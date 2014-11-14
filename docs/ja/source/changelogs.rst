@@ -22,6 +22,7 @@ Bug fixes
 * [ :issue:`445` ] - Operator compiler should validate shuffle keys
 * [ :issue:`446` ] - DMDL property name ends with 'option' should be error
 * [ :issue:`447` ] - Fix parsing DMDL name follows arrow symbol
+* [ :issue:`453` ] - DateTime.parseDateTime() does not handle correctly
 
 Others
 ------
