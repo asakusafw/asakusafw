@@ -80,6 +80,18 @@ public class GeneratorTesterRoot {
     }
 
     /**
+     * Expects that DMDL scripts have syntax/semantics errors.
+     */
+    protected void shouldAnalyzerError() {
+        try {
+            analyze(currentTestName.getMethodName());
+            fail("DMDL scripts should have errors");
+        } catch (IOException e) {
+            // ok.
+        }
+    }
+
+    /**
      * Generate Java model classes from context DMDL and returns compile and load results.
      * @return generated classes
      */
@@ -130,6 +142,16 @@ public class GeneratorTesterRoot {
     }
 
     private List<VolatileJavaFile> emit(String name) {
+        VolatileEmitter emitter;
+        try {
+            emitter = analyze(name);
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
+        return emitter.getEmitted();
+    }
+
+    private VolatileEmitter analyze(String name) throws IOException {
         ModelFactory factory = Models.getModelFactory();
         DmdlSourceRepository source = collectInput(name);
         VolatileEmitter emitter = new VolatileEmitter();
@@ -140,14 +162,9 @@ public class GeneratorTesterRoot {
                 emitter,
                 getClass().getClassLoader(),
                 Locale.getDefault());
-
         GenerateTask task = new GenerateTask(conf);
-        try {
-            task.process(new CompositeDataModelDriver(emitDrivers));
-        } catch (IOException e) {
-            throw new AssertionError(e);
-        }
-        return emitter.getEmitted();
+        task.process(new CompositeDataModelDriver(emitDrivers));
+        return emitter;
     }
 
     private DmdlSourceRepository collectInput(String name) {

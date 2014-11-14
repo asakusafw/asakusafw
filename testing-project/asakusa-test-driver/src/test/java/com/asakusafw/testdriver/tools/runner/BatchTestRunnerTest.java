@@ -21,29 +21,35 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import org.junit.Assume;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExternalResource;
+import org.junit.runner.Description;
 
 import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.flow.jobflow.JobflowModel.Export;
 import com.asakusafw.compiler.flow.jobflow.JobflowModel.Import;
 import com.asakusafw.compiler.testing.BatchInfo;
+import com.asakusafw.compiler.testing.TemporaryOutputDescription;
 import com.asakusafw.compiler.util.tester.CompilerTester;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.testdriver.TestDriverContext;
+import com.asakusafw.testdriver.TesterTestRoot;
 import com.asakusafw.testdriver.core.TestingEnvironmentConfigurator;
 import com.asakusafw.testdriver.hadoop.ConfigurationFactory;
 import com.asakusafw.testdriver.testing.batch.SimpleBatch;
 import com.asakusafw.testdriver.testing.model.Simple;
 import com.asakusafw.vocabulary.batch.Batch;
+import com.asakusafw.vocabulary.external.ExporterDescription;
 
 /**
  * Test for {@link BatchTestRunner}.
@@ -54,7 +60,12 @@ public class BatchTestRunnerTest {
      * Compiler testing tool.
      */
     @Rule
-    public final CompilerTester tester = new CompilerTester(ConfigurationFactory.getDefault(), true);
+    public final CompilerTester tester = new CompilerTester(ConfigurationFactory.getDefault(), true) {
+        @Override
+        protected void configure(Description description) throws IOException {
+            TesterTestRoot.installTo(framework());
+        }
+    };
 
     /**
      * Keeps system properties.
@@ -217,7 +228,7 @@ public class BatchTestRunnerTest {
         try {
             List<String> results = new ArrayList<String>();
             Export exporter = tester.getExporter(info, name);
-            for (Location location : exporter.getResolvedLocations()) {
+            for (Location location : getLocations(exporter)) {
                 ModelInput<Simple> input = tester.openInput(Simple.class, location);
                 try {
                     Simple model = new Simple();
@@ -232,5 +243,12 @@ public class BatchTestRunnerTest {
         } catch (IOException e) {
             throw new AssertionError(e);
         }
+    }
+
+    private Set<Location> getLocations(Export exporter) {
+        ExporterDescription description = exporter.getDescription().getExporterDescription();
+        assertThat(description, is(instanceOf(TemporaryOutputDescription.class)));
+        String prefix = ((TemporaryOutputDescription) description).getPathPrefix();
+        return Collections.singleton(Location.fromPath(prefix, '/'));
     }
 }

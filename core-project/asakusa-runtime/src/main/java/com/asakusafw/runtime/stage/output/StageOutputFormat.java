@@ -20,7 +20,9 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.WeakHashMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -30,6 +32,7 @@ import org.apache.hadoop.mapreduce.OutputCommitter;
 import org.apache.hadoop.mapreduce.OutputFormat;
 import org.apache.hadoop.mapreduce.RecordWriter;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
+import org.apache.hadoop.mapreduce.TaskAttemptID;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputCommitter;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
@@ -42,13 +45,14 @@ public final class StageOutputFormat extends OutputFormat<Object, Object> {
 
     static final Log LOG = LogFactory.getLog(StageOutputFormat.class);
 
-    private OutputCommitter outputCommitter;
-
     private final BridgeOutputFormat bridgeOutputFormat = new BridgeOutputFormat();
 
     private final FileOutputFormat<Object, Object> dummyFileOutputFormat = new EmptyFileOutputFormat();
 
     private final TemporaryOutputFormat<Object> temporaryOutputFormat = new TemporaryOutputFormat<Object>();
+
+    private final Map<TaskAttemptID, OutputCommitter> commiterCache =
+            new WeakHashMap<TaskAttemptID, OutputCommitter>();
 
     @Override
     public void checkOutputSpecs(JobContext context) throws IOException, InterruptedException {
@@ -73,10 +77,13 @@ public final class StageOutputFormat extends OutputFormat<Object, Object> {
     public OutputCommitter getOutputCommitter(
             TaskAttemptContext context) throws IOException, InterruptedException {
         synchronized (this) {
-            if (outputCommitter == null) {
-                outputCommitter = createOutputCommitter(context);
+            TaskAttemptID id = context.getTaskAttemptID();
+            OutputCommitter committer = commiterCache.get(id);
+            if (committer == null) {
+                committer = createOutputCommitter(context);
             }
-            return outputCommitter;
+            commiterCache.put(id, committer);
+            return committer;
         }
     }
 
@@ -225,7 +232,10 @@ public final class StageOutputFormat extends OutputFormat<Object, Object> {
             IOException exception = null;
             for (OutputCommitter component : components) {
                 try {
-                    results |= component.needsTaskCommit(taskContext);
+                    if (component.needsTaskCommit(taskContext)) {
+                        results = true;
+                        break;
+                    }
                 } catch (IOException e) {
                     LOG.warn(MessageFormat.format(
                             "Failed to detect commit task (JobID={1}, TaskAttemptID={2}, committer={0})",
@@ -248,7 +258,9 @@ public final class StageOutputFormat extends OutputFormat<Object, Object> {
             IOException exception = null;
             for (OutputCommitter component : components) {
                 try {
-                    component.commitTask(taskContext);
+                    if (component.needsTaskCommit(taskContext)) {
+                        component.commitTask(taskContext);
+                    }
                 } catch (IOException e) {
                     LOG.warn(MessageFormat.format(
                             "Failed to commit task (JobID={1}, TaskAttemptID={2}, committer={0})",

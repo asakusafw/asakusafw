@@ -138,6 +138,20 @@ public class DateTimeTest {
     }
 
     /**
+     * parses standard date-time string.
+     */
+    @Test
+    public void parse_standard_w_zeros() {
+        DateTime time = DateTime.valueOf("0001-01-01 00:00:00", DateTime.Format.STANDARD);
+        assertThat(time.getYear(), is(1));
+        assertThat(time.getMonth(), is(1));
+        assertThat(time.getDay(), is(1));
+        assertThat(time.getHour(), is(0));
+        assertThat(time.getMinute(), is(0));
+        assertThat(time.getSecond(), is(0));
+    }
+
+    /**
      * 最初の時刻の文字列解析。
      */
     @Test

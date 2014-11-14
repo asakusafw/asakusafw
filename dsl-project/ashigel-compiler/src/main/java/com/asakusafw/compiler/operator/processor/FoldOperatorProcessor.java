@@ -19,11 +19,11 @@ import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.common.TargetOperator;
 import com.asakusafw.compiler.operator.AbstractOperatorProcessor;
 import com.asakusafw.compiler.operator.ExecutableAnalyzer;
+import com.asakusafw.compiler.operator.ExecutableAnalyzer.ShuffleKeySpec;
 import com.asakusafw.compiler.operator.ExecutableAnalyzer.TypeConstraint;
 import com.asakusafw.compiler.operator.OperatorMethodDescriptor;
 import com.asakusafw.compiler.operator.OperatorMethodDescriptor.Builder;
 import com.asakusafw.vocabulary.flow.graph.FlowBoundary;
-import com.asakusafw.vocabulary.flow.graph.ShuffleKey;
 import com.asakusafw.vocabulary.operator.Fold;
 
 
@@ -64,10 +64,11 @@ public class FoldOperatorProcessor extends AbstractOperatorProcessor {
         if (context.environment.getTypeUtils().isSameType(left.getType(), right.getType()) == false) {
             a.error(1, "畳み込み演算子の1つ目の引数と2つ目の引数は同じ型である必要があります");
         }
-        ShuffleKey foldKey = a.getParameterKey(0);
+        ShuffleKeySpec foldKey = a.getParameterKeySpec(0);
         if (foldKey == null) {
             a.error("畳み込み演算子の引数には@Key注釈によってグループ化項目を指定する必要があります");
         }
+        a.validateShuffleKeys(foldKey);
         Fold annotation = context.element.getAnnotation(Fold.class);
         if (annotation == null) {
             a.error("注釈の解釈に失敗しました");
@@ -79,6 +80,7 @@ public class FoldOperatorProcessor extends AbstractOperatorProcessor {
         if (a.hasError()) {
             return null;
         }
+        assert foldKey != null;
 
         Builder builder = new Builder(getTargetAnnotationType(), context);
         builder.addAttribute(FlowBoundary.SHUFFLE);
@@ -90,7 +92,7 @@ public class FoldOperatorProcessor extends AbstractOperatorProcessor {
                 Fold.INPUT,
                 a.getParameterType(1).getType(),
                 1,
-                foldKey);
+                foldKey.getKey());
         builder.addOutput(
                 "畳み込みの結果",
                 annotation.outputPort(),

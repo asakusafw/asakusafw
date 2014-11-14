@@ -104,10 +104,11 @@ public class RuntimeResourceManager extends Configured {
      * @throws IllegalStateException 同一のリソースが複数回初期化された場合
      */
     public void cleanup() throws IOException, InterruptedException {
+        int count = resources.size();
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
                     "Unloading {0} runtime plugins",
-                    resources.size()));
+                    count));
         }
         try {
             for (RuntimeResource resource : resources) {
@@ -125,7 +126,7 @@ public class RuntimeResourceManager extends Configured {
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
                     "Unloaded {0} runtime plugins",
-                    resources.size()));
+                    count));
         }
     }
 

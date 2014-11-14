@@ -764,6 +764,8 @@ Hadoopの設定
 
 ..  [#] Hadoop 0.20.205以降、環境変数 ``HADOOP_HOME`` の利用は推奨されていません
 
+.. _testing-runtime-plugin-configuration:
+
 実行時プラグインの設定
 ----------------------
 テスト対象の演算子で実行時プラグイン [#]_ を利用する場合、
@@ -863,32 +865,18 @@ Hadoopの設定
 プログラミングインターフェース
 ------------------------------
 Javaのプログラムからバッチテストランナーを実行するには、
-``com.asakusafw.testdriver.tools.runner.BatchTestRunner`` クラスの ``execute()`` メソッドを起動します。
+``com.asakusafw.testdriver.tools.runner.BatchTestRunner`` クラスを利用します。
 
-``execute()`` メソッドには以下の種類があります。
-
-``int execute(String batchId)``
-    バッチID ( ``batchId`` ) のみを指定してバッチアプリケーションを実行します。
-
-``int execute(String batchId, Map<String, String> batchArguments)``
-    バッチID ( ``batchId`` ) とバッチ引数 ( ``batchArguments`` ) を指定してバッチアプリケーションを実行します。
-    各バッチ引数の名前と値は、 ``batchArguments`` のキーと値にそれぞれ指定してください。
-
-``int execute(String[] args)``
-    コマンドラインインターフェースと同様の方法でバッチアプリケーションを実行します。
-    コマンドライン引数については次項を参照してください。
-
-いずれのメソッドも、バッチアプリケーションが正常終了した際に戻り値として ``0`` を返し、正常終了しなかった場合に ``0`` 以外を返します。
+詳しい利用方法は、APIリファレンスの :javadoc:`com.asakusafw.testdriver.tools.runner.BatchTestRunner` を参照してください。
 
 以下は :ref:`Asakusa Framework スタートガイド <startguide-running-example>` で紹介しているサンプルアプリケーションを実行する例です。
 
 ..  code-block:: java
-
-    String id = "example.summarizeSales";
-    Map<String, String> args = new HashMap<String, String>();
-    args.put("date", "2011-04-01");
     
-    int result = BatchTestRunner.execute(id, args);
+    int result = new BatchTestRunner("example.summarizeSales")
+        .withArgument("date", "2011-04-01")
+        .execute();
+    
     if (result != 0) {
         // エラー処理 ...
     }
@@ -906,6 +894,9 @@ Javaのプログラムからバッチテストランナーを実行するには�
 ``-A,--argument <name=value>``
     実行するバッチのバッチ引数を指定します。
 
+``-D,--property <name=value>``
+    :ref:`testing-runtime-plugin-configuration` を行います。
+
 例えば :ref:`Asakusa Framework スタートガイド <startguide-running-example>` で紹介しているサンプルアプリケーションを実行する場合のオプション指定は以下のようになります。
 
 ..  code-block:: sh
@@ -914,9 +905,3 @@ Javaのプログラムからバッチテストランナーを実行するには�
 
 コマンドラインインターフェースは、バッチアプリケーションが正常終了した際に終了コード ``0`` を返し、
 正常終了しなかった場合に非 ``0`` を返します。
-
-..  hint::
-    Javaプログラムから ``BatchTestRunner`` クラスの ``main()`` メソッドを直接実行することは推奨しません。
-    このメソッドは、アプリケーションの実行終了時に Java VM を強制終了させる場合があります。
-
-    代わりに、 `プログラミングインターフェース`_ の ``execute()`` メソッドを利用してください。
