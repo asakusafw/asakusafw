@@ -570,11 +570,19 @@ public class HadoopDataSourceCore implements DirectDataSource {
                     path));
         }
         try {
-            if (fs.delete(path, true) == false) {
-                LOG.warn(MessageFormat.format(
-                        "Failed to delete temporary area (id={0}, path={0})",
-                        profile.getId(),
-                        path));
+            if (fs.exists(path)) {
+                if (fs.delete(path, true) == false) {
+                    LOG.warn(MessageFormat.format(
+                            "Failed to delete temporary area (id={0}, path={0})",
+                            profile.getId(),
+                            path));
+                }
+            } else {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(MessageFormat.format(
+                            "Temporary area is not found (may be not used): {0}",
+                            path));
+                }
             }
         } catch (FileNotFoundException e) {
             if (LOG.isDebugEnabled()) {
