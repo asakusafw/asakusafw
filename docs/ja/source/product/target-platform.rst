@@ -24,16 +24,21 @@ Asakusa Framework は、以下のHadoopディストリビューションと組�
       - CentOS 6 (6.2)
       - JDK 7 (1.7.0_67)
       - |version|-hadoop2
-    * - CDH5
-      - 5.1.2 (MRv1/MRv2)
-      - CentOS 6 (6.2)
-      - JDK 7 (1.7.0_45)
-      - |version|-hadoop2
     * - MapR
       - 3.1.1 (M3/M5/M7)
       - CentOS 6 (6.5)
       - JDK 7 (1.7.0_55)
       - |version|-hadoop1
+    * - Hortonworks Data Platform
+      - 2.1
+      - CentOS 6 (6.6)
+      - JDK 7 (1.7.0_65)
+      - |version|-hadoop2
+    * - CDH
+      - 5.2.0 (MRv1/MRv2)
+      - CentOS 6 (6.2)
+      - JDK 7 (1.7.0_45)
+      - |version|-hadoop2
     * - Amazon EMR [#]_
       - Hadoop 1.0.3
       - AMI 2.4.6
@@ -41,7 +46,7 @@ Asakusa Framework は、以下のHadoopディストリビューションと組�
       - |version|-hadoop1
     * - Amazon EMR
       - Hadoop 2.4.0
-      - AMI 3.2.1
+      - AMI 3.3.0
       - JDK 7 (1.7.0_65)
       - |version|-hadoop2
 
@@ -132,10 +137,12 @@ ThunderGate
       - Link
     * - Apache Hadoop
       - http://hadoop.apache.org/
-    * - Cloudera CDH
-      - http://www.cloudera.com/content/cloudera/en/products-and-services/cdh.html
     * - MapR
       - http://www.mapr.com/
+    * - Hortonworks Data Platform
+      - http://hortonworks.com/hdp/
+    * - Cloudera CDH
+      - http://www.cloudera.com/content/cloudera/en/products-and-services/cdh.html
     * - Amazon EMR
       - http://aws.amazon.com/elasticmapreduce/
     * - CentOS

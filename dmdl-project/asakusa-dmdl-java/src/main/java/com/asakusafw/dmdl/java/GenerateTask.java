@@ -21,6 +21,7 @@ import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.dmdl.java.analyzer.JavaDataModelAnalyzerEnhancer;
 import com.asakusafw.dmdl.java.emitter.CompositeDataModelDriver;
 import com.asakusafw.dmdl.java.emitter.JavaModelClassGenerator;
 import com.asakusafw.dmdl.java.spi.JavaDataModelDriver;
@@ -79,8 +80,10 @@ public class GenerateTask {
     }
 
     private DmdlSemantics analyze() throws IOException {
-        AnalyzeTask analyzer =
-                new AnalyzeTask(Messages.getString("GenerateTask.name"), conf.getServiceClassLoader()); //$NON-NLS-1$
+        AnalyzeTask analyzer = new AnalyzeTask(
+                Messages.getString("GenerateTask.name"), //$NON-NLS-1$
+                new JavaDataModelAnalyzerEnhancer(),
+                conf.getServiceClassLoader());
         return analyzer.process(conf.getSource());
     }
 }

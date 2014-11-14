@@ -23,12 +23,12 @@ import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.common.TargetOperator;
 import com.asakusafw.compiler.operator.AbstractOperatorProcessor;
 import com.asakusafw.compiler.operator.ExecutableAnalyzer;
+import com.asakusafw.compiler.operator.ExecutableAnalyzer.ShuffleKeySpec;
 import com.asakusafw.compiler.operator.ExecutableAnalyzer.TypeConstraint;
 import com.asakusafw.compiler.operator.OperatorMethodDescriptor;
 import com.asakusafw.compiler.operator.OperatorMethodDescriptor.Builder;
 import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.vocabulary.flow.graph.FlowBoundary;
-import com.asakusafw.vocabulary.flow.graph.ShuffleKey;
 import com.asakusafw.vocabulary.operator.CoGroup;
 
 
@@ -92,23 +92,16 @@ public class CoGroupOperatorProcessor extends AbstractOperatorProcessor {
             return null;
         }
 
-        List<ShuffleKey> keys = Lists.create();
+        List<ShuffleKeySpec> keys = Lists.create();
         for (int i = 0; i < startResults; i++) {
-            ShuffleKey key = a.getParameterKey(i);
+            ShuffleKeySpec key = a.getParameterKeySpec(i);
             if (key == null) {
                 a.error(i, "グループ結合演算子の引数には@Key注釈によってグループ化項目を指定する必要があります");
             } else {
                 keys.add(key);
             }
         }
-        if (keys.isEmpty() == false) {
-            ShuffleKey first = keys.get(0);
-            for (int i = 1, n = keys.size(); i < n; i++) {
-                if (first.getGroupProperties().size() != keys.get(i).getGroupProperties().size()) {
-                    a.error(0, "グループ結合演算子の@Key注釈ではグループ化項目の個数を全て一致させる必要があります");
-                }
-            }
-        }
+        a.validateShuffleKeys(keys);
         if (a.hasError()) {
             return null;
         }
@@ -129,7 +122,7 @@ public class CoGroupOperatorProcessor extends AbstractOperatorProcessor {
                     a.getParameterName(i),
                     a.getParameterType(i).getTypeArgument().getType(),
                     i,
-                    keys.get(i));
+                    keys.get(i).getKey());
         }
         for (int i = startResults; i < startParameters; i++) {
             TypeConstraint outputType = a.getParameterType(i).getTypeArgument();

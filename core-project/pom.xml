@@ -32,6 +32,8 @@
 	<modules>
 		<module>asakusa-runtime</module>
 		<module>asakusa-runtime-configuration</module>
+		<module>asakusa-simple-mapreduce</module>
+		<module>asakusa-runtime-inprocess</module>
 		<module>asakusa-runtime-all</module>
 	</modules>
 

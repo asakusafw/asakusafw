@@ -21,24 +21,32 @@
 		</license>
 	</licenses>
 
-	<packaging>pom</packaging>
+	<packaging>jar</packaging>
 
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
+				<artifactId>maven-shade-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>create-distribution</id>
 						<phase>package</phase>
 						<goals>
-							<goal>single</goal>
+							<goal>shade</goal>
 						</goals>
 						<configuration>
-							<descriptors>
-								<descriptor>src/main/assembly/lib.xml</descriptor>
-							</descriptors>
+							<artifactSet>
+								<includes>
+									<include>${project.groupId}</include>
+									<include>org.xerial.snappy:snappy-java</include>
+								</includes>
+							</artifactSet>
+							<transformers>
+								<transformer
+									implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+							</transformers>
+							<shadedArtifactAttached>true</shadedArtifactAttached>
+							<shadedClassifierName>lib</shadedClassifierName>
 						</configuration>
 					</execution>
 				</executions>
@@ -51,7 +59,11 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>asakusa-runtime</artifactId>
 			<version>${project.version}</version>
-			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-runtime-inprocess</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
 

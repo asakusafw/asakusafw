@@ -1,0 +1,9 @@
+a = {
+    a : INT;
+};
+
+b = {
+    b : INT;
+};
+
+c = a + { c_option : INT; } + b;

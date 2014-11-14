@@ -478,6 +478,14 @@ public class DmdlParserTest extends DmdlTesterRoot {
     }
 
     /**
+     * Name with arrow.
+     */
+    @Test
+    public void name_follows_arrow() {
+        load();
+    }
+
+    /**
      * with invalid name.
      */
     @Test

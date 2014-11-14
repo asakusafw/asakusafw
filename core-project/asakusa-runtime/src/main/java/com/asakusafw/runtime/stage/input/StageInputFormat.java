@@ -16,13 +16,19 @@
 package com.asakusafw.runtime.stage.input;
 
 import java.io.IOException;
+import java.lang.ref.Reference;
+import java.lang.ref.SoftReference;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -39,6 +45,7 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.util.ReflectionUtils;
 
 import com.asakusafw.runtime.compatibility.JobCompatibility;
+import com.asakusafw.runtime.io.util.DataBuffer;
 import com.asakusafw.runtime.stage.StageInput;
 import com.asakusafw.runtime.stage.input.StageInputSplit.Source;
 
@@ -48,7 +55,7 @@ import com.asakusafw.runtime.stage.input.StageInputSplit.Source;
  * {@link StageInputDriver}に指定された実際のInputFormatに処理を移譲する。
  * </p>
  * @since 0.1.0
- * @version 0.6.0
+ * @version 0.7.1
  */
 @SuppressWarnings("rawtypes")
 public class StageInputFormat extends InputFormat {
@@ -92,7 +99,12 @@ public class StageInputFormat extends InputFormat {
 
     static List<StageInputSplit> computeSplits(JobContext context) throws IOException, InterruptedException {
         assert context != null;
-        Map<FormatAndMapper, List<StageInput>> paths = getPaths(context);
+        List<StageInput> inputs = StageInputDriver.getInputs(context.getConfiguration());
+        List<StageInputSplit> cached = Cache.find(context, inputs);
+        if (cached != null) {
+            return cached;
+        }
+        Map<FormatAndMapper, List<StageInput>> paths = groupByFormatAndMapper(inputs);
         Map<Class<? extends InputFormat<?, ?>>, InputFormat<?, ?>> formats =
             instantiateFormats(context, paths.keySet());
         Job temporaryJob = JobCompatibility.newJob(context.getConfiguration());
@@ -121,6 +133,7 @@ public class StageInputFormat extends InputFormat {
                 results.add(wrapped);
             }
         }
+        Cache.put(context, inputs, results);
         return results;
     }
 
@@ -130,8 +143,16 @@ public class StageInputFormat extends InputFormat {
         return ReflectionUtils.newInstance(combinerClass, context.getConfiguration());
     }
 
-    private static Class<? extends SplitCombiner> getSplitCombinerClass(JobContext context) {
-        assert context != null;
+    /**
+     * Returns the {@link SplitCombiner} class used in the current job.
+     * @param context the current job context
+     * @return the {@link SplitCombiner} class
+     * @since 0.7.1
+     */
+    public static Class<? extends SplitCombiner> getSplitCombinerClass(JobContext context) {
+        if (context == null) {
+            throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
+        }
         Configuration conf = context.getConfiguration();
         String combinerType = conf.get(KEY_SPLIT_COMBINER, DEFAULT_SPLIT_COMBINER);
         if (JobCompatibility.isLocalMode(context) && combinerType.equals(DEFAULT_SPLIT_COMBINER)) {
@@ -151,6 +172,22 @@ public class StageInputFormat extends InputFormat {
         }
     }
 
+    /**
+     * Sets the {@link SplitCombiner} class for the current job.
+     * @param context the current job context
+     * @param aClass the {@link SplitCombiner} class
+     * @since 0.7.1
+     */
+    public static void setSplitCombinerClass(JobContext context, Class<? extends SplitCombiner> aClass) {
+        if (context == null) {
+            throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
+        }
+        if (aClass == null) {
+            throw new IllegalArgumentException("aClass must not be null"); //$NON-NLS-1$
+        }
+        context.getConfiguration().set(KEY_SPLIT_COMBINER, aClass.getName());
+    }
+
     private static Path[] toPathArray(List<StageInput> inputs) {
         assert inputs != null;
         List<Path> paths = new ArrayList<Path>();
@@ -160,9 +197,8 @@ public class StageInputFormat extends InputFormat {
         return paths.toArray(new Path[paths.size()]);
     }
 
-    private static Map<FormatAndMapper, List<StageInput>> getPaths(JobContext context) throws IOException {
-        assert context != null;
-        List<StageInput> inputs = StageInputDriver.getInputs(context.getConfiguration());
+    private static Map<FormatAndMapper, List<StageInput>> groupByFormatAndMapper(List<StageInput> inputs) {
+        assert inputs != null;
         Map<FormatAndMapper, List<StageInput>> paths = new HashMap<FormatAndMapper, List<StageInput>>();
         for (StageInput input : inputs) {
             FormatAndMapper fam = new FormatAndMapper(input.getFormatClass(), input.getMapperClass());
@@ -251,6 +287,93 @@ public class StageInputFormat extends InputFormat {
                 return false;
             }
             return true;
+        }
+    }
+
+    private static final class Cache {
+
+        private static final String KEY_CACHE_ID = Cache.class.getName() + ".id";
+
+        private static Reference<Cache> data;
+
+        private final String id;
+
+        private final Set<StageInput> key;
+
+        private final byte[] value;
+
+        private Cache(
+                Collection<? extends StageInput> key,
+                List<StageInputSplit> splits) throws IOException {
+            this.id = UUID.randomUUID().toString();
+            this.key = new HashSet<StageInput>(key);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(MessageFormat.format(
+                        "saving input splits into cache: id={0}",
+                        id));
+            }
+            DataBuffer buffer = new DataBuffer();
+            buffer.writeInt(splits.size());
+            for (StageInputSplit split : splits) {
+                split.write(buffer);
+            }
+            this.value = Arrays.copyOfRange(buffer.getData(), 0, buffer.getWritePosition());
+        }
+
+        private List<StageInputSplit> restore(Configuration conf) throws IOException {
+            assert conf != null;
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(MessageFormat.format(
+                        "restoring input splits from cache: id={0}",
+                        id));
+            }
+            DataBuffer buffer = new DataBuffer();
+            buffer.reset(value, 0, value.length);
+            int count = buffer.readInt();
+            List<StageInputSplit> results = new ArrayList<StageInputSplit>();
+            for (int i = 0; i < count; i++) {
+                StageInputSplit split = new StageInputSplit();
+                split.setConf(conf);
+                split.readFields(buffer);
+                results.add(split);
+            }
+            return results;
+        }
+
+        static List<StageInputSplit> find(
+                JobContext context,
+                Collection<? extends StageInput> key) throws IOException {
+            assert key != null;
+            assert context != null;
+            String id = context.getConfiguration().get(KEY_CACHE_ID);
+            if (id == null) {
+                return null;
+            }
+            Cache cached;
+            synchronized (Cache.class) {
+                cached = data == null ? null : data.get();
+                if (cached == null || id.equals(cached.id) == false) {
+                    return null;
+                }
+                Set<StageInput> k = new HashSet<StageInput>(key);
+                if (k.equals(cached.key) == false) {
+                    return null;
+                }
+            }
+            return cached.restore(context.getConfiguration());
+        }
+
+        static void put(
+                JobContext context,
+                Collection<? extends StageInput> key,
+                List<StageInputSplit> value) throws IOException {
+            assert key != null;
+            assert value != null;
+            Cache cache = new Cache(key, value);
+            synchronized (Cache.class) {
+                data = new SoftReference<Cache>(cache);
+            }
+            context.getConfiguration().set(KEY_CACHE_ID, cache.id);
         }
     }
 }
