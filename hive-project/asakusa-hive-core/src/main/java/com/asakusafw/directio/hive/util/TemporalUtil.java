@@ -138,7 +138,7 @@ public final class TemporalUtil {
             int minute = parse(value, COL_MINUTE_BEGIN, COL_MINUTE_END);
             int second = parse(value, COL_SECOND_BEGIN, COL_SECOND_END);
             if (year > 0 && month > 0 && day > 0
-                    && hour > 0 && minute > 0 && second > 0) {
+                    && hour >= 0 && minute >= 0 && second >= 0) {
                 long result = DateUtil.getDayFromDate(year, month, day) * 86400L;
                 result += DateUtil.getSecondFromTime(hour, minute, second);
                 return result;
