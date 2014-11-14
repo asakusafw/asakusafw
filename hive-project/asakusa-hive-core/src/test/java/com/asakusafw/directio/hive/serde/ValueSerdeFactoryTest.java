@@ -228,6 +228,34 @@ public class ValueSerdeFactoryTest {
     }
 
     /**
+     * date-time by string.
+     */
+    @Test
+    public void datetime_by_string_w_zeros() {
+        ValueSerde serde = StringValueSerdeFactory.DATETIME;
+        StringObjectInspector inspector = (StringObjectInspector) serde.getInspector();
+
+        DateTimeOption option = new DateTimeOption(new DateTime(1, 1, 1, 0, 0, 0));
+        String value = "0001-01-01 00:00:00";
+
+        assertThat(inspector.copyObject(option), is((Object) option));
+        assertThat(inspector.copyObject(option), is(not(sameInstance((Object) option))));
+        assertThat(inspector.copyObject(null), is(nullValue()));
+        assertThat(inspector.getPrimitiveJavaObject(option), is(value));
+        assertThat(inspector.getPrimitiveJavaObject(null), is(nullValue()));
+        assertThat(inspector.getPrimitiveWritableObject(option), is(new Text(value)));
+        assertThat(inspector.getPrimitiveWritableObject(null), is(nullValue()));
+
+        ValueDriver driver = serde.getDriver(inspector);
+        DateTimeOption copy = new DateTimeOption();
+
+        driver.set(copy, option);
+        assertThat(copy, is(option));
+        driver.set(copy, null);
+        assertThat(copy.isNull(), is(true));
+    }
+
+    /**
      * date by timestamp.
      */
     @SuppressWarnings("deprecation")
