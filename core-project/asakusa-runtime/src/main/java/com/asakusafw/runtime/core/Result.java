@@ -35,7 +35,7 @@ public interface Result<T> {
     /**
      * 演算子がデータの出力に失敗したことを表す例外。
      */
-    class OutputException extends RuntimeException {
+    public static class OutputException extends RuntimeException {
 
         private static final long serialVersionUID = 1L;
 

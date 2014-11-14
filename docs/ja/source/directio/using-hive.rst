@@ -311,11 +311,11 @@ Parquet形式の設定
     @directio.hive.orc
     document = {
         "the name of this document"
-        @directio.hive.field(name = doc-name)
+        @directio.hive.field(name = "doc_name")
         name : TEXT;
     
         "the content of this document"
-        @directio.hive.field(name = doc-content)
+        @directio.hive.field(name = "doc_content")
         content : TEXT;
     };
     

@@ -292,11 +292,42 @@ public class BufferedFileInputTest extends BufferedFileTestRoot {
     @Test
     public void testReadUTF() throws Exception {
         RandomAccessFile file = file();
-        DataIoUtils.writeUTF(file, "Hello, world!");
+        file.writeUTF("Hello, world!");
         file.seek(0);
 
         BufferedFileInput buf = manage(new BufferedFileInput(file, 256));
         assertThat(buf.readUTF(), is("Hello, world!"));
+        eof(buf);
+    }
+
+    /**
+     * Test method for {@link BufferedFileInput#readUTF()}.
+     * @throws Exception if failed
+     */
+    @Test
+    public void testReadUTF_codes() throws Exception {
+        String code = "\u0000-\u0001:\u0080-\u07ff:\u0800-\uffff";
+        RandomAccessFile file = file();
+        file.writeUTF(code);
+        file.seek(0);
+
+        BufferedFileInput buf = manage(new BufferedFileInput(file, 256));
+        assertThat(buf.readUTF(), is(code));
+        eof(buf);
+    }
+
+    /**
+     * Test method for {@link BufferedFileInput#readUTF()}.
+     * @throws Exception if failed
+     */
+    @Test
+    public void testReadUTF_empty() throws Exception {
+        RandomAccessFile file = file();
+        file.writeUTF("");
+        file.seek(0);
+
+        BufferedFileInput buf = manage(new BufferedFileInput(file, 256));
+        assertThat(buf.readUTF(), is(""));
         eof(buf);
     }
 

@@ -175,7 +175,8 @@ public class BufferedFileOutputTest extends BufferedFileTestRoot {
 
     /**
      * Test method for throws Exception {@link BufferedFileOutput#writeChar(int)}.
-     * @throws Exception if failed     */
+     * @throws Exception if failed
+     */
     @Test
     public void testWriteChar() throws Exception {
         RandomAccessFile file = file();
@@ -193,7 +194,8 @@ public class BufferedFileOutputTest extends BufferedFileTestRoot {
 
     /**
      * Test method for throws Exception {@link BufferedFileOutput#writeLong(long)}.
-     * @throws Exception if failed     */
+     * @throws Exception if failed
+     */
     @Test
     public void testWriteLong() throws Exception {
         RandomAccessFile file = file();
@@ -213,7 +215,8 @@ public class BufferedFileOutputTest extends BufferedFileTestRoot {
 
     /**
      * Test method for throws Exception {@link BufferedFileOutput#writeFloat(float)}.
-     * @throws Exception if failed     */
+     * @throws Exception if failed
+     */
     @Test
     public void testWriteFloat() throws Exception {
         RandomAccessFile file = file();
@@ -231,7 +234,8 @@ public class BufferedFileOutputTest extends BufferedFileTestRoot {
 
     /**
      * Test method for throws Exception {@link BufferedFileOutput#writeDouble(double)}.
-     * @throws Exception if failed     */
+     * @throws Exception if failed
+     */
     @Test
     public void testWriteDouble() throws Exception {
         RandomAccessFile file = file();
@@ -249,7 +253,8 @@ public class BufferedFileOutputTest extends BufferedFileTestRoot {
 
     /**
      * Test method for throws Exception {@link BufferedFileOutput#writeBytes(java.lang.String)}.
-     * @throws Exception if failed     */
+     * @throws Exception if failed
+     */
     @Test
     public void testWriteBytes() throws Exception {
         RandomAccessFile file = file();
@@ -268,7 +273,8 @@ public class BufferedFileOutputTest extends BufferedFileTestRoot {
 
     /**
      * Test method for throws Exception {@link BufferedFileOutput#writeChars(java.lang.String)}.
-     * @throws Exception if failed     */
+     * @throws Exception if failed
+     */
     @Test
     public void testWriteChars() throws Exception {
         RandomAccessFile file = file();
@@ -288,7 +294,8 @@ public class BufferedFileOutputTest extends BufferedFileTestRoot {
 
     /**
      * Test method for throws Exception {@link BufferedFileOutput#writeUTF(java.lang.String)}.
-     * @throws Exception if failed     */
+     * @throws Exception if failed
+     */
     @Test
     public void testWriteUTF() throws Exception {
         RandomAccessFile file = file();
@@ -297,14 +304,50 @@ public class BufferedFileOutputTest extends BufferedFileTestRoot {
         buf.flush();
 
         file.seek(0);
-        assertThat(DataIoUtils.readUTF(file), is("Hello, world!"));
+        assertThat(file.readUTF(), is("Hello, world!"));
+
+        eof(file);
+    }
+
+    /**
+     * Test method for throws Exception {@link BufferedFileOutput#writeUTF(java.lang.String)}.
+     * @throws Exception if failed
+     */
+    @Test
+    public void testWriteUTF_code() throws Exception {
+        String code = "\u0000-\u0001:\u0080-\u07ff:\u0800-\uffff";
+        RandomAccessFile file = file();
+        BufferedFileOutput buf = manage(new BufferedFileOutput(file, 100));
+        buf.writeUTF(code);
+        buf.flush();
+
+        file.seek(0);
+        assertThat(file.readUTF(), is(code));
+
+        eof(file);
+    }
+
+    /**
+     * Test method for throws Exception {@link BufferedFileOutput#writeUTF(java.lang.String)}.
+     * @throws Exception if failed
+     */
+    @Test
+    public void testWriteUTF_empty() throws Exception {
+        RandomAccessFile file = file();
+        BufferedFileOutput buf = manage(new BufferedFileOutput(file, 100));
+        buf.writeUTF("");
+        buf.flush();
+
+        file.seek(0);
+        assertThat(file.readUTF(), is(""));
 
         eof(file);
     }
 
     /**
      * Test method for throws Exception {@link BufferedFileOutput#sync()}.
-     * @throws Exception if failed     */
+     * @throws Exception if failed
+     */
     @Test
     public void testSync() throws Exception {
         RandomAccessFile file = file();
@@ -326,7 +369,8 @@ public class BufferedFileOutputTest extends BufferedFileTestRoot {
 
     /**
      * Test method for throws Exception {@link BufferedFileOutput#seek(long)}.
-     * @throws Exception if failed     */
+     * @throws Exception if failed
+     */
     @Test
     public void testSeek() throws Exception {
         RandomAccessFile file = file();

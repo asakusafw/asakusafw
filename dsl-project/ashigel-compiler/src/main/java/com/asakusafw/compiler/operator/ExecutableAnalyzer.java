@@ -16,6 +16,7 @@
 package com.asakusafw.compiler.operator;
 
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,7 @@ import javax.tools.Diagnostic;
 
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.operator.DataModelMirror.Kind;
+import com.asakusafw.compiler.operator.DataModelMirror.PropertyMirror;
 import com.asakusafw.runtime.core.Result;
 import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.collections.Maps;
@@ -61,6 +63,8 @@ import com.asakusafw.vocabulary.operator.Volatile;
 
 /**
  * メソッドやコンストラクターの宣言を解析する。
+ * @since 0.1.0
+ * @version 0.7.1
  */
 public class ExecutableAnalyzer {
 
@@ -299,12 +303,12 @@ public class ExecutableAnalyzer {
      * 指定の位置の引数に付与されたキーを返す。
      * @param index 対象の位置 (0起算)
      * @return 指定の位置の引数に付与されたキー
+     * @deprecated Use {@link #getParameterKeySpec(int)} instead
      */
+    @Deprecated
     public ShuffleKey getParameterKey(int index) {
         VariableElement parameter = executable.getParameters().get(index);
         TypeConstraint type = getParameterType(index);
-
-        // TODO 外側からしっかりと型を指定させる？
         TypeConstraint arg = type.getTypeArgument();
         if (arg.exists()) {
             type = arg;
@@ -314,6 +318,81 @@ public class ExecutableAnalyzer {
             return null;
         }
         return toShuffleKey(index, model, findAnnotation(parameter, environment.getDeclaredType(Key.class)));
+    }
+
+    /**
+     * Returns the shuffle key spec of the target parameter.
+     * @param index the parameter index
+     * @return the spec, or {@code null} if the key is not valid
+     * @since 0.7.1
+     */
+    public ShuffleKeySpec getParameterKeySpec(int index) {
+        VariableElement parameter = executable.getParameters().get(index);
+        TypeConstraint type = getParameterType(index);
+        TypeConstraint arg = type.getTypeArgument();
+        if (arg.exists()) {
+            type = arg;
+        }
+        DataModelMirror model = environment.loadDataModel(type.getType());
+        if (model == null) {
+            return null;
+        }
+        ShuffleKey key = toShuffleKey(index, model, findAnnotation(parameter, environment.getDeclaredType(Key.class)));
+        if (key == null) {
+            return null;
+        }
+        return new ShuffleKeySpec(index, model, key);
+    }
+
+    /**
+     * Validates shuffle keys.
+     * @param keys keys
+     */
+    public void validateShuffleKeys(ShuffleKeySpec... keys) {
+        validateShuffleKeys(Arrays.asList(keys));
+    }
+
+    /**
+     * Validates shuffle keys.
+     * @param keys keys
+     */
+    public void validateShuffleKeys(List<ShuffleKeySpec> keys) {
+        // ignores if errors are occurred
+        if (hasError() || keys.isEmpty()) {
+            return;
+        }
+        for (ShuffleKeySpec key : keys) {
+            if (key == null) {
+                return;
+            }
+        }
+        assert keys.isEmpty() == false;
+        ShuffleKeySpec first = keys.get(0);
+        for (int i = 1, inputCount = keys.size(); i < inputCount; i++) {
+            ShuffleKeySpec spec = keys.get(i);
+            List<PropertyMirror> aGroup = first.groupProperties;
+            List<PropertyMirror> bGroup = spec.groupProperties;
+            if (aGroup.size() != bGroup.size()) {
+                error(spec.position, "@Key注釈のグループ化項目はそれぞれ同じ数のプロパティを指定する必要があります");
+                continue;
+            }
+            assert aGroup.size() == bGroup.size();
+            Types types = environment.getTypeUtils();
+            for (int pIndex = 0, propertyCount = aGroup.size(); pIndex < propertyCount; pIndex++) {
+                PropertyMirror aProperty = aGroup.get(pIndex);
+                PropertyMirror bProperty = bGroup.get(pIndex);
+                if (aProperty == null || bProperty == null) {
+                    continue;
+                }
+                if (types.isSameType(aProperty.getType(), bProperty.getType()) == false) {
+                    error(spec.position, "@Key注釈のグループ化項目「{0}.{1}」は「{2}.{3}」と同じ型でなければなりません",
+                            getParameterName(spec.position),
+                            spec.key.getGroupProperties().get(pIndex),
+                            getParameterName(first.position),
+                            first.key.getGroupProperties().get(pIndex));
+                }
+            }
+        }
     }
 
     /**
@@ -524,6 +603,44 @@ public class ExecutableAnalyzer {
             results.put(key.getSimpleName().toString(), value);
         }
         return results;
+    }
+
+    /**
+     * Represents a {@link ShuffleKey} with original parameter info.
+     * @since 0.7.1
+     */
+    public static class ShuffleKeySpec {
+
+        final int position;
+
+        final DataModelMirror model;
+
+        final ShuffleKey key;
+
+        final List<PropertyMirror> groupProperties;
+
+        ShuffleKeySpec(int position, DataModelMirror model, ShuffleKey key) {
+            this.position = position;
+            this.model = model;
+            this.key = key;
+            this.groupProperties = resolveProperties();
+        }
+
+        private List<PropertyMirror> resolveProperties() {
+            List<PropertyMirror> results = Lists.create();
+            for (String name : key.getGroupProperties()) {
+                results.add(model.findProperty(name));
+            }
+            return results;
+        }
+
+        /**
+         * Returns the target key.
+         * @return the key
+         */
+        public ShuffleKey getKey() {
+            return key;
+        }
     }
 
     /**

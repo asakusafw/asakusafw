@@ -188,6 +188,24 @@ public class CoGroupOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
+     * Grouping key properties are inconsistent.
+     */
+    @Test
+    public void inconsistentGroupCount() {
+        add("com.example.InconsistentGroupCount");
+        error(new CoGroupOperatorProcessor());
+    }
+
+    /**
+     * Grouping key properties have inconsistent types.
+     */
+    @Test
+    public void inconsistentGroupType() {
+        add("com.example.InconsistentGroupType");
+        error(new CoGroupOperatorProcessor());
+    }
+
+    /**
      * ユーザー引数でない。
      */
     @Test

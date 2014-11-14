@@ -17,6 +17,8 @@ package com.asakusafw.runtime.stage.output;
 
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.Map;
+import java.util.WeakHashMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -29,6 +31,7 @@ import org.apache.hadoop.mapreduce.JobContext;
 import org.apache.hadoop.mapreduce.OutputFormat;
 import org.apache.hadoop.mapreduce.RecordWriter;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
+import org.apache.hadoop.mapreduce.TaskAttemptID;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputCommitter;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.security.TokenCache;
@@ -54,7 +57,8 @@ public final class TemporaryOutputFormat<T> extends OutputFormat<NullWritable, T
 
     private static final String KEY_OUTPUT_PATH = "com.asakusafw.temporary.output";
 
-    private FileOutputCommitter committerCache;
+    private final Map<TaskAttemptID, FileOutputCommitter> commiterCache =
+            new WeakHashMap<TaskAttemptID, FileOutputCommitter>();
 
     @Override
     public void checkOutputSpecs(JobContext context) throws IOException, InterruptedException {
@@ -115,7 +119,7 @@ public final class TemporaryOutputFormat<T> extends OutputFormat<NullWritable, T
             codec = (CompressionCodec) ReflectionUtils.newInstance(codecClass, conf);
         }
         FileOutputCommitter committer = getOutputCommitter(context);
-        Path file = new Path(
+        final Path file = new Path(
                 committer.getWorkPath(),
                 FileOutputFormat.getUniqueFile(context, name, ""));
         final ModelOutput<V> out = TemporaryStorage.openOutput(conf, dataType, file, codec);
@@ -130,15 +134,25 @@ public final class TemporaryOutputFormat<T> extends OutputFormat<NullWritable, T
             public void close(TaskAttemptContext ignored) throws IOException {
                 out.close();
             }
+
+            @Override
+            public String toString() {
+                return String.format("TemporaryOutput(%s)", file);
+            }
         };
     }
 
     @Override
-    public synchronized FileOutputCommitter getOutputCommitter(TaskAttemptContext context) throws IOException {
-        if (committerCache == null) {
-            committerCache = createOutputCommitter(context);
+    public FileOutputCommitter getOutputCommitter(TaskAttemptContext context) throws IOException {
+        synchronized (this) {
+            TaskAttemptID id = context.getTaskAttemptID();
+            FileOutputCommitter committer = commiterCache.get(id);
+            if (committer == null) {
+                committer = createOutputCommitter(context);
+            }
+            commiterCache.put(id, committer);
+            return committer;
         }
-        return committerCache;
     }
 
     private FileOutputCommitter createOutputCommitter(TaskAttemptContext context) throws IOException {

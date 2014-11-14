@@ -21,11 +21,11 @@ import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.common.TargetOperator;
 import com.asakusafw.compiler.operator.AbstractOperatorProcessor;
 import com.asakusafw.compiler.operator.ExecutableAnalyzer;
+import com.asakusafw.compiler.operator.ExecutableAnalyzer.ShuffleKeySpec;
 import com.asakusafw.compiler.operator.ExecutableAnalyzer.TypeConstraint;
 import com.asakusafw.compiler.operator.OperatorMethodDescriptor;
 import com.asakusafw.compiler.operator.OperatorMethodDescriptor.Builder;
 import com.asakusafw.vocabulary.flow.graph.FlowBoundary;
-import com.asakusafw.vocabulary.flow.graph.ShuffleKey;
 import com.asakusafw.vocabulary.operator.CoGroup;
 import com.asakusafw.vocabulary.operator.GroupSort;
 
@@ -81,11 +81,12 @@ public class GroupSortOperatorProcessor extends AbstractOperatorProcessor {
             return null;
         }
 
-        ShuffleKey key = a.getParameterKey(0);
+        ShuffleKeySpec key = a.getParameterKeySpec(0);
         if (key == null) {
             a.error("グループ整列演算子の引数には@Key注釈によってグループ化項目を指定する必要があります");
             return null;
         }
+        a.validateShuffleKeys(key);
         GroupSort annotation = context.element.getAnnotation(GroupSort.class);
         if (annotation == null) {
             a.error("注釈の解釈に失敗しました");
@@ -103,7 +104,7 @@ public class GroupSortOperatorProcessor extends AbstractOperatorProcessor {
                 a.getParameterName(0),
                 a.getParameterType(0).getTypeArgument().getType(),
                 0,
-                key);
+                key.getKey());
         for (int i = 1; i < startParameters; i++) {
             TypeConstraint outputType = a.getParameterType(i).getTypeArgument();
             TypeMirror outputTypeMirror = outputType.getType();

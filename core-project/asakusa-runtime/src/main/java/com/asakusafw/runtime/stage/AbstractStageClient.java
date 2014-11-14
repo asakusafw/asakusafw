@@ -38,6 +38,7 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.OutputFormat;
 import org.apache.hadoop.mapreduce.Partitioner;
 import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.hadoop.util.ReflectionUtils;
 
 import com.asakusafw.runtime.compatibility.JobCompatibility;
 import com.asakusafw.runtime.core.context.RuntimeContext;
@@ -54,7 +55,7 @@ import com.asakusafw.runtime.util.VariableTable.RedefineStrategy;
 /**
  * ステージごとの処理を起動するクライアントの基底クラス。
  * @since 0.1.0
- * @version 0.6.0
+ * @version 0.7.1
  */
 public abstract class AbstractStageClient extends BaseStageClient {
 
@@ -262,12 +263,13 @@ public abstract class AbstractStageClient extends BaseStageClient {
                     job.getJobName()));
             succeed = true;
         } else {
-            job.submit();
-            LOG.info(MessageFormat.format(
-                    "Job Submitted: id={0}, name={1}",
-                    job.getJobID(),
-                    job.getJobName()));
-            succeed = job.waitForCompletion(true);
+            String jobRunnerClassName = job.getConfiguration().get(StageConstants.PROP_JOB_RUNNER);
+            JobRunner runner = DefaultJobRunner.INSTANCE;
+            if (jobRunnerClassName != null) {
+                Class<?> jobRunnerClass = job.getConfiguration().getClassByName(jobRunnerClassName);
+                runner = (JobRunner) ReflectionUtils.newInstance(jobRunnerClass, job.getConfiguration());
+            }
+            succeed = runner.run(job);
         }
         long end = System.currentTimeMillis();
         LOG.info(MessageFormat.format(
@@ -443,5 +445,20 @@ public abstract class AbstractStageClient extends BaseStageClient {
         // replace variables
         configuration.set(PROP_ASAKUSA_BATCH_ARGS, variables.toSerialString());
         return variables;
+    }
+
+    private static final class DefaultJobRunner implements JobRunner {
+
+        static final JobRunner INSTANCE = new DefaultJobRunner();
+
+        @Override
+        public boolean run(Job job) throws IOException, InterruptedException, ClassNotFoundException {
+            job.submit();
+            LOG.info(MessageFormat.format(
+                    "Job Submitted: id={0}, name={1}",
+                    job.getJobID(),
+                    job.getJobName()));
+            return job.waitForCompletion(true);
+        }
     }
 }

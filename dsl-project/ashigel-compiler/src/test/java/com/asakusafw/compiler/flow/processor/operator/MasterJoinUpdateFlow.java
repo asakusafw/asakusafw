@@ -39,6 +39,7 @@ public abstract class MasterJoinUpdateFlow {
     public void simple(
             @Key(group = "string") Ex2 master,
             @Key(group = "string") Ex1 model) {
+        System.out.printf("*** Ms: %s, Tx: %s%n", master, model);
         withParameter(master, model, 0);
     }
 

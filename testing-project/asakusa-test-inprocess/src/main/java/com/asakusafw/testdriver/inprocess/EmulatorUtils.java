@@ -28,6 +28,8 @@ import com.asakusafw.testdriver.TestDriverContext;
  */
 public final class EmulatorUtils {
 
+    static final String KEY_PREFIX = "com.asakusafw.testdriver.inprocess";
+
     private EmulatorUtils() {
         return;
     }
