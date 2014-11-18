@@ -15,7 +15,6 @@
  */
 package com.asakusafw.testdriver.windgate.emulation;
 
-import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -34,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
+import com.asakusafw.runtime.stage.launcher.ApplicationLauncher;
 import com.asakusafw.testdriver.TestDriverContext;
 import com.asakusafw.testdriver.TestExecutionPlan;
 import com.asakusafw.testdriver.hadoop.ConfigurationFactory;
@@ -71,14 +71,13 @@ public abstract class AbstractWindGateCommandEmulator extends CommandEmulator {
             TestExecutionPlan.Command command) throws IOException, InterruptedException {
         configureLogs(context);
         ClassLoader classLoader = createClassLoader(context, configurations);
-        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+        ClassLoader contextClassLoader = ApplicationLauncher.switchContextClassLoader(classLoader);
         try {
-            Thread.currentThread().setContextClassLoader(classLoader);
             GateProfile profile = loadProfile(context, classLoader, command.getCommandTokens().get(ARG_PROFILE));
             execute0(context, classLoader, profile, command);
         } finally {
-            Thread.currentThread().setContextClassLoader(contextClassLoader);
-            closeQuietly(classLoader);
+            ApplicationLauncher.switchContextClassLoader(contextClassLoader);
+            ApplicationLauncher.disposeClassLoader(classLoader);
         }
     }
 
@@ -150,16 +149,6 @@ public abstract class AbstractWindGateCommandEmulator extends CommandEmulator {
             throw new IllegalArgumentException(MessageFormat.format(
                     "Invalid profile \"{0}\".",
                     profile), e);
-        }
-    }
-
-    static void closeQuietly(ClassLoader object) {
-        if (object instanceof Closeable) {
-            try {
-                ((Closeable) object).close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
     }
 }

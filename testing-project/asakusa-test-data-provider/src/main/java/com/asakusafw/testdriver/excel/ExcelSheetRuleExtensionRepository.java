@@ -15,6 +15,9 @@
  */
 package com.asakusafw.testdriver.excel;
 
+import java.lang.ref.Reference;
+import java.lang.ref.SoftReference;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -32,8 +35,8 @@ import com.asakusafw.testdriver.rule.ValuePredicate;
  */
 class ExcelSheetRuleExtensionRepository implements ExcelSheetRuleExtension {
 
-    private static final Map<ClassLoader, ExcelSheetRuleExtensionRepository> CACHE =
-            new WeakHashMap<ClassLoader, ExcelSheetRuleExtensionRepository>();
+    private static final Map<ClassLoader, Reference<ExcelSheetRuleExtensionRepository>> CACHE =
+            new WeakHashMap<ClassLoader, Reference<ExcelSheetRuleExtensionRepository>>();
 
     /**
      * Returns a {@link ExcelSheetRuleExtensionRepository} for the target context.
@@ -45,7 +48,8 @@ class ExcelSheetRuleExtensionRepository implements ExcelSheetRuleExtension {
         if (context == null) {
             throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
         }
-        ExcelSheetRuleExtensionRepository cached = CACHE.get(context.getTestContext().getClassLoader());
+        Reference<ExcelSheetRuleExtensionRepository> ref = CACHE.get(context.getTestContext().getClassLoader());
+        ExcelSheetRuleExtensionRepository cached = ref == null ? null : ref.get();
         if (cached != null) {
             return cached;
         }
@@ -55,7 +59,13 @@ class ExcelSheetRuleExtensionRepository implements ExcelSheetRuleExtension {
     }
 
     static void setCached(VerifyContext context, ExcelSheetRuleExtensionRepository repository) {
-        CACHE.put(context.getTestContext().getClassLoader(), repository);
+        Reference<ExcelSheetRuleExtensionRepository> ref;
+        if (repository.getClass().getClassLoader() == ClassLoader.getSystemClassLoader()) {
+            ref = new SoftReference<ExcelSheetRuleExtensionRepository>(repository);
+        } else {
+            ref = new WeakReference<ExcelSheetRuleExtensionRepository>(repository);
+        }
+        CACHE.put(context.getTestContext().getClassLoader(), ref);
     }
 
     private static ExcelSheetRuleExtensionRepository newInstance(VerifyContext context) {
