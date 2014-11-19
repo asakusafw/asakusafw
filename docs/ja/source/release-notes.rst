@@ -4,7 +4,7 @@
 
 Release 0.7.1
 =============
-Nov XX, 2014
+Nov 20, 2014
 
 `Asakusa Framework 0.7.1 documentation`_
 
