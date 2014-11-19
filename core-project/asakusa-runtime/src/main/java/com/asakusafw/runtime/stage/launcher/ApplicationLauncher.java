@@ -18,6 +18,7 @@ package com.asakusafw.runtime.stage.launcher;
 import static com.asakusafw.runtime.stage.launcher.Util.*;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.text.MessageFormat;
@@ -33,10 +34,29 @@ import org.apache.hadoop.util.ToolRunner;
 /**W
  * The Asakusa application launcher.
  * @since 0.7.0
+ * @version 0.7.1
  */
 public final class ApplicationLauncher {
 
     static final Log LOG = LogFactory.getLog(ApplicationLauncher.class);
+
+    private static final Method REFLECTION_UTILS_RELEASE;
+    static {
+        Method method;
+        String name = "clearCache";
+        try {
+            method = ReflectionUtils.class.getDeclaredMethod(name);
+            method.setAccessible(true);
+        } catch (Exception e) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(MessageFormat.format(
+                        "failed to activate cache releasing method: {0}#{1}()",
+                        ReflectionUtils.class.getName(), name), e);
+            }
+            method = null;
+        }
+        REFLECTION_UTILS_RELEASE = method;
+    }
 
     /**
      * The configuration key of whether the application may be launched via {@link ApplicationLauncher}.
@@ -123,7 +143,7 @@ public final class ApplicationLauncher {
                 return CLIENT_ERROR;
             }
         } finally {
-            closeQuiet(options.getApplicationClassLoader());
+            disposeClassLoader(options.getApplicationClassLoader());
             for (File file : options.getApplicationCacheDirectories()) {
                 if (delete(file) == false) {
                     LOG.warn(MessageFormat.format(
@@ -141,15 +161,21 @@ public final class ApplicationLauncher {
                     tool.getClass().getName(),
                     Arrays.toString(args)));
         }
-        ClassLoader contextClassLoader = setContextClassLoader(conf.getClassLoader());
+        ClassLoader contextClassLoader = switchContextClassLoader(conf.getClassLoader());
         try {
             return ToolRunner.run(conf, tool, args);
         } finally {
-            setContextClassLoader(contextClassLoader);
+            switchContextClassLoader(contextClassLoader);
         }
     }
 
-    private static ClassLoader setContextClassLoader(final ClassLoader classLoader) {
+    /**
+     * Sets the context class loader and returns the current one.
+     * @param classLoader the new context class loader
+     * @return the current context class loader
+     * @since 0.7.1
+     */
+    public static ClassLoader switchContextClassLoader(final ClassLoader classLoader) {
         return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
             @Override
             public ClassLoader run() {
@@ -158,5 +184,38 @@ public final class ApplicationLauncher {
                 return old;
             }
         });
+    }
+
+    /**
+     * Disposes the target class loader.
+     * @param classLoader the class loader
+     * @since 0.7.1
+     */
+    public static void disposeClassLoader(ClassLoader classLoader) {
+        if (classLoader == null) {
+            return;
+        }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "releasing class loader: {0}",
+                    classLoader));
+        }
+        releaseCachedClasses(classLoader);
+        closeQuiet(classLoader);
+    }
+
+    private static void releaseCachedClasses(ClassLoader classLoader) {
+        LogFactory.release(classLoader);
+        if (REFLECTION_UTILS_RELEASE != null) {
+            try {
+                REFLECTION_UTILS_RELEASE.invoke(null);
+            } catch (Exception e) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(MessageFormat.format(
+                            "failed to release classes cache: {0}",
+                            REFLECTION_UTILS_RELEASE), e);
+                }
+            }
+        }
     }
 }
