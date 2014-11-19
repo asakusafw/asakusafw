@@ -19,6 +19,8 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.ref.Reference;
+import java.lang.ref.WeakReference;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.AccessController;
@@ -86,8 +88,8 @@ public final class WindGateTestHelper {
 
     private static File lastPluginDirectory;
 
-    private static final WeakHashMap<ClassLoader, ClassLoader> PLUGIN_REPOSITORY =
-        new WeakHashMap<ClassLoader, ClassLoader>();
+    private static final WeakHashMap<ClassLoader, Reference<ClassLoader>> PLUGIN_REPOSITORY =
+        new WeakHashMap<ClassLoader, Reference<ClassLoader>>();
 
     /**
      * Creates a new {@link ProcessScript} for testing.
@@ -296,7 +298,8 @@ public final class WindGateTestHelper {
                 PLUGIN_REPOSITORY.clear();
                 lastPluginDirectory = pluginDirectory;
             }
-            ClassLoader plugins = PLUGIN_REPOSITORY.get(baseClassLoader);
+            Reference<ClassLoader> ref = PLUGIN_REPOSITORY.get(baseClassLoader);
+            ClassLoader plugins = ref == null ? null : ref.get();
             if (plugins != null) {
                 return plugins;
             }
@@ -328,7 +331,7 @@ public final class WindGateTestHelper {
                     return loader;
                 }
             });
-            PLUGIN_REPOSITORY.put(baseClassLoader, pluginClassLoader);
+            PLUGIN_REPOSITORY.put(baseClassLoader, new WeakReference<ClassLoader>(pluginClassLoader));
             return pluginClassLoader;
         }
     }
