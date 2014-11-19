@@ -47,7 +47,7 @@ public class StageResourceDriver implements Closeable {
 
     static final Log LOG = LogFactory.getLog(StageResourceDriver.class);
 
-    private static final String KEY_PREFIX = "com.asakusafw.cache.";
+    private static final String KEY_PREFIX = "com.asakusafw.stage.resource.";
 
     private static final String PREFIX_LOCAL_CACHE_NAME = KEY_PREFIX + "local.";
 
@@ -283,7 +283,7 @@ public class StageResourceDriver implements Closeable {
                 localNames.toArray(new String[localNames.size()]));
         conf.setStrings(
                 getRemotePathKey(resourceName),
-                remotePaths.toArray(new String[localNames.size()]));
+                remotePaths.toArray(new String[remotePaths.size()]));
         conf.setLong(KEY_SIZE, size);
         if (JobCompatibility.isLocalMode(job)) {
             LOG.info("symlinks for distributed cache will not be created in standalone mode");
