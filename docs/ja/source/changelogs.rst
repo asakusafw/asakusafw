@@ -2,6 +2,37 @@
 Changelogs
 ==========
 
+Release 0.7.1
+=============
+Nov 20, 2014
+
+Enhancements
+------------
+* [ :issue:`442` ] - Improves performance of small jobs
+* [ :issue:`444` ] - Add fine BatchTestRunner API
+* [ :issue:`449` ] - Support modified UTF-8 on DataBuffer
+* [ :issue-sdk:`19` ] - Enable customizing extension libraries
+* [ :issue-sdk:`20` ] - Custom assemblies does not follow its dependencies.
+* [ :issue-sdk:`21` ] - Explicitly create `.settings` dir for eclipse
+* [ :issue-sdk:`22` ] - Use project.apply(plugin:...) instead of project.plugins.apply(...)
+* [ :issue-sdk:`23` ] - Add updateAsakusafw task
+
+Bug fixes
+---------
+* [ :issue:`445` ] - Operator compiler should validate shuffle keys
+* [ :issue:`446` ] - DMDL property name ends with 'option' should be error
+* [ :issue:`447` ] - Fix parsing DMDL name follows arrow symbol
+* [ :issue:`453` ] - DateTime.parseDateTime() does not handle correctly
+* [ :issue:`454` ] - Direct I/O writes redundant warn log when cleaning temp area
+
+Others
+------
+* [ :issue:`443` ] - 0.7.1 Documents
+* [ :issue:`448` ] - Enable ThunderGate using local processes for testing
+* [ :issue:`450` ] - 0.7.1 Refactoring
+* [ :issue:`451` ] - Remove legacy autolocal module
+* [ :issue:`452` ] - Improves framework testcase
+
 Release 0.7.0
 =============
 Sep 25, 2014

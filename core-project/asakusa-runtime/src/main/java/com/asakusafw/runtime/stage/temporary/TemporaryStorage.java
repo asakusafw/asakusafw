@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -44,7 +45,7 @@ import com.asakusafw.runtime.io.sequencefile.SequenceFileUtil;
 /**
  * Access to the temporary storage.
  * @since 0.2.5
- * @version 0.7.0
+ * @version 0.7.1
  */
 public final class TemporaryStorage {
 
@@ -69,6 +70,33 @@ public final class TemporaryStorage {
         if (pathPattern == null) {
             throw new IllegalArgumentException("pathPattern must not be null"); //$NON-NLS-1$
         }
+        List<FileStatus> statusList = listStatus(conf, pathPattern);
+        if (statusList.isEmpty()) {
+            return Collections.emptyList();
+        }
+        List<Path> results = new ArrayList<Path>();
+        for (FileStatus status : statusList) {
+            results.add(status.getPath());
+        }
+        return results;
+    }
+
+    /**
+     * Resolves the raw path pattern into the concrete file status list.
+     * @param conf current configuration
+     * @param pathPattern path pattern which describes temporary storage
+     * @return the resolved file status
+     * @throws IOException if failed to resolve path pattern
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.7.1
+     */
+    public static List<FileStatus> listStatus(Configuration conf, Path pathPattern) throws IOException {
+        if (conf == null) {
+            throw new IllegalArgumentException("conf must not be null"); //$NON-NLS-1$
+        }
+        if (pathPattern == null) {
+            throw new IllegalArgumentException("pathPattern must not be null"); //$NON-NLS-1$
+        }
         FileSystem fs = pathPattern.getFileSystem(conf);
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
@@ -80,11 +108,7 @@ public final class TemporaryStorage {
         if (statusList == null || statusList.length == 0) {
             return Collections.emptyList();
         }
-        List<Path> results = new ArrayList<Path>();
-        for (FileStatus status : statusList) {
-            results.add(status.getPath());
-        }
-        return results;
+        return Arrays.asList(statusList);
     }
 
     /**

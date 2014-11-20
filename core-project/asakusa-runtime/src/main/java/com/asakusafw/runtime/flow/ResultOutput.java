@@ -141,4 +141,9 @@ public class ResultOutput<T> implements Result<T> {
         }
         writer.close(context);
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s -> %s", context.getTaskAttemptID(), writer);
+    }
 }

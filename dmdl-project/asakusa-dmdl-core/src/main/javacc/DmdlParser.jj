@@ -368,9 +368,18 @@ TOKEN :
 // erroneous token
 TOKEN :
 {   <INVALID_IDENTIFIER_LIKE
-    : ["A"-"Z", "a"-"z", "_", "-"] (["0"-"9", "A"-"Z", "a"-"z", "_", "-"])*
+    : <INVALID_IDENTIFIER_START> (<INVALID_IDENTIFIER_PART>)* ("-" (<INVALID_IDENTIFIER_PART>)+)*
     >
-|   <UNEXPECTED
+|   <#INVALID_IDENTIFIER_START
+    : ["A"-"Z", "a"-"z", "_"]
+    >
+|   <#INVALID_IDENTIFIER_PART
+    : <INVALID_IDENTIFIER_START>
+    | ["0"-"9"]
+    >
+}
+TOKEN :
+{   <UNEXPECTED
     : (~[])
     >
 }

@@ -20,6 +20,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
@@ -43,6 +44,8 @@ import com.asakusafw.testdriver.hadoop.ConfigurationFactory;
 public class InProcessJobExecutor extends JobExecutor {
 
     static final Logger LOG = LoggerFactory.getLogger(InProcessJobExecutor.class);
+
+    private static final Settings GLOBAL_SETTINGS = new Settings();
 
     static final String PATH_ASAKUSA_RESOURCES = "core/conf/asakusa-resources.xml";
 
@@ -78,6 +81,21 @@ public class InProcessJobExecutor extends JobExecutor {
         this.delegate = new DefaultJobExecutor(context, configurations);
         this.configurations = configurations;
         this.commandEmulators = null;
+    }
+
+    /**
+     * Returns the global settings for this executor.
+     * Please use the returned object with the synchronized block, like as:
+<pre><code>
+Settings s = InProcessJobExecutor.getGlobalSettings();
+synchronized(s) {
+    ...
+}
+</code></pre>
+     * @return the global settings
+     */
+    public static Settings getGlobalSettings() {
+        return GLOBAL_SETTINGS;
     }
 
     @Override
@@ -151,6 +169,11 @@ public class InProcessJobExecutor extends JobExecutor {
         ClassLoader original = Thread.currentThread().getContextClassLoader();
         try {
             Configuration conf = configurations.newInstance();
+            synchronized (GLOBAL_SETTINGS) {
+                for (Map.Entry<String, String> entry : GLOBAL_SETTINGS.getProperties().entrySet()) {
+                    conf.set(entry.getKey(), entry.getValue());
+                }
+            }
             for (Map.Entry<String, String> entry : job.getProperties().entrySet()) {
                 conf.set(entry.getKey(), entry.getValue());
             }
@@ -247,5 +270,30 @@ public class InProcessJobExecutor extends JobExecutor {
             }
         }
         return null;
+    }
+
+    /**
+     * Represents settings for {@link InProcessJobExecutor}.
+     * @since 0.7.1
+     */
+    public static final class Settings {
+
+        private final Map<String, String> properties = new HashMap<String, String>();
+
+        /**
+         * Returns the view of additional Hadoop properties.
+         * Clients can modify the returned object.
+         * @return the Hadoop properties
+         */
+        public Map<String, String> getProperties() {
+            return properties;
+        }
+
+        /**
+         * Resets this settings to default values.
+         */
+        public void reset() {
+            properties.clear();
+        }
     }
 }

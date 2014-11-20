@@ -26,6 +26,7 @@ import java.util.TreeMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.runtime.stage.AbstractCleanupStageClient;
 import com.asakusafw.runtime.stage.StageConstants;
 import com.asakusafw.runtime.util.VariableTable;
 import com.asakusafw.runtime.util.VariableTable.RedefineStrategy;
@@ -222,12 +223,15 @@ public class RunTask {
                 executor.getClass().getName(),
         });
         try {
-            runJobFlowCommands(executor, plan.getInitializers());
-            runJobFlowCommands(executor, plan.getImporters());
+            runJobflowCommands(executor, plan.getInitializers());
+            runJobflowCommands(executor, plan.getImporters());
             runJobflowJobs(executor, plan.getJobs());
-            runJobFlowCommands(executor, plan.getExporters());
+            runJobflowCommands(executor, plan.getExporters());
         } finally {
-            runJobFlowCommands(executor, plan.getFinalizers());
+            runJobflowCommands(executor, plan.getFinalizers());
+        }
+        if (configuration.cleanUp) {
+            cleanUpJobflow(executor);
         }
     }
 
@@ -238,11 +242,19 @@ public class RunTask {
         }
     }
 
-    private void runJobFlowCommands(JobExecutor executor, List<TestExecutionPlan.Command> cmdList) throws IOException {
+    private void runJobflowCommands(JobExecutor executor, List<TestExecutionPlan.Command> cmdList) throws IOException {
         assert cmdList != null;
         for (TestExecutionPlan.Command command : cmdList) {
             executor.execute(command, getEnvironmentVariables());
         }
+    }
+
+    private void cleanUpJobflow(JobExecutor executor) throws IOException {
+        TestExecutionPlan.Job job = new TestExecutionPlan.Job(
+                AbstractCleanupStageClient.IMPLEMENTATION,
+                configuration.context.getExecutionId(),
+                getHadoopProperties());
+        executor.execute(job, getEnvironmentVariables());
     }
 
     private Map<String, String> getEnvironmentVariables() {
@@ -253,6 +265,7 @@ public class RunTask {
     /**
      * Represents a configuration for {@link RunTask}.
      * @since 0.6.0
+     * @version 0.7.1
      */
     public static final class Configuration {
 
@@ -261,6 +274,8 @@ public class RunTask {
         final BatchScript script;
 
         final String executionIdPrefix;
+
+        boolean cleanUp = true;
 
         /**
          * Creates a new instance.
@@ -272,6 +287,17 @@ public class RunTask {
             this.context = context;
             this.script = script;
             this.executionIdPrefix = executionIdPrefix;
+        }
+
+        /**
+         * Sets whether jobflow clean up is enabled or not.
+         * @param enable {@code true} if it is enabled
+         * @return this
+         * @since 0.7.1
+         */
+        public Configuration withCleanUp(boolean enable) {
+            this.cleanUp = enable;
+            return this;
         }
     }
 }

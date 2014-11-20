@@ -37,8 +37,8 @@ import com.asakusafw.bulkloader.exception.BulkLoaderSystemException;
 import com.asakusafw.bulkloader.log.Log;
 import com.asakusafw.bulkloader.transfer.FileList;
 import com.asakusafw.bulkloader.transfer.FileListProvider;
+import com.asakusafw.bulkloader.transfer.RemoteFileListProviderFactory;
 import com.asakusafw.bulkloader.transfer.FileProtocol;
-import com.asakusafw.bulkloader.transfer.OpenSshFileListProvider;
 import com.asakusafw.runtime.core.context.RuntimeContext;
 
 /**
@@ -266,6 +266,6 @@ public class ImportFileSend {
                 jobflowId,
                 executionId);
 
-        return new OpenSshFileListProvider(sshPath, userName, hostName, command, env);
+        return new RemoteFileListProviderFactory(sshPath, hostName, userName).newInstance(command, env);
     }
 }

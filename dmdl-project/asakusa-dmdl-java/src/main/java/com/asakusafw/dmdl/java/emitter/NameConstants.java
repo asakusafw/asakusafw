@@ -19,6 +19,8 @@ import java.text.MessageFormat;
 
 /**
  * Constants about Java names.
+ * @since 0.2.0
+ * @version 0.7.1
  */
 public final class NameConstants {
 
@@ -47,6 +49,12 @@ public final class NameConstants {
      * </p>
      */
     public static final String PATTERN_DATA_MODEL = "{0}"; //$NON-NLS-1$
+
+    /**
+     * The property getter name suffix.
+     * @since 0.7.1
+     */
+    public static final String PROPERTY_GETTER_SUFFIX = "option"; //$NON-NLS-1$
 
     private NameConstants() {
         return;

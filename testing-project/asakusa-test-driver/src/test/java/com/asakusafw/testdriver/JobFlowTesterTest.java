@@ -20,10 +20,8 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 
-import org.junit.Rule;
 import org.junit.Test;
 
-import com.asakusafw.runtime.configuration.FrameworkDeployer;
 import com.asakusafw.testdriver.testing.flowpart.SimpleFlowPart;
 import com.asakusafw.testdriver.testing.jobflow.SimpleJobflow;
 import com.asakusafw.testdriver.testing.model.Simple;
@@ -32,13 +30,7 @@ import com.asakusafw.testdriver.testing.operator.SimpleOperator;
 /**
  * Test for {@link JobFlowTester}.
  */
-public class JobFlowTesterTest {
-
-    /**
-     * Temporary framework installation target.
-     */
-    @Rule
-    public FrameworkDeployer framework = new FrameworkDeployer();
+public class JobFlowTesterTest extends TesterTestRoot {
 
     /**
      * simple testing.

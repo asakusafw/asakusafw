@@ -93,7 +93,7 @@ public class WindGateCommandEmulatorTest {
 
         assertThat("check mock resource", call.get(), is(true));
 
-        File base = new File(deployer.getHome(), String.format("tmp/windgate/%s", System.getProperty("user.name")));
+        File base = new File(deployer.getHome(), "tmp/windgate/testing");
         assertThat("check input file", new File(base, "input.txt").isFile(), is(true));
         assertThat("check output file", new File(base, "output.txt").isFile(), is(true));
     }

@@ -59,6 +59,12 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-simple-mapreduce</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>ashigel-compiler</artifactId>
 			<version>${project.version}</version>
 			<classifier>tests</classifier>

@@ -71,6 +71,8 @@ import com.asakusafw.utils.graph.Graphs;
 
 /**
  * Analyzes DMDL AST and builds DMDL semantic models.
+ * @since 0.2.0
+ * @version 0.7.1
  */
 public class DmdlAnalyzer {
 
@@ -79,6 +81,8 @@ public class DmdlAnalyzer {
     final Context context;
 
     private final Graph<String> modelDependencies;
+
+    private final DmdlAnalyzerEnhancer enhancer;
 
     /**
      * Creates and returns a new instance.
@@ -89,6 +93,24 @@ public class DmdlAnalyzer {
     public DmdlAnalyzer(
             Iterable<? extends TypeDriver> typeDrivers,
             Iterable<? extends AttributeDriver> attributeDrivers) {
+        this(DmdlAnalyzerEnhancer.NULL, typeDrivers, attributeDrivers);
+    }
+
+    /**
+     * Creates and returns a new instance.
+     * @param enhancer enhances this analyzer
+     * @param typeDrivers type resolvers
+     * @param attributeDrivers attributed analyzers
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.7.1
+     */
+    public DmdlAnalyzer(
+            DmdlAnalyzerEnhancer enhancer,
+            Iterable<? extends TypeDriver> typeDrivers,
+            Iterable<? extends AttributeDriver> attributeDrivers) {
+        if (enhancer == null) {
+            throw new IllegalArgumentException("enhancer must not be null"); //$NON-NLS-1$
+        }
         if (typeDrivers == null) {
             throw new IllegalArgumentException("typeDrivers must not be null"); //$NON-NLS-1$
         }
@@ -97,6 +119,7 @@ public class DmdlAnalyzer {
         }
         this.context = new Context(new DmdlSemantics(), typeDrivers, attributeDrivers);
         this.modelDependencies = Graphs.newInstance();
+        this.enhancer = enhancer;
     }
 
     void report(Diagnostic diagnostic) {
@@ -105,7 +128,7 @@ public class DmdlAnalyzer {
     }
 
     /**
-     * Addes a model definition to this analyzer.
+     * Adds a model definition to this analyzer.
      * @param definition the model definition
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
@@ -127,6 +150,7 @@ public class DmdlAnalyzer {
                     definition.description,
                     definition.attributes);
             computeDependencies(definition);
+            enhancer.validateSyntax(world, definition);
         }
     }
 

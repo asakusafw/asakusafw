@@ -490,7 +490,7 @@ public final class EmitContext {
         }
         JavaName name = JavaName.of(property.getName());
         name.addFirst("get"); //$NON-NLS-1$
-        name.addLast("Option"); //$NON-NLS-1$
+        name.addLast(NameConstants.PROPERTY_GETTER_SUFFIX);
         return factory.newSimpleName(name.toMemberName());
     }
 
@@ -506,7 +506,7 @@ public final class EmitContext {
         }
         JavaName name = JavaName.of(property.getName());
         name.addFirst("set"); //$NON-NLS-1$
-        name.addLast("Option"); //$NON-NLS-1$
+        name.addLast(NameConstants.PROPERTY_GETTER_SUFFIX);
         return factory.newSimpleName(name.toMemberName());
     }
 

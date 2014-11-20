@@ -41,6 +41,8 @@ import com.asakusafw.compiler.testing.MultipleModelInput;
 import com.asakusafw.runtime.compatibility.CoreCompatibility;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
+import com.asakusafw.runtime.mapreduce.simple.SimpleJobRunner;
+import com.asakusafw.runtime.stage.StageConstants;
 import com.asakusafw.runtime.stage.launcher.ApplicationLauncher;
 import com.asakusafw.runtime.stage.optimizer.LibraryCopySuppressionConfigurator;
 import com.asakusafw.runtime.stage.temporary.TemporaryStorage;
@@ -50,7 +52,7 @@ import com.asakusafw.utils.collections.Lists;
 /**
  * A driver for control Hadoop jobs for testing.
  * @since 0.1.0
- * @version 0.7.0
+ * @version 0.7.1
  */
 public final class HadoopDriver implements Closeable {
 
@@ -71,20 +73,27 @@ public final class HadoopDriver implements Closeable {
 
     static final String KEY_INPROCESS = PREFIX_KEY + "inprocess";
 
+    static final String KEY_SMALLJOB = PREFIX_KEY + "smalljob";
+
+    static final String KEY_BUILTIN_MAPREDUCE = PREFIX_KEY + "builtin";
+
     private final File command;
 
     private final ConfigurationProvider configurations;
 
     private final Configuration configuration;
 
-    private boolean fork;
+    private boolean inProcess;
+
+    private final boolean simpleMr;
 
     private HadoopDriver(ConfigurationProvider configurations) {
         this.command = ConfigurationProvider.findHadoopCommand();
         this.configurations = configurations;
         this.configuration = configurations.newInstance();
         this.logger = LOG;
-        this.fork = isSet(KEY_INPROCESS) == false;
+        this.simpleMr = isSet(KEY_BUILTIN_MAPREDUCE) || isSet(KEY_SMALLJOB);
+        this.inProcess = simpleMr || isSet(KEY_INPROCESS);
     }
 
     private static boolean isSet(String key) {
@@ -112,7 +121,7 @@ public final class HadoopDriver implements Closeable {
      * @param fork {@code true} to run with fork, otherwise {@code false}
      */
     public void setFork(boolean fork) {
-        this.fork = fork;
+        this.inProcess = fork == false;
     }
 
     /**
@@ -294,10 +303,10 @@ public final class HadoopDriver implements Closeable {
         if (properties == null) {
             throw new IllegalArgumentException("properties must not be null"); //$NON-NLS-1$
         }
-        if (fork) {
-            return runFork(runtimeLib, libjars, className, conf, properties);
-        } else {
+        if (inProcess) {
             return runInProcess(runtimeLib, libjars, className, conf, properties);
+        } else {
+            return runFork(runtimeLib, libjars, className, conf, properties);
         }
     }
 
@@ -354,6 +363,7 @@ public final class HadoopDriver implements Closeable {
         arguments.add(className);
         addHadoopConf(arguments, confFile);
         addHadoopLibjars(libjars, arguments);
+        addBuiltInMapReduceJobRunner(arguments);
         addSuppressCopyLibraries(arguments);
         ClassLoader original = Thread.currentThread().getContextClassLoader();
         try {
@@ -408,6 +418,15 @@ public final class HadoopDriver implements Closeable {
                 String.valueOf(true)));
     }
 
+    private void addBuiltInMapReduceJobRunner(List<String> arguments) {
+        if (simpleMr) {
+            arguments.add("-D");
+            arguments.add(MessageFormat.format("{0}={1}",
+                    StageConstants.PROP_JOB_RUNNER,
+                    SimpleJobRunner.class.getName()));
+        }
+    }
+
     private void copyFromHadoop(Location location, File targetDirectory) throws IOException {
         targetDirectory.mkdirs();
         logger.info("copy {} to {}", location, targetDirectory);
@@ -458,7 +477,7 @@ public final class HadoopDriver implements Closeable {
         if (hadoop == null) {
             throw new IOException(MessageFormat.format(
                     "Failed to detect \"{0}\" command for testing: {1}",
-                    hadoop,
+                    "hadoop",
                     Arrays.toString(arguments)));
         }
         List<String> commands = Lists.create();
@@ -486,6 +505,9 @@ public final class HadoopDriver implements Closeable {
     }
 
     private String getHadoopCommand() {
+        if (command == null) {
+            return null;
+        }
         return command.getAbsolutePath();
     }
 

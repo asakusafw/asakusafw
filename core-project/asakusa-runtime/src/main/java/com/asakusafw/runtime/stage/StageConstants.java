@@ -22,7 +22,7 @@ import com.asakusafw.runtime.util.VariableTable;
 /**
  * Constants for each stage.
  * @since 0.2.5
- * @version 0.7.0
+ * @version 0.7.1
  */
 public final class StageConstants {
 
@@ -62,6 +62,12 @@ public final class StageConstants {
      * @since 0.7.0
      */
     public static final String PROP_APPLICATION_JAR = "com.asakusafw.appJar";
+
+    /**
+     * The property key name of the implementation class of {@link JobRunner}.
+     * @since 0.7.1
+     */
+    public static final String PROP_JOB_RUNNER = "com.asakusafw.jobRunner";
 
     /**
      * 実行ユーザー名の変数名。

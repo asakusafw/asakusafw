@@ -10,6 +10,8 @@
 
 エミュレーションモードではテストを実行しているプロセス内でほとんどの処理が行われ、デバッグモードのブレークポイントなどを利用できるようになります。
 
+さらに、Asakusa Framework バージョン ``0.7.1`` から追加されたスモールジョブ実行エンジンを併用することで、Hadoopジョブの実行を高速化し、テスト実行に要する時間を短縮できます。
+
 ..  attention::
     本機能はアプリケーションプロジェクトのHadoopライブラリを利用するため、標準で設定されたものと異なるHadoopディストリビューションやバージョンを利用する際に、正しく動かない可能性があります。
 
@@ -45,25 +47,62 @@
       - ``asakusa-test-inprocess``
       - テストドライバ実行をエミュレーションモードに変更
     * - ``com.asakusafw``
+      - ``asakusa-test-inprocess-ext``
+      - スモールジョブ実行エンジンを利用したエミュレーションモードで実行 (Experimental)
+    * - ``com.asakusafw``
       - ``asakusa-windgate-test-inprocess``
-      - :doc:`WindGate <../windgate/index>` をエミュレーションモードで実行 [#]_
-
-..  [#] 通常の場合、WindGateをエミュレーションモードで動作させる必要はありません。 ``DataModelStreamSupport`` [#]_ や ``DataModelJdbcSupport`` [#]_ などの動作を確認したい場合のみ、本アーティファクトを利用してください。
-
-..  [#] :javadoc:`com.asakusafw.windgate.core.vocabulary.DataModelStreamSupport`
-..  [#] :javadoc:`com.asakusafw.windgate.core.vocabulary.DataModelJdbcSupport`
+      - :doc:`WindGate <../windgate/index>` をエミュレーションモードで実行
 
 アプリケーションプロジェクトの設定
 ----------------------------------
-Gradleプロジェクトでエミュレーションモードを使用する場合は
-``build.gradle`` の ``dependencies`` ブロック内に ``testRuntime`` 依存関係(コンフィグレーション)に対して
-依存定義を追加します。
+
+エミュレーションモードの有効化
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+アプリケーションプロジェクトでエミュレーションモードを使用する場合は
+``build.gradle`` の ``dependencies`` ブロック内に
+``asakusa-test-inprocess`` を利用する依存定義を追加します。
 
 ..  code-block:: groovy
 
     dependencies {
         ...
         testRuntime group: 'com.asakusafw', name: 'asakusa-test-inprocess', version: asakusafw.asakusafwVersion
+
+スモールジョブ実行エンジンを利用したエミュレーションモードの有効化
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+..  attention::
+    Asakusa Framework バージョン |version| では、スモールジョブ実行エンジンを利用したエミュレーションモード実行は試験的機能として提供しています。
+
+Gradleプロジェクトでスモールジョブ実行エンジンを利用したエミュレーションモードを使用する場合は
+``build.gradle`` の ``dependencies`` ブロック内に
+``asakusa-test-inprocess-ext`` を利用する依存定義を追加します [#]_ 。
+
+..  code-block:: groovy
+
+    dependencies {
+        ...
+        testRuntime group: 'com.asakusafw', name: 'asakusa-test-inprocess-ext', version: asakusafw.asakusafwVersion
+
+..  [#] ``asakusa-test-inprocess-ext`` を利用する場合、 ``asakusa-test-inprocess`` の定義は不要です。
+
+WindGateのエミュレーションモードの有効化
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+WindGateをエミュレーションモードで実行する場合は
+``build.gradle`` の ``dependencies`` ブロック内に
+``asakusa-windgate-test-inprocess`` を利用する依存定義を追加します。
+
+..  code-block:: groovy
+
+    dependencies {
+        ...
+        testRuntime group: 'com.asakusafw', name: 'asakusa-windgate-test-inprocess', version: asakusafw.asakusafwVersion
+
+..  attention::
+    WindGate-JDBCを利用するジョブフローをテストする場合は、
+    利用するJDBCドライバをテスト実行時のクラスパスに追加する必要があります。
+     
+    上記の設定を行わない場合、テスト実行時にクラスロードに関する問題が発生する可能性があります。
+    一例として、テストを連続で実行した場合にOutOfMemoryErrorが発生する可能性があります。
 
 Gradle上でのテストドライバ実行
 ------------------------------

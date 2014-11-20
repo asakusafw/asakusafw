@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import com.asakusafw.dmdl.Diagnostic;
 import com.asakusafw.dmdl.analyzer.DmdlAnalyzer;
+import com.asakusafw.dmdl.analyzer.DmdlAnalyzerEnhancer;
 import com.asakusafw.dmdl.analyzer.DmdlSemanticException;
 import com.asakusafw.dmdl.model.AstModelDefinition;
 import com.asakusafw.dmdl.model.AstScript;
@@ -39,12 +40,16 @@ import com.asakusafw.dmdl.spi.TypeDriver;
 
 /**
  * Analyzes DMDL models from input DMDL scripts.
+ * @since 0.2.0
+ * @version 0.7.1
  */
 public class AnalyzeTask {
 
     static final Logger LOG = LoggerFactory.getLogger(AnalyzeTask.class);
 
     private final String processName;
+
+    private final DmdlAnalyzerEnhancer analyzerEnhancer;
 
     private final ClassLoader serviceClassLoader;
 
@@ -55,13 +60,29 @@ public class AnalyzeTask {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public AnalyzeTask(String processName, ClassLoader serviceClassLoader) {
+        this(processName, DmdlAnalyzerEnhancer.NULL, serviceClassLoader);
+    }
+
+    /**
+     * Creates and returns a new instance.
+     * @param processName the parent process name
+     * @param analyzerEnhancer enhances behavior of {@link DmdlAnalyzer}
+     * @param serviceClassLoader class loader to load the plug-ins
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.7.1
+     */
+    public AnalyzeTask(String processName, DmdlAnalyzerEnhancer analyzerEnhancer, ClassLoader serviceClassLoader) {
         if (processName == null) {
             throw new IllegalArgumentException("processName must not be null"); //$NON-NLS-1$
+        }
+        if (analyzerEnhancer == null) {
+            throw new IllegalArgumentException("analyzerEnhancer must not be null"); //$NON-NLS-1$
         }
         if (serviceClassLoader == null) {
             throw new IllegalArgumentException("serviceClassLoader must not be null"); //$NON-NLS-1$
         }
         this.processName = processName;
+        this.analyzerEnhancer = analyzerEnhancer;
         this.serviceClassLoader = serviceClassLoader;
     }
 
@@ -108,6 +129,7 @@ public class AnalyzeTask {
         boolean green = true;
         DmdlParser parser = new DmdlParser();
         DmdlAnalyzer analyzer = new DmdlAnalyzer(
+                analyzerEnhancer,
                 ServiceLoader.load(TypeDriver.class, serviceClassLoader),
                 ServiceLoader.load(AttributeDriver.class, serviceClassLoader));
         int count = 0;
