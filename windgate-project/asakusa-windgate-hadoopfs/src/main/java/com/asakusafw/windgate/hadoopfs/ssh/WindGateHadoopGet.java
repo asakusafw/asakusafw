@@ -31,6 +31,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.hadoop.conf.Configuration;
@@ -130,7 +131,14 @@ public class WindGateHadoopGet extends WindGateHadoopBase {
         assert drain != null;
         final BlockingQueue<Pair> queue = new SynchronousQueue<Pair>();
         final FileSystem fs = FileSystem.get(conf);
-        ExecutorService executor = Executors.newFixedThreadPool(1);
+        ExecutorService executor = Executors.newFixedThreadPool(1, new ThreadFactory() {
+            @Override
+            public Thread newThread(Runnable r) {
+                Thread t = new Thread(r, "HadoopFileCollector");
+                t.setDaemon(true);
+                return t;
+            }
+        });
         try {
             Future<Void> fetcher = executor.submit(new Callable<Void>() {
                 @Override

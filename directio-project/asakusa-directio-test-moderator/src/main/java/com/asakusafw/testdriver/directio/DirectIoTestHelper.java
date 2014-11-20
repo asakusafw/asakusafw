@@ -185,10 +185,12 @@ public final class DirectIoTestHelper {
      * @throws IOException if failed to perform by I/O error
      */
     public void truncate() throws IOException {
-        LOG.info("Truncating {} (id={})", new Object[] {
-                fullPath,
-                id,
-        });
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "Truncating Direct I/O resources: {0} (id={1})",
+                    fullPath,
+                    id));
+        }
         try {
             dataSource.delete(basePath, ALL, true, new Counter());
         } catch (InterruptedException e) {
@@ -217,12 +219,14 @@ public final class DirectIoTestHelper {
         final OutputAttemptContext outputContext = createOutputContext();
         DataFormat<T> format = createFormat(dataType, description.getFormat());
         String outputPath = toOutputName(description.getResourcePattern());
-        LOG.info("Opening {}/{} for output (id={}, description={})", new Object[] {
-                fullPath,
-                outputPath,
-                id,
-                description.getClass().getName(),
-        });
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "Opening {0}/{1} for output (id={2}, description={3})",
+                    fullPath,
+                    outputPath,
+                    id,
+                    description.getClass().getName()));
+        }
         DataDefinition<T> definition = SimpleDataDefinition.newInstance(dataType, format);
         try {
             dataSource.setupTransactionOutput(outputContext.getTransactionContext());
@@ -276,12 +280,14 @@ public final class DirectIoTestHelper {
         final Counter counter = new Counter();
         try {
             FilePattern pattern = toInputPattern(description.getResourcePattern());
-            LOG.info("Opening {}/{} for output (id={}, description={})", new Object[] {
-                    fullPath,
-                    pattern,
-                    id,
-                    description.getClass().getName(),
-            });
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(MessageFormat.format(
+                        "Opening {0}/{1} for input (id={2}, description={3})",
+                        fullPath,
+                        pattern,
+                        id,
+                        description.getClass().getName()));
+            }
             final List<DirectInputFragment> fragments = dataSource.findInputFragments(definition, basePath, pattern);
             return new ModelInput<T>() {
 
