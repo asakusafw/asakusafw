@@ -42,7 +42,11 @@ public class DirectFileOutputRetriever extends BaseExporterRetriever<DirectFileO
     @Override
     public void truncate(DirectFileOutputDescription description, TestContext context) throws IOException {
         DirectIoTestHelper helper = new DirectIoTestHelper(context, description.getBasePath());
-        LOG.info("Truncating output: {}", description.getClass().getName());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "Truncating Direct I/O output: {0}",
+                    description.getClass().getName()));
+        }
         helper.truncate();
     }
 
@@ -62,7 +66,11 @@ public class DirectFileOutputRetriever extends BaseExporterRetriever<DirectFileO
             DirectFileOutputDescription description,
             TestContext context) throws IOException {
         DirectIoTestHelper helper = new DirectIoTestHelper(context, description.getBasePath());
-        LOG.info("Retrieving output: {}", description.getClass().getName());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "Retrieving Direct I/O output: {0}",
+                    description.getClass().getName()));
+        }
         final V object = definition.toObject(definition.newReflection().build());
         final ModelInput<? super V> input = helper.openInput(definition.getModelClass(), description);
         return new DataModelSource() {

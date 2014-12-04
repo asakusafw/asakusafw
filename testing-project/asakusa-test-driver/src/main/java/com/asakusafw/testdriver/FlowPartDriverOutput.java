@@ -54,7 +54,9 @@ public class FlowPartDriverOutput<T> extends FlowDriverOutput<T, FlowPartDriverO
         this.descDriver = descDriver;
 
         String exportPath = FlowPartDriverUtils.createOutputLocation(driverContext, name).toPath('/');
-        LOG.info("Export Path=" + exportPath);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Export Path: {}", exportPath);
+        }
         this.exporterDescription = new DirectExporterDescription(modelType, exportPath);
         this.out = descDriver.createOut(name, exporterDescription);
     }

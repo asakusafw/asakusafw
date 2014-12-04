@@ -286,7 +286,9 @@ public class StageResourceDriver implements Closeable {
                 remotePaths.toArray(new String[remotePaths.size()]));
         conf.setLong(KEY_SIZE, size);
         if (JobCompatibility.isLocalMode(job)) {
-            LOG.info("symlinks for distributed cache will not be created in standalone mode");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("symlinks for distributed cache will not be created in standalone mode");
+            }
         } else {
             DistributedCache.createSymlink(conf);
         }

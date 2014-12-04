@@ -66,7 +66,7 @@ public class TemporaryInputPreparator extends BaseImporterPreparator<TemporaryIn
 
     @Override
     public void truncate(TemporaryInputDescription description, TestContext context) throws IOException {
-        LOG.info("Deleting input: {}", description);
+        LOG.debug("Deleting input: {}", description);
         VariableTable variables = createVariables(context);
         Configuration config = configurations.newInstance();
         FileSystem fs = FileSystem.get(config);
@@ -85,7 +85,7 @@ public class TemporaryInputPreparator extends BaseImporterPreparator<TemporaryIn
             DataModelDefinition<V> definition,
             TemporaryInputDescription description,
             TestContext context) throws IOException {
-        LOG.info("Preparing input: {}", description);
+        LOG.debug("Preparing input: {}", description);
         checkType(definition, description);
         Set<String> path = description.getPaths();
         if (path.isEmpty()) {
