@@ -19,12 +19,9 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.ref.Reference;
+import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 import java.net.URL;
-import java.net.URLClassLoader;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,6 +33,7 @@ import org.apache.hadoop.conf.Configurable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.runtime.stage.launcher.ApplicationLauncher;
 import com.asakusafw.testdriver.core.TestContext;
 import com.asakusafw.testdriver.hadoop.ConfigurationFactory;
 import com.asakusafw.vocabulary.windgate.WindGateExporterDescription;
@@ -55,10 +53,17 @@ import com.asakusafw.windgate.file.resource.Preparable;
 /**
  * Utilities for this package.
  * @since 0.2.2
+ * @version 0.7.2
  */
 public final class WindGateTestHelper {
 
     static final Logger LOG = LoggerFactory.getLogger(WindGateTestHelper.class);
+
+    /**
+     * The environment variable name / parameter name in profile context for the framework home path.
+     * @since 0.7.2
+     */
+    public static final String ENV_FRAMEWORK_HOME = "ASAKUSA_HOME";
 
     /**
      * For testing, WindGate profile path pattern in form of {@link MessageFormat}.
@@ -77,6 +82,7 @@ public final class WindGateTestHelper {
      * <code>{0}</code> will be replaced as the its profile name.
      * This module will load these files in {@code ASAKUSA_HOME}
      * if there are not in {@link #TESTING_PROFILE_PATH}.
+     * @see #ENV_FRAMEWORK_HOME
      */
     public static final String PRODUCTION_PROFILE_PATH = "windgate/profile/{0}.properties";
 
@@ -86,10 +92,8 @@ public final class WindGateTestHelper {
 
     private static final String DUMMY_PROCESS_NAME = "test-moderator";
 
-    private static File lastPluginDirectory;
-
-    private static final WeakHashMap<ClassLoader, Reference<ClassLoader>> PLUGIN_REPOSITORY =
-        new WeakHashMap<ClassLoader, Reference<ClassLoader>>();
+    private static final WeakHashMap<TestContext, Holder> CACHE_TEMPORARY_LOADER =
+            new WeakHashMap<TestContext, Holder>();
 
     /**
      * Creates a new {@link ProcessScript} for testing.
@@ -109,6 +113,7 @@ public final class WindGateTestHelper {
         if (description == null) {
             throw new IllegalArgumentException("description must not be null"); //$NON-NLS-1$
         }
+        Holder.clean();
         LOG.debug("Create process script: {}", description.getClass().getName());
         return new ProcessScript<T>(
                 DUMMY_PROCESS_NAME,
@@ -136,6 +141,7 @@ public final class WindGateTestHelper {
         if (description == null) {
             throw new IllegalArgumentException("description must not be null"); //$NON-NLS-1$
         }
+        Holder.clean();
         LOG.debug("Create process script: {}", description.getClass().getName());
         return new ProcessScript<T>(
                 DUMMY_PROCESS_NAME,
@@ -149,6 +155,21 @@ public final class WindGateTestHelper {
         return new DriverScript(
                 DUMMY_RESOURCE_NAME,
                 Collections.<String, String>emptyMap());
+    }
+
+    /**
+     * Creates a WindGate {@link ProfileContext} for the test context.
+     * @param testContext the current test context
+     * @return the created {@link ProfileContext}
+     * @since 0.7.2
+     */
+    public static ProfileContext createProfileContext(TestContext testContext) {
+        if (testContext == null) {
+            throw new IllegalArgumentException("testContext must not be null"); //$NON-NLS-1$
+        }
+        Holder.clean();
+        ClassLoader loader = findClassLoader(testContext);
+        return new ProfileContext(loader, new ParameterList(testContext.getEnvironmentVariables()));
     }
 
     /**
@@ -173,6 +194,7 @@ public final class WindGateTestHelper {
         if (arguments == null) {
             throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
         }
+        Holder.clean();
         LOG.debug("Create resource manipulator: {}", description.getClass().getName());
         GateProfile profile = loadProfile(testContext, description);
         String resourceName = description.getDriverScript().getResourceName();
@@ -213,9 +235,8 @@ public final class WindGateTestHelper {
         String profileName = description.getProfileName();
         LOG.debug("Searching for a WindGate profile: {}", profileName);
 
-        ClassLoader classLoader = findClassLoader(testContext);
-
-        URL url = classLoader.getResource(MessageFormat.format(
+        ProfileContext profileContext = createProfileContext(testContext);
+        URL url = profileContext.getClassLoader().getResource(MessageFormat.format(
                 TESTING_PROFILE_PATH,
                 profileName));
         if (url == null) {
@@ -243,10 +264,7 @@ public final class WindGateTestHelper {
             }
 
             LOG.debug("Resolving a WindGate profile: {}", url);
-            GateProfile profile = GateProfile.loadFrom(
-                    profileName,
-                    p,
-                    new ProfileContext(classLoader, new ParameterList(testContext.getEnvironmentVariables())));
+            GateProfile profile = GateProfile.loadFrom(profileName, p, profileContext);
             return profile;
         } catch (Exception e) {
             throw new IOException(MessageFormat.format(
@@ -277,34 +295,35 @@ public final class WindGateTestHelper {
     private static File findFileOnHomePath(TestContext testContext, String path) {
         assert testContext != null;
         assert path != null;
-        String home = testContext.getEnvironmentVariables().get("ASAKUSA_HOME");
+        String home = testContext.getEnvironmentVariables().get(ENV_FRAMEWORK_HOME);
         if (home != null) {
             File file = new File(home, path);
             if (file.exists()) {
                 return file;
             }
         } else {
-            LOG.warn("ASAKUSA_HOME is not defined");
+            LOG.warn(MessageFormat.format(
+                    "{0} is not defined",
+                    ENV_FRAMEWORK_HOME));
         }
         return null;
     }
 
     private static ClassLoader findClassLoader(TestContext testContext) {
         assert testContext != null;
+        ClassLoader current = testContext.getClassLoader();
         File pluginDirectory = findFileOnHomePath(testContext, PRODUCTION_PLUGIN_DIRECTORY);
-        final ClassLoader baseClassLoader = getBareClassLoader();
-        synchronized (PLUGIN_REPOSITORY) {
-            if (lastPluginDirectory != null && lastPluginDirectory.equals(pluginDirectory) == false) {
-                PLUGIN_REPOSITORY.clear();
-                lastPluginDirectory = pluginDirectory;
-            }
-            Reference<ClassLoader> ref = PLUGIN_REPOSITORY.get(baseClassLoader);
-            ClassLoader plugins = ref == null ? null : ref.get();
-            if (plugins != null) {
-                return plugins;
-            }
-            if (pluginDirectory == null || pluginDirectory.isDirectory() == false) {
-                return baseClassLoader;
+        if (pluginDirectory == null || pluginDirectory.isDirectory() == false) {
+            return current;
+        }
+        synchronized (CACHE_TEMPORARY_LOADER) {
+            Holder holder = CACHE_TEMPORARY_LOADER.get(testContext);
+            if (holder != null) {
+                assert holder.get() != null;
+                assert holder.get() == testContext;
+                if (holder.directory.equals(pluginDirectory)) {
+                    return holder.loader;
+                }
             }
             final List<URL> pluginLibraries = new ArrayList<URL>();
             for (File file : pluginDirectory.listFiles()) {
@@ -320,28 +339,12 @@ public final class WindGateTestHelper {
                 }
             }
             if (pluginLibraries.isEmpty()) {
-                return baseClassLoader;
+                return current;
             }
-            ClassLoader pluginClassLoader = AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
-                @Override
-                public ClassLoader run() {
-                    URLClassLoader loader = new URLClassLoader(
-                            pluginLibraries.toArray(new URL[pluginLibraries.size()]),
-                            baseClassLoader);
-                    return loader;
-                }
-            });
-            PLUGIN_REPOSITORY.put(baseClassLoader, new WeakReference<ClassLoader>(pluginClassLoader));
+            PluginClassLoader pluginClassLoader = PluginClassLoader.newInstance(current, pluginLibraries);
+            CACHE_TEMPORARY_LOADER.put(testContext, new Holder(testContext, pluginClassLoader, pluginDirectory));
             return pluginClassLoader;
         }
-    }
-
-    private static ClassLoader getBareClassLoader() {
-        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-        if (contextClassLoader != null) {
-            return contextClassLoader;
-        }
-        return ClassLoader.getSystemClassLoader();
     }
 
     /**
@@ -356,6 +359,7 @@ public final class WindGateTestHelper {
         if (object == null) {
             throw new IllegalArgumentException("object must not be null"); //$NON-NLS-1$
         }
+        Holder.clean();
         LOG.debug("Preparing object: {}", object);
         boolean succeed = false;
         try {
@@ -370,6 +374,50 @@ public final class WindGateTestHelper {
                 } catch (IOException e) {
                     LOG.warn("Failed to close", e);
                 }
+            }
+        }
+    }
+
+    /**
+     * Disposes WindGate plug-in class loader.
+     * @param loader the target plug-in class loader
+     * @since 0.7.2
+     */
+    public static void disposePluginClassLoader(PluginClassLoader loader) {
+        if (loader == null) {
+            throw new IllegalArgumentException("loader must not be null"); //$NON-NLS-1$
+        }
+        disposePluginClassLoader0(loader);
+        Holder.clean();
+    }
+
+    static void disposePluginClassLoader0(PluginClassLoader loader) {
+        assert loader != null;
+        JdbcDriverCleaner.runIn(loader);
+        ApplicationLauncher.disposeClassLoader(loader);
+    }
+
+    private static final class Holder extends WeakReference<TestContext> {
+
+        private static final ReferenceQueue<TestContext> QUEUE = new ReferenceQueue<TestContext>();
+
+        final PluginClassLoader loader;
+
+        final File directory;
+
+        public Holder(TestContext referent, PluginClassLoader loader, File directory) {
+            super(referent, QUEUE);
+            this.loader = loader;
+            this.directory = directory;
+        }
+
+        public static void clean() {
+            while (true) {
+                Holder next = (Holder) QUEUE.poll();
+                if (next == null) {
+                    break;
+                }
+                disposePluginClassLoader0(next.loader);
             }
         }
     }

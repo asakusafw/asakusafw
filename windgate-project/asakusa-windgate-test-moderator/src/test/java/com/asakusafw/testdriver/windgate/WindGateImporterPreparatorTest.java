@@ -43,8 +43,6 @@ import com.asakusafw.windgate.file.resource.FileResourceProvider;
  */
 public class WindGateImporterPreparatorTest {
 
-    private static final TestContext EMPTY = new TestContext.Empty();
-
     /**
      * Temporary folder.
      */
@@ -55,7 +53,7 @@ public class WindGateImporterPreparatorTest {
      * Profiles.
      */
     @Rule
-    public ProfileContext context = new ProfileContext();
+    public TestContextProvider context = new TestContextProvider();
 
     /**
      * Test method for {@link WindGateImporterPreparator#truncate(WindGateImporterDescription, TestContext)}.
@@ -78,7 +76,7 @@ public class WindGateImporterPreparatorTest {
         WindGateImporterPreparator preparator = new WindGateImporterPreparator();
 
         assertThat(file.exists(), is(true));
-        preparator.truncate(description, EMPTY);
+        preparator.truncate(description, context.get());
         assertThat(file.exists(), is(false));
     }
 
@@ -102,7 +100,8 @@ public class WindGateImporterPreparatorTest {
                 "testing",
                 driver);
         WindGateImporterPreparator preparator = new WindGateImporterPreparator();
-        ModelOutput<String> output = preparator.createOutput(ValueDefinition.of(String.class), description, EMPTY);
+        ModelOutput<String> output = preparator.createOutput(
+                ValueDefinition.of(String.class), description, context.get());
         try {
             output.write("Hello1, world!");
             output.write("Hello2, world!");

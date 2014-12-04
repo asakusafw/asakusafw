@@ -19,9 +19,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
-import java.net.URLClassLoader;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,6 +36,8 @@ import com.asakusafw.testdriver.TestExecutionPlan;
 import com.asakusafw.testdriver.hadoop.ConfigurationFactory;
 import com.asakusafw.testdriver.inprocess.CommandEmulator;
 import com.asakusafw.testdriver.inprocess.EmulatorUtils;
+import com.asakusafw.testdriver.windgate.PluginClassLoader;
+import com.asakusafw.testdriver.windgate.WindGateTestHelper;
 import com.asakusafw.windgate.bootstrap.CommandLineUtil;
 import com.asakusafw.windgate.core.GateProfile;
 import com.asakusafw.windgate.core.ParameterList;
@@ -58,9 +57,9 @@ public abstract class AbstractWindGateCommandEmulator extends CommandEmulator {
 
     private static final String PATH_CONF = PATH_WINDGATE + "/conf";
 
-    private static final String PATH_PLUGIN = PATH_WINDGATE + "/plugin";
+    private static final String PATH_PLUGIN = WindGateTestHelper.PRODUCTION_PLUGIN_DIRECTORY;
 
-    private static final String PATTERN_PROFILE = PATH_WINDGATE + "/profile/{0}.properties";
+    private static final String PATTERN_PROFILE = WindGateTestHelper.PRODUCTION_PROFILE_PATH;
 
     private static final int ARG_PROFILE = 1;
 
@@ -70,14 +69,14 @@ public abstract class AbstractWindGateCommandEmulator extends CommandEmulator {
             ConfigurationFactory configurations,
             TestExecutionPlan.Command command) throws IOException, InterruptedException {
         configureLogs(context);
-        ClassLoader classLoader = createClassLoader(context, configurations);
+        PluginClassLoader classLoader = createClassLoader(context, configurations);
         ClassLoader contextClassLoader = ApplicationLauncher.switchContextClassLoader(classLoader);
         try {
             GateProfile profile = loadProfile(context, classLoader, command.getCommandTokens().get(ARG_PROFILE));
             execute0(context, classLoader, profile, command);
         } finally {
             ApplicationLauncher.switchContextClassLoader(contextClassLoader);
-            ApplicationLauncher.disposeClassLoader(classLoader);
+            WindGateTestHelper.disposePluginClassLoader(classLoader);
         }
     }
 
@@ -102,11 +101,11 @@ public abstract class AbstractWindGateCommandEmulator extends CommandEmulator {
         MDC.put("executionId", context.getCurrentBatchId());
     }
 
-    private static ClassLoader createClassLoader(
+    private static PluginClassLoader createClassLoader(
             TestDriverContext context,
             ConfigurationFactory configurations) throws IOException {
-        final ClassLoader parent = configurations.newInstance().getClassLoader();
-        final List<URL> libraries = new ArrayList<URL>();
+        ClassLoader parent = configurations.newInstance().getClassLoader();
+        List<URL> libraries = new ArrayList<URL>();
         libraries.add(new File(context.getFrameworkHomePath(), PATH_CONF).toURI().toURL());
         libraries.add(EmulatorUtils.getJobflowLibraryPath(context).toURI().toURL());
         for (File file : EmulatorUtils.getBatchLibraryPaths(context)) {
@@ -120,12 +119,7 @@ public abstract class AbstractWindGateCommandEmulator extends CommandEmulator {
                 }
             }
         }
-        return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
-            @Override
-            public ClassLoader run() {
-                return new URLClassLoader(libraries.toArray(new URL[libraries.size()]), parent);
-            }
-        });
+        return PluginClassLoader.newInstance(parent, libraries);
     }
 
     private static GateProfile loadProfile(
