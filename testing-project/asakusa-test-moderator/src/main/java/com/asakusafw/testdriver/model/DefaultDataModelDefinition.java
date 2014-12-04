@@ -18,6 +18,7 @@ package com.asakusafw.testdriver.model;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -246,9 +247,12 @@ public class DefaultDataModelDefinition<T> implements DataModelDefinition<T> {
 
         PropertyOrder annotation = modelClass.getAnnotation(PropertyOrder.class);
         if (annotation == null) {
-            LOG.info("Annotation {} is not defined in {}",
-                    PropertyOrder.class.getSimpleName(),
-                    modelClass.getName());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(MessageFormat.format(
+                        "Annotation {0} is not defined in {1}",
+                        PropertyOrder.class.getSimpleName(),
+                        modelClass.getName()));
+            }
             return results;
         }
         Map<PropertyName, Method> ordered = new LinkedHashMap<PropertyName, Method>();
