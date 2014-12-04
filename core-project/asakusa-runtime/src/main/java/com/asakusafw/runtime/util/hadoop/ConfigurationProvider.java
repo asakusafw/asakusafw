@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InterruptedIOException;
 import java.io.OutputStream;
+import java.lang.ref.WeakReference;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -32,6 +33,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
@@ -44,7 +46,7 @@ import com.asakusafw.runtime.compatibility.CoreCompatibility;
 /**
  * Creates {@link Configuration}s with system defaults.
  * @since 0.4.0
- * @version 0.6.0
+ * @version 0.7.2
  */
 public class ConfigurationProvider {
 
@@ -79,6 +81,9 @@ public class ConfigurationProvider {
     static final Log LOG = LogFactory.getLog(ConfigurationProvider.class);
 
     private static final AtomicBoolean SAW_HADOOP_CONF_MISSING = new AtomicBoolean();
+
+    private static final WeakHashMap<ClassLoader, ClassLoaderHolder> CACHE_CLASS_LOADER =
+            new WeakHashMap<ClassLoader, ClassLoaderHolder>();
 
     private static final Map<File, File> CACHE_HADOOP_CMD_CONF = new HashMap<File, File>();
 
@@ -490,18 +495,30 @@ public class ConfigurationProvider {
     private ClassLoader createLoader(
             final ClassLoader current,
             final URL defaultConfigPath) {
-        if (defaultConfigPath != null) {
-            ClassLoader ehnahced = AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
-                @Override
-                public ClassLoader run() {
-                    return new URLClassLoader(new URL[] { defaultConfigPath }, current);
+        assert current != null;
+        if (defaultConfigPath == null) {
+            return current;
+        }
+        ClassLoader cached = null;
+        synchronized (CACHE_CLASS_LOADER) {
+            ClassLoaderHolder holder = CACHE_CLASS_LOADER.get(current);
+            if (holder != null) {
+                cached = holder.get();
+                if (cached != null && holder.defaultConfigPath.equals(defaultConfigPath)) {
+                    return cached;
                 }
-            });
-            if (ehnahced != null) {
-                return ehnahced;
             }
         }
-        return current;
+        ClassLoader ehnahced = AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
+            @Override
+            public ClassLoader run() {
+                return new URLClassLoader(new URL[] { defaultConfigPath }, current);
+            }
+        });
+        synchronized (CACHE_CLASS_LOADER) {
+            CACHE_CLASS_LOADER.put(current, new ClassLoaderHolder(ehnahced, defaultConfigPath));
+        }
+        return ehnahced;
     }
 
     /**
@@ -509,15 +526,10 @@ public class ConfigurationProvider {
      * @return the created configuration
      */
     public Configuration newInstance() {
-        ClassLoader context = Thread.currentThread().getContextClassLoader();
-        try {
-            Thread.currentThread().setContextClassLoader(loader);
-            Configuration conf = new Configuration(true);
-            configure(conf);
-            return conf;
-        } finally {
-            Thread.currentThread().setContextClassLoader(context);
-        }
+        Configuration conf = new Configuration(true);
+        conf.setClassLoader(loader);
+        configure(conf);
+        return conf;
     }
 
     /**
@@ -526,6 +538,16 @@ public class ConfigurationProvider {
      */
     protected void configure(Configuration configuration) {
         return;
+    }
+
+    private static class ClassLoaderHolder extends WeakReference<ClassLoader> {
+
+        final URL defaultConfigPath;
+
+        public ClassLoaderHolder(ClassLoader referent, URL defaultConfigPath) {
+            super(referent);
+            this.defaultConfigPath = defaultConfigPath;
+        }
     }
 
     private static class StreamRedirectTask implements Runnable {
