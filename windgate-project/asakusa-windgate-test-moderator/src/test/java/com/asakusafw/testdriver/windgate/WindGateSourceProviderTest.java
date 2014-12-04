@@ -35,7 +35,6 @@ import com.asakusafw.testdriver.core.DataModelReflection;
 import com.asakusafw.testdriver.core.DataModelSource;
 import com.asakusafw.testdriver.core.DataModelSourceProvider;
 import com.asakusafw.testdriver.core.SpiDataModelSourceProvider;
-import com.asakusafw.testdriver.core.TestContext;
 import com.asakusafw.vocabulary.windgate.WindGateExporterDescription;
 import com.asakusafw.vocabulary.windgate.WindGateImporterDescription;
 import com.asakusafw.windgate.core.DriverScript;
@@ -47,8 +46,6 @@ import com.asakusafw.windgate.file.resource.FileResourceProvider;
  */
 public class WindGateSourceProviderTest {
 
-    private static final TestContext EMPTY = new TestContext.Empty();
-
     /**
      * Temporary folder.
      */
@@ -59,7 +56,7 @@ public class WindGateSourceProviderTest {
      * Profiles.
      */
     @Rule
-    public ProfileContext context = new ProfileContext();
+    public TestContextProvider context = new TestContextProvider();
 
     volatile static File file;
 
@@ -94,7 +91,7 @@ public class WindGateSourceProviderTest {
         DataModelSourceProvider provider = new SpiDataModelSourceProvider(getClass().getClassLoader());
         URI uri = new URI("windgate:" + MockImporter.class.getName());
         ValueDefinition<String> definition = ValueDefinition.of(String.class);
-        DataModelSource source = provider.open(definition, uri, EMPTY);
+        DataModelSource source = provider.open(definition, uri, context.get());
         try {
             DataModelReflection r1 = source.next();
             assertThat(r1, is(notNullValue()));
@@ -124,7 +121,7 @@ public class WindGateSourceProviderTest {
         DataModelSourceProvider provider = new SpiDataModelSourceProvider(getClass().getClassLoader());
         URI uri = new URI("windgate:" + MockExporter.class.getName());
         ValueDefinition<String> definition = ValueDefinition.of(String.class);
-        DataModelSource source = provider.open(definition, uri, EMPTY);
+        DataModelSource source = provider.open(definition, uri, context.get());
         try {
             DataModelReflection r1 = source.next();
             assertThat(r1, is(notNullValue()));
@@ -154,7 +151,7 @@ public class WindGateSourceProviderTest {
         DataModelSourceProvider provider = new WindGateSourceProvider();
         URI uri = new URI("INVALIDwindgate:" + MockExporter.class.getName());
         ValueDefinition<String> definition = ValueDefinition.of(String.class);
-        DataModelSource source = provider.open(definition, uri, EMPTY);
+        DataModelSource source = provider.open(definition, uri, context.get());
         assertThat(source, is(nullValue()));
     }
 
@@ -167,7 +164,7 @@ public class WindGateSourceProviderTest {
         DataModelSourceProvider provider = new WindGateSourceProvider();
         URI uri = new URI("windgate:__INVALID__");
         ValueDefinition<String> definition = ValueDefinition.of(String.class);
-        provider.open(definition, uri, EMPTY);
+        provider.open(definition, uri, context.get());
     }
 
     /**
@@ -179,7 +176,7 @@ public class WindGateSourceProviderTest {
         DataModelSourceProvider provider = new WindGateSourceProvider();
         URI uri = new URI("windgate:" + String.class.getName());
         ValueDefinition<String> definition = ValueDefinition.of(String.class);
-        provider.open(definition, uri, EMPTY);
+        provider.open(definition, uri, context.get());
     }
 
     /**
