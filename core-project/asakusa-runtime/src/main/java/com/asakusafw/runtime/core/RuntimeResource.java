@@ -113,7 +113,7 @@ public interface RuntimeResource {
             if (registered != null) {
                 unregister(registered, configuration);
                 if (LOG.isDebugEnabled()) {
-                    LOG.info(MessageFormat.format(
+                    LOG.debug(MessageFormat.format(
                             "Unregistered plugin {1} from {0}",
                             getInterfaceType().getName(),
                             registered.getClass().getName()));

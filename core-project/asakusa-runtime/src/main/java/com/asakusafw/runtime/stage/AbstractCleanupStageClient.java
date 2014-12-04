@@ -62,66 +62,49 @@ public abstract class AbstractCleanupStageClient extends BaseStageClient {
         Configuration conf = getConf();
         Path path = getPath(conf);
         FileSystem fileSystem = FileSystem.get(path.toUri(), conf);
+        String info = MessageFormat.format(
+                "batchId={0}, flowId={1}, executionId={2}, operationId={3}, path={4}",
+                getBatchId(),
+                getFlowId(),
+                getExecutionId(),
+                getOperationId(),
+                path);
         try {
             LOG.info(MessageFormat.format(
-                    "Searching for cleanup target: batchId={0}, flowId={1}, executionId={2}, operationId={3}, path={4}",
-                    getBatchId(),
-                    getFlowId(),
-                    getExecutionId(),
-                    getOperationId(),
-                    path));
+                    "Searching for cleanup target: {0}",
+                    info));
             long start = System.currentTimeMillis();
             if (RuntimeContext.get().isSimulation()) {
                 LOG.info(MessageFormat.format(
-                        "Skip deleting cleanup target because current execution is in simulation mode: "
-                        + "batchId={0}, flowId={1}, executionId={2}, path={3}",
-                        getBatchId(),
-                        getFlowId(),
-                        getExecutionId(),
-                        path));
+                        "Skip deleting cleanup target because current execution is in simulation mode: {0}",
+                        info));
             } else {
                 FileStatus stat = fileSystem.getFileStatus(path);
                 if (stat == null) {
                     throw new FileNotFoundException(path.toString());
                 }
                 LOG.info(MessageFormat.format(
-                        "Start deleting cleanup target: batchId={0}, flowId={1}, executionId={2}, operationId={3}, path={4}",
-                        getBatchId(),
-                        getFlowId(),
-                        getExecutionId(),
-                        getOperationId(),
-                        path));
+                        "Start deleting cleanup target: {0}",
+                        info));
                 if (fileSystem.delete(path, true) == false) {
                     throw new IOException("FileSystem.delete() returned false");
                 }
             }
             long end = System.currentTimeMillis();
             LOG.info(MessageFormat.format(
-                    "Finish deleting cleanup target: batchId={0}, flowId={1}, executionId={2}, operationId={3}, path={4}",
-                    getBatchId(),
-                    getFlowId(),
-                    getExecutionId(),
-                    getOperationId(),
-                    path,
+                    "Finish deleting cleanup target: {0}, elapsed={1}ms",
+                    info,
                     end - start));
             return 0;
         } catch (FileNotFoundException e) {
             LOG.warn(MessageFormat.format(
-                    "Cleanup target is missing: batchId={0}, flowId={1}, executionId={2}, operationId={3}, path={4}",
-                    getBatchId(),
-                    getFlowId(),
-                    getExecutionId(),
-                    getOperationId(),
-                    path));
+                    "Cleanup target is missing: {0}",
+                    info));
             return 0;
         } catch (IOException e) {
             LOG.warn(MessageFormat.format(
-                    "Failed to delete cleanup target: batchId={0}, flowId={1}, executionId={2}, operationId={3}, path={4}",
-                    getBatchId(),
-                    getFlowId(),
-                    getExecutionId(),
-                    getOperationId(),
-                    path), e);
+                    "Failed to delete cleanup target: {0}",
+                    info), e);
             return 1;
         } finally {
             FileSystem.closeAll();
