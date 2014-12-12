@@ -500,11 +500,12 @@ public class ConfigurationProvider {
             return current;
         }
         ClassLoader cached = null;
+        String configPath = defaultConfigPath.toExternalForm();
         synchronized (CACHE_CLASS_LOADER) {
             ClassLoaderHolder holder = CACHE_CLASS_LOADER.get(current);
             if (holder != null) {
                 cached = holder.get();
-                if (cached != null && holder.defaultConfigPath.equals(defaultConfigPath)) {
+                if (cached != null && holder.configPath.equals(configPath)) {
                     return cached;
                 }
             }
@@ -516,7 +517,7 @@ public class ConfigurationProvider {
             }
         });
         synchronized (CACHE_CLASS_LOADER) {
-            CACHE_CLASS_LOADER.put(current, new ClassLoaderHolder(ehnahced, defaultConfigPath));
+            CACHE_CLASS_LOADER.put(current, new ClassLoaderHolder(ehnahced, configPath));
         }
         return ehnahced;
     }
@@ -542,11 +543,11 @@ public class ConfigurationProvider {
 
     private static class ClassLoaderHolder extends WeakReference<ClassLoader> {
 
-        final URL defaultConfigPath;
+        final String configPath;
 
-        public ClassLoaderHolder(ClassLoader referent, URL defaultConfigPath) {
+        public ClassLoaderHolder(ClassLoader referent, String configPath) {
             super(referent);
-            this.defaultConfigPath = defaultConfigPath;
+            this.configPath = configPath;
         }
     }
 
