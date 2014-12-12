@@ -64,6 +64,8 @@ public final class DirectIoTestHelper {
 
     private static final String WILDCARD_REPLACEMENT = "__testing__";
 
+    private static final String ENV_FRAMEWORK_HOME = "ASAKUSA_HOME";
+
     static final Logger LOG = LoggerFactory.getLogger(DirectIoTestHelper.class);
 
     private static final WeakHashMap<TestContext, DirectDataSourceRepository> REPOSITORY_CACHE =
@@ -155,29 +157,32 @@ public final class DirectIoTestHelper {
     }
 
     private URL findExtraConfiguration() throws IOException {
-        File file = findFileOnHomePath(context, RuntimeResourceManager.CONFIGURATION_FILE_PATH);
-        if (file == null) {
+        File home = getHomePath(context);
+        if (home == null) {
             throw new IOException(MessageFormat.format(
-                    "Direct I/O configuration is not set: {0}/{1}",
-                    "$ASAKUSA_HOME",
-                    RuntimeResourceManager.CONFIGURATION_FILE_PATH));
+                    "Environment variable \"{0}\" is not set",
+                    ENV_FRAMEWORK_HOME));
+        } else if (home.isDirectory() == false) {
+            throw new IOException(MessageFormat.format(
+                    "Asakusa Framework is not installed: {0}",
+                    home));
+        }
+        File file = new File(home, RuntimeResourceManager.CONFIGURATION_FILE_PATH);
+        if (file.exists() == false) {
+            throw new IOException(MessageFormat.format(
+                    "Direct I/O configuration file is not found: {0}",
+                    file));
         }
         return file.toURI().toURL();
     }
 
-    private static File findFileOnHomePath(TestContext context, String path) {
-        assert context != null;
-        assert path != null;
-        String home = context.getEnvironmentVariables().get("ASAKUSA_HOME");
-        if (home != null) {
-            File file = new File(home, path);
-            if (file.exists()) {
-                return file;
-            }
-        } else {
-            LOG.warn("ASAKUSA_HOME is not defined");
+    private static File getHomePath(TestContext context) {
+        String home = context.getEnvironmentVariables().get(ENV_FRAMEWORK_HOME);
+        if (home == null || home.trim().isEmpty()) {
+            return null;
         }
-        return null;
+        File file = new File(home);
+        return file;
     }
 
     /**
