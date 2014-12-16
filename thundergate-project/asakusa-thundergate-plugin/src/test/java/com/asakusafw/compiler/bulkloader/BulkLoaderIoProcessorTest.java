@@ -460,7 +460,7 @@ public class BulkLoaderIoProcessorTest {
         assertThat(provider, not(nullValue()));
 
         CommandContext context = new CommandContext("home", "id", "");
-        assertThat("２回にわけない", provider.getImportCommand(context).size(), is(1));
+        assertThat(provider.getImportCommand(context).size(), is(1));
         assertThat(provider.getExportCommand(context).size(), is(1));
         assertThat(provider.getFinalizeCommand(context).size(), is(1));
     }

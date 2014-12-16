@@ -33,12 +33,12 @@ public @interface TraceLocation {
     /**
      * Represents the unknown ID.
      */
-    String UNKNOWN = "?";
+    String UNKNOWN = "?"; //$NON-NLS-1$
 
     /**
      * Represents the computation module ID.
      */
-    String COMPUTATION_MODULE = "computation";
+    String COMPUTATION_MODULE = "computation"; //$NON-NLS-1$
 
     /**
      * The batch ID.

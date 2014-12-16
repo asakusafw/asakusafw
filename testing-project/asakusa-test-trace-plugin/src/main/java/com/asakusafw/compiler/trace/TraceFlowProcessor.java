@@ -45,13 +45,13 @@ public class TraceFlowProcessor extends LinePartProcessor {
     public void emitLinePart(Context context) {
         ModelFactory f = Models.getModelFactory();
         Expression driver = context.createField(
-                TraceDriver.class, "trace",
+                TraceDriver.class, "trace", //$NON-NLS-1$
                 new TypeBuilder(f, context.convert(TraceDriver.class))
-                    .method("get", createTraceContext(context))
+                    .method("get", createTraceContext(context)) //$NON-NLS-1$
                     .toExpression());
 
         Expression input = context.getInput();
-        context.add(new ExpressionBuilder(f, driver).method("trace", input).toStatement());
+        context.add(new ExpressionBuilder(f, driver).method("trace", input).toStatement()); //$NON-NLS-1$
         context.setOutput(input);
     }
 

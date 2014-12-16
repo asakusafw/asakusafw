@@ -116,12 +116,12 @@ public class FlowElementPortDescription {
     public String toString() {
         if (direction == PortDirection.INPUT) {
             return MessageFormat.format(
-                    "Input({0}):{1}",
+                    "Input({0}):{1}", //$NON-NLS-1$
                     getName(),
                     getDataType());
         } else {
             return MessageFormat.format(
-                    "Output({0}):{1}",
+                    "Output({0}):{1}", //$NON-NLS-1$
                     getName(),
                     getDataType());
         }

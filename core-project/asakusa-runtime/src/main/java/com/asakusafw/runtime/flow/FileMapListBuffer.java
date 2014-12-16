@@ -156,7 +156,7 @@ public class FileMapListBuffer<E extends Writable>
     }
 
     private void saveCurrentPage() throws AssertionError {
-        assert limit == pageBuffer.length : "page buffer should be full";
+        assert limit == pageBuffer.length : "page buffer should be full"; //$NON-NLS-1$
         if (backingStore.isSaved(currentPage) == false) {
             try {
                 backingStore.save(currentPage, pageBuffer);
@@ -190,9 +190,9 @@ public class FileMapListBuffer<E extends Writable>
 
         private static final int INITIAL_INDEX_SIZE = 16;
 
-        private static final String PAGE_STORE_PREFIX = "FileMap";
+        private static final String PAGE_STORE_PREFIX = "FileMap"; //$NON-NLS-1$
 
-        private static final String PAGE_STORE_SUFFIX = ".tmp";
+        private static final String PAGE_STORE_SUFFIX = ".tmp"; //$NON-NLS-1$
 
         private static final int NOT_SAVED = -1;
 
@@ -236,7 +236,7 @@ public class FileMapListBuffer<E extends Writable>
             assert pageNumber < pageIndex.length;
             if (LOG.isTraceEnabled()) {
                 LOG.trace(MessageFormat.format(
-                        "Saving a page into backing store: path={0}, index={1}, cursor={2}",
+                        "Saving a page into backing store: path={0}, index={1}, cursor={2}", //$NON-NLS-1$
                         mapFilePath,
                         pageNumber * objects.length,
                         cursor));
@@ -261,7 +261,7 @@ public class FileMapListBuffer<E extends Writable>
             assert fileOutput != null;
             if (LOG.isTraceEnabled()) {
                 LOG.trace(MessageFormat.format(
-                        "Restoring a page from backing store: path={0}, index={1}, cursor={2}",
+                        "Restoring a page from backing store: path={0}, index={1}, cursor={2}", //$NON-NLS-1$
                         mapFilePath,
                         pageNumber * objects.length,
                         start));
@@ -295,11 +295,11 @@ public class FileMapListBuffer<E extends Writable>
                         mapFilePath));
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(MessageFormat.format(
-                            "Preparing map file: path={0}, example={1}",
+                            "Preparing map file: path={0}, example={1}", //$NON-NLS-1$
                             mapFilePath,
                             objects[0]));
                 }
-                mapFile = new RandomAccessFile(mapFilePath, "rw");
+                mapFile = new RandomAccessFile(mapFilePath, "rw"); //$NON-NLS-1$
                 fileInput = new BufferedFileInput(mapFile, inputBuffer);
                 fileOutput = new BufferedFileOutput(mapFile, outputBuffer);
                 cursor = 0;

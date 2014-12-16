@@ -84,19 +84,19 @@ public class ValueOptionProperty implements DataClass.Property {
     @Override
     public Expression createIsNull(Expression object) {
         JavaName javaName = JavaName.of(name);
-        javaName.addFirst("get");
-        javaName.addLast("option");
+        javaName.addFirst("get"); //$NON-NLS-1$
+        javaName.addLast("option"); //$NON-NLS-1$
         return new ExpressionBuilder(factory, object)
             .method(javaName.toMemberName())
-            .method("isNull")
+            .method("isNull") //$NON-NLS-1$
             .toExpression();
     }
 
     @Override
     public Expression createGetter(Expression object) {
         JavaName javaName = JavaName.of(name);
-        javaName.addFirst("get");
-        javaName.addLast("option");
+        javaName.addFirst("get"); //$NON-NLS-1$
+        javaName.addLast("option"); //$NON-NLS-1$
         return new ExpressionBuilder(factory, object)
             .method(javaName.toMemberName())
             .toExpression();
@@ -105,7 +105,7 @@ public class ValueOptionProperty implements DataClass.Property {
     @Override
     public Statement assign(Expression target, Expression source) {
         return new ExpressionBuilder(factory, target)
-            .method("copyFrom", source)
+            .method("copyFrom", source) //$NON-NLS-1$
             .toStatement();
     }
 
@@ -117,8 +117,8 @@ public class ValueOptionProperty implements DataClass.Property {
     @Override
     public Statement createSetter(Expression object, Expression value) {
         JavaName javaName = JavaName.of(name);
-        javaName.addFirst("set");
-        javaName.addLast("option");
+        javaName.addFirst("set"); //$NON-NLS-1$
+        javaName.addLast("option"); //$NON-NLS-1$
         return new ExpressionBuilder(factory, object)
             .method(javaName.toMemberName(), value)
             .toStatement();
@@ -129,7 +129,7 @@ public class ValueOptionProperty implements DataClass.Property {
         Precondition.checkMustNotBeNull(object, "object"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(dataOutput, "dataOutput"); //$NON-NLS-1$
         return new ExpressionBuilder(factory, object)
-            .method("write", dataOutput)
+            .method("write", dataOutput) //$NON-NLS-1$
             .toStatement();
     }
 
@@ -138,7 +138,7 @@ public class ValueOptionProperty implements DataClass.Property {
         Precondition.checkMustNotBeNull(object, "object"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(dataInput, "dataInput"); //$NON-NLS-1$
         return new ExpressionBuilder(factory, object)
-            .method("readFields", dataInput)
+            .method("readFields", dataInput) //$NON-NLS-1$
             .toStatement();
     }
 
@@ -146,7 +146,7 @@ public class ValueOptionProperty implements DataClass.Property {
     public Expression createHashCode(Expression source) {
         Precondition.checkMustNotBeNull(source, "source"); //$NON-NLS-1$
         return new ExpressionBuilder(factory, source)
-            .method("hashCode")
+            .method("hashCode") //$NON-NLS-1$
             .toExpression();
     }
 
@@ -160,7 +160,7 @@ public class ValueOptionProperty implements DataClass.Property {
         Precondition.checkMustNotBeNull(length, "length"); //$NON-NLS-1$
         Type type = factory.newNamedType(Models.toName(factory, optionClass.getName()));
         return new TypeBuilder(factory, type)
-            .method("getBytesLength", bytes, start, length)
+            .method("getBytesLength", bytes, start, length) //$NON-NLS-1$
             .toExpression();
     }
 
@@ -176,7 +176,7 @@ public class ValueOptionProperty implements DataClass.Property {
         Precondition.checkMustNotBeNull(length2, "length2"); //$NON-NLS-1$
         Type type = factory.newNamedType(Models.toName(factory, optionClass.getName()));
         return new TypeBuilder(factory, type)
-            .method("compareBytes",
+            .method("compareBytes", //$NON-NLS-1$
                     bytes1, start1, length1,
                     bytes2, start2, length2)
             .toExpression();
@@ -187,7 +187,7 @@ public class ValueOptionProperty implements DataClass.Property {
         Precondition.checkMustNotBeNull(value1, "value1"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(value2, "value2"); //$NON-NLS-1$
         return new ExpressionBuilder(factory, value1)
-            .method("compareTo", value2)
+            .method("compareTo", value2) //$NON-NLS-1$
             .toExpression();
     }
 
@@ -224,7 +224,7 @@ public class ValueOptionProperty implements DataClass.Property {
     @Override
     public String toString() {
         return MessageFormat.format(
-                "{0}({1}:{2})",
+                "{0}({1}:{2})", //$NON-NLS-1$
                 getClass().getSimpleName(),
                 getName(),
                 getType());

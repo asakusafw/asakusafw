@@ -113,7 +113,7 @@ public class FlowPath {
             boolean includeArrivals) {
         Precondition.checkMustNotBeNull(graph, "graph"); //$NON-NLS-1$
         if (direction != Direction.FORWARD) {
-            throw new IllegalStateException("direction must be FORWARD");
+            throw new IllegalStateException("direction must be FORWARD"); //$NON-NLS-1$
         }
         if (includeStartings == false
                 && includeArrivals == false
@@ -242,7 +242,7 @@ public class FlowPath {
     @Override
     public String toString() {
         return MessageFormat.format(
-                "{0}: {1}->{2}",
+                "{0}: {1}->{2}", //$NON-NLS-1$
                 direction,
                 startings,
                 arrivals);

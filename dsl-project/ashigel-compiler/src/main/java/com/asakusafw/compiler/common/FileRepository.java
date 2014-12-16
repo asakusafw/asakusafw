@@ -75,8 +75,6 @@ public class FileRepository implements ResourceRepository {
                 Location enter = new Location(location, child.getName());
                 collect(results, enter, child);
             }
-        } else {
-            LOG.warn("不明なファイル {}", file);
         }
     }
 

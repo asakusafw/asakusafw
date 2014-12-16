@@ -427,7 +427,7 @@ public class Jsr269 {
         }
         TypeDeclaration primary = Emitter.findPrimaryType(unit);
         if (primary == null) {
-            name.append("package-info");
+            name.append("package-info"); //$NON-NLS-1$
         } else {
             name.append(primary.getName());
         }

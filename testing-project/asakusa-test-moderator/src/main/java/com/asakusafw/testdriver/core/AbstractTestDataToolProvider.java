@@ -86,7 +86,7 @@ public abstract class AbstractTestDataToolProvider implements TestDataToolProvid
             @Override
             public String toString() {
                 return MessageFormat.format(
-                        "Verifier(expected={0}, rule={1})",
+                        "Verifier(expected={0}, rule={1})", //$NON-NLS-1$
                         expectedFactory,
                         ruleFactory);
             }

@@ -89,10 +89,10 @@ public class CombinerEmitter {
     public CompiledType emit(StageModel model) throws IOException {
         Precondition.checkMustNotBeNull(model, "model"); //$NON-NLS-1$
         if (canCombine(model) == false) {
-            LOG.debug("{}に対してコンバイナークラスは不要です", model);
+            LOG.debug("combiner is not required: {}", model); //$NON-NLS-1$
             return null;
         }
-        LOG.debug("{}に対するコンバイナークラスを生成します", model);
+        LOG.debug("start generating combiner class: {}", model); //$NON-NLS-1$
         Engine engine = new Engine(environment, model);
         CompilationUnit source = engine.generate();
         environment.emit(source);
@@ -103,7 +103,7 @@ public class CombinerEmitter {
             .getModelFactory()
             .newQualifiedName(packageName, simpleName);
 
-        LOG.debug("{}のコンバイン処理には{}が利用されます", model, name);
+        LOG.debug("finish generating combiner class: {} ({})", model, name); //$NON-NLS-1$
         return new CompiledType(name);
     }
 
@@ -148,7 +148,7 @@ public class CombinerEmitter {
                     factory.newPackageDeclaration(packageName),
                     ImportBuilder.Strategy.TOP_LEVEL);
             this.names = new NameGenerator(factory);
-            this.context = names.create("context");
+            this.context = names.create("context"); //$NON-NLS-1$
             this.shuffleNames = Maps.create();
             this.rendezvousNames = Maps.create();
         }
@@ -172,11 +172,11 @@ public class CombinerEmitter {
             members.add(createGetRendezvous());
             return factory.newClassDeclaration(
                     new JavadocBuilder(factory)
-                        .text("ステージ{0}の処理を担当するコンバイナープログラム。",
+                        .text("Combiner class for stage <code>{0}</code>.", //$NON-NLS-1$
                                 shuffle.getStageBlock().getStageNumber())
                         .toJavadoc(),
                     new AttributeBuilder(factory)
-                        .annotation(t(SuppressWarnings.class), v("deprecation"))
+                        .annotation(t(SuppressWarnings.class), v("deprecation")) //$NON-NLS-1$
                         .Public()
                         .Final()
                         .toAttributes(),
@@ -194,9 +194,9 @@ public class CombinerEmitter {
         private List<FieldDeclaration> prepareFields() {
             List<FieldDeclaration> fields = Lists.create();
 
-            // shufles
+            // shuffles
             for (ShuffleModel.Segment segment : shuffle.getSegments()) {
-                SimpleName shuffleName = names.create("shuffle");
+                SimpleName shuffleName = names.create("shuffle"); //$NON-NLS-1$
                 shuffleNames.put(segment, shuffleName);
                 Name shuffleTypeName = segment.getCompiled().getCombineOutputType().getQualifiedName();
                 fields.add(factory.newFieldDeclaration(
@@ -215,7 +215,7 @@ public class CombinerEmitter {
                     continue;
                 }
                 Fragment first = unit.getFragments().get(0);
-                SimpleName rendezvousName = names.create("combine");
+                SimpleName rendezvousName = names.create("combine"); //$NON-NLS-1$
                 rendezvousNames.put(first, rendezvousName);
                 fields.add(factory.newFieldDeclaration(
                         null,
@@ -278,9 +278,9 @@ public class CombinerEmitter {
                         .toAttributes(),
                     Collections.<TypeParameterDeclaration>emptyList(),
                     t(void.class),
-                    factory.newSimpleName("setup"),
+                    factory.newSimpleName("setup"), //$NON-NLS-1$
                     Collections.singletonList(factory.newFormalParameterDeclaration(
-                            factory.newNamedType(factory.newSimpleName("Context")),
+                            factory.newNamedType(factory.newSimpleName("Context")), //$NON-NLS-1$
                             context)),
                     0,
                     Arrays.asList(t(IOException.class), t(InterruptedException.class)),
@@ -309,9 +309,9 @@ public class CombinerEmitter {
                         .toAttributes(),
                     Collections.<TypeParameterDeclaration>emptyList(),
                     t(void.class),
-                    factory.newSimpleName("cleanup"),
+                    factory.newSimpleName("cleanup"), //$NON-NLS-1$
                     Collections.singletonList(factory.newFormalParameterDeclaration(
-                            factory.newNamedType(factory.newSimpleName("Context")),
+                            factory.newNamedType(factory.newSimpleName("Context")), //$NON-NLS-1$
                             context)),
                     0,
                     Arrays.asList(t(IOException.class), t(InterruptedException.class)),
@@ -345,7 +345,7 @@ public class CombinerEmitter {
                 .newObject()
                 .toThrowStatement());
 
-            SimpleName argument = names.create("nextKey");
+            SimpleName argument = names.create("nextKey"); //$NON-NLS-1$
             List<Statement> statements = Lists.create();
             statements.add(factory.newSwitchStatement(
                     new ExpressionBuilder(factory, argument)

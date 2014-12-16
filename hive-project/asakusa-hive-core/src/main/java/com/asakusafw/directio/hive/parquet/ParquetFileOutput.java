@@ -227,7 +227,7 @@ public class ParquetFileOutput<T> implements ModelOutput<T> {
                 constructor = ParquetWriter.class.getConstructor(params);
             } catch (Exception e) {
                 LOG.trace(MessageFormat.format(
-                        "Mismatch Parquet library version: {0} {1}",
+                        "Mismatch Parquet library version: {0} {1}", //$NON-NLS-1$
                         name(),
                         Arrays.toString(params)), e);
                 return null;
@@ -240,7 +240,7 @@ public class ParquetFileOutput<T> implements ModelOutput<T> {
                 if (version.resolve() != null) {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug(MessageFormat.format(
-                                "Detected Parquet library version: {0}",
+                                "Detected Parquet library version: {0}", //$NON-NLS-1$
                                 version));
                     }
                     return version;

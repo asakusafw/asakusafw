@@ -36,57 +36,76 @@ public enum WorkbookFormat {
     /**
      * Only data sheet.
      */
-    DATA("{0}-data.xls", SpreadsheetVersion.EXCEL97, data("data")),
+    DATA("{0}-data.xls", //$NON-NLS-1$
+            SpreadsheetVersion.EXCEL97,
+            data("data")), //$NON-NLS-1$
 
     /**
      * Only rule sheet.
      */
-    RULE("{0}-rule.xls", SpreadsheetVersion.EXCEL97, rule("rule")),
+    RULE("{0}-rule.xls", //$NON-NLS-1$
+            SpreadsheetVersion.EXCEL97,
+            rule("rule")), //$NON-NLS-1$
 
     /**
      * Input data sheet and output data sheet.
      */
-    INOUT("{0}-inout.xls", SpreadsheetVersion.EXCEL97, data("input"), data("output")),
+    INOUT("{0}-inout.xls", //$NON-NLS-1$
+            SpreadsheetVersion.EXCEL97,
+            data("input"), data("output")), //$NON-NLS-1$ //$NON-NLS-2$
 
     /**
      * Expected data sheet and rule sheet.
      */
-    INSPECT("{0}-inspect.xls", SpreadsheetVersion.EXCEL97, data("expected"), rule("rule")),
+    INSPECT("{0}-inspect.xls", //$NON-NLS-1$
+            SpreadsheetVersion.EXCEL97,
+            data("expected"), rule("rule")), //$NON-NLS-1$ //$NON-NLS-2$
 
     /**
      * Input and output data sheet and rule sheet.
      */
-    ALL("{0}.xls", SpreadsheetVersion.EXCEL97, data("input"), data("output"), rule("rule")),
+    ALL("{0}.xls", //$NON-NLS-1$
+            SpreadsheetVersion.EXCEL97,
+            data("input"), data("output"), rule("rule")), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
     /**
      * Only data sheet (Excel 2007).
      * @since 0.5.3
      */
-    DATAX("{0}-data.xlsx", SpreadsheetVersion.EXCEL2007, data("data")),
+    DATAX("{0}-data.xlsx", //$NON-NLS-1$
+            SpreadsheetVersion.EXCEL2007,
+            data("data")), //$NON-NLS-1$
 
     /**
      * Only rule sheet (Excel 2007).
      * @since 0.5.3
      */
-    RULEX("{0}-rule.xlsx", SpreadsheetVersion.EXCEL2007, rule("rule")),
+    RULEX("{0}-rule.xlsx", //$NON-NLS-1$
+            SpreadsheetVersion.EXCEL2007, rule("rule")), //$NON-NLS-1$
 
     /**
      * Input data sheet and output data sheet (Excel 2007).
      * @since 0.5.3
      */
-    INOUTX("{0}-inout.xlsx", SpreadsheetVersion.EXCEL2007, data("input"), data("output")),
+    INOUTX("{0}-inout.xlsx", //$NON-NLS-1$
+            SpreadsheetVersion.EXCEL2007,
+            data("input"), data("output")), //$NON-NLS-1$ //$NON-NLS-2$
 
     /**
      * Expected data sheet and rule sheet (Excel 2007).
      * @since 0.5.3
      */
-    INSPECTX("{0}-inspect.xlsx", SpreadsheetVersion.EXCEL2007, data("expected"), rule("rule")),
+    INSPECTX("{0}-inspect.xlsx", //$NON-NLS-1$
+            SpreadsheetVersion.EXCEL2007,
+            data("expected"), rule("rule")), //$NON-NLS-1$ //$NON-NLS-2$
 
     /**
      * Input and output data sheet and rule sheet (Excel 2007).
      * @since 0.5.3
      */
-    ALLX("{0}.xlsx", SpreadsheetVersion.EXCEL2007, data("input"), data("output"), rule("rule")),
+    ALLX("{0}.xlsx", //$NON-NLS-1$
+            SpreadsheetVersion.EXCEL2007,
+            data("input"), data("output"), rule("rule")), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     ;
     private final String namePattern;
 

@@ -765,7 +765,7 @@ public final class JavadocBlockParserUtil {
             throw new IllegalArgumentException("tokens"); //$NON-NLS-1$
         }
         if (tokens.isEmpty()) {
-            return "";
+            return ""; //$NON-NLS-1$
         }
         StringBuilder buf = new StringBuilder();
         for (JavadocToken t : tokens) {

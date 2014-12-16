@@ -74,7 +74,7 @@ public class VolatileClassFile extends SimpleJavaFileObject {
             return new URI(
                 SCHEME,
                 null,
-                "/" + path,
+                "/" + path, //$NON-NLS-1$
                 null);
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException(

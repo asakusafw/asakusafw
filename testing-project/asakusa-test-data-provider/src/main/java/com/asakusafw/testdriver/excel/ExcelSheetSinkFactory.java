@@ -93,7 +93,7 @@ public class ExcelSheetSinkFactory extends DataModelSinkFactory {
                     output));
         }
         final Workbook workbook = Util.createEmptyWorkbookFor(output.getPath());
-        Sheet sheet = workbook.createSheet("results");
+        Sheet sheet = workbook.createSheet("results"); //$NON-NLS-1$
         return new ExcelSheetSink(definition, sheet, version.getMaxColumns()) {
             private boolean closed = false;
             @Override
@@ -116,7 +116,7 @@ public class ExcelSheetSinkFactory extends DataModelSinkFactory {
     @Override
     public String toString() {
         return MessageFormat.format(
-                "{0}({1})",
+                "{0}({1})", //$NON-NLS-1$
                 ExcelSheetSink.class.getSimpleName(),
                 output);
     }

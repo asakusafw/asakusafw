@@ -15,6 +15,8 @@
  */
 package com.asakusafw.runtime.directio;
 
+import java.text.MessageFormat;
+
 /**
  * Represents a context for output contents to attempt area.
  * @since 0.2.5
@@ -98,14 +100,10 @@ public final class OutputAttemptContext {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("OutputAttemptContext [transactionId=");
-        builder.append(transactionId);
-        builder.append(", attemptId=");
-        builder.append(attemptId);
-        builder.append(", outputId=");
-        builder.append(outputId);
-        builder.append("]");
-        return builder.toString();
+        return MessageFormat.format(
+                "OutputAttemptContext(transactionId={0}, attemptId={1}, outputId={2})", //$NON-NLS-1$
+                transactionId,
+                attemptId,
+                outputId);
     }
 }

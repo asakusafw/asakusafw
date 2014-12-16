@@ -50,7 +50,7 @@ public class SpiFlowElementProcessorRepository
 
     @Override
     protected void doInitialize() {
-        LOG.debug("フロー要素プロセッサのプラグインを読み出します");
+        LOG.debug("loading flow element processor plug-ins"); //$NON-NLS-1$
         this.emptyProcessor = new LinePartProcessor.Nop();
         this.lines = Maps.create();
         this.rendezvouses = Maps.create();
@@ -70,7 +70,7 @@ public class SpiFlowElementProcessorRepository
                         proc.getClass().getName());
                 continue;
             }
-            LOG.debug("{}が利用可能になります ({})",
+            LOG.debug("found flow element processor: {} ({})", //$NON-NLS-1$
                     targetType.getName(),
                     proc.getClass().getName());
             saw.put(targetType, proc);

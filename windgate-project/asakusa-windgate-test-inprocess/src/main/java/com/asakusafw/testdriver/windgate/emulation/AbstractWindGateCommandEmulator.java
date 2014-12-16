@@ -51,11 +51,11 @@ public abstract class AbstractWindGateCommandEmulator extends CommandEmulator {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractWindGateCommandEmulator.class);
 
-    static final String MODULE_NAME_PREFIX = "windgate.";
+    static final String MODULE_NAME_PREFIX = "windgate."; //$NON-NLS-1$
 
-    static final String PATH_WINDGATE = "windgate";
+    static final String PATH_WINDGATE = "windgate"; //$NON-NLS-1$
 
-    private static final String PATH_CONF = PATH_WINDGATE + "/conf";
+    private static final String PATH_CONF = PATH_WINDGATE + "/conf"; //$NON-NLS-1$
 
     private static final String PATH_PLUGIN = WindGateTestHelper.PRODUCTION_PLUGIN_DIRECTORY;
 
@@ -96,9 +96,9 @@ public abstract class AbstractWindGateCommandEmulator extends CommandEmulator {
             TestExecutionPlan.Command command) throws IOException, InterruptedException;
 
     private static void configureLogs(TestDriverContext context) {
-        MDC.put("batchId", context.getCurrentBatchId());
-        MDC.put("flowId", context.getCurrentBatchId());
-        MDC.put("executionId", context.getCurrentBatchId());
+        MDC.put("batchId", context.getCurrentBatchId()); //$NON-NLS-1$
+        MDC.put("flowId", context.getCurrentBatchId()); //$NON-NLS-1$
+        MDC.put("executionId", context.getCurrentBatchId()); //$NON-NLS-1$
     }
 
     private static PluginClassLoader createClassLoader(
@@ -126,13 +126,13 @@ public abstract class AbstractWindGateCommandEmulator extends CommandEmulator {
             TestDriverContext context,
             ClassLoader classLoader,
             String profile) {
-        LOG.debug("Loading profile: {}", profile);
+        LOG.debug("Loading profile: {}", profile); //$NON-NLS-1$
         try {
             File profilePath = new File(
                     context.getFrameworkHomePath(),
                     MessageFormat.format(PATTERN_PROFILE, profile)).getAbsoluteFile();
             Map<String, String> variables = new HashMap<String, String>(context.getEnvironmentVariables());
-            variables.put("WINDGATE_PROFILE", profile);
+            variables.put("WINDGATE_PROFILE", profile); //$NON-NLS-1$
             ParameterList contextParameters = new ParameterList(variables);
             ProfileContext profileContext = new ProfileContext(classLoader, contextParameters);
 

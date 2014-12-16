@@ -92,7 +92,7 @@ public abstract class AbstractParquetFileFormat<T> extends HadoopFileFormat<T>
 
     @Override
     public String getFormatName() {
-        return "PARQUET";
+        return "PARQUET"; //$NON-NLS-1$
     }
 
     @Override
@@ -159,7 +159,8 @@ public abstract class AbstractParquetFileFormat<T> extends HadoopFileFormat<T>
                 DirectInputFragment fragment = blockMap.get(begin, end);
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(MessageFormat.format(
-                            "Detect Parquet file block: path={0}, rows={1}, range={2}+{3}, allocation={4}",
+                            "Detect Parquet file block: " //$NON-NLS-1$
+                            + "path={0}, rows={1}, range={2}+{3}, allocation={4}", //$NON-NLS-1$
                             status.getPath(),
                             block.getRowCount(),
                             begin,
@@ -192,7 +193,7 @@ public abstract class AbstractParquetFileFormat<T> extends HadoopFileFormat<T>
         ParquetFormatConfiguration conf = getFormatConfiguration();
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Parquet file input ({0}): {1}",
+                    "Parquet file input ({0}): {1}", //$NON-NLS-1$
                     path,
                     conf));
         }
@@ -225,7 +226,7 @@ public abstract class AbstractParquetFileFormat<T> extends HadoopFileFormat<T>
         ParquetFormatConfiguration conf = getFormatConfiguration();
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Parquet file output ({0}): {1}",
+                    "Parquet file output ({0}): {1}", //$NON-NLS-1$
                     path,
                     conf));
         }

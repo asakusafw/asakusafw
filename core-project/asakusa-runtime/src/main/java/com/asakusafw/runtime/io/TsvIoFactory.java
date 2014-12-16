@@ -28,7 +28,7 @@ import java.nio.charset.Charset;
  */
 public class TsvIoFactory<T> extends ModelIoFactory<T> {
 
-    private static final Charset CHARSET = Charset.forName("UTF-8");
+    private static final Charset CHARSET = Charset.forName("UTF-8"); //$NON-NLS-1$
 
     /**
      * インスタンスを生成する。

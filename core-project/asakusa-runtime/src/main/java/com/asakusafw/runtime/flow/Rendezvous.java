@@ -26,17 +26,17 @@ public abstract class Rendezvous<V extends Writable> {
     /**
      * {@link #begin()}メソッドの名前。
      */
-    public static final String BEGIN = "begin";
+    public static final String BEGIN = "begin"; //$NON-NLS-1$
 
     /**
      * {@link #process(Writable)}メソッドの名前。
      */
-    public static final String PROCESS = "process";
+    public static final String PROCESS = "process"; //$NON-NLS-1$
 
     /**
      * {@link #end()}メソッドの名前。
      */
-    public static final String END = "end";
+    public static final String END = "end"; //$NON-NLS-1$
 
     /**
      * 特定グループの処理を開始する際に起動される。

@@ -49,6 +49,7 @@ public class RestructureFlowProcessor extends LinePartProcessor {
             Property sinkProperty = sinkType.findProperty(sourceProperty.getName());
             if (sinkProperty == null) {
                 // skip this property
+                continue;
             } else if (sourceProperty.getType().equals(sinkProperty.getType()) == false) {
                 getEnvironment().error(
                         "{0}において、{1}.{2}と{3}.{4}のプロパティ型が一致しません",

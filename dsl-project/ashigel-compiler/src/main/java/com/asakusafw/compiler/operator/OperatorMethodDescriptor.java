@@ -395,7 +395,7 @@ public class OperatorMethodDescriptor {
                         Models.toLiteral(f, helperMethod.getSimpleName().toString()),
                         // parameter types
                         new TypeBuilder(f, ib.toType(Arrays.class))
-                            .method("asList", new TypeBuilder(f, ib.toType(Class.class))
+                            .method("asList", new TypeBuilder(f, ib.toType(Class.class)) //$NON-NLS-1$
                                 .parameterize(f.newWildcard())
                                 .array(1)
                                 .newArray(f.newArrayInitializer(parameterTypeLiterals))

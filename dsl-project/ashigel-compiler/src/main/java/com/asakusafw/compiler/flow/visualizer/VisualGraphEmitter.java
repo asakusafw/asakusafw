@@ -58,7 +58,7 @@ import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
  */
 public final class VisualGraphEmitter {
 
-    static final Charset ENCODING = Charset.forName("UTF-8");
+    static final Charset ENCODING = Charset.forName("UTF-8"); //$NON-NLS-1$
 
     static final Logger LOG = LoggerFactory.getLogger(VisualGraphEmitter.class);
 
@@ -77,7 +77,7 @@ public final class VisualGraphEmitter {
     public static void emit(VisualGraph graph, boolean partial, OutputStream stream) throws IOException {
         Precondition.checkMustNotBeNull(graph, "graph"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(stream, "stream"); //$NON-NLS-1$
-        LOG.debug("Emitting a visual graph: {}", graph.getId());
+        LOG.debug("Emitting a visual graph: {}", graph.getId()); //$NON-NLS-1$
         EmitContext context = new EmitContext(stream);
         try {
             List<Relation> relations = analyzeRelations(graph, partial);
@@ -109,7 +109,7 @@ public final class VisualGraphEmitter {
 
     private static List<Relation> analyzeRelations(VisualGraph graph, boolean partial) {
         assert graph != null;
-        LOG.debug("Analyzing element relations");
+        LOG.debug("Analyzing element relations"); //$NON-NLS-1$
         List<Relation> result = RelationCollector.collect(Collections.singleton(graph), partial);
         return result;
     }
@@ -118,14 +118,14 @@ public final class VisualGraphEmitter {
         assert context != null;
         assert nodes != null;
         assert relations != null;
-        LOG.debug("Emitting graph structure");
-        context.put("digraph {");
+        LOG.debug("Emitting graph structure"); //$NON-NLS-1$
+        context.put("digraph {"); //$NON-NLS-1$
         context.push();
         dumpStructure(context, nodes);
         dumpLabels(context, relations);
         dumpRelations(context, relations);
         context.pop();
-        context.put("}");
+        context.put("}"); //$NON-NLS-1$
     }
 
     private static void dumpLabels(EmitContext context, List<Relation> relations) {
@@ -165,11 +165,11 @@ public final class VisualGraphEmitter {
         assert context != null;
         assert relations != null;
         for (Relation relation : relations) {
-            context.put("{0} -> {1} [label={2}];",
+            context.put("{0} -> {1} [label={2}];", //$NON-NLS-1$
                     toLiteral(relation.source.getResolved().getId().toString()),
                     toLiteral(relation.sink.getResolved().getId().toString()),
                     toLiteral(MessageFormat.format(
-                            "{0}>{1}",
+                            "{0}>{1}", //$NON-NLS-1$
                             relation.source.name,
                             relation.sink.name)));
         }
@@ -222,7 +222,9 @@ public final class VisualGraphEmitter {
 
         private static void resolveFailed(Port port) {
             assert port != null;
-            LOG.warn("Failed to resolve an element {}, ignored.", port.element);
+            LOG.warn(MessageFormat.format(
+                    "failed to resolve an element {0}",
+                    port.element));
         }
 
         @Override
@@ -461,18 +463,18 @@ public final class VisualGraphEmitter {
         @Override
         public Void visitGraph(EmitContext context, VisualGraph node) {
             if (node.getLabel() != null) {
-                context.put("subgraph {0} '{'",
-                        toLiteral("cluster_" + node.getId().toString()));
+                context.put("subgraph {0} '{'", //$NON-NLS-1$
+                        toLiteral("cluster_" + node.getId().toString())); //$NON-NLS-1$
                 context.push();
-                context.put("label = {0};", toLiteral(node.getLabel()));
-                context.put("style = bold;");
+                context.put("label = {0};", toLiteral(node.getLabel())); //$NON-NLS-1$
+                context.put("style = bold;"); //$NON-NLS-1$
             }
             for (VisualNode element : node.getNodes()) {
                 element.accept(this, context);
             }
             if (node.getLabel() != null) {
                 context.pop();
-                context.put("}");
+                context.put("}"); //$NON-NLS-1$
             }
             return null;
         }
@@ -480,33 +482,33 @@ public final class VisualGraphEmitter {
         @Override
         protected Void visitBlock(EmitContext context, VisualBlock node) throws NoThrow {
             if (node.getLabel() != null) {
-                context.put("subgraph {0} '{'",
-                        toLiteral("cluster_" + node.getId().toString()));
+                context.put("subgraph {0} '{'", //$NON-NLS-1$
+                        toLiteral("cluster_" + node.getId().toString())); //$NON-NLS-1$
                 context.push();
-                context.put("label = {0};", toLiteral(node.getLabel()));
+                context.put("label = {0};", toLiteral(node.getLabel())); //$NON-NLS-1$
             }
             for (VisualNode element : node.getNodes()) {
                 element.accept(this, context);
             }
             if (node.getLabel() != null) {
                 context.pop();
-                context.put("}");
+                context.put("}"); //$NON-NLS-1$
             }
             return null;
         }
 
         @Override
         protected Void visitFlowPart(EmitContext context, VisualFlowPart node) throws NoThrow {
-            context.put("subgraph {0} '{'",
-                    toLiteral("cluster_" + node.getId().toString()));
+            context.put("subgraph {0} '{'", //$NON-NLS-1$
+                    toLiteral("cluster_" + node.getId().toString())); //$NON-NLS-1$
             context.push();
-            context.put("label = {0};",
+            context.put("label = {0};", //$NON-NLS-1$
                     toLiteral(node.getElement().getDescription().getName()));
             for (VisualNode element : node.getNodes()) {
                 element.accept(this, context);
             }
             context.pop();
-            context.put("}");
+            context.put("}"); //$NON-NLS-1$
             return null;
         }
 
@@ -516,22 +518,22 @@ public final class VisualGraphEmitter {
             switch (element.getDescription().getKind()) {
             case INPUT:
             case OUTPUT:
-                context.put("{0} [shape=invhouse, label={1}];",
+                context.put("{0} [shape=invhouse, label={1}];", //$NON-NLS-1$
                         toLiteral(node.getId().toString()),
                         toLiteral(element.getDescription().getName()));
                 break;
             case OPERATOR:
-                context.put("{0} [shape=box, label={1}];",
+                context.put("{0} [shape=box, label={1}];", //$NON-NLS-1$
                         toLiteral(node.getId().toString()),
                         toLiteral(toOperatorName(node)));
                 break;
             case FLOW_COMPONENT:
-                context.put("{0} [shape=component, label={1}];",
+                context.put("{0} [shape=component, label={1}];", //$NON-NLS-1$
                         toLiteral(node.getId().toString()),
                         toLiteral(element.getDescription().getName()));
                 break;
             default:
-                context.put("{0} [shape=point];",
+                context.put("{0} [shape=point];", //$NON-NLS-1$
                         toLiteral(node.getId().toString()));
                 break;
             }
@@ -541,9 +543,9 @@ public final class VisualGraphEmitter {
         @Override
         protected Void visitLabel(EmitContext context, VisualLabel node) {
             if (node.getLabel() == null) {
-                context.put("{0} [shape=point];", toLiteral(node.getId().toString()));
+                context.put("{0} [shape=point];", toLiteral(node.getId().toString())); //$NON-NLS-1$
             } else {
-                context.put("{0} [shape=ellipse, label={1}];",
+                context.put("{0} [shape=ellipse, label={1}];", //$NON-NLS-1$
                         toLiteral(node.getId().toString()),
                         toLiteral(node.getLabel()));
             }
@@ -556,9 +558,9 @@ public final class VisualGraphEmitter {
             assert element.getDescription().getKind() == FlowElementKind.OPERATOR;
             OperatorDescription desc = (OperatorDescription) element.getDescription();
             StringBuilder buf = new StringBuilder();
-            buf.append("@");
+            buf.append("@"); //$NON-NLS-1$
             buf.append(desc.getDeclaration().getAnnotationType().getSimpleName());
-            buf.append("\n");
+            buf.append("\n"); //$NON-NLS-1$
             buf.append(desc.getName());
             return buf.toString();
         }

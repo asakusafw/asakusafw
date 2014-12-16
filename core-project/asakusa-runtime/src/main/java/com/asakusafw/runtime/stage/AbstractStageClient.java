@@ -62,57 +62,57 @@ public abstract class AbstractStageClient extends BaseStageClient {
     /**
      * {@link #getStageOutputPath()}のメソッド名。
      */
-    public static final String METHOD_STAGE_OUTPUT_PATH = "getStageOutputPath";
+    public static final String METHOD_STAGE_OUTPUT_PATH = "getStageOutputPath"; //$NON-NLS-1$
 
     /**
      * {@link #getStageInputs()}のメソッド名。
      */
-    public static final String METHOD_STAGE_INPUTS = "getStageInputs";
+    public static final String METHOD_STAGE_INPUTS = "getStageInputs"; //$NON-NLS-1$
 
     /**
      * {@link #getStageOutputs()}のメソッド名。
      */
-    public static final String METHOD_STAGE_OUTPUTS = "getStageOutputs";
+    public static final String METHOD_STAGE_OUTPUTS = "getStageOutputs"; //$NON-NLS-1$
 
     /**
      * {@link #getStageResources()}のメソッド名。
      */
-    public static final String METHOD_STAGE_RESOURCES = "getStageResources";
+    public static final String METHOD_STAGE_RESOURCES = "getStageResources"; //$NON-NLS-1$
 
     /**
      * {@link #getShuffleKeyClassOrNull()}のメソッド名。
      */
-    public static final String METHOD_SHUFFLE_KEY_CLASS = "getShuffleKeyClassOrNull";
+    public static final String METHOD_SHUFFLE_KEY_CLASS = "getShuffleKeyClassOrNull"; //$NON-NLS-1$
 
     /**
      * {@link #getShuffleValueClassOrNull()}のメソッド名。
      */
-    public static final String METHOD_SHUFFLE_VALUE_CLASS = "getShuffleValueClassOrNull";
+    public static final String METHOD_SHUFFLE_VALUE_CLASS = "getShuffleValueClassOrNull"; //$NON-NLS-1$
 
     /**
      * {@link #getPartitionerClassOrNull()}のメソッド名。
      */
-    public static final String METHOD_PARTITIONER_CLASS = "getPartitionerClassOrNull";
+    public static final String METHOD_PARTITIONER_CLASS = "getPartitionerClassOrNull"; //$NON-NLS-1$
 
     /**
      * {@link #getCombinerClassOrNull()}のメソッド名。
      */
-    public static final String METHOD_COMBINER_CLASS = "getCombinerClassOrNull";
+    public static final String METHOD_COMBINER_CLASS = "getCombinerClassOrNull"; //$NON-NLS-1$
 
     /**
      * {@link #getSortComparatorClassOrNull()}のメソッド名。
      */
-    public static final String METHOD_SORT_COMPARATOR_CLASS = "getSortComparatorClassOrNull";
+    public static final String METHOD_SORT_COMPARATOR_CLASS = "getSortComparatorClassOrNull"; //$NON-NLS-1$
 
     /**
      * {@link #getGroupingComparatorClassOrNull()}のメソッド名。
      */
-    public static final String METHOD_GROUPING_COMPARATOR_CLASS = "getGroupingComparatorClassOrNull";
+    public static final String METHOD_GROUPING_COMPARATOR_CLASS = "getGroupingComparatorClassOrNull"; //$NON-NLS-1$
 
     /**
      * {@link #getReducerClassOrNull()}のメソッド名。
      */
-    public static final String METHOD_REDUCER_CLASS = "getReducerClassOrNull";
+    public static final String METHOD_REDUCER_CLASS = "getReducerClassOrNull"; //$NON-NLS-1$
 
     static final Log LOG = LogFactory.getLog(AbstractStageClient.class);
 
@@ -294,7 +294,7 @@ public abstract class AbstractStageClient extends BaseStageClient {
         String operationId = getOperationId();
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug(MessageFormat.format("Hadoop Job Client: {0}", clientClass.getName()));
+            LOG.debug(MessageFormat.format("Hadoop Job Client: {0}", clientClass.getName())); //$NON-NLS-1$
         }
         String jar = job.getConfiguration().get(PROP_APPLICATION_JAR);
         if (jar == null || (job.getConfiguration() instanceof JobConf) == false) {
@@ -304,7 +304,7 @@ public abstract class AbstractStageClient extends BaseStageClient {
         }
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug(MessageFormat.format("Hadoop Job Name: {0}", operationId));
+            LOG.debug(MessageFormat.format("Hadoop Job Name: {0}", operationId)); //$NON-NLS-1$
         }
         job.setJobName(operationId);
     }
@@ -319,7 +319,7 @@ public abstract class AbstractStageClient extends BaseStageClient {
             Map<String, String> attributes = input.getAttributes();
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "Input: path={0}, format={1}, mapper={2}, attributes={3}",
+                        "Input: path={0}, format={1}, mapper={2}, attributes={3}", //$NON-NLS-1$
                         expanded,
                         formatClass.getName(),
                         mapperClass.getName(),
@@ -337,12 +337,12 @@ public abstract class AbstractStageClient extends BaseStageClient {
         Class<? extends Reducer> reducer = getReducerClassOrNull();
         if (reducer != null) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug(MessageFormat.format("Reducer: {0}", reducer.getName()));
+                LOG.debug(MessageFormat.format("Reducer: {0}", reducer.getName())); //$NON-NLS-1$
             }
             job.setReducerClass(reducer);
         } else {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Reducer: N/A");
+                LOG.debug("Reducer: N/A"); //$NON-NLS-1$
             }
             job.setNumReduceTasks(0);
             return;
@@ -352,7 +352,7 @@ public abstract class AbstractStageClient extends BaseStageClient {
         Class<? extends Writable> outputValueClass = or(getShuffleValueClassOrNull(), NullWritable.class);
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Shuffle: key={0}, value={1}",
+                    "Shuffle: key={0}, value={1}", //$NON-NLS-1$
                     outputKeyClass.getName(),
                     outputValueClass.getName()));
         }
@@ -362,48 +362,48 @@ public abstract class AbstractStageClient extends BaseStageClient {
         Class<? extends Reducer> combiner = getCombinerClassOrNull();
         if (combiner != null) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug(MessageFormat.format("Combiner: {0}", combiner.getName()));
+                LOG.debug(MessageFormat.format("Combiner: {0}", combiner.getName())); //$NON-NLS-1$
             }
             job.setCombinerClass(combiner);
         } else {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Combiner: N/A");
+                LOG.debug("Combiner: N/A"); //$NON-NLS-1$
             }
         }
 
         Class<? extends Partitioner> partitioner = getPartitionerClassOrNull();
         if (partitioner != null) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug(MessageFormat.format("Partitioner: {0}", partitioner.getName()));
+                LOG.debug(MessageFormat.format("Partitioner: {0}", partitioner.getName())); //$NON-NLS-1$
             }
             job.setPartitionerClass(partitioner);
         } else {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Partitioner: DEFAULT");
+                LOG.debug("Partitioner: DEFAULT"); //$NON-NLS-1$
             }
         }
 
         Class<? extends RawComparator> groupingComparator = getGroupingComparatorClassOrNull();
         if (groupingComparator != null) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug(MessageFormat.format("GroupingComparator: {0}", groupingComparator.getName()));
+                LOG.debug(MessageFormat.format("GroupingComparator: {0}", groupingComparator.getName())); //$NON-NLS-1$
             }
             job.setGroupingComparatorClass(groupingComparator);
         } else {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("GroupingComparator: DEFAULT");
+                LOG.debug("GroupingComparator: DEFAULT"); //$NON-NLS-1$
             }
         }
 
         Class<? extends RawComparator> sortComparator = getSortComparatorClassOrNull();
         if (sortComparator != null) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug(MessageFormat.format("SortComparator: {0}", sortComparator.getName()));
+                LOG.debug(MessageFormat.format("SortComparator: {0}", sortComparator.getName())); //$NON-NLS-1$
             }
             job.setSortComparatorClass(sortComparator);
         } else {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("SortComparator: DEFAULT");
+                LOG.debug("SortComparator: DEFAULT"); //$NON-NLS-1$
             }
         }
     }
@@ -413,7 +413,10 @@ public abstract class AbstractStageClient extends BaseStageClient {
         for (StageResource cache : resources) {
             String resolved = variables.parse(cache.getLocation());
             if (LOG.isDebugEnabled()) {
-                LOG.debug(MessageFormat.format("Distributed Cache: {0} @ {1}", cache.getName(), resolved));
+                LOG.debug(MessageFormat.format(
+                        "Distributed Cache: {0} @ {1}", //$NON-NLS-1$
+                        cache.getName(),
+                        resolved));
             }
             if (RuntimeContext.get().isSimulation()) {
                 LOG.info("Preparing distributed cache is skipped in simulation mode");
@@ -434,7 +437,7 @@ public abstract class AbstractStageClient extends BaseStageClient {
             Map<String, String> attributes = output.getAttributes();
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "Output: path={0}/{1}-*, format={2}, key={3}, value={4}, attributes={5}",
+                        "Output: path={0}/{1}-*, format={2}, key={3}, value={4}, attributes={5}", //$NON-NLS-1$
                         outputPath,
                         name,
                         formatClass.getName(),
@@ -450,7 +453,7 @@ public abstract class AbstractStageClient extends BaseStageClient {
         job.setOutputValueClass(NullWritable.class);
         job.setOutputFormatClass(StageOutputFormat.class);
         job.getConfiguration().setClass(
-                "mapred.output.committer.class",
+                "mapred.output.committer.class", //$NON-NLS-1$
                 LegacyBridgeOutputCommitter.class,
                 org.apache.hadoop.mapred.OutputCommitter.class);
     }
@@ -503,7 +506,7 @@ public abstract class AbstractStageClient extends BaseStageClient {
 
         @Override
         public String toString() {
-            return "Hadoop job runner";
+            return "Hadoop job runner"; //$NON-NLS-1$
         }
     }
 }

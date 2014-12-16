@@ -143,7 +143,7 @@ public class Tracepoint {
     @Override
     public String toString() {
         return MessageFormat.format(
-                "{0}#{1}-{2}({3})",
+                "{0}#{1}-{2}({3})", //$NON-NLS-1$
                 operatorClassName,
                 operatorMethodName,
                 portKind,

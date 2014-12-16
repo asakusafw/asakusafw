@@ -42,12 +42,12 @@ public abstract class AbstractCleanupStageClient extends BaseStageClient {
     /**
      * Fully qualified class name of implementation of this class.
      */
-    public static final String IMPLEMENTATION = "com.asakusafw.runtime.stage.CleanupStageClient";
+    public static final String IMPLEMENTATION = "com.asakusafw.runtime.stage.CleanupStageClient"; //$NON-NLS-1$
 
     /**
      * The method name of {@link #getCleanupPath()}.
      */
-    public static final String METHOD_CLEANUP_PATH = "getCleanupPath";
+    public static final String METHOD_CLEANUP_PATH = "getCleanupPath"; //$NON-NLS-1$
 
     static final Log LOG = LogFactory.getLog(AbstractCleanupStageClient.class);
 
@@ -63,7 +63,7 @@ public abstract class AbstractCleanupStageClient extends BaseStageClient {
         Path path = getPath(conf);
         FileSystem fileSystem = FileSystem.get(path.toUri(), conf);
         String info = MessageFormat.format(
-                "batchId={0}, flowId={1}, executionId={2}, operationId={3}, path={4}",
+                "batchId={0}, flowId={1}, executionId={2}, operationId={3}, path={4}", //$NON-NLS-1$
                 getBatchId(),
                 getFlowId(),
                 getExecutionId(),

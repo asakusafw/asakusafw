@@ -91,7 +91,7 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
         }
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Start computing splits for Direct I/O: input={0}",
+                    "Start computing splits for Direct I/O: input={0}", //$NON-NLS-1$
                     inputList.size()));
         }
         long t0 = -1L;
@@ -122,7 +122,7 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
             results.add(new NullInputSplit());
         }
         if (LOG.isInfoEnabled()) {
-            String type = "(unknown)";
+            String type = "(unknown)"; //$NON-NLS-1$
             if (patternGroups.isEmpty() == false) {
                 type = patternGroups.keySet().iterator().next().dataType.getName();
             }
@@ -178,7 +178,7 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
         if (input.componentPath.isEmpty()) {
             return containerPath;
         }
-        return String.format("%s/%s", containerPath, input.componentPath);
+        return String.format("%s/%s", containerPath, input.componentPath); //$NON-NLS-1$
     }
 
     private Map<DirectInputGroup, List<InputPath>> extractInputList(
@@ -188,7 +188,7 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
         assert context != null;
         assert repo != null;
         assert inputList != null;
-        String arguments = context.getConfiguration().get(StageConstants.PROP_ASAKUSA_BATCH_ARGS, "");
+        String arguments = context.getConfiguration().get(StageConstants.PROP_ASAKUSA_BATCH_ARGS, ""); //$NON-NLS-1$
         VariableTable variables = new VariableTable(VariableTable.RedefineStrategy.IGNORE);
         variables.defineVariables(arguments);
 
@@ -245,7 +245,7 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
         if (value == null) {
             value = DirectDataSourceConstants.DEFAULT_OPTIONAL;
         }
-        return value.equals("true");
+        return value.equals("true"); //$NON-NLS-1$
     }
 
     private Class<?> extractDataClass(JobContext context, StageInput input) throws IOException {

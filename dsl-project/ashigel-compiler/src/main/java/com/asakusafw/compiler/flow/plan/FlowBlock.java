@@ -116,7 +116,7 @@ public class FlowBlock {
             reduces += block.isReduceBlock() ? 1 : 0;
         }
         if (reduces != 0 && reduces != blocks.size()) {
-            throw new IllegalArgumentException("Cannot merge map blocks and reduce blocks");
+            throw new IllegalArgumentException("Cannot merge map blocks and reduce blocks"); //$NON-NLS-1$
         }
         final Set<PortConnection> empty = Collections.<PortConnection>emptySet();
         FlowBlock result = new FlowBlock(minSerialNumber, graph);
@@ -160,7 +160,7 @@ public class FlowBlock {
         Precondition.checkMustNotBeNull(elements, "elements"); //$NON-NLS-1$
         int shuffles = countShuffleBoundary(inputs);
         if (shuffles != 0 && shuffles != inputs.size()) {
-            throw new IllegalArgumentException("inputs must not be shuffle bounds partially");
+            throw new IllegalArgumentException("inputs must not be shuffle bounds partially"); //$NON-NLS-1$
         }
         this.serialNumber = serialNumber;
         this.source = source;
@@ -342,7 +342,7 @@ public class FlowBlock {
     public boolean isSucceedingReduceBlock() {
         if (detached == false) {
             throw new IllegalStateException(MessageFormat.format(
-                    "{0} was not detached",
+                    "{0} was not detached", //$NON-NLS-1$
                     this));
         }
         for (FlowBlock.Output output : blockOutputs) {
@@ -367,7 +367,7 @@ public class FlowBlock {
         if (detached) {
             return;
         }
-        LOG.debug("{}を{}からデタッチします", this, getSource());
+        LOG.debug("detaching from {}: {}", getSource(), this); //$NON-NLS-1$
         Map<FlowElement, FlowElement> elementMapping = Maps.create();
         Map<FlowElementInput, FlowElementInput> inputMapping = Maps.create();
         Map<FlowElementOutput, FlowElementOutput> outputMapping = Maps.create();
@@ -419,7 +419,7 @@ public class FlowBlock {
         assert inputMapping != null;
         assert outputMapping != null;
 
-        LOG.debug("Unifying elements: {}", this);
+        LOG.debug("Unifying elements: {}", this); //$NON-NLS-1$
 
         Map<Object, FlowElement> unifier = Maps.create();
         Map<FlowElement, FlowElement> unifiedElements = Maps.create();
@@ -437,7 +437,7 @@ public class FlowBlock {
                 unifier.put(orig.getIdentity(), unified);
             }  else {
                 unified = unifier.get(orig.getIdentity());
-                LOG.debug("Unify {} -> {}", dest, unified);
+                LOG.debug("Unify {} -> {}", dest, unified); //$NON-NLS-1$
             }
             unifiedElements.put(dest, unified);
             List<FlowElementInput> srcInput = orig.getInputPorts();
@@ -533,7 +533,7 @@ public class FlowBlock {
                 map.put(elementPort, blockPort);
                 blockPort.setElementPort(elementPort);
             } else {
-                LOG.debug("Input port {} will be unified", blockPort);
+                LOG.debug("Input port {} will be unified", blockPort); //$NON-NLS-1$
                 iter.remove();
                 for (FlowBlock.Connection conn : blockPort.getConnections()) {
                     FlowBlock.Output opposite = conn.getUpstream();
@@ -561,7 +561,7 @@ public class FlowBlock {
                 map.put(elementPort, blockPort);
                 blockPort.setElementPort(elementPort);
             } else {
-                LOG.debug("Output port {} will be unified", blockPort);
+                LOG.debug("Output port {} will be unified", blockPort); //$NON-NLS-1$
                 iter.remove();
                 for (FlowBlock.Connection conn : blockPort.getConnections()) {
                     FlowBlock.Input opposite = conn.getDownstream();
@@ -598,10 +598,10 @@ public class FlowBlock {
     public boolean compaction() {
         if (detached == false) {
             throw new IllegalStateException(MessageFormat.format(
-                    "{0} was not detached",
+                    "{0} was not detached", //$NON-NLS-1$
                     this));
         }
-        LOG.debug("Applying compaction: {}", this);
+        LOG.debug("Applying compaction: {}", this); //$NON-NLS-1$
         boolean changed = false;
         boolean localChanged;
         do {
@@ -621,13 +621,13 @@ public class FlowBlock {
 
     private boolean mergeSameBlockEdges() {
         boolean changed = false;
-        LOG.debug("Merging same block edges: {}", this);
+        LOG.debug("Merging same block edges: {}", this); //$NON-NLS-1$
 
         Map<FlowElementInput, FlowBlock.Input> inputMapping = Maps.create();
         for (FlowBlock.Input port : blockInputs) {
             FlowBlock.Input prime = inputMapping.get(port.getElementPort());
             if (prime != null) {
-                LOG.debug("Merging block input: {} on {}", port, this);
+                LOG.debug("Merging block input: {} on {}", port, this); //$NON-NLS-1$
                 for (FlowBlock.Connection conn : port.getConnections()) {
                     FlowBlock.connect(conn.getUpstream(), prime);
                 }
@@ -642,7 +642,7 @@ public class FlowBlock {
         for (FlowBlock.Output port : blockOutputs) {
             FlowBlock.Output prime = outputMapping.get(port.getElementPort());
             if (prime != null) {
-                LOG.debug("Merging block output: {} on {}", port, this);
+                LOG.debug("Merging block output: {} on {}", port, this); //$NON-NLS-1$
                 for (FlowBlock.Connection conn : port.getConnections()) {
                     FlowBlock.connect(prime, conn.getDownstream());
                 }
@@ -658,14 +658,14 @@ public class FlowBlock {
 
     private boolean trimDisconnectedBlockEdges() {
         boolean changed = false;
-        LOG.debug("Searching for disconnected block edges: {}", this);
+        LOG.debug("Searching for disconnected block edges: {}", this); //$NON-NLS-1$
 
         // 他のブロックと接続されていない入力を削除
         Iterator<FlowBlock.Input> inputs = blockInputs.iterator();
         while (inputs.hasNext()) {
             FlowBlock.Input port = inputs.next();
             if (port.getConnections().isEmpty()) {
-                LOG.debug("Deleting unnecessary block edge: {} on {}", port, this);
+                LOG.debug("Deleting unnecessary block edge: {} on {}", port, this); //$NON-NLS-1$
                 inputs.remove();
                 changed = true;
             }
@@ -676,7 +676,7 @@ public class FlowBlock {
         while (outputs.hasNext()) {
             FlowBlock.Output port = outputs.next();
             if (port.getConnections().isEmpty()) {
-                LOG.debug("Deleting dead block edge: {} on {}", port, this);
+                LOG.debug("Deleting dead block edge: {} on {}", port, this); //$NON-NLS-1$
                 outputs.remove();
                 changed = true;
             }
@@ -686,7 +686,7 @@ public class FlowBlock {
 
     private boolean trimDeadElements() {
         boolean changed = false;
-        LOG.debug("Searching for unnecessary operators: {}", this);
+        LOG.debug("Searching for unnecessary operators: {}", this); //$NON-NLS-1$
 
         Set<FlowElement> blockEdge = collectBlockEdges();
         Set<FlowElement> removed = Sets.create();
@@ -708,7 +708,7 @@ public class FlowBlock {
 
             if (FlowGraphUtil.isAlwaysEmpty(element)) {
                 // ひとつ以上の入力が存在し、かつすべての入力が他のいずれの要素にも結線されていない要素
-                LOG.debug("Deleting operator without input: {} on {}", element, this);
+                LOG.debug("Deleting operator without input: {} on {}", element, this); //$NON-NLS-1$
 
                 // 後続する要素に対する処理を発火させたのち、この要素を除去
                 work.addAll(FlowGraphUtil.getSuccessors(element));
@@ -719,7 +719,7 @@ public class FlowBlock {
                     && FlowGraphUtil.hasMandatorySideEffect(element) == false) {
                 // ひとつ以上の出力が存在し、かつすべての出力が他のいずれの要素にも結線されていない、
                 // かつat least onceの特性を持たない要素
-                LOG.debug("Deleting operator without output: {} on {}", element, this);
+                LOG.debug("Deleting operator without output: {} on {}", element, this); //$NON-NLS-1$
 
                 // 先行する要素に対する処理を発火させたのち、この要素を除去
                 work.addAll(FlowGraphUtil.getPredecessors(element));
@@ -734,7 +734,7 @@ public class FlowBlock {
 
     private boolean trimDeadBlockEdges() {
         boolean changed = false;
-        LOG.debug("Searching for unnecessary block edges: {}", this);
+        LOG.debug("Searching for unnecessary block edges: {}", this); //$NON-NLS-1$
 
         Set<FlowElement> inputElements = Sets.create();
         Set<FlowElement> outputElements = Sets.create();
@@ -750,7 +750,7 @@ public class FlowBlock {
             if (FlowGraphUtil.hasSuccessors(element) == false
                     && FlowGraphUtil.hasMandatorySideEffect(element) == false
                     && outputElements.contains(element) == false) {
-                LOG.debug("Deleting unnecessary input: {} on {}", port, this);
+                LOG.debug("Deleting unnecessary input: {} on {}", port, this); //$NON-NLS-1$
                 port.disconnect();
                 inputs.remove();
                 changed = true;
@@ -766,7 +766,7 @@ public class FlowBlock {
             FlowElement element = port.getElementPort().getOwner();
             if (FlowGraphUtil.hasPredecessors(element) == false
                     && inputElements.contains(element) == false) {
-                LOG.debug("Deleting unnecessary output: {} on {}", port, this);
+                LOG.debug("Deleting unnecessary output: {} on {}", port, this); //$NON-NLS-1$
                 port.disconnect();
                 outputs.remove();
                 changed = true;
@@ -822,7 +822,7 @@ public class FlowBlock {
             for (int i = 1, n = upstream.size(); i < n; i++) {
                 FlowBlock.Output otherTarget = upstream.get(i);
                 FlowElement otherElement = otherTarget.getElementPort().getOwner();
-                LOG.debug("Unifying pseud element: {} -> {}", otherElement, primaryElement);
+                LOG.debug("Unifying pseud element: {} -> {}", otherElement, primaryElement); //$NON-NLS-1$
 
                 assert otherElement.getDescription().getKind() == FlowElementKind.PSEUD;
                 assert otherElement.getInputPorts().size() == 1;
@@ -845,7 +845,7 @@ public class FlowBlock {
      * @return 実際に削除した場合は{@code true}
      */
     public boolean collectGarbages() {
-        LOG.debug("{}の不要になった要素を削除しています", this);
+        LOG.debug("removing dead operators: {}", this); //$NON-NLS-1$
         Set<FlowElement> blockEdge = collectBlockEdges();
         boolean changed = false;
         LOOP: for (Iterator<FlowElement> iter = elements.iterator(); iter.hasNext();) {
@@ -889,10 +889,10 @@ public class FlowBlock {
     @Override
     public String toString() {
         return MessageFormat.format(
-                "FlowBlock[{1}]({0}) - {2}..",
+                "FlowBlock[{1}]({0}) - {2}..", //$NON-NLS-1$
                 String.valueOf(serialNumber),
-                isReduceBlock() ? "R" : "M",
-                getBlockInputs().isEmpty() ? "?" : getBlockInputs().get(0));
+                isReduceBlock() ? "R" : "M", //$NON-NLS-1$ //$NON-NLS-2$
+                getBlockInputs().isEmpty() ? "?" : getBlockInputs().get(0)); //$NON-NLS-1$
     }
 
     /**
@@ -971,7 +971,7 @@ public class FlowBlock {
         @Override
         public String toString() {
             return MessageFormat.format(
-                    "{0}'{'owner=FlowBlock@{1}'}'",
+                    "{0}'{'owner=FlowBlock@{1}'}'", //$NON-NLS-1$
                     getElementPort(),
                     String.valueOf(FlowBlock.this.hashCode()));
         }
@@ -1062,7 +1062,7 @@ public class FlowBlock {
         @Override
         public String toString() {
             return MessageFormat.format(
-                    "{0}'{'owner=FlowBlock@{1}'}'",
+                    "{0}'{'owner=FlowBlock@{1}'}'", //$NON-NLS-1$
                     getElementPort(),
                     String.valueOf(FlowBlock.this.hashCode()));
         }
@@ -1117,7 +1117,7 @@ public class FlowBlock {
         @Override
         public String toString() {
             return MessageFormat.format(
-                    "{0} => {1}",
+                    "{0} => {1}", //$NON-NLS-1$
                     getUpstream(),
                     getDownstream());
         }

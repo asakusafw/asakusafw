@@ -24,22 +24,22 @@ public final class Constants {
     /**
      * The abstract resource name of JDBC.
      */
-    public static final String JDBC_RESOURCE_NAME = "jdbc";
+    public static final String JDBC_RESOURCE_NAME = "jdbc"; //$NON-NLS-1$
 
     /**
      * The abstract resource name of hadoop file systems.
      */
-    public static final String HADOOP_FILE_RESOURCE_NAME = "hadoop";
+    public static final String HADOOP_FILE_RESOURCE_NAME = "hadoop"; //$NON-NLS-1$
 
     /**
      * The abstract resource name of local file systems.
      */
-    public static final String LOCAL_FILE_RESOURCE_NAME = "local";
+    public static final String LOCAL_FILE_RESOURCE_NAME = "local"; //$NON-NLS-1$
 
     /**
      * The default process provider name.
      */
-    public static final String DEFAULT_PROCESS_NAME = "basic";
+    public static final String DEFAULT_PROCESS_NAME = "basic"; //$NON-NLS-1$
 
     private Constants() {
         return;

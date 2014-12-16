@@ -119,7 +119,7 @@ public class ExcelSheetDataModelSource implements DataModelSource {
     private PropertyName toPropertyName(Cell cell, String name) {
         assert cell != null;
         assert name != null;
-        String[] words = name.split("(_|-)+");
+        String[] words = name.split("(_|-)+"); //$NON-NLS-1$
         return PropertyName.newInstance(words);
     }
 

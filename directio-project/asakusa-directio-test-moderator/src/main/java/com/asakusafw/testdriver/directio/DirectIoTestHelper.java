@@ -60,11 +60,11 @@ import com.asakusafw.vocabulary.directio.DirectFileOutputDescription;
  */
 public final class DirectIoTestHelper {
 
-    private static final FilePattern ALL = FilePattern.compile("**");
+    private static final FilePattern ALL = FilePattern.compile("**"); //$NON-NLS-1$
 
-    private static final String WILDCARD_REPLACEMENT = "__testing__";
+    private static final String WILDCARD_REPLACEMENT = "__testing__"; //$NON-NLS-1$
 
-    private static final String ENV_FRAMEWORK_HOME = "ASAKUSA_HOME";
+    private static final String ENV_FRAMEWORK_HOME = "ASAKUSA_HOME"; //$NON-NLS-1$
 
     static final Logger LOG = LoggerFactory.getLogger(DirectIoTestHelper.class);
 
@@ -103,11 +103,11 @@ public final class DirectIoTestHelper {
         }
         this.context = context;
         this.hadoopConfiguration = createConfiguration();
-        LOG.debug("Creating test helper for Direct I/O (basePath={})", rootPath);
+        LOG.debug("Creating test helper for Direct I/O (basePath={})", rootPath); //$NON-NLS-1$
         this.variables = new VariableTable(RedefineStrategy.ERROR);
         variables.defineVariables(context.getArguments());
         String resolvedRootPath = resolve(rootPath);
-        LOG.debug("Resolved base path: {} -> {}", rootPath, resolvedRootPath);
+        LOG.debug("Resolved base path: {} -> {}", rootPath, resolvedRootPath); //$NON-NLS-1$
         DirectDataSourceRepository repo = getRepository();
         try {
             this.id = repo.getRelatedId(resolvedRootPath);
@@ -118,12 +118,12 @@ public final class DirectIoTestHelper {
                     resolvedRootPath,
                     findExtraConfiguration()), e);
         } catch (InterruptedException e) {
-            throw (IOException) new InterruptedIOException("interrupted").initCause(e);
+            throw (IOException) new InterruptedIOException("interrupted").initCause(e); //$NON-NLS-1$
         }
         this.fullPath = resolvedRootPath;
         this.containerPath = repo.getContainerPath(resolvedRootPath);
         this.basePath = repo.getComponentPath(resolvedRootPath);
-        LOG.debug("Direct I/O Mapping: {} -> id={}", resolvedRootPath, id);
+        LOG.debug("Direct I/O Mapping: {} -> id={}", resolvedRootPath, id); //$NON-NLS-1$
     }
 
     private synchronized DirectDataSourceRepository getRepository() {
@@ -192,14 +192,14 @@ public final class DirectIoTestHelper {
     public void truncate() throws IOException {
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Truncating Direct I/O resources: {0} (id={1})",
+                    "Truncating Direct I/O resources: {0} (id={1})", //$NON-NLS-1$
                     fullPath,
                     id));
         }
         try {
             dataSource.delete(basePath, ALL, true, new Counter());
         } catch (InterruptedException e) {
-            throw (IOException) new InterruptedIOException("interrupted").initCause(e);
+            throw (IOException) new InterruptedIOException("interrupted").initCause(e); //$NON-NLS-1$
         }
     }
 
@@ -226,7 +226,7 @@ public final class DirectIoTestHelper {
         String outputPath = toOutputName(description.getResourcePattern());
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Opening {0}/{1} for output (id={2}, description={3})",
+                    "Opening {0}/{1} for output (id={2}, description={3})", //$NON-NLS-1$
                     fullPath,
                     outputPath,
                     id,
@@ -253,12 +253,12 @@ public final class DirectIoTestHelper {
                         dataSource.commitTransactionOutput(outputContext.getTransactionContext());
                         dataSource.cleanupTransactionOutput(outputContext.getTransactionContext());
                     } catch (InterruptedException e) {
-                        throw (IOException) new InterruptedIOException("interrupted").initCause(e);
+                        throw (IOException) new InterruptedIOException("interrupted").initCause(e); //$NON-NLS-1$
                     }
                 }
             };
         } catch (InterruptedException e) {
-            throw (IOException) new InterruptedIOException("interrupted").initCause(e);
+            throw (IOException) new InterruptedIOException("interrupted").initCause(e); //$NON-NLS-1$
         }
     }
 
@@ -287,7 +287,7 @@ public final class DirectIoTestHelper {
             FilePattern pattern = toInputPattern(description.getResourcePattern());
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "Opening {0}/{1} for input (id={2}, description={3})",
+                        "Opening {0}/{1} for input (id={2}, description={3})", //$NON-NLS-1$
                         fullPath,
                         pattern,
                         id,
@@ -311,7 +311,8 @@ public final class DirectIoTestHelper {
                             try {
                                 current = dataSource.openInput(definition, fragment, counter);
                             } catch (InterruptedException e) {
-                                throw (IOException) new InterruptedIOException("interrupted").initCause(e);
+                                throw (IOException) new InterruptedIOException(
+                                        "interrupted").initCause(e); //$NON-NLS-1$
                             }
                         }
                         assert current != null;
@@ -331,7 +332,7 @@ public final class DirectIoTestHelper {
                 }
             };
         } catch (InterruptedException e) {
-            throw (IOException) new InterruptedIOException("interrupted").initCause(e);
+            throw (IOException) new InterruptedIOException("interrupted").initCause(e); //$NON-NLS-1$
         }
     }
 

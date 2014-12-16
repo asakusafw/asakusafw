@@ -43,7 +43,7 @@ public class DirectImporterDescription extends TemporaryInputDescription {
         Precondition.checkMustNotBeNull(modelType, "modelType"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(paths, "paths"); //$NON-NLS-1$
         if (paths.isEmpty()) {
-            throw new IllegalArgumentException("paths must not be empty");
+            throw new IllegalArgumentException("paths must not be empty"); //$NON-NLS-1$
         }
         this.modelType = modelType;
         this.paths = Sets.freeze(paths);

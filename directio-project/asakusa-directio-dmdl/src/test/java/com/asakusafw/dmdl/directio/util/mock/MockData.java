@@ -13,17 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.dmdl.directio.hive.util.mock;
-
-import com.asakusafw.runtime.directio.DataFormat;
+package com.asakusafw.dmdl.directio.util.mock;
 
 /**
- * Mock {@link DataFormat}.
+ * Mock data model.
  */
-public class MockDataFormat implements DataFormat<MockData> {
+public class MockData {
 
-    @Override
-    public Class<MockData> getSupportedType() {
-        return MockData.class;
-    }
+    // no members.
 }

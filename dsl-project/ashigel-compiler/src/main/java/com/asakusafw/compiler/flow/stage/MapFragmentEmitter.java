@@ -101,7 +101,7 @@ public class MapFragmentEmitter {
         if (fragment.isRendezvous()) {
             throw new IllegalArgumentException();
         }
-        LOG.debug("{}に対するフラグメントクラスを生成します", fragment);
+        LOG.debug("start generating mapper fragment: {}", fragment); //$NON-NLS-1$
 
         Engine engine = new Engine(environment, stageBlock, fragment);
         CompilationUnit source = engine.generate();
@@ -113,7 +113,7 @@ public class MapFragmentEmitter {
             .getModelFactory()
             .newQualifiedName(packageName, simpleName);
 
-        LOG.debug("{}の処理には{}が利用されます", fragment, name);
+        LOG.debug("finish generating mapper fragment: {} ({})", fragment, name); //$NON-NLS-1$
         return new CompiledType(name);
     }
 
@@ -180,7 +180,7 @@ public class MapFragmentEmitter {
                     createJavadoc(),
                     new AttributeBuilder(factory)
                         .annotation(t(TraceLocation.class), createTraceLocationElements())
-                        .annotation(t(SuppressWarnings.class), v("deprecation"))
+                        .annotation(t(SuppressWarnings.class), v("deprecation")) //$NON-NLS-1$
                         .Public()
                         .Final()
                         .toAttributes(),
@@ -196,15 +196,19 @@ public class MapFragmentEmitter {
 
         private Map<String, Expression> createTraceLocationElements() {
             Map<String, Expression> results = new LinkedHashMap<String, Expression>();
-            results.put("batchId", Models.toLiteral(factory, environment.getBatchId()));
-            results.put("flowId", Models.toLiteral(factory, environment.getFlowId()));
-            results.put("stageId", Models.toLiteral(factory, Naming.getStageName(stageBlock.getStageNumber())));
-            results.put("fragmentId", Models.toLiteral(factory, String.valueOf(fragment.getSerialNumber())));
+            results.put("batchId", //$NON-NLS-1$
+                    Models.toLiteral(factory, environment.getBatchId()));
+            results.put("flowId", //$NON-NLS-1$
+                    Models.toLiteral(factory, environment.getFlowId()));
+            results.put("stageId", //$NON-NLS-1$
+                    Models.toLiteral(factory, Naming.getStageName(stageBlock.getStageNumber())));
+            results.put("fragmentId", //$NON-NLS-1$
+                    Models.toLiteral(factory, String.valueOf(fragment.getSerialNumber())));
             return results;
         }
 
         private MethodDeclaration createBody() {
-            SimpleName argument = names.create("result");
+            SimpleName argument = names.create("result"); //$NON-NLS-1$
             List<Statement> statements = createStatements(argument);
             return factory.newMethodDeclaration(
                     null,
@@ -249,7 +253,7 @@ public class MapFragmentEmitter {
             FlowElementProcessor proc = factor.getProcessor();
             assert proc.getKind() == Kind.LINE_PART;
             LinePartProcessor processor = (LinePartProcessor) proc;
-            LOG.debug("{}に{}を適用しています", factor, processor);
+            LOG.debug("applying {}: {}", processor, factor); //$NON-NLS-1$
 
             LinePartProcessor.Context context = createPartConext(factor, input);
             processor.emitLinePart(context);
@@ -266,7 +270,7 @@ public class MapFragmentEmitter {
             FlowElementProcessor proc = factor.getProcessor();
             assert proc.getKind() == Kind.LINE_END;
             LineEndProcessor processor = (LineEndProcessor) proc;
-            LOG.debug("{}に{}を適用しています", factor, processor);
+            LOG.debug("applying {}: {}", processor, factor); //$NON-NLS-1$
 
             LineEndProcessor.Context context = createEndConext(factor, input);
             processor.emitLineEnd(context);
@@ -276,12 +280,12 @@ public class MapFragmentEmitter {
         private void emitImplicitEnd(List<Statement> statements, Expression input) {
             assert statements != null;
             assert input != null;
-            LOG.debug("{}の末尾のプログラムを生成します", fragment);
+            LOG.debug("generating map fragment terminator: {}", fragment); //$NON-NLS-1$
 
             List<FlowElementOutput> outputs = fragment.getOutputPorts();
             // implicit endになりうるelementの出力ポートは
             // 基本的にひとつ。これが崩れたら修正を行うこと
-            assert outputs.size() == 1;
+            assert outputs.size() == 1 : "number of implicit end output port must be = 1"; //$NON-NLS-1$
 
             LineEndProcessor.Context context = createEndConext(null, input);
             ResultMirror result = context.getOutput(outputs.get(0).getDescription());
@@ -297,9 +301,9 @@ public class MapFragmentEmitter {
             FlowElementDescription description = factor.getElement().getDescription();
             if ((description instanceof OperatorDescription) == false) {
                 description = new OperatorDescription.Builder(Identity.class)
-                    .declare(Void.class, Void.class, "")
-                    .addInput("input", Object.class)
-                    .addOutput("output", Object.class)
+                    .declare(Void.class, Void.class, "") //$NON-NLS-1$
+                    .addInput("input", Object.class) //$NON-NLS-1$
+                    .addOutput("output", Object.class) //$NON-NLS-1$
                     .toDescription();
             }
             return new LinePartProcessor.Context(
@@ -329,9 +333,9 @@ public class MapFragmentEmitter {
             OperatorDescription description;
             if (factorOrNull == null) {
                 description = new OperatorDescription.Builder(Identity.class)
-                    .declare(Void.class, Void.class, "")
-                    .addInput("input", Object.class)
-                    .addOutput("output", Object.class)
+                    .declare(Void.class, Void.class, "") //$NON-NLS-1$
+                    .addInput("input", Object.class) //$NON-NLS-1$
+                    .addOutput("output", Object.class) //$NON-NLS-1$
                     .toDescription();
             } else {
                 FlowElementDescription desc = factorOrNull.getElement().getDescription();
@@ -368,8 +372,9 @@ public class MapFragmentEmitter {
 
         private Javadoc createJavadoc() {
             return new JavadocBuilder(factory)
-                .code("{0}", fragment.getInputPorts())
-                .text("の処理を担当するマッププログラムの断片。")
+                .text("A mapper fragment for processing") //$NON-NLS-1$
+                .code("{0}", fragment.getInputPorts()) //$NON-NLS-1$
+                .text(".") //$NON-NLS-1$
                 .toJavadoc();
         }
 

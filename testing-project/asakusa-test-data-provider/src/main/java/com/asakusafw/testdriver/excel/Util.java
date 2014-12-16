@@ -41,34 +41,36 @@ final class Util {
 
     static final Logger LOG = LoggerFactory.getLogger(Util.class);
 
-    private static final Pattern FRAGMENT = Pattern.compile(":(\\d+)|([^:].*)");
+    private static final Pattern FRAGMENT = Pattern.compile(":(\\d+)|([^:].*)"); //$NON-NLS-1$
 
-    private static final String HSSF_EXTENSION = ".xls";
+    private static final String HSSF_EXTENSION = ".xls"; //$NON-NLS-1$
 
-    private static final String XSSF_EXTENSION = ".xlsx";
+    private static final String XSSF_EXTENSION = ".xlsx"; //$NON-NLS-1$
 
-    private static final String FRAGMENT_FIRST_SHEET = ":0";
+    private static final String FRAGMENT_FIRST_SHEET = ":0"; //$NON-NLS-1$
 
     static Sheet extract(URI source) throws IOException {
         assert source != null;
         String path = source.getSchemeSpecificPart();
         if (isHssf(path) == false && isXssf(path) == false) {
-            LOG.debug("Not a Excel workbook: {}", source);
+            LOG.debug("Not a Excel workbook: {}", source); //$NON-NLS-1$
             return null;
         }
         String fragment = source.getFragment();
         if (fragment == null) {
             // the first sheet
             fragment = FRAGMENT_FIRST_SHEET;
-            LOG.debug("Fragment is not set, using first sheet: {}", source);
+            LOG.debug("Fragment is not set, using first sheet: {}", source); //$NON-NLS-1$
         }
         Matcher matcher = FRAGMENT.matcher(fragment);
         if (matcher.matches() == false) {
-            LOG.info("Invalid fragment: {}", source);
+            LOG.info(MessageFormat.format(
+                    "Invalid fragment: {0}",
+                    source));
             return null;
         }
 
-        LOG.debug("Processing Excel workbook: {}", source);
+        LOG.debug("Processing Excel workbook: {}", source); //$NON-NLS-1$
         URL url = source.toURL();
         InputStream in = url.openStream();
         Workbook book;
@@ -86,7 +88,7 @@ final class Util {
 
         if (matcher.group(1) != null) {
             int sheetNumber = Integer.parseInt(matcher.group(1));
-            LOG.debug("Opening sheet by index : {}", sheetNumber);
+            LOG.debug("Opening sheet by index : {}", sheetNumber); //$NON-NLS-1$
             try {
                 Sheet sheet = book.getSheetAt(sheetNumber);
                 assert sheet != null;
@@ -99,7 +101,7 @@ final class Util {
             }
         } else {
             String sheetName = matcher.group(2);
-            LOG.debug("Opening sheet by name : {}", sheetName);
+            LOG.debug("Opening sheet by name : {}", sheetName); //$NON-NLS-1$
             assert sheetName != null;
             Sheet sheet = book.getSheet(sheetName);
             if (sheet == null) {
@@ -169,7 +171,7 @@ final class Util {
         }
     }
 
-    private static final Pattern TEXT = Pattern.compile(".*\\[(.*?)\\]");
+    private static final Pattern TEXT = Pattern.compile(".*\\[(.*?)\\]"); //$NON-NLS-1$
     static String extractSymbol(String text) {
         assert text != null;
         Matcher matcher = TEXT.matcher(text);

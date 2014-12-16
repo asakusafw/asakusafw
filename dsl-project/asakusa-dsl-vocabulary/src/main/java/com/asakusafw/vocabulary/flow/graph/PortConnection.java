@@ -46,7 +46,7 @@ public class PortConnection {
         FlowElementPortDescription down = downstream.getDescription();
         if (down.getDataType().equals(up.getDataType()) == false) {
             throw new IllegalArgumentException(MessageFormat.format(
-                    "Invalid data type {0} ({1}) -> {2} ({3})",
+                    "Invalid data type {0} ({1}) -> {2} ({3})", //$NON-NLS-1$
                     up.getName(),
                     up.getDataType(),
                     down.getName(),
@@ -148,7 +148,7 @@ public class PortConnection {
     @Override
     public String toString() {
         return MessageFormat.format(
-                "{0} => {1}",
+                "{0} => {1}", //$NON-NLS-1$
                 getUpstream(),
                 getDownstream());
     }

@@ -43,19 +43,19 @@ public class ConfigurationFactory extends ConfigurationProvider {
      * The system property key of {@link LocalFileSystem} implementation class name.
      * @since 0.6.0
      */
-    public static final String KEY_LOCAL_FILE_SYSTEM = "asakusa.testdriver.fs";
+    public static final String KEY_LOCAL_FILE_SYSTEM = "asakusa.testdriver.fs"; //$NON-NLS-1$
 
     /**
      * The system property key of Hadoop configuration path.
      * @since 0.6.0
      */
-    public static final String KEY_EXPLICIT_HADOOP_CONF = "asakusa.testdriver.hadoop.conf";
+    public static final String KEY_EXPLICIT_HADOOP_CONF = "asakusa.testdriver.hadoop.conf"; //$NON-NLS-1$
 
     /**
      * The system property key of Hadoop command path.
      * @since 0.6.0
      */
-    public static final String KEY_EXPLICIT_HADOOP_COMMAND = "asakusa.testdriver.hadoop.command";
+    public static final String KEY_EXPLICIT_HADOOP_COMMAND = "asakusa.testdriver.hadoop.command"; //$NON-NLS-1$
 
     /**
      * The default value of {@link LocalFileSystem} implementation class name.
@@ -120,8 +120,8 @@ public class ConfigurationFactory extends ConfigurationProvider {
     @Override
     protected void configure(Configuration configuration) {
         if (preferences.getLocalFileSystemClassName() != null) {
-            configuration.set("fs.file.impl", preferences.getLocalFileSystemClassName());
-            configuration.setBoolean("fs.fs.impl.disable.cache", true);
+            configuration.set("fs.file.impl", preferences.getLocalFileSystemClassName()); //$NON-NLS-1$
+            configuration.setBoolean("fs.fs.impl.disable.cache", true); //$NON-NLS-1$
         }
     }
 

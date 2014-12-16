@@ -24,7 +24,7 @@ public enum CompareOperator {
     /**
      * {@code <}.
      */
-    LESS_THAN("<") {
+    LESS_THAN("<") { //$NON-NLS-1$
         @Override
         public <T extends Comparable<T>> boolean satisfies(T a, T b) {
             if (a == null || b == null) {
@@ -37,7 +37,7 @@ public enum CompareOperator {
     /**
      * {@code >}.
      */
-    GREATER_THAN(">") {
+    GREATER_THAN(">") { //$NON-NLS-1$
         @Override
         public <T extends Comparable<T>> boolean satisfies(T a, T b) {
             if (a == null || b == null) {
@@ -50,7 +50,7 @@ public enum CompareOperator {
     /**
      * {@code <=}.
      */
-    LESS_THAN_OR_EQUAL("<=") {
+    LESS_THAN_OR_EQUAL("<=") { //$NON-NLS-1$
         @Override
         public <T extends Comparable<T>> boolean satisfies(T a, T b) {
             if (a == null || b == null) {
@@ -63,7 +63,7 @@ public enum CompareOperator {
     /**
      * {@code >=}.
      */
-    GREATER_THAN_OR_EQUAL(">=") {
+    GREATER_THAN_OR_EQUAL(">=") { //$NON-NLS-1$
         @Override
         public <T extends Comparable<T>> boolean satisfies(T a, T b) {
             if (a == null || b == null) {

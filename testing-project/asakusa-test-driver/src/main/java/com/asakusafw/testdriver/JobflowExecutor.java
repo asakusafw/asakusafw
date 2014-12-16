@@ -88,12 +88,12 @@ public class JobflowExecutor {
         FileSystem fs = FileSystem.get(conf);
         Path path = new Path(context.getClusterWorkDir());
         Path fullPath = fs.makeQualified(path);
-        LOG.debug("クラスタワークディレクトリを初期化します。Path: {}", fullPath);
+        LOG.debug("start initializing working directory on the testing runtime: {}", fullPath); //$NON-NLS-1$
         boolean deleted = fs.delete(fullPath, true);
         if (deleted) {
-            LOG.debug("クラスタワークディレクトリを削除しました。Path: {}", fullPath);
+            LOG.debug("finish initializing working directory on the testing runtime: {}", fullPath); //$NON-NLS-1$
         } else {
-            LOG.debug("クラスタワークディレクトリを削除できませんでした。Path: {}", fullPath);
+            LOG.debug("failed to initialize working directory on the testing runtime: {}", fullPath); //$NON-NLS-1$
         }
     }
 
@@ -109,7 +109,7 @@ public class JobflowExecutor {
         }
         if (context.isSkipCleanInput() == false) {
             for (Map.Entry<String, ImporterDescription> entry : info.getImporterMap().entrySet()) {
-                LOG.debug("入力{}を初期化しています", entry.getKey());
+                LOG.debug("cleaning input: {}", entry.getKey()); //$NON-NLS-1$
                 moderator.truncate(entry.getValue());
             }
         } else {
@@ -118,7 +118,7 @@ public class JobflowExecutor {
 
         if (context.isSkipCleanOutput() == false) {
             for (Map.Entry<String, ExporterDescription> entry : info.getExporterMap().entrySet()) {
-                LOG.debug("出力{}を初期化しています", entry.getKey());
+                LOG.debug("cleaning output: {}", entry.getKey()); //$NON-NLS-1$
                 moderator.truncate(entry.getValue());
             }
         } else {
@@ -148,7 +148,7 @@ public class JobflowExecutor {
                 DataModelSourceFactory source = input.getSource();
                 if (source != null) {
                     String name = input.getName();
-                    LOG.debug("入力{}を配置しています: {}", name, source);
+                    LOG.debug("preparing input: {} ({})", name, source); //$NON-NLS-1$
                     ImporterDescription description = info.findImporter(name);
                     if (description == null) {
                         throw new IllegalStateException(MessageFormat.format(
@@ -186,7 +186,7 @@ public class JobflowExecutor {
                 DataModelSourceFactory source = output.getSource();
                 if (source != null) {
                     String name = output.getName();
-                    LOG.debug("出力{}を配置しています: {}", name, source);
+                    LOG.debug("preparing output: {} ({})", name, source); //$NON-NLS-1$
                     ExporterDescription description = info.findExporter(name);
                     if (description == null) {
                         throw new IllegalStateException(MessageFormat.format(
@@ -225,19 +225,19 @@ public class JobflowExecutor {
     }
 
     private void deployApplication(JobflowInfo info) throws IOException {
-        LOG.debug("Deploying application library: {}", info.getPackageFile());
+        LOG.debug("Deploying application library: {}", info.getPackageFile()); //$NON-NLS-1$
         File jobflowDest = context.getJobflowPackageLocation(info.getJobflow().getBatchId());
         FileUtils.copyFileToDirectory(info.getPackageFile(), jobflowDest);
 
         File dependenciesDest = context.getLibrariesPackageLocation(info.getJobflow().getBatchId());
         if (dependenciesDest.exists()) {
-            LOG.debug("Cleaning up dependency libraries: {}", dependenciesDest);
+            LOG.debug("Cleaning up dependency libraries: {}", dependenciesDest); //$NON-NLS-1$
             FileUtils.deleteDirectory(dependenciesDest);
         }
 
         File dependencies = context.getLibrariesPath();
         if (dependencies.exists()) {
-            LOG.debug("Deplogying dependency libraries: {} -> {}", dependencies, dependenciesDest);
+            LOG.debug("Deplogying dependency libraries: {} -> {}", dependencies, dependenciesDest); //$NON-NLS-1$
             if (dependenciesDest.mkdirs() == false && dependenciesDest.isDirectory() == false) {
                 LOG.warn(MessageFormat.format(
                         "フォルダの作成に失敗しました: {0}",
@@ -247,7 +247,7 @@ public class JobflowExecutor {
                 if (file.isFile() == false) {
                     continue;
                 }
-                LOG.debug("Copying a library: {} -> {}", file, dependenciesDest);
+                LOG.debug("Copying a library: {} -> {}", file, dependenciesDest); //$NON-NLS-1$
                 FileUtils.copyFileToDirectory(file, dependenciesDest);
             }
         }
@@ -321,7 +321,8 @@ public class JobflowExecutor {
         assert plan != null;
         assert jobflowPackageFile != null;
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Executing plan: home={}, batchId={}, flowId={}, execId={}, args={}, executor={}", new Object[] {
+            LOG.debug("Executing plan: " //$NON-NLS-1$
+                    + "home={}, batchId={}, flowId={}, execId={}, args={}, executor={}", new Object[] { //$NON-NLS-1$
                     context.getFrameworkHomePath(),
                     context.getCurrentBatchId(),
                     context.getCurrentFlowId(),
@@ -396,11 +397,11 @@ public class JobflowExecutor {
                             info.getJobflow().getFlowId()));
                 }
                 if (output.getResultSink() != null) {
-                    LOG.debug("出力{}を保存しています: {}", output.getName(), output.getResultSink());
+                    LOG.debug("saving result output: {} ({})", output.getName(), output.getResultSink()); //$NON-NLS-1$
                     moderator.save(output.getModelType(), description, output.getResultSink());
                 }
                 if (output.getVerifier() != null) {
-                    LOG.debug("出力{}を検証しています: {}", name, output.getVerifier());
+                    LOG.debug("verifying result output: {} ({})", name, output.getVerifier()); //$NON-NLS-1$
                     List<Difference> diffList = moderator.inspect(
                             output.getModelType(),
                             description,
@@ -414,14 +415,15 @@ public class JobflowExecutor {
                                 info.getJobflow().getFlowId(),
                                 output.getName(),
                                 diffList.size());
-                        sb.append(String.format("%s:%n", message));
+                        sb.append(String.format("%s:%n", message)); //$NON-NLS-1$
                         LOG.warn(message);
                         if (output.getDifferenceSink() != null) {
-                            LOG.debug("出力{}の差異を出力しています: {}", name, output.getDifferenceSink());
+                            LOG.debug("saving output differences: {} ({})",  //$NON-NLS-1$
+                                    name, output.getDifferenceSink());
                             moderator.save(output.getModelType(), diffList, output.getDifferenceSink());
                         }
                         for (Difference difference : diffList) {
-                            sb.append(String.format("%s: %s%n",
+                            sb.append(String.format("%s: %s%n", //$NON-NLS-1$
                                     output.getModelType().getSimpleName(),
                                     difference));
                         }

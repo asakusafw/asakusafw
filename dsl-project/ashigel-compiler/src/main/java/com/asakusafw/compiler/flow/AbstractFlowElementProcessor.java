@@ -58,7 +58,7 @@ public abstract class AbstractFlowElementProcessor
     @Override
     public String toString() {
         return MessageFormat.format(
-                "{0}",
+                "{0}", //$NON-NLS-1$
                 getClass().getName());
     }
 }

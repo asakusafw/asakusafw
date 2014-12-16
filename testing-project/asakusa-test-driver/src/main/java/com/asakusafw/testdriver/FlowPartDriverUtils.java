@@ -43,7 +43,7 @@ final class FlowPartDriverUtils {
     public static Location createInputLocation(TestDriverContext driverContext, String name) {
         Location location = Location.fromPath(driverContext.getClusterWorkDir(), '/')
                 .append(StageConstants.EXPR_EXECUTION_ID)
-                .append("input")
+                .append("input") //$NON-NLS-1$
                 .append(normalize(name));
         return location;
     }
@@ -57,7 +57,10 @@ final class FlowPartDriverUtils {
      */
     public static Location createOutputLocation(TestDriverContext driverContext, String name) {
         Location location = Location.fromPath(driverContext.getClusterWorkDir(), '/')
-                .append(StageConstants.EXPR_EXECUTION_ID).append("output").append(normalize(name)).asPrefix();
+                .append(StageConstants.EXPR_EXECUTION_ID)
+                .append("output") //$NON-NLS-1$
+                .append(normalize(name))
+                .asPrefix();
         return location;
     }
 
@@ -70,7 +73,7 @@ final class FlowPartDriverUtils {
     public static Location createWorkingLocation(TestDriverContext driverContext) {
         Location location = Location.fromPath(driverContext.getClusterWorkDir(), '/')
                 .append(StageConstants.EXPR_EXECUTION_ID)
-                .append("temp");
+                .append("temp"); //$NON-NLS-1$
         return location;
     }
 
@@ -83,10 +86,10 @@ final class FlowPartDriverUtils {
                 buf.append(c);
             } else if (c <= 0xff) {
                 buf.append('0');
-                buf.append(String.format("%02x", (int) c));
+                buf.append(String.format("%02x", (int) c)); //$NON-NLS-1$
             } else {
-                buf.append("0u");
-                buf.append(String.format("%04x", (int) c));
+                buf.append("0u"); //$NON-NLS-1$
+                buf.append(String.format("%04x", (int) c)); //$NON-NLS-1$
             }
         }
         return buf.toString();

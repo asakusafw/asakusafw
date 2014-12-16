@@ -50,10 +50,10 @@ public class DecimalRange implements ValuePredicate<BigDecimal> {
     @Override
     public String describeExpected(BigDecimal expected, BigDecimal actual) {
         if (expected == null) {
-            return "(error)";
+            return "(error)"; //$NON-NLS-1$
         }
         return MessageFormat.format(
-                "{0} ~ {1}",
+                "{0} ~ {1}", //$NON-NLS-1$
                 Util.format(expected.add(lowerBound)),
                 Util.format(expected.add(upperBound)));
     }

@@ -93,12 +93,12 @@ public class WritableUnion implements Union, Writable {
     public String toString() {
         try {
             return MessageFormat.format(
-                    "Union (position={0}, object={1})",
+                    "Union (position={0}, object={1})", //$NON-NLS-1$
                     position,
                     getObject());
         } catch (RuntimeException e) {
             return MessageFormat.format(
-                    "Union (position={0}, object=(invalid))",
+                    "Union (position={0}, object=(invalid))", //$NON-NLS-1$
                     position);
         }
     }

@@ -32,17 +32,17 @@ public class SnappyConfigurator extends TestingEnvironmentConfigurator {
     /**
      * The system property key of enabling this feature.
      */
-    public static final String KEY_FEATURE_ENABLE = KEY_ENABLE + ".snappy";
+    public static final String KEY_FEATURE_ENABLE = KEY_ENABLE + ".snappy"; //$NON-NLS-1$
 
     /**
      * The default value of {@link #KEY_FEATURE_ENABLE}.
      */
-    public static final String DEFAULT_FEATURE_ENABLE = "true";
+    public static final String DEFAULT_FEATURE_ENABLE = "true"; //$NON-NLS-1$
 
     @Override
     protected void configure() {
         if (isEnabled() == false) {
-            LOG.debug("snappy configurator is disabled.");
+            LOG.debug("snappy configurator is disabled."); //$NON-NLS-1$
             return;
         }
         // Preloads native snappy library.
@@ -51,7 +51,7 @@ public class SnappyConfigurator extends TestingEnvironmentConfigurator {
 
     private boolean isEnabled() {
         String value = System.getProperty(KEY_FEATURE_ENABLE, DEFAULT_FEATURE_ENABLE);
-        return value.equals("true");
+        return value.equals("true"); //$NON-NLS-1$
     }
 
 }

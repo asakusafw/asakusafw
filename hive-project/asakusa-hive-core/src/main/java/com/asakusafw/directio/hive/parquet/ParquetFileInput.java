@@ -192,7 +192,7 @@ public class ParquetFileInput<T> implements ModelInput<T> {
         }
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Detecting target parquet blocks: {0} ({1}+{2})",
+                    "Detecting target parquet blocks: {0} ({1}+{2})", //$NON-NLS-1$
                     path,
                     this.offset,
                     this.fragmentSize));
@@ -216,7 +216,7 @@ public class ParquetFileInput<T> implements ModelInput<T> {
             if (this.offset <= begin && end <= this.offset + this.fragmentSize && block.getRowCount() != 0) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(MessageFormat.format(
-                            "Detected a target parquet block: {0} ({1}+{2})",
+                            "Detected a target parquet block: {0} ({1}+{2})", //$NON-NLS-1$
                             path,
                             begin,
                             end - begin));
@@ -225,7 +225,7 @@ public class ParquetFileInput<T> implements ModelInput<T> {
             } else {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(MessageFormat.format(
-                            "Filter parquet block: {0} ({1}+{2})",
+                            "Filter parquet block: {0} ({1}+{2})", //$NON-NLS-1$
                             path,
                             begin,
                             end - begin));

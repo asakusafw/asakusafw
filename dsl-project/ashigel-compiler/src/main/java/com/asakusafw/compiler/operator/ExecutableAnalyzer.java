@@ -229,11 +229,11 @@ public class ExecutableAnalyzer {
         if (comment == null) {
             return f.newJavadoc(Collections.<DocBlock>emptyList());
         }
-        if (comment.startsWith("/**") == false) {
-            comment = "/**" + comment;
+        if (comment.startsWith("/**") == false) { //$NON-NLS-1$
+            comment = "/**" + comment; //$NON-NLS-1$
         }
-        if (comment.endsWith("*/") == false) {
-            comment = comment + "*/";
+        if (comment.endsWith("*/") == false) { //$NON-NLS-1$
+            comment = comment + "*/"; //$NON-NLS-1$
         }
 
         try {
@@ -253,7 +253,7 @@ public class ExecutableAnalyzer {
             return Collections.emptyList();
         }
         DocBlock first = blocks.get(0);
-        if (first.getTag().equals("") == false) {
+        if (first.getTag().equals("") == false) { //$NON-NLS-1$
             return Collections.emptyList();
         }
         return first.getElements();
@@ -412,7 +412,7 @@ public class ExecutableAnalyzer {
     public List<? extends DocElement> getParameterDocument(int index) {
         String name = getParameterName(index);
         for (DocBlock block : documentation.getBlocks()) {
-            if (block.getTag().equals("@param") == false) {
+            if (block.getTag().equals("@param") == false) { //$NON-NLS-1$
                 continue;
             }
             List<? extends DocElement> elements = block.getElements();
@@ -437,8 +437,8 @@ public class ExecutableAnalyzer {
      */
     public List<? extends DocElement> getReturnDocument() {
         for (DocBlock block : documentation.getBlocks()) {
-            if (block.getTag().equals("@return") == false
-                    && block.getTag().equals("@returns") == false) {
+            if (block.getTag().equals("@return") == false //$NON-NLS-1$
+                    && block.getTag().equals("@returns") == false) { //$NON-NLS-1$
                 continue;
             }
             return block.getElements();
@@ -466,8 +466,8 @@ public class ExecutableAnalyzer {
             AnnotationMirror annotation) {
         assert annotation != null;
         Map<String, AnnotationValue> values = getValues(annotation);
-        List<String> group = toStringList(values.get("group"));
-        List<String> order = toStringList(values.get("order"));
+        List<String> group = toStringList(values.get("group")); //$NON-NLS-1$
+        List<String> order = toStringList(values.get("order")); //$NON-NLS-1$
         if (group == null) {
             error(position, "@Keyにgroupが指定されていません");
             return null;
@@ -583,13 +583,13 @@ public class ExecutableAnalyzer {
     static TypeMirror getReduceTermType(AnnotationMirror annotation) {
         assert annotation != null;
         Map<String, AnnotationValue> values = getValues(annotation);
-        return getValue(TypeMirror.class, values, "source");
+        return getValue(TypeMirror.class, values, "source"); //$NON-NLS-1$
     }
 
     static AnnotationMirror getReduceTermKey(AnnotationMirror annotation) {
         assert annotation != null;
         Map<String, AnnotationValue> values = getValues(annotation);
-        return getValue(AnnotationMirror.class, values, "shuffle");
+        return getValue(AnnotationMirror.class, values, "shuffle"); //$NON-NLS-1$
     }
 
     static Map<String, AnnotationValue> getValues(
@@ -807,7 +807,7 @@ public class ExecutableAnalyzer {
                 return false;
             }
             Map<String, AnnotationValue> values = getValues(annotation);
-            List<? extends AnnotationValue> terms = getList(values, "terms");
+            List<? extends AnnotationValue> terms = getList(values, "terms"); //$NON-NLS-1$
             if (terms == null
                     || terms.size() != 2
                     || (terms.get(0).getValue() instanceof AnnotationMirror) == false
@@ -842,7 +842,7 @@ public class ExecutableAnalyzer {
                 return false;
             }
             Map<String, AnnotationValue> values = getValues(annotation);
-            List<? extends AnnotationValue> terms = getList(values, "terms");
+            List<? extends AnnotationValue> terms = getList(values, "terms"); //$NON-NLS-1$
             if (terms == null
                     || terms.isEmpty()
                     || (terms.get(0).getValue() instanceof AnnotationMirror) == false) {
@@ -870,7 +870,7 @@ public class ExecutableAnalyzer {
                 throw new IllegalArgumentException();
             }
             Map<String, AnnotationValue> values = getValues(annotation);
-            List<? extends AnnotationValue> terms = getList(values, "terms");
+            List<? extends AnnotationValue> terms = getList(values, "terms"); //$NON-NLS-1$
             if (terms == null) {
                 throw new IllegalArgumentException();
             }
@@ -901,7 +901,7 @@ public class ExecutableAnalyzer {
                 return false;
             }
             Map<String, AnnotationValue> values = getValues(annotation);
-            AnnotationMirror from = getValue(AnnotationMirror.class, values, "term");
+            AnnotationMirror from = getValue(AnnotationMirror.class, values, "term"); //$NON-NLS-1$
             if (from == null) {
                 return false;
             }
@@ -923,7 +923,7 @@ public class ExecutableAnalyzer {
                 throw new IllegalArgumentException();
             }
             Map<String, AnnotationValue> values = getValues(annotation);
-            AnnotationMirror reduce = getValue(AnnotationMirror.class, values, "term");
+            AnnotationMirror reduce = getValue(AnnotationMirror.class, values, "term"); //$NON-NLS-1$
             if (reduce == null) {
                 throw new IllegalArgumentException();
             }

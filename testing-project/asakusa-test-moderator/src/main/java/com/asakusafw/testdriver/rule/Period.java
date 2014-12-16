@@ -73,8 +73,8 @@ public class Period implements ValuePredicate<Calendar> {
     @Override
     public String describeExpected(Calendar expected, Calendar actual) {
         return MessageFormat.format(
-                "{0} ~ {1}",
-                begin == null ? "..." : Util.format(begin),
-                end == null ? "..." : Util.format(end));
+                "{0} ~ {1}", //$NON-NLS-1$
+                begin == null ? "..." : Util.format(begin), //$NON-NLS-1$
+                end == null ? "..." : Util.format(end)); //$NON-NLS-1$
     }
 }

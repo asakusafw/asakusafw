@@ -129,13 +129,13 @@ public class JobFlowTester extends TestDriverBase {
         }
 
         FlowGraph flowGraph = jobFlowClass.getGraph();
-        String batchId = "bid";
+        String batchId = "testing"; //$NON-NLS-1$
         String flowId = jobFlowClass.getConfig().name();
         JobflowInfo jobflowInfo = DirectFlowCompiler.compile(
                 flowGraph,
                 batchId,
                 flowId,
-                "test.jobflow",
+                "test.jobflow", //$NON-NLS-1$
                 Location.fromPath(driverContext.getClusterWorkDir(), '/'),
                 compileWorkDir,
                 Arrays.asList(new File[] {
@@ -170,7 +170,7 @@ public class JobFlowTester extends TestDriverBase {
     private void validateTestCondition() throws IOException {
         TestModerator moderator = new TestModerator(driverContext.getRepository(), driverContext);
         for (DriverInputBase<?> port : inputs) {
-            String label = String.format("Input(%s)", port.getName());
+            String label = String.format("Input(%s)", port.getName()); //$NON-NLS-1$
             Class<?> type = port.getModelType();
             DataModelSourceFactory source = port.getSource();
             if (source != null) {
@@ -178,7 +178,7 @@ public class JobFlowTester extends TestDriverBase {
             }
         }
         for (DriverOutputBase<?> port : outputs) {
-            String label = String.format("Output(%s)", port.getName());
+            String label = String.format("Output(%s)", port.getName()); //$NON-NLS-1$
             Class<?> type = port.getModelType();
             DataModelSourceFactory source = port.getSource();
             if (source != null) {

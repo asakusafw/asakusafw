@@ -96,7 +96,7 @@ public class StageClientEmitter {
      */
     public CompiledStage emit(JobflowModel.Stage stage) throws IOException {
         Precondition.checkMustNotBeNull(stage, "stage"); //$NON-NLS-1$
-        LOG.debug("{}に対するジョブ実行クライアントを生成します", stage);
+        LOG.debug("start generating Hadoop job client: {}", stage); //$NON-NLS-1$
         Engine engine = new Engine(environment, stage);
         CompilationUnit source = engine.generate();
         environment.emit(source);
@@ -105,7 +105,7 @@ public class StageClientEmitter {
         QualifiedName name = environment
             .getModelFactory()
             .newQualifiedName(packageName, simpleName);
-        LOG.debug("{}のジョブ実行には{}が利用されます", stage, name);
+        LOG.debug("finish generating Hadoop job client {} ({})", stage, name); //$NON-NLS-1$
         return new CompiledStage(name, Naming.getStageName(stage.getNumber()));
     }
 
@@ -172,9 +172,9 @@ public class StageClientEmitter {
 
         private Map<String, Expression> createTraceLocationElements() {
             Map<String, Expression> results = new LinkedHashMap<String, Expression>();
-            results.put("batchId", Models.toLiteral(factory, environment.getBatchId()));
-            results.put("flowId", Models.toLiteral(factory, environment.getFlowId()));
-            results.put("stageId", Models.toLiteral(factory, Naming.getStageName(stage.getNumber())));
+            results.put("batchId", Models.toLiteral(factory, environment.getBatchId())); //$NON-NLS-1$
+            results.put("flowId", Models.toLiteral(factory, environment.getFlowId())); //$NON-NLS-1$
+            results.put("stageId", Models.toLiteral(factory, Naming.getStageName(stage.getNumber()))); //$NON-NLS-1$
             return results;
         }
 
@@ -206,8 +206,8 @@ public class StageClientEmitter {
         }
 
         private MethodDeclaration createStageInputsMethod() {
-            SimpleName list = factory.newSimpleName("results");
-            SimpleName attributes = factory.newSimpleName("attributes");
+            SimpleName list = factory.newSimpleName("results"); //$NON-NLS-1$
+            SimpleName attributes = factory.newSimpleName("attributes"); //$NON-NLS-1$
 
             List<Statement> statements = Lists.create();
             statements.add(new TypeBuilder(factory, t(ArrayList.class, t(StageInput.class)))
@@ -228,14 +228,14 @@ public class StageClientEmitter {
                         .toStatement());
                     for (Map.Entry<String, String> entry : info.getAttributes().entrySet()) {
                         statements.add(new ExpressionBuilder(factory, attributes)
-                            .method("put",
+                            .method("put", //$NON-NLS-1$
                                     Models.toLiteral(factory, entry.getKey()),
                                     Models.toLiteral(factory, entry.getValue()))
                             .toStatement());
                     }
                     for (Location location : info.getLocations()) {
                         statements.add(new ExpressionBuilder(factory, list)
-                            .method("add", new TypeBuilder(factory, t(StageInput.class))
+                            .method("add", new TypeBuilder(factory, t(StageInput.class)) //$NON-NLS-1$
                                 .newObject(
                                         Models.toLiteral(factory, location.toPath('/')),
                                         factory.newClassLiteral(t(inputFormatType)),
@@ -262,7 +262,7 @@ public class StageClientEmitter {
         }
 
         private MethodDeclaration createStageOutputsMethod() {
-            SimpleName list = factory.newSimpleName("results");
+            SimpleName list = factory.newSimpleName("results"); //$NON-NLS-1$
             List<Statement> statements = Lists.create();
             statements.add(new TypeBuilder(factory, t(ArrayList.class, t(StageOutput.class)))
                 .newObject()
@@ -272,7 +272,7 @@ public class StageClientEmitter {
                 Class<?> outputFormatType = process.getOutputFormatType();
                 for (Location location : process.getInputInfo().getLocations()) {
                     statements.add(new ExpressionBuilder(factory, list)
-                        .method("add", new TypeBuilder(factory, t(StageOutput.class))
+                        .method("add", new TypeBuilder(factory, t(StageOutput.class)) //$NON-NLS-1$
                             .newObject(
                                     Models.toLiteral(factory, location.getName()),
                                     factory.newClassLiteral(t(NullWritable.class)),
@@ -298,7 +298,7 @@ public class StageClientEmitter {
         }
 
         private TypeBodyDeclaration createStageResourcesMethod() {
-            SimpleName list = factory.newSimpleName("results");
+            SimpleName list = factory.newSimpleName("results"); //$NON-NLS-1$
             List<Statement> statements = Lists.create();
             statements.add(new TypeBuilder(factory, t(ArrayList.class, t(StageResource.class)))
                 .newObject()
@@ -306,7 +306,7 @@ public class StageClientEmitter {
             for (SideData sideData : stage.getSideData()) {
                 for (Location location : sideData.getClusterPaths()) {
                     statements.add(new ExpressionBuilder(factory, list)
-                        .method("add", new TypeBuilder(factory, t(StageResource.class))
+                        .method("add", new TypeBuilder(factory, t(StageResource.class)) //$NON-NLS-1$
                             .newObject(
                                     Models.toLiteral(factory, location.toPath('/')),
                                     Models.toLiteral(factory, sideData.getLocalName()))
@@ -359,7 +359,7 @@ public class StageClientEmitter {
 
         private Javadoc createJavadoc() {
             return new JavadocBuilder(factory)
-                .text("ステージ{0}のジョブを実行するクライアント。", stage.getNumber())
+                .text("Hadoop job client for stage <code>{0}</code>.", stage.getNumber())
                 .toJavadoc();
         }
 

@@ -123,13 +123,13 @@ public class FlowPartTester extends TestDriverBase {
             FileUtils.forceDelete(compileWorkDir);
         }
 
-        String batchId = "testing";
-        String flowId = "flowpart";
+        String batchId = "testing"; //$NON-NLS-1$
+        String flowId = "flowpart"; //$NON-NLS-1$
         JobflowInfo jobflowInfo = DirectFlowCompiler.compile(
                 flowGraph,
                 batchId,
                 flowId,
-                "test.flowpart",
+                "test.flowpart", //$NON-NLS-1$
                 FlowPartDriverUtils.createWorkingLocation(driverContext),
                 compileWorkDir,
                 Arrays.asList(new File[] {
@@ -166,7 +166,7 @@ public class FlowPartTester extends TestDriverBase {
     private void validateTestCondition() throws IOException {
         TestModerator moderator = new TestModerator(driverContext.getRepository(), driverContext);
         for (DriverInputBase<?> port : inputs) {
-            String label = String.format("Input(%s)", port.getName());
+            String label = String.format("Input(%s)", port.getName()); //$NON-NLS-1$
             Class<?> type = port.getModelType();
             DataModelSourceFactory source = port.getSource();
             if (source != null) {
@@ -174,7 +174,7 @@ public class FlowPartTester extends TestDriverBase {
             }
         }
         for (DriverOutputBase<?> port : outputs) {
-            String label = String.format("Output(%s)", port.getName());
+            String label = String.format("Output(%s)", port.getName()); //$NON-NLS-1$
             Class<?> type = port.getModelType();
             DataModelSourceFactory source = port.getSource();
             if (source != null) {

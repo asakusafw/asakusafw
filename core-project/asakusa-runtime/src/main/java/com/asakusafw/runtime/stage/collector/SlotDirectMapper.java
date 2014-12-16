@@ -34,7 +34,7 @@ public abstract class SlotDirectMapper extends MapperWithRuntimeResource<
     /**
      * The method name of {@link #getOutputName()}。
      */
-    public static final String NAME_GET_OUTPUT_NAME = "getOutputName";
+    public static final String NAME_GET_OUTPUT_NAME = "getOutputName"; //$NON-NLS-1$
 
     private StageOutputDriver output;
 

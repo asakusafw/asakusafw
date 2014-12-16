@@ -158,7 +158,7 @@ public class JoinResourceDescription implements FlowResourceDescription {
     @Override
     public String toString() {
         return MessageFormat.format(
-                "{0}(left={1}{2}, {3}{4})",
+                "{0}(left={1}{2}, {3}{4})", //$NON-NLS-1$
                 masterInput.getName(),
                 masterDataClass,
                 masterJoinKeys,

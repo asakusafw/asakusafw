@@ -36,7 +36,7 @@ public class TraceSettingAttribute implements FlowElementAttribute {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public TraceSettingAttribute(TraceSetting setting, int serialNumber) {
-        Precondition.checkMustNotBeNull(setting, "setting");
+        Precondition.checkMustNotBeNull(setting, "setting"); //$NON-NLS-1$
         this.setting = setting;
         this.serialNumber = serialNumber;
     }

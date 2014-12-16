@@ -38,7 +38,7 @@ public class ExternalIoCommandProvider implements Serializable {
      * @return このコマンドプロバイダーの名前
      */
     public String getName() {
-        return "default";
+        return "default"; //$NON-NLS-1$
     }
 
     /**
@@ -258,16 +258,16 @@ public class ExternalIoCommandProvider implements Serializable {
             StringBuilder buf = new StringBuilder();
             // TODO あらゆる文字に対応する
             for (Map.Entry<String, String> entry : environment.entrySet()) {
-                buf.append("'" + entry.getKey() + "'");
-                buf.append("=");
-                buf.append("'" + entry.getValue() + "'");
-                buf.append(" ");
+                buf.append("'" + entry.getKey() + "'"); //$NON-NLS-1$ //$NON-NLS-2$
+                buf.append("="); //$NON-NLS-1$
+                buf.append("'" + entry.getValue() + "'"); //$NON-NLS-1$ //$NON-NLS-2$
+                buf.append(" "); //$NON-NLS-1$
             }
             Iterator<String> iter = commandLine.iterator();
             if (iter.hasNext()) {
                 buf.append(iter.next());
                 while (iter.hasNext()) {
-                    buf.append(" ");
+                    buf.append(" "); //$NON-NLS-1$
                     buf.append(iter.next());
                 }
             }

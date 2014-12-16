@@ -74,16 +74,16 @@ public class StringPropertyDriver extends JavaDataModelDriver {
         assert context != null;
         assert property != null;
         JavaName name = JavaName.of(property.getName());
-        name.addFirst("get");
-        name.addLast("as");
-        name.addLast("string");
+        name.addFirst("get"); //$NON-NLS-1$
+        name.addLast("as"); //$NON-NLS-1$
+        name.addLast("string"); //$NON-NLS-1$
         ModelFactory f = context.getModelFactory();
         return f.newMethodDeclaration(
                 new JavadocBuilder(f)
                     .text("{0}を返す。",
                             context.getDescription(property))
                     .returns()
-                        .text("{0}",
+                        .text("{0}", //$NON-NLS-1$
                                 context.getDescription(property))
                     .exception(context.resolve(NullPointerException.class))
                         .text("{0}の値が<code>null</code>である場合",
@@ -97,7 +97,7 @@ public class StringPropertyDriver extends JavaDataModelDriver {
                 Collections.<FormalParameterDeclaration>emptyList(),
                 Collections.singletonList(new ExpressionBuilder(f, f.newThis())
                     .field(context.getFieldName(property))
-                    .method("getAsString")
+                    .method("getAsString") //$NON-NLS-1$
                     .toReturnStatement()));
     }
 
@@ -105,9 +105,9 @@ public class StringPropertyDriver extends JavaDataModelDriver {
         assert context != null;
         assert property != null;
         JavaName name = JavaName.of(property.getName());
-        name.addFirst("set");
-        name.addLast("as");
-        name.addLast("string");
+        name.addFirst("set"); //$NON-NLS-1$
+        name.addLast("as"); //$NON-NLS-1$
+        name.addLast("string"); //$NON-NLS-1$
         ModelFactory f = context.getModelFactory();
         SimpleName paramName = context.createVariableName(
                 context.getFieldName(property).getToken());
@@ -123,7 +123,7 @@ public class StringPropertyDriver extends JavaDataModelDriver {
                 new AttributeBuilder(f)
                     .annotation(
                             context.resolve(SuppressWarnings.class),
-                            Models.toLiteral(f, "deprecation"))
+                            Models.toLiteral(f, "deprecation")) //$NON-NLS-1$
                     .Public()
                     .toAttributes(),
                 context.resolve(void.class),
@@ -135,7 +135,7 @@ public class StringPropertyDriver extends JavaDataModelDriver {
                 }),
                 Collections.singletonList(new ExpressionBuilder(f, f.newThis())
                     .field(context.getFieldName(property))
-                    .method("modify", paramName)
+                    .method("modify", paramName) //$NON-NLS-1$
                     .toStatement()));
     }
 

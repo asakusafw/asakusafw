@@ -248,7 +248,7 @@ public class HashGraph<V> implements Graph<V> {
 
         @Override
         public String toString() {
-            return MessageFormat.format("{0} => {1}", from, to);
+            return MessageFormat.format("{0} => {1}", from, to); //$NON-NLS-1$
         }
     }
 

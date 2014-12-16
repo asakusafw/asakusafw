@@ -48,12 +48,12 @@ public abstract class TestingEnvironmentConfigurator {
     /**
      * The system property key of enabling this feature.
      */
-    public static final String KEY_ENABLE = "asakusa.testdriver.configurator";
+    public static final String KEY_ENABLE = "asakusa.testdriver.configurator"; //$NON-NLS-1$
 
     /**
      * The default value of {@link #KEY_ENABLE}.
      */
-    public static final String DEFAULT_ENABLE = "true";
+    public static final String DEFAULT_ENABLE = "true"; //$NON-NLS-1$
 
     private static boolean initialized = false;
 
@@ -69,10 +69,10 @@ public abstract class TestingEnvironmentConfigurator {
             LOG.info("Testing environment configurator is disabled");
             return;
         }
-        LOG.debug("Loading testing environment configurators");
+        LOG.debug("Loading testing environment configurators"); //$NON-NLS-1$
         Collection<TestingEnvironmentConfigurator> services = loadServices();
         for (TestingEnvironmentConfigurator service : services) {
-            LOG.debug("Applying testing environment configurator: {}", service);
+            LOG.debug("Applying testing environment configurator: {}", service); //$NON-NLS-1$
             try {
                 service.configure();
             } catch (RuntimeException e) {
@@ -108,7 +108,7 @@ public abstract class TestingEnvironmentConfigurator {
 
     private static boolean isEnabled() {
         String value = System.getProperty(KEY_ENABLE, DEFAULT_ENABLE);
-        return value.equals("true");
+        return value.equals("true"); //$NON-NLS-1$
     }
 
     /**

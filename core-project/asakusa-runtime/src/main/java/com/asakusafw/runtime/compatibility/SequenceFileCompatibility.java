@@ -57,7 +57,7 @@ public final class SequenceFileCompatibility {
         if (conf == null) {
             throw new IllegalArgumentException("conf must not be null"); //$NON-NLS-1$
         }
-        FileStatus status = new FileStatus(length, false, 0, length, 0, new Path("dummy:///"));
+        FileStatus status = new FileStatus(length, false, 0, length, 0, new Path("dummy:///")); //$NON-NLS-1$
         Path path = status.getPath();
         return new SequenceFile.Reader(
                 new InputStreamFileSystem(status, in),

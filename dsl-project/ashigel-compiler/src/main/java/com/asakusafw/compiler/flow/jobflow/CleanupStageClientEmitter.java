@@ -76,7 +76,7 @@ public class CleanupStageClientEmitter {
      * @throws IOException if faled to emit a class
      */
     public CompiledStage emit() throws IOException {
-        LOG.debug("Generating cleanup stage client for {}", environment.getFlowId());
+        LOG.debug("Generating cleanup stage client for {}", environment.getFlowId()); //$NON-NLS-1$
         Engine engine = new Engine(environment);
         CompilationUnit source = engine.generate();
         environment.emit(source);
@@ -85,7 +85,7 @@ public class CleanupStageClientEmitter {
         QualifiedName name = environment
             .getModelFactory()
             .newQualifiedName(packageName, simpleName);
-        LOG.debug("Cleanup stage client for {} will be {}", environment.getFlowId(), name);
+        LOG.debug("Cleanup stage client for {} will be {}", environment.getFlowId(), name); //$NON-NLS-1$
         return new CompiledStage(name, Naming.getCleanupStageName());
     }
 

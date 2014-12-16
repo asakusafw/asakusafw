@@ -99,7 +99,7 @@ public class JobflowAnalyzer {
     public JobflowModel analyze(StageGraph graph, Collection<StageModel> stageModels) {
         Precondition.checkMustNotBeNull(graph, "graph"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(stageModels, "stageModels"); //$NON-NLS-1$
-        LOG.debug("{}のステージ構造を分析します",
+        LOG.debug("analyzing stage structure: {}", //$NON-NLS-1$
                 graph.getInput().getSource().getDescription().getName());
 
         List<Import> imports = analyzeImports(graph, stageModels);
@@ -126,7 +126,7 @@ public class JobflowAnalyzer {
     private List<Import> analyzeImports(StageGraph graph, Collection<StageModel> stageModels) {
         assert graph != null;
         assert stageModels != null;
-        LOG.debug("入力を解析しています({})", graph.getInput());
+        LOG.debug("analyzing jobflow inputs: {}", graph.getInput()); //$NON-NLS-1$
 
         Set<InputDescription> saw = Sets.create();
         List<Import> results = Lists.create();
@@ -144,24 +144,24 @@ public class JobflowAnalyzer {
                 error("{0}は不明なインポーターを利用しています", desc);
                 continue;
             }
-            Import prologue = new Import(source, description, proc);
-            LOG.debug("入力{}が追加されます", prologue);
-            results.add(prologue);
+            Import input = new Import(source, description, proc);
+            LOG.debug("found jobflow input: {}", input); //$NON-NLS-1$
+            results.add(input);
         }
         Set<InputDescription> sideData = Sets.create();
         for (StageModel stage : stageModels) {
             sideData.addAll(stage.getSideDataInputs());
         }
         sideData.removeAll(saw);
-        for (InputDescription input : sideData) {
-            ExternalIoDescriptionProcessor proc = environment.getExternals().findProcessor(input);
+        for (InputDescription description : sideData) {
+            ExternalIoDescriptionProcessor proc = environment.getExternals().findProcessor(description);
             if (proc == null) {
-                error("{0}は不明なインポーターを利用しています", input);
+                error("{0}は不明なインポーターを利用しています", description);
                 continue;
             }
-            Import prologue = new Import(input, proc);
-            LOG.debug("サイドデータ入力{}が追加されます", prologue);
-            results.add(prologue);
+            Import input = new Import(description, proc);
+            LOG.debug("found side-data: {}", input); //$NON-NLS-1$
+            results.add(input);
         }
         return results;
     }
@@ -169,7 +169,7 @@ public class JobflowAnalyzer {
     private List<Export> analyzeExports(StageGraph graph, Collection<StageModel> stageModels) {
         assert graph != null;
         assert stageModels != null;
-        LOG.debug("出力を解析しています({})", graph.getOutput());
+        LOG.debug("analyzing jobflow outputs: {}", graph.getOutput()); //$NON-NLS-1$
 
         List<Export> results = Lists.create();
         for (FlowBlock.Input target : graph.getOutput().getBlockInputs()) {
@@ -190,7 +190,7 @@ public class JobflowAnalyzer {
                     description,
                     proc);
             results.add(epilogue);
-            LOG.debug("出力{}が追加されます", epilogue);
+            LOG.debug("found jobflow output: {}", epilogue); //$NON-NLS-1$
         }
         return results;
     }
@@ -206,7 +206,7 @@ public class JobflowAnalyzer {
 
     private Stage analyzeStage(StageModel model) {
         assert model != null;
-        LOG.debug("{}を解析しています", model);
+        LOG.debug("analyzing jobflow stage: {}", model); //$NON-NLS-1$
         List<Process> processes = analyzeProcesses(model);
         List<Delivery> deliveries = analyzeDeliveries(model);
         Set<SideData> sideData = analyzeSideData(model);
@@ -217,7 +217,7 @@ public class JobflowAnalyzer {
                 deliveries,
                 reduce,
                 sideData);
-        LOG.debug("{}が追加されます", model);
+        LOG.debug("found jobflow stage: {}", model); //$NON-NLS-1$
         return stage;
     }
 

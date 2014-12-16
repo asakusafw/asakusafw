@@ -15,6 +15,7 @@
  */
 package com.asakusafw.runtime.directio.hadoop;
 
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
 
@@ -92,14 +93,9 @@ public final class BlockInfo {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("BlockInfo [start=");
-        builder.append(start);
-        builder.append(", end=");
-        builder.append(end);
-        builder.append(", hosts=");
-        builder.append(Arrays.toString(hosts));
-        builder.append("]");
-        return builder.toString();
+        return MessageFormat.format(
+                "BlockInfo(range={0}+{1}, hosts={2})", //$NON-NLS-1$
+                start, end - start,
+                Arrays.toString(hosts));
     }
 }

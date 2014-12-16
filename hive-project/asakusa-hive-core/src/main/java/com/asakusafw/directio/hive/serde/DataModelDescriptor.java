@@ -133,7 +133,7 @@ public class DataModelDescriptor {
         if (c == null) {
             return name;
         } else {
-            return MessageFormat.format("{0} ({1})", getDataModelClass().getName(), c);
+            return MessageFormat.format("{0} ({1})", getDataModelClass().getName(), c); //$NON-NLS-1$
         }
     }
 }

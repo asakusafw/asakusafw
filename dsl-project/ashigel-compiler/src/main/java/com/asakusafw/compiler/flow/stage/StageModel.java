@@ -152,7 +152,7 @@ public class StageModel {
     @Override
     public String toString() {
         return MessageFormat.format(
-                "Stage(map={0}, shuffle={1}, reduce={2})",
+                "Stage(map={0}, shuffle={1}, reduce={2})", //$NON-NLS-1$
                 getMapUnits(),
                 getShuffleModel(),
                 getReduceUnits());
@@ -244,10 +244,10 @@ public class StageModel {
         @Override
         public String toString() {
             return MessageFormat.format(
-                    "MapUnit({2})'{'inputs={0}, fragments={1}'}'",
+                    "MapUnit({2})'{'inputs={0}, fragments={1}'}'", //$NON-NLS-1$
                     getInputs(),
                     getFragments(),
-                    hasSerialNumber() ? String.valueOf(getSerialNumber()) : "?");
+                    hasSerialNumber() ? String.valueOf(getSerialNumber()) : "?"); //$NON-NLS-1$
         }
     }
 
@@ -282,10 +282,10 @@ public class StageModel {
         @Override
         public String toString() {
             return MessageFormat.format(
-                    "ReduceUnit({2})'{'inputs={0}, fragments={1}'}'",
+                    "ReduceUnit({2})'{'inputs={0}, fragments={1}'}'", //$NON-NLS-1$
                     getInputs(),
                     getFragments(),
-                    hasSerialNumber() ? String.valueOf(getSerialNumber()) : "?");
+                    hasSerialNumber() ? String.valueOf(getSerialNumber()) : "?"); //$NON-NLS-1$
         }
     }
 
@@ -403,7 +403,7 @@ public class StageModel {
         @Override
         public String toString() {
             return MessageFormat.format(
-                    "Fragment{0}",
+                    "Fragment{0}", //$NON-NLS-1$
                     getInputPorts());
         }
     }
@@ -466,7 +466,7 @@ public class StageModel {
         @Override
         public String toString() {
             return MessageFormat.format(
-                    "Factor({0})",
+                    "Factor({0})", //$NON-NLS-1$
                     element);
         }
     }
@@ -571,7 +571,7 @@ public class StageModel {
 
         @Override
         public String toString() {
-            return MessageFormat.format("Sink({0})", getName());
+            return MessageFormat.format("Sink({0})", getName()); //$NON-NLS-1$
         }
     }
 }

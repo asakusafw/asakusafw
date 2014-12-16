@@ -51,10 +51,10 @@ public class IntegerRange implements ValuePredicate<Number> {
     @Override
     public String describeExpected(Number expected, Number actual) {
         if (expected == null) {
-            return "(error)";
+            return "(error)"; //$NON-NLS-1$
         }
         return MessageFormat.format(
-                "{0} ~ {1}",
+                "{0} ~ {1}", //$NON-NLS-1$
                 Util.format(expected.longValue() + lowerBound),
                 Util.format(expected.longValue() + upperBound));
     }

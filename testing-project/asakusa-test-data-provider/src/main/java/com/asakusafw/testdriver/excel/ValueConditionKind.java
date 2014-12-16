@@ -25,38 +25,38 @@ public enum ValueConditionKind {
     /**
      * Always accepts.
      */
-    ANY("-", "検査対象外", "すべて"),
+    ANY("-", "検査対象外", "すべて"), //$NON-NLS-1$
 
     /**
      * Used as comparing key.
      */
-    KEY("Key", "検査キー", "すべて"),
+    KEY("Key", "検査キー", "すべて"), //$NON-NLS-1$
 
     /**
      * Accepts if matched.
      */
-    EQUAL("=", "完全一致", "すべて"),
+    EQUAL("=", "完全一致", "すべて"), //$NON-NLS-1$
 
     /**
      * Accepts if expected data appears in the actual data.
      */
-    CONTAIN("<=", "部分一致", "文字列"),
+    CONTAIN("<=", "部分一致", "文字列"), //$NON-NLS-1$
 
     /**
      * Accepts if actual date/time is between test started date and its finished date.
      */
-    TODAY("Today", "現在日付", "日付または時刻"),
+    TODAY("Today", "現在日付", "日付または時刻"), //$NON-NLS-1$
 
     /**
      * Accepts if actual date/time is between test started time and its finished time.
      */
-    NOW("Now", "現在時刻", "日付または時刻"),
+    NOW("Now", "現在時刻", "日付または時刻"), //$NON-NLS-1$
 
     /**
      * Accepts if the user defined rule recognize the actual data.
      * @since 0.7.0
      */
-    EXPRESSION("Expr", "特殊ルール", "特殊"),
+    EXPRESSION("Expr", "特殊ルール", "特殊"), //$NON-NLS-1$
     ;
 
     private final String symbol;

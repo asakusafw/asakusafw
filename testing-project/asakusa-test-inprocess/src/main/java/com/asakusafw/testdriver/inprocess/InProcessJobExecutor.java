@@ -47,7 +47,7 @@ public class InProcessJobExecutor extends JobExecutor {
 
     private static final Settings GLOBAL_SETTINGS = new Settings();
 
-    static final String PATH_ASAKUSA_RESOURCES = "core/conf/asakusa-resources.xml";
+    static final String PATH_ASAKUSA_RESOURCES = "core/conf/asakusa-resources.xml"; //$NON-NLS-1$
 
     private final TestDriverContext context;
 
@@ -101,7 +101,7 @@ synchronized(s) {
     @Override
     public void validateEnvironment() {
         if (requiresValidateExecutionEnvironment() == false) {
-            LOG.debug("skipping test execution environment validation");
+            LOG.debug("skipping test execution environment validation"); //$NON-NLS-1$
             return;
         }
         if (context.getFrameworkHomePathOrNull() == null) {
@@ -111,7 +111,7 @@ synchronized(s) {
         }
         String runtime = context.getRuntimeEnvironmentVersion();
         if (runtime == null) {
-            LOG.debug("Runtime environment version is missing");
+            LOG.debug("Runtime environment version is missing"); //$NON-NLS-1$
         } else {
             String develop = context.getDevelopmentEnvironmentVersion();
             if (develop.equals(runtime) == false) {
@@ -139,7 +139,7 @@ synchronized(s) {
                 if (configurations.getHadoopCommand() == null) {
                     throw new AssertionError(MessageFormat.format(
                             "コマンド\"{0}\"を検出できませんでした",
-                            "hadoop"));
+                            "hadoop")); //$NON-NLS-1$
                 }
             }
         }
@@ -148,7 +148,7 @@ synchronized(s) {
     private boolean requiresValidateExecutionEnvironment() {
         String value = System.getProperty(TestDriverContext.KEY_FORCE_EXEC);
         if (value != null) {
-            if (value.isEmpty() || value.equalsIgnoreCase("true")) {
+            if (value.isEmpty() || value.equalsIgnoreCase("true")) { //$NON-NLS-1$
                 return false;
             }
         }
@@ -205,7 +205,7 @@ synchronized(s) {
 
     private void computeHadoopLibjars(List<String> arguments) throws IOException {
         assert arguments != null;
-        arguments.add("-libjars");
+        arguments.add("-libjars"); //$NON-NLS-1$
         StringBuilder libjars = new StringBuilder();
         File packageFile = EmulatorUtils.getJobflowLibraryPath(context);
         if (packageFile.isFile() == false) {
@@ -225,7 +225,7 @@ synchronized(s) {
         assert arguments != null;
         File asakusaResources = getAsakusaResoucesPath();
         if (asakusaResources.exists()) {
-            arguments.add("-conf");
+            arguments.add("-conf"); //$NON-NLS-1$
             arguments.add(asakusaResources.toURI().toString());
         }
     }

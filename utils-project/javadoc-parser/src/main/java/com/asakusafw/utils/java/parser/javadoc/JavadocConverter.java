@@ -131,7 +131,7 @@ public class JavadocConverter {
                 elements.add(f.accept(this, null));
             }
             return factory.newDocBlock(
-                tag == null ? "" : tag,
+                tag == null ? "" : tag, //$NON-NLS-1$
                 elements);
         }
 

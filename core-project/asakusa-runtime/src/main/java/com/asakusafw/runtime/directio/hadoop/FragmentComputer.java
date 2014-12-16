@@ -119,7 +119,7 @@ class FragmentComputer {
                     long fragmentSize = Math.min(end - offset, eachFragmentSize);
                     results.add(map.get(offset, offset + fragmentSize));
                     offset += fragmentSize;
-                    assert offset <= end : offset + " > " + end;
+                    assert offset <= end : offset + " > " + end; //$NON-NLS-1$
                 }
                 assert offset == end;
             } else {
@@ -154,10 +154,10 @@ class FragmentComputer {
         long expectedOffset = 0;
         for (DirectInputFragment fragment : results) {
             long offset = fragment.getOffset();
-            assert offset == expectedOffset : offset + " != " + expectedOffset;
+            assert offset == expectedOffset : offset + " != " + expectedOffset; //$NON-NLS-1$
             expectedOffset = offset + fragment.getSize();
         }
-        assert map.getFileSize() == expectedOffset : map.getFileSize() + " != " + expectedOffset;
+        assert map.getFileSize() == expectedOffset : map.getFileSize() + " != " + expectedOffset; //$NON-NLS-1$
         return true;
     }
 }

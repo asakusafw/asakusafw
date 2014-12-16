@@ -91,7 +91,7 @@ public class BatchCompiler {
         for (Workflow.Unit unit : units) {
             WorkDescriptionProcessor<?> proc = repo.findDescriptionProcessor(unit.getDescription());
             if (proc == null) {
-                environment.error("{}に対するプロセッサが見つかりません",
+                environment.error("{0}に対するプロセッサが見つかりません",
                         unit.getClass().getName());
                 continue;
             }

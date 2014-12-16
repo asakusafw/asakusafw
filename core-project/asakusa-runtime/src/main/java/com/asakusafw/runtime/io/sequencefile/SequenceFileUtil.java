@@ -63,7 +63,7 @@ public final class SequenceFileUtil {
         }
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Creating sequence file reader for {0}",
+                    "Creating sequence file reader for {0}", //$NON-NLS-1$
                     status.getPath()));
         }
         return SequenceFileCompatibility.openReader(in, status.getLen(), conf);
@@ -120,7 +120,7 @@ public final class SequenceFileUtil {
         }
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Creating sequence file writer for output (key={0}, value={0})",
+                    "Creating sequence file writer for output (key={0}, value={0})", //$NON-NLS-1$
                     keyClass.getName(),
                     valueClass.getName()));
         }

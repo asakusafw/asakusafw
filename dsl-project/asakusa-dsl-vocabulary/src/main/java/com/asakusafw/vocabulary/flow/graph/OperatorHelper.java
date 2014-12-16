@@ -89,7 +89,7 @@ public final class OperatorHelper implements FlowElementAttribute {
     @Override
     public String toString() {
         return MessageFormat.format(
-                "#{0}({1})",
+                "#{0}({1})", //$NON-NLS-1$
                 name,
                 parameterTypes);
     }

@@ -25,7 +25,7 @@ public interface SegmentedWritable extends Writable {
     /**
      * {@link #getSegmentId()}のメソッド名。
      */
-    String ID_GETTER = "getSegmentId";
+    String ID_GETTER = "getSegmentId"; //$NON-NLS-1$
 
     /**
      * このオブジェクトのセグメント番号を返す。

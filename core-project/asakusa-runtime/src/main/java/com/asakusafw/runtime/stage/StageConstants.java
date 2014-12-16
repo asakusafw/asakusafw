@@ -29,75 +29,75 @@ public final class StageConstants {
     /**
      * 実行ユーザー名のプロパティキー。
      */
-    public static final String PROP_USER = "com.asakusafw.user";
+    public static final String PROP_USER = "com.asakusafw.user"; //$NON-NLS-1$
 
     /**
      * 実行IDのプロパティキー。
      */
-    public static final String PROP_EXECUTION_ID = "com.asakusafw.executionId";
+    public static final String PROP_EXECUTION_ID = "com.asakusafw.executionId"; //$NON-NLS-1$
 
     /**
      * The property key name of batch ID.
      */
-    public static final String PROP_BATCH_ID = "com.asakusafw.batchId";
+    public static final String PROP_BATCH_ID = "com.asakusafw.batchId"; //$NON-NLS-1$
 
     /**
      * The property key name of flow ID.
      */
-    public static final String PROP_FLOW_ID = "com.asakusafw.flowId";
+    public static final String PROP_FLOW_ID = "com.asakusafw.flowId"; //$NON-NLS-1$
 
     /**
      * The property key name of tracking ID.
      * @since 0.5.0
      */
-    public static final String PROP_TRACKING_ID = "com.asakusafw.trackingId";
+    public static final String PROP_TRACKING_ID = "com.asakusafw.trackingId"; //$NON-NLS-1$
 
     /**
      * 環境変数表のプロパティキー。
      */
-    public static final String PROP_ASAKUSA_BATCH_ARGS = "com.asakusafw.batchArgs";
+    public static final String PROP_ASAKUSA_BATCH_ARGS = "com.asakusafw.batchArgs"; //$NON-NLS-1$
 
     /**
      * The application JAR path.
      * @since 0.7.0
      */
-    public static final String PROP_APPLICATION_JAR = "com.asakusafw.appJar";
+    public static final String PROP_APPLICATION_JAR = "com.asakusafw.appJar"; //$NON-NLS-1$
 
     /**
      * The property key name of the implementation class of {@link JobRunner}.
      * @since 0.7.1
      */
-    public static final String PROP_JOB_RUNNER = "com.asakusafw.jobRunner";
+    public static final String PROP_JOB_RUNNER = "com.asakusafw.jobRunner"; //$NON-NLS-1$
 
     /**
      * 実行ユーザー名の変数名。
      */
-    public static final String VAR_USER = "user";
+    public static final String VAR_USER = "user"; //$NON-NLS-1$
 
     /**
      * 実行IDの変数名。
      */
-    public static final String VAR_EXECUTION_ID = "execution_id";
+    public static final String VAR_EXECUTION_ID = "execution_id"; //$NON-NLS-1$
 
     /**
      * バッチIDの変数名。
      */
-    public static final String VAR_BATCH_ID = "batch_id";
+    public static final String VAR_BATCH_ID = "batch_id"; //$NON-NLS-1$
 
     /**
      * フローIDの変数名。
      */
-    public static final String VAR_FLOW_ID = "flow_id";
+    public static final String VAR_FLOW_ID = "flow_id"; //$NON-NLS-1$
 
     /**
      * 定義IDの変数名。
      */
-    public static final String VAR_DEFINITION_ID = "jobflow_name";
+    public static final String VAR_DEFINITION_ID = "jobflow_name"; //$NON-NLS-1$
 
     /**
      * ステージ名の変数名。
      */
-    public static final String VAR_STAGE_ID = "stage_name";
+    public static final String VAR_STAGE_ID = "stage_name"; //$NON-NLS-1$
 
     /**
      * 実行ユーザー名の変数表記。
@@ -137,7 +137,7 @@ public final class StageConstants {
         if (stageId == null) {
             throw new IllegalArgumentException("stageId must not be null"); //$NON-NLS-1$
         }
-        return MessageFormat.format("{0}.{1}.{2}", batchId, flowId, stageId);
+        return MessageFormat.format("{0}.{1}.{2}", batchId, flowId, stageId); //$NON-NLS-1$
     }
 
     private StageConstants() {

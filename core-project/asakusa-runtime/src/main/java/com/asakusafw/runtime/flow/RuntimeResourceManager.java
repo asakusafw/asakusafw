@@ -41,13 +41,13 @@ public class RuntimeResourceManager extends Configured {
     /**
      * 標準的な設定ファイルの名前。
      */
-    public static final String CONFIGURATION_FILE_NAME = "asakusa-resources.xml";
+    public static final String CONFIGURATION_FILE_NAME = "asakusa-resources.xml"; //$NON-NLS-1$
 
     /**
      * The path to configuration file (relative from $ASAKUSA_HOME).
      * @since 0.2.5
      */
-    public static final String CONFIGURATION_FILE_PATH = "core/conf/" + CONFIGURATION_FILE_NAME;
+    public static final String CONFIGURATION_FILE_PATH = "core/conf/" + CONFIGURATION_FILE_NAME; //$NON-NLS-1$
 
     private final ResourceConfiguration configuration;
 
@@ -76,14 +76,14 @@ public class RuntimeResourceManager extends Configured {
      */
     public void setup() throws IOException, InterruptedException {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Loading runtime plugins");
+            LOG.debug("Loading runtime plugins"); //$NON-NLS-1$
         }
         List<? extends RuntimeResource> loaded = load();
         this.resources = new ArrayList<RuntimeResource>();
         for (RuntimeResource resource : loaded) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "Activating runtime plugin: {0}",
+                        "Activating runtime plugin: {0}", //$NON-NLS-1$
                         resource.getClass().getName()));
             }
             resource.setup(configuration);
@@ -91,7 +91,7 @@ public class RuntimeResourceManager extends Configured {
         }
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Loaded {0} runtime plugins",
+                    "Loaded {0} runtime plugins", //$NON-NLS-1$
                     resources.size()));
         }
     }
@@ -107,14 +107,14 @@ public class RuntimeResourceManager extends Configured {
         int count = resources.size();
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Unloading {0} runtime plugins",
+                    "Unloading {0} runtime plugins", //$NON-NLS-1$
                     count));
         }
         try {
             for (RuntimeResource resource : resources) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(MessageFormat.format(
-                            "Deactivating runtime plugin: {0}",
+                            "Deactivating runtime plugin: {0}", //$NON-NLS-1$
                             resource.getClass().getName()));
                 }
                 resource.cleanup(configuration);
@@ -125,7 +125,7 @@ public class RuntimeResourceManager extends Configured {
         }
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Unloaded {0} runtime plugins",
+                    "Unloaded {0} runtime plugins", //$NON-NLS-1$
                     count));
         }
     }

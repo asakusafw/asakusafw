@@ -78,7 +78,7 @@ public abstract class FlowDriverInput<T, S extends FlowDriverInput<T, S>> extend
             throw new IllegalArgumentException("factory must not be null"); //$NON-NLS-1$
         }
         if (LOG.isDebugEnabled()) {
-            LOG.debug("prepare - ModelType: {}", getModelType());
+            LOG.debug("prepare - ModelType: {}", getModelType()); //$NON-NLS-1$
         }
         setSource(factory);
         return getThis();

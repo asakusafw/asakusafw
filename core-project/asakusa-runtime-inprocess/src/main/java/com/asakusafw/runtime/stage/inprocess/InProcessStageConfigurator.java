@@ -41,22 +41,22 @@ public class InProcessStageConfigurator extends StageConfigurator {
 
     static final Log LOG = LogFactory.getLog(InProcessStageConfigurator.class);
 
-    private static final String KEY_PREFIX = "com.asakusafw.inprocess.";
+    private static final String KEY_PREFIX = "com.asakusafw.inprocess."; //$NON-NLS-1$
 
     /**
      * Hadoop property key of the max input data size for in-process job execution.
      */
-    public static final String KEY_LIMIT = KEY_PREFIX + "limit";
+    public static final String KEY_LIMIT = KEY_PREFIX + "limit"; //$NON-NLS-1$
 
     /**
      * Always enables in-process execution even.
      */
-    public static final String KEY_FORCE = KEY_PREFIX + "force";
+    public static final String KEY_FORCE = KEY_PREFIX + "force"; //$NON-NLS-1$
 
     /**
      * Activates trailing Hadoop property only if in-process job execution is enabled.
      */
-    static final String KEY_PREFIX_REPLACE = KEY_PREFIX + "activate.";
+    static final String KEY_PREFIX_REPLACE = KEY_PREFIX + "activate."; //$NON-NLS-1$
 
     private static final Pattern PATTERN_KEY_REPLACE = Pattern.compile('^' + Pattern.quote(KEY_PREFIX_REPLACE));
 
@@ -65,7 +65,7 @@ public class InProcessStageConfigurator extends StageConfigurator {
         if (job.getConfiguration().getBoolean(KEY_FORCE, false)) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "force enabled in-process execution: {0}",
+                        "force enabled in-process execution: {0}", //$NON-NLS-1$
                         job.getJobName()));
             }
             install(job);
@@ -75,7 +75,7 @@ public class InProcessStageConfigurator extends StageConfigurator {
         if (limit < 0L) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "in-process execution is disabled: {0}",
+                        "in-process execution is disabled: {0}", //$NON-NLS-1$
                         job.getJobName()));
             }
             return;
@@ -83,7 +83,7 @@ public class InProcessStageConfigurator extends StageConfigurator {
         if (hasCustomJobRunner(job)) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "custom job runner is already activated: {0}",
+                        "custom job runner is already activated: {0}", //$NON-NLS-1$
                         job.getJobName()));
             }
             return;
@@ -91,7 +91,8 @@ public class InProcessStageConfigurator extends StageConfigurator {
         long estimated = getEstimatedJobSize(job);
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "estimated input data size for in-process execution: job={0}, limit={1}, estimated={2}",
+                    "estimated input data size for in-process execution: " //$NON-NLS-1$
+                    + "job={0}, limit={1}, estimated={2}", //$NON-NLS-1$
                     job.getJobName(),
                     limit,
                     estimated));
@@ -132,9 +133,9 @@ public class InProcessStageConfigurator extends StageConfigurator {
             String value = entry.getValue();
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "activate in-process configuration: {0}=\"{1}\"->\"{2}\"",
+                        "activate in-process configuration: {0}=\"{1}\"->\"{2}\"", //$NON-NLS-1$
                         key,
-                        conf.get(key, ""),
+                        conf.get(key, ""), //$NON-NLS-1$
                         value));
             }
             conf.set(key, value);

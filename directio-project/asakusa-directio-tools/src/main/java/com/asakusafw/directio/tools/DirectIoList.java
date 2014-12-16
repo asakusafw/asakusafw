@@ -68,7 +68,7 @@ public final class DirectIoList extends Configured implements Tool {
         Collections.addAll(argList, args);
         while (argList.isEmpty() == false) {
             String arg = argList.removeFirst();
-            if (arg.equals("--")) {
+            if (arg.equals("--")) { //$NON-NLS-1$
                 break;
             } else {
                 argList.addFirst(arg);

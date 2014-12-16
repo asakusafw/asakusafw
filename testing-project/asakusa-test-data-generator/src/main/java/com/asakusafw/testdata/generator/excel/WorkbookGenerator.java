@@ -82,22 +82,22 @@ public class WorkbookGenerator implements TemplateGenerator {
         for (SheetFormat sheet : format.getSheets()) {
             switch (sheet.getKind()) {
             case DATA:
-                LOG.debug("Building data sheet: {}.{}", model.getName(), sheet.getName());
+                LOG.debug("Building data sheet: {}.{}", model.getName(), sheet.getName()); //$NON-NLS-1$
                 builder.addData(sheet.getName());
                 break;
             case RULE:
-                LOG.debug("Building rule sheet: {}.{}", model.getName(), sheet.getName());
+                LOG.debug("Building rule sheet: {}.{}", model.getName(), sheet.getName()); //$NON-NLS-1$
                 builder.addRule(sheet.getName());
                 break;
             default:
                 throw new AssertionError(MessageFormat.format(
-                        "Unknown sheet format: {0}",
+                        "Unknown sheet format: {0}", //$NON-NLS-1$
                         sheet));
             }
         }
 
         File file = new File(output, format.getFileName(model));
-        LOG.debug("Emitting workbook: {}", file);
+        LOG.debug("Emitting workbook: {}", file); //$NON-NLS-1$
 
         OutputStream out = new FileOutputStream(file);
         try {
@@ -124,9 +124,9 @@ public class WorkbookGenerator implements TemplateGenerator {
         if (fileName == null) {
             throw new IllegalArgumentException("fileName must not be null"); //$NON-NLS-1$
         }
-        if (fileName.endsWith(".xls")) {
+        if (fileName.endsWith(".xls")) { //$NON-NLS-1$
             return SpreadsheetVersion.EXCEL97;
-        } else if (fileName.endsWith("xlsx")) {
+        } else if (fileName.endsWith("xlsx")) { //$NON-NLS-1$
             return SpreadsheetVersion.EXCEL2007;
         } else {
             throw new IllegalArgumentException(MessageFormat.format(
@@ -182,7 +182,7 @@ public class WorkbookGenerator implements TemplateGenerator {
     @Override
     public String getTitle() {
         return MessageFormat.format(
-                "Excelワークブックの生成 ({0})",
+                "generates Excel workbook ({0})",
                 format);
     }
 }

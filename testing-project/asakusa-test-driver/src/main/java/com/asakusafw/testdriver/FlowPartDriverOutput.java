@@ -55,7 +55,7 @@ public class FlowPartDriverOutput<T> extends FlowDriverOutput<T, FlowPartDriverO
 
         String exportPath = FlowPartDriverUtils.createOutputLocation(driverContext, name).toPath('/');
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Export Path: {}", exportPath);
+            LOG.debug("Export Path: {}", exportPath); //$NON-NLS-1$
         }
         this.exporterDescription = new DirectExporterDescription(modelType, exportPath);
         this.out = descDriver.createOut(name, exporterDescription);

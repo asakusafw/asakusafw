@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.dmdl.directio.hive.util;
+package com.asakusafw.dmdl.windgate.util;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -21,7 +21,6 @@ import java.util.Collections;
 import java.util.List;
 
 import com.asakusafw.dmdl.java.emitter.EmitContext;
-import com.asakusafw.runtime.directio.DataFormat;
 import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Attribute;
 import com.asakusafw.utils.java.model.syntax.ClassDeclaration;
@@ -32,20 +31,28 @@ import com.asakusafw.utils.java.model.syntax.ModelFactory;
 import com.asakusafw.utils.java.model.syntax.Name;
 import com.asakusafw.utils.java.model.syntax.Type;
 import com.asakusafw.utils.java.model.syntax.TypeBodyDeclaration;
-import com.asakusafw.utils.java.model.syntax.TypeParameterDeclaration;
 import com.asakusafw.utils.java.model.syntax.WildcardBoundKind;
 import com.asakusafw.utils.java.model.util.AttributeBuilder;
+import com.asakusafw.utils.java.model.util.ExpressionBuilder;
 import com.asakusafw.utils.java.model.util.JavadocBuilder;
 import com.asakusafw.utils.java.model.util.Models;
 import com.asakusafw.utils.java.model.util.TypeBuilder;
-import com.asakusafw.vocabulary.directio.DirectFileInputDescription;
 import com.asakusafw.vocabulary.external.ImporterDescription.DataSize;
+import com.asakusafw.windgate.core.vocabulary.DataModelStreamSupport;
 
 /**
- * Generates an implementation of {@link DirectFileInputDescription}.
- * @since 0.7.0
+ * Generates {@code FsImporterDescription} and {@code FsExporterDescription}.
+ * @since 0.7.3
  */
-public final class DirectFileInputDescriptionGenerator {
+public final class FsProcessDescriptionGenerator {
+
+    // for reduce library dependencies
+    private static final String IMPORTER_TYPE_NAME =
+            "com.asakusafw.vocabulary.windgate.FsImporterDescription"; //$NON-NLS-1$
+
+    // for reduce library dependencies
+    private static final String EXPORTER_TYPE_NAME =
+            "com.asakusafw.vocabulary.windgate.FsExporterDescription"; //$NON-NLS-1$
 
     private final EmitContext context;
 
@@ -53,10 +60,18 @@ public final class DirectFileInputDescriptionGenerator {
 
     private final ModelFactory f;
 
-    private DirectFileInputDescriptionGenerator(EmitContext context, Description description) {
+    private final boolean importer;
+
+    private FsProcessDescriptionGenerator(
+            EmitContext context,
+            Description description,
+            boolean importer) {
+        assert context != null;
+        assert description != null;
         this.context = context;
-        this.description = description;
         this.f = context.getModelFactory();
+        this.importer = importer;
+        this.description = description;
     }
 
     /**
@@ -65,8 +80,20 @@ public final class DirectFileInputDescriptionGenerator {
      * @param description the meta-description of target class
      * @throws IOException if generation was failed by I/O error
      */
-    public static void generate(EmitContext context, Description description) throws IOException {
-        new DirectFileInputDescriptionGenerator(context, description).emit();
+    public static void generateImporter(EmitContext context, Description description) throws IOException {
+        FsProcessDescriptionGenerator generator = new FsProcessDescriptionGenerator(context, description, true);
+        generator.emit();
+    }
+
+    /**
+     * Generates the class in the context.
+     * @param context the target emit context
+     * @param description the meta-description of target class
+     * @throws IOException if generation was failed by I/O error
+     */
+    public static void generateExporter(EmitContext context, Description description) throws IOException {
+        FsProcessDescriptionGenerator generator = new FsProcessDescriptionGenerator(context, description, false);
+        generator.emit();
     }
 
     private void emit() throws IOException {
@@ -78,9 +105,8 @@ public final class DirectFileInputDescriptionGenerator {
                     .toJavadoc(),
                 getClassAttributes(),
                 context.getTypeName(),
-                Collections.<TypeParameterDeclaration>emptyList(),
-                context.resolve(DirectFileInputDescription.class),
-                Collections.<Type>emptyList(),
+                context.resolve(Models.toName(f, importer ? IMPORTER_TYPE_NAME : EXPORTER_TYPE_NAME)),
+                Collections.<com.asakusafw.utils.java.model.syntax.Type>emptyList(),
                 createMembers());
         context.emit(decl);
     }
@@ -88,9 +114,9 @@ public final class DirectFileInputDescriptionGenerator {
     private List<? extends Attribute> getClassAttributes() {
         AttributeBuilder builder = new AttributeBuilder(f);
         builder.Public();
-        if (description.getBasePath() == null
-                || description.getResourcePattern() == null
-                || description.getFormatClassName() == null) {
+        if (description.getProfileName() == null
+                || description.getPath() == null
+                || description.getSupportClassName() == null) {
             builder.Abstract();
         }
         return builder.toAttributes();
@@ -98,66 +124,77 @@ public final class DirectFileInputDescriptionGenerator {
 
     private List<TypeBodyDeclaration> createMembers() {
         List<TypeBodyDeclaration> results = Lists.create();
-        results.add(createGetModelTypeMethod(description.getModelClassName()));
-        if (description.getBasePath() != null) {
-            results.add(createGetBasePathMethod(description.getBasePath()));
+        results.add(createGetModelType());
+        if (description.getProfileName() != null) {
+            results.add(createGetProfileName());
         }
-        if (description.getResourcePattern() != null) {
-            results.add(createGetResourcePatternMethod(description.getResourcePattern()));
+        if (description.getPath() != null) {
+            results.add(createGetPath());
         }
-        if (description.getFormatClassName() != null) {
-            results.add(createGetFormatMethod(description.getFormatClassName()));
-        }
-        if (description.getOptional() != null) {
-            results.add(createIsOptionalMethod(description.getOptional()));
+        if (description.getSupportClassName() != null) {
+            results.add(createGetStreamSupport());
         }
         if (description.getDataSize() != null) {
-            results.add(createGetDataSizeMethod(description.getDataSize()));
+            results.add(createGetDataSize());
         }
         return results;
     }
 
-    private MethodDeclaration createGetModelTypeMethod(Name value) {
-        return createGetMethod(
+    private MethodDeclaration createGetModelType() {
+        return createGetter(
+                new TypeBuilder(f, context.resolve(Class.class))
+                    .parameterize(f.newWildcard(
+                            WildcardBoundKind.UPPER_BOUNDED,
+                            context.resolve(description.getModelClassName())))
+                    .toType(),
                 "getModelType", //$NON-NLS-1$
-                f.newParameterizedType(context.resolve(Class.class), f.newWildcard()),
-                f.newClassLiteral(context.resolve(value)));
+                f.newClassLiteral(context.resolve(description.getModelClassName())));
     }
 
-    private MethodDeclaration createGetBasePathMethod(String value) {
-        return createGetMethod(
-                "getBasePath", //$NON-NLS-1$
+    private MethodDeclaration createGetProfileName() {
+        return createGetter(
                 context.resolve(String.class),
-                Models.toLiteral(f, value));
+                "getProfileName", //$NON-NLS-1$
+                Models.toLiteral(f, description.getProfileName()));
     }
 
-    private MethodDeclaration createGetResourcePatternMethod(String value) {
-        return createGetMethod(
-                "getResourcePattern", //$NON-NLS-1$
+    private MethodDeclaration createGetStreamSupport() {
+        return createGetter(
+                new TypeBuilder(f, context.resolve(Class.class))
+                    .parameterize(f.newWildcard(
+                            WildcardBoundKind.UPPER_BOUNDED,
+                            new TypeBuilder(f, context.resolve(DataModelStreamSupport.class))
+                                .parameterize(f.newWildcard())
+                                .toType()))
+                    .toType(),
+                "getStreamSupport", //$NON-NLS-1$
+                f.newClassLiteral(context.resolve(description.getSupportClassName())));
+    }
+
+    private MethodDeclaration createGetPath() {
+        return createGetter(
                 context.resolve(String.class),
-                Models.toLiteral(f, value));
+                "getPath", //$NON-NLS-1$
+                Models.toLiteral(f, description.getPath()));
     }
 
-    private MethodDeclaration createGetFormatMethod(Name value) {
-        Type type = f.newParameterizedType(
-                context.resolve(Class.class),
-                f.newWildcard(WildcardBoundKind.UPPER_BOUNDED, f.newParameterizedType(
-                        context.resolve(DataFormat.class), f.newWildcard())));
-        return createGetMethod("getFormat", type, f.newClassLiteral(context.resolve(value))); //$NON-NLS-1$
-    }
-
-    private MethodDeclaration createIsOptionalMethod(boolean value) {
-        return createGetMethod("isOptional", context.resolve(boolean.class), Models.toLiteral(f, value)); //$NON-NLS-1$
-    }
-
-    private MethodDeclaration createGetDataSizeMethod(DataSize value) {
+    private MethodDeclaration createGetDataSize() {
         Type type = context.resolve(DataSize.class);
-        return createGetMethod("getDataSize", type, new TypeBuilder(f, type) //$NON-NLS-1$
-                .field(value.name())
-                .toExpression());
+        return createGetter(
+                type,
+                "getDataSize", //$NON-NLS-1$
+                new TypeBuilder(f, type)
+                    .field(description.getDataSize().name())
+                    .toExpression());
     }
 
-    private MethodDeclaration createGetMethod(String name, Type type, Expression value) {
+    private MethodDeclaration createGetter(
+            com.asakusafw.utils.java.model.syntax.Type type,
+            String name,
+            Expression value) {
+        assert type != null;
+        assert name != null;
+        assert value != null;
         return f.newMethodDeclaration(
                 null,
                 new AttributeBuilder(f)
@@ -167,8 +204,9 @@ public final class DirectFileInputDescriptionGenerator {
                 type,
                 f.newSimpleName(name),
                 Collections.<FormalParameterDeclaration>emptyList(),
-                Arrays.asList(f.newReturnStatement(value)));
+                Arrays.asList(new ExpressionBuilder(f, value).toReturnStatement()));
     }
+
 
     /**
      * Represents the meta description.
@@ -180,13 +218,11 @@ public final class DirectFileInputDescriptionGenerator {
 
         private final Name modelClassName;
 
-        private String basePath;
+        private String path;
 
-        private String resourcePattern;
+        private String profileName;
 
-        private Name formatClassName;
-
-        private Boolean optional;
+        private Name supportClassName;
 
         private DataSize dataSize;
 
@@ -217,68 +253,51 @@ public final class DirectFileInputDescriptionGenerator {
         }
 
         /**
-         * Returns base path.
-         * @return the base path, or {@code null} if it is not set
+         * Returns the profile name.
+         * @return the profile name, or {@code null} if it is not set
          */
-        public String getBasePath() {
-            return basePath;
+        public String getProfileName() {
+            return profileName;
         }
 
         /**
-         * Sets the base path.
+         * Sets the profile name.
          * @param value the value to set
          */
-        public void setBasePath(String value) {
-            this.basePath = value;
+        public void setProfileName(String value) {
+            this.profileName = value;
         }
 
         /**
-         * Returns the resource pattern.
-         * @return the resource pattern, or {@code null} if it is not set
+         * Returns path.
+         * @return the path, or {@code null} if it is not set
          */
-        public String getResourcePattern() {
-            return resourcePattern;
+        public String getPath() {
+            return path;
         }
 
         /**
-         * Sets the resource pattern.
+         * Sets the path.
          * @param value the value to set
          */
-        public void setResourcePattern(String value) {
-            this.resourcePattern = value;
+        public void setPath(String value) {
+            this.path = value;
         }
 
         /**
          * Returns the format class name.
          * @return the format class name, or {@code null} if it is not set
          */
-        public Name getFormatClassName() {
-            return formatClassName;
+        public Name getSupportClassName() {
+            return supportClassName;
         }
 
         /**
          * Sets the format class name.
          * @param value the value to set
          */
-        public void setFormatClassName(Name value) {
-            this.formatClassName = value;
-        }
-
-        /**
-         * Returns whether the target input is optional or not.
-         * @return {@code true} : it is optional, {@code false} : it is not optional,
-         *     or {@code null} it is not set
-         */
-        public Boolean getOptional() {
-            return optional;
-        }
-
-        /**
-         * Sets whether the target input is optional or not.
-         * @param value the value to set
-         */
-        public void setOptional(Boolean value) {
-            this.optional = value;
+        public void setSupportClassName(Name value) {
+            this.supportClassName = value;
         }
 
         /**

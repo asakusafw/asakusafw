@@ -66,16 +66,16 @@ public class TemporaryInputPreparator extends BaseImporterPreparator<TemporaryIn
 
     @Override
     public void truncate(TemporaryInputDescription description, TestContext context) throws IOException {
-        LOG.debug("Deleting input: {}", description);
+        LOG.debug("Deleting input: {}", description); //$NON-NLS-1$
         VariableTable variables = createVariables(context);
         Configuration config = configurations.newInstance();
         FileSystem fs = FileSystem.get(config);
         for (String path : description.getPaths()) {
             String resolved = variables.parse(path, false);
             Path target = fs.makeQualified(new Path(resolved));
-            LOG.debug("Deleting file: {}", target);
+            LOG.debug("Deleting file: {}", target); //$NON-NLS-1$
             boolean succeed = fs.delete(target, true);
-            LOG.debug("Deleted file (succeed={}): {}", succeed, target);
+            LOG.debug("Deleted file (succeed={}): {}", succeed, target); //$NON-NLS-1$
         }
         return;
     }
@@ -85,7 +85,7 @@ public class TemporaryInputPreparator extends BaseImporterPreparator<TemporaryIn
             DataModelDefinition<V> definition,
             TemporaryInputDescription description,
             TestContext context) throws IOException {
-        LOG.debug("Preparing input: {}", description);
+        LOG.debug("Preparing input: {}", description); //$NON-NLS-1$
         checkType(definition, description);
         Set<String> path = description.getPaths();
         if (path.isEmpty()) {

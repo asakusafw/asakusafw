@@ -64,7 +64,7 @@ public class SpiDataModelMirrorRepository implements DataModelMirrorRepository {
 
     private List<DataModelMirrorRepository> loadRepositories(ClassLoader serviceLoader) {
         assert serviceLoader != null;
-        LOG.trace("Loading data model mirror repositories");
+        LOG.trace("Loading data model mirror repositories"); //$NON-NLS-1$
         ServiceLoader<DataModelMirrorRepository> services = ServiceLoader.load(
                 DataModelMirrorRepository.class,
                 serviceLoader);

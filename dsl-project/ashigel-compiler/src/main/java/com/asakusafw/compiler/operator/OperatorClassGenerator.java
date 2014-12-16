@@ -95,7 +95,7 @@ public abstract class OperatorClassGenerator {
         importer.resolvePackageMember(name);
         return factory.newClassDeclaration(
                 createJavadoc(),
-                getAttribuets(),
+                getAttributes(),
                 name,
                 Collections.<TypeParameterDeclaration>emptyList(),
                 getSuperClass(),
@@ -114,7 +114,7 @@ public abstract class OperatorClassGenerator {
      * @return 生成する型の属性一覧
      * @since 0.5.0
      */
-    protected abstract List<? extends Attribute> getAttribuets();
+    protected abstract List<? extends Attribute> getAttributes();
 
     /**
      * 生成する型のスーパータイプを返す。

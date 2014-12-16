@@ -62,7 +62,7 @@ public class MasterBranchFlowProcessor extends RendezvousProcessor {
             EnumUtil.extractConstants(enumType, desc.getOutputPorts());
 
         Expression impl = context.createImplementation();
-        SimpleName branch = context.createName("branch");
+        SimpleName branch = context.createName("branch"); //$NON-NLS-1$
         context.addProcess(tx, new ExpressionBuilder(f, impl)
             .method(desc.getDeclaration().getName(), arguments)
             .toLocalVariableDeclaration(

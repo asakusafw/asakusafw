@@ -48,14 +48,14 @@ public class DirectDataSourceRepository {
         }
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Preparing directio datasources (count={0})",
+                    "Preparing directio datasources (count={0})", //$NON-NLS-1$
                     providers.size()));
         }
         for (DirectDataSourceProvider provider : providers) {
             NodePath path = NodePath.of(provider.getPath());
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "Preparing datasource (id={0}, path={1})",
+                        "Preparing datasource (id={0}, path={1})", //$NON-NLS-1$
                         provider.getId(),
                         path));
             }
@@ -286,7 +286,7 @@ public class DirectDataSourceRepository {
             if (pathString.isEmpty()) {
                 return ROOT;
             }
-            String[] fields = pathString.split("/");
+            String[] fields = pathString.split("/"); //$NON-NLS-1$
             ArrayList<String> segments = new ArrayList<String>();
             for (String s : fields) {
                 if (s.isEmpty() == false) {
@@ -315,7 +315,7 @@ public class DirectDataSourceRepository {
 
         public String getPathString() {
             if (segments.isEmpty()) {
-                return "";
+                return ""; //$NON-NLS-1$
             }
             StringBuilder buf = new StringBuilder();
             ArrayList<String> copy = segments;
@@ -331,7 +331,7 @@ public class DirectDataSourceRepository {
         @Override
         public String toString() {
             if (segments.isEmpty()) {
-                return "(ROOT)";
+                return "(ROOT)"; //$NON-NLS-1$
             } else {
                 return getPathString();
             }

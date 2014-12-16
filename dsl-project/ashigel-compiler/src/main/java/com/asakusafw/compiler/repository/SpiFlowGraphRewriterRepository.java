@@ -38,15 +38,14 @@ public class SpiFlowGraphRewriterRepository
 
     @Override
     protected void doInitialize() {
-        LOG.debug("グラフ書き換えプラグインを読み出します");
+        LOG.debug("loading flow graph rewriting plug-ins"); //$NON-NLS-1$
         this.rewriters = Lists.create();
         ServiceLoader<FlowGraphRewriter> services = ServiceLoader.load(
                 FlowGraphRewriter.class,
                 getEnvironment().getServiceClassLoader());
         for (FlowGraphRewriter rewriter : services) {
             rewriter.initialize(getEnvironment());
-            LOG.debug("{}が利用可能になります",
-                    rewriter.getClass().getName());
+            LOG.debug("found flow graph rewriting plug-in: {}", rewriter.getClass().getName()); //$NON-NLS-1$
             rewriters.add(rewriter);
         }
     }

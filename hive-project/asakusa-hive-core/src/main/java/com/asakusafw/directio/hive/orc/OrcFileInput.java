@@ -164,7 +164,7 @@ public class OrcFileInput<T> implements ModelInput<T> {
             boolean available = projected.contains(field);
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "ORCFile projection: column={0}, include={1}",
+                        "ORCFile projection: column={0}, include={1}", //$NON-NLS-1$
                         field.getFieldName(),
                         available));
             }

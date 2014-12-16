@@ -102,15 +102,15 @@ public class SideDataKindFlowAnalyzer {
         Expression lookup = createLookup(context, f);
 
         this.hasMasterExpresion = new ExpressionBuilder(f, lookup)
-            .method("isEmpty")
+            .method("isEmpty") //$NON-NLS-1$
             .apply(InfixOperator.EQUALS, Models.toLiteral(f, false))
             .toExpression();
         this.getMasterExpression = new ExpressionBuilder(f, lookup)
-            .method("get", Models.toLiteral(f, 0))
+            .method("get", Models.toLiteral(f, 0)) //$NON-NLS-1$
             .toExpression();
         this.getCheckedMasterExpression = f.newConditionalExpression(
                 new ExpressionBuilder(f, lookup)
-                    .method("isEmpty")
+                    .method("isEmpty") //$NON-NLS-1$
                     .toExpression(),
                 Models.toNullLiteral(f),
                 getMasterExpression);
@@ -162,7 +162,7 @@ public class SideDataKindFlowAnalyzer {
                     .parameterize(Models.toType(f, resource.getMasterDataClass().getType()))
                     .toType()),
                 new ExpressionBuilder(f, context.getResource(resource))
-                    .method("find", context.getInput())
+                    .method("find", context.getInput()) //$NON-NLS-1$
                     .toExpression());
         return lookup;
     }

@@ -49,9 +49,9 @@ public abstract class SequenceFileFormat<K, V, T> extends HadoopFileFormat<T> {
 
     static final Log LOG = LogFactory.getLog(SequenceFileFormat.class);
 
-    static final String KEY_COMPRESSION_CODEC = "com.asakusafw.output.sequencefile.compression.codec";
+    static final String KEY_COMPRESSION_CODEC = "com.asakusafw.output.sequencefile.compression.codec"; //$NON-NLS-1$
 
-    static final String VALUE_COMPRESSION_AUTO = "auto";
+    static final String VALUE_COMPRESSION_AUTO = "auto"; //$NON-NLS-1$
 
     @Override
     public long getPreferredFragmentSize() throws IOException, InterruptedException {
@@ -183,7 +183,7 @@ public abstract class SequenceFileFormat<K, V, T> extends HadoopFileFormat<T> {
         CompressionCodec codec = getCompressionCodec(path);
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Creating sequence file (path={0}, type={1}, codec={2})",
+                    "Creating sequence file (path={0}, type={1}, codec={2})", //$NON-NLS-1$
                     path,
                     dataType.getName(),
                     codec));

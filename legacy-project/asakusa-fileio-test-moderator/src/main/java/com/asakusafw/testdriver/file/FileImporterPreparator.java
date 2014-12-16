@@ -71,16 +71,16 @@ public class FileImporterPreparator extends BaseImporterPreparator<FileImporterD
 
     @Override
     public void truncate(FileImporterDescription description, TestContext context) throws IOException {
-        LOG.info("インポート元をクリアしています: {}", description);
+        LOG.info("cleaning input files: {}", description);
         VariableTable variables = createVariables(context);
         Configuration config = configurations.newInstance();
         FileSystem fs = FileSystem.get(config);
         for (String path : description.getPaths()) {
             String resolved = variables.parse(path, false);
             Path target = fs.makeQualified(new Path(resolved));
-            LOG.debug("ファイルを削除しています: {}", target);
+            LOG.debug("start removing file: {}", target);
             boolean succeed = fs.delete(target, true);
-            LOG.debug("ファイルを削除しました (succeed={}): {}", succeed, target);
+            LOG.debug("finish removing file (succeed={}): {}", succeed, target);
         }
     }
 
@@ -89,7 +89,7 @@ public class FileImporterPreparator extends BaseImporterPreparator<FileImporterD
             DataModelDefinition<V> definition,
             FileImporterDescription description,
             TestContext context) throws IOException {
-        LOG.info("インポート元の初期値を設定します: {}", description);
+        LOG.info("creating input file for testing: {}", description);
         checkType(definition, description);
         Set<String> path = description.getPaths();
         if (path.isEmpty()) {

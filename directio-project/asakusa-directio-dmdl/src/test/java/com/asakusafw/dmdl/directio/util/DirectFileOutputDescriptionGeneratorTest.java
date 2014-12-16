@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.dmdl.directio.hive.util;
+package com.asakusafw.dmdl.directio.util;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
@@ -21,15 +21,16 @@ import static org.junit.Assert.*;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 
-import com.asakusafw.dmdl.directio.hive.common.GeneratorTesterRoot;
-import com.asakusafw.dmdl.directio.hive.util.DirectFileInputDescriptionGenerator.Description;
-import com.asakusafw.dmdl.directio.hive.util.mock.MockData;
-import com.asakusafw.dmdl.directio.hive.util.mock.MockDataFormat;
+import com.asakusafw.dmdl.directio.common.driver.GeneratorTesterRoot;
+import com.asakusafw.dmdl.directio.util.DirectFileOutputDescriptionGenerator.Description;
+import com.asakusafw.dmdl.directio.util.mock.MockData;
+import com.asakusafw.dmdl.directio.util.mock.MockDataFormat;
 import com.asakusafw.dmdl.java.emitter.EmitContext;
 import com.asakusafw.dmdl.java.spi.JavaDataModelDriver;
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
@@ -37,13 +38,12 @@ import com.asakusafw.utils.java.model.syntax.ModelFactory;
 import com.asakusafw.utils.java.model.syntax.Name;
 import com.asakusafw.utils.java.model.syntax.NamedType;
 import com.asakusafw.utils.java.model.util.Models;
-import com.asakusafw.vocabulary.directio.DirectFileInputDescription;
-import com.asakusafw.vocabulary.external.ImporterDescription.DataSize;
+import com.asakusafw.vocabulary.directio.DirectFileOutputDescription;
 
 /**
- * Test for {@link DirectFileInputDescriptionGenerator}.
+ * Test for {@link DirectFileOutputDescriptionGenerator}.
  */
-public class DirectFileInputDescriptionGeneratorTest extends GeneratorTesterRoot {
+public class DirectFileOutputDescriptionGeneratorTest extends GeneratorTesterRoot {
 
     private final ModelFactory f = Models.getModelFactory();
 
@@ -52,8 +52,8 @@ public class DirectFileInputDescriptionGeneratorTest extends GeneratorTesterRoot
      */
     @Test
     public void simple() {
-        Class<? extends DirectFileInputDescription> aClass = generate(new Description("Testing", name(MockData.class)));
-        assertThat(DirectFileInputDescription.class.isAssignableFrom(aClass), is(true));
+        Class<? extends DirectFileOutputDescription> aClass = generate(new Description("Testing", name(MockData.class)));
+        assertThat(DirectFileOutputDescription.class.isAssignableFrom(aClass), is(true));
         assertThat(Modifier.isAbstract(aClass.getModifiers()), is(true));
 
         assertThat(aClass, hasGetter("getModelType"));
@@ -73,17 +73,17 @@ public class DirectFileInputDescriptionGeneratorTest extends GeneratorTesterRoot
         description.setResourcePattern("*");
         description.setFormatClassName(name(MockDataFormat.class));
 
-        Class<? extends DirectFileInputDescription> aClass = generate(description);
-        assertThat(DirectFileInputDescription.class.isAssignableFrom(aClass), is(true));
+        Class<? extends DirectFileOutputDescription> aClass = generate(description);
+        assertThat(DirectFileOutputDescription.class.isAssignableFrom(aClass), is(true));
         assertThat(Modifier.isAbstract(aClass.getModifiers()), is(false));
 
-        DirectFileInputDescription object = aClass.newInstance();
+        DirectFileOutputDescription object = aClass.newInstance();
         assertThat(object.getModelType(), is((Object) MockData.class));
         assertThat(object.getBasePath(), is("base-path"));
         assertThat(object.getResourcePattern(), is("*"));
+        assertThat(object.getOrder(), is(Arrays.<String>asList()));
+        assertThat(object.getDeletePatterns(), is(Arrays.<String>asList()));
         assertThat(object.getFormat(), is((Object) MockDataFormat.class));
-        assertThat(object.isOptional(), is(false));
-        assertThat(object.getDataSize(), is(DataSize.UNKNOWN));
     }
 
     /**
@@ -95,21 +95,23 @@ public class DirectFileInputDescriptionGeneratorTest extends GeneratorTesterRoot
         Description description = new Description("Testing", name(MockData.class));
         description.setBasePath("base-path");
         description.setResourcePattern("*");
-        description.setOptional(true);
-        description.setDataSize(DataSize.TINY);
+        description.getOrder().add("something1");
+        description.getOrder().add("something2");
+        description.getDeletePatterns().add("delete1-*");
+        description.getDeletePatterns().add("delete2-*");
         description.setFormatClassName(name(MockDataFormat.class));
 
-        Class<? extends DirectFileInputDescription> aClass = generate(description);
-        assertThat(DirectFileInputDescription.class.isAssignableFrom(aClass), is(true));
+        Class<? extends DirectFileOutputDescription> aClass = generate(description);
+        assertThat(DirectFileOutputDescription.class.isAssignableFrom(aClass), is(true));
         assertThat(Modifier.isAbstract(aClass.getModifiers()), is(false));
 
-        DirectFileInputDescription object = aClass.newInstance();
+        DirectFileOutputDescription object = aClass.newInstance();
         assertThat(object.getModelType(), is((Object) MockData.class));
         assertThat(object.getBasePath(), is("base-path"));
         assertThat(object.getResourcePattern(), is("*"));
+        assertThat(object.getOrder(), is(Arrays.asList("something1", "something2")));
+        assertThat(object.getDeletePatterns(), is(Arrays.asList("delete1-*", "delete2-*")));
         assertThat(object.getFormat(), is((Object) MockDataFormat.class));
-        assertThat(object.isOptional(), is(true));
-        assertThat(object.getDataSize(), is(DataSize.TINY));
     }
 
     private Matcher<Class<?>> hasGetter(final String name) {
@@ -141,7 +143,7 @@ public class DirectFileInputDescriptionGeneratorTest extends GeneratorTesterRoot
     }
 
     @SuppressWarnings("unchecked")
-    private Class<? extends DirectFileInputDescription> generate(final Description description) {
+    private Class<? extends DirectFileOutputDescription> generate(final Description description) {
         emitDrivers.add(new JavaDataModelDriver() {
             @Override
             public void generateResources(EmitContext context, ModelDeclaration model) throws IOException {
@@ -150,11 +152,11 @@ public class DirectFileInputDescriptionGeneratorTest extends GeneratorTesterRoot
                         context.getConfiguration(),
                         model,
                         "testing",
-                        "MockFileInputDescription");
-                DirectFileInputDescriptionGenerator.generate(next, description);
+                        "MockFileOutputDescription");
+                DirectFileOutputDescriptionGenerator.generate(next, description);
             }
         });
-        ModelLoader loader = generateJava("model = { prop : INT; };");
-        return (Class<? extends DirectFileInputDescription>) loader.load("testing", "MockFileInputDescription");
+        ModelLoader loader = generateJavaFromLines("model = { prop : INT; };");
+        return (Class<? extends DirectFileOutputDescription>) loader.load("testing", "MockFileOutputDescription");
     }
 }

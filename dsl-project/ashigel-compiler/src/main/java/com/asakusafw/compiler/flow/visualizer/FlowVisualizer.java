@@ -32,11 +32,11 @@ import com.asakusafw.vocabulary.flow.graph.FlowGraph;
  */
 public class FlowVisualizer {
 
-    private static final String PATH_FLOW_GRAPH = "META-INF/visualize/flowgraph.dot";
+    private static final String PATH_FLOW_GRAPH = "META-INF/visualize/flowgraph.dot"; //$NON-NLS-1$
 
-    private static final String PATH_STAGE_GRAPH = "META-INF/visualize/stagegraph.dot";
+    private static final String PATH_STAGE_GRAPH = "META-INF/visualize/stagegraph.dot"; //$NON-NLS-1$
 
-    private static final String PATH_STAGE_BLOCK = "META-INF/visualize/stageblock-{0}.dot";
+    private static final String PATH_STAGE_BLOCK = "META-INF/visualize/stageblock-{0}.dot"; //$NON-NLS-1$
 
     private final FlowCompilingEnvironment environment;
 

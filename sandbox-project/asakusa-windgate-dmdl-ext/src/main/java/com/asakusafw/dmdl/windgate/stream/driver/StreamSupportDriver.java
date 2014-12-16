@@ -43,12 +43,12 @@ public class StreamSupportDriver extends AttributeDriver {
     /**
      * The attribute name.
      */
-    public static final String TARGET_NAME = "windgate.stream_format";
+    public static final String TARGET_NAME = "windgate.stream_format"; //$NON-NLS-1$
 
     /**
      * The element name.
      */
-    public static final String ELEMENT_NAME = "type";
+    public static final String ELEMENT_NAME = "type"; //$NON-NLS-1$
 
     @Override
     public String getTargetName() {

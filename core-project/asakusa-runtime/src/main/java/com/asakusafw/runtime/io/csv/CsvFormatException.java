@@ -202,7 +202,7 @@ public class CsvFormatException extends RecordFormatException {
         @Override
         public String toString() {
             return MessageFormat.format(
-                    "{0} (at {1}:{2}, record={3}, column={4}, expected={5}, actual={6})",
+                    "{0} (at {1}:{2}, record={3}, column={4}, expected={5}, actual={6})", //$NON-NLS-1$
                     getReason(),
                     getPath(),
                     getLineNumber(),

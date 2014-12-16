@@ -36,27 +36,27 @@ final class JdbcDescriptionUtil {
             throw new IllegalStateException(MessageFormat.format(
                     "{0} must not be null or empty string",
                     descriptionClass,
-                    "getTableName()"));
+                    "getTableName()")); //$NON-NLS-1$
         }
 
         if (columns == null) {
             throw new IllegalStateException(MessageFormat.format(
                     "{1} must not be null: {0}",
                     descriptionClass,
-                    "getColumNames()"));
+                    "getColumNames()")); //$NON-NLS-1$
         }
         if (columns.isEmpty()) {
             throw new IllegalStateException(MessageFormat.format(
                     "{1} must not be empty: {0}",
                     descriptionClass,
-                    "getColumNames()"));
+                    "getColumNames()")); //$NON-NLS-1$
         }
         for (String column : columns) {
             if (isEmpty(column)) {
                 throw new IllegalStateException(MessageFormat.format(
                         "{1} must not contain null or empty string: {0}",
                         descriptionClass,
-                        "getColumnNames()"));
+                        "getColumnNames()")); //$NON-NLS-1$
             }
         }
 
@@ -64,7 +64,7 @@ final class JdbcDescriptionUtil {
             throw new IllegalStateException(MessageFormat.format(
                     "{1} must not be null: {0}",
                     descriptionClass,
-                    "getJdbcSupport()"));
+                    "getJdbcSupport()")); //$NON-NLS-1$
         }
 
         DataModelJdbcSupport<?> support;

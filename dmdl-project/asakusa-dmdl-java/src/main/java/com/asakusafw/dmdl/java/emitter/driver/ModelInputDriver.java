@@ -67,7 +67,7 @@ public class ModelInputDriver extends JavaDataModelDriver {
                 context.getConfiguration(),
                 model,
                 NameConstants.CATEGORY_IO,
-                "{0}Input");
+                "{0}Input"); //$NON-NLS-1$
         Generator.emit(next, model);
         return context.resolve(next.getQualifiedTypeName());
     }
@@ -103,7 +103,7 @@ public class ModelInputDriver extends JavaDataModelDriver {
         private void emit() throws IOException {
             ClassDeclaration decl = f.newClassDeclaration(
                     new JavadocBuilder(f)
-                        .text("TSVファイルなどのレコードを表すファイルを入力として<code>{0}</code>を読み出す",
+                        .text("Provides a sequence of <code>{0}</code> using <code>RecordParser</code>.", //$NON-NLS-1$
                                 model.getName())
                         .toJavadoc(),
                     new AttributeBuilder(f)
@@ -145,11 +145,9 @@ public class ModelInputDriver extends JavaDataModelDriver {
         private TypeBodyDeclaration createConstructor() {
             return f.newConstructorDeclaration(
                     new JavadocBuilder(f)
-                        .text("インスタンスを生成する。")
+                        .text("Creates a new instance.") //$NON-NLS-1$
                         .param(createParserFieldName())
-                            .text("利用するパーサー")
-                        .exception(context.resolve(IllegalArgumentException.class))
-                            .text("引数に<code>null</code>が指定された場合")
+                            .text("the record parser") //$NON-NLS-1$
                         .toJavadoc(),
                     new AttributeBuilder(f)
                         .Public()
@@ -186,7 +184,7 @@ public class ModelInputDriver extends JavaDataModelDriver {
                         .toAttributes(),
                     Collections.<TypeParameterDeclaration>emptyList(),
                     context.resolve(boolean.class),
-                    f.newSimpleName("readTo"),
+                    f.newSimpleName("readTo"), //$NON-NLS-1$
                     Collections.singletonList(f.newFormalParameterDeclaration(
                             context.resolve(model.getSymbol()),
                             createModelParameterName())),
@@ -200,7 +198,7 @@ public class ModelInputDriver extends JavaDataModelDriver {
 
             results.add(f.newIfStatement(
                     new ExpressionBuilder(f, createParserFieldName())
-                        .method("next")
+                        .method("next") //$NON-NLS-1$
                         .apply(InfixOperator.EQUALS, Models.toLiteral(f, false))
                         .toExpression(),
                     f.newBlock(new ExpressionBuilder(f, Models.toLiteral(f, false))
@@ -221,14 +219,14 @@ public class ModelInputDriver extends JavaDataModelDriver {
                 .method(optionGetterName)
                 .toExpression();
             Statement fill = new ExpressionBuilder(f, createParserFieldName())
-                .method("fill", option)
+                .method("fill", option) //$NON-NLS-1$
                 .toStatement();
             return fill;
         }
 
         private Statement createEndRecordStatement() {
             return new ExpressionBuilder(f, createParserFieldName())
-                .method("endRecord")
+                .method("endRecord") //$NON-NLS-1$
                 .toStatement();
         }
 
@@ -241,7 +239,7 @@ public class ModelInputDriver extends JavaDataModelDriver {
                         .toAttributes(),
                     Collections.<TypeParameterDeclaration>emptyList(),
                     context.resolve(void.class),
-                    f.newSimpleName("close"),
+                    f.newSimpleName("close"), //$NON-NLS-1$
                     Collections.<FormalParameterDeclaration>emptyList(),
                     0,
                     Collections.singletonList(context.resolve(IOException.class)),
@@ -251,17 +249,17 @@ public class ModelInputDriver extends JavaDataModelDriver {
         private List<Statement> createCloserBody() {
             List<Statement> results = Lists.create();
             results.add(new ExpressionBuilder(f, createParserFieldName())
-                .method("close")
+                .method("close") //$NON-NLS-1$
                 .toStatement());
             return results;
         }
 
         private SimpleName createParserFieldName() {
-            return f.newSimpleName("parser");
+            return f.newSimpleName("parser"); //$NON-NLS-1$
         }
 
         private SimpleName createModelParameterName() {
-            return f.newSimpleName("model");
+            return f.newSimpleName("model"); //$NON-NLS-1$
         }
     }
 }

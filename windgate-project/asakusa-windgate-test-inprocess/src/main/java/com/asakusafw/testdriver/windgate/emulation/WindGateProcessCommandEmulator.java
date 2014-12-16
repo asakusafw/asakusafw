@@ -42,7 +42,7 @@ public class WindGateProcessCommandEmulator extends AbstractWindGateCommandEmula
 
     static final Logger LOG = LoggerFactory.getLogger(WindGateProcessCommandEmulator.class);
 
-    private static final String PATH_COMMAND = PATH_WINDGATE + "/bin/process.sh";
+    private static final String PATH_COMMAND = PATH_WINDGATE + "/bin/process.sh"; //$NON-NLS-1$
 
     private static final int ARG_SESSION_KIND = 2;
 
@@ -52,7 +52,7 @@ public class WindGateProcessCommandEmulator extends AbstractWindGateCommandEmula
 
     @Override
     public String getName() {
-        return "windgate-process";
+        return "windgate-process"; //$NON-NLS-1$
     }
 
     @Override
@@ -111,7 +111,7 @@ public class WindGateProcessCommandEmulator extends AbstractWindGateCommandEmula
             TestDriverContext context,
             ClassLoader classLoader,
             String script) {
-        LOG.debug("Loading script: {}", script);
+        LOG.debug("Loading script: {}", script); //$NON-NLS-1$
         try {
             URI uri = CommandLineUtil.toUri(script);
             Properties properties = CommandLineUtil.loadProperties(uri, classLoader);

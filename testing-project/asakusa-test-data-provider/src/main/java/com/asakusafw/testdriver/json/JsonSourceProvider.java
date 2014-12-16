@@ -23,6 +23,7 @@ import java.io.Reader;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.text.MessageFormat;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,9 +42,9 @@ public class JsonSourceProvider implements DataModelSourceProvider {
 
     static final Logger LOG = LoggerFactory.getLogger(JsonSourceProvider.class);
 
-    private static final String EXTENSION = ".json";
+    private static final String EXTENSION = ".json"; //$NON-NLS-1$
 
-    private static final Charset ENCONDING = Charset.forName("UTF-8");
+    private static final Charset ENCONDING = Charset.forName("UTF-8"); //$NON-NLS-1$
 
     @Override
     public <T> DataModelSource open(
@@ -54,7 +55,9 @@ public class JsonSourceProvider implements DataModelSourceProvider {
         if (path == null || path.endsWith(EXTENSION) == false) {
             return null;
         }
-        LOG.info("JSONファイルをデータソースに利用します: {}", source);
+        LOG.info(MessageFormat.format(
+                "JSONファイルをデータソースに利用します: {0}",
+                source));
         URL url = source.toURL();
         InputStream input = url.openStream();
         boolean established = false;

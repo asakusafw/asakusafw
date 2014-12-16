@@ -107,7 +107,7 @@ public abstract class LineProcessor extends AbstractFlowElementProcessor {
          */
         public Expression createLocalVariable(Type type, Expression initializer) {
             Precondition.checkMustNotBeNull(type, "type"); //$NON-NLS-1$
-            SimpleName name = names.create("v");
+            SimpleName name = names.create("v"); //$NON-NLS-1$
             add(new ExpressionBuilder(factory, initializer)
                 .toLocalVariableDeclaration(importer.resolve(type), name));
             return name;

@@ -35,9 +35,10 @@ public final class PropertyName implements Comparable<PropertyName>, Serializabl
      * The system property key of property name segment separator.
      * @since 0.7.0
      */
-    public static final String KEY_SEGMENT_SEPARATOR = "com.asakusafw.testdriver.property.segmentSeparator";
+    public static final String KEY_SEGMENT_SEPARATOR =
+            "com.asakusafw.testdriver.property.segmentSeparator"; //$NON-NLS-1$
 
-    static final String DEFAULT_SEGMENT_SEPARATOR = "-";
+    static final String DEFAULT_SEGMENT_SEPARATOR = "-"; //$NON-NLS-1$
 
     static final String SEGMENT_SEPARATOR;
     static {

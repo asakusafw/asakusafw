@@ -18,6 +18,7 @@ package com.asakusafw.runtime.io.util;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.text.MessageFormat;
 
 import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.io.WritableComparator;
@@ -162,13 +163,10 @@ public abstract class ShuffleKey<
 
     @Override
     public final String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("AbstractShuffleKey [group=");
-        builder.append(groupObject);
-        builder.append(", order=");
-        builder.append(orderObject);
-        builder.append("]");
-        return builder.toString();
+        return MessageFormat.format(
+                "ShuffleKey(group={0}, order={1})", //$NON-NLS-1$
+                groupObject,
+                orderObject);
     }
 
     /**

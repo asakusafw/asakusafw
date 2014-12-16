@@ -41,7 +41,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitAlternateConstructorInvocation(
             AlternateConstructorInvocation elem,
             C context) throws E {
-        throw new UnsupportedOperationException("AlternateConstructorInvocation");
+        throw new UnsupportedOperationException("AlternateConstructorInvocation"); //$NON-NLS-1$
     }
 
     /**
@@ -58,7 +58,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitAnnotationDeclaration(
             AnnotationDeclaration elem,
             C context) throws E {
-        throw new UnsupportedOperationException("AnnotationDeclaration");
+        throw new UnsupportedOperationException("AnnotationDeclaration"); //$NON-NLS-1$
     }
 
     /**
@@ -75,7 +75,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitAnnotationElement(
             AnnotationElement elem,
             C context) throws E {
-        throw new UnsupportedOperationException("AnnotationElement");
+        throw new UnsupportedOperationException("AnnotationElement"); //$NON-NLS-1$
     }
 
     /**
@@ -92,7 +92,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitAnnotationElementDeclaration(
             AnnotationElementDeclaration elem,
             C context) throws E {
-        throw new UnsupportedOperationException("AnnotationElementDeclaration");
+        throw new UnsupportedOperationException("AnnotationElementDeclaration"); //$NON-NLS-1$
     }
 
     /**
@@ -109,7 +109,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitArrayAccessExpression(
             ArrayAccessExpression elem,
             C context) throws E {
-        throw new UnsupportedOperationException("ArrayAccessExpression");
+        throw new UnsupportedOperationException("ArrayAccessExpression"); //$NON-NLS-1$
     }
 
     /**
@@ -126,7 +126,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitArrayCreationExpression(
             ArrayCreationExpression elem,
             C context) throws E {
-        throw new UnsupportedOperationException("ArrayCreationExpression");
+        throw new UnsupportedOperationException("ArrayCreationExpression"); //$NON-NLS-1$
     }
 
     /**
@@ -143,7 +143,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitArrayInitializer(
             ArrayInitializer elem,
             C context) throws E {
-        throw new UnsupportedOperationException("ArrayInitializer");
+        throw new UnsupportedOperationException("ArrayInitializer"); //$NON-NLS-1$
     }
 
     /**
@@ -160,7 +160,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitArrayType(
             ArrayType elem,
             C context) throws E {
-        throw new UnsupportedOperationException("ArrayType");
+        throw new UnsupportedOperationException("ArrayType"); //$NON-NLS-1$
     }
 
     /**
@@ -177,7 +177,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitAssertStatement(
             AssertStatement elem,
             C context) throws E {
-        throw new UnsupportedOperationException("AssertStatement");
+        throw new UnsupportedOperationException("AssertStatement"); //$NON-NLS-1$
     }
 
     /**
@@ -194,7 +194,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitAssignmentExpression(
             AssignmentExpression elem,
             C context) throws E {
-        throw new UnsupportedOperationException("AssignmentExpression");
+        throw new UnsupportedOperationException("AssignmentExpression"); //$NON-NLS-1$
     }
 
     /**
@@ -211,7 +211,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitBasicType(
             BasicType elem,
             C context) throws E {
-        throw new UnsupportedOperationException("BasicType");
+        throw new UnsupportedOperationException("BasicType"); //$NON-NLS-1$
     }
 
     /**
@@ -228,7 +228,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitBlock(
             Block elem,
             C context) throws E {
-        throw new UnsupportedOperationException("Block");
+        throw new UnsupportedOperationException("Block"); //$NON-NLS-1$
     }
 
     /**
@@ -245,7 +245,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitBlockComment(
             BlockComment elem,
             C context) throws E {
-        throw new UnsupportedOperationException("BlockComment");
+        throw new UnsupportedOperationException("BlockComment"); //$NON-NLS-1$
     }
 
     /**
@@ -262,7 +262,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitBreakStatement(
             BreakStatement elem,
             C context) throws E {
-        throw new UnsupportedOperationException("BreakStatement");
+        throw new UnsupportedOperationException("BreakStatement"); //$NON-NLS-1$
     }
 
     /**
@@ -279,7 +279,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitCastExpression(
             CastExpression elem,
             C context) throws E {
-        throw new UnsupportedOperationException("CastExpression");
+        throw new UnsupportedOperationException("CastExpression"); //$NON-NLS-1$
     }
 
     /**
@@ -296,7 +296,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitCatchClause(
             CatchClause elem,
             C context) throws E {
-        throw new UnsupportedOperationException("CatchClause");
+        throw new UnsupportedOperationException("CatchClause"); //$NON-NLS-1$
     }
 
     /**
@@ -313,7 +313,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitClassBody(
             ClassBody elem,
             C context) throws E {
-        throw new UnsupportedOperationException("ClassBody");
+        throw new UnsupportedOperationException("ClassBody"); //$NON-NLS-1$
     }
 
     /**
@@ -330,7 +330,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitClassDeclaration(
             ClassDeclaration elem,
             C context) throws E {
-        throw new UnsupportedOperationException("ClassDeclaration");
+        throw new UnsupportedOperationException("ClassDeclaration"); //$NON-NLS-1$
     }
 
     /**
@@ -347,7 +347,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitClassInstanceCreationExpression(
             ClassInstanceCreationExpression elem,
             C context) throws E {
-        throw new UnsupportedOperationException("ClassInstanceCreationExpression");
+        throw new UnsupportedOperationException("ClassInstanceCreationExpression"); //$NON-NLS-1$
     }
 
     /**
@@ -364,7 +364,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitClassLiteral(
             ClassLiteral elem,
             C context) throws E {
-        throw new UnsupportedOperationException("ClassLiteral");
+        throw new UnsupportedOperationException("ClassLiteral"); //$NON-NLS-1$
     }
 
     /**
@@ -381,7 +381,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitCompilationUnit(
             CompilationUnit elem,
             C context) throws E {
-        throw new UnsupportedOperationException("CompilationUnit");
+        throw new UnsupportedOperationException("CompilationUnit"); //$NON-NLS-1$
     }
 
     /**
@@ -398,7 +398,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitConditionalExpression(
             ConditionalExpression elem,
             C context) throws E {
-        throw new UnsupportedOperationException("ConditionalExpression");
+        throw new UnsupportedOperationException("ConditionalExpression"); //$NON-NLS-1$
     }
 
     /**
@@ -415,7 +415,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitConstructorDeclaration(
             ConstructorDeclaration elem,
             C context) throws E {
-        throw new UnsupportedOperationException("ConstructorDeclaration");
+        throw new UnsupportedOperationException("ConstructorDeclaration"); //$NON-NLS-1$
     }
 
     /**
@@ -432,7 +432,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitContinueStatement(
             ContinueStatement elem,
             C context) throws E {
-        throw new UnsupportedOperationException("ContinueStatement");
+        throw new UnsupportedOperationException("ContinueStatement"); //$NON-NLS-1$
     }
 
     /**
@@ -449,7 +449,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitDoStatement(
             DoStatement elem,
             C context) throws E {
-        throw new UnsupportedOperationException("DoStatement");
+        throw new UnsupportedOperationException("DoStatement"); //$NON-NLS-1$
     }
 
     /**
@@ -466,7 +466,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitDocBlock(
             DocBlock elem,
             C context) throws E {
-        throw new UnsupportedOperationException("DocBlock");
+        throw new UnsupportedOperationException("DocBlock"); //$NON-NLS-1$
     }
 
     /**
@@ -483,7 +483,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitDocField(
             DocField elem,
             C context) throws E {
-        throw new UnsupportedOperationException("DocField");
+        throw new UnsupportedOperationException("DocField"); //$NON-NLS-1$
     }
 
     /**
@@ -500,7 +500,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitDocMethod(
             DocMethod elem,
             C context) throws E {
-        throw new UnsupportedOperationException("DocMethod");
+        throw new UnsupportedOperationException("DocMethod"); //$NON-NLS-1$
     }
 
     /**
@@ -517,7 +517,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitDocMethodParameter(
             DocMethodParameter elem,
             C context) throws E {
-        throw new UnsupportedOperationException("DocMethodParameter");
+        throw new UnsupportedOperationException("DocMethodParameter"); //$NON-NLS-1$
     }
 
     /**
@@ -534,7 +534,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitDocText(
             DocText elem,
             C context) throws E {
-        throw new UnsupportedOperationException("DocText");
+        throw new UnsupportedOperationException("DocText"); //$NON-NLS-1$
     }
 
     /**
@@ -551,7 +551,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitEmptyStatement(
             EmptyStatement elem,
             C context) throws E {
-        throw new UnsupportedOperationException("EmptyStatement");
+        throw new UnsupportedOperationException("EmptyStatement"); //$NON-NLS-1$
     }
 
     /**
@@ -568,7 +568,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitEnhancedForStatement(
             EnhancedForStatement elem,
             C context) throws E {
-        throw new UnsupportedOperationException("EnhancedForStatement");
+        throw new UnsupportedOperationException("EnhancedForStatement"); //$NON-NLS-1$
     }
 
     /**
@@ -585,7 +585,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitEnumConstantDeclaration(
             EnumConstantDeclaration elem,
             C context) throws E {
-        throw new UnsupportedOperationException("EnumConstantDeclaration");
+        throw new UnsupportedOperationException("EnumConstantDeclaration"); //$NON-NLS-1$
     }
 
     /**
@@ -602,7 +602,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitEnumDeclaration(
             EnumDeclaration elem,
             C context) throws E {
-        throw new UnsupportedOperationException("EnumDeclaration");
+        throw new UnsupportedOperationException("EnumDeclaration"); //$NON-NLS-1$
     }
 
     /**
@@ -619,7 +619,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitExpressionStatement(
             ExpressionStatement elem,
             C context) throws E {
-        throw new UnsupportedOperationException("ExpressionStatement");
+        throw new UnsupportedOperationException("ExpressionStatement"); //$NON-NLS-1$
     }
 
     /**
@@ -636,7 +636,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitFieldAccessExpression(
             FieldAccessExpression elem,
             C context) throws E {
-        throw new UnsupportedOperationException("FieldAccessExpression");
+        throw new UnsupportedOperationException("FieldAccessExpression"); //$NON-NLS-1$
     }
 
     /**
@@ -653,7 +653,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitFieldDeclaration(
             FieldDeclaration elem,
             C context) throws E {
-        throw new UnsupportedOperationException("FieldDeclaration");
+        throw new UnsupportedOperationException("FieldDeclaration"); //$NON-NLS-1$
     }
 
     /**
@@ -670,7 +670,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitForStatement(
             ForStatement elem,
             C context) throws E {
-        throw new UnsupportedOperationException("ForStatement");
+        throw new UnsupportedOperationException("ForStatement"); //$NON-NLS-1$
     }
 
     /**
@@ -687,7 +687,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitFormalParameterDeclaration(
             FormalParameterDeclaration elem,
             C context) throws E {
-        throw new UnsupportedOperationException("FormalParameterDeclaration");
+        throw new UnsupportedOperationException("FormalParameterDeclaration"); //$NON-NLS-1$
     }
 
     /**
@@ -704,7 +704,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitIfStatement(
             IfStatement elem,
             C context) throws E {
-        throw new UnsupportedOperationException("IfStatement");
+        throw new UnsupportedOperationException("IfStatement"); //$NON-NLS-1$
     }
 
     /**
@@ -721,7 +721,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitImportDeclaration(
             ImportDeclaration elem,
             C context) throws E {
-        throw new UnsupportedOperationException("ImportDeclaration");
+        throw new UnsupportedOperationException("ImportDeclaration"); //$NON-NLS-1$
     }
 
     /**
@@ -738,7 +738,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitInfixExpression(
             InfixExpression elem,
             C context) throws E {
-        throw new UnsupportedOperationException("InfixExpression");
+        throw new UnsupportedOperationException("InfixExpression"); //$NON-NLS-1$
     }
 
     /**
@@ -755,7 +755,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitInitializerDeclaration(
             InitializerDeclaration elem,
             C context) throws E {
-        throw new UnsupportedOperationException("InitializerDeclaration");
+        throw new UnsupportedOperationException("InitializerDeclaration"); //$NON-NLS-1$
     }
 
     /**
@@ -772,7 +772,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitInstanceofExpression(
             InstanceofExpression elem,
             C context) throws E {
-        throw new UnsupportedOperationException("InstanceofExpression");
+        throw new UnsupportedOperationException("InstanceofExpression"); //$NON-NLS-1$
     }
 
     /**
@@ -789,7 +789,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitInterfaceDeclaration(
             InterfaceDeclaration elem,
             C context) throws E {
-        throw new UnsupportedOperationException("InterfaceDeclaration");
+        throw new UnsupportedOperationException("InterfaceDeclaration"); //$NON-NLS-1$
     }
 
     /**
@@ -806,7 +806,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitJavadoc(
             Javadoc elem,
             C context) throws E {
-        throw new UnsupportedOperationException("Javadoc");
+        throw new UnsupportedOperationException("Javadoc"); //$NON-NLS-1$
     }
 
     /**
@@ -823,7 +823,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitLabeledStatement(
             LabeledStatement elem,
             C context) throws E {
-        throw new UnsupportedOperationException("LabeledStatement");
+        throw new UnsupportedOperationException("LabeledStatement"); //$NON-NLS-1$
     }
 
     /**
@@ -840,7 +840,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitLineComment(
             LineComment elem,
             C context) throws E {
-        throw new UnsupportedOperationException("LineComment");
+        throw new UnsupportedOperationException("LineComment"); //$NON-NLS-1$
     }
 
     /**
@@ -857,7 +857,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitLiteral(
             Literal elem,
             C context) throws E {
-        throw new UnsupportedOperationException("Literal");
+        throw new UnsupportedOperationException("Literal"); //$NON-NLS-1$
     }
 
     /**
@@ -874,7 +874,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitLocalClassDeclaration(
             LocalClassDeclaration elem,
             C context) throws E {
-        throw new UnsupportedOperationException("LocalClassDeclaration");
+        throw new UnsupportedOperationException("LocalClassDeclaration"); //$NON-NLS-1$
     }
 
     /**
@@ -891,7 +891,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitLocalVariableDeclaration(
             LocalVariableDeclaration elem,
             C context) throws E {
-        throw new UnsupportedOperationException("LocalVariableDeclaration");
+        throw new UnsupportedOperationException("LocalVariableDeclaration"); //$NON-NLS-1$
     }
 
     /**
@@ -908,7 +908,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitMarkerAnnotation(
             MarkerAnnotation elem,
             C context) throws E {
-        throw new UnsupportedOperationException("MarkerAnnotation");
+        throw new UnsupportedOperationException("MarkerAnnotation"); //$NON-NLS-1$
     }
 
     /**
@@ -925,7 +925,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitMethodDeclaration(
             MethodDeclaration elem,
             C context) throws E {
-        throw new UnsupportedOperationException("MethodDeclaration");
+        throw new UnsupportedOperationException("MethodDeclaration"); //$NON-NLS-1$
     }
 
     /**
@@ -942,7 +942,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitMethodInvocationExpression(
             MethodInvocationExpression elem,
             C context) throws E {
-        throw new UnsupportedOperationException("MethodInvocationExpression");
+        throw new UnsupportedOperationException("MethodInvocationExpression"); //$NON-NLS-1$
     }
 
     /**
@@ -959,7 +959,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitModifier(
             Modifier elem,
             C context) throws E {
-        throw new UnsupportedOperationException("Modifier");
+        throw new UnsupportedOperationException("Modifier"); //$NON-NLS-1$
     }
 
     /**
@@ -976,7 +976,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitNamedType(
             NamedType elem,
             C context) throws E {
-        throw new UnsupportedOperationException("NamedType");
+        throw new UnsupportedOperationException("NamedType"); //$NON-NLS-1$
     }
 
     /**
@@ -993,7 +993,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitNormalAnnotation(
             NormalAnnotation elem,
             C context) throws E {
-        throw new UnsupportedOperationException("NormalAnnotation");
+        throw new UnsupportedOperationException("NormalAnnotation"); //$NON-NLS-1$
     }
 
     /**
@@ -1010,7 +1010,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitPackageDeclaration(
             PackageDeclaration elem,
             C context) throws E {
-        throw new UnsupportedOperationException("PackageDeclaration");
+        throw new UnsupportedOperationException("PackageDeclaration"); //$NON-NLS-1$
     }
 
     /**
@@ -1027,7 +1027,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitParameterizedType(
             ParameterizedType elem,
             C context) throws E {
-        throw new UnsupportedOperationException("ParameterizedType");
+        throw new UnsupportedOperationException("ParameterizedType"); //$NON-NLS-1$
     }
 
     /**
@@ -1044,7 +1044,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitParenthesizedExpression(
             ParenthesizedExpression elem,
             C context) throws E {
-        throw new UnsupportedOperationException("ParenthesizedExpression");
+        throw new UnsupportedOperationException("ParenthesizedExpression"); //$NON-NLS-1$
     }
 
     /**
@@ -1061,7 +1061,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitPostfixExpression(
             PostfixExpression elem,
             C context) throws E {
-        throw new UnsupportedOperationException("PostfixExpression");
+        throw new UnsupportedOperationException("PostfixExpression"); //$NON-NLS-1$
     }
 
     /**
@@ -1078,7 +1078,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitQualifiedName(
             QualifiedName elem,
             C context) throws E {
-        throw new UnsupportedOperationException("QualifiedName");
+        throw new UnsupportedOperationException("QualifiedName"); //$NON-NLS-1$
     }
 
     /**
@@ -1095,7 +1095,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitQualifiedType(
             QualifiedType elem,
             C context) throws E {
-        throw new UnsupportedOperationException("QualifiedType");
+        throw new UnsupportedOperationException("QualifiedType"); //$NON-NLS-1$
     }
 
     /**
@@ -1112,7 +1112,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitReturnStatement(
             ReturnStatement elem,
             C context) throws E {
-        throw new UnsupportedOperationException("ReturnStatement");
+        throw new UnsupportedOperationException("ReturnStatement"); //$NON-NLS-1$
     }
 
     /**
@@ -1129,7 +1129,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitSimpleName(
             SimpleName elem,
             C context) throws E {
-        throw new UnsupportedOperationException("SimpleName");
+        throw new UnsupportedOperationException("SimpleName"); //$NON-NLS-1$
     }
 
     /**
@@ -1146,7 +1146,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitSingleElementAnnotation(
             SingleElementAnnotation elem,
             C context) throws E {
-        throw new UnsupportedOperationException("SingleElementAnnotation");
+        throw new UnsupportedOperationException("SingleElementAnnotation"); //$NON-NLS-1$
     }
 
     /**
@@ -1163,7 +1163,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitStatementExpressionList(
             StatementExpressionList elem,
             C context) throws E {
-        throw new UnsupportedOperationException("StatementExpressionList");
+        throw new UnsupportedOperationException("StatementExpressionList"); //$NON-NLS-1$
     }
 
     /**
@@ -1180,7 +1180,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitSuper(
             Super elem,
             C context) throws E {
-        throw new UnsupportedOperationException("Super");
+        throw new UnsupportedOperationException("Super"); //$NON-NLS-1$
     }
 
     /**
@@ -1197,7 +1197,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitSuperConstructorInvocation(
             SuperConstructorInvocation elem,
             C context) throws E {
-        throw new UnsupportedOperationException("SuperConstructorInvocation");
+        throw new UnsupportedOperationException("SuperConstructorInvocation"); //$NON-NLS-1$
     }
 
     /**
@@ -1214,7 +1214,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitSwitchCaseLabel(
             SwitchCaseLabel elem,
             C context) throws E {
-        throw new UnsupportedOperationException("SwitchCaseLabel");
+        throw new UnsupportedOperationException("SwitchCaseLabel"); //$NON-NLS-1$
     }
 
     /**
@@ -1231,7 +1231,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitSwitchDefaultLabel(
             SwitchDefaultLabel elem,
             C context) throws E {
-        throw new UnsupportedOperationException("SwitchDefaultLabel");
+        throw new UnsupportedOperationException("SwitchDefaultLabel"); //$NON-NLS-1$
     }
 
     /**
@@ -1248,7 +1248,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitSwitchStatement(
             SwitchStatement elem,
             C context) throws E {
-        throw new UnsupportedOperationException("SwitchStatement");
+        throw new UnsupportedOperationException("SwitchStatement"); //$NON-NLS-1$
     }
 
     /**
@@ -1265,7 +1265,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitSynchronizedStatement(
             SynchronizedStatement elem,
             C context) throws E {
-        throw new UnsupportedOperationException("SynchronizedStatement");
+        throw new UnsupportedOperationException("SynchronizedStatement"); //$NON-NLS-1$
     }
 
     /**
@@ -1282,7 +1282,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitThis(
             This elem,
             C context) throws E {
-        throw new UnsupportedOperationException("This");
+        throw new UnsupportedOperationException("This"); //$NON-NLS-1$
     }
 
     /**
@@ -1299,7 +1299,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitThrowStatement(
             ThrowStatement elem,
             C context) throws E {
-        throw new UnsupportedOperationException("ThrowStatement");
+        throw new UnsupportedOperationException("ThrowStatement"); //$NON-NLS-1$
     }
 
     /**
@@ -1316,7 +1316,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitTryStatement(
             TryStatement elem,
             C context) throws E {
-        throw new UnsupportedOperationException("TryStatement");
+        throw new UnsupportedOperationException("TryStatement"); //$NON-NLS-1$
     }
 
     /**
@@ -1333,7 +1333,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitTypeParameterDeclaration(
             TypeParameterDeclaration elem,
             C context) throws E {
-        throw new UnsupportedOperationException("TypeParameterDeclaration");
+        throw new UnsupportedOperationException("TypeParameterDeclaration"); //$NON-NLS-1$
     }
 
     /**
@@ -1350,7 +1350,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitUnaryExpression(
             UnaryExpression elem,
             C context) throws E {
-        throw new UnsupportedOperationException("UnaryExpression");
+        throw new UnsupportedOperationException("UnaryExpression"); //$NON-NLS-1$
     }
 
     /**
@@ -1367,7 +1367,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitVariableDeclarator(
             VariableDeclarator elem,
             C context) throws E {
-        throw new UnsupportedOperationException("VariableDeclarator");
+        throw new UnsupportedOperationException("VariableDeclarator"); //$NON-NLS-1$
     }
 
     /**
@@ -1384,7 +1384,7 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitWhileStatement(
             WhileStatement elem,
             C context) throws E {
-        throw new UnsupportedOperationException("WhileStatement");
+        throw new UnsupportedOperationException("WhileStatement"); //$NON-NLS-1$
     }
 
     /**
@@ -1401,6 +1401,6 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     public R visitWildcard(
             Wildcard elem,
             C context) throws E {
-        throw new UnsupportedOperationException("Wildcard");
+        throw new UnsupportedOperationException("Wildcard"); //$NON-NLS-1$
     }
 }

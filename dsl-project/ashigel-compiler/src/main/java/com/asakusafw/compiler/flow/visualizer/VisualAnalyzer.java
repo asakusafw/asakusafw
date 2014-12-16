@@ -55,7 +55,7 @@ public final class VisualAnalyzer {
      */
     public static VisualGraph convertFlowGraph(FlowGraph graph) {
         Precondition.checkMustNotBeNull(graph, "graph"); //$NON-NLS-1$
-        LOG.debug("{}の構造を可視化用に分析しています", graph);
+        LOG.debug("analyzing flow graph for visualizing: {}", graph); //$NON-NLS-1$
         VisualAnalyzer analyzer = new VisualAnalyzer();
         Set<VisualNode> nodes = Sets.create();
         for (FlowElement element : FlowGraphUtil.collectElements(graph)) {
@@ -75,14 +75,14 @@ public final class VisualAnalyzer {
      */
     public static VisualGraph convertStageGraph(StageGraph graph) {
         Precondition.checkMustNotBeNull(graph, "graph"); //$NON-NLS-1$
-        LOG.debug("{}の構造を可視化用に分析しています", graph);
+        LOG.debug("analyzing stage graph for visualizing: {}", graph); //$NON-NLS-1$
         VisualAnalyzer analyzer = new VisualAnalyzer();
         Set<VisualNode> nodes = Sets.create();
-        nodes.add(analyzer.convertBlock("(source)", graph.getInput()));
+        nodes.add(analyzer.convertBlock("(source)", graph.getInput())); //$NON-NLS-1$
         for (StageBlock stage : graph.getStages()) {
             nodes.add(analyzer.convertStage(stage));
         }
-        nodes.add(analyzer.convertBlock("(sink)", graph.getOutput()));
+        nodes.add(analyzer.convertBlock("(sink)", graph.getOutput())); //$NON-NLS-1$
         return new VisualGraph(null, nodes);
     }
 
@@ -94,7 +94,7 @@ public final class VisualAnalyzer {
      */
     public static VisualGraph convertStageBlock(StageBlock stage) {
         Precondition.checkMustNotBeNull(stage, "stage"); //$NON-NLS-1$
-        LOG.debug("{}の構造を可視化用に分析しています", stage);
+        LOG.debug("analyzing stage block for visualizing: {}", stage); //$NON-NLS-1$
         VisualAnalyzer analyzer = new VisualAnalyzer();
         Set<VisualNode> nodes = Sets.create();
         for (FlowBlock head : stage.getMapBlocks()) {
@@ -133,10 +133,10 @@ public final class VisualAnalyzer {
      */
     public static VisualGraph convertFlowBlock(FlowBlock block) {
         Precondition.checkMustNotBeNull(block, "block"); //$NON-NLS-1$
-        LOG.debug("Visualizing a flow block: {}", block);
+        LOG.debug("analyzing flow block for visualizing: {}", block); //$NON-NLS-1$
         VisualAnalyzer analyzer = new VisualAnalyzer();
         Set<VisualNode> nodes = Sets.create();
-        nodes.add(analyzer.convertBlock("block", block));
+        nodes.add(analyzer.convertBlock("block", block)); //$NON-NLS-1$
         return new VisualGraph(null, nodes);
     }
 
@@ -174,7 +174,7 @@ public final class VisualAnalyzer {
     private VisualNode convertElement(FlowElement element) {
         assert element != null;
         if (sawElements.contains(element)) {
-            LOG.debug("Ignored already presented element: {}", element);
+            LOG.debug("Ignored already presented element: {}", element); //$NON-NLS-1$
             return null;
         }
         sawElements.add(element);

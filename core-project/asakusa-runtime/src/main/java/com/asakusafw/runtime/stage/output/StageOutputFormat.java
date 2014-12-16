@@ -111,7 +111,7 @@ public final class StageOutputFormat extends OutputFormat<Object, Object> {
         }
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Created stage output committers: {0}",
+                    "Created stage output committers: {0}", //$NON-NLS-1$
                     components));
         }
         return new CombinedOutputCommitter(new ArrayList<OutputCommitter>(components));

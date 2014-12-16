@@ -78,7 +78,7 @@ public class FragmentConnection {
         this.fragment = fragment;
         this.importer = importer;
         for (ResourceFragment resource : fragment.getResources()) {
-            SimpleName name = names.create("resource");
+            SimpleName name = names.create("resource"); //$NON-NLS-1$
             resources.put(resource.getDescription(), name);
         }
         for (FlowElementOutput output : fragment.getOutputPorts()) {
@@ -112,7 +112,7 @@ public class FragmentConnection {
     public ConstructorDeclaration createConstructor(SimpleName className) {
         Precondition.checkMustNotBeNull(className, "className"); //$NON-NLS-1$
         JavadocBuilder javadoc = new JavadocBuilder(factory)
-            .text("インスタンスを生成する。");
+            .text("Creates a new instance."); //$NON-NLS-1$
         List<FormalParameterDeclaration> parameters = Lists.create();
         List<Statement> statements = Lists.create();
         for (ResourceFragment resource : fragment.getResources()) {
@@ -131,10 +131,11 @@ public class FragmentConnection {
             SimpleName chain = successors.get(output);
             assert chain != null;
             javadoc.param(chain)
-                .code("{0}#{1}",
+                .text("output for ") //$NON-NLS-1$
+                .code("{0}#{1}", //$NON-NLS-1$
                         output.getOwner().getDescription().getName(),
                         output.getDescription().getName())
-                .text("への出力");
+                .text("."); //$NON-NLS-1$
             parameters.add(factory.newFormalParameterDeclaration(
                     importer.resolve(factory.newParameterizedType(
                             Models.toType(factory, Result.class),

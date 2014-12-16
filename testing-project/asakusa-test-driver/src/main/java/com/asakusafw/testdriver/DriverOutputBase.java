@@ -96,7 +96,7 @@ public class DriverOutputBase<T> extends DriverInputBase<T> {
      */
     protected final void setVerifier(VerifierFactory verifier) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Verifier: name={}, model={}, verifier={}", new Object[] {
+            LOG.debug("Verifier: name={}, model={}, verifier={}", new Object[] { //$NON-NLS-1$
                     getName(),
                     getModelType().getName(),
                     verifier,
@@ -122,7 +122,7 @@ public class DriverOutputBase<T> extends DriverInputBase<T> {
      */
     protected final void setResultSink(DataModelSinkFactory resultSink) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("ResultSink: name={}, model={}, sink={}", new Object[] {
+            LOG.debug("ResultSink: name={}, model={}, sink={}", new Object[] { //$NON-NLS-1$
                     getName(),
                     getModelType().getName(),
                     resultSink,
@@ -148,7 +148,7 @@ public class DriverOutputBase<T> extends DriverInputBase<T> {
      */
     protected final void setDifferenceSink(DifferenceSinkFactory differenceSink) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("DifferenceSink: name={}, model={}, sink={}", new Object[] {
+            LOG.debug("DifferenceSink: name={}, model={}, sink={}", new Object[] { //$NON-NLS-1$
                     getName(),
                     getModelType().getName(),
                     differenceSink,
@@ -237,7 +237,7 @@ public class DriverOutputBase<T> extends DriverInputBase<T> {
             @Override
             public String toString() {
                 return MessageFormat.format(
-                        "Filter(transformer={0})",
+                        "Filter(transformer={0})", //$NON-NLS-1$
                         transformer);
             }
         };
@@ -262,7 +262,7 @@ public class DriverOutputBase<T> extends DriverInputBase<T> {
             return tools.getVerifyRuleFactory(toUri(rulePath), fragments);
         } catch (URISyntaxException e) {
             throw new IllegalStateException(MessageFormat.format(
-                    "Invalid rule path: {0}",
+                    "Invalid rule path: {0}", //$NON-NLS-1$
                     rulePath), e);
         }
     }
@@ -320,7 +320,7 @@ public class DriverOutputBase<T> extends DriverInputBase<T> {
             @Override
             public String toString() {
                 return MessageFormat.format(
-                        "Verifier(verifier={0}, filter={1})",
+                        "Verifier(verifier={0}, filter={1})", //$NON-NLS-1$
                         verifierFactory,
                         sourceFilter);
             }

@@ -76,33 +76,33 @@ public final class HadoopDataSourceUtil {
     /**
      * The key prefix of data sources.
      */
-    public static final String PREFIX = "com.asakusafw.directio.";
+    public static final String PREFIX = "com.asakusafw.directio."; //$NON-NLS-1$
 
     /**
      * The key name of path.
      */
-    public static final String KEY_PATH = "path";
+    public static final String KEY_PATH = "path"; //$NON-NLS-1$
 
     private static final Pattern PREFIX_PATTERN = Pattern.compile('^' + Pattern.quote(PREFIX));
 
     /**
      * The key name of system directory for this format.
      */
-    public static final String KEY_SYSTEM_DIR = "com.asakusafw.output.system.dir";
+    public static final String KEY_SYSTEM_DIR = "com.asakusafw.output.system.dir"; //$NON-NLS-1$
 
     /**
      * The attribute key name of local tempdir.
      */
-    public static final String KEY_LOCAL_TEMPDIR = "com.asakusafw.output.local.tempdir";
+    public static final String KEY_LOCAL_TEMPDIR = "com.asakusafw.output.local.tempdir"; //$NON-NLS-1$
 
-    static final String DEFAULT_SYSTEM_DIR = "_directio";
+    static final String DEFAULT_SYSTEM_DIR = "_directio"; //$NON-NLS-1$
 
-    static final String TRANSACTION_INFO_DIR = "transactions";
+    static final String TRANSACTION_INFO_DIR = "transactions"; //$NON-NLS-1$
 
     /**
      * Charset for commit mark file comments.
      */
-    public static final Charset COMMENT_CHARSET = Charset.forName("UTF-8");
+    public static final Charset COMMENT_CHARSET = Charset.forName("UTF-8"); //$NON-NLS-1$
 
     /**
      * Loads a profile list from the configuration.
@@ -116,12 +116,12 @@ public final class HadoopDataSourceUtil {
         }
         Map<String, String> pathToKey = new HashMap<String, String>();
         Map<String, String> map = getConfigMap(conf);
-        Set<String> keys = getChildKeys(map, ".");
+        Set<String> keys = getChildKeys(map, "."); //$NON-NLS-1$
         try {
             List<DirectDataSourceProfile> results = new ArrayList<DirectDataSourceProfile>();
             for (String key : keys) {
                 String className = map.get(key);
-                Map<String, String> config = createPrefixMap(map, key + ".");
+                Map<String, String> config = createPrefixMap(map, key + "."); //$NON-NLS-1$
                 String path = config.remove(KEY_PATH);
                 if (path == null) {
                     throw new IllegalStateException(MessageFormat.format(
@@ -132,7 +132,7 @@ public final class HadoopDataSourceUtil {
                 if (pathToKey.containsKey(path)) {
                     throw new IllegalStateException(MessageFormat.format(
                             "Path mapping is duplicated: {0} ({1} <=> {2})",
-                            path.isEmpty() ? "/" : path,
+                            path.isEmpty() ? "/" : path, //$NON-NLS-1$
                             PREFIX + key + '.' + KEY_PATH,
                             PREFIX + pathToKey.get(key) + '.' + KEY_PATH));
                 } else {
@@ -382,7 +382,7 @@ public final class HadoopDataSourceUtil {
         if (transactionInfoPath == null) {
             throw new IllegalArgumentException("transactionInfoPath must not be null"); //$NON-NLS-1$
         }
-        return getMarkPath(transactionInfoPath, Pattern.compile("tx-(.+)"));
+        return getMarkPath(transactionInfoPath, Pattern.compile("tx-(.+)")); //$NON-NLS-1$
     }
 
     private static String getMarkPath(Path path, Pattern pattern) {
@@ -413,7 +413,7 @@ public final class HadoopDataSourceUtil {
         }
         return new Path(
                 getTransactionInfoDir(conf),
-                String.format("tx-%s", executionId));
+                String.format("tx-%s", executionId)); //$NON-NLS-1$
     }
 
     /**
@@ -433,7 +433,7 @@ public final class HadoopDataSourceUtil {
         }
         return new Path(
                 getTransactionInfoDir(conf),
-                String.format("commit-%s", executionId));
+                String.format("commit-%s", executionId)); //$NON-NLS-1$
     }
 
     /**
@@ -455,7 +455,7 @@ public final class HadoopDataSourceUtil {
         } catch (FileNotFoundException e) {
             statusArray = null;
             if (LOG.isDebugEnabled()) {
-                LOG.debug(MessageFormat.format("Target file is not found: {0}", dir), e);
+                LOG.debug(MessageFormat.format("Target file is not found: {0}", dir), e); //$NON-NLS-1$
             }
         }
         if (statusArray == null || statusArray.length == 0) {
@@ -500,7 +500,7 @@ public final class HadoopDataSourceUtil {
         }
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Start searching for files (path={0}, resourcePattern={1})",
+                    "Start searching for files (path={0}, resourcePattern={1})", //$NON-NLS-1$
                     base,
                     pattern));
         }
@@ -525,7 +525,7 @@ public final class HadoopDataSourceUtil {
         }
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Finish searching for files (path={0}, resourcePattern={1}, results={2}, steps={3})",
+                    "Finish searching for files (path={0}, resourcePattern={1}, results={2}, steps={3})", //$NON-NLS-1$
                     base,
                     pattern,
                     current.size(),
@@ -597,7 +597,7 @@ public final class HadoopDataSourceUtil {
                 candidates.add(Collections.singleton(element.getToken()));
                 break;
             case WILDCARD:
-                candidates.add(Collections.singleton("*"));
+                candidates.add(Collections.singleton("*")); //$NON-NLS-1$
                 break;
             case SELECTION:
                 candidates.add(new TreeSet<String>(((Selection) element).getContents()));
@@ -657,7 +657,7 @@ public final class HadoopDataSourceUtil {
                     } catch (FileNotFoundException e) {
                         children = null;
                         if (LOG.isDebugEnabled()) {
-                            LOG.debug(MessageFormat.format("Target file is not found: {0}", path), e);
+                            LOG.debug(MessageFormat.format("Target file is not found: {0}", path), e); //$NON-NLS-1$
                         }
                     }
                     if (children != null) {
@@ -828,7 +828,7 @@ public final class HadoopDataSourceUtil {
         }
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Start moving files (from={0}, to={1})",
+                    "Start moving files (from={0}, to={1})", //$NON-NLS-1$
                     from,
                     to));
         }
@@ -840,7 +840,7 @@ public final class HadoopDataSourceUtil {
         }
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Process moving files (from={0}, to={1}, count={2})",
+                    "Process moving files (from={0}, to={1}, count={2})", //$NON-NLS-1$
                     from,
                     to,
                     list.size()));
@@ -852,7 +852,7 @@ public final class HadoopDataSourceUtil {
             if (LOG.isTraceEnabled()) {
                 FileStatus stat = fromFs.getFileStatus(sourceFile);
                 LOG.trace(MessageFormat.format(
-                        "Moving file (from={0}, to={1}, size={2})",
+                        "Moving file (from={0}, to={1}, size={2})", //$NON-NLS-1$
                         sourceFile,
                         targetFile,
                         stat.getLen()));
@@ -861,7 +861,7 @@ public final class HadoopDataSourceUtil {
                 FileStatus stat = toFs.getFileStatus(targetFile);
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(MessageFormat.format(
-                            "Deleting file: {0}",
+                            "Deleting file: {0}", //$NON-NLS-1$
                             targetFile));
                 }
                 if (FileSystemCompatibility.isDirectory(stat)) {
@@ -874,7 +874,7 @@ public final class HadoopDataSourceUtil {
                 if (directoryCreated.contains(targetParent) == false) {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug(MessageFormat.format(
-                                "Creating directory: {0}",
+                                "Creating directory: {0}", //$NON-NLS-1$
                                 targetParent));
                     }
                     toFs.mkdirs(targetParent);
@@ -897,7 +897,7 @@ public final class HadoopDataSourceUtil {
         }
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Finish moving files (from={0}, to={1}, count={2})",
+                    "Finish moving files (from={0}, to={1}, count={2})", //$NON-NLS-1$
                     from,
                     to,
                     list.size()));
@@ -907,7 +907,7 @@ public final class HadoopDataSourceUtil {
     private static boolean isLocalPath(Path path) {
         assert path != null;
         String scheme = path.toUri().getScheme();
-        return scheme != null && scheme.equals("file");
+        return scheme != null && scheme.equals("file"); //$NON-NLS-1$
     }
 
     @SuppressWarnings("unchecked")
@@ -930,7 +930,7 @@ public final class HadoopDataSourceUtil {
         List<FileStatus> all = recursiveStep(fs, Collections.singletonList(root));
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Source path contains {1} files/directories: {0}",
+                    "Source path contains {1} files/directories: {0}", //$NON-NLS-1$
                     baseUri,
                     all.size()));
         }

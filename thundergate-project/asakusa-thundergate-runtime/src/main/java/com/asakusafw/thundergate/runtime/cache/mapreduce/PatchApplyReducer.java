@@ -41,9 +41,7 @@ public class PatchApplyReducer extends Reducer<
         Iterator<ThunderGateCacheSupport> iter = values.iterator();
         if (iter.hasNext()) {
             ThunderGateCacheSupport first = iter.next();
-            if (first.__tgc__Deleted()) {
-                // deleted
-            } else {
+            if (first.__tgc__Deleted() == false) {
                 context.write(KEY, first);
             }
         }

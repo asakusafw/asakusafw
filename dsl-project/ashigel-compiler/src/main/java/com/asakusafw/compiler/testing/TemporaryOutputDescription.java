@@ -43,7 +43,7 @@ public abstract class TemporaryOutputDescription implements ExporterDescription 
     @Override
     public String toString() {
         return MessageFormat.format(
-                "TemporaryExporter({0})",
+                "TemporaryExporter({0})", //$NON-NLS-1$
                 getPathPrefix());
     }
 }

@@ -78,14 +78,14 @@ class WorkbookInfo {
 
         dateDataStyle = workbook.createCellStyle();
         dateDataStyle.cloneStyleFrom(commonStyle);
-        dateDataStyle.setDataFormat(df.getFormat("yyyy-mm-dd"));
+        dateDataStyle.setDataFormat(df.getFormat("yyyy-mm-dd")); //$NON-NLS-1$
 
         timeDataStyle = workbook.createCellStyle();
         timeDataStyle.cloneStyleFrom(commonStyle);
-        timeDataStyle.setDataFormat(df.getFormat("hh:mm:ss"));
+        timeDataStyle.setDataFormat(df.getFormat("hh:mm:ss")); //$NON-NLS-1$
 
         datetimeDataStyle = workbook.createCellStyle();
         datetimeDataStyle.cloneStyleFrom(commonStyle);
-        datetimeDataStyle.setDataFormat(df.getFormat("yyyy-mm-dd hh:mm:ss"));
+        datetimeDataStyle.setDataFormat(df.getFormat("yyyy-mm-dd hh:mm:ss")); //$NON-NLS-1$
     }
 }

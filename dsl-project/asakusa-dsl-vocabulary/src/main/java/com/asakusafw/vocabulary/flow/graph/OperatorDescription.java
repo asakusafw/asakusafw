@@ -144,7 +144,7 @@ public class OperatorDescription implements FlowElementDescription {
     public String getName() {
         if (name == null) {
             return MessageFormat.format(
-                "{0}.{1}",
+                "{0}.{1}", //$NON-NLS-1$
                 declaration.getDeclaring().getSimpleName(),
                 declaration.getName());
         }
@@ -202,7 +202,7 @@ public class OperatorDescription implements FlowElementDescription {
     @Override
     public String toString() {
         return MessageFormat.format(
-                "{0}#{1}(@{2})",
+                "{0}#{1}(@{2})", //$NON-NLS-1$
                 getDeclaration().getDeclaring().getSimpleName(),
                 getDeclaration().getName(),
                 getDeclaration().getAnnotationType().getSimpleName());
@@ -319,7 +319,7 @@ public class OperatorDescription implements FlowElementDescription {
         @Override
         public String toString() {
             return MessageFormat.format(
-                    "{0}#{1}({2})",
+                    "{0}#{1}({2})", //$NON-NLS-1$
                     declaring.getName(),
                     name,
                     parameterTypes);
@@ -383,7 +383,7 @@ public class OperatorDescription implements FlowElementDescription {
         @Override
         public String toString() {
             return MessageFormat.format(
-                    "{0}[{1}]={2}",
+                    "{0}[{1}]={2}", //$NON-NLS-1$
                     getName(),
                     getType(),
                     getValue());

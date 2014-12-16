@@ -58,7 +58,7 @@ public final class Report {
 hadoop jar ... -D com.asakusafw.runtime.core.Report.Delegate=com.example.MockReportDelegate
 </code></pre>
      */
-    public static final String K_DELEGATE_CLASS = "com.asakusafw.runtime.core.Report.Delegate";
+    public static final String K_DELEGATE_CLASS = "com.asakusafw.runtime.core.Report.Delegate"; //$NON-NLS-1$
 
     private static final ThreadLocal<Delegate> DELEGATE = new ThreadLocal<Delegate>() {
         @Override
@@ -364,7 +364,7 @@ hadoop jar ... -D com.asakusafw.runtime.core.Report.Delegate=com.example.MockRep
                 break;
             default:
                 throw new AssertionError(MessageFormat.format(
-                        "[{0}] {1}",
+                        "[{0}] {1}", //$NON-NLS-1$
                         level,
                         message));
             }
@@ -388,7 +388,7 @@ hadoop jar ... -D com.asakusafw.runtime.core.Report.Delegate=com.example.MockRep
                 break;
             default:
                 throw new AssertionError(MessageFormat.format(
-                        "[{0}] {1}",
+                        "[{0}] {1}", //$NON-NLS-1$
                         level,
                         message));
             }

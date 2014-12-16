@@ -98,7 +98,7 @@ public class StageAnalyzer {
      */
     public StageModel analyze(StageBlock block, ShuffleModel shuffle) {
         Precondition.checkMustNotBeNull(block, "block"); //$NON-NLS-1$
-        LOG.debug("Analyzing stage {}", block);
+        LOG.debug("start analyzing stage: {}", block); //$NON-NLS-1$
 
         Context context = new Context(environment);
         List<MapUnit> mapUnits = Lists.create();
@@ -124,7 +124,7 @@ public class StageAnalyzer {
 
         StageModel model = new StageModel(block, mapUnits, shuffle, reduceUnits, outputs);
 
-        LOG.debug("{}は{}のようにコンパイルされます", block, model);
+        LOG.debug("finish analyzing stage: {} ({})", block, model); //$NON-NLS-1$
         return model;
     }
 
@@ -133,7 +133,7 @@ public class StageAnalyzer {
             FlowBlock block) {
         assert context != null;
         assert block != null;
-        LOG.debug("{}を分解してMapperプログラムの情報を抽出します", block);
+        LOG.debug("extracting mapper information: {}", block); //$NON-NLS-1$
         Set<FlowElement> startElements = collectFragmentStartElements(block);
         Map<FlowElement, Fragment> fragments = collectFragments(context, startElements);
         Graph<Fragment> fgraph = buildFragmentGraph(fragments);
@@ -191,7 +191,7 @@ public class StageAnalyzer {
             FlowBlock block) {
         assert context != null;
         assert block != null;
-        LOG.debug("{}を分解してReducerプログラムの情報を抽出します", block);
+        LOG.debug("extracting reducer information: {}", block); //$NON-NLS-1$
         Set<FlowElement> startElements = collectFragmentStartElements(block);
         Map<FlowElement, Fragment> fragments = collectFragments(context, startElements);
         Graph<Fragment> fgraph = buildFragmentGraph(fragments);
@@ -208,6 +208,7 @@ public class StageAnalyzer {
         assert block != null;
         assert fragments != null;
         assert fgraph != null;
+        LOG.debug("extracting mapper information: {}", block); //$NON-NLS-1$
         Map<FlowBlock.Input, Graph<Fragment>> streams = new LinkedHashMap<FlowBlock.Input, Graph<Fragment>>();
         for (FlowBlock.Input blockInput : block.getBlockInputs()) {
             FlowElementInput input = blockInput.getElementPort();
@@ -224,7 +225,6 @@ public class StageAnalyzer {
                 body.set(i, body.get(i));
             }
             MapUnit unit = new MapUnit(Collections.singletonList(input), body);
-            LOG.debug("{}を元に{}が生成されます", input, unit);
             results.add(unit);
         }
         return results;
@@ -262,7 +262,6 @@ public class StageAnalyzer {
             }
             List<FlowBlock.Input> inputs = inputGroups.get(element);
             ReduceUnit unit = new ReduceUnit(inputs, body);
-            LOG.debug("{}を元に{}が生成されます", element, unit);
             results.add(unit);
         }
         return results;
@@ -310,7 +309,7 @@ public class StageAnalyzer {
 
         List<Sink> results = Lists.create();
         for (Set<FlowBlock.Output> group : opposites.values()) {
-            String name = context.names.create("result").getToken();
+            String name = context.names.create("result").getToken(); //$NON-NLS-1$
             results.add(new Sink(group, context.names.create(name).getToken()));
         }
         return results;

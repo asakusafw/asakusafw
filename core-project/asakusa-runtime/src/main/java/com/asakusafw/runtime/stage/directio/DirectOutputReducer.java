@@ -42,7 +42,7 @@ public final class DirectOutputReducer extends ReducerWithRuntimeResource<
         AbstractDirectOutputKey, AbstractDirectOutputValue,
         Object, Object> {
 
-    private static final String COUNTER_GROUP = "com.asakusafw.directio.output.Statistics";
+    private static final String COUNTER_GROUP = "com.asakusafw.directio.output.Statistics"; //$NON-NLS-1$
 
     private org.apache.hadoop.mapreduce.Counter recordCounter;
 
@@ -54,7 +54,7 @@ public final class DirectOutputReducer extends ReducerWithRuntimeResource<
     protected void setup(Context context) throws IOException, InterruptedException {
         this.recordCounter = JobCompatibility.getTaskOutputRecordCounter(context);
         this.repository = HadoopDataSourceUtil.loadRepository(context.getConfiguration());
-        String arguments = context.getConfiguration().get(StageConstants.PROP_ASAKUSA_BATCH_ARGS, "");
+        String arguments = context.getConfiguration().get(StageConstants.PROP_ASAKUSA_BATCH_ARGS, ""); //$NON-NLS-1$
         this.variables = new VariableTable(VariableTable.RedefineStrategy.IGNORE);
         variables.defineVariables(arguments);
     }
@@ -90,9 +90,9 @@ public final class DirectOutputReducer extends ReducerWithRuntimeResource<
             output.close();
         }
         recordCounter.increment(records);
-        context.getCounter(COUNTER_GROUP, id + ".files").increment(1);
-        context.getCounter(COUNTER_GROUP, id + ".records").increment(records);
-        context.getCounter(COUNTER_GROUP, id + ".size").increment(counter.get());
+        context.getCounter(COUNTER_GROUP, id + ".files").increment(1); //$NON-NLS-1$
+        context.getCounter(COUNTER_GROUP, id + ".records").increment(records); //$NON-NLS-1$
+        context.getCounter(COUNTER_GROUP, id + ".size").increment(counter.get()); //$NON-NLS-1$
     }
 
     private <T> T configure(Context context, T object) {

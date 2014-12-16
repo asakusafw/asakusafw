@@ -57,53 +57,53 @@ public final class HiveQlEmitter {
                 emitDelimitedRowFormat(c, (DelimitedRowFormatInfo) table.getRowFormat());
                 break;
             case SERDE:
-                throw new UnsupportedOperationException("ROW FORMAT SERDE");
+                throw new UnsupportedOperationException("ROW FORMAT SERDE"); //$NON-NLS-1$
             default:
                 throw new AssertionError(rowFormat.getKind());
             }
         }
         if (table.getFormatName() != null) {
-            c.tokens("STORED", "AS");
+            c.tokens("STORED", "AS"); //$NON-NLS-1$ //$NON-NLS-2$
             c.token(table.getFormatName());
             c.newLine();
         }
         // or TODO STORED BY
 
         if (statement.getLocation() != null) {
-            c.token("LOCATION");
+            c.token("LOCATION"); //$NON-NLS-1$
             c.string(statement.getLocation());
             c.newLine();
         }
         if (table.getTableProperties().isEmpty() == false) {
-            c.token("TBLPROPERTIES");
-            c.token("(");
+            c.token("TBLPROPERTIES"); //$NON-NLS-1$
+            c.token("("); //$NON-NLS-1$
             c.newLine();
             c.indent(+1);
             emitProperties(c, table.getTableProperties());
             c.indent(-1);
-            c.token(")");
+            c.token(")"); //$NON-NLS-1$
             c.newLine();
         }
     }
 
     private static void emitCreateTableHead(Context c, HiveCreateTable statement) throws IOException {
-        c.token("CREATE");
+        c.token("CREATE"); //$NON-NLS-1$
         if (statement.isExternal()) {
-            c.token("EXTERNAL");
+            c.token("EXTERNAL"); //$NON-NLS-1$
         }
-        c.token("TABLE");
+        c.token("TABLE"); //$NON-NLS-1$
         if (statement.isSkipPresentTable()) {
-            c.tokens("IF", "NOT", "EXISTS");
+            c.tokens("IF", "NOT", "EXISTS"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         }
 
         HiveTableInfo table = statement.getTableInfo();
         if (statement.getDatabaseName() == null) {
             c.name(table.getTableName());
         } else {
-            c.name(String.format("%s.%s", statement.getDatabaseName(), table.getTableName()));
+            c.name(String.format("%s.%s", statement.getDatabaseName(), table.getTableName())); //$NON-NLS-1$
         }
 
-        c.token("(");
+        c.token("("); //$NON-NLS-1$
         c.newLine();
         c.indent(+1);
         HiveFieldInfo[] fields = table.getFields().toArray(new HiveFieldInfo[table.getFields().size()]);
@@ -112,56 +112,56 @@ public final class HiveQlEmitter {
             c.name(field.getFieldName());
             c.token(field.getFieldTypeInfo().getQualifiedName());
             if (field.getFieldComment() != null) {
-                c.token("COMMENT");
+                c.token("COMMENT"); //$NON-NLS-1$
                 c.string(field.getFieldComment());
             }
             if (i != fields.length - 1) {
-                c.token(",");
+                c.token(","); //$NON-NLS-1$
             }
             c.newLine();
         }
         c.indent(-1);
-        c.token(")");
+        c.token(")"); //$NON-NLS-1$
         c.newLine();
 
         if (table.getTableComment() != null) {
-            c.token("COMMENT");
+            c.token("COMMENT"); //$NON-NLS-1$
             c.string(table.getTableComment());
             c.newLine();
         }
     }
 
     private static void emitDelimitedRowFormat(Context c, DelimitedRowFormatInfo info) throws IOException {
-        c.tokens("ROW", "FORMAT", "DELIMITED");
+        c.tokens("ROW", "FORMAT", "DELIMITED"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         c.newLine();
         c.indent(+1);
         if (info.getFieldsTerminatedBy() != null) {
-            c.tokens("FIELDS", "TERMINATED", "BY");
+            c.tokens("FIELDS", "TERMINATED", "BY"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             c.string(info.getFieldsTerminatedBy());
             c.newLine();
             if (info.getEscapedBy() != null) {
-                c.tokens("ESCAPED", "BY");
+                c.tokens("ESCAPED", "BY"); //$NON-NLS-1$ //$NON-NLS-2$
                 c.string(info.getEscapedBy());
                 c.newLine();
             }
         }
         if (info.getCollectionItemsTerminatedBy() != null) {
-            c.tokens("COLLECTION", "ITEMS", "TERMINATED", "BY");
+            c.tokens("COLLECTION", "ITEMS", "TERMINATED", "BY"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
             c.string(info.getCollectionItemsTerminatedBy());
             c.newLine();
         }
         if (info.getMapKeysTerminatedBy() != null) {
-            c.tokens("MAP", "KEYS", "TERMINATED", "BY");
+            c.tokens("MAP", "KEYS", "TERMINATED", "BY"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
             c.string(info.getMapKeysTerminatedBy());
             c.newLine();
         }
         if (info.getLinesTerminatedBy() != null) {
-            c.tokens("LINES", "TERMINATED", "BY");
+            c.tokens("LINES", "TERMINATED", "BY"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             c.string(info.getLinesTerminatedBy());
             c.newLine();
         }
         if (info.getNullDefinedAs() != null) {
-            c.tokens("NULL", "DEFINED", "AS");
+            c.tokens("NULL", "DEFINED", "AS"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             c.string(info.getNullDefinedAs());
             c.newLine();
         }
@@ -177,10 +177,10 @@ public final class HiveQlEmitter {
         while (iter.hasNext()) {
             Map.Entry<String, String> entry = iter.next();
             c.string(entry.getKey());
-            c.token("=");
+            c.token("="); //$NON-NLS-1$
             c.string(entry.getValue());
             if (iter.hasNext()) {
-                c.token(",");
+                c.token(","); //$NON-NLS-1$
             }
             c.newLine();
         }
@@ -233,7 +233,7 @@ public final class HiveQlEmitter {
                     buf.append('\\');
                     buf.append(c);
                 } else if (Character.isISOControl(c)) {
-                    buf.append(String.format("\\%03o", (int) c));
+                    buf.append(String.format("\\%03o", (int) c)); //$NON-NLS-1$
                 } else {
                     buf.append(c);
                 }

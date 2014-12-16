@@ -26,7 +26,7 @@ import com.asakusafw.dmdl.semantics.Trait;
  */
 public class TsvFormatTrait implements Trait<TsvFormatTrait> {
 
-    static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
+    static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8"); //$NON-NLS-1$
 
     private final AstNode originalAst;
 

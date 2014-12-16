@@ -144,6 +144,6 @@ public class ResultOutput<T> implements Result<T> {
 
     @Override
     public String toString() {
-        return String.format("%s -> %s", context.getTaskAttemptID(), writer);
+        return String.format("%s -> %s", context.getTaskAttemptID(), writer); //$NON-NLS-1$
     }
 }
