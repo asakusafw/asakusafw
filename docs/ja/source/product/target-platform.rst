@@ -60,37 +60,43 @@ Asakusa Framework は、以下のHadoopディストリビューションと組�
 Asakusa Frameworkを利用したバッチアプリケーションの開発環境は、 以下のプラットフォームで動作を検証しています。
 
 ..  list-table:: 動作検証プラットフォーム(開発環境)
-    :widths:  4 6
+    :widths: 2 4 4
     :header-rows: 1
 
     * - 種類
-      - Product/Version
+      - Product
+      - Version
     * - OS
-      - Ubuntu Desktop 12.04
+      - Ubuntu Desktop
+      - 12.04 / 14.04
     * - OS
-      - Ubuntu Desktop 14.04
+      - MacOSX [#]_
+      - 10.7 / 10.9
     * - OS
-      - CentOS 6.2
+      - Windows [#]_
+      - 7(SP1) / 8.1
     * - Java
-      - JDK 6 (1.6.0_45) [#]_
-    * - Java
-      - JDK 7 (1.7.0_60)
+      - JDK [#]_
+      - 1.6.0_45 [#]_ / 1.7.0_60
     * - ビルドツール
-      - Gradle 2.1 [#]_
+      - Gradle [#]_
+      - 2.1
     * - ビルドツール
-      - Apache Maven 3.0.5 [#]_
+      - Apache Maven
+      - 3.0.5 [#]_
     * - IDE
-      - Eclipse IDE for Java Developers 4.3.2
-    * - IDE
-      - Eclipse IDE for Java Developers 4.4.0
+      - Eclipse IDE for Java Developers
+      - 4.3.2 / 4.4.0
     * - Hadoop
-      - Apache Hadoop 1.2.1
-    * - Hadoop
-      - Apache Hadoop 2.4.1 [#]_
+      - Apache Hadoop
+      - 1.2.1 / 2.4.1 [#]_
 
+..  [#] MacOSX上では基本的な動作のみ検証しています。
+..  [#] Windows上ではテストドライバを利用したテストは :doc:`エミュレーションモード <../testing/emulation-mode>` のみ使用できます。Windowsの利用については、 :doc:`../introduction/start-guide-windows` を参照してください。
+..  [#] JREでは一部の機能が動作しません。必ずJDKを使用してください。
 ..  [#] JDK 6の利用については、 :doc:`../application/using-jdk` を参照してください。
 ..  [#] Gradleの利用については、 :doc:`../application/gradle-plugin` を参照してください。
-..  [#] Mavenの利用については、 :doc:`../application/maven-archetype` を参照してください。
+..  [#] Mavenの利用は非推奨です。Mavenの利用については、 :doc:`../application/maven-archetype` を参照してください。
 ..  [#] 開発環境ではHadoop1系の利用を推奨しています。詳しくは :doc:`../application/using-hadoop` を参照してください。
 
 WindGate
@@ -98,15 +104,18 @@ WindGate
 :doc:`WindGate <../windgate/index>` は以下のプラットフォームで動作を検証しています。
 
 ..  list-table:: 動作検証プラットフォーム(WindGate/JDBC [#]_ )
-    :widths: 4 6
+    :widths: 2 4 4
     :header-rows: 1
 
     * - 種類
-      - Product/Version
+      - Product
+      - Version
     * - DBMS
-      - PostgreSQL 9.3
+      - PostgreSQL
+      - 9.3
     * - JDBC Driver
-      - PostgreSQL JDBC Driver 9.1 Build 901
+      - PostgreSQL JDBC Driver
+      - 9.1 Build 901
 
 ..  [#] データベースを利用しない場合(例えば WindGate/CSV のみを使う場合)には不要です
 
@@ -115,15 +124,18 @@ ThunderGate
 :doc:`ThunderGate <../thundergate/index>` は以下のプラットフォームで動作を検証しています。
 
 ..  list-table:: 動作検証プラットフォーム(ThunderGate)
-    :widths: 4 6
+    :widths: 2 4 4
     :header-rows: 1
 
     * - 種類
-      - Product/Version
+      - Product
+      - Version
     * - DBMS
-      - MySQL Server 5.5.25
+      - MySQL Server
+      - 5.5.25
     * - JDBC Driver
-      - MySQL Connector/J 5.1.25
+      - MySQL Connector/J
+      - 5.1.25
 
 リンク
 ======
@@ -149,6 +161,10 @@ ThunderGate
       - http://www.centos.org/
     * - Ubuntu
       - http://www.ubuntu.com/
+    * - MacOSX
+      - http://www.apple.com/osx/
+    * - Windows
+      - http://windows.microsoft.com/
     * - JDK (Java SE)
       - http://www.oracle.com/technetwork/java/javase/index.html
     * - Gradle
