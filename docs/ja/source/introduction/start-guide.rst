@@ -1,7 +1,9 @@
 ================================
 Asakusa Framework スタートガイド
 ================================
-この文書では、Asakusa Frameworkをはじめて利用するユーザ向けに、Asakusa Frameworkの開発環境を作成し、その環境でサンプルアプリケーションを動かすまでの手順を説明します。
+この文書では、Asakusa Frameworkをはじめて利用するユーザ向けに、Linux OS上にAsakusa Frameworkの開発環境を作成し、その環境でサンプルアプリケーションを動かすまでの手順を説明します。
+
+Windows環境を利用する場合は、 :doc:`start-guide-windows` の手順に従って開発環境を構築するか、仮想マシンなどを利用してLinux環境を用意してください。
 
 なお、この文書では開発環境の構築に必要となる各種ソフトウェアのバージョンは明記していません。Asakusa Frameworkが動作検証を行っている各種ソフトウェアのバージョンについては、 :doc:`../product/target-platform` を確認してください。
 
@@ -9,84 +11,31 @@ Asakusa Framework スタートガイド
 
 開発環境の構築
 ==============
-Asakusa FrameworkはLinux OS上に開発環境を構築して利用します。WindowsPC上で開発を行う場合、Windows上でLinuxの仮想マシンを実行し、ここで開発を行うと便利です。
-
-このスタートガイドでは仮想マシンの実行ソフトウェアとして `VMWare Player`_ 、仮想マシンに使用するOSとして `Ubuntu 12.04 Desktop (日本語 Remix CD x86用)`_ を使用し、この環境に必要なソフトウェアをセットアップする手順を説明します。
-
-..  _`VMWare Player`: http://www.vmware.com/jp/products/player/
-..  _`Ubuntu 12.04 Desktop (日本語 Remix CD x86用)`: http://www.ubuntulinux.jp/download/ja-remix 
+Linux OS上にAsakusa Frameworkの開発環境を作成します。
 
 ..  tip::
     開発環境の構築については、ここで説明するセットアップ手順を実施するほか、Asakusa Frmameworkの開発環境を手軽に構築するインストーラパッケージである Jinrikisha を利用する方法もあります。
-    
+        
     * :jinrikisha:`Jinrikisha (人力車) - Asakusa Framework Starter Package - <index.html>`
-     
-    Jinrikisha を使ってインストールする場合、本書の :ref:`install-ubuntu` までの手順を実施し、その後は Jinrikisha のドキュメントに従って開発環境を構築することができます。
-    
-    なお Jinrikisha ではインストール環境にJava(JDK)がインストールされていない場合、OpenJDKを簡易にインストールする機能が備わっていますが、試用目的以外でAsakusa Frameworkを使用する場合は 本書の :ref:`install-java` の手順を参考にしてOracleJDKをインストールした後に Jinrikisha のドキュメント に従って開発環境を構築することを推奨します。
-
-VMWare Playerのインストール
----------------------------
-VMWare Playerをダウンロードし、インストールを行います。
-
-VMWare Playerのダウンロードサイト (http://www.vmware.com/go/get-player-jp) からVMWare Player (Windows用) をダウンロードします。
-
-ダウンロードしたインストーラを実行し、インストール画面の指示に従ってVMWare Playerをインストールします。
-
-.. _install-ubuntu:
-
-Ubuntu Desktop のインストール
------------------------------
-Ubuntu Desktopをダウンロードし、インストールを行います。
-
-Ubuntu Desktop 日本語 Remix CDのダウンロードサイト (http://www.ubuntulinux.jp/download/ja-remix) からisoファイル(CDイメージ)をダウンロードします。
-
-ダウンロードが完了したらVMWare Playerを起動し、以下の手順に従ってUbuntu Desktopをインストールします。
-
-1. メニューから「新規仮想マシンの作成」を選択します、
-2. インストール元の選択画面では「後でOSをインストール」を選択し [#]_ 、次へ進みます。
-3. ゲストOSの選択で「Linux」を選択し、バージョンに「Ubuntu」を選択して次へ進みます。
-4. 仮想マシン名の入力では、任意の仮想マシン名と保存場所を指定して、次へ進みます。
-5. ディスク容量の指定は任意です。デフォルトの「20GB」はAsakusa Frameworkの開発を試すには十分な容量です。お使いの環境に合わせて設定し、次へ進みます。
-6. 仮想マシン作成準備画面で「ハードウェアをカスタマイズ」を選択します。デバイス一覧から「新規 CD/DVD(IDE)」を選択後、画面右側の「ISOイメージファイルを使用する」を選択し、参照ボタンを押下してダウンロードしたUbuntu Desktopのisoファイルを選択します。その他の設定は環境に合わせて設定してください。設定が完了したら画面下の閉じるボタンを押します。
-7. 完了ボタンを押して仮想マシンを作成後、仮想マシンを起動すると、Ubuntu Desktopのインストールが開始します。インストール画面の指示に従ってUbuntu Desktopをインストールします。
-
-Ubuntu Desktopが起動したら、同梱のブラウザなどを使用してUbuntuからインターネットにできることを確認してください。以後の手順ではインターネットに接続できることを前提とします。
-
-また、以降の手順で使用するホームフォルダ直下のダウンロードディレクトリを日本語名から英語に変更するため、ターミナルを開いて [#]_ 以下のコマンドを実行します。
-
-..  code-block:: sh
-
-    LANG=C xdg-user-dirs-gtk-update
-
-ダイアログが開いたら ``Don't ask me this again``  (次回からチェックしない) 」にチェックを入れ、 ``Update Names`` ボタンを押下します。
-
-そのほか、必須の手順ではないですがここでVMWare Toolsをインストールしておくとよいでしょう [#]_ 。
-
-..  [#] ここで「インストーラ ディスク イメージ ファイル」を選択し、isoファイルを選択するとOSの「簡易インストール」が行われますが、簡易インストールでは日本語環境がインストールされないほか、いくつかの設定が適切に行われないため、簡易インストールの使用は推奨しません。
-..  [#] ターミナルを開くにはデスクトップ上で ``[ctrl]`` + ``[alt]`` + ``[t]`` キーを押すか、画面左上のDashメニューを選択し、検索ボックスに ``terminal`` と入力後、画面下に表示される ``端末`` を選択します。
-..  [#] VMWare Toolsのインストールについては VMWare Playerのドキュメントなどを参照してください。
-
-.. _install-java:
 
 Java(JDK)のインストール
 -----------------------
 Hadoop、及びAsakusa Frameworkの実行に使用するJavaをインストールします。
 
-ブラウザを開き、Javaのダウンロードサイト (http://www.oracle.com/technetwork/java/javase/downloads/index.html) から、JDK 7 の インストールアーカイブ ``jdk-7uXX-linux-i586.tar.gz`` ( ``XX`` はUpdate番号) をダウンロードします [#]_ 。この文書では、ブラウザ標準のダウンロードディレクトリ  ``~/Downloads`` にダウンロードしたものとして説明を進めます。
+ブラウザを開き、Javaのダウンロードサイト (http://www.oracle.com/technetwork/java/javase/downloads/index.html) から、JDK 7 の インストールアーカイブ ``jdk-7uXX-linux-YY.tar.gz`` ( ``XX`` はUpdate番号、``YY`` はプラットフォーム固有の名前 ) をダウンロードします [#]_ 。この文書では、ブラウザ標準のダウンロードディレクトリ  ``~/Downloads`` にダウンロードしたものとして説明を進めます。
 
 ダウンロードが完了したら、以下の例を参考にしてJDKをインストールします。
 
 ..  code-block:: sh
 
     cd ~/Downloads
-    tar xf jdk-7u*-linux-i586.tar.gz
+    tar xf jdk-7u*-linux-*.tar.gz
     sudo chown -R root:root jdk1.7.0_*/
     sudo mkdir /usr/lib/jvm
     sudo mv jdk1.7.0_*/ /usr/lib/jvm
     sudo ln -s /usr/lib/jvm/jdk1.7.0_* /usr/lib/jvm/java-7-oracle
 
-..  [#] 本スタートガイドの環境に従う場合は、x64版用のファイル( ``jdk-7uXX-linux-x64.tar.gz`` )や、RPM版のファイル( ``jdk-7uXX-linux-i586.rpm`` ) をダウンロードしないよう注意してください。
+..  [#] 利用するプラットフォーム(32/64Bit版)に応じたインストールアーカイブをダウンロードしてください。
 
 Hadoopのインストール
 --------------------
