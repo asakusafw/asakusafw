@@ -104,39 +104,6 @@ public class ParquetFileDriverTest extends GeneratorTesterRoot {
     }
 
     /**
-     * unsupported type - decimal.
-     */
-    @Test
-    public void invalid_decimal() {
-        shouldSemanticError(new String[] {
-                "@directio.hive.parquet",
-                "model = { simple : DECIMAL; };"
-        });
-    }
-
-    /**
-     * unsupported type - date.
-     */
-    @Test
-    public void invalid_date() {
-        shouldSemanticError(new String[] {
-                "@directio.hive.parquet",
-                "model = { simple : DATE; };"
-        });
-    }
-
-    /**
-     * unsupported type - datetime.
-     */
-    @Test
-    public void invalid_date_time() {
-        shouldSemanticError(new String[] {
-                "@directio.hive.parquet",
-                "model = { simple : DATETIME; };"
-        });
-    }
-
-    /**
      * unsupported type but it is ignored.
      */
     @Test
@@ -147,7 +114,7 @@ public class ParquetFileDriverTest extends GeneratorTesterRoot {
                 "model = {",
                 "  value : INT;",
                 "  @directio.hive.ignore",
-                "  ignored : DECIMAL;",
+                "  ignored : DATE;",
                 "};",
         });
     }
@@ -175,6 +142,17 @@ public class ParquetFileDriverTest extends GeneratorTesterRoot {
                 "  compression = 'UNKNOWN',",
                 ")",
                 "model = { simple : INT; };"
+        });
+    }
+
+    /**
+     * unsupported type - date.
+     */
+    @Test
+    public void invalid_date() {
+        shouldSemanticError(new String[] {
+                "@directio.hive.parquet",
+                "model = { simple : DATE; };",
         });
     }
 }

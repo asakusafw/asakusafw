@@ -40,6 +40,7 @@ import com.asakusafw.runtime.io.ModelOutput;
  * An implementation of {@link ModelOutput} for writing Parquet files.
  * @param <T> the data model type
  * @since 0.7.0
+ * @version 0.7.2
  */
 public class ParquetFileOutput<T> implements ModelOutput<T> {
 
@@ -120,13 +121,30 @@ public class ParquetFileOutput<T> implements ModelOutput<T> {
         }
     }
 
-    // FIXME for supporting parquet-hadoop 1.2.5
-    // 'static' suppresses checkstyle warnings
     private static enum ParquetVersion {
 
         // Note: put newer version on top
 
-        V_NEW(10),
+        V_15(10) {
+            @Override
+            <T> ParquetWriter<T> newInstance(
+                    Path path,
+                    WriteSupport<T> writeSupport,
+                    ParquetFileOutput.Options options,
+                    Configuration configuration) throws IOException {
+                return new ParquetWriter<T>(
+                        path,
+                        writeSupport,
+                        options.getCompressionCodecName(),
+                        options.getBlockSize(),
+                        options.getDataPageSize(),
+                        options.getDictionaryPageSize(),
+                        options.isEnableDictionary(),
+                        options.isEnableValidation(),
+                        options.getWriterVersion(),
+                        configuration);
+            }
+        },
 
         V_13(9) {
             @Override
@@ -189,7 +207,7 @@ public class ParquetFileOutput<T> implements ModelOutput<T> {
             boolean.class,              //
             boolean.class,              // 8: v1.2
             ParquetProperties.WriterVersion.class, // 9: v1.3
-            Configuration.class,        // 10 ~
+            Configuration.class,        // 10 v1.5
         };
 
         final int parameterCount;

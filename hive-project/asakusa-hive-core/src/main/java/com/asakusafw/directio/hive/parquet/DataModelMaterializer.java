@@ -31,6 +31,7 @@ import parquet.column.ColumnDescriptor;
 import parquet.io.api.GroupConverter;
 import parquet.io.api.RecordMaterializer;
 import parquet.schema.MessageType;
+import parquet.schema.OriginalType;
 import parquet.schema.PrimitiveType;
 import parquet.schema.Type;
 import parquet.schema.Type.Repetition;
@@ -158,16 +159,17 @@ public class DataModelMaterializer extends RecordMaterializer<Object> {
         List<Mapping> mappings = new ArrayList<Mapping>();
         for (ColumnDescriptor s : source.getColumns()) {
             String name = s.getPath()[0];
+            Type sType = source.getType(s.getPath());
             PropertyDescriptor t = target.findPropertyDescriptor(name);
             if (t != null) {
-                mappings.add(new Mapping(s, t));
+                mappings.add(new Mapping(s, sType, t));
                 rest.remove(t);
             } else {
-                mappings.add(new Mapping(s, null));
+                mappings.add(new Mapping(s, sType, null));
             }
         }
         for (PropertyDescriptor t : rest) {
-            mappings.add(new Mapping(null, t));
+            mappings.add(new Mapping(null, null, t));
         }
         return mappings;
     }
@@ -185,14 +187,17 @@ public class DataModelMaterializer extends RecordMaterializer<Object> {
         int limit = Math.min(sources.size(), targets.size());
         for (int i = 0; i < limit; i++) {
             ColumnDescriptor s = sources.get(i);
+            Type sType = source.getType(s.getPath());
             PropertyDescriptor t = targets.get(i);
-            mappings.add(new Mapping(s, t));
+            mappings.add(new Mapping(s, sType, t));
         }
         for (int i = limit, n = sources.size(); i < n; i++) {
-            mappings.add(new Mapping(sources.get(i), null));
+            ColumnDescriptor s = sources.get(i);
+            Type sType = source.getType(s.getPath());
+            mappings.add(new Mapping(s, sType, null));
         }
         for (int i = limit, n = targets.size(); i < n; i++) {
-            mappings.add(new Mapping(null, targets.get(i)));
+            mappings.add(new Mapping(null, null, targets.get(i)));
         }
         return mappings;
     }
@@ -216,12 +221,12 @@ public class DataModelMaterializer extends RecordMaterializer<Object> {
                     mapping.source.getPath()[0],
                     mapping.source.getType()));
             return false;
-        } else if (isCompatible(mapping.source, mapping.target) == false) {
+        } else if (isCompatible(mapping.sourceType, mapping.target) == false) {
             handleException(configuration.getOnIncompatibleType(), MessageFormat.format(
                     "Field types are incompatible: model={0}, source={1}:{2}(Parquet), target={3}:{4}(data model)",
                     descriptor.getDataModelClass().getName(),
                     mapping.source.getPath()[0],
-                    mapping.source.getType(),
+                    getSourceTypeDescription(mapping),
                     mapping.target.getFieldName(),
                     mapping.target.getFieldTypeInfo()));
             return false;
@@ -230,15 +235,32 @@ public class DataModelMaterializer extends RecordMaterializer<Object> {
         }
     }
 
-    private boolean isCompatible(ColumnDescriptor source, PropertyDescriptor target) {
+    private String getSourceTypeDescription(Mapping mapping) {
+        OriginalType originalType = mapping.sourceType.getOriginalType();
+        if (originalType != null) {
+            return String.valueOf(originalType);
+        }
+        return String.valueOf(mapping.source.getType());
+    }
+
+    private boolean isCompatible(Type sourceType, PropertyDescriptor target) {
         ParquetValueDriver driver = ParquetValueDrivers.of(
                 target.getTypeInfo(),
                 target.getValueClass());
-        Type type = driver.getType(target.getFieldName());
-        if (type.isPrimitive() == false) {
-            return false;
+        Type targetType = driver.getType(target.getFieldName());
+        if (sourceType.getOriginalType() != null) {
+            if (sourceType.getOriginalType() == targetType.getOriginalType()) {
+                return true;
+            }
         }
-        return source.getType() == type.asPrimitiveType().getPrimitiveTypeName();
+        if (sourceType.isPrimitive()) {
+            if (targetType.isPrimitive() == false) {
+                return false;
+            }
+            return sourceType.asPrimitiveType().getPrimitiveTypeName()
+                    == targetType.asPrimitiveType().getPrimitiveTypeName();
+        }
+        return false;
     }
 
     private void handleException(ExceptionHandlingStrategy strategy, String message) {
@@ -260,10 +282,13 @@ public class DataModelMaterializer extends RecordMaterializer<Object> {
 
         final ColumnDescriptor source;
 
+        final Type sourceType;
+
         final PropertyDescriptor target;
 
-        Mapping(ColumnDescriptor source, PropertyDescriptor target) {
+        Mapping(ColumnDescriptor source, Type sourceType, PropertyDescriptor target) {
             this.source = source;
+            this.sourceType = sourceType;
             this.target = target;
         }
     }
