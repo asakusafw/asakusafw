@@ -27,14 +27,19 @@ import com.asakusafw.runtime.value.ValueOption;
 /**
  * Represents a property in data model object.
  * @since 0.7.0
+ * @version 0.7.2
  */
 public abstract class PropertyDescriptor implements StructField, HiveFieldInfo, ValueSerde, PropertyExtractor {
+
+    static final int INVALID_FIELD_ID = -1;
 
     private final String name;
 
     private final ValueSerde serde;
 
     private final String comment;
+
+    private int fieldId = INVALID_FIELD_ID;
 
     /**
      * Creates a new instance.
@@ -98,6 +103,20 @@ public abstract class PropertyDescriptor implements StructField, HiveFieldInfo, 
     @Override
     public String getFieldComment() {
         return comment;
+    }
+
+    @Override
+    public int getFieldID() {
+        return fieldId;
+    }
+
+    /**
+     * Sets the field ID.
+     * @param id the ID
+     * @since 0.7.2
+     */
+    void setFieldId(int id) {
+        this.fieldId = id;
     }
 
     @Override

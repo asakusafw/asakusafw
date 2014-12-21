@@ -39,6 +39,7 @@ import com.asakusafw.runtime.value.ValueOption;
 /**
  * Converts between {@link ValueOption} and {@code string (binary)}.
  * @since 0.7.0
+ * @version 0.7.2
  */
 public enum StringValueDrivers implements ParquetValueDriver {
 
