@@ -113,7 +113,12 @@ public class DataModelDescriptorEditor {
             }
             ValueSerde modified = edits.get(property);
             if (modified == null) {
-                properties.add(property);
+                properties.add(new PropertyDescriptor(property.getFieldName(), property, property.getFieldComment()) {
+                    @Override
+                    public ValueOption<?> extract(Object dataModel) {
+                        return property.extract(dataModel);
+                    }
+                });
             } else {
                 properties.add(new PropertyDescriptor(property.getFieldName(), modified, property.getFieldComment()) {
                     @Override
