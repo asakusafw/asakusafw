@@ -517,6 +517,14 @@ encoding/<project>=UTF-8
 					<exclusion>
 						<groupId>org.xerial.snappy</groupId>
 						<artifactId>snappy-java</artifactId>
+						</exclusion>
+					<exclusion>
+						<groupId>org.apache.calcite</groupId>
+						<artifactId>calcite-core</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.apache.calcite</groupId>
+						<artifactId>calcite-avatica</artifactId>
 					</exclusion>
 				</exclusions>
 			</dependency>
