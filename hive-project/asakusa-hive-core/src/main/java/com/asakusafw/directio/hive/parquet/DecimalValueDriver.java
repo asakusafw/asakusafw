@@ -40,9 +40,9 @@ import com.asakusafw.runtime.value.ValueOption;
  */
 public class DecimalValueDriver implements ParquetValueDriver {
 
-    static int PRECISION_INT_MAX = 9;
+    static final int PRECISION_INT_MAX = 9;
 
-    static int PRECISION_LONG_MAX = 18;
+    static final int PRECISION_LONG_MAX = 18;
 
     private final int precision;
 

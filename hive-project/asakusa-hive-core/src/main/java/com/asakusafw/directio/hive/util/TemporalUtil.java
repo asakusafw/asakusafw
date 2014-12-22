@@ -255,7 +255,7 @@ public final class TemporalUtil {
     }
 
     /**
-     * Returns the elapsed days from Julian day
+     * Returns the elapsed days from Julian day.
      * @param julianDayNumber the Julian day
      * @param nanoTime time of day in nanos
      * @return the elapsed days
