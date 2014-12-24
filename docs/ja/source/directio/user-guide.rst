@@ -428,29 +428,16 @@ Amazon Simple Storage Service ( `Amazon S3`_ )の入出力を行う場合の設�
         <value>false</value>
     </property>
     <property>
-        <name>com.asakusafw.directio.s3.output.streaming</name>
-        <value>false</value>
-    </property>
-    <property>
         <name>com.asakusafw.output.system.dir</name>
         <value>s3://example/var/system</value>
     </property>
-    <property>
-        <name>com.asakusafw.output.local.tempdir</name>
-        <value>/mnt/asakusa-directio</value>
-    </property>
 
-2013年11月現在、Hadoopのファイルシステムを経由してS3を利用する場合、出力ファイルの移動にコストがかかるようです。
-このため、上記の設定では主に次のようなことを行っています。
-
-* 試行領域をローカルファイルシステム上に作成する ( ``...output.streaming = false`` )
-
-  * 試行領域をS3上に作成した場合、試行の成功の際にファイルの名前を変更します。しかし、S3上でファイルの名前を変更すると、コピーと削除の組み合わせが内部的に発生します。
-  * このため、出力を直接データソースに出力せず、ローカルテンポラリ領域に出力するよう設定しています ( ``com.asakusafw.output.local.tempdir`` ) 。
+本ドキュメントの作成時点では、Hadoopのファイルシステムを経由してS3を利用する場合、出力ファイルの移動にコストがかかるようです。
+このため、上記の設定では次のようなことを行っています。
 
 * ステージ領域をスキップする ( ``...output.staging = false`` )
 
-  * ステージ領域を利用する場合、タスクが全て成功した後にファイルの名前変更を行います。試行領域の時と同様に、S3上でのファイル名変更はHDFS上のそれより時間がかかります。
+  * ステージ領域を利用する場合、タスクが全て成功した後にファイルの名前変更を行います。S3上でのファイル名変更はHDFS上のそれより時間がかかります。
 
 ..  attention::
     上記の例はステージ領域をスキップするよう設定していますが、この設定によりトランザクション処理が行えなくなる点に注意してください。
@@ -467,6 +454,24 @@ Amazon Simple Storage Service ( `Amazon S3`_ )の入出力を行う場合の設�
             <value>-1</value>
         </property>
 
+..  attention::
+    HadoopやAmazon EMRの古いバージョンなどの一部の実装では、S3上でのファイル名変更が正常に動作しないことがあります。もしこのような場合、以下の設定を試してみてください。
+     
+    * 試行領域をローカルファイルシステム上に作成する ( ``...output.streaming = false`` )
+   
+      * この設定では出力を直接データソースに出力せず、ローカルテンポラリ領域に出力するよう設定しています ( ``com.asakusafw.output.local.tempdir`` ) 。
+
+    ..  code-block:: xml
+
+         <property>
+             <name>com.asakusafw.directio.s3.output.streaming</name>
+             <value>false</value>
+         </property>    
+         <property>
+             <name>com.asakusafw.output.local.tempdir</name>
+             <value>/mnt/asakusa-directio</value>
+         </property>
+    
 
 複数のデータソースを利用する設定例
 ----------------------------------

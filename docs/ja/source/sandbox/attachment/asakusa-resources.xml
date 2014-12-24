@@ -44,14 +44,6 @@
     <property>
          <name>com.asakusafw.directio.root.output.staging</name>
          <value>false</value>
-     </property>
-     <property>
-         <name>com.asakusafw.directio.root.output.streaming</name>
-         <value>false</value>
-     </property>
-     <property>
-         <name>com.asakusafw.output.local.tempdir</name>
-         <value>/mnt/asakusa-directio</value>
-     </property>
+    </property>
 </configuration>
 
