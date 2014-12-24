@@ -785,7 +785,7 @@ public class ParquetFileFormatTest {
             input.close();
         }
         // fix timezone
-        buf.value.modify(buf.value.get().getElapsedSeconds() - TESTDATA_TIMEZONE_OFFSET + LOCAL_TIMEZONE_OFFSET);
+        buf.value.modify(buf.value.get().getElapsedSeconds() + TESTDATA_TIMEZONE_OFFSET - LOCAL_TIMEZONE_OFFSET);
         DateTime expected = new DateTime(
                 Integer.parseInt(matcher.group(1)),
                 Integer.parseInt(matcher.group(2)),
