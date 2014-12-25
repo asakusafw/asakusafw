@@ -172,8 +172,8 @@
 			<classifier>dist</classifier>
 		</dependency>
 
-        <!-- Direct I/O Hive -->
-		<dependency>
+	<!-- Direct I/O Hive -->
+	<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>asakusa-hive-core</artifactId>
 			<version>${project.version}</version>
@@ -329,6 +329,18 @@
 				<exclusion>
 					<groupId>org.slf4j</groupId>
 					<artifactId>slf4j-log4j12</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.xerial.snappy</groupId>
+					<artifactId>snappy-java</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.calcite</groupId>
+					<artifactId>calcite-core</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.calcite</groupId>
+					<artifactId>calcite-avatica</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>

@@ -89,10 +89,14 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
         if (inputList == null) {
             throw new IllegalArgumentException("inputList must not be null"); //$NON-NLS-1$
         }
-        if (LOG.isInfoEnabled()) {
-            LOG.info(MessageFormat.format(
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
                     "Start computing splits for Direct I/O: input={0}",
                     inputList.size()));
+        }
+        long t0 = -1L;
+        if (LOG.isInfoEnabled()) {
+            t0 = System.currentTimeMillis();
         }
         DirectDataSourceRepository repo = getDataSourceRepository(context);
         List<InputSplit> results = new ArrayList<InputSplit>();
@@ -118,11 +122,17 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
             results.add(new NullInputSplit());
         }
         if (LOG.isInfoEnabled()) {
+            String type = "(unknown)";
+            if (patternGroups.isEmpty() == false) {
+                type = patternGroups.keySet().iterator().next().dataType.getName();
+            }
+            long t1 = System.currentTimeMillis();
             LOG.info(MessageFormat.format(
-                    "Finish computing splits for Direct I/O: input={0}, fragments={1}, size={2}",
-                    inputList.size(),
+                    "found Direct I/O input splits: primary-type={0}, fragments={1}, size={2}bytes, elapsed={3}ms",
+                    type,
                     results.size(),
-                    totalSize));
+                    totalSize,
+                    t1 - t0));
         }
         return results;
     }

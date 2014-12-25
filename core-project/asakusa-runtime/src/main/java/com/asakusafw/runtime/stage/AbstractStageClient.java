@@ -224,6 +224,12 @@ public abstract class AbstractStageClient extends BaseStageClient {
         Configuration conf = getConf();
         conf.set(StageConstants.PROP_BATCH_ID, getBatchId());
         conf.set(StageConstants.PROP_FLOW_ID, getFlowId());
+        LOG.info(MessageFormat.format(
+                "Initializing Job: batchId={0}, flowId={1}, executionId={2}, stageId={3}",
+                getBatchId(),
+                getFlowId(),
+                getExecutionId(),
+                getStageId()));
         Job job = createJob(conf);
         return submit(job);
     }
@@ -252,9 +258,16 @@ public abstract class AbstractStageClient extends BaseStageClient {
     }
 
     private int submit(Job job) throws IOException, InterruptedException, ClassNotFoundException {
+        String jobRunnerClassName = job.getConfiguration().get(StageConstants.PROP_JOB_RUNNER);
+        JobRunner runner = DefaultJobRunner.INSTANCE;
+        if (jobRunnerClassName != null) {
+            Class<?> jobRunnerClass = job.getConfiguration().getClassByName(jobRunnerClassName);
+            runner = (JobRunner) ReflectionUtils.newInstance(jobRunnerClass, job.getConfiguration());
+        }
         LOG.info(MessageFormat.format(
-                "Submitting Job: {0}",
-                job.getJobName()));
+                "Submitting Job: {0} (runner: {1})",
+                job.getJobName(),
+                runner));
         long start = System.currentTimeMillis();
         boolean succeed;
         if (RuntimeContext.get().isSimulation()) {
@@ -263,12 +276,6 @@ public abstract class AbstractStageClient extends BaseStageClient {
                     job.getJobName()));
             succeed = true;
         } else {
-            String jobRunnerClassName = job.getConfiguration().get(StageConstants.PROP_JOB_RUNNER);
-            JobRunner runner = DefaultJobRunner.INSTANCE;
-            if (jobRunnerClassName != null) {
-                Class<?> jobRunnerClass = job.getConfiguration().getClassByName(jobRunnerClassName);
-                runner = (JobRunner) ReflectionUtils.newInstance(jobRunnerClass, job.getConfiguration());
-            }
             succeed = runner.run(job);
         }
         long end = System.currentTimeMillis();
@@ -286,7 +293,9 @@ public abstract class AbstractStageClient extends BaseStageClient {
         Class<?> clientClass = getClass();
         String operationId = getOperationId();
 
-        LOG.info(MessageFormat.format("Hadoop Job Client: {0}", clientClass.getName()));
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format("Hadoop Job Client: {0}", clientClass.getName()));
+        }
         String jar = job.getConfiguration().get(PROP_APPLICATION_JAR);
         if (jar == null || (job.getConfiguration() instanceof JobConf) == false) {
             job.setJarByClass(clientClass);
@@ -294,7 +303,9 @@ public abstract class AbstractStageClient extends BaseStageClient {
             ((JobConf) job.getConfiguration()).setJar(jar);
         }
 
-        LOG.info(MessageFormat.format("Hadoop Job Name: {0}", operationId));
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format("Hadoop Job Name: {0}", operationId));
+        }
         job.setJobName(operationId);
     }
 
@@ -306,12 +317,14 @@ public abstract class AbstractStageClient extends BaseStageClient {
             Class<? extends InputFormat<?, ?>> formatClass = input.getFormatClass();
             String expanded = variables.parse(pathString);
             Map<String, String> attributes = input.getAttributes();
-            LOG.info(MessageFormat.format(
-                    "Input: path={0}, format={1}, mapper={2}, attributes={3}",
-                    expanded,
-                    formatClass.getName(),
-                    mapperClass.getName(),
-                    attributes));
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(MessageFormat.format(
+                        "Input: path={0}, format={1}, mapper={2}, attributes={3}",
+                        expanded,
+                        formatClass.getName(),
+                        mapperClass.getName(),
+                        attributes));
+            }
             inputList.add(new StageInput(expanded, formatClass, mapperClass, attributes));
         }
         StageInputDriver.set(job, inputList);
@@ -323,53 +336,75 @@ public abstract class AbstractStageClient extends BaseStageClient {
     private void configureShuffle(Job job, VariableTable variables) {
         Class<? extends Reducer> reducer = getReducerClassOrNull();
         if (reducer != null) {
-            LOG.info(MessageFormat.format("Reducer: {0}", reducer.getName()));
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(MessageFormat.format("Reducer: {0}", reducer.getName()));
+            }
             job.setReducerClass(reducer);
         } else {
-            LOG.info("Reducer: N/A");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Reducer: N/A");
+            }
             job.setNumReduceTasks(0);
             return;
         }
 
         Class<? extends Writable> outputKeyClass = or(getShuffleKeyClassOrNull(), NullWritable.class);
         Class<? extends Writable> outputValueClass = or(getShuffleValueClassOrNull(), NullWritable.class);
-        LOG.info(MessageFormat.format(
-                "Shuffle: key={0}, value={1}",
-                outputKeyClass.getName(),
-                outputValueClass.getName()));
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "Shuffle: key={0}, value={1}",
+                    outputKeyClass.getName(),
+                    outputValueClass.getName()));
+        }
         job.setMapOutputKeyClass(outputKeyClass);
         job.setMapOutputValueClass(outputValueClass);
 
         Class<? extends Reducer> combiner = getCombinerClassOrNull();
         if (combiner != null) {
-            LOG.info(MessageFormat.format("Combiner: {0}", combiner.getName()));
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(MessageFormat.format("Combiner: {0}", combiner.getName()));
+            }
             job.setCombinerClass(combiner);
         } else {
-            LOG.info("Combiner: N/A");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Combiner: N/A");
+            }
         }
 
         Class<? extends Partitioner> partitioner = getPartitionerClassOrNull();
         if (partitioner != null) {
-            LOG.info(MessageFormat.format("Partitioner: {0}", partitioner.getName()));
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(MessageFormat.format("Partitioner: {0}", partitioner.getName()));
+            }
             job.setPartitionerClass(partitioner);
         } else {
-            LOG.info("Partitioner: DEFAULT");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Partitioner: DEFAULT");
+            }
         }
 
         Class<? extends RawComparator> groupingComparator = getGroupingComparatorClassOrNull();
         if (groupingComparator != null) {
-            LOG.info(MessageFormat.format("GroupingComparator: {0}", groupingComparator.getName()));
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(MessageFormat.format("GroupingComparator: {0}", groupingComparator.getName()));
+            }
             job.setGroupingComparatorClass(groupingComparator);
         } else {
-            LOG.info("GroupingComparator: DEFAULT");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("GroupingComparator: DEFAULT");
+            }
         }
 
         Class<? extends RawComparator> sortComparator = getSortComparatorClassOrNull();
         if (sortComparator != null) {
-            LOG.info(MessageFormat.format("SortComparator: {0}", sortComparator.getName()));
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(MessageFormat.format("SortComparator: {0}", sortComparator.getName()));
+            }
             job.setSortComparatorClass(sortComparator);
         } else {
-            LOG.info("SortComparator: DEFAULT");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("SortComparator: DEFAULT");
+            }
         }
     }
 
@@ -377,7 +412,9 @@ public abstract class AbstractStageClient extends BaseStageClient {
         List<StageResource> resources = getStageResources();
         for (StageResource cache : resources) {
             String resolved = variables.parse(cache.getLocation());
-            LOG.info(MessageFormat.format("Distributed Cache: {0} @ {1}", cache.getName(), resolved));
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(MessageFormat.format("Distributed Cache: {0} @ {1}", cache.getName(), resolved));
+            }
             if (RuntimeContext.get().isSimulation()) {
                 LOG.info("Preparing distributed cache is skipped in simulation mode");
             } else {
@@ -395,14 +432,16 @@ public abstract class AbstractStageClient extends BaseStageClient {
             Class<?> valueClass = output.getValueClass();
             Class<? extends OutputFormat<?, ?>> formatClass = output.getFormatClass();
             Map<String, String> attributes = output.getAttributes();
-            LOG.info(MessageFormat.format(
-                    "Output: path={0}/{1}-*, format={2}, key={3}, value={4}, attributes={5}",
-                    outputPath,
-                    name,
-                    formatClass.getName(),
-                    keyClass.getName(),
-                    valueClass.getName(),
-                    attributes));
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(MessageFormat.format(
+                        "Output: path={0}/{1}-*, format={2}, key={3}, value={4}, attributes={5}",
+                        outputPath,
+                        name,
+                        formatClass.getName(),
+                        keyClass.getName(),
+                        valueClass.getName(),
+                        attributes));
+            }
             outputList.add(new StageOutput(name, keyClass, valueClass, formatClass, attributes));
         }
         StageOutputDriver.set(job, outputPath, outputList);
@@ -455,10 +494,16 @@ public abstract class AbstractStageClient extends BaseStageClient {
         public boolean run(Job job) throws IOException, InterruptedException, ClassNotFoundException {
             job.submit();
             LOG.info(MessageFormat.format(
-                    "Job Submitted: id={0}, name={1}",
+                    "starting job using {0}: {1} ({2})",
+                    this,
                     job.getJobID(),
                     job.getJobName()));
             return job.waitForCompletion(true);
+        }
+
+        @Override
+        public String toString() {
+            return "Hadoop job runner";
         }
     }
 }

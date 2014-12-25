@@ -149,7 +149,7 @@ EMR向けのデプロイメント構成用のプロファイル ``emr`` を作�
             asakusafwVersion asakusafw.asakusafwVersion
         }
         profiles.emr {
-            asakusafwVersion '0.7.1-hadoop2'
+            asakusafwVersion '0.7.2-hadoop2'
             assembly.into('.') {
                 put 'src/dist/emr'
                 replace 'asakusa-resources.xml', directioRootFsPath: 's3://[mybucket]/app-data'
@@ -222,7 +222,7 @@ S3に対するファイルアップロードはAWS CLIからも実行するこ�
 
 ..  code-block:: sh
     
-    aws s3 cp build/asakusafw-0.7.1-hadoop2-emr.tar.gz s3://[mybucket]/asakusafw/
+    aws s3 cp build/asakusafw-0.7.2-hadoop2-emr.tar.gz s3://[mybucket]/asakusafw/
 
 アップロード後のバケットを確認します。
 
@@ -232,7 +232,7 @@ S3に対するファイルアップロードはAWS CLIからも実行するこ�
     
 ..  code-block:: sh
     
-    2014-09-19 12:36:45    5186529 asakusafw-0.7.1-hadoop2-emr.tar.gz
+    2014-09-19 12:36:45    5186529 asakusafw-0.7.2-hadoop2-emr.tar.gz
 
 ..  attention::
     上記例を参考にコマンドを入力する際は、必ずアップロード先のS3バケットのパスを実際に使用するパスに置き換えてください。
@@ -453,7 +453,7 @@ EMRクラスターに対して処理を要求するには、
       * 第1引数:  ``s3://asakusafw/emr/deploy-asakusa.sh``
       * 第2引数:  `デプロイメントアーカイブをS3に配置`_ で配置したデプロイメントアーカイブのS3パス
         
-        * 例: ``s3://[mybucket]/asakusafw/asakusafw-0.7.1-hadoop2-emr.tar.gz``
+        * 例: ``s3://[mybucket]/asakusafw/asakusafw-0.7.2-hadoop2-emr.tar.gz``
     
     ``Action on failure``
       * ``Continue`` を選択
@@ -494,7 +494,7 @@ AWS CLI を使ったデプロイ例を以下に示します。
     ActionOnFailure=CONTINUE,\
     Jar=s3://elasticmapreduce/libs/script-runner/script-runner.jar,\
     Args=s3://asakusafw/emr/deploy-asakusa.sh,\
-    s3://[mybucket]/asakusafw/asakusafw-0.7.1-hadoop2-emr.tar.gz
+    s3://[mybucket]/asakusafw/asakusafw-0.7.2-hadoop2-emr.tar.gz
 
 ステップを登録すると、以下のようにステップIDが表示されます。
 ステップIDはステップの実行結果を確認する場合などで使用します。

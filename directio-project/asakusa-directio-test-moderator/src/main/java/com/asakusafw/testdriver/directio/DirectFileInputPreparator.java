@@ -16,6 +16,7 @@
 package com.asakusafw.testdriver.directio;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +41,11 @@ public class DirectFileInputPreparator extends BaseImporterPreparator<DirectFile
             DirectFileInputDescription description,
             TestContext context) throws IOException {
         DirectIoTestHelper helper = new DirectIoTestHelper(context, description.getBasePath());
-        LOG.info("Trancating input: {}", description.getClass().getName());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "Truncating Direct I/O input: {0}",
+                    description.getClass().getName()));
+        }
         helper.truncate();
     }
 
@@ -50,7 +55,11 @@ public class DirectFileInputPreparator extends BaseImporterPreparator<DirectFile
             DirectFileInputDescription description,
             TestContext context) throws IOException {
         DirectIoTestHelper helper = new DirectIoTestHelper(context, description.getBasePath());
-        LOG.info("Preparing input: {}", description.getClass().getName());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "Preparing Direct I/O input: {0}",
+                    description.getClass().getName()));
+        }
         return helper.openOutput(definition.getModelClass(), description);
     }
 }

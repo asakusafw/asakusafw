@@ -47,8 +47,6 @@ import com.asakusafw.windgate.file.resource.FileResourceProvider;
  */
 public class WindGateExporterRetrieverTest {
 
-    private static final TestContext EMPTY = new TestContext.Empty();
-
     /**
      * Temporary folder.
      */
@@ -59,7 +57,7 @@ public class WindGateExporterRetrieverTest {
      * Profiles.
      */
     @Rule
-    public ProfileContext context = new ProfileContext();
+    public TestContextProvider context = new TestContextProvider();
 
     /**
      * Test method for {@link WindGateExporterRetriever#truncate(WindGateExporterDescription, TestContext)}.
@@ -82,7 +80,7 @@ public class WindGateExporterRetrieverTest {
         WindGateExporterRetriever preparator = new WindGateExporterRetriever();
 
         assertThat(file.exists(), is(true));
-        preparator.truncate(description, EMPTY);
+        preparator.truncate(description, context.get());
         assertThat(file.exists(), is(false));
     }
 
@@ -106,7 +104,8 @@ public class WindGateExporterRetrieverTest {
                 "testing",
                 driver);
         WindGateExporterRetriever retriever = new WindGateExporterRetriever();
-        ModelOutput<String> output = retriever.createOutput(ValueDefinition.of(String.class), description, EMPTY);
+        ModelOutput<String> output = retriever.createOutput(
+                ValueDefinition.of(String.class), description, context.get());
         try {
             output.write("Hello1, world!");
             output.write("Hello2, world!");
@@ -165,7 +164,7 @@ public class WindGateExporterRetrieverTest {
                 driver);
         WindGateExporterRetriever retriever = new WindGateExporterRetriever();
         ValueDefinition<String> stringDef = ValueDefinition.of(String.class);
-        DataModelSource source = retriever.createSource(stringDef, description, EMPTY);
+        DataModelSource source = retriever.createSource(stringDef, description, context.get());
         try {
             DataModelReflection r1 = source.next();
             assertThat(r1, is(notNullValue()));
