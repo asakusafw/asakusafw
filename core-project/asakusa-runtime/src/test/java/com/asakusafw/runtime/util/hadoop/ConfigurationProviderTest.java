@@ -23,6 +23,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -298,6 +299,22 @@ public class ConfigurationProviderTest {
 
         Configuration conf = new ConfigurationProvider(envp).newInstance();
         assertThat(isLoaded(conf), is(true));
+    }
+
+    /**
+     * reuses class loaders.
+     * @throws Exception if failed
+     */
+    @Test
+    public void newInstance_classloader_reuse() throws Exception {
+        File file = putConf("conf/core-site.xml");
+        URL dir = file.getParentFile().toURI().toURL();
+
+        Configuration c1 = new ConfigurationProvider(dir).newInstance();
+        assertThat(isLoaded(c1), is(true));
+
+        Configuration c2 = new ConfigurationProvider(dir).newInstance();
+        assertThat(c2.getClassLoader(), is(sameInstance(c1.getClassLoader())));
     }
 
     /**

@@ -83,13 +83,12 @@ public class SimpleJobRunner implements JobRunner {
     @Override
     public boolean run(Job job) throws InterruptedException {
         JobID jobId = newJobId(new Random().nextInt(Integer.MAX_VALUE));
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(MessageFormat.format(
-                    "starting job using simplified map-reduce engine: {0} ({1})",
-                    jobId,
-                    job.getJobName()));
-        }
         setJobId(job, jobId);
+        LOG.info(MessageFormat.format(
+                "starting job using {0}: {1} ({2})",
+                this,
+                job.getJobID(),
+                job.getJobName()));
         try {
             runJob(job);
             return true;
@@ -322,5 +321,10 @@ public class SimpleJobRunner implements JobRunner {
             .withTemporaryDirectory(temporaryDirectory)
             .withCompressBlock(compress);
         return options;
+    }
+
+    @Override
+    public String toString() {
+        return "Asakusa built-in job runner";
     }
 }

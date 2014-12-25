@@ -2,6 +2,51 @@
 リリースノート
 ==============
 
+Release 0.7.2
+=============
+Jan XX, 2015
+
+`Asakusa Framework 0.7.2 documentation`_
+
+..  _`Asakusa Framework 0.7.2 documentation`: http://asakusafw.s3.amazonaws.com/documents/0.7.2/release/ja/html/index.html
+
+新機能と主な変更点
+------------------
+
+Windows上でのアプリケーション開発に対応
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+アプリケーション開発環境の対応プラットフォームとしてWindowsを追加しました。
+
+:doc:`introduction/start-guide-windows` では
+Windows上にアプリケーション開発環境を構築し、
+サンプルアプリケーションを例に開発環境を利用する方法を紹介しています。
+
+Windowsでは運用機能に制限がありますが、
+アプリケーションの開発、テスト、ビルド機能のほぼすべてを利用することができます。
+
+Hive 0.14に対応
+~~~~~~~~~~~~~~~
+:doc:`Direct I/O Hive <directio/using-hive>` がHive 0.14.0に対応しました。
+
+Direct I/O Hiveが出力するParquetフォーマットで
+``TIMESTAMP`` や ``DECIMAL`` 型など
+Hive 0.14で新たに対応したデータタイプを利用することができるようになりました。
+
+その他の変更点
+~~~~~~~~~~~~~~
+その他、細かな機能改善およびバグフィックスが含まれます。
+すべての変更点は :doc:`changelogs` を参照してください。
+
+互換性に関して
+--------------
+本リリースでは過去バージョンとの互換性に関する特別な情報はありません。
+
+過去バージョンからのマイグレーション情報については、
+以下のドキュメントを参照してください。
+
+* :doc:`application/migration-guide`
+* :doc:`administration/migration-guide`
+
 Release 0.7.1
 =============
 Nov 20, 2014

@@ -68,7 +68,7 @@ public class TemporaryOutputRetriever extends BaseExporterRetriever<TemporaryOut
     public void truncate(
             TemporaryOutputDescription description,
             TestContext context) throws IOException {
-        LOG.info("Deleting output directory: {}", description);
+        LOG.debug("Deleting output directory: {}", description);
         VariableTable variables = createVariables(context);
         Configuration config = configurations.newInstance();
         FileSystem fs = FileSystem.get(config);
@@ -93,7 +93,7 @@ public class TemporaryOutputRetriever extends BaseExporterRetriever<TemporaryOut
             DataModelDefinition<V> definition,
             TemporaryOutputDescription description,
             TestContext context) throws IOException {
-        LOG.info("Preparing initial output: {}", description);
+        LOG.debug("Preparing initial output: {}", description);
         checkType(definition, description);
         VariableTable variables = createVariables(context);
         String destination = description.getPathPrefix().replace('*', '_');
@@ -108,7 +108,7 @@ public class TemporaryOutputRetriever extends BaseExporterRetriever<TemporaryOut
             DataModelDefinition<V> definition,
             TemporaryOutputDescription description,
             TestContext context) throws IOException {
-        LOG.info("Retrieving output: {}", description);
+        LOG.debug("Retrieving output: {}", description);
         VariableTable variables = createVariables(context);
         checkType(definition, description);
         Configuration conf = configurations.newInstance();

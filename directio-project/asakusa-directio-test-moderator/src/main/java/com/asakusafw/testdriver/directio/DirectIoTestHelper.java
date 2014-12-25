@@ -64,6 +64,8 @@ public final class DirectIoTestHelper {
 
     private static final String WILDCARD_REPLACEMENT = "__testing__";
 
+    private static final String ENV_FRAMEWORK_HOME = "ASAKUSA_HOME";
+
     static final Logger LOG = LoggerFactory.getLogger(DirectIoTestHelper.class);
 
     private static final WeakHashMap<TestContext, DirectDataSourceRepository> REPOSITORY_CACHE =
@@ -155,29 +157,32 @@ public final class DirectIoTestHelper {
     }
 
     private URL findExtraConfiguration() throws IOException {
-        File file = findFileOnHomePath(context, RuntimeResourceManager.CONFIGURATION_FILE_PATH);
-        if (file == null) {
+        File home = getHomePath(context);
+        if (home == null) {
             throw new IOException(MessageFormat.format(
-                    "Direct I/O configuration is not set: {0}/{1}",
-                    "$ASAKUSA_HOME",
-                    RuntimeResourceManager.CONFIGURATION_FILE_PATH));
+                    "Environment variable \"{0}\" is not set",
+                    ENV_FRAMEWORK_HOME));
+        } else if (home.isDirectory() == false) {
+            throw new IOException(MessageFormat.format(
+                    "Asakusa Framework is not installed: {0}",
+                    home));
+        }
+        File file = new File(home, RuntimeResourceManager.CONFIGURATION_FILE_PATH);
+        if (file.exists() == false) {
+            throw new IOException(MessageFormat.format(
+                    "Direct I/O configuration file is not found: {0}",
+                    file));
         }
         return file.toURI().toURL();
     }
 
-    private static File findFileOnHomePath(TestContext context, String path) {
-        assert context != null;
-        assert path != null;
-        String home = context.getEnvironmentVariables().get("ASAKUSA_HOME");
-        if (home != null) {
-            File file = new File(home, path);
-            if (file.exists()) {
-                return file;
-            }
-        } else {
-            LOG.warn("ASAKUSA_HOME is not defined");
+    private static File getHomePath(TestContext context) {
+        String home = context.getEnvironmentVariables().get(ENV_FRAMEWORK_HOME);
+        if (home == null || home.trim().isEmpty()) {
+            return null;
         }
-        return null;
+        File file = new File(home);
+        return file;
     }
 
     /**
@@ -185,10 +190,12 @@ public final class DirectIoTestHelper {
      * @throws IOException if failed to perform by I/O error
      */
     public void truncate() throws IOException {
-        LOG.info("Truncating {} (id={})", new Object[] {
-                fullPath,
-                id,
-        });
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "Truncating Direct I/O resources: {0} (id={1})",
+                    fullPath,
+                    id));
+        }
         try {
             dataSource.delete(basePath, ALL, true, new Counter());
         } catch (InterruptedException e) {
@@ -217,12 +224,14 @@ public final class DirectIoTestHelper {
         final OutputAttemptContext outputContext = createOutputContext();
         DataFormat<T> format = createFormat(dataType, description.getFormat());
         String outputPath = toOutputName(description.getResourcePattern());
-        LOG.info("Opening {}/{} for output (id={}, description={})", new Object[] {
-                fullPath,
-                outputPath,
-                id,
-                description.getClass().getName(),
-        });
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "Opening {0}/{1} for output (id={2}, description={3})",
+                    fullPath,
+                    outputPath,
+                    id,
+                    description.getClass().getName()));
+        }
         DataDefinition<T> definition = SimpleDataDefinition.newInstance(dataType, format);
         try {
             dataSource.setupTransactionOutput(outputContext.getTransactionContext());
@@ -276,12 +285,14 @@ public final class DirectIoTestHelper {
         final Counter counter = new Counter();
         try {
             FilePattern pattern = toInputPattern(description.getResourcePattern());
-            LOG.info("Opening {}/{} for output (id={}, description={})", new Object[] {
-                    fullPath,
-                    pattern,
-                    id,
-                    description.getClass().getName(),
-            });
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(MessageFormat.format(
+                        "Opening {0}/{1} for input (id={2}, description={3})",
+                        fullPath,
+                        pattern,
+                        id,
+                        description.getClass().getName()));
+            }
             final List<DirectInputFragment> fragments = dataSource.findInputFragments(definition, basePath, pattern);
             return new ModelInput<T>() {
 
