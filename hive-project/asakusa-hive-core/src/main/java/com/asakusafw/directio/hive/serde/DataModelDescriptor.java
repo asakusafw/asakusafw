@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import com.asakusafw.runtime.value.ValueOption;
+
 /**
  * Describes an Asakusa data model.
  * @since 0.7.0
@@ -58,8 +60,20 @@ public class DataModelDescriptor {
         this.comment = comment;
         this.propertyDescriptors = properties;
         this.names = new HashMap<String, PropertyDescriptor>();
-        for (PropertyDescriptor property : properties) {
-            names.put(normalizeName(property.getFieldName()), property);
+        for (final PropertyDescriptor property : properties) {
+            PropertyDescriptor p = property;
+            if (p.getFieldID() == PropertyDescriptor.INVALID_FIELD_ID) {
+                p.setFieldId(names.size());
+            } else {
+                p = new PropertyDescriptor(p.getFieldName(), p, p.getFieldComment()) {
+                    @Override
+                    public ValueOption<?> extract(Object dataModel) {
+                        return property.extract(dataModel);
+                    }
+                };
+                p.setFieldId(names.size());
+            }
+            names.put(normalizeName(p.getFieldName()), p);
         }
     }
 

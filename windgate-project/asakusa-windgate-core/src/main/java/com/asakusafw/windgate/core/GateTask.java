@@ -29,8 +29,10 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -118,7 +120,15 @@ public class GateTask implements Closeable {
         this.sessionProvider = loadSessionProvider(profile.getSession());
         this.resourceProviders = loadResourceProviders(profile.getResources());
         this.processProviders = loadProcessProviders(profile.getProcesses());
-        this.executor = Executors.newFixedThreadPool(profile.getCore().getMaxProcesses());
+        this.executor = Executors.newFixedThreadPool(profile.getCore().getMaxProcesses(), new ThreadFactory() {
+            private final AtomicInteger counter = new AtomicInteger();
+            @Override
+            public Thread newThread(Runnable r) {
+                Thread t = new Thread(r, String.format("WindGate-%d", counter.incrementAndGet()));
+                t.setDaemon(true);
+                return t;
+            }
+        });
     }
 
     private SessionProvider loadSessionProvider(SessionProfile session) throws IOException {

@@ -417,6 +417,9 @@ b) Hiveデータ型とカラムナフォーマットのデータ型とのマッ�
 ..  attention::
     上表で記載が無いHiveデータ型( ``BINARY`` 、及び ``ARRAY`` などの Complex Types）には対応していません。
 
+..  attention::
+    Hiveの ``TIMESTAMP`` 型はタイムゾーンを保持しません。複数の異なるタイムゾーンを持つ環境間で ``TIMESTAMP`` 型を持つデータを扱う場合、タイムゾーンの差異によって異なる値が扱われる可能性があることに注意してください。
+
 ..  [#] DMDLで指定するプロパティの型です。詳しくは :doc:`../dmdl/user-guide` を参照してください
 
 ..  [#] モデルプロパティの型に対して、標準で対応するHiveのデータ型です。Hiveのデータ型について詳しくはHiveのドキュメント `LanguageManual Types <https://cwiki.apache.org/confluence/display/Hive/LanguageManual+Types>`_ などを参照してください。
@@ -426,9 +429,9 @@ b) Hiveデータ型とカラムナフォーマットのデータ型とのマッ�
 Hiveのバージョンに関して
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-Asakusa Framework バージョン |version| では、Direct I/O の Hive連携モジュールにはHiveのバージョン ``0.13.1`` を使用しています。実行環境のHiveとAsakusa Frameworkが利用するHiveのバージョンが異なる場合、データの互換性に対する注意が必要です。
+Asakusa Framework バージョン |version| では、Direct I/O の Hive連携モジュールにはHiveのバージョン ``0.14.0`` を使用しています。実行環境のHiveとAsakusa Frameworkが利用するHiveのバージョンが異なる場合、データの互換性に対する注意が必要です。
 
-例えば実行環境のHiveバージョンが ``0.11`` の場合、Asakusa Frameworkが利用するHiveはバージョン ``0.13.1`` のためAsakusa FrameworkではHiveの ``VARCHAR`` 型や ``CHAR`` 型を持つファイルを生成することができますが、生成したファイルを実行環境のHiveは取り扱うことができません。
+例えば実行環境のHiveバージョンが ``0.11`` の場合、Asakusa Frameworkが利用するHiveはバージョン ``0.14.0`` のためAsakusa FrameworkではHiveの ``VARCHAR`` 型や ``CHAR`` 型を持つファイルを生成することができますが、生成したファイルを実行環境のHiveは取り扱うことができません。
 
 マッピング型変換機能
 ^^^^^^^^^^^^^^^^^^^^
@@ -465,11 +468,11 @@ Asakusa Framework バージョン |version| では、Direct I/O の Hive連携�
       - * ``DATE``
       - モデルプロパティをHiveの ``TIMESTAMP`` 型にマッピングする。 ``DATE`` からのマッピングでは時刻は常に ``00:00:00`` となる
     * - ``@directio.hive.char``
-      - * ``length`` :最大文字列長(1 - 256)
+      - * ``length`` :最大文字列長(1 - 255)
       - * ``TEXT``
       - モデルプロパティをHiveの ``CHAR`` 型にマッピングする。
     * - ``@directio.hive.varchar``
-      - * ``length`` :最大文字列長(1 - 65536)
+      - * ``length`` :最大文字列長(1 - 65535)
       - * ``TEXT``
       - モデルプロパティをHiveの ``VARCHAR`` 型にマッピングする。
 
@@ -506,7 +509,10 @@ Hiveデータ型とカラムナフォーマットのデータ型とのマッピ�
 * `Parquet <https://cwiki.apache.org/confluence/display/Hive/Parquet>`_
 
 ..  attention::
-    Asakusa Framework バージョン |version| では、Direct I/OはHiveのバージョン ``0.13.1`` のライブラリを使用しています。そのため、特にParquetに関しては上記のHiveのドキュメントに記載がある通り、TIMESTAMPやDECIMALなどHiveのバージョンの制約によりいくつかのデータ型がサポートされていないことに注意してください。
+    Asakusa Framework バージョン |version| では、Direct I/OはHiveのバージョン ``0.14.0`` のライブラリを使用しています。そのため、Parquetに関しては上記のHiveのドキュメントに記載がある通り、DATEデータ型がサポートされていないことに注意してください。
+
+..  attention::
+    本ドキュメントの作成時点で、Amazon EMRの最新AMIバージョン ``3.3.1`` では、Hive ``0.13.1`` に対して ``0.14.0`` で導入されたParquetの ``TIMESTAMP`` 型対応のパッチをバックポートした構成になっていますが、 Hive ``0.14.0`` が生成するParquetの ``TIMESTAMP`` 型とは互換性がないようです。
 
 カラムナフォーマットファイルから除外するプロパティ
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

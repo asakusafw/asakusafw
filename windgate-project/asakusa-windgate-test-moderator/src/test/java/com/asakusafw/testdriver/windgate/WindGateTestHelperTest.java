@@ -21,6 +21,7 @@ import static org.junit.Assert.*;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Collections;
 import java.util.Properties;
 
@@ -35,6 +36,7 @@ import com.asakusafw.vocabulary.windgate.WindGateProcessDescription;
 import com.asakusafw.windgate.core.DriverScript;
 import com.asakusafw.windgate.core.ParameterList;
 import com.asakusafw.windgate.core.ProcessScript;
+import com.asakusafw.windgate.core.ProfileContext;
 import com.asakusafw.windgate.core.resource.ResourceManipulator;
 import com.asakusafw.windgate.core.vocabulary.FileProcess;
 import com.asakusafw.windgate.file.resource.FileResourceProvider;
@@ -56,7 +58,7 @@ public class WindGateTestHelperTest {
      * Profiles.
      */
     @Rule
-    public ProfileContext context = new ProfileContext();
+    public TestContextProvider context = new TestContextProvider();
 
     /**
      * Test for {@link WindGateTestHelper#createProcessScript(Class, WindGateImporterDescription)}
@@ -95,6 +97,44 @@ public class WindGateTestHelperTest {
     }
 
     /**
+     * creating {@link ProfileContext} w/o plug-ins.
+     * @throws Exception if failed
+     */
+    @Test
+    public void createProfileContext() throws Exception {
+        TestContext testContext = context.get();
+        ProfileContext profile = WindGateTestHelper.createProfileContext(testContext);
+        assertThat(profile.getClassLoader(), is(sameInstance(testContext.getClassLoader())));
+    }
+
+    /**
+     * creating {@link ProfileContext} w/ plug-ins.
+     * @throws Exception if failed
+     */
+    @Test
+    public void createProfileContext_plugins() throws Exception {
+        plugin("dummy.jar");
+        TestContext testContext = context.get();
+        ProfileContext profile = context.register(WindGateTestHelper.createProfileContext(testContext));
+        assertThat(profile.getClassLoader(), is(not(sameInstance(testContext.getClassLoader()))));
+        assertThat(profile.getClassLoader().getResource("testing"), is(notNullValue()));
+    }
+
+    /**
+     * creating {@link ProfileContext} w/ plug-ins.
+     * @throws Exception if failed
+     */
+    @Test
+    public void createProfileContext_plugins_reload() throws Exception {
+        plugin("dummy.jar");
+        TestContext testContext = context.get();
+        ProfileContext p1 = context.register(WindGateTestHelper.createProfileContext(testContext));
+        ProfileContext p2 = context.register(WindGateTestHelper.createProfileContext(testContext));
+        assertThat(p1.getClassLoader(), is(not(sameInstance(testContext.getClassLoader()))));
+        assertThat(p2.getClassLoader(), is(p1.getClassLoader()));
+    }
+
+    /**
      * Test method for {@link WindGateTestHelper#createResourceManipulator(TestContext, WindGateProcessDescription, ParameterList)}.
      * @throws Exception if failed
      */
@@ -114,7 +154,7 @@ public class WindGateTestHelperTest {
                 driver);
 
         ResourceManipulator manipulator = WindGateTestHelper.createResourceManipulator(
-                new TestContext.Empty(),
+                context.get(),
                 description,
                 new ParameterList());
         assertThat(file.exists(), is(true));
@@ -140,7 +180,7 @@ public class WindGateTestHelperTest {
                 driver);
 
         try {
-            WindGateTestHelper.createResourceManipulator(new TestContext.Empty(), description, new ParameterList());
+            WindGateTestHelper.createResourceManipulator(context.get(), description, new ParameterList());
             fail();
         } catch (IOException e) {
             // ok.
@@ -167,7 +207,7 @@ public class WindGateTestHelperTest {
                 driver);
 
         try {
-            WindGateTestHelper.createResourceManipulator(new TestContext.Empty(), description, new ParameterList());
+            WindGateTestHelper.createResourceManipulator(context.get(), description, new ParameterList());
             fail();
         } catch (IOException e) {
             // ok.
@@ -194,7 +234,7 @@ public class WindGateTestHelperTest {
                 driver);
 
         try {
-            WindGateTestHelper.createResourceManipulator(new TestContext.Empty(), description, new ParameterList());
+            WindGateTestHelper.createResourceManipulator(context.get(), description, new ParameterList());
             fail();
         } catch (IOException e) {
             // ok.
@@ -248,6 +288,12 @@ public class WindGateTestHelperTest {
         }
         assertThat(driver.prepared, is(true));
         assertThat(driver.closed, is(true));
+    }
+
+    private void plugin(String name) {
+        URL url = getClass().getResource(name);
+        assertThat(name, url, is(notNullValue()));
+        context.put(name, url);
     }
 
     private static class MockDriver implements Preparable, Closeable {

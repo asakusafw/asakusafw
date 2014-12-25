@@ -25,6 +25,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.hadoop.conf.Configuration;
@@ -92,7 +93,14 @@ public class FileSystemModelInputProvider<T> implements ModelInputProvider<T> {
         }
         this.fileSystem = fileSystem;
         this.queue = new SynchronousQueue<Entry<T>>();
-        this.executor = Executors.newFixedThreadPool(1);
+        this.executor = Executors.newFixedThreadPool(1, new ThreadFactory() {
+            @Override
+            public Thread newThread(Runnable r) {
+                Thread t = new Thread(r, "HadoopFileCollector");
+                t.setDaemon(true);
+                return t;
+            }
+        });
         this.fetcher = this.executor.submit(new Callable<Void>() {
             @Override
             public Void call() throws Exception {

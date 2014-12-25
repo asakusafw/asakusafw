@@ -48,5 +48,6 @@
 		<module>asakusa-sdk-windgate</module>
 		<module>asakusa-sdk-thundergate</module>
 		<module>asakusa-sdk-hive</module>
+		<module>asakusa-sdk-test-emulation</module>
 	</modules>
 </project>
