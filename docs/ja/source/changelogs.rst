@@ -4,7 +4,7 @@ Changelogs
 
 Release 0.7.2
 =============
-Jan XX, 2015
+Jan 05, 2015
 
 Enhancements
 ------------
