@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspector.Category;
+import org.apache.hadoop.hive.serde2.typeinfo.BaseCharTypeInfo;
+import org.apache.hadoop.hive.serde2.typeinfo.DecimalTypeInfo;
 import org.apache.hadoop.hive.serde2.typeinfo.PrimitiveTypeInfo;
 import org.apache.hadoop.hive.serde2.typeinfo.TypeInfo;
 import org.apache.hadoop.hive.serde2.typeinfo.TypeInfoFactory;
@@ -35,6 +37,7 @@ import parquet.schema.Type.Repetition;
 
 import com.asakusafw.runtime.value.BooleanOption;
 import com.asakusafw.runtime.value.ByteOption;
+import com.asakusafw.runtime.value.DecimalOption;
 import com.asakusafw.runtime.value.DoubleOption;
 import com.asakusafw.runtime.value.FloatOption;
 import com.asakusafw.runtime.value.IntOption;
@@ -46,6 +49,7 @@ import com.asakusafw.runtime.value.ValueOption;
 /**
  * Provides {@link ParquetValueDriver}.
  * @since 0.7.0
+ * @version 0.7.2
  */
 public enum ParquetValueDrivers implements ParquetValueDriver {
 
@@ -248,10 +252,22 @@ public enum ParquetValueDrivers implements ParquetValueDriver {
         case STRING:
             return StringValueDrivers.find(valueClass);
 
-        case DATE:
-        case TIMESTAMP:
         case DECIMAL:
-            // TODO more support
+            if (valueClass == DecimalOption.class) {
+                DecimalTypeInfo decimal = (DecimalTypeInfo) typeInfo;
+                return new DecimalValueDriver(decimal.precision(), decimal.scale());
+            }
+            return null;
+
+        case TIMESTAMP:
+            return TimestampValueDrivers.find(valueClass);
+
+        case CHAR:
+        case VARCHAR:
+            if (valueClass == StringOption.class) {
+                int length = ((BaseCharTypeInfo) typeInfo).getLength();
+                return new LimitedStringValueDriver(length);
+            }
             return null;
 
         case BOOLEAN:
@@ -263,8 +279,7 @@ public enum ParquetValueDrivers implements ParquetValueDriver {
         case SHORT:
         case UNKNOWN:
         case VOID:
-        case CHAR:
-        case VARCHAR:
+        case DATE:
         case BINARY:
             return null;
         default:

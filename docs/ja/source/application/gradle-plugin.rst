@@ -70,12 +70,12 @@ Asakusa Gradle Plugin を利用する方法として、以下のいずれかの�
 Asakusa Gradle Plugin 用プロジェクトテンプレート
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-* `asakusa-project-template-0.7.1.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-project-template-0.7.1.tar.gz>`_ 
+* `asakusa-project-template-0.7.2.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-project-template-0.7.2.tar.gz>`_ 
 
 Asakusa Gradle Plugin 用サンプルアプリケーションプロジェクト
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-* `asakusa-example-project-0.7.1.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-example-project-0.7.1.tar.gz>`_ 
+* `asakusa-example-project-0.7.2.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-example-project-0.7.2.tar.gz>`_ 
 
 ..  note::
     サンプルアプリケーションの内容や利用方法については、
@@ -1158,7 +1158,7 @@ Direct I/O Hiveの構成に関する規約プロパティは、 ``asakusafwOrgan
       - この値をtrueにすると Direct I/O Hive連携モジュール用の構成を行う
     * -  ``libraries``
       - java.util.List
-      - ``org.apache.hive:hive-exec:0.13.1``
+      - ``org.apache.hive:hive-exec:0.14.0``
       - Directi I/O Hiveが実行時に使用するHiveライブラリ
 
 ..  [#] これらのプロパティは規約オブジェクト :gradledoc:`com.asakusafw.gradle.plugins.AsakusafwOrganizerPluginConvention.HiveConfiguration` が提供します。
@@ -1510,7 +1510,7 @@ Asakusa Gradle Pluginのバージョン指定
 
 ..  attention::
     ここで指定するバージョン番号は、 Asakusa Gradle Pluginのバージョン番号です。
-    例えば Asakusa Framework バージョン ``0.7.1`` では ``0.7.1`` のような値となります。
+    例えば Asakusa Framework バージョン ``0.7.2`` では ``0.7.2`` のような値となります。
     
     次の手順の `Asakusa Frameworkのバージョン指定`_ とは異なり、バージョン番号に
     ``-hadoop1`` や ``-hadoop2`` といった接尾辞は付かないことに注意してください。
@@ -1542,7 +1542,7 @@ Hadoop2系向けのバージョン ( ``-hadoop2`` ) を指定している場合�
 
 ..  attention::
     ここで指定するバージョン番号は、 Asakusa Framework本体のバージョン番号です。
-    例えば Asakusa Framework バージョン ``0.7.1`` では ``0.7.1-hadoop1`` のような値となります。
+    例えば Asakusa Framework バージョン ``0.7.2`` では ``0.7.2-hadoop1`` のような値となります。
     バージョン番号に ``-hadoop1`` や ``-hadoop2`` といった接尾辞が必要となることに注意してください
     
     バージョン ``0.6.x`` からのマイグレーションを検討する場合は、

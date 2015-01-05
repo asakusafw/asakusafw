@@ -12,5 +12,6 @@ Asakusa Frameworkを初めて導入する場合には「 :doc:`start-guide` 」�
 
     overview
     start-guide
+    start-guide-windows
     next-step
 

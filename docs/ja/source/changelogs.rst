@@ -2,6 +2,30 @@
 Changelogs
 ==========
 
+Release 0.7.2
+=============
+Jan 05, 2015
+
+Enhancements
+------------
+* [ :issue:`455` ] - Revise infomation log
+* [ :issue:`456` ] - Add sdk artifact for emulation test
+* [ :issue:`460` ] - Supports Hive 0.14.0 for Direct I/O
+* [ :issue:`461` ] - Unnecessary dependency on legacy-test-dirver
+* [ :issue-sdk:`24` ] - Bumps up default Hive version
+* [ :issue-sdk:`25` ] - Bumps up default Gradle version for project template
+
+Bug fixes
+---------
+* [ :issue:`457` ] - Memory leaks TestDriver with WindGate JDBC
+* [ :issue:`462` ] - Library cache does not work on EMR/Hadoop1
+
+Others
+------
+* [ :issue:`458` ] - 0.7.2 Documents
+* [ :issue:`459` ] - 0.7.2 Refactoring
+
+
 Release 0.7.1
 =============
 Nov 20, 2014

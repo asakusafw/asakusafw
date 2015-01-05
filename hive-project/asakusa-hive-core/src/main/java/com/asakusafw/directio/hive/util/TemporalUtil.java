@@ -16,9 +16,12 @@
 package com.asakusafw.directio.hive.util;
 
 import java.text.DateFormat;
+import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.BitSet;
+import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 
 import com.asakusafw.runtime.value.Date;
 import com.asakusafw.runtime.value.DateTime;
@@ -27,6 +30,7 @@ import com.asakusafw.runtime.value.DateUtil;
 /**
  * date and date-time utilities.
  * @since 0.7.0
+ * @version 0.7.2
  */
 public final class TemporalUtil {
 
@@ -90,6 +94,16 @@ public final class TemporalUtil {
     private static final int COL_SECOND_BEGIN = COL_MINUTE_END + 1;
 
     private static final int COL_SECOND_END = COL_SECOND_BEGIN + 2;
+
+    // FIXME always use local time-zone
+    private static final long LOCAL_TIMEZONE_OFFSET =
+            TimeUnit.MILLISECONDS.toSeconds(TimeZone.getDefault().getRawOffset());
+
+    private static final long GREGORIAN_EPOCH = new DateTime(1582, 10, 15, 0, 0, 0).getElapsedSeconds();
+
+    private static final long GREGORIAN_EPOCH_JDN = 2299161;
+
+    private static final long JULIAN_OFFSET = TimeUnit.DAYS.toSeconds(GREGORIAN_EPOCH_JDN) - GREGORIAN_EPOCH;
 
     /**
      * Parses a {@code date} value.
@@ -194,6 +208,80 @@ public final class TemporalUtil {
                 DATE_SEGMENT_SEPARATOR, DATE_TIME_SEPARATOR, TIME_SEGMENT_SEPARATOR,
                 buf);
         return buf.toString();
+    }
+
+    /**
+     * Returns the Julian day number of the date.
+     * @param date the date
+     * @return the Julian day number
+     * @since 0.7.2
+     */
+    public static int getJulianDayNumber(Date date) {
+        long julianSeconds = toJulianSecond(TimeUnit.DAYS.toSeconds(date.getElapsedDays()));
+        return getJulianDayNumber(julianSeconds);
+    }
+
+    /**
+     * Returns the nano time of the julian day.
+     * @param date the day
+     * @return the nano time of julian day
+     * @since 0.7.2
+     */
+    public static long getTimeOfDayNanos(Date date) {
+        long julianSeconds = toJulianSecond(TimeUnit.DAYS.toSeconds(date.getElapsedDays()));
+        return TimeUnit.SECONDS.toNanos(DateUtil.getSecondOfDay(julianSeconds));
+    }
+
+    /**
+     * Returns the Julian day number of the date time.
+     * @param dateTime the date time
+     * @return the Julian day number
+     * @since 0.7.2
+     */
+    public static int getJulianDayNumber(DateTime dateTime) {
+        long julianSeconds = toJulianSecond(dateTime.getElapsedSeconds());
+        return getJulianDayNumber(julianSeconds);
+    }
+
+    /**
+     * Returns the nano time of the julian day.
+     * @param dateTime the date time
+     * @return the nano time of julian day
+     * @since 0.7.2
+     */
+    public static long getTimeOfDayNanos(DateTime dateTime) {
+        long julianSeconds = toJulianSecond(dateTime.getElapsedSeconds());
+        return TimeUnit.SECONDS.toNanos(DateUtil.getSecondOfDay(julianSeconds));
+    }
+
+    /**
+     * Returns the elapsed days from Julian day.
+     * @param julianDayNumber the Julian day
+     * @param nanoTime time of day in nanos
+     * @return the elapsed days
+     * @since 0.7.2
+     */
+    public static long toElapsedSeconds(int julianDayNumber, long nanoTime) {
+        long julianSeconds = TimeUnit.DAYS.toSeconds(julianDayNumber) + TimeUnit.NANOSECONDS.toSeconds(nanoTime);
+        return fromJulianSecond(julianSeconds);
+    }
+
+    private static long toJulianSecond(long seconds) {
+        if (seconds < GREGORIAN_EPOCH) {
+            throw new UnsupportedOperationException(MessageFormat.format(
+                    "{0} must be greater then or equal to {1}",
+                    toTimestampString(seconds),
+                    toTimestampString(GREGORIAN_EPOCH)));
+        }
+        return seconds + JULIAN_OFFSET - LOCAL_TIMEZONE_OFFSET;
+    }
+
+    private static long fromJulianSecond(long seconds) {
+        return seconds - JULIAN_OFFSET + LOCAL_TIMEZONE_OFFSET;
+    }
+
+    private static int getJulianDayNumber(long julianSecond) {
+        return (int) TimeUnit.SECONDS.toDays(julianSecond);
     }
 
     private TemporalUtil() {
