@@ -39,13 +39,14 @@ import com.asakusafw.testdriver.core.TestModerator;
 import com.asakusafw.testdriver.core.VerifierFactory;
 import com.asakusafw.testdriver.core.VerifyContext;
 import com.asakusafw.vocabulary.batch.BatchDescription;
+import com.asakusafw.vocabulary.external.ImporterDescription;
 
 /**
  * バッチ用のテストドライバクラス。
  * @since 0.2.0
  * @version 0.5.2
  */
-public class BatchTester extends TestDriverBase {
+public class BatchTester extends TesterBase {
 
     static final Logger LOG = LoggerFactory.getLogger(BatchTester.class);
 
@@ -97,9 +98,7 @@ public class BatchTester extends TestDriverBase {
 
         if (driverContext.isSkipValidateCondition() == false) {
             LOG.info("テスト条件を検証しています: {}", driverContext.getCallerClass().getName());
-            for (Map.Entry<String, JobFlowTester> entry : jobFlowMap.entrySet()) {
-                validateTestCondition(entry.getValue(), entry.getKey());
-            }
+            validateTestCondition();
         }
 
         // 初期化
@@ -152,6 +151,13 @@ public class BatchTester extends TestDriverBase {
             driverContext.prepareCurrentJobflow(jobflowInfo);
             executor.cleanInputOutput(jobflowInfo);
         }
+        executor.cleanExtraResources(getExternalResources());
+
+        if (getExternalResources().isEmpty() == false) {
+            LOG.debug("initializing external resources: {}", //$NON-NLS-1$
+                    batchDescriptionClass.getName());
+            executor.prepareExternalResources(getExternalResources());
+        }
 
         for (JobflowInfo jobflowInfo : batchInfo.getJobflows()) {
             driverContext.prepareCurrentJobflow(jobflowInfo);
@@ -173,6 +179,20 @@ public class BatchTester extends TestDriverBase {
                         batchDescriptionClass.getName(), flowId);
                 executor.verify(jobflowInfo, verifyContext, tester.outputs);
             }
+        }
+    }
+
+    private void validateTestCondition() throws IOException {
+        TestModerator moderator = new TestModerator(driverContext.getRepository(), driverContext);
+        for (Map.Entry<? extends ImporterDescription, ? extends DataModelSourceFactory> entry :
+                getExternalResources().entrySet()) {
+            ImporterDescription description = entry.getKey();
+            String label = String.format("Resource(%s)", description); //$NON-NLS-1$
+            DataModelSourceFactory source = entry.getValue();
+            moderator.validate(entry.getKey().getModelType(), label, source);
+        }
+        for (Map.Entry<String, JobFlowTester> entry : jobFlowMap.entrySet()) {
+            validateTestCondition(entry.getValue(), entry.getKey());
         }
     }
 
