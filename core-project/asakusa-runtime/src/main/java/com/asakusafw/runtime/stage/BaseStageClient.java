@@ -38,17 +38,17 @@ public abstract class BaseStageClient extends Configured implements Tool {
     /**
      * {@link #getBatchId()}のメソッド名。
      */
-    public static final String METHOD_BATCH_ID = "getBatchId";
+    public static final String METHOD_BATCH_ID = "getBatchId"; //$NON-NLS-1$
 
     /**
      * {@link #getFlowId()}のメソッド名。
      */
-    public static final String METHOD_FLOW_ID = "getFlowId";
+    public static final String METHOD_FLOW_ID = "getFlowId"; //$NON-NLS-1$
 
     /**
      * {@link #getStageId()}のメソッド名。
      */
-    public static final String METHOD_STAGE_ID = "getStageId";
+    public static final String METHOD_STAGE_ID = "getStageId"; //$NON-NLS-1$
 
     /**
      * 処理中のユーザー名を返す。

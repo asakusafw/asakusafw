@@ -73,7 +73,7 @@ public enum RuleSheetFormat {
      * Format ID which this extractor supports.
      * This must be set on the right cell of {@link RuleSheetFormat#FORMAT}.
      */
-    public static final String FORMAT_VERSION = "EVR-2.0.0";
+    public static final String FORMAT_VERSION = "EVR-2.0.0"; //$NON-NLS-1$
 
     private final String title;
 

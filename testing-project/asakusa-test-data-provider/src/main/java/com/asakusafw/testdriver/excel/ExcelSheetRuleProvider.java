@@ -77,13 +77,15 @@ public class ExcelSheetRuleProvider implements VerifyRuleProvider {
         if (sheet == null) {
             return null;
         }
-        LOG.debug("Finding Excel sheet extractor: {}", source);
+        LOG.debug("Finding Excel sheet extractor: {}", source); //$NON-NLS-1$
         ExcelRuleExtractor extractor = findExtractor(sheet);
         if (extractor == null) {
-            LOG.debug("Valid Excel sheet extractor is not found: {}", source);
+            LOG.debug("Valid Excel sheet extractor is not found: {}", source); //$NON-NLS-1$
             return null;
         }
-        LOG.info("Excelシートをテスト条件に利用します: {}", source);
+        LOG.info(MessageFormat.format(
+                "Excelシートをテスト条件に利用します: {0}",
+                source));
         try {
             return resolve(definition, context, sheet, extractor);
         } catch (ExcelRuleExtractor.FormatException e) {

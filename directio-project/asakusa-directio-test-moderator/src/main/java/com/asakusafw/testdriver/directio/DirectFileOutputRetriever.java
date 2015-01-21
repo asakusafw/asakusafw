@@ -44,7 +44,7 @@ public class DirectFileOutputRetriever extends BaseExporterRetriever<DirectFileO
         DirectIoTestHelper helper = new DirectIoTestHelper(context, description.getBasePath());
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Truncating Direct I/O output: {0}",
+                    "Truncating Direct I/O output: {0}", //$NON-NLS-1$
                     description.getClass().getName()));
         }
         helper.truncate();
@@ -68,7 +68,7 @@ public class DirectFileOutputRetriever extends BaseExporterRetriever<DirectFileO
         DirectIoTestHelper helper = new DirectIoTestHelper(context, description.getBasePath());
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Retrieving Direct I/O output: {0}",
+                    "Retrieving Direct I/O output: {0}", //$NON-NLS-1$
                     description.getClass().getName()));
         }
         final V object = definition.toObject(definition.newReflection().build());

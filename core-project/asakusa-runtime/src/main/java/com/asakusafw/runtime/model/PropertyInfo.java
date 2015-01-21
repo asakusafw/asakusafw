@@ -82,7 +82,7 @@ public final class PropertyInfo {
     @Override
     public String toString() {
         return MessageFormat.format(
-                "{0}@{2}:{1}",
+                "{0}@{2}:{1}", //$NON-NLS-1$
                 name,
                 type,
                 String.valueOf(ordinal));

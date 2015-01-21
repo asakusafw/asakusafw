@@ -26,13 +26,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.dmdl.directio.sequencefile.driver.SequenceFileFormatTrait.Configuration;
+import com.asakusafw.dmdl.directio.util.DirectFileInputDescriptionGenerator;
+import com.asakusafw.dmdl.directio.util.DirectFileOutputDescriptionGenerator;
 import com.asakusafw.dmdl.java.emitter.EmitContext;
 import com.asakusafw.dmdl.java.spi.JavaDataModelDriver;
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
 import com.asakusafw.runtime.directio.hadoop.HadoopFileFormat;
 import com.asakusafw.runtime.directio.hadoop.SequenceFileFormat;
 import com.asakusafw.utils.java.model.syntax.ClassDeclaration;
-import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.FormalParameterDeclaration;
 import com.asakusafw.utils.java.model.syntax.MethodDeclaration;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
@@ -40,11 +41,9 @@ import com.asakusafw.utils.java.model.syntax.Name;
 import com.asakusafw.utils.java.model.syntax.SimpleName;
 import com.asakusafw.utils.java.model.syntax.Statement;
 import com.asakusafw.utils.java.model.syntax.TypeBodyDeclaration;
-import com.asakusafw.utils.java.model.syntax.WildcardBoundKind;
 import com.asakusafw.utils.java.model.util.AttributeBuilder;
 import com.asakusafw.utils.java.model.util.ExpressionBuilder;
 import com.asakusafw.utils.java.model.util.JavadocBuilder;
-import com.asakusafw.utils.java.model.util.Models;
 import com.asakusafw.utils.java.model.util.TypeBuilder;
 
 /**
@@ -58,7 +57,7 @@ public class SequenceFileFormatEmitter extends JavaDataModelDriver {
     /**
      * Category name for this format.
      */
-    public static final String CATEGORY_STREAM = "sequencefile";
+    public static final String CATEGORY_STREAM = "sequencefile"; //$NON-NLS-1$
 
     @Override
     public void generateResources(EmitContext context, ModelDeclaration model) throws IOException {
@@ -66,8 +65,8 @@ public class SequenceFileFormatEmitter extends JavaDataModelDriver {
             return;
         }
         Name supportName = generateFormat(context, model);
-        generateImporter(context, model, supportName);
-        generateExporter(context, model, supportName);
+        generateInputDescription(context, supportName, model);
+        generateOutputDescription(context, supportName, model);
     }
 
     private Name generateFormat(EmitContext context, ModelDeclaration model) throws IOException {
@@ -78,52 +77,42 @@ public class SequenceFileFormatEmitter extends JavaDataModelDriver {
                 context.getConfiguration(),
                 model,
                 CATEGORY_STREAM,
-                "{0}SequenceFileFormat");
-        LOG.debug("Generating SequenceFile format for {}",
+                "{0}SequenceFileFormat"); //$NON-NLS-1$
+        LOG.debug("Generating SequenceFile format for {}", //$NON-NLS-1$
                 context.getQualifiedTypeName().toNameString());
         FormatGenerator.emit(next, model, model.getTrait(SequenceFileFormatTrait.class).getConfiguration());
-        LOG.debug("Generated SequenceFile format for {}: {}",
+        LOG.debug("Generated SequenceFile format for {}: {}", //$NON-NLS-1$
                 context.getQualifiedTypeName().toNameString(),
                 next.getQualifiedTypeName().toNameString());
         return next.getQualifiedTypeName();
     }
 
-    private Name generateImporter(EmitContext context, ModelDeclaration model, Name supportName) throws IOException {
-        assert context != null;
-        assert model != null;
-        assert supportName != null;
+    private void generateInputDescription(
+            EmitContext context, Name formatClassName, ModelDeclaration model) throws IOException {
         EmitContext next = new EmitContext(
                 context.getSemantics(),
                 context.getConfiguration(),
                 model,
                 CATEGORY_STREAM,
-                "Abstract{0}SequenceFileInputDescription");
-        LOG.debug("Generating SequenceFile input description for {}",
-                context.getQualifiedTypeName().toNameString());
-        DescriptionGenerator.emitImporter(next, model, supportName);
-        LOG.debug("Generated SequenceFile input description for {}: {}",
-                context.getQualifiedTypeName().toNameString(),
-                next.getQualifiedTypeName().toNameString());
-        return next.getQualifiedTypeName();
+                "Abstract{0}SequenceFileInputDescription"); //$NON-NLS-1$
+        DirectFileInputDescriptionGenerator.Description desc = new DirectFileInputDescriptionGenerator.Description(
+                "SequenceFile input", context.getQualifiedTypeName()); //$NON-NLS-1$
+        desc.setFormatClassName(formatClassName);
+        DirectFileInputDescriptionGenerator.generate(next, desc);
     }
 
-    private Name generateExporter(EmitContext context, ModelDeclaration model, Name supportName) throws IOException {
-        assert context != null;
-        assert model != null;
-        assert supportName != null;
+    private void generateOutputDescription(
+            EmitContext context, Name formatClassName, ModelDeclaration model) throws IOException {
         EmitContext next = new EmitContext(
                 context.getSemantics(),
                 context.getConfiguration(),
                 model,
                 CATEGORY_STREAM,
-                "Abstract{0}SequenceFileOutputDescription");
-        LOG.debug("Generating SequenceFile output description for {}",
-                context.getQualifiedTypeName().toNameString());
-        DescriptionGenerator.emitExporter(next, model, supportName);
-        LOG.debug("Generated SequenceFile output description for {}: {}",
-                context.getQualifiedTypeName().toNameString(),
-                next.getQualifiedTypeName().toNameString());
-        return next.getQualifiedTypeName();
+                "Abstract{0}SequenceFileOutputDescription"); //$NON-NLS-1$
+        DirectFileOutputDescriptionGenerator.Description desc = new DirectFileOutputDescriptionGenerator.Description(
+                "SequenceFile output", context.getQualifiedTypeName()); //$NON-NLS-1$
+        desc.setFormatClassName(formatClassName);
+        DirectFileOutputDescriptionGenerator.generate(next, desc);
     }
 
     private boolean isTarget(ModelDeclaration model) {
@@ -160,9 +149,9 @@ public class SequenceFileFormatEmitter extends JavaDataModelDriver {
         private void emit() throws IOException {
             ClassDeclaration decl = f.newClassDeclaration(
                     new JavadocBuilder(f)
-                        .text("SequenceFile format for ")
+                        .text("SequenceFile format for ") //$NON-NLS-1$
                         .linkType(context.resolve(model.getSymbol()))
-                        .text(".")
+                        .text(".") //$NON-NLS-1$
                         .toJavadoc(),
                     new AttributeBuilder(f)
                         .Public()
@@ -198,7 +187,7 @@ public class SequenceFileFormatEmitter extends JavaDataModelDriver {
                     f.newParameterizedType(
                             context.resolve(Class.class),
                             context.resolve(model.getSymbol())),
-                    f.newSimpleName("getSupportedType"),
+                    f.newSimpleName("getSupportedType"), //$NON-NLS-1$
                     Collections.<FormalParameterDeclaration>emptyList(),
                     Arrays.asList(new Statement[] {
                             new TypeBuilder(f, context.resolve(model.getSymbol()))
@@ -216,11 +205,11 @@ public class SequenceFileFormatEmitter extends JavaDataModelDriver {
                         .Public()
                         .toAttributes(),
                     context.resolve(NullWritable.class),
-                    f.newSimpleName("createKeyObject"),
+                    f.newSimpleName("createKeyObject"), //$NON-NLS-1$
                     Collections.<FormalParameterDeclaration>emptyList(),
-                    Arrays.asList(f.newBlock(new TypeBuilder(f, context.resolve(NullWritable.class))
-                        .method("get")
-                        .toReturnStatement())));
+                    Arrays.asList(new TypeBuilder(f, context.resolve(NullWritable.class))
+                        .method("get") //$NON-NLS-1$
+                        .toReturnStatement()));
         }
 
         private MethodDeclaration createCreateValueObject() {
@@ -231,17 +220,17 @@ public class SequenceFileFormatEmitter extends JavaDataModelDriver {
                         .Public()
                         .toAttributes(),
                     context.resolve(model.getSymbol()),
-                    f.newSimpleName("createValueObject"),
+                    f.newSimpleName("createValueObject"), //$NON-NLS-1$
                     Collections.<FormalParameterDeclaration>emptyList(),
-                    Arrays.asList(f.newBlock(new TypeBuilder(f, context.resolve(model.getSymbol()))
+                    Arrays.asList(new TypeBuilder(f, context.resolve(model.getSymbol()))
                         .newObject()
-                        .toReturnStatement())));
+                        .toReturnStatement()));
         }
 
         private MethodDeclaration createCopyToModel() {
-            SimpleName key = f.newSimpleName("key");
-            SimpleName value = f.newSimpleName("value");
-            SimpleName internal = f.newSimpleName("model");
+            SimpleName key = f.newSimpleName("key"); //$NON-NLS-1$
+            SimpleName value = f.newSimpleName("value"); //$NON-NLS-1$
+            SimpleName internal = f.newSimpleName("model"); //$NON-NLS-1$
             return f.newMethodDeclaration(
                     null,
                     new AttributeBuilder(f)
@@ -249,21 +238,21 @@ public class SequenceFileFormatEmitter extends JavaDataModelDriver {
                         .Public()
                         .toAttributes(),
                     context.resolve(void.class),
-                    f.newSimpleName("copyToModel"),
+                    f.newSimpleName("copyToModel"), //$NON-NLS-1$
                     Arrays.asList(new FormalParameterDeclaration[] {
                             f.newFormalParameterDeclaration(context.resolve(NullWritable.class), key),
                             f.newFormalParameterDeclaration(context.resolve(model.getSymbol()), value),
                             f.newFormalParameterDeclaration(context.resolve(model.getSymbol()), internal),
                     }),
-                    Arrays.asList(f.newBlock(new ExpressionBuilder(f, internal)
-                        .method("copyFrom", value)
-                        .toStatement())));
+                    Arrays.asList(new ExpressionBuilder(f, internal)
+                        .method("copyFrom", value) //$NON-NLS-1$
+                        .toStatement()));
         }
 
         private MethodDeclaration createCopyFromModel() {
-            SimpleName key = f.newSimpleName("key");
-            SimpleName value = f.newSimpleName("value");
-            SimpleName internal = f.newSimpleName("model");
+            SimpleName key = f.newSimpleName("key"); //$NON-NLS-1$
+            SimpleName value = f.newSimpleName("value"); //$NON-NLS-1$
+            SimpleName internal = f.newSimpleName("model"); //$NON-NLS-1$
             return f.newMethodDeclaration(
                     null,
                     new AttributeBuilder(f)
@@ -271,139 +260,15 @@ public class SequenceFileFormatEmitter extends JavaDataModelDriver {
                         .Public()
                         .toAttributes(),
                     context.resolve(void.class),
-                    f.newSimpleName("copyFromModel"),
+                    f.newSimpleName("copyFromModel"), //$NON-NLS-1$
                     Arrays.asList(new FormalParameterDeclaration[] {
                             f.newFormalParameterDeclaration(context.resolve(model.getSymbol()), internal),
                             f.newFormalParameterDeclaration(context.resolve(NullWritable.class), key),
                             f.newFormalParameterDeclaration(context.resolve(model.getSymbol()), value),
                     }),
-                    Arrays.asList(f.newBlock(new ExpressionBuilder(f, value)
-                        .method("copyFrom", internal)
-                        .toStatement())));
-        }
-    }
-
-    private static final class DescriptionGenerator {
-
-        // for reduce library dependencies
-        private static final String IMPORTER_TYPE_NAME =
-            "com.asakusafw.vocabulary.directio.DirectFileInputDescription";
-
-        // for reduce library dependencies
-        private static final String EXPORTER_TYPE_NAME =
-            "com.asakusafw.vocabulary.directio.DirectFileOutputDescription";
-
-        private final EmitContext context;
-
-        private final ModelDeclaration model;
-
-        private final com.asakusafw.utils.java.model.syntax.Type supportClass;
-
-        private final ModelFactory f;
-
-        private final boolean importer;
-
-        private DescriptionGenerator(
-                EmitContext context,
-                ModelDeclaration model,
-                Name supportClassName,
-                boolean importer) {
-            assert context != null;
-            assert model != null;
-            assert supportClassName != null;
-            this.context = context;
-            this.model = model;
-            this.f = context.getModelFactory();
-            this.importer = importer;
-            this.supportClass = context.resolve(supportClassName);
-        }
-
-        static void emitImporter(
-                EmitContext context,
-                ModelDeclaration model,
-                Name supportClassName) throws IOException {
-            assert context != null;
-            assert model != null;
-            assert supportClassName != null;
-            DescriptionGenerator emitter = new DescriptionGenerator(context, model, supportClassName, true);
-            emitter.emit();
-        }
-
-        static void emitExporter(
-                EmitContext context,
-                ModelDeclaration model,
-                Name supportClassName) throws IOException {
-            assert context != null;
-            assert model != null;
-            assert supportClassName != null;
-            DescriptionGenerator emitter = new DescriptionGenerator(context, model, supportClassName, false);
-            emitter.emit();
-        }
-
-        private void emit() throws IOException {
-            ClassDeclaration decl = f.newClassDeclaration(
-                    new JavadocBuilder(f)
-                        .text("An abstract implementation of ")
-                        .linkType(context.resolve(model.getSymbol()))
-                        .text(" {0} description using Direct I/O SequenceFile",
-                                importer ? "importer" : "exporter")
-                        .text(".")
-                        .toJavadoc(),
-                    new AttributeBuilder(f)
-                        .Public()
-                        .Abstract()
-                        .toAttributes(),
-                    context.getTypeName(),
-                    context.resolve(Models.toName(f, importer ? IMPORTER_TYPE_NAME : EXPORTER_TYPE_NAME)),
-                    Collections.<com.asakusafw.utils.java.model.syntax.Type>emptyList(),
-                    createMembers());
-            context.emit(decl);
-        }
-
-        private List<TypeBodyDeclaration> createMembers() {
-            List<TypeBodyDeclaration> results = new ArrayList<TypeBodyDeclaration>();
-            results.add(createGetModelType());
-            results.add(createGetStreamSupport());
-            return results;
-        }
-
-        private MethodDeclaration createGetModelType() {
-            return createGetter(
-                    new TypeBuilder(f, context.resolve(Class.class))
-                        .parameterize(f.newWildcard(
-                                WildcardBoundKind.UPPER_BOUNDED,
-                                context.resolve(model.getSymbol())))
-                        .toType(),
-                    "getModelType",
-                    f.newClassLiteral(context.resolve(model.getSymbol())));
-        }
-
-        private MethodDeclaration createGetStreamSupport() {
-            return createGetter(
-                    new TypeBuilder(f, context.resolve(Class.class))
-                        .parameterize(supportClass)
-                        .toType(),
-                    "getFormat",
-                    f.newClassLiteral(supportClass));
-        }
-
-        private MethodDeclaration createGetter(
-                com.asakusafw.utils.java.model.syntax.Type type,
-                String name,
-                Expression value) {
-            assert type != null;
-            assert name != null;
-            assert value != null;
-            return f.newMethodDeclaration(
-                    null,
-                    new AttributeBuilder(f)
-                        .annotation(context.resolve(Override.class))
-                        .Public()
-                        .toAttributes(),
-                    type,
-                    f.newSimpleName(name),
-                    Collections.<FormalParameterDeclaration>emptyList(),
-                    Arrays.asList(new ExpressionBuilder(f, value).toReturnStatement()));
+                    Arrays.asList(new ExpressionBuilder(f, value)
+                        .method("copyFrom", internal) //$NON-NLS-1$
+                        .toStatement()));
         }
     }
 }

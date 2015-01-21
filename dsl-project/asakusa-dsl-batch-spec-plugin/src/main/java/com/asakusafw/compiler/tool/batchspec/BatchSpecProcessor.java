@@ -79,7 +79,7 @@ public class BatchSpecProcessor extends AbstractWorkflowProcessor {
         }
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("{} => {}", description.getName(), gson.toJson(spec, BatchSpec.class));
+            LOG.debug("{} => {}", description.getName(), gson.toJson(spec, BatchSpec.class)); //$NON-NLS-1$
         }
     }
 

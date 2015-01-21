@@ -17,6 +17,7 @@ package com.asakusafw.testdriver.excel;
 
 import java.io.IOException;
 import java.net.URI;
+import java.text.MessageFormat;
 
 import org.apache.poi.ss.usermodel.Sheet;
 import org.slf4j.Logger;
@@ -53,7 +54,9 @@ public class ExcelSheetSourceProvider implements DataModelSourceProvider {
         if (sheet == null) {
             return null;
         }
-        LOG.info("Excelシートをデータソースに利用します: {}", source);
+        LOG.info(MessageFormat.format(
+                "Excelシートをデータソースに利用します: {0}",
+                source));
         return new ExcelSheetDataModelSource(definition, source, sheet);
     }
 }

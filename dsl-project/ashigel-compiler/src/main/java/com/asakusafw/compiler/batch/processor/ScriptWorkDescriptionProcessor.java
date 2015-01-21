@@ -28,14 +28,6 @@ public class ScriptWorkDescriptionProcessor
 
     @Override
     public Void process(ScriptWorkDescription description) throws IOException {
-        if (isLocal(description)) {
-            // TODO 必要に応じてスクリプト等をコピーしてくる
-        }
-        return null;
-    }
-
-    private boolean isLocal(ScriptWorkDescription description) {
-        assert description != null;
-        return false;
+        throw new UnsupportedOperationException();
     }
 }

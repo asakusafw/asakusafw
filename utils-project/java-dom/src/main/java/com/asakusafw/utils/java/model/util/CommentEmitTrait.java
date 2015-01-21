@@ -24,7 +24,7 @@ import java.util.List;
  */
 public final class CommentEmitTrait {
 
-    private static final String REGEX_LINE_DELIMITER = "\\n|\\r|\\r\\n";
+    private static final String REGEX_LINE_DELIMITER = "\\n|\\r|\\r\\n"; //$NON-NLS-1$
 
     private List<String> contents;
 

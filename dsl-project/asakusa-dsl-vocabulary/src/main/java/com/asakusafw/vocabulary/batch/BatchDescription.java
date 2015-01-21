@@ -189,7 +189,7 @@ public abstract class BatchDescription {
     @Override
     public String toString() {
         return MessageFormat.format(
-                "{0}'{'works={1}'}'",
+                "{0}'{'works={1}'}'", //$NON-NLS-1$
                 getClass().getName(),
                 works);
     }

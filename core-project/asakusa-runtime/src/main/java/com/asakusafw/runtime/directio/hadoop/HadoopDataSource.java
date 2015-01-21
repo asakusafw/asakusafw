@@ -69,7 +69,7 @@ public class HadoopDataSource extends AbstractDirectDataSource implements Config
         }
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Start configuring Hadoop data source (id={0}, path={1})",
+                    "Start configuring Hadoop data source (id={0}, path={1})", //$NON-NLS-1$
                     profile.getId(),
                     profile.getPath()));
         }
@@ -80,7 +80,7 @@ public class HadoopDataSource extends AbstractDirectDataSource implements Config
         }
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Finish configuring Hadoop data source: {0}",
+                    "Finish configuring Hadoop data source: {0}", //$NON-NLS-1$
                     hProfile));
         }
     }

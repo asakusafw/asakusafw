@@ -45,7 +45,7 @@ final class TemporaryFileInputHelper implements Closeable {
         public Thread newThread(Runnable r) {
             Thread t = new Thread(r);
             t.setDaemon(true);
-            t.setName(String.format("TemporaryFileInput-%d", THREAD_COUNTER.incrementAndGet()));
+            t.setName(String.format("TemporaryFileInput-%d", THREAD_COUNTER.incrementAndGet())); //$NON-NLS-1$
             return t;
         }
     };

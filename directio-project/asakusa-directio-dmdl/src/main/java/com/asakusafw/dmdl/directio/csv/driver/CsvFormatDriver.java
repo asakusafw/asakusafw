@@ -88,7 +88,7 @@ public class CsvFormatDriver extends ModelAttributeDriver {
      * The element name of codec name.
      * @since 0.5.2
      */
-    public static final String ELEMENT_CODEC_NAME = "compression";
+    public static final String ELEMENT_CODEC_NAME = "compression"; //$NON-NLS-1$
 
     /**
      * The element name of {@code true} representation.

@@ -397,7 +397,7 @@ public final class FlowGraphUtil {
     public static void stop(FlowElementOutput output) {
         Precondition.checkMustNotBeNull(output, "output"); //$NON-NLS-1$
         FlowElementDescription desc = new PseudElementDescription(
-                "implicit-stop",
+                "implicit-stop", //$NON-NLS-1$
                 output.getDescription().getDataType(),
                 true,
                 false,
@@ -812,7 +812,7 @@ public final class FlowGraphUtil {
             for (FlowElementInput downstream : downstreams) {
                 if (attributes.length >= 1) {
                     FlowElementDescription desc = new PseudElementDescription(
-                            "bypass",
+                            "bypass", //$NON-NLS-1$
                             output.getDescription().getDataType(),
                             true,
                             true,
@@ -870,7 +870,7 @@ public final class FlowGraphUtil {
      */
     public static void insertCheckpoint(FlowElementOutput output) {
         Precondition.checkMustNotBeNull(output, "output"); //$NON-NLS-1$
-        insertElement(output, "implicit-checkpoint", FlowBoundary.STAGE);
+        insertElement(output, "implicit-checkpoint", FlowBoundary.STAGE); //$NON-NLS-1$
     }
 
     /**
@@ -884,7 +884,7 @@ public final class FlowGraphUtil {
      */
     public static void insertIdentity(FlowElementOutput output) {
         Precondition.checkMustNotBeNull(output, "output"); //$NON-NLS-1$
-        insertElement(output, "padding");
+        insertElement(output, "padding"); //$NON-NLS-1$
     }
 
     private static void insertElement(

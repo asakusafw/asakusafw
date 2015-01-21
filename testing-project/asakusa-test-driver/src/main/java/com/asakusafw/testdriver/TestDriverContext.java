@@ -60,9 +60,9 @@ public class TestDriverContext implements TestContext {
     static {
         ResourceBundle bundle;
         try {
-            bundle = ResourceBundle.getBundle("com.asakusafw.testdriver.information");
+            bundle = ResourceBundle.getBundle("com.asakusafw.testdriver.information"); //$NON-NLS-1$
         } catch (MissingResourceException e) {
-            LOG.warn("Missing framework information resource", e);
+            LOG.warn("Missing framework information resource", e); //$NON-NLS-1$
             bundle = new ListResourceBundle() {
                 @Override
                 protected Object[][] getContents() {
@@ -77,50 +77,50 @@ public class TestDriverContext implements TestContext {
      * The system property key of runtime working directory.
      * This working directory must be a relative path from the default working directory.
      */
-    public static final String KEY_RUNTIME_WORKING_DIRECTORY = "asakusa.testdriver.hadoopwork.dir";
+    public static final String KEY_RUNTIME_WORKING_DIRECTORY = "asakusa.testdriver.hadoopwork.dir"; //$NON-NLS-1$
 
     /**
      * The system property key of compiler working directory.
      */
-    public static final String KEY_COMPILER_WORKING_DIRECTORY = "asakusa.testdriver.compilerwork.dir";
+    public static final String KEY_COMPILER_WORKING_DIRECTORY = "asakusa.testdriver.compilerwork.dir"; //$NON-NLS-1$
 
     /**
      * The system property key of the default framework installation path.
      * This property will overwrite environment variables.
      * @since 0.6.0
      */
-    public static final String KEY_FRAMEWORK_PATH = "asakusa.testdriver.framework";
+    public static final String KEY_FRAMEWORK_PATH = "asakusa.testdriver.framework"; //$NON-NLS-1$
 
     /**
      * The system property key of the default batch applications installation base path.
      * This property will overwrite environment variables.
      * @since 0.6.1
      */
-    public static final String KEY_BATCHAPPS_PATH = "asakusa.testdriver.batchapps";
+    public static final String KEY_BATCHAPPS_PATH = "asakusa.testdriver.batchapps"; //$NON-NLS-1$
 
     /**
      * The system property key of ignoring environment checking.
      * @see #validateExecutionEnvironment()
      * @since 0.5.2
      */
-    public static final String KEY_FORCE_EXEC = "asakusa.testdriver.exec.force";
+    public static final String KEY_FORCE_EXEC = "asakusa.testdriver.exec.force"; //$NON-NLS-1$
 
     /**
      * Environmental variable: the framework home path.
      */
-    public static final String ENV_FRAMEWORK_PATH = "ASAKUSA_HOME";
+    public static final String ENV_FRAMEWORK_PATH = "ASAKUSA_HOME"; //$NON-NLS-1$
 
     /**
      * Environmental variable: the batch applications installation base path.
      * @since 0.6.1
      */
-    public static final String ENV_BATCHAPPS_PATH = "ASAKUSA_BATCHAPPS_HOME";
+    public static final String ENV_BATCHAPPS_PATH = "ASAKUSA_BATCHAPPS_HOME"; //$NON-NLS-1$
 
     /**
      * The default path of batch application installation base path (relative from the framework home path).
      * @since 0.6.1
      */
-    public static final String DEFAULT_BATCHAPPS_PATH = "batchapps";
+    public static final String DEFAULT_BATCHAPPS_PATH = "batchapps"; //$NON-NLS-1$
 
     /**
      * The path to the external dependency libraries folder (relative from working directory).
@@ -132,22 +132,22 @@ public class TestDriverContext implements TestContext {
      * The path to the framework version file (relative from the framework home path).
      * @since 0.5.2
      */
-    public static final String FRAMEWORK_VERSION_PATH = "VERSION";
+    public static final String FRAMEWORK_VERSION_PATH = "VERSION"; //$NON-NLS-1$
 
     /**
      * The entry key of the test-runtime framework version.
      * @since 0.5.2
      */
-    public static final String KEY_FRAMEWORK_VERSION = "asakusafw.version";
+    public static final String KEY_FRAMEWORK_VERSION = "asakusafw.version"; //$NON-NLS-1$
 
     /**
      * The system property key of {@link JobExecutorFactory}'s implementation class name.
      * @see #setJobExecutorFactory(JobExecutorFactory)
      * @since 0.6.0
      */
-    public static final String KEY_JOB_EXECUTOR_FACTORY = "asakusa.testdriver.exec.factory";
+    public static final String KEY_JOB_EXECUTOR_FACTORY = "asakusa.testdriver.exec.factory"; //$NON-NLS-1$
 
-    private static final String HADOOPWORK_DIR_DEFAULT = "target/testdriver/hadoopwork";
+    private static final String HADOOPWORK_DIR_DEFAULT = "target/testdriver/hadoopwork"; //$NON-NLS-1$
 
     static {
         TestingEnvironmentConfigurator.initialize();
@@ -209,9 +209,9 @@ public class TestDriverContext implements TestContext {
     }
 
     private void configureOptions() {
-        LOG.debug("Auto detecting current execution environment");
+        LOG.debug("Auto detecting current execution environment"); //$NON-NLS-1$
         this.options.putExtraAttribute(
-                "MAPREDUCE-370",
+                "MAPREDUCE-370", //$NON-NLS-1$
                 GenericOptionValue.AUTO.getSymbol());
     }
 
@@ -410,7 +410,7 @@ public class TestDriverContext implements TestContext {
         }
         File apps = getBatchApplicationsInstallationPath();
         File batch = new File(apps, batchId);
-        File lib = new File(batch, "lib");
+        File lib = new File(batch, "lib"); //$NON-NLS-1$
         return lib;
     }
 
@@ -438,7 +438,7 @@ public class TestDriverContext implements TestContext {
      */
     public CommandContext getCommandContext() {
         CommandContext context = new CommandContext(
-                getFrameworkHomePath().getAbsolutePath() + "/",
+                getFrameworkHomePath().getAbsolutePath() + "/", //$NON-NLS-1$
                 getExecutionId(),
                 getBatchArgs());
         return context;
@@ -467,7 +467,7 @@ public class TestDriverContext implements TestContext {
      */
     public String getOsUser() {
         Map<String, String> envp = getEnvironmentVariables0();
-        String user = System.getProperty("user.name", envp.get("USER"));
+        String user = System.getProperty("user.name", envp.get("USER")); //$NON-NLS-1$ //$NON-NLS-2$
         return user;
     }
 
@@ -484,7 +484,8 @@ public class TestDriverContext implements TestContext {
             }
             if (generatedCompilerWorkingDirectory == null) {
                 generatedCompilerWorkingDirectory = createTempDirPath();
-                LOG.debug("Created a temporary compiler working directory: {}", generatedCompilerWorkingDirectory);
+                LOG.debug("Created a temporary compiler working directory: {}", //$NON-NLS-1$
+                        generatedCompilerWorkingDirectory);
             }
             return generatedCompilerWorkingDirectory.getAbsolutePath();
         }
@@ -493,7 +494,7 @@ public class TestDriverContext implements TestContext {
 
     private File createTempDirPath() {
         try {
-            File file = File.createTempFile("asakusa", ".tmp");
+            File file = File.createTempFile("asakusa", ".tmp"); //$NON-NLS-1$ //$NON-NLS-2$
             if (file.delete() == false) {
                 throw new AssertionError(MessageFormat.format(
                         "テスト用のテンポラリディレクトリの作成に失敗しました: {0}",
@@ -573,7 +574,7 @@ public class TestDriverContext implements TestContext {
         this.currentBatchId = info.getJobflow().getBatchId();
         this.currentFlowId = info.getJobflow().getFlowId();
         this.currentExecutionId = MessageFormat.format(
-                "{0}-{1}-{2}",
+                "{0}-{1}-{2}", //$NON-NLS-1$
                 getCallerClass().getSimpleName(),
                 currentBatchId,
                 currentFlowId);
@@ -586,7 +587,7 @@ public class TestDriverContext implements TestContext {
      */
     public String getExecutionId() {
         if (currentExecutionId == null) {
-            throw new IllegalStateException("prepareCurrentJobflow was not invoked");
+            throw new IllegalStateException("prepareCurrentJobflow was not invoked"); //$NON-NLS-1$
         }
         return currentExecutionId;
     }
@@ -840,12 +841,14 @@ public class TestDriverContext implements TestContext {
      */
     public void cleanUpTemporaryResources() {
         if (generatedCompilerWorkingDirectory != null && generatedCompilerWorkingDirectory.exists()) {
-            LOG.debug("Deleting temporary compiler working directory: {}", generatedCompilerWorkingDirectory);
+            LOG.debug("Deleting temporary compiler working directory: {}", //$NON-NLS-1$
+                    generatedCompilerWorkingDirectory);
             removeAll(generatedCompilerWorkingDirectory);
             this.generatedCompilerWorkingDirectory = null;
         }
         if (generatedBatchappsHomePath != null && generatedBatchappsHomePath.exists()) {
-            LOG.debug("Deleting temporary batchapps directory: {}", generatedBatchappsHomePath);
+            LOG.debug("Deleting temporary batchapps directory: {}", //$NON-NLS-1$
+                    generatedBatchappsHomePath);
             removeAll(generatedBatchappsHomePath);
             this.generatedBatchappsHomePath = null;
         }

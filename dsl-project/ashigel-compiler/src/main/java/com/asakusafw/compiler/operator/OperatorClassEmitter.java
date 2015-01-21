@@ -46,9 +46,9 @@ public class OperatorClassEmitter {
 
     static final Logger LOG = LoggerFactory.getLogger(OperatorClassEmitter.class);
 
-    private static final String KEY_SUFFIX_FACTORY = "FACTORY";
+    private static final String KEY_SUFFIX_FACTORY = "FACTORY"; //$NON-NLS-1$
 
-    private static final String KEY_SUFFIX_IMPLEMENTATION = "IMPLEMENTATION";
+    private static final String KEY_SUFFIX_IMPLEMENTATION = "IMPLEMENTATION"; //$NON-NLS-1$
 
     private final OperatorCompilingEnvironment environment;
 
@@ -153,7 +153,7 @@ public class OperatorClassEmitter {
 
     private String getResourceKey(OperatorClass operatorClass, String suffix) {
         assert operatorClass != null;
-        return String.format("%s::%s", operatorClass.getElement().getQualifiedName(), suffix);
+        return String.format("%s::%s", operatorClass.getElement().getQualifiedName(), suffix); //$NON-NLS-1$
     }
 
     private void emit(
@@ -176,7 +176,7 @@ public class OperatorClassEmitter {
             }
         } catch (FilerException e) {
             LOG.debug(MessageFormat.format(
-                    "{0} has been already created in this session",
+                    "{0} has been already created in this session", //$NON-NLS-1$
                     typeDecl.getName().toNameString()), e);
         }
     }

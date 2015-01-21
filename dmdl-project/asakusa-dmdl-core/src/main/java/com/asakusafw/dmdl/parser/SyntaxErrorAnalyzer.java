@@ -123,7 +123,7 @@ class SyntaxErrorAnalyzer {
         String location;
         if (region.beginLine >= 1 && region.beginColumn >= 1) {
             location = MessageFormat.format(
-                    "{0}:{1}:{2}",
+                    "{0}:{1}:{2}", //$NON-NLS-1$
                     parser.getSourceFile(),
                     region.beginLine,
                     region.beginColumn);
@@ -182,7 +182,7 @@ class SyntaxErrorAnalyzer {
             return null;
         }
         String image = tokenImage[first];
-        if (image.startsWith("\"") == false || image.endsWith("\"") == false) {
+        if (image.startsWith("\"") == false || image.endsWith("\"") == false) { //$NON-NLS-1$ //$NON-NLS-2$
             return null;
         }
 

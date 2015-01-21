@@ -41,7 +41,7 @@ import com.asakusafw.windgate.core.resource.SourceDriver;
  */
 public class WindGateSourceProvider implements DataModelSourceProvider {
 
-    private static final String SCHEME = "windgate";
+    private static final String SCHEME = "windgate"; //$NON-NLS-1$
 
     static final Logger LOG = LoggerFactory.getLogger(WindGateSourceProvider.class);
 
@@ -52,12 +52,12 @@ public class WindGateSourceProvider implements DataModelSourceProvider {
             TestContext context) throws IOException {
         String scheme = source.getScheme();
         if (scheme == null || scheme.equals(SCHEME) == false) {
-            LOG.debug("URI does not indicate WindGate: {}", source);
+            LOG.debug("URI does not indicate WindGate: {}", source); //$NON-NLS-1$
             return null;
         }
         ClassLoader classLoader = context.getClassLoader();
         String rest = source.getSchemeSpecificPart();
-        LOG.debug("Attempts to load {} as a class", rest);
+        LOG.debug("Attempts to load {} as a class", rest); //$NON-NLS-1$
         Object instance;
         try {
             Class<?> target = classLoader.loadClass(rest);

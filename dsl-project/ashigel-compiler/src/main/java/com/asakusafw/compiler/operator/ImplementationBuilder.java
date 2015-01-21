@@ -119,7 +119,7 @@ public class ImplementationBuilder {
         Precondition.checkMustNotBeNull(from, "from"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(to, "to"); //$NON-NLS-1$
         this.statements.add(new ExpressionBuilder(factory, to)
-            .method("copyFrom", from)
+            .method("copyFrom", from) //$NON-NLS-1$
             .toStatement());
     }
 

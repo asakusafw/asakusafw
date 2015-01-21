@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * Utilities for DMDL for Hive.
+ * Utilities for DMDL for Direct I/O.
  */
-package com.asakusafw.dmdl.directio.hive.util;
+package com.asakusafw.dmdl.directio.util;

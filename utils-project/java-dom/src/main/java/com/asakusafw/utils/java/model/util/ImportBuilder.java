@@ -199,7 +199,7 @@ public class ImportBuilder {
 
     private Set<Name> createImplicit() {
         Set<Name> implicit = new HashSet<Name>();
-        implicit.add(Models.toName(resolver.factory, "java.lang"));
+        implicit.add(Models.toName(resolver.factory, "java.lang")); //$NON-NLS-1$
         if (packageDecl != null) {
             implicit.add(packageDecl.getName());
         }

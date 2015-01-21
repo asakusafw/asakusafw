@@ -80,7 +80,7 @@ public class FlowResourceEmitter {
             try {
                 Name compiled = rewriter.resolve(resource);
                 if (compiled != null) {
-                    LOG.debug("{}は{}でコンパイルしました", resource, compiled);
+                    LOG.debug("compiled resource: {} ({})", resource, compiled); //$NON-NLS-1$
                     return compiled;
                 }
             } catch (RewriteException e) {

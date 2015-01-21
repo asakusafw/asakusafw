@@ -128,7 +128,7 @@ public class FragmentFlow {
     private SimpleName createStageOutputs() {
         for (FragmentNode node : dependencies.getNodeSet()) {
             if (node.getKind() == Kind.OUTPUT) {
-                return names.create("outputs");
+                return names.create("outputs"); //$NON-NLS-1$
             }
         }
         return null;
@@ -153,7 +153,7 @@ public class FragmentFlow {
                     if (results.containsKey(resource)) {
                         continue;
                     }
-                    results.put(resource, names.create("resource"));
+                    results.put(resource, names.create("resource")); //$NON-NLS-1$
                 }
             }
         }
@@ -199,9 +199,9 @@ public class FragmentFlow {
                 saw.add(fragment);
                 FragmentNode node;
                 if (fragment.isRendezvous()) {
-                    node = new FragmentNode(Kind.RENDEZVOUS, fragment, names.create("rendezvous"));
+                    node = new FragmentNode(Kind.RENDEZVOUS, fragment, names.create("rendezvous")); //$NON-NLS-1$
                 } else {
-                    node = new FragmentNode(Kind.LINE, fragment, names.create("line"));
+                    node = new FragmentNode(Kind.LINE, fragment, names.create("line")); //$NON-NLS-1$
                 }
                 for (FlowElementOutput output : fragment.getOutputPorts()) {
                     Maps.addToList(results, output, node);
@@ -247,7 +247,7 @@ public class FragmentFlow {
         assert nodes != null;
         assert graph != null;
         for (Sink sink : stage.getStageResults()) {
-            SimpleName name = names.create("output");
+            SimpleName name = names.create("output"); //$NON-NLS-1$
             FragmentNode node = new FragmentNode(Kind.OUTPUT, sink, name);
             for (FlowBlock.Output output : sink.getOutputs()) {
                 FlowElementOutput target = output.getElementPort();
@@ -285,7 +285,7 @@ public class FragmentFlow {
             if (blockInput == null) {
                 continue;
             }
-            FragmentNode node = new FragmentNode(Kind.SHUFFLE, segment, names.create("shuffle"));
+            FragmentNode node = new FragmentNode(Kind.SHUFFLE, segment, names.create("shuffle")); //$NON-NLS-1$
             for (FlowBlock.Connection conn : blockInput.getConnections()) {
                 FlowElementOutput shuffleOut = conn.getUpstream().getElementPort();
                 List<FragmentNode> sources = nodes.get(shuffleOut);
@@ -392,8 +392,8 @@ public class FragmentFlow {
                 .toStatement());
             results.add(new ExpressionBuilder(factory, factory.newThis())
                 .field(field)
-                .method("setup", new ExpressionBuilder(factory, context)
-                    .method("getConfiguration")
+                .method("setup", new ExpressionBuilder(factory, context) //$NON-NLS-1$
+                    .method("getConfiguration") //$NON-NLS-1$
                     .toExpression())
                 .toStatement());
         }
@@ -524,7 +524,7 @@ public class FragmentFlow {
         }
         Type dataType = importer.toType(model.getType());
 
-        SimpleName cacheName = names.create("cache");
+        SimpleName cacheName = names.create("cache"); //$NON-NLS-1$
         FieldDeclaration cache = factory.newFieldDeclaration(
                 null,
                 new AttributeBuilder(factory)
@@ -534,7 +534,7 @@ public class FragmentFlow {
                 cacheName,
                 model.createNewInstance(dataType));
 
-        SimpleName argumentName = names.create("arg");
+        SimpleName argumentName = names.create("arg"); //$NON-NLS-1$
         List<Statement> statements = Lists.create();
         Iterator<FragmentNode> iter = downstream.iterator();
         while (iter.hasNext()) {
@@ -608,7 +608,7 @@ public class FragmentFlow {
                 Collections.singletonList(factory.newVariableDeclarator(
                         node.getName(),
                         new ExpressionBuilder(factory, stageOutputs)
-                            .method("getResultSink", Models.toLiteral(factory, value.getName()))
+                            .method("getResultSink", Models.toLiteral(factory, value.getName())) //$NON-NLS-1$
                             .toExpression())));
     }
 
@@ -633,8 +633,8 @@ public class FragmentFlow {
                     factory.newBlock(new Statement[] {
                             new ExpressionBuilder(factory, factory.newThis())
                                 .field(entry.getValue())
-                                .method("cleanup", new ExpressionBuilder(factory, context)
-                                    .method("getConfiguration")
+                                .method("cleanup", new ExpressionBuilder(factory, context) //$NON-NLS-1$
+                                    .method("getConfiguration") //$NON-NLS-1$
                                     .toExpression())
                                 .toStatement(),
                             new ExpressionBuilder(factory, factory.newThis())
@@ -663,7 +663,7 @@ public class FragmentFlow {
         List<Statement> results = Lists.create();
         results.add(new ExpressionBuilder(factory, factory.newThis())
             .field(stageOutputs)
-            .method("close")
+            .method("close") //$NON-NLS-1$
             .toStatement());
         results.add(new ExpressionBuilder(factory, factory.newThis())
             .field(stageOutputs)

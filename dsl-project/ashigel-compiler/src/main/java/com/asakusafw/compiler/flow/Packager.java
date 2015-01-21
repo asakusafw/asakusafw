@@ -46,13 +46,13 @@ public interface Packager extends FlowCompilingEnvironment.Initializable {
      * The location of framework info.
      * @since 0.4.0
      */
-    Location FRAMEWORK_INFO = PACKAGE_META_INFO.append("asakusa");
+    Location FRAMEWORK_INFO = PACKAGE_META_INFO.append("asakusa"); //$NON-NLS-1$
 
     /**
      * The location of fragment marker file in each class library.
      * @since 0.4.0
      */
-    Location FRAGMENT_MARKER_PATH = FRAMEWORK_INFO.append("fragment");
+    Location FRAGMENT_MARKER_PATH = FRAMEWORK_INFO.append("fragment"); //$NON-NLS-1$
 
     /**
      * 指定のJavaソースプログラムを出力するためのストリームを開いて返す。

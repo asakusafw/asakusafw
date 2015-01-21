@@ -38,7 +38,7 @@ public class TraceReportAction implements TraceAction {
 
     @Override
     public void trace(Object data) throws IOException, InterruptedException {
-        Report.info(String.format("[TRACE-%04d] %s: %s", context.getSerialNumber(), context, data));
+        Report.info(String.format("[TRACE-%04d] %s: %s", context.getSerialNumber(), context, data)); //$NON-NLS-1$
     }
 
     @Override

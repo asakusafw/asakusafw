@@ -68,9 +68,9 @@ public final class DirectIoDelete extends Configured implements Tool {
         boolean recursive = false;
         while (argList.isEmpty() == false) {
             String arg = argList.removeFirst();
-            if (arg.equals("-r") || arg.equals("-recursive")) {
+            if (arg.equals("-r") || arg.equals("-recursive")) { //$NON-NLS-1$ //$NON-NLS-2$
                 recursive = true;
-            } else if (arg.equals("--")) {
+            } else if (arg.equals("--")) { //$NON-NLS-1$
                 break;
             } else {
                 argList.addFirst(arg);

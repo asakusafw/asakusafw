@@ -34,7 +34,7 @@ public @interface Batch {
     /**
      * The default parameter value pattern.
      */
-    String DEFAULT_PARAMETER_VALUE_PATTERN = ".*";
+    String DEFAULT_PARAMETER_VALUE_PATTERN = ".*"; //$NON-NLS-1$
 
     /**
      * このバッチの識別子。

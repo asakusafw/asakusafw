@@ -235,7 +235,7 @@ public final class TraceContext {
     @Override
     public String toString() {
         return MessageFormat.format(
-                "{0}@{1}#{2}.{3}.{4}:{5}",
+                "{0}@{1}#{2}.{3}.{4}:{5}", //$NON-NLS-1$
                 String.valueOf(serialNumber),
                 operatorClass,
                 operatorMethod,

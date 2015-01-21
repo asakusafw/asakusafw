@@ -68,13 +68,13 @@ public final class OutputPattern {
     }
 
     private static final Pattern PATTERN_ORDER = Pattern.compile(
-            "\\s*("
-            + "(\\w+)"                              //  2 - asc
-            + "|" + "(\\+\\s*(\\w+))"               //  4 - asc
-            + "|" + "(-\\s*(\\w+))"                 //  6 - desc
-            + "|" + "((\\w+)\\s+[Aa][Ss][Cc])"      //  8 - asc
-            + "|" + "((\\w+)\\s+[Dd][Ee][Ss][Cc])"  // 10 - desc
-            + ")\\s*"
+            "\\s*(" //$NON-NLS-1$
+            + "(\\w+)"                              //  2 - asc //$NON-NLS-1$
+            + "|" + "(\\+\\s*(\\w+))"               //  4 - asc //$NON-NLS-1$ //$NON-NLS-2$
+            + "|" + "(-\\s*(\\w+))"                 //  6 - desc //$NON-NLS-1$ //$NON-NLS-2$
+            + "|" + "((\\w+)\\s+[Aa][Ss][Cc])"      //  8 - asc //$NON-NLS-1$ //$NON-NLS-2$
+            + "|" + "((\\w+)\\s+[Dd][Ee][Ss][Cc])"  // 10 - desc //$NON-NLS-1$ //$NON-NLS-2$
+            + ")\\s*" //$NON-NLS-1$
             );
 
     private static final int[] ORDER_GROUP_INDEX = { 2, 4, 6, 8, 10 };
@@ -123,7 +123,7 @@ public final class OutputPattern {
                     throw new IllegalArgumentException(MessageFormat.format(
                             "Invalid format \"{1}\": {0}",
                             cursor,
-                            argument == null ? "" : argument));
+                            argument == null ? "" : argument)); //$NON-NLS-1$
                 }
                 try {
                     format.check(property.getType(), argument);
@@ -132,7 +132,7 @@ public final class OutputPattern {
                     throw new IllegalArgumentException(MessageFormat.format(
                             "Invalid format \"{1}\": {0}",
                             cursor,
-                            argument == null ? "" : argument), e);
+                            argument == null ? "" : argument), e); //$NON-NLS-1$
                 }
                 results.add(new CompiledResourcePattern(property, format, argument));
             } else if (cursor.isRandomNumber()) {
@@ -362,7 +362,7 @@ public final class OutputPattern {
             return new Formatted(propertyName, formatString);
         }
 
-        private static final Pattern RNG = Pattern.compile("(\\d+)\\.{2,3}(\\d+)(:(.*))?");
+        private static final Pattern RNG = Pattern.compile("(\\d+)\\.{2,3}(\\d+)(:(.*))?"); //$NON-NLS-1$
         Formatted consumeRandomNumber() {
             assert isRandomNumber();
             this.lastSegmentPosition = position;
@@ -434,7 +434,7 @@ public final class OutputPattern {
             for (int i = 0, n = position; i < n; i++) {
                 buf.append(cbuf[i]);
             }
-            buf.append(" >> ");
+            buf.append(" >> "); //$NON-NLS-1$
             for (int i = position, n = cbuf.length; i < n; i++) {
                 buf.append(cbuf[i]);
             }

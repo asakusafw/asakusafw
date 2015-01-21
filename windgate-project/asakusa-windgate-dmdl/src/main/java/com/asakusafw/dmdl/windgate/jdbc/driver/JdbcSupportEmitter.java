@@ -21,6 +21,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
@@ -41,6 +42,7 @@ import com.asakusafw.dmdl.semantics.ModelDeclaration;
 import com.asakusafw.dmdl.semantics.PropertyDeclaration;
 import com.asakusafw.dmdl.semantics.Type;
 import com.asakusafw.dmdl.semantics.type.BasicType;
+import com.asakusafw.dmdl.windgate.util.JdbcProcessDescriptionGenerator;
 import com.asakusafw.runtime.value.Date;
 import com.asakusafw.runtime.value.DateTime;
 import com.asakusafw.runtime.value.DateUtil;
@@ -60,7 +62,6 @@ import com.asakusafw.utils.java.model.syntax.SimpleName;
 import com.asakusafw.utils.java.model.syntax.Statement;
 import com.asakusafw.utils.java.model.syntax.TypeBodyDeclaration;
 import com.asakusafw.utils.java.model.syntax.TypeParameterDeclaration;
-import com.asakusafw.utils.java.model.syntax.WildcardBoundKind;
 import com.asakusafw.utils.java.model.util.AttributeBuilder;
 import com.asakusafw.utils.java.model.util.ExpressionBuilder;
 import com.asakusafw.utils.java.model.util.JavadocBuilder;
@@ -81,7 +82,7 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
     /**
      * Category name for JDBC support.
      */
-    public static final String CATEGORY_JDBC = "jdbc";
+    public static final String CATEGORY_JDBC = "jdbc"; //$NON-NLS-1$
 
     @Override
     public void generateResources(EmitContext context, ModelDeclaration model) throws IOException {
@@ -106,11 +107,11 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
                 context.getConfiguration(),
                 model,
                 CATEGORY_JDBC,
-                "{0}JdbcSupport");
-        LOG.debug("Generating JDBC support for {}",
+                "{0}JdbcSupport"); //$NON-NLS-1$
+        LOG.debug("Generating JDBC support for {}", //$NON-NLS-1$
                 context.getQualifiedTypeName().toNameString());
         SupportGenerator.emit(next, model);
-        LOG.debug("Generated JDBC support for {}: {}",
+        LOG.debug("Generated JDBC support for {}: {}", //$NON-NLS-1$
                 context.getQualifiedTypeName().toNameString(),
                 next.getQualifiedTypeName().toNameString());
         return next.getQualifiedTypeName();
@@ -119,41 +120,45 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
     private void generateImporterDescription(
             EmitContext context,
             ModelDeclaration model,
-            Name supportClassName) throws IOException {
+            Name supportName) throws IOException {
         assert context != null;
         assert model != null;
+        assert supportName != null;
         EmitContext next = new EmitContext(
                 context.getSemantics(),
                 context.getConfiguration(),
                 model,
                 CATEGORY_JDBC,
-                "Abstract{0}JdbcImporterDescription");
-        LOG.debug("Generating importer description using JDBC for {}",
-                context.getQualifiedTypeName().toNameString());
-        DescriptionGenerator.emitImporter(next, model, supportClassName);
-        LOG.debug("Generated importer description using JDBC for {}: {}",
-                context.getQualifiedTypeName().toNameString(),
-                next.getQualifiedTypeName().toNameString());
+                "Abstract{0}JdbcImporterDescription"); //$NON-NLS-1$
+        JdbcProcessDescriptionGenerator.Description desc = new JdbcProcessDescriptionGenerator.Description(
+                "WindGate JDBC importer",
+                context.getQualifiedTypeName());
+        desc.setTableName(getTableName(model));
+        desc.setColumnNames(getColumnNames(model));
+        desc.setSupportClassName(supportName);
+        JdbcProcessDescriptionGenerator.generateImporter(next, desc);
     }
 
     private void generateExporterDescription(
             EmitContext context,
             ModelDeclaration model,
-            Name supportClassName) throws IOException {
+            Name supportName) throws IOException {
         assert context != null;
         assert model != null;
+        assert supportName != null;
         EmitContext next = new EmitContext(
                 context.getSemantics(),
                 context.getConfiguration(),
                 model,
                 CATEGORY_JDBC,
-                "Abstract{0}JdbcExporterDescription");
-        LOG.debug("Generating exporter description using JDBC for {}",
-                context.getQualifiedTypeName().toNameString());
-        DescriptionGenerator.emitExporter(next, model, supportClassName);
-        LOG.debug("Generated exporter description using JDBC for {}: {}",
-                context.getQualifiedTypeName().toNameString(),
-                next.getQualifiedTypeName().toNameString());
+                "Abstract{0}JdbcExporterDescription"); //$NON-NLS-1$
+        JdbcProcessDescriptionGenerator.Description desc = new JdbcProcessDescriptionGenerator.Description(
+                "WindGate JDBC exporter",
+                context.getQualifiedTypeName());
+        desc.setTableName(getTableName(model));
+        desc.setColumnNames(getColumnNames(model));
+        desc.setSupportClassName(supportName);
+        JdbcProcessDescriptionGenerator.generateImporter(next, desc);
     }
 
     private boolean isTarget(ModelDeclaration model) {
@@ -175,6 +180,22 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
             }
         }
         return sawTrait;
+    }
+
+    private String getTableName(ModelDeclaration model) {
+        assert hasTableTrait(model);
+        return model.getTrait(JdbcTableTrait.class).getName();
+    }
+
+    private List<String> getColumnNames(ModelDeclaration model) {
+        List<String> results = new ArrayList<String>();
+        for (PropertyDeclaration property : model.getDeclaredProperties()) {
+            JdbcColumnTrait columnTrait = property.getTrait(JdbcColumnTrait.class);
+            if (columnTrait != null) {
+                results.add(columnTrait.getName());
+            }
+        }
+        return results;
     }
 
     private void checkColumnExists(ModelDeclaration model) throws IOException {
@@ -228,21 +249,21 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
 
     private static final class SupportGenerator {
 
-        private static final String NAME_CALENDAR = "calendar";
+        private static final String NAME_CALENDAR = "calendar"; //$NON-NLS-1$
 
-        private static final String NAME_DATETIME = "datetime";
+        private static final String NAME_DATETIME = "datetime"; //$NON-NLS-1$
 
-        private static final String NAME_DATE = "date";
+        private static final String NAME_DATE = "date"; //$NON-NLS-1$
 
-        private static final String NAME_TEXT = "text";
+        private static final String NAME_TEXT = "text"; //$NON-NLS-1$
 
-        private static final String NAME_RESULT_SET_SUPPORT = "ResultSetSupport";
+        private static final String NAME_RESULT_SET_SUPPORT = "ResultSetSupport"; //$NON-NLS-1$
 
-        private static final String NAME_PREPARED_STATEMENT_SUPPORT = "PreparedStatementSupport";
+        private static final String NAME_PREPARED_STATEMENT_SUPPORT = "PreparedStatementSupport"; //$NON-NLS-1$
 
-        private static final String NAME_PROPERTY_POSITIONS = "PROPERTY_POSITIONS";
+        private static final String NAME_PROPERTY_POSITIONS = "PROPERTY_POSITIONS"; //$NON-NLS-1$
 
-        private static final String NAME_CREATE_VECTOR = "createPropertyVector";
+        private static final String NAME_CREATE_VECTOR = "createPropertyVector"; //$NON-NLS-1$
 
         private final EmitContext context;
 
@@ -316,7 +337,7 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
                     f.newSimpleName(NAME_PROPERTY_POSITIONS),
                     null));
             List<Statement> statements = Lists.create();
-            SimpleName map = f.newSimpleName("map");
+            SimpleName map = f.newSimpleName("map"); //$NON-NLS-1$
             statements.add(new TypeBuilder(f, context.resolve(TreeMap.class))
                 .parameterize(context.resolve(String.class), context.resolve(Integer.class))
                 .newObject()
@@ -333,7 +354,7 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
                 JdbcColumnTrait trait = property.getTrait(JdbcColumnTrait.class);
                 assert trait != null;
                 statements.add(new ExpressionBuilder(f, map)
-                    .method("put", Models.toLiteral(f, trait.getName()), Models.toLiteral(f, i))
+                    .method("put", Models.toLiteral(f, trait.getName()), Models.toLiteral(f, i)) //$NON-NLS-1$
                     .toStatement());
             }
             statements.add(new ExpressionBuilder(f, f.newSimpleName(NAME_PROPERTY_POSITIONS))
@@ -358,7 +379,7 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
                     f.newParameterizedType(
                             context.resolve(Class.class),
                             context.resolve(model.getSymbol())),
-                    f.newSimpleName("getSupportedType"),
+                    f.newSimpleName("getSupportedType"), //$NON-NLS-1$
                     Collections.<FormalParameterDeclaration>emptyList(),
                     Arrays.asList(new Statement[] {
                             new TypeBuilder(f, context.resolve(model.getSymbol()))
@@ -369,12 +390,12 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
         }
 
         private MethodDeclaration createIsSupported() {
-            SimpleName columnNames = f.newSimpleName("columnNames");
+            SimpleName columnNames = f.newSimpleName("columnNames"); //$NON-NLS-1$
             List<Statement> statements = Lists.create();
             statements.add(createNullCheck(columnNames));
             statements.add(f.newIfStatement(
                     new ExpressionBuilder(f, columnNames)
-                        .method("isEmpty")
+                        .method("isEmpty") //$NON-NLS-1$
                         .toExpression(),
                     f.newBlock(f.newReturnStatement(Models.toLiteral(f, false)))));
             statements.add(f.newTryStatement(
@@ -387,7 +408,7 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
                     Arrays.asList(f.newCatchClause(
                             f.newFormalParameterDeclaration(
                                     context.resolve(IllegalArgumentException.class),
-                                    f.newSimpleName("e")),
+                                    f.newSimpleName("e")), //$NON-NLS-1$
                             f.newBlock(new ExpressionBuilder(f, Models.toLiteral(f, false))
                                 .toReturnStatement()))),
                     null));
@@ -398,7 +419,7 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
                         .Public()
                         .toAttributes(),
                     context.resolve(boolean.class),
-                    f.newSimpleName("isSupported"),
+                    f.newSimpleName("isSupported"), //$NON-NLS-1$
                     Arrays.asList(f.newFormalParameterDeclaration(
                             f.newParameterizedType(
                                     context.resolve(List.class),
@@ -409,12 +430,12 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
         }
 
         private MethodDeclaration createCreateResultSetSupport() {
-            SimpleName resultSet = f.newSimpleName("resultSet");
-            SimpleName columnNames = f.newSimpleName("columnNames");
+            SimpleName resultSet = f.newSimpleName("resultSet"); //$NON-NLS-1$
+            SimpleName columnNames = f.newSimpleName("columnNames"); //$NON-NLS-1$
             List<Statement> statements = Lists.create();
             statements.add(createNullCheck(resultSet));
             statements.add(createNullCheck(columnNames));
-            SimpleName vector = f.newSimpleName("vector");
+            SimpleName vector = f.newSimpleName("vector"); //$NON-NLS-1$
             statements.add(new ExpressionBuilder(f, f.newThis())
                 .method(NAME_CREATE_VECTOR, columnNames)
                 .toLocalVariableDeclaration(context.resolve(int[].class), vector));
@@ -430,7 +451,7 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
                     context.resolve(f.newParameterizedType(
                             context.resolve(DataModelResultSet.class),
                             context.resolve(model.getSymbol()))),
-                    f.newSimpleName("createResultSetSupport"),
+                    f.newSimpleName("createResultSetSupport"), //$NON-NLS-1$
                     Arrays.asList(
                             f.newFormalParameterDeclaration(
                                 context.resolve(ResultSet.class),
@@ -445,12 +466,12 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
         }
 
         private MethodDeclaration createCreatePreparedStatementSupport() {
-            SimpleName preparedStatement = f.newSimpleName("statement");
-            SimpleName columnNames = f.newSimpleName("columnNames");
+            SimpleName preparedStatement = f.newSimpleName("statement"); //$NON-NLS-1$
+            SimpleName columnNames = f.newSimpleName("columnNames"); //$NON-NLS-1$
             List<Statement> statements = Lists.create();
             statements.add(createNullCheck(preparedStatement));
             statements.add(createNullCheck(columnNames));
-            SimpleName vector = f.newSimpleName("vector");
+            SimpleName vector = f.newSimpleName("vector"); //$NON-NLS-1$
             statements.add(new ExpressionBuilder(f, f.newThis())
                 .method(NAME_CREATE_VECTOR, columnNames)
                 .toLocalVariableDeclaration(context.resolve(int[].class), vector));
@@ -466,7 +487,7 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
                     context.resolve(f.newParameterizedType(
                             context.resolve(DataModelPreparedStatement.class),
                             context.resolve(model.getSymbol()))),
-                    f.newSimpleName("createPreparedStatementSupport"),
+                    f.newSimpleName("createPreparedStatementSupport"), //$NON-NLS-1$
                     Arrays.asList(
                             f.newFormalParameterDeclaration(
                                 context.resolve(PreparedStatement.class),
@@ -488,25 +509,25 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
                         .toExpression(),
                     f.newBlock(new TypeBuilder(f, context.resolve(IllegalArgumentException.class))
                         .newObject(Models.toLiteral(f, MessageFormat.format(
-                                "{0} must not be null",
+                                "{0} must not be null", //$NON-NLS-1$
                                 parameter.getToken())))
                         .toThrowStatement()));
         }
 
         private MethodDeclaration createCreatePropertyVector() {
-            SimpleName columnNames = f.newSimpleName("columnNames");
-            SimpleName vector = f.newSimpleName("vector");
+            SimpleName columnNames = f.newSimpleName("columnNames"); //$NON-NLS-1$
+            SimpleName vector = f.newSimpleName("vector"); //$NON-NLS-1$
             List<Statement> statements = Lists.create();
 
             statements.add(new TypeBuilder(f, context.resolve(int[].class))
                 .newArray(new ExpressionBuilder(f, f.newSimpleName(NAME_PROPERTY_POSITIONS))
-                    .method("size")
+                    .method("size") //$NON-NLS-1$
                     .toExpression())
                 .toLocalVariableDeclaration(context.resolve(int[].class), vector));
 
-            SimpleName index = f.newSimpleName("i");
-            SimpleName column = f.newSimpleName("column");
-            SimpleName position = f.newSimpleName("position");
+            SimpleName index = f.newSimpleName("i"); //$NON-NLS-1$
+            SimpleName column = f.newSimpleName("column"); //$NON-NLS-1$
+            SimpleName position = f.newSimpleName("position"); //$NON-NLS-1$
             statements.add(f.newForStatement(
                     f.newLocalVariableDeclaration(
                             new AttributeBuilder(f).toAttributes(),
@@ -516,22 +537,22 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
                                             index,
                                             Models.toLiteral(f, 0)),
                                     f.newVariableDeclarator(
-                                            f.newSimpleName("n"),
+                                            f.newSimpleName("n"), //$NON-NLS-1$
                                             new ExpressionBuilder(f, columnNames)
-                                                .method("size")
+                                                .method("size") //$NON-NLS-1$
                                                 .toExpression()))),
                     new ExpressionBuilder(f, index)
-                        .apply(InfixOperator.LESS, f.newSimpleName("n"))
+                        .apply(InfixOperator.LESS, f.newSimpleName("n")) //$NON-NLS-1$
                         .toExpression(),
                     f.newStatementExpressionList(new ExpressionBuilder(f, index)
                         .apply(PostfixOperator.INCREMENT)
                         .toExpression()),
                     f.newBlock(new Statement[] {
                             new ExpressionBuilder(f, columnNames)
-                                .method("get", index)
+                                .method("get", index) //$NON-NLS-1$
                                 .toLocalVariableDeclaration(context.resolve(String.class), column),
                             new ExpressionBuilder(f, f.newSimpleName(NAME_PROPERTY_POSITIONS))
-                                .method("get", column)
+                                .method("get", column) //$NON-NLS-1$
                                 .toLocalVariableDeclaration(context.resolve(Integer.class), position),
                             f.newIfStatement(
                                     new ExpressionBuilder(f, position)
@@ -568,8 +589,8 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
         }
 
         private ClassDeclaration createResultSetSupportClass() {
-            SimpleName resultSet = f.newSimpleName("resultSet");
-            SimpleName properties = f.newSimpleName("properties");
+            SimpleName resultSet = f.newSimpleName("resultSet"); //$NON-NLS-1$
+            SimpleName properties = f.newSimpleName("properties"); //$NON-NLS-1$
             List<TypeBodyDeclaration> members = Lists.create();
             members.add(createPrivateField(ResultSet.class, resultSet, false));
             members.add(createPrivateField(int[].class, properties, false));
@@ -595,11 +616,11 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
                             f.newFormalParameterDeclaration(context.resolve(int[].class), properties)),
                     Arrays.asList(mapField(resultSet), mapField(properties))));
 
-            SimpleName object = f.newSimpleName("object");
+            SimpleName object = f.newSimpleName("object"); //$NON-NLS-1$
             List<Statement> statements = Lists.create();
             statements.add(f.newIfStatement(
                     new ExpressionBuilder(f, resultSet)
-                        .method("next")
+                        .method("next") //$NON-NLS-1$
                         .apply(InfixOperator.EQUALS, Models.toLiteral(f, false))
                         .toExpression(),
                     f.newBlock(new ExpressionBuilder(f, Models.toLiteral(f, false))
@@ -622,7 +643,7 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
                         .toAttributes(),
                     Collections.<TypeParameterDeclaration>emptyList(),
                     context.resolve(boolean.class),
-                    f.newSimpleName("next"),
+                    f.newSimpleName("next"), //$NON-NLS-1$
                     Arrays.asList(f.newFormalParameterDeclaration(context.resolve(model.getSymbol()), object)),
                     0,
                     Arrays.asList(context.resolve(SQLException.class)),
@@ -661,13 +682,13 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
                     context.resolve(Calendar.class),
                     f.newSimpleName(NAME_CALENDAR),
                     new TypeBuilder(f, context.resolve(Calendar.class))
-                        .method("getInstance")
+                        .method("getInstance") //$NON-NLS-1$
                         .toExpression());
         }
 
         private ClassDeclaration createPreparedStatementSupportClass() {
-            SimpleName preparedStatement = f.newSimpleName("statement");
-            SimpleName properties = f.newSimpleName("properties");
+            SimpleName preparedStatement = f.newSimpleName("statement"); //$NON-NLS-1$
+            SimpleName properties = f.newSimpleName("properties"); //$NON-NLS-1$
             List<TypeBodyDeclaration> members = Lists.create();
             members.add(createPrivateField(PreparedStatement.class, preparedStatement, false));
             members.add(createPrivateField(int[].class, properties, false));
@@ -712,7 +733,7 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
                                     context.resolve(int[].class), properties)),
                     Arrays.asList(mapField(preparedStatement), mapField(properties))));
 
-            SimpleName object = f.newSimpleName("object");
+            SimpleName object = f.newSimpleName("object"); //$NON-NLS-1$
             List<Statement> statements = Lists.create();
             List<PropertyDeclaration> declared = getProperties();
             for (int i = 0, n = declared.size(); i < n; i++) {
@@ -730,7 +751,7 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
                         .toAttributes(),
                     Collections.<TypeParameterDeclaration>emptyList(),
                     context.resolve(void.class),
-                    f.newSimpleName("setParameters"),
+                    f.newSimpleName("setParameters"), //$NON-NLS-1$
                     Arrays.asList(f.newFormalParameterDeclaration(context.resolve(model.getSymbol()), object)),
                     0,
                     Arrays.asList(context.resolve(SQLException.class)),
@@ -757,7 +778,7 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
                 Expression position,
                 PropertyDeclaration property) {
             List<Statement> statements = Lists.create();
-            SimpleName value = f.newSimpleName("value");
+            SimpleName value = f.newSimpleName("value"); //$NON-NLS-1$
             SimpleName calendar = f.newSimpleName(NAME_CALENDAR);
             SimpleName text = f.newSimpleName(NAME_TEXT);
             SimpleName date = f.newSimpleName(NAME_DATE);
@@ -765,39 +786,54 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
             BasicTypeKind kind = toBasicKind(property.getType());
             switch (kind) {
             case INT:
-                statements.add(createResultSetMapping(object, resultSet, position, property, "getInt"));
-                statements.add(createResultSetNullMapping(object, resultSet, property));
+                statements.add(
+                        createResultSetMapping(object, resultSet, position, property, "getInt")); //$NON-NLS-1$
+                statements.add(
+                        createResultSetNullMapping(object, resultSet, property));
                 break;
             case LONG:
-                statements.add(createResultSetMapping(object, resultSet, position, property, "getLong"));
-                statements.add(createResultSetNullMapping(object, resultSet, property));
+                statements.add(
+                        createResultSetMapping(object, resultSet, position, property, "getLong")); //$NON-NLS-1$
+                statements.add(
+                        createResultSetNullMapping(object, resultSet, property));
                 break;
             case FLOAT:
-                statements.add(createResultSetMapping(object, resultSet, position, property, "getFloat"));
-                statements.add(createResultSetNullMapping(object, resultSet, property));
+                statements.add(
+                        createResultSetMapping(object, resultSet, position, property, "getFloat")); //$NON-NLS-1$
+                statements.add(
+                        createResultSetNullMapping(object, resultSet, property));
                 break;
             case DOUBLE:
-                statements.add(createResultSetMapping(object, resultSet, position, property, "getDouble"));
-                statements.add(createResultSetNullMapping(object, resultSet, property));
+                statements.add(
+                        createResultSetMapping(object, resultSet, position, property, "getDouble")); //$NON-NLS-1$
+                statements.add(
+                        createResultSetNullMapping(object, resultSet, property));
                 break;
             case BYTE:
-                statements.add(createResultSetMapping(object, resultSet, position, property, "getByte"));
-                statements.add(createResultSetNullMapping(object, resultSet, property));
+                statements.add(
+                        createResultSetMapping(object, resultSet, position, property, "getByte")); //$NON-NLS-1$
+                statements.add(
+                        createResultSetNullMapping(object, resultSet, property));
                 break;
             case SHORT:
-                statements.add(createResultSetMapping(object, resultSet, position, property, "getShort"));
-                statements.add(createResultSetNullMapping(object, resultSet, property));
+                statements.add(
+                        createResultSetMapping(object, resultSet, position, property, "getShort")); //$NON-NLS-1$
+                statements.add(
+                        createResultSetNullMapping(object, resultSet, property));
                 break;
             case BOOLEAN:
-                statements.add(createResultSetMapping(object, resultSet, position, property, "getBoolean"));
-                statements.add(createResultSetNullMapping(object, resultSet, property));
+                statements.add(
+                        createResultSetMapping(object, resultSet, position, property, "getBoolean")); //$NON-NLS-1$
+                statements.add(
+                        createResultSetNullMapping(object, resultSet, property));
                 break;
             case DECIMAL:
-                statements.add(createResultSetMapping(object, resultSet, position, property, "getBigDecimal"));
+                statements.add(
+                        createResultSetMapping(object, resultSet, position, property, "getBigDecimal")); //$NON-NLS-1$
                 break;
             case TEXT:
                 statements.add(new ExpressionBuilder(f, resultSet)
-                    .method("getString", position)
+                    .method("getString", position) //$NON-NLS-1$
                     .toLocalVariableDeclaration(context.resolve(String.class), value));
                 statements.add(f.newIfStatement(
                         new ExpressionBuilder(f, value)
@@ -805,7 +841,7 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
                             .toExpression(),
                         f.newBlock(
                                 new ExpressionBuilder(f, text)
-                                    .method("set", value)
+                                    .method("set", value) //$NON-NLS-1$
                                     .toStatement(),
                                 new ExpressionBuilder(f, object)
                                     .method(context.getValueSetterName(property), text)
@@ -814,7 +850,7 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
                 break;
             case DATE:
                 statements.add(new ExpressionBuilder(f, resultSet)
-                    .method("getDate", position, calendar)
+                    .method("getDate", position, calendar) //$NON-NLS-1$
                     .toLocalVariableDeclaration(context.resolve(java.sql.Date.class), value));
                 statements.add(f.newIfStatement(
                         new ExpressionBuilder(f, value)
@@ -822,11 +858,12 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
                             .toExpression(),
                         f.newBlock(
                                 new ExpressionBuilder(f, calendar)
-                                    .method("setTime", value)
+                                    .method("setTime", value) //$NON-NLS-1$
                                     .toStatement(),
                                 new ExpressionBuilder(f, date)
-                                    .method("setElapsedDays", new TypeBuilder(f, context.resolve(DateUtil.class))
-                                        .method("getDayFromCalendar", calendar)
+                                    .method("setElapsedDays", //$NON-NLS-1$
+                                            new TypeBuilder(f, context.resolve(DateUtil.class))
+                                        .method("getDayFromCalendar", calendar) //$NON-NLS-1$
                                         .toExpression())
                                     .toStatement(),
                                 new ExpressionBuilder(f, object)
@@ -836,7 +873,7 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
                 break;
             case DATETIME:
                 statements.add(new ExpressionBuilder(f, resultSet)
-                    .method("getTimestamp", position, calendar)
+                    .method("getTimestamp", position, calendar) //$NON-NLS-1$
                     .toLocalVariableDeclaration(context.resolve(java.sql.Timestamp.class), value));
                 statements.add(f.newIfStatement(
                         new ExpressionBuilder(f, value)
@@ -844,11 +881,12 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
                             .toExpression(),
                         f.newBlock(
                                 new ExpressionBuilder(f, calendar)
-                                    .method("setTime", value)
+                                    .method("setTime", value) //$NON-NLS-1$
                                     .toStatement(),
                                 new ExpressionBuilder(f, datetime)
-                                    .method("setElapsedSeconds", new TypeBuilder(f, context.resolve(DateUtil.class))
-                                        .method("getSecondFromCalendar", calendar)
+                                    .method("setElapsedSeconds", //$NON-NLS-1$
+                                            new TypeBuilder(f, context.resolve(DateUtil.class))
+                                        .method("getSecondFromCalendar", calendar) //$NON-NLS-1$
                                         .toExpression())
                                     .toStatement(),
                                 new ExpressionBuilder(f, object)
@@ -872,7 +910,7 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
                 PropertyDeclaration property) {
             return f.newIfStatement(
                     new ExpressionBuilder(f, resultSet)
-                        .method("wasNull")
+                        .method("wasNull") //$NON-NLS-1$
                         .toExpression(),
                     f.newBlock(setNullToProperty(object, property)));
         }
@@ -903,10 +941,10 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
                     f.newBlock(f.newIfStatement(
                             new ExpressionBuilder(f, object)
                                 .method(context.getOptionGetterName(property))
-                                .method("isNull")
+                                .method("isNull") //$NON-NLS-1$
                                 .toExpression(),
                             f.newBlock(new ExpressionBuilder(f, statement)
-                                .method("setNull", position, createNullType(property))
+                                .method("setNull", position, createNullType(property)) //$NON-NLS-1$
                                 .toStatement()),
                             f.newBlock(createParameterSetter(object, statement, position, property)))));
         }
@@ -927,71 +965,79 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
             BasicTypeKind kind = toBasicKind(property.getType());
             switch (kind) {
             case INT:
-                statements.add(createParameterMapping(object, statement, position, property, "setInt"));
+                statements.add(
+                        createParameterMapping(object, statement, position, property, "setInt")); //$NON-NLS-1$
                 break;
             case LONG:
-                statements.add(createParameterMapping(object, statement, position, property, "setLong"));
+                statements.add(
+                        createParameterMapping(object, statement, position, property, "setLong")); //$NON-NLS-1$
                 break;
             case FLOAT:
-                statements.add(createParameterMapping(object, statement, position, property, "setFloat"));
+                statements.add(
+                        createParameterMapping(object, statement, position, property, "setFloat")); //$NON-NLS-1$
                 break;
             case DOUBLE:
-                statements.add(createParameterMapping(object, statement, position, property, "setDouble"));
+                statements.add(
+                        createParameterMapping(object, statement, position, property, "setDouble")); //$NON-NLS-1$
                 break;
             case BYTE:
-                statements.add(createParameterMapping(object, statement, position, property, "setByte"));
+                statements.add(
+                        createParameterMapping(object, statement, position, property, "setByte")); //$NON-NLS-1$
                 break;
             case SHORT:
-                statements.add(createParameterMapping(object, statement, position, property, "setShort"));
+                statements.add(
+                        createParameterMapping(object, statement, position, property, "setShort")); //$NON-NLS-1$
                 break;
             case BOOLEAN:
-                statements.add(createParameterMapping(object, statement, position, property, "setBoolean"));
+                statements.add(
+                        createParameterMapping(object, statement, position, property, "setBoolean")); //$NON-NLS-1$
                 break;
             case DECIMAL:
-                statements.add(createParameterMapping(object, statement, position, property, "setBigDecimal"));
+                statements.add(
+                        createParameterMapping(object, statement, position, property, "setBigDecimal")); //$NON-NLS-1$
                 break;
             case TEXT:
                 statements.add(new ExpressionBuilder(f, statement)
-                    .method("setString", position, new ExpressionBuilder(f, object)
+                    .method("setString", position, new ExpressionBuilder(f, object) //$NON-NLS-1$
                         .method(context.getValueGetterName(property))
-                        .method("toString")
+                        .method("toString") //$NON-NLS-1$
                         .toExpression())
                     .toStatement());
                 break;
             case DATE:
                 statements.add(new TypeBuilder(f, context.resolve(DateUtil.class))
-                    .method("setDayToCalendar",
+                    .method("setDayToCalendar", //$NON-NLS-1$
                             new ExpressionBuilder(f, object)
                                 .method(context.getValueGetterName(property))
-                                .method("getElapsedDays")
+                                .method("getElapsedDays") //$NON-NLS-1$
                                 .toExpression(),
                             calendar)
                     .toStatement());
                 statements.add(new ExpressionBuilder(f, date)
-                    .method("setTime", new ExpressionBuilder(f, calendar)
-                        .method("getTimeInMillis")
+                    .method("setTime", new ExpressionBuilder(f, calendar) //$NON-NLS-1$
+                        .method("getTimeInMillis") //$NON-NLS-1$
                         .toExpression())
                     .toStatement());
                 statements.add(new ExpressionBuilder(f, statement)
-                    .method("setDate", position, date)
+                    .method("setDate", position, date) //$NON-NLS-1$
                     .toStatement());
                 break;
             case DATETIME:
                 statements.add(new TypeBuilder(f, context.resolve(DateUtil.class))
-                    .method("setSecondToCalendar",
+                    .method("setSecondToCalendar", //$NON-NLS-1$
                             new ExpressionBuilder(f, object)
                                 .method(context.getValueGetterName(property))
-                                .method("getElapsedSeconds")
+                                .method("getElapsedSeconds") //$NON-NLS-1$
                                 .toExpression(),
                             calendar)
                     .toStatement());
                 statements.add(new ExpressionBuilder(f, datetime)
-                    .method("setTime", new ExpressionBuilder(f, calendar)
-                        .method("getTimeInMillis")
+                    .method("setTime", new ExpressionBuilder(f, calendar) //$NON-NLS-1$
+                        .method("getTimeInMillis") //$NON-NLS-1$
                         .toExpression())
                     .toStatement());
                 statements.add(new ExpressionBuilder(f, statement)
-                    .method("setTimestamp", position, datetime)
+                    .method("setTimestamp", position, datetime) //$NON-NLS-1$
                     .toStatement());
                 break;
             default:
@@ -1012,27 +1058,27 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
             BasicTypeKind kind = toBasicKind(property.getType());
             switch (kind) {
             case INT:
-                return "INTEGER";
+                return "INTEGER"; //$NON-NLS-1$
             case LONG:
-                return "BIGINT";
+                return "BIGINT"; //$NON-NLS-1$
             case FLOAT:
-                return "FLOAT";
+                return "FLOAT"; //$NON-NLS-1$
             case DOUBLE:
-                return "DOUBLE";
+                return "DOUBLE"; //$NON-NLS-1$
             case BYTE:
-                return "TINYINT";
+                return "TINYINT"; //$NON-NLS-1$
             case SHORT:
-                return "SMALLINT";
+                return "SMALLINT"; //$NON-NLS-1$
             case BOOLEAN:
-                return "BOOLEAN";
+                return "BOOLEAN"; //$NON-NLS-1$
             case DECIMAL:
-                return "DECIMAL";
+                return "DECIMAL"; //$NON-NLS-1$
             case TEXT:
-                return "VARCHAR";
+                return "VARCHAR"; //$NON-NLS-1$
             case DATE:
-                return "DATE";
+                return "DATE"; //$NON-NLS-1$
             case DATETIME:
-                return "TIMESTAMP";
+                return "TIMESTAMP"; //$NON-NLS-1$
             default:
                 throw new AssertionError(kind);
             }
@@ -1115,160 +1161,6 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
                 }
             }
             return results;
-        }
-    }
-
-    private static final class DescriptionGenerator {
-
-        // for reduce library dependencies
-        private static final String IMPORTER_TYPE_NAME = "com.asakusafw.vocabulary.windgate.JdbcImporterDescription";
-
-        // for reduce library dependencies
-        private static final String EXPORTER_TYPE_NAME = "com.asakusafw.vocabulary.windgate.JdbcExporterDescription";
-
-        private final EmitContext context;
-
-        private final ModelDeclaration model;
-
-        private final com.asakusafw.utils.java.model.syntax.Type supportClass;
-
-        private final ModelFactory f;
-
-        private final boolean importer;
-
-        private final JdbcTableTrait tableTrait;
-
-        private DescriptionGenerator(
-                EmitContext context,
-                ModelDeclaration model,
-                Name supportClassName,
-                boolean importer) {
-            assert context != null;
-            assert model != null;
-            assert supportClassName != null;
-            this.context = context;
-            this.model = model;
-            this.f = context.getModelFactory();
-            this.importer = importer;
-            this.tableTrait = model.getTrait(JdbcTableTrait.class);
-            this.supportClass = context.resolve(supportClassName);
-
-            assert tableTrait != null;
-        }
-
-        static void emitImporter(
-                EmitContext context,
-                ModelDeclaration model,
-                Name supportClassName) throws IOException {
-            assert context != null;
-            assert model != null;
-            assert supportClassName != null;
-            DescriptionGenerator emitter = new DescriptionGenerator(context, model, supportClassName, true);
-            emitter.emit();
-        }
-
-        static void emitExporter(
-                EmitContext context,
-                ModelDeclaration model,
-                Name supportClassName) throws IOException {
-            assert context != null;
-            assert model != null;
-            assert supportClassName != null;
-            DescriptionGenerator emitter = new DescriptionGenerator(context, model, supportClassName, false);
-            emitter.emit();
-        }
-
-        private void emit() throws IOException {
-            ClassDeclaration decl = f.newClassDeclaration(
-                    new JavadocBuilder(f)
-                        .text("An abstract implementation of ")
-                        .linkType(context.resolve(model.getSymbol()))
-                        .text(" {0} description using WindGate JDBC",
-                                importer ? "importer" : "exporter")
-                        .text(".")
-                        .toJavadoc(),
-                    new AttributeBuilder(f)
-                        .Public()
-                        .Abstract()
-                        .toAttributes(),
-                    context.getTypeName(),
-                    context.resolve(Models.toName(f, importer ? IMPORTER_TYPE_NAME : EXPORTER_TYPE_NAME)),
-                    Collections.<com.asakusafw.utils.java.model.syntax.Type>emptyList(),
-                    createMembers());
-            context.emit(decl);
-        }
-
-        private List<TypeBodyDeclaration> createMembers() {
-            List<TypeBodyDeclaration> results = Lists.create();
-            results.add(createGetModelType());
-            results.add(createGetJdbcSupport());
-            results.add(createGetTableName());
-            results.add(createGetColumnNames());
-            return results;
-        }
-
-        private MethodDeclaration createGetModelType() {
-            return createGetter(
-                    new TypeBuilder(f, context.resolve(Class.class))
-                        .parameterize(f.newWildcard(
-                                WildcardBoundKind.UPPER_BOUNDED,
-                                context.resolve(model.getSymbol())))
-                        .toType(),
-                    "getModelType",
-                    f.newClassLiteral(context.resolve(model.getSymbol())));
-        }
-
-        private MethodDeclaration createGetJdbcSupport() {
-            return createGetter(
-                    new TypeBuilder(f, context.resolve(Class.class))
-                        .parameterize(supportClass)
-                        .toType(),
-                    "getJdbcSupport",
-                    f.newClassLiteral(supportClass));
-        }
-
-        private MethodDeclaration createGetTableName() {
-            return createGetter(
-                    context.resolve(String.class),
-                    "getTableName",
-                    Models.toLiteral(f, tableTrait.getName()));
-        }
-
-        private MethodDeclaration createGetColumnNames() {
-            List<Expression> arguments = Lists.create();
-            for (PropertyDeclaration property : model.getDeclaredProperties()) {
-                JdbcColumnTrait columnTrait = property.getTrait(JdbcColumnTrait.class);
-                if (columnTrait != null) {
-                    arguments.add(Models.toLiteral(f, columnTrait.getName()));
-                }
-            }
-            return createGetter(
-                    new TypeBuilder(f, context.resolve(List.class))
-                        .parameterize(context.resolve(String.class))
-                        .toType(),
-                    "getColumnNames",
-                    new TypeBuilder(f, context.resolve(Arrays.class))
-                        .method("asList", arguments)
-                        .toExpression());
-        }
-
-        private MethodDeclaration createGetter(
-                com.asakusafw.utils.java.model.syntax.Type type,
-                String name,
-                Expression value) {
-            assert type != null;
-            assert name != null;
-            assert value != null;
-            return f.newMethodDeclaration(
-                    null,
-                    new AttributeBuilder(f)
-                        .annotation(context.resolve(Override.class))
-                        .Public()
-                        .toAttributes(),
-                    type,
-                    f.newSimpleName(name),
-                    Collections.<FormalParameterDeclaration>emptyList(),
-                    Arrays.asList(new ExpressionBuilder(f, value).toReturnStatement()));
         }
     }
 }

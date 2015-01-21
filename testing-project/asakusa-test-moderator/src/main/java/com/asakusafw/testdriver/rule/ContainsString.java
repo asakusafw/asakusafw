@@ -34,7 +34,7 @@ public class ContainsString implements ValuePredicate<String> {
     @Override
     public String describeExpected(String expected, String actual) {
         if (expected == null) {
-            return "(error)";
+            return "(error)"; //$NON-NLS-1$
         }
         return MessageFormat.format(
                 "文字列{0}を含む",

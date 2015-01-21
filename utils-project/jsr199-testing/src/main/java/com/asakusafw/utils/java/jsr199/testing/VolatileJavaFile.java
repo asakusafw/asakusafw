@@ -43,7 +43,7 @@ public class VolatileJavaFile extends SimpleJavaFileObject {
      * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
      */
     public VolatileJavaFile(String path) {
-        this(path, "");
+        this(path, ""); //$NON-NLS-1$
     }
 
     /**
@@ -72,7 +72,7 @@ public class VolatileJavaFile extends SimpleJavaFileObject {
 
     @Override
     public Writer openWriter() {
-        this.contents = "";
+        this.contents = ""; //$NON-NLS-1$
         return new StringWriter() {
             @Override
             public void close() {
@@ -89,7 +89,7 @@ public class VolatileJavaFile extends SimpleJavaFileObject {
             return new URI(
                 URI_SCHEME,
                 null,
-                "/" + path.replace('\\', '/') + JavaFileObject.Kind.SOURCE.extension,
+                "/" + path.replace('\\', '/') + JavaFileObject.Kind.SOURCE.extension, //$NON-NLS-1$
                 null);
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException(e);

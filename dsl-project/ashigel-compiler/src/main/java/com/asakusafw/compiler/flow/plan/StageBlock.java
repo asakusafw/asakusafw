@@ -80,7 +80,7 @@ public class StageBlock {
         if (stageNumber == NOT_SET) {
             throw new IllegalArgumentException();
         }
-        LOG.debug("{}のステージ番号を{}に設定します", this, stageNumber);
+        LOG.debug("applying stage number {}: {}", stageNumber, this); //$NON-NLS-1$
         this.stageNumber = stageNumber;
     }
 
@@ -145,7 +145,7 @@ public class StageBlock {
      * @return 一つでも変更があった場合のみ{@code true}
      */
     public boolean compaction() {
-        LOG.debug("{}をコンパクションします", this);
+        LOG.debug("applying compaction: {}", this); //$NON-NLS-1$
         boolean changed = false;
         if (reduceBlocks.isEmpty() == false) {
             return changed;
@@ -159,7 +159,7 @@ public class StageBlock {
                 changed |= block.compaction();
             }
             if (block.isEmpty()) {
-                LOG.debug("{}の{}は空になったため削除されます", this, block);
+                LOG.debug("removed empty block {}: {}", block, this); //$NON-NLS-1$
                 iter.remove();
                 changed = true;
             }
@@ -187,9 +187,8 @@ public class StageBlock {
                 continue;
             }
 
-            LOG.debug("{}から{}へはバイパスされます", blockInput, blockOutput);
-
-            // 入力 -> 恒等関数 -> 出力 のパターンはバイパスしてしまう
+            // bypass (input -> identity-operator+ -> output)
+            LOG.debug("reducing identity path: {} -> {}", blockInput, blockOutput); //$NON-NLS-1$
             bypass(blockInput, blockOutput);
             changed = true;
         }
@@ -221,7 +220,7 @@ public class StageBlock {
     @Override
     public String toString() {
         return MessageFormat.format(
-                "StageBlock(id={0}, maps={1}, reduces={2})",
+                "StageBlock(id={0}, maps={1}, reduces={2})", //$NON-NLS-1$
                 stageNumber == NOT_SET
                         ? '@' + String.valueOf(hashCode())
                         : String.valueOf(stageNumber),

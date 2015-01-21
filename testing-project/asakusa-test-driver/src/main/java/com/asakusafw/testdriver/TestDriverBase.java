@@ -41,7 +41,7 @@ import com.asakusafw.vocabulary.flow.FlowPart;
  */
 public abstract class TestDriverBase {
 
-    private static final String FLOW_OPERATOR_FACTORY_METHOD_NAME = "create";
+    private static final String FLOW_OPERATOR_FACTORY_METHOD_NAME = "create"; //$NON-NLS-1$
 
     static {
         TestingEnvironmentConfigurator.initialize();

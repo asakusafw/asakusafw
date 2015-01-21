@@ -95,7 +95,7 @@ public final class Maps {
             throw new IllegalArgumentException("pairs must not be null"); //$NON-NLS-1$
         }
         if (pairs.length % 2 != 0) {
-            throw new IllegalArgumentException("pairs must ");
+            throw new IllegalArgumentException("pairs must have even numbers of elements"); //$NON-NLS-1$
         }
         Map<T, T> result = new HashMap<T, T>();
         for (int i = 0; i < pairs.length; i += 2) {

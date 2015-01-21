@@ -30,9 +30,9 @@ import com.asakusafw.utils.java.model.syntax.TypeDeclaration;
  */
 public abstract class Emitter {
 
-    private static final String EXTENSION = ".java";
+    private static final String EXTENSION = ".java"; //$NON-NLS-1$
 
-    private static final String PACKAGE_INFO = "package-info" + EXTENSION;
+    private static final String PACKAGE_INFO = "package-info" + EXTENSION; //$NON-NLS-1$
 
     /**
      * 指定のコンパイル単位に書き出すためのライターを返す。

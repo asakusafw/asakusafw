@@ -128,7 +128,7 @@ public class LegacyBridgeOutputCommitter extends org.apache.hadoop.mapred.Output
         }
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Progressable object is found (jobId={0}, object={1})",
+                    "Progressable object is found (jobId={0}, object={1})", //$NON-NLS-1$
                     jobContext.getJobID(),
                     progressable));
         }

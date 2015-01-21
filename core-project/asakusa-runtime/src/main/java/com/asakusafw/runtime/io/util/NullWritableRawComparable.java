@@ -79,6 +79,6 @@ public final class NullWritableRawComparable implements WritableRawComparable {
 
     @Override
     public String toString() {
-        return "(null)";
+        return "(null)"; //$NON-NLS-1$
     }
 }

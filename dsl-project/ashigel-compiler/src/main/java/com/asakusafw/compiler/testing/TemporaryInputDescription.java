@@ -43,7 +43,7 @@ public abstract class TemporaryInputDescription implements ImporterDescription {
     @Override
     public String toString() {
         return MessageFormat.format(
-                "TemporaryImporter({0})",
+                "TemporaryImporter({0})", //$NON-NLS-1$
                 getPaths());
     }
 }

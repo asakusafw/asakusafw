@@ -77,7 +77,7 @@ public class FileExporterRetriever extends BaseExporterRetriever<FileExporterDes
     public void truncate(
             FileExporterDescription description,
             TestContext context) throws IOException {
-        LOG.info("エクスポート先をクリアしています: {}", description);
+        LOG.info("cleaning output files: {}", description);
         VariableTable variables = createVariables(context);
         Configuration config = configurations.newInstance();
         String resolved = variables.parse(description.getPathPrefix(), false);
@@ -92,9 +92,9 @@ public class FileExporterRetriever extends BaseExporterRetriever<FileExporterDes
             LOG.warn("エクスポート先をディレクトリごと削除します: {}", output);
             target = fs.makeQualified(output);
         }
-        LOG.debug("ファイルを削除します: {}", target);
+        LOG.debug("start removing file: {}", target);
         boolean succeed = fs.delete(target, true);
-        LOG.debug("ファイルを削除しました (succeed={}): {}", succeed, target);
+        LOG.debug("finish removing file (succeed={}): {}", succeed, target);
     }
 
     @Override
@@ -102,7 +102,7 @@ public class FileExporterRetriever extends BaseExporterRetriever<FileExporterDes
             DataModelDefinition<V> definition,
             FileExporterDescription description,
             TestContext context) throws IOException {
-        LOG.info("エクスポート先の初期値を設定します: {}", description);
+        LOG.info("creating output file: {}", description);
         checkType(definition, description);
         VariableTable variables = createVariables(context);
         String destination = description.getPathPrefix().replace('*', '_');

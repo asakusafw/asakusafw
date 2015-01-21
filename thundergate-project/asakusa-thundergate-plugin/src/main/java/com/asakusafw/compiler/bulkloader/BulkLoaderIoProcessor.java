@@ -111,7 +111,7 @@ public class BulkLoaderIoProcessor extends ExternalIoDescriptionProcessor {
 
     @Override
     public boolean validate(List<InputDescription> inputs, List<OutputDescription> outputs) {
-        LOG.debug("バルクローダーの入出力を検査中: {}->{}", inputs, outputs);
+        LOG.debug("validating ThunderGate I/O: {}->{}", inputs, outputs);
         boolean valid = true;
         valid &= checkImports(inputs);
         valid &= checkExports(outputs);
