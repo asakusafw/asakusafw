@@ -158,7 +158,7 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
         desc.setTableName(getTableName(model));
         desc.setColumnNames(getColumnNames(model));
         desc.setSupportClassName(supportName);
-        JdbcProcessDescriptionGenerator.generateImporter(next, desc);
+        JdbcProcessDescriptionGenerator.generateExporter(next, desc);
     }
 
     private boolean isTarget(ModelDeclaration model) {
