@@ -103,7 +103,7 @@ public class OutputDescription implements FlowElementDescription {
         if (newName == null) {
             throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
         }
-        throw new UnsupportedOperationException("Renaming output does not permitted");
+        throw new UnsupportedOperationException("Renaming output does not permitted"); //$NON-NLS-1$
     }
 
     @Override
@@ -159,10 +159,10 @@ public class OutputDescription implements FlowElementDescription {
     @Override
     public String toString() {
         return MessageFormat.format(
-                "{0}'{'name={1}'}'",
+                "{0}'{'name={1}'}'", //$NON-NLS-1$
                 exporterDescription != null
                     ? exporterDescription.getClass().getSimpleName()
-                    : "フロー出力",
+                    : "N/A", //$NON-NLS-1$
                 name);
     }
 }

@@ -42,7 +42,7 @@ public class DirectExporterDescription extends TemporaryOutputDescription {
         Precondition.checkMustNotBeNull(pathPrefix, "pathPrefix"); //$NON-NLS-1$
         if (Location.fromPath(pathPrefix, '/').isPrefix() == false) {
             throw new IllegalArgumentException(MessageFormat.format(
-                    "pathPrefix must be an path prefix (ends with {1}): {0}",
+                    "pathPrefix must be an path prefix (ends with {1}): {0}", //$NON-NLS-1$
                     pathPrefix,
                     Location.WILDCARD_SUFFIX));
         }

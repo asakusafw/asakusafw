@@ -333,7 +333,7 @@ public final class JobFlowDriver {
             Object... args) {
         StringBuilder buf = new StringBuilder();
         buf.append(format(message, args));
-        buf.append(" - ");
+        buf.append(" - "); //$NON-NLS-1$
         buf.append(description.getName());
         String text = buf.toString();
         diagnostics.add(text);

@@ -60,34 +60,34 @@ public final class AllBatchCompilerDriver {
 
     private static final Options OPTIONS;
     static {
-        OPT_OUTPUT = new Option("output", true, "コンパイル結果を出力する先のディレクトリ");
-        OPT_OUTPUT.setArgName("/path/to/output");
+        OPT_OUTPUT = new Option("output", true, "コンパイル結果を出力する先のディレクトリ"); //$NON-NLS-1$
+        OPT_OUTPUT.setArgName("/path/to/output"); //$NON-NLS-1$
         OPT_OUTPUT.setValueSeparator(File.pathSeparatorChar);
         OPT_OUTPUT.setRequired(true);
 
-        OPT_PACKAGE = new Option("package", true, "コンパイル結果のベースパッケージ");
-        OPT_PACKAGE.setArgName("pkg.name");
+        OPT_PACKAGE = new Option("package", true, "コンパイル結果のベースパッケージ"); //$NON-NLS-1$
+        OPT_PACKAGE.setArgName("pkg.name"); //$NON-NLS-1$
         OPT_PACKAGE.setRequired(true);
 
-        OPT_HADOOPWORK = new Option("hadoopwork", true, "Hadoop上でのワーキングディレクトリ (ホームディレクトリからの相対パス)");
-        OPT_HADOOPWORK.setArgName("batch/working");
+        OPT_HADOOPWORK = new Option("hadoopwork", true, "Hadoop上でのワーキングディレクトリ (ホームディレクトリからの相対パス)"); //$NON-NLS-1$
+        OPT_HADOOPWORK.setArgName("batch/working"); //$NON-NLS-1$
         OPT_HADOOPWORK.setRequired(true);
 
-        OPT_COMPILERWORK = new Option("compilerwork", true, "コンパイラのワーキングディレクトリ");
-        OPT_COMPILERWORK.setArgName("/path/to/temporary");
+        OPT_COMPILERWORK = new Option("compilerwork", true, "コンパイラのワーキングディレクトリ"); //$NON-NLS-1$
+        OPT_COMPILERWORK.setArgName("/path/to/temporary"); //$NON-NLS-1$
         OPT_COMPILERWORK.setRequired(false);
 
-        OPT_LINK = new Option("link", true, "リンクするクラスライブラリの一覧");
-        OPT_LINK.setArgName("classlib.jar" + File.pathSeparatorChar + "/path/to/classes");
+        OPT_LINK = new Option("link", true, "リンクするクラスライブラリの一覧"); //$NON-NLS-1$
+        OPT_LINK.setArgName("classlib.jar" + File.pathSeparatorChar + "/path/to/classes"); //$NON-NLS-1$ //$NON-NLS-2$
 
-        OPT_PLUGIN = new Option("plugin", true, "利用するコンパイラプラグインの一覧");
-        OPT_PLUGIN.setArgName("plugin-1.jar" + File.pathSeparatorChar + "plugin-2.jar");
+        OPT_PLUGIN = new Option("plugin", true, "利用するコンパイラプラグインの一覧"); //$NON-NLS-1$
+        OPT_PLUGIN.setArgName("plugin-1.jar" + File.pathSeparatorChar + "plugin-2.jar"); //$NON-NLS-1$ //$NON-NLS-2$
         OPT_PLUGIN.setRequired(false);
 
-        OPT_SKIPERROR = new Option("skiperror", "コンパイルエラーが発生しても続けて次のバッチをコンパイルする");
+        OPT_SKIPERROR = new Option("skiperror", "コンパイルエラーが発生しても続けて次のバッチをコンパイルする"); //$NON-NLS-1$
 
-        OPT_SCANPATH = new Option("scanpath", true, "コンパイル対象のバッチを含むクラスライブラリ");
-        OPT_SCANPATH.setArgName("/path/to/classlib");
+        OPT_SCANPATH = new Option("scanpath", true, "コンパイル対象のバッチを含むクラスライブラリ"); //$NON-NLS-1$
+        OPT_SCANPATH.setArgName("/path/to/classlib"); //$NON-NLS-1$
         OPT_SCANPATH.setRequired(true);
 
         OPTIONS = new Options();
@@ -115,7 +115,7 @@ public final class AllBatchCompilerDriver {
             formatter.setWidth(Integer.MAX_VALUE);
             formatter.printHelp(
                     MessageFormat.format(
-                            "java -classpath ... {0}",
+                            "java -classpath ... {0}", //$NON-NLS-1$
                             AllBatchCompilerDriver.class.getName()),
                     OPTIONS,
                     true);
@@ -207,7 +207,9 @@ public final class AllBatchCompilerDriver {
         if (succeeded) {
             LOG.info("バッチアプリケーションの生成が完了しました");
         } else {
-            LOG.error("バッチをコンパイルする際にエラーが発生しました: {}", errorBatches);
+            LOG.error(MessageFormat.format(
+                    "バッチをコンパイルする際にエラーが発生しました: {0}",
+                    errorBatches));
         }
 
         return succeeded;
@@ -216,30 +218,32 @@ public final class AllBatchCompilerDriver {
     private static Class<? extends BatchDescription> getBatchDescription(Location location) {
         assert location != null;
         if (isValidClassFileName(location) == false) {
-            LOG.debug("{}はバッチのクラスファイルではありません", location);
+            LOG.debug("invalid batch class name: {}", location); //$NON-NLS-1$
             return null;
         }
         String className = toClassName(location);
         Class<? extends BatchDescription> batchClass = loadIfBatchClass(className);
         if (batchClass == null) {
-            LOG.debug("{}はバッチクラスではありません", className);
+            LOG.debug("not a batch class: {}", className); //$NON-NLS-1$
             return null;
         }
-        LOG.info("バッチクラスをコンパイルします: {}", className);
+        LOG.info(MessageFormat.format(
+                "バッチクラスをコンパイルします: {0}",
+                className));
         return batchClass;
     }
 
     private static String toClassName(Location location) {
         assert location != null;
         String className = location.toPath('.');
-        className = className.substring(0, className.length() - ".class".length());
+        className = className.substring(0, className.length() - ".class".length()); //$NON-NLS-1$
         return className;
     }
 
     private static boolean isValidClassFileName(Location location) {
         assert location != null;
         String simpleName = location.getName();
-        if (simpleName.endsWith(".class") == false) {
+        if (simpleName.endsWith(".class") == false) { //$NON-NLS-1$
             return false;
         }
         for (Location current = location.getParent();
@@ -262,12 +266,14 @@ public final class AllBatchCompilerDriver {
                 return null;
             }
             if (aClass.isAnnotationPresent(Batch.class) == false) {
-                LOG.warn("{}には@Batchの指定がありません", aClass.getName());
+                LOG.warn(MessageFormat.format(
+                        "{0}には@Batchの指定がありません",
+                        aClass.getName()));
                 return null;
             }
             return aClass.asSubclass(BatchDescription.class);
         } catch (ClassNotFoundException e) {
-            LOG.debug("クラスのロードに失敗しました", e);
+            LOG.debug("failed to load batch class", e); //$NON-NLS-1$
             return null;
         }
     }
@@ -282,7 +288,7 @@ public final class AllBatchCompilerDriver {
         }
         if (scanPath.isDirectory()) {
             return new FileRepository(scanPath);
-        } else if (scanPath.isFile() && (name.endsWith(".zip") || name.endsWith(".jar"))) {
+        } else if (scanPath.isFile() && (name.endsWith(".zip") || name.endsWith(".jar"))) { //$NON-NLS-1$ //$NON-NLS-2$
             return new ZipRepository(scanPath);
         } else {
             throw new IOException(MessageFormat.format(

@@ -84,7 +84,7 @@ public final class Work {
     @Override
     public String toString() {
         return MessageFormat.format(
-                "{0}'{'description={1}, declaring={2}, dependencies={3}'}'",
+                "{0}'{'description={1}, declaring={2}, dependencies={3}'}'", //$NON-NLS-1$
                 getClass().getSimpleName(),
                 description,
                 declaring.getClass().getName(),

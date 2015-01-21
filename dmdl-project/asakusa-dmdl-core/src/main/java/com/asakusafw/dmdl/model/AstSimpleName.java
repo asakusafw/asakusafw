@@ -79,11 +79,9 @@ public class AstSimpleName extends AbstractAstNode implements AstName {
         start++;
         while (true) {
             int next = identifier.indexOf('_', start);
-            if (next == start) {
-                // empty word
-            } else if (next < 0) {
+            if (next < 0) {
                 break;
-            } else {
+            } else if (next > start) {
                 results.add(identifier.substring(start, next));
             }
             start = next + 1;

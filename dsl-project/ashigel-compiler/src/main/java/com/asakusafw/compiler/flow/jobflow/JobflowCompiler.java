@@ -93,8 +93,7 @@ public class JobflowCompiler {
             Collection<StageModel> stageModels) throws IOException {
         Precondition.checkMustNotBeNull(graph, "graph"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(stageModels, "stageModels"); //$NON-NLS-1$
-        LOG.debug("フロー{}を解析しています",
-                graph.getInput().getSource().getDescription().getName());
+        LOG.debug("analyzing jobflow: {}", graph.getInput().getSource().getDescription().getName()); //$NON-NLS-1$
         JobflowModel jobflow = analyze(graph, stageModels);
         compileClients(jobflow);
         CompiledJobflow compiled = emit(jobflow);
@@ -118,8 +117,7 @@ public class JobflowCompiler {
 
     private CompiledJobflow emit(JobflowModel model) throws IOException {
         Precondition.checkMustNotBeNull(model, "model"); //$NON-NLS-1$
-        LOG.debug("{}.{}に対する外部入出力の記述を生成します",
-                model.getBatchId(), model.getFlowId());
+        LOG.debug("generating external I/O tasks: {}.{}", model.getBatchId(), model.getFlowId()); //$NON-NLS-1$
         Map<ExternalIoDescriptionProcessor, List<Import>> imports = group(model.getImports());
         Map<ExternalIoDescriptionProcessor, List<Export>> exports = group(model.getExports());
         fillEmptyList(imports, exports.keySet());
@@ -137,13 +135,13 @@ public class JobflowCompiler {
 
             IoContext context = createEmitContext(proc, importGroup, exportGroup);
 
-            LOG.debug("{}によって外部入出力の記述を生成しています", proc.getClass().getName());
+            LOG.debug("generating external I/O descriptions: {}", proc.getClass().getName()); //$NON-NLS-1$
             proc.emitPackage(context);
 
-            LOG.debug("{}によってインポーターの記述を生成しています", proc.getClass().getName());
+            LOG.debug("generating prologue stages: {}", proc.getClass().getName()); //$NON-NLS-1$
             prologues.addAll(proc.emitPrologue(context));
 
-            LOG.debug("{}によってエクスポーターの記述を生成しています", proc.getClass().getName());
+            LOG.debug("generating epilogue stages: {}", proc.getClass().getName()); //$NON-NLS-1$
             epilogues.addAll(proc.emitEpilogue(context));
 
             commands.add(proc.createCommandProvider(context));
@@ -177,64 +175,66 @@ public class JobflowCompiler {
 
     private void reportSummary(JobflowModel jobflow) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Compilation Report: {} - {}", jobflow.getBatchId(), jobflow.getFlowId());
-            LOG.debug("Imports: {}", jobflow.getImports().size());
-            LOG.debug("Exports: {}", jobflow.getExports().size());
-            LOG.debug("Stages : {}", jobflow.getStages().size());
-            LOG.debug("Details:");
+            LOG.debug("Compilation Report: {} - {}", jobflow.getBatchId(), jobflow.getFlowId()); //$NON-NLS-1$
+            LOG.debug("Imports: {}", jobflow.getImports().size()); //$NON-NLS-1$
+            LOG.debug("Exports: {}", jobflow.getExports().size()); //$NON-NLS-1$
+            LOG.debug("Stages : {}", jobflow.getStages().size()); //$NON-NLS-1$
+            LOG.debug("Details:"); //$NON-NLS-1$
             for (Import stage : jobflow.getImports()) {
-                LOG.debug("====");
-                LOG.debug("Import: {}", stage.getId());
-                LOG.debug("Description: {}", stage.getDescription().getImporterDescription().getClass().getName());
-                LOG.debug("Target: {}", stage.getInputInfo().getLocations());
-                LOG.debug("Format: {}", stage.getInputInfo().getFormat().getName());
+                LOG.debug("===="); //$NON-NLS-1$
+                LOG.debug("Import: {}", stage.getId()); //$NON-NLS-1$
+                LOG.debug("Description: {}", //$NON-NLS-1$
+                        stage.getDescription().getImporterDescription().getClass().getName());
+                LOG.debug("Target: {}", stage.getInputInfo().getLocations()); //$NON-NLS-1$
+                LOG.debug("Format: {}", stage.getInputInfo().getFormat().getName()); //$NON-NLS-1$
             }
             for (CompiledStage stage : jobflow.getCompiled().getPrologueStages()) {
-                LOG.debug("====");
-                LOG.debug("Prologue: {}", stage.getStageId());
-                LOG.debug("Client: {}", stage.getQualifiedName().toNameString());
+                LOG.debug("===="); //$NON-NLS-1$
+                LOG.debug("Prologue: {}", stage.getStageId()); //$NON-NLS-1$
+                LOG.debug("Client: {}", stage.getQualifiedName().toNameString()); //$NON-NLS-1$
             }
             Graph<Stage> graph = jobflow.getDependencyGraph();
             Graph<Stage> tgraph = Graphs.transpose(graph);
             for (Stage stage : jobflow.getStages()) {
-                LOG.debug("====");
-                LOG.debug("Stage: {}", stage.getCompiled().getStageId());
-                LOG.debug("Client: {}", stage.getCompiled().getQualifiedName().toNameString());
+                LOG.debug("===="); //$NON-NLS-1$
+                LOG.debug("Stage: {}", stage.getCompiled().getStageId()); //$NON-NLS-1$
+                LOG.debug("Client: {}", stage.getCompiled().getQualifiedName().toNameString()); //$NON-NLS-1$
                 for (Process unit : stage.getProcesses()) {
-                    LOG.debug("Input: {} ({})", unit.getResolvedLocations(), unit.getDataType());
+                    LOG.debug("Input: {} ({})", unit.getResolvedLocations(), unit.getDataType()); //$NON-NLS-1$
                 }
                 for (Delivery unit : stage.getDeliveries()) {
-                    LOG.debug("Output: {} ({})", unit.getInputInfo().getLocations(), unit.getDataType());
+                    LOG.debug("Output: {} ({})", unit.getInputInfo().getLocations(), unit.getDataType()); //$NON-NLS-1$
                 }
                 Reduce reducer = stage.getReduceOrNull();
                 if (reducer != null) {
-                    LOG.debug("ShuffleKey: {}", reducer.getKeyTypeName().toNameString());
-                    LOG.debug("ShuffleValue: {}", reducer.getValueTypeName().toNameString());
-                    LOG.debug("Partitioner: {}", reducer.getPartitionerTypeName().toNameString());
-                    LOG.debug("Grouping: {}", reducer.getGroupingComparatorTypeName().toNameString());
-                    LOG.debug("Sort: {}", reducer.getSortComparatorTypeName().toNameString());
-                    LOG.debug("Combiner: {}", reducer.getCombinerTypeNameOrNull() == null
-                            ? "N/A" : reducer.getCombinerTypeNameOrNull().toNameString());
-                    LOG.debug("Reducer: {}", reducer.getReducerTypeName().toNameString());
+                    LOG.debug("ShuffleKey: {}", reducer.getKeyTypeName().toNameString()); //$NON-NLS-1$
+                    LOG.debug("ShuffleValue: {}", reducer.getValueTypeName().toNameString()); //$NON-NLS-1$
+                    LOG.debug("Partitioner: {}", reducer.getPartitionerTypeName().toNameString()); //$NON-NLS-1$
+                    LOG.debug("Grouping: {}", reducer.getGroupingComparatorTypeName().toNameString()); //$NON-NLS-1$
+                    LOG.debug("Sort: {}", reducer.getSortComparatorTypeName().toNameString()); //$NON-NLS-1$
+                    LOG.debug("Combiner: {}", reducer.getCombinerTypeNameOrNull() == null //$NON-NLS-1$
+                            ? "N/A" : reducer.getCombinerTypeNameOrNull().toNameString()); //$NON-NLS-1$
+                    LOG.debug("Reducer: {}", reducer.getReducerTypeName().toNameString()); //$NON-NLS-1$
                 }
                 for (SideData data : stage.getSideData()) {
-                    LOG.debug("SideData: {} ({})", data.getLocalName(), data.getClusterPaths());
+                    LOG.debug("SideData: {} ({})", data.getLocalName(), data.getClusterPaths()); //$NON-NLS-1$
                 }
-                LOG.debug("Upstreams: {}", getStageIds(graph.getConnected(stage)));
-                LOG.debug("Downstreams: {}", getStageIds(tgraph.getConnected(stage)));
+                LOG.debug("Upstreams: {}", getStageIds(graph.getConnected(stage))); //$NON-NLS-1$
+                LOG.debug("Downstreams: {}", getStageIds(tgraph.getConnected(stage))); //$NON-NLS-1$
             }
             for (CompiledStage stage : jobflow.getCompiled().getEpilogueStages()) {
-                LOG.debug("====");
-                LOG.debug("Epilogue: {}", stage.getStageId());
-                LOG.debug("Client: {}", stage.getQualifiedName().toNameString());
+                LOG.debug("===="); //$NON-NLS-1$
+                LOG.debug("Epilogue: {}", stage.getStageId()); //$NON-NLS-1$
+                LOG.debug("Client: {}", stage.getQualifiedName().toNameString()); //$NON-NLS-1$
             }
             for (Export stage : jobflow.getExports()) {
-                LOG.debug("====");
-                LOG.debug("Export: {}", stage.getId());
-                LOG.debug("Description: {}", stage.getDescription().getExporterDescription().getClass().getName());
-                LOG.debug("Source: {}", stage.getResolvedLocations());
+                LOG.debug("===="); //$NON-NLS-1$
+                LOG.debug("Export: {}", stage.getId()); //$NON-NLS-1$
+                LOG.debug("Description: {}", //$NON-NLS-1$
+                        stage.getDescription().getExporterDescription().getClass().getName());
+                LOG.debug("Source: {}", stage.getResolvedLocations()); //$NON-NLS-1$
             }
-            LOG.debug("====");
+            LOG.debug("===="); //$NON-NLS-1$
         }
     }
 

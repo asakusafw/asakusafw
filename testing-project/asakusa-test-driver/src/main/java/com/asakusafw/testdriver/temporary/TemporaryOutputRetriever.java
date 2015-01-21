@@ -68,7 +68,7 @@ public class TemporaryOutputRetriever extends BaseExporterRetriever<TemporaryOut
     public void truncate(
             TemporaryOutputDescription description,
             TestContext context) throws IOException {
-        LOG.debug("Deleting output directory: {}", description);
+        LOG.debug("Deleting output directory: {}", description); //$NON-NLS-1$
         VariableTable variables = createVariables(context);
         Configuration config = configurations.newInstance();
         FileSystem fs = FileSystem.get(config);
@@ -83,9 +83,9 @@ public class TemporaryOutputRetriever extends BaseExporterRetriever<TemporaryOut
             LOG.warn("Output directory will be deleted: {}", output);
             target = fs.makeQualified(output);
         }
-        LOG.debug("Deleting output target: {}", target);
+        LOG.debug("Deleting output target: {}", target); //$NON-NLS-1$
         boolean succeed = fs.delete(target, true);
-        LOG.debug("Deleted output target (succeed={}): {}", succeed, target);
+        LOG.debug("Deleted output target (succeed={}): {}", succeed, target); //$NON-NLS-1$
     }
 
     @Override
@@ -93,7 +93,7 @@ public class TemporaryOutputRetriever extends BaseExporterRetriever<TemporaryOut
             DataModelDefinition<V> definition,
             TemporaryOutputDescription description,
             TestContext context) throws IOException {
-        LOG.debug("Preparing initial output: {}", description);
+        LOG.debug("Preparing initial output: {}", description); //$NON-NLS-1$
         checkType(definition, description);
         VariableTable variables = createVariables(context);
         String destination = description.getPathPrefix().replace('*', '_');
@@ -108,7 +108,7 @@ public class TemporaryOutputRetriever extends BaseExporterRetriever<TemporaryOut
             DataModelDefinition<V> definition,
             TemporaryOutputDescription description,
             TestContext context) throws IOException {
-        LOG.debug("Retrieving output: {}", description);
+        LOG.debug("Retrieving output: {}", description); //$NON-NLS-1$
         VariableTable variables = createVariables(context);
         checkType(definition, description);
         Configuration conf = configurations.newInstance();

@@ -30,7 +30,7 @@ public class Location {
     /**
      * パス接頭辞を表現する場合の接尾辞を表す。
      */
-    public static final String WILDCARD_SUFFIX = "-*";
+    public static final String WILDCARD_SUFFIX = "-*"; //$NON-NLS-1$
 
     private final Location parent;
 

@@ -47,18 +47,18 @@ public class TsvFormatDriver extends ModelAttributeDriver {
     /**
      * The attribute name.
      */
-    public static final String TARGET_NAME = "directio.tsv";
+    public static final String TARGET_NAME = "directio.tsv"; //$NON-NLS-1$
 
     /**
      * The element name of charset name.
      */
-    public static final String ELEMENT_CHARSET_NAME = "charset";
+    public static final String ELEMENT_CHARSET_NAME = "charset"; //$NON-NLS-1$
 
     /**
      * The element name of codec name.
      * @since 0.5.2
      */
-    public static final String ELEMENT_CODEC_NAME = "compression";
+    public static final String ELEMENT_CODEC_NAME = "compression"; //$NON-NLS-1$
 
     /**
      * The element name of whether header is required.

@@ -117,12 +117,12 @@ public class BatchTester extends TestDriverBase {
             FileUtils.forceDelete(compileWorkDir);
         }
 
-        File compilerOutputDir = new File(compileWorkDir, "output");
-        File compilerLocalWorkingDir = new File(compileWorkDir, "build");
+        File compilerOutputDir = new File(compileWorkDir, "output"); //$NON-NLS-1$
+        File compilerLocalWorkingDir = new File(compileWorkDir, "build"); //$NON-NLS-1$
 
         BatchInfo batchInfo = DirectBatchCompiler.compile(
                 batchDescriptionClass,
-                "test.batch",
+                "test.batch", //$NON-NLS-1$
                 Location.fromPath(driverContext.getClusterWorkDir(), '/'),
                 compilerOutputDir,
                 compilerLocalWorkingDir,
@@ -158,7 +158,7 @@ public class BatchTester extends TestDriverBase {
             String flowId = jobflowInfo.getJobflow().getFlowId();
             JobFlowTester tester = jobFlowMap.get(flowId);
             if (tester != null) {
-                LOG.debug("ジョブフローの入出力を初期化しています: {}#{}",
+                LOG.debug("initializing jobflow input/output: {}#{}", //$NON-NLS-1$
                         batchDescriptionClass.getName(), flowId);
                 executor.prepareInput(jobflowInfo, tester.inputs);
                 executor.prepareOutput(jobflowInfo, tester.outputs);
@@ -179,7 +179,7 @@ public class BatchTester extends TestDriverBase {
     private void validateTestCondition(JobFlowTester flow, String id) throws IOException {
         TestModerator moderator = new TestModerator(driverContext.getRepository(), driverContext);
         for (DriverInputBase<?> port : flow.inputs) {
-            String label = String.format("Input(flow=%s, name=%s)", id, port.getName());
+            String label = String.format("Input(flow=%s, name=%s)", id, port.getName()); //$NON-NLS-1$
             Class<?> type = port.getModelType();
             DataModelSourceFactory source = port.getSource();
             if (source != null) {
@@ -187,7 +187,7 @@ public class BatchTester extends TestDriverBase {
             }
         }
         for (DriverOutputBase<?> port : flow.outputs) {
-            String label = String.format("Output(flow=%s, name=%s)", id, port.getName());
+            String label = String.format("Output(flow=%s, name=%s)", id, port.getName()); //$NON-NLS-1$
             Class<?> type = port.getModelType();
             DataModelSourceFactory source = port.getSource();
             if (source != null) {

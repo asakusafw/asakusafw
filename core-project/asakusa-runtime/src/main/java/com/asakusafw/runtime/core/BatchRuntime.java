@@ -58,7 +58,7 @@ public final class BatchRuntime {
     }
 
     private static String toString(int major, int minor) {
-        return MessageFormat.format("{0}.{1}", String.valueOf(major), String.valueOf(minor));
+        return MessageFormat.format("{0}.{1}", String.valueOf(major), String.valueOf(minor)); //$NON-NLS-1$
     }
 
     private BatchRuntime() {

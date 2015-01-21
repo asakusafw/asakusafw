@@ -29,12 +29,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.asakusafw</groupId>
-			<artifactId>asakusa-dmdl-core</artifactId>
-			<version>${asakusafw.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.asakusafw</groupId>
-			<artifactId>asakusa-dmdl-java</artifactId>
+			<artifactId>asakusa-directio-dmdl</artifactId>
 			<version>${asakusafw.version}</version>
 		</dependency>
 		<dependency>

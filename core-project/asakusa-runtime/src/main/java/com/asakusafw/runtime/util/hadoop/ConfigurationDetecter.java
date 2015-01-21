@@ -36,9 +36,9 @@ import org.apache.hadoop.io.OutputBuffer;
  */
 public final class ConfigurationDetecter {
 
-    static final String MARKER_FILE_NAME = "core-site.xml";
+    static final String MARKER_FILE_NAME = "core-site.xml"; //$NON-NLS-1$
 
-    private static final Charset ENCODING = Charset.forName("UTF-8");
+    private static final Charset ENCODING = Charset.forName("UTF-8"); //$NON-NLS-1$
 
     private ConfigurationDetecter() {
         return;

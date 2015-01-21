@@ -134,7 +134,7 @@ NamePart: one of
         return out;
     }
 
-    private static final Pattern VALID_NAME = Pattern.compile("[A-Za-z_][0-9A-Za-z_]*");
+    private static final Pattern VALID_NAME = Pattern.compile("[A-Za-z_][0-9A-Za-z_]*"); //$NON-NLS-1$
 
     /**
      * 指定の名前が入出力の識別子として正しい場合のみ{@code true}を返す。

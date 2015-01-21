@@ -25,28 +25,28 @@ public final class DirectDataSourceConstants {
     /**
      * The attribute key name of base path.
      */
-    public static final String KEY_BASE_PATH = "basePath";
+    public static final String KEY_BASE_PATH = "basePath"; //$NON-NLS-1$
 
     /**
      * The attribute key name of resource path/pattern.
      */
-    public static final String KEY_RESOURCE_PATH = "resourcePath";
+    public static final String KEY_RESOURCE_PATH = "resourcePath"; //$NON-NLS-1$
 
     /**
      * The attribute key name of data class.
      */
-    public static final String KEY_DATA_CLASS = "dataClass";
+    public static final String KEY_DATA_CLASS = "dataClass"; //$NON-NLS-1$
 
     /**
      * The attribute key name of format class.
      */
-    public static final String KEY_FORMAT_CLASS = "formatClass";
+    public static final String KEY_FORMAT_CLASS = "formatClass"; //$NON-NLS-1$
 
     /**
      * The attribute key prefix of delete patterns.
      * @since 0.4.0
      */
-    public static final String PREFIX_DELETE_PATTERN = "deletePattern.";
+    public static final String PREFIX_DELETE_PATTERN = "deletePattern."; //$NON-NLS-1$
 
     /**
      * The attribute key name of whether the target input is optional.
@@ -54,13 +54,13 @@ public final class DirectDataSourceConstants {
      * or {@code null} ({@link #DEFAULT_OPTIONAL default value}).
      * @since 0.6.1
      */
-    public static final String KEY_OPTIONAL = "optional";
+    public static final String KEY_OPTIONAL = "optional"; //$NON-NLS-1$
 
     /**
      * The default value of {@link #KEY_OPTIONAL}.
      * @since 0.6.1
      */
-    public static final String DEFAULT_OPTIONAL = "false";
+    public static final String DEFAULT_OPTIONAL = "false"; //$NON-NLS-1$
 
     private DirectDataSourceConstants() {
         return;

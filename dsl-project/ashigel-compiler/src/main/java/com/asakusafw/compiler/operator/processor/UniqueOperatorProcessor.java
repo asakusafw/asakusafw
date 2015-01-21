@@ -84,13 +84,13 @@ public class UniqueOperatorProcessor extends AbstractOperatorProcessor {
                 key.getKey());
         builder.addOutput(
                 "項目の内容が一意であるデータが流れる出力",
-                "unique",
+                "unique", //$NON-NLS-1$
                 a.getParameterType(0).getType(),
                 a.getParameterName(0),
                 null);
         builder.addOutput(
                 "項目の内容が一意でないデータが流れる出力",
-                "duplicated",
+                "duplicated", //$NON-NLS-1$
                 a.getParameterType(0).getType(),
                 a.getParameterName(0),
                 null);

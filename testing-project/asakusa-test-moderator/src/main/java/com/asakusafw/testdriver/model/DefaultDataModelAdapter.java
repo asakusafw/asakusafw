@@ -27,7 +27,7 @@ import com.asakusafw.testdriver.core.DataModelDefinition;
  */
 public class DefaultDataModelAdapter implements DataModelAdapter {
 
-    private static final String KIND_NAME = "DMDL";
+    private static final String KIND_NAME = "DMDL"; //$NON-NLS-1$
 
     @Override
     public <T> DataModelDefinition<T> get(Class<T> modelClass) {

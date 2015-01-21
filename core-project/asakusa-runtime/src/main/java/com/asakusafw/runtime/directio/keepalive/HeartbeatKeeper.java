@@ -57,7 +57,7 @@ class HeartbeatKeeper implements Closeable {
                 keepAlive();
             }
         });
-        daemon.setName(String.format("directio-keepalive-%02d", THREAD_SERIAL.incrementAndGet()));
+        daemon.setName(String.format("directio-keepalive-%02d", THREAD_SERIAL.incrementAndGet())); //$NON-NLS-1$
         daemon.setDaemon(true);
     }
 
@@ -73,7 +73,7 @@ class HeartbeatKeeper implements Closeable {
         counter.add(0);
         counters.add(counter);
         if (LOG.isDebugEnabled()) {
-            LOG.debug(MessageFormat.format("Registered counter: {2} ({0}@{1})",
+            LOG.debug(MessageFormat.format("Registered counter: {2} ({0}@{1})", //$NON-NLS-1$
                     daemon.getName(),
                     daemon.getState(),
                     counter));
@@ -99,7 +99,7 @@ class HeartbeatKeeper implements Closeable {
         }
         boolean removed = counters.remove(counter);
         if (LOG.isDebugEnabled()) {
-            LOG.debug(MessageFormat.format("Unregistered counter: {2} ({0}@{1})",
+            LOG.debug(MessageFormat.format("Unregistered counter: {2} ({0}@{1})", //$NON-NLS-1$
                     daemon.getName(),
                     daemon.getState(),
                     counter));
@@ -119,7 +119,7 @@ class HeartbeatKeeper implements Closeable {
             while (true) {
                 if (LOG.isDebugEnabled() && counters.isEmpty() == false) {
                     LOG.debug(MessageFormat.format(
-                            "Heartbeat by HearbeatKeeper: {1}counter(s) ({0})",
+                            "Heartbeat by HearbeatKeeper: {1}counter(s) ({0})", //$NON-NLS-1$
                             Thread.currentThread().getName(),
                             counters.size()));
                 }

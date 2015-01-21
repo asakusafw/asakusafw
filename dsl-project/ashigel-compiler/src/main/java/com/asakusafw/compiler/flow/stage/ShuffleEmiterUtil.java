@@ -43,12 +43,12 @@ final class ShuffleEmiterUtil {
     /**
      * 整数を比較するメソッドの名前。
      */
-    public static final String COMPARE_INT = "compareInt";
+    public static final String COMPARE_INT = "compareInt"; //$NON-NLS-1$
 
     /**
      * ポート番号から要素番号を算出するメソッドの名前。
      */
-    public static final String PORT_TO_ELEMENT = "portIdToElementId";
+    public static final String PORT_TO_ELEMENT = "portIdToElementId"; //$NON-NLS-1$
 
     public static List<List<Segment>> groupByElement(ShuffleModel model) {
         List<List<Segment>> results = Lists.create();
@@ -88,8 +88,8 @@ final class ShuffleEmiterUtil {
 
     public static MethodDeclaration createCompareInts(
             ModelFactory factory) {
-        SimpleName a = factory.newSimpleName("a");
-        SimpleName b = factory.newSimpleName("b");
+        SimpleName a = factory.newSimpleName("a"); //$NON-NLS-1$
+        SimpleName b = factory.newSimpleName("b"); //$NON-NLS-1$
         Statement statement = factory.newIfStatement(
                 new ExpressionBuilder(factory, a)
                     .apply(InfixOperator.EQUALS, b)
@@ -137,7 +137,7 @@ final class ShuffleEmiterUtil {
         cases.add(factory.newSwitchDefaultLabel());
         cases.add(factory.newReturnStatement(Models.toLiteral(factory, -1)));
 
-        SimpleName pid = factory.newSimpleName("pid");
+        SimpleName pid = factory.newSimpleName("pid"); //$NON-NLS-1$
         Statement statement = factory.newSwitchStatement(pid, cases);
         return factory.newMethodDeclaration(
                 null,

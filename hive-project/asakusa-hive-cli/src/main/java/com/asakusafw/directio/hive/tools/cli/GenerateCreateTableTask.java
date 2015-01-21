@@ -40,11 +40,11 @@ import com.asakusafw.directio.hive.tools.cli.ClassCollector.Selector;
  */
 public class GenerateCreateTableTask {
 
-    static final Charset ENCODING = Charset.forName("UTF-8");
+    static final Charset ENCODING = Charset.forName("UTF-8"); //$NON-NLS-1$
 
     static final Logger LOG = LoggerFactory.getLogger(GenerateCreateTableTask.class);
 
-    private static final String STATEMENT_SEPARATOR = ";\n";
+    private static final String STATEMENT_SEPARATOR = ";\n"; //$NON-NLS-1$
 
     /**
      * Performs this task.
@@ -121,7 +121,7 @@ public class GenerateCreateTableTask {
                         return false;
                     }
                     if (pattern.matcher(info.getTableName()).matches() == false) {
-                        LOG.debug("Filtered table: {}", info.getTableName());
+                        LOG.debug("Filtered table: {}", info.getTableName()); //$NON-NLS-1$
                         return false;
                     }
                 }

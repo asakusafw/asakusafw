@@ -315,7 +315,7 @@ public class FilePattern implements ResourcePattern {
             for (int i = 0, n = cursor; i < n; i++) {
                 buf.append(cbuf[i]);
             }
-            buf.append(" >> ");
+            buf.append(" >> "); //$NON-NLS-1$
             for (int i = cursor, n = cbuf.length; i < n; i++) {
                 buf.append(cbuf[i]);
             }
@@ -483,24 +483,24 @@ public class FilePattern implements ResourcePattern {
         /**
          * Normal token.
          */
-        TOKEN("a"),
+        TOKEN("a"), //$NON-NLS-1$
 
         /**
          * Variable.
          * If element is this kind, the element must be type of {@link Variable}.
          */
-        VARIABLE("${...}"),
+        VARIABLE("${...}"), //$NON-NLS-1$
 
         /**
          * Selection.
          * If element is this kind, the element must be type of {@link Selection}.
          */
-        SELECTION("{...|...}"),
+        SELECTION("{...|...}"), //$NON-NLS-1$
 
         /**
          * Any string.
          */
-        WILDCARD("*"),
+        WILDCARD("*"), //$NON-NLS-1$
         ;
 
         private final String symbol;
@@ -549,7 +549,7 @@ public class FilePattern implements ResourcePattern {
             }
             @Override
             public String getToken() {
-                return "*";
+                return "*"; //$NON-NLS-1$
             }
         },
 
@@ -615,7 +615,7 @@ public class FilePattern implements ResourcePattern {
 
         @Override
         public String getToken() {
-            return String.format("${%s}", getName());
+            return String.format("${%s}", getName()); //$NON-NLS-1$
         }
 
         @Override

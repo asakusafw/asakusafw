@@ -36,17 +36,17 @@ public class InProcessEnvironmentOptimizer extends TestingEnvironmentConfigurato
     /**
      * The system property key of enabling this feature.
      */
-    public static final String KEY_FEATURE_ENABLE = KEY_ENABLE + ".inprocess.optimize";
+    public static final String KEY_FEATURE_ENABLE = KEY_ENABLE + ".inprocess.optimize"; //$NON-NLS-1$
 
     /**
      * The default value of {@link #KEY_FEATURE_ENABLE}.
      */
-    public static final String DEFAULT_FEATURE_ENABLE = "true";
+    public static final String DEFAULT_FEATURE_ENABLE = "true"; //$NON-NLS-1$
 
     @Override
     protected void configure() {
         if (isEnabled() == false) {
-            LOG.debug("disabled in-process testing environment optimizer for small jobs.");
+            LOG.debug("disabled in-process testing environment optimizer for small jobs."); //$NON-NLS-1$
             return;
         }
         InProcessJobExecutor.Settings settings = InProcessJobExecutor.getGlobalSettings();
@@ -61,7 +61,7 @@ public class InProcessEnvironmentOptimizer extends TestingEnvironmentConfigurato
 
     private boolean isEnabled() {
         String value = System.getProperty(KEY_FEATURE_ENABLE, DEFAULT_FEATURE_ENABLE);
-        return value.equals("true");
+        return value.equals("true"); //$NON-NLS-1$
     }
 
     private boolean checkProperty(Map<String, String> properties, String key) {

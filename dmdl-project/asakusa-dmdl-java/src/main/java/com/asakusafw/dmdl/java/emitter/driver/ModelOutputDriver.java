@@ -66,7 +66,7 @@ public class ModelOutputDriver extends JavaDataModelDriver {
                 context.getConfiguration(),
                 model,
                 NameConstants.CATEGORY_IO,
-                "{0}Output");
+                "{0}Output"); //$NON-NLS-1$
         Generator.emit(next, model);
         return context.resolve(next.getQualifiedTypeName());
     }
@@ -97,7 +97,7 @@ public class ModelOutputDriver extends JavaDataModelDriver {
         private void emit() throws IOException {
             ClassDeclaration decl = f.newClassDeclaration(
                     new JavadocBuilder(f)
-                        .text("<code>{0}</code>をTSVなどのレコード形式で出力する。",
+                        .text("Outputs a sequence of <code>{0}</code> using <code>RecordEmitter</code>.", //$NON-NLS-1$
                                 model.getSymbol().getName())
                         .toJavadoc(),
                     new AttributeBuilder(f)
@@ -138,11 +138,9 @@ public class ModelOutputDriver extends JavaDataModelDriver {
         private TypeBodyDeclaration createConstructor() {
             return f.newConstructorDeclaration(
                     new JavadocBuilder(f)
-                        .text("インスタンスを生成する。")
+                        .text("Creates a new instance.") //$NON-NLS-1$
                         .param(createEmitterFieldName())
-                            .text("利用するエミッター")
-                        .exception(context.resolve(IllegalArgumentException.class))
-                            .text("引数にnullが指定された場合")
+                            .text("the record emitter") //$NON-NLS-1$
                         .toJavadoc(),
                     new AttributeBuilder(f)
                         .Public()
@@ -179,7 +177,7 @@ public class ModelOutputDriver extends JavaDataModelDriver {
                         .toAttributes(),
                     Collections.<TypeParameterDeclaration>emptyList(),
                     context.resolve(void.class),
-                    f.newSimpleName("write"),
+                    f.newSimpleName("write"), //$NON-NLS-1$
                     Collections.singletonList(f.newFormalParameterDeclaration(
                             context.resolve(model.getSymbol()),
                             createModelParameterName())),
@@ -194,7 +192,7 @@ public class ModelOutputDriver extends JavaDataModelDriver {
                 results.add(createWriterStatement(property));
             }
             results.add(new ExpressionBuilder(f, createEmitterFieldName())
-                .method("endRecord")
+                .method("endRecord") //$NON-NLS-1$
                 .toStatement());
             return results;
         }
@@ -206,7 +204,7 @@ public class ModelOutputDriver extends JavaDataModelDriver {
                 .method(optionGetterName)
                 .toExpression();
             Statement fill = new ExpressionBuilder(f, createEmitterFieldName())
-                .method("emit", option)
+                .method("emit", option) //$NON-NLS-1$
                 .toStatement();
             return fill;
         }
@@ -220,7 +218,7 @@ public class ModelOutputDriver extends JavaDataModelDriver {
                         .toAttributes(),
                     Collections.<TypeParameterDeclaration>emptyList(),
                     context.resolve(void.class),
-                    f.newSimpleName("close"),
+                    f.newSimpleName("close"), //$NON-NLS-1$
                     Collections.<FormalParameterDeclaration>emptyList(),
                     0,
                     Collections.singletonList(context.resolve(IOException.class)),
@@ -230,17 +228,17 @@ public class ModelOutputDriver extends JavaDataModelDriver {
         private List<Statement> createCloserBody() {
             List<Statement> results = Lists.create();
             results.add(new ExpressionBuilder(f, createEmitterFieldName())
-                .method("close")
+                .method("close") //$NON-NLS-1$
                 .toStatement());
             return results;
         }
 
         private SimpleName createEmitterFieldName() {
-            return f.newSimpleName("emitter");
+            return f.newSimpleName("emitter"); //$NON-NLS-1$
         }
 
         private SimpleName createModelParameterName() {
-            return f.newSimpleName("model");
+            return f.newSimpleName("model"); //$NON-NLS-1$
         }
     }
 }

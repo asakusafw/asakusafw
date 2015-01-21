@@ -34,19 +34,19 @@ final class FsDescriptionUtil {
             throw new IllegalStateException(MessageFormat.format(
                     "{1} must not be null: {0}",
                     descriptionClass,
-                    "getPath()"));
+                    "getPath()")); //$NON-NLS-1$
         }
         if (path.isEmpty()) {
             throw new IllegalStateException(MessageFormat.format(
                     "{1} must not be empty string: {0}",
                     descriptionClass,
-                    "getPath()"));
+                    "getPath()")); //$NON-NLS-1$
         }
         if (supportClass == null) {
             throw new IllegalStateException(MessageFormat.format(
                     "{1} must not be null: {0}",
                     descriptionClass,
-                    "getStreamSupport()"));
+                    "getStreamSupport()")); //$NON-NLS-1$
         }
         DataModelStreamSupport<?> support;
         try {

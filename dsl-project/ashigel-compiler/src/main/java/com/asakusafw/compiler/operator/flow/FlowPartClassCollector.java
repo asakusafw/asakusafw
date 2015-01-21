@@ -312,7 +312,7 @@ public class FlowPartClassCollector {
         if (environment.getTypeUtils().isSubtype(type.asType(), superType) == false) {
             raiseInvalidClass(type, MessageFormat.format(
                     "フロー部品クラス{0}は{1}のサブクラスとして宣言する必要があります",
-                    "{0}",
+                    "{0}", //$NON-NLS-1$
                     FlowDescription.class.getName()));
         }
         if (type.getEnclosingElement().getKind() != ElementKind.PACKAGE) {

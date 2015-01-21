@@ -46,13 +46,13 @@ public enum TotalConditionKind {
     /**
      * Accepts iff only existing expected and actual data matched.
      */
-    INTERSECT("Intersect", "お互い存在するデータのみ検査", DataModelCondition.IGNORE_UNEXPECTED,
+    INTERSECT("Intersect", "お互い存在するデータのみ検査", DataModelCondition.IGNORE_UNEXPECTED, //$NON-NLS-1$
             DataModelCondition.IGNORE_ABSENT),
 
     /**
      * Accepts iff only existing expected and actual data matched.
      */
-    SKIP_ALL("-", "検査しない", DataModelCondition.IGNORE_UNEXPECTED,
+    SKIP_ALL("-", "検査しない", DataModelCondition.IGNORE_UNEXPECTED, //$NON-NLS-1$
             DataModelCondition.IGNORE_ABSENT,
             DataModelCondition.IGNORE_MATCHED),
 

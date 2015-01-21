@@ -23,9 +23,9 @@ import java.nio.charset.Charset;
  */
 final class Constants {
 
-    public static final String PATH = "etc/batch-spec.json";
+    public static final String PATH = "etc/batch-spec.json"; //$NON-NLS-1$
 
-    public static final Charset ENCODING = Charset.forName("UTF-8");
+    public static final Charset ENCODING = Charset.forName("UTF-8"); //$NON-NLS-1$
 
     private Constants() {
         return;

@@ -29,7 +29,7 @@ import com.asakusafw.utils.io.RecordWriter;
  */
 public class CsvWriter implements RecordWriter {
 
-    private static final Pattern PATTERN_ESCAPE = Pattern.compile("([,\"\r\n])");
+    private static final Pattern PATTERN_ESCAPE = Pattern.compile("([,\"\r\n])"); //$NON-NLS-1$
 
     private final Appendable writer;
 
@@ -86,7 +86,7 @@ public class CsvWriter implements RecordWriter {
 
     @Override
     public void putEndOfRecord() throws IOException {
-        writer.append("\r\n");
+        writer.append("\r\n"); //$NON-NLS-1$
         headOfRecord = true;
     }
 

@@ -87,7 +87,7 @@ public final class FlowOut<T> implements Out<T> {
     @Override
     public String toString() {
         return MessageFormat.format(
-                "{0}({1})",
+                "{0}({1})", //$NON-NLS-1$
                 getDescription(),
                 getFlowElement());
     }

@@ -80,7 +80,7 @@ public class OperatorTestEnvironment extends ExternalResource {
      * The embedded default configuration file.
      * @since 0.7.0
      */
-    static final String DEFAULT_CONFIGURATION_PATH = "default-asakusa-resources.xml";
+    static final String DEFAULT_CONFIGURATION_PATH = "default-asakusa-resources.xml"; //$NON-NLS-1$
 
     private RuntimeResourceManager manager;
 
@@ -234,7 +234,10 @@ public class OperatorTestEnvironment extends ExternalResource {
             }
         }
         if (dirty) {
-            throw new AssertionError("configure()によって設定が書き換えられていますが、reload()されていないようです");
+            throw new AssertionError(MessageFormat.format(
+                    "{0}によって設定が書き換えられていますが、{1}されていないようです",
+                    "configure()", //$NON-NLS-1$
+                    "reload()")); //$NON-NLS-1$
         }
     }
 }

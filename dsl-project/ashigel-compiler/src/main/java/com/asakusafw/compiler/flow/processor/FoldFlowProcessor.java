@@ -45,7 +45,7 @@ public class FoldFlowProcessor extends RendezvousProcessor {
         FlowElementPortDescription input = context.getInputPort(Fold.ID_INPUT);
         FlowElementPortDescription output = context.getOutputPort(Fold.ID_OUTPUT);
 
-        Expression init = context.createField(boolean.class, "initialized");
+        Expression init = context.createField(boolean.class, "initialized"); //$NON-NLS-1$
         context.addBegin(new ExpressionBuilder(f, init)
             .assignFrom(Models.toLiteral(f, false))
             .toStatement());
