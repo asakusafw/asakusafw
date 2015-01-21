@@ -44,7 +44,7 @@ public @interface DataModel {
         /**
          * {@link #copyFrom(Object)}のメソッド名。
          */
-        String METHOD_NAME_COPY_FROM = "copyFrom";
+        String METHOD_NAME_COPY_FROM = "copyFrom"; //$NON-NLS-1$
 
         /**
          * 指定のオブジェクトが持つプロパティの内容を全てこのオブジェクトにコピーする。

@@ -81,7 +81,7 @@ public final class JdbcDriverCleaner implements Runnable {
                 if (driver.getClass().getClassLoader() == loader) {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug(MessageFormat.format(
-                                "unloading {0} ({1})",
+                                "unloading {0} ({1})", //$NON-NLS-1$
                                 driver,
                                 loader));
                     }

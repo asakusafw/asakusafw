@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.dmdl.directio.hive.util;
+package com.asakusafw.dmdl.directio.util;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -21,7 +21,6 @@ import java.util.Collections;
 import java.util.List;
 
 import com.asakusafw.dmdl.java.emitter.EmitContext;
-import com.asakusafw.runtime.directio.DataFormat;
 import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Attribute;
 import com.asakusafw.utils.java.model.syntax.ClassDeclaration;
@@ -38,13 +37,15 @@ import com.asakusafw.utils.java.model.util.AttributeBuilder;
 import com.asakusafw.utils.java.model.util.JavadocBuilder;
 import com.asakusafw.utils.java.model.util.Models;
 import com.asakusafw.utils.java.model.util.TypeBuilder;
-import com.asakusafw.vocabulary.directio.DirectFileOutputDescription;
 
 /**
- * Generates an implementation of {@link DirectFileOutputDescription}.
- * @since 0.7.0
+ * Generates an implementation of {@code DirectFileOutputDescription}.
+ * @since 0.7.3
  */
 public final class DirectFileOutputDescriptionGenerator {
+
+    static final String DESCRIPTION_CLASS =
+            "com.asakusafw.vocabulary.directio.DirectFileOutputDescription"; //$NON-NLS-1$
 
     private final EmitContext context;
 
@@ -69,6 +70,7 @@ public final class DirectFileOutputDescriptionGenerator {
     }
 
     private void emit() throws IOException {
+        Name base = Models.toName(f, DESCRIPTION_CLASS);
         ClassDeclaration decl = f.newClassDeclaration(
                 new JavadocBuilder(f)
                     .text("{0} for ", description.getDescription()) //$NON-NLS-1$
@@ -78,7 +80,7 @@ public final class DirectFileOutputDescriptionGenerator {
                 getClassAttributes(),
                 context.getTypeName(),
                 Collections.<TypeParameterDeclaration>emptyList(),
-                context.resolve(DirectFileOutputDescription.class),
+                context.resolve(base),
                 Collections.<Type>emptyList(),
                 createMembers());
         context.emit(decl);
@@ -138,10 +140,11 @@ public final class DirectFileOutputDescriptionGenerator {
     }
 
     private MethodDeclaration createGetFormatMethod(Name value) {
+        Name base = Models.toName(f, DirectFileInputDescriptionGenerator.FORMAT_BASE_CLASS);
         Type type = f.newParameterizedType(
                 context.resolve(Class.class),
                 f.newWildcard(WildcardBoundKind.UPPER_BOUNDED, f.newParameterizedType(
-                        context.resolve(DataFormat.class), f.newWildcard())));
+                        context.resolve(base), f.newWildcard())));
         return createGetMethod("getFormat", type, f.newClassLiteral(context.resolve(value))); //$NON-NLS-1$
     }
 

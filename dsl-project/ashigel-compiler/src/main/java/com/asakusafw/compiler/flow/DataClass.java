@@ -140,7 +140,7 @@ public interface DataClass {
             Statement statement = factory.newEmptyStatement();
             statement.putModelTrait(CommentEmitTrait.class, new CommentEmitTrait(Arrays.asList(
                     MessageFormat.format(
-                            "Failed to resolve in \"reset\": {0}",
+                            "Failed to resolve in \"reset\": {0}", //$NON-NLS-1$
                             runtimeType)
             )));
             return statement;
@@ -151,7 +151,7 @@ public interface DataClass {
             Expression expression = Models.toNullLiteral(factory);
             expression.putModelTrait(CommentEmitTrait.class, new CommentEmitTrait(Arrays.asList(
                     MessageFormat.format(
-                            "Failed to resolve in \"createNewInstance\": {0}",
+                            "Failed to resolve in \"createNewInstance\": {0}", //$NON-NLS-1$
                             runtimeType)
             )));
             return expression;
@@ -162,7 +162,7 @@ public interface DataClass {
             Statement statement = factory.newEmptyStatement();
             statement.putModelTrait(CommentEmitTrait.class, new CommentEmitTrait(Arrays.asList(
                     MessageFormat.format(
-                            "Failed to resolve in \"assign\": {0}",
+                            "Failed to resolve in \"assign\": {0}", //$NON-NLS-1$
                             runtimeType)
             )));
             return statement;
@@ -173,7 +173,7 @@ public interface DataClass {
             Statement statement = factory.newEmptyStatement();
             statement.putModelTrait(CommentEmitTrait.class, new CommentEmitTrait(Arrays.asList(
                     MessageFormat.format(
-                            "Failed to resolve in \"createWriter\": {0}",
+                            "Failed to resolve in \"createWriter\": {0}", //$NON-NLS-1$
                             runtimeType)
             )));
             return statement;
@@ -184,7 +184,7 @@ public interface DataClass {
             Statement statement = factory.newEmptyStatement();
             statement.putModelTrait(CommentEmitTrait.class, new CommentEmitTrait(Arrays.asList(
                     MessageFormat.format(
-                            "Failed to resolve in \"createReader\": {0}",
+                            "Failed to resolve in \"createReader\": {0}", //$NON-NLS-1$
                             runtimeType)
             )));
             return statement;

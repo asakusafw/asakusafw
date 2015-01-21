@@ -32,9 +32,9 @@ import com.asakusafw.vocabulary.flow.graph.PortConnection;
  */
 public final class DebuggingUtils {
 
-    private static final String PORT_IN = "in";
+    private static final String PORT_IN = "in"; //$NON-NLS-1$
 
-    private static final String PORT_OUT = "out";
+    private static final String PORT_OUT = "out"; //$NON-NLS-1$
 
     private DebuggingUtils() {
         return;
@@ -76,7 +76,7 @@ public final class DebuggingUtils {
             .addAttribute(new DebuggingAttribute(delegate))
             .addInput(PORT_IN, type)
             .addOutput(PORT_OUT, type)
-            .declare(DebuggingUtils.class, DebuggingUtils.class, "debug")
+            .declare(DebuggingUtils.class, DebuggingUtils.class, "debug") //$NON-NLS-1$
             .toResolver();
         return resolver;
     }

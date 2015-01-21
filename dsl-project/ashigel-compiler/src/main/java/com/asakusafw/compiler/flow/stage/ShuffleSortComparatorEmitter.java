@@ -90,16 +90,14 @@ public class ShuffleSortComparatorEmitter {
             Name keyTypeName) throws IOException {
         Precondition.checkMustNotBeNull(model, "model"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(keyTypeName, "keyTypeName"); //$NON-NLS-1$
-        LOG.debug("{}に対する順序比較器を生成します", model.getStageBlock());
+        LOG.debug("start generating shuffle sort comparator: {}", model.getStageBlock()); //$NON-NLS-1$
         Engine engine = new Engine(environment, model, keyTypeName);
         CompilationUnit source = engine.generate();
         environment.emit(source);
         Name packageName = source.getPackageDeclaration().getName();
         SimpleName simpleName = source.getTypeDeclarations().get(0).getName();
         Name name = environment.getModelFactory().newQualifiedName(packageName, simpleName);
-        LOG.debug("{}の順序比較には{}が利用されます",
-                model.getStageBlock(),
-                name);
+        LOG.debug("finish generating shuffle sort comparator: {} ({})", model.getStageBlock(), name); //$NON-NLS-1$
         return name;
     }
 
@@ -150,7 +148,7 @@ public class ShuffleSortComparatorEmitter {
             return factory.newClassDeclaration(
                     createJavadoc(),
                     new AttributeBuilder(factory)
-                        .annotation(t(SuppressWarnings.class), v("rawtypes"))
+                        .annotation(t(SuppressWarnings.class), v("rawtypes")) //$NON-NLS-1$
                         .Public()
                         .toAttributes(),
                     name,
@@ -164,25 +162,25 @@ public class ShuffleSortComparatorEmitter {
         }
 
         private MethodDeclaration createCompareBytes() {
-            SimpleName b1 = factory.newSimpleName("b1");
-            SimpleName s1 = factory.newSimpleName("s1");
-            SimpleName l1 = factory.newSimpleName("l1");
-            SimpleName b2 = factory.newSimpleName("b2");
-            SimpleName s2 = factory.newSimpleName("s2");
-            SimpleName l2 = factory.newSimpleName("l2");
+            SimpleName b1 = factory.newSimpleName("b1"); //$NON-NLS-1$
+            SimpleName s1 = factory.newSimpleName("s1"); //$NON-NLS-1$
+            SimpleName l1 = factory.newSimpleName("l1"); //$NON-NLS-1$
+            SimpleName b2 = factory.newSimpleName("b2"); //$NON-NLS-1$
+            SimpleName s2 = factory.newSimpleName("s2"); //$NON-NLS-1$
+            SimpleName l2 = factory.newSimpleName("l2"); //$NON-NLS-1$
 
             List<Statement> statements = Lists.create();
-            SimpleName segmentId1 = factory.newSimpleName("segmentId1");
-            SimpleName segmentId2 = factory.newSimpleName("segmentId2");
+            SimpleName segmentId1 = factory.newSimpleName("segmentId1"); //$NON-NLS-1$
+            SimpleName segmentId2 = factory.newSimpleName("segmentId2"); //$NON-NLS-1$
 
             statements.add(new TypeBuilder(factory, t(WritableComparator.class))
-                .method("readInt", b1, s1)
+                .method("readInt", b1, s1) //$NON-NLS-1$
                 .toLocalVariableDeclaration(t(int.class), segmentId1));
             statements.add(new TypeBuilder(factory, t(WritableComparator.class))
-                .method("readInt", b2, s2)
+                .method("readInt", b2, s2) //$NON-NLS-1$
                 .toLocalVariableDeclaration(t(int.class), segmentId2));
 
-            SimpleName diff = factory.newSimpleName("diff");
+            SimpleName diff = factory.newSimpleName("diff"); //$NON-NLS-1$
             statements.add(new ExpressionBuilder(factory, factory.newThis())
                 .method(ShuffleEmiterUtil.COMPARE_INT,
                         new ExpressionBuilder(factory, factory.newThis())
@@ -194,10 +192,10 @@ public class ShuffleSortComparatorEmitter {
                 .toLocalVariableDeclaration(t(int.class), diff));
             statements.add(createDiff(diff));
 
-            SimpleName o1 = factory.newSimpleName("o1");
-            SimpleName o2 = factory.newSimpleName("o2");
-            SimpleName lim1 = factory.newSimpleName("lim1");
-            SimpleName lim2 = factory.newSimpleName("lim2");
+            SimpleName o1 = factory.newSimpleName("o1"); //$NON-NLS-1$
+            SimpleName o2 = factory.newSimpleName("o2"); //$NON-NLS-1$
+            SimpleName lim1 = factory.newSimpleName("lim1"); //$NON-NLS-1$
+            SimpleName lim2 = factory.newSimpleName("lim2"); //$NON-NLS-1$
             statements.add(new ExpressionBuilder(factory, v(4)).toLocalVariableDeclaration(t(int.class), o1));
             statements.add(new ExpressionBuilder(factory, v(4)).toLocalVariableDeclaration(t(int.class), o2));
             statements.add(new ExpressionBuilder(factory, v(-1)).toLocalVariableDeclaration(t(int.class), lim1));
@@ -299,7 +297,7 @@ public class ShuffleSortComparatorEmitter {
                         .Public()
                         .toAttributes(),
                     t(int.class),
-                    factory.newSimpleName("compare"),
+                    factory.newSimpleName("compare"), //$NON-NLS-1$
                     Arrays.asList(new FormalParameterDeclaration[] {
                             factory.newFormalParameterDeclaration(t(byte[].class), b1),
                             factory.newFormalParameterDeclaration(t(int.class), s1),
@@ -337,12 +335,12 @@ public class ShuffleSortComparatorEmitter {
         }
 
         private TypeBodyDeclaration createCompareObjects() {
-            SimpleName o1 = factory.newSimpleName("o1");
-            SimpleName o2 = factory.newSimpleName("o2");
+            SimpleName o1 = factory.newSimpleName("o1"); //$NON-NLS-1$
+            SimpleName o2 = factory.newSimpleName("o2"); //$NON-NLS-1$
 
             List<Statement> statements = Lists.create();
-            SimpleName segmentId1 = factory.newSimpleName("segmentId1");
-            SimpleName segmentId2 = factory.newSimpleName("segmentId2");
+            SimpleName segmentId1 = factory.newSimpleName("segmentId1"); //$NON-NLS-1$
+            SimpleName segmentId2 = factory.newSimpleName("segmentId2"); //$NON-NLS-1$
             statements.add(new ExpressionBuilder(factory, o1)
                 .method(SegmentedWritable.ID_GETTER)
                 .toLocalVariableDeclaration(t(int.class), segmentId1));
@@ -350,7 +348,7 @@ public class ShuffleSortComparatorEmitter {
                 .method(SegmentedWritable.ID_GETTER)
                 .toLocalVariableDeclaration(t(int.class), segmentId2));
 
-            SimpleName diff = factory.newSimpleName("diff");
+            SimpleName diff = factory.newSimpleName("diff"); //$NON-NLS-1$
             statements.add(new ExpressionBuilder(factory, factory.newThis())
                 .method(ShuffleEmiterUtil.COMPARE_INT,
                         new ExpressionBuilder(factory, factory.newThis())
@@ -437,7 +435,7 @@ public class ShuffleSortComparatorEmitter {
                         .Public()
                         .toAttributes(),
                     t(int.class),
-                    factory.newSimpleName("compare"),
+                    factory.newSimpleName("compare"), //$NON-NLS-1$
                     Arrays.asList(new FormalParameterDeclaration[] {
                             factory.newFormalParameterDeclaration(keyType, o1),
                             factory.newFormalParameterDeclaration(keyType, o2),
@@ -447,7 +445,7 @@ public class ShuffleSortComparatorEmitter {
 
         private Javadoc createJavadoc() {
             return new JavadocBuilder(factory)
-                .text("ステージ#{0}シャッフルで利用する順序比較器。",
+                .text("The shuffle sort comparator class for stage <code>{0}</code>.", //$NON-NLS-1$
                     model.getStageBlock().getStageNumber())
                 .toJavadoc();
         }

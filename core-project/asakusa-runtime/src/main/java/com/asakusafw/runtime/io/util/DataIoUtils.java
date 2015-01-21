@@ -67,7 +67,7 @@ final class DataIoUtils {
     public static String readUTF(DataInput input) throws IOException {
         int size = input.readUnsignedShort();
         if (size == 0) {
-            return "";
+            return ""; //$NON-NLS-1$
         }
         StringBuffer buf = STRING_BUFFER_POOL.get();
         buf.setLength(0);

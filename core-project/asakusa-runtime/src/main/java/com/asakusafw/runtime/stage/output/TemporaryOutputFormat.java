@@ -53,9 +53,9 @@ public final class TemporaryOutputFormat<T> extends OutputFormat<NullWritable, T
     /**
      * The default output name prefix.
      */
-    public static final String DEFAULT_FILE_NAME = "part";
+    public static final String DEFAULT_FILE_NAME = "part"; //$NON-NLS-1$
 
-    private static final String KEY_OUTPUT_PATH = "com.asakusafw.temporary.output";
+    private static final String KEY_OUTPUT_PATH = "com.asakusafw.temporary.output"; //$NON-NLS-1$
 
     private final Map<TaskAttemptID, FileOutputCommitter> commiterCache =
             new WeakHashMap<TaskAttemptID, FileOutputCommitter>();
@@ -121,7 +121,7 @@ public final class TemporaryOutputFormat<T> extends OutputFormat<NullWritable, T
         FileOutputCommitter committer = getOutputCommitter(context);
         final Path file = new Path(
                 committer.getWorkPath(),
-                FileOutputFormat.getUniqueFile(context, name, ""));
+                FileOutputFormat.getUniqueFile(context, name, "")); //$NON-NLS-1$
         final ModelOutput<V> out = TemporaryStorage.openOutput(conf, dataType, file, codec);
         return new RecordWriter<NullWritable, V>() {
 
@@ -137,7 +137,7 @@ public final class TemporaryOutputFormat<T> extends OutputFormat<NullWritable, T
 
             @Override
             public String toString() {
-                return String.format("TemporaryOutput(%s)", file);
+                return String.format("TemporaryOutput(%s)", file); //$NON-NLS-1$
             }
         };
     }

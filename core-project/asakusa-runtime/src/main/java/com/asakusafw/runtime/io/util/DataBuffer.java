@@ -415,7 +415,7 @@ public class DataBuffer implements DataInput, DataOutput {
     @Override
     public String toString() {
         return MessageFormat.format(
-                "{0}(read={1}, write={2})",
+                "{0}(read={1}, write={2})", //$NON-NLS-1$
                 getClass().getSimpleName(),
                 getReadPosition(),
                 getWritePosition());

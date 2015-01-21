@@ -44,7 +44,7 @@ public final class TestingUtils {
         try {
             OutputStream output = new FileOutputStream(file, true);
             try {
-                PrintWriter w = new PrintWriter(new OutputStreamWriter(output, "UTF-8"));
+                PrintWriter w = new PrintWriter(new OutputStreamWriter(output, "UTF-8")); //$NON-NLS-1$
                 w.println(message);
                 w.close();
             } finally {

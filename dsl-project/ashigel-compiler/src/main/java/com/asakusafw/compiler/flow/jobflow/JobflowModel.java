@@ -259,7 +259,7 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
         @Override
         public String toString() {
             return MessageFormat.format(
-                    "Stage({0})",
+                    "Stage({0})", //$NON-NLS-1$
                     String.valueOf(getNumber()));
         }
     }
@@ -527,7 +527,7 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
         @Override
         public String toString() {
             return MessageFormat.format(
-                    "Process(inputs={0}, mapper={1})",
+                    "Process(inputs={0}, mapper={1})", //$NON-NLS-1$
                     getInputs(),
                     getMapperTypeName());
         }
@@ -579,7 +579,7 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
         @Override
         public String toString() {
             return MessageFormat.format(
-                    "Delivery(output={0}, locations={1})",
+                    "Delivery(output={0}, locations={1})", //$NON-NLS-1$
                     getOutputs(),
                     getInputInfo().getLocations());
         }
@@ -666,7 +666,7 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
         @Override
         public String toString() {
             return MessageFormat.format(
-                    "Import(output={0}, locations={1}, description={2})",
+                    "Import(output={0}, locations={1}, description={2})", //$NON-NLS-1$
                     getOutputs(),
                     getInputInfo().getLocations(),
                     getDescription());
@@ -724,7 +724,7 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
         @Override
         public String toString() {
             return MessageFormat.format(
-                    "Export(inputs={0}, description={1})",
+                    "Export(inputs={0}, description={1})", //$NON-NLS-1$
                     getInputs(),
                     getDescription());
         }
@@ -771,7 +771,7 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
         @Override
         public String toString() {
             return MessageFormat.format(
-                    "SideData(path={0}, name={1})",
+                    "SideData(path={0}, name={1})", //$NON-NLS-1$
                     getClusterPaths(),
                     getLocalName());
         }

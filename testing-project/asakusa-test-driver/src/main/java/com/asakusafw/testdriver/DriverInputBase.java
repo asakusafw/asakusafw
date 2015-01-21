@@ -132,7 +132,7 @@ public abstract class DriverInputBase<T> {
      */
     protected final void setSource(DataModelSourceFactory source) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Prepare: name={}, model={}, source={}", new Object[] {
+            LOG.debug("Prepare: name={}, model={}, source={}", new Object[] { //$NON-NLS-1$
                     getName(),
                     getModelType().getName(),
                     source,
@@ -157,7 +157,9 @@ public abstract class DriverInputBase<T> {
         try {
             sourceUri = toUri(sourcePath);
         } catch (URISyntaxException e) {
-            throw new IllegalArgumentException("invalid source URI:" + sourcePath, e);
+            throw new IllegalArgumentException(MessageFormat.format(
+                    "Invalid URI: {0}",
+                    sourcePath), e);
         }
         return getTestTools().getDataModelSourceFactory(sourceUri);
     }
@@ -190,7 +192,7 @@ public abstract class DriverInputBase<T> {
             }
             @Override
             public String toString() {
-                return "DataModelSource(Iterable)";
+                return "DataModelSource(Iterable)"; //$NON-NLS-1$
             }
         };
     }
@@ -218,7 +220,7 @@ public abstract class DriverInputBase<T> {
             }
             @Override
             public String toString() {
-                return String.format("DataModelSource(%s)", sourceProvider);
+                return String.format("DataModelSource(%s)", sourceProvider); //$NON-NLS-1$
             }
         };
     }

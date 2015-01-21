@@ -53,12 +53,12 @@ public @interface SummarizedModel {
         /**
          * {@link #startSummarization(Object)}のメソッド名。
          */
-        String METHOD_NAME_START_SUMMARIZATION = "startSummarization";
+        String METHOD_NAME_START_SUMMARIZATION = "startSummarization"; //$NON-NLS-1$
 
         /**
          * {@link #combineSummarization(Object)}のメソッド名。
          */
-        String METHOD_NAME_COMBINE_SUMMARIZATION = "combineSummarization";
+        String METHOD_NAME_COMBINE_SUMMARIZATION = "combineSummarization"; //$NON-NLS-1$
 
         /**
          * 指定のモデルを最初の要素として、このモデルの集計結果を初期化する。

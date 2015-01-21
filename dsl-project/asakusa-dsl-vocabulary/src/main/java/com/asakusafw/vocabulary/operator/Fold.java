@@ -106,7 +106,7 @@ public @interface Fold {
     /**
      * 入力元のポート名。
      */
-    String INPUT = "in";
+    String INPUT = "in"; //$NON-NLS-1$
 
     /**
      * 部分集約の設定。

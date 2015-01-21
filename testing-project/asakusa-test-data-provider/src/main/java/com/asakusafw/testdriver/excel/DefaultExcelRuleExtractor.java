@@ -37,7 +37,7 @@ public class DefaultExcelRuleExtractor implements ExcelRuleExtractor {
      * @since 0.7.0
      */
     public static final Set<String> SUPPORTED_FORMATS = new HashSet<String>(Arrays.asList(new String[] {
-            "EVR-1.0.0",
+            "EVR-1.0.0", //$NON-NLS-1$
             RuleSheetFormat.FORMAT_VERSION,
     }));
 
@@ -86,11 +86,11 @@ public class DefaultExcelRuleExtractor implements ExcelRuleExtractor {
         assert sheet != null;
         Row row = sheet.getRow(rowIndex);
         if (row == null) {
-            return "?";
+            return "?"; //$NON-NLS-1$
         }
         Cell cell = row.getCell(colIndex);
         if (cell == null || cell.getCellType() != Cell.CELL_TYPE_STRING) {
-            return "?";
+            return "?"; //$NON-NLS-1$
         }
         return cell.getStringCellValue();
     }
@@ -159,13 +159,13 @@ public class DefaultExcelRuleExtractor implements ExcelRuleExtractor {
     @Override
     public String extractComments(Row row) throws FormatException {
         String value = getStringCell(row, RuleSheetFormat.COMMENTS);
-        return value == null ? "" : value;
+        return value == null ? "" : value; //$NON-NLS-1$
     }
 
     @Override
     public String extractOptions(Row row) throws FormatException {
         String value = getStringCell(row, RuleSheetFormat.EXTRA_OPTIONS);
-        return value == null ? "" : value;
+        return value == null ? "" : value; //$NON-NLS-1$
     }
 
     private String getStringCell(Row row, RuleSheetFormat item) throws FormatException {
@@ -173,7 +173,7 @@ public class DefaultExcelRuleExtractor implements ExcelRuleExtractor {
         assert item != null;
         Cell cell = row.getCell(item.getColumnIndex());
         if (cell == null || cell.getCellType() == Cell.CELL_TYPE_BLANK) {
-            return "";
+            return ""; //$NON-NLS-1$
         } else if (cell.getCellType() == Cell.CELL_TYPE_STRING) {
             return cell.getStringCellValue();
         }

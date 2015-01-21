@@ -86,7 +86,7 @@ public class VerifyRuleBuilder {
         if (name == null) {
             throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
         }
-        String[] words = name.split("_|-|\\s+");
+        String[] words = name.split("_|-|\\s+"); //$NON-NLS-1$
         PropertyName propertyName = PropertyName.newInstance(words);
         PropertyType type = definition.getType(propertyName);
         if (type == null) {
@@ -193,15 +193,15 @@ public class VerifyRuleBuilder {
         @Override
         public String toString() {
             StringBuilder builder = new StringBuilder();
-            builder.append("Property [name=");
+            builder.append("Property [name="); //$NON-NLS-1$
             builder.append(name);
-            builder.append(", type=");
+            builder.append(", type="); //$NON-NLS-1$
             builder.append(type);
-            builder.append(", key=");
+            builder.append(", key="); //$NON-NLS-1$
             builder.append(key);
-            builder.append(", predicates=");
+            builder.append(", predicates="); //$NON-NLS-1$
             builder.append(predicates);
-            builder.append("]");
+            builder.append("]"); //$NON-NLS-1$
             return builder.toString();
         }
     }

@@ -56,9 +56,9 @@ public class Clean extends Configured implements Tool {
 
     private static final Options OPTIONS;
     static {
-        OPT_RECURSIVE = new Option("r", "recursive", false, "remove recursively");
-        OPT_DRY_RUN = new Option("s", "dry-run", false, "do not delete actually");
-        OPT_KEEP_DAYS = new Option("k", "keep-days", true, "keep files lecent days");
+        OPT_RECURSIVE = new Option("r", "recursive", false, "remove recursively"); //$NON-NLS-1$ //$NON-NLS-2$
+        OPT_DRY_RUN = new Option("s", "dry-run", false, "do not delete actually"); //$NON-NLS-1$ //$NON-NLS-2$
+        OPT_KEEP_DAYS = new Option("k", "keep-days", true, "keep files lecent days"); //$NON-NLS-1$ //$NON-NLS-2$
 
         OPTIONS = new Options();
         OPTIONS.addOption(OPT_RECURSIVE);
@@ -119,7 +119,7 @@ public class Clean extends Configured implements Tool {
         }
         long period = currentTime - (long) (opts.keepDays * TimeUnit.DAYS.toMillis(1));
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Keep switching-time: {}", new Date(period));
+            LOG.debug("Keep switching-time: {}", new Date(period)); //$NON-NLS-1$
         }
         Context context = new Context(opts.recursive, period, opts.dryRun);
         for (Path path : opts.paths) {
@@ -134,7 +134,7 @@ public class Clean extends Configured implements Tool {
     private Opts parseOptions(String[] args) throws ParseException {
         assert args != null;
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Parsing options: {}", Arrays.toString(args));
+            LOG.debug("Parsing options: {}", Arrays.toString(args)); //$NON-NLS-1$
         }
 
         CommandLineParser parser = new BasicParser();
@@ -155,7 +155,7 @@ public class Clean extends Configured implements Tool {
             rest = new String[0];
         }
 
-        LOG.debug("Option {}: {}", OPT_RECURSIVE.getLongOpt(), recursive);
+        LOG.debug("Option {}: {}", OPT_RECURSIVE.getLongOpt(), recursive); //$NON-NLS-1$
         double keepDays;
         try {
             keepDays = Double.parseDouble(keepString);
@@ -166,8 +166,8 @@ public class Clean extends Configured implements Tool {
                     keepString));
             return null;
         }
-        LOG.debug("Option {}: {}", OPT_KEEP_DAYS.getLongOpt(), keepDays);
-        LOG.debug("Option {}: {}", OPT_DRY_RUN.getLongOpt(), dryRun);
+        LOG.debug("Option {}: {}", OPT_KEEP_DAYS.getLongOpt(), keepDays); //$NON-NLS-1$
+        LOG.debug("Option {}: {}", OPT_DRY_RUN.getLongOpt(), dryRun); //$NON-NLS-1$
 
         List<Path> paths = new ArrayList<Path>();
         for (String pathString : rest) {
@@ -177,7 +177,7 @@ public class Clean extends Configured implements Tool {
             try {
                 Path path = new Path(pathString);
                 paths.add(path);
-                LOG.debug("Option --: {}", path);
+                LOG.debug("Option --: {}", path); //$NON-NLS-1$
             } catch (RuntimeException e) {
                 LOG.error(MessageFormat.format(
                         "[OT-CLEAN-E00001] Invalid target path: {0}",
@@ -240,7 +240,7 @@ public class Clean extends Configured implements Tool {
     }
 
     private boolean remove(FileSystem fs, FileStatus file, Context context) {
-        LOG.debug("Attempt to remove {}", file.getPath());
+        LOG.debug("Attempt to remove {}", file.getPath()); //$NON-NLS-1$
         boolean isSymlink = context.isSymlink(fs, file);
         if (isSymlink) {
             LOG.error(MessageFormat.format(
@@ -281,7 +281,7 @@ public class Clean extends Configured implements Tool {
             }
         }
         if (context.canDelete(file)) {
-            LOG.debug("Removing {}", file.getPath());
+            LOG.debug("Removing {}", file.getPath()); //$NON-NLS-1$
             if (context.isDryRun() == false) {
                 try {
                     boolean removed = fs.delete(file.getPath(), false);
@@ -354,10 +354,10 @@ public class Clean extends Configured implements Tool {
         static {
             Method m;
             try {
-                m = FileStatus.class.getMethod("isSymlink");
+                m = FileStatus.class.getMethod("isSymlink"); //$NON-NLS-1$
             } catch (Exception e) {
                 m = null;
-                LOG.debug("FileStatus.isSymlink does not supported");
+                LOG.debug("FileStatus.isSymlink does not supported"); //$NON-NLS-1$
             }
             FILE_STATUS_IS_SYMLINK = m;
         }
@@ -375,7 +375,7 @@ public class Clean extends Configured implements Tool {
             } catch (Exception e) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(MessageFormat.format(
-                            "Failed to resolve symlink",
+                            "Failed to resolve symlink", //$NON-NLS-1$
                             file.getPath()), e);
                 }
                 return false;
@@ -393,7 +393,7 @@ public class Clean extends Configured implements Tool {
                 }
             }
             // NOTE: It seems that Hadoop 2.0 LocalFileSystem still does not support symlink.
-            if (uri.getScheme().equals("file")) {
+            if (uri.getScheme().equals("file")) { //$NON-NLS-1$
                 File f = new File(uri);
                 File c = f.getCanonicalFile();
                 if (f.equals(c)) {
@@ -412,7 +412,7 @@ public class Clean extends Configured implements Tool {
                 } catch (Exception e) {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug(MessageFormat.format(
-                                "Failed to invoke {0}({1})",
+                                "Failed to invoke {0}({1})", //$NON-NLS-1$
                                 FILE_STATUS_IS_SYMLINK.getName(),
                                 file.getPath()), e);
                     }

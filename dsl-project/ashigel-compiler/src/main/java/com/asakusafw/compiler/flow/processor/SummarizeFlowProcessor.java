@@ -69,7 +69,7 @@ public class SummarizeFlowProcessor extends RendezvousProcessor {
         Summarized summarized = TypeUtil.erase(output.getDataType()).getAnnotation(Summarized.class);
         if (summarized == null) {
             throw new IllegalStateException(MessageFormat.format(
-                    "Internal Error: {0} does not declared in {1} ({2})",
+                    "Internal Error: {0} does not declared in {1} ({2})", //$NON-NLS-1$
                     Summarized.class.getSimpleName(),
                     output.getDataType(),
                     output));
@@ -86,7 +86,7 @@ public class SummarizeFlowProcessor extends RendezvousProcessor {
             String target = mapping.get(original);
             if (target == null) {
                 throw new IllegalStateException(MessageFormat.format(
-                        "Internal Error: Grouping key mismatched (output={0}, grouping={1}, mapping={2})",
+                        "Internal Error: Grouping key mismatched (output={0}, grouping={1}, mapping={2})", //$NON-NLS-1$
                         output.getDataType(),
                         input.getShuffleKey(),
                         mapping));
@@ -103,7 +103,7 @@ public class SummarizeFlowProcessor extends RendezvousProcessor {
         FlowElementPortDescription input = context.getInputPort(Summarize.ID_INPUT);
         FlowElementPortDescription output = context.getOutputPort(Summarize.ID_OUTPUT);
 
-        Expression init = context.createField(boolean.class, "initialized");
+        Expression init = context.createField(boolean.class, "initialized"); //$NON-NLS-1$
         context.addBegin(new ExpressionBuilder(f, init)
             .assignFrom(Models.toLiteral(f, false))
             .toStatement());
@@ -148,16 +148,16 @@ public class SummarizeFlowProcessor extends RendezvousProcessor {
         switch (folding.aggregator()) {
         case MAX:
             return new ExpressionBuilder(f, property.createGetter(outputCache))
-                .method("max", property.createGetter(input))
+                .method("max", property.createGetter(input)) //$NON-NLS-1$
                 .toStatement();
         case MIN:
             return new ExpressionBuilder(f, property.createGetter(outputCache))
-                .method("min", property.createGetter(input))
+                .method("min", property.createGetter(input)) //$NON-NLS-1$
                 .toStatement();
         case SUM:
         case COUNT:
             return new ExpressionBuilder(f, property.createGetter(outputCache))
-                .method("add", property.createGetter(input))
+                .method("add", property.createGetter(input)) //$NON-NLS-1$
                 .toStatement();
         default:
             throw new AssertionError();
@@ -220,13 +220,13 @@ public class SummarizeFlowProcessor extends RendezvousProcessor {
             case MIN:
             case SUM:
                 return new ExpressionBuilder(f, destination.createGetter(outputCache))
-                    .method("modify", new ExpressionBuilder(f, source.createGetter(context.getInput()))
-                        .method("get")
+                    .method("modify", new ExpressionBuilder(f, source.createGetter(context.getInput())) //$NON-NLS-1$
+                        .method("get") //$NON-NLS-1$
                         .toExpression())
                     .toStatement();
             case COUNT:
                 return new ExpressionBuilder(f, destination.createGetter(outputCache))
-                    .method("modify", Models.toLiteral(f, 1L))
+                    .method("modify", Models.toLiteral(f, 1L)) //$NON-NLS-1$
                     .toStatement();
             default:
                 throw new AssertionError();

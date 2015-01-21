@@ -44,9 +44,9 @@ public class OperatorCompilingEnvironment {
 
     private static final Element[] EMPTY_ELEMENTS = new Element[0];
 
-    private static final String KEY_FORCE_GENERATE = "com.asakusafw.operator.generate.force";
+    private static final String KEY_FORCE_GENERATE = "com.asakusafw.operator.generate.force"; //$NON-NLS-1$
 
-    private static final String DEFAULT_FORCE_GENERATE = "false";
+    private static final String DEFAULT_FORCE_GENERATE = "false"; //$NON-NLS-1$
 
     private final ProcessingEnvironment processingEnvironment;
 

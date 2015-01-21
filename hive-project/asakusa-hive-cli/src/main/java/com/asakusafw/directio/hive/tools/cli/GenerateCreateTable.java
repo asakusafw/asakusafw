@@ -61,27 +61,27 @@ public final class GenerateCreateTable {
 
     static {
         OPT_LOCATION = new Option("l", "location", true, "table output location"); //$NON-NLS-1$ //$NON-NLS-2$
-        OPT_LOCATION.setArgName("URI");
+        OPT_LOCATION.setArgName("URI"); //$NON-NLS-1$
         OPT_LOCATION.setRequired(false);
 
         OPT_DATABASE = new Option("db", "database", true, "table database name"); //$NON-NLS-1$ //$NON-NLS-2$
-        OPT_DATABASE.setArgName("dbname");
+        OPT_DATABASE.setArgName("dbname"); //$NON-NLS-1$
         OPT_DATABASE.setRequired(false);
 
         OPT_INCLUDE = new Option("i", "include", true, "include table name regex"); //$NON-NLS-1$ //$NON-NLS-2$
-        OPT_INCLUDE.setArgName("regex");
+        OPT_INCLUDE.setArgName("regex"); //$NON-NLS-1$
         OPT_INCLUDE.setRequired(false);
 
         OPT_CLASSPATH = new Option("cp", "classpath", true, "classpath"); //$NON-NLS-1$ //$NON-NLS-2$
-        OPT_CLASSPATH.setArgName("/path/to/classes[" + File.pathSeparator + "...]");
+        OPT_CLASSPATH.setArgName("/path/to/classes[" + File.pathSeparator + "...]"); //$NON-NLS-1$ //$NON-NLS-2$
         OPT_CLASSPATH.setRequired(true);
 
         OPT_PLUGINPATH = new Option("pp", "pluginpath", true, "pluginpath"); //$NON-NLS-1$ //$NON-NLS-2$
-        OPT_PLUGINPATH.setArgName("/path/to/plugin.jar[" + File.pathSeparator + "...]");
+        OPT_PLUGINPATH.setArgName("/path/to/plugin.jar[" + File.pathSeparator + "...]"); //$NON-NLS-1$ //$NON-NLS-2$
         OPT_PLUGINPATH.setRequired(false);
 
         OPT_OUTPUT = new Option("o", "output", true, "output file path"); //$NON-NLS-1$ //$NON-NLS-2$
-        OPT_OUTPUT.setArgName("/path/to/output-file");
+        OPT_OUTPUT.setArgName("/path/to/output-file"); //$NON-NLS-1$
         OPT_OUTPUT.setRequired(true);
 
         OPTIONS = new Options();
@@ -138,7 +138,7 @@ public final class GenerateCreateTable {
     }
 
     static GenerateCreateTableTask.Configuration parseConfiguration(String... args) throws ParseException {
-        LOG.debug("Analyzing arguments: {}", Arrays.toString(args));
+        LOG.debug("Analyzing arguments: {}", Arrays.toString(args)); //$NON-NLS-1$
 
         CommandLineParser parser = new BasicParser();
         CommandLine cmd = parser.parse(OPTIONS, args);
@@ -169,7 +169,7 @@ public final class GenerateCreateTable {
 
         Stringnizer locationProvider = null;
         if (location != null) {
-            final String prefix = location.endsWith("/") ? location : location + '/';
+            final String prefix = location.endsWith("/") ? location : location + '/'; //$NON-NLS-1$
             locationProvider = new Stringnizer() {
                 @Override
                 public String toString(HiveTableInfo table) {
@@ -199,7 +199,7 @@ public final class GenerateCreateTable {
 
     private static String getOption(CommandLine cmd, Option option) {
         String value = cmd.getOptionValue(option.getOpt());
-        LOG.debug("Option: {}={}", option.getLongOpt(), value);
+        LOG.debug("Option: {}={}", option.getLongOpt(), value); //$NON-NLS-1$
         return value;
     }
 

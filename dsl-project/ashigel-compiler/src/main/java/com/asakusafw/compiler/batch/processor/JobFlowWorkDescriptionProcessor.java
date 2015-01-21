@@ -42,12 +42,12 @@ public class JobFlowWorkDescriptionProcessor
     /**
      * ジョブフローパッケージ(JAR)の出力先ディレクトリ (バッチ結果出力先の相対パス)。
      */
-    public static final String JOBFLOW_PACKAGE = "lib";
+    public static final String JOBFLOW_PACKAGE = "lib"; //$NON-NLS-1$
 
     /**
      * ジョブフローのビルド用作業ディレクトリ。
      */
-    private static final String JOBFLOW_TEMPORARY = "build";
+    private static final String JOBFLOW_TEMPORARY = "build"; //$NON-NLS-1$
 
     @Override
     public JobflowModel process(

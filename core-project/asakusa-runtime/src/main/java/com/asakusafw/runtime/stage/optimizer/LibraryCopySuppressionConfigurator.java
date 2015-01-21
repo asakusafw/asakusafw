@@ -46,21 +46,22 @@ public class LibraryCopySuppressionConfigurator extends StageConfigurator {
     /**
      * The configuration key of whether this feature is enabled or not.
      */
-    public static final String KEY_ENABLED = "com.asakusafw.runtime.stage.optimizer.libraryCopySuppression.enabled";
+    public static final String KEY_ENABLED =
+            "com.asakusafw.runtime.stage.optimizer.libraryCopySuppression.enabled"; //$NON-NLS-1$
 
     /**
      * The default configuration value of {@link #KEY_ENABLED}.
      */
     public static final boolean DEFAULT_ENABLED = false;
 
-    static final String KEY_CONF_LIBRARIES = "tmpjars";
+    static final String KEY_CONF_LIBRARIES = "tmpjars"; //$NON-NLS-1$
 
     static final Method CONFIGURATION_UNSET;
 
     static {
         Method method;
         try {
-            method = Configuration.class.getMethod("unset", String.class);
+            method = Configuration.class.getMethod("unset", String.class); //$NON-NLS-1$
         } catch (Exception e) {
             method = null;
         }
@@ -101,14 +102,14 @@ public class LibraryCopySuppressionConfigurator extends StageConfigurator {
             return;
         }
         StringBuilder result = new StringBuilder();
-        for (String library : libraries.split(",")) {
+        for (String library : libraries.split(",")) { //$NON-NLS-1$
             if (loaded.contains(library)) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug(MessageFormat.format("Keep library: {0}", library));
+                    LOG.debug(MessageFormat.format("Keep library: {0}", library)); //$NON-NLS-1$
                 }
             } else {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug(MessageFormat.format("Suppress library: {0}", library));
+                    LOG.debug(MessageFormat.format("Suppress library: {0}", library)); //$NON-NLS-1$
                 }
                 if (result.length() != 0) {
                     result.append(',');
@@ -137,10 +138,10 @@ public class LibraryCopySuppressionConfigurator extends StageConfigurator {
     static String selectLibraries(String libraries) {
         String minLibrary = null;
         long minSize = Long.MAX_VALUE;
-        for (String library : libraries.split(",")) {
+        for (String library : libraries.split(",")) { //$NON-NLS-1$
             Path path = new Path(library);
             String scheme = path.toUri().getScheme();
-            if (scheme != null && scheme.equals("file")) {
+            if (scheme != null && scheme.equals("file")) { //$NON-NLS-1$
                 File file = new File(path.toUri());
                 long size = file.length();
                 if (size < minSize) {

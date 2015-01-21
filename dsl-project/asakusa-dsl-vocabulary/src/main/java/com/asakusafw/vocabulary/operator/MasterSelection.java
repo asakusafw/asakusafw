@@ -127,10 +127,10 @@ public @interface MasterSelection {
     /**
      * マスタ選択演算子を利用しない際に指定されるメソッド名。
      */
-    String NO_SELECTION = "-";
+    String NO_SELECTION = "-"; //$NON-NLS-1$
 
     /**
      * この補助演算子を指定するための要素名。
      */
-    String ELEMENT_NAME = "selection";
+    String ELEMENT_NAME = "selection"; //$NON-NLS-1$
 }

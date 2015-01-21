@@ -63,11 +63,11 @@ public class RunTask {
         }
         @Override
         public String getHandlerId() {
-            return "testing";
+            return "testing"; //$NON-NLS-1$
         }
         @Override
         public String getResourceId(ExecutionContext context, ExecutionScript script) {
-            return "testing";
+            return "testing"; //$NON-NLS-1$
         }
         @Override
         public Map<String, String> getProperties(ExecutionContext context, ExecutionScript script) {
@@ -205,7 +205,7 @@ public class RunTask {
 
     private String getExecutionId(FlowScript flow) {
         assert flow != null;
-        return String.format("%s-%s-%s",
+        return String.format("%s-%s-%s", //$NON-NLS-1$
                 configuration.executionIdPrefix,
                 configuration.script.getId(),
                 flow.getId());

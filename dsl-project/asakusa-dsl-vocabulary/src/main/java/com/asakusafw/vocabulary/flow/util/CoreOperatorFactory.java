@@ -37,37 +37,37 @@ public class CoreOperatorFactory {
     /**
      * 空演算子の共通インスタンス名。
      */
-    public static final String EMPTY_NAME = "empty";
+    public static final String EMPTY_NAME = "empty"; //$NON-NLS-1$
 
     /**
      * 停止演算子の共通インスタンス名。
      */
-    public static final String STOP_NAME = "stop";
+    public static final String STOP_NAME = "stop"; //$NON-NLS-1$
 
     /**
      * 合流演算子の共通インスタンス名。
      */
-    public static final String CONFLUENT_NAME = "confluent";
+    public static final String CONFLUENT_NAME = "confluent"; //$NON-NLS-1$
 
     /**
      * チェックポイント演算子の共通インスタンス名。
      */
-    public static final String CHECKPOINT_NAME = "checkpoint";
+    public static final String CHECKPOINT_NAME = "checkpoint"; //$NON-NLS-1$
 
     /**
      * 射影演算子の共通インスタンス名。
      */
-    public static final String PROJECT_NAME = "project";
+    public static final String PROJECT_NAME = "project"; //$NON-NLS-1$
 
     /**
      * 拡張演算子の共通インスタンス名。
      */
-    public static final String EXTEND_NAME = "extend";
+    public static final String EXTEND_NAME = "extend"; //$NON-NLS-1$
 
     /**
      * 再構築演算子の共通インスタンス名。
      */
-    public static final String RESTRUCTURE_NAME = "restructure";
+    public static final String RESTRUCTURE_NAME = "restructure"; //$NON-NLS-1$
 
     /**
      * 出力先に何もデータを流さない疑似演算子。入力のダミーとして振る舞う。
@@ -449,7 +449,7 @@ public class CoreOperatorFactory {
             assert targetClass != null;
             OperatorDescription.Builder builder =
                 new OperatorDescription.Builder(com.asakusafw.vocabulary.operator.Project.class);
-            builder.declare(CoreOperatorFactory.class, CoreOperatorFactory.class, "project");
+            builder.declare(CoreOperatorFactory.class, CoreOperatorFactory.class, "project"); //$NON-NLS-1$
             builder.declareParameter(Source.class);
             builder.declareParameter(Class.class);
             builder.addInput(INPUT_PORT_NAME, in);
@@ -485,7 +485,7 @@ public class CoreOperatorFactory {
             assert targetClass != null;
             OperatorDescription.Builder builder =
                 new OperatorDescription.Builder(com.asakusafw.vocabulary.operator.Extend.class);
-            builder.declare(CoreOperatorFactory.class, CoreOperatorFactory.class, "extend");
+            builder.declare(CoreOperatorFactory.class, CoreOperatorFactory.class, "extend"); //$NON-NLS-1$
             builder.declareParameter(Source.class);
             builder.declareParameter(Class.class);
             builder.addInput(INPUT_PORT_NAME, in);
@@ -521,7 +521,7 @@ public class CoreOperatorFactory {
             assert targetClass != null;
             OperatorDescription.Builder builder =
                 new OperatorDescription.Builder(com.asakusafw.vocabulary.operator.Restructure.class);
-            builder.declare(CoreOperatorFactory.class, CoreOperatorFactory.class, "restructure");
+            builder.declare(CoreOperatorFactory.class, CoreOperatorFactory.class, "restructure"); //$NON-NLS-1$
             builder.declareParameter(Source.class);
             builder.declareParameter(Class.class);
             builder.addInput(INPUT_PORT_NAME, in);

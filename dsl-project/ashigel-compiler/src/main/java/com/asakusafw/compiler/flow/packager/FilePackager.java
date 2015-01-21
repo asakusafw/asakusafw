@@ -71,17 +71,17 @@ public class FilePackager
 
     static final Logger LOG = LoggerFactory.getLogger(FilePackager.class);
 
-    private static final Charset CHARSET = Charset.forName("UTF-8");
+    private static final Charset CHARSET = Charset.forName("UTF-8"); //$NON-NLS-1$
 
     /**
      * The option name of whether or not packaging is enabled.
      * @since 0.5.0
      */
-    public static final String KEY_OPTION_PACKAGING = "packaging";
+    public static final String KEY_OPTION_PACKAGING = "packaging"; //$NON-NLS-1$
 
-    private static final String SOURCE_DIRECTORY = "src";
+    private static final String SOURCE_DIRECTORY = "src"; //$NON-NLS-1$
 
-    private static final String CLASS_DIRECTORY = "bin";
+    private static final String CLASS_DIRECTORY = "bin"; //$NON-NLS-1$
 
     private final File sourceDirectory;
 
@@ -146,7 +146,7 @@ public class FilePackager
         compile();
         JarOutputStream jar = new JarOutputStream(buffering(output));
         try {
-            LOG.debug("コンパイル結果をパッケージングします");
+            LOG.debug("creating a package of compilation results"); //$NON-NLS-1$
             List<ResourceRepository> repos = Lists.create();
             if (classDirectory.exists()) {
                 repos.add(new FileRepository(classDirectory));
@@ -173,7 +173,7 @@ public class FilePackager
         if (skipCompile()) {
             return;
         }
-        LOG.debug("生成されたソースプログラムをパッケージングします");
+        LOG.debug("creating a package of generated source files"); //$NON-NLS-1$
         JarOutputStream jar = new JarOutputStream(buffering(output));
         try {
             boolean exists = drain(
@@ -221,11 +221,13 @@ public class FilePackager
                 Location location = cursor.getLocation();
                 if (allowFrameworkInfo == false
                         && (FRAMEWORK_INFO.isPrefixOf(location) || MANIFEST_FILE.isPrefixOf(location))) {
-                    LOG.debug("Skipped adding a framework info: {}", location);
+                    LOG.debug("Skipped adding a framework info: {}", location); //$NON-NLS-1$
                     continue;
                 }
                 if (saw.contains(location)) {
-                    LOG.warn("{} is already added to JAR", location);
+                    LOG.warn(MessageFormat.format(
+                            "{0} is already added to JAR",
+                            location));
                     continue;
                 }
                 saw.add(location);
@@ -237,8 +239,8 @@ public class FilePackager
     }
 
     private void addDummyEntry(JarOutputStream jar) throws IOException {
-        ZipEntry entry = new ZipEntry(".EMPTY");
-        entry.setComment("This archive file is empty.");
+        ZipEntry entry = new ZipEntry(".EMPTY"); //$NON-NLS-1$
+        entry.setComment("This archive file is empty."); //$NON-NLS-1$
         jar.putNextEntry(entry);
     }
 
@@ -249,7 +251,7 @@ public class FilePackager
         assert jar != null;
         assert source != null;
         assert location != null;
-        LOG.trace("Adding to jar entry: {}", location);
+        LOG.trace("Adding to jar entry: {}", location); //$NON-NLS-1$
         JarEntry entry = new JarEntry(location.toPath('/'));
         jar.putNextEntry(entry);
         try {
@@ -268,7 +270,7 @@ public class FilePackager
     }
 
     private void compile() throws IOException {
-        LOG.debug("生成されたプログラムをクラスファイルに変換します");
+        LOG.debug("compiling generated Java source files"); //$NON-NLS-1$
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         if (compiler == null) {
             throw new IllegalStateException(
@@ -288,8 +290,7 @@ public class FilePackager
         assert compiler != null;
         assert sources != null;
 
-        LOG.debug("生成されたソースファイルをコンパイルしています ({}個のファイル)", sources.size());
-        LOG.debug("コンパイル結果の出力先: {}", classDirectory);
+        LOG.debug("compiling Java:{} files -> {}", sources.size(), classDirectory); //$NON-NLS-1$
 
         mkdir(sourceDirectory);
         mkdir(classDirectory);
@@ -302,23 +303,23 @@ public class FilePackager
                 CHARSET);
         try {
             List<String> arguments = Lists.create();
-            Collections.addAll(arguments, "-source", "1.6");
-            Collections.addAll(arguments, "-target", "1.6");
-            Collections.addAll(arguments, "-encoding", CHARSET.name());
+            Collections.addAll(arguments, "-source", "1.6"); //$NON-NLS-1$ //$NON-NLS-2$
+            Collections.addAll(arguments, "-target", "1.6"); //$NON-NLS-1$ //$NON-NLS-2$
+            Collections.addAll(arguments, "-encoding", CHARSET.name()); //$NON-NLS-1$
             Collections.addAll(arguments,
-                    "-sourcepath",
+                    "-sourcepath", //$NON-NLS-1$
                     sourceDirectory.getCanonicalFile().toString());
             Collections.addAll(arguments,
-                    "-d",
+                    "-d", //$NON-NLS-1$
                     classDirectory.getCanonicalFile().toString());
-            Collections.addAll(arguments, "-proc:none");
-            Collections.addAll(arguments, "-Xlint:all");
-            Collections.addAll(arguments, "-Xlint:-options");
+            Collections.addAll(arguments, "-proc:none"); //$NON-NLS-1$
+            Collections.addAll(arguments, "-Xlint:all"); //$NON-NLS-1$
+            Collections.addAll(arguments, "-Xlint:-options"); //$NON-NLS-1$
 
             StringWriter errors = new StringWriter();
             PrintWriter pw = new PrintWriter(errors);
 
-            LOG.debug("コンパイルオプション: {}", arguments);
+            LOG.debug("Java compile options: {}", arguments); //$NON-NLS-1$
             CompilationTask task = compiler.getTask(
                     pw,
                     fileManager,
@@ -356,7 +357,7 @@ public class FilePackager
 
     private List<File> collect(File file, List<File> sourceFiles) {
         if (file.isFile()) {
-            LOG.trace("コンパイル対象として{}を発見しました", file);
+            LOG.trace("found compilation target: {}", file); //$NON-NLS-1$
             sourceFiles.add(file);
         } else {
             for (File child : file.listFiles()) {
@@ -388,7 +389,7 @@ public class FilePackager
                     "Invalid valud for compiler option \"{0}\" ({1}), this must be {2}",
                     getEnvironment().getOptions().getExtraAttributeKeyName(KEY_OPTION_PACKAGING),
                     getEnvironment().getOptions().getExtraAttribute(KEY_OPTION_PACKAGING),
-                    GenericOptionValue.ENABLED.getSymbol() + "|" + GenericOptionValue.DISABLED.getSymbol());
+                    GenericOptionValue.ENABLED.getSymbol() + '|' + GenericOptionValue.DISABLED.getSymbol());
             option = GenericOptionValue.AUTO;
         }
         return option == GenericOptionValue.DISABLED;

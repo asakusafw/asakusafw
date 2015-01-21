@@ -99,7 +99,7 @@ public class ConstantRetryStrategy implements RetryStrategy {
             if (attemptNumber >= maxAttemptNumber) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(MessageFormat.format(
-                            "exceeded max attempt number ({2}): {0}",
+                            "exceeded max attempt number ({2}): {0}", //$NON-NLS-1$
                             taskName,
                             maxAttemptNumber));
                 }
@@ -107,7 +107,7 @@ public class ConstantRetryStrategy implements RetryStrategy {
             }
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "waiting for next attempt ({1}/{2}): {0}",
+                        "waiting for next attempt ({1}/{2}): {0}", //$NON-NLS-1$
                         taskName,
                         attemptNumber,
                         maxAttemptNumber));

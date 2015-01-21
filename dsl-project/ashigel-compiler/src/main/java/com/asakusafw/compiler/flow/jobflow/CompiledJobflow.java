@@ -30,7 +30,7 @@ import com.asakusafw.utils.collections.Lists;
  */
 public class CompiledJobflow {
 
-    private static final String UNKNOWN_MODULE_NAME = "unknown";
+    private static final String UNKNOWN_MODULE_NAME = "unknown"; //$NON-NLS-1$
 
     private final List<ExternalIoCommandProvider> commands;
 

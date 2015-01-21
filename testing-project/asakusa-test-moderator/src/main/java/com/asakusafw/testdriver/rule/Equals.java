@@ -34,10 +34,10 @@ public class Equals implements ValuePredicate<Object> {
     @Override
     public String describeExpected(Object expected, Object actual) {
         if (expected == null) {
-            return "(error)";
+            return "(error)"; //$NON-NLS-1$
         }
         return MessageFormat.format(
-                "= {0}",
+                "= {0}", //$NON-NLS-1$
                 Util.format(expected));
     }
 }

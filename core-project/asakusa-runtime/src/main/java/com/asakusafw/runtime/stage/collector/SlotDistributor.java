@@ -35,7 +35,7 @@ public abstract class SlotDistributor<T extends Writable> extends MapperWithRunt
     /**
      * {@link #setSlotSpec(Writable, SortableSlot)}のメソッド名。
      */
-    public static final String NAME_SET_SLOT_SPEC = "setSlotSpec";
+    public static final String NAME_SET_SLOT_SPEC = "setSlotSpec"; //$NON-NLS-1$
 
     private final SortableSlot keyOut = new SortableSlot();
 

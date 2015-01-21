@@ -32,8 +32,8 @@ import com.asakusafw.utils.java.internal.parser.javadoc.ir.JavadocTokenKind;
 public class DefaultJavadocScanner implements JavadocScanner {
 
     private int index;
-    private List<JavadocToken> tokens;
-    private JavadocToken eof;
+    private final List<JavadocToken> tokens;
+    private final JavadocToken eof;
 
     /**
      * インスタンスを生成する。
@@ -61,6 +61,7 @@ public class DefaultJavadocScanner implements JavadocScanner {
         try {
             while (tokenizer.yylex() != -1) {
                 // do nothing
+                continue;
             }
         } catch (IOException e) {
             throw (AssertionError) new AssertionError(tokenizer.getStore()).initCause(e);

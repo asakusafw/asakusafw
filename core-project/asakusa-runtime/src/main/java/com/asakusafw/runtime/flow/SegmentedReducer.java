@@ -40,7 +40,7 @@ public abstract class SegmentedReducer<
     /**
      * {@link #getRendezvous(SegmentedWritable)}のメソッド名。
      */
-    public static final String GET_RENDEZVOUS = "getRendezvous";
+    public static final String GET_RENDEZVOUS = "getRendezvous"; //$NON-NLS-1$
 
     /**
      * キーのグループが変更された際、または最初のキーに対して呼び出され、

@@ -82,7 +82,7 @@ public class JoinRewriter extends FlowCompilingEnvironment.Initialized implement
         Precondition.checkMustNotBeNull(graph, "graph"); //$NON-NLS-1$
         FlowCompilerOptions options = getEnvironment().getOptions();
         if (options.isHashJoinForSmall() == false && options.isHashJoinForTiny() == false) {
-            LOG.debug("Joinの最適化は行われません");
+            LOG.debug("join optimization is disabled"); //$NON-NLS-1$
             return false;
         }
         return rewriteGraph(graph);

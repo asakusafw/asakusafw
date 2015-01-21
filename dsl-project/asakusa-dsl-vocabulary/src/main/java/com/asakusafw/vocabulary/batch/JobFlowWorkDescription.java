@@ -96,7 +96,7 @@ public class JobFlowWorkDescription extends WorkDescription {
     @Override
     public String toString() {
         return MessageFormat.format(
-                "JobFlow({0})",
+                "JobFlow({0})", //$NON-NLS-1$
                 getFlowClass().getName());
     }
 }

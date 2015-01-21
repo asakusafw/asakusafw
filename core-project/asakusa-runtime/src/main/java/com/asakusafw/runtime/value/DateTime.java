@@ -25,7 +25,7 @@ public class DateTime implements Comparable<DateTime> {
     /**
      * 日付時刻のフォーマット。
      */
-    public static final String FORMAT = "yyyy-MM-dd HH:mm:ss";
+    public static final String FORMAT = "yyyy-MM-dd HH:mm:ss"; //$NON-NLS-1$
 
     private long elapsedSeconds = 0L;
 
@@ -177,7 +177,7 @@ public class DateTime implements Comparable<DateTime> {
     @Override
     public String toString() {
         return String.format(
-                "%04d-%02d-%02d %02d:%02d:%02d",
+                "%04d-%02d-%02d %02d:%02d:%02d", //$NON-NLS-1$
                 getYear(),
                 getMonth(),
                 getDay(),
@@ -245,7 +245,7 @@ public class DateTime implements Comparable<DateTime> {
                     throw new IllegalArgumentException(MessageFormat.format(
                             "\"{0}\" is not form of \"{1}\"",
                             timeString,
-                            "YYYYMMDDhhmmss"));
+                            "YYYYMMDDhhmmss")); //$NON-NLS-1$
                 }
                 int year = get(timeString, 0, 4);
                 int month = get(timeString, 4, 6);
@@ -274,7 +274,7 @@ public class DateTime implements Comparable<DateTime> {
                     throw new IllegalArgumentException(MessageFormat.format(
                             "\"{0}\" is not form of \"{1}\"",
                             timeString,
-                            "YYYY-MM-DD hh:mm:ss"));
+                            "YYYY-MM-DD hh:mm:ss")); //$NON-NLS-1$
                 }
                 return value;
             }

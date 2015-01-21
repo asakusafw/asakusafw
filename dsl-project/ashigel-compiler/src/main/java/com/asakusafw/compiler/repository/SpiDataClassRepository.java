@@ -43,7 +43,7 @@ public class SpiDataClassRepository extends FlowCompilingEnvironment.Initialized
 
     @Override
     protected void doInitialize() {
-        LOG.debug("データモデルクラスのプラグインを読み出します");
+        LOG.debug("loading data model class plug-ins"); //$NON-NLS-1$
         List<DataClassRepository> results = Lists.create();
         ServiceLoader<DataClassRepository> services = ServiceLoader.load(
                 DataClassRepository.class,
@@ -51,7 +51,7 @@ public class SpiDataClassRepository extends FlowCompilingEnvironment.Initialized
         for (DataClassRepository repo : services) {
             assert repo.getClass().equals(this.getClass()) == false;
             repo.initialize(getEnvironment());
-            LOG.debug("{}が利用可能になります", repo.getClass().getName());
+            LOG.debug("found data model class plug-in: {}", repo.getClass().getName()); //$NON-NLS-1$
             results.add(repo);
         }
         Collections.sort(results, new Comparator<DataClassRepository>() {
@@ -67,8 +67,8 @@ public class SpiDataClassRepository extends FlowCompilingEnvironment.Initialized
 
     @Override
     public DataClass load(Type type) {
-        Precondition.checkMustNotBeNull(type, "type");
-        LOG.debug("Resolving {} as a data model", type);
+        Precondition.checkMustNotBeNull(type, "type"); //$NON-NLS-1$
+        LOG.debug("resolving {} as a data model", type); //$NON-NLS-1$
         for (DataClassRepository repository : repositories) {
             DataClass dataClass = repository.load(type);
             if (dataClass != null) {

@@ -54,10 +54,10 @@ public class CalendarRange implements ValuePredicate<Calendar> {
     @Override
     public String describeExpected(Calendar expected, Calendar actual) {
         if (expected == null) {
-            return "(error)";
+            return "(error)"; //$NON-NLS-1$
         }
         return MessageFormat.format(
-                "{0} ~ {1}",
+                "{0} ~ {1}", //$NON-NLS-1$
                 Util.format(add(expected, upperBound)),
                 Util.format(add(expected, lowerBound)));
     }

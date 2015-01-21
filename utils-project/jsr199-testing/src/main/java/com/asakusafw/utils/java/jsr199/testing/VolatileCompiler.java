@@ -65,14 +65,14 @@ public class VolatileCompiler implements Closeable {
             compiler.getStandardFileManager(
                 null,
                 Locale.ENGLISH,
-                Charset.forName("UTF-8")));
+                Charset.forName("UTF-8"))); //$NON-NLS-1$
         this.arguments = new ArrayList<String>();
         this.targets = new ArrayList<JavaFileObject>();
         this.processors = new ArrayList<Processor>();
 
-        Collections.addAll(arguments, "-source", "1.6");
-        Collections.addAll(arguments, "-target", "1.6");
-        Collections.addAll(arguments, "-encoding", "UTF-8");
+        Collections.addAll(arguments, "-source", "1.6"); //$NON-NLS-1$ //$NON-NLS-2$
+        Collections.addAll(arguments, "-target", "1.6"); //$NON-NLS-1$ //$NON-NLS-2$
+        Collections.addAll(arguments, "-encoding", "UTF-8"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /**

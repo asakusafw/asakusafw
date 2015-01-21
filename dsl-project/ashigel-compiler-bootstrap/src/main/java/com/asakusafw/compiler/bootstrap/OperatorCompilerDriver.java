@@ -55,20 +55,20 @@ public final class OperatorCompilerDriver {
 
     private static final Options OPTIONS;
     static {
-        OPT_SOURCEPATH = new Option("sourcepath", true, "コンパイル対象のソースコードを含むソースパス");
-        OPT_SOURCEPATH.setArgName("/path/to/sourceroot");
+        OPT_SOURCEPATH = new Option("sourcepath", true, "コンパイル対象のソースコードを含むソースパス"); //$NON-NLS-1$
+        OPT_SOURCEPATH.setArgName("/path/to/sourceroot"); //$NON-NLS-1$
         OPT_SOURCEPATH.setRequired(true);
 
-        OPT_ENCODING = new Option("encoding", true, "コンパイル対象の文字エンコーディング");
-        OPT_ENCODING.setArgName("charset-name");
+        OPT_ENCODING = new Option("encoding", true, "コンパイル対象の文字エンコーディング"); //$NON-NLS-1$
+        OPT_ENCODING.setArgName("charset-name"); //$NON-NLS-1$
 
-        OPT_OUTPUT = new Option("output", true, "コンパイル結果を出力する先のディレクトリ");
-        OPT_OUTPUT.setArgName("/path/to/output");
+        OPT_OUTPUT = new Option("output", true, "コンパイル結果を出力する先のディレクトリ"); //$NON-NLS-1$
+        OPT_OUTPUT.setArgName("/path/to/output"); //$NON-NLS-1$
         OPT_OUTPUT.setValueSeparator(File.pathSeparatorChar);
         OPT_OUTPUT.setRequired(true);
 
-        OPT_CLASSES = new Option("class", true, "コンパイル対象のクラス名一覧");
-        OPT_CLASSES.setArgName("class-names");
+        OPT_CLASSES = new Option("class", true, "コンパイル対象のクラス名一覧"); //$NON-NLS-1$
+        OPT_CLASSES.setArgName("class-names"); //$NON-NLS-1$
         OPT_CLASSES.setArgs(Option.UNLIMITED_VALUES);
         OPT_CLASSES.setRequired(true);
 
@@ -108,9 +108,11 @@ public final class OperatorCompilerDriver {
 
         // 内部的にはJSR-199を使ってコンパイラを起動するだけ
         List<File> sourceFiles = toSources(sourcePath, operatorClasses);
-        LOG.info("Compiling {}", sourceFiles);
+        LOG.info(MessageFormat.format(
+                "Compiling {0}",
+                sourceFiles));
         List<String> arguments = toArguments(sourcePath, outputPath, encoding);
-        LOG.debug("Compiler arguments {}", arguments);
+        LOG.debug("Compiler arguments {}", arguments); //$NON-NLS-1$
         if (outputPath.isDirectory() == false && outputPath.mkdirs() == false) {
             throw new IOException(MessageFormat.format(
                     "Failed to create {0}",
@@ -146,12 +148,12 @@ public final class OperatorCompilerDriver {
         assert outputPath != null;
         assert encoding != null;
         List<String> results = Lists.create();
-        Collections.addAll(results, "-proc:only");
-        Collections.addAll(results, "-source", "1.6");
-        Collections.addAll(results, "-target", "1.6");
-        Collections.addAll(results, "-encoding", encoding.displayName());
-        Collections.addAll(results, "-sourcepath", sourcePath.getAbsolutePath());
-        Collections.addAll(results, "-s", outputPath.getAbsolutePath());
+        Collections.addAll(results, "-proc:only"); //$NON-NLS-1$
+        Collections.addAll(results, "-source", "1.6"); //$NON-NLS-1$ //$NON-NLS-2$
+        Collections.addAll(results, "-target", "1.6"); //$NON-NLS-1$ //$NON-NLS-2$
+        Collections.addAll(results, "-encoding", encoding.displayName()); //$NON-NLS-1$
+        Collections.addAll(results, "-sourcepath", sourcePath.getAbsolutePath()); //$NON-NLS-1$
+        Collections.addAll(results, "-s", outputPath.getAbsolutePath()); //$NON-NLS-1$
         return results;
     }
 
@@ -173,7 +175,7 @@ public final class OperatorCompilerDriver {
     private static File findSource(File sourcePath, Class<?> aClass) throws IOException {
         assert sourcePath != null;
         assert aClass != null;
-        String[] segments = aClass.getName().split("\\.");
+        String[] segments = aClass.getName().split("\\."); //$NON-NLS-1$
         File current = sourcePath;
         for (int i = 0; i < segments.length - 1; i++) {
             current = new File(current, segments[i]);
@@ -189,7 +191,7 @@ public final class OperatorCompilerDriver {
         if (enclosing >= 0) {
             name = name.substring(0, enclosing);
         }
-        File file = new File(current, name + ".java");
+        File file = new File(current, name + ".java"); //$NON-NLS-1$
         if (file.isFile() == false) {
             if (current.isDirectory() == false) {
                 throw new FileNotFoundException(MessageFormat.format(
@@ -213,7 +215,7 @@ public final class OperatorCompilerDriver {
             formatter.setWidth(Integer.MAX_VALUE);
             formatter.printHelp(
                     MessageFormat.format(
-                            "java -classpath ... {0}",
+                            "java -classpath ... {0}", //$NON-NLS-1$
                             OperatorCompilerDriver.class.getName()),
                     OPTIONS,
                     true);
@@ -227,7 +229,7 @@ public final class OperatorCompilerDriver {
         CommandLine cmd = parser.parse(OPTIONS, args);
         String sourcePath = cmd.getOptionValue(OPT_SOURCEPATH.getOpt());
         String output = cmd.getOptionValue(OPT_OUTPUT.getOpt());
-        String encoding = cmd.getOptionValue(OPT_ENCODING.getOpt(), "UTF-8");
+        String encoding = cmd.getOptionValue(OPT_ENCODING.getOpt(), "UTF-8"); //$NON-NLS-1$
         String[] classes = cmd.getOptionValues(OPT_CLASSES.getOpt());
 
         List<Class<?>> operatorClasses = Lists.create();

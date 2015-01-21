@@ -15,6 +15,8 @@
  */
 package com.asakusafw.runtime.directio;
 
+import java.text.MessageFormat;
+
 /**
  * Represents a context for output contents to staging area.
  * @since 0.2.5
@@ -75,12 +77,9 @@ public final class OutputTransactionContext {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("OutputTransactionContext [transactionId=");
-        builder.append(transactionId);
-        builder.append(", outputId=");
-        builder.append(outputId);
-        builder.append("]");
-        return builder.toString();
+        return MessageFormat.format(
+                "OutputTransactionContext(transactionId={0}, outputId={1})", //$NON-NLS-1$
+                transactionId,
+                outputId);
     }
 }
