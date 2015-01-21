@@ -137,7 +137,7 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
                 "WindGate CSV exporter",
                 context.getQualifiedTypeName());
         desc.setSupportClassName(supportName);
-        FsProcessDescriptionGenerator.generateImporter(next, desc);
+        FsProcessDescriptionGenerator.generateExporter(next, desc);
     }
 
     private boolean isTarget(ModelDeclaration model) {
