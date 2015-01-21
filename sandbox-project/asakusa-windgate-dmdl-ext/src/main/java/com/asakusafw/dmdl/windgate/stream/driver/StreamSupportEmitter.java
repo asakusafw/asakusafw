@@ -135,7 +135,7 @@ public class StreamSupportEmitter extends JavaDataModelDriver {
                 "WindGate binary stream exporter",
                 context.getQualifiedTypeName());
         desc.setSupportClassName(supportName);
-        FsProcessDescriptionGenerator.generateImporter(next, desc);
+        FsProcessDescriptionGenerator.generateExporter(next, desc);
     }
 
     private boolean isTarget(ModelDeclaration model) throws IOException {
