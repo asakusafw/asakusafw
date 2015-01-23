@@ -46,6 +46,7 @@ public class JdbcExporterDescriptionTest {
         assertThat(conf.get(JdbcProcess.TABLE.key()), is("TESTING"));
         assertThat(conf.get(JdbcProcess.COLUMNS.key()), equalToIgnoringWhiteSpace("VALUE"));
         assertThat(conf.get(JdbcProcess.JDBC_SUPPORT.key()), is(StringSupport.class.getName()));
+        assertThat(conf.get(JdbcProcess.CUSTOM_TRUNCATE.key()), is(nullValue()));
         assertThat(conf.get(JdbcProcess.OPERATION.key()), is(not(nullValue())));
     }
 
@@ -63,6 +64,25 @@ public class JdbcExporterDescriptionTest {
         assertThat(conf.get(JdbcProcess.TABLE.key()), is("TESTING"));
         assertThat(conf.get(JdbcProcess.COLUMNS.key()), equalToIgnoringWhiteSpace("A, B, C"));
         assertThat(conf.get(JdbcProcess.JDBC_SUPPORT.key()), is(StringSupport.class.getName()));
+        assertThat(conf.get(JdbcProcess.CUSTOM_TRUNCATE.key()), is(nullValue()));
+        assertThat(conf.get(JdbcProcess.OPERATION.key()), is(not(nullValue())));
+    }
+
+    /**
+     * w/ custom truncate.
+     */
+    @Test
+    public void w_custom_truncate() {
+        Mock mock = new Mock(String.class, "testing", StringSupport.class, "TESTING", "VALUE")
+            .withCustomTruncate("CUSTOM");
+        DriverScript script = mock.getDriverScript();
+        assertThat(script.getResourceName(), is(Constants.JDBC_RESOURCE_NAME));
+        Map<String, String> conf = script.getConfiguration();
+        assertThat(conf.size(), is(5));
+        assertThat(conf.get(JdbcProcess.TABLE.key()), is("TESTING"));
+        assertThat(conf.get(JdbcProcess.COLUMNS.key()), equalToIgnoringWhiteSpace("VALUE"));
+        assertThat(conf.get(JdbcProcess.JDBC_SUPPORT.key()), is(StringSupport.class.getName()));
+        assertThat(conf.get(JdbcProcess.CUSTOM_TRUNCATE.key()), is("CUSTOM"));
         assertThat(conf.get(JdbcProcess.OPERATION.key()), is(not(nullValue())));
     }
 
@@ -177,6 +197,18 @@ public class JdbcExporterDescriptionTest {
     }
 
     /**
+     * custom truncate statement is empty.
+     */
+    @Test(expected = IllegalStateException.class)
+    public void empty_custom_truncate() {
+        Mock mock = new Mock(String.class, "testing", StringSupport.class, "TESTING", "VALUE")
+            .withCustomTruncate(" ");
+        DriverScript script = mock.getDriverScript();
+        assertThat(script.getResourceName(), is(Constants.JDBC_RESOURCE_NAME));
+        script.getConfiguration();
+    }
+
+    /**
      * String support.
      */
     public static class StringSupport extends MockJdbcSupport<String> {
@@ -230,6 +262,7 @@ public class JdbcExporterDescriptionTest {
         private final Class<? extends DataModelJdbcSupport<?>> jdbcSupport;
         private final String tableName;
         private final List<String> columnNames;
+        private String customTruncate;
 
         Mock(
                 Class<?> modelType,
@@ -271,6 +304,19 @@ public class JdbcExporterDescriptionTest {
         @Override
         public List<String> getColumnNames() {
             return columnNames;
+        }
+
+        @Override
+        public String getCustomTruncate() {
+            if (customTruncate == null) {
+                return super.getCustomTruncate();
+            }
+            return customTruncate;
+        }
+
+        public Mock withCustomTruncate(String value) {
+            this.customTruncate = value;
+            return this;
         }
     }
 }
