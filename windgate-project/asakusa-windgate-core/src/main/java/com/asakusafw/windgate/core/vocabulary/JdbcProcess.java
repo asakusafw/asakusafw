@@ -18,6 +18,7 @@ package com.asakusafw.windgate.core.vocabulary;
 /**
  * WindGate database resource configuration.
  * @since 0.2.2
+ * @version 0.7.3
  */
 public enum JdbcProcess implements ConfigurationItem {
 
@@ -52,6 +53,16 @@ public enum JdbcProcess implements ConfigurationItem {
     CONDITION(
             "condition", //$NON-NLS-1$
             "The condition expression"
+    ),
+
+    /**
+     * The script key of the custom truncate statement (for drains).
+     * The parameters in value will be replaced.
+     * @since 0.7.3
+     */
+    CUSTOM_TRUNCATE(
+            "customTruncate", //$NON-NLS-1$
+            "custom truncate statement"
     ),
 
     /**

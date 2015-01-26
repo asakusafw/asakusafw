@@ -25,6 +25,7 @@ import com.asakusafw.windgate.core.vocabulary.DataModelJdbcSupport;
  * A structured gate script fragment for JDBC.
  * @param <T> the type of target data model
  * @since 0.2.2
+ * @version 0.7.3
  */
 public class JdbcScript<T> {
 
@@ -37,6 +38,8 @@ public class JdbcScript<T> {
     private final List<String> columnNames;
 
     private final String condition;
+
+    private final String customTruncate;
 
     /**
      * Creates a new instance.
@@ -53,6 +56,27 @@ public class JdbcScript<T> {
             String tableName,
             List<String> columnNames,
             String condition) {
+        this(name, support, tableName, columnNames, condition, null);
+    }
+
+    /**
+     * Creates a new instance.
+     * @param name the name of original process
+     * @param support the support object for the script
+     * @param tableName the target table name
+     * @param columnNames the target column names
+     * @param condition the condition, or {@code null} if not used
+     * @param customTruncate the custom truncate statement, or {@code null} if not used
+     * @throws IllegalArgumentException if any parameter is {@code null}
+     * @since 0.7.3
+     */
+    public JdbcScript(
+            String name,
+            DataModelJdbcSupport<? super T> support,
+            String tableName,
+            List<String> columnNames,
+            String condition,
+            String customTruncate) {
         if (name == null) {
             throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
         }
@@ -66,7 +90,10 @@ public class JdbcScript<T> {
             throw new IllegalArgumentException("columnNames must not be null"); //$NON-NLS-1$
         }
         if (condition != null && isEmpty(condition)) {
-            throw new IllegalArgumentException("condition must not be null"); //$NON-NLS-1$
+            throw new IllegalArgumentException("condition must not be empty"); //$NON-NLS-1$
+        }
+        if (customTruncate != null && isEmpty(customTruncate)) {
+            throw new IllegalArgumentException("customTruncate must not be empty"); //$NON-NLS-1$
         }
         this.name = name;
         this.support = support;
@@ -78,6 +105,7 @@ public class JdbcScript<T> {
         }
         this.columnNames = Collections.unmodifiableList(new ArrayList<String>(columnNames));
         this.condition = condition;
+        this.customTruncate = customTruncate;
     }
 
     private boolean isEmpty(String string) {
@@ -122,5 +150,14 @@ public class JdbcScript<T> {
      */
     public String getCondition() {
         return condition;
+    }
+
+    /**
+     * Returns the custom truncate SQL statement.
+     * @return the custom truncate statement, or {@code null} if not used
+     * @since 0.7.3
+     */
+    public String getCustomTruncate() {
+        return customTruncate;
     }
 }
