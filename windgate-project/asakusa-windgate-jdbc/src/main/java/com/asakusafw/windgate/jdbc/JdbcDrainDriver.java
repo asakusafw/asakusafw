@@ -34,6 +34,7 @@ import com.asakusafw.windgate.core.vocabulary.DataModelJdbcSupport.DataModelPrep
  * An implementation of {@link DrainDriver} using JDBC.
  * @param <T> the type of data model object
  * @since 0.2.2
+ * @version 0.7.3
  */
 public class JdbcDrainDriver<T> implements DrainDriver<T> {
 
@@ -138,7 +139,12 @@ public class JdbcDrainDriver<T> implements DrainDriver<T> {
     }
 
     private void truncate() throws SQLException {
-        String sql = profile.getTruncateStatement(script.getTableName());
+        String sql;
+        if (script.getCustomTruncate() == null) {
+            sql = profile.getTruncateStatement(script.getTableName());
+        } else {
+            sql = script.getCustomTruncate();
+        }
         Statement truncater = connection.createStatement();
         try {
             WGLOG.info("I04001",

@@ -209,6 +209,34 @@ public class JdbcDrainDriverTest {
         }
     }
 
+    /**
+     * do custom truncate before put.
+     * @throws Exception if failed
+     */
+    @Test
+    public void custom_truncate() throws Exception {
+        h2.execute("INSERT INTO PAIR (KEY, VALUE) VALUES (1, 'Hello1')");
+        h2.execute("INSERT INTO PAIR (KEY, VALUE) VALUES (2, 'Hello2')");
+        h2.execute("INSERT INTO PAIR (KEY, VALUE) VALUES (3, 'Hello2')");
+        Connection conn = h2.open();
+        try {
+            JdbcScript<Pair> script = new JdbcScript<Pair>(
+                    "testing",
+                    new PairSupport(),
+                    "PAIR",
+                    Arrays.asList("KEY", "VALUE"),
+                    null,
+                    "DELETE FROM PAIR WHERE KEY = 2");
+            JdbcDrainDriver<Pair> driver = new JdbcDrainDriver<Pair>(profile(), script, conn, true);
+            driver.prepare();
+            driver.put(new Pair(2, "Other"));
+            driver.close();
+
+            test("Hello1", "Other", "Hello2");
+        } finally {
+            conn.close();
+        }
+    }
 
     /**
      * Suppresses doing truncate before put.
