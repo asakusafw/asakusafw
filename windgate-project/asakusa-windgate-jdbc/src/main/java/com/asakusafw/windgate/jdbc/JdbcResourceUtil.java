@@ -36,6 +36,7 @@ import com.asakusafw.windgate.core.vocabulary.JdbcProcess.OperationKind;
 /**
  * Common utility classes for this package.
  * @since 0.2.2
+ * @version 0.7.3
  */
 final class JdbcResourceUtil {
 
@@ -88,6 +89,7 @@ final class JdbcResourceUtil {
                     columnNames));
         }
         String condition = extract(profile, process, kind, JdbcProcess.CONDITION, false);
+        String customTruncate = extract(profile, process, kind, JdbcProcess.CUSTOM_TRUNCATE, false);
         if (kind == DriverScript.Kind.SOURCE) {
             if (condition == null || condition.isEmpty()) {
                 LOG.debug("\"WHERE\" clause is not specified in source process \"{}\"",
@@ -113,9 +115,34 @@ final class JdbcResourceUtil {
                             condition), e);
                 }
             }
+            customTruncate = null;
         }
         if (kind == DriverScript.Kind.DRAIN) {
             condition = null;
+            if (customTruncate == null || customTruncate.isEmpty()) {
+                LOG.debug("custom \"TRUNCATE\" statement is not specified in drain process \"{}\"",
+                        profile.getResourceName(),
+                        process.getName());
+                customTruncate = null;
+            } else {
+                try {
+                    customTruncate = arguments.replace(customTruncate, true);
+                } catch (IllegalArgumentException e) {
+                    WGLOG.error("E01001",
+                            profile.getResourceName(),
+                            process.getName(),
+                            kind.prefix,
+                            JdbcProcess.CUSTOM_TRUNCATE.key(),
+                            customTruncate);
+                    throw new IOException(MessageFormat.format(
+                            "\"{3}\" failed to resolve parameters: \"{4}\" (resource={0}, process={1}, kind={2})",
+                            profile.getResourceName(),
+                            process.getName(),
+                            kind,
+                            JdbcProcess.CUSTOM_TRUNCATE.key(),
+                            customTruncate), e);
+                }
+            }
             String operationString = extract(profile, process, kind, JdbcProcess.OPERATION, true);
             JdbcProcess.OperationKind op = JdbcProcess.OperationKind.find(operationString);
             if (op != OperationKind.INSERT_AFTER_TRUNCATE) {
@@ -135,7 +162,7 @@ final class JdbcResourceUtil {
                         operationString));
             }
         }
-        return new JdbcScript<T>(process.getName(), support, tableName, columnNames, condition);
+        return new JdbcScript<T>(process.getName(), support, tableName, columnNames, condition, customTruncate);
     }
 
     private static String extract(

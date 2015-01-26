@@ -103,6 +103,31 @@ public class JdbcResourceManipulatorTest {
     }
 
     /**
+     * Cleanups source with custom truncate statement.
+     * @throws Exception if failed
+     */
+    @Test
+    public void cleanupSource_with_custom_truncate() throws Exception {
+        Map<String, String> conf = new HashMap<String, String>();
+        conf.put(JdbcProcess.TABLE.key(), "PAIR");
+        conf.put(JdbcProcess.COLUMNS.key(), "KEY,VALUE");
+        conf.put(JdbcProcess.CUSTOM_TRUNCATE.key(), "DELETE FROM PAIR WHERE 0=1");
+        conf.put(JdbcProcess.JDBC_SUPPORT.key(), PairSupport.class.getName());
+
+        ProcessScript<Pair> process = process(new DriverScript("jdbc", conf), dummy());
+
+        h2.execute("INSERT INTO PAIR (KEY, VALUE) VALUES (1, 'Hello1, world!')");
+        h2.execute("INSERT INTO PAIR (KEY, VALUE) VALUES (2, 'Hello2, world!')");
+        h2.execute("INSERT INTO PAIR (KEY, VALUE) VALUES (3, 'Hello3, world!')");
+
+        JdbcResourceManipulator manipulator = new JdbcResourceManipulator(profile(), new ParameterList());
+
+        assertThat(h2.count("PAIR"), is(3));
+        manipulator.cleanupSource(process);
+        assertThat(h2.count("PAIR"), is(0));
+    }
+
+    /**
      * Cleanups source using modified truncate statement.
      * @throws Exception if failed
      */
@@ -172,6 +197,32 @@ public class JdbcResourceManipulatorTest {
     }
 
     /**
+     * Cleanups drain with custom truncate.
+     * @throws Exception if failed
+     */
+    @Test
+    public void cleanupDrain_with_custom_truncate() throws Exception {
+        Map<String, String> conf = new HashMap<String, String>();
+        conf.put(JdbcProcess.TABLE.key(), "PAIR");
+        conf.put(JdbcProcess.COLUMNS.key(), "KEY,VALUE");
+        conf.put(JdbcProcess.JDBC_SUPPORT.key(), PairSupport.class.getName());
+        conf.put(JdbcProcess.CUSTOM_TRUNCATE.key(), "DELETE FROM PAIR WHERE 0=1");
+        conf.put(JdbcProcess.OPERATION.key(), JdbcProcess.OperationKind.INSERT_AFTER_TRUNCATE.value());
+
+        ProcessScript<Pair> process = process(dummy(), new DriverScript("jdbc", conf));
+
+        h2.execute("INSERT INTO PAIR (KEY, VALUE) VALUES (1, 'Hello1, world!')");
+        h2.execute("INSERT INTO PAIR (KEY, VALUE) VALUES (2, 'Hello2, world!')");
+        h2.execute("INSERT INTO PAIR (KEY, VALUE) VALUES (3, 'Hello3, world!')");
+
+        JdbcResourceManipulator manipulator = new JdbcResourceManipulator(profile(), new ParameterList());
+
+        assertThat(h2.count("PAIR"), is(3));
+        manipulator.cleanupDrain(process);
+        assertThat(h2.count("PAIR"), is(0));
+    }
+
+    /**
      * Cleanups drain using modified truncate statement.
      * @throws Exception if failed
      */
@@ -218,7 +269,7 @@ public class JdbcResourceManipulatorTest {
     }
 
     /**
-     * Test method for {@link JdbcResourceManipulator#createSourceForSource(com.asakusafw.windgate.core.ProcessScript)}.
+     * Test method for {@link JdbcResourceManipulator#createSourceForSource(ProcessScript)}.
      * @throws Exception if failed
      */
     @Test
@@ -249,7 +300,7 @@ public class JdbcResourceManipulatorTest {
     }
 
     /**
-     * Test method for {@link JdbcResourceManipulator#createDrainForSource(com.asakusafw.windgate.core.ProcessScript)}.
+     * Test method for {@link JdbcResourceManipulator#createDrainForSource(ProcessScript)}.
      * @throws Exception if failed
      */
     @Test
@@ -278,7 +329,7 @@ public class JdbcResourceManipulatorTest {
     }
 
     /**
-     * Test method for {@link JdbcResourceManipulator#createSourceForDrain(com.asakusafw.windgate.core.ProcessScript)}.
+     * Test method for {@link JdbcResourceManipulator#createSourceForDrain(ProcessScript)}.
      * @throws Exception if failed
      */
     @Test
@@ -287,6 +338,7 @@ public class JdbcResourceManipulatorTest {
         conf.put(JdbcProcess.TABLE.key(), "PAIR");
         conf.put(JdbcProcess.COLUMNS.key(), "KEY,VALUE");
         conf.put(JdbcProcess.JDBC_SUPPORT.key(), PairSupport.class.getName());
+        conf.put(JdbcProcess.CUSTOM_TRUNCATE.key(), "DELETE FROM PAIR"); // should be ignored
         conf.put(JdbcProcess.OPERATION.key(), JdbcProcess.OperationKind.INSERT_AFTER_TRUNCATE.value());
 
         ProcessScript<Pair> process = process(dummy(), new DriverScript("jdbc", conf));
@@ -307,7 +359,7 @@ public class JdbcResourceManipulatorTest {
     }
 
     /**
-     * Test method for {@link JdbcResourceManipulator#createDrainForDrain(com.asakusafw.windgate.core.ProcessScript)}.
+     * Test method for {@link JdbcResourceManipulator#createDrainForDrain(ProcessScript)}.
      * @throws Exception if failed
      */
     @Test
@@ -316,6 +368,7 @@ public class JdbcResourceManipulatorTest {
         conf.put(JdbcProcess.TABLE.key(), "PAIR");
         conf.put(JdbcProcess.COLUMNS.key(), "KEY,VALUE");
         conf.put(JdbcProcess.JDBC_SUPPORT.key(), PairSupport.class.getName());
+        conf.put(JdbcProcess.CUSTOM_TRUNCATE.key(), "DELETE FROM PAIR"); // should be ignored
         conf.put(JdbcProcess.OPERATION.key(), JdbcProcess.OperationKind.INSERT_AFTER_TRUNCATE.value());
 
         h2.execute("INSERT INTO PAIR (KEY, VALUE) VALUES (1, 'Hello1, world!')");
