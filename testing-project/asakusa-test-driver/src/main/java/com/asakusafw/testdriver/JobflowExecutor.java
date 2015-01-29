@@ -127,6 +127,28 @@ public class JobflowExecutor {
     }
 
     /**
+     * Cleans up extra resources.
+     * @param resources the external resource map
+     * @throws IOException if failed to create job processes
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.7.3
+     */
+    public void cleanExtraResources(
+            Map<? extends ImporterDescription, ? extends DataModelSourceFactory> resources) throws IOException {
+        if (resources == null) {
+            throw new IllegalArgumentException("resources must not be null"); //$NON-NLS-1$
+        }
+        if (context.isSkipCleanInput() == false) {
+            for (ImporterDescription description : resources.keySet()) {
+                LOG.debug("cleaning external resource: {}", description); //$NON-NLS-1$
+                moderator.truncate(description);
+            }
+        } else {
+            LOG.info("外部リソースの初期化をスキップしました");
+        }
+    }
+
+    /**
      * Prepares the target jobflow's inputs.
      * @param info target jobflow
      * @param inputs target inputs
@@ -199,6 +221,31 @@ public class JobflowExecutor {
             }
         } else {
             LOG.info("出力の配置をスキップしました");
+        }
+    }
+
+    /**
+     * Prepares external resources.
+     * @param resources the external resource map
+     * @throws IOException if failed to prepare external resources
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.7.3
+     */
+    public void prepareExternalResources(
+            Map<? extends ImporterDescription, ? extends DataModelSourceFactory> resources) throws IOException {
+        if (resources == null) {
+            throw new IllegalArgumentException("resources must not be null"); //$NON-NLS-1$
+        }
+        if (context.isSkipPrepareInput() == false) {
+            for (Map.Entry<? extends ImporterDescription, ? extends DataModelSourceFactory> entry :
+                    resources.entrySet()) {
+                ImporterDescription description = entry.getKey();
+                DataModelSourceFactory source = entry.getValue();
+                LOG.debug("preparing external resource: {} ({})", description, source); //$NON-NLS-1$
+                moderator.prepare(description.getModelType(), description, source);
+            }
+        } else {
+            LOG.info("外部リソースの配置をスキップしました");
         }
     }
 

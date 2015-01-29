@@ -24,15 +24,17 @@ import java.util.ServiceLoader;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.conf.Configurable;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 
 import com.asakusafw.runtime.core.HadoopConfiguration;
-import com.asakusafw.runtime.core.ResourceConfiguration;
 import com.asakusafw.runtime.core.RuntimeResource;
 
 /**
  * 実行時リソースのライフサイクルを管理する。
+ * @since 0.1.0
+ * @version 0.7.3
  */
 public class RuntimeResourceManager extends Configured {
 
@@ -49,7 +51,7 @@ public class RuntimeResourceManager extends Configured {
      */
     public static final String CONFIGURATION_FILE_PATH = "core/conf/" + CONFIGURATION_FILE_NAME; //$NON-NLS-1$
 
-    private final ResourceConfiguration configuration;
+    private final HadoopConfiguration configuration;
 
     private List<RuntimeResource> resources;
 
@@ -145,6 +147,9 @@ public class RuntimeResourceManager extends Configured {
         ClassLoader loader = configuration.getClassLoader();
         try {
             for (RuntimeResource resource : ServiceLoader.load(RuntimeResource.class, loader)) {
+                if (resource instanceof Configurable) {
+                    ((Configurable) resource).setConf(configuration.getConf());
+                }
                 results.add(resource);
             }
         } catch (RuntimeException e) {
