@@ -20,13 +20,18 @@ import java.text.MessageFormat;
 import java.util.Map;
 
 import org.apache.hadoop.conf.Configuration;
-import org.junit.rules.ExternalResource;
+import org.junit.rules.TestRule;
+import org.junit.runner.Description;
+import org.junit.runners.model.Statement;
 
 import com.asakusafw.runtime.core.BatchContext;
 import com.asakusafw.runtime.flow.RuntimeResourceManager;
 import com.asakusafw.runtime.stage.StageConstants;
 import com.asakusafw.runtime.util.VariableTable;
 import com.asakusafw.runtime.util.VariableTable.RedefineStrategy;
+import com.asakusafw.testdriver.core.TestContext;
+import com.asakusafw.testdriver.core.TestDataToolProvider;
+import com.asakusafw.testdriver.core.TestToolRepository;
 import com.asakusafw.testdriver.core.TestingEnvironmentConfigurator;
 import com.asakusafw.testdriver.hadoop.ConfigurationFactory;
 import com.asakusafw.utils.collections.Maps;
@@ -68,9 +73,9 @@ public void sometest() {
 }
 </code></pre>
  * @since 0.1.0
- * @version 0.7.0
+ * @version 0.7.3
  */
-public class OperatorTestEnvironment extends ExternalResource {
+public class OperatorTestEnvironment extends DriverElementBase implements TestRule {
 
     static {
         TestingEnvironmentConfigurator.initialize();
@@ -93,6 +98,10 @@ public class OperatorTestEnvironment extends ExternalResource {
     private final Map<String, String> extraConfigurations;
 
     private boolean dirty;
+
+    private volatile Class<?> testClass;
+
+    private volatile TestToolRepository testTools;
 
     /**
      * インスタンスを生成する。
@@ -122,6 +131,43 @@ public class OperatorTestEnvironment extends ExternalResource {
     }
 
     @Override
+    public Statement apply(final Statement base, Description description) {
+        this.testClass = description.getTestClass();
+        return new Statement() {
+            @Override
+            public void evaluate() throws Throwable {
+                before();
+                try {
+                    base.evaluate();
+                } finally {
+                    after();
+                }
+            }
+        };
+    }
+
+    @Override
+    protected Class<?> getCallerClass() {
+        if (testClass == null) {
+            throw new IllegalStateException("@Rule is not declared");
+        }
+        return testClass;
+    }
+
+    @Override
+    protected TestDataToolProvider getTestTools() {
+        TestToolRepository result = testTools;
+        if (result == null) {
+            Class<?> caller = getCallerClass();
+            result = new TestToolRepository(caller.getClassLoader());
+            testTools = result;
+        }
+        return result;
+    }
+
+    /**
+     * Invoked before running test case.
+     */
     protected void before() {
         Configuration conf = createConfig();
         for (Map.Entry<String, String> entry : extraConfigurations.entrySet()) {
@@ -220,11 +266,34 @@ public class OperatorTestEnvironment extends ExternalResource {
                     "演算子テスト用の設定ファイルが見つかりません: {0}",
                     configurationPath));
         }
+        for (Map.Entry<String, String> entry : extraConfigurations.entrySet()) {
+            conf.set(entry.getKey(), entry.getValue());
+        }
         conf.addResource(resource);
         return conf;
     }
 
-    @Override
+    /**
+     * Returns the {@link TestContext} for the current environment.
+     * @return {@link TestContext} object
+     * @since 0.7.3
+     */
+    public TestContext getTestContext() {
+        return new Context(getCallerClass().getClassLoader(), batchArguments);
+    }
+
+    /**
+     * Returns the Configuration object for the current environment.
+     * @return the Configuration object
+     * @since 0.7.3
+     */
+    public Configuration getConfiguration() {
+        return createConfig();
+    }
+
+    /**
+     * Invoked after ran test case.
+     */
     protected void after() {
         if (manager != null) {
             try {
@@ -238,6 +307,33 @@ public class OperatorTestEnvironment extends ExternalResource {
                     "{0}によって設定が書き換えられていますが、{1}されていないようです",
                     "configure()", //$NON-NLS-1$
                     "reload()")); //$NON-NLS-1$
+        }
+    }
+
+    private static final class Context implements TestContext {
+
+        private final ClassLoader classLoader;
+
+        private final Map<String, String> arguments;
+
+        Context(ClassLoader classLoader, Map<String, String> arguments) {
+            this.classLoader = classLoader;
+            this.arguments = arguments;
+        }
+
+        @Override
+        public ClassLoader getClassLoader() {
+            return classLoader;
+        }
+
+        @Override
+        public Map<String, String> getEnvironmentVariables() {
+            return System.getenv();
+        }
+
+        @Override
+        public Map<String, String> getArguments() {
+            return arguments;
         }
     }
 }

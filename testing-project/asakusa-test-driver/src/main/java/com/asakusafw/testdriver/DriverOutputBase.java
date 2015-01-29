@@ -17,7 +17,6 @@ package com.asakusafw.testdriver;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -325,19 +324,5 @@ public class DriverOutputBase<T> extends DriverInputBase<T> {
                         sourceFilter);
             }
         };
-    }
-
-    /**
-     * Converts the path into the related URI.
-     * @param path the path
-     * @return the resulting URI
-     * @since 0.2.3
-     */
-    protected URI toOutputUri(String path) {
-        URI uri = URI.create(path.replace('\\', '/'));
-        if (uri.getScheme() != null) {
-            return uri;
-        }
-        return new File(path).toURI();
     }
 }
