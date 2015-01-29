@@ -25,6 +25,7 @@ import java.util.Map;
 
 import com.asakusafw.compiler.flow.FlowCompilerOptions;
 import com.asakusafw.compiler.trace.TracepointWeaveRewriter;
+import com.asakusafw.testdriver.core.TestDataToolProvider;
 import com.asakusafw.testdriver.core.TestingEnvironmentConfigurator;
 import com.asakusafw.trace.io.TraceSettingSerializer;
 import com.asakusafw.trace.model.TraceSetting;
@@ -39,7 +40,7 @@ import com.asakusafw.vocabulary.flow.FlowPart;
  * @since 0.2.0
  * @version 0.6.0
  */
-public abstract class TestDriverBase {
+public abstract class TestDriverBase extends DriverElementBase {
 
     private static final String FLOW_OPERATOR_FACTORY_METHOD_NAME = "create"; //$NON-NLS-1$
 
@@ -60,6 +61,16 @@ public abstract class TestDriverBase {
             throw new IllegalArgumentException("callerClass must not be null"); //$NON-NLS-1$
         }
         this.driverContext = new TestDriverContext(callerClass);
+    }
+
+    @Override
+    protected final Class<?> getCallerClass() {
+        return driverContext.getCallerClass();
+    }
+
+    @Override
+    protected final TestDataToolProvider getTestTools() {
+        return driverContext.getRepository();
     }
 
     /**
