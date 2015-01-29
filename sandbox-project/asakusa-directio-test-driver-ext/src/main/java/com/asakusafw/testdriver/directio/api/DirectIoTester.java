@@ -122,7 +122,7 @@ public abstract class DirectIoTester {
      * External resource manipulator for Direct I/O.
      * @since 0.7.3
      */
-    public static abstract class DirectIoResource extends DriverToolBase {
+    public abstract static class DirectIoResource extends DriverToolBase {
 
         /**
          * Returns the target description.

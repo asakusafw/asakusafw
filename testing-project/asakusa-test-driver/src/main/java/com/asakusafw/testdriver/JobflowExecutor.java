@@ -237,8 +237,8 @@ public class JobflowExecutor {
             throw new IllegalArgumentException("resources must not be null"); //$NON-NLS-1$
         }
         if (context.isSkipPrepareInput() == false) {
-            for (Map.Entry<? extends ImporterDescription, ? extends DataModelSourceFactory> entry :
-                    resources.entrySet()) {
+            for (Map.Entry<? extends ImporterDescription, ? extends DataModelSourceFactory> entry
+                    : resources.entrySet()) {
                 ImporterDescription description = entry.getKey();
                 DataModelSourceFactory source = entry.getValue();
                 LOG.debug("preparing external resource: {} ({})", description, source); //$NON-NLS-1$
