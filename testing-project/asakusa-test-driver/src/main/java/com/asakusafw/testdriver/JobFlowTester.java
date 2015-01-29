@@ -173,8 +173,8 @@ public class JobFlowTester extends TesterBase {
 
     private void validateTestCondition() throws IOException {
         TestModerator moderator = new TestModerator(driverContext.getRepository(), driverContext);
-        for (Map.Entry<? extends ImporterDescription, ? extends DataModelSourceFactory> entry :
-                getExternalResources().entrySet()) {
+        for (Map.Entry<? extends ImporterDescription, ? extends DataModelSourceFactory> entry
+                : getExternalResources().entrySet()) {
             ImporterDescription description = entry.getKey();
             String label = String.format("Resource(%s)", description); //$NON-NLS-1$
             DataModelSourceFactory source = entry.getValue();
