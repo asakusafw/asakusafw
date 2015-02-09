@@ -27,8 +27,8 @@ public interface ModelInput<T> extends Closeable {
     /**
      * このオブジェクトからモデルを読み出して、指定のオブジェクトに書き出す。
      * @param model 書き出す先のモデル
-     * @return モデルを読み出した場合は{@code null}、
-     *     これ以上読み出すモデルが存在しない場合は{@code null}
+     * @return モデルを読み出した場合は{@code true}、
+     *     これ以上読み出すモデルが存在しない場合は{@code false}
      * @throws IOException モデルの読み出しに失敗した場合
      */
     boolean readTo(T model) throws IOException;
