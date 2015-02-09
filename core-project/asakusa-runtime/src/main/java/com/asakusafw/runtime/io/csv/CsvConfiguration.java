@@ -49,7 +49,7 @@ public class CsvConfiguration {
 
     /**
      * The default {@code false} representation.
-     * @see #getTrueFormat()
+     * @see #getFalseFormat()
      */
     public static final String DEFAULT_FALSE_FORMAT = "false"; //$NON-NLS-1$
 
@@ -66,13 +66,13 @@ public class CsvConfiguration {
     public static final String DEFAULT_DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss"; //$NON-NLS-1$
 
     /**
-     * The default date time format.
-     * @see #isLineBreakInValue()
+     * The default field separator character.
+     * @see #getSeparatorChar()
      */
     public static final char DEFAULT_SEPARATOR_CHAR = ',';
 
     /**
-     * The default date time format.
+     * The default configuration whether allows line breaks in value.
      * @see #isLineBreakInValue()
      */
     public static final boolean DEFAULT_LINE_BREAK_IN_VALUE = true;
