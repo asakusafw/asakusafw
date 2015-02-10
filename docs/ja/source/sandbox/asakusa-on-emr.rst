@@ -224,16 +224,12 @@ S3に対するファイルアップロードはAWS CLIからも実行するこ�
     
     aws s3 cp build/asakusafw-0.7.2-hadoop2-emr.tar.gz s3://[mybucket]/asakusafw/
 
-アップロード後のバケットを確認します。
+S3上のファイルを表示し、正しくアップロードされたことを確認します。
 
 ..  code-block:: sh
     
     aws s3 ls s3://[mybucket]/asakusafw/
     
-..  code-block:: sh
-    
-    2014-09-19 12:36:45    5186529 asakusafw-0.7.2-hadoop2-emr.tar.gz
-
 ..  attention::
     上記例を参考にコマンドを入力する際は、必ずアップロード先のS3バケットのパスを実際に使用するパスに置き換えてください。
 
