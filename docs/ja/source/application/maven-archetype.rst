@@ -629,7 +629,7 @@ Asakusa Frameworkのバージョン指定
 
 ..  code-block:: sh
 
-    <asakusafw.version>0.7.2</asakusafw.version>
+    <asakusafw.version>0.7.3</asakusafw.version>
 
 ..  note::
     アーキタイプごとの利用可能なバージョンはアーキタイプカタログに公開しています。詳しくは :ref:`archetype-catalog` を参照してください。
