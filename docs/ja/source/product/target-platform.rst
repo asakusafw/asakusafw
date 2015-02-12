@@ -87,6 +87,9 @@ Asakusa Frameworkを利用したバッチアプリケーションの開発環境
     * - IDE
       - Eclipse IDE for Java Developers
       - 4.3.2 / 4.4.1
+    * - IDE
+      - IntelliJ IDEA Community Edition [#]_
+      - 14.0.3
     * - Hadoop
       - Apache Hadoop
       - 1.2.1 / 2.6.0 [#]_
@@ -97,6 +100,7 @@ Asakusa Frameworkを利用したバッチアプリケーションの開発環境
 ..  [#] JDK6の利用は非推奨です。JDK6の利用については、 :doc:`../application/using-jdk` を参照してください。
 ..  [#] Gradleの利用については、 :doc:`../application/gradle-plugin` を参照してください。
 ..  [#] Mavenの利用は非推奨です。Mavenの利用については、 :doc:`../application/maven-archetype` を参照してください。
+..  [#] IntelliJ IDEAの利用は試験的機能として提供しています。IntelliJ IDEAの利用については :doc:`../application/gradle-plugin` の :ref:`gradle-plugin-using-idea` を参照してください。
 ..  [#] 開発環境ではHadoop1系の利用を推奨しています。詳しくは :doc:`../application/using-hadoop` を参照してください。
 
 WindGate
