@@ -358,16 +358,17 @@ public final class DirectFlowCompiler {
             archive = new URI(qualifier);
         } catch (URISyntaxException e) {
             LOG.warn(MessageFormat.format(
-                    "Failed to locate the JAR library file {}: {}",
+                    "Failed to locate the JAR library file {0}: {1}",
                     qualifier,
                     resourceName),
                     e);
             throw new UnsupportedOperationException(qualifier, e);
         }
         if (archive.getScheme().equals("file") == false) { //$NON-NLS-1$
-            LOG.warn("Failed to locate the library path (unsupported protocol {}): {}",
+            LOG.warn(MessageFormat.format(
+                    "Failed to locate the library path (unsupported protocol {}): {}",
                     archive,
-                    resourceName);
+                    resourceName));
             return null;
         }
         File file = new File(archive);
