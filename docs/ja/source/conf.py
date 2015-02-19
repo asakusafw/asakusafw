@@ -43,6 +43,12 @@ javadoclinks = {
     'javadoc': ('http://asakusafw.s3.amazonaws.com/documents/0.7.2/release/api/%s.html', ""),
     'gradledoc': ('http://asakusafw.s3.amazonaws.com/documents/0.7.2/release/gradle-plugins/%s.html', "")
 }
+
+# The max depth of sidebar toctree.
+rst_prolog = """
+:tocdepth: 3
+"""
+
 # ------------------------------------------------------------------------------
 
 # Add any paths that contain templates here, relative to this directory.
