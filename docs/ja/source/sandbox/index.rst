@@ -1,8 +1,7 @@
-=========================
-Asakusa Framework Sandbox
-=========================
-Asakusa Framework Sandbox は 
-試験的機能 (Experimental Feature) として提供している
+=======
+Sandbox
+=======
+Sandboxは試験的機能 (Experimental Feature) として提供している
 Asakusa Framework の拡張機能群です。
 
 ドキュメント
