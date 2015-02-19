@@ -20,7 +20,7 @@ usage() {
 WindGate - A portable data transfer tool
 
 Usage:
-    $0 profile script session-kind batch-id flow-id execuion-id arguments
+    $0 profile session-kind script batch-id flow-id execuion-id arguments
 
 Parameters:
     profile

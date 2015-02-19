@@ -53,7 +53,7 @@ Asakusa Framework は、以下のHadoopディストリビューションと組�
 ..  [#] 検証バージョンは、Hadoopディストリビューションの動作検証に使用したAsakusa Frameworkのバージョンです。
         詳しくは :doc:`../administration/deployment-guide` を参照してください。
 
-..  [#] Amazon EMR上で利用するための情報を :doc:`../sandbox/asakusa-on-emr` (Asakusa Framework Sandbox) に公開しています。
+..  [#] Amazon EMR上で利用するための情報を :doc:`../sandbox/asakusa-on-emr` に公開しています。
 
 アプリケーション開発環境
 ========================

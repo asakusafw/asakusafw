@@ -43,6 +43,12 @@ javadoclinks = {
     'javadoc': ('http://asakusafw.s3.amazonaws.com/documents/0.7.2/release/api/%s.html', ""),
     'gradledoc': ('http://asakusafw.s3.amazonaws.com/documents/0.7.2/release/gradle-plugins/%s.html', "")
 }
+
+# The max depth of sidebar toctree.
+rst_prolog = """
+:tocdepth: 3
+"""
+
 # ------------------------------------------------------------------------------
 
 # Add any paths that contain templates here, relative to this directory.
@@ -156,10 +162,10 @@ html_static_path = ['_static']
 #html_additional_pages = {}
 
 # If false, no module index is generated.
-#html_domain_indices = True
+html_domain_indices = False
 
 # If false, no index is generated.
-#html_use_index = True
+html_use_index = False
 
 # If true, the index is split into individual pages for each letter.
 #html_split_index = False
