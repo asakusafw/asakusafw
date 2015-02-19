@@ -17,7 +17,7 @@
 
 usage() {
     cat 1>&2 <<EOF
-WindGate FInalizer
+WindGate Finalizer
 
 Usage:
     $0 profile

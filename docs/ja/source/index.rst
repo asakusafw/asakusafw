@@ -28,6 +28,7 @@ Asakusa Framework入門
 * :doc:`yaess/index`
 * :doc:`application/index`
 * :doc:`administration/index`
+* :doc:`sandbox/index`
 
 プロダクトについて
 ==================
@@ -36,12 +37,10 @@ Asakusa Framework入門
 * :doc:`product/target-platform`
 * :doc:`product/road-map`
 * :doc:`product/license`
-* :doc:`document/index`
 
 関連プロダクト
 ==============
 * :jinrikisha:`Jinrikisha (人力車) - Asakusa Framework Starter Package - <index.html>`
-* :doc:`sandbox/index`
 
 リソース
 ========
@@ -57,29 +56,8 @@ Asakusa Framework入門
 ..  _`課題管理 (GitHub)`: https://github.com/asakusafw/asakusafw/issues
 ..  _`ビルドサーバ(Jenkins)`: http://ec2-175-41-241-89.ap-northeast-1.compute.amazonaws.com/jenkins/
 
-----
-
-サイトマップ
-============
-
 ..  toctree::
-    :maxdepth: 3
-    :titlesonly:
+    :hidden:
+   
+    contents
 
-    self
-    release-notes
-    previous-release-notes
-    changelogs
-    introduction/index
-    dmdl/index
-    dsl/index
-    testing/index
-    windgate/index
-    thundergate/index
-    directio/index
-    yaess/index
-    application/index
-    administration/index
-    product/index
-    sandbox/index
-    document/index

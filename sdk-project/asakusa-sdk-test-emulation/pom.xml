@@ -26,7 +26,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.asakusafw</groupId>
-			<artifactId>asakusa-test-inprocess-ext</artifactId>
+			<artifactId>asakusa-test-inprocess</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
