@@ -4,11 +4,6 @@ Asakusa Gradle Plugin利用ガイド
 
 この文書では、GradleにAsakusa Framework を使ったアプリケーションの開発やデプロイを行うための機能を追加する Asakusa Gradle Plugin について説明します。
 
-.. contents::
-   :local:
-   :depth: 2
-   :backlinks: none
-
 概要
 ====
 
