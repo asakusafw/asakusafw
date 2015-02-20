@@ -2,6 +2,37 @@
 リリースノート
 ==============
 
+Release 0.7.3
+=============
+XXX XX, 2015
+
+`Asakusa Framework 0.7.3 documentation`_
+
+..  _`Asakusa Framework 0.7.3 documentation`: http://asakusafw.s3.amazonaws.com/documents/0.7.3/release/ja/html/index.html
+
+新機能と主な変更点
+------------------
+
+..  todo:: TBD
+
+互換性に関して
+--------------
+
+Java SE Development Kit (JDK)
+  本バージョンからJDK6の利用は非推奨となりました。
+  開発環境、運用環境共にJDK7を利用してください。
+
+  Asakusa Frameworkが動作検証を行なっているJavaのバージョンについては、 :doc:`product/target-platform` を参照してください。
+  また、開発環境で利用するJavaについての詳細は、 :doc:`application/using-jdk` を参照してください。
+
+  なお、将来のバージョンではJDK6の利用は非対応とすることを計画しています。
+  
+過去バージョンからのマイグレーション情報については、
+以下のドキュメントを参照してください。
+
+* :doc:`application/migration-guide`
+* :doc:`administration/migration-guide`
+
 Release 0.7.2
 =============
 Jan 05, 2015

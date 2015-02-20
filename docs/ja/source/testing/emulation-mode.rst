@@ -10,8 +10,6 @@
 
 エミュレーションモードではテストを実行しているプロセス内でほとんどの処理が行われ、デバッグモードのブレークポイントなどを利用できるようになります。
 
-さらに、Asakusa Framework バージョン ``0.7.1`` から追加されたスモールジョブ実行エンジンを併用することで、Hadoopジョブの実行を高速化し、テスト実行に要する時間を短縮できます。
-
 ..  attention::
     本機能はアプリケーションプロジェクトのHadoopライブラリを利用するため、標準で設定されたものと異なるHadoopディストリビューションやバージョンを利用する際に、正しく動かない可能性があります。
 
@@ -36,77 +34,50 @@
 ------------------------------------------
 エミュレーションモード用のモジュールはAsakusa FrameworkのMavenリポジトリに以下の内容で登録されています。
 
-..  list-table:: エミュレーションモードで使用するMavenアーティファクト
+..  list-table:: エミュレーションモードで使用するSDKアーティファクト
     :widths: 2 4 5
     :header-rows: 1
 
     * - グループID
       - アーティファクトID
       - 説明
-    * - ``com.asakusafw``
-      - ``asakusa-test-inprocess``
+    * - ``com.asakusafw.sdk``
+      - ``asakusa-sdk-test-emulation``
       - テストドライバ実行をエミュレーションモードに変更
-    * - ``com.asakusafw``
-      - ``asakusa-test-inprocess-ext``
-      - スモールジョブ実行エンジンを利用したエミュレーションモードで実行 (Experimental)
-    * - ``com.asakusafw``
-      - ``asakusa-windgate-test-inprocess``
-      - :doc:`WindGate <../windgate/index>` をエミュレーションモードで実行
 
-アプリケーションプロジェクトの設定
-----------------------------------
+..  attention::
+    Asakusa Framework バージョン ``0.7.3`` から、エミュレーションに関するモジュール定義は
+    上記のSDKアーティファクトに統一されました。
+    
+    バージョン ``0.7.2`` 以前で公開されていた以下のモジュール定義も当面は使用できますが、
+    将来のバージョンでは使用できなくなる可能性があるため、
+    上記のSDKアーティファクトに変更することを推奨します。
+     
+    * ``com.asakusafw:asakusa-test-inprocess``
+    * ``com.asakusafw:asakusa-test-inprocess-ext``
+    * ``com.asakusafw:asakusa-windgate-test-inprocess``
 
 エミュレーションモードの有効化
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------------
 アプリケーションプロジェクトでエミュレーションモードを使用する場合は
 ``build.gradle`` の ``dependencies`` ブロック内に
-``asakusa-test-inprocess`` を利用する依存定義を追加します。
+``com.asakusafw.sdk:asakusa-sdk-test-emulation`` を利用する依存定義を追加します。
 
 ..  code-block:: groovy
 
     dependencies {
         ...
-        testRuntime group: 'com.asakusafw', name: 'asakusa-test-inprocess', version: asakusafw.asakusafwVersion
+        testRuntime group: 'com.asakusafw.sdk', name: 'asakusa-sdk-test-emulation', version: asakusafw.asakusafwVersion
 
-スモールジョブ実行エンジンを利用したエミュレーションモードの有効化
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-..  attention::
-    Asakusa Framework バージョン |version| では、スモールジョブ実行エンジンを利用したエミュレーションモード実行は試験的機能として提供しています。
-
-Gradleプロジェクトでスモールジョブ実行エンジンを利用したエミュレーションモードを使用する場合は
-``build.gradle`` の ``dependencies`` ブロック内に
-``asakusa-test-inprocess-ext`` を利用する依存定義を追加します [#]_ 。
-
-..  code-block:: groovy
-
-    dependencies {
-        ...
-        testRuntime group: 'com.asakusafw', name: 'asakusa-test-inprocess-ext', version: asakusafw.asakusafwVersion
-
-..  [#] ``asakusa-test-inprocess-ext`` を利用する場合、 ``asakusa-test-inprocess`` の定義は不要です。
-
-WindGateのエミュレーションモードの有効化
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-WindGateをエミュレーションモードで実行する場合は
-``build.gradle`` の ``dependencies`` ブロック内に
-``asakusa-windgate-test-inprocess`` を利用する依存定義を追加します。
-
-..  code-block:: groovy
-
-    dependencies {
-        ...
-        testRuntime group: 'com.asakusafw', name: 'asakusa-windgate-test-inprocess', version: asakusafw.asakusafwVersion
-
-..  attention::
-    WindGate-JDBCを利用するジョブフローをテストする場合は、
-    利用するJDBCドライバをテスト実行時のクラスパスに追加する必要があります。
-     
-    上記の設定を行わない場合、テスト実行時にクラスロードに関する問題が発生する可能性があります。
-    一例として、テストを連続で実行した場合にOutOfMemoryErrorが発生する可能性があります。
+..  tip::
+    エミュレーションモードを有効する別の方法として、
+    :jinrikisha:`Shafu<shafu.html>` の機能を使ってEclipse上で設定する方法があります。
+    この方法で設定を行うと、Eclipse上でのみエミュレーションモードが有効になります。
+    詳しくは :jinrikisha:`Shafu<shafu.html>` の「設定」の説明を参照してください。
 
 Gradle上でのテストドライバ実行
 ------------------------------
-`アプリケーションプロジェクトの設定`_ を行った状態で Gradleの ``test`` タスクを実行すると、
+`エミュレーションモードの有効化`_ を行った状態で Gradleの ``test`` タスクを実行すると、
 テストドライバがエミュレーションモードで実行されます。
 
 ..  tip::
@@ -116,7 +87,7 @@ Gradle上でのテストドライバ実行
 
 Eclipse上でのテストドライバ実行
 -------------------------------
-`アプリケーションプロジェクトの設定`_ を行った状態で Gradleの ``eclipse`` タスクを実行すると、
+`エミュレーションモードの有効化`_ を行った状態で Gradleの ``eclipse`` タスクを実行すると、
 Eclipse上でアプリケーションプロジェクトに対してエミュレーションモードが有効になります。
 
 この状態でEclipseからテストドライバを利用するテストクラスや、バッチテストランナーを実行すると、
@@ -126,3 +97,30 @@ Eclipse上でアプリケーションプロジェクトに対してエミュレ�
     エミュレーションモードを有効にすると、
     テストドライバを使ったテストクラスのデバッグ実行時に
     Eclipseのブレークポイント機能などを利用できます。
+
+実行モードの選択
+----------------
+
+..  attention::
+    通常の場合、ここで説明する設定は不要です。
+    旧バージョンからのマイグレーション後にエミュレーションモードが正常に動作しない場合にのみ、
+    ここで説明する設定を有効にして動作を確認してください。
+
+標準の設定では、 ``com.asakusafw.sdk:asakusa-sdk-test-emulation``
+を指定したエミュレーションモードの実行時には
+スモールジョブ実行エンジン [#]_ が使用されます。
+
+また、Asakusa Framework バージョン ``0.7.2`` 以前では
+``com.asakusafw:asakusa-test-inprocess`` を指定したエミュレーションモードの実行には
+スモールジョブ実行エンジンは使用されませんでしたが、
+バージョン ``0.7.3`` からはスモールジョブ実行エンジンを使用するよう変更されました。
+
+エミュレーションモードをスモールジョブ実行エンジンを使用しない設定で実行するには、
+テストドライバ実行時に以下のシステムプロパティを設定します。
+
+``asakusa.testdriver.configurator.inprocess.optimize``
+  * ``true``: エミュレーションモードでスモールジョブ実行エンジンを使用する(デフォルト)
+  * ``false``: エミュレーションモードでスモールジョブ実行エンジンを使用しない
+
+..  [#] スモールジョブ実行エンジンについては、 :doc:`../administration/configure-task-optimization` を参照してください。
+

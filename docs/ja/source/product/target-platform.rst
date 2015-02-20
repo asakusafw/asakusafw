@@ -17,12 +17,12 @@ Asakusa Framework は、以下のHadoopディストリビューションと組�
     * - Apache Hadoop
       - 1.2.1
       - CentOS 6 (6.2)
-      - JDK 6 (1.6.0_31)
+      - JDK 7 (1.7.0_76)
       - |version|-hadoop1
     * - Apache Hadoop
-      - 2.4.1
+      - 2.6.0
       - CentOS 6 (6.2)
-      - JDK 7 (1.7.0_67)
+      - JDK 7 (1.7.0_76)
       - |version|-hadoop2
     * - MapR
       - 3.1.1 (M3/M5/M7)
@@ -77,7 +77,7 @@ Asakusa Frameworkを利用したバッチアプリケーションの開発環境
       - 7(SP1) / 8.1
     * - Java
       - JDK [#]_
-      - 1.6.0_45 [#]_ / 1.7.0_60
+      - 1.6.0_45 [#]_ / 1.7.0_76
     * - ビルドツール
       - Gradle [#]_
       - 2.2.1
@@ -86,17 +86,21 @@ Asakusa Frameworkを利用したバッチアプリケーションの開発環境
       - 3.0.5 [#]_
     * - IDE
       - Eclipse IDE for Java Developers
-      - 4.3.2 / 4.4.0
+      - 4.3.2 / 4.4.1
+    * - IDE
+      - IntelliJ IDEA Community Edition [#]_
+      - 14.0.3
     * - Hadoop
       - Apache Hadoop
-      - 1.2.1 / 2.4.1 [#]_
+      - 1.2.1 / 2.6.0 [#]_
 
 ..  [#] MacOSX上では基本的な動作のみ検証しています。
 ..  [#] Windows上ではテストドライバを利用したテストは :doc:`エミュレーションモード <../testing/emulation-mode>` のみ使用できます。Windowsの利用については、 :doc:`../introduction/start-guide-windows` を参照してください。
 ..  [#] JREでは一部の機能が動作しません。必ずJDKを使用してください。
-..  [#] JDK 6の利用については、 :doc:`../application/using-jdk` を参照してください。
+..  [#] JDK6の利用は非推奨です。JDK6の利用については、 :doc:`../application/using-jdk` を参照してください。
 ..  [#] Gradleの利用については、 :doc:`../application/gradle-plugin` を参照してください。
 ..  [#] Mavenの利用は非推奨です。Mavenの利用については、 :doc:`../application/maven-archetype` を参照してください。
+..  [#] IntelliJ IDEAの利用は試験的機能として提供しています。IntelliJ IDEAの利用については :doc:`../application/gradle-plugin` の :ref:`gradle-plugin-using-idea` を参照してください。
 ..  [#] 開発環境ではHadoop1系の利用を推奨しています。詳しくは :doc:`../application/using-hadoop` を参照してください。
 
 WindGate
