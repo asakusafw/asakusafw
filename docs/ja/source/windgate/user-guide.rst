@@ -948,6 +948,10 @@ WindGateと連携してジョブフローの処理結果をデータベースの
 
     このメソッドは、自動生成される骨格ではすでに宣言されています。
 
+``String getCustomTruncate()``
+    テーブルの内容を削除する際のクエリー文を指定します。
+    省略時には `データベースの設定`_ に従ったクエリーが実行されます。
+
 ``Class<? extends DataModelJdbcSupport<?>> getJdbcSupport()``
     ``DataModelJdbcSupport`` の実装クラスを戻り値に指定します。
 

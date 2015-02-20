@@ -74,7 +74,7 @@ public void edit(Hoge hoge) {
 public @interface Update {
 
     /**
-     * 入力ポートの番剛。
+     * 入力ポートの番号。
      */
     int ID_INPUT = 0;
 
