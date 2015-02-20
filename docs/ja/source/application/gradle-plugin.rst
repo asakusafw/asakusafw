@@ -65,12 +65,12 @@ Asakusa Gradle Plugin を利用する方法として、以下のいずれかの�
 Asakusa Gradle Plugin 用プロジェクトテンプレート
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-* `asakusa-project-template-0.7.2.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-project-template-0.7.2.tar.gz>`_ 
+* `asakusa-project-template-0.7.3.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-project-template-0.7.3.tar.gz>`_ 
 
 Asakusa Gradle Plugin 用サンプルアプリケーションプロジェクト
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-* `asakusa-example-project-0.7.2.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-example-project-0.7.2.tar.gz>`_ 
+* `asakusa-example-project-0.7.3.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-example-project-0.7.3.tar.gz>`_ 
 
 ..  note::
     サンプルアプリケーションの内容や利用方法については、
@@ -381,6 +381,8 @@ Asakusa DSLのテストを実行するには、 ``check`` タスクを実行し�
 ..  hint::
     ``clean`` タスクはプロジェクトのビルドディレクトリ ( ``build`` )を初期化します。
     リリースビルドを行うような場合は合わせて実行するとよいでしょう。
+
+.. _gradle-plugin-using-eclipse:
 
 Eclipse定義ファイルの作成
 -------------------------
@@ -914,23 +916,45 @@ ThunderGateに関する規約プロパティは、 ``asakusafw`` ブロック内
 
 Eclipse Pluginの拡張
 ~~~~~~~~~~~~~~~~~~~~
-Batch Application Plugin は Gradleが提供するEclipse Pluginが提供するタスクに対して、以下のようなEclipseプロジェクトの追加設定を行います。
+Batch Application Plugin は Gradleが提供するEclipse Pluginのタスクに対して、以下のようなEclipseプロジェクトの追加設定を行います。
 
 * OperatorDSLコンパイラを実行するためのAnnotation Processorの設定
 * Javaのバージョンやエンコーディングに関する設定
 
 また、Batch Application Pluginが設定する規約プロパティの情報を ``.settings/com.asakusafw.asakusafw.prefs`` に出力します。
 
-Idea Pluginの拡張
+GradleからEclipseプロジェクト用の定義ファイルを生成する方法については、 :ref:`gradle-plugin-using-eclipse` を参照してください。
+
+.. _gradle-plugin-using-idea:
+
+IDEA Pluginの拡張
 ~~~~~~~~~~~~~~~~~
 
 ..  attention::
-    Asakusa Framework バージョン |version| では、 Idea Pluginの拡張は試験的機能として提供しています。
+    Asakusa Framework バージョン |version| では、 IDEA Pluginの拡張は試験的機能として提供しています。
 
-Batch Application Plugin は Gradleが提供するIdea Pluginが提供するタスクに対して、以下のようなEclipseプロジェクトの追加設定を行います。
+Batch Application Plugin は Gradleが提供するIDEA Pluginのタスクに対して、以下のようなIntelliJ IDEAプロジェクトの追加設定を行います。
 
+* プロジェクトに含むモジュールの構成(ソースディレクトリに関する設定など)
 * OperatorDSLコンパイラを実行するためのAnnotation Processorの設定
-* Javaのバージョンやエンコーディングに関する設定
+* Javaのバージョンやコンパイラに関する設定
+
+アプリケーション開発用の統合開発環境(IDE)にIntelliJ IDEAを使用する場合、開発環境にIntelliJ IDEAをインストールした上で、プロジェクトに対してIntelliJ IDEAプロジェクト用の定義ファイルを追加します。
+
+IntelliJ IDEAプロジェクト用の定義ファイルを作成するには、 ``idea`` タスクを実行します。
+
+..  code-block:: sh
+    
+    ./gradlew idea
+
+このコマンドを実行することによって、プロジェクトディレクトリに対してIntelliJ IDEA用の定義ファイルやクラスパスに対応したソースディレクトリなどが追加されます。これにより、IntelliJ IDEAからプロジェクトをインポートすることが可能になります。
+
+..  tip::
+    IntelliJ IDEAからプロジェクトをインポートするには、Welcome Screen(プロジェクトを開いていない時に表示されるダイアログ)から ``[Import]`` を選択するか、メニューから ``[File]`` -> ``[Import Project...]`` を選択し、プロジェクトディレクトリを選択します。インポートウィザードが開始されるので、以下の例を参考にしてプロジェクトのインポートを行います。
+    
+    * インポートウィザードの最初の画面では、 ``[Import project from external model]`` を選択し、 ``Gradle`` を選択して ``[Next]`` を押下します。
+    * インポートウィザードの次の画面の ``Project format:`` は ``ipr (file based)`` を選択してください。デフォルトの ``.idea (directory based)`` ではGradleの ``idea`` タスクが生成した設定ファイルが使用されません。
+
 
 バッチテストランナーの実行
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1153,7 +1177,7 @@ Direct I/O Hiveの構成に関する規約プロパティは、 ``asakusafwOrgan
       - この値をtrueにすると Direct I/O Hive連携モジュール用の構成を行う
     * -  ``libraries``
       - java.util.List
-      - ``org.apache.hive:hive-exec:0.14.0``
+      - ``org.apache.hive:hive-exec:1.0.0``
       - Directi I/O Hiveが実行時に使用するHiveライブラリ
 
 ..  [#] これらのプロパティは規約オブジェクト :gradledoc:`com.asakusafw.gradle.plugins.AsakusafwOrganizerPluginConvention.HiveConfiguration` が提供します。
@@ -1505,7 +1529,7 @@ Asakusa Gradle Pluginのバージョン指定
 
 ..  attention::
     ここで指定するバージョン番号は、 Asakusa Gradle Pluginのバージョン番号です。
-    例えば Asakusa Framework バージョン ``0.7.2`` では ``0.7.2`` のような値となります。
+    例えば Asakusa Framework バージョン ``0.7.3`` では ``0.7.3`` のような値となります。
     
     次の手順の `Asakusa Frameworkのバージョン指定`_ とは異なり、バージョン番号に
     ``-hadoop1`` や ``-hadoop2`` といった接尾辞は付かないことに注意してください。
@@ -1537,7 +1561,7 @@ Hadoop2系向けのバージョン ( ``-hadoop2`` ) を指定している場合�
 
 ..  attention::
     ここで指定するバージョン番号は、 Asakusa Framework本体のバージョン番号です。
-    例えば Asakusa Framework バージョン ``0.7.2`` では ``0.7.2-hadoop1`` のような値となります。
+    例えば Asakusa Framework バージョン ``0.7.3`` では ``0.7.3-hadoop1`` のような値となります。
     バージョン番号に ``-hadoop1`` や ``-hadoop2`` といった接尾辞が必要となることに注意してください
     
     バージョン ``0.6.x`` からのマイグレーションを検討する場合は、

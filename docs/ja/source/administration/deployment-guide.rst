@@ -150,7 +150,7 @@ Hadoop2系向けのバージョンに変更します。
    
     asakusafwOrganizer {
         profiles.prod {
-            asakusafwVersion '0.7.2-hadoop2'
+            asakusafwVersion '0.7.3-hadoop2'
         }
     }
 

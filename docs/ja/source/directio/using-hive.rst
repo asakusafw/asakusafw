@@ -429,9 +429,9 @@ b) Hiveデータ型とカラムナフォーマットのデータ型とのマッ�
 Hiveのバージョンに関して
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-Asakusa Framework バージョン |version| では、Direct I/O の Hive連携モジュールにはHiveのバージョン ``0.14.0`` を使用しています。実行環境のHiveとAsakusa Frameworkが利用するHiveのバージョンが異なる場合、データの互換性に対する注意が必要です。
+Asakusa Framework バージョン |version| では、Direct I/O の Hive連携モジュールにはHiveのバージョン ``1.0.0`` を使用しています。実行環境のHiveとAsakusa Frameworkが利用するHiveのバージョンが異なる場合、データの互換性に対する注意が必要です。
 
-例えば実行環境のHiveバージョンが ``0.11`` の場合、Asakusa Frameworkが利用するHiveはバージョン ``0.14.0`` のためAsakusa FrameworkではHiveの ``VARCHAR`` 型や ``CHAR`` 型を持つファイルを生成することができますが、生成したファイルを実行環境のHiveは取り扱うことができません。
+例えば実行環境のHiveバージョンが ``0.11`` の場合、Asakusa Frameworkが利用するHiveのバージョンではHiveの ``VARCHAR`` 型や ``CHAR`` 型を持つファイルを生成することができますが、生成したファイルを実行環境のHiveは取り扱うことができません。
 
 マッピング型変換機能
 ^^^^^^^^^^^^^^^^^^^^
@@ -509,7 +509,7 @@ Hiveデータ型とカラムナフォーマットのデータ型とのマッピ�
 * `Parquet <https://cwiki.apache.org/confluence/display/Hive/Parquet>`_
 
 ..  attention::
-    Asakusa Framework バージョン |version| では、Direct I/OはHiveのバージョン ``0.14.0`` のライブラリを使用しています。そのため、Parquetに関しては上記のHiveのドキュメントに記載がある通り、DATEデータ型がサポートされていないことに注意してください。
+    Asakusa Framework バージョン |version| では、Direct I/OはHiveのバージョン ``1.0.0`` のライブラリを使用しています。そのため、Parquetに関しては上記のHiveのドキュメントに記載がある通り、DATEデータ型がサポートされていないことに注意してください。
 
 ..  attention::
     本ドキュメントの作成時点で、Amazon EMRの最新AMIバージョン ``3.3.1`` では、Hive ``0.13.1`` に対して ``0.14.0`` で導入されたParquetの ``TIMESTAMP`` 型対応のパッチをバックポートした構成になっていますが、 Hive ``0.14.0`` が生成するParquetの ``TIMESTAMP`` 型とは互換性がないようです。
