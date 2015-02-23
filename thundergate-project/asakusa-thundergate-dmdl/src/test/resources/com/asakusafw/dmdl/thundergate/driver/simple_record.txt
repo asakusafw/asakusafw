@@ -1,0 +1,1 @@
+simple = { sid : LONG; value : TEXT; };

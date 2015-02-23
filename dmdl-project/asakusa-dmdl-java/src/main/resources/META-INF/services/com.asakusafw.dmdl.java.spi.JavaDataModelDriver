@@ -1,8 +1,6 @@
 com.asakusafw.dmdl.java.emitter.driver.ObjectDriver
 com.asakusafw.dmdl.java.emitter.driver.GeneratorInfoDriver
 com.asakusafw.dmdl.java.emitter.driver.WritableDriver
-com.asakusafw.dmdl.java.emitter.driver.ModelInputDriver
-com.asakusafw.dmdl.java.emitter.driver.ModelOutputDriver
 com.asakusafw.dmdl.java.emitter.driver.ProjectionDriver
 com.asakusafw.dmdl.java.emitter.driver.JoinDriver
 com.asakusafw.dmdl.java.emitter.driver.PropertyOrderDriver
