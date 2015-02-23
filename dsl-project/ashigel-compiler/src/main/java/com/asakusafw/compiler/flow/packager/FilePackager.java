@@ -63,7 +63,7 @@ import com.asakusafw.utils.java.model.util.Filer;
 /**
  * ファイルシステム上に構成物を展開するパッケージャ。
  * @since 0.1.0
- * @version 0.5.0
+ * @version 0.7.3
  */
 public class FilePackager
         extends FlowCompilingEnvironment.Initialized
@@ -78,6 +78,18 @@ public class FilePackager
      * @since 0.5.0
      */
     public static final String KEY_OPTION_PACKAGING = "packaging"; //$NON-NLS-1$
+
+    /**
+     * The option name of Java source/target version.
+     * @since 0.7.3
+     */
+    public static final String KEY_JAVA_VERSION = "javaVersion"; //$NON-NLS-1$
+
+    /**
+     * The default value of {@link #KEY_JAVA_VERSION}.
+     * @since 0.7.3
+     */
+    public static final String DEFAULT_JAVA_VERSION = "1.6"; //$NON-NLS-1$
 
     private static final String SOURCE_DIRECTORY = "src"; //$NON-NLS-1$
 
@@ -303,8 +315,9 @@ public class FilePackager
                 CHARSET);
         try {
             List<String> arguments = Lists.create();
-            Collections.addAll(arguments, "-source", "1.6"); //$NON-NLS-1$ //$NON-NLS-2$
-            Collections.addAll(arguments, "-target", "1.6"); //$NON-NLS-1$ //$NON-NLS-2$
+            String javaVersion = getJavaVersion();
+            Collections.addAll(arguments, "-source", javaVersion); //$NON-NLS-1$
+            Collections.addAll(arguments, "-target", javaVersion); //$NON-NLS-1$
             Collections.addAll(arguments, "-encoding", CHARSET.name()); //$NON-NLS-1$
             Collections.addAll(arguments,
                     "-sourcepath", //$NON-NLS-1$
@@ -353,6 +366,10 @@ public class FilePackager
         } finally {
             fileManager.close();
         }
+    }
+
+    private String getJavaVersion() {
+        return getEnvironment().getOptions().getExtraAttribute(KEY_JAVA_VERSION, DEFAULT_JAVA_VERSION);
     }
 
     private List<File> collect(File file, List<File> sourceFiles) {

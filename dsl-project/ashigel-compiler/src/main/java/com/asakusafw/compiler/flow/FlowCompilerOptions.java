@@ -33,6 +33,8 @@ import com.asakusafw.compiler.common.Precondition;
 
 /**
  * Flowコンパイラのオプション設定。
+ * @since 0.1.0
+ * @version 0.7.3
  */
 public class FlowCompilerOptions {
 
@@ -431,6 +433,21 @@ OptionName:
      */
     public String getExtraAttribute(String name) {
         return this.extraAttributes.get(name);
+    }
+
+    /**
+     * Returns the extra attribute.
+     * @param name attribute name
+     * @param defaultValue the default value
+     * @return related value, or the default value if the attribute is not set
+     * @since 0.7.1
+     */
+    public String getExtraAttribute(String name, String defaultValue) {
+        String value = this.extraAttributes.get(name);
+        if (value == null) {
+            return defaultValue;
+        }
+        return value;
     }
 
     /**
