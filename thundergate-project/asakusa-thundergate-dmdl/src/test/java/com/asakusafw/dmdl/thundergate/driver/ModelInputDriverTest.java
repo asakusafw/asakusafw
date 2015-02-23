@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.dmdl.java.emitter.driver;
+package com.asakusafw.dmdl.thundergate.driver;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
@@ -28,7 +28,10 @@ import org.apache.hadoop.io.Text;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.asakusafw.dmdl.java.GeneratorTesterRoot;
+import com.asakusafw.dmdl.java.emitter.driver.ObjectDriver;
+import com.asakusafw.dmdl.thundergate.GeneratorTesterRoot;
+import com.asakusafw.dmdl.thundergate.driver.ModelInputDriver;
+import com.asakusafw.dmdl.thundergate.driver.ModelOutputDriver;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.runtime.io.RecordEmitter;
@@ -63,7 +66,7 @@ public class ModelInputDriverTest extends GeneratorTesterRoot {
     @SuppressWarnings("unchecked")
     @Test
     public void simple_record() throws Exception {
-        ModelLoader loader = generate();
+        ModelLoader loader = generateJava("simple_record");
 
         Class<?> type = loader.modelType("Simple");
         assertThat(type.isAnnotationPresent(ModelInputLocation.class), is(true));
@@ -120,7 +123,7 @@ public class ModelInputDriverTest extends GeneratorTesterRoot {
     @SuppressWarnings("unchecked")
     @Test
     public void primitives() throws Exception {
-        ModelLoader loader = generate();
+        ModelLoader loader = generateJava("primitives");
 
         Class<?> type = loader.modelType("Primitives");
         assertThat(type.isAnnotationPresent(ModelInputLocation.class), is(true));

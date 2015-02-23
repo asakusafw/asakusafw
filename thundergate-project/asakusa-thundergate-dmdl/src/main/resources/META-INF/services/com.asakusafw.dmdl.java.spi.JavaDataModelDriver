@@ -2,3 +2,5 @@ com.asakusafw.dmdl.thundergate.driver.CacheSupportEmitter
 com.asakusafw.dmdl.thundergate.driver.ColumnOrderEmitter
 com.asakusafw.dmdl.thundergate.driver.OriginalNameEmitter
 com.asakusafw.dmdl.thundergate.driver.PrimaryKeyEmitter
+com.asakusafw.dmdl.thundergate.driver.ModelInputDriver
+com.asakusafw.dmdl.thundergate.driver.ModelOutputDriver
