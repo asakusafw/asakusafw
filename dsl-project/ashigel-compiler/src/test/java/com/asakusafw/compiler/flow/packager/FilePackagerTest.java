@@ -29,6 +29,9 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
+import javax.lang.model.SourceVersion;
+
+import org.junit.Assume;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -163,6 +166,24 @@ public class FilePackagerTest extends JobflowCompilerTestRoot {
         emit(packager, cu);
         build(entries, packager);
         assertThat(environment.hasError(), is(false));
+    }
+
+    /**
+     * Builds a java source file w/ {@code JDK 7}.
+     * @throws Exception if failed
+     */
+    @Test
+    public void build_java_jdk7() throws Exception {
+        Assume.assumeThat(SourceVersion.latest(), is(greaterThan(SourceVersion.RELEASE_6)));
+        environment.getOptions().putExtraAttribute(FilePackager.KEY_JAVA_VERSION, "1.7");
+        Set<String> entries = Sets.create();
+        FilePackager packager = new FilePackager(
+                folder.newFolder(),
+                Arrays.<ResourceRepository>asList());
+        packager.initialize(environment);
+        emit(packager, java("Hello"));
+        build(entries, packager);
+        assertThat(entries, hasItem("com/example/Hello.class"));
     }
 
     private CompilationUnit getErroneousSource() {

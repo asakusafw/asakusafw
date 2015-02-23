@@ -216,7 +216,7 @@ public class GeneratorTesterRoot {
     /**
      * Generated data model loader for testing.
      */
-    protected static class ModelLoader {
+    public static class ModelLoader {
 
         private final ClassLoader classLoader;
 
@@ -300,7 +300,7 @@ public class GeneratorTesterRoot {
      * DataModel class instance.
      */
     @SuppressWarnings("rawtypes")
-    protected static class ModelWrapper {
+    public static class ModelWrapper {
 
         private final DataModel instance;
 

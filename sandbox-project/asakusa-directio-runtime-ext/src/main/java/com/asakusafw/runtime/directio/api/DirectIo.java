@@ -16,27 +16,14 @@
 package com.asakusafw.runtime.directio.api;
 
 import java.io.IOException;
-import java.io.InterruptedIOException;
-import java.text.MessageFormat;
-import java.util.List;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
-import org.apache.hadoop.util.ReflectionUtils;
 
 import com.asakusafw.runtime.core.ResourceConfiguration;
 import com.asakusafw.runtime.core.RuntimeResource;
 import com.asakusafw.runtime.core.util.Shared;
-import com.asakusafw.runtime.directio.Counter;
-import com.asakusafw.runtime.directio.DataDefinition;
 import com.asakusafw.runtime.directio.DataFormat;
-import com.asakusafw.runtime.directio.DirectDataSource;
-import com.asakusafw.runtime.directio.DirectDataSourceRepository;
-import com.asakusafw.runtime.directio.DirectInputFragment;
-import com.asakusafw.runtime.directio.FilePattern;
-import com.asakusafw.runtime.directio.ResourcePattern;
-import com.asakusafw.runtime.directio.SimpleDataDefinition;
-import com.asakusafw.runtime.directio.hadoop.HadoopDataSourceUtil;
 import com.asakusafw.runtime.io.ModelInput;
 
 /**
@@ -46,19 +33,15 @@ import com.asakusafw.runtime.io.ModelInput;
  */
 public final class DirectIo {
 
-    static final ThreadLocal<DirectIo> DELEGATE = new ThreadLocal<DirectIo>() {
+    static final ThreadLocal<DirectIoDelegate> DELEGATE = new ThreadLocal<DirectIoDelegate>() {
         @Override
-        protected DirectIo initialValue() {
+        protected DirectIoDelegate initialValue() {
             throw new IllegalStateException("Direct I/O API is not yet initialized");
         }
     };
 
-    private final Configuration configuration;
-
-    private DirectDataSourceRepository lazyRepository;
-
-    private DirectIo(Configuration configuration) {
-        this.configuration = configuration;
+    private DirectIo() {
+        return;
     }
 
     /**
@@ -100,51 +83,11 @@ try (ModelInput&lt;Hoge&gt; input = DirectIo.open(...)) {
             Class<? extends DataFormat<T>> formatClass,
             String basePath,
             String resourcePattern) throws IOException {
-        FilePattern bPattern = FilePattern.compile(basePath);
-        if (bPattern.containsVariables()) {
-            throw new IllegalArgumentException(MessageFormat.format(
-                    "base path must not contain variables: {0}",
-                    basePath));
-        }
-        FilePattern rPattern = FilePattern.compile(resourcePattern);
-        if (rPattern.containsVariables()) {
-            throw new IllegalArgumentException(MessageFormat.format(
-                    "resource pattern must not contain variables: {0}",
-                    resourcePattern));
-        }
-        try {
-            return DELEGATE.get().open0(formatClass, basePath, rPattern);
-        } catch (InterruptedException e) {
-            throw (IOException) new InterruptedIOException().initCause(e);
-        }
-    }
-
-    private <T> ModelInput<T> open0(
-            Class<? extends DataFormat<T>> formatClass,
-            String originalBasePath,
-            ResourcePattern resourcePattern) throws IOException, InterruptedException {
-        DirectDataSourceRepository repository = prepareRepository();
-        String basePath = repository.getComponentPath(originalBasePath);
-        DirectDataSource source = repository.getRelatedDataSource(originalBasePath);
-        DataDefinition<T> definition = createDataDefinition(formatClass);
-        List<DirectInputFragment> fragments = source.findInputFragments(definition, basePath, resourcePattern);
-        return new DirectInputFragmentInput<T>(source, definition, fragments.iterator(), new Counter());
-    }
-
-    private <T> DataDefinition<T> createDataDefinition(Class<? extends DataFormat<T>> formatClass) {
-        DataFormat<T> format = ReflectionUtils.newInstance(formatClass, configuration);
-        return SimpleDataDefinition.newInstance(format.getSupportedType(), format);
-    }
-
-    private DirectDataSourceRepository prepareRepository() {
-        if (lazyRepository == null) {
-            this.lazyRepository = HadoopDataSourceUtil.loadRepository(configuration);
-        }
-        return lazyRepository;
+        return DELEGATE.get().open(formatClass, basePath, resourcePattern);
     }
 
     static void set(Configuration configuration) {
-        DELEGATE.set(new DirectIo(configuration));
+        DELEGATE.set(new DirectIoDelegate(configuration));
     }
 
     static void clear() {
