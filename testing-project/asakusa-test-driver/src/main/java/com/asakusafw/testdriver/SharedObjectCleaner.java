@@ -33,6 +33,7 @@ import com.asakusafw.runtime.core.util.Shared;
  * Using this,
  * <p>
  * Example:
+ * </p>
 <pre><code>
 // operator class with shared class field
 public abstract class SomeOperator {
@@ -56,7 +57,6 @@ public class SomeOperatorTest {
     }
 }
 </code></pre>
- * </p>
  * @since 0.7.3
  */
 public class SharedObjectCleaner extends ExternalResource {

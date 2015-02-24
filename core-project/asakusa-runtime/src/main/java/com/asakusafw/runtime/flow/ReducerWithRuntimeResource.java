@@ -39,7 +39,7 @@ public abstract class ReducerWithRuntimeResource<KEYIN, VALUEIN, KEYOUT, VALUEOU
     private RuntimeResourceManager resources;
 
     /**
-     * Invokes {@link Reducer#run(Context)} internally.
+     * Invokes {code Reducer#run(Context)} internally.
      * Clients can override this method and implement customized {@code run} method.
      * @param context current context
      * @throws IOException if task is failed by I/O error

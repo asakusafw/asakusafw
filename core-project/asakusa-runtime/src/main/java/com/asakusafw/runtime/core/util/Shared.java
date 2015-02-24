@@ -23,6 +23,7 @@ import java.io.IOException;
  * {@link #initialValue()} to prepare shared value.
  * <p>
  * Example:
+ * </p>
 <pre><code>
 // operator class
 public abstract class SomeOperator {
@@ -43,7 +44,6 @@ public abstract class SomeOperator {
     }
 }
 </code></pre>
- * </p>
  * @param <T> the value type
  * @since 0.7.3
  */

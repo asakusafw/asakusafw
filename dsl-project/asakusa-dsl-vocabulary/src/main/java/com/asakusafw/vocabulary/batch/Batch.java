@@ -42,6 +42,7 @@ public @interface Batch {
      * この識別子は、同一アプリケーション内で重複してはならない。
      * また、識別子には、下記の形式(Javaのパッケージ名のうち、ASCIIコード表に収まるもののみ)の
      * 名前を利用可能である。
+     * </p>
 <pre><code>
 Name :
     SimpleName
@@ -56,7 +57,6 @@ NamePart: one of
     NameStart
     0-9
 </code></pre>
-     * </p>
      */
     String name();
 

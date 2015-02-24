@@ -75,10 +75,10 @@ public abstract class &lt;Operator-Class&gt; {
     &#64;Branch
     public Status select(Hoge hoge) {
         int price = hoge.getPrice();
-        if (price < 0) {
+        if (price &lt; 0) {
             return Status.ERROR;
         }
-        if (price >= 1000000) {
+        if (price &gt;= 1000000) {
             return Status.EXPENSIVE;
         }
         return Status.CHEAP;
