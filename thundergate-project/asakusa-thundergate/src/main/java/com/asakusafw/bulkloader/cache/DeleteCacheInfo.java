@@ -29,7 +29,7 @@ import com.asakusafw.runtime.core.context.RuntimeContext;
 /**
  * Disables each cache information.
  * This requires the one of the following argument sequence:
-<table border="1">
+<table border="1"><caption>argument sequence of {@link #main}</caption>
 <tr>
     <th> subcommand </th>
     <th> target-name </th>
