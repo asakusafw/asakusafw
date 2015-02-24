@@ -806,7 +806,7 @@ public class FragmentFlow {
          * <p>
          * コンパイル結果が{@link Result}型を表す{@link ShuffleModel.Segment}。
          * コンストラクターの引数に、{@link TaskInputOutputContext
-         * TaskInputOutputContext<?, ?, ? super K, ? super V>}を取る。
+         * TaskInputOutputContext&lt;?, ?, ? super K, ? super V&gt;}を取る。
          * </p>
          */
         SHUFFLE,

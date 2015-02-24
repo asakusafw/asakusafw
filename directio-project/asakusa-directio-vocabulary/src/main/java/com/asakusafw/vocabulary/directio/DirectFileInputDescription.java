@@ -77,8 +77,8 @@ public abstract class DirectFileInputDescription implements ImporterDescription 
      *   </ul>
      * </li>
      * </ul>
-     * Examples:
-     * <table border="1">
+     *
+     * <table border="1"><caption>Examples of Resource Pattern</caption>
      * <tr>
      *   <th> Expression </th>
      *   <th> Description </th>

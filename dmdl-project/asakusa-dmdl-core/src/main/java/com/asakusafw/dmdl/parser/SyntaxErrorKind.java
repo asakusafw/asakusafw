@@ -35,20 +35,26 @@ public enum SyntaxErrorKind {
 
     /**
      * Occurs unexpected token and the next expected token is guessed.
+     * <ol start="0">
      * <li> current token image </li>
      * <li> expected token </li>
+     * </ol>
      */
     UNEXPECTED_TOKEN_GUESS,
 
     /**
      * Occurs unexpected token and the next expected token is unknown.
+     * <ol start="0">
      * <li> current token image </li>
+     * </ol>
      */
     UNEXPECTED_TOKEN_UNKNOWN,
 
     /**
      * Occurs unexpected EOF.
+     * <ol start="0">
      * <li> current token image </li>
+     * </ol>
      */
     UNEXPECTED_EOF,
 

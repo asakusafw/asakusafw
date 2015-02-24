@@ -34,11 +34,13 @@ import com.asakusafw.vocabulary.bulkloader.BulkLoadImporterDescription;
  * Configurations to connect the ThunderGate database.
  * <p>
  * This locates a configuration file with following order:
+ * </p>
  * <ol>
  * <li> {@code <classpath-root>/<target-name>-jdbc.properties} </li>
  * <li> {@code <classpath-root>/asakusa-test.properties} </li>
  * <li> {@code <local-config-path>/<target-name>-jdbc.properties} </li>
  * </ol>
+ * <p>
  * Note that, classpath root is determined by using a context class loader,
  * or a defining class loader of this class if context class loader is not defined.
  * Additionally, if environment variable {@code ASAKUSA_HOME} is not defined,
@@ -46,17 +48,21 @@ import com.asakusafw.vocabulary.bulkloader.BulkLoadImporterDescription;
  * </p>
  * <p>
  * Each properties file must include the following items:
+ * </p>
  * <ul>
  * <li> {@code driver} - JDBC driver class name, </li>
  * <li> {@code url} - Database URL, </li>
  * <li> {@code user} - Database login user name, </li>
  * <li> {@code password} - Database login password. </li>
  * </ul>
+ * <p>
  * You can also qualify each property names at its head with one of following:
+ * </p>
  * <ol>
  * <li> {@code "test.jdbc."} </li>
  * <li> {@code "jdbc."} </li>
  * </ol>
+ * <p>
  * If there are same properties with different qualifiers,
  * this will resolve in the order noted above.
  * For example, there are {@code test.jdbc.user = asakusa}

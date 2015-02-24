@@ -34,33 +34,30 @@ public abstract class ReflectionTypeVisitor<R, C, E extends Throwable> {
      * {@code type}の種類でメソッドの再束縛を行い、該当する{@code visit*}メソッドを起動する。
      * <p>
      * このメソッドが識別可能な型は次のとおりである。
+     * </p>
      * <ul>
      *   <li>
-     *     {@link Class}
-     - *     {@link #visitClass(Class, Object)
-     *     visitClass(type, context)}
+     *     {@link Class} -
+     *     {@link #visitClass(Class, Object) visitClass(type, context)}
      *   </li>
      *   <li>
-     *     {@link GenericArrayType}
-     - *     {@link #visitGenericArrayType(GenericArrayType, Object)
-     *     visitGenericArrayType(type, context)}
+     *     {@link GenericArrayType} -
+     *     {@link #visitGenericArrayType(GenericArrayType, Object) visitGenericArrayType(type, context)}
      *   </li>
      *   <li>
-     *     {@link ParameterizedType}
-     - *     {@link #visitParameterizedType(ParameterizedType, Object)
-     *     visitParameterizedType(type, context)}
+     *     {@link ParameterizedType} -
+     *     {@link #visitParameterizedType(ParameterizedType, Object) visitParameterizedType(type, context)}
      *   </li>
      *   <li>
-     *     {@link TypeVariable}
-     - *     {@link #visitTypeVariable(TypeVariable, Object)
-     *     visitTypeVariable(type, context)}
+     *     {@link TypeVariable} -
+     *     {@link #visitTypeVariable(TypeVariable, Object) visitTypeVariable(type, context)}
      *   </li>
      *   <li>
-     *     {@link WildcardType}
-     - *     {@link #visitWildcardType(WildcardType, Object)
-     *     visitWildcardType(type, context)}
+     *     {@link WildcardType} -
+     *     {@link #visitWildcardType(WildcardType, Object) visitWildcardType(type, context)}
      *   </li>
      * </ul>
+     * <p>
      * 上記のいずれでもない場合、この呼び出しは失敗する。
      * また、上記のうち複数のサブタイプであるようなオブジェクトを{@code type}に指定した場合、
      * 実際に呼び出される{@code visit*}メソッドは保証されない。

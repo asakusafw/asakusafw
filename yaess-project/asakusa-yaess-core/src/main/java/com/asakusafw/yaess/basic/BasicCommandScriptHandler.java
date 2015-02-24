@@ -28,9 +28,9 @@ import com.asakusafw.yaess.core.ServiceProfile;
 # &lt;prefix command token&gt; can contain "&#64;[position],"
 # this will be replaced as original command tokens (0-origin position)
 command.&lt;profile-name&gt; = &lt;this class name&gt;
-command.&lt;profile-name&gt.env.ASAKUSA_HOME = ${ASAKUSA_HOME}
-command.&lt;profile-name&gt.command.&lt;position&gt; = $&lt;prefix command token&gt;
-command.&lt;profile-name&gt.env.&lt;key&gt; = $&lt;extra environment variables&gt;
+command.&lt;profile-name&gt;.env.ASAKUSA_HOME = ${ASAKUSA_HOME}
+command.&lt;profile-name&gt;.command.&lt;position&gt; = $&lt;prefix command token&gt;
+command.&lt;profile-name&gt;.env.&lt;key&gt; = $&lt;extra environment variables&gt;
 </code></pre>
  * @since 0.2.3
  */

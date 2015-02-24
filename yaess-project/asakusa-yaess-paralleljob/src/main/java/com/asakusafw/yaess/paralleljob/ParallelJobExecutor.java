@@ -116,11 +116,15 @@ public class ParallelJobExecutor implements JobExecutor {
 
     /**
      * Extracts multiplexity profiles from configuration and returns a related executor.
+     * <p>
      * This operation extracts following entries from {@code configuration}:
+     * </p>
      * <ul>
-     * <li> {@link #KEY_PARALLEL_PREFIX parallel.<resource-name>} -  </li>
+     * <li> {@link #KEY_PARALLEL_PREFIX parallel.&lt;resource-name&gt;} - </li>
      * </ul>
+     * <p>
      * Profiles must be contain {@link #DEFAULT_RESOURCE_ID parallel.default}.
+     * </p>
      * @param servicePrefix prefix of configuration keys
      * @param configuration target configuration
      * @param variables variable resolver

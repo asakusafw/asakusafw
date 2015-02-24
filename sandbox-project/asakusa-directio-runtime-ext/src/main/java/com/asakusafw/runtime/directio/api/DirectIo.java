@@ -48,6 +48,7 @@ public final class DirectIo {
      * Returns data model objects from Direct I/O data sources.
      * <p>
      * Clients can obtain each data model object:
+     * </p>
 <pre><code>
 try (ModelInput&lt;Hoge&gt; input = DirectIo.open(...)) {
     Hoge object = new Hoge();
@@ -71,7 +72,6 @@ try (ModelInput&lt;Hoge&gt; input = DirectIo.open(...)) {
     }
 }
 </code></pre>
-     * </p>
      * @param <T> the data model object type
      * @param formatClass the Direct I/O data format class
      * @param basePath the base path (must not contain variables)
