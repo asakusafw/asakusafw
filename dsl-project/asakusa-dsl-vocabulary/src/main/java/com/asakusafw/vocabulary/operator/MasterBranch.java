@@ -95,10 +95,10 @@ public abstract class &lt;Operator-Class&gt; {
             return Status.ERROR;
         }
         int price = master.getPrice();
-        if (price < 0) {
+        if (price &lt; 0) {
             return Status.ERROR;
         }
-        if (price >= 1000000) {
+        if (price &gt;= 1000000) {
             return Status.EXPENSIVE;
         }
         return Status.CHEAP;

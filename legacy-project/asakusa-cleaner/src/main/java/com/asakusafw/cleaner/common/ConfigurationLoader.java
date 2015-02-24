@@ -345,7 +345,7 @@ public final class ConfigurationLoader {
     }
     /**
      * 環境変数を設定します。
-     * @param m Map<String, String>
+     * @param m Map&lt;String, String&gt;
      * @deprecated UT用
      */
     @Deprecated

@@ -410,9 +410,6 @@ public final class FlowGraphUtil {
     /**
      * 指定の要素のすべての入力された内容を、後続する要素の入力に接続しなおしたのち、
      * この要素を削除する。
-     * <p>
-     *
-     * </p>
      * @param element 対象の要素
      * @throws IllegalArgumentException 引数に{@code null}が指定された場合
      */

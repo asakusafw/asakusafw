@@ -78,10 +78,10 @@ public @interface Key {
      * また、{@code ID}と以降の区切り文字はJavaにおける任意の空白文字とする。
      * </p>
      * <p><code>
-     * Order:<br/>
-     * &nbsp;&nbsp;&nbsp;&nbsp;ID<br/>
-     * &nbsp;&nbsp;&nbsp;&nbsp;ID 'ASC'<br/>
-     * &nbsp;&nbsp;&nbsp;&nbsp;ID 'DESC'<br/>
+     * Order:<br>
+     * &nbsp;&nbsp;&nbsp;&nbsp;ID<br>
+     * &nbsp;&nbsp;&nbsp;&nbsp;ID 'ASC'<br>
+     * &nbsp;&nbsp;&nbsp;&nbsp;ID 'DESC'<br>
      * </code></p>
      * <p>
      * この要素を省略した場合や、空の配列を指定した場合には、値の順序は保証されなくなる。

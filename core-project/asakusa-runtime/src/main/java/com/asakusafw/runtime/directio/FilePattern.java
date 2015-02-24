@@ -61,8 +61,7 @@ character:
     (any character except "/", "\", "$", "*", "?", "#", "{", "}", "[", "]")
 
 </code></pre>
- * For example:
- * <table border="1">
+ * <table border="1"><caption>Examples of Pattern Expression</caption>
  * <tr>
  *   <th> Expression </th>
  *   <th> Description </th>

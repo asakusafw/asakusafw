@@ -39,7 +39,7 @@ public abstract class MapperWithRuntimeResource<KEYIN, VALUEIN, KEYOUT, VALUEOUT
     private RuntimeResourceManager resources;
 
     /**
-     * Invokes {@link Mapper#run(Context)} internally.
+     * Invokes {@code Mapper#run(Context)} internally.
      * Clients can override this method and implement customized {@code run} method.
      * @param context current context
      * @throws IOException if task is failed by I/O error
