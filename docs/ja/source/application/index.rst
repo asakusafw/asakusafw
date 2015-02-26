@@ -1,6 +1,7 @@
 ==============
 開発環境の整備
 ==============
+
 Asakusa Frameworkによる開発を行うための開発環境の構築について説明します。
 
 Asakusa Framework開発環境の新規構築
@@ -23,7 +24,7 @@ Asakusa Frameworkの開発環境(OSやAsakusa Frameworkが利用するソフト�
 Asakusa Frameworkが提供する開発ツールに関するドキュメントです。
 
 * :doc:`dsl-visualization`
-* :doc:`yaess-log-visualization` (Experimental)
+* :doc:`yaess-log-visualization`
 
 プラットフォーム関連
 ====================
@@ -44,7 +45,7 @@ Asakusa Framework バージョン |version| において、以下のドキュメ
 
 ..  attention::
     非推奨となった機能のうち、その多くは、現在のバージョンで代替となる推奨機能が提供されています。
-    詳しくはドキュメント内の説明を参照してください。
+    詳しくは各ドキュメント内の説明を参照してください。
 
 関連するドキュメント
 ====================

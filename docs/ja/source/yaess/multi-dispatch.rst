@@ -8,6 +8,7 @@
 
 クラスタの振り分け方法
 ======================
+
 このプラグインでは、バッチに含まれるそれぞれのジョブを実行する際に、それぞれ異なる設定を使ったジョブの実行が行えます。
 バッチごとに異なる設定のクラスタ上で処理を行ったり、ジョブフローごとに異なるHadoopパラメーターを利用するなど様々な設定が可能です。
 
@@ -18,29 +19,28 @@
 構成ファイルについての詳しい情報は、 `Hadoopジョブの振り分け設定`_ や `コマンドラインジョブの振り分け設定`_ をそれぞれ参照してください。
 
 振り分ける規則は、「振り分け設定ファイル」というファイルを作成し、その中に記述します。
-このファイルは対象のバッチごとに ``<バッチID>.properties`` というプロパティファイルとして作成します。
+このファイルは対象のバッチごとに :file:`<バッチID>.properties` というプロパティファイルとして作成します。
 
 振り分け設定ファイル内には、ジョブフロー、フェーズ、ジョブがそれぞれどのサブハンドラを利用してジョブを起動するかを記載します。
 振り分けハンドラは、振り分け設定ファイル内の情報をもとに、適切なサブハンドラを選択してそれぞれのジョブを実行します。
 
 振り分け設定ファイルについての詳しい情報は、 `ジョブの振り分け先設定`_ を参照してください。
 
-..  [#] ``hadoop`` セクションについては :doc:`user-guide` の :ref:`yaess-profile-hadoop-section` を参照してください。
-..  [#] ``command`` セクションについては :doc:`user-guide` の :ref:`yaess-profile-command-section` を参照してください。
-
+..  [#] ``hadoop`` セクションについては :doc:`user-guide` - :ref:`yaess-profile-hadoop-section` を参照してください。
+..  [#] ``command`` セクションについては :doc:`user-guide` - :ref:`yaess-profile-command-section` を参照してください。
 
 プラグインの利用方法
 ====================
 
 プラグインの登録
 ----------------
-このプラグインを利用するには、 ``asakusa-yaess-multidispatch`` というプラグインライブラリをYAESSに登録します [#]_ 。
-プラグインライブラリの登録方法は、 :doc:`user-guide` を参照してください。
 
-..  [#] このプラグインは バージョン |version| ではYAESSの標準構成に含まれています。
+このプラグインを利用するには、 ``asakusa-yaess-multidispatch`` というプラグインライブラリをYAESSに登録します。
+このプラグインは バージョン |version| ではYAESSの標準構成に含まれています。
 
 Hadoopジョブの振り分け設定
 --------------------------
+
 Hadoopジョブをサブハンドラに振り分けて実行する場合、構成ファイルの ``hadoop`` セクションに以下の内容を設定します。
 
 ..  list-table:: Hadoopジョブの振り分け設定
@@ -50,7 +50,7 @@ Hadoopジョブをサブハンドラに振り分けて実行する場合、構�
     * - 名前
       - 値
     * - ``hadoop``
-      - :javadoc:`com.asakusafw.yaess.multidispatch.HadoopScriptHandlerDispatcher`
+      - ``com.asakusafw.yaess.multidispatch.HadoopScriptHandlerDispatcher``
     * - ``hadoop.conf.directory``
       - 振り分け設定ファイルを配置するディレクトリ
     * - ``hadoop.conf.setup``
@@ -62,7 +62,8 @@ Hadoopジョブをサブハンドラに振り分けて実行する場合、構�
     * - ``hadoop.<サブハンドラ名>.<設定名>``
       - サブハンドラの設定値
 
-``hadoop`` には振り分けハンドラを利用するためのディスパッチャクラスを指定します。YAESS導入時には ``hadoop`` には標準的なハンドラクラスが設定されているので、この設定を変更します。
+``hadoop`` には振り分けハンドラを利用するためのディスパッチャクラスを指定します。
+YAESS導入時には ``hadoop`` には標準的なハンドラクラスが設定されているので、この設定を変更します。
 
 ``hadoop.conf.directory`` は振り分け設定ファイルを配置するディレクトリへの絶対パスを指定します。
 このディレクトリの直下に対象バッチのバッチIDと同名の振り分け設定ファイルを作成し、それぞれのファイルで `ジョブの振り分け先設定`_ を行います。
@@ -72,22 +73,22 @@ Hadoopジョブをサブハンドラに振り分けて実行する場合、構�
 上記にサブハンドラ名を設定した場合、振り分け設定ファイルの内容によらず指定のサブハンドラで ``setup`` フェーズや ``cleanup`` フェーズのジョブをそれぞれ実行します。
 
 ``hadoop.<サブハンドラ名>`` や ``hadoop.<サブハンドラ名>.<設定名>`` では、サブハンドラの設定を行います。
-ここでは、通常の ``hadoop`` セクションの代わりに ``hadoop.<サブハンドラ名>`` というサブセクションを作成し、それぞれのサブハンドラの設定を行ってください。サブハンドラ名には半角の英数字のみを利用してください。
+ここでは、通常の ``hadoop`` セクションの代わりに ``hadoop.<サブハンドラ名>`` というサブセクションを作成し、それぞれのサブハンドラの設定を行ってください。
+サブハンドラ名には半角の英数字のみを利用してください。
 
 例えば、サブハンドラ名に `remote` を指定し、このハンドラに対して :ref:`yaess-profile-hadoop-section-ssh` 設定を適用する場合、以下例のようになります [#]_ 。
 
 ..  code-block:: properties
-     
+
     hadoop.remote = com.asakusafw.yaess.jsch.SshHadoopScriptHandler
     hadoop.remote.ssh.user=asakusa
     hadoop.remote.ssh.host=example.com
     hadoop.remote.ssh.port=22
     
-
 サブハンドラは複数定義することが出来ますが、必ず ``default`` という名前のサブハンドラの設定を含めてください。
 これは、振り分け設定ファイルで振り分け先のサブハンドラが明示的に指定されなかった場合に利用されるサブハンドラとなります。
 
-..  warning::
+..  attention::
     ``default`` という名前のサブハンドラが設定されていない場合、YAESSの初期化時にエラーとなります。
 
 上記のうち、先頭の ``hadoop`` を除くすべての項目には ``${変数名}`` という形式で、YAESSを起動した環境の環境変数を含められます。
@@ -95,19 +96,19 @@ Hadoopジョブをサブハンドラに振り分けて実行する場合、構�
 
 ..  [#] ここでは設定の一部のみを記載しています。サブハンドラの設定については後述の `設定例`_ も参考にしてください。
 
-
 コマンドラインジョブの振り分け設定
 ----------------------------------
+
 コマンドラインジョブをサブハンドラに振り分けて実行する場合、構成ファイルの ``command.<プロファイル名>`` セクションに以下の内容を設定します。
 
 ..  list-table:: コマンドラインジョブの振り分け設定
-    :widths: 5 5
+    :widths: 10 15
     :header-rows: 1
 
     * - 名前
       - 値
     * - ``command.<プロファイル名>``
-      - :javadoc:`com.asakusafw.yaess.multidispatch.CommandScriptHandlerDispatcher`
+      - ``com.asakusafw.yaess.multidispatch.CommandScriptHandlerDispatcher``
     * - ``command.<プロファイル名>.conf.directory``
       - 振り分け設定ファイルを配置するディレクトリ
     * - ``command.<プロファイル名>.conf.setup``
@@ -119,7 +120,8 @@ Hadoopジョブをサブハンドラに振り分けて実行する場合、構�
     * - ``command.<プロファイル名>.<サブハンドラ名>.<設定名>``
       - サブハンドラの設定値
 
-``command.<プロファイル名>`` には振り分けハンドラを利用するためのディスパッチャクラスを指定します。YAESS導入時には ``command.<プロファイル名>`` には標準的なハンドラクラスが設定されているので、この設定を変更します。
+``command.<プロファイル名>`` には振り分けハンドラを利用するためのディスパッチャクラスを指定します。
+YAESS導入時には ``command.<プロファイル名>`` には標準的なハンドラクラスが設定されているので、この設定を変更します。
 
 ``command.<プロファイル名>.conf.directory`` は振り分け設定ファイルを配置するディレクトリへの絶対パスを指定します。
 このディレクトリの直下に対象バッチのバッチIDと同名の振り分け設定ファイルを作成し、それぞれのファイルで `ジョブの振り分け先設定`_ を行います。
@@ -129,30 +131,27 @@ Hadoopジョブをサブハンドラに振り分けて実行する場合、構�
 上記にサブハンドラ名を設定した場合、振り分け設定ファイルの内容によらず指定のサブハンドラで ``setup`` フェーズや ``cleanup`` フェーズのジョブをそれぞれ実行します。
 
 ``command.<プロファイル名>.<サブハンドラ名>`` や ``command.<プロファイル名>.<サブハンドラ名>.<設定名>`` では、サブハンドラの設定を行います。
-ここでは、通常の ``command.<プロファイル名>`` セクションの代わりに ``command.<プロファイル名>.<サブハンドラ名>`` というサブセクションを作成し、それぞれのサブハンドラの設定を行ってください。サブハンドラ名には半角の英数字のみを利用してください。
+ここでは、通常の ``command.<プロファイル名>`` セクションの代わりに ``command.<プロファイル名>.<サブハンドラ名>`` というサブセクションを作成し、それぞれのサブハンドラの設定を行ってください。
+サブハンドラ名には半角の英数字のみを利用してください。
 
 例えば、サブハンドラ名に `remote` を指定し、このハンドラに対してコマンドラインジョブのプロファイル `asakusa` に対して :ref:`yaess-profile-command-section-ssh` 設定を適用する場合、以下のようになります [#]_ 。
 
 ..  code-block:: properties
-     
+
     command.asakusa.remote = com.asakusafw.yaess.jsch.SshCommandScriptHandler
     command.asakusa.remote.ssh.user=asakusa
     command.asakusa.remote.ssh.host=example.com
     command.asakusa.remote.ssh.port=22
 
 ..  attention::
-    コマンドラインジョブの振り分け機能を使うと、 :ref:`yaess-profile-command-section` で説明する
-    プロファイル単位で実行方法を切り替える機能の代替として、単一のプロファイル( ``command.*`` )のみを指定し、
-    ジョブフロー単位でコマンドラインジョブを振り分けることで同様の振る舞いを
-    実現可能な場合がありますが、この方法は推奨できません。
+    コマンドラインジョブの振り分け機能を使うと、 :ref:`yaess-profile-command-section` で説明するプロファイル単位で実行方法を切り替える機能の代替として、単一のプロファイル( ``command.*`` )のみを指定し、ジョブフロー単位でコマンドラインジョブを振り分けることで同様の振る舞いを実現可能な場合がありますが、この方法は推奨できません。
      
-    プロファイル単位で実行方法を分ける必要がある場合は、できるだけプロファイル名を分けて
-    個別の ``command.<プロファイル名>`` セクションを用意して設定を切り替えるべきです。
+    プロファイル単位で実行方法を分ける必要がある場合は、できるだけプロファイル名を分けて個別の ``command.<プロファイル名>`` セクションを用意して設定を切り替えるべきです。
 
 サブハンドラは複数定義することが出来ますが、必ず ``default`` という名前のサブハンドラの設定を含めてください。
 これは、振り分け設定ファイルで振り分け先のサブハンドラが明示的に指定されなかった場合に利用されるサブハンドラとなります。
 
-..  warning::
+..  attention::
     ``default`` という名前のサブハンドラが設定されていない場合、YAESSの初期化時にエラーとなります。
 
 上記のうち、先頭の ``command.<プロファイル名>`` を除くすべての項目には ``${変数名}`` という形式で、YAESSを起動した環境の環境変数を含められます。
@@ -160,9 +159,9 @@ Hadoopジョブをサブハンドラに振り分けて実行する場合、構�
 
 ..  [#] ここでは設定の一部のみを記載しています。サブハンドラの設定については後述の `設定例`_ も参考にしてください。
 
-
 ジョブの振り分け先設定
 ----------------------
+
 ジョブをサブハンドラに振り分ける際には、「振り分け設定ファイル」を利用して振り分け先を判断します。
 
 この振り分け設定ファイルは、 ``hadoop.conf.directory`` や ``command.<プロファイル名>.conf.directory`` で指定したディレクトリの直下に ``<バッチID>.properties`` という名前で作成します [#]_ 。
@@ -194,16 +193,15 @@ Hadoopジョブをサブハンドラに振り分けて実行する場合、構�
 
 対応する振り分け設定ファイルが存在しない場合や、設定ファイル内にマッチする行が存在しない場合、 ``default`` という名前のサブハンドラを利用してジョブを実行します。
 
-..  warning::
+..  attention::
     現在のAsakusa Frameworkでは、バッチコンパイルのたびにステージIDがランダムに決定されます。
-    ステージIDまで指定して設定を振り分ける場合にはアプリケーションの再デプロイの際に
-    意図した設定が効かなくなる可能性があるため注意が必要です。
+    ステージIDまで指定して設定を振り分ける場合にはアプリケーションの再デプロイの際に意図した設定が効かなくなる可能性があるため注意が必要です。
 
 ..  hint::
-    ステージIDについては、 :doc:`../dsl/user-guide` の :ref:`compiled-batch-application-components` を参照してください。
+    ステージIDについては、 :doc:`../dsl/user-guide` - :ref:`compiled-batch-application-components` を参照してください。
 
-..  [#] 例えばバッチIDが `example.summarizeSales` の場合、振り分け設定ファイル名は  `example.summarizeSales.properties` となります。
-..  [#] 利用可能なフェーズについては :doc:`user-guide` の :ref:`yaess-batch-structure` を参照してください。
+..  [#] 例えばバッチIDが `example.summarizeSales` の場合、振り分け設定ファイル名は `example.summarizeSales.properties` となります。
+..  [#] 利用可能なフェーズについては :doc:`user-guide` - :ref:`yaess-batch-structure` を参照してください。
         なお、 ``setup`` と ``cleanup`` フェーズは振り分けハンドラ側の設定が優先されます。
 ..  [#] 振り分け設定ファイル内に記載した行の順序は、設定の優先度に影響しません。
 
@@ -212,12 +210,14 @@ Hadoopジョブをサブハンドラに振り分けて実行する場合、構�
 
 複数の実行環境にジョブフローを振り分ける例
 ------------------------------------------
-以下はローカル環境上のHadoopの設定と、リモート環境上のHadopの設定を定義し、ジョブフロー単位で使用するHadoopを振り分ける設定例(構成ファイルの一部)です。2つのHadoopクラスタを処理に応じて使い分ける場合などを想定しています。
+
+以下はローカル環境上のHadoopの設定と、リモート環境上のHadopの設定を定義し、ジョブフロー単位で使用するHadoopを振り分ける設定例(構成ファイルの一部)です。
+2つのHadoopクラスタを処理に応じて使い分ける場合などを想定しています。
 
 ローカル環境上の設定に対するサブハンドラには ``default`` を、リモート環境の設定に対するサブハンドラには ``remote`` という名前をそれぞれ指定しています。
 
 ..  code-block:: properties
-    
+
     # 振り分けハンドラ本体
     hadoop = com.asakusafw.yaess.multidispatch.HadoopScriptHandlerDispatcher
     hadoop.conf.directory = ${ASAKUSA_HOME}/yaess/conf/multidispatch/
@@ -256,7 +256,9 @@ Hadoopジョブをサブハンドラに振り分けて実行する場合、構�
 
 そして、 ``md.batch`` というバッチに含まれる ``farexec`` というジョブフローのみをリモート環境で実行し、それ以外のすべての処理をローカル環境で動作させる場合を考えます。
 
-まず、各 ``.conf.directory`` で指定したディレクトリ以下に、バッチ ``md.batch`` に対応する振り分け設定ファイルとして ``md.batch.properties`` というファイルを作成します。上記の例では、 ``${ASAKUSA_HOME}/yaess/conf/multidispatch/md.batch.properties`` というパスになります。このファイルを以下のように定義します。
+まず、各 ``.conf.directory`` で指定したディレクトリ以下に、バッチ ``md.batch`` に対応する振り分け設定ファイルとして ``md.batch.properties`` というファイルを作成します。
+上記の例では、 :file:`${ASAKUSA_HOME}/yaess/conf/multidispatch/md.batch.properties` というパスになります。
+このファイルを以下のように定義します。
 
 ..  code-block:: properties
 
@@ -272,17 +274,16 @@ Hadoopジョブをサブハンドラに振り分けて実行する場合、構�
     
     なお、複数のクラスタでデフォルトのファイルシステムを共有している場合、上記は問題になりません。
 
-
 単一の実行環境を異なる設定で利用する例
 --------------------------------------
 
-以下は同一のHadoopを異なる設定で利用する設定例(構成ファイルの一部)です。振り分けの設定をチューニンパラメータとして利用する場合などを想定しています。
+以下は同一のHadoopを異なる設定で利用する設定例(構成ファイルの一部)です。
+振り分けの設定をチューニンパラメータとして利用する場合などを想定しています。
 
 デフォルトの設定を利用するサブハンドラには ``default`` を、Reduceタスク数を4に設定したサブハンドラには ``reduce4`` を、Reduceタスク数を8に設定したサブハンドラには ``reduce8`` という名前をそれぞれ指定しています。
 
-
 ..  code-block:: properties
-    
+
     # 振り分けハンドラ本体
     hadoop = com.asakusafw.yaess.multidispatch.HadoopScriptHandlerDispatcher
     hadoop.conf.directory = ${HOME}/.asakusa/multidispatch
@@ -307,17 +308,17 @@ Hadoopジョブをサブハンドラに振り分けて実行する場合、構�
     hadoop.reduce8.env.HADOOP_CMD = /usr/bin/hadoop
     hadoop.reduce8.env.ASAKUSA_HOME = ${ASAKUSA_HOME}
 
-
 そして、 ``md.batch`` というバッチに含まれる ``medium`` というジョブフローの ``epilogue`` フェーズのみで ``mapred.reduce.tasks = 4`` が有効になり、同ジョブフローのそれ以外のフェーズでは ``mapred.reduce.tasks = 8`` が有効になるような例を考えます。
 
-上記の例では、 ``${HOME}/.asakusa/multidispatch/md.batch.properties`` というファイルを以下のように定義します。
+上記の例では、 :file:`${HOME}/.asakusa/multidispatch/md.batch.properties` というファイルを以下のように定義します。
 
 ..  code-block:: properties
 
     medium.epilogue.* = reduce4
     medium.* = reduce8
 
-この場合、 ``medium.epilogue.* = reduce4`` の方が ``medium.* = reduce8`` よりも優先されるため、 ``epilogue`` フェーズではサブハンドラ ``reduce4`` を利用します。また、 それ以外のフェーズでは ``reduce8`` を利用します。
+この場合、 ``medium.epilogue.* = reduce4`` の方が ``medium.* = reduce8`` よりも優先されるため、 ``epilogue`` フェーズではサブハンドラ ``reduce4`` を利用します。
+また、 それ以外のフェーズでは ``reduce8`` を利用します。
 
 なお、上記に記載されていないジョブフローでは、デフォルト設定の ``default`` を利用します。
 

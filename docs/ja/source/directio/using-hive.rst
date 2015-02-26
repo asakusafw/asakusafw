@@ -2,12 +2,13 @@
 Direct I/OのHive連携
 ====================
 
+この文書では、Direct I/Oを使って `Apache Hive <https://hive.apache.org/>`_ （以下「Hive」）が対応するカラムナフォーマットのファイルを読み書きする方法について説明します。
+
 ..  attention::
     Asakusa Framework バージョン |version| では、Direct I/O のHive連携機能は試験的機能として提供しています。
 
-この文書では、Direct I/Oを使って `Apache Hive <https://hive.apache.org/>`_ （以下「Hive」）が対応するカラムナフォーマットのファイルを読み書きする方法について説明します。
-
-Hiveの操作も含めたアプリケーション開発の全体の流れについては、 :doc:`../sandbox/asakusa-with-hive` も参照にしてください。
+..  seealso::
+    Hiveの操作も含めたアプリケーション開発の全体の流れについては、 :doc:`../sandbox/asakusa-with-hive` も参照にしてください。
 
 Hive連携モジュールの利用方法
 ============================
@@ -28,18 +29,20 @@ Direct I/OのHive連携モジュールを利用するには、利用するアプ
 Gradleプロジェクトの設定
 ------------------------
 
-GradleプロジェクトでHive 連携モジュールを使用する場合は ``build.gradle`` に対して以下の定義を追加します。
+GradleプロジェクトでHive 連携モジュールを使用する場合は :file:`build.gradle` に対して以下の定義を追加します。
 
 * Framework Organizerに対してHiveの構成を有効化する
-   * ``asakusafwOrganizer`` ブロックに ``hive.enabled true`` を追加
+
+  * ``asakusafwOrganizer`` ブロックに ``hive.enabled true`` を追加
 * Hive連携モジュールSDKを依存関係に追加する
-   * ``dependencies`` ブロックの ``compile`` に対して ``asakusa-sdk-hive`` を 追加
+
+  * ``dependencies`` ブロックの ``compile`` に対して ``asakusa-sdk-hive`` を 追加
 
 以下、 ``build.gradle`` の設定例です。
 
 ..  code-block:: groovy
     :emphasize-lines: 2,10
-    
+
     asakusafwOrganizer {
         hive.enabled true
         profiles.prod {
@@ -52,9 +55,9 @@ GradleプロジェクトでHive 連携モジュールを使用する場合は ``
         compile group: 'com.asakusafw.sdk', name: 'asakusa-sdk-hive', version: asakusafw.asakusafwVersion
     }
 
-上記の設定後、 ``installAsakusafw`` タスクを実行して開発環境のAsakusa Frameworkを再インストールします。
+上記の設定後、 :program:`installAsakusafw` タスクを実行して開発環境のAsakusa Frameworkを再インストールします。
 
-Eclipseを利用している場合は、 ``eclipse`` タスクを実行してEclipseのプロジェクト情報を再構成します。
+Eclipseを利用している場合は、 :program:`eclipse` タスクを実行してEclipseのプロジェクト情報を再構成します。
 
 ..  attention::
     MavenプロジェクトはHiveとの連携機能をサポートしていません。Hiveとの連携機能を利用する場合はGradleプロジェクトを利用してください。
@@ -74,7 +77,8 @@ Asakusa Frameworkのバージョン |version| では、Hiveが対応するカラ
 
 :doc:`csv-format` と同様に、データモデルクラス、及びファイル形式をマッピングする ``DataFormat`` の実装クラスは、DMDLコンパイラの拡張を利用して自動的に生成できます。
 
-これらの生成機能は、DMDLコンパイラのプラグイン ``asakusa-hive-dmdl`` によって提供されます。このコンパイラプラグインは上述のHive連携モジュールSDKを設定することで利用することができます。
+これらの生成機能は、DMDLコンパイラのプラグイン ``asakusa-hive-dmdl`` によって提供されます。
+このコンパイラプラグインは上述の `Hive連携モジュールの利用方法`_ の設定を行うことで利用することができます。
 
 ORC File形式のDataFormatの作成
 ------------------------------
@@ -92,9 +96,12 @@ ORC File形式に対応した ``DataFormat`` の実装クラスを自動的に�
         content : TEXT;
     };
 
-上記のように記述してデータモデルクラスを生成すると、 ``<出力先パッケージ>.hive.orc.<データモデル名>OrcFileFormat`` というクラスが自動生成されます。 このクラスは ``DataFormat`` を実装し、データモデルに対応するORC Fileを取り扱えます。
+上記のように記述してデータモデルクラスを生成すると、 ``<出力先パッケージ>.hive.orc.<データモデル名>OrcFileFormat`` というクラスが自動生成されます。
+このクラスは ``DataFormat`` を実装し、データモデルに対応するORC Fileを取り扱えます。
 
-また、 :ref:`directio-dsl-input-description` と :ref:`directio-dsl-output-description` の骨格も自動生成します。前者は ``<出力先パッケージ>.hive.orc.Abstract<データモデル名>OrcFileInputDescription`` 、後者は ``<出力先パッケージ>.hive.orc.Abstract<データモデル名>OrcFileOutputDescription`` というクラス名で生成します。必要に応じて継承して利用してください。
+また、 :ref:`directio-dsl-input-description` と :ref:`directio-dsl-output-description` の骨格も自動生成します。
+前者は ``<出力先パッケージ>.hive.orc.Abstract<データモデル名>OrcFileInputDescription`` 、後者は ``<出力先パッケージ>.hive.orc.Abstract<データモデル名>OrcFileOutputDescription`` というクラス名で生成します。
+必要に応じて継承して利用してください。
 
 ORC File形式の設定
 ~~~~~~~~~~~~~~~~~~
@@ -144,11 +151,15 @@ ORC File形式の設定
 
 ``table_name`` には、Hive上のテーブル名を指定します。指定しない場合はデータモデル上のモデル名をテーブル名として使用します。
 
-``field_mapping`` 、 ``on_missing_source`` 、 ``on_missing_target`` は、Direct I/Oがファイルを読み込む際に使用するデータモデルとのマッピング方式と、マッピングできないカラムが存在した場合の動作をそれぞれ指定します。詳しくは後述の `カラム名のマッピング`_ を参照してください。
+``field_mapping`` 、 ``on_missing_source`` 、 ``on_missing_target`` は、Direct I/Oがファイルを読み込む際に使用するデータモデルとのマッピング方式と、マッピングできないカラムが存在した場合の動作をそれぞれ指定します。
+詳しくは後述の `カラム名のマッピング`_ を参照してください。
 
-``on_incompatible_type`` には、Direct I/Oがファイルを読み込む際にORC File上のカラムデータ型とデータモデルのプロパティの型が対応していない場合の動作を指定します。データモデルとHive、及び各ファイルフォーマットとのデータ型の対応については、 `データ型のマッピング`_ を参照してください。
+``on_incompatible_type`` には、Direct I/Oがファイルを読み込む際にORC File上のカラムデータ型とデータモデルのプロパティの型が対応していない場合の動作を指定します。
+データモデルとHive、及び各ファイルフォーマットとのデータ型の対応については、 `データ型のマッピング`_ を参照してください。
 
-``format_version`` はDirect I/Oで作成するORC Fileのバージョンを、ファイルを読み込むHiveのバージョンに合わせて指定します。例えば、作成したファイルを Hive ``0.11`` で読む場合は、フォーマットバージョンに ``0.11`` と指定します。Hiveのバージョンについては 後述の `Hiveのバージョンに関して`_ も合わせて参照してください。
+``format_version`` はDirect I/Oで作成するORC Fileのバージョンを、ファイルを読み込むHiveのバージョンに合わせて指定します。
+例えば、作成したファイルを Hive ``0.11`` で読む場合は、フォーマットバージョンに ``0.11`` と指定します。
+Hiveのバージョンについては 後述の `Hiveのバージョンに関して`_ も合わせて参照してください。
 
 以下はDMDLスクリプトの記述例です。
 
@@ -184,9 +195,12 @@ Parquet形式に対応した ``DataFormat`` の実装クラスを自動的に生
         content : TEXT;
     };
 
-上記のように記述してデータモデルクラスを生成すると、 ``<出力先パッケージ>.hive.parquet.<データモデル名>ParquetFileFormat`` というクラスが自動生成されます。 このクラスは ``DataFormat`` を実装し、データモデルに対応するParquetを取り扱えます。
+上記のように記述してデータモデルクラスを生成すると、 ``<出力先パッケージ>.hive.parquet.<データモデル名>ParquetFileFormat`` というクラスが自動生成されます。
+このクラスは ``DataFormat`` を実装し、データモデルに対応するParquetを取り扱えます。
 
-また、 :ref:`directio-dsl-input-description` と :ref:`directio-dsl-output-description` の骨格も自動生成します。前者は ``<出力先パッケージ>.hive.parquet.Abstract<データモデル名>ParquetFileInputDescription`` 、後者は ``<出力先パッケージ>.hive.parquet.Abstract<データモデル名>ParquetFileOutputDescription`` というクラス名で生成します。必要に応じて継承して利用してください。
+また、 :ref:`directio-dsl-input-description` と :ref:`directio-dsl-output-description` の骨格も自動生成します。
+前者は ``<出力先パッケージ>.hive.parquet.Abstract<データモデル名>ParquetFileInputDescription`` 、後者は ``<出力先パッケージ>.hive.parquet.Abstract<データモデル名>ParquetFileOutputDescription`` というクラス名で生成します。
+必要に応じて継承して利用してください。
 
 Parquet形式の設定
 ~~~~~~~~~~~~~~~~~
@@ -250,11 +264,14 @@ Parquet形式の設定
       - ``FALSE``
       - ファイル出力時にParquetのデータスキーマの検査を行うか。 ``TRUE`` :検査する, ``FALSE`` :検査しない
 
-``table_name`` には、Hive上のテーブル名を指定します。指定しない場合はデータモデル上のモデル名をテーブル名として使用します。
+``table_name`` には、Hive上のテーブル名を指定します。
+指定しない場合はデータモデル上のモデル名をテーブル名として使用します。
 
-``field_mapping`` 、 ``on_missing_source`` 、 ``on_missing_target`` は、Direct I/Oがファイルを読み込む際に使用するデータモデルとのマッピング方式と、マッピングできないカラムが存在した場合の動作をそれぞれ指定します。詳しくは後述の `カラム名のマッピング`_ を参照してください。
+``field_mapping`` 、 ``on_missing_source`` 、 ``on_missing_target`` は、Direct I/Oがファイルを読み込む際に使用するデータモデルとのマッピング方式と、マッピングできないカラムが存在した場合の動作をそれぞれ指定します。
+詳しくは後述の `カラム名のマッピング`_ を参照してください。
 
-``on_incompatible_type`` には、Direct I/Oがファイルを読み込む際にParquet上のカラムデータ型とデータモデルのプロパティの型が対応していない場合の動作を指定します。データモデルとHive、及び各ファイルフォーマットとのデータ型の対応については、 `データ型のマッピング`_ を参照してください。
+``on_incompatible_type`` には、Direct I/Oがファイルを読み込む際にParquet上のカラムデータ型とデータモデルのプロパティの型が対応していない場合の動作を指定します。
+データモデルとHive、及び各ファイルフォーマットとのデータ型の対応については、 `データ型のマッピング`_ を参照してください。
 
 以下はDMDLスクリプトの記述例です。
 
@@ -291,7 +308,8 @@ Parquet形式の設定
 位置マッピング
 ^^^^^^^^^^^^^^
 
-位置マッピングはデータモデル内のプロパティ定義の順番でカラムナフォーマットのカラムとの対応を行います。位置マッピングは :doc:`csv-format` のマッピング方法と同様の方法です。
+位置マッピングはデータモデル内のプロパティ定義の順番でカラムナフォーマットのカラムとの対応を行います。
+位置マッピングは :doc:`csv-format` のマッピング方法と同様の方法です。
 
 位置マッピングを行うには、データモデルの要素 ``field_mapping`` の値に ``position`` を指定します。
 
@@ -325,7 +343,8 @@ Parquet形式の設定
 
 ファイル入力時にデータモデルのモデルプロパティとカラムナフォーマットファイルのカラム間の対応付けができなかった場合の動作は、データモデルの要素 ``on_missing_source`` と ``on_missing_target`` で指定します。
 
-``on_missing_source`` はデータモデルのプロパティ名に対して、入力ファイル内にカラムがない場合の動作を指定します。 ``on_missing_target`` は反対に、入力ファイル内のカラムに対して、データモデルのプロパティがない場合の動作を指定します。
+``on_missing_source`` はデータモデルのプロパティ名に対して、入力ファイル内にカラムがない場合の動作を指定します。
+``on_missing_target`` は反対に、入力ファイル内のカラムに対して、データモデルのプロパティがない場合の動作を指定します。
 
 各要素の値にはそれぞれ以下の値を設定することができます。
 
@@ -334,12 +353,14 @@ Parquet形式の設定
 * ``fail`` : エラーとしてバッチ処理を異常終了
 
 ..  attention::
-    ORC FileをHiveで生成する際に、利用するHiveのバージョンによってはファイルにカラム名の情報が出力されないようです。この場合、名前マッピングは利用できないため、位置マッピングの機能を利用する必要があります。
+    ORC FileをHiveで生成する際に、利用するHiveのバージョンによってはファイルにカラム名の情報が出力されないようです。
+    この場合、名前マッピングは利用できないため、位置マッピングの機能を利用する必要があります。
 
 ..  hint::
-    ORC Fileにカラム情報が出力されているかどうかを確認する方法として、ORC File Dump Utility を利用することができます。このツールはHive CLIが利用できる環境で以下のコマンドを実行します。
+    ORC Fileにカラム情報が出力されているかどうかを確認する方法として、ORC File Dump Utility を利用することができます。
+    このツールはHive CLIが利用できる環境で以下のコマンドを実行します。
     
-    ``hive --orcfiledump <hdfs-location-of-orc-file>``
+    :program:`hive --orcfiledump <hdfs-location-of-orc-file>`
 
 データ型のマッピング
 ~~~~~~~~~~~~~~~~~~~~
@@ -351,7 +372,9 @@ b) Hiveデータ型とカラムナフォーマットのデータ型とのマッ�
 
 たとえばあるデータ型について、a.のマッピングは対応しているが、b.のマッピングは対応していない、という場合にはそのままではそのプロパティを扱うことはできません。
 
-そのような場合に、異なるデータ型としてそのプロパティを扱うための `マッピング型変換機能`_ を提供しています。これは、a.のモデルプロパティとHiveデータ型とのマッピングにおいて、標準のデータ型のマッピングとは異なるデータ型へのマッピングを行う機能です。これによりそのプロパティを取り扱うことを可能にしています。
+そのような場合に、異なるデータ型としてそのプロパティを扱うための `マッピング型変換機能`_ を提供しています。
+これは、a.のモデルプロパティとHiveデータ型とのマッピングにおいて、標準のデータ型のマッピングとは異なるデータ型へのマッピングを行う機能です。
+これによりそのプロパティを取り扱うことを可能にしています。
 
 モデルプロパティとHiveデータ型とのマッピング
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -418,18 +441,21 @@ b) Hiveデータ型とカラムナフォーマットのデータ型とのマッ�
     上表で記載が無いHiveデータ型( ``BINARY`` 、及び ``ARRAY`` などの Complex Types）には対応していません。
 
 ..  attention::
-    Hiveの ``TIMESTAMP`` 型はタイムゾーンを保持しません。複数の異なるタイムゾーンを持つ環境間で ``TIMESTAMP`` 型を持つデータを扱う場合、タイムゾーンの差異によって異なる値が扱われる可能性があることに注意してください。
+    Hiveの ``TIMESTAMP`` 型はタイムゾーンを保持しません。
+    複数の異なるタイムゾーンを持つ環境間で ``TIMESTAMP`` 型を持つデータを扱う場合、タイムゾーンの差異によって異なる値が扱われる可能性があることに注意してください。
 
 ..  [#] DMDLで指定するプロパティの型です。詳しくは :doc:`../dmdl/user-guide` を参照してください
 
-..  [#] モデルプロパティの型に対して、標準で対応するHiveのデータ型です。Hiveのデータ型について詳しくはHiveのドキュメント `LanguageManual Types <https://cwiki.apache.org/confluence/display/Hive/LanguageManual+Types>`_ などを参照してください。
+..  [#] モデルプロパティの型に対して、標準で対応するHiveのデータ型です。
+        Hiveのデータ型について詳しくはHiveのドキュメント `LanguageManual Types <https://cwiki.apache.org/confluence/display/Hive/LanguageManual+Types>`_ などを参照してください。
 
 ..  [#] モデルプロパティの型に対して、 `マッピング型変換機能`_ が対応するHiveのデータ型です。
 
 Hiveのバージョンに関して
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-Asakusa Framework バージョン |version| では、Direct I/O の Hive連携モジュールにはHiveのバージョン ``1.0.0`` を使用しています。実行環境のHiveとAsakusa Frameworkが利用するHiveのバージョンが異なる場合、データの互換性に対する注意が必要です。
+Asakusa Framework バージョン |version| では、Direct I/O の Hive連携モジュールにはHiveのバージョン ``1.0.0`` を使用しています。
+実行環境のHiveとAsakusa Frameworkが利用するHiveのバージョンが異なる場合、データの互換性に対する注意が必要です。
 
 例えば実行環境のHiveバージョンが ``0.11`` の場合、Asakusa Frameworkが利用するHiveのバージョンではHiveの ``VARCHAR`` 型や ``CHAR`` 型を持つファイルを生成することができますが、生成したファイルを実行環境のHiveは取り扱うことができません。
 
@@ -440,7 +466,8 @@ Asakusa Framework バージョン |version| では、Direct I/O の Hive連携�
 
 モデルプロパティに対して、 `モデルプロパティとHiveデータ型とのマッピング`_ 表の「Hive (マッピング型変換)」に記載されているHiveデータ型に対するマッピングを行うことが可能です。
 
-マッピング型変換を行うには、それぞれのモデルプロパティにマッピング型変換用の属性を指定します。属性によっては、さらにその属性が持つ各要素でデータ型の詳細情報を指定します。
+マッピング型変換を行うには、それぞれのモデルプロパティにマッピング型変換用の属性を指定します。
+属性によっては、さらにその属性が持つ各要素でデータ型の詳細情報を指定します。
 
 マッピング型変換で利用可能な属性は以下の通りです。
     
@@ -457,24 +484,24 @@ Asakusa Framework バージョン |version| では、Direct I/O の Hive連携�
       - * ``DECIMAL``
         * ``DATE``
         * ``DATETIME``
-      - モデルプロパティをHiveの ``STRING`` 型にマッピングする
+      - モデルプロパティをHiveの ``STRING`` 型にマッピング
     * - ``@directio.hive.decimal``
       - * ``precision`` :精度(1 - 38)
         * ``scale`` :スケール(0 - 38)
       - * ``DECIMAL``
-      - モデルプロパティを精度とスケールを持つHiveの ``DECIMAL`` 型にマッピングする。
+      - モデルプロパティを精度とスケールを持つHiveの ``DECIMAL`` 型にマッピング
     * - ``@directio.hive.timestamp``
       - ``-``
       - * ``DATE``
-      - モデルプロパティをHiveの ``TIMESTAMP`` 型にマッピングする。 ``DATE`` からのマッピングでは時刻は常に ``00:00:00`` となる
+      - モデルプロパティをHiveの ``TIMESTAMP`` 型にマッピング ( ``DATE`` からのマッピングでは時刻は常に ``00:00:00`` )
     * - ``@directio.hive.char``
       - * ``length`` :最大文字列長(1 - 255)
       - * ``TEXT``
-      - モデルプロパティをHiveの ``CHAR`` 型にマッピングする。
+      - モデルプロパティをHiveの ``CHAR`` 型にマッピング
     * - ``@directio.hive.varchar``
       - * ``length`` :最大文字列長(1 - 65535)
       - * ``TEXT``
-      - モデルプロパティをHiveの ``VARCHAR`` 型にマッピングする。
+      - モデルプロパティをHiveの ``VARCHAR`` 型にマッピング
 
 ..  [#] この属性を指定することが可能なDMDLのプロパティの型です。
 
@@ -509,7 +536,8 @@ Hiveデータ型とカラムナフォーマットのデータ型とのマッピ�
 * `Parquet <https://cwiki.apache.org/confluence/display/Hive/Parquet>`_
 
 ..  attention::
-    Asakusa Framework バージョン |version| では、Direct I/OはHiveのバージョン ``1.0.0`` のライブラリを使用しています。そのため、Parquetに関しては上記のHiveのドキュメントに記載がある通り、DATEデータ型がサポートされていないことに注意してください。
+    Asakusa Framework バージョン |version| では、Direct I/OはHiveのバージョン ``1.0.0`` のライブラリを使用しています。
+    そのため、Parquetに関しては上記のHiveのドキュメントに記載がある通り、DATEデータ型がサポートされていないことに注意してください。
 
 ..  attention::
     本ドキュメントの作成時点で、Amazon EMRの最新AMIバージョン ``3.3.1`` では、Hive ``0.13.1`` に対して ``0.14.0`` で導入されたParquetの ``TIMESTAMP`` 型対応のパッチをバックポートした構成になっていますが、 Hive ``0.14.0`` が生成するParquetの ``TIMESTAMP`` 型とは互換性がないようです。
@@ -525,21 +553,21 @@ Hiveデータ型とカラムナフォーマットのデータ型とのマッピ�
 Hive DDLの生成
 --------------
 
-アプリケーションの開発にGradleプロジェクトを利用している場合、 Hive連携モジュールを利用するDMDLスクリプトからHiveのDDLを生成する ``generateHiveDDL`` タスクを利用することができます。
+アプリケーションの開発にGradleプロジェクトを利用している場合、Hive連携モジュールを利用するDMDLスクリプトからHiveのDDLを生成する :program:`generateHiveDDL` タスクを利用することができます。
 
 ..  code-block:: sh
 
     ./gradlew generateHiveDDL
     
-``generateHiveDDL`` タスクを実行すると、プロジェクトの ``build/hive-ddl`` ディレクトリ配下にHiveのDDL文を含むSQLファイルが生成されます。
+:program:`generateHiveDDL` タスクを実行すると、プロジェクトの :file:`build/hive-ddl` ディレクトリ配下にHiveのDDL文を含むSQLファイルが生成されます。
 
-詳しくは、 :doc:`../application/gradle-plugin` の :ref:`gradle-plugin-task-hiveddl` を参照してください。
-
-また、Hiveの操作も含めたアプリケーション開発の全体の流れについては、 :doc:`../sandbox/asakusa-with-hive` も参照にしてください。
+詳しくは、 :doc:`../application/gradle-plugin` - :ref:`gradle-plugin-task-hiveddl` を参照してください。
 
 ライブラリキャッシュの利用
 --------------------------
-Hive連携モジュールが使用する実行ライブラリはファイルサイズが大きいため、Hadoopジョブの実行のつどHadoopクラスターにライブラリを配布することでパフォーマンスに悪影響を与える可能性があります。このため、ライブラリキャッシュの設定を行いHive連携モジュール用のライブラリをキャッシュすることを推奨します。
+
+Hive連携モジュールが使用する実行ライブラリはファイルサイズが大きいため、Hadoopジョブの実行のつどHadoopクラスターにライブラリを配布することでパフォーマンスに悪影響を与える可能性があります。
+このため、ライブラリキャッシュの設定を行いHive連携モジュール用のライブラリをキャッシュすることを推奨します。
 
 ライブラリキャッシュの利用方法については詳しくは、 :doc:`../administration/configure-library-cache` を参照してください。
 
