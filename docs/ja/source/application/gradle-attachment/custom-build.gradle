@@ -30,7 +30,7 @@ asakusafw {
     compiler {
         compiledSourcePackage 'com.example.batchapp'
         // DSL compile options
-        compilerOptions "+enableCombiner,-compressFlowPart"
+        compilerOptions += ["+enableCombiner", "-compressFlowPart"]
     }
 }
 

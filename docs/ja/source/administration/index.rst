@@ -1,10 +1,12 @@
 ==============
 運用環境の整備
 ==============
+
 Asakusa FrameworkとバッチアプリケーションをHadoopクラスタなどの各種サーバにデプロイし、実行するための手順などについて説明します。
 
 運用環境のデプロイ
 ==================
+
 * :doc:`deployment-guide`
 * :doc:`deployment-architecture`
 * :doc:`configure-hadoop-parameters`
