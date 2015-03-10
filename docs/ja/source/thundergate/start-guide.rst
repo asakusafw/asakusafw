@@ -11,7 +11,7 @@ ThunderGateの詳しい利用方法については :doc:`user-guide` を参照�
 
 ThunderGateを使ったアプリケーションの開発環境構築
 =================================================
-ThunderGateを使ったアプリケーションの開発環境を構築する場合、 :doc:`../introduction/start-guide` の :ref:`startguide-development-environment` で構築した開発環境の設定に加えて、以下に示す設定を行う必要があります。
+ThunderGateを使ったアプリケーションの開発環境を構築する場合、 :doc:`../introduction/start-guide` - :ref:`startguide-development-environment` で構築した開発環境の設定に加えて、以下に示す設定を行う必要があります。
 
 OSのセキュリティ設定
 --------------------
@@ -119,7 +119,7 @@ ThunderGateはRDBMSに対してJDBC接続を経由してデータの入出力を
 ..  hint::
     このファイルは ``$ASAKUSA_HOME/bulkloader/conf/asakusa-jdbc.properties`` をコピーして作成することもできます。
 
-JDBC接続設定について詳しくは、 :doc:`user-guide` の :ref:`thundergate-jdbc-configuration-file` を参照してください。
+JDBC接続設定について詳しくは、 :doc:`user-guide` - :ref:`thundergate-jdbc-configuration-file` を参照してください。
 
 データベースノード用設定
 ------------------------
@@ -127,7 +127,7 @@ ThunderGateはRDBMSがインストールされているサーバ（データベ�
 
 データベースノードに対する設定を定義したプロパティファイルは、 ``$ASAKUSA_HOME/bulkloader/conf`` 配下に ``bulkloader-conf-db.properties`` という名前で配置します。開発環境については通常はデフォルトのままで動作するよう設定されていますが、必要に応じて設定を変更してください。
 
-データベースノード用設定について詳しくは、 :doc:`user-guide` の :ref:`thundergate-db-configuration-file` を参照してください。
+データベースノード用設定について詳しくは、 :doc:`user-guide` - :ref:`thundergate-db-configuration-file` を参照してください。
 
 Hadoopクライアントマシン用設定
 ------------------------------
@@ -135,7 +135,7 @@ Hadoopクライアントマシン用設定
 
 Hadoopクライアントマシンに対する設定を定義したプロパティファイルは、 ``$ASAKUSA_HOME/bulkloader/conf`` 配下に ``bulkloader-conf-hc.properties`` という名前で配置します。データベースノード用の設定と同様、この設定ファイルも開発環境については通常はデフォルトのままで動作するよう設定されていますが、必要に応じて設定を変更してください。
 
-Hadoopクライアント用設定について詳しくは、 :doc:`user-guide` の :ref:`thundergate-hc-configuration-file` を参照してください。
+Hadoopクライアント用設定について詳しくは、 :doc:`user-guide` - :ref:`thundergate-hc-configuration-file` を参照してください。
 
 サンプルプログラムの実行
 ========================

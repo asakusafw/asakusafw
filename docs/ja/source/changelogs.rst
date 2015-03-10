@@ -4,10 +4,12 @@ Changelogs
 
 Release 0.7.2
 =============
+
 Jan 05, 2015
 
 Enhancements
 ------------
+
 * [ :issue:`455` ] - Revise infomation log
 * [ :issue:`456` ] - Add sdk artifact for emulation test
 * [ :issue:`460` ] - Supports Hive 0.14.0 for Direct I/O
@@ -17,21 +19,25 @@ Enhancements
 
 Bug fixes
 ---------
+
 * [ :issue:`457` ] - Memory leaks TestDriver with WindGate JDBC
 * [ :issue:`462` ] - Library cache does not work on EMR/Hadoop1
 
 Others
 ------
+
 * [ :issue:`458` ] - 0.7.2 Documents
 * [ :issue:`459` ] - 0.7.2 Refactoring
 
 
 Release 0.7.1
 =============
+
 Nov 20, 2014
 
 Enhancements
 ------------
+
 * [ :issue:`442` ] - Improves performance of small jobs
 * [ :issue:`444` ] - Add fine BatchTestRunner API
 * [ :issue:`449` ] - Support modified UTF-8 on DataBuffer
@@ -43,6 +49,7 @@ Enhancements
 
 Bug fixes
 ---------
+
 * [ :issue:`445` ] - Operator compiler should validate shuffle keys
 * [ :issue:`446` ] - DMDL property name ends with 'option' should be error
 * [ :issue:`447` ] - Fix parsing DMDL name follows arrow symbol
@@ -51,6 +58,7 @@ Bug fixes
 
 Others
 ------
+
 * [ :issue:`443` ] - 0.7.1 Documents
 * [ :issue:`448` ] - Enable ThunderGate using local processes for testing
 * [ :issue:`450` ] - 0.7.1 Refactoring
@@ -59,10 +67,12 @@ Others
 
 Release 0.7.0
 =============
+
 Sep 25, 2014
 
 Enhancements
 ------------
+
 * [ :issue:`370` ] - Validate test data at first
 * [ :issue:`394` ] - Trim space option for Direct I/O CSV
 * [ :issue:`395` ] - Introduces Testdriver rule extension for approximate numeric evaluation
@@ -109,6 +119,7 @@ Enhancements
 
 Bug fixes
 ---------
+
 * [ :issue:`382` ] - Adds local mode detection logic to JobCompatibilty layer. (REOPEN)
 * [ :issue:`393` ] - Error message is not clear when the profile name returned from WindGateProcessDescription is null.
 * [ :issue:`398` ] - Running gradle tasks fails
@@ -127,6 +138,7 @@ Bug fixes
 
 Others
 ------
+
 * [ :issue:`415` ] - Transfers application sdk projects to asakusafw-sdk repository
 * [ :issue:`416` ] - Integrates asakusafw-sandbox projects in asakusafw repository
 * [ :issue:`419` ] - Transfers jobqueue server projects to asakusafw-jobqueue-server repository
@@ -141,10 +153,12 @@ Others
 
 Release 0.6.2
 =============
+
 May 22, 2014
 
 Enhancements
 ------------
+
 * [ :issue:`325` ] - DMDL Compiler should fail when defining more than 3 model join as joined model.
 * [ :issue:`386` ] - Optimize split combiner for tiny inputs
 * [ :issue:`388` ] - Bumps up default Gradle version to 1.12.
@@ -153,6 +167,7 @@ Enhancements
 
 Bug fixes
 ---------
+
 * [ :issue:`326` ] - Unreadable error message when DMDL compiles joined model with no joined key property.
 * [ :issue:`379` ] - Insert a dropped character
 * [ :issue:`380` ] - Wrong index of the transaction parameter
@@ -164,15 +179,18 @@ Bug fixes
 
 Others
 ------
+
 * [ :issue:`390` ] - 0.6.2 Documents
 * [ :issue:`392` ] - 0.6.2 Refactoring
 
 Release 0.6.1
 =============
+
 Mar 19, 2014
 
 Enhancements
 ------------
+
 * [ :issue:`367` ] - Keeps batchapps in ASAKUSA_HOME clean when running TestDriver.
 * [ :issue:`368` ] - Improves details of Batch Application Plugin [Gradle Plugin]
 * [ :issue:`369` ] - Gradle Plugin supports ThunderGate
@@ -182,21 +200,25 @@ Enhancements
 
 Bug fixes
 ---------
+
 * [ :issue:`371` ] - Fails to resolve data source from Direct I/O output base path with variables
 * [ :issue:`373` ] - Failed to compile Operator class with overloaded private methods
 * [ :issue:`378` ] - Running local job with parallel may conflict in local attempt output area
 
 Others
 ------
+
 * [ :issue:`376` ] - 0.6.1 Documents
 * [ :issue:`377` ] - 0.6.1 Refactoring
 
 Release 0.6.0
 =============
+
 Feb 17, 2014
 
 Enhancements
 ------------
+
 * [ :issue:`341` ] - Creates directories for generated sources on eclipse task [Gradle Plugin]
 * [ :issue:`347` ] - Adds wrapper task with settings for batchapp to template project [Gradle Plugin]
 * [ :issue:`353` ] - Enables to modify compilerArgs via build script and changes default value [Gradle Plugin]
@@ -212,6 +234,7 @@ Enhancements
 
 Bug fixes
 ---------
+
 * [ :issue:`339` ] - Fix a closing tag name
 * [ :issue:`343` ] - Incorrect hadoopWorkDirectory set on Gradle Plugin
 * [ :issue:`344` ] - generateTestbook task should set headless option [Gradle Plugin]
@@ -228,6 +251,7 @@ Bug fixes
 
 Others
 ------
+
 * [ :issue:`340` ] - Changes standard build system on documents to Gradle-based 
     * See: :doc:`application/gradle-plugin`
 * [ :issue:`342` ] - Refactoring Gradle Plugin
@@ -239,10 +263,12 @@ Others
 
 Release 0.5.3
 =============
+
 Dec 24, 2013
 
 Enhancements
 ------------
+
 * [ :issue:`312` ] - Improvement of error message for invalid DMDL property name
 * [ :issue:`313` ] - (Experimental) Supports Apache Hadoop 2.2.0
     * See: :doc:`product/target-platform`
@@ -268,6 +294,7 @@ Enhancements
 
 Bug fixes
 ---------
+
 * [ :issue:`303` ] - (Reopened issue) TestDriver fails when installed framework version is older than project framework version.
 * [ :issue:`317` ] - Fails standalone use of framework organizer plugin [Gradle Plugin]
 * [ :issue:`318` ] - Fails compileTestJava task when main SourceSet file does not exist. [Gradle Plugin]
@@ -275,6 +302,7 @@ Bug fixes
 
 Others
 ------
+
 * [ :issue:`320` ] - Bumps up default Gradle version.
 * [ :issue:`323` ] - 0.5.3 Documents
 * [ :issue:`329` ] - runtime.core.Result tend to misunderstand that cannot add multiple objects
@@ -285,10 +313,12 @@ Others
 
 Release 0.5.2
 =============
+
 Nov 20, 2013
 
 Enhancements
 ------------
+
 * [ :issue:`300` ] - Region is null when a cycle exists in model dependencies
 * [ :issue:`301` ] - New Build System based on Gradle
     * See: :doc:`application/gradle-plugin`
@@ -300,6 +330,7 @@ Enhancements
 
 Bug fixes
 ---------
+
 * [ :issue:`297` ] - "true","false","null" has leaked from the check of SimpleName
 * [ :issue:`298` ] - Fix documentation bugs
 * [ :issue:`299` ] - Fix documentation bugs
@@ -310,6 +341,7 @@ Bug fixes
 
 Others
 ------
+
 * [ :issue:`306` ] - Bumps up default dependency hadoop version
     * See: :doc:`product/target-platform`
 * [ :issue:`308` ] - Updates document for using Direct I/O with splittable configuration on S3
@@ -319,6 +351,7 @@ Others
 
 Release 0.5.1
 =============
+
 Jul 26, 2013
 
 Others
@@ -326,6 +359,7 @@ Others
 
 Enhancements
 ------------
+
 * [ :issue:`282` ] - Error message improvement in DMDL
 * [ :issue:`287` ] - Manages application dependency libraries per project
     * See: :doc:`application/maven-archetype`
@@ -337,6 +371,7 @@ Enhancements
 
 Bug fixes
 ---------
+
 * [ :issue:`284` ] - Tester assertion seems strange in case of verify key duplication
 * [ :issue:`285` ] - Value of emum counted port at @MasterBranch operator
 * [ :issue:`286` ] - Delete a wrong sentence.
@@ -346,15 +381,18 @@ Bug fixes
 
 Others
 ------
+
 * [ :issue:`290` ] - 0.5.1 Documentation
 * [ :issue:`293` ] - Update Maven plugins to recent versions (0.5.1)
 
 Release 0.5.0
 =============
+
 May 9, 2013
 
 Enhancements
 ------------
+
 * [ :issue:`246` ] - Make retry interval of RetryableProcessProvider configurable
     * See: :doc:`windgate/user-guide`
 * [ :issue:`249` ] - Improve error handling on FileSystem.listFiles().
@@ -381,6 +419,7 @@ Enhancements
 
 Bug fixes
 ---------
+
 * [ :issue:`243` ] - DirectI/O user-guide AmazonS3-example typo
 * [ :issue:`257` ] - Export target table does not clear when changing to DELETE query and exporting empty data.
 * [ :issue:`258` ] - Example value of windgate profile should have same as defalut value
@@ -392,6 +431,7 @@ Bug fixes
 
 Others
 ------
+
 * [ :issue:`248` ] - Changes default version and distribution of dependency Hadoop library
     * See: :doc:`product/target-platform`
 * [ :issue:`255` ] - Update dependency testing libraries to recent versions
@@ -403,10 +443,12 @@ Others
 
 Release 0.4.0
 =============
+
 Aug 30, 2012
 
 Enhancements
 ------------
+
 * [ :issue:`78` ] - \*Tester should provide the way to define precision accuracy
     * See: :doc:`testing/user-guide`
 * [ :issue:`115` ] - Manage assembly descriptor as part of Maven artifact.
@@ -457,6 +499,7 @@ Enhancements
 
 Bug fixes
 ---------
+
 * [ :issue:`194` ] - WindGate log seems not correct
 * [ :issue:`196` ] - Cleaner should use Hadoop libraries provided environment
 * [ :issue:`211` ] - Unexpected exception thrown when log directory lost permission.
@@ -476,6 +519,7 @@ Bug fixes
 
 Revisions
 ---------
+
 * [ :issue:`198` ] - Changes archetype composition
     * See: :doc:`application/maven-archetype`
 * [ :issue:`207` ] - Legacy TestDriver should not use experimental shell script
@@ -484,6 +528,7 @@ Revisions
 
 Others
 ------
+
 * [ :issue:`70` ] - Need more detailed and easy-to-see documentation for logging and related maintainance
     * See: :doc:`windgate/log-table`
     * See: :doc:`yaess/log-table`
@@ -510,10 +555,12 @@ Others
 
 Release 0.2.6
 =============
+
 May 31, 2012
 
 Enhancements
 ------------
+
 * [ :issue:`84` ] - WindGate logging improvement
 * [ :issue:`138` ] - Provide command script building cache for ThunderGate
     * See: :doc:`thundergate/cache`
@@ -562,6 +609,7 @@ Enhancements
 
 Bug fixes
 ---------
+
 * [ :issue:`140` ] - NPE when running DMDL Genarator without encoding option
 * [ :issue:`141` ] - Code example for generated DMDL is wrong
 * [ :issue:`144` ] - Failed with NPE when Direct I/O outputs with specifing date format
@@ -580,6 +628,7 @@ Bug fixes
 
 Others
 ------
+
 * [ :issue:`142` ] - 0.2.6 Documentation
 * [ :issue:`169` ] - Refoctoring for release 0.2.6
 
@@ -587,10 +636,12 @@ Others
 
 Release 0.2.5
 =============
+
 Jan 31, 2012
 
 Enhancements
 ------------
+
 * [ :issue:`131` ] - Direct I/O - direct data access facility from Hadoop cluster
     * See: :doc:`directio/index`
 * [ :issue:`134` ] - Original Apache Hadoop Support
@@ -602,10 +653,12 @@ Enhancements
 
 Bug fixes
 ---------
+
 * [ :issue:`137` ] - "Reduce output records" counter is wrong
 
 Others
 ------
+
 * [ :issue:`129` ] - 0.2.5 Documentation
 * [ :issue:`130` ] - Refoctoring for release 0.2.5
 
@@ -613,6 +666,7 @@ Others
 
 Release 0.2.4
 =============
+
 Dec 19, 2011
 
 Enhancements
@@ -635,6 +689,7 @@ Enhancements
 
 Revisions
 ---------
+
 * [ :issue:`105` ] - Shoud there be existed a copy constructor at DecimalOption
 * [ :issue:`114` ] - Change default configuration of archetype for WindGate for using local file (CSV) .
 * [ :issue:`116` ] - Deployment archive for WindGate should be included files for running Hadoop on local.
@@ -643,6 +698,7 @@ Revisions
 
 Bug fixes
 ---------
+
 * [ :issue:`118` ] - ThunderGate raises unknown error if cache lock was conflicted
 * [ :issue:`119` ] - ThunderGate recoverer and release cache lock have same job ID
 * [ :issue:`124` ] - asakusa-resources.xml has incorrect default configuration.
@@ -651,6 +707,7 @@ Bug fixes
 
 Others
 ------
+
 * [ :issue:`106` ] - 0.2.4 Documentation
 
 ----
@@ -658,10 +715,12 @@ Others
 
 Release 0.2.3
 =============
+
 Nov 16, 2011
 
 Enhancements
 ------------
+
 * [ :issue:`60` ] - Test driver message is not easy to understand
 * [ :issue:`67` ] - Support fine grain verification on TestDriver
 * [ :issue:`81` ] - support CDH3u1 
@@ -684,6 +743,7 @@ Enhancements
 
 Bug fixes
 ---------
+
 * [ :issue:`85` ] - FileExporterDescription failed to output to multiple files
 * [ :issue:`90` ] - typo in documents
 * [ :issue:`95` ] - Extractor returns invalid return code
@@ -694,6 +754,7 @@ Bug fixes
 
 Others
 ------
+
 * [ :issue:`89` ] - 0.2.3 Documentation
 
 ----
@@ -701,10 +762,12 @@ Others
 
 Release 0.2.2
 =============
+
 Sep 29, 2011
 
 Enhancements
 ------------
+
 * [ :issue:`61` ] - ThunderGate log messages improvement
 * [ :issue:`63` ] - Reduce dependency of MultipleOutputs
 * [ :issue:`64` ] - Enable to input expect data from database table.
@@ -717,6 +780,7 @@ Enhancements
 
 Bug fixes
 ---------
+
 * [ :issue:`53` ] - Batch compile error message on importer type unmatch seems strange
 * [ :issue:`57` ] - Correct messages
 * [ :issue:`58` ] - Error message when jobflow output missing is difficult to understand
@@ -731,16 +795,19 @@ Bug fixes
 
 Others
 ------
+
 * [ :issue:`54` ] - 0.2.2 Documentation
 
 ----
 
 Release 0.2.1
 =============
+
 Jul 27, 2011
 
 Enhancements
 ------------
+
 * [ :issue:`38` ] - Supports CLOB for property type
     * See: :doc:`thundergate/with-dmdl`
 * [ :issue:`41` ] - Support new operator "Extract"
@@ -750,21 +817,25 @@ Enhancements
 
 Bug fixes
 ---------
+
 * [ :issue:`49` ] - Failed to synthesize record models with same property
 * [ :issue:`51` ] - Repository url of pom.xml defines https unnecessarily
 
 Others
 ------
+
 * [ :issue:`52` ] - 0.2.1 Documentation
 
 ----
 
 Release 0.2.0
 =============
+
 Jun 29, 2011
 
 Enhancements
 ------------
+
 * [ :issue:`10` ] - support CDH3u0
 * [ :issue:`17` ] - New data model generator
     * See: :doc:`dmdl/index`
@@ -780,11 +851,13 @@ Enhancements
 
 Revisions
 ---------
+
 * [ :issue:`26` ] - modelgen should be bound to generate-sources phase (not process-resources phase).
 * [ :issue:`40` ] - Enable compiler option "compressFlowPart" default value
 
 Bug fixes
 ---------
+
 * [ :issue:`3` ] - 'mvn test' fails if X window system is not available
 * [ :issue:`4` ] - testtools.properties does not use on a project generated with archetype
 * [ :issue:`5` ] - system property and environment variables "NS\_" -> "ASAKUSA\_" corresponding leakage of renaming
@@ -813,12 +886,14 @@ Bug fixes
 
 Others
 ------
+
 * [ :issue:`25` ] - 0.2.0 Documentation
 
 ----
 
 Release 0.1.0
 =============
+
 Mar 30, 2011
 
 * The first release of Asakusa Framework.
