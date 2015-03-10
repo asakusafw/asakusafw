@@ -4,6 +4,7 @@
 
 Hadoopディストリビューション
 ============================
+
 Asakusa Framework は、以下のHadoopディストリビューションと組み合わせた運用環境で動作を検証しています。
 
 ..  list-table:: 動作検証プラットフォーム(Hadoopディストリビューション)
@@ -39,7 +40,7 @@ Asakusa Framework は、以下のHadoopディストリビューションと組�
       - CentOS 6 (6.2)
       - JDK 7 (1.7.0_45)
       - |version|-hadoop2
-    * - Amazon EMR [#]_
+    * - Amazon EMR
       - Hadoop 1.0.3
       - AMI 2.4.6
       - JDK 7 (1.7.0_60)
@@ -50,13 +51,12 @@ Asakusa Framework は、以下のHadoopディストリビューションと組�
       - JDK 7 (1.7.0_71)
       - |version|-hadoop2
 
-..  [#] 検証バージョンは、Hadoopディストリビューションの動作検証に使用したAsakusa Frameworkのバージョンです。
+..  [#] 検証バージョンとは、Hadoopディストリビューションの動作検証に使用したAsakusa Frameworkのバージョンです。
         詳しくは :doc:`../administration/deployment-guide` を参照してください。
-
-..  [#] Amazon EMR上で利用するための情報を :doc:`../sandbox/asakusa-on-emr` に公開しています。
 
 アプリケーション開発環境
 ========================
+
 Asakusa Frameworkを利用したバッチアプリケーションの開発環境は、 以下のプラットフォームで動作を検証しています。
 
 ..  list-table:: 動作検証プラットフォーム(開発環境)
@@ -100,11 +100,12 @@ Asakusa Frameworkを利用したバッチアプリケーションの開発環境
 ..  [#] JDK6の利用は非推奨です。JDK6の利用については、 :doc:`../application/using-jdk` を参照してください。
 ..  [#] Gradleの利用については、 :doc:`../application/gradle-plugin` を参照してください。
 ..  [#] Mavenの利用は非推奨です。Mavenの利用については、 :doc:`../application/maven-archetype` を参照してください。
-..  [#] IntelliJ IDEAの利用は試験的機能として提供しています。IntelliJ IDEAの利用については :doc:`../application/gradle-plugin` の :ref:`gradle-plugin-using-idea` を参照してください。
+..  [#] IntelliJ IDEAの利用は試験的機能として提供しています。IntelliJ IDEAの利用については :doc:`../application/gradle-plugin` - :ref:`gradle-plugin-using-idea` を参照してください。
 ..  [#] 開発環境ではHadoop1系の利用を推奨しています。詳しくは :doc:`../application/using-hadoop` を参照してください。
 
 WindGate
 ========
+
 :doc:`WindGate <../windgate/index>` は以下のプラットフォームで動作を検証しています。
 
 ..  list-table:: 動作検証プラットフォーム(WindGate/JDBC [#]_ )
@@ -125,6 +126,7 @@ WindGate
 
 ThunderGate
 ===========
+
 :doc:`ThunderGate <../thundergate/index>` は以下のプラットフォームで動作を検証しています。
 
 ..  list-table:: 動作検証プラットフォーム(ThunderGate)
@@ -143,6 +145,7 @@ ThunderGate
 
 リンク
 ======
+
 対応プラットフォームのリンク集です。
 
 ..  list-table::
