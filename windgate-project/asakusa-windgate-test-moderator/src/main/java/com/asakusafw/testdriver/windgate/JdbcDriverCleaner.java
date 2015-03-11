@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -81,7 +81,7 @@ public final class JdbcDriverCleaner implements Runnable {
                 if (driver.getClass().getClassLoader() == loader) {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug(MessageFormat.format(
-                                "unloading {0} ({1})",
+                                "unloading {0} ({1})", //$NON-NLS-1$
                                 driver,
                                 loader));
                     }

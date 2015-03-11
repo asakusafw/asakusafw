@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -138,7 +138,7 @@ public class ProjectiveModelEmitter {
                     .text("{0}を返す。",
                             context.getDescription(property))
                     .returns()
-                        .text("{0}",
+                        .text("{0}", //$NON-NLS-1$
                                 context.getDescription(property))
                     .exception(context.resolve(NullPointerException.class))
                         .text("{0}の値が<code>null</code>である場合",
@@ -156,7 +156,7 @@ public class ProjectiveModelEmitter {
 
     private MethodDeclaration createSetter(PropertyDeclaration property) {
         assert property != null;
-        SimpleName paramName = context.createVariableName("value");
+        SimpleName paramName = context.createVariableName("value"); //$NON-NLS-1$
         Type valueType = context.getValueType(property);
         return f.newMethodDeclaration(
                 new JavadocBuilder(f)
@@ -186,7 +186,7 @@ public class ProjectiveModelEmitter {
                     .text("<code>null</code>を許す{0}を返す。",
                             context.getDescription(property))
                     .returns()
-                        .text("{0}",
+                        .text("{0}", //$NON-NLS-1$
                                 context.getDescription(property))
                     .toJavadoc(),
                 driver.getMemberAnnotations(context, property),
@@ -201,7 +201,7 @@ public class ProjectiveModelEmitter {
 
     private MethodDeclaration createOptionSetter(PropertyDeclaration property) {
         assert property != null;
-        SimpleName paramName = context.createVariableName("option");
+        SimpleName paramName = context.createVariableName("option"); //$NON-NLS-1$
 
         Type optionType = context.getFieldType(property);
         return f.newMethodDeclaration(

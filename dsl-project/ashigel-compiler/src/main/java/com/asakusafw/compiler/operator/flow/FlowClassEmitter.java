@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ public class FlowClassEmitter {
 
     static final Logger LOG = LoggerFactory.getLogger(FlowClassEmitter.class);
 
-    private static final String KEY_SUFFIX_FACTORY = "FACTORY";
+    private static final String KEY_SUFFIX_FACTORY = "FACTORY"; //$NON-NLS-1$
 
     private final OperatorCompilingEnvironment environment;
 
@@ -118,14 +118,14 @@ public class FlowClassEmitter {
             }
         } catch (FilerException e) {
             LOG.debug(MessageFormat.format(
-                    "{0} has been already created in this session",
+                    "{0} has been already created in this session", //$NON-NLS-1$
                     typeDecl.getName().toNameString()), e);
         }
     }
 
     private String getResourceKey(FlowPartClass aClass, String suffix) {
         assert aClass != null;
-        return String.format("%s::%s", aClass.getElement().getQualifiedName(), suffix);
+        return String.format("%s::%s", aClass.getElement().getQualifiedName(), suffix); //$NON-NLS-1$
     }
 
     private PackageDeclaration getPackage(

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -395,7 +395,7 @@ public class OperatorMethodDescriptor {
                         Models.toLiteral(f, helperMethod.getSimpleName().toString()),
                         // parameter types
                         new TypeBuilder(f, ib.toType(Arrays.class))
-                            .method("asList", new TypeBuilder(f, ib.toType(Class.class))
+                            .method("asList", new TypeBuilder(f, ib.toType(Class.class)) //$NON-NLS-1$
                                 .parameterize(f.newWildcard())
                                 .array(1)
                                 .newArray(f.newArrayInitializer(parameterTypeLiterals))

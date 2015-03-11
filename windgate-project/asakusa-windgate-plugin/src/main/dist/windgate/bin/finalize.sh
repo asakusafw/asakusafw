@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright 2011-2014 Asakusa Framework Team.
+# Copyright 2011-2015 Asakusa Framework Team.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 
 usage() {
     cat 1>&2 <<EOF
-WindGate FInalizer
+WindGate Finalizer
 
 Usage:
     $0 profile

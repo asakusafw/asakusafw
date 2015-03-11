@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -77,7 +77,7 @@ public class ParallelSortClientEmitter {
     /**
      * Whether emulates legacy mode.
      */
-    public static final String ATTRIBUTE_LEGACY = ParallelSortClientEmitter.class.getName() + ".legacy";
+    public static final String ATTRIBUTE_LEGACY = ParallelSortClientEmitter.class.getName() + ".legacy"; //$NON-NLS-1$
 
     private final FlowCompilingEnvironment environment;
 
@@ -111,7 +111,7 @@ public class ParallelSortClientEmitter {
         Precondition.checkMustNotBeNull(moduleId, "moduleId"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(slots, "slots"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(outputDirectory, "outputDirectory"); //$NON-NLS-1$
-        LOG.debug("{}に対するエピローグジョブ実行クライアントを生成します", moduleId);
+        LOG.debug("start generating epilogue stage client: {}", moduleId); //$NON-NLS-1$
         Engine engine = new Engine(environment, moduleId, slots, outputDirectory);
         CompilationUnit source = engine.generate();
         environment.emit(source);
@@ -120,7 +120,7 @@ public class ParallelSortClientEmitter {
         QualifiedName name = environment
             .getModelFactory()
             .newQualifiedName(packageName, simpleName);
-        LOG.debug("エピローグ\"{}\"のジョブ実行には{}が利用されます", moduleId, name);
+        LOG.debug("finish generating epilogue stage client: {} ({})", moduleId, name); //$NON-NLS-1$
         return new CompiledStage(name, Naming.getEpilogueName(moduleId));
     }
 
@@ -195,9 +195,9 @@ public class ParallelSortClientEmitter {
 
         private Map<String, Expression> createTraceLocationElements() {
             Map<String, Expression> results = new LinkedHashMap<String, Expression>();
-            results.put("batchId", Models.toLiteral(factory, environment.getBatchId()));
-            results.put("flowId", Models.toLiteral(factory, environment.getFlowId()));
-            results.put("stageId", Models.toLiteral(factory, Naming.getEpilogueName(moduleId)));
+            results.put("batchId", Models.toLiteral(factory, environment.getBatchId())); //$NON-NLS-1$
+            results.put("flowId", Models.toLiteral(factory, environment.getFlowId())); //$NON-NLS-1$
+            results.put("stageId", Models.toLiteral(factory, Naming.getEpilogueName(moduleId))); //$NON-NLS-1$
             return results;
         }
 
@@ -226,8 +226,8 @@ public class ParallelSortClientEmitter {
         }
 
         private MethodDeclaration createStageInputsMethod() throws IOException {
-            SimpleName list = factory.newSimpleName("results");
-            SimpleName attributes = factory.newSimpleName("attributes");
+            SimpleName list = factory.newSimpleName("results"); //$NON-NLS-1$
+            SimpleName attributes = factory.newSimpleName("attributes"); //$NON-NLS-1$
             List<Statement> statements = Lists.create();
             statements.add(new TypeBuilder(factory, t(ArrayList.class, t(StageInput.class)))
                 .newObject()
@@ -245,14 +245,14 @@ public class ParallelSortClientEmitter {
                 for (SourceInfo input : slot.getSource().getInputs()) {
                     for (Map.Entry<String, String> entry : input.getAttributes().entrySet()) {
                         statements.add(new ExpressionBuilder(factory, attributes)
-                            .method("put",
+                            .method("put", //$NON-NLS-1$
                                     Models.toLiteral(factory, entry.getKey()),
                                     Models.toLiteral(factory, entry.getValue()))
                             .toStatement());
                     }
                     for (Location location : input.getLocations()) {
                         statements.add(new ExpressionBuilder(factory, list)
-                            .method("add", new TypeBuilder(factory, t(StageInput.class))
+                            .method("add", new TypeBuilder(factory, t(StageInput.class)) //$NON-NLS-1$
                                 .newObject(
                                         Models.toLiteral(factory, location.toPath(PATH_SEPARATOR)),
                                         factory.newClassLiteral(t(input.getFormat())),
@@ -280,7 +280,7 @@ public class ParallelSortClientEmitter {
 
 
         private MethodDeclaration createStageOutputsMethod() {
-            SimpleName list = factory.newSimpleName("results");
+            SimpleName list = factory.newSimpleName("results"); //$NON-NLS-1$
             List<Statement> statements = Lists.create();
             statements.add(new TypeBuilder(factory, t(ArrayList.class, t(StageOutput.class)))
                 .newObject()
@@ -289,7 +289,7 @@ public class ParallelSortClientEmitter {
                 Expression valueType = factory.newClassLiteral(t(slot.getValueClass().getType()));
                 Class<?> outputFormatType = slot.getSource().getOutputFormatType();
                 statements.add(new ExpressionBuilder(factory, list)
-                    .method("add", new TypeBuilder(factory, t(StageOutput.class))
+                    .method("add", new TypeBuilder(factory, t(StageOutput.class)) //$NON-NLS-1$
                         .newObject(
                                 Models.toLiteral(factory, slot.getSource().getOutputName()),
                                 factory.newClassLiteral(t(NullWritable.class)),
@@ -360,7 +360,7 @@ public class ParallelSortClientEmitter {
 
         private Javadoc createJavadoc() {
             return new JavadocBuilder(factory)
-                .text("\"{0}\"のエピローグステージのジョブを実行するクライアント。", moduleId)
+                .text("Hadoop client class for processing epilogue stage <code>{0}</code>.", moduleId) //$NON-NLS-1$
                 .toJavadoc();
         }
 

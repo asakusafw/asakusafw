@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package com.asakusafw.runtime.io.util;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.text.MessageFormat;
 
 /**
  * A wrapper for invert ordering of {@link WritableRawComparable}.
@@ -101,10 +102,8 @@ public class InvertOrder implements WritableRawComparable {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("InvertOrder [");
-        builder.append(entity);
-        builder.append("]");
-        return builder.toString();
+        return MessageFormat.format(
+                "InvertOrder({0})", //$NON-NLS-1$
+                entity);
     }
 }

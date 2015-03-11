@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,15 +57,15 @@ public class StageOutputDriver {
 
     static final Log LOG = LogFactory.getLog(StageOutputDriver.class);
 
-    private static final String K_NAMES = "com.asakusafw.stage.output.names";
+    private static final String K_NAMES = "com.asakusafw.stage.output.names"; //$NON-NLS-1$
 
-    private static final String K_FORMAT_PREFIX = "com.asakusafw.stage.output.format.";
+    private static final String K_FORMAT_PREFIX = "com.asakusafw.stage.output.format."; //$NON-NLS-1$
 
-    private static final String K_KEY_PREFIX = "com.asakusafw.stage.output.key.";
+    private static final String K_KEY_PREFIX = "com.asakusafw.stage.output.key."; //$NON-NLS-1$
 
-    private static final String K_VALUE_PREFIX = "com.asakusafw.stage.output.value.";
+    private static final String K_VALUE_PREFIX = "com.asakusafw.stage.output.value."; //$NON-NLS-1$
 
-    private static final String COUNTER_GROUP = "com.asakusafw.stage.output.RecordCounters";
+    private static final String COUNTER_GROUP = "com.asakusafw.stage.output.RecordCounters"; //$NON-NLS-1$
 
     private final Map<String, ResultOutput<?>> resultSinks;
 
@@ -97,7 +97,7 @@ public class StageOutputDriver {
         return results;
     }
 
-    private static final String METHOD_SET_OUTPUT_NAME = "setOutputName";
+    private static final String METHOD_SET_OUTPUT_NAME = "setOutputName"; //$NON-NLS-1$
 
     private void setOutputFilePrefix(JobContext localContext, String name) throws IOException {
         assert localContext != null;

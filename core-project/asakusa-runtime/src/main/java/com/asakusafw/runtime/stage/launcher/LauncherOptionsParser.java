@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -75,54 +75,54 @@ public final class LauncherOptionsParser {
         }
     };
 
-    private static final String SYSPROP_TMPDIR = "java.io.tmpdir";
+    private static final String SYSPROP_TMPDIR = "java.io.tmpdir"; //$NON-NLS-1$
 
-    private static final String SYSPROP_USER_NAME = "user.name";
+    private static final String SYSPROP_USER_NAME = "user.name"; //$NON-NLS-1$
 
-    private static final String PATTERN_TMPDIR_NAME = "asakusa-launcher-cache-{0}";
+    private static final String PATTERN_TMPDIR_NAME = "asakusa-launcher-cache-{0}"; //$NON-NLS-1$
 
-    static final String KEY_ARG_LIBRARIES = "-libjars";
+    static final String KEY_ARG_LIBRARIES = "-libjars"; //$NON-NLS-1$
 
-    static final String KEY_CONF_LIBRARIES = "tmpjars";
+    static final String KEY_CONF_LIBRARIES = "tmpjars"; //$NON-NLS-1$
 
     static final String KEY_CONF_JAR = StageConstants.PROP_APPLICATION_JAR;
 
     /**
      * The configuration key of whether library cache mechanism is enabled or not.
      */
-    public static final String KEY_CACHE_ENABLED = "com.asakusafw.launcher.cache.enabled";
+    public static final String KEY_CACHE_ENABLED = "com.asakusafw.launcher.cache.enabled"; //$NON-NLS-1$
 
     /**
      * The configuration key of remote cache repository path.
      */
-    public static final String KEY_CACHE_REPOSITORY = "com.asakusafw.launcher.cache.path";
+    public static final String KEY_CACHE_REPOSITORY = "com.asakusafw.launcher.cache.path"; //$NON-NLS-1$
 
     /**
      * The configuration key of max number of cache building retry attempt.
      */
-    public static final String KEY_CACHE_RETRY_COUNT = "com.asakusafw.launcher.cache.retry.max";
+    public static final String KEY_CACHE_RETRY_COUNT = "com.asakusafw.launcher.cache.retry.max"; //$NON-NLS-1$
 
     /**
      * The configuration key of interval long of cache building retry attempt.
      */
-    public static final String KEY_CACHE_RETRY_INTERVAL = "com.asakusafw.launcher.cache.retry.interval";
+    public static final String KEY_CACHE_RETRY_INTERVAL = "com.asakusafw.launcher.cache.retry.interval"; //$NON-NLS-1$
 
     /**
      * The configuration key of local temporary directory for cache building.
      */
-    public static final String KEY_CACHE_TEMPORARY = "com.asakusafw.launcher.cache.local";
+    public static final String KEY_CACHE_TEMPORARY = "com.asakusafw.launcher.cache.local"; //$NON-NLS-1$
 
     /**
      * The configuration key of max thread number for cache building.
      */
-    public static final String KEY_MAX_THREADS = "com.asakusafw.launcher.cache.threads";
+    public static final String KEY_MAX_THREADS = "com.asakusafw.launcher.cache.threads"; //$NON-NLS-1$
 
     /**
      * The configuration key of whether cached job jar is enabled or not.
      */
-    public static final String KEY_CACHE_JOBJAR = "com.asakusafw.launcher.cache.jobjar";
+    public static final String KEY_CACHE_JOBJAR = "com.asakusafw.launcher.cache.jobjar"; //$NON-NLS-1$
 
-    static final String PATH_LOCK_DIRECTORY = "lock";
+    static final String PATH_LOCK_DIRECTORY = "lock"; //$NON-NLS-1$
 
     static final boolean DEFAULT_CACHE_ENABLED = true;
 
@@ -228,7 +228,7 @@ public final class LauncherOptionsParser {
                 if (iter.hasNext()) {
                     String libraries = iter.next();
                     iter.remove();
-                    for (String library : libraries.split(",")) {
+                    for (String library : libraries.split(",")) { //$NON-NLS-1$
                         String path = library.trim();
                         if (path.isEmpty() == false) {
                             results.add(path);
@@ -273,7 +273,7 @@ public final class LauncherOptionsParser {
         for (Path path : libraryPaths) {
             URI uri = path.toUri();
             assert uri.getScheme() != null;
-            if (uri.getScheme().equals("file")) {
+            if (uri.getScheme().equals("file")) { //$NON-NLS-1$
                 localUrls.add(uri.toURL());
             }
             Path remote = resolved.get(path);
@@ -302,20 +302,20 @@ public final class LauncherOptionsParser {
         for (Path path : paths) {
             Path remote = cacheMap.get(path);
             URI uri = path.toUri();
-            if (remote != null && uri.getScheme().equals("file")) {
+            if (remote != null && uri.getScheme().equals("file")) { //$NON-NLS-1$
                 File file = new File(uri);
                 if (isInclude(file, className)) {
                     Path qualified = remote.getFileSystem(configuration).makeQualified(remote);
                     if (LOG.isDebugEnabled()) {
                         LOG.debug(MessageFormat.format(
-                                "Application class is in: file={2} ({1}), class={0}",
+                                "Application class is in: file={2} ({1}), class={0}", //$NON-NLS-1$
                                 className,
                                 path,
                                 qualified));
                     }
                     URI target = qualified.toUri();
                     if (target.getScheme() != null
-                            && (target.getScheme().equals("file") || target.getAuthority() != null)) {
+                            && (target.getScheme().equals("file") || target.getAuthority() != null)) { //$NON-NLS-1$
                         configuration.set(KEY_CONF_JAR, qualified.toString());
                     }
                     break;
@@ -328,14 +328,14 @@ public final class LauncherOptionsParser {
         try {
             ZipFile zip = new ZipFile(file);
             try {
-                return zip.getEntry(className.replace('.', '/') + ".class") != null;
+                return zip.getEntry(className.replace('.', '/') + ".class") != null; //$NON-NLS-1$
             } finally {
                 zip.close();
             }
         } catch (Exception e) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "Exception occurred while detecting for class: file={0}, class={1}",
+                        "Exception occurred while detecting for class: file={0}, class={1}", //$NON-NLS-1$
                         file,
                         className), e);
             }
@@ -344,7 +344,7 @@ public final class LauncherOptionsParser {
     }
 
     private String buildLibjars(List<Path> paths) throws IOException {
-        StringBuilder buf = new StringBuilder(configuration.get(KEY_CONF_LIBRARIES, ""));
+        StringBuilder buf = new StringBuilder(configuration.get(KEY_CONF_LIBRARIES, "")); //$NON-NLS-1$
         for (Path path : paths) {
             if (buf.length() != 0) {
                 buf.append(',');
@@ -399,7 +399,7 @@ public final class LauncherOptionsParser {
         repositoryPath = repositoryPath.getFileSystem(configuration).makeQualified(repositoryPath);
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Using cache repository: -D{0}={1}",
+                    "Using cache repository: -D{0}={1}", //$NON-NLS-1$
                     KEY_CACHE_REPOSITORY,
                     repositoryPath));
         }
@@ -427,7 +427,7 @@ public final class LauncherOptionsParser {
         File result = new File(tmpdir, folder);
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Auto configuration: -D{0}={1}",
+                    "Auto configuration: -D{0}={1}", //$NON-NLS-1$
                     KEY_CACHE_TEMPORARY,
                     result));
         }

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ public class DirectImporterDescription extends TemporaryInputDescription {
         Precondition.checkMustNotBeNull(modelType, "modelType"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(paths, "paths"); //$NON-NLS-1$
         if (paths.isEmpty()) {
-            throw new IllegalArgumentException("paths must not be empty");
+            throw new IllegalArgumentException("paths must not be empty"); //$NON-NLS-1$
         }
         this.modelType = modelType;
         this.paths = Sets.freeze(paths);

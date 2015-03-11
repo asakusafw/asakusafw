@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,32 +58,32 @@ public final class BatchCompilerDriver {
 
     private static final Options OPTIONS;
     static {
-        OPT_OUTPUT = new Option("output", true, "コンパイル結果を出力する先のディレクトリ");
-        OPT_OUTPUT.setArgName("/path/to/output");
+        OPT_OUTPUT = new Option("output", true, "コンパイル結果を出力する先のディレクトリ"); //$NON-NLS-1$
+        OPT_OUTPUT.setArgName("/path/to/output"); //$NON-NLS-1$
         OPT_OUTPUT.setValueSeparator(File.pathSeparatorChar);
         OPT_OUTPUT.setRequired(true);
 
-        OPT_PACKAGE = new Option("package", true, "コンパイル結果のベースパッケージ");
-        OPT_PACKAGE.setArgName("pkg.name");
+        OPT_PACKAGE = new Option("package", true, "コンパイル結果のベースパッケージ"); //$NON-NLS-1$
+        OPT_PACKAGE.setArgName("pkg.name"); //$NON-NLS-1$
         OPT_PACKAGE.setRequired(true);
 
-        OPT_HADOOPWORK = new Option("hadoopwork", true, "Hadoop上でのワーキングディレクトリ (ホームディレクトリからの相対パス)");
-        OPT_HADOOPWORK.setArgName("batch/working");
+        OPT_HADOOPWORK = new Option("hadoopwork", true, "Hadoop上でのワーキングディレクトリ (ホームディレクトリからの相対パス)"); //$NON-NLS-1$
+        OPT_HADOOPWORK.setArgName("batch/working"); //$NON-NLS-1$
         OPT_HADOOPWORK.setRequired(true);
 
-        OPT_COMPILERWORK = new Option("compilerwork", true, "コンパイラのワーキングディレクトリ");
-        OPT_COMPILERWORK.setArgName("/path/to/temporary");
+        OPT_COMPILERWORK = new Option("compilerwork", true, "コンパイラのワーキングディレクトリ"); //$NON-NLS-1$
+        OPT_COMPILERWORK.setArgName("/path/to/temporary"); //$NON-NLS-1$
         OPT_COMPILERWORK.setRequired(false);
 
-        OPT_LINK = new Option("link", true, "リンクするクラスライブラリの一覧");
-        OPT_LINK.setArgName("classlib.jar" + File.pathSeparatorChar + "/path/to/classes");
+        OPT_LINK = new Option("link", true, "リンクするクラスライブラリの一覧"); //$NON-NLS-1$
+        OPT_LINK.setArgName("classlib.jar" + File.pathSeparatorChar + "/path/to/classes"); //$NON-NLS-1$ //$NON-NLS-2$
 
-        OPT_PLUGIN = new Option("plugin", true, "利用するコンパイラプラグインの一覧");
-        OPT_PLUGIN.setArgName("plugin-1.jar" + File.pathSeparatorChar + "plugin-2.jar");
+        OPT_PLUGIN = new Option("plugin", true, "利用するコンパイラプラグインの一覧"); //$NON-NLS-1$
+        OPT_PLUGIN.setArgName("plugin-1.jar" + File.pathSeparatorChar + "plugin-2.jar"); //$NON-NLS-1$ //$NON-NLS-2$
         OPT_PLUGIN.setRequired(false);
 
-        OPT_CLASS = new Option("class", true, "コンパイル対象のバッチクラス名");
-        OPT_CLASS.setArgName("class-name");
+        OPT_CLASS = new Option("class", true, "コンパイル対象のバッチクラス名"); //$NON-NLS-1$
+        OPT_CLASS.setArgName("class-name"); //$NON-NLS-1$
         OPT_CLASS.setRequired(true);
 
         OPTIONS = new Options();
@@ -110,7 +110,7 @@ public final class BatchCompilerDriver {
             formatter.setWidth(Integer.MAX_VALUE);
             formatter.printHelp(
                     MessageFormat.format(
-                            "java -classpath ... {0}",
+                            "java -classpath ... {0}", //$NON-NLS-1$
                             BatchCompilerDriver.class.getName()),
                     OPTIONS,
                     true);
@@ -173,7 +173,9 @@ public final class BatchCompilerDriver {
                 pluginLocations);
 
         if (succeeded) {
-            LOG.info("{}をコンパイルしました", batchDescription.getName());
+            LOG.info(MessageFormat.format(
+                    "{0}をコンパイルしました",
+                    batchDescription.getName()));
         } else {
             LOG.error(MessageFormat.format(
                     "コンパイルはエラーにより中断しました ({0})",

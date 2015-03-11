@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -77,11 +77,11 @@ public final class SheetFormat {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("SheetFormat [kind=");
+        builder.append("SheetFormat [kind="); //$NON-NLS-1$
         builder.append(kind);
-        builder.append(", name=");
+        builder.append(", name="); //$NON-NLS-1$
         builder.append(name);
-        builder.append("]");
+        builder.append("]"); //$NON-NLS-1$
         return builder.toString();
     }
 

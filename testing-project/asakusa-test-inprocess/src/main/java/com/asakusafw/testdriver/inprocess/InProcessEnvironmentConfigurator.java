@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,17 +34,17 @@ public class InProcessEnvironmentConfigurator extends TestingEnvironmentConfigur
     /**
      * The system property key of enabling this feature.
      */
-    public static final String KEY_FEATURE_ENABLE = KEY_ENABLE + ".inprocess";
+    public static final String KEY_FEATURE_ENABLE = KEY_ENABLE + ".inprocess"; //$NON-NLS-1$
 
     /**
      * The default value of {@link #KEY_FEATURE_ENABLE}.
      */
-    public static final String DEFAULT_FEATURE_ENABLE = "true";
+    public static final String DEFAULT_FEATURE_ENABLE = "true"; //$NON-NLS-1$
 
     @Override
     protected void configure() {
         if (isEnabled() == false) {
-            LOG.debug("In-process testing environment configurator is disabled.");
+            LOG.debug("In-process testing environment configurator is disabled."); //$NON-NLS-1$
             return;
         }
         if (checkProperty(TestDriverContext.KEY_JOB_EXECUTOR_FACTORY) == false) {
@@ -56,7 +56,7 @@ public class InProcessEnvironmentConfigurator extends TestingEnvironmentConfigur
 
     private boolean isEnabled() {
         String value = System.getProperty(KEY_FEATURE_ENABLE, DEFAULT_FEATURE_ENABLE);
-        return value.equals("true");
+        return value.equals("true"); //$NON-NLS-1$
     }
 
     private boolean checkProperty(String key) {

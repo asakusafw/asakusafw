@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ public final class ApplicationLauncher {
     private static final Method REFLECTION_UTILS_RELEASE;
     static {
         Method method;
-        String name = "clearCache";
+        String name = "clearCache"; //$NON-NLS-1$
         try {
             method = ReflectionUtils.class.getDeclaredMethod(name);
             method.setAccessible(true);
@@ -62,7 +62,7 @@ public final class ApplicationLauncher {
      * The configuration key of whether the application may be launched via {@link ApplicationLauncher}.
      * This will be only set by this class.
      */
-    public static final String KEY_LAUNCHER_USED = "com.asakusafw.launcher.used";
+    public static final String KEY_LAUNCHER_USED = "com.asakusafw.launcher.used"; //$NON-NLS-1$
 
     /**
      * Failed to prepare the application.
@@ -107,7 +107,7 @@ public final class ApplicationLauncher {
     public static int exec(Configuration configuration, String... args) {
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Preparing application: {0}",
+                    "Preparing application: {0}", //$NON-NLS-1$
                     Arrays.toString(args)));
         }
         configuration.setBoolean(KEY_LAUNCHER_USED, true);
@@ -157,7 +157,7 @@ public final class ApplicationLauncher {
     private static int launch(Configuration conf, Tool tool, String[] args) throws Exception {
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Launching application: {0}{1}",
+                    "Launching application: {0}{1}", //$NON-NLS-1$
                     tool.getClass().getName(),
                     Arrays.toString(args)));
         }
@@ -197,7 +197,7 @@ public final class ApplicationLauncher {
         }
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "releasing class loader: {0}",
+                    "releasing class loader: {0}", //$NON-NLS-1$
                     classLoader));
         }
         releaseCachedClasses(classLoader);
@@ -212,7 +212,7 @@ public final class ApplicationLauncher {
             } catch (Exception e) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(MessageFormat.format(
-                            "failed to release classes cache: {0}",
+                            "failed to release classes cache: {0}", //$NON-NLS-1$
                             REFLECTION_UTILS_RELEASE), e);
                 }
             }

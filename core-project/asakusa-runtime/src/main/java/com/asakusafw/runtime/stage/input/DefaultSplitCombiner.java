@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,38 +43,38 @@ public class DefaultSplitCombiner extends SplitCombiner {
 
     static final Log LOG = LogFactory.getLog(DefaultSplitCombiner.class);
 
-    static final String KEY_SLOTS_PER_INPUT = "com.asakusafw.input.combine.max";
+    static final String KEY_SLOTS_PER_INPUT = "com.asakusafw.input.combine.max"; //$NON-NLS-1$
 
-    static final String KEY_GENERATIONS = "com.asakusafw.input.combine.ga.generation";
+    static final String KEY_GENERATIONS = "com.asakusafw.input.combine.ga.generation"; //$NON-NLS-1$
 
-    static final String KEY_POPULATIONS = "com.asakusafw.input.combine.ga.population";
+    static final String KEY_POPULATIONS = "com.asakusafw.input.combine.ga.population"; //$NON-NLS-1$
 
-    static final String KEY_MUTATION_RATIO = "com.asakusafw.input.combine.ga.mutation";
+    static final String KEY_MUTATION_RATIO = "com.asakusafw.input.combine.ga.mutation"; //$NON-NLS-1$
 
     /**
      * The configuration key of the limit input size (in bytes) for
      * combining all splits for a mapper into a single split.
      * @since 0.6.2
      */
-    static final String KEY_TINY_LIMIT = "com.asakusafw.input.combine.tiny.limit";
+    static final String KEY_TINY_LIMIT = "com.asakusafw.input.combine.tiny.limit"; //$NON-NLS-1$
 
     /**
      * The configuration key of weight for average time comparing to the worst time penalty.
      * @since 0.7.0
      */
-    static final String KEY_AVERAGE_TIME_WEIGHT = "com.asakusafw.input.combine.ga.averageTimeWeight";
+    static final String KEY_AVERAGE_TIME_WEIGHT = "com.asakusafw.input.combine.ga.averageTimeWeight"; //$NON-NLS-1$
 
     /**
      * The configuration key of penalty ratio for non-local data accesses (should be {@code > 1.0}).
      * @since 0.7.0
      */
-    static final String KEY_NON_LOCAL_PENALTY_RATIO = "com.asakusafw.input.combine.ga.nonLocalPenalty";
+    static final String KEY_NON_LOCAL_PENALTY_RATIO = "com.asakusafw.input.combine.ga.nonLocalPenalty"; //$NON-NLS-1$
 
     /**
      * The configuration key of initial locality ratio (should be {@code [0, 1]}).
      * @since 0.7.0
      */
-    static final String KEY_INITIAL_LOCALITY_RATIO = "com.asakusafw.input.combine.ga.initialLoacality";
+    static final String KEY_INITIAL_LOCALITY_RATIO = "com.asakusafw.input.combine.ga.initialLoacality"; //$NON-NLS-1$
 
     static final int DEFAULT_SLOTS_PER_INPUT = Integer.MAX_VALUE;
 
@@ -145,7 +145,7 @@ public class DefaultSplitCombiner extends SplitCombiner {
         if (max > 0) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "Combine split configuration: {0}={1}",
+                        "Combine split configuration: {0}={1}", //$NON-NLS-1$
                         KEY_SLOTS_PER_INPUT,
                         max));
             }
@@ -162,7 +162,7 @@ public class DefaultSplitCombiner extends SplitCombiner {
         assert configuration.slotsPerInput > 0;
         if (isTinyInput(sources, configuration.tinyLimit)) {
             LOG.debug(MessageFormat.format(
-                    "Mapper inputs are tiny: < {2} bytes in {1} input(s) ({0})",
+                    "Mapper inputs are tiny: < {2} bytes in {1} input(s) ({0})", //$NON-NLS-1$
                     mapper.getName(),
                     sources.size(),
                     configuration.tinyLimit));
@@ -177,7 +177,7 @@ public class DefaultSplitCombiner extends SplitCombiner {
         }
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Combining splits: {1} -> {2} ({0})",
+                    "Combining splits: {1} -> {2} ({0})", //$NON-NLS-1$
                     mapper.getName(),
                     sources.size(),
                     configuration.slotsPerInput));
@@ -189,12 +189,12 @@ public class DefaultSplitCombiner extends SplitCombiner {
         if (LOG.isDebugEnabled()) {
             begin = System.currentTimeMillis();
             LOG.debug(MessageFormat.format(
-                    "Start GA: {1}splits -> {2}slots (mapper={0})",
+                    "Start GA: {1}splits -> {2}slots (mapper={0})", //$NON-NLS-1$
                     mapper.getName(),
                     sources.size(),
                     configuration.slotsPerInput));
             LOG.debug(MessageFormat.format(
-                    "GA parameters: {0}",
+                    "GA parameters: {0}", //$NON-NLS-1$
                     configuration.getGaParametersString()));
         }
         Environment env = createEnvironment(configuration, sources);
@@ -202,7 +202,7 @@ public class DefaultSplitCombiner extends SplitCombiner {
         List<StageInputSplit> results = resolve(env, gene, mapper);
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Finish GA: {1}splits -> {2}slots (elapsed={4}ms, locality={3}, mapper={0})",
+                    "Finish GA: {1}splits -> {2}slots (elapsed={4}ms, locality={3}, mapper={0})", //$NON-NLS-1$
                     mapper.getName(),
                     sources.size(),
                     results.size(),
@@ -310,7 +310,7 @@ public class DefaultSplitCombiner extends SplitCombiner {
             results.add(new SplitDef(source, locations, localScore, globalScore));
         }
         if (locationIds.isEmpty()) {
-            locationIds.put("DUMMY-LOCATION", locationIds.size());
+            locationIds.put("DUMMY-LOCATION", locationIds.size()); //$NON-NLS-1$
         }
         String[] locations = new String[locationIds.size()];
         for (Map.Entry<String, Integer> entry : locationIds.entrySet()) {
@@ -346,7 +346,7 @@ public class DefaultSplitCombiner extends SplitCombiner {
             results[i] = slot;
             if (LOG.isTraceEnabled()) {
                 LOG.trace(MessageFormat.format(
-                        "Slot[{0}]: {1}",
+                        "Slot[{0}]: {1}", //$NON-NLS-1$
                         i, slot));
             }
         }
@@ -375,7 +375,7 @@ public class DefaultSplitCombiner extends SplitCombiner {
         if (LOG.isTraceEnabled()) {
             for (int i = 0; i < current.length; i++) {
                 LOG.trace(MessageFormat.format(
-                        "Gene[{0}]: {1}",
+                        "Gene[{0}]: {1}", //$NON-NLS-1$
                         i, current[i]));
             }
         }
@@ -418,7 +418,7 @@ public class DefaultSplitCombiner extends SplitCombiner {
         }
         if (changed && LOG.isTraceEnabled()) {
             LOG.trace(MessageFormat.format(
-                    "Current best gene: {0}",
+                    "Current best gene: {0}", //$NON-NLS-1$
                     best));
         }
         return best;
@@ -586,8 +586,8 @@ public class DefaultSplitCombiner extends SplitCombiner {
          */
         String getGaParametersString() {
             return MessageFormat.format(
-                    "schema-base={0}, populations={1}, generations={2}, mutation-ratio={3}, "
-                    + "initial-locality={4}, non-local-penalty={5}, average-time-weight={6}",
+                    "schema-base={0}, populations={1}, generations={2}, mutation-ratio={3}, " //$NON-NLS-1$
+                    + "initial-locality={4}, non-local-penalty={5}, average-time-weight={6}", //$NON-NLS-1$
                     slotsPerInput,
                     populations,
                     generations,
@@ -687,7 +687,7 @@ public class DefaultSplitCombiner extends SplitCombiner {
         @Override
         public String toString() {
             return MessageFormat.format(
-                    "{0}[{1}]",
+                    "{0}[{1}]", //$NON-NLS-1$
                     symbol, location);
         }
     }
@@ -857,7 +857,7 @@ public class DefaultSplitCombiner extends SplitCombiner {
         public String toString() {
             eval();
             return MessageFormat.format(
-                    "best-time={0}, worst-time={1}, average-time={2}, locality={3}",
+                    "best-time={0}, worst-time={1}, average-time={2}, locality={3}", //$NON-NLS-1$
                     Math.round(bestTime),
                     Math.round(worstTime),
                     Math.round(averageTime),

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
  */
 public class VariableTable {
 
-    private static final Pattern VARIABLE = Pattern.compile("\\$\\{(.*?)\\}");
+    private static final Pattern VARIABLE = Pattern.compile("\\$\\{(.*?)\\}"); //$NON-NLS-1$
 
     private final RedefineStrategy redefineStrategy;
 
@@ -127,9 +127,9 @@ public class VariableTable {
         StringBuilder buf = new StringBuilder();
         for (Map.Entry<String, String> entry : variables.entrySet()) {
             buf.append(escape(entry.getKey()));
-            buf.append("=");
+            buf.append("="); //$NON-NLS-1$
             buf.append(escape(entry.getValue()));
-            buf.append(",");
+            buf.append(","); //$NON-NLS-1$
         }
         if (buf.length() >= 1) {
             buf.deleteCharAt(buf.length() - 1);
@@ -137,14 +137,14 @@ public class VariableTable {
         return buf.toString();
     }
 
-    private static final Pattern TO_ESCAPED = Pattern.compile("[=,\\\\]");
+    private static final Pattern TO_ESCAPED = Pattern.compile("[=,\\\\]"); //$NON-NLS-1$
     private String escape(String string) {
         assert string != null;
-        return TO_ESCAPED.matcher(string).replaceAll("\\\\$0");
+        return TO_ESCAPED.matcher(string).replaceAll("\\\\$0"); //$NON-NLS-1$
     }
 
-    private static final Pattern PAIRS = Pattern.compile("(?<!\\\\),");
-    private static final Pattern KEY_VALUE = Pattern.compile("(?<!\\\\)=");
+    private static final Pattern PAIRS = Pattern.compile("(?<!\\\\),"); //$NON-NLS-1$
+    private static final Pattern KEY_VALUE = Pattern.compile("(?<!\\\\)="); //$NON-NLS-1$
 
     /**
      * 変数表の一覧を定義する文字列を解析し、この変数表に追加する。
@@ -186,10 +186,10 @@ Character:
             String[] kv = KEY_VALUE.split(pair);
             if (kv.length == 0) {
                 // "=" returns a empty array
-                defineVariable("", "");
+                defineVariable("", ""); //$NON-NLS-1$ //$NON-NLS-2$
             } else if (kv.length == 1 && kv[0].equals(pair) == false) {
                 // "key=" returns only its key
-                defineVariable(unescape(kv[0]), "");
+                defineVariable(unescape(kv[0]), ""); //$NON-NLS-1$
             } else if (kv.length == 2) {
                 defineVariable(unescape(kv[0]), unescape(kv[1]));
             } else {
@@ -287,7 +287,7 @@ Character:
     @Override
     public String toString() {
         return MessageFormat.format(
-                "{0}{1}",
+                "{0}{1}", //$NON-NLS-1$
                 getClass().getSimpleName(),
                 variables.toString());
     }

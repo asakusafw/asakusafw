@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -116,7 +116,7 @@ abstract class DateFormatter {
     private static final class Standard extends DateFormatter {
 
         private static final Pattern META_PATTERN = Pattern.compile(
-                "yyyy([ \\-\\._/]|'[a-zA-Z \\-\\._/]')MM\\1dd");
+                "yyyy([ \\-\\._/]|'[a-zA-Z \\-\\._/]')MM\\1dd"); //$NON-NLS-1$
 
         private final StringBuilder buffer = new StringBuilder(10);
 
@@ -155,11 +155,11 @@ abstract class DateFormatter {
         @Override
         String getPattern() {
             buffer.setLength(0);
-            buffer.append("yyyy");
+            buffer.append("yyyy"); //$NON-NLS-1$
             buffer.append(separator);
-            buffer.append("MM");
+            buffer.append("MM"); //$NON-NLS-1$
             buffer.append(separator);
-            buffer.append("dd");
+            buffer.append("dd"); //$NON-NLS-1$
             return buffer.toString();
         }
 
@@ -182,7 +182,7 @@ abstract class DateFormatter {
 
     private static final class Direct extends DateFormatter {
 
-        private static final String PATTERN = "yyyyMMdd";
+        private static final String PATTERN = "yyyyMMdd"; //$NON-NLS-1$
 
         private static final int POS_YEAR = 0;
 

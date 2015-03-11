@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -159,13 +159,13 @@ public class WritableRawComparableUnion implements Union, WritableRawComparable 
     public String toString() {
         try {
             return MessageFormat.format(
-                    "{0} (position={1}, object={2})",
+                    "{0} (position={1}, object={2})", //$NON-NLS-1$
                     getClass().getSimpleName(),
                     position,
                     getObject());
         } catch (RuntimeException e) {
             return MessageFormat.format(
-                    "{0} (position={1}, object=(invalid))",
+                    "{0} (position={1}, object=(invalid))", //$NON-NLS-1$
                     getClass().getSimpleName(),
                     position);
         }

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package com.asakusafw.testdata.generator;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,7 +74,9 @@ public class GenerateTask {
         LOG.info("テンプレートの生成を開始しています");
         DmdlSemantics semantics = analyze();
         for (ModelDeclaration model : semantics.getDeclaredModels()) {
-            LOG.info("テンプレートを生成しています: {}", model.getName().identifier);
+            LOG.info(MessageFormat.format(
+                    "テンプレートを生成しています: {0}",
+                    model.getName().identifier));
             generator.generate(model);
         }
         LOG.info("テンプレートの生成を終了しました");

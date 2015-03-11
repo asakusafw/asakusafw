@@ -78,53 +78,15 @@ Asakusa Frameworkは利用出来るアーキタイプとそのバージョンを
 
     mvn archetype:generate -DarchetypeCatalog=http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.7-release.xml
 
-コマンド実行後、作成するプロジェクトに関するパラメータを対話式に入力していきます [#]_ 。以下はWindGate用のアーキタイプ ``asakusa-archetype-windgate`` を指定し、 Asakusa Framework バージョン ``0.7.2`` を利用したバッチアプリケーション用のプロジェクトを作成する手順例です。
-
-..  code-block:: sh
-
-    ...
-    Choose archetype:
-    1: http://.../archetype-catalog-0.7-release.xml -> com.asakusafw:asakusa-archetype-windgate (-)
-    2: http://.../archetype-catalog-0.7-release.xml -> com.asakusafw:asakusa-archetype-thundergate (-)
-    3: http://.../archetype-catalog-0.7-release.xml -> com.asakusafw:asakusa-archetype-directio (-)
-    Choose a number or apply filter (format: [groupId:]artifactId, case sensitive contains): : 1 (<-1を入力)
-
-    ...
-    Choose com.asakusafw:asakusa-archetype-windgate version: 
-    1: 0.7.0
-    2: 0.7.1
-    3: 0.7.2
-    Choose a number: 3: 3 (<-3を入力)
-
-
-..  [#] Mavenアーキタイププラグインはアーキタイプカタログを利用して対話式にプロジェクトを作成するほかに、必要なパラメータを指定して非対話式にプロジェクトを作成することも出来ます。詳しくは、Mavenアーキタイププラグインのドキュメントなどを参照してください。
-
-    * http://maven.apache.org/archetype/maven-archetype-plugin/generate-mojo.html
-
-プロジェクト情報の入力
-----------------------
-アーキタイプの種類とバージョンを選択したら、続けてプロジェクト情報を入力していきます。
-
-..  code-block:: sh
-
-    Define value for property 'groupId': :    [<-アプリケーションのグループ名を入力] 
-    Define value for property 'artifactId': : [<-アプリケーションのプロジェクト名を入力] 
-    Define value for property 'version':      [<-アプリケーションの初期バージョンを入力]
-    Define value for property 'package':      [<-アプリケーションの基底パッケージ名を入力]
-
-プロジェクト情報を確認後、 ``Y`` を入力してプロジェクトを作成します。
-
-..  code-block:: sh
-
-    Confirm properties configuration:
-    groupId: ...
-    artifactId: ...
-    version: ...
-    package: ...
-    Y: : Y
+コマンド実行後、作成するプロジェクトに関するパラメータを対話式に入力していきます。
 
 プロジェクトの作成が成功すると、 ``BUILD SUCCESS`` が表示され、
 カレントディレクトリ配下にプロジェクトディレクトリが作成されます。
+
+..  tip::
+    Mavenアーキタイププラグインはアーキタイプカタログを利用して対話式にプロジェクトを作成するほかに、必要なパラメータを指定して非対話式にプロジェクトを作成することも出来ます。詳しくは、Mavenアーキタイププラグインのドキュメントなどを参照してください。
+    
+    * http://maven.apache.org/archetype/maven-archetype-plugin/generate-mojo.html
 
 
 プロジェクトのディレクトリ構成
@@ -367,7 +329,7 @@ Mavenの標準出力に ``BUILD SUCCESS`` が出力されればバッチコン�
     これは、DSLコンパイラが「スパイラルコンパイル」という方式でコンパイルを段階的に実行している過程の警告であり、
     最終的にコンパイルが成功していれば問題ありません。
 
-    より詳しくは、 :doc:`../dsl/user-guide` の :ref:`dsl-userguide-operator-dsl-compiler` を参照してください。
+    より詳しくは、 :doc:`../dsl/user-guide` - :ref:`dsl-userguide-operator-dsl-compiler` を参照してください。
 
 .. _batch-compile-option-with-pom:
 
@@ -377,11 +339,11 @@ Mavenの標準出力に ``BUILD SUCCESS`` が出力されればバッチコン�
 設定できる値は「 ``+<有効にするオプション名>`` 」や「 ``-<無効にするオプション名>`` 」のように、オプション名の先頭に「 ``+`` 」や「 ``-`` 」を指定します。
 また、複数のオプションを指定するには「 ``,`` 」(カンマ)でそれぞれを区切ります。
 
-指定できるバッチコンパイルのオプションについては、 :doc:`../dsl/user-guide` の :ref:`batch-compile-options` を参照してください。
+指定できるバッチコンパイルのオプションについては、 :doc:`../dsl/user-guide` - :ref:`batch-compile-options` を参照してください。
 
 モジュールの取り込み
 --------------------
-バッチコンパイルの実行時に、 :doc:`../dsl/user-guide` の :ref:`include-fragment-module` に説明されているマーカーファイルを使用する方法を使って、バッチアプリケーションを構成する外部のライブラリを取り込むことが出来ます。
+バッチコンパイルの実行時に、 :doc:`../dsl/user-guide` - :ref:`include-fragment-module` に説明されているマーカーファイルを使用する方法を使って、バッチアプリケーションを構成する外部のライブラリを取り込むことが出来ます。
 
 マーカファイルの指定によりバッチアプリケーションに取り込まれたライブラリ（フラグメントライブラリ）は、バッチコンパイル実行時に ( ``package`` フェーズ実行時に) 以下のようなログが出力されます。
 
@@ -601,7 +563,7 @@ TestDriver Settings
     ( ``true`` or ``false`` ) このプロパティをfalseにすると、 ``generate-sources`` フェーズ実行時にテストデータテンプレートの作成を行わないようになります。テストドライバを使ったテストにおいて、テストデータの定義をExcelシート以外で管理する場合はfalseに設定してください。
 
   ``asakusa.testdatasheet.format``
-    ``generate-sources`` フェーズ実行時に生成されるテストデータテンプレートのフォーマットを指定します。指定可能な値は、 :doc:`../testing/using-excel` の :ref:`testdata-generator-excel-format` を参照してください。
+    ``generate-sources`` フェーズ実行時に生成されるテストデータテンプレートのフォーマットを指定します。指定可能な値は、 :doc:`../testing/using-excel` - :ref:`testdata-generator-excel-format` を参照してください。
 
   ``asakusa.testdatasheet.output``
     ``generate-sources`` フェーズ実行時に生成されるテストデータテンプレートの出力ディレクトリを指定します。
@@ -667,7 +629,7 @@ Asakusa Frameworkのバージョン指定
 
 ..  code-block:: sh
 
-    <asakusafw.version>0.7.2</asakusafw.version>
+    <asakusafw.version>0.7.3</asakusafw.version>
 
 ..  note::
     アーキタイプごとの利用可能なバージョンはアーキタイプカタログに公開しています。詳しくは :ref:`archetype-catalog` を参照してください。

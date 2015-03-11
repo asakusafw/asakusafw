@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -84,7 +84,7 @@ public final class Work {
     @Override
     public String toString() {
         return MessageFormat.format(
-                "{0}'{'description={1}, declaring={2}, dependencies={3}'}'",
+                "{0}'{'description={1}, declaring={2}, dependencies={3}'}'", //$NON-NLS-1$
                 getClass().getSimpleName(),
                 description,
                 declaring.getClass().getName(),

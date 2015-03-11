@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -111,7 +111,7 @@ public class PluginClassLoader extends URLClassLoader {
             }
         }
         ClassLoader cl = aClass.getClassLoader();
-        InputStream input = cl.getResourceAsStream(aClass.getName().replace('.', '/') + ".class");
+        InputStream input = cl.getResourceAsStream(aClass.getName().replace('.', '/') + ".class"); //$NON-NLS-1$
         if (input == null) {
             throw new FileNotFoundException(MessageFormat.format(
                     "failed to obtain a class bytes: {0}",

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import com.asakusafw.testdriver.TestDriverContext;
  */
 public final class EmulatorUtils {
 
-    static final String KEY_PREFIX = "com.asakusafw.testdriver.inprocess";
+    static final String KEY_PREFIX = "com.asakusafw.testdriver.inprocess"; //$NON-NLS-1$
 
     private EmulatorUtils() {
         return;
@@ -44,7 +44,7 @@ public final class EmulatorUtils {
         File librariesPath = context.getLibrariesPackageLocation(context.getCurrentBatchId());
         if (librariesPath.isDirectory()) {
             for (File file : librariesPath.listFiles()) {
-                if (file.isFile() && file.getName().endsWith(".jar")) {
+                if (file.isFile() && file.getName().endsWith(".jar")) { //$NON-NLS-1$
                     results.add(file);
                 }
             }

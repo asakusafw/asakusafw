@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,7 +62,7 @@ public class MasterBranchFlowProcessor extends RendezvousProcessor {
             EnumUtil.extractConstants(enumType, desc.getOutputPorts());
 
         Expression impl = context.createImplementation();
-        SimpleName branch = context.createName("branch");
+        SimpleName branch = context.createName("branch"); //$NON-NLS-1$
         context.addProcess(tx, new ExpressionBuilder(f, impl)
             .method(desc.getDeclaration().getName(), arguments)
             .toLocalVariableDeclaration(

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -93,7 +93,7 @@ public abstract class AbstractOrcFileFormat<T> extends HadoopFileFormat<T>
 
     @Override
     public String getFormatName() {
-        return "ORC";
+        return "ORC"; //$NON-NLS-1$
     }
 
     @Override
@@ -154,7 +154,7 @@ public abstract class AbstractOrcFileFormat<T> extends HadoopFileFormat<T>
                 DirectInputFragment fragment = blockMap.get(begin, end);
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(MessageFormat.format(
-                            "Detect ORCFile stripe: path={0}, rows={1}, range={2}+{3}, allocation={4}",
+                            "Detect ORCFile stripe: path={0}, rows={1}, range={2}+{3}, allocation={4}", //$NON-NLS-1$
                             fragment.getPath(),
                             stripe.getNumberOfRows(),
                             fragment.getOffset(),
@@ -187,7 +187,7 @@ public abstract class AbstractOrcFileFormat<T> extends HadoopFileFormat<T>
         OrcFormatConfiguration conf = getFormatConfiguration();
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "ORCFile input ({0}): {1}",
+                    "ORCFile input ({0}): {1}", //$NON-NLS-1$
                     path,
                     conf));
         }
@@ -221,7 +221,7 @@ public abstract class AbstractOrcFileFormat<T> extends HadoopFileFormat<T>
         OrcFormatConfiguration conf = getFormatConfiguration();
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "ORCFile output ({0}): {1}",
+                    "ORCFile output ({0}): {1}", //$NON-NLS-1$
                     path,
                     conf));
         }

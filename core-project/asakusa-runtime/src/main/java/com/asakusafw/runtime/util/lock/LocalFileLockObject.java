@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,7 +72,7 @@ public class LocalFileLockObject<T> implements LockObject<T> {
     public void close() throws IOException {
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Starting to release lock for \"{0}\" ({1})",
+                    "Starting to release lock for \"{0}\" ({1})", //$NON-NLS-1$
                     target,
                     lockFile));
         }
@@ -89,7 +89,7 @@ public class LocalFileLockObject<T> implements LockObject<T> {
     @Override
     public String toString() {
         return MessageFormat.format(
-                "{0}({1}@{2})",
+                "{0}({1}@{2})", //$NON-NLS-1$
                 getClass().getSimpleName(),
                 target,
                 lockFile);

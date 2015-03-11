@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 package com.asakusafw.runtime.stage.directio;
+
+import java.text.MessageFormat;
 
 import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.util.ReflectionUtils;
@@ -135,18 +137,12 @@ public class DirectOutputSpec {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("DirectOutputSpec [valueType=");
-        builder.append(valueType);
-        builder.append(", path=");
-        builder.append(path);
-        builder.append(", formatClass=");
-        builder.append(formatClass);
-        builder.append(", namingClass=");
-        builder.append(namingClass);
-        builder.append(", orderClass=");
-        builder.append(orderClass);
-        builder.append("]");
-        return builder.toString();
+        return MessageFormat.format(
+                "DirectOutputSpec(valueType={0}, path={1}, format={2}, naming={3}, order={4})", //$NON-NLS-1$
+                valueType.getName(),
+                path,
+                formatClass.getName(),
+                namingClass.getName(),
+                orderClass.getName());
     }
 }

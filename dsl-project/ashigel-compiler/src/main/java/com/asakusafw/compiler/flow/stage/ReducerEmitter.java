@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -85,7 +85,7 @@ public class ReducerEmitter {
      */
     public CompiledType emit(StageModel model) throws IOException {
         Precondition.checkMustNotBeNull(model, "model"); //$NON-NLS-1$
-        LOG.debug("{}に対するレデューサークラスを生成します", model);
+        LOG.debug("start generating reducer class: {}", model); //$NON-NLS-1$
 
         Engine engine = new Engine(environment, model);
         CompilationUnit source = engine.generate();
@@ -97,7 +97,7 @@ public class ReducerEmitter {
             .getModelFactory()
             .newQualifiedName(packageName, simpleName);
 
-        LOG.debug("{}のレデュース処理には{}が利用されます", model, name);
+        LOG.debug("finish generating reducer class: {} ({})", model, name); //$NON-NLS-1$
         return new CompiledType(name);
     }
 
@@ -139,7 +139,7 @@ public class ReducerEmitter {
                     names,
                     model,
                     model.getReduceUnits());
-            this.context = names.create("context");
+            this.context = names.create("context"); //$NON-NLS-1$
         }
 
         public CompilationUnit generate() {
@@ -163,7 +163,7 @@ public class ReducerEmitter {
                     createJavadoc(),
                     new AttributeBuilder(factory)
                         .annotation(t(TraceLocation.class), createTraceLocationElements())
-                        .annotation(t(SuppressWarnings.class), v("deprecation"))
+                        .annotation(t(SuppressWarnings.class), v("deprecation")) //$NON-NLS-1$
                         .Public()
                         .Final()
                         .toAttributes(),
@@ -182,11 +182,11 @@ public class ReducerEmitter {
 
         private Map<String, Expression> createTraceLocationElements() {
             Map<String, Expression> results = new LinkedHashMap<String, Expression>();
-            results.put("batchId", Models.toLiteral(factory, environment.getBatchId()));
-            results.put("flowId", Models.toLiteral(factory, environment.getFlowId()));
-            results.put("stageId",
+            results.put("batchId", Models.toLiteral(factory, environment.getBatchId())); //$NON-NLS-1$
+            results.put("flowId", Models.toLiteral(factory, environment.getFlowId())); //$NON-NLS-1$
+            results.put("stageId", //$NON-NLS-1$
                     Models.toLiteral(factory, Naming.getStageName(model.getStageBlock().getStageNumber())));
-            results.put("stageUnitId", Models.toLiteral(factory, "r"));
+            results.put("stageUnitId", Models.toLiteral(factory, "r")); //$NON-NLS-1$ //$NON-NLS-2$
             return results;
         }
 
@@ -199,9 +199,9 @@ public class ReducerEmitter {
                         .toAttributes(),
                     Collections.<TypeParameterDeclaration>emptyList(),
                     t(void.class),
-                    factory.newSimpleName("setup"),
+                    factory.newSimpleName("setup"), //$NON-NLS-1$
                     Collections.singletonList(factory.newFormalParameterDeclaration(
-                            factory.newNamedType(factory.newSimpleName("Context")),
+                            factory.newNamedType(factory.newSimpleName("Context")), //$NON-NLS-1$
                             context)),
                     0,
                     Arrays.asList(t(IOException.class), t(InterruptedException.class)),
@@ -217,9 +217,9 @@ public class ReducerEmitter {
                         .toAttributes(),
                     Collections.<TypeParameterDeclaration>emptyList(),
                     t(void.class),
-                    factory.newSimpleName("cleanup"),
+                    factory.newSimpleName("cleanup"), //$NON-NLS-1$
                     Collections.singletonList(factory.newFormalParameterDeclaration(
-                            factory.newNamedType(factory.newSimpleName("Context")),
+                            factory.newNamedType(factory.newSimpleName("Context")), //$NON-NLS-1$
                             context)),
                     0,
                     Arrays.asList(t(IOException.class), t(InterruptedException.class)),
@@ -241,7 +241,7 @@ public class ReducerEmitter {
                 .newObject()
                 .toThrowStatement());
 
-            SimpleName argument = names.create("nextKey");
+            SimpleName argument = names.create("nextKey"); //$NON-NLS-1$
             List<Statement> statements = Lists.create();
             statements.add(factory.newSwitchStatement(
                     new ExpressionBuilder(factory, argument)
@@ -267,7 +267,7 @@ public class ReducerEmitter {
 
         private Javadoc createJavadoc() {
             return new JavadocBuilder(factory)
-                .text("ステージ{0}の処理を担当するレデュースプログラム。",
+                .text("A reducer class for processing stage <code>{0}</code>.", //$NON-NLS-1$
                         shuffle.getStageBlock().getStageNumber())
                 .toJavadoc();
         }

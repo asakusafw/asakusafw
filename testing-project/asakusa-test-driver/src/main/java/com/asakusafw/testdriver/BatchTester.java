@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,13 +39,14 @@ import com.asakusafw.testdriver.core.TestModerator;
 import com.asakusafw.testdriver.core.VerifierFactory;
 import com.asakusafw.testdriver.core.VerifyContext;
 import com.asakusafw.vocabulary.batch.BatchDescription;
+import com.asakusafw.vocabulary.external.ImporterDescription;
 
 /**
  * バッチ用のテストドライバクラス。
  * @since 0.2.0
  * @version 0.5.2
  */
-public class BatchTester extends TestDriverBase {
+public class BatchTester extends TesterBase {
 
     static final Logger LOG = LoggerFactory.getLogger(BatchTester.class);
 
@@ -97,9 +98,7 @@ public class BatchTester extends TestDriverBase {
 
         if (driverContext.isSkipValidateCondition() == false) {
             LOG.info("テスト条件を検証しています: {}", driverContext.getCallerClass().getName());
-            for (Map.Entry<String, JobFlowTester> entry : jobFlowMap.entrySet()) {
-                validateTestCondition(entry.getValue(), entry.getKey());
-            }
+            validateTestCondition();
         }
 
         // 初期化
@@ -117,12 +116,12 @@ public class BatchTester extends TestDriverBase {
             FileUtils.forceDelete(compileWorkDir);
         }
 
-        File compilerOutputDir = new File(compileWorkDir, "output");
-        File compilerLocalWorkingDir = new File(compileWorkDir, "build");
+        File compilerOutputDir = new File(compileWorkDir, "output"); //$NON-NLS-1$
+        File compilerLocalWorkingDir = new File(compileWorkDir, "build"); //$NON-NLS-1$
 
         BatchInfo batchInfo = DirectBatchCompiler.compile(
                 batchDescriptionClass,
-                "test.batch",
+                "test.batch", //$NON-NLS-1$
                 Location.fromPath(driverContext.getClusterWorkDir(), '/'),
                 compilerOutputDir,
                 compilerLocalWorkingDir,
@@ -152,13 +151,20 @@ public class BatchTester extends TestDriverBase {
             driverContext.prepareCurrentJobflow(jobflowInfo);
             executor.cleanInputOutput(jobflowInfo);
         }
+        executor.cleanExtraResources(getExternalResources());
+
+        if (getExternalResources().isEmpty() == false) {
+            LOG.debug("initializing external resources: {}", //$NON-NLS-1$
+                    batchDescriptionClass.getName());
+            executor.prepareExternalResources(getExternalResources());
+        }
 
         for (JobflowInfo jobflowInfo : batchInfo.getJobflows()) {
             driverContext.prepareCurrentJobflow(jobflowInfo);
             String flowId = jobflowInfo.getJobflow().getFlowId();
             JobFlowTester tester = jobFlowMap.get(flowId);
             if (tester != null) {
-                LOG.debug("ジョブフローの入出力を初期化しています: {}#{}",
+                LOG.debug("initializing jobflow input/output: {}#{}", //$NON-NLS-1$
                         batchDescriptionClass.getName(), flowId);
                 executor.prepareInput(jobflowInfo, tester.inputs);
                 executor.prepareOutput(jobflowInfo, tester.outputs);
@@ -176,10 +182,24 @@ public class BatchTester extends TestDriverBase {
         }
     }
 
+    private void validateTestCondition() throws IOException {
+        TestModerator moderator = new TestModerator(driverContext.getRepository(), driverContext);
+        for (Map.Entry<? extends ImporterDescription, ? extends DataModelSourceFactory> entry
+                : getExternalResources().entrySet()) {
+            ImporterDescription description = entry.getKey();
+            String label = String.format("Resource(%s)", description); //$NON-NLS-1$
+            DataModelSourceFactory source = entry.getValue();
+            moderator.validate(entry.getKey().getModelType(), label, source);
+        }
+        for (Map.Entry<String, JobFlowTester> entry : jobFlowMap.entrySet()) {
+            validateTestCondition(entry.getValue(), entry.getKey());
+        }
+    }
+
     private void validateTestCondition(JobFlowTester flow, String id) throws IOException {
         TestModerator moderator = new TestModerator(driverContext.getRepository(), driverContext);
         for (DriverInputBase<?> port : flow.inputs) {
-            String label = String.format("Input(flow=%s, name=%s)", id, port.getName());
+            String label = String.format("Input(flow=%s, name=%s)", id, port.getName()); //$NON-NLS-1$
             Class<?> type = port.getModelType();
             DataModelSourceFactory source = port.getSource();
             if (source != null) {
@@ -187,7 +207,7 @@ public class BatchTester extends TestDriverBase {
             }
         }
         for (DriverOutputBase<?> port : flow.outputs) {
-            String label = String.format("Output(flow=%s, name=%s)", id, port.getName());
+            String label = String.format("Output(flow=%s, name=%s)", id, port.getName()); //$NON-NLS-1$
             Class<?> type = port.getModelType();
             DataModelSourceFactory source = port.getSource();
             if (source != null) {

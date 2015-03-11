@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,7 +55,7 @@ public class FlowPartDriverOutput<T> extends FlowDriverOutput<T, FlowPartDriverO
 
         String exportPath = FlowPartDriverUtils.createOutputLocation(driverContext, name).toPath('/');
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Export Path: {}", exportPath);
+            LOG.debug("Export Path: {}", exportPath); //$NON-NLS-1$
         }
         this.exporterDescription = new DirectExporterDescription(modelType, exportPath);
         this.out = descDriver.createOut(name, exporterDescription);

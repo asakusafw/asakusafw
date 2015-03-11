@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import java.util.TreeMap;
  */
 public class PrintEmitContext implements EmitContext {
 
-    private static final String INDENT = "    ";
+    private static final String INDENT = "    "; //$NON-NLS-1$
 
     private PrintWriter writer;
 
@@ -163,12 +163,12 @@ public class PrintEmitContext implements EmitContext {
         }
         if (direction == EmitDirection.BEGIN) {
             before(State.SYMBOL);
-            putToken("{");
+            putToken("{"); //$NON-NLS-1$
             push();
         } else {
             pop();
             before(State.SEPARATOR);
-            putToken("}");
+            putToken("}"); //$NON-NLS-1$
         }
     }
 
@@ -220,12 +220,12 @@ public class PrintEmitContext implements EmitContext {
         if (direction == EmitDirection.BEGIN) {
             before(State.LINE_END);
             before(State.BLOCK_START);
-            putToken("/**");
+            putToken("/**"); //$NON-NLS-1$
             this.inDocComment = true;
         } else {
             this.inDocComment = false;
             before(State.BLOCK_END);
-            putToken(" */");
+            putToken(" */"); //$NON-NLS-1$
         }
     }
 
@@ -244,10 +244,10 @@ public class PrintEmitContext implements EmitContext {
         }
         if (direction == EmitDirection.BEGIN) {
             before(State.SYMBOL);
-            putToken("{");
+            putToken("{"); //$NON-NLS-1$
         } else {
             before(State.SYMBOL);
-            putToken("}");
+            putToken("}"); //$NON-NLS-1$
         }
     }
 
@@ -258,16 +258,16 @@ public class PrintEmitContext implements EmitContext {
         }
         before(State.BLOCK_COMMENT);
         inComment = true;
-        putToken("/*");
+        putToken("/*"); //$NON-NLS-1$
         before(State.LINE_END);
         for (String line : contents) {
             before(State.BLOCK_COMMENT);
-            putToken(" * ");
+            putToken(" * "); //$NON-NLS-1$
             putToken(line);
             before(State.LINE_END);
         }
         before(State.BLOCK_COMMENT);
-        putToken(" */");
+        putToken(" */"); //$NON-NLS-1$
         inComment = false;
         before(State.LINE_END);
     }
@@ -279,7 +279,7 @@ public class PrintEmitContext implements EmitContext {
         }
         before(State.BLOCK_COMMENT);
         inComment = true;
-        putToken("// ");
+        putToken("// "); //$NON-NLS-1$
         putToken(content);
         inComment = false;
         before(State.LINE_END);
@@ -292,9 +292,9 @@ public class PrintEmitContext implements EmitContext {
         }
         before(State.INLINE_COMMENT);
         inComment = true;
-        putToken("/* ");
+        putToken("/* "); //$NON-NLS-1$
         putToken(content);
-        putToken(" */");
+        putToken(" */"); //$NON-NLS-1$
         inComment = false;
         before(State.SEPARATOR);
     }
@@ -303,12 +303,12 @@ public class PrintEmitContext implements EmitContext {
         assert direction != null;
         if (direction == EmitDirection.BEGIN) {
             before(State.BLOCK_START);
-            putToken("{");
+            putToken("{"); //$NON-NLS-1$
             push();
         } else {
             pop();
             before(State.BLOCK_END);
-            putToken("}");
+            putToken("}"); //$NON-NLS-1$
         }
     }
 
@@ -421,7 +421,7 @@ public class PrintEmitContext implements EmitContext {
     }
 
     private void putPadding() {
-        writer.print(" ");
+        writer.print(" "); //$NON-NLS-1$
         column += 1;
         bodyColumn += 1;
     }
@@ -443,7 +443,7 @@ public class PrintEmitContext implements EmitContext {
             column += INDENT.length() * 2;
         }
         if (inDocComment) {
-            writer.print(" * ");
+            writer.print(" * "); //$NON-NLS-1$
             column += 3;
             bodyColumn += 3;
         }

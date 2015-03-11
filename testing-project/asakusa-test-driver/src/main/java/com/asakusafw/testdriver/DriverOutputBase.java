@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ package com.asakusafw.testdriver;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -96,7 +95,7 @@ public class DriverOutputBase<T> extends DriverInputBase<T> {
      */
     protected final void setVerifier(VerifierFactory verifier) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Verifier: name={}, model={}, verifier={}", new Object[] {
+            LOG.debug("Verifier: name={}, model={}, verifier={}", new Object[] { //$NON-NLS-1$
                     getName(),
                     getModelType().getName(),
                     verifier,
@@ -122,7 +121,7 @@ public class DriverOutputBase<T> extends DriverInputBase<T> {
      */
     protected final void setResultSink(DataModelSinkFactory resultSink) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("ResultSink: name={}, model={}, sink={}", new Object[] {
+            LOG.debug("ResultSink: name={}, model={}, sink={}", new Object[] { //$NON-NLS-1$
                     getName(),
                     getModelType().getName(),
                     resultSink,
@@ -148,7 +147,7 @@ public class DriverOutputBase<T> extends DriverInputBase<T> {
      */
     protected final void setDifferenceSink(DifferenceSinkFactory differenceSink) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("DifferenceSink: name={}, model={}, sink={}", new Object[] {
+            LOG.debug("DifferenceSink: name={}, model={}, sink={}", new Object[] { //$NON-NLS-1$
                     getName(),
                     getModelType().getName(),
                     differenceSink,
@@ -237,7 +236,7 @@ public class DriverOutputBase<T> extends DriverInputBase<T> {
             @Override
             public String toString() {
                 return MessageFormat.format(
-                        "Filter(transformer={0})",
+                        "Filter(transformer={0})", //$NON-NLS-1$
                         transformer);
             }
         };
@@ -262,7 +261,7 @@ public class DriverOutputBase<T> extends DriverInputBase<T> {
             return tools.getVerifyRuleFactory(toUri(rulePath), fragments);
         } catch (URISyntaxException e) {
             throw new IllegalStateException(MessageFormat.format(
-                    "Invalid rule path: {0}",
+                    "Invalid rule path: {0}", //$NON-NLS-1$
                     rulePath), e);
         }
     }
@@ -320,24 +319,10 @@ public class DriverOutputBase<T> extends DriverInputBase<T> {
             @Override
             public String toString() {
                 return MessageFormat.format(
-                        "Verifier(verifier={0}, filter={1})",
+                        "Verifier(verifier={0}, filter={1})", //$NON-NLS-1$
                         verifierFactory,
                         sourceFilter);
             }
         };
-    }
-
-    /**
-     * Converts the path into the related URI.
-     * @param path the path
-     * @return the resulting URI
-     * @since 0.2.3
-     */
-    protected URI toOutputUri(String path) {
-        URI uri = URI.create(path.replace('\\', '/'));
-        if (uri.getScheme() != null) {
-            return uri;
-        }
-        return new File(path).toURI();
     }
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,7 +58,7 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
     /**
      * 結果オブジェクトに結果を追加する際のメソッド名。
      */
-    String RESULT_METHOD_NAME = "add";
+    String RESULT_METHOD_NAME = "add"; //$NON-NLS-1$
 
     /**
      * このプロセッサの種類を返す。
@@ -272,7 +272,7 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
         public Expression createImplementation() {
             Class<?> implementing = description.getDeclaration().getImplementing();
             Type type = convert(implementing);
-            return addField(type, "op", new TypeBuilder(factory, type)
+            return addField(type, "op", new TypeBuilder(factory, type) //$NON-NLS-1$
                 .newObject()
                 .toExpression());
         }
@@ -322,7 +322,7 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
             Type domType = importer.toType(type);
             Expression cache = addField(
                     domType,
-                    "cache",
+                    "cache", //$NON-NLS-1$
                     data.createNewInstance(domType));
             return new DataObjectMirror(factory, cache, data);
         }
@@ -344,7 +344,7 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
                     Collections.singletonList(elementType)));
             Expression list = addField(
                     listType,
-                    "list",
+                    "list", //$NON-NLS-1$
                     new TypeBuilder(factory, listType)
                         .newObject()
                         .toExpression());
@@ -497,17 +497,17 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
      */
     public static class ListBufferMirror {
 
-        private static final String BEGIN = "begin";
+        private static final String BEGIN = "begin"; //$NON-NLS-1$
 
-        private static final String ADVANCE = "advance";
+        private static final String ADVANCE = "advance"; //$NON-NLS-1$
 
-        private static final String END = "end";
+        private static final String END = "end"; //$NON-NLS-1$
 
-        private static final String EXPAND = "expand";
+        private static final String EXPAND = "expand"; //$NON-NLS-1$
 
-        private static final String IS_EXPAND_REQUIRED = "isExpandRequired";
+        private static final String IS_EXPAND_REQUIRED = "isExpandRequired"; //$NON-NLS-1$
 
-        private static final String SHRINK = "shrink";
+        private static final String SHRINK = "shrink"; //$NON-NLS-1$
 
         private final ModelFactory factory;
 

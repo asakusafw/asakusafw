@@ -24,23 +24,13 @@
 	<packaging>jar</packaging>
 	<dependencies>
 		<dependency>
-			<groupId>com.asakusafw</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>asakusa-hive-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.asakusafw</groupId>
-			<artifactId>asakusa-directio-vocabulary</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>asakusa-dmdl-core</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>asakusa-dmdl-java</artifactId>
+			<artifactId>asakusa-directio-dmdl</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
@@ -60,6 +50,12 @@
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>asakusa-directio-vocabulary</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>

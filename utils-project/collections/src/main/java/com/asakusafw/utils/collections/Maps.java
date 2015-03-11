@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -95,7 +95,7 @@ public final class Maps {
             throw new IllegalArgumentException("pairs must not be null"); //$NON-NLS-1$
         }
         if (pairs.length % 2 != 0) {
-            throw new IllegalArgumentException("pairs must ");
+            throw new IllegalArgumentException("pairs must have even numbers of elements"); //$NON-NLS-1$
         }
         Map<T, T> result = new HashMap<T, T>();
         for (int i = 0; i < pairs.length; i += 2) {

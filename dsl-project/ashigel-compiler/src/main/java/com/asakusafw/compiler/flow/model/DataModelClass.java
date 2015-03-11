@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -94,8 +94,8 @@ public class DataModelClass implements DataClass {
         if (segments.size() <= 2) {
             return null;
         }
-        if (segments.get(0).equals("get") == false
-                || segments.get(segments.size() - 1).equals("option") == false) {
+        if (segments.get(0).equals("get") == false //$NON-NLS-1$
+                || segments.get(segments.size() - 1).equals("option") == false) { //$NON-NLS-1$
             return null;
         }
         name.removeLast();
@@ -128,7 +128,7 @@ public class DataModelClass implements DataClass {
     public Statement reset(Expression object) {
         Precondition.checkMustNotBeNull(object, "object"); //$NON-NLS-1$
         return new ExpressionBuilder(factory, object)
-            .method("reset")
+            .method("reset") //$NON-NLS-1$
             .toStatement();
     }
 
@@ -145,7 +145,7 @@ public class DataModelClass implements DataClass {
         Precondition.checkMustNotBeNull(target, "target"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(source, "source"); //$NON-NLS-1$
         return new ExpressionBuilder(factory, target)
-            .method("copyFrom", source)
+            .method("copyFrom", source) //$NON-NLS-1$
             .toStatement();
     }
 
@@ -154,7 +154,7 @@ public class DataModelClass implements DataClass {
         Precondition.checkMustNotBeNull(object, "object"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(dataOutput, "dataOutput"); //$NON-NLS-1$
         return new ExpressionBuilder(factory, object)
-            .method("write", dataOutput)
+            .method("write", dataOutput) //$NON-NLS-1$
             .toStatement();
     }
 
@@ -163,7 +163,7 @@ public class DataModelClass implements DataClass {
         Precondition.checkMustNotBeNull(object, "object"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(dataInput, "dataInput"); //$NON-NLS-1$
         return new ExpressionBuilder(factory, object)
-            .method("readFields", dataInput)
+            .method("readFields", dataInput) //$NON-NLS-1$
             .toStatement();
     }
 
@@ -211,7 +211,7 @@ public class DataModelClass implements DataClass {
     @Override
     public String toString() {
         return MessageFormat.format(
-                "{0}({1})",
+                "{0}({1})", //$NON-NLS-1$
                 getClass().getSimpleName(),
                 type.getName());
     }

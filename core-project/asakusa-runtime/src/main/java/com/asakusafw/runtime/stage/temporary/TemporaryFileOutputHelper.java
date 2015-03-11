@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ class TemporaryFileOutputHelper implements Closeable {
         public Thread newThread(Runnable r) {
             Thread t = new Thread(r);
             t.setDaemon(true);
-            t.setName(String.format("TemporaryFileOutput-%d", THREAD_COUNTER.incrementAndGet()));
+            t.setName(String.format("TemporaryFileOutput-%d", THREAD_COUNTER.incrementAndGet())); //$NON-NLS-1$
             return t;
         }
     };

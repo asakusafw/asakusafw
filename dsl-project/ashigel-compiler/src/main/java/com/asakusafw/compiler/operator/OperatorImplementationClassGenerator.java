@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,9 +62,9 @@ public class OperatorImplementationClassGenerator extends OperatorClassGenerator
     }
 
     @Override
-    protected List<? extends Attribute> getAttribuets() {
+    protected List<? extends Attribute> getAttributes() {
         return new AttributeBuilder(factory)
-            .annotation(util.t(Generated.class), util.v("{0}:{1}",
+            .annotation(util.t(Generated.class), util.v("{0}:{1}", //$NON-NLS-1$
                     getClass().getSimpleName(),
                     OperatorCompiler.VERSION))
             .Public()
@@ -80,8 +80,9 @@ public class OperatorImplementationClassGenerator extends OperatorClassGenerator
     @Override
     protected Javadoc createJavadoc() {
         return new JavadocBuilder(factory)
+            .text("An operator implementation class for") //$NON-NLS-1$
             .linkType(util.t(operatorClass.getElement()))
-            .text("に関する演算子実装クラス。")
+            .text(".") //$NON-NLS-1$
             .toJavadoc();
     }
 
@@ -109,7 +110,7 @@ public class OperatorImplementationClassGenerator extends OperatorClassGenerator
     private ConstructorDeclaration createConstructor() {
         return factory.newConstructorDeclaration(
                 new JavadocBuilder(factory)
-                    .text("インスタンスを生成する。")
+                    .text("Creates a new instance.") //$NON-NLS-1$
                     .toJavadoc(),
                 new AttributeBuilder(factory)
                     .Public()

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -111,7 +111,7 @@ public final class StageOutputFormat extends OutputFormat<Object, Object> {
         }
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Created stage output committers: {0}",
+                    "Created stage output committers: {0}", //$NON-NLS-1$
                     components));
         }
         return new CombinedOutputCommitter(new ArrayList<OutputCommitter>(components));

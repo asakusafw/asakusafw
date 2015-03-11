@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -85,7 +85,7 @@ public class ShuffleModel extends Compilable.Trait<CompiledShuffle> {
     @Override
     public String toString() {
         return MessageFormat.format(
-                "Shuffle({0})",
+                "Shuffle({0})", //$NON-NLS-1$
                 segments);
     }
 
@@ -220,7 +220,7 @@ public class ShuffleModel extends Compilable.Trait<CompiledShuffle> {
         @Override
         public String toString() {
             return MessageFormat.format(
-                    "ShuffleSegment({2})(port={0}, terms={1})",
+                    "ShuffleSegment({2})(port={0}, terms={1})", //$NON-NLS-1$
                     port,
                     terms,
                     portId);
@@ -283,7 +283,7 @@ public class ShuffleModel extends Compilable.Trait<CompiledShuffle> {
         @Override
         public String toString() {
             return MessageFormat.format(
-                    "{0} {1}",
+                    "{0} {1}", //$NON-NLS-1$
                     getSource().getName(),
                     getArrangement());
         }

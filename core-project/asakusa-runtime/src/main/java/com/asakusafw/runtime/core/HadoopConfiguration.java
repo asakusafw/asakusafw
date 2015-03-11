@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,16 @@
 package com.asakusafw.runtime.core;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.conf.Configured;
 
 /**
  * リソースの設定情報。
+ * @since 0.1.0
+ * @version 0.7.3
  */
-public class HadoopConfiguration implements ResourceConfiguration {
+public class HadoopConfiguration extends Configured implements ResourceConfiguration {
 
-    private Configuration configration;
+    private final Configuration configration;
 
     /**
      * インスタンスを生成する。
@@ -37,6 +40,7 @@ public class HadoopConfiguration implements ResourceConfiguration {
      * @throws IllegalArgumentException 引数に{@code null}が指定された場合
      */
     public HadoopConfiguration(Configuration configuration) {
+        super(configuration);
         if (configuration == null) {
             throw new IllegalArgumentException("configuration must not be null"); //$NON-NLS-1$
         }

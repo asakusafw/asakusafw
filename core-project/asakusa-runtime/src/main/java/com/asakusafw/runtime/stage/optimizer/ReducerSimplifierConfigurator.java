@@ -1,5 +1,5 @@
 /**
- * Copyright 2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ public class ReducerSimplifierConfigurator extends StageConfigurator {
 
     static final Log LOG = LogFactory.getLog(ReducerSimplifierConfigurator.class);
 
-    private static final String KEY_TINY_LIMIT = "com.asakusafw.reducer.tiny.limit";
+    private static final String KEY_TINY_LIMIT = "com.asakusafw.reducer.tiny.limit"; //$NON-NLS-1$
 
     private static final int TASKS_TINY = 1;
 
@@ -49,7 +49,7 @@ public class ReducerSimplifierConfigurator extends StageConfigurator {
         if (limit < 0L) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "Reducer simplifier is disabled for tiny inputs: {0}",
+                        "Reducer simplifier is disabled for tiny inputs: {0}", //$NON-NLS-1$
                         job.getJobName()));
             }
             return;
@@ -57,7 +57,7 @@ public class ReducerSimplifierConfigurator extends StageConfigurator {
         long estimated = StageInputDriver.estimateInputSize(job);
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Reducer simplifier: job={0}, tiny-limit={1}, estimated={2}",
+                    "Reducer simplifier: job={0}, tiny-limit={1}, estimated={2}", //$NON-NLS-1$
                     job.getJobName(),
                     limit,
                     estimated));

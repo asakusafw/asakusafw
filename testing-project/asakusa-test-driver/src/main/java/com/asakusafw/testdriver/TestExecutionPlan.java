@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -239,16 +239,16 @@ public class TestExecutionPlan implements Serializable {
         public String getCommandLineString() {
             StringBuilder buf = new StringBuilder();
             for (Map.Entry<String, String> entry : environment.entrySet()) {
-                buf.append("'" + entry.getKey() + "'");
-                buf.append("=");
-                buf.append("'" + entry.getValue() + "'");
-                buf.append(" ");
+                buf.append("'" + entry.getKey() + "'"); //$NON-NLS-1$ //$NON-NLS-2$
+                buf.append("="); //$NON-NLS-1$
+                buf.append("'" + entry.getValue() + "'"); //$NON-NLS-1$ //$NON-NLS-2$
+                buf.append(" "); //$NON-NLS-1$
             }
             Iterator<String> iter = commandLine.iterator();
             if (iter.hasNext()) {
                 buf.append(iter.next());
                 while (iter.hasNext()) {
-                    buf.append(" ");
+                    buf.append(" "); //$NON-NLS-1$
                     buf.append(iter.next());
                 }
             }
