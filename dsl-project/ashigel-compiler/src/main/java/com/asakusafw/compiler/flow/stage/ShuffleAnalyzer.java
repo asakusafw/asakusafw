@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -88,30 +88,25 @@ public class ShuffleAnalyzer {
      */
     public ShuffleModel analyze(StageBlock block) {
         Precondition.checkMustNotBeNull(block, "block"); //$NON-NLS-1$
-        LOG.debug("{}で行われるシャッフルフェーズについて分析します", block);
-
         if (block.hasReduceBlocks() == false) {
-            LOG.debug("{}ではシャッフルが行われません", block);
             return null;
         }
+        LOG.debug("start analyzing shuffle phase in stage: {}", block); //$NON-NLS-1$
         List<FlowElement> elements = collectRendezvousElements(block.getReduceBlocks());
         List<ShuffleModel.Segment> segments = collectSegments(elements);
         ShuffleModel model = new ShuffleModel(block, segments);
 
         if (environment.hasError()) {
-            LOG.debug("{}の分析はエラーのため中断されます", block);
             return null;
         }
 
-        LOG.debug("{}は{}のようにシャッフルされます", block, model);
+        LOG.debug("finish analyzing shuffle phase in stage: {} ({})", block, model); //$NON-NLS-1$
         return model;
     }
 
     private List<ShuffleModel.Segment> collectSegments(
             List<FlowElement> elements) {
         assert elements != null;
-        LOG.debug("シャッフルへの各セグメントを分析しています");
-
         List<ShuffleModel.Segment> segments = Lists.create();
         for (int elementId = 0, n = elements.size(); elementId < n; elementId++) {
             FlowElement element = elements.get(elementId);
@@ -126,7 +121,7 @@ public class ShuffleAnalyzer {
             }
 
             List<ShuffleModel.Segment> segmentsInElement = Lists.create();
-            LOG.debug("{}は{}を使ってシャッフルの情報を分析します", element, proc);
+            LOG.debug("applying {}: {}", proc, element); //$NON-NLS-1$
             for (FlowElementInput input : element.getInputPorts()) {
                 ShuffleDescription desc = extractDescription(proc, input);
                 ShuffleModel.Segment segment = resolveDescription(
@@ -202,7 +197,7 @@ public class ShuffleAnalyzer {
     private List<FlowElement> collectRendezvousElements(Set<FlowBlock> reduceBlocks) {
         assert reduceBlocks != null;
         assert reduceBlocks.isEmpty() == false;
-        LOG.debug("{}から待ち合わせ要素を検索しています", reduceBlocks);
+        LOG.debug("collecting shuffle result inputs: {}", reduceBlocks); //$NON-NLS-1$
 
         List<FlowElement> results = Lists.create();
         Set<FlowElement> saw = Sets.create();
@@ -212,7 +207,7 @@ public class ShuffleAnalyzer {
                 if (saw.contains(rendezvous)) {
                     continue;
                 }
-                LOG.debug("{}の{}は待ち合わせ要素です", reducer, rendezvous);
+                LOG.debug("operator {} will use shuffle results: {}", rendezvous, reducer); //$NON-NLS-1$
                 saw.add(rendezvous);
                 results.add(rendezvous);
             }

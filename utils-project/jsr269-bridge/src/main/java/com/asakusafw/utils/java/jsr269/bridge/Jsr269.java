@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -427,7 +427,7 @@ public class Jsr269 {
         }
         TypeDeclaration primary = Emitter.findPrimaryType(unit);
         if (primary == null) {
-            name.append("package-info");
+            name.append("package-info"); //$NON-NLS-1$
         } else {
             name.append(primary.getName());
         }

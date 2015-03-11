@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ public class TraceSettingAttribute implements FlowElementAttribute {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public TraceSettingAttribute(TraceSetting setting, int serialNumber) {
-        Precondition.checkMustNotBeNull(setting, "setting");
+        Precondition.checkMustNotBeNull(setting, "setting"); //$NON-NLS-1$
         this.setting = setting;
         this.serialNumber = serialNumber;
     }

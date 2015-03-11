@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,13 +57,13 @@ public final class StageInputDriver {
 
     static final Log LOG = LogFactory.getLog(StageInputDriver.class);
 
-    private static final Charset ASCII = Charset.forName("ASCII");
+    private static final Charset ASCII = Charset.forName("ASCII"); //$NON-NLS-1$
 
     private static final long SERIAL_VERSION = 1;
 
-    private static final String KEY = "com.asakusafw.stage.input";
+    private static final String KEY = "com.asakusafw.stage.input"; //$NON-NLS-1$
 
-    private static final String KEY_SIZE_CACHE = "com.asakusafw.stage.input.size.cache";
+    private static final String KEY_SIZE_CACHE = "com.asakusafw.stage.input.size.cache"; //$NON-NLS-1$
 
     /**
      * Sets the input specification for this job.
@@ -82,13 +82,13 @@ public final class StageInputDriver {
         try {
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "Encoding inputs ({0} entries)",
+                        "Encoding inputs ({0} entries)", //$NON-NLS-1$
                         inputList.size()));
             }
             String encoded = encode(inputList);
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "Encoded inputs ({0} bytes)",
+                        "Encoded inputs ({0} bytes)", //$NON-NLS-1$
                         encoded.length()));
             }
             job.getConfiguration().set(KEY, encoded);
@@ -141,7 +141,7 @@ public final class StageInputDriver {
             if (LOG.isDebugEnabled()) {
                 long t1 = System.currentTimeMillis();
                 LOG.debug(MessageFormat.format(
-                        "estimated stage input size: {0}bytes, elapsed={1}ms",
+                        "estimated stage input size: {0}bytes, elapsed={1}ms", //$NON-NLS-1$
                         results,
                         t1 - t0));
             }
@@ -170,13 +170,13 @@ public final class StageInputDriver {
         try {
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "Decoding inputs ({0} bytes)",
+                        "Decoding inputs ({0} bytes)", //$NON-NLS-1$
                         encoded.length()));
             }
             List<StageInput> inputList = decode(conf, encoded);
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "Decoded inputs ({0} entries)",
+                        "Decoded inputs ({0} entries)", //$NON-NLS-1$
                         inputList.size()));
             }
             return inputList;

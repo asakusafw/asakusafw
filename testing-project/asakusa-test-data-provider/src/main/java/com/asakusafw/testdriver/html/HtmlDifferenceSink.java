@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,9 +52,9 @@ public class HtmlDifferenceSink implements DifferenceSink {
 
     static final Logger LOG = LoggerFactory.getLogger(HtmlDifferenceSink.class);
 
-    private static final String CSS_FILE_NAME = "difference.css";
+    private static final String CSS_FILE_NAME = "difference.css"; //$NON-NLS-1$
 
-    static final Charset CHARSET = Charset.forName("UTF-8");
+    static final Charset CHARSET = Charset.forName("UTF-8"); //$NON-NLS-1$
 
     static final List<String> CSS;
 
@@ -82,7 +82,7 @@ public class HtmlDifferenceSink implements DifferenceSink {
                 } catch (IOException e) {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug(MessageFormat.format(
-                                "Failed to close CSS file: {}",
+                                "Failed to close CSS file: {}", //$NON-NLS-1$
                                 HtmlDifferenceSink.class.getResource(CSS_FILE_NAME)), e);
                     }
                 }
@@ -164,11 +164,11 @@ public class HtmlDifferenceSink implements DifferenceSink {
 
         private final PrintWriter writer;
 
-        private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+        private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd"); //$NON-NLS-1$
 
-        private final SimpleDateFormat datetimeFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        private final SimpleDateFormat datetimeFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss"); //$NON-NLS-1$
 
-        private final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+        private final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss"); //$NON-NLS-1$
 
         Context(PrintWriter writer, DataModelDefinition<?> definition) {
             assert writer != null;
@@ -179,62 +179,62 @@ public class HtmlDifferenceSink implements DifferenceSink {
 
         public void writeDifference(Difference difference) {
             assert difference != null;
-            writer.println("<div class=\"difference\">");
+            writer.println("<div class=\"difference\">"); //$NON-NLS-1$
 
-            writer.println("<p class=\"diagnostic-label\">");
+            writer.println("<p class=\"diagnostic-label\">"); //$NON-NLS-1$
             writer.println("Diagnostic Message:");
-            writer.println("</p>");
-            writer.println("<div class=\"diagnostic\">");
-            writer.println("<span class=\"diagnostic-message\">");
+            writer.println("</p>"); //$NON-NLS-1$
+            writer.println("<div class=\"diagnostic\">"); //$NON-NLS-1$
+            writer.println("<span class=\"diagnostic-message\">"); //$NON-NLS-1$
             writer.println(toHtml(difference.getDiagnostic()));
-            writer.println("</span>");
-            writer.println("</div>");
+            writer.println("</span>"); //$NON-NLS-1$
+            writer.println("</div>"); //$NON-NLS-1$
 
-            writer.println("<p class=\"compare-label\">");
+            writer.println("<p class=\"compare-label\">"); //$NON-NLS-1$
             writer.println("Inspection:");
-            writer.println("</p>");
-            writer.println("<div class=\"compare\">");
-            writer.println("<table class=\"object\">");
+            writer.println("</p>"); //$NON-NLS-1$
+            writer.println("<div class=\"compare\">"); //$NON-NLS-1$
+            writer.println("<table class=\"object\">"); //$NON-NLS-1$
 
-            writer.println("<tr>");
+            writer.println("<tr>"); //$NON-NLS-1$
 
-            writer.println("<th class=\"property\">");
+            writer.println("<th class=\"property\">"); //$NON-NLS-1$
             writer.println("Property Name");
-            writer.println("</th>");
+            writer.println("</th>"); //$NON-NLS-1$
 
-            writer.println("<th class=\"expected\">");
+            writer.println("<th class=\"expected\">"); //$NON-NLS-1$
             writer.println("Expected Value");
-            writer.println("</th>");
+            writer.println("</th>"); //$NON-NLS-1$
 
-            writer.println("<th class=\"actual\">");
+            writer.println("<th class=\"actual\">"); //$NON-NLS-1$
             writer.println("Actual Value");
-            writer.println("</th>");
+            writer.println("</th>"); //$NON-NLS-1$
 
-            writer.println("</tr>");
+            writer.println("</tr>"); //$NON-NLS-1$
 
             DataModelReflection expected = difference.getExpected();
             DataModelReflection actual = difference.getActual();
             for (PropertyName property : definition.getProperties()) {
-                writer.println("<tr>");
+                writer.println("<tr>"); //$NON-NLS-1$
 
-                writer.println("<td class=\"property\">");
+                writer.println("<td class=\"property\">"); //$NON-NLS-1$
                 writer.println(toHtml(property));
-                writer.println("</td>");
+                writer.println("</td>"); //$NON-NLS-1$
 
-                writer.println("<td class=\"expected\">");
+                writer.println("<td class=\"expected\">"); //$NON-NLS-1$
                 writer.println(toHtml(describeProperty(expected, property)));
-                writer.println("</td>");
+                writer.println("</td>"); //$NON-NLS-1$
 
-                writer.println("<td class=\"actual\">");
+                writer.println("<td class=\"actual\">"); //$NON-NLS-1$
                 writer.println(toHtml(describeProperty(actual, property)));
-                writer.println("</td>");
+                writer.println("</td>"); //$NON-NLS-1$
 
-                writer.println("</tr>");
+                writer.println("</tr>"); //$NON-NLS-1$
             }
 
-            writer.println("</table>");
-            writer.println("</div>");
-            writer.println("</div>");
+            writer.println("</table>"); //$NON-NLS-1$
+            writer.println("</div>"); //$NON-NLS-1$
+            writer.println("</div>"); //$NON-NLS-1$
         }
 
         private Object describeProperty(DataModelReflection object, PropertyName property) {
@@ -256,7 +256,7 @@ public class HtmlDifferenceSink implements DifferenceSink {
                 return datetimeFormat.format(((Calendar) value).getTime());
             case DECIMAL:
                 return String.format(
-                        "%s(scale=%d)",
+                        "%s(scale=%d)", //$NON-NLS-1$
                         ((BigDecimal) value).toPlainString(),
                         ((BigDecimal) value).scale());
             case STRING:
@@ -285,32 +285,32 @@ public class HtmlDifferenceSink implements DifferenceSink {
         }
 
         public void writeHeader() {
-            writer.println("<html>");
+            writer.println("<html>"); //$NON-NLS-1$
 
-            writer.println("<head>");
-            writer.println("<meta http-equiv=\"Content-type\" content=\"text/html; charset=UTF-8\">");
-            writer.println("<title>Differences</title>");
-            writer.println("<style type=\"text/css\">");
-            writer.println("<!--");
+            writer.println("<head>"); //$NON-NLS-1$
+            writer.println("<meta http-equiv=\"Content-type\" content=\"text/html; charset=UTF-8\">"); //$NON-NLS-1$
+            writer.println("<title>Differences</title>"); //$NON-NLS-1$
+            writer.println("<style type=\"text/css\">"); //$NON-NLS-1$
+            writer.println("<!--"); //$NON-NLS-1$
             for (String line : CSS) {
                 writer.println(line);
             }
-            writer.println("-->");
-            writer.println("</style>");
-            writer.println("</head>");
+            writer.println("-->"); //$NON-NLS-1$
+            writer.println("</style>"); //$NON-NLS-1$
+            writer.println("</head>"); //$NON-NLS-1$
 
-            writer.println("<body>");
-            writer.println("<p class=\"header-label\">");
+            writer.println("<body>"); //$NON-NLS-1$
+            writer.println("<p class=\"header-label\">"); //$NON-NLS-1$
             writer.println("Differences");
-            writer.println("</p>");
+            writer.println("</p>"); //$NON-NLS-1$
         }
 
         public void writeFooter() {
-            writer.println("<p class=\"footer-label\">");
+            writer.println("<p class=\"footer-label\">"); //$NON-NLS-1$
             writer.printf("Generated: %s%n", datetimeFormat.format(new Date()));
-            writer.println("</p>");
-            writer.println("</body>");
-            writer.println("</html>");
+            writer.println("</p>"); //$NON-NLS-1$
+            writer.println("</body>"); //$NON-NLS-1$
+            writer.println("</html>"); //$NON-NLS-1$
         }
 
         @Override
@@ -323,13 +323,13 @@ public class HtmlDifferenceSink implements DifferenceSink {
             StringBuilder buf = new StringBuilder();
             for (char c : text.toCharArray()) {
                 if (c == '<') {
-                    buf.append("&lt;");
+                    buf.append("&lt;"); //$NON-NLS-1$
                 } else if (c == '>') {
-                    buf.append("&gt;");
+                    buf.append("&gt;"); //$NON-NLS-1$
                 } else if (c == '"') {
-                    buf.append("&quot;");
+                    buf.append("&quot;"); //$NON-NLS-1$
                 } else if (c == '&') {
-                    buf.append("&amp;");
+                    buf.append("&amp;"); //$NON-NLS-1$
                 } else {
                     buf.append(c);
                 }

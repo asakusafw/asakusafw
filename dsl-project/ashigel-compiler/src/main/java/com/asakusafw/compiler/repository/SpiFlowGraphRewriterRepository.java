@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,15 +38,14 @@ public class SpiFlowGraphRewriterRepository
 
     @Override
     protected void doInitialize() {
-        LOG.debug("グラフ書き換えプラグインを読み出します");
+        LOG.debug("loading flow graph rewriting plug-ins"); //$NON-NLS-1$
         this.rewriters = Lists.create();
         ServiceLoader<FlowGraphRewriter> services = ServiceLoader.load(
                 FlowGraphRewriter.class,
                 getEnvironment().getServiceClassLoader());
         for (FlowGraphRewriter rewriter : services) {
             rewriter.initialize(getEnvironment());
-            LOG.debug("{}が利用可能になります",
-                    rewriter.getClass().getName());
+            LOG.debug("found flow graph rewriting plug-in: {}", rewriter.getClass().getName()); //$NON-NLS-1$
             rewriters.add(rewriter);
         }
     }

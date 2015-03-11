@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ import com.asakusafw.dmdl.semantics.Type;
 import com.asakusafw.dmdl.semantics.type.BasicType;
 import com.asakusafw.dmdl.windgate.csv.driver.CsvFieldTrait.Kind;
 import com.asakusafw.dmdl.windgate.csv.driver.CsvSupportTrait.Configuration;
+import com.asakusafw.dmdl.windgate.util.FsProcessDescriptionGenerator;
 import com.asakusafw.runtime.io.csv.CsvConfiguration;
 import com.asakusafw.runtime.io.csv.CsvEmitter;
 import com.asakusafw.runtime.io.csv.CsvParser;
@@ -54,7 +55,6 @@ import com.asakusafw.utils.java.model.syntax.SimpleName;
 import com.asakusafw.utils.java.model.syntax.Statement;
 import com.asakusafw.utils.java.model.syntax.TypeBodyDeclaration;
 import com.asakusafw.utils.java.model.syntax.TypeParameterDeclaration;
-import com.asakusafw.utils.java.model.syntax.WildcardBoundKind;
 import com.asakusafw.utils.java.model.util.AttributeBuilder;
 import com.asakusafw.utils.java.model.util.ExpressionBuilder;
 import com.asakusafw.utils.java.model.util.JavadocBuilder;
@@ -75,7 +75,7 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
     /**
      * Category name for CSV support.
      */
-    public static final String CATEGORY_STREAM = "csv";
+    public static final String CATEGORY_STREAM = "csv"; //$NON-NLS-1$
 
     @Override
     public void generateResources(EmitContext context, ModelDeclaration model) throws IOException {
@@ -96,17 +96,17 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
                 context.getConfiguration(),
                 model,
                 CATEGORY_STREAM,
-                "{0}CsvSupport");
-        LOG.debug("Generating CSV support for {}",
+                "{0}CsvSupport"); //$NON-NLS-1$
+        LOG.debug("Generating CSV support for {}", //$NON-NLS-1$
                 context.getQualifiedTypeName().toNameString());
         SupportGenerator.emit(next, model, model.getTrait(CsvSupportTrait.class).getConfiguration());
-        LOG.debug("Generated CSV support for {}: {}",
+        LOG.debug("Generated CSV support for {}: {}", //$NON-NLS-1$
                 context.getQualifiedTypeName().toNameString(),
                 next.getQualifiedTypeName().toNameString());
         return next.getQualifiedTypeName();
     }
 
-    private Name generateImporter(EmitContext context, ModelDeclaration model, Name supportName) throws IOException {
+    private void generateImporter(EmitContext context, ModelDeclaration model, Name supportName) throws IOException {
         assert context != null;
         assert model != null;
         assert supportName != null;
@@ -115,17 +115,15 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
                 context.getConfiguration(),
                 model,
                 CATEGORY_STREAM,
-                "Abstract{0}CsvImporterDescription");
-        LOG.debug("Generating CSV importer description for {}",
-                context.getQualifiedTypeName().toNameString());
-        DescriptionGenerator.emitImporter(next, model, supportName);
-        LOG.debug("Generated CSV importer description for {}: {}",
-                context.getQualifiedTypeName().toNameString(),
-                next.getQualifiedTypeName().toNameString());
-        return next.getQualifiedTypeName();
+                "Abstract{0}CsvImporterDescription"); //$NON-NLS-1$
+        FsProcessDescriptionGenerator.Description desc = new FsProcessDescriptionGenerator.Description(
+                "WindGate CSV importer",
+                context.getQualifiedTypeName());
+        desc.setSupportClassName(supportName);
+        FsProcessDescriptionGenerator.generateImporter(next, desc);
     }
 
-    private Name generateExporter(EmitContext context, ModelDeclaration model, Name supportName) throws IOException {
+    private void generateExporter(EmitContext context, ModelDeclaration model, Name supportName) throws IOException {
         assert context != null;
         assert model != null;
         assert supportName != null;
@@ -134,14 +132,12 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
                 context.getConfiguration(),
                 model,
                 CATEGORY_STREAM,
-                "Abstract{0}CsvExporterDescription");
-        LOG.debug("Generating CSV exporter description for {}",
-                context.getQualifiedTypeName().toNameString());
-        DescriptionGenerator.emitExporter(next, model, supportName);
-        LOG.debug("Generated CSV exporter description for {}: {}",
-                context.getQualifiedTypeName().toNameString(),
-                next.getQualifiedTypeName().toNameString());
-        return next.getQualifiedTypeName();
+                "Abstract{0}CsvExporterDescription"); //$NON-NLS-1$
+        FsProcessDescriptionGenerator.Description desc = new FsProcessDescriptionGenerator.Description(
+                "WindGate CSV exporter",
+                context.getQualifiedTypeName());
+        desc.setSupportClassName(supportName);
+        FsProcessDescriptionGenerator.generateExporter(next, desc);
     }
 
     private boolean isTarget(ModelDeclaration model) {
@@ -173,13 +169,13 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
 
     private static final class SupportGenerator {
 
-        private static final String NAME_READER = "StreamReader";
+        private static final String NAME_READER = "StreamReader"; //$NON-NLS-1$
 
-        private static final String NAME_WRITER = "StreamWriter";
+        private static final String NAME_WRITER = "StreamWriter"; //$NON-NLS-1$
 
-        private static final String METHOD_CONFIG = "getConfiguration";
+        private static final String METHOD_CONFIG = "getConfiguration"; //$NON-NLS-1$
 
-        private static final String FIELD_PATH_NAME = "pathText";
+        private static final String FIELD_PATH_NAME = "pathText"; //$NON-NLS-1$
 
         private final EmitContext context;
 
@@ -242,10 +238,10 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
             List<Statement> statements = Lists.create();
             List<Expression> arguments = Lists.create();
             arguments.add(new TypeBuilder(f, context.resolve(Charset.class))
-                .method("forName", Models.toLiteral(f, conf.getCharsetName()))
+                .method("forName", Models.toLiteral(f, conf.getCharsetName())) //$NON-NLS-1$
                 .toExpression());
             if (conf.isEnableHeader()) {
-                SimpleName headers = f.newSimpleName("headers");
+                SimpleName headers = f.newSimpleName("headers"); //$NON-NLS-1$
                 statements.add(new TypeBuilder(f, context.resolve(ArrayList.class))
                     .parameterize(context.resolve(String.class))
                     .newObject()
@@ -258,14 +254,14 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
                     if (isValueField(property)) {
                         String fieldName = CsvFieldTrait.getFieldName(property);
                         statements.add(new ExpressionBuilder(f, headers)
-                            .method("add", Models.toLiteral(f, fieldName))
+                            .method("add", Models.toLiteral(f, fieldName)) //$NON-NLS-1$
                             .toStatement());
                     }
                 }
                 arguments.add(headers);
             } else {
                 arguments.add(new TypeBuilder(f, context.resolve(CsvConfiguration.class))
-                    .field("DEFAULT_HEADER_CELLS")
+                    .field("DEFAULT_HEADER_CELLS") //$NON-NLS-1$
                     .toExpression());
             }
             arguments.add(Models.toLiteral(f, conf.getTrueFormat()));
@@ -300,7 +296,7 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
                     f.newParameterizedType(
                             context.resolve(Class.class),
                             context.resolve(model.getSymbol())),
-                    f.newSimpleName("getSupportedType"),
+                    f.newSimpleName("getSupportedType"), //$NON-NLS-1$
                     Collections.<FormalParameterDeclaration>emptyList(),
                     Arrays.asList(new Statement[] {
                             new TypeBuilder(f, context.resolve(model.getSymbol()))
@@ -311,13 +307,13 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
         }
 
         private MethodDeclaration createCreateReader() {
-            SimpleName path = f.newSimpleName("path");
-            SimpleName stream = f.newSimpleName("stream");
+            SimpleName path = f.newSimpleName("path"); //$NON-NLS-1$
+            SimpleName stream = f.newSimpleName("stream"); //$NON-NLS-1$
             List<Statement> statements = Lists.create();
             statements.add(createNullCheck(path));
             statements.add(createNullCheck(stream));
 
-            SimpleName parser = f.newSimpleName("parser");
+            SimpleName parser = f.newSimpleName("parser"); //$NON-NLS-1$
             statements.add(new TypeBuilder(f, context.resolve(CsvParser.class))
                 .newObject(stream, path, new ExpressionBuilder(f, f.newThis())
                     .method(METHOD_CONFIG)
@@ -337,7 +333,7 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
                     context.resolve(f.newParameterizedType(
                             context.resolve(DataModelReader.class),
                             context.resolve(model.getSymbol()))),
-                    f.newSimpleName("createReader"),
+                    f.newSimpleName("createReader"), //$NON-NLS-1$
                     Arrays.asList(
                             f.newFormalParameterDeclaration(context.resolve(String.class), path),
                             f.newFormalParameterDeclaration(context.resolve(InputStream.class), stream)),
@@ -348,13 +344,13 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
         }
 
         private MethodDeclaration createCreateWriter() {
-            SimpleName path = f.newSimpleName("path");
-            SimpleName stream = f.newSimpleName("stream");
+            SimpleName path = f.newSimpleName("path"); //$NON-NLS-1$
+            SimpleName stream = f.newSimpleName("stream"); //$NON-NLS-1$
             List<Statement> statements = Lists.create();
             statements.add(createNullCheck(path));
             statements.add(createNullCheck(stream));
 
-            SimpleName emitter = f.newSimpleName("emitter");
+            SimpleName emitter = f.newSimpleName("emitter"); //$NON-NLS-1$
             statements.add(new TypeBuilder(f, context.resolve(CsvEmitter.class))
                 .newObject(stream, path, new ExpressionBuilder(f, f.newThis())
                     .method(METHOD_CONFIG)
@@ -375,7 +371,7 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
                     context.resolve(f.newParameterizedType(
                             context.resolve(DataModelWriter.class),
                             context.resolve(model.getSymbol()))),
-                    f.newSimpleName("createWriter"),
+                    f.newSimpleName("createWriter"), //$NON-NLS-1$
                     Arrays.asList(
                             f.newFormalParameterDeclaration(context.resolve(String.class), path),
                             f.newFormalParameterDeclaration(context.resolve(OutputStream.class), stream)),
@@ -393,13 +389,13 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
                         .toExpression(),
                     f.newBlock(new TypeBuilder(f, context.resolve(IllegalArgumentException.class))
                         .newObject(Models.toLiteral(f, MessageFormat.format(
-                                "{0} must not be null",
+                                "{0} must not be null", //$NON-NLS-1$
                                 parameter.getToken())))
                         .toThrowStatement()));
         }
 
         private ClassDeclaration createReaderClass() {
-            SimpleName parser = f.newSimpleName("parser");
+            SimpleName parser = f.newSimpleName("parser"); //$NON-NLS-1$
             List<TypeBodyDeclaration> members = Lists.create();
             members.add(createPrivateField(CsvParser.class, parser));
             List<ExpressionStatement> constructorStatements = Lists.create();
@@ -409,7 +405,7 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
                 constructorStatements.add(new ExpressionBuilder(f, f.newSimpleName(FIELD_PATH_NAME))
                     .assignFrom(new TypeBuilder(f, context.resolve(StringOption.class))
                         .newObject(new ExpressionBuilder(f, parser)
-                            .method("getPath")
+                            .method("getPath") //$NON-NLS-1$
                             .toExpression())
                         .toExpression())
                     .toStatement());
@@ -422,11 +418,11 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
                             f.newFormalParameterDeclaration(context.resolve(CsvParser.class), parser)),
                     constructorStatements));
 
-            SimpleName object = f.newSimpleName("object");
+            SimpleName object = f.newSimpleName("object"); //$NON-NLS-1$
             List<Statement> statements = Lists.create();
             statements.add(f.newIfStatement(
                     new ExpressionBuilder(f, parser)
-                        .method("next")
+                        .method("next") //$NON-NLS-1$
                         .apply(InfixOperator.EQUALS, Models.toLiteral(f, false))
                         .toExpression(),
                     f.newBlock(new ExpressionBuilder(f, Models.toLiteral(f, false))
@@ -435,7 +431,7 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
                 switch (CsvFieldTrait.getKind(property, Kind.VALUE)) {
                 case VALUE:
                     statements.add(new ExpressionBuilder(f, parser)
-                        .method("fill", new ExpressionBuilder(f, object)
+                        .method("fill", new ExpressionBuilder(f, object) //$NON-NLS-1$
                             .method(context.getOptionGetterName(property))
                             .toExpression())
                         .toStatement());
@@ -448,14 +444,14 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
                 case LINE_NUMBER:
                     statements.add(new ExpressionBuilder(f, object)
                         .method(context.getValueSetterName(property), new ExpressionBuilder(f, parser)
-                            .method("getCurrentLineNumber")
+                            .method("getCurrentLineNumber") //$NON-NLS-1$
                             .toExpression())
                         .toStatement());
                     break;
                 case RECORD_NUMBER:
                     statements.add(new ExpressionBuilder(f, object)
                         .method(context.getValueSetterName(property), new ExpressionBuilder(f, parser)
-                            .method("getCurrentRecordNumber")
+                            .method("getCurrentRecordNumber") //$NON-NLS-1$
                             .toExpression())
                         .toStatement());
                     break;
@@ -465,7 +461,7 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
                 }
             }
             statements.add(new ExpressionBuilder(f, parser)
-                .method("endRecord")
+                .method("endRecord") //$NON-NLS-1$
                 .toStatement());
             statements.add(new ExpressionBuilder(f, Models.toLiteral(f, true))
                 .toReturnStatement());
@@ -477,7 +473,7 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
                         .toAttributes(),
                     Collections.<TypeParameterDeclaration>emptyList(),
                     context.resolve(boolean.class),
-                    f.newSimpleName("readTo"),
+                    f.newSimpleName("readTo"), //$NON-NLS-1$
                     Arrays.asList(f.newFormalParameterDeclaration(context.resolve(model.getSymbol()), object)),
                     0,
                     Arrays.asList(context.resolve(IOException.class)),
@@ -499,7 +495,7 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
         }
 
         private ClassDeclaration createWriterClass() {
-            SimpleName emitter = f.newSimpleName("emitter");
+            SimpleName emitter = f.newSimpleName("emitter"); //$NON-NLS-1$
             List<TypeBodyDeclaration> members = Lists.create();
             members.add(createPrivateField(CsvEmitter.class, emitter));
             members.add(f.newConstructorDeclaration(
@@ -509,19 +505,19 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
                     Arrays.asList(f.newFormalParameterDeclaration(context.resolve(CsvEmitter.class), emitter)),
                     Arrays.asList(mapField(emitter))));
 
-            SimpleName object = f.newSimpleName("object");
+            SimpleName object = f.newSimpleName("object"); //$NON-NLS-1$
             List<Statement> statements = Lists.create();
             for (PropertyDeclaration property : model.getDeclaredProperties()) {
                 if (isValueField(property)) {
                     statements.add(new ExpressionBuilder(f, emitter)
-                        .method("emit", new ExpressionBuilder(f, object)
+                        .method("emit", new ExpressionBuilder(f, object) //$NON-NLS-1$
                             .method(context.getOptionGetterName(property))
                             .toExpression())
                         .toStatement());
                 }
             }
             statements.add(new ExpressionBuilder(f, emitter)
-                .method("endRecord")
+                .method("endRecord") //$NON-NLS-1$
                 .toStatement());
 
             members.add(f.newMethodDeclaration(
@@ -532,7 +528,7 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
                         .toAttributes(),
                     Collections.<TypeParameterDeclaration>emptyList(),
                     context.resolve(void.class),
-                    f.newSimpleName("write"),
+                    f.newSimpleName("write"), //$NON-NLS-1$
                     Arrays.asList(f.newFormalParameterDeclaration(context.resolve(model.getSymbol()), object)),
                     0,
                     Arrays.asList(context.resolve(IOException.class)),
@@ -546,12 +542,12 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
                         .toAttributes(),
                     Collections.<TypeParameterDeclaration>emptyList(),
                     context.resolve(void.class),
-                    f.newSimpleName("flush"),
+                    f.newSimpleName("flush"), //$NON-NLS-1$
                     Collections.<FormalParameterDeclaration>emptyList(),
                     0,
                     Arrays.asList(context.resolve(IOException.class)),
                     f.newBlock(new ExpressionBuilder(f, emitter)
-                        .method("flush")
+                        .method("flush") //$NON-NLS-1$
                         .toStatement())));
 
             return f.newClassDeclaration(
@@ -595,128 +591,6 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
                     context.resolve(type),
                     name,
                     null);
-        }
-    }
-
-    private static final class DescriptionGenerator {
-
-        // for reduce library dependencies
-        private static final String IMPORTER_TYPE_NAME = "com.asakusafw.vocabulary.windgate.FsImporterDescription";
-
-        // for reduce library dependencies
-        private static final String EXPORTER_TYPE_NAME = "com.asakusafw.vocabulary.windgate.FsExporterDescription";
-
-        private final EmitContext context;
-
-        private final ModelDeclaration model;
-
-        private final com.asakusafw.utils.java.model.syntax.Type supportClass;
-
-        private final ModelFactory f;
-
-        private final boolean importer;
-
-        private DescriptionGenerator(
-                EmitContext context,
-                ModelDeclaration model,
-                Name supportClassName,
-                boolean importer) {
-            assert context != null;
-            assert model != null;
-            assert supportClassName != null;
-            this.context = context;
-            this.model = model;
-            this.f = context.getModelFactory();
-            this.importer = importer;
-            this.supportClass = context.resolve(supportClassName);
-        }
-
-        static void emitImporter(
-                EmitContext context,
-                ModelDeclaration model,
-                Name supportClassName) throws IOException {
-            assert context != null;
-            assert model != null;
-            assert supportClassName != null;
-            DescriptionGenerator emitter = new DescriptionGenerator(context, model, supportClassName, true);
-            emitter.emit();
-        }
-
-        static void emitExporter(
-                EmitContext context,
-                ModelDeclaration model,
-                Name supportClassName) throws IOException {
-            assert context != null;
-            assert model != null;
-            assert supportClassName != null;
-            DescriptionGenerator emitter = new DescriptionGenerator(context, model, supportClassName, false);
-            emitter.emit();
-        }
-
-        private void emit() throws IOException {
-            ClassDeclaration decl = f.newClassDeclaration(
-                    new JavadocBuilder(f)
-                        .text("An abstract implementation of ")
-                        .linkType(context.resolve(model.getSymbol()))
-                        .text(" {0} description using WindGate CSV",
-                                importer ? "importer" : "exporter")
-                        .text(".")
-                        .toJavadoc(),
-                    new AttributeBuilder(f)
-                        .Public()
-                        .Abstract()
-                        .toAttributes(),
-                    context.getTypeName(),
-                    context.resolve(Models.toName(f, importer ? IMPORTER_TYPE_NAME : EXPORTER_TYPE_NAME)),
-                    Collections.<com.asakusafw.utils.java.model.syntax.Type>emptyList(),
-                    createMembers());
-            context.emit(decl);
-        }
-
-        private List<TypeBodyDeclaration> createMembers() {
-            List<TypeBodyDeclaration> results = Lists.create();
-            results.add(createGetModelType());
-            results.add(createGetStreamSupport());
-            return results;
-        }
-
-        private MethodDeclaration createGetModelType() {
-            return createGetter(
-                    new TypeBuilder(f, context.resolve(Class.class))
-                        .parameterize(f.newWildcard(
-                                WildcardBoundKind.UPPER_BOUNDED,
-                                context.resolve(model.getSymbol())))
-                        .toType(),
-                    "getModelType",
-                    f.newClassLiteral(context.resolve(model.getSymbol())));
-        }
-
-        private MethodDeclaration createGetStreamSupport() {
-            return createGetter(
-                    new TypeBuilder(f, context.resolve(Class.class))
-                        .parameterize(supportClass)
-                        .toType(),
-                    "getStreamSupport",
-                    f.newClassLiteral(supportClass));
-        }
-
-        private MethodDeclaration createGetter(
-                com.asakusafw.utils.java.model.syntax.Type type,
-                String name,
-                Expression value) {
-            assert type != null;
-            assert name != null;
-            assert value != null;
-            return f.newMethodDeclaration(
-                    null,
-                    new AttributeBuilder(f)
-                        .annotation(context.resolve(Override.class))
-                        .Public()
-                        .toAttributes(),
-                    type,
-                    f.newSimpleName(name),
-                    Collections.<FormalParameterDeclaration>emptyList(),
-                    Arrays.asList(new ExpressionBuilder(f, value).toReturnStatement()));
         }
     }
 }

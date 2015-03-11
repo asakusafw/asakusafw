@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -116,9 +116,9 @@ abstract class DateTimeFormatter {
     private static final class Standard extends DateTimeFormatter {
 
         private static final Pattern META_PATTERN = Pattern.compile(
-                "yyyy([ \\-\\._/]|'[a-zA-Z \\-\\._/]')MM\\1dd"
-                + "([ \\-\\._]|'[a-zA-Z \\-\\._]')"
-                + "HH([ \\-\\.:_]|'[a-zA-Z \\-\\.:_]')mm\\3ss");
+                "yyyy([ \\-\\._/]|'[a-zA-Z \\-\\._/]')MM\\1dd" //$NON-NLS-1$
+                + "([ \\-\\._]|'[a-zA-Z \\-\\._]')" //$NON-NLS-1$
+                + "HH([ \\-\\.:_]|'[a-zA-Z \\-\\.:_]')mm\\3ss"); //$NON-NLS-1$
 
         private final StringBuilder buffer = new StringBuilder(10);
 
@@ -165,17 +165,17 @@ abstract class DateTimeFormatter {
         @Override
         String getPattern() {
             buffer.setLength(0);
-            buffer.append("yyyy");
+            buffer.append("yyyy"); //$NON-NLS-1$
             buffer.append(dateSegmentSeparator);
-            buffer.append("MM");
+            buffer.append("MM"); //$NON-NLS-1$
             buffer.append(dateSegmentSeparator);
-            buffer.append("dd");
+            buffer.append("dd"); //$NON-NLS-1$
             buffer.append(dateTimeSeparator);
-            buffer.append("HH");
+            buffer.append("HH"); //$NON-NLS-1$
             buffer.append(timeSegmentSeparator);
-            buffer.append("mm");
+            buffer.append("mm"); //$NON-NLS-1$
             buffer.append(timeSegmentSeparator);
-            buffer.append("ss");
+            buffer.append("ss"); //$NON-NLS-1$
             return buffer.toString();
         }
 
@@ -200,7 +200,7 @@ abstract class DateTimeFormatter {
 
     private static final class Direct extends DateTimeFormatter {
 
-        static final String PATTERN = "yyyyMMddHHmmss";
+        static final String PATTERN = "yyyyMMddHHmmss"; //$NON-NLS-1$
 
         private static final int POS_YEAR = 0;
 

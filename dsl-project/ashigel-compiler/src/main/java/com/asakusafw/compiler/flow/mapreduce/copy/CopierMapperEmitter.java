@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -84,7 +84,7 @@ final class CopierMapperEmitter {
     public CompiledType emit(String moduleId, CopyDescription slot, boolean prologue) throws IOException {
         Precondition.checkMustNotBeNull(moduleId, "moduleId"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(slot, "slot"); //$NON-NLS-1$
-        LOG.debug("Generates a mapper for \"{}\" in \"{}\"",
+        LOG.debug("Generates a mapper for \"{}\" in \"{}\"", //$NON-NLS-1$
                 slot.getName(), moduleId);
         CompilationUnit source;
         Engine engine = new Engine(environment, moduleId, slot, prologue);
@@ -93,7 +93,7 @@ final class CopierMapperEmitter {
         Name packageName = source.getPackageDeclaration().getName();
         SimpleName simpleName = source.getTypeDeclarations().get(0).getName();
         Name name = environment.getModelFactory().newQualifiedName(packageName, simpleName);
-        LOG.debug("Mapper for \"{}\" is {}",
+        LOG.debug("Mapper for \"{}\" is {}", //$NON-NLS-1$
                 slot.getName(),
                 name);
         return new CompiledType(name);
@@ -148,7 +148,7 @@ final class CopierMapperEmitter {
             importer.resolvePackageMember(name);
             return factory.newClassDeclaration(
                     new JavadocBuilder(factory)
-                        .text("Mapper for input \"{0}\" in prologue phase.", slot.getName())
+                        .text("Mapper for input \"{0}\" in prologue phase.", slot.getName()) //$NON-NLS-1$
                         .toJavadoc(),
                     new AttributeBuilder(factory)
                         .annotation(importer.toType(TraceLocation.class), createTraceLocationElements())
@@ -165,12 +165,12 @@ final class CopierMapperEmitter {
 
         private Map<String, Expression> createTraceLocationElements() {
             Map<String, Expression> results = new LinkedHashMap<String, Expression>();
-            results.put("batchId", Models.toLiteral(factory, environment.getBatchId()));
-            results.put("flowId", Models.toLiteral(factory, environment.getFlowId()));
+            results.put("batchId", Models.toLiteral(factory, environment.getBatchId())); //$NON-NLS-1$
+            results.put("flowId", Models.toLiteral(factory, environment.getFlowId())); //$NON-NLS-1$
             if (prologue) {
-                results.put("stageId", Models.toLiteral(factory, Naming.getPrologueName(moduleId)));
+                results.put("stageId", Models.toLiteral(factory, Naming.getPrologueName(moduleId))); //$NON-NLS-1$
             } else {
-                results.put("stageId", Models.toLiteral(factory, Naming.getEpilogueName(moduleId)));
+                results.put("stageId", Models.toLiteral(factory, Naming.getEpilogueName(moduleId))); //$NON-NLS-1$
             }
             return results;
         }

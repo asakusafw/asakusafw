@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,9 +41,9 @@ import com.asakusafw.yaess.core.ServiceProfile;
 # &lt;prefix command token&gt; can contain "&#64;[position],"
 # this will be replaced as original command tokens (0-origin position)
 command.&lt;profile-name&gt; = &lt;subclass class name&gt;
-command.&lt;profile-name&gt.env.ASAKUSA_HOME = ${ASAKUSA_HOME}
-command.&lt;profile-name&gt.command.&lt;position&gt; = $&lt;prefix command token&gt;
-command.&lt;profile-name&gt.env.&lt;key&gt; = $&lt;extra environment variables&gt;
+command.&lt;profile-name&gt;.env.ASAKUSA_HOME = ${ASAKUSA_HOME}
+command.&lt;profile-name&gt;.command.&lt;position&gt; = $&lt;prefix command token&gt;
+command.&lt;profile-name&gt;.env.&lt;key&gt; = $&lt;extra environment variables&gt;
 </code></pre>
  * @since 0.2.3
  * @version 0.2.6

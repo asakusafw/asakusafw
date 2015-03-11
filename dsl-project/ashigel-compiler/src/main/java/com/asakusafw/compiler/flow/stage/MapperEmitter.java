@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -91,7 +91,7 @@ public class MapperEmitter {
             StageModel.MapUnit unit) throws IOException {
         Precondition.checkMustNotBeNull(model, "model"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(unit, "unit"); //$NON-NLS-1$
-        LOG.debug("{}に対するマッパークラスを生成します", unit);
+        LOG.debug("start generating mapper class: {}", unit); //$NON-NLS-1$
 
         Engine engine = new Engine(environment, model, unit);
         CompilationUnit source = engine.generate();
@@ -103,7 +103,7 @@ public class MapperEmitter {
             .getModelFactory()
             .newQualifiedName(packageName, simpleName);
 
-        LOG.debug("{}の処理には{}が利用されます", unit, name);
+        LOG.debug("finish generating mapper class: {} ({})", unit, name); //$NON-NLS-1$
         return new CompiledType(name);
     }
 
@@ -153,8 +153,8 @@ public class MapperEmitter {
                     names,
                     model,
                     Collections.singletonList(unit));
-            this.context = names.create("context");
-            this.cache = names.create("cache");
+            this.context = names.create("context"); //$NON-NLS-1$
+            this.cache = names.create("cache"); //$NON-NLS-1$
             this.dataClass = environment
                 .getDataClasses()
                 .load(getInputTypeAsReflect());
@@ -188,7 +188,7 @@ public class MapperEmitter {
                     createJavadoc(),
                     new AttributeBuilder(factory)
                         .annotation(t(TraceLocation.class), createTraceLocationElements())
-                        .annotation(t(SuppressWarnings.class), v("deprecation"))
+                        .annotation(t(SuppressWarnings.class), v("deprecation")) //$NON-NLS-1$
                         .Public()
                         .Final()
                         .toAttributes(),
@@ -207,11 +207,12 @@ public class MapperEmitter {
 
         private Map<String, Expression> createTraceLocationElements() {
             Map<String, Expression> results = new LinkedHashMap<String, Expression>();
-            results.put("batchId", Models.toLiteral(factory, environment.getBatchId()));
-            results.put("flowId", Models.toLiteral(factory, environment.getFlowId()));
-            results.put("stageId",
+            results.put("batchId", Models.toLiteral(factory, environment.getBatchId())); //$NON-NLS-1$
+            results.put("flowId", Models.toLiteral(factory, environment.getFlowId())); //$NON-NLS-1$
+            results.put("stageId", //$NON-NLS-1$
                     Models.toLiteral(factory, Naming.getStageName(model.getStageBlock().getStageNumber())));
-            results.put("stageUnitId", Models.toLiteral(factory, "m" + unit.getSerialNumber()));
+            results.put("stageUnitId", //$NON-NLS-1$
+                    Models.toLiteral(factory, "m" + unit.getSerialNumber())); //$NON-NLS-1$
             return results;
         }
 
@@ -236,9 +237,9 @@ public class MapperEmitter {
                         .toAttributes(),
                     Collections.<TypeParameterDeclaration>emptyList(),
                     t(void.class),
-                    factory.newSimpleName("setup"),
+                    factory.newSimpleName("setup"), //$NON-NLS-1$
                     Collections.singletonList(factory.newFormalParameterDeclaration(
-                            factory.newNamedType(factory.newSimpleName("Context")),
+                            factory.newNamedType(factory.newSimpleName("Context")), //$NON-NLS-1$
                             context)),
                     0,
                     Arrays.asList(t(IOException.class), t(InterruptedException.class)),
@@ -254,9 +255,9 @@ public class MapperEmitter {
                         .toAttributes(),
                     Collections.<TypeParameterDeclaration>emptyList(),
                     t(void.class),
-                    factory.newSimpleName("cleanup"),
+                    factory.newSimpleName("cleanup"), //$NON-NLS-1$
                     Collections.singletonList(factory.newFormalParameterDeclaration(
-                            factory.newNamedType(factory.newSimpleName("Context")),
+                            factory.newNamedType(factory.newSimpleName("Context")), //$NON-NLS-1$
                             context)),
                     0,
                     Arrays.asList(t(IOException.class), t(InterruptedException.class)),
@@ -269,7 +270,7 @@ public class MapperEmitter {
             for (FlowBlock.Input input : unit.getInputs()) {
                 Expression expr = fragments.getLine(input.getElementPort());
                 loop.add(dataClass.assign(cache, new ExpressionBuilder(factory, context)
-                    .method("getCurrentValue")
+                    .method("getCurrentValue") //$NON-NLS-1$
                     .toExpression()));
                 loop.add(new ExpressionBuilder(factory, expr)
                     .method(FlowElementProcessor.RESULT_METHOD_NAME, cache)
@@ -278,15 +279,15 @@ public class MapperEmitter {
 
             List<Statement> statements = Lists.create();
             statements.add(new ExpressionBuilder(factory, factory.newThis())
-                .method("setup", context)
+                .method("setup", context) //$NON-NLS-1$
                 .toStatement());
             statements.add(factory.newWhileStatement(
                     new ExpressionBuilder(factory, context)
-                        .method("nextKeyValue")
+                        .method("nextKeyValue") //$NON-NLS-1$
                         .toExpression(),
                     factory.newBlock(loop)));
             statements.add(new ExpressionBuilder(factory, factory.newThis())
-                .method("cleanup", context)
+                .method("cleanup", context) //$NON-NLS-1$
                 .toStatement());
 
             return factory.newMethodDeclaration(
@@ -297,9 +298,9 @@ public class MapperEmitter {
                         .toAttributes(),
                     Collections.<TypeParameterDeclaration>emptyList(),
                     t(void.class),
-                    factory.newSimpleName("runInternal"),
+                    factory.newSimpleName("runInternal"), //$NON-NLS-1$
                     Collections.singletonList(factory.newFormalParameterDeclaration(
-                            factory.newNamedType(factory.newSimpleName("Context")),
+                            factory.newNamedType(factory.newSimpleName("Context")), //$NON-NLS-1$
                             context)),
                     0,
                     Arrays.asList(t(IOException.class), t(InterruptedException.class)),
@@ -318,8 +319,9 @@ public class MapperEmitter {
 
         private Javadoc createJavadoc() {
             return new JavadocBuilder(factory)
-                .code("{0}", unit.getInputs())
-                .text("の処理を担当するマッププログラム。")
+                .text("A mapper class for processing") //$NON-NLS-1$
+                .code("{0}", unit.getInputs()) //$NON-NLS-1$
+                .text(".") //$NON-NLS-1$
                 .toJavadoc();
         }
 

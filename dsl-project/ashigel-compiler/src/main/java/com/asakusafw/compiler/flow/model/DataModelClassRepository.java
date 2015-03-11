@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ public class DataModelClassRepository
         extends FlowCompilingEnvironment.Initialized
         implements DataClassRepository {
 
-    private static final String KIND = "DMDL";
+    private static final String KIND = "DMDL"; //$NON-NLS-1$
 
     static final Logger LOG = LoggerFactory.getLogger(DataModelClassRepository.class);
 
@@ -80,20 +80,20 @@ public class DataModelClassRepository
     private boolean isSuitable(Class<?> aClass) {
         assert aClass != null;
         if (DataModel.class.isAssignableFrom(aClass) == false) {
-            LOG.debug("{}は{}のサブタイプでないため、スキップされます",
+            LOG.debug("{} is not a data-model class: should be subtype of {}", //$NON-NLS-1$
                     aClass.getName(),
                     DataModel.class.getName());
             return false;
         }
         DataModelKind kind = aClass.getAnnotation(DataModelKind.class);
         if (kind == null) {
-            LOG.debug("{}は{}の指定がないため、スキップされます",
+            LOG.debug("{} is not a data-model class: shoud be annotated with {}", //$NON-NLS-1$
                     aClass.getName(),
                     DataModelKind.class.getName());
             return false;
         }
         if (kind.value().equals(KIND) == false) {
-            LOG.debug("{}は@{}(\"{}\")の指定がないため、スキップされます", new Object[] {
+            LOG.debug("{}is not a data-model class: should be with @{}(\"{}\")", new Object[] { //$NON-NLS-1$
                     aClass.getName(),
                     DataModelKind.class.getName(),
                     KIND,

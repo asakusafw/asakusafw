@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,7 +57,7 @@ public final class TemporaryInputFormat<T> extends InputFormat<NullWritable, T> 
 
     static final Log LOG = LogFactory.getLog(TemporaryInputFormat.class);
 
-    static final String KEY_DEFAULT_SPLIT_SIZE = "com.asakusafw.stage.input.temporary.blockSize";
+    static final String KEY_DEFAULT_SPLIT_SIZE = "com.asakusafw.stage.input.temporary.blockSize"; //$NON-NLS-1$
 
     static final long DEFAULT_SPLIT_SIZE = 128L * 1024 * 1024;
 

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -97,12 +97,12 @@ public class ShuffleFragmentEmitter {
             StageBlock stageBlock) throws IOException {
         Precondition.checkMustNotBeNull(segment, "segment"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(stageBlock, "stageBlock"); //$NON-NLS-1$
-        LOG.debug("{}に対するフラグメントクラスを生成します", segment);
+        LOG.debug("start generating shuffle fragment: {}", segment); //$NON-NLS-1$
 
         CompiledType mapOut = emitMapOutput(segment, keyTypeName, valueTypeName, stageBlock);
         CompiledType combineOut = emitCombineOutput(segment, keyTypeName, valueTypeName, stageBlock);
 
-        LOG.debug("{}の出力処理には{}, {}が利用されます", new Object[] {
+        LOG.debug("finish generating shuffle fragment: {} ({}, {})", new Object[] { //$NON-NLS-1$
                 segment,
                 mapOut.getQualifiedName().toNameString(),
                 combineOut.getQualifiedName().toNameString(),
@@ -147,7 +147,6 @@ public class ShuffleFragmentEmitter {
             .getModelFactory()
             .newQualifiedName(packageName, simpleName);
 
-        LOG.debug("{}のMap出力処理には{}が利用されます", segment, typeName);
         CompiledType compiled = new CompiledType(typeName);
         return compiled;
     }
@@ -181,7 +180,7 @@ public class ShuffleFragmentEmitter {
             }
 
             processor.emitLinePart(context);
-            LOG.debug("{}に{}を適用しています", segment, processor);
+            LOG.debug("applying {}: {}", processor, segment); //$NON-NLS-1$
 
             results.addAll(context.getGeneratedStatements());
             extraFields.addAll(context.getGeneratedFields());
@@ -256,11 +255,11 @@ public class ShuffleFragmentEmitter {
                     factory.newPackageDeclaration(packageName),
                     ImportBuilder.Strategy.TOP_LEVEL);
             this.names = new NameGenerator(factory);
-            this.collector = names.create("collector");
+            this.collector = names.create("collector"); //$NON-NLS-1$
             this.keyType = importer.toType(keyTypeName);
             this.valueType = importer.toType(valueTypeName);
-            this.keyModel = names.create("key");
-            this.valueModel = names.create("value");
+            this.keyModel = names.create("key"); //$NON-NLS-1$
+            this.valueModel = names.create("value"); //$NON-NLS-1$
         }
 
         abstract SimpleName getClassSimpleName();
@@ -288,7 +287,7 @@ public class ShuffleFragmentEmitter {
             return factory.newClassDeclaration(
                     createJavadoc(),
                     new AttributeBuilder(factory)
-                        .annotation(t(SuppressWarnings.class), v("deprecation"))
+                        .annotation(t(SuppressWarnings.class), v("deprecation")) //$NON-NLS-1$
                         .Public()
                         .Final()
                         .toAttributes(),
@@ -361,9 +360,9 @@ public class ShuffleFragmentEmitter {
                 .toStatement());
             return factory.newConstructorDeclaration(
                     new JavadocBuilder(factory)
-                        .text("インスタンスを生成する。")
+                        .text("Creates a new instance.") //$NON-NLS-1$
                         .param(collector)
-                            .text("実際の出力先")
+                            .text("output collector") //$NON-NLS-1$
                         .toJavadoc(),
                     new AttributeBuilder(factory)
                         .Public()
@@ -385,7 +384,7 @@ public class ShuffleFragmentEmitter {
         }
 
         private MethodDeclaration createBody() {
-            SimpleName argument = names.create("result");
+            SimpleName argument = names.create("result"); //$NON-NLS-1$
             List<Statement> statements = createStatements(argument);
             return factory.newMethodDeclaration(
                     null,
@@ -420,7 +419,7 @@ public class ShuffleFragmentEmitter {
                 .toStatement());
 
             results.add(new TypeBuilder(factory, t(ResultOutput.class))
-                .method("write",
+                .method("write", //$NON-NLS-1$
                         new ExpressionBuilder(factory, factory.newThis())
                             .field(collector)
                             .toExpression(),
@@ -441,9 +440,9 @@ public class ShuffleFragmentEmitter {
         private LinePartProcessor.Context createPartConext(Expression input) {
             assert input != null;
             OperatorDescription description = new OperatorDescription.Builder(Identity.class)
-                .declare(Void.class, Void.class, "")
-                .addInput("input", Object.class)
-                .addOutput("output", Object.class)
+                .declare(Void.class, Void.class, "") //$NON-NLS-1$
+                .addInput("input", Object.class) //$NON-NLS-1$
+                .addOutput("output", Object.class) //$NON-NLS-1$
                 .toDescription();
             return new LinePartProcessor.Context(
                     environment,
@@ -457,8 +456,9 @@ public class ShuffleFragmentEmitter {
 
         private Javadoc createJavadoc() {
             return new JavadocBuilder(factory)
-                .code("{0}", segment.getPort())
-                .text("へのシャッフル処理を担当するプログラムの断片。")
+                .text("A shuffle fragment for processing") //$NON-NLS-1$
+                .code("{0}", segment.getPort()) //$NON-NLS-1$
+                .text(".") //$NON-NLS-1$
                 .toJavadoc();
         }
 

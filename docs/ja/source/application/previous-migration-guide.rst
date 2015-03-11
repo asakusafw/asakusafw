@@ -32,7 +32,7 @@ Gradleプロジェクトのマイグレーション手順
 バージョン0.6.0で提供しているプロジェクトテンプレートの内容に置き換えることを推奨します。
 
 プロジェクトテンプレートの置き換えについては、
-:doc:`gradle-plugin` の :ref:`apply-gradle-project-template` の項などを参照してください。
+:doc:`gradle-plugin` - :ref:`apply-gradle-project-template` の項などを参照してください。
 
 Mavenプロジェクトのマイグレーション手順
 =======================================
@@ -64,7 +64,7 @@ Mavenプロジェクトのマイグレーション手順
 Gradleプロジェクトへの移行
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 MavenプロジェクトをGradleプロジェクトに移行する場合は、
-:doc:`gradle-plugin` の :ref:`migrate-from-maven-to-gradle` の項を参照してください。
+:doc:`gradle-plugin` - :ref:`migrate-from-maven-to-gradle` の項を参照してください。
 
 0.5.3 へのマイグレーション
 --------------------------

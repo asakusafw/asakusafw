@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -144,6 +144,6 @@ public class ResultOutput<T> implements Result<T> {
 
     @Override
     public String toString() {
-        return String.format("%s -> %s", context.getTaskAttemptID(), writer);
+        return String.format("%s -> %s", context.getTaskAttemptID(), writer); //$NON-NLS-1$
     }
 }

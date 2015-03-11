@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,7 +59,7 @@ public final class CoreCompatibility {
         /**
          * Don't care for temporary.
          */
-        DONT_CARE("<don't-care>") {
+        DONT_CARE("<don't-care>") { //$NON-NLS-1$
             @Override
             public boolean isCompatibleTo(FrameworkVersion running) {
                 // don't care
@@ -70,12 +70,12 @@ public final class CoreCompatibility {
         /**
          * Represents Hadoop {@code 1.x}.
          */
-        HADOOP_V1("hadoop-1.x"),
+        HADOOP_V1("hadoop-1.x"), //$NON-NLS-1$
 
         /**
          * Represents Hadoop {@code 2.x} with YARN.
          */
-        HADOOP_V2("hadoop-2.x") {
+        HADOOP_V2("hadoop-2.x") { //$NON-NLS-1$
             @Override
             public boolean isCompatibleTo(FrameworkVersion running) {
                 return this == running || running == HADOOP_V2_MR1;
@@ -85,12 +85,12 @@ public final class CoreCompatibility {
         /**
          * Represents Hadoop {@code 2.x} with {@code MRv1}.
          */
-        HADOOP_V2_MR1("hadoop-2.x-MRv1"),
+        HADOOP_V2_MR1("hadoop-2.x-MRv1"), //$NON-NLS-1$
 
         /**
          * Represents unknown framework.
          */
-        UNKNOWN("hadoop-<UNKNOWN_VERSION>"),
+        UNKNOWN("hadoop-<UNKNOWN_VERSION>"), //$NON-NLS-1$
         ;
 
         private final String label;
@@ -128,7 +128,7 @@ public final class CoreCompatibility {
                 FrameworkVersion detected = UNKNOWN;
 
                 // Detect MRConfig
-                if (existsClass("org.apache.hadoop.mapreduce.MRConfig")) {
+                if (existsClass("org.apache.hadoop.mapreduce.MRConfig")) { //$NON-NLS-1$
                     detected = HADOOP_V2;
                 } else if (JobContext.class.isInterface()) {
                     detected = HADOOP_V2_MR1;
@@ -137,7 +137,7 @@ public final class CoreCompatibility {
                 }
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(MessageFormat.format(
-                            "Detected installed framework: {0}",
+                            "Detected installed framework: {0}", //$NON-NLS-1$
                             detected));
                 }
                 VERSION = detected;

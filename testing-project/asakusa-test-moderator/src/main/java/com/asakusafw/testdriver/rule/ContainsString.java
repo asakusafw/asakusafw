@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ public class ContainsString implements ValuePredicate<String> {
     @Override
     public String describeExpected(String expected, String actual) {
         if (expected == null) {
-            return "(error)";
+            return "(error)"; //$NON-NLS-1$
         }
         return MessageFormat.format(
                 "文字列{0}を含む",

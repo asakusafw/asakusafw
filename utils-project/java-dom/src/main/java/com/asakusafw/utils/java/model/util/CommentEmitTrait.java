@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import java.util.List;
  */
 public final class CommentEmitTrait {
 
-    private static final String REGEX_LINE_DELIMITER = "\\n|\\r|\\r\\n";
+    private static final String REGEX_LINE_DELIMITER = "\\n|\\r|\\r\\n"; //$NON-NLS-1$
 
     private List<String> contents;
 

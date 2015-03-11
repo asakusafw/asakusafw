@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -77,13 +77,14 @@ finally {
 @SuppressWarnings("deprecation")
 public final class TsvParser implements RecordParser {
 
-    private static final Pattern SPECIAL_FLOAT = Pattern.compile("(\\+?Inf.*)|(-Inf.*)|((\\+|-)?[Nn]a[Nn])");
+    private static final Pattern SPECIAL_FLOAT =
+            Pattern.compile("(\\+?Inf.*)|(-Inf.*)|((\\+|-)?[Nn]a[Nn])"); //$NON-NLS-1$
 
     private static final int SPECIAL_FLOAT_POSITIVE_INF = 1;
 
     private static final int SPECIAL_FLOAT_NEGATIVE_INF = 2;
 
-    private static final Charset TEXT_ENCODE = Charset.forName("UTF-8");
+    private static final Charset TEXT_ENCODE = Charset.forName("UTF-8"); //$NON-NLS-1$
 
     private static final int INITIAL_BUFFER_SIZE = 2048;
 
@@ -459,7 +460,7 @@ public final class TsvParser implements RecordParser {
             throw new RecordFormatException(MessageFormat.format(
                     "Invalid character in expected ''{0}'' but was \"{1}\"",
                     expect,
-                    String.format("\\u%04x", c)));
+                    String.format("\\u%04x", c))); //$NON-NLS-1$
         }
     }
 
@@ -469,7 +470,7 @@ public final class TsvParser implements RecordParser {
         }
         throw new RecordFormatException(MessageFormat.format(
                 "Invalid character in number context {0}",
-                String.format("\\u%04x", c)));
+                String.format("\\u%04x", c))); //$NON-NLS-1$
     }
 
     private void append(CharBuffer source, StringOption target) throws RecordFormatException {
@@ -536,7 +537,7 @@ public final class TsvParser implements RecordParser {
         throw new RecordFormatException(MessageFormat.format(
                 "Unknown escape character \\{0} ({1}) for StringOption",
                 (char) c,
-                String.format("U%04x", c)));
+                String.format("U%04x", c))); //$NON-NLS-1$
     }
 
     /**

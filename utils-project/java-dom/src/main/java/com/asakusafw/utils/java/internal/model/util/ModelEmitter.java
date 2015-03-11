@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -90,9 +90,9 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         processBlockComment(elem, context);
         context.statement(EmitDirection.BEGIN);
         processTypeParameters(elem.getTypeArguments(), context);
-        context.keyword("this");
+        context.keyword("this"); //$NON-NLS-1$
         processParameters(elem.getArguments(), context);
-        context.separator(";");
+        context.separator(";"); //$NON-NLS-1$
         context.statement(EmitDirection.END);
         return null;
     }
@@ -105,8 +105,8 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         process(elem.getJavadoc(), context);
         processBlockComment(elem, context);
         process(elem.getModifiers(), context);
-        context.symbol("@");
-        context.keyword("interface");
+        context.symbol("@"); //$NON-NLS-1$
+        context.keyword("interface"); //$NON-NLS-1$
         process(elem.getName(), context);
         context.classBlock(EmitDirection.BEGIN);
         process(elem.getBodyDeclarations(), context);
@@ -121,7 +121,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         begin(elem, context);
         processInlineComment(elem, context);
         process(elem.getName(), context);
-        context.operator("=");
+        context.operator("="); //$NON-NLS-1$
         process(elem.getExpression(), context);
         return null;
     }
@@ -138,10 +138,10 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         process(elem.getName(), context);
         processParameters(Collections.<Model>emptyList(), context);
         if (appears(elem.getDefaultExpression())) {
-            context.keyword("default");
+            context.keyword("default"); //$NON-NLS-1$
             process(elem.getDefaultExpression(), context);
         }
-        context.separator(";");
+        context.separator(";"); //$NON-NLS-1$
         context.declaration(EmitDirection.END);
         return null;
     }
@@ -152,9 +152,9 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         begin(elem, context);
         processInlineComment(elem, context);
         process(elem.getArray(), context);
-        context.symbol("[");
+        context.symbol("["); //$NON-NLS-1$
         process(elem.getIndex(), context);
-        context.separator("]");
+        context.separator("]"); //$NON-NLS-1$
         return null;
     }
 
@@ -173,18 +173,18 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
             }
             scalar = current;
         }
-        context.keyword("new");
+        context.keyword("new"); //$NON-NLS-1$
         process(scalar, context);
         for (Expression expr : elem.getDimensionExpressions()) {
-            context.symbol("[");
+            context.symbol("["); //$NON-NLS-1$
             process(expr, context);
-            context.separator("]");
+            context.separator("]"); //$NON-NLS-1$
             dim--;
         }
         // can be dim < 0 (invalid array type)
         for (int i = 0; i < dim; i++) {
-            context.symbol("[");
-            context.separator("]");
+            context.symbol("["); //$NON-NLS-1$
+            context.separator("]"); //$NON-NLS-1$
         }
         process(elem.getArrayInitializer(), context);
         return null;
@@ -206,8 +206,8 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         begin(elem, context);
         processInlineComment(elem, context);
         process(elem.getComponentType(), context);
-        context.symbol("[");
-        context.separator("]");
+        context.symbol("["); //$NON-NLS-1$
+        context.separator("]"); //$NON-NLS-1$
         return null;
     }
 
@@ -217,13 +217,13 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         begin(elem, context);
         processBlockComment(elem, context);
         context.statement(EmitDirection.BEGIN);
-        context.keyword("assert");
+        context.keyword("assert"); //$NON-NLS-1$
         process(elem.getExpression(), context);
         if (appears(elem.getMessage())) {
-            context.separator(":");
+            context.separator(":"); //$NON-NLS-1$
             process(elem.getMessage(), context);
         }
-        context.separator(";");
+        context.separator(";"); //$NON-NLS-1$
         context.statement(EmitDirection.END);
         return null;
     }
@@ -257,20 +257,20 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         return null;
     }
 
-    private static final Pattern HEAD_ASTER = Pattern.compile("^ ?\\* ?");
+    private static final Pattern HEAD_ASTER = Pattern.compile("^ ?\\* ?"); //$NON-NLS-1$
     @Override
     public Void visitBlockComment(BlockComment elem, EmitContext context) {
         String content = elem.getString();
-        if (content.startsWith("/*")) {
+        if (content.startsWith("/*")) { //$NON-NLS-1$
             content = content.substring(2);
         }
-        if (content.endsWith("*/")) {
+        if (content.endsWith("*/")) { //$NON-NLS-1$
             content = content.substring(0, content.length() - 2);
         }
         List<String> results = new ArrayList<String>();
-        String[] lines = content.split("\\n|\\r|\\r\\n");
+        String[] lines = content.split("\\n|\\r|\\r\\n"); //$NON-NLS-1$
         for (String line : lines) {
-            if (line.startsWith(" * ")) {
+            if (line.startsWith(" * ")) { //$NON-NLS-1$
                 Matcher m = HEAD_ASTER.matcher(line);
                 if (m.find()) {
                     results.add(line.substring(m.end()));
@@ -289,9 +289,9 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         begin(elem, context);
         processBlockComment(elem, context);
         context.statement(EmitDirection.BEGIN);
-        context.keyword("break");
+        context.keyword("break"); //$NON-NLS-1$
         process(elem.getTarget(), context);
-        context.separator(";");
+        context.separator(";"); //$NON-NLS-1$
         context.statement(EmitDirection.END);
         return null;
     }
@@ -301,9 +301,9 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
             EmitContext context) {
         begin(elem, context);
         processInlineComment(elem, context);
-        context.symbol("(");
+        context.symbol("("); //$NON-NLS-1$
         process(elem.getType(), context);
-        context.separator(")");
+        context.separator(")"); //$NON-NLS-1$
         process(elem.getExpression(), context);
         return null;
     }
@@ -312,10 +312,10 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     public Void visitCatchClause(CatchClause elem, EmitContext context) {
         begin(elem, context);
         processBlockComment(elem, context);
-        context.keyword("catch");
-        context.symbol("(");
+        context.keyword("catch"); //$NON-NLS-1$
+        context.symbol("("); //$NON-NLS-1$
         process(elem.getParameter(), context);
-        context.separator(")");
+        context.separator(")"); //$NON-NLS-1$
         process(elem.getBody(), context);
         return null;
     }
@@ -338,15 +338,15 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         process(elem.getJavadoc(), context);
         processBlockComment(elem, context);
         process(elem.getModifiers(), context);
-        context.keyword("class");
+        context.keyword("class"); //$NON-NLS-1$
         process(elem.getName(), context);
         processTypeParameters(elem.getTypeParameters(), context);
         if (appears(elem.getSuperClass())) {
-            context.keyword("extends");
+            context.keyword("extends"); //$NON-NLS-1$
             process(elem.getSuperClass(), context);
         }
         if (appears(elem.getSuperInterfaceTypes())) {
-            context.keyword("implements");
+            context.keyword("implements"); //$NON-NLS-1$
             processJoinWithComma(elem.getSuperInterfaceTypes(), context);
         }
         context.classBlock(EmitDirection.BEGIN);
@@ -362,9 +362,9 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         begin(elem, context);
         processInlineComment(elem, context);
         if (process(elem.getQualifier(), context)) {
-            context.symbol(".");
+            context.symbol("."); //$NON-NLS-1$
         }
-        context.keyword("new");
+        context.keyword("new"); //$NON-NLS-1$
         processTypeParameters(elem.getTypeArguments(), context);
         process(elem.getType(), context);
         processParameters(elem.getArguments(), context);
@@ -377,8 +377,8 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         begin(elem, context);
         processInlineComment(elem, context);
         process(elem.getType(), context);
-        context.symbol(".");
-        context.keyword("class");
+        context.symbol("."); //$NON-NLS-1$
+        context.keyword("class"); //$NON-NLS-1$
         return null;
     }
 
@@ -399,9 +399,9 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         begin(elem, context);
         processInlineComment(elem, context);
         process(elem.getCondition(), context);
-        context.operator("?");
+        context.operator("?"); //$NON-NLS-1$
         process(elem.getThenExpression(), context);
-        context.operator(":");
+        context.operator(":"); //$NON-NLS-1$
         process(elem.getElseExpression(), context);
         return null;
     }
@@ -418,7 +418,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         process(elem.getName(), context);
         processParameters(elem.getFormalParameters(), context);
         if (appears(elem.getExceptionTypes())) {
-            context.keyword("throws");
+            context.keyword("throws"); //$NON-NLS-1$
             processJoinWithComma(elem.getExceptionTypes(), context);
         }
         process(elem.getBody(), context);
@@ -432,9 +432,9 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         begin(elem, context);
         processBlockComment(elem, context);
         context.statement(EmitDirection.BEGIN);
-        context.keyword("continue");
+        context.keyword("continue"); //$NON-NLS-1$
         process(elem.getTarget(), context);
-        context.separator(";");
+        context.separator(";"); //$NON-NLS-1$
         context.statement(EmitDirection.END);
         return null;
     }
@@ -444,13 +444,13 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         begin(elem, context);
         processBlockComment(elem, context);
         context.statement(EmitDirection.BEGIN);
-        context.keyword("do");
+        context.keyword("do"); //$NON-NLS-1$
         process(elem.getBody(), context);
-        context.keyword("while");
-        context.symbol("(");
+        context.keyword("while"); //$NON-NLS-1$
+        context.symbol("("); //$NON-NLS-1$
         process(elem.getCondition(), context);
-        context.separator(")");
-        context.separator(";");
+        context.separator(")"); //$NON-NLS-1$
+        context.separator(";"); //$NON-NLS-1$
         context.statement(EmitDirection.END);
         return null;
     }
@@ -461,7 +461,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         begin(elem, context);
         processBlockComment(elem, context);
         context.statement(EmitDirection.BEGIN);
-        context.separator(";");
+        context.separator(";"); //$NON-NLS-1$
         context.statement(EmitDirection.END);
         return null;
     }
@@ -472,12 +472,12 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         begin(elem, context);
         processBlockComment(elem, context);
         context.statement(EmitDirection.BEGIN);
-        context.keyword("for");
-        context.symbol("(");
+        context.keyword("for"); //$NON-NLS-1$
+        context.symbol("("); //$NON-NLS-1$
         process(elem.getParameter(), context);
-        context.separator(":");
+        context.separator(":"); //$NON-NLS-1$
         process(elem.getExpression(), context);
-        context.separator(")");
+        context.separator(")"); //$NON-NLS-1$
         process(elem.getBody(), context);
         context.statement(EmitDirection.END);
         return null;
@@ -496,7 +496,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
             processParameters(elem.getArguments(), context);
         }
         process(elem.getBody(), context);
-        context.separator(",");
+        context.separator(","); //$NON-NLS-1$
         context.declaration(EmitDirection.END);
         return null;
     }
@@ -509,17 +509,17 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         process(elem.getJavadoc(), context);
         processBlockComment(elem, context);
         process(elem.getModifiers(), context);
-        context.keyword("enum");
+        context.keyword("enum"); //$NON-NLS-1$
         process(elem.getName(), context);
         if (appears(elem.getSuperInterfaceTypes())) {
-            context.keyword("implements");
+            context.keyword("implements"); //$NON-NLS-1$
             processJoinWithComma(elem.getSuperInterfaceTypes(), context);
         }
         context.classBlock(EmitDirection.BEGIN);
         process(elem.getConstantDeclarations(), context);
         if (appears(elem.getBodyDeclarations())) {
             context.declaration(EmitDirection.BEGIN);
-            context.separator(";");
+            context.separator(";"); //$NON-NLS-1$
             context.declaration(EmitDirection.END);
             process(elem.getBodyDeclarations(), context);
         }
@@ -535,7 +535,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         processBlockComment(elem, context);
         context.statement(EmitDirection.BEGIN);
         process(elem.getExpression(), context);
-        context.separator(";");
+        context.separator(";"); //$NON-NLS-1$
         context.statement(EmitDirection.END);
         return null;
     }
@@ -546,7 +546,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         begin(elem, context);
         processInlineComment(elem, context);
         process(elem.getQualifier(), context);
-        context.symbol(".");
+        context.symbol("."); //$NON-NLS-1$
         process(elem.getName(), context);
         return null;
     }
@@ -561,7 +561,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         process(elem.getModifiers(), context);
         process(elem.getType(), context);
         processJoinWithComma(elem.getVariableDeclarators(), context);
-        context.separator(";");
+        context.separator(";"); //$NON-NLS-1$
         context.declaration(EmitDirection.END);
         return null;
     }
@@ -574,12 +574,12 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         process(elem.getModifiers(), context);
         process(elem.getType(), context);
         if (elem.isVariableArity()) {
-            context.separator("...");
+            context.separator("..."); //$NON-NLS-1$
         }
         process(elem.getName(), context);
         for (int i = 0, n = elem.getExtraDimensions(); i < n; i++) {
-            context.symbol("[");
-            context.separator("]");
+            context.symbol("["); //$NON-NLS-1$
+            context.separator("]"); //$NON-NLS-1$
         }
         return null;
     }
@@ -589,8 +589,8 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         begin(elem, context);
         processBlockComment(elem, context);
         context.statement(EmitDirection.BEGIN);
-        context.keyword("for");
-        context.symbol("(");
+        context.keyword("for"); //$NON-NLS-1$
+        context.symbol("("); //$NON-NLS-1$
         if (elem.getInitialization() instanceof LocalVariableDeclaration) {
             LocalVariableDeclaration decl =
                 (LocalVariableDeclaration) elem.getInitialization();
@@ -598,11 +598,11 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         } else {
             process(elem.getInitialization(), context);
         }
-        context.separator(";");
+        context.separator(";"); //$NON-NLS-1$
         process(elem.getCondition(), context);
-        context.separator(";");
+        context.separator(";"); //$NON-NLS-1$
         process(elem.getUpdate(), context);
-        context.separator(")");
+        context.separator(")"); //$NON-NLS-1$
         process(elem.getBody(), context);
         context.statement(EmitDirection.END);
         return null;
@@ -613,13 +613,13 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         begin(elem, context);
         processBlockComment(elem, context);
         context.statement(EmitDirection.BEGIN);
-        context.keyword("if");
-        context.symbol("(");
+        context.keyword("if"); //$NON-NLS-1$
+        context.symbol("("); //$NON-NLS-1$
         process(elem.getCondition(), context);
-        context.separator(")");
+        context.separator(")"); //$NON-NLS-1$
         process(elem.getThenStatement(), context);
         if (appears(elem.getElseStatement())) {
-            context.keyword("else");
+            context.keyword("else"); //$NON-NLS-1$
             process(elem.getElseStatement(), context);
         }
         context.statement(EmitDirection.END);
@@ -632,16 +632,16 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         begin(elem, context);
         processBlockComment(elem, context);
         context.declaration(EmitDirection.BEGIN);
-        context.keyword("import");
+        context.keyword("import"); //$NON-NLS-1$
         if (elem.getImportKind().getTarget() == Target.MEMBER) {
-            context.keyword("static");
+            context.keyword("static"); //$NON-NLS-1$
         }
         process(elem.getName(), context);
         if (elem.getImportKind().getRange() == Range.ON_DEMAND) {
-            context.symbol(".");
-            context.symbol("*");
+            context.symbol("."); //$NON-NLS-1$
+            context.symbol("*"); //$NON-NLS-1$
         }
-        context.separator(";");
+        context.separator(";"); //$NON-NLS-1$
         context.declaration(EmitDirection.END);
         return null;
     }
@@ -675,7 +675,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         begin(elem, context);
         processInlineComment(elem, context);
         process(elem.getExpression(), context);
-        context.keyword("instanceof");
+        context.keyword("instanceof"); //$NON-NLS-1$
         process(elem.getType(), context);
         return null;
     }
@@ -688,11 +688,11 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         process(elem.getJavadoc(), context);
         processBlockComment(elem, context);
         process(elem.getModifiers(), context);
-        context.keyword("interface");
+        context.keyword("interface"); //$NON-NLS-1$
         process(elem.getName(), context);
         processTypeParameters(elem.getTypeParameters(), context);
         if (appears(elem.getSuperInterfaceTypes())) {
-            context.keyword("extends");
+            context.keyword("extends"); //$NON-NLS-1$
             processJoinWithComma(elem.getSuperInterfaceTypes(), context);
         }
         context.classBlock(EmitDirection.BEGIN);
@@ -709,7 +709,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         processBlockComment(elem, context);
         context.statement(EmitDirection.BEGIN);
         process(elem.getLabel(), context);
-        context.separator(":");
+        context.separator(":"); //$NON-NLS-1$
         process(elem.getBody(), context);
         context.statement(EmitDirection.END);
         return null;
@@ -718,10 +718,10 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     @Override
     public Void visitLineComment(LineComment elem, EmitContext context) {
         String body = elem.getString();
-        if (body.startsWith("//")) {
+        if (body.startsWith("//")) { //$NON-NLS-1$
             body = body.substring(2);
         }
-        if (body.startsWith(" ")) {
+        if (body.startsWith(" ")) { //$NON-NLS-1$
             body = body.substring(1);
         }
         context.putLineComment(body);
@@ -754,7 +754,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         processBlockComment(elem, context);
         context.statement(EmitDirection.BEGIN);
         processLocalVaribale(elem, context);
-        context.separator(";");
+        context.separator(";"); //$NON-NLS-1$
         context.statement(EmitDirection.END);
         return null;
     }
@@ -772,7 +772,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
             EmitContext context) {
         begin(elem, context);
         processInlineComment(elem, context);
-        context.symbol("@");
+        context.symbol("@"); //$NON-NLS-1$
         process(elem.getType(), context);
         return null;
     }
@@ -790,17 +790,17 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         process(elem.getName(), context);
         processParameters(elem.getFormalParameters(), context);
         for (int i = 0, n = elem.getExtraDimensions(); i < n; i++) {
-            context.symbol("[");
-            context.separator("]");
+            context.symbol("["); //$NON-NLS-1$
+            context.separator("]"); //$NON-NLS-1$
         }
         if (appears(elem.getExceptionTypes())) {
-            context.keyword("throws");
+            context.keyword("throws"); //$NON-NLS-1$
             processJoinWithComma(elem.getExceptionTypes(), context);
         }
         if (appears(elem.getBody())) {
             process(elem.getBody(), context);
         } else {
-            context.separator(";");
+            context.separator(";"); //$NON-NLS-1$
         }
         context.declaration(EmitDirection.END);
         return null;
@@ -812,7 +812,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         begin(elem, context);
         processInlineComment(elem, context);
         if (process(elem.getQualifier(), context)) {
-            context.symbol(".");
+            context.symbol("."); //$NON-NLS-1$
         }
         processTypeParameters(elem.getTypeArguments(), context);
         process(elem.getName(), context);
@@ -841,7 +841,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
             EmitContext context) {
         begin(elem, context);
         processInlineComment(elem, context);
-        context.symbol("@");
+        context.symbol("@"); //$NON-NLS-1$
         process(elem.getType(), context);
         processParameters(elem.getElements(), context);
         return null;
@@ -854,9 +854,9 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         context.declaration(EmitDirection.BEGIN);
         process(elem.getJavadoc(), context);
         processBlockComment(elem, context);
-        context.keyword("package");
+        context.keyword("package"); //$NON-NLS-1$
         process(elem.getName(), context);
-        context.separator(";");
+        context.separator(";"); //$NON-NLS-1$
         context.declaration(EmitDirection.END);
         return null;
     }
@@ -876,9 +876,9 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
             EmitContext context) {
         begin(elem, context);
         processInlineComment(elem, context);
-        context.symbol("(");
+        context.symbol("("); //$NON-NLS-1$
         process(elem.getExpression(), context);
-        context.separator(")");
+        context.separator(")"); //$NON-NLS-1$
         return null;
     }
 
@@ -897,7 +897,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         begin(elem, context);
         processInlineComment(elem, context);
         process(elem.getQualifier(), context);
-        context.symbol(".");
+        context.symbol("."); //$NON-NLS-1$
         process(elem.getSimpleName(), context);
         return null;
     }
@@ -907,7 +907,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         begin(elem, context);
         processInlineComment(elem, context);
         process(elem.getQualifier(), context);
-        context.symbol(".");
+        context.symbol("."); //$NON-NLS-1$
         process(elem.getSimpleName(), context);
         return null;
     }
@@ -918,9 +918,9 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         begin(elem, context);
         processBlockComment(elem, context);
         context.statement(EmitDirection.BEGIN);
-        context.keyword("return");
+        context.keyword("return"); //$NON-NLS-1$
         process(elem.getExpression(), context);
-        context.separator(";");
+        context.separator(";"); //$NON-NLS-1$
         context.statement(EmitDirection.END);
         return null;
     }
@@ -938,11 +938,11 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
             EmitContext context) {
         begin(elem, context);
         processInlineComment(elem, context);
-        context.symbol("@");
+        context.symbol("@"); //$NON-NLS-1$
         process(elem.getType(), context);
-        context.symbol("(");
+        context.symbol("("); //$NON-NLS-1$
         process(elem.getExpression(), context);
-        context.separator(")");
+        context.separator(")"); //$NON-NLS-1$
         return null;
     }
 
@@ -960,9 +960,9 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         begin(elem, context);
         processInlineComment(elem, context);
         if (process(elem.getQualifier(), context)) {
-            context.symbol(".");
+            context.symbol("."); //$NON-NLS-1$
         }
-        context.keyword("super");
+        context.keyword("super"); //$NON-NLS-1$
         return null;
     }
 
@@ -973,12 +973,12 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         processBlockComment(elem, context);
         context.statement(EmitDirection.BEGIN);
         if (process(elem.getQualifier(), context)) {
-            context.symbol(".");
+            context.symbol("."); //$NON-NLS-1$
         }
         processTypeParameters(elem.getTypeArguments(), context);
-        context.keyword("super");
+        context.keyword("super"); //$NON-NLS-1$
         processParameters(elem.getArguments(), context);
-        context.separator(";");
+        context.separator(";"); //$NON-NLS-1$
         context.statement(EmitDirection.END);
         return null;
     }
@@ -989,9 +989,9 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         begin(elem, context);
         processBlockComment(elem, context);
         context.statement(EmitDirection.BEGIN);
-        context.keyword("case");
+        context.keyword("case"); //$NON-NLS-1$
         process(elem.getExpression(), context);
-        context.symbol(":");
+        context.symbol(":"); //$NON-NLS-1$
         context.statement(EmitDirection.END);
         return null;
     }
@@ -1002,8 +1002,8 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         begin(elem, context);
         processBlockComment(elem, context);
         context.statement(EmitDirection.BEGIN);
-        context.keyword("default");
-        context.symbol(":");
+        context.keyword("default"); //$NON-NLS-1$
+        context.symbol(":"); //$NON-NLS-1$
         context.statement(EmitDirection.END);
         return null;
     }
@@ -1014,10 +1014,10 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         begin(elem, context);
         processBlockComment(elem, context);
         context.statement(EmitDirection.BEGIN);
-        context.keyword("switch");
-        context.symbol("(");
+        context.keyword("switch"); //$NON-NLS-1$
+        context.symbol("("); //$NON-NLS-1$
         process(elem.getExpression(), context);
-        context.separator(")");
+        context.separator(")"); //$NON-NLS-1$
         context.statementBlock(EmitDirection.BEGIN);
         processSwitchBody(elem, context);
         context.statementBlock(EmitDirection.END);
@@ -1053,10 +1053,10 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         begin(elem, context);
         processBlockComment(elem, context);
         context.statement(EmitDirection.BEGIN);
-        context.keyword("synchronized");
-        context.symbol("(");
+        context.keyword("synchronized"); //$NON-NLS-1$
+        context.symbol("("); //$NON-NLS-1$
         process(elem.getExpression(), context);
-        context.separator(")");
+        context.separator(")"); //$NON-NLS-1$
         process(elem.getBody(), context);
         context.statement(EmitDirection.END);
         return null;
@@ -1067,9 +1067,9 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         begin(elem, context);
         processInlineComment(elem, context);
         if (process(elem.getQualifier(), context)) {
-            context.symbol(".");
+            context.symbol("."); //$NON-NLS-1$
         }
-        context.keyword("this");
+        context.keyword("this"); //$NON-NLS-1$
         return null;
     }
 
@@ -1079,9 +1079,9 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         begin(elem, context);
         processBlockComment(elem, context);
         context.statement(EmitDirection.BEGIN);
-        context.keyword("throw");
+        context.keyword("throw"); //$NON-NLS-1$
         process(elem.getExpression(), context);
-        context.separator(";");
+        context.separator(";"); //$NON-NLS-1$
         context.statement(EmitDirection.END);
         return null;
     }
@@ -1091,11 +1091,11 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         begin(elem, context);
         processBlockComment(elem, context);
         context.statement(EmitDirection.BEGIN);
-        context.keyword("try");
+        context.keyword("try"); //$NON-NLS-1$
         process(elem.getTryBlock(), context);
         process(elem.getCatchClauses(), context);
         if (appears(elem.getFinallyBlock())) {
-            context.keyword("finally");
+            context.keyword("finally"); //$NON-NLS-1$
             process(elem.getFinallyBlock(), context);
         }
         context.statement(EmitDirection.END);
@@ -1110,10 +1110,10 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         process(elem.getName(), context);
         Iterator<? extends Type> iter = elem.getTypeBounds().iterator();
         if (iter.hasNext()) {
-            context.keyword("extends");
+            context.keyword("extends"); //$NON-NLS-1$
             process(iter.next(), context);
             while (iter.hasNext()) {
-                context.separator("&");
+                context.separator("&"); //$NON-NLS-1$
                 process(iter.next(), context);
             }
         }
@@ -1137,11 +1137,11 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         processInlineComment(elem, context);
         process(elem.getName(), context);
         for (int i = 0, n = elem.getExtraDimensions(); i < n; i++) {
-            context.symbol("[");
-            context.separator("]");
+            context.symbol("["); //$NON-NLS-1$
+            context.separator("]"); //$NON-NLS-1$
         }
         if (appears(elem.getInitializer())) {
-            context.operator("=");
+            context.operator("="); //$NON-NLS-1$
             process(elem.getInitializer(), context);
         }
         return null;
@@ -1153,10 +1153,10 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         begin(elem, context);
         processBlockComment(elem, context);
         context.statement(EmitDirection.BEGIN);
-        context.keyword("while");
-        context.symbol("(");
+        context.keyword("while"); //$NON-NLS-1$
+        context.symbol("("); //$NON-NLS-1$
         process(elem.getCondition(), context);
-        context.separator(")");
+        context.separator(")"); //$NON-NLS-1$
         process(elem.getBody(), context);
         context.statement(EmitDirection.END);
         return null;
@@ -1166,12 +1166,12 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     public Void visitWildcard(Wildcard elem, EmitContext context) {
         begin(elem, context);
         processInlineComment(elem, context);
-        context.keyword("?");
+        context.keyword("?"); //$NON-NLS-1$
         if (elem.getBoundKind() == WildcardBoundKind.UPPER_BOUNDED) {
-            context.keyword("extends");
+            context.keyword("extends"); //$NON-NLS-1$
             process(elem.getTypeBound(), context);
         } else if (elem.getBoundKind() == WildcardBoundKind.LOWER_BOUNDED) {
-            context.keyword("super");
+            context.keyword("super"); //$NON-NLS-1$
             process(elem.getTypeBound(), context);
         }
         return null;
@@ -1201,11 +1201,11 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         }
         int offset = 0;
         List<? extends DocElement> elements = elem.getElements();
-        if (tag.equals("@param") && isDocTypeParameter(elements)) {
+        if (tag.equals("@param") && isDocTypeParameter(elements)) { //$NON-NLS-1$
             // @param <T>
-            context.symbol("<");
+            context.symbol("<"); //$NON-NLS-1$
             context.symbol(((SimpleName) elements.get(1)).getToken());
-            context.symbol(">");
+            context.symbol(">"); //$NON-NLS-1$
             context.padding();
             offset = 3;
         }
@@ -1229,10 +1229,10 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         if (elements.get(2).getModelKind() != ModelKind.DOC_TEXT) {
             return false;
         }
-        if (((DocText) elements.get(0)).getString().equals("<") == false) {
+        if (((DocText) elements.get(0)).getString().equals("<") == false) { //$NON-NLS-1$
             return false;
         }
-        if (((DocText) elements.get(2)).getString().equals(">") == false) {
+        if (((DocText) elements.get(2)).getString().equals(">") == false) { //$NON-NLS-1$
             return false;
         }
         return true;
@@ -1258,7 +1258,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     public Void visitDocField(DocField elem, EmitContext context) {
         begin(elem, context);
         process(elem.getType(), context);
-        context.symbol("#");
+        context.symbol("#"); //$NON-NLS-1$
         process(elem.getName(), context);
         return null;
     }
@@ -1267,11 +1267,11 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     public Void visitDocMethod(DocMethod elem, EmitContext context) {
         begin(elem, context);
         process(elem.getType(), context);
-        context.symbol("#");
+        context.symbol("#"); //$NON-NLS-1$
         process(elem.getName(), context);
-        context.symbol("(");
+        context.symbol("("); //$NON-NLS-1$
         processJoinWithComma(elem.getFormalParameters(), context);
-        context.separator(")");
+        context.separator(")"); //$NON-NLS-1$
         return null;
     }
 
@@ -1281,7 +1281,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         begin(elem, context);
         process(elem.getType(), context);
         if (elem.isVariableArity()) {
-            context.separator("...");
+            context.separator("..."); //$NON-NLS-1$
         }
         process(elem.getName(), context);
         return null;
@@ -1290,7 +1290,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     @Override
     public Void visitDocText(DocText elem, EmitContext context) {
         begin(elem, context);
-        if (elem.getString().startsWith(" ")) {
+        if (elem.getString().startsWith(" ")) { //$NON-NLS-1$
             context.symbol(elem.getString());
         } else {
             context.immediate(elem.getString());
@@ -1332,7 +1332,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         if (iter.hasNext()) {
             process(iter.next(), context);
             while (iter.hasNext()) {
-                context.separator(",");
+                context.separator(","); //$NON-NLS-1$
                 process(iter.next(), context);
             }
         }
@@ -1340,17 +1340,17 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
 
     private void processParameters(List<? extends Model> elements,
             EmitContext context) {
-        context.symbol("(");
+        context.symbol("("); //$NON-NLS-1$
         processJoinWithComma(elements, context);
-        context.separator(")");
+        context.separator(")"); //$NON-NLS-1$
     }
 
     private void processTypeParameters(List<? extends Model> elements,
             EmitContext context) {
         if (appears(elements)) {
-            context.symbol("<");
+            context.symbol("<"); //$NON-NLS-1$
             processJoinWithComma(elements, context);
-            context.separator(">");
+            context.separator(">"); //$NON-NLS-1$
         }
     }
 

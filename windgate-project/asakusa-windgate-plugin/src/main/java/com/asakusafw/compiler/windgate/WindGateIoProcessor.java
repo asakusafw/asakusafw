@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,23 +67,23 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
     /**
      * The module name of WindGate.
      */
-    public static final String MODULE_NAME = "windgate";
+    public static final String MODULE_NAME = "windgate"; //$NON-NLS-1$
 
-    private static final String CMD_PROCESS = "windgate/bin/process.sh";
+    private static final String CMD_PROCESS = "windgate/bin/process.sh"; //$NON-NLS-1$
 
-    private static final String CMD_FINALIZE = "windgate/bin/finalize.sh";
+    private static final String CMD_FINALIZE = "windgate/bin/finalize.sh"; //$NON-NLS-1$
 
-    private static final String OPT_IMPORT = "import";
+    private static final String OPT_IMPORT = "import"; //$NON-NLS-1$
 
-    private static final String OPT_EXPORT = "export";
+    private static final String OPT_EXPORT = "export"; //$NON-NLS-1$
 
-    private static final String PATTERN_SCRIPT_LOCATION = "META-INF/windgate/{0}-{1}.properties";
+    private static final String PATTERN_SCRIPT_LOCATION = "META-INF/windgate/{0}-{1}.properties"; //$NON-NLS-1$
 
-    static final String OPT_BEGIN = "begin";
+    static final String OPT_BEGIN = "begin"; //$NON-NLS-1$
 
-    static final String OPT_END = "end";
+    static final String OPT_END = "end"; //$NON-NLS-1$
 
-    static final String OPT_ONESHOT = "oneshot";
+    static final String OPT_ONESHOT = "oneshot"; //$NON-NLS-1$
 
     @Override
     public String getId() {
@@ -102,7 +102,7 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
 
     @Override
     public boolean validate(List<InputDescription> inputs, List<OutputDescription> outputs) {
-        LOG.debug("Validating WindGate Vocabularies (batch={}, flow={})",
+        LOG.debug("Validating WindGate Vocabularies (batch={}, flow={})", //$NON-NLS-1$
                 getEnvironment().getBatchId(),
                 getEnvironment().getFlowId());
         boolean valid = true;
@@ -153,13 +153,13 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
             throw new IllegalStateException(MessageFormat.format(
                     "{1} must not be null: {0}",
                     desc.getClass().getName(),
-                    "getProfileName()"));
+                    "getProfileName()")); //$NON-NLS-1$
         }
         if (profileName.isEmpty()) {
             throw new IllegalStateException(MessageFormat.format(
                     "{1} must not be empty string: {0}",
                     desc.getClass().getName(),
-                    "getProfileName()"));
+                    "getProfileName()")); //$NON-NLS-1$
         }
     }
 
@@ -174,7 +174,7 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
         if (context.getOutputs().isEmpty()) {
             return Collections.emptyList();
         }
-        LOG.debug("Emitting epilogue stages for WindGate (batch={}, flow={})",
+        LOG.debug("Emitting epilogue stages for WindGate (batch={}, flow={})", //$NON-NLS-1$
                 getEnvironment().getBatchId(),
                 getEnvironment().getFlowId());
 
@@ -238,14 +238,14 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
             }
         }
         if (buf.length() == 0) {
-            buf.append("0");
+            buf.append("0"); //$NON-NLS-1$
         }
         return buf.toString();
     }
 
     @Override
     public void emitPackage(IoContext context) throws IOException {
-        LOG.debug("Emitting process scripts for WindGate (batch={}, flow={})",
+        LOG.debug("Emitting process scripts for WindGate (batch={}, flow={})", //$NON-NLS-1$
                 getEnvironment().getBatchId(),
                 getEnvironment().getFlowId());
         Map<String, GateScript> importers = toImporterScripts(context.getInputs());
@@ -253,7 +253,7 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
 
         for (Map.Entry<String, GateScript> entry : importers.entrySet()) {
             String script = getScriptLocation(true, entry.getKey());
-            LOG.debug("Emitting importer script {} (batch={}, flow={})", new Object[] {
+            LOG.debug("Emitting importer script {} (batch={}, flow={})", new Object[] { //$NON-NLS-1$
                     script,
                     getEnvironment().getBatchId(),
                     getEnvironment().getFlowId(),
@@ -262,7 +262,7 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
         }
         for (Map.Entry<String, GateScript> entry : exporters.entrySet()) {
             String script = getScriptLocation(false, entry.getKey());
-            LOG.debug("Emitting importer script {} (batch={}, flow={})", new Object[] {
+            LOG.debug("Emitting importer script {} (batch={}, flow={})", new Object[] { //$NON-NLS-1$
                     script,
                     getEnvironment().getBatchId(),
                     getEnvironment().getFlowId(),
@@ -494,13 +494,13 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
                 } else {
                     commands.add(OPT_ONESHOT);
                 }
-                commands.add("classpath:" + getScriptLocation(true, profile));
+                commands.add(String.format("classpath:%s", getScriptLocation(true, profile))); //$NON-NLS-1$
                 commands.add(batchId);
                 commands.add(flowId);
                 commands.add(context.getExecutionId());
                 commands.add(context.getVariableList());
                 results.add(new Command(
-                        String.format("%s%s%04d", MODULE_NAME, '.', results.size()),
+                        String.format("%s%s%04d", MODULE_NAME, '.', results.size()), //$NON-NLS-1$
                         commands,
                         resolveModuleName(profile),
                         resolveProfileName(profile),
@@ -523,13 +523,13 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
                 } else {
                     commands.add(OPT_ONESHOT);
                 }
-                commands.add("classpath:" + getScriptLocation(false, profile));
+                commands.add(String.format("classpath:%s", getScriptLocation(false, profile))); //$NON-NLS-1$
                 commands.add(batchId);
                 commands.add(flowId);
                 commands.add(context.getExecutionId());
                 commands.add(context.getVariableList());
                 results.add(new Command(
-                        String.format("%s%s%04d", MODULE_NAME, '.', results.size()),
+                        String.format("%s%s%04d", MODULE_NAME, '.', results.size()), //$NON-NLS-1$
                         commands,
                         resolveModuleName(profile),
                         resolveProfileName(profile),
@@ -558,7 +558,7 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
                 commands.add(flowId);
                 commands.add(context.getExecutionId());
                 results.add(new Command(
-                        String.format("%s%s%04d", MODULE_NAME, '.', results.size()),
+                        String.format("%s%s%04d", MODULE_NAME, '.', results.size()), //$NON-NLS-1$
                         commands,
                         resolveModuleName(profile),
                         resolveProfileName(profile),

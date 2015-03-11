@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -86,7 +86,7 @@ public abstract class AbstractTestDataToolProvider implements TestDataToolProvid
             @Override
             public String toString() {
                 return MessageFormat.format(
-                        "Verifier(expected={0}, rule={1})",
+                        "Verifier(expected={0}, rule={1})", //$NON-NLS-1$
                         expectedFactory,
                         ruleFactory);
             }

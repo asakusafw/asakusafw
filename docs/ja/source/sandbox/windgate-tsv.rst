@@ -6,8 +6,8 @@ WindGateのTSVファイル連携
 
 Mavenアーティファクト
 =====================
-WindGateのTSVファイル連携モジュールはAsakusa FrameworkのMavenリポジトリに
-グループID ``com.asakusafw.sandbox`` を持つMavenアーティファクトとして登録されています。
+
+WindGateのTSVファイル連携モジュールはAsakusa FrameworkのMavenリポジトリにグループID ``com.asakusafw.sandbox`` を持つMavenアーティファクトとして登録されています。
 
 ..  list-table:: WindGateのTSVファイル連携で使用するMavenアーティファクト
     :widths: 5 5 
@@ -20,9 +20,8 @@ WindGateのTSVファイル連携モジュールはAsakusa FrameworkのMavenリ�
 
 TSVファイル連携モジュールの利用方法
 ===================================
-TSVファイル連携モジュールを使用する場合はアプリケーションプロジェクトの
-``build.gradle`` の ``dependencies`` ブロック内に ``compile`` 依存関係(コンフィグレーション)に対して
-依存定義を追加します。
+
+TSVファイル連携モジュールを使用する場合はアプリケーションプロジェクトの :file:`build.gradle` の ``dependencies`` ブロック内に依存定義を追加します。
 
 ..  code-block:: groovy
 
@@ -35,6 +34,7 @@ TSVファイル連携モジュールを使用する場合はアプリケーシ�
 
 DMDLに対するTSVファイル用拡張属性の追加
 ---------------------------------------
+
 TSVファイル連携を行うために、DMDLに対してTSVファイルを扱うことを示す拡張属性を追加します。
 
 各モデルのDMDLスクリプトに対して、モデル名の記述行の前行に拡張属性 ``@windgate.stream_format(type="tsv")`` を付与します。
@@ -57,10 +57,12 @@ TSVファイル連携を行うために、DMDLに対してTSVファイルを扱�
 
 Asakusa DSLの記述
 =================
+
 WindGateのTSVファイル連携を使った場合のAsakusa DSLの記述については、CSVファイル連携を使った場合と同じです。
 
 TSVファイルフォーマット仕様
 ===========================
+
 WindGateのTSV連携機能で扱うTSVファイルのフォーマット仕様について説明します。
 
 ..  warning::
@@ -68,18 +70,25 @@ WindGateのTSV連携機能で扱うTSVファイルのフォーマット仕様に
 
 TSVフォーマット概要
 -------------------
-* TSVファイルは、MySQLの ``SELECT ... INTO OUTFILE`` で、次の指定をした場合に生成されるファイルフォーマットと同一です（MySQL 5.1のデフォルト)
-    * ``FIELDS TERMINATED BY '\t' ENCLOSED BY '' ESCAPED BY '\\'``
-    * ``LINES TERMINATED BY '\n' STARTING BY ''``
+
+TSVファイルは、MySQLの ``SELECT ... INTO OUTFILE`` で、次の指定をした場合に生成されるファイルフォーマット [#]_ と同一です。
+
+* ``FIELDS TERMINATED BY '\t' ENCLOSED BY '' ESCAPED BY '\\'``
+* ``LINES TERMINATED BY '\n' STARTING BY ''``
+
+..  [#] MySQL 5.1 のデフォルトフォーマットと同一です。
 
 TSVフォーマット詳細
 -------------------
+
 * 各フィールドをDMDLスクリプトの順番に記述します。
 * フィールドの区切り文字にはタブ文字を使用します。
 * レコードの区切り文字は改行(LF)を使用します。
-    * CR+LF は使用できません。
+
+  * CR+LF は使用できません。
 * エスケープ文字には「\\」を使用します。
-    * エスケープ文字そのもの、改行(LF)、タブ文字をデータとして扱う場合は「\\」を前に付加してエスケープします。
+
+  * エスケープ文字そのもの、改行(LF)、タブ文字をデータとして扱う場合は「\\」を前に付加してエスケープします。
 * 引用文字は使用しません。
 * 最終レコードにも(LF)が必要です。
 * エンコーディングはUTF-8を使用します。
@@ -87,17 +96,21 @@ TSVフォーマット詳細
 * 空文字はフィールド区切り文字間に何も文字を入れないことで表現します。
 * 指数表記は使用しません。
 * Booleanは0/1で表します。
-    * 0:false , 1:true
+
+  * 0:false , 1:true
 * Date, Datetimeは以下の書式で表します。
-    * Date: YYYY-MM-DD
-    * Datetime: YYYY-MM-DD HH:MM:SS
+
+  * Date: YYYY-MM-DD
+  * Datetime: YYYY-MM-DD HH:MM:SS
 
 TSVファイルのサンプル
 ---------------------
+
 DMDLスクリプトに対応するTSVファイルの例を以下に示します。
 
 サンプル:DMDLスクリプト
 ~~~~~~~~~~~~~~~~~~~~~~~
+
 ..  code-block:: java
 
     "テーブルEX1"
@@ -114,7 +127,8 @@ DMDLスクリプトに対応するTSVファイルの例を以下に示します�
 
 サンプル:TSVファイル
 ~~~~~~~~~~~~~~~~~~~~
-..  note::
+
+..  attention::
     以下サンプルのドキュメント上の区切り文字はスペースになっていますが、実際のファイルはタブ文字を使用してください。
 
 ..  code-block:: java

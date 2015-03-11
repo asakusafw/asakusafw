@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -110,7 +110,8 @@ public class NamingClassEmitter {
         if (namingInfo == null) {
             throw new IllegalArgumentException("namingInfo must not be null"); //$NON-NLS-1$
         }
-        LOG.debug("Start preparing output file name template: batch={}, flow={}, output={}", new Object[] {
+        LOG.debug("Start preparing output file name template: " //$NON-NLS-1$
+                + "batch={}, flow={}, output={}", new Object[] { //$NON-NLS-1$
                 environment.getBatchId(),
                 environment.getFlowId(),
                 outputName,
@@ -124,7 +125,8 @@ public class NamingClassEmitter {
         QualifiedName name = environment
             .getModelFactory()
             .newQualifiedName(packageName, simpleName);
-        LOG.debug("Finish preparing output file name template: batch={}, flow={}, output={}, class={}", new Object[] {
+        LOG.debug("Finish preparing output file name template: " //$NON-NLS-1$
+                + "batch={}, flow={}, output={}, class={}", new Object[] { //$NON-NLS-1$
                 environment.getBatchId(),
                 environment.getFlowId(),
                 outputName,
@@ -136,9 +138,9 @@ public class NamingClassEmitter {
 
     private static final class Engine {
 
-        private static final String FIELD_RANDOM_HOLDER = "randomValue";
+        private static final String FIELD_RANDOM_HOLDER = "randomValue"; //$NON-NLS-1$
 
-        private static final String FIELD_RANDOMIZER = "randomizer";
+        private static final String FIELD_RANDOMIZER = "randomizer"; //$NON-NLS-1$
 
         private final String moduleId;
 
@@ -203,7 +205,7 @@ public class NamingClassEmitter {
                     new AttributeBuilder(factory)
                         .annotation(
                                 importer.toType(SuppressWarnings.class),
-                                Models.toLiteral(factory, "deprecation"))
+                                Models.toLiteral(factory, "deprecation")) //$NON-NLS-1$
                         .Public()
                         .Final()
                         .toAttributes(),
@@ -269,7 +271,7 @@ public class NamingClassEmitter {
             statements.add(factory.newSuperConstructorInvocation(arguments));
             return factory.newConstructorDeclaration(
                     new JavadocBuilder(factory)
-                        .text("Creates a new instance.")
+                        .text("Creates a new instance.") //$NON-NLS-1$
                         .toJavadoc(),
                     new AttributeBuilder(factory)
                         .Public()
@@ -280,8 +282,8 @@ public class NamingClassEmitter {
         }
 
         private MethodDeclaration createSetMethod() {
-            SimpleName raw = factory.newSimpleName("rawObject");
-            SimpleName object = factory.newSimpleName("object");
+            SimpleName raw = factory.newSimpleName("rawObject"); //$NON-NLS-1$
+            SimpleName object = factory.newSimpleName("object"); //$NON-NLS-1$
             List<Statement> statements = Lists.create();
             statements.add(new ExpressionBuilder(factory, raw)
                 .castTo(t(dataType.getType()))
@@ -294,7 +296,8 @@ public class NamingClassEmitter {
                 case PROPERTY: {
                     DataClass.Property property = naming.getTarget();
                     statements.add(new ExpressionBuilder(factory, factory.newThis())
-                        .method("setProperty", Models.toLiteral(factory, position), property.createGetter(object))
+                        .method("setProperty", //$NON-NLS-1$
+                                Models.toLiteral(factory, position), property.createGetter(object))
                         .toStatement());
                     break;
                 }
@@ -302,16 +305,16 @@ public class NamingClassEmitter {
                     RandomNumber rand = naming.getRandomNumber();
                     statements.add(new ExpressionBuilder(factory, factory.newThis())
                         .field(FIELD_RANDOM_HOLDER)
-                        .method("modify", new ExpressionBuilder(factory, factory.newThis())
+                        .method("modify", new ExpressionBuilder(factory, factory.newThis()) //$NON-NLS-1$
                             .field(FIELD_RANDOMIZER)
                             .method(
-                                    "nextInt",
+                                    "nextInt", //$NON-NLS-1$
                                     Models.toLiteral(factory, rand.getUpperBound() - rand.getLowerBound() + 1))
                             .apply(InfixOperator.PLUS, Models.toLiteral(factory, rand.getLowerBound()))
                             .toExpression())
                         .toStatement());
                     statements.add(new ExpressionBuilder(factory, factory.newThis())
-                        .method("setProperty",
+                        .method("setProperty", //$NON-NLS-1$
                                 Models.toLiteral(factory, position),
                                 new ExpressionBuilder(factory, factory.newThis())
                                     .field(FIELD_RANDOM_HOLDER)
@@ -331,18 +334,18 @@ public class NamingClassEmitter {
                         .Public()
                         .toAttributes(),
                     t(void.class),
-                    factory.newSimpleName("set"),
+                    factory.newSimpleName("set"), //$NON-NLS-1$
                     Collections.singletonList(factory.newFormalParameterDeclaration(t(Object.class), raw)),
                     statements);
         }
 
         private SimpleName getClassName() {
-            return factory.newSimpleName(String.format("%s%04d", "Naming", index));
+            return factory.newSimpleName(String.format("%s%04d", "Naming", index)); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
         private Javadoc createJavadoc() {
             return new JavadocBuilder(factory)
-                .text("A naming output \"{1}\" class for \"{0}\".", moduleId, outputName)
+                .text("A naming output \"{1}\" class for \"{0}\".", moduleId, outputName) //$NON-NLS-1$
                 .toJavadoc();
         }
 

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -112,7 +112,7 @@ public class ReduceFragmentEmitter {
         }
         assert fragment.getFactors().size() == 1;
 
-        LOG.debug("{}に対するフラグメントクラスを生成します", fragment);
+        LOG.debug("start generating reducer fragment: {}", fragment); //$NON-NLS-1$
 
         Engine engine = new Engine(environment, stageBlock, fragment, shuffle);
         CompilationUnit source = engine.generate();
@@ -124,13 +124,13 @@ public class ReduceFragmentEmitter {
             .getModelFactory()
             .newQualifiedName(packageName, simpleName);
 
-        LOG.debug("{}の処理には{}が利用されます", fragment, name);
+        LOG.debug("finish generating reducer fragment: {} ({})", fragment, name); //$NON-NLS-1$
         return new CompiledType(name);
     }
 
     private static class Engine {
 
-        private static final String PROCESS_PREFIX = "process";
+        private static final String PROCESS_PREFIX = "process"; //$NON-NLS-1$
 
         private final FlowCompilingEnvironment environment;
 
@@ -194,7 +194,7 @@ public class ReduceFragmentEmitter {
             members.addAll(connection.createFields());
             ConstructorDeclaration ctor = connection.createConstructor(name);
             List<MethodDeclaration> methods = Lists.create();
-            SimpleName value = names.create("value");
+            SimpleName value = names.create("value"); //$NON-NLS-1$
             methods.add(createProcess(value));
             methods.addAll(emit(value));
             members.addAll(extraFields);
@@ -204,7 +204,7 @@ public class ReduceFragmentEmitter {
                     createJavadoc(),
                     new AttributeBuilder(factory)
                         .annotation(t(TraceLocation.class), createTraceLocationElements())
-                        .annotation(t(SuppressWarnings.class), v("deprecation"))
+                        .annotation(t(SuppressWarnings.class), v("deprecation")) //$NON-NLS-1$
                         .Public()
                         .Final()
                         .toAttributes(),
@@ -219,10 +219,14 @@ public class ReduceFragmentEmitter {
 
         private Map<String, Expression> createTraceLocationElements() {
             Map<String, Expression> results = new LinkedHashMap<String, Expression>();
-            results.put("batchId", Models.toLiteral(factory, environment.getBatchId()));
-            results.put("flowId", Models.toLiteral(factory, environment.getFlowId()));
-            results.put("stageId", Models.toLiteral(factory, Naming.getStageName(stageBlock.getStageNumber())));
-            results.put("fragmentId", Models.toLiteral(factory, String.valueOf(fragment.getSerialNumber())));
+            results.put("batchId", //$NON-NLS-1$
+                    Models.toLiteral(factory, environment.getBatchId()));
+            results.put("flowId", //$NON-NLS-1$
+                    Models.toLiteral(factory, environment.getFlowId()));
+            results.put("stageId", //$NON-NLS-1$
+                    Models.toLiteral(factory, Naming.getStageName(stageBlock.getStageNumber())));
+            results.put("fragmentId", //$NON-NLS-1$
+                    Models.toLiteral(factory, String.valueOf(fragment.getSerialNumber())));
             return results;
         }
 
@@ -301,7 +305,7 @@ public class ReduceFragmentEmitter {
             FlowElementProcessor proc = factor.getProcessor();
             assert proc.getKind() == Kind.RENDEZVOUS;
             RendezvousProcessor processor = (RendezvousProcessor) proc;
-            LOG.debug("{}に{}を適用しています", factor, processor);
+            LOG.debug("applying {}: {}", processor, factor); //$NON-NLS-1$
 
             RendezvousProcessor.Context context = createConext(factor, argument);
             processor.emitRendezvous(context);
@@ -349,7 +353,7 @@ public class ReduceFragmentEmitter {
                         segment,
                         argument,
                         context.getProcessStatements(input.getDescription()));
-                LOG.debug("セグメント{}のメソッドは{}として作成されます", segment, port.getName());
+                LOG.debug("reduce segment \"{}\", {}", segment, port.getName()); //$NON-NLS-1$
                 results.add(port);
             }
             return results;
@@ -379,8 +383,9 @@ public class ReduceFragmentEmitter {
 
         private Javadoc createJavadoc() {
             return new JavadocBuilder(factory)
-                .code("{0}", fragment.getInputPorts())
-                .text("の処理を担当するマッププログラムの断片。")
+                .text("A reducer fragment for processing") //$NON-NLS-1$
+                .code("{0}", fragment.getInputPorts()) //$NON-NLS-1$
+                .text(".") //$NON-NLS-1$
                 .toJavadoc();
         }
 
@@ -394,7 +399,7 @@ public class ReduceFragmentEmitter {
 
         private SimpleName getMethodName(String prefix, Segment segment) {
             return factory.newSimpleName(String.format(
-                    "%s%04d",
+                    "%s%04d", //$NON-NLS-1$
                     prefix,
                     segment.getPortId()));
         }

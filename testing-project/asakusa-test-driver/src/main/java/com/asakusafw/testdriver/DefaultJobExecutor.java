@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,7 +47,7 @@ public class DefaultJobExecutor extends JobExecutor {
     /**
      * Path to the script to submit a stage job (relative path from {@link TestDriverContext#getFrameworkHomePath()}).
      */
-    public static final String SUBMIT_JOB_SCRIPT = "testing/libexec/hadoop-execute.sh";
+    public static final String SUBMIT_JOB_SCRIPT = "testing/libexec/hadoop-execute.sh"; //$NON-NLS-1$
 
     private final TestDriverContext context;
 
@@ -89,7 +89,7 @@ public class DefaultJobExecutor extends JobExecutor {
     @Override
     public void validateEnvironment() {
         if (requiresValidateExecutionEnvironment() == false) {
-            LOG.debug("skipping test execution environment validation");
+            LOG.debug("skipping test execution environment validation"); //$NON-NLS-1$
             return;
         }
         if (context.getFrameworkHomePathOrNull() == null) {
@@ -100,11 +100,11 @@ public class DefaultJobExecutor extends JobExecutor {
         if (configurations.getHadoopCommand() == null) {
             raiseInvalid(MessageFormat.format(
                     "コマンド\"{0}\"を検出できませんでした",
-                    "hadoop"));
+                    "hadoop")); //$NON-NLS-1$
         }
         String runtime = context.getRuntimeEnvironmentVersion();
         if (runtime == null) {
-            LOG.debug("Runtime environment version is missing");
+            LOG.debug("Runtime environment version is missing"); //$NON-NLS-1$
         } else {
             String develop = context.getDevelopmentEnvironmentVersion();
             if (develop.equals(runtime) == false) {
@@ -119,7 +119,7 @@ public class DefaultJobExecutor extends JobExecutor {
     private boolean requiresValidateExecutionEnvironment() {
         String value = System.getProperty(TestDriverContext.KEY_FORCE_EXEC);
         if (value != null) {
-            if (value.isEmpty() || value.equalsIgnoreCase("true")) {
+            if (value.isEmpty() || value.equalsIgnoreCase("true")) { //$NON-NLS-1$
                 return false;
             }
         }
@@ -151,8 +151,8 @@ public class DefaultJobExecutor extends JobExecutor {
         commandLine.add(context.getCurrentBatchId());
 
         for (Map.Entry<String, String> entry : job.getProperties().entrySet()) {
-            commandLine.add("-D");
-            commandLine.add(entry.getKey() + "=" + entry.getValue());
+            commandLine.add("-D"); //$NON-NLS-1$
+            commandLine.add(entry.getKey() + "=" + entry.getValue()); //$NON-NLS-1$
         }
         int exitValue = runCommand(commandLine, environmentVariables);
         if (exitValue != 0) {
@@ -198,9 +198,9 @@ public class DefaultJobExecutor extends JobExecutor {
         builder.environment().putAll(environmentVariables);
         File hadoopCommand = configurations.getHadoopCommand();
         if (hadoopCommand != null) {
-            builder.environment().put("HADOOP_CMD", hadoopCommand.getAbsolutePath());
+            builder.environment().put("HADOOP_CMD", hadoopCommand.getAbsolutePath()); //$NON-NLS-1$
         }
-        builder.directory(new File(System.getProperty("user.home", ".")));
+        builder.directory(new File(System.getProperty("user.home", "."))); //$NON-NLS-1$ //$NON-NLS-2$
 
         int exitCode;
         Process process = null;
@@ -238,7 +238,7 @@ public class DefaultJobExecutor extends JobExecutor {
         assert commandLine != null;
         StringBuilder sb = new StringBuilder();
         for (String cmd : commandLine) {
-            sb.append(cmd).append(" ");
+            sb.append(cmd).append(" "); //$NON-NLS-1$
         }
         return sb.toString().trim();
     }

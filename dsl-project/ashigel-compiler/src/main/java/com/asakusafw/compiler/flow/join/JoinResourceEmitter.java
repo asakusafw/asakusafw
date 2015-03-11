@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,7 +70,7 @@ public final class JoinResourceEmitter {
         assert resource != null;
         this.environment = environment;
         this.factory = environment.getModelFactory();
-        Name packageName = environment.getResourcePackage("join");
+        Name packageName = environment.getResourcePackage("join"); //$NON-NLS-1$
         this.importer = new ImportBuilder(
                 factory,
                 factory.newPackageDeclaration(packageName),
@@ -96,15 +96,13 @@ public final class JoinResourceEmitter {
     }
 
     private Name emit() throws IOException {
-        LOG.debug("{}のリソースに対するプログラムを生成します", resource);
+        LOG.debug("start generating side-data handler: {}", resource); //$NON-NLS-1$
         CompilationUnit source = generate();
         environment.emit(source);
         Name packageName = source.getPackageDeclaration().getName();
         SimpleName simpleName = source.getTypeDeclarations().get(0).getName();
         Name name = environment.getModelFactory().newQualifiedName(packageName, simpleName);
-        LOG.debug("{}のリソースには{}が利用されます",
-                resource,
-                name);
+        LOG.debug("finish generating side-data handler: {} ({})", resource, name); //$NON-NLS-1$
         return name;
     }
 
@@ -118,15 +116,16 @@ public final class JoinResourceEmitter {
     }
 
     private ClassDeclaration createType() {
-        SimpleName name = environment.createUniqueName("Join");
+        SimpleName name = environment.createUniqueName("Join"); //$NON-NLS-1$
         importer.resolvePackageMember(name);
         List<TypeBodyDeclaration> members = createMembers();
         return factory.newClassDeclaration(
                 new JavadocBuilder(factory)
+                    .text("Represents side-data join action between ") //$NON-NLS-1$
                     .linkType(importer.toType(resource.getMasterDataClass().getType()))
-                    .text("と")
+                    .text("and") //$NON-NLS-1$
                     .linkType(importer.toType(resource.getTransactionDataClass().getType()))
-                    .text("を結合するためのリソース。")
+                    .text(".") //$NON-NLS-1$
                     .toJavadoc(),
                 new AttributeBuilder(factory)
                     .Public()
@@ -158,7 +157,7 @@ public final class JoinResourceEmitter {
                     .Protected()
                     .toAttributes(),
                 importer.toType(String.class),
-                factory.newSimpleName("getCacheName"),
+                factory.newSimpleName("getCacheName"), //$NON-NLS-1$
                 Collections.<FormalParameterDeclaration>emptyList(),
                 Collections.singletonList(new ExpressionBuilder(factory, result)
                     .toReturnStatement()));
@@ -174,7 +173,7 @@ public final class JoinResourceEmitter {
                     .Protected()
                     .toAttributes(),
                 importer.toType(resource.getMasterDataClass().getType()),
-                factory.newSimpleName("createValueObject"),
+                factory.newSimpleName("createValueObject"), //$NON-NLS-1$
                 Collections.<FormalParameterDeclaration>emptyList(),
                 Collections.singletonList(new ExpressionBuilder(factory, result)
                     .toReturnStatement()));
@@ -182,14 +181,14 @@ public final class JoinResourceEmitter {
 
     private MethodDeclaration createBuildLeftKey() {
         return createBuildKey(
-                "buildLeftKey",
+                "buildLeftKey", //$NON-NLS-1$
                 resource.getMasterDataClass(),
                 resource.getMasterJoinKeys());
     }
 
     private MethodDeclaration createBuildRightKey() {
         return createBuildKey(
-                "buildRightKey",
+                "buildRightKey", //$NON-NLS-1$
                 resource.getTransactionDataClass(),
                 resource.getTransactionJoinKeys());
     }
@@ -201,12 +200,12 @@ public final class JoinResourceEmitter {
         assert methodName != null;
         assert dataClass != null;
         assert joinKeys != null;
-        SimpleName value = factory.newSimpleName("value");
-        SimpleName key = factory.newSimpleName("key");
+        SimpleName value = factory.newSimpleName("value"); //$NON-NLS-1$
+        SimpleName key = factory.newSimpleName("key"); //$NON-NLS-1$
         List<Statement> statements = Lists.create();
         for (Property join : joinKeys) {
             statements.add(new ExpressionBuilder(factory, key)
-                .method("add", join.createGetter(value))
+                .method("add", join.createGetter(value)) //$NON-NLS-1$
                 .toStatement());
         }
         statements.add(new ExpressionBuilder(factory, key)

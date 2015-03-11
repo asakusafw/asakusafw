@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -140,7 +140,7 @@ public interface DataClass {
             Statement statement = factory.newEmptyStatement();
             statement.putModelTrait(CommentEmitTrait.class, new CommentEmitTrait(Arrays.asList(
                     MessageFormat.format(
-                            "Failed to resolve in \"reset\": {0}",
+                            "Failed to resolve in \"reset\": {0}", //$NON-NLS-1$
                             runtimeType)
             )));
             return statement;
@@ -151,7 +151,7 @@ public interface DataClass {
             Expression expression = Models.toNullLiteral(factory);
             expression.putModelTrait(CommentEmitTrait.class, new CommentEmitTrait(Arrays.asList(
                     MessageFormat.format(
-                            "Failed to resolve in \"createNewInstance\": {0}",
+                            "Failed to resolve in \"createNewInstance\": {0}", //$NON-NLS-1$
                             runtimeType)
             )));
             return expression;
@@ -162,7 +162,7 @@ public interface DataClass {
             Statement statement = factory.newEmptyStatement();
             statement.putModelTrait(CommentEmitTrait.class, new CommentEmitTrait(Arrays.asList(
                     MessageFormat.format(
-                            "Failed to resolve in \"assign\": {0}",
+                            "Failed to resolve in \"assign\": {0}", //$NON-NLS-1$
                             runtimeType)
             )));
             return statement;
@@ -173,7 +173,7 @@ public interface DataClass {
             Statement statement = factory.newEmptyStatement();
             statement.putModelTrait(CommentEmitTrait.class, new CommentEmitTrait(Arrays.asList(
                     MessageFormat.format(
-                            "Failed to resolve in \"createWriter\": {0}",
+                            "Failed to resolve in \"createWriter\": {0}", //$NON-NLS-1$
                             runtimeType)
             )));
             return statement;
@@ -184,7 +184,7 @@ public interface DataClass {
             Statement statement = factory.newEmptyStatement();
             statement.putModelTrait(CommentEmitTrait.class, new CommentEmitTrait(Arrays.asList(
                     MessageFormat.format(
-                            "Failed to resolve in \"createReader\": {0}",
+                            "Failed to resolve in \"createReader\": {0}", //$NON-NLS-1$
                             runtimeType)
             )));
             return statement;

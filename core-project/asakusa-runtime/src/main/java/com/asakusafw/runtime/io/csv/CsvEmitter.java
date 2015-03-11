@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ public class CsvEmitter implements RecordEmitter {
 
     private static final int INITIAL_BUFFER_SIZE = 1024;
 
-    private static final String LINE_DELIMITER = "\r\n";
+    private static final String LINE_DELIMITER = "\r\n"; //$NON-NLS-1$
 
     private static final char ESCAPE = '"';
 
@@ -97,7 +97,8 @@ public class CsvEmitter implements RecordEmitter {
         }
         this.writer = new OutputStreamWriter(stream, config.getCharset());
         this.separator = config.getSeparatorChar();
-        this.escapePattern = Pattern.compile("[" + ESCAPE + separator + LINE_DELIMITER + "]");
+        this.escapePattern = Pattern.compile(
+                "[" + ESCAPE + separator + LINE_DELIMITER + "]"); //$NON-NLS-1$ //$NON-NLS-2$
         this.trueFormat = escape(config.getTrueFormat());
         this.falseFormat = escape(config.getFalseFormat());
         this.dateFormat = DateFormatter.newInstance(config.getDateFormat());

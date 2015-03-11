@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,12 +56,12 @@ public @interface JoinedModel {
         /**
          * {@link #joinFrom(Object, Object)}のメソッド名。
          */
-        String METHOD_NAME_JOIN_FROM = "joinFrom";
+        String METHOD_NAME_JOIN_FROM = "joinFrom"; //$NON-NLS-1$
 
         /**
          * {@link #splitInto(Object, Object)}のメソッド名。
          */
-        String METHOD_NAME_SPLIT_INTO = "splitInto";
+        String METHOD_NAME_SPLIT_INTO = "splitInto"; //$NON-NLS-1$
 
         /**
          * 2つのモデルオブジェクトを結合した結果を、このオブジェクトに設定する。

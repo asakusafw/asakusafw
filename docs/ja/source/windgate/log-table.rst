@@ -6,6 +6,7 @@ WindGateに関するログ一覧
 
 WindGate本体のログ
 ------------------
+
 WindGateのプラグイン部分を除く本体が出力するログは以下の通りです。
 
 ..  list-table:: WindGate本体のログ
@@ -193,7 +194,8 @@ WindGateのプラグイン部分を除く本体が出力するログは以下の
 
 ローカルファイルシステムを利用したセッションに関するログ
 --------------------------------------------------------
-プロファイルの ``session`` セクションに :javadoc:`com.asakusafw.windgate.file.session.FileSessionProvider` を指定した場合の、対応する部分のログは以下の通りです。
+
+プロファイルの ``session`` セクションに ``com.asakusafw.windgate.file.session.FileSessionProvider`` を指定した場合の、対応する部分のログは以下の通りです。
 
 ..  list-table:: ローカルファイルシステムを利用したセッションに関するログ
     :widths: 15 5 30
@@ -231,7 +233,8 @@ WindGateのプラグイン部分を除く本体が出力するログは以下の
 
 再試行可能なデータ転送プロセスに関するログ
 ------------------------------------------
-プロファイルの ``process.basic`` セクションに :javadoc:`com.asakusafw.windgate.retryable.RetryableProcessProvider` を指定した場合の、対応する部分のログは以下の通りです。
+
+プロファイルの ``process.basic`` セクションに ``com.asakusafw.windgate.retryable.RetryableProcessProvider`` を指定した場合の、対応する部分のログは以下の通りです。
 
 ..  list-table:: 再試行可能なデータ転送プロセスに関するログ
     :widths: 15 5 30
@@ -266,10 +269,10 @@ WindGateのプラグイン部分を除く本体が出力するログは以下の
       - エラー
       - データ転送中に割り込み要求が行われたため、すべての試行を中断した
 
-
 同一環境上のHadoopを利用するリソースに関するログ
 ------------------------------------------------
-プロファイルの ``resource.hadoop`` セクションに :javadoc:`com.asakusafw.windgate.hadoopfs.HadoopFsProvider` を指定した場合の、対応する部分のログは以下の通りです。
+
+プロファイルの ``resource.hadoop`` セクションに ``com.asakusafw.windgate.hadoopfs.HadoopFsProvider`` を指定した場合の、対応する部分のログは以下の通りです。
 
 ..  list-table:: 同一環境上のHadoopを利用するリソースに関するログ
     :widths: 15 5 30
@@ -319,7 +322,8 @@ WindGateのプラグイン部分を除く本体が出力するログは以下の
 
 SSH経由でリモートのHadoopを利用するリソースに関するログ
 -------------------------------------------------------
-プロファイルの ``resource.hadoop`` セクションに :javadoc:`com.asakusafw.windgate.hadoopfs.jsch.JschHadoopFsProvider` を指定した場合の、対応する部分のログは以下の通りです。
+
+プロファイルの ``resource.hadoop`` セクションに ``com.asakusafw.windgate.hadoopfs.jsch.JschHadoopFsProvider`` を指定した場合の、対応する部分のログは以下の通りです。
 
 ..  list-table:: SSH経由でリモートのHadoopを利用するリソースに関するログ
     :widths: 15 5 30
@@ -444,7 +448,8 @@ SSH経由でリモートのHadoopを利用するリソースに関するログ
 
 ローカルファイルシステムを利用するリソースに関するログ
 ------------------------------------------------------
-プロファイルの ``resource.local`` セクションに :javadoc:`com.asakusafw.windgate.stream.file.FileResourceProvider` を指定した場合の、対応する部分のログは以下の通りです。
+
+プロファイルの ``resource.local`` セクションに ``com.asakusafw.windgate.stream.file.FileResourceProvider`` を指定した場合の、対応する部分のログは以下の通りです。
 
 ..  list-table:: ローカルファイルシステムを利用するリソースに関するログ
     :widths: 15 5 30
@@ -453,7 +458,6 @@ SSH経由でリモートのHadoopを利用するリソースに関するログ
     * - ログコード
       - レベル
       - 概要
-
     * - ``WG-STREAM-E00001``
       - エラー
       - プロファイル内のリソース設定が正しくない
@@ -488,12 +492,11 @@ SSH経由でリモートのHadoopを利用するリソースに関するログ
       - エラー
       - 出力ストリームを閉じられなかった
 
+データベースを利用するリソースに関するログ
+------------------------------------------
+プロファイルの ``resource.jdbc`` セクションに ``com.asakusafw.windgate.jdbc.JdbcResourceProvider`` を指定した場合の、対応する部分のログは以下の通りです。
 
-リレーショナルデータベースを利用するリソースに関するログ
---------------------------------------------------------
-プロファイルの ``resource.jdbc`` セクションに :javadoc:`com.asakusafw.windgate.jdbc.JdbcResourceProvider` を指定した場合の、対応する部分のログは以下の通りです。
-
-..  list-table:: リレーショナルデータベースを利用するリソースに関するログ
+..  list-table:: データベースを利用するリソースに関するログ
     :widths: 15 5 30
     :header-rows: 1
 

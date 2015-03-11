@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,12 +43,12 @@ public class StreamSupportDriver extends AttributeDriver {
     /**
      * The attribute name.
      */
-    public static final String TARGET_NAME = "windgate.stream_format";
+    public static final String TARGET_NAME = "windgate.stream_format"; //$NON-NLS-1$
 
     /**
      * The element name.
      */
-    public static final String ELEMENT_NAME = "type";
+    public static final String ELEMENT_NAME = "type"; //$NON-NLS-1$
 
     @Override
     public String getTargetName() {

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,17 +58,17 @@ public class LoggingFlowProcessor extends LinePartProcessor {
         switch (level == null ? Level.getDefault() : level) {
         case WARN:
             context.add(new TypeBuilder(f, context.convert(Report.class))
-                .method("warn", result)
+                .method("warn", result) //$NON-NLS-1$
                 .toStatement());
             break;
         case ERROR:
             context.add(new TypeBuilder(f, context.convert(Report.class))
-                .method("error", result)
+                .method("error", result) //$NON-NLS-1$
                 .toStatement());
             break;
         default:
             context.add(new TypeBuilder(f, context.convert(Report.class))
-                .method("info", result)
+                .method("info", result) //$NON-NLS-1$
                 .toStatement());
             break;
         }

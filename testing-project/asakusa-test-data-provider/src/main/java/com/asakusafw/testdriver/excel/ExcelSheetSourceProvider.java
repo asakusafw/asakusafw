@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package com.asakusafw.testdriver.excel;
 
 import java.io.IOException;
 import java.net.URI;
+import java.text.MessageFormat;
 
 import org.apache.poi.ss.usermodel.Sheet;
 import org.slf4j.Logger;
@@ -53,7 +54,9 @@ public class ExcelSheetSourceProvider implements DataModelSourceProvider {
         if (sheet == null) {
             return null;
         }
-        LOG.info("Excelシートをデータソースに利用します: {}", source);
+        LOG.info(MessageFormat.format(
+                "Excelシートをデータソースに利用します: {0}",
+                source));
         return new ExcelSheetDataModelSource(definition, source, sheet);
     }
 }

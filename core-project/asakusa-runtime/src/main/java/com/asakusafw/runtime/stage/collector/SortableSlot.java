@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,22 +46,22 @@ public class SortableSlot implements WritableComparable<SortableSlot> {
     /**
      * {@link #begin(int)}のメソッド名。
      */
-    public static final String NAME_BEGIN = "begin";
+    public static final String NAME_BEGIN = "begin"; //$NON-NLS-1$
 
     /**
      * {@link #addByte(int)}のメソッド名。
      */
-    public static final String NAME_ADD_BYTE = "addByte";
+    public static final String NAME_ADD_BYTE = "addByte"; //$NON-NLS-1$
 
     /**
      * {@link #addRandom()}のメソッド名。
      */
-    public static final String NAME_ADD_RANDOM = "addRandom";
+    public static final String NAME_ADD_RANDOM = "addRandom"; //$NON-NLS-1$
 
     /**
      * {@link #add(Writable)}のメソッド名。
      */
-    public static final String NAME_ADD = "add";
+    public static final String NAME_ADD = "add"; //$NON-NLS-1$
 
     private final SecureRandom random = new SecureRandom();
 

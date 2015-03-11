@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -77,7 +77,7 @@ public final class FlowElement implements FlowElementAttributeProvider {
         for (FlowElementPortDescription port : description.getInputPorts()) {
             if (port.getDirection() != PortDirection.INPUT) {
                 throw new IllegalArgumentException(MessageFormat.format(
-                        "{0} must be an INPUT port",
+                        "{0} must be an INPUT port", //$NON-NLS-1$
                         port));
             }
             inputPorts.add(new FlowElementInput(port, this));
@@ -86,7 +86,7 @@ public final class FlowElement implements FlowElementAttributeProvider {
         for (FlowElementPortDescription port : description.getOutputPorts()) {
             if (port.getDirection() != PortDirection.OUTPUT) {
                 throw new IllegalArgumentException(MessageFormat.format(
-                        "{0} must be an OUTPUT port",
+                        "{0} must be an OUTPUT port", //$NON-NLS-1$
                         port));
             }
             outputPorts.add(new FlowElementOutput(port, this));
@@ -200,7 +200,7 @@ public final class FlowElement implements FlowElementAttributeProvider {
     @Override
     public String toString() {
         return MessageFormat.format(
-                "{0}({1}#{2})",
+                "{0}({1}#{2})", //$NON-NLS-1$
                 getDescription().getName(),
                 getDescription().getKind().name().toLowerCase(),
                 String.valueOf(hashCode()));

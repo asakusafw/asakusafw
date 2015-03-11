@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -99,7 +99,7 @@ public class ConstantRetryStrategy implements RetryStrategy {
             if (attemptNumber >= maxAttemptNumber) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(MessageFormat.format(
-                            "exceeded max attempt number ({2}): {0}",
+                            "exceeded max attempt number ({2}): {0}", //$NON-NLS-1$
                             taskName,
                             maxAttemptNumber));
                 }
@@ -107,7 +107,7 @@ public class ConstantRetryStrategy implements RetryStrategy {
             }
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "waiting for next attempt ({1}/{2}): {0}",
+                        "waiting for next attempt ({1}/{2}): {0}", //$NON-NLS-1$
                         taskName,
                         attemptNumber,
                         maxAttemptNumber));

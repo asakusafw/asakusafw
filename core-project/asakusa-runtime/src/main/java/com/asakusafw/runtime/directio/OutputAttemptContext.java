@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 package com.asakusafw.runtime.directio;
+
+import java.text.MessageFormat;
 
 /**
  * Represents a context for output contents to attempt area.
@@ -98,14 +100,10 @@ public final class OutputAttemptContext {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("OutputAttemptContext [transactionId=");
-        builder.append(transactionId);
-        builder.append(", attemptId=");
-        builder.append(attemptId);
-        builder.append(", outputId=");
-        builder.append(outputId);
-        builder.append("]");
-        return builder.toString();
+        return MessageFormat.format(
+                "OutputAttemptContext(transactionId={0}, attemptId={1}, outputId={2})", //$NON-NLS-1$
+                transactionId,
+                attemptId,
+                outputId);
     }
 }

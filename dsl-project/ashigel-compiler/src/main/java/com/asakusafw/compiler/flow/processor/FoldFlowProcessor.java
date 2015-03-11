@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@ public class FoldFlowProcessor extends RendezvousProcessor {
         FlowElementPortDescription input = context.getInputPort(Fold.ID_INPUT);
         FlowElementPortDescription output = context.getOutputPort(Fold.ID_OUTPUT);
 
-        Expression init = context.createField(boolean.class, "initialized");
+        Expression init = context.createField(boolean.class, "initialized"); //$NON-NLS-1$
         context.addBegin(new ExpressionBuilder(f, init)
             .assignFrom(Models.toLiteral(f, false))
             .toStatement());

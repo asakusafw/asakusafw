@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,6 +51,16 @@ import com.asakusafw.runtime.value.StringOption;
 public class CsvParser implements RecordParser {
 
     static final Log LOG = LogFactory.getLog(CsvParser.class);
+
+    private static final String CHAR_END_OF_CELL = "cell separator";
+
+    private static final String CHAR_END_OF_RECORD = "End of Line";
+
+    private static final String CHAR_END_OF_FILE = "End of File";
+
+    private static final String CHAR_LF = "LF (0x0a)"; //$NON-NLS-1$
+
+    private static final String CHAR_DOUBLE_QUOTE = "\""; //$NON-NLS-1$
 
     private static final int BUFFER_LIMIT = 10 * 1024 * 1024;
 
@@ -279,7 +289,7 @@ public class CsvParser implements RecordParser {
         case '\n':
             state = STATE_QUOTED;
             if (allowLineBreakInValue == false) {
-                exceptionStatus = createStatusInDecode(Reason.UNEXPECTED_LINE_BREAK, "\"", "LF (0x0a)");
+                exceptionStatus = createStatusInDecode(Reason.UNEXPECTED_LINE_BREAK, CHAR_DOUBLE_QUOTE, CHAR_LF);
             }
             currentPhysicalLine++;
             emit(c);
@@ -287,7 +297,7 @@ public class CsvParser implements RecordParser {
         case EOF: // invalid state
             state = STATE_FINAL;
             addSeparator();
-            exceptionStatus = createStatusInDecode(Reason.UNEXPECTED_EOF, "\"", "End of File");
+            exceptionStatus = createStatusInDecode(Reason.UNEXPECTED_EOF, CHAR_DOUBLE_QUOTE, CHAR_END_OF_FILE);
             break;
         default:
             state = STATE_QUOTED;
@@ -321,7 +331,7 @@ public class CsvParser implements RecordParser {
                 addSeparator();
             } else {
                 state = STATE_CELL_BODY;
-                warn(createStatusInDecode(Reason.CHARACTER_AFTER_QUOTE, "cell separator", String.valueOf(c)));
+                warn(createStatusInDecode(Reason.CHARACTER_AFTER_QUOTE, CHAR_END_OF_CELL, String.valueOf(c)));
                 emit(c);
             }
             break;
@@ -363,14 +373,14 @@ public class CsvParser implements RecordParser {
         case '\n':
             state = STATE_QUOTED;
             if (allowLineBreakInValue == false) {
-                exceptionStatus = createStatusInDecode(Reason.UNEXPECTED_LINE_BREAK, "\"", "LF (0x0a)");
+                exceptionStatus = createStatusInDecode(Reason.UNEXPECTED_LINE_BREAK, CHAR_DOUBLE_QUOTE, CHAR_LF);
             }
             emit(c);
             break;
         case EOF: // invalid state
             state = STATE_FINAL;
             addSeparator();
-            exceptionStatus = createStatusInDecode(Reason.UNEXPECTED_EOF, "\"", "End of File");
+            exceptionStatus = createStatusInDecode(Reason.UNEXPECTED_EOF, CHAR_DOUBLE_QUOTE, CHAR_END_OF_FILE);
             break;
         default:
             state = STATE_QUOTED;
@@ -795,7 +805,7 @@ public class CsvParser implements RecordParser {
                     currentPhysicalHeadLine,
                     currentRecordNumber,
                     cellBeginPositions.position(),
-                    "End of Line",
+                    CHAR_END_OF_RECORD,
                     lineBuffer.toString()), null);
         }
     }

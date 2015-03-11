@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ public @interface Batch {
     /**
      * The default parameter value pattern.
      */
-    String DEFAULT_PARAMETER_VALUE_PATTERN = ".*";
+    String DEFAULT_PARAMETER_VALUE_PATTERN = ".*"; //$NON-NLS-1$
 
     /**
      * このバッチの識別子。
@@ -42,6 +42,7 @@ public @interface Batch {
      * この識別子は、同一アプリケーション内で重複してはならない。
      * また、識別子には、下記の形式(Javaのパッケージ名のうち、ASCIIコード表に収まるもののみ)の
      * 名前を利用可能である。
+     * </p>
 <pre><code>
 Name :
     SimpleName
@@ -56,7 +57,6 @@ NamePart: one of
     NameStart
     0-9
 </code></pre>
-     * </p>
      */
     String name();
 

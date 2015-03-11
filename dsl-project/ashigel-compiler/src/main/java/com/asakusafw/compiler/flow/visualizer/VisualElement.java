@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package com.asakusafw.compiler.flow.visualizer;
 
+import java.text.MessageFormat;
 import java.util.UUID;
 
 import com.asakusafw.compiler.common.Precondition;
@@ -66,10 +67,9 @@ public class VisualElement implements VisualNode {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("VisualElement [element=");
-        builder.append(element);
-        builder.append("]");
-        return builder.toString();
+        return MessageFormat.format(
+                "{0}({1})", //$NON-NLS-1$
+                getClass().getSimpleName(),
+                element);
     }
 }

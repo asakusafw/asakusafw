@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package com.asakusafw.testdriver.excel;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.text.MessageFormat;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,14 +47,16 @@ public class ExcelSheetSinkProvider implements DataModelSinkProvider {
             URI sink,
             TestContext context) throws IOException {
         String scheme = sink.getScheme();
-        if (scheme == null || scheme.endsWith("file") == false) {
+        if (scheme == null || scheme.endsWith("file") == false) { //$NON-NLS-1$
             return null;
         }
         File file = new File(sink);
         if (Util.isHssf(file.getPath()) == false && Util.isXssf(file.getPath()) == false) {
             return null;
         }
-        LOG.info("Excelシートをデータシンクに利用します: {}", sink);
+        LOG.info(MessageFormat.format(
+                "Excelシートをデータシンクに利用します: {0}",
+                sink));
         return new ExcelSheetSinkFactory(file).createSink(definition, context);
     }
 }

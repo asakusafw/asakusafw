@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -113,7 +113,7 @@ public class ConcurrentBatchFileCacheRepository implements BatchFileCacheReposit
                         futures.remove(file);
                         if (LOG.isDebugEnabled()) {
                             LOG.debug(MessageFormat.format(
-                                    "Processing cache is cancelled: {0}",
+                                    "Processing cache is cancelled: {0}", //$NON-NLS-1$
                                     file), e);
                         }
                     } catch (ExecutionException e) {
@@ -125,7 +125,7 @@ public class ConcurrentBatchFileCacheRepository implements BatchFileCacheReposit
                     } catch (TimeoutException e) {
                         if (LOG.isTraceEnabled()) {
                             LOG.trace(MessageFormat.format(
-                                    "Trying to wait for next task complete: {0}",
+                                    "Trying to wait for next task complete: {0}", //$NON-NLS-1$
                                     file), e);
                         }
                     }
@@ -135,7 +135,7 @@ public class ConcurrentBatchFileCacheRepository implements BatchFileCacheReposit
             for (Map.Entry<Path, Future<Path>> entry : futures.entrySet()) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(MessageFormat.format(
-                            "Request cancel for processing cache: {0}",
+                            "Request cancel for processing cache: {0}", //$NON-NLS-1$
                             entry.getKey()));
                 }
                 entry.getValue().cancel(true);
@@ -155,7 +155,7 @@ public class ConcurrentBatchFileCacheRepository implements BatchFileCacheReposit
         } else if (cause instanceof InterruptedException) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "Processing cache is cancelled: {0}",
+                        "Processing cache is cancelled: {0}", //$NON-NLS-1$
                         file), e);
             }
             return null;

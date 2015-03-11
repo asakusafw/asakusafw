@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,9 +44,9 @@ public class OperatorCompilingEnvironment {
 
     private static final Element[] EMPTY_ELEMENTS = new Element[0];
 
-    private static final String KEY_FORCE_GENERATE = "com.asakusafw.operator.generate.force";
+    private static final String KEY_FORCE_GENERATE = "com.asakusafw.operator.generate.force"; //$NON-NLS-1$
 
-    private static final String DEFAULT_FORCE_GENERATE = "false";
+    private static final String DEFAULT_FORCE_GENERATE = "false"; //$NON-NLS-1$
 
     private final ProcessingEnvironment processingEnvironment;
 

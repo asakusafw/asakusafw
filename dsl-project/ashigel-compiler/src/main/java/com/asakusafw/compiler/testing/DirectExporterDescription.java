@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ public class DirectExporterDescription extends TemporaryOutputDescription {
         Precondition.checkMustNotBeNull(pathPrefix, "pathPrefix"); //$NON-NLS-1$
         if (Location.fromPath(pathPrefix, '/').isPrefix() == false) {
             throw new IllegalArgumentException(MessageFormat.format(
-                    "pathPrefix must be an path prefix (ends with {1}): {0}",
+                    "pathPrefix must be an path prefix (ends with {1}): {0}", //$NON-NLS-1$
                     pathPrefix,
                     Location.WILDCARD_SUFFIX));
         }

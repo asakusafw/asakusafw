@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,9 +26,11 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 import javax.tools.Diagnostic;
@@ -47,6 +49,7 @@ import com.asakusafw.dmdl.model.AstScript;
 import com.asakusafw.dmdl.model.AstSimpleName;
 import com.asakusafw.dmdl.parser.DmdlEmitter;
 import com.asakusafw.dmdl.source.DmdlSourceDirectory;
+import com.asakusafw.dmdl.source.DmdlSourceFile;
 import com.asakusafw.dmdl.source.DmdlSourceRepository;
 import com.asakusafw.dmdl.source.DmdlSourceResource;
 import com.asakusafw.runtime.model.DataModel;
@@ -142,6 +145,42 @@ public class GeneratorTesterRoot {
             ClassLoader loaded = compile(files);
             return new ModelLoader(loaded);
         } catch (Exception e) {
+            throw new AssertionError(e);
+        }
+    }
+
+    /**
+     * Generate Java model classes from specified DMDL and returns compile and load results.
+     * @param lines DMDL lines
+     * @return generated classes
+     */
+    protected ModelLoader generateJavaFromLines(String... lines) {
+        try {
+            List<VolatileJavaFile> sources = emit(new DmdlSourceFile(
+                    Arrays.asList(emitDmdl(lines)),
+                    Charset.forName("UTF-8")));
+            ClassLoader loaded = compile(sources);
+            return new ModelLoader(loaded);
+        } catch (Exception e) {
+            throw new AssertionError(e);
+        }
+    }
+
+    private File emitDmdl(String... lines) {
+        try {
+            File file = folder.newFile(UUID.randomUUID() + ".dmdl");
+            PrintWriter writer = new PrintWriter(file, "UTF-8");
+            try {
+                for (String line : lines) {
+                    String s = line.replace('\'', '"');
+                    writer.println(s);
+                    System.out.println(s);
+                }
+            } finally {
+                writer.close();
+            }
+            return file;
+        } catch (IOException e) {
             throw new AssertionError(e);
         }
     }
@@ -282,6 +321,22 @@ public class GeneratorTesterRoot {
             }
             catch (Exception e) {
                 return false;
+            }
+        }
+
+        /**
+         * Loads a class.
+         * @param category the category name
+         * @param name the simple name of target class
+         * @return the loaded class
+         * @see #setNamespace(String)
+         */
+        public Class<?> load(String category, String name) {
+            try {
+                return type(category, name);
+            }
+            catch (Exception e) {
+                throw new AssertionError(e);
             }
         }
 

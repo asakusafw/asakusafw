@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,7 +73,7 @@ finally {
  */
 public class TsvEmitter implements RecordEmitter {
 
-    private static final Charset TEXT_ENCODE = Charset.forName("UTF-8");
+    private static final Charset TEXT_ENCODE = Charset.forName("UTF-8"); //$NON-NLS-1$
 
     private static final int BUFFER_SIZE = 2048;
 

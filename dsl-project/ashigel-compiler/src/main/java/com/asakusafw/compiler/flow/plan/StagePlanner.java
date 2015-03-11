@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,7 +69,7 @@ import com.asakusafw.vocabulary.operator.Trace;
  */
 public class StagePlanner {
 
-    static final String KEY_COMPRESS_FLOW_BLOCK_GROUP = "compressFlowBlockGroup";
+    static final String KEY_COMPRESS_FLOW_BLOCK_GROUP = "compressFlowBlockGroup"; //$NON-NLS-1$
 
     static final GenericOptionValue DEFAULT_COMPRESS_FLOW_BLOCK_GROUP = GenericOptionValue.ENABLED;
 
@@ -128,9 +128,9 @@ public class StagePlanner {
         if (validate(graph) == false) {
             return null;
         }
-        LOG.debug("{}の実行計画を計算中", graph);
-        LOG.debug("フロー部品の圧縮: {}", options.isCompressFlowPart());
-        LOG.debug("並行ステージの圧縮: {}", options.isCompressConcurrentStage());
+        LOG.debug("creating logical plan: {}", graph); //$NON-NLS-1$
+        LOG.debug("compressFlowPart: {}", options.isCompressFlowPart()); //$NON-NLS-1$
+        LOG.debug("compressConcurrentStage: {}", options.isCompressConcurrentStage()); //$NON-NLS-1$
 
         FlowGraph copy = FlowGraphUtil.deepCopy(graph);
 
@@ -147,7 +147,7 @@ public class StagePlanner {
 
     private boolean rewrite(FlowGraph graph) {
         assert graph != null;
-        LOG.debug("{}の書き換えを行います", graph);
+        LOG.debug("rewriting flow graph: {}", graph); //$NON-NLS-1$
         boolean modified = false;
         for (FlowGraphRewriter rewriter : rewriters) {
             try {
@@ -173,10 +173,10 @@ public class StagePlanner {
 
     private void unifyGlobalSideEffects(FlowGraph graph) {
         assert graph != null;
-        LOG.debug("{}に出現する副作用のある演算子を処理します", graph);
+        LOG.debug("processing operators w/ global side-effects: {}", graph); //$NON-NLS-1$
         for (FlowElement element : FlowGraphUtil.collectElements(graph)) {
             if (FlowGraphUtil.hasGlobalSideEffect(element)) {
-                LOG.debug("{}には副作用があるため、直後にチェックポイントが挿入されます", element);
+                LOG.debug("inserting checkpoint before \"volatile\" operator: {}", element); //$NON-NLS-1$
                 for (FlowElementOutput output : element.getOutputPorts()) {
                     FlowGraphUtil.insertCheckpoint(output);
                 }
@@ -200,7 +200,7 @@ public class StagePlanner {
      */
     StageGraph buildStageGraph(FlowGraph graph) {
         assert graph != null;
-        LOG.debug("{}に対するステージを計算します", graph);
+        LOG.debug("building stage graph: {}", graph); //$NON-NLS-1$
         FlowBlock input = buildInputBlock(graph);
         FlowBlock output = buildOutputBlock(graph);
         List<FlowBlock> computation = buildComputationBlocks(graph);
@@ -218,7 +218,7 @@ public class StagePlanner {
     private void compressStageBlocks(List<StageBlock> blocks) {
         assert blocks != null;
         boolean changed;
-        LOG.debug("ステージブロックを整理しています");
+        LOG.debug("compressing stage blocks"); //$NON-NLS-1$
         do {
             changed = false;
             Iterator<StageBlock> iter = blocks.iterator();
@@ -226,7 +226,7 @@ public class StagePlanner {
                 StageBlock block = iter.next();
                 changed |= block.compaction();
                 if (block.isEmpty()) {
-                    LOG.debug("{}は空になったため削除されます", block);
+                    LOG.debug("removing empty stage block: {}", block); //$NON-NLS-1$
                     iter.remove();
                     changed = true;
                 }
@@ -236,7 +236,7 @@ public class StagePlanner {
 
     private void sortStageBlocks(List<StageBlock> stageBlocks) {
         assert stageBlocks != null;
-        LOG.debug("ステージグラフのステージを整列しています");
+        LOG.debug("sorting stages in stage graph"); //$NON-NLS-1$
         Map<FlowBlock, StageBlock> membership = Maps.create();
         for (StageBlock stage : stageBlocks) {
             for (FlowBlock flow : stage.getMapBlocks()) {
@@ -289,7 +289,7 @@ public class StagePlanner {
 
     private List<StageBlock> buildStageBlocks(List<FlowBlock> blocks) {
         assert blocks != null;
-        LOG.debug("{}に対するステージブロックを構成します", blocks);
+        LOG.debug("building stage blocks: {}", blocks); //$NON-NLS-1$
 
         List<StageBlock> results = Lists.create();
         List<FlowBlockGroup> flowBlockGroups = collectFlowBlockGroups(blocks);
@@ -300,15 +300,15 @@ public class StagePlanner {
                 assert predecessors.isEmpty() == false;
                 StageBlock stage = new StageBlock(predecessors, group.members);
                 results.add(stage);
-                LOG.debug("ステージ{}はレデュースブロック{}と先行する{}から作成されます", new Object[] {
+                LOG.debug("stage {}: map={}, reduce={}", new Object[] { //$NON-NLS-1$
                         stage,
-                        group.members,
                         predecessors,
+                        group.members,
                 });
             } else {
                 StageBlock stage = new StageBlock(group.members, Collections.<FlowBlock>emptySet());
                 results.add(stage);
-                LOG.debug("ステージ{}はマップブロック{}から作成されます", stage, group.members);
+                LOG.debug("stage {}: map={}, reduce=N/A", stage, group.members); //$NON-NLS-1$
             }
         }
         return results;
@@ -322,7 +322,7 @@ public class StagePlanner {
         if (active == GenericOptionValue.DISABLED) {
             return;
         }
-        LOG.debug("Compressing flow blocks");
+        LOG.debug("Compressing flow blocks"); //$NON-NLS-1$
 
         // merge blocks
         List<FlowBlock> blocks = Lists.create();
@@ -332,7 +332,7 @@ public class StagePlanner {
             if (group.reducer) {
                 Set<FlowBlock> predecessors = getPredecessors(group.members);
                 if (predecessors.size() >= 2) {
-                    LOG.debug("Compressing flow blocks: {}", predecessors);
+                    LOG.debug("Compressing flow blocks: {}", predecessors); //$NON-NLS-1$
                     FlowBlock mergedPreds = FlowBlock.fromBlocks(predecessors, inputMapping, outputMapping);
                     group.predeceaseBlocks.clear();
                     group.predeceaseBlocks.add(mergedPreds);
@@ -340,7 +340,7 @@ public class StagePlanner {
                 }
             }
             if (group.members.size() >= 2) {
-                LOG.debug("Compressing flow blocks: {}", group.members);
+                LOG.debug("Compressing flow blocks: {}", group.members); //$NON-NLS-1$
                 FlowBlock mergedBlocks = FlowBlock.fromBlocks(group.members, inputMapping, outputMapping);
                 group.members.clear();
                 group.members.add(mergedBlocks);
@@ -394,8 +394,7 @@ public class StagePlanner {
 
     private List<FlowBlockGroup> collectFlowBlockGroups(List<FlowBlock> blocks) {
         assert blocks != null;
-
-        LOG.debug("ステージ中のブロックグループを検証しています");
+        LOG.debug("collecting concurrent stages"); //$NON-NLS-1$
 
         LinkedList<FlowBlockGroup> groups = new LinkedList<FlowBlockGroup>();
         for (FlowBlock block : blocks) {
@@ -407,10 +406,10 @@ public class StagePlanner {
         }
 
         if (options.isCompressConcurrentStage() == false) {
-            LOG.debug("コンパイラの設定により並行ステージを圧縮は行いません");
+            LOG.debug("compressing concurrent stages is disabled"); //$NON-NLS-1$
             return Lists.from(groups);
         }
-        LOG.debug("並行ステージを圧縮しています");
+        LOG.debug("compressing concurrent stages"); //$NON-NLS-1$
 
         // クリティカルパス距離の計算
         computeCriticalPaths(groups);
@@ -423,7 +422,7 @@ public class StagePlanner {
             while (rest.hasNext()) {
                 FlowBlockGroup next = rest.next();
                 if (first.combine(next)) {
-                    LOG.debug("ブロック{}と{}は合成されます", first.founder, next.founder);
+                    LOG.debug("merging flow block: {}, {}", first.founder, next.founder); //$NON-NLS-1$
                     rest.remove();
                 }
             }
@@ -521,19 +520,20 @@ public class StagePlanner {
      */
     private List<FlowBlock> buildComputationBlocks(FlowGraph graph) {
         assert graph != null;
-        LOG.debug("{}に出現するブロックを計算しています", graph);
+        LOG.debug("computing flow blocks: {}", graph); //$NON-NLS-1$
 
-        // シャッフル境界から後続するステージ境界まで
+        // shuffle bound -> next stage bounds
         Collection<FlowPath> shuffleSuccessors = Sets.create();
 
-        // シャッフル境界から先行するステージ境界まで
+        // shuffle bound <- previous stage bounds
         Collection<FlowPath> shufflePredecessors = Sets.create();
 
-        // ステージ境界から後続する任意の境界まで
+        // stage bound -> any next (shuffle/stage) bounds
         Map<FlowElement, FlowPath> stageSuccessors = Maps.create();
 
-        // ステージ境界から先行する任意の境界まで
+        // stage bound <- any previous (shuffle/stage) bounds
         Map<FlowElement, FlowPath> stagePredecessors = Maps.create();
+
         for (FlowElement boundary : FlowGraphUtil.collectBoundaries(graph)) {
             boolean shuffle = FlowGraphUtil.isShuffleBoundary(boundary);
             boolean success = FlowGraphUtil.hasSuccessors(boundary);
@@ -555,15 +555,9 @@ public class StagePlanner {
 
         List<FlowBlock> results = Lists.create();
 
-        // シャッフル境界から後続するステージ境界まで
         results.addAll(collectShuffleToStage(graph, shuffleSuccessors));
-
-        // ステージ境界から後続するシャッフル境界まで
         results.addAll(collectStageToShuffle(graph, shufflePredecessors, stageSuccessors));
-
-        // ステージ境界から後続するステージ境界まで
         results.addAll(collectStageToStage(graph, stageSuccessors, stagePredecessors));
-
         return results;
     }
 
@@ -574,7 +568,7 @@ public class StagePlanner {
         assert graph != null;
         assert stageSuccessors != null;
         assert stagePredecessors != null;
-        LOG.debug("{}のステージ境界からステージ境界までをマップブロックに切り出しています", graph);
+        LOG.debug("computing map blocks (w/o succeeding reducers): {}", graph); //$NON-NLS-1$
 
         // (ステージ境界, ステージ境界) は入力ごとにマップブロックにする
         List<FlowBlock> results = Lists.create();
@@ -607,7 +601,7 @@ public class StagePlanner {
                     false,
                     false);
             results.add(block);
-            LOG.debug("{}から{}までがマップロックとして登録されました",
+            LOG.debug("add map block (stage -> stage): {} -> {}", //$NON-NLS-1$
                     block.getBlockInputs(),
                     block.getBlockOutputs());
         }
@@ -621,7 +615,7 @@ public class StagePlanner {
         assert graph != null;
         assert shufflePredecessors != null;
         assert stageSuccessors != null;
-        LOG.debug("{}のステージ境界からシャッフル境界までをマップブロックに切り出しています", graph);
+        LOG.debug("computing map blocks (w/ succeeding reducers): {}", graph); //$NON-NLS-1$
 
         // (ステージ境界, シャッフル境界) は(入力, シャッフル)ごとにマップブロックにする
         List<FlowBlock> results = Lists.create();
@@ -641,7 +635,7 @@ public class StagePlanner {
                         false,
                         false);
                 results.add(block);
-                LOG.debug("{}から{}までがシャッフルブロックとして登録されました",
+                LOG.debug("add map block (stage -> shuffle): {} -> {}", //$NON-NLS-1$
                         block.getBlockInputs(),
                         block.getBlockOutputs());
             }
@@ -654,7 +648,7 @@ public class StagePlanner {
             Collection<FlowPath> shuffleSuccessors) {
         assert graph != null;
         assert shuffleSuccessors != null;
-        LOG.debug("{}のシャッフル境界からステージ境界までをレデュースブロックに切り出しています", graph);
+        LOG.debug("computing reduce blocks (w/ succeeding reducers): {}", graph); //$NON-NLS-1$
 
         // [シャッフル境界, ステージ境界) は必ず単一のレデュースブロックになる
         List<FlowBlock> results = Lists.create();
@@ -665,7 +659,7 @@ public class StagePlanner {
                     true,
                     false);
             results.add(block);
-            LOG.debug("{}から{}までがレデュースブロックとして登録されました",
+            LOG.debug("add reduce block (shuffle -> stage): {} -> {}", //$NON-NLS-1$
                     block.getBlockInputs(),
                     block.getBlockOutputs());
         }
@@ -683,7 +677,7 @@ public class StagePlanner {
         assert inputBlock != null;
         assert outputBlock != null;
         assert computationBlocks != null;
-        LOG.debug("ブロック間の関係を計算しています");
+        LOG.debug("connecting flow blocks"); //$NON-NLS-1$
 
         List<FlowBlock> blocks = Lists.create();
         blocks.add(inputBlock);
@@ -740,7 +734,7 @@ public class StagePlanner {
     private void trimFlowBlocks(List<FlowBlock> blocks) {
         assert blocks != null;
         boolean changed;
-        LOG.debug("演算子グラフの不要な要素を削除します");
+        LOG.debug("removing dead operators"); //$NON-NLS-1$
         do {
             changed = false;
             Iterator<FlowBlock> iter = blocks.iterator();
@@ -748,7 +742,7 @@ public class StagePlanner {
                 FlowBlock block = iter.next();
                 changed |= block.compaction();
                 if (block.isEmpty()) {
-                    LOG.debug("{}は空になったため削除されます", block);
+                    LOG.debug("removing empty block: {}", block); //$NON-NLS-1$
                     iter.remove();
                     changed = true;
                 }
@@ -771,12 +765,11 @@ public class StagePlanner {
      */
     void normalizeFlowGraph(FlowGraph graph) {
         assert graph != null;
-        LOG.debug("{}の演算子グラフを標準形に変換しています", graph);
+        LOG.debug("normalizing operator graph: {}", graph); //$NON-NLS-1$
 
         inlineFlowParts(graph);
 
-        // FIXME at most onceの性質を持つ演算子の単一化
-        // とりあえずの措置として、直後にチェックポイントを配置する
+        // FIXME process "at most once" (or "volatile") operators
         unifyGlobalSideEffects(graph);
 
         insertCheckpoints(graph);
@@ -799,7 +792,7 @@ public class StagePlanner {
                         : Inline.KEEP_SEGREGATED;
             }
             if (inlineConfig == Inline.FORCE_AGGREGATE) {
-                LOG.debug("フロー部品{}を圧縮します", element.getDescription().getName());
+                LOG.debug("compressing flow-part: {}", element.getDescription().getName()); //$NON-NLS-1$
                 FlowGraphUtil.inlineFlowPart(element);
             } else {
                 FlowGraphUtil.inlineFlowPart(element, FlowBoundary.STAGE);
@@ -815,7 +808,7 @@ public class StagePlanner {
      */
     void insertCheckpoints(FlowGraph graph) {
         assert graph != null;
-        LOG.debug("{}にステージ境界を挿入します", graph);
+        LOG.debug("inserting checkpoints on stage bounds: {}", graph); //$NON-NLS-1$
         for (FlowElement element : FlowGraphUtil.collectBoundaries(graph)) {
             insertCheckpoints(element);
         }
@@ -842,18 +835,18 @@ public class StagePlanner {
             }
             Set<PortConnection> connections = output.getConnected();
             if (connections.size() != 1) {
-                LOG.debug("Inserts checkpoint after {}", output);
+                LOG.debug("Inserts checkpoint after {}", output); //$NON-NLS-1$
                 FlowGraphUtil.insertCheckpoint(output);
                 continue;
             }
             FlowElementInput input = connections.iterator().next().getDownstream();
             FlowElement successor = input.getOwner();
             if (isPushDownTarget(successor) == false) {
-                LOG.debug("Inserts checkpoint after {}", output);
+                LOG.debug("Inserts checkpoint after {}", output); //$NON-NLS-1$
                 FlowGraphUtil.insertCheckpoint(output);
                 continue;
             }
-            LOG.debug("Pushdown operator {}", successor);
+            LOG.debug("Pushdown operator {}", successor); //$NON-NLS-1$
             work.addAll(successor.getOutputPorts());
         }
     }
@@ -937,7 +930,7 @@ public class StagePlanner {
      */
     void splitIdentities(FlowGraph graph) {
         assert graph != null;
-        LOG.debug("{}に出現する恒等演算子を分解します", graph);
+        LOG.debug("normalizing identity operators: {}", graph); //$NON-NLS-1$
         boolean changed;
         do {
             changed = false;
@@ -957,7 +950,7 @@ public class StagePlanner {
      */
     void reduceIdentities(FlowGraph graph) {
         assert graph != null;
-        LOG.debug("{}に出現する不要な恒等演算子を削除します", graph);
+        LOG.debug("reducing identity operators: {}", graph); //$NON-NLS-1$
         boolean changed;
         do {
             changed = false;
@@ -967,7 +960,7 @@ public class StagePlanner {
                 }
                 Set<FlowElement> preds = FlowGraphUtil.getPredecessors(element);
                 Set<FlowElement> succs = FlowGraphUtil.getSuccessors(element);
-                assert preds.size() == 1 && succs.size() == 1 : "all identities must be splitted";
+                assert preds.size() == 1 && succs.size() == 1 : "all identities must be splitted"; //$NON-NLS-1$
 
                 // ブロック唯一の要素になりそうであれば残す
                 FlowElement pred = preds.iterator().next();
@@ -975,7 +968,7 @@ public class StagePlanner {
                 if (FlowGraphUtil.isStageBoundary(pred) && FlowGraphUtil.isBoundary(succ)) {
                     continue;
                 }
-                LOG.debug("{}は不要な恒等演算子なので削除します", element);
+                LOG.debug("removing redundant identity operator: {}", element); //$NON-NLS-1$
 
                 changed = true;
                 FlowGraphUtil.skip(element);
@@ -990,7 +983,7 @@ public class StagePlanner {
      */
     boolean validate(FlowGraph graph) {
         assert graph != null;
-        LOG.debug("{}の正当性を検証しています", graph);
+        LOG.debug("validating flow graph: {}", graph); //$NON-NLS-1$
 
         Graph<FlowElement> elements = FlowGraphUtil.toElementGraph(graph);
 
@@ -1008,7 +1001,7 @@ public class StagePlanner {
     private boolean validateConnection(FlowGraph graph, Graph<FlowElement> elements) {
         assert graph != null;
         assert elements != null;
-        LOG.debug("{}の結線に関する正当性を確認しています", graph);
+        LOG.debug("validating operator connections: {}", graph); //$NON-NLS-1$
 
         boolean sawError = false;
         for (FlowElement element : elements.getNodeSet()) {
@@ -1041,7 +1034,7 @@ public class StagePlanner {
                             port.getDescription().getName());
                     sawError = true;
                 } else {
-                    LOG.debug("{}の出力{}に自動的に停止演算子を結線します",
+                    LOG.debug("inserting implicit \"stop\" operator: {}.{}", //$NON-NLS-1$
                             element.getDescription().getName(),
                             port.getDescription().getName());
                     FlowGraphUtil.stop(port);
@@ -1055,7 +1048,7 @@ public class StagePlanner {
     private boolean validateAcyclic(FlowGraph graph, Graph<FlowElement> elements) {
         assert graph != null;
         assert elements != null;
-        LOG.debug("{}の循環を検出しています", graph);
+        LOG.debug("validating cyclicity: {}", graph); //$NON-NLS-1$
 
         Set<Set<FlowElement>> circuits = Graphs.findCircuit(elements);
         for (Set<FlowElement> cyclic : circuits) {

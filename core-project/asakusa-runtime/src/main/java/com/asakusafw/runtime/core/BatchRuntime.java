@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,7 +58,7 @@ public final class BatchRuntime {
     }
 
     private static String toString(int major, int minor) {
-        return MessageFormat.format("{0}.{1}", String.valueOf(major), String.valueOf(minor));
+        return MessageFormat.format("{0}.{1}", String.valueOf(major), String.valueOf(minor)); //$NON-NLS-1$
     }
 
     private BatchRuntime() {

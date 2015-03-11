@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,22 +55,22 @@ public class SimpleJobRunner implements JobRunner {
 
     static final Log LOG = LogFactory.getLog(SimpleJobRunner.class);
 
-    private static final String KEY_PREFIX = "com.asakusafw.mapreduce.";
+    private static final String KEY_PREFIX = "com.asakusafw.mapreduce."; //$NON-NLS-1$
 
     /**
      * Hadoop property key of shuffle buffer size.
      */
-    public static final String KEY_BUFFER_SIZE = KEY_PREFIX + "shuffle.buffer";
+    public static final String KEY_BUFFER_SIZE = KEY_PREFIX + "shuffle.buffer"; //$NON-NLS-1$
 
     /**
      * Hadoop property key of shuffle temporary directory.
      */
-    public static final String KEY_TEMPORARY_LOCATION = KEY_PREFIX + "shuffle.tempdir";
+    public static final String KEY_TEMPORARY_LOCATION = KEY_PREFIX + "shuffle.tempdir"; //$NON-NLS-1$
 
     /**
      * Hadoop property key of whether block file compression is enabled or not.
      */
-    public static final String KEY_COMPRESS_BLOCK = KEY_PREFIX + "shuffle.compress";
+    public static final String KEY_COMPRESS_BLOCK = KEY_PREFIX + "shuffle.compress"; //$NON-NLS-1$
 
     private static final int DEFAULT_BUFFER_SIZE = 64 * 1024 * 1024;
 
@@ -161,7 +161,7 @@ public class SimpleJobRunner implements JobRunner {
             Mapper<?, ?, ?, ?> mapper = ReflectionUtils.newInstance(job.getMapperClass(), conf);
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "starting mapper: {0}@{1} ({2}bytes)",
+                        "starting mapper: {0}@{1} ({2}bytes)", //$NON-NLS-1$
                         mapper.getClass().getName(),
                         id,
                         split.getLength()));
@@ -221,7 +221,7 @@ public class SimpleJobRunner implements JobRunner {
         Reducer<?, ?, ?, ?> reducer = ReflectionUtils.newInstance(job.getReducerClass(), conf);
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "starting reducer: {0}@{1} ({2}records, {3}bytes)",
+                    "starting reducer: {0}@{1} ({2}records, {3}bytes)", //$NON-NLS-1$
                     reducer.getClass().getName(),
                     id,
                     sorter.getRecordCount(),
@@ -285,7 +285,7 @@ public class SimpleJobRunner implements JobRunner {
         KeyValueSorter.Options options = getSorterOptions(job.getConfiguration());
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "shuffle buffer size: {1}bytes/page, {2}bytes/block, compression:{3} ({0})",
+                    "shuffle buffer size: {1}bytes/page, {2}bytes/block, compression:{3} ({0})", //$NON-NLS-1$
                     job.getJobName(),
                     options.getPageSize(),
                     options.getBlockSize(),

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -370,10 +370,10 @@ public class AttributeBuilder {
             throw new IllegalArgumentException("elementValue1 must not be null"); //$NON-NLS-1$
         }
         if (elementName2 == null) {
-            throw new IllegalArgumentException("elementName2 must not be null"); //$NON-NLS-2$
+            throw new IllegalArgumentException("elementName2 must not be null"); //$NON-NLS-1$
         }
         if (elementValue2 == null) {
-            throw new IllegalArgumentException("elementValue2 must not be null"); //$NON-NLS-2$
+            throw new IllegalArgumentException("elementValue2 must not be null"); //$NON-NLS-1$
         }
         List<AnnotationElement> elements = new ArrayList<AnnotationElement>();
         elements.add(f.newAnnotationElement(
@@ -413,16 +413,16 @@ public class AttributeBuilder {
             throw new IllegalArgumentException("elementValue1 must not be null"); //$NON-NLS-1$
         }
         if (elementName2 == null) {
-            throw new IllegalArgumentException("elementName2 must not be null"); //$NON-NLS-2$
+            throw new IllegalArgumentException("elementName2 must not be null"); //$NON-NLS-1$
         }
         if (elementValue2 == null) {
-            throw new IllegalArgumentException("elementValue2 must not be null"); //$NON-NLS-2$
+            throw new IllegalArgumentException("elementValue2 must not be null"); //$NON-NLS-1$
         }
         if (elementName3 == null) {
-            throw new IllegalArgumentException("elementName3 must not be null"); //$NON-NLS-3$
+            throw new IllegalArgumentException("elementName3 must not be null"); //$NON-NLS-1$
         }
         if (elementValue3 == null) {
-            throw new IllegalArgumentException("elementValue3 must not be null"); //$NON-NLS-3$
+            throw new IllegalArgumentException("elementValue3 must not be null"); //$NON-NLS-1$
         }
         List<AnnotationElement> elements = new ArrayList<AnnotationElement>();
         elements.add(f.newAnnotationElement(
@@ -467,22 +467,22 @@ public class AttributeBuilder {
             throw new IllegalArgumentException("elementValue1 must not be null"); //$NON-NLS-1$
         }
         if (elementName2 == null) {
-            throw new IllegalArgumentException("elementName2 must not be null"); //$NON-NLS-2$
+            throw new IllegalArgumentException("elementName2 must not be null"); //$NON-NLS-1$
         }
         if (elementValue2 == null) {
-            throw new IllegalArgumentException("elementValue2 must not be null"); //$NON-NLS-2$
+            throw new IllegalArgumentException("elementValue2 must not be null"); //$NON-NLS-1$
         }
         if (elementName3 == null) {
-            throw new IllegalArgumentException("elementName3 must not be null"); //$NON-NLS-3$
+            throw new IllegalArgumentException("elementName3 must not be null"); //$NON-NLS-1$
         }
         if (elementValue3 == null) {
-            throw new IllegalArgumentException("elementValue3 must not be null"); //$NON-NLS-3$
+            throw new IllegalArgumentException("elementValue3 must not be null"); //$NON-NLS-1$
         }
         if (elementName4 == null) {
-            throw new IllegalArgumentException("elementName4 must not be null"); //$NON-NLS-4$
+            throw new IllegalArgumentException("elementName4 must not be null"); //$NON-NLS-1$
         }
         if (elementValue4 == null) {
-            throw new IllegalArgumentException("elementValue4 must not be null"); //$NON-NLS-4$
+            throw new IllegalArgumentException("elementValue4 must not be null"); //$NON-NLS-1$
         }
         List<AnnotationElement> elements = new ArrayList<AnnotationElement>();
         elements.add(f.newAnnotationElement(
@@ -532,28 +532,28 @@ public class AttributeBuilder {
             throw new IllegalArgumentException("elementValue1 must not be null"); //$NON-NLS-1$
         }
         if (elementName2 == null) {
-            throw new IllegalArgumentException("elementName2 must not be null"); //$NON-NLS-2$
+            throw new IllegalArgumentException("elementName2 must not be null"); //$NON-NLS-1$
         }
         if (elementValue2 == null) {
-            throw new IllegalArgumentException("elementValue2 must not be null"); //$NON-NLS-2$
+            throw new IllegalArgumentException("elementValue2 must not be null"); //$NON-NLS-1$
         }
         if (elementName3 == null) {
-            throw new IllegalArgumentException("elementName3 must not be null"); //$NON-NLS-3$
+            throw new IllegalArgumentException("elementName3 must not be null"); //$NON-NLS-1$
         }
         if (elementValue3 == null) {
-            throw new IllegalArgumentException("elementValue3 must not be null"); //$NON-NLS-3$
+            throw new IllegalArgumentException("elementValue3 must not be null"); //$NON-NLS-1$
         }
         if (elementName4 == null) {
-            throw new IllegalArgumentException("elementName4 must not be null"); //$NON-NLS-4$
+            throw new IllegalArgumentException("elementName4 must not be null"); //$NON-NLS-1$
         }
         if (elementValue4 == null) {
-            throw new IllegalArgumentException("elementValue4 must not be null"); //$NON-NLS-4$
+            throw new IllegalArgumentException("elementValue4 must not be null"); //$NON-NLS-1$
         }
         if (elementName5 == null) {
-            throw new IllegalArgumentException("elementName5 must not be null"); //$NON-NLS-5$
+            throw new IllegalArgumentException("elementName5 must not be null"); //$NON-NLS-1$
         }
         if (elementValue5 == null) {
-            throw new IllegalArgumentException("elementValue5 must not be null"); //$NON-NLS-5$
+            throw new IllegalArgumentException("elementValue5 must not be null"); //$NON-NLS-1$
         }
         List<AnnotationElement> elements = new ArrayList<AnnotationElement>();
         elements.add(f.newAnnotationElement(

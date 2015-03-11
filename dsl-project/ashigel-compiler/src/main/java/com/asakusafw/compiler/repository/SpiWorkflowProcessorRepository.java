@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,13 +48,13 @@ public class SpiWorkflowProcessorRepository
 
     @Override
     protected void doInitialize() {
-        LOG.debug("ワークフロー処理のプラグインを読み出します");
+        LOG.debug("loading workflow processor plug-ins"); //$NON-NLS-1$
         Iterable<? extends WorkflowProcessor> services = loadServices();
         List<WorkflowProcessor> procs = Lists.create();
         for (WorkflowProcessor proc : services) {
             proc.initialize(getEnvironment());
             procs.add(proc);
-            LOG.debug("{}が利用可能になります", proc.getClass().getName());
+            LOG.debug("activating workflow processor plug-in: {}", proc.getClass().getName()); //$NON-NLS-1$
         }
 
         Map<Class<? extends WorkDescriptionProcessor<?>>, WorkDescriptionProcessor<?>> saw = Maps.create();

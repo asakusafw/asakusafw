@@ -4,10 +4,12 @@
 
 プロジェクトの構成
 ==================
-ドキュメンテーションのプロジェクトを ``<root>/docs`` に配置する。
+
+ドキュメンテーションのプロジェクトを :file:`<root>/docs` に配置する。
 
 ルートディレクトリの構成
 ------------------------
+
 プロジェクトのルートディレクトリは、以下のような構成とする
 
 ..  list-table:: プロジェクトディレクトリの構成
@@ -16,21 +18,22 @@
 
     * - パス 
       - 内容 
-    * - source/
+    * - :file:`source/`
       - ドキュメントのソースファイルを格納するディレクトリ
-    * - build/
+    * - :file:`build/`
       - ビルド結果を格納するディレクトリ (自動生成)
-    * - README
+    * - :file:`README`
       - プロジェクトについての解説
-    * - LICENSE
+    * - :file:`LICENSE`
       - ライセンス情報
-    * - make.bat
+    * - :file:`make.bat`
       - Windows環境でドキュメントをビルドするバッチ
-    * - Makefile
+    * - :file:`Makefile`
       - Unix系環境でドキュメントをビルドするmakeファイル
 
 ソースディレクトリの構成
 ------------------------
+
 プロジェクトのソースディレクトリは、以下のような構成とする。
 
 ..  list-table:: ソースディレクトリの構成
@@ -39,69 +42,74 @@
 
     * - パス 
       - 内容 
-    * - _static
+    * - :file:`_static`
       - 静的ファイルを配置するディレクトリ
-    * - conf.py
+    * - :file:`conf.py`
       - ドキュメントの構成設定情報
-    * - index.rst
+    * - :file:`index.rst`
       - プロジェクトのマスタードキュメント
-    * - `component`/index.rst
+    * - :file:`<component>/index.rst`
       - コンポーネントごとのマスタードキュメント
 
 コンポーネント
 ==============
+
 ソースディレクトリ以下にコンポーネントごとにディレクトリを作成し、関連するドキュメントを配置する。
 
 ..  list-table:: コンポーネントの例
     :widths: 1 4 10
     :header-rows: 1
-    
+
     * - パス
       - コンポーネント
       - 内容
-    * - ./
+    * - :file:`./`
       - フレームワーク
       - インデックスやリリースノート、サイトマップ等
-    * - intruduction/
+    * - :file:`intruduction/`
       - フレームワークの紹介
       - フレームワークの概要説明、入門ドキュメント、開発の流れ
-    * - application/
+    * - :file:`application/`
       - アプリケーション開発環境の整備
       - 開発環境構築手順やバッチアプリケーションのビルド手順等
-    * - dmdl/
+    * - :file:`dmdl/`
       - Asakusa Data Model
       - DMDLおよびDMDLコンパイラ
-    * - dsl/
+    * - :file:`dsl/`
       - Asakusa DSL
       - 各種DSLおよびコンパイラ
-    * - testing/
+    * - :file:`testing/`
       - TestDriver
       - テストドライバ
-    * - directio/
+    * - :file:`directio/`
       - Direct I/O
       - Direct I/O
-    * - windgate/
+    * - :file:`windgate/`
       - WindGate
       - WindGate
-    * - thundergate/
+    * - :file:`thundergate/`
       - ThunderGate
       - ThunderGate
-    * - yaess/
+    * - :file:`yaess/`
       - YAESS
       - YAESS
-    * - administration/
+    * - :file:`administration/`
       - 運用環境の整備
       - 運用環境へのデプロイメント手順等
-    * - product/
+    * - :file:`product/`
       - プロダクトについて
       - ライセンス条項やFAQ、対応プラットフォーム等
-    * - documentation/
+    * - :file:`sandbox/`
+      - Sandbox
+      - Sandboxプロジェクト
+    * - :file:`documentation/`
       - Documentation
       - ドキュメントの書き方等 (内部向け)
 
 ドキュメントの形式
 ==================
-ドキュメントは Sphinx_ でビルド可能な reStructuredText_ 形式で記述し、拡張子は `*.rst` とする。
+
+ドキュメントは Sphinx_ でビルド可能な reStructuredText_ 形式で記述し、拡張子は :file:`*.rst` とする。
 
 ..  _Sphinx : http://sphinx.pocoo.org/
 ..  _reStructuredText : http://docutils.sourceforge.net/rst.html
@@ -113,6 +121,7 @@
 
 ドキュメントのターゲット
 ------------------------
+
 以下のうち誰を対象とするかを想定すること。
 
 * User (U): Asakusa Frameworkを利用してバッチアプリケーションを開発する人
@@ -123,15 +132,15 @@
 
 ドキュメントファイルの命名規則
 ------------------------------
+
 ファイル名の規則は以下のとおり。
 
-* 英語ドキュメントは `<ドキュメント名>.rst`
-* 英語以外は `<ドキュメント名>_<言語名>.rst`
 * ドキュメント名は小文字アルファベット、数字、ハイフンのみから構成
 * 同じ内容で言語の異なるドキュメント名は一致させる
 
 標準的なドキュメント名
 ----------------------
+
 ありえそうなドキュメントの例。
 下記に該当するドキュメントは、可能な限り名前をそろえる。下記に該当しないドキュメントは、命名規則の範囲で自由に名前をつけてよい。
 

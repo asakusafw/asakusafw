@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,10 +50,10 @@ public class FloatRange implements ValuePredicate<Number> {
     @Override
     public String describeExpected(Number expected, Number actual) {
         if (expected == null) {
-            return "(error)";
+            return "(error)"; //$NON-NLS-1$
         }
         return MessageFormat.format(
-                "{0} ~ {1}",
+                "{0} ~ {1}", //$NON-NLS-1$
                 Util.format(expected.doubleValue() + lowerBound),
                 Util.format(expected.doubleValue() + upperBound));
     }

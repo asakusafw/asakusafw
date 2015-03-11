@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ public final class BatchTestRunner {
     /**
      * The YAESS script path (relative from batch application directory).
      */
-    public static final String PATH_YAESS_SCRIPT = "etc/yaess-script.properties";
+    public static final String PATH_YAESS_SCRIPT = "etc/yaess-script.properties"; //$NON-NLS-1$
 
     static final Option OPT_BATCH_ID;
     static final Option OPT_ARGUMENT;
@@ -61,20 +61,20 @@ public final class BatchTestRunner {
 
     private static final Options OPTIONS;
     static {
-        OPT_BATCH_ID = new Option("b", "batch", true, "batch ID");
-        OPT_BATCH_ID.setArgName("batch_id");
+        OPT_BATCH_ID = new Option("b", "batch", true, "batch ID"); //$NON-NLS-1$ //$NON-NLS-2$
+        OPT_BATCH_ID.setArgName("batch_id"); //$NON-NLS-1$
         OPT_BATCH_ID.setRequired(true);
 
-        OPT_ARGUMENT = new Option("A", "argument", true, "batch argument");
+        OPT_ARGUMENT = new Option("A", "argument", true, "batch argument"); //$NON-NLS-1$ //$NON-NLS-2$
         OPT_ARGUMENT.setArgs(2);
         OPT_ARGUMENT.setValueSeparator('=');
-        OPT_ARGUMENT.setArgName("name=value");
+        OPT_ARGUMENT.setArgName("name=value"); //$NON-NLS-1$
         OPT_ARGUMENT.setRequired(false);
 
-        OPT_PROPERTY = new Option("D", "property", true, "hadoop property");
+        OPT_PROPERTY = new Option("D", "property", true, "hadoop property"); //$NON-NLS-1$ //$NON-NLS-2$
         OPT_PROPERTY.setArgs(2);
         OPT_PROPERTY.setValueSeparator('=');
-        OPT_PROPERTY.setArgName("name=value");
+        OPT_PROPERTY.setArgName("name=value"); //$NON-NLS-1$
         OPT_PROPERTY.setRequired(false);
 
         OPTIONS = new Options();
@@ -264,7 +264,7 @@ public final class BatchTestRunner {
             formatter.setWidth(Integer.MAX_VALUE);
             formatter.printHelp(
                     MessageFormat.format(
-                            "java -classpath ... {0}",
+                            "java -classpath ... {0}", //$NON-NLS-1$
                             BatchTestRunner.class.getName()),
                     OPTIONS,
                     true);
@@ -304,13 +304,13 @@ public final class BatchTestRunner {
         CommandLine cmd = parser.parse(OPTIONS, args);
 
         String batchId = cmd.getOptionValue(OPT_BATCH_ID.getOpt());
-        LOG.debug("Batch ID: {}", batchId);
+        LOG.debug("Batch ID: {}", batchId); //$NON-NLS-1$
 
         Properties arguments = cmd.getOptionProperties(OPT_ARGUMENT.getOpt());
-        LOG.debug("Batch arguments: {}", arguments);
+        LOG.debug("Batch arguments: {}", arguments); //$NON-NLS-1$
 
         Properties properties = cmd.getOptionProperties(OPT_PROPERTY.getOpt());
-        LOG.debug("Extra properties: {}", arguments);
+        LOG.debug("Extra properties: {}", arguments); //$NON-NLS-1$
 
         return new BatchTestRunner(batchId)
             .withArguments(toMap(arguments))
@@ -320,7 +320,7 @@ public final class BatchTestRunner {
     private RunTask.Configuration loadConfiguration() {
         BatchScript script;
         File scriptFile = getScriptFile(context, batchId);
-        LOG.debug("Loading script: {}", scriptFile);
+        LOG.debug("Loading script: {}", scriptFile); //$NON-NLS-1$
         try {
             Properties properties = loadProperties(scriptFile);
             script = BatchScript.load(properties);
@@ -330,7 +330,7 @@ public final class BatchTestRunner {
                     scriptFile), e);
         }
 
-        LOG.debug("Analyzed YAESS bootstrap arguments");
+        LOG.debug("Analyzed YAESS bootstrap arguments"); //$NON-NLS-1$
         return new RunTask.Configuration(
                 context,
                 script,

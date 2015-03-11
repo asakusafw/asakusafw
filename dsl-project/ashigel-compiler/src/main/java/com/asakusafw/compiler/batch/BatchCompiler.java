@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -91,7 +91,7 @@ public class BatchCompiler {
         for (Workflow.Unit unit : units) {
             WorkDescriptionProcessor<?> proc = repo.findDescriptionProcessor(unit.getDescription());
             if (proc == null) {
-                environment.error("{}に対するプロセッサが見つかりません",
+                environment.error("{0}に対するプロセッサが見つかりません",
                         unit.getClass().getName());
                 continue;
             }

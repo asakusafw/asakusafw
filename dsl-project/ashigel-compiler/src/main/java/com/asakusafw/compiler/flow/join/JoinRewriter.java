@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -82,7 +82,7 @@ public class JoinRewriter extends FlowCompilingEnvironment.Initialized implement
         Precondition.checkMustNotBeNull(graph, "graph"); //$NON-NLS-1$
         FlowCompilerOptions options = getEnvironment().getOptions();
         if (options.isHashJoinForSmall() == false && options.isHashJoinForTiny() == false) {
-            LOG.debug("Joinの最適化は行われません");
+            LOG.debug("join optimization is disabled"); //$NON-NLS-1$
             return false;
         }
         return rewriteGraph(graph);

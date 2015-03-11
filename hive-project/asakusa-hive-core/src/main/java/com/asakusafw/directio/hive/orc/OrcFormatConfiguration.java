@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -185,21 +185,21 @@ public class OrcFormatConfiguration {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("OrcFormatConfiguration [fieldMappingStrategy=");
+        builder.append("OrcFormatConfiguration [fieldMappingStrategy="); //$NON-NLS-1$
         builder.append(fieldMappingStrategy);
-        builder.append(", onMissingSource=");
+        builder.append(", onMissingSource="); //$NON-NLS-1$
         builder.append(onMissingSource);
-        builder.append(", onMissingTarget=");
+        builder.append(", onMissingTarget="); //$NON-NLS-1$
         builder.append(onMissingTarget);
-        builder.append(", onIncompatibleType=");
+        builder.append(", onIncompatibleType="); //$NON-NLS-1$
         builder.append(onIncompatibleType);
-        builder.append(", formatVersion=");
+        builder.append(", formatVersion="); //$NON-NLS-1$
         builder.append(formatVersion);
-        builder.append(", compressionKind=");
+        builder.append(", compressionKind="); //$NON-NLS-1$
         builder.append(compressionKind);
-        builder.append(", stripeSize=");
+        builder.append(", stripeSize="); //$NON-NLS-1$
         builder.append(stripeSize);
-        builder.append("]");
+        builder.append("]"); //$NON-NLS-1$
         return builder.toString();
     }
 }

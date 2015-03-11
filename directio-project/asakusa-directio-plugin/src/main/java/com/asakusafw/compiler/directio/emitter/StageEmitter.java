@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -113,7 +113,7 @@ public class StageEmitter {
     public CompiledStage emit(List<Slot> slots, Location outputLocation) throws IOException {
         Precondition.checkMustNotBeNull(slots, "slots"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(outputLocation, "outputLocation"); //$NON-NLS-1$
-        LOG.debug("Start preparing output stage for Direct I/O epilogue: batch={}, flow={}",
+        LOG.debug("Start preparing output stage for Direct I/O epilogue: batch={}, flow={}", //$NON-NLS-1$
                 environment.getBatchId(),
                 environment.getFlowId());
         if (requiresReducer(slots)) {
@@ -141,25 +141,26 @@ public class StageEmitter {
     private CompiledStage emitClientWithReducer(List<Slot> slots, Location outputLocation) throws IOException {
         assert slots != null;
         assert outputLocation != null;
-        LOG.debug("Emitting shuffle key for Direct I/O epilogue");
+        LOG.debug("Emitting shuffle key for Direct I/O epilogue"); //$NON-NLS-1$
         Name key = emitKey(slots);
 
-        LOG.debug("Emitting shuffle value for Direct I/O epilogue");
+        LOG.debug("Emitting shuffle value for Direct I/O epilogue"); //$NON-NLS-1$
         Name value = emitValue(slots);
 
-        LOG.debug("Emitting grouping comparator for Direct I/O epilogue");
+        LOG.debug("Emitting grouping comparator for Direct I/O epilogue"); //$NON-NLS-1$
         Name grouping = emitGrouping(key);
 
-        LOG.debug("Emitting sort comparator for Direct I/O epilogue");
+        LOG.debug("Emitting sort comparator for Direct I/O epilogue"); //$NON-NLS-1$
         Name ordering = emitOrdering(key);
 
-        LOG.debug("Emitting mappers for Direct I/O epilogue");
+        LOG.debug("Emitting mappers for Direct I/O epilogue"); //$NON-NLS-1$
         List<CompiledSlot> compiledSlots = emitMappers(slots, key, value);
 
-        LOG.debug("Emitting stage client (with reducer) for Direct I/O epilogue");
+        LOG.debug("Emitting stage client (with reducer) for Direct I/O epilogue"); //$NON-NLS-1$
         Name client = emitClient(compiledSlots, key, value, grouping, ordering, outputLocation);
 
-        LOG.debug("Finish preparing output stage for Direct I/O epilogue: batch={}, flow={}, class={}", new Object[] {
+        LOG.debug("Finish preparing output stage for Direct I/O epilogue: " //$NON-NLS-1$
+                + "batch={}, flow={}, class={}", new Object[] { //$NON-NLS-1$
                 environment.getBatchId(),
                 environment.getFlowId(),
                 client.toNameString(),
@@ -171,13 +172,14 @@ public class StageEmitter {
         assert slots != null;
         assert outputLocation != null;
 
-        LOG.debug("Emitting mappers for Direct I/O epilogue");
+        LOG.debug("Emitting mappers for Direct I/O epilogue"); //$NON-NLS-1$
         List<CompiledSlot> compiledSlots = emitMappers(slots, null, null);
 
-        LOG.debug("Emitting stage client (without reducer) for Direct I/O epilogue");
+        LOG.debug("Emitting stage client (without reducer) for Direct I/O epilogue"); //$NON-NLS-1$
         Name client = emitClient(compiledSlots, null, null, null, null, outputLocation);
 
-        LOG.debug("Finish preparing output stage for Direct I/O epilogue: batch={}, flow={}, class={}", new Object[] {
+        LOG.debug("Finish preparing output stage for Direct I/O epilogue: " //$NON-NLS-1$
+                + "batch={}, flow={}, class={}", new Object[] { //$NON-NLS-1$
                 environment.getBatchId(),
                 environment.getFlowId(),
                 client.toNameString(),
@@ -364,7 +366,7 @@ public class StageEmitter {
         Statement ctorChain = f.newSuperConstructorInvocation(arguments);
         ConstructorDeclaration ctorDecl = f.newConstructorDeclaration(
                 new JavadocBuilder(f)
-                    .text("Creates a new instance.")
+                    .text("Creates a new instance.") //$NON-NLS-1$
                     .toJavadoc(),
                 new AttributeBuilder(f)
                     .Public()
@@ -395,16 +397,16 @@ public class StageEmitter {
         QualifiedName name = environment
             .getModelFactory()
             .newQualifiedName(packageName, simpleName);
-        LOG.debug("epilogue of \"{}\" will use {}", moduleId, name);
+        LOG.debug("epilogue of \"{}\" will use {}", moduleId, name); //$NON-NLS-1$
         return name;
     }
 
     private Map<String, Expression> createTraceLocationElements() {
         ModelFactory factory = environment.getModelFactory();
         Map<String, Expression> results = new LinkedHashMap<String, Expression>();
-        results.put("batchId", Models.toLiteral(factory, environment.getBatchId()));
-        results.put("flowId", Models.toLiteral(factory, environment.getFlowId()));
-        results.put("stageId", Models.toLiteral(factory, Naming.getEpilogueName(moduleId)));
+        results.put("batchId", Models.toLiteral(factory, environment.getBatchId())); //$NON-NLS-1$
+        results.put("flowId", Models.toLiteral(factory, environment.getFlowId())); //$NON-NLS-1$
+        results.put("stageId", Models.toLiteral(factory, Naming.getEpilogueName(moduleId))); //$NON-NLS-1$
         return results;
     }
 
@@ -441,7 +443,7 @@ public class StageEmitter {
         QualifiedName name = environment
             .getModelFactory()
             .newQualifiedName(packageName, simpleName);
-        LOG.debug("\"{}\" will use {}", moduleId, name);
+        LOG.debug("\"{}\" will use {}", moduleId, name); //$NON-NLS-1$
         return name;
     }
 
@@ -548,9 +550,9 @@ public class StageEmitter {
 
         private Map<String, Expression> createTraceLocationElements() {
             Map<String, Expression> results = new LinkedHashMap<String, Expression>();
-            results.put("batchId", Models.toLiteral(factory, environment.getBatchId()));
-            results.put("flowId", Models.toLiteral(factory, environment.getFlowId()));
-            results.put("stageId", Models.toLiteral(factory, Naming.getEpilogueName(moduleId)));
+            results.put("batchId", Models.toLiteral(factory, environment.getBatchId())); //$NON-NLS-1$
+            results.put("flowId", Models.toLiteral(factory, environment.getFlowId())); //$NON-NLS-1$
+            results.put("stageId", Models.toLiteral(factory, Naming.getEpilogueName(moduleId))); //$NON-NLS-1$
             return results;
         }
 
@@ -579,8 +581,8 @@ public class StageEmitter {
         }
 
         private MethodDeclaration createStageInputsMethod() {
-            SimpleName list = factory.newSimpleName("results");
-            SimpleName attributes = factory.newSimpleName("attributes");
+            SimpleName list = factory.newSimpleName("results"); //$NON-NLS-1$
+            SimpleName attributes = factory.newSimpleName("attributes"); //$NON-NLS-1$
 
             List<Statement> statements = Lists.create();
             statements.add(new TypeBuilder(factory, t(ArrayList.class, t(StageInput.class)))
@@ -599,14 +601,14 @@ public class StageEmitter {
                         .toStatement());
                     for (Map.Entry<String, String> entry : info.getAttributes().entrySet()) {
                         statements.add(new ExpressionBuilder(factory, attributes)
-                            .method("put",
+                            .method("put", //$NON-NLS-1$
                                     Models.toLiteral(factory, entry.getKey()),
                                     Models.toLiteral(factory, entry.getValue()))
                             .toStatement());
                     }
                     for (Location input : info.getLocations()) {
                         statements.add(new ExpressionBuilder(factory, list)
-                            .method("add", new TypeBuilder(factory, t(StageInput.class))
+                            .method("add", new TypeBuilder(factory, t(StageInput.class)) //$NON-NLS-1$
                                 .newObject(
                                         Models.toLiteral(factory, input.toPath(PATH_SEPARATOR)),
                                         factory.newClassLiteral(t(info.getFormat())),
@@ -652,8 +654,8 @@ public class StageEmitter {
         }
 
         private MethodDeclaration createStageOutputsMethod() {
-            SimpleName list = factory.newSimpleName("results");
-            SimpleName attributes = factory.newSimpleName("attributes");
+            SimpleName list = factory.newSimpleName("results"); //$NON-NLS-1$
+            SimpleName attributes = factory.newSimpleName("attributes"); //$NON-NLS-1$
 
             List<Statement> statements = Lists.create();
             statements.add(new TypeBuilder(factory, t(ArrayList.class, t(StageOutput.class)))
@@ -674,14 +676,14 @@ public class StageEmitter {
                 int index = 1;
                 for (String pattern : slot.original.deletePatterns) {
                     statements.add(new ExpressionBuilder(factory, attributes)
-                        .method("put",
-                                Models.toLiteral(factory, String.format(
-                                        "%s%02d", DirectDataSourceConstants.PREFIX_DELETE_PATTERN, index++)),
+                        .method("put", //$NON-NLS-1$
+                                Models.toLiteral(factory, String.format("%s%02d", //$NON-NLS-1$
+                                        DirectDataSourceConstants.PREFIX_DELETE_PATTERN, index++)),
                                 Models.toLiteral(factory, pattern))
                         .toStatement());
                 }
                 statements.add(new ExpressionBuilder(factory, list)
-                    .method("add", new TypeBuilder(factory, t(StageOutput.class))
+                    .method("add", new TypeBuilder(factory, t(StageOutput.class)) //$NON-NLS-1$
                         .newObject(
                                 Models.toLiteral(factory, origin.basePath),
                                 factory.newClassLiteral(t(NullWritable.class)),
@@ -708,7 +710,7 @@ public class StageEmitter {
 
         private Javadoc createJavadoc() {
             return new JavadocBuilder(factory)
-                .text("A client class for \"{0}\".", moduleId)
+                .text("A client class for \"{0}\".", moduleId) //$NON-NLS-1$
                 .toJavadoc();
         }
 

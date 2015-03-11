@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,7 +55,7 @@ public final class TemporaryFile {
      */
     public static final int EMPTY_ENTRY_PADDING = 0;
 
-    private static final Charset ENCODING = Charset.forName("UTF-8");
+    private static final Charset ENCODING = Charset.forName("UTF-8"); //$NON-NLS-1$
 
     /**
      * The maximum page size.

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,7 +63,7 @@ public final class SequenceFileUtil {
         }
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Creating sequence file reader for {0}",
+                    "Creating sequence file reader for {0}", //$NON-NLS-1$
                     status.getPath()));
         }
         return SequenceFileCompatibility.openReader(in, status.getLen(), conf);
@@ -120,7 +120,7 @@ public final class SequenceFileUtil {
         }
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Creating sequence file writer for output (key={0}, value={0})",
+                    "Creating sequence file writer for output (key={0}, value={0})", //$NON-NLS-1$
                     keyClass.getName(),
                     valueClass.getName()));
         }
