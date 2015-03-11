@@ -4,11 +4,11 @@
 	<name>Asakusa Framework Sandbox Parent POM</name>
 	<groupId>com.asakusafw.sandbox</groupId>
 	<artifactId>asakusa-sandbox-parent</artifactId>
-	<version>0.7.2</version>
+	<version>0.7.3-RC1</version>
 	<parent>
 		<artifactId>asakusa-parent</artifactId>
 		<groupId>com.asakusafw</groupId>
-		<version>0.7.2</version>
+		<version>0.7.3-RC1</version>
 		<relativePath>../../asakusa-parent</relativePath>
 	</parent>
 
