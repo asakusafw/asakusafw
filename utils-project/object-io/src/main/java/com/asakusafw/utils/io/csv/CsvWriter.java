@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ import com.asakusafw.utils.io.RecordWriter;
  */
 public class CsvWriter implements RecordWriter {
 
-    private static final Pattern PATTERN_ESCAPE = Pattern.compile("([,\"\r\n])");
+    private static final Pattern PATTERN_ESCAPE = Pattern.compile("([,\"\r\n])"); //$NON-NLS-1$
 
     private final Appendable writer;
 
@@ -86,7 +86,7 @@ public class CsvWriter implements RecordWriter {
 
     @Override
     public void putEndOfRecord() throws IOException {
-        writer.append("\r\n");
+        writer.append("\r\n"); //$NON-NLS-1$
         headOfRecord = true;
     }
 

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package com.asakusafw.compiler.testing;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -129,7 +130,9 @@ public final class DirectBatchCompiler {
     private static void clean(File localWorkingDirectory) {
         assert localWorkingDirectory != null;
         if (localWorkingDirectory.exists()) {
-            LOG.info("Cleaning local working directory: {}", localWorkingDirectory);
+            LOG.info(MessageFormat.format(
+                    "作業ディレクトリを初期化しています: {0}",
+                    localWorkingDirectory));
         }
         delete(localWorkingDirectory);
     }

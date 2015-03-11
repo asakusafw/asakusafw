@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -127,7 +127,7 @@ public class DataModelMaterializer extends RecordMaterializer<Object> {
                 assert mapping.target != null;
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(MessageFormat.format(
-                            "Map Parquet column: {0}:{1} -> {2}:{3}",
+                            "Map Parquet column: {0}:{1} -> {2}:{3}", //$NON-NLS-1$
                             mapping.source.getPath()[0],
                             mapping.source.getType(),
                             mapping.target.getFieldName(),
@@ -152,7 +152,7 @@ public class DataModelMaterializer extends RecordMaterializer<Object> {
             DataModelDescriptor target, MessageType source) {
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Mapping columns by their name: model={0}",
+                    "Mapping columns by their name: model={0}", //$NON-NLS-1$
                     target.getDataModelClass().getName()));
         }
         Set<PropertyDescriptor> rest = new LinkedHashSet<PropertyDescriptor>(target.getPropertyDescriptors());
@@ -178,7 +178,7 @@ public class DataModelMaterializer extends RecordMaterializer<Object> {
             DataModelDescriptor target, MessageType source) {
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Mapping columns by their position: model={0}",
+                    "Mapping columns by their position: model={0}", //$NON-NLS-1$
                     target.getDataModelClass().getName()));
         }
         List<ColumnDescriptor> sources = source.getColumns();

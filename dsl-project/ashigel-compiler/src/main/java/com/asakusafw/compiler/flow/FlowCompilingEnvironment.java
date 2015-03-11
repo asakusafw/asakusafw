@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -164,7 +164,7 @@ public class FlowCompilingEnvironment {
      * @return コンパイル対象に対する識別子
      */
     public String getTargetId() {
-        return MessageFormat.format("{0}.{1}", getBatchId(), getFlowId());
+        return MessageFormat.format("{0}.{1}", getBatchId(), getFlowId()); //$NON-NLS-1$
     }
 
     /**
@@ -181,7 +181,7 @@ public class FlowCompilingEnvironment {
     private String normalize(String name) {
         assert name != null;
         StringBuilder buf = new StringBuilder();
-        String[] segments = name.split(Pattern.quote("."));
+        String[] segments = name.split(Pattern.quote(".")); //$NON-NLS-1$
         buf.append(memberName(segments[0]));
         for (int i = 1; i < segments.length; i++) {
             buf.append('.');
@@ -193,7 +193,7 @@ public class FlowCompilingEnvironment {
     private String memberName(String string) {
         assert string != null;
         if (string.isEmpty()) {
-            return "_";
+            return "_"; //$NON-NLS-1$
         }
         return JavaName.of(string).toMemberName();
     }
@@ -211,7 +211,7 @@ public class FlowCompilingEnvironment {
         return Models.append(
                 config.getFactory(),
                 getTargetPackageName(),
-                String.format("stage%04d", stageNumber));
+                String.format("stage%04d", stageNumber)); //$NON-NLS-1$
     }
 
     /**
@@ -249,7 +249,7 @@ public class FlowCompilingEnvironment {
         return Models.append(
                 config.getFactory(),
                 getTargetPackageName(),
-                MessageFormat.format("{0}.prologue", memberName(moduleId)));
+                MessageFormat.format("{0}.prologue", memberName(moduleId))); //$NON-NLS-1$
     }
 
     /**
@@ -263,7 +263,7 @@ public class FlowCompilingEnvironment {
         return Models.append(
                 config.getFactory(),
                 getTargetPackageName(),
-                MessageFormat.format("{0}.epilogue", memberName(moduleId)));
+                MessageFormat.format("{0}.epilogue", memberName(moduleId))); //$NON-NLS-1$
     }
 
     /**
@@ -287,7 +287,7 @@ public class FlowCompilingEnvironment {
         if (stageNumber < 0) {
             throw new IllegalArgumentException("stageNumber must be a positive integer"); //$NON-NLS-1$
         }
-        String stageSuffix = String.format("stage%04d", stageNumber);
+        String stageSuffix = String.format("stage%04d", stageNumber); //$NON-NLS-1$
         return getTargetLocation().append(stageSuffix);
     }
 
@@ -300,7 +300,7 @@ public class FlowCompilingEnvironment {
     public Location getPrologueLocation(String moduleId) {
         Precondition.checkMustNotBeNull(moduleId, "moduleId"); //$NON-NLS-1$
         return getTargetLocation()
-            .append("prologue")
+            .append("prologue") //$NON-NLS-1$
             .append(moduleId);
     }
 
@@ -313,7 +313,7 @@ public class FlowCompilingEnvironment {
     public Location getEpilogueLocation(String moduleId) {
         Precondition.checkMustNotBeNull(moduleId, "moduleId"); //$NON-NLS-1$
         return getTargetLocation()
-            .append("epilogue")
+            .append("epilogue") //$NON-NLS-1$
             .append(moduleId);
     }
 

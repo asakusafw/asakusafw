@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -345,7 +345,7 @@ public final class ConfigurationLoader {
     }
     /**
      * 環境変数を設定します。
-     * @param m Map<String, String>
+     * @param m Map&lt;String, String&gt;
      * @deprecated UT用
      */
     @Deprecated

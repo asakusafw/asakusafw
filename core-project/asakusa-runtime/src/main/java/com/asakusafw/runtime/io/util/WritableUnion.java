@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -93,12 +93,12 @@ public class WritableUnion implements Union, Writable {
     public String toString() {
         try {
             return MessageFormat.format(
-                    "Union (position={0}, object={1})",
+                    "Union (position={0}, object={1})", //$NON-NLS-1$
                     position,
                     getObject());
         } catch (RuntimeException e) {
             return MessageFormat.format(
-                    "Union (position={0}, object=(invalid))",
+                    "Union (position={0}, object=(invalid))", //$NON-NLS-1$
                     position);
         }
     }

@@ -6,9 +6,12 @@ Hadoopパラメータの設定
 
 設定ファイル
 ============
-Asakusa Frameworkに関するHadoopのパラメータは、 ``$ASAKUSA_HOME/core/conf/asakusa-resources.xml`` 内 [#]_ に記載します。このファイルに設定した内容はバッチアプリケーションの実行時にHadoopジョブの設定として使用され、ジョブ実行時の動作に影響を与えます。
 
-設定ファイルはHadoopの各設定ファイルのフォーマットと同様です。以下のように、１つの設定項目に対して ``<property>`` 要素を作成し、設定名を ``<name>`` 要素に、設定値を ``<value>`` 要素にそれぞれ設定します。
+Asakusa Frameworkに関するHadoopのパラメータは、 :file:`$ASAKUSA_HOME/core/conf/asakusa-resources.xml` [#]_ に記載します。
+このファイルに設定した内容はバッチアプリケーションの実行時にHadoopジョブの設定として使用され、ジョブ実行時の動作に影響を与えます。
+
+設定ファイルはHadoopの各設定ファイルのフォーマットと同様です。
+以下のように、１つの設定項目に対して ``<property>`` 要素を作成し、設定名を ``<name>`` 要素に、設定値を ``<value>`` 要素にそれぞれ設定します。
 
 **asakusa-resources.xml**
 

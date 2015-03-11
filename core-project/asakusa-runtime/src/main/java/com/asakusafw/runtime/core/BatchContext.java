@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -74,7 +74,7 @@ public class BatchContext {
 
         @Override
         public void setup(ResourceConfiguration configuration) throws IOException, InterruptedException {
-            String arguments = configuration.get(StageConstants.PROP_ASAKUSA_BATCH_ARGS, "");
+            String arguments = configuration.get(StageConstants.PROP_ASAKUSA_BATCH_ARGS, ""); //$NON-NLS-1$
             VariableTable variables = new VariableTable(VariableTable.RedefineStrategy.IGNORE);
             variables.defineVariables(arguments);
             BatchContext context = new BatchContext(variables.getVariables());

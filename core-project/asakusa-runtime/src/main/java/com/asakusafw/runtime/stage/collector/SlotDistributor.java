@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ public abstract class SlotDistributor<T extends Writable> extends MapperWithRunt
     /**
      * {@link #setSlotSpec(Writable, SortableSlot)}のメソッド名。
      */
-    public static final String NAME_SET_SLOT_SPEC = "setSlotSpec";
+    public static final String NAME_SET_SLOT_SPEC = "setSlotSpec"; //$NON-NLS-1$
 
     private final SortableSlot keyOut = new SortableSlot();
 

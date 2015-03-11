@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -100,7 +100,7 @@ public final class TemporaryStorage {
         FileSystem fs = pathPattern.getFileSystem(conf);
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Listing temporary input: {0} (fs={1})",
+                    "Listing temporary input: {0} (fs={1})", //$NON-NLS-1$
                     pathPattern,
                     fs.getUri()));
         }
@@ -138,7 +138,7 @@ public final class TemporaryStorage {
         FileSystem fs = path.getFileSystem(conf);
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Opening temporary input: {0} (fs={1})",
+                    "Opening temporary input: {0} (fs={1})", //$NON-NLS-1$
                     path,
                     fs.getUri()));
         }
@@ -212,7 +212,7 @@ public final class TemporaryStorage {
         FileSystem fs = path.getFileSystem(conf);
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Opening temporary output: {0} (fs={1})",
+                    "Opening temporary output: {0} (fs={1})", //$NON-NLS-1$
                     path,
                     fs.getUri()));
         }
@@ -260,7 +260,7 @@ public final class TemporaryStorage {
         FileSystem fs = path.getFileSystem(conf);
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Opening temporary output: {0} (fs={1})",
+                    "Opening temporary output: {0} (fs={1})", //$NON-NLS-1$
                     path,
                     fs.getUri()));
         }

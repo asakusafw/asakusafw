@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -125,7 +125,7 @@ public class TestToolRepository extends AbstractTestDataToolProvider {
             @Override
             public String toString() {
                 return MessageFormat.format(
-                        "DataModelSource({0})",
+                        "DataModelSource({0})", //$NON-NLS-1$
                         uri);
             }
         };
@@ -152,7 +152,7 @@ public class TestToolRepository extends AbstractTestDataToolProvider {
             @Override
             public String toString() {
                 return MessageFormat.format(
-                        "DataModelSink({0})",
+                        "DataModelSink({0})", //$NON-NLS-1$
                         uri);
             }
         };
@@ -179,7 +179,7 @@ public class TestToolRepository extends AbstractTestDataToolProvider {
             @Override
             public String toString() {
                 return MessageFormat.format(
-                        "DifferenceSink({0})",
+                        "DifferenceSink({0})", //$NON-NLS-1$
                         uri);
             }
         };
@@ -208,7 +208,7 @@ public class TestToolRepository extends AbstractTestDataToolProvider {
             @Override
             public String toString() {
                 return MessageFormat.format(
-                        "VerifyRule({0})",
+                        "VerifyRule({0})", //$NON-NLS-1$
                         ruleUri.toString());
             }
         };

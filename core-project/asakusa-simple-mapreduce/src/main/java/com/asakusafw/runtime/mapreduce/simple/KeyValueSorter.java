@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,7 +56,7 @@ public class KeyValueSorter<K, V> implements Closeable {
 
     static final Log LOG = LogFactory.getLog(KeyValueSorter.class);
 
-    private static final String NAME_PREFIX_BLOCK_FILE = "asakusa-sort";
+    private static final String NAME_PREFIX_BLOCK_FILE = "asakusa-sort"; //$NON-NLS-1$
 
     static final double BUFFER_EXPANSION_FACTOR = 1.2;
 
@@ -165,7 +165,7 @@ public class KeyValueSorter<K, V> implements Closeable {
     public Source<KeyValueSlice> sort() throws IOException, InterruptedException {
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "merging records: page-buffer={0}bytes, block-buffer={1}bytes, block-files={2}bytes",
+                    "merging records: page-buffer={0}bytes, block-buffer={1}bytes, block-files={2}bytes", //$NON-NLS-1$
                     pageBuffer.getSizeInBytes(),
                     blockBuffer.getSizeInBytes(),
                     blockStore.getSizeInBytes()));
@@ -185,7 +185,7 @@ public class KeyValueSorter<K, V> implements Closeable {
         }
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "flushing page buffer: {0}records, {1}bytes",
+                    "flushing page buffer: {0}records, {1}bytes", //$NON-NLS-1$
                     page.getCount(),
                     page.getSizeInBytes()));
         }
@@ -462,7 +462,7 @@ public class KeyValueSorter<K, V> implements Closeable {
             }
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "expanding block buffer: {0}->{1}bytes",
+                        "expanding block buffer: {0}->{1}bytes", //$NON-NLS-1$
                         oldCapacity, newCapacity));
             }
             buffer.ensureCapacity(newCapacity);
@@ -576,7 +576,7 @@ public class KeyValueSorter<K, V> implements Closeable {
             if (LOG.isDebugEnabled()) {
                 long t1 = System.currentTimeMillis();
                 LOG.debug(MessageFormat.format(
-                        "saved block file: {0} (data={1}->{2}bytes, compress={3}, elapsed={4}ms)",
+                        "saved block file: {0} (data={1}->{2}bytes, compress={3}, elapsed={4}ms)", //$NON-NLS-1$
                         file,
                         size,
                         file.length(),
@@ -587,7 +587,7 @@ public class KeyValueSorter<K, V> implements Closeable {
         }
 
         private File createTemporaryFile() throws IOException {
-            return File.createTempFile(NAME_PREFIX_BLOCK_FILE, ".tmp", temporaryDirectory);
+            return File.createTempFile(NAME_PREFIX_BLOCK_FILE, ".tmp", temporaryDirectory); //$NON-NLS-1$
         }
 
         void reset() {
@@ -635,7 +635,7 @@ public class KeyValueSorter<K, V> implements Closeable {
         private void deleteTemporaryFile(File file) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "deleting temporary file: {0}",
+                        "deleting temporary file: {0}", //$NON-NLS-1$
                         file));
             }
             if (file.delete() == false && file.exists()) {

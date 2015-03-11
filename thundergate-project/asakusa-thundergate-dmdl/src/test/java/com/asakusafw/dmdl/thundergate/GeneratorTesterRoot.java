@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -216,7 +216,7 @@ public class GeneratorTesterRoot {
     /**
      * Generated data model loader for testing.
      */
-    protected static class ModelLoader {
+    public static class ModelLoader {
 
         private final ClassLoader classLoader;
 
@@ -300,7 +300,7 @@ public class GeneratorTesterRoot {
      * DataModel class instance.
      */
     @SuppressWarnings("rawtypes")
-    protected static class ModelWrapper {
+    public static class ModelWrapper {
 
         private final DataModel instance;
 

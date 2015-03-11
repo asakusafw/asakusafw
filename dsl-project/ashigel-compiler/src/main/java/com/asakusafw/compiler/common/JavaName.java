@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,60 +32,60 @@ public class JavaName {
     static {
         // see http://java.sun.com/docs/books/jls/third_edition/html/lexical.html#3.9
         Set<String> set = Sets.create();
-        set.add("abstract");
-        set.add("continue");
-        set.add("for");
-        set.add("new");
-        set.add("switch");
-        set.add("assert");
-        set.add("default");
-        set.add("if");
-        set.add("package");
-        set.add("synchronized");
-        set.add("boolean");
-        set.add("do");
-        set.add("goto");
-        set.add("private");
-        set.add("this");
-        set.add("break");
-        set.add("double");
-        set.add("implements");
-        set.add("protected");
-        set.add("throw");
-        set.add("byte");
-        set.add("else");
-        set.add("import");
-        set.add("public");
-        set.add("throws");
-        set.add("case");
-        set.add("enum");
-        set.add("instanceof");
-        set.add("return");
-        set.add("transient");
-        set.add("catch");
-        set.add("extends");
-        set.add("int");
-        set.add("short");
-        set.add("try");
-        set.add("char");
-        set.add("final");
-        set.add("interface");
-        set.add("static");
-        set.add("void");
-        set.add("class");
-        set.add("finally");
-        set.add("long");
-        set.add("strictfp");
-        set.add("volatile");
-        set.add("const");
-        set.add("float");
-        set.add("native");
-        set.add("super");
-        set.add("while");
+        set.add("abstract"); //$NON-NLS-1$
+        set.add("continue"); //$NON-NLS-1$
+        set.add("for"); //$NON-NLS-1$
+        set.add("new"); //$NON-NLS-1$
+        set.add("switch"); //$NON-NLS-1$
+        set.add("assert"); //$NON-NLS-1$
+        set.add("default"); //$NON-NLS-1$
+        set.add("if"); //$NON-NLS-1$
+        set.add("package"); //$NON-NLS-1$
+        set.add("synchronized"); //$NON-NLS-1$
+        set.add("boolean"); //$NON-NLS-1$
+        set.add("do"); //$NON-NLS-1$
+        set.add("goto"); //$NON-NLS-1$
+        set.add("private"); //$NON-NLS-1$
+        set.add("this"); //$NON-NLS-1$
+        set.add("break"); //$NON-NLS-1$
+        set.add("double"); //$NON-NLS-1$
+        set.add("implements"); //$NON-NLS-1$
+        set.add("protected"); //$NON-NLS-1$
+        set.add("throw"); //$NON-NLS-1$
+        set.add("byte"); //$NON-NLS-1$
+        set.add("else"); //$NON-NLS-1$
+        set.add("import"); //$NON-NLS-1$
+        set.add("public"); //$NON-NLS-1$
+        set.add("throws"); //$NON-NLS-1$
+        set.add("case"); //$NON-NLS-1$
+        set.add("enum"); //$NON-NLS-1$
+        set.add("instanceof"); //$NON-NLS-1$
+        set.add("return"); //$NON-NLS-1$
+        set.add("transient"); //$NON-NLS-1$
+        set.add("catch"); //$NON-NLS-1$
+        set.add("extends"); //$NON-NLS-1$
+        set.add("int"); //$NON-NLS-1$
+        set.add("short"); //$NON-NLS-1$
+        set.add("try"); //$NON-NLS-1$
+        set.add("char"); //$NON-NLS-1$
+        set.add("final"); //$NON-NLS-1$
+        set.add("interface"); //$NON-NLS-1$
+        set.add("static"); //$NON-NLS-1$
+        set.add("void"); //$NON-NLS-1$
+        set.add("class"); //$NON-NLS-1$
+        set.add("finally"); //$NON-NLS-1$
+        set.add("long"); //$NON-NLS-1$
+        set.add("strictfp"); //$NON-NLS-1$
+        set.add("volatile"); //$NON-NLS-1$
+        set.add("const"); //$NON-NLS-1$
+        set.add("float"); //$NON-NLS-1$
+        set.add("native"); //$NON-NLS-1$
+        set.add("super"); //$NON-NLS-1$
+        set.add("while"); //$NON-NLS-1$
         RESERVED = Collections.unmodifiableSet(set);
     }
 
-    private static final String EMPTY_NAME = "_";
+    private static final String EMPTY_NAME = "_"; //$NON-NLS-1$
 
     private final List<String> words;
 

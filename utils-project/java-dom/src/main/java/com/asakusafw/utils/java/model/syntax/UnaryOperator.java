@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,32 +27,32 @@ public enum UnaryOperator {
     /**
      * 単項プラス。
      */
-    PLUS("+", Category.SIGN),
+    PLUS("+", Category.SIGN), //$NON-NLS-1$
 
     /**
      * 単項マイナス。
      */
-    MINUS("-", Category.SIGN),
+    MINUS("-", Category.SIGN), //$NON-NLS-1$
 
     /**
      * 単項ビット反転。
      */
-    COMPLEMENT("~", Category.BITWISE),
+    COMPLEMENT("~", Category.BITWISE), //$NON-NLS-1$
 
     /**
      * 単項論理反転。
      */
-    NOT("!", Category.LOGICAL),
+    NOT("!", Category.LOGICAL), //$NON-NLS-1$
 
     /**
      * 前置インクリメント。
      */
-    INCREMENT("++", Category.INCREMENT_DECREMENT),
+    INCREMENT("++", Category.INCREMENT_DECREMENT), //$NON-NLS-1$
 
     /**
      * 前置デクリメント。
      */
-    DECREMENT("--", Category.INCREMENT_DECREMENT),
+    DECREMENT("--", Category.INCREMENT_DECREMENT), //$NON-NLS-1$
 
     ;
 

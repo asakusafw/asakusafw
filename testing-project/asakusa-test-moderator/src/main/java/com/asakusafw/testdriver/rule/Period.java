@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,8 +73,8 @@ public class Period implements ValuePredicate<Calendar> {
     @Override
     public String describeExpected(Calendar expected, Calendar actual) {
         return MessageFormat.format(
-                "{0} ~ {1}",
-                begin == null ? "..." : Util.format(begin),
-                end == null ? "..." : Util.format(end));
+                "{0} ~ {1}", //$NON-NLS-1$
+                begin == null ? "..." : Util.format(begin), //$NON-NLS-1$
+                end == null ? "..." : Util.format(end)); //$NON-NLS-1$
     }
 }

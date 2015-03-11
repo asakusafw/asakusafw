@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,7 +47,7 @@ public class SpiExternalIoDescriptionProcessorRepository
 
     @Override
     protected void doInitialize() {
-        LOG.debug("外部入出力のプラグインを読み出します");
+        LOG.debug("loading external I/O plug-ins"); //$NON-NLS-1$
         this.processors = Lists.create();
         this.map = Maps.create();
         ServiceLoader<ExternalIoDescriptionProcessor> services = ServiceLoader.load(
@@ -65,7 +65,7 @@ public class SpiExternalIoDescriptionProcessorRepository
                         map.get(importerType).getClass().getName(),
                         proc.getClass().getName());
             } else {
-                LOG.debug("{}が利用可能になります ({})",
+                LOG.debug("found importer plug-in: {} ({})", //$NON-NLS-1$
                         proc.getImporterDescriptionType().getName(),
                         proc.getClass().getName());
                 map.put(importerType, proc);
@@ -77,7 +77,7 @@ public class SpiExternalIoDescriptionProcessorRepository
                         map.get(exporterType).getClass().getName(),
                         proc.getClass().getName());
             } else {
-                LOG.debug("{}が利用可能になります ({})",
+                LOG.debug("found exporter plug-in: {} ({})", //$NON-NLS-1$
                         proc.getExporterDescriptionType().getName(),
                         proc.getClass().getName());
                 map.put(exporterType, proc);

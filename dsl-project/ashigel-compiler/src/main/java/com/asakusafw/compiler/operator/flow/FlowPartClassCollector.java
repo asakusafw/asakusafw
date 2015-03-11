@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -312,7 +312,7 @@ public class FlowPartClassCollector {
         if (environment.getTypeUtils().isSubtype(type.asType(), superType) == false) {
             raiseInvalidClass(type, MessageFormat.format(
                     "フロー部品クラス{0}は{1}のサブクラスとして宣言する必要があります",
-                    "{0}",
+                    "{0}", //$NON-NLS-1$
                     FlowDescription.class.getName()));
         }
         if (type.getEnclosingElement().getKind() != ElementKind.PACKAGE) {

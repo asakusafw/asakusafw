@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -397,7 +397,7 @@ public final class FlowGraphUtil {
     public static void stop(FlowElementOutput output) {
         Precondition.checkMustNotBeNull(output, "output"); //$NON-NLS-1$
         FlowElementDescription desc = new PseudElementDescription(
-                "implicit-stop",
+                "implicit-stop", //$NON-NLS-1$
                 output.getDescription().getDataType(),
                 true,
                 false,
@@ -410,9 +410,6 @@ public final class FlowGraphUtil {
     /**
      * 指定の要素のすべての入力された内容を、後続する要素の入力に接続しなおしたのち、
      * この要素を削除する。
-     * <p>
-     *
-     * </p>
      * @param element 対象の要素
      * @throws IllegalArgumentException 引数に{@code null}が指定された場合
      */
@@ -812,7 +809,7 @@ public final class FlowGraphUtil {
             for (FlowElementInput downstream : downstreams) {
                 if (attributes.length >= 1) {
                     FlowElementDescription desc = new PseudElementDescription(
-                            "bypass",
+                            "bypass", //$NON-NLS-1$
                             output.getDescription().getDataType(),
                             true,
                             true,
@@ -870,7 +867,7 @@ public final class FlowGraphUtil {
      */
     public static void insertCheckpoint(FlowElementOutput output) {
         Precondition.checkMustNotBeNull(output, "output"); //$NON-NLS-1$
-        insertElement(output, "implicit-checkpoint", FlowBoundary.STAGE);
+        insertElement(output, "implicit-checkpoint", FlowBoundary.STAGE); //$NON-NLS-1$
     }
 
     /**
@@ -884,7 +881,7 @@ public final class FlowGraphUtil {
      */
     public static void insertIdentity(FlowElementOutput output) {
         Precondition.checkMustNotBeNull(output, "output"); //$NON-NLS-1$
-        insertElement(output, "padding");
+        insertElement(output, "padding"); //$NON-NLS-1$
     }
 
     private static void insertElement(

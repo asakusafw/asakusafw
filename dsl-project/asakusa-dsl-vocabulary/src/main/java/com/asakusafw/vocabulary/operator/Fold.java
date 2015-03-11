@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -106,7 +106,7 @@ public @interface Fold {
     /**
      * 入力元のポート名。
      */
-    String INPUT = "in";
+    String INPUT = "in"; //$NON-NLS-1$
 
     /**
      * 部分集約の設定。

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package com.asakusafw.compiler.operator.processor;
 
+import java.text.MessageFormat;
 import java.util.List;
 
 import javax.lang.model.element.ExecutableElement;
@@ -118,13 +119,17 @@ public class MasterCheckOperatorProcessor extends AbstractOperatorProcessor {
                 1,
                 transactionKey.getKey());
         builder.addOutput(
-                a.getParameterName(0) + "の引き当てに成功した" + a.getParameterName(1),
+                MessageFormat.format(
+                        "{0}の引き当てに成功した{1}",
+                        a.getParameterName(0), a.getParameterName(1)),
                 annotation.foundPort(),
                 a.getParameterType(1).getType(),
                 a.getParameterName(1),
                 null);
         builder.addOutput(
-                a.getParameterName(0) + "の引き当てに失敗した" + a.getParameterName(1),
+                MessageFormat.format(
+                        "{0}の引き当てに失敗した{1}",
+                        a.getParameterName(0), a.getParameterName(1)),
                 annotation.missedPort(),
                 a.getParameterType(1).getType(),
                 a.getParameterName(1),

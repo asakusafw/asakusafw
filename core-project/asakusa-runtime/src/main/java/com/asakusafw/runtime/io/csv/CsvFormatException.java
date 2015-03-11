@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -202,7 +202,7 @@ public class CsvFormatException extends RecordFormatException {
         @Override
         public String toString() {
             return MessageFormat.format(
-                    "{0} (at {1}:{2}, record={3}, column={4}, expected={5}, actual={6})",
+                    "{0} (at {1}:{2}, record={3}, column={4}, expected={5}, actual={6})", //$NON-NLS-1$
                     getReason(),
                     getPath(),
                     getLineNumber(),

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,22 +52,22 @@ public final class JobCompatibility {
 
     static final Log LOG = LogFactory.getLog(JobCompatibility.class);
 
-    private static final String NAME_DUMMY_JOB = "asakusafw";
+    private static final String NAME_DUMMY_JOB = "asakusafw"; //$NON-NLS-1$
 
-    private static final String KEY_JOBTRACKER_ADDRESS = "mapred.job.tracker";
+    private static final String KEY_JOBTRACKER_ADDRESS = "mapred.job.tracker"; //$NON-NLS-1$
 
     private static final Method SET_JOB_ID;
     static {
         Method method = null;
         for (Class<?> aClass = Job.class; aClass != null; aClass = aClass.getSuperclass()) {
             try {
-                method = aClass.getDeclaredMethod("setJobID", JobID.class);
+                method = aClass.getDeclaredMethod("setJobID", JobID.class); //$NON-NLS-1$
                 method.setAccessible(true);
                 break;
             } catch (Exception e) {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace(MessageFormat.format(
-                            "failed to detect {0}.setJobID() method",
+                            "failed to detect {0}.setJobID() method", //$NON-NLS-1$
                             aClass.getName()), e);
                 }
             }
@@ -291,7 +291,7 @@ public final class JobCompatibility {
         }
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Detecting local mode configuraiton: {0}={1}",
+                    "Detecting local mode configuraiton: {0}={1}", //$NON-NLS-1$
                     KEY_JOBTRACKER_ADDRESS, mode));
         }
         return isRemoteJob(mode) == false;
@@ -302,7 +302,7 @@ public final class JobCompatibility {
     }
 
     private static boolean isRemoteJob(String modeName) {
-        return modeName != null && modeName.equals("local") == false;
+        return modeName != null && modeName.equals("local") == false; //$NON-NLS-1$
     }
 
     /**
@@ -373,8 +373,8 @@ public final class JobCompatibility {
                 configuration,
                 id,
                 reader,
-                reporter.getCounter("asakusafw", "inputKey"),
-                reporter.getCounter("asakusafw", "inputValue"),
+                reporter.getCounter("asakusafw", "inputKey"), //$NON-NLS-1$ //$NON-NLS-2$
+                reporter.getCounter("asakusafw", "inputValue"), //$NON-NLS-1$ //$NON-NLS-2$
                 writer, committer, reporter, comparator,
                 inputKeyClass, inputValueClass);
     }

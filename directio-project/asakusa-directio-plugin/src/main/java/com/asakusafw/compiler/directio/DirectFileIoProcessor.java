@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,11 +71,11 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
     private static final Set<PatternElementKind> INVALID_BASE_PATH_KIND =
             EnumSet.of(PatternElementKind.WILDCARD, PatternElementKind.SELECTION);
 
-    private static final String METHOD_RESOURCE_PATTERN = "getResourcePattern";
+    private static final String METHOD_RESOURCE_PATTERN = "getResourcePattern"; //$NON-NLS-1$
 
-    private static final String METHOD_ORDER = "getOrder";
+    private static final String METHOD_ORDER = "getOrder"; //$NON-NLS-1$
 
-    private static final String MODULE_NAME = "directio";
+    private static final String MODULE_NAME = "directio"; //$NON-NLS-1$
 
     private static final Class<? extends InputFormat<?, ?>> INPUT_FORMAT = BridgeInputFormat.class;
 
@@ -96,21 +96,21 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
 
     @Override
     public boolean validate(List<InputDescription> inputs, List<OutputDescription> outputs) {
-        LOG.debug("Checking Direct I/O vocabularies: batch={}, flow={}",
+        LOG.debug("Checking Direct I/O vocabularies: batch={}, flow={}", //$NON-NLS-1$
                 getEnvironment().getBatchId(),
                 getEnvironment().getFlowId());
         boolean valid = true;
         for (InputDescription input : inputs) {
-            LOG.debug("Checking Direct I/O input: {}",
+            LOG.debug("Checking Direct I/O input: {}", //$NON-NLS-1$
                     input.getName());
             valid &= validateInput(input);
         }
         for (OutputDescription output : outputs) {
-            LOG.debug("Checking Direct I/O output: {}",
+            LOG.debug("Checking Direct I/O output: {}", //$NON-NLS-1$
                     output.getName());
             valid &= validateOutput(output);
         }
-        LOG.debug("Checking Direct I/O paths");
+        LOG.debug("Checking Direct I/O paths"); //$NON-NLS-1$
         valid &= validatePaths(inputs, outputs);
         return valid;
     }
@@ -369,7 +369,7 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
     private SourceInfo getOriginalInputInfo(InputDescription description) {
         DirectFileInputDescription desc = extract(description);
         Set<Location> locations = Collections.singleton(
-                Location.fromPath("__DIRECTIO__", '/')
+                Location.fromPath("__DIRECTIO__", '/') //$NON-NLS-1$
                 .append(description.getName())
                 .append(Location.fromPath(desc.getBasePath(), '/')));
         return new SourceInfo(locations, INPUT_FORMAT, getAttributes(desc));
@@ -394,10 +394,10 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
                 buf.append(c);
             } else if (c <= 0xff) {
                 buf.append('0');
-                buf.append(String.format("%02x", (int) c));
+                buf.append(String.format("%02x", (int) c)); //$NON-NLS-1$
             } else {
-                buf.append("0u");
-                buf.append(String.format("%04x", (int) c));
+                buf.append("0u"); //$NON-NLS-1$
+                buf.append(String.format("%04x", (int) c)); //$NON-NLS-1$
             }
         }
         return buf.toString();
@@ -411,7 +411,7 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
             InputDescription description = input.getDescription();
             DirectFileInputDescription desc = extract(description);
             if (isCacheTarget(desc)) {
-                LOG.debug("Input will be copied in prologue: {}", description.getName());
+                LOG.debug("Input will be copied in prologue: {}", description.getName()); //$NON-NLS-1$
                 targets.add(new CopyDescription(
                         getProcessedInputName(description),
                         getEnvironment().getDataClasses().load(description.getDataType()),

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -80,7 +80,7 @@ public class FlowResourceEmitter {
             try {
                 Name compiled = rewriter.resolve(resource);
                 if (compiled != null) {
-                    LOG.debug("{}は{}でコンパイルしました", resource, compiled);
+                    LOG.debug("compiled resource: {} ({})", resource, compiled); //$NON-NLS-1$
                     return compiled;
                 }
             } catch (RewriteException e) {

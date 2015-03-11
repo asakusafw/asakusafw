@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,15 +24,17 @@ import java.util.ServiceLoader;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.conf.Configurable;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 
 import com.asakusafw.runtime.core.HadoopConfiguration;
-import com.asakusafw.runtime.core.ResourceConfiguration;
 import com.asakusafw.runtime.core.RuntimeResource;
 
 /**
  * 実行時リソースのライフサイクルを管理する。
+ * @since 0.1.0
+ * @version 0.7.3
  */
 public class RuntimeResourceManager extends Configured {
 
@@ -41,15 +43,15 @@ public class RuntimeResourceManager extends Configured {
     /**
      * 標準的な設定ファイルの名前。
      */
-    public static final String CONFIGURATION_FILE_NAME = "asakusa-resources.xml";
+    public static final String CONFIGURATION_FILE_NAME = "asakusa-resources.xml"; //$NON-NLS-1$
 
     /**
      * The path to configuration file (relative from $ASAKUSA_HOME).
      * @since 0.2.5
      */
-    public static final String CONFIGURATION_FILE_PATH = "core/conf/" + CONFIGURATION_FILE_NAME;
+    public static final String CONFIGURATION_FILE_PATH = "core/conf/" + CONFIGURATION_FILE_NAME; //$NON-NLS-1$
 
-    private final ResourceConfiguration configuration;
+    private final HadoopConfiguration configuration;
 
     private List<RuntimeResource> resources;
 
@@ -76,14 +78,14 @@ public class RuntimeResourceManager extends Configured {
      */
     public void setup() throws IOException, InterruptedException {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Loading runtime plugins");
+            LOG.debug("Loading runtime plugins"); //$NON-NLS-1$
         }
         List<? extends RuntimeResource> loaded = load();
         this.resources = new ArrayList<RuntimeResource>();
         for (RuntimeResource resource : loaded) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "Activating runtime plugin: {0}",
+                        "Activating runtime plugin: {0}", //$NON-NLS-1$
                         resource.getClass().getName()));
             }
             resource.setup(configuration);
@@ -91,7 +93,7 @@ public class RuntimeResourceManager extends Configured {
         }
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Loaded {0} runtime plugins",
+                    "Loaded {0} runtime plugins", //$NON-NLS-1$
                     resources.size()));
         }
     }
@@ -107,14 +109,14 @@ public class RuntimeResourceManager extends Configured {
         int count = resources.size();
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Unloading {0} runtime plugins",
+                    "Unloading {0} runtime plugins", //$NON-NLS-1$
                     count));
         }
         try {
             for (RuntimeResource resource : resources) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(MessageFormat.format(
-                            "Deactivating runtime plugin: {0}",
+                            "Deactivating runtime plugin: {0}", //$NON-NLS-1$
                             resource.getClass().getName()));
                 }
                 resource.cleanup(configuration);
@@ -125,7 +127,7 @@ public class RuntimeResourceManager extends Configured {
         }
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Unloaded {0} runtime plugins",
+                    "Unloaded {0} runtime plugins", //$NON-NLS-1$
                     count));
         }
     }
@@ -145,6 +147,9 @@ public class RuntimeResourceManager extends Configured {
         ClassLoader loader = configuration.getClassLoader();
         try {
             for (RuntimeResource resource : ServiceLoader.load(RuntimeResource.class, loader)) {
+                if (resource instanceof Configurable) {
+                    ((Configurable) resource).setConf(configuration.getConf());
+                }
                 results.add(resource);
             }
         } catch (RuntimeException e) {

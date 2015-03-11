@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,7 +64,7 @@ public class FlowFactoryClassGenerator {
     /**
      * {@link FlowElementResolver}を保持するフィールド名。
      */
-    static final String RESOLVER_FIELD_NAME = "$";
+    static final String RESOLVER_FIELD_NAME = "$"; //$NON-NLS-1$
 
     private final ModelFactory factory;
 
@@ -114,7 +114,7 @@ public class FlowFactoryClassGenerator {
                     .seeType(new Jsr269(factory).convert(environment.getErasure(flowClass.getElement().asType())))
                     .toJavadoc(),
                 new AttributeBuilder(factory)
-                    .annotation(util.t(Generated.class), util.v("{0}:{1}",
+                    .annotation(util.t(Generated.class), util.v("{0}:{1}", //$NON-NLS-1$
                             FlowOperatorCompiler.class.getSimpleName(),
                             FlowOperatorCompiler.VERSION))
                     .annotation(util.t(OperatorFactory.class),
@@ -202,7 +202,7 @@ public class FlowFactoryClassGenerator {
     private MethodDeclaration createRenamer(NamedType objectType, NameGenerator names) {
         assert objectType != null;
         assert names != null;
-        SimpleName newName = names.create("newName");
+        SimpleName newName = names.create("newName"); //$NON-NLS-1$
         return factory.newMethodDeclaration(
                 new JavadocBuilder(factory)
                     .text("この演算子の名前を設定する。")
@@ -211,22 +211,20 @@ public class FlowFactoryClassGenerator {
                     .returns()
                         .text("この演算子オブジェクト (this)")
                     .exception(util.t(IllegalArgumentException.class))
-                        .text("引数に")
-                        .code("null")
-                        .text("が指定された場合")
+                        .text("引数に<code>null</code>が指定された場合")
                     .toJavadoc(),
                 new AttributeBuilder(factory)
                     .Public()
                     .toAttributes(),
                 getType(objectType),
-                factory.newSimpleName("as"),
+                factory.newSimpleName("as"), //$NON-NLS-1$
                 Collections.singletonList(factory.newFormalParameterDeclaration(
                         util.t(String.class),
                         newName)),
                 Arrays.asList(new Statement[] {
                         new ExpressionBuilder(factory, factory.newThis())
                             .field(RESOLVER_FIELD_NAME)
-                            .method("setName", newName)
+                            .method("setName", newName) //$NON-NLS-1$
                             .toStatement(),
                         new ExpressionBuilder(factory, factory.newThis())
                             .toReturnStatement(),
@@ -236,7 +234,7 @@ public class FlowFactoryClassGenerator {
     private MethodDeclaration createInliner(NamedType objectType, NameGenerator names) {
         assert objectType != null;
         assert names != null;
-        SimpleName optimize = names.create("optimize");
+        SimpleName optimize = names.create("optimize"); //$NON-NLS-1$
         return factory.newMethodDeclaration(
                 new JavadocBuilder(factory)
                     .text("このフロー部品のインライン化状態を設定する。")
@@ -249,15 +247,15 @@ public class FlowFactoryClassGenerator {
                     .Public()
                     .toAttributes(),
                 getType(objectType),
-                factory.newSimpleName("inlined"),
+                factory.newSimpleName("inlined"), //$NON-NLS-1$
                 Collections.singletonList(factory.newFormalParameterDeclaration(
                         util.t(boolean.class),
                         optimize)),
                 Arrays.asList(new Statement[] {
                         new ExpressionBuilder(factory, factory.newThis())
                             .field(RESOLVER_FIELD_NAME)
-                            .method("getElement")
-                            .method("override", factory.newConditionalExpression(
+                            .method("getElement") //$NON-NLS-1$
+                            .method("override", factory.newConditionalExpression(//$NON-NLS-1$
                                     optimize,
                                     new TypeBuilder(factory, util.t(Inline.class))
                                         .field(Inline.FORCE_AGGREGATE.name())
@@ -331,7 +329,7 @@ public class FlowFactoryClassGenerator {
             NameGenerator names) {
         assert parameters != null;
         List<Statement> statements = Lists.create();
-        SimpleName builderName = names.create("builder");
+        SimpleName builderName = names.create("builder"); //$NON-NLS-1$
         statements.add(new TypeBuilder(factory, util.t(FlowPartDescription.Builder.class))
             .newObject(factory.newClassLiteral(util.t(flowClass.getElement())))
             .toLocalVariableDeclaration(util.t(FlowPartDescription.Builder.class),
@@ -345,7 +343,7 @@ public class FlowFactoryClassGenerator {
         for (OperatorPortDeclaration var : flowClass.getInputPorts()) {
             SimpleName name = names.create(var.getName());
             statements.add(new ExpressionBuilder(factory, builderName)
-                .method("addInput",
+                .method("addInput", //$NON-NLS-1$
                         util.v(var.getName()),
                         factory.newSimpleName(var.getType().getReference()))
                 .toLocalVariableDeclaration(
@@ -358,7 +356,7 @@ public class FlowFactoryClassGenerator {
             Expression type = toExpression(var);
             assert type != null;
             statements.add(new ExpressionBuilder(factory, builderName)
-                .method("addOutput", util.v(var.getName()), type)
+                .method("addOutput", util.v(var.getName()), type) //$NON-NLS-1$
                 .toLocalVariableDeclaration(
                         util.toOutType(var.getType().getRepresentation()),
                         name));
@@ -368,14 +366,14 @@ public class FlowFactoryClassGenerator {
             Expression type = toExpression(var);
             SimpleName name = factory.newSimpleName(var.getName());
             statements.add(new ExpressionBuilder(factory, builderName)
-                .method("addParameter",
+                .method("addParameter", //$NON-NLS-1$
                     util.v(var.getName()),
                     type,
                     name)
                 .toStatement());
             arguments[var.getParameterPosition()] = name;
         }
-        SimpleName descName = names.create("desc");
+        SimpleName descName = names.create("desc"); //$NON-NLS-1$
         statements.add(new TypeBuilder(factory, getType(util.t(flowClass.getElement())))
             .newObject(arguments)
             .toLocalVariableDeclaration(util.t(FlowDescription.class), descName));
@@ -385,12 +383,12 @@ public class FlowFactoryClassGenerator {
             .toExpression();
         statements.add(new ExpressionBuilder(factory, resolver)
             .assignFrom(new ExpressionBuilder(factory, builderName)
-                .method("toResolver", descName)
+                .method("toResolver", descName) //$NON-NLS-1$
                 .toExpression())
             .toStatement());
         for (OperatorPortDeclaration var : flowClass.getInputPorts()) {
             statements.add(new ExpressionBuilder(factory, resolver)
-                .method("resolveInput",
+                .method("resolveInput", //$NON-NLS-1$
                         util.v(var.getName()),
                         factory.newSimpleName(var.getName()))
                 .toStatement());
@@ -399,7 +397,7 @@ public class FlowFactoryClassGenerator {
             statements.add(new ExpressionBuilder(factory, factory.newThis())
                 .field(var.getName())
                 .assignFrom(new ExpressionBuilder(factory, resolver)
-                    .method("resolveOutput", util.v(var.getName()))
+                    .method("resolveOutput", util.v(var.getName())) //$NON-NLS-1$
                     .toExpression())
                 .toStatement());
         }
@@ -456,15 +454,15 @@ public class FlowFactoryClassGenerator {
                 javadoc.toJavadoc(),
                 new AttributeBuilder(factory)
                     .annotation(util.t(OperatorInfo.class),
-                            "kind", factory.newClassLiteral(util.t(FlowPart.class)),
-                            "input", factory.newArrayInitializer(inputMetaData),
-                            "output", factory.newArrayInitializer(outputMetaData),
-                            "parameter", factory.newArrayInitializer(parameterMetaData))
+                            "kind", factory.newClassLiteral(util.t(FlowPart.class)), //$NON-NLS-1$
+                            "input", factory.newArrayInitializer(inputMetaData), //$NON-NLS-1$
+                            "output", factory.newArrayInitializer(outputMetaData), //$NON-NLS-1$
+                            "parameter", factory.newArrayInitializer(parameterMetaData)) //$NON-NLS-1$
                     .Public()
                     .toAttributes(),
                 util.toTypeParameters(flowClass.getElement()),
                 type,
-                factory.newSimpleName("create"),
+                factory.newSimpleName("create"), //$NON-NLS-1$
                 parameters,
                 0,
                 Collections.<Type>emptyList(),

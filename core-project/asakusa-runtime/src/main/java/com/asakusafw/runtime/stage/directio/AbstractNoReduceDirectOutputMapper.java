@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ public abstract class AbstractNoReduceDirectOutputMapper<T> extends MapperWithRu
         Object, T,
         Object, Object> {
 
-    private static final String COUNTER_GROUP = "com.asakusafw.directio.output.Statistics";
+    private static final String COUNTER_GROUP = "com.asakusafw.directio.output.Statistics"; //$NON-NLS-1$
 
     private final Log log;
 
@@ -95,19 +95,19 @@ public abstract class AbstractNoReduceDirectOutputMapper<T> extends MapperWithRu
         if (context.nextKeyValue() == false) {
             if (log.isDebugEnabled()) {
                 log.debug(MessageFormat.format(
-                        "There are not input for directly output Mapper {0}@{1}",
+                        "There are not input for directly output Mapper {0}@{1}", //$NON-NLS-1$
                         getClass().getName(),
                         context.getTaskAttemptID()));
             }
         } else {
             if (log.isDebugEnabled()) {
                 log.debug(MessageFormat.format(
-                        "Start setup directly output Mapper {0}@{1}",
+                        "Start setup directly output Mapper {0}@{1}", //$NON-NLS-1$
                         getClass().getName(),
                         context.getTaskAttemptID()));
             }
             DirectDataSourceRepository repository = HadoopDataSourceUtil.loadRepository(context.getConfiguration());
-            String arguments = context.getConfiguration().get(StageConstants.PROP_ASAKUSA_BATCH_ARGS, "");
+            String arguments = context.getConfiguration().get(StageConstants.PROP_ASAKUSA_BATCH_ARGS, ""); //$NON-NLS-1$
             VariableTable variables = new VariableTable(VariableTable.RedefineStrategy.IGNORE);
             variables.defineVariables(arguments);
 
@@ -118,14 +118,14 @@ public abstract class AbstractNoReduceDirectOutputMapper<T> extends MapperWithRu
             DirectDataSource datasource = repository.getRelatedDataSource(path);
             String basePath = repository.getComponentPath(path);
             String unresolvedResourcePath = rawResourcePath.replaceAll(
-                    Pattern.quote("*"),
-                    String.format("%04d", context.getTaskAttemptID().getTaskID().getId()));
+                    Pattern.quote("*"), //$NON-NLS-1$
+                    String.format("%04d", context.getTaskAttemptID().getTaskID().getId())); //$NON-NLS-1$
             String resourcePath = variables.parse(unresolvedResourcePath);
             DataDefinition<? super T> definition = SimpleDataDefinition.newInstance(dataType, format);
 
             if (log.isDebugEnabled()) {
                 log.debug(MessageFormat.format(
-                        "Open mapper output (id={0}, basePath={1}, resourcePath={2})",
+                        "Open mapper output (id={0}, basePath={1}, resourcePath={2})", //$NON-NLS-1$
                         id,
                         basePath,
                         resourcePath));
@@ -146,7 +146,7 @@ public abstract class AbstractNoReduceDirectOutputMapper<T> extends MapperWithRu
             } finally {
                 if (log.isDebugEnabled()) {
                     log.debug(MessageFormat.format(
-                            "Start cleanup directly output Mapper {0}@{1}",
+                            "Start cleanup directly output Mapper {0}@{1}", //$NON-NLS-1$
                             getClass().getName(),
                             context.getTaskAttemptID()));
                 }
@@ -154,9 +154,9 @@ public abstract class AbstractNoReduceDirectOutputMapper<T> extends MapperWithRu
             }
             org.apache.hadoop.mapreduce.Counter recordCounter = JobCompatibility.getTaskOutputRecordCounter(context);
             recordCounter.increment(records);
-            context.getCounter(COUNTER_GROUP, id + ".files").increment(1);
-            context.getCounter(COUNTER_GROUP, id + ".records").increment(records);
-            context.getCounter(COUNTER_GROUP, id + ".size").increment(outputContext.getCounter().get());
+            context.getCounter(COUNTER_GROUP, id + ".files").increment(1); //$NON-NLS-1$
+            context.getCounter(COUNTER_GROUP, id + ".records").increment(records); //$NON-NLS-1$
+            context.getCounter(COUNTER_GROUP, id + ".size").increment(outputContext.getCounter().get()); //$NON-NLS-1$
         }
     }
 }

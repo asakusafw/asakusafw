@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,9 +60,9 @@ import com.asakusafw.runtime.stage.input.StageInputSplit.Source;
 @SuppressWarnings("rawtypes")
 public class StageInputFormat extends InputFormat {
 
-    private static final String KEY_SPLIT_COMBINER = "com.asakusafw.input.combine";
+    private static final String KEY_SPLIT_COMBINER = "com.asakusafw.input.combine"; //$NON-NLS-1$
 
-    private static final String DEFAULT_SPLIT_COMBINER = "default";
+    private static final String DEFAULT_SPLIT_COMBINER = "default"; //$NON-NLS-1$
 
     static final Log LOG = LogFactory.getLog(StageInputFormat.class);
 
@@ -70,8 +70,8 @@ public class StageInputFormat extends InputFormat {
     static {
         Map<String, Class<? extends SplitCombiner>> map = new HashMap<String, Class<? extends SplitCombiner>>();
         map.put(DEFAULT_SPLIT_COMBINER, DefaultSplitCombiner.class);
-        map.put("disabled", IdentitySplitCombiner.class);
-        map.put("extreme", ExtremeSplitCombiner.class);
+        map.put("disabled", IdentitySplitCombiner.class); //$NON-NLS-1$
+        map.put("extreme", ExtremeSplitCombiner.class); //$NON-NLS-1$
         SPLIT_COMBINERS = Collections.unmodifiableMap(map);
     }
 
@@ -82,7 +82,7 @@ public class StageInputFormat extends InputFormat {
         if (LOG.isDebugEnabled()) {
             if ((combiner instanceof IdentitySplitCombiner) == false) {
                 LOG.debug(MessageFormat.format(
-                        "Combines {0} splits: {1}",
+                        "Combines {0} splits: {1}", //$NON-NLS-1$
                         splits.size(),
                         combiner.getClass().getName()));
             }
@@ -90,7 +90,7 @@ public class StageInputFormat extends InputFormat {
         List<StageInputSplit> combined = combiner.combine(context, splits);
         if (LOG.isDebugEnabled() && splits.size() != combined.size()) {
             LOG.debug(MessageFormat.format(
-                    "Input splits are combined: {0} -> {1}",
+                    "Input splits are combined: {0} -> {1}", //$NON-NLS-1$
                     splits.size(),
                     combined.size()));
         }
@@ -292,7 +292,7 @@ public class StageInputFormat extends InputFormat {
 
     private static final class Cache {
 
-        private static final String KEY_CACHE_ID = Cache.class.getName() + ".id";
+        private static final String KEY_CACHE_ID = Cache.class.getName() + ".id"; //$NON-NLS-1$
 
         private static Reference<Cache> data;
 
@@ -309,7 +309,7 @@ public class StageInputFormat extends InputFormat {
             this.key = new HashSet<StageInput>(key);
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "saving input splits into cache: id={0}",
+                        "saving input splits into cache: id={0}", //$NON-NLS-1$
                         id));
             }
             DataBuffer buffer = new DataBuffer();
@@ -324,7 +324,7 @@ public class StageInputFormat extends InputFormat {
             assert conf != null;
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "restoring input splits from cache: id={0}",
+                        "restoring input splits from cache: id={0}", //$NON-NLS-1$
                         id));
             }
             DataBuffer buffer = new DataBuffer();

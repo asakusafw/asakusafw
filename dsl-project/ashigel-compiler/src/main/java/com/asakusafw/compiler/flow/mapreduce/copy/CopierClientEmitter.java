@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -124,9 +124,9 @@ public class CopierClientEmitter {
         Precondition.checkMustNotBeNull(moduleId, "moduleId"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(slots, "slots"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(outputDirectory, "outputDirectory"); //$NON-NLS-1$
-        LOG.debug("Generates job for {} in {} phase",
+        LOG.debug("Generates job for {} in {} phase", //$NON-NLS-1$
                 moduleId,
-                prologue ? "prologue" : "epilogue");
+                prologue ? "prologue" : "epilogue"); //$NON-NLS-1$ //$NON-NLS-2$
         Engine engine = new Engine(environment, moduleId, slots, outputDirectory, prologue);
         CompilationUnit source = engine.generate();
         environment.emit(source);
@@ -135,7 +135,7 @@ public class CopierClientEmitter {
         QualifiedName name = environment
             .getModelFactory()
             .newQualifiedName(packageName, simpleName);
-        LOG.debug("\"{}\" will use {}", moduleId, name);
+        LOG.debug("\"{}\" will use {}", moduleId, name); //$NON-NLS-1$
         return new CompiledStage(name, prologue ? Naming.getPrologueName(moduleId) : Naming.getEpilogueName(moduleId));
     }
 
@@ -214,12 +214,12 @@ public class CopierClientEmitter {
 
         private Map<String, Expression> createTraceLocationElements() {
             Map<String, Expression> results = new LinkedHashMap<String, Expression>();
-            results.put("batchId", Models.toLiteral(factory, environment.getBatchId()));
-            results.put("flowId", Models.toLiteral(factory, environment.getFlowId()));
+            results.put("batchId", Models.toLiteral(factory, environment.getBatchId())); //$NON-NLS-1$
+            results.put("flowId", Models.toLiteral(factory, environment.getFlowId())); //$NON-NLS-1$
             if (prologue) {
-                results.put("stageId", Models.toLiteral(factory, Naming.getPrologueName(moduleId)));
+                results.put("stageId", Models.toLiteral(factory, Naming.getPrologueName(moduleId))); //$NON-NLS-1$
             } else {
-                results.put("stageId", Models.toLiteral(factory, Naming.getEpilogueName(moduleId)));
+                results.put("stageId", Models.toLiteral(factory, Naming.getEpilogueName(moduleId))); //$NON-NLS-1$
             }
             return results;
         }
@@ -251,8 +251,8 @@ public class CopierClientEmitter {
         }
 
         private MethodDeclaration createStageInputsMethod() throws IOException {
-            SimpleName list = factory.newSimpleName("results");
-            SimpleName attributes = factory.newSimpleName("attributes");
+            SimpleName list = factory.newSimpleName("results"); //$NON-NLS-1$
+            SimpleName attributes = factory.newSimpleName("attributes"); //$NON-NLS-1$
 
             List<Statement> statements = Lists.create();
             statements.add(new TypeBuilder(factory, t(ArrayList.class, t(StageInput.class)))
@@ -272,14 +272,14 @@ public class CopierClientEmitter {
                     .toStatement());
                 for (Map.Entry<String, String> entry : info.getAttributes().entrySet()) {
                     statements.add(new ExpressionBuilder(factory, attributes)
-                        .method("put",
+                        .method("put", //$NON-NLS-1$
                                 Models.toLiteral(factory, entry.getKey()),
                                 Models.toLiteral(factory, entry.getValue()))
                         .toStatement());
                 }
                 for (Location input : info.getLocations()) {
                     statements.add(new ExpressionBuilder(factory, list)
-                        .method("add", new TypeBuilder(factory, t(StageInput.class))
+                        .method("add", new TypeBuilder(factory, t(StageInput.class)) //$NON-NLS-1$
                             .newObject(
                                     Models.toLiteral(factory, input.toPath(PATH_SEPARATOR)),
                                     factory.newClassLiteral(formatClass),
@@ -306,7 +306,7 @@ public class CopierClientEmitter {
 
 
         private MethodDeclaration createStageOutputsMethod() {
-            SimpleName list = factory.newSimpleName("results");
+            SimpleName list = factory.newSimpleName("results"); //$NON-NLS-1$
             List<Statement> statements = Lists.create();
             statements.add(new TypeBuilder(factory, t(ArrayList.class, t(StageOutput.class)))
                 .newObject()
@@ -314,7 +314,7 @@ public class CopierClientEmitter {
             for (CopyDescription slot : slots) {
                 Expression valueType = factory.newClassLiteral(t(slot.getDataModel().getType()));
                 statements.add(new ExpressionBuilder(factory, list)
-                    .method("add", new TypeBuilder(factory, t(StageOutput.class))
+                    .method("add", new TypeBuilder(factory, t(StageOutput.class)) //$NON-NLS-1$
                         .newObject(
                                 Models.toLiteral(factory, slot.getName()),
                                 factory.newClassLiteral(t(NullWritable.class)),
@@ -347,7 +347,7 @@ public class CopierClientEmitter {
 
         private Javadoc createJavadoc() {
             return new JavadocBuilder(factory)
-                .text("A client class for \"{0}\".", moduleId)
+                .text("A client class for \"{0}\".", moduleId) //$NON-NLS-1$
                 .toJavadoc();
         }
 

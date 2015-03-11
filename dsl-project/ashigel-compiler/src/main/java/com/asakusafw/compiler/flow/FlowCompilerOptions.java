@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package com.asakusafw.compiler.flow;
 
+import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -32,6 +33,8 @@ import com.asakusafw.compiler.common.Precondition;
 
 /**
  * Flowコンパイラのオプション設定。
+ * @since 0.1.0
+ * @version 0.7.3
  */
 public class FlowCompilerOptions {
 
@@ -40,12 +43,12 @@ public class FlowCompilerOptions {
     /**
      * プロパティに指定する際の設定名。
      */
-    public static final String K_OPTIONS = "com.asakusafw.compiler.options";
+    public static final String K_OPTIONS = "com.asakusafw.compiler.options"; //$NON-NLS-1$
 
     /**
      * The key prefix for extra options.
      */
-    public static final String PREFIX_EXTRA_OPTION = "X";
+    public static final String PREFIX_EXTRA_OPTION = "X"; //$NON-NLS-1$
 
     /**
      * オプションの項目一覧。
@@ -152,35 +155,45 @@ public class FlowCompilerOptions {
         /**
          * The option is enabled.
          */
-        ENABLED("enabled", "enable", "t", "true", "y", "yes", "on"),
+        ENABLED("enabled,enable,t,true,y,yes,on"), //$NON-NLS-1$
 
         /**
          * The option is disabled.
          */
-        DISABLED("disabled", "disable", "f", "false", "n", "no", "off"),
+        DISABLED("disabled,disable,f,false,n,no,off"), //$NON-NLS-1$
 
         /**
          * The option should be auto detected.
          */
-        AUTO("auto"),
+        AUTO("auto"), //$NON-NLS-1$
 
         /**
          * The option which is invalid.
          */
-        INVALID("invalid"),
-
+        INVALID("invalid"), //$NON-NLS-1$
         ;
 
         private final String primary;
 
         private final Set<String> symbols;
 
-        private GenericOptionValue(String primary, String... symbols) {
-            assert primary != null;
+        private GenericOptionValue(String symbols) {
             assert symbols != null;
-            this.primary = primary;
+            String first = null;
             this.symbols = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
-            Collections.addAll(this.symbols, primary);
+            for (String s : symbols.split(",")) { //$NON-NLS-1$
+                String token = s.trim();
+                if (token.isEmpty() == false) {
+                    if (first == null) {
+                        first = token;
+                    }
+                    this.symbols.add(token);
+                }
+            }
+            if (first == null) {
+                throw new IllegalArgumentException();
+            }
+            this.primary = first;
             Collections.addAll(this.symbols, symbols);
         }
 
@@ -195,7 +208,7 @@ public class FlowCompilerOptions {
         /**
          * Returns a value corresponding to the symbol.
          * @param symbol target symbol
-         * @return corresnponded value, or {@link FlowCompilerOptions.GenericOptionValue#INVALID} if does not exist
+         * @return corresponded value, or {@link FlowCompilerOptions.GenericOptionValue#INVALID} if does not exist
          * @throws IllegalArgumentException if some parameters were {@code null}
          */
         public static GenericOptionValue fromSymbol(String symbol) {
@@ -234,9 +247,9 @@ public class FlowCompilerOptions {
         }
     }
 
-    private static final Pattern OPTION = Pattern.compile("\\s*(\\+|-)\\s*([0-9A-Za-z_\\-]+)\\s*");
+    private static final Pattern OPTION = Pattern.compile("\\s*(\\+|-)\\s*([0-9A-Za-z_\\-]+)\\s*"); //$NON-NLS-1$
 
-    private static final Pattern EXTRA_OPTION = Pattern.compile("\\s*X([0-9A-Za-z_\\-]+)\\s*=([^,]*)");
+    private static final Pattern EXTRA_OPTION = Pattern.compile("\\s*X([0-9A-Za-z_\\-]+)\\s*=([^,]*)"); //$NON-NLS-1$
 
     /**
      * デフォルトの設定をプロパティからロードする。
@@ -270,7 +283,7 @@ OptionName:
      */
     public static FlowCompilerOptions load(Properties properties) {
         Precondition.checkMustNotBeNull(properties, "properties"); //$NON-NLS-1$
-        String[] options = properties.getProperty(K_OPTIONS, "").split("\\s*,\\s*");
+        String[] options = properties.getProperty(K_OPTIONS, "").split("\\s*,\\s*"); //$NON-NLS-1$ //$NON-NLS-2$
         FlowCompilerOptions results = new FlowCompilerOptions();
         for (String option : options) {
             if (option.isEmpty()) {
@@ -278,13 +291,15 @@ OptionName:
             }
             Matcher optionMatcher = OPTION.matcher(option);
             if (optionMatcher.matches()) {
-                boolean value = optionMatcher.group(1).equals("+");
+                boolean value = optionMatcher.group(1).equals("+"); //$NON-NLS-1$
                 String name = optionMatcher.group(2);
                 try {
                     Item item = Item.valueOf(name);
                     item.setTo(results, value);
                 } catch (NoSuchElementException e) {
-                    LOG.warn("コンパイラオプション\"{}\"を解釈できません", option);
+                    LOG.warn(MessageFormat.format(
+                            "コンパイラオプション\"{0}\"を解釈できません",
+                            option));
                 }
             } else {
                 Matcher extraMatcher = EXTRA_OPTION.matcher(option);
@@ -293,7 +308,9 @@ OptionName:
                     String value = extraMatcher.group(2).trim();
                     results.extraAttributes.put(key, value);
                 } else {
-                    LOG.warn("コンパイラオプション\"{}\"を解釈できません", option);
+                    LOG.warn(MessageFormat.format(
+                            "コンパイラオプション\"{0}\"を解釈できません",
+                            option));
                 }
             }
         }
@@ -416,6 +433,21 @@ OptionName:
      */
     public String getExtraAttribute(String name) {
         return this.extraAttributes.get(name);
+    }
+
+    /**
+     * Returns the extra attribute.
+     * @param name attribute name
+     * @param defaultValue the default value
+     * @return related value, or the default value if the attribute is not set
+     * @since 0.7.1
+     */
+    public String getExtraAttribute(String name, String defaultValue) {
+        String value = this.extraAttributes.get(name);
+        if (value == null) {
+            return defaultValue;
+        }
+        return value;
     }
 
     /**

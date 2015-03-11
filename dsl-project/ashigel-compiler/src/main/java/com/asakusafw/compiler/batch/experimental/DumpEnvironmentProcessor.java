@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,22 +47,22 @@ public class DumpEnvironmentProcessor extends AbstractWorkflowProcessor {
 
     static final Logger LOG = LoggerFactory.getLogger(DumpEnvironmentProcessor.class);
 
-    static final Charset ENCODING = Charset.forName("UTF-8");
+    static final Charset ENCODING = Charset.forName("UTF-8"); //$NON-NLS-1$
 
     /**
      * 出力先のパス。
      */
-    public static final String PATH = "etc/build.log";
+    public static final String PATH = "etc/build.log"; //$NON-NLS-1$
 
     /**
      * 出力する環境変数の接頭辞。
      */
-    public static final String PREFIX_ENV = "ASAKUSA_";
+    public static final String PREFIX_ENV = "ASAKUSA_"; //$NON-NLS-1$
 
     /**
      * 出力するシステムプロパティの接頭辞。
      */
-    public static final String PREFIX_SYSPROP = "com.asakusafw.";
+    public static final String PREFIX_SYSPROP = "com.asakusafw."; //$NON-NLS-1$
 
     /**
      * 実験用のシェルスクリプトの出力先を返す。
@@ -98,18 +98,18 @@ public class DumpEnvironmentProcessor extends AbstractWorkflowProcessor {
     }
 
     private void dumpInternal(Context context) {
-        context.put("core.batchId = {0}", getEnvironment().getConfiguration().getBatchId());
-        context.put("core.buildId = {0}", getEnvironment().getBuildId());
+        context.put("core.batchId = {0}", getEnvironment().getConfiguration().getBatchId()); //$NON-NLS-1$
+        context.put("core.buildId = {0}", getEnvironment().getBuildId()); //$NON-NLS-1$
     }
 
     private void dumpEnv(Context context) {
         try {
             SortedMap<String, String> map = sortFilter(System.getenv(), PREFIX_ENV);
             for (Map.Entry<String, ?> entry : map.entrySet()) {
-                context.put("{0} = {1}", entry.getKey(), entry.getValue());
+                context.put("{0} = {1}", entry.getKey(), entry.getValue()); //$NON-NLS-1$
             }
         } catch (SecurityException e) {
-            LOG.warn("System.getenv()に失敗しました", e);
+            LOG.warn("failed to obtain environment variables", e);
         }
     }
 
@@ -117,10 +117,10 @@ public class DumpEnvironmentProcessor extends AbstractWorkflowProcessor {
         try {
             SortedMap<String, Object> map = sortFilter(System.getProperties(), PREFIX_SYSPROP);
             for (Map.Entry<String, ?> entry : map.entrySet()) {
-                context.put("{0} = {1}", entry.getKey(), entry.getValue());
+                context.put("{0} = {1}", entry.getKey(), entry.getValue()); //$NON-NLS-1$
             }
         } catch (SecurityException e) {
-            LOG.warn("System.getProperties()に失敗しました", e);
+            LOG.warn("failed to obtain system properties", e);
         }
     }
 

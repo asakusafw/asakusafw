@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ public class VolatileResourceFile implements FileObject {
      */
     public static final String URI_SCHEME = VolatileResourceFile.class.getName();
 
-    private static final Charset CHARSET = Charset.forName("UTF-8");
+    private static final Charset CHARSET = Charset.forName("UTF-8"); //$NON-NLS-1$
 
     private URI uri;
 
@@ -128,7 +128,7 @@ public class VolatileResourceFile implements FileObject {
             return new URI(
                 URI_SCHEME,
                 null,
-                "/" + path.replace('\\', '/'),
+                "/" + path.replace('\\', '/'), //$NON-NLS-1$
                 null);
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException(e);

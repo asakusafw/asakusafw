@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -32,6 +33,7 @@ import com.asakusafw.testdriver.core.DataModelSourceFactory;
 import com.asakusafw.testdriver.core.TestModerator;
 import com.asakusafw.testdriver.core.VerifierFactory;
 import com.asakusafw.testdriver.core.VerifyContext;
+import com.asakusafw.vocabulary.external.ImporterDescription;
 import com.asakusafw.vocabulary.flow.FlowDescription;
 import com.asakusafw.vocabulary.flow.graph.FlowGraph;
 
@@ -40,7 +42,7 @@ import com.asakusafw.vocabulary.flow.graph.FlowGraph;
  * @since 0.2.0
  * @version 0.5.2
  */
-public class FlowPartTester extends TestDriverBase {
+public class FlowPartTester extends TesterBase {
 
     static final Logger LOG = LoggerFactory.getLogger(FlowPartTester.class);
 
@@ -123,13 +125,13 @@ public class FlowPartTester extends TestDriverBase {
             FileUtils.forceDelete(compileWorkDir);
         }
 
-        String batchId = "testing";
-        String flowId = "flowpart";
+        String batchId = "testing"; //$NON-NLS-1$
+        String flowId = "flowpart"; //$NON-NLS-1$
         JobflowInfo jobflowInfo = DirectFlowCompiler.compile(
                 flowGraph,
                 batchId,
                 flowId,
-                "test.flowpart",
+                "test.flowpart", //$NON-NLS-1$
                 FlowPartDriverUtils.createWorkingLocation(driverContext),
                 compileWorkDir,
                 Arrays.asList(new File[] {
@@ -148,8 +150,10 @@ public class FlowPartTester extends TestDriverBase {
         LOG.info("テスト環境を初期化しています: {}", driverContext.getCallerClass().getName());
         executor.cleanWorkingDirectory();
         executor.cleanInputOutput(jobflowInfo);
+        executor.cleanExtraResources(getExternalResources());
 
         LOG.info("テストデータを配置しています: {}", driverContext.getCallerClass().getName());
+        executor.prepareExternalResources(getExternalResources());
         executor.prepareInput(jobflowInfo, inputs);
         executor.prepareOutput(jobflowInfo, outputs);
 
@@ -165,8 +169,15 @@ public class FlowPartTester extends TestDriverBase {
 
     private void validateTestCondition() throws IOException {
         TestModerator moderator = new TestModerator(driverContext.getRepository(), driverContext);
+        for (Map.Entry<? extends ImporterDescription, ? extends DataModelSourceFactory> entry
+                : getExternalResources().entrySet()) {
+            ImporterDescription description = entry.getKey();
+            String label = String.format("Resource(%s)", description); //$NON-NLS-1$
+            DataModelSourceFactory source = entry.getValue();
+            moderator.validate(entry.getKey().getModelType(), label, source);
+        }
         for (DriverInputBase<?> port : inputs) {
-            String label = String.format("Input(%s)", port.getName());
+            String label = String.format("Input(%s)", port.getName()); //$NON-NLS-1$
             Class<?> type = port.getModelType();
             DataModelSourceFactory source = port.getSource();
             if (source != null) {
@@ -174,7 +185,7 @@ public class FlowPartTester extends TestDriverBase {
             }
         }
         for (DriverOutputBase<?> port : outputs) {
-            String label = String.format("Output(%s)", port.getName());
+            String label = String.format("Output(%s)", port.getName()); //$NON-NLS-1$
             Class<?> type = port.getModelType();
             DataModelSourceFactory source = port.getSource();
             if (source != null) {

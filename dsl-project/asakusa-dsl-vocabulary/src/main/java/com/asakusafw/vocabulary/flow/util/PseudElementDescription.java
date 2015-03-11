@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,12 +45,12 @@ public class PseudElementDescription implements FlowElementDescription {
     /**
      * 入力ポートの名前。
      */
-    public static final String INPUT_PORT_NAME = "in";
+    public static final String INPUT_PORT_NAME = "in"; //$NON-NLS-1$
 
     /**
      * 出力ポートの名前。
      */
-    public static final String OUTPUT_PORT_NAME = "out";
+    public static final String OUTPUT_PORT_NAME = "out"; //$NON-NLS-1$
 
     private String name;
 
@@ -169,7 +169,7 @@ public class PseudElementDescription implements FlowElementDescription {
     public String toString() {
         Class<? extends Annotation> annotation = analyzePseud();
         return MessageFormat.format(
-                "{0}#{1}(@{2})",
+                "{0}#{1}(@{2})", //$NON-NLS-1$
                 CoreOperatorFactory.class.getSimpleName(),
                 annotation.getSimpleName().toLowerCase(Locale.ENGLISH),
                 annotation.getSimpleName());

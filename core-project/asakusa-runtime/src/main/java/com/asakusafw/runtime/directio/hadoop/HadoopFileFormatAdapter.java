@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -99,7 +99,7 @@ public class HadoopFileFormatAdapter<T> extends HadoopFileFormat<T> {
         try {
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "Process opening input [stream opened] (path={0}, offset={1}, size={2})",
+                        "Process opening input [stream opened] (path={0}, offset={1}, size={2})", //$NON-NLS-1$
                         path,
                         offset,
                         fragmentSize));
@@ -108,7 +108,7 @@ public class HadoopFileFormatAdapter<T> extends HadoopFileFormat<T> {
                 stream.seek(offset);
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(MessageFormat.format(
-                            "Process opening input [sought to offset] (path={0}, offset={1}, size={2})",
+                            "Process opening input [sought to offset] (path={0}, offset={1}, size={2})", //$NON-NLS-1$
                             path,
                             offset,
                             fragmentSize));
@@ -120,13 +120,13 @@ public class HadoopFileFormatAdapter<T> extends HadoopFileFormat<T> {
                     @Override
                     public void close() throws IOException {
                         LOG.debug(MessageFormat.format(
-                                "Start closing input (path={0}, offset={1}, size={2})",
+                                "Start closing input (path={0}, offset={1}, size={2})", //$NON-NLS-1$
                                 path,
                                 offset,
                                 fragmentSize));
                         super.close();
                         LOG.debug(MessageFormat.format(
-                                "Finish closing input (path={0}, offset={1}, size={2})",
+                                "Finish closing input (path={0}, offset={1}, size={2})", //$NON-NLS-1$
                                 path,
                                 offset,
                                 fragmentSize));
@@ -168,11 +168,11 @@ public class HadoopFileFormatAdapter<T> extends HadoopFileFormat<T> {
                     @Override
                     public void close() throws IOException {
                         LOG.debug(MessageFormat.format(
-                                "Start closing output (file={0})",
+                                "Start closing output (file={0})", //$NON-NLS-1$
                                 path));
                         super.close();
                         LOG.debug(MessageFormat.format(
-                                "Finish closing output (file={0})",
+                                "Finish closing output (file={0})", //$NON-NLS-1$
                                 path));
                     }
                 };

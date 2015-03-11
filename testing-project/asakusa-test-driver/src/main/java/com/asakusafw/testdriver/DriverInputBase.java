@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,26 +16,15 @@
 package com.asakusafw.testdriver;
 
 import java.io.IOException;
-import java.io.InterruptedIOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.DataModelReflection;
-import com.asakusafw.testdriver.core.DataModelSource;
 import com.asakusafw.testdriver.core.DataModelSourceFactory;
-import com.asakusafw.testdriver.core.IteratorDataModelSource;
-import com.asakusafw.testdriver.core.SourceDataModelSource;
-import com.asakusafw.testdriver.core.TestContext;
 import com.asakusafw.testdriver.core.TestDataToolProvider;
-import com.asakusafw.utils.io.Provider;
-import com.asakusafw.utils.io.Source;
 
 /**
  * テストドライバのテスト入力データの親クラス。
@@ -43,7 +32,7 @@ import com.asakusafw.utils.io.Source;
  * @version 0.6.0
  * @param <T> モデルクラス
  */
-public abstract class DriverInputBase<T> {
+public abstract class DriverInputBase<T> extends DriverElementBase {
 
     private static final Logger LOG = LoggerFactory.getLogger(DriverInputBase.class);
 
@@ -84,18 +73,12 @@ public abstract class DriverInputBase<T> {
         this.modelType = modelType;
     }
 
-    /**
-     * Returns the caller class.
-     * @return the caller class
-     */
+    @Override
     protected final Class<?> getCallerClass() {
         return callerClass;
     }
 
-    /**
-     * Returns the test tools.
-     * @return the test tools
-     */
+    @Override
     protected final TestDataToolProvider getTestTools() {
         return testTools;
     }
@@ -132,34 +115,13 @@ public abstract class DriverInputBase<T> {
      */
     protected final void setSource(DataModelSourceFactory source) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Prepare: name={}, model={}, source={}", new Object[] {
+            LOG.debug("Prepare: name={}, model={}, source={}", new Object[] { //$NON-NLS-1$
                     getName(),
                     getModelType().getName(),
                     source,
             });
         }
         this.source = source;
-    }
-
-    /**
-     * Converts a source path into {@link DataModelSourceFactory} which provides data models.
-     * This implementation lazily converts source contents into equivalent {@link DataModelReflection}s.
-     * @param sourcePath the source path
-     * @return the {@link DataModelSourceFactory}
-     * @throws IllegalArgumentException if the target resource is not found
-     * @since 0.6.0
-     */
-    protected final DataModelSourceFactory toDataModelSourceFactory(String sourcePath) {
-        if (sourcePath == null) {
-            throw new IllegalArgumentException("sourcePath must not be null"); //$NON-NLS-1$
-        }
-        URI sourceUri;
-        try {
-            sourceUri = toUri(sourcePath);
-        } catch (URISyntaxException e) {
-            throw new IllegalArgumentException("invalid source URI:" + sourcePath, e);
-        }
-        return getTestTools().getDataModelSourceFactory(sourceUri);
     }
 
     /**
@@ -173,54 +135,8 @@ public abstract class DriverInputBase<T> {
         if (sourceObjects == null) {
             throw new IllegalArgumentException("sourceObjects must not be null"); //$NON-NLS-1$
         }
-        final DataModelDefinition<T> definition = getDataModelDefinition();
-        final ArrayList<DataModelReflection> results = new ArrayList<DataModelReflection>();
-        for (T dataModel : sourceObjects) {
-            results.add(definition.toReflection(dataModel));
-        }
-        results.trimToSize();
-        return new DataModelSourceFactory() {
-            @Override
-            public <S> DataModelSource createSource(
-                    DataModelDefinition<S> inner, TestContext context) throws IOException {
-                if (inner.getModelClass() != definition.getModelClass()) {
-                    throw new IllegalStateException();
-                }
-                return new IteratorDataModelSource(results.iterator());
-            }
-            @Override
-            public String toString() {
-                return "DataModelSource(Iterable)";
-            }
-        };
-    }
-
-    /**
-     * Converts an data model object collection into {@link DataModelSourceFactory} which provides data models.
-     * This implementation lazily converts data model objects into equivalent {@link DataModelReflection}s.
-     * @param sourceProvider the original data model objects
-     * @return the {@link DataModelSourceFactory}
-     * @since 0.6.0
-     */
-    protected final DataModelSourceFactory toDataModelSourceFactory(
-            final Provider<? extends Source<? extends T>> sourceProvider) {
-        return new DataModelSourceFactory() {
-            @SuppressWarnings({ "rawtypes", "unchecked" })
-            @Override
-            public DataModelSource createSource(
-                    DataModelDefinition definition,
-                    TestContext context) throws IOException {
-                try {
-                    return new SourceDataModelSource<T>(definition, sourceProvider.open());
-                } catch (InterruptedException e) {
-                    throw (InterruptedIOException) new InterruptedIOException().initCause(e);
-                }
-            }
-            @Override
-            public String toString() {
-                return String.format("DataModelSource(%s)", sourceProvider);
-            }
-        };
+        DataModelDefinition<T> definition = getDataModelDefinition();
+        return toDataModelSourceFactory(definition, sourceObjects);
     }
 
     /**
@@ -236,39 +152,6 @@ public abstract class DriverInputBase<T> {
                     "Invalid data model type in \"{0}\": {1}",
                     name,
                     modelType.getName()), e);
-        }
-    }
-
-    /**
-     * パス文字列からURIを生成する。
-     *
-     * @param path パス文字列
-     * @return ワーキングのリソース位置
-     * @throws URISyntaxException 引数の値がURIとして不正な値であった場合
-     */
-    public URI toUri(String path) throws URISyntaxException {
-        if (path == null) {
-            throw new IllegalArgumentException("path must not be null"); //$NON-NLS-1$
-        }
-        // FIXME for invalid characters
-        URI uri = URI.create(path.replace('\\', '/'));
-        if (uri.getScheme() != null) {
-            return uri;
-        }
-
-        URL url = getCallerClass().getResource(uri.getPath());
-        if (url == null) {
-            throw new IllegalArgumentException(MessageFormat.format(
-                    "指定されたリソースが見つかりません: {0} (検索クラス: {1})",
-                    path,
-                    getCallerClass().getName()));
-        }
-        URI resourceUri = url.toURI();
-        if (uri.getFragment() == null) {
-            return resourceUri;
-        } else {
-            URI resolvedUri = URI.create(resourceUri.toString() + '#' + uri.getFragment());
-            return resolvedUri;
         }
     }
 }

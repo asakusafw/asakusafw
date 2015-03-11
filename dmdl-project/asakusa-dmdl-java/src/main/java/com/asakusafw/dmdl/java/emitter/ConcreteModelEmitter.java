@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -166,7 +166,7 @@ public class ConcreteModelEmitter {
         for (PropertyDeclaration property : model.getDeclaredProperties()) {
             statements.add(new ExpressionBuilder(f, f.newThis())
                 .field(context.getFieldName(property))
-                .method("setNull")
+                .method("setNull") //$NON-NLS-1$
                 .toStatement());
         }
         return f.newMethodDeclaration(
@@ -174,22 +174,22 @@ public class ConcreteModelEmitter {
                 new AttributeBuilder(f)
                     .annotation(context.resolve(Override.class))
                     .annotation(context.resolve(SuppressWarnings.class),
-                            Models.toLiteral(f, "deprecation"))
+                            Models.toLiteral(f, "deprecation")) //$NON-NLS-1$
                     .Public()
                     .toAttributes(),
                 context.resolve(void.class),
-                f.newSimpleName("reset"),
+                f.newSimpleName("reset"), //$NON-NLS-1$
                 Collections.<FormalParameterDeclaration>emptyList(),
                 statements);
     }
 
     private MethodDeclaration createCopyMethod() {
-        SimpleName other = context.createVariableName("other");
+        SimpleName other = context.createVariableName("other"); //$NON-NLS-1$
         List<Statement> statements = Lists.create();
         for (PropertyDeclaration property : model.getDeclaredProperties()) {
             statements.add(new ExpressionBuilder(f, f.newThis())
                 .field(context.getFieldName(property))
-                .method("copyFrom", new ExpressionBuilder(f, other)
+                .method("copyFrom", new ExpressionBuilder(f, other) //$NON-NLS-1$
                     .field(context.getFieldName(property))
                     .toExpression())
                 .toStatement());
@@ -199,11 +199,11 @@ public class ConcreteModelEmitter {
                 new AttributeBuilder(f)
                     .annotation(context.resolve(Override.class))
                     .annotation(context.resolve(SuppressWarnings.class),
-                            Models.toLiteral(f, "deprecation"))
+                            Models.toLiteral(f, "deprecation")) //$NON-NLS-1$
                     .Public()
                     .toAttributes(),
                 context.resolve(void.class),
-                f.newSimpleName("copyFrom"),
+                f.newSimpleName("copyFrom"), //$NON-NLS-1$
                 Collections.singletonList(f.newFormalParameterDeclaration(
                         context.resolve(context.getQualifiedTypeName()),
                         other)),
@@ -233,7 +233,7 @@ public class ConcreteModelEmitter {
                     .text("{0}を返す。",
                             context.getDescription(property))
                     .returns()
-                        .text("{0}",
+                        .text("{0}", //$NON-NLS-1$
                                 context.getDescription(property))
                     .exception(context.resolve(NullPointerException.class))
                         .text("{0}の値が<code>null</code>である場合",
@@ -245,13 +245,13 @@ public class ConcreteModelEmitter {
                 Collections.<FormalParameterDeclaration>emptyList(),
                 Collections.singletonList(new ExpressionBuilder(f, f.newThis())
                     .field(context.getFieldName(property))
-                    .method("get")
+                    .method("get") //$NON-NLS-1$
                     .toReturnStatement()));
     }
 
     private MethodDeclaration createValueSetter(PropertyDeclaration property) {
         assert property != null;
-        SimpleName paramName = context.createVariableName("value");
+        SimpleName paramName = context.createVariableName("value"); //$NON-NLS-1$
         Type valueType = context.getValueType(property);
         return f.newMethodDeclaration(
                 new JavadocBuilder(f)
@@ -264,7 +264,7 @@ public class ConcreteModelEmitter {
                 new AttributeBuilder(f)
                     .annotation(
                             context.resolve(SuppressWarnings.class),
-                            Models.toLiteral(f, "deprecation"))
+                            Models.toLiteral(f, "deprecation")) //$NON-NLS-1$
                     .Public()
                     .toAttributes(),
                 context.resolve(void.class),
@@ -274,7 +274,7 @@ public class ConcreteModelEmitter {
                 }),
                 Collections.singletonList(new ExpressionBuilder(f, f.newThis())
                     .field(context.getFieldName(property))
-                    .method("modify", paramName)
+                    .method("modify", paramName) //$NON-NLS-1$
                     .toStatement()));
     }
 
@@ -291,7 +291,7 @@ public class ConcreteModelEmitter {
                     .text("<code>null</code>を許す{0}を返す。",
                             context.getDescription(property))
                     .returns()
-                        .text("{0}",
+                        .text("{0}", //$NON-NLS-1$
                                 context.getDescription(property))
                     .toJavadoc(),
                 attributes,
@@ -305,7 +305,7 @@ public class ConcreteModelEmitter {
 
     private MethodDeclaration createOptionSetter(PropertyDeclaration property) {
         assert property != null;
-        SimpleName paramName = context.createVariableName("option");
+        SimpleName paramName = context.createVariableName("option"); //$NON-NLS-1$
         Type optionType = context.getFieldType(property);
         return f.newMethodDeclaration(
                 new JavadocBuilder(f)
@@ -318,7 +318,7 @@ public class ConcreteModelEmitter {
                 new AttributeBuilder(f)
                     .annotation(
                             context.resolve(SuppressWarnings.class),
-                            Models.toLiteral(f, "deprecation"))
+                            Models.toLiteral(f, "deprecation")) //$NON-NLS-1$
                     .Public()
                     .toAttributes(),
                 context.resolve(void.class),
@@ -328,7 +328,7 @@ public class ConcreteModelEmitter {
                 }),
                 Collections.singletonList(new ExpressionBuilder(f, f.newThis())
                     .field(context.getFieldName(property))
-                    .method("copyFrom", paramName)
+                    .method("copyFrom", paramName) //$NON-NLS-1$
                     .toStatement()));
     }
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package com.asakusafw.runtime.directio;
 
+import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -121,18 +122,12 @@ public final class DirectInputFragment {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("DirectInputFragment [path=");
-        builder.append(path);
-        builder.append(", offset=");
-        builder.append(offset);
-        builder.append(", length=");
-        builder.append(length);
-        builder.append(", ownerNodeNames=");
-        builder.append(ownerNodeNames);
-        builder.append(", attributes=");
-        builder.append(attributes);
-        builder.append("]");
-        return builder.toString();
+        return MessageFormat.format(
+                "DirectInputFragment(path={0}, offset={1}, length={2}, owner={3}, attributes={4})", //$NON-NLS-1$
+                path,
+                offset,
+                length,
+                ownerNodeNames,
+                attributes);
     }
 }

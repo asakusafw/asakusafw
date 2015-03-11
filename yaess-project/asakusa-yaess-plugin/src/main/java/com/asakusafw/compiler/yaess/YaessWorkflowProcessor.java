@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,7 +65,7 @@ public class YaessWorkflowProcessor extends AbstractWorkflowProcessor {
     /**
      * The output path.
      */
-    public static final String PATH = "etc/yaess-script.properties";
+    public static final String PATH = "etc/yaess-script.properties"; //$NON-NLS-1$
 
     /**
      * Computes and returns the path to the YAESS script output.
@@ -90,31 +90,31 @@ public class YaessWorkflowProcessor extends AbstractWorkflowProcessor {
 
     @Override
     public void process(Workflow workflow) throws IOException {
-        LOG.debug("Anayzing Workflow Structure for YAESS");
+        LOG.debug("Anayzing Workflow Structure for YAESS"); //$NON-NLS-1$
         List<FlowScript> scripts = processJobflowList(workflow);
 
-        LOG.debug("Building YAESS Batch Script");
+        LOG.debug("Building YAESS Batch Script"); //$NON-NLS-1$
         Properties properties = new Properties();
         properties.setProperty(BatchScript.KEY_ID, getBatchId());
         properties.setProperty(BatchScript.KEY_VERSION, BatchScript.VERSION);
         properties.setProperty(BatchScript.KEY_VERIFICATION_CODE, getEnvironment().getBuildId());
 
         for (FlowScript script : scripts) {
-            LOG.trace("Building YAESS Flow Script: {}", script.getId());
+            LOG.trace("Building YAESS Flow Script: {}", script.getId()); //$NON-NLS-1$
             script.storeTo(properties);
         }
 
-        LOG.debug("Exporting YAESS Batch Script");
+        LOG.debug("Exporting YAESS Batch Script"); //$NON-NLS-1$
         OutputStream output = getEnvironment().openResource(PATH);
         try {
             properties.store(output, MessageFormat.format(
-                    "YAESS Batch Script for \"{0}\", version {1}",
+                    "YAESS Batch Script for \"{0}\", version {1}", //$NON-NLS-1$
                     getBatchId(),
                     BatchScript.VERSION));
         } finally {
             output.close();
         }
-        LOG.debug("Exported YAESS Batch Script");
+        LOG.debug("Exported YAESS Batch Script"); //$NON-NLS-1$
     }
 
     private List<FlowScript> processJobflowList(Workflow workflow) {

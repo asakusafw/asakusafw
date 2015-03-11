@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,12 +28,12 @@ import java.util.regex.Pattern;
 public class ShuffleKey {
 
     static final Pattern ORDER_PATTERN = Pattern.compile(
-            "(\\S+)(\\s+(ASC|DESC))?",
+            "(\\S+)(\\s+(ASC|DESC))?", //$NON-NLS-1$
             Pattern.CASE_INSENSITIVE);
 
-    private List<String> groupProperties;
+    private final List<String> groupProperties;
 
-    private List<Order> orderings;
+    private final List<Order> orderings;
 
     /**
      * インスタンスを生成する。
@@ -103,9 +103,9 @@ public class ShuffleKey {
      */
     public static class Order {
 
-        private String property;
+        private final String property;
 
-        private Direction direction;
+        private final Direction direction;
 
         /**
          * インスタンスを生成する。
@@ -171,7 +171,7 @@ public class ShuffleKey {
         }
 
         /**
-         * "プロパティ名 整列方向"の形式の文字列から、相応する{@link Order}オブジェクトを生成して返す。
+         * {@code プロパティ名, 整列方向} の形式の文字列から、相応する{@link Order}オブジェクトを生成して返す。
          * @param string {@link Order#toString()}の文字列
          * @return 対応するオブジェクト、解析に失敗した場合は{@code null}
          * @throws IllegalArgumentException 引数に{@code null}が指定された場合
@@ -202,7 +202,7 @@ public class ShuffleKey {
         @Override
         public String toString() {
             return MessageFormat.format(
-                    "{0} {1}",
+                    "{0} {1}", //$NON-NLS-1$
                     getProperty(),
                     getDirection().name());
         }

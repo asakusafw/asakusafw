@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -103,7 +103,7 @@ public class OrderingClassEmitter {
         if (orderingInfo == null) {
             throw new IllegalArgumentException("orderingInfo must not be null"); //$NON-NLS-1$
         }
-        LOG.debug("Start preparing output file orderer: batch={}, flow={}, output={}", new Object[] {
+        LOG.debug("Start preparing output file orderer: batch={}, flow={}, output={}", new Object[] { //$NON-NLS-1$
                 environment.getBatchId(),
                 environment.getFlowId(),
                 outputName,
@@ -116,7 +116,8 @@ public class OrderingClassEmitter {
         QualifiedName name = environment
             .getModelFactory()
             .newQualifiedName(packageName, simpleName);
-        LOG.debug("Finish preparing output file orderer: batch={}, flow={}, output={}, class={}", new Object[] {
+        LOG.debug("Finish preparing output file orderer: " //$NON-NLS-1$
+                + "batch={}, flow={}, output={}, class={}", new Object[] { //$NON-NLS-1$
                 environment.getBatchId(),
                 environment.getFlowId(),
                 outputName,
@@ -227,14 +228,14 @@ public class OrderingClassEmitter {
             int position = 0;
             for (CompiledOrder order : orderingInfo) {
                 Expression obj = new ExpressionBuilder(factory, factory.newThis())
-                    .method("get", Models.toLiteral(factory, position))
+                    .method("get", Models.toLiteral(factory, position)) //$NON-NLS-1$
                     .toExpression();
                 if (order.isAscend() == false) {
                     Expression invert = factory.newParenthesizedExpression(new ExpressionBuilder(factory, obj)
                         .castTo(t(InvertOrder.class))
                         .toExpression());
                     obj = new ExpressionBuilder(factory, invert)
-                        .method("getEntity")
+                        .method("getEntity") //$NON-NLS-1$
                         .toExpression();
                 }
                 statements.add(new ExpressionBuilder(factory, factory.newThis())
@@ -247,7 +248,7 @@ public class OrderingClassEmitter {
             }
             return factory.newConstructorDeclaration(
                     new JavadocBuilder(factory)
-                        .text("Creates a new instance.")
+                        .text("Creates a new instance.") //$NON-NLS-1$
                         .toJavadoc(),
                     new AttributeBuilder(factory)
                         .Public()
@@ -258,8 +259,8 @@ public class OrderingClassEmitter {
         }
 
         private MethodDeclaration createSetMethod() {
-            SimpleName raw = getArgumentName("rawObject");
-            SimpleName object = getArgumentName("object");
+            SimpleName raw = getArgumentName("rawObject"); //$NON-NLS-1$
+            SimpleName object = getArgumentName("object"); //$NON-NLS-1$
             List<Statement> statements = Lists.create();
             statements.add(new ExpressionBuilder(factory, raw)
                 .castTo(t(dataType.getType()))
@@ -274,7 +275,7 @@ public class OrderingClassEmitter {
             if (orderingInfo.isEmpty() == false) {
                 attributes = attributes.annotation(
                         importer.toType(SuppressWarnings.class),
-                        Models.toLiteral(factory, "deprecation"));
+                        Models.toLiteral(factory, "deprecation")); //$NON-NLS-1$
             }
             attributes.annotation(t(Override.class)).Public();
 
@@ -282,7 +283,7 @@ public class OrderingClassEmitter {
                     null,
                     attributes.toAttributes(),
                     t(void.class),
-                    factory.newSimpleName("set"),
+                    factory.newSimpleName("set"), //$NON-NLS-1$
                     Collections.singletonList(factory.newFormalParameterDeclaration(t(Object.class), raw)),
                     statements);
         }
@@ -306,12 +307,12 @@ public class OrderingClassEmitter {
         }
 
         private SimpleName getClassName() {
-            return factory.newSimpleName(String.format("%s%04d", "Ordering", index));
+            return factory.newSimpleName(String.format("%s%04d", "Ordering", index)); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
         private Javadoc createJavadoc() {
             return new JavadocBuilder(factory)
-                .text("An ordering output \"{1}\" class for \"{0}\".", moduleId, outputName)
+                .text("An ordering output \"{1}\" class for \"{0}\".", moduleId, outputName) //$NON-NLS-1$
                 .toJavadoc();
         }
 

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,15 +47,15 @@ public class StageResourceDriver implements Closeable {
 
     static final Log LOG = LogFactory.getLog(StageResourceDriver.class);
 
-    private static final String KEY_PREFIX = "com.asakusafw.stage.resource.";
+    private static final String KEY_PREFIX = "com.asakusafw.stage.resource."; //$NON-NLS-1$
 
-    private static final String PREFIX_LOCAL_CACHE_NAME = KEY_PREFIX + "local.";
+    private static final String PREFIX_LOCAL_CACHE_NAME = KEY_PREFIX + "local."; //$NON-NLS-1$
 
-    private static final String PREFIX_REMOTE_PATH = KEY_PREFIX + "remote.";
+    private static final String PREFIX_REMOTE_PATH = KEY_PREFIX + "remote."; //$NON-NLS-1$
 
-    private static final String KEY_SIZE = KEY_PREFIX + "size";
+    private static final String KEY_SIZE = KEY_PREFIX + "size"; //$NON-NLS-1$
 
-    private static final String KEY_ACCESS_MODE = KEY_PREFIX + "mode";
+    private static final String KEY_ACCESS_MODE = KEY_PREFIX + "mode"; //$NON-NLS-1$
 
     private final Configuration configuration;
 
@@ -99,7 +99,7 @@ public class StageResourceDriver implements Closeable {
         }
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "finding stage resource: {0} (mode={1})",
+                    "finding stage resource: {0} (mode={1})", //$NON-NLS-1$
                     resourceName,
                     accessMode));
         }
@@ -134,7 +134,7 @@ public class StageResourceDriver implements Closeable {
         }
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Cache file resolved: resource={0}, paths={1}",
+                    "Cache file resolved: resource={0}, paths={1}", //$NON-NLS-1$
                     resourceName,
                     results));
         }
@@ -146,12 +146,12 @@ public class StageResourceDriver implements Closeable {
         Path cache = new Path(localName);
         if (localFileSystem.exists(cache)) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("symlink found: " + cache);
+                LOG.debug("symlink found: " + cache); //$NON-NLS-1$
             }
             return localFileSystem.makeQualified(cache);
         }
         if (LOG.isDebugEnabled()) {
-            LOG.debug("symlink not found: " + localName);
+            LOG.debug("symlink not found: " + localName); //$NON-NLS-1$
         }
         Path directPath = findCacheForLocalMode(resourceName, localName);
         return directPath;
@@ -165,7 +165,7 @@ public class StageResourceDriver implements Closeable {
         for (URI uri : DistributedCache.getCacheFiles(configuration)) {
             if (localName.equals(uri.getFragment())) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("fragment matched: " + uri);
+                    LOG.debug("fragment matched: " + uri); //$NON-NLS-1$
                 }
                 String rpath = uri.getPath();
                 remotePath = new Path(uri);
@@ -175,7 +175,7 @@ public class StageResourceDriver implements Closeable {
         }
         if (remoteName == null) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("fragment not matched: " + resourceName);
+                LOG.debug("fragment not matched: " + resourceName); //$NON-NLS-1$
             }
             return null;
         }
@@ -189,14 +189,14 @@ public class StageResourceDriver implements Closeable {
                 continue;
             }
             if (LOG.isDebugEnabled()) {
-                LOG.debug("local path matched: " + path);
+                LOG.debug("local path matched: " + path); //$NON-NLS-1$
             }
             return localFileSystem.makeQualified(path);
         }
         FileSystem remoteFileSystem = remotePath.getFileSystem(configuration);
         remotePath = remoteFileSystem.makeQualified(remotePath);
         if (LOG.isDebugEnabled()) {
-            LOG.debug("distributed cache is not localized explicitly: " + remotePath);
+            LOG.debug("distributed cache is not localized explicitly: " + remotePath); //$NON-NLS-1$
         }
         if (isLocal(remoteFileSystem) == false) {
             LOG.warn(MessageFormat.format(
@@ -261,7 +261,7 @@ public class StageResourceDriver implements Closeable {
         long size = conf.getLong(KEY_SIZE, 0L);
         int index = localNames.size();
         for (FileStatus status : list) {
-            String name = String.format("%s-%04d", resourceName, index++);
+            String name = String.format("%s-%04d", resourceName, index++); //$NON-NLS-1$
             StringBuilder buf = new StringBuilder();
             buf.append(status.getPath().toString());
             buf.append('#');
@@ -287,7 +287,7 @@ public class StageResourceDriver implements Closeable {
         conf.setLong(KEY_SIZE, size);
         if (JobCompatibility.isLocalMode(job)) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("symlinks for distributed cache will not be created in standalone mode");
+                LOG.debug("symlinks for distributed cache will not be created in standalone mode"); //$NON-NLS-1$
             }
         } else {
             DistributedCache.createSymlink(conf);

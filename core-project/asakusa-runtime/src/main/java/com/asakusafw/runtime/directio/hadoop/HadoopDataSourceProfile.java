@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,56 +42,56 @@ public class HadoopDataSourceProfile {
 
     // fs.staging
 
-    private static final String ROOT_REPRESENTATION = "/";
+    private static final String ROOT_REPRESENTATION = "/"; //$NON-NLS-1$
 
     /**
      * The property key name for {@link #getFileSystemPath()}.
      * Default is {@link FileSystem#getWorkingDirectory()}.
      */
-    public static final String KEY_PATH = "fs.path";
+    public static final String KEY_PATH = "fs.path"; //$NON-NLS-1$
 
     /**
      * The property key name for {@link #getTemporaryFileSystemPath()}.
      */
-    public static final String KEY_TEMP = "fs.tempdir";
+    public static final String KEY_TEMP = "fs.tempdir"; //$NON-NLS-1$
 
     /**
      * The property key name for {@link #isOutputStaging()}.
      */
-    public static final String KEY_OUTPUT_STAGING = "output.staging";
+    public static final String KEY_OUTPUT_STAGING = "output.staging"; //$NON-NLS-1$
 
     /**
      * The property key name for {@link #isOutputStreaming()}.
      */
-    public static final String KEY_OUTPUT_STREAMING = "output.streaming";
+    public static final String KEY_OUTPUT_STREAMING = "output.streaming"; //$NON-NLS-1$
 
     /**
      * The property key name for {@link #getMinimumFragmentSize(FragmentableDataFormat)}.
      */
-    public static final String KEY_MIN_FRAGMENT = "fragment.min";
+    public static final String KEY_MIN_FRAGMENT = "fragment.min"; //$NON-NLS-1$
 
     /**
      * The property key name for {@link #getPreferredFragmentSize(FragmentableDataFormat)}.
      */
-    public static final String KEY_PREF_FRAGMENT = "fragment.pref";
+    public static final String KEY_PREF_FRAGMENT = "fragment.pref"; //$NON-NLS-1$
 
     /**
      * The property key name for {@link #isSplitBlocks()}.
      */
-    public static final String KEY_SPLIT_BLOCKS = "block.split";
+    public static final String KEY_SPLIT_BLOCKS = "block.split"; //$NON-NLS-1$
 
     /**
      * The property key name for {@link #isCombineBlocks()}.
      */
-    public static final String KEY_COMBINE_BLOCKS = "block.combine";
+    public static final String KEY_COMBINE_BLOCKS = "block.combine"; //$NON-NLS-1$
 
     /**
      * The property key name for {@link #getKeepAliveInterval()}.
      * @since 0.2.6
      */
-    public static final String KEY_KEEPALIVE_INTERVAL = "keepalive.interval";
+    public static final String KEY_KEEPALIVE_INTERVAL = "keepalive.interval"; //$NON-NLS-1$
 
-    private static final String DEFAULT_TEMP_SUFFIX = "_directio_temp";
+    private static final String DEFAULT_TEMP_SUFFIX = "_directio_temp"; //$NON-NLS-1$
 
     private static final boolean DEFAULT_OUTPUT_STAGING = true;
 
@@ -372,33 +372,33 @@ public class HadoopDataSourceProfile {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("HadoopDataSourceProfile [id=");
+        builder.append("HadoopDataSourceProfile [id="); //$NON-NLS-1$
         builder.append(id);
-        builder.append(", contextPath=");
+        builder.append(", contextPath="); //$NON-NLS-1$
         builder.append(contextPath);
-        builder.append(", fileSystemPath=");
+        builder.append(", fileSystemPath="); //$NON-NLS-1$
         builder.append(fileSystemPath);
-        builder.append(", temporaryPath=");
+        builder.append(", temporaryPath="); //$NON-NLS-1$
         builder.append(temporaryPath);
-        builder.append(", outputStaging=");
+        builder.append(", outputStaging="); //$NON-NLS-1$
         builder.append(outputStaging);
-        builder.append(", outputStreaming=");
+        builder.append(", outputStreaming="); //$NON-NLS-1$
         builder.append(outputStreaming);
-        builder.append(", minimumFragmentSize=");
+        builder.append(", minimumFragmentSize="); //$NON-NLS-1$
         builder.append(minimumFragmentSize);
-        builder.append(", preferredFragmentSize=");
+        builder.append(", preferredFragmentSize="); //$NON-NLS-1$
         builder.append(preferredFragmentSize);
-        builder.append(", splitBlocks=");
+        builder.append(", splitBlocks="); //$NON-NLS-1$
         builder.append(splitBlocks);
-        builder.append(", combineBlocks=");
+        builder.append(", combineBlocks="); //$NON-NLS-1$
         builder.append(combineBlocks);
-        builder.append(", keepAliveInterval=");
+        builder.append(", keepAliveInterval="); //$NON-NLS-1$
         builder.append(keepAliveInterval);
-        builder.append(", fileSystem=");
+        builder.append(", fileSystem="); //$NON-NLS-1$
         builder.append(fileSystem);
-        builder.append(", localFileSystem=");
+        builder.append(", localFileSystem="); //$NON-NLS-1$
         builder.append(localFileSystem);
-        builder.append("]");
+        builder.append("]"); //$NON-NLS-1$
         return builder.toString();
     }
 
@@ -474,7 +474,7 @@ public class HadoopDataSourceProfile {
         assert profile != null;
         assert key != null;
         return MessageFormat.format(
-                "{0}.{1}",
+                "{0}.{1}", //$NON-NLS-1$
                 profile.getId(),
                 key);
     }
@@ -572,9 +572,9 @@ public class HadoopDataSourceProfile {
         if (string == null) {
             return defaultValue;
         }
-        if (string.equalsIgnoreCase("true")) {
+        if (string.equalsIgnoreCase("true")) { //$NON-NLS-1$
             return true;
-        } else if (string.equalsIgnoreCase("false")) {
+        } else if (string.equalsIgnoreCase("false")) { //$NON-NLS-1$
             return false;
         } else {
             throw new IOException(MessageFormat.format(

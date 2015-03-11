@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,17 +41,17 @@ public final class RuntimeContext {
     static {
         // install JDK13Logger to SLF4J if enabled
         try {
-            Class<?> bridge = Class.forName("org.slf4j.bridge.SLF4JBridgeHandler");
-            Method isInstalled = bridge.getMethod("isInstalled");
-            Method install = bridge.getMethod("install");
-            Method clean = bridge.getMethod("removeHandlersForRootLogger");
+            Class<?> bridge = Class.forName("org.slf4j.bridge.SLF4JBridgeHandler"); //$NON-NLS-1$
+            Method isInstalled = bridge.getMethod("isInstalled"); //$NON-NLS-1$
+            Method install = bridge.getMethod("install"); //$NON-NLS-1$
+            Method clean = bridge.getMethod("removeHandlersForRootLogger"); //$NON-NLS-1$
             if (Boolean.FALSE.equals(isInstalled.invoke(null))) {
                 clean.invoke(null);
                 install.invoke(null);
             }
         } catch (Exception e) {
             if (LOG.isLoggable(Level.FINE)) {
-                LOG.log(Level.FINE, "jul-to-slf4j is not enabled", e);
+                LOG.log(Level.FINE, "jul-to-slf4j is not enabled", e); //$NON-NLS-1$
             }
         }
     }
@@ -70,44 +70,44 @@ public final class RuntimeContext {
      * <li> build ID (key={@link #KEY_BUILD_ID}) </li>
      * </ul>
      */
-    public static final String PATH_APPLICATION_INFO = "META-INF/asakusa/application.properties";
+    public static final String PATH_APPLICATION_INFO = "META-INF/asakusa/application.properties"; //$NON-NLS-1$
 
     /**
      * The value map key of {@link #mode(ExecutionMode)}.
      * @see #apply(Map)
      * @see #unapply()
      */
-    public static final String KEY_EXECUTION_MODE = "_ASAKUSA_APP_EXECUTION_MODE";
+    public static final String KEY_EXECUTION_MODE = "_ASAKUSA_APP_EXECUTION_MODE"; //$NON-NLS-1$
 
     /**
      * The value map key of {@link #batchId(String)}.
      * @see #apply(Map)
      * @see #unapply()
      */
-    public static final String KEY_BATCH_ID = "_ASAKUSA_APP_BATCH_ID";
+    public static final String KEY_BATCH_ID = "_ASAKUSA_APP_BATCH_ID"; //$NON-NLS-1$
 
     /**
      * The value map key of flow ID.
      * This is only for information path.
      */
-    public static final String KEY_FLOW_ID = "_ASAKUSA_APP_FLOW_ID";
+    public static final String KEY_FLOW_ID = "_ASAKUSA_APP_FLOW_ID"; //$NON-NLS-1$
 
     /**
      * The value map key of {@link #buildId(String)}.
      * @see #apply(Map)
      * @see #unapply()
      */
-    public static final String KEY_BUILD_ID = "_ASAKUSA_APP_BUILD_ID";
+    public static final String KEY_BUILD_ID = "_ASAKUSA_APP_BUILD_ID"; //$NON-NLS-1$
 
     /**
      * The value map key of build date.
      */
-    public static final String KEY_BUILD_DATE = "_ASAKUSA_APP_BUILD_DATE";
+    public static final String KEY_BUILD_DATE = "_ASAKUSA_APP_BUILD_DATE"; //$NON-NLS-1$
 
     /**
      * The value map key of {@link #getRuntimeVersion() runtime version}.
      */
-    public static final String KEY_RUNTIME_VERSION = "_ASAKUSA_RUNTIME_VERSION";
+    public static final String KEY_RUNTIME_VERSION = "_ASAKUSA_RUNTIME_VERSION"; //$NON-NLS-1$
 
     private static final AtomicReference<RuntimeContext> GLOBAL =  new AtomicReference<RuntimeContext>(DEFAULT);
 
@@ -288,13 +288,13 @@ public final class RuntimeContext {
         }
         if (batchId == null) {
             if (LOG.isLoggable(Level.FINE)) {
-                LOG.fine("Application Verfication was skipped (Batch ID is not defined)");
+                LOG.fine("Application Verfication was skipped (Batch ID is not defined)"); //$NON-NLS-1$
             }
             return;
         }
         if (buildId == null) {
             if (LOG.isLoggable(Level.FINE)) {
-                LOG.fine("Application verification was skipped (Verification code is not defined)");
+                LOG.fine("Application verification was skipped (Verification code is not defined)"); //$NON-NLS-1$
             }
             return;
         }
@@ -304,7 +304,7 @@ public final class RuntimeContext {
             while (infoEnum.hasMoreElements()) {
                 URL url = infoEnum.nextElement();
                 if (LOG.isLoggable(Level.FINE)) {
-                    LOG.fine(MessageFormat.format("Loading application info: {0}", url));
+                    LOG.fine(MessageFormat.format("Loading application info: {0}", url)); //$NON-NLS-1$
                 }
                 Properties properties = new Properties();
                 InputStream in = url.openStream();
@@ -322,7 +322,7 @@ public final class RuntimeContext {
         if (verified) {
             if (LOG.isLoggable(Level.FINE)) {
                 LOG.fine(MessageFormat.format(
-                        "Application was successfully verified: batchId={0}, verificationCode={1}",
+                        "Application was successfully verified: batchId={0}, verificationCode={1}", //$NON-NLS-1$
                         batchId,
                         buildId));
             }
@@ -330,7 +330,8 @@ public final class RuntimeContext {
         } else {
             if (LOG.isLoggable(Level.FINE)) {
                 LOG.fine(MessageFormat.format(
-                        "Missing veirification info in class loader: batchId={0}, buildId={1}, loader={2}",
+                        "Missing veirification info in class loader: " //$NON-NLS-1$
+                        + "batchId={0}, buildId={1}, loader={2}", //$NON-NLS-1$
                         batchId,
                         buildId,
                         classLoader));
@@ -349,7 +350,7 @@ public final class RuntimeContext {
         if (targetBatchId == null || targetBatchId.equals(batchId) == false) {
             if (LOG.isLoggable(Level.FINE)) {
                 LOG.fine(MessageFormat.format(
-                        "Not a corresponding application info for \"{1}\": {0}",
+                        "Not a corresponding application info for \"{1}\": {0}", //$NON-NLS-1$
                         url,
                         batchId));
             }
@@ -357,7 +358,7 @@ public final class RuntimeContext {
         } else if (targetBuildId != null && targetBuildId.equals(buildId)) {
             if (LOG.isLoggable(Level.FINE)) {
                 LOG.fine(MessageFormat.format(
-                        "Found verified application for \"{1}\": {0}",
+                        "Found verified application for \"{1}\": {0}", //$NON-NLS-1$
                         url,
                         batchId));
             }
@@ -381,14 +382,14 @@ public final class RuntimeContext {
         if (runtimeVersion == null) {
             if (LOG.isLoggable(Level.FINE)) {
                 LOG.fine(MessageFormat.format(
-                        "Missing runtime version: {0}",
+                        "Missing runtime version: {0}", //$NON-NLS-1$
                         url));
             }
             return;
         } else if (runtimeVersion.equals(BatchRuntime.getLabel())) {
             if (LOG.isLoggable(Level.FINE)) {
                 LOG.fine(MessageFormat.format(
-                        "Runtime version is verified: {0}",
+                        "Runtime version is verified: {0}", //$NON-NLS-1$
                         url));
             }
             return;
@@ -424,9 +425,9 @@ public final class RuntimeContext {
     }
 
     private String getHostName() {
-        String hostname = System.getenv("HOSTNAME");
+        String hostname = System.getenv("HOSTNAME"); //$NON-NLS-1$
         if (hostname == null) {
-            hostname = System.getenv("SSH_CONNECTION");
+            hostname = System.getenv("SSH_CONNECTION"); //$NON-NLS-1$
         }
         return hostname;
 
@@ -476,15 +477,11 @@ public final class RuntimeContext {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("RuntimeContext [batchId=");
-        builder.append(batchId);
-        builder.append(", mode=");
-        builder.append(mode);
-        builder.append(", verificationCode=");
-        builder.append(buildId);
-        builder.append("]");
-        return builder.toString();
+        return MessageFormat.format(
+                "RuntimeContext(batchId={0}, mode={1}, buildId={2})", //$NON-NLS-1$
+                batchId,
+                mode,
+                buildId);
     }
 
     /**
@@ -496,12 +493,12 @@ public final class RuntimeContext {
         /**
          * Normal execution.
          */
-        PRODUCTION("production"),
+        PRODUCTION("production"), //$NON-NLS-1$
 
         /**
          * Simulated execution.
          */
-        SIMULATION("simulation"),
+        SIMULATION("simulation"), //$NON-NLS-1$
         ;
 
         private final String symbol;

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,12 +36,12 @@ public abstract class SlotSorter extends ReducerWithRuntimeResource<
     /**
      * {@link #getOutputNames()}のメソッド名。
      */
-    public static final String NAME_GET_OUTPUT_NAMES = "getOutputNames";
+    public static final String NAME_GET_OUTPUT_NAMES = "getOutputNames"; //$NON-NLS-1$
 
     /**
      * {@link #createSlotObjects()}のメソッド名。
      */
-    public static final String NAME_CREATE_SLOT_OBJECTS = "createSlotObjects";
+    public static final String NAME_CREATE_SLOT_OBJECTS = "createSlotObjects"; //$NON-NLS-1$
 
     private StageOutputDriver output;
 
@@ -67,7 +67,7 @@ public abstract class SlotSorter extends ReducerWithRuntimeResource<
         this.objects = createSlotObjects();
         String[] names = getOutputNames();
         if (objects.length != names.length) {
-            throw new AssertionError("inconsistent slot object and output");
+            throw new AssertionError("inconsistent slot object and output"); //$NON-NLS-1$
         }
         this.output = new StageOutputDriver(context);
         this.results = new Result[objects.length];

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,29 +54,29 @@ public class ConfigurationProvider {
         CoreCompatibility.verifyFrameworkVersion();
     }
 
-    private static final String ENV_PATH = "PATH";
+    private static final String ENV_PATH = "PATH"; //$NON-NLS-1$
 
-    private static final String ENV_HADOOP_CONF = "HADOOP_CONF";
+    private static final String ENV_HADOOP_CONF = "HADOOP_CONF"; //$NON-NLS-1$
 
-    private static final String ENV_HADOOP_CMD = "HADOOP_CMD";
+    private static final String ENV_HADOOP_CMD = "HADOOP_CMD"; //$NON-NLS-1$
 
-    private static final String ENV_HADOOP_HOME = "HADOOP_HOME";
+    private static final String ENV_HADOOP_HOME = "HADOOP_HOME"; //$NON-NLS-1$
 
-    private static final String ENV_HADOOP_CLASSPATH = "HADOOP_CLASSPATH";
+    private static final String ENV_HADOOP_CLASSPATH = "HADOOP_CLASSPATH"; //$NON-NLS-1$
 
-    private static final String PATH_HADOOP_COMMAND_FILE = "hadoop";
+    private static final String PATH_HADOOP_COMMAND_FILE = "hadoop"; //$NON-NLS-1$
 
-    private static final String PATH_HADOOP_COMMAND = "bin/hadoop";
+    private static final String PATH_HADOOP_COMMAND = "bin/hadoop"; //$NON-NLS-1$
 
-    private static final String PATH_CONF_DIR_TARBALL = "conf";
+    private static final String PATH_CONF_DIR_TARBALL = "conf"; //$NON-NLS-1$
 
-    private static final String PATH_CONF_DIR_TARBALL_TESTER = "conf/hadoop-env.sh";
+    private static final String PATH_CONF_DIR_TARBALL_TESTER = "conf/hadoop-env.sh"; //$NON-NLS-1$
 
-    private static final String PATH_CONF_DIR_PACKAGE = "etc/hadoop";
+    private static final String PATH_CONF_DIR_PACKAGE = "etc/hadoop"; //$NON-NLS-1$
 
-    private static final String CLASS_EXTENSION = ".class";
+    private static final String CLASS_EXTENSION = ".class"; //$NON-NLS-1$
 
-    private static final String PATH_SUBPROC_OUTPUT = "result";
+    private static final String PATH_SUBPROC_OUTPUT = "result"; //$NON-NLS-1$
 
     static final Log LOG = LogFactory.getLog(ConfigurationProvider.class);
 
@@ -156,13 +156,13 @@ public class ConfigurationProvider {
         String conf = envp.get(ENV_HADOOP_CONF);
         if (conf == null) {
             LOG.debug(MessageFormat.format(
-                    "Missed explicit Hadoop conf directory: {0}",
+                    "Missed explicit Hadoop conf directory: {0}", //$NON-NLS-1$
                     ENV_HADOOP_CONF));
             return null;
         }
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Found explicit Hadoop confdir: {0}={1}",
+                    "Found explicit Hadoop confdir: {0}={1}", //$NON-NLS-1$
                     ENV_HADOOP_CONF,
                     conf));
         }
@@ -171,7 +171,7 @@ public class ConfigurationProvider {
 
     private static File getImplicitConfigurationDirectory(Map<String, String> envp) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Detecting default Hadoop configuration dir from Hadoop installation path");
+            LOG.debug("Detecting default Hadoop configuration dir from Hadoop installation path"); //$NON-NLS-1$
         }
         File command = findHadoopCommand(envp);
         if (command == null) {
@@ -179,7 +179,7 @@ public class ConfigurationProvider {
         }
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Hadoop command: {0}",
+                    "Hadoop command: {0}", //$NON-NLS-1$
                     command));
         }
         File conf;
@@ -187,7 +187,7 @@ public class ConfigurationProvider {
         if (conf != null) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "Found implicit Hadoop confdir (from hadoop command path): {0}",
+                        "Found implicit Hadoop confdir (from hadoop command path): {0}", //$NON-NLS-1$
                         conf));
             }
             return conf;
@@ -196,7 +196,7 @@ public class ConfigurationProvider {
         if (conf != null) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "Found implicit Hadoop confdir (from hadoop command execution): {0}",
+                        "Found implicit Hadoop confdir (from hadoop command execution): {0}", //$NON-NLS-1$
                         conf));
             }
             return conf;
@@ -241,13 +241,13 @@ public class ConfigurationProvider {
         String commandString = envp.get(ENV_HADOOP_CMD);
         if (commandString == null || commandString.isEmpty()) {
             LOG.debug(MessageFormat.format(
-                    "Missed explicit Hadoop home command path: {0}",
+                    "Missed explicit Hadoop home command path: {0}", //$NON-NLS-1$
                     ENV_HADOOP_CMD));
             return null;
         }
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Found explicit Hadoop command path: {0}={1}",
+                    "Found explicit Hadoop command path: {0}={1}", //$NON-NLS-1$
                     ENV_HADOOP_CMD,
                     commandString));
         }
@@ -258,13 +258,13 @@ public class ConfigurationProvider {
         String homeString = envp.get(ENV_HADOOP_HOME);
         if (homeString == null) {
             LOG.debug(MessageFormat.format(
-                    "Missed explicit Hadoop home directory: {0}",
+                    "Missed explicit Hadoop home directory: {0}", //$NON-NLS-1$
                     ENV_HADOOP_HOME));
             return null;
         }
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Found explicit Hadoop home directory: {0}={1}",
+                    "Found explicit Hadoop home directory: {0}={1}", //$NON-NLS-1$
                     ENV_HADOOP_HOME,
                     homeString));
         }
@@ -340,7 +340,7 @@ public class ConfigurationProvider {
         }
         File conf;
         try {
-            File dir = File.createTempFile("asakusa-runtime", ".tmp");
+            File dir = File.createTempFile("asakusa-runtime", ".tmp"); //$NON-NLS-1$ //$NON-NLS-2$
             try {
                 if (dir.delete() == false) {
                     LOG.warn(MessageFormat.format("Failed to delete temporary file: {0}", dir));

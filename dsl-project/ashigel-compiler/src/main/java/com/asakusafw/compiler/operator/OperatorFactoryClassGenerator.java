@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,7 +63,7 @@ public class OperatorFactoryClassGenerator extends OperatorClassGenerator {
     /**
      * {@link FlowElementResolver}を保持するフィールド名。
      */
-    static final String RESOLVER_FIELD_NAME = "$";
+    static final String RESOLVER_FIELD_NAME = "$"; //$NON-NLS-1$
 
     /**
      * インスタンスを生成する。
@@ -99,9 +99,9 @@ public class OperatorFactoryClassGenerator extends OperatorClassGenerator {
     }
 
     @Override
-    protected List<? extends Attribute> getAttribuets() {
+    protected List<? extends Attribute> getAttributes() {
         return new AttributeBuilder(factory)
-            .annotation(util.t(Generated.class), util.v("{0}:{1}",
+            .annotation(util.t(Generated.class), util.v("{0}:{1}", //$NON-NLS-1$
                     getClass().getSimpleName(),
                     OperatorCompiler.VERSION))
             .annotation(util.t(OperatorFactory.class),
@@ -222,7 +222,7 @@ public class OperatorFactoryClassGenerator extends OperatorClassGenerator {
                 .parameterize(util.toTypeVariables(context.element))
                 .toType();
         }
-        SimpleName newName = context.names.create("newName");
+        SimpleName newName = context.names.create("newName"); //$NON-NLS-1$
         return factory.newMethodDeclaration(
                 new JavadocBuilder(factory)
                     .text("この演算子の名前を設定する。")
@@ -239,14 +239,14 @@ public class OperatorFactoryClassGenerator extends OperatorClassGenerator {
                     .Public()
                     .toAttributes(),
                 objectType,
-                factory.newSimpleName("as"),
+                factory.newSimpleName("as"), //$NON-NLS-1$
                 Collections.singletonList(factory.newFormalParameterDeclaration(
                         util.t(String.class),
                         newName)),
                 Arrays.asList(new Statement[] {
                         new ExpressionBuilder(factory, factory.newThis())
                             .field(RESOLVER_FIELD_NAME)
-                            .method("setName", newName)
+                            .method("setName", newName) //$NON-NLS-1$
                             .toStatement(),
                         new ExpressionBuilder(factory, factory.newThis())
                             .toReturnStatement(),
@@ -310,14 +310,14 @@ public class OperatorFactoryClassGenerator extends OperatorClassGenerator {
         assert descriptor != null;
         assert parameters != null;
         List<Statement> statements = Lists.create();
-        SimpleName builderName = context.names.create("builder");
+        SimpleName builderName = context.names.create("builder"); //$NON-NLS-1$
         statements.add(new TypeBuilder(factory, util.t(OperatorDescription.Builder.class))
             .newObject(factory.newClassLiteral(util.t(descriptor.getAnnotationType())))
             .toLocalVariableDeclaration(
                     util.t(OperatorDescription.Builder.class),
                     builderName));
         statements.add(new ExpressionBuilder(factory, builderName)
-            .method("declare",
+            .method("declare", //$NON-NLS-1$
                     factory.newClassLiteral(util.t(operatorClass.getElement())),
                     factory.newClassLiteral(factory.newNamedType(
                             util.getImplementorName(operatorClass.getElement()))),
@@ -325,7 +325,7 @@ public class OperatorFactoryClassGenerator extends OperatorClassGenerator {
             .toStatement());
         for (VariableElement parameter : context.element.getParameters()) {
             statements.add(new ExpressionBuilder(factory, builderName)
-                .method("declareParameter",
+                .method("declareParameter", //$NON-NLS-1$
                         new TypeBuilder(factory, util.t(environment.getErasure(parameter.asType())))
                             .dotClass()
                             .toExpression())
@@ -341,19 +341,19 @@ public class OperatorFactoryClassGenerator extends OperatorClassGenerator {
                 arguments.add(toSource(key));
             }
             statements.add(new ExpressionBuilder(factory, builderName)
-                .method("addInput", arguments)
+                .method("addInput", arguments) //$NON-NLS-1$
                 .toStatement());
         }
         for (OperatorPortDeclaration var : descriptor.getOutputPorts()) {
             Expression type = toExpression(var);
             statements.add(new ExpressionBuilder(factory, builderName)
-                .method("addOutput", util.v(var.getName()), type)
+                .method("addOutput", util.v(var.getName()), type) //$NON-NLS-1$
                 .toStatement());
         }
         for (OperatorPortDeclaration var : descriptor.getParameters()) {
             Expression type = toExpression(var);
             statements.add(new ExpressionBuilder(factory, builderName)
-                .method("addParameter",
+                .method("addParameter", //$NON-NLS-1$
                         util.v(var.getName()),
                         type,
                         factory.newSimpleName(var.getName()))
@@ -361,7 +361,7 @@ public class OperatorFactoryClassGenerator extends OperatorClassGenerator {
         }
         for (Expression attr : descriptor.getAttributes()) {
             statements.add(new ExpressionBuilder(factory, builderName)
-                .method("addAttribute", attr)
+                .method("addAttribute", attr) //$NON-NLS-1$
                 .toStatement());
         }
         Expression resolver = new ExpressionBuilder(factory, factory.newThis())
@@ -369,12 +369,12 @@ public class OperatorFactoryClassGenerator extends OperatorClassGenerator {
             .toExpression();
         statements.add(new ExpressionBuilder(factory, resolver)
             .assignFrom(new ExpressionBuilder(factory, builderName)
-                .method("toResolver")
+                .method("toResolver") //$NON-NLS-1$
                 .toExpression())
             .toStatement());
         for (OperatorPortDeclaration var : descriptor.getInputPorts()) {
             statements.add(new ExpressionBuilder(factory, resolver)
-                .method("resolveInput",
+                .method("resolveInput", //$NON-NLS-1$
                         util.v(var.getName()),
                         factory.newSimpleName(var.getName()))
                 .toStatement());
@@ -383,7 +383,7 @@ public class OperatorFactoryClassGenerator extends OperatorClassGenerator {
             statements.add(new ExpressionBuilder(factory, factory.newThis())
                 .field(var.getName())
                 .assignFrom(new ExpressionBuilder(factory, resolver)
-                    .method("resolveOutput", util.v(var.getName()))
+                    .method("resolveOutput", util.v(var.getName())) //$NON-NLS-1$
                     .toExpression())
                 .toStatement());
         }
@@ -433,7 +433,7 @@ public class OperatorFactoryClassGenerator extends OperatorClassGenerator {
         assert type != null;
         assert expressions != null;
         return new TypeBuilder(factory, util.t(Arrays.class))
-            .method("asList", factory.newArrayCreationExpression(
+            .method("asList", factory.newArrayCreationExpression(//$NON-NLS-1$
                     factory.newArrayType(type),
                     Collections.<Expression>emptyList(),
                     factory.newArrayInitializer(expressions)))
@@ -509,10 +509,10 @@ public class OperatorFactoryClassGenerator extends OperatorClassGenerator {
                 javadoc.toJavadoc(),
                 new AttributeBuilder(factory)
                     .annotation(util.t(OperatorInfo.class),
-                            "kind", factory.newClassLiteral(util.t(descriptor.getAnnotationType())),
-                            "input", factory.newArrayInitializer(inputMetaData),
-                            "output", factory.newArrayInitializer(outputMetaData),
-                            "parameter", factory.newArrayInitializer(parameterMetaData))
+                            "kind", factory.newClassLiteral(util.t(descriptor.getAnnotationType())), //$NON-NLS-1$
+                            "input", factory.newArrayInitializer(inputMetaData), //$NON-NLS-1$
+                            "output", factory.newArrayInitializer(outputMetaData), //$NON-NLS-1$
+                            "parameter", factory.newArrayInitializer(parameterMetaData)) //$NON-NLS-1$
                     .Public()
                     .toAttributes(),
                 util.toTypeParameters(context.element),

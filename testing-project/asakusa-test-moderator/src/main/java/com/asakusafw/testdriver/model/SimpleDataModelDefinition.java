@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -89,7 +89,7 @@ public class SimpleDataModelDefinition<T> implements DataModelDefinition<T> {
         return Collections.unmodifiableMap(results);
     }
 
-    private static final Pattern NAME = Pattern.compile("[a-z][0-9A-Za-z]*");
+    private static final Pattern NAME = Pattern.compile("[a-z][0-9A-Za-z]*"); //$NON-NLS-1$
     private PropertyName extract(Field field) {
         assert field != null;
         if (Modifier.isPublic(field.getModifiers()) == false) {

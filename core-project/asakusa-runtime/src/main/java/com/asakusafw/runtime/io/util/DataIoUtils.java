@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,7 +67,7 @@ final class DataIoUtils {
     public static String readUTF(DataInput input) throws IOException {
         int size = input.readUnsignedShort();
         if (size == 0) {
-            return "";
+            return ""; //$NON-NLS-1$
         }
         StringBuffer buf = STRING_BUFFER_POOL.get();
         buf.setLength(0);

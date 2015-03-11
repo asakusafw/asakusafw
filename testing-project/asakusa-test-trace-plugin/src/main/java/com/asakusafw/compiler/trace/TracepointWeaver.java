@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,14 +52,14 @@ public class TracepointWeaver {
     /**
      * The input port name of trace operators.
      */
-    public static final String INPUT_PORT_NAME = "in";
+    public static final String INPUT_PORT_NAME = "in"; //$NON-NLS-1$
 
     /**
      * The output port name of trace operators.
      */
-    public static final String OUTPUT_PORT_NAME = "out";
+    public static final String OUTPUT_PORT_NAME = "out"; //$NON-NLS-1$
 
-    private static final String FLOWPART_FACTORY_NAME = "create";
+    private static final String FLOWPART_FACTORY_NAME = "create"; //$NON-NLS-1$
 
     static final Logger LOG = LoggerFactory.getLogger(TracepointWeaver.class);
 
@@ -181,7 +181,7 @@ public class TracepointWeaver {
         assert upstreams != null;
         assert downstreams != null;
         OperatorDescription.Builder builder = new OperatorDescription.Builder(Trace.class);
-        builder.declare(TraceDriver.class, TraceDriver.class, "trace");
+        builder.declare(TraceDriver.class, TraceDriver.class, "trace"); //$NON-NLS-1$
         builder.addInput(INPUT_PORT_NAME, port.getDescription().getDataType());
         builder.addOutput(OUTPUT_PORT_NAME, port.getDescription().getDataType());
         builder.addAttribute(new TraceSettingAttribute(setting, counter.incrementAndGet()));

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -249,7 +249,7 @@ public class DefaultDataModelDefinition<T> implements DataModelDefinition<T> {
         if (annotation == null) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "Annotation {0} is not defined in {1}",
+                        "Annotation {0} is not defined in {1}", //$NON-NLS-1$
                         PropertyOrder.class.getSimpleName(),
                         modelClass.getName()));
             }
@@ -257,17 +257,21 @@ public class DefaultDataModelDefinition<T> implements DataModelDefinition<T> {
         }
         Map<PropertyName, Method> ordered = new LinkedHashMap<PropertyName, Method>();
         for (String name : annotation.value()) {
-            String[] words = name.split("(_|-)+");
+            String[] words = name.split("(_|-)+"); //$NON-NLS-1$
             PropertyName propertyName = PropertyName.newInstance(words);
             Method method = results.remove(propertyName);
             if (method == null) {
-                LOG.warn("Property {} is not found in {}", name, modelClass.getName());
+                LOG.warn(MessageFormat.format(
+                        "Property {0} is not found in {1}",
+                        name, modelClass.getName()));
             } else {
                 ordered.put(propertyName, method);
             }
         }
         if (results.isEmpty() == false) {
-            LOG.warn("Property {} is not declared its order in {}", results.keySet(), modelClass.getName());
+            LOG.warn(MessageFormat.format(
+                    "Property {0} is not declared its order in {1}",
+                    results.keySet(), modelClass.getName()));
             ordered.putAll(results);
         }
         return ordered;

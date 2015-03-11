@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ public class LocalFileLockProvider<T> implements LockProvider<T> {
 
     static final Log LOG = LogFactory.getLog(LocalFileLockProvider.class);
 
-    private static final Charset ENCODING = Charset.forName("UTF-8");
+    private static final Charset ENCODING = Charset.forName("UTF-8"); //$NON-NLS-1$
 
     private final File baseDirectory;
 
@@ -54,14 +54,14 @@ public class LocalFileLockProvider<T> implements LockProvider<T> {
                     "Failed to create lock directory: {0}",
                     baseDirectory));
         }
-        String fileName = String.format("%08x.lck", target == null ? -1 : target.hashCode());
+        String fileName = String.format("%08x.lck", target == null ? -1 : target.hashCode()); //$NON-NLS-1$
         File lockFile = new File(baseDirectory, fileName);
         RandomAccessFile fd = new RandomAccessFile(lockFile, "rw"); //$NON-NLS-1$
         boolean success = false;
         try {
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "Start to acquire lock for \"{0}\" ({1})",
+                        "Start to acquire lock for \"{0}\" ({1})", //$NON-NLS-1$
                         target,
                         lockFile));
             }
@@ -71,7 +71,7 @@ public class LocalFileLockProvider<T> implements LockProvider<T> {
             } else {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(MessageFormat.format(
-                            "Finished to acquire lock for \"{0}\" ({1})",
+                            "Finished to acquire lock for \"{0}\" ({1})", //$NON-NLS-1$
                             target,
                             lockFile));
                 }
@@ -100,7 +100,7 @@ public class LocalFileLockProvider<T> implements LockProvider<T> {
             if (result == null) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(MessageFormat.format(
-                            "Failed to acquire lock for \"{0}\" ({1})",
+                            "Failed to acquire lock for \"{0}\" ({1})", //$NON-NLS-1$
                             target,
                             lockFile));
                 }
@@ -109,7 +109,7 @@ public class LocalFileLockProvider<T> implements LockProvider<T> {
         } catch (OverlappingFileLockException e) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "Failed to acquire lock for \"{0}\" ({1})",
+                        "Failed to acquire lock for \"{0}\" ({1})", //$NON-NLS-1$
                         target,
                         lockFile)/*, e*/);
             }

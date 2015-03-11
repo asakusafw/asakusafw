@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -119,7 +119,7 @@ public class ImplementationBuilder {
         Precondition.checkMustNotBeNull(from, "from"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(to, "to"); //$NON-NLS-1$
         this.statements.add(new ExpressionBuilder(factory, to)
-            .method("copyFrom", from)
+            .method("copyFrom", from) //$NON-NLS-1$
             .toStatement());
     }
 
