@@ -35,6 +35,7 @@ import com.asakusafw.testdriver.JobExecutor;
 import com.asakusafw.testdriver.TestDriverContext;
 import com.asakusafw.testdriver.TestExecutionPlan;
 import com.asakusafw.testdriver.TestExecutionPlan.Job;
+import com.asakusafw.testdriver.TestExecutionPlan.TaskKind;
 import com.asakusafw.testdriver.hadoop.ConfigurationFactory;
 
 /**
@@ -128,14 +129,18 @@ synchronized(s) {
         if (requiresValidateExecutionEnvironment() == false) {
             return;
         }
-        List<TestExecutionPlan.Command> commands = new ArrayList<TestExecutionPlan.Command>();
-        commands.addAll(plan.getInitializers());
-        commands.addAll(plan.getImporters());
-        commands.addAll(plan.getExporters());
-        commands.addAll(plan.getFinalizers());
+        List<TestExecutionPlan.Task> tasks = new ArrayList<TestExecutionPlan.Task>();
+        tasks.addAll(plan.getInitializers());
+        tasks.addAll(plan.getImporters());
+        tasks.addAll(plan.getJobs());
+        tasks.addAll(plan.getExporters());
+        tasks.addAll(plan.getFinalizers());
 
-        for (TestExecutionPlan.Command command : commands) {
-            if (findCommandEmulator(command) == null) {
+        for (TestExecutionPlan.Task task : tasks) {
+            if (task.getTaskKind() != TaskKind.COMMAND) {
+                continue;
+            }
+            if (findCommandEmulator((TestExecutionPlan.Command) task) == null) {
                 if (configurations.getHadoopCommand() == null) {
                     throw new AssertionError(MessageFormat.format(
                             "コマンド\"{0}\"を検出できませんでした",
