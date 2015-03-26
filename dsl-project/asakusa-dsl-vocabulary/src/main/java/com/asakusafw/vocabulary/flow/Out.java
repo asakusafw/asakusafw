@@ -15,9 +15,13 @@
  */
 package com.asakusafw.vocabulary.flow;
 
+import com.asakusafw.vocabulary.flow.graph.FlowElementInput;
+
 /**
  * フローからの出力を表すインターフェース。
  * @param <T> 出力するデータの種類
+ * @since 0.1.0
+ * @version 0.7.3
  */
 public interface Out<T> {
 
@@ -26,4 +30,13 @@ public interface Out<T> {
      * @param source フロー全体の出力となるデータが流れるソース
      */
     void add(Source<T> source);
+
+    /**
+     * この要素のポートとしての表現を返す。
+     * <p>
+     * DSL利用者はこのクラスのメソッドを直接利用すべきでない。
+     * </p>
+     * @return この要素のポートとしての表現
+     */
+    FlowElementInput toInputPort();
 }

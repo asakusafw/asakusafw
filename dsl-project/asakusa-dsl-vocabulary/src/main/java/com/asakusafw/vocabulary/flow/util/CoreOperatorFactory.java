@@ -18,19 +18,22 @@ package com.asakusafw.vocabulary.flow.util;
 import static com.asakusafw.vocabulary.flow.util.PseudElementDescription.*;
 
 import java.lang.reflect.Type;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.asakusafw.vocabulary.flow.Operator;
+import com.asakusafw.vocabulary.flow.Out;
 import com.asakusafw.vocabulary.flow.Source;
 import com.asakusafw.vocabulary.flow.graph.FlowBoundary;
 import com.asakusafw.vocabulary.flow.graph.FlowElementOutput;
 import com.asakusafw.vocabulary.flow.graph.FlowElementResolver;
 import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 
-
 /**
  * 標準的な演算子オブジェクトを生成するファクトリ。
+ * @since 0.1.0
+ * @version 0.7.3
  */
 public class CoreOperatorFactory {
 
@@ -92,6 +95,19 @@ public class CoreOperatorFactory {
             throw new IllegalArgumentException("type must not be null"); //$NON-NLS-1$
         }
         return new Empty<T>(type);
+    }
+
+    /**
+     * 空演算子の断片を生成する。
+     * <p>
+     * この演算子の断片は、対象の演算子が取り扱うデータの型を指定することで、演算子として利用できるようになる。
+     * </p>
+     * @return 空(から)演算子の断片
+     * @since 0.7.3
+     * @see #empty(Class)
+     */
+    public EmptyFragment empty() {
+        return new EmptyFragment();
     }
 
     /**
@@ -257,6 +273,7 @@ public class CoreOperatorFactory {
      * @return 射影演算子
      * @throws IllegalArgumentException if some parameters were {@code null}
      * @since 0.2.0
+     * @see #project(Source)
      */
     public <T> Project<T> project(Source<?> in, Class<T> targetType) {
         if (in == null) {
@@ -266,6 +283,24 @@ public class CoreOperatorFactory {
             throw new IllegalArgumentException("targetType must not be null"); //$NON-NLS-1$
         }
         return new Project<T>(in, targetType);
+    }
+
+    /**
+     * 射影演算子の断片を返す。
+     * <p>
+     * この演算子の断片は、射影演算子の変換後の型を指定することで、演算子として利用できるようになる。
+     * </p>
+     * @param in 射影対象の入力
+     * @return 射影演算子の断片
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.7.3
+     * @see #project(Source, Class)
+     */
+    public ProjectFragment project(Source<?> in) {
+        if (in == null) {
+            throw new IllegalArgumentException("in must not be null"); //$NON-NLS-1$
+        }
+        return new ProjectFragment(in);
     }
 
     /**
@@ -285,6 +320,7 @@ public class CoreOperatorFactory {
      * @return 拡張演算子
      * @throws IllegalArgumentException if some parameters were {@code null}
      * @since 0.2.0
+     * @see #extend(Source)
      */
     public <T> Extend<T> extend(Source<?> in, Class<T> targetType) {
         if (in == null) {
@@ -294,6 +330,24 @@ public class CoreOperatorFactory {
             throw new IllegalArgumentException("targetType must not be null"); //$NON-NLS-1$
         }
         return new Extend<T>(in, targetType);
+    }
+
+    /**
+     * 拡張演算子の断片を返す。
+     * <p>
+     * この演算子の断片は、拡張演算子の変換後の型を指定することで、演算子として利用できるようになる。
+     * </p>
+     * @param in 拡張対象の入力
+     * @return 拡張演算子の断片
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.7.3
+     * @see #extend(Source, Class)
+     */
+    public ExtendFragment extend(Source<?> in) {
+        if (in == null) {
+            throw new IllegalArgumentException("in must not be null"); //$NON-NLS-1$
+        }
+        return new ExtendFragment(in);
     }
 
     /**
@@ -313,6 +367,7 @@ public class CoreOperatorFactory {
      * @return 再構築演算子
      * @throws IllegalArgumentException if some parameters were {@code null}
      * @since 0.2.1
+     * @see #restructure(Source)
      */
     public <T> Restructure<T> restructure(Source<?> in, Class<T> targetType) {
         if (in == null) {
@@ -322,6 +377,24 @@ public class CoreOperatorFactory {
             throw new IllegalArgumentException("targetType must not be null"); //$NON-NLS-1$
         }
         return new Restructure<T>(in, targetType);
+    }
+
+    /**
+     * 再構築演算子の断片を返す。
+     * <p>
+     * この演算子の断片は、再構築演算子の変換後の型を指定することで、演算子として利用できるようになる。
+     * </p>
+     * @param in 再構築対象の入力
+     * @return 再構築演算子の断片
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.7.3
+     * @see #restructure(Source, Class)
+     */
+    public RestructureFragment restructure(Source<?> in) {
+        if (in == null) {
+            throw new IllegalArgumentException("in must not be null"); //$NON-NLS-1$
+        }
+        return new RestructureFragment(in);
     }
 
     private <T> Type getPortType(Source<T> source) {
@@ -536,5 +609,199 @@ public class CoreOperatorFactory {
         public FlowElementOutput toOutputPort() {
             return resolver.getOutput(OUTPUT_PORT_NAME);
         }
+    }
+
+    /**
+     * An <em>empty operator</em> fragment which requires the target type.
+     * @since 0.7.3
+     */
+    public static final class EmptyFragment {
+
+        EmptyFragment() {
+            return;
+        }
+
+        /**
+         * 対象の型を指定し、空演算子を生成する。
+         * @param <T> 対象の型
+         * @param target 対象の型
+         * @return 生成した演算子
+         */
+        public <T> Empty<T> as(Class<T> target) {
+            return new Empty<T>(target);
+        }
+
+        /**
+         * 対象の型と同様の型を持つ入力を指定し、空演算子を生成する。
+         * @param <T> 対象の型
+         * @param target 対象の型と同様の型を持つ入力
+         * @return 生成した演算子
+         */
+        public <T> Empty<T> as(Source<T> target) {
+            return as(classOf(target));
+        }
+
+        /**
+         * 対象の型と同様の型を持つ出力を指定し、空演算子を生成する。
+         * @param <T> 対象の型
+         * @param target 対象の型と同様の型を持つ出力
+         * @return 生成した演算子
+         */
+        public <T> Empty<T> as(Out<T> target) {
+            return as(classOf(target));
+        }
+    }
+
+    /**
+     * An <em>project operator</em> fragment which requires the target type.
+     * @since 0.7.3
+     */
+    public static final class ProjectFragment {
+
+        private final Source<?> in;
+
+        ProjectFragment(Source<?> in) {
+            this.in = in;
+        }
+
+        /**
+         * 変換対象の型を指定し、射影演算子を生成する。
+         * @param <T> 変換対象の型
+         * @param target 変換対象の型
+         * @return 生成した演算子
+         */
+        public <T> Project<T> as(Class<T> target) {
+            return new Project<T>(in, target);
+        }
+
+        /**
+         * 変換対象の型と同様の型を持つ入力を指定し、射影演算子を生成する。
+         * @param <T> 変換対象の型
+         * @param target 対象の型と同様の型を持つ入力
+         * @return 生成した演算子
+         */
+        public <T> Project<T> as(Source<T> target) {
+            return as(classOf(target));
+        }
+
+        /**
+         * 変換対象の型と同様の型を持つ出力を指定し、射影演算子を生成する。
+         * @param <T> 変換対象の型
+         * @param target 対象の型と同様の型を持つ出力
+         * @return 生成した演算子
+         */
+        public <T> Project<T> as(Out<T> target) {
+            return as(classOf(target));
+        }
+    }
+
+    /**
+     * An <em>extend operator</em> fragment which requires the target type.
+     * @since 0.7.3
+     */
+    public static final class ExtendFragment {
+
+        private final Source<?> in;
+
+        ExtendFragment(Source<?> in) {
+            this.in = in;
+        }
+
+        /**
+         * 変換対象の型を指定し、拡張演算子を生成する。
+         * @param <T> 変換対象の型
+         * @param target 変換対象の型
+         * @return 生成した演算子
+         */
+        public <T> Extend<T> as(Class<T> target) {
+            return new Extend<T>(in, target);
+        }
+
+        /**
+         * 変換対象の型と同様の型を持つ入力を指定し、拡張演算子を生成する。
+         * @param <T> 変換対象の型
+         * @param target 対象の型と同様の型を持つ入力
+         * @return 生成した演算子
+         */
+        public <T> Extend<T> as(Source<T> target) {
+            return as(classOf(target));
+        }
+
+        /**
+         * 変換対象の型と同様の型を持つ出力を指定し、拡張演算子を生成する。
+         * @param <T> 変換対象の型
+         * @param target 対象の型と同様の型を持つ出力
+         * @return 生成した演算子
+         */
+        public <T> Extend<T> as(Out<T> target) {
+            return as(classOf(target));
+        }
+    }
+
+    /**
+     * An <em>restructure operator</em> fragment which requires the target type.
+     * @since 0.7.3
+     */
+    public static final class RestructureFragment {
+
+        private final Source<?> in;
+
+        RestructureFragment(Source<?> in) {
+            this.in = in;
+        }
+
+        /**
+         * 変換対象の型を指定し、再構築演算子を生成する。
+         * @param <T> 変換対象の型
+         * @param target 変換対象の型
+         * @return 生成した演算子
+         */
+        public <T> Restructure<T> as(Class<T> target) {
+            return new Restructure<T>(in, target);
+        }
+
+        /**
+         * 変換対象の型と同様の型を持つ入力を指定し、再構築演算子を生成する。
+         * @param <T> 変換対象の型
+         * @param target 対象の型と同様の型を持つ入力
+         * @return 生成した演算子
+         */
+        public <T> Restructure<T> as(Source<T> target) {
+            return as(classOf(target));
+        }
+
+        /**
+         * 変換対象の型と同様の型を持つ出力を指定し、再構築演算子を生成する。
+         * @param <T> 変換対象の型
+         * @param target 対象の型と同様の型を持つ出力
+         * @return 生成した演算子
+         */
+        public <T> Restructure<T> as(Out<T> target) {
+            return as(classOf(target));
+        }
+    }
+
+    static <T> Class<T> classOf(Source<T> source) {
+        Type type = source.toOutputPort().getDescription().getDataType();
+        if ((type instanceof Class<?>) == false) {
+            throw new IllegalArgumentException(MessageFormat.format(
+                    "type must be a class: {0}",
+                    type));
+        }
+        @SuppressWarnings("unchecked")
+        Class<T> aClass = (Class<T>) type;
+        return aClass;
+    }
+
+    static <T> Class<T> classOf(Out<T> out) {
+        Type type = out.toInputPort().getDescription().getDataType();
+        if ((type instanceof Class<?>) == false) {
+            throw new IllegalArgumentException(MessageFormat.format(
+                    "type must be a class: {0}",
+                    type));
+        }
+        @SuppressWarnings("unchecked")
+        Class<T> aClass = (Class<T>) type;
+        return aClass;
     }
 }
