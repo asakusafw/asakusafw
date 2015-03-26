@@ -22,6 +22,7 @@ import com.asakusafw.compiler.flow.FlowDescriptionDriver;
 import com.asakusafw.compiler.testing.DirectExporterDescription;
 import com.asakusafw.vocabulary.flow.Out;
 import com.asakusafw.vocabulary.flow.Source;
+import com.asakusafw.vocabulary.flow.graph.FlowElementInput;
 
 /**
  * フロー部品のテスト出力データオブジェクト。
@@ -73,5 +74,10 @@ public class FlowPartDriverOutput<T> extends FlowDriverOutput<T, FlowPartDriverO
     @Override
     public void add(Source<T> upstream) {
         out.add(upstream);
+    }
+
+    @Override
+    public FlowElementInput toInputPort() {
+        return out.toInputPort();
     }
 }
