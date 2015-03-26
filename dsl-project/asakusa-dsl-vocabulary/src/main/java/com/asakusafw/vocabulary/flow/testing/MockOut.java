@@ -18,6 +18,7 @@ package com.asakusafw.vocabulary.flow.testing;
 import com.asakusafw.vocabulary.flow.Out;
 import com.asakusafw.vocabulary.flow.Source;
 import com.asakusafw.vocabulary.flow.graph.FlowElement;
+import com.asakusafw.vocabulary.flow.graph.FlowElementInput;
 import com.asakusafw.vocabulary.flow.graph.FlowElementResolver;
 import com.asakusafw.vocabulary.flow.graph.OutputDescription;
 import com.asakusafw.vocabulary.flow.graph.PortConnection;
@@ -28,7 +29,7 @@ import com.asakusafw.vocabulary.flow.graph.PortConnection;
  */
 public class MockOut<T> implements Out<T> {
 
-    private FlowElementResolver resolver;
+    private final FlowElementResolver resolver;
 
     /**
      * インスタンスを生成する。
@@ -55,7 +56,7 @@ public class MockOut<T> implements Out<T> {
     public void add(Source<T> source) {
         PortConnection.connect(
                 source.toOutputPort(),
-                resolver.getInput(OutputDescription.INPUT_PORT_NAME));
+                this.toInputPort());
     }
 
     /**
@@ -64,5 +65,10 @@ public class MockOut<T> implements Out<T> {
      */
     public FlowElement toElement() {
         return resolver.getElement();
+    }
+
+    @Override
+    public FlowElementInput toInputPort() {
+        return resolver.getInput(OutputDescription.INPUT_PORT_NAME);
     }
 }
