@@ -209,10 +209,22 @@ public class TestDriverContext implements TestContext {
     }
 
     private void configureOptions() {
-        LOG.debug("Auto detecting current execution environment"); //$NON-NLS-1$
-        this.options.putExtraAttribute(
-                "MAPREDUCE-370", //$NON-NLS-1$
-                GenericOptionValue.AUTO.getSymbol());
+        // disables Direct I/O input filters
+        if (checkClass("com.asakusafw.compiler.directio.DirectFileIoProcessor")) { //$NON-NLS-1$
+            LOG.debug("diasbles Direct I/O input filters"); //$NON-NLS-1$
+            this.options.putExtraAttribute(
+                    "directio.input.filter.enabled", //$NON-NLS-1$
+                    GenericOptionValue.DISABLED.getSymbol());
+        }
+    }
+
+    private boolean checkClass(String name) {
+        try {
+            Class.forName(name);
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
     }
 
     /**
