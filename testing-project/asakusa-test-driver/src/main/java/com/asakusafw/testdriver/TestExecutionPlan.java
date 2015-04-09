@@ -16,6 +16,7 @@
 package com.asakusafw.testdriver;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +24,9 @@ import java.util.Map;
 import com.asakusafw.compiler.common.Precondition;
 
 /**
- * ジョブフローを直接実行する際に利用する計画。
+ * Represents an execution plan for testing.
+ * @since 0.1.0
+ * @version 0.7.3
  */
 public class TestExecutionPlan implements Serializable {
 
@@ -33,15 +36,15 @@ public class TestExecutionPlan implements Serializable {
 
     private final String executionId;
 
-    private final List<Command> initializers;
+    private final List<Task> initializers;
 
-    private final List<Command> importers;
+    private final List<Task> importers;
 
-    private final List<Job> jobs;
+    private final List<Task> jobs;
 
-    private final List<Command> exporters;
+    private final List<Task> exporters;
 
-    private final List<Command> finalizers;
+    private final List<Task> finalizers;
 
     /**
      * インスタンスを生成する。
@@ -57,11 +60,11 @@ public class TestExecutionPlan implements Serializable {
     public TestExecutionPlan(
             String definitionId,
             String executionId,
-            List<Command> initializers,
-            List<Command> importers,
-            List<Job> jobs,
-            List<Command> exporters,
-            List<Command> finalizers) {
+            List<? extends Task> initializers,
+            List<? extends Task> importers,
+            List<? extends Task> jobs,
+            List<? extends Task> exporters,
+            List<? extends Task> finalizers) {
         Precondition.checkMustNotBeNull(definitionId, "definitionId"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(executionId, "executionId"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(initializers, "initializers"); //$NON-NLS-1$
@@ -71,11 +74,11 @@ public class TestExecutionPlan implements Serializable {
         Precondition.checkMustNotBeNull(finalizers, "finalizers"); //$NON-NLS-1$
         this.definitionId = definitionId;
         this.executionId = executionId;
-        this.initializers = initializers;
-        this.importers = importers;
-        this.jobs = jobs;
-        this.exporters = exporters;
-        this.finalizers = finalizers;
+        this.initializers = new ArrayList<Task>(initializers);
+        this.importers = new ArrayList<Task>(importers);
+        this.jobs = new ArrayList<Task>(jobs);
+        this.exporters = new ArrayList<Task>(exporters);
+        this.finalizers = new ArrayList<Task>(finalizers);
     }
 
     /**
@@ -98,7 +101,7 @@ public class TestExecutionPlan implements Serializable {
      * フェーズの一覧を返す。
      * @return フェーズの一覧
      */
-    public List<Command> getInitializers() {
+    public List<Task> getInitializers() {
         return initializers;
     }
 
@@ -106,7 +109,7 @@ public class TestExecutionPlan implements Serializable {
      * フェーズの一覧を返す。
      * @return フェーズの一覧
      */
-    public List<Command> getImporters() {
+    public List<Task> getImporters() {
         return importers;
     }
 
@@ -114,7 +117,7 @@ public class TestExecutionPlan implements Serializable {
      * フェーズの一覧を返す。
      * @return フェーズの一覧
      */
-    public List<Job> getJobs() {
+    public List<Task> getJobs() {
         return jobs;
     }
 
@@ -122,7 +125,7 @@ public class TestExecutionPlan implements Serializable {
      * フェーズの一覧を返す。
      * @return フェーズの一覧
      */
-    public List<Command> getExporters() {
+    public List<Task> getExporters() {
         return exporters;
     }
 
@@ -130,58 +133,82 @@ public class TestExecutionPlan implements Serializable {
      * フェーズの一覧を返す。
      * @return フェーズの一覧
      */
-    public List<Command> getFinalizers() {
+    public List<Task> getFinalizers() {
         return finalizers;
     }
 
     /**
-     * 起動すべきジョブを表す。
+     * Represents a task in execution.
+     * @since 0.7.3
      */
-    public static class Job implements Serializable {
+    public static interface Task extends Serializable {
+
+        /**
+         * Returns the kind of this task.
+         * @return the kind of this task
+         */
+        TaskKind getTaskKind();
+    }
+
+    /**
+     * Represents a kind of {@link Task}.
+     * @since 0.7.3
+     */
+    public enum TaskKind {
+
+        /**
+         * Represents a command task.
+         */
+        COMMAND,
+
+        /**
+         * Represents a Hadoop job task.
+         */
+        HADOOP,
+    }
+
+    /**
+     * Represents a Hadoop job task.
+     * @since 0.1.0
+     * @version 0.7.3
+     */
+    public static class Job implements Task {
 
         private static final long serialVersionUID = -1707317463227716296L;
 
         private final String className;
 
-        private final String executionId;
-
         private final Map<String, String> properties;
 
         /**
-         * インスタンスを生成する。
-         * @param className ジョブを起動するためのクライアントクラスの完全限定名
-         * @param executionId このジョブの実行識別子
-         * @param properties ジョブ起動時のプロパティ一覧
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Creates a new instance.
+         * @param className the fully qualified name of the job client class
+         * @param properties extra Hadoop properties
+         * @throws IllegalArgumentException if arguments contains {@code null}
          */
-        public Job(String className, String executionId, Map<String, String> properties) {
+        public Job(String className, Map<String, String> properties) {
             Precondition.checkMustNotBeNull(className, "className"); //$NON-NLS-1$
-            Precondition.checkMustNotBeNull(executionId, "executionId"); //$NON-NLS-1$
             Precondition.checkMustNotBeNull(properties, "properties"); //$NON-NLS-1$
             this.className = className;
-            this.executionId = executionId;
             this.properties = properties;
         }
 
+        @Override
+        public TaskKind getTaskKind() {
+            return TaskKind.HADOOP;
+        }
+
         /**
-         * ジョブを起動するためのクライアントクラス名を返す。
-         * @return ジョブを起動するためのクライアントクラス名
+         * Returns the fully qualified name of the job client class.
+         * @return the fully qualified name of the job client class
          */
         public String getClassName() {
             return className;
         }
 
         /**
-         * このジョブの実行識別子を返す。
-         * @return このジョブの実行識別子
-         */
-        public String getExecutionId() {
-            return executionId;
-        }
-
-        /**
-         * ジョブ起動時のプロパティ一覧を返す。
-         * @return ジョブ起動時のプロパティ一覧
+         * Returns the extra Hadoop properties.
+         * @return the extra Hadoop properties
          */
         public Map<String, String> getProperties() {
             return properties;
@@ -189,9 +216,11 @@ public class TestExecutionPlan implements Serializable {
     }
 
     /**
-     * 起動すべきコマンドを表す。
+     * Represents a generic command task.
+     * @since 0.1.0
+     * @version 0.7.3
      */
-    public static class Command implements Serializable {
+    public static class Command implements Task {
 
         private static final long serialVersionUID = -6594560296027009816L;
 
@@ -204,12 +233,12 @@ public class TestExecutionPlan implements Serializable {
         private final Map<String, String> environment;
 
         /**
-         * インスタンスを生成する。
-         * @param commandLine コマンドラインを構成するセグメント一覧
-         * @param moduleName この機能を提供するモジュールのID
-         * @param profileName この機能を利用するロールプロファイルのID、規定の場合は{@code null}
-         * @param environment 環境変数の一覧
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Creates a new instance.
+         * @param commandLine the command line tokens
+         * @param moduleName the target module name
+         * @param profileName the target profile name, or {@code null} if it is default
+         * @param environment the environment variables
+         * @throws IllegalArgumentException if arguments contains {@code null}
          */
         public Command(
                 List<String> commandLine,
@@ -224,17 +253,22 @@ public class TestExecutionPlan implements Serializable {
             this.environment = environment;
         }
 
+        @Override
+        public TaskKind getTaskKind() {
+            return TaskKind.COMMAND;
+        }
+
         /**
-         * このコマンドのコマンドライントークンの一覧を返す。
-         * @return このコマンドのコマンドライントークン
+         * Returns the command line tokens.
+         * @return the command line tokens
          */
         public List<String> getCommandTokens() {
             return commandLine;
         }
 
         /**
-         * このコマンドのコマンドライン文字列を返す。
-         * @return このコマンドのコマンドライン文字列
+         * Returns the command line string.
+         * @return the command line string
          */
         public String getCommandLineString() {
             StringBuilder buf = new StringBuilder();
@@ -256,24 +290,24 @@ public class TestExecutionPlan implements Serializable {
         }
 
         /**
-         * この機能を提供するモジュールのIDを返す。
-         * @return この機能を提供するモジュールのID
+         * Returns the target module name.
+         * @return the target module name
          */
         public String getModuleName() {
             return moduleName;
         }
 
         /**
-         * この機能を利用する際のロールプロファイルのIDを返す。
-         * @return この機能を利用する際のロールプロファイルのID、デフォルトの場合は{@code null}
+         * Returns the target profile name.
+         * @return the target profile name, or {@code null} if it is not set
          */
         public String getProfileName() {
             return profileName;
         }
 
         /**
-         * 環境変数の一覧を返す。
-         * @return 環境変数の一覧
+         * Returns the environment variables.
+         * @return the environment variables
          */
         public Map<String, String> getEnvironment() {
             return environment;
