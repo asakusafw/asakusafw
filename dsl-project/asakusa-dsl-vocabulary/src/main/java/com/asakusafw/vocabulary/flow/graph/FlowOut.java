@@ -27,9 +27,9 @@ import com.asakusafw.vocabulary.flow.Source;
  */
 public final class FlowOut<T> implements Out<T> {
 
-    private OutputDescription description;
+    private final OutputDescription description;
 
-    private FlowElementResolver resolver;
+    private final FlowElementResolver resolver;
 
     /**
      * インスタンスを生成する。
@@ -76,10 +76,7 @@ public final class FlowOut<T> implements Out<T> {
         PortConnection.connect(source.toOutputPort(), this.toInputPort());
     }
 
-    /**
-     * この要素のポートとしての表現を返す。
-     * @return この要素のポートとしての表現
-     */
+    @Override
     public FlowElementInput toInputPort() {
         return resolver.getInput(OutputDescription.INPUT_PORT_NAME);
     }

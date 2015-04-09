@@ -37,6 +37,7 @@ import com.asakusafw.runtime.stage.launcher.LauncherOptionsParser;
 import com.asakusafw.runtime.stage.optimizer.LibraryCopySuppressionConfigurator;
 import com.asakusafw.testdriver.TestExecutionPlan.Command;
 import com.asakusafw.testdriver.TestExecutionPlan.Job;
+import com.asakusafw.testdriver.TestExecutionPlan.Task;
 import com.asakusafw.testdriver.core.DataModelSourceFactory;
 import com.asakusafw.testdriver.core.Difference;
 import com.asakusafw.testdriver.core.TestModerator;
@@ -323,7 +324,7 @@ public class JobflowExecutor {
         assert properties != null;
         List<Job> jobs = Lists.create();
         for (StageInfo stage : info.getStages()) {
-            jobs.add(new Job(stage.getClassName(), commands.getExecutionId(), properties));
+            jobs.add(new Job(stage.getClassName(), properties));
         }
 
         List<Command> initializers = Lists.create();
@@ -379,27 +380,27 @@ public class JobflowExecutor {
             });
         }
         try {
-            runJobFlowCommands(plan.getInitializers());
-            runJobFlowCommands(plan.getImporters());
-            runJobflowJobs(jobflowPackageFile, plan.getJobs());
-            runJobFlowCommands(plan.getExporters());
+            runJobflowTasks(plan.getInitializers());
+            runJobflowTasks(plan.getImporters());
+            runJobflowTasks(plan.getJobs());
+            runJobflowTasks(plan.getExporters());
         } finally {
-            runJobFlowCommands(plan.getFinalizers());
+            runJobflowTasks(plan.getFinalizers());
         }
     }
 
-    private void runJobflowJobs(File jobflowPackageFile, List<Job> jobs) throws IOException {
-        assert jobflowPackageFile != null;
-        assert jobs != null;
-        for (Job job : jobs) {
-            jobExecutor.execute(job, getEnvironmentVariables());
-        }
-    }
-
-    private void runJobFlowCommands(List<TestExecutionPlan.Command> cmdList) throws IOException {
-        assert cmdList != null;
-        for (TestExecutionPlan.Command command : cmdList) {
-            jobExecutor.execute(command, getEnvironmentVariables());
+    private void runJobflowTasks(List<? extends Task> tasks) throws IOException {
+        for (TestExecutionPlan.Task task : tasks) {
+            switch (task.getTaskKind()) {
+            case COMMAND:
+                jobExecutor.execute((TestExecutionPlan.Command) task, getEnvironmentVariables());
+                break;
+            case HADOOP:
+                jobExecutor.execute((TestExecutionPlan.Job) task, getEnvironmentVariables());
+                break;
+            default:
+                throw new AssertionError(task);
+            }
         }
     }
 

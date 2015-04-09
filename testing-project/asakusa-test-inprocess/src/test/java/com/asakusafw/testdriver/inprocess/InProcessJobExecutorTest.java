@@ -426,7 +426,7 @@ public class InProcessJobExecutorTest {
         for (int i = 0, n = properties.length; i < n; i+=2) {
             props.put(properties[i], properties[i + 1]);
         }
-        return new TestExecutionPlan.Job(className, EXECUTION_ID, props);
+        return new TestExecutionPlan.Job(className, props);
     }
 
     private TestExecutionPlan.Command command(String moduleName, String... commandLine) {
