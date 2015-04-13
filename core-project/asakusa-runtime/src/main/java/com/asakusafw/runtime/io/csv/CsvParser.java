@@ -46,7 +46,7 @@ import com.asakusafw.runtime.value.StringOption;
 /**
  * A simple CSV parser.
  * @since 0.2.4
- * @version 0.4.0
+ * @version 0.7.3
  */
 public class CsvParser implements RecordParser {
 
@@ -98,6 +98,8 @@ public class CsvParser implements RecordParser {
 
     private final DateTimeFormatter dateTimeFormat;
 
+    private final boolean forceConsumeHeader;
+
     private final List<String> headerCellsFormat;
 
     private final boolean allowLineBreakInValue;
@@ -139,6 +141,7 @@ public class CsvParser implements RecordParser {
         this.dateFormat = DateFormatter.newInstance(config.getDateFormat());
         this.dateTimeFormat = DateTimeFormatter.newInstance(config.getDateTimeFormat());
         this.headerCellsFormat = config.getHeaderCells();
+        this.forceConsumeHeader = config.isForceConsumeHeader();
         this.allowLineBreakInValue = config.isLineBreakInValue();
 
         readerBuffer.clear();
@@ -513,6 +516,9 @@ public class CsvParser implements RecordParser {
     }
 
     private boolean isHeader() {
+        if (forceConsumeHeader) {
+            return true;
+        }
         if (headerCellsFormat.isEmpty()) {
             return false;
         }

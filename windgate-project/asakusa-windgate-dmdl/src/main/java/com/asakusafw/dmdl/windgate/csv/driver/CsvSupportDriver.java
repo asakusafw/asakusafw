@@ -41,6 +41,10 @@ The attributed declaration can have:
 <li> with {@code charset=[string-literal]} as charset name (default: UTF-8) </li>
 <li> with {@code has_header=TRUE|FALSE} as whether header is required (default: FALSE) </li>
 <li>
+    with {@code force_header=TRUE|FALSE} as whether header is ALWAYS required,
+    and it may not have a valid form (default: FALSE) </li>
+<li> with {@code allow_linefeed=TRUE|FALSE} as whether each field can contain linefeed (default: FALSE) </li>
+<li>
     with {@code true=[string-literal]} as {@code "true"} representation
     (default: {@link CsvConfiguration#DEFAULT_TRUE_FORMAT})
 </li>
@@ -58,6 +62,7 @@ The attributed declaration can have:
 </li>
 </ul>
  * @since 0.2.4
+ * @version 0.7.3
  */
 public class CsvSupportDriver extends ModelAttributeDriver {
 
@@ -75,6 +80,12 @@ public class CsvSupportDriver extends ModelAttributeDriver {
      * The element name of whether header is required.
      */
     public static final String ELEMENT_HAS_HEADER_NAME = "has_header"; //$NON-NLS-1$
+
+    /**
+     * The element name of whether header is ALWAYS required.
+     * @since 0.7.3
+     */
+    public static final String ELEMENT_FORCE_HEADER_NAME = "force_header"; //$NON-NLS-1$
 
     /**
      * The element name of {@code true} representation.
@@ -116,6 +127,7 @@ public class CsvSupportDriver extends ModelAttributeDriver {
             Map<String, AstAttributeElement> elements) {
         AstLiteral charset = take(environment, elements, ELEMENT_CHARSET_NAME, LiteralKind.STRING);
         AstLiteral header = take(environment, elements, ELEMENT_HAS_HEADER_NAME, LiteralKind.BOOLEAN);
+        AstLiteral forceHeader = take(environment, elements, ELEMENT_FORCE_HEADER_NAME, LiteralKind.BOOLEAN);
         AstLiteral trueRep = take(environment, elements, ELEMENT_TRUE_NAME, LiteralKind.STRING);
         AstLiteral falseRep = take(environment, elements, ELEMENT_FALSE_NAME, LiteralKind.STRING);
         AstLiteral dateFormat = take(environment, elements, ELEMENT_DATE_NAME, LiteralKind.STRING);
@@ -128,6 +140,9 @@ public class CsvSupportDriver extends ModelAttributeDriver {
         }
         if (header != null) {
             result.setEnableHeader(header.toBooleanValue());
+        }
+        if (forceHeader != null) {
+            result.setForceHeader(forceHeader.toBooleanValue());
         }
         if (trueRep != null && checkNotEmpty(environment, ELEMENT_TRUE_NAME, trueRep)) {
             result.setTrueFormat(trueRep.toStringValue());

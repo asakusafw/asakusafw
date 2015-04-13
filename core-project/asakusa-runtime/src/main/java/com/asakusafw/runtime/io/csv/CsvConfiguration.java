@@ -26,6 +26,7 @@ import com.asakusafw.runtime.value.DateTime;
 /**
  * CSV configurations.
  * @since 0.2.4
+ * @version 0.7.3
  */
 public class CsvConfiguration {
 
@@ -77,6 +78,12 @@ public class CsvConfiguration {
      */
     public static final boolean DEFAULT_LINE_BREAK_IN_VALUE = true;
 
+    /**
+     * The default configuration whether forcibly consumes header cells even if header contents is invalid or not.
+     * @see #isForceConsumeHeader()
+     */
+    public static final boolean DEFAULT_FORCE_CONSUME_HEADER = false;
+
     private final Charset charset;
 
     private final List<String> headerCells;
@@ -92,6 +99,8 @@ public class CsvConfiguration {
     private volatile boolean lineBreakInValue = DEFAULT_LINE_BREAK_IN_VALUE;
 
     private volatile char separatorChar = DEFAULT_SEPARATOR_CHAR;
+
+    private boolean forceConsumeHeader = DEFAULT_FORCE_CONSUME_HEADER;
 
     /**
      * Creates a new instance.
@@ -214,5 +223,23 @@ public class CsvConfiguration {
      */
     public void setSeparatorChar(char separatorChar) {
         this.separatorChar = separatorChar;
+    }
+
+    /**
+     * Returns whether forcibly consumes header cells or not.
+     * @return {@code true} to forcibly consumes the header cell, otherwise {@code false}
+     * @since 0.7.3
+     */
+    public boolean isForceConsumeHeader() {
+        return forceConsumeHeader;
+    }
+
+    /**
+     * Sets whether forcibly consumes header cells or not.
+     * @param newValue {@code true} to forcibly consumes the header cell, otherwise {@code false}
+     * @since 0.7.3
+     */
+    public void setForceConsumeHeader(boolean newValue) {
+        this.forceConsumeHeader = newValue;
     }
 }
