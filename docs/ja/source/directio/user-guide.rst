@@ -688,6 +688,11 @@ Direct I/Oを利用してファイルからデータを読み出す場合、 ``D
 
   このメソッドは、自動生成される骨格ではすでに宣言されています。
 
+``Class<? extends DataFilter<?>> getFilter()``
+  ``DataFilter`` [#]_ のサブクラスを戻り値に指定します。
+
+  詳細については `入力データのフィルター`_ を参照してください。
+
 ``boolean isOptional()``
   入力にとるファイルが存在しない場合に、バッチ全体を異常終了させるには ``false`` を、空の入力として処理を続行する場合には ``true`` を、それぞれ戻り値に指定します。
 
@@ -725,6 +730,11 @@ Direct I/Oを利用してファイルからデータを読み出す場合、 ``D
         }
 
         @Override
+        public Class<? extends DataFilter<?>> getFilter() {
+            return DocumentFilter.class;
+        }
+
+        @Override
         public boolean isOptional() {
             return true;
         }
@@ -736,6 +746,7 @@ Direct I/Oを利用してファイルからデータを読み出す場合、 ``D
     }
 .. ***
 ..  [#] :javadoc:`com.asakusafw.vocabulary.directio.DirectFileInputDescription`
+..  [#] :javadoc:`com.asakusafw.runtime.directio.DataFilter`
 
 入力ファイルのベースパス
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -798,6 +809,69 @@ Direct I/Oを利用してファイルからデータを読み出す場合、 ``D
 
 ..  hint::
     「変数」に関する挙動は、パターンの解釈の前に一度変数をすべて展開し、展開後の文字列をパターンとして解釈して利用しています。
+
+入力データのフィルター
+~~~~~~~~~~~~~~~~~~~~~~
+
+``getFilter()`` で入力フィルタークラスを指定すると、Direct I/O を利用してファイルからデータを読み出す際に、ファイル単位やレコード単位で読み出すデータを制限できます。
+
+..  attention::
+    Asakusa Framework バージョン |version| では、Direct I/O の入力フィルターは試験的機能として提供しています。
+
+この入力フィルタークラスは、 ``DataFilter`` [#]_ を継承したクラスを、アプリケーションの入力データに合わせて個別に実装する必要があります。 ``DataFilter`` を継承し、下記のメソッドを必要に応じてオーバーライドしてください。
+
+``void initialize(Context context)``
+  入力フィルターを初期化する際にフレームワークから呼び出されます。
+
+  ``context`` からバッチ引数を取得できます。
+  入力フィルターの中では Framework API を利用できませんので、バッチ引数が必要な場合はここで取得する必要があります。
+
+``boolean acceptsPath(String path)``
+  入力データのうち、ファイルを丸ごとフィルターする際に利用します。
+  このメソッドが ``true`` を返す場合には対象のファイルを入力として利用し、 ``false`` を返す場合には対象のファイルを入力から除外します。
+
+  ``path`` には、入力データのフルパスが格納されています。
+  ベースパスやファイル名のパターンとは異なる可能性がある点に注意が必要です。
+
+``boolean acceptsData(T data)``
+  入力データのうち、個々のレコードをフィルターする際に利用します。
+  このメソッドが ``true`` を返す場合には対象のレコードを入力として利用し、 ``false`` を返す場合には対象のレコードを入力から除外します。
+
+入力フィルターを利用する際には、以下の点に注意してください。
+
+入力フィルター内でフレームワークAPIを利用できない
+  入力フィルタークラスの各メソッド内では、フレームワークAPIを利用できません
+  とくにバッチ引数などを利用する際には、 ``initialize()`` メソッドの ``Context`` オブジェクトから取得してください
+
+テストドライバからの実行で入力フィルターを利用できない
+  テストドライバから入力フィルターを含むジョブフローやバッチをテストする場合、入力フィルターは自動的に無効化されます
+  テストデータを用意する際には「フィルター適用後」のデータを指定し、入力フィルターのテストは個別に行ってください
+
+以下は入力フィルタークラスの実装例です。
+
+..  code-block:: java
+
+    public class RegexInputFilter extends DataFilter<Object> {
+
+        private Pattern accept;
+
+        @Override
+        public void initialize(Context context) {
+            // バッチ引数から正規表現パターンを取り出す
+            String s = context.getBatchArguments().get("pattern");
+            accept = Pattern.compile(s);
+        }
+
+        @Override
+        public boolean acceptsPath(String path) {
+            // 正規表現パターンにマッチするファイルのみを入力に利用
+            return accept.matcher(path).matches();
+        }
+    }
+..  **
+
+..  [#] :javadoc:`com.asakusafw.runtime.directio.DataFilter`
+
 
 .. _directio-dsl-output-description:
 
