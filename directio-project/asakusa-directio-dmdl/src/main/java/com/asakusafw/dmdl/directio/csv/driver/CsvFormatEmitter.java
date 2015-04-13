@@ -224,7 +224,6 @@ public class CsvFormatEmitter extends JavaDataModelDriver {
                         .toJavadoc(),
                     new AttributeBuilder(f)
                         .Public()
-                        .Final()
                         .toAttributes(),
                     context.getTypeName(),
                     f.newParameterizedType(
