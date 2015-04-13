@@ -16,7 +16,6 @@
 package com.asakusafw.testdriver;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URISyntaxException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -26,21 +25,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.testdriver.core.DataModelDefinition;
-import com.asakusafw.testdriver.core.DataModelReflection;
 import com.asakusafw.testdriver.core.DataModelSinkFactory;
-import com.asakusafw.testdriver.core.DataModelSource;
 import com.asakusafw.testdriver.core.DataModelSourceFactory;
 import com.asakusafw.testdriver.core.DataModelSourceFilter;
-import com.asakusafw.testdriver.core.Difference;
 import com.asakusafw.testdriver.core.DifferenceSinkFactory;
 import com.asakusafw.testdriver.core.ModelTester;
 import com.asakusafw.testdriver.core.ModelTransformer;
 import com.asakusafw.testdriver.core.ModelVerifier;
 import com.asakusafw.testdriver.core.TestDataToolProvider;
 import com.asakusafw.testdriver.core.TestRule;
-import com.asakusafw.testdriver.core.Verifier;
 import com.asakusafw.testdriver.core.VerifierFactory;
-import com.asakusafw.testdriver.core.VerifyContext;
 import com.asakusafw.testdriver.core.VerifyRuleFactory;
 
 /**
@@ -213,33 +207,7 @@ public class DriverOutputBase<T> extends DriverInputBase<T> {
      */
     protected final DataModelSourceFilter toDataModelSourceFilter(final ModelTransformer<? super T> transformer) {
         final DataModelDefinition<T> definition = getDataModelDefinition();
-        return new DataModelSourceFilter() {
-            @Override
-            public DataModelSource apply(final DataModelSource source) {
-                return new DataModelSource() {
-                    @Override
-                    public DataModelReflection next() throws IOException {
-                        DataModelReflection next = source.next();
-                        if (next == null) {
-                            return null;
-                        }
-                        T object = definition.toObject(next);
-                        transformer.transform(object);
-                        return definition.toReflection(object);
-                    }
-                    @Override
-                    public void close() throws IOException {
-                        source.close();
-                    }
-                };
-            }
-            @Override
-            public String toString() {
-                return MessageFormat.format(
-                        "Filter(transformer={0})", //$NON-NLS-1$
-                        transformer);
-            }
-        };
+        return toDataModelSourceFilter(definition, transformer);
     }
 
     /**
@@ -286,43 +254,5 @@ public class DriverOutputBase<T> extends DriverInputBase<T> {
     protected final VerifierFactory toVerifierFactory(
             DataModelSourceFactory expectedFactory, VerifyRuleFactory ruleFactory) {
         return getTestTools().toVerifierFactory(expectedFactory, ruleFactory);
-    }
-
-    /**
-     * Converts a pair of expected data set factory and verify rule factory into {@link VerifyRuleFactory}.
-     * @param verifierFactory the original verifier factory
-     * @param sourceFilter the filter for verifier input
-     * @return the {@link VerifierFactory} which provides a verifier using the filtered input
-     * @since 0.7.0
-     */
-    protected final VerifierFactory toVerifierFactory(
-            final VerifierFactory verifierFactory,
-            final DataModelSourceFilter sourceFilter) {
-        return new VerifierFactory() {
-            @Override
-            public <M> Verifier createVerifier(
-                    DataModelDefinition<M> definition,
-                    VerifyContext context) throws IOException {
-                final Verifier delegate = verifierFactory.createVerifier(definition, context);
-                return new Verifier() {
-                    @Override
-                    public List<Difference> verify(DataModelSource results) throws IOException {
-                        DataModelSource filtered = sourceFilter.apply(results);
-                        return delegate.verify(filtered);
-                    }
-                    @Override
-                    public void close() throws IOException {
-                        delegate.close();
-                    }
-                };
-            }
-            @Override
-            public String toString() {
-                return MessageFormat.format(
-                        "Verifier(verifier={0}, filter={1})", //$NON-NLS-1$
-                        verifierFactory,
-                        sourceFilter);
-            }
-        };
     }
 }
