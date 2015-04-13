@@ -296,7 +296,6 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
                         .toJavadoc(),
                     new AttributeBuilder(f)
                         .Public()
-                        .Final()
                         .toAttributes(),
                     context.getTypeName(),
                     Collections.<TypeParameterDeclaration>emptyList(),

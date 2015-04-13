@@ -15,7 +15,6 @@
  */
 package com.asakusafw.testdriver.tools.runner;
 
-import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,10 +36,7 @@ import org.slf4j.LoggerFactory;
 
 import com.asakusafw.compiler.batch.BatchDriver;
 import com.asakusafw.compiler.flow.JobFlowDriver;
-import com.asakusafw.testdriver.DriverElementBase;
 import com.asakusafw.testdriver.TestDriverContext;
-import com.asakusafw.testdriver.core.TestDataToolProvider;
-import com.asakusafw.testdriver.core.TestModerator;
 import com.asakusafw.vocabulary.batch.BatchDescription;
 import com.asakusafw.vocabulary.batch.JobFlowWorkDescription;
 import com.asakusafw.vocabulary.batch.Work;
@@ -57,7 +53,7 @@ import com.asakusafw.vocabulary.flow.graph.FlowOut;
  * @see BatchTestRunner
  * @since 0.7.3
  */
-public class BatchTestTruncator extends DriverElementBase {
+public class BatchTestTruncator extends BatchTestTool {
 
     static final Logger LOG = LoggerFactory.getLogger(BatchTestTruncator.class);
 
@@ -89,50 +85,12 @@ public class BatchTestTruncator extends DriverElementBase {
         OPTIONS.addOption(OPT_PROPERTY);
     }
 
-    private final TestDriverContext context;
-
     /**
      * Creates a new instance.
      * @param context the current context
      */
     public BatchTestTruncator(TestDriverContext context) {
-        this.context = context;
-    }
-
-    @Override
-    protected Class<?> getCallerClass() {
-        return context.getCallerClass();
-    }
-
-    @Override
-    protected TestDataToolProvider getTestTools() {
-        return context.getRepository();
-    }
-
-    /**
-     * Truncates jobflow input.
-     * @param description the target importer description
-     * @throws IOException if failed to truncate the input
-     */
-    public void truncate(ImporterDescription description) throws IOException {
-        LOG.info(MessageFormat.format(
-                "cleaning input: {0}",
-                description.getClass().getName()));
-        TestModerator moderator = new TestModerator(context.getRepository(), context);
-        moderator.truncate(description);
-    }
-
-    /**
-     * Truncates jobflow output.
-     * @param description the target exporter description
-     * @throws IOException if failed to truncate the output
-     */
-    public void truncate(ExporterDescription description) throws IOException {
-        LOG.info(MessageFormat.format(
-                "cleaning output: {0}",
-                description.getClass().getName()));
-        TestModerator moderator = new TestModerator(context.getRepository(), context);
-        moderator.truncate(description);
+        super(context);
     }
 
     /**
