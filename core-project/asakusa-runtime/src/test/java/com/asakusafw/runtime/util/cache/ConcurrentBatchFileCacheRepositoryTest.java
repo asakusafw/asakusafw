@@ -43,7 +43,7 @@ public class ConcurrentBatchFileCacheRepositoryTest extends FileCacheRepositoryT
      */
     @Test
     public void simple() throws Exception {
-        File source = put(folder.newFile(), "Hello, world!");
+        File source = put(newFile(), "Hello, world!");
         Map<File, File> results;
         ExecutorService executor = Executors.newFixedThreadPool(1);
         try {
@@ -69,7 +69,7 @@ public class ConcurrentBatchFileCacheRepositoryTest extends FileCacheRepositoryT
         List<File> sources = new ArrayList<File>();
         List<Path> paths = new ArrayList<Path>();
         for (int i = 0; i < 100; i++) {
-            File source = put(folder.newFile(), String.format("hello%02d", i));
+            File source = put(newFile(), String.format("hello%02d", i));
             sources.add(source);
             paths.add(path(source));
         }
@@ -98,8 +98,8 @@ public class ConcurrentBatchFileCacheRepositoryTest extends FileCacheRepositoryT
      */
     @Test
     public void exception_suppress() throws Exception {
-        File source = put(folder.newFile(), "Hello, world!");
-        final File alter = folder.newFile();
+        File source = put(newFile(), "Hello, world!");
+        final File alter = newFile();
         Map<File, File> results;
         ExecutorService executor = Executors.newFixedThreadPool(1);
         try {
@@ -129,7 +129,7 @@ public class ConcurrentBatchFileCacheRepositoryTest extends FileCacheRepositoryT
      */
     @Test
     public void exception_rethrow() throws Exception {
-        File source = put(folder.newFile(), "Hello, world!");
+        File source = put(newFile(), "Hello, world!");
         ExecutorService executor = Executors.newFixedThreadPool(1);
         try {
             BatchFileCacheRepository batch = new ConcurrentBatchFileCacheRepository(
@@ -159,7 +159,7 @@ public class ConcurrentBatchFileCacheRepositoryTest extends FileCacheRepositoryT
      */
     @Test
     public void cancel() throws Exception {
-        File source = put(folder.newFile(), "Hello, world!");
+        File source = put(newFile(), "Hello, world!");
         Map<File, File> results;
         ExecutorService executor = Executors.newFixedThreadPool(1);
         try {
@@ -176,5 +176,9 @@ public class ConcurrentBatchFileCacheRepositoryTest extends FileCacheRepositoryT
         }
         assertThat(results.size(), is(1));
         assertThat(results.get(source), is(nullValue()));
+    }
+
+    private File newFile() throws IOException {
+        return folder.newFile().getCanonicalFile();
     }
 }

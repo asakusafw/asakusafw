@@ -2397,7 +2397,6 @@ public class ModelEmitterTest {
             lines.add(elements[i].toString());
         }
         unit.putModelTrait(CommentEmitTrait.class, new CommentEmitTrait(lines));
-        System.out.println(unit);
         compiler.addSource(new CompilationUnitJavaFile(unit));
         List<Diagnostic<? extends JavaFileObject>> diagnostics = compiler.doCompile();
         if (diagnostics.isEmpty() == false) {
