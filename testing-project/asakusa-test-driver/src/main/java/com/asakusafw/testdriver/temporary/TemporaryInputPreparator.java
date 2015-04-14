@@ -20,6 +20,7 @@ import java.text.MessageFormat;
 import java.util.Set;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.slf4j.Logger;
@@ -73,9 +74,7 @@ public class TemporaryInputPreparator extends BaseImporterPreparator<TemporaryIn
         for (String path : description.getPaths()) {
             String resolved = variables.parse(path, false);
             Path target = fs.makeQualified(new Path(resolved));
-            LOG.debug("Deleting file: {}", target); //$NON-NLS-1$
-            boolean succeed = fs.delete(target, true);
-            LOG.debug("Deleted file (succeed={}): {}", succeed, target); //$NON-NLS-1$
+            delete(fs, target);
         }
         return;
     }
@@ -123,6 +122,19 @@ public class TemporaryInputPreparator extends BaseImporterPreparator<TemporaryIn
                     definition.getModelClass().getName(),
                     description.getModelType().getName(),
                     description));
+        }
+    }
+
+    static void delete(FileSystem fs, Path target) throws IOException {
+        FileStatus[] stats = fs.globStatus(target);
+        if (stats == null || stats.length == 0) {
+            return;
+        }
+        for (FileStatus s : stats) {
+            Path path = s.getPath();
+            LOG.debug("deleting file: {}", path); //$NON-NLS-1$
+            boolean succeed = fs.delete(path, true);
+            LOG.debug("deleted file (succeed={}): {}", succeed, path); //$NON-NLS-1$
         }
     }
 }
