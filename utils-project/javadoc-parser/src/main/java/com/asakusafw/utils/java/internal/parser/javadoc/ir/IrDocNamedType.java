@@ -18,7 +18,7 @@ package com.asakusafw.utils.java.internal.parser.javadoc.ir;
 /**
  * 名前付きの型。
  */
-public class IrDocNamedType extends AbstractIrDocElement implements IrDocFragment, IrDocType {
+public class IrDocNamedType extends AbstractIrDocElement implements IrDocType {
 
     private static final long serialVersionUID = 1L;
 

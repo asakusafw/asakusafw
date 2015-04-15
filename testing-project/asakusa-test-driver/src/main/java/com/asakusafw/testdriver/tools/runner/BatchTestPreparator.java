@@ -15,7 +15,6 @@
  */
 package com.asakusafw.testdriver.tools.runner;
 
-import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Map;
@@ -32,11 +31,7 @@ import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.asakusafw.testdriver.DriverElementBase;
 import com.asakusafw.testdriver.TestDriverContext;
-import com.asakusafw.testdriver.core.DataModelSourceFactory;
-import com.asakusafw.testdriver.core.TestDataToolProvider;
-import com.asakusafw.testdriver.core.TestModerator;
 import com.asakusafw.vocabulary.external.ImporterDescription;
 
 /**
@@ -44,7 +39,7 @@ import com.asakusafw.vocabulary.external.ImporterDescription;
  * @see BatchTestRunner
  * @since 0.7.3
  */
-public class BatchTestPreparator extends DriverElementBase {
+public class BatchTestPreparator extends BatchTestTool {
 
     static final Logger LOG = LoggerFactory.getLogger(BatchTestPreparator.class);
 
@@ -82,55 +77,14 @@ public class BatchTestPreparator extends DriverElementBase {
         OPTIONS.addOption(OPT_PROPERTY);
     }
 
-    private final TestDriverContext context;
-
     /**
      * Creates a new instance.
      * @param context the current context
      */
     public BatchTestPreparator(TestDriverContext context) {
-        this.context = context;
+        super(context);
     }
 
-    @Override
-    protected Class<?> getCallerClass() {
-        return context.getCallerClass();
-    }
-
-    @Override
-    protected TestDataToolProvider getTestTools() {
-        return context.getRepository();
-    }
-
-    /**
-     * Prepares jobflow input.
-     * @param description the target importer description
-     * @param dataPath the data URI
-     * @throws IOException if failed to prepare the output
-     */
-    public void prepare(ImporterDescription description, String dataPath) throws IOException {
-        try {
-            DataModelSourceFactory source = getTestTools().getDataModelSourceFactory(toUri(dataPath));
-            prepare(description, source);
-        } catch (IOException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new IOException(MessageFormat.format(
-                    "failed to prepare input: {0}",
-                    description.getClass().getName()), e);
-        }
-    }
-
-    /**
-     * Prepares jobflow input.
-     * @param description the importer description
-     * @param source the data model source
-     * @throws IOException if failed to prepare the input
-     */
-    public void prepare(ImporterDescription description, DataModelSourceFactory source) throws IOException {
-        TestModerator moderator = new TestModerator(context.getRepository(), context);
-        moderator.prepare(description.getModelType(), description, source);
-    }
     /**
      * Program entry.
      * @param args program arguments

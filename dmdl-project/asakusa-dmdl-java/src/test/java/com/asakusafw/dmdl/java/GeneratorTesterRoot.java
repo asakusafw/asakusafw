@@ -115,21 +115,24 @@ public class GeneratorTesterRoot {
             throw new AssertionError();
         }
         for (JavaFileObject java : files) {
-            try {
-                System.out.println("=== " + java.getName());
-                System.out.println(java.getCharContent(true));
-                System.out.println();
-                System.out.println();
-            } catch (IOException e) {
-                // ignored
-            }
             compiler.addSource(java);
         }
         compiler.addArguments("-Xlint");
         List<Diagnostic<? extends JavaFileObject>> diagnostics = compiler.doCompile();
         boolean hasWrong = false;
-        for (Diagnostic<?> d : diagnostics) {
+        for (Diagnostic<? extends JavaFileObject> d : diagnostics) {
             if (d.getKind() == Diagnostic.Kind.ERROR || d.getKind() == Diagnostic.Kind.WARNING) {
+                JavaFileObject java = d.getSource();
+                if (java != null) {
+                    try {
+                        System.out.println("=== " + java.getName());
+                        System.out.println(java.getCharContent(true));
+                        System.out.println();
+                        System.out.println();
+                    } catch (IOException e) {
+                        // ignored
+                    }
+                }
                 System.out.println("--");
                 System.out.println(d.getMessage(Locale.getDefault()));
                 hasWrong = true;

@@ -240,7 +240,7 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
             arguments.add(new TypeBuilder(f, context.resolve(Charset.class))
                 .method("forName", Models.toLiteral(f, conf.getCharsetName())) //$NON-NLS-1$
                 .toExpression());
-            if (conf.isEnableHeader()) {
+            if (conf.isEnableHeader() || conf.isForceHeader()) {
                 SimpleName headers = f.newSimpleName("headers"); //$NON-NLS-1$
                 statements.add(new TypeBuilder(f, context.resolve(ArrayList.class))
                     .parameterize(context.resolve(String.class))
@@ -268,9 +268,16 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
             arguments.add(Models.toLiteral(f, conf.getFalseFormat()));
             arguments.add(Models.toLiteral(f, conf.getDateFormat()));
             arguments.add(Models.toLiteral(f, conf.getDateTimeFormat()));
+            SimpleName config = f.newSimpleName("config"); //$NON-NLS-1$
             statements.add(new TypeBuilder(f, context.resolve(CsvConfiguration.class))
                         .newObject(arguments)
-                        .toReturnStatement());
+                        .toLocalVariableDeclaration(context.resolve(CsvConfiguration.class), config));
+            if (conf.isForceHeader()) {
+                statements.add(new ExpressionBuilder(f, config)
+                    .method("setForceConsumeHeader", Models.toLiteral(f, conf.isForceHeader())) //$NON-NLS-1$
+                    .toStatement());
+            }
+            statements.add(new ExpressionBuilder(f, config).toReturnStatement());
             return f.newMethodDeclaration(
                     new JavadocBuilder(f)
                         .text("Returns this CSV format configuration.")

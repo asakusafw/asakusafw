@@ -16,6 +16,7 @@
 package com.asakusafw.compiler.directio;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
@@ -36,6 +37,7 @@ import com.asakusafw.compiler.directio.emitter.StageEmitter;
 import com.asakusafw.compiler.flow.DataClass;
 import com.asakusafw.compiler.flow.ExternalIoDescriptionProcessor;
 import com.asakusafw.compiler.flow.Location;
+import com.asakusafw.compiler.flow.FlowCompilerOptions.GenericOptionValue;
 import com.asakusafw.compiler.flow.jobflow.CompiledStage;
 import com.asakusafw.compiler.flow.jobflow.ExternalIoStage;
 import com.asakusafw.compiler.flow.mapreduce.copy.CopierClientEmitter;
@@ -62,7 +64,7 @@ import com.asakusafw.vocabulary.flow.graph.OutputDescription;
 /**
  * Processes {@link DirectFileInputDescription} and {@link DirectFileOutputDescription}.
  * @since 0.2.5
- * @version 0.6.1
+ * @version 0.7.3
  */
 public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
 
@@ -70,6 +72,14 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
 
     private static final Set<PatternElementKind> INVALID_BASE_PATH_KIND =
             EnumSet.of(PatternElementKind.WILDCARD, PatternElementKind.SELECTION);
+
+    private static final String PREFIX_OPTION = "directio."; //$NON-NLS-1$
+
+    /**
+     * The compiler option name whether filter feature is enabled or not.
+     * @since 0.7.3
+     */
+    public static final String OPTION_FILTER_ENABLED = PREFIX_OPTION + "input.filter.enabled"; //$NON-NLS-1$
 
     private static final String METHOD_RESOURCE_PATTERN = "getResourcePattern"; //$NON-NLS-1$
 
@@ -381,8 +391,25 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
         attributes.put(DirectDataSourceConstants.KEY_FORMAT_CLASS, desc.getFormat().getName());
         attributes.put(DirectDataSourceConstants.KEY_BASE_PATH, desc.getBasePath());
         attributes.put(DirectDataSourceConstants.KEY_RESOURCE_PATH, desc.getResourcePattern());
+        if (desc.getFilter() != null) {
+            if (isFilterEnabled()) {
+                attributes.put(DirectDataSourceConstants.KEY_FILTER_CLASS, desc.getFilter().getName());
+            } else {
+                LOG.info(MessageFormat.format(
+                        "Direct I/O input filter is disabled in current setting: {0} ({1})",
+                        desc.getClass().getName(),
+                        desc.getFilter().getName()));
+            }
+        }
         attributes.put(DirectDataSourceConstants.KEY_OPTIONAL, String.valueOf(desc.isOptional()));
         return attributes;
+    }
+
+    private boolean isFilterEnabled() {
+        GenericOptionValue value = getEnvironment().getOptions().getGenericExtraAttribute(
+                OPTION_FILTER_ENABLED,
+                GenericOptionValue.ENABLED);
+        return value != GenericOptionValue.DISABLED;
     }
 
     private String getProcessedInputName(InputDescription description) {

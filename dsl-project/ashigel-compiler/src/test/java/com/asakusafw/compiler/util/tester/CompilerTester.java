@@ -403,9 +403,7 @@ public class CompilerTester implements TestRule {
             throw new IllegalArgumentException("info must not be null"); //$NON-NLS-1$
         }
         File confFile = frameworkDeployer.getCoreConfigurationFile();
-        if (confFile == null) {
-            LOG.info("execute hadoop with configuration file");
-        } else {
+        if (confFile != null && confFile.exists() == false) {
             LOG.warn("execute hadoop with no configuration file (missing: {})", confFile.getAbsolutePath());
         }
 
