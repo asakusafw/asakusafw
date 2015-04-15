@@ -80,12 +80,10 @@ public class TemporaryOutputRetriever extends BaseExporterRetriever<TemporaryOut
             LOG.warn("Skipped deleting output directory because it is a base directory: {}", path);
             target = fs.makeQualified(path);
         } else {
-            LOG.warn("Output directory will be deleted: {}", output);
+            LOG.debug("Output directory will be deleted: {}", output); //$NON-NLS-1$
             target = fs.makeQualified(output);
         }
-        LOG.debug("Deleting output target: {}", target); //$NON-NLS-1$
-        boolean succeed = fs.delete(target, true);
-        LOG.debug("Deleted output target (succeed={}): {}", succeed, target); //$NON-NLS-1$
+        TemporaryInputPreparator.delete(fs, target);
     }
 
     @Override

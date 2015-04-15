@@ -230,6 +230,29 @@ public class CsvFormatEmitterTest extends GeneratorTesterRoot {
     }
 
     /**
+     * with force header.
+     * @throws Exception if failed
+     */
+    @Test
+    public void force_header() throws Exception {
+        ModelLoader loaded = generateJava("force_header");
+        ModelWrapper model = loaded.newModel("Model");
+        BinaryStreamFormat<Object> support = unsafe(loaded.newObject("csv", "ModelCsvFormat"));
+
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        ModelOutput<Object> writer = support.createOutput(model.unwrap().getClass(), "hello", output);
+        model.set("value", new Text("Hello, world!"));
+        writer.write(model.unwrap());
+        writer.close();
+
+        String[][] results = parse(1, new String(output.toByteArray(), "UTF-8"));
+        assertThat(results, is(new String[][] {
+                {"title"},
+                {"Hello, world!"},
+        }));
+    }
+
+    /**
      * with implicit field.
      * @throws Exception if failed
      */

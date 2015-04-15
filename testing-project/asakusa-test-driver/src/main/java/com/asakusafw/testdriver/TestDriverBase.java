@@ -38,7 +38,7 @@ import com.asakusafw.vocabulary.flow.FlowPart;
 /**
  * テストドライバの基底クラス。
  * @since 0.2.0
- * @version 0.6.0
+ * @version 0.7.0
  */
 public abstract class TestDriverBase extends DriverElementBase {
 
@@ -152,6 +152,22 @@ public abstract class TestDriverBase extends DriverElementBase {
      */
     public void setDebug(boolean enable) {
         driverContext.getOptions().setEnableDebugLogging(enable);
+    }
+
+    /**
+     * コンパイラの追加オプション ({@code X<name>=<value>}) を設定する。
+     * オプション名を指定する際に、先頭の {@code "X"} を指定しないこと。
+     * @param name オプション名
+     * @param value オプションの値
+     * @since 0.7.3
+     */
+    public void setExtraCompilerOption(String name, String value) {
+        if (name.startsWith("X")) {
+            throw new IllegalArgumentException(MessageFormat.format(
+                    "オプション名の先頭に \"X\" を指定できません: {0}",
+                    name));
+        }
+        driverContext.getOptions().putExtraAttribute(name, value);
     }
 
     /**
