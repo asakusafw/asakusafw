@@ -71,8 +71,12 @@ public class HadoopDataSourceProfileTest {
         assertThat(result.getId(), is("testing"));
         assertThat(result.getContextPath(), is("context"));
         assertThat(result.getFileSystem().getUri().getScheme(), is("file"));
-        assertThat(new File(result.getFileSystemPath().toUri()), is(folder.getRoot()));
-        assertThat(new File(result.getTemporaryFileSystemPath().getParent().toUri()), is(folder.getRoot()));
+        assertThat(
+                new File(result.getFileSystemPath().toUri()).getCanonicalFile(),
+                is(folder.getRoot().getCanonicalFile()));
+        assertThat(
+                new File(result.getTemporaryFileSystemPath().getParent().toUri()).getCanonicalFile(),
+                is(folder.getRoot().getCanonicalFile()));
 
         assertThat(result.isOutputStaging(), is(true));
         assertThat(result.isOutputStreaming(), is(true));
@@ -148,8 +152,12 @@ public class HadoopDataSourceProfileTest {
         assertThat(result.getId(), is("testing"));
         assertThat(result.getContextPath(), is("context"));
         assertThat(result.getFileSystem().getUri().getScheme(), is("file"));
-        assertThat(new File(result.getFileSystemPath().toUri()), is(prod));
-        assertThat(new File(result.getTemporaryFileSystemPath().toUri()), is(temp));
+        assertThat(
+                new File(result.getFileSystemPath().toUri()).getCanonicalFile(),
+                is(prod.getCanonicalFile()));
+        assertThat(
+                new File(result.getTemporaryFileSystemPath().toUri()).getCanonicalFile(),
+                is(temp.getCanonicalFile()));
 
         assertThat(result.getMinimumFragmentSize(new MockFormat(9999, -1)), is(123L));
         assertThat(result.getMinimumFragmentSize(new MockFormat(100, -1)), is(100L));

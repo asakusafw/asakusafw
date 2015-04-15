@@ -45,6 +45,7 @@ import com.asakusafw.yaess.core.BatchScript;
  * The program entry point of Asakusa batch application runner.
  * @since 0.6.0
  * @version 0.7.1
+ * @see BatchTestTool
  */
 public final class BatchTestRunner {
 

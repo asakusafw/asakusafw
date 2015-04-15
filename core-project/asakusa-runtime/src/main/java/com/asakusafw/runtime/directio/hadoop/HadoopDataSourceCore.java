@@ -31,10 +31,12 @@ import com.asakusafw.runtime.compatibility.FileSystemCompatibility;
 import com.asakusafw.runtime.directio.BinaryStreamFormat;
 import com.asakusafw.runtime.directio.Counter;
 import com.asakusafw.runtime.directio.DataDefinition;
+import com.asakusafw.runtime.directio.DataFilter;
 import com.asakusafw.runtime.directio.DataFormat;
 import com.asakusafw.runtime.directio.DirectDataSource;
 import com.asakusafw.runtime.directio.DirectInputFragment;
 import com.asakusafw.runtime.directio.FilePattern;
+import com.asakusafw.runtime.directio.FilteredModelInput;
 import com.asakusafw.runtime.directio.FragmentableDataFormat;
 import com.asakusafw.runtime.directio.OutputAttemptContext;
 import com.asakusafw.runtime.directio.OutputTransactionContext;
@@ -90,7 +92,6 @@ public class HadoopDataSourceCore implements DirectDataSource {
         Path temporary = p.getTemporaryFileSystemPath();
         List<FileStatus> stats = HadoopDataSourceUtil.search(fs, base, pattern);
         stats = filesOnly(stats, temporary);
-
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
                     "Process finding input (id={0}, path={1}, resource={2}, files={3})", //$NON-NLS-1$
@@ -107,6 +108,11 @@ public class HadoopDataSourceCore implements DirectDataSource {
                         stat.getLen()));
             }
         }
+        DataFilter<?> filter = definition.getDataFilter();
+        if (filter != null) {
+            stats = applyFilter(stats, filter);
+        }
+
         DataFormat<T> format = definition.getDataFormat();
         Class<? extends T> dataType = definition.getDataClass();
         List<DirectInputFragment> results;
@@ -136,6 +142,24 @@ public class HadoopDataSourceCore implements DirectDataSource {
                     basePath,
                     resourcePattern,
                     results.size()));
+        }
+        return results;
+    }
+
+    private List<FileStatus> applyFilter(List<FileStatus> stats, DataFilter<?> filter) {
+        List<FileStatus> results = new ArrayList<FileStatus>();
+        for (FileStatus stat : stats) {
+            String path = stat.getPath().toString();
+            if (filter.acceptsPath(path)) {
+                results.add(stat);
+            } else {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(MessageFormat.format(
+                            "filtered direct input file: {0} ({1})",
+                            path,
+                            filter));
+                }
+            }
         }
         return results;
     }
@@ -210,6 +234,7 @@ public class HadoopDataSourceCore implements DirectDataSource {
         DataFormat<T> format = definition.getDataFormat();
         Class<? extends T> dataType = definition.getDataClass();
         HadoopFileFormat<T> fileFormat = convertFormat(format);
+        DataFilter<? super T> filter = definition.getDataFilter();
         ModelInput<T> input = fileFormat.createInput(
                 dataType,
                 profile.getFileSystem(),
@@ -225,7 +250,11 @@ public class HadoopDataSourceCore implements DirectDataSource {
                     fragment.getOffset(),
                     fragment.getSize()));
         }
-        return input;
+        if (filter == null) {
+            return input;
+        } else {
+            return new FilteredModelInput<T>(input, filter);
+        }
     }
 
     @Override

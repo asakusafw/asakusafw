@@ -15,10 +15,8 @@
  */
 package com.asakusafw.testdriver.tools.runner;
 
-import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -34,14 +32,8 @@ import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.asakusafw.testdriver.DriverElementBase;
 import com.asakusafw.testdriver.TestDriverContext;
 import com.asakusafw.testdriver.core.Difference;
-import com.asakusafw.testdriver.core.TestDataToolProvider;
-import com.asakusafw.testdriver.core.TestModerator;
-import com.asakusafw.testdriver.core.TestRule;
-import com.asakusafw.testdriver.core.VerifierFactory;
-import com.asakusafw.testdriver.core.VerifyContext;
 import com.asakusafw.vocabulary.external.ExporterDescription;
 
 /**
@@ -49,7 +41,7 @@ import com.asakusafw.vocabulary.external.ExporterDescription;
  * @see BatchTestRunner
  * @since 0.7.3
  */
-public class BatchTestVerifier extends DriverElementBase {
+public class BatchTestVerifier extends BatchTestTool {
 
     static final Logger LOG = LoggerFactory.getLogger(BatchTestVerifier.class);
 
@@ -93,67 +85,14 @@ public class BatchTestVerifier extends DriverElementBase {
         OPTIONS.addOption(OPT_PROPERTY);
     }
 
-    private final TestDriverContext context;
-
     /**
      * Creates a new instance.
      * @param context the current context
      */
     public BatchTestVerifier(TestDriverContext context) {
-        this.context = context;
+        super(context);
     }
 
-    @Override
-    protected Class<?> getCallerClass() {
-        return context.getCallerClass();
-    }
-
-    @Override
-    protected TestDataToolProvider getTestTools() {
-        return context.getRepository();
-    }
-
-    /**
-     * Verifies jobflow output.
-     * @param description the target exporter description
-     * @param expectedPath the expected data URI
-     * @param verifyRulePath the verification rule URI
-     * @return verify differences
-     * @throws IOException if failed to verify the output
-     */
-    public List<Difference> verify(
-            ExporterDescription description,
-            String expectedPath,
-            String verifyRulePath) throws IOException {
-        try {
-            VerifierFactory verifier = getTestTools().toVerifierFactory(
-                    toDataModelSourceFactory(expectedPath),
-                    getTestTools().getVerifyRuleFactory(toUri(verifyRulePath), Collections.<TestRule>emptyList()));
-            return verify(description, verifier);
-        } catch (IOException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new IOException(MessageFormat.format(
-                    "failed to prepare verify output: {0}",
-                    description.getClass().getName()), e);
-        }
-    }
-
-    /**
-     * Verifies jobflow output.
-     * @param description the exporter description
-     * @param verifier the verifier
-     * @return verify differences
-     * @throws IOException if failed to verify the output
-     */
-    public List<Difference> verify(ExporterDescription description, VerifierFactory verifier) throws IOException {
-        TestModerator moderator = new TestModerator(context.getRepository(), context);
-        return moderator.inspect(
-                description.getModelType(),
-                description,
-                new VerifyContext(context),
-                verifier);
-    }
     /**
      * Program entry.
      * @param args program arguments

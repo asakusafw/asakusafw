@@ -26,7 +26,7 @@ import java.util.List;
  * </ul>
  */
 public interface EnumConstantDeclaration
-        extends TypeBodyDeclaration, TypedElement, Invocation {
+        extends TypeBodyDeclaration, Invocation {
 
     // properties
 

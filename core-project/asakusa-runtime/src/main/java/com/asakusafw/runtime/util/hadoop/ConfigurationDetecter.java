@@ -128,7 +128,7 @@ public final class ConfigurationDetecter {
                 }
                 ob.write(buf, 0, read);
             }
-            result = new String(ob.getData(), 0, ob.getLength(), ENCODING);
+            result = new String(ob.getData(), 0, ob.getLength(), ENCODING).trim();
             ob.close();
         } finally {
             input.close();

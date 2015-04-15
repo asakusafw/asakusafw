@@ -141,7 +141,7 @@ public class TestExecutionPlan implements Serializable {
      * Represents a task in execution.
      * @since 0.7.3
      */
-    public static interface Task extends Serializable {
+    public interface Task extends Serializable {
 
         /**
          * Returns the kind of this task.

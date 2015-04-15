@@ -382,7 +382,7 @@ public class ConfigurationProviderTest {
             writer.printf("  then\n");
             writer.printf("    exit 1\n");
             writer.printf("  fi\n");
-            writer.printf("  echo -n '%s' > \"$2\"\n", site.getParentFile().getAbsolutePath());
+            writer.printf("  echo '%s' > \"$2\"\n", site.getParentFile().getAbsolutePath());
             writer.printf("  exit 0\n");
             writer.printf("fi\n");
         } finally {

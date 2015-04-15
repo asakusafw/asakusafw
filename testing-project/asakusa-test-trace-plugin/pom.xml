@@ -71,13 +71,10 @@
 							<target name="modelgen" description="generates model classes from DMDL">
 								<mkdir dir="target/generated-sources/test-dmdl" />
 								<delete>
-									<fileset dir="target/generated-sources/test-dmdl"
-										includes="**/*.java" />
+									<fileset dir="target/generated-sources/test-dmdl" includes="**/*.java" />
 								</delete>
-								<java classname="com.asakusafw.dmdl.java.Main"
-									classpathref="maven.test.classpath" fork="true">
-									<jvmarg
-										value="-Dlogback.configurationFile=src/test/resources/logback-test.xml" />
+								<java classname="com.asakusafw.dmdl.java.Main" classpathref="maven.test.classpath" fork="true">
+									<jvmarg value="-Dlogback.configurationFile=src/test/resources/logback-test.xml" />
 									<arg value="-output" />
 									<arg value="target/generated-test-sources/test-dmdl" />
 									<arg value="-package" />
@@ -161,9 +158,9 @@
 			<artifactId>slf4j-api</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
-			<optional>true</optional>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-simple</artifactId>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>

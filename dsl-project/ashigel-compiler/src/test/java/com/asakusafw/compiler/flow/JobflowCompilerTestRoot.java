@@ -30,6 +30,8 @@ import javax.tools.JavaFileObject;
 import org.apache.hadoop.io.Writable;
 import org.junit.After;
 import org.junit.Before;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.asakusafw.compiler.common.Naming;
 import com.asakusafw.compiler.flow.plan.StageBlock;
@@ -72,10 +74,7 @@ import com.asakusafw.vocabulary.flow.graph.FlowGraph;
  */
 public class JobflowCompilerTestRoot {
 
-    /**
-     * ダンプ出力のためのフラグ
-     */
-    protected boolean dump = true;
+    static final Logger LOG = LoggerFactory.getLogger(JobflowCompilerTestRoot.class);
 
     private final VolatileCompiler javaCompiler = new VolatileCompiler();
 
@@ -437,18 +436,15 @@ public class JobflowCompilerTestRoot {
      */
     protected ClassLoader start() {
         List<Diagnostic<? extends JavaFileObject>> diagnostics = doCompile();
+        boolean wrong = false;
         for (Diagnostic<?> d : diagnostics) {
             if (d.getKind() != Diagnostic.Kind.NOTE) {
-                throw new AssertionError(diagnostics);
+                wrong = true;
+                break;
             }
         }
-        return javaCompiler.getClassLoader();
-    }
-
-    private List<Diagnostic<? extends JavaFileObject>> doCompile() {
-        List<VolatileJavaFile> sources = packager.getEmitter().getEmitted();
-        if (dump) {
-            for (JavaFileObject java : sources) {
+        if (wrong) {
+            for (JavaFileObject java : javaCompiler.getSources()) {
                 try {
                     System.out.println("====" + java.getName());
                     System.out.println(java.getCharContent(true));
@@ -456,8 +452,29 @@ public class JobflowCompilerTestRoot {
                     // ignore.
                 }
             }
+            for (Diagnostic<? extends JavaFileObject> d : diagnostics) {
+                System.out.println("====");
+                System.out.println(d);
+            }
+            throw new AssertionError(diagnostics);
+        }
+        return javaCompiler.getClassLoader();
+    }
+
+    private List<Diagnostic<? extends JavaFileObject>> doCompile() {
+        List<VolatileJavaFile> sources = packager.getEmitter().getEmitted();
+        if (LOG.isDebugEnabled()) {
+            for (JavaFileObject java : sources) {
+                try {
+                    LOG.debug("==== {}", java.getName());
+                    LOG.debug("{}", java.getCharContent(true));
+                } catch (IOException e) {
+                    // ignore.
+                }
+            }
         }
 
+        javaCompiler.addArguments("-Xlint:unchecked");
         for (JavaFileObject java : sources) {
             javaCompiler.addSource(java);
         }
@@ -465,10 +482,18 @@ public class JobflowCompilerTestRoot {
             javaCompiler.addSource(new VolatileJavaFile("A", "public class A {}"));
         }
         List<Diagnostic<? extends JavaFileObject>> diagnostics = javaCompiler.doCompile();
-        if (dump) {
+        if (LOG.isDebugEnabled()) {
+            for (JavaFileObject java : javaCompiler.getSources()) {
+                try {
+                    LOG.debug("==== {}", java.getName());
+                    LOG.debug("{}", java.getCharContent(true));
+                } catch (IOException e) {
+                    // ignore.
+                }
+            }
             for (Diagnostic<? extends JavaFileObject> d : diagnostics) {
-                System.out.println("====");
-                System.out.println(d);
+                LOG.debug("====");
+                LOG.debug("{}", d);
             }
         }
         return diagnostics;

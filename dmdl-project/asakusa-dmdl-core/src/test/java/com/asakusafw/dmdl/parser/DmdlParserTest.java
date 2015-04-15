@@ -25,6 +25,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.asakusafw.dmdl.DmdlTesterRoot;
 import com.asakusafw.dmdl.model.*;
@@ -34,6 +36,8 @@ import com.asakusafw.utils.collections.Lists;
  * Test for {@link DmdlParser}.
  */
 public class DmdlParserTest extends DmdlTesterRoot {
+
+    static final Logger LOG = LoggerFactory.getLogger(DmdlParserTest.class);
 
     /**
      * Parse a simple record definition.
@@ -647,8 +651,8 @@ public class DmdlParserTest extends DmdlTesterRoot {
         DmdlEmitter.emit(script, writer);
         writer.close();
 
-        System.out.println(script.getRegion().sourceFile);
-        System.out.println(output.toString());
+        LOG.debug("{}", script.getRegion().sourceFile);
+        LOG.debug("{}", output);
 
         DmdlParser parser = new DmdlParser();
         try {
