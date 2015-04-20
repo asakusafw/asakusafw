@@ -84,8 +84,7 @@ Asakusa Gradle Plugin 用サンプルアプリケーションプロジェクト
 * `asakusa-example-project-0.7.3.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-example-project-0.7.3.tar.gz>`_ 
 
 ..  seealso::
-    サンプルアプリケーションの内容や利用方法については、
-    :doc:`../introduction/start-guide` - :ref:`startguide-running-example`  を参照してください。
+    サンプルアプリケーションの内容や利用方法については、 :doc:`../introduction/start-guide` - :ref:`startguide-running-example`  を参照してください。
 
 プロジェクトの配置
 ------------------
@@ -998,10 +997,10 @@ IntelliJ IDEAプロジェクト用の定義ファイルを作成するには、:
 バッチテストランナーの実行
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-:program:`testRunBatchapp` タスクはインテグレーションテスト用のテストAPIであるバッチテストランナーをGradleタスクとして実行することができます。
-
 ..  attention::
     Asakusa Frameworkのバージョン |version| では、 ``testRunBatchapp`` タスクは試験的機能として提供しています。
+
+:program:`testRunBatchapp` タスクはインテグレーションテスト用のテストAPIであるバッチテストランナーをGradleタスクとして実行することができます。
 
 :program:`testRunBatchapp` タスクは :program:`gradlew` コマンド実行時に以下のコマンドライン引数を指定します。
 
@@ -1024,9 +1023,22 @@ IntelliJ IDEAプロジェクト用の定義ファイルを作成するには、:
     ./gradlew testRunBatchapp --id example.summarizeSales --arguments date=2011-04-01
 
 ..  seealso::
-    バッチテストランナーの詳細は :doc:`../testing/user-guide` - :ref:`testing-userguide-integration-test` を参照してください。
+    バッチテストランナーの詳細は :doc:`../testing/user-guide` - :ref:`testing-userguide-batch-test-runner` を参照してください。
 
 .. _gradle-plugin-task-hiveddl:
+
+テストツールタスクの実行
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+..  attention::
+    Asakusa Frameworkのバージョン |version| では、 ``TestTookTask`` は試験的機能として提供しています。
+
+``TestToolTask`` [#]_ を使うことで、テストドライバやバッチテストランナーが持つ機能を組み合わせてGradleのタスクとして実行することができます。
+
+..  seealso::
+    テストツールタスクの利用例は :doc:`../testing/user-guide` - :ref:`testing-userguide-testtool-task` を参照してください。
+
+..  [#] :gradledoc:`com.asakusafw.gradle.tasks.TestToolTask`
 
 Hive用DDLファイルの生成
 ~~~~~~~~~~~~~~~~~~~~~~~

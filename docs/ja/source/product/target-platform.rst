@@ -26,17 +26,17 @@ Asakusa Framework は、以下のHadoopディストリビューションと組�
       - JDK 7 (1.7.0_76)
       - |version|-hadoop2
     * - MapR
-      - 3.1.1 (M3/M5/M7)
+      - 4.1.0 (MRv2) [#]_
       - CentOS 6 (6.5)
-      - JDK 7 (1.7.0_55)
-      - |version|-hadoop1
+      - JDK 7 (1.7.0_75)
+      - |version|-hadoop2
     * - Hortonworks Data Platform
       - 2.2
       - CentOS 6 (6.6)
       - JDK 7 (1.7.0_65)
       - |version|-hadoop2
     * - CDH
-      - 5.2.0 (MRv1/MRv2)
+      - 5.2.0 (MRv2) [#]_
       - CentOS 6 (6.2)
       - JDK 7 (1.7.0_45)
       - |version|-hadoop2
@@ -53,6 +53,8 @@ Asakusa Framework は、以下のHadoopディストリビューションと組�
 
 ..  [#] 検証バージョンとは、Hadoopディストリビューションの動作検証に使用したAsakusa Frameworkのバージョンです。
         詳しくは :doc:`../administration/deployment-guide` を参照してください。
+..  [#] Asakusa Framework バージョン |version| では、 MapReduce Version 1 (MRv1) では動作検証を行なっていません。
+..  [#] Asakusa Framework バージョン |version| では、 MapReduce Version 1 (MRv1) では動作検証を行なっていません。
 
 アプリケーション開発環境
 ========================
