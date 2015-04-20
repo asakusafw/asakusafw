@@ -226,7 +226,7 @@ Hiveライブラリの指定
         hive.enabled true
         profiles.prod {
             asakusafwVersion asakusafw.asakusafwVersion
-            hive.libraries = ['org.apache.hive:hive-exec:0.13.0-mapr-1406-protobuf241@jar']
+            hive.libraries = ['org.apache.hive:hive-exec:0.13.0-mapr-1501-protobuf250@jar']
         }
     }
 
