@@ -342,6 +342,10 @@
 					<groupId>org.apache.calcite</groupId>
 					<artifactId>calcite-avatica</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>org.apache.curator</groupId>
+					<artifactId>apache-curator</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 	</dependencies>
