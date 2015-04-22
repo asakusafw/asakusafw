@@ -2,6 +2,52 @@
 Changelogs
 ==========
 
+Release 0.7.3
+=============
+
+Apr 22, 2015
+
+Enhancements
+------------
+
+* [ :issue:`66` ] - Support Unit Testing on Windows Machine
+* [ :issue:`465` ] - Enables to specify custom trucate query to each exporter description for WindGate JDBC
+* [ :issue:`466` ] - Add 'DirectIo' framework API
+* [ :issue:`471` ] - Supports Hive 1.0.0 for Direct I/O
+* [ :issue:`473` ] - Bumps up default depedency hadoop2 version
+* [ :issue:`479` ] - Add DSL compiler option for specifing Java version
+* [ :issue:`483` ] - Introduce operator fragment for core operators
+* [ :issue:`484` ] - Enhance BatchTestRunner and introduce more APIs for integration testing
+* [ :issue:`485` ] - Direct I/O Input filter
+* [ :issue:`486` ] - Add force_header option to Direct I/O CSV and WindGate CSV
+* [ :issue-sdk:`28` ] - Bumps up default Hive version
+* [ :issue-sdk:`30` ] - Add DSL compiler default option
+* [ :issue-sdk:`31` ] - Add TestToolTask for integration testing
+
+
+Bug fixes
+---------
+
+* [ :issue:`476` ] - Typo on WindGate bootstrap scripts
+* [ :issue:`481` ] - Fail to generate Javadoc with java8
+* [ :issue-sdk:`27` ] - Failed idea task with multi project
+
+Others
+------
+
+* [ :issue:`463` ] - Update license year to 2015
+* [ :issue:`464` ] - Refactor messages
+* [ :issue:`467` ] - 0.7.3 Documents
+* [ :issue:`468` ] - 0.7.3 Refactoring
+* [ :issue:`472` ] - Revise .gitignore
+* [ :issue:`477` ] - Modifies TestDriver inprocess artifact structure
+* [ :issue:`478` ] - Add document table of contents page
+* [ :issue:`480` ] - Move ModelInput/Output generator to ThunderGate
+* [ :issue:`487` ] - Revise pom.xml of framework projects
+* [ :issue:`488` ] - Some framework projects have hadoop-client dependency with default scope
+* [ :issue-sdk:`26` ] - Update license year to 2015
+* [ :issue-sdk:`29` ] - Revise .gitignore
+
 Release 0.7.2
 =============
 
