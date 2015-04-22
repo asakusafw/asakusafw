@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@ public abstract class JoinResource<L extends Writable, R> implements FlowResourc
     public void setup(Configuration configuration) throws IOException, InterruptedException {
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Building join-table from \"{0}\" on distributed cache",
+                    "Building join-table from \"{0}\" on distributed cache", //$NON-NLS-1$
                     getCacheName()));
         }
         StageResourceDriver driver = new StageResourceDriver(configuration);
@@ -61,7 +61,7 @@ public abstract class JoinResource<L extends Writable, R> implements FlowResourc
             }
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "Building join table \"{0}\" using \"{1}\"",
+                        "Building join table \"{0}\" using \"{1}\"", //$NON-NLS-1$
                         getCacheName(),
                         paths));
             }
@@ -74,7 +74,7 @@ public abstract class JoinResource<L extends Writable, R> implements FlowResourc
             }
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "Built join-table from \"{0}\"",
+                        "Built join-table from \"{0}\"", //$NON-NLS-1$
                         getCacheName()));
             }
         } finally {
@@ -91,7 +91,7 @@ public abstract class JoinResource<L extends Writable, R> implements FlowResourc
         for (Path path : paths) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "Reading local cache fragment \"{1}\" for join table {0}",
+                        "Reading local cache fragment \"{1}\" for join table {0}", //$NON-NLS-1$
                         getCacheName(),
                         path));
             }

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,7 +68,7 @@ public class TemporaryOutputRetriever extends BaseExporterRetriever<TemporaryOut
     public void truncate(
             TemporaryOutputDescription description,
             TestContext context) throws IOException {
-        LOG.debug("Deleting output directory: {}", description);
+        LOG.debug("Deleting output directory: {}", description); //$NON-NLS-1$
         VariableTable variables = createVariables(context);
         Configuration config = configurations.newInstance();
         FileSystem fs = FileSystem.get(config);
@@ -80,12 +80,10 @@ public class TemporaryOutputRetriever extends BaseExporterRetriever<TemporaryOut
             LOG.warn("Skipped deleting output directory because it is a base directory: {}", path);
             target = fs.makeQualified(path);
         } else {
-            LOG.warn("Output directory will be deleted: {}", output);
+            LOG.debug("Output directory will be deleted: {}", output); //$NON-NLS-1$
             target = fs.makeQualified(output);
         }
-        LOG.debug("Deleting output target: {}", target);
-        boolean succeed = fs.delete(target, true);
-        LOG.debug("Deleted output target (succeed={}): {}", succeed, target);
+        TemporaryInputPreparator.delete(fs, target);
     }
 
     @Override
@@ -93,7 +91,7 @@ public class TemporaryOutputRetriever extends BaseExporterRetriever<TemporaryOut
             DataModelDefinition<V> definition,
             TemporaryOutputDescription description,
             TestContext context) throws IOException {
-        LOG.debug("Preparing initial output: {}", description);
+        LOG.debug("Preparing initial output: {}", description); //$NON-NLS-1$
         checkType(definition, description);
         VariableTable variables = createVariables(context);
         String destination = description.getPathPrefix().replace('*', '_');
@@ -108,7 +106,7 @@ public class TemporaryOutputRetriever extends BaseExporterRetriever<TemporaryOut
             DataModelDefinition<V> definition,
             TemporaryOutputDescription description,
             TestContext context) throws IOException {
-        LOG.debug("Retrieving output: {}", description);
+        LOG.debug("Retrieving output: {}", description); //$NON-NLS-1$
         VariableTable variables = createVariables(context);
         checkType(definition, description);
         Configuration conf = configurations.newInstance();

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -103,7 +103,7 @@ public class InputDescription implements FlowElementDescription {
         if (newName == null) {
             throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
         }
-        throw new UnsupportedOperationException("Renaming input does not permitted");
+        throw new UnsupportedOperationException("Renaming input does not permitted"); //$NON-NLS-1$
     }
 
     /**
@@ -159,10 +159,10 @@ public class InputDescription implements FlowElementDescription {
     @Override
     public String toString() {
         return MessageFormat.format(
-                "{0}'{'name={1}'}'",
+                "{0}'{'name={1}'}'", //$NON-NLS-1$
                 importerDescription != null
                     ? importerDescription.getClass().getSimpleName()
-                    : "フロー入力",
+                    : "N/A", //$NON-NLS-1$
                 name);
     }
 }

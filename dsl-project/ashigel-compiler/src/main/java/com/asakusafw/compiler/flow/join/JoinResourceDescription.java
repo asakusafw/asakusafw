@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -158,7 +158,7 @@ public class JoinResourceDescription implements FlowResourceDescription {
     @Override
     public String toString() {
         return MessageFormat.format(
-                "{0}(left={1}{2}, {3}{4})",
+                "{0}(left={1}{2}, {3}{4})", //$NON-NLS-1$
                 masterInput.getName(),
                 masterDataClass,
                 masterJoinKeys,

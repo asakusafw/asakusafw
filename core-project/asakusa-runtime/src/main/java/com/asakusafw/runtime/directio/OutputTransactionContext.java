@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 package com.asakusafw.runtime.directio;
+
+import java.text.MessageFormat;
 
 /**
  * Represents a context for output contents to staging area.
@@ -75,12 +77,9 @@ public final class OutputTransactionContext {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("OutputTransactionContext [transactionId=");
-        builder.append(transactionId);
-        builder.append(", outputId=");
-        builder.append(outputId);
-        builder.append("]");
-        return builder.toString();
+        return MessageFormat.format(
+                "OutputTransactionContext(transactionId={0}, outputId={1})", //$NON-NLS-1$
+                transactionId,
+                outputId);
     }
 }

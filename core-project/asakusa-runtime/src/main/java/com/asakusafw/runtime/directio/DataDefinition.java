@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package com.asakusafw.runtime.directio;
  * Represents the data definition.
  * @param <T> the data type
  * @since 0.7.0
+ * @version 0.7.3
  */
 public interface DataDefinition<T> {
 
@@ -33,4 +34,11 @@ public interface DataDefinition<T> {
      * @return the data format
      */
     DataFormat<T> getDataFormat();
+
+    /**
+     * Returns the data filter.
+     * @return the data filter, or {@code null} if the filter is not defined
+     * @since 0.7.3
+     */
+    DataFilter<? super T> getDataFilter();
 }

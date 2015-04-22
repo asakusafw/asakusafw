@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -382,7 +382,7 @@ public class ConfigurationProviderTest {
             writer.printf("  then\n");
             writer.printf("    exit 1\n");
             writer.printf("  fi\n");
-            writer.printf("  echo -n '%s' > \"$2\"\n", site.getParentFile().getAbsolutePath());
+            writer.printf("  echo '%s' > \"$2\"\n", site.getParentFile().getAbsolutePath());
             writer.printf("  exit 0\n");
             writer.printf("fi\n");
         } finally {

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,7 +65,7 @@ public class ExternalIoAnalyzer {
      */
     public boolean validate(FlowGraph graph) {
         Precondition.checkMustNotBeNull(graph, "graph"); //$NON-NLS-1$
-        LOG.debug("{}の入出力を検証しています", graph.getDescription().getName());
+        LOG.debug("validating external I/O: {}", graph.getDescription().getName()); //$NON-NLS-1$
         List<Tuple2<InputDescription, ExternalIoDescriptionProcessor>> inputs = Lists.create();
         List<Tuple2<OutputDescription, ExternalIoDescriptionProcessor>> outputs = Lists.create();
 

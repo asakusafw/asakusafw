@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,6 +40,9 @@ The attributed declaration can have:
 <ul>
 <li> with {@code charset=[string-literal]} as charset name (default: UTF-8) </li>
 <li> with {@code has_header=TRUE|FALSE} as whether header is required (default: FALSE) </li>
+<li>
+    with {@code force_header=TRUE|FALSE} as whether header is ALWAYS required,
+    and it may not have a valid form (default: FALSE) </li>
 <li> with {@code allow_linefeed=TRUE|FALSE} as whether each field can contain linefeed (default: FALSE) </li>
 <li>
     with {@code true=[string-literal]} as {@code "true"} representation
@@ -60,7 +63,7 @@ The attributed declaration can have:
 <li> with {@code compression=[string-literal]} as compression name (default: plain) </li>
 </ul>
  * @since 0.2.5
- * @version 0.5.2
+ * @version 0.7.3
  */
 public class CsvFormatDriver extends ModelAttributeDriver {
 
@@ -80,6 +83,12 @@ public class CsvFormatDriver extends ModelAttributeDriver {
     public static final String ELEMENT_HAS_HEADER_NAME = "has_header"; //$NON-NLS-1$
 
     /**
+     * The element name of whether header is ALWAYS required.
+     * @since 0.7.3
+     */
+    public static final String ELEMENT_FORCE_HEADER_NAME = "force_header"; //$NON-NLS-1$
+
+    /**
      * The element name of whether value can contain linefeed.
      */
     public static final String ELEMENT_ALLOW_LINEFEED = "allow_linefeed"; //$NON-NLS-1$
@@ -88,7 +97,7 @@ public class CsvFormatDriver extends ModelAttributeDriver {
      * The element name of codec name.
      * @since 0.5.2
      */
-    public static final String ELEMENT_CODEC_NAME = "compression";
+    public static final String ELEMENT_CODEC_NAME = "compression"; //$NON-NLS-1$
 
     /**
      * The element name of {@code true} representation.
@@ -130,6 +139,7 @@ public class CsvFormatDriver extends ModelAttributeDriver {
             Map<String, AstAttributeElement> elements) {
         AstLiteral charset = take(environment, elements, ELEMENT_CHARSET_NAME, LiteralKind.STRING);
         AstLiteral header = take(environment, elements, ELEMENT_HAS_HEADER_NAME, LiteralKind.BOOLEAN);
+        AstLiteral forceHeader = take(environment, elements, ELEMENT_FORCE_HEADER_NAME, LiteralKind.BOOLEAN);
         AstLiteral allowlf = take(environment, elements, ELEMENT_ALLOW_LINEFEED, LiteralKind.BOOLEAN);
         AstLiteral trueRep = take(environment, elements, ELEMENT_TRUE_NAME, LiteralKind.STRING);
         AstLiteral falseRep = take(environment, elements, ELEMENT_FALSE_NAME, LiteralKind.STRING);
@@ -144,6 +154,9 @@ public class CsvFormatDriver extends ModelAttributeDriver {
         }
         if (header != null) {
             result.setEnableHeader(header.toBooleanValue());
+        }
+        if (forceHeader != null) {
+            result.setForceHeader(forceHeader.toBooleanValue());
         }
         if (allowlf != null) {
             result.setAllowLinefeed(allowlf.toBooleanValue());

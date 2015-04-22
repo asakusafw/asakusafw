@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,22 +33,22 @@ public class ScriptWorkDescription extends WorkDescription {
     /**
      * コマンド行のプロパティキー名。
      */
-    public static final String K_NAME = "name";
+    public static final String K_NAME = "name"; //$NON-NLS-1$
 
     /**
      * コマンド行のプロパティキー名。
      */
-    public static final String K_COMMAND = "command";
+    public static final String K_COMMAND = "command"; //$NON-NLS-1$
 
     /**
      * プロファイルのプロパティキー名。
      */
-    public static final String K_PROFILE = "profile";
+    public static final String K_PROFILE = "profile"; //$NON-NLS-1$
 
     /**
      * 環境変数のプロパティキー接頭辞。
      */
-    public static final String K_ENVIRONMENT_PREFIX = "env.";
+    public static final String K_ENVIRONMENT_PREFIX = "env."; //$NON-NLS-1$
 
     private String name;
 
@@ -230,6 +230,6 @@ public class ScriptWorkDescription extends WorkDescription {
 
     @Override
     public String toString() {
-        return MessageFormat.format("Script({0})@{1}", getCommand(), getProfileName());
+        return MessageFormat.format("Script({0})@{1}", getCommand(), getProfileName()); //$NON-NLS-1$
     }
 }

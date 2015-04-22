@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,19 +63,19 @@ public final class WindGateTestHelper {
      * The environment variable name / parameter name in profile context for the framework home path.
      * @since 0.7.2
      */
-    public static final String ENV_FRAMEWORK_HOME = "ASAKUSA_HOME";
+    public static final String ENV_FRAMEWORK_HOME = "ASAKUSA_HOME"; //$NON-NLS-1$
 
     /**
      * For testing, WindGate profile path pattern in form of {@link MessageFormat}.
      * <code>{0}</code> will be replaced as the its profile name.
      * This module will load these files from the class path.
      */
-    public static final String TESTING_PROFILE_PATH = "windgate-{0}.properties";
+    public static final String TESTING_PROFILE_PATH = "windgate-{0}.properties"; //$NON-NLS-1$
 
     /**
      * WindGate plugin directory path from Asakusa installation path.
      */
-    public static final String PRODUCTION_PLUGIN_DIRECTORY = "windgate/plugin";
+    public static final String PRODUCTION_PLUGIN_DIRECTORY = "windgate/plugin"; //$NON-NLS-1$
 
     /**
      * For normal use, WindGate profile path pattern in form of {@link MessageFormat}.
@@ -84,13 +84,13 @@ public final class WindGateTestHelper {
      * if there are not in {@link #TESTING_PROFILE_PATH}.
      * @see #ENV_FRAMEWORK_HOME
      */
-    public static final String PRODUCTION_PROFILE_PATH = "windgate/profile/{0}.properties";
+    public static final String PRODUCTION_PROFILE_PATH = "windgate/profile/{0}.properties"; //$NON-NLS-1$
 
-    private static final String PLUGIN_EXTENSION = ".jar";
+    private static final String PLUGIN_EXTENSION = ".jar"; //$NON-NLS-1$
 
-    private static final String DUMMY_RESOURCE_NAME = "__DUMMY__";
+    private static final String DUMMY_RESOURCE_NAME = "__DUMMY__"; //$NON-NLS-1$
 
-    private static final String DUMMY_PROCESS_NAME = "test-moderator";
+    private static final String DUMMY_PROCESS_NAME = "test-moderator"; //$NON-NLS-1$
 
     private static final WeakHashMap<TestContext, Holder> CACHE_TEMPORARY_LOADER =
             new WeakHashMap<TestContext, Holder>();
@@ -114,7 +114,7 @@ public final class WindGateTestHelper {
             throw new IllegalArgumentException("description must not be null"); //$NON-NLS-1$
         }
         Holder.clean();
-        LOG.debug("Create process script: {}", description.getClass().getName());
+        LOG.debug("Create process script: {}", description.getClass().getName()); //$NON-NLS-1$
         return new ProcessScript<T>(
                 DUMMY_PROCESS_NAME,
                 DUMMY_PROCESS_NAME,
@@ -142,7 +142,7 @@ public final class WindGateTestHelper {
             throw new IllegalArgumentException("description must not be null"); //$NON-NLS-1$
         }
         Holder.clean();
-        LOG.debug("Create process script: {}", description.getClass().getName());
+        LOG.debug("Create process script: {}", description.getClass().getName()); //$NON-NLS-1$
         return new ProcessScript<T>(
                 DUMMY_PROCESS_NAME,
                 DUMMY_PROCESS_NAME,
@@ -195,7 +195,7 @@ public final class WindGateTestHelper {
             throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
         }
         Holder.clean();
-        LOG.debug("Create resource manipulator: {}", description.getClass().getName());
+        LOG.debug("Create resource manipulator: {}", description.getClass().getName()); //$NON-NLS-1$
         GateProfile profile = loadProfile(testContext, description);
         String resourceName = description.getDriverScript().getResourceName();
         for (ResourceProfile resource : profile.getResources()) {
@@ -220,7 +220,7 @@ public final class WindGateTestHelper {
         ResourceProvider provider = resource.createProvider();
         ResourceManipulator manipulator = provider.createManipulator(arguments);
         if (manipulator instanceof Configurable) {
-            LOG.debug("Configuring resource manipulator: {}", manipulator);
+            LOG.debug("Configuring resource manipulator: {}", manipulator); //$NON-NLS-1$
             ConfigurationFactory configuration = ConfigurationFactory.getDefault();
             ((Configurable) manipulator).setConf(configuration.newInstance());
         }
@@ -233,7 +233,7 @@ public final class WindGateTestHelper {
         assert testContext != null;
         assert description != null;
         String profileName = description.getProfileName();
-        LOG.debug("Searching for a WindGate profile: {}", profileName);
+        LOG.debug("Searching for a WindGate profile: {}", profileName); //$NON-NLS-1$
 
         ProfileContext profileContext = createProfileContext(testContext);
         URL url = profileContext.getClassLoader().getResource(MessageFormat.format(
@@ -253,7 +253,7 @@ public final class WindGateTestHelper {
                     description.getProfileName()));
         }
 
-        LOG.debug("Loading a WindGate profile: {}", url);
+        LOG.debug("Loading a WindGate profile: {}", url); //$NON-NLS-1$
         try {
             Properties p = new Properties();
             InputStream input = url.openStream();
@@ -263,7 +263,7 @@ public final class WindGateTestHelper {
                 input.close();
             }
 
-            LOG.debug("Resolving a WindGate profile: {}", url);
+            LOG.debug("Resolving a WindGate profile: {}", url); //$NON-NLS-1$
             GateProfile profile = GateProfile.loadFrom(profileName, p, profileContext);
             return profile;
         } catch (Exception e) {
@@ -360,7 +360,7 @@ public final class WindGateTestHelper {
             throw new IllegalArgumentException("object must not be null"); //$NON-NLS-1$
         }
         Holder.clean();
-        LOG.debug("Preparing object: {}", object);
+        LOG.debug("Preparing object: {}", object); //$NON-NLS-1$
         boolean succeed = false;
         try {
             object.prepare();
@@ -368,7 +368,9 @@ public final class WindGateTestHelper {
             return object;
         } finally {
             if (succeed == false) {
-                LOG.warn("Failed to prepare object: {}", object);
+                LOG.warn(MessageFormat.format(
+                        "Failed to prepare object: {0}",
+                        object));
                 try {
                     object.close();
                 } catch (IOException e) {

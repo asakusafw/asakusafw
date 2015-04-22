@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,6 +49,7 @@ public class RestructureFlowProcessor extends LinePartProcessor {
             Property sinkProperty = sinkType.findProperty(sourceProperty.getName());
             if (sinkProperty == null) {
                 // skip this property
+                continue;
             } else if (sourceProperty.getType().equals(sinkProperty.getType()) == false) {
                 getEnvironment().error(
                         "{0}において、{1}.{2}と{3}.{4}のプロパティ型が一致しません",

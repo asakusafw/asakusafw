@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,13 +37,11 @@ import com.asakusafw.dmdl.semantics.ModelDeclaration;
 import com.asakusafw.dmdl.semantics.PropertyDeclaration;
 import com.asakusafw.dmdl.semantics.Type;
 import com.asakusafw.dmdl.semantics.type.BasicType;
+import com.asakusafw.dmdl.windgate.util.FsProcessDescriptionGenerator;
 import com.asakusafw.runtime.io.RecordEmitter;
 import com.asakusafw.runtime.io.RecordParser;
 import com.asakusafw.runtime.io.TsvEmitter;
 import com.asakusafw.runtime.io.TsvParser;
-import com.asakusafw.windgate.core.vocabulary.DataModelStreamSupport;
-import com.asakusafw.windgate.core.vocabulary.DataModelStreamSupport.DataModelReader;
-import com.asakusafw.windgate.core.vocabulary.DataModelStreamSupport.DataModelWriter;
 import com.asakusafw.utils.java.model.syntax.ClassDeclaration;
 import com.asakusafw.utils.java.model.syntax.ExpressionStatement;
 import com.asakusafw.utils.java.model.syntax.FieldDeclaration;
@@ -51,6 +49,7 @@ import com.asakusafw.utils.java.model.syntax.FormalParameterDeclaration;
 import com.asakusafw.utils.java.model.syntax.InfixOperator;
 import com.asakusafw.utils.java.model.syntax.MethodDeclaration;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
+import com.asakusafw.utils.java.model.syntax.Name;
 import com.asakusafw.utils.java.model.syntax.SimpleName;
 import com.asakusafw.utils.java.model.syntax.Statement;
 import com.asakusafw.utils.java.model.syntax.TypeBodyDeclaration;
@@ -60,10 +59,14 @@ import com.asakusafw.utils.java.model.util.ExpressionBuilder;
 import com.asakusafw.utils.java.model.util.JavadocBuilder;
 import com.asakusafw.utils.java.model.util.Models;
 import com.asakusafw.utils.java.model.util.TypeBuilder;
+import com.asakusafw.windgate.core.vocabulary.DataModelStreamSupport;
+import com.asakusafw.windgate.core.vocabulary.DataModelStreamSupport.DataModelReader;
+import com.asakusafw.windgate.core.vocabulary.DataModelStreamSupport.DataModelWriter;
 
 /**
  * Emits {@link DataModelStreamSupport} implementations.
  * @since 0.2.2
+ * @version 0.7.3
  */
 public class StreamSupportEmitter extends JavaDataModelDriver {
 
@@ -72,7 +75,7 @@ public class StreamSupportEmitter extends JavaDataModelDriver {
     /**
      * Category name for JDBC support.
      */
-    public static final String CATEGORY_STREAM = "stream";
+    public static final String CATEGORY_STREAM = "stream"; //$NON-NLS-1$
 
     @Override
     public void generateResources(EmitContext context, ModelDeclaration model) throws IOException {
@@ -80,18 +83,59 @@ public class StreamSupportEmitter extends JavaDataModelDriver {
             return;
         }
         checkPropertyType(model);
+        Name supportName = generateSupport(context, model);
+        generateImporter(context, model, supportName);
+        generateExporter(context, model, supportName);
+    }
+
+    private Name generateSupport(EmitContext context, ModelDeclaration model) throws IOException {
         EmitContext next = new EmitContext(
                 context.getSemantics(),
                 context.getConfiguration(),
                 model,
                 CATEGORY_STREAM,
-                "{0}StreamSupport");
-        LOG.debug("Generating stream support for {}",
+                "{0}StreamSupport"); //$NON-NLS-1$
+        LOG.debug("Generating stream support for {}", //$NON-NLS-1$
                 context.getQualifiedTypeName().toNameString());
         Generator.emit(next, model);
-        LOG.debug("Generated stream support for {}: {}",
+        LOG.debug("Generated stream support for {}: {}", //$NON-NLS-1$
                 context.getQualifiedTypeName().toNameString(),
                 next.getQualifiedTypeName().toNameString());
+        return next.getQualifiedTypeName();
+    }
+
+    private void generateImporter(EmitContext context, ModelDeclaration model, Name supportName) throws IOException {
+        assert context != null;
+        assert model != null;
+        assert supportName != null;
+        EmitContext next = new EmitContext(
+                context.getSemantics(),
+                context.getConfiguration(),
+                model,
+                CATEGORY_STREAM,
+                "Abstract{0}StreamImporterDescription"); //$NON-NLS-1$
+        FsProcessDescriptionGenerator.Description desc = new FsProcessDescriptionGenerator.Description(
+                "WindGate binary stream importer",
+                context.getQualifiedTypeName());
+        desc.setSupportClassName(supportName);
+        FsProcessDescriptionGenerator.generateImporter(next, desc);
+    }
+
+    private void generateExporter(EmitContext context, ModelDeclaration model, Name supportName) throws IOException {
+        assert context != null;
+        assert model != null;
+        assert supportName != null;
+        EmitContext next = new EmitContext(
+                context.getSemantics(),
+                context.getConfiguration(),
+                model,
+                CATEGORY_STREAM,
+                "Abstract{0}StreamExporterDescription"); //$NON-NLS-1$
+        FsProcessDescriptionGenerator.Description desc = new FsProcessDescriptionGenerator.Description(
+                "WindGate binary stream exporter",
+                context.getQualifiedTypeName());
+        desc.setSupportClassName(supportName);
+        FsProcessDescriptionGenerator.generateExporter(next, desc);
     }
 
     private boolean isTarget(ModelDeclaration model) throws IOException {
@@ -100,13 +144,13 @@ public class StreamSupportEmitter extends JavaDataModelDriver {
         if (trait == null) {
             return false;
         }
-        if (trait.getTypeName().equalsIgnoreCase("TSV")) {
+        if (trait.getTypeName().equalsIgnoreCase("TSV")) { //$NON-NLS-1$
             return true;
         }
 
         throw new IOException(MessageFormat.format(
                 "Currently, only type = \"{0}\" is supported: {1} (at {2})",
-                "TSV",
+                "TSV", //$NON-NLS-1$
                 model.getName().identifier,
                 trait.getOriginalAst().getRegion()));
     }
@@ -127,9 +171,9 @@ public class StreamSupportEmitter extends JavaDataModelDriver {
 
     private static final class Generator {
 
-        private static final String NAME_READER = "StreamReader";
+        private static final String NAME_READER = "StreamReader"; //$NON-NLS-1$
 
-        private static final String NAME_WRITER = "StreamWriter";
+        private static final String NAME_WRITER = "StreamWriter"; //$NON-NLS-1$
 
         private final EmitContext context;
 
@@ -155,14 +199,13 @@ public class StreamSupportEmitter extends JavaDataModelDriver {
         private void emit() throws IOException {
             ClassDeclaration decl = f.newClassDeclaration(
                     new JavadocBuilder(f)
-                        .text("Supports InputStream and OutputStream for ",
+                        .text("Supports binary stream for ", //$NON-NLS-1$
                                 model.getName())
                         .linkType(context.resolve(model.getSymbol()))
-                        .text(".")
+                        .text(".") //$NON-NLS-1$
                         .toJavadoc(),
                     new AttributeBuilder(f)
                         .Public()
-                        .Final()
                         .toAttributes(),
                     context.getTypeName(),
                     Collections.<TypeParameterDeclaration>emptyList(),
@@ -194,7 +237,7 @@ public class StreamSupportEmitter extends JavaDataModelDriver {
                     f.newParameterizedType(
                             context.resolve(Class.class),
                             context.resolve(model.getSymbol())),
-                    f.newSimpleName("getSupportedType"),
+                    f.newSimpleName("getSupportedType"), //$NON-NLS-1$
                     Collections.<FormalParameterDeclaration>emptyList(),
                     Arrays.asList(new Statement[] {
                             new TypeBuilder(f, context.resolve(model.getSymbol()))
@@ -205,16 +248,16 @@ public class StreamSupportEmitter extends JavaDataModelDriver {
         }
 
         private MethodDeclaration createCreateReader() {
-            SimpleName stream = f.newSimpleName("stream");
+            SimpleName stream = f.newSimpleName("stream"); //$NON-NLS-1$
             List<Statement> statements = new ArrayList<Statement>();
             statements.add(createNullCheck(stream));
 
-            SimpleName reader = f.newSimpleName("reader");
+            SimpleName reader = f.newSimpleName("reader"); //$NON-NLS-1$
             statements.add(new TypeBuilder(f, context.resolve(InputStreamReader.class))
-                .newObject(stream, Models.toLiteral(f, "UTF-8"))
+                .newObject(stream, Models.toLiteral(f, "UTF-8")) //$NON-NLS-1$
                 .toLocalVariableDeclaration(context.resolve(Reader.class), reader));
 
-            SimpleName parser = f.newSimpleName("parser");
+            SimpleName parser = f.newSimpleName("parser"); //$NON-NLS-1$
             statements.add(new TypeBuilder(f, context.resolve(TsvParser.class))
                 .newObject(reader)
                 .toLocalVariableDeclaration(context.resolve(RecordParser.class), parser));
@@ -222,7 +265,7 @@ public class StreamSupportEmitter extends JavaDataModelDriver {
             statements.add(new TypeBuilder(f, f.newNamedType(f.newSimpleName(NAME_READER)))
                 .newObject(parser)
                 .toReturnStatement());
-            SimpleName path = f.newSimpleName("path");
+            SimpleName path = f.newSimpleName("path"); //$NON-NLS-1$
             MethodDeclaration decl = f.newMethodDeclaration(
                     null,
                     new AttributeBuilder(f)
@@ -233,7 +276,7 @@ public class StreamSupportEmitter extends JavaDataModelDriver {
                     context.resolve(f.newParameterizedType(
                             context.resolve(DataModelReader.class),
                             context.resolve(model.getSymbol()))),
-                    f.newSimpleName("createReader"),
+                    f.newSimpleName("createReader"), //$NON-NLS-1$
                     Arrays.asList(
                             f.newFormalParameterDeclaration(context.resolve(String.class), path),
                             f.newFormalParameterDeclaration(context.resolve(InputStream.class), stream)),
@@ -244,16 +287,16 @@ public class StreamSupportEmitter extends JavaDataModelDriver {
         }
 
         private MethodDeclaration createCreateWriter() {
-            SimpleName stream = f.newSimpleName("stream");
+            SimpleName stream = f.newSimpleName("stream"); //$NON-NLS-1$
             List<Statement> statements = new ArrayList<Statement>();
             statements.add(createNullCheck(stream));
 
-            SimpleName writer = f.newSimpleName("writer");
+            SimpleName writer = f.newSimpleName("writer"); //$NON-NLS-1$
             statements.add(new TypeBuilder(f, context.resolve(OutputStreamWriter.class))
-                .newObject(stream, Models.toLiteral(f, "UTF-8"))
+                .newObject(stream, Models.toLiteral(f, "UTF-8")) //$NON-NLS-1$
                 .toLocalVariableDeclaration(context.resolve(Writer.class), writer));
 
-            SimpleName emitter = f.newSimpleName("emitter");
+            SimpleName emitter = f.newSimpleName("emitter"); //$NON-NLS-1$
             statements.add(new TypeBuilder(f, context.resolve(TsvEmitter.class))
                 .newObject(writer)
                 .toLocalVariableDeclaration(context.resolve(RecordEmitter.class), emitter));
@@ -262,7 +305,7 @@ public class StreamSupportEmitter extends JavaDataModelDriver {
                 .newObject(emitter)
                 .toReturnStatement());
 
-            SimpleName path = f.newSimpleName("path");
+            SimpleName path = f.newSimpleName("path"); //$NON-NLS-1$
             MethodDeclaration decl = f.newMethodDeclaration(
                     null,
                     new AttributeBuilder(f)
@@ -273,7 +316,7 @@ public class StreamSupportEmitter extends JavaDataModelDriver {
                     context.resolve(f.newParameterizedType(
                             context.resolve(DataModelWriter.class),
                             context.resolve(model.getSymbol()))),
-                    f.newSimpleName("createWriter"),
+                    f.newSimpleName("createWriter"), //$NON-NLS-1$
                     Arrays.asList(
                             f.newFormalParameterDeclaration(context.resolve(String.class), path),
                             f.newFormalParameterDeclaration(context.resolve(OutputStream.class), stream)),
@@ -291,13 +334,13 @@ public class StreamSupportEmitter extends JavaDataModelDriver {
                         .toExpression(),
                     f.newBlock(new TypeBuilder(f, context.resolve(IllegalArgumentException.class))
                         .newObject(Models.toLiteral(f, MessageFormat.format(
-                                "{0} must not be null",
+                                "{0} must not be null", //$NON-NLS-1$
                                 parameter.getToken())))
                         .toThrowStatement()));
         }
 
         private ClassDeclaration createReaderClass() {
-            SimpleName parser = f.newSimpleName("parser");
+            SimpleName parser = f.newSimpleName("parser"); //$NON-NLS-1$
             List<TypeBodyDeclaration> members = new ArrayList<TypeBodyDeclaration>();
             members.add(createPrivateField(RecordParser.class, parser));
             members.add(f.newConstructorDeclaration(
@@ -308,18 +351,18 @@ public class StreamSupportEmitter extends JavaDataModelDriver {
                             f.newFormalParameterDeclaration(context.resolve(RecordParser.class), parser)),
                     Arrays.asList(mapField(parser))));
 
-            SimpleName object = f.newSimpleName("object");
+            SimpleName object = f.newSimpleName("object"); //$NON-NLS-1$
             List<Statement> statements = new ArrayList<Statement>();
             statements.add(f.newIfStatement(
                     new ExpressionBuilder(f, parser)
-                        .method("next")
+                        .method("next") //$NON-NLS-1$
                         .apply(InfixOperator.EQUALS, Models.toLiteral(f, false))
                         .toExpression(),
                     f.newBlock(new ExpressionBuilder(f, Models.toLiteral(f, false))
                         .toReturnStatement())));
             for (PropertyDeclaration property : model.getDeclaredProperties()) {
                 statements.add(new ExpressionBuilder(f, parser)
-                    .method("fill", new ExpressionBuilder(f, object)
+                    .method("fill", new ExpressionBuilder(f, object) //$NON-NLS-1$
                         .method(context.getOptionGetterName(property))
                         .toExpression())
                     .toStatement());
@@ -334,7 +377,7 @@ public class StreamSupportEmitter extends JavaDataModelDriver {
                         .toAttributes(),
                     Collections.<TypeParameterDeclaration>emptyList(),
                     context.resolve(boolean.class),
-                    f.newSimpleName("readTo"),
+                    f.newSimpleName("readTo"), //$NON-NLS-1$
                     Arrays.asList(f.newFormalParameterDeclaration(context.resolve(model.getSymbol()), object)),
                     0,
                     Arrays.asList(context.resolve(IOException.class)),
@@ -356,7 +399,7 @@ public class StreamSupportEmitter extends JavaDataModelDriver {
         }
 
         private ClassDeclaration createWriterClass() {
-            SimpleName emitter = f.newSimpleName("emitter");
+            SimpleName emitter = f.newSimpleName("emitter"); //$NON-NLS-1$
             List<TypeBodyDeclaration> members = new ArrayList<TypeBodyDeclaration>();
             members.add(createPrivateField(RecordEmitter.class, emitter));
             members.add(f.newConstructorDeclaration(
@@ -367,17 +410,17 @@ public class StreamSupportEmitter extends JavaDataModelDriver {
                                     context.resolve(RecordEmitter.class), emitter)),
                     Arrays.asList(mapField(emitter))));
 
-            SimpleName object = f.newSimpleName("object");
+            SimpleName object = f.newSimpleName("object"); //$NON-NLS-1$
             List<Statement> statements = new ArrayList<Statement>();
             for (PropertyDeclaration property : model.getDeclaredProperties()) {
                 statements.add(new ExpressionBuilder(f, emitter)
-                    .method("emit", new ExpressionBuilder(f, object)
+                    .method("emit", new ExpressionBuilder(f, object) //$NON-NLS-1$
                         .method(context.getOptionGetterName(property))
                         .toExpression())
                     .toStatement());
             }
             statements.add(new ExpressionBuilder(f, emitter)
-                .method("endRecord")
+                .method("endRecord") //$NON-NLS-1$
                 .toStatement());
 
             members.add(f.newMethodDeclaration(
@@ -388,7 +431,7 @@ public class StreamSupportEmitter extends JavaDataModelDriver {
                         .toAttributes(),
                     Collections.<TypeParameterDeclaration>emptyList(),
                     context.resolve(void.class),
-                    f.newSimpleName("write"),
+                    f.newSimpleName("write"), //$NON-NLS-1$
                     Arrays.asList(f.newFormalParameterDeclaration(context.resolve(model.getSymbol()), object)),
                     0,
                     Arrays.asList(context.resolve(IOException.class)),
@@ -402,12 +445,12 @@ public class StreamSupportEmitter extends JavaDataModelDriver {
                         .toAttributes(),
                     Collections.<TypeParameterDeclaration>emptyList(),
                     context.resolve(void.class),
-                    f.newSimpleName("flush"),
+                    f.newSimpleName("flush"), //$NON-NLS-1$
                     Collections.<FormalParameterDeclaration>emptyList(),
                     0,
                     Arrays.asList(context.resolve(IOException.class)),
                     f.newBlock(new ExpressionBuilder(f, emitter)
-                        .method("flush")
+                        .method("flush") //$NON-NLS-1$
                         .toStatement())));
 
             return f.newClassDeclaration(

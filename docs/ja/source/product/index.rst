@@ -2,7 +2,7 @@
 プロダクトについて
 ==================
 
-Asakusa Frameworkのプロダクトとしての情報についてのページです。
+Asakusa Frameworkのプロダクト情報に関するドキュメントです。
 
 ..  toctree::
     :maxdepth: 1

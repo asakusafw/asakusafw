@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ public @interface DataModel {
         /**
          * {@link #copyFrom(Object)}のメソッド名。
          */
-        String METHOD_NAME_COPY_FROM = "copyFrom";
+        String METHOD_NAME_COPY_FROM = "copyFrom"; //$NON-NLS-1$
 
         /**
          * 指定のオブジェクトが持つプロパティの内容を全てこのオブジェクトにコピーする。

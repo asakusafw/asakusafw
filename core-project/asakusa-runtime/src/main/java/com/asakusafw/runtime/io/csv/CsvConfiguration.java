@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import com.asakusafw.runtime.value.DateTime;
 /**
  * CSV configurations.
  * @since 0.2.4
+ * @version 0.7.3
  */
 public class CsvConfiguration {
 
@@ -33,7 +34,7 @@ public class CsvConfiguration {
      * The default charset encoding.
      * @see #getCharset()
      */
-    public static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
+    public static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8"); //$NON-NLS-1$
 
     /**
      * The default header cells (empty list).
@@ -45,37 +46,43 @@ public class CsvConfiguration {
      * The default {@code true} representation.
      * @see #getTrueFormat()
      */
-    public static final String DEFAULT_TRUE_FORMAT = "true";
+    public static final String DEFAULT_TRUE_FORMAT = "true"; //$NON-NLS-1$
 
     /**
      * The default {@code false} representation.
-     * @see #getTrueFormat()
+     * @see #getFalseFormat()
      */
-    public static final String DEFAULT_FALSE_FORMAT = "false";
+    public static final String DEFAULT_FALSE_FORMAT = "false"; //$NON-NLS-1$
 
     /**
      * The default date format.
      * @see #getDateFormat()
      */
-    public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd";
+    public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd"; //$NON-NLS-1$
 
     /**
      * The default date time format.
      * @see #getDateTimeFormat()
      */
-    public static final String DEFAULT_DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    public static final String DEFAULT_DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss"; //$NON-NLS-1$
 
     /**
-     * The default date time format.
-     * @see #isLineBreakInValue()
+     * The default field separator character.
+     * @see #getSeparatorChar()
      */
     public static final char DEFAULT_SEPARATOR_CHAR = ',';
 
     /**
-     * The default date time format.
+     * The default configuration whether allows line breaks in value.
      * @see #isLineBreakInValue()
      */
     public static final boolean DEFAULT_LINE_BREAK_IN_VALUE = true;
+
+    /**
+     * The default configuration whether forcibly consumes header cells even if header contents is invalid or not.
+     * @see #isForceConsumeHeader()
+     */
+    public static final boolean DEFAULT_FORCE_CONSUME_HEADER = false;
 
     private final Charset charset;
 
@@ -92,6 +99,8 @@ public class CsvConfiguration {
     private volatile boolean lineBreakInValue = DEFAULT_LINE_BREAK_IN_VALUE;
 
     private volatile char separatorChar = DEFAULT_SEPARATOR_CHAR;
+
+    private boolean forceConsumeHeader = DEFAULT_FORCE_CONSUME_HEADER;
 
     /**
      * Creates a new instance.
@@ -214,5 +223,23 @@ public class CsvConfiguration {
      */
     public void setSeparatorChar(char separatorChar) {
         this.separatorChar = separatorChar;
+    }
+
+    /**
+     * Returns whether forcibly consumes header cells or not.
+     * @return {@code true} to forcibly consumes the header cell, otherwise {@code false}
+     * @since 0.7.3
+     */
+    public boolean isForceConsumeHeader() {
+        return forceConsumeHeader;
+    }
+
+    /**
+     * Sets whether forcibly consumes header cells or not.
+     * @param newValue {@code true} to forcibly consumes the header cell, otherwise {@code false}
+     * @since 0.7.3
+     */
+    public void setForceConsumeHeader(boolean newValue) {
+        this.forceConsumeHeader = newValue;
     }
 }

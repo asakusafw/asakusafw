@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ public class Location {
     /**
      * パス接頭辞を表現する場合の接尾辞を表す。
      */
-    public static final String WILDCARD_SUFFIX = "-*";
+    public static final String WILDCARD_SUFFIX = "-*"; //$NON-NLS-1$
 
     private final Location parent;
 

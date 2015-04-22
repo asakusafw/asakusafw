@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package com.asakusafw.runtime.directio;
  * A simple implementation of {@link DataDefinition}.
  * @param <T> the data type
  * @since 0.7.0
+ * @version 0.7.3
  */
 public final class SimpleDataDefinition<T> implements DataDefinition<T> {
 
@@ -26,11 +27,15 @@ public final class SimpleDataDefinition<T> implements DataDefinition<T> {
 
     private final DataFormat<T> dataFormat;
 
+    private final DataFilter<? super T> dataFilter;
+
     private SimpleDataDefinition(
             Class<? extends T> dataClass,
-            DataFormat<T> dataFormat) {
+            DataFormat<T> dataFormat,
+            DataFilter<? super T> dataFilter) {
         this.dataClass = dataClass;
         this.dataFormat = dataFormat;
+        this.dataFilter = dataFilter;
     }
 
     /**
@@ -43,7 +48,27 @@ public final class SimpleDataDefinition<T> implements DataDefinition<T> {
     public static <T> DataDefinition<T> newInstance(
             Class<?> dataClass,
             DataFormat<T> dataFormat) {
-        return new SimpleDataDefinition<T>(dataClass.asSubclass(dataFormat.getSupportedType()), dataFormat);
+        return newInstance(dataClass, dataFormat, null);
+    }
+
+    /**
+     * Creates a new instance.
+     * @param dataClass the data model class
+     * @param dataFormat the data format
+     * @param dataFilter the data filter (nullable)
+     * @param <T> the data type
+     * @return the created instance
+     * @since 0.7.3
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> DataDefinition<T> newInstance(
+            Class<?> dataClass,
+            DataFormat<T> dataFormat,
+            DataFilter<?> dataFilter) {
+        return new SimpleDataDefinition<T>(
+                dataClass.asSubclass(dataFormat.getSupportedType()),
+                dataFormat,
+                (DataFilter<? super T>) dataFilter);
     }
 
     @Override
@@ -54,5 +79,10 @@ public final class SimpleDataDefinition<T> implements DataDefinition<T> {
     @Override
     public DataFormat<T> getDataFormat() {
         return dataFormat;
+    }
+
+    @Override
+    public DataFilter<? super T> getDataFilter() {
+        return dataFilter;
     }
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,7 +63,7 @@ public class OperatorCompiler implements Processor {
     /**
      * このコンパイラのバージョン。
      */
-    public static final String VERSION = "0.1.0";
+    public static final String VERSION = "0.1.0"; //$NON-NLS-1$
 
     static final Logger LOG = LoggerFactory.getLogger(OperatorCompiler.class);
 
@@ -142,9 +142,7 @@ public class OperatorCompiler implements Processor {
             try {
                 results.add(iter.next());
             } catch (RuntimeException e) {
-                environment.getMessager().printMessage(Diagnostic.Kind.ERROR,
-                        "演算子プロセッサの読み出しに失敗しました");
-                LOG.debug("演算子プロセッサの読み出しに失敗しました", e);
+                environment.getMessager().printMessage(Diagnostic.Kind.ERROR, toDetailString(e));
             }
         }
         return results;
@@ -209,7 +207,6 @@ public class OperatorCompiler implements Processor {
             LOG.debug(e.getMessage(), e);
         } catch (RuntimeException e) {
             environment.getMessager().printMessage(Diagnostic.Kind.ERROR, toDetailString(e));
-            LOG.error("演算子のコンパイルに失敗しました", e);
         }
         return false;
     }

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package com.asakusafw.runtime.stage.directio;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.text.MessageFormat;
 
 import com.asakusafw.runtime.directio.DataFormat;
 import com.asakusafw.runtime.io.util.NullWritableRawComparable;
@@ -44,7 +45,7 @@ class DirectOutputGroup implements WritableRawComparable {
     private final StringTemplate nameGenerator;
 
     private DirectOutputGroup() {
-        this.path = "";
+        this.path = ""; //$NON-NLS-1$
         this.dataType = NullWritableRawComparable.class;
         this.format = new DataFormat<NullWritableRawComparable>() {
             @Override
@@ -156,14 +157,10 @@ class DirectOutputGroup implements WritableRawComparable {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("DirectOutputGroup [path=");
-        builder.append(path);
-        builder.append(", format=");
-        builder.append(format);
-        builder.append(", nameGenerator=");
-        builder.append(nameGenerator);
-        builder.append("]");
-        return builder.toString();
+        return MessageFormat.format(
+                "DirectOutputGroup(path={0}, format={1}, nameGenerator={2})", //$NON-NLS-1$
+                path,
+                format,
+                nameGenerator);
     }
 }

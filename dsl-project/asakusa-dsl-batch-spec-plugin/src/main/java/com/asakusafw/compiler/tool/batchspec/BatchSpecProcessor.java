@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -79,7 +79,7 @@ public class BatchSpecProcessor extends AbstractWorkflowProcessor {
         }
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("{} => {}", description.getName(), gson.toJson(spec, BatchSpec.class));
+            LOG.debug("{} => {}", description.getName(), gson.toJson(spec, BatchSpec.class)); //$NON-NLS-1$
         }
     }
 

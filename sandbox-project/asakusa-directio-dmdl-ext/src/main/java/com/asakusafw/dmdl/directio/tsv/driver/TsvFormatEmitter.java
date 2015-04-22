@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,8 @@ import org.slf4j.LoggerFactory;
 
 import com.asakusafw.dmdl.directio.tsv.driver.TsvFieldTrait.Kind;
 import com.asakusafw.dmdl.directio.tsv.driver.TsvFormatTrait.Configuration;
+import com.asakusafw.dmdl.directio.util.DirectFileInputDescriptionGenerator;
+import com.asakusafw.dmdl.directio.util.DirectFileOutputDescriptionGenerator;
 import com.asakusafw.dmdl.java.emitter.EmitContext;
 import com.asakusafw.dmdl.java.spi.JavaDataModelDriver;
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
@@ -79,7 +81,7 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
     /**
      * Category name for TSV format.
      */
-    public static final String CATEGORY_STREAM = "tsv";
+    public static final String CATEGORY_STREAM = "tsv"; //$NON-NLS-1$
 
     @Override
     public void generateResources(EmitContext context, ModelDeclaration model) throws IOException {
@@ -88,8 +90,8 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
         }
         checkPropertyType(model);
         Name supportName = generateFormat(context, model);
-        generateImporter(context, model, supportName);
-        generateExporter(context, model, supportName);
+        generateInputDescription(context, supportName, model);
+        generateOutputDescription(context, supportName, model);
     }
 
     private Name generateFormat(EmitContext context, ModelDeclaration model) throws IOException {
@@ -100,52 +102,42 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
                 context.getConfiguration(),
                 model,
                 CATEGORY_STREAM,
-                "{0}TsvFormat");
-        LOG.debug("Generating TSV format for {}",
+                "{0}TsvFormat"); //$NON-NLS-1$
+        LOG.debug("Generating TSV format for {}", //$NON-NLS-1$
                 context.getQualifiedTypeName().toNameString());
         FormatGenerator.emit(next, model, model.getTrait(TsvFormatTrait.class).getConfiguration());
-        LOG.debug("Generated TSV format for {}: {}",
+        LOG.debug("Generated TSV format for {}: {}", //$NON-NLS-1$
                 context.getQualifiedTypeName().toNameString(),
                 next.getQualifiedTypeName().toNameString());
         return next.getQualifiedTypeName();
     }
 
-    private Name generateImporter(EmitContext context, ModelDeclaration model, Name supportName) throws IOException {
-        assert context != null;
-        assert model != null;
-        assert supportName != null;
+    private void generateInputDescription(
+            EmitContext context, Name formatClassName, ModelDeclaration model) throws IOException {
         EmitContext next = new EmitContext(
                 context.getSemantics(),
                 context.getConfiguration(),
                 model,
                 CATEGORY_STREAM,
-                "Abstract{0}TsvInputDescription");
-        LOG.debug("Generating TSV input description for {}",
-                context.getQualifiedTypeName().toNameString());
-        DescriptionGenerator.emitImporter(next, model, supportName);
-        LOG.debug("Generated TSV input description for {}: {}",
-                context.getQualifiedTypeName().toNameString(),
-                next.getQualifiedTypeName().toNameString());
-        return next.getQualifiedTypeName();
+                "Abstract{0}TsvInputDescription"); //$NON-NLS-1$
+        DirectFileInputDescriptionGenerator.Description desc = new DirectFileInputDescriptionGenerator.Description(
+                "TSV file input", context.getQualifiedTypeName()); //$NON-NLS-1$
+        desc.setFormatClassName(formatClassName);
+        DirectFileInputDescriptionGenerator.generate(next, desc);
     }
 
-    private Name generateExporter(EmitContext context, ModelDeclaration model, Name supportName) throws IOException {
-        assert context != null;
-        assert model != null;
-        assert supportName != null;
+    private void generateOutputDescription(
+            EmitContext context, Name formatClassName, ModelDeclaration model) throws IOException {
         EmitContext next = new EmitContext(
                 context.getSemantics(),
                 context.getConfiguration(),
                 model,
                 CATEGORY_STREAM,
-                "Abstract{0}TsvOutputDescription");
-        LOG.debug("Generating TSV output description for {}",
-                context.getQualifiedTypeName().toNameString());
-        DescriptionGenerator.emitExporter(next, model, supportName);
-        LOG.debug("Generated TSV output description for {}: {}",
-                context.getQualifiedTypeName().toNameString(),
-                next.getQualifiedTypeName().toNameString());
-        return next.getQualifiedTypeName();
+                "Abstract{0}TsvOutputDescription"); //$NON-NLS-1$
+        DirectFileOutputDescriptionGenerator.Description desc = new DirectFileOutputDescriptionGenerator.Description(
+                "TSV file output", context.getQualifiedTypeName()); //$NON-NLS-1$
+        desc.setFormatClassName(formatClassName);
+        DirectFileOutputDescriptionGenerator.generate(next, desc);
     }
 
     private boolean isTarget(ModelDeclaration model) {
@@ -177,21 +169,21 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
 
     private static final class FormatGenerator {
 
-        private static final String NAME_ADD_HEADER = "addHeader";
+        private static final String NAME_ADD_HEADER = "addHeader"; //$NON-NLS-1$
 
-        private static final String NAME_SKIP_HEADER = "skipHeader";
+        private static final String NAME_SKIP_HEADER = "skipHeader"; //$NON-NLS-1$
 
-        private static final String NAME_READER = "RecordReader";
+        private static final String NAME_READER = "RecordReader"; //$NON-NLS-1$
 
-        private static final String NAME_WRITER = "RecordWriter";
+        private static final String NAME_WRITER = "RecordWriter"; //$NON-NLS-1$
 
         private static final Map<String, String> CODEC_SHORT_NAMES;
         static {
             Map<String, String> map = new HashMap<String, String>();
-            map.put("gzip", "org.apache.hadoop.io.compress.GzipCodec");
-            map.put("deflate", "org.apache.hadoop.io.compress.DeflateCodec");
-            map.put("bzip2", "org.apache.hadoop.io.compress.BZip2Codec");
-            map.put("snappy", "org.apache.hadoop.io.compress.SnappyCodec");
+            map.put("gzip", "org.apache.hadoop.io.compress.GzipCodec"); //$NON-NLS-1$ //$NON-NLS-2$
+            map.put("deflate", "org.apache.hadoop.io.compress.DeflateCodec"); //$NON-NLS-1$ //$NON-NLS-2$
+            map.put("bzip2", "org.apache.hadoop.io.compress.BZip2Codec"); //$NON-NLS-1$ //$NON-NLS-2$
+            map.put("snappy", "org.apache.hadoop.io.compress.SnappyCodec"); //$NON-NLS-1$ //$NON-NLS-2$
             CODEC_SHORT_NAMES = map;
         }
 
@@ -226,13 +218,12 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
                     : BinaryStreamFormat.class;
             ClassDeclaration decl = f.newClassDeclaration(
                     new JavadocBuilder(f)
-                        .text("TSV format for ")
+                        .text("TSV format for ") //$NON-NLS-1$
                         .linkType(context.resolve(model.getSymbol()))
-                        .text(".")
+                        .text(".") //$NON-NLS-1$
                         .toJavadoc(),
                     new AttributeBuilder(f)
                         .Public()
-                        .Final()
                         .toAttributes(),
                     context.getTypeName(),
                     f.newParameterizedType(
@@ -269,7 +260,7 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
                     f.newParameterizedType(
                             context.resolve(Class.class),
                             context.resolve(model.getSymbol())),
-                    f.newSimpleName("getSupportedType"),
+                    f.newSimpleName("getSupportedType"), //$NON-NLS-1$
                     Collections.<FormalParameterDeclaration>emptyList(),
                     Arrays.asList(new Statement[] {
                             new TypeBuilder(f, context.resolve(model.getSymbol()))
@@ -288,7 +279,7 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
                         .Public()
                         .toAttributes(),
                     context.resolve(long.class),
-                    f.newSimpleName("getPreferredFragmentSize"),
+                    f.newSimpleName("getPreferredFragmentSize"), //$NON-NLS-1$
                     Collections.<FormalParameterDeclaration>emptyList(),
                     Collections.singletonList(new ExpressionBuilder(f, value).toReturnStatement()));
         }
@@ -296,7 +287,7 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
         private MethodDeclaration createGetMinimumFragmentSize() {
             boolean fastMode = isFastMode();
             Expression value = fastMode
-                ? new TypeBuilder(f, context.resolve(Long.class)).field("MAX_VALUE").toExpression()
+                ? new TypeBuilder(f, context.resolve(Long.class)).field("MAX_VALUE").toExpression() //$NON-NLS-1$
                 : Models.toLiteral(f, -1L);
             return f.newMethodDeclaration(
                     null,
@@ -305,7 +296,7 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
                         .Public()
                         .toAttributes(),
                     context.resolve(long.class),
-                    f.newSimpleName("getMinimumFragmentSize"),
+                    f.newSimpleName("getMinimumFragmentSize"), //$NON-NLS-1$
                     Collections.<FormalParameterDeclaration>emptyList(),
                     Collections.singletonList(new ExpressionBuilder(f, value).toReturnStatement()));
         }
@@ -319,11 +310,11 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
         }
 
         private MethodDeclaration createCreateReader() {
-            SimpleName dataType = f.newSimpleName("dataType");
-            SimpleName path = f.newSimpleName("path");
-            SimpleName stream = f.newSimpleName("stream");
-            SimpleName offset = f.newSimpleName("offset");
-            SimpleName fragmentSize = f.newSimpleName("fragmentSize");
+            SimpleName dataType = f.newSimpleName("dataType"); //$NON-NLS-1$
+            SimpleName path = f.newSimpleName("path"); //$NON-NLS-1$
+            SimpleName stream = f.newSimpleName("stream"); //$NON-NLS-1$
+            SimpleName offset = f.newSimpleName("offset"); //$NON-NLS-1$
+            SimpleName fragmentSize = f.newSimpleName("fragmentSize"); //$NON-NLS-1$
             List<Statement> statements = Lists.create();
             statements.add(createNullCheck(dataType));
             statements.add(createNullCheck(path));
@@ -336,12 +327,12 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
                         isNotHead,
                         f.newBlock(new TypeBuilder(f, context.resolve(IllegalArgumentException.class))
                             .newObject(Models.toLiteral(f, MessageFormat.format(
-                                    "{0} does not support fragmentation.",
+                                    "{0} does not support fragmentation.", //$NON-NLS-1$
                                     context.getQualifiedTypeName().toNameString())))
                             .toThrowStatement())));
             }
 
-            SimpleName fragmentInput = f.newSimpleName("fragmentInput");
+            SimpleName fragmentInput = f.newSimpleName("fragmentInput"); //$NON-NLS-1$
             statements.add(f.newLocalVariableDeclaration(
                     context.resolve(InputStream.class),
                     fragmentInput,
@@ -372,7 +363,7 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
                                 .toStatement())));
             }
 
-            SimpleName parser = f.newSimpleName("parser");
+            SimpleName parser = f.newSimpleName("parser"); //$NON-NLS-1$
             statements.add(new TypeBuilder(f, context.resolve(TsvParser.class))
                 .newObject(new TypeBuilder(f, context.resolve(InputStreamReader.class))
                         .newObject(fragmentInput, Models.toLiteral(f, conf.getCharsetName()))
@@ -399,7 +390,7 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
                     f.newParameterizedType(
                             context.resolve(ModelInput.class),
                             context.resolve(model.getSymbol())),
-                    f.newSimpleName("createInput"),
+                    f.newSimpleName("createInput"), //$NON-NLS-1$
                     Arrays.asList(
                             f.newFormalParameterDeclaration(
                                     f.newParameterizedType(
@@ -419,14 +410,14 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
         }
 
         private MethodDeclaration createCreateWriter() {
-            SimpleName dataType = f.newSimpleName("dataType");
-            SimpleName path = f.newSimpleName("path");
-            SimpleName stream = f.newSimpleName("stream");
+            SimpleName dataType = f.newSimpleName("dataType"); //$NON-NLS-1$
+            SimpleName path = f.newSimpleName("path"); //$NON-NLS-1$
+            SimpleName stream = f.newSimpleName("stream"); //$NON-NLS-1$
             List<Statement> statements = Lists.create();
             statements.add(createNullCheck(path));
             statements.add(createNullCheck(stream));
 
-            SimpleName emitter = f.newSimpleName("emitter");
+            SimpleName emitter = f.newSimpleName("emitter"); //$NON-NLS-1$
             statements.add(new TypeBuilder(f, context.resolve(TsvEmitter.class))
                 .newObject(new TypeBuilder(f, context.resolve(OutputStreamWriter.class))
                         .newObject(blessOutputStream(stream), Models.toLiteral(f, conf.getCharsetName()))
@@ -453,7 +444,7 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
                     context.resolve(f.newParameterizedType(
                             context.resolve(ModelOutput.class),
                             context.resolve(model.getSymbol()))),
-                    f.newSimpleName("createOutput"),
+                    f.newSimpleName("createOutput"), //$NON-NLS-1$
                     Arrays.asList(
                             f.newFormalParameterDeclaration(
                                     f.newParameterizedType(
@@ -471,8 +462,8 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
         }
 
         private MethodDeclaration createAddHeader() {
-            SimpleName emitter = f.newSimpleName("emitter");
-            SimpleName buf = f.newSimpleName("buf");
+            SimpleName emitter = f.newSimpleName("emitter"); //$NON-NLS-1$
+            SimpleName buf = f.newSimpleName("buf"); //$NON-NLS-1$
             List<Statement> statements = Lists.create();
             statements.add(new TypeBuilder(f, context.resolve(StringOption.class))
                     .newObject()
@@ -482,10 +473,10 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
                 switch (TsvFieldTrait.getKind(property, Kind.VALUE)) {
                 case VALUE:
                     statements.add(new ExpressionBuilder(f, buf)
-                            .method("modify", Models.toLiteral(f, TsvFieldTrait.getFieldName(property)))
+                            .method("modify", Models.toLiteral(f, TsvFieldTrait.getFieldName(property))) //$NON-NLS-1$
                             .toStatement());
                     statements.add(new ExpressionBuilder(f, emitter)
-                        .method("emit", buf)
+                        .method("emit", buf) //$NON-NLS-1$
                         .toStatement());
                     break;
                 default:
@@ -494,7 +485,7 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
                 }
             }
             statements.add(new ExpressionBuilder(f, emitter)
-                .method("endRecord")
+                .method("endRecord") //$NON-NLS-1$
                 .toStatement());
             MethodDeclaration decl = f.newMethodDeclaration(
                     null,
@@ -513,12 +504,12 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
         }
 
         private MethodDeclaration createSkipHeader() {
-            SimpleName input = f.newSimpleName("stream");
+            SimpleName input = f.newSimpleName("stream"); //$NON-NLS-1$
             List<Statement> body = Lists.create();
 
-            SimpleName c = f.newSimpleName("c");
+            SimpleName c = f.newSimpleName("c"); //$NON-NLS-1$
             body.add(new ExpressionBuilder(f, input)
-                    .method("read")
+                    .method("read") //$NON-NLS-1$
                     .toLocalVariableDeclaration(context.resolve(int.class), c));
             body.add(f.newIfStatement(
                     new ExpressionBuilder(f, c)
@@ -551,7 +542,7 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
                 return stream;
             }
             return new ExpressionBuilder(f, codec)
-                .method("createInputStream", stream)
+                .method("createInputStream", stream) //$NON-NLS-1$
                 .toExpression();
         }
 
@@ -561,7 +552,7 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
                 return stream;
             }
             return new ExpressionBuilder(f, codec)
-                .method("createOutputStream", stream)
+                .method("createOutputStream", stream) //$NON-NLS-1$
                 .toExpression();
         }
 
@@ -575,13 +566,14 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
             }
             assert codecName != null;
             assert isHadoopConfRequired();
-            return new TypeBuilder(f, context.resolve(Models.toName(f, "org.apache.hadoop.util.ReflectionUtils")))
-                .method("newInstance",
+            return new TypeBuilder(f,
+                    context.resolve(Models.toName(f, "org.apache.hadoop.util.ReflectionUtils"))) //$NON-NLS-1$
+                .method("newInstance", //$NON-NLS-1$
                         new TypeBuilder(f, context.resolve(Models.toName(f, codecName)))
                             .dotClass()
                             .toExpression(),
                         new ExpressionBuilder(f, f.newThis())
-                            .method("getConf")
+                            .method("getConf") //$NON-NLS-1$
                             .toExpression())
                 .toExpression();
         }
@@ -594,14 +586,14 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
                         .toExpression(),
                     f.newBlock(new TypeBuilder(f, context.resolve(IllegalArgumentException.class))
                         .newObject(Models.toLiteral(f, MessageFormat.format(
-                                "{0} must not be null",
+                                "{0} must not be null", //$NON-NLS-1$
                                 parameter.getToken())))
                         .toThrowStatement()));
         }
 
         private ClassDeclaration createReaderClass() {
-            SimpleName parser = f.newSimpleName("parser");
-            SimpleName path = f.newSimpleName("path");
+            SimpleName parser = f.newSimpleName("parser"); //$NON-NLS-1$
+            SimpleName path = f.newSimpleName("path"); //$NON-NLS-1$
 
             List<TypeBodyDeclaration> members = Lists.create();
             List<ExpressionStatement> constructorStatements = Lists.create();
@@ -621,11 +613,11 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
                     constructorParameters,
                     constructorStatements));
 
-            SimpleName object = f.newSimpleName("object");
+            SimpleName object = f.newSimpleName("object"); //$NON-NLS-1$
             List<Statement> statements = Lists.create();
             statements.add(f.newIfStatement(
                     new ExpressionBuilder(f, parser)
-                        .method("next")
+                        .method("next") //$NON-NLS-1$
                         .apply(InfixOperator.EQUALS, Models.toLiteral(f, false))
                         .toExpression(),
                     f.newBlock(new ExpressionBuilder(f, Models.toLiteral(f, false))
@@ -634,7 +626,7 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
                 switch (TsvFieldTrait.getKind(property, Kind.VALUE)) {
                 case VALUE:
                     statements.add(new ExpressionBuilder(f, parser)
-                        .method("fill", new ExpressionBuilder(f, object)
+                        .method("fill", new ExpressionBuilder(f, object) //$NON-NLS-1$
                             .method(context.getOptionGetterName(property))
                             .toExpression())
                         .toStatement());
@@ -650,7 +642,7 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
                 }
             }
             statements.add(new ExpressionBuilder(f, parser)
-                .method("endRecord")
+                .method("endRecord") //$NON-NLS-1$
                 .toStatement());
             statements.add(new ExpressionBuilder(f, Models.toLiteral(f, true))
                 .toReturnStatement());
@@ -662,7 +654,7 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
                         .toAttributes(),
                     Collections.<TypeParameterDeclaration>emptyList(),
                     context.resolve(boolean.class),
-                    f.newSimpleName("readTo"),
+                    f.newSimpleName("readTo"), //$NON-NLS-1$
                     Arrays.asList(f.newFormalParameterDeclaration(context.resolve(model.getSymbol()), object)),
                     0,
                     Arrays.asList(context.resolve(IOException.class)),
@@ -675,12 +667,12 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
                         .toAttributes(),
                     Collections.<TypeParameterDeclaration>emptyList(),
                     context.resolve(void.class),
-                    f.newSimpleName("close"),
+                    f.newSimpleName("close"), //$NON-NLS-1$
                     Collections.<FormalParameterDeclaration>emptyList(),
                     0,
                     Arrays.asList(context.resolve(IOException.class)),
                     f.newBlock(new ExpressionBuilder(f, parser)
-                        .method("close")
+                        .method("close") //$NON-NLS-1$
                         .toStatement())));
 
             return f.newClassDeclaration(
@@ -699,7 +691,7 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
         }
 
         private ClassDeclaration createWriterClass() {
-            SimpleName emitter = f.newSimpleName("emitter");
+            SimpleName emitter = f.newSimpleName("emitter"); //$NON-NLS-1$
             List<TypeBodyDeclaration> members = Lists.create();
             members.add(createPrivateField(TsvEmitter.class, emitter));
             members.add(f.newConstructorDeclaration(
@@ -709,19 +701,19 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
                     Arrays.asList(f.newFormalParameterDeclaration(context.resolve(TsvEmitter.class), emitter)),
                     Arrays.asList(mapField(emitter))));
 
-            SimpleName object = f.newSimpleName("object");
+            SimpleName object = f.newSimpleName("object"); //$NON-NLS-1$
             List<Statement> statements = Lists.create();
             for (PropertyDeclaration property : model.getDeclaredProperties()) {
                 if (isValueField(property)) {
                     statements.add(new ExpressionBuilder(f, emitter)
-                        .method("emit", new ExpressionBuilder(f, object)
+                        .method("emit", new ExpressionBuilder(f, object) //$NON-NLS-1$
                             .method(context.getOptionGetterName(property))
                             .toExpression())
                         .toStatement());
                 }
             }
             statements.add(new ExpressionBuilder(f, emitter)
-                .method("endRecord")
+                .method("endRecord") //$NON-NLS-1$
                 .toStatement());
 
             members.add(f.newMethodDeclaration(
@@ -732,7 +724,7 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
                         .toAttributes(),
                     Collections.<TypeParameterDeclaration>emptyList(),
                     context.resolve(void.class),
-                    f.newSimpleName("write"),
+                    f.newSimpleName("write"), //$NON-NLS-1$
                     Arrays.asList(f.newFormalParameterDeclaration(context.resolve(model.getSymbol()), object)),
                     0,
                     Arrays.asList(context.resolve(IOException.class)),
@@ -745,12 +737,12 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
                         .toAttributes(),
                     Collections.<TypeParameterDeclaration>emptyList(),
                     context.resolve(void.class),
-                    f.newSimpleName("close"),
+                    f.newSimpleName("close"), //$NON-NLS-1$
                     Collections.<FormalParameterDeclaration>emptyList(),
                     0,
                     Arrays.asList(context.resolve(IOException.class)),
                     f.newBlock(new ExpressionBuilder(f, emitter)
-                        .method("close")
+                        .method("close") //$NON-NLS-1$
                         .toStatement())));
 
             return f.newClassDeclaration(
@@ -794,130 +786,6 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
                     context.resolve(type),
                     name,
                     null);
-        }
-    }
-
-    private static final class DescriptionGenerator {
-
-        // for reduce library dependencies
-        private static final String IMPORTER_TYPE_NAME =
-            "com.asakusafw.vocabulary.directio.DirectFileInputDescription";
-
-        // for reduce library dependencies
-        private static final String EXPORTER_TYPE_NAME =
-            "com.asakusafw.vocabulary.directio.DirectFileOutputDescription";
-
-        private final EmitContext context;
-
-        private final ModelDeclaration model;
-
-        private final com.asakusafw.utils.java.model.syntax.Type supportClass;
-
-        private final ModelFactory f;
-
-        private final boolean importer;
-
-        private DescriptionGenerator(
-                EmitContext context,
-                ModelDeclaration model,
-                Name supportClassName,
-                boolean importer) {
-            assert context != null;
-            assert model != null;
-            assert supportClassName != null;
-            this.context = context;
-            this.model = model;
-            this.f = context.getModelFactory();
-            this.importer = importer;
-            this.supportClass = context.resolve(supportClassName);
-        }
-
-        static void emitImporter(
-                EmitContext context,
-                ModelDeclaration model,
-                Name supportClassName) throws IOException {
-            assert context != null;
-            assert model != null;
-            assert supportClassName != null;
-            DescriptionGenerator emitter = new DescriptionGenerator(context, model, supportClassName, true);
-            emitter.emit();
-        }
-
-        static void emitExporter(
-                EmitContext context,
-                ModelDeclaration model,
-                Name supportClassName) throws IOException {
-            assert context != null;
-            assert model != null;
-            assert supportClassName != null;
-            DescriptionGenerator emitter = new DescriptionGenerator(context, model, supportClassName, false);
-            emitter.emit();
-        }
-
-        private void emit() throws IOException {
-            ClassDeclaration decl = f.newClassDeclaration(
-                    new JavadocBuilder(f)
-                        .text("An abstract implementation of ")
-                        .linkType(context.resolve(model.getSymbol()))
-                        .text(" {0} description using Direct I/O TSV",
-                                importer ? "importer" : "exporter")
-                        .text(".")
-                        .toJavadoc(),
-                    new AttributeBuilder(f)
-                        .Public()
-                        .Abstract()
-                        .toAttributes(),
-                    context.getTypeName(),
-                    context.resolve(Models.toName(f, importer ? IMPORTER_TYPE_NAME : EXPORTER_TYPE_NAME)),
-                    Collections.<com.asakusafw.utils.java.model.syntax.Type>emptyList(),
-                    createMembers());
-            context.emit(decl);
-        }
-
-        private List<TypeBodyDeclaration> createMembers() {
-            List<TypeBodyDeclaration> results = Lists.create();
-            results.add(createGetModelType());
-            results.add(createGetStreamSupport());
-            return results;
-        }
-
-        private MethodDeclaration createGetModelType() {
-            return createGetter(
-                    new TypeBuilder(f, context.resolve(Class.class))
-                        .parameterize(f.newWildcard(
-                                WildcardBoundKind.UPPER_BOUNDED,
-                                context.resolve(model.getSymbol())))
-                        .toType(),
-                    "getModelType",
-                    f.newClassLiteral(context.resolve(model.getSymbol())));
-        }
-
-        private MethodDeclaration createGetStreamSupport() {
-            return createGetter(
-                    new TypeBuilder(f, context.resolve(Class.class))
-                        .parameterize(supportClass)
-                        .toType(),
-                    "getFormat",
-                    f.newClassLiteral(supportClass));
-        }
-
-        private MethodDeclaration createGetter(
-                com.asakusafw.utils.java.model.syntax.Type type,
-                String name,
-                Expression value) {
-            assert type != null;
-            assert name != null;
-            assert value != null;
-            return f.newMethodDeclaration(
-                    null,
-                    new AttributeBuilder(f)
-                        .annotation(context.resolve(Override.class))
-                        .Public()
-                        .toAttributes(),
-                    type,
-                    f.newSimpleName(name),
-                    Collections.<FormalParameterDeclaration>emptyList(),
-                    Arrays.asList(new ExpressionBuilder(f, value).toReturnStatement()));
         }
     }
 }

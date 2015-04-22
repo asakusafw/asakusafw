@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -181,7 +181,7 @@ public final class JsonObjectDriver extends DataModelScanner<JsonObject, IOExcep
         builder.add(name, prop.getAsString());
     }
 
-    private static final Pattern DATE = Pattern.compile("(\\d{3,})-(\\d{1,2})-(\\d{1,2})");
+    private static final Pattern DATE = Pattern.compile("(\\d{3,})-(\\d{1,2})-(\\d{1,2})"); //$NON-NLS-1$
     @Override
     public void dateProperty(PropertyName name, JsonObject context) throws IOException {
         JsonElement prop = property(context, name);
@@ -195,7 +195,7 @@ public final class JsonObjectDriver extends DataModelScanner<JsonObject, IOExcep
                     "invalid date property \"{0}\", must be \"{2}\" form, but was \"{1}\"",
                     name,
                     string,
-                    "yyyy-mm-dd"));
+                    "yyyy-mm-dd")); //$NON-NLS-1$
         }
         Calendar calendar = Calendar.getInstance();
         calendar.clear();
@@ -205,7 +205,7 @@ public final class JsonObjectDriver extends DataModelScanner<JsonObject, IOExcep
         builder.add(name, calendar);
     }
 
-    private static final Pattern TIME = Pattern.compile("(\\d{1,2}):(\\d{1,2}):(\\d{1,2})");
+    private static final Pattern TIME = Pattern.compile("(\\d{1,2}):(\\d{1,2}):(\\d{1,2})"); //$NON-NLS-1$
     @Override
     public void timeProperty(PropertyName name, JsonObject context) throws IOException {
         JsonElement prop = property(context, name);
@@ -219,7 +219,7 @@ public final class JsonObjectDriver extends DataModelScanner<JsonObject, IOExcep
                     "invalid time property \"{0}\", must be \"{2}\" form, but was \"{1}\"",
                     name,
                     string,
-                    "hh:mm:ss"));
+                    "hh:mm:ss")); //$NON-NLS-1$
         }
         Calendar calendar = Calendar.getInstance();
         calendar.clear();
@@ -230,7 +230,7 @@ public final class JsonObjectDriver extends DataModelScanner<JsonObject, IOExcep
     }
 
     private static final Pattern DATETIME = Pattern.compile(
-            "(\\d{3,})-(\\d{1,2})-(\\d{1,2})\\s+(\\d{1,2}):(\\d{1,2}):(\\d{1,2})");
+            "(\\d{3,})-(\\d{1,2})-(\\d{1,2})\\s+(\\d{1,2}):(\\d{1,2}):(\\d{1,2})"); //$NON-NLS-1$
     @Override
     public void datetimeProperty(PropertyName name, JsonObject context) throws IOException {
         JsonElement prop = property(context, name);
@@ -244,7 +244,7 @@ public final class JsonObjectDriver extends DataModelScanner<JsonObject, IOExcep
                     "invalid time property \"{0}\", must be \"{2}\" form, but was \"{1}\"",
                     name,
                     string,
-                    "yyyy-mm-dd hh:mm:ss"));
+                    "yyyy-mm-dd hh:mm:ss")); //$NON-NLS-1$
         }
         Calendar calendar = Calendar.getInstance();
         calendar.clear();

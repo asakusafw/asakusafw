@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -100,7 +100,7 @@ public class MasterKindFlowAnalyzer {
         OperatorDescription desc = context.getOperatorDescription();
         FlowElementPortDescription master = desc.getInputPorts().get(0);
 
-        Expression hasMaster = context.createField(boolean.class, "sawMaster");
+        Expression hasMaster = context.createField(boolean.class, "sawMaster"); //$NON-NLS-1$
         DataObjectMirror masterCache = context.createModelCache(master.getDataType());
         context.addBegin(new ExpressionBuilder(f, hasMaster)
             .assignFrom(Models.toLiteral(f, false))
@@ -154,7 +154,7 @@ public class MasterKindFlowAnalyzer {
 
         context.addProcess(tx, list.createEnd());
         Expression impl = context.createImplementation();
-        SimpleName selected = context.createName("selected");
+        SimpleName selected = context.createName("selected"); //$NON-NLS-1$
         context.addProcess(tx, new ExpressionBuilder(f, impl)
             .method(selector.getName(), arguments)
             .toLocalVariableDeclaration(

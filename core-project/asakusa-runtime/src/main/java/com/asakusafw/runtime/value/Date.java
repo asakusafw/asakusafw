@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,14 +19,13 @@ import java.text.MessageFormat;
 
 /**
  * 日付に関する軽量クラス。
- * @see <a href="http://law.e-gov.go.jp/htmldata/M29/M29HO089.html#1000000000000000000000000000000000000000000000014300000000000000000000000000000">民法第百四十三条</a>
  */
 public class Date implements Comparable<Date> {
 
     /**
      * 日付のフォーマット。
      */
-    public static final String FORMAT = "yyyy-MM-dd";
+    public static final String FORMAT = "yyyy-MM-dd"; //$NON-NLS-1$
 
     private int elapsed = 0;
 
@@ -141,7 +140,7 @@ public class Date implements Comparable<Date> {
     @Override
     public String toString() {
         return String.format(
-                "%04d-%02d-%02d",
+                "%04d-%02d-%02d", //$NON-NLS-1$
                 getYear(),
                 getMonth(),
                 getDay());
@@ -206,7 +205,7 @@ public class Date implements Comparable<Date> {
                     throw new IllegalArgumentException(MessageFormat.format(
                             "\"{0}\" is not form of \"{1}\"",
                             dateString,
-                            "YYYYMMDD"));
+                            "YYYYMMDD")); //$NON-NLS-1$
                 }
                 int year = get(dateString, 0, 4);
                 int month = get(dateString, 4, 6);
@@ -230,7 +229,7 @@ public class Date implements Comparable<Date> {
                     throw new IllegalArgumentException(MessageFormat.format(
                             "\"{0}\" is not form of \"{1}\"",
                             dateString,
-                            "YYYY-MM-DD"));
+                            "YYYY-MM-DD")); //$NON-NLS-1$
                 }
                 return value;
             }

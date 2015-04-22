@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,11 +35,11 @@ final class Util {
     static <T> List<T> loadService(Class<T> spi, ClassLoader loader) {
         assert spi != null;
         assert loader != null;
-        LOG.debug("{}のプラグインを登録しています", spi.getSimpleName());
+        LOG.debug("{}のプラグインを登録しています", spi.getSimpleName()); //$NON-NLS-1$
         ServiceLoader<T> services = ServiceLoader.load(spi, loader);
         List<T> results = new ArrayList<T>();
         for (T service : services) {
-            LOG.debug("Activating {}", service.getClass().getName());
+            LOG.debug("Activating {}", service.getClass().getName()); //$NON-NLS-1$
             results.add(service);
         }
         Collections.sort(results, new Comparator<Object>() {

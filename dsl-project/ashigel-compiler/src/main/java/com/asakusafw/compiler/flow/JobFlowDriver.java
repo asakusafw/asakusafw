@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -333,7 +333,7 @@ public final class JobFlowDriver {
             Object... args) {
         StringBuilder buf = new StringBuilder();
         buf.append(format(message, args));
-        buf.append(" - ");
+        buf.append(" - "); //$NON-NLS-1$
         buf.append(description.getName());
         String text = buf.toString();
         diagnostics.add(text);

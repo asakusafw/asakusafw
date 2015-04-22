@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ public class TraceReportAction implements TraceAction {
 
     @Override
     public void trace(Object data) throws IOException, InterruptedException {
-        Report.info(String.format("[TRACE-%04d] %s: %s", context.getSerialNumber(), context, data));
+        Report.info(String.format("[TRACE-%04d] %s: %s", context.getSerialNumber(), context, data)); //$NON-NLS-1$
     }
 
     @Override

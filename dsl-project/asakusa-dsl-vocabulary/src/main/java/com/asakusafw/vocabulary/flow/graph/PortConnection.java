@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ public class PortConnection {
         FlowElementPortDescription down = downstream.getDescription();
         if (down.getDataType().equals(up.getDataType()) == false) {
             throw new IllegalArgumentException(MessageFormat.format(
-                    "Invalid data type {0} ({1}) -> {2} ({3})",
+                    "Invalid data type {0} ({1}) -> {2} ({3})", //$NON-NLS-1$
                     up.getName(),
                     up.getDataType(),
                     down.getName(),
@@ -148,7 +148,7 @@ public class PortConnection {
     @Override
     public String toString() {
         return MessageFormat.format(
-                "{0} => {1}",
+                "{0} => {1}", //$NON-NLS-1$
                 getUpstream(),
                 getDownstream());
     }

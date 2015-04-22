@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,9 +49,9 @@ import com.asakusafw.vocabulary.flow.graph.OutputDescription;
  */
 public class TemporaryIoProcessor extends ExternalIoDescriptionProcessor {
 
-    private static final Pattern VALID_OUTPUT_NAME = Pattern.compile("[0-9A-Za-z]+");
+    private static final Pattern VALID_OUTPUT_NAME = Pattern.compile("[0-9A-Za-z]+"); //$NON-NLS-1$
 
-    private static final String MODULE_NAME = "temporary";
+    private static final String MODULE_NAME = "temporary"; //$NON-NLS-1$
 
     @Override
     public String getId() {
@@ -142,7 +142,7 @@ public class TemporaryIoProcessor extends ExternalIoDescriptionProcessor {
         assert saw != null;
         assert target != null;
         String simpleSuffix = generateSuffix(target);
-        String baseModuleId = MessageFormat.format("{0}.{1}", MODULE_NAME, simpleSuffix);
+        String baseModuleId = MessageFormat.format("{0}.{1}", MODULE_NAME, simpleSuffix); //$NON-NLS-1$
         if (saw.contains(baseModuleId) == false) {
             saw.add(baseModuleId);
             return baseModuleId;
@@ -162,7 +162,7 @@ public class TemporaryIoProcessor extends ExternalIoDescriptionProcessor {
         assert target != null;
         String name = target.getName();
         if (name.isEmpty()) {
-            return "_";
+            return "_"; //$NON-NLS-1$
         }
         StringBuilder buf = new StringBuilder();
         if (Character.isJavaIdentifierStart(name.charAt(0)) == false) {
@@ -189,8 +189,8 @@ public class TemporaryIoProcessor extends ExternalIoDescriptionProcessor {
                 // 親パスを文字列で比較
                 // AがBの祖先パス => A.toString < B.toString
                 // と言う関係をもとに、親パスの文字列が異なればその順序で整列
-                String parentPath1 = (o1.getParent() == null) ? "" : o1.getParent().toPath('/');
-                String parentPath2 = (o2.getParent() == null) ? "" : o2.getParent().toPath('/');
+                String parentPath1 = (o1.getParent() == null) ? "" : o1.getParent().toPath('/'); //$NON-NLS-1$
+                String parentPath2 = (o2.getParent() == null) ? "" : o2.getParent().toPath('/'); //$NON-NLS-1$
                 int parentDiff = parentPath1.compareTo(parentPath2);
                 if (parentDiff != 0) {
                     return (parentDiff > 0) ? +1 : -1;

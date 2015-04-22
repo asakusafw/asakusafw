@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.text.DateFormat;
+import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -407,13 +408,10 @@ public abstract class StringTemplate implements WritableRawComparable {
 
         @Override
         public String toString() {
-            StringBuilder builder = new StringBuilder();
-            builder.append("FormatSpec [format=");
-            builder.append(format);
-            builder.append(", string=");
-            builder.append(string);
-            builder.append("]");
-            return builder.toString();
+            return MessageFormat.format(
+                    "StringTemplate(format={0}, string={1})", //$NON-NLS-1$
+                    format,
+                    string);
         }
     }
 

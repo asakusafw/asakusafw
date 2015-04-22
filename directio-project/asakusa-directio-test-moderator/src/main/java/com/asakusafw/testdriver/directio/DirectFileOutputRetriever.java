@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ public class DirectFileOutputRetriever extends BaseExporterRetriever<DirectFileO
         DirectIoTestHelper helper = new DirectIoTestHelper(context, description.getBasePath());
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Truncating Direct I/O output: {0}",
+                    "Truncating Direct I/O output: {0}", //$NON-NLS-1$
                     description.getClass().getName()));
         }
         helper.truncate();
@@ -68,7 +68,7 @@ public class DirectFileOutputRetriever extends BaseExporterRetriever<DirectFileO
         DirectIoTestHelper helper = new DirectIoTestHelper(context, description.getBasePath());
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Retrieving Direct I/O output: {0}",
+                    "Retrieving Direct I/O output: {0}", //$NON-NLS-1$
                     description.getClass().getName()));
         }
         final V object = definition.toObject(definition.newReflection().build());

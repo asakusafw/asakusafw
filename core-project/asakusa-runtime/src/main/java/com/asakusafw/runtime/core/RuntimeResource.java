@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -81,7 +81,7 @@ public interface RuntimeResource {
             }
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "Loading plugin for {0}: key={1}, value={2}",
+                        "Loading plugin for {0}: key={1}, value={2}", //$NON-NLS-1$
                         getInterfaceType().getName(),
                         getClassNameKey(),
                         className));
@@ -90,7 +90,7 @@ public interface RuntimeResource {
 
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "Registering plugin {2} into {0}",
+                        "Registering plugin {2} into {0}", //$NON-NLS-1$
                         getInterfaceType().getName(),
                         getClassNameKey(),
                         className));
@@ -100,7 +100,7 @@ public interface RuntimeResource {
             this.registered = loaded;
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "Registered plugin {2} into {0}",
+                        "Registered plugin {2} into {0}", //$NON-NLS-1$
                         getInterfaceType().getName(),
                         getClassNameKey(),
                         className));
@@ -114,7 +114,7 @@ public interface RuntimeResource {
                 unregister(registered, configuration);
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(MessageFormat.format(
-                            "Unregistered plugin {1} from {0}",
+                            "Unregistered plugin {1} from {0}", //$NON-NLS-1$
                             getInterfaceType().getName(),
                             registered.getClass().getName()));
                 }

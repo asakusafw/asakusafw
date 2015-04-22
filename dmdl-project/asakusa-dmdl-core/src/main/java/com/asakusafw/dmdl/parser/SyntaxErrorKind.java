@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,20 +35,26 @@ public enum SyntaxErrorKind {
 
     /**
      * Occurs unexpected token and the next expected token is guessed.
+     * <ol start="0">
      * <li> current token image </li>
      * <li> expected token </li>
+     * </ol>
      */
     UNEXPECTED_TOKEN_GUESS,
 
     /**
      * Occurs unexpected token and the next expected token is unknown.
+     * <ol start="0">
      * <li> current token image </li>
+     * </ol>
      */
     UNEXPECTED_TOKEN_UNKNOWN,
 
     /**
      * Occurs unexpected EOF.
+     * <ol start="0">
      * <li> current token image </li>
+     * </ol>
      */
     UNEXPECTED_EOF,
 

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -158,7 +158,9 @@ public final class DirectFlowCompiler {
     private static void clean(File localWorkingDirectory) {
         assert localWorkingDirectory != null;
         if (localWorkingDirectory.exists()) {
-            LOG.info("Cleaning local working directory: {}", localWorkingDirectory);
+            LOG.info(MessageFormat.format(
+                    "作業ディレクトリを初期化しています: {0}",
+                    localWorkingDirectory));
         }
         delete(localWorkingDirectory);
     }
@@ -186,21 +188,23 @@ public final class DirectFlowCompiler {
         List<ResourceRepository> results = Lists.create();
         Set<File> saw = Sets.create();
         for (File file : targets) {
-            LOG.debug("Preparing fragment resource: {}", file);
+            LOG.debug("Preparing fragment resource: {}", file); //$NON-NLS-1$
             File canonical = file.getAbsoluteFile().getCanonicalFile();
             if (saw.contains(canonical)) {
-                LOG.debug("Skipped duplicated Fragment resource: {}", file);
+                LOG.debug("Skipped duplicated Fragment resource: {}", file); //$NON-NLS-1$
                 continue;
             }
             saw.add(file);
             if (file.isDirectory()) {
                 results.add(new FileRepository(file));
-            } else if (file.isFile() && file.getName().endsWith(".zip")) {
+            } else if (file.isFile() && file.getName().endsWith(".zip")) { //$NON-NLS-1$
                 results.add(new ZipRepository(file));
-            } else if (file.isFile() && file.getName().endsWith(".jar")) {
+            } else if (file.isFile() && file.getName().endsWith(".jar")) { //$NON-NLS-1$
                 results.add(new ZipRepository(file));
             } else {
-                LOG.warn("{}は不明な形式のため、無視されます", file);
+                LOG.warn(MessageFormat.format(
+                        "{0}は不明な形式のため、無視されます",
+                        file));
             }
         }
         return results;
@@ -265,7 +269,7 @@ public final class DirectFlowCompiler {
         List<File> results = Lists.create();
         while (resources.hasMoreElements()) {
             URL url = resources.nextElement();
-            LOG.debug("Fragment marker found: {}", url);
+            LOG.debug("Fragment marker found: {}", url); //$NON-NLS-1$
             File library = findLibraryFromUrl(url, path);
             if (library != null) {
                 LOG.info(MessageFormat.format(
@@ -282,12 +286,14 @@ public final class DirectFlowCompiler {
         String className = aClass.getName();
         int start = className.lastIndexOf('.') + 1;
         String name = className.substring(start);
-        URL resource = aClass.getResource(name + ".class");
+        URL resource = aClass.getResource(name + ".class"); //$NON-NLS-1$
         if (resource == null) {
-            LOG.warn("Failed to locate the class file: {}", aClass.getName());
+            LOG.warn(MessageFormat.format(
+                    "Failed to locate the class file: {0}",
+                    aClass.getName()));
             return null;
         }
-        String resourcePath = className.replace('.', '/') + ".class";
+        String resourcePath = className.replace('.', '/') + ".class"; //$NON-NLS-1$
         return findLibraryFromUrl(resource, resourcePath);
     }
 
@@ -295,7 +301,7 @@ public final class DirectFlowCompiler {
         assert resource != null;
         assert resourcePath != null;
         String protocol = resource.getProtocol();
-        if (protocol.equals("file")) {
+        if (protocol.equals("file")) { //$NON-NLS-1$
             try {
                 File file = new File(resource.toURI());
                 return toClassPathRoot(file, resourcePath);
@@ -306,7 +312,7 @@ public final class DirectFlowCompiler {
                 return null;
             }
         }
-        if (protocol.equals("jar")) {
+        if (protocol.equals("jar")) { //$NON-NLS-1$
             String path = resource.getPath();
             return toClassPathRoot(path, resourcePath);
         } else {
@@ -327,9 +333,10 @@ public final class DirectFlowCompiler {
         for (int start = resourcePath.indexOf('/'); start >= 0; start = resourcePath.indexOf('/', start + 1)) {
             current = current.getParentFile();
             if (current == null || current.isDirectory() == false) {
-                LOG.warn("Failed to locate the library path: {} ({})",
+                LOG.warn(MessageFormat.format(
+                        "Failed to locate the library path: {0} ({1})",
                         resourceFile,
-                        resourcePath);
+                        resourcePath));
                 return null;
             }
         }
@@ -351,16 +358,17 @@ public final class DirectFlowCompiler {
             archive = new URI(qualifier);
         } catch (URISyntaxException e) {
             LOG.warn(MessageFormat.format(
-                    "Failed to locate the JAR library file {}: {}",
+                    "Failed to locate the JAR library file {0}: {1}",
                     qualifier,
                     resourceName),
                     e);
             throw new UnsupportedOperationException(qualifier, e);
         }
-        if (archive.getScheme().equals("file") == false) {
-            LOG.warn("Failed to locate the library path (unsupported protocol {}): {}",
+        if (archive.getScheme().equals("file") == false) { //$NON-NLS-1$
+            LOG.warn(MessageFormat.format(
+                    "Failed to locate the library path (unsupported protocol {}): {}",
                     archive,
-                    resourceName);
+                    resourceName));
             return null;
         }
         File file = new File(archive);

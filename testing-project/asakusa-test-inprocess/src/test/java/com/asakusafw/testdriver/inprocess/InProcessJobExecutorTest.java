@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -426,7 +426,7 @@ public class InProcessJobExecutorTest {
         for (int i = 0, n = properties.length; i < n; i+=2) {
             props.put(properties[i], properties[i + 1]);
         }
-        return new TestExecutionPlan.Job(className, EXECUTION_ID, props);
+        return new TestExecutionPlan.Job(className, props);
     }
 
     private TestExecutionPlan.Command command(String moduleName, String... commandLine) {

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -88,7 +88,7 @@ final class ParallelSortMapperEmitter {
     public CompiledType emit(String moduleId, ResolvedSlot slot) throws IOException {
         Precondition.checkMustNotBeNull(moduleId, "moduleId"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(slot, "slot"); //$NON-NLS-1$
-        LOG.debug("Generates a mapper for the output \"{}\" in epilogue phase of \"{}\"",
+        LOG.debug("Generates a mapper for the output \"{}\" in epilogue phase of \"{}\"", //$NON-NLS-1$
                 slot.getSource().getOutputName(), moduleId);
         CompilationUnit source;
         if (slot.getSortProperties().isEmpty() && ParallelSortClientEmitter.legacy(environment) == false) {
@@ -102,7 +102,7 @@ final class ParallelSortMapperEmitter {
         Name packageName = source.getPackageDeclaration().getName();
         SimpleName simpleName = source.getTypeDeclarations().get(0).getName();
         Name name = environment.getModelFactory().newQualifiedName(packageName, simpleName);
-        LOG.debug("Mapper for output \"{}\" in epilogue phase is {}",
+        LOG.debug("Mapper for output \"{}\" in epilogue phase is {}", //$NON-NLS-1$
                 slot.getSource().getOutputName(),
                 name);
         return new CompiledType(name);
@@ -152,7 +152,8 @@ final class ParallelSortMapperEmitter {
             importer.resolvePackageMember(name);
             return factory.newClassDeclaration(
                     new JavadocBuilder(factory)
-                        .text("Mapper for output \"{0}\" in epilogue phase.", slot.getSource().getOutputName())
+                        .text("Mapper for output \"{0}\" in epilogue phase.", //$NON-NLS-1$
+                                slot.getSource().getOutputName())
                         .toJavadoc(),
                     new AttributeBuilder(factory)
                         .annotation(importer.toType(TraceLocation.class), createTraceLocationElements())
@@ -167,9 +168,9 @@ final class ParallelSortMapperEmitter {
 
         private Map<String, Expression> createTraceLocationElements() {
             Map<String, Expression> results = new LinkedHashMap<String, Expression>();
-            results.put("batchId", Models.toLiteral(factory, environment.getBatchId()));
-            results.put("flowId", Models.toLiteral(factory, environment.getFlowId()));
-            results.put("stageId", Models.toLiteral(factory, Naming.getEpilogueName(moduleId)));
+            results.put("batchId", Models.toLiteral(factory, environment.getBatchId())); //$NON-NLS-1$
+            results.put("flowId", Models.toLiteral(factory, environment.getFlowId())); //$NON-NLS-1$
+            results.put("stageId", Models.toLiteral(factory, Naming.getEpilogueName(moduleId))); //$NON-NLS-1$
             return results;
         }
 
@@ -228,7 +229,8 @@ final class ParallelSortMapperEmitter {
             importer.resolvePackageMember(name);
             return factory.newClassDeclaration(
                     new JavadocBuilder(factory)
-                        .text("Mapper for output \"{0}\" in epilogue phase.", slot.getSource().getOutputName())
+                        .text("Mapper for output \"{0}\" in epilogue phase.", //$NON-NLS-1$
+                                slot.getSource().getOutputName())
                         .toJavadoc(),
                     new AttributeBuilder(factory)
                         .Public()
@@ -243,8 +245,8 @@ final class ParallelSortMapperEmitter {
         }
 
         private MethodDeclaration createSlotSpec() {
-            SimpleName valueName = factory.newSimpleName("value");
-            SimpleName slotName = factory.newSimpleName("slot");
+            SimpleName valueName = factory.newSimpleName("value"); //$NON-NLS-1$
+            SimpleName slotName = factory.newSimpleName("slot"); //$NON-NLS-1$
             List<Statement> statements = Lists.create();
             statements.add(new ExpressionBuilder(factory, slotName)
                 .method(SortableSlot.NAME_BEGIN, Models.toLiteral(factory, slot.getSlotNumber()))

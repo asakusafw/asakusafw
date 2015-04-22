@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,9 +36,9 @@ import org.apache.hadoop.io.OutputBuffer;
  */
 public final class ConfigurationDetecter {
 
-    static final String MARKER_FILE_NAME = "core-site.xml";
+    static final String MARKER_FILE_NAME = "core-site.xml"; //$NON-NLS-1$
 
-    private static final Charset ENCODING = Charset.forName("UTF-8");
+    private static final Charset ENCODING = Charset.forName("UTF-8"); //$NON-NLS-1$
 
     private ConfigurationDetecter() {
         return;
@@ -128,7 +128,7 @@ public final class ConfigurationDetecter {
                 }
                 ob.write(buf, 0, read);
             }
-            result = new String(ob.getData(), 0, ob.getLength(), ENCODING);
+            result = new String(ob.getData(), 0, ob.getLength(), ENCODING).trim();
             ob.close();
         } finally {
             input.close();

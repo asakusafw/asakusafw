@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -74,7 +74,7 @@ public void edit(Hoge hoge) {
 public @interface Update {
 
     /**
-     * 入力ポートの番剛。
+     * 入力ポートの番号。
      */
     int ID_INPUT = 0;
 

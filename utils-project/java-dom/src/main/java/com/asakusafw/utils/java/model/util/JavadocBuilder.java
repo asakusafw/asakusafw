@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ import com.asakusafw.utils.java.model.syntax.Type;
  */
 public class JavadocBuilder {
 
-    private static final Pattern ESCAPE = Pattern.compile("@");
+    private static final Pattern ESCAPE = Pattern.compile("@"); //$NON-NLS-1$
 
     private ModelFactory f;
 
@@ -63,7 +63,7 @@ public class JavadocBuilder {
         }
         this.f = factory;
         this.blocks = new ArrayList<DocBlock>();
-        this.currentTag = ""; // overview
+        this.currentTag = ""; // overview //$NON-NLS-1$
         this.elements = new ArrayList<DocElement>();
     }
 
@@ -84,7 +84,7 @@ public class JavadocBuilder {
      * @return 変換結果
      */
     public Javadoc toJavadoc() {
-        flushBlock("");
+        flushBlock(""); //$NON-NLS-1$
         return f.newJavadoc(blocks);
     }
 
@@ -101,10 +101,10 @@ public class JavadocBuilder {
         if (tag == null) {
             throw new IllegalArgumentException("tag must not be null"); //$NON-NLS-1$
         }
-        if (tag.startsWith("@")) {
+        if (tag.startsWith("@")) { //$NON-NLS-1$
             flushBlock(tag);
         } else {
-            flushBlock("@" + tag);
+            flushBlock("@" + tag); //$NON-NLS-1$
         }
         return this;
     }
@@ -160,7 +160,7 @@ public class JavadocBuilder {
      * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
      */
     public JavadocBuilder param(SimpleName name) {
-        block("@param");
+        block("@param"); //$NON-NLS-1$
         elements.add(name);
         return this;
     }
@@ -191,10 +191,10 @@ public class JavadocBuilder {
         if (name == null) {
             throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
         }
-        block("@param");
-        elements.add(f.newDocText("<"));
+        block("@param"); //$NON-NLS-1$
+        elements.add(f.newDocText("<")); //$NON-NLS-1$
         elements.add(name);
-        elements.add(f.newDocText(">"));
+        elements.add(f.newDocText(">")); //$NON-NLS-1$
         return this;
     }
 
@@ -230,7 +230,7 @@ public class JavadocBuilder {
      * @return 続きの操作を行うビルダー
      */
     public JavadocBuilder returns() {
-        block("@return");
+        block("@return"); //$NON-NLS-1$
         return this;
     }
 
@@ -250,7 +250,7 @@ public class JavadocBuilder {
         if (type.getModelKind() != ModelKind.NAMED_TYPE) {
             throw new IllegalArgumentException("type must be a simple name-type");
         }
-        block("@throws");
+        block("@throws"); //$NON-NLS-1$
         elements.add(((NamedType) type).getName());
         return this;
     }
@@ -551,7 +551,7 @@ public class JavadocBuilder {
         if (element == null) {
             throw new IllegalArgumentException("element must not be null"); //$NON-NLS-1$
         }
-        block("@see");
+        block("@see"); //$NON-NLS-1$
         elements.add(element);
         return this;
     }
@@ -577,7 +577,7 @@ public class JavadocBuilder {
      */
     public JavadocBuilder code(String pattern, Object... arguments) {
         elements.add(f.newDocBlock(
-                "@code",
+                "@code", //$NON-NLS-1$
                 Collections.singletonList(escape(pattern, arguments))));
         return this;
     }
@@ -837,14 +837,14 @@ public class JavadocBuilder {
             throw new IllegalArgumentException("element must not be null"); //$NON-NLS-1$
         }
         elements.add(f.newDocBlock(
-            "@link",
+            "@link", //$NON-NLS-1$
             Collections.singletonList(element)));
         return this;
     }
 
     private DocText escape(String pattern, Object... arguments) {
         String text = MessageFormat.format(pattern, arguments);
-        String escaped = ESCAPE.matcher(text).replaceAll("&#64;");
+        String escaped = ESCAPE.matcher(text).replaceAll("&#64;"); //$NON-NLS-1$
         return f.newDocText(escaped);
     }
 

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package com.asakusafw.compiler.directio;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
@@ -36,6 +37,7 @@ import com.asakusafw.compiler.directio.emitter.StageEmitter;
 import com.asakusafw.compiler.flow.DataClass;
 import com.asakusafw.compiler.flow.ExternalIoDescriptionProcessor;
 import com.asakusafw.compiler.flow.Location;
+import com.asakusafw.compiler.flow.FlowCompilerOptions.GenericOptionValue;
 import com.asakusafw.compiler.flow.jobflow.CompiledStage;
 import com.asakusafw.compiler.flow.jobflow.ExternalIoStage;
 import com.asakusafw.compiler.flow.mapreduce.copy.CopierClientEmitter;
@@ -62,7 +64,7 @@ import com.asakusafw.vocabulary.flow.graph.OutputDescription;
 /**
  * Processes {@link DirectFileInputDescription} and {@link DirectFileOutputDescription}.
  * @since 0.2.5
- * @version 0.6.1
+ * @version 0.7.3
  */
 public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
 
@@ -71,11 +73,19 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
     private static final Set<PatternElementKind> INVALID_BASE_PATH_KIND =
             EnumSet.of(PatternElementKind.WILDCARD, PatternElementKind.SELECTION);
 
-    private static final String METHOD_RESOURCE_PATTERN = "getResourcePattern";
+    private static final String PREFIX_OPTION = "directio."; //$NON-NLS-1$
 
-    private static final String METHOD_ORDER = "getOrder";
+    /**
+     * The compiler option name whether filter feature is enabled or not.
+     * @since 0.7.3
+     */
+    public static final String OPTION_FILTER_ENABLED = PREFIX_OPTION + "input.filter.enabled"; //$NON-NLS-1$
 
-    private static final String MODULE_NAME = "directio";
+    private static final String METHOD_RESOURCE_PATTERN = "getResourcePattern"; //$NON-NLS-1$
+
+    private static final String METHOD_ORDER = "getOrder"; //$NON-NLS-1$
+
+    private static final String MODULE_NAME = "directio"; //$NON-NLS-1$
 
     private static final Class<? extends InputFormat<?, ?>> INPUT_FORMAT = BridgeInputFormat.class;
 
@@ -96,21 +106,21 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
 
     @Override
     public boolean validate(List<InputDescription> inputs, List<OutputDescription> outputs) {
-        LOG.debug("Checking Direct I/O vocabularies: batch={}, flow={}",
+        LOG.debug("Checking Direct I/O vocabularies: batch={}, flow={}", //$NON-NLS-1$
                 getEnvironment().getBatchId(),
                 getEnvironment().getFlowId());
         boolean valid = true;
         for (InputDescription input : inputs) {
-            LOG.debug("Checking Direct I/O input: {}",
+            LOG.debug("Checking Direct I/O input: {}", //$NON-NLS-1$
                     input.getName());
             valid &= validateInput(input);
         }
         for (OutputDescription output : outputs) {
-            LOG.debug("Checking Direct I/O output: {}",
+            LOG.debug("Checking Direct I/O output: {}", //$NON-NLS-1$
                     output.getName());
             valid &= validateOutput(output);
         }
-        LOG.debug("Checking Direct I/O paths");
+        LOG.debug("Checking Direct I/O paths"); //$NON-NLS-1$
         valid &= validatePaths(inputs, outputs);
         return valid;
     }
@@ -369,7 +379,7 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
     private SourceInfo getOriginalInputInfo(InputDescription description) {
         DirectFileInputDescription desc = extract(description);
         Set<Location> locations = Collections.singleton(
-                Location.fromPath("__DIRECTIO__", '/')
+                Location.fromPath("__DIRECTIO__", '/') //$NON-NLS-1$
                 .append(description.getName())
                 .append(Location.fromPath(desc.getBasePath(), '/')));
         return new SourceInfo(locations, INPUT_FORMAT, getAttributes(desc));
@@ -381,8 +391,25 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
         attributes.put(DirectDataSourceConstants.KEY_FORMAT_CLASS, desc.getFormat().getName());
         attributes.put(DirectDataSourceConstants.KEY_BASE_PATH, desc.getBasePath());
         attributes.put(DirectDataSourceConstants.KEY_RESOURCE_PATH, desc.getResourcePattern());
+        if (desc.getFilter() != null) {
+            if (isFilterEnabled()) {
+                attributes.put(DirectDataSourceConstants.KEY_FILTER_CLASS, desc.getFilter().getName());
+            } else {
+                LOG.info(MessageFormat.format(
+                        "Direct I/O input filter is disabled in current setting: {0} ({1})",
+                        desc.getClass().getName(),
+                        desc.getFilter().getName()));
+            }
+        }
         attributes.put(DirectDataSourceConstants.KEY_OPTIONAL, String.valueOf(desc.isOptional()));
         return attributes;
+    }
+
+    private boolean isFilterEnabled() {
+        GenericOptionValue value = getEnvironment().getOptions().getGenericExtraAttribute(
+                OPTION_FILTER_ENABLED,
+                GenericOptionValue.ENABLED);
+        return value != GenericOptionValue.DISABLED;
     }
 
     private String getProcessedInputName(InputDescription description) {
@@ -394,10 +421,10 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
                 buf.append(c);
             } else if (c <= 0xff) {
                 buf.append('0');
-                buf.append(String.format("%02x", (int) c));
+                buf.append(String.format("%02x", (int) c)); //$NON-NLS-1$
             } else {
-                buf.append("0u");
-                buf.append(String.format("%04x", (int) c));
+                buf.append("0u"); //$NON-NLS-1$
+                buf.append(String.format("%04x", (int) c)); //$NON-NLS-1$
             }
         }
         return buf.toString();
@@ -411,7 +438,7 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
             InputDescription description = input.getDescription();
             DirectFileInputDescription desc = extract(description);
             if (isCacheTarget(desc)) {
-                LOG.debug("Input will be copied in prologue: {}", description.getName());
+                LOG.debug("Input will be copied in prologue: {}", description.getName()); //$NON-NLS-1$
                 targets.add(new CopyDescription(
                         getProcessedInputName(description),
                         getEnvironment().getDataClasses().load(description.getDataType()),

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,10 +31,12 @@ import com.asakusafw.runtime.compatibility.FileSystemCompatibility;
 import com.asakusafw.runtime.directio.BinaryStreamFormat;
 import com.asakusafw.runtime.directio.Counter;
 import com.asakusafw.runtime.directio.DataDefinition;
+import com.asakusafw.runtime.directio.DataFilter;
 import com.asakusafw.runtime.directio.DataFormat;
 import com.asakusafw.runtime.directio.DirectDataSource;
 import com.asakusafw.runtime.directio.DirectInputFragment;
 import com.asakusafw.runtime.directio.FilePattern;
+import com.asakusafw.runtime.directio.FilteredModelInput;
 import com.asakusafw.runtime.directio.FragmentableDataFormat;
 import com.asakusafw.runtime.directio.OutputAttemptContext;
 import com.asakusafw.runtime.directio.OutputTransactionContext;
@@ -52,9 +54,9 @@ public class HadoopDataSourceCore implements DirectDataSource {
 
     static final Log LOG = LogFactory.getLog(HadoopDataSourceCore.class);
 
-    private static final String ATTEMPT_AREA = "attempts";
+    private static final String ATTEMPT_AREA = "attempts"; //$NON-NLS-1$
 
-    private static final String STAGING_AREA = "staging";
+    private static final String STAGING_AREA = "staging"; //$NON-NLS-1$
 
     private final HadoopDataSourceProfile profile;
 
@@ -77,7 +79,7 @@ public class HadoopDataSourceCore implements DirectDataSource {
             ResourcePattern resourcePattern) throws IOException, InterruptedException {
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Start finding input (id={0}, path={1}, resourcePattern={2})",
+                    "Start finding input (id={0}, path={1}, resourcePattern={2})", //$NON-NLS-1$
                     profile.getId(),
                     basePath,
                     resourcePattern));
@@ -90,10 +92,9 @@ public class HadoopDataSourceCore implements DirectDataSource {
         Path temporary = p.getTemporaryFileSystemPath();
         List<FileStatus> stats = HadoopDataSourceUtil.search(fs, base, pattern);
         stats = filesOnly(stats, temporary);
-
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Process finding input (id={0}, path={1}, resource={2}, files={3})",
+                    "Process finding input (id={0}, path={1}, resource={2}, files={3})", //$NON-NLS-1$
                     profile.getId(),
                     basePath,
                     resourcePattern,
@@ -102,11 +103,16 @@ public class HadoopDataSourceCore implements DirectDataSource {
         if (LOG.isTraceEnabled()) {
             for (FileStatus stat : stats) {
                 LOG.trace(MessageFormat.format(
-                        "Input found (path={0}, length={1})",
+                        "Input found (path={0}, length={1})", //$NON-NLS-1$
                         stat.getPath(),
                         stat.getLen()));
             }
         }
+        DataFilter<?> filter = definition.getDataFilter();
+        if (filter != null) {
+            stats = applyFilter(stats, filter);
+        }
+
         DataFormat<T> format = definition.getDataFormat();
         Class<? extends T> dataType = definition.getDataClass();
         List<DirectInputFragment> results;
@@ -131,11 +137,29 @@ public class HadoopDataSourceCore implements DirectDataSource {
 
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Finish finding input (id={0}, path={1}, resource={2}, fragments={3})",
+                    "Finish finding input (id={0}, path={1}, resource={2}, fragments={3})", //$NON-NLS-1$
                     profile.getId(),
                     basePath,
                     resourcePattern,
                     results.size()));
+        }
+        return results;
+    }
+
+    private List<FileStatus> applyFilter(List<FileStatus> stats, DataFilter<?> filter) {
+        List<FileStatus> results = new ArrayList<FileStatus>();
+        for (FileStatus stat : stats) {
+            String path = stat.getPath().toString();
+            if (filter.acceptsPath(path)) {
+                results.add(stat);
+            } else {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(MessageFormat.format(
+                            "filtered direct input file: {0} ({1})",
+                            path,
+                            filter));
+                }
+            }
         }
         return results;
     }
@@ -171,7 +195,7 @@ public class HadoopDataSourceCore implements DirectDataSource {
             if (LOG.isTraceEnabled()) {
                 for (BlockInfo block : blocks) {
                     LOG.trace(MessageFormat.format(
-                            "Original BlockInfo (path={0}, start={1}, end={2}, hosts={3})",
+                            "Original BlockInfo (path={0}, start={1}, end={2}, hosts={3})", //$NON-NLS-1$
                             path,
                             block.getStart(),
                             block.getEnd(),
@@ -182,7 +206,7 @@ public class HadoopDataSourceCore implements DirectDataSource {
             if (LOG.isTraceEnabled()) {
                 for (DirectInputFragment fragment : fragments) {
                     LOG.trace(MessageFormat.format(
-                            "Fragment found (path={0}, offset={1}, size={2}, owners={3})",
+                            "Fragment found (path={0}, offset={1}, size={2}, owners={3})", //$NON-NLS-1$
                             fragment.getPath(),
                             fragment.getOffset(),
                             fragment.getSize(),
@@ -201,7 +225,7 @@ public class HadoopDataSourceCore implements DirectDataSource {
             Counter counter) throws IOException, InterruptedException {
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Start opening input (id={0}, path={1}, offset={2}, size={3})",
+                    "Start opening input (id={0}, path={1}, offset={2}, size={3})", //$NON-NLS-1$
                     profile.getId(),
                     fragment.getPath(),
                     fragment.getOffset(),
@@ -210,6 +234,7 @@ public class HadoopDataSourceCore implements DirectDataSource {
         DataFormat<T> format = definition.getDataFormat();
         Class<? extends T> dataType = definition.getDataClass();
         HadoopFileFormat<T> fileFormat = convertFormat(format);
+        DataFilter<? super T> filter = definition.getDataFilter();
         ModelInput<T> input = fileFormat.createInput(
                 dataType,
                 profile.getFileSystem(),
@@ -219,13 +244,17 @@ public class HadoopDataSourceCore implements DirectDataSource {
                 counter);
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Finish opening input (id={0}, path={1}, offset={2}, size={3})",
+                    "Finish opening input (id={0}, path={1}, offset={2}, size={3})", //$NON-NLS-1$
                     profile.getId(),
                     fragment.getPath(),
                     fragment.getOffset(),
                     fragment.getSize()));
         }
-        return input;
+        if (filter == null) {
+            return input;
+        } else {
+            return new FilteredModelInput<T>(input, filter);
+        }
     }
 
     @Override
@@ -240,7 +269,7 @@ public class HadoopDataSourceCore implements DirectDataSource {
         if (isLocalAttemptOutput()) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "Start opening output (id={0}, path={1}, resource={2}, streaming={3})",
+                        "Start opening output (id={0}, path={1}, resource={2}, streaming={3})", //$NON-NLS-1$
                         profile.getId(),
                         basePath,
                         resourcePath,
@@ -251,7 +280,7 @@ public class HadoopDataSourceCore implements DirectDataSource {
         } else {
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "Start opening output (id={0}, path={1}, resource={2}, streaming={3})",
+                        "Start opening output (id={0}, path={1}, resource={2}, streaming={3})", //$NON-NLS-1$
                         profile.getId(),
                         basePath,
                         resourcePath,
@@ -267,7 +296,7 @@ public class HadoopDataSourceCore implements DirectDataSource {
         ModelOutput<T> output = fileFormat.createOutput(dataType, fs, file, counter);
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Finish opening output (id={0}, path={1}, resource={2}, file={3})",
+                    "Finish opening output (id={0}, path={1}, resource={2}, file={3})", //$NON-NLS-1$
                     profile.getId(),
                     basePath,
                     resourcePath,
@@ -321,7 +350,7 @@ public class HadoopDataSourceCore implements DirectDataSource {
             Counter counter) throws IOException, InterruptedException {
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Start listing files (id={0}, path={1}, resource={2})",
+                    "Start listing files (id={0}, path={1}, resource={2})", //$NON-NLS-1$
                     profile.getId(),
                     basePath,
                     resourcePattern));
@@ -346,7 +375,7 @@ public class HadoopDataSourceCore implements DirectDataSource {
         }
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Finish listing files (id={0}, path={1}, resource={2}, count={3})",
+                    "Finish listing files (id={0}, path={1}, resource={2}, count={3})", //$NON-NLS-1$
                     profile.getId(),
                     basePath,
                     resourcePattern,
@@ -361,10 +390,10 @@ public class HadoopDataSourceCore implements DirectDataSource {
             ResourcePattern resourcePattern,
             boolean recursive,
             Counter counter) throws IOException, InterruptedException {
-        assert basePath.startsWith("/") == false;
+        assert basePath.startsWith("/") == false; //$NON-NLS-1$
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Start deleting files (id={0}, path={1}, resource={2}, recursive={3})",
+                    "Start deleting files (id={0}, path={1}, resource={2}, recursive={3})", //$NON-NLS-1$
                     profile.getId(),
                     basePath,
                     resourcePattern,
@@ -384,7 +413,7 @@ public class HadoopDataSourceCore implements DirectDataSource {
 
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Process deleting files (id={0}, path={1}, resource={2}, files={3})",
+                    "Process deleting files (id={0}, path={1}, resource={2}, files={3})", //$NON-NLS-1$
                     profile.getId(),
                     basePath,
                     resourcePattern,
@@ -394,7 +423,7 @@ public class HadoopDataSourceCore implements DirectDataSource {
         for (FileStatus stat : stats) {
             if (LOG.isTraceEnabled()) {
                 LOG.trace(MessageFormat.format(
-                        "Deleting file (id={0}, path={1}, recursive={2})",
+                        "Deleting file (id={0}, path={1}, recursive={2})", //$NON-NLS-1$
                         profile.getId(),
                         stat.getPath(),
                         recursive));
@@ -412,7 +441,7 @@ public class HadoopDataSourceCore implements DirectDataSource {
 
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Finish deleting files (id={0}, path={1}, resource={2}, files={3})",
+                    "Finish deleting files (id={0}, path={1}, resource={2}, files={3})", //$NON-NLS-1$
                     profile.getId(),
                     basePath,
                     resourcePattern,
@@ -453,7 +482,7 @@ public class HadoopDataSourceCore implements DirectDataSource {
             Path attempt = getLocalAttemptOutput(context);
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "Create local attempt area (id={0}, path={1})",
+                        "Create local attempt area (id={0}, path={1})", //$NON-NLS-1$
                         profile.getId(),
                         attempt));
             }
@@ -463,7 +492,7 @@ public class HadoopDataSourceCore implements DirectDataSource {
             Path attempt = getAttemptOutput(context);
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "Create attempt area (id={0}, path={1})",
+                        "Create attempt area (id={0}, path={1})", //$NON-NLS-1$
                         profile.getId(),
                         attempt));
             }
@@ -483,7 +512,7 @@ public class HadoopDataSourceCore implements DirectDataSource {
             Path attempt = getLocalAttemptOutput(context);
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "Commit local attempt area (id={0}, path={1}, staging={2})",
+                        "Commit local attempt area (id={0}, path={1}, staging={2})", //$NON-NLS-1$
                         profile.getId(),
                         attempt,
                         profile.isOutputStaging()));
@@ -494,7 +523,7 @@ public class HadoopDataSourceCore implements DirectDataSource {
             Path attempt = getAttemptOutput(context);
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "Commit attempt area (id={0}, path={1}, staging={2})",
+                        "Commit attempt area (id={0}, path={1}, staging={2})", //$NON-NLS-1$
                         profile.getId(),
                         attempt,
                         profile.isOutputStaging()));
@@ -509,7 +538,7 @@ public class HadoopDataSourceCore implements DirectDataSource {
             Path attempt = getLocalAttemptOutput(context);
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "Delete local attempt area (id={0}, path={1})",
+                        "Delete local attempt area (id={0}, path={1})", //$NON-NLS-1$
                         profile.getId(),
                         attempt));
             }
@@ -519,7 +548,7 @@ public class HadoopDataSourceCore implements DirectDataSource {
             Path attempt = getAttemptOutput(context);
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "Delete attempt area (id={0}, path={1})",
+                        "Delete attempt area (id={0}, path={1})", //$NON-NLS-1$
                         profile.getId(),
                         attempt));
             }
@@ -535,7 +564,7 @@ public class HadoopDataSourceCore implements DirectDataSource {
             Path staging = getStagingOutput(context);
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "Create staging area (id={0}, path={1})",
+                        "Create staging area (id={0}, path={1})", //$NON-NLS-1$
                         profile.getId(),
                         staging));
             }
@@ -551,7 +580,7 @@ public class HadoopDataSourceCore implements DirectDataSource {
             Path target = profile.getFileSystemPath();
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "Commit staging area (id={0}, path={1})",
+                        "Commit staging area (id={0}, path={1})", //$NON-NLS-1$
                         profile.getId(),
                         staging));
             }
@@ -565,7 +594,7 @@ public class HadoopDataSourceCore implements DirectDataSource {
         Path path = getTemporaryOutput(context);
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Delete temporary area (id={0}, path={1})",
+                    "Delete temporary area (id={0}, path={1})", //$NON-NLS-1$
                     profile.getId(),
                     path));
         }
@@ -580,14 +609,14 @@ public class HadoopDataSourceCore implements DirectDataSource {
             } else {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(MessageFormat.format(
-                            "Temporary area is not found (may be not used): {0}",
+                            "Temporary area is not found (may be not used): {0}", //$NON-NLS-1$
                             path));
                 }
             }
         } catch (FileNotFoundException e) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "Temporary area is not found (may be not used): {0}",
+                        "Temporary area is not found (may be not used): {0}", //$NON-NLS-1$
                         path));
             }
         }
@@ -596,7 +625,7 @@ public class HadoopDataSourceCore implements DirectDataSource {
     private Path getTemporaryOutput(OutputTransactionContext context) {
         assert context != null;
         Path tempRoot = profile.getTemporaryFileSystemPath();
-        String suffix = String.format("%s-%s",
+        String suffix = String.format("%s-%s", //$NON-NLS-1$
                 context.getTransactionId(),
                 context.getOutputId());
         return append(tempRoot, suffix);
@@ -612,7 +641,7 @@ public class HadoopDataSourceCore implements DirectDataSource {
     Path getAttemptOutput(OutputAttemptContext context) {
         assert context != null;
         Path tempPath = getTemporaryOutput(context.getTransactionContext());
-        String suffix = String.format("%s/%s",
+        String suffix = String.format("%s/%s", //$NON-NLS-1$
                 ATTEMPT_AREA,
                 context.getAttemptId());
         return append(tempPath, suffix);
@@ -621,7 +650,7 @@ public class HadoopDataSourceCore implements DirectDataSource {
     Path getLocalAttemptOutput(OutputAttemptContext context) throws IOException {
         assert context != null;
         Path tempPath = HadoopDataSourceUtil.getLocalTemporaryDirectory(profile.getLocalFileSystem());
-        String suffix = String.format("%s-%s-%s",
+        String suffix = String.format("%s-%s-%s", //$NON-NLS-1$
                 context.getTransactionId(),
                 context.getAttemptId(),
                 context.getOutputId());

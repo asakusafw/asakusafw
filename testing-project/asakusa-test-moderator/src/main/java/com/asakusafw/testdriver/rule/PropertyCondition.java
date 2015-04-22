@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -92,7 +92,8 @@ public class PropertyCondition<T> {
                 // this means "ERROR" in ternary, continue checking rest conditions
                 if (LOG.isTraceEnabled()) {
                     LOG.trace(MessageFormat.format(
-                            "Error occurred while evaluating predicate: predicate={0}, expected={1}, actual={2}",
+                            "Error occurred while evaluating predicate: " //$NON-NLS-1$
+                            + "predicate={0}, expected={1}, actual={2}", //$NON-NLS-1$
                             predicate,
                             e, a), ex);
                 }

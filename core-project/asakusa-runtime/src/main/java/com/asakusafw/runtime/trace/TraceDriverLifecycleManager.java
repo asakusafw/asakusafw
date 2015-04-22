@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,7 +65,7 @@ public class TraceDriverLifecycleManager implements RuntimeResource {
         if (factoryClass == null) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "The configuration key \"{0}\" is not set, we use \"{1}\"",
+                        "The configuration key \"{0}\" is not set, we use \"{1}\"", //$NON-NLS-1$
                         KEY_FACTORY_CLASS,
                         DEFAULT_FACTORY_CLASS));
             }
@@ -73,7 +73,7 @@ public class TraceDriverLifecycleManager implements RuntimeResource {
         } else {
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "Data-flow tracing support: {0}",
+                        "Data-flow tracing support: {0}", //$NON-NLS-1$
                         factoryClass));
             }
         }
@@ -97,7 +97,7 @@ public class TraceDriverLifecycleManager implements RuntimeResource {
             for (Map.Entry<TraceContext, TraceAction> entry : actions.entrySet()) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(MessageFormat.format(
-                            "Cleanup tracepoint: {0}",
+                            "Cleanup tracepoint: {0}", //$NON-NLS-1$
                             entry.getKey()));
                 }
                 try {

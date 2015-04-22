@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
@@ -123,23 +124,31 @@ public abstract class EmitterTestRoot {
             throw new AssertionError();
         }
         for (JavaFileObject java : files) {
-            try {
-                System.out.println("=== " + java.getName());
-                System.out.println(java.getCharContent(true));
-                System.out.println();
-                System.out.println();
-            } catch (IOException e) {
-                // ignored
-            }
             compiler.addSource(java);
         }
         compiler.addArguments("-Xlint");
         List<Diagnostic<? extends JavaFileObject>> diagnostics = compiler.doCompile();
-        for (Diagnostic<?> d : diagnostics) {
-            if (d.getKind() == Diagnostic.Kind.ERROR ||
-                    d.getKind() == Diagnostic.Kind.WARNING) {
-                throw new AssertionError(diagnostics);
+        boolean hasWrong = false;
+        for (Diagnostic<? extends JavaFileObject> d : diagnostics) {
+            if (d.getKind() == Diagnostic.Kind.ERROR || d.getKind() == Diagnostic.Kind.WARNING) {
+                JavaFileObject java = d.getSource();
+                if (java != null) {
+                    try {
+                        System.out.println("=== " + java.getName());
+                        System.out.println(java.getCharContent(true));
+                        System.out.println();
+                        System.out.println();
+                    } catch (IOException e) {
+                        // ignored
+                    }
+                }
+                System.out.println("--");
+                System.out.println(d.getMessage(Locale.getDefault()));
+                hasWrong = true;
             }
+        }
+        if (hasWrong) {
+            throw new AssertionError(diagnostics);
         }
         return compiler.getClassLoader();
     }

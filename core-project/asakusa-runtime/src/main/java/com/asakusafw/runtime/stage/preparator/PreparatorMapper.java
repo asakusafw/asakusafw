@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ public abstract class PreparatorMapper<T> extends MapperWithRuntimeResource<
     /**
      * The method name of {@link #getOutputName()}。
      */
-    public static final String NAME_GET_OUTPUT_NAME = "getOutputName";
+    public static final String NAME_GET_OUTPUT_NAME = "getOutputName"; //$NON-NLS-1$
 
     private StageOutputDriver output;
 

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,13 +46,13 @@ public enum TotalConditionKind {
     /**
      * Accepts iff only existing expected and actual data matched.
      */
-    INTERSECT("Intersect", "お互い存在するデータのみ検査", DataModelCondition.IGNORE_UNEXPECTED,
+    INTERSECT("Intersect", "お互い存在するデータのみ検査", DataModelCondition.IGNORE_UNEXPECTED, //$NON-NLS-1$
             DataModelCondition.IGNORE_ABSENT),
 
     /**
      * Accepts iff only existing expected and actual data matched.
      */
-    SKIP_ALL("-", "検査しない", DataModelCondition.IGNORE_UNEXPECTED,
+    SKIP_ALL("-", "検査しない", DataModelCondition.IGNORE_UNEXPECTED, //$NON-NLS-1$
             DataModelCondition.IGNORE_ABSENT,
             DataModelCondition.IGNORE_MATCHED),
 

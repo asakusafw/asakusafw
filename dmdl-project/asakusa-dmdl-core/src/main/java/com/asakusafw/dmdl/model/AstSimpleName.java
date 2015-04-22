@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -79,11 +79,9 @@ public class AstSimpleName extends AbstractAstNode implements AstName {
         start++;
         while (true) {
             int next = identifier.indexOf('_', start);
-            if (next == start) {
-                // empty word
-            } else if (next < 0) {
+            if (next < 0) {
                 break;
-            } else {
+            } else if (next > start) {
                 results.add(identifier.substring(start, next));
             }
             start = next + 1;

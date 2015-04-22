@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,6 +63,7 @@ public class CsvSupportTrait implements Trait<CsvSupportTrait> {
     /**
      * The CSV format configuration.
      * @since 0.2.4
+     * @version 0.7.3
      * @see CsvConfiguration
      */
     public static class Configuration {
@@ -70,6 +71,8 @@ public class CsvSupportTrait implements Trait<CsvSupportTrait> {
         private String charsetName = "UTF-8"; //$NON-NLS-1$
 
         private boolean enableHeader = false;
+
+        private boolean forceHeader = CsvConfiguration.DEFAULT_FORCE_CONSUME_HEADER;
 
         private String trueFormat = CsvConfiguration.DEFAULT_TRUE_FORMAT;
 
@@ -109,6 +112,24 @@ public class CsvSupportTrait implements Trait<CsvSupportTrait> {
          */
         public void setEnableHeader(boolean enableHeader) {
             this.enableHeader = enableHeader;
+        }
+
+        /**
+         * Returns whether the header is always required.
+         * @return {@code true} if header is always required, otherwise {@code false} (default: false)
+         * @since 0.7.3
+         */
+        public boolean isForceHeader() {
+            return forceHeader;
+        }
+
+        /**
+         * Sets whether the header is always required.
+         * @param forceHeader {@code true} to always require header, otherwise {@code false}
+         * @since 0.7.3
+         */
+        public void setForceHeader(boolean forceHeader) {
+            this.forceHeader = forceHeader;
         }
 
         /**

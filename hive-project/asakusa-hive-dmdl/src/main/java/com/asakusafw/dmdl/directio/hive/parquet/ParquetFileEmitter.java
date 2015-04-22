@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,8 +29,8 @@ import com.asakusafw.directio.hive.serde.DataModelDescriptor;
 import com.asakusafw.directio.hive.serde.DataModelMapping.ExceptionHandlingStrategy;
 import com.asakusafw.directio.hive.serde.DataModelMapping.FieldMappingStrategy;
 import com.asakusafw.dmdl.directio.hive.common.HiveDataModelEmitter;
-import com.asakusafw.dmdl.directio.hive.util.DirectFileInputDescriptionGenerator;
-import com.asakusafw.dmdl.directio.hive.util.DirectFileOutputDescriptionGenerator;
+import com.asakusafw.dmdl.directio.util.DirectFileInputDescriptionGenerator;
+import com.asakusafw.dmdl.directio.util.DirectFileOutputDescriptionGenerator;
 import com.asakusafw.dmdl.java.emitter.EmitContext;
 import com.asakusafw.dmdl.java.spi.JavaDataModelDriver;
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
@@ -118,7 +118,7 @@ public class ParquetFileEmitter extends JavaDataModelDriver {
                 CATEGORY,
                 PATTERN_INPUT_DESCRIPTION);
         DirectFileInputDescriptionGenerator.Description desc = new DirectFileInputDescriptionGenerator.Description(
-                "Parquet file output", context.getQualifiedTypeName()); //$NON-NLS-1$
+                "Parquet file input", context.getQualifiedTypeName()); //$NON-NLS-1$
         desc.setFormatClassName(formatClassName);
         DirectFileInputDescriptionGenerator.generate(next, desc);
     }
@@ -132,7 +132,7 @@ public class ParquetFileEmitter extends JavaDataModelDriver {
                 CATEGORY,
                 PATTERN_OUTPUT_DESCRIPTION);
         DirectFileOutputDescriptionGenerator.Description desc = new DirectFileOutputDescriptionGenerator.Description(
-                "Parquet file input", context.getQualifiedTypeName()); //$NON-NLS-1$
+                "Parquet file output", context.getQualifiedTypeName()); //$NON-NLS-1$
         desc.setFormatClassName(formatClassName);
         DirectFileOutputDescriptionGenerator.generate(next, desc);
     }
@@ -165,7 +165,6 @@ public class ParquetFileEmitter extends JavaDataModelDriver {
                         .toJavadoc(),
                     new AttributeBuilder(f)
                         .Public()
-                        .Final()
                         .toAttributes(),
                     context.getTypeName(),
                     Collections.<TypeParameterDeclaration>emptyList(),

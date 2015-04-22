@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,7 +62,7 @@ public class ShuffleValueEmitter {
 
     static final Logger LOG = LoggerFactory.getLogger(ShuffleValueEmitter.class);
 
-    private FlowCompilingEnvironment environment;
+    private final FlowCompilingEnvironment environment;
 
     /**
      * インスタンスを生成する。
@@ -83,28 +83,26 @@ public class ShuffleValueEmitter {
      */
     public Name emit(ShuffleModel model) throws IOException {
         Precondition.checkMustNotBeNull(model, "model"); //$NON-NLS-1$
-        LOG.debug("{}に対するシャッフル値を生成します", model.getStageBlock());
+        LOG.debug("start generating shuffle value class: {}", model.getStageBlock()); //$NON-NLS-1$
         Engine engine = new Engine(environment, model);
         CompilationUnit source = engine.generate();
         environment.emit(source);
         Name packageName = source.getPackageDeclaration().getName();
         SimpleName simpleName = source.getTypeDeclarations().get(0).getName();
         Name name = environment.getModelFactory().newQualifiedName(packageName, simpleName);
-        LOG.debug("{}のシャッフル値には{}が利用されます",
-                model.getStageBlock(),
-                name);
+        LOG.debug("finish generating shuffle value class: {} ({})", model.getStageBlock(), name); //$NON-NLS-1$
         return name;
     }
 
     private static class Engine {
 
-        private static final String SEGMENT_ID_FIELD_NAME = "segmentId";
+        private static final String SEGMENT_ID_FIELD_NAME = "segmentId"; //$NON-NLS-1$
 
-        private ShuffleModel model;
+        private final ShuffleModel model;
 
-        private ModelFactory factory;
+        private final ModelFactory factory;
 
-        private ImportBuilder importer;
+        private final ImportBuilder importer;
 
         public Engine(FlowCompilingEnvironment environment, ShuffleModel model) {
             assert environment != null;
@@ -138,7 +136,7 @@ public class ShuffleValueEmitter {
             return factory.newClassDeclaration(
                     createJavadoc(),
                     new AttributeBuilder(factory)
-                        .annotation(t(SuppressWarnings.class), v("deprecation"))
+                        .annotation(t(SuppressWarnings.class), v("deprecation")) //$NON-NLS-1$
                         .Public()
                         .Final()
                         .toAttributes(),
@@ -159,7 +157,7 @@ public class ShuffleValueEmitter {
         private FieldDeclaration createSegmentIdField() {
             return factory.newFieldDeclaration(
                     new JavadocBuilder(factory)
-                        .text("セグメント番号。")
+                        .text("the shuffle segment ID.") //$NON-NLS-1$
                         .toJavadoc(),
                     new AttributeBuilder(factory)
                         .Public()
@@ -194,7 +192,7 @@ public class ShuffleValueEmitter {
         }
 
         private String createPropertyName(Segment segment) {
-            return String.format("%s%04d", "port", segment.getPortId());
+            return String.format("%s%04d", "port", segment.getPortId()); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
         private FieldDeclaration createProperty(Segment segment) {
@@ -203,7 +201,7 @@ public class ShuffleValueEmitter {
             DataClass target = segment.getTarget();
             return factory.newFieldDeclaration(
                     new JavadocBuilder(factory)
-                        .text("{0}#{1}が利用するモデル ({2})。",
+                        .text("data model for {0}#{1} ({2}).", //$NON-NLS-1$
                                 segment.getPort().getOwner().getDescription().getName(),
                                 segment.getPort().getDescription().getName(),
                                 segment.getPortId())
@@ -246,7 +244,7 @@ public class ShuffleValueEmitter {
 
             return factory.newMethodDeclaration(
                     new JavadocBuilder(factory)
-                        .text("{0}#{1}のモデルオブジェクトを返す。",
+                        .text("Return a data model object for {0}#{1}.", //$NON-NLS-1$
                                 segment.getPort().getOwner().getDescription().getName(),
                                 segment.getPort().getDescription().getName())
                         .toJavadoc(),
@@ -264,7 +262,7 @@ public class ShuffleValueEmitter {
             String methodName = Naming.getShuffleValueSetter(segment.getPortId());
             DataClass type = segment.getTarget();
 
-            SimpleName argument = factory.newSimpleName("model");
+            SimpleName argument = factory.newSimpleName("model"); //$NON-NLS-1$
 
             List<Statement> statements = Lists.create();
             statements.add(new ExpressionBuilder(factory, factory.newThis())
@@ -279,11 +277,12 @@ public class ShuffleValueEmitter {
 
             return factory.newMethodDeclaration(
                     new JavadocBuilder(factory)
-                        .text("{0}#{1}で使用するモデルオブジェクトを設定する。",
+                        .text("Sets a data model object for " //$NON-NLS-1$
+                                + "the successing operator input <code>{0}#{1}</code>.", //$NON-NLS-1$
                                 segment.getPort().getOwner().getDescription().getName(),
                                 segment.getPort().getDescription().getName())
                         .param(argument)
-                            .text("設定するモデルオブジェクト")
+                            .text("the target data model object") //$NON-NLS-1$
                         .toJavadoc(),
                     new AttributeBuilder(factory)
                         .Public()
@@ -303,7 +302,7 @@ public class ShuffleValueEmitter {
         }
 
         private MethodDeclaration createWriteMethod() {
-            SimpleName out = factory.newSimpleName("out");
+            SimpleName out = factory.newSimpleName("out"); //$NON-NLS-1$
 
             Expression segmentId = new ExpressionBuilder(factory, factory.newThis())
                 .field(SEGMENT_ID_FIELD_NAME)
@@ -313,7 +312,7 @@ public class ShuffleValueEmitter {
             for (Segment segment : model.getSegments()) {
                 cases.add(factory.newSwitchCaseLabel(v(segment.getPortId())));
                 cases.add(new ExpressionBuilder(factory, out)
-                    .method("writeInt", v(segment.getPortId()))
+                    .method("writeInt", v(segment.getPortId())) //$NON-NLS-1$
                     .toStatement());
                 String fieldName = createPropertyName(segment);
                 cases.add(segment.getTarget().createWriter(
@@ -339,7 +338,7 @@ public class ShuffleValueEmitter {
                         .toAttributes(),
                     Collections.<TypeParameterDeclaration>emptyList(),
                     t(void.class),
-                    factory.newSimpleName("write"),
+                    factory.newSimpleName("write"), //$NON-NLS-1$
                     Collections.singletonList(factory.newFormalParameterDeclaration(
                             t(DataOutput.class),
                             out)),
@@ -349,7 +348,7 @@ public class ShuffleValueEmitter {
         }
 
         private MethodDeclaration createReadFieldsMethod() {
-            SimpleName in = factory.newSimpleName("in");
+            SimpleName in = factory.newSimpleName("in"); //$NON-NLS-1$
 
             Expression segmentId = new ExpressionBuilder(factory, factory.newThis())
                 .field(SEGMENT_ID_FIELD_NAME)
@@ -358,7 +357,7 @@ public class ShuffleValueEmitter {
             List<Statement> statements = Lists.create();
             statements.add(new ExpressionBuilder(factory, segmentId)
                 .assignFrom(new ExpressionBuilder(factory, in)
-                    .method("readInt")
+                    .method("readInt") //$NON-NLS-1$
                     .toExpression())
                 .toStatement());
 
@@ -388,7 +387,7 @@ public class ShuffleValueEmitter {
                         .toAttributes(),
                     Collections.<TypeParameterDeclaration>emptyList(),
                     t(void.class),
-                    factory.newSimpleName("readFields"),
+                    factory.newSimpleName("readFields"), //$NON-NLS-1$
                     Collections.singletonList(factory.newFormalParameterDeclaration(
                             t(DataInput.class),
                             in)),
@@ -399,7 +398,7 @@ public class ShuffleValueEmitter {
 
         private Javadoc createJavadoc() {
             return new JavadocBuilder(factory)
-                .text("ステージ#{0}シャッフルで利用する値クラス。",
+                .text("The shuffle value class for stage <code>{0}</code>.", //$NON-NLS-1$
                     model.getStageBlock().getStageNumber())
                 .toJavadoc();
         }

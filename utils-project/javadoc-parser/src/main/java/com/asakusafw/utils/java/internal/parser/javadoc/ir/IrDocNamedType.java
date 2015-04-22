@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package com.asakusafw.utils.java.internal.parser.javadoc.ir;
 /**
  * 名前付きの型。
  */
-public class IrDocNamedType extends AbstractIrDocElement implements IrDocFragment, IrDocType {
+public class IrDocNamedType extends AbstractIrDocElement implements IrDocType {
 
     private static final long serialVersionUID = 1L;
 

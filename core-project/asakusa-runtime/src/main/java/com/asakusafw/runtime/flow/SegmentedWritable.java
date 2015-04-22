@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ public interface SegmentedWritable extends Writable {
     /**
      * {@link #getSegmentId()}のメソッド名。
      */
-    String ID_GETTER = "getSegmentId";
+    String ID_GETTER = "getSegmentId"; //$NON-NLS-1$
 
     /**
      * このオブジェクトのセグメント番号を返す。

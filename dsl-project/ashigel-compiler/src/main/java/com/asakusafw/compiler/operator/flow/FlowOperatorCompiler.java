@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ public class FlowOperatorCompiler implements Processor {
     /**
      * このコンパイラのバージョン。
      */
-    public static final String VERSION = "0.1.0";
+    public static final String VERSION = "0.1.0"; //$NON-NLS-1$
 
     static final Logger LOG = LoggerFactory.getLogger(FlowOperatorCompiler.class);
 
@@ -108,7 +108,6 @@ public class FlowOperatorCompiler implements Processor {
             LOG.debug(e.getMessage(), e);
         } catch (RuntimeException e) {
             environment.getMessager().printMessage(Diagnostic.Kind.ERROR, toDetailString(e));
-            LOG.error("フロー演算子のコンパイルに失敗しました", e);
         }
         return false;
     }

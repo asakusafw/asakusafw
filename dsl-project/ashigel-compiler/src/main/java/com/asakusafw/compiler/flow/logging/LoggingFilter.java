@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,10 +46,10 @@ public class LoggingFilter extends FlowCompilingEnvironment.Initialized implemen
     @Override
     public boolean rewrite(FlowGraph graph) throws RewriteException {
         if (getEnvironment().getOptions().isEnableDebugLogging()) {
-            LOG.debug("デバッグ用のロギング演算子は有効です");
+            LOG.debug("debug logging is enabled"); //$NON-NLS-1$
             return false;
         }
-        LOG.debug("デバッグ用のロギング演算子を削除しています");
+        LOG.debug("removing debug logging operators"); //$NON-NLS-1$
         return rewriteGraph(graph);
     }
 
@@ -60,7 +60,7 @@ public class LoggingFilter extends FlowCompilingEnvironment.Initialized implemen
                 FlowPartDescription desc = (FlowPartDescription) element.getDescription();
                 rewriteGraph(desc.getFlowGraph());
             } else if (isDebugLogging(element)) {
-                LOG.debug("デバッグ用のロギング演算子を削除します: {}", element);
+                LOG.debug("removing debug logging operator: {}", element); //$NON-NLS-1$
                 FlowGraphUtil.skip(element);
             }
         }

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package com.asakusafw.vocabulary.directio;
 
+import com.asakusafw.runtime.directio.DataFilter;
 import com.asakusafw.runtime.directio.DataFormat;
 import com.asakusafw.runtime.directio.FilePattern;
 import com.asakusafw.vocabulary.external.ImporterDescription;
@@ -29,7 +30,7 @@ import com.asakusafw.vocabulary.external.ImporterDescription;
  * <li> not declared any explicit constructors </li>
  * </ul>
  * @since 0.2.5
- * @version 0.6.1
+ * @version 0.7.3
  */
 public abstract class DirectFileInputDescription implements ImporterDescription {
 
@@ -77,8 +78,8 @@ public abstract class DirectFileInputDescription implements ImporterDescription 
      *   </ul>
      * </li>
      * </ul>
-     * Examples:
-     * <table border="1">
+     *
+     * <table border="1"><caption>Examples of Resource Pattern</caption>
      * <tr>
      *   <th> Expression </th>
      *   <th> Description </th>
@@ -115,9 +116,18 @@ public abstract class DirectFileInputDescription implements ImporterDescription 
 
     /**
      * Returns an implementation of {@link DataFormat} class.
-     * @return the class of {@link DataFormat}
+     * @return {@link DataFormat} implementation
      */
     public abstract Class<? extends DataFormat<?>> getFormat();
+
+    /**
+     * Returns an implementation of {@link DataFilter} class.
+     * @return {@link DataFilter} implementation, or {@code null} if filter is not required
+     * @since 0.7.3
+     */
+    public Class<? extends DataFilter<?>> getFilter() {
+        return null;
+    }
 
     /**
      * Returns whether the target input is optional or not.

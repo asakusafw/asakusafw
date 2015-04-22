@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,26 +54,27 @@ public final class Main {
 
     private static final Options OPTIONS;
     static {
-        OPT_OUTPUT = new Option("output", true, "output directory location");
-        OPT_OUTPUT.setArgName("/path/to/output");
+        OPT_OUTPUT = new Option("output", true, "output directory location"); //$NON-NLS-1$
+        OPT_OUTPUT.setArgName("/path/to/output"); //$NON-NLS-1$
         OPT_OUTPUT.setRequired(true);
 
-        OPT_SOURCE_PATH = new Option("source", true, "source file or source directory paths");
-        OPT_SOURCE_PATH.setArgName("source-file.dmdl" + File.pathSeparatorChar + "/path/to/source");
+        OPT_SOURCE_PATH = new Option("source", true, "source file or source directory paths"); //$NON-NLS-1$
+        OPT_SOURCE_PATH.setArgName(
+                "source-file.dmdl" + File.pathSeparatorChar + "/path/to/source"); //$NON-NLS-1$ //$NON-NLS-2$
         OPT_SOURCE_PATH.setRequired(true);
 
-        OPT_FORMAT = new Option("format", true, "output format");
+        OPT_FORMAT = new Option("format", true, "output format"); //$NON-NLS-1$
         OPT_FORMAT.setArgName(MessageFormat.format(
-                "one-of-{0}",
+                "one-of-{0}", //$NON-NLS-1$
                 Arrays.toString(WorkbookFormat.values())));
         OPT_FORMAT.setRequired(true);
 
-        OPT_ENCODING = new Option("encoding", true, "input DMDL charset encoding");
-        OPT_ENCODING.setArgName("source-encoding");
+        OPT_ENCODING = new Option("encoding", true, "input DMDL charset encoding"); //$NON-NLS-1$
+        OPT_ENCODING.setArgName("source-encoding"); //$NON-NLS-1$
         OPT_ENCODING.setRequired(false);
 
-        OPT_PLUGIN = new Option("plugin", true, "DMDL processor plug-ins");
-        OPT_PLUGIN.setArgName("plugin-1.jar" + File.pathSeparatorChar + "plugin-2.jar");
+        OPT_PLUGIN = new Option("plugin", true, "DMDL processor plug-ins"); //$NON-NLS-1$
+        OPT_PLUGIN.setArgName("plugin-1.jar" + File.pathSeparatorChar + "plugin-2.jar"); //$NON-NLS-1$ //$NON-NLS-2$
         OPT_PLUGIN.setValueSeparator(File.pathSeparatorChar);
         OPT_PLUGIN.setRequired(false);
 
@@ -112,7 +113,7 @@ public final class Main {
             formatter.setWidth(Integer.MAX_VALUE);
             formatter.printHelp(
                     MessageFormat.format(
-                            "java -classpath ... {0}",
+                            "java -classpath ... {0}", //$NON-NLS-1$
                             Main.class.getName()),
                     OPTIONS,
                     true);

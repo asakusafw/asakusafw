@@ -29,17 +29,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.asakusafw</groupId>
-			<artifactId>asakusa-windgate-core</artifactId>
-			<version>${asakusafw.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.asakusafw</groupId>
-			<artifactId>asakusa-dmdl-core</artifactId>
-			<version>${asakusafw.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.asakusafw</groupId>
-			<artifactId>asakusa-dmdl-java</artifactId>
+			<artifactId>asakusa-windgate-dmdl</artifactId>
 			<version>${asakusafw.version}</version>
 		</dependency>
 		<dependency>
@@ -52,9 +42,15 @@
 			<artifactId>slf4j-api</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
-			<optional>true</optional>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-simple</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.asakusafw</groupId>
+			<artifactId>asakusa-windgate-vocabulary</artifactId>
+			<version>${asakusafw.version}</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.asakusafw</groupId>

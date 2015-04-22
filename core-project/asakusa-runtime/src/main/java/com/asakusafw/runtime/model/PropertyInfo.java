@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -82,7 +82,7 @@ public final class PropertyInfo {
     @Override
     public String toString() {
         return MessageFormat.format(
-                "{0}@{2}:{1}",
+                "{0}@{2}:{1}", //$NON-NLS-1$
                 name,
                 type,
                 String.valueOf(ordinal));

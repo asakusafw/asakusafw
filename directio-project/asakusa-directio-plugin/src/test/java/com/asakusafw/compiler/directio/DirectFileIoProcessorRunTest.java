@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
@@ -44,6 +45,7 @@ import org.junit.runners.Parameterized.Parameters;
 import com.asakusafw.compiler.directio.testing.model.Line1;
 import com.asakusafw.compiler.directio.testing.model.Line2;
 import com.asakusafw.compiler.util.tester.CompilerTester;
+import com.asakusafw.runtime.directio.DataFilter;
 import com.asakusafw.runtime.directio.DataFormat;
 import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.vocabulary.directio.DirectFileInputDescription;
@@ -408,6 +410,94 @@ public class DirectFileIoProcessorRunTest {
     }
 
     /**
+     * filter by path.
+     * @throws Exception if failed
+     */
+    @Test
+    public void input_filter_path() throws Exception {
+        put("input/input-1.txt", "1Hello");
+        put("input/input-2.txt", "2Hello");
+        put("input/input-3.txt", "3Hello");
+        put("input/other.txt", "4Hello");
+        In<Line1> in = tester.input("in1", new Input(format, "input", "input-*").withFilter(MockFilterPath.class));
+        Out<Line1> out = tester.output("out1", new Output(format, "output", "output.txt"));
+        tester.variables().defineVariable("filter", ".*input-2\\.txt");
+        assertThat(tester.runFlow(new IdentityFlow<Line1>(in, out)), is(true));
+
+        List<String> list = get("output/output.txt");
+        assertThat(list.size(), is(2));
+        assertThat(list, hasItem("1Hello"));
+        assertThat(list, hasItem("3Hello"));
+    }
+
+    /**
+     * filter by object.
+     * @throws Exception if failed
+     */
+    @Test
+    public void input_filter_object() throws Exception {
+        put("input/input-1.txt", "1Hello");
+        put("input/input-2.txt", "2Hello");
+        put("input/input-3.txt", "3Hello");
+        put("input/other.txt", "4Hello");
+        In<Line1> in = tester.input("in1", new Input(format, "input", "input-*").withFilter(MockFilterObject.class));
+        Out<Line1> out = tester.output("out1", new Output(format, "output", "output.txt"));
+        tester.variables().defineVariable("filter", "3Hello");
+        assertThat(tester.runFlow(new IdentityFlow<Line1>(in, out)), is(true));
+
+        List<String> list = get("output/output.txt");
+        assertThat(list.size(), is(2));
+        assertThat(list, hasItem("1Hello"));
+        assertThat(list, hasItem("2Hello"));
+    }
+
+    /**
+     * filter by path.
+     * @throws Exception if failed
+     */
+    @Test
+    public void input_filter_path_disabled() throws Exception {
+        put("input/input-1.txt", "1Hello");
+        put("input/input-2.txt", "2Hello");
+        put("input/input-3.txt", "3Hello");
+        put("input/other.txt", "4Hello");
+        In<Line1> in = tester.input("in1", new Input(format, "input", "input-*").withFilter(MockFilterPath.class));
+        Out<Line1> out = tester.output("out1", new Output(format, "output", "output.txt"));
+        tester.variables().defineVariable("filter", ".*input-2\\.txt");
+        tester.options().putExtraAttribute(DirectFileIoProcessor.OPTION_FILTER_ENABLED, "false");
+        assertThat(tester.runFlow(new IdentityFlow<Line1>(in, out)), is(true));
+
+        List<String> list = get("output/output.txt");
+        assertThat(list.size(), is(3));
+        assertThat(list, hasItem("1Hello"));
+        assertThat(list, hasItem("2Hello"));
+        assertThat(list, hasItem("3Hello"));
+    }
+
+    /**
+     * filter by object.
+     * @throws Exception if failed
+     */
+    @Test
+    public void input_filter_object_disabled() throws Exception {
+        put("input/input-1.txt", "1Hello");
+        put("input/input-2.txt", "2Hello");
+        put("input/input-3.txt", "3Hello");
+        put("input/other.txt", "4Hello");
+        In<Line1> in = tester.input("in1", new Input(format, "input", "input-*").withFilter(MockFilterObject.class));
+        Out<Line1> out = tester.output("out1", new Output(format, "output", "output.txt"));
+        tester.variables().defineVariable("filter", "3Hello");
+        tester.options().putExtraAttribute(DirectFileIoProcessor.OPTION_FILTER_ENABLED, "false");
+        assertThat(tester.runFlow(new IdentityFlow<Line1>(in, out)), is(true));
+
+        List<String> list = get("output/output.txt");
+        assertThat(list.size(), is(3));
+        assertThat(list, hasItem("1Hello"));
+        assertThat(list, hasItem("2Hello"));
+        assertThat(list, hasItem("3Hello"));
+    }
+
+    /**
      * dual in/out.
      * @throws Exception if failed
      */
@@ -586,6 +676,7 @@ public class DirectFileIoProcessorRunTest {
         private final String resourcePattern;
         private final Boolean optional;
         private final DataSize dataSize;
+        private Class<? extends DataFilter<?>> filter;
 
         Input(
                 Class<?> modelType,
@@ -661,6 +752,16 @@ public class DirectFileIoProcessorRunTest {
             }
             return super.getDataSize();
         }
+
+        @Override
+        public Class<? extends DataFilter<?>> getFilter() {
+            return filter;
+        }
+
+        public Input withFilter(Class<? extends DataFilter<?>> newValue) {
+            this.filter = newValue;
+            return this;
+        }
     }
 
     private static class Output extends DirectFileOutputDescription {
@@ -730,6 +831,42 @@ public class DirectFileIoProcessorRunTest {
         @Override
         public List<String> getDeletePatterns() {
             return deletes;
+        }
+    }
+
+    /**
+     * filters by path.
+     */
+    public static class MockFilterPath extends DataFilter<Object> {
+
+        private Pattern pattern;
+
+        @Override
+        public void initialize(DataFilter.Context context) {
+            pattern = Pattern.compile(context.getBatchArguments().get("filter"));
+        }
+
+        @Override
+        public boolean acceptsPath(String path) {
+            return pattern.matcher(path).matches() == false;
+        }
+    }
+
+    /**
+     * filters by object.
+     */
+    public static class MockFilterObject extends DataFilter<Line1> {
+
+        private Pattern pattern;
+
+        @Override
+        public void initialize(DataFilter.Context context) {
+            pattern = Pattern.compile(context.getBatchArguments().get("filter"));
+        }
+
+        @Override
+        public boolean acceptsData(Line1 data) {
+            return pattern.matcher(data.getValueAsString()).matches() == false;
         }
     }
 }

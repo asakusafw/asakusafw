@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,14 +19,19 @@ import com.asakusafw.vocabulary.flow.Source;
 import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory.Checkpoint;
 import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory.Confluent;
 import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory.Empty;
+import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory.EmptyFragment;
 import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory.Extend;
+import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory.ExtendFragment;
 import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory.Project;
+import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory.ProjectFragment;
 import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory.Restructure;
+import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory.RestructureFragment;
 
 /**
  * 標準的な演算子オブジェクトを生成するファクトリ。
  * {@link CoreOperatorFactory}のメソッドの一部を{@code static}メソッドとして提供する。
  * @since 0.2.6
+ * @version 0.7.3
  */
 public final class CoreOperators {
 
@@ -46,6 +51,19 @@ public final class CoreOperators {
      */
     public static <T> Empty<T> empty(Class<T> type) {
         return FACTORY.empty(type);
+    }
+
+    /**
+     * 空演算子の断片を生成する。
+     * <p>
+     * この演算子の断片は、対象の演算子が取り扱うデータの型を指定することで、演算子として利用できるようになる。
+     * </p>
+     * @return 空(から)演算子の断片
+     * @since 0.7.3
+     * @see CoreOperatorFactory#empty()
+     */
+    public static EmptyFragment empty() {
+        return FACTORY.empty();
     }
 
     /**
@@ -152,6 +170,21 @@ public final class CoreOperators {
     }
 
     /**
+     * 射影演算子の断片を返す。
+     * <p>
+     * この演算子の断片は、射影演算子の変換後の型を指定することで、演算子として利用できるようになる。
+     * </p>
+     * @param in 射影対象の入力
+     * @return 射影演算子の断片
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.7.3
+     * @see CoreOperatorFactory#project(Source)
+     */
+    public static ProjectFragment project(Source<?> in) {
+        return FACTORY.project(in);
+    }
+
+    /**
      * 入力されたデータを指定のデータ型に拡張する。
      * <p>
      * 変換後のデータ型は入力するデータ型の全てのプロパティを有していなければならない。
@@ -174,6 +207,21 @@ public final class CoreOperators {
     }
 
     /**
+     * 拡張演算子の断片を返す。
+     * <p>
+     * この演算子の断片は、拡張演算子の変換後の型を指定することで、演算子として利用できるようになる。
+     * </p>
+     * @param in 拡張対象の入力
+     * @return 拡張演算子の断片
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.7.3
+     * @see CoreOperatorFactory#extend(Source)
+     */
+    public static ExtendFragment extend(Source<?> in) {
+        return FACTORY.extend(in);
+    }
+
+    /**
      * 入力されたデータを指定のデータ型に再構築する。
      * <p>
      * この演算子の処理結果は、入力されたデータ型に含まれるプロパティのうち、
@@ -193,5 +241,20 @@ public final class CoreOperators {
      */
     public static <T> Restructure<T> restructure(Source<?> in, Class<T> targetType) {
         return FACTORY.restructure(in, targetType);
+    }
+
+    /**
+     * 再構築演算子の断片を返す。
+     * <p>
+     * この演算子の断片は、再構築演算子の変換後の型を指定することで、演算子として利用できるようになる。
+     * </p>
+     * @param in 再構築対象の入力
+     * @return 再構築演算子の断片
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.7.3
+     * @see CoreOperatorFactory#restructure(Source)
+     */
+    public static RestructureFragment restructure(Source<?> in) {
+        return FACTORY.restructure(in);
     }
 }

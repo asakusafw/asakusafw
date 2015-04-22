@@ -34,13 +34,15 @@
 		<plugin.antrun.version>1.7</plugin.antrun.version>
 		<plugin.properties.version>1.0-alpha-2</plugin.properties.version>
 		<plugin.assembly.version>2.4</plugin.assembly.version>
+		<plugin.jar.version>2.4</plugin.jar.version>
 		<plugin.shade.version>2.3</plugin.shade.version>
+		<plugin.javadoc.version>2.10.1</plugin.javadoc.version>
 
 		<!-- artifact id/versions -->
 		<hadoop.artifact.id>hadoop-client</hadoop.artifact.id>
 		<hadoop.version>1.2.1</hadoop.version>
-		<hive.version>0.14.0</hive.version>
-		<snappy.version>1.1.1.3</snappy.version>
+		<hive.version>1.1.0</hive.version>
+		<snappy.version>1.1.1.6</snappy.version>
 		<mysql.jdbc.version>5.1.25</mysql.jdbc.version>
 		<commons.cli.version>1.2</commons.cli.version>
 		<commons.configuration.version>1.8</commons.configuration.version>
@@ -263,8 +265,7 @@
 						<systemProperties>
 							<property>
 								<name>net.sourceforge.cobertura.datafile</name>
-								<value>
-									${basedir}/target/cobertura/cobertura.ser</value>
+								<value>${basedir}/target/cobertura/cobertura.ser</value>
 							</property>
 						</systemProperties>
 					</configuration>
@@ -285,7 +286,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-jar-plugin</artifactId>
-					<version>2.5</version>
+					<version>${plugin.jar.version}</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -410,7 +411,7 @@ encoding/<project>=UTF-8
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.9.1</version>
+				<version>${plugin.javadoc.version}</version>
 				<configuration>
 					<encoding>UTF-8</encoding>
 					<charset>UTF-8</charset>
@@ -435,7 +436,7 @@ encoding/<project>=UTF-8
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
-				<version>2.12.1</version>
+				<version>2.15</version>
 				<configuration>
 					<configLocation>com/asakusafw/checkstyle.xml</configLocation>
 				</configuration>
@@ -526,6 +527,10 @@ encoding/<project>=UTF-8
 						<groupId>org.apache.calcite</groupId>
 						<artifactId>calcite-avatica</artifactId>
 					</exclusion>
+					<exclusion>
+						<groupId>org.apache.curator</groupId>
+						<artifactId>apache-curator</artifactId>
+					</exclusion>
 				</exclusions>
 			</dependency>
 			<dependency>
@@ -555,7 +560,22 @@ encoding/<project>=UTF-8
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-simple</artifactId>
+				<version>${slf4j.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
 				<artifactId>jul-to-slf4j</artifactId>
+				<version>${slf4j.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>jcl-over-slf4j</artifactId>
+				<version>${slf4j.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>log4j-over-slf4j</artifactId>
 				<version>${slf4j.version}</version>
 			</dependency>
 			<dependency>

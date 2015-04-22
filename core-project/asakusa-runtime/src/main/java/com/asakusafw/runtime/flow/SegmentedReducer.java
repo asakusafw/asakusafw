@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ public abstract class SegmentedReducer<
     /**
      * {@link #getRendezvous(SegmentedWritable)}のメソッド名。
      */
-    public static final String GET_RENDEZVOUS = "getRendezvous";
+    public static final String GET_RENDEZVOUS = "getRendezvous"; //$NON-NLS-1$
 
     /**
      * キーのグループが変更された際、または最初のキーに対して呼び出され、

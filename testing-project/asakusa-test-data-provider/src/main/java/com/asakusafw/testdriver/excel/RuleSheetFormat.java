@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,7 +73,7 @@ public enum RuleSheetFormat {
      * Format ID which this extractor supports.
      * This must be set on the right cell of {@link RuleSheetFormat#FORMAT}.
      */
-    public static final String FORMAT_VERSION = "EVR-2.0.0";
+    public static final String FORMAT_VERSION = "EVR-2.0.0"; //$NON-NLS-1$
 
     private final String title;
 

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ public final class Naming {
      * @return ステージごとのクライアントのクラス名
      */
     public static String getClientClass() {
-        return "StageClient";
+        return "StageClient"; //$NON-NLS-1$
     }
 
     /**
@@ -38,7 +38,7 @@ public final class Naming {
      * @return マッパークラスの単純名
      */
     public static String getMapClass(int inputId) {
-        return String.format("%s%d", "StageMapper", inputId);
+        return String.format("%s%d", "StageMapper", inputId); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /**
@@ -46,7 +46,7 @@ public final class Naming {
      * @return レデューサークラスの単純名
      */
     public static String getReduceClass() {
-        return "StageReducer";
+        return "StageReducer"; //$NON-NLS-1$
     }
 
     /**
@@ -54,7 +54,7 @@ public final class Naming {
      * @return コンバイナークラスの単純名
      */
     public static String getCombineClass() {
-        return "StageCombiner";
+        return "StageCombiner"; //$NON-NLS-1$
     }
 
     /**
@@ -63,7 +63,7 @@ public final class Naming {
      * @return 断片プログラムクラスの単純名
      */
     public static String getMapFragmentClass(int serialNumber) {
-        return String.format("%s%d", "MapFragment", serialNumber);
+        return String.format("%s%d", "MapFragment", serialNumber); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /**
@@ -72,7 +72,7 @@ public final class Naming {
      * @return 断片プログラムクラスの単純名
      */
     public static String getReduceFragmentClass(int serialNumber) {
-        return String.format("%s%d", "ReduceFragment", serialNumber);
+        return String.format("%s%d", "ReduceFragment", serialNumber); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /**
@@ -81,7 +81,7 @@ public final class Naming {
      * @return 断片プログラムクラスの単純名
      */
     public static String getMapOutputFragmentClass(int serialNumber) {
-        return String.format("%s%d", "MapOutputFragment", serialNumber);
+        return String.format("%s%d", "MapOutputFragment", serialNumber); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /**
@@ -90,7 +90,7 @@ public final class Naming {
      * @return 断片プログラムクラスの単純名
      */
     public static String getCombineOutputFragmentClass(int serialNumber) {
-        return String.format("%s%d", "CombineOutputFragment", serialNumber);
+        return String.format("%s%d", "CombineOutputFragment", serialNumber); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /**
@@ -99,7 +99,7 @@ public final class Naming {
      * @return 断片プログラムクラスの単純名
      */
     public static String getCombineFragmentClass(int serialNumber) {
-        return String.format("%s%d", "CombineFragment", serialNumber);
+        return String.format("%s%d", "CombineFragment", serialNumber); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /**
@@ -110,7 +110,7 @@ public final class Naming {
      * @return クラス単純名
      */
     public static String getShuffleKeyClass() {
-        return "ShuffleKey";
+        return "ShuffleKey"; //$NON-NLS-1$
     }
 
     /**
@@ -121,7 +121,7 @@ public final class Naming {
      * @return クラス単純名
      */
     public static String getShuffleValueClass() {
-        return "ShuffleValue";
+        return "ShuffleValue"; //$NON-NLS-1$
     }
 
     /**
@@ -132,7 +132,7 @@ public final class Naming {
      * @return クラス単純名
      */
     public static String getShufflePartitionerClass() {
-        return "ShufflePartitioner";
+        return "ShufflePartitioner"; //$NON-NLS-1$
     }
 
     /**
@@ -143,7 +143,7 @@ public final class Naming {
      * @return クラス単純名
      */
     public static String getShuffleGroupingComparatorClass() {
-        return "ShuffleGroupingComparator";
+        return "ShuffleGroupingComparator"; //$NON-NLS-1$
     }
 
     /**
@@ -154,7 +154,7 @@ public final class Naming {
      * @return クラス単純名
      */
     public static String getShuffleSortComparatorClass() {
-        return "ShuffleSortComparator";
+        return "ShuffleSortComparator"; //$NON-NLS-1$
     }
 
     /**
@@ -162,7 +162,7 @@ public final class Naming {
      * @return メソッド名
      */
     public static String getShuffleKeyGroupCopier() {
-        return "copyGroupFrom";
+        return "copyGroupFrom"; //$NON-NLS-1$
     }
 
     /**
@@ -172,7 +172,7 @@ public final class Naming {
      * @return プロパティ名
      */
     public static String getShuffleKeyGroupProperty(int elementId, int termId) {
-        return String.format("groupElem%dTerm%d", elementId, termId);
+        return String.format("groupElem%dTerm%d", elementId, termId); //$NON-NLS-1$
     }
 
     /**
@@ -182,7 +182,7 @@ public final class Naming {
      * @return プロパティ名
      */
     public static String getShuffleKeySortProperty(int portId, int termId) {
-        return String.format("sortPort%dTerm%d", portId, termId);
+        return String.format("sortPort%dTerm%d", portId, termId); //$NON-NLS-1$
     }
 
     /**
@@ -191,7 +191,7 @@ public final class Naming {
      * @return プロパティ名
      */
     public static String getShuffleKeySetter(int portId) {
-        return String.format("setPort%d", portId);
+        return String.format("setPort%d", portId); //$NON-NLS-1$
     }
 
     /**
@@ -200,7 +200,7 @@ public final class Naming {
      * @return プロパティ名
      */
     public static String getShuffleValueGetter(int portId) {
-        return String.format("getPort%d", portId);
+        return String.format("getPort%d", portId); //$NON-NLS-1$
     }
 
     /**
@@ -209,7 +209,7 @@ public final class Naming {
      * @return プロパティ名
      */
     public static String getShuffleValueSetter(int portId) {
-        return String.format("setPort%d", portId);
+        return String.format("setPort%d", portId); //$NON-NLS-1$
     }
 
     /**
@@ -218,7 +218,7 @@ public final class Naming {
      * @return 名前
      */
     public static String getStageName(int stageNumber) {
-        return String.format("stage%04d", stageNumber);
+        return String.format("stage%04d", stageNumber); //$NON-NLS-1$
     }
 
     /**
@@ -227,7 +227,7 @@ public final class Naming {
      * @since 0.2.6
      */
     public static String getCleanupStageName() {
-        return "cleanup";
+        return "cleanup"; //$NON-NLS-1$
     }
 
     /**
@@ -238,7 +238,7 @@ public final class Naming {
      */
     public static String getPrologueName(String moduleId) {
         Precondition.checkMustNotBeNull(moduleId, "moduleId"); //$NON-NLS-1$
-        return MessageFormat.format("prologue.{0}", moduleId);
+        return MessageFormat.format("prologue.{0}", moduleId); //$NON-NLS-1$
     }
 
     /**
@@ -250,7 +250,7 @@ public final class Naming {
      */
     public static String getPrologueName(String moduleId, String stageId) {
         Precondition.checkMustNotBeNull(moduleId, "moduleId"); //$NON-NLS-1$
-        return MessageFormat.format("prologue.{0}.{1}", moduleId, stageId);
+        return MessageFormat.format("prologue.{0}.{1}", moduleId, stageId); //$NON-NLS-1$
     }
 
     /**
@@ -261,7 +261,7 @@ public final class Naming {
      */
     public static String getEpilogueName(String moduleId) {
         Precondition.checkMustNotBeNull(moduleId, "moduleId"); //$NON-NLS-1$
-        return MessageFormat.format("epilogue.{0}", moduleId);
+        return MessageFormat.format("epilogue.{0}", moduleId); //$NON-NLS-1$
     }
 
     /**
@@ -273,7 +273,7 @@ public final class Naming {
      */
     public static String getEpilogueName(String moduleId, String stageId) {
         Precondition.checkMustNotBeNull(moduleId, "moduleId"); //$NON-NLS-1$
-        return MessageFormat.format("epilogue.{0}.{1}", moduleId, stageId);
+        return MessageFormat.format("epilogue.{0}.{1}", moduleId, stageId); //$NON-NLS-1$
     }
 
     /**
@@ -284,7 +284,7 @@ public final class Naming {
      */
     public static String getJobflowClassPackageName(String flowId) {
         Precondition.checkMustNotBeNull(flowId, "flowId"); //$NON-NLS-1$
-        return String.format("jobflow-%s%s", flowId, ".jar");
+        return String.format("jobflow-%s%s", flowId, ".jar"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /**
@@ -295,7 +295,7 @@ public final class Naming {
      */
     public static String getJobflowSourceBundleName(String flowId) {
         Precondition.checkMustNotBeNull(flowId, "flowId"); //$NON-NLS-1$
-        return String.format("jobflow-%s-sources%s", flowId, ".jar");
+        return String.format("jobflow-%s-sources%s", flowId, ".jar"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /**

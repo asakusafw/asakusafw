@@ -1,10 +1,12 @@
 ==============
 運用環境の整備
 ==============
+
 Asakusa FrameworkとバッチアプリケーションをHadoopクラスタなどの各種サーバにデプロイし、実行するための手順などについて説明します。
 
 運用環境のデプロイ
 ==================
+
 * :doc:`deployment-guide`
 * :doc:`deployment-architecture`
 * :doc:`configure-hadoop-parameters`
@@ -28,12 +30,12 @@ Asakusa Frameworkが提供する運用ツールに関するドキュメントで
 クラウドプラットフォーム
 ------------------------
 
-* :doc:`../sandbox/asakusa-on-emr` (Asakusa Framework Sandbox Document)
+* :doc:`../sandbox/asakusa-on-emr` (Sandbox Document)
 
 Hadoopエコシステム連携
 ----------------------
 
-* :doc:`../sandbox/asakusa-with-hive` (Asakusa Framework Sandbox Document)
+* :doc:`../sandbox/asakusa-with-hive` (Sandbox Document)
 
 その他
 ======

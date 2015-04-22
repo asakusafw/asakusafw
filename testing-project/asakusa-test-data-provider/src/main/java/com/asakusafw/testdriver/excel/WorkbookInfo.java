@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -78,14 +78,14 @@ class WorkbookInfo {
 
         dateDataStyle = workbook.createCellStyle();
         dateDataStyle.cloneStyleFrom(commonStyle);
-        dateDataStyle.setDataFormat(df.getFormat("yyyy-mm-dd"));
+        dateDataStyle.setDataFormat(df.getFormat("yyyy-mm-dd")); //$NON-NLS-1$
 
         timeDataStyle = workbook.createCellStyle();
         timeDataStyle.cloneStyleFrom(commonStyle);
-        timeDataStyle.setDataFormat(df.getFormat("hh:mm:ss"));
+        timeDataStyle.setDataFormat(df.getFormat("hh:mm:ss")); //$NON-NLS-1$
 
         datetimeDataStyle = workbook.createCellStyle();
         datetimeDataStyle.cloneStyleFrom(commonStyle);
-        datetimeDataStyle.setDataFormat(df.getFormat("yyyy-mm-dd hh:mm:ss"));
+        datetimeDataStyle.setDataFormat(df.getFormat("yyyy-mm-dd hh:mm:ss")); //$NON-NLS-1$
     }
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,12 +44,12 @@ public class DependencyLibrariesProcessor extends AbstractWorkflowProcessor {
     /**
      * The library directory path in the target project.
      */
-    public static final String LIBRARY_DIRECTORY_PATH = "src/main/libs";
+    public static final String LIBRARY_DIRECTORY_PATH = "src/main/libs"; //$NON-NLS-1$
 
     /**
      * The output directory path in the final artifact.
      */
-    public static final String OUTPUT_DIRECTORY_PATH = "usr/lib";
+    public static final String OUTPUT_DIRECTORY_PATH = "usr/lib"; //$NON-NLS-1$
 
     @Override
     public Collection<Class<? extends WorkDescriptionProcessor<?>>> getDescriptionProcessors() {
@@ -61,10 +61,10 @@ public class DependencyLibrariesProcessor extends AbstractWorkflowProcessor {
     @Override
     public void process(Workflow workflow) throws IOException {
         File libraryDirectory = getLibraryDirectory();
-        LOG.debug("Inspecting library directory: {}", libraryDirectory);
+        LOG.debug("Inspecting library directory: {}", libraryDirectory); //$NON-NLS-1$
 
         if (libraryDirectory.isDirectory() == false) {
-            LOG.debug("Library directory is not found: {}", libraryDirectory);
+            LOG.debug("Library directory is not found: {}", libraryDirectory); //$NON-NLS-1$
             return;
         }
 
@@ -77,7 +77,7 @@ public class DependencyLibrariesProcessor extends AbstractWorkflowProcessor {
                     outputDirectory.getAbsolutePath()));
         }
 
-        LOG.debug("Copying library files: {}", libraryDirectory);
+        LOG.debug("Copying library files: {}", libraryDirectory); //$NON-NLS-1$
         for (File file : libraryDirectory.listFiles()) {
             if (file.isDirectory()) {
                 LOG.warn(MessageFormat.format(
@@ -95,7 +95,7 @@ public class DependencyLibrariesProcessor extends AbstractWorkflowProcessor {
                 }
             }
         }
-        LOG.debug("Finished copying library files: {}", libraryDirectory);
+        LOG.debug("Finished copying library files: {}", libraryDirectory); //$NON-NLS-1$
     }
 
     private File getLibraryDirectory() {
@@ -103,7 +103,7 @@ public class DependencyLibrariesProcessor extends AbstractWorkflowProcessor {
     }
 
     private void copyFile(File source, File destination) throws IOException {
-        LOG.debug("Copying library file: {} -> {}", source, destination);
+        LOG.debug("Copying library file: {} -> {}", source, destination); //$NON-NLS-1$
         byte[] buf = new byte[1024];
         InputStream in = new FileInputStream(source);
         try {

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -269,29 +269,29 @@ public class ParquetFormatConfiguration {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("ParquetFormatConfiguration [fieldMappingStrategy=");
+        builder.append("ParquetFormatConfiguration [fieldMappingStrategy="); //$NON-NLS-1$
         builder.append(fieldMappingStrategy);
-        builder.append(", onMissingSource=");
+        builder.append(", onMissingSource="); //$NON-NLS-1$
         builder.append(onMissingSource);
-        builder.append(", onMissingTarget=");
+        builder.append(", onMissingTarget="); //$NON-NLS-1$
         builder.append(onMissingTarget);
-        builder.append(", onIncompatibleType=");
+        builder.append(", onIncompatibleType="); //$NON-NLS-1$
         builder.append(onIncompatibleType);
-        builder.append(", compressionCodecName=");
+        builder.append(", compressionCodecName="); //$NON-NLS-1$
         builder.append(compressionCodecName);
-        builder.append(", blockSize=");
+        builder.append(", blockSize="); //$NON-NLS-1$
         builder.append(blockSize);
-        builder.append(", dataPageSize=");
+        builder.append(", dataPageSize="); //$NON-NLS-1$
         builder.append(dataPageSize);
-        builder.append(", dictionaryPageSize=");
+        builder.append(", dictionaryPageSize="); //$NON-NLS-1$
         builder.append(dictionaryPageSize);
-        builder.append(", enableDictionary=");
+        builder.append(", enableDictionary="); //$NON-NLS-1$
         builder.append(enableDictionary);
-        builder.append(", enableValidation=");
+        builder.append(", enableValidation="); //$NON-NLS-1$
         builder.append(enableValidation);
-        builder.append(", writerVersion=");
+        builder.append(", writerVersion="); //$NON-NLS-1$
         builder.append(writerVersion);
-        builder.append("]");
+        builder.append("]"); //$NON-NLS-1$
         return builder.toString();
     }
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -94,9 +94,9 @@ public class GeneratorUtil {
     public final SimpleName getFactoryName(TypeElement type) {
         Precondition.checkMustNotBeNull(type, "type"); //$NON-NLS-1$
         return factory.newSimpleName(MessageFormat.format(
-                "{0}{1}",
+                "{0}{1}", //$NON-NLS-1$
                 type.getSimpleName(),
-                "Factory"));
+                "Factory")); //$NON-NLS-1$
     }
 
     /**
@@ -120,9 +120,9 @@ public class GeneratorUtil {
     public static final String getImplmentorName(String typeName) {
         Precondition.checkMustNotBeNull(typeName, "typeName"); //$NON-NLS-1$
         return MessageFormat.format(
-                "{0}{1}",
+                "{0}{1}", //$NON-NLS-1$
                 typeName,
-                "Impl");
+                "Impl"); //$NON-NLS-1$
     }
 
     /**
@@ -306,7 +306,10 @@ public class GeneratorUtil {
             List<Expression> group = new ArrayList<Expression>();
             for (String entry : key.getGroupProperties()) {
                 group.addAll(new AttributeBuilder(factory)
-                        .annotation(t(KeyInfo.Group.class), "expression", Models.toLiteral(factory, entry))
+                        .annotation(
+                                t(KeyInfo.Group.class),
+                                "expression", //$NON-NLS-1$
+                                Models.toLiteral(factory, entry))
                         .toAnnotations());
             }
             List<Expression> order = new ArrayList<Expression>();
@@ -314,17 +317,17 @@ public class GeneratorUtil {
                 order.addAll(new AttributeBuilder(factory)
                         .annotation(
                                 t(KeyInfo.Order.class),
-                                "direction", new TypeBuilder(factory, t(KeyInfo.Direction.class))
+                                "direction", new TypeBuilder(factory, t(KeyInfo.Direction.class)) //$NON-NLS-1$
                                         .field(entry.getDirection().name())
                                         .toExpression(),
-                                "expression", Models.toLiteral(factory, entry.getProperty()))
+                                "expression", Models.toLiteral(factory, entry.getProperty())) //$NON-NLS-1$
                         .toAnnotations());
             }
 
             attributes.annotation(
                     t(KeyInfo.class),
-                    "group", factory.newArrayInitializer(group),
-                    "order", factory.newArrayInitializer(order));
+                    "group", factory.newArrayInitializer(group), //$NON-NLS-1$
+                    "order", factory.newArrayInitializer(order)); //$NON-NLS-1$
         }
         return factory.newFormalParameterDeclaration(
                 attributes.toAttributes(),
@@ -347,20 +350,20 @@ public class GeneratorUtil {
         TypeMirror representation = var.getType().getRepresentation();
         List<AnnotationElement> members = Lists.create();
         members.add(factory.newAnnotationElement(
-                factory.newSimpleName("name"),
+                factory.newSimpleName("name"), //$NON-NLS-1$
                 Models.toLiteral(factory, var.getName())));
         members.add(factory.newAnnotationElement(
-                factory.newSimpleName("type"),
+                factory.newSimpleName("type"), //$NON-NLS-1$
                 factory.newClassLiteral(t(environment.getErasure(representation)))));
         if (var.getKind() == OperatorPortDeclaration.Kind.INPUT) {
             type = (NamedType) t(OperatorInfo.Input.class);
             members.add(factory.newAnnotationElement(
-                    factory.newSimpleName("position"),
+                    factory.newSimpleName("position"), //$NON-NLS-1$
                     Models.toLiteral(factory, position)));
             String typeVariable = getTypeVariableName(representation);
             if (typeVariable != null) {
                 members.add(factory.newAnnotationElement(
-                        factory.newSimpleName("typeVariable"),
+                        factory.newSimpleName("typeVariable"), //$NON-NLS-1$
                         Models.toLiteral(factory, typeVariable)));
             }
         } else if (var.getKind() == OperatorPortDeclaration.Kind.OUTPUT) {
@@ -368,18 +371,18 @@ public class GeneratorUtil {
             String typeVariable = getTypeVariableName(representation);
             if (typeVariable != null) {
                 members.add(factory.newAnnotationElement(
-                        factory.newSimpleName("typeVariable"),
+                        factory.newSimpleName("typeVariable"), //$NON-NLS-1$
                         Models.toLiteral(factory, typeVariable)));
             }
         } else if (var.getKind() == OperatorPortDeclaration.Kind.CONSTANT) {
             type = (NamedType) t(OperatorInfo.Parameter.class);
             members.add(factory.newAnnotationElement(
-                    factory.newSimpleName("position"),
+                    factory.newSimpleName("position"), //$NON-NLS-1$
                     Models.toLiteral(factory, position)));
             String typeVariable = getTypeVariableNameInClass(representation);
             if (typeVariable != null) {
                 members.add(factory.newAnnotationElement(
-                        factory.newSimpleName("typeVariable"),
+                        factory.newSimpleName("typeVariable"), //$NON-NLS-1$
                         Models.toLiteral(factory, typeVariable)));
             }
         } else {

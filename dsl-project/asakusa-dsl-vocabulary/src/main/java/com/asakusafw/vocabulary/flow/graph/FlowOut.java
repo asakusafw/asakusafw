@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,9 +27,9 @@ import com.asakusafw.vocabulary.flow.Source;
  */
 public final class FlowOut<T> implements Out<T> {
 
-    private OutputDescription description;
+    private final OutputDescription description;
 
-    private FlowElementResolver resolver;
+    private final FlowElementResolver resolver;
 
     /**
      * インスタンスを生成する。
@@ -76,10 +76,7 @@ public final class FlowOut<T> implements Out<T> {
         PortConnection.connect(source.toOutputPort(), this.toInputPort());
     }
 
-    /**
-     * この要素のポートとしての表現を返す。
-     * @return この要素のポートとしての表現
-     */
+    @Override
     public FlowElementInput toInputPort() {
         return resolver.getInput(OutputDescription.INPUT_PORT_NAME);
     }
@@ -87,7 +84,7 @@ public final class FlowOut<T> implements Out<T> {
     @Override
     public String toString() {
         return MessageFormat.format(
-                "{0}({1})",
+                "{0}({1})", //$NON-NLS-1$
                 getDescription(),
                 getFlowElement());
     }

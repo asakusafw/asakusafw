@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,7 +61,7 @@ public class ShufflePartitionerEmitter {
 
     static final Logger LOG = LoggerFactory.getLogger(ShufflePartitionerEmitter.class);
 
-    private FlowCompilingEnvironment environment;
+    private final FlowCompilingEnvironment environment;
 
     /**
      * インスタンスを生成する。
@@ -88,32 +88,30 @@ public class ShufflePartitionerEmitter {
             Name valueTypeName) throws IOException {
         Precondition.checkMustNotBeNull(model, "model"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(keyTypeName, "keyTypeName"); //$NON-NLS-1$
-        LOG.debug("{}に対するパーティショナーを生成します", model.getStageBlock());
+        LOG.debug("start creating shuffle partitioner: {}", model.getStageBlock()); //$NON-NLS-1$
         Engine engine = new Engine(environment, model, keyTypeName, valueTypeName);
         CompilationUnit source = engine.generate();
         environment.emit(source);
         Name packageName = source.getPackageDeclaration().getName();
         SimpleName simpleName = source.getTypeDeclarations().get(0).getName();
         Name name = environment.getModelFactory().newQualifiedName(packageName, simpleName);
-        LOG.debug("{}のパーティショニングには{}が利用されます",
-                model.getStageBlock(),
-                name);
+        LOG.debug("finish creating shuffle partitioner: {} ({})", model.getStageBlock(), name); //$NON-NLS-1$
         return name;
     }
 
     private static class Engine {
 
-        private static final String HASH_CODE_METHOD_NAME = "getHashCode";
+        private static final String HASH_CODE_METHOD_NAME = "getHashCode"; //$NON-NLS-1$
 
-        private ShuffleModel model;
+        private final ShuffleModel model;
 
-        private ModelFactory factory;
+        private final ModelFactory factory;
 
-        private ImportBuilder importer;
+        private final ImportBuilder importer;
 
-        private Type keyType;
+        private final Type keyType;
 
-        private Type valueType;
+        private final Type valueType;
 
         public Engine(
                 FlowCompilingEnvironment environment,
@@ -154,7 +152,7 @@ public class ShufflePartitionerEmitter {
             return factory.newClassDeclaration(
                     createJavadoc(),
                     new AttributeBuilder(factory)
-                        .annotation(t(SuppressWarnings.class), v("deprecation"))
+                        .annotation(t(SuppressWarnings.class), v("deprecation")) //$NON-NLS-1$
                         .Public()
                         .Final()
                         .toAttributes(),
@@ -168,15 +166,15 @@ public class ShufflePartitionerEmitter {
         }
 
         private MethodDeclaration createPartition() {
-            SimpleName key = factory.newSimpleName("key");
-            SimpleName value = factory.newSimpleName("value");
-            SimpleName partitions = factory.newSimpleName("numPartitions");
+            SimpleName key = factory.newSimpleName("key"); //$NON-NLS-1$
+            SimpleName value = factory.newSimpleName("value"); //$NON-NLS-1$
+            SimpleName partitions = factory.newSimpleName("numPartitions"); //$NON-NLS-1$
 
             List<Statement> statements = Lists.create();
             statements.add(new ExpressionBuilder(factory, factory.newThis())
                 .method(HASH_CODE_METHOD_NAME, key)
                 .apply(InfixOperator.AND, new TypeBuilder(factory, t(Integer.class))
-                    .field("MAX_VALUE")
+                    .field("MAX_VALUE") //$NON-NLS-1$
                     .toExpression())
                 .apply(InfixOperator.REMAINDER, partitions)
                 .toReturnStatement());
@@ -188,7 +186,7 @@ public class ShufflePartitionerEmitter {
                         .Public()
                         .toAttributes(),
                     t(int.class),
-                    factory.newSimpleName("getPartition"),
+                    factory.newSimpleName("getPartition"), //$NON-NLS-1$
                     Arrays.asList(new FormalParameterDeclaration[] {
                             factory.newFormalParameterDeclaration(keyType, key),
                             factory.newFormalParameterDeclaration(valueType, value),
@@ -198,10 +196,10 @@ public class ShufflePartitionerEmitter {
         }
 
         private MethodDeclaration createHashCode() {
-            SimpleName key = factory.newSimpleName("key");
+            SimpleName key = factory.newSimpleName("key"); //$NON-NLS-1$
             List<Statement> statements = Lists.create();
-            SimpleName portId = factory.newSimpleName("portId");
-            SimpleName result = factory.newSimpleName("result");
+            SimpleName portId = factory.newSimpleName("portId"); //$NON-NLS-1$
+            SimpleName result = factory.newSimpleName("result"); //$NON-NLS-1$
 
             statements.add(new ExpressionBuilder(factory, key)
                 .method(SegmentedWritable.ID_GETTER)
@@ -254,7 +252,7 @@ public class ShufflePartitionerEmitter {
 
         private Javadoc createJavadoc() {
             return new JavadocBuilder(factory)
-                .text("ステージ#{0}シャッフルで利用するパーティショナー。",
+                .text("The shuffle partitioner class for stage <code>{0}</code>.", //$NON-NLS-1$
                     model.getStageBlock().getStageNumber())
                 .toJavadoc();
         }

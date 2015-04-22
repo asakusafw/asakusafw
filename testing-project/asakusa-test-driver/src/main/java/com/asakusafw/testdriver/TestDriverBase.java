@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import java.util.Map;
 
 import com.asakusafw.compiler.flow.FlowCompilerOptions;
 import com.asakusafw.compiler.trace.TracepointWeaveRewriter;
+import com.asakusafw.testdriver.core.TestDataToolProvider;
 import com.asakusafw.testdriver.core.TestingEnvironmentConfigurator;
 import com.asakusafw.trace.io.TraceSettingSerializer;
 import com.asakusafw.trace.model.TraceSetting;
@@ -37,11 +38,11 @@ import com.asakusafw.vocabulary.flow.FlowPart;
 /**
  * テストドライバの基底クラス。
  * @since 0.2.0
- * @version 0.6.0
+ * @version 0.7.0
  */
-public abstract class TestDriverBase {
+public abstract class TestDriverBase extends DriverElementBase {
 
-    private static final String FLOW_OPERATOR_FACTORY_METHOD_NAME = "create";
+    private static final String FLOW_OPERATOR_FACTORY_METHOD_NAME = "create"; //$NON-NLS-1$
 
     static {
         TestingEnvironmentConfigurator.initialize();
@@ -60,6 +61,16 @@ public abstract class TestDriverBase {
             throw new IllegalArgumentException("callerClass must not be null"); //$NON-NLS-1$
         }
         this.driverContext = new TestDriverContext(callerClass);
+    }
+
+    @Override
+    protected final Class<?> getCallerClass() {
+        return driverContext.getCallerClass();
+    }
+
+    @Override
+    protected final TestDataToolProvider getTestTools() {
+        return driverContext.getRepository();
     }
 
     /**
@@ -141,6 +152,22 @@ public abstract class TestDriverBase {
      */
     public void setDebug(boolean enable) {
         driverContext.getOptions().setEnableDebugLogging(enable);
+    }
+
+    /**
+     * コンパイラの追加オプション ({@code X<name>=<value>}) を設定する。
+     * オプション名を指定する際に、先頭の {@code "X"} を指定しないこと。
+     * @param name オプション名
+     * @param value オプションの値
+     * @since 0.7.3
+     */
+    public void setExtraCompilerOption(String name, String value) {
+        if (name.startsWith("X")) {
+            throw new IllegalArgumentException(MessageFormat.format(
+                    "オプション名の先頭に \"X\" を指定できません: {0}",
+                    name));
+        }
+        driverContext.getOptions().putExtraAttribute(name, value);
     }
 
     /**

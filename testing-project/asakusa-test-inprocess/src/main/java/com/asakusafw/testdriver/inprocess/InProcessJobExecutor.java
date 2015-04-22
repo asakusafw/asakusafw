@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ import com.asakusafw.testdriver.JobExecutor;
 import com.asakusafw.testdriver.TestDriverContext;
 import com.asakusafw.testdriver.TestExecutionPlan;
 import com.asakusafw.testdriver.TestExecutionPlan.Job;
+import com.asakusafw.testdriver.TestExecutionPlan.TaskKind;
 import com.asakusafw.testdriver.hadoop.ConfigurationFactory;
 
 /**
@@ -47,7 +48,7 @@ public class InProcessJobExecutor extends JobExecutor {
 
     private static final Settings GLOBAL_SETTINGS = new Settings();
 
-    static final String PATH_ASAKUSA_RESOURCES = "core/conf/asakusa-resources.xml";
+    static final String PATH_ASAKUSA_RESOURCES = "core/conf/asakusa-resources.xml"; //$NON-NLS-1$
 
     private final TestDriverContext context;
 
@@ -101,7 +102,7 @@ synchronized(s) {
     @Override
     public void validateEnvironment() {
         if (requiresValidateExecutionEnvironment() == false) {
-            LOG.debug("skipping test execution environment validation");
+            LOG.debug("skipping test execution environment validation"); //$NON-NLS-1$
             return;
         }
         if (context.getFrameworkHomePathOrNull() == null) {
@@ -111,7 +112,7 @@ synchronized(s) {
         }
         String runtime = context.getRuntimeEnvironmentVersion();
         if (runtime == null) {
-            LOG.debug("Runtime environment version is missing");
+            LOG.debug("Runtime environment version is missing"); //$NON-NLS-1$
         } else {
             String develop = context.getDevelopmentEnvironmentVersion();
             if (develop.equals(runtime) == false) {
@@ -128,18 +129,22 @@ synchronized(s) {
         if (requiresValidateExecutionEnvironment() == false) {
             return;
         }
-        List<TestExecutionPlan.Command> commands = new ArrayList<TestExecutionPlan.Command>();
-        commands.addAll(plan.getInitializers());
-        commands.addAll(plan.getImporters());
-        commands.addAll(plan.getExporters());
-        commands.addAll(plan.getFinalizers());
+        List<TestExecutionPlan.Task> tasks = new ArrayList<TestExecutionPlan.Task>();
+        tasks.addAll(plan.getInitializers());
+        tasks.addAll(plan.getImporters());
+        tasks.addAll(plan.getJobs());
+        tasks.addAll(plan.getExporters());
+        tasks.addAll(plan.getFinalizers());
 
-        for (TestExecutionPlan.Command command : commands) {
-            if (findCommandEmulator(command) == null) {
+        for (TestExecutionPlan.Task task : tasks) {
+            if (task.getTaskKind() != TaskKind.COMMAND) {
+                continue;
+            }
+            if (findCommandEmulator((TestExecutionPlan.Command) task) == null) {
                 if (configurations.getHadoopCommand() == null) {
                     throw new AssertionError(MessageFormat.format(
                             "コマンド\"{0}\"を検出できませんでした",
-                            "hadoop"));
+                            "hadoop")); //$NON-NLS-1$
                 }
             }
         }
@@ -148,7 +153,7 @@ synchronized(s) {
     private boolean requiresValidateExecutionEnvironment() {
         String value = System.getProperty(TestDriverContext.KEY_FORCE_EXEC);
         if (value != null) {
-            if (value.isEmpty() || value.equalsIgnoreCase("true")) {
+            if (value.isEmpty() || value.equalsIgnoreCase("true")) { //$NON-NLS-1$
                 return false;
             }
         }
@@ -205,7 +210,7 @@ synchronized(s) {
 
     private void computeHadoopLibjars(List<String> arguments) throws IOException {
         assert arguments != null;
-        arguments.add("-libjars");
+        arguments.add("-libjars"); //$NON-NLS-1$
         StringBuilder libjars = new StringBuilder();
         File packageFile = EmulatorUtils.getJobflowLibraryPath(context);
         if (packageFile.isFile() == false) {
@@ -225,7 +230,7 @@ synchronized(s) {
         assert arguments != null;
         File asakusaResources = getAsakusaResoucesPath();
         if (asakusaResources.exists()) {
-            arguments.add("-conf");
+            arguments.add("-conf"); //$NON-NLS-1$
             arguments.add(asakusaResources.toURI().toString());
         }
     }

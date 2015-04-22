@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -84,13 +84,13 @@ public class UniqueOperatorProcessor extends AbstractOperatorProcessor {
                 key.getKey());
         builder.addOutput(
                 "項目の内容が一意であるデータが流れる出力",
-                "unique",
+                "unique", //$NON-NLS-1$
                 a.getParameterType(0).getType(),
                 a.getParameterName(0),
                 null);
         builder.addOutput(
                 "項目の内容が一意でないデータが流れる出力",
-                "duplicated",
+                "duplicated", //$NON-NLS-1$
                 a.getParameterType(0).getType(),
                 a.getParameterName(0),
                 null);

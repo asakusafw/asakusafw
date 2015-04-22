@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,7 +63,7 @@ public class ShuffleGroupingComparatorEmitter {
 
     static final Logger LOG = LoggerFactory.getLogger(ShuffleGroupingComparatorEmitter.class);
 
-    private FlowCompilingEnvironment environment;
+    private final FlowCompilingEnvironment environment;
 
     /**
      * インスタンスを生成する。
@@ -88,28 +88,26 @@ public class ShuffleGroupingComparatorEmitter {
             Name keyTypeName) throws IOException {
         Precondition.checkMustNotBeNull(model, "model"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(keyTypeName, "keyTypeName"); //$NON-NLS-1$
-        LOG.debug("{}に対するグループ比較器を生成します", model.getStageBlock());
+        LOG.debug("start generating grouping comparator: {}", model.getStageBlock()); //$NON-NLS-1$
         Engine engine = new Engine(environment, model, keyTypeName);
         CompilationUnit source = engine.generate();
         environment.emit(source);
         Name packageName = source.getPackageDeclaration().getName();
         SimpleName simpleName = source.getTypeDeclarations().get(0).getName();
         Name name = environment.getModelFactory().newQualifiedName(packageName, simpleName);
-        LOG.debug("{}のグループ比較には{}が利用されます",
-                model.getStageBlock(),
-                name);
+        LOG.debug("finish generating grouping comparator: {} ({})", model.getStageBlock(), name); //$NON-NLS-1$
         return name;
     }
 
     private static class Engine {
 
-        private ShuffleModel model;
+        private final ShuffleModel model;
 
-        private ModelFactory factory;
+        private final ModelFactory factory;
 
-        private ImportBuilder importer;
+        private final ImportBuilder importer;
 
-        private Type keyType;
+        private final Type keyType;
 
         public Engine(
                 FlowCompilingEnvironment environment,
@@ -148,7 +146,7 @@ public class ShuffleGroupingComparatorEmitter {
             return factory.newClassDeclaration(
                     createJavadoc(),
                     new AttributeBuilder(factory)
-                        .annotation(t(SuppressWarnings.class), v("rawtypes"))
+                        .annotation(t(SuppressWarnings.class), v("rawtypes")) //$NON-NLS-1$
                         .Public()
                         .toAttributes(),
                     name,
@@ -162,24 +160,24 @@ public class ShuffleGroupingComparatorEmitter {
         }
 
         private MethodDeclaration createCompareBytes() {
-            SimpleName b1 = factory.newSimpleName("b1");
-            SimpleName s1 = factory.newSimpleName("s1");
-            SimpleName l1 = factory.newSimpleName("l1");
-            SimpleName b2 = factory.newSimpleName("b2");
-            SimpleName s2 = factory.newSimpleName("s2");
-            SimpleName l2 = factory.newSimpleName("l2");
+            SimpleName b1 = factory.newSimpleName("b1"); //$NON-NLS-1$
+            SimpleName s1 = factory.newSimpleName("s1"); //$NON-NLS-1$
+            SimpleName l1 = factory.newSimpleName("l1"); //$NON-NLS-1$
+            SimpleName b2 = factory.newSimpleName("b2"); //$NON-NLS-1$
+            SimpleName s2 = factory.newSimpleName("s2"); //$NON-NLS-1$
+            SimpleName l2 = factory.newSimpleName("l2"); //$NON-NLS-1$
 
             List<Statement> statements = Lists.create();
-            SimpleName segmentId1 = factory.newSimpleName("segmentId1");
-            SimpleName segmentId2 = factory.newSimpleName("segmentId2");
+            SimpleName segmentId1 = factory.newSimpleName("segmentId1"); //$NON-NLS-1$
+            SimpleName segmentId2 = factory.newSimpleName("segmentId2"); //$NON-NLS-1$
             statements.add(new TypeBuilder(factory, t(WritableComparator.class))
-                .method("readInt", b1, s1)
+                .method("readInt", b1, s1) //$NON-NLS-1$
                 .toLocalVariableDeclaration(t(int.class), segmentId1));
             statements.add(new TypeBuilder(factory, t(WritableComparator.class))
-                .method("readInt", b2, s2)
+                .method("readInt", b2, s2) //$NON-NLS-1$
                 .toLocalVariableDeclaration(t(int.class), segmentId2));
 
-            SimpleName diff = factory.newSimpleName("diff");
+            SimpleName diff = factory.newSimpleName("diff"); //$NON-NLS-1$
             statements.add(new ExpressionBuilder(factory, factory.newThis())
                 .method(ShuffleEmiterUtil.COMPARE_INT,
                         new ExpressionBuilder(factory, factory.newThis())
@@ -191,10 +189,10 @@ public class ShuffleGroupingComparatorEmitter {
                 .toLocalVariableDeclaration(t(int.class), diff));
             statements.add(createDiffBranch(diff));
 
-            SimpleName o1 = factory.newSimpleName("o1");
-            SimpleName o2 = factory.newSimpleName("o2");
-            SimpleName size1 = factory.newSimpleName("size1");
-            SimpleName size2 = factory.newSimpleName("size2");
+            SimpleName o1 = factory.newSimpleName("o1"); //$NON-NLS-1$
+            SimpleName o2 = factory.newSimpleName("o2"); //$NON-NLS-1$
+            SimpleName size1 = factory.newSimpleName("size1"); //$NON-NLS-1$
+            SimpleName size2 = factory.newSimpleName("size2"); //$NON-NLS-1$
             statements.add(new ExpressionBuilder(factory, v(4))
                 .toLocalVariableDeclaration(t(int.class), o1));
             statements.add(new ExpressionBuilder(factory, v(4))
@@ -261,7 +259,7 @@ public class ShuffleGroupingComparatorEmitter {
                         .Public()
                         .toAttributes(),
                     t(int.class),
-                    factory.newSimpleName("compare"),
+                    factory.newSimpleName("compare"), //$NON-NLS-1$
                     Arrays.asList(new FormalParameterDeclaration[] {
                             factory.newFormalParameterDeclaration(t(byte[].class), b1),
                             factory.newFormalParameterDeclaration(t(int.class), s1),
@@ -284,12 +282,12 @@ public class ShuffleGroupingComparatorEmitter {
         }
 
         private TypeBodyDeclaration createCompareObjects() {
-            SimpleName o1 = factory.newSimpleName("o1");
-            SimpleName o2 = factory.newSimpleName("o2");
+            SimpleName o1 = factory.newSimpleName("o1"); //$NON-NLS-1$
+            SimpleName o2 = factory.newSimpleName("o2"); //$NON-NLS-1$
 
             List<Statement> statements = Lists.create();
-            SimpleName segmentId1 = factory.newSimpleName("segmentId1");
-            SimpleName segmentId2 = factory.newSimpleName("segmentId2");
+            SimpleName segmentId1 = factory.newSimpleName("segmentId1"); //$NON-NLS-1$
+            SimpleName segmentId2 = factory.newSimpleName("segmentId2"); //$NON-NLS-1$
             statements.add(new ExpressionBuilder(factory, o1)
                 .method(SegmentedWritable.ID_GETTER)
                 .toLocalVariableDeclaration(t(int.class), segmentId1));
@@ -297,7 +295,7 @@ public class ShuffleGroupingComparatorEmitter {
                 .method(SegmentedWritable.ID_GETTER)
                 .toLocalVariableDeclaration(t(int.class), segmentId2));
 
-            SimpleName diff = factory.newSimpleName("diff");
+            SimpleName diff = factory.newSimpleName("diff"); //$NON-NLS-1$
             statements.add(new ExpressionBuilder(factory, factory.newThis())
                 .method(ShuffleEmiterUtil.COMPARE_INT,
                         new ExpressionBuilder(factory, factory.newThis())
@@ -350,7 +348,7 @@ public class ShuffleGroupingComparatorEmitter {
                         .Public()
                         .toAttributes(),
                     t(int.class),
-                    factory.newSimpleName("compare"),
+                    factory.newSimpleName("compare"), //$NON-NLS-1$
                     Arrays.asList(new FormalParameterDeclaration[] {
                             factory.newFormalParameterDeclaration(keyType, o1),
                             factory.newFormalParameterDeclaration(keyType, o2),
@@ -360,7 +358,7 @@ public class ShuffleGroupingComparatorEmitter {
 
         private Javadoc createJavadoc() {
             return new JavadocBuilder(factory)
-                .text("ステージ#{0}シャッフルで利用するグループ比較器。",
+                .text("A grouping comparator using shuffle phase in stage <code>{0}</code>.", //$NON-NLS-1$
                     model.getStageBlock().getStageNumber())
                 .toJavadoc();
         }

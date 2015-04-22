@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,6 +38,8 @@ import javax.tools.JavaFileObject;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.junit.After;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.collections.Sets;
@@ -61,16 +63,13 @@ import com.asakusafw.vocabulary.flow.testing.MockIn;
  */
 public class OperatorCompilerTestRoot {
 
+    static final Logger LOG = LoggerFactory.getLogger(OperatorCompilerTestRoot.class);
+
     ModelFactory f = Models.getModelFactory();
 
     private final VolatileCompiler compiler = new VolatileCompiler();
 
     private final List<JavaFileObject> sources = Lists.create();
-
-    /**
-     * コンパイル時に{@code true}になっていたらソースのダンプを表示する。
-     */
-    protected boolean dump = true;
 
     /**
      * テストの情報を破棄する。
@@ -340,20 +339,37 @@ public class OperatorCompilerTestRoot {
 
     private ClassLoader start() {
         List<Diagnostic<? extends JavaFileObject>> diagnostics = doCompile();
+        boolean wrong = false;
         for (Diagnostic<?> d : diagnostics) {
             if (d.getKind() != Diagnostic.Kind.NOTE) {
-                throw new AssertionError(diagnostics);
+                wrong = true;
+                break;
             }
+        }
+        if (wrong) {
+            for (JavaFileObject java : compiler.getSources()) {
+                try {
+                    System.out.println("====" + java.getName());
+                    System.out.println(java.getCharContent(true));
+                } catch (IOException e) {
+                    // ignore.
+                }
+            }
+            for (Diagnostic<? extends JavaFileObject> d : diagnostics) {
+                System.out.println("====");
+                System.out.println(d);
+            }
+            throw new AssertionError(diagnostics);
         }
         return compiler.getClassLoader();
     }
 
     private List<Diagnostic<? extends JavaFileObject>> doCompile() {
-        if (dump) {
+        if (LOG.isDebugEnabled()) {
             for (JavaFileObject java : sources) {
                 try {
-                    System.out.println("====" + java.getName());
-                    System.out.println(java.getCharContent(true));
+                    LOG.debug("==== {}", java.getName());
+                    LOG.debug("{}", java.getCharContent(true));
                 } catch (IOException e) {
                     // ignore.
                 }
@@ -368,18 +384,18 @@ public class OperatorCompilerTestRoot {
             compiler.addSource(new VolatileJavaFile("A", "public class A {}"));
         }
         List<Diagnostic<? extends JavaFileObject>> diagnostics = compiler.doCompile();
-        for (JavaFileObject java : compiler.getSources()) {
-            try {
-                System.out.println("====" + java.getName());
-                System.out.println(java.getCharContent(true));
-            } catch (IOException e) {
-                // ignore.
+        if (LOG.isDebugEnabled()) {
+            for (JavaFileObject java : compiler.getSources()) {
+                try {
+                    LOG.debug("==== {}", java.getName());
+                    LOG.debug("{}", java.getCharContent(true));
+                } catch (IOException e) {
+                    // ignore.
+                }
             }
-        }
-        if (dump) {
             for (Diagnostic<? extends JavaFileObject> d : diagnostics) {
-                System.out.println("====");
-                System.out.println(d);
+                LOG.debug("====");
+                LOG.debug("{}", d);
             }
         }
         return diagnostics;

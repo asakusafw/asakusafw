@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -74,11 +74,11 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
 
     static final Log LOG = LogFactory.getLog(BridgeOutputFormat.class);
 
-    private static final Charset ASCII = Charset.forName("ASCII");
+    private static final Charset ASCII = Charset.forName("ASCII"); //$NON-NLS-1$
 
     private static final long SERIAL_VERSION = 1;
 
-    private static final String KEY = "com.asakusafw.output.bridge";
+    private static final String KEY = "com.asakusafw.output.bridge"; //$NON-NLS-1$
 
     private final Map<TaskAttemptID, OutputCommitter> commiterCache =
             new WeakHashMap<TaskAttemptID, OutputCommitter>();
@@ -260,7 +260,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
         List<OutputSpec> specs = getSpecs(context);
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Creating output commiter: {0}",
+                    "Creating output commiter: {0}", //$NON-NLS-1$
                     specs));
         }
         return new BridgeOutputCommitter(repository, specs);
@@ -268,7 +268,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
 
     static VariableTable getVariableTable(JobContext context) {
         assert context != null;
-        String arguments = context.getConfiguration().get(StageConstants.PROP_ASAKUSA_BATCH_ARGS, "");
+        String arguments = context.getConfiguration().get(StageConstants.PROP_ASAKUSA_BATCH_ARGS, ""); //$NON-NLS-1$
         VariableTable variables = new VariableTable(VariableTable.RedefineStrategy.IGNORE);
         variables.defineVariables(arguments);
         return variables;
@@ -296,7 +296,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
         @Override
         public String toString() {
             return MessageFormat.format(
-                    "Output(path={0}, delete={1})",
+                    "Output(path={0}, delete={1})", //$NON-NLS-1$
                     basePath,
                     deletePatterns);
         }
@@ -346,7 +346,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
             }
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "start Direct I/O output task: {1} ({0})",
+                        "start Direct I/O output task: {1} ({0})", //$NON-NLS-1$
                         taskContext.getJobName(),
                         taskContext.getTaskAttemptID()));
             }
@@ -356,7 +356,8 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
                 String id = entry.getValue();
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(MessageFormat.format(
-                            "start Direct I/O output task setup for datasource: datasource={0} ({2} ({1}))",
+                            "start Direct I/O output task setup for datasource: " //$NON-NLS-1$
+                            + "datasource={0} ({2} ({1}))", //$NON-NLS-1$
                             id,
                             taskContext.getJobName(),
                             taskContext.getTaskAttemptID()));
@@ -384,7 +385,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
             if (LOG.isDebugEnabled()) {
                 long t1 = System.currentTimeMillis();
                 LOG.debug(MessageFormat.format(
-                        "finish Direct I/O output task setup: task={1} ({0}), elapsed={2}ms",
+                        "finish Direct I/O output task setup: task={1} ({0}), elapsed={2}ms", //$NON-NLS-1$
                         taskContext.getJobName(),
                         taskContext.getTaskAttemptID(),
                         t1 - t0));
@@ -398,7 +399,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
             }
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "start Direct I/O output task commit: {1} ({0})",
+                        "start Direct I/O output task commit: {1} ({0})", //$NON-NLS-1$
                         taskContext.getJobName(),
                         taskContext.getTaskAttemptID()));
             }
@@ -408,7 +409,8 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
                 String id = entry.getValue();
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(MessageFormat.format(
-                            "start Direct I/O output task commit for datasource: datasource={0} ({2} ({1}))",
+                            "start Direct I/O output task commit for datasource: " //$NON-NLS-1$
+                            + "datasource={0} ({2} ({1}))", //$NON-NLS-1$
                             id,
                             taskContext.getJobName(),
                             taskContext.getTaskAttemptID()));
@@ -454,7 +456,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
             }
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "Start Direct I/O output task abort: {1} ({0})",
+                        "Start Direct I/O output task abort: {1} ({0})", //$NON-NLS-1$
                         taskContext.getJobName(),
                         taskContext.getTaskAttemptID()));
             }
@@ -477,7 +479,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
                 String id = entry.getValue();
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(MessageFormat.format(
-                            "Start directio task cleanup for datasource: datasource={0} ({2} ({1}))",
+                            "Start directio task cleanup for datasource: datasource={0} ({2} ({1}))", //$NON-NLS-1$
                             id,
                             taskContext.getJobName(),
                             taskContext.getTaskAttemptID()));
@@ -511,7 +513,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
             }
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "start Direct I/O output job setup: {0} ({1})",
+                        "start Direct I/O output job setup: {0} ({1})", //$NON-NLS-1$
                         jobContext.getJobID(),
                         jobContext.getJobName()));
             }
@@ -523,7 +525,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
                 String id = entry.getValue();
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(MessageFormat.format(
-                            "Start Direct I/O output job setup: datasource={0} ({1} ({2}))",
+                            "Start Direct I/O output job setup: datasource={0} ({1} ({2}))", //$NON-NLS-1$
                             id,
                             jobContext.getJobID(),
                             jobContext.getJobName()));
@@ -572,7 +574,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
                         FilePattern resources = FilePattern.compile(pattern);
                         if (LOG.isDebugEnabled()) {
                             LOG.debug(MessageFormat.format(
-                                    "Deleting output: datasource={0}, basePath={1}, pattern={2}",
+                                    "Deleting output: datasource={0}, basePath={1}, pattern={2}", //$NON-NLS-1$
                                     id,
                                     basePath,
                                     pattern));
@@ -580,7 +582,8 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
                         boolean succeed = repo.delete(basePath, resources, true, context.getCounter());
                         if (LOG.isDebugEnabled()) {
                             LOG.debug(MessageFormat.format(
-                                    "Deleted output (succeed={3}): datasource={0}, basePath={1}, pattern={2}",
+                                    "Deleted output (succeed={3}): " //$NON-NLS-1$
+                                    + "datasource={0}, basePath={1}, pattern={2}", //$NON-NLS-1$
                                     id,
                                     basePath,
                                     pattern,
@@ -611,7 +614,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
             }
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "start Direct I/O output job commit: {0} ({1})",
+                        "start Direct I/O output job commit: {0} ({1})", //$NON-NLS-1$
                         jobContext.getJobID(),
                         jobContext.getJobName()));
             }
@@ -635,7 +638,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
             if (value) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(MessageFormat.format(
-                            "Creating Direct I/O transaction info: job={0} ({1}), path={2}",
+                            "Creating Direct I/O transaction info: job={0} ({1}), path={2}", //$NON-NLS-1$
                             jobContext.getJobID(),
                             jobContext.getJobName(),
                             fs.makeQualified(transactionInfo)));
@@ -645,13 +648,20 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
                 try {
                     PrintWriter writer = new PrintWriter(
                             new OutputStreamWriter(output, HadoopDataSourceUtil.COMMENT_CHARSET));
-                    writer.printf("      User Name: %s%n", conf.getRaw(StageConstants.PROP_USER));
-                    writer.printf("       Batch ID: %s%n", conf.getRaw(StageConstants.PROP_BATCH_ID));
-                    writer.printf("        Flow ID: %s%n", conf.getRaw(StageConstants.PROP_FLOW_ID));
-                    writer.printf("   Execution ID: %s%n", conf.getRaw(StageConstants.PROP_EXECUTION_ID));
-                    writer.printf("Batch Arguments: %s%n", conf.getRaw(StageConstants.PROP_ASAKUSA_BATCH_ARGS));
-                    writer.printf("  Hadoop Job ID: %s%n", jobContext.getJobID());
-                    writer.printf("Hadoop Job Name: %s%n", jobContext.getJobName());
+                    writer.printf("      User Name: %s%n", //$NON-NLS-1$
+                            conf.getRaw(StageConstants.PROP_USER));
+                    writer.printf("       Batch ID: %s%n", //$NON-NLS-1$
+                            conf.getRaw(StageConstants.PROP_BATCH_ID));
+                    writer.printf("        Flow ID: %s%n", //$NON-NLS-1$
+                            conf.getRaw(StageConstants.PROP_FLOW_ID));
+                    writer.printf("   Execution ID: %s%n", //$NON-NLS-1$
+                            conf.getRaw(StageConstants.PROP_EXECUTION_ID));
+                    writer.printf("Batch Arguments: %s%n", //$NON-NLS-1$
+                            conf.getRaw(StageConstants.PROP_ASAKUSA_BATCH_ARGS));
+                    writer.printf("  Hadoop Job ID: %s%n", //$NON-NLS-1$
+                            jobContext.getJobID());
+                    writer.printf("Hadoop Job Name: %s%n", //$NON-NLS-1$
+                            jobContext.getJobName());
                     writer.close();
                     closed = true;
                 } finally {
@@ -662,7 +672,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
                 }
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(MessageFormat.format(
-                            "Finish creating Direct I/O transaction info: job={0} ({1}), path={2}",
+                            "Finish creating Direct I/O transaction info: job={0} ({1}), path={2}", //$NON-NLS-1$
                             jobContext.getJobID(),
                             jobContext.getJobName(),
                             fs.makeQualified(transactionInfo)));
@@ -674,7 +684,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
                                 new InputStreamReader(input, HadoopDataSourceUtil.COMMENT_CHARSET));
                         while (scanner.hasNextLine()) {
                             String line = scanner.nextLine();
-                            LOG.trace(">> " + line);
+                            LOG.trace(">> " + line); //$NON-NLS-1$
                         }
                         scanner.close();
                     } finally {
@@ -684,7 +694,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
             } else {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(MessageFormat.format(
-                            "Deleting Direct I/O transaction info: job={0} ({1}), path={2}",
+                            "Deleting Direct I/O transaction info: job={0} ({1}), path={2}", //$NON-NLS-1$
                             jobContext.getJobID(),
                             jobContext.getJobName(),
                             fs.makeQualified(transactionInfo)));
@@ -692,7 +702,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
                 fs.delete(transactionInfo, false);
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(MessageFormat.format(
-                            "Finish deleting Direct I/O transaction info: job={0} ({1}), path={2}",
+                            "Finish deleting Direct I/O transaction info: job={0} ({1}), path={2}", //$NON-NLS-1$
                             jobContext.getJobID(),
                             jobContext.getJobName(),
                             fs.makeQualified(transactionInfo)));
@@ -707,7 +717,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
             if (value) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(MessageFormat.format(
-                            "Creating Direct I/O commit mark: job={0} ({1}), path={2}",
+                            "Creating Direct I/O commit mark: job={0} ({1}), path={2}", //$NON-NLS-1$
                             jobContext.getJobID(),
                             jobContext.getJobName(),
                             fs.makeQualified(commitMark)));
@@ -715,7 +725,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
                 fs.create(commitMark, false).close();
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(MessageFormat.format(
-                            "Finish creating Direct I/O commit mark: job={0} ({1}), path={2}",
+                            "Finish creating Direct I/O commit mark: job={0} ({1}), path={2}", //$NON-NLS-1$
                             jobContext.getJobID(),
                             jobContext.getJobName(),
                             fs.makeQualified(commitMark)));
@@ -723,7 +733,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
             } else {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(MessageFormat.format(
-                            "Deleting Direct I/O commit mark: job={0} ({1}), path={2}",
+                            "Deleting Direct I/O commit mark: job={0} ({1}), path={2}", //$NON-NLS-1$
                             jobContext.getJobID(),
                             jobContext.getJobName(),
                             fs.makeQualified(commitMark)));
@@ -731,7 +741,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
                 fs.delete(commitMark, false);
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(MessageFormat.format(
-                            "Finish deleting Direct I/O commit mark: job={0} ({1}), path={2}",
+                            "Finish deleting Direct I/O commit mark: job={0} ({1}), path={2}", //$NON-NLS-1$
                             jobContext.getJobID(),
                             jobContext.getJobName(),
                             fs.makeQualified(commitMark)));
@@ -752,7 +762,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
             }
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "Start Direct I/O output job abort: job={0} ({1}), state={2}",
+                        "Start Direct I/O output job abort: job={0} ({1}), state={2}", //$NON-NLS-1$
                         jobContext.getJobID(),
                         jobContext.getJobName(),
                         state));
@@ -788,7 +798,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
                 String id = entry.getValue();
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(MessageFormat.format(
-                            "Start Direct I/O output job rollforward: datasource={0} ({1} ({2}))",
+                            "Start Direct I/O output job rollforward: datasource={0} ({1} ({2}))", //$NON-NLS-1$
                             id,
                             jobContext.getJobID(),
                             jobContext.getJobName()));
@@ -820,7 +830,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
                 String id = entry.getValue();
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(MessageFormat.format(
-                            "Start Direct I/O output job cleanup: datasource={0} ({1} ({2}))",
+                            "Start Direct I/O output job cleanup: datasource={0} ({1} ({2}))", //$NON-NLS-1$
                             id,
                             jobContext.getJobID(),
                             jobContext.getJobName()));

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -84,14 +84,14 @@ final class ParallelSortReducerEmitter {
      * @throws IllegalArgumentException 引数に{@code null}が指定された場合
      */
     public CompiledType emit(String moduleId, List<ResolvedSlot> slots) throws IOException {
-        LOG.debug("\"{}\"エピローグ用のレデューサーを生成します", moduleId);
+        LOG.debug("start generating a reducer for distributed sort: {}", moduleId); //$NON-NLS-1$
         Engine engine = new Engine(environment, moduleId, slots);
         CompilationUnit source = engine.generate();
         environment.emit(source);
         Name packageName = source.getPackageDeclaration().getName();
         SimpleName simpleName = source.getTypeDeclarations().get(0).getName();
         Name name = environment.getModelFactory().newQualifiedName(packageName, simpleName);
-        LOG.debug("エピローグ用レデューサーには{}が利用されます", name);
+        LOG.debug("finish generating a reducer for distributed sort: {} ({})", moduleId, name); //$NON-NLS-1$
         return new CompiledType(name);
     }
 
@@ -135,7 +135,7 @@ final class ParallelSortReducerEmitter {
             importer.resolvePackageMember(name);
             return factory.newClassDeclaration(
                     new JavadocBuilder(factory)
-                        .text("エピローグ用のレデューサー。")
+                        .text("Reducer class for epilogue <code>{0}</code>.", moduleId) //$NON-NLS-1$
                         .toJavadoc(),
                     new AttributeBuilder(factory)
                         .annotation(importer.toType(TraceLocation.class), createTraceLocationElements())
@@ -150,14 +150,14 @@ final class ParallelSortReducerEmitter {
 
         private Map<String, Expression> createTraceLocationElements() {
             Map<String, Expression> results = new LinkedHashMap<String, Expression>();
-            results.put("batchId", Models.toLiteral(factory, environment.getBatchId()));
-            results.put("flowId", Models.toLiteral(factory, environment.getFlowId()));
-            results.put("stageId", Models.toLiteral(factory, Naming.getEpilogueName(moduleId)));
+            results.put("batchId", Models.toLiteral(factory, environment.getBatchId())); //$NON-NLS-1$
+            results.put("flowId", Models.toLiteral(factory, environment.getFlowId())); //$NON-NLS-1$
+            results.put("stageId", Models.toLiteral(factory, Naming.getEpilogueName(moduleId))); //$NON-NLS-1$
             return results;
         }
 
         private MethodDeclaration createSlotNames() {
-            SimpleName resultName = factory.newSimpleName("results");
+            SimpleName resultName = factory.newSimpleName("results"); //$NON-NLS-1$
             List<Statement> statements = Lists.create();
             statements.add(new TypeBuilder(factory, importer.toType(String.class))
                 .array(1)
@@ -192,7 +192,7 @@ final class ParallelSortReducerEmitter {
         }
 
         private MethodDeclaration createSlotObjects() {
-            SimpleName resultName = factory.newSimpleName("results");
+            SimpleName resultName = factory.newSimpleName("results"); //$NON-NLS-1$
             List<Statement> statements = Lists.create();
             statements.add(new TypeBuilder(factory, importer.toType(Writable.class))
                 .array(1)

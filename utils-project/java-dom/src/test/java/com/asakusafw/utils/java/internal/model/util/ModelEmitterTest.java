@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -2397,7 +2397,6 @@ public class ModelEmitterTest {
             lines.add(elements[i].toString());
         }
         unit.putModelTrait(CommentEmitTrait.class, new CommentEmitTrait(lines));
-        System.out.println(unit);
         compiler.addSource(new CompilationUnitJavaFile(unit));
         List<Diagnostic<? extends JavaFileObject>> diagnostics = compiler.doCompile();
         if (diagnostics.isEmpty() == false) {

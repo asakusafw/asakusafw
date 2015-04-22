@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -765,7 +765,7 @@ public final class JavadocBlockParserUtil {
             throw new IllegalArgumentException("tokens"); //$NON-NLS-1$
         }
         if (tokens.isEmpty()) {
-            return "";
+            return ""; //$NON-NLS-1$
         }
         StringBuilder buf = new StringBuilder();
         for (JavadocToken t : tokens) {

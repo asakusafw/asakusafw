@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -78,7 +78,7 @@ public abstract class FlowDriverInput<T, S extends FlowDriverInput<T, S>> extend
             throw new IllegalArgumentException("factory must not be null"); //$NON-NLS-1$
         }
         if (LOG.isDebugEnabled()) {
-            LOG.debug("prepare - ModelType: {}", getModelType());
+            LOG.debug("prepare - ModelType: {}", getModelType()); //$NON-NLS-1$
         }
         setSource(factory);
         return getThis();

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,6 +43,7 @@ import org.apache.hadoop.util.ReflectionUtils;
 
 import com.asakusafw.runtime.directio.Counter;
 import com.asakusafw.runtime.directio.DataDefinition;
+import com.asakusafw.runtime.directio.DataFilter;
 import com.asakusafw.runtime.directio.DataFormat;
 import com.asakusafw.runtime.directio.DirectDataSource;
 import com.asakusafw.runtime.directio.DirectDataSourceConstants;
@@ -59,7 +60,7 @@ import com.asakusafw.runtime.util.VariableTable;
 /**
  * A bridge implementation for Hadoop {@link InputFormat}.
  * @since 0.2.5
- * @version 0.7.0
+ * @version 0.7.3
  */
 public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
 
@@ -91,7 +92,7 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
         }
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Start computing splits for Direct I/O: input={0}",
+                    "Start computing splits for Direct I/O: input={0}", //$NON-NLS-1$
                     inputList.size()));
         }
         long t0 = -1L;
@@ -106,8 +107,7 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
             DirectInputGroup group = entry.getKey();
             List<InputPath> paths = entry.getValue();
             DirectDataSource dataSource = repo.getRelatedDataSource(group.containerPath);
-            DataFormat<?> format = ReflectionUtils.newInstance(group.formatClass, context.getConfiguration());
-            DataDefinition<?> definition = SimpleDataDefinition.newInstance(group.dataType, format);
+            DataDefinition<?> definition = createDataDefinition(context.getConfiguration(), group);
             for (InputPath path : paths) {
                 List<DirectInputFragment> fragments = getFragments(repo, group, path, definition, dataSource);
                 for (DirectInputFragment fragment : fragments) {
@@ -122,7 +122,7 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
             results.add(new NullInputSplit());
         }
         if (LOG.isInfoEnabled()) {
-            String type = "(unknown)";
+            String type = "(unknown)"; //$NON-NLS-1$
             if (patternGroups.isEmpty() == false) {
                 type = patternGroups.keySet().iterator().next().dataType.getName();
             }
@@ -135,6 +135,13 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
                     t1 - t0));
         }
         return results;
+    }
+
+    private DataDefinition<?> createDataDefinition(Configuration configuration, DirectInputGroup group) {
+        DataFormat<?> format = ReflectionUtils.newInstance(group.formatClass, configuration);
+        DataFilter<?> filter = createFilter(group.filterClass, configuration);
+        DataDefinition<?> definition = SimpleDataDefinition.newInstance(group.dataType, format, filter);
+        return definition;
     }
 
     private <T> List<DirectInputFragment> getFragments(
@@ -178,7 +185,7 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
         if (input.componentPath.isEmpty()) {
             return containerPath;
         }
-        return String.format("%s/%s", containerPath, input.componentPath);
+        return String.format("%s/%s", containerPath, input.componentPath); //$NON-NLS-1$
     }
 
     private Map<DirectInputGroup, List<InputPath>> extractInputList(
@@ -188,10 +195,7 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
         assert context != null;
         assert repo != null;
         assert inputList != null;
-        String arguments = context.getConfiguration().get(StageConstants.PROP_ASAKUSA_BATCH_ARGS, "");
-        VariableTable variables = new VariableTable(VariableTable.RedefineStrategy.IGNORE);
-        variables.defineVariables(arguments);
-
+        VariableTable variables = createBatchArgumentsTable(context.getConfiguration());
         Map<DirectInputGroup, List<InputPath>> results = new HashMap<DirectInputGroup, List<InputPath>>();
         for (StageInput input : inputList) {
             String fullBasePath = variables.parse(extractBasePath(input));
@@ -199,7 +203,8 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
             FilePattern pattern = extractSearchPattern(context, variables, input);
             Class<?> dataClass = extractDataClass(context, input);
             Class<? extends DataFormat<?>> formatClass = extractFormatClass(context, input);
-            DirectInputGroup group = new DirectInputGroup(fullBasePath, dataClass, formatClass);
+            Class<? extends DataFilter<?>> filterClass = extractFilterClass(context, input);
+            DirectInputGroup group = new DirectInputGroup(fullBasePath, dataClass, formatClass, filterClass);
             List<InputPath> paths = results.get(group);
             if (paths == null) {
                 paths = new ArrayList<InputPath>();
@@ -245,7 +250,7 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
         if (value == null) {
             value = DirectDataSourceConstants.DEFAULT_OPTIONAL;
         }
-        return value.equals("true");
+        return value.equals("true"); //$NON-NLS-1$
     }
 
     private Class<?> extractDataClass(JobContext context, StageInput input) throws IOException {
@@ -280,6 +285,27 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    private Class<? extends DataFilter<?>> extractFilterClass(
+            JobContext context,
+            StageInput input) throws IOException {
+        assert context != null;
+        assert input != null;
+        String value = input.getAttributes().get(DirectDataSourceConstants.KEY_FILTER_CLASS);
+        if (value == null) {
+            return null;
+        }
+        try {
+            Class<?> aClass = Class.forName(value, false, context.getConfiguration().getClassLoader());
+            return (Class<? extends DataFilter<?>>) aClass.asSubclass(DataFilter.class);
+        } catch (Exception e) {
+            throw new IOException(MessageFormat.format(
+                    "Invalid format class: \"{1}\" (path={0})",
+                    extractBasePath(input),
+                    value), e);
+        }
+    }
+
     private String extract(StageInput input, String key) throws IOException {
         String value = input.getAttributes().get(key);
         if (value == null) {
@@ -297,9 +323,7 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
             TaskAttemptContext context) throws IOException, InterruptedException {
         if (split instanceof BridgeInputSplit) {
             BridgeInputSplit bridgeInfo = (BridgeInputSplit) split;
-            DataFormat<?> format =
-                    ReflectionUtils.newInstance(bridgeInfo.group.formatClass, context.getConfiguration());
-            DataDefinition<?> definition = SimpleDataDefinition.newInstance(bridgeInfo.group.dataType, format);
+            DataDefinition<?> definition = createDataDefinition(context.getConfiguration(), bridgeInfo.group);
             return createRecordReader(definition, bridgeInfo, context);
         } else if (split instanceof NullInputSplit) {
             return createNullRecordReader(context);
@@ -308,6 +332,24 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
                     "Unknown input split: {0}",
                     split));
         }
+    }
+
+    private DataFilter<?> createFilter(Class<? extends DataFilter<?>> filterClass, Configuration configuration) {
+        if (filterClass == null) {
+            return null;
+        }
+        DataFilter<?> result = ReflectionUtils.newInstance(filterClass, configuration);
+        Map<String, String> batchArguments = createBatchArgumentsTable(configuration).getVariables();
+        DataFilter.Context context = new DataFilter.Context(batchArguments);
+        result.initialize(context);
+        return result;
+    }
+
+    private VariableTable createBatchArgumentsTable(Configuration configuration) {
+        String arguments = configuration.get(StageConstants.PROP_ASAKUSA_BATCH_ARGS, ""); //$NON-NLS-1$
+        VariableTable variables = new VariableTable(VariableTable.RedefineStrategy.IGNORE);
+        variables.defineVariables(arguments);
+        return variables;
     }
 
     private <T> RecordReader<NullWritable, Object> createRecordReader(
@@ -358,16 +400,20 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
 
         final Class<? extends DataFormat<?>> formatClass;
 
+        final Class<? extends DataFilter<?>> filterClass;
+
         DirectInputGroup(
                 String containerPath,
                 Class<?> dataType,
-                Class<? extends DataFormat<?>> formatClass) {
+                Class<? extends DataFormat<?>> formatClass,
+                Class<? extends DataFilter<?>> filterClass) {
             assert containerPath != null;
             assert dataType != null;
             assert formatClass != null;
             this.containerPath = containerPath;
             this.dataType = dataType;
             this.formatClass = formatClass;
+            this.filterClass = filterClass;
         }
 
         @Override
@@ -377,6 +423,7 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
             result = prime * result + containerPath.hashCode();
             result = prime * result + dataType.hashCode();
             result = prime * result + formatClass.hashCode();
+            result = prime * result + ((filterClass == null) ? 0 : filterClass.hashCode());
             return result;
         }
 
@@ -399,6 +446,13 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
                 return false;
             }
             if (!formatClass.equals(other.formatClass)) {
+                return false;
+            }
+            if (filterClass == null) {
+                if (other.filterClass != null) {
+                    return false;
+                }
+            } else if (!filterClass.equals(other.filterClass)) {
                 return false;
             }
             return true;
@@ -473,6 +527,12 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
             WritableUtils.writeString(out, groupCopy.containerPath);
             WritableUtils.writeString(out, groupCopy.dataType.getName());
             WritableUtils.writeString(out, groupCopy.formatClass.getName());
+            if (groupCopy.filterClass == null) {
+                out.writeBoolean(false);
+            } else {
+                out.writeBoolean(true);
+                WritableUtils.writeString(out, groupCopy.filterClass.getName());
+            }
 
             DirectInputFragment fragmentCopy = fragment;
             WritableUtils.writeString(out, fragmentCopy.getPath());
@@ -493,7 +553,11 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
         public void readFields(DataInput in) throws IOException {
             String containerPath = WritableUtils.readString(in);
             String dataTypeName = WritableUtils.readString(in);
-            String supportTypeName = WritableUtils.readString(in);
+            String formatTypeName = WritableUtils.readString(in);
+            String filterTypeName = null;
+            if (in.readBoolean()) {
+                filterTypeName = WritableUtils.readString(in);
+            }
             String path = WritableUtils.readString(in);
             long offset = WritableUtils.readVLong(in);
             long length = WritableUtils.readVLong(in);
@@ -514,10 +578,16 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
 
             try {
                 Class<? extends DataFormat<?>> formatClass = (Class<? extends DataFormat<?>>) conf
-                        .getClassByName(supportTypeName)
+                        .getClassByName(formatTypeName)
                         .asSubclass(DataFormat.class);
+                Class<? extends DataFilter<?>> filterClass = null;
+                if (filterTypeName != null) {
+                    filterClass = (Class<? extends DataFilter<?>>) conf
+                            .getClassByName(filterTypeName)
+                            .asSubclass(DataFilter.class);
+                }
                 Class<?> dataType = conf.getClassByName(dataTypeName);
-                this.group = new DirectInputGroup(containerPath, dataType, formatClass);
+                this.group = new DirectInputGroup(containerPath, dataType, formatClass, filterClass);
             } catch (ClassNotFoundException e) {
                 throw new IOException("Failed to restore split", e);
             }

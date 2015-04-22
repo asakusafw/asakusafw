@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ public final class OperatorProcessorUtil {
         Set<String> saw = Sets.create();
         for (String name : names) {
             if (saw.contains(name)) {
-                analyzer.error("ポート名\"{}\"が重複しています", name);
+                analyzer.error("ポート名\"{0}\"が重複しています", name);
                 saw.remove(name);
             } else {
                 saw.add(name);
@@ -50,11 +50,11 @@ public final class OperatorProcessorUtil {
         }
     }
 
-    private static final Pattern VALID_NAME = Pattern.compile("[A-Za-z_][0-9A-Za-z_]*");
+    private static final Pattern VALID_NAME = Pattern.compile("[A-Za-z_][0-9A-Za-z_]*"); //$NON-NLS-1$
     private static void checkName(ExecutableAnalyzer analyzer, String name) {
         assert name != null;
         if (VALID_NAME.matcher(name).matches() == false) {
-            analyzer.error("ポート名に\"{}\"は利用できません", name);
+            analyzer.error("ポート名に\"{0}\"は利用できません", name);
         }
     }
 

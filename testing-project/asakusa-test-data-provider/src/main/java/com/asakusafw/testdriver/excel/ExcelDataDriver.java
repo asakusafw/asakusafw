@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,8 @@ import java.text.MessageFormat;
 import java.util.Calendar;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.DataModelDefinition.Builder;
@@ -34,6 +36,8 @@ import com.asakusafw.testdriver.core.PropertyName;
  * @since 0.2.0
  */
 class ExcelDataDriver {
+
+    static final Logger LOG = LoggerFactory.getLogger(ExcelDataDriver.class);
 
     private final Engine engine;
 
@@ -99,40 +103,40 @@ class ExcelDataDriver {
                 builder.add(name, context.getBooleanCellValue());
             } else {
                 String string = context.getStringCellValue();
-                if (string.equalsIgnoreCase("true")) {
+                if (string.equalsIgnoreCase("true")) { //$NON-NLS-1$
                     builder.add(name, true);
-                } else if (string.equalsIgnoreCase("false")) {
+                } else if (string.equalsIgnoreCase("false")) { //$NON-NLS-1$
                     builder.add(name, false);
                 } else {
-                    throw exception(name, context, "boolean");
+                    throw exception(name, context, "boolean"); //$NON-NLS-1$
                 }
             }
         }
 
         @Override
         public void byteProperty(PropertyName name, Cell context) throws IOException {
-            long value = toLong(name, context, "byte");
+            long value = toLong(name, context, "byte"); //$NON-NLS-1$
             checkRange(name, context, value, Byte.MIN_VALUE, Byte.MAX_VALUE);
             builder.add(name, (byte) value);
         }
 
         @Override
         public void shortProperty(PropertyName name, Cell context) throws IOException {
-            long value = toLong(name, context, "short");
+            long value = toLong(name, context, "short"); //$NON-NLS-1$
             checkRange(name, context, value, Short.MIN_VALUE, Short.MAX_VALUE);
             builder.add(name, (short) value);
         }
 
         @Override
         public void intProperty(PropertyName name, Cell context) throws IOException {
-            long value = toLong(name, context, "int");
+            long value = toLong(name, context, "int"); //$NON-NLS-1$
             checkRange(name, context, value, Integer.MIN_VALUE, Integer.MAX_VALUE);
             builder.add(name, (int) value);
         }
 
         @Override
         public void longProperty(PropertyName name, Cell context) throws IOException {
-            long value = toLong(name, context, "long");
+            long value = toLong(name, context, "long"); //$NON-NLS-1$
             builder.add(name, value);
         }
 
@@ -143,9 +147,17 @@ class ExcelDataDriver {
             if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
                 return (long) cell.getNumericCellValue();
             } else if (cell.getCellType() == Cell.CELL_TYPE_STRING) {
+                String stringValue = cell.getStringCellValue();
                 try {
-                    return Long.parseLong(stripNumber(cell.getStringCellValue()));
+                    return Long.parseLong(stripNumber(stringValue));
                 } catch (NumberFormatException e) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug(MessageFormat.format(
+                                "invalid long number: {0} (cell=({1}, {2}))", //$NON-NLS-1$
+                                stringValue,
+                                cell.getRowIndex() + 1,
+                                cell.getColumnIndex() + 1), e);
+                    }
                     // fall through
                 }
             }
@@ -156,8 +168,8 @@ class ExcelDataDriver {
             if (string == null) {
                 return null;
             }
-            String trimmed = string.trim().replaceAll("[_,]", "");
-            if (trimmed.startsWith("+")) {
+            String trimmed = string.trim().replaceAll("[_,]", ""); //$NON-NLS-1$ //$NON-NLS-2$
+            if (trimmed.startsWith("+")) { //$NON-NLS-1$
                 return trimmed.substring(1).trim();
             }
             return trimmed;
@@ -181,13 +193,13 @@ class ExcelDataDriver {
 
         @Override
         public void floatProperty(PropertyName name, Cell context) throws IOException {
-            double value = toDouble(name, context, "float");
+            double value = toDouble(name, context, "float"); //$NON-NLS-1$
             builder.add(name, (float) value);
         }
 
         @Override
         public void doubleProperty(PropertyName name, Cell context) throws IOException {
-            double value = toDouble(name, context, "double");
+            double value = toDouble(name, context, "double"); //$NON-NLS-1$
             builder.add(name, value);
         }
 
@@ -198,9 +210,17 @@ class ExcelDataDriver {
             if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
                 return cell.getNumericCellValue();
             } else if (cell.getCellType() == Cell.CELL_TYPE_STRING) {
+                String stringValue = cell.getStringCellValue();
                 try {
-                    return Double.parseDouble(stripNumber(cell.getStringCellValue()));
+                    return Double.parseDouble(stripNumber(stringValue));
                 } catch (NumberFormatException e) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug(MessageFormat.format(
+                                "invalid double number: {0} (cell=({1}, {2}))", //$NON-NLS-1$
+                                stringValue,
+                                cell.getRowIndex() + 1,
+                                cell.getColumnIndex() + 1), e);
+                    }
                     // fall through
                 }
             }
@@ -209,30 +229,38 @@ class ExcelDataDriver {
 
         @Override
         public void integerProperty(PropertyName name, Cell context) throws IOException {
-            BigDecimal decimal = toDecimal(name, context, "integer");
+            BigDecimal decimal = toDecimal(name, context, "integer"); //$NON-NLS-1$
             builder.add(name, decimal.toBigInteger());
         }
 
         @Override
         public void decimalProperty(PropertyName name, Cell context) throws IOException {
-            BigDecimal decimal = toDecimal(name, context, "decimal");
+            BigDecimal decimal = toDecimal(name, context, "decimal"); //$NON-NLS-1$
             builder.add(name, decimal);
         }
 
-        private BigDecimal toDecimal(PropertyName name, Cell context, String expected) throws IOException {
+        private BigDecimal toDecimal(PropertyName name, Cell cell, String expected) throws IOException {
             assert name != null;
-            assert context != null;
+            assert cell != null;
             assert expected != null;
-            if (context.getCellType() == Cell.CELL_TYPE_NUMERIC) {
-                return new BigDecimal(context.getNumericCellValue());
-            } else if (context.getCellType() == Cell.CELL_TYPE_STRING) {
+            if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
+                return new BigDecimal(cell.getNumericCellValue());
+            } else if (cell.getCellType() == Cell.CELL_TYPE_STRING) {
+                String stringValue = cell.getStringCellValue();
                 try {
-                    return new BigDecimal(stripNumber(context.getStringCellValue()));
+                    return new BigDecimal(stripNumber(stringValue));
                 } catch (NumberFormatException e) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug(MessageFormat.format(
+                                "invalid decimal number: {0} (cell=({1}, {2}))", //$NON-NLS-1$
+                                stringValue,
+                                cell.getRowIndex() + 1,
+                                cell.getColumnIndex() + 1), e);
+                    }
                     // fall through
                 }
             }
-            throw exception(name, context, expected);
+            throw exception(name, cell, expected);
         }
 
         @Override
@@ -250,7 +278,7 @@ class ExcelDataDriver {
         @Override
         public void dateProperty(PropertyName name, Cell context) throws IOException {
             if (context.getCellType() != Cell.CELL_TYPE_NUMERIC) {
-                throw exception(name, context, "date/datetime");
+                throw exception(name, context, "date/datetime"); //$NON-NLS-1$
             }
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(context.getDateCellValue());
@@ -267,7 +295,7 @@ class ExcelDataDriver {
         @Override
         public void timeProperty(PropertyName name, Cell context) throws IOException {
             if (context.getCellType() != Cell.CELL_TYPE_NUMERIC) {
-                throw exception(name, context, "date/datetime");
+                throw exception(name, context, "date/datetime"); //$NON-NLS-1$
             }
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(context.getDateCellValue());
@@ -283,7 +311,7 @@ class ExcelDataDriver {
         @Override
         public void datetimeProperty(PropertyName name, Cell context) throws IOException {
             if (context.getCellType() != Cell.CELL_TYPE_NUMERIC) {
-                throw exception(name, context, "date/datetime");
+                throw exception(name, context, "date/datetime"); //$NON-NLS-1$
             }
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(context.getDateCellValue());
@@ -302,7 +330,7 @@ class ExcelDataDriver {
 
         @Override
         public void anyProperty(PropertyName name, Cell context) throws IOException {
-            throw exception(name, context, "(BLANK)");
+            throw exception(name, context, "(BLANK)"); //$NON-NLS-1$
         }
 
         private IOException exception(PropertyName name, Cell cell, String expected) {

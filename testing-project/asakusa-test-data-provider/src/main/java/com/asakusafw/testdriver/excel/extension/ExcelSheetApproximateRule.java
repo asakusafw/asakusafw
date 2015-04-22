@@ -1,5 +1,5 @@
 /**
- * Copyright 2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,13 +34,13 @@ import com.asakusafw.testdriver.rule.ValuePredicate;
  */
 public class ExcelSheetApproximateRule implements ExcelSheetRuleExtension {
 
-    private static final Pattern PATTERN = Pattern.compile("\\s*~\\s*([\\+\\-]\\s*)?(.+)");
+    private static final Pattern PATTERN = Pattern.compile("\\s*~\\s*([\\+\\-]\\s*)?(.+)"); //$NON-NLS-1$
 
-    private static final String TRIGGER = "~";
+    private static final String TRIGGER = "~"; //$NON-NLS-1$
 
-    private static final String SIGN_PLUS = "+";
+    private static final String SIGN_PLUS = "+"; //$NON-NLS-1$
 
-    private static final String SIGN_MINUS = "-";
+    private static final String SIGN_MINUS = "-"; //$NON-NLS-1$
 
     @Override
     public ValuePredicate<?> resolve(

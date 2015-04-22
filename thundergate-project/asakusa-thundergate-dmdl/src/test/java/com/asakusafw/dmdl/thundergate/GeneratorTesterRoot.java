@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -100,8 +100,6 @@ public class GeneratorTesterRoot {
         output.close();
         try {
             File file = folder.newFile(model.name.identifier + ".dmdl");
-            System.out.println("== " + file.getName());
-            System.out.println(buffer.toString());
             PrintWriter writer = new PrintWriter(file, "UTF-8");
             try {
                 writer.print(buffer.toString());
@@ -164,21 +162,24 @@ public class GeneratorTesterRoot {
             throw new AssertionError();
         }
         for (JavaFileObject java : files) {
-            try {
-                System.out.println("=== " + java.getName());
-                System.out.println(java.getCharContent(true));
-                System.out.println();
-                System.out.println();
-            } catch (IOException e) {
-                // ignored
-            }
             compiler.addSource(java);
         }
         compiler.addArguments("-Xlint");
         List<Diagnostic<? extends JavaFileObject>> diagnostics = compiler.doCompile();
         boolean hasWrong = false;
-        for (Diagnostic<?> d : diagnostics) {
+        for (Diagnostic<? extends JavaFileObject> d : diagnostics) {
             if (d.getKind() == Diagnostic.Kind.ERROR || d.getKind() == Diagnostic.Kind.WARNING) {
+                JavaFileObject java = d.getSource();
+                if (java != null) {
+                    try {
+                        System.out.println("=== " + java.getName());
+                        System.out.println(java.getCharContent(true));
+                        System.out.println();
+                        System.out.println();
+                    } catch (IOException e) {
+                        // ignored
+                    }
+                }
                 System.out.println("--");
                 System.out.println(d.getMessage(Locale.getDefault()));
                 hasWrong = true;
@@ -216,7 +217,7 @@ public class GeneratorTesterRoot {
     /**
      * Generated data model loader for testing.
      */
-    protected static class ModelLoader {
+    public static class ModelLoader {
 
         private final ClassLoader classLoader;
 
@@ -300,7 +301,7 @@ public class GeneratorTesterRoot {
      * DataModel class instance.
      */
     @SuppressWarnings("rawtypes")
-    protected static class ModelWrapper {
+    public static class ModelWrapper {
 
         private final DataModel instance;
 

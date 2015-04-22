@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -78,7 +78,7 @@ final class Util {
         assert type != null;
         TypeElement element = (TypeElement) environment.getTypeUtils().asElement(type);
         DataModelKind kind = element.getAnnotation(DataModelKind.class);
-        return kind != null && kind.value().equals("DMDL");
+        return kind != null && kind.value().equals("DMDL"); //$NON-NLS-1$
     }
 
     private static boolean hasKindMatched(OperatorCompilingEnvironment environment, TypeParameterElement parameter) {
@@ -113,8 +113,8 @@ final class Util {
         if (segments.size() <= 2) {
             return null;
         }
-        if (segments.get(0).equals("get") == false
-                || segments.get(segments.size() - 1).equals("option") == false) {
+        if (segments.get(0).equals("get") == false //$NON-NLS-1$
+                || segments.get(segments.size() - 1).equals("option") == false) { //$NON-NLS-1$
             return null;
         }
         name.removeLast();

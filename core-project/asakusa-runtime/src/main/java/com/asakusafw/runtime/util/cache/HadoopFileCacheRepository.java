@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ public class HadoopFileCacheRepository implements FileCacheRepository {
 
     static final Log LOG = LogFactory.getLog(HadoopFileCacheRepository.class);
 
-    static final String KEY_CHECK_BEFORE_DELETE = "com.asakusafw.cache.hadoop.deleteOnlyIfExists";
+    static final String KEY_CHECK_BEFORE_DELETE = "com.asakusafw.cache.hadoop.deleteOnlyIfExists"; //$NON-NLS-1$
 
     static final boolean DEFAULT_CHECK_BEFORE_DELETE = true;
 
@@ -120,7 +120,7 @@ public class HadoopFileCacheRepository implements FileCacheRepository {
                     if (isCached(cachePath, cacheChecksumPath, sourceChecksum)) {
                         if (LOG.isDebugEnabled()) {
                             LOG.debug(MessageFormat.format(
-                                    "cache hit: {0} -> {1}",
+                                    "cache hit: {0} -> {1}", //$NON-NLS-1$
                                     sourcePath,
                                     cachePath));
                         }
@@ -128,7 +128,7 @@ public class HadoopFileCacheRepository implements FileCacheRepository {
                     } else {
                         if (LOG.isDebugEnabled()) {
                             LOG.debug(MessageFormat.format(
-                                    "cache miss: {0} -> {1}",
+                                    "cache miss: {0} -> {1}", //$NON-NLS-1$
                                     sourcePath,
                                     cachePath));
                         }
@@ -160,7 +160,7 @@ public class HadoopFileCacheRepository implements FileCacheRepository {
     private long computeChecksum(FileSystem fs, Path file) throws IOException {
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Computing checksum: {0}",
+                    "Computing checksum: {0}", //$NON-NLS-1$
                     file));
         }
         Checksum checksum = new CRC32();
@@ -185,9 +185,9 @@ public class HadoopFileCacheRepository implements FileCacheRepository {
         String directoryName;
         Path parent = file.getParent();
         if (parent == null) {
-            directoryName = String.format("%08x", 0);
+            directoryName = String.format("%08x", 0); //$NON-NLS-1$
         } else {
-            directoryName = String.format("%08x", parent.toString().hashCode());
+            directoryName = String.format("%08x", parent.toString().hashCode()); //$NON-NLS-1$
         }
         Path directory = new Path(repository, directoryName);
         Path target = new Path(directory, file.getName());
@@ -196,28 +196,28 @@ public class HadoopFileCacheRepository implements FileCacheRepository {
 
     private Path computeCacheChecksumPath(Path cachePath) {
         Path parent = cachePath.getParent();
-        String name = String.format("%s.acrc", cachePath.getName());
+        String name = String.format("%s.acrc", cachePath.getName()); //$NON-NLS-1$
         return new Path(parent, name);
     }
 
     private boolean isCached(Path cacheFilePath, Path cacheChecksumPath, long checksum) throws IOException {
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "checking remote cache: {0}",
+                    "checking remote cache: {0}", //$NON-NLS-1$
                     cacheFilePath));
         }
         FileSystem fs = cacheChecksumPath.getFileSystem(configuration);
         if (fs.exists(cacheChecksumPath) == false || fs.exists(cacheFilePath) == false) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "remote cache is not found: {0}",
+                        "remote cache is not found: {0}", //$NON-NLS-1$
                         cacheFilePath));
             }
             return false;
         } else {
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
-                        "reading remote cache checksum: {0}",
+                        "reading remote cache checksum: {0}", //$NON-NLS-1$
                         cacheFilePath));
             }
             long other;

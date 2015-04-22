@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,17 +41,17 @@ public abstract class ModelIoFactory<T> {
      * モデルクラスの名前のパターン ($1 - ベースパッケージ, $2 - 単純名)。
      */
     static final Pattern MODEL_CLASS_NAME_PATTERN = Pattern.compile(
-            "(.*)\\.model\\.([^\\.]+)$");
+            "(.*)\\.model\\.([^\\.]+)$"); //$NON-NLS-1$
 
     /**
      * {@link ModelInput}の実装が配置してある場所の名前 ({0} - ベースパッケージ, {1} - モデルの単純名)。
      */
-    public static final String MODEL_INPUT_CLASS_FORMAT = "{0}.io.{1}ModelInput";
+    public static final String MODEL_INPUT_CLASS_FORMAT = "{0}.io.{1}ModelInput"; //$NON-NLS-1$
 
     /**
      * {@link ModelOutput}の実装が配置してある場所の名前 ({0} - ベースパッケージ, {1} - モデルの単純名)。
      */
-    public static final String MODEL_OUTPUT_CLASS_FORMAT = "{0}.io.{1}ModelOutput";
+    public static final String MODEL_OUTPUT_CLASS_FORMAT = "{0}.io.{1}ModelOutput"; //$NON-NLS-1$
 
     private final Class<T> modelClass;
 

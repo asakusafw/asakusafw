@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ import com.asakusafw.runtime.util.VariableTable.RedefineStrategy;
 import com.asakusafw.testdriver.JobExecutor;
 import com.asakusafw.testdriver.TestDriverContext;
 import com.asakusafw.testdriver.TestExecutionPlan;
+import com.asakusafw.testdriver.TestExecutionPlan.Task;
 import com.asakusafw.utils.collections.Maps;
 import com.asakusafw.yaess.core.BatchScript;
 import com.asakusafw.yaess.core.CommandScript;
@@ -63,11 +64,11 @@ public class RunTask {
         }
         @Override
         public String getHandlerId() {
-            return "testing";
+            return "testing"; //$NON-NLS-1$
         }
         @Override
         public String getResourceId(ExecutionContext context, ExecutionScript script) {
-            return "testing";
+            return "testing"; //$NON-NLS-1$
         }
         @Override
         public Map<String, String> getProperties(ExecutionContext context, ExecutionScript script) {
@@ -122,14 +123,14 @@ public class RunTask {
 
     private TestExecutionPlan toPlan(FlowScript flow) throws IOException {
         assert flow != null;
-        List<TestExecutionPlan.Command> initializers = resolveCommands(flow, ExecutionPhase.INITIALIZE);
-        List<TestExecutionPlan.Command> importers = resolveCommands(flow, ExecutionPhase.IMPORT);
-        List<TestExecutionPlan.Job> jobs = new ArrayList<TestExecutionPlan.Job>();
-        jobs.addAll(resolveJobs(flow, ExecutionPhase.PROLOGUE));
-        jobs.addAll(resolveJobs(flow, ExecutionPhase.MAIN));
-        jobs.addAll(resolveJobs(flow, ExecutionPhase.EPILOGUE));
-        List<TestExecutionPlan.Command> exporters = resolveCommands(flow, ExecutionPhase.EXPORT);
-        List<TestExecutionPlan.Command> finalizers = resolveCommands(flow, ExecutionPhase.FINALIZE);
+        List<TestExecutionPlan.Task> initializers = resolveTasks(flow, ExecutionPhase.INITIALIZE);
+        List<TestExecutionPlan.Task> importers = resolveTasks(flow, ExecutionPhase.IMPORT);
+        List<TestExecutionPlan.Task> jobs = new ArrayList<TestExecutionPlan.Task>();
+        jobs.addAll(resolveTasks(flow, ExecutionPhase.PROLOGUE));
+        jobs.addAll(resolveTasks(flow, ExecutionPhase.MAIN));
+        jobs.addAll(resolveTasks(flow, ExecutionPhase.EPILOGUE));
+        List<TestExecutionPlan.Task> exporters = resolveTasks(flow, ExecutionPhase.EXPORT);
+        List<TestExecutionPlan.Task> finalizers = resolveTasks(flow, ExecutionPhase.FINALIZE);
         return new TestExecutionPlan(
                 flow.getId(),
                 configuration.context.getExecutionId(),
@@ -140,32 +141,26 @@ public class RunTask {
                 finalizers);
     }
 
-    private List<TestExecutionPlan.Job> resolveJobs(FlowScript flow, ExecutionPhase phase) throws IOException {
+    private List<TestExecutionPlan.Task> resolveTasks(FlowScript flow, ExecutionPhase phase) throws IOException {
         ExecutionContext context = createExecutionContext(flow, phase);
-        List<TestExecutionPlan.Job> results = new ArrayList<TestExecutionPlan.Job>();
+        List<TestExecutionPlan.Task> results = new ArrayList<TestExecutionPlan.Task>();
         for (ExecutionScript script : flow.getScripts().get(phase)) {
-            HadoopScript resolved = (HadoopScript) resolveScript(script, context);
-            Map<String, String> props = new TreeMap<String, String>();
-            props.putAll(getHadoopProperties());
-            props.putAll(resolved.getHadoopProperties());
-            results.add(new TestExecutionPlan.Job(
-                    resolved.getClassName(),
-                    context.getExecutionId(),
-                    props));
-        }
-        return results;
-    }
-
-    private List<TestExecutionPlan.Command> resolveCommands(FlowScript flow, ExecutionPhase phase) throws IOException {
-        ExecutionContext context = createExecutionContext(flow, phase);
-        List<TestExecutionPlan.Command> results = new ArrayList<TestExecutionPlan.Command>();
-        for (ExecutionScript script : flow.getScripts().get(phase)) {
-            CommandScript resolved = (CommandScript) resolveScript(script, context);
-            results.add(new TestExecutionPlan.Command(
-                    resolved.getCommandLineTokens(),
-                    resolved.getModuleName(),
-                    resolved.getProfileName(),
-                    resolved.getEnvironmentVariables()));
+            if (script.getKind() == ExecutionScript.Kind.COMMAND) {
+                CommandScript resolved = (CommandScript) resolveScript(script, context);
+                results.add(new TestExecutionPlan.Command(
+                        resolved.getCommandLineTokens(),
+                        resolved.getModuleName(),
+                        resolved.getProfileName(),
+                        resolved.getEnvironmentVariables()));
+            } else if (script.getKind() == ExecutionScript.Kind.HADOOP) {
+                HadoopScript resolved = (HadoopScript) resolveScript(script, context);
+                Map<String, String> props = new TreeMap<String, String>();
+                props.putAll(getHadoopProperties());
+                props.putAll(resolved.getHadoopProperties());
+                results.add(new TestExecutionPlan.Job(resolved.getClassName(), props));
+            } else {
+                throw new AssertionError(script);
+            }
         }
         return results;
     }
@@ -205,7 +200,7 @@ public class RunTask {
 
     private String getExecutionId(FlowScript flow) {
         assert flow != null;
-        return String.format("%s-%s-%s",
+        return String.format("%s-%s-%s", //$NON-NLS-1$
                 configuration.executionIdPrefix,
                 configuration.script.getId(),
                 flow.getId());
@@ -223,36 +218,36 @@ public class RunTask {
                 executor.getClass().getName(),
         });
         try {
-            runJobflowCommands(executor, plan.getInitializers());
-            runJobflowCommands(executor, plan.getImporters());
-            runJobflowJobs(executor, plan.getJobs());
-            runJobflowCommands(executor, plan.getExporters());
+            runJobflowTasks(executor, plan.getInitializers());
+            runJobflowTasks(executor, plan.getImporters());
+            runJobflowTasks(executor, plan.getJobs());
+            runJobflowTasks(executor, plan.getExporters());
         } finally {
-            runJobflowCommands(executor, plan.getFinalizers());
+            runJobflowTasks(executor, plan.getFinalizers());
         }
         if (configuration.cleanUp) {
             cleanUpJobflow(executor);
         }
     }
 
-    private void runJobflowJobs(JobExecutor executor, List<TestExecutionPlan.Job> jobs) throws IOException {
-        assert jobs != null;
-        for (TestExecutionPlan.Job job : jobs) {
-            executor.execute(job, getEnvironmentVariables());
-        }
-    }
-
-    private void runJobflowCommands(JobExecutor executor, List<TestExecutionPlan.Command> cmdList) throws IOException {
-        assert cmdList != null;
-        for (TestExecutionPlan.Command command : cmdList) {
-            executor.execute(command, getEnvironmentVariables());
+    private void runJobflowTasks(JobExecutor executor, List<? extends Task> tasks) throws IOException {
+        for (TestExecutionPlan.Task task : tasks) {
+            switch (task.getTaskKind()) {
+            case COMMAND:
+                executor.execute((TestExecutionPlan.Command) task, getEnvironmentVariables());
+                break;
+            case HADOOP:
+                executor.execute((TestExecutionPlan.Job) task, getEnvironmentVariables());
+                break;
+            default:
+                throw new AssertionError(task);
+            }
         }
     }
 
     private void cleanUpJobflow(JobExecutor executor) throws IOException {
         TestExecutionPlan.Job job = new TestExecutionPlan.Job(
                 AbstractCleanupStageClient.IMPLEMENTATION,
-                configuration.context.getExecutionId(),
                 getHadoopProperties());
         executor.execute(job, getEnvironmentVariables());
     }

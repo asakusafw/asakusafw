@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ import com.asakusafw.runtime.core.context.RuntimeContext;
 /**
  * Disables each cache information.
  * This requires the one of the following argument sequence:
-<table border="1">
+<table border="1"><caption>argument sequence of {@link #main}</caption>
 <tr>
     <th> subcommand </th>
     <th> target-name </th>

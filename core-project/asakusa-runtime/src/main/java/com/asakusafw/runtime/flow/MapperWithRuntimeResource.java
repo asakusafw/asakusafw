@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ public abstract class MapperWithRuntimeResource<KEYIN, VALUEIN, KEYOUT, VALUEOUT
     private RuntimeResourceManager resources;
 
     /**
-     * Invokes {@link Mapper#run(Context)} internally.
+     * Invokes {@code Mapper#run(Context)} internally.
      * Clients can override this method and implement customized {@code run} method.
      * @param context current context
      * @throws IOException if task is failed by I/O error

@@ -15,7 +15,7 @@ mvn install -DskipTests
 ## How to run tests
 * Install [Hadoop](http://hadoop.apache.org/) with local-mode settings
 * Set `hadoop` command into your PATH variable, or set it to `$HADOOP_CMD`
-* And run `mvn test [-Dhadoop.inprocess]`
+* And run `mvn test [-Dhadoop.builtin]`
 
 ## How to import projects into Eclipse
 * Run `mvn install eclipse:eclipse -DskipTests`

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2014 Asakusa Framework Team.
+ * Copyright 2011-2015 Asakusa Framework Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -116,12 +116,12 @@ public class FlowElementPortDescription {
     public String toString() {
         if (direction == PortDirection.INPUT) {
             return MessageFormat.format(
-                    "Input({0}):{1}",
+                    "Input({0}):{1}", //$NON-NLS-1$
                     getName(),
                     getDataType());
         } else {
             return MessageFormat.format(
-                    "Output({0}):{1}",
+                    "Output({0}):{1}", //$NON-NLS-1$
                     getName(),
                     getDataType());
         }
