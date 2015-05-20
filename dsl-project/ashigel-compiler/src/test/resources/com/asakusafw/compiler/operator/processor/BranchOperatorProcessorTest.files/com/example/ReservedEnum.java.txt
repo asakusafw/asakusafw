@@ -2,7 +2,7 @@ package com.example;
 
 public enum ReservedEnum {
 
-    _,
+    INT,
 
     NEW,
 }
