@@ -30,7 +30,7 @@ import com.asakusafw.runtime.value.DateUtil;
 /**
  * date and date-time utilities.
  * @since 0.7.0
- * @version 0.7.2
+ * @version 0.7.4
  */
 public final class TemporalUtil {
 
@@ -104,6 +104,12 @@ public final class TemporalUtil {
     private static final long GREGORIAN_EPOCH_JDN = 2299161;
 
     private static final long JULIAN_OFFSET = TimeUnit.DAYS.toSeconds(GREGORIAN_EPOCH_JDN) - GREGORIAN_EPOCH;
+
+    /**
+     * The day number of the epoch date.
+     * @since 0.7.4
+     */
+    public static final int DATE_EPOCH_OFFSET = DateUtil.getDayFromDate(1970, 1, 1);
 
     /**
      * Parses a {@code date} value.
@@ -286,5 +292,27 @@ public final class TemporalUtil {
 
     private TemporalUtil() {
         return;
+    }
+
+    /**
+     * Returns the day number since the epoch date.
+     * @param date the target date
+     * @return the day number
+     * @since 0.7.4
+     * @see #toElapsedDays(int)
+     */
+    public static int getDaysSinceEpoch(Date date) {
+        return date.getElapsedDays() - DATE_EPOCH_OFFSET;
+    }
+
+    /**
+     * Returns the elapsed days from the epoch date.
+     * @param daysSinceEpoch the day number since epoch date
+     * @return the elapsed days
+     * @since 0.7.4
+     * @see #getDaysSinceEpoch(Date)
+     */
+    public static int toElapsedDays(int daysSinceEpoch) {
+        return daysSinceEpoch + DATE_EPOCH_OFFSET;
     }
 }

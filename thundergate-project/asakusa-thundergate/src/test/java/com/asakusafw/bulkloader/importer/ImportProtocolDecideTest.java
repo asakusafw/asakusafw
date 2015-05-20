@@ -148,7 +148,7 @@ public class ImportProtocolDecideTest {
         bean.setTargetTable(targetTable);
         ImportProtocolDecide service = new ImportProtocolDecide() {
             @Override
-            protected Map<String, CacheInfo> collectRemoteCacheInfo(ImportBean _)
+            protected Map<String, CacheInfo> collectRemoteCacheInfo(ImportBean ignored)
                     throws BulkLoaderSystemException {
                 return Collections.emptyMap();
             }
@@ -205,7 +205,7 @@ public class ImportProtocolDecideTest {
         bean.setTargetTable(targetTable);
         ImportProtocolDecide service = new ImportProtocolDecide() {
             @Override
-            protected Map<String, CacheInfo> collectRemoteCacheInfo(ImportBean _)
+            protected Map<String, CacheInfo> collectRemoteCacheInfo(ImportBean ignored)
                     throws BulkLoaderSystemException {
                 return Collections.singletonMap("tb1", new CacheInfo(
                         CacheInfo.FEATURE_VERSION,
@@ -270,7 +270,7 @@ public class ImportProtocolDecideTest {
         bean.setTargetTable(targetTable);
         ImportProtocolDecide service = new ImportProtocolDecide() {
             @Override
-            protected Map<String, CacheInfo> collectRemoteCacheInfo(ImportBean _)
+            protected Map<String, CacheInfo> collectRemoteCacheInfo(ImportBean ignored)
                     throws BulkLoaderSystemException {
                 return Collections.singletonMap("tb1", new CacheInfo(
                         CacheInfo.FEATURE_VERSION,
@@ -334,7 +334,7 @@ public class ImportProtocolDecideTest {
         bean.setTargetTable(targetTable);
         ImportProtocolDecide service = new ImportProtocolDecide() {
             @Override
-            protected Map<String, CacheInfo> collectRemoteCacheInfo(ImportBean _)
+            protected Map<String, CacheInfo> collectRemoteCacheInfo(ImportBean ignored)
                     throws BulkLoaderSystemException {
                 return Collections.singletonMap("tb1", new CacheInfo(
                         CacheInfo.FEATURE_VERSION,
@@ -386,7 +386,7 @@ public class ImportProtocolDecideTest {
         bean.setTargetTable(targetTable);
         ImportProtocolDecide service = new ImportProtocolDecide() {
             @Override
-            protected Map<String, CacheInfo> collectRemoteCacheInfo(ImportBean _)
+            protected Map<String, CacheInfo> collectRemoteCacheInfo(ImportBean ignored)
                     throws BulkLoaderSystemException {
                 return Collections.singletonMap("tb1", new CacheInfo(
                         CacheInfo.FEATURE_VERSION,
@@ -424,7 +424,7 @@ public class ImportProtocolDecideTest {
         bean.setTargetTable(targetTable);
         ImportProtocolDecide service = new ImportProtocolDecide() {
             @Override
-            protected Map<String, CacheInfo> collectRemoteCacheInfo(ImportBean _)
+            protected Map<String, CacheInfo> collectRemoteCacheInfo(ImportBean ignored)
                     throws BulkLoaderSystemException {
                 return Collections.singletonMap("tb1", new CacheInfo(
                         CacheInfo.FEATURE_VERSION,
@@ -476,7 +476,7 @@ public class ImportProtocolDecideTest {
         bean.setTargetTable(targetTable);
         ImportProtocolDecide service = new ImportProtocolDecide() {
             @Override
-            protected Map<String, CacheInfo> collectRemoteCacheInfo(ImportBean _)
+            protected Map<String, CacheInfo> collectRemoteCacheInfo(ImportBean ignored)
                     throws BulkLoaderSystemException {
                 return Collections.emptyMap();
             }
@@ -521,7 +521,7 @@ public class ImportProtocolDecideTest {
         bean.setTargetTable(targetTable);
         ImportProtocolDecide service = new ImportProtocolDecide() {
             @Override
-            protected Map<String, CacheInfo> collectRemoteCacheInfo(ImportBean _)
+            protected Map<String, CacheInfo> collectRemoteCacheInfo(ImportBean ignored)
                     throws BulkLoaderSystemException {
                 return Collections.singletonMap("tb1", new CacheInfo(
                         CacheInfo.FEATURE_VERSION + "+",
@@ -573,7 +573,7 @@ public class ImportProtocolDecideTest {
         bean.setTargetTable(targetTable);
         ImportProtocolDecide service = new ImportProtocolDecide() {
             @Override
-            protected Map<String, CacheInfo> collectRemoteCacheInfo(ImportBean _)
+            protected Map<String, CacheInfo> collectRemoteCacheInfo(ImportBean ignored)
                     throws BulkLoaderSystemException {
                 return Collections.singletonMap("tb1", new CacheInfo(
                         CacheInfo.FEATURE_VERSION,
@@ -620,7 +620,7 @@ public class ImportProtocolDecideTest {
 
         ImportProtocolDecide service = new ImportProtocolDecide() {
             @Override
-            protected Map<String, CacheInfo> collectRemoteCacheInfo(ImportBean _)
+            protected Map<String, CacheInfo> collectRemoteCacheInfo(ImportBean ignored)
                     throws BulkLoaderSystemException {
                 return Collections.emptyMap();
             }
@@ -664,7 +664,7 @@ public class ImportProtocolDecideTest {
 
         ImportProtocolDecide service = new ImportProtocolDecide() {
             @Override
-            protected Map<String, CacheInfo> collectRemoteCacheInfo(ImportBean _)
+            protected Map<String, CacheInfo> collectRemoteCacheInfo(ImportBean ignored)
                     throws BulkLoaderSystemException {
                 return Collections.emptyMap();
             }

@@ -13,6 +13,6 @@ public abstract class Reserved {
         if (hoge.getValue() > 100) {
             return ReservedEnum.NEW;
         }
-        return ReservedEnum._;
+        return ReservedEnum.INT;
     }
 }
