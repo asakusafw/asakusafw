@@ -144,15 +144,4 @@ public class ParquetFileDriverTest extends GeneratorTesterRoot {
                 "model = { simple : INT; };"
         });
     }
-
-    /**
-     * unsupported type - date.
-     */
-    @Test
-    public void invalid_date() {
-        shouldSemanticError(new String[] {
-                "@directio.hive.parquet",
-                "model = { simple : DATE; };",
-        });
-    }
 }

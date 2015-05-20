@@ -35,8 +35,10 @@ import parquet.schema.PrimitiveType.PrimitiveTypeName;
 import parquet.schema.Type;
 import parquet.schema.Type.Repetition;
 
+import com.asakusafw.directio.hive.util.TemporalUtil;
 import com.asakusafw.runtime.value.BooleanOption;
 import com.asakusafw.runtime.value.ByteOption;
+import com.asakusafw.runtime.value.DateOption;
 import com.asakusafw.runtime.value.DecimalOption;
 import com.asakusafw.runtime.value.DoubleOption;
 import com.asakusafw.runtime.value.FloatOption;
@@ -49,7 +51,7 @@ import com.asakusafw.runtime.value.ValueOption;
 /**
  * Provides {@link ParquetValueDriver}.
  * @since 0.7.0
- * @version 0.7.2
+ * @version 0.7.4
  */
 public enum ParquetValueDrivers implements ParquetValueDriver {
 
@@ -166,6 +168,25 @@ public enum ParquetValueDrivers implements ParquetValueDriver {
         @Override
         public Type getType(String name) {
             return new PrimitiveType(Repetition.OPTIONAL, typeName, name, OriginalType.UTF8);
+        }
+    },
+
+    /**
+     * Driver for basic {@link DateOption}.
+     * @since 0.7.4
+     */
+    DATE(DateOption.class, TypeInfoFactory.dateTypeInfo, PrimitiveTypeName.INT32) {
+        @Override
+        public ValueConverter getConverter() {
+            return new DateOptionConverter();
+        }
+        @Override
+        public ValueWriter getWriter() {
+            return BasicValueWriter.DATE;
+        }
+        @Override
+        public Type getType(String name) {
+            return new PrimitiveType(Repetition.OPTIONAL, typeName, name, OriginalType.DATE);
         }
     },
     ;
@@ -493,6 +514,26 @@ public enum ParquetValueDrivers implements ParquetValueDriver {
                 Arrays.fill(this.dict, null);
             }
             return this.dict;
+        }
+    }
+
+    private static final class DateOptionConverter extends ValueConverter {
+
+        private DateOption target;
+
+        public DateOptionConverter() {
+            return;
+        }
+
+        @Override
+        public void set(ValueOption<?> value) {
+            this.target = (DateOption) value;
+        }
+
+        @SuppressWarnings("deprecation")
+        @Override
+        public void addInt(int value) {
+            this.target.modify(TemporalUtil.toElapsedDays(value));
         }
     }
 }
