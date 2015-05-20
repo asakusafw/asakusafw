@@ -41,7 +41,7 @@
 		<!-- artifact id/versions -->
 		<hadoop.artifact.id>hadoop-client</hadoop.artifact.id>
 		<hadoop.version>1.2.1</hadoop.version>
-		<hive.version>1.1.0</hive.version>
+		<hive.version>1.2.0</hive.version>
 		<snappy.version>1.1.1.6</snappy.version>
 		<mysql.jdbc.version>5.1.25</mysql.jdbc.version>
 		<commons.cli.version>1.2</commons.cli.version>
