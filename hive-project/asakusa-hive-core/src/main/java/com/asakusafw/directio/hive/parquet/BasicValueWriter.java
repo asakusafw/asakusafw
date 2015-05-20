@@ -15,13 +15,18 @@
  */
 package com.asakusafw.directio.hive.parquet;
 
+import java.text.MessageFormat;
+
 import org.apache.hadoop.io.Text;
 
 import parquet.io.api.Binary;
 import parquet.io.api.RecordConsumer;
 
+import com.asakusafw.directio.hive.util.TemporalUtil;
 import com.asakusafw.runtime.value.BooleanOption;
 import com.asakusafw.runtime.value.ByteOption;
+import com.asakusafw.runtime.value.Date;
+import com.asakusafw.runtime.value.DateOption;
 import com.asakusafw.runtime.value.DoubleOption;
 import com.asakusafw.runtime.value.FloatOption;
 import com.asakusafw.runtime.value.IntOption;
@@ -32,6 +37,7 @@ import com.asakusafw.runtime.value.StringOption;
 /**
  * Provides {@link ValueWriter}s.
  * @since 0.7.0
+ * @version 0.7.4
  */
 public enum BasicValueWriter implements ValueWriter {
 
@@ -115,4 +121,24 @@ public enum BasicValueWriter implements ValueWriter {
             consumer.addBinary(Binary.fromByteArray(text.getBytes(), 0, text.getLength()));
         }
     },
+
+    /**
+     * Writer for {@link DateOption}.
+     * @since 0.7.4
+     */
+    DATE {
+        @Override
+        public void write(Object value, RecordConsumer consumer) {
+            DateOption option = (DateOption) value;
+            int days = TemporalUtil.getDaysSinceEpoch(option.get());
+            if (days < 0) {
+                throw new IllegalStateException(MessageFormat.format(
+                        "failed to write date: {0} (must be after {1})",
+                        option,
+                        new Date(TemporalUtil.DATE_EPOCH_OFFSET)));
+            }
+            consumer.addInteger(days);
+        }
+    }
+    ;
 }
