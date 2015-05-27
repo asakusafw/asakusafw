@@ -28,6 +28,12 @@
 			<groupId>com.asakusafw</groupId>
 			<artifactId>asakusa-hive-dmdl</artifactId>
 			<version>${project.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.hive</groupId>
+					<artifactId>hive-exec</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 	</dependencies>
 </project>
