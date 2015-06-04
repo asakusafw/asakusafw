@@ -42,6 +42,7 @@ import com.asakusafw.yaess.bootstrap.Yaess.Configuration;
 import com.asakusafw.yaess.bootstrap.Yaess.Mode;
 import com.asakusafw.yaess.core.ExecutionLock;
 import com.asakusafw.yaess.core.ExecutionPhase;
+import com.asakusafw.yaess.core.VariableResolver;
 
 /**
  * Test for {@link Yaess}.
@@ -159,6 +160,32 @@ public class YaessTest {
         assertThat(conf.arguments.get("a"), is("b"));
         assertThat(conf.arguments.get("c"), is("d"));
         assertThat(conf.arguments.get("e"), is("f"));
+    }
+
+    /**
+     * w/ custom environment variables.
+     * @throws Exception if failed
+     */
+    @Test
+    public void config_variables() throws Exception {
+        ProfileBuilder builder = new ProfileBuilder(folder.getRoot());
+        File profile = builder.getProfile();
+        File script = builder.getScript();
+
+        List<String> arguments = new ArrayList<String>();
+        Collections.addAll(arguments, "-profile", profile.getAbsolutePath());
+        Collections.addAll(arguments, "-script", script.getAbsolutePath());
+        Collections.addAll(arguments, "-batch", "tbatch");
+        Collections.addAll(arguments, "-V", "a=b");
+        Collections.addAll(arguments, "-V", "c=d");
+        Collections.addAll(arguments, "-V", "e=f");
+
+        Configuration conf = Yaess.parseConfiguration(arguments.toArray(new String[arguments.size()]));
+        VariableResolver vars = conf.context.getContextParameters();
+        assertThat(vars.replace("${a-a}", true), is("b"));
+        assertThat(vars.replace("${c-c}", true), is("d"));
+        assertThat(vars.replace("${e-e}", true), is("f"));
+        assertThat(vars.replace("${g-g}", true), is("g"));
     }
 
     /**
