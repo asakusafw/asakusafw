@@ -50,6 +50,8 @@ public final class Yaess {
 
     static final Logger LOG = LoggerFactory.getLogger(Yaess.class);
 
+    static final String KEY_CUSTOM_PROFILE = "profile";
+
     static final Option OPT_PROFILE;
     static final Option OPT_SCRIPT;
     static final Option OPT_BATCH_ID;
@@ -219,15 +221,17 @@ public final class Yaess {
         result.mode = computeMode(flowId, executionId, phaseName);
 
         LOG.debug("Loading profile: {}", profile);
+        File file = new File(profile);
+        file = findCustomProfile(file, definitions.getProperty(KEY_CUSTOM_PROFILE));
         try {
             ProfileContext context = ProfileContext.system(loader);
-            Properties properties = CommandLineUtil.loadProperties(new File(profile));
+            Properties properties = CommandLineUtil.loadProperties(file);
             result.profile = YaessProfile.load(properties, context);
         } catch (Exception e) {
-            YSLOG.error(e, "E01001", profile);
+            YSLOG.error(e, "E01001", file.getPath());
             throw new IllegalArgumentException(MessageFormat.format(
                     "Invalid profile \"{0}\".",
-                    profile), e);
+                    file), e);
         }
 
         LOG.debug("Loading script: {}", script);
@@ -257,6 +261,23 @@ public final class Yaess {
         result.definitions = toMap(definitions);
 
         LOG.debug("Analyzed YAESS bootstrap arguments");
+        return result;
+    }
+
+    private static File findCustomProfile(File file, String customProfileName) {
+        if (customProfileName == null) {
+            return file;
+        }
+        String fileName = file.getName();
+        int index = fileName.lastIndexOf('.');
+        String extension = ""; //$NON-NLS-1$
+        if (index >= 0) {
+            extension = fileName.substring(index);
+        }
+
+        File result = new File(file.getParentFile(), customProfileName + extension);
+        YSLOG.info("I01001", //$NON-NLS-1$
+                result);
         return result;
     }
 

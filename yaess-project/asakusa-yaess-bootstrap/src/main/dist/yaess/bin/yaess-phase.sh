@@ -22,7 +22,9 @@ usage() {
 YAESS - A portable Asakusa workflow processor
 
 Usage:
-    yaess-phase.sh batch-id flow-id phase-name execution-id [-A <key>=<value> [-A <key>=<value>  [...]]]
+    yaess-phase.sh batch-id flow-id phase-name execution-id \\
+        [-A <key>=<value> [-A <key>=<value>  [...]]] \\
+        [-D <key>=<value> [-D <key>=<value>  [...]]]
 
 Parameters:
     batch-id
@@ -39,8 +41,13 @@ Parameters:
         generated automatically (experimental feature)
     -A <key>=<value>
         argument for this execution
+    -D <key>=<value>
+        definition for this execution
 
 Definitions:
+    -D profile=<custom-profile-name>
+        uses a custom profile: "conf/<custom-profile-name>.properties"
+        instead of "conf/yaess.properties"
     -D dryRun, -D dryRun=true
         executes each stage as simulation mode
     -D verifyApplication=false
