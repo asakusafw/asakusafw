@@ -222,8 +222,7 @@ public class WindGateHadoopPutTest {
     }
 
     private void put(FileList.Writer writer, Path path, String string) throws IOException {
-        FileStatus status = FileList.createFileStatus(path);
-        OutputStream out = writer.openNext(status);
+        OutputStream out = writer.openNext(path);
         try {
             out.write(string.getBytes("UTF-8"));
         } finally {
