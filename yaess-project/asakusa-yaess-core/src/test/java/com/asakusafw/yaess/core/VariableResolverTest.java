@@ -65,6 +65,27 @@ public class VariableResolverTest {
     }
 
     /**
+     * present variable w/ default value.
+     */
+    @Test
+    public void with_default_present() {
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("message", "Hello, world!");
+        VariableResolver resolver = new VariableResolver(map);
+        assertThat(resolver.replace("${message-MISSING}", true), is("Hello, world!"));
+    }
+
+    /**
+     * absent variable w/ default value.
+     */
+    @Test
+    public void with_default_missing() {
+        Map<String, String> map = new HashMap<String, String>();
+        VariableResolver resolver = new VariableResolver(map);
+        assertThat(resolver.replace("${message-MISSING}", true), is("MISSING"));
+    }
+
+    /**
      * Unknown variable.
      */
     @Test(expected = IllegalArgumentException.class)

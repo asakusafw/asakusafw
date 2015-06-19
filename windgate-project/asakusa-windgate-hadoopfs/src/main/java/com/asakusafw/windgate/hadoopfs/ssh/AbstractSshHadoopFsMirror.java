@@ -164,7 +164,7 @@ public abstract class AbstractSshHadoopFsMirror extends ResourceMirror {
             ModelOutput<T> output = TemporaryStorage.openOutput(
                     configuration,
                     script.getDataClass(),
-                    fileList.openNext(FileList.createFileStatus(new Path(path.get(0)))));
+                    fileList.openNext(new Path(path.get(0))));
             ModelOutputDrainDriver<T> result = new SshDrainDriver<T>(output, connection, path, fileList, script);
             succeeded = true;
             return result;

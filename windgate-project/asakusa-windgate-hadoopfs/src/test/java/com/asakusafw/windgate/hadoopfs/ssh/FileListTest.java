@@ -207,7 +207,7 @@ public class FileListTest {
     }
 
     private void write(FileList.Writer writer, String path, String content) throws IOException {
-        OutputStream f = writer.openNext(FileList.createFileStatus(new Path(path)));
+        OutputStream f = writer.openNext(new Path(path));
         try {
             f.write(content.getBytes("UTF-8"));
         } finally {
@@ -217,7 +217,7 @@ public class FileListTest {
 
     private void read(FileList.Reader reader, String path, String content) throws IOException {
         assertThat(reader.next(), is(true));
-        assertThat(reader.getCurrentFile().getPath().toString(), is(path));
+        assertThat(reader.getCurrentPath().toString(), is(path));
         InputStream f = reader.openContent();
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
