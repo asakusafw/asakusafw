@@ -36,6 +36,9 @@ Parameters:
         custom variables (inherits current environment variables)
 
 Definitions:
+    -D profile=<custom-profile-name>
+        uses custom profile: "conf/<custom-profile-name>.properties"
+        instead of "conf/yaess.properties"
     -D skipFlows=<flowId>[,<flowId>[,...]]
         ignores target jobflow execution
     -D serializeFlows , -D serializeFlows=true

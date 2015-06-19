@@ -48,6 +48,9 @@ Parameters:
         custom variables (inherits current environment variables)
 
 Definitions:
+    -D profile=<custom-profile-name>
+        uses a custom profile: "conf/<custom-profile-name>.properties"
+        instead of "conf/yaess.properties"
     -D dryRun, -D dryRun=true
         executes each stage as simulation mode
     -D verifyApplication=false

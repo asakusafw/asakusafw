@@ -33,6 +33,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.junit.Assume;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -40,6 +41,7 @@ import org.junit.rules.TemporaryFolder;
 import com.asakusafw.yaess.bootstrap.ExecutionTracker.Record;
 import com.asakusafw.yaess.bootstrap.Yaess.Configuration;
 import com.asakusafw.yaess.bootstrap.Yaess.Mode;
+import com.asakusafw.yaess.core.CoreProfile;
 import com.asakusafw.yaess.core.ExecutionLock;
 import com.asakusafw.yaess.core.ExecutionPhase;
 import com.asakusafw.yaess.core.VariableResolver;
@@ -204,6 +206,38 @@ public class YaessTest {
         Collections.addAll(arguments, "-batch", "tbatch");
 
         Yaess.parseConfiguration(arguments.toArray(new String[arguments.size()]));
+    }
+
+    /**
+     * parse configuration w/ custom profile.
+     * @throws Exception if failed
+     */
+    @Test
+    public void config_profile() throws Exception {
+        ProfileBuilder builder = new ProfileBuilder(folder.getRoot());
+
+        // custom profile
+        builder.override.put("core.version", "CUSTOM");
+        File profile = builder.getProfile();
+        File custom = new File(profile.getParentFile(), "custom.properties");
+        Assume.assumeTrue(profile.renameTo(custom));
+
+        // default profile
+        builder.override.put("core.version", "default");
+        profile = builder.getProfile();
+
+        File script = builder.getScript();
+
+        List<String> arguments = new ArrayList<String>();
+        Collections.addAll(arguments, "-profile", profile.getAbsolutePath());
+        Collections.addAll(arguments, "-script", script.getAbsolutePath());
+        Collections.addAll(arguments, "-batch", "tbatch");
+        Collections.addAll(arguments, "-D", "profile=custom");
+
+        Configuration conf = Yaess.parseConfiguration(arguments.toArray(new String[arguments.size()]));
+
+        CoreProfile core = conf.profile.getCore().newInstance();
+        assertThat(core.getVersion(), is("CUSTOM"));
     }
 
     /**
