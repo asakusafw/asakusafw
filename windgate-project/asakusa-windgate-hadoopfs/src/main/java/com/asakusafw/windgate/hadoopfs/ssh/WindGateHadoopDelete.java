@@ -135,7 +135,7 @@ public class WindGateHadoopDelete extends WindGateHadoopBase {
         WGLOG.info("I22004",
                 fs.getUri(),
                 status.getPath());
-        OutputStream output = drain.openNext(status);
+        OutputStream output = drain.openNext(status.getPath());
         try {
             String failReason = null;
             try {

@@ -18,6 +18,7 @@ package com.asakusafw.yaess.bootstrap;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -36,6 +37,7 @@ import org.slf4j.LoggerFactory;
 import com.asakusafw.yaess.basic.ExitCodeException;
 import com.asakusafw.yaess.core.ExecutionPhase;
 import com.asakusafw.yaess.core.ProfileContext;
+import com.asakusafw.yaess.core.VariableResolver;
 import com.asakusafw.yaess.core.YaessLogger;
 import com.asakusafw.yaess.core.YaessProfile;
 import com.asakusafw.yaess.core.task.ExecutionTask;
@@ -43,12 +45,15 @@ import com.asakusafw.yaess.core.task.ExecutionTask;
 /**
  * A YAESS program main entry point.
  * @since 0.2.3
+ * @version 0.7.4
  */
 public final class Yaess {
 
     static final YaessLogger YSLOG = new YaessBootstrapLogger(Yaess.class);
 
     static final Logger LOG = LoggerFactory.getLogger(Yaess.class);
+
+    static final String KEY_CUSTOM_PROFILE = "profile";
 
     static final Option OPT_PROFILE;
     static final Option OPT_SCRIPT;
@@ -59,6 +64,7 @@ public final class Yaess {
     static final Option OPT_PLUGIN;
     static final Option OPT_ARGUMENT;
     static final Option OPT_DEFINITION;
+    static final Option OPT_ENVIRONMENT_VARIABLE;
 
     private static final Options OPTIONS;
     static {
@@ -90,17 +96,23 @@ public final class Yaess {
         OPT_PLUGIN.setArgName("plugin-1.jar" + File.pathSeparatorChar + "plugin-2.jar");
         OPT_PLUGIN.setRequired(false);
 
-        OPT_ARGUMENT = new Option("A", true, "name-value pair");
+        OPT_ARGUMENT = new Option("A", true, "batch argument");
         OPT_ARGUMENT.setArgs(2);
         OPT_ARGUMENT.setValueSeparator('=');
         OPT_ARGUMENT.setArgName("name=value");
         OPT_ARGUMENT.setRequired(false);
 
-        OPT_DEFINITION = new Option("D", true, "name-value pair");
+        OPT_DEFINITION = new Option("D", true, "definitions");
         OPT_DEFINITION.setArgs(2);
         OPT_DEFINITION.setValueSeparator('=');
         OPT_DEFINITION.setArgName("name=value");
         OPT_DEFINITION.setRequired(false);
+
+        OPT_ENVIRONMENT_VARIABLE = new Option("V", true, "extra environment variable");
+        OPT_ENVIRONMENT_VARIABLE.setArgs(2);
+        OPT_ENVIRONMENT_VARIABLE.setValueSeparator('=');
+        OPT_ENVIRONMENT_VARIABLE.setArgName("name=value");
+        OPT_ENVIRONMENT_VARIABLE.setRequired(false);
 
         OPTIONS = new Options();
         OPTIONS.addOption(OPT_PROFILE);
@@ -112,6 +124,7 @@ public final class Yaess {
         OPTIONS.addOption(OPT_PLUGIN);
         OPTIONS.addOption(OPT_ARGUMENT);
         OPTIONS.addOption(OPT_DEFINITION);
+        OPTIONS.addOption(OPT_ENVIRONMENT_VARIABLE);
     }
 
     private Yaess() {
@@ -208,8 +221,10 @@ public final class Yaess {
         LOG.debug("Plug-ins: {}", plugins);
         Properties arguments = cmd.getOptionProperties(OPT_ARGUMENT.getOpt());
         LOG.debug("Execution arguments: {}", arguments);
+        Properties variables = cmd.getOptionProperties(OPT_ENVIRONMENT_VARIABLE.getOpt());
+        LOG.debug("Environment variables: {}", variables);
         Properties definitions = cmd.getOptionProperties(OPT_DEFINITION.getOpt());
-        LOG.debug("Execution definitions: {}", definitions);
+        LOG.debug("YAESS feature definitions: {}", definitions);
 
         LOG.debug("Loading plugins: {}", plugins);
         List<File> pluginFiles = CommandLineUtil.parseFileList(plugins);
@@ -219,15 +234,21 @@ public final class Yaess {
         result.mode = computeMode(flowId, executionId, phaseName);
 
         LOG.debug("Loading profile: {}", profile);
+        File file = new File(profile);
+        file = findCustomProfile(file, definitions.getProperty(KEY_CUSTOM_PROFILE));
         try {
-            ProfileContext context = ProfileContext.system(loader);
-            Properties properties = CommandLineUtil.loadProperties(new File(profile));
+            Map<String, String> env = new HashMap<String, String>();
+            env.putAll(System.getenv());
+            env.putAll(toMap(variables));
+            ProfileContext context = new ProfileContext(loader, new VariableResolver(env));
+            Properties properties = CommandLineUtil.loadProperties(file);
+            result.context = context;
             result.profile = YaessProfile.load(properties, context);
         } catch (Exception e) {
-            YSLOG.error(e, "E01001", profile);
+            YSLOG.error(e, "E01001", file.getPath());
             throw new IllegalArgumentException(MessageFormat.format(
                     "Invalid profile \"{0}\".",
-                    profile), e);
+                    file), e);
         }
 
         LOG.debug("Loading script: {}", script);
@@ -257,6 +278,23 @@ public final class Yaess {
         result.definitions = toMap(definitions);
 
         LOG.debug("Analyzed YAESS bootstrap arguments");
+        return result;
+    }
+
+    private static File findCustomProfile(File file, String customProfileName) {
+        if (customProfileName == null) {
+            return file;
+        }
+        String fileName = file.getName();
+        int index = fileName.lastIndexOf('.');
+        String extension = ""; //$NON-NLS-1$
+        if (index >= 0) {
+            extension = fileName.substring(index);
+        }
+
+        File result = new File(file.getParentFile(), customProfileName + extension);
+        YSLOG.info("I01001", //$NON-NLS-1$
+                result);
         return result;
     }
 
@@ -301,6 +339,7 @@ public final class Yaess {
 
     static final class Configuration {
         Mode mode;
+        ProfileContext context;
         YaessProfile profile;
         Properties script;
         String batchId;

@@ -21,15 +21,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
-import java.util.Arrays;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.DataInputBuffer;
-import org.apache.hadoop.io.DataOutputBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +36,7 @@ import com.asakusafw.windgate.hadoopfs.HadoopFsLogger;
 /**
  * A file list transfer protocol.
  * @since 0.2.2
- * @version 0.7.0
+ * @version 0.7.4
  */
 public final class FileList {
 
@@ -53,12 +50,16 @@ public final class FileList {
 
     static final String LAST_ENTRY_NAME = ".__LAST_ENTRY__"; //$NON-NLS-1$
 
+    static final Charset PATH_ENCODING = Charset.forName("UTF-8"); //$NON-NLS-1$
+
     /**
      * Creates a simple {@link FileStatus}.
      * @param path the target path
      * @return the created file status with the specified path
      * @throws IllegalArgumentException if some parameters were {@code null}
+     * @deprecated should not use this
      */
+    @Deprecated
     public static FileStatus createFileStatus(Path path) {
         if (path == null) {
             throw new IllegalArgumentException("path must not be null"); //$NON-NLS-1$
@@ -108,6 +109,7 @@ public final class FileList {
     /**
      * A {@link FileList} read protocol.
      * @since 0.2.2
+     * @version 0.7.4
      */
     public static class Reader implements Closeable {
 
@@ -115,9 +117,7 @@ public final class FileList {
 
         private final ZipInputStream input;
 
-        private final FileStatus current = new FileStatus();
-
-        private final DataInputBuffer buffer = new DataInputBuffer();
+        private Path currentPath;
 
         private boolean sawNext;
 
@@ -136,7 +136,7 @@ public final class FileList {
 
         /**
          * Returns true iff the next temporary file exists,
-         * and then the {@link #getCurrentFile()} and {@link #openContent()} method returns it.
+         * and then the {@link #getCurrentPath()} and {@link #openContent()} method returns it.
          * @return {@code true} if the next data model object exists, otherwise {@code false}
          * @throws IOException if failed to prepare the next data
          */
@@ -188,9 +188,9 @@ public final class FileList {
             if (extra == null) {
                 return false;
             }
-            buffer.reset(extra, extra.length);
             try {
-                current.readFields(buffer);
+                FileInfo info = FileInfo.fromBytes(extra);
+                currentPath = new Path(info.getUri());
             } catch (Exception e) {
                 WGLOG.warn(e, "W19001",
                         entry.getName());
@@ -200,13 +200,26 @@ public final class FileList {
         }
 
         /**
+         * Opens the current file path prepared by the {@link #next()} method.
+         * @return the current temporary file contents
+         * @throws IOException if failed to get status
+         * @since 0.7.4
+         */
+        public Path getCurrentPath() throws IOException {
+            checkCurrent();
+            return currentPath;
+        }
+
+        /**
          * Opens the current file status prepared by the {@link #next()} method.
          * @return the current temporary file contents
          * @throws IOException if failed to get status
+         * @deprecated Use {@link #getCurrentPath()} instead
          */
+        @Deprecated
         public FileStatus getCurrentFile() throws IOException {
             checkCurrent();
-            return current;
+            return createFileStatus(currentPath);
         }
 
         /**
@@ -237,12 +250,11 @@ public final class FileList {
     /**
      * A {@link FileList} write protocol.
      * @since 0.2.2
+     * @version 0.7.4
      */
     public static class Writer implements Closeable {
 
         private final ZipOutputStream output;
-
-        private final DataOutputBuffer buffer = new DataOutputBuffer(65536);
 
         private boolean closed = false;
 
@@ -263,7 +275,9 @@ public final class FileList {
          * @return the opened {@link OutputStream}
          * @throws IOException if failed to open the file
          * @throws IllegalArgumentException if the status or its path is {@code null}
+         * @deprecated Use {@link #openNext(Path)} instead
          */
+        @Deprecated
         public OutputStream openNext(FileStatus status) throws IOException {
             if (status == null) {
                 throw new IllegalArgumentException("status must not be null"); //$NON-NLS-1$
@@ -271,18 +285,29 @@ public final class FileList {
             if (status.getPath() == null) {
                 throw new IllegalAccessError("status.path must not be null"); //$NON-NLS-1$
             }
-            ZipEntry entry = createEntryFromStatus(status);
+            return openNext(status.getPath());
+        }
+
+        /**
+         * Creates a next file and opens an {@link OutputStream} to write it content.
+         * @param path the next file path
+         * @return the opened {@link OutputStream}
+         * @throws IOException if failed to open the file
+         * @throws IllegalArgumentException if the path is {@code null}
+         */
+        public OutputStream openNext(Path path) throws IOException {
+            if (path == null) {
+                throw new IllegalArgumentException("path must not be null"); //$NON-NLS-1$
+            }
+            ZipEntry entry = createEntry(new FileInfo(path.toString()));
             LOG.debug("Putting next entry: {}", entry.getName());
             output.putNextEntry(entry);
             return new ZipEntryOutputStream(output);
         }
 
-        private ZipEntry createEntryFromStatus(FileStatus status) throws IOException {
-            assert status != null;
-            buffer.reset();
-            status.write(buffer);
-            ZipEntry entry = new ZipEntry(status.getPath().toString());
-            entry.setExtra(Arrays.copyOfRange(buffer.getData(), 0, buffer.getLength()));
+        private ZipEntry createEntry(FileInfo info) {
+            ZipEntry entry = new ZipEntry(info.getUri());
+            entry.setExtra(info.toBytes());
             return entry;
         }
 

@@ -33,6 +33,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.junit.Assume;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -40,8 +41,10 @@ import org.junit.rules.TemporaryFolder;
 import com.asakusafw.yaess.bootstrap.ExecutionTracker.Record;
 import com.asakusafw.yaess.bootstrap.Yaess.Configuration;
 import com.asakusafw.yaess.bootstrap.Yaess.Mode;
+import com.asakusafw.yaess.core.CoreProfile;
 import com.asakusafw.yaess.core.ExecutionLock;
 import com.asakusafw.yaess.core.ExecutionPhase;
+import com.asakusafw.yaess.core.VariableResolver;
 
 /**
  * Test for {@link Yaess}.
@@ -162,6 +165,32 @@ public class YaessTest {
     }
 
     /**
+     * w/ custom environment variables.
+     * @throws Exception if failed
+     */
+    @Test
+    public void config_variables() throws Exception {
+        ProfileBuilder builder = new ProfileBuilder(folder.getRoot());
+        File profile = builder.getProfile();
+        File script = builder.getScript();
+
+        List<String> arguments = new ArrayList<String>();
+        Collections.addAll(arguments, "-profile", profile.getAbsolutePath());
+        Collections.addAll(arguments, "-script", script.getAbsolutePath());
+        Collections.addAll(arguments, "-batch", "tbatch");
+        Collections.addAll(arguments, "-V", "a=b");
+        Collections.addAll(arguments, "-V", "c=d");
+        Collections.addAll(arguments, "-V", "e=f");
+
+        Configuration conf = Yaess.parseConfiguration(arguments.toArray(new String[arguments.size()]));
+        VariableResolver vars = conf.context.getContextParameters();
+        assertThat(vars.replace("${a-a}", true), is("b"));
+        assertThat(vars.replace("${c-c}", true), is("d"));
+        assertThat(vars.replace("${e-e}", true), is("f"));
+        assertThat(vars.replace("${g-g}", true), is("g"));
+    }
+
+    /**
      * Attempts to parse config with missing profile.
      * @throws Exception if failed
      */
@@ -177,6 +206,38 @@ public class YaessTest {
         Collections.addAll(arguments, "-batch", "tbatch");
 
         Yaess.parseConfiguration(arguments.toArray(new String[arguments.size()]));
+    }
+
+    /**
+     * parse configuration w/ custom profile.
+     * @throws Exception if failed
+     */
+    @Test
+    public void config_profile() throws Exception {
+        ProfileBuilder builder = new ProfileBuilder(folder.getRoot());
+
+        // custom profile
+        builder.override.put("core.version", "CUSTOM");
+        File profile = builder.getProfile();
+        File custom = new File(profile.getParentFile(), "custom.properties");
+        Assume.assumeTrue(profile.renameTo(custom));
+
+        // default profile
+        builder.override.put("core.version", "default");
+        profile = builder.getProfile();
+
+        File script = builder.getScript();
+
+        List<String> arguments = new ArrayList<String>();
+        Collections.addAll(arguments, "-profile", profile.getAbsolutePath());
+        Collections.addAll(arguments, "-script", script.getAbsolutePath());
+        Collections.addAll(arguments, "-batch", "tbatch");
+        Collections.addAll(arguments, "-D", "profile=custom");
+
+        Configuration conf = Yaess.parseConfiguration(arguments.toArray(new String[arguments.size()]));
+
+        CoreProfile core = conf.profile.getCore().newInstance();
+        assertThat(core.getVersion(), is("CUSTOM"));
     }
 
     /**
