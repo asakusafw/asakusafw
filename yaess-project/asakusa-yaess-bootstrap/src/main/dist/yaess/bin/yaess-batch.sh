@@ -22,7 +22,8 @@ YAESS - A portable Asakusa workflow processor
 Usage:
     yaess-batch.sh batch-id \\
         [-A <key>=<value> [-A <key>=<value>  [...]]] \\
-        [-D <key>=<value> [-D <key>=<value>  [...]]]
+        [-D <key>=<value> [-D <key>=<value>  [...]]] \\
+        [-V <key>=<value> [-V <key>=<value>  [...]]]
 
 Parameters:
     batch-id
@@ -31,6 +32,8 @@ Parameters:
         argument for this execution
     -D <key>=<value>
         definition for this execution
+    -V <key>=<value>
+        custom variables (inherits current environment variables)
 
 Definitions:
     -D skipFlows=<flowId>[,<flowId>[,...]]
