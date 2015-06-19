@@ -734,7 +734,7 @@ public class AbstractSshHadoopFsMirrorTest {
         FileStatus status = fs.getFileStatus(new Path(temp.toURI()));
         FSDataInputStream src = fs.open(status.getPath());
         try {
-            OutputStream dst = writer.openNext(status);
+            OutputStream dst = writer.openNext(status.getPath());
             byte[] buf = new byte[256];
             while (true) {
                 int read = src.read(buf);
@@ -755,8 +755,8 @@ public class AbstractSshHadoopFsMirrorTest {
         try {
             FileList.Reader reader = FileList.createReader(in);
             while (reader.next()) {
-                FileStatus status = reader.getCurrentFile();
-                File entry = folder.newFile(status.getPath().getName());
+                Path path = reader.getCurrentPath();
+                File entry = folder.newFile(path.getName());
                 FileOutputStream dst = new FileOutputStream(entry);
                 try {
                     InputStream src = reader.openContent();

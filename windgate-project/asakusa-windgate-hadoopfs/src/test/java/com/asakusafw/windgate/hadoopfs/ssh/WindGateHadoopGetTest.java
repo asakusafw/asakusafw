@@ -238,7 +238,7 @@ public class WindGateHadoopGetTest {
                     baos.write(buf, 0, read);
                 }
                 String result = new String(baos.toByteArray(), "UTF-8");
-                results.put(reader.getCurrentFile().getPath().getName(), result);
+                results.put(reader.getCurrentPath().getName(), result);
             } finally {
                 f.close();
             }
