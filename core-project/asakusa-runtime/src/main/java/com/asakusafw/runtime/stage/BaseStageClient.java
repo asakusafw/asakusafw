@@ -22,7 +22,7 @@ import java.text.MessageFormat;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.util.Tool;
 
-import com.asakusafw.runtime.compatibility.CoreCompatibility;
+import com.asakusafw.runtime.compatibility.hadoop.CoreCompatibility;
 import com.asakusafw.runtime.core.context.RuntimeContext;
 
 /**
