@@ -237,6 +237,7 @@ public final class Yaess {
         File file = new File(profile);
         file = findCustomProfile(file, definitions.getProperty(KEY_CUSTOM_PROFILE));
         try {
+            definitions.remove(KEY_CUSTOM_PROFILE);
             Map<String, String> env = new HashMap<String, String>();
             env.putAll(System.getenv());
             env.putAll(toMap(variables));
