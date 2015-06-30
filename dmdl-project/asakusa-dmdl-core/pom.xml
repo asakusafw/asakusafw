@@ -28,7 +28,6 @@
 			<plugin>
 				<groupId>de.jflex</groupId>
 				<artifactId>maven-jflex-plugin</artifactId>
-				<version>1.4.3</version>
 				<executions>
 					<execution>
 						<goals>
@@ -40,7 +39,6 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>javacc-maven-plugin</artifactId>
-				<version>2.6</version>
 				<executions>
 					<execution>
 						<id>javacc</id>
