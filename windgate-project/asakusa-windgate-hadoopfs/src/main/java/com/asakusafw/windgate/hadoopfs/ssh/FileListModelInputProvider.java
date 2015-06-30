@@ -19,27 +19,31 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileStatus;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.Writable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.runtime.io.ModelInput;
-import com.asakusafw.runtime.stage.temporary.TemporaryStorage;
+import com.asakusafw.runtime.stage.temporary.TemporaryFileInput;
 import com.asakusafw.windgate.hadoopfs.temporary.ModelInputProvider;
 
 /**
  * An implementation of {@link ModelInputProvider} using {@link FileList}.
  * @param <T> target data model type
  * @since 0.2.5
+ * @version 0.7.4
  */
 public class FileListModelInputProvider<T> implements ModelInputProvider<T> {
 
     static final Logger LOG = LoggerFactory.getLogger(FileListModelInputProvider.class);
 
+    @SuppressWarnings("unused")
     private final Configuration conf;
 
     private final FileList.Reader fileList;
 
+    @SuppressWarnings("unused")
     private final Class<T> dataModelClass;
 
     /**
@@ -69,16 +73,18 @@ public class FileListModelInputProvider<T> implements ModelInputProvider<T> {
         return fileList.next();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public ModelInput<T> open() throws IOException {
-        FileStatus status = fileList.getCurrentFile();
+        Path path = fileList.getCurrentPath();
         InputStream content = fileList.openContent();
         boolean succeeded = false;
         try {
-            LOG.debug("Opening next temporary file: {}", status.getPath());
-            ModelInput<T> input = TemporaryStorage.openInput(conf, dataModelClass, status, content);
+            LOG.debug("Opening next temporary file: {}", path);
+            // FIXME should use TemporaryStorage.openInput()
+            ModelInput<Writable> input = new TemporaryFileInput<Writable>(content, 0);
             succeeded = true;
-            return input;
+            return (ModelInput<T>) input;
         } finally {
             if (succeeded == false) {
                 content.close();

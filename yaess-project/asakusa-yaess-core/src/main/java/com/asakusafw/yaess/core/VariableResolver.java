@@ -27,14 +27,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Resolves variables in form of <code>${variable-name}</code>.
+ * Resolves variables in form of <code>${variable_name}</code>.
  * @since 0.2.2
+ * @version 0.7.4
  */
 public class VariableResolver {
 
     static final Logger LOG = LoggerFactory.getLogger(VariableResolver.class);
 
     private static final Pattern VARIABLE = Pattern.compile("\\$\\{(.*?)\\}");
+
+    private static final char SEPARATOR_DEFAULT_VALUE = '-';
 
     private final Map<String, String> entries;
 
@@ -86,13 +89,13 @@ public class VariableResolver {
         int start = 0;
         Matcher matcher = VARIABLE.matcher(string);
         while (matcher.find(start)) {
-            String name = matcher.group(1);
-            String replacement = entries.get(name);
+            String placeholder = matcher.group(1);
+            String replacement = resolve(placeholder);
             if (replacement == null) {
                 if (strict) {
                     throw new IllegalArgumentException(MessageFormat.format(
                             "parameter \"{0}\" is not defined in the list: {1}",
-                            name,
+                            placeholder,
                             this));
                 } else {
                     buf.append(string.substring(start, matcher.start() + 1));
@@ -107,6 +110,25 @@ public class VariableResolver {
         buf.append(string.substring(start));
         return buf.toString();
     }
+
+    private String resolve(String placeholder) {
+        String name;
+        String defaultValue;
+        int defaultAt = placeholder.indexOf(SEPARATOR_DEFAULT_VALUE);
+        if (defaultAt < 0) {
+            name = placeholder;
+            defaultValue = null;
+        } else {
+            name = placeholder.substring(0, defaultAt);
+            defaultValue = placeholder.substring(defaultAt + 1);
+        }
+        String replacement = entries.get(name);
+        if (replacement != null) {
+            return replacement;
+        }
+        return defaultValue;
+    }
+
 
     @Override
     public String toString() {

@@ -247,7 +247,7 @@ public class WindGateHadoopGet extends WindGateHadoopBase {
         long transferred = 0;
         try {
             if (RuntimeContext.get().isSimulation() == false) {
-                OutputStream output = drain.openNext(status);
+                OutputStream output = drain.openNext(status.getPath());
                 try {
                     byte[] buf = new byte[1024];
                     while (true) {

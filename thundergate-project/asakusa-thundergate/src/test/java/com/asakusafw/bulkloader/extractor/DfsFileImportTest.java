@@ -313,7 +313,8 @@ public class DfsFileImportTest {
                 return new ByteArrayInputStream(buffer.toByteArray());
             }
             @Override
-            protected URI resolveLocation(ImportBean _, String user, String location) throws BulkLoaderSystemException {
+            protected URI resolveLocation(
+                    ImportBean ignored, String user, String location) throws BulkLoaderSystemException {
                 return new File(output, location).toURI();
             }
             @Override
@@ -332,7 +333,7 @@ public class DfsFileImportTest {
             @Override
             protected Callable<?> createCacheBuilder(
                     String subcommand,
-                    ImportBean _,
+                    ImportBean ignored,
                     URI location,
                     final CacheInfo target) throws IOException {
                 assertThat(subcommand, is(CacheBuildClient.SUBCOMMAND_CREATE));
@@ -487,7 +488,7 @@ public class DfsFileImportTest {
                 return new ByteArrayInputStream(output.toByteArray());
             }
             @Override
-            protected URI resolveLocation(ImportBean _, String user, String location) {
+            protected URI resolveLocation(ImportBean ignored, String user, String location) {
                 return target.toURI();
             }
         };

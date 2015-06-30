@@ -48,11 +48,13 @@ import org.junit.rules.TemporaryFolder;
 import parquet.column.ParquetProperties.WriterVersion;
 
 import com.asakusafw.directio.hive.parquet.mock.MockSimpleWithLong;
+import com.asakusafw.directio.hive.parquet.mock.WithDate;
 import com.asakusafw.directio.hive.parquet.mock.WithDateTime;
 import com.asakusafw.directio.hive.parquet.mock.WithDecimal;
 import com.asakusafw.directio.hive.parquet.mock.WithFour;
 import com.asakusafw.directio.hive.parquet.mock.WithString;
 import com.asakusafw.directio.hive.parquet.mock.WithStringSupports;
+import com.asakusafw.directio.hive.parquet.mock.WithTimestampSupports;
 import com.asakusafw.directio.hive.serde.DataModelDescriptorEditor;
 import com.asakusafw.directio.hive.serde.DataModelMapping.ExceptionHandlingStrategy;
 import com.asakusafw.directio.hive.serde.DataModelMapping.FieldMappingStrategy;
@@ -69,6 +71,7 @@ import com.asakusafw.runtime.directio.hadoop.StripedDataFormat;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.runtime.value.Date;
+import com.asakusafw.runtime.value.DateOption;
 import com.asakusafw.runtime.value.DateTime;
 import com.asakusafw.runtime.value.DateTimeOption;
 import com.asakusafw.runtime.value.DecimalOption;
@@ -161,7 +164,6 @@ public class ParquetFileFormatTest {
     public void io_types() throws Exception {
         Map<String, ValueSerde> edits = new HashMap<String, ValueSerde>();
         edits.put("decimalOption", ValueSerdeFactory.getDecimal(10, 2));
-        edits.put("dateOption", TimestampValueSerdeFactory.DATE);
 
         ParquetFileFormat<MockTypes> format = format(MockTypes.class, edits);
         MockTypes in = new MockTypes();
@@ -201,7 +203,6 @@ public class ParquetFileFormatTest {
         for (int p = 2; p <= HiveDecimal.MAX_PRECISION; p++) {
             Map<String, ValueSerde> edits = new HashMap<String, ValueSerde>();
             edits.put("decimalOption", ValueSerdeFactory.getDecimal(p, 2));
-            edits.put("dateOption", TimestampValueSerdeFactory.DATE);
 
             ParquetFileFormat<MockTypes> format = format(MockTypes.class, edits);
             MockTypes in = new MockTypes();
@@ -224,7 +225,6 @@ public class ParquetFileFormatTest {
     public void io_decimals_int32() throws Exception {
         Map<String, ValueSerde> edits = new HashMap<String, ValueSerde>();
         edits.put("decimalOption", ValueSerdeFactory.getDecimal(9, 2));
-        edits.put("dateOption", TimestampValueSerdeFactory.DATE);
 
         int count = 100;
         ParquetFileFormat<MockTypes> format = format(MockTypes.class, edits);
@@ -251,7 +251,6 @@ public class ParquetFileFormatTest {
     public void io_decimals_int64() throws Exception {
         Map<String, ValueSerde> edits = new HashMap<String, ValueSerde>();
         edits.put("decimalOption", ValueSerdeFactory.getDecimal(18, 2));
-        edits.put("dateOption", TimestampValueSerdeFactory.DATE);
 
         int count = 100;
         ParquetFileFormat<MockTypes> format = format(MockTypes.class, edits);
@@ -278,7 +277,6 @@ public class ParquetFileFormatTest {
     public void io_decimals_binary() throws Exception {
         Map<String, ValueSerde> edits = new HashMap<String, ValueSerde>();
         edits.put("decimalOption", ValueSerdeFactory.getDecimal(38, 2));
-        edits.put("dateOption", TimestampValueSerdeFactory.DATE);
 
         int count = 100;
         ParquetFileFormat<MockTypes> format = format(MockTypes.class, edits);
@@ -305,7 +303,6 @@ public class ParquetFileFormatTest {
     public void io_types_large() throws Exception {
         Map<String, ValueSerde> edits = new HashMap<String, ValueSerde>();
         edits.put("decimalOption", ValueSerdeFactory.getDecimal(10, 2));
-        edits.put("dateOption", TimestampValueSerdeFactory.DATE);
 
         int count = 1000;
         ParquetFileFormat<MockTypes> format = format(MockTypes.class, edits);
@@ -351,7 +348,6 @@ public class ParquetFileFormatTest {
     public void io_nulls() throws Exception {
         Map<String, ValueSerde> edits = new HashMap<String, ValueSerde>();
         edits.put("decimalOption", ValueSerdeFactory.getDecimal(10, 2));
-        edits.put("dateOption", TimestampValueSerdeFactory.DATE);
 
         ParquetFileFormat<MockTypes> format = format(MockTypes.class, edits);
         MockTypes in = new MockTypes();
@@ -631,6 +627,27 @@ public class ParquetFileFormatTest {
     }
 
     /**
+     * using timestamps.
+     * @throws Exception if failed
+     */
+    @SuppressWarnings("deprecation")
+    @Test
+    public void io_timestamp() throws Exception {
+        Map<String, ValueSerde> edits = new HashMap<String, ValueSerde>();
+        edits.put("date", TimestampValueSerdeFactory.DATE);
+        edits.put("datetime", ValueSerdeFactory.DATETIME);
+        ParquetFileFormat<WithTimestampSupports> format = format(WithTimestampSupports.class, edits);
+
+        WithTimestampSupports in = new WithTimestampSupports();
+        in.date.modify(new Date(2015, 7, 1));
+        in.datetime.modify(new DateTime(2015, 7, 1, 12, 34, 56));
+
+        WithTimestampSupports out = restore(format, in);
+        assertThat(out.date, is(in.date));
+        assertThat(out.datetime, is(in.datetime));
+    }
+
+    /**
      * using char.
      * @throws Exception if failed
      */
@@ -794,6 +811,36 @@ public class ParquetFileFormatTest {
                 Integer.parseInt(matcher.group(5)),
                 Integer.parseInt(matcher.group(6)));
         assertThat(buf.value, is(new DateTimeOption(expected)));
+    }
+
+    /**
+     * loading date type which generated be hive.
+     * @throws Exception if failed
+     */
+    @Test
+    public void format_date() throws Exception {
+        checkDate("date-1970-01-01.parquet");
+        checkDate("date-2015-12-31.parquet");
+        checkDate("date-1995-05-23.parquet");
+    }
+
+    private void checkDate(String file) throws IOException, InterruptedException {
+        Pattern p = Pattern.compile("date-(\\d+)-(\\d+)-(\\d+)\\.parquet");
+        Matcher matcher = p.matcher(file);
+        assertThat(matcher.matches(), is(true));
+        WithDate buf = new WithDate();
+        ModelInput<WithDate> input = load(WithDate.class, file);
+        try {
+            assertThat(input.readTo(buf), is(true));
+            assertThat(input.readTo(new WithDate()), is(false));
+        } finally {
+            input.close();
+        }
+        Date expected = new Date(
+                Integer.parseInt(matcher.group(1)),
+                Integer.parseInt(matcher.group(2)),
+                Integer.parseInt(matcher.group(3)));
+        assertThat(buf.value, is(new DateOption(expected)));
     }
 
     private <T> ModelInput<T> load(Class<T> modelType, String name) throws IOException, InterruptedException {

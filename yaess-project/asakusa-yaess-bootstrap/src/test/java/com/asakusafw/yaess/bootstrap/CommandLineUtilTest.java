@@ -62,9 +62,9 @@ public class CommandLineUtilTest {
      */
     @Test
     public void parseFileList() throws Exception {
-        File a = folder.newFile("a.properties");
-        File b = folder.newFile("c.properties");
-        File c = folder.newFile("b.properties");
+        File a = folder.newFile("a.properties").getCanonicalFile();
+        File b = folder.newFile("c.properties").getCanonicalFile();
+        File c = folder.newFile("b.properties").getCanonicalFile();
 
         StringBuilder buf = new StringBuilder();
         buf.append(a);

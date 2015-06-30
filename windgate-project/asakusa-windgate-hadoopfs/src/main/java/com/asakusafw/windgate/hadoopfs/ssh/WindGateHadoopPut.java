@@ -22,8 +22,8 @@ import java.io.OutputStream;
 import java.util.Arrays;
 
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -102,29 +102,29 @@ public class WindGateHadoopPut extends WindGateHadoopBase {
         assert source != null;
         FileSystem fs = FileSystem.get(conf);
         while (source.next()) {
-            FileStatus status = source.getCurrentFile();
+            Path path = source.getCurrentPath();
             InputStream input = source.openContent();
             try {
-                doPut(fs, status, input);
+                doPut(fs, path, input);
             } finally {
                 input.close();
             }
         }
     }
 
-    private void doPut(FileSystem fs, FileStatus status, InputStream input) throws IOException {
+    private void doPut(FileSystem fs, Path path, InputStream input) throws IOException {
         assert fs != null;
-        assert status != null;
+        assert path != null;
         assert input != null;
         WGLOG.info("I21003",
                 fs.getUri(),
-                status.getPath());
+                path);
         long transferred = 0;
         OutputStream output;
         if (RuntimeContext.get().isSimulation()) {
             output = new VoidOutputStream();
         } else {
-            output = fs.create(status.getPath(), true, BUFFER_SIZE);
+            output = fs.create(path, true, BUFFER_SIZE);
         }
         try {
             byte[] buf = new byte[256];
@@ -141,7 +141,7 @@ public class WindGateHadoopPut extends WindGateHadoopBase {
         }
         WGLOG.info("I21004",
                 fs.getUri(),
-                status.getPath(),
+                path,
                 transferred);
     }
 }
