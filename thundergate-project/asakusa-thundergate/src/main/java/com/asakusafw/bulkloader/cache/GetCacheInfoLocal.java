@@ -105,7 +105,7 @@ public class GetCacheInfoLocal {
                     result = downstream.get(1, TimeUnit.SECONDS);
                     break;
                 } catch (TimeoutException e) {
-                    // will retry
+                    LOG.debugMessage("trying retry"); //$NON-NLS-1$
                 } catch (CancellationException e) {
                     upstream.cancel(true);
                     downstream.cancel(true);

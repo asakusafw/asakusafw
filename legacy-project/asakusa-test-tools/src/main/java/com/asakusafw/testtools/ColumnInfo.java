@@ -23,6 +23,7 @@ import com.asakusafw.modelgen.source.MySqlDataType;
  */
 public class ColumnInfo {
 
+// CHECKSTYLE:OFF ParameterNumberCheck
     /**
      * インスタンスを生成する。
      * @param tableName テーブル名
@@ -60,72 +61,73 @@ public class ColumnInfo {
         getterName = "get" + javaName.toTypeName() + "Option";
         setterName = "set" + javaName.toTypeName() + "Option";
     }
+// CHECKSTYLE:ON ParameterNumberCheck
 
     /**
      * テーブル名。
      */
-    private String tableName;
+    private final String tableName;
 
     /**
      * カラム名。
      */
-    private String columnName;
+    private final String columnName;
 
     /**
      * カラムコメント。
      */
-    private String columnComment;
+    private final String columnComment;
 
     /**
      * カラムのデータ型。
      */
-    private MySqlDataType dataType;
+    private final MySqlDataType dataType;
 
     /**
      * 文字列型カラムの最大長。
      */
-    private long characterMaximumLength;
+    private final long characterMaximumLength;
 
     /**
      * Decimal型カラムの桁数。
      */
-    private int numericPrecision;
+    private final int numericPrecision;
 
     /**
      * Decimal型カラムの精度。
      */
-    private int numericScale;
+    private final int numericScale;
 
     /**
      * NULL可フラグ。
      */
-    private boolean nullable;
+    private final boolean nullable;
 
     /**
      * Key項目フラグ。
      */
-    private boolean key;
+    private final boolean key;
 
     /**
      * テスト条件。
      */
-    private ColumnMatchingCondition columnMatchingCondition;
+    private final ColumnMatchingCondition columnMatchingCondition;
 
 
     /**
      * NULL値の扱い。
      */
-    private NullValueCondition nullValueCondition;
+    private final NullValueCondition nullValueCondition;
 
     /**
      * JavaBeansのgetter名。
      */
-    private String getterName;
+    private final String getterName;
 
     /**
      * JavaBeansのsetter名。
      */
-    private String setterName;
+    private final String setterName;
 
 
     /**

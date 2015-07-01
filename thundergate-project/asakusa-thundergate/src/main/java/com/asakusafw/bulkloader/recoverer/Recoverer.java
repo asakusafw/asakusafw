@@ -248,6 +248,7 @@ public class Recoverer {
         }
     }
 
+    // CHECKSTYLE:OFF MethodLengthCheck - FIXME refactoring
     /**
      * リカバリ処理を行う。
      * 処理結果として以下の通り戻り値を返す。
@@ -409,8 +410,9 @@ public class Recoverer {
             // ジョブフローインスタンスIDの排他を解除
             DBAccessUtil.releaseJobflowInstanceLock(lockConn);
         }
-
     }
+    // CHECKSTYLE:ON MethodLengthCheck
+
     /**
      * 当該ジョブフローインスタンスがリカバリ対象かどうかを判断する。
      * @param exporterBean Exporterで使用するパラメータを保持するオブジェクト

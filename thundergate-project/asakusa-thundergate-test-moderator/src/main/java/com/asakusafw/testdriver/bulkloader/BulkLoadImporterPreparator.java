@@ -72,7 +72,7 @@ public class BulkLoadImporterPreparator extends AbstractImporterPreparator<BulkL
                 try {
                     conn.close();
                 } catch (SQLException e) {
-                    // ignored.
+                    LOG.warn("error occurred while closing database connection", e);
                 }
             }
         }

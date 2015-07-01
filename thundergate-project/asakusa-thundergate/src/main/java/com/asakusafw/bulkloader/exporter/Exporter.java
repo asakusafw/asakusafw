@@ -62,6 +62,7 @@ public class Exporter {
         System.exit(result);
     }
 
+    // CHECKSTYLE:OFF MethodLengthCheck - FIXME refactoring
     /**
      * Exporterの処理を実行する。
      * @param args コマンドライン引数
@@ -260,6 +261,8 @@ public class Exporter {
             DBAccessUtil.releaseJobflowInstanceLock(lockConn);
         }
     }
+    // CHECKSTYLE:ON MethodLengthCheck
+
     /**
      * パラメータを保持するBeanを作成する。
      * @param targetName ターゲット名

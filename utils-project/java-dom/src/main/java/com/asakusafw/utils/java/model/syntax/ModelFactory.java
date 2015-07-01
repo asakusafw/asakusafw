@@ -17,9 +17,12 @@ package com.asakusafw.utils.java.model.syntax;
 
 import java.util.List;
 
+import javax.annotation.Generated;
+
 /**
  * {@link Model}を生成するファクトリのインターフェース。
  */
+@Generated("com.asakusafw.utils.java.model.syntax.ModelFactory")
 public interface ModelFactory {
 
     /**

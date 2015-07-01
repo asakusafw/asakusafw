@@ -19,12 +19,16 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.Generated;
+
 import com.asakusafw.utils.java.internal.model.util.ExpressionPriority;
 import com.asakusafw.utils.java.model.syntax.*;
 
+//CHECKSTYLE:OFF
 /**
  * {@link ModelFactory}の実装。
  */
+@Generated("com.asakusafw.utils.java.model.syntax.ModelFactory")
 public class ModelFactoryImpl implements ModelFactory {
 
     @Override
@@ -2369,3 +2373,4 @@ public class ModelFactoryImpl implements ModelFactory {
         }
     }
 }
+//CHECKSTYLE:ON

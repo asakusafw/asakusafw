@@ -47,7 +47,7 @@ public abstract class AbstractInspector implements Inspector {
     /**
      * KEYカラムの情報。
      */
-    private List<ColumnInfo> keyColumnInfos = new ArrayList<ColumnInfo>();
+    private final List<ColumnInfo> keyColumnInfos = new ArrayList<ColumnInfo>();
 
     /**
      * テストの開始時刻。
@@ -63,7 +63,7 @@ public abstract class AbstractInspector implements Inspector {
     /**
      * NG原因のリスト。
      */
-    private List<Cause> causes = new ArrayList<Cause>();
+    private final List<Cause> causes = new ArrayList<Cause>();
 
 
     /**
@@ -229,11 +229,7 @@ public abstract class AbstractInspector implements Inspector {
 
     @Override
     public boolean isSuccess() {
-        if (causes.size() == 0) {
-            return true;
-        } else {
-            return false;
-        }
+        return causes.isEmpty();
     }
 
     /**
