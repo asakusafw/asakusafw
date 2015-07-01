@@ -241,10 +241,9 @@ public final class Yaess {
             Map<String, String> env = new HashMap<String, String>();
             env.putAll(System.getenv());
             env.putAll(toMap(variables));
-            ProfileContext context = new ProfileContext(loader, new VariableResolver(env));
+            result.context = new ProfileContext(loader, new VariableResolver(env));
             Properties properties = CommandLineUtil.loadProperties(file);
-            result.context = context;
-            result.profile = YaessProfile.load(properties, context);
+            result.profile = YaessProfile.load(properties, result.context);
         } catch (Exception e) {
             YSLOG.error(e, "E01001", file.getPath());
             throw new IllegalArgumentException(MessageFormat.format(
