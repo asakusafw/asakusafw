@@ -149,7 +149,7 @@ public class OperatorTestEnvironmentTest {
         static volatile String lastMessage;
 
         @Override
-        protected void report(Level level, String message) throws IOException {
+        public void report(Level level, String message) throws IOException {
             lastLevel = level;
             lastMessage = message;
         }

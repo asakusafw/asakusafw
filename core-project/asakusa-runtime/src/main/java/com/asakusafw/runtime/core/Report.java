@@ -250,7 +250,7 @@ hadoop jar ... -D com.asakusafw.runtime.core.Report.Delegate=com.example.MockRep
     /**
      * {@link Report}クラスの実体。
      * @since 0.1.0
-     * @version 0.5.1
+     * @version 0.7.4
      */
     public abstract static class Delegate implements RuntimeResource {
 
@@ -270,7 +270,7 @@ hadoop jar ... -D com.asakusafw.runtime.core.Report.Delegate=com.example.MockRep
          * @param message メッセージ
          * @throws IOException レポートの通知に失敗した場合
          */
-        protected abstract void report(Level level, String message) throws IOException;
+        public abstract void report(Level level, String message) throws IOException;
 
         /**
          * Notifies a report.
@@ -280,7 +280,7 @@ hadoop jar ... -D com.asakusafw.runtime.core.Report.Delegate=com.example.MockRep
          * @throws IOException if failed to notify this report by I/O error
          * @since 0.5.1
          */
-        protected void report(Level level, String message, Throwable throwable) throws IOException {
+        public void report(Level level, String message, Throwable throwable) throws IOException {
             report(level, message);
         }
     }
@@ -349,7 +349,7 @@ hadoop jar ... -D com.asakusafw.runtime.core.Report.Delegate=com.example.MockRep
     public static class Default extends Delegate {
 
         @Override
-        protected void report(Level level, String message) {
+        public void report(Level level, String message) {
             switch (level) {
             case INFO:
                 System.out.println(message);
@@ -371,7 +371,7 @@ hadoop jar ... -D com.asakusafw.runtime.core.Report.Delegate=com.example.MockRep
         }
 
         @Override
-        protected void report(Level level, String message, Throwable throwable) {
+        public void report(Level level, String message, Throwable throwable) {
             switch (level) {
             case INFO:
                 System.out.println(message);

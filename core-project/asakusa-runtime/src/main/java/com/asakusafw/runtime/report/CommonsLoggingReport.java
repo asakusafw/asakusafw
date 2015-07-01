@@ -34,7 +34,7 @@ public class CommonsLoggingReport extends Report.Delegate {
     static final Log LOG = LogFactory.getLog(CommonsLoggingReport.class);
 
     @Override
-    protected void report(Level level, String message) {
+    public void report(Level level, String message) {
         if (level == Level.ERROR) {
             if (LOG.isErrorEnabled()) {
                 LOG.error(message, new Exception("error"));
@@ -51,7 +51,7 @@ public class CommonsLoggingReport extends Report.Delegate {
     }
 
     @Override
-    protected void report(Level level, String message, Throwable throwable) throws IOException {
+    public void report(Level level, String message, Throwable throwable) throws IOException {
         if (level == Level.ERROR) {
             LOG.error(message, throwable);
         } else if (level == Level.WARN) {
