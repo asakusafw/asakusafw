@@ -70,7 +70,7 @@ public class ReportTest {
     public void info_error() {
         Report.setDelegate(new Report.Delegate() {
             @Override
-            protected void report(Level level, String message) throws IOException {
+            public void report(Level level, String message) throws IOException {
                 throw new IOException();
             }
         });
@@ -95,7 +95,7 @@ public class ReportTest {
     public void warn_error() {
         Report.setDelegate(new Report.Delegate() {
             @Override
-            protected void report(Level level, String message) throws IOException {
+            public void report(Level level, String message) throws IOException {
                 throw new IOException();
             }
         });
@@ -120,7 +120,7 @@ public class ReportTest {
     public void error_error() {
         Report.setDelegate(new Report.Delegate() {
             @Override
-            protected void report(Level level, String message) throws IOException {
+            public void report(Level level, String message) throws IOException {
                 throw new IOException();
             }
         });
@@ -157,7 +157,7 @@ public class ReportTest {
         static final List<String> messages = new ArrayList<String>();
 
         @Override
-        protected void report(Level level, String message) throws IOException {
+        public void report(Level level, String message) throws IOException {
             levels.add(level);
             messages.add(message);
         }
