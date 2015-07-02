@@ -312,11 +312,12 @@ public final class JobCompatibilityHadoop2 extends JobCompatibilityHadoop {
             OutputCommitter committer,
             RawComparator<KEYIN> comparator) throws IOException, InterruptedException {
         StatusReporter reporter = new MockStatusReporter();
-        ReduceContext<KEYIN, VALUEIN, KEYOUT, VALUEOUT> context = new ReduceContextImpl<KEYIN, VALUEIN, KEYOUT, VALUEOUT>(
-                configuration, id, reader,
-                reporter.getCounter("asakusafw", "inputKey"), //$NON-NLS-1$ //$NON-NLS-2$
-                reporter.getCounter("asakusafw", "inputValue"), //$NON-NLS-1$ //$NON-NLS-2$
-                writer, committer, reporter, comparator, inputKeyClass, inputValueClass);
+        ReduceContext<KEYIN, VALUEIN, KEYOUT, VALUEOUT> context =
+                new ReduceContextImpl<KEYIN, VALUEIN, KEYOUT, VALUEOUT>(
+                        configuration, id, reader,
+                        reporter.getCounter("asakusafw", "inputKey"), //$NON-NLS-1$ //$NON-NLS-2$
+                        reporter.getCounter("asakusafw", "inputValue"), //$NON-NLS-1$ //$NON-NLS-2$
+                        writer, committer, reporter, comparator, inputKeyClass, inputValueClass);
         return new WrappedReducer<KEYIN, VALUEIN, KEYOUT, VALUEOUT>().getReducerContext(context);
     }
 
