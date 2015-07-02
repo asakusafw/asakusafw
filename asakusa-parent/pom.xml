@@ -37,6 +37,8 @@
 		<plugin.jar.version>2.4</plugin.jar.version>
 		<plugin.shade.version>2.3</plugin.shade.version>
 		<plugin.javadoc.version>2.10.1</plugin.javadoc.version>
+		<plugin.javacc.version>2.6</plugin.javacc.version>
+		<plugin.jflex.version>1.4.3</plugin.jflex.version>
 
 		<!-- artifact id/versions -->
 		<hadoop.artifact.id>hadoop-client</hadoop.artifact.id>
@@ -335,6 +337,23 @@ encoding/<project>=UTF-8
 					<version>${plugin.antrun.version}</version>
 				</plugin>
 				<plugin>
+					<groupId>de.jflex</groupId>
+					<artifactId>maven-jflex-plugin</artifactId>
+					<version>${plugin.jflex.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>javacc-maven-plugin</artifactId>
+					<version>${plugin.javacc.version}</version>
+					<dependencies>
+						<dependency>
+							<groupId>net.java.dev.javacc</groupId>
+							<artifactId>javacc</artifactId>
+							<version>6.1.2</version>
+						</dependency>
+					</dependencies>
+				</plugin>
+				<plugin>
 					<groupId>com.mycila.maven-license-plugin</groupId>
 					<artifactId>maven-license-plugin</artifactId>
 					<version>1.9.0</version>
@@ -511,7 +530,7 @@ encoding/<project>=UTF-8
 					<exclusion>
 						<groupId>org.xerial.snappy</groupId>
 						<artifactId>snappy-java</artifactId>
-						</exclusion>
+					</exclusion>
 					<exclusion>
 						<groupId>org.apache.calcite</groupId>
 						<artifactId>calcite-core</artifactId>
