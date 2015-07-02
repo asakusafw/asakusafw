@@ -16,6 +16,7 @@
 package com.asakusafw.directio.hive.parquet;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -104,29 +105,13 @@ public enum TimestampValueDrivers implements ParquetValueDriver {
         }
     }
 
-    static int reverseEndian(int value) {
-        int result = 0;
-        result |= (value & (0xff << 24)) >>> 24;
-        result |= (value & (0xff << 16)) >>>  8;
-        result |= (value & (0xff <<  8))  <<  8;
-        result |= (value & (0xff <<  0))  << 24;
-        return result;
-    }
-
-    static long reverseEndian(long value) {
-        int hi = (int) (value >> 32);
-        int lo = (int) (value >>  0);
-        long result = ((long) reverseEndian(lo) << 32) | (reverseEndian(hi) & 0xffffffffL);
-        return result;
-    }
-
     abstract static class AbstractWriter implements ValueWriter {
 
         void write(int julianDay, long timeOfDayNanos, RecordConsumer consumer) {
-            ByteBuffer buf = ByteBuffer.allocate(12);
+            ByteBuffer buf = ByteBuffer.allocate(12).order(ByteOrder.LITTLE_ENDIAN);
             buf.clear();
-            buf.putLong(reverseEndian(timeOfDayNanos));
-            buf.putInt(reverseEndian(julianDay));
+            buf.putLong(timeOfDayNanos);
+            buf.putInt(julianDay);
             buf.flip();
             consumer.addBinary(Binary.fromByteBuffer(buf));
         }
@@ -176,9 +161,9 @@ public enum TimestampValueDrivers implements ParquetValueDriver {
                 this.nanoTimes = new long[capacity];
             }
             for (int id = 0, max = dictionary.getMaxId(); id <= max; id++) {
-                ByteBuffer bytes = dictionary.decodeToBinary(id).toByteBuffer();
-                long time = reverseEndian(bytes.getLong());
-                int day = reverseEndian(bytes.getInt());
+                ByteBuffer bytes = dictionary.decodeToBinary(id).toByteBuffer().order(ByteOrder.LITTLE_ENDIAN);
+                long time = bytes.getLong();
+                int day = bytes.getInt();
                 julianDays[id] = day;
                 nanoTimes[id] = time;
             }
@@ -191,9 +176,9 @@ public enum TimestampValueDrivers implements ParquetValueDriver {
 
         @Override
         public void addBinary(Binary value) {
-            ByteBuffer bytes = value.toByteBuffer();
-            long time = reverseEndian(bytes.getLong());
-            int day = reverseEndian(bytes.getInt());
+            ByteBuffer bytes = value.toByteBuffer().order(ByteOrder.LITTLE_ENDIAN);
+            long time = bytes.getLong();
+            int day = bytes.getInt();
             addNanoTime(day, time);
         }
 
