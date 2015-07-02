@@ -155,14 +155,6 @@
 			</releases>
 		</pluginRepository>
 		<pluginRepository>
-			<id>codehaus.org</id>
-			<name>Codehaus Maven Repository</name>
-			<url>http://repository.codehaus.org/</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</pluginRepository>
-		<pluginRepository>
 			<id>com.asakusafw.releases</id>
 			<name>Asakusa Framework Repository</name>
 			<url>http://asakusafw.s3.amazonaws.com/maven/releases</url>
