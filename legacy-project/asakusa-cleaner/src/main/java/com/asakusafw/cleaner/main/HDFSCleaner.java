@@ -198,11 +198,13 @@ public class HDFSCleaner extends Configured implements Tool {
                     cleanResult = false;
                 } finally {
                     if (fs != null) {
+                        // CHECKSTYLE:OFF EmptyBlockCheck
                         try {
                             fs.close();
                         } catch (IOException ignored) {
                             // ignored
                         }
+                        // CHECKSTYLE:ON EmptyBlockCheck
                     }
                 }
             }

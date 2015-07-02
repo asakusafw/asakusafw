@@ -91,6 +91,7 @@ public class ResultOutput<T> implements Result<T> {
         this.counters = counters;
     }
 
+    // CHECKSTYLE:OFF JavadocMethodCheck - Result.OutputException is ignored by checkstyle
     /**
      * Writes a key and value into current context.
      * @param context current context
@@ -108,6 +109,7 @@ public class ResultOutput<T> implements Result<T> {
             throw new Result.OutputException(e);
         }
     }
+    // CHECKSTYLE:ON JavadocMethodCheck
 
     @Override
     public void add(T result) {

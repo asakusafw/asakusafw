@@ -75,7 +75,7 @@ public class BulkLoadExporterRetriever extends AbstractExporterRetriever<BulkLoa
                 try {
                     conn.close();
                 } catch (SQLException e) {
-                    // ignored.
+                    LOG.warn("error occurred while closing database connection", e);
                 }
             }
         }
@@ -99,7 +99,7 @@ public class BulkLoadExporterRetriever extends AbstractExporterRetriever<BulkLoa
                 try {
                     conn.close();
                 } catch (SQLException e) {
-                    // ignored.
+                    LOG.warn("error occurred while closing database connection", e);
                 }
             }
         }

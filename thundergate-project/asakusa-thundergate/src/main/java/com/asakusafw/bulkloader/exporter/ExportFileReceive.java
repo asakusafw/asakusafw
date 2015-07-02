@@ -49,6 +49,7 @@ public class ExportFileReceive {
 
     static final Log LOG = new Log(ExportFileReceive.class);
 
+    // CHECKSTYLE:OFF MethodLengthCheck - FIXME refactoring
     /**
      * HDFSのNameノードのCollectorを呼出し、Exportファイルを受信してローカルにファイルを書き出す。
      * @param bean パラメータを保持するBean
@@ -220,6 +221,7 @@ public class ExportFileReceive {
         }
         return true;
     }
+    // CHECKSTYLE:ON MethodLengthCheck
 
     /**
      * ファイルに対するアウトプットストリームを作成する。

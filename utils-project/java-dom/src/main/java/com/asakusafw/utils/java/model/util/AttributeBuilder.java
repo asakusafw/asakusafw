@@ -30,6 +30,7 @@ import com.asakusafw.utils.java.model.syntax.ModifierKind;
 import com.asakusafw.utils.java.model.syntax.NamedType;
 import com.asakusafw.utils.java.model.syntax.Type;
 
+// CHECKSTYLE:OFF
 /**
  * 修飾子を構築するビルダー。
  * <p>
@@ -115,6 +116,8 @@ public class AttributeBuilder {
         }
         return results;
     }
+
+// CHECKSTYLE:OFF MethodNameCheck
 
     /**
      * {@code public}を追加したビルダーを返す。
@@ -214,6 +217,8 @@ public class AttributeBuilder {
     public AttributeBuilder Strictfp() {
         return modifier(ModifierKind.STRICTFP);
     }
+
+// CHECKSTYLE:ON MethodNameCheck
 
     /**
      * 指定の修飾子を追加したビルダーを返す。
@@ -496,6 +501,8 @@ public class AttributeBuilder {
         return annotation(f.newNormalAnnotation((NamedType) type, elements));
     }
 
+// CHECKSTYLE:OFF ParameterNumberCheck
+
     /**
      * 指定の注釈を追加したビルダーを返す。
      * @param type 注釈の型
@@ -568,6 +575,8 @@ public class AttributeBuilder {
                 f.newSimpleName(elementName5), elementValue5));
         return annotation(f.newNormalAnnotation((NamedType) type, elements));
     }
+
+// CHECKSTYLE:ON ParameterNumberCheck
 
     /**
      * 指定の注釈を追加したビルダーを返す。

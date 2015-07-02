@@ -143,6 +143,7 @@ public class Importer {
         }
     }
 
+    // CHECKSTYLE:OFF MethodLengthCheck - FIXME refactoring
     /**
      * Imports tables described in the specified bean.
      * @param bean target
@@ -305,6 +306,7 @@ public class Importer {
             }
         }
     }
+    // CHECKSTYLE:ON MethodLengthCheck
 
     /**
      * パラメータを保持するBeanを作成する。

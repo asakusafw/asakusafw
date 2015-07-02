@@ -413,6 +413,8 @@ encoding/<project>=UTF-8
 					</dependencies>
 					<configuration>
 						<configLocation>com/asakusafw/checkstyle.xml</configLocation>
+						<suppressionsLocation>com/asakusafw/checkstyle-suppressions.xml</suppressionsLocation>
+						<suppressionsFileExpression>checkstyle.suppressions.file</suppressionsFileExpression>
 					</configuration>
 				</plugin>
 			</plugins>

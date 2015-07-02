@@ -15,6 +15,7 @@
  */
 package com.asakusafw.yaess.core;
 
+// CHECKSTYLE:OFF InterfaceIsTypeCheck - there are no effective methods
 /**
  * Executes {@link CommandScript}.
  * @since 0.2.3
@@ -27,3 +28,4 @@ public interface CommandScriptHandler extends ExecutionScriptHandler<CommandScri
      */
     String PROFILE_WILDCARD = "*";
 }
+//CHECKSTYLE:ON InterfaceIsTypeCheck

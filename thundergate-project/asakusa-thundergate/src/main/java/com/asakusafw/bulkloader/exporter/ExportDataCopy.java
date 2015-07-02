@@ -324,6 +324,8 @@ public class ExportDataCopy {
         selectCondition.append(maxRecord);
         return selectCondition.toString();
     }
+
+    // CHECKSTYLE:OFF MethodLengthCheck - FIXME refactoring
     /**
      * 更新データをExport対象テーブルにコピーする。
      * テーブルロックを取得していない場合、コピーしたデータは行ロック状態に更新する。
@@ -519,6 +521,8 @@ public class ExportDataCopy {
             return false;
         }
     }
+    // CHECKSTYLE:ON MethodLengthCheck
+
     /**
      * 更新レコードコピーでエラーになったレコードを取得するSQLを作成する。
      * @param tempTableName テンポラリテーブル名

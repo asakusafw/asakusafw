@@ -187,6 +187,8 @@ public final class ConfigurationLoader {
                     Constants.PROP_DEFAULT_CACHE_BUILDER_PARALLEL);
         }
     }
+
+    // CHECKSTYLE:OFF MethodLengthCheck - FIXME refactoring
     /**
      * DBサーバのプロパティの必須チェックとデフォルト値を設定する。
      * @throws BulkLoaderSystemException プロパティの中身が不正であった場合
@@ -346,6 +348,8 @@ public final class ConfigurationLoader {
                     "エクスポートファイルを置くディレクトリが設定されていません");
         }
     }
+    // CHECKSTYLE:ON MethodLengthCheck
+
     /**
      * 共通のプロパティの必須チェックとデフォルト値を設定する。
      */
