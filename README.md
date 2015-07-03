@@ -21,5 +21,10 @@ mvn install -DskipTests
 * Run `mvn install eclipse:eclipse -DskipTests`
 * And then import projects from Eclipse
 
+## Sub projects
+* [Asakusa SDK](https://github.com/asakusafw/asakusafw-sdk)
+* [Asakusa Framework Language Project](https://github.com/asakusafw/asakusafw-compiler)
+* [Asakusa on Spark](https://github.com/asakusafw/asakusafw-spark)
+
 ## License
 * [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0)
