@@ -9,7 +9,7 @@ Apr 22, 2015
 
 `Asakusa Framework 0.7.3 documentation`_
 
-..  _`Asakusa Framework 0.7.3 documentation`: http://asakusafw.s3.amazonaws.com/documents/0.7.3/release/ja/html/index.html
+..  _`Asakusa Framework 0.7.3 documentation`: http://docs.asakusafw.com/0.7.3/release/ja/html/index.html
 
 新機能と主な変更点
 ------------------
@@ -90,7 +90,7 @@ Jan 05, 2015
 
 `Asakusa Framework 0.7.2 documentation`_
 
-..  _`Asakusa Framework 0.7.2 documentation`: http://asakusafw.s3.amazonaws.com/documents/0.7.2/release/ja/html/index.html
+..  _`Asakusa Framework 0.7.2 documentation`: http://docs.asakusafw.com/0.7.2/release/ja/html/index.html
 
 新機能と主な変更点
 ------------------
@@ -134,7 +134,7 @@ Nov 20, 2014
 
 `Asakusa Framework 0.7.1 documentation`_
 
-..  _`Asakusa Framework 0.7.1 documentation`: http://asakusafw.s3.amazonaws.com/documents/0.7.1/release/ja/html/index.html
+..  _`Asakusa Framework 0.7.1 documentation`: http://docs.asakusafw.com/0.7.1/release/ja/html/index.html
 
 新機能と主な変更点
 ------------------
@@ -188,7 +188,7 @@ Sep 25, 2014
 
 `Asakusa Framework 0.7.0 documentation`_
 
-..  _`Asakusa Framework 0.7.0 documentation`: http://asakusafw.s3.amazonaws.com/documents/0.7.0/release/ja/html/index.html
+..  _`Asakusa Framework 0.7.0 documentation`: http://docs.asakusafw.com/0.7.0/release/ja/html/index.html
 
 新機能と主な変更点
 ------------------

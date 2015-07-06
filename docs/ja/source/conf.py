@@ -35,13 +35,13 @@ todo_include_todos = True
 extlinks = {
     'issue': ('https://github.com/asakusafw/asakusafw/issues/%s', '#'),
     'issue-sdk': ('https://github.com/asakusafw/asakusafw-sdk/issues/%s', 'SDK-#'),
-    'jinrikisha': ('http://asakusafw.s3.amazonaws.com/documents/jinrikisha/ja/html/%s', None),
-    'apiref': ('http://asakusafw.s3.amazonaws.com/documents/0.7.3/release/api/%s', None),
-    'epub': ('http://asakusafw.s3.amazonaws.com/documents/0.7.3/release/ja/epub/%s', None)
+    'jinrikisha': ('http://docs.asakusafw.com/jinrikisha/ja/html/%s', None),
+    'apiref': ('http://docs.asakusafw.com/0.7.3/release/api/%s', None),
+    'epub': ('http://docs.asakusafw.com/0.7.3/release/ja/epub/%s', None)
 }
 javadoclinks = {
-    'javadoc': ('http://asakusafw.s3.amazonaws.com/documents/0.7.3/release/api/%s.html', ""),
-    'gradledoc': ('http://asakusafw.s3.amazonaws.com/documents/0.7.3/release/gradle-plugins/%s.html', "")
+    'javadoc': ('http://docs.asakusafw.com/0.7.3/release/api/%s.html', ""),
+    'gradledoc': ('http://docs.asakusafw.com/0.7.3/release/gradle-plugins/%s.html', "")
 }
 
 # The max depth of sidebar toctree.

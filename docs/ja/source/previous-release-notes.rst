@@ -13,7 +13,7 @@ May 22, 2014
 
 `Asakusa Framework 0.6.2 documentation`_
 
-..  _`Asakusa Framework 0.6.2 documentation`: http://asakusafw.s3.amazonaws.com/documents/0.6.2/release/ja/html/index.html
+..  _`Asakusa Framework 0.6.2 documentation`: http://docs.asakusafw.com/0.6.2/release/ja/html/index.html
 
 新機能と主な変更点
 ------------------
@@ -76,7 +76,7 @@ Mar 19, 2014
 
 `Asakusa Framework 0.6.1 documentation`_
 
-..  _`Asakusa Framework 0.6.1 documentation`: http://asakusafw.s3.amazonaws.com/documents/0.6.1/release/ja/html/index.html
+..  _`Asakusa Framework 0.6.1 documentation`: http://docs.asakusafw.com/0.6.1/release/ja/html/index.html
 
 新機能と主な変更点
 ------------------
@@ -110,7 +110,7 @@ Feb 17, 2014
 
 `Asakusa Framework 0.6.0 documentation`_
 
-..  _`Asakusa Framework 0.6.0 documentation`: http://asakusafw.s3.amazonaws.com/documents/0.6.0/release/ja/html/index.html
+..  _`Asakusa Framework 0.6.0 documentation`: http://docs.asakusafw.com/0.6.0/release/ja/html/index.html
 
 .. contents::
    :local:
@@ -210,7 +210,7 @@ Dec 24, 2013
 
 `Asakusa Framework 0.5.3 documentation`_
 
-..  _`Asakusa Framework 0.5.3 documentation`: http://asakusafw.s3.amazonaws.com/documents/0.5.3/release/ja/html/index.html
+..  _`Asakusa Framework 0.5.3 documentation`: http://docs.asakusafw.com/0.5.3/release/ja/html/index.html
 
 本リリースはAsakusa Frameworkの開発版リリースです。
 主な変更内容は以下の通りです。
@@ -238,7 +238,7 @@ Nov 20, 2013
 
 `Asakusa Framework 0.5.2 documentation`_
 
-..  _`Asakusa Framework 0.5.2 documentation`: http://asakusafw.s3.amazonaws.com/documents/0.5.2/release/ja/html/index.html
+..  _`Asakusa Framework 0.5.2 documentation`: http://docs.asakusafw.com/0.5.2/release/ja/html/index.html
 
 本リリースはAsakusa Frameworkの開発版リリースです。
 主な変更内容は以下の通りです。
@@ -255,7 +255,7 @@ Jul 26, 2013
 
 `Asakusa Framework 0.5.1 documentation`_
 
-..  _`Asakusa Framework 0.5.1 documentation`: http://asakusafw.s3.amazonaws.com/documents/0.5.1/release/ja/html/index.html
+..  _`Asakusa Framework 0.5.1 documentation`: http://docs.asakusafw.com/0.5.1/release/ja/html/index.html
 
 本リリースはAsakusa Frameworkの開発版リリースです。
 主な変更内容は以下の通りです。
@@ -272,7 +272,7 @@ May 9, 2013
 
 `Asakusa Framework 0.5.0 documentation`_
 
-..  _`Asakusa Framework 0.5.0 documentation`: http://asakusafw.s3.amazonaws.com/documents/0.5.0/release/ja/html/index.html
+..  _`Asakusa Framework 0.5.0 documentation`: http://docs.asakusafw.com/0.5.0/release/ja/html/index.html
 
 本リリースはAsakusa Frameworkの開発版リリースです。
 主な変更内容は以下の通りです。
@@ -286,7 +286,7 @@ May 9, 2013
 
 * `Asakusa Framework Sandbox - CDH4上でAsakusa Frameworkを利用する`_
 
-..  _`Asakusa Framework Sandbox - CDH4上でAsakusa Frameworkを利用する`: http://asakusafw.s3.amazonaws.com/documents/sandbox/ja/html/administration/asakusa-on-cdh4.html
+..  _`Asakusa Framework Sandbox - CDH4上でAsakusa Frameworkを利用する`: http://docs.asakusafw.com/sandbox/ja/html/administration/asakusa-on-cdh4.html
 
 Release 0.4.0
 =============
@@ -295,7 +295,7 @@ Aug 30, 2012
 
 `Asakusa Framework 0.4.0 documentation`_
 
-..  _`Asakusa Framework 0.4.0 documentation`: http://asakusafw.s3.amazonaws.com/documents/0.4.0/release/ja/html/index.html
+..  _`Asakusa Framework 0.4.0 documentation`: http://docs.asakusafw.com/0.4.0/release/ja/html/index.html
 
 本リリースはAsakusa Frameworkの安定版リリースです。
 主な変更内容は以下の通りです。
@@ -314,7 +314,7 @@ May 31, 2012
 
 `Asakusa Framework 0.2.6 documentation`_
 
-..  _`Asakusa Framework 0.2.6 documentation`: http://asakusafw.s3.amazonaws.com/documents/0.2/release/ja/html/index.html
+..  _`Asakusa Framework 0.2.6 documentation`: http://docs.asakusafw.com/0.2/release/ja/html/index.html
 
 本リリースではYAESS マルチディスパッチ機能が追加されました。
 
