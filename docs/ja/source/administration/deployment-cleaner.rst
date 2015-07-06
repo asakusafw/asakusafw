@@ -19,7 +19,7 @@ Asakusa Frameworkでは、ローカルファイル、及び分散ファイルシ
 
 クリーニングツールの詳細にはついては、 `Asakusa Cleanerユーザーガイド(PDF)`_ を参照してください。
 
-.. _`Asakusa Cleanerユーザーガイド(PDF)` : https://asakusafw.s3.amazonaws.com/documents/AsakusaCleaner_UserGuide.pdf
+.. _`Asakusa Cleanerユーザーガイド(PDF)` : https://docs.asakusafw.com/AsakusaCleaner_UserGuide.pdf
 
 クリーニングツールのデプロイ
 ----------------------------
