@@ -36,6 +36,7 @@ extlinks = {
     'issue': ('https://github.com/asakusafw/asakusafw/issues/%s', '#'),
     'issue-sdk': ('https://github.com/asakusafw/asakusafw-sdk/issues/%s', 'SDK-#'),
     'jinrikisha': ('http://docs.asakusafw.com/jinrikisha/ja/html/%s', None),
+    'preview': ('http://docs.asakusafw.com/preview/ja/html/%s', None),
     'apiref': ('http://docs.asakusafw.com/0.7.3/release/api/%s', None),
     'epub': ('http://docs.asakusafw.com/0.7.3/release/ja/epub/%s', None)
 }
