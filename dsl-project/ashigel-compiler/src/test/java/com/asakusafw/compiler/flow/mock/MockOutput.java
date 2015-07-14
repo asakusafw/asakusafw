@@ -15,22 +15,23 @@
  */
 package com.asakusafw.compiler.flow.mock;
 
-import java.io.IOException;
+import static com.asakusafw.runtime.compatibility.JobCompatibility.*;
 
-import com.asakusafw.runtime.compatibility.JobCompatibility;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.mapreduce.TaskAttemptID;
+import org.apache.hadoop.mapreduce.TaskInputOutputContext;
+
+import com.asakusafw.runtime.compatibility.hadoop.KeyValueConsumer;
 import com.asakusafw.runtime.core.Result;
 
 /**
  * ダミーの出力先。
- * @param <KEYOUT> キーの型
- * @param <VALUEOUT> 値の型
  */
-public class MockOutput<KEYOUT, VALUEOUT> extends
-        JobCompatibility.TaskInputOutputContextStub<Object, Object, KEYOUT, VALUEOUT> {
+public class MockOutput {
 
-    private final Result<? super KEYOUT> keyOut;
-
-    private final Result<? super VALUEOUT> valueOut;
+    private MockOutput() {
+        return;
+    }
 
     /**
      * インスタンスを生成する。
@@ -40,40 +41,28 @@ public class MockOutput<KEYOUT, VALUEOUT> extends
      * @param valueOut 値の出力先
      * @return 生成したインスタンス
      */
-    public static <K, V> MockOutput<K, V> create(
+    public static <K, V> TaskInputOutputContext<?, ?, K, V> create(
             Result<K> keyOut,
             Result<V> valueOut) {
-        return new MockOutput<K, V>(keyOut, valueOut);
+        TaskAttemptID id = newTaskAttemptId(newTaskId(newJobId()));
+        return newTaskOutputContext(new Configuration(false), id, new ResultBridge<K, V>(keyOut, valueOut));
     }
 
-    /**
-     * インスタンスを生成する。
-     * @param keyOut キーの出力先
-     * @param valueOut 値の出力先
-     */
-    public MockOutput(Result<? super KEYOUT> keyOut, Result<? super VALUEOUT> valueOut) {
-        this.keyOut = keyOut;
-        this.valueOut = valueOut;
-    }
+    private static class ResultBridge<K, V> implements KeyValueConsumer<K, V> {
 
-    @Override
-    public void write(KEYOUT key, VALUEOUT value) {
-        keyOut.add(key);
-        valueOut.add(value);
-    }
+        private final Result<K> keyOut;
 
-    @Override
-    public boolean nextKeyValue() throws IOException, InterruptedException {
-        throw new UnsupportedOperationException();
-    }
+        private final Result<V> valueOut;
 
-    @Override
-    public Object getCurrentKey() throws IOException, InterruptedException {
-        throw new UnsupportedOperationException();
-    }
+        public ResultBridge(Result<K> keyOut, Result<V> valueOut) {
+            this.keyOut = keyOut;
+            this.valueOut = valueOut;
+        }
 
-    @Override
-    public Object getCurrentValue() throws IOException, InterruptedException {
-        throw new UnsupportedOperationException();
+        @Override
+        public void consume(K key, V value) {
+            keyOut.add(key);
+            valueOut.add(value);
+        }
     }
 }

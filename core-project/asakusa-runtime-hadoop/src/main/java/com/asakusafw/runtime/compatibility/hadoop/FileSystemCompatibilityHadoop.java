@@ -13,25 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.runtime.compatibility;
+package com.asakusafw.runtime.compatibility.hadoop;
 
 import org.apache.hadoop.fs.FileStatus;
 
-import com.asakusafw.runtime.compatibility.hadoop.FileSystemCompatibilityHadoop;
-
 /**
  * Compatibility for file system APIs.
- * @since 0.5.0
- * @version 0.7.4
+ * Clients should not use this class directly.
+ * @since 0.7.4
  */
-public final class FileSystemCompatibility {
-
-    private static final FileSystemCompatibilityHadoop DELEGATE =
-            CompatibilitySelector.getImplementation(FileSystemCompatibilityHadoop.class);
-
-    private FileSystemCompatibility() {
-        return;
-    }
+public abstract class FileSystemCompatibilityHadoop implements CompatibilityHadoop {
 
     /**
      * Returns whether the target file status represents a directory.
@@ -39,7 +30,5 @@ public final class FileSystemCompatibility {
      * @return {@code true} iff it is a directory
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public static boolean isDirectory(FileStatus status) {
-        return DELEGATE.isDirectory(status);
-    }
+    public abstract boolean isDirectory(FileStatus status);
 }

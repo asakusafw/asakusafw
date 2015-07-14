@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.runtime.compatibility;
+package com.asakusafw.runtime.compatibility.hadoop;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,21 +21,12 @@ import java.io.InputStream;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.SequenceFile;
 
-import com.asakusafw.runtime.compatibility.hadoop.SequenceFileCompatibilityHadoop;
-
 /**
  * Compatibility for {@link SequenceFile} APIs.
- * @since 0.7.0
- * @version 0.7.4
+ * Clients should not use this class directly.
+ * @since 0.7.4
  */
-public final class SequenceFileCompatibility {
-
-    private static final SequenceFileCompatibilityHadoop DELEGATE =
-            CompatibilitySelector.getImplementation(SequenceFileCompatibilityHadoop.class);
-
-    private SequenceFileCompatibility() {
-        return;
-    }
+public abstract class SequenceFileCompatibilityHadoop implements CompatibilityHadoop {
 
     /**
      * Creates a new {@link SequenceFile} reader.
@@ -46,10 +37,8 @@ public final class SequenceFileCompatibility {
      * @throws IOException if failed to open the sequence file
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public static SequenceFile.Reader openReader(
+    public abstract SequenceFile.Reader openReader(
             InputStream in,
             long length,
-            Configuration conf) throws IOException {
-        return DELEGATE.openReader(in, length, conf);
-    }
+            Configuration conf) throws IOException;
 }

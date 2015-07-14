@@ -13,26 +13,70 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.runtime.compatibility;
+package com.asakusafw.runtime.compatibility.hadoop;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.MessageFormat;
+import java.util.Properties;
+import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.filecache.DistributedCache;
 import org.apache.hadoop.mapreduce.JobContext;
 
 /**
  * Compatibility for core framework layer.
  * @since 0.7.0
+ * @version 0.7.4
  */
 public final class CoreCompatibility {
 
     static final Log LOG = LogFactory.getLog(CoreCompatibility.class);
 
+    private static final String PATH_HADOOP_INFO = "META-INF/asakusa-runtime/hadoop.properties"; //$NON-NLS-1$
+
+    private static final String KEY_TARGET_VERSION = "version"; //$NON-NLS-1$
+
     /**
      * Represents the target version.
      */
-    private static final FrameworkVersion TARGET = FrameworkVersion.DONT_CARE;
+    static final FrameworkVersion TARGET;
+    static {
+        FrameworkVersion detected = FrameworkVersion.DONT_CARE;
+        try {
+            InputStream input = CoreCompatibility.class.getClassLoader().getResourceAsStream(PATH_HADOOP_INFO);
+            if (input == null) {
+                throw new FileNotFoundException(PATH_HADOOP_INFO);
+            }
+            Properties p = new Properties();
+            try {
+                p.load(input);
+            } finally {
+                input.close();
+            }
+            String value = p.getProperty(KEY_TARGET_VERSION);
+            FrameworkVersion version = FrameworkVersion.find(value);
+            if (value == null) {
+                LOG.warn("target Hadoop version is not defined");
+            } else if (version == null) {
+                LOG.warn(MessageFormat.format(
+                        "unknown target Hadoop version: {0}",
+                        value));
+            } else {
+                detected = version;
+                LOG.debug(MessageFormat.format(
+                        "detect target Hadoop version: {1} ({0})", //$NON-NLS-1$
+                        detected));
+            }
+        } catch (IOException e) {
+            LOG.warn("failed to detect current target Hadoop version", e);
+            detected = FrameworkVersion.DONT_CARE;
+        }
+        TARGET = detected;
+    }
 
     private CoreCompatibility() {
         return;
@@ -53,13 +97,15 @@ public final class CoreCompatibility {
 
     /**
      * Represents the core framework version.
+     * @since 0.7.0
+     * @version 0.7.4
      */
     public enum FrameworkVersion {
 
         /**
          * Don't care for temporary.
          */
-        DONT_CARE("<don't-care>") { //$NON-NLS-1$
+        DONT_CARE("<don't-care>", "\\$\\{.*\\}") { //$NON-NLS-1$ //$NON-NLS-2$
             @Override
             public boolean isCompatibleTo(FrameworkVersion running) {
                 // don't care
@@ -70,12 +116,12 @@ public final class CoreCompatibility {
         /**
          * Represents Hadoop {@code 1.x}.
          */
-        HADOOP_V1("hadoop-1.x"), //$NON-NLS-1$
+        HADOOP_V1("hadoop-1.x", "1\\..*"), //$NON-NLS-1$ //$NON-NLS-2$
 
         /**
          * Represents Hadoop {@code 2.x} with YARN.
          */
-        HADOOP_V2("hadoop-2.x") { //$NON-NLS-1$
+        HADOOP_V2("hadoop-2.x", "2\\..*") { //$NON-NLS-1$ //$NON-NLS-2$
             @Override
             public boolean isCompatibleTo(FrameworkVersion running) {
                 return this == running || running == HADOOP_V2_MR1;
@@ -93,10 +139,17 @@ public final class CoreCompatibility {
         UNKNOWN("hadoop-<UNKNOWN_VERSION>"), //$NON-NLS-1$
         ;
 
-        private final String label;
+        final String label;
+
+        final Pattern pattern;
 
         private FrameworkVersion(String label) {
+            this(label, null);
+        }
+
+        private FrameworkVersion(String label, String pattern) {
             this.label = label;
+            this.pattern = pattern == null ? null : Pattern.compile(pattern);
         }
 
         /**
@@ -106,6 +159,28 @@ public final class CoreCompatibility {
          */
         public boolean isCompatibleTo(FrameworkVersion running) {
             return this == running;
+        }
+
+        /**
+         * Returns a version constant from its name.
+         * @param name the version name
+         * @return the related version, or {@code null} if there is no such a version
+         * @since 0.7.4
+         */
+        public static FrameworkVersion find(String name) {
+            for (FrameworkVersion version : values()) {
+                if (version.isMember(name)) {
+                    return version;
+                }
+            }
+            return null;
+        }
+
+        boolean isMember(String name) {
+            if (pattern != null) {
+                return pattern.matcher(name).matches();
+            }
+            return false;
         }
 
         /**
@@ -128,7 +203,7 @@ public final class CoreCompatibility {
                 FrameworkVersion detected = UNKNOWN;
 
                 // Detect MRConfig
-                if (existsClass("org.apache.hadoop.mapreduce.MRConfig")) { //$NON-NLS-1$
+                if (DistributedCache.class.isAnnotationPresent(Deprecated.class)) {
                     detected = HADOOP_V2;
                 } else if (JobContext.class.isInterface()) {
                     detected = HADOOP_V2_MR1;
@@ -141,16 +216,6 @@ public final class CoreCompatibility {
                             detected));
                 }
                 VERSION = detected;
-            }
-
-            private static boolean existsClass(String className) {
-                ClassLoader loader = CoreCompatibility.class.getClassLoader();
-                try {
-                    Class.forName(className, false, loader);
-                    return true;
-                } catch (ClassNotFoundException e) {
-                    return false;
-                }
             }
         }
     }
