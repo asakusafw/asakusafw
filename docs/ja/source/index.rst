@@ -34,6 +34,11 @@ Asakusa Framework入門
 * :doc:`administration/index`
 * :doc:`sandbox/index`
 
+Developer Preview
+-----------------
+
+* :preview:`Asakusa on Spark <asakusa-on-spark/index.html>`
+
 プロダクトについて
 ==================
 
@@ -61,7 +66,7 @@ Asakusa Framework入門
 ..  _`ソースリポジトリ (GitHub)`: http://github.com/asakusafw/asakusafw
 ..  _`サンプルプログラム集 (GitHub)`: http://github.com/asakusafw/asakusafw-examples
 ..  _`課題管理 (GitHub)`: https://github.com/asakusafw/asakusafw/issues
-..  _`ビルドサーバ(Jenkins)`: http://ec2-175-41-241-89.ap-northeast-1.compute.amazonaws.com/jenkins/
+..  _`ビルドサーバ(Jenkins)`: http://ci.asakusafw.com
 
 ..  toctree::
     :hidden:

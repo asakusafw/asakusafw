@@ -595,7 +595,7 @@ Others
     * See: `Asakusa Framework API References (Version 0.4.0)`_
 * [ :issue:`216` ] - Refoctoring Maven archetype for release 0.4.0
 
-..  _`Asakusa Framework API References (Version 0.4.0)`: http://asakusafw.s3.amazonaws.com/documents/0.4.0/release/api/index.html
+..  _`Asakusa Framework API References (Version 0.4.0)`: http://docs.asakusafw.com/0.4.0/release/api/index.html
 
 ----
 
