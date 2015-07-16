@@ -27,6 +27,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.apache.hadoop.util.Shell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xerial.snappy.OSInfo;
 
 /**
  * Installs {@code winutils.exe} into the current environment.
@@ -63,7 +64,9 @@ public final class WinUtilsInstaller {
 
     private static final String ARCH_32 = "x86"; //$NON-NLS-1$
 
-    private static final String SOURCE = ARCH_32 + "/winutils.exe"; //$NON-NLS-1$
+    private static final String ARCH_64 = "x86_64"; //$NON-NLS-1$
+
+    private static final String SOURCE = getArchitecture() + "/winutils.exe"; //$NON-NLS-1$
 
     private static final String TARGET_PREFIX = "winutils-" + getUserHash(); //$NON-NLS-1$
 
@@ -182,6 +185,14 @@ public final class WinUtilsInstaller {
             input.close();
         }
         return CACHE.get();
+    }
+
+    private static String getArchitecture() {
+        String name = OSInfo.getArchName();
+        if (name.equals(ARCH_32) || name.equals(ARCH_64)) {
+            return name;
+        }
+        return ARCH_64;
     }
 
     private static String getUserHash() {
