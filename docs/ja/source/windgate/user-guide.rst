@@ -855,6 +855,61 @@ Asakusa FrameworkのバッチアプリケーションからWindGateを利用し�
 
 ..  [#] :javadoc:`com.asakusafw.windgate.core.vocabulary.DataModelJdbcSupport`
 
+DMDLとJDBCの型の対応
+--------------------
+
+.. list-table:: DMDLとJavaとJDBCのデータ型
+
+   * - 意味
+     - DMDL
+     - Javaクラス
+     - JDBC
+   * - 32bit符号付き整数
+     - INT
+     - int (IntOption)
+     - int
+   * - 64bit符号付き整数
+     - LONG
+     - long (LongOption)
+     - long
+   * - 単精度浮動小数点
+     - FLOAT
+     - float (FloatOption)
+     - float
+   * - 倍精度浮動小数点
+     - DOUBLE
+     - double (DoubleOption)
+     - double
+   * - 文字列
+     - TEXT
+     - Text (StringOption)
+     - String
+   * - 10進数
+     - DECIMAL
+     - BigDecimal (DecimalOption)
+     - BigDecimal
+   * - 日付
+     - DATE
+     - Date (DateOption)
+     - java.sql.Date
+   * - 日時
+     - DATETIME
+     - DateTime (DateTime)
+     - java.sql.Timestamp
+   * - 論理値
+     - BOOLEAN
+     - boolean (BooleanOption)
+     - boolean
+   * - 8bit符号付き整数
+     - BYTE
+     - byte (ByteOption)
+     - byte
+   * - 16bit符号付き整数
+     - SHORT
+     - short (ShortOption)
+     - short
+
+
 DataModelJdbcSupportの自動生成
 ------------------------------
 
