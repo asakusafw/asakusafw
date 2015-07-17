@@ -855,12 +855,45 @@ Asakusa FrameworkのバッチアプリケーションからWindGateを利用し�
 
 ..  [#] :javadoc:`com.asakusafw.windgate.core.vocabulary.DataModelJdbcSupport`
 
+DataModelJdbcSupportの自動生成
+------------------------------
+
+データモデルから ``DataModelJdbcSupport`` の実装クラスを自動的に生成するには、それぞれのプロパティに ``@windgate.jdbc.column`` を指定してさらに ``name`` 要素で対応するカラム名を記述します。
+また、テーブル名を指定するにはデータモデルに ``@windgate.jdbc.table`` を指定して ``name`` 要素内に記述します [#]_ 。
+
+..  code-block:: none
+
+    @windgate.jdbc.table(name = "DOCUMENT")
+    document = {
+        "the name of this document"
+        @windgate.jdbc.column(name = "NAME")
+        name : TEXT;
+
+        "the content of this document"
+        @windgate.jdbc.column(name = "CONTENT")
+        content : TEXT;
+    };
+
+上記のように記述してデータモデルクラスを生成すると、
+``<出力先パッケージ>.jdbc.<データモデル名>JdbcSupport`` というクラスが自動生成されます。
+このクラスは ``DataModelJdbcSupport`` を実装し、 ``@windgate.jdbc.column`` で指定したカラムが利用可能です。
+
+また、 ``@windgate.jdbc.table`` を指定した場合、単純な `データベースを利用するインポーター記述`_ と `データベースを利用するエクスポーター記述`_ の骨格も自動生成します。
+前者は ``<出力先パッケージ>.jdbc.Abstract<データモデル名>JdbcImporterDescription`` 、後者は ``<出力先パッケージ>.jdbc.Abstract<データモデル名>JdbcExporterDescription`` というクラス名で生成します。
+
+この自動生成されたインポーター/エクスポーター記述の骨格は指定されたテーブルのすべてのカラムを利用します。
+必要に応じて継承して利用してください。
+
+..  [#] ``@windgate.jdbc.table`` の指定は必須ではありません。
+
 DMDLとJDBCの型の対応
---------------------
+~~~~~~~~~~~~~~~~~~~~
+
+DMDLとJDBCの型の対応は以下の通りです。
 
 .. list-table:: DMDLとJavaとJDBCのデータ型
 
-   * - 意味
+   * - 説明
      - DMDL
      - Javaクラス
      - JDBC
@@ -908,38 +941,6 @@ DMDLとJDBCの型の対応
      - SHORT
      - short (ShortOption)
      - short
-
-
-DataModelJdbcSupportの自動生成
-------------------------------
-
-データモデルから ``DataModelJdbcSupport`` の実装クラスを自動的に生成するには、それぞれのプロパティに ``@windgate.jdbc.column`` を指定してさらに ``name`` 要素で対応するカラム名を記述します。
-また、テーブル名を指定するにはデータモデルに ``@windgate.jdbc.table`` を指定して ``name`` 要素内に記述します [#]_ 。
-
-..  code-block:: none
-
-    @windgate.jdbc.table(name = "DOCUMENT")
-    document = {
-        "the name of this document"
-        @windgate.jdbc.column(name = "NAME")
-        name : TEXT;
-
-        "the content of this document"
-        @windgate.jdbc.column(name = "CONTENT")
-        content : TEXT;
-    };
-
-上記のように記述してデータモデルクラスを生成すると、
-``<出力先パッケージ>.jdbc.<データモデル名>JdbcSupport`` というクラスが自動生成されます。
-このクラスは ``DataModelJdbcSupport`` を実装し、 ``@windgate.jdbc.column`` で指定したカラムが利用可能です。
-
-また、 ``@windgate.jdbc.table`` を指定した場合、単純な `データベースを利用するインポーター記述`_ と `データベースを利用するエクスポーター記述`_ の骨格も自動生成します。
-前者は ``<出力先パッケージ>.jdbc.Abstract<データモデル名>JdbcImporterDescription`` 、後者は ``<出力先パッケージ>.jdbc.Abstract<データモデル名>JdbcExporterDescription`` というクラス名で生成します。
-
-この自動生成されたインポーター/エクスポーター記述の骨格は指定されたテーブルのすべてのカラムを利用します。
-必要に応じて継承して利用してください。
-
-..  [#] ``@windgate.jdbc.table`` の指定は必須ではありません。
 
 データベースを利用するインポーター記述
 --------------------------------------
