@@ -27,7 +27,7 @@ Asakusa Frameworkのバッチは次のような構造を持ちます。
     * - ジョブフロー
       - バッチ内のトランザクション単位
     * - `フェーズ`_
-      - フロー内の処理内容の段階 
+      - フロー内の処理内容の段階
     * - `ジョブ`_
       - フェーズ内の個々の実行単位
 
@@ -93,7 +93,7 @@ Asakusa Frameworkのバッチは次のような構造を持ちます。
 バッチの各要素は、以下の関係を持っています。
 
 * バッチは複数のジョブフローで構成され、 :ref:`dsl-userguide-batch-dsl` の定義にしたがった実行順序の依存関係を持つ
-* 各ジョブフローは各フェーズを上から順に実行する (DSLの定義内容によっては、フェーズの一部がスキップされる) 
+* 各ジョブフローは各フェーズを上から順に実行する (DSLの定義内容によっては、フェーズの一部がスキップされる)
 * 各フェーズは複数のジョブで構成され、 :ref:`dsl-userguide-flow-dsl` の定義などにしたがった実行順序の依存関係を持つ
 * ジョブが実行する各処理は、 :ref:`dsl-userguide-flow-dsl` や :ref:`dsl-userguide-operator-dsl` の定義などによって決定される
 
@@ -1105,6 +1105,32 @@ YAESSではUnixの方式に従い、正常終了の場合は ``0`` , それ以�
     実行計画が異なるアプリケーションを異なる環境に配置して実行した場合、予期しない動作をする可能性が高いです。
 
 ..  [#] :javadoc:`com.asakusafw.runtime.core.context.InconsistentApplicationException`
+
+プロファイルセットの指定
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+コマンドラインの引数に ``-D profile=<プロファイル名>`` と指定することで、``$ASAKUSA_HOME/yaess/conf/`` 配下に配置した任意の構成ファイルを使用することができます。
+
+以下は、 ``$ASAKUSA_HOME/yaess/conf/custom-profile.properties`` という構成ファイルを使ってバッチを実行する例です。
+
+..  code-block:: sh
+
+    $ASAKUSA_HOME/yaess/bin/yaess-batch.sh ex -A code=123 -D profile=custom-profile
+
+このオプションを指定しない場合、 ``$ASAKUSA_HOME/yaess/conf/yaess.properties`` が標準の構成ファイルとして使用されます。
+
+環境変数の指定
+~~~~~~~~~~~~~~
+
+コマンドラインの引数に ``-V <key>=<value>`` と指定することで、コマンドライン経由で環境変数を指定することができます。
+
+この機能は、プロファイルセットで ``${変数名}`` という形式で環境変数を利用するように設定した項目値に対して、コマンドライン経由でその値を設定するといった場合に利用します。
+
+例えば、 プロファイルセット内で、Hadoopジョブの並列度を ``scheduler.parallel.hadoop-master = ${YAESS_PARALLEL_HADOOP}`` のように設定した場合、コマンドラインからこの値を指定するには以下のように実行します。
+
+..  code-block:: sh
+
+    $ASAKUSA_HOME/yaess/bin/yaess-batch.sh ex -A code=123 -V YAESS_PARALLEL_HADOOP=4
 
 実行結果の確認
 --------------
