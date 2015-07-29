@@ -56,7 +56,7 @@ Asakusa FrameworkとHiveを連携したシステムにおける各コンポー�
 
   Direct I/O Hiveが提供するDMDLの拡張によって、入出力データの形式にカラムナフォーマットファイル( ``ORCFile`` または ``Parquet`` )を指定することができます。
 
-  また、DMDLからHiveのテーブルを作成するためのDDLスクリプトを作成することができます。 
+  また、DMDLからHiveのテーブルを作成するためのDDLスクリプトを作成することができます。
 
 `Hiveテーブルの作成`_ : ``Hive (Execute DDL)``
   DMDLから生成したHiveテーブル作成用のDDLスクリプトをHiveのコマンドやWeb UIから実行すると、Hiveのメタストア ( ``Metastore`` ) にテーブルの情報が登録されます。
@@ -96,9 +96,9 @@ Hiveとの連携に利用するカラムナフォーマットファイルは、�
 
 Asakusa Frameworkの `サンプルプログラム集 (GitHub)`_ にDirect I/O Hiveを利用したサンプルアプリケーションを公開しています。
 
-以下はAsakusa Framework バージョン ``0.7.3`` を使用したDirect I/O Hiveのサンプルアプリケーションです。
+以下はAsakusa Framework バージョン ``0.7.4`` を使用したDirect I/O Hiveのサンプルアプリケーションです。
 
-* https://github.com/asakusafw/asakusafw-examples/tree/0.7.3/example-directio-hive
+* https://github.com/asakusafw/asakusafw-examples/tree/0.7.4/example-directio-hive
 
 ..  _`サンプルプログラム集 (GitHub)`: http://github.com/asakusafw/asakusafw-examples
 
@@ -213,7 +213,7 @@ Direct I/O Hiveを利用したバッチアプリケーションを実行しま�
 ..  code-block:: sh
 
     hadoop fs -rmr target/testing/directio/tables
-    hadoop fs -put /tmp/example-dataset/tables target/testing/directio/tables 
+    hadoop fs -put /tmp/example-dataset/tables target/testing/directio/tables
 
     $ASAKUSA_HOME/yaess/bin/yaess-batch.sh example.summarizeSales
 
@@ -232,7 +232,7 @@ Direct I/O Hiveを利用したバッチアプリケーションを実行しま�
     1401    15  1470
     1600    28  5400
     
-    hive> select * from error_record;    
+    hive> select * from error_record;
     OK
     1990-01-01 10:40:00 0001    9999999999999   商品不明
     2011-04-01 11:00:00 0001    9999999999999   商品不明

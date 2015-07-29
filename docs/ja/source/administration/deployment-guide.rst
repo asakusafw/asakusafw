@@ -38,7 +38,7 @@ Hadoop2系向けAsakusa Framework
 
 運用環境を構築する際には、利用するHadoopバージョンに応じたAsakusa Frameworkの実行モジュールを運用環境にデプロイする必要があります。
 
-..  warning:: 
+..  warning::
     Asakusa Framework バージョン ``0.7.0`` からAsakusa Frameworkのバージョン体系が変更になりました。
     Asakusa Framework バージョン ``0.6.x`` 以前のバージョンからのマイグレーションを検討する場合、必ず :doc:`../application/migration-guide` - :ref:`versioning-sysytem-changing` の内容を確認してください。
 
@@ -120,7 +120,7 @@ Hadoop2系向けの構成に変更するには、 ``profile.prod`` ブロック�
    
     asakusafwOrganizer {
         profiles.prod {
-            asakusafwVersion '0.7.3-hadoop2'
+            asakusafwVersion '0.7.4-hadoop2'
         }
     }
 
@@ -128,7 +128,7 @@ Hadoop2系向けの構成に変更するには、 ``profile.prod`` ブロック�
 この状態で :program:`assemble` タスクを実行すると、Hadoop2系向けのAsakusa Framework本体の実行ライブラリが含まれます。
 
 ..  hint::
-    上記の構成では、開発環境のHadoopはHadoop1系を利用し、運用環境向けのHadoopはHadoop2系を利用する、という構成になります。 
+    上記の構成では、開発環境のHadoopはHadoop1系を利用し、運用環境向けのHadoopはHadoop2系を利用する、という構成になります。
      
     Asakusa Framework バージョン |version| では、開発環境で利用するHadoopはHadoop1系を推奨しています。
     :doc:`../introduction/start-guide` の手順やJinrikishaの標準構成ではHadoop1系を利用するため、上記例のように設定すると開発環境の構成変更が不要です。
@@ -157,7 +157,7 @@ Hadoop2系向けの構成に変更するには、 ``profile.prod`` ブロック�
     }
 
 ``assembly.into`` は引数に指定したパス上にファイルを含めることを意味します。
-例では引数に ``(.)`` と記述しており、これはデプロイメントアーカイブのルートディレクトリに対してファイルを含める指定となります。 
+例では引数に ``(.)`` と記述しており、これはデプロイメントアーカイブのルートディレクトリに対してファイルを含める指定となります。
 
 ``assembly.into`` ブロック配下の ``put`` の引数で含める対象となるファイルパスを指定します。
 相対パスで指定した場合はプロジェクトディレクトリが起点となります。
@@ -177,7 +177,7 @@ Hadoop2系向けの構成に変更するには、 ``profile.prod`` ブロック�
 ~~~~~~~~~~
 
 ``asakusafwOrganizer`` ブロック上では上記の他にも様々な構成に関する設定が可能です。
-いくつかの構成例を以下に紹介します。 
+いくつかの構成例を以下に紹介します。
 
 ``asakusafwOrganizer`` ブロックに関する設定やこれを提供するAsakusa Gradle Pluginの詳細な説明は、 :doc:`../application/gradle-plugin` を参照してください。
 
@@ -332,7 +332,7 @@ Direct I/O Hiveを `MapR`_ 環境で利用する場合、Direct I/O HiveはMapR�
 :file:`build.gradle` では以下のように設定しているため、
 
 * ``profile.prod`` ブロック: ``replace 'asakusa-resources.xml', inputCombineMax: '48'``
-* ``profile.stage`` ブロック: ``replace 'asakusa-resources.xml', inputCombineMax: '24'`` 
+* ``profile.stage`` ブロック: ``replace 'asakusa-resources.xml', inputCombineMax: '24'``
 
 それぞれのデプロイメントアーカイブの :file:`asakusa-resources.xml` にはこれらの設定値が置換された状態の設定ファイルが同梱されます。
 

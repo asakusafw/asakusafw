@@ -43,7 +43,7 @@ JDK 6(JDK 1.6)を使用する場合、必要に応じてこれらの設定を変
     Asakusa Framework バージョン 0.7.3 からJDK 6の利用は非推奨になりました。
 
 ..  attention::
-    Asakusa Framework バージョン 0.7.0 からアプリケーション開発環境向けのデフォルト設定が JDK 6からJDK 7に変更になりました。 
+    Asakusa Framework バージョン 0.7.0 からアプリケーション開発環境向けのデフォルト設定が JDK 6からJDK 7に変更になりました。
     過去バージョンからのマイグレーションに関する注意点などは、 :doc:`migration-guide` も参照してください。
 
 ..  attention::
@@ -88,7 +88,7 @@ Batch Application Pluginに設定しているソースコードのバージョ�
 ..  code-block:: groovy
     
     asakusafw {
-        asakusafwVersion '0.7.3-hadoop1'
+        asakusafwVersion '0.7.4-hadoop1'
     
         modelgen {
             modelgenSourcePackage 'com.example.modelgen'
@@ -116,7 +116,7 @@ Batch Application Pluginの設定をEclipseのプロジェクト設定に反映�
     
     .. code-block:: none
        
-       Build path specifies execution environment JavaSE-1.6. There are no JREs installed in the workspace that are strictly compatible with this environment. 
+       Build path specifies execution environment JavaSE-1.6. There are no JREs installed in the workspace that are strictly compatible with this environment.
     
     これは、プロジェクト側の設定では ``JavaSE-1.6`` が指定されているが、Eclipse側で厳密に一致するJavaのバージョンがインストールされていないと認識するためです。
     開発環境のJavaバージョンを変えずに警告を非表示にする場合は、Eclipseの設定画面から以下の設定を行います。
