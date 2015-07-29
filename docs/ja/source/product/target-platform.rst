@@ -9,6 +9,7 @@ Asakusa Framework は、以下のHadoopディストリビューションと組�
 
 ..  list-table:: 動作検証プラットフォーム(Hadoopディストリビューション)
     :header-rows: 1
+    :widths: 25 20 25 15 15
 
     * - Distribution
       - Version
@@ -20,20 +21,15 @@ Asakusa Framework は、以下のHadoopディストリビューションと組�
       - CentOS 6 (6.2)
       - JDK 7 (1.7.0_76)
       - |version|-hadoop1
-    * - Apache Hadoop
-      - 2.6.0
-      - CentOS 6 (6.2)
-      - JDK 7 (1.7.0_76)
-      - |version|-hadoop2
     * - MapR
-      - 4.1.0 (MRv2) [#]_
-      - CentOS 6 (6.5)
-      - JDK 7 (1.7.0_75)
+      - 5.0.0 (MRv2) [#]_
+      - Red Hat Enterprise Linux 7.1
+      - JDK 8 (1.8.0_51)
       - |version|-hadoop2
     * - Hortonworks Data Platform
-      - 2.2
+      - 2.3
       - CentOS 6 (6.6)
-      - JDK 7 (1.7.0_65)
+      - JDK 8 (1.8.0_51)
       - |version|-hadoop2
     * - CDH
       - 5.2.0 (MRv2) [#]_
@@ -41,20 +37,15 @@ Asakusa Framework は、以下のHadoopディストリビューションと組�
       - JDK 7 (1.7.0_45)
       - |version|-hadoop2
     * - Amazon EMR
-      - Hadoop 1.0.3
-      - AMI 2.4.6
-      - JDK 7 (1.7.0_60)
-      - |version|-hadoop1
-    * - Amazon EMR
       - Hadoop 2.4.0
-      - AMI 3.3.1
+      - AMI 3.8.0
       - JDK 7 (1.7.0_71)
       - |version|-hadoop2
 
 ..  [#] 検証バージョンとは、Hadoopディストリビューションの動作検証に使用したAsakusa Frameworkのバージョンです。
         詳しくは :doc:`../administration/deployment-guide` を参照してください。
-..  [#] Asakusa Framework バージョン |version| では、 MapReduce Version 1 (MRv1) では動作検証を行なっていません。
-..  [#] Asakusa Framework バージョン |version| では、 MapReduce Version 1 (MRv1) では動作検証を行なっていません。
+..  [#] MapReduce Version 1 (MRv1) では動作検証を行なっていません。
+..  [#] MapReduce Version 1 (MRv1) では動作検証を行なっていません。
 
 アプリケーション開発環境
 ========================
@@ -79,7 +70,7 @@ Asakusa Frameworkを利用したバッチアプリケーションの開発環境
       - 7(SP1) / 8.1
     * - Java
       - JDK [#]_
-      - 1.6.0_45 [#]_ / 1.7.0_76
+      - 1.7.0_76 [#]_ [#]_
     * - ビルドツール
       - Gradle [#]_
       - 2.2.1
@@ -88,7 +79,7 @@ Asakusa Frameworkを利用したバッチアプリケーションの開発環境
       - 3.0.5 [#]_
     * - IDE
       - Eclipse IDE for Java Developers
-      - 4.3.2 / 4.4.1
+      - 4.4.2 / 4.5.0
     * - IDE
       - IntelliJ IDEA Community Edition [#]_
       - 14.0.3
@@ -100,6 +91,7 @@ Asakusa Frameworkを利用したバッチアプリケーションの開発環境
 ..  [#] Windows上ではテストドライバを利用したテストは :doc:`エミュレーションモード <../testing/emulation-mode>` のみ使用できます。Windowsの利用については、 :doc:`../introduction/start-guide-windows` を参照してください。
 ..  [#] JREでは一部の機能が動作しません。必ずJDKを使用してください。
 ..  [#] JDK6の利用は非推奨です。JDK6の利用については、 :doc:`../application/using-jdk` を参照してください。
+..  [#] JDK8の利用は基本的な動作のみ検証しています。
 ..  [#] Gradleの利用については、 :doc:`../application/gradle-plugin` を参照してください。
 ..  [#] Mavenの利用は非推奨です。Mavenの利用については、 :doc:`../application/maven-archetype` を参照してください。
 ..  [#] IntelliJ IDEAの利用は試験的機能として提供しています。IntelliJ IDEAの利用については :doc:`../application/gradle-plugin` - :ref:`gradle-plugin-using-idea` を参照してください。
