@@ -2,6 +2,78 @@
 リリースノート
 ==============
 
+Release 0.7.4
+=============
+
+Aug XX, 2015
+
+`Asakusa Framework 0.7.4 documentation`_
+
+..  _`Asakusa Framework 0.7.4 documentation`: http://docs.asakusafw.com/0.7.4/release/ja/html/index.html
+
+新機能と主な変更点
+------------------
+
+YAESSコマンドオプションの追加
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+YAESSのバッチ実行用コマンドに以下のオプションを設定できるようになりました。
+
+* 任意のプロファイルセット(構成ファイル)を指定 ( ``-D profile=<プロファイル名>`` )
+* 実行時の環境変数を指定 ( ``-V key=value`` )
+
+YAESSコマンドオプションの詳細は、以下のドキュメントを参照してください。
+
+* :doc:`yaess/user-guide`
+
+ParquetのDATE型に対応
+~~~~~~~~~~~~~~~~~~~~~
+
+Direct I/O HiveでParquetを利用する場合にHiveの ``DATE`` 型を利用できるようになりました。
+
+なお、ParquetのDATE型をHiveから利用する場合、Hiveのバージョン 1.2 以上を利用する必要があります。
+
+詳細は、以下のドキュメントを参照してください。
+
+* :doc:`directio/using-hive`
+
+サポートプラットフォームの更新
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+いくつかのプラットフォームの対応バージョンを更新しています。
+
+* MapR 5.0.0
+* Hortonworks Data Platform 2.3
+* Apache Hive 1.2.1
+
+また、いくつかのHadoopディストリビューションでJDK8上での動作検証を行いました。
+
+なお、アプリケーションの開発環境でのJDK8の利用については、現時点では基本的な動作のみ検証しています。
+
+詳しくは、 :doc:`product/target-platform` を参照してください。
+
+その他の変更点
+~~~~~~~~~~~~~~
+
+* Asakusa Gradle PluginがGradle 2.4以降で正常に動作しない問題を修正しました。
+* WindGate-SSHを異なるHadoopバージョン間の環境で利用した場合の動作を改善しました。
+* Windows上でHadoop2系を使ったエミュレーションモードが動作しない問題を修正しました。
+
+その他、細かな機能改善およびバグフィックスが含まれます。
+すべての変更点は :doc:`changelogs` を参照してください。
+
+互換性に関して
+--------------
+
+将来のバージョンにおいて、以下のプロダクトバージョンを対応プラットフォームから除外することを計画しています。
+
+* Hadoop: Hadoop1系 (Hadoop2系にのみ対応)
+* Gradle: Gradleのバージョン1.12以前 (Gradle 2.X以降にのみ対応)
+* Java: JDK6 （JDK7以降にのみ対応)
+
+..  seealso::
+    Hadoopバージョンについての詳細は :doc:`administration/deployment-guide` を参照してください
+
 Release 0.7.3
 =============
 
@@ -296,7 +368,7 @@ Framework Organizer Plugin (Gradle)
 * :doc:`administration/migration-guide`
 
 ..  warning::
-    バージョン 0.7.0 は以前のバージョンからいくつかの重要な変更が行われました。 
+    バージョン 0.7.0 は以前のバージョンからいくつかの重要な変更が行われました。
     過去のバージョンからのマイグレーションを検討する際には必ず :doc:`application/migration-guide` の内容を確認してください。
 
 リンク

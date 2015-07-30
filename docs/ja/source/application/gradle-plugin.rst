@@ -13,7 +13,7 @@ Asakusa Gradle Plugin は、Asakusa Framework用の `Gradle <http://www.gradle.o
 利用環境
 --------
 
-Asakusa Gradle Plugin を利用するにはJava(JDK)がインストールされている必要があります。 
+Asakusa Gradle Plugin を利用するにはJava(JDK)がインストールされている必要があります。
 これらの導入方法については、 :doc:`../introduction/start-guide` - :ref:`startguide-development-environment` などを参考にしてください。
 
 なお、Gradleのインストールについては、本書では `Gradleラッパー <http://www.gradle.org/docs/current/userguide/gradle_wrapper.html>`_ と呼ばれるGradleを利用するためのコマンドを使う方法を推奨しています。
@@ -76,12 +76,12 @@ Asakusa Gradle Pluginを使った標準的なアプリケーション開発環�
 Asakusa Gradle Plugin 用プロジェクトテンプレート
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-* `asakusa-project-template-0.7.3.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-project-template-0.7.3.tar.gz>`_ 
+* `asakusa-project-template-0.7.4.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-project-template-0.7.4.tar.gz>`_
 
 Asakusa Gradle Plugin 用サンプルアプリケーションプロジェクト
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-* `asakusa-example-project-0.7.3.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-example-project-0.7.3.tar.gz>`_ 
+* `asakusa-example-project-0.7.4.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-example-project-0.7.4.tar.gz>`_
 
 ..  seealso::
     サンプルアプリケーションの内容や利用方法については、 :doc:`../introduction/start-guide` - :ref:`startguide-running-example`  を参照してください。
@@ -300,7 +300,7 @@ DMDLスクリプトの記述や配置方法については :doc:`../dmdl/index` 
     :lines: 19-28
 
 ..  attention::
-    DMDLスクリプトでモデル名を変更した後に :program:`compileDMDL` タスクを実行した場合、モデル名を変更する前のデータモデルクラスが出力ディレクトリに残ります。 
+    DMDLスクリプトでモデル名を変更した後に :program:`compileDMDL` タスクを実行した場合、モデル名を変更する前のデータモデルクラスが出力ディレクトリに残ります。
     データモデルクラス用のソースディレクトリを初期化する場合、:program:`cleanCompileDMDL` タスクを合わせて実行します。
 
 ..  seealso::
@@ -344,12 +344,12 @@ Gradle Pluginでは運用環境にデプロイする実行モジュールを全�
 
 ..  attention::
     デプロイメントアーカイブ生成について、Asakusa Framework バージョン 0.6.x 以前から推奨となる機能と設定方法が変更になりました。
-    0.6.x からのマイグレーションを検討する場合、 :doc:`gradle-plugin-deprecated` も参照してください。 
+    0.6.x からのマイグレーションを検討する場合、 :doc:`gradle-plugin-deprecated` も参照してください。
 
 バッチアプリケーションアーカイブファイルは運用環境の :file:`$ASAKUSA_HOME/batchapps` 配下にjarファイルを展開してデプロイします。
 バッチアプリケーションの再デプロイのみを行うといった場合に使用します。
 
-バッチアプリケーション生成ディレクトリにはバッチIDをディレクトリ名としたバッチアプリケーション実行ファイル一式が生成されます。 
+バッチアプリケーション生成ディレクトリにはバッチIDをディレクトリ名としたバッチアプリケーション実行ファイル一式が生成されます。
 開発環境でバッチアプリケーション生成ディレクトリを :file:`$ASAKUSA_HOME/batchapp` 配下に配置すればYAESS経由でアプリケーションの実行が可能となります [#]_ 。
 
 ..  [#] DSLコンパイラについての詳しい情報は :doc:`../dsl/user-guide` を参照してください。
@@ -608,23 +608,23 @@ Batch Application Plugin は、以下のタスクをプロジェクトに追加�
       - ``Jar``
       - バッチアプリケーションアーカイブを生成する
     * - :program:`generateTestbook`
-      - ``-`` 
+      - ``-``
       - ``GenerateTestbookTask`` [#]_
       - テストデータ定義シートを生成する
     * - :program:`generateThunderGateDataModel`
-      - ``-`` 
+      - ``-``
       - ``GenerateThunderGateDataModelTask`` [#]_
       - ThunderGate用のMySQLメタデータからDMDLスクリプトを生成する
     * - :program:`testRunBatchapp`
-      - ``-`` 
+      - ``-``
       - ``RunBatchappTask`` [#]_
       - バッチテストランナーを実行する
     * - :program:`summarizeYaessJob`
-      - ``-`` 
+      - ``-``
       - ``AnalyzeYaessLogTask`` [#]_
       - YAESS Log Analyzerを実行する [#]_
     * - :program:`generateHiveDDL`
-      - ``-`` 
+      - ``-``
       - ``GenerateHiveDdlTask`` [#]_
       - DMDLからHive用のDDLファイルを生成する
 
@@ -719,7 +719,7 @@ Batch Application Plugin の規約プロパティはビルドスクリプトか�
       - プラグインが実行するJavaプロセスの最大ヒープサイズ
     * - ``logbackConf``
       - String
-      - ``src/${project.sourceSets.test.name}/resources/logback-test.xml`` 
+      - ``src/${project.sourceSets.test.name}/resources/logback-test.xml``
       - プロジェクトのLogback設定ファイル [#]_
     * - ``basePackage``
       - String
@@ -884,7 +884,7 @@ ThunderGateプロパティ
 ThunderGateに関する規約プロパティは、 ``asakusafw`` ブロック内の参照名 ``thundergate`` でアクセスできます [#]_ 。
 この規約オブジェクトは以下のプロパティを持ちます。
 
-..  list-table:: Batch Application Plugin - ThunderGateプロパティ ( ``thundergate`` ブロック ) 
+..  list-table:: Batch Application Plugin - ThunderGateプロパティ ( ``thundergate`` ブロック )
     :widths: 2 1 2 5
     :header-rows: 1
 
@@ -896,7 +896,7 @@ ThunderGateに関する規約プロパティは、 ``asakusafw`` ブロック内
       - String
       - ``未指定``
       - ThunderGateのターゲット。この値をセットすることでThunderGate用のビルド設定が有効になる [#]_
-    * - ``jdbcFile`` 
+    * - ``jdbcFile``
       - String
       - ``未指定``
       - ``generateThunderGateDataModel`` タスクの実行時に使用するJDBC接続設定ファイルのパス。この値をセットすることでThunderGate用のビルド設定が有効になる [#]_
@@ -1126,13 +1126,13 @@ Framework Organizer Plugin は、以下のタスクを定義します。
       - ``Task``
       - 運用環境向けのデプロイメント構成を持つデプロイメントアーカイブを生成する
     * - :program:`installAsakusafw`
-      - ``-`` 
+      - ``-``
       - ``Task``
       - 開発環境向けのデプロイメント構成をローカル環境にインストールする
 
 ..  attention::
     Asakusa Framework バージョン 0.6.x から非推奨となったタスク、削除されたタスクがあります。
-    0.6.x からのマイグレーションを検討する場合、 :doc:`gradle-plugin-deprecated` も参照してください。 
+    0.6.x からのマイグレーションを検討する場合、 :doc:`gradle-plugin-deprecated` も参照してください。
 
 ..  note::
     Framework Organizer Pluginは上記のタスク一覧の他に、プラグイン内部で ``attach`` から始まるタスクを生成し利用します。
@@ -1403,7 +1403,7 @@ Asakusa Frameworkの拡張構成に関する規約プロパティは、 ``asakus
 
 ``put``
   デプロイメントアーカイブ追加するディレクトリやファイルのパスを指定します。
-  相対パスで指定した場合はプロジェクトディレクトリが起点となります。 
+  相対パスで指定した場合はプロジェクトディレクトリが起点となります。
 
 ``replace``
   ``put`` の指定で追加の対象となるファイルに対して置換を行います。
@@ -1436,7 +1436,7 @@ Framework Organizer Pluginはプロファイルごとの設定に従ってそれ
       - 説明
     * -  ``dev``
       - 開発環境向けのデプロイ構成を定義するプロファイル [#]_
-    * -  ``prod`` 
+    * -  ``prod``
       - 運用環境向けのデプロイ構成を定義するプロファイル
 
 標準で設定されているプロファイルに加えて、 ``asakusafwOrganizer`` ブロック配下に ``profiles.<profile-name>`` という形式で任意のプロファイルを追加することができます。
@@ -1555,7 +1555,7 @@ Asakusa Gradle Pluginのバージョン指定
 
 ..  attention::
     ここで指定するバージョン番号は、 Asakusa Gradle Pluginのバージョン番号です。
-    例えば Asakusa Framework バージョン ``0.7.3`` では ``0.7.3`` のような値となります。
+    例えば Asakusa Framework バージョン ``0.7.4`` では ``0.7.4`` のような値となります。
     
     次の手順の `Asakusa Frameworkのバージョン指定`_ とは異なり、バージョン番号に ``-hadoop1`` や ``-hadoop2`` といった接尾辞は付かないことに注意してください。
 
@@ -1580,7 +1580,7 @@ Asakusa Frameworkのバージョン指定
 
 ..  attention::
     ここで指定するバージョン番号は、 Asakusa Framework本体のバージョン番号です。
-    例えば Asakusa Framework バージョン ``0.7.3`` では ``0.7.3-hadoop1`` のような値となります。
+    例えば Asakusa Framework バージョン ``0.7.4`` では ``0.7.4-hadoop1`` のような値となります。
     バージョン番号に ``-hadoop1`` や ``-hadoop2`` といった接尾辞が必要となることに注意してください
     
     バージョン ``0.6.x`` からのマイグレーションを検討する場合は、 :doc:`migration-guide` - :ref:`versioning-sysytem-changing` の内容を必ず確認してください。
@@ -1701,7 +1701,7 @@ MavenプロジェクトとAsakusa Gradle Pluginのプロジェクトテンプレ
 
 MavenプロジェクトとAsakusa Gradle Pluginのプロジェクトテンプレートの両方に含まれるファイルの一覧を以下に示します。
 
-..  list-table:: 
+..  list-table::
     :widths: 234 218
     :header-rows: 1
 

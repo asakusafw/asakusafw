@@ -40,7 +40,7 @@ AWSへのサインアップ
   `アカウント作成の流れ | アマゾン ウェブ サービス（AWS 日本語）`_
 
 Amazon S3バケットの作成
-  `Amazon Simple Storage Service の使用開始`_ ( `Amazon S3 入門ガイド`_ ) 
+  `Amazon Simple Storage Service の使用開始`_ ( `Amazon S3 入門ガイド`_ )
 
 ..  _`アカウント作成の流れ | アマゾン ウェブ サービス（AWS 日本語）`: http://aws.amazon.com/jp/register-flow/
 ..  _`Amazon Simple Storage Service の使用開始`: http://docs.aws.amazon.com/ja_jp/AmazonS3/latest/gsg/GetStartedWithS3.html
@@ -125,7 +125,7 @@ EMR向けの構成を持つデプロイメントアーカイブを作成する�
             asakusafwVersion asakusafw.asakusafwVersion
         }
         profiles.emr {
-            asakusafwVersion '0.7.3-hadoop2'
+            asakusafwVersion '0.7.4-hadoop2'
             assembly.into('.') {
                 put 'src/dist/emr'
                 replace 'asakusa-resources.xml', directioRootFsPath: 's3://[mybucket]/app-data'
@@ -188,7 +188,7 @@ S3に対するファイルアップロードはAWS CLIからも実行するこ�
 
 ..  code-block:: sh
 
-    aws s3 cp build/asakusafw-0.7.3-hadoop2-emr.tar.gz s3://[mybucket]/asakusafw/
+    aws s3 cp build/asakusafw-0.7.4-hadoop2-emr.tar.gz s3://[mybucket]/asakusafw/
 
 S3上のファイルを表示し、正しくアップロードされたことを確認します。
 
@@ -373,7 +373,7 @@ CLI
 
 `EMRクラスターの起動`_ の手順でEMRクラスターが正常に起動し、ステータスが ``Waiting`` になっていることを確認して以降の手順に進みます。
 
-..  [#] EMRが管理するステータスの意味やその種類については、 `Life Cycle of a Cluster <http://docs.aws.amazon.com/ElasticMapReduce/latest/DeveloperGuide/ProcessingCycle.html>`_ ( `EMR Developer Guide`_ ) などを参照してください。 
+..  [#] EMRが管理するステータスの意味やその種類については、 `Life Cycle of a Cluster <http://docs.aws.amazon.com/ElasticMapReduce/latest/DeveloperGuide/ProcessingCycle.html>`_ ( `EMR Developer Guide`_ ) などを参照してください。
 
 EMRクラスターにAsakusa Frameworkをデプロイ
 ==========================================
@@ -414,7 +414,7 @@ EMRクラスターに対して処理を要求するには、コンソールやCL
       * 第1引数:  ``s3://asakusafw/emr/deploy-asakusa.sh``
       * 第2引数:  `デプロイメントアーカイブをS3に配置`_ で配置したデプロイメントアーカイブのS3パス
         
-        * 例: ``s3://[mybucket]/asakusafw/asakusafw-0.7.3-hadoop2-emr.tar.gz``
+        * 例: ``s3://[mybucket]/asakusafw/asakusafw-0.7.4-hadoop2-emr.tar.gz``
     
     :guilabel:`Action on failure`
       * ``Continue`` を選択
@@ -452,7 +452,7 @@ AWS CLI を使ったデプロイ例を以下に示します。
     ActionOnFailure=CONTINUE,\
     Jar=s3://elasticmapreduce/libs/script-runner/script-runner.jar,\
     Args=s3://asakusafw/emr/deploy-asakusa.sh,\
-    s3://[mybucket]/asakusafw/asakusafw-0.7.3-hadoop2-emr.tar.gz
+    s3://[mybucket]/asakusafw/asakusafw-0.7.4-hadoop2-emr.tar.gz
 
 ステップを登録すると、以下のようにステップIDが表示されます。
 ステップIDはステップの実行結果を確認する場合などで使用します。
@@ -470,7 +470,7 @@ AWS CLI を使ったデプロイ例を以下に示します。
 ..  code-block:: sh
 
     aws emr describe-step --cluster-id j-XXXXXXXXXXXXX --step-id s-XXXXXXXXXXXXX \
-     --query 'Step.Status.State'    
+     --query 'Step.Status.State'
 
 ..  code-block:: json
 
@@ -633,7 +633,7 @@ AWS CLI を使ったステップのステータス確認の例を以下に示し
 ..  code-block:: sh
 
     aws emr describe-step --cluster-id j-XXXXXXXXXXXXX --step-id s-XXXXXXXXXXXXX \
-     --query 'Step.Status.State'    
+     --query 'Step.Status.State'
 
 ..  code-block:: json
 
