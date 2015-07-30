@@ -68,7 +68,7 @@ Asakusa Frameworkは利用出来るアーキタイプとそのバージョンを
     * http://asakusafw.s3.amazonaws.com/maven/archetype-catalog-0.7-develop.xml
 
 ..  note::
-    過去バージョンを含むすべてのバージョンを参照したい場合はアーキタイプカタログURLを以下のURLに変更します。 
+    過去バージョンを含むすべてのバージョンを参照したい場合はアーキタイプカタログURLを以下のURLに変更します。
 
     * http://asakusafw.s3.amazonaws.com/maven/archetype-catalog.xml
 
@@ -110,7 +110,7 @@ Asakusa Frameworkは利用出来るアーキタイプとそのバージョンを
     * - ``pom.xml``
       - プロジェクトの様々な構成や設定を定義するファイル
     * - ``build.properties``
-      - プロジェクトのビルド設定を定義するファイル [#]_ 
+      - プロジェクトのビルド設定を定義するファイル [#]_
 
 このうち、アプリケーション開発者は ``src`` ディレクトリ配下を編集することでアプリケーションを開発します。
 ``target`` ディレクトリは ``src`` ディレクトリ配下のファイルをビルドすることで生成される成果物が配置されます。
@@ -569,7 +569,7 @@ TestDriver Settings
     ``generate-sources`` フェーズ実行時に生成されるテストデータテンプレートの出力ディレクトリを指定します。
 
   ``asakusa.testdriver.compilerwork.dir``
-    テストドライバの実行時にテストドライバの内部で実行されるバッチコンパイルに対してコンパイラが使用するワークディレクトリを指定します。 
+    テストドライバの実行時にテストドライバの内部で実行されるバッチコンパイルに対してコンパイラが使用するワークディレクトリを指定します。
     
     ``asakusa.compilerwork.dir`` と同じ働きですが、この項目はテストドライバの実行時にのみ使われます。
 
@@ -629,7 +629,7 @@ Asakusa Frameworkのバージョン指定
 
 ..  code-block:: sh
 
-    <asakusafw.version>0.7.3</asakusafw.version>
+    <asakusafw.version>0.7.4</asakusafw.version>
 
 ..  note::
     アーキタイプごとの利用可能なバージョンはアーキタイプカタログに公開しています。詳しくは :ref:`archetype-catalog` を参照してください。
