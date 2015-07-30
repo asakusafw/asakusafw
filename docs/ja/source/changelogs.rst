@@ -2,6 +2,49 @@
 Changelogs
 ==========
 
+Release 0.7.4
+=============
+
+Aug XX, 2015
+
+Enhancements
+------------
+
+* [ :issue:`489` ] - Supports Date Type on Parquet
+* [ :issue:`490` ] - Sets runtime environment variables via yaess-batch.sh
+* [ :issue:`491` ] - Specifies yaess profile via yaess-batch.sh
+* [ :issue:`492` ] - Make WingGate-SSH data protocol more portable
+* [ :pr:`494` ] - Put JavaCC/JFlex versions to the root pom.xml.
+* [ :pr:`495` ] - Fix YAESS bootstrap for findbugs.
+* [ :pr:`496` ] - Reduce checkstyle warnings.
+* [ :pr:`497` ] - Make methods in Report.Delegate public.
+* [ :pr:`498` ] - Merge compatibility APIs from `-hadoop{1,2}` branches.
+* [ :pr:`499` ] - Use `ByteOrder.LITTLE_ENDIAN` to ser/de Parquet timestamp.
+* [ :pr:`500` ] - Revise README to add subprojects of asakusafw.
+* [ :pr:`504` ] - Add asakusa-on-spark document link to index page.
+* [ :pr:`505` ] - Testdriver should use embedded winutils.exe in Windows.
+* [ :pr:`506` ] - Add a table describing correspondence
+* [ :pr:`507` ] - Bump up hive version.
+* [ :pr:`508` ] - Revise yaess document for new cli options.
+* [ :pr-sdk:`32` ] - Revise build.gradle.
+* [ :pr-sdk:`33` ] - Refactor asakusafw-organizer plug-in.
+* [ :pr-sdk:`34` ] - Fix for Gradle 2.4+.
+* [ :pr-sdk:`35` ] - Revise README.md.
+* [ :pr-sdk:`36` ] - Port new Asakusa DSL compiler components from Asakusa on Spark.
+* [ :pr-sdk:`37` ] - Raise warning messages for using Gradle 1.x.
+* [ :pr-sdk:`38` ] - Bump up sdk hive version.
+
+Bug fixes
+---------
+
+Others
+------
+
+* [ :pr:`493` ] - Remove codehaus.org repositories.
+* [ :pr:`501` ] - Change build server URL
+* [ :pr:`502` ] - Replace docs URL with `docs.asakusafw.com`.
+* [ :pr:`503` ] - Replace docs URL with `docs.asakusafw.com`.
+
 Release 0.7.3
 =============
 
@@ -284,11 +327,11 @@ Bug fixes
 * [ :issue:`339` ] - Fix a closing tag name
 * [ :issue:`343` ] - Incorrect hadoopWorkDirectory set on Gradle Plugin
 * [ :issue:`344` ] - generateTestbook task should set headless option [Gradle Plugin]
-* [ :issue:`350` ] - Fix a wrong Javadoc parameter explanation 
+* [ :issue:`350` ] - Fix a wrong Javadoc parameter explanation
 * [ :issue:`351` ] - Generates resources.prefs file in configuration phase [Gradle Plugin]
 * [ :issue:`352` ] - Maven archetype has broken example script file
-* [ :issue:`356` ] - Task inputs/outputs property does not evaluate correctly when changing that [Gradle Plugin] 
-* [ :issue:`357` ] - TestDriver cannot accept an empty file as a JSON data input 
+* [ :issue:`356` ] - Task inputs/outputs property does not evaluate correctly when changing that [Gradle Plugin]
+* [ :issue:`357` ] - TestDriver cannot accept an empty file as a JSON data input
 * [ :issue:`359` ] - Direct I/O does not detect data source correctly when using base path with valuables
 * [ :issue:`360` ] - TestDriver fails on project with blank space path
 * [ :issue:`362` ] - TestDriverBase#setFrameworkHomePath does not work
@@ -298,12 +341,12 @@ Bug fixes
 Others
 ------
 
-* [ :issue:`340` ] - Changes standard build system on documents to Gradle-based 
+* [ :issue:`340` ] - Changes standard build system on documents to Gradle-based
     * See: :doc:`application/gradle-plugin`
 * [ :issue:`342` ] - Refactoring Gradle Plugin
 * [ :issue:`345` ] - Prepare for 0.6.0 release
 * [ :issue:`346` ] - 0.6.0 Documents
-* [ :issue:`348` ] - Refactoring Gradle Template Project [Gradle Plugin] 
+* [ :issue:`348` ] - Refactoring Gradle Template Project [Gradle Plugin]
 * [ :issue:`349` ] - Adds eclipse.preferences.version to asakusafw project prefs [Gradle Plugin]
 * [ :issue:`363` ] - 0.6.0 Refactoring
 
@@ -502,7 +545,7 @@ Enhancements
     * See: :doc:`windgate/user-guide`
 * [ :issue:`160` ] - Optimize execution plan for eliminating duplication of Operator
     * See: :doc:`dsl/user-guide`
-* [ :issue:`179` ] - Batch application submodule mechanism 
+* [ :issue:`179` ] - Batch application submodule mechanism
     * See: :doc:`dsl/user-guide`
 * [ :issue:`185` ] - Generate Input/Output Description for Direct I/O SequenceFile format
     * See: :doc:`directio/user-guide`
@@ -769,7 +812,7 @@ Enhancements
 
 * [ :issue:`60` ] - Test driver message is not easy to understand
 * [ :issue:`67` ] - Support fine grain verification on TestDriver
-* [ :issue:`81` ] - support CDH3u1 
+* [ :issue:`81` ] - support CDH3u1
 * [ :issue:`86` ] - Pluggable compare for \*Tester
 * [ :issue:`91` ] - Enabled to dump all actual data when running testdriver.
     * See: :doc:`testing/user-guide`
