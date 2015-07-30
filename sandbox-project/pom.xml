@@ -7,7 +7,7 @@
 	<parent>
 		<artifactId>asakusa-parent</artifactId>
 		<groupId>com.asakusafw</groupId>
-		<version>0.7-hadoop2-SNAPSHOT</version>
+		<version>0.7.4-RC1-hadoop2</version>
 		<relativePath>../asakusa-parent</relativePath>
 	</parent>
 
