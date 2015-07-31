@@ -112,7 +112,7 @@ public final class OutputPattern {
                 if (property == null) {
                     cursor.rewind();
                     throw new IllegalArgumentException(MessageFormat.format(
-                            "Unknown property \"{1}\": {0}",
+                            Messages.getString("OutputPattern.errorUndefinedProperty"), //$NON-NLS-1$
                             cursor,
                             ph.original));
                 }
@@ -121,7 +121,7 @@ public final class OutputPattern {
                 if (format == null) {
                     cursor.rewind();
                     throw new IllegalArgumentException(MessageFormat.format(
-                            "Invalid format \"{1}\": {0}",
+                            Messages.getString("OutputPattern.errorInvalidPlaceholderFormat"), //$NON-NLS-1$
                             cursor,
                             argument == null ? "" : argument)); //$NON-NLS-1$
                 }
@@ -130,7 +130,7 @@ public final class OutputPattern {
                 } catch (IllegalArgumentException e) {
                     cursor.rewind();
                     throw new IllegalArgumentException(MessageFormat.format(
-                            "Invalid format \"{1}\": {0}",
+                            Messages.getString("OutputPattern.errorInvalidPlaceholderFormatArgument"), //$NON-NLS-1$
                             cursor,
                             argument == null ? "" : argument), e); //$NON-NLS-1$
                 }
@@ -144,7 +144,7 @@ public final class OutputPattern {
                 results.add(new CompiledResourcePattern());
             } else {
                 throw new IllegalArgumentException(MessageFormat.format(
-                        "Invalid character: {0}",
+                        Messages.getString("OutputPattern.errorInvalidCharacter"), //$NON-NLS-1$
                         cursor));
             }
         }
@@ -174,7 +174,7 @@ public final class OutputPattern {
             Matcher matcher = PATTERN_ORDER.matcher(order.trim());
             if (matcher.matches() == false) {
                 throw new IllegalArgumentException(MessageFormat.format(
-                        "Invalid order format: {0}",
+                        Messages.getString("OutputPattern.errorInvalidOrder"), //$NON-NLS-1$
                         order));
             }
             for (int i = 0; i < ORDER_GROUP_INDEX.length; i++) {
@@ -189,13 +189,13 @@ public final class OutputPattern {
             DataClass.Property property = findProperty(dataType, name);
             if (property == null) {
                 throw new IllegalArgumentException(MessageFormat.format(
-                        "Unknown property \"{1}\": {0}",
+                        Messages.getString("OutputPattern.errorUndefinedOrderProperty"), //$NON-NLS-1$
                         order,
                         name));
             }
             if (saw.contains(property.getName())) {
                 throw new IllegalArgumentException(MessageFormat.format(
-                        "Duplicate property \"{1}\": {0}",
+                        Messages.getString("OutputPattern.errorDuplicateOrderProperty"), //$NON-NLS-1$
                         order,
                         name));
             }
@@ -304,7 +304,7 @@ public final class OutputPattern {
                 if (isEof()) {
                     position = start;
                     throw new IllegalArgumentException(MessageFormat.format(
-                            "Variable is not closed: {0}",
+                            Messages.getString("OutputPattern.errorUnclosedVariable"), //$NON-NLS-1$
                             this));
                 }
                 char c = cbuf[position];
@@ -327,7 +327,7 @@ public final class OutputPattern {
                 if (isEof()) {
                     position = start;
                     throw new IllegalArgumentException(MessageFormat.format(
-                            "Placeholder is not closed: {0}",
+                            Messages.getString("OutputPattern.errorUnclosedPlaceholder"), //$NON-NLS-1$
                             this));
                 }
                 char c = cbuf[position];
@@ -344,7 +344,7 @@ public final class OutputPattern {
                     if (isEof()) {
                         position = start;
                         throw new IllegalArgumentException(MessageFormat.format(
-                                "Placeholder is not closed: {0}",
+                                Messages.getString("OutputPattern.errorUnclosedPlaceholder"), //$NON-NLS-1$
                                 this));
                     }
                     char c = cbuf[position];
@@ -371,7 +371,7 @@ public final class OutputPattern {
                 if (isEof()) {
                     position = start;
                     throw new IllegalArgumentException(MessageFormat.format(
-                            "Random number is not closed: {0}",
+                            Messages.getString("OutputPattern.errorUnclosedRandomNumber"), //$NON-NLS-1$
                             this));
                 }
                 char c = cbuf[position];
@@ -385,7 +385,7 @@ public final class OutputPattern {
             if (matcher.matches() == false) {
                 position = start;
                 throw new IllegalArgumentException(MessageFormat.format(
-                        "Invalid random number format: {0}",
+                        Messages.getString("OutputPattern.errorInvalidRandomNumber"), //$NON-NLS-1$
                         this));
             }
             int lower;
@@ -394,7 +394,7 @@ public final class OutputPattern {
             } catch (NumberFormatException e) {
                 position = start + matcher.start(1);
                 throw new IllegalArgumentException(MessageFormat.format(
-                        "Invalid random number format: {0}",
+                        Messages.getString("OutputPattern.errorInvalidRandomNumberArgument"), //$NON-NLS-1$
                         this), e);
             }
             int upper;
@@ -403,13 +403,13 @@ public final class OutputPattern {
             } catch (NumberFormatException e) {
                 position = start + matcher.start(2);
                 throw new IllegalArgumentException(MessageFormat.format(
-                        "Invalid random number format: {0}",
+                        Messages.getString("OutputPattern.errorInvalidRandomNumberArgument"), //$NON-NLS-1$
                         this), e);
             }
             if (lower >= upper) {
                 position = start + matcher.start(1);
                 throw new IllegalArgumentException(MessageFormat.format(
-                        "The random number [lower..upper] must be lower < upper: {0}",
+                        Messages.getString("OutputPattern.errorInvalidRandomNumberRange"), //$NON-NLS-1$
                         this));
             }
 

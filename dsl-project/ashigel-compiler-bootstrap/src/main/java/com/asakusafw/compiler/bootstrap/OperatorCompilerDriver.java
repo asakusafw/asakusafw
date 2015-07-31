@@ -55,19 +55,23 @@ public final class OperatorCompilerDriver {
 
     private static final Options OPTIONS;
     static {
-        OPT_SOURCEPATH = new Option("sourcepath", true, "コンパイル対象のソースコードを含むソースパス"); //$NON-NLS-1$
+        OPT_SOURCEPATH = new Option("sourcepath", true, //$NON-NLS-1$
+                Messages.getString("OperatorCompilerDriver.optSourcepath")); //$NON-NLS-1$
         OPT_SOURCEPATH.setArgName("/path/to/sourceroot"); //$NON-NLS-1$
         OPT_SOURCEPATH.setRequired(true);
 
-        OPT_ENCODING = new Option("encoding", true, "コンパイル対象の文字エンコーディング"); //$NON-NLS-1$
+        OPT_ENCODING = new Option("encoding", true, //$NON-NLS-1$
+                Messages.getString("OperatorCompilerDriver.optEncoding")); //$NON-NLS-1$
         OPT_ENCODING.setArgName("charset-name"); //$NON-NLS-1$
 
-        OPT_OUTPUT = new Option("output", true, "コンパイル結果を出力する先のディレクトリ"); //$NON-NLS-1$
+        OPT_OUTPUT = new Option("output", true, //$NON-NLS-1$
+                Messages.getString("OperatorCompilerDriver.optOutput")); //$NON-NLS-1$
         OPT_OUTPUT.setArgName("/path/to/output"); //$NON-NLS-1$
         OPT_OUTPUT.setValueSeparator(File.pathSeparatorChar);
         OPT_OUTPUT.setRequired(true);
 
-        OPT_CLASSES = new Option("class", true, "コンパイル対象のクラス名一覧"); //$NON-NLS-1$
+        OPT_CLASSES = new Option("class", true, //$NON-NLS-1$
+                Messages.getString("OperatorCompilerDriver.optClass")); //$NON-NLS-1$
         OPT_CLASSES.setArgName("class-names"); //$NON-NLS-1$
         OPT_CLASSES.setArgs(Option.UNLIMITED_VALUES);
         OPT_CLASSES.setRequired(true);
@@ -109,18 +113,19 @@ public final class OperatorCompilerDriver {
         // 内部的にはJSR-199を使ってコンパイラを起動するだけ
         List<File> sourceFiles = toSources(sourcePath, operatorClasses);
         LOG.info(MessageFormat.format(
-                "Compiling {0}",
+                Messages.getString("OperatorCompilerDriver.infoStart"), //$NON-NLS-1$
                 sourceFiles));
         List<String> arguments = toArguments(sourcePath, outputPath, encoding);
         LOG.debug("Compiler arguments {}", arguments); //$NON-NLS-1$
         if (outputPath.isDirectory() == false && outputPath.mkdirs() == false) {
             throw new IOException(MessageFormat.format(
-                    "Failed to create {0}",
+                    Messages.getString("OperatorCompilerDriver.errorFailedToCreateOutputDirectory"), //$NON-NLS-1$
                     outputPath));
         }
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         if (compiler == null) {
-            throw new IOException("Failed to create a compiler");
+            throw new IOException(
+                    Messages.getString("OperatorCompilerDriver.errorFailedToCreateJavaCompiler")); //$NON-NLS-1$
         }
         StandardJavaFileManager files = compiler.getStandardFileManager(null, null, encoding);
         try {
@@ -132,12 +137,12 @@ public final class OperatorCompilerDriver {
                     Collections.<String>emptyList(),
                     files.getJavaFileObjectsFromFiles(sourceFiles));
             if (task.call() == false) {
-                LOG.error("Compilation Failed");
+                LOG.error(Messages.getString("OperatorCompilerDriver.errorFailedToCompile")); //$NON-NLS-1$
             }
         } finally {
             files.close();
         }
-        LOG.info("Completed");
+        LOG.info(Messages.getString("OperatorCompilerDriver.infoCompleted")); //$NON-NLS-1$
     }
 
     private static List<String> toArguments(
@@ -181,7 +186,7 @@ public final class OperatorCompilerDriver {
             current = new File(current, segments[i]);
             if (current.isDirectory() == false) {
                 throw new FileNotFoundException(MessageFormat.format(
-                        "{0} (for {1})",
+                        Messages.getString("OperatorCompilerDriver.errorMissingPackageDirectory"), //$NON-NLS-1$
                         current,
                         aClass.getName()));
             }
@@ -195,7 +200,7 @@ public final class OperatorCompilerDriver {
         if (file.isFile() == false) {
             if (current.isDirectory() == false) {
                 throw new FileNotFoundException(MessageFormat.format(
-                        "{0} (for {1})",
+                        Messages.getString("OperatorCompilerDriver.errorMissingSourceFile"), //$NON-NLS-1$
                         file,
                         aClass.getName()));
             }

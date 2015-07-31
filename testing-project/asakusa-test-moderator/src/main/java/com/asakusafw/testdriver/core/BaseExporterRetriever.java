@@ -40,14 +40,15 @@ public abstract class BaseExporterRetriever<T extends ExporterDescription>
         List<Type> arguments = TypeUtil.invoke(BaseExporterRetriever.class, getClass());
         if (arguments.size() != 1) {
             throw new IllegalStateException(MessageFormat.format(
-                    "Failed to extract type argument from {0}",
+                    Messages.getString("BaseExporterRetriever.errorUnboundTypeParameter"), //$NON-NLS-1$
+                    ExporterRetriever.class.getName(),
                     getClass().getName()));
         }
         Type first = arguments.get(0);
         if ((first instanceof Class<?>) == false
                 || ExporterDescription.class.isAssignableFrom((Class<?>) first) == false) {
             throw new IllegalStateException(MessageFormat.format(
-                    "Failed to extract type argument of {0} from {1}",
+                    Messages.getString("BaseExporterRetriever.errorInvalidTypeParameter"), //$NON-NLS-1$
                     ExporterDescription.class.getName(),
                     getClass().getName()));
         }

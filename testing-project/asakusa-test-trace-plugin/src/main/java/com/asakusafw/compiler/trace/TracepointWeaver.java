@@ -44,7 +44,7 @@ import com.asakusafw.vocabulary.flow.graph.PortConnection;
 import com.asakusafw.vocabulary.operator.Trace;
 
 /**
- * Weaves trace operators into tracepoints.
+ * Weaves trace operators into trace-points.
  * @since 0.5.1
  */
 public class TracepointWeaver {
@@ -94,7 +94,7 @@ public class TracepointWeaver {
     }
 
     /**
-     * Weaves tracepoints into {@link FlowElement}.
+     * Weaves trace-points into {@link FlowElement}.
      * @param element the target element
      * @return {@code true} if the target element is modified, otherwise {@code false}
      * @throws IllegalArgumentException if some parameters were {@code null}
@@ -161,13 +161,13 @@ public class TracepointWeaver {
     }
 
     private void edit(FlowElementInput port, TraceSetting setting) {
-        LOG.info("Weaving tracepoint ({}): {}", setting.getTracepoint(), port);
+        LOG.debug("weaving tracepoint ({}): {}", setting.getTracepoint(), port); //$NON-NLS-1$
         Collection<FlowElementOutput> opposites = port.getOpposites();
         edit(setting, port, opposites, Collections.singleton(port));
     }
 
     private void edit(FlowElementOutput port, TraceSetting setting) {
-        LOG.info("Weaving tracepoint ({}): {}", setting.getTracepoint(), port);
+        LOG.debug("weaving tracepoint ({}): {}", setting.getTracepoint(), port); //$NON-NLS-1$
         Collection<FlowElementInput> opposites = port.getOpposites();
         edit(setting, port, Collections.singleton(port), opposites);
     }

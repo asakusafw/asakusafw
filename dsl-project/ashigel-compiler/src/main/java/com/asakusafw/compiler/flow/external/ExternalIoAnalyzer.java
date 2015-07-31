@@ -149,7 +149,7 @@ public class ExternalIoAnalyzer {
                 inputs.add(Tuples.of(desc, processor));
             } else {
                 environment.error(
-                        "{0}を処理するプロセッサが見つかりませんでした。",
+                        Messages.getString("ExternalIoAnalyzer.errorMissingProcessor"), //$NON-NLS-1$
                         desc.getClass().getName());
                 valid = false;
             }

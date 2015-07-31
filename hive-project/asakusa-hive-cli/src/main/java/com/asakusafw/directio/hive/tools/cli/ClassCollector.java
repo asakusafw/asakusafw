@@ -126,7 +126,7 @@ public class ClassCollector {
             }
         } catch (ClassNotFoundException e) {
             LOG.warn(MessageFormat.format(
-                    "Failed to load a class: {0}",
+                    Messages.getString("ClassCollector.warnFailedToLoadClass"), //$NON-NLS-1$
                     className));
         }
     }

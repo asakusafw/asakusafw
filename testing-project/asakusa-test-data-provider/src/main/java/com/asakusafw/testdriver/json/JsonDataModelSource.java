@@ -85,7 +85,7 @@ public class JsonDataModelSource implements DataModelSource {
             return JsonObjectDriver.convert(definition, element);
         } catch (JsonParseException e) {
             throw new IOException(MessageFormat.format(
-                    "Malformed JSON object (id={0})",
+                    Messages.getString("JsonDataModelSource.errorMalformedJsonObject"), //$NON-NLS-1$
                     id), e);
         }
     }

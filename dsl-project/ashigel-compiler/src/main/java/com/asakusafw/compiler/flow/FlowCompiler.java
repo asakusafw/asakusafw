@@ -129,7 +129,7 @@ public class FlowCompiler {
             assert parent != null;
             if (parent.isDirectory() == false && parent.mkdirs() == false) {
                 throw new IOException(MessageFormat.format(
-                        "Failed to create {0} (cannot create parent directory)",
+                        Messages.getString("FlowCompiler.errorFailedToCreateParentDirectory"), //$NON-NLS-1$
                         file));
             }
         }
@@ -170,7 +170,7 @@ public class FlowCompiler {
         ExternalIoAnalyzer analyzer = new ExternalIoAnalyzer(environment);
         if (analyzer.validate(graph) == false) {
             throw new IOException(MessageFormat.format(
-                    "フローの入出力が正しくないため、コンパイルを中止します ({0})",
+                    Messages.getString("FlowCompiler.errorInvalidFlow"), //$NON-NLS-1$
                     environment.getErrorMessage()));
         }
     }
@@ -185,7 +185,7 @@ public class FlowCompiler {
             for (Diagnostic diagnostic : planner.getDiagnostics()) {
                 LOG.error(diagnostic.toString());
             }
-            throw new IOException("実行計画の作成に失敗しました");
+            throw new IOException(Messages.getString("FlowCompiler.errorFailedToGenerateExecutionPlan")); //$NON-NLS-1$
         }
         return plan;
     }
@@ -206,12 +206,13 @@ public class FlowCompiler {
         properties.put(RuntimeContext.KEY_BATCH_ID, environment.getBatchId());
         properties.put(RuntimeContext.KEY_FLOW_ID, environment.getFlowId());
         properties.put(RuntimeContext.KEY_BUILD_ID, environment.getBuildId());
-        properties.put(RuntimeContext.KEY_BUILD_DATE, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+        properties.put(RuntimeContext.KEY_BUILD_DATE,
+                new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())); //$NON-NLS-1$
         properties.put(RuntimeContext.KEY_RUNTIME_VERSION, RuntimeContext.getRuntimeVersion());
 
         OutputStream output = environment.openResource(null, RuntimeContext.PATH_APPLICATION_INFO);
         try {
-            properties.store(output, "Created by Asakusa DSL compiler");
+            properties.store(output, "Created by Asakusa DSL compiler"); //$NON-NLS-1$
         } finally {
             output.close();
         }

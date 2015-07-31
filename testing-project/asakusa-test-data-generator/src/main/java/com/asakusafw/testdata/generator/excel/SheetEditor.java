@@ -76,7 +76,7 @@ public class SheetEditor {
         for (PropertyDeclaration property : model.getDeclaredProperties()) {
             if (index >= info.version.getMaxColumns()) {
                 LOG.warn(MessageFormat.format(
-                        "データシートに追加できるプロパティ数は{0}までです: {1}",
+                        Messages.getString("SheetEditor.warnExceedColumnCount"), //$NON-NLS-1$
                         info.version.getMaxColumns(),
                         model.getName()));
                 break;

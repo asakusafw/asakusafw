@@ -115,7 +115,7 @@ public class StageCompiler {
         }
         if (environment.hasError()) {
             throw new IOException(MessageFormat.format(
-                    "エラーによりコンパイルは中断されました ({0})",
+                    Messages.getString("StageCompiler.errorFailedToCompileResource"), //$NON-NLS-1$
                     environment.getErrorMessage()));
         }
         return results;
@@ -199,12 +199,12 @@ public class StageCompiler {
         ShuffleModel shuffle = shuffleAnalyzer.analyze(block);
         if (shuffleAnalyzer.hasError()) {
             shuffleAnalyzer.clearError();
-            throw new IOException("ステージのコンパイルは中断されました");
+            throw new IOException(Messages.getString("StageCompiler.errorFailedToCompileShuffle")); //$NON-NLS-1$
         }
         StageModel model = mapredAnalyzer.analyze(block, shuffle);
         if (mapredAnalyzer.hasError()) {
             mapredAnalyzer.clearError();
-            throw new IOException("ステージのコンパイルは中断されました");
+            throw new IOException(Messages.getString("StageCompiler.errorFailedToCompileBlock")); //$NON-NLS-1$
         }
         return model;
     }
@@ -277,7 +277,7 @@ public class StageCompiler {
             if (resolved == null) {
                 if (saw.contains(fragment.getDescription()) == false) {
                     environment.error(
-                            "{0}が解決されていません",
+                            Messages.getString("StageCompiler.errorUnresolvedResource"), //$NON-NLS-1$
                             fragment.getDescription());
                     saw.add(fragment.getDescription());
                 }

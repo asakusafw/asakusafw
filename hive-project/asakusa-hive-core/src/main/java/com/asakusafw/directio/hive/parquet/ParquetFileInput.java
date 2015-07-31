@@ -143,7 +143,7 @@ public class ParquetFileInput<T> implements ModelInput<T> {
         if (fileReader == null) {
             if (LOG.isInfoEnabled()) {
                 LOG.info(MessageFormat.format(
-                        "Loading Parquet file metadata ({0}): {1}",
+                        Messages.getString("ParquetFileInput.infoLoadMetadata"), //$NON-NLS-1$
                         descriptor.getDataModelClass().getSimpleName(),
                         path));
             }
@@ -156,7 +156,7 @@ public class ParquetFileInput<T> implements ModelInput<T> {
             this.averageBytesPerRecord = (double) fragmentSize / totalRecords;
             if (LOG.isInfoEnabled()) {
                 LOG.info(MessageFormat.format(
-                        "Loading Parquet file contents ({0}): path={1}, range={2}+{3}",
+                        Messages.getString("ParquetFileInput.infoLoadContents"), //$NON-NLS-1$
                         descriptor.getDataModelClass().getSimpleName(),
                         path,
                         offset,

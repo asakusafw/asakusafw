@@ -785,7 +785,7 @@ public class CoreOperatorFactory {
         Type type = source.toOutputPort().getDescription().getDataType();
         if ((type instanceof Class<?>) == false) {
             throw new IllegalArgumentException(MessageFormat.format(
-                    "type must be a class: {0}",
+                    Messages.getString("CoreOperatorFactory.errorRequireClass"), //$NON-NLS-1$
                     type));
         }
         @SuppressWarnings("unchecked")
@@ -797,7 +797,7 @@ public class CoreOperatorFactory {
         Type type = out.toInputPort().getDescription().getDataType();
         if ((type instanceof Class<?>) == false) {
             throw new IllegalArgumentException(MessageFormat.format(
-                    "type must be a class: {0}",
+                    Messages.getString("CoreOperatorFactory.errorRequireClass"), //$NON-NLS-1$
                     type));
         }
         @SuppressWarnings("unchecked")

@@ -37,7 +37,7 @@ public class ContainsString implements ValuePredicate<String> {
             return "(error)"; //$NON-NLS-1$
         }
         return MessageFormat.format(
-                "文字列{0}を含む",
+                Messages.getString("ContainsString.message"), //$NON-NLS-1$
                 Util.format(expected));
     }
 }

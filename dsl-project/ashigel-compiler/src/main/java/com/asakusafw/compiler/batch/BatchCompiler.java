@@ -60,13 +60,13 @@ public class BatchCompiler {
         processUnits(workflow.getGraph().getNodeSet());
         if (environment.hasError()) {
             throw new IOException(MessageFormat.format(
-                    "ワークフローの解析に失敗したため、処理を中断します: {0}",
+                    Messages.getString("BatchCompiler.errorFailedToAnalyze"), //$NON-NLS-1$
                     environment.getErrorMessage()));
         }
         processWorkflow(workflow);
         if (environment.hasError()) {
             throw new IOException(MessageFormat.format(
-                    "ワークフローの出力に失敗したため、処理を中断します: {0}",
+                    Messages.getString("BatchCompiler.errorFailedToEmit"), //$NON-NLS-1$
                     environment.getErrorMessage()));
         }
         return workflow;
@@ -91,7 +91,7 @@ public class BatchCompiler {
         for (Workflow.Unit unit : units) {
             WorkDescriptionProcessor<?> proc = repo.findDescriptionProcessor(unit.getDescription());
             if (proc == null) {
-                environment.error("{0}に対するプロセッサが見つかりません",
+                environment.error(Messages.getString("BatchCompiler.errorMissingProcessor"), //$NON-NLS-1$
                         unit.getClass().getName());
                 continue;
             }

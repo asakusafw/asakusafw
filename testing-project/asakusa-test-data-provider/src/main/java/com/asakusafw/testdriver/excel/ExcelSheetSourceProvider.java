@@ -55,7 +55,7 @@ public class ExcelSheetSourceProvider implements DataModelSourceProvider {
             return null;
         }
         LOG.info(MessageFormat.format(
-                "Excelシートをデータソースに利用します: {0}",
+                Messages.getString("ExcelSheetSourceProvider.infoApply"), //$NON-NLS-1$
                 source));
         return new ExcelSheetDataModelSource(definition, source, sheet);
     }

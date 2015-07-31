@@ -39,22 +39,22 @@ public class FoldOperatorProcessor extends AbstractOperatorProcessor {
 
         ExecutableAnalyzer a = new ExecutableAnalyzer(context.environment, context.element);
         if (a.isAbstract()) {
-            a.error("畳み込み演算子はabstractで宣言できません");
+            a.error(Messages.getString("FoldOperatorProcessor.errorAbstract")); //$NON-NLS-1$
         }
         if (a.getReturnType().isVoid() == false) {
-            a.error("畳み込み演算子は戻り値にvoidを指定する必要があります");
+            a.error(Messages.getString("FoldOperatorProcessor.errorNotVoid")); //$NON-NLS-1$
         }
         TypeConstraint left = a.getParameterType(0);
         if (left.isModel() == false) {
-            a.error(0, "畳み込み演算子の1つ目の引数はモデルオブジェクト型である必要があります");
+            a.error(0, Messages.getString("FoldOperatorProcessor.errorNotModelLeft")); //$NON-NLS-1$
         }
         TypeConstraint right = a.getParameterType(1);
         if (right.isModel() == false) {
-            a.error(1, "畳み込み演算子の2つ目の引数はモデルオブジェクト型である必要があります");
+            a.error(1, Messages.getString("FoldOperatorProcessor.errorNotModelRight")); //$NON-NLS-1$
         }
         for (int i = 2, n = a.countParameters(); i < n; i++) {
             if (a.getParameterType(i).isBasic() == false) {
-                a.error(i, "畳み込み演算子の3つ目以降の引数は文字列またはプリミティブ型である必要があります");
+                a.error(i, Messages.getString("FoldOperatorProcessor.errorInvalidOptionParameter")); //$NON-NLS-1$
             }
         }
         if (a.hasError()) {
@@ -62,16 +62,16 @@ public class FoldOperatorProcessor extends AbstractOperatorProcessor {
         }
 
         if (context.environment.getTypeUtils().isSameType(left.getType(), right.getType()) == false) {
-            a.error(1, "畳み込み演算子の1つ目の引数と2つ目の引数は同じ型である必要があります");
+            a.error(1, Messages.getString("FoldOperatorProcessor.errorInconsistentInput")); //$NON-NLS-1$
         }
         ShuffleKeySpec foldKey = a.getParameterKeySpec(0);
         if (foldKey == null) {
-            a.error("畳み込み演算子の引数には@Key注釈によってグループ化項目を指定する必要があります");
+            a.error(Messages.getString("FoldOperatorProcessor.errorMissingKeyAnnotation")); //$NON-NLS-1$
         }
         a.validateShuffleKeys(foldKey);
         Fold annotation = context.element.getAnnotation(Fold.class);
         if (annotation == null) {
-            a.error("注釈の解釈に失敗しました");
+            a.error(Messages.getString("FoldOperatorProcessor.errorInvalidAnnotation")); //$NON-NLS-1$
             return null;
         }
         OperatorProcessorUtil.checkPortName(a, new String[] {
@@ -94,7 +94,7 @@ public class FoldOperatorProcessor extends AbstractOperatorProcessor {
                 1,
                 foldKey.getKey());
         builder.addOutput(
-                "畳み込みの結果",
+                Messages.getString("FoldOperatorProcessor.javadocOutput"), //$NON-NLS-1$
                 annotation.outputPort(),
                 a.getParameterType(0).getType(),
                 Fold.INPUT,

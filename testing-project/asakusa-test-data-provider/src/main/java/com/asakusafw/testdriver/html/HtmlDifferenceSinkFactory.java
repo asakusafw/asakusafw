@@ -72,10 +72,12 @@ public class HtmlDifferenceSinkFactory extends DifferenceSinkFactory {
         File parent = output.getParentFile();
         if (parent != null && parent.isDirectory() == false && parent.mkdirs() == false) {
             throw new IOException(MessageFormat.format(
-                    "Failed to create an output directory for {0}",
+                    Messages.getString("HtmlDifferenceSinkFactory.errorFailedToCreateOutputDirectory"), //$NON-NLS-1$
                     output));
         }
-        LOG.info("Generating difference information into {}", output.getAbsoluteFile());
+        LOG.info(MessageFormat.format(
+                Messages.getString("HtmlDifferenceSinkFactory.infoCreate"), //$NON-NLS-1$
+                output.getAbsoluteFile()));
         return new HtmlDifferenceSink(output, definition);
     }
 

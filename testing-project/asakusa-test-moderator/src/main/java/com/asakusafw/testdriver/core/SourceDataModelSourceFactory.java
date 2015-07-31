@@ -60,7 +60,7 @@ public class SourceDataModelSourceFactory extends DataModelSourceFactory {
     public <T> DataModelSource createSource(DataModelDefinition<T> definition, TestContext context) throws IOException {
         if (sourceType != null && definition.getModelClass() != sourceType) {
             throw new IOException(MessageFormat.format(
-                    "Unsupported data model type: required {0}, but is {1}",
+                    Messages.getString("SourceDataModelSourceFactory.errorInconsistentDataType"), //$NON-NLS-1$
                     sourceType.getName(),
                     definition.getModelClass().getName()));
         }

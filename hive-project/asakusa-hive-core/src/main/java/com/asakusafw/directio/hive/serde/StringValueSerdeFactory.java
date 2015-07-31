@@ -214,7 +214,7 @@ public enum StringValueSerdeFactory implements ValueSerde {
                 ((DecimalOption) target).modify(new BigDecimal(value));
             } catch (NumberFormatException e) {
                 throw new IllegalArgumentException(MessageFormat.format(
-                        "Invalid decimal: {0}",
+                        Messages.getString("StringValueSerdeFactory.errorInvalidDecimal"), //$NON-NLS-1$
                         value), e);
             }
         }
@@ -245,7 +245,7 @@ public enum StringValueSerdeFactory implements ValueSerde {
             int result = TemporalUtil.parseDate(value);
             if (result < 0) {
                 throw new IllegalArgumentException(MessageFormat.format(
-                        "Invalid date: {0}",
+                        Messages.getString("StringValueSerdeFactory.errorInvalidDate"), //$NON-NLS-1$
                         value));
             }
             ((DateOption) target).modify(result);
@@ -277,7 +277,7 @@ public enum StringValueSerdeFactory implements ValueSerde {
             long result = TemporalUtil.parseTimestamp(value);
             if (result < 0) {
                 throw new IllegalArgumentException(MessageFormat.format(
-                        "Invalid timestamp: {0}",
+                        Messages.getString("StringValueSerdeFactory.errorInvalidTimestamp"), //$NON-NLS-1$
                         value));
             }
             ((DateTimeOption) target).modify(result);

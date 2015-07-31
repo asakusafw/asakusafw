@@ -209,21 +209,21 @@ public class DataModelMaterializer extends RecordMaterializer<Object> {
         assert mapping.source != null || mapping.target != null;
         if (mapping.source == null) {
             handleException(configuration.getOnMissingSource(), MessageFormat.format(
-                    "Source field is not found: model={0}, field={1}:{2}(data model)",
+                    Messages.getString("DataModelMaterializer.errorMissingSource"), //$NON-NLS-1$
                     descriptor.getDataModelClass().getName(),
                     mapping.target.getFieldName(),
                     mapping.target.getFieldTypeInfo()));
             return false;
         } else if (mapping.target == null) {
             handleException(configuration.getOnMissingTarget(), MessageFormat.format(
-                    "Target field is not found: model={0}, field={1}:{2}(Parquet)",
+                    Messages.getString("DataModelMaterializer.errorMissingTarget"), //$NON-NLS-1$
                     descriptor.getDataModelClass().getName(),
                     mapping.source.getPath()[0],
                     mapping.source.getType()));
             return false;
         } else if (isCompatible(mapping.sourceType, mapping.target) == false) {
             handleException(configuration.getOnIncompatibleType(), MessageFormat.format(
-                    "Field types are incompatible: model={0}, source={1}:{2}(Parquet), target={3}:{4}(data model)",
+                    Messages.getString("DataModelMaterializer.errorIncompatibleType"), //$NON-NLS-1$
                     descriptor.getDataModelClass().getName(),
                     mapping.source.getPath()[0],
                     getSourceTypeDescription(mapping),

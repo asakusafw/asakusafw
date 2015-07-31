@@ -91,7 +91,7 @@ public class FlowClassEmitter {
             LOG.debug(e.getMessage(), e);
             environment.getMessager().printMessage(Diagnostic.Kind.ERROR,
                     MessageFormat.format(
-                            "{0}に対する演算子ファクトリークラスの作成に失敗しました ({1})",
+                            Messages.getString("FlowClassEmitter.errorFailedToCreateOperatorFactory"), //$NON-NLS-1$
                             aClass.getElement().getQualifiedName().toString(),
                             e.getMessage()));
         }

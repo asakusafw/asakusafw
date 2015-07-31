@@ -67,7 +67,7 @@ public class DataModelWriteSupport extends WriteSupport<Object> {
     public DataModelWriteSupport(DataModelDescriptor descriptor, Map<String, String> metadata) {
         if (descriptor.getPropertyDescriptors().isEmpty()) {
             throw new IllegalArgumentException(MessageFormat.format(
-                    "Parquet file must contain >= 1 properties: {0}",
+                    Messages.getString("DataModelWriteSupport.errorEmptyDataModel"), //$NON-NLS-1$
                     descriptor.getDataModelClass().getName()));
         }
         this.schema = computeSchema(descriptor);

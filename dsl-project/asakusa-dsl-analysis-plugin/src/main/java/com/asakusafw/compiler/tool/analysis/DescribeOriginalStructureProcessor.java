@@ -54,12 +54,12 @@ public class DescribeOriginalStructureProcessor extends AbstractWorkflowProcesso
 
     static final Logger LOG = LoggerFactory.getLogger(DescribeOriginalStructureProcessor.class);
 
-    static final Charset ENCODING = Charset.forName("UTF-8");
+    static final Charset ENCODING = Charset.forName("UTF-8"); //$NON-NLS-1$
 
     /**
      * Output path.
      */
-    public static final String PATH = Constants.PATH_BATCH + "original-structure.txt";
+    public static final String PATH = Constants.PATH_BATCH + "original-structure.txt"; //$NON-NLS-1$
 
     @Override
     public Collection<Class<? extends WorkDescriptionProcessor<?>>> getDescriptionProcessors() {
@@ -73,7 +73,7 @@ public class DescribeOriginalStructureProcessor extends AbstractWorkflowProcesso
         OutputStream output = getEnvironment().openResource(PATH);
         try {
             Context context = new Context(output);
-            context.put("batch: {0}", getEnvironment().getConfiguration().getBatchId());
+            context.put("batch: {0}", getEnvironment().getConfiguration().getBatchId()); //$NON-NLS-1$
             dump(context, workflow.getGraph());
             context.close();
         } finally {
@@ -111,15 +111,15 @@ public class DescribeOriginalStructureProcessor extends AbstractWorkflowProcesso
         assert desc != null;
         assert model != null;
 
-        context.put("flow: {0}", model.getFlowId());
+        context.put("flow: {0}", model.getFlowId()); //$NON-NLS-1$
         context.push();
 
-        context.put("input:");
+        context.put("input:"); //$NON-NLS-1$
         context.push();
         writeInput(context, model);
         context.pop();
 
-        context.put("output:");
+        context.put("output:"); //$NON-NLS-1$
         context.push();
         writeOutput(context, model);
         context.pop();
@@ -130,7 +130,7 @@ public class DescribeOriginalStructureProcessor extends AbstractWorkflowProcesso
     }
 
     private void writeFlow(Context context, FlowGraph flow) {
-        context.put("flow: {0}", flow.getDescription().getName());
+        context.put("flow: {0}", flow.getDescription().getName()); //$NON-NLS-1$
         context.push();
         for (FlowElement element : FlowGraphUtil.collectElements(flow)) {
             FlowElementDescription desc = element.getDescription();
@@ -138,7 +138,7 @@ public class DescribeOriginalStructureProcessor extends AbstractWorkflowProcesso
             case INPUT:
             case OUTPUT:
             case OPERATOR:
-                context.put("{0}: {1}", desc.getKind().name().toLowerCase(), desc.toString());
+                context.put("{0}: {1}", desc.getKind().name().toLowerCase(), desc.toString()); //$NON-NLS-1$
                 break;
             case FLOW_COMPONENT:
                 writeFlow(context, ((FlowPartDescription) desc).getFlowGraph());
@@ -154,7 +154,7 @@ public class DescribeOriginalStructureProcessor extends AbstractWorkflowProcesso
 
     private void writeInput(Context context, JobflowModel model) {
         for (Import ext : model.getImports()) {
-            context.put("{0} ({1})",
+            context.put("{0} ({1})", //$NON-NLS-1$
                     ext.getDescription().getName(),
                     ext.getDescription().getImporterDescription().getClass().getName());
         }
@@ -162,7 +162,7 @@ public class DescribeOriginalStructureProcessor extends AbstractWorkflowProcesso
 
     private void writeOutput(Context context, JobflowModel model) {
         for (Export ext : model.getExports()) {
-            context.put("{0} ({1})",
+            context.put("{0} ({1})", //$NON-NLS-1$
                     ext.getDescription().getName(),
                     ext.getDescription().getExporterDescription().getClass().getName());
         }
@@ -195,7 +195,7 @@ public class DescribeOriginalStructureProcessor extends AbstractWorkflowProcesso
             assert arguments != null;
             StringBuilder buf = new StringBuilder();
             for (int i = 0, n = indent; i < n; i++) {
-                buf.append("    ");
+                buf.append("    "); //$NON-NLS-1$
             }
             if (arguments.length == 0) {
                 buf.append(pattern);

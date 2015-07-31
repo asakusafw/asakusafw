@@ -114,7 +114,7 @@ public class ShuffleAnalyzer {
             RendezvousProcessor proc = environment.getProcessors()
                 .findRendezvousProcessor(description);
             if (proc == null) {
-                error("{0}に対する{1}が見つかりませんでした",
+                error(Messages.getString("ShuffleAnalyzer.errorMissingProcessor"), //$NON-NLS-1$
                         description,
                         FlowElementProcessor.class.getName());
                 continue;
@@ -150,7 +150,7 @@ public class ShuffleAnalyzer {
             List<ShuffleModel.Term> other = getGroupingTerms(segmentsInElement.get(i));
             if (group.size() != other.size()) {
                 error(
-                        "グループ化項目の個数が一致しません: {0}",
+                        Messages.getString("ShuffleAnalyzer.errorInconsistentGroupKeyCount"), //$NON-NLS-1$
                         first.getPort().getOwner());
                 break;
             }
@@ -159,7 +159,7 @@ public class ShuffleAnalyzer {
                 Property otherTerm = other.get(j).getSource();
                 if (isCompatible(firstTerm.getType(), otherTerm.getType()) == false) {
                     error(
-                            "グループ化項目の種類が一致しません: {0}",
+                            Messages.getString("ShuffleAnalyzer.errorInconsistentGroupKeyType"), //$NON-NLS-1$
                             first.getPort().getOwner());
                 }
             }
@@ -230,10 +230,11 @@ public class ShuffleAnalyzer {
         DataClass source = dataClasses.load(inputType);
         DataClass target = dataClasses.load(desciption.getOutputType());
         if (source == null) {
-            error("データクラス{0}は定義されていません", inputType);
+            error(Messages.getString("ShuffleAnalyzer.errorMissingDataClass"), inputType); //$NON-NLS-1$
         }
         if (target == null) {
-            error("データクラス{0}は定義されていません", desciption.getOutputType());
+            error(Messages.getString("ShuffleAnalyzer.errorMissingDataClass"), //$NON-NLS-1$
+                    desciption.getOutputType());
         }
         if (source == null || target == null) {
             return null;
@@ -244,7 +245,7 @@ public class ShuffleAnalyzer {
             int termId = terms.size() + 1;
             DataClass.Property property = target.findProperty(name);
             if (property == null) {
-                error("データクラス{0}にはプロパティ{1}が定義されていません", target, name);
+                error(Messages.getString("ShuffleAnalyzer.errorMissingProperty"), target, name); //$NON-NLS-1$
                 continue;
             }
             terms.add(new ShuffleModel.Term(
@@ -256,7 +257,7 @@ public class ShuffleAnalyzer {
             int termId = terms.size() + 1;
             DataClass.Property property = target.findProperty(order.getProperty());
             if (property == null) {
-                error("データクラス{0}にはプロパティ{1}が定義されていません",
+                error(Messages.getString("ShuffleAnalyzer.errorMissingProperty"), //$NON-NLS-1$
                         target,
                         order.getProperty());
                 continue;

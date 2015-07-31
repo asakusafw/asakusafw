@@ -64,7 +64,7 @@ public class SpiFlowElementProcessorRepository
             Class<? extends Annotation> targetType = proc.getTargetAnnotationType();
             if (saw.containsKey(targetType)) {
                 getEnvironment().error(
-                        "演算子プロセッサ{0}はすでに{1}によって組み込まれているため、{2}は無視されます",
+                        Messages.getString("SpiFlowElementProcessorRepository.errorConflictProcessor"), //$NON-NLS-1$
                         targetType.getName(),
                         saw.get(targetType).getClass().getName(),
                         proc.getClass().getName());

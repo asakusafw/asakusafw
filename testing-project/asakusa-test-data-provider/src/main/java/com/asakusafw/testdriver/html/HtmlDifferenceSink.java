@@ -74,7 +74,7 @@ public class HtmlDifferenceSink implements DifferenceSink {
                 }
                 scanner.close();
             } catch (IOException e) {
-                LOG.warn("Failed to initialize HtmlDifferenceSink", e);
+                LOG.warn(Messages.getString("HtmlDifferenceSink.warnFailedToInitialize"), e); //$NON-NLS-1$
                 lines.clear();
             } finally {
                 try {
@@ -121,7 +121,7 @@ public class HtmlDifferenceSink implements DifferenceSink {
                     os.close();
                 } catch (IOException e) {
                     LOG.warn(MessageFormat.format(
-                            "Failed to open file: {0}",
+                            Messages.getString("HtmlDifferenceSink.warnFailedToOpenFile"), //$NON-NLS-1$
                             output), e);
                 }
             }
@@ -182,7 +182,7 @@ public class HtmlDifferenceSink implements DifferenceSink {
             writer.println("<div class=\"difference\">"); //$NON-NLS-1$
 
             writer.println("<p class=\"diagnostic-label\">"); //$NON-NLS-1$
-            writer.println("Diagnostic Message:");
+            writer.println(Messages.getString("HtmlDifferenceSink.htmlTitle")); //$NON-NLS-1$
             writer.println("</p>"); //$NON-NLS-1$
             writer.println("<div class=\"diagnostic\">"); //$NON-NLS-1$
             writer.println("<span class=\"diagnostic-message\">"); //$NON-NLS-1$
@@ -191,7 +191,7 @@ public class HtmlDifferenceSink implements DifferenceSink {
             writer.println("</div>"); //$NON-NLS-1$
 
             writer.println("<p class=\"compare-label\">"); //$NON-NLS-1$
-            writer.println("Inspection:");
+            writer.println(Messages.getString("HtmlDifferenceSink.htmlInspection")); //$NON-NLS-1$
             writer.println("</p>"); //$NON-NLS-1$
             writer.println("<div class=\"compare\">"); //$NON-NLS-1$
             writer.println("<table class=\"object\">"); //$NON-NLS-1$
@@ -199,15 +199,15 @@ public class HtmlDifferenceSink implements DifferenceSink {
             writer.println("<tr>"); //$NON-NLS-1$
 
             writer.println("<th class=\"property\">"); //$NON-NLS-1$
-            writer.println("Property Name");
+            writer.println(Messages.getString("HtmlDifferenceSink.htmlPropertyName")); //$NON-NLS-1$
             writer.println("</th>"); //$NON-NLS-1$
 
             writer.println("<th class=\"expected\">"); //$NON-NLS-1$
-            writer.println("Expected Value");
+            writer.println(Messages.getString("HtmlDifferenceSink.htmlExpectedValue")); //$NON-NLS-1$
             writer.println("</th>"); //$NON-NLS-1$
 
             writer.println("<th class=\"actual\">"); //$NON-NLS-1$
-            writer.println("Actual Value");
+            writer.println(Messages.getString("HtmlDifferenceSink.htmlActualValue")); //$NON-NLS-1$
             writer.println("</th>"); //$NON-NLS-1$
 
             writer.println("</tr>"); //$NON-NLS-1$
@@ -301,13 +301,13 @@ public class HtmlDifferenceSink implements DifferenceSink {
 
             writer.println("<body>"); //$NON-NLS-1$
             writer.println("<p class=\"header-label\">"); //$NON-NLS-1$
-            writer.println("Differences");
+            writer.println(Messages.getString("HtmlDifferenceSink.htmlDifferences")); //$NON-NLS-1$
             writer.println("</p>"); //$NON-NLS-1$
         }
 
         public void writeFooter() {
             writer.println("<p class=\"footer-label\">"); //$NON-NLS-1$
-            writer.printf("Generated: %s%n", datetimeFormat.format(new Date()));
+            writer.printf("Generated: %s%n", datetimeFormat.format(new Date())); //$NON-NLS-1$
             writer.println("</p>"); //$NON-NLS-1$
             writer.println("</body>"); //$NON-NLS-1$
             writer.println("</html>"); //$NON-NLS-1$

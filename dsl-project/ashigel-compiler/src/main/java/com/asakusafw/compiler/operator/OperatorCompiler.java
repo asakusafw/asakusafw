@@ -110,13 +110,13 @@ public class OperatorCompiler implements Processor {
                 env.getMessager().printMessage(
                     Diagnostic.Kind.WARNING,
                     MessageFormat.format(
-                        "{0}は正しくロードされなかったため、スキップされます",
+                        Messages.getString("OperatorCompiler.warnSkipInvalidProcessor"), //$NON-NLS-1$
                         proc.getClass().getName()));
             } else if (results.containsKey(target)) {
                 env.getMessager().printMessage(
                         Diagnostic.Kind.WARNING,
                         MessageFormat.format(
-                            "{0}の対象演算子{1}はすでに{2}によって対象となっているため、スキップされます",
+                            Messages.getString("OperatorCompiler.warnSkipConflictProcessor"), //$NON-NLS-1$
                             proc.getClass().getName(),
                             target.getName(),
                             results.get(target).getClass().getName()));
@@ -214,7 +214,7 @@ public class OperatorCompiler implements Processor {
     private String toDetailString(RuntimeException e) {
         StringWriter writer = new StringWriter();
         PrintWriter pw = new PrintWriter(writer);
-        pw.println("演算子のコンパイルに失敗しました:");
+        pw.println(Messages.getString("OperatorCompiler.errorDetailHeader")); //$NON-NLS-1$
         e.printStackTrace(pw);
         pw.close();
         return writer.toString();

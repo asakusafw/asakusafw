@@ -47,28 +47,29 @@ public class MasterBranchOperatorProcessor extends AbstractOperatorProcessor {
 
         ExecutableAnalyzer a = new ExecutableAnalyzer(context.environment, context.element);
         if (a.isAbstract()) {
-            a.error("マスタ分岐演算子はabstractで宣言できません");
+            a.error(Messages.getString("MasterBranchOperatorProcessor.errorAbstract")); //$NON-NLS-1$
         }
         List<VariableElement> constants = Collections.emptyList();
         if (a.getReturnType().isEnum() == false) {
-            a.error("マスタ分岐演算子は戻り値にpublicで宣言された列挙型を指定する必要があります");
+            a.error(Messages.getString("MasterBranchOperatorProcessor.errorNotEnumResult")); //$NON-NLS-1$
         } else {
             constants = a.getReturnType().getEnumConstants();
             if (constants.isEmpty()) {
-                a.error("マスタ分岐演算子の戻り値は定数が1つ以上宣言された列挙型である必要があります");
+                a.error(Messages.getString("MasterBranchOperatorProcessor.errorEmptyEnumResult")); //$NON-NLS-1$
             }
         }
         TypeConstraint master = a.getParameterType(0);
         if (master.isModel() == false) {
-            a.error(0, "マスタ分岐演算子の1つ目の引数はモデルオブジェクト型である必要があります");
+            a.error(0, Messages.getString("MasterBranchOperatorProcessor.errorNotModelInputMaster")); //$NON-NLS-1$
         }
         TypeConstraint transaction = a.getParameterType(1);
         if (transaction.isModel() == false) {
-            a.error(1, "マスタ分岐演算子の2つ目の引数はモデルオブジェクト型である必要があります");
+            a.error(1, Messages.getString("MasterBranchOperatorProcessor.errorNotModelTransaction")); //$NON-NLS-1$
         }
         for (int i = 2, n = a.countParameters(); i < n; i++) {
             if (a.getParameterType(i).isBasic() == false) {
-                a.error(i, "マスタ分岐演算子の3つ目以降の引数は文字列またはプリミティブ型である必要があります");
+                a.error(i, Messages.getString(
+                        "MasterBranchOperatorProcessor.errorInvalidOptionParameter")); //$NON-NLS-1$
             }
         }
         if (a.hasError()) {
@@ -77,11 +78,13 @@ public class MasterBranchOperatorProcessor extends AbstractOperatorProcessor {
 
         ShuffleKeySpec masterKey = a.getParameterKeySpec(0);
         if (masterKey == null) {
-            a.error("マスタ分岐演算子の引数には@Key注釈によってグループ化項目を指定する必要があります");
+            a.error(Messages.getString(
+                    "MasterBranchOperatorProcessor.errorMissingKeyAnnotationMaster")); //$NON-NLS-1$
         }
         ShuffleKeySpec transactionKey = a.getParameterKeySpec(1);
         if (transactionKey == null) {
-            a.error("マスタ分岐演算子の引数には@Key注釈によってグループ化項目を指定する必要があります");
+            a.error(Messages.getString(
+                    "MasterBranchOperatorProcessor.errorMissingKeyAnnotationTransaction")); //$NON-NLS-1$
         }
         a.validateShuffleKeys(masterKey, transactionKey);
         ExecutableElement selector = null;

@@ -85,17 +85,18 @@ public class FlowResourceEmitter {
                 }
             } catch (RewriteException e) {
                 environment.error(
-                        "リソース{0}のコンパイルに失敗しました: {1}",
+                        Messages.getString("FlowResourceEmitter.errorFailedToCompile") //$NON-NLS-1$
+                        + ": {0}", //$NON-NLS-1$
                         resource,
                         e.getMessage());
                 LOG.error(MessageFormat.format(
-                        "リソース{0}をコンパイルできませんでした",
+                        Messages.getString("FlowResourceEmitter.errorFailedToCompile"), //$NON-NLS-1$
                         resource),
                         e);
             }
         }
         environment.error(
-                "リソース{0}をコンパイルするエンジンが見つかりませんでした",
+                Messages.getString("FlowResourceEmitter.errorMissingProcessor"), //$NON-NLS-1$
                 resource);
         return null;
     }

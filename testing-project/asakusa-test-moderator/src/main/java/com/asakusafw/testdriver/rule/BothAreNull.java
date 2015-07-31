@@ -31,6 +31,6 @@ public class BothAreNull implements ValuePredicate<Object> {
         if (expected != null) {
             return null;
         }
-        return "is null";
+        return Messages.getString("BothAreNull.message"); //$NON-NLS-1$
     }
 }

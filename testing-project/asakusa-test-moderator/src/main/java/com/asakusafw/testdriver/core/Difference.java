@@ -68,7 +68,7 @@ public class Difference {
     @Override
     public String toString() {
         return MessageFormat.format(
-                "{2}: expected <{0}>, but was <{1}>",
+                Messages.getString("Difference.message"), //$NON-NLS-1$
                 getExpected(),
                 getActual(),
                 getDiagnostic());

@@ -80,13 +80,14 @@ public class StringPropertyDriver extends JavaDataModelDriver {
         ModelFactory f = context.getModelFactory();
         return f.newMethodDeclaration(
                 new JavadocBuilder(f)
-                    .text("{0}を返す。",
+                    .text(Messages.getString("StringPropertyDriver.javadocGetter"), //$NON-NLS-1$
                             context.getDescription(property))
                     .returns()
                         .text("{0}", //$NON-NLS-1$
                                 context.getDescription(property))
                     .exception(context.resolve(NullPointerException.class))
-                        .text("{0}の値が<code>null</code>である場合",
+                        .text(Messages.getString(
+                                "StringPropertyDriver.javadocGetterNullPointerException"), //$NON-NLS-1$
                                 context.getDescription(property))
                     .toJavadoc(),
                 new AttributeBuilder(f)
@@ -114,10 +115,10 @@ public class StringPropertyDriver extends JavaDataModelDriver {
 
         return f.newMethodDeclaration(
                 new JavadocBuilder(f)
-                    .text("{0}を設定する。",
+                    .text(Messages.getString("StringPropertyDriver.javadocSetter"), //$NON-NLS-1$
                             context.getDescription(property))
                     .param(paramName)
-                        .text("設定する値",
+                        .text(Messages.getString("StringPropertyDriver.javadocSetterParameter"), //$NON-NLS-1$
                                 context.getDescription(property))
                     .toJavadoc(),
                 new AttributeBuilder(f)

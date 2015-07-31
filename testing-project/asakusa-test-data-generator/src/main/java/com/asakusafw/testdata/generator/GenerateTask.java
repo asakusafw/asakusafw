@@ -71,15 +71,15 @@ public class GenerateTask {
      * @throws IOException if failed to process DMDL scripts, or failed to generate templates
      */
     public void process() throws IOException {
-        LOG.info("テンプレートの生成を開始しています");
+        LOG.info(Messages.getString("GenerateTask.infoStartTask")); //$NON-NLS-1$
         DmdlSemantics semantics = analyze();
         for (ModelDeclaration model : semantics.getDeclaredModels()) {
             LOG.info(MessageFormat.format(
-                    "テンプレートを生成しています: {0}",
+                    Messages.getString("GenerateTask.infoGenerateTemplate"), //$NON-NLS-1$
                     model.getName().identifier));
             generator.generate(model);
         }
-        LOG.info("テンプレートの生成を終了しました");
+        LOG.info(Messages.getString("GenerateTask.infoFinishTask")); //$NON-NLS-1$
     }
 
     private DmdlSemantics analyze() throws IOException {

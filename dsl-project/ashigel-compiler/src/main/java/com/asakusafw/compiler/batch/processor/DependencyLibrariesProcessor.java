@@ -73,7 +73,7 @@ public class DependencyLibrariesProcessor extends AbstractWorkflowProcessor {
                 OUTPUT_DIRECTORY_PATH);
         if (outputDirectory.mkdirs() == false && outputDirectory.isDirectory() == false) {
             throw new IOException(MessageFormat.format(
-                    "Failed to create library output: {0}",
+                    Messages.getString("DependencyLibrariesProcessor.errorFailedToCreateOutputDierctory"), //$NON-NLS-1$
                     outputDirectory.getAbsolutePath()));
         }
 
@@ -81,7 +81,7 @@ public class DependencyLibrariesProcessor extends AbstractWorkflowProcessor {
         for (File file : libraryDirectory.listFiles()) {
             if (file.isDirectory()) {
                 LOG.warn(MessageFormat.format(
-                        "Ignored a sub-directory in library path: {0}",
+                        Messages.getString("DependencyLibrariesProcessor.warnIgnoreNestedInputDirectory"), //$NON-NLS-1$
                         file.getAbsolutePath()));
             } else {
                 File target = new File(outputDirectory, file.getName());
@@ -89,7 +89,7 @@ public class DependencyLibrariesProcessor extends AbstractWorkflowProcessor {
                     copyFile(file, target);
                 } catch (IOException e) {
                     throw new IOException(MessageFormat.format(
-                            "Failed to copy a library: {0} -> {1}",
+                            Messages.getString("DependencyLibrariesProcessor.errorFailedToCopyLibrary"), //$NON-NLS-1$
                             file,
                             target));
                 }
