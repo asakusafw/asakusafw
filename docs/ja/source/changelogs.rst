@@ -5,7 +5,7 @@ Changelogs
 Release 0.7.4
 =============
 
-Aug XX, 2015
+Aug 11, 2015
 
 Enhancements
 ------------
@@ -44,6 +44,7 @@ Others
 * [ :pr:`501` ] - Change build server URL
 * [ :pr:`502` ] - Replace docs URL with `docs.asakusafw.com`.
 * [ :pr:`503` ] - Replace docs URL with `docs.asakusafw.com`.
+* [ :pr-sdk:`39` ] - Remove codehaus.org repositories.
 
 Release 0.7.3
 =============
