@@ -7,7 +7,7 @@
 	<parent>
 		<artifactId>asakusa-sandbox-parent</artifactId>
 		<groupId>com.asakusafw.sandbox</groupId>
-		<version>0.7.4-RC1-hadoop1</version>
+		<version>0.7.4-hadoop1</version>
 		<relativePath>../asakusa-sandbox-parent</relativePath>
 	</parent>
 
