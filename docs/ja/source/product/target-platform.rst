@@ -28,8 +28,8 @@ Asakusa Framework は、以下のHadoopディストリビューションと組�
       - |version|-hadoop2
     * - Hortonworks Data Platform
       - 2.3
-      - CentOS 6 (6.6)
-      - JDK 8 (1.8.0_51)
+      - CentOS 7 (7.1)
+      - JDK 8 (1.8.0_40)
       - |version|-hadoop2
     * - CDH
       - 5.2.0 (MRv2) [#]_
