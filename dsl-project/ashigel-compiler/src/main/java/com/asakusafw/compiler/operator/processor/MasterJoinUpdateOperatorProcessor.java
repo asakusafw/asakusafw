@@ -42,22 +42,23 @@ public class MasterJoinUpdateOperatorProcessor extends AbstractOperatorProcessor
 
         ExecutableAnalyzer a = new ExecutableAnalyzer(context.environment, context.element);
         if (a.isAbstract()) {
-            a.error("マスタつき更新演算子はabstractで宣言できません");
+            a.error(Messages.getString("MasterJoinUpdateOperatorProcessor.errorAbstract")); //$NON-NLS-1$
         }
         if (a.getReturnType().isVoid() == false) {
-            a.error("マスタつき更新演算子は戻り値にvoidを指定する必要があります");
+            a.error(Messages.getString("MasterJoinUpdateOperatorProcessor.errorNotVoidResult")); //$NON-NLS-1$
         }
         TypeConstraint master = a.getParameterType(0);
         if (master.isModel() == false) {
-            a.error(0, "マスタつき更新演算子の一つ目の引数はモデルオブジェクト型である必要があります");
+            a.error(0, Messages.getString("MasterJoinUpdateOperatorProcessor.errorNotModelMaster")); //$NON-NLS-1$
         }
         TypeConstraint transaction = a.getParameterType(1);
         if (transaction.isModel() == false) {
-            a.error(1, "マスタつき更新演算子の二つ目の引数はモデルオブジェクト型である必要があります");
+            a.error(1, Messages.getString("MasterJoinUpdateOperatorProcessor.errorNotModelTransaction")); //$NON-NLS-1$
         }
         for (int i = 2, n = a.countParameters(); i < n; i++) {
             if (a.getParameterType(i).isBasic() == false) {
-                a.error(i, "マスタつき更新演算子の2つ目以降の引数は文字列またはプリミティブ型である必要があります");
+                a.error(i, Messages.getString(
+                        "MasterJoinUpdateOperatorProcessor.errorInvalidOptionParameter")); //$NON-NLS-1$
             }
         }
         if (a.hasError()) {
@@ -66,11 +67,13 @@ public class MasterJoinUpdateOperatorProcessor extends AbstractOperatorProcessor
 
         ShuffleKeySpec masterKey = a.getParameterKeySpec(0);
         if (masterKey == null) {
-            a.error("マスタつき更新演算子の引数には@Key注釈によってグループ化項目を指定する必要があります");
+            a.error(Messages.getString(
+                    "MasterJoinUpdateOperatorProcessor.errorMissingKeyAnnotationMaster")); //$NON-NLS-1$
         }
         ShuffleKeySpec transactionKey = a.getParameterKeySpec(1);
         if (transactionKey == null) {
-            a.error("マスタつき更新演算子の引数には@Key注釈によってグループ化項目を指定する必要があります");
+            a.error(Messages.getString(
+                    "MasterJoinUpdateOperatorProcessor.errorMissingKeyAnnotationTransaction")); //$NON-NLS-1$
         }
         a.validateShuffleKeys(masterKey, transactionKey);
         ExecutableElement selector = null;
@@ -82,7 +85,7 @@ public class MasterJoinUpdateOperatorProcessor extends AbstractOperatorProcessor
 
         MasterJoinUpdate annotation = context.element.getAnnotation(MasterJoinUpdate.class);
         if (annotation == null) {
-            a.error("注釈の解釈に失敗しました");
+            a.error(Messages.getString("MasterJoinUpdateOperatorProcessor.errorInvalidAnnotation")); //$NON-NLS-1$
             return null;
         }
         OperatorProcessorUtil.checkPortName(a, new String[] {
@@ -115,13 +118,13 @@ public class MasterJoinUpdateOperatorProcessor extends AbstractOperatorProcessor
                 1,
                 transactionKey.getKey());
         builder.addOutput(
-                "引き当ておよび更新が成功したデータ",
+                Messages.getString("MasterJoinUpdateOperatorProcessor.javadocJoined"), //$NON-NLS-1$
                 annotation.updatedPort(),
                 a.getParameterType(1).getType(),
                 a.getParameterName(1),
                 null);
         builder.addOutput(
-                "引き当てに失敗したデータ",
+                Messages.getString("MasterJoinUpdateOperatorProcessor.javadocMissed"), //$NON-NLS-1$
                 annotation.missedPort(),
                 a.getParameterType(1).getType(),
                 a.getParameterName(1),

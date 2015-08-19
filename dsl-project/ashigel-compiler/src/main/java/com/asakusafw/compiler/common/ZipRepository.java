@@ -49,7 +49,7 @@ public class ZipRepository implements ResourceRepository {
         Precondition.checkMustNotBeNull(archive, "archive"); //$NON-NLS-1$
         if (archive.isFile() == false) {
             throw new IOException(MessageFormat.format(
-                    "{0} is not a directory",
+                    Messages.getString("ZipRepository.errorInputNotRegular"), //$NON-NLS-1$
                     archive));
         }
         this.archive = archive.getAbsoluteFile().getCanonicalFile();
@@ -95,7 +95,7 @@ public class ZipRepository implements ResourceRepository {
                 if (current == null) {
                     if (entries == 0) {
                         throw new IOException(MessageFormat.format(
-                                "Invalid ZIP format: {0}",
+                                Messages.getString("ZipRepository.errorMalformedZipFile"), //$NON-NLS-1$
                                 source));
                     }
                     return false;

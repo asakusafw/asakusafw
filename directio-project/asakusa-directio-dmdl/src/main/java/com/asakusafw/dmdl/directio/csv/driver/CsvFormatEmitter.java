@@ -153,7 +153,7 @@ public class CsvFormatEmitter extends JavaDataModelDriver {
                 Type type = prop.getType();
                 if ((type instanceof BasicType) == false) {
                     throw new IOException(MessageFormat.format(
-                            "Type \"{0}\" can not map to CSV field: {1}.{2} ",
+                            Messages.getString("CsvFormatEmitter.errorUnsupportedType"), //$NON-NLS-1$
                             type,
                             prop.getOwner().getName().identifier,
                             prop.getName().identifier));
@@ -409,7 +409,7 @@ public class CsvFormatEmitter extends JavaDataModelDriver {
                         isNotHead,
                         f.newBlock(new TypeBuilder(f, context.resolve(IllegalArgumentException.class))
                             .newObject(Models.toLiteral(f, MessageFormat.format(
-                                    "{0} does not support fragmentation.",
+                                    Messages.getString("CsvFormatEmitter.messageNotSupportFragmentation"), //$NON-NLS-1$
                                     context.getQualifiedTypeName().toNameString())))
                             .toThrowStatement())));
             }

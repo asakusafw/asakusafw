@@ -153,7 +153,7 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
                 Type type = prop.getType();
                 if ((type instanceof BasicType) == false) {
                     throw new IOException(MessageFormat.format(
-                            "Type \"{0}\" can not map to TSV field: {1}.{2} ",
+                            Messages.getString("TsvFormatEmitter.errorUnsupportedType"), //$NON-NLS-1$
                             type,
                             prop.getOwner().getName().identifier,
                             prop.getName().identifier));

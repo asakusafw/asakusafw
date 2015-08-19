@@ -50,7 +50,7 @@ public class Not<T> implements ValuePredicate<T> {
             return null;
         }
         return MessageFormat.format(
-                "{0}でない",
+                Messages.getString("Not.message"), //$NON-NLS-1$
                 factorExpected);
     }
 }

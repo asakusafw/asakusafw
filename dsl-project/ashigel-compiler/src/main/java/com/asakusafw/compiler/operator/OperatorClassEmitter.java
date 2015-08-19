@@ -112,7 +112,8 @@ public class OperatorClassEmitter {
             LOG.debug(e.getMessage(), e);
             environment.getMessager().printMessage(Diagnostic.Kind.ERROR,
                     MessageFormat.format(
-                            "{0}に対する演算子実装クラスの作成に失敗しました ({1})",
+                            Messages.getString(
+                                    "OperatorClassEmitter.errorFailedToCreateOperatorImplementation"), //$NON-NLS-1$
                             operatorClass.getElement().getQualifiedName().toString(),
                             e.getMessage()));
         }
@@ -145,7 +146,7 @@ public class OperatorClassEmitter {
             LOG.debug(e.getMessage(), e);
             environment.getMessager().printMessage(Diagnostic.Kind.ERROR,
                     MessageFormat.format(
-                            "{0}に対する演算子ファクトリークラスの作成に失敗しました ({1})",
+                            Messages.getString("OperatorClassEmitter.errorFailedToCreateOperatorFactory"), //$NON-NLS-1$
                             operatorClass.getElement().getQualifiedName().toString(),
                             e.getMessage()));
         }

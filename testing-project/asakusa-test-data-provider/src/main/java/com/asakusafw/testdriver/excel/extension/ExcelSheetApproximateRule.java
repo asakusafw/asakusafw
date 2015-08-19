@@ -54,7 +54,7 @@ public class ExcelSheetApproximateRule implements ExcelSheetRuleExtension {
         Matcher matcher = PATTERN.matcher(expression);
         if (matcher.matches() == false) {
             throw new FormatException(MessageFormat.format(
-                    "Invalid approx(~) expression: {0}",
+                    Messages.getString("ExcelSheetApproximateRule.errorSyntax"), //$NON-NLS-1$
                     name));
         }
         String sign = matcher.group(1);
@@ -72,7 +72,7 @@ public class ExcelSheetApproximateRule implements ExcelSheetRuleExtension {
                 return Predicates.integerRange(minus ? -value : 0, plus ? +value : 0);
             } catch (NumberFormatException e) {
                 throw new FormatException(MessageFormat.format(
-                        "Invalid approx(~) error \"{1}\": {0}",
+                        Messages.getString("ExcelSheetApproximateRule.errorValueFormat"), //$NON-NLS-1$
                         name,
                         magnitude), e);
             }
@@ -83,7 +83,7 @@ public class ExcelSheetApproximateRule implements ExcelSheetRuleExtension {
                 return Predicates.floatRange(minus ? -value : 0, plus ? +value : 0);
             } catch (NumberFormatException e) {
                 throw new FormatException(MessageFormat.format(
-                        "Invalid approx(~) value \"{1}\": {0}",
+                        Messages.getString("ExcelSheetApproximateRule.errorValueFormat"), //$NON-NLS-1$
                         name,
                         magnitude), e);
             }
@@ -95,7 +95,7 @@ public class ExcelSheetApproximateRule implements ExcelSheetRuleExtension {
                         plus ? value : BigDecimal.ZERO);
             } catch (NumberFormatException e) {
                 throw new FormatException(MessageFormat.format(
-                        "Invalid approx(~) error \"{1}\": {0}",
+                        Messages.getString("ExcelSheetApproximateRule.errorValueFormat"), //$NON-NLS-1$
                         name,
                         magnitude), e);
             }
@@ -110,13 +110,13 @@ public class ExcelSheetApproximateRule implements ExcelSheetRuleExtension {
                 }
             } catch (NumberFormatException e) {
                 throw new FormatException(MessageFormat.format(
-                        "Invalid approx(~) error \"{1}\": {0}",
+                        Messages.getString("ExcelSheetApproximateRule.errorValueFormat"), //$NON-NLS-1$
                         name,
                         magnitude), e);
             }
         default:
             throw new FormatException(MessageFormat.format(
-                    "Property does not support approx(~) expression: {0}",
+                    Messages.getString("ExcelSheetApproximateRule.errorInconsistentType"), //$NON-NLS-1$
                     name));
         }
     }

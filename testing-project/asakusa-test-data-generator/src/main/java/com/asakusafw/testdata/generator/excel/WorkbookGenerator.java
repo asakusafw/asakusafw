@@ -74,7 +74,7 @@ public class WorkbookGenerator implements TemplateGenerator {
         }
         if (output.isDirectory() == false && output.mkdirs() == false) {
             throw new IOException(MessageFormat.format(
-                    "出力先のディレクトリを生成できませんでした: {0}",
+                    Messages.getString("WorkbookGenerator.errorFailedToCreateOutputDirectory"), //$NON-NLS-1$
                     output));
         }
         Workbook workbook = createWorkbook();
@@ -106,7 +106,7 @@ public class WorkbookGenerator implements TemplateGenerator {
             out.close();
         }
         LOG.info(MessageFormat.format(
-                "Excelワークブックを生成しました: {0}",
+                Messages.getString("WorkbookGenerator.infoFinish"), //$NON-NLS-1$
                 file.getAbsolutePath()));
     }
 
@@ -130,7 +130,7 @@ public class WorkbookGenerator implements TemplateGenerator {
             return SpreadsheetVersion.EXCEL2007;
         } else {
             throw new IllegalArgumentException(MessageFormat.format(
-                    "サポートしていないExcelワークブックの形式です: {0}",
+                    Messages.getString("WorkbookGenerator.errorUnsupportedFormat"), //$NON-NLS-1$
                     fileName));
         }
     }
@@ -151,7 +151,7 @@ public class WorkbookGenerator implements TemplateGenerator {
             return SpreadsheetVersion.EXCEL2007;
         } else {
             throw new IllegalArgumentException(MessageFormat.format(
-                    "サポートしていないExcelワークブックの形式です: {0}",
+                    Messages.getString("WorkbookGenerator.errorUnsupportedWorkbookApi"), //$NON-NLS-1$
                     workbook.getClass().getName()));
         }
     }
@@ -174,7 +174,7 @@ public class WorkbookGenerator implements TemplateGenerator {
             return new XSSFWorkbook();
         default:
             throw new IOException(MessageFormat.format(
-                    "サポートしていないExcelワークブックの形式です: {0}",
+                    Messages.getString("WorkbookGenerator.errorUnsupportedWorkbookVersion"), //$NON-NLS-1$
                     version));
         }
     }
@@ -182,7 +182,7 @@ public class WorkbookGenerator implements TemplateGenerator {
     @Override
     public String getTitle() {
         return MessageFormat.format(
-                "generates Excel workbook ({0})",
+                Messages.getString("WorkbookGenerator.title"), //$NON-NLS-1$
                 format);
     }
 }

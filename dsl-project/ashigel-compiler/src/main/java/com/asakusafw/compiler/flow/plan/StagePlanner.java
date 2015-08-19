@@ -154,13 +154,13 @@ public class StagePlanner {
                 modified |= rewriter.rewrite(graph);
             } catch (RewriteException e) {
                 LOG.warn(MessageFormat.format(
-                        "グラフの書き換えに失敗しました: {0} ({1})",
+                        Messages.getString("StagePlanner.warnFailedToRewrite"), //$NON-NLS-1$
                         rewriter.getClass().getName(),
                         e.getMessage()), e);
                 error(
                         graph,
                         Collections.<FlowElement>emptyList(),
-                        "グラフの書き換えに失敗しました ({0})",
+                        Messages.getString("StagePlanner.errorFailedToRewrite"), //$NON-NLS-1$
                         e.getMessage());
                 return false;
             }
@@ -1016,7 +1016,7 @@ public class StagePlanner {
                 error(
                         graph,
                         Collections.singletonList(element),
-                        "{0}の入力{1}が他の演算子からの出力、もしくはジョブフローの入力に接続されていません",
+                        Messages.getString("StagePlanner.errorOrphanedInput"), //$NON-NLS-1$
                         element.getDescription(),
                         port.getDescription().getName());
                 sawError = true;
@@ -1029,7 +1029,7 @@ public class StagePlanner {
                     error(
                             graph,
                             Collections.singletonList(element),
-                            "{0}の出力{1}が他の演算子への入力、もしくはジョブフローの出力に接続されていません",
+                            Messages.getString("StagePlanner.errorOrphanedOutput"), //$NON-NLS-1$
                             element.getDescription(),
                             port.getDescription().getName());
                     sawError = true;
@@ -1060,7 +1060,7 @@ public class StagePlanner {
             error(
                     graph,
                     context,
-                    "結線の循環を検出しました {0}",
+                    Messages.getString("StagePlanner.errorCyclicGraph"), //$NON-NLS-1$
                     names);
         }
 
@@ -1127,7 +1127,7 @@ public class StagePlanner {
         @Override
         public String toString() {
             return MessageFormat.format(
-                    "{0} (at {1})",
+                    "{0} (at {1})", //$NON-NLS-1$
                     message,
                     graph.getDescription().getName());
         }

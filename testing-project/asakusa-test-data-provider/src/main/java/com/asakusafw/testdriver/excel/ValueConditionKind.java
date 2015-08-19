@@ -25,38 +25,45 @@ public enum ValueConditionKind {
     /**
      * Always accepts.
      */
-    ANY("-", "検査対象外", "すべて"), //$NON-NLS-1$
+    ANY("-", Messages.getString("ValueConditionKind.titleAny"), //$NON-NLS-1$ //$NON-NLS-2$
+            Messages.getString("ValueConditionKind.typeAny")), //$NON-NLS-1$
 
     /**
      * Used as comparing key.
      */
-    KEY("Key", "検査キー", "すべて"), //$NON-NLS-1$
+    KEY("Key", Messages.getString("ValueConditionKind.titleKey"), //$NON-NLS-1$ //$NON-NLS-2$
+            Messages.getString("ValueConditionKind.typeKey")), //$NON-NLS-1$
 
     /**
      * Accepts if matched.
      */
-    EQUAL("=", "完全一致", "すべて"), //$NON-NLS-1$
+    EQUAL("=", Messages.getString("ValueConditionKind.titleEqual"), //$NON-NLS-1$ //$NON-NLS-2$
+            Messages.getString("ValueConditionKind.typeEqual")), //$NON-NLS-1$
 
     /**
      * Accepts if expected data appears in the actual data.
      */
-    CONTAIN("<=", "部分一致", "文字列"), //$NON-NLS-1$
+    CONTAIN("<=", Messages.getString("ValueConditionKind.titleContain"), //$NON-NLS-1$ //$NON-NLS-2$
+            Messages.getString("ValueConditionKind.typeContain")), //$NON-NLS-1$
 
     /**
      * Accepts if actual date/time is between test started date and its finished date.
      */
-    TODAY("Today", "現在日付", "日付または時刻"), //$NON-NLS-1$
+    TODAY("Today", Messages.getString("ValueConditionKind.titleToday"), //$NON-NLS-1$ //$NON-NLS-2$
+            Messages.getString("ValueConditionKind.typeToday")), //$NON-NLS-1$
 
     /**
      * Accepts if actual date/time is between test started time and its finished time.
      */
-    NOW("Now", "現在時刻", "日付または時刻"), //$NON-NLS-1$
+    NOW("Now", Messages.getString("ValueConditionKind.titleNow"), //$NON-NLS-1$ //$NON-NLS-2$
+            Messages.getString("ValueConditionKind.typeNow")), //$NON-NLS-1$
 
     /**
      * Accepts if the user defined rule recognize the actual data.
      * @since 0.7.0
      */
-    EXPRESSION("Expr", "特殊ルール", "特殊"), //$NON-NLS-1$
+    EXPRESSION("Expr", Messages.getString("ValueConditionKind.titleExpression"), //$NON-NLS-1$ //$NON-NLS-2$
+            Messages.getString("ValueConditionKind.typeExpression")), //$NON-NLS-1$
     ;
 
     private final String symbol;
@@ -94,7 +101,7 @@ public enum ValueConditionKind {
     }
 
     /**
-     * Retutns a constant of this enum from the corresponded textual representation.
+     * Returns a constant of this enum from the corresponded textual representation.
      * @param text a textual representation
      * @return the corresponding constant, or {@code null} if does not exist
      * @throws IllegalArgumentException if some parameters were {@code null}

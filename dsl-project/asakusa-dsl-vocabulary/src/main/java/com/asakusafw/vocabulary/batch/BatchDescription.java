@@ -107,7 +107,7 @@ public abstract class BatchDescription {
             desc = ScriptWorkDescription.load(getClass(), scriptDefinition);
         } catch (IOException e) {
             throw new IllegalArgumentException(MessageFormat.format(
-                    "スクリプト \"{0}\" を読み出せませんでした ({1})",
+                    Messages.getString("BatchDescription.errorFailedToLoadScript"), //$NON-NLS-1$
                     scriptDefinition,
                     getClass().getName()),
                     e);
@@ -152,7 +152,7 @@ public abstract class BatchDescription {
     private void checkFlushed() {
         if (adding != null) {
             throw new IllegalStateException(MessageFormat.format(
-                    "{0}の依存関係が指定されていません",
+                    Messages.getString("BatchDescription.errorIncomplete"), //$NON-NLS-1$
                     adding.description));
         }
     }
@@ -176,7 +176,7 @@ public abstract class BatchDescription {
         String name = work.getDescription().getName();
         if (works.containsKey(name)) {
             throw new IllegalStateException(MessageFormat.format(
-                    "指定の処理{0}は既にこのバッチに登録されています ({1} <=> {2})",
+                    Messages.getString("BatchDescription.errorDuplicateDescription"), //$NON-NLS-1$
                     name,
                     work.getDescription(),
                     works.get(name).getDescription()));
@@ -237,7 +237,7 @@ public abstract class BatchDescription {
             for (Work p : dependencies) {
                 if (dependency.getDeclaring() != BatchDescription.this) {
                     throw new IllegalArgumentException(MessageFormat.format(
-                            "指定された{0}は現在のバッチと無関係です",
+                            Messages.getString("BatchDescription.errorInvalidDependency"), //$NON-NLS-1$
                             p));
                 }
             }

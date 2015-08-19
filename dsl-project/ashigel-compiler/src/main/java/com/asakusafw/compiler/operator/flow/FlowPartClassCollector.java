@@ -71,7 +71,7 @@ public class FlowPartClassCollector {
     public void add(Element element) {
         Precondition.checkMustNotBeNull(element, "element"); //$NON-NLS-1$
         if (element.getKind() != ElementKind.CLASS) {
-            error(element, "フロー部品はクラスとして宣言される必要があります");
+            error(element, Messages.getString("FlowPartClassCollector.errorNotClass")); //$NON-NLS-1$
             return;
         }
         TypeElement typeDecl = (TypeElement) element;
@@ -117,7 +117,7 @@ public class FlowPartClassCollector {
             }
         }
         if (inputPorts.isEmpty() && outputPorts.isEmpty()) {
-            analyzer.error("フロー部品の入出力が指定されていません。コンストラクターの引数にIn<...>, Out<...>型で指定して下さい");
+            analyzer.error(Messages.getString("FlowPartClassCollector.errorMissingIo")); //$NON-NLS-1$
         }
         if (analyzer.hasError()) {
             sawError = true;
@@ -174,7 +174,7 @@ public class FlowPartClassCollector {
                 } else {
                     analyzer.error(
                             output.getParameterPosition(),
-                            "{0}の型{1}は入力と関係のない型です",
+                            Messages.getString("FlowPartClassCollector.errorUnboundOutputType"), //$NON-NLS-1$
                             output.getName(),
                             output.getType().getRepresentation());
                 }
@@ -240,7 +240,7 @@ public class FlowPartClassCollector {
         assert type != null;
         TypeConstraint dataType = type.getTypeArgument();
         if (dataType.isModel() == false) {
-            analyzer.error(index, "モデルオブジェクト型以外は入出力に指定できません");
+            analyzer.error(index, Messages.getString("FlowPartClassCollector.errorNotModelIo")); //$NON-NLS-1$
             return null;
         }
         return new OperatorPortDeclaration(
@@ -259,7 +259,7 @@ public class FlowPartClassCollector {
         assert analyzer != null;
         assert type != null;
         if (type.isOperator()) {
-            analyzer.error(index, "演算子オブジェクトは引数に直接指定できません");
+            analyzer.error(index, Messages.getString("FlowPartClassCollector.errorOperatorParameter")); //$NON-NLS-1$
             return null;
         }
         return new OperatorPortDeclaration(
@@ -281,12 +281,12 @@ public class FlowPartClassCollector {
             }
         }
         if (elements.isEmpty()) {
-            error(type, "フロー部品クラスには明示的なpublicコンストラクターが必要です");
+            error(type, Messages.getString("FlowPartClassCollector.errorMissingPublicConstructor")); //$NON-NLS-1$
             return null;
         }
         if (elements.size() >= 2) {
             for (ExecutableElement odd : elements) {
-                error(odd, "フロー部品クラスに定義可能なpublicコンストラクタは一つまでです");
+                error(odd, Messages.getString("FlowPartClassCollector.errorExtraPublicConstructor")); //$NON-NLS-1$
             }
             return null;
         }
@@ -300,7 +300,8 @@ public class FlowPartClassCollector {
      */
     public List<FlowPartClass> collect() {
         if (sawError) {
-            throw new OperatorCompilerException(null, "フロー部品クラスの分析に失敗したため、処理を中止します");
+            throw new OperatorCompilerException(null,
+                    Messages.getString("FlowPartClassCollector.errorFailedToAnalyze")); //$NON-NLS-1$
         }
         return collected;
     }
@@ -311,18 +312,18 @@ public class FlowPartClassCollector {
         DeclaredType superType = environment.getDeclaredType(FlowDescription.class);
         if (environment.getTypeUtils().isSubtype(type.asType(), superType) == false) {
             raiseInvalidClass(type, MessageFormat.format(
-                    "フロー部品クラス{0}は{1}のサブクラスとして宣言する必要があります",
+                    Messages.getString("FlowPartClassCollector.errorInvalidSuperClass"), //$NON-NLS-1$
                     "{0}", //$NON-NLS-1$
                     FlowDescription.class.getName()));
         }
         if (type.getEnclosingElement().getKind() != ElementKind.PACKAGE) {
-            raiseInvalidClass(type, "フロー部品クラス{0}はパッケージ直下のトップレベルクラスとして宣言する必要があります");
+            raiseInvalidClass(type, Messages.getString("FlowPartClassCollector.errorEnclosedClass")); //$NON-NLS-1$
         }
         if (type.getModifiers().contains(Modifier.PUBLIC) == false) {
-            raiseInvalidClass(type, "フロー部品クラス{0}はpublicとして宣言する必要があります");
+            raiseInvalidClass(type, Messages.getString("FlowPartClassCollector.errorNotPublic")); //$NON-NLS-1$
         }
         if (type.getModifiers().contains(Modifier.ABSTRACT)) {
-            raiseInvalidClass(type, "フロー部品クラス{0}はabstractとして宣言できません");
+            raiseInvalidClass(type, Messages.getString("FlowPartClassCollector.errorAbstract")); //$NON-NLS-1$
         }
         return true;
     }
@@ -330,10 +331,10 @@ public class FlowPartClassCollector {
     private void validateConstructorModifiers(ExecutableElement ctor) {
         assert ctor != null;
         if (ctor.getThrownTypes().isEmpty() == false) {
-            error(ctor, "フロー部品クラスのコンストラクターには例外型を指定できません");
+            error(ctor, Messages.getString("FlowPartClassCollector.errorThrows")); //$NON-NLS-1$
         }
         if (ctor.getTypeParameters().isEmpty() == false) {
-            error(ctor, "フロー部品クラスのコンストラクターには型引数を指定できません");
+            error(ctor, Messages.getString("FlowPartClassCollector.errorTypeParameterConstructor")); //$NON-NLS-1$
         }
     }
 

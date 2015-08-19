@@ -107,7 +107,9 @@ public class SpiWorkflowProcessorRepository
         try {
             return type.newInstance();
         } catch (Exception e) {
-            getEnvironment().error("{0}の初期化に失敗しました", type.getName());
+            getEnvironment().error(
+                    Messages.getString("SpiWorkflowProcessorRepository.errorFailedToInitialize"), //$NON-NLS-1$
+                    type.getName());
             return null;
         }
     }

@@ -159,7 +159,8 @@ public class MapperEmitter {
                 .getDataClasses()
                 .load(getInputTypeAsReflect());
             if (dataClass == null) {
-                environment.error("{0}のデータモデルを解析できませんでした", getInputTypeAsReflect());
+                environment.error(Messages.getString("MapperEmitter.errorMissingDataClass"), //$NON-NLS-1$
+                        getInputTypeAsReflect());
                 dataClass = new DataClass.Unresolved(factory, getInputTypeAsReflect());
             }
         }

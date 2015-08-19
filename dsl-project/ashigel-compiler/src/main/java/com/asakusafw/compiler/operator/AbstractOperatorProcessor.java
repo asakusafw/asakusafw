@@ -56,7 +56,7 @@ public abstract class AbstractOperatorProcessor implements OperatorProcessor {
             env.getMessager().printMessage(
                 Diagnostic.Kind.WARNING,
                 MessageFormat.format(
-                    "{0}に@{1}の指定がありません",
+                    Messages.getString("AbstractOperatorProcessor.errorMissingAnnotation"), //$NON-NLS-1$
                     getClass().getName(),
                     TargetOperator.class.getName()));
         }

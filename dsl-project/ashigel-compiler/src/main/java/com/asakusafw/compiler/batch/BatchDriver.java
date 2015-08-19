@@ -35,11 +35,11 @@ public final class BatchDriver {
 
     static final Logger LOG = LoggerFactory.getLogger(BatchDriver.class);
 
-    private Class<? extends BatchDescription> description;
+    private final Class<? extends BatchDescription> description;
 
     private BatchClass batchClass;
 
-    private List<String> diagnostics;
+    private final List<String> diagnostics;
 
     private BatchDriver(Class<? extends BatchDescription> description) {
         Precondition.checkMustNotBeNull(description, "description"); //$NON-NLS-1$
@@ -95,17 +95,17 @@ public final class BatchDriver {
 
     private Batch findConfig() {
         if (description.getEnclosingClass() != null) {
-            error(null, "バッチクラスはトップレベルクラスとして宣言する必要があります");
+            error(null, Messages.getString("BatchDriver.errorEnclosingClass")); //$NON-NLS-1$
         }
         if (Modifier.isPublic(description.getModifiers()) == false) {
-            error(null, "バッチクラスはpublicで宣言する必要があります");
+            error(null, Messages.getString("BatchDriver.errorNotPublic")); //$NON-NLS-1$
         }
         if (Modifier.isAbstract(description.getModifiers())) {
-            error(null, "バッチクラスはabstractで宣言できません");
+            error(null, Messages.getString("BatchDriver.errorAbstract")); //$NON-NLS-1$
         }
         Batch conf = description.getAnnotation(Batch.class);
         if (conf == null) {
-            error(null, "バッチクラスには@Batch注釈の付与が必要です");
+            error(null, Messages.getString("BatchDriver.errorMissingAnnotation")); //$NON-NLS-1$
         }
         return conf;
     }
@@ -117,7 +117,7 @@ public final class BatchDriver {
         } catch (Exception e) {
             error(
                     e,
-                    "バッチクラス{0}には引数を取らないコンストラクター(またはデフォルトコンストラクター)が必要です ({1})",
+                    Messages.getString("BatchDriver.errorMissingDefaultConstructor"), //$NON-NLS-1$
                     description.getName(),
                     e.toString());
             return null;
@@ -126,13 +126,15 @@ public final class BatchDriver {
         try {
             instance = ctor.newInstance();
         } catch (Exception e) {
-            error(e, "{0}のインスタンス生成に失敗しました ({1})", description.getName(), e.toString());
+            error(e, Messages.getString("BatchDriver.errorFailedToInstantiate"), //$NON-NLS-1$
+                    description.getName(), e.toString());
             return null;
         }
         try {
             instance.start();
         } catch (Exception e) {
-            error(e, "{0}の解析に失敗しました ({1})", description.getName(), e.toString());
+            error(e, Messages.getString("BatchDriver.errorFailedToAnalyze"), //$NON-NLS-1$
+                    description.getName(), e.toString());
             return null;
         }
         return instance;

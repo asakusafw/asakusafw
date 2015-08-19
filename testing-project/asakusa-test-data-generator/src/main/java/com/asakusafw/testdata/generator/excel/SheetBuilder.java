@@ -70,7 +70,7 @@ public class SheetBuilder {
         this(workbook, model);
         if (version != WorkbookGenerator.getSpreadsheetVersion(workbook)) {
             throw new IllegalArgumentException(MessageFormat.format(
-                    "Inconsistent spreadsheet version: workbook={0}, specified={1}",
+                    Messages.getString("SheetBuilder.errorInconsistentVersion"), //$NON-NLS-1$
                     WorkbookGenerator.getSpreadsheetVersion(workbook),
                     version));
         }

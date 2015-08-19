@@ -19,6 +19,7 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -109,15 +110,21 @@ public class JobFlowTester extends TesterBase {
     }
 
     private void runTestInternal(Class<? extends FlowDescription> jobFlowDescriptionClass) throws IOException {
-        LOG.info("テストを開始しています: {}", driverContext.getCallerClass().getName());
+        LOG.info(MessageFormat.format(
+                Messages.getString("JobFlowTester.infoStart"), //$NON-NLS-1$
+                driverContext.getCallerClass().getName()));
 
         if (driverContext.isSkipValidateCondition() == false) {
-            LOG.info("テスト条件を検証しています: {}", driverContext.getCallerClass().getName());
+            LOG.info(MessageFormat.format(
+                    Messages.getString("JobFlowTester.infoVerifyCondition"), //$NON-NLS-1$
+                    driverContext.getCallerClass().getName()));
             validateTestCondition();
         }
 
         // フローコンパイラの実行
-        LOG.info("ジョブフローをコンパイルしています: {}", jobFlowDescriptionClass.getName());
+        LOG.info(MessageFormat.format(
+                Messages.getString("JobFlowTester.infoCompileDsl"), //$NON-NLS-1$
+                jobFlowDescriptionClass.getName()));
         JobFlowDriver jobFlowDriver = JobFlowDriver.analyze(jobFlowDescriptionClass);
         assertFalse(jobFlowDriver.getDiagnostics().toString(), jobFlowDriver.hasError());
 
@@ -152,22 +159,30 @@ public class JobFlowTester extends TesterBase {
         JobflowExecutor executor = new JobflowExecutor(driverContext);
         driverContext.prepareCurrentJobflow(jobflowInfo);
 
-        LOG.info("テスト環境を初期化しています: {}", driverContext.getCallerClass().getName());
+        LOG.info(MessageFormat.format(
+                Messages.getString("JobFlowTester.infoInitializeEnvironment"), //$NON-NLS-1$
+                driverContext.getCallerClass().getName()));
         executor.cleanWorkingDirectory();
         executor.cleanInputOutput(jobflowInfo);
         executor.cleanExtraResources(getExternalResources());
 
-        LOG.info("テストデータを配置しています: {}", driverContext.getCallerClass().getName());
+        LOG.info(MessageFormat.format(
+                Messages.getString("JobFlowTester.infoPrepareData"), //$NON-NLS-1$
+                driverContext.getCallerClass().getName()));
         executor.prepareExternalResources(getExternalResources());
         executor.prepareInput(jobflowInfo, inputs);
         executor.prepareOutput(jobflowInfo, outputs);
 
-        LOG.info("ジョブフローを実行しています: {}", jobFlowDescriptionClass.getName());
+        LOG.info(MessageFormat.format(
+                Messages.getString("JobFlowTester.infoExecute"), //$NON-NLS-1$
+                jobFlowDescriptionClass.getName()));
         VerifyContext verifyContext = new VerifyContext(driverContext);
         executor.runJobflow(jobflowInfo);
         verifyContext.testFinished();
 
-        LOG.info("実行結果を検証しています: {}", driverContext.getCallerClass().getName());
+        LOG.info(MessageFormat.format(
+                Messages.getString("JobFlowTester.infoVerifyResult"), //$NON-NLS-1$
+                driverContext.getCallerClass().getName()));
         executor.verify(jobflowInfo, verifyContext, outputs);
     }
 

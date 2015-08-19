@@ -94,15 +94,21 @@ public class BatchTester extends TesterBase {
     }
 
     private void runTestInternal(Class<? extends BatchDescription> batchDescriptionClass) throws IOException {
-        LOG.info("テストを開始しています: {}", driverContext.getCallerClass().getName());
+        LOG.info(MessageFormat.format(
+                Messages.getString("BatchTester.infoStart"), //$NON-NLS-1$
+                driverContext.getCallerClass().getName()));
 
         if (driverContext.isSkipValidateCondition() == false) {
-            LOG.info("テスト条件を検証しています: {}", driverContext.getCallerClass().getName());
+            LOG.info(MessageFormat.format(
+                    Messages.getString("BatchTester.infoVerifyCondition"), //$NON-NLS-1$
+                    driverContext.getCallerClass().getName()));
             validateTestCondition();
         }
 
         // 初期化
-        LOG.info("バッチをコンパイルしています: {}", batchDescriptionClass.getName());
+        LOG.info(MessageFormat.format(
+                Messages.getString("BatchTester.infoCompile"), //$NON-NLS-1$
+                batchDescriptionClass.getName()));
 
         // バッチコンパイラの実行
         BatchDriver batchDriver = BatchDriver.analyze(batchDescriptionClass);
@@ -135,7 +141,7 @@ public class BatchTester extends TesterBase {
         for (String flowId : jobFlowMap.keySet()) {
             if (batchInfo.findJobflow(flowId) == null) {
                 throw new IllegalStateException(MessageFormat.format(
-                        "ジョブフロー{1}はバッチ{0}に定義されていません",
+                        Messages.getString("BatchTester.errorMissingJobflow"), //$NON-NLS-1$
                         driverContext.getCallerClass().getName(),
                         flowId));
             }
@@ -144,7 +150,9 @@ public class BatchTester extends TesterBase {
         // 環境の検証
         driverContext.validateExecutionEnvironment();
 
-        LOG.info("テスト環境を初期化しています: {}", driverContext.getCallerClass().getName());
+        LOG.info(MessageFormat.format(
+                Messages.getString("BatchTester.infoInitializeEnvironment"), //$NON-NLS-1$
+                driverContext.getCallerClass().getName()));
         JobflowExecutor executor = new JobflowExecutor(driverContext);
         executor.cleanWorkingDirectory();
         for (JobflowInfo jobflowInfo : batchInfo.getJobflows()) {
@@ -169,14 +177,16 @@ public class BatchTester extends TesterBase {
                 executor.prepareInput(jobflowInfo, tester.inputs);
                 executor.prepareOutput(jobflowInfo, tester.outputs);
 
-                LOG.info("ジョブフローを実行しています: {}#{}",
-                        batchDescriptionClass.getName(), flowId);
+                LOG.info(MessageFormat.format(
+                        Messages.getString("BatchTester.infoExecute"), //$NON-NLS-1$
+                        batchDescriptionClass.getName(), flowId));
                 VerifyContext verifyContext = new VerifyContext(driverContext);
                 executor.runJobflow(jobflowInfo);
                 verifyContext.testFinished();
 
-                LOG.info("ジョブフローの実行結果を検証しています: {}#{}",
-                        batchDescriptionClass.getName(), flowId);
+                LOG.info(MessageFormat.format(
+                        Messages.getString("BatchTester.infoVerifyResult"), //$NON-NLS-1$
+                        batchDescriptionClass.getName(), flowId));
                 executor.verify(jobflowInfo, verifyContext, tester.outputs);
             }
         }

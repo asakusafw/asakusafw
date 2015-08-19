@@ -42,7 +42,7 @@ public final class OperatorProcessorUtil {
         Set<String> saw = Sets.create();
         for (String name : names) {
             if (saw.contains(name)) {
-                analyzer.error("ポート名\"{0}\"が重複しています", name);
+                analyzer.error(Messages.getString("OperatorProcessorUtil.errorConflictPortName"), name); //$NON-NLS-1$
                 saw.remove(name);
             } else {
                 saw.add(name);
@@ -54,7 +54,7 @@ public final class OperatorProcessorUtil {
     private static void checkName(ExecutableAnalyzer analyzer, String name) {
         assert name != null;
         if (VALID_NAME.matcher(name).matches() == false) {
-            analyzer.error("ポート名に\"{0}\"は利用できません", name);
+            analyzer.error(Messages.getString("OperatorProcessorUtil.errorInvalidPortName"), name); //$NON-NLS-1$
         }
     }
 

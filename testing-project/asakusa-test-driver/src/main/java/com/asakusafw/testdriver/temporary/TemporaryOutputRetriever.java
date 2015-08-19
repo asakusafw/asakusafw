@@ -77,10 +77,12 @@ public class TemporaryOutputRetriever extends BaseExporterRetriever<TemporaryOut
         Path output = path.getParent();
         Path target;
         if (output == null) {
-            LOG.warn("Skipped deleting output directory because it is a base directory: {}", path);
+            LOG.warn(MessageFormat.format(
+                    Messages.getString("TemporaryOutputRetriever.warnDeleteBaseDirectory"), //$NON-NLS-1$
+                    path));
             target = fs.makeQualified(path);
         } else {
-            LOG.debug("Output directory will be deleted: {}", output); //$NON-NLS-1$
+            LOG.debug("output directory will be deleted: {}", output); //$NON-NLS-1$
             target = fs.makeQualified(output);
         }
         TemporaryInputPreparator.delete(fs, target);
@@ -125,7 +127,7 @@ public class TemporaryOutputRetriever extends BaseExporterRetriever<TemporaryOut
             TemporaryOutputDescription description) throws IOException {
         if (definition.getModelClass() != description.getModelType()) {
             throw new IOException(MessageFormat.format(
-                    "Invalid output type: expected={0}, actual={1} ({2})",
+                    Messages.getString("TemporaryOutputRetriever.errorInconsistentDataType"), //$NON-NLS-1$
                     definition.getModelClass().getName(),
                     description.getModelType().getName(),
                     description));

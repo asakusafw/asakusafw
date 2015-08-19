@@ -128,13 +128,15 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
     private boolean validateInput(InputDescription input) {
         boolean valid = true;
         DirectFileInputDescription desc = extract(input);
-        valid &= checkBasePath(desc.getClass(), desc.getBasePath(), "入力ベースパス");
+        valid &= checkBasePath(
+                desc.getClass(), desc.getBasePath(),
+                Messages.getString("DirectFileIoProcessor.nameInputBasePath")); //$NON-NLS-1$
         String pattern = desc.getResourcePattern();
         try {
             FilePattern.compile(pattern);
         } catch (IllegalArgumentException e) {
             getEnvironment().error(
-                    "入力リソース名のパターンが不正です ({1}): {0}",
+                    Messages.getString("DirectFileIoProcessor.errorInvalidInputResourcePattern"), //$NON-NLS-1$
                     e.getMessage(),
                     desc.getClass().getName());
             valid = false;
@@ -146,7 +148,9 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
     private boolean validateOutput(OutputDescription output) {
         boolean valid = true;
         DirectFileOutputDescription desc = extract(output);
-        valid &= checkBasePath(desc.getClass(), desc.getBasePath(), "出力ベースパス");
+        valid &= checkBasePath(
+                desc.getClass(), desc.getBasePath(),
+                Messages.getString("DirectFileIoProcessor.nameOutputBasePath")); //$NON-NLS-1$
         DataClass dataType = getEnvironment().getDataClasses().load(desc.getModelType());
         String pattern = desc.getResourcePattern();
         List<CompiledResourcePattern> compiledPattern;
@@ -154,7 +158,7 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
             compiledPattern = OutputPattern.compileResourcePattern(pattern, dataType);
         } catch (IllegalArgumentException e) {
             getEnvironment().error(
-                    "出力リソース名のパターンが不正です ({1}) [{0}]",
+                    Messages.getString("DirectFileIoProcessor.errorInvalidOutputResourcePattern"), //$NON-NLS-1$
                     e.getMessage(),
                     desc.getClass().getName());
             valid = false;
@@ -166,7 +170,7 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
                 FilePattern.compile(patternString);
             } catch (IllegalArgumentException e) {
                 getEnvironment().error(
-                        "削除するリソース名のパターン(\"{2}\")が不正です ({1}) [{0}]",
+                        Messages.getString("DirectFileIoProcessor.errorInvalidDeletePattern"), //$NON-NLS-1$
                         e.getMessage(),
                         desc.getClass().getName(),
                         patternString);
@@ -179,7 +183,7 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
             OutputPattern.compileOrder(orders, dataType);
         } catch (IllegalArgumentException e) {
             getEnvironment().error(
-                    "出力順序の指定が不正です ({1}) [{0}]",
+                    Messages.getString("DirectFileIoProcessor.errorInvalidOrder"), //$NON-NLS-1$
                     e.getMessage(),
                     desc.getClass().getName());
             valid = false;
@@ -189,8 +193,7 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
         if (kinds.contains(OutputPattern.SourceKind.ENVIRONMENT)) {
             if (kinds.contains(OutputPattern.SourceKind.PROPERTY)) {
                 getEnvironment().error(
-                        "出力リソース名にワイルドカードを含む場合、プロパティ ('{'name'}') は指定できません"
-                        + " ({1}.{2}()): {0}",
+                        Messages.getString("DirectFileIoProcessor.errorWildcardOutputWithPlaceholder"), //$NON-NLS-1$
                         pattern,
                         desc.getClass().getName(),
                         METHOD_RESOURCE_PATTERN);
@@ -198,8 +201,7 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
             }
             if (kinds.contains(OutputPattern.SourceKind.RANDOM)) {
                 getEnvironment().error(
-                        "出力リソース名にワイルドカードを含む場合、ランダム ([m..n]) は指定できません"
-                        + " ({1}.{2}()): {0}",
+                        Messages.getString("DirectFileIoProcessor.errorWildcardOutputWithRandomNumber"), //$NON-NLS-1$
                         pattern,
                         desc.getClass().getName(),
                         METHOD_RESOURCE_PATTERN);
@@ -207,8 +209,7 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
             }
             if (orders.isEmpty() == false) {
                 getEnvironment().error(
-                        "出力リソース名にワイルドカードを含む場合、出力順序は指定できません"
-                        + " ({1}.{2}()): {0}",
+                        Messages.getString("DirectFileIoProcessor.errorWildcardOutputWithOrder"), //$NON-NLS-1$
                         pattern,
                         desc.getClass().getName(),
                         METHOD_ORDER);
@@ -226,7 +227,7 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
             FilePattern pattern = FilePattern.compile(basePath);
             if (pattern.containsTraverse()) {
                 getEnvironment().error(
-                        "{0}にワイルドカード (**) を利用できません: {1}",
+                        Messages.getString("DirectFileIoProcessor.errorInvalidBasePathTraverse"), //$NON-NLS-1$
                         name,
                         theClass.getName());
                 valid = false;
@@ -235,7 +236,7 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
             for (PatternElementKind kind : kinds) {
                 if (INVALID_BASE_PATH_KIND.contains(kind)) {
                     getEnvironment().error(
-                            "{0}に \"{1}\" を利用できません: {2}",
+                            Messages.getString("DirectFileIoProcessor.errorInvalidBasePathToken"), //$NON-NLS-1$
                             name,
                             kind.getSymbol(),
                             theClass.getName());
@@ -244,7 +245,7 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
             }
         } catch (IllegalArgumentException e) {
             getEnvironment().error(
-                    "{0}が不正です ({2}): {1}",
+                    Messages.getString("DirectFileIoProcessor.errorInvalidBasePathUnknown"), //$NON-NLS-1$
                     name,
                     e.getMessage(),
                     theClass.getName());
@@ -273,7 +274,7 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
                 }
                 DirectFileInputDescription other = extract(entry.getValue());
                 getEnvironment().error(
-                        "入出力のベースパスが衝突しています: {0}[{1}] -> {2}[{3}]",
+                        Messages.getString("DirectFileIoProcessor.errorConflictInputOutputBasePath"), //$NON-NLS-1$
                         desc.getClass().getName(),
                         desc.getBasePath(),
                         other.getClass().getName(),
@@ -283,7 +284,7 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
             if (outputPaths.containsKey(path)) {
                 DirectFileOutputDescription other = extract(outputPaths.get(path));
                 getEnvironment().error(
-                        "2つの出力のベースパスが重複しています: {0}[{1}] <-> {2}[{3}]",
+                        Messages.getString("DirectFileIoProcessor.errorDuplicateOutputBasePath"), //$NON-NLS-1$
                         desc.getClass().getName(),
                         desc.getBasePath(),
                         other.getClass().getName(),
@@ -302,7 +303,7 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
                 }
                 DirectFileOutputDescription other = extract(entry.getValue());
                 getEnvironment().error(
-                        "2つの出力のベースパスが衝突しています: {0}[{1}] -> {2}[{3}]",
+                        Messages.getString("DirectFileIoProcessor.errorConflictOutputBasePath"), //$NON-NLS-1$
                         desc.getClass().getName(),
                         desc.getBasePath(),
                         other.getClass().getName(),
@@ -339,7 +340,7 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
         assert desc != null;
         if (format == null) {
             getEnvironment().error(
-                    "データフォーマットが指定されていません: {0}",
+                    Messages.getString("DirectFileIoProcessor.errorMissingDataFormat"), //$NON-NLS-1$
                     desc.getName());
             return false;
         }
@@ -348,14 +349,14 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
             formatObject = format.getConstructor().newInstance();
         } catch (Exception e) {
             getEnvironment().error(
-                    "データフォーマット\"{1}\"の生成に失敗しました: {0}",
+                    Messages.getString("DirectFileIoProcessor.errorFailedToInstantiateDataFormat"), //$NON-NLS-1$
                     desc.getName(),
                     format.getName());
             return false;
         }
         if (formatObject.getSupportedType().isAssignableFrom(model) == false) {
             getEnvironment().error(
-                    "データフォーマット\"{2}\"はデータモデル\"{1}\"をサポートしていません: {0}",
+                    Messages.getString("DirectFileIoProcessor.errorIncompatibleDataFormatType"), //$NON-NLS-1$
                     desc.getName(),
                     model.getName(),
                     format.getName());
@@ -396,7 +397,7 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
                 attributes.put(DirectDataSourceConstants.KEY_FILTER_CLASS, desc.getFilter().getName());
             } else {
                 LOG.info(MessageFormat.format(
-                        "Direct I/O input filter is disabled in current setting: {0} ({1})",
+                        Messages.getString("DirectFileIoProcessor.infoDisabledInputFilter"), //$NON-NLS-1$
                         desc.getClass().getName(),
                         desc.getFilter().getName()));
             }

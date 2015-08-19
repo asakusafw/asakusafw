@@ -77,7 +77,7 @@ public abstract class DriverElementBase {
             sourceUri = toUri(sourcePath);
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException(MessageFormat.format(
-                    "invalid URI: {0}",
+                    Messages.getString("DriverElementBase.errorInvalidUri"), //$NON-NLS-1$
                     sourcePath), e);
         }
         return getTestTools().getDataModelSourceFactory(sourceUri);
@@ -243,7 +243,7 @@ public abstract class DriverElementBase {
         URL url = getCallerClass().getResource(uri.getPath());
         if (url == null) {
             throw new IllegalArgumentException(MessageFormat.format(
-                    "指定されたリソースが見つかりません: {0} (検索クラス: {1})",
+                    Messages.getString("DriverElementBase.errorMissingResource"), //$NON-NLS-1$
                     path,
                     getCallerClass().getName()));
         }

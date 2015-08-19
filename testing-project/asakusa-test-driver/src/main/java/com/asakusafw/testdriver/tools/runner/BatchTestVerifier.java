@@ -53,25 +53,30 @@ public class BatchTestVerifier extends BatchTestTool {
 
     private static final Options OPTIONS;
     static {
-        OPT_EXPORTER = new Option(null, "exporter", true, "exporter description class"); //$NON-NLS-1$ //$NON-NLS-2$
+        OPT_EXPORTER = new Option(null, "exporter", true, //$NON-NLS-1$
+                Messages.getString("BatchTestVerifier.optExporter")); //$NON-NLS-1$
         OPT_EXPORTER.setArgName("exporter class name"); //$NON-NLS-1$
         OPT_EXPORTER.setRequired(true);
 
-        OPT_DATA = new Option(null, "data", true, "expected data path"); //$NON-NLS-1$ //$NON-NLS-2$
+        OPT_DATA = new Option(null, "data", true, //$NON-NLS-1$
+                Messages.getString("BatchTestVerifier.optData")); //$NON-NLS-1$
         OPT_DATA.setArgName("data URI"); //$NON-NLS-1$
         OPT_DATA.setRequired(true);
 
-        OPT_RULE = new Option(null, "rule", true, "verification rule path"); //$NON-NLS-1$ //$NON-NLS-2$
+        OPT_RULE = new Option(null, "rule", true, //$NON-NLS-1$
+                Messages.getString("BatchTestVerifier.optRule")); //$NON-NLS-1$
         OPT_RULE.setArgName("rule URI"); //$NON-NLS-1$
         OPT_RULE.setRequired(false);
 
-        OPT_ARGUMENT = new Option("A", "argument", true, "batch argument"); //$NON-NLS-1$ //$NON-NLS-2$
+        OPT_ARGUMENT = new Option("A", "argument", true, //$NON-NLS-1$ //$NON-NLS-2$
+                Messages.getString("BatchTestVerifier.optArgument")); //$NON-NLS-1$
         OPT_ARGUMENT.setArgs(2);
         OPT_ARGUMENT.setValueSeparator('=');
         OPT_ARGUMENT.setArgName("name=value"); //$NON-NLS-1$
         OPT_ARGUMENT.setRequired(false);
 
-        OPT_PROPERTY = new Option("D", "property", true, "hadoop property"); //$NON-NLS-1$ //$NON-NLS-2$
+        OPT_PROPERTY = new Option("D", "property", true, //$NON-NLS-1$ //$NON-NLS-2$
+                Messages.getString("BatchTestVerifier.optProperty")); //$NON-NLS-1$
         OPT_PROPERTY.setArgs(2);
         OPT_PROPERTY.setValueSeparator('=');
         OPT_PROPERTY.setArgName("name=value"); //$NON-NLS-1$
@@ -123,7 +128,7 @@ public class BatchTestVerifier extends BatchTestTool {
                     OPTIONS,
                     true);
             LOG.error(MessageFormat.format(
-                    "Failed to parse the program arguments: {0}",
+                    Messages.getString("BatchTestVerifier.errorInvalidArgument"), //$NON-NLS-1$
                     Arrays.toString(args)), e);
             return 1;
         }
@@ -133,7 +138,7 @@ public class BatchTestVerifier extends BatchTestTool {
                     conf.exporter,
                     conf.data, conf.rule);
             if (diffList.isEmpty()) {
-                LOG.info("successfully verified");
+                LOG.info(Messages.getString("BatchTestVerifier.infoSuccess")); //$NON-NLS-1$
                 return 0;
             } else {
                 for (Difference diff : diffList) {
@@ -143,7 +148,7 @@ public class BatchTestVerifier extends BatchTestTool {
             }
         } catch (Exception e) {
             LOG.error(MessageFormat.format(
-                    "failed to verify output: {0}",
+                    Messages.getString("BatchTestVerifier.errorFailedToVerifyResult"), //$NON-NLS-1$
                     Arrays.toString(args)), e);
             return 1;
         }
@@ -160,7 +165,7 @@ public class BatchTestVerifier extends BatchTestTool {
             conf.exporter = Class.forName(exporterClass).asSubclass(ExporterDescription.class).newInstance();
         } catch (Exception e) {
             throw new IllegalArgumentException(MessageFormat.format(
-                    "failed to instantiate exporter description: {0}",
+                    Messages.getString("BatchTestVerifier.errorInvalidExporterDescription"), //$NON-NLS-1$
                     exporterClass), e);
         }
         conf.data = cmd.getOptionValue(OPT_DATA.getLongOpt());

@@ -28,7 +28,7 @@ import com.asakusafw.utils.collections.Lists;
  */
 public class SlotResolver {
 
-    private FlowCompilingEnvironment environment;
+    private final FlowCompilingEnvironment environment;
 
     /**
      * インスタンスを生成する。
@@ -63,12 +63,13 @@ public class SlotResolver {
         List<Property> sortProperties = Lists.create();
         if (valueClass == null) {
             valueClass = new DataClass.Unresolved(environment.getModelFactory(), slot.getType());
-            environment.error("型{0}をロードできませんでした", slot.getType());
+            environment.error(Messages.getString("SlotResolver.errorMissingDataClass"), slot.getType()); //$NON-NLS-1$
         } else {
             for (String name : slot.getSortPropertyNames()) {
                 Property property = valueClass.findProperty(name);
                 if (property == null) {
-                    environment.error("型{0}のプロパティをロードできませんでした", slot.getType(), name);
+                    environment.error(Messages.getString("SlotResolver.errorMissingProperty"), //$NON-NLS-1$
+                            slot.getType(), name);
                 } else {
                     sortProperties.add(property);
                 }

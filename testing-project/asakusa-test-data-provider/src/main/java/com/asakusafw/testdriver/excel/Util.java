@@ -65,7 +65,7 @@ final class Util {
         Matcher matcher = FRAGMENT.matcher(fragment);
         if (matcher.matches() == false) {
             LOG.info(MessageFormat.format(
-                    "Invalid fragment: {0}",
+                    Messages.getString("Util.infoUnsupportedUriFragment"), //$NON-NLS-1$
                     source));
             return null;
         }
@@ -80,7 +80,7 @@ final class Util {
             bin.close();
         } catch (IOException e) {
             throw new IOException(MessageFormat.format(
-                    "Excelファイルの展開に失敗しました: {0}",
+                    Messages.getString("Util.errorFailedToOpenWorkbook"), //$NON-NLS-1$
                     source));
         } finally {
             in.close();
@@ -95,7 +95,7 @@ final class Util {
                 return sheet;
             } catch (RuntimeException e) {
                 throw new IOException(MessageFormat.format(
-                        "Excelシートの展開に失敗しました: {0} (シート{1}番がありません)",
+                        Messages.getString("Util.errorMissingSheetByIndex"), //$NON-NLS-1$
                         source,
                         sheetNumber), e);
             }
@@ -106,7 +106,7 @@ final class Util {
             Sheet sheet = book.getSheet(sheetName);
             if (sheet == null) {
                 throw new IOException(MessageFormat.format(
-                        "Excelシートの展開に失敗しました: {0} (シート\"{1}\"がありません)",
+                        Messages.getString("Util.errorMissingSheetByName"), //$NON-NLS-1$
                         source,
                         sheetName));
             }

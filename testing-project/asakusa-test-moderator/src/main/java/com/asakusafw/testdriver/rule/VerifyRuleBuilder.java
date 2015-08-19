@@ -91,7 +91,7 @@ public class VerifyRuleBuilder {
         PropertyType type = definition.getType(propertyName);
         if (type == null) {
             throw new IllegalArgumentException(MessageFormat.format(
-                    "\"{0}\"にプロパティ\"{1}\"は定義されていません",
+                    Messages.getString("VerifyRuleBuilder.errorUndefinedProperty"), //$NON-NLS-1$
                     definition.getModelClass().getName(),
                     propertyName));
         }

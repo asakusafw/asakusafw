@@ -207,7 +207,8 @@ public class ConfigurationFactory extends ConfigurationProvider {
                     return explicitConfigurationPath.toURI().toURL();
                 } catch (MalformedURLException e) {
                     LOG.error(MessageFormat.format(
-                            "Hadoop configuration path is not valid: {0}",
+                            Messages.getString(
+                                    "ConfigurationFactory.errorInvalidHadoopConfigurationPath"), //$NON-NLS-1$
                             explicitConfigurationPath), e);
                 }
             }

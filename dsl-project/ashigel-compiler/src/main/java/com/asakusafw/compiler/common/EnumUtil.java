@@ -48,7 +48,7 @@ public final class EnumUtil {
         Enum<?>[] constants = (Enum<?>[]) enumType.getEnumConstants();
         if (constants == null) {
             throw new IllegalArgumentException(MessageFormat.format(
-                    "Cannot extract constants from {0}",
+                    "Cannot extract constants from {0}", //$NON-NLS-1$
                     enumType));
         }
 
@@ -63,7 +63,7 @@ public final class EnumUtil {
             FlowElementPortDescription port = portNames.get(name);
             if (port == null) {
                 throw new IllegalStateException(MessageFormat.format(
-                        "Cannot extract {0} (in {1})",
+                        "Cannot extract {0} (in {1})", //$NON-NLS-1$
                         constant.name(),
                         portNames));
             }
@@ -71,7 +71,7 @@ public final class EnumUtil {
         }
         if (ports.size() > results.size()) {
             throw new IllegalArgumentException(MessageFormat.format(
-                    "Cannot map constants to ports ({0} -> {1})",
+                    "Cannot map constants to ports ({0} -> {1})", //$NON-NLS-1$
                     Arrays.asList(constants),
                     ports));
         }

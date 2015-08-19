@@ -56,7 +56,7 @@ public final class JsonObjectDriver extends DataModelScanner<JsonObject, IOExcep
             JsonElement element) throws IOException {
         if ((element instanceof JsonObject) == false) {
             throw new IOException(MessageFormat.format(
-                    "Each JSON value must be just a object: {0}",
+                    Messages.getString("JsonObjectDriver.errorInvalidJsonValue"), //$NON-NLS-1$
                     element));
         }
         JsonObjectDriver driver = new JsonObjectDriver(definition.newReflection());
@@ -64,7 +64,7 @@ public final class JsonObjectDriver extends DataModelScanner<JsonObject, IOExcep
             driver.scan(definition, (JsonObject) element);
         } catch (RuntimeException e) {
             throw new IOException(MessageFormat.format(
-                    "Failed to convert object: {0}",
+                    Messages.getString("JsonObjectDriver.errorFailedToConvert"), //$NON-NLS-1$
                     element), e);
         }
         return driver.builder.build();
@@ -192,7 +192,7 @@ public final class JsonObjectDriver extends DataModelScanner<JsonObject, IOExcep
         Matcher matcher = DATE.matcher(string);
         if (matcher.matches() == false) {
             throw new IOException(MessageFormat.format(
-                    "invalid date property \"{0}\", must be \"{2}\" form, but was \"{1}\"",
+                    Messages.getString("JsonObjectDriver.errorInvalidDateFormat"), //$NON-NLS-1$
                     name,
                     string,
                     "yyyy-mm-dd")); //$NON-NLS-1$
@@ -216,7 +216,7 @@ public final class JsonObjectDriver extends DataModelScanner<JsonObject, IOExcep
         Matcher matcher = TIME.matcher(string);
         if (matcher.matches() == false) {
             throw new IOException(MessageFormat.format(
-                    "invalid time property \"{0}\", must be \"{2}\" form, but was \"{1}\"",
+                    Messages.getString("JsonObjectDriver.errorInvalidTimeFormat"), //$NON-NLS-1$
                     name,
                     string,
                     "hh:mm:ss")); //$NON-NLS-1$
@@ -241,7 +241,7 @@ public final class JsonObjectDriver extends DataModelScanner<JsonObject, IOExcep
         Matcher matcher = DATETIME.matcher(string);
         if (matcher.matches() == false) {
             throw new IOException(MessageFormat.format(
-                    "invalid time property \"{0}\", must be \"{2}\" form, but was \"{1}\"",
+                    Messages.getString("JsonObjectDriver.errorInvalidDateTimeFormat"), //$NON-NLS-1$
                     name,
                     string,
                     "yyyy-mm-dd hh:mm:ss")); //$NON-NLS-1$

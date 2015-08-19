@@ -149,7 +149,7 @@ public abstract class DriverInputBase<T> extends DriverElementBase {
             return tools.toDataModelDefinition(modelType);
         } catch (IOException e) {
             throw new IllegalStateException(MessageFormat.format(
-                    "Invalid data model type in \"{0}\": {1}",
+                    Messages.getString("DriverInputBase.errorInvalidDataModel"), //$NON-NLS-1$
                     name,
                     modelType.getName()), e);
         }

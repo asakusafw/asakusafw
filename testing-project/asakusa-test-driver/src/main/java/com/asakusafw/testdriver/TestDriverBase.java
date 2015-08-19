@@ -162,9 +162,10 @@ public abstract class TestDriverBase extends DriverElementBase {
      * @since 0.7.3
      */
     public void setExtraCompilerOption(String name, String value) {
-        if (name.startsWith("X")) {
+        if (name.startsWith(FlowCompilerOptions.PREFIX_EXTRA_OPTION)) {
             throw new IllegalArgumentException(MessageFormat.format(
-                    "オプション名の先頭に \"X\" を指定できません: {0}",
+                    Messages.getString("TestDriverBase.errorInvalidPrefix"), //$NON-NLS-1$
+                    FlowCompilerOptions.PREFIX_EXTRA_OPTION,
                     name));
         }
         driverContext.getOptions().putExtraAttribute(name, value);
@@ -281,7 +282,7 @@ public abstract class TestDriverBase extends DriverElementBase {
     }
 
     /**
-     * Adds a new tracepoint to the target operator input.
+     * Adds a new trace-point to the target operator input.
      * @param operatorClass target operator class
      * @param methodName target operator method name
      * @param portName target operator input port name
@@ -306,7 +307,7 @@ public abstract class TestDriverBase extends DriverElementBase {
     }
 
     /**
-     * Adds a new tracepoint to the target operator output.
+     * Adds a new trace-point to the target operator output.
      * @param operatorClass target operator class
      * @param methodName target operator method name
      * @param portName target operator input port name
@@ -331,7 +332,7 @@ public abstract class TestDriverBase extends DriverElementBase {
     }
 
     /**
-     * Adds a new tracepoint to the target operator input.
+     * Adds a new trace-point to the target operator input.
      * @param flowpartClass target flow-part class
      * @param portName target operator input port name
      * @throws IllegalArgumentException if some parameters were {@code null}
@@ -344,11 +345,7 @@ public abstract class TestDriverBase extends DriverElementBase {
         if (portName == null) {
             throw new IllegalArgumentException("portName must not be null"); //$NON-NLS-1$
         }
-        if (flowpartClass.isAnnotationPresent(FlowPart.class) == false) {
-            throw new IllegalArgumentException(MessageFormat.format(
-                    "The \"flowpartClass\" must be a flow-part: {0}",
-                    flowpartClass.getName()));
-        }
+        checkFlowpart(flowpartClass);
         TraceSetting setting = createTraceSetting(
                 flowpartClass, FLOW_OPERATOR_FACTORY_METHOD_NAME,
                 PortKind.INPUT, portName,
@@ -356,8 +353,16 @@ public abstract class TestDriverBase extends DriverElementBase {
         appendTrace(setting);
     }
 
+    private void checkFlowpart(Class<? extends FlowDescription> flowpartClass) {
+        if (flowpartClass.isAnnotationPresent(FlowPart.class) == false) {
+            throw new IllegalArgumentException(MessageFormat.format(
+                    Messages.getString("TestDriverBase.errorInvalidFlowpartClass"), //$NON-NLS-1$
+                    flowpartClass.getName()));
+        }
+    }
+
     /**
-     * Adds a new tracepoint to the target operator output.
+     * Adds a new trace-point to the target operator output.
      * @param flowpartClass target flow-part class
      * @param portName target operator input port name
      * @throws IllegalArgumentException if some parameters were {@code null}
@@ -370,11 +375,7 @@ public abstract class TestDriverBase extends DriverElementBase {
         if (portName == null) {
             throw new IllegalArgumentException("portName must not be null"); //$NON-NLS-1$
         }
-        if (flowpartClass.isAnnotationPresent(FlowPart.class) == false) {
-            throw new IllegalArgumentException(MessageFormat.format(
-                    "The \"flowpartClass\" must be a flow-part: {0}",
-                    flowpartClass.getName()));
-        }
+        checkFlowpart(flowpartClass);
         TraceSetting setting = createTraceSetting(
                 flowpartClass, FLOW_OPERATOR_FACTORY_METHOD_NAME,
                 PortKind.OUTPUT, portName,

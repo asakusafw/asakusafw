@@ -130,7 +130,7 @@ public class BatchCompilingEnvironment {
         File parent = file.getParentFile();
         if (parent.mkdirs() == false && parent.isDirectory() == false) {
             throw new IOException(MessageFormat.format(
-                    "Failed to create output directory {0}",
+                    Messages.getString("BatchCompilingEnvironment.errorFailedToCreateParentDirectory"), //$NON-NLS-1$
                     parent));
         }
         return new FileOutputStream(file);

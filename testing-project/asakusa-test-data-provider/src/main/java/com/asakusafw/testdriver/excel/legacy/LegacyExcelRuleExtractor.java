@@ -56,12 +56,12 @@ public class LegacyExcelRuleExtractor implements ExcelRuleExtractor {
         ConditionSheetItem item = ConditionSheetItem.ROW_MATCHING_CONDITION;
         String cell = getStringCell(sheet, item.getRow(), item.getCol() + 1);
         if (cell == null) {
-            cell = "";
+            cell = ""; //$NON-NLS-1$
         }
         RowMatchingCondition condition = RowMatchingCondition.getConditonByJapanseName(cell);
         if (condition == null) {
             throw new FormatException(MessageFormat.format(
-                    "{0}の値が不正です: \"{1}\" {2}",
+                    Messages.getString("LegacyExcelRuleExtractor.errorInvalidRowMatchingCondition"), //$NON-NLS-1$
                     ConditionSheetItem.ROW_MATCHING_CONDITION.getName(),
                     cell,
                     Arrays.asList(RowMatchingCondition.getJapaneseNames())));
@@ -110,7 +110,7 @@ public class LegacyExcelRuleExtractor implements ExcelRuleExtractor {
             return null;
         } else if (cell.getCellType() != Cell.CELL_TYPE_STRING) {
             throw new FormatException(MessageFormat.format(
-                    "{0}は文字列で指定してください: ({1}, {2})",
+                    Messages.getString("LegacyExcelRuleExtractor.errorInvalidNameType"), //$NON-NLS-1$
                     ConditionSheetItem.COLUMN_NAME.getName(),
                     cell.getRowIndex() + 1,
                     cell.getColumnIndex() + 1));
@@ -134,7 +134,7 @@ public class LegacyExcelRuleExtractor implements ExcelRuleExtractor {
         ColumnMatchingCondition condition = ColumnMatchingCondition.getConditonByJapanseName(cell);
         if (condition == null) {
             throw new FormatException(MessageFormat.format(
-                    "{0}の値が不正です: \"{1}\" (row={2}, col={3}) {2}",
+                    Messages.getString("LegacyExcelRuleExtractor.errorInvalidColumnMatchingCondition"), //$NON-NLS-1$
                     ConditionSheetItem.MATCHING_CONDITION.getName(),
                     cell,
                     row.getRowNum() + 1,
@@ -172,7 +172,7 @@ public class LegacyExcelRuleExtractor implements ExcelRuleExtractor {
         NullValueCondition condition = NullValueCondition.getConditonByJapanseName(cell);
         if (condition == null) {
             throw new FormatException(MessageFormat.format(
-                    "{0}の値が不正です: \"{1}\" (row={2}, col={3}) {2}",
+                    Messages.getString("LegacyExcelRuleExtractor.errorInvalidNullValueCondition"), //$NON-NLS-1$
                     ConditionSheetItem.NULL_VALUE_CONDITION.getName(),
                     cell,
                     row.getRowNum() + 1,
@@ -198,13 +198,13 @@ public class LegacyExcelRuleExtractor implements ExcelRuleExtractor {
     @Override
     public String extractComments(Row row) throws FormatException {
         String value = getStringCell(row, ConditionSheetItem.COLUMN_COMMENT);
-        return value == null ? "" : value;
+        return value == null ? "" : value; //$NON-NLS-1$
     }
 
     @Override
     public String extractOptions(Row row) throws FormatException {
         // no such field
-        return "";
+        return ""; //$NON-NLS-1$
     }
 
     private String getStringCell(Row row, ConditionSheetItem item) throws FormatException {
@@ -212,12 +212,12 @@ public class LegacyExcelRuleExtractor implements ExcelRuleExtractor {
         assert item != null;
         Cell cell = row.getCell(item.getCol());
         if (cell == null || cell.getCellType() == Cell.CELL_TYPE_BLANK) {
-            return "";
+            return ""; //$NON-NLS-1$
         } else if (cell.getCellType() == Cell.CELL_TYPE_STRING) {
             return cell.getStringCellValue();
         }
         throw new FormatException(MessageFormat.format(
-                "{0}は文字列で指定してください: (row={1}, col={2})",
+                Messages.getString("LegacyExcelRuleExtractor.errorInvalidStringCell"), //$NON-NLS-1$
                 item.getName(),
                 cell.getRowIndex() + 1,
                 cell.getColumnIndex() + 1));

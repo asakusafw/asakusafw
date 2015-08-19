@@ -115,7 +115,7 @@ public class CommandLineUtilTest {
         buf.append(File.pathSeparatorChar);
         buf.append(c);
         List<File> result = canonicalize(CommandLineUtil.parseFileList(buf.toString()));
-        assertThat(result, is(Arrays.asList(a, b, c)));
+        assertThat(result, is(canonicalize(a, b, c)));
     }
 
     /**
@@ -124,7 +124,7 @@ public class CommandLineUtilTest {
     @Test
     public void parseFileList_null() {
         List<File> result = canonicalize(CommandLineUtil.parseFileList(null));
-        assertThat(result, is(Arrays.<File>asList()));
+        assertThat(result, is(canonicalize()));
     }
 
     /**
@@ -133,7 +133,11 @@ public class CommandLineUtilTest {
     @Test
     public void parseFileList_empty() {
         List<File> result = canonicalize(CommandLineUtil.parseFileList(""));
-        assertThat(result, is(Arrays.<File>asList()));
+        assertThat(result, is(canonicalize()));
+    }
+
+    private List<File> canonicalize(File... files) {
+        return canonicalize(Arrays.asList(files));
     }
 
     private List<File> canonicalize(List<File> list) {

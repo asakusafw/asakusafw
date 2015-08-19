@@ -449,7 +449,7 @@ public class StageAnalyzer {
         FlowElementProcessor.Repository repo = environment.getProcessors();
         FlowElementProcessor processor = repo.findProcessor(description);
         if (processor == null) {
-            error("{0}に対するプロセッサが見つかりません", description);
+            error(Messages.getString("StageAnalyzer.errorMissingProcessor"), description); //$NON-NLS-1$
             return false;
         }
         return processor.getKind() == Kind.LINE_END
@@ -465,7 +465,7 @@ public class StageAnalyzer {
         }
         FlowElementProcessor processor = repo.findProcessor(description);
         if (processor == null) {
-            error("{0}に対するプロセッサが見つかりません", description);
+            error(Messages.getString("StageAnalyzer.errorMissingProcessor"), description); //$NON-NLS-1$
             return new Factor(element, repo.getEmptyProcessor());
         }
         return new Factor(element, processor);

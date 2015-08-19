@@ -66,7 +66,7 @@ public class DefaultExcelRuleExtractor implements ExcelRuleExtractor {
         TotalConditionKind kind = TotalConditionKind.fromOption(text);
         if (kind == null) {
             throw new FormatException(MessageFormat.format(
-                    "{0}の値が不正です: \"{1}\" 期待値:{2}",
+                    Messages.getString("DefaultExcelRuleExtractor.errorInvalidTotalCondition"), //$NON-NLS-1$
                     RuleSheetFormat.TOTAL_CONDITION.getTitle(),
                     text,
                     Arrays.asList(TotalConditionKind.getOptions())));
@@ -106,7 +106,7 @@ public class DefaultExcelRuleExtractor implements ExcelRuleExtractor {
             return null;
         } else if (cell.getCellType() != Cell.CELL_TYPE_STRING) {
             throw new FormatException(MessageFormat.format(
-                    "{0}は文字列で指定してください: ({1}, {2})",
+                    Messages.getString("DefaultExcelRuleExtractor.errorInvalidNameType"), //$NON-NLS-1$
                     RuleSheetFormat.PROPERTY_NAME.getTitle(),
                     cell.getRowIndex() + 1,
                     cell.getColumnIndex() + 1));
@@ -127,7 +127,7 @@ public class DefaultExcelRuleExtractor implements ExcelRuleExtractor {
         ValueConditionKind condition = ValueConditionKind.fromOption(cell);
         if (condition == null) {
             throw new FormatException(MessageFormat.format(
-                    "{0}の値が不正です: \"{1}\" (row={2}, col={3}) 期待値:{2}",
+                    Messages.getString("DefaultExcelRuleExtractor.errorInvalidValueCondition"), //$NON-NLS-1$
                     RuleSheetFormat.VALUE_CONDITION.getTitle(),
                     cell,
                     row.getRowNum() + 1,
@@ -146,7 +146,7 @@ public class DefaultExcelRuleExtractor implements ExcelRuleExtractor {
         NullityConditionKind condition = NullityConditionKind.fromOption(cell);
         if (condition == null) {
             throw new FormatException(MessageFormat.format(
-                    "{0}の値が不正です: \"{1}\" (row={2}, col={3}) 期待値:{2}",
+                    Messages.getString("DefaultExcelRuleExtractor.errorInvalidNullityCondition"), //$NON-NLS-1$
                     RuleSheetFormat.NULLITY_CONDITION.getTitle(),
                     cell,
                     row.getRowNum() + 1,
@@ -178,7 +178,7 @@ public class DefaultExcelRuleExtractor implements ExcelRuleExtractor {
             return cell.getStringCellValue();
         }
         throw new FormatException(MessageFormat.format(
-                "{0}は文字列で指定してください: (row={1}, col={2})",
+                Messages.getString("DefaultExcelRuleExtractor.errorInvalidStringCell"), //$NON-NLS-1$
                 item.getTitle(),
                 cell.getRowIndex() + 1,
                 cell.getColumnIndex() + 1));

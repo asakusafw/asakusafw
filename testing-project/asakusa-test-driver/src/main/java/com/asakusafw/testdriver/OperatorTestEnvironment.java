@@ -149,7 +149,8 @@ public class OperatorTestEnvironment extends DriverElementBase implements TestRu
     @Override
     protected Class<?> getCallerClass() {
         if (testClass == null) {
-            throw new IllegalStateException("@Rule is not declared");
+            throw new IllegalStateException(
+                    Messages.getString("OperatorTestEnvironment.errorNotInitialized")); //$NON-NLS-1$
         }
         return testClass;
     }
@@ -263,7 +264,7 @@ public class OperatorTestEnvironment extends DriverElementBase implements TestRu
         }
         if (resource == null) {
             throw new IllegalStateException(MessageFormat.format(
-                    "演算子テスト用の設定ファイルが見つかりません: {0}",
+                    Messages.getString("OperatorTestEnvironment.errorMissingConfigurationFile"), //$NON-NLS-1$
                     configurationPath));
         }
         for (Map.Entry<String, String> entry : extraConfigurations.entrySet()) {
@@ -304,7 +305,7 @@ public class OperatorTestEnvironment extends DriverElementBase implements TestRu
         }
         if (dirty) {
             throw new AssertionError(MessageFormat.format(
-                    "{0}によって設定が書き換えられていますが、{1}されていないようです",
+                    Messages.getString("OperatorTestEnvironment.errorNotReloaded"), //$NON-NLS-1$
                     "configure()", //$NON-NLS-1$
                     "reload()")); //$NON-NLS-1$
         }

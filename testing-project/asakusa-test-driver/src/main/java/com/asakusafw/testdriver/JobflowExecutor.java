@@ -114,7 +114,7 @@ public class JobflowExecutor {
                 moderator.truncate(entry.getValue());
             }
         } else {
-            LOG.info("入力の初期化をスキップしました");
+            LOG.info(Messages.getString("JobflowExecutor.infoSkipInitializeInput")); //$NON-NLS-1$
         }
 
         if (context.isSkipCleanOutput() == false) {
@@ -123,7 +123,7 @@ public class JobflowExecutor {
                 moderator.truncate(entry.getValue());
             }
         } else {
-            LOG.info("出力の初期化をスキップしました");
+            LOG.info(Messages.getString("JobflowExecutor.infoSkipInitializeOutput")); //$NON-NLS-1$
         }
     }
 
@@ -145,7 +145,7 @@ public class JobflowExecutor {
                 moderator.truncate(description);
             }
         } else {
-            LOG.info("外部リソースの初期化をスキップしました");
+            LOG.info(Messages.getString("JobflowExecutor.infoSkipInitializeExtraResources")); //$NON-NLS-1$
         }
     }
 
@@ -173,24 +173,19 @@ public class JobflowExecutor {
                     String name = input.getName();
                     LOG.debug("preparing input: {} ({})", name, source); //$NON-NLS-1$
                     ImporterDescription description = info.findImporter(name);
-                    if (description == null) {
-                        throw new IllegalStateException(MessageFormat.format(
-                                "入力{0}はフロー{1}で定義されていません",
-                                name,
-                                info.getJobflow().getFlowId()));
-                    }
+                    checkImporter(info, name, description);
                     moderator.prepare(input.getModelType(), description, source);
                 }
             }
         } else {
-            LOG.info("入力の配置をスキップしました");
+            LOG.info(Messages.getString("JobflowExecutor.infoSkipPrepareInput")); //$NON-NLS-1$
         }
     }
 
     /**
      * Prepares the target jobflow's output.
      * @param info target jobflow
-     * @param outputs target ouputs
+     * @param outputs target outputs
      * @throws IOException if failed to create job processes
      * @throws IllegalStateException if output is not defined in the jobflow
      * @throws IllegalArgumentException if some parameters were {@code null}
@@ -211,17 +206,30 @@ public class JobflowExecutor {
                     String name = output.getName();
                     LOG.debug("preparing output: {} ({})", name, source); //$NON-NLS-1$
                     ExporterDescription description = info.findExporter(name);
-                    if (description == null) {
-                        throw new IllegalStateException(MessageFormat.format(
-                                "出力{0}はフロー{1}で定義されていません",
-                                name,
-                                info.getJobflow().getFlowId()));
-                    }
+                    checkExporter(info, name, description);
                     moderator.prepare(output.getModelType(), description, source);
                 }
             }
         } else {
-            LOG.info("出力の配置をスキップしました");
+            LOG.info(Messages.getString("JobflowExecutor.infoSkipPrepareOutput")); //$NON-NLS-1$
+        }
+    }
+
+    private void checkImporter(JobflowInfo info, String name, ImporterDescription description) {
+        if (description == null) {
+            throw new IllegalStateException(MessageFormat.format(
+                    Messages.getString("JobflowExecutor.errorMissingInput"), //$NON-NLS-1$
+                    name,
+                    info.getJobflow().getFlowId()));
+        }
+    }
+
+    private void checkExporter(JobflowInfo info, String name, ExporterDescription description) {
+        if (description == null) {
+            throw new IllegalStateException(MessageFormat.format(
+                    Messages.getString("JobflowExecutor.errorMissingOutput"), //$NON-NLS-1$
+                    name,
+                    info.getJobflow().getFlowId()));
         }
     }
 
@@ -246,7 +254,7 @@ public class JobflowExecutor {
                 moderator.prepare(description.getModelType(), description, source);
             }
         } else {
-            LOG.info("外部リソースの配置をスキップしました");
+            LOG.info(Messages.getString("JobflowExecutor.infoSkipPrepareExtraResource")); //$NON-NLS-1$
         }
     }
 
@@ -268,7 +276,7 @@ public class JobflowExecutor {
             validatePlan(plan);
             executePlan(plan, info.getPackageFile());
         } else {
-            LOG.info("フローの実行をスキップしました");
+            LOG.info(Messages.getString("JobflowExecutor.infoSkipExecute")); //$NON-NLS-1$
         }
     }
 
@@ -288,7 +296,7 @@ public class JobflowExecutor {
             LOG.debug("Deplogying dependency libraries: {} -> {}", dependencies, dependenciesDest); //$NON-NLS-1$
             if (dependenciesDest.mkdirs() == false && dependenciesDest.isDirectory() == false) {
                 LOG.warn(MessageFormat.format(
-                        "フォルダの作成に失敗しました: {0}",
+                        Messages.getString("JobflowExecutor.warnFailedToCreateDirectory"), //$NON-NLS-1$
                         dependenciesDest.getAbsolutePath()));
             }
             for (File file : dependencies.listFiles()) {
@@ -438,12 +446,7 @@ public class JobflowExecutor {
             for (DriverOutputBase<?> output : outputs) {
                 String name = output.getName();
                 ExporterDescription description = info.findExporter(name);
-                if (description == null) {
-                    throw new IllegalStateException(MessageFormat.format(
-                            "出力{0}はフロー{1}で定義されていません",
-                            name,
-                            info.getJobflow().getFlowId()));
-                }
+                checkExporter(info, name, description);
                 if (output.getResultSink() != null) {
                     LOG.debug("saving result output: {} ({})", output.getName(), output.getResultSink()); //$NON-NLS-1$
                     moderator.save(output.getModelType(), description, output.getResultSink());
@@ -458,7 +461,7 @@ public class JobflowExecutor {
                     if (diffList.isEmpty() == false) {
                         sawError = true;
                         String message = MessageFormat.format(
-                                "{0}.{1}の出力{2}には{3}個の差異があります",
+                                Messages.getString("JobflowExecutor.messageDifferenceSummary"), //$NON-NLS-1$
                                 info.getJobflow().getBatchId(),
                                 info.getJobflow().getFlowId(),
                                 output.getName(),
@@ -482,7 +485,7 @@ public class JobflowExecutor {
                 throw new AssertionError(sb);
             }
         } else {
-            LOG.info("実行結果の検証をスキップしました");
+            LOG.info(Messages.getString("JobflowExecutor.infoSkipVerifyResult")); //$NON-NLS-1$
         }
     }
 }

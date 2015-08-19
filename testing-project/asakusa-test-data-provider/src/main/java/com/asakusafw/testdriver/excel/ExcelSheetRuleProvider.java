@@ -84,13 +84,13 @@ public class ExcelSheetRuleProvider implements VerifyRuleProvider {
             return null;
         }
         LOG.info(MessageFormat.format(
-                "Excelシートをテスト条件に利用します: {0}",
+                Messages.getString("ExcelSheetRuleProvider.infoApply"), //$NON-NLS-1$
                 source));
         try {
             return resolve(definition, context, sheet, extractor);
         } catch (ExcelRuleExtractor.FormatException e) {
             throw new IOException(MessageFormat.format(
-                    "{0}の形式が正しくありません",
+                    Messages.getString("ExcelSheetRuleProvider.errorInvalidFormat"), //$NON-NLS-1$
                     source), e);
         }
     }
@@ -157,7 +157,7 @@ public class ExcelSheetRuleProvider implements VerifyRuleProvider {
             property = builder.property(name);
         } catch (IllegalArgumentException e) {
             throw new ExcelRuleExtractor.FormatException(MessageFormat.format(
-                    "プロパティが見つかりません (row={0})",
+                    Messages.getString("ExcelSheetRuleProvider.errorMissingProperty"), //$NON-NLS-1$
                     row.getRowNum() + 1), e);
         }
         ValueConditionKind value = extractor.extractValueCondition(row);
@@ -200,7 +200,7 @@ public class ExcelSheetRuleProvider implements VerifyRuleProvider {
             return false;
         default:
             throw new ExcelRuleExtractor.FormatException(MessageFormat.format(
-                    "Unknown nullity constraint \"{1}\": {0}",
+                    Messages.getString("ExcelSheetRuleProvider.errorUnknownNullityConstraint"), //$NON-NLS-1$
                     property,
                     nullity));
         }
@@ -252,7 +252,7 @@ public class ExcelSheetRuleProvider implements VerifyRuleProvider {
             break;
         default:
             throw new ExcelRuleExtractor.FormatException(MessageFormat.format(
-                    "Unknown value constraint \"{1}\": {0}",
+                    Messages.getString("ExcelSheetRuleProvider.errorUnknownValueConstraint"), //$NON-NLS-1$
                     property,
                     value));
         }
@@ -268,7 +268,7 @@ public class ExcelSheetRuleProvider implements VerifyRuleProvider {
             property.accept(resolved);
         } else {
             throw new ExcelRuleExtractor.FormatException(MessageFormat.format(
-                    "Unsupported optional expression: {0} -> \"{1}\"",
+                    Messages.getString("ExcelSheetRuleProvider.errorUnsupportedOptionalExpression"), //$NON-NLS-1$
                     property.getName(),
                     expression));
         }
@@ -323,7 +323,7 @@ public class ExcelSheetRuleProvider implements VerifyRuleProvider {
         assert property != null;
         assert kind != null;
         return new ExcelRuleExtractor.FormatException(MessageFormat.format(
-                "{1}をプロパティ\"{0}\"に利用できません: {2}のみに利用可能です",
+                Messages.getString("ExcelSheetRuleProvider.errorInconsistentPropertyType"), //$NON-NLS-1$
                 property.getName(),
                 kind.getTitle(),
                 kind.getExpectedType()));

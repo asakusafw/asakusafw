@@ -63,7 +63,9 @@ public class BatchSpecProcessor extends AbstractWorkflowProcessor {
     }
 
     void process(Class<? extends BatchDescription> description) throws IOException {
-        LOG.info("Extracting metadata: {}", description.getName());
+        LOG.info(MessageFormat.format(
+                Messages.getString("BatchSpecProcessor.infoExtractingMetadata"), //$NON-NLS-1$
+                description.getName()));
         BatchSpec spec = toSpec(description);
         Gson gson = new GsonBuilder()
             .setPrettyPrinting()
@@ -88,7 +90,7 @@ public class BatchSpecProcessor extends AbstractWorkflowProcessor {
         String batchId = getEnvironment().getConfiguration().getBatchId();
         if (info == null) {
             LOG.warn(MessageFormat.format(
-                    "Failed to extract \"@{0}\": {1}",
+                    Messages.getString("BatchSpecProcessor.warnMissingMetadata"), //$NON-NLS-1$
                     Batch.class.getName(),
                     description.getName()));
             return new BatchSpec(batchId);
@@ -109,7 +111,7 @@ public class BatchSpecProcessor extends AbstractWorkflowProcessor {
             String key = parameter.key();
             if (keys.contains(key)) {
                 getEnvironment().error(
-                        "The batch parameter \"{1}\" is duplicated: {0}",
+                        Messages.getString("BatchSpecProcessor.errorConflictParameter"), //$NON-NLS-1$
                         description.getName(),
                         key);
                 continue;
@@ -137,7 +139,7 @@ public class BatchSpecProcessor extends AbstractWorkflowProcessor {
             return pattern;
         } catch (PatternSyntaxException e) {
             LOG.warn(MessageFormat.format(
-                    "The batch parameter \"{1}\" has invalid pattern \"{2}\": {0}",
+                    Messages.getString("BatchSpecProcessor.errorMalformedParameter"), //$NON-NLS-1$
                     description.getName(),
                     key,
                     pattern), e);
