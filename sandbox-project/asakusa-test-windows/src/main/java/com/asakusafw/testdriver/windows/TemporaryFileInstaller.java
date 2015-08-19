@@ -80,7 +80,7 @@ public final class TemporaryFileInstaller {
         File parent = target.getAbsoluteFile().getParentFile();
         if (parent.mkdirs() == false && parent.isDirectory() == false) {
             throw new IOException(MessageFormat.format(
-                    "failed to create a file: {0}",
+                    Messages.getString("TemporaryFileInstaller.errorFailedToCreateFile"), //$NON-NLS-1$
                     target));
         }
         RandomAccessFile file = new RandomAccessFile(target, "rw"); //$NON-NLS-1$

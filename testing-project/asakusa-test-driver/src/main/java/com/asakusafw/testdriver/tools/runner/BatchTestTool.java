@@ -138,7 +138,7 @@ public class BatchTestTool extends DriverElementBase implements TestContext {
      */
     public void truncate(ImporterDescription description) throws IOException {
         LOG.info(MessageFormat.format(
-                "cleaning input: {0}",
+                Messages.getString("BatchTestTool.infoCleaningInput"), //$NON-NLS-1$
                 description.getClass().getName()));
         TestModerator moderator = new TestModerator(getTestTools(), this);
         moderator.truncate(description);
@@ -151,7 +151,7 @@ public class BatchTestTool extends DriverElementBase implements TestContext {
      */
     public void truncate(ExporterDescription description) throws IOException {
         LOG.info(MessageFormat.format(
-                "cleaning output: {0}",
+                Messages.getString("BatchTestTool.infoCleaningOutput"), //$NON-NLS-1$
                 description.getClass().getName()));
         TestModerator moderator = new TestModerator(getTestTools(), this);
         moderator.truncate(description);
@@ -171,7 +171,7 @@ public class BatchTestTool extends DriverElementBase implements TestContext {
             throw e;
         } catch (Exception e) {
             throw new IOException(MessageFormat.format(
-                    "failed to prepare input: {0}",
+                    Messages.getString("BatchTestTool.errorFailedToPrepareInput"), //$NON-NLS-1$
                     description.getClass().getName()), e);
         }
     }
@@ -230,7 +230,7 @@ public class BatchTestTool extends DriverElementBase implements TestContext {
             throw e;
         } catch (Exception e) {
             throw new IOException(MessageFormat.format(
-                    "failed to prepare verify output: {0}",
+                    Messages.getString("BatchTestTool.errorFailedToPrepareOutput"), //$NON-NLS-1$
                     description.getClass().getName()), e);
         }
     }

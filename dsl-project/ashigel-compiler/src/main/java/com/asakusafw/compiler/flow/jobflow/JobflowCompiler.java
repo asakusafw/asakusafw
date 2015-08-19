@@ -110,7 +110,7 @@ public class JobflowCompiler {
         JobflowModel jobflow = analyzer.analyze(graph, stageModels);
         if (analyzer.hasError()) {
             analyzer.clearError();
-            throw new IOException("ジョブフローのコンパイルは中断されました");
+            throw new IOException(Messages.getString("JobflowCompiler.errorFailedToAnalyze")); //$NON-NLS-1$
         }
         return jobflow;
     }

@@ -109,7 +109,8 @@ public class DumpEnvironmentProcessor extends AbstractWorkflowProcessor {
                 context.put("{0} = {1}", entry.getKey(), entry.getValue()); //$NON-NLS-1$
             }
         } catch (SecurityException e) {
-            LOG.warn("failed to obtain environment variables", e);
+            LOG.warn(Messages.getString(
+                    "DumpEnvironmentProcessor.warnFailedToObtainEnvironmentVariable"), e); //$NON-NLS-1$
         }
     }
 
@@ -120,7 +121,8 @@ public class DumpEnvironmentProcessor extends AbstractWorkflowProcessor {
                 context.put("{0} = {1}", entry.getKey(), entry.getValue()); //$NON-NLS-1$
             }
         } catch (SecurityException e) {
-            LOG.warn("failed to obtain system properties", e);
+            LOG.warn(Messages.getString(
+                    "DumpEnvironmentProcessor.warnFailedToObtainSystemProperty"), e); //$NON-NLS-1$
         }
     }
 

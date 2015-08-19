@@ -78,18 +78,16 @@ public class ExcelSheetSinkFactory extends DataModelSinkFactory {
 
         SpreadsheetVersion version = Util.getSpreadsheetVersionFor(output.getPath());
         if (definition.getProperties().size() > version.getMaxColumns()) {
-            LOG.warn("The data model \"{}\" has > {} properties, so several properties will be omitted to generate {}.",
-                    new Object[] {
-                        definition.getModelClass().getName(),
-                        version.getMaxColumns(),
-                        output,
-                    }
-            );
+            LOG.warn(MessageFormat.format(
+                    Messages.getString("ExcelSheetSinkFactory.warnExceedColumnCount"), //$NON-NLS-1$
+                    definition.getModelClass().getName(),
+                    version.getMaxColumns(),
+                    output));
         }
         File parent = output.getParentFile();
         if (parent != null && parent.isDirectory() == false && parent.mkdirs() == false) {
             throw new IOException(MessageFormat.format(
-                    "Failed to create an output directory for {0}",
+                    Messages.getString("ExcelSheetSinkFactory.errorFailedToCreateOutputDirectory"), //$NON-NLS-1$
                     output));
         }
         final Workbook workbook = Util.createEmptyWorkbookFor(output.getPath());
@@ -102,7 +100,9 @@ public class ExcelSheetSinkFactory extends DataModelSinkFactory {
                     return;
                 }
                 closed = true;
-                LOG.info("Generating job result into {}", output);
+                LOG.info(MessageFormat.format(
+                        Messages.getString("ExcelSheetSinkFactory.infoStartOutput"), //$NON-NLS-1$
+                        output));
                 OutputStream stream = new FileOutputStream(output);
                 try {
                     workbook.write(stream);

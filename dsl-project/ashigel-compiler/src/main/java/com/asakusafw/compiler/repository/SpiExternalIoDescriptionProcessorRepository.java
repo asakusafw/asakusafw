@@ -60,7 +60,8 @@ public class SpiExternalIoDescriptionProcessorRepository
             Class<?> exporterType = proc.getExporterDescriptionType();
             if (map.containsKey(importerType)) {
                 getEnvironment().error(
-                        "インポーター記述{0}はすでに{1}の対象となっているため、{2}は無視されます",
+                        Messages.getString(
+                                "SpiExternalIoDescriptionProcessorRepository.errorConflictImporter"), //$NON-NLS-1$
                         importerType.getName(),
                         map.get(importerType).getClass().getName(),
                         proc.getClass().getName());
@@ -72,7 +73,8 @@ public class SpiExternalIoDescriptionProcessorRepository
             }
             if (map.containsKey(exporterType)) {
                 getEnvironment().error(
-                        "エクスポーター記述{0}はすでに{1}の対象となっているため、{2}は無視されます",
+                        Messages.getString(
+                                "SpiExternalIoDescriptionProcessorRepository.errorConflictExporter"), //$NON-NLS-1$
                         exporterType.getName(),
                         map.get(exporterType).getClass().getName(),
                         proc.getClass().getName());

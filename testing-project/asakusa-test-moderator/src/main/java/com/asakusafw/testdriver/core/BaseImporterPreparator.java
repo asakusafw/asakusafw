@@ -40,14 +40,15 @@ public abstract class BaseImporterPreparator<T extends ImporterDescription>
         List<Type> arguments = TypeUtil.invoke(BaseImporterPreparator.class, getClass());
         if (arguments.size() != 1) {
             throw new IllegalStateException(MessageFormat.format(
-                    "Failed to extract type argument from {0}",
+                    Messages.getString("BaseImporterPreparator.errorUnboundTypeParameter"), //$NON-NLS-1$
+                    ImporterPreparator.class.getName(),
                     getClass().getName()));
         }
         Type first = arguments.get(0);
         if ((first instanceof Class<?>) == false
                 || ImporterDescription.class.isAssignableFrom((Class<?>) first) == false) {
             throw new IllegalStateException(MessageFormat.format(
-                    "Failed to extract type argument of {0} from {1}",
+                    Messages.getString("BaseImporterPreparator.errorInvalidTypeParameter"), //$NON-NLS-1$
                     ImporterDescription.class.getName(),
                     getClass().getName()));
         }

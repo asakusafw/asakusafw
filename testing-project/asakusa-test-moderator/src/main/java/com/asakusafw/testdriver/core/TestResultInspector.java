@@ -239,7 +239,7 @@ public class TestResultInspector {
         DataModelDefinition<T> definition = adapter.get(modelClass);
         if (definition == null) {
             throw new IOException(MessageFormat.format(
-                    "Failed to adapt {0}: (adaptor not found)",
+                    Messages.getString("TestResultInspector.errorMissingDataModelDefinition"), //$NON-NLS-1$
                     modelClass.getName()));
         }
         return definition;
@@ -280,7 +280,7 @@ public class TestResultInspector {
         DataModelSource expected = sources.open(definition, uri, context);
         if (expected == null) {
             throw new IOException(MessageFormat.format(
-                    "Failed to load an expected data set: {0}",
+                    Messages.getString("TestResultInspector.errorMissingDataModelSource"), //$NON-NLS-1$
                     uri));
         }
         return expected;
@@ -296,7 +296,7 @@ public class TestResultInspector {
         VerifyRule rule = rules.get(definition, verifyContext, ruleUri);
         if (rule == null) {
             throw new IOException(MessageFormat.format(
-                    "Failed to load a verify rule: {0}",
+                    Messages.getString("TestResultInspector.errorMissingVerifyRule"), //$NON-NLS-1$
                     ruleUri));
         }
         return rule;

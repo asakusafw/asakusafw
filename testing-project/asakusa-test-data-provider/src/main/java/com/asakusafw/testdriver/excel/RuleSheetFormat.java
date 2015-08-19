@@ -33,40 +33,40 @@ public enum RuleSheetFormat {
      * The total condition kind must be set on the immediate right cell,
      * and it must be one of {@link TotalConditionKind#getOptions()}.
      */
-    TOTAL_CONDITION("全体の比較", 1, 0),
+    TOTAL_CONDITION(Messages.getString("RuleSheetFormat.titleTotalCondition"), 1, 0), //$NON-NLS-1$
 
     /**
      * Title of property names.
      * Each property name must be set on the same column below this cell,
      * and it must be form of "snake_case".
      */
-    PROPERTY_NAME("プロパティ", 2, 0),
+    PROPERTY_NAME(Messages.getString("RuleSheetFormat.titlePropertyName"), 2, 0), //$NON-NLS-1$
 
     /**
      * Title of the condition of property's value.
      * Each item must be set on the same column below this cell,
      * and it must be one of {@link ValueConditionKind#getOptions()}.
      */
-    VALUE_CONDITION("値の比較", 2, 1),
+    VALUE_CONDITION(Messages.getString("RuleSheetFormat.titleValueCondition"), 2, 1), //$NON-NLS-1$
 
     /**
      * Title of the condition of property's nullity.
      * Each item must be set on the same column below this cell,
      * and it must be one of {@link NullityConditionKind#getOptions()}.
      */
-    NULLITY_CONDITION("NULLの比較", 2, 2),
+    NULLITY_CONDITION(Messages.getString("RuleSheetFormat.titleNullityCondition"), 2, 2), //$NON-NLS-1$
 
     /**
      * Title of comments of property.
      * Each item must be set on the same column below this cell.
      */
-    COMMENTS("コメント", 2, 3),
+    COMMENTS(Messages.getString("RuleSheetFormat.titleComments"), 2, 3), //$NON-NLS-1$
 
     /**
      * Title of options of property.
      * Each item must be set on the same column below this cell.
      */
-    EXTRA_OPTIONS("オプション", 2, 4),
+    EXTRA_OPTIONS(Messages.getString("RuleSheetFormat.titleOption"), 2, 4), //$NON-NLS-1$
     ;
 
     /**

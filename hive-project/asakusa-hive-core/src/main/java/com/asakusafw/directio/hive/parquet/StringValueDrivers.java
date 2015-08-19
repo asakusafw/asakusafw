@@ -333,7 +333,7 @@ public enum StringValueDrivers implements ParquetValueDriver {
             int days = TemporalUtil.parseDate(value);
             if (days < 0) {
                 throw new IllegalArgumentException(MessageFormat.format(
-                        "Invalid date string: {0}",
+                        Messages.getString("StringValueDrivers.errorInvalidDateString"), //$NON-NLS-1$
                         value));
             }
             return days;
@@ -369,7 +369,7 @@ public enum StringValueDrivers implements ParquetValueDriver {
             long seconds = TemporalUtil.parseTimestamp(value);
             if (seconds < 0) {
                 throw new IllegalArgumentException(MessageFormat.format(
-                        "Invalid timestamp string: {0}",
+                        Messages.getString("StringValueDrivers.errorInvalidTimestampString"), //$NON-NLS-1$
                         value));
             }
             return seconds;

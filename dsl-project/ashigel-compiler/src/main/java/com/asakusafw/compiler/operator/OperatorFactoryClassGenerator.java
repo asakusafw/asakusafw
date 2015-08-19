@@ -113,8 +113,8 @@ public class OperatorFactoryClassGenerator extends OperatorClassGenerator {
     @Override
     protected Javadoc createJavadoc() {
         return new JavadocBuilder(factory)
-            .linkType(util.t(operatorClass.getElement()))
-            .text("に関する演算子ファクトリークラス。")
+            .text(Messages.getString("OperatorFactoryClassGenerator.javadocClass"), //$NON-NLS-1$
+                    operatorClass.getElement().getSimpleName())
             .seeType(util.t(operatorClass.getElement()))
             .toJavadoc();
     }
@@ -225,15 +225,17 @@ public class OperatorFactoryClassGenerator extends OperatorClassGenerator {
         SimpleName newName = context.names.create("newName"); //$NON-NLS-1$
         return factory.newMethodDeclaration(
                 new JavadocBuilder(factory)
-                    .text("この演算子の名前を設定する。")
+                    .text(Messages.getString(
+                            "OperatorFactoryClassGenerator.javadocSetName")) //$NON-NLS-1$
                     .param(newName)
-                        .text("設定する名前")
+                        .text(Messages.getString(
+                                "OperatorFactoryClassGenerator.javadocSetNameParameter")) //$NON-NLS-1$
                     .returns()
-                        .text("この演算子オブジェクト (this)")
+                        .text(Messages.getString(
+                                "OperatorFactoryClassGenerator.javadocSetNameReturn")) //$NON-NLS-1$
                     .exception(util.t(IllegalArgumentException.class))
-                        .text("引数に")
-                        .code("null")
-                        .text("が指定された場合")
+                        .text(Messages.getString(
+                                "OperatorFactoryClassGenerator.javadocSetNameNullParameter")) //$NON-NLS-1$
                     .toJavadoc(),
                 new AttributeBuilder(factory)
                     .Public()
@@ -494,7 +496,7 @@ public class OperatorFactoryClassGenerator extends OperatorClassGenerator {
             parameterMetaData.add(util.toMetaData(var, arguments.size()));
             arguments.add(name);
         }
-        javadoc.returns().text("生成した演算子オブジェクト");
+        javadoc.returns().text(Messages.getString("OperatorFactoryClassGenerator.javadocFactoryReturn")); //$NON-NLS-1$
 
         List<Type> rawParameterTypes = Lists.create();
         for (VariableElement var : context.element.getParameters()) {

@@ -45,34 +45,34 @@ public class SummarizeOperatorProcessor extends AbstractOperatorProcessor {
 
         ExecutableAnalyzer a = new ExecutableAnalyzer(context.environment, context.element);
         if (a.isGeneric()) {
-            a.error("単純集計演算子はジェネリックメソッドで宣言できません");
+            a.error(Messages.getString("SummarizeOperatorProcessor.errorGeneric")); //$NON-NLS-1$
         }
         if (a.isAbstract() == false) {
-            a.error("単純集計演算子はabstractで宣言する必要があります");
+            a.error(Messages.getString("SummarizeOperatorProcessor.errorNotAbstract")); //$NON-NLS-1$
         }
         TypeConstraint summarized = a.getReturnType();
         if (summarized.isConcreteModel() == false) {
-            a.error("単純集計演算子は戻り値にモデルオブジェクト型を指定する必要があります");
+            a.error(Messages.getString("SummarizeOperatorProcessor.errorNotModelResult")); //$NON-NLS-1$
         }
         TypeConstraint summarizee = a.getParameterType(0);
         if (summarizee.isModel() == false) {
-            a.error(0, "単純集計演算子の最初の引数はモデルオブジェクト型である必要があります");
+            a.error(0, Messages.getString("SummarizeOperatorProcessor.errorNotModelInput")); //$NON-NLS-1$
         }
         for (int i = 1, n = a.countParameters(); i < n; i++) {
-            a.error(i, "単純集計演算子にはユーザー引数を利用できません");
+            a.error(i, Messages.getString("SummarizeOperatorProcessor.errorExtraParameter")); //$NON-NLS-1$
         }
         if (a.hasError()) {
             return null;
         }
         if (summarized.isSummarizedModel(summarizee.getType()) == false) {
-            a.error("単純集計演算子の戻り値型は最初の引数の集計結果を表す型である必要があります");
+            a.error(Messages.getString("SummarizeOperatorProcessor.errorNotSummarizedModel")); //$NON-NLS-1$
             return null;
         }
 
         ShuffleKey key = summarized.getSummarizeKey();
         Summarize annotation = context.element.getAnnotation(Summarize.class);
         if (annotation == null) {
-            a.error("注釈の解釈に失敗しました");
+            a.error(Messages.getString("SummarizeOperatorProcessor.errorInvalidAnnotation")); //$NON-NLS-1$
             return null;
         }
         OperatorProcessorUtil.checkPortName(a, new String[] {
@@ -107,7 +107,8 @@ public class SummarizeOperatorProcessor extends AbstractOperatorProcessor {
         ImplementationBuilder builder = new ImplementationBuilder(context);
         ModelFactory f = context.environment.getFactory();
         builder.addStatement(new TypeBuilder(f, context.importer.toType(UnsupportedOperationException.class))
-            .newObject(Models.toLiteral(f, "単純集計演算子は組み込みの方法で処理されます"))
+            .newObject(Models.toLiteral(f,
+                    Messages.getString("SummarizeOperatorProcessor.messageMethodBody"))) //$NON-NLS-1$
             .toThrowStatement());
         return builder.toImplementation();
     }

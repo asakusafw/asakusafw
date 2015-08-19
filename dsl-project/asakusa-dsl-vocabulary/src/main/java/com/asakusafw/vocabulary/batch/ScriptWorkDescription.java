@@ -85,7 +85,7 @@ public class ScriptWorkDescription extends WorkDescription {
         }
         if (isValidName(name) == false) {
             throw new IllegalArgumentException(MessageFormat.format(
-                    "{0}はスクリプトの名前として正しくありません ({0})",
+                    Messages.getString("ScriptWorkDescription.errorInvalidId"), //$NON-NLS-1$
                     name,
                     command));
         }
@@ -166,20 +166,20 @@ public class ScriptWorkDescription extends WorkDescription {
         for (Map.Entry<?, ?> entry : properties.entrySet()) {
             if ((entry.getKey() instanceof String) == false) {
                 throw new IllegalArgumentException(MessageFormat.format(
-                        "不正なキー{0}が含まれています ({1})",
+                        Messages.getString("ScriptWorkDescription.errorInvalidPropertyKey"), //$NON-NLS-1$
                         entry.getKey(),
                         entry.getKey().getClass().getName()));
             }
             if ((entry.getValue() instanceof String) == false) {
                 throw new IllegalArgumentException(MessageFormat.format(
-                        "不正な値{0}が含まれています ({1})",
+                        Messages.getString("ScriptWorkDescription.errorInvalidPropertyValue"), //$NON-NLS-1$
                         entry.getValue(),
                         entry.getValue().getClass().getName()));
             }
             String key = (String) entry.getKey();
             if (key.startsWith(K_ENVIRONMENT_PREFIX) == false) {
                 throw new IllegalArgumentException(MessageFormat.format(
-                        "不正なキー{0}が含まれています (\"{1}\" が先頭にありません)",
+                        Messages.getString("ScriptWorkDescription.errorMalformedPropertyKey"), //$NON-NLS-1$
                         entry.getKey(),
                         K_ENVIRONMENT_PREFIX));
             }

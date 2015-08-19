@@ -95,7 +95,8 @@ public class ProjectiveModelEmitter {
         driver.generateResources(context, model);
         context.emit(f.newInterfaceDeclaration(
                 new JavadocBuilder(f)
-                    .text("{0}を表す射影モデルインターフェース。", context.getDescription(model))
+                    .text(Messages.getString("ProjectiveModelEmitter.javadocClass"), //$NON-NLS-1$
+                            context.getDescription(model))
                     .toJavadoc(),
                 createModifiers(),
                 context.getTypeName(),
@@ -135,13 +136,14 @@ public class ProjectiveModelEmitter {
         assert property != null;
         return f.newMethodDeclaration(
                 new JavadocBuilder(f)
-                    .text("{0}を返す。",
+                    .text(Messages.getString("ProjectiveModelEmitter.javadocGetter"), //$NON-NLS-1$
                             context.getDescription(property))
                     .returns()
                         .text("{0}", //$NON-NLS-1$
                                 context.getDescription(property))
                     .exception(context.resolve(NullPointerException.class))
-                        .text("{0}の値が<code>null</code>である場合",
+                        .text(Messages.getString(
+                                "ProjectiveModelEmitter.javadocGetterNullPointerException"), //$NON-NLS-1$
                                 context.getDescription(property))
                     .toJavadoc(),
                 new AttributeBuilder(f).toAttributes(),
@@ -160,10 +162,10 @@ public class ProjectiveModelEmitter {
         Type valueType = context.getValueType(property);
         return f.newMethodDeclaration(
                 new JavadocBuilder(f)
-                    .text("{0}を設定する。",
+                    .text(Messages.getString("ProjectiveModelEmitter.javadocSetter"), //$NON-NLS-1$
                             context.getDescription(property))
                     .param(paramName)
-                        .text("設定する値",
+                        .text(Messages.getString("ProjectiveModelEmitter.javadocSetterParameter"), //$NON-NLS-1$
                                 context.getDescription(property))
                     .toJavadoc(),
                 new AttributeBuilder(f)
@@ -183,7 +185,7 @@ public class ProjectiveModelEmitter {
         assert property != null;
         return f.newMethodDeclaration(
                 new JavadocBuilder(f)
-                    .text("<code>null</code>を許す{0}を返す。",
+                    .text(Messages.getString("ProjectiveModelEmitter.javadocOptionGetter"), //$NON-NLS-1$
                             context.getDescription(property))
                     .returns()
                         .text("{0}", //$NON-NLS-1$
@@ -206,10 +208,10 @@ public class ProjectiveModelEmitter {
         Type optionType = context.getFieldType(property);
         return f.newMethodDeclaration(
                 new JavadocBuilder(f)
-                    .text("{0}を設定する。",
+                    .text(Messages.getString("ProjectiveModelEmitter.javadocOptionSetter"), //$NON-NLS-1$
                             context.getDescription(property))
                     .param(paramName)
-                        .text("設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる",
+                        .text(Messages.getString("ProjectiveModelEmitter.javadocOptionSetterParameter"), //$NON-NLS-1$
                                 context.getDescription(property))
                     .toJavadoc(),
                 new AttributeBuilder(f)

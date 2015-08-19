@@ -129,7 +129,7 @@ public class OrcFileInput<T> implements ModelInput<T> {
         if (reader == null) {
             if (LOG.isInfoEnabled()) {
                 LOG.info(MessageFormat.format(
-                        "Loading ORCFile metadata ({0}): {1}",
+                        Messages.getString("OrcFileInput.infoLoadMetadata"), //$NON-NLS-1$
                         descriptor.getDataModelClass().getSimpleName(),
                         path));
             }
@@ -138,7 +138,7 @@ public class OrcFileInput<T> implements ModelInput<T> {
             driver = new DataModelDriver(descriptor, sourceInspector, configuration);
             if (LOG.isInfoEnabled()) {
                 LOG.info(MessageFormat.format(
-                        "Loading ORCFile contents ({0}): path={1}, range={2}+{3}",
+                        Messages.getString("OrcFileInput.infoLoadContents"), //$NON-NLS-1$
                         descriptor.getDataModelClass().getSimpleName(),
                         path,
                         offset,

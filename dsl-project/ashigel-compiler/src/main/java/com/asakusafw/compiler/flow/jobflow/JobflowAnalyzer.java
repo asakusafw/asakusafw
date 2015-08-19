@@ -134,14 +134,14 @@ public class JobflowAnalyzer {
             FlowElement element = source.getElementPort().getOwner();
             FlowElementDescription desc = element.getDescription();
             if (desc.getKind() != FlowElementKind.INPUT) {
-                error("{0}は入力を表現していません", desc);
+                error(Messages.getString("JobflowAnalyzer.errorInvalidInput"), desc); //$NON-NLS-1$
                 continue;
             }
             InputDescription description = (InputDescription) desc;
             saw.add(description);
             ExternalIoDescriptionProcessor proc = environment.getExternals().findProcessor(description);
             if (proc == null) {
-                error("{0}は不明なインポーターを利用しています", desc);
+                error(Messages.getString("JobflowAnalyzer.errorMissingImporterProcessor"), desc); //$NON-NLS-1$
                 continue;
             }
             Import input = new Import(source, description, proc);
@@ -156,7 +156,7 @@ public class JobflowAnalyzer {
         for (InputDescription description : sideData) {
             ExternalIoDescriptionProcessor proc = environment.getExternals().findProcessor(description);
             if (proc == null) {
-                error("{0}は不明なインポーターを利用しています", description);
+                error(Messages.getString("JobflowAnalyzer.errorMissingImporterProcessor"), description); //$NON-NLS-1$
                 continue;
             }
             Import input = new Import(description, proc);
@@ -176,13 +176,13 @@ public class JobflowAnalyzer {
             FlowElement element = target.getElementPort().getOwner();
             FlowElementDescription desc = element.getDescription();
             if (desc.getKind() != FlowElementKind.OUTPUT) {
-                error("{0}は出力を表現していません", desc);
+                error(Messages.getString("JobflowAnalyzer.errorInvalidOutput"), desc); //$NON-NLS-1$
                 continue;
             }
             OutputDescription description = (OutputDescription) desc;
             ExternalIoDescriptionProcessor proc = environment.getExternals().findProcessor(description);
             if (proc == null) {
-                error("{0}は不明なエクスポーターを利用しています", desc);
+                error(Messages.getString("JobflowAnalyzer.errorMissingExporterProcessor"), desc); //$NON-NLS-1$
                 continue;
             }
             Export epilogue = new Export(
@@ -268,7 +268,7 @@ public class JobflowAnalyzer {
         for (InputDescription input : model.getSideDataInputs()) {
             ExternalIoDescriptionProcessor proc = environment.getExternals().findProcessor(input);
             if (proc == null) {
-                error("{0}は不明なインポーターを利用しています", input);
+                error(Messages.getString("JobflowAnalyzer.errorMissingImporterProcessor"), input); //$NON-NLS-1$
                 continue;
             }
             Set<Location> locations = proc.getInputInfo(input).getLocations();

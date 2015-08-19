@@ -48,13 +48,13 @@ public class VisualizeJobflowStructureProcessor extends AbstractWorkflowProcesso
 
     static final Logger LOG = LoggerFactory.getLogger(VisualizeJobflowStructureProcessor.class);
 
-    static final Charset ENCODING = Charset.forName("UTF-8");
+    static final Charset ENCODING = Charset.forName("UTF-8"); //$NON-NLS-1$
 
-    private static final String PATH_FLOW_GRAPH = Constants.PATH_JOBFLOW + "{0}/flowgraph.dot";
+    private static final String PATH_FLOW_GRAPH = Constants.PATH_JOBFLOW + "{0}/flowgraph.dot"; //$NON-NLS-1$
 
-    private static final String PATH_STAGE_GRAPH = Constants.PATH_JOBFLOW + "{0}/stagegraph.dot";
+    private static final String PATH_STAGE_GRAPH = Constants.PATH_JOBFLOW + "{0}/stagegraph.dot"; //$NON-NLS-1$
 
-    private static final String PATH_STAGE_BLOCK = Constants.PATH_JOBFLOW + "{0}/stageblock-{1}.dot";
+    private static final String PATH_STAGE_BLOCK = Constants.PATH_JOBFLOW + "{0}/stageblock-{1}.dot"; //$NON-NLS-1$
 
     @Override
     public Collection<Class<? extends WorkDescriptionProcessor<?>>> getDescriptionProcessors() {

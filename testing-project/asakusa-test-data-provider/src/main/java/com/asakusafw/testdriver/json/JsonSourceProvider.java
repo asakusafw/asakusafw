@@ -56,7 +56,7 @@ public class JsonSourceProvider implements DataModelSourceProvider {
             return null;
         }
         LOG.info(MessageFormat.format(
-                "JSONファイルをデータソースに利用します: {0}",
+                Messages.getString("JsonSourceProvider.infoApply"), //$NON-NLS-1$
                 source));
         URL url = source.toURL();
         InputStream input = url.openStream();

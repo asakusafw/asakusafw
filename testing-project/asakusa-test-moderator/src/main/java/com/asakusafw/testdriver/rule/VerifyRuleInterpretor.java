@@ -79,7 +79,7 @@ public class VerifyRuleInterpretor implements VerifyRule {
                 return null;
             } else {
                 return MessageFormat.format(
-                        "結果に対する期待値がありません: キー={0}",
+                        Messages.getString("VerifyRuleInterpretor.messageMissingExpectedData"), //$NON-NLS-1$
                         Util.formatMap(getKey(actual)));
             }
         }
@@ -88,7 +88,7 @@ public class VerifyRuleInterpretor implements VerifyRule {
                 return null;
             } else {
                 return MessageFormat.format(
-                        "期待値に対する結果がありません: キー={0}",
+                        Messages.getString("VerifyRuleInterpretor.messageMissingActualData"), //$NON-NLS-1$
                         Util.formatMap(getKey(expected)));
             }
         }
@@ -105,7 +105,7 @@ public class VerifyRuleInterpretor implements VerifyRule {
             Object a = actual.getValue(condition.getPropertyName());
             if (condition.accepts(e, a) == false) {
                 differences.add(MessageFormat.format(
-                        "\"{0}\"(={1})が正しくありません: {2}",
+                        Messages.getString("VerifyRuleInterpretor.messageWrongProperty"), //$NON-NLS-1$
                         condition.getPropertyName(),
                         Util.format(a),
                         condition.describeExpected(e, a)));

@@ -131,7 +131,7 @@ public final class DirectBatchCompiler {
         assert localWorkingDirectory != null;
         if (localWorkingDirectory.exists()) {
             LOG.info(MessageFormat.format(
-                    "作業ディレクトリを初期化しています: {0}",
+                    Messages.getString("DirectBatchCompiler.infoInitializeWorkingDirectory"), //$NON-NLS-1$
                     localWorkingDirectory));
         }
         delete(localWorkingDirectory);

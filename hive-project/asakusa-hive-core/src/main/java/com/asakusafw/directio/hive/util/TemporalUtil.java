@@ -275,7 +275,7 @@ public final class TemporalUtil {
     private static long toJulianSecond(long seconds) {
         if (seconds < GREGORIAN_EPOCH) {
             throw new UnsupportedOperationException(MessageFormat.format(
-                    "{0} must be greater then or equal to {1}",
+                    Messages.getString("TemporalUtil.errorBeforeEpochTimestamp"), //$NON-NLS-1$
                     toTimestampString(seconds),
                     toTimestampString(GREGORIAN_EPOCH)));
         }

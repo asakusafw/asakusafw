@@ -80,7 +80,7 @@ public abstract class JdbcExporterDescription extends WindGateExporterDescriptio
         JdbcDescriptionUtil.checkCommonConfig(descriptionClass, modelType, supportClass, table, columns);
         if (customTruncate != null && customTruncate.trim().isEmpty()) {
             throw new IllegalStateException(MessageFormat.format(
-                    "{1} must not be empty string: \"{0}\"",
+                    Messages.getString("JdbcExporterDescription.errorEmptyStringProperty"), //$NON-NLS-1$
                     customTruncate,
                     "getCustomTruncate()")); //$NON-NLS-1$
         }

@@ -76,12 +76,12 @@ NamePart: one of
         Precondition.checkMustNotBeNull(importer, "importer"); //$NON-NLS-1$
         if (isValidName(name) == false) {
             throw new IllegalArgumentException(MessageFormat.format(
-                    "入力の名前が不正です ({0})",
+                    Messages.getString("FlowDescriptionDriver.errorInvalidInputName"), //$NON-NLS-1$
                     name));
         }
         if (inputs.containsKey(name)) {
             throw new IllegalStateException(MessageFormat.format(
-                    "入力の名前が重複しています ({0})",
+                    Messages.getString("FlowDescriptionDriver.errorConflictInputName"), //$NON-NLS-1$
                     name));
         }
         FlowIn<T> in = new FlowIn<T>(new InputDescription(name, importer));
@@ -120,12 +120,12 @@ NamePart: one of
         Precondition.checkMustNotBeNull(exporter, "exporter"); //$NON-NLS-1$
         if (isValidName(name) == false) {
             throw new IllegalArgumentException(MessageFormat.format(
-                    "出力の名前が不正です ({0})",
+                    Messages.getString("FlowDescriptionDriver.errorInvalidOutputName"), //$NON-NLS-1$
                     name));
         }
         if (outputs.containsKey(name)) {
             throw new IllegalStateException(MessageFormat.format(
-                    "出力の名前が重複しています ({0})",
+                    Messages.getString("FlowDescriptionDriver.errorConflictOutputName"), //$NON-NLS-1$
                     name));
         }
         FlowOut<T> out = new FlowOut<T>(new OutputDescription(name, exporter));

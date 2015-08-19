@@ -97,7 +97,7 @@ public class VerifyContext {
      */
     public Date getTestFinished() {
         if (testFinished == null) {
-            throw new IllegalStateException("Test have not been finished");
+            throw new IllegalStateException(Messages.getString("VerifyContext.errorNotFinished")); //$NON-NLS-1$
         }
         return (Date) testFinished.clone();
     }

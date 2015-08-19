@@ -114,7 +114,7 @@ public class PluginClassLoader extends URLClassLoader {
         InputStream input = cl.getResourceAsStream(aClass.getName().replace('.', '/') + ".class"); //$NON-NLS-1$
         if (input == null) {
             throw new FileNotFoundException(MessageFormat.format(
-                    "failed to obtain a class bytes: {0}",
+                    Messages.getString("PluginClassLoader.errorFailedToLoadClassBytes"), //$NON-NLS-1$
                     aClass.getName()));
         }
         byte[] results;

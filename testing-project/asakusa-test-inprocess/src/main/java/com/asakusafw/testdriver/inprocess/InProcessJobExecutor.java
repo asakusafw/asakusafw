@@ -107,7 +107,7 @@ synchronized(s) {
         }
         if (context.getFrameworkHomePathOrNull() == null) {
             throw new AssertionError(MessageFormat.format(
-                    "環境変数\"{0}\"が未設定です",
+                    Messages.getString("InProcessJobExecutor.errorUndefinedEnvironmentVariable"), //$NON-NLS-1$
                     TestDriverContext.ENV_FRAMEWORK_PATH));
         }
         String runtime = context.getRuntimeEnvironmentVersion();
@@ -117,7 +117,7 @@ synchronized(s) {
             String develop = context.getDevelopmentEnvironmentVersion();
             if (develop.equals(runtime) == false) {
                 throw new AssertionError(MessageFormat.format(
-                        "開発環境とテスト実行環境でフレームワークのバージョンが一致しません（開発環境：{0}, 実行環境：{1}）",
+                        Messages.getString("InProcessJobExecutor.errorInconsistentSdkVersion"), //$NON-NLS-1$
                         develop,
                         runtime));
             }
@@ -143,7 +143,7 @@ synchronized(s) {
             if (findCommandEmulator((TestExecutionPlan.Command) task) == null) {
                 if (configurations.getHadoopCommand() == null) {
                     throw new AssertionError(MessageFormat.format(
-                            "コマンド\"{0}\"を検出できませんでした",
+                            Messages.getString("InProcessJobExecutor.errorMissingCommandPath"), //$NON-NLS-1$
                             "hadoop")); //$NON-NLS-1$
                 }
             }
@@ -166,7 +166,7 @@ synchronized(s) {
             Map<String, String> environmentVariables) throws IOException {
         assert job != null;
         LOG.info(MessageFormat.format(
-                "Emulating hadoop job: {0}",
+                Messages.getString("InProcessJobExecutor.infoStartHadoop"), //$NON-NLS-1$
                 job.getClassName()));
         List<String> arguments = new ArrayList<String>();
         arguments.add(job.getClassName());
@@ -186,13 +186,13 @@ synchronized(s) {
                 int exitValue = ApplicationLauncher.exec(conf, arguments.toArray(new String[arguments.size()]));
                 if (exitValue != 0) {
                     throw new AssertionError(MessageFormat.format(
-                            "Hadoopジョブの実行に失敗しました (exitCode={0}, flowId={1})",
+                            Messages.getString("InProcessJobExecutor.errorNonZeroHadoopExitCode"), //$NON-NLS-1$
                             exitValue,
                             context.getCurrentFlowId()));
                 }
             } catch (Exception e) {
                 throw (AssertionError) new AssertionError(MessageFormat.format(
-                        "Hadoopジョブの実行に失敗しました (flowId={0})",
+                        Messages.getString("InProcessJobExecutor.errorUnknownHadoopException"), //$NON-NLS-1$
                         context.getCurrentFlowId())).initCause(e);
             }
         } finally {
@@ -246,14 +246,14 @@ synchronized(s) {
         CommandEmulator emulator = findCommandEmulator(command);
         if (emulator != null) {
             LOG.info(MessageFormat.format(
-                    "Emulating command ({1}): {0}",
+                    Messages.getString("InProcessJobExecutor.infoStartCommandJob"), //$NON-NLS-1$
                     command.getCommandLineString(),
                     emulator.getName()));
             try {
                 emulator.execute(context, configurations, command);
             } catch (InterruptedException e) {
                 throw (AssertionError) new AssertionError(MessageFormat.format(
-                        "コマンドの実行中に割り込みが発生しました (flowId={0}, command=\"{1}\")",
+                        Messages.getString("InProcessJobExecutor.errorExecutionInterrupted"), //$NON-NLS-1$
                         context.getCurrentFlowId(),
                         command.getCommandLineString())).initCause(e);
             }

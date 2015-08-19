@@ -86,7 +86,7 @@ final class DirectIoOperatorTester extends DirectIoTester {
                 }
             } catch (IOException e) {
                 throw new IllegalStateException(MessageFormat.format(
-                        "failed to initialize Direct I/O environment: {0}",
+                        Messages.getString("DirectIoOperatorTester.errorFailedToInitialize"), //$NON-NLS-1$
                         description), e);
             }
         }

@@ -61,17 +61,17 @@ public class VisualizeOriginalStructureProcessor extends AbstractWorkflowProcess
 
     static final Logger LOG = LoggerFactory.getLogger(VisualizeOriginalStructureProcessor.class);
 
-    static final Charset ENCODING = Charset.forName("UTF-8");
+    static final Charset ENCODING = Charset.forName("UTF-8"); //$NON-NLS-1$
 
     /**
      * Output path.
      */
-    public static final String NAIVE_PATH = Constants.PATH_BATCH + "original-structure.dot";
+    public static final String NAIVE_PATH = Constants.PATH_BATCH + "original-structure.dot"; //$NON-NLS-1$
 
     /**
      * Output path.
      */
-    public static final String MERGED_PATH = Constants.PATH_BATCH + "original-merged-structure.dot";
+    public static final String MERGED_PATH = Constants.PATH_BATCH + "original-merged-structure.dot"; //$NON-NLS-1$
 
     @Override
     public Collection<Class<? extends WorkDescriptionProcessor<?>>> getDescriptionProcessors() {
@@ -90,14 +90,14 @@ public class VisualizeOriginalStructureProcessor extends AbstractWorkflowProcess
         OutputStream output = getEnvironment().openResource(path);
         try {
             Context context = new Context(output, merged);
-            context.put("digraph {");
+            context.put("digraph {"); //$NON-NLS-1$
             context.push();
-            context.put("rankdir = LR;");
+            context.put("rankdir = LR;"); //$NON-NLS-1$
             Class<? extends BatchDescription> desc = workflow.getDescription().getClass();
-            String batchId = context.label(desc, "Batch", desc.getSimpleName());
+            String batchId = context.label(desc, "Batch", desc.getSimpleName()); //$NON-NLS-1$
             dump(context, batchId, workflow.getGraph());
             context.pop();
-            context.put("}");
+            context.put("}"); //$NON-NLS-1$
             context.close();
         } finally {
             output.close();
@@ -135,7 +135,7 @@ public class VisualizeOriginalStructureProcessor extends AbstractWorkflowProcess
         assert desc != null;
         assert model != null;
 
-        String id = context.label(desc.getFlowClass(), "JobFlow", desc.getFlowClass().getSimpleName());
+        String id = context.label(desc.getFlowClass(), "JobFlow", desc.getFlowClass().getSimpleName()); //$NON-NLS-1$
         dumpFlowBody(context, id, model.getStageGraph().getInput().getSource().getOrigin());
         return id;
     }
@@ -146,12 +146,12 @@ public class VisualizeOriginalStructureProcessor extends AbstractWorkflowProcess
             switch (desc.getKind()) {
             case OPERATOR:
                 Declaration decl = ((OperatorDescription) desc).getDeclaration();
-                if (decl.getDeclaring().getName().startsWith("com.asakusafw.vocabulary.") == false) {
+                if (decl.getDeclaring().getName().startsWith("com.asakusafw.vocabulary.") == false) { //$NON-NLS-1$
                     String elementId = context.label(
                             decl.toMethod(),
                             decl.getAnnotationType().getSimpleName(),
                             MessageFormat.format(
-                                    "{0}#{1}",
+                                    "{0}#{1}", //$NON-NLS-1$
                                     decl.getDeclaring().getSimpleName(),
                                     decl.toMethod().getName()));
                     context.connect(flowId, elementId);
@@ -160,7 +160,7 @@ public class VisualizeOriginalStructureProcessor extends AbstractWorkflowProcess
             case FLOW_COMPONENT:
                 FlowPartDescription part = (FlowPartDescription) desc;
                 Class<? extends FlowDescription> description = part.getFlowGraph().getDescription();
-                String elementId = context.label(description, "FlowPart", description.getSimpleName());
+                String elementId = context.label(description, "FlowPart", description.getSimpleName()); //$NON-NLS-1$
                 context.connect(flowId, elementId);
                 dumpFlowBody(context, elementId, part.getFlowGraph());
                 break;
@@ -218,7 +218,7 @@ public class VisualizeOriginalStructureProcessor extends AbstractWorkflowProcess
 
         String newLabel(String kind, String detail) {
             String id = UUID.randomUUID().toString();
-            put("\"{0}\" [shape=box, label=\"{1}\\n{2}\"];", id, kind, detail);
+            put("\"{0}\" [shape=box, label=\"{1}\\n{2}\"];", id, kind, detail); //$NON-NLS-1$
             return id;
         }
 
@@ -227,10 +227,10 @@ public class VisualizeOriginalStructureProcessor extends AbstractWorkflowProcess
                 String id = src + '|' + dst;
                 if (sawConnections.contains(id) == false) {
                     sawConnections.add(id);
-                    put("\"{0}\" -> \"{1}\";", src, dst);
+                    put("\"{0}\" -> \"{1}\";", src, dst); //$NON-NLS-1$
                 }
             } else {
-                put("\"{0}\" -> \"{1}\";", src, dst);
+                put("\"{0}\" -> \"{1}\";", src, dst); //$NON-NLS-1$
             }
         }
 
@@ -239,7 +239,7 @@ public class VisualizeOriginalStructureProcessor extends AbstractWorkflowProcess
             assert arguments != null;
             StringBuilder buf = new StringBuilder();
             for (int i = 0, n = indent; i < n; i++) {
-                buf.append("    ");
+                buf.append("    "); //$NON-NLS-1$
             }
             if (arguments.length == 0) {
                 buf.append(pattern);

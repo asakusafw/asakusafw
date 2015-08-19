@@ -246,7 +246,7 @@ public class TestDataPreparator {
         DataModelDefinition<T> definition = adapter.get(type);
         if (definition == null) {
             throw new IOException(MessageFormat.format(
-                    "Failed to adapt {0}: (adaptor not found)",
+                    Messages.getString("TestDataPreparator.errorMissingDataModelDefinition"), //$NON-NLS-1$
                     type.getName()));
         }
         return definition;
@@ -282,7 +282,7 @@ public class TestDataPreparator {
             DataModelSource input = sources.open(definition, source, context);
             if (input == null) {
                 throw new IOException(MessageFormat.format(
-                        "Failed to open source: {0} (handler not found)",
+                        Messages.getString("TestDataPreparator.errorMissingDataModelSource"), //$NON-NLS-1$
                         source));
             }
             try {

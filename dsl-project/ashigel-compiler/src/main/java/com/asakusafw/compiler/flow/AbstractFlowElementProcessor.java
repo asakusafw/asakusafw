@@ -48,7 +48,9 @@ public abstract class AbstractFlowElementProcessor
         if (targetOperatorAnnotation == null) {
             this.targetOperatorAnnotation = loadTargetAnnotationType();
             if (targetOperatorAnnotation == null) {
-                getEnvironment().error("{0}が対象とする注釈型を検出できませんでした", getClass());
+                getEnvironment().error(
+                        Messages.getString("AbstractFlowElementProcessor.errorMissingTargetAnnotation"), //$NON-NLS-1$
+                        getClass());
                 throw new IllegalStateException();
             }
         }
