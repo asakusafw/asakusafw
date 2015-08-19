@@ -134,11 +134,11 @@ public final class DirectIoTestHelper {
         } catch (IOException e) {
             if (explicit) {
                 throw new IOException(MessageFormat.format(
-                        "Failed to initialize Direct I/O for \"{0}\", please check Direct I/O configuration",
+                        Messages.getString("DirectIoTestHelper.errorMissingConfiguration"), //$NON-NLS-1$
                         resolvedRootPath), e);
             } else {
                 throw new IOException(MessageFormat.format(
-                        "Failed to initialize Direct I/O for \"{0}\", please check configuration ({1})",
+                        Messages.getString("DirectIoTestHelper.errorMissingConfigurationWithFile"), //$NON-NLS-1$
                         resolvedRootPath,
                         findExtraConfiguration(context)), e);
             }
@@ -185,17 +185,17 @@ public final class DirectIoTestHelper {
         File home = getHomePath(context);
         if (home == null) {
             throw new IOException(MessageFormat.format(
-                    "Environment variable \"{0}\" is not set",
+                    Messages.getString("DirectIoTestHelper.errorUndefinedEnvironmentVariable"), //$NON-NLS-1$
                     ENV_FRAMEWORK_HOME));
         } else if (home.isDirectory() == false) {
             throw new IOException(MessageFormat.format(
-                    "Asakusa Framework is not installed: {0}",
+                    Messages.getString("DirectIoTestHelper.errorSdkNotFound"), //$NON-NLS-1$
                     home));
         }
         File file = new File(home, RuntimeResourceManager.CONFIGURATION_FILE_PATH);
         if (file.exists() == false) {
             throw new IOException(MessageFormat.format(
-                    "Direct I/O configuration file is not found: {0}",
+                    Messages.getString("DirectIoTestHelper.errorMissingConfigurationFile"), //$NON-NLS-1$
                     file));
         }
         return file.toURI().toURL();
@@ -378,7 +378,7 @@ public final class DirectIoTestHelper {
         FilePattern pattern = FilePattern.compile(patternString);
         if (pattern.containsVariables()) {
             throw new IOException(MessageFormat.format(
-                    "Input resource pattern contains variables (original=[{0}], expanded=[{1}])",
+                    Messages.getString("DirectIoTestHelper.errorInputContainUnresolvedVariable"), //$NON-NLS-1$
                     inputResourcePattern,
                     patternString));
         }
@@ -435,13 +435,13 @@ public final class DirectIoTestHelper {
             format = ReflectionUtils.newInstance(formatClass, hadoopConfiguration);
         } catch (Exception e) {
             throw new IOException(MessageFormat.format(
-                    "Failed to create data format: {0}",
+                    Messages.getString("DirectIoTestHelper.errorFailedToInitializeDataFormat"), //$NON-NLS-1$
                     formatClass.getName()), e);
         }
 
         if (format.getSupportedType().isAssignableFrom(dataType) == false) {
             throw new IOException(MessageFormat.format(
-                    "The data format does not support {1}: {0}",
+                    Messages.getString("DirectIoTestHelper.errorIncompatibleDataFormatType"), //$NON-NLS-1$
                     formatClass.getName(),
                     dataType.getName()));
         }

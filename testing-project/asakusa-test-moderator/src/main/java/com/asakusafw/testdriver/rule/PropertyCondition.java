@@ -119,17 +119,17 @@ public class PropertyCondition<T> {
                 continue;
             }
             if (sawDescription) {
-                buf.append("または");
+                buf.append(Messages.getString("PropertyCondition.messageOrDescription")); //$NON-NLS-1$
             }
             sawDescription = true;
             buf.append(MessageFormat.format(
-                    "「{0}」",
+                    Messages.getString("PropertyCondition.messageQuotedDescription"), //$NON-NLS-1$
                     description));
         }
         if (sawDescription) {
             return buf.toString();
         } else {
-            return "(期待値とルールの組み合わせが正しくない)";
+            return Messages.getString("PropertyCondition.messageUnsupportedData"); //$NON-NLS-1$
         }
     }
 }

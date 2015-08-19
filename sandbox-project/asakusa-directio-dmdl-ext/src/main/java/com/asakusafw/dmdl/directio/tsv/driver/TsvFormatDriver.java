@@ -36,7 +36,7 @@ The attributed declaration can have:
 <ul>
 <li> with {@code charset=[string-literal]} as charset name (default: UTF-8) </li>
 <li> with {@code has_header=TRUE|FALSE} as whether header is required (default: FALSE) </li>
-<li> with {@code allow_linefeed=TRUE|FALSE} as whether each field can contain linefeed (default: FALSE) </li>
+<li> with {@code allow_linefeed=TRUE|FALSE} as whether each field can contain line-feed (default: FALSE) </li>
 <li> with {@code compression=[string-literal]} as compression name (default: plain) </li>
 </ul>
  * @since 0.5.0
@@ -67,7 +67,7 @@ public class TsvFormatDriver extends ModelAttributeDriver {
     public static final String ELEMENT_HAS_HEADER_NAME = "has_header"; //$NON-NLS-1$
 
     /**
-     * The element name of whether value can contain linefeed.
+     * The element name of whether value can contain line-feed.
      * @since 0.7.0
      */
     public static final String ELEMENT_ALLOW_LINEFEED = "allow_linefeed"; //$NON-NLS-1$
@@ -121,7 +121,7 @@ public class TsvFormatDriver extends ModelAttributeDriver {
             environment.report(new Diagnostic(
                     Level.ERROR,
                     stringLiteral,
-                    "@{0}({1}) must not be empty",
+                    Messages.getString("TsvFormatDriver.errorEmptyString"), //$NON-NLS-1$
                     TARGET_NAME,
                     name));
             return false;
@@ -145,7 +145,7 @@ public class TsvFormatDriver extends ModelAttributeDriver {
             environment.report(new Diagnostic(
                     Level.ERROR,
                     element,
-                    "@{0}({1}) must be a string literal",
+                    Messages.getString("TsvFormatDriver.errorNotString"), //$NON-NLS-1$
                     TARGET_NAME,
                     elementName));
             return null;
@@ -155,7 +155,7 @@ public class TsvFormatDriver extends ModelAttributeDriver {
                 environment.report(new Diagnostic(
                         Level.ERROR,
                         element,
-                        "@{0}({1}) must be a string literal",
+                        Messages.getString("TsvFormatDriver.errorNotString"), //$NON-NLS-1$
                         TARGET_NAME,
                         elementName));
                 return null;

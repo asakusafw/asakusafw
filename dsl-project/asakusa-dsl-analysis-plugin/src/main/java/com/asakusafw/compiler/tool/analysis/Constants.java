@@ -21,11 +21,11 @@ package com.asakusafw.compiler.tool.analysis;
  */
 final class Constants {
 
-    public static final String PATH_PREFIX = "opt/dsl-analysis/";
+    public static final String PATH_PREFIX = "opt/dsl-analysis/"; //$NON-NLS-1$
 
-    public static final String PATH_BATCH = PATH_PREFIX + "batch/";
+    public static final String PATH_BATCH = PATH_PREFIX + "batch/"; //$NON-NLS-1$
 
-    public static final String PATH_JOBFLOW = PATH_PREFIX + "jobflow/";
+    public static final String PATH_JOBFLOW = PATH_PREFIX + "jobflow/"; //$NON-NLS-1$
 
     private Constants() {
         return;

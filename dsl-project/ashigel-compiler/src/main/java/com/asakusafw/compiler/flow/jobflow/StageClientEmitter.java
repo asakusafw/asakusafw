@@ -359,7 +359,7 @@ public class StageClientEmitter {
 
         private Javadoc createJavadoc() {
             return new JavadocBuilder(factory)
-                .text("Hadoop job client for stage <code>{0}</code>.", stage.getNumber())
+                .text(Messages.getString("StageClientEmitter.javadocClass"), stage.getNumber()) //$NON-NLS-1$
                 .toJavadoc();
         }
 

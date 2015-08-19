@@ -50,7 +50,7 @@ public class InProcessEnvironmentConfigurator extends TestingEnvironmentConfigur
         if (checkProperty(TestDriverContext.KEY_JOB_EXECUTOR_FACTORY) == false) {
             return;
         }
-        LOG.info("Installing test driver features for in-process testing environment.");
+        LOG.info(Messages.getString("InProcessEnvironmentConfigurator.infoApply")); //$NON-NLS-1$
         System.setProperty(TestDriverContext.KEY_JOB_EXECUTOR_FACTORY, InProcessJobExecutorFactory.class.getName());
     }
 
@@ -63,7 +63,7 @@ public class InProcessEnvironmentConfigurator extends TestingEnvironmentConfigur
         String value = System.getProperty(key);
         if (value != null) {
             LOG.warn(MessageFormat.format(
-                    "The system property {0} is already set: {1}",
+                    Messages.getString("InProcessEnvironmentConfigurator.warnConflict"), //$NON-NLS-1$
                     key,
                     value));
             return false;

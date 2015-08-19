@@ -16,6 +16,7 @@
 package com.asakusafw.dmdl.java;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.Collection;
 
 import org.slf4j.Logger;
@@ -71,9 +72,12 @@ public class GenerateTask {
         DmdlSemantics semantics = analyze();
         JavaModelClassGenerator generator = new JavaModelClassGenerator(semantics, conf, driver);
         Collection<ModelDeclaration> models = semantics.getDeclaredModels();
-        LOG.info(Messages.getString("GenerateTask.monitorGenerateStarting"), models.size()); //$NON-NLS-1$
+        LOG.info(MessageFormat.format(
+                Messages.getString("GenerateTask.monitorGenerateStarting"), //$NON-NLS-1$
+                models.size()));
         for (ModelDeclaration model : models) {
-            LOG.info(Messages.getString("GenerateTask.monitorGenerateModel"), model.getName()); //$NON-NLS-1$
+            LOG.info(MessageFormat.format(Messages.getString("GenerateTask.monitorGenerateModel"), //$NON-NLS-1$
+                    model.getName()));
             generator.emit(model);
         }
         LOG.info(Messages.getString("GenerateTask.monitorGenerateFinishing")); //$NON-NLS-1$

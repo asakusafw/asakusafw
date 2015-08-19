@@ -53,7 +53,7 @@ public class InProcessEnvironmentOptimizer extends TestingEnvironmentConfigurato
         synchronized (settings) {
             Map<String, String> properties = settings.getProperties();
             if (checkProperty(properties, InProcessStageConfigurator.KEY_FORCE)) {
-                LOG.info("installing test driver features for optimizing in-process testing environment.");
+                LOG.info(Messages.getString("InProcessEnvironmentOptimizer.infoApply")); //$NON-NLS-1$
                 properties.put(InProcessStageConfigurator.KEY_FORCE, String.valueOf(true));
             }
         }
@@ -67,7 +67,7 @@ public class InProcessEnvironmentOptimizer extends TestingEnvironmentConfigurato
     private boolean checkProperty(Map<String, String> properties, String key) {
         if (properties.containsKey(key)) {
             LOG.warn(MessageFormat.format(
-                    "The system property {0} is already set: {1}",
+                    Messages.getString("InProcessEnvironmentOptimizer.warnConflict"), //$NON-NLS-1$
                     key,
                     properties.get(key)));
             return false;

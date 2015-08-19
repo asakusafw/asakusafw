@@ -40,14 +40,14 @@ public class JobFlowWorkDescription extends WorkDescription {
         }
         if (FlowDescription.isJobFlow(flowClass) == false) {
             throw new IllegalArgumentException(MessageFormat.format(
-                    "{0}はジョブフローではありません (@{1}をクラスに付与して下さい)",
+                    Messages.getString("JobFlowWorkDescription.errorMissingAnnotation"), //$NON-NLS-1$
                     flowClass.getName(),
                     JobFlow.class.getSimpleName()));
         }
         this.name = FlowDescription.getJobFlowName(flowClass);
         if (isValidName(name) == false) {
             throw new IllegalArgumentException(MessageFormat.format(
-                    "{0}はジョブフローの名前として正しくありません ({0})",
+                    Messages.getString("JobFlowWorkDescription.errorInvalidId"), //$NON-NLS-1$
                     name,
                     flowClass.getName()));
         }

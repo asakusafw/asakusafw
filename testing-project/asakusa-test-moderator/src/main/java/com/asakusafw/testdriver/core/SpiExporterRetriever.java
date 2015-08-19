@@ -48,7 +48,7 @@ public class SpiExporterRetriever implements ExporterRetriever<ExporterDescripti
 
     /**
      * Creates a new instance.
-     * @param elements the elements to be composited
+     * @param elements the elements to be composed
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     @SuppressWarnings("rawtypes")
@@ -73,7 +73,7 @@ public class SpiExporterRetriever implements ExporterRetriever<ExporterDescripti
             }
         }
         throw new IOException(MessageFormat.format(
-                "Failed to open results of {0} (does not supported)",
+                Messages.getString("SpiExporterRetriever.errorFailedToTruncate"), //$NON-NLS-1$
                 description));
     }
 
@@ -98,7 +98,7 @@ public class SpiExporterRetriever implements ExporterRetriever<ExporterDescripti
             }
         }
         throw new IOException(MessageFormat.format(
-                "Failed to open results of {0} (does not supported)",
+                Messages.getString("SpiExporterRetriever.errorFailedToCreateOutput"), //$NON-NLS-1$
                 description));
     }
 
@@ -125,7 +125,7 @@ public class SpiExporterRetriever implements ExporterRetriever<ExporterDescripti
             }
         }
         throw new IOException(MessageFormat.format(
-                "Failed to open results of {0} (does not supported)",
+                Messages.getString("SpiExporterRetriever.errorFailedToCreateSource"), //$NON-NLS-1$
                 description));
     }
 

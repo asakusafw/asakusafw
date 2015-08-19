@@ -180,7 +180,7 @@ class ExcelDataDriver {
             assert cell != null;
             if (value < min || max < value) {
                 throw new IOException(MessageFormat.format(
-                        "{0}は{2}~{3}を指定してください: {1} (cell=({5}, {6}), id={4})",
+                        Messages.getString("ExcelDataDriver.errorInvalidNumberRange"), //$NON-NLS-1$
                         name,
                         value,
                         min,
@@ -267,7 +267,7 @@ class ExcelDataDriver {
         public void stringProperty(PropertyName name, Cell context) throws IOException {
             if (context.getCellType() != Cell.CELL_TYPE_STRING) {
                 throw new IOException(MessageFormat.format(
-                        "({0}, {1}, {2})の形式を判別できませんでした。先頭に '' を付けて文字列を表すようにしてください",
+                        Messages.getString("ExcelDataDriver.errorNotExplicitString"), //$NON-NLS-1$
                         id,
                         context.getRowIndex() + 1,
                         context.getColumnIndex() + 1));
@@ -335,7 +335,7 @@ class ExcelDataDriver {
 
         private IOException exception(PropertyName name, Cell cell, String expected) {
             return new IOException(MessageFormat.format(
-                    "{0}は{1}を指定してください: (cell=({3}, {4}), id={2})",
+                    Messages.getString("ExcelDataDriver.errorUnexpectedCellType"), //$NON-NLS-1$
                     name,
                     expected,
                     id,

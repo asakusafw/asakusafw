@@ -316,7 +316,9 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
             Precondition.checkMustNotBeNull(type, "type"); //$NON-NLS-1$
             DataClass data = environment.getDataClasses().load(type);
             if (data == null) {
-                environment.error("{0}のデータモデルを解析できませんでした", type);
+                environment.error(
+                        Messages.getString("FlowElementProcessor.errorMissingDataClass"), //$NON-NLS-1$
+                        type);
                 data = new DataClass.Unresolved(factory, type);
             }
             Type domType = importer.toType(type);
@@ -350,7 +352,9 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
                         .toExpression());
             DataClass component = environment.getDataClasses().load(type);
             if (component == null) {
-                environment.error("{0}のデータモデルを解析できませんでした", type);
+                environment.error(
+                        Messages.getString("FlowElementProcessor.errorMissingDataClass"), //$NON-NLS-1$
+                        type);
                 component = new DataClass.Unresolved(factory, type);
             }
             return new ListBufferMirror(factory, list, component, elementType);

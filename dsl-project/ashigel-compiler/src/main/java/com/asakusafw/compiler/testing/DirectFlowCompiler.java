@@ -159,7 +159,7 @@ public final class DirectFlowCompiler {
         assert localWorkingDirectory != null;
         if (localWorkingDirectory.exists()) {
             LOG.info(MessageFormat.format(
-                    "作業ディレクトリを初期化しています: {0}",
+                    Messages.getString("DirectFlowCompiler.infoInitializeWorkingDirectory"), //$NON-NLS-1$
                     localWorkingDirectory));
         }
         delete(localWorkingDirectory);
@@ -203,7 +203,7 @@ public final class DirectFlowCompiler {
                 results.add(new ZipRepository(file));
             } else {
                 LOG.warn(MessageFormat.format(
-                        "{0}は不明な形式のため、無視されます",
+                        Messages.getString("DirectFlowCompiler.warnIgnoredUnknownFormat"), //$NON-NLS-1$
                         file));
             }
         }
@@ -273,7 +273,7 @@ public final class DirectFlowCompiler {
             File library = findLibraryFromUrl(url, path);
             if (library != null) {
                 LOG.info(MessageFormat.format(
-                        "フラグメントクラスライブラリを取り込みます: {0}",
+                        Messages.getString("DirectFlowCompiler.infoLoadFragmentClassLibrary"), //$NON-NLS-1$
                         library));
                 results.add(library);
             }
@@ -289,7 +289,7 @@ public final class DirectFlowCompiler {
         URL resource = aClass.getResource(name + ".class"); //$NON-NLS-1$
         if (resource == null) {
             LOG.warn(MessageFormat.format(
-                    "Failed to locate the class file: {0}",
+                    Messages.getString("DirectFlowCompiler.warnFailedToLocateClassFile"), //$NON-NLS-1$
                     aClass.getName()));
             return null;
         }
@@ -307,7 +307,7 @@ public final class DirectFlowCompiler {
                 return toClassPathRoot(file, resourcePath);
             } catch (URISyntaxException e) {
                 LOG.warn(MessageFormat.format(
-                        "Failed to locate the library path (cannot convert to local file): {0}",
+                        Messages.getString("DirectFlowCompiler.warnInvalidLibraryUri"), //$NON-NLS-1$
                         resource), e);
                 return null;
             }
@@ -317,8 +317,8 @@ public final class DirectFlowCompiler {
             return toClassPathRoot(path, resourcePath);
         } else {
             LOG.warn(MessageFormat.format(
-                    "Failed to locate the library path (unsupported protocol {0}): {1}",
-                    resource,
+                    Messages.getString("DirectFlowCompiler.warnUnsupportedLibraryScheme"), //$NON-NLS-1$
+                    protocol,
                     resourcePath));
             return null;
         }
@@ -334,7 +334,7 @@ public final class DirectFlowCompiler {
             current = current.getParentFile();
             if (current == null || current.isDirectory() == false) {
                 LOG.warn(MessageFormat.format(
-                        "Failed to locate the library path: {0} ({1})",
+                        Messages.getString("DirectFlowCompiler.warnUnsupportedLibraryLocation"), //$NON-NLS-1$
                         resourceFile,
                         resourcePath));
                 return null;
@@ -358,7 +358,7 @@ public final class DirectFlowCompiler {
             archive = new URI(qualifier);
         } catch (URISyntaxException e) {
             LOG.warn(MessageFormat.format(
-                    "Failed to locate the JAR library file {0}: {1}",
+                    Messages.getString("DirectFlowCompiler.warnUnexpedtedLibraryPath"), //$NON-NLS-1$
                     qualifier,
                     resourceName),
                     e);
@@ -366,9 +366,9 @@ public final class DirectFlowCompiler {
         }
         if (archive.getScheme().equals("file") == false) { //$NON-NLS-1$
             LOG.warn(MessageFormat.format(
-                    "Failed to locate the library path (unsupported protocol {}): {}",
-                    archive,
-                    resourceName));
+                    Messages.getString("DirectFlowCompiler.warnUnsupportedLibraryScheme"), //$NON-NLS-1$
+                    archive.getScheme(),
+                    archive));
             return null;
         }
         File file = new File(archive);

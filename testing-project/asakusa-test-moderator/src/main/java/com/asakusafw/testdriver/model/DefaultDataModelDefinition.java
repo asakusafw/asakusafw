@@ -262,7 +262,7 @@ public class DefaultDataModelDefinition<T> implements DataModelDefinition<T> {
             Method method = results.remove(propertyName);
             if (method == null) {
                 LOG.warn(MessageFormat.format(
-                        "Property {0} is not found in {1}",
+                        Messages.getString("DefaultDataModelDefinition.warnOrderContainUnknownProperty"), //$NON-NLS-1$
                         name, modelClass.getName()));
             } else {
                 ordered.put(propertyName, method);
@@ -270,7 +270,7 @@ public class DefaultDataModelDefinition<T> implements DataModelDefinition<T> {
         }
         if (results.isEmpty() == false) {
             LOG.warn(MessageFormat.format(
-                    "Property {0} is not declared its order in {1}",
+                    Messages.getString("DefaultDataModelDefinition.warnOrderNotCoverProperty"), //$NON-NLS-1$
                     results.keySet(), modelClass.getName()));
             ordered.putAll(results);
         }

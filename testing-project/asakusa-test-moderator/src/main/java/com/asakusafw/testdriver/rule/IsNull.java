@@ -28,6 +28,6 @@ public class IsNull implements ValuePredicate<Object> {
 
     @Override
     public String describeExpected(Object expected, Object actual) {
-        return "is null";
+        return Messages.getString("IsNull.message"); //$NON-NLS-1$
     }
 }

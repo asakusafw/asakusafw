@@ -77,28 +77,28 @@ public class TemporaryIoProcessor extends ExternalIoDescriptionProcessor {
             if (pathPrefix == null) {
                 valid = false;
                 getEnvironment().error(
-                        "{0}のパスが指定されていません",
+                        Messages.getString("TemporaryIoProcessor.errorMissingOutputPath"), //$NON-NLS-1$
                         desc.getClass().getName());
             } else {
                 Location location = Location.fromPath(pathPrefix, '/');
                 if (location.isPrefix() == false) {
                     valid = false;
                     getEnvironment().error(
-                            "{0}はパスの接尾辞(-*)でなければなりません: {1}",
+                            Messages.getString("TemporaryIoProcessor.errorMissingOutputPathSuffix"), //$NON-NLS-1$
                             desc.getClass().getName(),
                             pathPrefix);
                 }
                 if (location.getParent() == null) {
                     valid = false;
                     getEnvironment().error(
-                            "{0}には最低ひとつのディレクトリの指定が必要です: {1}",
+                            Messages.getString("TemporaryIoProcessor.errorMissingOutputParentDirectory"), //$NON-NLS-1$
                             desc.getClass().getName(),
                             pathPrefix);
                 }
                 if (VALID_OUTPUT_NAME.matcher(location.getName()).matches() == false) {
                     valid = false;
                     getEnvironment().error(
-                            "{0}のファイル名(末尾のセグメント)は英数字のみ利用できます: {1}",
+                            Messages.getString("TemporaryIoProcessor.errorInvalidOutputName"), //$NON-NLS-1$
                             desc.getClass().getName(),
                             pathPrefix);
                 }

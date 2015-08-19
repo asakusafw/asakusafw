@@ -76,7 +76,7 @@ public class VerifyEngine {
                 DataModelReflection old = expectedRest.put(key, next);
                 if (old != null) {
                     throw new IOException(MessageFormat.format(
-                            "期待値のキーが重複しています: {0} ({1} <=> {2})",
+                            Messages.getString("VerifyEngine.errorConflictExpectedDataKey"), //$NON-NLS-1$
                             key,
                             old,
                             next));
@@ -128,7 +128,7 @@ public class VerifyEngine {
                 DataModelReflection saw = sawActual.get(key);
                 if (saw != null) {
                     results.add(new Difference(actual, null, MessageFormat.format(
-                            "結果のキーが重複しています: {0} ({1} <=> {2})",
+                            Messages.getString("VerifyEngine.errorConflictActualDataKey"), //$NON-NLS-1$
                             key,
                             saw,
                             actual)));

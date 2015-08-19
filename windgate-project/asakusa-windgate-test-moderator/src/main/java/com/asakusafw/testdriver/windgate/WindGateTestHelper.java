@@ -204,7 +204,7 @@ public final class WindGateTestHelper {
             }
         }
         throw new IOException(MessageFormat.format(
-                "Failed to prepare WindGate resource: {2} (profile={1}, description={0})",
+                Messages.getString("WindGateTestHelper.errorFailedToCreateResourceManipulator"), //$NON-NLS-1$
                 description.getClass().getName(),
                 description.getProfileName(),
                 resourceName));
@@ -248,7 +248,7 @@ public final class WindGateTestHelper {
         }
         if (url == null) {
             throw new IOException(MessageFormat.format(
-                    "WindGate profile is not found (profile={1}, description={0})",
+                    Messages.getString("WindGateTestHelper.errorMissingProfile"), //$NON-NLS-1$
                     description.getClass().getName(),
                     description.getProfileName()));
         }
@@ -268,7 +268,7 @@ public final class WindGateTestHelper {
             return profile;
         } catch (Exception e) {
             throw new IOException(MessageFormat.format(
-                    "Failed to load WindGate profile: {2} (profile={1}, description={0})",
+                    Messages.getString("WindGateTestHelper.errorFailedToLoadProfile"), //$NON-NLS-1$
                     description.getClass().getName(),
                     description.getProfileName(),
                     url), e);
@@ -284,7 +284,7 @@ public final class WindGateTestHelper {
                 return file.toURI().toURL();
             } catch (IOException e) {
                 LOG.warn(MessageFormat.format(
-                        "Failed to convert a file path to URL: {0}",
+                        Messages.getString("WindGateTestHelper.errorInvalidFilePath"), //$NON-NLS-1$
                         file), e);
                 return null;
             }
@@ -303,7 +303,7 @@ public final class WindGateTestHelper {
             }
         } else {
             LOG.warn(MessageFormat.format(
-                    "{0} is not defined",
+                    Messages.getString("WindGateTestHelper.warnUndefinedEnvironmentVariable"), //$NON-NLS-1$
                     ENV_FRAMEWORK_HOME));
         }
         return null;
@@ -333,7 +333,7 @@ public final class WindGateTestHelper {
                         pluginLibraries.add(url);
                     } catch (Exception e) {
                         LOG.warn(MessageFormat.format(
-                                "Failed to convert a file path to URL: {0}",
+                                Messages.getString("WindGateTestHelper.errorInvalidPluginPath"), //$NON-NLS-1$
                                 file), e);
                     }
                 }
@@ -369,12 +369,12 @@ public final class WindGateTestHelper {
         } finally {
             if (succeed == false) {
                 LOG.warn(MessageFormat.format(
-                        "Failed to prepare object: {0}",
+                        Messages.getString("WindGateTestHelper.errorFailedToPrepareObject"), //$NON-NLS-1$
                         object));
                 try {
                     object.close();
                 } catch (IOException e) {
-                    LOG.warn("Failed to close", e);
+                    LOG.warn(Messages.getString("WindGateTestHelper.errorFailedToCloseObject"), e); //$NON-NLS-1$
                 }
             }
         }

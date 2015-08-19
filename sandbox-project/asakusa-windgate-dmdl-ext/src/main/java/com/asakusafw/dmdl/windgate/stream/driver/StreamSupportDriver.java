@@ -23,10 +23,9 @@ import com.asakusafw.dmdl.model.AstAttribute;
 import com.asakusafw.dmdl.model.AstAttributeElement;
 import com.asakusafw.dmdl.model.AstLiteral;
 import com.asakusafw.dmdl.model.LiteralKind;
-import com.asakusafw.dmdl.semantics.Declaration;
 import com.asakusafw.dmdl.semantics.DmdlSemantics;
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
-import com.asakusafw.dmdl.spi.AttributeDriver;
+import com.asakusafw.dmdl.spi.ModelAttributeDriver;
 import com.asakusafw.dmdl.util.AttributeUtil;
 
 /**
@@ -37,8 +36,9 @@ The attributed declaration must be:
 <li> with type={@code "<format-name>"} </li>
 </ul>
  * @since 0.2.2
+ * @version 0.7.5
  */
-public class StreamSupportDriver extends AttributeDriver {
+public class StreamSupportDriver extends ModelAttributeDriver {
 
     /**
      * The attribute name.
@@ -58,17 +58,9 @@ public class StreamSupportDriver extends AttributeDriver {
     @Override
     public void process(
             DmdlSemantics environment,
-            Declaration declaration,
+            ModelDeclaration declaration,
             AstAttribute attribute) {
         assert attribute.name.toString().equals(TARGET_NAME);
-        if ((declaration instanceof ModelDeclaration) == false) {
-            environment.report(new Diagnostic(
-                    Level.ERROR,
-                    declaration.getOriginalAst(),
-                    "@{0} is for only for models",
-                    TARGET_NAME));
-            return;
-        }
         String value = getString(environment, attribute);
         if (value != null) {
             declaration.putTrait(
@@ -87,7 +79,7 @@ public class StreamSupportDriver extends AttributeDriver {
             environment.report(new Diagnostic(
                     Level.ERROR,
                     attribute.name,
-                    "@{0} must declare an element \"{1}=...\"",
+                    Messages.getString("StreamSupportDriver.diagnosticMissingElement"), //$NON-NLS-1$
                     TARGET_NAME,
                     ELEMENT_NAME));
             return null;
@@ -95,7 +87,7 @@ public class StreamSupportDriver extends AttributeDriver {
             environment.report(new Diagnostic(
                     Level.ERROR,
                     target,
-                    "@{0}.{1} must be a string literal",
+                    Messages.getString("StreamSupportDriver.diagnosticNotString"), //$NON-NLS-1$
                     TARGET_NAME,
                     ELEMENT_NAME));
             return null;
@@ -105,7 +97,7 @@ public class StreamSupportDriver extends AttributeDriver {
                 environment.report(new Diagnostic(
                         Level.ERROR,
                         target,
-                        "@{0}.{1} must be a string literal",
+                        Messages.getString("StreamSupportDriver.diagnosticNotString"), //$NON-NLS-1$
                         TARGET_NAME,
                         ELEMENT_NAME));
                 return null;

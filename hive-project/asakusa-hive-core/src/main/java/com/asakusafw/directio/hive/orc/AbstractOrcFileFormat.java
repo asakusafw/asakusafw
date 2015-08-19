@@ -129,14 +129,14 @@ public abstract class AbstractOrcFileFormat<T> extends HadoopFileFormat<T>
         for (FileStatus status : context.getInputFiles()) {
             if (LOG.isInfoEnabled()) {
                 LOG.info(MessageFormat.format(
-                        "Loading ORCFile metadata ({0}): {1}",
+                        Messages.getString("AbstractOrcFileFormat.infoLoadMetadata"), //$NON-NLS-1$
                         context.getDataType().getSimpleName(),
                         status.getPath()));
             }
             Reader orc = OrcFile.createReader(context.getFileSystem(), status.getPath());
             if (LOG.isInfoEnabled()) {
                 LOG.info(MessageFormat.format(
-                        "Loaded ORCFile metadata ({0}): path={1}, rows={2}, deser-size={3}",
+                        Messages.getString("AbstractOrcFileFormat.infoAnalyzeMetadata"), //$NON-NLS-1$
                         context.getDataType().getSimpleName(),
                         status.getPath(),
                         orc.getNumberOfRows(),

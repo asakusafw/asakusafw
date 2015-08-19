@@ -373,7 +373,8 @@ public class ExecutableAnalyzer {
             List<PropertyMirror> aGroup = first.groupProperties;
             List<PropertyMirror> bGroup = spec.groupProperties;
             if (aGroup.size() != bGroup.size()) {
-                error(spec.position, "@Key注釈のグループ化項目はそれぞれ同じ数のプロパティを指定する必要があります");
+                error(spec.position,
+                        Messages.getString("ExecutableAnalyzer.errorInconsistentGroupKeyCount")); //$NON-NLS-1$
                 continue;
             }
             assert aGroup.size() == bGroup.size();
@@ -385,7 +386,8 @@ public class ExecutableAnalyzer {
                     continue;
                 }
                 if (types.isSameType(aProperty.getType(), bProperty.getType()) == false) {
-                    error(spec.position, "@Key注釈のグループ化項目「{0}.{1}」は「{2}.{3}」と同じ型でなければなりません",
+                    error(spec.position,
+                            Messages.getString("ExecutableAnalyzer.errorInconsistentGroupKeyType"), //$NON-NLS-1$
                             getParameterName(spec.position),
                             spec.key.getGroupProperties().get(pIndex),
                             getParameterName(first.position),
@@ -469,7 +471,7 @@ public class ExecutableAnalyzer {
         List<String> group = toStringList(values.get("group")); //$NON-NLS-1$
         List<String> order = toStringList(values.get("order")); //$NON-NLS-1$
         if (group == null) {
-            error(position, "@Keyにgroupが指定されていません");
+            error(position, Messages.getString("ExecutableAnalyzer.errorMissingGroup")); //$NON-NLS-1$
             return null;
         }
         if (order == null) {
@@ -479,7 +481,8 @@ public class ExecutableAnalyzer {
         for (String orderString : order) {
             ShuffleKey.Order o = ShuffleKey.Order.parse(orderString);
             if (o == null) {
-                error(position, "@Keyのorder \"{0}\" を正しく解析できません", orderString);
+                error(position,
+                        Messages.getString("ExecutableAnalyzer.errorInvalidOrderKey"), orderString); //$NON-NLS-1$
             } else {
                 formedOrder.add(o);
             }
@@ -492,14 +495,14 @@ public class ExecutableAnalyzer {
         assert key != null;
         for (String name : key.getGroupProperties()) {
             if (model.findProperty(name) == null) {
-                error(position, "@Keyのgroupに指定されたプロパティ\"{0}\"が見つかりません({1})",
+                error(position, Messages.getString("ExecutableAnalyzer.errorUnknownGroupKey"), //$NON-NLS-1$
                         name,
                         model);
             }
         }
         for (ShuffleKey.Order order : key.getOrderings()) {
             if (model.findProperty(order.getProperty()) == null) {
-                error(position, "@Keyのorderに指定されたプロパティ\"{0}\"が見つかりません({1})",
+                error(position, Messages.getString("ExecutableAnalyzer.errorUnknownOrderKey"), //$NON-NLS-1$
                         order.getProperty(),
                         model);
             }

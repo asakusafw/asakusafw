@@ -66,7 +66,7 @@ public abstract class TestingEnvironmentConfigurator {
         }
         initialized = true;
         if (isEnabled() == false) {
-            LOG.info("Testing environment configurator is disabled");
+            LOG.info(Messages.getString("TestingEnvironmentConfigurator.infoDisabled")); //$NON-NLS-1$
             return;
         }
         LOG.debug("Loading testing environment configurators"); //$NON-NLS-1$
@@ -77,7 +77,7 @@ public abstract class TestingEnvironmentConfigurator {
                 service.configure();
             } catch (RuntimeException e) {
                 LOG.warn(MessageFormat.format(
-                        "Failed to apply testing environment configurator: {0}",
+                        Messages.getString("TestingEnvironmentConfigurator.warnFailedToApply"), //$NON-NLS-1$
                         service.getClass().getName()), e);
             }
         }

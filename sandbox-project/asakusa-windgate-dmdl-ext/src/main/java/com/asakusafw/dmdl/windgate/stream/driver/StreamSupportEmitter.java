@@ -115,7 +115,7 @@ public class StreamSupportEmitter extends JavaDataModelDriver {
                 CATEGORY_STREAM,
                 "Abstract{0}StreamImporterDescription"); //$NON-NLS-1$
         FsProcessDescriptionGenerator.Description desc = new FsProcessDescriptionGenerator.Description(
-                "WindGate binary stream importer",
+                Messages.getString("StreamSupportEmitter.javadocImporter"), //$NON-NLS-1$
                 context.getQualifiedTypeName());
         desc.setSupportClassName(supportName);
         FsProcessDescriptionGenerator.generateImporter(next, desc);
@@ -132,7 +132,7 @@ public class StreamSupportEmitter extends JavaDataModelDriver {
                 CATEGORY_STREAM,
                 "Abstract{0}StreamExporterDescription"); //$NON-NLS-1$
         FsProcessDescriptionGenerator.Description desc = new FsProcessDescriptionGenerator.Description(
-                "WindGate binary stream exporter",
+                Messages.getString("StreamSupportEmitter.javadocExporter"), //$NON-NLS-1$
                 context.getQualifiedTypeName());
         desc.setSupportClassName(supportName);
         FsProcessDescriptionGenerator.generateExporter(next, desc);
@@ -149,7 +149,7 @@ public class StreamSupportEmitter extends JavaDataModelDriver {
         }
 
         throw new IOException(MessageFormat.format(
-                "Currently, only type = \"{0}\" is supported: {1} (at {2})",
+                Messages.getString("StreamSupportEmitter.errorUnsupportedFormat"), //$NON-NLS-1$
                 "TSV", //$NON-NLS-1$
                 model.getName().identifier,
                 trait.getOriginalAst().getRegion()));
@@ -161,7 +161,7 @@ public class StreamSupportEmitter extends JavaDataModelDriver {
             Type type = prop.getType();
             if ((type instanceof BasicType) == false) {
                 throw new IOException(MessageFormat.format(
-                        "Type \"{0}\" can not map to format: {1}.{2} ",
+                        Messages.getString("StreamSupportEmitter.errorUnsupportedType"), //$NON-NLS-1$
                         type,
                         prop.getOwner().getName().identifier,
                         prop.getName().identifier));

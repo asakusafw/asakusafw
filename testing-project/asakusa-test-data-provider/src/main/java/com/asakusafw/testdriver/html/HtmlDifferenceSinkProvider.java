@@ -55,7 +55,7 @@ public class HtmlDifferenceSinkProvider implements DifferenceSinkProvider {
             return null;
         }
         LOG.info(MessageFormat.format(
-                "HTMLファイルを差分シンクに利用します: {0}",
+                Messages.getString("HtmlDifferenceSinkProvider.infoApply"), //$NON-NLS-1$
                 sink));
         return new HtmlDifferenceSinkFactory(file).createSink(definition, context);
     }

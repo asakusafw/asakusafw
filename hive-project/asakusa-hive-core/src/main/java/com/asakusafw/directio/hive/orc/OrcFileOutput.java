@@ -80,7 +80,7 @@ public class OrcFileOutput<T> implements ModelOutput<T> {
         if (writer == null) {
             if (LOG.isInfoEnabled()) {
                 LOG.info(MessageFormat.format(
-                        "Creating ORCFile ({0}): {1}",
+                        Messages.getString("OrcFileOutput.infoCreate"), //$NON-NLS-1$
                         descriptor.getDataModelClass().getSimpleName(),
                         path));
             }

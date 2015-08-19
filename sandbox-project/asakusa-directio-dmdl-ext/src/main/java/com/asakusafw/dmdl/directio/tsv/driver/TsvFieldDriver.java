@@ -15,19 +15,14 @@
  */
 package com.asakusafw.dmdl.directio.tsv.driver;
 
-import java.util.Arrays;
 import java.util.Map;
 
-import com.asakusafw.dmdl.Diagnostic;
-import com.asakusafw.dmdl.Diagnostic.Level;
 import com.asakusafw.dmdl.directio.tsv.driver.TsvFieldTrait.Kind;
 import com.asakusafw.dmdl.model.AstAttribute;
 import com.asakusafw.dmdl.model.AstAttributeElement;
 import com.asakusafw.dmdl.model.BasicTypeKind;
 import com.asakusafw.dmdl.semantics.DmdlSemantics;
 import com.asakusafw.dmdl.semantics.PropertyDeclaration;
-import com.asakusafw.dmdl.semantics.Type;
-import com.asakusafw.dmdl.semantics.type.BasicType;
 import com.asakusafw.dmdl.spi.PropertyAttributeDriver;
 import com.asakusafw.dmdl.util.AttributeUtil;
 
@@ -62,40 +57,11 @@ public class TsvFieldDriver  extends PropertyAttributeDriver {
         Map<String, AstAttributeElement> elements = AttributeUtil.getElementMap(attribute);
         String value = AttributeUtil.takeString(environment, attribute, elements, ELEMENT_NAME, false);
         environment.reportAll(AttributeUtil.reportInvalidElements(attribute, elements.values()));
-        checkFieldType(environment, declaration, attribute, BasicTypeKind.values());
+        TsvFieldTrait.checkFieldType(environment, declaration, attribute, BasicTypeKind.values());
         if (TsvFieldTrait.checkConflict(environment, declaration, attribute)) {
             declaration.putTrait(
                     TsvFieldTrait.class,
                     new TsvFieldTrait(attribute, Kind.VALUE, value));
         }
-    }
-
-    static void checkFieldType(
-            DmdlSemantics environment,
-            PropertyDeclaration declaration,
-            AstAttribute attribute,
-            BasicTypeKind... types) {
-        assert environment != null;
-        assert declaration != null;
-        assert attribute != null;
-        assert types != null;
-        assert types.length > 0;
-        Type type = declaration.getType();
-        if (type instanceof BasicType) {
-            BasicTypeKind kind = ((BasicType) type).getKind();
-            for (BasicTypeKind accept : types) {
-                if (kind == accept) {
-                    return;
-                }
-            }
-        }
-        environment.report(new Diagnostic(
-                Level.ERROR,
-                attribute,
-                "Invalid type for @{2} ({0}.{1}), must be one of {3}",
-                declaration.getOwner().getName().identifier,
-                declaration.getName().identifier,
-                attribute.name.toString(),
-                Arrays.asList(types)));
     }
 }

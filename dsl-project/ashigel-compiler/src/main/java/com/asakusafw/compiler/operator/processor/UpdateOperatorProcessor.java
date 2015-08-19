@@ -36,22 +36,23 @@ public class UpdateOperatorProcessor extends AbstractOperatorProcessor {
 
         ExecutableAnalyzer a = new ExecutableAnalyzer(context.environment, context.element);
         if (a.isAbstract()) {
-            a.error("更新演算子はabstractで宣言できません");
+            a.error(Messages.getString("UpdateOperatorProcessor.errorAbstract")); //$NON-NLS-1$
         }
         if (a.getReturnType().isVoid() == false) {
-            a.error("更新演算子は戻り値にvoidを指定する必要があります");
+            a.error(Messages.getString("UpdateOperatorProcessor.errorNotVoidResult")); //$NON-NLS-1$
         }
         if (a.getParameterType(0).isModel() == false) {
-            a.error(0, "更新演算子の最初の引数はモデルオブジェクト型である必要があります");
+            a.error(0, Messages.getString("UpdateOperatorProcessor.errorNotModelInput")); //$NON-NLS-1$
         }
         for (int i = 1, n = a.countParameters(); i < n; i++) {
             if (a.getParameterType(i).isBasic() == false) {
-                a.error(i, "更新演算子の2つ目以降の引数は文字列またはプリミティブ型である必要があります");
+                a.error(i, Messages.getString(
+                        "UpdateOperatorProcessor.errorInvalidOptionOptionParameter")); //$NON-NLS-1$
             }
         }
         Update annotation = context.element.getAnnotation(Update.class);
         if (annotation == null) {
-            a.error("注釈の解釈に失敗しました");
+            a.error(Messages.getString("UpdateOperatorProcessor.errorInvalidAnnotation")); //$NON-NLS-1$
             return null;
         }
         OperatorProcessorUtil.checkPortName(a, new String[] {
@@ -70,7 +71,7 @@ public class UpdateOperatorProcessor extends AbstractOperatorProcessor {
                 a.getParameterType(0).getType(),
                 0);
         builder.addOutput(
-                "結果",
+                Messages.getString("UpdateOperatorProcessor.javadocOutput"), //$NON-NLS-1$
                 annotation.outputPort(),
                 a.getParameterType(0).getType(),
                 a.getParameterName(0),

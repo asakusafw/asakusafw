@@ -250,7 +250,7 @@ public final class JobCompatibilityHadoop2 extends JobCompatibilityHadoop {
         }
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "{0}={1}",
+                    "{0}={1}", //$NON-NLS-1$
                     MRConfig.FRAMEWORK_NAME,
                     context.getConfiguration().get(MRConfig.FRAMEWORK_NAME)));
         }

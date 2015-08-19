@@ -63,17 +63,20 @@ public class BatchTestTruncator extends BatchTestTool {
 
     private static final Options OPTIONS;
     static {
-        OPT_DESCRIPTION = new Option(null, "description", true, "description class"); //$NON-NLS-1$ //$NON-NLS-2$
+        OPT_DESCRIPTION = new Option(null, "description", true, //$NON-NLS-1$
+                Messages.getString("BatchTestTruncator.optDescription")); //$NON-NLS-1$
         OPT_DESCRIPTION.setArgName("description class name"); //$NON-NLS-1$
         OPT_DESCRIPTION.setRequired(true);
 
-        OPT_ARGUMENT = new Option("A", "argument", true, "batch argument"); //$NON-NLS-1$ //$NON-NLS-2$
+        OPT_ARGUMENT = new Option("A", "argument", true, //$NON-NLS-1$ //$NON-NLS-2$
+                Messages.getString("BatchTestTruncator.optArgument")); //$NON-NLS-1$
         OPT_ARGUMENT.setArgs(2);
         OPT_ARGUMENT.setValueSeparator('=');
         OPT_ARGUMENT.setArgName("name=value"); //$NON-NLS-1$
         OPT_ARGUMENT.setRequired(false);
 
-        OPT_PROPERTY = new Option("D", "property", true, "hadoop property"); //$NON-NLS-1$ //$NON-NLS-2$
+        OPT_PROPERTY = new Option("D", "property", true, //$NON-NLS-1$ //$NON-NLS-2$
+                Messages.getString("BatchTestTruncator.optProperty")); //$NON-NLS-1$
         OPT_PROPERTY.setArgs(2);
         OPT_PROPERTY.setValueSeparator('=');
         OPT_PROPERTY.setArgName("name=value"); //$NON-NLS-1$
@@ -123,7 +126,7 @@ public class BatchTestTruncator extends BatchTestTool {
                     OPTIONS,
                     true);
             LOG.error(MessageFormat.format(
-                    "Failed to parse the program arguments: {0}",
+                    Messages.getString("BatchTestTruncator.errorInvalidArgument"), //$NON-NLS-1$
                     Arrays.toString(args)), e);
             return 1;
         }
@@ -138,7 +141,7 @@ public class BatchTestTruncator extends BatchTestTool {
             return 0;
         } catch (Exception e) {
             LOG.error(MessageFormat.format(
-                    "failed to prepare input: {0}",
+                    Messages.getString("BatchTestTruncator.errorFailedToTruncate"), //$NON-NLS-1$
                     Arrays.toString(args)), e);
             return 1;
         }
@@ -156,7 +159,7 @@ public class BatchTestTruncator extends BatchTestTool {
             description = Class.forName(descriptionClass);
         } catch (Exception e) {
             throw new IllegalArgumentException(MessageFormat.format(
-                    "failed to analyze description: {0}",
+                    Messages.getString("BatchTestTruncator.errorFailedToAnalyze"), //$NON-NLS-1$
                     descriptionClass), e);
         }
         conf.context = new TestDriverContext(description);
@@ -182,7 +185,7 @@ public class BatchTestTruncator extends BatchTestTool {
             resolveExporter(conf, description.asSubclass(ExporterDescription.class));
         } else {
             throw new IllegalArgumentException(MessageFormat.format(
-                    "description type must be one of batch, flow, importer, or exporter: {0}",
+                    Messages.getString("BatchTestTruncator.errorInvalidTarget"), //$NON-NLS-1$
                     description.getName()));
         }
     }
@@ -195,7 +198,7 @@ public class BatchTestTruncator extends BatchTestTool {
                 LOG.error(message);
             }
             throw new IllegalArgumentException(MessageFormat.format(
-                    "invalid batch class: {0}",
+                    Messages.getString("BatchTestTruncator.errorInvalidBatchClass"), //$NON-NLS-1$
                     aClass.getName()));
         }
         Collection<Work> works = driver.getBatchClass().getDescription().getWorks();
@@ -216,7 +219,7 @@ public class BatchTestTruncator extends BatchTestTool {
                 LOG.error(message);
             }
             throw new IllegalArgumentException(MessageFormat.format(
-                    "invalid jobflow class: {0}",
+                    Messages.getString("BatchTestTruncator.errorInvalidJobflowClass"), //$NON-NLS-1$
                     aClass.getName()));
         }
         FlowGraph graph = driver.getJobFlowClass().getGraph();
@@ -239,7 +242,7 @@ public class BatchTestTruncator extends BatchTestTool {
             conf.importers.add(aClass.newInstance());
         } catch (Exception e) {
             throw new IllegalArgumentException(MessageFormat.format(
-                    "failed to instantiate importer description: {0}",
+                    Messages.getString("BatchTestTruncator.errorInvalidImporterClass"), //$NON-NLS-1$
                     aClass.getName()), e);
         }
     }
@@ -249,7 +252,7 @@ public class BatchTestTruncator extends BatchTestTool {
             conf.exporters.add(aClass.newInstance());
         } catch (Exception e) {
             throw new IllegalArgumentException(MessageFormat.format(
-                    "failed to instantiate exporter description: {0}",
+                    Messages.getString("BatchTestTruncator.errorInvalidExporterClass"), //$NON-NLS-1$
                     aClass.getName()), e);
         }
     }

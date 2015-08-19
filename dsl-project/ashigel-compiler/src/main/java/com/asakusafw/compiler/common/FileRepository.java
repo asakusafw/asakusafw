@@ -49,7 +49,7 @@ public class FileRepository implements ResourceRepository {
         Precondition.checkMustNotBeNull(root, "root"); //$NON-NLS-1$
         if (root.isDirectory() == false) {
             throw new IllegalArgumentException(MessageFormat.format(
-                    "{0} is not a directory",
+                    Messages.getString("FileRepository.errorInputNotDirectory"), //$NON-NLS-1$
                     root));
         }
         this.root = root.getAbsoluteFile().getCanonicalFile();

@@ -41,13 +41,13 @@ public class ExtractOperatorProcessor extends AbstractOperatorProcessor {
 
         ExecutableAnalyzer a = new ExecutableAnalyzer(context.environment, context.element);
         if (a.isAbstract()) {
-            a.error("抽出演算子はabstractで宣言できません");
+            a.error(Messages.getString("ExtractOperatorProcessor.errorNotAbstract")); //$NON-NLS-1$
         }
         if (a.getReturnType().isVoid() == false) {
-            a.error("抽出演算子は戻り値にvoidを指定する必要があります");
+            a.error(Messages.getString("ExtractOperatorProcessor.errorNotVoidResult")); //$NON-NLS-1$
         }
         if (a.getParameterType(0).isModel() == false) {
-            a.error(0, "抽出演算子の最初の引数はモデルオブジェクト型である必要があります");
+            a.error(0, Messages.getString("ExtractOperatorProcessor.errorNotModelInput")); //$NON-NLS-1$
         }
 
         int startParameters = RESULT_START;
@@ -56,20 +56,20 @@ public class ExtractOperatorProcessor extends AbstractOperatorProcessor {
             if (param.isResult() == false) {
                 break;
             } else if (param.getTypeArgument().isModel() == false) {
-                a.error(i, "抽出演算子の結果は結果のモデルオブジェクト型である必要があります");
+                a.error(i, Messages.getString("ExtractOperatorProcessor.errorNotModelOutput")); //$NON-NLS-1$
             } else {
                 startParameters++;
             }
         }
         if (startParameters == RESULT_START) { // 結果型がない
-            a.error("抽出演算子の引数には一つ以上の結果(Result)型を指定する必要があります");
+            a.error(Messages.getString("ExtractOperatorProcessor.errorNotResultOutput")); //$NON-NLS-1$
         }
         for (int i = startParameters, n = a.countParameters(); i < n; i++) {
             TypeConstraint param = a.getParameterType(i);
             if (param.isResult()) {
-                a.error(i, "ユーザー引数の後には結果型を含められません");
+                a.error(i, Messages.getString("ExtractOperatorProcessor.errorInvalidResult")); //$NON-NLS-1$
             } else if (param.isBasic() == false) {
-                a.error(i, "ユーザー引数は文字列またはプリミティブ型である必要があります");
+                a.error(i, Messages.getString("ExtractOperatorProcessor.errorInvalidOptionParameter")); //$NON-NLS-1$
             }
         }
         if (a.hasError()) {
@@ -89,7 +89,8 @@ public class ExtractOperatorProcessor extends AbstractOperatorProcessor {
             TypeMirror outputTypeMirror = outputType.getType();
             String found = builder.findInput(outputTypeMirror);
             if (found == null && outputType.isProjectiveModel()) {
-                a.error("出力型{0}に対する入力が見つかりません", outputTypeMirror);
+                a.error(Messages.getString("ExtractOperatorProcessor.errorUnboundOutput"), //$NON-NLS-1$
+                        outputTypeMirror);
             }
             builder.addOutput(
                     a.getParameterDocument(i),

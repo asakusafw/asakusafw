@@ -60,27 +60,33 @@ public final class GenerateCreateTable {
     static final Options OPTIONS;
 
     static {
-        OPT_LOCATION = new Option("l", "location", true, "table output location"); //$NON-NLS-1$ //$NON-NLS-2$
+        OPT_LOCATION = new Option("l", "location", true, //$NON-NLS-1$ //$NON-NLS-2$
+                Messages.getString("GenerateCreateTable.optLocation")); //$NON-NLS-1$
         OPT_LOCATION.setArgName("URI"); //$NON-NLS-1$
         OPT_LOCATION.setRequired(false);
 
-        OPT_DATABASE = new Option("db", "database", true, "table database name"); //$NON-NLS-1$ //$NON-NLS-2$
+        OPT_DATABASE = new Option("db", "database", true, //$NON-NLS-1$ //$NON-NLS-2$
+                Messages.getString("GenerateCreateTable.optDatabase")); //$NON-NLS-1$
         OPT_DATABASE.setArgName("dbname"); //$NON-NLS-1$
         OPT_DATABASE.setRequired(false);
 
-        OPT_INCLUDE = new Option("i", "include", true, "include table name regex"); //$NON-NLS-1$ //$NON-NLS-2$
+        OPT_INCLUDE = new Option("i", "include", true, //$NON-NLS-1$ //$NON-NLS-2$
+                Messages.getString("GenerateCreateTable.optInclude")); //$NON-NLS-1$
         OPT_INCLUDE.setArgName("regex"); //$NON-NLS-1$
         OPT_INCLUDE.setRequired(false);
 
-        OPT_CLASSPATH = new Option("cp", "classpath", true, "classpath"); //$NON-NLS-1$ //$NON-NLS-2$
+        OPT_CLASSPATH = new Option("cp", "classpath", true, //$NON-NLS-1$ //$NON-NLS-2$
+                Messages.getString("GenerateCreateTable.optClasspath")); //$NON-NLS-1$
         OPT_CLASSPATH.setArgName("/path/to/classes[" + File.pathSeparator + "...]"); //$NON-NLS-1$ //$NON-NLS-2$
         OPT_CLASSPATH.setRequired(true);
 
-        OPT_PLUGINPATH = new Option("pp", "pluginpath", true, "pluginpath"); //$NON-NLS-1$ //$NON-NLS-2$
+        OPT_PLUGINPATH = new Option("pp", "pluginpath", true, //$NON-NLS-1$ //$NON-NLS-2$
+                Messages.getString("GenerateCreateTable.optPluginpath")); //$NON-NLS-1$
         OPT_PLUGINPATH.setArgName("/path/to/plugin.jar[" + File.pathSeparator + "...]"); //$NON-NLS-1$ //$NON-NLS-2$
         OPT_PLUGINPATH.setRequired(false);
 
-        OPT_OUTPUT = new Option("o", "output", true, "output file path"); //$NON-NLS-1$ //$NON-NLS-2$
+        OPT_OUTPUT = new Option("o", "output", true, //$NON-NLS-1$ //$NON-NLS-2$
+                Messages.getString("GenerateCreateTable.optOutput")); //$NON-NLS-1$
         OPT_OUTPUT.setArgName("/path/to/output-file"); //$NON-NLS-1$
         OPT_OUTPUT.setRequired(true);
 
@@ -115,7 +121,7 @@ public final class GenerateCreateTable {
         try {
             conf = parseConfiguration(args);
         } catch (Exception e) {
-            LOG.error("Failed to initialize application", e);
+            LOG.error(Messages.getString("GenerateCreateTable.errorInvalidArgument"), e); //$NON-NLS-1$
             HelpFormatter formatter = new HelpFormatter();
             formatter.setWidth(Integer.MAX_VALUE);
             formatter.printHelp(
@@ -129,7 +135,7 @@ public final class GenerateCreateTable {
         try {
             task.perform(conf);
         } catch (Exception e) {
-            LOG.error("Failed to reverse-engineer", e);
+            LOG.error(Messages.getString("GenerateCreateTable.errorExecute"), e); //$NON-NLS-1$
             return 1;
         } finally {
             closeQuiet(conf.classLoader);
@@ -161,7 +167,7 @@ public final class GenerateCreateTable {
                 acceptTableNames = Pattern.compile(include);
             } catch (PatternSyntaxException e) {
                 throw new IllegalArgumentException(MessageFormat.format(
-                        "Invalid regex (--{0}): {1}",
+                        Messages.getString("GenerateCreateTable.errorInvalidInclude"), //$NON-NLS-1$
                         OPT_INCLUDE.getLongOpt(),
                         include));
             }
@@ -244,14 +250,14 @@ public final class GenerateCreateTable {
             try {
                 if (file.exists() == false) {
                     throw new FileNotFoundException(MessageFormat.format(
-                            "Plug-in file/directory is not found \"{0}\"",
+                            Messages.getString("GenerateCreateTable.errorMissingPluginFile"), //$NON-NLS-1$
                             file.getAbsolutePath()));
                 }
                 URL url = file.toURI().toURL();
                 locations.add(url);
             } catch (IOException e) {
                 LOG.warn(MessageFormat.format(
-                        "Failed to detect plug-in file/directory: {0}",
+                        Messages.getString("GenerateCreateTable.warnInvalidPluginFile"), //$NON-NLS-1$
                         file.getAbsolutePath()), e);
             }
         }
@@ -271,7 +277,7 @@ public final class GenerateCreateTable {
                 ((Closeable) object).close();
             } catch (IOException e) {
                 LOG.warn(MessageFormat.format(
-                        "Failed to close object: {0}",
+                        Messages.getString("GenerateCreateTable.errorFailedToClose"), //$NON-NLS-1$
                         object), e);
             }
         }

@@ -34,27 +34,27 @@ final class JdbcDescriptionUtil {
             List<String> columns) {
         if (isEmpty(table)) {
             throw new IllegalStateException(MessageFormat.format(
-                    "{0} must not be null or empty string",
+                    Messages.getString("JdbcDescriptionUtil.errorEmptyProperty"), //$NON-NLS-1$
                     descriptionClass,
                     "getTableName()")); //$NON-NLS-1$
         }
 
         if (columns == null) {
             throw new IllegalStateException(MessageFormat.format(
-                    "{1} must not be null: {0}",
+                    Messages.getString("JdbcDescriptionUtil.errorNullProperty"), //$NON-NLS-1$
                     descriptionClass,
                     "getColumNames()")); //$NON-NLS-1$
         }
         if (columns.isEmpty()) {
             throw new IllegalStateException(MessageFormat.format(
-                    "{1} must not be empty: {0}",
+                    Messages.getString("JdbcDescriptionUtil.errorEmptyProperty"), //$NON-NLS-1$
                     descriptionClass,
                     "getColumNames()")); //$NON-NLS-1$
         }
         for (String column : columns) {
             if (isEmpty(column)) {
                 throw new IllegalStateException(MessageFormat.format(
-                        "{1} must not contain null or empty string: {0}",
+                        Messages.getString("JdbcDescriptionUtil.errorContainEmptyStringProperty"), //$NON-NLS-1$
                         descriptionClass,
                         "getColumnNames()")); //$NON-NLS-1$
             }
@@ -62,7 +62,7 @@ final class JdbcDescriptionUtil {
 
         if (supportClass == null) {
             throw new IllegalStateException(MessageFormat.format(
-                    "{1} must not be null: {0}",
+                    Messages.getString("JdbcDescriptionUtil.errorNullProperty"), //$NON-NLS-1$
                     descriptionClass,
                     "getJdbcSupport()")); //$NON-NLS-1$
         }
@@ -72,20 +72,20 @@ final class JdbcDescriptionUtil {
             support = supportClass.newInstance();
         } catch (Exception e) {
             throw new IllegalStateException(MessageFormat.format(
-                    "Failed to instantiate {1}: {0}",
+                    Messages.getString("JdbcDescriptionUtil.errorFailedToInstantiate"), //$NON-NLS-1$
                     descriptionClass,
                     supportClass.getName()), e);
         }
         if (support.getSupportedType().isAssignableFrom(modelType) == false) {
             throw new IllegalStateException(MessageFormat.format(
-                    "{1} must support {2}: {0}",
+                    Messages.getString("JdbcDescriptionUtil.errorIncompatibleDataType"), //$NON-NLS-1$
                     descriptionClass,
                     supportClass.getName(),
                     modelType.getName()));
         }
         if (support.isSupported(columns) == false) {
             throw new IllegalStateException(MessageFormat.format(
-                    "{1} must support columns {2}: {0}",
+                    Messages.getString("JdbcDescriptionUtil.errorUnsupportedColumns"), //$NON-NLS-1$
                     descriptionClass,
                     supportClass.getName(),
                     columns));

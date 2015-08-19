@@ -17,6 +17,7 @@ package com.asakusafw.testdriver;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -106,15 +107,21 @@ public class FlowPartTester extends TesterBase {
     }
 
     private void runTestInternal(FlowDescription flowDescription) throws IOException {
-        LOG.info("テストを開始しています: {}", driverContext.getCallerClass().getName());
+        LOG.info(MessageFormat.format(
+                Messages.getString("FlowPartTester.infoStart"), //$NON-NLS-1$
+                driverContext.getCallerClass().getName()));
 
         if (driverContext.isSkipValidateCondition() == false) {
-            LOG.info("テスト条件を検証しています: {}", driverContext.getCallerClass().getName());
+            LOG.info(MessageFormat.format(
+                    Messages.getString("FlowPartTester.infoVerifyCondition"), //$NON-NLS-1$
+                    driverContext.getCallerClass().getName()));
             validateTestCondition();
         }
 
         // フローコンパイラの実行
-        LOG.info("フロー部品をコンパイルしています: {}", flowDescription.getClass().getName());
+        LOG.info(MessageFormat.format(
+                Messages.getString("FlowPartTester.infoCompileDsl"), //$NON-NLS-1$
+                flowDescription.getClass().getName()));
         FlowGraph flowGraph = descDriver.createFlowGraph(flowDescription);
 
         // コンパイル環境の検証
@@ -147,23 +154,31 @@ public class FlowPartTester extends TesterBase {
         driverContext.prepareCurrentJobflow(jobflowInfo);
 
         // 初期化
-        LOG.info("テスト環境を初期化しています: {}", driverContext.getCallerClass().getName());
+        LOG.info(MessageFormat.format(
+                Messages.getString("FlowPartTester.infoInitializeEnvironment"), //$NON-NLS-1$
+                driverContext.getCallerClass().getName()));
         executor.cleanWorkingDirectory();
         executor.cleanInputOutput(jobflowInfo);
         executor.cleanExtraResources(getExternalResources());
 
-        LOG.info("テストデータを配置しています: {}", driverContext.getCallerClass().getName());
+        LOG.info(MessageFormat.format(
+                Messages.getString("FlowPartTester.infoPrepareData"), //$NON-NLS-1$
+                driverContext.getCallerClass().getName()));
         executor.prepareExternalResources(getExternalResources());
         executor.prepareInput(jobflowInfo, inputs);
         executor.prepareOutput(jobflowInfo, outputs);
 
-        LOG.info("フロー部品を実行しています: {}", flowDescription.getClass().getName());
+        LOG.info(MessageFormat.format(
+                Messages.getString("FlowPartTester.infoExecute"), //$NON-NLS-1$
+                flowDescription.getClass().getName()));
         VerifyContext verifyContext = new VerifyContext(driverContext);
         executor.runJobflow(jobflowInfo);
         verifyContext.testFinished();
 
         // 実行結果の検証
-        LOG.info("実行結果を検証しています: {}", driverContext.getCallerClass().getName());
+        LOG.info(MessageFormat.format(
+                Messages.getString("FlowPartTester.infoVerifyResult"), //$NON-NLS-1$
+                driverContext.getCallerClass().getName()));
         executor.verify(jobflowInfo, verifyContext, outputs);
     }
 

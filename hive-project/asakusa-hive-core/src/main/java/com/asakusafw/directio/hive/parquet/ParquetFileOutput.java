@@ -99,7 +99,7 @@ public class ParquetFileOutput<T> implements ModelOutput<T> {
         if (writer == null) {
             if (LOG.isInfoEnabled()) {
                 LOG.info(MessageFormat.format(
-                        "Creating parquet file ({0}): {1}",
+                        Messages.getString("ParquetFileOutput.infoCreate"), //$NON-NLS-1$
                         descriptor.getDataModelClass().getSimpleName(),
                         path));
             }

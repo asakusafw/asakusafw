@@ -24,27 +24,27 @@ public enum NullityConditionKind {
     /**
      * Accepts if .
      */
-    NORMAL("-", "通常比較"), //$NON-NLS-1$
+    NORMAL("-", Messages.getString("NullityConditionKind.titleNormal")), //$NON-NLS-1$ //$NON-NLS-2$
 
     /**
      * Accepts if actual value is null.
      */
-    ACCEPT_ABSENT("AA", "NULLなら常に成功"), //$NON-NLS-1$
+    ACCEPT_ABSENT("AA", Messages.getString("NullityConditionKind.titleAcceptAbsent")), //$NON-NLS-1$ //$NON-NLS-2$
 
     /**
      * Deny if actual value is null.
      */
-    DENY_ABSENT("DA", "NULLなら常に失敗"), //$NON-NLS-1$
+    DENY_ABSENT("DA", Messages.getString("NullityConditionKind.titleDenyAbsent")), //$NON-NLS-1$ //$NON-NLS-2$
 
     /**
      * Accepts if actual value is not null.
      */
-    ACCEPT_PRESENT("AP", "NULLでなければ常に成功"), //$NON-NLS-1$
+    ACCEPT_PRESENT("AP", Messages.getString("NullityConditionKind.titleAcceptPresent")), //$NON-NLS-1$ //$NON-NLS-2$
 
     /**
      * Deny if actual value is not null.
      */
-    DENY_PRESENT("DP", "NULLでなければ常に失敗"), //$NON-NLS-1$
+    DENY_PRESENT("DP", Messages.getString("NullityConditionKind.titleDenyPresent")), //$NON-NLS-1$ //$NON-NLS-2$
     ;
 
     private final String symbol;
@@ -78,7 +78,7 @@ public enum NullityConditionKind {
     }
 
     /**
-     * Retutns a constant of this enum from the corresponded textual representation.
+     * Returns a constant of this enum from the corresponded textual representation.
      * @param text a textual representation
      * @return the corresponding constant, or {@code null} if does not exist
      * @throws IllegalArgumentException if some parameters were {@code null}

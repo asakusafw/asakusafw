@@ -48,25 +48,25 @@ public class MasterJoinOperatorProcessor extends AbstractOperatorProcessor {
 
         ExecutableAnalyzer a = new ExecutableAnalyzer(context.environment, context.element);
         if (a.isGeneric()) {
-            a.error("マスタ結合演算子はジェネリックメソッドで宣言できません");
+            a.error(Messages.getString("MasterJoinOperatorProcessor.errorGeneric")); //$NON-NLS-1$
         }
         if (a.isAbstract() == false) {
-            a.error("マスタ結合演算子はabstractで宣言する必要があります");
+            a.error(Messages.getString("MasterJoinOperatorProcessor.errorNotAbstract")); //$NON-NLS-1$
         }
         TypeConstraint joined = a.getReturnType();
         if (joined.isConcreteModel() == false) {
-            a.error("マスタ結合演算子は戻り値にモデルオブジェクト型を指定する必要があります");
+            a.error(Messages.getString("MasterJoinOperatorProcessor.errorNotModelResult")); //$NON-NLS-1$
         }
         TypeConstraint master = a.getParameterType(0);
         if (master.isModel() == false) {
-            a.error(0, "マスタ結合演算子の一つ目の引数はモデルオブジェクト型である必要があります");
+            a.error(0, Messages.getString("MasterJoinOperatorProcessor.errorNotModelMaster")); //$NON-NLS-1$
         }
         TypeConstraint transaction = a.getParameterType(1);
         if (transaction.isModel() == false) {
-            a.error(1, "マスタ結合演算子の二つ目の引数はモデルオブジェクト型である必要があります");
+            a.error(1, Messages.getString("MasterJoinOperatorProcessor.errorNotModelTransaction")); //$NON-NLS-1$
         }
         for (int i = 2, n = a.countParameters(); i < n; i++) {
-            a.error(i, "マスタ結合演算子にはユーザー引数を利用できません");
+            a.error(i, Messages.getString("MasterJoinOperatorProcessor.errorExtraParameter")); //$NON-NLS-1$
         }
         ExecutableElement selector = null;
         try {
@@ -75,7 +75,7 @@ public class MasterJoinOperatorProcessor extends AbstractOperatorProcessor {
             a.error(e.getMessage());
         }
         if (joined.isJoinedModel(master.getType(), transaction.getType()) == false) {
-            a.error("マスタ結合演算子の戻り値型は引数の結合結果を表す型である必要があります");
+            a.error(Messages.getString("MasterJoinOperatorProcessor.errorNotJoinedModel")); //$NON-NLS-1$
             return null;
         }
 
@@ -84,7 +84,7 @@ public class MasterJoinOperatorProcessor extends AbstractOperatorProcessor {
 
         MasterJoin annotation = context.element.getAnnotation(MasterJoin.class);
         if (annotation == null) {
-            a.error("注釈の解釈に失敗しました");
+            a.error(Messages.getString("MasterJoinOperatorProcessor.errorInvalidAnnotation")); //$NON-NLS-1$
             return null;
         }
         OperatorProcessorUtil.checkPortName(a, new String[] {
@@ -121,7 +121,7 @@ public class MasterJoinOperatorProcessor extends AbstractOperatorProcessor {
                 null,
                 null);
         builder.addOutput(
-                "結合に失敗したデータ",
+                Messages.getString("MasterJoinOperatorProcessor.javadocMissing"), //$NON-NLS-1$
                 annotation.missedPort(),
                 a.getParameterType(1).getType(),
                 a.getParameterName(1),
@@ -134,7 +134,8 @@ public class MasterJoinOperatorProcessor extends AbstractOperatorProcessor {
         ImplementationBuilder builder = new ImplementationBuilder(context);
         ModelFactory f = context.environment.getFactory();
         builder.addStatement(new TypeBuilder(f, context.importer.toType(UnsupportedOperationException.class))
-            .newObject(Models.toLiteral(f, "マスタ結合演算子は組み込みの方法で処理されます"))
+            .newObject(Models.toLiteral(f,
+                    Messages.getString("MasterJoinOperatorProcessor.messageMethodBody"))) //$NON-NLS-1$
             .toThrowStatement());
         return builder.toImplementation();
     }

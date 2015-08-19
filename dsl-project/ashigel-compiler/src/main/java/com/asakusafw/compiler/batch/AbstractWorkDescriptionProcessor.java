@@ -38,14 +38,14 @@ public abstract class AbstractWorkDescriptionProcessor<T extends WorkDescription
             TypeUtil.invoke(WorkDescriptionProcessor.class, getClass());
         if (typeArguments == null || typeArguments.size() != 1) {
             throw new IllegalStateException(MessageFormat.format(
-                    "{0}は{1}の型引数を設定しません",
+                    Messages.getString("AbstractWorkDescriptionProcessor.errorUnboundTypeParameter"), //$NON-NLS-1$
                     getClass().getName(),
                     WorkDescriptionProcessor.class.getName()));
         }
         Type first = typeArguments.get(0);
         if ((first instanceof Class<?>) == false) {
             throw new IllegalStateException(MessageFormat.format(
-                    "{0}で指定された{1}の型引数{2}は、クラス型である必要があります",
+                    Messages.getString("AbstractWorkDescriptionProcessor.errorTypeParameterNotClass"), //$NON-NLS-1$
                     getClass().getName(),
                     WorkDescriptionProcessor.class.getName(),
                     first));

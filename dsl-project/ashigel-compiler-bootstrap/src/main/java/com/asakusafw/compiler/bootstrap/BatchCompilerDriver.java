@@ -58,31 +58,38 @@ public final class BatchCompilerDriver {
 
     private static final Options OPTIONS;
     static {
-        OPT_OUTPUT = new Option("output", true, "コンパイル結果を出力する先のディレクトリ"); //$NON-NLS-1$
+        OPT_OUTPUT = new Option("output", true, //$NON-NLS-1$
+                Messages.getString("BatchCompilerDriver.optOutput")); //$NON-NLS-1$
         OPT_OUTPUT.setArgName("/path/to/output"); //$NON-NLS-1$
         OPT_OUTPUT.setValueSeparator(File.pathSeparatorChar);
         OPT_OUTPUT.setRequired(true);
 
-        OPT_PACKAGE = new Option("package", true, "コンパイル結果のベースパッケージ"); //$NON-NLS-1$
+        OPT_PACKAGE = new Option("package", true, //$NON-NLS-1$
+                Messages.getString("BatchCompilerDriver.optPackage")); //$NON-NLS-1$
         OPT_PACKAGE.setArgName("pkg.name"); //$NON-NLS-1$
         OPT_PACKAGE.setRequired(true);
 
-        OPT_HADOOPWORK = new Option("hadoopwork", true, "Hadoop上でのワーキングディレクトリ (ホームディレクトリからの相対パス)"); //$NON-NLS-1$
+        OPT_HADOOPWORK = new Option("hadoopwork", true, //$NON-NLS-1$
+                Messages.getString("BatchCompilerDriver.optHadoopwork")); //$NON-NLS-1$
         OPT_HADOOPWORK.setArgName("batch/working"); //$NON-NLS-1$
         OPT_HADOOPWORK.setRequired(true);
 
-        OPT_COMPILERWORK = new Option("compilerwork", true, "コンパイラのワーキングディレクトリ"); //$NON-NLS-1$
+        OPT_COMPILERWORK = new Option("compilerwork", true, //$NON-NLS-1$
+                Messages.getString("BatchCompilerDriver.optCompilerwork")); //$NON-NLS-1$
         OPT_COMPILERWORK.setArgName("/path/to/temporary"); //$NON-NLS-1$
         OPT_COMPILERWORK.setRequired(false);
 
-        OPT_LINK = new Option("link", true, "リンクするクラスライブラリの一覧"); //$NON-NLS-1$
+        OPT_LINK = new Option("link", true, //$NON-NLS-1$
+                Messages.getString("BatchCompilerDriver.optLink")); //$NON-NLS-1$
         OPT_LINK.setArgName("classlib.jar" + File.pathSeparatorChar + "/path/to/classes"); //$NON-NLS-1$ //$NON-NLS-2$
 
-        OPT_PLUGIN = new Option("plugin", true, "利用するコンパイラプラグインの一覧"); //$NON-NLS-1$
+        OPT_PLUGIN = new Option("plugin", true, //$NON-NLS-1$
+                Messages.getString("BatchCompilerDriver.optPlugin")); //$NON-NLS-1$
         OPT_PLUGIN.setArgName("plugin-1.jar" + File.pathSeparatorChar + "plugin-2.jar"); //$NON-NLS-1$ //$NON-NLS-2$
         OPT_PLUGIN.setRequired(false);
 
-        OPT_CLASS = new Option("class", true, "コンパイル対象のバッチクラス名"); //$NON-NLS-1$
+        OPT_CLASS = new Option("class", true, //$NON-NLS-1$
+                Messages.getString("BatchCompilerDriver.optClass")); //$NON-NLS-1$
         OPT_CLASS.setArgName("class-name"); //$NON-NLS-1$
         OPT_CLASS.setRequired(true);
 
@@ -154,7 +161,7 @@ public final class BatchCompilerDriver {
                     pluginLocations.add(url);
                 } catch (IOException e) {
                     LOG.warn(MessageFormat.format(
-                            "プラグイン{0}をロードできませんでした",
+                            Messages.getString("BatchCompilerDriver.warnFailedToLoadPlugin"), //$NON-NLS-1$
                             s),
                             e);
                 }
@@ -174,12 +181,8 @@ public final class BatchCompilerDriver {
 
         if (succeeded) {
             LOG.info(MessageFormat.format(
-                    "{0}をコンパイルしました",
+                    Messages.getString("BatchCompilerDriver.infoComplete"), //$NON-NLS-1$
                     batchDescription.getName()));
-        } else {
-            LOG.error(MessageFormat.format(
-                    "コンパイルはエラーにより中断しました ({0})",
-                    className));
         }
         return succeeded;
     }
@@ -228,11 +231,9 @@ public final class BatchCompilerDriver {
                     FlowCompilerOptions.load(System.getProperties()));
             return true;
         } catch (Exception e) {
-            LOG.error(
-                    MessageFormat.format(
-                            "コンパイルはエラーにより中断しました ({0})",
-                            batchDescription.getName()),
-                    e);
+            LOG.error(MessageFormat.format(
+                    Messages.getString("BatchCompilerDriver.errorFailedToCompile"), //$NON-NLS-1$
+                    batchDescription.getName()), e);
             return false;
         }
     }

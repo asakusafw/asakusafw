@@ -298,7 +298,7 @@ OptionName:
                     item.setTo(results, value);
                 } catch (NoSuchElementException e) {
                     LOG.warn(MessageFormat.format(
-                            "コンパイラオプション\"{0}\"を解釈できません",
+                            Messages.getString("FlowCompilerOptions.warnUnknownOption"), //$NON-NLS-1$
                             option));
                 }
             } else {
@@ -309,7 +309,7 @@ OptionName:
                     results.extraAttributes.put(key, value);
                 } else {
                     LOG.warn(MessageFormat.format(
-                            "コンパイラオプション\"{0}\"を解釈できません",
+                            Messages.getString("FlowCompilerOptions.warnMalformedOption"), //$NON-NLS-1$
                             option));
                 }
             }
