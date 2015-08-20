@@ -52,7 +52,7 @@ import com.asakusafw.utils.collections.Lists;
 /**
  * A driver for control Hadoop jobs for testing.
  * @since 0.1.0
- * @version 0.7.1
+ * @version 0.7.5
  */
 public final class HadoopDriver implements Closeable {
 
@@ -92,16 +92,20 @@ public final class HadoopDriver implements Closeable {
         this.configurations = configurations;
         this.configuration = configurations.newInstance();
         this.logger = LOG;
-        this.simpleMr = isSet(KEY_BUILTIN_MAPREDUCE) || isSet(KEY_SMALLJOB);
+        this.simpleMr = isSet(KEY_BUILTIN_MAPREDUCE, true) || isSet(KEY_SMALLJOB);
         this.inProcess = simpleMr || isSet(KEY_INPROCESS);
     }
 
-    private static boolean isSet(String key) {
+    private static boolean isSet(String key, boolean defaultValue) {
         String value = System.getProperty(key);
         if (value == null) {
-            return false;
+            return defaultValue;
         }
         return value.isEmpty() || value.equalsIgnoreCase("true");
+    }
+
+    private static boolean isSet(String key) {
+        return isSet(key, false);
     }
 
     /**
