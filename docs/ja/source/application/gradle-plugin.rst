@@ -596,7 +596,7 @@ Batch Application Plugin は、以下のタスクをプロジェクトに追加�
       - 型
       - 説明
     * - :program:`compileDMDL`
-      - ``-`` [#]_
+      - ``-``
       - ``CompileDmdlTask`` [#]_
       - DMDLコンパイラを使ってモデルクラスを生成する
     * - :program:`compileBatchapp`
@@ -611,10 +611,6 @@ Batch Application Plugin は、以下のタスクをプロジェクトに追加�
       - ``-``
       - ``GenerateTestbookTask`` [#]_
       - テストデータ定義シートを生成する
-    * - :program:`generateThunderGateDataModel`
-      - ``-``
-      - ``GenerateThunderGateDataModelTask`` [#]_
-      - ThunderGate用のMySQLメタデータからDMDLスクリプトを生成する
     * - :program:`testRunBatchapp`
       - ``-``
       - ``RunBatchappTask`` [#]_
@@ -628,11 +624,9 @@ Batch Application Plugin は、以下のタスクをプロジェクトに追加�
       - ``GenerateHiveDdlTask`` [#]_
       - DMDLからHive用のDDLファイルを生成する
 
-..  [#] ThunderGateの設定を有効にした場合、:program:`generateThunderGateDataModel` タスクが依存先に追加されます
 ..  [#] :gradledoc:`com.asakusafw.gradle.tasks.CompileDmdlTask`
 ..  [#] :gradledoc:`com.asakusafw.gradle.tasks.CompileBatchappTask`
 ..  [#] :gradledoc:`com.asakusafw.gradle.tasks.GenerateTestbookTask`
-..  [#] :gradledoc:`com.asakusafw.gradle.tasks.GenerateThunderGateDataModelTask`
 ..  [#] :gradledoc:`com.asakusafw.gradle.tasks.RunBatchappTask`
 ..  [#] :gradledoc:`com.asakusafw.gradle.tasks.AnalyzeYaessLogTask`
 ..  [#] YAESS Log Analyzerやその使い方については、 :doc:`yaess-log-visualization` を参照してください。
@@ -877,76 +871,6 @@ DSLコンパイラ関する規約プロパティは、 ``asakusafw`` ブロッ�
 
 ..  [#] これらのプロパティは規約オブジェクト :gradledoc:`com.asakusafw.gradle.plugins.AsakusafwPluginConvention.TestToolsConfiguration` が提供します。
 ..  [#] テストデータ定義シートのフォーマット指定値は、 :doc:`../testing/using-excel` - :ref:`testdata-generator-excel-format` を参照してください。
-
-ThunderGateプロパティ
-^^^^^^^^^^^^^^^^^^^^^
-
-ThunderGateに関する規約プロパティは、 ``asakusafw`` ブロック内の参照名 ``thundergate`` でアクセスできます [#]_ 。
-この規約オブジェクトは以下のプロパティを持ちます。
-
-..  list-table:: Batch Application Plugin - ThunderGateプロパティ ( ``thundergate`` ブロック )
-    :widths: 2 1 2 5
-    :header-rows: 1
-
-    * - プロパティ名
-      - 型
-      - デフォルト値
-      - 説明
-    * - ``target``
-      - String
-      - ``未指定``
-      - ThunderGateのターゲット。この値をセットすることでThunderGate用のビルド設定が有効になる [#]_
-    * - ``jdbcFile``
-      - String
-      - ``未指定``
-      - ``generateThunderGateDataModel`` タスクの実行時に使用するJDBC接続設定ファイルのパス。この値をセットすることでThunderGate用のビルド設定が有効になる [#]_
-    * - ``ddlEncoding``
-      - String
-      - ``未指定``
-      - MySQLメタデータ登録用DDLファイルのエンコーディング
-    * - ``ddlSourceDirectory``
-      - String
-      - ``src/${project.sourceSets.main.name}/sql/modelgen``
-      - MySQLメタデータ登録用DDLファイルのソースディレクトリ
-    * - ``includes``
-      - String
-      - ``未指定``
-      - モデルジェネレータ、およびテストデータテンプレート生成ツールが生成対象とするモデル名を正規表現の書式で指定
-    * - ``excludes``
-      - String
-      - ``未指定``
-      - モデルジェネレータ、およびテストデータテンプレート生成ツールが生成対象外とするモデル名を正規表現の書式で指定
-    * - ``dmdlOutputDirectory``
-      - String
-      - ``${project.buildDir}/thundergate/dmdl``
-      - MySQLメタデータから生成されるDMDLスクリプトの出力先
-    * - ``ddlOutputDirectory``
-      - String
-      - ``${project.buildDir}/thundergate/sql``
-      - ThunderGate管理テーブル用DDLスクリプトの出力先
-    * - ``sidColumn``
-      - String
-      - ``SID``
-      - ThunderGateが入出力を行う業務テーブルのシステムIDカラム名
-    * - ``timestampColumn``
-      - String
-      - ``UPDT_DATETIME``
-      - ThunderGateが入出力を行う業務テーブルの更新日時カラム名
-    * - ``deleteColumn``
-      - String
-      - ``DELETE_FLAG``
-      - ThunderGateが入出力を行う論理削除フラグカラム名
-    * - ``deleteValue``
-      - String
-      - ``'1'``
-      - ThunderGateが入出力を行う業務テーブルの論理削除フラグが削除されたことを示す値
-
-..  [#] これらのプロパティは規約オブジェクト :gradledoc:`com.asakusafw.gradle.plugins.AsakusafwPluginConvention.ThunderGateConfiguration` が提供します。
-
-..  [#] この設定を利用する場合、タスク実行時にAsakusa Frameworkがインストール済みとなっている必要があります。
-        または ``jdbcFile`` をプロパティを設定することで、インストールを行わない状態でタスクが実行できるようになります。
-
-..  [#] ``target`` プロパティを同時に有効にした場合、 ``jdbcFile`` プロパティが優先されます。
 
 Eclipse Pluginの拡張
 ~~~~~~~~~~~~~~~~~~~~
@@ -1259,31 +1183,6 @@ Direct I/O Hiveの構成に関する規約プロパティは、 ``asakusafwOrgan
       - この値をtrueにするとテストモジュール用の構成を行う
 
 ..  [#] これらのプロパティは規約オブジェクト :gradledoc:`com.asakusafw.gradle.plugins.AsakusafwOrganizerPluginConvention.TestingConfiguration` が提供します。
-
-ThunderGateプロパティ
-^^^^^^^^^^^^^^^^^^^^^
-
-ThunderGateの構成に関する規約プロパティは、 ``asakusafwOrganizer`` ブロック内の参照名 ``thundergate`` でアクセスできます [#]_ 。
-この規約オブジェクトは以下のプロパティを持ちます。
-
-..  list-table:: Framework Organizer Plugin - ThunderGateプロパティ ( ``thundergate`` ブロック )
-    :widths: 2 1 2 5
-    :header-rows: 1
-
-    * - プロパティ名
-      - 型
-      - デフォルト値
-      - 説明
-    * - ``enabled``
-      - boolean
-      - false
-      - この値をtrueにするとThunderGate用の構成を行う
-    * - ``target``
-      - String
-      - ``未指定``
-      - デプロイメントアーカイブに含める既定のThunderGateのターゲット名。
-
-..  [#] これらのプロパティは規約オブジェクト :gradledoc:`com.asakusafw.gradle.plugins.AsakusafwOrganizerPluginConvention.ThunderGateConfiguration` が提供します。
 
 WindGateプロパティ
 ^^^^^^^^^^^^^^^^^^

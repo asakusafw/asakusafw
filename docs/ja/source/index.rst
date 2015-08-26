@@ -28,7 +28,6 @@ Asakusa Framework入門
 * :doc:`testing/index`
 * :doc:`directio/index`
 * :doc:`windgate/index`
-* :doc:`thundergate/index`
 * :doc:`yaess/index`
 * :doc:`application/index`
 * :doc:`administration/index`
