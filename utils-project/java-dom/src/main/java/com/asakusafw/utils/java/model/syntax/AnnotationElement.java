@@ -15,31 +15,26 @@
  */
 package com.asakusafw.utils.java.model.syntax;
 
-
 /**
- * 注釈要素を構成する名前と値のペアを表現するインターフェース。
+ * An interface which represents annotation name and its value pair.
  * <ul>
  *   <li> Specified In: <ul>
- *     <li> {@code [JLS3:9.7] Annotations (<i>ElementValuePair</i>)} </li>
+ *     <li> {@code [JLS3:9.7] Annotations (ElementValuePair)} </li>
  *   </ul> </li>
  * </ul>
  */
 public interface AnnotationElement
         extends Invocation {
 
-    // properties
-
     /**
-     * 注釈要素の名前を返す。
-     * @return
-     *     注釈要素の名前
+     * Returns the annotation element name.
+     * @return the annotation element name
      */
     SimpleName getName();
 
     /**
-     * 注釈要素値の式を返す。
-     * @return
-     *     注釈要素値の式
+     * Returns the element value.
+     * @return the element value
      */
     Expression getExpression();
 }

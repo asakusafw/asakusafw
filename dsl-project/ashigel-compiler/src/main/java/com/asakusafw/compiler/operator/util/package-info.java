@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /**
- * 演算子DSLコンパイラが利用するユーティリティ群。
+ * Utilities for Operator DSL compiler.
  */
 package com.asakusafw.compiler.operator.util;
 

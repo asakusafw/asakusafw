@@ -15,9 +15,8 @@
  */
 package com.asakusafw.utils.java.model.syntax;
 
-
 /**
- * 型ワイルドカードを表現するインターフェース。
+ * An interface which represents type wildcard.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:4.5.1] Type Arguments and Wildcards} </li>
@@ -27,21 +26,15 @@ package com.asakusafw.utils.java.model.syntax;
 public interface Wildcard
         extends Type {
 
-    // properties
-
     /**
-     * 型境界の種類を返す。
-     * @return
-     *     型境界の種類
+     * Returns the type bound kind.
+     * @return the type bound kind
      */
     WildcardBoundKind getBoundKind();
 
     /**
-     * 境界型を返す。
-     * <p> 境界型が指定されない場合は{@code null}が返される。 </p>
-     * @return
-     *     境界型、
-     *     ただし境界型が指定されない場合は{@code null}
+     * Returns the bound type.
+     * @return the bound type, or {@code null} if this is an unbound wildcard
      */
     Type getTypeBound();
 }

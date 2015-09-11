@@ -60,14 +60,14 @@ public class FilePackagerTest extends JobflowCompilerTestRoot {
     static final Logger LOG = LoggerFactory.getLogger(FilePackagerTest.class);
 
     /**
-     * テンポラリフォルダ。
+     * A temporary folder for testing.
      */
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
 
     /**
-     * Javaのファイルを一つだけビルドする。
-     * @throws Exception テストに失敗した場合
+     * Builds a Java source file.
+     * @throws Exception if exception was occurred
      */
     @Test
     public void build_java() throws Exception {
@@ -84,8 +84,8 @@ public class FilePackagerTest extends JobflowCompilerTestRoot {
     }
 
     /**
-     * リソースファイルを一つだけビルドする。
-     * @throws Exception テストに失敗した場合
+     * Builds a resource file.
+     * @throws Exception if exception was occurred
      */
     @Test
     public void build_resource() throws Exception {
@@ -102,8 +102,8 @@ public class FilePackagerTest extends JobflowCompilerTestRoot {
     }
 
     /**
-     * 複数のファイルをビルドする。
-     * @throws Exception テストに失敗した場合
+     * Builds Java and resource files.
+     * @throws Exception if exception was occurred
      */
     @Test
     public void build_mixed() throws Exception {
@@ -126,8 +126,8 @@ public class FilePackagerTest extends JobflowCompilerTestRoot {
     }
 
     /**
-     * エラーが出るプログラムをビルドする。
-     * @throws Exception テストに失敗した場合
+     * Builds a malformed Java files.
+     * @throws Exception if exception was occurred
      */
     @Test
     public void build_error() throws Exception {

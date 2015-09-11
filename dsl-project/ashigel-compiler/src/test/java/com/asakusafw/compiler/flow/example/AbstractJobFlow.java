@@ -23,21 +23,20 @@ import com.asakusafw.vocabulary.flow.In;
 import com.asakusafw.vocabulary.flow.JobFlow;
 import com.asakusafw.vocabulary.flow.Out;
 
-
 /**
- * 抽象クラスで宣言されたジョブフロー。
+ * A jobflow class w/ abstract modifier.
  */
 @JobFlow(name = "testing")
 public abstract class AbstractJobFlow extends FlowDescription {
 
-    private In<MockHoge> in;
+    private final In<MockHoge> in;
 
-    private Out<MockHoge> out;
+    private final Out<MockHoge> out;
 
     /**
-     * インスタンスを生成する。
-     * @param in 入力
-     * @param out 出力
+     * Creates a new instance.
+     * @param in input
+     * @param out output
      */
     public AbstractJobFlow(
             @Import(name = "hoge", description = MockHogeImporterDescription.class)

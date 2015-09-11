@@ -20,27 +20,27 @@ import java.io.IOException;
 import org.apache.hadoop.conf.Configuration;
 
 /**
- * MapやReduceの実行時に利用され、ライフサイクルを持つリソース。
+ * Represents a resource used in runtime, and it has resource lifecycle.
  */
 public interface FlowResource {
 
     /**
-     * このリソースを初期化する。
-     * @param configuration 初期化の設定
-     * @throws IOException リソースの初期化に失敗した場合
-     * @throws InterruptedException 初期化中に割り込みが発生した場合
-     * @throws IllegalArgumentException 設定が不正である場合
-     * @throws IllegalStateException 同一のリソースが複数回初期化された場合
+     * Initializes this resource.
+     * @param configuration the current configuration
+     * @throws IOException if failed to initialize this resource
+     * @throws InterruptedException if interrupted while initializing this resource
+     * @throws IllegalArgumentException if configuration is not valid
+     * @throws IllegalStateException if resource lifecycle has something wrong
      */
     void setup(Configuration configuration) throws IOException, InterruptedException;
 
     /**
-     * このリソースを解放する。
-     * @param configuration 初期化の設定
-     * @throws IOException リソースの初期化に失敗した場合
-     * @throws InterruptedException 初期化中に割り込みが発生した場合
-     * @throws IllegalArgumentException 設定が不正である場合
-     * @throws IllegalStateException 同一のリソースが複数回初期化された場合
+     * Finalizes this resource.
+     * @param configuration the current configuration
+     * @throws IOException if failed to finalizing this resource
+     * @throws InterruptedException if interrupted while finalizing this resource
+     * @throws IllegalArgumentException if configuration is not valid
+     * @throws IllegalStateException if resource lifecycle has something wrong
      */
     void cleanup(Configuration configuration) throws IOException, InterruptedException;
 }

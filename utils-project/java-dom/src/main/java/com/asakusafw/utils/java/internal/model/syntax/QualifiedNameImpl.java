@@ -26,18 +26,12 @@ import com.asakusafw.utils.java.model.syntax.SimpleName;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link QualifiedName}の実装。
+ * An implementation of {@link QualifiedName}.
  */
 public final class QualifiedNameImpl extends ModelRoot implements QualifiedName {
 
-    /**
-     * 限定子。
-     */
     private Name qualifier;
 
-    /**
-     * この限定名の末尾にある単純名。
-     */
     private SimpleName simpleName;
 
     @Override
@@ -46,11 +40,9 @@ public final class QualifiedNameImpl extends ModelRoot implements QualifiedName 
     }
 
     /**
-     * 限定子を設定する。
-     * @param qualifier
-     *     限定子
-     * @throws IllegalArgumentException
-     *     {@code qualifier}に{@code null}が指定された場合
+     * Sets the name qualifier.
+     * @param qualifier the name qualifier
+     * @throws IllegalArgumentException if {@code qualifier} was {@code null}
      */
     public void setQualifier(Name qualifier) {
         Util.notNull(qualifier, "qualifier"); //$NON-NLS-1$
@@ -63,11 +55,9 @@ public final class QualifiedNameImpl extends ModelRoot implements QualifiedName 
     }
 
     /**
-     * この限定名の末尾にある単純名を設定する。
-     * @param simpleName
-     *     この限定名の末尾にある単純名
-     * @throws IllegalArgumentException
-     *     {@code simpleName}に{@code null}が指定された場合
+     * Sets the simple name on the tail.
+     * @param simpleName the simple name on the tail
+     * @throws IllegalArgumentException if {@code simpleName} was {@code null}
      */
     public void setSimpleName(SimpleName simpleName) {
         Util.notNull(simpleName, "simpleName"); //$NON-NLS-1$
@@ -75,7 +65,7 @@ public final class QualifiedNameImpl extends ModelRoot implements QualifiedName 
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#QUALIFIED_NAME}を返す。
+     * Returns {@link ModelKind#QUALIFIED_NAME} which represents this element kind.
      * @return {@link ModelKind#QUALIFIED_NAME}
      */
     @Override
@@ -116,8 +106,7 @@ public final class QualifiedNameImpl extends ModelRoot implements QualifiedName 
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitQualifiedName(this, context);
     }

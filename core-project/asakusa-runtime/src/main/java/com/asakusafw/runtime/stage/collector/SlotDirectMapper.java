@@ -32,7 +32,7 @@ public abstract class SlotDirectMapper extends MapperWithRuntimeResource<
         SortableSlot, WritableSlot> {
 
     /**
-     * The method name of {@link #getOutputName()}。
+     * The method name of {@link #getOutputName()}.
      */
     public static final String NAME_GET_OUTPUT_NAME = "getOutputName"; //$NON-NLS-1$
 

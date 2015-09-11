@@ -17,7 +17,7 @@ package com.asakusafw.utils.java.model.syntax;
 
 
 /**
- * コンストラクタの宣言を表現するインターフェース。
+ * An interface which represents constructor declarations.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:8.8] Constructor Declarations} </li>
@@ -27,12 +27,9 @@ package com.asakusafw.utils.java.model.syntax;
 public interface ConstructorDeclaration
         extends MethodOrConstructorDeclaration, TypedElement {
 
-    // properties
-
     /**
-     * コンストラクタ本体を返す。
-     * @return
-     *     コンストラクタ本体
+     * Returns the constructor body.
+     * @return the constructor body
      */
     @Override
     Block getBody();

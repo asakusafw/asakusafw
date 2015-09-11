@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /**
- * Joinの最適化に関するパッケージ。
+ * Classes for join optimization.
  */
 package com.asakusafw.compiler.flow.join;
 

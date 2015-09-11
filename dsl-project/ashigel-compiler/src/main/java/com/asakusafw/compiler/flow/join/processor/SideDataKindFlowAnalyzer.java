@@ -31,7 +31,7 @@ import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 import com.asakusafw.vocabulary.flow.graph.OperatorHelper;
 
 /**
- * {@code SideData*}系の演算子を解析する。
+ * Analyzes {@code SideData-like} operators.
  */
 public class SideDataKindFlowAnalyzer {
 
@@ -44,14 +44,12 @@ public class SideDataKindFlowAnalyzer {
     private Expression getCheckedMasterExpression;
 
     /**
-     * インスタンスを生成する。
-     * @param context 文脈オブジェクト
-     * @param resource 結合リソース
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param context the current context
+     * @param resource information of the side data
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
-    public SideDataKindFlowAnalyzer(
-            LineEndProcessor.Context context,
-            JoinResourceDescription resource) {
+    public SideDataKindFlowAnalyzer(LineEndProcessor.Context context, JoinResourceDescription resource) {
         Precondition.checkMustNotBeNull(context, "context"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(resource, "resource"); //$NON-NLS-1$
         OperatorHelper selector = context.getOperatorDescription().getAttribute(OperatorHelper.class);
@@ -64,32 +62,27 @@ public class SideDataKindFlowAnalyzer {
     }
 
     /**
-     * マスタデータが存在するか確認するための式を返す。
-     * @return マスタデータが存在するか確認するための式
+     * Returns a Java expression for checking whether the join target data exists or not.
+     * @return a Java expression for checking whether the join target data exists or not
      */
     public Expression getHasMasterExpresion() {
         return hasMasterExpresion;
     }
 
     /**
-     * マスタデータを取得するための式を返す。
-     * <p>
-     * ただし、{@link #getHasMasterExpresion()}が{@code false}をあらわす場合、
-     * この式の内容は不定である。
-     * </p>
-     * @return マスタデータを取得するための式
+     * Returns a Java expression for obtaining the join target data.
+     * The expression will be resolved only if the join target data exists.
+     * @return a Java expression for obtaining the join target data
+     * @see #getHasMasterExpresion()
      */
     public Expression getGetRawMasterExpression() {
         return getMasterExpression;
     }
 
     /**
-     * マスタデータを取得するための式を返す。
-     * <p>
-     * ただし、{@link #getHasMasterExpresion()}が{@code false}をあらわす場合、
-     * この式は常に{@code null}をあらわす。
-     * </p>
-     * @return マスタデータを取得するための式
+     * Returns a Java expression for obtaining the join target data.
+     * This expression will become {@code null} if the join target data does not exist.
+     * @return a Java expression for obtaining the join target data
      */
     public Expression getGetCheckedMasterExpression() {
         return getCheckedMasterExpression;

@@ -31,17 +31,17 @@ import org.junit.Test;
 public class GraphsTest {
 
     /**
-     * 空のグラフをコピー。
+     * copies an empty graph.
      */
     @Test
-    public void copy_Empty() {
+    public void copy_empty() {
         Graph<Integer> graph = Graphs.newInstance();
         Graph<Integer> copy = Graphs.copy(graph);
         assertThat(copy.isEmpty(), is(true));
     }
 
     /**
-     * グラフをコピー。
+     * copies a regular graph.
      */
     @Test
     public void copy_normal() {
@@ -58,7 +58,7 @@ public class GraphsTest {
     }
 
     /**
-     * サブグラフを作成。
+     * creates a subgraph.
      */
     @Test
     public void subgraph() {
@@ -81,7 +81,7 @@ public class GraphsTest {
     }
 
     /**
-     * 空のサブグラフを作成。
+     * creates an empty subgraph.
      */
     @Test
     public void subgraph_empty() {
@@ -99,7 +99,7 @@ public class GraphsTest {
     }
 
     /**
-     * 同一のサブグラフを作成。
+     * creates an equivalent subgraph.
      */
     @Test
     public void subgraph_all() {

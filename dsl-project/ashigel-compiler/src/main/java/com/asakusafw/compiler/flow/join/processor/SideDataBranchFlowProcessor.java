@@ -36,7 +36,7 @@ import com.asakusafw.vocabulary.flow.graph.FlowResourceDescription;
 import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 
 /**
- * {@link SideDataBranch}を処理する。
+ * Processes {@link SideDataBranch} operators.
  */
 @TargetOperator(SideDataBranch.class)
 public class SideDataBranchFlowProcessor extends LineEndProcessor {

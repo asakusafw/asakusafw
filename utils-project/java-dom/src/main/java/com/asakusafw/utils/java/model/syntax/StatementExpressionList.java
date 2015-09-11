@@ -18,7 +18,7 @@ package com.asakusafw.utils.java.model.syntax;
 import java.util.List;
 
 /**
- * {@code for}文の初期化部および更新部に指定可能な式のリストを表現するインターフェース。
+ * An interface which represents expression list (in initializer part) of {@code for} statement.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:14.14.1.1] Initialization of for statement} </li>
@@ -29,12 +29,9 @@ import java.util.List;
 public interface StatementExpressionList
         extends ForInitializer {
 
-    // properties
-
     /**
-     * 式の一覧を返す。
-     * @return
-     *     式の一覧
+     * Returns the expression list.
+     * @return the expression list
      */
     List<? extends Expression> getExpressions();
 }

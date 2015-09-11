@@ -23,7 +23,7 @@ import com.asakusafw.compiler.testing.TemporaryInputDescription;
 
 
 /**
- * {@link ExJoined}のモックインポーター記述。
+ * Mock importer description for {@link ExJoined}.
  */
 public class ExJoinedMockImporterDescription extends TemporaryInputDescription {
 

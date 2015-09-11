@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 /**
- * ステージごとの出力に利用するクラス群。
- * <p>
- * アプリケーション作成者はこのパッケージ内のクラスやインターフェースを直接利用しない。
- * </p>
+ * Classes for stage outputs.
+ * Application developer should not use APIs in this package directly.
  */
 package com.asakusafw.runtime.stage.output;

@@ -16,7 +16,7 @@
 package com.asakusafw.utils.java.internal.parser.javadoc.ir;
 
 /**
- * 名前付きの型。
+ * Represents named type in {@link IrDocComment}.
  */
 public class IrDocNamedType extends AbstractIrDocElement implements IrDocType {
 
@@ -25,12 +25,11 @@ public class IrDocNamedType extends AbstractIrDocElement implements IrDocType {
     private IrDocName name;
 
     /**
-     * インスタンスを生成する。
-     * @param name 型の名前
-     * @throws IllegalArgumentException 引数に{@code null}が含まれていた場合
+     * Creates a new instance.
+     * @param name the type name
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public IrDocNamedType(IrDocName name) {
-        super();
         if (name == null) {
             throw new IllegalArgumentException("name"); //$NON-NLS-1$
         }
@@ -43,17 +42,17 @@ public class IrDocNamedType extends AbstractIrDocElement implements IrDocType {
     }
 
     /**
-     * この型の名前を返す。
-     * @return 型の名前
+     * Returns the type name.
+     * @return the type name
      */
     public IrDocName getName() {
         return this.name;
     }
 
     /**
-     * 型の名前を設定する。
-     * @param name 設定する名前
-     * @throws IllegalArgumentException 引数に{@code null}が含まれていた場合
+     * Sets the type name.
+     * @param name the type name
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public void setName(IrDocName name) {
         if (name == null) {

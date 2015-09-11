@@ -20,7 +20,7 @@ import com.asakusafw.vocabulary.batch.BatchDescription;
 import com.asakusafw.vocabulary.batch.Work;
 
 /**
- * 順序付きののバッチ。
+ * A batch class with sequential jobflows.
  */
 @Batch(name = "ordered")
 public class OrderedBatch extends BatchDescription {

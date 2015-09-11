@@ -26,31 +26,31 @@ import javax.tools.JavaFileObject;
 import javax.tools.SimpleJavaFileObject;
 
 /**
- * メモリ上でソースファイルを取り扱うためのファイルオブジェクトクラス。
+ * Represents a Java source file which is stored on the heap.
  */
 public class VolatileJavaFile extends SimpleJavaFileObject {
 
     /**
-     * このファイルのスキーマ名。
+     * The schema name of this kind of resources.
      */
     public static final String URI_SCHEME = VolatileJavaFile.class.getName();
 
     volatile String contents;
 
     /**
-     * 空の内容を持つインスタンスを生成する。
-     * @param path このファイルのソースフォルダからの相対パス (.javaを指定しない)
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Creates a new instance with empty contents.
+     * @param path the relative path from the source path (do not end with {@code .java})
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public VolatileJavaFile(String path) {
         this(path, ""); //$NON-NLS-1$
     }
 
     /**
-     * インスタンスを生成する。
-     * @param path このファイルのソースフォルダからの相対パス (.javaを指定しない)
-     * @param contents このファイルの内容
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Creates a new instance with the specified contents.
+     * @param path the relative path from the source path (do not end with {@code .java})
+     * @param contents the file contents
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public VolatileJavaFile(String path, String contents) {
         super(toUriFromPath(path), JavaFileObject.Kind.SOURCE);

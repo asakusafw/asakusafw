@@ -30,14 +30,14 @@ import javax.lang.model.element.TypeElement;
 @SupportedAnnotationTypes({
     "*"
 })
-@SupportedSourceVersion(SourceVersion.RELEASE_6)
+@SupportedSourceVersion(SourceVersion.RELEASE_7)
 public class DelegateProcessor extends AbstractProcessor {
 
-    private Callback callback;
+    private final Callback callback;
 
     /**
-     * インスタンスを生成する。
-     * @param callback コールバックオブジェクト
+     * Creates a new instance.
+     * @param callback the callback object
      */
     public DelegateProcessor(Callback callback) {
         this.callback = callback;

@@ -43,7 +43,8 @@ import com.asakusafw.vocabulary.batch.Batch;
 import com.asakusafw.vocabulary.batch.BatchDescription;
 
 /**
- * バッチDSLをまとめてコンパイルするコンパイラのプログラムエントリ。
+ * Program entry for compiling all batch classes under a class library.
+ * @see BatchCompilerDriver
  */
 public final class AllBatchCompilerDriver {
 
@@ -110,8 +111,8 @@ public final class AllBatchCompilerDriver {
     }
 
     /**
-     * プログラムエントリ。
-     * @param args コマンドライン引数
+     * The program entry.
+     * @param args command line arguments
      */
     public static void main(String... args) {
         try {

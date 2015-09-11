@@ -18,7 +18,7 @@ package com.asakusafw.compiler.batch.batch;
 import com.asakusafw.vocabulary.batch.BatchDescription;
 
 /**
- * 注釈の指定がないバッチ。
+ * A batch class without mandatory annotations.
  */
 public class NotAnnotated extends BatchDescription {
 

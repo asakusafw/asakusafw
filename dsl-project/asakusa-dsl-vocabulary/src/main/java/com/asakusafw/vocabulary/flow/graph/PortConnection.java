@@ -18,9 +18,9 @@ package com.asakusafw.vocabulary.flow.graph;
 import java.text.MessageFormat;
 
 /**
- * {@link FlowElementPort}間の結線を表現する。
+ * Represents a connection between {@link FlowElementPort}s.
  */
-public class PortConnection {
+public final class PortConnection {
 
     private final FlowElementOutput upstream;
 
@@ -28,14 +28,7 @@ public class PortConnection {
 
     private boolean connected;
 
-    /**
-     * インスタンスを生成する。
-     * @param upstream 上流ポート
-     * @param downstream 下流ポート
-     * @throws IllegalArgumentException 入出力の型に不一致がある場合、
-     *     または引数に{@code null}が指定された場合
-     */
-    PortConnection(FlowElementOutput upstream, FlowElementInput downstream) {
+    private PortConnection(FlowElementOutput upstream, FlowElementInput downstream) {
         if (upstream == null) {
             throw new IllegalArgumentException("upstream must not be null"); //$NON-NLS-1$
         }
@@ -57,13 +50,10 @@ public class PortConnection {
     }
 
     /**
-     * 指定のポート間を接続する。
-     * @param upstream 上流ポート
-     * @param downstream 下流ポート
-     * @throws IllegalArgumentException {@code upstream}に出力以外が指定された場合、
-     *     または{@code downstream}に入力以外が指定された場合、
-     *     または入出力の型に不一致がある場合、
-     *     または引数に{@code null}が指定された場合
+     * Connects between the two ports.
+     * @param upstream the upstream port
+     * @param downstream the downstream port
+     * @throws IllegalArgumentException if the data type is not consistent, or some parameters are {@code null}
      */
     public static void connect(FlowElementOutput upstream, FlowElementInput downstream) {
         if (upstream == null) {
@@ -107,11 +97,8 @@ public class PortConnection {
     }
 
     /**
-     * この接続を解除する。
-     * <p>
-     * 接続が既に解除されている場合、このメソッドはなにも行わない。
-     * </p>
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Disposes this connection.
+     * If this has been already disposed, this method will have no effects.
      */
     public void disconnect() {
         if (isValid() == false) {
@@ -122,24 +109,24 @@ public class PortConnection {
     }
 
     /**
-     * この接続が解除されておらず、有効である場合に{@code true}を返す。
-     * @return この接続が有効である場合に{@code true}
+     * Returns whether this connection is valid or not.
+     * @return {@code true} if this connection is valid, or {@code false} if this is {@link #disconnect() disposed}
      */
     public boolean isValid() {
         return connected;
     }
 
     /**
-     * この結線の上流ポートを返す。
-     * @return この結線の上流ポート
+     * Returns the upstream port.
+     * @return the upstream port
      */
     public FlowElementOutput getUpstream() {
         return upstream;
     }
 
     /**
-     * この結線の下流ポートを返す。
-     * @return この結線の下流ポート
+     * Returns the downstream port.
+     * @return the downstream port
      */
     public FlowElementInput getDownstream() {
         return downstream;

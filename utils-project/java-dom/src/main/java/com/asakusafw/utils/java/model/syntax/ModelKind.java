@@ -20,12 +20,12 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * {@link Model}の種類。
+ * Represents a kind of {@link Model}.
  */
 public enum ModelKind {
 
     /**
-     * {@link AlternateConstructorInvocation}を表現する。
+     * Represents {@link AlternateConstructorInvocation}.
      */
     ALTERNATE_CONSTRUCTOR_INVOCATION(AlternateConstructorInvocation.class, new PropertyKind[] {
         PropertyKind.CONSTRUCTOR_INVOCATION_TYPE_ARGUMENTS,
@@ -33,7 +33,7 @@ public enum ModelKind {
     }),
 
     /**
-     * {@link AnnotationDeclaration}を表現する。
+     * Represents {@link AnnotationDeclaration}.
      */
     ANNOTATION_DECLARATION(AnnotationDeclaration.class, new PropertyKind[] {
         PropertyKind.TYPE_BODY_DECLARATION_JAVADOC,
@@ -43,7 +43,7 @@ public enum ModelKind {
     }),
 
     /**
-     * {@link AnnotationElement}を表現する。
+     * Represents {@link AnnotationElement}.
      */
     ANNOTATION_ELEMENT(AnnotationElement.class, new PropertyKind[] {
         PropertyKind.ANNOTATION_ELEMENT_NAME,
@@ -51,7 +51,7 @@ public enum ModelKind {
     }),
 
     /**
-     * {@link AnnotationElementDeclaration}を表現する。
+     * Represents {@link AnnotationElementDeclaration}.
      */
     ANNOTATION_ELEMENT_DECLARATION(AnnotationElementDeclaration.class, new PropertyKind[] {
         PropertyKind.TYPE_BODY_DECLARATION_JAVADOC,
@@ -62,7 +62,7 @@ public enum ModelKind {
     }),
 
     /**
-     * {@link ArrayAccessExpression}を表現する。
+     * Represents {@link ArrayAccessExpression}.
      */
     ARRAY_ACCESS_EXPRESSION(ArrayAccessExpression.class, new PropertyKind[] {
         PropertyKind.ARRAY_ACCESS_EXPRESSION_ARRAY,
@@ -70,7 +70,7 @@ public enum ModelKind {
     }),
 
     /**
-     * {@link ArrayCreationExpression}を表現する。
+     * Represents {@link ArrayCreationExpression}.
      */
     ARRAY_CREATION_EXPRESSION(ArrayCreationExpression.class, new PropertyKind[] {
         PropertyKind.ARRAY_CREATION_EXPRESSION_TYPE,
@@ -79,21 +79,21 @@ public enum ModelKind {
     }),
 
     /**
-     * {@link ArrayInitializer}を表現する。
+     * Represents {@link ArrayInitializer}.
      */
     ARRAY_INITIALIZER(ArrayInitializer.class, new PropertyKind[] {
         PropertyKind.ARRAY_INITIALIZER_ELEMENTS,
     }),
 
     /**
-     * {@link ArrayType}を表現する。
+     * Represents {@link ArrayType}.
      */
     ARRAY_TYPE(ArrayType.class, new PropertyKind[] {
         PropertyKind.ARRAY_TYPE_COMPONENT_TYPE,
     }),
 
     /**
-     * {@link AssertStatement}を表現する。
+     * Represents {@link AssertStatement}.
      */
     ASSERT_STATEMENT(AssertStatement.class, new PropertyKind[] {
         PropertyKind.ASSERT_STATEMENT_EXPRESSION,
@@ -101,7 +101,7 @@ public enum ModelKind {
     }),
 
     /**
-     * {@link AssignmentExpression}を表現する。
+     * Represents {@link AssignmentExpression}.
      */
     ASSIGNMENT_EXPRESSION(AssignmentExpression.class, new PropertyKind[] {
         PropertyKind.ASSIGNMENT_EXPRESSION_LEFT_HAND_SIDE,
@@ -110,35 +110,35 @@ public enum ModelKind {
     }),
 
     /**
-     * {@link BasicType}を表現する。
+     * Represents {@link BasicType}.
      */
     BASIC_TYPE(BasicType.class, new PropertyKind[] {
         PropertyKind.BASIC_TYPE_TYPE_KIND,
     }),
 
     /**
-     * {@link Block}を表現する。
+     * Represents {@link Block}.
      */
     BLOCK(Block.class, new PropertyKind[] {
         PropertyKind.BLOCK_STATEMENTS,
     }),
 
     /**
-     * {@link BlockComment}を表現する。
+     * Represents {@link BlockComment}.
      */
     BLOCK_COMMENT(BlockComment.class, new PropertyKind[] {
         PropertyKind.BLOCK_COMMENT_STRING,
     }),
 
     /**
-     * {@link BreakStatement}を表現する。
+     * Represents {@link BreakStatement}.
      */
     BREAK_STATEMENT(BreakStatement.class, new PropertyKind[] {
         PropertyKind.BRANCH_STATEMENT_TARGET,
     }),
 
     /**
-     * {@link CastExpression}を表現する。
+     * Represents {@link CastExpression}.
      */
     CAST_EXPRESSION(CastExpression.class, new PropertyKind[] {
         PropertyKind.CAST_EXPRESSION_TYPE,
@@ -146,7 +146,7 @@ public enum ModelKind {
     }),
 
     /**
-     * {@link CatchClause}を表現する。
+     * Represents {@link CatchClause}.
      */
     CATCH_CLAUSE(CatchClause.class, new PropertyKind[] {
         PropertyKind.CATCH_CLAUSE_PARAMETER,
@@ -154,14 +154,14 @@ public enum ModelKind {
     }),
 
     /**
-     * {@link ClassBody}を表現する。
+     * Represents {@link ClassBody}.
      */
     CLASS_BODY(ClassBody.class, new PropertyKind[] {
         PropertyKind.CLASS_BODY_BODY_DECLARATIONS,
     }),
 
     /**
-     * {@link ClassDeclaration}を表現する。
+     * Represents {@link ClassDeclaration}.
      */
     CLASS_DECLARATION(ClassDeclaration.class, new PropertyKind[] {
         PropertyKind.TYPE_BODY_DECLARATION_JAVADOC,
@@ -174,7 +174,7 @@ public enum ModelKind {
     }),
 
     /**
-     * {@link ClassInstanceCreationExpression}を表現する。
+     * Represents {@link ClassInstanceCreationExpression}.
      */
     CLASS_INSTANCE_CREATION_EXPRESSION(ClassInstanceCreationExpression.class, new PropertyKind[] {
         PropertyKind.CLASS_INSTANCE_CREATION_EXPRESSION_QUALIFIER,
@@ -185,14 +185,14 @@ public enum ModelKind {
     }),
 
     /**
-     * {@link ClassLiteral}を表現する。
+     * Represents {@link ClassLiteral}.
      */
     CLASS_LITERAL(ClassLiteral.class, new PropertyKind[] {
         PropertyKind.CLASS_LITERAL_TYPE,
     }),
 
     /**
-     * {@link CompilationUnit}を表現する。
+     * Represents {@link CompilationUnit}.
      */
     COMPILATION_UNIT(CompilationUnit.class, new PropertyKind[] {
         PropertyKind.COMPILATION_UNIT_PACKAGE_DECLARATION,
@@ -202,7 +202,7 @@ public enum ModelKind {
     }),
 
     /**
-     * {@link ConditionalExpression}を表現する。
+     * Represents {@link ConditionalExpression}.
      */
     CONDITIONAL_EXPRESSION(ConditionalExpression.class, new PropertyKind[] {
         PropertyKind.CONDITIONAL_EXPRESSION_CONDITION,
@@ -211,7 +211,7 @@ public enum ModelKind {
     }),
 
     /**
-     * {@link ConstructorDeclaration}を表現する。
+     * Represents {@link ConstructorDeclaration}.
      */
     CONSTRUCTOR_DECLARATION(ConstructorDeclaration.class, new PropertyKind[] {
         PropertyKind.TYPE_BODY_DECLARATION_JAVADOC,
@@ -224,14 +224,14 @@ public enum ModelKind {
     }),
 
     /**
-     * {@link ContinueStatement}を表現する。
+     * Represents {@link ContinueStatement}.
      */
     CONTINUE_STATEMENT(ContinueStatement.class, new PropertyKind[] {
         PropertyKind.BRANCH_STATEMENT_TARGET,
     }),
 
     /**
-     * {@link DoStatement}を表現する。
+     * Represents {@link DoStatement}.
      */
     DO_STATEMENT(DoStatement.class, new PropertyKind[] {
         PropertyKind.DO_STATEMENT_BODY,
@@ -239,7 +239,7 @@ public enum ModelKind {
     }),
 
     /**
-     * {@link DocBlock}を表現する。
+     * Represents {@link DocBlock}.
      */
     DOC_BLOCK(DocBlock.class, new PropertyKind[] {
         PropertyKind.DOC_BLOCK_TAG,
@@ -247,7 +247,7 @@ public enum ModelKind {
     }),
 
     /**
-     * {@link DocField}を表現する。
+     * Represents {@link DocField}.
      */
     DOC_FIELD(DocField.class, new PropertyKind[] {
         PropertyKind.DOC_FIELD_TYPE,
@@ -255,7 +255,7 @@ public enum ModelKind {
     }),
 
     /**
-     * {@link DocMethod}を表現する。
+     * Represents {@link DocMethod}.
      */
     DOC_METHOD(DocMethod.class, new PropertyKind[] {
         PropertyKind.DOC_METHOD_TYPE,
@@ -264,7 +264,7 @@ public enum ModelKind {
     }),
 
     /**
-     * {@link DocMethodParameter}を表現する。
+     * Represents {@link DocMethodParameter}.
      */
     DOC_METHOD_PARAMETER(DocMethodParameter.class, new PropertyKind[] {
         PropertyKind.DOC_METHOD_PARAMETER_TYPE,
@@ -273,20 +273,20 @@ public enum ModelKind {
     }),
 
     /**
-     * {@link DocText}を表現する。
+     * Represents {@link DocText}.
      */
     DOC_TEXT(DocText.class, new PropertyKind[] {
         PropertyKind.DOC_TEXT_STRING,
     }),
 
     /**
-     * {@link EmptyStatement}を表現する。
+     * Represents {@link EmptyStatement}.
      */
     EMPTY_STATEMENT(EmptyStatement.class, new PropertyKind[] {
     }),
 
     /**
-     * {@link EnhancedForStatement}を表現する。
+     * Represents {@link EnhancedForStatement}.
      */
     ENHANCED_FOR_STATEMENT(EnhancedForStatement.class, new PropertyKind[] {
         PropertyKind.ENHANCED_FOR_STATEMENT_PARAMETER,
@@ -295,7 +295,7 @@ public enum ModelKind {
     }),
 
     /**
-     * {@link EnumConstantDeclaration}を表現する。
+     * Represents {@link EnumConstantDeclaration}.
      */
     ENUM_CONSTANT_DECLARATION(EnumConstantDeclaration.class, new PropertyKind[] {
         PropertyKind.TYPE_BODY_DECLARATION_JAVADOC,
@@ -306,7 +306,7 @@ public enum ModelKind {
     }),
 
     /**
-     * {@link EnumDeclaration}を表現する。
+     * Represents {@link EnumDeclaration}.
      */
     ENUM_DECLARATION(EnumDeclaration.class, new PropertyKind[] {
         PropertyKind.TYPE_BODY_DECLARATION_JAVADOC,
@@ -318,14 +318,14 @@ public enum ModelKind {
     }),
 
     /**
-     * {@link ExpressionStatement}を表現する。
+     * Represents {@link ExpressionStatement}.
      */
     EXPRESSION_STATEMENT(ExpressionStatement.class, new PropertyKind[] {
         PropertyKind.EXPRESSION_STATEMENT_EXPRESSION,
     }),
 
     /**
-     * {@link FieldAccessExpression}を表現する。
+     * Represents {@link FieldAccessExpression}.
      */
     FIELD_ACCESS_EXPRESSION(FieldAccessExpression.class, new PropertyKind[] {
         PropertyKind.FIELD_ACCESS_EXPRESSION_QUALIFIER,
@@ -333,7 +333,7 @@ public enum ModelKind {
     }),
 
     /**
-     * {@link FieldDeclaration}を表現する。
+     * Represents {@link FieldDeclaration}.
      */
     FIELD_DECLARATION(FieldDeclaration.class, new PropertyKind[] {
         PropertyKind.TYPE_BODY_DECLARATION_JAVADOC,
@@ -343,7 +343,7 @@ public enum ModelKind {
     }),
 
     /**
-     * {@link ForStatement}を表現する。
+     * Represents {@link ForStatement}.
      */
     FOR_STATEMENT(ForStatement.class, new PropertyKind[] {
         PropertyKind.FOR_STATEMENT_INITIALIZATION,
@@ -353,7 +353,7 @@ public enum ModelKind {
     }),
 
     /**
-     * {@link FormalParameterDeclaration}を表現する。
+     * Represents {@link FormalParameterDeclaration}.
      */
     FORMAL_PARAMETER_DECLARATION(FormalParameterDeclaration.class, new PropertyKind[] {
         PropertyKind.FORMAL_PARAMETER_DECLARATION_MODIFIERS,
@@ -364,7 +364,7 @@ public enum ModelKind {
     }),
 
     /**
-     * {@link IfStatement}を表現する。
+     * Represents {@link IfStatement}.
      */
     IF_STATEMENT(IfStatement.class, new PropertyKind[] {
         PropertyKind.IF_STATEMENT_CONDITION,
@@ -373,7 +373,7 @@ public enum ModelKind {
     }),
 
     /**
-     * {@link ImportDeclaration}を表現する。
+     * Represents {@link ImportDeclaration}.
      */
     IMPORT_DECLARATION(ImportDeclaration.class, new PropertyKind[] {
         PropertyKind.IMPORT_DECLARATION_IMPORT_KIND,
@@ -381,7 +381,7 @@ public enum ModelKind {
     }),
 
     /**
-     * {@link InfixExpression}を表現する。
+     * Represents {@link InfixExpression}.
      */
     INFIX_EXPRESSION(InfixExpression.class, new PropertyKind[] {
         PropertyKind.INFIX_EXPRESSION_LEFT_OPERAND,
@@ -390,7 +390,7 @@ public enum ModelKind {
     }),
 
     /**
-     * {@link InitializerDeclaration}を表現する。
+     * Represents {@link InitializerDeclaration}.
      */
     INITIALIZER_DECLARATION(InitializerDeclaration.class, new PropertyKind[] {
         PropertyKind.TYPE_BODY_DECLARATION_JAVADOC,
@@ -399,7 +399,7 @@ public enum ModelKind {
     }),
 
     /**
-     * {@link InstanceofExpression}を表現する。
+     * Represents {@link InstanceofExpression}.
      */
     INSTANCEOF_EXPRESSION(InstanceofExpression.class, new PropertyKind[] {
         PropertyKind.INSTANCEOF_EXPRESSION_EXPRESSION,
@@ -407,7 +407,7 @@ public enum ModelKind {
     }),
 
     /**
-     * {@link InterfaceDeclaration}を表現する。
+     * Represents {@link InterfaceDeclaration}.
      */
     INTERFACE_DECLARATION(InterfaceDeclaration.class, new PropertyKind[] {
         PropertyKind.TYPE_BODY_DECLARATION_JAVADOC,
@@ -419,14 +419,14 @@ public enum ModelKind {
     }),
 
     /**
-     * {@link Javadoc}を表現する。
+     * Represents {@link Javadoc}.
      */
     JAVADOC(Javadoc.class, new PropertyKind[] {
         PropertyKind.JAVADOC_BLOCKS,
     }),
 
     /**
-     * {@link LabeledStatement}を表現する。
+     * Represents {@link LabeledStatement}.
      */
     LABELED_STATEMENT(LabeledStatement.class, new PropertyKind[] {
         PropertyKind.LABELED_STATEMENT_LABEL,
@@ -434,28 +434,28 @@ public enum ModelKind {
     }),
 
     /**
-     * {@link LineComment}を表現する。
+     * Represents {@link LineComment}.
      */
     LINE_COMMENT(LineComment.class, new PropertyKind[] {
         PropertyKind.LINE_COMMENT_STRING,
     }),
 
     /**
-     * {@link Literal}を表現する。
+     * Represents {@link Literal}.
      */
     LITERAL(Literal.class, new PropertyKind[] {
         PropertyKind.LITERAL_TOKEN,
     }),
 
     /**
-     * {@link LocalClassDeclaration}を表現する。
+     * Represents {@link LocalClassDeclaration}.
      */
     LOCAL_CLASS_DECLARATION(LocalClassDeclaration.class, new PropertyKind[] {
         PropertyKind.LOCAL_CLASS_DECLARATION_DECLARATION,
     }),
 
     /**
-     * {@link LocalVariableDeclaration}を表現する。
+     * Represents {@link LocalVariableDeclaration}.
      */
     LOCAL_VARIABLE_DECLARATION(LocalVariableDeclaration.class, new PropertyKind[] {
         PropertyKind.LOCAL_VARIABLE_DECLARATION_MODIFIERS,
@@ -464,14 +464,14 @@ public enum ModelKind {
     }),
 
     /**
-     * {@link MarkerAnnotation}を表現する。
+     * Represents {@link MarkerAnnotation}.
      */
     MARKER_ANNOTATION(MarkerAnnotation.class, new PropertyKind[] {
         PropertyKind.ANNOTATION_TYPE,
     }),
 
     /**
-     * {@link MethodDeclaration}を表現する。
+     * Represents {@link MethodDeclaration}.
      */
     METHOD_DECLARATION(MethodDeclaration.class, new PropertyKind[] {
         PropertyKind.TYPE_BODY_DECLARATION_JAVADOC,
@@ -486,7 +486,7 @@ public enum ModelKind {
     }),
 
     /**
-     * {@link MethodInvocationExpression}を表現する。
+     * Represents {@link MethodInvocationExpression}.
      */
     METHOD_INVOCATION_EXPRESSION(MethodInvocationExpression.class, new PropertyKind[] {
         PropertyKind.METHOD_INVOCATION_EXPRESSION_QUALIFIER,
@@ -496,21 +496,21 @@ public enum ModelKind {
     }),
 
     /**
-     * {@link Modifier}を表現する。
+     * Represents {@link Modifier}.
      */
     MODIFIER(Modifier.class, new PropertyKind[] {
         PropertyKind.MODIFIER_MODIFIER_KIND,
     }),
 
     /**
-     * {@link NamedType}を表現する。
+     * Represents {@link NamedType}.
      */
     NAMED_TYPE(NamedType.class, new PropertyKind[] {
         PropertyKind.NAMED_TYPE_NAME,
     }),
 
     /**
-     * {@link NormalAnnotation}を表現する。
+     * Represents {@link NormalAnnotation}.
      */
     NORMAL_ANNOTATION(NormalAnnotation.class, new PropertyKind[] {
         PropertyKind.ANNOTATION_TYPE,
@@ -518,7 +518,7 @@ public enum ModelKind {
     }),
 
     /**
-     * {@link PackageDeclaration}を表現する。
+     * Represents {@link PackageDeclaration}.
      */
     PACKAGE_DECLARATION(PackageDeclaration.class, new PropertyKind[] {
         PropertyKind.PACKAGE_DECLARATION_JAVADOC,
@@ -527,7 +527,7 @@ public enum ModelKind {
     }),
 
     /**
-     * {@link ParameterizedType}を表現する。
+     * Represents {@link ParameterizedType}.
      */
     PARAMETERIZED_TYPE(ParameterizedType.class, new PropertyKind[] {
         PropertyKind.PARAMETERIZED_TYPE_TYPE,
@@ -535,14 +535,14 @@ public enum ModelKind {
     }),
 
     /**
-     * {@link ParenthesizedExpression}を表現する。
+     * Represents {@link ParenthesizedExpression}.
      */
     PARENTHESIZED_EXPRESSION(ParenthesizedExpression.class, new PropertyKind[] {
         PropertyKind.PARENTHESIZED_EXPRESSION_EXPRESSION,
     }),
 
     /**
-     * {@link PostfixExpression}を表現する。
+     * Represents {@link PostfixExpression}.
      */
     POSTFIX_EXPRESSION(PostfixExpression.class, new PropertyKind[] {
         PropertyKind.POSTFIX_EXPRESSION_OPERAND,
@@ -550,7 +550,7 @@ public enum ModelKind {
     }),
 
     /**
-     * {@link QualifiedName}を表現する。
+     * Represents {@link QualifiedName}.
      */
     QUALIFIED_NAME(QualifiedName.class, new PropertyKind[] {
         PropertyKind.QUALIFIED_NAME_QUALIFIER,
@@ -558,7 +558,7 @@ public enum ModelKind {
     }),
 
     /**
-     * {@link QualifiedType}を表現する。
+     * Represents {@link QualifiedType}.
      */
     QUALIFIED_TYPE(QualifiedType.class, new PropertyKind[] {
         PropertyKind.QUALIFIED_TYPE_QUALIFIER,
@@ -566,21 +566,21 @@ public enum ModelKind {
     }),
 
     /**
-     * {@link ReturnStatement}を表現する。
+     * Represents {@link ReturnStatement}.
      */
     RETURN_STATEMENT(ReturnStatement.class, new PropertyKind[] {
         PropertyKind.RETURN_STATEMENT_EXPRESSION,
     }),
 
     /**
-     * {@link SimpleName}を表現する。
+     * Represents {@link SimpleName}.
      */
     SIMPLE_NAME(SimpleName.class, new PropertyKind[] {
         PropertyKind.SIMPLE_NAME_STRING,
     }),
 
     /**
-     * {@link SingleElementAnnotation}を表現する。
+     * Represents {@link SingleElementAnnotation}.
      */
     SINGLE_ELEMENT_ANNOTATION(SingleElementAnnotation.class, new PropertyKind[] {
         PropertyKind.ANNOTATION_TYPE,
@@ -588,21 +588,21 @@ public enum ModelKind {
     }),
 
     /**
-     * {@link StatementExpressionList}を表現する。
+     * Represents {@link StatementExpressionList}.
      */
     STATEMENT_EXPRESSION_LIST(StatementExpressionList.class, new PropertyKind[] {
         PropertyKind.STATEMENT_EXPRESSION_LIST_EXPRESSIONS,
     }),
 
     /**
-     * {@link Super}を表現する。
+     * Represents {@link Super}.
      */
     SUPER(Super.class, new PropertyKind[] {
         PropertyKind.KEYWORD_QUALIFIER,
     }),
 
     /**
-     * {@link SuperConstructorInvocation}を表現する。
+     * Represents {@link SuperConstructorInvocation}.
      */
     SUPER_CONSTRUCTOR_INVOCATION(SuperConstructorInvocation.class, new PropertyKind[] {
         PropertyKind.SUPER_CONSTRUCTOR_INVOCATION_QUALIFIER,
@@ -611,20 +611,20 @@ public enum ModelKind {
     }),
 
     /**
-     * {@link SwitchCaseLabel}を表現する。
+     * Represents {@link SwitchCaseLabel}.
      */
     SWITCH_CASE_LABEL(SwitchCaseLabel.class, new PropertyKind[] {
         PropertyKind.SWITCH_CASE_LABEL_EXPRESSION,
     }),
 
     /**
-     * {@link SwitchDefaultLabel}を表現する。
+     * Represents {@link SwitchDefaultLabel}.
      */
     SWITCH_DEFAULT_LABEL(SwitchDefaultLabel.class, new PropertyKind[] {
     }),
 
     /**
-     * {@link SwitchStatement}を表現する。
+     * Represents {@link SwitchStatement}.
      */
     SWITCH_STATEMENT(SwitchStatement.class, new PropertyKind[] {
         PropertyKind.SWITCH_STATEMENT_EXPRESSION,
@@ -632,7 +632,7 @@ public enum ModelKind {
     }),
 
     /**
-     * {@link SynchronizedStatement}を表現する。
+     * Represents {@link SynchronizedStatement}.
      */
     SYNCHRONIZED_STATEMENT(SynchronizedStatement.class, new PropertyKind[] {
         PropertyKind.SYNCHRONIZED_STATEMENT_EXPRESSION,
@@ -640,21 +640,21 @@ public enum ModelKind {
     }),
 
     /**
-     * {@link This}を表現する。
+     * Represents {@link This}.
      */
     THIS(This.class, new PropertyKind[] {
         PropertyKind.KEYWORD_QUALIFIER,
     }),
 
     /**
-     * {@link ThrowStatement}を表現する。
+     * Represents {@link ThrowStatement}.
      */
     THROW_STATEMENT(ThrowStatement.class, new PropertyKind[] {
         PropertyKind.THROW_STATEMENT_EXPRESSION,
     }),
 
     /**
-     * {@link TryStatement}を表現する。
+     * Represents {@link TryStatement}.
      */
     TRY_STATEMENT(TryStatement.class, new PropertyKind[] {
         PropertyKind.TRY_STATEMENT_TRY_BLOCK,
@@ -663,7 +663,7 @@ public enum ModelKind {
     }),
 
     /**
-     * {@link TypeParameterDeclaration}を表現する。
+     * Represents {@link TypeParameterDeclaration}.
      */
     TYPE_PARAMETER_DECLARATION(TypeParameterDeclaration.class, new PropertyKind[] {
         PropertyKind.TYPE_PARAMETER_DECLARATION_NAME,
@@ -671,7 +671,7 @@ public enum ModelKind {
     }),
 
     /**
-     * {@link UnaryExpression}を表現する。
+     * Represents {@link UnaryExpression}.
      */
     UNARY_EXPRESSION(UnaryExpression.class, new PropertyKind[] {
         PropertyKind.UNARY_EXPRESSION_OPERATOR,
@@ -679,7 +679,7 @@ public enum ModelKind {
     }),
 
     /**
-     * {@link VariableDeclarator}を表現する。
+     * Represents {@link VariableDeclarator}.
      */
     VARIABLE_DECLARATOR(VariableDeclarator.class, new PropertyKind[] {
         PropertyKind.VARIABLE_DECLARATOR_NAME,
@@ -688,7 +688,7 @@ public enum ModelKind {
     }),
 
     /**
-     * {@link WhileStatement}を表現する。
+     * Represents {@link WhileStatement}.
      */
     WHILE_STATEMENT(WhileStatement.class, new PropertyKind[] {
         PropertyKind.WHILE_STATEMENT_CONDITION,
@@ -696,7 +696,7 @@ public enum ModelKind {
     }),
 
     /**
-     * {@link Wildcard}を表現する。
+     * Represents {@link Wildcard}.
      */
     WILDCARD(Wildcard.class, new PropertyKind[] {
         PropertyKind.WILDCARD_BOUND_KIND,
@@ -719,16 +719,16 @@ public enum ModelKind {
     }
 
     /**
-     * この種類を表現するインターフェースの型を返す。
-     * @return この種類を表現するインターフェースの型
+     * Returns the interface type of this model kind.
+     * @return the interface type of this model kind
      */
     public Class<? extends Model> getInterfaceType() {
         return interfaceType;
     }
 
     /**
-     * この種類の要素が公開するプロパティの一覧を返す。
-     * @return この種類の要素が公開するプロパティの一覧
+     * Returns property kinds in this model kind.
+     * @return property kinds
      */
     public List<PropertyKind> getProperties() {
         return properties;

@@ -21,13 +21,10 @@ import com.asakusafw.utils.java.model.syntax.SimpleName;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link ContinueStatement}の実装。
+ * An implementation of {@link ContinueStatement}.
  */
 public final class ContinueStatementImpl extends ModelRoot implements ContinueStatement {
 
-    /**
-     * 分岐先ラベル。
-     */
     private SimpleName target;
 
     @Override
@@ -36,18 +33,15 @@ public final class ContinueStatementImpl extends ModelRoot implements ContinueSt
     }
 
     /**
-     * 分岐先ラベルを設定する。
-     * <p> 分岐先ラベルが指定されない場合、引数には{@code null}を指定する。 </p>
-     * @param target
-     *     分岐先ラベル、
-     *     ただし分岐先ラベルが指定されない場合は{@code null}
+     * Sets the target label.
+     * @param target the target label, or {@code null} if it is not specified
      */
     public void setTarget(SimpleName target) {
         this.target = target;
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#CONTINUE_STATEMENT}を返す。
+     * Returns {@link ModelKind#CONTINUE_STATEMENT} which represents this element kind.
      * @return {@link ModelKind#CONTINUE_STATEMENT}
      */
     @Override
@@ -56,8 +50,7 @@ public final class ContinueStatementImpl extends ModelRoot implements ContinueSt
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitContinueStatement(this, context);
     }

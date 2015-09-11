@@ -30,7 +30,7 @@ import java.util.Set;
 import com.asakusafw.vocabulary.flow.Source;
 
 /**
- * フローから利用される演算子の定義を表現する。
+ * A description of user/code operator.
  * @since 0.1.0
  * @version 0.5.1
  */
@@ -53,14 +53,14 @@ public class OperatorDescription implements FlowElementDescription {
     private String name;
 
     /**
-     * インスタンスを生成する。
-     * @param declaration 演算子メソッド等の宣言情報
-     * @param inputPorts 入力ポートの情報
-     * @param outputPorts 出力ポートの情報
-     * @param resources 利用するリソースの情報
-     * @param parameters 演算子に渡された入出力以外のパラメーターの情報
-     * @param attributes 演算子が持つ属性の情報
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param declaration information of the operator declaration
+     * @param inputPorts information of the input ports
+     * @param outputPorts information of the output ports
+     * @param resources information of the external resources
+     * @param parameters information of the user parameters
+     * @param attributes the attributes
+     * @throws IllegalArgumentException if some parameters are {@code null}
      */
     public OperatorDescription(
             Declaration declaration,
@@ -75,13 +75,13 @@ public class OperatorDescription implements FlowElementDescription {
     /**
      * Creates a new instance.
      * @param origin the original description (nullable)
-     * @param declaration the original method declaration information
-     * @param inputPorts input port descriptions
-     * @param outputPorts output port descriptions
-     * @param resources related resource descriptions
-     * @param parameters parameters and their arguments
-     * @param attributes attributes for this operator
-     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @param declaration information of the operator declaration
+     * @param inputPorts information of the input ports
+     * @param outputPorts information of the output ports
+     * @param resources information of the external resources
+     * @param parameters information of the user parameters
+     * @param attributes the attributes
+     * @throws IllegalArgumentException if some parameters are {@code null}
      * @since 0.5.1
      */
     public OperatorDescription(
@@ -133,8 +133,8 @@ public class OperatorDescription implements FlowElementDescription {
     }
 
     /**
-     * この演算子の宣言に関する情報を返す。
-     * @return この演算子の宣言に関する情報
+     * Returns information of the operator declaration.
+     * @return information of the operator declaration
      */
     public Declaration getDeclaration() {
         return declaration;
@@ -175,8 +175,9 @@ public class OperatorDescription implements FlowElementDescription {
     }
 
     /**
-     * この演算子が利用するパラメーターの一覧を返す。
-     * @return この演算子が利用するパラメーターの一覧
+     *
+     * Returns information of the user parameters.
+     * @return information of the user parameters
      */
     public List<Parameter> getParameters() {
         return parameters;
@@ -192,8 +193,8 @@ public class OperatorDescription implements FlowElementDescription {
     }
 
     /**
-     * この演算子に指定された属性の一覧を返す。
-     * @return この演算子に指定された属性の一覧
+     * Returns the attributes of the operator.
+     * @return the attributes
      */
     public Set<FlowElementAttribute> getAttributes() {
         return new HashSet<FlowElementAttribute>(attributes.values());
@@ -209,7 +210,7 @@ public class OperatorDescription implements FlowElementDescription {
     }
 
     /**
-     * 演算子メソッドの宣言。
+     * Represents a declaration of operator.
      */
     public static class Declaration {
 
@@ -224,13 +225,13 @@ public class OperatorDescription implements FlowElementDescription {
         private final List<Class<?>> parameterTypes;
 
         /**
-         * インスタンスを生成する。
-         * @param annotationType 演算子注釈の種類
-         * @param declaring 演算子クラス
-         * @param implementing 演算子実装クラス
-         * @param name 演算子メソッドの名前
-         * @param parameterTypes 演算子メソッドの引数型(消去型)一覧
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Creates a new instance.
+         * @param annotationType the operator annotation type
+         * @param declaring the declaring class (a.k.a. operator class)
+         * @param implementing the implementation class
+         * @param name the operator method name
+         * @param parameterTypes the erased parameter types of the operator method
+         * @throws IllegalArgumentException if some parameters are {@code null}
          */
         public Declaration(
                 Class<? extends Annotation> annotationType,
@@ -261,51 +262,48 @@ public class OperatorDescription implements FlowElementDescription {
         }
 
         /**
-         * 演算子注釈の種類を返す。
-         * @return 演算子注釈の種類
+         * Returns the operator annotation type.
+         * @return the operator annotation type
          */
         public Class<? extends Annotation> getAnnotationType() {
             return annotationType;
         }
 
         /**
-         * 演算子クラスを返す。
-         * @return 演算子クラス
+         * Returns the declaring class.
+         * @return the declaring class
          */
         public Class<?> getDeclaring() {
             return declaring;
         }
 
         /**
-         * 演算子実装クラスを返す。
-         * @return 演算子クラス
+         * Returns the implementation class.
+         * @return the implementation class
          */
         public Class<?> getImplementing() {
             return implementing;
         }
 
         /**
-         * 演算子メソッドの名前を返す。
-         * @return 演算子メソッドの名前
+         * Returns the operator method name.
+         * @return the operator method name
          */
         public String getName() {
             return name;
         }
 
         /**
-         * 演算子メソッドのパラメーター型一覧を返す。
-         * <p>
-         * これらの型は、消去型として返される。
-         * </p>
-         * @return 演算子メソッドのパラメーター型一覧
+         * Returns the erased parameter types of the operator method.
+         * @return the parameter types
          */
         public List<Class<?>> getParameterTypes() {
             return parameterTypes;
         }
 
         /**
-         * この宣言に対する実行時のメソッド表現を返す。
-         * @return 実行時のメソッド表現、対応するものが存在しない場合は{@code null}
+         * Returns the reflective object of the target operator method.
+         * @return the reflective object, or {@code null} if there is no such a corresponding method
          */
         public Method toMethod() {
             Class<?>[] params = parameterTypes.toArray(new Class<?>[parameterTypes.size()]);
@@ -327,7 +325,7 @@ public class OperatorDescription implements FlowElementDescription {
     }
 
     /**
-     * 演算子ファクトリーメソッドに渡された引数。
+     * Represents a user parameter.
      */
     public static class Parameter {
 
@@ -338,11 +336,11 @@ public class OperatorDescription implements FlowElementDescription {
         private final Object value;
 
         /**
-         * インスタンスを生成する。
-         * @param name パラメーターの名前
-         * @param type パラメーターの型
-         * @param value パラメーターの値 ({@code nullable})
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Creates a new instance.
+         * @param name the parameter name
+         * @param type the parameter type
+         * @param value the parameter value ({@code nullable})
+         * @throws IllegalArgumentException if some parameters are {@code null}
          */
         public Parameter(String name, Type type, Object value) {
             if (name == null) {
@@ -357,24 +355,24 @@ public class OperatorDescription implements FlowElementDescription {
         }
 
         /**
-         * パラメーターの名前を返す。
-         * @return パラメーターの名前
+         * Returns the parameter name.
+         * @return the parameter name
          */
         public String getName() {
             return name;
         }
 
         /**
-         * パラメーターの型を返す。
-         * @return パラメーターの型
+         * Returns the parameter type.
+         * @return the parameter type
          */
         public Type getType() {
             return type;
         }
 
         /**
-         * パラメーターの値を返す。
-         * @return パラメーターの値、値が{@code null}の場合は返される値も{@code null}
+         * Returns the parameter value.
+         * @return the parameter value, or {@code null} if the target value is just {@code null}
          */
         public Object getValue() {
             return value;
@@ -391,7 +389,7 @@ public class OperatorDescription implements FlowElementDescription {
     }
 
     /**
-     * この要素を構築するビルダー。
+     * A builder for building {@link OperatorDescription}.
      * @since 0.1.0
      * @version 0.5.1
      */
@@ -420,9 +418,9 @@ public class OperatorDescription implements FlowElementDescription {
         private final List<FlowElementAttribute> attributes;
 
         /**
-         * インスタンスを生成する。
-         * @param annotationType 演算子の種類
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Creates a new instance.
+         * @param annotationType the operator annotation type
+         * @throws IllegalArgumentException if the parameter is {@code null}
          */
         public Builder(Class<? extends Annotation> annotationType) {
             if (annotationType == null) {
@@ -438,15 +436,13 @@ public class OperatorDescription implements FlowElementDescription {
         }
 
         /**
-         * 演算子メソッドの宣言に関する情報を追加する。
-         * <p>
-         * なお、演算子メソッドの引数型は{@link #declareParameter(Class)}で宣言する。
-         * </p>
-         * @param operatorClass 演算子クラス
-         * @param implementorClass 演算子実装クラス
-         * @param methodName 演算子メソッドの名前
-         * @return このオブジェクト (メソッドチェイン用)
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Sets information of operator method declaration.
+         * Note that, clients should use {@link #declareParameter(Class)} to add method parameters.
+         * @param operatorClass the operator class
+         * @param implementorClass the implementation class
+         * @param methodName the operator method name
+         * @return this
+         * @throws IllegalArgumentException if some parameters are {@code null}
          */
         public Builder declare(
                 Class<?> operatorClass,
@@ -479,10 +475,10 @@ public class OperatorDescription implements FlowElementDescription {
         }
 
         /**
-         * 演算子メソッドのパラメーターを追加する。
-         * @param parameterType パラメーターの型 (型消去済みのもの)
-         * @return このオブジェクト (メソッドチェイン用)
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Adds a parameter of the target operator method.
+         * @param parameterType the erased parameter type
+         * @return this
+         * @throws IllegalArgumentException if the parameter is {@code null}
          */
         public Builder declareParameter(Class<?> parameterType) {
             if (parameterType == null) {
@@ -493,11 +489,11 @@ public class OperatorDescription implements FlowElementDescription {
         }
 
         /**
-         * 演算子の入力ポートを追加する。
-         * @param portName 追加するポートの名前
-         * @param dataType 追加するポートのデータ型
-         * @return このオブジェクト (メソッドチェイン用)
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Adds a new input port of the target operator.
+         * @param portName the port name
+         * @param dataType the data type
+         * @return this
+         * @throws IllegalArgumentException if some parameters are {@code null}
          */
         public Builder addInput(String portName, Type dataType) {
             if (portName == null) {
@@ -514,11 +510,11 @@ public class OperatorDescription implements FlowElementDescription {
         }
 
         /**
-         * 演算子の入力ポートを追加する。
-         * @param portName 追加するポートの名前
-         * @param typeReference 追加するポートと同様の型を持つソース
-         * @return このオブジェクト (メソッドチェイン用)
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Adds a new input port of the target operator.
+         * @param portName the port name
+         * @param typeReference a source that has the data type as same to the creating port
+         * @return this
+         * @throws IllegalArgumentException if some parameters are {@code null}
          */
         public Builder addInput(String portName, Source<?> typeReference) {
             if (portName == null) {
@@ -533,12 +529,12 @@ public class OperatorDescription implements FlowElementDescription {
         }
 
         /**
-         * 演算子の入力ポートを追加する。
-         * @param portName 追加するポートの名前
-         * @param dataType 追加するポートのデータ型
-         * @param key ポートのシャッフル条件
-         * @return このオブジェクト (メソッドチェイン用)
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Adds a new input port of the target operator.
+         * @param portName the port name
+         * @param dataType the data type
+         * @param key information of the shuffle operation
+         * @return this
+         * @throws IllegalArgumentException if some parameters are {@code null}
          */
         public Builder addInput(String portName, Type dataType, ShuffleKey key) {
             if (portName == null) {
@@ -558,12 +554,12 @@ public class OperatorDescription implements FlowElementDescription {
         }
 
         /**
-         * 演算子の入力ポートを追加する。
-         * @param portName 追加するポートの名前
-         * @param typeReference 追加するポートと同様の型を持つソース
-         * @param key ポートのシャッフル条件
-         * @return このオブジェクト (メソッドチェイン用)
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Adds a new input port of the target operator.
+         * @param portName the port name
+         * @param typeReference a source that has the data type as same to the creating port
+         * @param key information of the shuffle operation
+         * @return this
+         * @throws IllegalArgumentException if some parameters are {@code null}
          */
         public Builder addInput(String portName, Source<?> typeReference, ShuffleKey key) {
             if (portName == null) {
@@ -579,11 +575,11 @@ public class OperatorDescription implements FlowElementDescription {
         }
 
         /**
-         * 演算子の出力ポートを追加する。
-         * @param portName 追加するポートの名前
-         * @param dataType 追加するポートのデータ型
-         * @return このオブジェクト (メソッドチェイン用)
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Adds a new output port of the target operator.
+         * @param portName the port name
+         * @param dataType the data type
+         * @return this
+         * @throws IllegalArgumentException if some parameters are {@code null}
          */
         public Builder addOutput(String portName, Type dataType) {
             if (portName == null) {
@@ -600,11 +596,11 @@ public class OperatorDescription implements FlowElementDescription {
         }
 
         /**
-         * 演算子の出力ポートを追加する。
-         * @param portName 追加するポートの名前
-         * @param typeReference 追加するポートと同様の型を持つソース
-         * @return このオブジェクト (メソッドチェイン用)
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Adds a new output port of the target operator.
+         * @param portName the port name
+         * @param typeReference a source that has the data type as same to the creating port
+         * @return this
+         * @throws IllegalArgumentException if some parameters are {@code null}
          */
         public Builder addOutput(String portName, Source<?> typeReference) {
             if (portName == null) {
@@ -617,10 +613,10 @@ public class OperatorDescription implements FlowElementDescription {
         }
 
         /**
-         * 演算子のリソースを追加する。
-         * @param resource 追加するリソース
-         * @return このオブジェクト (メソッドチェイン用)
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Adds a new external resource.
+         * @param resource the external resource
+         * @return this
+         * @throws IllegalArgumentException if the parameter is {@code null}
          */
         public Builder addResource(FlowResourceDescription resource) {
             if (resource == null) {
@@ -631,12 +627,12 @@ public class OperatorDescription implements FlowElementDescription {
         }
 
         /**
-         * 演算子が利用する入出力以外のパラメーターを追加する。
-         * @param parameterName パラメーターの名前
-         * @param parameterType パラメーターの型
-         * @param argument 実引数の値、{@code null}を表す場合は{@code null}
-         * @return このオブジェクト (メソッドチェイン用)
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Adds a new user parameter.
+         * @param parameterName the parameter name
+         * @param parameterType the parameter value
+         * @param argument the actual parameter argument, or {@code null} if the argument is just {@code null}
+         * @return this
+         * @throws IllegalArgumentException if some parameters are {@code null}
          */
         public Builder addParameter(
                 String parameterName,
@@ -653,10 +649,10 @@ public class OperatorDescription implements FlowElementDescription {
         }
 
         /**
-         * 演算子の値を持たない属性情報を追加する。
-         * @param attribute 追加する属性
-         * @return このオブジェクト (メソッドチェイン用)
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Adds an attribute.
+         * @param attribute the attribute
+         * @return this
+         * @throws IllegalArgumentException if the parameter is {@code null}
          */
         public Builder addAttribute(FlowElementAttribute attribute) {
             if (attribute == null) {
@@ -667,8 +663,8 @@ public class OperatorDescription implements FlowElementDescription {
         }
 
         /**
-         * ここまでの内容を元に、演算子の定義記述オブジェクトを生成して返す。
-         * @return 生成したオブジェクト
+         * Creates a new description object from the previously information.
+         * @return the created description
          */
         public OperatorDescription toDescription() {
             return new OperatorDescription(
@@ -687,8 +683,8 @@ public class OperatorDescription implements FlowElementDescription {
         }
 
         /**
-         * ここまでの内容を元に、演算子の解決オブジェクトを生成して返す。
-         * @return 生成したオブジェクト
+         * Creates a new {@link FlowElementResolver} object from the previously information.
+         * @return the created object
          */
         public FlowElementResolver toResolver() {
             return new FlowElementResolver(toDescription());

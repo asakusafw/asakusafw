@@ -28,38 +28,20 @@ import com.asakusafw.utils.java.model.syntax.TypeParameterDeclaration;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link InterfaceDeclaration}の実装。
+ * An implementation of {@link InterfaceDeclaration}.
  */
 public final class InterfaceDeclarationImpl extends ModelRoot implements InterfaceDeclaration {
 
-    /**
-     * ドキュメンテーションコメント。
-     */
     private Javadoc javadoc;
 
-    /**
-     * 修飾子および注釈の一覧。
-     */
     private List<? extends Attribute> modifiers;
 
-    /**
-     * 型の単純名。
-     */
     private SimpleName name;
 
-    /**
-     * 仮型引数宣言の一覧。
-     */
     private List<? extends TypeParameterDeclaration> typeParameters;
 
-    /**
-     * 親インターフェースの一覧。
-     */
     private List<? extends Type> superInterfaceTypes;
 
-    /**
-     * メンバの一覧。
-     */
     private List<? extends TypeBodyDeclaration> bodyDeclarations;
 
     @Override
@@ -68,11 +50,8 @@ public final class InterfaceDeclarationImpl extends ModelRoot implements Interfa
     }
 
     /**
-     * ドキュメンテーションコメントを設定する。
-     * <p> ドキュメンテーションコメントが存在しない場合、引数には{@code null}を指定する。 </p>
-     * @param javadoc
-     *     ドキュメンテーションコメント、
-     *     ただしドキュメンテーションコメントが存在しない場合は{@code null}
+     * Sets the documentation comment.
+     * @param javadoc the documentation comment, or {@code null} if it is not specified
      */
     public void setJavadoc(Javadoc javadoc) {
         this.javadoc = javadoc;
@@ -84,12 +63,9 @@ public final class InterfaceDeclarationImpl extends ModelRoot implements Interfa
     }
 
     /**
-     * 修飾子および注釈の一覧を設定する。
-     * <p> 修飾子または注釈が一つも宣言されない場合、引数には空を指定する。 </p>
-     * @param modifiers
-     *     修飾子および注釈の一覧
-     * @throws IllegalArgumentException
-     *     {@code modifiers}に{@code null}が指定された場合
+     * Sets the modifiers and annotations.
+     * @param modifiers the modifiers and annotations
+     * @throws IllegalArgumentException if {@code modifiers} was {@code null}
      */
     public void setModifiers(List<? extends Attribute> modifiers) {
         Util.notNull(modifiers, "modifiers"); //$NON-NLS-1$
@@ -103,11 +79,9 @@ public final class InterfaceDeclarationImpl extends ModelRoot implements Interfa
     }
 
     /**
-     * 型の単純名を設定する。
-     * @param name
-     *     型の単純名
-     * @throws IllegalArgumentException
-     *     {@code name}に{@code null}が指定された場合
+     * Sets the simple type name.
+     * @param name the simple type name
+     * @throws IllegalArgumentException if {@code name} was {@code null}
      */
     public void setName(SimpleName name) {
         Util.notNull(name, "name"); //$NON-NLS-1$
@@ -120,12 +94,9 @@ public final class InterfaceDeclarationImpl extends ModelRoot implements Interfa
     }
 
     /**
-     * 仮型引数宣言の一覧を設定する。
-     * <p> 仮型引数が一つも宣言されない場合、引数には空を指定する。 </p>
-     * @param typeParameters
-     *     仮型引数宣言の一覧
-     * @throws IllegalArgumentException
-     *     {@code typeParameters}に{@code null}が指定された場合
+     * Sets the type parameter declarations.
+     * @param typeParameters the type parameter declarations
+     * @throws IllegalArgumentException if {@code typeParameters} was {@code null}
      */
     public void setTypeParameters(List<? extends TypeParameterDeclaration> typeParameters) {
         Util.notNull(typeParameters, "typeParameters"); //$NON-NLS-1$
@@ -139,12 +110,9 @@ public final class InterfaceDeclarationImpl extends ModelRoot implements Interfa
     }
 
     /**
-     * 親インターフェースの一覧を設定する。
-     * <p> 親インターフェースが一つも宣言されない場合、引数には空を指定する。 </p>
-     * @param superInterfaceTypes
-     *     親インターフェースの一覧
-     * @throws IllegalArgumentException
-     *     {@code superInterfaceTypes}に{@code null}が指定された場合
+     * Sets the super interface types.
+     * @param superInterfaceTypes the super interface types
+     * @throws IllegalArgumentException if {@code superInterfaceTypes} was {@code null}
      */
     public void setSuperInterfaceTypes(List<? extends Type> superInterfaceTypes) {
         Util.notNull(superInterfaceTypes, "superInterfaceTypes"); //$NON-NLS-1$
@@ -158,12 +126,9 @@ public final class InterfaceDeclarationImpl extends ModelRoot implements Interfa
     }
 
     /**
-     * メンバの一覧を設定する。
-     * <p> メンバが一つも宣言されない場合、引数には空を指定する。 </p>
-     * @param bodyDeclarations
-     *     メンバの一覧
-     * @throws IllegalArgumentException
-     *     {@code bodyDeclarations}に{@code null}が指定された場合
+     * Sets the type member declarations.
+     * @param bodyDeclarations the type member declarations
+     * @throws IllegalArgumentException if {@code bodyDeclarations} was {@code null}
      */
     public void setBodyDeclarations(List<? extends TypeBodyDeclaration> bodyDeclarations) {
         Util.notNull(bodyDeclarations, "bodyDeclarations"); //$NON-NLS-1$
@@ -172,7 +137,7 @@ public final class InterfaceDeclarationImpl extends ModelRoot implements Interfa
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#INTERFACE_DECLARATION}を返す。
+     * Returns {@link ModelKind#INTERFACE_DECLARATION} which represents this element kind.
      * @return {@link ModelKind#INTERFACE_DECLARATION}
      */
     @Override
@@ -181,8 +146,7 @@ public final class InterfaceDeclarationImpl extends ModelRoot implements Interfa
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitInterfaceDeclaration(this, context);
     }

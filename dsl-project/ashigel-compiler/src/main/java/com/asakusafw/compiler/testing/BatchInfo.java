@@ -21,9 +21,8 @@ import java.util.List;
 import com.asakusafw.compiler.batch.Workflow;
 import com.asakusafw.compiler.common.Precondition;
 
-
 /**
- * テストで利用するバッチの構成情報。
+ * Represents information of batch structure for testing.
  */
 public class BatchInfo {
 
@@ -34,11 +33,11 @@ public class BatchInfo {
     private final File output;
 
     /**
-     * インスタンスを生成する。
-     * @param workflow 元となったワークフロー
-     * @param output 成果物の出力先ディレクトリ
-     * @param jobflows バッチに含まれるジョブフローの実行順序
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Creates a new instance.
+     * @param workflow the original workflow
+     * @param output the output directory
+     * @param jobflows the information of jobflows in the target batch
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public BatchInfo(
             Workflow workflow,
@@ -71,24 +70,24 @@ public class BatchInfo {
     }
 
     /**
-     * 成果物の出力先ディレクトリを返す。
-     * @return 成果物の出力先ディレクトリ
+     * Returns the output directory.
+     * @return the output directory
      */
     public File getOutputDirectory() {
         return output;
     }
 
     /**
-     * 元となったワークフローを返す。
-     * @return 元となったワークフロー
+     * Returns the original workflow object.
+     * @return the original workflow object
      */
     public Workflow getWorkflow() {
         return workflow;
     }
 
     /**
-     * バッチに含まれるジョブフローの実行順序を返す。
-     * @return バッチに含まれるジョブフローの実行順序
+     * Returns the jobflows in the target batch.
+     * @return the jobflows in the target batch
      */
     public List<JobflowInfo> getJobflows() {
         return this.jobflows;

@@ -16,37 +16,37 @@
 package com.asakusafw.compiler.flow;
 
 /**
- * コンパイル可能な要素。
- * @param <T> コンパイルした結果の情報
+ * Represents an element which can be compiled.
+ * @param <T> the compiled element type
  */
 public interface Compilable<T> {
 
     /**
-     * この要素がコンパイル済みである場合のみ{@code true}を返す。
-     * @return コンパイル済みである場合のみ{@code true}
+     * Returns whether this element has been already compiled or not.
+     * @return {@code true} if this element has been already compiled, otherwise {@code false}
      */
     boolean isCompiled();
 
     /**
-     * この要素のコンパイル結果を返す。
-     * @return コンパイル結果
-     * @throws IllegalStateException コンパイル済みでない場合
+     * Returns the compiled element for this.
+     * @return the compiled element
+     * @throws IllegalStateException this element has not been compiled yet
      * @see #isCompiled()
      */
     T getCompiled();
 
     /**
-     * この要素のコンパイル結果を設定する。
-     * @param object コンパイル結果
-     * @throws IllegalStateException すでにコンパイル済みであった場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Sets the compiled element.
+     * @param object the compiled element
+     * @throws IllegalStateException this element has been already compiled
+     * @throws IllegalArgumentException if the parameter is {@code null}
      * {@link #isCompiled()}
      */
     void setCompiled(T object);
 
     /**
-     * {@link Compilable}の機能を提供するクラス。
-     * @param <T> コンパイルした結果の情報
+     * A basic implementation of {@link Compilable}.
+     * @param <T> the compiled element type
      */
     class Trait<T> implements Compilable<T> {
 

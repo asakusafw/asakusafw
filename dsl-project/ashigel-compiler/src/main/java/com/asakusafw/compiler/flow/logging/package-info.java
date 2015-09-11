@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /**
- * Loggingの除去に関するパッケージ。
+ * Classes for optimizing logging operators.
  */
 package com.asakusafw.compiler.flow.logging;
 

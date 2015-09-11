@@ -15,12 +15,11 @@
  */
 package com.asakusafw.utils.java.model.syntax;
 
-
 /**
- * 要素を持たない注釈を表現するインターフェース。
+ * An interface which represents annotations without any annotation elements.
  * <ul>
  *   <li> Specified In: <ul>
- *     <li> {@code [JLS3:9.7] Annotations (<i>MarkerAnnotation</i>)} </li>
+ *     <li> {@code [JLS3:9.7] Annotations (MarkerAnnotation)} </li>
  *   </ul> </li>
  * </ul>
  */

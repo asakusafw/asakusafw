@@ -18,24 +18,21 @@ package com.asakusafw.utils.java.internal.parser.javadoc.ir;
 import java.util.List;
 
 /**
- * 名前を表す要素。
+ * Represents a name in {@link IrDocComment}.
  */
 public abstract class IrDocName extends AbstractIrDocElement implements IrDocFragment {
 
-    /**
-     * serialVersionUID を表す。
-     */
     private static final long serialVersionUID = -511710630107018908L;
 
     /**
-     * この名前全体を表す文字列を返す。
-     * @return この名前全体を表す文字列
+     * Returns this name as string.
+     * @return this name as string
      */
     public abstract String asString();
 
     /**
-     * この名前を構成する単純名の一覧を返す。
-     * @return この名前を構成する単純名の一覧
+     * Returns this name as its simple name list.
+     * @return this name as its simple name list
      */
     public abstract List<IrDocSimpleName> asSimpleNameList();
 }

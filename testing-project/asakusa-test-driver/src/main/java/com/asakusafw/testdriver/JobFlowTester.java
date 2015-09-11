@@ -50,9 +50,15 @@ import com.asakusafw.vocabulary.flow.graph.FlowGraph;
 public class JobFlowTester extends TesterBase {
 
     static final Logger LOG = LoggerFactory.getLogger(JobFlowTester.class);
-    /** 入力データのリスト。 */
+
+    /**
+     * The flow inputs.
+     */
     protected final List<JobFlowDriverInput<?>> inputs = new LinkedList<JobFlowDriverInput<?>>();
-    /** 出力データのリスト。 */
+
+    /**
+     * The flow outputs.
+     */
     protected final List<JobFlowDriverOutput<?>> outputs = new LinkedList<JobFlowDriverOutput<?>>();
 
     /**
@@ -67,10 +73,10 @@ public class JobFlowTester extends TesterBase {
     /**
      * テスト入力データを指定する。
      *
-     * @param <T> ModelType。
-     * @param name 入力データ名。テストドライバに指定する入力データ間で一意の名前を指定する。
-     * @param modelType ModelType。
-     * @return テスト入力データオブジェクト。
+     * @param <T> the data model type
+     * @param name 入力データ名。テストドライバに指定する入力データ間で一意の名前を指定する
+     * @param modelType the data model type
+     * @return テスト入力データオブジェクト
      */
     public <T> JobFlowDriverInput<T> input(String name, Class<T> modelType) {
         JobFlowDriverInput<T> input = new JobFlowDriverInput<T>(driverContext, name, modelType);
@@ -81,10 +87,10 @@ public class JobFlowTester extends TesterBase {
     /**
      * テスト結果の出力データ（期待値データ）を指定する。
      *
-     * @param <T> ModelType。
-     * @param name 出力データ名。テストドライバに指定する出力データ間で一意の名前を指定する。
-     * @param modelType ModelType。
-     * @return テスト入力データオブジェクト。
+     * @param <T> the data model type
+     * @param name 出力データ名。テストドライバに指定する出力データ間で一意の名前を指定する
+     * @param modelType the data model type
+     * @return テスト出力データオブジェクト
      */
     public <T> JobFlowDriverOutput<T> output(String name, Class<T> modelType) {
         JobFlowDriverOutput<T> output = new JobFlowDriverOutput<T>(driverContext, name, modelType);
@@ -121,14 +127,12 @@ public class JobFlowTester extends TesterBase {
             validateTestCondition();
         }
 
-        // フローコンパイラの実行
         LOG.info(MessageFormat.format(
                 Messages.getString("JobFlowTester.infoCompileDsl"), //$NON-NLS-1$
                 jobFlowDescriptionClass.getName()));
         JobFlowDriver jobFlowDriver = JobFlowDriver.analyze(jobFlowDescriptionClass);
         assertFalse(jobFlowDriver.getDiagnostics().toString(), jobFlowDriver.hasError());
 
-        // コンパイル環境の検証
         driverContext.validateCompileEnvironment();
 
         JobFlowClass jobFlowClass = jobFlowDriver.getJobFlowClass();
@@ -153,7 +157,6 @@ public class JobFlowTester extends TesterBase {
                 jobFlowDescriptionClass.getClassLoader(),
                 driverContext.getOptions());
 
-        // 環境の検証
         driverContext.validateExecutionEnvironment();
 
         JobflowExecutor executor = new JobflowExecutor(driverContext);

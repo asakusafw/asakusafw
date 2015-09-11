@@ -65,7 +65,7 @@ import com.asakusafw.vocabulary.operator.Split;
 import com.asakusafw.vocabulary.operator.Trace;
 
 /**
- * 演算子グラフの実行計画を立案する。
+ * Creates an execution plan from flow graphs.
  */
 public class StagePlanner {
 
@@ -95,14 +95,12 @@ public class StagePlanner {
     private int blockSequence = 1;
 
     /**
-     * インスタンスを生成する。
-     * @param rewriters フローグラフを書き換えるオブジェクトの一覧
-     * @param options コンパイラオプション
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param rewriters the flow graph rewriters to be applied
+     * @param options the current compiler options
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
-    public StagePlanner(
-            List<? extends FlowGraphRewriter> rewriters,
-            FlowCompilerOptions options) {
+    public StagePlanner(List<? extends FlowGraphRewriter> rewriters, FlowCompilerOptions options) {
         Precondition.checkMustNotBeNull(rewriters, "rewriters"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(options, "options"); //$NON-NLS-1$
         this.rewriters = sortRewriters(rewriters);
@@ -117,10 +115,10 @@ public class StagePlanner {
     }
 
     /**
-     * 指定の演算子グラフを分析し、実行時のステージグラフに変換して返す。
-     * @param graph 対象のグラフ
-     * @return 変換結果、変換できない場合は{@code null}
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Analyzes the flow graph and returns the corresponded stage graph.
+     * @param graph the target flow graph
+     * @return the analyzed result, or {@code null} if the flow graph is something wrong
+     * @throws IllegalArgumentException if the parameter is {@code null}
      * @see #getDiagnostics()
      */
     public StageGraph plan(FlowGraph graph) {
@@ -185,18 +183,17 @@ public class StagePlanner {
     }
 
     /**
-     * このオブジェクトで実行された処理の診断情報を返す。
-     * @return 処理の診断情報
+     * Returns the diagnostics information while executing {@link #plan(FlowGraph)}.
+     * @return the diagnostics information
      */
     public List<StagePlanner.Diagnostic> getDiagnostics() {
         return diagnostics;
     }
 
     /**
-     * {@link #normalizeFlowGraph(FlowGraph)}が適用された前提で、
-     * 演算子グラフからステージグラフを構築する。
-     * @param graph 対象のグラフ
-     * @return 構築したステージグラフ
+     * Creates a stage graph from a {@link #normalizeFlowGraph(FlowGraph) normalized flow graph}.
+     * @param graph the target flow graph
+     * @return the created stage graph
      */
     StageGraph buildStageGraph(FlowGraph graph) {
         assert graph != null;
@@ -398,7 +395,7 @@ public class StagePlanner {
 
         LinkedList<FlowBlockGroup> groups = new LinkedList<FlowBlockGroup>();
         for (FlowBlock block : blocks) {
-            // Reducerが後続するMapperは対象としない
+            // ignores map blocks with following reduce blocks
             if (block.isReduceBlock() == false && block.isSucceedingReduceBlock()) {
                 continue;
             }
@@ -411,10 +408,9 @@ public class StagePlanner {
         }
         LOG.debug("compressing concurrent stages"); //$NON-NLS-1$
 
-        // クリティカルパス距離の計算
         computeCriticalPaths(groups);
 
-        // 合成可能なものをまとめる
+        // merges blocks
         List<FlowBlockGroup> results = Lists.create();
         while (groups.isEmpty() == false) {
             FlowBlockGroup first = groups.removeFirst();
@@ -471,9 +467,9 @@ public class StagePlanner {
     }
 
     /**
-     * 指定のグラフの入力ブロックを作成する。
-     * @param graph 対象のグラフ
-     * @return 演算子グラフへの入力のみを含むブロック
+     * Creates an input block which only contains flow inputs.
+     * @param graph the target flow graph
+     * @return the created block
      */
     private FlowBlock buildInputBlock(FlowGraph graph) {
         assert graph != null;
@@ -492,9 +488,9 @@ public class StagePlanner {
     }
 
     /**
-     * 指定のグラフの出力ブロックを作成する。
-     * @param graph 対象のグラフ
-     * @return 演算子グラフからの出力のみを含むブロック
+     * Creates an output block which only contains flow outputs.
+     * @param graph the target flow graph
+     * @return the created block
      */
     private FlowBlock buildOutputBlock(FlowGraph graph) {
         assert graph != null;
@@ -513,10 +509,9 @@ public class StagePlanner {
     }
 
     /**
-     * {@link #normalizeFlowGraph(FlowGraph)}が行われていることを前提に、
-     * グラフから入出力を除くすべてのブロックを構築する。
-     * @param graph 対象のグラフ
-     * @return 構築したブロック
+     * Creates flow blocks from {@link #normalizeFlowGraph(FlowGraph) the normalized flow graph}.
+     * @param graph the target flow graph
+     * @return the created blocks
      */
     private List<FlowBlock> buildComputationBlocks(FlowGraph graph) {
         assert graph != null;
@@ -570,12 +565,10 @@ public class StagePlanner {
         assert stagePredecessors != null;
         LOG.debug("computing map blocks (w/o succeeding reducers): {}", graph); //$NON-NLS-1$
 
-        // (ステージ境界, ステージ境界) は入力ごとにマップブロックにする
+        // creates map blocks from (stage -> stage) path per their input
         List<FlowBlock> results = Lists.create();
         Collection<FlowPath> ss = stageSuccessors.values();
         for (FlowPath stageForward : ss) {
-
-            // このステージ境界に後続するステージ境界から、逆順のパスを抽出する
             List<FlowPath> stageBackwards = Lists.create();
             for (FlowElement arrival : stageForward.getArrivals()) {
                 if (FlowGraphUtil.isShuffleBoundary(arrival) == false) {
@@ -584,16 +577,10 @@ public class StagePlanner {
                     stageBackwards.add(stageBackward);
                 }
             }
-
-            // 逆順のパスが空ならば、全てシャッフル境界が後続していたことになる
             if (stageBackwards.isEmpty()) {
                 continue;
             }
-
-            // 後続するステージ境界から逆順のパスの和となるパスを求める
             FlowPath backward = FlowGraphUtil.union(stageBackwards);
-
-            // ステージ境界からステージ境界までの最小のパスを作成する
             FlowPath path = stageForward.transposeIntersect(backward);
             FlowBlock block = path.createBlock(
                     graph,
@@ -617,7 +604,7 @@ public class StagePlanner {
         assert stageSuccessors != null;
         LOG.debug("computing map blocks (w/ succeeding reducers): {}", graph); //$NON-NLS-1$
 
-        // (ステージ境界, シャッフル境界) は(入力, シャッフル)ごとにマップブロックにする
+        // creates map blocks from (stage -> shuffle) path per their input
         List<FlowBlock> results = Lists.create();
         for (FlowPath shuffleBackward : shufflePredecessors) {
             Set<FlowElement> arrivals = shuffleBackward.getArrivals();
@@ -626,8 +613,6 @@ public class StagePlanner {
 
                 FlowPath stageForward = stageSuccessors.get(stageStart);
                 assert stageForward != null;
-
-                // 単一のステージから始まり、かつシャッフルから先行するパスのみ
                 FlowPath path = stageForward.transposeIntersect(shuffleBackward);
                 FlowBlock block = path.createBlock(
                         graph,
@@ -643,14 +628,12 @@ public class StagePlanner {
         return results;
     }
 
-    private List<FlowBlock> collectShuffleToStage(
-            FlowGraph graph,
-            Collection<FlowPath> shuffleSuccessors) {
+    private List<FlowBlock> collectShuffleToStage(FlowGraph graph, Collection<FlowPath> shuffleSuccessors) {
         assert graph != null;
         assert shuffleSuccessors != null;
         LOG.debug("computing reduce blocks (w/ succeeding reducers): {}", graph); //$NON-NLS-1$
 
-        // [シャッフル境界, ステージ境界) は必ず単一のレデュースブロックになる
+        // creates map blocks from [shuffle -> stage) path
         List<FlowBlock> results = Lists.create();
         for (FlowPath path : shuffleSuccessors) {
             FlowBlock block = path.createBlock(
@@ -670,10 +653,7 @@ public class StagePlanner {
         return blockSequence++;
     }
 
-    private void connectFlowBlocks(
-            FlowBlock inputBlock,
-            FlowBlock outputBlock,
-            List<FlowBlock> computationBlocks) {
+    private void connectFlowBlocks(FlowBlock inputBlock, FlowBlock outputBlock, List<FlowBlock> computationBlocks) {
         assert inputBlock != null;
         assert outputBlock != null;
         assert computationBlocks != null;
@@ -751,27 +731,22 @@ public class StagePlanner {
     }
 
     /**
-     * 演算子グラフを標準形に変換する。
+     * Normalizes the target flow graph.
      * <ul>
-     * <li> フロー部品のインライン化 </li>
-     * <li> shuffle-shuffleへのチェックポイントの挿入 </li>
-     * <li> boundary-boundaryへのidentityの挿入 </li>
-     * <li> identityの分解 </li>
-     * <li> identityの最小化 </li>
-     * <li> フロー部品の標準形化 </li>
+     * <li> flatten flow-parts </li>
+     * <li> insert stage boundary into ({@code shuffle -> shuffle}) paths </li>
+     * <li> insert identity operator into ({@code boundary -> boundary}) </li>
+     * <li> split identity operators </li>
+     * <li> reduce redundant identity operators </li>
      * </ul>
-     * @param graph 変換対象のグラフ
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * @param graph the target flow graph
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     void normalizeFlowGraph(FlowGraph graph) {
         assert graph != null;
         LOG.debug("normalizing operator graph: {}", graph); //$NON-NLS-1$
-
         inlineFlowParts(graph);
-
-        // FIXME process "at most once" (or "volatile") operators
         unifyGlobalSideEffects(graph);
-
         insertCheckpoints(graph);
         insertIdentities(graph);
         splitIdentities(graph);
@@ -802,9 +777,8 @@ public class StagePlanner {
     }
 
     /**
-     * shuffle -* shuffleとなるような接続を発見した際に、チェックポイントを挿入して
-     * shuffle -* stageとなるように変換する。
-     * @param graph 対象のグラフ
+     * Inserts stage boundary into {@code shuffle -> shuffle} path.
+     * @param graph the target flow graph
      */
     void insertCheckpoints(FlowGraph graph) {
         assert graph != null;
@@ -898,9 +872,8 @@ public class StagePlanner {
     }
 
     /**
-     * stage -1 boundaryとなるような接続を発見した際に、恒等関数を挿入して
-     * stage - identity - boundaryとなるように変換する。
-     * @param graph 対象のグラフ
+     * Inserts identity operators into paths which have no body functions.
+     * @param graph the target flow graph
      */
     void insertIdentities(FlowGraph graph) {
         assert graph != null;
@@ -925,8 +898,8 @@ public class StagePlanner {
     }
 
     /**
-     * すべてのidentityの入出力が1:1になるようにidentityを分解する。
-     * @param graph 対象のグラフ
+     * Normalizes identity operators: they must have only one upstream and downstream operators.
+     * @param graph the target flow graph
      */
     void splitIdentities(FlowGraph graph) {
         assert graph != null;
@@ -943,10 +916,9 @@ public class StagePlanner {
     }
 
     /**
-     * {@link #splitIdentities(FlowGraph)}が適用されていることを前提に、
-     * 不要な恒等関数をすべて除去する。
-     * @param graph 対象のグラフ
-     * @see #insertIdentities(FlowGraph)
+     * Removes redundant identity operators.
+     * The target flow graph must be applied {@link #splitIdentities(FlowGraph)}.
+     * @param graph the target flow graph
      */
     void reduceIdentities(FlowGraph graph) {
         assert graph != null;
@@ -962,7 +934,6 @@ public class StagePlanner {
                 Set<FlowElement> succs = FlowGraphUtil.getSuccessors(element);
                 assert preds.size() == 1 && succs.size() == 1 : "all identities must be splitted"; //$NON-NLS-1$
 
-                // ブロック唯一の要素になりそうであれば残す
                 FlowElement pred = preds.iterator().next();
                 FlowElement succ = succs.iterator().next();
                 if (FlowGraphUtil.isStageBoundary(pred) && FlowGraphUtil.isBoundary(succ)) {
@@ -977,9 +948,10 @@ public class StagePlanner {
     }
 
     /**
-     * 演算子グラフの未結線や循環結線がないことを確認する。
-     * @param graph 対象のグラフ
-     * @return 未結線や循環結線が存在する場合
+     * Validates the target flow graph is well-formed.
+     * Each element port must be connected to the other ports (if it is required), and the flow graph must be acyclic.
+     * @param graph the target flow graph
+     * @return {@code true} if the target flow graph is well-formed, otherwise {@code false}
      */
     boolean validate(FlowGraph graph) {
         assert graph != null;
@@ -1086,36 +1058,33 @@ public class StagePlanner {
     }
 
     /**
-     * 実行計画の診断情報。
+     * A diagnostic information of {@link StagePlanner}.
      */
     public static class Diagnostic {
 
         /**
-         * 診断対象のグラフ。
+         * The target flow graph.
          */
         public final FlowGraph graph;
 
         /**
-         * 診断情報の対象。
+         * The target flow elements.
          */
         public final List<FlowElement> context;
 
         /**
-         * 診断メッセージ。
+         * The diagnostics message.
          */
         public final String message;
 
         /**
-         * インスタンスを生成する。
-         * @param graph 診断対象のグラフ
-         * @param context 診断情報の対象
-         * @param message 診断メッセージ
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Creates a new instance.
+         * @param graph the target flow graph
+         * @param context the target flow elements
+         * @param message the diagnostics message
+         * @throws IllegalArgumentException if the parameters are {@code null}
          */
-        public Diagnostic(
-                FlowGraph graph,
-                List<FlowElement> context,
-                String message) {
+        public Diagnostic(FlowGraph graph, List<FlowElement> context, String message) {
             Precondition.checkMustNotBeNull(graph, "graph"); //$NON-NLS-1$
             Precondition.checkMustNotBeNull(context, "context"); //$NON-NLS-1$
             Precondition.checkMustNotBeNull(message, "message"); //$NON-NLS-1$
@@ -1138,17 +1107,14 @@ public class StagePlanner {
         final FlowBlock founder;
 
         /**
-         * グループへの入力を生成する出力。
+         * The upstream output for this group.
          */
         @SuppressWarnings("unused")
         private final Set<FlowBlock.Output> groupSource;
 
         /**
-         * 直接先行するブロック。
-         * ただし、
-         * - Reducerが後続しないMapperである
-         * - Reducerである
-         * のいずれか。
+         * The direct upstream blocks.
+         * This must be map blocks w/o reduce blocks, or reduce blocks.
          */
         final Set<FlowBlock> predeceaseBlocks;
 
@@ -1214,7 +1180,7 @@ public class StagePlanner {
                 FlowBlock first = work.removeFirst();
                 Set<FlowBlock> preds = getPredeceaseBlocks(first);
                 for (FlowBlock block : preds) {
-                    // 入力ブロックは除外
+                    // ignores input blocks
                     if (block.getBlockInputs().isEmpty()) {
                         continue;
                     }
@@ -1230,11 +1196,11 @@ public class StagePlanner {
 
         boolean combine(FlowBlockGroup other) {
             assert other != null;
-            // mapperどうし、またはreducerどうしでのみ合成
+            // merges only the same block type (map/reduce)
             if (this.reducer != other.reducer) {
                 return false;
             }
-            // 入力からの最大長が等しいものを合成
+            // merges that have the same distance from the head
             if (this.distance == -1 || this.distance != other.distance) {
                 return false;
             }

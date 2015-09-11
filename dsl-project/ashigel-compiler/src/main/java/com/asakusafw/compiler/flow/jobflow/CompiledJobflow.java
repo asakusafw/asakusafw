@@ -24,7 +24,7 @@ import com.asakusafw.compiler.flow.ExternalIoDescriptionProcessor.IoContext;
 import com.asakusafw.utils.collections.Lists;
 
 /**
- * コンパイル済みのジョブフローの情報。
+ * Compiled information of a jobflow.
  * @since 0.1.0
  * @version 0.5.1
  */
@@ -39,11 +39,11 @@ public class CompiledJobflow {
     private final List<ExternalIoStage> epilogueStages;
 
     /**
-     * インスタンスを生成する。
-     * @param commands 提供するコマンドの一覧
-     * @param prologueStages プロローグステージの一覧
-     * @param epilogueStages エピローグステージの一覧
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param commands I/O command provides for this jobflow
+     * @param prologueStages prologue stages in this jobflow
+     * @param epilogueStages epilogue stages in this jobflow
+     * @throws IllegalArgumentException if some parameters were {@code null}
      * @deprecated Use {@link #CompiledJobflow(Collection, Collection, Collection)} instead
      */
     @Deprecated
@@ -80,8 +80,8 @@ public class CompiledJobflow {
     }
 
     /**
-     * 提供するコマンドの一覧を返す。
-     * @return 提供するコマンドの一覧
+     * Returns the resolved command providers.
+     * @return the resolved command providers
      */
     public List<ExternalIoCommandProvider> getCommandProviders() {
         return commands;
@@ -106,16 +106,16 @@ public class CompiledJobflow {
     }
 
     /**
-     * プロローグステージの一覧を返す。
-     * @return プロローグステージの一覧
+     * Returns the compiled stages in the prologue phase.
+     * @return the compiled stages in the prologue phase
      */
     public List<CompiledStage> getPrologueStages() {
         return unblessIoContext(prologueStages);
     }
 
     /**
-     * エピローグステージの一覧を返す。
-     * @return エピローグステージの一覧
+     * Returns the compiled stages in the epilogue phase.
+     * @return the compiled stages in the epilogue phase
      */
     public List<CompiledStage> getEpilogueStages() {
         return unblessIoContext(epilogueStages);

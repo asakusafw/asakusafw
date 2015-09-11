@@ -22,7 +22,7 @@ import com.asakusafw.utils.java.model.syntax.ModelFactory;
 import com.asakusafw.utils.java.model.syntax.SimpleName;
 
 /**
- * 衝突しない名前を作成する。
+ * Generates unique names.
  */
 public class NameGenerator {
 
@@ -31,9 +31,9 @@ public class NameGenerator {
     private final Set<String> used = Sets.create();
 
     /**
-     * インスタンスを生成する。
-     * @param factory DOMを生成するファクトリー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Creates a new instance.
+     * @param factory the Java DOM factory
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public NameGenerator(ModelFactory factory) {
         Precondition.checkMustNotBeNull(factory, "factory"); //$NON-NLS-1$
@@ -41,10 +41,10 @@ public class NameGenerator {
     }
 
     /**
-     * 指定の名前を利用済みの名前として登録する。
-     * @param name 登録する名前
-     * @return 引数の値
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Adds a name as reserved one.
+     * @param name the target name
+     * @return the reserved name
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public String reserve(String name) {
         Precondition.checkMustNotBeNull(name, "name"); //$NON-NLS-1$
@@ -53,10 +53,10 @@ public class NameGenerator {
     }
 
     /**
-     * 指定の要素とヒント名を利用して、まだ利用していない単純名を生成する。
-     * @param hint ヒント名
-     * @return まだ利用していない名前
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Adds a new unique name and returns it.
+     * @param hint the hint of the new name
+     * @return the unique name
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public SimpleName create(String hint) {
         Precondition.checkMustNotBeNull(hint, "hint"); //$NON-NLS-1$

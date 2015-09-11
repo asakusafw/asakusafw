@@ -17,7 +17,7 @@ package com.asakusafw.utils.java.model.syntax;
 
 
 /**
- * {@code instanceof}式を表現するインターフェース。
+ * An interface which represents {@code instance of} expression.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:15.20.2] Type Comparison Operator instanceof} </li>
@@ -27,19 +27,15 @@ package com.asakusafw.utils.java.model.syntax;
 public interface InstanceofExpression
         extends Expression {
 
-    // properties
-
     /**
-     * 被演算項を返す。
-     * @return
-     *     被演算項
+     * Returns the target term.
+     * @return the target term
      */
     Expression getExpression();
 
     /**
-     * 比較対象型を返す。
-     * @return
-     *     比較対象型
+     * Returns the target type.
+     * @return the target type
      */
     Type getType();
 }

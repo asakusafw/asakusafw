@@ -20,7 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * ブロック要素。
+ * Represents blocks in {@link IrDocComment}.
  */
 public class IrDocBlock extends AbstractIrDocElement implements IrDocFragment {
 
@@ -33,7 +33,6 @@ public class IrDocBlock extends AbstractIrDocElement implements IrDocFragment {
      * Creates a new instance.
      */
     public IrDocBlock() {
-        super();
         this.tag = null;
         this.fragments = Collections.emptyList();
     }
@@ -44,20 +43,18 @@ public class IrDocBlock extends AbstractIrDocElement implements IrDocFragment {
     }
 
     /**
-     * このブロックのタグを返す。
-     * このタグが概要ブロックを表現する場合、タグは存在せずこの呼び出しは{@code null}を返す。
-     * そうでない場合、返される文字列の先頭は必ず<code>&#64;</code>であることが保証されている。
-     * @return <code>&#64;</code>から始まるタグ名、タグが存在しない場合は{@code null}
+     * Returns the block tag.
+     * If the block tag exists, the returned text always start with <code>&#64;</code>.
+     * @return the tag name (it starts with <code>&#64;</code>), or {@code null} if this block has no tags
      */
     public String getTag() {
         return this.tag;
     }
 
     /**
-     * このブロックのタグを設定する。
-     * 引数に{@code null}が指定された場合、このブロックはタグが存在しない概要ブロックを表現する。
-     * そうでなく、先頭文字が<code>&#64;</code>でない場合、自動的に付与される。
-     * @param tag 設定するタグ文字列、または{@code null}
+     * Sets the block tag.
+     * @param tag the tag name (it may or may not start with <code>&#64;</code>),
+     *     or {@code null} if this block has no tags
      */
     public void setTag(String tag) {
         if (tag == null) {
@@ -72,17 +69,17 @@ public class IrDocBlock extends AbstractIrDocElement implements IrDocFragment {
     }
 
     /**
-     * このブロックのタグ以降の要素を返す。
-     * @return このブロックのタグ以外の要素
+     * Returns the element fragments.
+     * @return the element fragments
      */
     public List<? extends IrDocFragment> getFragments() {
         return this.fragments;
     }
 
     /**
-     * このブロックのタグ以降の要素を設定する。
-     * @param fragments 設定する要素
-     * @throws IllegalArgumentException 引数に{@code null}が含まれていた場合
+     * Sets the element fragments.
+     * @param fragments the element fragments
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public void setFragments(List<? extends IrDocFragment> fragments) {
         if (fragments == null) {

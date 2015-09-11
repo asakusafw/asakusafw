@@ -17,7 +17,7 @@ package com.asakusafw.utils.java.model.syntax;
 
 
 /**
- * ドキュメンテーションコメントの構成要素を表現する基底インターフェース。
+ * An abstract super interface of elements in documentation comments.
  */
 public interface DocElement
         extends Model {

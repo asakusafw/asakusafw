@@ -32,7 +32,7 @@ import com.asakusafw.vocabulary.flow.graph.FlowResourceDescription;
 import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 
 /**
- * {@link SideDataJoinUpdate}を処理する。
+ * Processes {@link SideDataJoinUpdate}.
  */
 @TargetOperator(SideDataJoinUpdate.class)
 public class SideDataJoinUpdateFlowProcessor extends LineEndProcessor {

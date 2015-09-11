@@ -17,6 +17,7 @@ package com.asakusafw.runtime.core;
 
 /**
  * 演算子の出力を表現するインターフェース。
+ * TODO i18n
  * @param <T> データの種類
  */
 public interface Result<T> {
@@ -40,32 +41,32 @@ public interface Result<T> {
         private static final long serialVersionUID = 1L;
 
         /**
-         * インスタンスを生成する。
+         * Creates a new instance.
          */
         public OutputException() {
             super();
         }
 
         /**
-         * インスタンスを生成する。
-         * @param message メッセージ
+         * Creates a new instance.
+         * @param message message (nullable)
          */
         public OutputException(String message) {
             super(message);
         }
 
         /**
-         * インスタンスを生成する。
-         * @param cause 原因
+         * Creates a new instance.
+         * @param cause original cause (nullable)
          */
         public OutputException(Throwable cause) {
             super(cause);
         }
 
         /**
-         * インスタンスを生成する。
-         * @param message メッセージ
-         * @param cause 原因
+         * Creates a new instance.
+         * @param message message (nullable)
+         * @param cause original cause (nullable)
          */
         public OutputException(String message, Throwable cause) {
             super(message, cause);

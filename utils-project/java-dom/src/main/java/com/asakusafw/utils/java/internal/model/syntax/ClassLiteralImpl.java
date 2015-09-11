@@ -21,13 +21,10 @@ import com.asakusafw.utils.java.model.syntax.Type;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link ClassLiteral}の実装。
+ * An implementation of {@link ClassLiteral}.
  */
 public final class ClassLiteralImpl extends ModelRoot implements ClassLiteral {
 
-    /**
-     * 対象の型。
-     */
     private Type type;
 
     @Override
@@ -36,11 +33,9 @@ public final class ClassLiteralImpl extends ModelRoot implements ClassLiteral {
     }
 
     /**
-     * 対象の型を設定する。
-     * @param type
-     *     対象の型
-     * @throws IllegalArgumentException
-     *     {@code type}に{@code null}が指定された場合
+     * Sets the target type.
+     * @param type the target type
+     * @throws IllegalArgumentException if {@code type} was {@code null}
      */
     public void setType(Type type) {
         Util.notNull(type, "type"); //$NON-NLS-1$
@@ -48,7 +43,7 @@ public final class ClassLiteralImpl extends ModelRoot implements ClassLiteral {
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#CLASS_LITERAL}を返す。
+     * Returns {@link ModelKind#CLASS_LITERAL} which represents this element kind.
      * @return {@link ModelKind#CLASS_LITERAL}
      */
     @Override
@@ -57,8 +52,7 @@ public final class ClassLiteralImpl extends ModelRoot implements ClassLiteral {
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitClassLiteral(this, context);
     }

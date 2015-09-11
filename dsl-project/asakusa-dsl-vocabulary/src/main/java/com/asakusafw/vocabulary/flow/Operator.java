@@ -16,7 +16,7 @@
 package com.asakusafw.vocabulary.flow;
 
 /**
- * 全ての演算子オブジェクトが持つべきインターフェース。
+ * An abstract super interface of all operators.
  */
 public interface Operator {
 

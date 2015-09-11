@@ -31,16 +31,16 @@ import com.asakusafw.vocabulary.batch.Work;
 import com.asakusafw.vocabulary.batch.WorkDescription;
 
 /**
- * バッチDSLをコンパイルするコンパイラ。
+ * Compiles batch classes described in the batch DSL.
  */
 public class BatchCompiler {
 
     private final BatchCompilingEnvironment environment;
 
     /**
-     * インスタンスを生成する。
-     * @param configuration コンパイラの設定
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param configuration the compiler settings
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public BatchCompiler(BatchCompilerConfiguration configuration) {
         Precondition.checkMustNotBeNull(configuration, "configuration"); //$NON-NLS-1$
@@ -48,11 +48,11 @@ public class BatchCompiler {
     }
 
     /**
-     * 指定のバッチ記述に対するコンパイルを実行する。
-     * @param description 対象のバッチ記述
-     * @return コンパイル結果のワークフロー
-     * @throws IOException コンパイルに失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Compiles the target batch description.
+     * @param description the target batch description
+     * @return the compiled result
+     * @throws IOException if failed to compile
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public Workflow compile(BatchDescription description) throws IOException {
         Precondition.checkMustNotBeNull(description, "description"); //$NON-NLS-1$

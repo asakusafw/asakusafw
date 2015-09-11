@@ -44,7 +44,7 @@ import com.asakusafw.vocabulary.flow.graph.InputDescription;
 import com.asakusafw.vocabulary.flow.graph.OutputDescription;
 
 /**
- * ジョブフロー全体のモデル。
+ * Structural information of jobflows.
  */
 public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
 
@@ -61,20 +61,19 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
     private final List<Stage> stages;
 
     /**
-     * インスタンスを生成する。
-     * @param stageGraph このモデルの元となったステージグラフ
-     * @param batchId このモデルに関連するバッチID
-     * @param flowId このモデルに関連するフローID
-     * @param imports ジョブフローへの入力の一覧
-     * @param exports ジョブフローからの出力の一覧
-     * @param stages ステージ情報の一覧
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param stageGraph the original stage graph
+     * @param batchId the batch ID
+     * @param flowId the flow ID
+     * @param imports the import stages
+     * @param exports the export stages
+     * @param stages the MapReduce stages
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public JobflowModel(
             StageGraph stageGraph,
-            String batchId,
-            String flowId, List<Import> imports,
-            List<Export> exports,
+            String batchId, String flowId,
+            List<Import> imports, List<Export> exports,
             List<Stage> stages) {
         Precondition.checkMustNotBeNull(stageGraph, "stageGraph"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(batchId, "batchId"); //$NON-NLS-1$
@@ -91,57 +90,56 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
     }
 
     /**
-     * このモデルの元となったステージグラフを返す。
-     * @return このモデルの元となったステージグラフ
+     * Returns the original stage graph.
+     * @return the original stage graph
      */
     public StageGraph getStageGraph() {
         return stageGraph;
     }
 
     /**
-     * このモデルに関連するバッチIDを返す。
-     * @return このモデルに関連するバッチID
+     * Returns the batch ID.
+     * @return the batch ID
      */
     public String getBatchId() {
         return batchId;
     }
 
     /**
-     * このモデルに関連するフローIDを返す。
-     * @return このモデルに関連するフローID
+     * Returns the flow ID.
+     * @return the flow ID
      */
     public String getFlowId() {
         return flowId;
     }
 
     /**
-     * ジョブフローへの入力の一覧を返す。
-     * @return ジョブフローへの入力の一覧
+     * Returns information of the import stages.
+     * @return the import stages
      */
     public List<Import> getImports() {
         return imports;
     }
 
     /**
-     * ジョブフローからの出力の一覧を返す。
-     * @return ジョブフローからの出力の一覧
+     * Returns information of the export stages.
+     * @return the export stages
      */
     public List<Export> getExports() {
         return exports;
     }
 
     /**
-     * ステージ情報の一覧を返す。
-     * @return ステージ情報の一覧
+     * Returns information of the MapReduce stages.
+     * @return the MapReduce stages
      */
     public List<Stage> getStages() {
         return stages;
     }
 
     /**
-     * このジョブフローに含まれるステージの関係を依存元から依存先へのグラフにして返す。
-     * @return 構築したグラフ
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns the dependency graph of MapReduce stages.
+     * @return the dependency graph
      */
     public Graph<Stage> getDependencyGraph() {
         Map<Delivery, Stage> deliveries = Maps.create();
@@ -157,7 +155,7 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
                 for (Source source : process.getResolvedSources()) {
                     Stage dependence = deliveries.get(source);
                     if (dependence == null) {
-                        // 先頭ステージ
+                        // the head stage
                         continue;
                     }
                     graph.addEdge(stage, dependence);
@@ -168,7 +166,7 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
     }
 
     /**
-     * ステージの定義。
+     * Structural information of MapReduce stages.
      */
     public static class Stage extends Compilable.Trait<CompiledStage> {
 
@@ -183,13 +181,13 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
         private final Set<SideData> sideData;
 
         /**
-         * インスタンスを生成する。
-         * @param model このステージの構造
-         * @param processes このステージのプロセス情報一覧
-         * @param deliveries このステージの成果物一覧
-         * @param reduceOrNull このステージのレデューサー定義、利用しない場合は{@code null}
-         * @param sideData このステージで利用するサイドデータの一覧
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Creates a new instance.
+         * @param model the stage model
+         * @param processes the processes (Map actions) in this stage
+         * @param deliveries the deliveries of this stage
+         * @param reduceOrNull the reducer action (nullable)
+         * @param sideData the side-data for this stage
+         * @throws IllegalArgumentException if some parameters are {@code null}
          */
         public Stage(
                 StageModel model,
@@ -209,48 +207,48 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
         }
 
         /**
-         * このステージのステージ番号を返す。
-         * @return このステージのステージ番号
+         * Returns the stage number.
+         * @return the stage number
          */
         public int getNumber() {
             return model.getStageBlock().getStageNumber();
         }
 
         /**
-         * このステージの構造を返す。
-         * @return このステージの構造
+         * Returns the model of this stage.
+         * @return the stage model
          */
         public StageModel getModel() {
             return model;
         }
 
         /**
-         * このステージのプロセス情報を返す。
-         * @return プロセス情報
+         * Returns information of the Map actions in this stage.
+         * @return the Map actions
          */
         public List<Process> getProcesses() {
             return processes;
         }
 
         /**
-         * このステージの成果物情報を返す。
-         * @return 成果物情報
+         * Returns information of the stage deliveries.
+         * @return the stage deliveries
          */
         public List<Delivery> getDeliveries() {
             return deliveries;
         }
 
         /**
-         * レデューサーの定義を返す。
-         * @return レデューサーの定義、レデュースフェーズが存在しない場合は{@code null}
+         * Returns information of the Reduce action.
+         * @return the Reduce action, or {@code null} if this stage does not contain Reduce actions
          */
         public Reduce getReduceOrNull() {
             return reduceOrNull;
         }
 
         /**
-         * このステージで利用するサイドデータの一覧を返す。
-         * @return サイドデータ
+         * Returns information of the side-data list for this stage.
+         * @return the side-data list
          */
         public Set<SideData> getSideData() {
             return sideData;
@@ -265,7 +263,7 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
     }
 
     /**
-     * レデューサーの定義。
+     *　Represents a set of configurations for Reduce actions.
      */
     public static class Reduce {
 
@@ -284,15 +282,15 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
         private final Name partitionerTypeName;
 
         /**
-         * インスタンスを生成する。
-         * @param reducerTypeName レデューサークラスの完全限定名
-         * @param combinerTypeNameOrNull コンバイナークラスの完全限定名、利用しない場合は{@code null}
-         * @param keyTypeName キークラスの完全限定名
-         * @param valueTypeName 値クラスの完全限定名
-         * @param groupingComparatorTypeName グループ比較器クラスの完全限定名
-         * @param sortComparatorTypeName 順序比較器クラスの完全限定名
-         * @param partitionerTypeName パーティショナークラスの完全限定名
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Creates a new instance.
+         * @param reducerTypeName the qualified class name of the reducer
+         * @param combinerTypeNameOrNull the qualified class name of the reducer (nullable)
+         * @param keyTypeName the qualified class name of the shuffle key
+         * @param valueTypeName the qualified class name of the shuffle value
+         * @param groupingComparatorTypeName the qualified class name of the grouping comparator
+         * @param sortComparatorTypeName the qualified class name of the sort comparator
+         * @param partitionerTypeName the qualified class name of the partitioner
+         * @throws IllegalArgumentException if the parameters are {@code null}
          */
         public Reduce(
                 Name reducerTypeName,
@@ -318,56 +316,56 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
         }
 
         /**
-         * このオブジェクトに関連するコンバイナークラスの完全限定名を返す。
-         * @return コンバイナークラスの完全限定名、利用しない場合は{@code null}
+         * Returns the qualified name of the combiner class.
+         * @return the qualified class name, or {@code null} if combiner is not available
          */
         public Name getCombinerTypeNameOrNull() {
             return combinerTypeNameOrNull;
         }
 
         /**
-         * このオブジェクトに関連するレデューサークラスの完全限定名を返す。
-         * @return レデューサークラスの完全限定名
+         * Returns the qualified name of the reducer class.
+         * @return the qualified class name
          */
         public Name getReducerTypeName() {
             return reducerTypeName;
         }
 
         /**
-         * シャッフル時に利用するキークラスの完全限定名を返す。
-         * @return キークラスの完全限定名
+         * Returns the qualified name of the shuffle key class.
+         * @return the qualified class name
          */
         public Name getKeyTypeName() {
             return keyTypeName;
         }
 
         /**
-         * シャッフル時に利用する値クラスの完全限定名を返す。
-         * @return 値クラスの完全限定名
+         * Returns the qualified name of the shuffle value class.
+         * @return the qualified class name
          */
         public Name getValueTypeName() {
             return valueTypeName;
         }
 
         /**
-         * シャッフル時に利用するグループ化比較器クラスの完全限定名を返す。
-         * @return グループ化比較器クラスの完全限定名
+         * Returns the qualified name of the grouping comparator class.
+         * @return the qualified class name
          */
         public Name getGroupingComparatorTypeName() {
             return groupingComparatorTypeName;
         }
 
         /**
-         * シャッフル時に利用する順序比較器クラスの完全限定名を返す。
-         * @return 順序比較器クラスの完全限定名
+         * Returns the qualified name of the sort comparator class.
+         * @return the qualified class name
          */
         public Name getSortComparatorTypeName() {
             return sortComparatorTypeName;
         }
 
         /**
-         * シャッフル時に利用するパーティショナークラスの完全限定名を返す。
-         * @return パーティショナークラスの完全限定名
+         * Returns the qualified name of the partitioner class.
+         * @return the qualified class name
          */
         public Name getPartitionerTypeName() {
             return partitionerTypeName;
@@ -375,16 +373,16 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
     }
 
     /**
-     * 何らかの出力を提供するインターフェース。
+     * An abstract super class which provides output data-sets.
      */
     public abstract static class Source {
 
         private final Set<FlowBlock.Output> outputs;
 
         /**
-         * インスタンスを生成する。
-         * @param outputs このソースに関連する出力ポートの一覧
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Creates a new instance.
+         * @param outputs set of the corresponded output ports
+         * @throws IllegalArgumentException if the parameter is {@code null}
          */
         protected Source(Set<FlowBlock.Output> outputs) {
             Precondition.checkMustNotBeNull(outputs, "outputs"); //$NON-NLS-1$
@@ -398,8 +396,8 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
         public abstract SourceInfo getInputInfo();
 
         /**
-         * このソースに関連する出力ポートを返す。
-         * @return 関連する出力ポート
+         * Returns set of the corresponded output ports.
+         * @return the corresponded output ports
          */
         public Set<FlowBlock.Output> getOutputs() {
             return outputs;
@@ -407,7 +405,7 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
     }
 
     /**
-     * {@link JobflowModel.Source}からの出力を受け取るインターフェース。
+     * An abstract super class which accepts data-sets from {@link Source}.
      */
     public abstract static class Target {
 
@@ -416,9 +414,9 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
         private Set<Source> sources;
 
         /**
-         * インスタンスを生成する。
-         * @param inputs 関連する入力ポート群
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Creates a new instance.
+         * @param inputs set of the corresponded input ports
+         * @throws IllegalArgumentException if the parameter is {@code null}
          */
         public Target(List<FlowBlock.Input> inputs) {
             Precondition.checkMustNotBeNull(inputs, "inputs"); //$NON-NLS-1$
@@ -429,9 +427,9 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
         }
 
         /**
-         * このオブジェクトが受け取るべき出力の一覧を設定する。
-         * @param opposites 受け取るべき出力の一覧
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Sets opposite {@link Source} objects that provides data-sets for this target.
+         * @param opposites the upstream sources
+         * @throws IllegalArgumentException if the parameter is {@code null}
          */
         public void resolveSources(Collection<? extends Source> opposites) {
             Precondition.checkMustNotBeNull(opposites, "opposites"); //$NON-NLS-1$
@@ -439,9 +437,9 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
         }
 
         /**
-         * このオブジェクトに設定された出力の一覧を返す。
-         * @return 設定された出力の一覧
-         * @throws IllegalStateException 設定されていない場合
+         * Returns the opposite {@link Source} objects.
+         * @return the upstream sources
+         * @throws IllegalStateException if they have been not set yet
          * @see #resolveSources(Collection)
          */
         public Set<Source> getResolvedSources() {
@@ -452,9 +450,9 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
         }
 
         /**
-         * このオブジェクトに設定された出力からのパス一覧を返す。
-         * @return 設定された出力からのパス一覧
-         * @throws IllegalStateException 設定されていない場合
+         * Returns the locations where the upstream data-sets will be stored.
+         * @return the upstream data-set locations
+         * @throws IllegalStateException if the opposite {@link Source} objects are not set
          * @see #resolveSources(Collection)
          */
         public Set<Location> getResolvedLocations() {
@@ -466,16 +464,16 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
         }
 
         /**
-         * このターゲットに関連する入力ポートを返す。
-         * @return 関連する入力ポート
+         * Returns the corresponded input ports.
+         * @return the corresponded input ports
          */
         public List<FlowBlock.Input> getInputs() {
             return inputs;
         }
 
         /**
-         * このターゲットのデータ型を返す。
-         * @return このターゲットのデータ型
+         * Returns the data type.
+         * @return the data type
          */
         public java.lang.reflect.Type getDataType() {
             if (inputs.isEmpty()) {
@@ -486,29 +484,29 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
     }
 
     /**
-     * 外部入出力に対するプロセッサーを提供するインターフェース。
+     * An abstract super interface for external I/O models.
      */
     public interface Processible {
 
         /**
-         * このオブジェクトの記述を処理するプロセッサーを返す。
-         * @return 記述を処理するプロセッサー
+         * Returns the processor for processing this external I/O operations.
+         * @return the related processor
          */
         ExternalIoDescriptionProcessor getProcessor();
     }
 
     /**
-     * ステージで処理されるプロセスの情報。
+     *　Represents a set of configurations for Map actions.
      */
     public static class Process extends Target {
 
         private final Name mapperTypeName;
 
         /**
-         * インスタンスを生成する。
-         * @param inputs 関連する入力ポート
-         * @param mapperTypeName 処理を行うマッパークラスの限定名
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Creates a new instance.
+         * @param inputs the corresponded input ports
+         * @param mapperTypeName the qualified class name of the mapper
+         * @throws IllegalArgumentException if the parameters are {@code null}
          */
         public Process(List<FlowBlock.Input> inputs, Name mapperTypeName) {
             super(inputs);
@@ -517,8 +515,8 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
         }
 
         /**
-         * 処理を行うマッパークラスの限定名を返す。
-         * @return 処理を行うマッパークラスの限定名
+         * Returns the qualified name of the mapper class.
+         * @return the qualified class name
          */
         public Name getMapperTypeName() {
             return mapperTypeName;
@@ -534,17 +532,17 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
     }
 
     /**
-     * ステージで出力される成果物。
+     * Represents deliveries from some actions.
      */
     public static class Delivery extends Source {
 
         private final Set<Location> locations;
 
         /**
-         * インスタンスを生成する。
-         * @param outputs 関連する出力ポートの一覧
-         * @param locations 出力先のパス一覧
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Creates a new instance.
+         * @param outputs the corresponded output ports
+         * @param locations the target output locations
+         * @throws IllegalArgumentException if the parameters are {@code null}
          */
         public Delivery(Set<FlowBlock.Output> outputs, Set<Location> locations) {
             super(outputs);
@@ -553,8 +551,8 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
         }
 
         /**
-         * この成果物の型を返す。
-         * @return この成果物の型
+         * Returns the data type.
+         * @return the data type
          */
         public java.lang.reflect.Type getDataType() {
             FlowBlock.Output first = getOutputs().iterator().next();
@@ -568,8 +566,8 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
         }
 
         /**
-         * この成果物の形式を表す{@link OutputFormat}クラスを返す。
-         * @return この成果物の形式を表す{@link OutputFormat}クラス
+         * Returns the Hadoop {@link OutputFormat} class for storing this delivery.
+         * @return the Hadoop {@link OutputFormat} class
          */
         @SuppressWarnings("rawtypes")
         public Class<? extends OutputFormat> getOutputFormatType() {
@@ -586,7 +584,7 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
     }
 
     /**
-     * フロー全体への入力。
+     * Represents import actions that obtains data-sets from external inputs.
      */
     public static class Import extends Source implements Processible {
 
@@ -595,14 +593,12 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
         private final ExternalIoDescriptionProcessor processor;
 
         /**
-         * インスタンスを生成する。
-         * @param description 入力記述
-         * @param processor 上記記述を処理するプロセッサー
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Creates a new instance.
+         * @param description the input description
+         * @param processor the external I/O processor for processing this
+         * @throws IllegalArgumentException if the parameters are {@code null}
          */
-        public Import(
-                InputDescription description,
-                ExternalIoDescriptionProcessor processor) {
+        public Import(InputDescription description, ExternalIoDescriptionProcessor processor) {
             super(Collections.<FlowBlock.Output>emptySet());
             Precondition.checkMustNotBeNull(description, "description"); //$NON-NLS-1$
             Precondition.checkMustNotBeNull(processor, "processor"); //$NON-NLS-1$
@@ -611,15 +607,14 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
         }
 
         /**
-         * インスタンスを生成する。
-         * @param output 関連する出力ポート
-         * @param description 入力記述
-         * @param processor 上記記述を処理するプロセッサー
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Creates a new instance.
+         * @param output the target output port
+         * @param description the input description
+         * @param processor the external I/O processor for processing this
+         * @throws IllegalArgumentException if the parameters are {@code null}
          */
         public Import(
-                FlowBlock.Output output,
-                InputDescription description,
+                FlowBlock.Output output, InputDescription description,
                 ExternalIoDescriptionProcessor processor) {
             super(Collections.singleton(output));
             Precondition.checkMustNotBeNull(description, "description"); //$NON-NLS-1$
@@ -629,8 +624,8 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
         }
 
         /**
-         * このオブジェクトが構成する識別子を返す。
-         * @return このオブジェクトが構成する識別子
+         * Returns the ID of this action.
+         * @return the action ID
          */
         public String getId() {
             return description.getName();
@@ -642,8 +637,8 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
         }
 
         /**
-         * この入力を後続で利用する形式を表す{@link OutputFormat}クラスを返す。
-         * @return この入力を後続で利用する形式を表す{@link OutputFormat}クラス
+         * Returns a Hadoop {@link OutputFormat} class which generates the output data-set from this importer.
+         * @return the Hadoop {@link OutputFormat} class
          */
         @SuppressWarnings("rawtypes")
         public Class<? extends OutputFormat> getOutputFormatType() {
@@ -651,8 +646,8 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
         }
 
         /**
-         * このオブジェクトの内容を表す入力記述を返す。
-         * @return 記述
+         * Returns the input description.
+         * @return the input description
          */
         public InputDescription getDescription() {
             return description;
@@ -674,7 +669,7 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
     }
 
     /**
-     * フロー全体からの出力。
+     * Represents export actions that write data-sets into external outputs.
      */
     public static class Export extends Target implements Processible {
 
@@ -683,11 +678,11 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
         private final ExternalIoDescriptionProcessor processor;
 
         /**
-         * インスタンスを生成する。
-         * @param inputs 関連する入力ポート
-         * @param description 入力記述
-         * @param processor 上記記述を処理するプロセッサー
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Creates a new instance.
+         * @param inputs the source input port
+         * @param description the output description
+         * @param processor the external I/O processor for processing this
+         * @throws IllegalArgumentException if the parameters are {@code null}
          */
         public Export(
                 List<FlowBlock.Input> inputs,
@@ -701,16 +696,16 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
         }
 
         /**
-         * このオブジェクトが構成する識別子を返す。
-         * @return このオブジェクトが構成する識別子
+         * Returns the ID of this action.
+         * @return the action ID
          */
         public String getId() {
             return description.getName();
         }
 
         /**
-         * このオブジェクトの内容を表す出力記述を返す。
-         * @return 記述
+         * Returns the output description.
+         * @return the output description
          */
         public OutputDescription getDescription() {
             return description;
@@ -731,7 +726,7 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
     }
 
     /**
-     * ステージで利用するサイドデータの一覧。
+     * Information of side-data.
      */
     public static class SideData {
 
@@ -740,10 +735,10 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
         private final String localName;
 
         /**
-         * インスタンスを生成する。
-         * @param clusterPaths サイドデータのクラスター上のパス
-         * @param localName ローカル上での名前
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Creates a new instance.
+         * @param clusterPaths the remote path of the target data
+         * @param localName the unique local name
+         * @throws IllegalArgumentException if parameters are {@code null}
          */
         public SideData(Set<Location> clusterPaths, String localName) {
             Precondition.checkMustNotBeNull(clusterPaths, "clusterPath"); //$NON-NLS-1$
@@ -753,16 +748,16 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
         }
 
         /**
-         * サイドデータのクラスター上のパスを返す。
-         * @return サイドデータのクラスター上のパス
+         * Returns the remote path of the target data.
+         * @return the remote path of the target data
          */
         public Set<Location> getClusterPaths() {
             return clusterPaths;
         }
 
         /**
-         * ローカル上での名前を返す。
-         * @return ローカル上での名前
+         * Returns the unique local name.
+         * @return the unique local name
          */
         public String getLocalName() {
             return localName;

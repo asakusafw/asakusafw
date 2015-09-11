@@ -21,22 +21,22 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * バッチから実行される処理 (Unit-of-Work) を表す。
+ * Represents a Unit-of-Work in batch.
  */
 public final class Work {
 
-    private BatchDescription declaring;
+    private final BatchDescription declaring;
 
-    private WorkDescription description;
+    private final WorkDescription description;
 
-    private List<Work> dependencies;
+    private final List<Work> dependencies;
 
     /**
-     * インスタンスを生成する。
-     * @param declaring この処理を宣言したバッチクラス
-     * @param description 処理対象のジョブフロークラス
-     * @param dependencies この処理の前提となる依存処理の一覧
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param declaring the declaring batch class
+     * @param description the target description of this work
+     * @param dependencies the dependencies of this work in the batch
+     * @throws IllegalArgumentException if some parameters are {@code null}
      */
     public Work(
             BatchDescription declaring,
@@ -58,24 +58,24 @@ public final class Work {
     }
 
     /**
-     * この処理を宣言したバッチの情報を返す。
-     * @return この処理を宣言したバッチの情報
+     * Returns the batch which declaring this work.
+     * @return the declaring batch
      */
     public BatchDescription getDeclaring() {
         return declaring;
     }
 
     /**
-     * 処理内容記述を返す。
-     * @return 処理内容記述
+     * Returns the description of this work.
+     * @return the description
      */
     public WorkDescription getDescription() {
         return description;
     }
 
     /**
-     * 処理の前提となる依存処理の一覧を返す。
-     * @return 依存処理の一覧
+     * Returns the dependencies of this work.
+     * @return the dependencies
      */
     public List<Work> getDependencies() {
         return dependencies;

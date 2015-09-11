@@ -22,18 +22,12 @@ import com.asakusafw.utils.java.model.syntax.SynchronizedStatement;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link SynchronizedStatement}の実装。
+ * An implementation of {@link SynchronizedStatement}.
  */
 public final class SynchronizedStatementImpl extends ModelRoot implements SynchronizedStatement {
 
-    /**
-     * 同期オブジェクト。
-     */
     private Expression expression;
 
-    /**
-     * 本体ブロック。
-     */
     private Block body;
 
     @Override
@@ -42,11 +36,9 @@ public final class SynchronizedStatementImpl extends ModelRoot implements Synchr
     }
 
     /**
-     * 同期オブジェクトを設定する。
-     * @param expression
-     *     同期オブジェクト
-     * @throws IllegalArgumentException
-     *     {@code expression}に{@code null}が指定された場合
+     * Sets the monitor object.
+     * @param expression the monitor object
+     * @throws IllegalArgumentException if {@code expression} was {@code null}
      */
     public void setExpression(Expression expression) {
         Util.notNull(expression, "expression"); //$NON-NLS-1$
@@ -59,11 +51,9 @@ public final class SynchronizedStatementImpl extends ModelRoot implements Synchr
     }
 
     /**
-     * 本体ブロックを設定する。
-     * @param body
-     *     本体ブロック
-     * @throws IllegalArgumentException
-     *     {@code body}に{@code null}が指定された場合
+     * Sets the body block.
+     * @param body the body block
+     * @throws IllegalArgumentException if {@code body} was {@code null}
      */
     public void setBody(Block body) {
         Util.notNull(body, "body"); //$NON-NLS-1$
@@ -71,7 +61,7 @@ public final class SynchronizedStatementImpl extends ModelRoot implements Synchr
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#SYNCHRONIZED_STATEMENT}を返す。
+     * Returns {@link ModelKind#SYNCHRONIZED_STATEMENT} which represents this element kind.
      * @return {@link ModelKind#SYNCHRONIZED_STATEMENT}
      */
     @Override
@@ -80,8 +70,7 @@ public final class SynchronizedStatementImpl extends ModelRoot implements Synchr
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitSynchronizedStatement(this, context);
     }

@@ -104,7 +104,7 @@ public class OperatorTestEnvironment extends DriverElementBase implements TestRu
     private volatile TestToolRepository testTools;
 
     /**
-     * インスタンスを生成する。
+     * Creates a new instance.
      */
     public OperatorTestEnvironment() {
         this(RuntimeResourceManager.CONFIGURATION_FILE_NAME, false);
@@ -252,8 +252,8 @@ public class OperatorTestEnvironment extends DriverElementBase implements TestRu
     }
 
     /**
-     * {@link RuntimeResourceManager}が利用する設定情報を返す。
-     * @return {@link RuntimeResourceManager}が利用する設定情報
+     * Returns a new configuration object for {@link RuntimeResourceManager}.
+     * @return the created configuration object
      */
     protected Configuration createConfig() {
         Configuration conf = ConfigurationFactory.getDefault().newInstance();

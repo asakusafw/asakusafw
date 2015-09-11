@@ -20,19 +20,19 @@ import com.asakusafw.vocabulary.flow.In;
 import com.asakusafw.vocabulary.flow.Out;
 
 /**
- * テスト用の恒等フロー。
- * @param <T> フローのデータ種
+ * identity data flow for testing.
+ * @param <T> data type
  */
 public class IdentityFlow<T> extends FlowDescription {
 
-    private In<T> in;
+    private final In<T> in;
 
-    private Out<T> out;
+    private final Out<T> out;
 
     /**
-     * インスタンスを生成する。
-     * @param in 入力
-     * @param out 出力
+     * Creates a new instance.
+     * @param in input
+     * @param out output
      */
     public IdentityFlow(In<T> in, Out<T> out) {
         this.in = in;

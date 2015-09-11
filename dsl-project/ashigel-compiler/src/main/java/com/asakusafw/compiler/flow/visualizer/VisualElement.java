@@ -22,7 +22,7 @@ import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.vocabulary.flow.graph.FlowElement;
 
 /**
- * 可視化用のフロー要素。
+ * A visual model for flow elements.
  */
 public class VisualElement implements VisualNode {
 
@@ -31,9 +31,9 @@ public class VisualElement implements VisualNode {
     private final FlowElement element;
 
     /**
-     * インスタンスを生成する。
-     * @param element 対象の要素
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param element the target element
+     * @throws IllegalArgumentException if the element is {@code null}
      */
     public VisualElement(FlowElement element) {
         Precondition.checkMustNotBeNull(element, "element"); //$NON-NLS-1$
@@ -51,8 +51,8 @@ public class VisualElement implements VisualNode {
     }
 
     /**
-     * この要素の元となるフロー要素を返す。
-     * @return この要素の元となるフロー要素
+     * Returns the original flow element.
+     * @return the original flow element
      */
     public FlowElement getElement() {
         return element;

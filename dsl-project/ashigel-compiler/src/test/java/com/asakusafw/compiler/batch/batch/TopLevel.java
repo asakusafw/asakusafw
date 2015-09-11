@@ -19,13 +19,12 @@ import com.asakusafw.vocabulary.batch.Batch;
 import com.asakusafw.vocabulary.batch.BatchDescription;
 
 /**
- * トップレベルにないバッチ。
+ * A container class for wrong batch class.
  */
-@Batch(name = "testing")
 public class TopLevel {
 
     /**
-     * 単純なバッチ。
+     * A batch class which is not a top-level class.
      */
     @Batch(name = "testing")
     public static class Inner extends BatchDescription {

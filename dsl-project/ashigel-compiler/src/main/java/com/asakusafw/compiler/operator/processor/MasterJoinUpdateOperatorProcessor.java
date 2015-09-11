@@ -31,7 +31,7 @@ import com.asakusafw.vocabulary.operator.MasterJoinUpdate;
 
 
 /**
- * {@link MasterJoinUpdate マスタつき更新演算子}を処理する。
+ * Processes {@link MasterJoinUpdate} operators.
  */
 @TargetOperator(MasterJoinUpdate.class)
 public class MasterJoinUpdateOperatorProcessor extends AbstractOperatorProcessor {
@@ -78,7 +78,7 @@ public class MasterJoinUpdateOperatorProcessor extends AbstractOperatorProcessor
         a.validateShuffleKeys(masterKey, transactionKey);
         ExecutableElement selector = null;
         try {
-            selector = MasterKindOperatorAnalyzer.findSelector(context.environment, context);
+            selector = MasterKindOperatorAnalyzer.findSelector(context);
         } catch (ResolveException e) {
             a.error(e.getMessage());
         }

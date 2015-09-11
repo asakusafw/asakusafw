@@ -30,7 +30,7 @@ import com.asakusafw.vocabulary.flow.Out;
 
 
 /**
- * {@link FoldFlowProcessor}のテスト。
+ * test for {@link FoldFlowProcessor}.
  */
 @JobFlow(name = "testing")
 public class FoldFlowWithParameter extends FlowDescription {
@@ -40,9 +40,9 @@ public class FoldFlowWithParameter extends FlowDescription {
     private Out<Ex1> out1;
 
     /**
-     * インスタンスを生成する。
-     * @param in1 入力
-     * @param out1 出力
+     * Creates a new instance.
+     * @param in1 input
+     * @param out1 output
      */
     public FoldFlowWithParameter(
             @Import(name = "e1", description = Ex1MockImporterDescription.class)

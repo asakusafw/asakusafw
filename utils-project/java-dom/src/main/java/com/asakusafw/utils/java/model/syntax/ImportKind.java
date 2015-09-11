@@ -16,7 +16,7 @@
 package com.asakusafw.utils.java.model.syntax;
 
 /**
- * {@code import}宣言の種類。
+ * Represents a kind of {@code import} declarations.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:7.5] Import Declarations} </li>
@@ -26,7 +26,7 @@ package com.asakusafw.utils.java.model.syntax;
 public enum ImportKind {
 
     /**
-     * 単一の型インポート宣言。
+     * Single type import.
      * <ul>
      *   <li> Specified In: <ul>
      *     <li> {@code [JLS3:7.5.1] Single-Type-Import Declaration} </li>
@@ -36,7 +36,7 @@ public enum ImportKind {
     SINGLE_TYPE(Target.TYPE, Range.SINGLE),
 
     /**
-     * オンデマンドの型インポート宣言。
+     * On-demand type import.
      * <ul>
      *   <li> Specified In: <ul>
      *     <li> {@code [JLS3:7.5.2] Type-Import-on-Demand Declaration} </li>
@@ -46,7 +46,7 @@ public enum ImportKind {
     TYPE_ON_DEMAND(Target.TYPE, Range.ON_DEMAND),
 
     /**
-     * 単一の{@code static}インポート宣言。
+     * Single static import.
      * <ul>
      *   <li> Specified In: <ul>
      *     <li> {@code [JLS3:7.5.3] Single Static Import Declaration} </li>
@@ -56,7 +56,7 @@ public enum ImportKind {
     SINGLE_STATIC(Target.MEMBER, Range.SINGLE),
 
     /**
-     * オンデマンドの{@code static}インポート宣言。
+     * On-demand static import.
      * <ul>
      *   <li> Specified In: <ul>
      *     <li> {@code [JLS3:7.5.4] Static-Import-on-Demand Declaration} </li>
@@ -64,7 +64,6 @@ public enum ImportKind {
      * </ul>
      */
     STATIC_ON_DEMAND(Target.MEMBER, Range.ON_DEMAND),
-
     ;
 
     private Target target;
@@ -79,27 +78,27 @@ public enum ImportKind {
     }
 
     /**
-     * インポート対象の種類を返す。
-     * @return インポート対象の種類
+     * Returns the import target kind.
+     * @return the import target kind
      */
     public Target getTarget() {
         return target;
     }
 
     /**
-     * インポートする範囲を返す。
-     * @return インポートする範囲
+     * Returns the import scope kind.
+     * @return the import scope kind
      */
     public Range getRange() {
         return range;
     }
 
     /**
-     * 指定の対象と範囲を表現するインポート宣言の種類を返す。
-     * @param target 対象
-     * @param range 範囲
-     * @return 対応する宣言
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the import kind from its target and scope kinds.
+     * @param target the target kind
+     * @param range the scope kind
+     * @return the corresponding import kind
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static ImportKind valueOf(Target target, Range range) {
         if (target == null) {
@@ -124,33 +123,33 @@ public enum ImportKind {
     }
 
     /**
-     * インポート対象の種類。
+     * Represents a kind of import target.
      */
     public enum Target {
 
         /**
-         * 型のインポート。
+         * Import types.
          */
         TYPE,
 
         /**
-         * メンバのインポート。
+         * Import members.
          */
         MEMBER,
     }
 
     /**
-     * インポートする範囲。
+     * Represents a kind of import scope.
      */
     public enum Range {
 
         /**
-         * 単一。
+         * Single import.
          */
         SINGLE,
 
         /**
-         * オンデマンド。
+         * On-demand import ({@code import ...*}).
          */
         ON_DEMAND,
     }

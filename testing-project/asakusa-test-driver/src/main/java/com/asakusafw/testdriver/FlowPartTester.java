@@ -64,9 +64,9 @@ public class FlowPartTester extends TesterBase {
     /**
      * テスト入力データを指定する。
      *
-     * @param <T> ModelType。
+     * @param <T> the data model type
      * @param name 入力データ名。テストドライバに指定する入力データ間で一意の名前を指定する。
-     * @param modelType ModelType。
+     * @param modelType the data model type
      * @return テスト入力データオブジェクト。
      */
     public <T> FlowPartDriverInput<T> input(String name, Class<T> modelType) {
@@ -78,9 +78,9 @@ public class FlowPartTester extends TesterBase {
     /**
      * テスト結果の出力データ（期待値データ）を指定する。
      *
-     * @param <T> ModelType。
+     * @param <T> the data model type
      * @param name 出力データ名。テストドライバに指定する出力データ間で一意の名前を指定する。
-     * @param modelType ModelType。
+     * @param modelType the data model type
      * @return テスト入力データオブジェクト。
      */
     public <T> FlowPartDriverOutput<T> output(String name, Class<T> modelType) {
@@ -118,13 +118,11 @@ public class FlowPartTester extends TesterBase {
             validateTestCondition();
         }
 
-        // フローコンパイラの実行
         LOG.info(MessageFormat.format(
                 Messages.getString("FlowPartTester.infoCompileDsl"), //$NON-NLS-1$
                 flowDescription.getClass().getName()));
         FlowGraph flowGraph = descDriver.createFlowGraph(flowDescription);
 
-        // コンパイル環境の検証
         driverContext.validateCompileEnvironment();
 
         File compileWorkDir = driverContext.getCompilerWorkingDirectory();
@@ -147,13 +145,11 @@ public class FlowPartTester extends TesterBase {
                 flowDescription.getClass().getClassLoader(),
                 driverContext.getOptions());
 
-        // 環境の検証
         driverContext.validateExecutionEnvironment();
 
         JobflowExecutor executor = new JobflowExecutor(driverContext);
         driverContext.prepareCurrentJobflow(jobflowInfo);
 
-        // 初期化
         LOG.info(MessageFormat.format(
                 Messages.getString("FlowPartTester.infoInitializeEnvironment"), //$NON-NLS-1$
                 driverContext.getCallerClass().getName()));
@@ -175,7 +171,6 @@ public class FlowPartTester extends TesterBase {
         executor.runJobflow(jobflowInfo);
         verifyContext.testFinished();
 
-        // 実行結果の検証
         LOG.info(MessageFormat.format(
                 Messages.getString("FlowPartTester.infoVerifyResult"), //$NON-NLS-1$
                 driverContext.getCallerClass().getName()));

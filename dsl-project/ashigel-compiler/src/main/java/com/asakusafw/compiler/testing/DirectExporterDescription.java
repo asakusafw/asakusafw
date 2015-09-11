@@ -31,11 +31,10 @@ public class DirectExporterDescription extends TemporaryOutputDescription {
     private final String pathPrefix;
 
     /**
-     * インスタンスを生成する。
-     * @param modelType エクスポートするモデルのデータ型
-     * @param pathPrefix エクスポート先のファイルへの相対パス(接頭辞)、
-     *     パスは必ず{@code -*}で終わる必要がある
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param modelType the target data model type
+     * @param pathPrefix the relative path prefix of the export target file (must be ends with {@code -*})
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public DirectExporterDescription(Class<?> modelType, String pathPrefix) {
         Precondition.checkMustNotBeNull(modelType, "modelType"); //$NON-NLS-1$

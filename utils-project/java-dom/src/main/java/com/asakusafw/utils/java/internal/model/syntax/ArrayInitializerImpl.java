@@ -23,13 +23,10 @@ import com.asakusafw.utils.java.model.syntax.ModelKind;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link ArrayInitializer}の実装。
+ * An implementation of {@link ArrayInitializer}.
  */
 public final class ArrayInitializerImpl extends ModelRoot implements ArrayInitializer {
 
-    /**
-     * 要素の一覧。
-     */
     private List<? extends Expression> elements;
 
     @Override
@@ -38,12 +35,9 @@ public final class ArrayInitializerImpl extends ModelRoot implements ArrayInitia
     }
 
     /**
-     * 要素の一覧を設定する。
-     * <p> 要素が一つも指定されない場合、引数には空を指定する。 </p>
-     * @param elements
-     *     要素の一覧
-     * @throws IllegalArgumentException
-     *     {@code elements}に{@code null}が指定された場合
+     * Sets the element expressions.
+     * @param elements the element expressions
+     * @throws IllegalArgumentException if {@code elements} was {@code null}
      */
     public void setElements(List<? extends Expression> elements) {
         Util.notNull(elements, "elements"); //$NON-NLS-1$
@@ -52,7 +46,7 @@ public final class ArrayInitializerImpl extends ModelRoot implements ArrayInitia
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#ARRAY_INITIALIZER}を返す。
+     * Returns {@link ModelKind#ARRAY_INITIALIZER} which represents this element kind.
      * @return {@link ModelKind#ARRAY_INITIALIZER}
      */
     @Override
@@ -61,8 +55,7 @@ public final class ArrayInitializerImpl extends ModelRoot implements ArrayInitia
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitArrayInitializer(this, context);
     }

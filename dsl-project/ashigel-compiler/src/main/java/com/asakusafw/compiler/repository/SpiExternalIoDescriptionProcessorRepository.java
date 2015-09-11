@@ -33,7 +33,7 @@ import com.asakusafw.vocabulary.flow.graph.InputDescription;
 import com.asakusafw.vocabulary.flow.graph.OutputDescription;
 
 /**
- * Service Provider Interfaceを利用して{@link ExternalIoDescriptionProcessor}を探索するリポジトリー。
+ * Aggregates repositories of {@link ExternalIoDescriptionProcessor} using Service Provider Interface.
  */
 public class SpiExternalIoDescriptionProcessorRepository
         extends FlowCompilingEnvironment.Initialized

@@ -21,38 +21,35 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * 必要なタグを選択して受け入れ可能なパーサの基底。
+ * An implementation of {@link JavadocBaseParser} which accepts tag blocks by their tag name.
  */
 public abstract class AcceptableJavadocBlockParser extends JavadocBlockParser {
 
-    private Set<String> acceptable;
+    private final Set<String> acceptable;
 
     /**
-     * インスタンスを生成する。
+     * Creates a new instance.
      */
     public AcceptableJavadocBlockParser() {
-        super();
         this.acceptable = Collections.emptySet();
     }
 
     /**
-     * インスタンスを生成する。
-     * @param tagName 処理可能なタグ名
-     * @param tagNames 処理可能なタグ名の一覧
+     * Creates a new instance.
+     * @param tagName the first acceptable tag name
+     * @param tagNames the rest acceptable tag names
      */
     public AcceptableJavadocBlockParser(String tagName, String...tagNames) {
-        super();
         this.acceptable = new HashSet<String>();
         this.acceptable.add(tagName);
-        this.acceptable.addAll(Arrays.asList(tagNames));
+        Collections.addAll(this.acceptable, tagNames);
     }
 
     /**
-     * インスタンスを生成する。
-     * @param tagNames 処理可能なタグ名の一覧
+     * Creates a new instance.
+     * @param tagNames the acceptable tag names
      */
     public AcceptableJavadocBlockParser(String[] tagNames) {
-        super();
         this.acceptable = new HashSet<String>();
         this.acceptable.addAll(Arrays.asList(tagNames));
     }

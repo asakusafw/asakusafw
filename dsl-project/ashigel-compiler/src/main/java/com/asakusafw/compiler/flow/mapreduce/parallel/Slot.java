@@ -22,7 +22,7 @@ import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.flow.ExternalIoDescriptionProcessor.SourceInfo;
 
 /**
- * ソートする出力のスロット。
+ * Represents a data-set slot for parallel sorting.
  */
 public class Slot {
 
@@ -37,13 +37,13 @@ public class Slot {
     private final Class<?> outputFormatType;
 
     /**
-     * インスタンスを生成する。
-     * @param outputName このスロットに関する出力先の名前
-     * @param type このスロットに関連する出力の型
-     * @param propertyNames このスロットに関連する整列プロパティ名の一覧
-     * @param inputs このスロットへの入力の一覧
-     * @param outputFormatType このスロットからの出力形式
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param outputName the slot output name
+     * @param type the slot data type
+     * @param propertyNames the sort key property names
+     * @param inputs information of the target inputs
+     * @param outputFormatType the Hadoop output format class
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public Slot(
             String outputName,
@@ -64,40 +64,40 @@ public class Slot {
     }
 
     /**
-     * このスロットに関連する出力の識別子を返す。
-     * @return このスロットに関連する出力の識別子
+     * Returns the slot output name.
+     * @return the slot output name
      */
     public String getOutputName() {
         return outputName;
     }
 
     /**
-     * このスロットに関連する出力の型を返す。
-     * @return このスロットに関連する出力の型
+     * Returns the slot data type.
+     * @return the slot data type
      */
     public Type getType() {
         return type;
     }
 
     /**
-     * このスロットに関連する整列プロパティ名の一覧を返す。
-     * @return このスロットに関連する整列プロパティ名の一覧
+     * Returns the sort key property names.
+     * @return the sort key property names
      */
     public List<String> getSortPropertyNames() {
         return propertyNames;
     }
 
     /**
-     * このスロットへの入力の一覧を返す。
-     * @return このスロットへの入力の一覧
+     * Returns information of the target inputs.
+     * @return information of the target inputs
      */
     public List<SourceInfo> getInputs() {
         return inputs;
     }
 
     /**
-     * このスロットからの出力形式を返す。
-     * @return このスロットからの出力形式
+     * Returns the Hadoop output format class.
+     * @return the Hadoop output format class
      */
     public Class<?> getOutputFormatType() {
         return outputFormatType;

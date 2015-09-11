@@ -25,13 +25,10 @@ import com.asakusafw.utils.java.model.syntax.ModelKind;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link Literal}の実装。
+ * An implementation of {@link Literal}.
  */
 public final class LiteralImpl extends ModelRoot implements Literal {
 
-    /**
-     * このリテラルを構成する字句。
-     */
     private String token;
 
     private LiteralKind literalKind;
@@ -42,13 +39,10 @@ public final class LiteralImpl extends ModelRoot implements Literal {
     }
 
     /**
-     * このリテラルを構成する字句を設定する。
-     * @param token
-     *     このリテラルを構成する字句
-     * @throws IllegalArgumentException
-     *     {@code token}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code token}に空が指定された場合
+     * Sets the literal token.
+     * @param token the literal token
+     * @throws IllegalArgumentException if {@code token} was {@code null}
+     * @throws IllegalArgumentException if {@code token} was empty
      */
     public void setToken(String token) {
         Util.notNull(token, "token"); //$NON-NLS-1$
@@ -84,7 +78,7 @@ public final class LiteralImpl extends ModelRoot implements Literal {
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#LITERAL}を返す。
+     * Returns {@link ModelKind#LITERAL} which represents this element kind.
      * @return {@link ModelKind#LITERAL}
      */
     @Override
@@ -93,8 +87,7 @@ public final class LiteralImpl extends ModelRoot implements Literal {
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitLiteral(this, context);
     }

@@ -27,33 +27,33 @@ import javax.tools.JavaFileObject;
 import javax.tools.SimpleJavaFileObject;
 
 /**
- * メモリ上でクラスファイルを取り扱うためのファイルオブジェクトクラス。
+ * Represents a Java class file which is stored on the heap.
  */
 public class VolatileClassFile extends SimpleJavaFileObject {
 
     /**
-     * このファイルオブジェクトが利用するURIのscheme名。
+     * The schema name of this kind of resources.
      */
     public static final String SCHEME = VolatileClassFile.class.getName();
 
-    private String binaryName;
+    private final String binaryName;
 
     volatile byte[] contents;
 
     /**
-     * 空のインスタンスを生成する。
-     * @param binaryName 対象とするクラスのバイナリ名
-     * @throws IllegalArgumentException 引数に不正な値が含まれる場合
+     * Creates a new instance with empty contents.
+     * @param binaryName the binary name of the target class
+     * @throws IllegalArgumentException if the binary name is invalid
      */
     public VolatileClassFile(String binaryName) {
         this(binaryName, new byte[0]);
     }
 
     /**
-     * インスタンスを生成する。
-     * @param binaryName 対象とするクラスのバイナリ名
-     * @param contents このファイルの内容
-     * @throws IllegalArgumentException 引数に不正な値が含まれる場合
+     * Creates a new instance with the specified contents.
+     * @param binaryName the binary name of the target class
+     * @param contents the class file image
+     * @throws IllegalArgumentException if the binary name is invalid
      */
     public VolatileClassFile(String binaryName, byte[] contents) {
         super(toUri(binaryName), JavaFileObject.Kind.CLASS);
@@ -108,16 +108,16 @@ public class VolatileClassFile extends SimpleJavaFileObject {
     }
 
     /**
-     * このクラスファイルのバイナリ名を返す。
-     * @return このクラスファイルのバイナリ名
+     * Returns the binary name of this class file.
+     * @return the class binary name
      */
     public String getBinaryName() {
         return binaryName;
     }
 
     /**
-     * このクラスファイルの内容を返す。
-     * @return このクラスファイルの内容
+     * Returns the contents of this class file.
+     * @return the class file contents, or an empty array if the contents have never been set
      */
     public byte[] getBinaryContent() {
         return contents.clone();

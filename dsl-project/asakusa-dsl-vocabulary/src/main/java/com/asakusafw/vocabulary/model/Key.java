@@ -42,6 +42,7 @@ import java.lang.annotation.Target;
 // 全てを単一のグループにまとめ、回数の降順で整列
 &#64;Key(group = {}, order = "count DESC")
 </code></pre>
+ * TODO i18n
  */
 @Target({ ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)

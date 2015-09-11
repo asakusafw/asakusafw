@@ -49,9 +49,8 @@ import com.asakusafw.vocabulary.flow.graph.PortDirection;
 import com.asakusafw.vocabulary.flow.util.PseudElementDescription;
 import com.asakusafw.vocabulary.operator.Identity;
 
-
 /**
- * テストで利用するフローグラフ生成器。
+ * Flow graph generator for testing.
  */
 public class FlowGraphGenerator {
 
@@ -64,9 +63,9 @@ public class FlowGraphGenerator {
     private final Map<String, FlowElement> elements = Maps.create();
 
     /**
-     * 入力要素を追加する。
-     * @param name 追加する要素の名前
-     * @return 追加した要素
+     * Adds an input.
+     * @param name the element name
+     * @return the added element
      */
     public FlowElement defineInput(String name) {
         InputDescription desc = new InputDescription(name, TYPE);
@@ -76,9 +75,9 @@ public class FlowGraphGenerator {
     }
 
     /**
-     * 出力要素を追加する。
-     * @param name 追加する要素の名前
-     * @return 追加した要素
+     * Adds an output.
+     * @param name the element name
+     * @return the added element
      */
     public FlowElement defineOutput(String name) {
         OutputDescription desc = new OutputDescription(name, TYPE);
@@ -88,12 +87,12 @@ public class FlowGraphGenerator {
     }
 
     /**
-     * 演算子を追加する。
-     * @param name 追加する要素の名前
-     * @param inputList スペース区切りの入力ポート名の一覧
-     * @param outputList スペース区切りの出力ポート名の一覧
-     * @param attributes 属性の一覧
-     * @return 追加した要素
+     * Adds an operator.
+     * @param name the element name
+     * @param inputList the space separated input port names
+     * @param outputList the space separated output port names
+     * @param attributes the attributes
+     * @return the added element
      */
     public FlowElement defineOperator(
             String name,
@@ -135,10 +134,10 @@ public class FlowGraphGenerator {
     }
 
     /**
-     * フロー部品を追加する。
-     * @param name 追加する要素の名前
-     * @param graph フロー部品グラフ
-     * @return 追加した要素
+     * Adds an flow-part.
+     * @param name the element name
+     * @param graph the flow graph
+     * @return the added element
      */
     public FlowElement defineFlowPart(
             String name,
@@ -148,9 +147,9 @@ public class FlowGraphGenerator {
     }
 
     /**
-     * 空要素を追加する。
-     * @param name 追加する要素の名前
-     * @return 追加した要素
+     * Adds an empty operator.
+     * @param name the element name
+     * @return the added element
      */
     public FlowElement defineEmpty(String name) {
         return register(name, new PseudElementDescription(
@@ -162,9 +161,9 @@ public class FlowGraphGenerator {
     }
 
     /**
-     * 停止要素を追加する。
-     * @param name 追加する要素の名前
-     * @return 追加した要素
+     * Adds .
+     * @param name the element name
+     * @return the added element
      */
     public FlowElement defineStop(String name) {
         return register(name, new PseudElementDescription(
@@ -176,10 +175,10 @@ public class FlowGraphGenerator {
     }
 
     /**
-     * 疑似要素を追加する。
-     * @param name 追加する要素の名前
-     * @param attributes 属性の一覧
-     * @return 追加した要素
+     * Adds a pseudo-element.
+     * @param name the element name
+     * @param attributes the attributes
+     * @return the added element
      */
     public FlowElement definePseud(
             String name,
@@ -193,12 +192,12 @@ public class FlowGraphGenerator {
     }
 
     /**
-     * 指定のポート間を接続する。
-     * ポートは "element-name.port-name"の形式で指定する。
-     * ただし、対象の要素がポートを一つしか有さない場合、"element-name"の形式でも指定できる
-     * @param upstream 上流
-     * @param downstream 下流
-     * @return 自身のオブジェクト
+     * Connects ports.
+     * The port should be described as {@code "element-name.port-name"}, or
+     * {@code "element-name"} for single port elements.
+     * @param upstream the upstream
+     * @param downstream the downstream
+     * @return this
      */
     public FlowGraphGenerator connect(String upstream, String downstream) {
         FlowElementOutput output = findOutput(upstream);
@@ -208,9 +207,9 @@ public class FlowGraphGenerator {
     }
 
     /**
-     * 指定の名前を有する要素を返す。
-     * @param name 対象の名前
-     * @return 発見した要素
+     * Returns an element.
+     * @param name the target name
+     * @return the target element
      */
     public FlowElement get(String name) {
         FlowElement found = elements.get(name);
@@ -221,9 +220,9 @@ public class FlowGraphGenerator {
     }
 
     /**
-     * 指定の名前を有する要素を返す。
-     * @param name 対象の名前
-     * @return 発見した要素
+     * Returns an element description.
+     * @param name the target name
+     * @return the target element
      */
     public FlowElementDescription desc(String name) {
         FlowElement found = elements.get(name);
@@ -234,18 +233,18 @@ public class FlowGraphGenerator {
     }
 
     /**
-     * 指定の名前を有する入力を返す。
-     * @param input 入力名
-     * @return 発見したポート
+     * Returns an input.
+     * @param input the input name
+     * @return the target port
      */
     public FlowElementInput input(String input) {
         return findInput(input);
     }
 
     /**
-     * 指定の名前を有する入力を返す。
-     * @param inputs 入力名
-     * @return 発見したポート
+     * Returns inputs.
+     * @param inputs the input names
+     * @return the target ports
      */
     public Set<FlowElementInput> inputs(String... inputs) {
         Set<FlowElementInput> results = Sets.create();
@@ -256,18 +255,18 @@ public class FlowGraphGenerator {
     }
 
     /**
-     * 指定の名前を有する出力を返す。
-     * @param output 出力名
-     * @return 発見したポート
+     * Returns an output.
+     * @param output the output name
+     * @return the target port
      */
     public FlowElementOutput output(String output) {
         return findOutput(output);
     }
 
     /**
-     * 指定の名前を有する出力を返す。
-     * @param outputs 出力名
-     * @return 発見したポート
+     * Returns outputs.
+     * @param outputs the output names
+     * @return the target ports
      */
     public Set<FlowElementOutput> outputs(String... outputs) {
         Set<FlowElementOutput> results = Sets.create();
@@ -278,9 +277,9 @@ public class FlowGraphGenerator {
     }
 
     /**
-     * 指定の名前を持つ要素の一覧を返す。
-     * @param names 名前の一覧
-     * @return 要素の一覧
+     * Returns the set of elements.
+     * @param names the element names
+     * @return the elements
      */
     public Set<FlowElement> getAsSet(String... names) {
         Set<FlowElement> results = Sets.create();
@@ -291,28 +290,25 @@ public class FlowGraphGenerator {
     }
 
     /**
-     * ここまでに作成した要素の一覧を返す。
-     * @return ここまでに作成した要素の一覧
+     * Returns the all elements.
+     * @return the all elements
      */
     public Set<FlowElement> all() {
         return new HashSet<FlowElement>(elements.values());
     }
 
     /**
-     * ここまでに構築した内容を元にしたグラフを返す。
-     * @return 構築した内容を元にしたグラフ
+     * Returns the flow graph.
+     * @return the flow graph
      */
     public FlowGraph toGraph() {
         return new FlowGraph(Testing.class, flowInputs, flowOutputs);
     }
 
     /**
-     * ここまでに構築した内容を元にしたパスを返す。
-     * <p>
-     * 返されるパスはグラフの入力から出力までを表現する。
-     * </p>
-     * @param direction パスの向き、逆方向を指定すると入出力が反転する
-     * @return 構築したパス
+     * Returns the flow path.
+     * @param direction the path direction
+     * @return the flow path
      */
     public FlowPath toPath(FlowPath.Direction direction) {
         Set<FlowElement> inputs = Sets.create();

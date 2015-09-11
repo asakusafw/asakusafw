@@ -34,8 +34,8 @@ import com.asakusafw.runtime.io.testing.model.MockModel;
 public class TsvIoFactoryTest {
 
     /**
-     * 入力に関する単純なテスト。
-     * @throws Exception 例外が発生した場合
+     * simple case for inputs.
+     * @throws Exception if failed
      */
     @Test
     public void input() throws Exception {
@@ -60,8 +60,8 @@ public class TsvIoFactoryTest {
     }
 
     /**
-     * 出力に関する単純なテスト。
-     * @throws Exception 例外が発生した場合
+     * simple case for outputs.
+     * @throws Exception if failed
      */
     @SuppressWarnings("deprecation")
     @Test

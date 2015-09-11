@@ -56,7 +56,7 @@ public enum TotalConditionKind {
             DataModelCondition.IGNORE_UNEXPECTED, DataModelCondition.IGNORE_ABSENT),
 
     /**
-     * Accepts iff only existing expected and actual data matched.
+     * Always accepts.
      */
     SKIP_ALL("-", //$NON-NLS-1$
             Messages.getString("TotalConditionKind.titleIgnore"), //$NON-NLS-1$

@@ -15,9 +15,8 @@
  */
 package com.asakusafw.utils.java.model.syntax;
 
-
 /**
- * ローカルクラス宣言を表現するインターフェース。
+ * An interface which represents local class declaration.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:14.3] Local Class Declarations} </li>
@@ -27,12 +26,9 @@ package com.asakusafw.utils.java.model.syntax;
 public interface LocalClassDeclaration
         extends Statement {
 
-    // properties
-
     /**
-     * 宣言するクラスを返す。
-     * @return
-     *     宣言するクラス
+     * Returns the declaring class.
+     * @return the declaring class
      */
     ClassDeclaration getDeclaration();
 }

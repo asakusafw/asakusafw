@@ -23,6 +23,7 @@ import java.lang.annotation.Target;
 
 /**
  * フロー部品クラスに付与されるべき注釈。
+ * TODO i18n
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

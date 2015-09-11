@@ -26,6 +26,7 @@ package com.asakusafw.vocabulary.external;
  * <li> 型引数が宣言されていない </li>
  * <li> 明示的なコンストラクターが宣言されていない </li>
  * </ul>
+ * TODO i18n
  */
 public interface ExporterDescription {
 

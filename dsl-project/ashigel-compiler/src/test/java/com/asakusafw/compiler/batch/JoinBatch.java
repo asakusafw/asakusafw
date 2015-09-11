@@ -20,7 +20,7 @@ import com.asakusafw.vocabulary.batch.BatchDescription;
 import com.asakusafw.vocabulary.batch.Work;
 
 /**
- * 合流付きののバッチ。
+ * A batch class with join flow.
  */
 @Batch(name = "join")
 public class JoinBatch extends BatchDescription {

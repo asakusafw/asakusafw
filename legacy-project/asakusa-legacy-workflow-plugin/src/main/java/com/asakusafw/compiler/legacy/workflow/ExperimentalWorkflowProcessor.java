@@ -34,7 +34,6 @@ import com.asakusafw.compiler.batch.AbstractWorkflowProcessor;
 import com.asakusafw.compiler.batch.WorkDescriptionProcessor;
 import com.asakusafw.compiler.batch.Workflow;
 import com.asakusafw.compiler.batch.processor.JobFlowWorkDescriptionProcessor;
-import com.asakusafw.compiler.batch.processor.ScriptWorkDescriptionProcessor;
 import com.asakusafw.compiler.common.Naming;
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.flow.ExternalIoCommandProvider;
@@ -49,12 +48,13 @@ import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.graph.Graph;
 import com.asakusafw.utils.graph.Graphs;
 import com.asakusafw.vocabulary.batch.JobFlowWorkDescription;
-import com.asakusafw.vocabulary.batch.ScriptWorkDescription;
 import com.asakusafw.vocabulary.batch.WorkDescription;
 
 /**
  * ワークフローの情報を実験用のシェルスクリプトの形式で残す。
+ * @deprecated Use YAESS instead
  */
+@Deprecated
 public class ExperimentalWorkflowProcessor extends AbstractWorkflowProcessor {
 
     /**
@@ -125,7 +125,6 @@ public class ExperimentalWorkflowProcessor extends AbstractWorkflowProcessor {
     public Collection<Class<? extends WorkDescriptionProcessor<?>>> getDescriptionProcessors() {
         List<Class<? extends WorkDescriptionProcessor<?>>> results = Lists.create();
         results.add(JobFlowWorkDescriptionProcessor.class);
-        results.add(ScriptWorkDescriptionProcessor.class);
         return results;
     }
 
@@ -172,9 +171,7 @@ public class ExperimentalWorkflowProcessor extends AbstractWorkflowProcessor {
         assert context != null;
         assert unit != null;
         WorkDescription desc = unit.getDescription();
-        if (desc instanceof ScriptWorkDescription) {
-            dumpDescription(context, (ScriptWorkDescription) desc);
-        } else if (desc instanceof JobFlowWorkDescription) {
+        if (desc instanceof JobFlowWorkDescription) {
             dumpDescription(
                     context,
                     (JobFlowWorkDescription) desc,
@@ -182,16 +179,6 @@ public class ExperimentalWorkflowProcessor extends AbstractWorkflowProcessor {
         } else {
             throw new AssertionError(desc);
         }
-    }
-
-    private void dumpDescription(Context context, ScriptWorkDescription desc) {
-        assert context != null;
-        assert desc != null;
-
-        context.put("## Script - \"{0}\"", desc.getCommand());
-        context.put("echo \"Processing script ''{0}''\"", desc.getCommand());
-        dumpRun(context, null, desc.getCommand());
-        context.put("");
     }
 
     private void dumpDescription(

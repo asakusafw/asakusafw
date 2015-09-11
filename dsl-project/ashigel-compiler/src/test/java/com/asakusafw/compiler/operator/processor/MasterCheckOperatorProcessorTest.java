@@ -34,7 +34,7 @@ import com.asakusafw.vocabulary.flow.testing.MockOut;
 public class MasterCheckOperatorProcessorTest extends OperatorCompilerTestRoot {
 
     /**
-     * 単純なテスト。
+     * simple case.
      */
     @Test
     public void simple() {
@@ -57,7 +57,7 @@ public class MasterCheckOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * マスタ選択つき。
+     * w/ master selection.
      */
     @Test
     public void selector() {
@@ -103,7 +103,7 @@ public class MasterCheckOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * キーの指定がない。
+     * missing key annotation.
      */
     @Test
     public void NoKeys() {
@@ -112,7 +112,7 @@ public class MasterCheckOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * 具象メソッド。
+     * not abstract method.
      */
     @Test
     public void NotAbstract() {
@@ -121,7 +121,7 @@ public class MasterCheckOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * 論理以外を返す。
+     * not returns boolean.
      */
     @Test
     public void NotBoolean() {
@@ -130,7 +130,7 @@ public class MasterCheckOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * モデルでない。
+     * not a data model parameter.
      */
     @Test
     public void NotModel() {
@@ -139,7 +139,7 @@ public class MasterCheckOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * パラメーター化。
+     * parameterized.
      */
     @Test
     public void Parameterized() {

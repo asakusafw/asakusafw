@@ -21,7 +21,7 @@ import javax.lang.model.element.ExecutableElement;
 import com.asakusafw.compiler.common.Precondition;
 
 /**
- * 演算子メソッドの構造。
+ * Structural information of operator methods.
  * @since 0.1.0
  * @version 0.7.0
  */
@@ -34,10 +34,10 @@ public class OperatorMethod {
     private final AnnotationMirror annotation;
 
     /**
-     * インスタンスを生成する。
-     * @param element 演算子メソッドのメソッド宣言
-     * @param processor 対応する演算子プロセッサ
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Creates a new instance.
+     * @param element the declaration of operator method
+     * @param processor the operator processor for processing this method
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public OperatorMethod(ExecutableElement element, OperatorProcessor processor) {
         Precondition.checkMustNotBeNull(element, "element"); //$NON-NLS-1$
@@ -67,24 +67,24 @@ public class OperatorMethod {
     }
 
     /**
-     * 演算子メソッドに付与された演算子注釈を返す。
-     * @return 付与された演算子注釈
+     * Returns the operator annotation.
+     * @return the operator annotation
      */
     public AnnotationMirror getAnnotation() {
         return annotation;
     }
 
     /**
-     * 演算子メソッドのメソッド宣言を返す。
-     * @return 演算子メソッドのメソッド宣言
+     * Returns the declaration of operator method.
+     * @return the declaration of operator method
      */
     public ExecutableElement getElement() {
         return this.element;
     }
 
     /**
-     * 対応する演算子プロセッサを返す。
-     * @return 対応する演算子プロセッサ
+     * Returns the operator processor for processing this method.
+     * @return the operator processor
      */
     public OperatorProcessor getProcessor() {
         return this.processor;

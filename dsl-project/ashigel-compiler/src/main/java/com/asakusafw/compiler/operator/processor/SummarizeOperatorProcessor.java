@@ -34,7 +34,7 @@ import com.asakusafw.vocabulary.flow.graph.ShuffleKey;
 import com.asakusafw.vocabulary.operator.Summarize;
 
 /**
- * {@link Summarize 単純集計演算子}を処理する。
+ * Processes {@link Summarize} operators.
  */
 @TargetOperator(Summarize.class)
 public class SummarizeOperatorProcessor extends AbstractOperatorProcessor {

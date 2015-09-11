@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
 import com.asakusafw.utils.collections.Lists;
 
 /**
- * 演算子クラスを直接コンパイルする。
+ * Compiles operator classes.
  */
 public final class OperatorCompilerDriver {
 
@@ -84,13 +84,13 @@ public final class OperatorCompilerDriver {
     }
 
     /**
-     * 演算子クラスをコンパイルする。
-     * @param sourcePath ソースパス
-     * @param outputPath 出力先のパス
-     * @param encoding エンコーディング
-     * @param operatorClasses コンパイル対象の一覧
-     * @throws IOException 書き出しに失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Compiles operator classes.
+     * @param sourcePath the source path
+     * @param outputPath the output path
+     * @param encoding the source file encoding
+     * @param operatorClasses the target operator classes
+     * @throws IOException if compilation was failed by I/O error
+     * @throws IllegalArgumentException if some parameters are {@code null}
      */
     public static void compile(
             File sourcePath,
@@ -110,7 +110,7 @@ public final class OperatorCompilerDriver {
             throw new IllegalArgumentException("operatorClasses must not be null"); //$NON-NLS-1$
         }
 
-        // 内部的にはJSR-199を使ってコンパイラを起動するだけ
+        // we launches Java compiler via JSR-199
         List<File> sourceFiles = toSources(sourcePath, operatorClasses);
         LOG.info(MessageFormat.format(
                 Messages.getString("OperatorCompilerDriver.infoStart"), //$NON-NLS-1$
@@ -209,8 +209,8 @@ public final class OperatorCompilerDriver {
     }
 
     /**
-     * プログラムエントリ。
-     * @param args コマンドライン引数
+     * The program entry.
+     * @param args command line arguments
      */
     public static void main(String... args) {
         try {

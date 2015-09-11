@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * ジョブフローのパッケージングを行う。
+ * Builds jobflow packages.
  */
 package com.asakusafw.compiler.flow.packager;

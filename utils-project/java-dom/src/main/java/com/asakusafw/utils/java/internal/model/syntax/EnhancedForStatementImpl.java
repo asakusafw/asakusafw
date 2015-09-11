@@ -23,23 +23,14 @@ import com.asakusafw.utils.java.model.syntax.Statement;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link EnhancedForStatement}の実装。
+ * An implementation of {@link EnhancedForStatement}.
  */
 public final class EnhancedForStatementImpl extends ModelRoot implements EnhancedForStatement {
 
-    /**
-     * ループ変数。
-     */
     private FormalParameterDeclaration parameter;
 
-    /**
-     * ループ対象式。
-     */
     private Expression expression;
 
-    /**
-     * ループ本体。
-     */
     private Statement body;
 
     @Override
@@ -48,11 +39,9 @@ public final class EnhancedForStatementImpl extends ModelRoot implements Enhance
     }
 
     /**
-     * ループ変数を設定する。
-     * @param parameter
-     *     ループ変数
-     * @throws IllegalArgumentException
-     *     {@code parameter}に{@code null}が指定された場合
+     * Sets the loop variable declaration.
+     * @param parameter the loop variable declaration
+     * @throws IllegalArgumentException if {@code parameter} was {@code null}
      */
     public void setParameter(FormalParameterDeclaration parameter) {
         Util.notNull(parameter, "parameter"); //$NON-NLS-1$
@@ -65,11 +54,9 @@ public final class EnhancedForStatementImpl extends ModelRoot implements Enhance
     }
 
     /**
-     * ループ対象式を設定する。
-     * @param expression
-     *     ループ対象式
-     * @throws IllegalArgumentException
-     *     {@code expression}に{@code null}が指定された場合
+     * Sets the loop target expression.
+     * @param expression the loop target expression
+     * @throws IllegalArgumentException if {@code expression} was {@code null}
      */
     public void setExpression(Expression expression) {
         Util.notNull(expression, "expression"); //$NON-NLS-1$
@@ -82,11 +69,9 @@ public final class EnhancedForStatementImpl extends ModelRoot implements Enhance
     }
 
     /**
-     * ループ本体を設定する。
-     * @param body
-     *     ループ本体
-     * @throws IllegalArgumentException
-     *     {@code body}に{@code null}が指定された場合
+     * Sets the loop body.
+     * @param body the loop body
+     * @throws IllegalArgumentException if {@code body} was {@code null}
      */
     public void setBody(Statement body) {
         Util.notNull(body, "body"); //$NON-NLS-1$
@@ -94,7 +79,7 @@ public final class EnhancedForStatementImpl extends ModelRoot implements Enhance
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#ENHANCED_FOR_STATEMENT}を返す。
+     * Returns {@link ModelKind#ENHANCED_FOR_STATEMENT} which represents this element kind.
      * @return {@link ModelKind#ENHANCED_FOR_STATEMENT}
      */
     @Override
@@ -103,8 +88,7 @@ public final class EnhancedForStatementImpl extends ModelRoot implements Enhance
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitEnhancedForStatement(this, context);
     }

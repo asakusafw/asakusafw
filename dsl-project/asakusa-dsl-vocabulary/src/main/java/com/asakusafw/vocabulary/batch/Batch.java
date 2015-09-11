@@ -23,6 +23,7 @@ import java.lang.annotation.Target;
 
 /**
  * バッチクラスに付与されるべき注釈。
+ * TODO i18n
  * @since 0.1.0
  * @version 0.5.0
  */

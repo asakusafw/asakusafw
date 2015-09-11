@@ -19,16 +19,16 @@ import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.utils.java.model.syntax.Name;
 
 /**
- * コンパイルされたクラスやインターフェース。
+ * Represents a compiled class or interface.
  */
 public class CompiledType {
 
-    private Name qualifiedName;
+    private final Name qualifiedName;
 
     /**
-     * インスタンスを生成する。
-     * @param qualifiedName コンパイル結果型の完全限定名
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param qualifiedName the qualified name of the compiled type
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public CompiledType(Name qualifiedName) {
         Precondition.checkMustNotBeNull(qualifiedName, "qualifiedName"); //$NON-NLS-1$
@@ -36,8 +36,8 @@ public class CompiledType {
     }
 
     /**
-     * コンパイル結果型の完全限定名を返す。
-     * @return コンパイル結果型の完全限定名
+     * Returns the qualified name of the compiled type.
+     * @return the qualified class name
      */
     public Name getQualifiedName() {
         return qualifiedName;

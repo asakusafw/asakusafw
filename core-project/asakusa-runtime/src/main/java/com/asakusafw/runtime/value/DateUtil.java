@@ -31,9 +31,6 @@ public final class DateUtil {
         }
     };
 
-    /**
-     * 平年の年間日数。
-     */
     private static final int DAYS_YEAR = 365;
 
     private static final int DAYS_JANUARY = 31;
@@ -63,42 +60,24 @@ public final class DateUtil {
         DAYS_NOVEMBER,
     };
 
-    /**
-     * 閏年の循環単位。
-     */
     private static final int YEARS_LEAP_CYCLE = 400;
 
-    /**
-     * 閏年の循環単位の日数。
-     */
     private static final int DAYS_LEAP_CYCLE =
         DAYS_YEAR * YEARS_LEAP_CYCLE
         + (YEARS_LEAP_CYCLE / 4)
         - (YEARS_LEAP_CYCLE / 100)
         + (YEARS_LEAP_CYCLE / 400);
 
-    /**
-     * 世紀。
-     */
     private static final int YEARS_CENTURY = 100;
 
-    /**
-     * 世紀の日数。
-     */
     private static final int DAYS_CENTURY =
         DAYS_YEAR * YEARS_CENTURY
         + (YEARS_CENTURY / 4)
         - (YEARS_CENTURY / 100)
         + (YEARS_CENTURY / 400);
 
-    /**
-     * 閏年の最小単位。
-     */
     private static final int YEARS_LEAP = 4;
 
-    /**
-     * 閏年の最小単位の日数。
-     */
     private static final int DAYS_LEAP =
         DAYS_YEAR * YEARS_LEAP
         + (YEARS_LEAP / 4)
@@ -240,27 +219,25 @@ public final class DateUtil {
      */
     public static int getYearFromDay(int dayOfEra) {
 
-        // 400年を繰り返した回数
+        // the number of leap year cycles (400years)
         int cycles = dayOfEra / DAYS_LEAP_CYCLE;
         int cycleRest = dayOfEra % DAYS_LEAP_CYCLE;
 
-        // 400年ごとの何個目の世紀か (0-3)
+        // the century offset in the current leap year cycle (0-3)
         int centInCycle = cycleRest / DAYS_CENTURY;
         int centRest = cycleRest % DAYS_CENTURY;
-        // (0 mod 400) 年 12 月 31 日を間違えていたら修正
         centRest += DAYS_CENTURY * (centInCycle / (YEARS_LEAP_CYCLE / YEARS_CENTURY));
         centInCycle -= (centInCycle / (YEARS_LEAP_CYCLE / YEARS_CENTURY));
 
-        // 世紀ごとの何回目の閏年か (0-24)
+        // the leap year offset in the current century (0-24)
         int leapInCent = centRest / DAYS_LEAP;
         int leapRest = centRest % DAYS_LEAP;
 
-        // 閏年の何年目か (0-3)
+        // the year offset since the last leap year (0-3)
         int yearInLeap = leapRest / DAYS_YEAR;
-        // (0 mod 4) 年 12 月 31 日を間違えていたら修正
         yearInLeap -= (yearInLeap / YEARS_LEAP);
 
-        // 合計すると何年か
+        // compute the year
         int year = YEARS_LEAP_CYCLE * cycles
             + YEARS_CENTURY * centInCycle
             + YEARS_LEAP * leapInCent
@@ -409,29 +386,6 @@ public final class DateUtil {
     public static int getSecondOfDay(long seconds) {
         return (int) (seconds % 86400);
     }
-
-//    /**
-//     * UNIX秒の開始時刻。
-//     */
-//    private static final long UNIX_TIME_OFFSET = (long) getDayFromDate(1970, 1, 1) * 86400;
-//
-//    /**
-//     * {@link java.util.Date}が示す時刻を西暦0001/01/01 00:00:00からの経過秒数に変換して返す。
-//     * <p>
-//     * ミリ秒のフィールドは切り捨てられる。
-//     * </p>
-//     * @param date 変換する時刻
-//     * @return 0001/01/01 00:00:00 からの経過秒数(0起算)
-//     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
-//     */
-//    public static long toSeconds(java.util.Date date) {
-//        if (date == null) {
-//            throw new IllegalArgumentException("date must not be null"); //$NON-NLS-1$
-//        }
-//        long unixTime = date.getTime();
-//        long seconds = (unixTime / 1000) + UNIX_TIME_OFFSET;
-//        return seconds;
-//    }
 
     private static final int COL_YEAR_BEGIN = 0;
 

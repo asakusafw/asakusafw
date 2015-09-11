@@ -33,7 +33,7 @@ import com.asakusafw.utils.java.model.util.Models;
 import com.asakusafw.utils.java.model.util.NoThrow;
 
 /**
- * {@link java.lang.reflect.Type}をモデルに変換する。
+ * Maps {@link java.lang.reflect.Type} into Java DOM types.
  */
 public class ReflectionTypeMapper
         extends ReflectionTypeVisitor<Type, ModelFactory, NoThrow> {

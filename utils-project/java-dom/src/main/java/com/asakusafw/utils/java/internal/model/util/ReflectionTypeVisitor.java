@@ -23,18 +23,17 @@ import java.lang.reflect.WildcardType;
 import java.text.MessageFormat;
 
 /**
- * {@link java.lang.reflect.Type}の種類ごとにメソッドを再束縛する。
- * @param <R> 再束縛される{@code visit*}メソッドの実行結果型
- * @param <C> 再束縛される{@code visit*}メソッドのコンテキストオブジェクト型
- * @param <E> 再束縛される{@code visit*}メソッドの例外型
+ * Visitors for processing implementations of {@link java.lang.reflect.Type}.
+ * Each {@code visit*} method in this implementation does nothing and always returns {@code null}.
+ * @param <C> type of visitor context
+ * @param <R> type of visitor result
+ * @param <E> type of visitor exception
  */
 public abstract class ReflectionTypeVisitor<R, C, E extends Throwable> {
 
     /**
-     * {@code type}の種類でメソッドの再束縛を行い、該当する{@code visit*}メソッドを起動する。
-     * <p>
-     * このメソッドが識別可能な型は次のとおりである。
-     * </p>
+     * Dispatches the suitable {@code visit*} method.
+     * This can dispatch the following methods:
      * <ul>
      *   <li>
      *     {@link Class} -
@@ -57,24 +56,17 @@ public abstract class ReflectionTypeVisitor<R, C, E extends Throwable> {
      *     {@link #visitWildcardType(WildcardType, Object) visitWildcardType(type, context)}
      *   </li>
      * </ul>
-     * <p>
-     * 上記のいずれでもない場合、この呼び出しは失敗する。
-     * また、上記のうち複数のサブタイプであるようなオブジェクトを{@code type}に指定した場合、
-     * 実際に呼び出される{@code visit*}メソッドは保証されない。
-     * </p>
-     * @param type メソッドの再束縛をする型
-     * @param context コンテキストオブジェクト(省略可)
-     * @return 再束縛された{@code visit*}の実行結果
-     * @throws E 再束縛された{@code visit*}の実行中に例外が発生した場合
+     * @param type the type to be dispatched
+     * @param context the current context (nullable)
+     * @return the processing result in {@code visit*}
+     * @throws E if error was occurred while processing the target element {@code visit*}
      * @throws IllegalArgumentException
-     *     引数{@code type}が
+     *     if the {@code type} is neither
      *     {@link Class},
      *     {@link GenericArrayType},
      *     {@link ParameterizedType},
-     *     {@link TypeVariable},
+     *     {@link TypeVariable}, nor
      *     {@link WildcardType}
-     *     のいずれでもない場合
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
      */
     public final R dispatch(Type type, C context) throws E {
         if (type == null) {
@@ -99,70 +91,60 @@ public abstract class ReflectionTypeVisitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link #dispatch(Type, Object)}の第一引数に{@link Class}型の値が
-     * 指定された際に呼び出される。
-     * @param type
-     *     処理対象の型オブジェクト({@link #dispatch(Type, Object)}の第一引数)
-     * @param context
-     *     コンテキストオブジェクト({@link #dispatch(Type, Object)}の第二引数、省略可)
-     * @return 実行結果
-     * @throws E 処理中に例外が発生した場合
+     * Processes {@link Class} using this visitor.
+     * @param type the processing target
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target type
+     * @see #dispatch(Type, Object)
      */
     protected R visitClass(Class<?> type, C context) throws E {
         return null;
     }
 
     /**
-     * {@link #dispatch(Type, Object)}の第一引数に{@link GenericArrayType}型の値が
-     * 指定された際に呼び出される。
-     * @param type
-     *     処理対象の型オブジェクト({@link #dispatch(Type, Object)}の第一引数)
-     * @param context
-     *     コンテキストオブジェクト({@link #dispatch(Type, Object)}の第二引数、省略可)
-     * @return 実行結果
-     * @throws E 処理中に例外が発生した場合
+     * Processes {@link GenericArrayType} using this visitor.
+     * @param type the processing target
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target type
+     * @see #dispatch(Type, Object)
      */
     protected R visitGenericArrayType(GenericArrayType type, C context) throws E {
         return null;
     }
 
     /**
-     * {@link #dispatch(Type, Object)}の第一引数に{@link ParameterizedType}型の値が
-     * 指定された際に呼び出される。
-     * @param type
-     *     処理対象の型オブジェクト({@link #dispatch(Type, Object)}の第一引数)
-     * @param context
-     *     コンテキストオブジェクト({@link #dispatch(Type, Object)}の第二引数、省略可)
-     * @return 実行結果
-     * @throws E 処理中に例外が発生した場合
+     * Processes {@link ParameterizedType} using this visitor.
+     * @param type the processing target
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target type
+     * @see #dispatch(Type, Object)
      */
     protected R visitParameterizedType(ParameterizedType type, C context) throws E {
         return null;
     }
 
     /**
-     * {@link #dispatch(Type, Object)}の第一引数に{@link TypeVariable}型の値が
-     * 指定された際に呼び出される。
-     * @param type
-     *     処理対象の型オブジェクト({@link #dispatch(Type, Object)}の第一引数)
-     * @param context
-     *     コンテキストオブジェクト({@link #dispatch(Type, Object)}の第二引数、省略可)
-     * @return 実行結果
-     * @throws E 処理中に例外が発生した場合
+     * Processes {@link TypeVariable} using this visitor.
+     * @param type the processing target
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target type
+     * @see #dispatch(Type, Object)
      */
     protected R visitTypeVariable(TypeVariable<?> type, C context) throws E {
         return null;
     }
 
     /**
-     * {@link #dispatch(Type, Object)}の第一引数に{@link WildcardType}型の値が
-     * 指定された際に呼び出される。
-     * @param type
-     *     処理対象の型オブジェクト({@link #dispatch(Type, Object)}の第一引数)
-     * @param context
-     *     コンテキストオブジェクト({@link #dispatch(Type, Object)}の第二引数、省略可)
-     * @return 実行結果
-     * @throws E 処理中に例外が発生した場合
+     * Processes {@link WildcardType} using this visitor.
+     * @param type the processing target
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target type
+     * @see #dispatch(Type, Object)
      */
     protected R visitWildcardType(WildcardType type, C context) throws E {
         return null;

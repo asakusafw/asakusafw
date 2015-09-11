@@ -22,18 +22,12 @@ import com.asakusafw.utils.java.model.syntax.SimpleName;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link FieldAccessExpression}の実装。
+ * An implementation of {@link FieldAccessExpression}.
  */
 public final class FieldAccessExpressionImpl extends ModelRoot implements FieldAccessExpression {
 
-    /**
-     * 限定式。
-     */
     private Expression qualifier;
 
-    /**
-     * フィールドの名前。
-     */
     private SimpleName name;
 
     @Override
@@ -42,11 +36,9 @@ public final class FieldAccessExpressionImpl extends ModelRoot implements FieldA
     }
 
     /**
-     * 限定式を設定する。
-     * @param qualifier
-     *     限定式
-     * @throws IllegalArgumentException
-     *     {@code qualifier}に{@code null}が指定された場合
+     * Sets the qualifier expression.
+     * @param qualifier the qualifier expression
+     * @throws IllegalArgumentException if {@code qualifier} was {@code null}
      */
     public void setQualifier(Expression qualifier) {
         Util.notNull(qualifier, "qualifier"); //$NON-NLS-1$
@@ -59,11 +51,9 @@ public final class FieldAccessExpressionImpl extends ModelRoot implements FieldA
     }
 
     /**
-     * フィールドの名前を設定する。
-     * @param name
-     *     フィールドの名前
-     * @throws IllegalArgumentException
-     *     {@code name}に{@code null}が指定された場合
+     * Sets the field name.
+     * @param name the field name
+     * @throws IllegalArgumentException if {@code name} was {@code null}
      */
     public void setName(SimpleName name) {
         Util.notNull(name, "name"); //$NON-NLS-1$
@@ -71,7 +61,7 @@ public final class FieldAccessExpressionImpl extends ModelRoot implements FieldA
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#FIELD_ACCESS_EXPRESSION}を返す。
+     * Returns {@link ModelKind#FIELD_ACCESS_EXPRESSION} which represents this element kind.
      * @return {@link ModelKind#FIELD_ACCESS_EXPRESSION}
      */
     @Override
@@ -80,8 +70,7 @@ public final class FieldAccessExpressionImpl extends ModelRoot implements FieldA
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitFieldAccessExpression(this, context);
     }

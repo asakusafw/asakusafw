@@ -21,13 +21,10 @@ import com.asakusafw.utils.java.model.syntax.ReturnStatement;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link ReturnStatement}の実装。
+ * An implementation of {@link ReturnStatement}.
  */
 public final class ReturnStatementImpl extends ModelRoot implements ReturnStatement {
 
-    /**
-     * 返戻値。
-     */
     private Expression expression;
 
     @Override
@@ -36,18 +33,15 @@ public final class ReturnStatementImpl extends ModelRoot implements ReturnStatem
     }
 
     /**
-     * 返戻値を設定する。
-     * <p> 返戻値が指定されない場合、引数には{@code null}を指定する。 </p>
-     * @param expression
-     *     返戻値、
-     *     ただし返戻値が指定されない場合は{@code null}
+     * Sets the return value.
+     * @param expression the return value, or {@code null} if it is not specified
      */
     public void setExpression(Expression expression) {
         this.expression = expression;
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#RETURN_STATEMENT}を返す。
+     * Returns {@link ModelKind#RETURN_STATEMENT} which represents this element kind.
      * @return {@link ModelKind#RETURN_STATEMENT}
      */
     @Override
@@ -56,8 +50,7 @@ public final class ReturnStatementImpl extends ModelRoot implements ReturnStatem
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitReturnStatement(this, context);
     }

@@ -32,9 +32,8 @@ import com.asakusafw.vocabulary.operator.Summarize;
 import com.asakusafw.vocabulary.operator.Update;
 import com.asakusafw.vocabulary.operator.Volatile;
 
-
 /**
- * テスト用の演算子。
+ * Operator class for testing.
  */
 public abstract class ExOperator {
 
@@ -71,7 +70,7 @@ public abstract class ExOperator {
     /**
      * folding operator.
      * @param a context
-     * @param b feld
+     * @param b felt
      */
     @Fold
     public void foldAdd(@Key(group = "STRING") Ex1 a, Ex1 b) {
@@ -79,7 +78,7 @@ public abstract class ExOperator {
     }
 
     /**
-     * cogroup operator.
+     * co-group operator.
      * @param list target list
      * @param result result
      */
@@ -120,7 +119,7 @@ public abstract class ExOperator {
     public abstract ExSummarized summarize(Ex1 model);
 
     /**
-     * complex cogroup opetator.
+     * complex co-group operator.
      * @param ex1 model1
      * @param ex2 model2
      * @param r1 output1

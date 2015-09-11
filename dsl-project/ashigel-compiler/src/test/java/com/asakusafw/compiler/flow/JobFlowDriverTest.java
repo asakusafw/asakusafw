@@ -31,7 +31,7 @@ import com.asakusafw.vocabulary.flow.graph.FlowOut;
 public class JobFlowDriverTest {
 
     /**
-     * 単純な例。
+     * simple case.
      */
     @Test
     public void simple() {
@@ -55,7 +55,7 @@ public class JobFlowDriverTest {
     }
 
     /**
-     * トップレベルでないクラス。
+     * not top-level class.
      */
     @Test
     public void Class_NotTopLevel() {
@@ -64,7 +64,7 @@ public class JobFlowDriverTest {
     }
 
     /**
-     * publicでないクラス。
+     * not public class.
      */
     @Test
     public void Class_NotPublic() {
@@ -73,7 +73,7 @@ public class JobFlowDriverTest {
     }
 
     /**
-     * 抽象クラス。
+     * abstract class.
      */
     @Test
     public void Class_Abstract() {
@@ -82,7 +82,7 @@ public class JobFlowDriverTest {
     }
 
     /**
-     * 注釈がない。
+     * class w/o annotations.
      */
     @Test
     public void Class_NotAnnotated() {
@@ -91,7 +91,7 @@ public class JobFlowDriverTest {
     }
 
     /**
-     * 公開コンストラクタがない。
+     * class w/o public constructors.
      */
     @Test
     public void Constructor_None() {
@@ -100,7 +100,7 @@ public class JobFlowDriverTest {
     }
 
     /**
-     * 公開コンストラクタが多い。
+     * class w/ extra public constructors.
      */
     @Test
     public void Constructor_Multi() {
@@ -109,7 +109,7 @@ public class JobFlowDriverTest {
     }
 
     /**
-     * 入出力に関連しない余計なパラメーター。
+     * constructor w/ extra parameters.
      */
     @Test
     public void Constructor_InvalidParameter() {
@@ -118,7 +118,7 @@ public class JobFlowDriverTest {
     }
 
     /**
-     * 型が指定されていない入力。
+     * raw input.
      */
     @Test
     public void Input_NotTyped() {
@@ -127,7 +127,7 @@ public class JobFlowDriverTest {
     }
 
     /**
-     * 不正な注釈を持つ入力。
+     * input w/ invalid annotation.
      */
     @Test
     public void Input_WithInvalidAnnotation() {
@@ -136,7 +136,7 @@ public class JobFlowDriverTest {
     }
 
     /**
-     * Empty name for input.
+     * empty name for input.
      */
     @Test
     public void Input_WithEmptyInputName() {
@@ -146,7 +146,7 @@ public class JobFlowDriverTest {
     }
 
     /**
-     * 入力ポート名が不正。
+     * input w/ invalid name.
      */
     @Test
     public void Input_WithInvalidInputName() {
@@ -156,7 +156,7 @@ public class JobFlowDriverTest {
     }
 
     /**
-     * 必要な注釈がない入力。
+     * input w/o annotation.
      */
     @Test
     public void Input_WithoudMandatoryAnnotation() {
@@ -165,7 +165,7 @@ public class JobFlowDriverTest {
     }
 
     /**
-     * 注釈の型が不一致。
+     * input w/ export annotation.
      */
     @Test
     public void Input_InconsistentAnnotation() {
@@ -174,7 +174,7 @@ public class JobFlowDriverTest {
     }
 
     /**
-     * インスタンス化できないインポーター記述。
+     * input w/ importer which cannot be instantiated.
      */
     @Test
     public void Input_AbstractDescription() {
@@ -183,7 +183,7 @@ public class JobFlowDriverTest {
     }
 
     /**
-     * 型の指定が無いインポーター記述。
+     * input w/ importer which cannot provide its data type.
      */
     @Test
     public void Input_InvalidTypeDescription() {
@@ -192,7 +192,7 @@ public class JobFlowDriverTest {
     }
 
     /**
-     * 型が指定されていない出力。
+     * output w/ data type info.
      */
     @Test
     public void Output_NotTyped() {
@@ -201,7 +201,7 @@ public class JobFlowDriverTest {
     }
 
     /**
-     * 不正な注釈を持つ出力。
+     * output w/ invalid annotation.
      */
     @Test
     public void Output_WithInvalidAnnotation() {
@@ -210,7 +210,7 @@ public class JobFlowDriverTest {
     }
 
     /**
-     * Empty name for output.
+     * empty name for output.
      */
     @Test
     public void Output_WithEmptyOutputName() {
@@ -220,7 +220,7 @@ public class JobFlowDriverTest {
     }
 
     /**
-     * 出力ポート名が不正。
+     * output w/ invalid name.
      */
     @Test
     public void Output_WithInvalidOutputName() {
@@ -230,7 +230,7 @@ public class JobFlowDriverTest {
     }
 
     /**
-     * 必要な注釈がない出力。
+     * output w/o annotation.
      */
     @Test
     public void Output_WithoudMandatoryAnnotation() {
@@ -239,7 +239,7 @@ public class JobFlowDriverTest {
     }
 
     /**
-     * 注釈の型が不一致。
+     * output w/ import annotation.
      */
     @Test
     public void Output_InconsistentAnnotation() {
@@ -248,7 +248,7 @@ public class JobFlowDriverTest {
     }
 
     /**
-     * インスタンス化できないエクスポーター記述。
+     * output w/ exporter which cannot be instantiated.
      */
     @Test
     public void Output_InvalidDescription() {
@@ -257,7 +257,7 @@ public class JobFlowDriverTest {
     }
 
     /**
-     * 型の指定が無いエクスポーター記述。
+     * output w/ exporter which cannot provide its data type.
      */
     @Test
     public void Output_InvalidTypeDescription() {
@@ -266,7 +266,7 @@ public class JobFlowDriverTest {
     }
 
     /**
-     * インスタンス化に失敗する。
+     * constructor raises an exception.
      */
     @Test
     public void InstantiateFailure() {
@@ -275,7 +275,7 @@ public class JobFlowDriverTest {
     }
 
     /**
-     * 結線に失敗する。
+     * describe method raises an exception.
      */
     @Test
     public void DescribeFailure() {

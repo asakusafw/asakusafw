@@ -19,15 +19,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * クラスファイルの内容を直接取り扱うローダー。
+ * A class loader that handles class files on the heap.
  */
 public class DirectClassLoader extends ClassLoader {
 
-    private Map<String, byte[]> classes;
+    private final Map<String, byte[]> classes;
 
     /**
-     * インスタンスを生成する。
-     * @param parent 親のクラスローダー
+     * Creates a new instance.
+     * @param parent the parent class loader
      */
     public DirectClassLoader(ClassLoader parent) {
         super(parent);
@@ -35,10 +35,10 @@ public class DirectClassLoader extends ClassLoader {
     }
 
     /**
-     * このローダーがロード可能なクラスの情報を追加する。
-     * @param name 追加するクラスのバイナリ名
-     * @param content 追加するクラスの内容
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Adds a class file for this class loader.
+     * @param name the binary name of the target class
+     * @param content the class file contents
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public synchronized void add(String name, byte[] content) {
         if (name == null) {

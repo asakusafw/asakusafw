@@ -30,6 +30,7 @@ import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory.RestructureFragmen
 /**
  * 標準的な演算子オブジェクトを生成するファクトリ。
  * {@link CoreOperatorFactory}のメソッドの一部を{@code static}メソッドとして提供する。
+ * TODO i18n
  * @since 0.2.6
  * @version 0.7.3
  */

@@ -24,23 +24,14 @@ import com.asakusafw.utils.java.model.syntax.TryStatement;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link TryStatement}の実装。
+ * An implementation of {@link TryStatement}.
  */
 public final class TryStatementImpl extends ModelRoot implements TryStatement {
 
-    /**
-     * {@code try}節。
-     */
     private Block tryBlock;
 
-    /**
-     * {@code catch}節の一覧。
-     */
     private List<? extends CatchClause> catchClauses;
 
-    /**
-     * {@code finally}節。
-     */
     private Block finallyBlock;
 
     @Override
@@ -49,11 +40,9 @@ public final class TryStatementImpl extends ModelRoot implements TryStatement {
     }
 
     /**
-     * {@code try}節を設定する。
-     * @param tryBlock
-     *     {@code try}節
-     * @throws IllegalArgumentException
-     *     {@code tryBlock}に{@code null}が指定された場合
+     * Sets the body block of {@code try} clause.
+     * @param tryBlock the body block of {@code try} clause
+     * @throws IllegalArgumentException if {@code tryBlock} was {@code null}
      */
     public void setTryBlock(Block tryBlock) {
         Util.notNull(tryBlock, "tryBlock"); //$NON-NLS-1$
@@ -66,12 +55,9 @@ public final class TryStatementImpl extends ModelRoot implements TryStatement {
     }
 
     /**
-     * {@code catch}節の一覧を設定する。
-     * <p> {@code catch}節が一つも指定されない場合、引数には空を指定する。 </p>
-     * @param catchClauses
-     *     {@code catch}節の一覧
-     * @throws IllegalArgumentException
-     *     {@code catchClauses}に{@code null}が指定された場合
+     * Sets the {@code catch} clauses.
+     * @param catchClauses the {@code catch} clauses
+     * @throws IllegalArgumentException if {@code catchClauses} was {@code null}
      */
     public void setCatchClauses(List<? extends CatchClause> catchClauses) {
         Util.notNull(catchClauses, "catchClauses"); //$NON-NLS-1$
@@ -85,18 +71,15 @@ public final class TryStatementImpl extends ModelRoot implements TryStatement {
     }
 
     /**
-     * {@code finally}節を設定する。
-     * <p> {@code finally}節が指定されない場合、引数には{@code null}を指定する。 </p>
-     * @param finallyBlock
-     *     {@code finally}節、
-     *     ただし{@code finally}節が指定されない場合は{@code null}
+     * Sets the body block of {@code finally} clause.
+     * @param finallyBlock the body block of {@code finally} clause, or {@code null} if it is not specified
      */
     public void setFinallyBlock(Block finallyBlock) {
         this.finallyBlock = finallyBlock;
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#TRY_STATEMENT}を返す。
+     * Returns {@link ModelKind#TRY_STATEMENT} which represents this element kind.
      * @return {@link ModelKind#TRY_STATEMENT}
      */
     @Override
@@ -105,8 +88,7 @@ public final class TryStatementImpl extends ModelRoot implements TryStatement {
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitTryStatement(this, context);
     }

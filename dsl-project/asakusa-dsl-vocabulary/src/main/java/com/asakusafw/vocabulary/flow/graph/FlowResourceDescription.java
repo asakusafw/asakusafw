@@ -18,13 +18,13 @@ package com.asakusafw.vocabulary.flow.graph;
 import java.util.Set;
 
 /**
- * フロー中に出現するリソースの記述。
+ * A description of external flow resource.
  */
 public interface FlowResourceDescription {
 
     /**
-     * このリソースが利用するサイドデータの入力一覧を返す。
-     * @return このリソースが利用するサイドデータの入力一覧
+     * Returns the descriptions of source inputs.
+     * @return the descriptions of source inputs
      */
     Set<InputDescription> getSideDataInputs();
 }

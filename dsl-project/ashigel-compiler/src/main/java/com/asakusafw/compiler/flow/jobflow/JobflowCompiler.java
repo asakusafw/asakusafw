@@ -50,7 +50,7 @@ import com.asakusafw.utils.graph.Graph;
 import com.asakusafw.utils.graph.Graphs;
 
 /**
- * ジョブフロー内で利用されるプログラムをコンパイルする。
+ * Compiles jobflow described in the flow DSL.
  * @since 0.1.0
  * @version 0.2.6
  */
@@ -68,9 +68,9 @@ public class JobflowCompiler {
     private final CleanupStageClientEmitter cleanupStageClientEmitter;
 
     /**
-     * インスタンスを生成する。
-     * @param environment 環境オブジェクト
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param environment the current environment
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JobflowCompiler(FlowCompilingEnvironment environment) {
         Precondition.checkMustNotBeNull(environment, "environment"); //$NON-NLS-1$
@@ -81,12 +81,12 @@ public class JobflowCompiler {
     }
 
     /**
-     * 指定のステージグラフをコンパイルし、ジョブフロー全体のステージ構造に関する情報を返す。
-     * @param graph ステージグラフ
-     * @param stageModels 各ステージの情報
-     * @return ジョブフロー全体のステージ構造に関する情報、解析に失敗した場合は{@code null}
-     * @throws IOException コンパイル結果の出力に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Compiles the target stage graph.
+     * @param graph the target stage graph
+     * @param stageModels the stage models
+     * @return the corresponded jobflow model object
+     * @throws IOException if failed to compile
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public JobflowModel compile(
             StageGraph graph,

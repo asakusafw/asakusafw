@@ -23,17 +23,16 @@ import com.asakusafw.vocabulary.flow.In;
 import com.asakusafw.vocabulary.flow.JobFlow;
 import com.asakusafw.vocabulary.flow.Out;
 
-
 /**
- * {@link #describe()}に失敗するジョブフロー。
+ * A jobflow class which {@link #describe()} method raises an exception.
  */
 @JobFlow(name = "testing")
 public class DescribeFailJobFlow extends FlowDescription {
 
     /**
-     * インスタンスを生成する。
-     * @param in 入力
-     * @param out 出力
+     * Creates a new instance.
+     * @param in input
+     * @param out output
      */
     public DescribeFailJobFlow(
             @Import(name = "hoge", description = MockHogeImporterDescription.class)

@@ -23,6 +23,7 @@ import java.lang.annotation.Target;
 
 /**
  * ジョブフロークラスに付与されるべき注釈。
+ * TODO i18n
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

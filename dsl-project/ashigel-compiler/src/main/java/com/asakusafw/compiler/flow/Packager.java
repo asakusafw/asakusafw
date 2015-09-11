@@ -24,7 +24,7 @@ import com.asakusafw.utils.java.model.syntax.CompilationUnit;
 import com.asakusafw.utils.java.model.syntax.Name;
 
 /**
- * ジョブフローのパッケージングを行う。
+ * An abstract super interface of packager that creates jobflow packages.
  * @since 0.1.0
  * @version 0.4.0
  */
@@ -55,37 +55,37 @@ public interface Packager extends FlowCompilingEnvironment.Initializable {
     Location FRAGMENT_MARKER_PATH = FRAMEWORK_INFO.append("fragment"); //$NON-NLS-1$
 
     /**
-     * 指定のJavaソースプログラムを出力するためのストリームを開いて返す。
-     * @param source 対象のソースプログラムの内容
-     * @return ソースプログラムが配置されるべき適切なリソースへの出力ストリーム
-     * @throws IOException ストリームの作成に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new Java source file.
+     * @param source the target compilation unit
+     * @return the writer to output contents of the source file
+     * @throws IOException if error occurred while creating the file
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     PrintWriter openWriter(CompilationUnit source) throws IOException;
 
     /**
-     * 指定位置のリソースを出力するためのストリームを開いて返す。
-     * @param packageNameOrNull 対象のパッケージ名 、ルートパッケージを基点にする場合は{@code null}
-     * @param relativePath 対象のパッケージからの相対パス
-     * @return リソースへの出力ストリーム
-     * @throws IOException ストリームの作成に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new resource file.
+     * @param packageNameOrNull the target package name, or {@code null} for the root package
+     * @param relativePath the relative path from the target package
+     * @return the output stream to output contents of the resource
+     * @throws IOException if error occurred while creating the resource
+     * @throws IllegalArgumentException if the {@code relativePath} is {@code null}
      */
     OutputStream openStream(Name packageNameOrNull, String relativePath) throws IOException;
 
     /**
-     * ここまでに追加したソースプログラムやリソースファイル等を、コンパイルしてパッケージングして出力する。
-     * @param output 出力先
-     * @throws IOException 出力に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a jobflow package from the previously added source files and resources.
+     * @param output the output target
+     * @throws IOException if error occurred while building the source files
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     void build(OutputStream output) throws IOException;
 
     /**
-     * これまでに追加したソースプログラムを、そのままパッケージングして出力する。
-     * @param output 出力先
-     * @throws IOException 出力に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a source package from the previously added source files.
+     * @param output the output target
+     * @throws IOException if error occurred while collecting the source files
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     void packageSources(OutputStream output) throws IOException;
 }

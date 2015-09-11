@@ -24,8 +24,8 @@ import org.apache.hadoop.io.SequenceFile;
 import com.asakusafw.runtime.io.ModelOutput;
 
 /**
- * {@link SequenceFile}にモデルオブジェクトを書き出す{@link ModelOutput}の実装。
- * @param <T> モデルオブジェクトの型
+ * An implementation of {@link ModelOutput} using {@link SequenceFile}.
+ * @param <T> the data model type
  */
 public class SequenceFileModelOutput<T> implements ModelOutput<T> {
 
@@ -34,9 +34,9 @@ public class SequenceFileModelOutput<T> implements ModelOutput<T> {
     private Closeable closeable;
 
     /**
-     * インスタンスを生成する。
-     * @param writer 出力先
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param writer the target writer
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public SequenceFileModelOutput(SequenceFile.Writer writer) {
         this(writer, writer);

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /**
- * 各種のコンパイラが共通に利用する。
+ * Common classes for individual Asakusa DSL compilers.
  */
 package com.asakusafw.compiler.common;
 

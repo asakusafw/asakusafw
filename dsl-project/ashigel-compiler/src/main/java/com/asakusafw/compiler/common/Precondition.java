@@ -18,15 +18,15 @@ package com.asakusafw.compiler.common;
 import java.text.MessageFormat;
 
 /**
- * 事前条件に関するクラス。
+ * Utilities for precondition.
  */
 public final class Precondition {
 
     /**
-     * 指定の値が{@code null}である場合にエラーをスローする。
-     * @param value 対象の値
-     * @param expression 対象の表現
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Raises an exception only if the specified value was {@code null}.
+     * @param value the target value
+     * @param expression the string expression of the target value
+     * @throws IllegalArgumentException if the @{@code value} is {@code null}
      */
     public static void checkMustNotBeNull(Object value, String expression) {
         if (value == null) {

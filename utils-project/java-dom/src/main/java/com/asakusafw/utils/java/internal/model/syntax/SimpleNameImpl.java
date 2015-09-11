@@ -27,7 +27,7 @@ import com.asakusafw.utils.java.model.syntax.SimpleName;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link SimpleName}の実装。
+ * An implementation of {@link SimpleName}.
  */
 public final class SimpleNameImpl extends ModelRoot implements SimpleName {
 
@@ -91,9 +91,6 @@ public final class SimpleNameImpl extends ModelRoot implements SimpleName {
         RESERVED = Collections.unmodifiableSet(set);
     }
 
-    /**
-     * この単純名を表現する文字列。
-     */
     private String token;
 
     @Override
@@ -102,13 +99,10 @@ public final class SimpleNameImpl extends ModelRoot implements SimpleName {
     }
 
     /**
-     * この単純名を表現する文字列を設定する。
-     * @param token
-     *     この単純名を表現する文字列
-     * @throws IllegalArgumentException
-     *     {@code string}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code string}に空が指定された場合
+     * Sets the identifier.
+     * @param token the identifier
+     * @throws IllegalArgumentException if {@code string} was {@code null}
+     * @throws IllegalArgumentException if {@code string} was empty
      */
     public void setToken(String token) {
         Util.notNull(token, "token"); //$NON-NLS-1$
@@ -151,7 +145,7 @@ public final class SimpleNameImpl extends ModelRoot implements SimpleName {
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#SIMPLE_NAME}を返す。
+     * Returns {@link ModelKind#SIMPLE_NAME} which represents this element kind.
      * @return {@link ModelKind#SIMPLE_NAME}
      */
     @Override
@@ -160,8 +154,7 @@ public final class SimpleNameImpl extends ModelRoot implements SimpleName {
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitSimpleName(this, context);
     }

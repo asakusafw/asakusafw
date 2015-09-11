@@ -21,13 +21,10 @@ import com.asakusafw.utils.java.model.syntax.SimpleName;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link BreakStatement}の実装。
+ * An implementation of {@link BreakStatement}.
  */
 public final class BreakStatementImpl extends ModelRoot implements BreakStatement {
 
-    /**
-     * 分岐先ラベル。
-     */
     private SimpleName target;
 
     @Override
@@ -36,18 +33,15 @@ public final class BreakStatementImpl extends ModelRoot implements BreakStatemen
     }
 
     /**
-     * 分岐先ラベルを設定する。
-     * <p> 分岐先ラベルが指定されない場合、引数には{@code null}を指定する。 </p>
-     * @param target
-     *     分岐先ラベル、
-     *     ただし分岐先ラベルが指定されない場合は{@code null}
+     * Sets the target label.
+     * @param target the target label, or {@code null} if there is no target labels
      */
     public void setTarget(SimpleName target) {
         this.target = target;
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#BREAK_STATEMENT}を返す。
+     * Returns {@link ModelKind#BREAK_STATEMENT} which represents this element kind.
      * @return {@link ModelKind#BREAK_STATEMENT}
      */
     @Override
@@ -56,8 +50,7 @@ public final class BreakStatementImpl extends ModelRoot implements BreakStatemen
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitBreakStatement(this, context);
     }

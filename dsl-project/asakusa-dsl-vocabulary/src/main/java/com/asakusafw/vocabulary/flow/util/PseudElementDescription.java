@@ -38,17 +38,17 @@ import com.asakusafw.vocabulary.operator.Stop;
 
 
 /**
- * 疑似要素の定義記述。
+ * Represents definition of a pseudo-element on the flow DSL.
  */
 public class PseudElementDescription implements FlowElementDescription {
 
     /**
-     * 入力ポートの名前。
+     * The input port name.
      */
     public static final String INPUT_PORT_NAME = "in"; //$NON-NLS-1$
 
     /**
-     * 出力ポートの名前。
+     * The output port name.
      */
     public static final String OUTPUT_PORT_NAME = "out"; //$NON-NLS-1$
 
@@ -61,13 +61,12 @@ public class PseudElementDescription implements FlowElementDescription {
     private final Map<Class<? extends FlowElementAttribute>, FlowElementAttribute> attributes;
 
     /**
-     * インスタンスを生成する。
-     * @param name 要素の名前
-     * @param type 取り扱うデータの種類
-     * @param hasInput {@code true}ならば入力ポートを持つ
-     * @param hasOutput {@code true}ならば出力ポートを持つ
-     * @param attributes 属性の一覧
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param name the element name
+     * @param type the data type
+     * @param hasInput {@code true} to provide an input port
+     * @param hasOutput {@code true} to provide an output port
+     * @param attributes the element attributes
      */
     public PseudElementDescription(
             String name,

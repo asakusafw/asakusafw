@@ -38,14 +38,14 @@ import com.asakusafw.compiler.util.tester.CompilerTester.TestOutput;
 public class FoldFlowProcessorTest extends JobflowCompilerTestRoot {
 
     /**
-     * テストヘルパ。
+     * A test helper
      */
     @Rule
     public CompilerTester tester = new CompilerTester();
 
     /**
-     * 単純なテスト。
-     * @throws Exception テストが失敗した場合
+     * simple case.
+     * @throws Exception if exception was occurred
      */
     @Test
     public void simple() throws Exception {
@@ -94,8 +94,8 @@ public class FoldFlowProcessorTest extends JobflowCompilerTestRoot {
     }
 
     /**
-     * パラメータつきのテスト。
-     * @throws Exception テストが失敗した場合
+     * parameterized.
+     * @throws Exception if exception was occurred
      */
     @Test
     public void withParameter() throws Exception {
@@ -142,8 +142,8 @@ public class FoldFlowProcessorTest extends JobflowCompilerTestRoot {
     }
 
     /**
-     * 単純なテスト。
-     * @throws Exception テストが失敗した場合
+     * w/ combiner.
+     * @throws Exception if exception was occurred
      */
     @Test
     public void combine() throws Exception {

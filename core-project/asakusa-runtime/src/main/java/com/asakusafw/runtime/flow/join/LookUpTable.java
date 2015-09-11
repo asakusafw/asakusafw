@@ -19,42 +19,39 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * Joinを行うためのテーブル。
- * @param <T> 要素の種類
+ * An abstract super interface of looking up a list of objects.
+ * @param <T> the element type
  */
 public interface LookUpTable<T> {
 
     /**
-     * 指定のキーに関連する要素の一覧を返す。
-     * @param key 対象のキー
-     * @return 関連する要素の一覧、発見できない場合には空のリスト
-     * @throws IOException 値の取得に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns a list of objects for the corresponding key.
+     * @param key the lookup key
+     * @return the related list of objects, or an empty list if there are no corresponding objects
+     * @throws IOException if error occurred while looking up objects
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     List<T> get(LookUpKey key) throws IOException;
 
     /**
-     * {@link LookUpTable}を構築するためのビルダー。
-     * @param <T> 要素の種類
+     * A builder for building {@link LookUpTable}.
+     * @param <T> the element type
      */
     interface Builder<T> {
 
         /**
-         * 指定のキーに関連する要素を追加する。
-         * @param key 対象のキー
-         * @param value 関連する要素
-         * @throws IOException 値の追加に失敗した場合
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Puts a key and value pair.
+         * @param key the key
+         * @param value the value
+         * @throws IOException if error occurred while adding the key value pair
+         * @throws IllegalArgumentException if some parameters are {@code null}
          */
         void add(LookUpKey key, T value) throws IOException;
 
         /**
-         * ここまでに追加した情報を元に、テーブルを構築して返す。
-         * <p>
-         * このメソッドを起動した以後、このオブジェクトをそうさしてはならない。
-         * </p>
-         * @throws IOException テーブルの構築に失敗した場合
-         * @return 構築したテーブル
+         * Returns a {@link LookUpTable} from previously added key value pairs.
+         * @throws IOException if error occurred while building the table
+         * @return the created table
          */
         LookUpTable<T> build() throws IOException;
     }

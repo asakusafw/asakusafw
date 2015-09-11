@@ -20,7 +20,7 @@ import com.asakusafw.compiler.testing.TemporaryOutputDescription;
 
 
 /**
- * {@link ExSummarized2}のモックエクスポーター記述。
+ * Mock exporter description for {@link ExSummarized2}.
  */
 public class ExSummarized2MockExporterDescription extends TemporaryOutputDescription {
 

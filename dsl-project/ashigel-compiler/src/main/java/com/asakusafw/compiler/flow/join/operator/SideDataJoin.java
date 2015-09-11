@@ -23,10 +23,8 @@ import java.lang.annotation.Target;
 import com.asakusafw.vocabulary.operator.MasterJoin;
 
 /**
- * {@link MasterJoin}をサイドデータを利用して行う。
- * <p>
- * この演算子は演算子メソッドに直接指定しない。
- * </p>
+ * Process {@link MasterJoin} using side data.
+ * Application developers should not attach this to operator methods directly.
  * @see MasterJoin
  */
 @Target({ })
@@ -35,22 +33,22 @@ import com.asakusafw.vocabulary.operator.MasterJoin;
 public @interface SideDataJoin {
 
     /**
-     * トランザクションの入力ポート番号。
+     * The input port number of transaction input.
      */
     int ID_INPUT_TRANSACTION = 0;
 
     /**
-     * 結合が成功した場合の出力先のポート番号。
+     * As {@link MasterJoin#ID_OUTPUT_JOINED}.
      */
     int ID_OUTPUT_JOINED = 0;
 
     /**
-     * 結合が失敗した場合の出力先のポート番号。
+     * As {@link MasterJoin#ID_OUTPUT_MISSED}.
      */
     int ID_OUTPUT_MISSED = 1;
 
     /**
-     * マスタ表のリソース番号。
+     * The external resource number of master input.
      */
     int ID_RESOURCE_MASTER = 0;
 }

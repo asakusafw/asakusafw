@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * モデルに関するクラス群。
+ * Meta-classes for data model classes.
  */
 package com.asakusafw.runtime.model;

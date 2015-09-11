@@ -30,7 +30,7 @@ import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory;
 import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory.Extend;
 
 /**
- * Test flow for {@link ExtendFlowProcessor}。
+ * Test flow for {@link ExtendFlowProcessor}.
  */
 @JobFlow(name = "testing")
 public class ExtendFlowInvalid extends FlowDescription {

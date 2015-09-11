@@ -20,10 +20,9 @@ import java.text.MessageFormat;
 import com.asakusafw.vocabulary.flow.Out;
 import com.asakusafw.vocabulary.flow.Source;
 
-
 /**
- * フローからの出力。
- * @param <T> 取り扱うデータの種類
+ * Represents an output of flow graph.
+ * @param <T> the data type
  */
 public final class FlowOut<T> implements Out<T> {
 
@@ -32,9 +31,9 @@ public final class FlowOut<T> implements Out<T> {
     private final FlowElementResolver resolver;
 
     /**
-     * インスタンスを生成する。
-     * @param description この出力の定義記述
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param description the description
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public FlowOut(OutputDescription description) {
         if (description == null) {
@@ -45,27 +44,27 @@ public final class FlowOut<T> implements Out<T> {
     }
 
     /**
-     * インスタンスを生成する。
-     * @param <T> 取り扱うデータの種類
-     * @param description この出力の定義記述
-     * @return 生成したインスタンス
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param <T> the data type
+     * @param description the description
+     * @return the created instance
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static <T> FlowOut<T> newInstance(OutputDescription description) {
         return new FlowOut<T>(description);
     }
 
     /**
-     * この出力の定義記述を返す。
-     * @return この出力の定義記述
+     * Returns the description of this output.
+     * @return the description
      */
     public OutputDescription getDescription() {
         return description;
     }
 
     /**
-     * この出力に対応するフロー要素を返す。
-     * @return 対応するフロー要素
+     * Returns the corresponding {@link FlowElement} object.
+     * @return the corresponding {@link FlowElement} object
      */
     public FlowElement getFlowElement() {
         return resolver.getElement();

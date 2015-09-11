@@ -22,18 +22,14 @@ import org.apache.hadoop.io.Writable;
 
 import com.asakusafw.runtime.model.DataModel;
 import com.asakusafw.runtime.model.DataModelKind;
-import com.asakusafw.runtime.model.ModelInputLocation;
-import com.asakusafw.runtime.model.ModelOutputLocation;
 import com.asakusafw.runtime.model.PropertyOrder;
 import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.runtime.value.LongOption;
-import com.asakusafw.testdriver.testing.io.NamingInput;
-import com.asakusafw.testdriver.testing.io.NamingOutput;
 /**
- * namingを表すデータモデルクラス。
+ * A data model class that represents naming.
  */
-@DataModelKind("DMDL")@ModelInputLocation(NamingInput.class)@ModelOutputLocation(NamingOutput.class)@PropertyOrder({"a", 
-            "very_very_very_long_name"}) public class Naming implements DataModel<Naming>, Writable {
+@DataModelKind("DMDL")@PropertyOrder({"a", "very_very_very_long_name"}) public class Naming implements DataModel<Naming>
+        , Writable {
     private final IntOption a = new IntOption();
     private final LongOption veryVeryVeryLongName = new LongOption();
     @Override@SuppressWarnings("deprecation") public void reset() {
@@ -45,59 +41,59 @@ import com.asakusafw.testdriver.testing.io.NamingOutput;
         this.veryVeryVeryLongName.copyFrom(other.veryVeryVeryLongName);
     }
     /**
-     * aを返す。
+     * Returns a.
      * @return a
-     * @throws NullPointerException aの値が<code>null</code>である場合
+     * @throws NullPointerException if a is <code>null</code>
      */
     public int getA() {
         return this.a.get();
     }
     /**
-     * aを設定する。
-     * @param value 設定する値
+     * Sets a.
+     * @param value the value
      */
     @SuppressWarnings("deprecation") public void setA(int value) {
         this.a.modify(value);
     }
     /**
-     * <code>null</code>を許すaを返す。
+     * Returns a which may be represent <code>null</code>.
      * @return a
      */
     public IntOption getAOption() {
         return this.a;
     }
     /**
-     * aを設定する。
-     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     * Sets a.
+     * @param option the value, or <code>null</code> to set this property to <code>null</code>
      */
     @SuppressWarnings("deprecation") public void setAOption(IntOption option) {
         this.a.copyFrom(option);
     }
     /**
-     * very_very_very_long_nameを返す。
+     * Returns very_very_very_long_name.
      * @return very_very_very_long_name
-     * @throws NullPointerException very_very_very_long_nameの値が<code>null</code>である場合
+     * @throws NullPointerException if very_very_very_long_name is <code>null</code>
      */
     public long getVeryVeryVeryLongName() {
         return this.veryVeryVeryLongName.get();
     }
     /**
-     * very_very_very_long_nameを設定する。
-     * @param value 設定する値
+     * Sets very_very_very_long_name.
+     * @param value the value
      */
     @SuppressWarnings("deprecation") public void setVeryVeryVeryLongName(long value) {
         this.veryVeryVeryLongName.modify(value);
     }
     /**
-     * <code>null</code>を許すvery_very_very_long_nameを返す。
+     * Returns very_very_very_long_name which may be represent <code>null</code>.
      * @return very_very_very_long_name
      */
     public LongOption getVeryVeryVeryLongNameOption() {
         return this.veryVeryVeryLongName;
     }
     /**
-     * very_very_very_long_nameを設定する。
-     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     * Sets very_very_very_long_name.
+     * @param option the value, or <code>null</code> to set this property to <code>null</code>
      */
     @SuppressWarnings("deprecation") public void setVeryVeryVeryLongNameOption(LongOption option) {
         this.veryVeryVeryLongName.copyFrom(option);
@@ -127,14 +123,14 @@ import com.asakusafw.testdriver.testing.io.NamingOutput;
         if(obj == null) {
             return false;
         }
-        if(this.getClass()!= obj.getClass()) {
+        if(this.getClass() != obj.getClass()) {
             return false;
         }
         Naming other = (Naming) obj;
-        if(this.a.equals(other.a)== false) {
+        if(this.a.equals(other.a) == false) {
             return false;
         }
-        if(this.veryVeryVeryLongName.equals(other.veryVeryVeryLongName)== false) {
+        if(this.veryVeryVeryLongName.equals(other.veryVeryVeryLongName) == false) {
             return false;
         }
         return true;

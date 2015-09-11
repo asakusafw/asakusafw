@@ -27,18 +27,19 @@ import org.junit.Test;
 @SuppressWarnings("deprecation")
 public class StringOptionTest extends ValueOptionTestRoot {
 
+    static final String HELLO_JP = "\u3053\u3093\u306b\u3061\u306f\u3001\u4e16\u754c\uff01";
+
     /**
-     * 初期値。
+     * test for initial state.
      */
     @Test
     public void init() {
         StringOption option = new StringOption();
-        assertThat("初期値はnull",
-                option.isNull(), is(true));
+        assertThat(option.isNull(), is(true));
     }
 
     /**
-     * Textの設定。
+     * test for set w/ text.
      */
     @Test
     public void text() {
@@ -49,7 +50,7 @@ public class StringOptionTest extends ValueOptionTestRoot {
     }
 
     /**
-     * Textのor。
+     * test for or w/ text.
      */
     @Test
     public void textOr() {
@@ -62,7 +63,7 @@ public class StringOptionTest extends ValueOptionTestRoot {
     }
 
     /**
-     * Stringの設定。
+     * test for w/ get as string.
      */
     @Test
     public void string() {
@@ -73,7 +74,7 @@ public class StringOptionTest extends ValueOptionTestRoot {
     }
 
     /**
-     * Stringのor。
+     * test for or w/ string.
      */
     @Test
     public void stringOr() {
@@ -86,7 +87,7 @@ public class StringOptionTest extends ValueOptionTestRoot {
     }
 
     /**
-     * modifyにnullを設定。
+     * test for modify w/ null.
      */
     @Test
     public void modifyNull() {
@@ -103,7 +104,7 @@ public class StringOptionTest extends ValueOptionTestRoot {
     }
 
     /**
-     * copyFromでコピー。
+     * test for copyFrom.
      */
     @Test
     public void copy() {
@@ -119,7 +120,7 @@ public class StringOptionTest extends ValueOptionTestRoot {
     }
 
     /**
-     * copyFromでnullをコピー。
+     * test for copyFrom w/ null.
      */
     @Test
     public void copyNull() {
@@ -138,17 +139,17 @@ public class StringOptionTest extends ValueOptionTestRoot {
     }
 
     /**
-     * 日本語の利用。
+     * test for Japanese characters.
      */
     @Test
     public void japanese() {
         StringOption option = new StringOption();
-        option.modify(new Text("こんにちは世界"));
-        assertThat(option.getAsString(), is("こんにちは世界"));
+        option.modify(new Text(HELLO_JP));
+        assertThat(option.getAsString(), is(HELLO_JP));
     }
 
     /**
-     * 順序付けのテスト。
+     * test for compare.
      */
     @Test
     public void compare() {
@@ -157,10 +158,10 @@ public class StringOptionTest extends ValueOptionTestRoot {
         StringOption c = new StringOption();
         StringOption d = new StringOption();
 
-        a.modify("いあ");
-        b.modify("ああ");
-        c.modify("あい");
-        d.modify("いあ");
+        a.modify("ba");
+        b.modify("aa");
+        c.modify("ab");
+        d.modify("ba");
 
         assertThat(compare(a, b), greaterThan(0));
         assertThat(compare(b, c), lessThan(0));
@@ -173,7 +174,7 @@ public class StringOptionTest extends ValueOptionTestRoot {
     }
 
     /**
-     * nullに関する順序付けのテスト。
+     * test for compare w/ null.
      */
     @Test
     public void compareNull() {
@@ -181,7 +182,7 @@ public class StringOptionTest extends ValueOptionTestRoot {
         StringOption b = new StringOption();
         StringOption c = new StringOption();
 
-        a.modify("あ");
+        a.modify("a");
 
         assertThat(compare(a, b), greaterThan(0));
         assertThat(compare(b, a), lessThan(0));
@@ -189,7 +190,7 @@ public class StringOptionTest extends ValueOptionTestRoot {
     }
 
     /**
-     * 最大値のテスト。
+     * test for max.
      */
     @Test
     public void max() {
@@ -197,22 +198,22 @@ public class StringOptionTest extends ValueOptionTestRoot {
         StringOption b = new StringOption();
         StringOption c = new StringOption();
 
-        a.modify("ああ");
-        b.modify("いあ");
-        c.modify("あい");
+        a.modify("aa");
+        b.modify("ba");
+        c.modify("ab");
 
         a.max(b);
-        assertThat(a.getAsString(), is("いあ"));
-        assertThat(b.getAsString(), is("いあ"));
+        assertThat(a.getAsString(), is("ba"));
+        assertThat(b.getAsString(), is("ba"));
 
         a.max(c);
-        assertThat(a.getAsString(), is("いあ"));
-        assertThat(b.getAsString(), is("いあ"));
-        assertThat(c.getAsString(), is("あい"));
+        assertThat(a.getAsString(), is("ba"));
+        assertThat(b.getAsString(), is("ba"));
+        assertThat(c.getAsString(), is("ab"));
     }
 
     /**
-     * 最小値のテスト。
+     * test for min.
      */
     @Test
     public void min() {
@@ -220,22 +221,22 @@ public class StringOptionTest extends ValueOptionTestRoot {
         StringOption b = new StringOption();
         StringOption c = new StringOption();
 
-        a.modify("うえ");
-        b.modify("いえ");
-        c.modify("おか");
+        a.modify("cd");
+        b.modify("bd");
+        c.modify("ef");
 
         a.min(b);
-        assertThat(a.getAsString(), is("いえ"));
-        assertThat(b.getAsString(), is("いえ"));
+        assertThat(a.getAsString(), is("bd"));
+        assertThat(b.getAsString(), is("bd"));
 
         a.min(c);
-        assertThat(a.getAsString(), is("いえ"));
-        assertThat(b.getAsString(), is("いえ"));
-        assertThat(c.getAsString(), is("おか"));
+        assertThat(a.getAsString(), is("bd"));
+        assertThat(b.getAsString(), is("bd"));
+        assertThat(c.getAsString(), is("ef"));
     }
 
     /**
-     * Writable対応のテスト。
+     * test for Writable.
      */
     @Test
     public void writable() {
@@ -246,7 +247,7 @@ public class StringOptionTest extends ValueOptionTestRoot {
     }
 
     /**
-     * Writable対応のテスト。
+     * test for Writable w/ long text.
      */
     @Test
     public void writable_long() {
@@ -262,7 +263,7 @@ public class StringOptionTest extends ValueOptionTestRoot {
     }
 
     /**
-     * Writable対応のテスト。
+     * test for Writable w/ empty string.
      */
     @Test
     public void writable_empty() {
@@ -273,7 +274,7 @@ public class StringOptionTest extends ValueOptionTestRoot {
     }
 
     /**
-     * null-Writable対応のテスト。
+     * test for Writable w/ null.
      */
     @Test
     public void writableOption() {

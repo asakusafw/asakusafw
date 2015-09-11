@@ -26,7 +26,7 @@ import com.asakusafw.utils.java.model.syntax.PackageDeclaration;
 import com.asakusafw.utils.java.model.syntax.SimpleName;
 
 /**
- * ソースコードを出力するためのファイルを作成する。
+ * An implementation of {@link Emitter} which generates files into the local file system.
  */
 public class Filer extends Emitter {
 
@@ -35,10 +35,10 @@ public class Filer extends Emitter {
     private final Charset encoding;
 
     /**
-     * インスタンスを生成する。
-     * @param outputPath 出力先のパス
-     * @param encoding エンコーディング
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Creates a new instance.
+     * @param outputPath the base output directory
+     * @param encoding the character set encoding of generating source files
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public Filer(File outputPath, Charset encoding) {
         if (outputPath == null) {
@@ -52,13 +52,10 @@ public class Filer extends Emitter {
     }
 
     /**
-     * 指定のパッケージ宣言に関連するフォルダへのパスを返す。
-     * <p>
-     * 返されたパスにフォルダが実際に存在するとは限らない。
-     * </p>
-     * @param packageDeclOrNull パッケージ宣言、無名パッケージの場合は{@code null}
-     * @return 対象のフォルダへのパス
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the folder for the target package.
+     * The returning folder may not exist.
+     * @param packageDeclOrNull the target package, or {@code null} for the default (unnamed) package
+     * @return the corresponded folder path
      */
     public File getFolderFor(PackageDeclaration packageDeclOrNull) {
         if (packageDeclOrNull == null) {
@@ -68,13 +65,10 @@ public class Filer extends Emitter {
     }
 
     /**
-     * 指定のパッケージ名に関連するフォルダへのパスを返す。
-     * <p>
-     * 返されたパスにフォルダが実際に存在するとは限らない。
-     * </p>
-     * @param packageNameOrNull パッケージ名、無名パッケージの場合は{@code null}
-     * @return 対象のフォルダへのパス
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the folder for the target package.
+     * The returning folder may not exist.
+     * @param packageNameOrNull the target package, or {@code null} for the default (unnamed) package
+     * @return the corresponded folder path
      */
     public File getFolderFor(Name packageNameOrNull) {
         if (packageNameOrNull == null) {
@@ -87,14 +81,6 @@ public class Filer extends Emitter {
         return path;
     }
 
-    /**
-     * 指定のパッケージに指定のサブパスのファイルを作成するためのライターを返す。
-     * @param packageDeclOrNull 対象のパッケージ宣言、無名パッケージの場合は{@code null}
-     * @param subPath パッケージ下のサブパス
-     * @return 開いたライター
-     * @throws IOException ファイルの作成に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
-     */
     @Override
     public PrintWriter openFor(
             PackageDeclaration packageDeclOrNull,

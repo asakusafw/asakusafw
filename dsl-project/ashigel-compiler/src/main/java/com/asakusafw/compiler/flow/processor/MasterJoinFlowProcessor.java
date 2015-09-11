@@ -33,7 +33,7 @@ import com.asakusafw.vocabulary.model.Joined;
 import com.asakusafw.vocabulary.operator.MasterJoin;
 
 /**
- * {@link MasterJoin マスタ結合演算子}を処理する。
+ * Processes {@link MasterJoin} operators.
  */
 @TargetOperator(MasterJoin.class)
 public class MasterJoinFlowProcessor extends RendezvousProcessor {

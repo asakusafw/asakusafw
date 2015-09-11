@@ -39,7 +39,7 @@ import com.asakusafw.runtime.stage.output.TemporaryOutputFormat;
 public class SlotResolverTest extends JobflowCompilerTestRoot {
 
     /**
-     * 単一のスロットの解決。
+     * single slot.
      */
     @Test
     public void single() {
@@ -64,7 +64,7 @@ public class SlotResolverTest extends JobflowCompilerTestRoot {
     }
 
     /**
-     * 複数スロットの解決。
+     * multiple slots.
      */
     @Test
     public void multiple() {
@@ -102,7 +102,7 @@ public class SlotResolverTest extends JobflowCompilerTestRoot {
     }
 
     /**
-     * 解決できない型。
+     * invalid class.
      */
     @Test
     public void invalid_class() {
@@ -118,7 +118,7 @@ public class SlotResolverTest extends JobflowCompilerTestRoot {
     }
 
     /**
-     * 解決できないプロパティ。
+     * invalid property.
      */
     @Test
     public void invalid_property() {

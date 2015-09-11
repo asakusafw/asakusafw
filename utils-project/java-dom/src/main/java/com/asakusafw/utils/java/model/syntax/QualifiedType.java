@@ -17,8 +17,7 @@ package com.asakusafw.utils.java.model.syntax;
 
 
 /**
- * 限定型を表現するインターフェース。
- * <p> 限定名のみで表現できる型は名前型で表現することができる。 </p>
+ * An interface which represents qualified types.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:4.3] Reference Types and Values} </li>
@@ -29,19 +28,15 @@ package com.asakusafw.utils.java.model.syntax;
 public interface QualifiedType
         extends Type {
 
-    // properties
-
     /**
-     * 型限定子を返す。
-     * @return
-     *     型限定子
+     * Returns the type qualifier.
+     * @return the type qualifier
      */
     Type getQualifier();
 
     /**
-     * 型の単純名を返す。
-     * @return
-     *     型の単純名
+     * Returns the simple type name.
+     * @return the simple type name
      */
     SimpleName getSimpleName();
 }

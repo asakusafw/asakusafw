@@ -17,7 +17,7 @@ package com.asakusafw.utils.java.model.syntax;
 
 
 /**
- * {@code continue}文を表現するインターフェース。
+ * An interface which represents continue statement.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:14.16] The continue Statement} </li>

@@ -21,14 +21,14 @@ import java.util.regex.Pattern;
 import com.asakusafw.compiler.common.Precondition;
 
 /**
- * リソースの位置を表す。
+ * Represents a resource location.
  * @since 0.1.0
  * @version 0.4.0
  */
 public class Location {
 
     /**
-     * パス接頭辞を表現する場合の接尾辞を表す。
+     * The suffix name for prefix locations.
      */
     public static final String WILDCARD_SUFFIX = "-*"; //$NON-NLS-1$
 
@@ -39,10 +39,10 @@ public class Location {
     private boolean prefix;
 
     /**
-     * インスタンスを生成する。
-     * @param parent 親リソースの位置、ルートの場合は{@code null}
-     * @param name リソースの名前
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param parent the parent location, or {@code null} for the root location
+     * @param name the resource name
+     * @throws IllegalArgumentException if the {@code name} is {@code null}
      */
     public Location(Location parent, String name) {
         Precondition.checkMustNotBeNull(name, "name"); //$NON-NLS-1$
@@ -55,8 +55,8 @@ public class Location {
     }
 
     /**
-     * この位置の末尾にワイルドカードを付与した位置を返す。
-     * @return この位置の末尾にワイルドカードを付与した位置
+     * Returns a new location which this location is used as its prefix.
+     * @return the prefixed location of this
      */
     public Location asPrefix() {
         Location copy = new Location(parent, name);
@@ -65,36 +65,34 @@ public class Location {
     }
 
     /**
-     * この位置がパスの接頭辞を表している場合のみ{@code true}を返す。
-     * @return パスの接頭辞を表している場合のみ{@code true}
+     * Returns whether this represents a prefix location or not.
+     * @return {@code true} if this represents a prefix location, otherwise {@code false}
      */
     public boolean isPrefix() {
         return prefix;
     }
 
     /**
-     * 親リソースの位置を返す。
-     * @return 親リソースの位置、ルートの場合は{@code null}
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns the parent location.
+     * @return the parent location, or {@code null} if there is no parent location
      */
     public Location getParent() {
         return parent;
     }
 
     /**
-     * リソースの名前を返す。
-     * @return リソースの名前
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns the name of this location.
+     * @return the resource name
      */
     public String getName() {
         return name;
     }
 
     /**
-     * この位置の末尾に指定の名前を付与した位置を返す。
-     * @param lastName 末尾の名前
-     * @return 新しい位置
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns a new location which has this as parent and the specified name as its resource name.
+     * @param lastName the resource name
+     * @return the created location
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public Location append(String lastName) {
         Precondition.checkMustNotBeNull(lastName, "lastName"); //$NON-NLS-1$
@@ -102,10 +100,10 @@ public class Location {
     }
 
     /**
-     * この位置の末尾に指定の相対パスを付与した位置を返す。
-     * @param suffix 相対パス
-     * @return 新しい位置
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns a new location which is concatenated this and the specified location.
+     * @param suffix the suffix location
+     * @return the created location
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public Location append(Location suffix) {
         Precondition.checkMustNotBeNull(suffix, "suffix"); //$NON-NLS-1$
@@ -126,17 +124,11 @@ public class Location {
     }
 
     /**
-     * パス文字列を元にリソースの位置を構築して返す。
-     * <p>
-     * 区切り文字が先頭に来たり、区切り文字が連続しているなどして
-     * リソースの名前が0文字になるような場合、それらのリソースの名前は無視される。
-     * 結果として、全てのリソースの名前が0文字になる場合には、このメソッドは失敗する。
-     * </p>
-     * @param pathString パス文字列
-     * @param separator 区切り文字
-     * @return 生成した位置
-     * @throws IllegalArgumentException 位置が不正である場合、
-     *     または引数に{@code null}が指定された場合
+     * Parses a path string and returns it as {@link Location}.
+     * @param pathString the path string
+     * @param separator the separator character
+     * @return the parsed location
+     * @throws IllegalArgumentException if the path string is something wrong
      */
     public static Location fromPath(String pathString, char separator) {
         Precondition.checkMustNotBeNull(pathString, "pathString"); //$NON-NLS-1$
@@ -160,13 +152,10 @@ public class Location {
     }
 
     /**
-     * このリソースの位置を、指定の区切り文字を挿入したパス文字列に変換して返す。
-     * <p>
-     * 先頭には区切り文字が挿入されない。
-     * </p>
-     * @param separator 区切り文字
-     * @return パス文字列
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns this as path string.
+     * The separator character will not be inserted into the head of the path string.
+     * @param separator the separator character
+     * @return the path string
      */
     public String toPath(char separator) {
         LinkedList<String> segments = new LinkedList<String>();

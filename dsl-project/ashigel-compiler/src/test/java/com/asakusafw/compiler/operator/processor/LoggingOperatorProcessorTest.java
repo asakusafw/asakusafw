@@ -31,7 +31,7 @@ import com.asakusafw.vocabulary.flow.testing.MockOut;
 public class LoggingOperatorProcessorTest extends OperatorCompilerTestRoot {
 
     /**
-     * 単純な例。
+     * simple case.
      */
     @Test
     public void simple() {
@@ -50,7 +50,7 @@ public class LoggingOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * パラメータ化。
+     * parameterized.
      */
     @Test
     public void parameterized() {
@@ -88,7 +88,7 @@ public class LoggingOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * 抽象メソッド。
+     * w/ abstract modifier.
      */
     @Test
     public void Abstract() {
@@ -97,7 +97,7 @@ public class LoggingOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * モデルでない。
+     * not a data model parameter.
      */
     @Test
     public void NotModel() {
@@ -106,7 +106,7 @@ public class LoggingOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * 文字列以外を返す。
+     * not returns string.
      */
     @Test
     public void NotString() {
@@ -115,7 +115,7 @@ public class LoggingOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * ユーザー定義パラメーターでない。
+     * not a valid user parameters.
      */
     @Test
     public void NotUserParameter() {

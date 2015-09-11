@@ -33,7 +33,7 @@ import org.junit.Test;
 public class TypeUtilTest {
 
     /**
-     * Objectの起動
+     * invoke {@link Object}.
      */
     @Test
     public void object() {
@@ -42,7 +42,7 @@ public class TypeUtilTest {
     }
 
     /**
-     * クラスの起動。
+     * invoke classes.
      */
     @Test
     public void invokeClass() {
@@ -52,7 +52,7 @@ public class TypeUtilTest {
     }
 
     /**
-     * 深いクラスの起動。
+     * invoke deep inherited classes.
      */
     @Test
     public void invokeDeepClass() {
@@ -62,7 +62,7 @@ public class TypeUtilTest {
     }
 
     /**
-     * インターフェースの起動。
+     * invoke interfaces.
      */
     @Test
     public void invokeInterface() {
@@ -72,7 +72,7 @@ public class TypeUtilTest {
     }
 
     /**
-     * 深いインターフェースの起動。
+     * invoke deep inherited interfaces.
      */
     @Test
     public void invokeDeepInterface() {
@@ -82,7 +82,7 @@ public class TypeUtilTest {
     }
 
     /**
-     * インターフェースからインターフェースの起動。
+     * invoke interfaces from other interfaces.
      */
     @Test
     public void invokeInterfaceFromInterface() {
@@ -92,7 +92,7 @@ public class TypeUtilTest {
     }
 
     /**
-     * インターフェースから深いインターフェースの起動。
+     * invoke deep inherited interfaces from other interfaces.
      */
     @Test
     public void invokeDeepInterfaceFromInterface() {
@@ -102,7 +102,7 @@ public class TypeUtilTest {
     }
 
     /**
-     * 関係のない型の起動。
+     * invoke unrelated types.
      */
     @Test
     public void invokeOrthogonal() {

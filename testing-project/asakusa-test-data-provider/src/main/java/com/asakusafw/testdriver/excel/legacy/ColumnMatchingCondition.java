@@ -18,42 +18,40 @@
  */
 package com.asakusafw.testdriver.excel.legacy;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * カラム毎に指定するテスト条件を表す列挙型。
+ * Represents a kind of column verification rule.
  */
 public enum ColumnMatchingCondition {
 
     /**
-     * 検査対象外。
+     * Accepts anything.
      */
     NONE("検査対象外"),
 
     /**
-     * 完全一致。
+     * Accepts equivalent values.
      */
     EXACT("完全一致"),
 
     /**
-     * 部分一致。
+     * Accepts if expected data appears in the actual data.
      */
     PARTIAL("部分一致"),
 
     /**
-     * 現在時刻。
+     * Accepts if actual date/time is between the test started time and its finished time.
      */
     NOW("現在時刻"),
 
     /**
-     * 現在日。
+     * Accepts if actual date/time is between the test started date and its finished date.
      */
     TODAY("現在日");
 
-    /**
-     * 日本語名。
-     */
     private String japaneseName;
 
     private ColumnMatchingCondition(String japaneseName) {
@@ -61,40 +59,39 @@ public enum ColumnMatchingCondition {
     }
 
     /**
-     * 日本語名を取得します。
-     * @return 日本語名
+     * Returns the Japanese name of this item.
+     * @return the Japanese name
      */
     public String getJapaneseName() {
         return japaneseName;
     }
 
-    /**
-     * 日本語名と条件のマップ。
-     */
     private static Map<String, ColumnMatchingCondition> japaneseNameMap
         = new HashMap<String, ColumnMatchingCondition>();
     static {
         for (ColumnMatchingCondition conditon : ColumnMatchingCondition.values()) {
             String key = conditon.getJapaneseName();
             if (japaneseNameMap.containsKey(key)) {
-                throw new RuntimeException("日本語名に重複があります");
+                throw new RuntimeException(MessageFormat.format(
+                        "duplicate Japanese name: {0}", //$NON-NLS-1$
+                        key));
             }
             japaneseNameMap.put(key, conditon);
         }
     }
 
     /**
-     * 日本語名から条件を返す。
-     * @param key 日本語名
-     * @return 条件
+     * Returns an item about the {@link #getJapaneseName() Japanese name}.
+     * @param key the Japanese name
+     * @return the related item, or {@code null} if there is no such the item
      */
     public static ColumnMatchingCondition getConditonByJapanseName(String key) {
         return japaneseNameMap.get(key);
     }
 
     /**
-     * 日本語名の配列を返す。
-     * @return 日本語名の配列
+     * Returns the available Japanese names.
+     * @return the available Japanese names
      */
     public static String[] getJapaneseNames() {
         ColumnMatchingCondition[] values = ColumnMatchingCondition.values();

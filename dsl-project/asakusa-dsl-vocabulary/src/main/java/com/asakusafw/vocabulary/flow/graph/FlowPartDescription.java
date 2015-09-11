@@ -26,9 +26,8 @@ import java.util.Map;
 import com.asakusafw.vocabulary.flow.FlowDescription;
 import com.asakusafw.vocabulary.flow.Source;
 
-
 /**
- * フロー部品の定義記述。
+ * A description of flow-part.
  * @since 0.1.0
  * @version 0.5.0
  */
@@ -53,9 +52,9 @@ public class FlowPartDescription implements FlowElementDescription {
     private String name;
 
     /**
-     * インスタンスを生成する。
-     * @param flowGraph このフロー要素を構成するグラフ構造
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param flowGraph the flow-graph which represents this flow-part structure
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public FlowPartDescription(FlowGraph flowGraph) {
         this(flowGraph, Collections.<Parameter>emptyList());
@@ -97,8 +96,8 @@ public class FlowPartDescription implements FlowElementDescription {
     }
 
     /**
-     * このフロー要素を構成するグラフ構造を返す。
-     * @return このフロー要素を構成するグラフ構造
+     * Returns the flow-graph which represents this flow-part structure.
+     * @return the flow-graph
      */
     public FlowGraph getFlowGraph() {
         return flowGraph;
@@ -150,10 +149,12 @@ public class FlowPartDescription implements FlowElementDescription {
     }
 
     /**
-     * この要素への入力ポートに対する、フロー部品内部の入力ポートを返す。
-     * @param externalInput この要素への入力ポート
-     * @return 対応するフロー部品内部の入力ポート
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns the flow-inside input ports that individually corresponded to each flow-outside input port.
+     * Note that each flow-inside port is a member of {@link #getFlowGraph() flow graph}, on the other hand,
+     * each flow-outside port is a member of {@link #getInputPorts() input ports} of this element.
+     * @param externalInput flow-outside port
+     * @return the corresponded flow-inside port
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public FlowIn<?> getInternalInputPort(FlowElementPortDescription externalInput) {
         if (externalInput == null) {
@@ -168,10 +169,12 @@ public class FlowPartDescription implements FlowElementDescription {
     }
 
     /**
-     * この要素からの出力ポートに対する、フロー部品内部の出力ポートを返す。
-     * @param externalOutput この要素からの出力ポート
-     * @return 対応するフロー部品内部の出力ポート
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns the flow-inside outputs ports that individually corresponded to each flow-outside output port.
+     * Note that each flow-inside port is a member of {@link #getFlowGraph() flow graph}, on the other hand,
+     * each flow-outside port is a member of {@link #getOutputPorts() output ports} of this element.
+     * @param externalOutput flow-outside port
+     * @return the corresponded flow-inside port
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public FlowOut<?> getInternalOutputPort(FlowElementPortDescription externalOutput) {
         if (externalOutput == null) {
@@ -270,7 +273,7 @@ public class FlowPartDescription implements FlowElementDescription {
     }
 
     /**
-     * この要素を構築するビルダー。
+     * A builder for building {@link FlowPartDescription}.
      * @since 0.1.0
      * @version 0.5.0
      */
@@ -285,9 +288,9 @@ public class FlowPartDescription implements FlowElementDescription {
         private final List<Parameter> parameters;
 
         /**
-         * インスタンスを生成する。
-         * @param declaring フロー部品を宣言するクラス
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Creates a new instance.
+         * @param declaring the class declaring the target flow-part
+         * @throws IllegalArgumentException if the parameter is {@code null}
          */
         public Builder(Class<? extends FlowDescription> declaring) {
             if (declaring == null) {
@@ -300,12 +303,12 @@ public class FlowPartDescription implements FlowElementDescription {
         }
 
         /**
-         * フローへの入力ポートを新しく定義する。
-         * @param <T> 取り扱うデータの種類
-         * @param name ポートの名前
-         * @param type 取り扱うデータの種類
-         * @return 定義したポート
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Add a new input port into the target flow-part.
+         * @param <T> the data type
+         * @param name the port name
+         * @param type the data type
+         * @return the {@link FlowIn} object that represents the defined port
+         * @throws IllegalArgumentException if some parameters are {@code null}
          */
         public <T> FlowIn<T> addInput(String name, Type type) {
             if (name == null) {
@@ -320,12 +323,12 @@ public class FlowPartDescription implements FlowElementDescription {
         }
 
         /**
-         * フローからの出力ポートを新しく定義する。
-         * @param <T> 取り扱うデータの種類
-         * @param name ポートの名前
-         * @param type 取り扱うデータの種類
-         * @return 定義したポート
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Add a new output port into the target flow-part.
+         * @param <T> the data type
+         * @param name the port name
+         * @param type the data type
+         * @return the {@link FlowOut} object that represents the defined port
+         * @throws IllegalArgumentException if some parameters are {@code null}
          */
         public <T> FlowOut<T> addOutput(String name, Type type) {
             if (name == null) {
@@ -341,12 +344,12 @@ public class FlowPartDescription implements FlowElementDescription {
 
 
         /**
-         * フローへの入力ポートを新しく定義する。
-         * @param <T> 取り扱うデータの種類
-         * @param name ポートの名前
-         * @param typeReference 追加するポートと同様の型を持つソース
-         * @return 定義したポート
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Add a new input port into the target flow-part.
+         * @param <T> the data type
+         * @param name the port name
+         * @param typeReference a source that has the data type as same to the creating port
+         * @return the {@link FlowIn} object that represents the defined port
+         * @throws IllegalArgumentException if some parameters are {@code null}
          */
         public <T> FlowIn<T> addInput(String name, Source<T> typeReference) {
             if (name == null) {
@@ -355,20 +358,17 @@ public class FlowPartDescription implements FlowElementDescription {
             if (typeReference == null) {
                 throw new IllegalArgumentException("type must not be null"); //$NON-NLS-1$
             }
-            FlowIn<T> in = new FlowIn<T>(new InputDescription(
-                    name,
-                    typeReference.toOutputPort().getDescription().getDataType()));
-            flowInputs.add(in);
-            return in;
+            Type type = typeReference.toOutputPort().getDescription().getDataType();
+            return addInput(name, type);
         }
 
         /**
-         * フローからの出力ポートを新しく定義する。
-         * @param <T> 取り扱うデータの種類
-         * @param name ポートの名前
-         * @param typeReference 追加するポートと同様の型を持つソース
-         * @return 定義したポート
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Add a new output port into the target flow-part.
+         * @param <T> the data type
+         * @param name the port name
+         * @param typeReference a source that has the data type as same to the creating port
+         * @return the {@link FlowOut} object that represents the defined port
+         * @throws IllegalArgumentException if some parameters are {@code null}
          */
         public <T> FlowOut<T> addOutput(String name, Source<T> typeReference) {
             if (name == null) {
@@ -377,11 +377,8 @@ public class FlowPartDescription implements FlowElementDescription {
             if (typeReference == null) {
                 throw new IllegalArgumentException("typeReference must not be null"); //$NON-NLS-1$
             }
-            FlowOut<T> out = new FlowOut<T>(new OutputDescription(
-                    name,
-                    typeReference.toOutputPort().getDescription().getDataType()));
-            flowOutputs.add(out);
-            return out;
+            Type type = typeReference.toOutputPort().getDescription().getDataType();
+            return addOutput(name, type);
         }
 
         /**
@@ -406,8 +403,8 @@ public class FlowPartDescription implements FlowElementDescription {
         }
 
         /**
-         * ここまでの情報を元に、定義記述情報を構築して返す。
-         * @return 構築した定義記述情報
+         * Creates a new description object from the previously information.
+         * @return the created description
          */
         public FlowPartDescription toDescription() {
             FlowGraph graph = new FlowGraph(declaring, flowInputs, flowOutputs);
@@ -415,9 +412,9 @@ public class FlowPartDescription implements FlowElementDescription {
         }
 
         /**
-         * ここまでの内容を元に、演算子の解決オブジェクトを生成して返す。
-         * @param desc フローの記述
-         * @return 生成したオブジェクト
+         * Creates a new {@link FlowElementResolver} object from the previously information.
+         * @param desc the original flow description object
+         * @return the created object
          */
         public FlowElementResolver toResolver(FlowDescription desc) {
             if (desc == null) {

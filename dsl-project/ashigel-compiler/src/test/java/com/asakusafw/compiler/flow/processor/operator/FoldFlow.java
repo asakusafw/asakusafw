@@ -20,16 +20,15 @@ import com.asakusafw.compiler.flow.testing.model.Ex1;
 import com.asakusafw.vocabulary.model.Key;
 import com.asakusafw.vocabulary.operator.Fold;
 
-
 /**
- * {@link FoldFlowProcessor}に対するテスト演算子。
+ * An operator class for testing {@link FoldFlowProcessor}.
  */
 public abstract class FoldFlow {
 
     /**
-     * 通常の演算子。
-     * @param context 畳み込み先
-     * @param right 畳み込む値
+     * simple.
+     * @param context fold sink
+     * @param right fold source
      */
     @Fold
     public void simple(@Key(group = "string") Ex1 context, Ex1 right) {
@@ -37,10 +36,10 @@ public abstract class FoldFlow {
     }
 
     /**
-     * 引数つきの演算子。
-     * @param context 畳み込み先
-     * @param right 畳み込む値
-     * @param parameter 追加パラメータ
+     * parameterized.
+     * @param context fold sink
+     * @param right fold source
+     * @param parameter additional parameter
      */
     @Fold
     public void withParameter(@Key(group = "string") Ex1 context, Ex1 right, int parameter) {

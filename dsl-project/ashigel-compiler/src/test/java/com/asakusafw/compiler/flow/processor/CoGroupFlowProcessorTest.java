@@ -47,7 +47,7 @@ import com.asakusafw.utils.java.model.syntax.Name;
 public class CoGroupFlowProcessorTest extends JobflowCompilerTestRoot {
 
     /**
-     * 単一グループでのテスト。
+     * test for 1-group.
      */
     @Test
     public void op1() {
@@ -91,7 +91,7 @@ public class CoGroupFlowProcessorTest extends JobflowCompilerTestRoot {
     }
 
     /**
-     * 2グループでのテスト。
+     * test for 2-groups.
      */
     @Test
     public void op2() {
@@ -146,7 +146,7 @@ public class CoGroupFlowProcessorTest extends JobflowCompilerTestRoot {
     }
 
     /**
-     * 3グループでのテスト。
+     * test for 3-groups.
      */
     @Test
     public void op3() {
@@ -208,7 +208,7 @@ public class CoGroupFlowProcessorTest extends JobflowCompilerTestRoot {
     }
 
     /**
-     * パラメーター付きのテスト。
+     * parameterized.
      */
     @Test
     public void withParameter() {
@@ -252,7 +252,7 @@ public class CoGroupFlowProcessorTest extends JobflowCompilerTestRoot {
     }
 
     /**
-     * スワップ付きバッファでのテスト。
+     * test for inputbuffer=escape.
      */
     @Test
     public void swap() {

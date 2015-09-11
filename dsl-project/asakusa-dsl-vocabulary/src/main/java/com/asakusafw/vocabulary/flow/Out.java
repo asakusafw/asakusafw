@@ -19,6 +19,7 @@ import com.asakusafw.vocabulary.flow.graph.FlowElementInput;
 
 /**
  * フローからの出力を表すインターフェース。
+ * TODO i18n
  * @param <T> 出力するデータの種類
  * @since 0.1.0
  * @version 0.7.3
@@ -32,11 +33,9 @@ public interface Out<T> {
     void add(Source<T> source);
 
     /**
-     * この要素のポートとしての表現を返す。
-     * <p>
-     * DSL利用者はこのクラスのメソッドを直接利用すべきでない。
-     * </p>
-     * @return この要素のポートとしての表現
+     * Returns the internal port representation of this flow output.
+     * Application developers should not use this method directly.
+     * @return the internal port representation
      */
     FlowElementInput toInputPort();
 }

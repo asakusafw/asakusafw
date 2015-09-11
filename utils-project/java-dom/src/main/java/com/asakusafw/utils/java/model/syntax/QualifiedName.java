@@ -15,9 +15,8 @@
  */
 package com.asakusafw.utils.java.model.syntax;
 
-
 /**
- * 限定名を表現するインターフェース。
+ * An interface which represents qualified names.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:6.2] Names and Identifiers} </li>
@@ -27,19 +26,15 @@ package com.asakusafw.utils.java.model.syntax;
 public interface QualifiedName
         extends Name {
 
-    // properties
-
     /**
-     * 限定子を返す。
-     * @return
-     *     限定子
+     * Returns the name qualifier.
+     * @return the name qualifier
      */
     Name getQualifier();
 
     /**
-     * この限定名の末尾にある単純名を返す。
-     * @return
-     *     この限定名の末尾にある単純名
+     * Returns the simple name on the tail.
+     * @return the simple name on the tail
      */
     SimpleName getSimpleName();
 }

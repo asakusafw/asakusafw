@@ -26,9 +26,8 @@ import com.asakusafw.compiler.flow.ShuffleDescription;
 import com.asakusafw.compiler.flow.plan.StageBlock;
 import com.asakusafw.vocabulary.flow.graph.FlowElementInput;
 
-
 /**
- * シャッフルフェーズの構造を表すモデル。
+ * Represents detail of shuffle actions.
  */
 public class ShuffleModel extends Compilable.Trait<CompiledShuffle> {
 
@@ -37,10 +36,10 @@ public class ShuffleModel extends Compilable.Trait<CompiledShuffle> {
     private final List<Segment> segments;
 
     /**
-     * インスタンスを生成する。
-     * @param stageBlock 対象のステージ
-     * @param segments ステージに含まれるセグメント一覧
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param stageBlock the target stage block
+     * @param segments the shuffle segments
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public ShuffleModel(StageBlock stageBlock, List<Segment> segments) {
         Precondition.checkMustNotBeNull(stageBlock, "stageBlock"); //$NON-NLS-1$
@@ -50,27 +49,26 @@ public class ShuffleModel extends Compilable.Trait<CompiledShuffle> {
     }
 
     /**
-     * このシャッフルフェーズの元となるステージブロックを返す。
-     * @return シャッフルフェーズの元となるステージブロック
+     * Returns the target stage block.
+     * @return the target stage block
      */
     public StageBlock getStageBlock() {
         return stageBlock;
     }
 
     /**
-     * このシャッフルフェーズに含まれるセグメントの一覧を返す。
-     * @return シャッフルフェーズに含まれるセグメントの一覧
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns the segments in the target shuffle operation.
+     * @return the shuffle segments
      */
     public List<Segment> getSegments() {
         return segments;
     }
 
     /**
-     * 指定の入力に関するセグメントを返す。
-     * @param input 対象の入力
-     * @return 対応するセグメント、存在しない場合は{@code null}
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns a shuffle segment.
+     * @param input the target input port
+     * @return the shuffle segment that corresponds to the input port, or {@code null} if there is no such a segment
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public Segment findSegment(FlowElementInput input) {
         Precondition.checkMustNotBeNull(input, "input"); //$NON-NLS-1$
@@ -90,7 +88,7 @@ public class ShuffleModel extends Compilable.Trait<CompiledShuffle> {
     }
 
     /**
-     * シャッフルの入力ごとの情報。
+     * Represents a shuffle action for each shuffle input.
      */
     public static class Segment extends Compilable.Trait<CompiledShuffleFragment> {
 
@@ -109,23 +107,21 @@ public class ShuffleModel extends Compilable.Trait<CompiledShuffle> {
         private final List<Term> terms;
 
         /**
-         * インスタンスを生成する。
-         * @param elementId 要素のシャッフル全体の通し番号
-         * @param portId ポートのシャッフル全体の通し番号
-         * @param description ポートごとのシャッフル記述
-         * @param port 実際のポート
-         * @param source シャッフル開始時の型
-         * @param target シャッフル終了時の型
-         * @param terms シャッフル時のキープロパティの一覧
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Creates a new instance.
+         * @param elementId the target element ID of this segment
+         * @param portId the target port ID of this segment
+         * @param description description of this segment
+         * @param port the target input port
+         * @param source the input type
+         * @param target the output type
+         * @param terms the terms of this segment
+         * @throws IllegalArgumentException if the parameters are {@code null}
          */
         public Segment(
-                int elementId,
-                int portId,
+                int elementId, int portId,
                 ShuffleDescription description,
                 FlowElementInput port,
-                DataClass source,
-                DataClass target,
+                DataClass source, DataClass target,
                 List<Term> terms) {
             Precondition.checkMustNotBeNull(description, "description"); //$NON-NLS-1$
             Precondition.checkMustNotBeNull(port, "port"); //$NON-NLS-1$
@@ -142,66 +138,66 @@ public class ShuffleModel extends Compilable.Trait<CompiledShuffle> {
         }
 
         /**
-         * 要素のシャッフル全体の通し番号を返す。
-         * @return 要素のシャッフル全体の通し番号
+         * Returns the target element ID.
+         * @return the target element ID
          */
         public int getElementId() {
             return elementId;
         }
 
         /**
-         * ポートのシャッフル全体の通し番号を返す。
-         * @return ポートのシャッフル全体の通し番号
+         * Returns the target port ID.
+         * @return the target port ID
          */
         public int getPortId() {
             return portId;
         }
 
         /**
-         * ポートごとのシャッフル記述を返す。
-         * @return ポートごとのシャッフル記述
+         * Returns a description of this segment behavior.
+         * @return the segment description
          */
         public ShuffleDescription getDescription() {
             return description;
         }
 
         /**
-         * 実際のポートを返す。
-         * @return 実際のポート
+         * Returns the original element port.
+         * @return the original element port
          */
         public FlowElementInput getPort() {
             return port;
         }
 
         /**
-         * シャッフル開始前の型を返す。
-         * @return シャッフル開始前の型
+         * Returns the input type.
+         * @return the input type
          */
         public DataClass getSource() {
             return source;
         }
 
         /**
-         * シャッフル時の型を返す。
-         * @return シャッフル時の型
+         * Returns the output type.
+         * @return the output type
          */
         public DataClass getTarget() {
             return target;
         }
 
         /**
-         * シャッフル時のキープロパティの一覧を返す。
-         * @return シャッフル時のキープロパティの一覧
+         * Returns the terms of this segment.
+         * @return the terms
          */
         public List<Term> getTerms() {
             return terms;
         }
 
         /**
-         * このセグメントに含まれる、指定の名前を持つキープロパティを返す。
-         * @param propertyName 対象のプロパティ名
-         * @return 対応するキープロパティ、存在しない場合は{@code null}
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Returns a term of this segment.
+         * @param propertyName the target property name
+         * @return the term which is corresponded to the target property, or {@code null} if there is no such the term
+         * @throws IllegalArgumentException if the parameter is {@code null}
          */
         public Term findTerm(String propertyName) {
             Precondition.checkMustNotBeNull(propertyName, "propertyName"); //$NON-NLS-1$
@@ -228,7 +224,7 @@ public class ShuffleModel extends Compilable.Trait<CompiledShuffle> {
     }
 
     /**
-     * シャッフル時のキープロパティ。
+     * Represents individual key properties in shuffle {@link Segment}.
      */
     public static class Term {
 
@@ -239,11 +235,11 @@ public class ShuffleModel extends Compilable.Trait<CompiledShuffle> {
         private final Arrangement arrangement;
 
         /**
-         * インスタンスを生成する。
-         * @param termId プロパティのセグメント内の通し番号
-         * @param source 対応するプロパティ
-         * @param arrangement プロパティの整列情報
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Creates a new instance.
+         * @param termId the serial number
+         * @param source the target property
+         * @param arrangement arrangement of the target property
+         * @throws IllegalArgumentException if the parameters are {@code null}
          */
         public Term(
                 int termId,
@@ -257,24 +253,24 @@ public class ShuffleModel extends Compilable.Trait<CompiledShuffle> {
         }
 
         /**
-         * プロパティのセグメント内の通し番号を返す。
-         * @return プロパティのセグメント内の通し番号
+         * Returns the serial number of this term in the owner {@link Segment}.
+         * @return the serial number
          */
         public int getTermId() {
             return termId;
         }
 
         /**
-         * 対応するプロパティの情報を返す。
-         * @return 対応するプロパティの情報
+         * Returns the target property.
+         * @return the target property
          */
         public DataClass.Property getSource() {
             return source;
         }
 
         /**
-         * プロパティの整列情報を返す。
-         * @return プロパティの整列情報
+         * Returns arrangement of {@link #getSource() the target property}.
+         * @return arrangement of the target property
          */
         public Arrangement getArrangement() {
             return arrangement;
@@ -290,22 +286,22 @@ public class ShuffleModel extends Compilable.Trait<CompiledShuffle> {
     }
 
     /**
-     * 並べ方。
+     * Represents kinds of arrangement for each property.
      */
     public enum Arrangement {
 
         /**
-         * 同じ値のものでグループ化する。
+         * Only grouping by its property.
          */
         GROUPING,
 
         /**
-         * 昇順に並べる。
+         * Sort by its property with ascending order.
          */
         ASCENDING,
 
         /**
-         * 降順に並べる。
+         * Sort by its property with descending order.
          */
         DESCENDING,
     }

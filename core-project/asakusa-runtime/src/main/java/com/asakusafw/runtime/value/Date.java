@@ -37,7 +37,7 @@ public class Date implements Comparable<Date> {
     }
 
     /**
-     * インスタンスを生成する。
+     * Creates a new instance.
      * @param year 年 (1-...)
      * @param month 月 (1-12)
      * @param day 日 (1-31)
@@ -47,7 +47,7 @@ public class Date implements Comparable<Date> {
     }
 
     /**
-     * インスタンスを生成する。
+     * Creates a new instance.
      * @param elapsedDays 表す日付の0001/01/01からの経過日数(0起算)
      */
     public Date(int elapsedDays) {

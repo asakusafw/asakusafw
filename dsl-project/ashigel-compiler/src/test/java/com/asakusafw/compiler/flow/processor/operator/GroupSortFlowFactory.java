@@ -1,24 +1,4 @@
-/**
- * Copyright 2011-2015 Asakusa Framework Team.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.asakusafw.compiler.flow.processor.operator;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.annotation.Generated;
-
 import com.asakusafw.compiler.flow.testing.model.Ex1;
 import com.asakusafw.runtime.core.Result;
 import com.asakusafw.vocabulary.flow.Operator;
@@ -30,22 +10,29 @@ import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 import com.asakusafw.vocabulary.flow.graph.ShuffleKey;
 import com.asakusafw.vocabulary.flow.processor.InputBuffer;
 import com.asakusafw.vocabulary.operator.CoGroup;
+import com.asakusafw.vocabulary.operator.KeyInfo;
+import com.asakusafw.vocabulary.operator.OperatorFactory;
+import com.asakusafw.vocabulary.operator.OperatorInfo;
+import java.util.Arrays;
+import java.util.List;
+import javax.annotation.Generated;
 /**
- * {@link GroupSortFlow}に関する演算子ファクトリークラス。
+ * An operator factory class about <code>GroupSortFlow</code>.
  * @see GroupSortFlow
  */
-@Generated("OperatorFactoryClassGenerator:0.0.1") public class GroupSortFlowFactory {
+@Generated("OperatorFactoryClassGenerator:0.1.0")@OperatorFactory(GroupSortFlow.class) public class GroupSortFlowFactory 
+        {
     /**
-     * 値がパラメーター以下かそうでないかで結果の出力先を変える。
+     * Switches output target whether if the value is less than or equal to the parameter.
      */
     public static final class WithParameter implements Operator {
         private final FlowElementResolver $;
         /**
-         *  パラメーター以下の値を持つ結果
+         *  a1 where value of input is less than or equal to the parameter
          */
         public final Source<Ex1> r1;
         /**
-         *  パラメーターを超える値を持つ結果
+         *  a1 where value of input is greater than the parameter
          */
         public final Source<Ex1> r2;
         WithParameter(Source<Ex1> a1, int parameter) {
@@ -69,10 +56,10 @@ import com.asakusafw.vocabulary.operator.CoGroup;
             this.r2 = this.$.resolveOutput("r2");
         }
         /**
-         * この演算子の名前を設定する。
-         * @param newName 設定する名前
-         * @return この演算子オブジェクト (this)
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Configures the name of this operator.
+         * @param newName the new operator name
+         * @return this operator object
+         * @throws IllegalArgumentException if the parameter is <code>null</code>
          */
         public GroupSortFlowFactory.WithParameter as(String newName) {
             this.$.setName(newName);
@@ -80,22 +67,27 @@ import com.asakusafw.vocabulary.operator.CoGroup;
         }
     }
     /**
-     * 値がパラメーター以下かそうでないかで結果の出力先を変える。
-     * @param a1 グループ
-     * @param parameter パラメーター
-     * @return 生成した演算子オブジェクト
+     * Switches output target whether if the value is less than or equal to the parameter.
+     * @param a1  group
+     * @param parameter  the parameter for switching output target
+     * @return the created operator object
      * @see GroupSortFlow#withParameter(List, Result, Result, int)
      */
-    public GroupSortFlowFactory.WithParameter withParameter(Source<Ex1> a1, int parameter) {
+    @OperatorInfo(kind = CoGroup.class, input = {@OperatorInfo.Input(name = "a1", type = Ex1.class, position = 0)}, 
+            output = {@OperatorInfo.Output(name = "r1", type = Ex1.class),@OperatorInfo.Output(name = "r2", type = Ex1.
+                class)}, parameter = {@OperatorInfo.Parameter(name = "parameter", type = int.class, position = 1)}) 
+            public GroupSortFlowFactory.WithParameter withParameter(@KeyInfo(group = {@KeyInfo.Group(expression = 
+                "string")}, order = {@KeyInfo.Order(direction = KeyInfo.Direction.ASC, expression = "value")}) Source<
+            Ex1> a1, int parameter) {
         return new GroupSortFlowFactory.WithParameter(a1, parameter);
     }
     /**
-     * グループ内で値が最小のものを返す。
+     * return min.
      */
     public static final class Min implements Operator {
         private final FlowElementResolver $;
         /**
-         *  結果
+         *  result
          */
         public final Source<Ex1> r1;
         Min(Source<Ex1> a1) {
@@ -114,10 +106,10 @@ import com.asakusafw.vocabulary.operator.CoGroup;
             this.r1 = this.$.resolveOutput("r1");
         }
         /**
-         * この演算子の名前を設定する。
-         * @param newName0 設定する名前
-         * @return この演算子オブジェクト (this)
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Configures the name of this operator.
+         * @param newName0 the new operator name
+         * @return this operator object
+         * @throws IllegalArgumentException if the parameter is <code>null</code>
          */
         public GroupSortFlowFactory.Min as(String newName0) {
             this.$.setName(newName0);
@@ -125,21 +117,24 @@ import com.asakusafw.vocabulary.operator.CoGroup;
         }
     }
     /**
-     * グループ内で値が最小のものを返す。
-     * @param a1 グループ
-     * @return 生成した演算子オブジェクト
+     * return min.
+     * @param a1  group
+     * @return the created operator object
      * @see GroupSortFlow#min(List, Result)
      */
-    public GroupSortFlowFactory.Min min(Source<Ex1> a1) {
+    @OperatorInfo(kind = CoGroup.class, input = {@OperatorInfo.Input(name = "a1", type = Ex1.class, position = 0)}, 
+            output = {@OperatorInfo.Output(name = "r1", type = Ex1.class)}, parameter = {}) public GroupSortFlowFactory.
+            Min min(@KeyInfo(group = {@KeyInfo.Group(expression = "string")}, order = {@KeyInfo.Order(direction = 
+                KeyInfo.Direction.ASC, expression = "value")}) Source<Ex1> a1) {
         return new GroupSortFlowFactory.Min(a1);
     }
     /**
-     * グループ内で値が最大のものを返す。
+     * return max.
      */
     public static final class Max implements Operator {
         private final FlowElementResolver $;
         /**
-         *  結果
+         *  result
          */
         public final Source<Ex1> r1;
         Max(Source<Ex1> a1) {
@@ -158,10 +153,10 @@ import com.asakusafw.vocabulary.operator.CoGroup;
             this.r1 = this.$.resolveOutput("r1");
         }
         /**
-         * この演算子の名前を設定する。
-         * @param newName1 設定する名前
-         * @return この演算子オブジェクト (this)
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Configures the name of this operator.
+         * @param newName1 the new operator name
+         * @return this operator object
+         * @throws IllegalArgumentException if the parameter is <code>null</code>
          */
         public GroupSortFlowFactory.Max as(String newName1) {
             this.$.setName(newName1);
@@ -169,12 +164,15 @@ import com.asakusafw.vocabulary.operator.CoGroup;
         }
     }
     /**
-     * グループ内で値が最大のものを返す。
-     * @param a1 グループ
-     * @return 生成した演算子オブジェクト
+     * return max.
+     * @param a1  group
+     * @return the created operator object
      * @see GroupSortFlow#max(List, Result)
      */
-    public GroupSortFlowFactory.Max max(Source<Ex1> a1) {
+    @OperatorInfo(kind = CoGroup.class, input = {@OperatorInfo.Input(name = "a1", type = Ex1.class, position = 0)}, 
+            output = {@OperatorInfo.Output(name = "r1", type = Ex1.class)}, parameter = {}) public GroupSortFlowFactory.
+            Max max(@KeyInfo(group = {@KeyInfo.Group(expression = "string")}, order = {@KeyInfo.Order(direction = 
+                KeyInfo.Direction.DESC, expression = "value")}) Source<Ex1> a1) {
         return new GroupSortFlowFactory.Max(a1);
     }
 }

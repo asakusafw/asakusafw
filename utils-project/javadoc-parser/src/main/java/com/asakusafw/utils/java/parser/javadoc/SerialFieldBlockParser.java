@@ -23,22 +23,21 @@ import com.asakusafw.utils.java.internal.parser.javadoc.ir.IrDocSimpleName;
 import com.asakusafw.utils.java.internal.parser.javadoc.ir.IrDocType;
 
 /**
- * {@code serialField}を解析する。
+ * An implementation of {@link JavadocBaseParser} which parses {@code serialField} blocks.
  */
 public class SerialFieldBlockParser extends AcceptableJavadocBlockParser {
 
     /**
-     * インスタンスを生成する。
-     * インラインブロックを解析するパーサは存在しない状態となる。
+     * Creates a new instance.
      */
     public SerialFieldBlockParser() {
         super("serialField"); //$NON-NLS-1$
     }
 
     /**
-     * インスタンスを生成する。
-     * @param tagName 処理可能なタグ名
-     * @param tagNames 処理可能なタグ名の一覧
+     * Creates a new instance.
+     * @param tagName the first acceptable tag name
+     * @param tagNames the rest acceptable tag names
      */
     public SerialFieldBlockParser(String tagName, String... tagNames) {
         super(tagName, tagNames);

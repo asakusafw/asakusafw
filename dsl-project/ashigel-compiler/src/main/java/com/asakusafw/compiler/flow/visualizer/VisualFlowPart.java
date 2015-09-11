@@ -24,7 +24,7 @@ import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.vocabulary.flow.graph.FlowElement;
 
 /**
- * 可視化用のフロー部品。
+ * A visual model for flow-parts.
  */
 public class VisualFlowPart implements VisualNode {
 
@@ -35,10 +35,10 @@ public class VisualFlowPart implements VisualNode {
     private final Set<VisualNode> nodes;
 
     /**
-     * インスタンスを生成する。
-     * @param element このフロー部品を表す要素
-     * @param nodes このフロー部品に含まれるノード一覧
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param element the original flow-part
+     * @param nodes the element nodes
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public VisualFlowPart(FlowElement element, Set<? extends VisualNode> nodes) {
         Precondition.checkMustNotBeNull(element, "element"); //$NON-NLS-1$
@@ -58,16 +58,16 @@ public class VisualFlowPart implements VisualNode {
     }
 
     /**
-     * この要素の元となるフロー要素を返す。
-     * @return この要素の元となるフロー要素
+     * Returns the original flow-parts.
+     * @return the original flow-parts
      */
     public FlowElement getElement() {
         return element;
     }
 
     /**
-     * このフロー部品に含まれるノード一覧を返す。
-     * @return このフロー部品に含まれるノード一覧
+     * Returns the element nodes of this flow-part.
+     * @return the element nodes
      */
     public Set<VisualNode> getNodes() {
         return Collections.unmodifiableSet(nodes);

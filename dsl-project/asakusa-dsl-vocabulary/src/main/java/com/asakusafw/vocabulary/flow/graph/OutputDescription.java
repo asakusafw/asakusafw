@@ -24,14 +24,13 @@ import java.util.Map;
 
 import com.asakusafw.vocabulary.external.ExporterDescription;
 
-
 /**
- * フローからの出力を表す要素の定義記述。
+ * A description of flow output.
  */
 public class OutputDescription implements FlowElementDescription {
 
     /**
-     * この要素の出力ポート名。
+     * The port name.
      */
     public static final String INPUT_PORT_NAME = "port"; //$NON-NLS-1$
 
@@ -50,10 +49,10 @@ public class OutputDescription implements FlowElementDescription {
     private final ExporterDescription exporterDescription;
 
     /**
-     * インスタンスを生成する。
-     * @param name この出力の名前
-     * @param type この出力のデータ型
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param name the output name
+     * @param type the data type
+     * @throws IllegalArgumentException if some parameters are {@code null}
      */
     public OutputDescription(String name, Type type) {
         if (name == null) {
@@ -68,10 +67,10 @@ public class OutputDescription implements FlowElementDescription {
     }
 
     /**
-     * インスタンスを生成する。
-     * @param name この出力の名前
-     * @param exporter エクスポーター処理の記述
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param name the input name
+     * @param exporter the exporter description of this output
+     * @throws IllegalArgumentException if some parameters are {@code null}
      */
     public OutputDescription(String name, ExporterDescription exporter) {
         if (name == null) {
@@ -117,16 +116,16 @@ public class OutputDescription implements FlowElementDescription {
     }
 
     /**
-     * この出力が利用するデータの種類を返す。
-     * @return この出力が利用するデータの種類
+     * Returns the data type of this output.
+     * @return the data type
      */
     public Type getDataType() {
         return port.getDataType();
     }
 
     /**
-     * エクスポーター処理の記述を返す。
-     * @return エクスポーター処理の記述、利用しない場合は{@code null}
+     * Returns the exporter description of this output.
+     * @return the exporter description, or {@code null} if this output is not external
      */
     public ExporterDescription getExporterDescription() {
         return this.exporterDescription;

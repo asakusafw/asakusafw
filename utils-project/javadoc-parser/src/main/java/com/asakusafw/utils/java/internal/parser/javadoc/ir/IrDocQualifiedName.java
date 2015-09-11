@@ -20,7 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * 限定名。
+ * Represents qualified names in {@link IrDocComment}.
  */
 public class IrDocQualifiedName extends IrDocName {
 
@@ -30,14 +30,12 @@ public class IrDocQualifiedName extends IrDocName {
     private IrDocSimpleName name;
 
     /**
-     * インスタンスを生成する。
-     * @param qualifier 修飾する名前
-     * @param name 修飾される名前
-     * @throws IllegalArgumentException 引数に自分が含まれる場合
-     * @throws IllegalArgumentException 引数に{@code null}が含まれていた場合
+     * Creates a new instance.
+     * @param qualifier the name qualifier
+     * @param name the simple name
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public IrDocQualifiedName(IrDocName qualifier, IrDocSimpleName name) {
-        super();
         if (qualifier == null) {
             throw new IllegalArgumentException("qualifier"); //$NON-NLS-1$
         }
@@ -54,18 +52,18 @@ public class IrDocQualifiedName extends IrDocName {
     }
 
     /**
-     * この名前を修飾する別の名前を返す。
-     * @return この名前を修飾する別の名前
+     * Returns the name qualifier.
+     * @return the name qualifier
      */
     public IrDocName getQualifier() {
         return this.qualifier;
     }
 
     /**
-     * この名前を修飾する別の名前を設定する。
-     * @param qualifier 設定する修飾名
-     * @throws IllegalArgumentException 引数に自分が含まれる場合
-     * @throws IllegalArgumentException 引数に{@code null}が含まれていた場合
+     * Sets the name qualifier.
+     * @param qualifier the name qualifier
+     * @throws IllegalArgumentException if the qualifier contains this name
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public void setQualifier(IrDocName qualifier) {
         if (qualifier == null) {
@@ -86,17 +84,17 @@ public class IrDocQualifiedName extends IrDocName {
     }
 
     /**
-     * 単純名を返す。
-     * @return 修飾された単純名
+     * Returns the simple name.
+     * @return the simple name
      */
     public IrDocSimpleName getName() {
         return this.name;
     }
 
     /**
-     * 単純名を設定する。
-     * @param name 設定する名前
-     * @throws IllegalArgumentException 引数に{@code null}が含まれていた場合
+     * Sets the simple name.
+     * @param name the simple name
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public void setName(IrDocSimpleName name) {
         if (name == null) {

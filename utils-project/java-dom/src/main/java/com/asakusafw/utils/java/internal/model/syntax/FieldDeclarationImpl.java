@@ -26,28 +26,16 @@ import com.asakusafw.utils.java.model.syntax.VariableDeclarator;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link FieldDeclaration}の実装。
+ * An implementation of {@link FieldDeclaration}.
  */
 public final class FieldDeclarationImpl extends ModelRoot implements FieldDeclaration {
 
-    /**
-     * ドキュメンテーションコメント。
-     */
     private Javadoc javadoc;
 
-    /**
-     * 修飾子および注釈の一覧。
-     */
     private List<? extends Attribute> modifiers;
 
-    /**
-     * フィールドの型。
-     */
     private Type type;
 
-    /**
-     * 宣言するフィールドの一覧。
-     */
     private List<? extends VariableDeclarator> variableDeclarators;
 
     @Override
@@ -56,11 +44,8 @@ public final class FieldDeclarationImpl extends ModelRoot implements FieldDeclar
     }
 
     /**
-     * ドキュメンテーションコメントを設定する。
-     * <p> ドキュメンテーションコメントが存在しない場合、引数には{@code null}を指定する。 </p>
-     * @param javadoc
-     *     ドキュメンテーションコメント、
-     *     ただしドキュメンテーションコメントが存在しない場合は{@code null}
+     * Sets the documentation comment.
+     * @param javadoc the documentation comment, or {@code null} if it is not specified
      */
     public void setJavadoc(Javadoc javadoc) {
         this.javadoc = javadoc;
@@ -72,12 +57,9 @@ public final class FieldDeclarationImpl extends ModelRoot implements FieldDeclar
     }
 
     /**
-     * 修飾子および注釈の一覧を設定する。
-     * <p> 修飾子または注釈が一つも宣言されない場合、引数には空を指定する。 </p>
-     * @param modifiers
-     *     修飾子および注釈の一覧
-     * @throws IllegalArgumentException
-     *     {@code modifiers}に{@code null}が指定された場合
+     * Sets the modifiers and annotations.
+     * @param modifiers the modifiers and annotations
+     * @throws IllegalArgumentException if {@code modifiers} was {@code null}
      */
     public void setModifiers(List<? extends Attribute> modifiers) {
         Util.notNull(modifiers, "modifiers"); //$NON-NLS-1$
@@ -91,11 +73,9 @@ public final class FieldDeclarationImpl extends ModelRoot implements FieldDeclar
     }
 
     /**
-     * フィールドの型を設定する。
-     * @param type
-     *     フィールドの型
-     * @throws IllegalArgumentException
-     *     {@code type}に{@code null}が指定された場合
+     * Sets the field type.
+     * @param type the field type
+     * @throws IllegalArgumentException if {@code type} was {@code null}
      */
     public void setType(Type type) {
         Util.notNull(type, "type"); //$NON-NLS-1$
@@ -108,13 +88,10 @@ public final class FieldDeclarationImpl extends ModelRoot implements FieldDeclar
     }
 
     /**
-     * 宣言するフィールドの一覧を設定する。
-     * @param variableDeclarators
-     *     宣言するフィールドの一覧
-     * @throws IllegalArgumentException
-     *     {@code variableDeclarators}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code variableDeclarators}に空が指定された場合
+     * Sets the field variable declarators.
+     * @param variableDeclarators the field variable declarators
+     * @throws IllegalArgumentException if {@code variableDeclarators} was {@code null}
+     * @throws IllegalArgumentException if {@code variableDeclarators} was empty
      */
     public void setVariableDeclarators(List<? extends VariableDeclarator> variableDeclarators) {
         Util.notNull(variableDeclarators, "variableDeclarators"); //$NON-NLS-1$
@@ -124,7 +101,7 @@ public final class FieldDeclarationImpl extends ModelRoot implements FieldDeclar
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#FIELD_DECLARATION}を返す。
+     * Returns {@link ModelKind#FIELD_DECLARATION} which represents this element kind.
      * @return {@link ModelKind#FIELD_DECLARATION}
      */
     @Override
@@ -133,8 +110,7 @@ public final class FieldDeclarationImpl extends ModelRoot implements FieldDeclar
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitFieldDeclaration(this, context);
     }

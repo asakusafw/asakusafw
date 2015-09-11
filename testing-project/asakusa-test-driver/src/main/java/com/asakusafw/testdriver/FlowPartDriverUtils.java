@@ -20,25 +20,20 @@ import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.runtime.stage.StageConstants;
 
 /**
- * フロー部品用のテストドライバを実行するためのユーティリティクラス。
+ * Utilities for flow-part test drivers.
  * @since 0.2.0
  */
 final class FlowPartDriverUtils {
 
-
-    /**
-     * コンストラクタ。
-     */
     private FlowPartDriverUtils() {
-        // new不可。
+        return;
     }
 
     /**
-     * Hadoop Jobの入力データのリソース位置を生成する。
-     *
-     * @param driverContext ドライバコンテキスト。
-     * @param name 入力データ名。
-     * @return 入力データのリソース位置
+     * Computes the canonical input location (for Hadoop) from its name.
+     * @param driverContext the current context
+     * @param name the input name
+     * @return the canonical location of the target input
      */
     public static Location createInputLocation(TestDriverContext driverContext, String name) {
         Location location = Location.fromPath(driverContext.getClusterWorkDir(), '/')
@@ -49,11 +44,10 @@ final class FlowPartDriverUtils {
     }
 
     /**
-     * Hadoop Jobの出力データのリソース位置を生成する。
-     *
-     * @param driverContext ドライバコンテキスト。
-     * @param name 出力データ名。
-     * @return 出力データのリソース位置
+     * Computes the canonical output location (for Hadoop) from its name.
+     * @param driverContext the current context
+     * @param name the input name
+     * @return the canonical location of the target output
      */
     public static Location createOutputLocation(TestDriverContext driverContext, String name) {
         Location location = Location.fromPath(driverContext.getClusterWorkDir(), '/')
@@ -65,10 +59,9 @@ final class FlowPartDriverUtils {
     }
 
     /**
-     * Hadoop Jobのワーキングディレクトリのリソース位置を生成する。
-     *
-     * @param driverContext ドライバコンテキスト。
-     * @return ワーキングのリソース位置
+     * Computes the canonical temporary location (for Hadoop) from the current context.
+     * @param driverContext the current context
+     * @return the canonical location of the temporary working area
      */
     public static Location createWorkingLocation(TestDriverContext driverContext) {
         Location location = Location.fromPath(driverContext.getClusterWorkDir(), '/')
@@ -78,10 +71,10 @@ final class FlowPartDriverUtils {
     }
 
     private static String normalize(String name) {
-        // MultipleInputs/Outputsではアルファベットと数字だけしかつかえない
+        // Hadoop MultipleInputs/Outputs only can accept alphameric characters
         StringBuilder buf = new StringBuilder();
         for (char c : name.toCharArray()) {
-            // 0 はエスケープ記号に
+            // we use '0' as escape symbol
             if ('1' <= c && c <= '9' || 'A' <= c && c <= 'Z' || 'a' <= c && c <= 'z') {
                 buf.append(c);
             } else if (c <= 0xff) {

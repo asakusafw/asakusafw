@@ -15,13 +15,12 @@
  */
 package com.asakusafw.utils.java.model.syntax;
 
-
 /**
- * {@code switch}文に含まれる{@code case}ラベルを表現するインターフェース。
- * <p> この要素は、{@code switch}文の本体にのみ含めることができる </p>
+ *  * An interface which represents {@code case} labels in switch statements.
+ * This element only can appear in the body of {@link SwitchStatement}.
  * <ul>
  *   <li> Specified In: <ul>
- *     <li> {@code [JLS3:14.11] The switch Statement (<i>SwitchLabel</i>)} </li>
+ *     <li> {@code [JLS3:14.11] The switch Statement (SwitchLabel)} </li>
  *   </ul> </li>
  * </ul>
  * @see SwitchStatement
@@ -29,12 +28,9 @@ package com.asakusafw.utils.java.model.syntax;
 public interface SwitchCaseLabel
         extends SwitchLabel {
 
-    // properties
-
     /**
-     * {@code case}ラベルの値を返す。
-     * @return
-     *     {@code case}ラベルの値
+     * Returns the {@code case} label value.
+     * @return {@code case} label value
      */
     Expression getExpression();
 }

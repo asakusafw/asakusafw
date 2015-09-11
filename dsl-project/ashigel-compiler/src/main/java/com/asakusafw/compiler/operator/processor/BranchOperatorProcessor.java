@@ -29,9 +29,8 @@ import com.asakusafw.compiler.operator.OperatorMethodDescriptor;
 import com.asakusafw.compiler.operator.OperatorMethodDescriptor.Builder;
 import com.asakusafw.vocabulary.operator.Branch;
 
-
 /**
- * {@link Branch 分岐演算子}を処理する。
+ * Processes {@link Branch} operators.
  */
 @TargetOperator(Branch.class)
 public class BranchOperatorProcessor extends AbstractOperatorProcessor {

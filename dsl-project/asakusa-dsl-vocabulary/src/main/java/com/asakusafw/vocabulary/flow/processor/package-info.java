@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /**
- * 演算子ごとの特性を表す。
+ * Represents characteristics of each operator behavior.
  */
 package com.asakusafw.vocabulary.flow.processor;
 

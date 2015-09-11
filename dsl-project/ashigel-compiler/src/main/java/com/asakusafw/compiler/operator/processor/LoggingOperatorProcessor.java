@@ -30,7 +30,7 @@ import com.asakusafw.vocabulary.flow.graph.ObservationCount;
 import com.asakusafw.vocabulary.operator.Logging;
 
 /**
- * {@link Logging ロギング演算子}を処理する。
+ * Processes {@link Logging} operators.
  */
 @TargetOperator(Logging.class)
 public class LoggingOperatorProcessor extends AbstractOperatorProcessor {

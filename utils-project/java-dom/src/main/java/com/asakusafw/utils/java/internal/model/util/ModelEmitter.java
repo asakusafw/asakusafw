@@ -30,7 +30,7 @@ import com.asakusafw.utils.java.model.util.CommentEmitTrait;
 import com.asakusafw.utils.java.model.util.NoThrow;
 
 /**
- * {@link Model}を出力する。
+ * Emits Java DOM objects.
  */
 public class ModelEmitter {
 
@@ -39,9 +39,9 @@ public class ModelEmitter {
     private final PrintWriter writer;
 
     /**
-     * インスタンスを生成する。
-     * @param writer 出力先
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Creates a new instance.
+     * @param writer the target writer
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public ModelEmitter(PrintWriter writer) {
         if (writer == null) {
@@ -51,9 +51,9 @@ public class ModelEmitter {
     }
 
     /**
-     * 指定の要素をこのインスタンスに関連した出力先に出力する。
-     * @param element 出力する要素
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Emits a Java DOM object into the target writer.
+     * @param element the target object
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public void emit(Model element) {
         if (element == null) {
@@ -65,12 +65,15 @@ public class ModelEmitter {
     }
 
     /**
-     * 指定の要素をこのインスタンスに関連した出力先に出力する。
-     * @param element 出力する要素
-     * @param context 利用するコンテキストオブジェクト
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Emits a Java DOM object into the target context.
+     * @param element the target object
+     * @param context the current context
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public static void emit(Model element, EmitContext context) {
+        if (element == null) {
+            throw new IllegalArgumentException("element must not be null"); //$NON-NLS-1$
+        }
         if (context == null) {
             throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
         }
@@ -79,7 +82,7 @@ public class ModelEmitter {
 }
 
 /**
- * {@link ModelEmitter}のエンジン部分。
+ * An engine for {@link ModelEmitter}.
  */
 class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
 

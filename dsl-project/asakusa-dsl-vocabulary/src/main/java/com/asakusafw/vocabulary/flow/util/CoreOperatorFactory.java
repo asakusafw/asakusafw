@@ -32,6 +32,7 @@ import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 
 /**
  * 標準的な演算子オブジェクトを生成するファクトリ。
+ * TODO i18n
  * @since 0.1.0
  * @version 0.7.3
  */

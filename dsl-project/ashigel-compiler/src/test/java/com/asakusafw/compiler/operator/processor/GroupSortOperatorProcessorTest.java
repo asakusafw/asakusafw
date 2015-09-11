@@ -31,7 +31,7 @@ import com.asakusafw.vocabulary.flow.testing.MockOut;
 public class GroupSortOperatorProcessorTest extends OperatorCompilerTestRoot {
 
     /**
-     * 単純な例。
+     * simple case.
      */
     @Test
     public void simple() {
@@ -52,7 +52,7 @@ public class GroupSortOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * パラメータ化。
+     * parameterized.
      */
     @Test
     public void parameterized() {
@@ -94,7 +94,7 @@ public class GroupSortOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * 抽象メソッド。
+     * w/ abstract modifier.
      */
     @Test
     public void Abstract() {
@@ -103,7 +103,7 @@ public class GroupSortOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * キーがない。
+     * missing key annotation.
      */
     @Test
     public void NoKey() {
@@ -112,7 +112,7 @@ public class GroupSortOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * 結果がない。
+     * w/o result parameters.
      */
     @Test
     public void NoResults() {
@@ -121,7 +121,7 @@ public class GroupSortOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * リストでない。
+     * not a list parameter.
      */
     @Test
     public void NotList() {
@@ -130,7 +130,7 @@ public class GroupSortOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * モデルでない。
+     * not a data model parameter.
      */
     @Test
     public void NotModel() {
@@ -139,7 +139,7 @@ public class GroupSortOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * 結果でない。
+     * not a result paraemer.
      */
     @Test
     public void NotResult() {
@@ -148,7 +148,7 @@ public class GroupSortOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * ユーザー定義パラメーターでない。
+     * not a valid user parameters.
      */
     @Test
     public void NotUserParameter() {
@@ -157,7 +157,7 @@ public class GroupSortOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * 結果を返す。
+     * not void type method.
      */
     @Test
     public void NotVoid() {

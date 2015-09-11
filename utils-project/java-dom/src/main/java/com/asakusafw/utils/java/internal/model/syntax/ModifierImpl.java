@@ -21,13 +21,10 @@ import com.asakusafw.utils.java.model.syntax.ModifierKind;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link Modifier}の実装。
+ * An implementation of {@link Modifier}.
  */
 public final class ModifierImpl extends ModelRoot implements Modifier {
 
-    /**
-     * 修飾子の種類。
-     */
     private ModifierKind modifierKind;
 
     @Override
@@ -36,11 +33,9 @@ public final class ModifierImpl extends ModelRoot implements Modifier {
     }
 
     /**
-     * 修飾子の種類を設定する。
-     * @param modifierKind
-     *     修飾子の種類
-     * @throws IllegalArgumentException
-     *     {@code modifierKind}に{@code null}が指定された場合
+     * Sets the modifier kind.
+     * @param modifierKind the modifier kind
+     * @throws IllegalArgumentException if {@code modifierKind} was {@code null}
      */
     public void setModifierKind(ModifierKind modifierKind) {
         Util.notNull(modifierKind, "modifierKind"); //$NON-NLS-1$
@@ -48,7 +43,7 @@ public final class ModifierImpl extends ModelRoot implements Modifier {
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#MODIFIER}を返す。
+     * Returns {@link ModelKind#MODIFIER} which represents this element kind.
      * @return {@link ModelKind#MODIFIER}
      */
     @Override
@@ -57,8 +52,7 @@ public final class ModifierImpl extends ModelRoot implements Modifier {
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitModifier(this, context);
     }

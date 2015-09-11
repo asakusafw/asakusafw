@@ -22,18 +22,12 @@ import com.asakusafw.utils.java.model.syntax.UnaryOperator;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link UnaryExpression}の実装。
+ * An implementation of {@link UnaryExpression}.
  */
 public final class UnaryExpressionImpl extends ModelRoot implements UnaryExpression {
 
-    /**
-     * 単項演算子。
-     */
     private UnaryOperator operator;
 
-    /**
-     * 演算項。
-     */
     private Expression operand;
 
     @Override
@@ -42,11 +36,9 @@ public final class UnaryExpressionImpl extends ModelRoot implements UnaryExpress
     }
 
     /**
-     * 単項演算子を設定する。
-     * @param operator
-     *     単項演算子
-     * @throws IllegalArgumentException
-     *     {@code operator}に{@code null}が指定された場合
+     * Sets the unary operator.
+     * @param operator the unary operator
+     * @throws IllegalArgumentException if {@code operator} was {@code null}
      */
     public void setOperator(UnaryOperator operator) {
         Util.notNull(operator, "operator"); //$NON-NLS-1$
@@ -59,11 +51,9 @@ public final class UnaryExpressionImpl extends ModelRoot implements UnaryExpress
     }
 
     /**
-     * 演算項を設定する。
-     * @param operand
-     *     演算項
-     * @throws IllegalArgumentException
-     *     {@code operand}に{@code null}が指定された場合
+     * Sets the operand term.
+     * @param operand the operand term
+     * @throws IllegalArgumentException if {@code operand} was {@code null}
      */
     public void setOperand(Expression operand) {
         Util.notNull(operand, "operand"); //$NON-NLS-1$
@@ -71,7 +61,7 @@ public final class UnaryExpressionImpl extends ModelRoot implements UnaryExpress
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#UNARY_EXPRESSION}を返す。
+     * Returns {@link ModelKind#UNARY_EXPRESSION} which represents this element kind.
      * @return {@link ModelKind#UNARY_EXPRESSION}
      */
     @Override
@@ -80,8 +70,7 @@ public final class UnaryExpressionImpl extends ModelRoot implements UnaryExpress
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitUnaryExpression(this, context);
     }

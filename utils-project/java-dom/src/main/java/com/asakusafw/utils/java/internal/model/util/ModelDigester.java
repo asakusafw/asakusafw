@@ -21,12 +21,12 @@ import com.asakusafw.utils.java.model.syntax.*;
 import com.asakusafw.utils.java.model.util.NoThrow;
 
 /**
- * {@link Model}のダイジェスト値を算出する。
+ * Computes digest value for {@link Model} objects.
  */
 public final class ModelDigester extends StrictVisitor<Void, DigestContext, NoThrow> {
 
     /**
-     * このクラスのインスタンス。
+     * The singleton instance.
      */
     public static final ModelDigester INSTANCE = new ModelDigester();
 
@@ -35,14 +35,14 @@ public final class ModelDigester extends StrictVisitor<Void, DigestContext, NoTh
     }
 
     /**
-     * 指定のモデルのダイジェスト値を返す。
-     * @param model 対象のモデル
-     * @return 対応するダイジェスト値
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the digest value of the target object.
+     * @param model the target object
+     * @return the corresponded digest value
+     * @throws IllegalArgumentException if the parameter {@code null}
      */
     public static int compute(Model model) {
         if (model == null) {
-            throw new IllegalArgumentException("model is null"); //$NON-NLS-1$
+            throw new IllegalArgumentException("model must not be null"); //$NON-NLS-1$
         }
         DigestContext digest = new DigestContext();
         model.accept(INSTANCE, digest);
@@ -931,7 +931,7 @@ public final class ModelDigester extends StrictVisitor<Void, DigestContext, NoTh
 }
 
 /**
- * {@link ModelDigester}が計算の途中経過を保持する。
+ * A computing context for {@link ModelDigester}.
  */
 class DigestContext {
 

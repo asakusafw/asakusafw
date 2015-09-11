@@ -35,11 +35,11 @@ public class DualIdentityFlow<A, B> extends FlowDescription {
     private final Out<B> out2;
 
     /**
-     * インスタンスを生成する。
-     * @param in1 入力
-     * @param in2 入力
-     * @param out1 出力
-     * @param out2 出力
+     * Creates a new instance.
+     * @param in1 input
+     * @param in2 input
+     * @param out1 output
+     * @param out2 output
      */
     public DualIdentityFlow(In<A> in1, In<B> in2, Out<A> out1, Out<B> out2) {
         this.in1 = in1;

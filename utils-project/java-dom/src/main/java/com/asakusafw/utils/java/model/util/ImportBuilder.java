@@ -45,7 +45,7 @@ import com.asakusafw.utils.java.model.syntax.Wildcard;
 import com.asakusafw.utils.java.model.syntax.WildcardBoundKind;
 
 /**
- * {@link ImportDeclaration}を構築するビルダー。
+ * A builder for building import declarations.
  */
 public class ImportBuilder {
 
@@ -54,11 +54,11 @@ public class ImportBuilder {
     private final Resolver resolver;
 
     /**
-     * インスタンスを生成する。
-     * @param factory モデルを生成するファクトリ
-     * @param packageDecl 現在のパッケージ宣言
-     * @param strategy インポートを行う戦略
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Creates a new instance.
+     * @param factory the Java DOM factory
+     * @param packageDecl the target package declaration (nullable)
+     * @param strategy the import strategy
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public ImportBuilder(
             ModelFactory factory,
@@ -75,10 +75,10 @@ public class ImportBuilder {
     }
 
     /**
-     * 指定の名前をパッケージメンバーの型名としてインポートし、インポート後の型表現を返す。
-     * @param name 対象の型名
-     * @return インポート後の型
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Resolves the type name as an package member of this current context.
+     * @param name the target type name
+     * @return the resolved type
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public Type resolvePackageMember(Name name) {
         if (name == null) {
@@ -131,10 +131,10 @@ public class ImportBuilder {
     }
 
     /**
-     * 指定の型を可能であればインポートし、インポート後の型表現を返す。
-     * @param type 対象の型
-     * @return インポート後の型
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Resolves the target type and returns it as an imported type representation.
+     * @param type the target type
+     * @return the imported type representation
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public Type resolve(Type type) {
         if (type == null) {
@@ -144,10 +144,10 @@ public class ImportBuilder {
     }
 
     /**
-     * 指定の名前からなる型を可能であればインポートし、インポート後の型表現を返す。
-     * @param name 対象の型名
-     * @return インポート後の型
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Resolves the target type and returns it as an imported type representation.
+     * @param name the target type name
+     * @return the imported type representation
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public Type toType(Name name) {
         if (name == null) {
@@ -157,10 +157,10 @@ public class ImportBuilder {
     }
 
     /**
-     * 指定の型を可能であればインポートし、インポート後の型表現を返す。
-     * @param type 対象の型
-     * @return インポート後の型
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Resolves the target type and returns it as an imported type representation.
+     * @param type the target type
+     * @return the imported type representation
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public Type toType(java.lang.reflect.Type type) {
         if (type == null) {
@@ -170,8 +170,8 @@ public class ImportBuilder {
     }
 
     /**
-     * これまでにこのビルダーでインポートしたクラスに対するインポート宣言の一覧を返す。
-     * @return インポートしたクラスに対するインポート宣言の一覧
+     * Returns the built import declarations.
+     * @return the built import declarations
      */
     public List<ImportDeclaration> toImportDeclarations() {
         ModelFactory f = resolver.factory;
@@ -190,8 +190,8 @@ public class ImportBuilder {
     }
 
     /**
-     * このビルダーが対象としているパッケージの宣言を返す。
-     * @return このビルダーが対象としているパッケージの宣言
+     * Returns the package declaration of this builder.
+     * @return the package declaration, or {@code null} if the current package is the default (unnamed) package
      */
     public PackageDeclaration getPackageDeclaration() {
         return this.packageDecl;
@@ -208,9 +208,6 @@ public class ImportBuilder {
 
     private enum ImportComparator implements Comparator<ImportDeclaration> {
 
-        /**
-         * 唯一のインスタンス。
-         */
         INSTANCE,
 
         ;
@@ -325,12 +322,12 @@ public class ImportBuilder {
             }
             Name qualifier = ((QualifiedName) name).getQualifier();
 
-            // 限定子がパッケージなら、その名前は定義上トップレベル
+            // if the name qualifier is just package, it must be a top-level type
             if (knownPackageNames.contains(qualifier)) {
                 return false;
             }
 
-            // 親の単純名がクラス名の形式であれば、この型は内部クラスとみなす
+            // if the name qualifier is form of ClassName, we assume that the type is enclosed
             SimpleName parent;
             if (qualifier.getModelKind() == ModelKind.QUALIFIED_NAME) {
                 parent = ((QualifiedName) qualifier).getSimpleName();
@@ -383,17 +380,17 @@ public class ImportBuilder {
     }
 
     /**
-     * インポートの戦略。
+     * Represents an import strategy.
      */
     public enum Strategy {
 
         /**
-         * トップレベル型のみをインポートする。
+         * Imports only top-level types.
          */
         TOP_LEVEL,
 
         /**
-         * 末端の単純名を利用するようにインポートする。
+         * Imports both top-level and enclosed types.
          */
         ENCLOSING,
     }

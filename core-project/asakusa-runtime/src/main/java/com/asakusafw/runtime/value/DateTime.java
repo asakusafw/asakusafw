@@ -37,7 +37,7 @@ public class DateTime implements Comparable<DateTime> {
     }
 
     /**
-     * インスタンスを生成する。
+     * Creates a new instance.
      * @param elapsedSeconds 0001/01/01 00:00:00 からの経過秒数(0起算)
      */
     public DateTime(long elapsedSeconds) {
@@ -45,7 +45,7 @@ public class DateTime implements Comparable<DateTime> {
     }
 
     /**
-     * インスタンスを生成する。
+     * Creates a new instance.
      * @param year 年 (1-...)
      * @param month 月 (1-12)
      * @param day 日 (1-31)

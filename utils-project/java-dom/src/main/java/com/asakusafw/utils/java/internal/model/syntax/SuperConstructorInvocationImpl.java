@@ -24,23 +24,14 @@ import com.asakusafw.utils.java.model.syntax.Type;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link SuperConstructorInvocation}の実装。
+ * An implementation of {@link SuperConstructorInvocation}.
  */
 public final class SuperConstructorInvocationImpl extends ModelRoot implements SuperConstructorInvocation {
 
-    /**
-     * 限定式。
-     */
     private Expression qualifier;
 
-    /**
-     * 型引数の一覧。
-     */
     private List<? extends Type> typeArguments;
 
-    /**
-     * 実引数の一覧。
-     */
     private List<? extends Expression> arguments;
 
     @Override
@@ -49,11 +40,8 @@ public final class SuperConstructorInvocationImpl extends ModelRoot implements S
     }
 
     /**
-     * 限定式を設定する。
-     * <p> 限定式が指定されない場合、引数には{@code null}を指定する。 </p>
-     * @param qualifier
-     *     限定式、
-     *     ただし限定式が指定されない場合は{@code null}
+     * Sets the qualifier expression.
+     * @param qualifier the qualifier expression, or {@code null} if it is not specified
      */
     public void setQualifier(Expression qualifier) {
         this.qualifier = qualifier;
@@ -65,12 +53,9 @@ public final class SuperConstructorInvocationImpl extends ModelRoot implements S
     }
 
     /**
-     * 型引数の一覧を設定する。
-     * <p> 型引数を一つも指定しない場合、引数には空を指定する。 </p>
-     * @param typeArguments
-     *     型引数の一覧
-     * @throws IllegalArgumentException
-     *     {@code typeArguments}に{@code null}が指定された場合
+     * Sets the type arguments.
+     * @param typeArguments the type arguments
+     * @throws IllegalArgumentException if {@code typeArguments} was {@code null}
      */
     public void setTypeArguments(List<? extends Type> typeArguments) {
         Util.notNull(typeArguments, "typeArguments"); //$NON-NLS-1$
@@ -84,12 +69,9 @@ public final class SuperConstructorInvocationImpl extends ModelRoot implements S
     }
 
     /**
-     * 実引数の一覧を設定する。
-     * <p> 実引数を一つも指定しない場合、引数には空を指定する。 </p>
-     * @param arguments
-     *     実引数の一覧
-     * @throws IllegalArgumentException
-     *     {@code arguments}に{@code null}が指定された場合
+     * Sets the actual arguments.
+     * @param arguments the actual arguments
+     * @throws IllegalArgumentException if {@code arguments} was {@code null}
      */
     public void setArguments(List<? extends Expression> arguments) {
         Util.notNull(arguments, "arguments"); //$NON-NLS-1$
@@ -98,7 +80,7 @@ public final class SuperConstructorInvocationImpl extends ModelRoot implements S
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#SUPER_CONSTRUCTOR_INVOCATION}を返す。
+     * Returns {@link ModelKind#SUPER_CONSTRUCTOR_INVOCATION} which represents this element kind.
      * @return {@link ModelKind#SUPER_CONSTRUCTOR_INVOCATION}
      */
     @Override
@@ -107,8 +89,7 @@ public final class SuperConstructorInvocationImpl extends ModelRoot implements S
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitSuperConstructorInvocation(this, context);
     }

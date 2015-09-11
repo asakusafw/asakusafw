@@ -30,7 +30,7 @@ import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory;
 import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory.Project;
 
 /**
- * Test flow for {@link ProjectFlowProcessor}。
+ * Test flow for {@link ProjectFlowProcessor}.
  */
 @JobFlow(name = "testing")
 public class ProjectFlowSame extends FlowDescription {

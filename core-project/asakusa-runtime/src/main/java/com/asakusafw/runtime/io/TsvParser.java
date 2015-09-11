@@ -48,31 +48,8 @@ import com.asakusafw.runtime.value.StringOption;
 import com.asakusafw.runtime.value.ValueOption;
 
 /**
- * TSVファイルを解析してレコードを読み出す。
- * <p>
- * 次のように利用する。
- * </p>
-<pre><code>
-Reader reader = ...;
-SomeModel model = new SomeModel();
-try {
-    TsvParser parser = new TsvParser(reader);
-    while (parser.hasNext()) {
-        parser.fill(model.getHogeOption());
-        parser.fill(model.getFooOption());
-        parser.fill(model.getBarOption());
-
-        performModelAction(model);
-    }
-}
-finally {
-    reader.close();
-}
-</code></pre>
- * <p>
- * 特に指定がない限り、このクラスのメソッドの引数に{@code null}を指定した場合には
- * {@link NullPointerException}がスローされる。
- * </p>
+ * Reads TSV format text and set each cell into {@link ValueOption}.
+ * Each method in this class may raise {@link NullPointerException} if parameters were {@code null}.
  */
 @SuppressWarnings("deprecation")
 public final class TsvParser implements RecordParser {
@@ -103,10 +80,10 @@ public final class TsvParser implements RecordParser {
     private final ByteBuffer encodeBuffer;
 
     /**
-     * インスタンスを生成する。
-     * @param reader TSVの内容を読み出すリーダー
-     * @throws IOException 初期化に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param reader the source reader
+     * @throws IOException if failed to initialize the parser
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public TsvParser(Reader reader) throws IOException {
         if (reader == null) {
@@ -128,18 +105,17 @@ public final class TsvParser implements RecordParser {
     }
 
     /**
-     * 先読みバッファに一文字先読みする。
-     * <p>
-     * 現在の実装では、全てのメソッドの終了時に{@link #lookAhead}に
-     * ストリームの次の文字が格納されているものとする。
-     * </p>
-     * @throws IOException 先読みに失敗した場合
+     * Consumes a character and put it into the look-ahead buffer.
+     * In the current implementation, the look-ahead buffer has always the head of the stream
+     * after each method invocation.
+     * @throws IOException if failed to read the next character
      */
     private void fillLookAhead() throws IOException {
         this.lookAhead = reader.read();
     }
 
-    // 拡張のため、IOExceptionを残す
+    // MEMO: keep "throws IOException" for forward compatibility
+
     @Override
     public boolean next() throws RecordFormatException, IOException {
         lastSeparator = CELL_SEPARATOR;
@@ -147,11 +123,10 @@ public final class TsvParser implements RecordParser {
     }
 
     /**
-     * 現在の解析位置がセルの先頭であることを検証する。
-     * @throws RecordFormatException セルの先頭でない場合
+     * Validates the current reading position is the head of a cell.
+     * @throws RecordFormatException if violated
      */
     private void checkCellStart() throws RecordFormatException {
-        // パフォーマンスによってはこの呼び出しを省略する
         if (lastSeparator != CELL_SEPARATOR || lookAhead == -1) {
             throw new RecordFormatException("Next cell is not started");
         }
@@ -322,14 +297,14 @@ public final class TsvParser implements RecordParser {
     public void fill(StringOption option) throws RecordFormatException, IOException {
         checkCellStart();
 
-        // 書き込み用にcharBufferを初期化
+        // initializes charBuffer for writing
         if (wrappedCharBuffer == null) {
             wrappedCharBuffer = CharBuffer.wrap(charBuffer);
         } else {
             wrappedCharBuffer.clear();
         }
 
-        // 書き込み先のTextも初期化
+        // resets Text for writing
         option.reset();
 
         if (lookAhead == ESCAPE_CHAR) {
@@ -367,14 +342,14 @@ public final class TsvParser implements RecordParser {
                 wrappedCharBuffer.append((char) c);
             }
 
-            // バッファが溢れる前に書き出す
+            // flush buffer before limit
             if (wrappedCharBuffer.position() == wrappedCharBuffer.limit()) {
                 wrappedCharBuffer.flip();
                 append(wrappedCharBuffer, option);
                 wrappedCharBuffer.clear();
             }
         }
-        // 残りのバッファを書き出す
+        // flush rest contents in buffer
         wrappedCharBuffer.flip();
         append(wrappedCharBuffer, option);
         wrappedCharBuffer.clear();
@@ -541,18 +516,13 @@ public final class TsvParser implements RecordParser {
     }
 
     /**
-     * TSVから読み出したセルの数値を返す。
-     * <p>
-     * この呼び出しによってストリームの位置は次のセパレータの次の文字を指すようになり、
-     * 先読みバッファの内容はセパレータの文字を保持する。
-     * </p>
-     * @param option 最終先に書き出す予定のオブジェクト
-     * @return 読み出した文字数
-     * @throws RecordFormatException TSVの内容を解釈できない場合
-     * @throws IOException TSVの読み出しに失敗した場合
+     * Consumes the next integer.
+     * @param option the target object (this method never changes it)
+     * @return the next integer
+     * @throws RecordFormatException if the format is wrong
+     * @throws IOException if failed by I/O error
      */
-    private int readInt(ValueOption<?> option) throws IOException,
-            RecordFormatException {
+    private int readInt(ValueOption<?> option) throws IOException, RecordFormatException {
         boolean negative = false;
         if (lookAhead == '-') {
             lookAhead = reader.read();
@@ -579,18 +549,11 @@ public final class TsvParser implements RecordParser {
     }
 
     /**
-     * {@link #charBuffer}にTSVから読み出したセルの文字列の内容を格納する。
-     * <p>
-     * 読み出した文字列は、バッファの{@code start}から順に書きこんでゆき、
-     * セパレータとなる文字の手前までが書き込まれる。
-     * </p>
-     * <p>
-     * この呼び出しによってストリームの位置は次のセパレータの次の文字を指すようになる。
-     * </p>
-     * @param start 書き出す開始位置
-     * @param option 最終先に書き出す予定のオブジェクト
-     * @return 読み出した文字数
-     * @throws IOException TSVの読み出しに失敗した場合
+     * Consumes the next string and put it into {@link #charBuffer}.
+     * @param start the starting offset index of {@link #charBuffer}
+     * @param option the target object (this method never changes it)
+     * @return the number of characters to be consumed
+     * @throws IOException if failed by I/O error
      */
     private int readString(int start, ValueOption<?> option) throws IOException {
         int current = start;
@@ -631,17 +594,11 @@ public final class TsvParser implements RecordParser {
     }
 
     /**
-     * 次の文字がエスケープ記号である場合、そのセルを{@code null}を表すセルと仮定して
-     * 解析を行い、指定の値に{@code null}を設定する。
-     * <p>
-     * 次の文字がエスケープ記号でない場合はストリームの状態を変更しない。
-     * </p>
-     * @param option 指定先の値
-     * @return 現在のセルが{@code null}を表すセルである場合に{@code true}、
-     *     それ以外の場合は{@code false}
-     * @throws RecordFormatException エスケープ記号が先頭にありながら、
-     *     そのセルが{@code null}を表さない場合
-     * @throws IOException TSVの読み出しに失敗した場合
+     * Consumes {@code null} to the target object only if the next cell actually represents {@code null}.
+     * @param option the target object
+     * @return {@code true} if actually consumed the next cell, or otherwise {@code false}
+     * @throws RecordFormatException if the record format is something wrong
+     * @throws IOException if failed by I/O error
      */
     private boolean applyNull(ValueOption<?> option) throws RecordFormatException, IOException {
         if (lookAhead != ESCAPE_CHAR) {

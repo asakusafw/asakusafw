@@ -17,34 +17,26 @@ package com.asakusafw.utils.java.model.syntax;
 
 
 /**
- * ドキュメンテーションコメント内のメソッドやコンストラクタの仮引数宣言を表現するインターフェース。
+ * An interface which represents formal parameters in {@link DocMethod}.
  */
 public interface DocMethodParameter
         extends Model {
 
-    // properties
-
     /**
-     * 仮引数の型を返す。
-     * @return
-     *     仮引数の型
+     * Returns the parameter type.
+     * @return the parameter type
      */
     Type getType();
 
     /**
-     * 仮引数の名前を返す。
-     * <p> 仮引数の名前が省略される場合は{@code null}が返される。 </p>
-     * @return
-     *     仮引数の名前、
-     *     ただし仮引数の名前が省略される場合は{@code null}
+     * Returns the parameter name.
+     * @return the parameter name, or {@code null} if it is not specified
      */
     SimpleName getName();
 
     /**
-     * 可変長引数である場合に{@code true}を返す。
-     * <p> そうでない場合、この呼び出しは{@code false}を返す。 </p>
-     * @return
-     *     可変長引数
+     * Returns whether this parameter is variable arity or not.
+     * @return {@code true} if this parameter is variable arity, otherwise {@code false}
      */
     boolean isVariableArity();
 }
