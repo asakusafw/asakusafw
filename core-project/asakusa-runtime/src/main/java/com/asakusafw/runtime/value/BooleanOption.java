@@ -22,6 +22,7 @@ import java.text.MessageFormat;
 
 import com.asakusafw.runtime.io.util.WritableRawComparable;
 
+//TODO i18n
 /**
  * {@code null}値を許容する{@code boolean}値。
  */
@@ -37,7 +38,7 @@ public final class BooleanOption extends ValueOption<BooleanOption> {
      * Creates a new instance which represents {@code null} value.
      */
     public BooleanOption() {
-        super();
+        this.nullValue = true;
     }
 
     /**
@@ -45,7 +46,6 @@ public final class BooleanOption extends ValueOption<BooleanOption> {
      * @param value the initial value
      */
     public BooleanOption(boolean value) {
-        super();
         this.value = value;
         this.nullValue = false;
     }

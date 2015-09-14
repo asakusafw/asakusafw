@@ -24,6 +24,7 @@ import org.apache.hadoop.io.WritableComparator;
 
 import com.asakusafw.runtime.io.util.WritableRawComparable;
 
+//TODO i18n
 /**
  * {@code null}値を許容する{@code int}値。
  */
@@ -32,15 +33,15 @@ public final class IntOption extends ValueOption<IntOption> {
     private int value;
 
     /**
-     * Creates a new instance.
+     * Creates a new instance which represents {@code null} value.
      */
     public IntOption() {
         this.nullValue = true;
     }
 
     /**
-     * Creates a new instance.
-     * @param value 初期値
+     * Creates a new instance which represents the specified value.
+     * @param value the initial value
      */
     public IntOption(int value) {
         this.nullValue = false;

@@ -23,13 +23,13 @@ import java.lang.annotation.Target;
 
 import com.asakusafw.vocabulary.external.ExporterDescription;
 
+//TODO i18n
 /**
  * 利用するエクスポーターの内容を指定する注釈。
  * <p>
  * ジョブフロークラスのコンストラクターで{@link Out}型の引数を利用する場合、
  * 引数にこの注釈を付与してエクスポーターの動作を指定する必要がある。
  * </p>
- * TODO i18n
  */
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)

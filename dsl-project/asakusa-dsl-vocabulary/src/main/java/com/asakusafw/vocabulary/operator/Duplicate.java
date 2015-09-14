@@ -21,12 +21,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 複製演算子を表す演算子注釈。
- * <p>
- * この演算子を表す演算子メソッドは作成できない。
- * 他の演算子からの出力や、フローへの入力を複数回利用することで、
- * 同等の機能を実現可能である。
- * </p>
+ * Represents <em>duplicate</em> operator annotation.
+ * Application developers should drive {@code Source} object multiple times instead using this operator.
  */
 @Target({ })
 @Retention(RetentionPolicy.RUNTIME)

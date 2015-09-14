@@ -22,6 +22,7 @@ import java.text.MessageFormat;
 
 import com.asakusafw.runtime.io.util.WritableRawComparable;
 
+//TODO i18n
 /**
  * {@code null}値を許容する{@code short}値。
  */
@@ -33,7 +34,7 @@ public final class ShortOption extends ValueOption<ShortOption> {
      * Creates a new instance which represents {@code null} value.
      */
     public ShortOption() {
-        super();
+        this.nullValue = true;
     }
 
     /**
@@ -41,7 +42,6 @@ public final class ShortOption extends ValueOption<ShortOption> {
      * @param value the initial value
      */
     public ShortOption(short value) {
-        super();
         this.value = value;
         this.nullValue = false;
     }

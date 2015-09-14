@@ -35,6 +35,7 @@ import com.asakusafw.trace.model.Tracepoint.PortKind;
 import com.asakusafw.vocabulary.flow.FlowDescription;
 import com.asakusafw.vocabulary.flow.FlowPart;
 
+// TODO i18n
 /**
  * An abstract super class of test-driver classes.
  * @since 0.2.0

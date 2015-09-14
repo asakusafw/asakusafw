@@ -21,6 +21,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+//TODO i18n
 /**
  * 変換演算子を表すメソッドに付与する注釈。
  * <p>
@@ -84,27 +85,27 @@ public Foo toFoo(Hoge hoge) {
 public @interface Convert {
 
     /**
-     * 入力ポートの番号。
+     * The input port number.
      */
     int ID_INPUT = 0;
 
     /**
-     * 入力をそのまま出す出力ポートの番号。
+     * The output port number which provides the original data-set.
      */
     int ID_OUTPUT_ORIGINAL = 0;
 
     /**
-     * 変換後の出力ポートの番号。
+     * The output port number which provides the converted data-set.
      */
     int ID_OUTPUT_CONVERTED = 1;
 
     /**
-     * 入力をそのまま出すポート名。
+     * The default port name of {@link #ID_OUTPUT_ORIGINAL}.
      */
     String originalPort() default "original";
 
     /**
-     * 変換後の出力のポート名。
+     * The default port name of {@link #ID_OUTPUT_CONVERTED}.
      */
     String convertedPort() default "out";
 }

@@ -23,6 +23,7 @@ import com.asakusafw.testdriver.core.TestDataToolProvider;
 import com.asakusafw.utils.io.Provider;
 import com.asakusafw.utils.io.Source;
 
+// TODO i18n
 /**
  * An abstract super class which represents an input port of data flow on testing.
  * Clients should not inherit this class directly.

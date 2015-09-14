@@ -26,6 +26,7 @@ import org.apache.hadoop.io.WritableUtils;
 
 import com.asakusafw.runtime.io.util.WritableRawComparable;
 
+//TODO i18n
 /**
  * {@code null}値を許容する文字列。
  * <p>
@@ -55,15 +56,15 @@ public final class StringOption extends ValueOption<StringOption> {
     private final Text entity = new Text();
 
     /**
-     * Creates a new instance.
+     * Creates a new instance which represents {@code null} value.
      */
     public StringOption() {
         this.nullValue = true;
     }
 
     /**
-     * Creates a new instance.
-     * @param textOrNull 生成するインスタンスの初期値
+     * Creates a new instance which represents the specified value.
+     * @param textOrNull the initial value (nullable)
      */
     public StringOption(String textOrNull) {
         if (textOrNull == null) {

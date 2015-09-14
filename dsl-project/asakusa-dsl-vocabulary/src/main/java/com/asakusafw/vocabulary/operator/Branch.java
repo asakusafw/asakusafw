@@ -21,6 +21,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+//TODO i18n
 /**
  * 分岐演算子を表すメソッドに付与する注釈。
  * <p>
@@ -116,7 +117,7 @@ public abstract class &lt;Operator-Class&gt; {
 public @interface Branch {
 
     /**
-     * 入力ポートの番号。
+     * The input port number.
      */
     int ID_INPUT = 0;
 }

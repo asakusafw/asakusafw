@@ -189,7 +189,7 @@ public class ExpressionBuilder {
 
     /**
      * Returns an assignment expression which contains the building expression on the left hand side.
-     * @param operator 複合代入演算子
+     * @param operator infix operator for compound assignment
      * @param rightHandSide the right hand side expression
      * @return this
      * @throws IllegalArgumentException if the parameter is {@code null}

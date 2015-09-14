@@ -26,6 +26,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.asakusafw.vocabulary.flow.FlowDescription;
 
+//TODO i18n
 /**
  * バッチを記述するための基底クラス。
  * <p>
@@ -49,7 +50,6 @@ public class HogeBatch extends BatchDescription {
  * {@code SecondFlow, ParallelFlow}が実行され、
  * いずれも完了したのちに{@code JoinFlow}が実行されるようなバッチを表す。
  * </p>
- * TODO i18n
  */
 public abstract class BatchDescription {
 

@@ -23,13 +23,13 @@ import java.lang.annotation.Target;
 
 import com.asakusafw.vocabulary.external.ImporterDescription;
 
+//TODO i18n
 /**
  * 利用するインポーターの内容を指定する注釈。
  * <p>
  * ジョブフロークラスのコンストラクターで{@link In}型の引数を利用する場合、
  * 引数にこの注釈を付与してインポーターの動作を指定する必要がある。
  * </p>
- * TODO i18n
  */
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)

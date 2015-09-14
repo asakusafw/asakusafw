@@ -24,6 +24,7 @@ import org.apache.hadoop.io.WritableComparator;
 
 import com.asakusafw.runtime.io.util.WritableRawComparable;
 
+//TODO i18n
 /**
  * {@code null}値を許容する{@code long}値。
  */
@@ -35,7 +36,7 @@ public final class LongOption extends ValueOption<LongOption> {
      * Creates a new instance which represents {@code null} value.
      */
     public LongOption() {
-        super();
+        this.nullValue = true;
     }
 
     /**
@@ -43,7 +44,6 @@ public final class LongOption extends ValueOption<LongOption> {
      * @param value the initial value
      */
     public LongOption(long value) {
-        super();
         this.value = value;
         this.nullValue = false;
     }

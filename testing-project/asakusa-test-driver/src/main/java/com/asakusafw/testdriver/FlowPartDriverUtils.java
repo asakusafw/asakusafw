@@ -15,7 +15,6 @@
  */
 package com.asakusafw.testdriver;
 
-
 import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.runtime.stage.StageConstants;
 

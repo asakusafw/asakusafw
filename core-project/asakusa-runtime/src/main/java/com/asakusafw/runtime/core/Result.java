@@ -15,9 +15,9 @@
  */
 package com.asakusafw.runtime.core;
 
+//TODO i18n
 /**
  * 演算子の出力を表現するインターフェース。
- * TODO i18n
  * @param <T> データの種類
  */
 public interface Result<T> {

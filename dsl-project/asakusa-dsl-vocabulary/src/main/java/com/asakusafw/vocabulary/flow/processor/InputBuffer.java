@@ -17,9 +17,9 @@ package com.asakusafw.vocabulary.flow.processor;
 
 import com.asakusafw.vocabulary.flow.graph.FlowElementAttribute;
 
+//TODO i18n
 /**
  * Listを引数に取る演算子の、入力バッファの性質。
- * TODO i18n
  * @since 0.2.0
  */
 public enum InputBuffer implements FlowElementAttribute {

@@ -17,6 +17,7 @@ package com.asakusafw.runtime.value;
 
 import com.asakusafw.runtime.io.util.WritableRawComparable;
 
+//TODO i18n
 /**
  * Represents nullable and modifiable value.
  * Note that, the sub-classes may be thread unsafe.

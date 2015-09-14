@@ -17,6 +17,7 @@ package com.asakusafw.runtime.value;
 
 import java.text.MessageFormat;
 
+//TODO i18n
 /**
  * 日付に関する軽量クラス。
  */
@@ -37,7 +38,7 @@ public class Date implements Comparable<Date> {
     }
 
     /**
-     * Creates a new instance.
+     * インスタンスを生成する。
      * @param year 年 (1-...)
      * @param month 月 (1-12)
      * @param day 日 (1-31)
@@ -47,7 +48,7 @@ public class Date implements Comparable<Date> {
     }
 
     /**
-     * Creates a new instance.
+     * インスタンスを生成する。
      * @param elapsedDays 表す日付の0001/01/01からの経過日数(0起算)
      */
     public Date(int elapsedDays) {

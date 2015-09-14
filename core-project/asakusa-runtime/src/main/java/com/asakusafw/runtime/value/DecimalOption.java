@@ -27,6 +27,7 @@ import org.apache.hadoop.io.WritableUtils;
 
 import com.asakusafw.runtime.io.util.WritableRawComparable;
 
+//TODO i18n
 /**
  * {@code null}値を許容する10進数。
  * @since 0.1.0
@@ -60,7 +61,7 @@ public final class DecimalOption extends ValueOption<DecimalOption> {
      * Creates a new instance which represents {@code null} value.
      */
     public DecimalOption() {
-        super();
+        this.nullValue = true;
     }
 
     /**
@@ -68,7 +69,9 @@ public final class DecimalOption extends ValueOption<DecimalOption> {
      * @param valueOrNull the initial value
      */
     public DecimalOption(BigDecimal valueOrNull) {
-        if (valueOrNull != null) {
+        if (valueOrNull == null) {
+            this.nullValue = true;
+        } else {
             this.entity = valueOrNull;
             this.nullValue = false;
         }

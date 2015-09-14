@@ -22,6 +22,7 @@ import java.text.MessageFormat;
 
 import com.asakusafw.runtime.io.util.WritableRawComparable;
 
+//TODO i18n
 /**
  * {@code null}値を許容する{@code byte}値。
  */
@@ -33,7 +34,7 @@ public final class ByteOption extends ValueOption<ByteOption> {
      * Creates a new instance which represents {@code null} value.
      */
     public ByteOption() {
-        super();
+        this.nullValue = true;
     }
 
     /**
@@ -41,7 +42,6 @@ public final class ByteOption extends ValueOption<ByteOption> {
      * @param value the initial value
      */
     public ByteOption(byte value) {
-        super();
         this.value = value;
         this.nullValue = false;
     }

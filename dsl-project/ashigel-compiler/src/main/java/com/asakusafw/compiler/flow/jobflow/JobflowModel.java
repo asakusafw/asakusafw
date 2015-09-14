@@ -263,7 +263,7 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
     }
 
     /**
-     *　Represents a set of configurations for Reduce actions.
+     * Represents a set of configurations for Reduce actions.
      */
     public static class Reduce {
 
@@ -496,7 +496,7 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
     }
 
     /**
-     *　Represents a set of configurations for Map actions.
+     * Represents a set of configurations for Map actions.
      */
     public static class Process extends Target {
 

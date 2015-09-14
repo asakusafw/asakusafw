@@ -21,56 +21,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.asakusafw.vocabulary.model.Key;
-
-
 /**
- * 重複検出演算子を表すメソッドに付与する注釈。
- * <p>
- * この演算子は、単一の入力を特定の項目でグループ化し、
- * 同項目の値に重複があるものとそうでないものに分類した上で出力する。
- * </p>
- * <p>
- * 対象のメソッドは抽象メソッドとして宣言し、重複を検出する対象のモデルオブジェクト型の引数を取る。
- * また、同引数には{@link Key}注釈を指定し、
- * {@link Key#group() グループ化}のためのプロパティ名を指定する。
- * </p>
- * <p>
- * 引数には同メソッドで宣言した型変数を利用できる。
- * </p>
- * <p>
- * この注釈を付与するメソッドは、下記の要件を満たす必要がある。
- * </p>
- * <ul>
- * <li> 返戻型に{@code void}を指定する </li>
- * <li> 以下の引数を宣言する
- *   <ul>
- *   <li> モデルオブジェクト型の引数、さらに{@link Key}注釈でグループ化のプロパティを指定する </li>
- *   </ul>
- * </li>
- * <li> 以下の修飾子を付与する
- *   <ul>
- *   <li> {@code abstract} </li>
- *   </ul>
- * </li>
- * <li> 以下の修飾子は付与しない
- *   <ul>
- *   <li> (特になし) </li>
- *   </ul>
- * </li>
- * </ul>
- * <p>
- * 例:
- * </p>
-<pre><code>
-/**
- &#42; レコードHogeをプロパティfooにおいて重複を検出する。
- &#42; &#64;param hoge 重複を検出する対象
- &#42;&#47;
-&#64;Unique
-public abstract void unique(&#64;Key(group="foo") Hoge hoge);
-</code></pre>
- * @deprecated {@link GroupSort}の整列順序を利用しないことで代用
+ * Represents <em>unique</em> operator annotation.
+ * @deprecated Use {@link GroupSort} instead
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)

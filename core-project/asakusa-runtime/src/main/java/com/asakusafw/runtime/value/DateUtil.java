@@ -17,6 +17,7 @@ package com.asakusafw.runtime.value;
 
 import java.util.Calendar;
 
+//TODO i18n
 /**
  * 日付に関するユーティリティ群。
  * @since 0.1.0

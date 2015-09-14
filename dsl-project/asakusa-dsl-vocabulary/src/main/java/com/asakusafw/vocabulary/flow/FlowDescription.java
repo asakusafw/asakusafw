@@ -17,9 +17,9 @@ package com.asakusafw.vocabulary.flow;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+//TODO i18n
 /**
  * フローを記述するための基底クラス。
- * TODO i18n
  */
 public abstract class FlowDescription {
 

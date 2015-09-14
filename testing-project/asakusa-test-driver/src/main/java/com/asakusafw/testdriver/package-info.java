@@ -15,8 +15,6 @@
  */
 /**
  * Test driver classes.
- * <p>
  * Application developers will use classes in this package for testing Asakusa applications.
- * </p>
  */
 package com.asakusafw.testdriver;

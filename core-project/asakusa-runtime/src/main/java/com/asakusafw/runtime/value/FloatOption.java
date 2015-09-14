@@ -24,6 +24,7 @@ import org.apache.hadoop.io.WritableComparator;
 
 import com.asakusafw.runtime.io.util.WritableRawComparable;
 
+//TODO i18n
 /**
  * {@code null}値を許容する{@code float}値。
  */
@@ -35,7 +36,7 @@ public final class FloatOption extends ValueOption<FloatOption> {
      * Creates a new instance which represents {@code null} value.
      */
     public FloatOption() {
-        super();
+        this.nullValue = true;
     }
 
     /**
@@ -43,7 +44,6 @@ public final class FloatOption extends ValueOption<FloatOption> {
      * @param value the initial value
      */
     public FloatOption(float value) {
-        super();
         this.value = value;
         this.nullValue = false;
     }

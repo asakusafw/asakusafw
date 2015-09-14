@@ -18,6 +18,7 @@ package com.asakusafw.runtime.core;
 import java.io.IOException;
 import java.text.MessageFormat;
 
+//TODO i18n
 /**
  * システムにレポートを通知するためのAPI。
  * <p>
@@ -40,7 +41,6 @@ public void updateWithReport(Hoge hoge) {
     }
 }
 </code></pre>
- * TODO i18n
  * @since 0.1.0
  * @version 0.5.1
  */

@@ -17,9 +17,9 @@ package com.asakusafw.vocabulary.flow;
 
 import com.asakusafw.vocabulary.flow.graph.FlowElementInput;
 
+//TODO i18n
 /**
  * フローからの出力を表すインターフェース。
- * TODO i18n
  * @param <T> 出力するデータの種類
  * @since 0.1.0
  * @version 0.7.3

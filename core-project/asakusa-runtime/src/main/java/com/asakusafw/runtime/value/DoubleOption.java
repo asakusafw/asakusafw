@@ -24,6 +24,7 @@ import org.apache.hadoop.io.WritableComparator;
 
 import com.asakusafw.runtime.io.util.WritableRawComparable;
 
+//TODO i18n
 /**
  * {@code null}値を許容する{@code double}値。
  */
@@ -35,7 +36,7 @@ public final class DoubleOption extends ValueOption<DoubleOption> {
      * Creates a new instance which represents {@code null} value.
      */
     public DoubleOption() {
-        super();
+        this.nullValue = true;
     }
 
     /**
@@ -43,7 +44,6 @@ public final class DoubleOption extends ValueOption<DoubleOption> {
      * @param value the initial value
      */
     public DoubleOption(double value) {
-        super();
         this.value = value;
         this.nullValue = false;
     }

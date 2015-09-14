@@ -23,7 +23,7 @@ import java.lang.annotation.Target;
 
 import com.asakusafw.vocabulary.model.Key;
 
-
+//TODO i18n
 /**
  * マスタ確認演算子を表すメソッドに付与する注釈。
  * <p>
@@ -93,32 +93,32 @@ public abstract boolean exists(
 public @interface MasterCheck {
 
     /**
-     * マスタの入力ポート番号。
+     * The input port number for the <em>master</em> data.
      */
     int ID_INPUT_MASTER = 0;
 
     /**
-     * トランザクションの入力ポート番号。
+     * The input port number for the <em>transaction</em> data.
      */
     int ID_INPUT_TRANSACTION = 1;
 
     /**
-     * 引き当てが成功した場合の出力先のポート番号。
+     * The output port number for the successfully checked data.
      */
     int ID_OUTPUT_FOUND = 0;
 
     /**
-     * 引き当てが失敗した場合の出力先のポート番号。
+     * The output port number for the <em>master</em> missing data.
      */
     int ID_OUTPUT_MISSED = 1;
 
     /**
-     * 引き当てが成功した場合の出力先のポート名。
+     * The default port name of {#ID_OUTPUT_FOUND}.
      */
     String foundPort() default "found";
 
     /**
-     * 引き当てが失敗した場合の出力先のポート名。
+     * The default port name of {@link #ID_OUTPUT_MISSED}.
      */
     String missedPort() default "missed";
 

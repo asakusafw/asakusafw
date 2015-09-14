@@ -22,6 +22,7 @@ import java.util.Map;
 import com.asakusafw.runtime.stage.StageConstants;
 import com.asakusafw.runtime.util.VariableTable;
 
+//TODO i18n
 /**
  * バッチの文脈情報。
  * <p>
@@ -30,7 +31,6 @@ import com.asakusafw.runtime.util.VariableTable;
  * 一部のインポータやエクスポータでは、この文脈情報と同じ情報を、特殊な方法で取得するための
  * 機能が用意されているものもある。
  * </p>
- * TODO i18n
  */
 public class BatchContext {
 

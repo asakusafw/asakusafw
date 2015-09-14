@@ -17,9 +17,9 @@ package com.asakusafw.vocabulary.flow;
 
 import com.asakusafw.vocabulary.flow.graph.FlowElementOutput;
 
+//TODO i18n
 /**
  * フロー内でデータを提供する要素が持つべきインターフェース。
- * TODO i18n
  * @param <T> 提供するデータの種類
  */
 public interface Source<T> {

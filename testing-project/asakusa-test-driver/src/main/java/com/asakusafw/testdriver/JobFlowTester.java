@@ -42,6 +42,7 @@ import com.asakusafw.vocabulary.external.ImporterDescription;
 import com.asakusafw.vocabulary.flow.FlowDescription;
 import com.asakusafw.vocabulary.flow.graph.FlowGraph;
 
+// TODO i18n
 /**
  * ジョブフロー用のテストドライバクラス。
  * @since 0.2.0
@@ -63,7 +64,6 @@ public class JobFlowTester extends TesterBase {
 
     /**
      * コンストラクタ。
-     *
      * @param callerClass 呼出元クラス
      */
     public JobFlowTester(Class<?> callerClass) {
@@ -72,9 +72,8 @@ public class JobFlowTester extends TesterBase {
 
     /**
      * テスト入力データを指定する。
-     *
      * @param <T> the data model type
-     * @param name 入力データ名。テストドライバに指定する入力データ間で一意の名前を指定する
+     * @param name 入力データ名 - テストドライバに指定する入力データ間で一意の名前を指定する
      * @param modelType the data model type
      * @return テスト入力データオブジェクト
      */

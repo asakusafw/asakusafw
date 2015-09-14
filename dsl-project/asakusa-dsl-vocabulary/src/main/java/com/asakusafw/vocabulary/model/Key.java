@@ -21,6 +21,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+//TODO i18n
 /**
  * レコードのキーを指定する注釈。
  * <p>
@@ -42,7 +43,6 @@ import java.lang.annotation.Target;
 // 全てを単一のグループにまとめ、回数の降順で整列
 &#64;Key(group = {}, order = "count DESC")
 </code></pre>
- * TODO i18n
  */
 @Target({ ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)

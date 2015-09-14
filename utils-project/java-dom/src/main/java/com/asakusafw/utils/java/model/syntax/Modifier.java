@@ -17,7 +17,7 @@ package com.asakusafw.utils.java.model.syntax;
 
 
 /**
- * An interface which represents 修飾子.
+ * An interface which represents modifiers.
  */
 public interface Modifier
         extends Attribute {

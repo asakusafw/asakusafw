@@ -17,9 +17,9 @@ package com.asakusafw.vocabulary.flow.processor;
 
 import com.asakusafw.vocabulary.flow.graph.FlowElementAttribute;
 
+//TODO i18n
 /**
  * 部分集約の性質。
- * TODO i18n
  * @since 0.2.0
  */
 public enum PartialAggregation implements FlowElementAttribute {

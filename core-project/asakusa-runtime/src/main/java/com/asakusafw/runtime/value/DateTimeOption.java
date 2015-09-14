@@ -22,6 +22,7 @@ import java.text.MessageFormat;
 
 import com.asakusafw.runtime.io.util.WritableRawComparable;
 
+//TODO i18n
 /**
  * {@code null}値を許容する日付時刻。
  */
@@ -33,16 +34,17 @@ public final class DateTimeOption extends ValueOption<DateTimeOption> {
      * Creates a new instance which represents {@code null} value.
      */
     public DateTimeOption() {
-        super();
+        this.nullValue = true;
     }
 
     /**
      * Creates a new instance which represents the specified value.
-     * @param valueOrNull the initial value
+     * @param valueOrNull the initial value (nullable)
      */
     public DateTimeOption(DateTime valueOrNull) {
-        super();
-        if (valueOrNull != null) {
+        if (valueOrNull == null) {
+            this.nullValue = true;
+        } else {
             this.entity.setElapsedSeconds(valueOrNull.getElapsedSeconds());
             this.nullValue = false;
         }
