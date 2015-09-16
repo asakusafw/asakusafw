@@ -115,7 +115,8 @@ public @interface MasterJoin {
     String missedPort() default "missed";
 
     /**
-     * 利用するマスタ選択演算子のメソッド名。
+     * The selector method name.
+     * The target method must be declared in the same class.
      * @see MasterSelection
      */
     String selection() default MasterSelection.NO_SELECTION;

@@ -69,42 +69,42 @@ public abstract class &lt;Operator-Class&gt; {
     ...
 
     /**
-     &#42; レコードの状態ごとに処理を分岐する。
-     &#42; &#64;param hoge 対象のレコード
-     &#42; &#64;return 分岐先を表すオブジェクト
+     &#42; Returns the record status.
+     &#42; &#64;param hoge the target record
+     &#42; &#64;return the branch target status
      &#42;&#47;
     &#64;Branch
     public Status select(Hoge hoge) {
         int price = hoge.getPrice();
         if (price &lt; 0) {
             return Status.ERROR;
-        }
-        if (price &gt;= 1000000) {
+        } else if (price &lt; 1000000) {
+            return Status.CHEAP;
+        } else {
             return Status.EXPENSIVE;
         }
-        return Status.CHEAP;
     }
 
     /**
-     &#42; 値段に関するレコードの状態。
+     &#42; Represents price status.
      &#42;&#47;
     public enum Status {
+
         /**
-         &#42; 高い。
+         &#42; Expensive price.
          &#42;&#47;
         EXPENSIVE,
 
         /**
-         &#42; 安い。
+         &#42; Cheap price.
          &#42;&#47;
         CHEAP,
 
         /**
-         &#42; エラー。
+         &#42; Erroneous price.
          &#42;&#47;
         ERROR,
     }
-
     ...
 }
 </code></pre>

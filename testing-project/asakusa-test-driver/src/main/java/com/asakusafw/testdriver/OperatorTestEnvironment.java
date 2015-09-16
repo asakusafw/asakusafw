@@ -25,6 +25,7 @@ import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
 import com.asakusafw.runtime.core.BatchContext;
+import com.asakusafw.runtime.core.Report;
 import com.asakusafw.runtime.flow.RuntimeResourceManager;
 import com.asakusafw.runtime.stage.StageConstants;
 import com.asakusafw.runtime.util.VariableTable;
@@ -36,30 +37,21 @@ import com.asakusafw.testdriver.core.TestingEnvironmentConfigurator;
 import com.asakusafw.testdriver.hadoop.ConfigurationFactory;
 import com.asakusafw.utils.collections.Maps;
 
-// TODO i18n
 /**
- * 演算子のテスト時に各種プラグインを利用可能にするためのリソース。
- * <p>
- * テストクラス内で以下のように利用する:
- * </p>
+ * An <em>Operator DSL</em> test helper which enables framework APIs.
+ * Application developers can use this class like as following:
 <pre><code>
 &#64;Rule
 public OperatorTestEnvironment resource = new OperatorTestEnvironment();
 </code></pre>
- * <p>
- * 上記のように記述することで、クラスパス上の{@code asakusa-resources.xml}というファイルがあれば読みだし、
- * 各種プラグインが提供するクラスを利用できるようになる。
- * </p>
- * <p>
- * 別の設定ファイルを利用する場合は、下記のようにクラスパス上のファイル名を指定する。
- * </p>
+ * The above activates a configuration file {@code asakusa-resources.xml} on the current class-path,
+ * and enables framework APIs (e.g. {@link Report Report API}) using the configuration.
+ * Clients can also use alternative configuration files by specifying their paths:
 <pre><code>
 &#64;Rule
 public OperatorTestEnvironment resource = new OperatorTestEnvironment("com/example/testing.xml");
 </code></pre>
- * <p>
- * さらに設定をアドホックに変更する場合、次のように行う。
- * </p>
+ * Additionally, clients can also put batch arguments or extra configuration items:
 <pre><code>
 &#64;Rule
 public OperatorTestEnvironment resource = new OperatorTestEnvironment(...);
@@ -67,6 +59,7 @@ public OperatorTestEnvironment resource = new OperatorTestEnvironment(...);
 &#64;Test
 public void sometest() {
     resource.configure("key", "value");
+    resource.setBatchArg("date", "2011/03/31");
     ...
     resource.reload();
 
@@ -105,16 +98,16 @@ public class OperatorTestEnvironment extends DriverElementBase implements TestRu
     private volatile TestToolRepository testTools;
 
     /**
-     * 既定の設定ファイルを利用して、インスタンスを生成する。
+     * Creates a new instance with the default configuration file.
      */
     public OperatorTestEnvironment() {
         this(RuntimeResourceManager.CONFIGURATION_FILE_NAME, false);
     }
 
     /**
-     * 設定ファイルのパスを指定して、インスタンスを生成する。
-     * @param configurationPath クラスパス上の設定ファイルのパス
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param configurationPath the configuration file location (relative from the class-path)
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public OperatorTestEnvironment(String configurationPath) {
         this(configurationPath, true);
@@ -192,17 +185,11 @@ public class OperatorTestEnvironment extends DriverElementBase implements TestRu
     }
 
     /**
-     * 設定項目を追加する。
-     * <p>
-     * このメソッドは、プラグインの設定を変更するために主に利用する。
-     * </p>
-     * <p>
-     * このメソッドを実行した場合、テスト実行前に
-     * {@link #reload()}メソッドを起動して設定を再読み込みする必要がある。
-     * </p>
-     * @param key 追加する項目のキー名
-     * @param value 追加する項目の値、{@code null}の場合には項目を削除する
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Adds a configuration item.
+     * Please invoke {@link #reload()} to active this change before executing the test target.
+     * @param key the configuration key name
+     * @param value the configuration value, or {@code null} to unset the target configuration
+     * @throws IllegalArgumentException if {@code key} is {@code null}
      * @see #reload()
      */
     public void configure(String key, String value) {
@@ -218,18 +205,13 @@ public class OperatorTestEnvironment extends DriverElementBase implements TestRu
     }
 
     /**
-     * バッチ実行時引数(変数表)を設定する。
-     * <p>
-     * このメソッドは、変数表(${...}で指定する変数)を変更するために主に利用する。
-     * ここで設定した値は、{@link BatchContext#get(String)}やインポーターの設定の中などで利用できる。
-     * </p>
-     * <p>
-     * このメソッドを実行した場合、テスト実行前に
-     * {@link #reload()}メソッドを起動して設定を再読み込みする必要がある。
-     * </p>
-     * @param key 追加する項目のキー名
-     * @param value 追加する項目の値、{@code null}の場合には項目を削除する
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Adds a batch argument.
+     * Clients can obtain batch arguments via {@link BatchContext#get(String) context API}.
+     * Please invoke {@link #reload()} to active this change before executing the test target.
+     * @param key the argument name
+     * @param value the argument value, or {@code null} to unset the target argument
+     * @throws IllegalArgumentException if {@code key} is {@code null}
+     * @see #reload()
      */
     public void setBatchArg(String key, String value) {
         if (key == null) {
@@ -244,7 +226,7 @@ public class OperatorTestEnvironment extends DriverElementBase implements TestRu
     }
 
     /**
-     * 設定内容を再読み込みする。
+     * Reloads the configuration file and activates changes.
      */
     public void reload() {
         dirty = false;

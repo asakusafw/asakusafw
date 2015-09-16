@@ -39,12 +39,13 @@ import com.asakusafw.testdriver.core.TestModerator;
 import com.asakusafw.testdriver.core.VerifierFactory;
 import com.asakusafw.testdriver.core.VerifyContext;
 import com.asakusafw.vocabulary.external.ImporterDescription;
+import com.asakusafw.vocabulary.flow.Export;
 import com.asakusafw.vocabulary.flow.FlowDescription;
+import com.asakusafw.vocabulary.flow.Import;
 import com.asakusafw.vocabulary.flow.graph.FlowGraph;
 
-// TODO i18n
 /**
- * ジョブフロー用のテストドライバクラス。
+ * A tester for {@code JobFlow jobflow} classes.
  * @since 0.2.0
  * @version 0.5.2
  */
@@ -63,19 +64,19 @@ public class JobFlowTester extends TesterBase {
     protected final List<JobFlowDriverOutput<?>> outputs = new LinkedList<JobFlowDriverOutput<?>>();
 
     /**
-     * コンストラクタ。
-     * @param callerClass 呼出元クラス
+     * Creates a new instance.
+     * @param callerClass the caller class (usually it is a test class)
      */
     public JobFlowTester(Class<?> callerClass) {
         super(callerClass);
     }
 
     /**
-     * テスト入力データを指定する。
+     * Starts configuring the target flow input.
      * @param <T> the data model type
-     * @param name 入力データ名 - テストドライバに指定する入力データ間で一意の名前を指定する
+     * @param name the target input name (specified in {@link Import#name() &#64;Import(name=...)})
      * @param modelType the data model type
-     * @return テスト入力データオブジェクト
+     * @return object for configuring the target input
      */
     public <T> JobFlowDriverInput<T> input(String name, Class<T> modelType) {
         JobFlowDriverInput<T> input = new JobFlowDriverInput<T>(driverContext, name, modelType);
@@ -84,12 +85,11 @@ public class JobFlowTester extends TesterBase {
     }
 
     /**
-     * テスト結果の出力データ（期待値データ）を指定する。
-     *
+     * Starts configuring the target flow output.
      * @param <T> the data model type
-     * @param name 出力データ名。テストドライバに指定する出力データ間で一意の名前を指定する
+     * @param name the target output name (specified in {@link Export#name() &#64;Export(name=...)})
      * @param modelType the data model type
-     * @return テスト出力データオブジェクト
+     * @return object for configuring the target output
      */
     public <T> JobFlowDriverOutput<T> output(String name, Class<T> modelType) {
         JobFlowDriverOutput<T> output = new JobFlowDriverOutput<T>(driverContext, name, modelType);
@@ -98,14 +98,15 @@ public class JobFlowTester extends TesterBase {
     }
 
     /**
-     * ジョブフローのテストを実行し、テスト結果を検証します。
-     * @param jobFlowDescriptionClass ジョブフロークラスのクラスオブジェクト
-     * @throws IllegalStateException ジョブフローのコンパイル、入出力や検査ルールの用意に失敗した場合
+     * Executes a jobflow and then verifies the execution result.
+     * @param description the target jobflow class
+     * @throws IllegalStateException if error was occurred while building jobflow class or initializing this tester
+     * @throws AssertionError if verification was failed
      */
-    public void runTest(Class<? extends FlowDescription> jobFlowDescriptionClass) {
+    public void runTest(Class<? extends FlowDescription> description) {
         try {
             try {
-                runTestInternal(jobFlowDescriptionClass);
+                runTestInternal(description);
             } finally {
                 driverContext.cleanUpTemporaryResources();
             }

@@ -18,24 +18,20 @@ package com.asakusafw.runtime.core;
 import java.io.IOException;
 import java.text.MessageFormat;
 
-//TODO i18n
 /**
- * システムにレポートを通知するためのAPI。
- * <p>
- * レポートの内容によってワークフロー制御が変わることはない。
- * ただし、ワークフローエンジンによっては、このレポートの情報をもとに
- * ジョブの結果にメタ情報を付与することも想定される。
- * </p>
- * <p>
- * このクラスのメソッドを利用する演算子では、以下のように<code>&#64;Sticky</code>を付与する必要がある。
- * この指定が無い場合、コンパイラの最適化によって、演算子の処理そのものが行われなくなる可能性がある。
- * </p>
+ * Report API entry class.
+ * The Report API enables to notify some messages in operator methods, to the runtime reporting system
+ * (e.g. logger, standard output, or etc.).
+ * Generally, the Report API does not have any effect on the batch execution, for example, the batch execution will
+ * continue even if {@link Report#error(String)} is invoked.
+ * Clients should put <code>&#64;Sticky</code> annotation for operator methods using this API, otherwise the Asakusa
+ * DSL compiler optimization may remove the target operator.
 <pre><code>
 &#64;Sticky
 &#64;Update
 public void updateWithReport(Hoge hoge) {
     if (hoge.getValue() &lt; 0) {
-        Report.error("invalid valud");
+        Report.error("invalid value");
     } else {
         hoge.setValue(0);
     }
@@ -75,12 +71,10 @@ public final class Report {
     }
 
     /**
-     * ジョブフロー全体の終了状態に影響のない「情報」レポートを通知する。
-     * <p>
-     * このクラスのメソッドを利用する演算子では、メソッド宣言に<code>&#64;Sticky</code>を付与する必要がある。
-     * </p>
-     * @param message 通知するメッセージ
-     * @throws Report.FailedException レポートの通知に失敗した場合
+     * Reports an <em>informative</em> message.
+     * Clients should put <code>&#64;Sticky</code> annotation to the operator method that using this.
+     * @param message the message
+     * @throws Report.FailedException if error was occurred while reporting the message
      * @see Report
      */
     public static void info(String message) {
@@ -92,13 +86,11 @@ public final class Report {
     }
 
     /**
-     * ジョブフロー全体の終了状態に影響のない「情報」レポートを通知する。
-     * <p>
-     * このクラスのメソッドを利用する演算子では、メソッド宣言に<code>&#64;Sticky</code>を付与する必要がある。
-     * </p>
-     * @param message 通知するメッセージ
-     * @param throwable 例外情報 (省略可能)
-     * @throws Report.FailedException レポートの通知に失敗した場合
+     * Reports an <em>informative</em> message.
+     * Clients should put <code>&#64;Sticky</code> annotation to the operator method that using this.
+     * @param message the message
+     * @param throwable the optional exception object (nullable)
+     * @throws Report.FailedException if error was occurred while reporting the message
      * @see Report
      * @since 0.5.1
      */
@@ -111,12 +103,10 @@ public final class Report {
     }
 
     /**
-     * ジョブフロー全体の終了状態を警告状態以上にする「警告」レポートを通知する。
-     * <p>
-     * このクラスのメソッドを利用する演算子では、メソッド宣言に<code>&#64;Sticky</code>を付与する必要がある。
-     * </p>
-     * @param message 通知するメッセージ
-     * @throws Report.FailedException レポートの通知に失敗した場合
+     * Reports a <em>warning</em> message.
+     * Clients should put <code>&#64;Sticky</code> annotation to the operator method that using this.
+     * @param message the message
+     * @throws Report.FailedException if error was occurred while reporting the message
      * @see Report
      */
     public static void warn(String message) {
@@ -128,13 +118,11 @@ public final class Report {
     }
 
     /**
-     * ジョブフロー全体の終了状態を警告状態以上にする「警告」レポートを通知する。
-     * <p>
-     * このクラスのメソッドを利用する演算子では、メソッド宣言に<code>&#64;Sticky</code>を付与する必要がある。
-     * </p>
-     * @param message 通知するメッセージ
-     * @param throwable 例外情報 (省略可能)
-     * @throws Report.FailedException レポートの通知に失敗した場合
+     * Reports a <em>warning</em> message.
+     * Clients should put <code>&#64;Sticky</code> annotation to the operator method that using this.
+     * @param message the message
+     * @param throwable the optional exception object (nullable)
+     * @throws Report.FailedException if error was occurred while reporting the message
      * @see Report
      * @since 0.5.1
      */
@@ -147,16 +135,12 @@ public final class Report {
     }
 
     /**
-     * ジョブフロー全体の終了状態を異常状態にする「エラー」レポートを通知する。
-     * <p>
-     * このクラスのメソッドを利用する演算子では、メソッド宣言に<code>&#64;Sticky</code>を付与する必要がある。
-     * </p>
-     * <p>
-     * このレポート通知を行った後も、処理は継続される。
-     * 処理を即座に終了させる場合には、演算子内で適切な例外をスローすること。
-     * </p>
-     * @param message 通知するメッセージ
-     * @throws Report.FailedException レポートの通知に失敗した場合
+     * Reports an <em>error</em> message.
+     * Clients should put <code>&#64;Sticky</code> annotation to the operator method that using this.
+     * Please be careful that this method will <em>NOT</em> shutdown the running batch.
+     * To shutdown the batch, throw an exception ({@link RuntimeException}) in operator methods.
+     * @param message the message
+     * @throws Report.FailedException if error was occurred while reporting the message
      * @see Report
      */
     public static void error(String message) {
@@ -168,17 +152,13 @@ public final class Report {
     }
 
     /**
-     * ジョブフロー全体の終了状態を異常状態にする「エラー」レポートを通知する。
-     * <p>
-     * このクラスのメソッドを利用する演算子では、メソッド宣言に<code>&#64;Sticky</code>を付与する必要がある。
-     * </p>
-     * <p>
-     * このレポート通知を行った後も、処理は継続される。
-     * 処理を即座に終了させる場合には、演算子内で適切な例外をスローすること。
-     * </p>
-     * @param message 通知するメッセージ
-     * @param throwable 例外情報 (省略可能)
-     * @throws Report.FailedException レポートの通知に失敗した場合
+     * Reports an <em>error</em> message.
+     * Clients should put <code>&#64;Sticky</code> annotation to the operator method that using this.
+     * Please be careful that this method will <em>NOT</em> shutdown the running batch.
+     * To shutdown the batch, throw an exception ({@link RuntimeException}) in operator methods.
+     * @param message the message
+     * @param throwable the optional exception object (nullable)
+     * @throws Report.FailedException if error was occurred while reporting the message
      * @see Report
      * @since 0.5.1
      */
@@ -195,7 +175,7 @@ public final class Report {
     }
 
     /**
-     * レポートに失敗したことを表す例外。
+     * {@link FailedException} is thrown when an exception was occurred while processing messages in {@link Report}.
      */
     public static class FailedException extends RuntimeException {
 
@@ -258,7 +238,6 @@ public final class Report {
          * @param level report level
          * @param message report message
          * @throws IOException if failed to notify this report by I/O error
-         * @see #report(Level, String, Throwable)
          */
         public abstract void report(Level level, String message) throws IOException;
 

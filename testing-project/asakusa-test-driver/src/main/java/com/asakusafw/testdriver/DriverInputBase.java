@@ -100,7 +100,7 @@ public abstract class DriverInputBase<T> extends DriverElementBase {
     }
 
     /**
-     * Returns the source for jobflow input.
+     * Returns the data source for this input.
      * @return the source, or {@code null} if not defined
      * @since 0.2.3
      */
@@ -109,7 +109,7 @@ public abstract class DriverInputBase<T> extends DriverElementBase {
     }
 
     /**
-     * Sets the source for jobflow input.
+     * Sets the data source for this input.
      * @param source the source, or {@code null} to reset it
      * @since 0.6.0
      */

@@ -17,9 +17,9 @@ package com.asakusafw.vocabulary.flow;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-//TODO i18n
 /**
- * フローを記述するための基底クラス。
+ * An abstract super class for describing the details of a data-flow.
+ * Subclasses must override {@link #describe()} method and build a data-flow in the method.
  */
 public abstract class FlowDescription {
 
@@ -37,7 +37,8 @@ public abstract class FlowDescription {
     }
 
     /**
-     * フロー記述メソッド。
+     * Describes data-flow structure.
+     * Subclasses must override this method and build a data-flow using Asakusa flow DSL.
      */
     protected abstract void describe();
 

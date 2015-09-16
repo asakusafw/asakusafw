@@ -15,26 +15,24 @@
  */
 package com.asakusafw.runtime.core;
 
-//TODO i18n
 /**
- * 演算子の出力を表現するインターフェース。
- * @param <T> データの種類
+ * Represents a result sink of operators.
+ * @param <T> the data type
  */
 public interface Result<T> {
 
     /**
-     * この演算子の出力に指定のデータを追加する。
-     * <p>
-     * この操作により、引数に指定したオブジェクトの内容が変更される場合がある。
-     * 同オブジェクトを引き続き利用する場合には、あらかじめオブジェクトの内容を退避しておくこと。
-     * </p>
-     * @param result 追加するデータ
-     * @throws Result.OutputException 追加に失敗した場合
+     * Adds an object into this result.
+     * Generally, this object accepts two or more objects per an operation.
+     * This method will modify properties in the added object, so that clients should create a copy the object
+     * if the object will be continuously used.
+     * @param result the target object
+     * @throws Result.OutputException if error was occurred while processing the added object
      */
     void add(T result);
 
     /**
-     * 演算子がデータの出力に失敗したことを表す例外。
+     * An {@link OutputException} is thrown when a {@link Result} was failed to output data model objects.
      */
     public static class OutputException extends RuntimeException {
 

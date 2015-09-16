@@ -77,12 +77,12 @@ import com.asakusafw.vocabulary.model.Key;
  &#42; レコードHogeTrnに対するHogeMstが存在する場合に{&#64;code true}を返す。
  &#42; &#64;param master マスタデータ
  &#42; &#64;param tx トランザクションデータ
- &#42; &#64;return HogeMstが存在する場合のみ{@code true}
+ &#42; &#64;return HogeMstが存在する場合のみ{&#64;code true}
  &#42;&#47;
 &#64;MasterCheck
 public abstract boolean exists(
-        &#64;Key(group = "id") HogeMst master,
-        &#64;Key(group = "masterId") HogeTrn tx);
+        &#64;Key(group = &quot;id&quot;) HogeMst master,
+        &#64;Key(group = &quot;masterId&quot;) HogeTrn tx);
 </code></pre>
  * @see MasterJoin
  * @see MasterSelection
@@ -123,7 +123,8 @@ public @interface MasterCheck {
     String missedPort() default "missed";
 
     /**
-     * 利用するマスタ選択演算子のメソッド名。
+     * The selector method name.
+     * The target method must be declared in the same class.
      * @see MasterSelection
      */
     String selection() default MasterSelection.NO_SELECTION;

@@ -65,7 +65,7 @@ import java.lang.annotation.Target;
  * </p>
 <pre><code>
 // スレッド安全なので変換後の結果オブジェクトを再利用可能
-private Foo foo = new Foo();
+private final Foo foo = new Foo();
 
 /**
  &#42; レコードHogeを等価なFooに変換して返す。

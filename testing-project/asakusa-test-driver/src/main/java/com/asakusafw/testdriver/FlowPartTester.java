@@ -36,11 +36,12 @@ import com.asakusafw.testdriver.core.VerifierFactory;
 import com.asakusafw.testdriver.core.VerifyContext;
 import com.asakusafw.vocabulary.external.ImporterDescription;
 import com.asakusafw.vocabulary.flow.FlowDescription;
+import com.asakusafw.vocabulary.flow.In;
+import com.asakusafw.vocabulary.flow.Out;
 import com.asakusafw.vocabulary.flow.graph.FlowGraph;
 
-// i18n
 /**
- * フロー部品用のテストドライバクラス。
+ * A tester for {@code FlowPart flow-part} classes.
  * @since 0.2.0
  * @version 0.5.2
  */
@@ -54,19 +55,21 @@ public class FlowPartTester extends TesterBase {
     private final FlowDescriptionDriver descDriver = new FlowDescriptionDriver();
 
     /**
-     * インスタンスを生成する。
-     * @param callerClass 呼出元クラス
+     * Creates a new instance.
+     * @param callerClass the caller class (usually it is a test class)
      */
     public FlowPartTester(Class<?> callerClass) {
         super(callerClass);
     }
 
     /**
-     * テスト入力データを指定する。
+     * Starts configuring the target flow input.
+     * The resulting object implements {@link In} interface. Application developers should keep the object after
+     * configuring the target input, and drive it into the flow-part's constructor.
      * @param <T> the data model type
-     * @param name 入力データ名 - テストドライバに指定する入力データ間で一意の名前を指定する
-     * @param modelType the data model class
-     * @return テスト入力データオブジェクト
+     * @param name a unique input name
+     * @param modelType the data model type
+     * @return object for configuring the target input
      */
     public <T> FlowPartDriverInput<T> input(String name, Class<T> modelType) {
         FlowPartDriverInput<T> input = new FlowPartDriverInput<T>(driverContext, descDriver, name, modelType);
@@ -75,11 +78,13 @@ public class FlowPartTester extends TesterBase {
     }
 
     /**
-     * テスト結果の出力データ（期待値データ）を指定する。
+     * Starts configuring the target flow output.
+     * The resulting object implements {@link Out} interface. Application developers should keep the object after
+     * configuring the target output, and drive it into the flow-part's constructor.
      * @param <T> the data model type
-     * @param name 出力データ名 - テストドライバに指定する出力データ間で一意の名前を指定する
-     * @param modelType the data model class
-     * @return テスト出力データオブジェクト
+     * @param name a unique output name
+     * @param modelType the data model type
+     * @return object for configuring the target output
      */
     public <T> FlowPartDriverOutput<T> output(String name, Class<T> modelType) {
         FlowPartDriverOutput<T> output = new FlowPartDriverOutput<T>(driverContext, descDriver, name, modelType);
@@ -88,14 +93,15 @@ public class FlowPartTester extends TesterBase {
     }
 
     /**
-     * フロー部品のテストを実行し、テスト結果を検証する。
-     * @param flowDescription フロー部品クラスのインスタンス
-     * @throws IllegalStateException 入出力や検査ルールの用意に失敗した場合
+     * Executes a flow-part and then verifies the execution result.
+     * @param description the target flow-part object
+     * @throws IllegalStateException if error was occurred while building jobflow class or initializing this tester
+     * @throws AssertionError if verification was failed
      */
-    public void runTest(FlowDescription flowDescription) {
+    public void runTest(FlowDescription description) {
         try {
             try {
-                runTestInternal(flowDescription);
+                runTestInternal(description);
             } finally {
                 driverContext.cleanUpTemporaryResources();
             }

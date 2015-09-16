@@ -23,13 +23,9 @@ import java.lang.annotation.Target;
 
 import com.asakusafw.vocabulary.external.ImporterDescription;
 
-//TODO i18n
 /**
- * 利用するインポーターの内容を指定する注釈。
- * <p>
- * ジョブフロークラスのコンストラクターで{@link In}型の引数を利用する場合、
- * 引数にこの注釈を付与してインポーターの動作を指定する必要がある。
- * </p>
+ * An annotation for specifying <em>import operations</em> of jobflows.
+ * This annotates each {@link In} parameter of jobflow class constructors.
  */
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
@@ -37,12 +33,9 @@ import com.asakusafw.vocabulary.external.ImporterDescription;
 public @interface Import {
 
     /**
-     * この入力を識別する名前。
-     * <p>
-     * 入力の名前は、同一のフロー記述における入力内で重複してはならない。
-     * また、識別子には、下記の形式の名前 (Javaの変数名のうち、ASCIIコード表に収まるもののみ)
-     * を利用可能である。
-     * </p>
+     * The import operation identifier.
+     * Each <em>import operation</em> must have a unique identifier in the same jobflow,
+     * and must be in the form of the following rule:
 <pre><code>
 Name :
     NameStart NamePart*
@@ -54,11 +47,12 @@ NamePart: one of
     NameStart
     0-9
 </code></pre>
+     * In other words, the above rule is a subset of Java class or names.
      */
     String name();
 
     /**
-     * 利用するインポーターに対するインポーター記述クラス。
+     * The importer description class for describing the import operation of the target flow input.
      */
     Class<? extends ImporterDescription> description();
 }
