@@ -59,8 +59,8 @@ public class ModelEmitterTest {
     private final VolatileCompiler compiler = new VolatileCompiler();
 
     /**
-     * テストを破棄する。
-     * @throws Exception 例外が発生した場合
+     * disposes compiler.
+     * @throws Exception if exception was occurred
      */
     @After
     public void tearDown() throws Exception {
@@ -68,7 +68,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * 最小のテスト。
+     * simple case.
      */
     @Test
     public void simple() {
@@ -79,7 +79,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * 文字列リテラル。
+     * literal - string.
      */
     @Test
     public void Literal_String() {
@@ -90,7 +90,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * 数値リテラル。
+     * literal - integer.
      */
     @Test
     public void Literal_Int() {
@@ -101,7 +101,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * 浮動小数点数リテラル。
+     * literal - float.
      */
     @Test
     public void Literal_Float() {
@@ -112,7 +112,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * 文字リテラル。
+     * literal - char.
      */
     @Test
     public void Literal_Char() {
@@ -123,7 +123,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * 論理値リテラル。
+     * literal - boolean.
      */
     @Test
     public void Literal_Boolean() {
@@ -134,7 +134,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * void型。
+     * void type.
      */
     @Test
     public void Type_void() {
@@ -144,7 +144,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * 基本型。
+     * primitive type.
      */
     @Test
     public void Type_primitive() {
@@ -154,7 +154,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * 名前型。
+     * named type.
      */
     @Test
     public void Type_ClassOrInterface() {
@@ -164,7 +164,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * 配列型。
+     * array type.
      */
     @Test
     public void Type_Array() {
@@ -174,7 +174,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * 型変数。
+     * type variable.
      */
     @Test
     public void Type_variable() {
@@ -187,7 +187,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * パラメータ化型。
+     * parameterized type.
      */
     @Test
     public void Type_parameterized() {
@@ -206,7 +206,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * 型ワイルドカード。
+     * type wildcard.
      */
     @Test
     public void Type_wildcard() {
@@ -230,7 +230,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * 型ワイルドカード。
+     * type wildcard w/ upper bound types.
      */
     @Test
     public void Type_wildcard_upperBounded() {
@@ -256,7 +256,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * 型ワイルドカード。
+     * type wildcard w/ lower bound types.
      */
     @Test
     public void Type_wildcard_lowerBounded() {
@@ -283,7 +283,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * 前置演算子。
+     * unary operator.
      */
     @Test
     public void Unary() {
@@ -295,7 +295,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * キャスト演算子 (数値)。
+     * cast operator - int.
      */
     @Test
     public void Cast_Basic() {
@@ -309,7 +309,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * キャスト演算子 (参照)。
+     * cast operator - object.
      */
     @Test
     public void Cast_Reference() {
@@ -323,7 +323,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * 中値演算子。
+     * infix operator.
      */
     @Test
     public void Infix() {
@@ -338,7 +338,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * 中値演算子。
+     * instance-of operator.
      */
     @Test
     public void Instanceof() {
@@ -354,7 +354,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * 三項演算子。
+     * conditional operator.
      */
     @Test
     public void Conditional() {
@@ -369,7 +369,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * 括弧。
+     * parenthesize.
      */
     @Test
     public void Parenthesize() {
@@ -388,7 +388,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * 名前参照。
+     * expression name.
      */
     @Test
     public void ExpressionName() {
@@ -400,7 +400,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * フィールド参照。
+     * field access.
      */
     @Test
     public void FieldAccess() {
@@ -421,7 +421,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * 配列生成 (1次元)。
+     * new array - 1 dimension.
      */
     @Test
     public void ArrayCreation_Single() {
@@ -441,7 +441,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * 配列生成 (多次元)。
+     * new array - multiple dimensions.
      */
     @Test
     public void ArrayCreation_Multi() {
@@ -462,7 +462,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * 配列生成 (多次元 - 一部)。
+     * new array - multiple dimensions w/ lacked dimensions.
      */
     @Test
     public void ArrayCreation_MultiPartial() {
@@ -483,7 +483,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * 配列初期化子
+     * array initializer.
      */
     @Test
     public void ArrayInitializer() {
@@ -506,7 +506,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * 配列参照。
+     * array access.
      */
     @Test
     public void ArrayAccess() {
@@ -527,7 +527,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * 型リテラル。
+     * type literal.
      */
     @Test
     public void ClassLiteral() {
@@ -543,7 +543,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * A method invocation.
+     * method invocation.
      */
     @Test
     public void MethodInvocation() {
@@ -559,7 +559,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * A method invocation whose receiver object has cast.
+     * method invocation whose receiver object has cast.
      */
     @Test
     public void MethodInvocation_cast_object() {
@@ -577,7 +577,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * インスタンス生成。
+     * new object.
      */
     @Test
     public void ClassInstanceCreation() {
@@ -594,7 +594,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * 匿名クラスインスタンス生成。
+     * new object w/ anonymous class block.
      */
     @Test
     public void ClassInstanceCreation_Anonymous() {
@@ -613,7 +613,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * 表明。
+     * assert statement.
      */
     @Test
     public void Assert() {
@@ -626,7 +626,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * メッセージつきの表明。
+     * assert statement w/ message.
      */
     @Test
     public void Assert_WithMessage() {
@@ -641,7 +641,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * ローカル変数宣言。
+     * local variable declaration.
      */
     @Test
     public void LocalVariable() {
@@ -662,7 +662,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * ローカル変数宣言。
+     * local variable declaration w/ multiple declarators.
      */
     @Test
     public void LocalVariable_Multiple() {
@@ -698,7 +698,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * 代入。
+     * assignment expression.
      */
     @Test
     public void Assignment() {
@@ -724,7 +724,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * 空文。
+     * empty statement.
      */
     @Test
     public void Empty() {
@@ -737,7 +737,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * if文 (true)。
+     * if statement - true.
      */
     @Test
     public void If_true() {
@@ -753,7 +753,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * if文 (false)。
+     * if statement - false.
      */
     @Test
     public void If_false() {
@@ -769,7 +769,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * if-else文 (false)。
+     * if-else statement - false.
      */
     @Test
     public void If_else() {
@@ -784,7 +784,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * if-else文 (false)。
+     * if-else statement - false.
      */
     @Test
     public void If_elseIf() {
@@ -802,7 +802,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * while文。
+     * while statement.
      */
     @Test
     public void While() {
@@ -827,7 +827,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * for文 (変数宣言)。
+     * for statement w/ variable declaration.
      */
     @Test
     public void For() {
@@ -851,7 +851,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * for文 (変数宣言なし)。
+     * for statement w/o variable declarations.
      */
     @Test
     public void For_noVar() {
@@ -880,7 +880,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * 拡張for文。
+     * enhanced for statement.
      */
     @Test
     public void ForEach() {
@@ -909,7 +909,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * do-while文。
+     * do-while statement.
      */
     @Test
     public void DoWhile() {
@@ -933,7 +933,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * break文。
+     * break statement.
      */
     @Test
     public void Break() {
@@ -959,7 +959,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * ラベルつきbreak文。
+     * break statement w/ label.
      */
     @Test
     public void Break_Labeled() {
@@ -987,7 +987,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * continue文。
+     * continue statement.
      */
     @Test
     public void Continue() {
@@ -1020,7 +1020,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * continue文。
+     * continue statement.
      */
     @Test
     public void Continue_Labeled() {
@@ -1064,7 +1064,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * switch-case文。
+     * switch-case statement.
      */
     @Test
     public void Switch_Case() {
@@ -1085,7 +1085,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * switch-case文。
+     * switch-case statement.
      */
     @Test
     public void Switch_Default() {
@@ -1106,7 +1106,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * switch-case文。
+     * switch-case statement.
      */
     @Test
     public void Throw() {
@@ -1124,7 +1124,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * switch-case文。
+     * switch-case statement.
      */
     @Test
     public void Try_Catch() {
@@ -1177,7 +1177,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * switch-case文。
+     * switch-case statement.
      */
     @Test
     public void Try_Finally() {
@@ -1223,7 +1223,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * synchronized文。
+     * synchronized statement.
      */
     @Test
     public void Synchronized() {
@@ -1246,7 +1246,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * クラス宣言。
+     * class declaration.
      */
     @Test
     public void ClassDeclaration() {
@@ -1267,7 +1267,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * クラス宣言 (修飾子)。
+     * class declaration w/ modifiers.
      */
     @Test
     public void ClassDeclaration_modifiers() {
@@ -1291,7 +1291,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * クラス宣言 (マーカー注釈)。
+     * class declaration w/ marker annotation.
      */
     @Test
     public void ClassDeclaration_markerAnnotation() {
@@ -1313,7 +1313,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * クラス宣言 (単一要素注釈)。
+     * class declaration - single element annotation.
      */
     @Test
     public void ClassDeclaration_singleElementAnnotation() {
@@ -1345,7 +1345,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * クラス宣言 (注釈)。
+     * class declaration w/ normal annotation.
      */
     @Test
     public void ClassDeclaration_normalAnnotation() {
@@ -1380,7 +1380,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * クラス宣言 (型変数)。
+     * class declaration w/ type parameters.
      */
     @Test
     public void ClassDeclaration_typeParameter() {
@@ -1407,7 +1407,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * クラス宣言 (型変数)。
+     * class declaration w/ type parameters.
      */
     @Test
     public void ClassDeclaration_boundedTypeParameter() {
@@ -1435,7 +1435,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * クラス宣言 (親クラス)。
+     * class declaration w/ super class.
      */
     @Test
     public void ClassDeclaration_superClass() {
@@ -1452,7 +1452,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * クラス宣言 (親インターフェース)。
+     * class declaration - super interfaces.
      */
     @Test
     public void ClassDeclaration_superInterfaces() {
@@ -1478,7 +1478,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * インターフェース宣言。
+     * interface declaration.
      */
     @Test
     public void InterfaceDeclaration() {
@@ -1514,8 +1514,8 @@ public class ModelEmitterTest {
     }
 
     /**
-     * 列挙型宣言。
-     * @throws Exception 例外発生時
+     * enum declaration.
+     * @throws Exception if error occurred
      */
     @Test
     public void EnumDeclaration() throws Exception {
@@ -1574,8 +1574,8 @@ public class ModelEmitterTest {
     }
 
     /**
-     * フィールド宣言。
-     * @throws Exception 例外発生時
+     * field declaration.
+     * @throws Exception if error occurred
      */
     @Test
     public void FieldDeclaration() throws Exception {
@@ -1608,8 +1608,8 @@ public class ModelEmitterTest {
     }
 
     /**
-     * 初期化子宣言。
-     * @throws Exception 例外発生時
+     * initializer declaration.
+     * @throws Exception if error occurred
      */
     @Test
     public void InitializerDeclaration() throws Exception {
@@ -1646,8 +1646,8 @@ public class ModelEmitterTest {
     }
 
     /**
-     * コンストラクター宣言。
-     * @throws Exception 例外発生時
+     * constructor declaration.
+     * @throws Exception if error occurred
      */
     @Test
     public void ConstructorDeclaration() throws Exception {
@@ -1687,8 +1687,8 @@ public class ModelEmitterTest {
     }
 
     /**
-     * コンストラクター宣言 (委譲コンストラクタ起動)。
-     * @throws Exception 例外発生時
+     * constructor declaration w/ delegate constructor invocation.
+     * @throws Exception if error occurred
      */
     @Test
     public void ConstructorDeclaration_delegate() throws Exception {
@@ -1760,8 +1760,8 @@ public class ModelEmitterTest {
     }
 
     /**
-     * コンストラクター宣言 (例外宣言つき)。
-     * @throws Exception 例外発生時
+     * constructor declaration w/ exception types.
+     * @throws Exception if error occurred
      */
     @Test
     public void ConstructorDeclaration_throws() throws Exception {
@@ -1799,8 +1799,8 @@ public class ModelEmitterTest {
     }
 
     /**
-     * メソッド宣言。
-     * @throws Exception 例外発生時
+     * method declaration.
+     * @throws Exception if error occurred
      */
     @Test
     public void MethodDeclaration() throws Exception {
@@ -1828,8 +1828,8 @@ public class ModelEmitterTest {
     }
 
     /**
-     * メソッド宣言。
-     * @throws Exception 例外発生時
+     * method declaration w/ parameters.
+     * @throws Exception if error occurred
      */
     @Test
     public void MethodDeclaration_parameter() throws Exception {
@@ -1862,8 +1862,8 @@ public class ModelEmitterTest {
     }
 
     /**
-     * メソッド宣言 (可変長引数)。
-     * @throws Exception 例外発生時
+     * method declaration w/ varargs.
+     * @throws Exception if error occurred
      */
     @Test
     public void MethodDeclaration_varargs() throws Exception {
@@ -1899,8 +1899,8 @@ public class ModelEmitterTest {
     }
 
     /**
-     * メソッド宣言。
-     * @throws Exception 例外発生時
+     * method declaration w/ extra dimensions.
+     * @throws Exception if error occurred
      */
     @Test
     public void MethodDeclaration_extraDims() throws Exception {
@@ -1935,8 +1935,8 @@ public class ModelEmitterTest {
     }
 
     /**
-     * 列挙型宣言。
-     * @throws Exception 例外発生時
+     * enum constant declaration w/ constructor arguments.
+     * @throws Exception if error occurred
      */
     @Test
     public void EnumConstantDeclaration_arguments() throws Exception {
@@ -2004,8 +2004,8 @@ public class ModelEmitterTest {
     }
 
     /**
-     * 列挙型宣言。
-     * @throws Exception 例外発生時
+     * enum constant declaration w/ class block.
+     * @throws Exception if error occurred
      */
     @Test
     public void EnumConstantDeclaration_body() throws Exception {
@@ -2036,8 +2036,8 @@ public class ModelEmitterTest {
     }
 
     /**
-     * 親メソッド起動。
-     * @throws Exception 例外発生時
+     * super method invocation.
+     * @throws Exception if error occurred
      */
     @Test
     public void Super() throws Exception {
@@ -2072,7 +2072,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * パッケージ宣言。
+     * package declaration.
      */
     @Test
     public void PackageDeclaration() {
@@ -2087,7 +2087,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * インポート宣言。
+     * import declaration.
      */
     @Test
     public void ImportDeclaration_type() {
@@ -2105,7 +2105,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * インポート宣言 (オンデマンド)。
+     * import declaration - on-demand import.
      */
     @Test
     public void ImportDeclaration_onDemand() {
@@ -2123,7 +2123,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * インポート宣言 (スタティック)。
+     * import declaration - static.
      */
     @Test
     public void ImportDeclaration_singleStatic() {
@@ -2141,7 +2141,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * インポート宣言 (スタティックオンデマンド)。
+     * import declaration - static on-demand import.
      */
     @Test
     public void ImportDeclaration_staticOnDemand() {
@@ -2159,7 +2159,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * 二項演算子の左項での自動括弧付け。
+     * auto parenthesize - left term of infix operator.
      */
     @Test
     public void autoParenthesize_infixLeft() {
@@ -2176,7 +2176,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * 二項演算子の右項での自動括弧付け。
+     * auto parenthesize - right term of infix operator.
      */
     @Test
     public void autoParenthesize_infixRight() {

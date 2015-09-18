@@ -17,7 +17,7 @@ package com.asakusafw.utils.java.model.syntax;
 
 
 /**
- * 三項演算式を表現するインターフェース。
+ * An interface which represents conditional expression.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:15.25] Conditional Operator ? :} </li>
@@ -27,26 +27,21 @@ package com.asakusafw.utils.java.model.syntax;
 public interface ConditionalExpression
         extends Expression {
 
-    // properties
-
     /**
-     * 条件式を返す。
-     * @return
-     *     条件式
+     * Returns the condition term.
+     * @return the condition term
      */
     Expression getCondition();
 
     /**
-     * 条件成立時に評価される式を返す。
-     * @return
-     *     条件成立時に評価される式
+     * Returns the truth term.
+     * @return the truth term
      */
     Expression getThenExpression();
 
     /**
-     * 条件不成立時に評価される式を返す。
-     * @return
-     *     条件不成立時に評価される式
+     * Returns the false term.
+     * @return the false term
      */
     Expression getElseExpression();
 }

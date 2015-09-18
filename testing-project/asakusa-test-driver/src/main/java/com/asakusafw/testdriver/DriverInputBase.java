@@ -27,10 +27,10 @@ import com.asakusafw.testdriver.core.DataModelSourceFactory;
 import com.asakusafw.testdriver.core.TestDataToolProvider;
 
 /**
- * テストドライバのテスト入力データの親クラス。
+ * An abstract super class of test driver inputs.
  * @since 0.2.0
  * @version 0.6.0
- * @param <T> モデルクラス
+ * @param <T> the data model type
  */
 public abstract class DriverInputBase<T> extends DriverElementBase {
 

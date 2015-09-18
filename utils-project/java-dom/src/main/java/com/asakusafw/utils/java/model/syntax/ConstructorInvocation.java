@@ -18,8 +18,8 @@ package com.asakusafw.utils.java.model.syntax;
 import java.util.List;
 
 /**
- * 明示的コンストラクタ起動文を表現する基底インターフェース。
- * <p> この要素は、コンストラクタ宣言本体の1つ目の文としてのみ出現できる。 </p>
+ * An abstract super interface of constructor invocations.
+ * This can appear the top of constructor declaration bodies as a statement.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:8.8.7.1] Explicit Constructor Invocations} </li>
@@ -29,21 +29,15 @@ import java.util.List;
 public interface ConstructorInvocation
         extends Statement, Invocation {
 
-    // properties
-
     /**
-     * 型引数の一覧を返す。
-     * <p> 型引数を一つも指定しない場合は空が返される。 </p>
-     * @return
-     *     型引数の一覧
+     * Returns the type arguments.
+     * @return the type arguments
      */
     List<? extends Type> getTypeArguments();
 
     /**
-     * 実引数の一覧を返す。
-     * <p> 実引数を一つも指定しない場合は空が返される。 </p>
-     * @return
-     *     実引数の一覧
+     * Returns the actual arguments.
+     * @return the actual arguments
      */
     List<? extends Expression> getArguments();
 }

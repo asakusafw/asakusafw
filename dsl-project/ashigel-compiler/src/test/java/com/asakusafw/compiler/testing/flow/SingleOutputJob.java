@@ -27,19 +27,19 @@ import com.asakusafw.vocabulary.flow.JobFlow;
 import com.asakusafw.vocabulary.flow.Out;
 
 /**
- * 単一の出力のみを行うジョブ。
+ * A jobflow with single output.
  */
 @JobFlow(name = "job")
 public class SingleOutputJob extends FlowDescription {
 
-    private In<Ex1> input;
+    private final In<Ex1> input;
 
-    private Out<Ex1> output1;
+    private final Out<Ex1> output1;
 
     /**
-     * インスタンスを生成する。
-     * @param input 入力
-     * @param output1 出力(1)
+     * Creates a new instance.
+     * @param input the input
+     * @param output1 the output
      */
     public SingleOutputJob(
             @Import(name = "input", description = Ex1MockImporterDescription.class)

@@ -24,17 +24,16 @@ import com.asakusafw.vocabulary.model.Key;
 import com.asakusafw.vocabulary.operator.MasterCheck;
 import com.asakusafw.vocabulary.operator.MasterSelection;
 
-
 /**
- * {@link MasterCheckFlowProcessor}に対するテスト演算子。
+ * An operator class for testing {@link MasterCheckFlowProcessor}.
  */
 public abstract class MasterCheckFlow {
 
     /**
-     * 通常の演算子。
-     * @param master マスタ
-     * @param model モデル
-     * @return 引き当て結果
+     * simple.
+     * @param master the master data
+     * @param model target data model
+     * @return hit/miss
      */
     @MasterCheck
     public abstract boolean simple(
@@ -42,10 +41,10 @@ public abstract class MasterCheckFlow {
             @Key(group = "string") Ex1 model);
 
     /**
-     * セレクタつき演算子。
-     * @param master マスタ
-     * @param model モデル
-     * @return 引き当て結果
+     * w/ selector.
+     * @param master the master data
+     * @param model target data model
+     * @return hit/miss
      */
     @MasterCheck(selection = "selector")
     public abstract boolean selection(
@@ -53,10 +52,10 @@ public abstract class MasterCheckFlow {
             @Key(group = "string") Ex1 model);
 
     /**
-     * 引数無しのセレクタ。
-     * @param masters マスタ一覧
-     * @param model 対象のモデル
-     * @return 選択したマスタ、利用しない場合は{@code null}
+     * non-parameterized selector.
+     * @param masters list of masters
+     * @param model the data model
+     * @return the selected master data, or {@code null} if there is no suitable master data
      */
     @MasterSelection
     public Ex2 selector(List<Ex2> masters, Ex1 model) {

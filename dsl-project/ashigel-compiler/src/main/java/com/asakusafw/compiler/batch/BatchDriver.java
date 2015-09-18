@@ -29,7 +29,7 @@ import com.asakusafw.vocabulary.batch.Batch;
 import com.asakusafw.vocabulary.batch.BatchDescription;
 
 /**
- * {@link Batch}が付与されている要素について、フローの構造を解析する。
+ * Analyzes batch classes (which annotated with {@link Batch}).
  */
 public final class BatchDriver {
 
@@ -48,10 +48,10 @@ public final class BatchDriver {
     }
 
     /**
-     * インスタンスを生成する。
-     * @param description 対象のバッチクラス
-     * @return 生成したインスタンス
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param description the target batch class
+     * @return the created instance
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static BatchDriver analyze(Class<? extends BatchDescription> description) {
         Precondition.checkMustNotBeNull(description, "description"); //$NON-NLS-1$
@@ -61,24 +61,24 @@ public final class BatchDriver {
     }
 
     /**
-     * 解析結果のバッチクラス情報を返す。
-     * @return 解析結果のバッチクラス情報、解析に失敗した場合は{@code null}
+     * Returns information of the target batch class.
+     * @return information of the target batch class, or {@code null} if the target batch class is not valid
      */
     public BatchClass getBatchClass() {
         return batchClass;
     }
 
     /**
-     * 解析対象のバッチクラスを返す。
-     * @return 解析対象のバッチクラス
+     * Returns the target batch class.
+     * @return the target batch class
      */
     public Class<? extends BatchDescription> getDescription() {
         return this.description;
     }
 
     /**
-     * 解析結果の診断メッセージを返す。
-     * @return 解析結果の診断メッセージ
+     * Returns the diagnostics messages.
+     * @return the diagnostics messages
      */
     public List<String> getDiagnostics() {
         return diagnostics;
@@ -164,8 +164,8 @@ public final class BatchDriver {
     }
 
     /**
-     * この解析結果にエラーが含まれている場合のみ{@code true}を返す。
-     * @return 解析結果にエラーが含まれている場合のみ{@code true}
+     * Returns whether this analysis result contains any erroneous information or not.
+     * @return {@code true} if this contains any erroneous information, otherwise {@code false}
      */
     public boolean hasError() {
         return getDiagnostics().isEmpty() == false;

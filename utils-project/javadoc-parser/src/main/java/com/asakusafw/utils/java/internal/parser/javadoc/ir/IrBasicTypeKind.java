@@ -16,59 +16,58 @@
 package com.asakusafw.utils.java.internal.parser.javadoc.ir;
 
 /**
- * 基本型の種類。
+ * Represents a basic type kind.
  */
 public enum IrBasicTypeKind {
 
     /**
-     * {@code int}。
+     * {@code int} type.
      */
     INT,
 
     /**
-     * {@code long}。
+     * {@code long} type.
      */
     LONG,
 
     /**
-     * {@code float}。
+     * {@code float} type.
      */
     FLOAT,
 
     /**
-     * {@code double}。
+     * {@code double} type.
      */
     DOUBLE,
 
     /**
-     * {@code byte}。
+     * {@code byte} type.
      */
     BYTE,
 
     /**
-     * {@code short}。
+     * {@code short} type.
      */
     SHORT,
 
     /**
-     * {@code char}。
+     * {@code char} type.
      */
     CHAR,
 
     /**
-     * {@code boolean}。
+     * {@code boolean} type.
      */
     BOOLEAN,
 
     /**
-     * {@code void}。
+     * {@code void} (pseudo-type).
      */
     VOID,
-
     ;
     /**
-     * この型を表現するシンボルを返す。
-     * @return この型を表現するシンボル
+     * Returns the symbol of this type kind.
+     * @return the symbol of this type kind
      */
     public String getSymbol() {
         return name().toLowerCase();

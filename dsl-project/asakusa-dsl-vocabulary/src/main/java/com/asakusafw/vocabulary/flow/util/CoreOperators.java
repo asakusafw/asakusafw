@@ -27,6 +27,7 @@ import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory.ProjectFragment;
 import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory.Restructure;
 import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory.RestructureFragment;
 
+//TODO i18n
 /**
  * 標準的な演算子オブジェクトを生成するファクトリ。
  * {@link CoreOperatorFactory}のメソッドの一部を{@code static}メソッドとして提供する。

@@ -23,18 +23,12 @@ import com.asakusafw.utils.java.model.syntax.Type;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link ParameterizedType}の実装。
+ * An implementation of {@link ParameterizedType}.
  */
 public final class ParameterizedTypeImpl extends ModelRoot implements ParameterizedType {
 
-    /**
-     * パラメータ化されていない型。
-     */
     private Type type;
 
-    /**
-     * 型引数の一覧。
-     */
     private List<? extends Type> typeArguments;
 
     @Override
@@ -43,11 +37,9 @@ public final class ParameterizedTypeImpl extends ModelRoot implements Parameteri
     }
 
     /**
-     * パラメータ化されていない型を設定する。
-     * @param type
-     *     パラメータ化されていない型
-     * @throws IllegalArgumentException
-     *     {@code type}に{@code null}が指定された場合
+     * Sets the non-parameterized type.
+     * @param type the non-parameterized type
+     * @throws IllegalArgumentException if {@code type} was {@code null}
      */
     public void setType(Type type) {
         Util.notNull(type, "type"); //$NON-NLS-1$
@@ -60,13 +52,10 @@ public final class ParameterizedTypeImpl extends ModelRoot implements Parameteri
     }
 
     /**
-     * 型引数の一覧を設定する。
-     * @param typeArguments
-     *     型引数の一覧
-     * @throws IllegalArgumentException
-     *     {@code typeArguments}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code typeArguments}に空が指定された場合
+     * Sets the type arguments.
+     * @param typeArguments the type arguments
+     * @throws IllegalArgumentException if {@code typeArguments} was {@code null}
+     * @throws IllegalArgumentException if {@code typeArguments} was empty
      */
     public void setTypeArguments(List<? extends Type> typeArguments) {
         Util.notNull(typeArguments, "typeArguments"); //$NON-NLS-1$
@@ -76,7 +65,7 @@ public final class ParameterizedTypeImpl extends ModelRoot implements Parameteri
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#PARAMETERIZED_TYPE}を返す。
+     * Returns {@link ModelKind#PARAMETERIZED_TYPE} which represents this element kind.
      * @return {@link ModelKind#PARAMETERIZED_TYPE}
      */
     @Override
@@ -85,8 +74,7 @@ public final class ParameterizedTypeImpl extends ModelRoot implements Parameteri
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitParameterizedType(this, context);
     }

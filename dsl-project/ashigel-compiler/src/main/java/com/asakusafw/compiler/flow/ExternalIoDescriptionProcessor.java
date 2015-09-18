@@ -35,15 +35,11 @@ import com.asakusafw.vocabulary.flow.graph.InputDescription;
 import com.asakusafw.vocabulary.flow.graph.OutputDescription;
 
 /**
- * {@link ImporterDescription}と{@link ExporterDescription}を処理する。
- * <p>
- * このクラスのメソッドに渡される全ての{@link InputDescription}に含まれる
- * {@link ImporterDescription}は、{@link #getImporterDescriptionType()}
- * が返すクラスのサブクラスであることが保証される。
- * 同様に、メソッドに渡される全ての{@link OutputDescription}に含まれる
- * {@link ExporterDescription}は、常に{@link #getImporterDescriptionType()}
- * が返すクラスのサブクラスであることが保証される。
- * </p>
+ * Processes {@link ImporterDescription} and {@link ExporterDescription} in flow DSL
+ * for the targeted external I/O component.
+ * Each {@link InputDescription} and {@link OutputDescription} in method parameter must have
+ * the supported {@link ImporterDescription} and {@link ExporterDescription} which are specified in
+ * {@link #getImporterDescriptionType()} and {@link #getExporterDescriptionType()}.
  * @since 0.1.0
  * @version 0.5.1
  */
@@ -57,23 +53,23 @@ public abstract class ExternalIoDescriptionProcessor extends FlowCompilingEnviro
     public abstract String getId();
 
     /**
-     * このプロセッサが対象とする{@link ImporterDescription}の種類を返す。
-     * @return 対象とする{@code ImporterDescription}の種類
+     * Returns the target {@link ImporterDescription} type.
+     * @return the target {@link ImporterDescription} type
      */
     public abstract Class<? extends ImporterDescription> getImporterDescriptionType();
 
     /**
-     * このプロセッサが対象とする{@link ExporterDescription}の種類を返す。
-     * @return 対象とする{@code ExporterDescription}の種類
+     * Returns the target {@link ExporterDescription} type.
+     * @return the target {@link ExporterDescription} type
      */
     public abstract Class<? extends ExporterDescription> getExporterDescriptionType();
 
     /**
-     * このプロセッサが対象とする入出力の妥当性を検査する。
-     * @param inputs 入力の一覧
-     * @param outputs 出力の一覧
-     * @return 入出力に問題が無い場合のみ{@code true}
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Validates flow inputs/outputs which are target of this processor.
+     * @param inputs the target flow inputs
+     * @param outputs the target flow outputs
+     * @return {@code true} if the all flow inputs/outputs are valid, otherwise {@code false}
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public abstract boolean validate(List<InputDescription> inputs, List<OutputDescription> outputs);
 
@@ -86,50 +82,44 @@ public abstract class ExternalIoDescriptionProcessor extends FlowCompilingEnviro
     public abstract SourceInfo getInputInfo(InputDescription description);
 
     /**
-     * 指定の入力に対して、前処理を実行するクライアントプログラムを返す。
-     * <p>
-     * {@link #getInputInfo(InputDescription)}は、この前処理が
-     * <em>完了した後</em>のパスを指定する必要がある。
-     * </p>
-     * <p>
-     * 前処理が不要である場合、このメソッドは空のリストを返す。
-     * </p>
-     * @param context 文脈情報
-     * @return 前処理を実行するクライアントプログラムの一覧
-     * @throws IOException プログラムの出力に失敗した場合
+     * Emits source and resource files which are used in the prologue phase,
+     * and returns information of their individual stages.
+     * @param context the current context
+     * @return information of the prologue stages
+     * @throws IOException if error was occurred while generating files
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public List<ExternalIoStage> emitPrologue(IoContext context) throws IOException {
         return Collections.emptyList();
     }
 
     /**
-     * 指定の出力に対して、後処理を実行するクライアントプログラムの限定名を返す。
-     * <p>
-     * 後処理が不要である場合、このメソッドは空のリストを返す。
-     * </p>
-     * @param context 文脈情報
-     * @return 後処理を実行するクライアントプログラムの一覧
-     * @throws IOException プログラムの出力に失敗した場合
+     * Emits source and resource files which are used in the epilogue phase,
+     * and returns information of their individual stages.
+     * @param context the current context
+     * @return information of the epilogue stages
+     * @throws IOException if error was occurred while generating files
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public List<ExternalIoStage> emitEpilogue(IoContext context) throws IOException {
         return Collections.emptyList();
     }
 
     /**
-     * 出力するパッケージに対して、このインポーターおよびエクスポーターに対する任意の処理を実行する。
-     * @param context 文脈情報
-     * @throws IOException 処理に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Emits source and resource files which are used in the main phase.
+     * @param context the current context
+     * @throws IOException if error was occurred while generating files
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public void emitPackage(IoContext context) throws IOException {
         return;
     }
 
     /**
-     * I/O処理を行うコマンドプロバイダーを生成して返す。
-     * @param context 文脈情報
-     * @return 生成したコマンドプロバイダー
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns the command provider for this targeted external I/O component.
+     * @param context the current context
+     * @return the created command provider
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public ExternalIoCommandProvider createCommandProvider(IoContext context) {
         Precondition.checkMustNotBeNull(context, "context"); //$NON-NLS-1$
@@ -137,7 +127,7 @@ public abstract class ExternalIoDescriptionProcessor extends FlowCompilingEnviro
     }
 
     /**
-     * IOに関する文脈情報。
+     * Represents a context of {@link ExternalIoDescriptionProcessor}.
      * @since 0.1.0
      * @version 0.5.1
      */
@@ -155,10 +145,9 @@ public abstract class ExternalIoDescriptionProcessor extends FlowCompilingEnviro
         private final List<Output> outputs;
 
         /**
-         * インスタンスを生成する。
-         * @param inputs 処理対象の入力一覧 (関連するもののみ)
-         * @param outputs 処理対象の出力一覧 (関連するもののみ)
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Creates a new instance.
+         * @param inputs the target flow inputs
+         * @param outputs the target flow outputs
          */
         public IoContext(List<Input> inputs, List<Output> outputs) {
             this.inputs = inputs;
@@ -166,23 +155,23 @@ public abstract class ExternalIoDescriptionProcessor extends FlowCompilingEnviro
         }
 
         /**
-         * 処理中のフローに対する入力一覧(関係するもののみ)を返す。
-         * @return 処理中のフローに対する入力一覧
+         * Returns the target flow inputs.
+         * @return the target flow inputs
          */
         public List<Input> getInputs() {
             return inputs;
         }
 
         /**
-         * 処理中のフローに対する出力一覧(関係するもののみ)を返す。
-         * @return 処理中のフローに対する出力一覧
+         * Returns the target flow outputs.
+         * @return the target flow outputs
          */
         public List<Output> getOutputs() {
             return outputs;
         }
 
         /**
-         * Returns a new instance which only has inputs' information.
+         * Returns a new instance which only has information of the target inputs.
          * @return the created instance
          */
         public IoContext getInputContext() {
@@ -190,7 +179,7 @@ public abstract class ExternalIoDescriptionProcessor extends FlowCompilingEnviro
         }
 
         /**
-         * Returns a new instance which only has outputs' information.
+         * Returns a new instance which only has information of the target outputs.
          * @return the created instance
          */
         public IoContext getOutputContext() {
@@ -238,7 +227,7 @@ public abstract class ExternalIoDescriptionProcessor extends FlowCompilingEnviro
     }
 
     /**
-     * 出力を表す。
+     * Represents an external output.
      */
     public static class Output {
 
@@ -247,10 +236,10 @@ public abstract class ExternalIoDescriptionProcessor extends FlowCompilingEnviro
         private final List<SourceInfo> sources;
 
         /**
-         * インスタンスを生成する。
-         * @param description 出力要素の記述
-         * @param sources この出力の元となる情報の一覧
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Creates a new instance.
+         * @param description description of the target flow output
+         * @param sources the upstream information of the output
+         * @throws IllegalArgumentException the parameters are {@code null}
          */
         public Output(OutputDescription description, List<SourceInfo> sources) {
             Precondition.checkMustNotBeNull(description, "description"); //$NON-NLS-1$
@@ -260,16 +249,16 @@ public abstract class ExternalIoDescriptionProcessor extends FlowCompilingEnviro
         }
 
         /**
-         * 出力要素の記述を返す。
-         * @return 出力要素の記述
+         * Returns description of the target flow output.
+         * @return the target flow output description
          */
         public OutputDescription getDescription() {
             return description;
         }
 
         /**
-         * この出力の元となる情報の一覧を返す。
-         * @return この出力の元となる情報の一覧
+         * Returns the upstream information of the output.
+         * @return the upstream information of the output
          */
         public List<SourceInfo> getSources() {
             return sources;
@@ -277,7 +266,7 @@ public abstract class ExternalIoDescriptionProcessor extends FlowCompilingEnviro
     }
 
     /**
-     * 入力を表す。
+     * Represents an external input.
      */
     public static class Input {
 
@@ -286,28 +275,30 @@ public abstract class ExternalIoDescriptionProcessor extends FlowCompilingEnviro
         private final Class<? extends OutputFormat<?, ?>> format;
 
         /**
-         * インスタンスを生成する。
-         * @param description 入力要素の記述
-         * @param format 入力を配置する際のフォーマット
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Creates a new instance.
+         * @param description description of the target flow input
+         * @param format the Hadoop input format how to fetch the target input data-set
+         * @throws IllegalArgumentException the parameters are {@code null}
          */
         @SuppressWarnings({ "rawtypes", "unchecked" })
         public Input(InputDescription description, Class<? extends OutputFormat> format) {
+            Precondition.checkMustNotBeNull(description, "description"); //$NON-NLS-1$
+            Precondition.checkMustNotBeNull(format, "format"); //$NON-NLS-1$
             this.description = description;
             this.format = (Class<? extends OutputFormat<?, ?>>) format;
         }
 
         /**
-         * 入力要素の記述を返す。
-         * @return 入力要素の記述
+         * Returns description of the target flow input.
+         * @return the target flow input description
          */
         public InputDescription getDescription() {
             return description;
         }
 
         /**
-         * 入力を配置する際のフォーマットを返す。
-         * @return 入力を配置する際のフォーマット
+         * Returns the Hadoop input format for fetching the target input data-set.
+         * @return the corresponded Hadoop input format
          */
         public Class<? extends OutputFormat<?, ?>> getFormat() {
             return format;
@@ -315,7 +306,7 @@ public abstract class ExternalIoDescriptionProcessor extends FlowCompilingEnviro
     }
 
     /**
-     * 入出力の元となる情報。
+     * Represents an upstream data-set information.
      */
     public static class SourceInfo {
 
@@ -328,7 +319,7 @@ public abstract class ExternalIoDescriptionProcessor extends FlowCompilingEnviro
         /**
          * Creates a new instance.
          * @param locations input source locations
-         * @param format input format
+         * @param format the Hadoop input format how to fetch the target input data-set
          * @throws IllegalArgumentException if some parameters were {@code null}
          */
         @SuppressWarnings({ "rawtypes" })
@@ -341,8 +332,8 @@ public abstract class ExternalIoDescriptionProcessor extends FlowCompilingEnviro
         /**
          * Creates a new instance.
          * @param locations input source locations
-         * @param format input format
-         * @param attributes attributes
+         * @param format the Hadoop input format how to fetch the target input data-set
+         * @param attributes attributes for the input format
          * @throws IllegalArgumentException if some parameters were {@code null}
          */
         @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -359,24 +350,24 @@ public abstract class ExternalIoDescriptionProcessor extends FlowCompilingEnviro
         }
 
         /**
-         * 入力元の位置を返す。
-         * @return 入力元の位置
+         * Returns the input source locations.
+         * @return the input source locations
          */
         public Set<Location> getLocations() {
             return locations;
         }
 
         /**
-         * 入力フォーマットを返す。
-         * @return 入力フォーマット
+         * Returns the Hadoop input format how to fetch the target input data-set.
+         * @return the corresponded Hadoop input format
          */
         public Class<? extends InputFormat<?, ?>> getFormat() {
             return format;
         }
 
         /**
-         * Returns the attributes.
-         * @return the attributes
+         * Returns the attributes of {@link #getFormat() the input format}.
+         * @return the input format attributes
          */
         public Map<String, String> getAttributes() {
             return attributes;
@@ -384,23 +375,23 @@ public abstract class ExternalIoDescriptionProcessor extends FlowCompilingEnviro
     }
 
     /**
-     * {@link ExternalIoDescriptionProcessor}を取得するためのリポジトリ。
+     * An abstract super interface of repository of {@link ExternalIoDescriptionProcessor}.
      */
     public interface Repository extends FlowCompilingEnvironment.Initializable {
 
         /**
-         * 指定の入力記述に対するプロセッサーを返す。
-         * @param description 対象の入力記述
-         * @return 対応するプロセッサー、存在しない場合は{@code null}
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Returns a {@link ExternalIoDescriptionProcessor} for the target input description.
+         * @param description the target flow input description
+         * @return the supported processor, or {@code null} if there is no such the processor
+         * @throws IllegalArgumentException if the parameter is {@code null}
          */
         ExternalIoDescriptionProcessor findProcessor(InputDescription description);
 
         /**
-         * 指定の出力記述に対するプロセッサーを返す。
-         * @param description 対象の入力記述
-         * @return 対応するプロセッサー、存在しない場合は{@code null}
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Returns a {@link ExternalIoDescriptionProcessor} for the target output description.
+         * @param description the target flow output description
+         * @return the supported processor, or {@code null} if there is no such the processor
+         * @throws IllegalArgumentException if the parameter is {@code null}
          */
         ExternalIoDescriptionProcessor findProcessor(OutputDescription description);
     }

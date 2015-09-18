@@ -38,7 +38,7 @@ import com.asakusafw.vocabulary.flow.graph.FlowBoundary;
 import com.asakusafw.vocabulary.operator.MasterCheck;
 
 /**
- * {@link MasterCheck マスタ確認演算子}を処理する。
+ * Processes {@link MasterCheck} operators.
  */
 @TargetOperator(MasterCheck.class)
 public class MasterCheckOperatorProcessor extends AbstractOperatorProcessor {
@@ -82,7 +82,7 @@ public class MasterCheckOperatorProcessor extends AbstractOperatorProcessor {
         a.validateShuffleKeys(masterKey, transactionKey);
         ExecutableElement selector = null;
         try {
-            selector = MasterKindOperatorAnalyzer.findSelector(context.environment, context);
+            selector = MasterKindOperatorAnalyzer.findSelector(context);
         } catch (ResolveException e) {
             a.error(e.getMessage());
         }

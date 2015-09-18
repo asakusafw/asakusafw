@@ -18,7 +18,7 @@ package com.asakusafw.utils.java.model.syntax;
 import java.util.List;
 
 /**
- * メンバの宣言を表現する基底インターフェース。
+ * An abstract super interface of type member declarations.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:8.1.6] Class Body and Member Declarations} </li>
@@ -28,22 +28,15 @@ import java.util.List;
 public interface TypeBodyDeclaration
         extends Model {
 
-    // properties
-
     /**
-     * ドキュメンテーションコメントを返す。
-     * <p> ドキュメンテーションコメントが存在しない場合は{@code null}が返される。 </p>
-     * @return
-     *     ドキュメンテーションコメント、
-     *     ただしドキュメンテーションコメントが存在しない場合は{@code null}
+     * Returns the documentation comment.
+     * @return the documentation comment, or {@code null} if it is not specified
      */
     Javadoc getJavadoc();
 
     /**
-     * 修飾子および注釈の一覧を返す。
-     * <p> 修飾子または注釈が一つも宣言されない場合は空が返される。 </p>
-     * @return
-     *     修飾子および注釈の一覧
+     * Returns the modifiers and annotations.
+     * @return the modifiers and annotations
      */
     List<? extends Attribute> getModifiers();
 }

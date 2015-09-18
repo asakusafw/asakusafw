@@ -19,19 +19,19 @@ import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.utils.java.model.syntax.Name;
 
 /**
- * コンパイルされたステージの情報。
+ * Compiled information of a jobflow stage in the main phase.
  */
 public class CompiledStage {
 
-    private Name qualifiedName;
+    private final Name qualifiedName;
 
-    private String stageId;
+    private final String stageId;
 
     /**
-     * インスタンスを生成する。
-     * @param qualifiedName コンパイル結果型の完全限定名
-     * @param stageId ステージ識別子
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param qualifiedName the stage client class name
+     * @param stageId the stage ID
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public CompiledStage(Name qualifiedName, String stageId) {
         Precondition.checkMustNotBeNull(qualifiedName, "qualifiedName"); //$NON-NLS-1$
@@ -41,16 +41,16 @@ public class CompiledStage {
     }
 
     /**
-     * コンパイル結果型の完全限定名を返す。
-     * @return コンパイル結果型の完全限定名
+     * Returns the qualified name of the stage client class.
+     * @return the qualified name of the stage client class
      */
     public Name getQualifiedName() {
         return qualifiedName;
     }
 
     /**
-     * このステージのステージ識別子を返す。
-     * @return このステージのステージ識別子
+     * Returns the stage ID.
+     * @return the stage ID
      */
     public String getStageId() {
         return stageId;

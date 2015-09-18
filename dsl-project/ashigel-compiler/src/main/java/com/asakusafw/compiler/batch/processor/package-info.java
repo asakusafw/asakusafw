@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * 処理記述を解釈するためのプラグイン。
+ * Compiler plug-ins about batch DSL.
  */
 package com.asakusafw.compiler.batch.processor;

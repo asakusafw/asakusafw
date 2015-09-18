@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /**
- * バッチDSLで利用可能な、注釈やそれらに関連するクラスを提供する。
+ * Batch DSL vocabulary annotations/classes.
  */
 package com.asakusafw.vocabulary.batch;
 

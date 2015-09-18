@@ -18,16 +18,16 @@ package com.asakusafw.vocabulary.batch;
 import java.util.regex.Pattern;
 
 /**
- * 任意の処理を実行する。
+ * A description of Unit-of-Work in batch.
+ * @see Work
+ * @see BatchDescription
  */
 public abstract class WorkDescription {
 
     /**
-     * この処理の識別子を返す。
+     * Returns the identifier of this work.
      * <p>
-     * この識別子は、同一のバッチ内で重複してはならない。
-     * また、識別子には、下記の形式の名前 (Javaの変数名のうち、ASCIIコード表に収まるもののみ)
-     * を利用可能である。
+     * The ID must be identical in the batch, and its name can be following format:
      * </p>
 <pre><code>
 Name :
@@ -40,16 +40,16 @@ NamePart: one of
     NameStart
     0-9
 </code></pre>
-     * @return この処理の識別子
+     * @return the ID of this work
      */
     public abstract String getName();
 
     private static final Pattern VALID_NAME = Pattern.compile("[A-Za-z_][0-9A-Za-z_]*"); //$NON-NLS-1$
 
     /**
-     * 指定の名前が処理の識別子として正しい場合のみ{@code true}を返す。
-     * @param name 名前
-     * @return 名前が識別子として正しい場合のみ{@code true}、{@code null}や不正な文字列の場合は{@code false}
+     * Returns whether the name is valid identifier or not.
+     * @param name the name
+     * @return {@code true} if the name is valid identifier, or {@code false} if it is not valid
      */
     protected static boolean isValidName(String name) {
         if (name == null) {

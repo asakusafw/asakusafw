@@ -15,9 +15,8 @@
  */
 package com.asakusafw.vocabulary.batch;
 
-
 /**
- * 単純なバッチ。
+ * Incomplete batch DSL.
  */
 public class LastUnderConstructionBatch extends BatchDescription {
 

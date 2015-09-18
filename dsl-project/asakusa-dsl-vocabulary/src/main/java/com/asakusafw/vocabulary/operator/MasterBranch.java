@@ -23,7 +23,7 @@ import java.lang.annotation.Target;
 
 import com.asakusafw.vocabulary.model.Key;
 
-
+//TODO i18n
 /**
  * マスタ分岐演算子を表すメソッドに付与する注釈。
  * <p>
@@ -139,12 +139,12 @@ public abstract class &lt;Operator-Class&gt; {
 public @interface MasterBranch {
 
     /**
-     * マスタの入力ポート番号。
+     * The input port number for the <em>master</em> data.
      */
     int ID_INPUT_MASTER = 0;
 
     /**
-     * トランザクションの入力ポート番号。
+     * The input port number for the <em>transaction</em> data.
      */
     int ID_INPUT_TRANSACTION = 1;
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /**
- * バッチDSLに関するコンパイラ。
+ * A compiler for Asakusa batch DSL.
  */
 package com.asakusafw.compiler.batch;
 

@@ -21,6 +21,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+//TODO i18n
 /**
  * 分割演算子を表すメソッドに付与する注釈。
  * <p>
@@ -80,17 +81,17 @@ public abstract void split(HogeFoo joined, Result&lt;Hoge&gt; hoge, Result&lt;Fo
 public @interface Split {
 
     /**
-     * 入力のポート番号。
+     * The input port number.
      */
     int ID_INPUT = 0;
 
     /**
-     * 最初の出力のポート番号。
+     * The first (left) output port number.
      */
     int ID_OUTPUT_LEFT = 0;
 
     /**
-     * 2つめの出力のポート番号。
+     * The second (right) output port number.
      */
     int ID_OUTPUT_RIGHT = 1;
 }

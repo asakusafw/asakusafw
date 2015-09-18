@@ -22,18 +22,12 @@ import com.asakusafw.utils.java.model.syntax.Wildcard;
 import com.asakusafw.utils.java.model.syntax.WildcardBoundKind;
 
 /**
- * {@link Wildcard}の実装。
+ * An implementation of {@link Wildcard}.
  */
 public final class WildcardImpl extends ModelRoot implements Wildcard {
 
-    /**
-     * 型境界の種類。
-     */
     private WildcardBoundKind boundKind;
 
-    /**
-     * 境界型。
-     */
     private Type typeBound;
 
     @Override
@@ -42,11 +36,9 @@ public final class WildcardImpl extends ModelRoot implements Wildcard {
     }
 
     /**
-     * 型境界の種類を設定する。
-     * @param boundKind
-     *     型境界の種類
-     * @throws IllegalArgumentException
-     *     {@code boundKind}に{@code null}が指定された場合
+     * Sets the type bound kind.
+     * @param boundKind the type bound kind
+     * @throws IllegalArgumentException if {@code boundKind} was {@code null}
      */
     public void setBoundKind(WildcardBoundKind boundKind) {
         Util.notNull(boundKind, "boundKind"); //$NON-NLS-1$
@@ -59,18 +51,15 @@ public final class WildcardImpl extends ModelRoot implements Wildcard {
     }
 
     /**
-     * 境界型を設定する。
-     * <p> 境界型が指定されない場合、引数には{@code null}を指定する。 </p>
-     * @param typeBound
-     *     境界型、
-     *     ただし境界型が指定されない場合は{@code null}
+     * Sets the bound type.
+     * @param typeBound the bound type, or {@code null} if this is an unbound wildcard
      */
     public void setTypeBound(Type typeBound) {
         this.typeBound = typeBound;
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#WILDCARD}を返す。
+     * Returns {@link ModelKind#WILDCARD} which represents this element kind.
      * @return {@link ModelKind#WILDCARD}
      */
     @Override
@@ -79,8 +68,7 @@ public final class WildcardImpl extends ModelRoot implements Wildcard {
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitWildcard(this, context);
     }

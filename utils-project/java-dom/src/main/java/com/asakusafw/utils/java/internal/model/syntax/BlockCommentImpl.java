@@ -20,13 +20,10 @@ import com.asakusafw.utils.java.model.syntax.ModelKind;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link BlockComment}の実装。
+ * An implementation of {@link BlockComment}.
  */
 public final class BlockCommentImpl extends ModelRoot implements BlockComment {
 
-    /**
-     * コメント文字列。
-     */
     private String string;
 
     @Override
@@ -35,13 +32,10 @@ public final class BlockCommentImpl extends ModelRoot implements BlockComment {
     }
 
     /**
-     * コメント文字列を設定する。
-     * @param string
-     *     コメント文字列
-     * @throws IllegalArgumentException
-     *     {@code string}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code string}に空が指定された場合
+     * Sets the comment text.
+     * @param string the comment text
+     * @throws IllegalArgumentException if {@code string} was {@code null}
+     * @throws IllegalArgumentException if {@code string} was empty
      */
     public void setString(String string) {
         Util.notNull(string, "string"); //$NON-NLS-1$
@@ -49,7 +43,7 @@ public final class BlockCommentImpl extends ModelRoot implements BlockComment {
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#BLOCK_COMMENT}を返す。
+     * Returns {@link ModelKind#BLOCK_COMMENT} which represents this element kind.
      * @return {@link ModelKind#BLOCK_COMMENT}
      */
     @Override
@@ -58,8 +52,7 @@ public final class BlockCommentImpl extends ModelRoot implements BlockComment {
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitBlockComment(this, context);
     }

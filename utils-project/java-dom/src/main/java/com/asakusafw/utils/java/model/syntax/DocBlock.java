@@ -18,26 +18,20 @@ package com.asakusafw.utils.java.model.syntax;
 import java.util.List;
 
 /**
- * ドキュメンテーションコメント内の概要ブロック、タグ付きブロック、インラインブロックを表現するインターフェース。
+ * An interface which represents blocks in documentation comments.
  */
 public interface DocBlock
         extends DocElement {
 
-    // properties
-
     /**
-     * タグ文字列を返す。
-     * <p> タグが省略された場合は空が返される。 </p>
-     * @return
-     *     タグ文字列
+     * Returns the tag name.
+     * @return the tag name
      */
     String getTag();
 
     /**
-     * インライン要素の一覧を返す。
-     * <p> インライン要素が一つも指定されない場合は空が返される。 </p>
-     * @return
-     *     インライン要素の一覧
+     * Returns the inline elements.
+     * @return the inline elements
      */
     List<? extends DocElement> getElements();
 }

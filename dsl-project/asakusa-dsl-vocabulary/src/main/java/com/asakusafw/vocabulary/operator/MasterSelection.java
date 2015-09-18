@@ -24,7 +24,7 @@ import java.util.List;
 
 import com.asakusafw.vocabulary.model.Key;
 
-
+//TODO i18n
 /**
  * マスタ選択演算子を表すメソッドに付与する注釈。
  * <p>
@@ -125,12 +125,12 @@ public void updateWithMaster(
 public @interface MasterSelection {
 
     /**
-     * マスタ選択演算子を利用しない際に指定されるメソッド名。
+     * The pseudo method name which represents no methods are specified.
      */
     String NO_SELECTION = "-"; //$NON-NLS-1$
 
     /**
-     * この補助演算子を指定するための要素名。
+     * The common annotation element name for specifying the selection method name.
      */
     String ELEMENT_NAME = "selection"; //$NON-NLS-1$
 }

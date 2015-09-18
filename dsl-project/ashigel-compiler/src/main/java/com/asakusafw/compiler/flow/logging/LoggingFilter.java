@@ -32,7 +32,7 @@ import com.asakusafw.vocabulary.operator.Logging;
 import com.asakusafw.vocabulary.operator.Logging.Level;
 
 /**
- * デバッグロギングを除去する。
+ * Removes debug level logging operators.
  */
 public class LoggingFilter extends FlowCompilingEnvironment.Initialized implements FlowGraphRewriter {
 

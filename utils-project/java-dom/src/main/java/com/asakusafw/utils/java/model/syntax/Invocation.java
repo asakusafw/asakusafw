@@ -17,8 +17,7 @@ package com.asakusafw.utils.java.model.syntax;
 
 
 /**
- * メソッドやコンストラクタへの参照を表現する基底インターフェース。
- * <p> 注釈要素への参照はこのインターフェースを利用しない </p>
+ * An abstract super interface which refers executable elements.
  * @see EnumConstantDeclaration
  * @see ConstructorInvocation
  * @see ClassInstanceCreationExpression

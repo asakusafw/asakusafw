@@ -18,12 +18,12 @@ package com.asakusafw.utils.java.internal.model.syntax;
 import org.junit.Test;
 
 /**
- * {@link SimpleNameImpl}のテスト。
+ * test for {@link SimpleNameImpl}.
  */
 public class SimpleNameImplTest {
 
     /**
-     * 通常の名前。
+     * camel case.
      */
     @Test
     public void camel() {
@@ -32,7 +32,7 @@ public class SimpleNameImplTest {
     }
 
     /**
-     * 一文字。
+     * single character.
      */
     @Test
     public void singleChar() {
@@ -41,7 +41,7 @@ public class SimpleNameImplTest {
     }
 
     /**
-     * 後ろに数値。
+     * digits after a character.
      */
     @Test
     public void trailingNumbers() {
@@ -50,7 +50,7 @@ public class SimpleNameImplTest {
     }
 
     /**
-     * ドル。
+     * $.
      */
     @Test
     public void dollar() {
@@ -59,7 +59,7 @@ public class SimpleNameImplTest {
     }
 
     /**
-     * 空文字列。
+     * empty string.
      */
     @Test(expected = IllegalArgumentException.class)
     public void empty() {
@@ -68,7 +68,7 @@ public class SimpleNameImplTest {
     }
 
     /**
-     * 数値。
+     * numeric string.
      */
     @Test(expected = IllegalArgumentException.class)
     public void isNumber() {
@@ -77,7 +77,7 @@ public class SimpleNameImplTest {
     }
 
     /**
-     * 不正な文字。
+     * w/ invalid character.
      */
     @Test(expected = IllegalArgumentException.class)
     public void hasInvalid() {
@@ -86,7 +86,7 @@ public class SimpleNameImplTest {
     }
 
     /**
-     * キーワード。
+     * keyword.
      */
     @Test(expected = IllegalArgumentException.class)
     public void keyword() {
@@ -95,7 +95,7 @@ public class SimpleNameImplTest {
     }
 
     /**
-     * リテラル true。
+     * literal - true.
      */
     @Test(expected = IllegalArgumentException.class)
     public void booleanLiteralTrue() {
@@ -104,7 +104,7 @@ public class SimpleNameImplTest {
     }
 
     /**
-     * リテラル false。
+     * literal - false.
      */
     @Test(expected = IllegalArgumentException.class)
     public void booleanLiteralFalse() {
@@ -113,7 +113,7 @@ public class SimpleNameImplTest {
     }
 
     /**
-     * リテラル null。
+     * literal - null.
      */
     @Test(expected = IllegalArgumentException.class)
     public void nullLiteral() {

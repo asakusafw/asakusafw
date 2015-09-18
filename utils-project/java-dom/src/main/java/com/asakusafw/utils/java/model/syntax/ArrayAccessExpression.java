@@ -17,7 +17,7 @@ package com.asakusafw.utils.java.model.syntax;
 
 
 /**
- * 配列参照式を表現するインターフェース。
+ * An interface which represents array access expression.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:15.13] Array Access Expressions} </li>
@@ -27,19 +27,15 @@ package com.asakusafw.utils.java.model.syntax;
 public interface ArrayAccessExpression
         extends Expression {
 
-    // properties
-
     /**
-     * 配列式を返す。
-     * @return
-     *     配列式
+     * Returns the array expression.
+     * @return the array expression
      */
     Expression getArray();
 
     /**
-     * 添え字式を返す。
-     * @return
-     *     添え字式
+     * Returns the index expression.
+     * @return the index expression
      */
     Expression getIndex();
 }

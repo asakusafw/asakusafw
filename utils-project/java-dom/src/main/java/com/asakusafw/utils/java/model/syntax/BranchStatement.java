@@ -15,9 +15,8 @@
  */
 package com.asakusafw.utils.java.model.syntax;
 
-
 /**
- * 分岐する文を表現する基底インターフェース。
+ * An abstract super interface of branching statements.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:14.15] The break Statement} </li>
@@ -28,14 +27,9 @@ package com.asakusafw.utils.java.model.syntax;
 public interface BranchStatement
         extends Statement {
 
-    // properties
-
     /**
-     * 分岐先ラベルを返す。
-     * <p> 分岐先ラベルが指定されない場合は{@code null}が返される。 </p>
-     * @return
-     *     分岐先ラベル、
-     *     ただし分岐先ラベルが指定されない場合は{@code null}
+     * Returns the target label.
+     * @return the target label, or {@code null} if it is not specified
      */
     SimpleName getTarget();
 }

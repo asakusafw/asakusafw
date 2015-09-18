@@ -37,6 +37,7 @@ import com.asakusafw.compiler.flow.stage.StageModel.Sink;
 import com.asakusafw.compiler.flow.stage.StageModel.Unit;
 import com.asakusafw.runtime.core.Result;
 import com.asakusafw.runtime.flow.Rendezvous;
+import com.asakusafw.runtime.flow.ResultOutput;
 import com.asakusafw.runtime.flow.VoidResult;
 import com.asakusafw.runtime.stage.output.StageOutputDriver;
 import com.asakusafw.utils.collections.Lists;
@@ -64,7 +65,7 @@ import com.asakusafw.vocabulary.flow.graph.FlowElementInput;
 import com.asakusafw.vocabulary.flow.graph.FlowElementOutput;
 
 /**
- * 処理断片を依存関係に従って再構築する。
+ * Builds a Mapper/Reducer class from a fragment graph.
  */
 public class FragmentFlow {
 
@@ -93,13 +94,13 @@ public class FragmentFlow {
     private final Graph<FragmentNode> dependencies;
 
     /**
-     * インスタンスを生成する。
-     * @param environment 環境オブジェクト
-     * @param importer インポート宣言を生成する
-     * @param names 衝突しない名前を生成する
-     * @param model 対象のステージを表すモデル
-     * @param units 対象の処理単位群
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param environment the current environment
+     * @param importer the import declaration builder
+     * @param names the unique name generator
+     * @param model the target stage model
+     * @param units the target operation units
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public FragmentFlow(
             FlowCompilingEnvironment environment,
@@ -301,8 +302,8 @@ public class FragmentFlow {
     }
 
     /**
-     * 処理断片の先頭要素を参照するためのフィールド群を構築して返す。
-     * @return 処理断片の先頭要素を参照するためのフィールド群
+     * Returns the field declarations which holds each fragment.
+     * @return the field declarations
      */
     public List<FieldDeclaration> createFields() {
         List<FieldDeclaration> results = Lists.create();
@@ -362,10 +363,10 @@ public class FragmentFlow {
     }
 
     /**
-     * 処理断片を初期化する文の一覧を返す。
-     * @param context コンテキストオブジェクトを参照するための式
-     * @return 構築した文の一覧
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns the statements which initializes each fragment.
+     * @param context an expression which represents a Map/Reduce task context
+     * @return the statements
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public List<Statement> createSetup(Expression context) {
         Precondition.checkMustNotBeNull(context, "context"); //$NON-NLS-1$
@@ -483,7 +484,7 @@ public class FragmentFlow {
         assert node != null;
         assert fragment != null;
         List<Expression> results = Lists.create();
-        // TODO 引数の並び順に暗黙の前提: リソース一覧 -> 出力一覧
+        // TODO parameters must be ordered: external resources -> outputs
         for (ResourceFragment resource : fragment.getResources()) {
             results.add(resolveResouce(resource));
         }
@@ -613,10 +614,10 @@ public class FragmentFlow {
     }
 
     /**
-     * 処理断片を破棄する文の一覧を返す。
-     * @param context コンテキストオブジェクトを参照するための式
-     * @return 構築した文の一覧
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns the statements which finalizes each fragment.
+     * @param context an expression which represents a Map/Reduce task context
+     * @return the statements
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public List<Statement> createCleanup(SimpleName context) {
         Precondition.checkMustNotBeNull(context, "context"); //$NON-NLS-1$
@@ -673,8 +674,8 @@ public class FragmentFlow {
     }
 
     /**
-     * シャッフル出力に関するキーの型を返す。
-     * @return シャッフル出力に関するキーの型、シャッフルしない場合はダミーの型
+     * Returns the shuffle output key type.
+     * @return the shuffle output key type, or a dummy type if this does not contain shuffle action
      */
     public Type getShuffleKeyType() {
         if (shuffle == null) {
@@ -685,8 +686,8 @@ public class FragmentFlow {
     }
 
     /**
-     * シャッフル出力に関する値の型を返す。
-     * @return シャッフル出力に関する値の型、シャッフルしない場合はダミーの型
+     * Returns the shuffle output value type.
+     * @return the shuffle output value type, or a dummy type if this does not contain shuffle action
      */
     public Type getShuffleValueType() {
         if (shuffle == null) {
@@ -697,10 +698,10 @@ public class FragmentFlow {
     }
 
     /**
-     * 指定の入力に関連するライン断片を参照するための式を返す。
-     * @param input 対象の入力
-     * @return 対応する式
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns an expression of the line fragment.
+     * @param input the target input port
+     * @return an expression of the corresponded fragment
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public Expression getLine(FlowElementInput input) {
         Precondition.checkMustNotBeNull(input, "input"); //$NON-NLS-1$
@@ -714,10 +715,10 @@ public class FragmentFlow {
     }
 
     /**
-     * 指定の要素に関連する合流断片を参照するための式を返す。
-     * @param element 対象の要素
-     * @return 対応する式
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns an expression of the rendezvous fragment.
+     * @param element the target element
+     * @return an expression of the corresponded fragment
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public Expression getRendezvous(FlowElement element) {
         Precondition.checkMustNotBeNull(element, "element"); //$NON-NLS-1$
@@ -779,43 +780,35 @@ public class FragmentFlow {
     }
 
     /**
-     * ノードの種類。
+     * Represents a kind of node.
      */
     public enum Kind {
 
         /**
-         * 1入力多出力のライン。
-         * <p>
-         * コンパイル結果が{@link Result}型を表す{@link StageModel.Fragment}。
-         * コンストラクターの引数に、出力の順にノードを取る。
-         * </p>
+         * A line fragment.
+         * The compilation result must be a sub-class of {@link Result} (from {@link StageModel.Fragment}),
+         * and its constructor will accepts each external resource and output.
          */
         LINE,
 
         /**
-         * 合流を表す演算子。
-         * <p>
-         * コンパイル結果が{@link Rendezvous}型を表す{@link StageModel.Fragment}。
-         * コンストラクターの引数に、出力の順にノードを取る。
-         * </p>
+         * A rendezvous fragment.
+         * The compilation result must be a sub-class of {@link Rendezvous} (from {@link StageModel.Fragment}),
+         * and its constructor will accepts each external resource and output.
          */
         RENDEZVOUS,
 
         /**
-         * 1入力をシャッフルに出力する。
-         * <p>
-         * コンパイル結果が{@link Result}型を表す{@link ShuffleModel.Segment}。
-         * コンストラクターの引数に、{@link TaskInputOutputContext
-         * TaskInputOutputContext&lt;?, ?, ? super K, ? super V&gt;}を取る。
-         * </p>
+         * A shuffle fragment.
+         * The compilation result must be a sub-class of {@link Result} (from {@link ShuffleModel.Segment}),
+         * and its constructor will accepts just a {@link TaskInputOutputContext
+         * TaskInputOutputContext&lt;?, ?, ? super K, ? super V&gt;}
          */
         SHUFFLE,
 
         /**
-         * 1入力を既定のファイルシステムに出力する。
-         * <p>
-         * シャッフル以外へ出力する{@link StageModel.Sink}。
-         * </p>
+         * Stage output.
+         * This kind of fragments will not be compiled, and they are represented as {@link ResultOutput}.
          */
         OUTPUT,
     }

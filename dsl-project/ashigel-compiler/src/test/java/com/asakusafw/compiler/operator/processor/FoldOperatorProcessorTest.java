@@ -31,7 +31,7 @@ import com.asakusafw.vocabulary.flow.testing.MockOut;
 public class FoldOperatorProcessorTest extends OperatorCompilerTestRoot {
 
     /**
-     * 単純な例。
+     * simple case.
      */
     @Test
     public void simple() {
@@ -71,7 +71,7 @@ public class FoldOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * 抽象を返す。
+     * abstract method.
      */
     @Test
     public void isAbstract() {
@@ -80,7 +80,7 @@ public class FoldOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * 値を返す。
+     * not void type method.
      */
     @Test
     public void returns() {
@@ -89,7 +89,7 @@ public class FoldOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * パラメーターの宣言が足りない。
+     * no parameters.
      */
     @Test
     public void noParameters() {
@@ -98,7 +98,7 @@ public class FoldOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * パラメーターの宣言が足りない。
+     * less parameters.
      */
     @Test
     public void lessParameters() {
@@ -107,7 +107,7 @@ public class FoldOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * 入力が多い。
+     * too many parameters.
      */
     @Test
     public void tooManyInput() {
@@ -116,7 +116,7 @@ public class FoldOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * 第一引数と第二引数の型が異なる。
+     * inconsistent type between the first and second parameter.
      */
     @Test
     public void inconsistentType() {
@@ -125,7 +125,7 @@ public class FoldOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * キーの指定がない。
+     * missing key annotation.
      */
     @Test
     public void noKey() {

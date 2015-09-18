@@ -42,7 +42,7 @@ import com.asakusafw.utils.java.model.syntax.SimpleName;
 import com.asakusafw.utils.java.model.syntax.Type;
 
 /**
- * {@link Model}に関するユーティリティ群。
+ * Utilities for {@link Model}.
  */
 public final class Models {
 
@@ -61,21 +61,18 @@ public final class Models {
     }
 
     /**
-     * {@link Model}の実装を生成するためのファクトリを返す。
-     * @return {@link Model}の実装を生成するためのファクトリ
+     * Returns a basic Java DOM factory.
+     * @return a Java DOM factory
      */
     public static ModelFactory getModelFactory() {
         return new ModelFactoryImpl();
     }
 
     /**
-     * 指定の名前を単純名のリストに変換して返す。
-     * <p>
-     * 返されるリストは、表記と同様の順序に整列される。
-     * </p>
-     * @param name 変換する名前
-     * @return 変換後の名前
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns a simple name list of the target name.
+     * @param name the target name
+     * @return the simple name list
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static List<SimpleName> toList(Name name) {
         if (name == null) {
@@ -101,15 +98,12 @@ public final class Models {
     }
 
     /**
-     * 指定の名前の末尾に、指定の文字列を名前とみなして末尾に結合して返す。
-     * <p>
-     * 指定された文字列が限定名を表現する場合、限定名とみなして結合する。
-     * </p>
-     * @param factory 利用するファクトリ
-     * @param prefix 結合される名前の先頭の名前
-     * @param rest 末尾に結合される名前を表す文字列
-     * @return 結合された名前
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns a new name which is concatenated the prefix name with the suffix name string.
+     * @param factory the Java DOM factory
+     * @param prefix the prefix name
+     * @param rest the suffix name string (may be a qualified name string)
+     * @return the concatenated name
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public static Name append(ModelFactory factory, Name prefix, String rest) {
         if (factory == null) {
@@ -126,12 +120,11 @@ public final class Models {
     }
 
     /**
-     * 指定された名前の一覧を順に結合して返す。
-     * @param factory 利用するファクトリ
-     * @param names 結合される名前のリスト
-     * @return 結合された名前
-     * @throws IllegalArgumentException 名前が指定されない場合、
-     *     または引数に{@code null}が含まれる場合
+     * Concatenates each name and returns it.
+     * @param factory the Java DOM factory
+     * @param names the names to be concatenated
+     * @return the concatenated name
+     * @throws IllegalArgumentException if the names are empty, or the parameters are {@code null}
      */
     public static Name append(ModelFactory factory, Name... names) {
         if (factory == null) {
@@ -156,16 +149,12 @@ public final class Models {
     }
 
     /**
-     * モデルを指定の出力先に文字列として書き出す。
-     * <p>
-     * 対象のモデルおよびそれに含まれるモデルのいずれかが
-     * {@link CommentEmitTrait}を{@link Model#findModelTrait(Class)
-     * 所有している}場合、それらのモデルはアダプタが指定するコメントをモデルの出力の前に出力する。
-     * ただし、一部のコメントはモデルの途中で出力される場合がある。
-     * </p>
-     * @param model 対象のモデル
-     * @param writer 出力先
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Emits Java DOM object into the target writer.
+     * If there are elements which have {@link CommentEmitTrait},
+     * their comments will be also emitted into the writer.
+     * @param model the target DOM object
+     * @param writer the target writer
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public static void emit(Model model, PrintWriter writer) {
         if (model == null) {
@@ -179,11 +168,11 @@ public final class Models {
     }
 
     /**
-     * リフレクションAPIの型の表現を、モデルの型の表現に変換して返す。
-     * @param factory 利用するファクトリ
-     * @param type 変換対象の型
-     * @return 変換後のモデル
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns a Java DOM object from the Java reflective object.
+     * @param factory the Java DOM factory
+     * @param type the target reflective object
+     * @return the corresponded Java DOM object
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public static Type toType(ModelFactory factory, java.lang.reflect.Type type) {
         if (factory == null) {
@@ -196,14 +185,11 @@ public final class Models {
     }
 
     /**
-     * 指定の文字列を名前の構造に変換する。
-     * <p>
-     * 名前として正しいかどうかについては検証を行わない。
-     * </p>
-     * @param factory 利用するファクトリ
-     * @param nameString 変換対象の文字列
-     * @return 変換後の名前
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns a name from the name string.
+     * @param factory the Java DOM factory
+     * @param nameString the target name string
+     * @return the corresponded name
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public static Name toName(ModelFactory factory, String nameString) {
         if (factory == null) {
@@ -225,11 +211,11 @@ public final class Models {
     }
 
     /**
-     * 指定の定数を完全限定名に変換する。
-     * @param factory 利用するファクトリ
-     * @param constant 定数
-     * @return 変換後の名前
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the fully qualified name of the target enum constant.
+     * @param factory the Java DOM factory
+     * @param constant the target enum constant
+     * @return the corresponded name
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public static Name toName(ModelFactory factory, Enum<?> constant) {
         if (factory == null) {
@@ -245,11 +231,11 @@ public final class Models {
     }
 
     /**
-     * 指定の値をキャストしたリテラルに変換する。
-     * @param factory 利用するファクトリ
-     * @param value 値
-     * @return 変換後のリテラル
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns a Java literal (with cast operation) of the target value.
+     * @param factory the Java DOM factory
+     * @param value the target value
+     * @return the corresponded Java literal
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public static Expression toLiteral(ModelFactory factory, byte value) {
         if (factory == null) {
@@ -262,11 +248,11 @@ public final class Models {
     }
 
     /**
-     * 指定の値をキャストしたリテラルに変換する。
-     * @param factory 利用するファクトリ
-     * @param value 値
-     * @return 変換後のリテラル
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns a Java literal (with cast operation) of the target value.
+     * @param factory the Java DOM factory
+     * @param value the target value
+     * @return the corresponded Java literal
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static Expression toLiteral(ModelFactory factory, short value) {
         if (factory == null) {
@@ -279,11 +265,11 @@ public final class Models {
     }
 
     /**
-     * 指定の値をリテラルに変換する。
-     * @param factory 利用するファクトリ
-     * @param value 値
-     * @return 変換後のリテラル
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns a Java literal of the target value.
+     * @param factory the Java DOM factory
+     * @param value the target value
+     * @return the corresponded Java literal
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static Literal toLiteral(ModelFactory factory, int value) {
         if (factory == null) {
@@ -294,11 +280,11 @@ public final class Models {
     }
 
     /**
-     * 指定の値をリテラルに変換する。
-     * @param factory 利用するファクトリ
-     * @param value 値
-     * @return 変換後のリテラル
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns a Java literal of the target value.
+     * @param factory the Java DOM factory
+     * @param value the target value
+     * @return the corresponded Java literal
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static Literal toLiteral(ModelFactory factory, long value) {
         if (factory == null) {
@@ -309,11 +295,11 @@ public final class Models {
     }
 
     /**
-     * 指定の値をリテラルに変換する。
-     * @param factory 利用するファクトリ
-     * @param value 値
-     * @return 変換後のリテラル
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns a Java literal of the target value.
+     * @param factory the Java DOM factory
+     * @param value the target value
+     * @return the corresponded Java literal
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static Literal toLiteral(ModelFactory factory, float value) {
         if (factory == null) {
@@ -324,11 +310,11 @@ public final class Models {
     }
 
     /**
-     * 指定の値をリテラルに変換する。
-     * @param factory 利用するファクトリ
-     * @param value 値
-     * @return 変換後のリテラル
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns a Java literal of the target value.
+     * @param factory the Java DOM factory
+     * @param value the target value
+     * @return the corresponded Java literal
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static Literal toLiteral(ModelFactory factory, double value) {
         if (factory == null) {
@@ -339,11 +325,11 @@ public final class Models {
     }
 
     /**
-     * 指定の値をリテラルに変換する。
-     * @param factory 利用するファクトリ
-     * @param value 値
-     * @return 変換後のリテラル
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns a Java literal of the target value.
+     * @param factory the Java DOM factory
+     * @param value the target value
+     * @return the corresponded Java literal
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static Literal toLiteral(ModelFactory factory, boolean value) {
         if (factory == null) {
@@ -354,11 +340,11 @@ public final class Models {
     }
 
     /**
-     * 指定の値をリテラルに変換する。
-     * @param factory 利用するファクトリ
-     * @param value 値
-     * @return 変換後のリテラル
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns a Java literal of the target value.
+     * @param factory the Java DOM factory
+     * @param value the target value
+     * @return the corresponded Java literal
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static Literal toLiteral(ModelFactory factory, char value) {
         if (factory == null) {
@@ -369,11 +355,11 @@ public final class Models {
     }
 
     /**
-     * 指定の値をリテラルに変換する。
-     * @param factory 利用するファクトリ
-     * @param value 値
-     * @return 変換後のリテラル
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns a Java literal of the target value.
+     * @param factory the Java DOM factory
+     * @param value the target value
+     * @return the corresponded Java literal
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public static Literal toLiteral(ModelFactory factory, String value) {
         if (factory == null) {
@@ -387,13 +373,18 @@ public final class Models {
     }
 
     /**
-     * 指定の値がプリミティブのラッパー型、{@code null}、
-     * {@code String}、{@code java.lang.reflect.Type}のいずれかである場合に、
-     * そのリテラル表現を返す。
-     * @param factory 利用するファクトリ
-     * @param value 変換する値
-     * @return 変換後の表現
-     * @throws IllegalArgumentException 変換できなかった場合、または引数に{@code null}が指定された場合
+     * Returns a Java literal of the target value.
+     * The value must be one of the following value:
+     * <ul>
+     * <li> the primitive wrapper object </li>
+     * <li> {@code java.lang.String} </li>
+     * <li> {@code java.lang.reflect.Type} </li>
+     * <li> {@code null} </li>
+     * </ul>
+     * @param factory the Java DOM factory
+     * @param value the target value
+     * @return the corresponded Java literal
+     * @throws IllegalArgumentException if the value is something wrong, or the parameters are {@code null}
      */
     public static Expression toLiteral(ModelFactory factory, Object value) {
         if (factory == null) {
@@ -437,11 +428,11 @@ public final class Models {
     }
 
     /**
-     * 指定の型をリテラルに変換する。
-     * @param factory 利用するファクトリ
-     * @param type 型
-     * @return 変換後のリテラル
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns a type literal of the target type.
+     * @param factory the Java DOM factory
+     * @param type the target Java type
+     * @return the corresponded Java literal
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public static ClassLiteral toClassLiteral(
             ModelFactory factory,
@@ -456,10 +447,10 @@ public final class Models {
     }
 
     /**
-     * {@code null}リテラルを返す。
-     * @param factory 利用するファクトリ
-     * @return 変換後の名前
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns a {@code null} literal.
+     * @param factory the Java DOM factory
+     * @return the literal
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static Literal toNullLiteral(ModelFactory factory) {
         if (factory == null) {
@@ -470,11 +461,11 @@ public final class Models {
     }
 
     /**
-     * 指定の配列を配列初期化子に変換して返す。
-     * @param factory 利用するファクトリ
-     * @param array 変換する配列
-     * @return 変換後の配列初期化子
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns an array initializer which contains the original elements as related Java expression.
+     * @param factory the Java DOM factory
+     * @param array the target array
+     * @return the corresponded array initializer
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public static ArrayInitializer toArrayInitializer(
             ModelFactory factory,
@@ -493,11 +484,11 @@ public final class Models {
     }
 
     /**
-     * 指定の配列を配列初期化子に変換して返す。
-     * @param factory 利用するファクトリ
-     * @param array 変換する配列
-     * @return 変換後の配列初期化子
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns an array initializer which contains the original elements as related Java expression.
+     * @param factory the Java DOM factory
+     * @param array the target array
+     * @return the corresponded array initializer
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public static ArrayInitializer toArrayInitializer(
             ModelFactory factory,
@@ -516,11 +507,11 @@ public final class Models {
     }
 
     /**
-     * 指定の配列を配列初期化子に変換して返す。
-     * @param factory 利用するファクトリ
-     * @param array 変換する配列
-     * @return 変換後の配列初期化子
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns an array initializer which contains the original elements as related Java expression.
+     * @param factory the Java DOM factory
+     * @param array the target array
+     * @return the corresponded array initializer
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public static ArrayInitializer toArrayInitializer(
             ModelFactory factory,
@@ -539,11 +530,11 @@ public final class Models {
     }
 
     /**
-     * 指定の配列を配列初期化子に変換して返す。
-     * @param factory 利用するファクトリ
-     * @param array 変換する配列
-     * @return 変換後の配列初期化子
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns an array initializer which contains the original elements as related Java expression.
+     * @param factory the Java DOM factory
+     * @param array the target array
+     * @return the corresponded array initializer
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public static ArrayInitializer toArrayInitializer(
             ModelFactory factory,
@@ -562,11 +553,11 @@ public final class Models {
     }
 
     /**
-     * 指定の配列を配列初期化子に変換して返す。
-     * @param factory 利用するファクトリ
-     * @param array 変換する配列
-     * @return 変換後の配列初期化子
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns an array initializer which contains the original elements as related Java expression.
+     * @param factory the Java DOM factory
+     * @param array the target array
+     * @return the corresponded array initializer
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public static ArrayInitializer toArrayInitializer(
             ModelFactory factory,
@@ -585,11 +576,11 @@ public final class Models {
     }
 
     /**
-     * 指定の配列を配列初期化子に変換して返す。
-     * @param factory 利用するファクトリ
-     * @param array 変換する配列
-     * @return 変換後の配列初期化子
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns an array initializer which contains the original elements as related Java expression.
+     * @param factory the Java DOM factory
+     * @param array the target array
+     * @return the corresponded array initializer
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public static ArrayInitializer toArrayInitializer(
             ModelFactory factory,
@@ -608,11 +599,11 @@ public final class Models {
     }
 
     /**
-     * 指定の配列を配列初期化子に変換して返す。
-     * @param factory 利用するファクトリ
-     * @param array 変換する配列
-     * @return 変換後の配列初期化子
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns an array initializer which contains the original elements as related Java expression.
+     * @param factory the Java DOM factory
+     * @param array the target array
+     * @return the corresponded array initializer
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public static ArrayInitializer toArrayInitializer(
             ModelFactory factory,
@@ -631,11 +622,11 @@ public final class Models {
     }
 
     /**
-     * 指定の配列を配列初期化子に変換して返す。
-     * @param factory 利用するファクトリ
-     * @param array 変換する配列
-     * @return 変換後の配列初期化子
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns an array initializer which contains the original elements as related Java expression.
+     * @param factory the Java DOM factory
+     * @param array the target array
+     * @return the corresponded array initializer
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public static ArrayInitializer toArrayInitializer(
             ModelFactory factory,
@@ -654,11 +645,11 @@ public final class Models {
     }
 
     /**
-     * 指定の配列を配列初期化子に変換して返す。
-     * @param factory 利用するファクトリ
-     * @param array 変換する配列
-     * @return 変換後の配列初期化子
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns an array initializer which contains the original elements as related Java expression.
+     * @param factory the Java DOM factory
+     * @param array the target array
+     * @return the corresponded array initializer
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public static ArrayInitializer toArrayInitializer(
             ModelFactory factory,
@@ -681,11 +672,11 @@ public final class Models {
     }
 
     /**
-     * 指定の配列を配列初期化子に変換して返す。
-     * @param factory 利用するファクトリ
-     * @param array 変換する配列
-     * @return 変換後の配列初期化子
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns an array initializer which contains the original elements as related Java expression.
+     * @param factory the Java DOM factory
+     * @param array the target array
+     * @return the corresponded array initializer
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public static ArrayInitializer toArrayInitializer(
             ModelFactory factory,

@@ -22,18 +22,12 @@ import com.asakusafw.utils.java.model.syntax.Type;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link DocField}の実装。
+ * An implementation of {@link DocField}.
  */
 public final class DocFieldImpl extends ModelRoot implements DocField {
 
-    /**
-     * フィールドを宣言した型。
-     */
     private Type type;
 
-    /**
-     * フィールドの名称。
-     */
     private SimpleName name;
 
     @Override
@@ -42,11 +36,8 @@ public final class DocFieldImpl extends ModelRoot implements DocField {
     }
 
     /**
-     * フィールドを宣言した型を設定する。
-     * <p> 宣言型が指定されない場合、引数には{@code null}を指定する。 </p>
-     * @param type
-     *     フィールドを宣言した型、
-     *     ただし宣言型が指定されない場合は{@code null}
+     * Sets the owner type.
+     * @param type the owner type, or {@code null} if it is not specified
      */
     public void setType(Type type) {
         this.type = type;
@@ -58,11 +49,9 @@ public final class DocFieldImpl extends ModelRoot implements DocField {
     }
 
     /**
-     * フィールドの名称を設定する。
-     * @param name
-     *     フィールドの名称
-     * @throws IllegalArgumentException
-     *     {@code name}に{@code null}が指定された場合
+     * Sets the field name.
+     * @param name the field name
+     * @throws IllegalArgumentException if {@code name} was {@code null}
      */
     public void setName(SimpleName name) {
         Util.notNull(name, "name"); //$NON-NLS-1$
@@ -70,7 +59,7 @@ public final class DocFieldImpl extends ModelRoot implements DocField {
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#DOC_FIELD}を返す。
+     * Returns {@link ModelKind#DOC_FIELD} which represents this element kind.
      * @return {@link ModelKind#DOC_FIELD}
      */
     @Override
@@ -79,8 +68,7 @@ public final class DocFieldImpl extends ModelRoot implements DocField {
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitDocField(this, context);
     }

@@ -23,6 +23,7 @@ import java.lang.annotation.Target;
 
 import com.asakusafw.vocabulary.external.ImporterDescription;
 
+//TODO i18n
 /**
  * 利用するインポーターの内容を指定する注釈。
  * <p>

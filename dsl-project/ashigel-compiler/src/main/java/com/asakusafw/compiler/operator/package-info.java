@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /**
- * 演算子DSLに関するコンパイラ。
+ * Compiles operator classes.
  */
 package com.asakusafw.compiler.operator;
 

@@ -18,22 +18,22 @@ package com.asakusafw.vocabulary.flow.graph;
 import java.text.MessageFormat;
 
 /**
- * フローの境界属性。
+ * Represents characteristics of flow boundaries.
  */
 public enum FlowBoundary implements FlowElementAttribute {
 
     /**
-     * ステージ境界を表す。
+     * The element must become a stage boundary.
      */
     STAGE,
 
     /**
-     * シャッフル境界を表す。
+     * The element must become a shuffle boundary.
      */
     SHUFFLE,
 
     /**
-     * 境界でない。
+     * The element must not become any flow boundaries.
      */
     DEFAULT,
 

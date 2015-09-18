@@ -21,18 +21,18 @@ import static org.junit.Assert.*;
 import com.asakusafw.runtime.value.StringOption;
 
 /**
- * 入出力確認用のモックモデル。
+ * Mock data model for testing I/O.
  */
 public class MockModel {
 
     /**
-     * 入力したデータを保持するフィールド。
+     * The data field.
      */
     public StringOption value = new StringOption();
 
     /**
-     * 現在の値を確認する。
-     * @param expect 期待値
+     * Verifies the current data.
+     * @param expect the expected data
      */
     public void assertValueIs(String expect) {
         assertThat(value.getAsString(), is(expect));

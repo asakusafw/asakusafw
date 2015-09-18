@@ -24,9 +24,8 @@ import java.lang.annotation.Target;
 
 import com.asakusafw.compiler.operator.AbstractOperatorProcessor;
 
-
 /**
- * {@link AbstractOperatorProcessor}のサブクラスに付与することで、対象の演算子注釈を表す。
+ * An annotation for tell the target operator annotation for {@link AbstractOperatorProcessor}.
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
@@ -34,7 +33,7 @@ import com.asakusafw.compiler.operator.AbstractOperatorProcessor;
 public @interface TargetOperator {
 
     /**
-     * 対象の演算子注釈の型。
+     * The target operator annotation type.
      */
     Class<? extends Annotation> value();
 }

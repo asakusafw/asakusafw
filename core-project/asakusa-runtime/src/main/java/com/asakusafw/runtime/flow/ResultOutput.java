@@ -30,8 +30,8 @@ import org.apache.hadoop.mapreduce.TaskInputOutputContext;
 import com.asakusafw.runtime.core.Result;
 
 /**
- * 結果を出力する。
- * @param <T> 結果の型
+ * An implementation of {@link Result} which put data model objects into the final output.
+ * @param <T> the data model type
  * @since 0.1.0
  * @version 0.5.0
  */
@@ -48,12 +48,12 @@ public class ResultOutput<T> implements Result<T> {
     private long records;
 
     /**
-     * インスタンスを生成する。
-     * @param context 現在のコンテキスト
-     * @param writer 結果の出力先
-     * @throws IOException 初期化に失敗した場合
-     * @throws InterruptedException 初期化に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param context the current context
+     * @param writer the record writer for writing data model objects
+     * @throws IOException if failed to initialize the output
+     * @throws InterruptedException if interrupted while initializing the output
+     * @throws IllegalArgumentException if some parameters are {@code null}
      */
     @SuppressWarnings({ "rawtypes" })
     public ResultOutput(
@@ -132,10 +132,9 @@ public class ResultOutput<T> implements Result<T> {
     }
 
     /**
-     * 現在の出力を破棄する。
-     * @throws IOException 出力のフラッシュに失敗した場合
-     * @throws InterruptedException 出力の破棄に割り込みが発行された場合
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Finalizes and closes this output.
+     * @throws IOException if failed to finalize the output
+     * @throws InterruptedException if interrupted while finalizing the output
      */
     public void close() throws IOException, InterruptedException {
         for (Counter counter : counters) {

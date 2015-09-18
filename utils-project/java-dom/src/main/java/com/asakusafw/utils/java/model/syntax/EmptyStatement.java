@@ -17,7 +17,7 @@ package com.asakusafw.utils.java.model.syntax;
 
 
 /**
- * 空文を表現するインターフェース。
+ * An interface which represents empty statement.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:14.6] The Empty Statement} </li>

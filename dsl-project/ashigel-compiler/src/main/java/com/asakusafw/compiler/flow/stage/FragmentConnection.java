@@ -43,7 +43,7 @@ import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
 import com.asakusafw.vocabulary.flow.graph.FlowResourceDescription;
 
 /**
- * {@code *FragmentEmitter}の共通処理。
+ * Common operators for {@code *FragmentEmitter}.
  */
 public class FragmentConnection {
 
@@ -58,12 +58,12 @@ public class FragmentConnection {
     private final ImportBuilder importer;
 
     /**
-     * インスタンスを生成する。
-     * @param environment 環境オブジェクト
-     * @param fragment 対象のフラグメント
-     * @param names 名前を生成するオブジェクト
-     * @param importer インポートを管理するオブジェクト
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param environment the current environment
+     * @param fragment the target fragment
+     * @param names the unique name generator
+     * @param importer the import declaration builder
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public FragmentConnection(
             FlowCompilingEnvironment environment,
@@ -89,8 +89,8 @@ public class FragmentConnection {
 
 
     /**
-     * リソースや出力に関するフィールドの一覧を返す。
-     * @return リソースや出力に関するフィールドの一覧
+     * Returns the field declarations.
+     * @return the field declarations
      */
     public List<FieldDeclaration> createFields() {
         List<FieldDeclaration> results = Lists.create();
@@ -104,10 +104,10 @@ public class FragmentConnection {
     }
 
     /**
-     * コンストラクタの宣言を返す。
-     * @param className クラス名
-     * @return コンストラクタの宣言
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns a constructor declaration.
+     * @param className the simple name of the target fragment class
+     * @return the constructor declaration
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public ConstructorDeclaration createConstructor(SimpleName className) {
         Precondition.checkMustNotBeNull(className, "className"); //$NON-NLS-1$
@@ -192,8 +192,8 @@ public class FragmentConnection {
     }
 
     /**
-     * リソースに関する定義とそれを参照するための式の表を返す。
-     * @return リソースに関する定義とそれを参照するための式の表
+     * Returns expressions which provides external resources.
+     * @return a mapping of external resource description to its expression
      */
     public Map<FlowResourceDescription, Expression> getResources() {
         Map<FlowResourceDescription, Expression> results = Maps.create();
@@ -210,8 +210,8 @@ public class FragmentConnection {
     }
 
     /**
-     * 出力に関する定義とそれを参照するための式の表を返す。
-     * @return 出力に関する定義とそれを参照するための式の表
+     * Returns expressions which provides {@link Result} outputs.
+     * @return a mapping of output port to its expression
      */
     public Map<FlowElementPortDescription, Expression> getOutputs() {
         Map<FlowElementPortDescription, Expression> results = Maps.create();

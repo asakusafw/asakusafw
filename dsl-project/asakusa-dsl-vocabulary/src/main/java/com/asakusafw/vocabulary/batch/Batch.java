@@ -21,6 +21,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+// TODO i18n
 /**
  * バッチクラスに付与されるべき注釈。
  * @since 0.1.0

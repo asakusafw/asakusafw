@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /**
- * フローDSLに関するコンパイラ。
+ * A compiler for Asakusa flow DSL.
  */
 package com.asakusafw.compiler.flow;
 

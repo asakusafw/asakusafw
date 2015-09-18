@@ -34,9 +34,8 @@ import com.asakusafw.vocabulary.flow.graph.FlowOut;
 import com.asakusafw.vocabulary.flow.graph.InputDescription;
 import com.asakusafw.vocabulary.flow.graph.OutputDescription;
 
-
 /**
- * {@link FlowDescription}を結線するドライバ。
+ * Creates {@link FlowGraph} from {@link FlowDescription}.
  */
 public class FlowDescriptionDriver {
 
@@ -47,29 +46,13 @@ public class FlowDescriptionDriver {
     private final Map<String, FlowOut<?>> outputs = new LinkedHashMap<String, FlowOut<?>>();
 
     /**
-     * 指定の名前とインポーター記述を持つ入力を作成する。
-     * <p>
-     * 入力の名前は、同一のフロー記述における入力内で重複してはならない。
-     * また、識別子には、下記の形式の名前 (Javaの変数名のうち、ASCIIコード表に収まるもののみ)
-     * を利用可能である。
-     * </p>
-<pre><code>
-Name :
-    NameStart NamePart*
-NameStart: one of
-    A-Z
-    a-z
-    _
-NamePart: one of
-    NameStart
-    0-9
-</code></pre>
-     * @param <T> 入力データの型
-     * @param name 入力の名前
-     * @param importer 入力に利用するインポーターの名前
-     * @return 作成した入力オブジェクト
-     * @throws IllegalStateException すでに指定の名前の入力が存在する場合
-     * @throws IllegalArgumentException 引数に不正な名前、または{@code null}が指定された場合
+     * Returns a new flow input.
+     * @param <T> the data type
+     * @param name the input name
+     * @param importer the importer description for the target input
+     * @return the created input
+     * @throws IllegalStateException if the input name is conflicted
+     * @throws IllegalArgumentException if the input name is invalid, or the parameters are {@code null}
      */
     public <T> In<T> createIn(String name, ImporterDescription importer) {
         Precondition.checkMustNotBeNull(name, "name"); //$NON-NLS-1$
@@ -91,29 +74,13 @@ NamePart: one of
     }
 
     /**
-     * 指定の名前とエクスポーター記述を持つ出力を作成する。
-     * <p>
-     * 出力の名前は、同一のフロー記述における出力内で重複してはならない。
-     * また、識別子には、下記の形式の名前 (Javaの変数名のうち、ASCIIコード表に収まるもののみ)
-     * を利用可能である。
-     * </p>
-<pre><code>
-Name :
-    NameStart NamePart*
-NameStart: one of
-    A-Z
-    a-z
-    _
-NamePart: one of
-    NameStart
-    0-9
-</code></pre>
-     * @param <T> 出力データの型
-     * @param name 出力の名前
-     * @param exporter 出力に利用するエクスポーターの名前
-     * @return 作成した出力オブジェクト
-     * @throws IllegalStateException すでに指定の名前の出力が存在する場合
-     * @throws IllegalArgumentException 引数に不正な名前、または{@code null}が指定された場合
+     * Returns a new flow output.
+     * @param <T> the data type
+     * @param name the output name
+     * @param exporter the exporter description for the target output
+     * @return the created output
+     * @throws IllegalStateException if the output name is conflicted
+     * @throws IllegalArgumentException if the output name is invalid, or the parameters are {@code null}
      */
     public <T> Out<T> createOut(String name, ExporterDescription exporter) {
         Precondition.checkMustNotBeNull(name, "name"); //$NON-NLS-1$
@@ -137,9 +104,9 @@ NamePart: one of
     private static final Pattern VALID_NAME = Pattern.compile("[A-Za-z_][0-9A-Za-z_]*"); //$NON-NLS-1$
 
     /**
-     * 指定の名前が入出力の識別子として正しい場合のみ{@code true}を返す。
-     * @param name 名前
-     * @return 名前が識別子として正しい場合のみ{@code true}、{@code null}や不正な文字列の場合は{@code false}
+     * Returns whether the target name is valid for flow input/output name or not.
+     * @param name the input/output name
+     * @return {@code true} if the target name is valid, otherwise {@code false}
      */
     public boolean isValidName(String name) {
         if (name == null) {
@@ -149,22 +116,19 @@ NamePart: one of
     }
 
     /**
-     * これまでに登録した入出力をその順番に返す。
-     * <p>
-     * 返されるリストに含まれる要素は、必ず{@link FlowIn}か {@link FlowOut}のいずれかである。
-     * </p>
-     * @return これまでに登録した入出力
+     * Returns the previously added flow inputs/outputs by their order.
+     * The returned list will only contain {@link FlowIn} (for inputs) and {@link FlowOut} (for outputs).
+     * @return the added flow inputs/output
      */
     public List<Object> getPorts() {
         return ports;
     }
 
     /**
-     * 指定のフロー記述オブジェクトを解釈し、ここまでに作成した入出力を起点とする
-     * 演算子グラフを構築して返す。
-     * @param description 対象のフロー記述オブジェクト
-     * @return 生成した演算子グラフ
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Analyzes the target flow description, and returns the corresponded flow graph.
+     * @param description the target flow description
+     * @return the analyzed flow graph
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public FlowGraph createFlowGraph(FlowDescription description) {
         Precondition.checkMustNotBeNull(description, "description"); //$NON-NLS-1$

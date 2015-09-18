@@ -22,23 +22,14 @@ import com.asakusafw.utils.java.model.syntax.ModelKind;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link InfixExpression}の実装。
+ * An implementation of {@link InfixExpression}.
  */
 public final class InfixExpressionImpl extends ModelRoot implements InfixExpression {
 
-    /**
-     * 第一演算項。
-     */
     private Expression leftOperand;
 
-    /**
-     * 二項演算子。
-     */
     private InfixOperator operator;
 
-    /**
-     * 第二演算項。
-     */
     private Expression rightOperand;
 
     @Override
@@ -47,11 +38,9 @@ public final class InfixExpressionImpl extends ModelRoot implements InfixExpress
     }
 
     /**
-     * 第一演算項を設定する。
-     * @param leftOperand
-     *     第一演算項
-     * @throws IllegalArgumentException
-     *     {@code leftOperand}に{@code null}が指定された場合
+     * Sets the left term.
+     * @param leftOperand the left term
+     * @throws IllegalArgumentException if {@code leftOperand} was {@code null}
      */
     public void setLeftOperand(Expression leftOperand) {
         Util.notNull(leftOperand, "leftOperand"); //$NON-NLS-1$
@@ -64,11 +53,9 @@ public final class InfixExpressionImpl extends ModelRoot implements InfixExpress
     }
 
     /**
-     * 二項演算子を設定する。
-     * @param operator
-     *     二項演算子
-     * @throws IllegalArgumentException
-     *     {@code operator}に{@code null}が指定された場合
+     * Sets the infix operator.
+     * @param operator the infix operator
+     * @throws IllegalArgumentException if {@code operator} was {@code null}
      */
     public void setOperator(InfixOperator operator) {
         Util.notNull(operator, "operator"); //$NON-NLS-1$
@@ -81,11 +68,9 @@ public final class InfixExpressionImpl extends ModelRoot implements InfixExpress
     }
 
     /**
-     * 第二演算項を設定する。
-     * @param rightOperand
-     *     第二演算項
-     * @throws IllegalArgumentException
-     *     {@code rightOperand}に{@code null}が指定された場合
+     * Sets the right term.
+     * @param rightOperand the right term
+     * @throws IllegalArgumentException if {@code rightOperand} was {@code null}
      */
     public void setRightOperand(Expression rightOperand) {
         Util.notNull(rightOperand, "rightOperand"); //$NON-NLS-1$
@@ -93,7 +78,7 @@ public final class InfixExpressionImpl extends ModelRoot implements InfixExpress
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#INFIX_EXPRESSION}を返す。
+     * Returns {@link ModelKind#INFIX_EXPRESSION} which represents this element kind.
      * @return {@link ModelKind#INFIX_EXPRESSION}
      */
     @Override
@@ -102,8 +87,7 @@ public final class InfixExpressionImpl extends ModelRoot implements InfixExpress
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitInfixExpression(this, context);
     }

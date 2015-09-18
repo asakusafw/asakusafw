@@ -22,18 +22,12 @@ import com.asakusafw.utils.java.model.syntax.SingleElementAnnotation;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link SingleElementAnnotation}の実装。
+ * An implementation of {@link SingleElementAnnotation}.
  */
 public final class SingleElementAnnotationImpl extends ModelRoot implements SingleElementAnnotation {
 
-    /**
-     * 注釈の型。
-     */
     private NamedType type;
 
-    /**
-     * {@code value}要素値の式。
-     */
     private Expression expression;
 
     @Override
@@ -42,11 +36,9 @@ public final class SingleElementAnnotationImpl extends ModelRoot implements Sing
     }
 
     /**
-     * 注釈の型を設定する。
-     * @param type
-     *     注釈の型
-     * @throws IllegalArgumentException
-     *     {@code type}に{@code null}が指定された場合
+     * Sets the annotation type.
+     * @param type the annotation type
+     * @throws IllegalArgumentException if {@code type} was {@code null}
      */
     public void setType(NamedType type) {
         Util.notNull(type, "type"); //$NON-NLS-1$
@@ -59,11 +51,9 @@ public final class SingleElementAnnotationImpl extends ModelRoot implements Sing
     }
 
     /**
-     * {@code value}要素値の式を設定する。
-     * @param expression
-     *     {@code value}要素値の式
-     * @throws IllegalArgumentException
-     *     {@code expression}に{@code null}が指定された場合
+     * Sets the value for {@code value} element.
+     * @param expression the value for {@code value} element
+     * @throws IllegalArgumentException if {@code expression} was {@code null}
      */
     public void setExpression(Expression expression) {
         Util.notNull(expression, "expression"); //$NON-NLS-1$
@@ -71,7 +61,7 @@ public final class SingleElementAnnotationImpl extends ModelRoot implements Sing
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#SINGLE_ELEMENT_ANNOTATION}を返す。
+     * Returns {@link ModelKind#SINGLE_ELEMENT_ANNOTATION} which represents this element kind.
      * @return {@link ModelKind#SINGLE_ELEMENT_ANNOTATION}
      */
     @Override
@@ -80,8 +70,7 @@ public final class SingleElementAnnotationImpl extends ModelRoot implements Sing
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitSingleElementAnnotation(this, context);
     }

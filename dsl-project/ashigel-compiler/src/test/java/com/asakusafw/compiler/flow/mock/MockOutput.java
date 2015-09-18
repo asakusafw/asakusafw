@@ -25,7 +25,7 @@ import com.asakusafw.runtime.compatibility.hadoop.KeyValueConsumer;
 import com.asakusafw.runtime.core.Result;
 
 /**
- * ダミーの出力先。
+ * Mock output.
  */
 public class MockOutput {
 
@@ -34,12 +34,12 @@ public class MockOutput {
     }
 
     /**
-     * インスタンスを生成する。
-     * @param <K> キーの型
-     * @param <V> 値の型
-     * @param keyOut キーの出力先
-     * @param valueOut 値の出力先
-     * @return 生成したインスタンス
+     * Creates a new instance.
+     * @param <K> the key type
+     * @param <V> the value type
+     * @param keyOut the key output
+     * @param valueOut the value output
+     * @return the created instance
      */
     public static <K, V> TaskInputOutputContext<?, ?, K, V> create(
             Result<K> keyOut,

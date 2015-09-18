@@ -16,7 +16,7 @@
 package com.asakusafw.utils.java.internal.parser.javadoc.ir;
 
 /**
- * 型を表す要素。
+ * Represents types in {@link IrDocComment}.
  */
 public interface IrDocType extends IrDocFragment {
     // no members

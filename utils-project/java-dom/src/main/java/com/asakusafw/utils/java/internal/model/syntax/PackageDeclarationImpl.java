@@ -25,23 +25,14 @@ import com.asakusafw.utils.java.model.syntax.PackageDeclaration;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link PackageDeclaration}の実装。
+ * An implementation of {@link PackageDeclaration}.
  */
 public final class PackageDeclarationImpl extends ModelRoot implements PackageDeclaration {
 
-    /**
-     * ドキュメンテーションコメント。
-     */
     private Javadoc javadoc;
 
-    /**
-     * 注釈の一覧。
-     */
     private List<? extends Annotation> annotations;
 
-    /**
-     * 宣言するパッケージの名称。
-     */
     private Name name;
 
     @Override
@@ -50,11 +41,8 @@ public final class PackageDeclarationImpl extends ModelRoot implements PackageDe
     }
 
     /**
-     * ドキュメンテーションコメントを設定する。
-     * <p> ドキュメンテーションコメントが存在しない場合、引数には{@code null}を指定する。 </p>
-     * @param javadoc
-     *     ドキュメンテーションコメント、
-     *     ただしドキュメンテーションコメントが存在しない場合は{@code null}
+     * Sets the documentation comment.
+     * @param javadoc the documentation comment, or {@code null} if it is not specified
      */
     public void setJavadoc(Javadoc javadoc) {
         this.javadoc = javadoc;
@@ -66,12 +54,9 @@ public final class PackageDeclarationImpl extends ModelRoot implements PackageDe
     }
 
     /**
-     * 注釈の一覧を設定する。
-     * <p> 注釈が存在しない場合、引数には空を指定する。 </p>
-     * @param annotations
-     *     注釈の一覧
-     * @throws IllegalArgumentException
-     *     {@code annotations}に{@code null}が指定された場合
+     * Sets the annotations.
+     * @param annotations the annotations
+     * @throws IllegalArgumentException if {@code annotations} was {@code null}
      */
     public void setAnnotations(List<? extends Annotation> annotations) {
         Util.notNull(annotations, "annotations"); //$NON-NLS-1$
@@ -85,11 +70,9 @@ public final class PackageDeclarationImpl extends ModelRoot implements PackageDe
     }
 
     /**
-     * 宣言するパッケージの名称を設定する。
-     * @param name
-     *     宣言するパッケージの名称
-     * @throws IllegalArgumentException
-     *     {@code name}に{@code null}が指定された場合
+     * Sets the target package name.
+     * @param name the target package name
+     * @throws IllegalArgumentException if {@code name} was {@code null}
      */
     public void setName(Name name) {
         Util.notNull(name, "name"); //$NON-NLS-1$
@@ -97,7 +80,7 @@ public final class PackageDeclarationImpl extends ModelRoot implements PackageDe
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#PACKAGE_DECLARATION}を返す。
+     * Returns {@link ModelKind#PACKAGE_DECLARATION} which represents this element kind.
      * @return {@link ModelKind#PACKAGE_DECLARATION}
      */
     @Override
@@ -106,8 +89,7 @@ public final class PackageDeclarationImpl extends ModelRoot implements PackageDe
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitPackageDeclaration(this, context);
     }

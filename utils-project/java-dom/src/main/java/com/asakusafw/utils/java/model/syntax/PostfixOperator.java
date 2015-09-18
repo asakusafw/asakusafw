@@ -20,17 +20,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 後置演算子。
+ * Represents postfix operators.
  */
 public enum PostfixOperator {
 
     /**
-     * 後置インクリメント。
+     * Postfix increment.
      */
     INCREMENT("++"), //$NON-NLS-1$
 
     /**
-     * 後置デクリメント。
+     * Postfix decrement.
      */
     DECREMENT("--"), //$NON-NLS-1$
 
@@ -39,8 +39,8 @@ public enum PostfixOperator {
     private final String symbol;
 
     /**
-     * インスタンスを生成する。
-     * @param symbol シンボル
+     * Creates a new instance.
+     * @param symbol the operator symbol
      */
     private PostfixOperator(String symbol) {
         assert symbol != null;
@@ -48,18 +48,18 @@ public enum PostfixOperator {
     }
 
     /**
-     * この演算子のシンボルを返す。
-     * @return シンボル
+     * Returns the operator symbol.
+     * @return the operator symbol
      */
     public String getSymbol() {
         return this.symbol;
     }
 
     /**
-     * 指定のシンボルに対応するこの列挙の定数を返す。
-     * @param symbol 対象のシンボル
-     * @return 対応する定数、存在しない場合は{@code null}
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns an operator from its symbol.
+     * @param symbol the target operator symbol
+     * @return the corresponded operator, or {@code null} if there is no such the operator
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static PostfixOperator fromSymbol(String symbol) {
         if (symbol == null) {

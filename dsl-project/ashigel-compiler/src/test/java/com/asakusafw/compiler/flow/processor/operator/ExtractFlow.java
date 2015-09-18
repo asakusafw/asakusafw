@@ -22,14 +22,14 @@ import com.asakusafw.runtime.core.Result;
 import com.asakusafw.vocabulary.operator.Extract;
 
 /**
- * {@link ExtractFlowProcessor}に対するテスト演算子。
+ * An operator class for testing {@link ExtractFlowProcessor}.
  */
 public abstract class ExtractFlow {
 
     /**
-     * valueを加算する。
-     * @param a1 入力
-     * @param r1 value + 1
+     * value of input + 1.
+     * @param a1 input
+     * @param r1 result
      */
     @Extract
     public void op1(
@@ -39,10 +39,10 @@ public abstract class ExtractFlow {
     }
 
     /**
-     * valueを加算する。
-     * @param a1 入力
-     * @param r1 value + 1
-     * @param r2 value + 2
+     * value of input + 1 to r1, value of input + 2 to r2.
+     * @param a1 input
+     * @param r1 result 1
+     * @param r2 result 2
      */
     @Extract
     public void op2(
@@ -54,11 +54,11 @@ public abstract class ExtractFlow {
     }
 
     /**
-     * valueを加算する。
-     * @param a1 入力
-     * @param r1 value + 1
-     * @param r2 value + 2
-     * @param r3 value + 3
+     * value of input + N to rN.
+     * @param a1 input
+     * @param r1 result 1
+     * @param r2 result 2
+     * @param r3 result 3
      */
     @Extract
     public void op3(
@@ -72,10 +72,10 @@ public abstract class ExtractFlow {
     }
 
     /**
-     * valueを加算する。
-     * @param a1 入力
-     * @param r1 value + param
-     * @param parameter パラメーター
+     * value of input + parameter.
+     * @param a1 input
+     * @param r1 result
+     * @param parameter additional parameter
      */
     @Extract
     public void withParameter(

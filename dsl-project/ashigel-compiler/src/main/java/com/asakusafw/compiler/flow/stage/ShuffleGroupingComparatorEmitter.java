@@ -57,7 +57,7 @@ import com.asakusafw.utils.java.model.util.Models;
 import com.asakusafw.utils.java.model.util.TypeBuilder;
 
 /**
- * シャッフルフェーズで利用するグループ比較器を生成する。
+ * An emitter for emitting shuffle grouping comparator classes.
  */
 public class ShuffleGroupingComparatorEmitter {
 
@@ -66,9 +66,9 @@ public class ShuffleGroupingComparatorEmitter {
     private final FlowCompilingEnvironment environment;
 
     /**
-     * インスタンスを生成する。
-     * @param environment 環境オブジェクト
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param environment the current environment
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public ShuffleGroupingComparatorEmitter(FlowCompilingEnvironment environment) {
         Precondition.checkMustNotBeNull(environment, "environment"); //$NON-NLS-1$
@@ -76,12 +76,12 @@ public class ShuffleGroupingComparatorEmitter {
     }
 
     /**
-     * 指定のモデルに対するグループ比較器を表すクラスを生成し、生成したクラスの完全限定名を返す。
-     * @param model 対象のモデル
-     * @param keyTypeName キー型の完全限定名
-     * @return 生成したクラスの完全限定名
-     * @throws IOException クラスの生成に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new shuffle grouping comparator class, and returns the qualified name of its class.
+     * @param model the target shuffle model
+     * @param keyTypeName the qualified name of the target shuffle key class
+     * @return qualified name of the created class
+     * @throws IOException if error was occurred while creating the class
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public Name emit(
             ShuffleModel model,

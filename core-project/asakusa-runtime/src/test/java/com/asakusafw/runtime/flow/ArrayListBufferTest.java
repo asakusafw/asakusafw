@@ -26,7 +26,7 @@ import org.junit.Test;
 public class ArrayListBufferTest {
 
     /**
-     * 空のリストを作成する。
+     * creates an empty buffer.
      */
     @Test
     public void createEmpty() {
@@ -39,7 +39,7 @@ public class ArrayListBufferTest {
     }
 
     /**
-     * 要素がひとつのリストを作成する。
+     * creates a buffer with one element.
      */
     @Test
     public void createSingle() {
@@ -57,7 +57,7 @@ public class ArrayListBufferTest {
     }
 
     /**
-     * 要素がひとつのリストを作成し、再利用する。
+     * reuses element objects.
      */
     @Test
     public void reuse() {
@@ -80,7 +80,7 @@ public class ArrayListBufferTest {
     }
 
     /**
-     * 巨大なリストを生成する。。
+     * creates a big buffer.
      */
     @Test
     public void createBigList() {
@@ -106,7 +106,7 @@ public class ArrayListBufferTest {
     }
 
     /**
-     * リストの構築時にexpandを行わない。
+     * missing expand.
      */
     @Test(expected = IndexOutOfBoundsException.class)
     public void advance_OutOfBounds() {
@@ -122,7 +122,7 @@ public class ArrayListBufferTest {
     }
 
     /**
-     * リストの構築時にadvanceを行わない。
+     * missing advance.
      */
     @Test(expected = IndexOutOfBoundsException.class)
     public void get_UpperOutOfBounds() {
@@ -137,7 +137,7 @@ public class ArrayListBufferTest {
     }
 
     /**
-     * 負のインデックスを参照する。
+     * negative index.
      */
     @Test(expected = IndexOutOfBoundsException.class)
     public void get_LowerOutOfBounds() {

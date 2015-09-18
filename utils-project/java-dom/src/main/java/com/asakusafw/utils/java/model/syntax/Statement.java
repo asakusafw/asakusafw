@@ -17,7 +17,7 @@ package com.asakusafw.utils.java.model.syntax;
 
 
 /**
- * 文を表現する基底インターフェース。
+ * An abstract super interface of statement.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:14] Blocks and Statements} </li>

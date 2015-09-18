@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * フローDSLのテスト用のクラス群。
+ * Classes for Flow DSL testing.
  */
 package com.asakusafw.vocabulary.flow.testing;

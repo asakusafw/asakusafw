@@ -17,6 +17,7 @@ package com.asakusafw.runtime.value;
 
 import java.text.MessageFormat;
 
+//TODO i18n
 /**
  * 日付時刻に関する軽量クラス。
  */

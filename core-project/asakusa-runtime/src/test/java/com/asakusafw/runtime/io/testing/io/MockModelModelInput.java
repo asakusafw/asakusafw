@@ -23,15 +23,15 @@ import com.asakusafw.runtime.io.testing.model.MockModel;
 
 
 /**
- * {@link MockModel}のレコード入力。
+ * A data model input for {@link MockModel}.
  */
 public class MockModelModelInput implements ModelInput<MockModel> {
 
-    private RecordParser parser;
+    private final RecordParser parser;
 
     /**
-     * インスタンスを生成する。
-     * @param parser 利用するパーサー
+     * Creates a new instance.
+     * @param parser the record parser
      */
     public MockModelModelInput(RecordParser parser) {
         this.parser = parser;

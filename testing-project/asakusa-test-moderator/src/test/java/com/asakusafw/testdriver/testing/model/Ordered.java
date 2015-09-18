@@ -23,18 +23,14 @@ import org.apache.hadoop.io.Writable;
 
 import com.asakusafw.runtime.model.DataModel;
 import com.asakusafw.runtime.model.DataModelKind;
-import com.asakusafw.runtime.model.ModelInputLocation;
-import com.asakusafw.runtime.model.ModelOutputLocation;
 import com.asakusafw.runtime.model.PropertyOrder;
 import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.runtime.value.StringOption;
-import com.asakusafw.testdriver.testing.io.OrderedInput;
-import com.asakusafw.testdriver.testing.io.OrderedOutput;
 /**
- * orderedを表すデータモデルクラス。
+ * A data model class that represents ordered.
  */
-@DataModelKind("DMDL")@ModelInputLocation(OrderedInput.class)@ModelOutputLocation(OrderedOutput.class)@PropertyOrder({
-            "first", "second_property", "a", "last"}) public class Ordered implements DataModel<Ordered>, Writable {
+@DataModelKind("DMDL")@PropertyOrder({"first", "second_property", "a", "last"}) public class Ordered implements
+        DataModel<Ordered>, Writable {
     private final IntOption first = new IntOption();
     private final IntOption secondProperty = new IntOption();
     private final StringOption a = new StringOption();
@@ -52,117 +48,117 @@ import com.asakusafw.testdriver.testing.io.OrderedOutput;
         this.last.copyFrom(other.last);
     }
     /**
-     * firstを返す。
+     * Returns first.
      * @return first
-     * @throws NullPointerException firstの値が<code>null</code>である場合
+     * @throws NullPointerException if first is <code>null</code>
      */
     public int getFirst() {
         return this.first.get();
     }
     /**
-     * firstを設定する。
-     * @param value 設定する値
+     * Sets first.
+     * @param value the value
      */
     @SuppressWarnings("deprecation") public void setFirst(int value) {
         this.first.modify(value);
     }
     /**
-     * <code>null</code>を許すfirstを返す。
+     * Returns first which may be represent <code>null</code>.
      * @return first
      */
     public IntOption getFirstOption() {
         return this.first;
     }
     /**
-     * firstを設定する。
-     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     * Sets first.
+     * @param option the value, or <code>null</code> to set this property to <code>null</code>
      */
     @SuppressWarnings("deprecation") public void setFirstOption(IntOption option) {
         this.first.copyFrom(option);
     }
     /**
-     * second_propertyを返す。
+     * Returns second_property.
      * @return second_property
-     * @throws NullPointerException second_propertyの値が<code>null</code>である場合
+     * @throws NullPointerException if second_property is <code>null</code>
      */
     public int getSecondProperty() {
         return this.secondProperty.get();
     }
     /**
-     * second_propertyを設定する。
-     * @param value 設定する値
+     * Sets second_property.
+     * @param value the value
      */
     @SuppressWarnings("deprecation") public void setSecondProperty(int value) {
         this.secondProperty.modify(value);
     }
     /**
-     * <code>null</code>を許すsecond_propertyを返す。
+     * Returns second_property which may be represent <code>null</code>.
      * @return second_property
      */
     public IntOption getSecondPropertyOption() {
         return this.secondProperty;
     }
     /**
-     * second_propertyを設定する。
-     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     * Sets second_property.
+     * @param option the value, or <code>null</code> to set this property to <code>null</code>
      */
     @SuppressWarnings("deprecation") public void setSecondPropertyOption(IntOption option) {
         this.secondProperty.copyFrom(option);
     }
     /**
-     * aを返す。
+     * Returns a.
      * @return a
-     * @throws NullPointerException aの値が<code>null</code>である場合
+     * @throws NullPointerException if a is <code>null</code>
      */
     public Text getA() {
         return this.a.get();
     }
     /**
-     * aを設定する。
-     * @param value 設定する値
+     * Sets a.
+     * @param value the value
      */
     @SuppressWarnings("deprecation") public void setA(Text value) {
         this.a.modify(value);
     }
     /**
-     * <code>null</code>を許すaを返す。
+     * Returns a which may be represent <code>null</code>.
      * @return a
      */
     public StringOption getAOption() {
         return this.a;
     }
     /**
-     * aを設定する。
-     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     * Sets a.
+     * @param option the value, or <code>null</code> to set this property to <code>null</code>
      */
     @SuppressWarnings("deprecation") public void setAOption(StringOption option) {
         this.a.copyFrom(option);
     }
     /**
-     * lastを返す。
+     * Returns last.
      * @return last
-     * @throws NullPointerException lastの値が<code>null</code>である場合
+     * @throws NullPointerException if last is <code>null</code>
      */
     public int getLast() {
         return this.last.get();
     }
     /**
-     * lastを設定する。
-     * @param value 設定する値
+     * Sets last.
+     * @param value the value
      */
     @SuppressWarnings("deprecation") public void setLast(int value) {
         this.last.modify(value);
     }
     /**
-     * <code>null</code>を許すlastを返す。
+     * Returns last which may be represent <code>null</code>.
      * @return last
      */
     public IntOption getLastOption() {
         return this.last;
     }
     /**
-     * lastを設定する。
-     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     * Sets last.
+     * @param option the value, or <code>null</code> to set this property to <code>null</code>
      */
     @SuppressWarnings("deprecation") public void setLastOption(IntOption option) {
         this.last.copyFrom(option);
@@ -198,35 +194,35 @@ import com.asakusafw.testdriver.testing.io.OrderedOutput;
         if(obj == null) {
             return false;
         }
-        if(this.getClass()!= obj.getClass()) {
+        if(this.getClass() != obj.getClass()) {
             return false;
         }
         Ordered other = (Ordered) obj;
-        if(this.first.equals(other.first)== false) {
+        if(this.first.equals(other.first) == false) {
             return false;
         }
-        if(this.secondProperty.equals(other.secondProperty)== false) {
+        if(this.secondProperty.equals(other.secondProperty) == false) {
             return false;
         }
-        if(this.a.equals(other.a)== false) {
+        if(this.a.equals(other.a) == false) {
             return false;
         }
-        if(this.last.equals(other.last)== false) {
+        if(this.last.equals(other.last) == false) {
             return false;
         }
         return true;
     }
     /**
-     * aを返す。
+     * Returns a.
      * @return a
-     * @throws NullPointerException aの値が<code>null</code>である場合
+     * @throws NullPointerException if a is <code>null</code>
      */
     public String getAAsString() {
         return this.a.getAsString();
     }
     /**
-     * aを設定する。
-     * @param a0 設定する値
+     * Returns a.
+     * @param a0 the value
      */
     @SuppressWarnings("deprecation") public void setAAsString(String a0) {
         this.a.modify(a0);

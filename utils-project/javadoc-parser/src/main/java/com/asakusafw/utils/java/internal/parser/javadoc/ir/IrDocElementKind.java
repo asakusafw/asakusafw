@@ -16,62 +16,62 @@
 package com.asakusafw.utils.java.internal.parser.javadoc.ir;
 
 /**
- * {@link IrDocElement}の要素種。
+ * Represents a kind of {@link IrDocElement}.
  */
 public enum IrDocElementKind {
 
     /**
-     * Javadoc全体。
+     * Java documentation comments.
      */
     COMMENT,
 
     /**
-     * ブロック。
+     * Blocks.
      */
     BLOCK,
 
     /**
-     * 単純名。
+     * Simple names.
      */
     SIMPLE_NAME,
 
     /**
-     * 限定名。
+     * Qualified names.
      */
     QUALIFIED_NAME,
 
     /**
-     * フィールド。
+     * Field references.
      */
     FIELD,
 
     /**
-     * メソッド。
+     * Method or constructor references.
      */
     METHOD,
 
     /**
-     * テキスト。
+     * Plain texts.
      */
     TEXT,
 
     /**
-     * メソッド仮引数。
+     * Method or constructor parameters.
      */
     METHOD_PARAMETER,
 
     /**
-     * 基本型。
+     * Basic types.
      */
     BASIC_TYPE,
 
     /**
-     * 名前付き型。
+     * Named types.
      */
     NAMED_TYPE,
 
     /**
-     * 配列型。
+     * Array types.
      */
     ARRAY_TYPE,
 }

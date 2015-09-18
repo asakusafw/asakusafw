@@ -15,6 +15,6 @@
  */
 /**
  * Copies original flow inputs into temporary area.
- * Application developpers should not use these classes directly.
+ * Application developers should not use these classes directly.
  */
 package com.asakusafw.runtime.stage.preparator;

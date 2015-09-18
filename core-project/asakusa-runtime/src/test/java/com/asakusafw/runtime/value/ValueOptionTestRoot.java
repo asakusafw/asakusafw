@@ -28,16 +28,16 @@ import java.lang.reflect.Method;
 import org.apache.hadoop.io.Writable;
 
 /**
- * {@link ValueOption}のテストに関する基底。
+ * Test root for {@link ValueOption}.
  */
-public class ValueOptionTestRoot {
+abstract class ValueOptionTestRoot {
 
     /**
-     * 比較結果を返す。
-     * @param <T> データの種類
-     * @param a 比較される値
-     * @param b 比較する値
-     * @return 比較結果
+     * compares between two objects.
+     * @param <T> the value type
+     * @param a object 1
+     * @param b object 2
+     * @return result
      */
     protected <T extends ValueOption<T>> int compare(T a, T b) {
         int object = a.compareTo(b);
@@ -70,10 +70,10 @@ public class ValueOptionTestRoot {
     }
 
     /**
-     * Writableとして書き出した後に復元する。
-     * @param <T> データの種類
-     * @param value 対象のデータ
-     * @return 復元したデータ
+     * ser/de the object and returns the restored it.
+     * @param <T> the value type
+     * @param value the target object
+     * @return the restored object
      */
     protected <T extends ValueOption<T>> T restore(T value) {
         checkLength(value);

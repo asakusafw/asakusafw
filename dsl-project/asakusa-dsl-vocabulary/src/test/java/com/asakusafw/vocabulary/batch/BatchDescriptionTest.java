@@ -34,7 +34,7 @@ import com.asakusafw.vocabulary.flow.FlowDescription;
 public class BatchDescriptionTest {
 
     /**
-     * 単純なテスト。
+     * simple case.
      */
     @Test
     public void simple() {
@@ -44,7 +44,7 @@ public class BatchDescriptionTest {
     }
 
     /**
-     * 連結リスト。
+     * sequential structure.
      */
     @Test
     public void list() {
@@ -56,7 +56,7 @@ public class BatchDescriptionTest {
     }
 
     /**
-     * グラフ構造。
+     * DAG structure.
      */
     @Test
     public void graph() {
@@ -69,7 +69,7 @@ public class BatchDescriptionTest {
     }
 
     /**
-     * 名前の衝突。
+     * conflict flow names.
      */
     @Test(expected = IllegalStateException.class)
     public void nameConflict() {
@@ -77,7 +77,7 @@ public class BatchDescriptionTest {
     }
 
     /**
-     * 不正な名前。
+     * includes invalid batch name.
      */
     @Test(expected = IllegalArgumentException.class)
     public void invalidName() {
@@ -85,7 +85,7 @@ public class BatchDescriptionTest {
     }
 
     /**
-     * 注釈なしのジョブフローを含む。
+     * includes jobflow without annotations.
      */
     @Test(expected = IllegalArgumentException.class)
     public void notAnnotatedJobFlow() {
@@ -93,7 +93,7 @@ public class BatchDescriptionTest {
     }
 
     /**
-     * soonやafterを指定しない (describeの途中)。
+     * incomplete DSL.
      */
     @Test(expected = IllegalStateException.class)
     public void underConstruction_middle() {
@@ -101,7 +101,7 @@ public class BatchDescriptionTest {
     }
 
     /**
-     * soonやafterを指定しない (describeの最後)。
+     * incomplete DSL.
      */
     @Test(expected = IllegalStateException.class)
     public void underConstruction_last() {

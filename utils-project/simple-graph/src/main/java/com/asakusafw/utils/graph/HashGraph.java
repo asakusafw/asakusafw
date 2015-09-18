@@ -24,19 +24,12 @@ import java.util.Iterator;
 import java.util.Set;
 
 /**
- * {@link HashMap}を利用した{@link Graph}の実装。
- * @param <V> ノードを識別する値の型
+ * An implementation of {@link Graph} which uses {@link HashMap} in the internal storage.
+ * @param <V> the vertex value type
  */
 public class HashGraph<V> implements Graph<V> {
 
-    private final HashMap<V, HashVertex<V>> entity;
-
-    /**
-     * インスタンスを生成する。
-     */
-    public HashGraph() {
-        this.entity = new HashMap<V, HashVertex<V>>();
-    }
+    private final HashMap<V, HashVertex<V>> entity = new HashMap<V, HashVertex<V>>();
 
     @Override
     public void addEdge(V from, V to) {
@@ -48,7 +41,7 @@ public class HashGraph<V> implements Graph<V> {
     @Override
     public void addEdges(V from, Collection<? extends V> to) {
         if (to == null) {
-            throw new IllegalArgumentException("to is null"); //$NON-NLS-1$
+            throw new IllegalArgumentException("to must not be null"); //$NON-NLS-1$
         }
         HashVertex<V> vertex = prepare(from);
         for (V v : to) {
@@ -152,7 +145,7 @@ public class HashGraph<V> implements Graph<V> {
     @Override
     public void removeNodes(Collection<?> nodes) {
         if (nodes == null) {
-            throw new IllegalArgumentException("nodes is null"); //$NON-NLS-1$
+            throw new IllegalArgumentException("nodes must not be null"); //$NON-NLS-1$
         }
         if (entity.keySet().removeAll(nodes) == false) {
             return;
@@ -176,28 +169,13 @@ public class HashGraph<V> implements Graph<V> {
         return vertex;
     }
 
-    /**
-     * グラフ上の頂点を表現し、接続先ノード情報を持つオブジェクト。
-     * @param <V> ノードを識別する値の型
-     */
     private static class HashVertex<V> implements Vertex<V> {
 
-        /**
-         * 接続元のノードに割り当てられた値。
-         */
         final V from;
 
-        /**
-         * それぞれの接続先のノードに割り当てられた値。
-         */
         final Set<V> to;
 
-        /**
-         * インスタンスを生成する。
-         * @param node この頂点ノードに割り当てられた値
-         */
         public HashVertex(V node) {
-            super();
             this.from = node;
             this.to = new HashSet<V>();
         }
@@ -252,18 +230,10 @@ public class HashGraph<V> implements Graph<V> {
         }
     }
 
-    /**
-     * {@link Iterator}をラップして、型パラメータの制約を弱くするクラス。
-     * @param <V> 反復する値の型
-     */
     private static final class IteratorWrapper<V> implements Iterator<V> {
 
         private final Iterator<? extends V> iterator;
 
-        /**
-         * インスタンスを生成する。
-         * @param iterator ラップする反復子
-         */
         public IteratorWrapper(Iterator<? extends V> iterator) {
             assert iterator != null;
             this.iterator = iterator;

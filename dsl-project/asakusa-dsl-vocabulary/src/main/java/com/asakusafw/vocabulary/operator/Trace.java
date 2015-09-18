@@ -21,11 +21,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 追跡演算子を表す演算子注釈。
- * <p>
- * この演算子を表す演算子メソッドは作成できない。
- * テストドライバ等のツールから間接的に利用される。
- * </p>
+ * Represents <em>trace</em> operator annotation.
+ * This only used in testing for tracing text executions.
  * @since 0.5.1
  */
 @Target({ })

@@ -15,7 +15,6 @@
  */
 package com.asakusafw.vocabulary.batch;
 
-import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,7 +26,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.asakusafw.vocabulary.flow.FlowDescription;
 
-
+//TODO i18n
 /**
  * バッチを記述するための基底クラス。
  * <p>
@@ -56,15 +55,15 @@ public abstract class BatchDescription {
 
     static final Work[] NOTHING = new Work[0];
 
-    private Map<String, Work> works = new LinkedHashMap<String, Work>();
+    private final Map<String, Work> works = new LinkedHashMap<String, Work>();
 
     private DependencyBuilder adding;
 
     private final AtomicBoolean described = new AtomicBoolean(false);
 
     /**
-     * バッチ記述メソッドを起動する。
-     * @throws IllegalStateException 別のジョブフローを登録している最中であった場合
+     * Analyzes batch DSL using {@link #describe() batch description method}.
+     * Application developers should not invoke this method directly.
      */
     public final void start() {
         if (described.compareAndSet(false, true) == false) {
@@ -81,38 +80,16 @@ public abstract class BatchDescription {
 
     /**
      * このバッチで実行するスクリプトを定義したプロパティファイルを指定する。
-     * <p>
-     * プロパティファイルはこのクラスを継承したソースファイルが含まれるパッケージからの
-     * 相対パスとして指定する。
-     * たとえば、{@code com.example}以下にソースファイルを配置して
-     * {@code com.example.script}以下にプロパティファイル{@code hoge.properties}を
-     * 配置した場合、{@code run(script/hoge.properties)}のように指定する必要がある。
-     * </p>
-     * <p>
-     * それぞれのプロパティファイルに記載すべき内容については、{@link ScriptWorkDescription}
-     * のドキュメントを参照すること。
-     * </p>
      * @param scriptDefinition このクラスを継承したクラスのパッケージから、
      *      スクリプトを定義したプロパティファイルへの相対パス
      * @return 依存関係を追加するためのビルダー
      * @throws IllegalArgumentException 引数に不正なプロパティファイルが指定された場合
      * @throws IllegalStateException 別の処理を登録している最中であった場合
+     * @deprecated does not supported
      */
+    @Deprecated
     protected DependencyBuilder run(String scriptDefinition) {
-        if (scriptDefinition == null) {
-            throw new IllegalArgumentException("scriptDefinition must not be null"); //$NON-NLS-1$
-        }
-        ScriptWorkDescription desc;
-        try {
-            desc = ScriptWorkDescription.load(getClass(), scriptDefinition);
-        } catch (IOException e) {
-            throw new IllegalArgumentException(MessageFormat.format(
-                    Messages.getString("BatchDescription.errorFailedToLoadScript"), //$NON-NLS-1$
-                    scriptDefinition,
-                    getClass().getName()),
-                    e);
-        }
-        return run0(desc);
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -158,19 +135,13 @@ public abstract class BatchDescription {
     }
 
     /**
-     * このバッチで記述された作業の一覧を返す。
-     * @return このバッチで記述された作業の一覧
+     * Returns a collection of Unit-of-Works which is represented in this batch.
+     * @return a collection of Unit-of-Works of this batch
      */
     public Collection<Work> getWorks() {
         return new ArrayList<Work>(works.values());
     }
 
-    /**
-     * このバッチ記述に指定の処理を追加する。
-     * @param work 追加する処理
-     * @return 追加した処理
-     * @throws IllegalStateException すでにこの名前の処理が存在する場合
-     */
     Work register(Work work) {
         assert work != null;
         String name = work.getDescription().getName();
@@ -195,7 +166,7 @@ public abstract class BatchDescription {
     }
 
     /**
-     * 依存関係を指定してバッチ内での処理を記述する。
+     * A builder for building batch by specifying Unit-of-Works and their dependencies.
      */
     protected class DependencyBuilder {
 

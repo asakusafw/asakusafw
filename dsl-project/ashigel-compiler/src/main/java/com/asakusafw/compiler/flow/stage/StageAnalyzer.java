@@ -53,7 +53,7 @@ import com.asakusafw.vocabulary.flow.graph.FlowElementOutput;
 import com.asakusafw.vocabulary.flow.graph.FlowResourceDescription;
 
 /**
- * 各ステージのマップレデュースで行われる内容を解析する。
+ * Analyzes Hadoop MapReduce stages.
  */
 public class StageAnalyzer {
 
@@ -64,9 +64,9 @@ public class StageAnalyzer {
     private boolean sawError;
 
     /**
-     * インスタンスを生成する。
-     * @param environment 環境オブジェクト
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param environment the current environment
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public StageAnalyzer(FlowCompilingEnvironment environment) {
         Precondition.checkMustNotBeNull(environment, "environment"); //$NON-NLS-1$
@@ -74,15 +74,15 @@ public class StageAnalyzer {
     }
 
     /**
-     * 現在までにエラーが発生していた場合に{@code true}を返す。
-     * @return 現在までにエラーが発生していた場合に{@code true}
+     * Returns whether this analysis result contains any erroneous information or not.
+     * @return {@code true} if this contains any erroneous information, otherwise {@code false}
      */
     public boolean hasError() {
         return sawError;
     }
 
     /**
-     * 現在までに発生したエラーの情報をクリアする。
+     * Clears analysis errors.
      * @see #hasError()
      */
     public void clearError() {
@@ -90,11 +90,11 @@ public class StageAnalyzer {
     }
 
     /**
-     * 指定のステージブロックを解析し、対象ステージのマップレデュースプログラムに関する情報を返す。
-     * @param block 対象のステージブロック
-     * @param shuffle シャッフルの情報、存在しない場合は{@code null}
-     * @return マップレデュースプログラムに関する情報、解析に失敗した場合は{@code null}
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Analyzes the target stage block and returns its MapReduce job model.
+     * @param block the target stage block
+     * @param shuffle the analyzed shuffle model in the target stage (nullable)
+     * @return corresponded MapReduce job model, or {@code null} if the target stage block is something wrong
+     * @throws IllegalArgumentException if the {@code block} is {@code null}
      */
     public StageModel analyze(StageBlock block, ShuffleModel shuffle) {
         Precondition.checkMustNotBeNull(block, "block"); //$NON-NLS-1$
@@ -294,11 +294,11 @@ public class StageAnalyzer {
         Map<Set<FlowBlock.Input>, Set<FlowBlock.Output>> opposites = Maps.create();
         for (FlowBlock block : blocks) {
             for (FlowBlock.Output blockOutput : block.getBlockOutputs()) {
-                // 実際に出力につながらないポートは除外
+                // ignores disconnected outputs
                 if (outputs.contains(blockOutput.getElementPort()) == false) {
                     continue;
                 }
-                // 同じ入力への出力でまとめる
+                // grouping outputs by having the same downstream
                 Set<FlowBlock.Input> downstream = Sets.create();
                 for (FlowBlock.Connection connection : blockOutput.getConnections()) {
                     downstream.add(connection.getDownstream());
@@ -418,7 +418,7 @@ public class StageAnalyzer {
         }
         for (FlowElement element : block.getElements()) {
 
-            // 入力を取らない、または複数の入力を取る要素はフラグメントの先頭になる
+            // element whose upstream != 1 will be fragment head
             Set<FlowElement> predecessors = FlowGraphUtil.getPredecessors(element);
             if (predecessors.size() != 1) {
                 results.add(element);
@@ -426,13 +426,13 @@ public class StageAnalyzer {
 
             Set<FlowElement> successors = FlowGraphUtil.getSuccessors(element);
             if (successors.size() >= 2 || element.getOutputPorts().size() >= 2) {
-                // 複数の出力を取る要素は後続する要素がフラグメントの先頭になる
+                // successors of the element w/ 1> outputs will be fragment head
                 results.addAll(successors);
             } else if (outputs.contains(element)) {
-                // 出力に一つでもつながっている要素は、後続する要素がフラグメントの先頭になる
+                // successors of the element which connected to block output will be fragment head
                 results.addAll(successors);
             } else if (isFragmentEnd(element)) {
-                // 強制的にフラグメントの末尾となる要素は、直後の要素がフラグメントの先頭になる
+                // successors of the element which is tail of fragment will be fragment head
                 results.addAll(successors);
             }
         }

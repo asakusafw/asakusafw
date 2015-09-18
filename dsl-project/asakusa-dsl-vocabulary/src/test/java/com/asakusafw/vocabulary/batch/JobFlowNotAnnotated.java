@@ -18,7 +18,7 @@ package com.asakusafw.vocabulary.batch;
 import com.asakusafw.vocabulary.flow.FlowDescription;
 
 /**
- * 注釈のないジョブフロー。
+ * Jobflow but it is not annotated.
  */
 public class JobFlowNotAnnotated extends FlowDescription {
 

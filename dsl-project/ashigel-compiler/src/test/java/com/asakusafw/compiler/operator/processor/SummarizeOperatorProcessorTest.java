@@ -32,7 +32,7 @@ import com.asakusafw.vocabulary.flow.testing.MockOut;
 public class SummarizeOperatorProcessorTest extends OperatorCompilerTestRoot {
 
     /**
-     * 単純な例。
+     * simple case.
      */
     @Test
     public void simple() {
@@ -51,7 +51,7 @@ public class SummarizeOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * 具象メソッド。
+     * not abstract method.
      */
     @Test
     public void NotAbstract() {
@@ -60,7 +60,7 @@ public class SummarizeOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * モデルでない。
+     * not a data model parameter.
      */
     @Test
     public void NotModel() {
@@ -69,7 +69,7 @@ public class SummarizeOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * 集計モデルでない。
+     * does not returns a summarized model.
      */
     @Test
     public void NotSummarized() {
@@ -78,7 +78,7 @@ public class SummarizeOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * パラメーター化。
+     * parameterized.
      */
     @Test
     public void Parameterized() {

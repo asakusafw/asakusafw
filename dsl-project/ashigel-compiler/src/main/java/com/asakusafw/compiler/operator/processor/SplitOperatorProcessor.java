@@ -32,7 +32,7 @@ import com.asakusafw.utils.java.model.util.TypeBuilder;
 import com.asakusafw.vocabulary.operator.Split;
 
 /**
- * {@link Split 分割演算子}を処理する。
+ * Processes {@link Split} operators.
  */
 @TargetOperator(Split.class)
 public class SplitOperatorProcessor extends AbstractOperatorProcessor {

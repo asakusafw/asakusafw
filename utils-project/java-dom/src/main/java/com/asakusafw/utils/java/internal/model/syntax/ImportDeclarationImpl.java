@@ -22,18 +22,12 @@ import com.asakusafw.utils.java.model.syntax.Name;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link ImportDeclaration}の実装。
+ * An implementation of {@link ImportDeclaration}.
  */
 public final class ImportDeclarationImpl extends ModelRoot implements ImportDeclaration {
 
-    /**
-     * インポートの種類。
-     */
     private ImportKind importKind;
 
-    /**
-     * インポートする型およびメンバの名前。
-     */
     private Name name;
 
     @Override
@@ -42,11 +36,9 @@ public final class ImportDeclarationImpl extends ModelRoot implements ImportDecl
     }
 
     /**
-     * インポートの種類を設定する。
-     * @param importKind
-     *     インポートの種類
-     * @throws IllegalArgumentException
-     *     {@code importKind}に{@code null}が指定された場合
+     * Sets the import kind.
+     * @param importKind the import kind
+     * @throws IllegalArgumentException if {@code importKind} was {@code null}
      */
     public void setImportKind(ImportKind importKind) {
         Util.notNull(importKind, "importKind"); //$NON-NLS-1$
@@ -59,11 +51,9 @@ public final class ImportDeclarationImpl extends ModelRoot implements ImportDecl
     }
 
     /**
-     * インポートする型およびメンバの名前を設定する。
-     * @param name
-     *     インポートする型およびメンバの名前
-     * @throws IllegalArgumentException
-     *     {@code name}に{@code null}が指定された場合
+     * Sets the import target type or member name.
+     * @param name the import target type or member name
+     * @throws IllegalArgumentException if {@code name} was {@code null}
      */
     public void setName(Name name) {
         Util.notNull(name, "name"); //$NON-NLS-1$
@@ -71,7 +61,7 @@ public final class ImportDeclarationImpl extends ModelRoot implements ImportDecl
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#IMPORT_DECLARATION}を返す。
+     * Returns {@link ModelKind#IMPORT_DECLARATION} which represents this element kind.
      * @return {@link ModelKind#IMPORT_DECLARATION}
      */
     @Override
@@ -80,8 +70,7 @@ public final class ImportDeclarationImpl extends ModelRoot implements ImportDecl
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitImportDeclaration(this, context);
     }

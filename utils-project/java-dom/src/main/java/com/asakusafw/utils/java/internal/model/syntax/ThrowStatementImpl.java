@@ -21,13 +21,10 @@ import com.asakusafw.utils.java.model.syntax.ThrowStatement;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link ThrowStatement}の実装。
+ * An implementation of {@link ThrowStatement}.
  */
 public final class ThrowStatementImpl extends ModelRoot implements ThrowStatement {
 
-    /**
-     * 例外オブジェクト。
-     */
     private Expression expression;
 
     @Override
@@ -36,11 +33,9 @@ public final class ThrowStatementImpl extends ModelRoot implements ThrowStatemen
     }
 
     /**
-     * 例外オブジェクトを設定する。
-     * @param expression
-     *     例外オブジェクト
-     * @throws IllegalArgumentException
-     *     {@code expression}に{@code null}が指定された場合
+     * Sets the thrown object.
+     * @param expression the thrown object
+     * @throws IllegalArgumentException if {@code expression} was {@code null}
      */
     public void setExpression(Expression expression) {
         Util.notNull(expression, "expression"); //$NON-NLS-1$
@@ -48,7 +43,7 @@ public final class ThrowStatementImpl extends ModelRoot implements ThrowStatemen
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#THROW_STATEMENT}を返す。
+     * Returns {@link ModelKind#THROW_STATEMENT} which represents this element kind.
      * @return {@link ModelKind#THROW_STATEMENT}
      */
     @Override
@@ -57,8 +52,7 @@ public final class ThrowStatementImpl extends ModelRoot implements ThrowStatemen
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitThrowStatement(this, context);
     }

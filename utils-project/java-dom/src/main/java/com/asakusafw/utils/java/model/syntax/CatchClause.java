@@ -15,9 +15,8 @@
  */
 package com.asakusafw.utils.java.model.syntax;
 
-
 /**
- * {@code catch}節を表現するインターフェース。
+ * An interface which represents catch clause.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:14.20] The try statement} </li>
@@ -27,19 +26,15 @@ package com.asakusafw.utils.java.model.syntax;
 public interface CatchClause
         extends TypedElement {
 
-    // properties
-
     /**
-     * 例外仮引数を返す。
-     * @return
-     *     例外仮引数
+     * Returns the exception parameter.
+     * @return the exception parameter
      */
     FormalParameterDeclaration getParameter();
 
     /**
-     * {@code catch}ブロックを返す。
-     * @return
-     *     {@code catch}ブロック
+     * Returns the {@code catch} block body.
+     * @return the {@code catch} block body
      */
     Block getBody();
 }

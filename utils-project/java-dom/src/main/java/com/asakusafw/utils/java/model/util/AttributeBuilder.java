@@ -32,11 +32,7 @@ import com.asakusafw.utils.java.model.syntax.Type;
 
 // CHECKSTYLE:OFF
 /**
- * 修飾子を構築するビルダー。
- * <p>
- * このクラスのオブジェクトは、自身を破壊的に変更して修飾子等を構築する。
- * 特定の状態のビルダーを再利用する場合、{@link #copy()}を利用すること。
- * </p>
+ * A builder for building attributes of declarations.
  * @since 0.1.0
  * @version 0.5.1
  */
@@ -47,9 +43,9 @@ public class AttributeBuilder {
     private final List<Attribute> attributes;
 
     /**
-     * インスタンスを生成する。
-     * @param factory モデルを生成するためのファクトリ
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Creates a new instance.
+     * @param factory the Java DOM factory
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public AttributeBuilder(ModelFactory factory) {
         if (factory == null) {
@@ -60,8 +56,8 @@ public class AttributeBuilder {
     }
 
     /**
-     * 現在のビルダーと同等の内容を持つビルダーを新しく作成して返す。
-     * @return コピーしたビルダー
+     * Returns a copy of this builder.
+     * @return the copy
      */
     public AttributeBuilder copy() {
         AttributeBuilder copy = new AttributeBuilder(f);
@@ -70,24 +66,17 @@ public class AttributeBuilder {
     }
 
     /**
-     * ここまでに構築した内容をリストに変換して返す。
-     * <p>
-     * 返されるリスト内の要素は、ビルダーに追加順に整列される。
-     * </p>
-     * @return 構築した内容を含むリスト
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the attribute list which contains the added attributes as their order.
+     * @return the attributes
      */
     public List<Attribute> toAttributes() {
         return new ArrayList<Attribute>(attributes);
     }
 
     /**
-     * ここまでに構築した内容のうち、修飾子だけをリストに含めて返す。
-     * <p>
-     * 返されるリスト内の要素は、ビルダーに追加順に整列される。
-     * </p>
-     * @return 構築した内容を含むリスト
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the Java modifier list which contains the added modifiers as their order.
+     * Note that, each attribute which is not a modifier is ignored.
+     * @return the Java modifiers
      */
     public List<Modifier> toModifiers() {
         List<Modifier> results = new ArrayList<Modifier>();
@@ -100,12 +89,9 @@ public class AttributeBuilder {
     }
 
     /**
-     * ここまでに構築した内容のうち、注釈だけをリストに含めて返す。
-     * <p>
-     * 返されるリスト内の要素は、ビルダーに追加順に整列される。
-     * </p>
-     * @return 構築した内容を含むリスト
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the Java annotation list which contains the added annotations as their order.
+     * Note that, each attribute which is not a annotation is ignored.
+     * @return the Java annotations
      */
     public List<Annotation> toAnnotations() {
         List<Annotation> results = new ArrayList<Annotation>();
@@ -120,99 +106,88 @@ public class AttributeBuilder {
 // CHECKSTYLE:OFF MethodNameCheck
 
     /**
-     * {@code public}を追加したビルダーを返す。
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Appends {@code public} modifier to this builder.
+     * @return this
      */
     public AttributeBuilder Public() {
         return modifier(ModifierKind.PUBLIC);
     }
 
     /**
-     * {@code protected}を追加したビルダーを返す。
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Appends {@code protected} modifier to this builder.
+     * @return this
      */
     public AttributeBuilder Protected() {
         return modifier(ModifierKind.PROTECTED);
     }
 
     /**
-     * {@code private}を追加したビルダーを返す。
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Appends {@code private} modifier to this builder.
+     * @return this
      */
     public AttributeBuilder Private() {
         return modifier(ModifierKind.PRIVATE);
     }
 
     /**
-     * {@code static}を追加したビルダーを返す。
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Appends {@code static} modifier to this builder.
+     * @return this
      */
     public AttributeBuilder Static() {
         return modifier(ModifierKind.STATIC);
     }
 
     /**
-     * {@code abstract}を追加したビルダーを返す。
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Appends {@code abstract} modifier to this builder.
+     * @return this
      */
     public AttributeBuilder Abstract() {
         return modifier(ModifierKind.ABSTRACT);
     }
 
     /**
-     * {@code native}を追加したビルダーを返す。
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Appends {@code native} modifier to this builder.
+     * @return this
      */
     public AttributeBuilder Native() {
         return modifier(ModifierKind.NATIVE);
     }
 
     /**
-     * {@code final}を追加したビルダーを返す。
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Appends {@code final} modifier to this builder.
+     * @return this
      */
     public AttributeBuilder Final() {
         return modifier(ModifierKind.FINAL);
     }
 
     /**
-     * {@code synchronized}を追加したビルダーを返す。
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Appends {@code synchronized} modifier to this builder.
+     * @return this
      */
     public AttributeBuilder Synchronized() {
         return modifier(ModifierKind.SYNCHRONIZED);
     }
 
     /**
-     * {@code transient}を追加したビルダーを返す。
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Appends {@code transient} modifier to this builder.
+     * @return this
      */
     public AttributeBuilder Transient() {
         return modifier(ModifierKind.TRANSIENT);
     }
 
     /**
-     * {@code volatile}を追加したビルダーを返す。
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Appends {@code volatile} modifier to this builder.
+     * @return this
      */
     public AttributeBuilder Volatile() {
         return modifier(ModifierKind.VOLATILE);
     }
 
     /**
-     * {@code strictfp}を追加したビルダーを返す。
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Appends {@code strictfp} modifier to this builder.
+     * @return this
      */
     public AttributeBuilder Strictfp() {
         return modifier(ModifierKind.STRICTFP);
@@ -221,10 +196,10 @@ public class AttributeBuilder {
 // CHECKSTYLE:ON MethodNameCheck
 
     /**
-     * 指定の修飾子を追加したビルダーを返す。
-     * @param modifier 修飾子の種類
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Appends the modifier to this builder.
+     * @param modifier the target modifier kind
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public AttributeBuilder modifier(ModifierKind modifier) {
         if (modifier == null) {
@@ -234,10 +209,10 @@ public class AttributeBuilder {
     }
 
     /**
-     * 指定の注釈を追加したビルダーを返す。
-     * @param type 注釈の型
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Appends the annotation to the builder.
+     * @param type the annotation type
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public AttributeBuilder annotation(Type type) {
         if (type == null) {
@@ -250,10 +225,10 @@ public class AttributeBuilder {
     }
 
     /**
-     * 指定の注釈を追加したビルダーを返す。
-     * @param type 注釈の型
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Appends the marker annotation to the builder.
+     * @param type the annotation type
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public AttributeBuilder annotation(java.lang.reflect.Type type) {
         if (type == null) {
@@ -263,11 +238,11 @@ public class AttributeBuilder {
     }
 
     /**
-     * 指定の注釈を追加したビルダーを返す。
-     * @param type 注釈の型
-     * @param value 要素の値
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Appends the single element annotation to the builder.
+     * @param type the annotation type
+     * @param value the annotation value
+     * @return this
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public AttributeBuilder annotation(Type type, Expression value) {
         if (type == null) {
@@ -280,11 +255,11 @@ public class AttributeBuilder {
     }
 
     /**
-     * 指定の注釈を追加したビルダーを返す。
-     * @param type 注釈の型
-     * @param value 要素の値
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Appends the single element annotation to the builder.
+     * @param type the annotation type
+     * @param value the annotation value
+     * @return this
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public AttributeBuilder annotation(java.lang.reflect.Type type, Expression value) {
         if (type == null) {
@@ -319,12 +294,12 @@ public class AttributeBuilder {
     }
 
     /**
-     * 指定の注釈を追加したビルダーを返す。
-     * @param type 注釈の型
-     * @param elementName 要素名
-     * @param elementValue 要素の値
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Appends the annotation to the builder.
+     * @param type the annotation type
+     * @param elementName the element name
+     * @param elementValue the element value
+     * @return this
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public AttributeBuilder annotation(
             Type type,
@@ -349,14 +324,14 @@ public class AttributeBuilder {
     }
 
     /**
-     * 指定の注釈を追加したビルダーを返す。
-     * @param type 注釈の型
-     * @param elementName1 要素名 (1)
-     * @param elementValue1 要素の値 (1)
-     * @param elementName2 要素名 (2)
-     * @param elementValue2 要素の値 (2)
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Appends the annotation to the builder.
+     * @param type the annotation type
+     * @param elementName1 the element name (1)
+     * @param elementValue1 the element value (1)
+     * @param elementName2 the element name (2)
+     * @param elementValue2 the element value (2)
+     * @return this
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public AttributeBuilder annotation(
             Type type,
@@ -389,16 +364,16 @@ public class AttributeBuilder {
     }
 
     /**
-     * 指定の注釈を追加したビルダーを返す。
-     * @param type 注釈の型
-     * @param elementName1 要素名 (1)
-     * @param elementValue1 要素の値 (1)
-     * @param elementName2 要素名 (2)
-     * @param elementValue2 要素の値 (2)
-     * @param elementName3 要素名 (3)
-     * @param elementValue3 要素の値 (3)
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Appends the annotation to the builder.
+     * @param type the annotation type
+     * @param elementName1 the element name (1)
+     * @param elementValue1 the element value (1)
+     * @param elementName2 the element name (2)
+     * @param elementValue2 the element value (2)
+     * @param elementName3 the element name (3)
+     * @param elementValue3 the element value (3)
+     * @return this
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public AttributeBuilder annotation(
             Type type,
@@ -440,18 +415,18 @@ public class AttributeBuilder {
     }
 
     /**
-     * 指定の注釈を追加したビルダーを返す。
-     * @param type 注釈の型
-     * @param elementName1 要素名 (1)
-     * @param elementValue1 要素の値 (1)
-     * @param elementName2 要素名 (2)
-     * @param elementValue2 要素の値 (2)
-     * @param elementName3 要素名 (3)
-     * @param elementValue3 要素の値 (3)
-     * @param elementName4 要素名 (4)
-     * @param elementValue4 要素の値 (4)
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Appends the annotation to the builder.
+     * @param type the annotation type
+     * @param elementName1 the element name (1)
+     * @param elementValue1 the element value (1)
+     * @param elementName2 the element name (2)
+     * @param elementValue2 the element value (2)
+     * @param elementName3 the element name (3)
+     * @param elementValue3 the element value (3)
+     * @param elementName4 the element name (4)
+     * @param elementValue4 the element value (4)
+     * @return this
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public AttributeBuilder annotation(
             Type type,
@@ -504,20 +479,20 @@ public class AttributeBuilder {
 // CHECKSTYLE:OFF ParameterNumberCheck
 
     /**
-     * 指定の注釈を追加したビルダーを返す。
-     * @param type 注釈の型
-     * @param elementName1 要素名 (1)
-     * @param elementValue1 要素の値 (1)
-     * @param elementName2 要素名 (2)
-     * @param elementValue2 要素の値 (2)
-     * @param elementName3 要素名 (3)
-     * @param elementValue3 要素の値 (3)
-     * @param elementName4 要素名 (4)
-     * @param elementValue4 要素の値 (4)
-     * @param elementName5 要素名 (5)
-     * @param elementValue5 要素の値 (5)
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Appends the annotation to the builder.
+     * @param type the annotation type
+     * @param elementName1 the element name (1)
+     * @param elementValue1 the element value (1)
+     * @param elementName2 the element name (2)
+     * @param elementValue2 the element value (2)
+     * @param elementName3 the element name (3)
+     * @param elementValue3 the element value (3)
+     * @param elementName4 the element name (4)
+     * @param elementValue4 the element value (4)
+     * @param elementName5 the element name (5)
+     * @param elementValue5 the element value (5)
+     * @return this
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public AttributeBuilder annotation(
             Type type,
@@ -579,10 +554,10 @@ public class AttributeBuilder {
 // CHECKSTYLE:ON ParameterNumberCheck
 
     /**
-     * 指定の注釈を追加したビルダーを返す。
-     * @param annotation 注釈
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Appends the annotation to the builder.
+     * @param annotation the target annotation
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public AttributeBuilder annotation(Annotation annotation) {
         if (annotation == null) {

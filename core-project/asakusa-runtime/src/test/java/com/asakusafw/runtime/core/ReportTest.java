@@ -45,7 +45,7 @@ public class ReportTest {
     }
 
     /**
-     * 委譲をセットしていない。
+     * does not set delegates.
      */
     @Test(expected = Report.FailedException.class)
     public void noDelegate() {
@@ -53,7 +53,7 @@ public class ReportTest {
     }
 
     /**
-     * infoレポート。
+     * info report.
      */
     @Test
     public void info() {
@@ -64,7 +64,7 @@ public class ReportTest {
     }
 
     /**
-     * infoレポートでのエラー。
+     * info report w/ failure.
      */
     @Test(expected = Report.FailedException.class)
     public void info_error() {
@@ -78,7 +78,7 @@ public class ReportTest {
     }
 
     /**
-     * warnレポート。
+     * warn report.
      */
     @Test
     public void warn() {
@@ -89,7 +89,7 @@ public class ReportTest {
     }
 
     /**
-     * warnレポートでのエラー。
+     * warn report w/ failure.
      */
     @Test(expected = Report.FailedException.class)
     public void warn_error() {
@@ -103,7 +103,7 @@ public class ReportTest {
     }
 
     /**
-     * errorレポート。
+     * error report.
      */
     @Test
     public void testError() {
@@ -114,7 +114,7 @@ public class ReportTest {
     }
 
     /**
-     * errorレポートでのエラー。
+     * error report w/ failure.
      */
     @Test(expected = Report.FailedException.class)
     public void error_error() {
@@ -128,8 +128,8 @@ public class ReportTest {
     }
 
     /**
-     * 委譲先の利用。
-     * @throws Exception エラー
+     * test for loading custom delegation class.
+     * @throws Exception if failed
      */
     @Test
     public void initialize() throws Exception {
@@ -149,7 +149,7 @@ public class ReportTest {
     }
 
     /**
-     * テスト用のモック。
+     * mock for testing.
      */
     public static class Mock extends Report.Delegate {
 

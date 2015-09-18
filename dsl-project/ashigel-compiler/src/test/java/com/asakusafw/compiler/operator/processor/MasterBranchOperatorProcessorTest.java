@@ -39,7 +39,7 @@ import com.asakusafw.vocabulary.flow.testing.MockOut;
 public class MasterBranchOperatorProcessorTest extends OperatorCompilerTestRoot {
 
     /**
-     * 単純なテスト。
+     * simple case.
      */
     @Test
     public void simple() {
@@ -69,7 +69,7 @@ public class MasterBranchOperatorProcessorTest extends OperatorCompilerTestRoot 
     }
 
     /**
-     * マスタ選択つき。
+     * w/ master selection.
      */
     @Test
     public void selector() {
@@ -99,7 +99,7 @@ public class MasterBranchOperatorProcessorTest extends OperatorCompilerTestRoot 
     }
 
     /**
-     * パラメータ化。
+     * parameterized.
      */
     @Test
     public void parameterized() {
@@ -129,7 +129,7 @@ public class MasterBranchOperatorProcessorTest extends OperatorCompilerTestRoot 
     }
 
     /**
-     * マスタ選択つきパラメータ化 (セレクタのパラメータ無し)。
+     * w/ user parameter and selector (the selector w/o user parameters).
      */
     @Test
     public void parameterizedSelector1() {
@@ -159,7 +159,7 @@ public class MasterBranchOperatorProcessorTest extends OperatorCompilerTestRoot 
     }
 
     /**
-     * マスタ選択つきパラメータ化 (セレクタのパラメータ無し)。
+     * w/ user parameter and selector (the selector w/o user parameters).
      */
     @Test
     public void parameterizedSelector2() {
@@ -242,7 +242,7 @@ public class MasterBranchOperatorProcessorTest extends OperatorCompilerTestRoot 
     }
 
     /**
-     * 抽象メソッド。
+     * w/ abstract modifier.
      */
     @Test
     public void Abstract() {
@@ -253,7 +253,7 @@ public class MasterBranchOperatorProcessorTest extends OperatorCompilerTestRoot 
     }
 
     /**
-     * 列挙が空。
+     * refers empty enum type.
      */
     @Test
     public void Empty() {
@@ -264,7 +264,7 @@ public class MasterBranchOperatorProcessorTest extends OperatorCompilerTestRoot 
     }
 
     /**
-     * 列挙でない。
+     * refers not an enum type.
      */
     @Test
     public void NotEnum() {
@@ -284,7 +284,7 @@ public class MasterBranchOperatorProcessorTest extends OperatorCompilerTestRoot 
     }
 
     /**
-     * モデルでない。
+     * not a data model parameter.
      */
     @Test
     public void NotModel() {
@@ -295,7 +295,7 @@ public class MasterBranchOperatorProcessorTest extends OperatorCompilerTestRoot 
     }
 
     /**
-     * ユーザー定義パラメーターでない。
+     * not a valid user parameters.
      */
     @Test
     public void NotUserParameter() {
@@ -306,7 +306,7 @@ public class MasterBranchOperatorProcessorTest extends OperatorCompilerTestRoot 
     }
 
     /**
-     * キーの指定がない。
+     * missing key annotation.
      */
     @Test
     public void NoKey() {
@@ -317,7 +317,7 @@ public class MasterBranchOperatorProcessorTest extends OperatorCompilerTestRoot 
     }
 
     /**
-     * キーの指定がない。
+     * missing key annotation.
      */
     @Test
     public void SelectorWithTooMatchParameters() {
@@ -328,7 +328,7 @@ public class MasterBranchOperatorProcessorTest extends OperatorCompilerTestRoot 
     }
 
     /**
-     * マスタ型が不正。
+     * selector w/ invalid master type.
      */
     @Test
     public void SelectorWithInvalidMaster() {
@@ -339,7 +339,7 @@ public class MasterBranchOperatorProcessorTest extends OperatorCompilerTestRoot 
     }
 
     /**
-     * トランザクション型が不正。
+     * selector w/ invalid tx type.
      */
     @Test
     public void SelectorWithInvalidTx() {
@@ -350,7 +350,7 @@ public class MasterBranchOperatorProcessorTest extends OperatorCompilerTestRoot 
     }
 
     /**
-     * 戻り値型が不正。
+     * selector w/ invalid return type.
      */
     @Test
     public void SelectorWithInvalidReturn() {
@@ -361,7 +361,7 @@ public class MasterBranchOperatorProcessorTest extends OperatorCompilerTestRoot 
     }
 
     /**
-     * マスタ選択メソッドが存在しない。
+     * missing selector method.
      */
     @Test
     public void SelectorWithoutMethod() {
@@ -372,7 +372,7 @@ public class MasterBranchOperatorProcessorTest extends OperatorCompilerTestRoot 
     }
 
     /**
-     * マスタ選択メソッドの注釈が不正。
+     * selector w/o the mandatory annotation.
      */
     @Test
     public void SelectorWithoutAnnotated() {

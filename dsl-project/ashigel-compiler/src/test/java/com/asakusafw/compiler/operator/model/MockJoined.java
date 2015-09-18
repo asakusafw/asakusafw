@@ -1,18 +1,3 @@
-/**
- * Copyright 2011-2015 Asakusa Framework Team.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.asakusafw.compiler.operator.model;
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -20,23 +5,20 @@ import java.io.IOException;
 
 import org.apache.hadoop.io.Writable;
 
-import com.asakusafw.compiler.operator.io.MockJoinedInput;
-import com.asakusafw.compiler.operator.io.MockJoinedOutput;
 import com.asakusafw.runtime.model.DataModel;
 import com.asakusafw.runtime.model.DataModelKind;
-import com.asakusafw.runtime.model.ModelInputLocation;
-import com.asakusafw.runtime.model.ModelOutputLocation;
+import com.asakusafw.runtime.model.PropertyOrder;
 import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.vocabulary.model.Joined;
 import com.asakusafw.vocabulary.model.Key;
 /**
- * mock_joinedを表すデータモデルクラス。
+ * A data model class that represents mock_joined.
  */
-@DataModelKind("DMDL")@Joined(terms = {@Joined.Term(source = MockHoge.class, mappings = {@Joined.Mapping(source = 
+@DataModelKind("DMDL")@Joined(terms = {@Joined.Term(source = MockHoge.class, mappings = {@Joined.Mapping(source =
                 "value", destination = "hogeValue")}, shuffle = @Key(group = {"value"})),@Joined.Term(source = MockFoo.
             class, mappings = {@Joined.Mapping(source = "value", destination = "fooValue")}, shuffle = @Key(group = {
-                "value"}))})@ModelInputLocation(MockJoinedInput.class)@ModelOutputLocation(MockJoinedOutput.class) 
-        public class MockJoined implements DataModel<MockJoined>, Writable {
+                "value"}))})@PropertyOrder({"hoge_value", "foo_value"}) public class MockJoined implements DataModel<
+        MockJoined>, Writable {
     private final IntOption hogeValue = new IntOption();
     private final IntOption fooValue = new IntOption();
     @Override@SuppressWarnings("deprecation") public void reset() {
@@ -48,59 +30,59 @@ import com.asakusafw.vocabulary.model.Key;
         this.fooValue.copyFrom(other.fooValue);
     }
     /**
-     * hoge_valueを返す。
+     * Returns hoge_value.
      * @return hoge_value
-     * @throws NullPointerException hoge_valueの値が<code>null</code>である場合
+     * @throws NullPointerException if hoge_value is <code>null</code>
      */
     public int getHogeValue() {
         return this.hogeValue.get();
     }
     /**
-     * hoge_valueを設定する。
-     * @param value 設定する値
+     * Sets hoge_value.
+     * @param value the value
      */
     @SuppressWarnings("deprecation") public void setHogeValue(int value) {
         this.hogeValue.modify(value);
     }
     /**
-     * <code>null</code>を許すhoge_valueを返す。
+     * Returns hoge_value which may be represent <code>null</code>.
      * @return hoge_value
      */
     public IntOption getHogeValueOption() {
         return this.hogeValue;
     }
     /**
-     * hoge_valueを設定する。
-     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     * Sets hoge_value.
+     * @param option the value, or <code>null</code> to set this property to <code>null</code>
      */
     @SuppressWarnings("deprecation") public void setHogeValueOption(IntOption option) {
         this.hogeValue.copyFrom(option);
     }
     /**
-     * foo_valueを返す。
+     * Returns foo_value.
      * @return foo_value
-     * @throws NullPointerException foo_valueの値が<code>null</code>である場合
+     * @throws NullPointerException if foo_value is <code>null</code>
      */
     public int getFooValue() {
         return this.fooValue.get();
     }
     /**
-     * foo_valueを設定する。
-     * @param value 設定する値
+     * Sets foo_value.
+     * @param value the value
      */
     @SuppressWarnings("deprecation") public void setFooValue(int value) {
         this.fooValue.modify(value);
     }
     /**
-     * <code>null</code>を許すfoo_valueを返す。
+     * Returns foo_value which may be represent <code>null</code>.
      * @return foo_value
      */
     public IntOption getFooValueOption() {
         return this.fooValue;
     }
     /**
-     * foo_valueを設定する。
-     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     * Sets foo_value.
+     * @param option the value, or <code>null</code> to set this property to <code>null</code>
      */
     @SuppressWarnings("deprecation") public void setFooValueOption(IntOption option) {
         this.fooValue.copyFrom(option);
@@ -130,14 +112,14 @@ import com.asakusafw.vocabulary.model.Key;
         if(obj == null) {
             return false;
         }
-        if(this.getClass()!= obj.getClass()) {
+        if(this.getClass() != obj.getClass()) {
             return false;
         }
         MockJoined other = (MockJoined) obj;
-        if(this.hogeValue.equals(other.hogeValue)== false) {
+        if(this.hogeValue.equals(other.hogeValue) == false) {
             return false;
         }
-        if(this.fooValue.equals(other.fooValue)== false) {
+        if(this.fooValue.equals(other.fooValue) == false) {
             return false;
         }
         return true;

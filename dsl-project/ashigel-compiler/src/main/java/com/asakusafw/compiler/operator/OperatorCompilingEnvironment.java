@@ -36,7 +36,7 @@ import com.asakusafw.utils.java.model.syntax.CompilationUnit;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
 
 /**
- * Operator DSL Compilerの環境。
+ * Represents a compiler environment for operator DSL compiler.
  * @since 0.1.0
  * @version 0.7.0
  */
@@ -59,11 +59,11 @@ public class OperatorCompilingEnvironment {
     private final Set<String> generatedResourceKeys = Sets.create();
 
     /**
-     * インスタンスを生成する。
-     * @param processingEnvironment 注釈プロセッサの実行環境
-     * @param factory Java DOMを構築するためのファクトリ
-     * @param options コンパイラオプション
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param processingEnvironment the annotation processing environment
+     * @param factory the Java DOM factory
+     * @param options the compiler options
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public OperatorCompilingEnvironment(
             ProcessingEnvironment processingEnvironment,
@@ -79,77 +79,77 @@ public class OperatorCompilingEnvironment {
     }
 
     /**
-     * 注釈プロセッサの実行環境を返す。
-     * @return 注釈プロセッサの実行環境
+     * Returns the annotation processing environment.
+     * @return the annotation processing environment
      */
     public ProcessingEnvironment getProcessingEnvironment() {
         return processingEnvironment;
     }
 
     /**
-     * Java DOMを構築するためのファクトリを返す。
-     * @return Java DOMを構築するためのファクトリ
+     * Returns the Java DOM factory.
+     * @return the Java DOM factory
      */
     public ModelFactory getFactory() {
         return factory;
     }
 
     /**
-     * サービスをロードするためのクラスローダーを返す。
-     * @return サービスをロードするためのクラスローダー
+     * Returns the class loader for loading service classes.
+     * @return the class loader for loading service classes
      */
     public ClassLoader getServiceClassLoader() {
         return options.getServiceClassLoader();
     }
 
     /**
-     * コンパイラオプションの一覧を返す。
-     * @return コンパイラオプションの一覧
+     * Returns the compiler options.
+     * @return the compiler options
      */
     public OperatorCompilerOptions getOptions() {
         return options;
     }
 
     /**
-     * 環境に診断メッセージを表示するためのオブジェクトを返す。
-     * @return 環境に診断メッセージを表示するためのオブジェクト
+     * Returns the messager.
+     * @return the messager
      */
     public Messager getMessager() {
         return getProcessingEnvironment().getMessager();
     }
 
     /**
-     * 構文要素のユーティリティを返す。
-     * @return 構文要素のユーティリティ
+     * Returns the element utilities.
+     * @return the element utilities
      */
     public Elements getElementUtils() {
         return getProcessingEnvironment().getElementUtils();
     }
 
     /**
-     * 型のユーティリティを返す。
-     * @return 型のユーティリティ
+     * Returns the type utilities.
+     * @return the type utilities
      */
     public Types getTypeUtils() {
         return getProcessingEnvironment().getTypeUtils();
     }
 
     /**
-     * 指定のコンパイル単位をソースコードとして適切な位置に出力する。
-     * @param unit 対象のコンパイル単位
-     * @throws IOException 出力に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Emits a compilation unit.
+     * @param unit the target compilation unit
+     * @throws IOException if error occurred while emitting the compilation unit
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public void emit(CompilationUnit unit) throws IOException {
         emit(unit, EMPTY_ELEMENTS);
     }
 
     /**
-     * 指定のコンパイル単位をソースコードとして適切な位置に出力する。
-     * @param unit 対象のコンパイル単位
-     * @param originatingElements 生成するソースコードの元になった要素の一覧
-     * @throws IOException 出力に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Emits a compilation unit.
+     * @param unit the target compilation unit
+     * @param originatingElements the original elements
+     * @throws IOException if error occurred while emitting the compilation unit
+     * @throws IllegalArgumentException if the parameter is {@code null}
      * @since 0.7.0
      */
     public void emit(CompilationUnit unit, Element... originatingElements) throws IOException {
@@ -173,10 +173,10 @@ public class OperatorCompilingEnvironment {
     }
 
     /**
-     * 指定のクラスに対応する宣言型(型引数無し)を返す。
-     * @param type 対象の型
-     * @return 対応する宣言型
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the declared type (no type arguments) for the target class.
+     * @param type the target class
+     * @return the corresponded declared type
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public DeclaredType getDeclaredType(Class<?> type) {
         Precondition.checkMustNotBeNull(type, "type"); //$NON-NLS-1$
@@ -188,14 +188,14 @@ public class OperatorCompilingEnvironment {
     }
 
     /**
-     * 指定の型の消去型を返す。
-     * @param type 対象の型
-     * @return 消去型
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the type erasure.
+     * @param type the target type
+     * @return the type erasure
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public TypeMirror getErasure(TypeMirror type) {
         Precondition.checkMustNotBeNull(type, "type"); //$NON-NLS-1$
-        // Eclipse のバグでイレイジャを正しく計算できない
+        // several version of Eclipse may compute invalid erasure
         if (type.getKind() == TypeKind.DECLARED) {
             TypeElement element = (TypeElement) ((DeclaredType) type).asElement();
             return getTypeUtils().getDeclaredType(element);

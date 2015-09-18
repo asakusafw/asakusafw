@@ -26,7 +26,7 @@ import com.asakusafw.utils.java.model.syntax.PackageDeclaration;
 import com.asakusafw.utils.java.model.syntax.TypeDeclaration;
 
 /**
- * ソースコードを出力するための出力を作成する。
+ * An abstract super class of Java source code emitters.
  */
 public abstract class Emitter {
 
@@ -35,11 +35,11 @@ public abstract class Emitter {
     private static final String PACKAGE_INFO = "package-info" + EXTENSION; //$NON-NLS-1$
 
     /**
-     * 指定のコンパイル単位に書き出すためのライターを返す。
-     * @param unit 対象のコンパイル単位
-     * @return 開いたライター
-     * @throws IOException ファイルの作成に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Creates a new Java source file and returns the writer for writing the contents of the file.
+     * @param unit the target compilation unit
+     * @return the created writer
+     * @throws IOException if error was occurred while creating the target source file
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public PrintWriter openFor(CompilationUnit unit) throws IOException {
         if (unit == null) {
@@ -53,13 +53,12 @@ public abstract class Emitter {
     }
 
     /**
-     * 指定のコンパイル単位に含まれる、ファイル名に利用できそうな型の宣言を返す。
-     * <p>
-     * 型の宣言が指定のコンパイル単位に含まれない場合、このメソッドは{@code null}を返す。
-     * </p>
-     * @param unit 対象のコンパイル単位
-     * @return ファイル名に利用できそうな型の宣言、存在しない場合は{@code null}
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns a primary type declaration in the compilation unit.
+     * Primary type is a type which is declared as top-level {@code public} type,
+     * or the first type in the compilation unit.
+     * @param unit the target compilation unit
+     * @return the primary type declaration, or {@code null} if the compilation unit does not contain any types
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static TypeDeclaration findPrimaryType(CompilationUnit unit) {
         if (unit == null) {
@@ -91,14 +90,12 @@ public abstract class Emitter {
     }
 
     /**
-     * 指定のパッケージに指定のサブパスのファイルを作成するためのライターを返す。
-     * @param packageDeclOrNull 対象のパッケージ宣言、無名パッケージの場合は{@code null}
-     * @param subPath パッケージ下のサブパス
-     * @return 開いたライター
-     * @throws IOException ファイルの作成に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Creates a new resource file and returns the writer for writing the contents of the resource.
+     * @param packageDeclOrNull the base package, or {@code null} if it is the default (unnamed) package
+     * @param subPath the relative path from the base package
+     * @return the created writer
+     * @throws IOException if error was occurred while creating the target resource
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
-    public abstract PrintWriter openFor(
-            PackageDeclaration packageDeclOrNull,
-            String subPath) throws IOException;
+    public abstract PrintWriter openFor(PackageDeclaration packageDeclOrNull, String subPath) throws IOException;
 }

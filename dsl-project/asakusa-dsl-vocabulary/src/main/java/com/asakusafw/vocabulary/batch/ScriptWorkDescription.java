@@ -15,56 +15,53 @@
  */
 package com.asakusafw.vocabulary.batch;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 import java.util.TreeMap;
 
 /**
- * スクリプトを実行する記述。
+ * A description of Unit-of-Work using custom scripts.
+ * @deprecated does not supported
  */
+@Deprecated
 public class ScriptWorkDescription extends WorkDescription {
 
     /**
-     * コマンド行のプロパティキー名。
+     * The key name of the command name.
      */
     public static final String K_NAME = "name"; //$NON-NLS-1$
 
     /**
-     * コマンド行のプロパティキー名。
+     * The key name of command line.
      */
     public static final String K_COMMAND = "command"; //$NON-NLS-1$
 
     /**
-     * プロファイルのプロパティキー名。
+     * The key name of profile name.
      */
     public static final String K_PROFILE = "profile"; //$NON-NLS-1$
 
     /**
-     * 環境変数のプロパティキー接頭辞。
+     * The key prefix of environment variables.
      */
     public static final String K_ENVIRONMENT_PREFIX = "env."; //$NON-NLS-1$
 
-    private String name;
+    private final String name;
 
-    private String command;
+    private final String command;
 
-    private String profileName;
+    private final String profileName;
 
-    private Map<String, String> variables;
+    private final Map<String, String> variables;
 
     /**
-     * インスタンスを生成する。
-     * @param name 識別子
-     * @param command コマンド行
-     * @param profileName プロファイル名
-     * @param variables 環境変数一覧
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param name the identifier of this work
+     * @param command the command line
+     * @param profileName the profile name
+     * @param variables the environment variables
+     * @throws IllegalArgumentException if some parameters are {@code null}
      */
     public ScriptWorkDescription(
             String name,
@@ -101,93 +98,27 @@ public class ScriptWorkDescription extends WorkDescription {
     }
 
     /**
-     * このスクリプトのコマンドを返す。
-     * @return コマンド
+     * Returns the command line.
+     * @return the command line
      */
     public String getCommand() {
         return command;
     }
 
     /**
-     * このスクリプトを実行するプロファイルの名前を返す。
-     * @return スクリプトを実行するプロファイルの名前
+     * Returns the profile name.
+     * @return the profile name
      */
     public String getProfileName() {
         return profileName;
     }
 
     /**
-     * このスクリプトを実行する際の環境変数一覧を返す。
-     * @return スクリプト実行時の環境変数の一覧
+     * Returns the environment variables.
+     * @return the environment variables
      */
     public Map<String, String> getVariables() {
         return variables;
-    }
-
-    /**
-     * このクラスのオブジェクトの内容を表すプロパティファイルを読み出し、新しいオブジェクトを返す。
-     * @param context プロパティファイルを検索する文脈となるクラス
-     * @param path 指定した文脈クラスを含むパッケージからの、プロパティファイルの相対パス
-     * @return 生成したオブジェクト
-     * @throws IOException プロパティファイルの読み出しに失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
-     */
-    public static ScriptWorkDescription load(
-            Class<?> context,
-            String path) throws IOException {
-        if (context == null) {
-            throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
-        }
-        if (path == null) {
-            throw new IllegalArgumentException("path must not be null"); //$NON-NLS-1$
-        }
-        InputStream stream = context.getResourceAsStream(path);
-        if (stream == null) {
-            throw new FileNotFoundException(path);
-        }
-        Properties properties = new Properties();
-        try {
-            properties.load(stream);
-        } finally {
-            stream.close();
-        }
-        return load(properties);
-    }
-
-    private static ScriptWorkDescription load(Properties properties) {
-        assert properties != null;
-        String name = properties.getProperty(K_NAME);
-        String command = properties.getProperty(K_COMMAND);
-        String profile = properties.getProperty(K_PROFILE);
-        properties.remove(K_COMMAND);
-        properties.remove(K_PROFILE);
-
-        Map<String, String> env = new HashMap<String, String>();
-        for (Map.Entry<?, ?> entry : properties.entrySet()) {
-            if ((entry.getKey() instanceof String) == false) {
-                throw new IllegalArgumentException(MessageFormat.format(
-                        Messages.getString("ScriptWorkDescription.errorInvalidPropertyKey"), //$NON-NLS-1$
-                        entry.getKey(),
-                        entry.getKey().getClass().getName()));
-            }
-            if ((entry.getValue() instanceof String) == false) {
-                throw new IllegalArgumentException(MessageFormat.format(
-                        Messages.getString("ScriptWorkDescription.errorInvalidPropertyValue"), //$NON-NLS-1$
-                        entry.getValue(),
-                        entry.getValue().getClass().getName()));
-            }
-            String key = (String) entry.getKey();
-            if (key.startsWith(K_ENVIRONMENT_PREFIX) == false) {
-                throw new IllegalArgumentException(MessageFormat.format(
-                        Messages.getString("ScriptWorkDescription.errorMalformedPropertyKey"), //$NON-NLS-1$
-                        entry.getKey(),
-                        K_ENVIRONMENT_PREFIX));
-            }
-            key = key.substring(K_ENVIRONMENT_PREFIX.length());
-            String value = (String) entry.getValue();
-            env.put(key, value);
-        }
-        return new ScriptWorkDescription(name, command, profile, env);
     }
 
     @Override

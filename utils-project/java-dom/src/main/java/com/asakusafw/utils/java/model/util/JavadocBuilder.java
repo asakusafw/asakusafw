@@ -34,17 +34,13 @@ import com.asakusafw.utils.java.model.syntax.SimpleName;
 import com.asakusafw.utils.java.model.syntax.Type;
 
 /**
- * Javadocを構築するビルダー。
- * <p>
- * このクラスのオブジェクトは、自身を破壊的に変更してJavadocを構築する。
- * 特定の状態のビルダーを再利用する場合、{@link #copy()}を利用すること。
- * </p>
+ * A builder for building Javadoc.
  */
 public class JavadocBuilder {
 
     private static final Pattern ESCAPE = Pattern.compile("@"); //$NON-NLS-1$
 
-    private ModelFactory f;
+    private final ModelFactory f;
 
     private List<DocBlock> blocks;
 
@@ -53,9 +49,9 @@ public class JavadocBuilder {
     private List<DocElement> elements;
 
     /**
-     * インスタンスを生成する。
-     * @param factory モデルの構築に利用するファクトリ
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Creates a new instance.
+     * @param factory the Java DOM factory
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocBuilder(ModelFactory factory) {
         if (factory == null) {
@@ -68,8 +64,8 @@ public class JavadocBuilder {
     }
 
     /**
-     * 現在のビルダーと同等の内容を持つビルダーを新しく作成して返す。
-     * @return コピーしたビルダー
+     * Returns a copy of this builder.
+     * @return the copy
      */
     public JavadocBuilder copy() {
         JavadocBuilder copy = new JavadocBuilder(f);
@@ -80,8 +76,8 @@ public class JavadocBuilder {
     }
 
     /**
-     * ここまでに構築した内容を{@link Javadoc}の形式に変換して返す。
-     * @return 変換結果
+     * Returns the built {@link Javadoc} object.
+     * @return the built object
      */
     public Javadoc toJavadoc() {
         flushBlock(""); //$NON-NLS-1$
@@ -89,13 +85,11 @@ public class JavadocBuilder {
     }
 
     /**
-     * 指定のタグを利用してブロックを開始する。
-     * <p>
-     * 直前までのブロックはこの操作によって終了する。
-     * </p>
-     * @param tag 開始するタグ (先頭の<code>&#64;は省略してもよい</code>)
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Starts a new block in this builder.
+     * The current building block will be finished before this operation.
+     * @param tag the block tag (the starting <code>&quot;&#64;&quot;</code> can be omitted)
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocBuilder block(String tag) {
         if (tag == null) {
@@ -110,10 +104,10 @@ public class JavadocBuilder {
     }
 
     /**
-     * 指定のインライン要素を挿入する。
-     * @param element 対象の要素
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Appends an inline element into this builder.
+     * @param element the target element
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocBuilder inline(DocElement element) {
         if (element == null) {
@@ -124,10 +118,10 @@ public class JavadocBuilder {
     }
 
     /**
-     * 指定のインライン要素を挿入する。
-     * @param elems 対象の要素
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Appends inline elements into this builder.
+     * @param elems the target elements
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocBuilder inline(List<? extends DocElement> elems) {
         if (elems == null) {
@@ -138,26 +132,22 @@ public class JavadocBuilder {
     }
 
     /**
-     * 指定の名前のパラメーターに関する<code>&#64;param</code>タグブロックを開始する。
-     * <p>
-     * 直前までのブロックはこの操作によって終了する。
-     * </p>
-     * @param name パラメータの名前
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Starts a <code>&#64;param</code> tag block for the target parameter in this builder.
+     * The current building block will be finished before this operation.
+     * @param name the target parameter name
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocBuilder param(String name) {
         return param(f.newSimpleName(name));
     }
 
     /**
-     * 指定の名前のパラメーターに関する<code>&#64;param</code>タグブロックを開始する。
-     * <p>
-     * 直前までのブロックはこの操作によって終了する。
-     * </p>
-     * @param name パラメータの名前
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Starts a <code>&#64;param</code> tag block for the target parameter in this builder.
+     * The current building block will be finished before this operation.
+     * @param name the target parameter name
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocBuilder param(SimpleName name) {
         block("@param"); //$NON-NLS-1$
@@ -166,26 +156,22 @@ public class JavadocBuilder {
     }
 
     /**
-     * 指定の名前の型パラメーターに関する<code>&#64;param</code>タグブロックを開始する。
-     * <p>
-     * 直前までのブロックはこの操作によって終了する。
-     * </p>
-     * @param name パラメータの名前
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Starts a <code>&#64;param</code> tag block for the target type parameter in this builder.
+     * The current building block will be finished before this operation.
+     * @param name the target parameter name
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocBuilder typeParam(String name) {
         return typeParam(f.newSimpleName(name));
     }
 
     /**
-     * 指定の名前の型パラメーターに関する<code>&#64;param</code>タグブロックを開始する。
-     * <p>
-     * 直前までのブロックはこの操作によって終了する。
-     * </p>
-     * @param name パラメータの名前
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Starts a <code>&#64;param</code> tag block for the target type parameter in this builder.
+     * The current building block will be finished before this operation.
+     * @param name the target parameter name
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocBuilder typeParam(SimpleName name) {
         if (name == null) {
@@ -199,13 +185,11 @@ public class JavadocBuilder {
     }
 
     /**
-     * 指定の型変数に対応する型パラメーターに関する<code>&#64;param</code>タグブロックを開始する。
-     * <p>
-     * 直前までのブロックはこの操作によって終了する。
-     * </p>
-     * @param typeVariable 型変数
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Starts a <code>&#64;param</code> tag block for the target type parameter in this builder.
+     * The current building block will be finished before this operation.
+     * @param typeVariable the type variable
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocBuilder typeParam(Type typeVariable) {
         if (typeVariable == null) {
@@ -223,11 +207,9 @@ public class JavadocBuilder {
     }
 
     /**
-     * <code>&#64;return</code>タグブロックを開始する。
-     * <p>
-     * 直前までのブロックはこの操作によって終了する。
-     * </p>
-     * @return 続きの操作を行うビルダー
+     * Starts a <code>&#64;return</code> tag block in this builder.
+     * The current building block will be finished before this operation.
+     * @return this
      */
     public JavadocBuilder returns() {
         block("@return"); //$NON-NLS-1$
@@ -235,13 +217,11 @@ public class JavadocBuilder {
     }
 
     /**
-     * 指定の名前の型に関する<code>&#64;throw</code>タグブロックを開始する。
-     * <p>
-     * 直前までのブロックはこの操作によって終了する。
-     * </p>
-     * @param type 例外の型
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Starts a <code>&#64;throw</code> tag block for the target type in this builder.
+     * The current building block will be finished before this operation.
+     * @param type the target exception type
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocBuilder exception(Type type) {
         if (type == null) {
@@ -256,12 +236,10 @@ public class JavadocBuilder {
     }
 
     /**
-     * 指定の名前の型に関する<code>&#64;see</code>タグブロックを開始する。
-     * <p>
-     * 直前までのブロックはこの操作によって終了する。
-     * </p>
-     * @param type 型
-     * @return 続きの操作を行うビルダー
+     * Starts a <code>&#64;see</code> tag block for the target type in this builder.
+     * The current building block will be finished before this operation.
+     * @param type the target type
+     * @return this
      */
     public JavadocBuilder seeType(Type type) {
         if (type == null) {
@@ -274,13 +252,11 @@ public class JavadocBuilder {
     }
 
     /**
-     * 指定のフィールドに関する<code>&#64;see</code>タグブロックを開始する。
-     * <p>
-     * 直前までのブロックはこの操作によって終了する。
-     * </p>
-     * @param name フィールドの単純名
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Starts a <code>&#64;see</code> tag block for the target field in this builder.
+     * The current building block will be finished before this operation.
+     * @param name the target field name
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocBuilder seeField(String name) {
         if (name == null) {
@@ -290,14 +266,12 @@ public class JavadocBuilder {
     }
 
     /**
-     * 指定のフィールドに関する<code>&#64;see</code>タグブロックを開始する。
-     * <p>
-     * 直前までのブロックはこの操作によって終了する。
-     * </p>
-     * @param type フィールドの型
-     * @param name フィールドの単純名
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Starts a <code>&#64;see</code> tag block for the target field in this builder.
+     * The current building block will be finished before this operation.
+     * @param type the target field type
+     * @param name the target field name
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocBuilder seeField(Type type, String name) {
         if (name == null) {
@@ -307,27 +281,23 @@ public class JavadocBuilder {
     }
 
     /**
-     * 指定のフィールドに関する<code>&#64;see</code>タグブロックを開始する。
-     * <p>
-     * 直前までのブロックはこの操作によって終了する。
-     * </p>
-     * @param name フィールドの単純名
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Starts a <code>&#64;see</code> tag block for the target field in this builder.
+     * The current building block will be finished before this operation.
+     * @param name the target field name
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocBuilder seeField(SimpleName name) {
         return seeField(null, name);
     }
 
     /**
-     * 指定のフィールドに関する<code>&#64;see</code>タグブロックを開始する。
-     * <p>
-     * 直前までのブロックはこの操作によって終了する。
-     * </p>
-     * @param type フィールドの型
-     * @param name フィールドの単純名
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Starts a <code>&#64;see</code> tag block for the target field in this builder.
+     * The current building block will be finished before this operation.
+     * @param type the target field type
+     * @param name the target field name
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocBuilder seeField(Type type, SimpleName name) {
         if (name == null) {
@@ -337,14 +307,12 @@ public class JavadocBuilder {
     }
 
     /**
-     * 指定のメソッドに関する<code>&#64;see</code>タグブロックを開始する。
-     * <p>
-     * 直前までのブロックはこの操作によって終了する。
-     * </p>
-     * @param name メソッドの単純名
-     * @param parameterTypes メソッドの引数型一覧
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Starts a <code>&#64;see</code> tag block for the target method in this builder.
+     * The current building block will be finished before this operation.
+     * @param name the target method name
+     * @param parameterTypes the target method parameter types
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocBuilder seeMethod(
             String name,
@@ -363,14 +331,12 @@ public class JavadocBuilder {
     }
 
     /**
-     * 指定のメソッドに関する<code>&#64;see</code>タグブロックを開始する。
-     * <p>
-     * 直前までのブロックはこの操作によって終了する。
-     * </p>
-     * @param name メソッドの単純名
-     * @param parameterTypes メソッドの引数型一覧
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Starts a <code>&#64;see</code> tag block for the target method in this builder.
+     * The current building block will be finished before this operation.
+     * @param name the target method name
+     * @param parameterTypes the target method parameter types
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocBuilder seeMethod(
             String name,
@@ -386,14 +352,12 @@ public class JavadocBuilder {
     }
 
     /**
-     * 指定のメソッドに関する<code>&#64;see</code>タグブロックを開始する。
-     * <p>
-     * 直前までのブロックはこの操作によって終了する。
-     * </p>
-     * @param name メソッドの単純名
-     * @param parameterTypes メソッドの引数型一覧
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Starts a <code>&#64;see</code> tag block for the target method in this builder.
+     * The current building block will be finished before this operation.
+     * @param name the target method name
+     * @param parameterTypes the target method parameter types
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocBuilder seeMethod(
             SimpleName name,
@@ -409,14 +373,12 @@ public class JavadocBuilder {
     }
 
     /**
-     * 指定のメソッドに関する<code>&#64;see</code>タグブロックを開始する。
-     * <p>
-     * 直前までのブロックはこの操作によって終了する。
-     * </p>
-     * @param name メソッドの単純名
-     * @param parameterTypes メソッドの引数型一覧
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Starts a <code>&#64;see</code> tag block for the target method in this builder.
+     * The current building block will be finished before this operation.
+     * @param name the target method name
+     * @param parameterTypes the target method parameter types
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocBuilder seeMethod(
             SimpleName name,
@@ -432,15 +394,13 @@ public class JavadocBuilder {
     }
 
     /**
-     * 指定のメソッドに関する<code>&#64;see</code>タグブロックを開始する。
-     * <p>
-     * 直前までのブロックはこの操作によって終了する。
-     * </p>
-     * @param type メソッドの型
-     * @param name メソッドの単純名
-     * @param parameterTypes メソッドの引数型一覧
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Starts a <code>&#64;see</code> tag block for the target method in this builder.
+     * The current building block will be finished before this operation.
+     * @param type the target method type
+     * @param name the target method name
+     * @param parameterTypes the target method parameter types
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocBuilder seeMethod(
             Type type,
@@ -460,15 +420,13 @@ public class JavadocBuilder {
     }
 
     /**
-     * 指定のメソッドに関する<code>&#64;see</code>タグブロックを開始する。
-     * <p>
-     * 直前までのブロックはこの操作によって終了する。
-     * </p>
-     * @param type メソッドの型
-     * @param name メソッドの単純名
-     * @param parameterTypes メソッドの引数型一覧
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Starts a <code>&#64;see</code> tag block for the target method in this builder.
+     * The current building block will be finished before this operation.
+     * @param type the target method type
+     * @param name the target method name
+     * @param parameterTypes the target method parameter types
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocBuilder seeMethod(
             Type type,
@@ -485,15 +443,13 @@ public class JavadocBuilder {
     }
 
     /**
-     * 指定のメソッドに関する<code>&#64;see</code>タグブロックを開始する。
-     * <p>
-     * 直前までのブロックはこの操作によって終了する。
-     * </p>
-     * @param type メソッドの型
-     * @param name メソッドの単純名
-     * @param parameterTypes メソッドの引数型一覧
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Starts <code>&#64;see</code> tag block about the specified element in this builder.
+     * The current building block will be finished before this operation.
+     * @param type the target method type
+     * @param name the target method name
+     * @param parameterTypes the target method parameter types
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocBuilder seeMethod(
             Type type,
@@ -510,15 +466,13 @@ public class JavadocBuilder {
     }
 
     /**
-     * 指定のメソッドに関する<code>&#64;see</code>タグブロックを開始する。
-     * <p>
-     * 直前までのブロックはこの操作によって終了する。
-     * </p>
-     * @param type メソッドの型
-     * @param name メソッドの単純名
-     * @param parameterTypes メソッドの引数型一覧
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Starts <code>&#64;see</code> tag block about the specified element in this builder.
+     * The current building block will be finished before this operation.
+     * @param type the target method type
+     * @param name the target method name
+     * @param parameterTypes the target method parameter types
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocBuilder seeMethod(
             Type type,
@@ -539,13 +493,11 @@ public class JavadocBuilder {
     }
 
     /**
-     * 指定の要素に関する<code>&#64;see</code>タグブロックを開始する。
-     * <p>
-     * 直前までのブロックはこの操作によって終了する。
-     * </p>
-     * @param element 対象の要素
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Starts <code>&#64;see</code> tag block about the specified element in this builder.
+     * The current building block will be finished before this operation.
+     * @param element the target element
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocBuilder see(DocElement element) {
         if (element == null) {
@@ -557,11 +509,11 @@ public class JavadocBuilder {
     }
 
     /**
-     * 指定の内容のテキストを挿入する。
-     * @param pattern {@link MessageFormat#format(String, Object...)}形式のパターン
-     * @param arguments {@link MessageFormat#format(String, Object...)}形式の引数
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Appends a plain text into this builder.
+     * @param pattern the text pattern in form of {@link MessageFormat#format(String, Object...)}
+     * @param arguments the arguments for the pattern
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocBuilder text(String pattern, Object... arguments) {
         elements.add(escape(pattern, arguments));
@@ -569,11 +521,11 @@ public class JavadocBuilder {
     }
 
     /**
-     * 指定の内容の<code>&#64;code</code>インラインブロックを挿入する。
-     * @param pattern {@link MessageFormat#format(String, Object...)}形式のパターン
-     * @param arguments {@link MessageFormat#format(String, Object...)}形式の引数
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Appends a <code>&#64;code</code> inline block into this builder.
+     * @param pattern the text pattern in form of {@link MessageFormat#format(String, Object...)}
+     * @param arguments the arguments for the pattern
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocBuilder code(String pattern, Object... arguments) {
         elements.add(f.newDocBlock(
@@ -583,9 +535,9 @@ public class JavadocBuilder {
     }
 
     /**
-     * 指定の名前の型に関する<code>&#64;link</code>インラインブロックを挿入する。
-     * @param type 型
-     * @return 続きの操作を行うビルダー
+     * Appends a <code>&#64;link</code> inline block for the target type into this builder.
+     * @param type the target type
+     * @return this
      */
     public JavadocBuilder linkType(Type type) {
         if (type == null) {
@@ -598,10 +550,10 @@ public class JavadocBuilder {
     }
 
     /**
-     * 指定のフィールドに関する<code>&#64;link</code>インラインブロックを挿入する。
-     * @param name フィールドの単純名
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Appends a <code>&#64;link</code> inline block for the target field into this builder.
+     * @param name the target field name
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocBuilder linkField(String name) {
         if (name == null) {
@@ -611,11 +563,11 @@ public class JavadocBuilder {
     }
 
     /**
-     * 指定のフィールドに関する<code>&#64;link</code>インラインブロックを挿入する。
-     * @param type フィールドの型
-     * @param name フィールドの単純名
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Appends a <code>&#64;link</code> inline block for the target field into this builder.
+     * @param type the target field type
+     * @param name the target field name
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocBuilder linkField(Type type, String name) {
         if (name == null) {
@@ -625,21 +577,21 @@ public class JavadocBuilder {
     }
 
     /**
-     * 指定のフィールドに関する<code>&#64;link</code>インラインブロックを挿入する。
-     * @param name フィールドの単純名
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Appends a <code>&#64;link</code> inline block for the target field into this builder.
+     * @param name the target field name
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocBuilder linkField(SimpleName name) {
         return linkField(null, name);
     }
 
     /**
-     * 指定のフィールドに関する<code>&#64;link</code>インラインブロックを挿入する。
-     * @param type フィールドの型
-     * @param name フィールドの単純名
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Appends a <code>&#64;link</code> inline block for the target field into this builder.
+     * @param type the target field type
+     * @param name the target field name
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocBuilder linkField(Type type, SimpleName name) {
         if (name == null) {
@@ -649,11 +601,11 @@ public class JavadocBuilder {
     }
 
     /**
-     * 指定のメソッドに関する<code>&#64;link</code>インラインブロックを挿入する。
-     * @param name メソッドの単純名
-     * @param parameterTypes メソッドの引数型一覧
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Appends a <code>&#64;link</code> inline block for the target method into this builder.
+     * @param name the target method name
+     * @param parameterTypes the target method parameter types
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocBuilder linkMethod(
             String name,
@@ -672,11 +624,11 @@ public class JavadocBuilder {
     }
 
     /**
-     * 指定のメソッドに関する<code>&#64;link</code>インラインブロックを挿入する。
-     * @param name メソッドの単純名
-     * @param parameterTypes メソッドの引数型一覧
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Appends a <code>&#64;link</code> inline block for the target method into this builder.
+     * @param name the target method name
+     * @param parameterTypes the target method parameter types
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocBuilder linkMethod(
             String name,
@@ -692,11 +644,11 @@ public class JavadocBuilder {
     }
 
     /**
-     * 指定のメソッドに関する<code>&#64;link</code>インラインブロックを挿入する。
-     * @param name メソッドの単純名
-     * @param parameterTypes メソッドの引数型一覧
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Appends a <code>&#64;link</code> inline block for the target method into this builder.
+     * @param name the target method name
+     * @param parameterTypes the target method parameter types
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocBuilder linkMethod(
             SimpleName name,
@@ -712,11 +664,11 @@ public class JavadocBuilder {
     }
 
     /**
-     * 指定のメソッドに関する<code>&#64;link</code>インラインブロックを挿入する。
-     * @param name メソッドの単純名
-     * @param parameterTypes メソッドの引数型一覧
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Appends a <code>&#64;link</code> inline block for the target method into this builder.
+     * @param name the target method name
+     * @param parameterTypes the target method parameter types
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocBuilder linkMethod(
             SimpleName name,
@@ -732,12 +684,12 @@ public class JavadocBuilder {
     }
 
     /**
-     * 指定のメソッドに関する<code>&#64;link</code>インラインブロックを挿入する。
-     * @param type メソッドの型
-     * @param name メソッドの単純名
-     * @param parameterTypes メソッドの引数型一覧
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Appends a <code>&#64;link</code> inline block for the target method into this builder.
+     * @param type the target method type
+     * @param name the target method name
+     * @param parameterTypes the target method parameter types
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocBuilder linkMethod(
             Type type,
@@ -757,12 +709,12 @@ public class JavadocBuilder {
     }
 
     /**
-     * 指定のメソッドに関する<code>&#64;link</code>インラインブロックを挿入する。
-     * @param type メソッドの型
-     * @param name メソッドの単純名
-     * @param parameterTypes メソッドの引数型一覧
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Appends a <code>&#64;link</code> inline block for the target method into this builder.
+     * @param type the target method type
+     * @param name the target method name
+     * @param parameterTypes the target method parameter types
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocBuilder linkMethod(
             Type type,
@@ -779,12 +731,12 @@ public class JavadocBuilder {
     }
 
     /**
-     * 指定のメソッドに関する<code>&#64;link</code>インラインブロックを挿入する。
-     * @param type メソッドの型
-     * @param name メソッドの単純名
-     * @param parameterTypes メソッドの引数型一覧
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Appends a <code>&#64;link</code> inline block for the target method into this builder.
+     * @param type the target method type
+     * @param name the target method name
+     * @param parameterTypes the target method parameter types
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocBuilder linkMethod(
             Type type,
@@ -801,12 +753,12 @@ public class JavadocBuilder {
     }
 
     /**
-     * 指定のメソッドに関する<code>&#64;link</code>インラインブロックを挿入する。
-     * @param type メソッドの型
-     * @param name メソッドの単純名
-     * @param parameterTypes メソッドの引数型一覧
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Appends a <code>&#64;link</code> inline block for the target method into this builder.
+     * @param type the target method type
+     * @param name the target method name
+     * @param parameterTypes the target method parameter types
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocBuilder linkMethod(
             Type type,
@@ -827,10 +779,10 @@ public class JavadocBuilder {
     }
 
     /**
-     * 指定の要素に関する<code>&#64;link</code>インラインブロックを挿入する。
-     * @param element 対象の要素
-     * @return 続きの操作を行うビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Appends a <code>&#64;link</code> inline block for the target element into this builder.
+     * @param element the target element
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocBuilder link(DocElement element) {
         if (element == null) {

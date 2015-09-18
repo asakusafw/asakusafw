@@ -30,7 +30,7 @@ import com.asakusafw.vocabulary.model.Joined.Term;
 import com.asakusafw.vocabulary.operator.Split;
 
 /**
- * {@link Split 分割演算子}を処理する。
+ * Processes {@link Split} operators.
  */
 @TargetOperator(Split.class)
 public class SplitFlowProcessor extends LineEndProcessor {

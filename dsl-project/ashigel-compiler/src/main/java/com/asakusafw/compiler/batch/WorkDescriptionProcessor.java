@@ -19,25 +19,24 @@ import java.io.IOException;
 
 import com.asakusafw.vocabulary.batch.WorkDescription;
 
-
 /**
- * 処理記述を処理するプロセッサ。
- * @param <T> 処理対象の{@link WorkDescription}クラス
+ * An abstract super interface of processor for {@link WorkDescription}.
+ * @param <T> the target {@link WorkDescription}
  */
 public interface WorkDescriptionProcessor<T extends WorkDescription>
         extends BatchCompilingEnvironment.Initializable {
 
     /**
-     * このプロセッサが対象とするクラス(またはその基底クラス)を返す。
-     * @return このプロセッサが対象とするクラス
+     * Returns the target class of this processor.
+     * @return the target class
      */
     Class<T> getTargetType();
 
     /**
-     * このプロセッサを利用して記述を処理する。
-     * @param description 対象の処理記述
-     * @return 処理結果を表すデータ
-     * @throws IOException 処理に失敗した場合
+     * Processes the target description object.
+     * @param description the target description object
+     * @return the processed result
+     * @throws IOException if failed to process the target description
      */
     Object process(T description) throws IOException;
 }

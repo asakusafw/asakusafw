@@ -23,13 +23,9 @@ import java.lang.annotation.Target;
 import com.asakusafw.vocabulary.flow.Source;
 import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory;
 
-
 /**
- * 合流演算子を表す演算子注釈。
- * <p>
- * この演算子を表す演算子メソッドは作成できない。
- * 代わりに {@link CoreOperatorFactory#confluent(Source, Source)}などを利用すること。
- * </p>
+ * Represents <em>confluent</em> operator annotation.
+ * Application developers should use {@link CoreOperatorFactory#confluent(Iterable)} instead of operator methods.
  * @see CoreOperatorFactory#confluent(Source, Source)
  * @see CoreOperatorFactory#confluent(Source, Source, Source)
  * @see CoreOperatorFactory#confluent(Source, Source, Source, Source)

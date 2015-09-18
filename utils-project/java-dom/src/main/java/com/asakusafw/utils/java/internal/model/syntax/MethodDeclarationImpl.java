@@ -29,53 +29,26 @@ import com.asakusafw.utils.java.model.syntax.TypeParameterDeclaration;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link MethodDeclaration}の実装。
+ * An implementation of {@link MethodDeclaration}.
  */
 public final class MethodDeclarationImpl extends ModelRoot implements MethodDeclaration {
 
-    /**
-     * ドキュメンテーションコメント。
-     */
     private Javadoc javadoc;
 
-    /**
-     * 修飾子および注釈の一覧。
-     */
     private List<? extends Attribute> modifiers;
 
-    /**
-     * 型引数宣言の一覧。
-     */
     private List<? extends TypeParameterDeclaration> typeParameters;
 
-    /**
-     * 戻り値の型。
-     */
     private Type returnType;
 
-    /**
-     * メソッドまたはコンストラクタの名前。
-     */
     private SimpleName name;
 
-    /**
-     * 仮引数宣言の一覧。
-     */
     private List<? extends FormalParameterDeclaration> formalParameters;
 
-    /**
-     * 戻り値の次元数。
-     */
     private int extraDimensions;
 
-    /**
-     * 例外型宣言の一覧。
-     */
     private List<? extends Type> exceptionTypes;
 
-    /**
-     * メソッドまたはコンストラクタ本体。
-     */
     private Block body;
 
     @Override
@@ -84,11 +57,8 @@ public final class MethodDeclarationImpl extends ModelRoot implements MethodDecl
     }
 
     /**
-     * ドキュメンテーションコメントを設定する。
-     * <p> ドキュメンテーションコメントが存在しない場合、引数には{@code null}を指定する。 </p>
-     * @param javadoc
-     *     ドキュメンテーションコメント、
-     *     ただしドキュメンテーションコメントが存在しない場合は{@code null}
+     * Sets the documentation comment.
+     * @param javadoc the documentation comment, or {@code null} if it is not specified
      */
     public void setJavadoc(Javadoc javadoc) {
         this.javadoc = javadoc;
@@ -100,12 +70,9 @@ public final class MethodDeclarationImpl extends ModelRoot implements MethodDecl
     }
 
     /**
-     * 修飾子および注釈の一覧を設定する。
-     * <p> 修飾子または注釈が一つも宣言されない場合、引数には空を指定する。 </p>
-     * @param modifiers
-     *     修飾子および注釈の一覧
-     * @throws IllegalArgumentException
-     *     {@code modifiers}に{@code null}が指定された場合
+     * Sets the modifiers and annotations.
+     * @param modifiers the modifiers and annotations
+     * @throws IllegalArgumentException if {@code modifiers} was {@code null}
      */
     public void setModifiers(List<? extends Attribute> modifiers) {
         Util.notNull(modifiers, "modifiers"); //$NON-NLS-1$
@@ -119,12 +86,9 @@ public final class MethodDeclarationImpl extends ModelRoot implements MethodDecl
     }
 
     /**
-     * 型引数宣言の一覧を設定する。
-     * <p> 型引数が一つも宣言されない場合、引数には空を指定する。 </p>
-     * @param typeParameters
-     *     型引数宣言の一覧
-     * @throws IllegalArgumentException
-     *     {@code typeParameters}に{@code null}が指定された場合
+     * Sets the type parameter declarations.
+     * @param typeParameters the type parameter declarations
+     * @throws IllegalArgumentException if {@code typeParameters} was {@code null}
      */
     public void setTypeParameters(List<? extends TypeParameterDeclaration> typeParameters) {
         Util.notNull(typeParameters, "typeParameters"); //$NON-NLS-1$
@@ -138,11 +102,9 @@ public final class MethodDeclarationImpl extends ModelRoot implements MethodDecl
     }
 
     /**
-     * 戻り値の型を設定する。
-     * @param returnType
-     *     戻り値の型
-     * @throws IllegalArgumentException
-     *     {@code returnType}に{@code null}が指定された場合
+     * Sets the return type.
+     * @param returnType the return type
+     * @throws IllegalArgumentException if {@code returnType} was {@code null}
      */
     public void setReturnType(Type returnType) {
         Util.notNull(returnType, "returnType"); //$NON-NLS-1$
@@ -155,11 +117,9 @@ public final class MethodDeclarationImpl extends ModelRoot implements MethodDecl
     }
 
     /**
-     * メソッドまたはコンストラクタの名前を設定する。
-     * @param name
-     *     メソッドまたはコンストラクタの名前
-     * @throws IllegalArgumentException
-     *     {@code name}に{@code null}が指定された場合
+     * Sets the method name.
+     * @param name the method name
+     * @throws IllegalArgumentException if {@code name} was {@code null}
      */
     public void setName(SimpleName name) {
         Util.notNull(name, "name"); //$NON-NLS-1$
@@ -172,12 +132,9 @@ public final class MethodDeclarationImpl extends ModelRoot implements MethodDecl
     }
 
     /**
-     * 仮引数宣言の一覧を設定する。
-     * <p> 仮引数が一つも宣言されない場合、引数には空を指定する。 </p>
-     * @param formalParameters
-     *     仮引数宣言の一覧
-     * @throws IllegalArgumentException
-     *     {@code formalParameters}に{@code null}が指定された場合
+     * Sets the formal parameter declarations.
+     * @param formalParameters the formal parameter declarations
+     * @throws IllegalArgumentException if {@code formalParameters} was {@code null}
      */
     public void setFormalParameters(List<? extends FormalParameterDeclaration> formalParameters) {
         Util.notNull(formalParameters, "formalParameters"); //$NON-NLS-1$
@@ -191,11 +148,9 @@ public final class MethodDeclarationImpl extends ModelRoot implements MethodDecl
     }
 
     /**
-     * 戻り値の次元数を設定する。
-     * @param extraDimensions
-     *     戻り値の次元数
-     * @throws IllegalArgumentException
-     *     {@code extraDimensions}に負の値が指定された場合
+     * Sets the number of extra dimensions of the return type.
+     * @param extraDimensions the number of extra dimensions of the return type
+     * @throws IllegalArgumentException if {@code extraDimensions} was negative value
      */
     public void setExtraDimensions(int extraDimensions) {
         this.extraDimensions = extraDimensions;
@@ -207,12 +162,9 @@ public final class MethodDeclarationImpl extends ModelRoot implements MethodDecl
     }
 
     /**
-     * 例外型宣言の一覧を設定する。
-     * <p> 例外型が一つも宣言されない場合、引数には空を指定する。 </p>
-     * @param exceptionTypes
-     *     例外型宣言の一覧
-     * @throws IllegalArgumentException
-     *     {@code exceptionTypes}に{@code null}が指定された場合
+     * Sets the exception types.
+     * @param exceptionTypes the exception types
+     * @throws IllegalArgumentException if {@code exceptionTypes} was {@code null}
      */
     public void setExceptionTypes(List<? extends Type> exceptionTypes) {
         Util.notNull(exceptionTypes, "exceptionTypes"); //$NON-NLS-1$
@@ -226,18 +178,15 @@ public final class MethodDeclarationImpl extends ModelRoot implements MethodDecl
     }
 
     /**
-     * メソッドまたはコンストラクタ本体を設定する。
-     * <p> このメソッドが本体を提供されない抽象メソッドやインターフェースメソッドである場合、引数には{@code null}を指定する。 </p>
-     * @param body
-     *     メソッドまたはコンストラクタ本体、
-     *     ただしこのメソッドが本体を提供されない抽象メソッドやインターフェースメソッドである場合は{@code null}
+     * Sets the method body.
+     * @param body the method body, or {@code null} if the method does not have a method body
      */
     public void setBody(Block body) {
         this.body = body;
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#METHOD_DECLARATION}を返す。
+     * Returns {@link ModelKind#METHOD_DECLARATION} which represents this element kind.
      * @return {@link ModelKind#METHOD_DECLARATION}
      */
     @Override
@@ -246,8 +195,7 @@ public final class MethodDeclarationImpl extends ModelRoot implements MethodDecl
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitMethodDeclaration(this, context);
     }

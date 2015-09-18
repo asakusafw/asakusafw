@@ -28,7 +28,7 @@ import com.asakusafw.vocabulary.operator.Extract;
 
 
 /**
- * {@link Extract 抽出演算子}を処理する。
+ * Processes {@link Extract} operators.
  */
 @TargetOperator(Extract.class)
 public class ExtractOperatorProcessor extends AbstractOperatorProcessor {
@@ -61,7 +61,7 @@ public class ExtractOperatorProcessor extends AbstractOperatorProcessor {
                 startParameters++;
             }
         }
-        if (startParameters == RESULT_START) { // 結果型がない
+        if (startParameters == RESULT_START) { // missing Result<_>
             a.error(Messages.getString("ExtractOperatorProcessor.errorNotResultOutput")); //$NON-NLS-1$
         }
         for (int i = startParameters, n = a.countParameters(); i < n; i++) {

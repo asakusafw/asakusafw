@@ -22,23 +22,14 @@ import com.asakusafw.utils.java.model.syntax.VariableDeclarator;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link VariableDeclarator}の実装。
+ * An implementation of {@link VariableDeclarator}.
  */
 public final class VariableDeclaratorImpl extends ModelRoot implements VariableDeclarator {
 
-    /**
-     * 変数の名前。
-     */
     private SimpleName name;
 
-    /**
-     * 追加次元数の宣言。
-     */
     private int extraDimensions;
 
-    /**
-     * 初期化式。
-     */
     private Expression initializer;
 
     @Override
@@ -47,11 +38,9 @@ public final class VariableDeclaratorImpl extends ModelRoot implements VariableD
     }
 
     /**
-     * 変数の名前を設定する。
-     * @param name
-     *     変数の名前
-     * @throws IllegalArgumentException
-     *     {@code name}に{@code null}が指定された場合
+     * Sets the variable name.
+     * @param name the variable name
+     * @throws IllegalArgumentException if {@code name} was {@code null}
      */
     public void setName(SimpleName name) {
         Util.notNull(name, "name"); //$NON-NLS-1$
@@ -64,11 +53,9 @@ public final class VariableDeclaratorImpl extends ModelRoot implements VariableD
     }
 
     /**
-     * 追加次元数の宣言を設定する。
-     * @param extraDimensions
-     *     追加次元数の宣言
-     * @throws IllegalArgumentException
-     *     {@code extraDimensions}に負の値が指定された場合
+     * Sets the extra variable dimensions.
+     * @param extraDimensions the extra variable dimensions
+     * @throws IllegalArgumentException if {@code extraDimensions} was negative value
      */
     public void setExtraDimensions(int extraDimensions) {
         this.extraDimensions = extraDimensions;
@@ -80,18 +67,15 @@ public final class VariableDeclaratorImpl extends ModelRoot implements VariableD
     }
 
     /**
-     * 初期化式を設定する。
-     * <p> 初期化式が指定されない場合、引数には{@code null}を指定する。 </p>
-     * @param initializer
-     *     初期化式、
-     *     ただし初期化式が指定されない場合は{@code null}
+     * Sets the variable initializer expression.
+     * @param initializer the variable initializer expression, or {@code null} if it is not specified
      */
     public void setInitializer(Expression initializer) {
         this.initializer = initializer;
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#VARIABLE_DECLARATOR}を返す。
+     * Returns {@link ModelKind#VARIABLE_DECLARATOR} which represents this element kind.
      * @return {@link ModelKind#VARIABLE_DECLARATOR}
      */
     @Override
@@ -100,8 +84,7 @@ public final class VariableDeclaratorImpl extends ModelRoot implements VariableD
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitVariableDeclarator(this, context);
     }

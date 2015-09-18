@@ -17,7 +17,7 @@ package com.asakusafw.utils.java.model.syntax;
 
 
 /**
- * 拡張{@code for}文を表現するインターフェース。
+ * An interface which represents enhanced for statement.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:14.14.2] The enhanced for statement} </li>
@@ -27,26 +27,21 @@ package com.asakusafw.utils.java.model.syntax;
 public interface EnhancedForStatement
         extends Statement {
 
-    // properties
-
     /**
-     * ループ変数を返す。
-     * @return
-     *     ループ変数
+     * Returns the loop variable declaration.
+     * @return the loop variable declaration
      */
     FormalParameterDeclaration getParameter();
 
     /**
-     * ループ対象式を返す。
-     * @return
-     *     ループ対象式
+     * Returns the loop target expression.
+     * @return the loop target expression
      */
     Expression getExpression();
 
     /**
-     * ループ本体を返す。
-     * @return
-     *     ループ本体
+     * Returns the loop body.
+     * @return the loop body
      */
     Statement getBody();
 }

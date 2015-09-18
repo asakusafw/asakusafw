@@ -40,7 +40,7 @@ import com.asakusafw.vocabulary.flow.testing.MockOut;
 public class OperatorClassEmitterTest extends OperatorCompilerTestRoot {
 
     /**
-     * ファクトリの生成。
+     * emits factory class.
      */
     @Test
     public void emitFactory() {
@@ -80,7 +80,7 @@ public class OperatorClassEmitterTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * 注釈クラス名と演算子オブジェクトクラス名が衝突するケース。
+     * conflict between operator and annotation name.
      */
     @Test
     public void emitFactory_annotationNameConflict() {
@@ -89,7 +89,7 @@ public class OperatorClassEmitterTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * 実装の生成 (すでに実装済みのもの)。
+     * emit operator implementation w/o any abstract operator methods.
      */
     @Test
     public void emitConcreteImpl() {
@@ -101,7 +101,7 @@ public class OperatorClassEmitterTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * 実装の生成 (未実装のもの)。
+     * emits operator implementation w some abstract operator methods.
      */
     @Test
     public void emitAbstractImpl() {

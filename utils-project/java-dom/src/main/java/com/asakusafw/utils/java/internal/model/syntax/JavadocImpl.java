@@ -23,13 +23,10 @@ import com.asakusafw.utils.java.model.syntax.ModelKind;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link Javadoc}の実装。
+ * An implementation of {@link Javadoc}.
  */
 public final class JavadocImpl extends ModelRoot implements Javadoc {
 
-    /**
-     * ブロックの一覧。
-     */
     private List<? extends DocBlock> blocks;
 
     @Override
@@ -38,12 +35,9 @@ public final class JavadocImpl extends ModelRoot implements Javadoc {
     }
 
     /**
-     * ブロックの一覧を設定する。
-     * <p> ブロックが一つも指定されない場合、引数には空を指定する。 </p>
-     * @param blocks
-     *     ブロックの一覧
-     * @throws IllegalArgumentException
-     *     {@code blocks}に{@code null}が指定された場合
+     * Sets the documentation blocks.
+     * @param blocks the documentation blocks
+     * @throws IllegalArgumentException if {@code blocks} was {@code null}
      */
     public void setBlocks(List<? extends DocBlock> blocks) {
         Util.notNull(blocks, "blocks"); //$NON-NLS-1$
@@ -52,7 +46,7 @@ public final class JavadocImpl extends ModelRoot implements Javadoc {
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#JAVADOC}を返す。
+     * Returns {@link ModelKind#JAVADOC} which represents this element kind.
      * @return {@link ModelKind#JAVADOC}
      */
     @Override
@@ -61,8 +55,7 @@ public final class JavadocImpl extends ModelRoot implements Javadoc {
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitJavadoc(this, context);
     }

@@ -27,6 +27,7 @@ import org.apache.hadoop.io.WritableUtils;
 
 import com.asakusafw.runtime.io.util.WritableRawComparable;
 
+//TODO i18n
 /**
  * {@code null}値を許容する10進数。
  * @since 0.1.0
@@ -60,7 +61,7 @@ public final class DecimalOption extends ValueOption<DecimalOption> {
      * Creates a new instance which represents {@code null} value.
      */
     public DecimalOption() {
-        super();
+        this.nullValue = true;
     }
 
     /**
@@ -68,7 +69,9 @@ public final class DecimalOption extends ValueOption<DecimalOption> {
      * @param valueOrNull the initial value
      */
     public DecimalOption(BigDecimal valueOrNull) {
-        if (valueOrNull != null) {
+        if (valueOrNull == null) {
+            this.nullValue = true;
+        } else {
             this.entity = valueOrNull;
             this.nullValue = false;
         }
@@ -126,10 +129,10 @@ public final class DecimalOption extends ValueOption<DecimalOption> {
     }
 
     /**
-     * このオブジェクトが表現する値を変更する。
-     * @param newValue 変更後の値、{@code null}を指定した場合はこの値が{@code null}を表すようになる
-     * @return 自身のオブジェクト
-     * @deprecated アプリケーションからは利用しない
+     * Sets the value.
+     * @param newValue the value (nullable)
+     * @return this
+     * @deprecated Application developer should not use this method directly
      */
     @Deprecated
     public DecimalOption modify(BigDecimal newValue) {
@@ -142,12 +145,6 @@ public final class DecimalOption extends ValueOption<DecimalOption> {
         return this;
     }
 
-    /**
-     * このオブジェクトの内容を、指定のオブジェクトの内容で上書きする。
-     * @param optionOrNull 上書きする内容、
-     *     {@code null}の場合はこのオブジェクトが{@code null}値を表すようになる
-     * @deprecated アプリケーションからは利用しない
-     */
     @Override
     @Deprecated
     public void copyFrom(DecimalOption optionOrNull) {
@@ -207,7 +204,6 @@ public final class DecimalOption extends ValueOption<DecimalOption> {
     @Override
     public int compareTo(WritableRawComparable o) {
         DecimalOption other = (DecimalOption) o;
-        // nullは他のどのような値よりも小さい
         if (nullValue | other.nullValue) {
             if (nullValue & other.nullValue) {
                 return 0;
@@ -306,11 +302,11 @@ public final class DecimalOption extends ValueOption<DecimalOption> {
     }
 
     /**
-     * このクラスの直列化された形式から、占有しているバイト長を返す。
-     * @param bytes 対象のバイト配列
-     * @param offset バイト配列の開始位置
-     * @param length バイト配列の制限長
-     * @return 比較結果
+     * Returns the actual number of bytes from the serialized byte array.
+     * @param bytes the target byte array
+     * @param offset the beginning index in the byte array (inclusive)
+     * @param length the limit length of the byte array
+     * @return the comparison result
      */
     public static int getBytesLength(byte[] bytes, int offset, int length) {
         try {
@@ -329,14 +325,14 @@ public final class DecimalOption extends ValueOption<DecimalOption> {
     }
 
     /**
-     * このクラスの2つの直列化された値を比較する。
-     * @param b1 比較されるバイト配列
-     * @param s1 比較されるバイト配列の開始位置
-     * @param l1 比較されるバイト配列内で、このクラスの直列化形式が占有しているバイト長
-     * @param b2 比較するバイト配列
-     * @param s2 比較するバイト配列の開始位置
-     * @param l2 比較するバイト配列内で、このクラスの直列化形式が占有しているバイト長
-     * @return 比較結果
+     * Compares between the two objects in serialized form.
+     * @param b1 the first byte array to be compared
+     * @param s1 the beginning index in {@code b1}
+     * @param l1 the limit byte size in {@code b1}
+     * @param b2 the second byte array to be compared
+     * @param s2 the beginning index in {@code b2}
+     * @param l2 the limit byte size in {@code b2}
+     * @return the comparison result
      */
     public static int compareBytes(
             byte[] b1, int s1, int l1,

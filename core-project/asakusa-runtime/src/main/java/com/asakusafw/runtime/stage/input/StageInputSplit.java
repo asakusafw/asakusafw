@@ -35,10 +35,7 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.util.ReflectionUtils;
 
 /**
- * ステージ入力に対するそれぞれの{@link InputSplit}。
- * <p>
- * 全体の{@code InputFormat, Mapper}に関する設定を無視して、スプリットごとにそれぞれを指定できる。
- * </p>
+ * An implementation of Hadoop {@link InputSplit} for handling multiple Map operations.
  * @since 0.1.0
  * @version 0.2.6
  */
@@ -53,18 +50,18 @@ public class StageInputSplit extends InputSplit implements Writable, Configurabl
     private String[] locations;
 
     /**
-     * {@link Writable}の初期化用にインスタンスを生成する。
+     * Creates a new instance for the serialization framework.
      */
     public StageInputSplit() {
         return;
     }
 
     /**
-     * インスタンスを生成する。
-     * @param original 実際のデータに関する{@link InputSplit}
-     * @param formatClass このスプリットの元になった{@link InputFormat}
-     * @param mapperClass このスプリットを処理する{@link Mapper}
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Creates a new instance.
+     * @param original the actual {@link InputSplit}
+     * @param formatClass the {@link InputFormat} for handling this split
+     * @param mapperClass the {@link Mapper} for handling this split
+     * @throws IllegalArgumentException if some parameters are {@code null}
      * @deprecated Use {@link #StageInputSplit(Class, List)} instead
      */
     @Deprecated
@@ -147,8 +144,8 @@ public class StageInputSplit extends InputSplit implements Writable, Configurabl
     }
 
     /**
-     * 実際のデータに関するスプリットの情報を返す。
-     * @return 実際のデータに関するスプリットの情報
+     * Returns the actual input split.
+     * @return the actual input split
      * @deprecated Use {@link #getSources()} instead.
      */
     @Deprecated
@@ -160,8 +157,8 @@ public class StageInputSplit extends InputSplit implements Writable, Configurabl
     }
 
     /**
-     * このスプリットの元になったフォーマットクラスを返す。
-     * @return このスプリットの元になったフォーマットクラス
+     * Returns the input format for handling this.
+     * @return the input format for handling this
      * @deprecated Use {@link #getSources()} instead.
      */
     @Deprecated
@@ -182,8 +179,8 @@ public class StageInputSplit extends InputSplit implements Writable, Configurabl
     }
 
     /**
-     * このスプリットを処理するMapperクラスを返す。
-     * @return このスプリットを処理するMapperクラス
+     * Returns the mapper class for handling this.
+     * @return the mapper class for handling this
      */
     public Class<? extends Mapper<?, ?, ?, ?>> getMapperClass() {
         return mapperClass;

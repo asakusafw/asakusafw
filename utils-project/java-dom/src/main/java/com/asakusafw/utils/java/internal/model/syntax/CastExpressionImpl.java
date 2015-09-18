@@ -22,18 +22,12 @@ import com.asakusafw.utils.java.model.syntax.Type;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link CastExpression}の実装。
+ * An implementation of {@link CastExpression}.
  */
 public final class CastExpressionImpl extends ModelRoot implements CastExpression {
 
-    /**
-     * キャスト対象の型。
-     */
     private Type type;
 
-    /**
-     * 演算項。
-     */
     private Expression expression;
 
     @Override
@@ -42,11 +36,9 @@ public final class CastExpressionImpl extends ModelRoot implements CastExpressio
     }
 
     /**
-     * キャスト対象の型を設定する。
-     * @param type
-     *     キャスト対象の型
-     * @throws IllegalArgumentException
-     *     {@code type}に{@code null}が指定された場合
+     * Sets the target type.
+     * @param type the target type
+     * @throws IllegalArgumentException if {@code type} was {@code null}
      */
     public void setType(Type type) {
         Util.notNull(type, "type"); //$NON-NLS-1$
@@ -59,11 +51,9 @@ public final class CastExpressionImpl extends ModelRoot implements CastExpressio
     }
 
     /**
-     * 演算項を設定する。
-     * @param expression
-     *     演算項
-     * @throws IllegalArgumentException
-     *     {@code expression}に{@code null}が指定された場合
+     * Sets the target term.
+     * @param expression the target term
+     * @throws IllegalArgumentException if {@code expression} was {@code null}
      */
     public void setExpression(Expression expression) {
         Util.notNull(expression, "expression"); //$NON-NLS-1$
@@ -71,7 +61,7 @@ public final class CastExpressionImpl extends ModelRoot implements CastExpressio
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#CAST_EXPRESSION}を返す。
+     * Returns {@link ModelKind#CAST_EXPRESSION} which represents this element kind.
      * @return {@link ModelKind#CAST_EXPRESSION}
      */
     @Override
@@ -80,8 +70,7 @@ public final class CastExpressionImpl extends ModelRoot implements CastExpressio
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitCastExpression(this, context);
     }

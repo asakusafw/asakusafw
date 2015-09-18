@@ -8,17 +8,17 @@ public enum ExampleEnum {
     UNKNOWN,
 
     /**
-     * 高い。
+     * High.
      */
     HIGH,
 
     /**
-     * 中間。
+     * Middle.
      */
     MIDDLE,
 
     /**
-     * 低い。
+     * Low.
      */
     LOW,
 }

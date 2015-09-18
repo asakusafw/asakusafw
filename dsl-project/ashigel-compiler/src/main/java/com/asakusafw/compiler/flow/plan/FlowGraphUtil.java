@@ -47,18 +47,16 @@ import com.asakusafw.vocabulary.flow.graph.PortConnection;
 import com.asakusafw.vocabulary.flow.util.PseudElementDescription;
 
 /**
- * {@link FlowGraph}に関するユーティリティ。
+ * Utilities about {@link FlowGraph}.
  */
 public final class FlowGraphUtil {
 
     /**
-     * 対象のグラフに含まれ、かついずれかの入力または出力に結線された全ての要素を返す。
-     * <p>
-     * 返される結果には、フローの入出力も含まれる。
-     * </p>
-     * @param graph 対象のグラフ
-     * @return グラフに含まれるすべての要素
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns all transitive connected elements from inputs/outputs.
+     * The returned set will contain inputs/outputs themselves.
+     * @param graph the target graph
+     * @return the all connected elements
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static Set<FlowElement> collectElements(FlowGraph graph) {
         Precondition.checkMustNotBeNull(graph, "graph"); //$NON-NLS-1$
@@ -74,10 +72,12 @@ public final class FlowGraphUtil {
     }
 
     /**
-     * 対象のグラフに含まれる全てのフロー部品を表す要素を返す。
-     * @param graph 対象のグラフ
-     * @return グラフに含まれるすべてのフロー部品
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns all flow-parts in the target graph.
+     * The returned set will only contain the directly appeared flow-parts in the graph, in other words,
+     * the all nested flow-parts will not appear in the set.
+     * @param graph the target graph
+     * @return the flow-parts in the flow graph
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static Set<FlowElement> collectFlowParts(FlowGraph graph) {
         Precondition.checkMustNotBeNull(graph, "graph"); //$NON-NLS-1$
@@ -92,10 +92,12 @@ public final class FlowGraphUtil {
     }
 
     /**
-     * 対象のグラフに含まれる全てのフロー境界を表す要素を返す。
-     * @param graph 対象のグラフ
-     * @return グラフに含まれるすべてのフロー境界
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns the all boundary elements in the target graph.
+     * The returned set will only contain the directly appeared elements in the graph, in other words,
+     * the elements which is appeared in flow-parts will not be appeared in the set.
+     * @param graph the target graph
+     * @return the boundary elements in the flow graph
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static Set<FlowElement> collectBoundaries(FlowGraph graph) {
         Precondition.checkMustNotBeNull(graph, "graph"); //$NON-NLS-1$
@@ -109,10 +111,10 @@ public final class FlowGraphUtil {
     }
 
     /**
-     * 対象のグラフを要素間の結線関係を表す有効グラフに変換して返す。
-     * @param graph 対象のグラフ
-     * @return 要素間の結線関係を表す有効グラフ
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns the element dependency graph of the target flow graph.
+     * @param graph the target graph
+     * @return the dependency graph
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static Graph<FlowElement> toElementGraph(FlowGraph graph) {
         Precondition.checkMustNotBeNull(graph, "graph"); //$NON-NLS-1$
@@ -124,20 +126,15 @@ public final class FlowGraphUtil {
     }
 
     /**
-     * 対象のグラフの内容を複製し、新しいインスタンスとして返す。
-     * <p>
-     * 対象のグラフにネストしたグラフが含まれる場合、それらも再帰的にコピーの対象となる。
-     * </p>
-     * @param graph 複製するグラフ
-     * @return 複製結果のグラフ
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns a deep copy of the target graph.
+     * @param graph the target graph
+     * @return the created copy
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static FlowGraph deepCopy(FlowGraph graph) {
         Precondition.checkMustNotBeNull(graph, "graph"); //$NON-NLS-1$
 
         Map<FlowElement, FlowElement> elemMapping = Maps.create();
-
-        // 入出力のコピー
         List<FlowIn<?>> flowInputs = Lists.create();
         for (FlowIn<?> orig : graph.getFlowInputs()) {
             FlowIn<?> copy = FlowIn.newInstance(orig.getDescription());
@@ -162,15 +159,12 @@ public final class FlowGraphUtil {
     }
 
     /**
-     * 対象のフロー要素一覧のコピーを作成し、対応表に追加する。
-     * <p>
-     * 対象のグラフにネストしたグラフが含まれる場合、それらも再帰的に複製の対象となる。
-     * </p>
-     * @param elements コピーする要素の一覧
-     * @param elementMapping 対応表、すでに対応付けが与えられているものに関してはコピーを新たに作成しない
-     * @param inputMapping 入力の対応表
-     * @param outputMapping 出力の対応表
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a deep copy of the elements and builds its mapping tables.
+     * @param elements the target elements
+     * @param elementMapping the element mapping table to be built
+     * @param inputMapping the input port mapping table to be built
+     * @param outputMapping the output port mapping table to be built
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public static void deepCopy(
             Set<FlowElement> elements,
@@ -179,14 +173,13 @@ public final class FlowGraphUtil {
             Map<FlowElementOutput, FlowElementOutput> outputMapping) {
         Precondition.checkMustNotBeNull(elements, "elements"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(elementMapping, "elementMapping"); //$NON-NLS-1$
-        // 全てのポートをコピー前後で対応付け
+        // builds element mappings
         for (FlowElement orig : elements) {
             FlowElement copy = createMapping(elementMapping, orig);
             addMapping(inputMapping, orig.getInputPorts(), copy.getInputPorts());
             addMapping(outputMapping, orig.getOutputPorts(), copy.getOutputPorts());
         }
-
-        // ポート接続のコピー
+        // restore port connections
         for (Map.Entry<FlowElementInput, FlowElementInput> entry : inputMapping.entrySet()) {
             FlowElementInput origIn = entry.getKey();
             FlowElementInput copyIn = entry.getValue();
@@ -266,10 +259,10 @@ public final class FlowGraphUtil {
     }
 
     /**
-     * 指定の要素が必須の副作用を有する場合のみ{@code true}を返す。
-     * @param element 対象の要素
-     * @return 必須の副作用を有する場合のみ{@code true}
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns whether the element has any mandatory side effects or not.
+     * @param element the target element
+     * @return {@code true} if the element has any mandatory side effects, otherwise {@code false}
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static boolean hasMandatorySideEffect(FlowElement element) {
         Precondition.checkMustNotBeNull(element, "element"); //$NON-NLS-1$
@@ -281,10 +274,10 @@ public final class FlowGraphUtil {
     }
 
     /**
-     * 指定の要素が広域の副作用を有する場合のみ{@code true}を返す。
-     * @param element 対象の要素
-     * @return 広域の副作用を有する場合のみ{@code true}
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns whether the element has any global side effects or not.
+     * @param element the target element
+     * @return {@code true} if the element has any global side effects, otherwise {@code false}
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static boolean hasGlobalSideEffect(FlowElement element) {
         Precondition.checkMustNotBeNull(element, "element"); //$NON-NLS-1$
@@ -296,11 +289,10 @@ public final class FlowGraphUtil {
     }
 
     /**
-     * 指定の要素にひとつ以上の入力が存在し、
-     * かつすべての入力が他のいずれの要素にも結線されていない場合のみ{@code true}を返す。
-     * @param element 対象の要素
-     * @return 常に何も入力されない場合のみ{@code true}
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns whether the element has always empty inputs (and some inputs are connected) or not.
+     * @param element the target element
+     * @return {@code true} if the element always has empty inputs, otherwise {@code false}
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static boolean isAlwaysEmpty(FlowElement element) {
         Precondition.checkMustNotBeNull(element, "element"); //$NON-NLS-1$
@@ -317,11 +309,10 @@ public final class FlowGraphUtil {
     }
 
     /**
-     * 指定の要素にひとつ以上の出力が存在し、
-     * かつすべての出力が他のいずれの要素にも結線されていない場合のみ{@code true}を返す。
-     * @param element 対象の要素
-     * @return 常に何も出力しない場合のみ{@code true}
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns whether the element always has empty outputs (and some outputs are connected) or not.
+     * @param element the target element
+     * @return {@code true} if the element always has empty outputs, otherwise {@code false}
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static boolean isAlwaysStop(FlowElement element) {
         Precondition.checkMustNotBeNull(element, "element"); //$NON-NLS-1$
@@ -338,11 +329,10 @@ public final class FlowGraphUtil {
     }
 
     /**
-     * 指定の要素がフロー境界の属性を持っておらず、
-     * かつ1入力1出力の恒等関数を表現する場合のみ{@code true}を返す。
-     * @param element 対象の要素
-     * @return フロー境界でなく、かつ恒等関数である場合のみ{@code true}
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns whether the element is pseudo-element without any boundaries or not.
+     * @param element the target element
+     * @return {@code true} if the element is pseudo-element without any boundaries, otherwise {@code false}
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static boolean isIdentity(FlowElement element) {
         Precondition.checkMustNotBeNull(element, "element"); //$NON-NLS-1$
@@ -354,14 +344,12 @@ public final class FlowGraphUtil {
     }
 
     /**
-     * 指定の恒等関数を表す要素が、複数の入力や複数の出力を取る場合に、
-     * それら入出力の組合せの個数の恒等関数にする。
-     * <p>
-     * 指定の恒等関数が一つの入力を取り、かつ一つの出力を取る場合には何も行わない。
-     * </p>
-     * @param element 対象の要素
-     * @return 実際に分割した場合のみ{@code true}
-     * @throws IllegalArgumentException 引数に恒等関数を取らない場合、または引数に{@code null}が指定された場合
+     * Splits the target pseudo-element only if its inputs or outputs are connected to two or more elements.
+     * Each split element will also be a pseudo-element and have at most one opposite.
+     * If the target pseudo-element already has one upstream and downstream opposites, this does not nothing.
+     * @param element the target element
+     * @return {@code true} if this method was actually performed, otherwise {@code false}
+     * @throws IllegalArgumentException if the parameter is not a pseudo-element
      */
     public static boolean splitIdentity(FlowElement element) {
         Precondition.checkMustNotBeNull(element, "element"); //$NON-NLS-1$
@@ -390,9 +378,9 @@ public final class FlowGraphUtil {
     }
 
     /**
-     * 指定のポートに停止演算子を接続する。
-     * @param output 停止演算子を接続するポート
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Attaches a stop operator into the target port.
+     * @param output the target port
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static void stop(FlowElementOutput output) {
         Precondition.checkMustNotBeNull(output, "output"); //$NON-NLS-1$
@@ -408,10 +396,10 @@ public final class FlowGraphUtil {
     }
 
     /**
-     * 指定の要素のすべての入力された内容を、後続する要素の入力に接続しなおしたのち、
-     * この要素を削除する。
-     * @param element 対象の要素
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Reconnects the upstream outputs of the target element into the downstream inputs of the element.
+     * Finally the target element will have no opposites.
+     * @param element the target element
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static void skip(FlowElement element) {
         Precondition.checkMustNotBeNull(element, "element"); //$NON-NLS-1$
@@ -431,10 +419,10 @@ public final class FlowGraphUtil {
     }
 
     /**
-     * 指定の要素がフロー境界要素を表現する場合のみ{@code true}を返す。
-     * @param element 対象の要素
-     * @return フロー境界要素を表現する場合のみ{@code true}
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns whether the target element is a boundary element or not.
+     * @param element the target element
+     * @return {@code true} if the target element is a boundary element, otherwise {@code false}
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static boolean isBoundary(FlowElement element) {
         Precondition.checkMustNotBeNull(element, "element"); //$NON-NLS-1$
@@ -442,10 +430,10 @@ public final class FlowGraphUtil {
     }
 
     /**
-     * 対象の要素がシャッフル境界要素を表現する場合のみ{@code true}を返す。
-     * @param element 対象の要素
-     * @return シャッフル境界要素を表現する場合のみ{@code true}
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns whether the target element is a shuffle boundary or not.
+     * @param element the target element
+     * @return {@code true} if the target element is a shuffle boundary, otherwise {@code false}
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static boolean isShuffleBoundary(FlowElement element) {
         Precondition.checkMustNotBeNull(element, "element"); //$NON-NLS-1$
@@ -453,10 +441,10 @@ public final class FlowGraphUtil {
     }
 
     /**
-     * 対象の要素がステージ境界要素を表現する場合のみ{@code true}を返す。
-     * @param element 対象の要素
-     * @return ステージ境界要素を表現する場合のみ{@code true}
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns whether the target element is a stage boundary or not.
+     * @param element the target element
+     * @return {@code true} if the target element is a stage boundary, otherwise {@code false}
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static boolean isStageBoundary(FlowElement element) {
         Precondition.checkMustNotBeNull(element, "element"); //$NON-NLS-1$
@@ -464,10 +452,10 @@ public final class FlowGraphUtil {
     }
 
     /**
-     * 対象の要素がステージ境界の疑似要素を表現する場合のみ{@code true}を返す。
-     * @param element 対象の要素
-     * @return ステージ境界の疑似要素を表現する場合のみ{@code true}
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns whether the target element is a stage boundary and pseudo-element or not.
+     * @param element the target element
+     * @return {@code true} if the target element is a stage boundary and pseudo-element, otherwise {@code false}
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static boolean isStagePadding(FlowElement element) {
         Precondition.checkMustNotBeNull(element, "element"); //$NON-NLS-1$
@@ -475,10 +463,10 @@ public final class FlowGraphUtil {
     }
 
     /**
-     * 指定の要素から、直接後続する全ての境界までのパスを作成して返す。
-     * @param element 対象の要素
-     * @return フロー順方向のパス
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns a forward path from the target element.
+     * @param element the target element
+     * @return the forward path
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static FlowPath getSucceedBoundaryPath(FlowElement element) {
         Precondition.checkMustNotBeNull(element, "element"); //$NON-NLS-1$
@@ -519,10 +507,10 @@ public final class FlowGraphUtil {
     }
 
     /**
-     * 指定の要素から、直接先行する全ての境界までのパスを作成して返す。
-     * @param element 対象の要素
-     * @return フロー逆方向のパス
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns a backward path from the target element.
+     * @param element the target element
+     * @return the created path
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static FlowPath getPredeceaseBoundaryPath(FlowElement element) {
         Precondition.checkMustNotBeNull(element, "element"); //$NON-NLS-1$
@@ -564,10 +552,10 @@ public final class FlowGraphUtil {
     }
 
     /**
-     * 指定のパス一覧をすべて含むパスを返す。
-     * @param paths 対象のパス一覧
-     * @return すべて含むパス
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns a union of the paths.
+     * @param paths the target paths
+     * @return the union
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static FlowPath union(Collection<FlowPath> paths) {
         Precondition.checkMustNotBeNull(paths, "paths"); //$NON-NLS-1$
@@ -586,10 +574,10 @@ public final class FlowGraphUtil {
     }
 
     /**
-     * 指定の要素が後続する要素を持つ場合のみ{@code true}を返す。
-     * @param element 対象の要素
-     * @return 後続する要素を持つ場合のみ{@code true}
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns whether the element has any successors or not.
+     * @param element the target element
+     * @return {@code true} if the element has any successors, otherwise {@code false}
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static boolean hasSuccessors(FlowElement element) {
         Precondition.checkMustNotBeNull(element, "element"); //$NON-NLS-1$
@@ -602,10 +590,10 @@ public final class FlowGraphUtil {
     }
 
     /**
-     * 指定の要素が先行する要素を持つ場合のみ{@code true}を返す。
-     * @param element 対象の要素
-     * @return 先行する要素を持つ場合のみ{@code true}
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns whether the element has any predecessors or not.
+     * @param element the target element
+     * @return {@code true} if the element has any predecessors, otherwise {@code false}
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static boolean hasPredecessors(FlowElement element) {
         Precondition.checkMustNotBeNull(element, "element"); //$NON-NLS-1$
@@ -618,10 +606,10 @@ public final class FlowGraphUtil {
     }
 
     /**
-     * 指定の要素に直接後続する全ての要素を返す。
-     * @param element 対象の要素
-     * @return 直接後続する全ての要素
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns the all direct successors of the element.
+     * @param element the target element
+     * @return the all direct successors
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static Set<FlowElement> getSuccessors(FlowElement element) {
         Precondition.checkMustNotBeNull(element, "element"); //$NON-NLS-1$
@@ -643,10 +631,10 @@ public final class FlowGraphUtil {
     }
 
     /**
-     * 指定の要素に直接先行する全ての要素を返す。
-     * @param element 対象の要素
-     * @return 直接先行する全ての要素
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns the all direct predecessors of the element.
+     * @param element the target element
+     * @return the all direct predecessors
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static Set<FlowElement> getPredecessors(FlowElement element) {
         Precondition.checkMustNotBeNull(element, "element"); //$NON-NLS-1$
@@ -668,13 +656,12 @@ public final class FlowGraphUtil {
     }
 
     /**
-     * 指定の出力に直接後続するすべてのフロー境界要素を返す。
-     * @param output 対象の出力
-     * @return 直接後続するすべてのフロー境界要素
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns the forward nearest boundary elements of the target output port.
+     * @param output the target output port
+     * @return the forward nearest boundary elements
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
-    public static Set<FlowElement> getSucceedingBoundaries(
-            FlowElementOutput output) {
+    public static Set<FlowElement> getSucceedingBoundaries(FlowElementOutput output) {
         Precondition.checkMustNotBeNull(output, "output"); //$NON-NLS-1$
         LinkedList<FlowElement> nextSuccessors = new LinkedList<FlowElement>();
         for (FlowElementInput next : output.getOpposites()) {
@@ -703,11 +690,11 @@ public final class FlowGraphUtil {
     }
 
     /**
-     * 指定の入力またはそれらに後続する入力のうち、引数に指定した入力の集合にもっとも近いものの一覧を返す。
-     * @param start 開始する入力
-     * @param connections 後続する接続の一覧
-     * @return 後続する接続に最も近いものの一覧
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns the forward nearest connections the target connection.
+     * @param start the target connection
+     * @param connections the succeeding connections
+     * @return the nearest connections for the succeeding them
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public static Set<PortConnection> getSucceedingConnections(
             PortConnection start,
@@ -732,10 +719,10 @@ public final class FlowGraphUtil {
     }
 
     /**
-     * 指定のフロー要素をインライン化する。
-     * @param element 対象の要素
-     * @param attributes インライン化する際のバイパス要素に付与する属性
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Flattens the target flow-part.
+     * @param element the target element
+     * @param attributes the attributes for the padding elements
+     * @throws IllegalArgumentException if the element is not a flow-part, or the parameters are {@code null}
      */
     public static void inlineFlowPart(FlowElement element, FlowElementAttribute... attributes) {
         Precondition.checkMustNotBeNull(element, "element"); //$NON-NLS-1$
@@ -747,7 +734,7 @@ public final class FlowGraphUtil {
         FlowPartDescription component = (FlowPartDescription) description;
         FlowGraph graph = component.getFlowGraph();
 
-        // フロー部品の外側からの入力と、フロー部品の内部の入力を結線する
+        // connects between out-side and in-side inputs.
         List<FlowElementInput> externalInputs = element.getInputPorts();
         List<FlowElementOutput> internalInputs = Lists.create();
         for (FlowIn<?> fin : graph.getFlowInputs()) {
@@ -755,7 +742,7 @@ public final class FlowGraphUtil {
         }
         bypass(externalInputs, internalInputs, attributes);
 
-        // フロー部品の内側からの出力と、フロー部品の外側への出力を結線する
+        // connects between out-side and in-side outputs.
         List<FlowElementOutput> externalOutputs = element.getOutputPorts();
         List<FlowElementInput> internalOutputs = Lists.create();
         for (FlowOut<?> fout : graph.getFlowOutputs()) {
@@ -763,15 +750,13 @@ public final class FlowGraphUtil {
         }
         bypass(internalOutputs, externalOutputs, attributes);
 
-        // 不要な結線を解除
+        // make the flow-part orphaned
         for (FlowIn<?> fin : graph.getFlowInputs()) {
             disconnect(fin.getFlowElement());
         }
         for (FlowOut<?> fout : graph.getFlowOutputs()) {
             disconnect(fout.getFlowElement());
         }
-
-        // インライン化したフロー部品を除去
         disconnect(element);
     }
 
@@ -842,9 +827,9 @@ public final class FlowGraphUtil {
     }
 
     /**
-     * この要素に関連するすべての結線を解除する。
-     * @param element 対象の要素
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Disconnects all connections of the element.
+     * @param element the target element
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static void disconnect(FlowElement element) {
         Precondition.checkMustNotBeNull(element, "element"); //$NON-NLS-1$
@@ -857,13 +842,9 @@ public final class FlowGraphUtil {
     }
 
     /**
-     * 指定の出力の直後にチェックポイント演算子を挿入する。
-     * <p>
-     * 現在指定の出力に接続されているすべての入力は、このメソッドの起動後に
-     * 挿入した演算子の出力に接続されなおす。
-     * </p>
-     * @param output 対象の出力
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Inserts a checkpoint operator after the target output port.
+     * @param output the target output port
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static void insertCheckpoint(FlowElementOutput output) {
         Precondition.checkMustNotBeNull(output, "output"); //$NON-NLS-1$
@@ -871,13 +852,9 @@ public final class FlowGraphUtil {
     }
 
     /**
-     * 指定の出力の直後に恒等演算子を挿入する。
-     * <p>
-     * 現在指定の出力に接続されているすべての入力は、このメソッドの起動後に
-     * 挿入したト演算子の出力に接続されなおす。
-     * </p>
-     * @param output 対象の出力
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Inserts an  identity operator after the target output port.
+     * @param output the target output port
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static void insertIdentity(FlowElementOutput output) {
         Precondition.checkMustNotBeNull(output, "output"); //$NON-NLS-1$

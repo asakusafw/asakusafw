@@ -18,7 +18,7 @@ package com.asakusafw.utils.java.model.syntax;
 import java.util.List;
 
 /**
- * 型の宣言を表現する基底インターフェース。
+ * An abstract super interface of type declarations.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:7.6] Top Level Type Declarations} </li>
@@ -29,21 +29,17 @@ import java.util.List;
 public interface TypeDeclaration
         extends TypeBodyDeclaration, TypedElement {
 
-    // properties
-
     /**
-     * 型の単純名を返す。
-     * @return
-     *     型の単純名
+     * Returns the simple type name.
+     * @return the simple type name
      */
     SimpleName getName();
 
     /**
-     * メンバの一覧を返す。
-     * <p> メンバが一つも宣言されない場合は空が返される。 </p>
-     * <p> この型が列挙型である場合、列挙定数は返されるリストに含まれない </p>
-     * @return
-     *     メンバの一覧
+     * Returns type member declarations.
+     * If this represents an enum type declaration,
+     * the enum constant declarations will not be in the member declarations.
+     * @return type member declarations
      */
     List<? extends TypeBodyDeclaration> getBodyDeclarations();
 }

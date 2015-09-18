@@ -23,9 +23,8 @@ import com.asakusafw.compiler.operator.OperatorMethodDescriptor;
 import com.asakusafw.compiler.operator.OperatorMethodDescriptor.Builder;
 import com.asakusafw.vocabulary.operator.Convert;
 
-
 /**
- * {@link Convert 変換演算子}を処理する。
+ * Processes {@link Convert} operators.
  */
 @TargetOperator(Convert.class)
 public class ConvertOperatorProcessor extends AbstractOperatorProcessor {

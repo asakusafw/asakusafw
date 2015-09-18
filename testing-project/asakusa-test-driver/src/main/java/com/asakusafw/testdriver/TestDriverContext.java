@@ -48,7 +48,7 @@ import com.asakusafw.testdriver.core.TestingEnvironmentConfigurator;
 import com.asakusafw.utils.collections.Maps;
 
 /**
- * テスト実行時のコンテキスト情報を管理する。
+ * Represents contextual information for test drivers.
  * @since 0.2.0
  * @version 0.6.1
  */

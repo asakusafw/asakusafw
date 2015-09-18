@@ -15,6 +15,7 @@
  */
 package com.asakusafw.vocabulary.flow;
 
+//TODO i18n
 /**
  * フローへの入力を表すインターフェース。
  * @param <T> 入力するデータの種類

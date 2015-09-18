@@ -15,42 +15,40 @@
  */
 package com.asakusafw.testdriver.excel.legacy;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * カラムの値がNULLだったときの扱いを表す列挙型。
+ * Kind of nullity predicate represented in each cell.
  */
 public enum NullValueCondition {
 
     /**
-     * 通常比較。
+     * Accepts like that {@code null} is a regular value.
      */
     NORMAL("通常比較"),
 
     /**
-     * 常にOK。
+     * Accepts if actual value is {@code null}.
      */
     NULL_IS_OK("常にOK"),
 
     /**
-     * 常にNG。
+     * Denies if actual value is {@code null}.
      */
     NULL_IS_NG("常にNG"),
 
     /**
-     * NULLでなければ常にOK。
+     * Accepts if actual value is not {@code null}.
      */
     NOT_NULL_IS_OK("NULLでなければ常にOK"),
 
     /**
-     * NULLでなければ常にNG。
+     * Denies if actual value is not {@code null}.
      */
     NOT_NULL_IS_NG("NULLでなければ常にNG");
 
-    /**
-     * 日本語名。
-     */
     private String japaneseName;
 
     private NullValueCondition(String japaneseName) {
@@ -58,39 +56,38 @@ public enum NullValueCondition {
     }
 
     /**
-     * 日本語名を取得します。
-     * @return 日本語名
+     * Returns the Japanese name of this item.
+     * @return the Japanese name
      */
     public String getJapaneseName() {
         return japaneseName;
     }
 
-    /**
-     * 日本語名と条件のマップ。
-     */
     private static Map<String, NullValueCondition> japaneseNameMap = new HashMap<String, NullValueCondition>();
     static {
         for (NullValueCondition conditon : NullValueCondition.values()) {
             String key = conditon.getJapaneseName();
             if (japaneseNameMap.containsKey(key)) {
-                throw new RuntimeException("日本語名に重複があります");
+                throw new RuntimeException(MessageFormat.format(
+                        "duplicate Japanese name: {0}", //$NON-NLS-1$
+                        key));
             }
             japaneseNameMap.put(key, conditon);
         }
     }
 
     /**
-     * 日本語名から条件を返す。
-     * @param key 日本語名
-     * @return 条件
+     * Returns an item about the {@link #getJapaneseName() Japanese name}.
+     * @param key the Japanese name
+     * @return the related item, or {@code null} if there is no such the item
      */
     public static NullValueCondition getConditonByJapanseName(String key) {
         return japaneseNameMap.get(key);
     }
 
     /**
-     * 日本語名の配列を返す。
-     * @return 日本語名の配列
+     * Returns the available Japanese names.
+     * @return the available Japanese names
      */
     public static String[] getJapaneseNames() {
         NullValueCondition[] values = NullValueCondition.values();

@@ -20,37 +20,37 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 単項演算子。
+ * Represents unary operators.
  */
 public enum UnaryOperator {
 
     /**
-     * 単項プラス。
+     * Unary plus.
      */
-    PLUS("+", Category.SIGN), //$NON-NLS-1$
+    PLUS("+", Category.ARITHMETIC), //$NON-NLS-1$
 
     /**
-     * 単項マイナス。
+     * Unary minus.
      */
-    MINUS("-", Category.SIGN), //$NON-NLS-1$
+    MINUS("-", Category.ARITHMETIC), //$NON-NLS-1$
 
     /**
-     * 単項ビット反転。
+     * Bit complement.
      */
     COMPLEMENT("~", Category.BITWISE), //$NON-NLS-1$
 
     /**
-     * 単項論理反転。
+     * Logical not.
      */
     NOT("!", Category.LOGICAL), //$NON-NLS-1$
 
     /**
-     * 前置インクリメント。
+     * Prefix increment.
      */
     INCREMENT("++", Category.INCREMENT_DECREMENT), //$NON-NLS-1$
 
     /**
-     * 前置デクリメント。
+     * Prefix decrement.
      */
     DECREMENT("--", Category.INCREMENT_DECREMENT), //$NON-NLS-1$
 
@@ -61,9 +61,9 @@ public enum UnaryOperator {
     private final Category category;
 
     /**
-     * インスタンスを生成する。
-     * @param symbol シンボル
-     * @param category 演算子のカテゴリ
+     * Creates a new instance.
+     * @param symbol the operator symbol
+     * @param category the operator category
      */
     private UnaryOperator(String symbol, Category category) {
         assert symbol != null;
@@ -73,26 +73,26 @@ public enum UnaryOperator {
     }
 
     /**
-     * この演算子のシンボルを返す。
-     * @return この演算子のシンボル
+     * Returns the operator symbol.
+     * @return the operator symbol
      */
     public String getSymbol() {
         return this.symbol;
     }
 
     /**
-     * この演算子のカテゴリを返す。
-     * @return この演算子のカテゴリ
+     * Returns the operator category.
+     * @return the operator category
      */
     public Category getCategory() {
         return category;
     }
 
     /**
-     * 指定のシンボルに対応するこの列挙の定数を返す。
-     * @param symbol 対象のシンボル
-     * @return 対応する定数、存在しない場合は{@code null}
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns an operator from its symbol.
+     * @param symbol the target operator symbol
+     * @return the corresponded operator, or {@code null} if there is no such the operator
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static UnaryOperator fromSymbol(String symbol) {
         if (symbol == null) {
@@ -102,27 +102,27 @@ public enum UnaryOperator {
     }
 
     /**
-     * 演算子のカテゴリ。
+     * Represents an operator kind.
      */
     public enum Category {
 
         /**
-         * 前置インクリメント/デクリメント。
+         * Prefix increment/decrement.
          */
         INCREMENT_DECREMENT,
 
         /**
-         * 符号演算。
+         * Arithmetic operations.
          */
-        SIGN,
+        ARITHMETIC,
 
         /**
-         * ビット演算。
+         * Bitwise operations.
          */
         BITWISE,
 
         /**
-         * 論理演算。
+         * Logical operations.
          */
         LOGICAL,
     }

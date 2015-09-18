@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 /**
- * Join最適化に関するクラス群。
- * <p>
- * アプリケーション作成者はこのパッケージ内のクラスやインターフェースを直接利用しない。
- * </p>
+ * Classes for join algorithm.
+ * Application developers should not use classes in this package directly.
  */
 package com.asakusafw.runtime.flow.join;

@@ -17,10 +17,8 @@ package com.asakusafw.utils.java.model.syntax;
 
 import java.util.List;
 
-
 /**
- * 名前を表現する基底インターフェース。
- * <p> フィールド参照式が名前のみによって表現可能な場合、名前式を利用しなければならない。 </p>
+ * An abstract super interface of names.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:6.2] Names and Identifiers} </li>
@@ -33,26 +31,21 @@ public interface Name
         extends Expression, DocElement {
 
     /**
-     * この名前の末尾の単純名を返す。
-     * <p>
-     * この名前が単純名である場合は、名前そのものが返される。
-     * </p>
-     * @return この名前の末尾の単純名
+     * Returns the simple name of this name.
+     * If this already represents a simple name, this returns the name itself.
+     * @return the simple name
      */
     SimpleName getLastSegment();
 
     /**
-     * この名前を単純名のリストに変換して返す。
-     * <p>
-     * 返されるリストは、表記と同様の順序に整列される。
-     * </p>
-     * @return 変換後の名前
+     * Returns a simple name list of this name.
+     * @return a simple name list of this name
      */
     List<SimpleName> toNameList();
 
     /**
-     * この名前に対する正規化された文字列を返す。
-     * @return 名前に対する正規化された文字列
+     * Returns the string representation of this name.
+     * @return the string representation of this name
      */
     String toNameString();
 }

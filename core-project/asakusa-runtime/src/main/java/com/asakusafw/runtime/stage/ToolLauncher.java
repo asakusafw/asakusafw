@@ -18,36 +18,38 @@ package com.asakusafw.runtime.stage;
 import com.asakusafw.runtime.stage.launcher.ApplicationLauncher;
 
 /**
- * ツールを起動するプログラムエントリ。
+ * A program entry for launching Asakusa tools.
  * @since 0.1.0
  * @version 0.7.0
+ * @see ApplicationLauncher
  */
 public final class ToolLauncher {
 
     /**
-     * 処理の成功が確定したことを表す結果。
+     * The exit status value for successful jobs.
      */
     public static final int JOB_SUCCEEDED = 0;
 
     /**
-     * 処理の失敗が確定したことを表す結果。
+     * The exit status value for failed jobs.
      */
     public static final int JOB_FAILED = 1;
 
     /**
-     * 起動自体に失敗したことを表す結果。
+     * The exit status value for launching errors.
      */
     public static final int LAUNCH_ERROR = -2;
 
     /**
-     * クライアントがエラーを返したことを表す結果。
+     * The exit status value for client errors.
      */
     public static final int CLIENT_ERROR = -1;
 
     /**
-     * プログラムを実行する。
+     *
+     * Launches the tool.
      * @param args {@code Tool-class-name [optional-arguments]}
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static void main(String...args) {
         if (args == null) {

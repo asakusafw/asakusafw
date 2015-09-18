@@ -1,40 +1,19 @@
-/**
- * Copyright 2011-2015 Asakusa Framework Team.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.asakusafw.compiler.flow.testing.model;
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
-
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.io.Writable;
-
-import com.asakusafw.compiler.flow.testing.io.Ex1Input;
-import com.asakusafw.compiler.flow.testing.io.Ex1Output;
 import com.asakusafw.runtime.model.DataModel;
 import com.asakusafw.runtime.model.DataModelKind;
-import com.asakusafw.runtime.model.ModelInputLocation;
-import com.asakusafw.runtime.model.ModelOutputLocation;
+import com.asakusafw.runtime.model.PropertyOrder;
 import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.runtime.value.LongOption;
 import com.asakusafw.runtime.value.StringOption;
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.Writable;
 /**
- * ex1を表すデータモデルクラス。
+ * A data model class that represents ex1.
  */
-@DataModelKind("DMDL")@ModelInputLocation(Ex1Input.class)@ModelOutputLocation(Ex1Output.class) public class Ex1 
-        implements DataModel<Ex1>, Writable {
+@DataModelKind("DMDL")@PropertyOrder({"sid", "value", "string"}) public class Ex1 implements DataModel<Ex1>, Writable {
     private final LongOption sid = new LongOption();
     private final IntOption value = new IntOption();
     private final StringOption string = new StringOption();
@@ -49,88 +28,88 @@ import com.asakusafw.runtime.value.StringOption;
         this.string.copyFrom(other.string);
     }
     /**
-     * sidを返す。
+     * Returns sid.
      * @return sid
-     * @throws NullPointerException sidの値が<code>null</code>である場合
+     * @throws NullPointerException if sid is <code>null</code>
      */
     public long getSid() {
         return this.sid.get();
     }
     /**
-     * sidを設定する。
-     * @param value0 設定する値
+     * Sets sid.
+     * @param value0 the value
      */
     @SuppressWarnings("deprecation") public void setSid(long value0) {
         this.sid.modify(value0);
     }
     /**
-     * <code>null</code>を許すsidを返す。
+     * Returns sid which may be represent <code>null</code>.
      * @return sid
      */
     public LongOption getSidOption() {
         return this.sid;
     }
     /**
-     * sidを設定する。
-     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     * Sets sid.
+     * @param option the value, or <code>null</code> to set this property to <code>null</code>
      */
     @SuppressWarnings("deprecation") public void setSidOption(LongOption option) {
         this.sid.copyFrom(option);
     }
     /**
-     * valueを返す。
+     * Returns value.
      * @return value
-     * @throws NullPointerException valueの値が<code>null</code>である場合
+     * @throws NullPointerException if value is <code>null</code>
      */
     public int getValue() {
         return this.value.get();
     }
     /**
-     * valueを設定する。
-     * @param value0 設定する値
+     * Sets value.
+     * @param value0 the value
      */
     @SuppressWarnings("deprecation") public void setValue(int value0) {
         this.value.modify(value0);
     }
     /**
-     * <code>null</code>を許すvalueを返す。
+     * Returns value which may be represent <code>null</code>.
      * @return value
      */
     public IntOption getValueOption() {
         return this.value;
     }
     /**
-     * valueを設定する。
-     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     * Sets value.
+     * @param option the value, or <code>null</code> to set this property to <code>null</code>
      */
     @SuppressWarnings("deprecation") public void setValueOption(IntOption option) {
         this.value.copyFrom(option);
     }
     /**
-     * stringを返す。
+     * Returns string.
      * @return string
-     * @throws NullPointerException stringの値が<code>null</code>である場合
+     * @throws NullPointerException if string is <code>null</code>
      */
     public Text getString() {
         return this.string.get();
     }
     /**
-     * stringを設定する。
-     * @param value0 設定する値
+     * Sets string.
+     * @param value0 the value
      */
     @SuppressWarnings("deprecation") public void setString(Text value0) {
         this.string.modify(value0);
     }
     /**
-     * <code>null</code>を許すstringを返す。
+     * Returns string which may be represent <code>null</code>.
      * @return string
      */
     public StringOption getStringOption() {
         return this.string;
     }
     /**
-     * stringを設定する。
-     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     * Sets string.
+     * @param option the value, or <code>null</code> to set this property to <code>null</code>
      */
     @SuppressWarnings("deprecation") public void setStringOption(StringOption option) {
         this.string.copyFrom(option);
@@ -163,32 +142,32 @@ import com.asakusafw.runtime.value.StringOption;
         if(obj == null) {
             return false;
         }
-        if(this.getClass()!= obj.getClass()) {
+        if(this.getClass() != obj.getClass()) {
             return false;
         }
         Ex1 other = (Ex1) obj;
-        if(this.sid.equals(other.sid)== false) {
+        if(this.sid.equals(other.sid) == false) {
             return false;
         }
-        if(this.value.equals(other.value)== false) {
+        if(this.value.equals(other.value) == false) {
             return false;
         }
-        if(this.string.equals(other.string)== false) {
+        if(this.string.equals(other.string) == false) {
             return false;
         }
         return true;
     }
     /**
-     * stringを返す。
+     * Returns string.
      * @return string
-     * @throws NullPointerException stringの値が<code>null</code>である場合
+     * @throws NullPointerException if string is <code>null</code>
      */
     public String getStringAsString() {
         return this.string.getAsString();
     }
     /**
-     * stringを設定する。
-     * @param string0 設定する値
+     * Returns string.
+     * @param string0 the value
      */
     @SuppressWarnings("deprecation") public void setStringAsString(String string0) {
         this.string.modify(string0);

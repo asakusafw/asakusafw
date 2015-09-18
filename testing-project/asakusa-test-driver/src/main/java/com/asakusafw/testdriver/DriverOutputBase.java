@@ -38,10 +38,10 @@ import com.asakusafw.testdriver.core.VerifierFactory;
 import com.asakusafw.testdriver.core.VerifyRuleFactory;
 
 /**
- * テストドライバのテスト出力データの親クラス。
+ * An abstract super class of test driver outputs.
  * @since 0.2.0
  * @version 0.7.0
- * @param <T> モデルクラス
+ * @param <T> the data model type
  */
 public class DriverOutputBase<T> extends DriverInputBase<T> {
 

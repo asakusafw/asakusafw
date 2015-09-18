@@ -15,89 +15,91 @@
  */
 package com.asakusafw.vocabulary.model;
 
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 /**
- * プロパティの情報。
+ * An annotation that represents data model properties.
+ * @deprecated replaced into {@link Joined} and {@link Summarized} since 0.2.0
  */
+@Deprecated
+@Target({ ElementType.FIELD, ElementType.METHOD })
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
 public @interface Property {
 
     /**
-     * このプロパティの元になった名前。
-     * <p>
-     * 存在しない場合、空の文字列が指定される。
-     * </p>
+     * The original name of the target property.
+     * If the target property has no original one, this returns an empty string.
      */
     String name() default "";
 
     /**
-     * このプロパティの元になったプロパティの情報({@code FROM ...})。
-     * <p>
-     * 存在しない場合、
-     * {@link Source#declaring()}の値に{@code void.class}が指定される。
-     * </p>
+     * The source property information ({@code FROM ...}).
+     * If it is not defined, {@link Source#declaring()} will become {@code void.class}.
      */
     Source from() default @Source(declaring = void.class, name = "");
 
     /**
-     * このプロパティの元になったプロパティの情報({@code JOIN ...})。
-     * <p>
-     * 存在しない場合、
-     * {@link Property.Source#declaring()}の値に{@code void.class}が指定される。
-     * </p>
+     * The source property information ({@code JOIN ...}).
+     * If it is not defined, {@link Source#declaring()} will become {@code void.class}.
      */
     Source join() default @Source(declaring = void.class, name = "");
 
     /**
-     * このプロパティに適用されるべき集約関数。
+     * The aggregate function type should be applied into this property.
      * <p>
-     * 存在しない場合、
-     * {@link Property.Aggregator#IDENT}が指定される。
+     * If it is not defined, this returns {@link Property.Aggregator#IDENT}.
      * </p>
      */
     Aggregator aggregator() default Aggregator.IDENT;
 
     /**
-     * 元になったプロパティの情報。
+     * The source property information.
      */
     public @interface Source {
 
         /**
-         * 元のプロパティを宣言するクラス。
+         * The class that declares the target property.
          */
         Class<?> declaring();
 
         /**
-         * 元のプロパティの名前。
+         * The name of the target property.
          */
         String name();
     }
 
     /**
-     * 集約関数。
+     * Represents aggregate functions.
      */
     public enum Aggregator {
 
         /**
-         * 集約なし。
+         * Do not aggregate.
          */
         IDENT,
 
         /**
-         * 合計。
+         * Summation.
          */
         SUM,
 
         /**
-         * カウント。
+         * Count.
          */
         COUNT,
 
         /**
-         * 最大値。
+         * Maximum.
          */
         MAX,
 
         /**
-         * 最小値。
+         * Minimum.
          */
         MIN,
         ;

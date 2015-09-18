@@ -25,7 +25,7 @@ import java.util.List;
 import com.asakusafw.vocabulary.flow.processor.InputBuffer;
 import com.asakusafw.vocabulary.model.Key;
 
-
+//TODO i18n
 /**
  * グループ結合演算子を表すメソッドに付与する注釈。
  * <p>
@@ -126,8 +126,7 @@ public @interface CoGroup {
     /**
      * 演算子の入力バッファの性質を指定する。
      * <p>
-     * デフォルトではヒープ上に高速な入力バッファを構築し、
-     * 巨大なグループに対しての処理は行えない。
+     * デフォルトではヒープ上に高速な入力バッファを構築し、巨大なグループに対しての処理は行えない。
      * </p>
      * @since 0.2.0
      * @see InputBuffer

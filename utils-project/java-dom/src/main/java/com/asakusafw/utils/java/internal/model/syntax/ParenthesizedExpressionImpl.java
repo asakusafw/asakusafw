@@ -21,13 +21,10 @@ import com.asakusafw.utils.java.model.syntax.ParenthesizedExpression;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link ParenthesizedExpression}の実装。
+ * An implementation of {@link ParenthesizedExpression}.
  */
 public final class ParenthesizedExpressionImpl extends ModelRoot implements ParenthesizedExpression {
 
-    /**
-     * 内包する式。
-     */
     private Expression expression;
 
     @Override
@@ -36,11 +33,9 @@ public final class ParenthesizedExpressionImpl extends ModelRoot implements Pare
     }
 
     /**
-     * 内包する式を設定する。
-     * @param expression
-     *     内包する式
-     * @throws IllegalArgumentException
-     *     {@code expression}に{@code null}が指定された場合
+     * Sets the element expression.
+     * @param expression the element expression
+     * @throws IllegalArgumentException if {@code expression} was {@code null}
      */
     public void setExpression(Expression expression) {
         Util.notNull(expression, "expression"); //$NON-NLS-1$
@@ -48,7 +43,7 @@ public final class ParenthesizedExpressionImpl extends ModelRoot implements Pare
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#PARENTHESIZED_EXPRESSION}を返す。
+     * Returns {@link ModelKind#PARENTHESIZED_EXPRESSION} which represents this element kind.
      * @return {@link ModelKind#PARENTHESIZED_EXPRESSION}
      */
     @Override
@@ -57,8 +52,7 @@ public final class ParenthesizedExpressionImpl extends ModelRoot implements Pare
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitParenthesizedExpression(this, context);
     }

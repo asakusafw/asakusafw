@@ -15,6 +15,7 @@
  */
 package com.asakusafw.vocabulary.external;
 
+//TODO i18n
 /**
  * エクスポーターの処理内容を記述するインターフェース。
  * <p>

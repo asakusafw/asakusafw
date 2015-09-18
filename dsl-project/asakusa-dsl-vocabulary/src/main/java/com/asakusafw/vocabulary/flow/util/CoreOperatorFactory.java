@@ -30,6 +30,7 @@ import com.asakusafw.vocabulary.flow.graph.FlowElementOutput;
 import com.asakusafw.vocabulary.flow.graph.FlowElementResolver;
 import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 
+//TODO i18n
 /**
  * 標準的な演算子オブジェクトを生成するファクトリ。
  * @since 0.1.0

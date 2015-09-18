@@ -64,7 +64,7 @@ import com.asakusafw.vocabulary.operator.MasterJoin;
 import com.asakusafw.vocabulary.operator.MasterJoinUpdate;
 
 /**
- * フローグラフを書き換えてJoinを最適化する。
+ * Rewrites flow graphs for optimizing join operations.
  * @since 0.1.0
  * @version 0.7.1
  */

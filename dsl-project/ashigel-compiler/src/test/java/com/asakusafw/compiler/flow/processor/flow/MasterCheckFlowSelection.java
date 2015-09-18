@@ -32,7 +32,7 @@ import com.asakusafw.vocabulary.flow.Out;
 
 
 /**
- * {@link MasterCheckFlowProcessor}のテスト。
+ * test for {@link MasterCheckFlowProcessor}.
  */
 @JobFlow(name = "testing")
 public class MasterCheckFlowSelection extends FlowDescription {
@@ -46,11 +46,11 @@ public class MasterCheckFlowSelection extends FlowDescription {
     private Out<Ex1> out2;
 
     /**
-     * インスタンスを生成する。
-     * @param in1 入力1
-     * @param in2 入力2
-     * @param out1 出力1
-     * @param out2 出力2
+     * Creates a new instance.
+     * @param in1 input1
+     * @param in2 input2
+     * @param out1 output1
+     * @param out2 output2
      */
     public MasterCheckFlowSelection(
             @Import(name = "e1", description = Ex1MockImporterDescription.class)

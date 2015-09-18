@@ -18,7 +18,7 @@ package com.asakusafw.utils.java.model.syntax;
 import java.util.List;
 
 /**
- * {@code switch}文を表現するインターフェース。
+ * An interface which represents switch statement.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:14.11] The switch Statement} </li>
@@ -29,21 +29,15 @@ import java.util.List;
 public interface SwitchStatement
         extends Statement, TypedElement {
 
-    // properties
-
     /**
-     * セレクタ式を返す。
-     * @return
-     *     セレクタ式
+     * Returns the {@code switch} selector expression.
+     * @return the {@code switch} selector expression
      */
     Expression getExpression();
 
     /**
-     * {@code switch}文の本体を返す。
-     * <p> 本体に一つもラベルが指定されない場合は空が返される。 </p>
-     * <p> {@code switch}文の本体中にのみ、{@code case}, {@code default}ラベルを含めることができる。 </p>
-     * @return
-     *     {@code switch}文の本体
+     * Returns the {@code switch} body statements.
+     * @return the {@code switch} body statements
      */
     List<? extends Statement> getStatements();
 }

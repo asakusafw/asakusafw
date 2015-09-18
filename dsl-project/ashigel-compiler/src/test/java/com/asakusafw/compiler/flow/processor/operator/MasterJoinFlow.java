@@ -21,40 +21,49 @@ import com.asakusafw.compiler.flow.processor.MasterJoinFlowProcessor;
 import com.asakusafw.compiler.flow.testing.model.Ex1;
 import com.asakusafw.compiler.flow.testing.model.Ex2;
 import com.asakusafw.compiler.flow.testing.model.ExJoined;
+import com.asakusafw.compiler.flow.testing.model.ExJoined2;
 import com.asakusafw.runtime.core.Result;
 import com.asakusafw.vocabulary.operator.MasterJoin;
 import com.asakusafw.vocabulary.operator.MasterSelection;
 import com.asakusafw.vocabulary.operator.Split;
 
-
 /**
- * {@link MasterJoinFlowProcessor}に対するテスト演算子。
+ * An operator class for testing {@link MasterJoinFlowProcessor}.
  */
 public abstract class MasterJoinFlow {
 
     /**
-     * 結合する。
-     * @param ex1 マスタ
-     * @param ex2 トラン
-     * @return 結合結果
+     * join.
+     * @param ex1 master
+     * @param ex2 transaction
+     * @return result
      */
     @MasterJoin
     public abstract ExJoined join(Ex1 ex1, Ex2 ex2);
 
     /**
-     * セレクタつき。
-     * @param ex1 マスタ
-     * @param ex2 トラン
-     * @return 結合結果
+     * join w/ renaming join key.
+     * @param ex1 master
+     * @param ex2 transaction
+     * @return result
+     */
+    @MasterJoin
+    public abstract ExJoined2 renameKey(Ex1 ex1, Ex2 ex2);
+
+    /**
+     * w/ selector.
+     * @param ex1 master
+     * @param ex2 transaction
+     * @return result
      */
     @MasterJoin(selection = "selector")
     public abstract ExJoined selection(Ex1 ex1, Ex2 ex2);
 
     /**
-     * 引数無しのセレクタ。
-     * @param masters マスタ一覧
-     * @param model 対象のモデル
-     * @return 選択したマスタ、利用しない場合は{@code null}
+     * non-parameterized selector.
+     * @param masters list of masters
+     * @param model the data model
+     * @return the selected master data, or {@code null} if there is no suitable master data
      */
     @MasterSelection
     public Ex1 selector(List<Ex1> masters, Ex2 model) {
@@ -67,10 +76,10 @@ public abstract class MasterJoinFlow {
     }
 
     /**
-     * 分解する。
-     * @param joined 結合結果
-     * @param ex1 マスタ
-     * @param ex2 トラン
+     * split.
+     * @param joined joined data
+     * @param ex1 master
+     * @param ex2 transaction
      */
     @Split
     public abstract void split(ExJoined joined, Result<Ex1> ex1, Result<Ex2> ex2);

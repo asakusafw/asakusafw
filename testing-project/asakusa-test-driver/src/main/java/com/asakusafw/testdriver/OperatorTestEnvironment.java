@@ -36,6 +36,7 @@ import com.asakusafw.testdriver.core.TestingEnvironmentConfigurator;
 import com.asakusafw.testdriver.hadoop.ConfigurationFactory;
 import com.asakusafw.utils.collections.Maps;
 
+// TODO i18n
 /**
  * 演算子のテスト時に各種プラグインを利用可能にするためのリソース。
  * <p>
@@ -104,7 +105,7 @@ public class OperatorTestEnvironment extends DriverElementBase implements TestRu
     private volatile TestToolRepository testTools;
 
     /**
-     * インスタンスを生成する。
+     * 既定の設定ファイルを利用して、インスタンスを生成する。
      */
     public OperatorTestEnvironment() {
         this(RuntimeResourceManager.CONFIGURATION_FILE_NAME, false);
@@ -252,8 +253,8 @@ public class OperatorTestEnvironment extends DriverElementBase implements TestRu
     }
 
     /**
-     * {@link RuntimeResourceManager}が利用する設定情報を返す。
-     * @return {@link RuntimeResourceManager}が利用する設定情報
+     * Returns a new configuration object for {@link RuntimeResourceManager}.
+     * @return the created configuration object
      */
     protected Configuration createConfig() {
         Configuration conf = ConfigurationFactory.getDefault().newInstance();

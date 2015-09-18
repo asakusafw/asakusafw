@@ -17,7 +17,7 @@ package com.asakusafw.utils.java.model.syntax;
 
 
 /**
- * 配列型を表現するインターフェース。
+ * An interface which represents array types.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:10.1] Array Types} </li>
@@ -27,12 +27,9 @@ package com.asakusafw.utils.java.model.syntax;
 public interface ArrayType
         extends Type {
 
-    // properties
-
     /**
-     * 要素型を返す。
-     * @return
-     *     要素型
+     * Returns the element type.
+     * @return the element type
      */
     Type getComponentType();
 }

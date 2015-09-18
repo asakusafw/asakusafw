@@ -18,7 +18,7 @@ package com.asakusafw.utils.java.model.syntax;
 import java.util.List;
 
 /**
- * {@code try}文を表現するインターフェース。
+ * An interface which represents try statement.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:14.20] The try statement} </li>
@@ -28,29 +28,21 @@ import java.util.List;
 public interface TryStatement
         extends Statement {
 
-    // properties
-
     /**
-     * {@code try}節を返す。
-     * @return
-     *     {@code try}節
+     * Returns the body block of {@code try} clause.
+     * @return the body block of {@code try} clause
      */
     Block getTryBlock();
 
     /**
-     * {@code catch}節の一覧を返す。
-     * <p> {@code catch}節が一つも指定されない場合は空が返される。 </p>
-     * @return
-     *     {@code catch}節の一覧
+     * Returns the {@code catch} clauses.
+     * @return the {@code catch} clauses, or an empty list if there is no cache clauses
      */
     List<? extends CatchClause> getCatchClauses();
 
     /**
-     * {@code finally}節を返す。
-     * <p> {@code finally}節が指定されない場合は{@code null}が返される。 </p>
-     * @return
-     *     {@code finally}節、
-     *     ただし{@code finally}節が指定されない場合は{@code null}
+     * Returns the body block of {@code finally} clause.
+     * @return the body block of {@code finally} clause, or {@code null} if it is not specified
      */
     Block getFinallyBlock();
 }

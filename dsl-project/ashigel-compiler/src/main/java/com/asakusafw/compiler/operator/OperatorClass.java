@@ -25,7 +25,7 @@ import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.utils.collections.Lists;
 
 /**
- * 演算子クラスの構造を表現する。
+ * Structural information of operator classes.
  * @since 0.1.0
  * @version 0.7.0
  */
@@ -36,9 +36,9 @@ public class OperatorClass {
     private final List<OperatorMethod> methods;
 
     /**
-     * インスタンスを生成する。
-     * @param type この演算子クラスに対応するクラスの宣言
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Creates a new instance.
+     * @param type the corresponded operator class
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public OperatorClass(TypeElement type) {
         Precondition.checkMustNotBeNull(type, "type"); //$NON-NLS-1$
@@ -47,8 +47,8 @@ public class OperatorClass {
     }
 
     /**
-     * この演算子クラスを表現するクラスを返す。
-     * @return この演算子クラスを表現するクラス
+     * Returns the corresponded operator class.
+     * @return the corresponded operator class
      */
     public TypeElement getElement() {
         return this.element;
@@ -60,10 +60,7 @@ public class OperatorClass {
      * @param methodElement the operator method
      * @param processor corresponded operator method
      */
-    public void add(
-            AnnotationMirror annotation,
-            ExecutableElement methodElement,
-            OperatorProcessor processor) {
+    public void add(AnnotationMirror annotation, ExecutableElement methodElement, OperatorProcessor processor) {
         Precondition.checkMustNotBeNull(annotation, "annotation"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(methodElement, "methodElement"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(processor, "processor"); //$NON-NLS-1$
@@ -75,14 +72,12 @@ public class OperatorClass {
     }
 
     /**
-     * この演算子クラスに指定の演算子メソッドの情報を追加する。
-     * @param methodElement 演算子メソッドのメソッド宣言
-     * @param processor 対応する演算子プロセッサ
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Adds an operator method.
+     * @param methodElement the target method
+     * @param processor the operator processor that processes the target method
+     * @throws IllegalArgumentException if some parameters are {@code null}
      */
-    public void add(
-            ExecutableElement methodElement,
-            OperatorProcessor processor) {
+    public void add(ExecutableElement methodElement, OperatorProcessor processor) {
         Precondition.checkMustNotBeNull(methodElement, "methodElement"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(processor, "processor"); //$NON-NLS-1$
         if (element.equals(methodElement.getEnclosingElement()) == false) {
@@ -93,8 +88,8 @@ public class OperatorClass {
     }
 
     /**
-     * この演算子クラスに宣言された演算子メソッドの一覧を返す。
-     * @return 演算子メソッドの一覧
+     * Returns structural information of operator methods in this operator class.
+     * @return the operator methods
      */
     public List<OperatorMethod> getMethods() {
         return methods;

@@ -18,19 +18,15 @@ package com.asakusafw.utils.java.model.syntax;
 import java.util.List;
 
 /**
- * Javaドキュメンテーションコメントを表現するインターフェース。
+ * An interface which represents the Java documentation comment.
  */
 public interface Javadoc
         extends Comment {
 
-    // properties
-
     /**
-     * ブロックの一覧を返す。
-     * <p> ブロックが一つも指定されない場合は空が返される。 </p>
-     * <p> 先頭のタグが指定されないブロックは概要ブロックを表現する。 </p>
-     * @return
-     *     ブロックの一覧
+     * Returns the documentation blocks.
+     * A block without tag text represents an abstract block.
+     * @return the documentation blocks
      */
     List<? extends DocBlock> getBlocks();
 }

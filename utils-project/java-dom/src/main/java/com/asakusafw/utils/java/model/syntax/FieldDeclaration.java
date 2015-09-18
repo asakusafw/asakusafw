@@ -18,7 +18,7 @@ package com.asakusafw.utils.java.model.syntax;
 import java.util.List;
 
 /**
- * フィールド宣言(の一覧)を表現するインターフェース。
+ * An interface which represents field declarations.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:8.3] Field Declarations} </li>
@@ -28,19 +28,15 @@ import java.util.List;
 public interface FieldDeclaration
         extends TypeBodyDeclaration {
 
-    // properties
-
     /**
-     * フィールドの型を返す。
-     * @return
-     *     フィールドの型
+     * Returns the field type.
+     * @return the field type
      */
     Type getType();
 
     /**
-     * 宣言するフィールドの一覧を返す。
-     * @return
-     *     宣言するフィールドの一覧
+     * Returns the field variable declarators.
+     * @return the field variable declarators
      */
     List<? extends VariableDeclarator> getVariableDeclarators();
 }

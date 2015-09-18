@@ -15,9 +15,8 @@
  */
 package com.asakusafw.vocabulary.batch;
 
-
 /**
- * soonやafterを指定しない (describeの途中)。
+ * Incomplete batch DSL.
  */
 public class MiddleUnderConstructionBatch extends BatchDescription {
 

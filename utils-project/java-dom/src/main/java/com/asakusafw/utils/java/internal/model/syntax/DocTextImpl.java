@@ -20,13 +20,10 @@ import com.asakusafw.utils.java.model.syntax.ModelKind;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link DocText}の実装。
+ * An implementation of {@link DocText}.
  */
 public final class DocTextImpl extends ModelRoot implements DocText {
 
-    /**
-     * テキストを構成する文字列。
-     */
     private String string;
 
     @Override
@@ -35,11 +32,9 @@ public final class DocTextImpl extends ModelRoot implements DocText {
     }
 
     /**
-     * テキストを構成する文字列を設定する。
-     * @param string
-     *     テキストを構成する文字列
-     * @throws IllegalArgumentException
-     *     {@code string}に{@code null}が指定された場合
+     * Sets the comment text.
+     * @param string the comment text
+     * @throws IllegalArgumentException if {@code string} was {@code null}
      */
     public void setString(String string) {
         Util.notNull(string, "string"); //$NON-NLS-1$
@@ -47,7 +42,7 @@ public final class DocTextImpl extends ModelRoot implements DocText {
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#DOC_TEXT}を返す。
+     * Returns {@link ModelKind#DOC_TEXT} which represents this element kind.
      * @return {@link ModelKind#DOC_TEXT}
      */
     @Override
@@ -56,8 +51,7 @@ public final class DocTextImpl extends ModelRoot implements DocText {
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitDocText(this, context);
     }

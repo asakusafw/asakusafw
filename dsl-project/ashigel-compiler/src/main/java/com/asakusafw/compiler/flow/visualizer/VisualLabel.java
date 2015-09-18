@@ -20,18 +20,18 @@ import java.util.UUID;
 import com.asakusafw.compiler.common.Precondition;
 
 /**
- * 可視化用のラベル。
+ * A visual model for labels.
  */
 public class VisualLabel implements VisualNode {
 
     private final UUID id = UUID.randomUUID();
 
-    private String label;
+    private final String label;
 
     /**
-     * インスタンスを生成する。
-     * @param label 対象のラベル、省略する場合は{@code null}
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param label the label of this element (nullable)
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public VisualLabel(String label) {
         this.label = label;
@@ -48,8 +48,8 @@ public class VisualLabel implements VisualNode {
     }
 
     /**
-     * このラベルの文字列を返す。
-     * @return このラベルの文字列、省略する場合は{@code null}
+     * Returns the text of this label.
+     * @return the text, or {@code null} if it was not specified
      */
     public String getLabel() {
         return label;

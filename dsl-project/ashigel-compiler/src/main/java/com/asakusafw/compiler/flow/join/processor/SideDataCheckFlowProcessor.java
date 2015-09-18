@@ -24,7 +24,7 @@ import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
 import com.asakusafw.vocabulary.flow.graph.FlowResourceDescription;
 
 /**
- * {@link SideDataCheck}を処理する。
+ * Processes {@link SideDataCheck} operators.
  */
 @TargetOperator(SideDataCheck.class)
 public class SideDataCheckFlowProcessor extends LineEndProcessor {

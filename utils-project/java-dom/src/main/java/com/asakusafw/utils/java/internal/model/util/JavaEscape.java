@@ -16,7 +16,7 @@
 package com.asakusafw.utils.java.internal.model.util;
 
 /**
- * Javaの文字エスケープに関する処理。
+ * Rules about escape characters.
  */
 public final class JavaEscape {
 
@@ -30,21 +30,18 @@ public final class JavaEscape {
         ASCII_SPECIAL_ESCAPE['\\'] = '\\';
     }
 
-    /**
-     * インスタンス化の禁止。
-     */
     private JavaEscape() {
-        super();
+        return;
     }
 
     /**
-     * 文字列の各文字を必要に応じてエスケープし、ASCIIコードの範囲で表示可能にする。
-     * ASCIIコードの表示可能文字はそのままの値を保ち、
-     * {@code \b, \t, \n, \f, \r}はそれぞれ左記のようにエスケープされる。
-     * @param string エスケープする文字列
-     * @param charValue {@code true}が指定された場合、&quot;はエスケープせずに'をエスケープする
-     * @param unicodeEscape {@code true}が指定された場合、\u007f以降の文字は全てunicode escapeする
-     * @return エスケープされた文字列
+     * Escapes characters in the target text.
+     * This replaces {@code \} (backslash) and non-printable characters like as Java characters,
+     * for creating string or character literals.
+     * @param string the target text
+     * @param charValue {@code true} to escape <code>&quot;</code>, or {@code false} to escape <code>'</code>
+     * @param unicodeEscape {@code true} to escape after U+007f characters, or {@code false} to keep them
+     * @return the escaped string
      */
     public static String escape(String string, boolean charValue, boolean unicodeEscape) {
         StringBuilder buf = new StringBuilder();
@@ -65,10 +62,10 @@ public final class JavaEscape {
     }
 
     /**
-     * エスケープを含む文字列のエスケープを解除した文字列を返す。
-     * @param string エスケープを解除する文字列
-     * @return エスケープが解除された文字列
-     * @throws IllegalArgumentException 解除できないエスケープが含まれていた場合
+     * Decodes a escaped string.
+     * @param string the escaped string
+     * @return the decoded string
+     * @throws IllegalArgumentException if the escaped string is malformed
      */
     public static String unescape(String string) {
         return EscapeDecoder.scan(string);

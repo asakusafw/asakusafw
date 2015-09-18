@@ -38,6 +38,7 @@ import com.asakusafw.vocabulary.external.ImporterDescription;
 import com.asakusafw.vocabulary.flow.FlowDescription;
 import com.asakusafw.vocabulary.flow.graph.FlowGraph;
 
+// i18n
 /**
  * フロー部品用のテストドライバクラス。
  * @since 0.2.0
@@ -53,8 +54,7 @@ public class FlowPartTester extends TesterBase {
     private final FlowDescriptionDriver descDriver = new FlowDescriptionDriver();
 
     /**
-     * コンストラクタ。
-     *
+     * インスタンスを生成する。
      * @param callerClass 呼出元クラス
      */
     public FlowPartTester(Class<?> callerClass) {
@@ -63,11 +63,10 @@ public class FlowPartTester extends TesterBase {
 
     /**
      * テスト入力データを指定する。
-     *
-     * @param <T> ModelType。
-     * @param name 入力データ名。テストドライバに指定する入力データ間で一意の名前を指定する。
-     * @param modelType ModelType。
-     * @return テスト入力データオブジェクト。
+     * @param <T> the data model type
+     * @param name 入力データ名 - テストドライバに指定する入力データ間で一意の名前を指定する
+     * @param modelType the data model class
+     * @return テスト入力データオブジェクト
      */
     public <T> FlowPartDriverInput<T> input(String name, Class<T> modelType) {
         FlowPartDriverInput<T> input = new FlowPartDriverInput<T>(driverContext, descDriver, name, modelType);
@@ -77,11 +76,10 @@ public class FlowPartTester extends TesterBase {
 
     /**
      * テスト結果の出力データ（期待値データ）を指定する。
-     *
-     * @param <T> ModelType。
-     * @param name 出力データ名。テストドライバに指定する出力データ間で一意の名前を指定する。
-     * @param modelType ModelType。
-     * @return テスト入力データオブジェクト。
+     * @param <T> the data model type
+     * @param name 出力データ名 - テストドライバに指定する出力データ間で一意の名前を指定する
+     * @param modelType the data model class
+     * @return テスト出力データオブジェクト
      */
     public <T> FlowPartDriverOutput<T> output(String name, Class<T> modelType) {
         FlowPartDriverOutput<T> output = new FlowPartDriverOutput<T>(driverContext, descDriver, name, modelType);
@@ -118,13 +116,11 @@ public class FlowPartTester extends TesterBase {
             validateTestCondition();
         }
 
-        // フローコンパイラの実行
         LOG.info(MessageFormat.format(
                 Messages.getString("FlowPartTester.infoCompileDsl"), //$NON-NLS-1$
                 flowDescription.getClass().getName()));
         FlowGraph flowGraph = descDriver.createFlowGraph(flowDescription);
 
-        // コンパイル環境の検証
         driverContext.validateCompileEnvironment();
 
         File compileWorkDir = driverContext.getCompilerWorkingDirectory();
@@ -147,13 +143,11 @@ public class FlowPartTester extends TesterBase {
                 flowDescription.getClass().getClassLoader(),
                 driverContext.getOptions());
 
-        // 環境の検証
         driverContext.validateExecutionEnvironment();
 
         JobflowExecutor executor = new JobflowExecutor(driverContext);
         driverContext.prepareCurrentJobflow(jobflowInfo);
 
-        // 初期化
         LOG.info(MessageFormat.format(
                 Messages.getString("FlowPartTester.infoInitializeEnvironment"), //$NON-NLS-1$
                 driverContext.getCallerClass().getName()));
@@ -175,7 +169,6 @@ public class FlowPartTester extends TesterBase {
         executor.runJobflow(jobflowInfo);
         verifyContext.testFinished();
 
-        // 実行結果の検証
         LOG.info(MessageFormat.format(
                 Messages.getString("FlowPartTester.infoVerifyResult"), //$NON-NLS-1$
                 driverContext.getCallerClass().getName()));

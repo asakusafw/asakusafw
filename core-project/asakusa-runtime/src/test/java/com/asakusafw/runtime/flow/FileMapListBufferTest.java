@@ -34,7 +34,7 @@ import com.asakusafw.runtime.model.DataModel;
 public class FileMapListBufferTest {
 
     /**
-     * 空のリストを作成する。
+     * creates an empty buffer.
      */
     @Test
     public void createEmpty() {
@@ -47,7 +47,7 @@ public class FileMapListBufferTest {
     }
 
     /**
-     * 要素がひとつのリストを作成する。
+     * creates a buffer with one element.
      */
     @Test
     public void createSingle() {
@@ -65,7 +65,7 @@ public class FileMapListBufferTest {
     }
 
     /**
-     * 要素がひとつのリストを作成し、再利用する。
+     * reuses element objects.
      */
     @Test
     public void reuse() {
@@ -87,7 +87,7 @@ public class FileMapListBufferTest {
     }
 
     /**
-     * 巨大なリストを生成する。。
+     * creates a big buffer.
      */
     @Test
     public void createBigList() {
@@ -125,7 +125,7 @@ public class FileMapListBufferTest {
     }
 
     /**
-     * over expanded.
+     * over expand.
      */
     @Test(expected = IndexOutOfBoundsException.class)
     public void over_expand() {
@@ -141,7 +141,7 @@ public class FileMapListBufferTest {
     }
 
     /**
-     * リストの構築時にadvanceを行わない。
+     * missing advance.
      */
     @Test(expected = IndexOutOfBoundsException.class)
     public void get_UpperOutOfBounds() {
@@ -156,7 +156,7 @@ public class FileMapListBufferTest {
     }
 
     /**
-     * 負のインデックスを参照する。
+     * negative index.
      */
     @Test(expected = IndexOutOfBoundsException.class)
     public void get_LowerOutOfBounds() {

@@ -1,44 +1,23 @@
-/**
- * Copyright 2011-2015 Asakusa Framework Team.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.asakusafw.compiler.flow.testing.model;
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
-
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.io.Writable;
-
-import com.asakusafw.compiler.flow.testing.io.KeyConflictInput;
-import com.asakusafw.compiler.flow.testing.io.KeyConflictOutput;
 import com.asakusafw.runtime.model.DataModel;
 import com.asakusafw.runtime.model.DataModelKind;
-import com.asakusafw.runtime.model.ModelInputLocation;
-import com.asakusafw.runtime.model.ModelOutputLocation;
+import com.asakusafw.runtime.model.PropertyOrder;
 import com.asakusafw.runtime.value.LongOption;
 import com.asakusafw.runtime.value.StringOption;
 import com.asakusafw.vocabulary.model.Key;
 import com.asakusafw.vocabulary.model.Summarized;
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.Writable;
 /**
- * key_conflictを表すデータモデルクラス。
+ * A data model class that represents key_conflict.
  */
-@DataModelKind("DMDL")@ModelInputLocation(KeyConflictInput.class)@ModelOutputLocation(KeyConflictOutput.class)@
-        Summarized(term = @Summarized.Term(source = Ex1.class, foldings = {@Summarized.Folding(aggregator = Summarized.
-            Aggregator.ANY, source = "string", destination = "key"),@Summarized.Folding(aggregator = Summarized.
-            Aggregator.COUNT, source = "string", destination = "count")}, shuffle = @Key(group = {"string"}))) public 
-        class KeyConflict implements DataModel<KeyConflict>, Writable {
+@DataModelKind("DMDL")@PropertyOrder({"key", "count"})@Summarized(term = @Summarized.Term(source = Ex1.class, foldings = 
+        {@Summarized.Folding(aggregator = Summarized.Aggregator.ANY, source = "string", destination = "key"),@Summarized
+            .Folding(aggregator = Summarized.Aggregator.COUNT, source = "string", destination = "count")}, shuffle = @
+        Key(group = {"string"}))) public class KeyConflict implements DataModel<KeyConflict>, Writable {
     private final StringOption key = new StringOption();
     private final LongOption count = new LongOption();
     @Override@SuppressWarnings("deprecation") public void reset() {
@@ -50,59 +29,59 @@ import com.asakusafw.vocabulary.model.Summarized;
         this.count.copyFrom(other.count);
     }
     /**
-     * keyを返す。
+     * Returns key.
      * @return key
-     * @throws NullPointerException keyの値が<code>null</code>である場合
+     * @throws NullPointerException if key is <code>null</code>
      */
     public Text getKey() {
         return this.key.get();
     }
     /**
-     * keyを設定する。
-     * @param value 設定する値
+     * Sets key.
+     * @param value the value
      */
     @SuppressWarnings("deprecation") public void setKey(Text value) {
         this.key.modify(value);
     }
     /**
-     * <code>null</code>を許すkeyを返す。
+     * Returns key which may be represent <code>null</code>.
      * @return key
      */
     public StringOption getKeyOption() {
         return this.key;
     }
     /**
-     * keyを設定する。
-     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     * Sets key.
+     * @param option the value, or <code>null</code> to set this property to <code>null</code>
      */
     @SuppressWarnings("deprecation") public void setKeyOption(StringOption option) {
         this.key.copyFrom(option);
     }
     /**
-     * countを返す。
+     * Returns count.
      * @return count
-     * @throws NullPointerException countの値が<code>null</code>である場合
+     * @throws NullPointerException if count is <code>null</code>
      */
     public long getCount() {
         return this.count.get();
     }
     /**
-     * countを設定する。
-     * @param value 設定する値
+     * Sets count.
+     * @param value the value
      */
     @SuppressWarnings("deprecation") public void setCount(long value) {
         this.count.modify(value);
     }
     /**
-     * <code>null</code>を許すcountを返す。
+     * Returns count which may be represent <code>null</code>.
      * @return count
      */
     public LongOption getCountOption() {
         return this.count;
     }
     /**
-     * countを設定する。
-     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     * Sets count.
+     * @param option the value, or <code>null</code> to set this property to <code>null</code>
      */
     @SuppressWarnings("deprecation") public void setCountOption(LongOption option) {
         this.count.copyFrom(option);
@@ -132,29 +111,29 @@ import com.asakusafw.vocabulary.model.Summarized;
         if(obj == null) {
             return false;
         }
-        if(this.getClass()!= obj.getClass()) {
+        if(this.getClass() != obj.getClass()) {
             return false;
         }
         KeyConflict other = (KeyConflict) obj;
-        if(this.key.equals(other.key)== false) {
+        if(this.key.equals(other.key) == false) {
             return false;
         }
-        if(this.count.equals(other.count)== false) {
+        if(this.count.equals(other.count) == false) {
             return false;
         }
         return true;
     }
     /**
-     * keyを返す。
+     * Returns key.
      * @return key
-     * @throws NullPointerException keyの値が<code>null</code>である場合
+     * @throws NullPointerException if key is <code>null</code>
      */
     public String getKeyAsString() {
         return this.key.getAsString();
     }
     /**
-     * keyを設定する。
-     * @param key0 設定する値
+     * Returns key.
+     * @param key0 the value
      */
     @SuppressWarnings("deprecation") public void setKeyAsString(String key0) {
         this.key.modify(key0);

@@ -16,19 +16,20 @@
 package com.asakusafw.runtime.stage;
 
 /**
- * ステージで利用するリソース。
+ * Represents a stage resource.
+ * @since 0.1.0
  */
 public class StageResource {
 
-    private String location;
+    private final String location;
 
-    private String name;
+    private final String name;
 
     /**
-     * インスタンスを生成する。
-     * @param location リソースのDFS上での位置
-     * @param name ステージで利用する際の名前
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param location the path expression for resources
+     * @param name the resource name
+     * @throws IllegalArgumentException if some parameters are {@code null}
      */
     public StageResource(String location, String name) {
         if (location == null) {
@@ -42,16 +43,16 @@ public class StageResource {
     }
 
     /**
-     * リソースのDFS上での位置を返す。
-     * @return リソースのDFS上での位置
+     * Returns the path expression for the resources.
+     * @return the path expression
      */
     public String getLocation() {
         return location;
     }
 
     /**
-     * ステージで利用する際の名前を返す。
-     * @return ステージで利用する際の名前
+     * Returns the resource name.
+     * @return the resource name
      */
     public String getName() {
         return name;

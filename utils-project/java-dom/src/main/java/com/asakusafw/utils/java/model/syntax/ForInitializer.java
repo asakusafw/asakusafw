@@ -17,7 +17,7 @@ package com.asakusafw.utils.java.model.syntax;
 
 
 /**
- * {@code for}文の初期化部を表現する基底インターフェース。
+ * An abstract super interface of initializer part of {@code for} statement.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:14.14.1.1] Initialization of for statement} </li>

@@ -1,45 +1,25 @@
-/**
- * Copyright 2011-2015 Asakusa Framework Team.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.asakusafw.compiler.flow.testing.model;
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
-
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.io.Writable;
-
-import com.asakusafw.compiler.flow.testing.io.ExSummarizedInput;
-import com.asakusafw.compiler.flow.testing.io.ExSummarizedOutput;
 import com.asakusafw.runtime.model.DataModel;
 import com.asakusafw.runtime.model.DataModelKind;
-import com.asakusafw.runtime.model.ModelInputLocation;
-import com.asakusafw.runtime.model.ModelOutputLocation;
+import com.asakusafw.runtime.model.PropertyOrder;
 import com.asakusafw.runtime.value.LongOption;
 import com.asakusafw.runtime.value.StringOption;
 import com.asakusafw.vocabulary.model.Key;
 import com.asakusafw.vocabulary.model.Summarized;
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.Writable;
 /**
- * ex_summarizedを表すデータモデルクラス。
+ * A data model class that represents ex_summarized.
  */
-@DataModelKind("DMDL")@ModelInputLocation(ExSummarizedInput.class)@ModelOutputLocation(ExSummarizedOutput.class)@
-        Summarized(term = @Summarized.Term(source = Ex1.class, foldings = {@Summarized.Folding(aggregator = Summarized.
-            Aggregator.ANY, source = "string", destination = "string"),@Summarized.Folding(aggregator = Summarized.
-            Aggregator.SUM, source = "value", destination = "value"),@Summarized.Folding(aggregator = Summarized.
-            Aggregator.COUNT, source = "sid", destination = "count")}, shuffle = @Key(group = {"string"}))) public class 
-        ExSummarized implements DataModel<ExSummarized>, Writable {
+@DataModelKind("DMDL")@PropertyOrder({"string", "value", "count"})@Summarized(term = @Summarized.Term(source = Ex1.class
+        , foldings = {@Summarized.Folding(aggregator = Summarized.Aggregator.ANY, source = "string", destination = 
+            "string"),@Summarized.Folding(aggregator = Summarized.Aggregator.SUM, source = "value", destination = 
+            "value"),@Summarized.Folding(aggregator = Summarized.Aggregator.COUNT, source = "sid", destination = "count"
+            )}, shuffle = @Key(group = {"string"}))) public class ExSummarized implements DataModel<ExSummarized>, 
+        Writable {
     private final StringOption string = new StringOption();
     private final LongOption value = new LongOption();
     private final LongOption count = new LongOption();
@@ -54,88 +34,88 @@ import com.asakusafw.vocabulary.model.Summarized;
         this.count.copyFrom(other.count);
     }
     /**
-     * stringを返す。
+     * Returns string.
      * @return string
-     * @throws NullPointerException stringの値が<code>null</code>である場合
+     * @throws NullPointerException if string is <code>null</code>
      */
     public Text getString() {
         return this.string.get();
     }
     /**
-     * stringを設定する。
-     * @param value0 設定する値
+     * Sets string.
+     * @param value0 the value
      */
     @SuppressWarnings("deprecation") public void setString(Text value0) {
         this.string.modify(value0);
     }
     /**
-     * <code>null</code>を許すstringを返す。
+     * Returns string which may be represent <code>null</code>.
      * @return string
      */
     public StringOption getStringOption() {
         return this.string;
     }
     /**
-     * stringを設定する。
-     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     * Sets string.
+     * @param option the value, or <code>null</code> to set this property to <code>null</code>
      */
     @SuppressWarnings("deprecation") public void setStringOption(StringOption option) {
         this.string.copyFrom(option);
     }
     /**
-     * valueを返す。
+     * Returns value.
      * @return value
-     * @throws NullPointerException valueの値が<code>null</code>である場合
+     * @throws NullPointerException if value is <code>null</code>
      */
     public long getValue() {
         return this.value.get();
     }
     /**
-     * valueを設定する。
-     * @param value0 設定する値
+     * Sets value.
+     * @param value0 the value
      */
     @SuppressWarnings("deprecation") public void setValue(long value0) {
         this.value.modify(value0);
     }
     /**
-     * <code>null</code>を許すvalueを返す。
+     * Returns value which may be represent <code>null</code>.
      * @return value
      */
     public LongOption getValueOption() {
         return this.value;
     }
     /**
-     * valueを設定する。
-     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     * Sets value.
+     * @param option the value, or <code>null</code> to set this property to <code>null</code>
      */
     @SuppressWarnings("deprecation") public void setValueOption(LongOption option) {
         this.value.copyFrom(option);
     }
     /**
-     * countを返す。
+     * Returns count.
      * @return count
-     * @throws NullPointerException countの値が<code>null</code>である場合
+     * @throws NullPointerException if count is <code>null</code>
      */
     public long getCount() {
         return this.count.get();
     }
     /**
-     * countを設定する。
-     * @param value0 設定する値
+     * Sets count.
+     * @param value0 the value
      */
     @SuppressWarnings("deprecation") public void setCount(long value0) {
         this.count.modify(value0);
     }
     /**
-     * <code>null</code>を許すcountを返す。
+     * Returns count which may be represent <code>null</code>.
      * @return count
      */
     public LongOption getCountOption() {
         return this.count;
     }
     /**
-     * countを設定する。
-     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     * Sets count.
+     * @param option the value, or <code>null</code> to set this property to <code>null</code>
      */
     @SuppressWarnings("deprecation") public void setCountOption(LongOption option) {
         this.count.copyFrom(option);
@@ -168,32 +148,32 @@ import com.asakusafw.vocabulary.model.Summarized;
         if(obj == null) {
             return false;
         }
-        if(this.getClass()!= obj.getClass()) {
+        if(this.getClass() != obj.getClass()) {
             return false;
         }
         ExSummarized other = (ExSummarized) obj;
-        if(this.string.equals(other.string)== false) {
+        if(this.string.equals(other.string) == false) {
             return false;
         }
-        if(this.value.equals(other.value)== false) {
+        if(this.value.equals(other.value) == false) {
             return false;
         }
-        if(this.count.equals(other.count)== false) {
+        if(this.count.equals(other.count) == false) {
             return false;
         }
         return true;
     }
     /**
-     * stringを返す。
+     * Returns string.
      * @return string
-     * @throws NullPointerException stringの値が<code>null</code>である場合
+     * @throws NullPointerException if string is <code>null</code>
      */
     public String getStringAsString() {
         return this.string.getAsString();
     }
     /**
-     * stringを設定する。
-     * @param string0 設定する値
+     * Returns string.
+     * @param string0 the value
      */
     @SuppressWarnings("deprecation") public void setStringAsString(String string0) {
         this.string.modify(string0);

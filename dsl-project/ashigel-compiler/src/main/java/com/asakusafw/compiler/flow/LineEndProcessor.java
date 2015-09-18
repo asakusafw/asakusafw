@@ -19,6 +19,7 @@ import java.util.Map;
 
 import com.asakusafw.compiler.common.NameGenerator;
 import com.asakusafw.compiler.common.Precondition;
+import com.asakusafw.runtime.core.Result;
 import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.util.ImportBuilder;
 import com.asakusafw.vocabulary.flow.graph.FlowElementAttributeProvider;
@@ -27,7 +28,7 @@ import com.asakusafw.vocabulary.flow.graph.FlowResourceDescription;
 import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 
 /**
- * ラインの末尾に配置される演算子を処理する。
+ * Processes an operator which is end of line.
  */
 public abstract class LineEndProcessor extends LineProcessor {
 
@@ -37,14 +38,14 @@ public abstract class LineEndProcessor extends LineProcessor {
     }
 
     /**
-     * このプロセッサによる処理を実行する。
-     * @param context 文脈オブジェクト
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Performs this processor for the context.
+     * @param context the current context
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public abstract void emitLineEnd(Context context);
 
     /**
-     * 処理の文脈を表す。
+     * A context object for {@link LineEndProcessor}.
      */
     public static class Context extends LineProcessorContext {
 
@@ -53,16 +54,16 @@ public abstract class LineEndProcessor extends LineProcessor {
         private final Map<FlowElementPortDescription, Expression> outputs;
 
         /**
-         * インスタンスを生成する。
-         * @param environment 環境
-         * @param element target element
-         * @param importer インポート
-         * @param names 名前生成
-         * @param desc 演算子の定義記述
-         * @param input 演算子への入力
-         * @param outputs 出力ポートごとに割り当てられた結果オブジェクトの式
-         * @param resources リソースと式の対応表
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Creates a new instance.
+         * @param environment the current context
+         * @param element the target element
+         * @param importer the import declaration builder
+         * @param names the unique name generator
+         * @param desc the target operator description
+         * @param input an expression of the input value for the operator
+         * @param outputs a mapping of output ports to their expression
+         * @param resources the mapping between external resources and their Java expressions
+         * @throws IllegalArgumentException if the parameters are {@code null}
          */
         public Context(
                 FlowCompilingEnvironment environment,
@@ -81,18 +82,18 @@ public abstract class LineEndProcessor extends LineProcessor {
         }
 
         /**
-         * 現在の文脈における入力データを表す式を返す。
-         * @return 入力データを表す式
+         * Returns an expression of the input value.
+         * @return the expression of the input value
          */
         public Expression getInput() {
             return input;
         }
 
         /**
-         * 現在の文脈において、指定のポートに対する演算子の結果オブジェクトを返す。
-         * @param port 対象のポート
-         * @return 対応する結果オブジェクト
-         * @throws IllegalArgumentException 指定のポートを発見できない場合
+         * Returns the mirror of {@link Result} object for the target output port.
+         * @param port the target output port
+         * @return the corresponded output port
+         * @throws IllegalArgumentException if there is no such a corresponding a {@link Result} mirror
          */
         public ResultMirror getOutput(FlowElementPortDescription port) {
             Precondition.checkMustNotBeNull(port, "port"); //$NON-NLS-1$

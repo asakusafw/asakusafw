@@ -17,8 +17,8 @@ package com.asakusafw.runtime.core;
 
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.util.ServiceLoader;
 
+//TODO i18n
 /**
  * システムにレポートを通知するためのAPI。
  * <p>
@@ -47,16 +47,8 @@ public void updateWithReport(Hoge hoge) {
 public final class Report {
 
     /**
-     * {@code -D}で指定する{@link Report.Delegate}の実装クラスを指定するプロパティ名。
-     * <p>
-     * デフォルトを利用したい場合には、同プロパティに
-     * {@code com.asakusafw.runtime.core.Report$Default}
-     * を指定すること。
-     * </p>
-<pre><code>
-例:
-hadoop jar ... -D com.asakusafw.runtime.core.Report.Delegate=com.example.MockReportDelegate
-</code></pre>
+     * The Hadoop property name of the custom implementation class name of {@link Report.Delegate}.
+     * To use a default implementation, clients should set {@code com.asakusafw.runtime.core.Report$Default} to it.
      */
     public static final String K_DELEGATE_CLASS = "com.asakusafw.runtime.core.Report.Delegate"; //$NON-NLS-1$
 
@@ -69,12 +61,10 @@ hadoop jar ... -D com.asakusafw.runtime.core.Report.Delegate=com.example.MockRep
     };
 
     /**
-     * このAPIに委譲先のオブジェクトを設定する。
-     * <p>
-     * 以降、このスレッドからこのメソッドを除く各種メソッドを起動した場合、
-     * 指定の移譲オブジェクトに定義された所定のメソッドが起動する。
-     * </p>
-     * @param delegate 委譲先のオブジェクト、登録を解除する場合は{@code null}
+     * Sets a custom implementation for the current thread.
+     * After the implementation was set, each report API method will be redirected to the implementation.
+     * Application developers should not use this method directly.
+     * @param delegate the custom implementation, or {@code null} to unregister the implementation
      */
     public static void setDelegate(Delegate delegate) {
         if (delegate == null) {
@@ -200,9 +190,6 @@ hadoop jar ... -D com.asakusafw.runtime.core.Report.Delegate=com.example.MockRep
         }
     }
 
-    /**
-     * インスタンス化の禁止。
-     */
     private Report() {
         throw new AssertionError();
     }
@@ -215,32 +202,32 @@ hadoop jar ... -D com.asakusafw.runtime.core.Report.Delegate=com.example.MockRep
         private static final long serialVersionUID = 1L;
 
         /**
-         * インスタンスを生成する。
+         * Creates a new instance.
          */
         public FailedException() {
             super();
         }
 
         /**
-         * インスタンスを生成する。
-         * @param message メッセージ (省略可)
-         * @param cause この例外の原因となった例外 (省略可)
+         * Creates a new instance.
+         * @param message the exception message (nullable)
+         * @param cause the original cause (nullable)
          */
         public FailedException(String message, Throwable cause) {
             super(message, cause);
         }
 
         /**
-         * インスタンスを生成する。
-         * @param message メッセージ (省略可)
+         * Creates a new instance.
+         * @param message the exception message (nullable)
          */
         public FailedException(String message) {
             super(message);
         }
 
         /**
-         * インスタンスを生成する。
-         * @param cause この例外の原因となった例外 (省略可)
+         * Creates a new instance.
+         * @param cause the original cause (nullable)
          */
         public FailedException(Throwable cause) {
             super(cause);
@@ -248,7 +235,9 @@ hadoop jar ... -D com.asakusafw.runtime.core.Report.Delegate=com.example.MockRep
     }
 
     /**
-     * {@link Report}クラスの実体。
+     * An abstract super class of delegation objects for {@link Report}.
+     * Application developers can inherit this class, and set the fully qualified name to the property
+     * {@link Report#K_DELEGATE_CLASS} to use the custom implementation for the Report API.
      * @since 0.1.0
      * @version 0.7.4
      */
@@ -265,10 +254,11 @@ hadoop jar ... -D com.asakusafw.runtime.core.Report.Delegate=com.example.MockRep
         }
 
         /**
-         * 指定のレベルのレポートを通知する。
-         * @param level レポートのレベル
-         * @param message メッセージ
-         * @throws IOException レポートの通知に失敗した場合
+         * Notifies a report.
+         * @param level report level
+         * @param message report message
+         * @throws IOException if failed to notify this report by I/O error
+         * @see #report(Level, String, Throwable)
          */
         public abstract void report(Level level, String message) throws IOException;
 
@@ -286,33 +276,28 @@ hadoop jar ... -D com.asakusafw.runtime.core.Report.Delegate=com.example.MockRep
     }
 
     /**
-     * レポートのレベル。
+     * Represents levels of reporting.
      */
     public enum Level {
 
         /**
-         * ジョブフロー全体の終了状態に影響のない「情報」レポート。
+         * Informative level.
          */
         INFO,
 
         /**
-         * ジョブフロー全体の終了状態を警告状態以上にする「警告」レポート。
+         * Warning level.
          */
         WARN,
 
         /**
-         * ジョブフロー全体の終了状態を異常状態にする「エラー」レポートを通知する。
+         * Erroneous level.
          */
         ERROR,
     }
 
     /**
-     * {@link Report}クラスの移譲オブジェクトを初期化する。
-     * <p>
-     * このクラスを{@link ServiceLoader}に登録すると、
-     * {@link Report#K_DELEGATE_CLASS}で指定した
-     * {@link Report.Delegate}クラスのインスタンスを委譲オブジェクトとして登録する。
-     * </p>
+     * An initializer for {@link Delegate}.
      */
     public static class Initializer extends RuntimeResource.DelegateRegisterer<Delegate> {
 
@@ -342,7 +327,7 @@ hadoop jar ... -D com.asakusafw.runtime.core.Report.Delegate=com.example.MockRep
     }
 
     /**
-     * {@link Report.Delegate}の標準的な実装。
+     * A basic implementation of {@link Delegate}.
      * @since 0.1.0
      * @version 0.5.1
      */

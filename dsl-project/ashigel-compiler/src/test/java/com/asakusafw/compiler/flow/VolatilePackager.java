@@ -52,7 +52,7 @@ import com.asakusafw.utils.java.model.syntax.CompilationUnit;
 import com.asakusafw.utils.java.model.syntax.Name;
 
 /**
- * メモリ上に構成物を展開するパッケージャ。
+ * A volatile implementation of {@link Packager}.
  */
 public class VolatilePackager
         extends FlowCompilingEnvironment.Initialized
@@ -67,7 +67,7 @@ public class VolatilePackager
     Map<String, byte[]> contents;
 
     /**
-     * インスタンスを生成する。
+     * Creates a new instance.
      */
     public VolatilePackager() {
         this.emitter = new MockEmitter();
@@ -75,8 +75,8 @@ public class VolatilePackager
     }
 
     /**
-     * このパッケージャが利用するエミッタを返す。
-     * @return 利用するエミッタ
+     * Returns the internal emitter for this packager.
+     * @return the internal emitter
      */
     public MockEmitter getEmitter() {
         return emitter;
@@ -145,8 +145,7 @@ public class VolatilePackager
     private void compile(JarOutputStream jar) throws IOException {
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         if (compiler == null) {
-            throw new IllegalStateException(
-                    "この環境ではJavaコンパイラーを利用できません (JREにはコンパイラーが含まれていません)");
+            throw new IllegalStateException("the current environment does not provide Java compiler (JSR-199)");
         }
         compile(compiler, jar);
     }
@@ -199,7 +198,7 @@ public class VolatilePackager
             }
             if(Boolean.TRUE.equals(successed) == false) {
                 throw new IOException(MessageFormat.format(
-                        "{0}のコンパイルに失敗しました: {1}",
+                        "failed to compile {0}: {1}",
                         getEnvironment().getTargetId(),
                         errors.toString()));
             }

@@ -22,10 +22,11 @@ import java.util.Map;
 import com.asakusafw.runtime.stage.StageConstants;
 import com.asakusafw.runtime.util.VariableTable;
 
+//TODO i18n
 /**
  * バッチの文脈情報。
  * <p>
- * このクラスは<b>演算子の内部でのみ</b>利用できる。
+ * このクラスは<em>演算子の内部でのみ</em>利用できる。
  * インポータ記述などはコンパイル時に参照するため、このクラスを利用しようとするとエラーが発生する。
  * 一部のインポータやエクスポータでは、この文脈情報と同じ情報を、特殊な方法で取得するための
  * 機能が用意されているものもある。
@@ -43,9 +44,9 @@ public class BatchContext {
     private Map<String, String> variables = new HashMap<String, String>();
 
     /**
-     * インスタンスを生成する。
-     * @param variables 変数表
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param variables variable table
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     protected BatchContext(Map<String, String> variables) {
         if (variables == null) {
@@ -68,7 +69,7 @@ public class BatchContext {
     }
 
     /**
-     * {@link BatchContext}の初期化を行う。
+     * Initializes {@link BatchContext}.
      */
     public static class Initializer implements RuntimeResource {
 

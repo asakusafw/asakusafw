@@ -18,9 +18,8 @@ package com.asakusafw.compiler.flow.testing.external;
 import com.asakusafw.compiler.flow.testing.model.Ex1;
 import com.asakusafw.compiler.testing.TemporaryOutputDescription;
 
-
 /**
- * {@link Ex1}のモックエクスポーター記述。
+ * Mock exporter description for {@link Ex1}.
  */
 public class Ex1MockExporterDescription extends TemporaryOutputDescription {
 

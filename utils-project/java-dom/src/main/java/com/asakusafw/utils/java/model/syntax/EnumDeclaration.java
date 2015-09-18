@@ -18,7 +18,7 @@ package com.asakusafw.utils.java.model.syntax;
 import java.util.List;
 
 /**
- * 列挙型の宣言を表現するインターフェース。
+ * An interface which represents enum type declarations.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:8.9] Enums} </li>
@@ -28,21 +28,15 @@ import java.util.List;
 public interface EnumDeclaration
         extends TypeDeclaration {
 
-    // properties
-
     /**
-     * 親インターフェースの一覧を返す。
-     * <p> 親インターフェースが一つも宣言されない場合は空が返される。 </p>
-     * @return
-     *     親インターフェースの一覧
+     * Returns the super interface types.
+     * @return the super interface types
      */
     List<? extends Type> getSuperInterfaceTypes();
 
     /**
-     * 列挙定数の一覧を返す。
-     * <p> 列挙定数が一つも宣言されない場合は空が返される。 </p>
-     * @return
-     *     列挙定数の一覧
+     * Returns the enum constant declarations.
+     * @return the enum constant declarations
      */
     List<? extends EnumConstantDeclaration> getConstantDeclarations();
 }

@@ -19,16 +19,15 @@ import com.asakusafw.compiler.flow.processor.LoggingFlowProcessor;
 import com.asakusafw.compiler.flow.testing.model.Ex1;
 import com.asakusafw.vocabulary.operator.Logging;
 
-
 /**
- * {@link LoggingFlowProcessor}に対するテスト演算子。
+ * An operator class for testing {@link LoggingFlowProcessor}.
  */
 public abstract class LoggingFlow {
 
     /**
-     * 通常の演算子。
-     * @param model 対象のモデル
-     * @return 文字列属性
+     * simple.
+     * @param model target data model
+     * @return string representation of the input model
      */
     @Logging
     public String simple(Ex1 model) {
@@ -36,10 +35,10 @@ public abstract class LoggingFlow {
     }
 
     /**
-     * パラメーター付きの演算子。
-     * @param model 対象のモデル
-     * @param parameter 返す文字列
-     * @return 引数に指定した文字列
+     * parameterized.
+     * @param model target data model
+     * @param parameter additional parameter
+     * @return = {@code parameter}
      */
     @Logging
     public String withParameter(Ex1 model, String parameter) {

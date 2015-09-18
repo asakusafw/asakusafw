@@ -36,7 +36,7 @@ import com.asakusafw.vocabulary.operator.MasterBranch;
 
 
 /**
- * {@link MasterBranch マスタ分岐演算子}を処理する。
+ * Processes {@link MasterBranch} operators.
  */
 @TargetOperator(MasterBranch.class)
 public class MasterBranchOperatorProcessor extends AbstractOperatorProcessor {
@@ -89,7 +89,7 @@ public class MasterBranchOperatorProcessor extends AbstractOperatorProcessor {
         a.validateShuffleKeys(masterKey, transactionKey);
         ExecutableElement selector = null;
         try {
-            selector = MasterKindOperatorAnalyzer.findSelector(context.environment, context);
+            selector = MasterKindOperatorAnalyzer.findSelector(context);
         } catch (ResolveException e) {
             a.error(e.getMessage());
         }

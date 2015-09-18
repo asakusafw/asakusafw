@@ -47,13 +47,13 @@ public enum ValueConditionKind {
             Messages.getString("ValueConditionKind.typeContain")), //$NON-NLS-1$
 
     /**
-     * Accepts if actual date/time is between test started date and its finished date.
+     * Accepts if actual date/time is between the test started date and its finished date.
      */
     TODAY("Today", Messages.getString("ValueConditionKind.titleToday"), //$NON-NLS-1$ //$NON-NLS-2$
             Messages.getString("ValueConditionKind.typeToday")), //$NON-NLS-1$
 
     /**
-     * Accepts if actual date/time is between test started time and its finished time.
+     * Accepts if actual date/time is between the test started time and its finished time.
      */
     NOW("Now", Messages.getString("ValueConditionKind.titleNow"), //$NON-NLS-1$ //$NON-NLS-2$
             Messages.getString("ValueConditionKind.typeNow")), //$NON-NLS-1$

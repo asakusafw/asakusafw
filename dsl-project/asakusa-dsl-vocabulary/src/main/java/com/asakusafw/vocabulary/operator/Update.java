@@ -21,6 +21,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+//TODO i18n
 /**
  * 更新演算子を表すメソッドに付与する注釈。
  * <p>
@@ -74,17 +75,17 @@ public void edit(Hoge hoge) {
 public @interface Update {
 
     /**
-     * 入力ポートの番号。
+     * The input port number.
      */
     int ID_INPUT = 0;
 
     /**
-     * 出力ポートの番号。
+     * The output port number.
      */
     int ID_OUTPUT = 0;
 
     /**
-     * 出力のポート名。
+     * The default port name of {@link #ID_OUTPUT}.
      */
     String outputPort() default "out";
 }

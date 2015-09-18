@@ -30,21 +30,20 @@ import com.asakusafw.vocabulary.flow.In;
 import com.asakusafw.vocabulary.flow.JobFlow;
 import com.asakusafw.vocabulary.flow.Out;
 
-
 /**
- * シャッフルを行わないジョブフロー。
+ * A jobflow w/ co-group.
  */
 @SuppressWarnings("all")
 @JobFlow(name = "testing")
 public class CoGroupStage extends FlowDescription {
 
-    private In<Ex1> in1;
+    private final In<Ex1> in1;
 
-    private In<Ex2> in2;
+    private final In<Ex2> in2;
 
-    private Out<Ex1> out1;
+    private final Out<Ex1> out1;
 
-    private Out<Ex2> out2;
+    private final Out<Ex2> out2;
 
     public CoGroupStage(
             @Import(name = "ex1", description = Ex1MockImporterDescription.class) In<Ex1> in1,

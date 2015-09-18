@@ -34,8 +34,8 @@ import com.asakusafw.runtime.value.IntOption;
 public class WritableSlotTest {
 
     /**
-     * {@link WritableSlot}を経由した{@link Writable}の永続化。
-     * @throws Exception テストに失敗した場合
+     * ser/de via {@link Writable}.
+     * @throws Exception if failed
      */
     @SuppressWarnings("deprecation")
     @Test
@@ -55,8 +55,8 @@ public class WritableSlotTest {
     }
 
     /**
-     * {@link WritableSlot}自体の永続化。
-     * @throws Exception テストに失敗した場合
+     * ser/de {@link WritableSlot} itself.
+     * @throws Exception if failed
      */
     @SuppressWarnings("deprecation")
     @Test

@@ -24,7 +24,7 @@ import java.lang.annotation.Target;
 import com.asakusafw.vocabulary.flow.processor.PartialAggregation;
 import com.asakusafw.vocabulary.model.Key;
 
-
+//TODO i18n
 /**
  * 畳み込み演算子を表すメソッドに付与する注釈。
  * <p>
@@ -94,32 +94,31 @@ public void fold(&#64;Key(group = "name") Hoge left, Hoge right) {
 public @interface Fold {
 
     /**
-     * 入力ポートの番剛。
+     * The input port number.
      */
     int ID_INPUT = 0;
 
     /**
-     * 出力ポートの番号。
+     * The output port number.
      */
     int ID_OUTPUT = 0;
 
     /**
-     * 入力元のポート名。
+     * The default input port name.
      */
     String INPUT = "in"; //$NON-NLS-1$
 
     /**
      * 部分集約の設定。
      * <p>
-     * この演算子で部分集約を可能にした場合、
-     * 現在はメソッド内でフレームワークAPIを利用できなくなる。
+     * この演算子で部分集約を可能にした場合、現在はメソッド内でフレームワークAPIを利用できなくなる。
      * </p>
      * @since 0.2.0
      */
     PartialAggregation partialAggregation() default PartialAggregation.DEFAULT;
 
     /**
-     * 出力先のポート名。
+     * The default output port name.
      */
     String outputPort() default "out";
 }

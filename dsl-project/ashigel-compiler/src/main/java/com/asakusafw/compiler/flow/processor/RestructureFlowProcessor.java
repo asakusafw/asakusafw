@@ -24,7 +24,7 @@ import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
 import com.asakusafw.vocabulary.operator.Restructure;
 
 /**
- * {@link Restructure 再構築演算子}を処理する。
+ * Processes {@link Restructure} operators.
  */
 @TargetOperator(Restructure.class)
 public class RestructureFlowProcessor extends LinePartProcessor {

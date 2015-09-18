@@ -27,6 +27,8 @@ import com.asakusafw.compiler.flow.FlowElementProcessor.Kind;
 import com.asakusafw.compiler.flow.RendezvousProcessor;
 import com.asakusafw.compiler.flow.plan.FlowBlock;
 import com.asakusafw.compiler.flow.plan.StageBlock;
+import com.asakusafw.runtime.core.Result;
+import com.asakusafw.runtime.flow.Rendezvous;
 import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.vocabulary.flow.graph.FlowElement;
@@ -35,12 +37,9 @@ import com.asakusafw.vocabulary.flow.graph.FlowElementOutput;
 import com.asakusafw.vocabulary.flow.graph.FlowResourceDescription;
 import com.asakusafw.vocabulary.flow.graph.InputDescription;
 
-
 /**
- * Map Reduceプログラムの構造を表すモデル。
- * <p>
- * シャッフルフェーズの内容については、別途{@link ShuffleModel}で表現する。
- * </p>
+ * Represents detail of MapReduce job stages.
+ * @see ShuffleModel
  */
 public class StageModel {
 
@@ -55,13 +54,13 @@ public class StageModel {
     private final List<Sink> sinks;
 
     /**
-     * インスタンスを生成する。
-     * @param stageBlock このモデルに関連するステージブロック
-     * @param mapUnits このモデルに含むマップ単位の一覧
-     * @param shuffleModel シャッフルの構造
-     * @param reduceUnits このモデルに含むレデュース単位の一覧
-     * @param sinks このステージの出力一覧
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param stageBlock the target stage block
+     * @param mapUnits the map units in the target stage
+     * @param shuffleModel the shuffle model of the target stage (nullable)
+     * @param reduceUnits the reduce units in the target stage
+     * @param sinks the outputs in the target stage
+     * @throws IllegalArgumentException if some parameters are {@code null}
      */
     public StageModel(
             StageBlock stageBlock,
@@ -88,41 +87,40 @@ public class StageModel {
     }
 
     /**
-     * この要素を構成するステージブロックを返す。
-     * @return この要素を構成するステージブロック
+     * Returns the target stage block.
+     * @return the target stage block
      */
     public StageBlock getStageBlock() {
         return stageBlock;
     }
 
     /**
-     * この要素を構成するマップ単位の一覧を返す。
-     * @return この要素を構成するマップ単位の一覧
+     * Returns the map units of this stage.
+     * @return the map units
      */
     public List<MapUnit> getMapUnits() {
         return mapUnits;
     }
 
     /**
-     * ステージ内で行われるシャッフルの構造を返す。
-     * @return ステージ内で行われるシャッフルの構造、行われない場合は{@code null}
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns the shuffle model of this stage.
+     * @return the shuffle model, or {@code null} if this stage does not require shuffle operations
      */
     public ShuffleModel getShuffleModel() {
         return shuffleModel;
     }
 
     /**
-     * この要素を構成するレデュース単位の一覧を返す。
-     * @return この要素を構成するレデュース単位の一覧
+     * Returns the reduce units of this stage.
+     * @return the reduce units, or an empty list if this stage does not require reduce operations
      */
     public List<ReduceUnit> getReduceUnits() {
         return reduceUnits;
     }
 
     /**
-     * ステージ内で利用されるサイドデータ入力の一覧を返す。
-     * @return サイドデータ入力の一覧
+     * Returns input descriptions which will be used for external resources in this stage.
+     * @return input description of the external resources
      */
     public Set<InputDescription> getSideDataInputs() {
         Set<ResourceFragment> resources = Sets.create();
@@ -142,8 +140,8 @@ public class StageModel {
     }
 
     /**
-     * このステージの結果として利用される要素の一覧を返す。
-     * @return このステージの結果として利用される要素の一覧
+     * Returns the outputs of this stage.
+     * @return the outputs
      */
     public List<Sink> getStageResults() {
         return sinks;
@@ -159,8 +157,8 @@ public class StageModel {
     }
 
     /**
-     * レデュース処理やマップ処理単位の基底となるクラス。
-     * @param <T> コンパイル結果のデータ種
+     * An abstract super class of map/reduce operation units.
+     * @param <T> the compiled model type
      */
     public abstract static class Unit<T> extends Compilable.Trait<T> {
 
@@ -171,10 +169,10 @@ public class StageModel {
         private int serialNumber = -1;
 
         /**
-         * インスタンスを生成する。
-         * @param inputs この処理単位へのブロック入力の一覧
-         * @param fragments 処理単位を構成する処理断片の一覧
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Creates a new instance.
+         * @param inputs the input ports of this operation unit
+         * @param fragments the operation fragments
+         * @throws IllegalArgumentException if the parameters are {@code null}
          */
         public Unit(List<FlowBlock.Input> inputs, List<Fragment> fragments) {
             Precondition.checkMustNotBeNull(inputs, "inputs"); //$NON-NLS-1$
@@ -184,19 +182,9 @@ public class StageModel {
         }
 
         /**
-         * この処理単位にシリアル番号が振られている場合のみ{@code true}を返す。
-         * @return シリアル番号が振られている場合のみ{@code true}
-         */
-        boolean hasSerialNumber() {
-            return serialNumber >= 0;
-        }
-
-        /**
-         * この処理単位のシリアル番号を返す。
-         * <p>
-         * 全ての処理単位は、ステージ内において異なるシリアル番号を持つ必要がある。
-         * </p>
-         * @return この処理単位のシリアル番号
+         * Returns the serial number of this stage.
+         * @return the stage number
+         * @throws IllegalStateException if the stage number has been not set
          */
         public int getSerialNumber() {
             if (serialNumber < 0) {
@@ -206,19 +194,23 @@ public class StageModel {
         }
 
         /**
-         * この処理単位へのブロック入力の一覧を返す。
-         * @return ブロック入力の一覧
+         * Returns the input ports of this unit.
+         * @return the input ports
          */
         public List<FlowBlock.Input> getInputs() {
             return inputs;
         }
 
         /**
-         * この処理単位を構成する処理断片の一覧を返す。
-         * @return 処理断片の一覧
+         * Returns the operation fragments.
+         * @return the operation fragments
          */
         public List<Fragment> getFragments() {
             return fragments;
+        }
+
+        boolean hasSerialNumber() {
+            return serialNumber >= 0;
         }
 
         void renumberUnit(int serial) {
@@ -227,15 +219,15 @@ public class StageModel {
     }
 
     /**
-     * マップ処理の単位。
+     * Represents a map operation unit.
      */
     public static class MapUnit extends Unit<CompiledType> {
 
         /**
-         * インスタンスを生成する。
-         * @param inputs このマップ単位へのブロック入力の一覧
-         * @param fragments 処理断片の一覧
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Creates a new instance.
+         * @param inputs the input ports of this operation unit
+         * @param fragments the operation fragments
+         * @throws IllegalArgumentException if the parameters are {@code null}
          */
         public MapUnit(List<FlowBlock.Input> inputs, List<Fragment> fragments) {
             super(inputs, fragments);
@@ -252,23 +244,23 @@ public class StageModel {
     }
 
     /**
-     * レデュース処理の単位。
+     * Represents a reduce operation unit.
      */
     public static class ReduceUnit extends Unit<CompiledReduce> {
 
         /**
-         * インスタンスを生成する。
-         * @param inputs このレデュース単位へのブロック入力の一覧
-         * @param fragments 処理断片の一覧
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Creates a new instance.
+         * @param inputs the input ports of this operation unit
+         * @param fragments the operation fragments
+         * @throws IllegalArgumentException if the parameters are {@code null}
          */
         public ReduceUnit(List<FlowBlock.Input> inputs, List<Fragment> fragments) {
             super(inputs, fragments);
         }
 
         /**
-         * この処理単位がコンバイン処理を許す場合のみ{@code true}を返す。
-         * @return この処理単位がコンバイン処理を許す場合のみ{@code true}
+         * Returns whether this unit allows combine operations or not.
+         * @return {@code true} if this unit allows combine operations, otherwise {@code false}
          */
         public boolean canCombine() {
             List<Fragment> fragments = getFragments();
@@ -290,7 +282,7 @@ public class StageModel {
     }
 
     /**
-     * 処理断片。
+     * Represents an operation fragment.
      */
     public static class Fragment extends Compilable.Trait<CompiledType> {
 
@@ -301,11 +293,11 @@ public class StageModel {
         private final List<ResourceFragment> resources;
 
         /**
-         * インスタンスを生成する。
+         * Creates a new instance.
          * @param serialNumber the serial number
-         * @param factors 処理の最小単位の一覧
-         * @param resources リソースの一覧
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * @param factors operation factors in this fragment
+         * @param resources external resources in this fragment
+         * @throws IllegalArgumentException if the parameters are {@code null}
          */
         public Fragment(int serialNumber, List<Factor> factors, List<ResourceFragment> resources) {
             Precondition.checkMustNotBeNull(factors, "factors"); //$NON-NLS-1$
@@ -326,16 +318,16 @@ public class StageModel {
         }
 
         /**
-         * この処理断片のシリアル番号を返す。
-         * @return この処理断片のシリアル番号
+         * Returns the serial number of this fragment.
+         * @return the serial number
          */
         public int getSerialNumber() {
             return serialNumber;
         }
 
         /**
-         * この処理断片がコンバイン処理を許す場合のみ{@code true}を返す。
-         * @return この処理断片がコンバイン処理を許す場合のみ{@code true}
+         * Returns whether this fragment allows combine operations or not.
+         * @return {@code true} if this fragment allows combine operations, otherwise {@code false}
          */
         public boolean canCombine() {
             if (isRendezvous() == false) {
@@ -348,17 +340,16 @@ public class StageModel {
         }
 
         /**
-         * この処理断片を構成する処理の最小単位の一覧を返す。
-         * @return 処理の最小単位の一覧
+         * Returns the operation factors in this fragment.
+         * @return the operation factors
          */
         public List<Factor> getFactors() {
             return factors;
         }
 
         /**
-         * この処理断片への入力一覧を返す。
-         * @return 処理断片への入力一覧
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Returns the original input ports.
+         * @return the original input ports
          */
         public List<FlowElementInput> getInputPorts() {
             if (factors.isEmpty()) {
@@ -369,8 +360,8 @@ public class StageModel {
         }
 
         /**
-         * この処理断片からの出力一覧を返す。
-         * @return この処理断片からの出力一覧
+         * Returns the original output ports.
+         * @return the original output ports
          */
         public List<FlowElementOutput> getOutputPorts() {
             if (factors.isEmpty()) {
@@ -381,16 +372,17 @@ public class StageModel {
         }
 
         /**
-         * この処理断片が利用するリソースの一覧を返す。
-         * @return この処理断片が利用するリソースの一覧
+         * Returns the external resources used in this fragment.
+         * @return the external resources
          */
         public List<ResourceFragment> getResources() {
             return resources;
         }
 
         /**
-         * この処理断片が全体として合流地点に配置される場合のみ{@code true}を返す。
-         * @return 合流地点に配置される場合のみ{@code true}
+         * Returns whether this is a rendezvous fragment or not.
+         * If so, this fragment will be compiled into {@link Rendezvous}, otherwise {@link Result}.
+         * @return {@code true} if this is a rendezvous fragment, otherwise {@code false}
          */
         public boolean isRendezvous() {
             if (factors.isEmpty()) {
@@ -409,7 +401,8 @@ public class StageModel {
     }
 
     /**
-     * 個々の演算子に関連する要素。
+     * Represents an operation factor.
+     * This holds only one {@link FlowElement}.
      */
     public static class Factor {
 
@@ -418,10 +411,10 @@ public class StageModel {
         private final FlowElementProcessor processor;
 
         /**
-         * インスタンスを生成する。
-         * @param element この要素に関連するフロー要素
-         * @param processor この要素を処理する処理器
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Creates a new instance.
+         * @param element the corresponding flow element
+         * @param processor the processor that can process the {@code element}
+         * @throws IllegalArgumentException if the parameters are {@code null}
          */
         public Factor(FlowElement element, FlowElementProcessor processor) {
             Precondition.checkMustNotBeNull(element, "element"); //$NON-NLS-1$
@@ -431,33 +424,32 @@ public class StageModel {
         }
 
         /**
-         * この要素が合流地点に配置される場合のみ{@code true}を返す。
-         * @return 合流地点に配置される場合のみ{@code true}
+         * Returns whether this operation is kind of rendezvous or not.
+         * @return {@code true} if this operation is kind of rendezvous, otherwise {@code false}
          */
         public boolean isRendezvous() {
             return processor.getKind() == Kind.RENDEZVOUS;
         }
 
         /**
-         * この要素がラインの末端に配置される場合のみ{@code true}を返す。
-         * @return ラインの末端に配置される場合のみ{@code true}
+         * Returns whether this operation must be put on the end of {@link Fragment} or not.
+         * @return {@code true} if this operation must be put on the end of {@link Fragment}, otherwise {@code false}
          */
         public boolean isLineEnd() {
             return processor.getKind() == Kind.LINE_END;
         }
 
         /**
-         * この要素に関連するフロー要素を返す。
-         * @return 関連するフロー要素
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Returns the corresponding flow element.
+         * @return the corresponding flow element
          */
         public FlowElement getElement() {
             return element;
         }
 
         /**
-         * この要素に関連するフロー要素の処理器を返す。
-         * @return 関連するフロー要素の処理器
+         * Returns the processor which can process {@link #getElement() the holding flow element}.
+         * @return the suitable flow processor
          */
         public FlowElementProcessor getProcessor() {
             return processor;
@@ -472,16 +464,16 @@ public class StageModel {
     }
 
     /**
-     * リソースに対する要素。
+     * Represents an external resources.
      */
     public static class ResourceFragment extends Compilable.Trait<CompiledType> {
 
         private final FlowResourceDescription description;
 
         /**
-         * インスタンスを生成する。
-         * @param description 対象の記述
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Creates a new instance.
+         * @param description the target description
+         * @throws IllegalArgumentException if the parameter is {@code null}
          */
         public ResourceFragment(FlowResourceDescription description) {
             Precondition.checkMustNotBeNull(description, "description"); //$NON-NLS-1$
@@ -489,8 +481,8 @@ public class StageModel {
         }
 
         /**
-         * 対応する記述を返す。
-         * @return 対応する記述
+         * Returns the description of this external resource.
+         * @return the description of this external resource
          */
         public FlowResourceDescription getDescription() {
             return description;
@@ -524,7 +516,7 @@ public class StageModel {
     }
 
     /**
-     * 出力を表す。
+     * Represents an output of MapReduce stage.
      */
     public static class Sink {
 
@@ -533,10 +525,10 @@ public class StageModel {
         private final String name;
 
         /**
-         * ステージの出力を表すインスタンスを生成する。
-         * @param outputs 関連するブロック出力の一覧
-         * @param name 出力の名前
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Creates a new instance.
+         * @param outputs the original output ports
+         * @param name the output name
+         * @throws IllegalArgumentException if the parameters are {@code null}
          */
         public Sink(Set<FlowBlock.Output> outputs, String name) {
             Precondition.checkMustNotBeNull(outputs, "outputs"); //$NON-NLS-1$
@@ -546,24 +538,24 @@ public class StageModel {
         }
 
         /**
-         * この出力に関連するブロック出力を返す。
-         * @return 関連するブロック出力
+         * Returns the original output ports.
+         * @return the original output ports
          */
         public Set<FlowBlock.Output> getOutputs() {
             return outputs;
         }
 
         /**
-         * この出力に関連する型を返す。
-         * @return 関連する型
+         * Returns the data model type of this output.
+         * @return the data model type
          */
         public java.lang.reflect.Type getType() {
             return outputs.iterator().next().getElementPort().getDescription().getDataType();
         }
 
         /**
-         * この出力の名前を返す。
-         * @return この出力の名前
+         * Returns the name of this output.
+         * @return the name
          */
         public String getName() {
             return name;

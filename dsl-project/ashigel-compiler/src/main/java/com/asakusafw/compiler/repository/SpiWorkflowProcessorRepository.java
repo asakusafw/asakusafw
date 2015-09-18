@@ -34,7 +34,7 @@ import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.vocabulary.batch.WorkDescription;
 
 /**
- * Service Provider Interfaceを利用して{@link WorkflowProcessor}を探索するリポジトリー。
+ * Aggregates repositories of {@link WorkflowProcessor} using Service Provider Interface.
  */
 public class SpiWorkflowProcessorRepository
         extends BatchCompilingEnvironment.Initialized
@@ -93,8 +93,8 @@ public class SpiWorkflowProcessorRepository
     }
 
     /**
-     * 利用可能な{@link WorkflowProcessor}のインスタンスを返す。
-     * @return {@link WorkflowProcessor}のインスタンスの一覧
+     * Returns the available {@link WorkflowProcessor} instances in this environment.
+     * @return the available {@link WorkflowProcessor} instances
      */
     protected Iterable<? extends WorkflowProcessor> loadServices() {
         Iterable<WorkflowProcessor> services = ServiceLoader.load(

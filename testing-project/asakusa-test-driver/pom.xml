@@ -108,6 +108,7 @@
 									<fileset dir="target/generated-sources/test-dmdl" includes="**/*.java" />
 								</delete>
 								<java classname="com.asakusafw.dmdl.java.Main" classpathref="maven.test.classpath" fork="true">
+									<jvmarg value="-Duser.language=en" />
 									<jvmarg value="-Dlogback.configurationFile=src/test/resources/logback-test.xml" />
 									<arg value="-output" />
 									<arg value="target/generated-test-sources/test-dmdl" />
@@ -128,12 +129,9 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.5.1</version>
 				<configuration>
 					<fork>true</fork>
 					<encoding>UTF-8</encoding>
-					<source>1.6</source>
-					<target>1.6</target>
 					<proc>none</proc>
 				</configuration>
 				<executions>
@@ -160,10 +158,11 @@
 						<configuration>
 							<fork>true</fork>
 							<encoding>UTF-8</encoding>
-							<source>1.6</source>
-							<target>1.6</target>
 							<proc>only</proc>
 							<failOnError>false</failOnError>
+							<compilerArgs>
+								<arg>-J-Duser.language=en</arg>
+							</compilerArgs>
 						</configuration>
 					</execution>
 				</executions>

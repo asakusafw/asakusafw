@@ -18,7 +18,7 @@ package com.asakusafw.utils.java.model.syntax;
 import java.util.List;
 
 /**
- * 配列初期化子を表現するインターフェース。
+ * An interface which represents the array initializer.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:10.6] Array Initializers} </li>
@@ -28,13 +28,9 @@ import java.util.List;
 public interface ArrayInitializer
         extends Expression {
 
-    // properties
-
     /**
-     * 要素の一覧を返す。
-     * <p> 要素が一つも指定されない場合は空が返される。 </p>
-     * @return
-     *     要素の一覧
+     * Returns the element expressions.
+     * @return the element expressions
      */
     List<? extends Expression> getElements();
 }

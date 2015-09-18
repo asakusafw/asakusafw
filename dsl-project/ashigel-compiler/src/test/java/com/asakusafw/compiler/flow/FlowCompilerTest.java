@@ -52,8 +52,8 @@ public class FlowCompilerTest {
     public CompilerTester tester = new CompilerTester();
 
     /**
-     * Mapperのみのテスト。
-     * @throws Exception テストに失敗した場合
+     * map only.
+     * @throws Exception if exception was occurred
      */
     @Test
     public void mapOnly() throws Exception {
@@ -74,8 +74,8 @@ public class FlowCompilerTest {
     }
 
     /**
-     * Reducerを含むテスト。
-     * @throws Exception テストに失敗した場合
+     * w/ reduce block.
+     * @throws Exception if exception was occurred
      */
     @Test
     public void withReduce() throws Exception {
