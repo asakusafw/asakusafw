@@ -130,6 +130,109 @@ Asakusa Frameworkでは、標準のデプロイメントアーカイブに含ま
 Asakusa Gradle Plugin リファレンス
 ==================================
 
+Batch Application Plugin
+------------------------
+
+タスク
+~~~~~~
+
+Batch Application Plugin は、以下のタスクをプロジェクトに追加します。
+
+..  attention::
+    以下では非推奨となったタスクをあげています。
+
+..  list-table:: Batch Application Plugin - タスク
+    :widths: 113 63 113 163
+    :header-rows: 1
+
+    * - タスク名
+      - 依存先
+      - 型
+      - 説明
+    * - :program:`generateThunderGateDataModel`
+      - ``-`` [#]_
+      - ``GenerateThunderGateDataModelTask`` [#]_
+      - ThunderGate用のMySQLメタデータからDMDLスクリプトを生成する
+
+..  [#] ThunderGateの設定を有効にした場合、 :program:`compileDMDL` タスクに :program:`generateThunderGateDataModel` タスクが依存先として追加されます
+..  [#] :gradledoc:`com.asakusafw.gradle.tasks.GenerateThunderGateDataModelTask`
+
+規約プロパティ
+~~~~~~~~~~~~~~
+
+..  attention::
+    以下では非推奨となった規約プロパティをあげています。
+
+ThunderGateプロパティ
+^^^^^^^^^^^^^^^^^^^^^
+
+ThunderGateに関する規約プロパティは、 ``asakusafw`` ブロック内の参照名 ``thundergate`` でアクセスできます [#]_ 。
+この規約オブジェクトは以下のプロパティを持ちます。
+
+..  list-table:: Batch Application Plugin - ThunderGateプロパティ ( ``thundergate`` ブロック )
+    :widths: 2 1 2 5
+    :header-rows: 1
+
+    * - プロパティ名
+      - 型
+      - デフォルト値
+      - 説明
+    * - ``target``
+      - String
+      - ``未指定``
+      - ThunderGateのターゲット。この値をセットすることでThunderGate用のビルド設定が有効になる [#]_
+    * - ``jdbcFile``
+      - String
+      - ``未指定``
+      - ``generateThunderGateDataModel`` タスクの実行時に使用するJDBC接続設定ファイルのパス。この値をセットすることでThunderGate用のビルド設定が有効になる [#]_
+    * - ``ddlEncoding``
+      - String
+      - ``未指定``
+      - MySQLメタデータ登録用DDLファイルのエンコーディング
+    * - ``ddlSourceDirectory``
+      - String
+      - ``src/${project.sourceSets.main.name}/sql/modelgen``
+      - MySQLメタデータ登録用DDLファイルのソースディレクトリ
+    * - ``includes``
+      - String
+      - ``未指定``
+      - モデルジェネレータ、およびテストデータテンプレート生成ツールが生成対象とするモデル名を正規表現の書式で指定
+    * - ``excludes``
+      - String
+      - ``未指定``
+      - モデルジェネレータ、およびテストデータテンプレート生成ツールが生成対象外とするモデル名を正規表現の書式で指定
+    * - ``dmdlOutputDirectory``
+      - String
+      - ``${project.buildDir}/thundergate/dmdl``
+      - MySQLメタデータから生成されるDMDLスクリプトの出力先
+    * - ``ddlOutputDirectory``
+      - String
+      - ``${project.buildDir}/thundergate/sql``
+      - ThunderGate管理テーブル用DDLスクリプトの出力先
+    * - ``sidColumn``
+      - String
+      - ``SID``
+      - ThunderGateが入出力を行う業務テーブルのシステムIDカラム名
+    * - ``timestampColumn``
+      - String
+      - ``UPDT_DATETIME``
+      - ThunderGateが入出力を行う業務テーブルの更新日時カラム名
+    * - ``deleteColumn``
+      - String
+      - ``DELETE_FLAG``
+      - ThunderGateが入出力を行う論理削除フラグカラム名
+    * - ``deleteValue``
+      - String
+      - ``'1'``
+      - ThunderGateが入出力を行う業務テーブルの論理削除フラグが削除されたことを示す値
+
+..  [#] これらのプロパティは規約オブジェクト :gradledoc:`com.asakusafw.gradle.plugins.AsakusafwPluginConvention.ThunderGateConfiguration` が提供します。
+
+..  [#] この設定を利用する場合、タスク実行時にAsakusa Frameworkがインストール済みとなっている必要があります。
+        または ``jdbcFile`` をプロパティを設定することで、インストールを行わない状態でタスクが実行できるようになります。
+
+..  [#] ``target`` プロパティを同時に有効にした場合、 ``jdbcFile`` プロパティが優先されます。
+
 Framework Organizer Plugin
 --------------------------
 
@@ -163,7 +266,7 @@ Framework Organizer Plugin は、以下のタスクを定義します。
     詳しくは、 :doc:`../administration/deployment-guide` や :ref:`asakusa-gradle-plugin-reference` を参照してください。
 
 ..  attention::
-    以下の表ではバージョン 0.7.0 以降で非推奨となったタスク、及び削除されたタスクをあげています。
+    以下では非推奨となったタスク、及び削除されたタスクをあげています。
 
 ..  list-table:: Framework Organizer Plugin - タスク
     :widths: 152 121 48 131
@@ -173,77 +276,107 @@ Framework Organizer Plugin は、以下のタスクを定義します。
       - 依存先
       - 型
       - 説明
-    * -  ``attachBatchapps`` 
-      -  ``-`` 
+    * -  ``attachBatchapps``
+      -  ``-``
       - ``Task``
       - デプロイメント構成にバッチアプリケーションを追加する [#]_
-    * -  ``attachComponentCore`` 
-      -  ``-`` 
+    * -  ``attachComponentCore``
+      -  ``-``
       - ``Task``
       - デプロイメント構成にランタイムコアモジュールを追加する
-    * -  ``attachComponentDirectIo`` 
-      -  ``-`` 
+    * -  ``attachComponentDirectIo``
+      -  ``-``
       - ``Task``
       - デプロイメント構成にDirect I/Oを追加する
-    * -  ``attachComponentYaess`` 
-      -  ``-`` 
+    * -  ``attachComponentYaess``
+      -  ``-``
       - ``Task``
       - デプロイメント構成にYAESSを追加する
-    * -  ``attachComponentWindGate`` 
-      -  ``-`` 
+    * -  ``attachComponentWindGate``
+      -  ``-``
       - ``Task``
       - デプロイメント構成にWindGateを追加する
-    * -  ``attachComponentThunderGate`` 
-      -  ``-`` 
+    * -  ``attachComponentThunderGate``
+      -  ``-``
       - ``Task``
       - デプロイメント構成にThunderGateを追加する
-    * -  ``attachComponentDevelopment`` 
-      -  ``-`` 
+    * -  ``attachComponentDevelopment``
+      -  ``-``
       - ``Task``
       - デプロイメント構成に開発ツールを追加する
-    * -  ``attachComponentOperation`` 
-      -  ``-`` 
+    * -  ``attachComponentOperation``
+      -  ``-``
       - ``Task``
       - デプロイメント構成に運用ツールを追加する
-    * -  ``attachExtensionYaessJobQueue`` 
-      -  ``-`` 
+    * -  ``attachExtensionYaessJobQueue``
+      -  ``-``
       - ``Task``
       - デプロイメント構成にYAESS JobQueue Pluginを追加する
-    * -  ``attachExtensionWindGateRetryable`` 
-      -  ``-`` 
+    * -  ``attachExtensionWindGateRetryable``
+      -  ``-``
       - ``Task``
       - デプロイメント構成にWindGate Retryable Pluginを追加する
-    * -  ``attachConf<``  ``DistributionName``  ``>`` 
-      -  ``-`` 
+    * -  ``attachConf<``  ``DistributionName``  ``>``
+      -  ``-``
       - ``Task``
       - デプロイメント構成にディストリビューション名に対応するディレクトリを追加する [#]_
-    * -  ``attachAssembleDev`` 
-      -  ``attachBatchapps,`` 
-         ``attachComponentCore,`` 
-         ``attachComponentDirectIo,`` 
-         ``attachComponentYaess,`` 
-         ``attachComponentWindGate,`` 
-         ``attachComponentDevelopment,`` 
-         ``attachComponentOperation`` 
+    * -  ``attachAssembleDev``
+      -  ``attachBatchapps,``
+         ``attachComponentCore,``
+         ``attachComponentDirectIo,``
+         ``attachComponentYaess,``
+         ``attachComponentWindGate,``
+         ``attachComponentDevelopment,``
+         ``attachComponentOperation``
       - ``Task``
       - 開発環境向けのデプロイメント構成を構築する
-    * -  ``attachAssemble`` 
-      -  ``attachComponentCore,`` 
-         ``attachComponentDirectIo,`` 
-         ``attachComponentYaess,`` 
-         ``attachComponentWindGate,`` 
-         ``attachComponentOperation`` 
+    * -  ``attachAssemble``
+      -  ``attachComponentCore,``
+         ``attachComponentDirectIo,``
+         ``attachComponentYaess,``
+         ``attachComponentWindGate,``
+         ``attachComponentOperation``
       - ``Task``
       - 運用環境向けのデプロイメント構成を構築する
-    * -  ``assembleCustomAsakusafw`` 
-      -  ``-`` 
+    * -  ``assembleCustomAsakusafw``
+      -  ``-``
       - ``Task``
       - 任意のデプロイメント構成を持つデプロイメントアーカイブを生成する
-    * -  ``assembleDevAsakusafw`` 
-      -  ``attachAssembleDev`` 
+    * -  ``assembleDevAsakusafw``
+      -  ``attachAssembleDev``
       - ``Task``
       - 開発環境向けのデプロイメント構成を持つデプロイメントアーカイブを生成する
 
 ..  [#]  ``attachBatchapps`` タスクを利用するには本プラグインをアプリケーションプロジェクト上で利用する必要があります。
 ..  [#]  ``attachConf<DistributionName>`` タスクを利用するには本プラグインをアプリケーションプロジェクト上で利用する必要があります。
 
+規約プロパティ
+~~~~~~~~~~~~~~
+
+..  attention::
+    以下では非推奨となった規約プロパティをあげています。
+
+ThunderGateプロパティ
+^^^^^^^^^^^^^^^^^^^^^
+
+ThunderGateの構成に関する規約プロパティは、 ``asakusafwOrganizer`` ブロック内の参照名 ``thundergate`` でアクセスできます [#]_ 。
+この規約オブジェクトは以下のプロパティを持ちます。
+
+..  list-table:: Framework Organizer Plugin - ThunderGateプロパティ ( ``thundergate`` ブロック )
+    :widths: 2 1 2 5
+    :header-rows: 1
+
+    * - プロパティ名
+      - 型
+      - デフォルト値
+      - 説明
+    * - ``enabled``
+      - boolean
+      - false
+      - この値をtrueにするとThunderGate用の構成を行う
+    * - ``target``
+      - String
+      - ``未指定``
+      - デプロイメントアーカイブに含める既定のThunderGateのターゲット名。
+
+..  [#] これらのプロパティは規約オブジェクト :gradledoc:`com.asakusafw.gradle.plugins.AsakusafwOrganizerPluginConvention.ThunderGateConfiguration` が提供します。

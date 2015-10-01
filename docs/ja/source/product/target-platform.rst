@@ -118,25 +118,6 @@ WindGate
 
 ..  [#] データベースを利用しない場合(例えば WindGate/CSV のみを使う場合)には不要です
 
-ThunderGate
-===========
-
-:doc:`ThunderGate <../thundergate/index>` は以下のプラットフォームで動作を検証しています。
-
-..  list-table:: 動作検証プラットフォーム(ThunderGate)
-    :widths: 2 4 4
-    :header-rows: 1
-
-    * - 種類
-      - Product
-      - Version
-    * - DBMS
-      - MySQL Server
-      - 5.5.25
-    * - JDBC Driver
-      - MySQL Connector/J
-      - 5.1.25
-
 リンク
 ======
 
@@ -176,5 +157,3 @@ ThunderGate
       - http://www.eclipse.org/
     * - PostgreSQL
       - http://www.postgresql.org/
-    * - MySQL
-      - http://www.mysql.com/

@@ -179,11 +179,3 @@ WindGateとの連携
 ----------------
 
 WindGateとの連携について、詳しい情報は :doc:`../windgate/index` を参照してください。
-
-ThunderGateとの連携
--------------------
-
-ThunderGateを利用するプロジェクト構成の場合、DMDLコンパイラの実行前にThunderGateが利用するデータベースの情報を分析して、データベース内に定義されたテーブルやビューの情報を元に、対応するデータモデルの定義を記述するDMDLを自動的に生成します。
-
-ThunderGateとの連携について、詳しくは :doc:`../thundergate/with-dmdl` を参照してください。
-

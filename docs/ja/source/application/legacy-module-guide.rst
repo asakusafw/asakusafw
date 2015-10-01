@@ -33,6 +33,10 @@ TestDriver
 ..  [#] :javadoc:`com.asakusafw.testdriver.JobFlowTestDriver`
 ..  [#] :javadoc:`com.asakusafw.testdriver.FlowPartTestDriver`
 
+外部システム連携
+----------------
+* :doc:`ThunderGate <../thundergate/index>`
+
 ワークフロー定義
 ----------------
 * Experimental shell script
@@ -63,6 +67,12 @@ TestDriver
 これらのTestDriver APIはThunderGateと組み合わせて利用することのみを想定しており、 WindGate や Direct I/O と組み合わせて利用することが出来ません。
 
 バージョン0.2.0から :doc:`../testing/index` で説明されている新TestDriver APIが提供されました。新TestDriver APIはAsakusa Frameworkのすべての外部連携モジュールに対応しており、また複数のテストデータの入出力方式への対応や入出力データ方法のカスタマイズ、テストデータの検証方法のカスタマイズが可能であったりと、より柔軟で豊富な機能を提供しています。バージョン0.4以降は新TestDriver APIを利用することを強く推奨します。
+
+外部システム連携
+----------------
+ThunderGateは「オンラインシステムのRDBMSとHadoopの連携」を念頭に置いたデータ転送ツールです。詳細は、 :doc:`../thundergate/index` を参照してください。
+
+ThunderGateは対応プラットフォームが限定的であることや、利用するための前提条件や制約が非常に厳しいため、通常の場合、外部システム連携を行う機能として :doc:`../directio/index` や :doc:`../windgate/index` の利用を検討してください。
 
 ワークフロー定義
 ----------------
@@ -127,6 +137,12 @@ TestDriver
         </dependency>
 
 Eclipse で開発を行っている場合は、 ``pom.xml`` を編集後、  ``mvn eclipse:eclipse`` を実行し、上記のモジュールをEclipseのクラスパス定義ファイルに追加します。
+
+外部システム連携
+----------------
+ThunderGateを利用するための方法は、 :doc:`../thundergate/index` を参照してください。
+
+また、 ThunderGateをGradleから利用するための設定については、 :doc:`../application/gradle-plugin-deprecated` を参照してください。
 
 ワークフロー定義
 ----------------
