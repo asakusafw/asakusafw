@@ -10,10 +10,10 @@ import com.asakusafw.vocabulary.operator.*;
 public abstract class Simple {
 
     /**
-     * 畳み込み演算子のテスト。
-     * @param left 途中結果
-     * @param right 畳み込み対象
-     * @param param パラメーター
+     * Fold operator for testing.
+     * @param left accumulator
+     * @param right target object
+     * @param param value parameter
      */
     @Fold
     public void example(@Key(group = "value") MockHoge left, MockHoge right, int param) {
