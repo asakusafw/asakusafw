@@ -3,7 +3,7 @@ package com.example;
 public enum ExampleEnum {
     
     /**
-     * 不明。
+     * Unknown.
      */
     UNKNOWN,
 

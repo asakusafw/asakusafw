@@ -9,9 +9,9 @@ import com.asakusafw.vocabulary.operator.*;
 public abstract class Simple {
 
     /**
-     * 集計結果を返す。
-     * @param in 集計対象
-     * @return 集計結果
+     * Summarize operator for testing.
+     * @param in target object
+     * @return summarized result
      */
     @Summarize
     public abstract MockSummarized example(MockHoge in);
