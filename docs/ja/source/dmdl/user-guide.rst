@@ -543,8 +543,8 @@ DMDLコンパイラの実行
 
 作成したDMDLスクリプトからAsakusa DSLで利用可能なデータモデルを生成するには、DMDLコンパイラを利用します。
 
-Javaデータモデルクラスの生成
-----------------------------
+データモデルクラスの生成
+------------------------
 
 DMDLスクリプトからJavaデータモデルクラスを生成する場合、Asakusa Frameworkの :file:`asakusa-dmdl-java-*.jar` の :javadoc:`com.asakusafw.dmdl.java.Main` クラスを次の引数で起動します。
 

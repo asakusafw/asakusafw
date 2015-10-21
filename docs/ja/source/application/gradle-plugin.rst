@@ -459,7 +459,7 @@ Asakusa Gradle Plugin固有の設定情報は、ビルドスクリプトの ``as
 以下の例では、トップレベルの階層にプロジェクトで使用するAsakusa Frameworkのバージョンを示す ``asakusafwVersion`` が指定され、続いてデータモデルクラスの生成に関する ``modelgen`` ブロック、DSLコンパイルの設定に関する ``compiler`` ブロックが指定されています。
 ブロック内には複数のプロパティを指定することができます。
 
-以下の例では、プロジェクトテンプレートのデフォルト設定に対して、モデルクラス名のパッケージ名の変更、DSLコンパイルオプションを指定するプロパティの追加を行っています。
+以下の例では、プロジェクトテンプレートのデフォルト設定に対して、データモデルクラス名のパッケージ名の変更、DSLコンパイルオプションを指定するプロパティの追加を行っています。
 
 **build.gradle**
 
@@ -562,7 +562,7 @@ Batch Application Plugin [#]_ は、Asakusa Framework の バッチアプリケ�
 
 Batch Application Plugin はAsakusa Framework の バッチアプリケーションプロジェクトに対して、以下のような機能を提供します。
 
-* DMDLスクリプト から モデルクラスを生成するタスクの提供
+* DMDLスクリプト から データモデルクラスを生成するタスクの提供
 * Gradle標準のJavaコンパイルタスクに対して、Operator DSLコンパイラによる演算子実装クラス、演算子ファクトリクラスの生成を行うための設定を追加
 * Asakusa DSLとして記述したJavaソースファイル一式に対して、Batch DSLコンパイラによるバッチアプリケーション実行モジュールの生成を行うタスクの提供
 * テストドライバを利用したテストケースを作成するためのテストデータ定義シートのテンプレートファイルを生成するタスクの提供
@@ -598,7 +598,7 @@ Batch Application Plugin は、以下のタスクをプロジェクトに追加�
     * - :program:`compileDMDL`
       - ``-``
       - ``CompileDmdlTask`` [#]_
-      - DMDLコンパイラを使ってモデルクラスを生成する
+      - DMDLコンパイラを使ってデータモデルクラスを生成する
     * - :program:`compileBatchapp`
       - :program:`compileJava`, :program:`processResources`
       - ``CompileBatchappTask`` [#]_
@@ -1655,7 +1655,7 @@ Gradleではこれらのプロパティについてビルドスクリプト上�
       - DSLコンパイラが生成する各クラスに使用されるパッケージ名
     * - ``asakusa.modelgen.package``
       - ``asakusafw.modelgen.modelgenSourcePackage``
-      - モデルクラスに使用されるパッケージ名
+      - データモデルクラスに使用されるパッケージ名
 
 その他の項目については、 :file:`build.properties` をデフォルト値のまま利用している場合は移行作業は不要です。
 変更しているものがある場合はBatch Application Plugin上の規約プロパティを確認し、設定を反映してください。
