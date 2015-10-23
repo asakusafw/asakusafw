@@ -26,12 +26,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.asakusafw.vocabulary.flow.FlowDescription;
 
-//TODO i18n
 /**
- * バッチを記述するための基底クラス。
- * <p>
- * サブクラスでは、{@link #describe()}を継承し、次のようにジョブフロー間の関係を記述する。
- * </p>
+ * An abstract super class for describing the details of a batch workflow.
+ * Subclasses must override {@link #describe()} method and build a workflow in the method, like as following:
 <pre><code>
 &#64;Batch(name = "hoge")
 public class HogeBatch extends BatchDescription {
@@ -45,11 +42,9 @@ public class HogeBatch extends BatchDescription {
     }
 }
 </code></pre>
- * <p>
- * 上記の例では、まず{@code FirstFlow}が実行され、その後に
- * {@code SecondFlow, ParallelFlow}が実行され、
- * いずれも完了したのちに{@code JoinFlow}が実行されるようなバッチを表す。
- * </p>
+ * In the above example, only {@code FirstFlow} will be started first. And then, after the {@code FirstFlow} was
+ * completed, {@code SecondFlow} and {@code ParallelFlow} will be concurrently processed. Finally,
+ * {@code JoinFlow} was processed after the all other jobflows were completed.
  */
 public abstract class BatchDescription {
 
@@ -74,17 +69,17 @@ public abstract class BatchDescription {
     }
 
     /**
-     * バッチ記述メソッド。
+     * Describes workflow structure.
+     * Subclasses must override this method and build a workflow using Asakusa batch DSL.
      */
     protected abstract void describe();
 
     /**
-     * このバッチで実行するスクリプトを定義したプロパティファイルを指定する。
-     * @param scriptDefinition このクラスを継承したクラスのパッケージから、
-     *      スクリプトを定義したプロパティファイルへの相対パス
-     * @return 依存関係を追加するためのビルダー
-     * @throws IllegalArgumentException 引数に不正なプロパティファイルが指定された場合
-     * @throws IllegalStateException 別の処理を登録している最中であった場合
+     * Start registering a new <em>script job</em> to this batch.
+     * @param scriptDefinition the script definition path
+     * @return a builder for specifying dependencies of the adding job
+     * @throws IllegalArgumentException if the script definition is something wrong
+     * @throws IllegalStateException if another job is building dependencies
      * @deprecated does not supported
      */
     @Deprecated
@@ -93,23 +88,19 @@ public abstract class BatchDescription {
     }
 
     /**
-     * このバッチで実行するジョブフロークラスを指定する。
-     * <p>
-     * このメソッドだけではジョブフローが登録されたことにはならず、
-     * 返されるオブジェクトの次のいずれかを指定する必要がある。
-     * </p>
+     * Start registering a new <em>jobflow</em> to this batch.
+     * Clients must tell the dependencies of the target jobflow to the resulting builder of this method, by using
+     * either methods.
      * <ul>
      * <li> {@link DependencyBuilder#soon() run(...).soon()} </li>
      * <li> {@link DependencyBuilder#after(Work, Work...) run(...).after(...)} </li>
      * </ul>
-     * <p>
-     * 後者のメソッドは、現在のメソッドに指定したジョブフローを実行する際に、
-     * 前提となるジョブフローの一覧を表す。
-     * </p>
-     * @param jobflow バッチで実行するジョブフロークラス
-     * @return 依存関係を追加するためのビルダー
-     * @throws IllegalArgumentException 引数にジョブフロークラス以外が指定された場合
-     * @throws IllegalStateException 別の処理を登録している最中であった場合
+     * The both above methods will return a {@link Work} object which represents the registered jobflow.
+     * And then the latter method accepts {@link Work} objects as its dependencies.
+     * @param jobflow the target jobflow class
+     * @return a builder for specifying dependencies of the adding job
+     * @throws IllegalArgumentException if the jobflow class is something wrong
+     * @throws IllegalStateException if another job is building dependencies
      */
     protected DependencyBuilder run(Class<? extends FlowDescription> jobflow) {
         if (jobflow == null) {
@@ -178,8 +169,8 @@ public abstract class BatchDescription {
         }
 
         /**
-         * 現在の処理を前提となる処理が存在しないものとして構成する。
-         * @return 構成した処理
+         * Completes registering job without any dependencies.
+         * @return the registered job
          */
         public Work soon() {
             return register(new Work(
@@ -189,11 +180,12 @@ public abstract class BatchDescription {
         }
 
         /**
-         * 前提とされる処理を指定して、現在の処理を構成する。
-         * @param dependency 前提とされる処理
-         * @param rest 前提とされる処理の残りの一覧
-         * @return 構成した処理
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Completes registering job with dependencies.
+         * The registered job will be executed after the precedent jobs were (successfully) completed.
+         * @param dependency the precedent job
+         * @param rest the other precedent job
+         * @return the registered job
+         * @throws IllegalArgumentException if some parameters are {@code null}
          */
         public Work after(Work dependency, Work... rest) {
             if (dependency == null) {

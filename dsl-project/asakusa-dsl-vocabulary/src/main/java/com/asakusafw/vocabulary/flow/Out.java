@@ -17,18 +17,17 @@ package com.asakusafw.vocabulary.flow;
 
 import com.asakusafw.vocabulary.flow.graph.FlowElementInput;
 
-//TODO i18n
 /**
- * フローからの出力を表すインターフェース。
- * @param <T> 出力するデータの種類
+ * Represents a flow output.
+ * @param <T> the output data model type
  * @since 0.1.0
  * @version 0.7.3
  */
 public interface Out<T> {
 
     /**
-     * 指定の出力をフロー全体の出力として追加する。
-     * @param source フロー全体の出力となるデータが流れるソース
+     * Adds an upstream source to this flow output.
+     * @param source the upstream source
      */
     void add(Source<T> source);
 

@@ -22,15 +22,10 @@ import java.util.Map;
 import com.asakusafw.runtime.stage.StageConstants;
 import com.asakusafw.runtime.util.VariableTable;
 
-//TODO i18n
 /**
- * バッチの文脈情報。
- * <p>
- * このクラスは<em>演算子の内部でのみ</em>利用できる。
- * インポータ記述などはコンパイル時に参照するため、このクラスを利用しようとするとエラーが発生する。
- * 一部のインポータやエクスポータでは、この文脈情報と同じ情報を、特殊な方法で取得するための
- * 機能が用意されているものもある。
- * </p>
+ * Context API entry class.
+ * The context API provides the batch arguments and others about the current batch execution.
+ * Clients can use this class <em>only in operator methods</em>, not in flow, importer, nor descriptions.
  */
 public class BatchContext {
 
@@ -56,10 +51,10 @@ public class BatchContext {
     }
 
     /**
-     * 指定の名前に関連する変数の内容を返す。
-     * @param name 変数名
-     * @return 対応する内容、存在しない場合は{@code null}
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns a value of the context variable (which includes batch arguments).
+     * @param name the target variable name
+     * @return the value of the target variable, or {@code null} if it is not defined in this context
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static String get(String name) {
         if (name == null) {

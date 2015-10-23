@@ -83,8 +83,8 @@ import com.asakusafw.vocabulary.model.Key;
  &#42;&#47;
 &#64;MasterJoinUpdate
 public void updateWithMaster(
-        &#64;Key(group = "id") ItemMst master,
-        &#64;Key(group = "itemId") HogeTrn tx) {
+        &#64;Key(group = &quot;id&quot;) ItemMst master,
+        &#64;Key(group = &quot;itemId&quot;) HogeTrn tx) {
     tx.setPrice(master.getPrice());
 }
 </code></pre>
@@ -128,7 +128,8 @@ public @interface MasterJoinUpdate {
     String missedPort() default "missed";
 
     /**
-     * 利用するマスタ選択演算子のメソッド名。
+     * The selector method name.
+     * The target method must be declared in the same class.
      * @see MasterSelection
      */
     String selection() default MasterSelection.NO_SELECTION;

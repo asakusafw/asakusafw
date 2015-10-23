@@ -17,9 +17,8 @@ package com.asakusafw.runtime.value;
 
 import java.util.Calendar;
 
-//TODO i18n
 /**
- * 日付に関するユーティリティ群。
+ * Utilities about date and time.
  * @since 0.1.0
  * @version 0.7.0
  */
@@ -86,11 +85,11 @@ public final class DateUtil {
         + (YEARS_LEAP / 400);
 
     /**
-     * 日付を西暦0001/01/01からの経過日数に変換して返す。
-     * @param year 年
-     * @param month 月 (1-12)
-     * @param day 日 (1-31)
-     * @return 日付に対応する西暦0001/01/01からの経過日数
+     * Returns a date as the number of elapsed days from {@code 0001/01/01 (YYYY/MM/DD)}.
+     * @param year year
+     * @param month month (1-12)
+     * @param day day (1-31)
+     * @return the number of elapsed days (0-origin)
      */
     public static int getDayFromDate(int year, int month, int day) {
         int result = 0;
@@ -104,9 +103,9 @@ public final class DateUtil {
     }
 
     /**
-     * 日付を西暦0001/01/01からの経過日数に変換して返す。
-     * @param calendar 対象のカレンダー
-     * @return 日付に対応する西暦0001/01/01からの経過日数
+     * Returns a date as the number of elapsed days from {@code 0001/01/01 (YYYY/MM/DD)}.
+     * @param calendar the target calendar object
+     * @return the number of elapsed days (0-origin)
      * @since 0.2.2
      */
     public static int getDayFromCalendar(Calendar calendar) {
@@ -117,9 +116,9 @@ public final class DateUtil {
     }
 
     /**
-     * 日付を西暦0001/01/01からの経過日数に変換して返す。
-     * @param date 対象の日付オブジェクト
-     * @return 日付に対応する西暦0001/01/01からの経過日数
+     * Returns a date as the number of elapsed days from {@code 0001/01/01 (YYYY/MM/DD)}.
+     * @param date the target date object
+     * @return the number of elapsed days (0-origin)
      * @since 0.7.0
      */
     public static int getDayFromDate(java.util.Date date) {
@@ -127,10 +126,11 @@ public final class DateUtil {
     }
 
     /**
-     * 西暦0001/01/01からの経過日数で指定された日付を対象のカレンダーに設定する。
-     * 時、分、秒、ミリ秒のフィールドは0に設定される。
-     * @param days 西暦0001/01/01からの経過日数
-     * @param calendar 対象のカレンダー
+     * Converts the number of elapsed days from {@code 0001/01/01 (YYYY/MM/DD)} to the corresponded date,
+     * and set it to the target calendar object.
+     * Note that, the hour, minute, second and millisecond fields will be set to {@code 0}.
+     * @param days the number of elapsed days from {@code 0001/01/01 (YYYY/MM/DD)}
+     * @param calendar the target calendar object
      * @since 0.2.2
      */
     public static void setDayToCalendar(int days, Calendar calendar) {
@@ -144,11 +144,11 @@ public final class DateUtil {
     }
 
     /**
-     * 時刻を秒数に変換して返す。
-     * @param hour 時
-     * @param minute 分
-     * @param second 秒
-     * @return 時刻に対応する秒数
+     * Converts the time as the number of elapsed seconds from {@code 00:00:00}.
+     * @param hour hour
+     * @param minute minute
+     * @param second second
+     * @return the number of elapsed seconds (0-origin)
      */
     public static int getSecondFromTime(int hour, int minute, int second) {
         int result = 0;
@@ -159,9 +159,9 @@ public final class DateUtil {
     }
 
     /**
-     * 時刻を西暦0001/01/01 00:00:00からの経過秒数に変換して返す。
-     * @param calendar 対象のカレンダー
-     * @return 西暦0001/01/01 00:00:00からの経過秒数 (0起算)
+     * Converts the date and time as the number of elapsed seconds from {@code 0001/01/01 (YYYY/MM/DD) 00:00:00}.
+     * @param calendar the target calendar object
+     * @return the number of elapsed seconds (0-origin)
      * @since 0.2.2
      */
     public static long getSecondFromCalendar(Calendar calendar) {
@@ -174,9 +174,9 @@ public final class DateUtil {
     }
 
     /**
-     * 時刻を西暦0001/01/01 00:00:00からの経過秒数に変換して返す。
-     * @param date 対象の日付オブジェクト
-     * @return 西暦0001/01/01 00:00:00からの経過秒数 (0起算)
+     * Converts the date and time as the number of elapsed seconds from {@code 0001/01/01 (YYYY/MM/DD) 00:00:00}.
+     * @param date the target date object
+     * @return the number of elapsed seconds (0-origin)
      * @since 0.7.0
      */
     public static long getSecondFromDate(java.util.Date date) {
@@ -190,10 +190,11 @@ public final class DateUtil {
     }
 
     /**
-     * 西暦0001/01/01 00:00:00からの経過秒数で指定された時刻を対象のカレンダーに設定する。
-     * ミリ秒のフィールドは0に設定される。
-     * @param seconds 西暦0001/01/01 00:00:00からの経過秒数
-     * @param calendar 対象のカレンダー
+     * Converts the number of elapsed seconds from {@code 0001/01/01 (YYYY/MM/DD) 00:00:00} to the corresponded date,
+     * and set it to the target calendar object.
+     * Note that, the millisecond fields will be set to {@code 0}.
+     * @param seconds the number of elapsed seconds
+     * @param calendar the target calendar object
      * @since 0.2.2
      */
     public static void setSecondToCalendar(long seconds, Calendar calendar) {
@@ -214,15 +215,15 @@ public final class DateUtil {
     }
 
     /**
-     * 西暦0001/01/01からの経過日数に対し、その日の西暦年を返す。
-     * @param dayOfEra 0001/01/01 からの経過日数(0起算)
-     * @return 指定された日数を経過した時点での西暦
+     * Converts the number of elapsed days from {@code 0001/01/01 (YYYY/MM/DD)} to the corresponding year.
+     * @param days the number of elapsed days
+     * @return the corresponded year
      */
-    public static int getYearFromDay(int dayOfEra) {
+    public static int getYearFromDay(int days) {
 
         // the number of leap year cycles (400years)
-        int cycles = dayOfEra / DAYS_LEAP_CYCLE;
-        int cycleRest = dayOfEra % DAYS_LEAP_CYCLE;
+        int cycles = days / DAYS_LEAP_CYCLE;
+        int cycleRest = days % DAYS_LEAP_CYCLE;
 
         // the century offset in the current leap year cycle (0-3)
         int centInCycle = cycleRest / DAYS_CENTURY;
@@ -249,9 +250,9 @@ public final class DateUtil {
     }
 
     /**
-     * 指定の西暦年が閏年である場合に{@code true}を返す。
-     * @param year 対象の西暦年
-     * @return 閏年である場合に{@code true}
+     * Whether the target year is leap year or not.
+     * @param year the target year
+     * @return {@code true} if the target year is leap year, otherwise {@code false}
      */
     public static boolean isLeap(int year) {
         if (year % 4 != 0) {
@@ -261,12 +262,11 @@ public final class DateUtil {
     }
 
     /**
-     * 指定された西暦年に対し、西暦0001/01/01からその年の初めの日までの日数を返す。
-     * <p>
-     * つまり、西暦1年が指定された場合、0001/01/01から0001/01/01なので、その差の0日を返す。
-     * </p>
-     * @param year 対象の年
-     * @return 西暦0001/01/01からその年の初めの日までの日数
+     * Converts the year to the number of elapsed days from {@code 0001/01/01 (YYYY/MM/DD)} about
+     * the first day of the specified year.
+     * For example, {@code getDayFromYear(1)} returns just {@code 0}.
+     * @param year the target year
+     * @return the number of elapsed days about the first day of the specified year
      */
     public static int getDayFromYear(int year) {
         int y = year - 1;
@@ -274,10 +274,10 @@ public final class DateUtil {
     }
 
     /**
-     * 年初からの経過日数に対し、その日の月を返す。
-     * @param dayOfYear 年初からの経過日数 (0起算)
-     * @param leap {@code true}ならばその年が閏年として計算する
-     * @return 対象の日を含む月、<em>1月を1とし、12月を12とする</em>
+     * Converts the number of elapsed days from beginning of the year to the corresponding month.
+     * @param dayOfYear the number of elapsed days from beginning of the year
+     * @param leap whether the target year is leap year or not
+     * @return the month including the target day (<em>1-origin</em>)
      */
     public static int getMonthOfYear(int dayOfYear, boolean leap) {
         int d = dayOfYear;
@@ -321,10 +321,10 @@ public final class DateUtil {
     }
 
     /**
-     * 年初からの経過日数に対し、その日の月内での日を返す。
-     * @param dayOfYear 年初からの経過日数 (0起算)
-     * @param leap {@code true}ならばその年が閏年として計算する
-     * @return 対応する月内での日、<em>1日を1とし、30日を30などとする</em>
+     * Converts the number of elapsed days from beginning of the year to the date in the current month.
+     * @param dayOfYear the number of elapsed days from beginning of the year
+     * @param leap whether the target year is leap year or not
+     * @return the date in the current month (1-origin)
      */
     public static int getDayOfMonth(int dayOfYear, boolean leap) {
         int d = dayOfYear;
@@ -371,18 +371,22 @@ public final class DateUtil {
     }
 
     /**
-     * 西暦0001/01/01 00:00:00からの経過秒数に対し、その日までの経過日数を返す。
-     * @param seconds 0001/01/01 00:00:00 からの経過秒数(0起算)
-     * @return その日までの経過日数 (0起算)
+     * Converts the number of elapsed seconds from {@code 0001/01/01 (YYYY/MM/DD) 00:00:00} to
+     * the corresponded date as the number of elapsed days.
+     * @param seconds the number of elapsed seconds (0-origin)
+     * @return the corresponded number of elapsed days (0-origin)
+     * @see #getSecondOfDay(long)
      */
     public static int getDayFromSeconds(long seconds) {
         return (int) (seconds / 86400);
     }
 
     /**
-     * 西暦0001/01/01 00:00:00からの経過秒数に対し、その日の中での経過秒数を返す。
-     * @param seconds 0001/01/01 00:00:00 からの経過秒数(0起算)
-     * @return その日の中での経過秒数 (0起算)
+     * Converts the number of elapsed seconds from {@code 0001/01/01 (YYYY/MM/DD) 00:00:00} to
+     * the number of elapsed seconds from beginning of the corresponding date.
+     * @param seconds the number of elapsed seconds (0-origin)
+     * @return the number of elapsed seconds of the day (0-origin)
+     * @see #getDayFromSeconds(long)
      */
     public static int getSecondOfDay(long seconds) {
         return (int) (seconds % 86400);
@@ -492,7 +496,7 @@ public final class DateUtil {
 
     /**
      * Appends a string representation of {@link Date}.
-     * @param elapsedDays the elapsed days from 0001/01/01
+     * @param elapsedDays the number of elapsed days from 0001/01/01
      * @param dateSegmentSeparator the separator char between each date segment
      * @param target the target buffer
      * @since 0.7.0
@@ -506,7 +510,7 @@ public final class DateUtil {
 
     /**
      * Appends a string representation of {@link DateTime}.
-     * @param elapsedSeconds the elapsed seconds from 0001/01/01 00:00:00
+     * @param elapsedSeconds the number of elapsed seconds from 0001/01/01 00:00:00
      * @param dateSegmentSeparator the separator char between each date segment
      * @param dateTimeSeparator the separator char between date and time
      * @param timeSegmentSeparator the separator char between each time segment

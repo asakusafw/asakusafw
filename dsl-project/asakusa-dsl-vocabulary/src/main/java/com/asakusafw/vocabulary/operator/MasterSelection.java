@@ -88,7 +88,7 @@ import com.asakusafw.vocabulary.model.Key;
  &#42; 有効なマスタを選択する。
  &#42; &#64;param masters 選択対象のマスタデータ一覧
  &#42; &#64;param tx トランザクションデータ
- &#42; &#64;return 実際に利用するマスタデータ、利用可能なものがない場合は{@code null}
+ &#42; &#64;return 実際に利用するマスタデータ、利用可能なものがない場合は{&#64;code null}
  &#42;&#47;
 &#64;MasterSelection
 public ItemMst selectItemMst(List&lt;ItemMst&gt; masters, HogeTrn tx) {
@@ -106,10 +106,10 @@ public ItemMst selectItemMst(List&lt;ItemMst&gt; masters, HogeTrn tx) {
  &#42; &#64;param master マスタデータ
  &#42; &#64;param tx 変更するトランザクションデータ
  &#42;&#47;
-&#64;MasterJoinUpdate(selection = "selectItemMst")
+&#64;MasterJoinUpdate(selection = &quot;selectItemMst&quot;)
 public void updateWithMaster(
-        &#64;Key(group = "id") ItemMst master,
-        &#64;Key(group = "itemId") HogeTrn tx) {
+        &#64;Key(group = &quot;id&quot;) ItemMst master,
+        &#64;Key(group = &quot;itemId&quot;) HogeTrn tx) {
     tx.setPrice(master.getPrice());
 }
 </code></pre>

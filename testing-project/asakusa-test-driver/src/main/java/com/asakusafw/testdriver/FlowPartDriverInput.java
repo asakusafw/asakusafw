@@ -64,8 +64,8 @@ public class FlowPartDriverInput<T> extends FlowDriverInput<T, FlowPartDriverInp
     }
 
     /**
-     * テストデータのデータサイズを指定する。
-     * @param dataSize データサイズ
+     * Configures the estimated data size for this input.
+     * @param dataSize the estimated data size (nullable)
      * @return this
      */
     public FlowPartDriverInput<T> withDataSize(DataSize dataSize) {

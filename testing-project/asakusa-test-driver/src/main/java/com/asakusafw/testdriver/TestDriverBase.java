@@ -25,6 +25,7 @@ import java.util.Map;
 
 import com.asakusafw.compiler.flow.FlowCompilerOptions;
 import com.asakusafw.compiler.trace.TracepointWeaveRewriter;
+import com.asakusafw.runtime.core.Report;
 import com.asakusafw.testdriver.core.TestDataToolProvider;
 import com.asakusafw.testdriver.core.TestingEnvironmentConfigurator;
 import com.asakusafw.trace.io.TraceSettingSerializer;
@@ -35,7 +36,6 @@ import com.asakusafw.trace.model.Tracepoint.PortKind;
 import com.asakusafw.vocabulary.flow.FlowDescription;
 import com.asakusafw.vocabulary.flow.FlowPart;
 
-// TODO i18n
 /**
  * An abstract super class of test-driver classes.
  * @since 0.2.0
@@ -77,10 +77,11 @@ public abstract class TestDriverBase extends DriverElementBase {
     }
 
     /**
-     * 設定項目を追加する。
-     * @param key 追加する項目のキー名
-     * @param value 追加する項目の値、{@code null}の場合には項目を削除する
-     * @throws IllegalArgumentException if the {@code key} is {@code null}
+     * Adds a runtime configuration item.
+     * This may customize behavior of some framework APIs (e.g. {@link Report report API}).
+     * @param key the configuration key name
+     * @param value the configuration value, or {@code null} to unset the target configuration
+     * @throws IllegalArgumentException if {@code key} is {@code null}
      */
     public void configure(String key, String value) {
         if (key == null) {
@@ -94,9 +95,9 @@ public abstract class TestDriverBase extends DriverElementBase {
     }
 
     /**
-     * バッチ実行時引数を設定する。
-     * @param key 追加する項目のキー名
-     * @param value 追加する項目の値、{@code null}の場合には項目を削除する
+     * Adds a batch argument.
+     * @param key the argument name
+     * @param value the argument value, or {@code null} to unset the target argument
      * @throws IllegalArgumentException if {@code key} is {@code null}
      */
     public void setBatchArg(String key, String value) {

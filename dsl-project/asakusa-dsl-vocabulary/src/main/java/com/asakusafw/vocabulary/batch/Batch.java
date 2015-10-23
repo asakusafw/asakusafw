@@ -20,10 +20,10 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.regex.Pattern;
 
-// TODO i18n
 /**
- * バッチクラスに付与されるべき注釈。
+ * An annotation for batch classes.
  * @since 0.1.0
  * @version 0.5.0
  */
@@ -38,14 +38,10 @@ public @interface Batch {
     String DEFAULT_PARAMETER_VALUE_PATTERN = ".*"; //$NON-NLS-1$
 
     /**
-     * このバッチの識別子。
-     * <p>
-     * この識別子は、同一アプリケーション内で重複してはならない。
-     * また、識別子には、下記の形式(Javaのパッケージ名のうち、ASCIIコード表に収まるもののみ)の
-     * 名前を利用可能である。
-     * </p>
+     * The identifier for the target batch ({@literal a.k.a.} <em>batch ID</em>).
+     * The batch ID must be unique in the system, and must be in the form of the following rule:
 <pre><code>
-Name :
+Name:
     SimpleName
     Name "." SimpleName
 SimpleName:
@@ -58,57 +54,54 @@ NamePart: one of
     NameStart
     0-9
 </code></pre>
+     * In other words, the above rule is a subset of Java package names (e.g. {@code com.asakusafw}).
      */
     String name();
 
     /**
-     * このバッチに対するコメント。
+     * The comments for the target batch.
      * @since 0.5.0
      */
     String comment() default "";
 
     /**
-     * このバッチに利用可能な引数の一覧。
-     * 未指定の場合はなし。
+     * The available batch arguments.
      * @since 0.5.0
      * @see #strict()
      */
     Parameter[] parameters() default { };
 
     /**
-     * {@link #parameters()}で指定していない引数を利用できるかどうか。
-     * {@code true}の場合は利用できず、{@code false}の場合は利用できる。
-     * 未指定の場合は{@code false}。
+     * Whether this batch accepts only predefined batch arguments (in {@link #parameters()}) or not.
+     * {@code false} accepts any batch arguments even if they are not predefined.
      * @since 0.5.0
      */
     boolean strict() default false;
 
     /**
-     * バッチ引数の情報。
+     * Represents a batch parameter.
      * @since 0.5.0
      */
     public @interface Parameter {
 
         /**
-         * 引数のキー名。
+         * The name of this parameter.
          */
         String key();
 
         /**
-         * 引数のコメント。
-         * 未指定の場合はなし。
+         * Comments for this parameter.
          */
         String comment() default "";
 
         /**
-         * 必須引数であれば{@code true}, そうでなければ{@code false}。
-         * 未指定の場合は {@code true}。
+         * Whether this parameter is mandatory or not.
          */
         boolean required() default true;
 
         /**
-         * 引数に指定可能な文字列の正規表現パターン。
-         * 未指定の場合は任意の文字列を許可。
+         * The valid argument value pattern in {@link Pattern Java regular expressions}.
+         * If this is not specified, any values will be accepted.
          */
         String pattern() default DEFAULT_PARAMETER_VALUE_PATTERN;
     }

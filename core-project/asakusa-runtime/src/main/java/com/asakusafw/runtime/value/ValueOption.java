@@ -17,7 +17,6 @@ package com.asakusafw.runtime.value;
 
 import com.asakusafw.runtime.io.util.WritableRawComparable;
 
-//TODO i18n
 /**
  * Represents nullable and modifiable value.
  * Note that, the sub-classes may be thread unsafe.
@@ -33,8 +32,8 @@ public abstract class ValueOption<V extends ValueOption<V>> implements WritableR
     protected boolean nullValue = true;
 
     /**
-     * この値が{@code null}値を表す場合のみ{@code true}を返す。
-     * @return この値が{@code null}値を表す場合のみ{@code true}
+     * Returns whether this object represents {@code null} or not.
+     * @return {@code true} if this object represents {@code null}, otherwise {@code false}
      */
     public final boolean isNull() {
         return nullValue;
@@ -60,12 +59,9 @@ public abstract class ValueOption<V extends ValueOption<V>> implements WritableR
     public abstract void copyFrom(V otherOrNull);
 
     /**
-     * この値と指定された値を比較し、小さいものをこの値の内容とする。
-     * <p>
-     * ただし、この値または比較対象の値が{@code null}を表す場合、
-     * この値は{@code null}を表す値となる。
-     * </p>
-     * @param other 対象の値
+     * Sets the specified value to this object only if the specified value is less than this object. However, if either
+     * this object or the specified value represents {@code null}, this object will also turn to {@code null}.
+     * @param other the target value
      */
     public final void min(V other) {
         if (this == other) {
@@ -79,12 +75,9 @@ public abstract class ValueOption<V extends ValueOption<V>> implements WritableR
     }
 
     /**
-     * この値と指定された値を比較し、大きなものをこの値の内容とする。
-     * <p>
-     * ただし、この値または比較対象の値が{@code null}を表す場合、
-     * この値は{@code null}を表す値となる。
-     * </p>
-     * @param other 対象の値
+     * Sets the specified value to this object only if the specified value is greater than this object. However, if
+     * either this object or the specified value represents {@code null}, this object will also turn to {@code null}.
+     * @param other the target value
      */
     public final void max(V other) {
         if (this == other) {

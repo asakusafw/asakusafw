@@ -82,7 +82,7 @@ import com.asakusafw.vocabulary.model.Key;
  &#42; &#64;param right 畳み込む対象
  &#42;&#47;
 &#64;Fold
-public void fold(&#64;Key(group = "name") Hoge left, Hoge right) {
+public void fold(&#64;Key(group = &quot;name&quot;) Hoge left, Hoge right) {
     // &#64;Summarizeを手動で行うイメージで、leftに次々とrightを加える
     left.setValue(left.getValue() + right.getValue());
 }

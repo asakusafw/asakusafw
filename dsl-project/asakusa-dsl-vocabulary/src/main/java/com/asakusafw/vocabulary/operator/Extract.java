@@ -65,8 +65,8 @@ import java.lang.annotation.Target;
  * </p>
 <pre><code>
 // スレッド安全なので抽出結果のオブジェクトは再利用可能
-private A a = new A();
-private B b = new B();
+private final A a = new A();
+private final B b = new B();
 
 /**
  &#42; レコードに含まれるそれぞれのフィールドを抽出し、出力する。

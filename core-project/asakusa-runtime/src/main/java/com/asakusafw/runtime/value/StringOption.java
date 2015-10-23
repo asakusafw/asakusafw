@@ -26,12 +26,9 @@ import org.apache.hadoop.io.WritableUtils;
 
 import com.asakusafw.runtime.io.util.WritableRawComparable;
 
-//TODO i18n
 /**
- * {@code null}値を許容する文字列。
- * <p>
- * この文字列を比較する場合、次のように書くとよい。
- * </p>
+ * Represents a character string value which can be {@code null}.
+ * The following snippet works well for comparing {@link StringOption} with a constant value:
 <pre><code>
 class Something {
     static final StringOption TARGET = new StringOption("something");
@@ -76,9 +73,9 @@ public final class StringOption extends ValueOption<StringOption> {
     }
 
     /**
-     * このオブジェクトが表現する値を返す。
-     * @return このオブジェクトが表現する値
-     * @throws NullPointerException この値が{@code null}を表現する場合
+     * Returns the value which this object represents.
+     * @return the value which this object represents, never {@code null}
+     * @throws NullPointerException if this object represents {@code null}
      */
     public Text get() {
         if (nullValue) {
@@ -88,9 +85,9 @@ public final class StringOption extends ValueOption<StringOption> {
     }
 
     /**
-     * このオブジェクトが表現する値を返す。
-     * @return このオブジェクトが表現する値
-     * @throws NullPointerException この値が{@code null}を表現する場合
+     * Returns the value which this object represents.
+     * @return the value which this object represents, never {@code null}
+     * @throws NullPointerException if this object represents {@code null}
      */
     public String getAsString() {
         if (nullValue) {
@@ -100,9 +97,9 @@ public final class StringOption extends ValueOption<StringOption> {
     }
 
     /**
-     * このオブジェクトが表現する値を返す。
-     * @param alternate このオブジェクトが{@code null}を表現する場合に返す値
-     * @return このオブジェクトが表現する値、{@code null}を表現する場合は引数の値
+     * Returns the value which this object represents.
+     * @param alternate the alternative value for {@code null}
+     * @return the value which this object represents, or the alternative one if this object represents {@code null}
      */
     public Text or(Text alternate) {
         if (nullValue) {
@@ -112,9 +109,9 @@ public final class StringOption extends ValueOption<StringOption> {
     }
 
     /**
-     * このオブジェクトが表現する値を返す。
-     * @param alternate このオブジェクトが{@code null}を表現する場合に返す値
-     * @return このオブジェクトが表現する値、{@code null}を表現する場合は引数の値
+     * Returns the value which this object represents.
+     * @param alternate the alternative value for {@code null}
+     * @return the value which this object represents, or the alternative one if this object represents {@code null}
      */
     public String or(String alternate) {
         if (nullValue) {
@@ -124,10 +121,8 @@ public final class StringOption extends ValueOption<StringOption> {
     }
 
     /**
-     * このオブジェクトを空の文字列に変更する。
-     * <p>
-     * このオブジェクトが{@code null}を表していた場合にも、この呼び出しによって空の文字列を表すようになる。
-     * </p>
+     * Reset this object to an empty character string.
+     * This method makes the object non-null, an empty string even if the object just represents {@code null}.
      */
     public void reset() {
         nullValue = false;
@@ -213,9 +208,9 @@ public final class StringOption extends ValueOption<StringOption> {
     }
 
     /**
-     * この値と指定の値が同じものを表現する場合のみ{@code true}を返す。
-     * @param other 対象の値、または{@code null}
-     * @return 指定の値が同じものを表現する場合のみ{@code true}
+     * Returns whether both this object and the specified value represents an equivalent value or not.
+     * @param other the target value (nullable)
+     * @return {@code true} if this object has the specified value, otherwise {@code false}
      */
     public boolean has(String other) {
         if (isNull()) {
@@ -230,9 +225,9 @@ public final class StringOption extends ValueOption<StringOption> {
     }
 
     /**
-     * この値と指定の値が同じものを表現する場合のみ{@code true}を返す。
-     * @param other 対象の値、または{@code null}
-     * @return 指定の値が同じものを表現する場合のみ{@code true}
+     * Returns whether both this object and the specified value represents an equivalent value or not.
+     * @param other the target value (nullable)
+     * @return {@code true} if this object has the specified value, otherwise {@code false}
      */
     public boolean has(Text other) {
         if (isNull()) {

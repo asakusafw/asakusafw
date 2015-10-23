@@ -83,7 +83,7 @@ import com.asakusafw.vocabulary.model.Key;
  &#42;&#47;
 &#64;GroupSort
 public void firstLast(
-        &#64;Key(group = "name", order = "age ASC") List&lt;Hoge&gt; hogeList,
+        &#64;Key(group = &quot;name&quot;, order = &quot;age ASC&quot;) List&lt;Hoge&gt; hogeList,
         Result&lt;Hoge&gt; first,
         Result&lt;Hoge&gt; last) {
     first.add(hogeList.get(0));

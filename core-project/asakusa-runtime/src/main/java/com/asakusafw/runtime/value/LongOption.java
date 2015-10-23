@@ -24,9 +24,8 @@ import org.apache.hadoop.io.WritableComparator;
 
 import com.asakusafw.runtime.io.util.WritableRawComparable;
 
-//TODO i18n
 /**
- * {@code null}値を許容する{@code long}値。
+ * Represents a {@code long} value which can be {@code null}.
  */
 public final class LongOption extends ValueOption<LongOption> {
 
@@ -49,9 +48,9 @@ public final class LongOption extends ValueOption<LongOption> {
     }
 
     /**
-     * このオブジェクトが表現する値を返す。
-     * @return このオブジェクトが表現する値
-     * @throws NullPointerException この値が{@code null}を表現する場合
+     * Returns the value which this object represents.
+     * @return the value which this object represents, never {@code null}
+     * @throws NullPointerException if this object represents {@code null}
      */
     public long get() {
         if (nullValue) {
@@ -61,9 +60,9 @@ public final class LongOption extends ValueOption<LongOption> {
     }
 
     /**
-     * このオブジェクトが表現する値を返す。
-     * @param alternate このオブジェクトが{@code null}を表現する場合に返す値
-     * @return このオブジェクトが表現する値、{@code null}を表現する場合は引数の値
+     * Returns the value which this object represents.
+     * @param alternate the alternative value for {@code null}
+     * @return the value which this object represents, or the alternative one if this object represents {@code null}
      */
     public long or(long alternate) {
         if (nullValue) {
@@ -73,9 +72,9 @@ public final class LongOption extends ValueOption<LongOption> {
     }
 
     /**
-     * このオブジェクトの内容と指定の値を合計した結果を、このオブジェクトに書き出す。
-     * @param delta 追加する値
-     * @throws NullPointerException このオブジェクトが{@code null}を表現する場合
+     * Adds a value into this object.
+     * @param delta the value to be add
+     * @throws NullPointerException if this object represents {@code null}
      */
     public void add(long delta) {
         if (nullValue) {
@@ -85,9 +84,9 @@ public final class LongOption extends ValueOption<LongOption> {
     }
 
     /**
-     * このオブジェクトの内容と指定のオブジェクトの内容を合計した結果を、このオブジェクトに書き出す。
-     * @param other 対象のオブジェクト、{@code null}が指定された場合には何も行わない
-     * @throws NullPointerException このオブジェクトが{@code null}を表現する場合
+     * Adds a value into this object.
+     * @param other the value to be add, or {@code null} to do nothing
+     * @throws NullPointerException if this object represents {@code null}
      */
     public void add(LongOption other) {
         if (nullValue) {
@@ -157,9 +156,9 @@ public final class LongOption extends ValueOption<LongOption> {
     }
 
     /**
-     * この値と指定の値が同じものを表現する場合のみ{@code true}を返す。
-     * @param other 対象の値
-     * @return 指定の値が同じものを表現する場合のみ{@code true}
+     * Returns whether both this object and the specified value represents an equivalent value or not.
+     * @param other the target value
+     * @return {@code true} if this object has the specified value, otherwise {@code false}
      */
     public boolean has(long other) {
         if (isNull()) {

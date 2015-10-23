@@ -17,10 +17,9 @@ package com.asakusafw.vocabulary.flow;
 
 import com.asakusafw.vocabulary.flow.graph.FlowElementOutput;
 
-//TODO i18n
 /**
- * フロー内でデータを提供する要素が持つべきインターフェース。
- * @param <T> 提供するデータの種類
+ * Represents an abstract data source for downstream operators and flow outputs.
+ * @param <T> the data model type
  */
 public interface Source<T> {
 
