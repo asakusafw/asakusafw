@@ -62,7 +62,7 @@ public final class JavaEscape {
     }
 
     /**
-     * Decodes a escaped string.
+     * Decodes an escaped string.
      * @param string the escaped string
      * @return the decoded string
      * @throws IllegalArgumentException if the escaped string is malformed

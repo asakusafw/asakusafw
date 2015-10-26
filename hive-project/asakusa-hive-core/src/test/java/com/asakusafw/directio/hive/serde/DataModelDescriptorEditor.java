@@ -102,7 +102,7 @@ public class DataModelDescriptorEditor {
     }
 
     /**
-     * Builds a edited result.
+     * Builds an edited result.
      * @return the result
      */
     public DataModelDescriptor build() {

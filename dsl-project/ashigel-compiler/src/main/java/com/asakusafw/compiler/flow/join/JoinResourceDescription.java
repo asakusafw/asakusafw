@@ -27,7 +27,7 @@ import com.asakusafw.vocabulary.flow.graph.FlowResourceDescription;
 import com.asakusafw.vocabulary.flow.graph.InputDescription;
 
 /**
- * Represents a external resource for enabling side-data join operations.
+ * Represents an external resource for enabling side-data join operations.
  */
 public class JoinResourceDescription implements FlowResourceDescription {
 

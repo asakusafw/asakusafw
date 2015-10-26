@@ -219,7 +219,7 @@ public final class IntOption extends ValueOption<IntOption> {
     public int restore(byte[] bytes, int offset, int limit) throws IOException {
         if (limit - offset == 0) {
             throw new IOException(MessageFormat.format(
-                    "Cannot restore a int field ({0})",
+                    "Cannot restore int field ({0})",
                     "invalid length"));
         }
         if (bytes[offset + 0] == 0) {
@@ -230,7 +230,7 @@ public final class IntOption extends ValueOption<IntOption> {
             return 4 + 1;
         } else {
             throw new IOException(MessageFormat.format(
-                    "Cannot restore a int field ({0})",
+                    "Cannot restore int field ({0})",
                     "invalid length"));
         }
     }

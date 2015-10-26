@@ -269,12 +269,10 @@ public class VolatileClassOutputManager
 
     @Override
     public boolean isSameFile(FileObject a, FileObject b) {
-        if (a instanceof VolatileJavaFile
-                || a instanceof VolatileClassFile) {
+        if (a instanceof VolatileJavaFile || a instanceof VolatileClassFile) {
             return a.toUri().equals(b.toUri());
         }
-        if (b instanceof VolatileJavaFile
-                || b instanceof VolatileClassFile) {
+        if (b instanceof VolatileJavaFile || b instanceof VolatileClassFile) {
             return b.toUri().equals(a.toUri());
         }
         return super.isSameFile(a, b);

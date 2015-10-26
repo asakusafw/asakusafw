@@ -160,7 +160,7 @@ public final class RuntimeContext {
     }
 
     /**
-     * Creates a inherited context with specified execution mode.
+     * Creates an inherited context with specified execution mode.
      * @param newValue execution mode
      * @return the inherited context
      * @throws IllegalArgumentException if some parameters were {@code null}
@@ -173,25 +173,25 @@ public final class RuntimeContext {
     }
 
     /**
-     * Creates a inherited context with specified batch ID.
+     * Creates an inherited context with specified batch ID.
      * @param newValue batch ID, or {@code null} to unset batch ID
-     * @return the ihnerited context
+     * @return the inherited context
      */
     public RuntimeContext batchId(String newValue) {
         return new RuntimeContext(mode, newValue, buildId);
     }
 
     /**
-     * Creates a inherited context with specified verification code.
+     * Creates an inherited context with specified verification code.
      * @param newValue verification code, or {@code null} to unset verification code
-     * @return the ihnerited context
+     * @return the inherited context
      */
     public RuntimeContext buildId(String newValue) {
         return new RuntimeContext(mode, batchId, newValue);
     }
 
     /**
-     * Creates a inherited context with applying value map.
+     * Creates an inherited context from a value map.
      * @param newValueMap value map
      * @return the inherited context
      * @throws IllegalArgumentException if some parameters were {@code null}
@@ -230,7 +230,7 @@ public final class RuntimeContext {
     }
 
     /**
-     * Creates a value map describes this context.
+     * Creates a value map that describes this context.
      * @return the value map
      * @see #apply(Map)
      */

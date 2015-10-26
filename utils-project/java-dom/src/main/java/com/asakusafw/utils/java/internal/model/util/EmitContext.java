@@ -143,21 +143,21 @@ public interface EmitContext {
     void docBlock(EmitDirection direction);
 
     /**
-     * Emits a begin or end of a inline block in documentation comments.
+     * Emits a begin or end of an inline block in documentation comments.
      * @param direction indicates either begin or end
      * @throws IllegalArgumentException if the parameter is {@code null}
      */
     void docInlineBlock(EmitDirection direction);
 
     /**
-     * Adds an block comment.
+     * Adds a block comment.
      * @param contents contents of the comment
      * @throws IllegalArgumentException if the parameter is {@code null}
      */
     void putBlockComment(List<String> contents);
 
     /**
-     * Puts an line comment.
+     * Puts a line comment.
      * @param content contents of the comment
      * @throws IllegalArgumentException if the parameter is {@code null}
      */

@@ -37,7 +37,7 @@ public class JavadocParserBuilder {
     }
 
     /**
-     * Adds a inline block parser.
+     * Adds an inline block parser.
      * @param parser the parser
      * @throws IllegalArgumentException if the parameter is {@code null}
      * @throws IllegalStateException if {@link #build()} has already been invoked
