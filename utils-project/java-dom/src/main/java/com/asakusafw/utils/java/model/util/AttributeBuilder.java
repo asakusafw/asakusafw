@@ -90,7 +90,7 @@ public class AttributeBuilder {
 
     /**
      * Returns the Java annotation list which contains the added annotations as their order.
-     * Note that, each attribute which is not a annotation is ignored.
+     * Note that, each attribute which is not an annotation will be ignored.
      * @return the Java annotations
      */
     public List<Annotation> toAnnotations() {

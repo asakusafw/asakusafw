@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 public interface ExecutionScript {
 
     /**
-     * A environment variable name of Asakusa installation home.
+     * An environment variable name of Asakusa installation home.
      */
     String ENV_ASAKUSA_HOME = "ASAKUSA_HOME";
 

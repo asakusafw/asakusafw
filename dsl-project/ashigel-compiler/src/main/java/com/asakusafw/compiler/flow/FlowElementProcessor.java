@@ -369,7 +369,7 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
         }
 
         /**
-         * Returns a imported type for the specified one.
+         * Returns an imported type for the specified one.
          * @param type the target type
          * @return the imported type
          * @throws IllegalArgumentException if the parameter is {@code null}
@@ -380,7 +380,7 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
         }
 
         /**
-         * Returns a imported type for the specified one.
+         * Returns an imported type for the specified one.
          * @param type the target type
          * @return the imported type
          * @throws IllegalArgumentException if the parameter is {@code null}

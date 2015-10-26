@@ -93,7 +93,7 @@ public class ExecutableAnalyzer {
 
     /**
      * Raises an error to this element.
-     * @param message a error message, or message pattern if the arguments are not empty
+     * @param message an error message, or message pattern if the arguments are not empty
      * @param arguments the message arguments
      * @throws IllegalArgumentException if the parameters are {@code null}
      */
@@ -109,7 +109,7 @@ public class ExecutableAnalyzer {
     /**
      * Raises an error to a parameter of this element.
      * @param parameterIndex the target parameter index (0-origin)
-     * @param message a error message, or message pattern if the arguments are not empty
+     * @param message an error message, or message pattern if the arguments are not empty
      * @param arguments the message arguments
      * @throws IllegalArgumentException if the parameters are {@code null}
      */

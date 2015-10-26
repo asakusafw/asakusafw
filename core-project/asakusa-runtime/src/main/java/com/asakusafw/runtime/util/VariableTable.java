@@ -179,7 +179,7 @@ Character:
             }
             String[] kv = KEY_VALUE.split(pair);
             if (kv.length == 0) {
-                // "=" returns a empty array
+                // "=" returns an empty array
                 defineVariable("", ""); //$NON-NLS-1$ //$NON-NLS-2$
             } else if (kv.length == 1 && kv[0].equals(pair) == false) {
                 // "key=" returns only its key

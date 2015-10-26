@@ -53,7 +53,7 @@ final class Util {
         assert source != null;
         String path = source.getSchemeSpecificPart();
         if (isHssf(path) == false && isXssf(path) == false) {
-            LOG.debug("Not a Excel workbook: {}", source); //$NON-NLS-1$
+            LOG.debug("Not an Excel workbook: {}", source); //$NON-NLS-1$
             return null;
         }
         String fragment = source.getFragment();

@@ -91,7 +91,7 @@ public class VerifyEngine {
     /**
      * Verifies the input sequence and returns diagnostics.
      * <p>
-     * First, this engine search a expected model object corresponded to each input object using their
+     * First, this engine search an expected model object corresponded to each input object using their
      * {@link VerifyRule#getKey(DataModelReflection) keys}.
      * If there are the such pairs, then this engine invokes
      * {@link VerifyRule#verify(DataModelReflection, DataModelReflection)
