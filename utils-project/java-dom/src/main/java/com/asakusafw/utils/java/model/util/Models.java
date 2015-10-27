@@ -225,9 +225,7 @@ public final class Models {
             throw new IllegalArgumentException("constant must not be null"); //$NON-NLS-1$
         }
         Name typeName = toName(factory, constant.getDeclaringClass().getName());
-        return factory.newQualifiedName(
-                typeName,
-                factory.newSimpleName(constant.name()));
+        return factory.newQualifiedName(typeName, factory.newSimpleName(constant.name()));
     }
 
     /**
@@ -242,9 +240,7 @@ public final class Models {
             throw new IllegalArgumentException("factory must not be null"); //$NON-NLS-1$
         }
         String token = LiteralAnalyzer.intLiteralOf(value);
-        return factory.newCastExpression(
-            factory.newBasicType(BasicTypeKind.BYTE),
-            factory.newLiteral(token));
+        return factory.newCastExpression(factory.newBasicType(BasicTypeKind.BYTE), factory.newLiteral(token));
     }
 
     /**
@@ -259,9 +255,7 @@ public final class Models {
             throw new IllegalArgumentException("factory must not be null"); //$NON-NLS-1$
         }
         String token = LiteralAnalyzer.intLiteralOf(value);
-        return factory.newCastExpression(
-            factory.newBasicType(BasicTypeKind.SHORT),
-            factory.newLiteral(token));
+        return factory.newCastExpression(factory.newBasicType(BasicTypeKind.SHORT), factory.newLiteral(token));
     }
 
     /**
@@ -434,9 +428,7 @@ public final class Models {
      * @return the corresponded Java literal
      * @throws IllegalArgumentException if the parameters are {@code null}
      */
-    public static ClassLiteral toClassLiteral(
-            ModelFactory factory,
-            java.lang.reflect.Type type) {
+    public static ClassLiteral toClassLiteral(ModelFactory factory, java.lang.reflect.Type type) {
         if (factory == null) {
             throw new IllegalArgumentException("factory must not be null"); //$NON-NLS-1$
         }
@@ -467,9 +459,7 @@ public final class Models {
      * @return the corresponded array initializer
      * @throws IllegalArgumentException if the parameters are {@code null}
      */
-    public static ArrayInitializer toArrayInitializer(
-            ModelFactory factory,
-            int[] array) {
+    public static ArrayInitializer toArrayInitializer(ModelFactory factory, int[] array) {
         if (factory == null) {
             throw new IllegalArgumentException("factory must not be null"); //$NON-NLS-1$
         }
@@ -490,9 +480,7 @@ public final class Models {
      * @return the corresponded array initializer
      * @throws IllegalArgumentException if the parameters are {@code null}
      */
-    public static ArrayInitializer toArrayInitializer(
-            ModelFactory factory,
-            float[] array) {
+    public static ArrayInitializer toArrayInitializer(ModelFactory factory, float[] array) {
         if (factory == null) {
             throw new IllegalArgumentException("factory must not be null"); //$NON-NLS-1$
         }
@@ -513,9 +501,7 @@ public final class Models {
      * @return the corresponded array initializer
      * @throws IllegalArgumentException if the parameters are {@code null}
      */
-    public static ArrayInitializer toArrayInitializer(
-            ModelFactory factory,
-            long[] array) {
+    public static ArrayInitializer toArrayInitializer(ModelFactory factory, long[] array) {
         if (factory == null) {
             throw new IllegalArgumentException("factory must not be null"); //$NON-NLS-1$
         }
@@ -536,9 +522,7 @@ public final class Models {
      * @return the corresponded array initializer
      * @throws IllegalArgumentException if the parameters are {@code null}
      */
-    public static ArrayInitializer toArrayInitializer(
-            ModelFactory factory,
-            double[] array) {
+    public static ArrayInitializer toArrayInitializer(ModelFactory factory, double[] array) {
         if (factory == null) {
             throw new IllegalArgumentException("factory must not be null"); //$NON-NLS-1$
         }
@@ -559,9 +543,7 @@ public final class Models {
      * @return the corresponded array initializer
      * @throws IllegalArgumentException if the parameters are {@code null}
      */
-    public static ArrayInitializer toArrayInitializer(
-            ModelFactory factory,
-            char[] array) {
+    public static ArrayInitializer toArrayInitializer(ModelFactory factory, char[] array) {
         if (factory == null) {
             throw new IllegalArgumentException("factory must not be null"); //$NON-NLS-1$
         }
@@ -582,9 +564,7 @@ public final class Models {
      * @return the corresponded array initializer
      * @throws IllegalArgumentException if the parameters are {@code null}
      */
-    public static ArrayInitializer toArrayInitializer(
-            ModelFactory factory,
-            boolean[] array) {
+    public static ArrayInitializer toArrayInitializer(ModelFactory factory, boolean[] array) {
         if (factory == null) {
             throw new IllegalArgumentException("factory must not be null"); //$NON-NLS-1$
         }
@@ -605,9 +585,7 @@ public final class Models {
      * @return the corresponded array initializer
      * @throws IllegalArgumentException if the parameters are {@code null}
      */
-    public static ArrayInitializer toArrayInitializer(
-            ModelFactory factory,
-            byte[] array) {
+    public static ArrayInitializer toArrayInitializer(ModelFactory factory, byte[] array) {
         if (factory == null) {
             throw new IllegalArgumentException("factory must not be null"); //$NON-NLS-1$
         }
@@ -628,9 +606,7 @@ public final class Models {
      * @return the corresponded array initializer
      * @throws IllegalArgumentException if the parameters are {@code null}
      */
-    public static ArrayInitializer toArrayInitializer(
-            ModelFactory factory,
-            short[] array) {
+    public static ArrayInitializer toArrayInitializer(ModelFactory factory, short[] array) {
         if (factory == null) {
             throw new IllegalArgumentException("factory must not be null"); //$NON-NLS-1$
         }
@@ -651,9 +627,7 @@ public final class Models {
      * @return the corresponded array initializer
      * @throws IllegalArgumentException if the parameters are {@code null}
      */
-    public static ArrayInitializer toArrayInitializer(
-            ModelFactory factory,
-            String[] array) {
+    public static ArrayInitializer toArrayInitializer(ModelFactory factory, String[] array) {
         if (factory == null) {
             throw new IllegalArgumentException("factory must not be null"); //$NON-NLS-1$
         }
@@ -678,9 +652,7 @@ public final class Models {
      * @return the corresponded array initializer
      * @throws IllegalArgumentException if the parameters are {@code null}
      */
-    public static ArrayInitializer toArrayInitializer(
-            ModelFactory factory,
-            java.lang.reflect.Type[] array) {
+    public static ArrayInitializer toArrayInitializer(ModelFactory factory, java.lang.reflect.Type[] array) {
         if (factory == null) {
             throw new IllegalArgumentException("factory must not be null"); //$NON-NLS-1$
         }

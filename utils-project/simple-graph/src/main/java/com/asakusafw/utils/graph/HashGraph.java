@@ -219,8 +219,8 @@ public class HashGraph<V> implements Graph<V> {
         public int hashCode() {
             final int prime = 31;
             int result = 1;
-            result = prime * result + ((this.from == null) ? 0 : this.from.hashCode());
-            result = prime * result + this.to.hashCode();
+            result = prime * result + ((from == null) ? 0 : from.hashCode());
+            result = prime * result + to.hashCode();
             return result;
         }
 

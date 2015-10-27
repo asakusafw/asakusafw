@@ -124,20 +124,14 @@ public class VolatileClassOutputManager
             String packageName,
             String relativeName) throws IOException {
         if (location == StandardLocation.CLASS_OUTPUT) {
-            String binaryName = normalizePath(
-                packageName,
-                relativeName,
-                JavaFileObject.Kind.CLASS);
+            String binaryName = normalizePath(packageName, relativeName, JavaFileObject.Kind.CLASS);
             if (binaryName == null) {
                 String path = toPath(packageName, relativeName);
                 return resourceMap.get(path);
             }
             return getJavaFileForInput(location, binaryName, JavaFileObject.Kind.CLASS);
         } else if (location == StandardLocation.SOURCE_OUTPUT) {
-            String binaryName = normalizePath(
-                packageName,
-                relativeName,
-                JavaFileObject.Kind.SOURCE);
+            String binaryName = normalizePath(packageName, relativeName, JavaFileObject.Kind.SOURCE);
             if (binaryName == null) {
                 String path = toPath(packageName, relativeName);
                 return resourceMap.get(path);
@@ -155,10 +149,7 @@ public class VolatileClassOutputManager
             String relativeName,
             FileObject sibling) throws IOException {
         if (location == StandardLocation.CLASS_OUTPUT) {
-            String binaryName = normalizePath(
-                packageName,
-                relativeName,
-                JavaFileObject.Kind.CLASS);
+            String binaryName = normalizePath(packageName, relativeName, JavaFileObject.Kind.CLASS);
             if (binaryName == null) {
                 String path = toPath(packageName, relativeName);
                 VolatileResourceFile file = resourceMap.get(path);
@@ -168,16 +159,9 @@ public class VolatileClassOutputManager
                 }
                 return file;
             }
-            return getJavaFileForOutput(
-                location,
-                binaryName,
-                JavaFileObject.Kind.CLASS,
-                sibling);
+            return getJavaFileForOutput(location, binaryName, JavaFileObject.Kind.CLASS, sibling);
         } else if (location == StandardLocation.SOURCE_OUTPUT) {
-            String binaryName = normalizePath(
-                packageName,
-                relativeName,
-                JavaFileObject.Kind.SOURCE);
+            String binaryName = normalizePath(packageName, relativeName, JavaFileObject.Kind.SOURCE);
             if (binaryName == null) {
                 String path = toPath(packageName, relativeName);
                 VolatileResourceFile file = resourceMap.get(path);
@@ -187,11 +171,7 @@ public class VolatileClassOutputManager
                 }
                 return file;
             }
-            return getJavaFileForOutput(
-                location,
-                binaryName,
-                JavaFileObject.Kind.SOURCE,
-                sibling);
+            return getJavaFileForOutput(location, binaryName, JavaFileObject.Kind.SOURCE, sibling);
         } else {
             return super.getFileForOutput(location, packageName, relativeName, sibling);
         }
@@ -291,9 +271,7 @@ public class VolatileClassOutputManager
             prefix = 0;
         } else {
             String binaryName = normalizeClassName(packageName);
-            map = all.subMap(
-                binaryName + NAME_SEPARATOR,
-                binaryName + NAME_SEPARATOR_NEXT);
+            map = all.subMap(binaryName + NAME_SEPARATOR, binaryName + NAME_SEPARATOR_NEXT);
             prefix = binaryName.length() + 1;
         }
 
@@ -311,23 +289,16 @@ public class VolatileClassOutputManager
         return results;
     }
 
-    private String normalizePath(
-            String packageName,
-            String relativeName,
-            JavaFileObject.Kind kind) {
+    private String normalizePath(String packageName, String relativeName, JavaFileObject.Kind kind) {
         assert packageName != null;
         assert relativeName != null;
         if (relativeName.endsWith(kind.extension) == false) {
             return null;
         }
-        String strippedRelativeName = relativeName.substring(
-            0,
-            relativeName.length() - kind.extension.length());
-
+        String strippedRelativeName = relativeName.substring(0, relativeName.length() - kind.extension.length());
         if (packageName.isEmpty()) {
             return normalizeClassName(strippedRelativeName);
         }
-
         String className = packageName + SEGMENT_SEPARATOR + strippedRelativeName;
         return normalizeClassName(className);
     }

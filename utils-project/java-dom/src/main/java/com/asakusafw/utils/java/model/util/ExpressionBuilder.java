@@ -203,10 +203,7 @@ public class ExpressionBuilder {
         if (rightHandSide == null) {
             throw new IllegalArgumentException("rightHandSide must not be null"); //$NON-NLS-1$
         }
-        return chain(f.newAssignmentExpression(
-                context,
-                operator,
-                rightHandSide));
+        return chain(f.newAssignmentExpression(context, operator, rightHandSide));
     }
 
     /**
@@ -219,9 +216,7 @@ public class ExpressionBuilder {
         if (type == null) {
             throw new IllegalArgumentException("type must not be null"); //$NON-NLS-1$
         }
-        return chain(f.newCastExpression(
-                type,
-                context));
+        return chain(f.newCastExpression(type, context));
     }
 
     /**
@@ -340,10 +335,7 @@ public class ExpressionBuilder {
         if (arguments == null) {
             throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
         }
-        return method(
-                Collections.<Type>emptyList(),
-                name,
-                Arrays.asList(arguments));
+        return method(Collections.<Type> emptyList(), name, Arrays.asList(arguments));
     }
 
     /**
@@ -367,10 +359,7 @@ public class ExpressionBuilder {
         if (arguments == null) {
             throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
         }
-        return method(
-                typeArguments,
-                name,
-                Arrays.asList(arguments));
+        return method(typeArguments, name, Arrays.asList(arguments));
     }
 
     /**
@@ -389,10 +378,7 @@ public class ExpressionBuilder {
         if (arguments == null) {
             throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
         }
-        return method(
-                Collections.<Type>emptyList(),
-                name,
-                arguments);
+        return method(Collections.<Type> emptyList(), name, arguments);
     }
 
     /**
@@ -416,10 +402,7 @@ public class ExpressionBuilder {
         if (arguments == null) {
             throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
         }
-        return method(
-                typeArguments,
-                f.newSimpleName(name),
-                arguments);
+        return method(typeArguments, f.newSimpleName(name), arguments);
     }
 
     /**
@@ -438,10 +421,7 @@ public class ExpressionBuilder {
         if (arguments == null) {
             throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
         }
-        return method(
-                Collections.<Type>emptyList(),
-                name,
-                Arrays.asList(arguments));
+        return method(Collections.<Type> emptyList(), name, Arrays.asList(arguments));
     }
 
     /**
@@ -465,10 +445,7 @@ public class ExpressionBuilder {
         if (arguments == null) {
             throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
         }
-        return method(
-                typeArguments,
-                name,
-                Arrays.asList(arguments));
+        return method(typeArguments, name, Arrays.asList(arguments));
     }
 
     /**
@@ -487,10 +464,7 @@ public class ExpressionBuilder {
         if (arguments == null) {
             throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
         }
-        return method(
-                Collections.<Type>emptyList(),
-                name,
-                arguments);
+        return method(Collections.<Type> emptyList(), name, arguments);
     }
 
     /**
@@ -514,11 +488,7 @@ public class ExpressionBuilder {
         if (arguments == null) {
             throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
         }
-        return chain(f.newMethodInvocationExpression(
-                context,
-                typeArguments,
-                name,
-                arguments));
+        return chain(f.newMethodInvocationExpression(context, typeArguments, name, arguments));
     }
 
     private ExpressionBuilder chain(Expression expression) {

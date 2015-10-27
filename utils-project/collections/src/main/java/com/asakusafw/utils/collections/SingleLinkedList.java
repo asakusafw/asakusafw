@@ -127,9 +127,9 @@ public class SingleLinkedList<E> implements Iterable<E>, Serializable {
     }
 
     /**
-     * Returns the {@code index}th element in this list.
+     * Returns the {@code index}-th element in this list.
      * @param index target element index (0-origin)
-     * @return {@code index}th element
+     * @return {@code index}-th element
      * @throws IndexOutOfBoundsException if index is out of bound
      */
     public E get(int index) {
@@ -283,8 +283,7 @@ public class SingleLinkedList<E> implements Iterable<E>, Serializable {
 
     private Node<E> restoreFromList(List<? extends E> store) {
         Node<E> node = null;
-        for (ListIterator<? extends E> iter = store.listIterator(store.size());
-                iter.hasPrevious();) {
+        for (ListIterator<? extends E> iter = store.listIterator(store.size()); iter.hasPrevious();) {
             E value = iter.previous();
             Node<E> prev = new Node<E>(value, node);
             node = prev;

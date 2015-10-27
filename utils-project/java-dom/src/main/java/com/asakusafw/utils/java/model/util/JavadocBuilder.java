@@ -217,7 +217,7 @@ public class JavadocBuilder {
     }
 
     /**
-     * Starts a <code>&#64;throw</code> tag block for the target type in this builder.
+     * Starts a <code>&#64;throws</code> tag block for the target type in this builder.
      * The current building block will be finished before this operation.
      * @param type the target exception type
      * @return this
@@ -314,20 +314,14 @@ public class JavadocBuilder {
      * @return this
      * @throws IllegalArgumentException if the parameter is {@code null}
      */
-    public JavadocBuilder seeMethod(
-            String name,
-            Type... parameterTypes) {
+    public JavadocBuilder seeMethod(String name, Type... parameterTypes) {
         if (name == null) {
             throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
         }
         if (parameterTypes == null) {
-            throw new IllegalArgumentException(
-                "parameterTypes must not be null"); //$NON-NLS-1$
+            throw new IllegalArgumentException("parameterTypes must not be null"); //$NON-NLS-1$
         }
-        return seeMethod(
-                null,
-                f.newSimpleName(name),
-                Arrays.asList(parameterTypes));
+        return seeMethod(null, f.newSimpleName(name), Arrays.asList(parameterTypes));
     }
 
     /**
@@ -338,15 +332,12 @@ public class JavadocBuilder {
      * @return this
      * @throws IllegalArgumentException if the parameter is {@code null}
      */
-    public JavadocBuilder seeMethod(
-            String name,
-            List<? extends Type> parameterTypes) {
+    public JavadocBuilder seeMethod(String name, List<? extends Type> parameterTypes) {
         if (name == null) {
             throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
         }
         if (parameterTypes == null) {
-            throw new IllegalArgumentException(
-                "parameterTypes must not be null"); //$NON-NLS-1$
+            throw new IllegalArgumentException("parameterTypes must not be null"); //$NON-NLS-1$
         }
         return seeMethod(null, f.newSimpleName(name), parameterTypes);
     }
@@ -359,15 +350,12 @@ public class JavadocBuilder {
      * @return this
      * @throws IllegalArgumentException if the parameter is {@code null}
      */
-    public JavadocBuilder seeMethod(
-            SimpleName name,
-            Type... parameterTypes) {
+    public JavadocBuilder seeMethod(SimpleName name, Type... parameterTypes) {
         if (name == null) {
             throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
         }
         if (parameterTypes == null) {
-            throw new IllegalArgumentException(
-                "parameterTypes must not be null"); //$NON-NLS-1$
+            throw new IllegalArgumentException("parameterTypes must not be null"); //$NON-NLS-1$
         }
         return seeMethod(null, name, Arrays.asList(parameterTypes));
     }
@@ -380,15 +368,12 @@ public class JavadocBuilder {
      * @return this
      * @throws IllegalArgumentException if the parameter is {@code null}
      */
-    public JavadocBuilder seeMethod(
-            SimpleName name,
-            List<? extends Type> parameterTypes) {
+    public JavadocBuilder seeMethod(SimpleName name, List<? extends Type> parameterTypes) {
         if (name == null) {
             throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
         }
         if (parameterTypes == null) {
-            throw new IllegalArgumentException(
-                "parameterTypes must not be null"); //$NON-NLS-1$
+            throw new IllegalArgumentException("parameterTypes must not be null"); //$NON-NLS-1$
         }
         return seeMethod(null, name, parameterTypes);
     }
@@ -402,16 +387,12 @@ public class JavadocBuilder {
      * @return this
      * @throws IllegalArgumentException if the parameter is {@code null}
      */
-    public JavadocBuilder seeMethod(
-            Type type,
-            String name,
-            Type... parameterTypes) {
+    public JavadocBuilder seeMethod(Type type, String name, Type... parameterTypes) {
         if (name == null) {
             throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
         }
         if (parameterTypes == null) {
-            throw new IllegalArgumentException(
-                "parameterTypes must not be null"); //$NON-NLS-1$
+            throw new IllegalArgumentException("parameterTypes must not be null"); //$NON-NLS-1$
         }
         return seeMethod(
                 type,
@@ -428,16 +409,12 @@ public class JavadocBuilder {
      * @return this
      * @throws IllegalArgumentException if the parameter is {@code null}
      */
-    public JavadocBuilder seeMethod(
-            Type type,
-            String name,
-            List<? extends Type> parameterTypes) {
+    public JavadocBuilder seeMethod(Type type, String name, List<? extends Type> parameterTypes) {
         if (name == null) {
             throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
         }
         if (parameterTypes == null) {
-            throw new IllegalArgumentException(
-                "parameterTypes must not be null"); //$NON-NLS-1$
+            throw new IllegalArgumentException("parameterTypes must not be null"); //$NON-NLS-1$
         }
         return seeMethod(type, f.newSimpleName(name), parameterTypes);
     }
@@ -451,16 +428,12 @@ public class JavadocBuilder {
      * @return this
      * @throws IllegalArgumentException if the parameter is {@code null}
      */
-    public JavadocBuilder seeMethod(
-            Type type,
-            SimpleName name,
-            Type... parameterTypes) {
+    public JavadocBuilder seeMethod(Type type, SimpleName name, Type... parameterTypes) {
         if (name == null) {
             throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
         }
         if (parameterTypes == null) {
-            throw new IllegalArgumentException(
-                "parameterTypes must not be null"); //$NON-NLS-1$
+            throw new IllegalArgumentException("parameterTypes must not be null"); //$NON-NLS-1$
         }
         return seeMethod(type, name, Arrays.asList(parameterTypes));
     }
@@ -474,16 +447,12 @@ public class JavadocBuilder {
      * @return this
      * @throws IllegalArgumentException if the parameter is {@code null}
      */
-    public JavadocBuilder seeMethod(
-            Type type,
-            SimpleName name,
-            List<? extends Type> parameterTypes) {
+    public JavadocBuilder seeMethod(Type type, SimpleName name, List<? extends Type> parameterTypes) {
         if (name == null) {
             throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
         }
         if (parameterTypes == null) {
-            throw new IllegalArgumentException(
-                "parameterTypes must not be null"); //$NON-NLS-1$
+            throw new IllegalArgumentException("parameterTypes must not be null"); //$NON-NLS-1$
         }
         List<DocMethodParameter> parameters = new ArrayList<DocMethodParameter>();
         for (Type parameterType : parameterTypes) {
@@ -607,15 +576,12 @@ public class JavadocBuilder {
      * @return this
      * @throws IllegalArgumentException if the parameter is {@code null}
      */
-    public JavadocBuilder linkMethod(
-            String name,
-            Type... parameterTypes) {
+    public JavadocBuilder linkMethod(String name, Type... parameterTypes) {
         if (name == null) {
             throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
         }
         if (parameterTypes == null) {
-            throw new IllegalArgumentException(
-                "parameterTypes must not be null"); //$NON-NLS-1$
+            throw new IllegalArgumentException("parameterTypes must not be null"); //$NON-NLS-1$
         }
         return linkMethod(
                 null,
@@ -630,15 +596,12 @@ public class JavadocBuilder {
      * @return this
      * @throws IllegalArgumentException if the parameter is {@code null}
      */
-    public JavadocBuilder linkMethod(
-            String name,
-            List<? extends Type> parameterTypes) {
+    public JavadocBuilder linkMethod(String name, List<? extends Type> parameterTypes) {
         if (name == null) {
             throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
         }
         if (parameterTypes == null) {
-            throw new IllegalArgumentException(
-                "parameterTypes must not be null"); //$NON-NLS-1$
+            throw new IllegalArgumentException("parameterTypes must not be null"); //$NON-NLS-1$
         }
         return linkMethod(null, f.newSimpleName(name), parameterTypes);
     }
@@ -650,15 +613,12 @@ public class JavadocBuilder {
      * @return this
      * @throws IllegalArgumentException if the parameter is {@code null}
      */
-    public JavadocBuilder linkMethod(
-            SimpleName name,
-            Type... parameterTypes) {
+    public JavadocBuilder linkMethod(SimpleName name, Type... parameterTypes) {
         if (name == null) {
             throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
         }
         if (parameterTypes == null) {
-            throw new IllegalArgumentException(
-                "parameterTypes must not be null"); //$NON-NLS-1$
+            throw new IllegalArgumentException("parameterTypes must not be null"); //$NON-NLS-1$
         }
         return linkMethod(null, name, Arrays.asList(parameterTypes));
     }
@@ -670,15 +630,12 @@ public class JavadocBuilder {
      * @return this
      * @throws IllegalArgumentException if the parameter is {@code null}
      */
-    public JavadocBuilder linkMethod(
-            SimpleName name,
-            List<? extends Type> parameterTypes) {
+    public JavadocBuilder linkMethod(SimpleName name, List<? extends Type> parameterTypes) {
         if (name == null) {
             throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
         }
         if (parameterTypes == null) {
-            throw new IllegalArgumentException(
-                "parameterTypes must not be null"); //$NON-NLS-1$
+            throw new IllegalArgumentException("parameterTypes must not be null"); //$NON-NLS-1$
         }
         return linkMethod(null, name, parameterTypes);
     }
@@ -691,16 +648,12 @@ public class JavadocBuilder {
      * @return this
      * @throws IllegalArgumentException if the parameter is {@code null}
      */
-    public JavadocBuilder linkMethod(
-            Type type,
-            String name,
-            Type... parameterTypes) {
+    public JavadocBuilder linkMethod(Type type, String name, Type... parameterTypes) {
         if (name == null) {
             throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
         }
         if (parameterTypes == null) {
-            throw new IllegalArgumentException(
-                "parameterTypes must not be null"); //$NON-NLS-1$
+            throw new IllegalArgumentException("parameterTypes must not be null"); //$NON-NLS-1$
         }
         return linkMethod(
                 type,
@@ -716,16 +669,12 @@ public class JavadocBuilder {
      * @return this
      * @throws IllegalArgumentException if the parameter is {@code null}
      */
-    public JavadocBuilder linkMethod(
-            Type type,
-            String name,
-            List<? extends Type> parameterTypes) {
+    public JavadocBuilder linkMethod(Type type, String name, List<? extends Type> parameterTypes) {
         if (name == null) {
             throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
         }
         if (parameterTypes == null) {
-            throw new IllegalArgumentException(
-                "parameterTypes must not be null"); //$NON-NLS-1$
+            throw new IllegalArgumentException("parameterTypes must not be null"); //$NON-NLS-1$
         }
         return linkMethod(type, f.newSimpleName(name), parameterTypes);
     }
@@ -738,16 +687,12 @@ public class JavadocBuilder {
      * @return this
      * @throws IllegalArgumentException if the parameter is {@code null}
      */
-    public JavadocBuilder linkMethod(
-            Type type,
-            SimpleName name,
-            Type... parameterTypes) {
+    public JavadocBuilder linkMethod(Type type, SimpleName name, Type... parameterTypes) {
         if (name == null) {
             throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
         }
         if (parameterTypes == null) {
-            throw new IllegalArgumentException(
-                "parameterTypes must not be null"); //$NON-NLS-1$
+            throw new IllegalArgumentException("parameterTypes must not be null"); //$NON-NLS-1$
         }
         return linkMethod(type, name, Arrays.asList(parameterTypes));
     }
@@ -760,16 +705,12 @@ public class JavadocBuilder {
      * @return this
      * @throws IllegalArgumentException if the parameter is {@code null}
      */
-    public JavadocBuilder linkMethod(
-            Type type,
-            SimpleName name,
-            List<? extends Type> parameterTypes) {
+    public JavadocBuilder linkMethod(Type type, SimpleName name, List<? extends Type> parameterTypes) {
         if (name == null) {
             throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
         }
         if (parameterTypes == null) {
-            throw new IllegalArgumentException(
-                "parameterTypes must not be null"); //$NON-NLS-1$
+            throw new IllegalArgumentException("parameterTypes must not be null"); //$NON-NLS-1$
         }
         List<DocMethodParameter> parameters = new ArrayList<DocMethodParameter>();
         for (Type parameterType : parameterTypes) {
