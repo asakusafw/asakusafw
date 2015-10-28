@@ -350,8 +350,7 @@ public class ImportBuilder {
             for (Type t : elem.getTypeArguments()) {
                 arguments.add(t.accept(this, null));
             }
-            if (nonparameterized.equals(elem.getType())
-                    && arguments.equals(elem.getTypeArguments())) {
+            if (nonparameterized.equals(elem.getType()) && arguments.equals(elem.getTypeArguments())) {
                 return elem;
             }
             return factory.newParameterizedType(nonparameterized, arguments);

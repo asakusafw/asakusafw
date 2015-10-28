@@ -246,10 +246,7 @@ public class TypeBuilder {
         if (dimensions == null) {
             throw new IllegalArgumentException("dimensions must not be null"); //$NON-NLS-1$
         }
-        return expr(f.newArrayCreationExpression(
-                toArrayType(),
-                dimensions,
-                null));
+        return expr(f.newArrayCreationExpression(toArrayType(), dimensions, null));
     }
 
     /**
@@ -263,10 +260,7 @@ public class TypeBuilder {
         if (initializer == null) {
             throw new IllegalArgumentException("initializer must not be null"); //$NON-NLS-1$
         }
-        return expr(f.newArrayCreationExpression(
-                toArrayType(),
-                Collections.<Expression>emptyList(),
-                initializer));
+        return expr(f.newArrayCreationExpression(toArrayType(), Collections.<Expression> emptyList(), initializer));
     }
 
     /**
@@ -347,19 +341,14 @@ public class TypeBuilder {
      * @throws IllegalStateException the building type is not a named type
      * @throws IllegalArgumentException if the parameters are {@code null}
      */
-    public ExpressionBuilder method(
-            String name,
-            Expression... arguments) {
+    public ExpressionBuilder method(String name, Expression... arguments) {
         if (name == null) {
             throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
         }
         if (arguments == null) {
             throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
         }
-        return method(
-                Collections.<Type>emptyList(),
-                name,
-                Arrays.asList(arguments));
+        return method(Collections.<Type> emptyList(), name, Arrays.asList(arguments));
     }
 
     /**
@@ -371,10 +360,7 @@ public class TypeBuilder {
      * @throws IllegalStateException the building type is not a named type
      * @throws IllegalArgumentException if the parameters are {@code null}
      */
-    public ExpressionBuilder method(
-            List<? extends Type> typeArguments,
-            String name,
-            Expression... arguments) {
+    public ExpressionBuilder method(List<? extends Type> typeArguments, String name, Expression... arguments) {
         if (typeArguments == null) {
             throw new IllegalArgumentException("typeArguments must not be null"); //$NON-NLS-1$
         }
@@ -384,10 +370,7 @@ public class TypeBuilder {
         if (arguments == null) {
             throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
         }
-        return method(
-                typeArguments,
-                name,
-                Arrays.asList(arguments));
+        return method(typeArguments, name, Arrays.asList(arguments));
     }
 
     /**
@@ -398,19 +381,14 @@ public class TypeBuilder {
      * @throws IllegalStateException the building type is not a named type
      * @throws IllegalArgumentException if the parameters are {@code null}
      */
-    public ExpressionBuilder method(
-            String name,
-            List<? extends Expression> arguments) {
+    public ExpressionBuilder method(String name, List<? extends Expression> arguments) {
         if (name == null) {
             throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
         }
         if (arguments == null) {
             throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
         }
-        return method(
-                Collections.<Type>emptyList(),
-                name,
-                arguments);
+        return method(Collections.<Type> emptyList(), name, arguments);
     }
 
     /**
@@ -435,10 +413,7 @@ public class TypeBuilder {
         if (arguments == null) {
             throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
         }
-        return method(
-                typeArguments,
-                f.newSimpleName(name),
-                arguments);
+        return method(typeArguments, f.newSimpleName(name), arguments);
     }
 
     /**
@@ -449,19 +424,14 @@ public class TypeBuilder {
      * @throws IllegalStateException the building type is not a named type
      * @throws IllegalArgumentException if the parameters are {@code null}
      */
-    public ExpressionBuilder method(
-            SimpleName name,
-            Expression... arguments) {
+    public ExpressionBuilder method(SimpleName name, Expression... arguments) {
         if (name == null) {
             throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
         }
         if (arguments == null) {
             throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
         }
-        return method(
-                Collections.<Type>emptyList(),
-                name,
-                Arrays.asList(arguments));
+        return method(Collections.<Type> emptyList(), name, Arrays.asList(arguments));
     }
 
     /**
@@ -473,10 +443,7 @@ public class TypeBuilder {
      * @throws IllegalStateException the building type is not a named type
      * @throws IllegalArgumentException if the parameters are {@code null}
      */
-    public ExpressionBuilder method(
-            List<? extends Type> typeArguments,
-            SimpleName name,
-            Expression... arguments) {
+    public ExpressionBuilder method(List<? extends Type> typeArguments, SimpleName name, Expression... arguments) {
         if (typeArguments == null) {
             throw new IllegalArgumentException("typeArguments must not be null"); //$NON-NLS-1$
         }
@@ -486,10 +453,7 @@ public class TypeBuilder {
         if (arguments == null) {
             throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
         }
-        return method(
-                typeArguments,
-                name,
-                Arrays.asList(arguments));
+        return method(typeArguments, name, Arrays.asList(arguments));
     }
 
     /**
@@ -500,19 +464,14 @@ public class TypeBuilder {
      * @throws IllegalStateException the building type is not a named type
      * @throws IllegalArgumentException if the parameters are {@code null}
      */
-    public ExpressionBuilder method(
-            SimpleName name,
-            List<? extends Expression> arguments) {
+    public ExpressionBuilder method(SimpleName name, List<? extends Expression> arguments) {
         if (name == null) {
             throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
         }
         if (arguments == null) {
             throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
         }
-        return method(
-                Collections.<Type>emptyList(),
-                name,
-                arguments);
+        return method(Collections.<Type> emptyList(), name, arguments);
     }
 
     /**
@@ -537,11 +496,7 @@ public class TypeBuilder {
         if (arguments == null) {
             throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
         }
-        return expr(f.newMethodInvocationExpression(
-                toNamedType().getName(),
-                typeArguments,
-                name,
-                arguments));
+        return expr(f.newMethodInvocationExpression(toNamedType().getName(), typeArguments, name, arguments));
     }
 
     private TypeBuilder chain(Type type) {

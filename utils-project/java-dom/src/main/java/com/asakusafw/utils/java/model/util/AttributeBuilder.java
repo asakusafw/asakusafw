@@ -317,9 +317,7 @@ public class AttributeBuilder {
             throw new IllegalArgumentException("elementValue must not be null"); //$NON-NLS-1$
         }
         List<AnnotationElement> elements = new ArrayList<AnnotationElement>();
-        elements.add(f.newAnnotationElement(
-                f.newSimpleName(elementName),
-                elementValue));
+        elements.add(f.newAnnotationElement(f.newSimpleName(elementName), elementValue));
         return annotation(f.newNormalAnnotation((NamedType) type, elements));
     }
 
@@ -356,10 +354,8 @@ public class AttributeBuilder {
             throw new IllegalArgumentException("elementValue2 must not be null"); //$NON-NLS-1$
         }
         List<AnnotationElement> elements = new ArrayList<AnnotationElement>();
-        elements.add(f.newAnnotationElement(
-                f.newSimpleName(elementName1), elementValue1));
-        elements.add(f.newAnnotationElement(
-                f.newSimpleName(elementName2), elementValue2));
+        elements.add(f.newAnnotationElement(f.newSimpleName(elementName1), elementValue1));
+        elements.add(f.newAnnotationElement(f.newSimpleName(elementName2), elementValue2));
         return annotation(f.newNormalAnnotation((NamedType) type, elements));
     }
 
@@ -405,12 +401,9 @@ public class AttributeBuilder {
             throw new IllegalArgumentException("elementValue3 must not be null"); //$NON-NLS-1$
         }
         List<AnnotationElement> elements = new ArrayList<AnnotationElement>();
-        elements.add(f.newAnnotationElement(
-                f.newSimpleName(elementName1), elementValue1));
-        elements.add(f.newAnnotationElement(
-                f.newSimpleName(elementName2), elementValue2));
-        elements.add(f.newAnnotationElement(
-                f.newSimpleName(elementName3), elementValue3));
+        elements.add(f.newAnnotationElement(f.newSimpleName(elementName1), elementValue1));
+        elements.add(f.newAnnotationElement(f.newSimpleName(elementName2), elementValue2));
+        elements.add(f.newAnnotationElement(f.newSimpleName(elementName3), elementValue3));
         return annotation(f.newNormalAnnotation((NamedType) type, elements));
     }
 
@@ -465,14 +458,10 @@ public class AttributeBuilder {
             throw new IllegalArgumentException("elementValue4 must not be null"); //$NON-NLS-1$
         }
         List<AnnotationElement> elements = new ArrayList<AnnotationElement>();
-        elements.add(f.newAnnotationElement(
-                f.newSimpleName(elementName1), elementValue1));
-        elements.add(f.newAnnotationElement(
-                f.newSimpleName(elementName2), elementValue2));
-        elements.add(f.newAnnotationElement(
-                f.newSimpleName(elementName3), elementValue3));
-        elements.add(f.newAnnotationElement(
-                f.newSimpleName(elementName4), elementValue4));
+        elements.add(f.newAnnotationElement(f.newSimpleName(elementName1), elementValue1));
+        elements.add(f.newAnnotationElement(f.newSimpleName(elementName2), elementValue2));
+        elements.add(f.newAnnotationElement(f.newSimpleName(elementName3), elementValue3));
+        elements.add(f.newAnnotationElement(f.newSimpleName(elementName4), elementValue4));
         return annotation(f.newNormalAnnotation((NamedType) type, elements));
     }
 
@@ -538,16 +527,11 @@ public class AttributeBuilder {
             throw new IllegalArgumentException("elementValue5 must not be null"); //$NON-NLS-1$
         }
         List<AnnotationElement> elements = new ArrayList<AnnotationElement>();
-        elements.add(f.newAnnotationElement(
-                f.newSimpleName(elementName1), elementValue1));
-        elements.add(f.newAnnotationElement(
-                f.newSimpleName(elementName2), elementValue2));
-        elements.add(f.newAnnotationElement(
-                f.newSimpleName(elementName3), elementValue3));
-        elements.add(f.newAnnotationElement(
-                f.newSimpleName(elementName4), elementValue4));
-        elements.add(f.newAnnotationElement(
-                f.newSimpleName(elementName5), elementValue5));
+        elements.add(f.newAnnotationElement(f.newSimpleName(elementName1), elementValue1));
+        elements.add(f.newAnnotationElement(f.newSimpleName(elementName2), elementValue2));
+        elements.add(f.newAnnotationElement(f.newSimpleName(elementName3), elementValue3));
+        elements.add(f.newAnnotationElement(f.newSimpleName(elementName4), elementValue4));
+        elements.add(f.newAnnotationElement(f.newSimpleName(elementName5), elementValue5));
         return annotation(f.newNormalAnnotation((NamedType) type, elements));
     }
 

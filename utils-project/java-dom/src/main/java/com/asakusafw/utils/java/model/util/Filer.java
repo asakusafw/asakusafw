@@ -96,12 +96,10 @@ public class Filer extends Emitter {
     private PrintWriter open(File file) throws IOException {
         assert file != null;
         File parent = file.getParentFile();
-        if (parent != null) {
-            if (parent.mkdirs() == false && parent.exists() == false) {
-                throw new IOException(MessageFormat.format(
-                        "Failed to create directory for create {0}",
-                        file));
-            }
+        if (parent != null && parent.mkdirs() == false && parent.exists() == false) {
+            throw new IOException(MessageFormat.format(
+                    "Failed to create directory for create {0}",
+                    file));
         }
         return new PrintWriter(file, encoding.name());
     }
