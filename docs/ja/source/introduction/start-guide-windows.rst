@@ -53,7 +53,7 @@ Asakusa Frameworkの利用に必要となる環境変数を設定します。
   ``ASAKUSA_HOME``
 
 変数値
-  任意のフォルダ (例: :file:`%USERPROFILE%¥asakusa` )
+  任意のフォルダ (例: :file:`%USERPROFILE%\\asakusa` )
 
 ..  figure:: images/windows-environment-valuables-setting.png
     :width: 50%
@@ -116,7 +116,7 @@ Eclipse経由で実行するJavaに `Java(JDK)のインストール`_ でイン�
 #. :guilabel:`JRE Definition` ダイアログの各項目にインストールしたJDKの情報が設定されたことを確認して :guilabel:`Finish` ボタンを押下します。
 #. :guilabel:`Installed JREs` ダイアログに追加したJDKの項目が表示されるので、その項目の :guilabel:`Name` 欄に表示されているチェックボックスを :guilabel:`ON` にします。JDKの項目が ``jdk1.7.0_XX (default)`` のような表示になれば設定完了です。
 
-..  [#] JDKのフォルダは例えば ``C:¥Program Files¥Java¥jdk1.7.0_XX`` のようなフォルダです。JREのフォルダを指定しないよう注意してください。
+..  [#] 開発環境にJDKとJREの両方がインストールされている場合、ここでJREのフォルダを指定しないよう注意してください。
 
 ..  figure:: images/eclipse-preferences-installed-jre.png
     :width: 100%
