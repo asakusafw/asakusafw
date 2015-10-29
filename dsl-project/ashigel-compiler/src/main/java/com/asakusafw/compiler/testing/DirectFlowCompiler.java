@@ -98,7 +98,7 @@ public final class DirectFlowCompiler {
         Precondition.checkMustNotBeNull(flowCompilerOptions, "flowCompilerOptions"); //$NON-NLS-1$
 
         if (localWorkingDirectory.exists()) {
-            clean(localWorkingDirectory);
+            delete(localWorkingDirectory);
         }
         List<ResourceRepository> repositories = createRepositories(serviceClassLoader, extraResources);
         FlowCompilerConfiguration config = createConfig(
@@ -153,16 +153,6 @@ public final class DirectFlowCompiler {
             stages.add(toInfo(compiled));
         }
         return new JobflowInfo(jobflow, packageFile, sourceBundle, stages);
-    }
-
-    private static void clean(File localWorkingDirectory) {
-        assert localWorkingDirectory != null;
-        if (localWorkingDirectory.exists()) {
-            LOG.info(MessageFormat.format(
-                    Messages.getString("DirectFlowCompiler.infoInitializeWorkingDirectory"), //$NON-NLS-1$
-                    localWorkingDirectory));
-        }
-        delete(localWorkingDirectory);
     }
 
     private static boolean delete(File target) {

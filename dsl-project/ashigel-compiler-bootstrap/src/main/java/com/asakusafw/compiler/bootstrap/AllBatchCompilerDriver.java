@@ -20,8 +20,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.text.MessageFormat;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
@@ -58,6 +60,7 @@ public final class AllBatchCompilerDriver {
     private static final Option OPT_PLUGIN;
     private static final Option OPT_SKIPERROR;
     private static final Option OPT_SCANPATH;
+    private static final Option OPT_INCLUDE;
 
     private static final Options OPTIONS;
     static {
@@ -87,17 +90,22 @@ public final class AllBatchCompilerDriver {
         OPT_LINK.setArgName("classlib.jar" + File.pathSeparatorChar + "/path/to/classes"); //$NON-NLS-1$ //$NON-NLS-2$
 
         OPT_PLUGIN = new Option("plugin", true, //$NON-NLS-1$
-                Messages.getString("AllBatchCompilerDriver.optPlugin")); //$NON-NLS-1$ 
+                Messages.getString("AllBatchCompilerDriver.optPlugin")); //$NON-NLS-1$
         OPT_PLUGIN.setArgName("plugin-1.jar" + File.pathSeparatorChar + "plugin-2.jar"); //$NON-NLS-1$ //$NON-NLS-2$
         OPT_PLUGIN.setRequired(false);
 
         OPT_SKIPERROR = new Option("skiperror", //$NON-NLS-1$
-                Messages.getString("AllBatchCompilerDriver.optSkiperror")); //$NON-NLS-1$ 
+                Messages.getString("AllBatchCompilerDriver.optSkiperror")); //$NON-NLS-1$
 
         OPT_SCANPATH = new Option("scanpath", true, //$NON-NLS-1$
-                Messages.getString("AllBatchCompilerDriver.optScanpath")); //$NON-NLS-1$ 
+                Messages.getString("AllBatchCompilerDriver.optScanpath")); //$NON-NLS-1$
         OPT_SCANPATH.setArgName("/path/to/classlib"); //$NON-NLS-1$
         OPT_SCANPATH.setRequired(true);
+
+        OPT_INCLUDE = new Option("include", true, //$NON-NLS-1$
+                Messages.getString("AllBatchCompilerDriver.optInclude")); //$NON-NLS-1$
+        OPT_INCLUDE.setArgName("class-pattern1[,class-pattern2[,..]]"); //$NON-NLS-1$
+        OPT_INCLUDE.setRequired(false);
 
         OPTIONS = new Options();
         OPTIONS.addOption(OPT_OUTPUT);
@@ -108,6 +116,7 @@ public final class AllBatchCompilerDriver {
         OPTIONS.addOption(OPT_PLUGIN);
         OPTIONS.addOption(OPT_SKIPERROR);
         OPTIONS.addOption(OPT_SCANPATH);
+        OPTIONS.addOption(OPT_INCLUDE);
     }
 
     /**
@@ -144,38 +153,14 @@ public final class AllBatchCompilerDriver {
         String link = cmd.getOptionValue(OPT_LINK.getOpt());
         String plugin = cmd.getOptionValue(OPT_PLUGIN.getOpt());
         boolean skipError = cmd.hasOption(OPT_SKIPERROR.getOpt());
+        String include = cmd.getOptionValue(OPT_INCLUDE.getOpt());
 
         File outputDirectory = new File(output);
         Location hadoopWorkLocation = Location.fromPath(hadoopWork, '/');
         File compilerWorkDirectory = new File(compilerWork);
-        List<File> linkingResources = Lists.create();
-        if (link != null) {
-            for (String s : link.split(File.pathSeparator)) {
-                linkingResources.add(new File(s));
-            }
-        }
-        List<URL> pluginLocations = Lists.create();
-        if (plugin != null) {
-            for (String s : plugin.split(File.pathSeparator)) {
-                if (s.trim().isEmpty()) {
-                    continue;
-                }
-                try {
-                    File file = new File(s);
-                    if (file.exists() == false) {
-                        throw new FileNotFoundException(file.getAbsolutePath());
-                    }
-                    URL url = file.toURI().toURL();
-                    pluginLocations.add(url);
-                } catch (IOException e) {
-                    LOG.warn(MessageFormat.format(
-                            Messages.getString("AllBatchCompilerDriver.warnFailedToLoadPlugin"), //$NON-NLS-1$
-                            s),
-                            e);
-                }
-            }
-        }
-
+        List<File> linkingResources = extractEmbedResources(link);
+        List<URL> pluginLocations = extractPluginPath(plugin);
+        Pattern includePattern = extractIncludePattern(include);
         Set<String> errorBatches = Sets.create();
         boolean succeeded = true;
         try {
@@ -184,7 +169,7 @@ public final class AllBatchCompilerDriver {
             try {
                 while (cursor.next()) {
                     Location location = cursor.getLocation();
-                    Class<? extends BatchDescription> batchDescription = getBatchDescription(location);
+                    Class<? extends BatchDescription> batchDescription = getBatchDescription(location, includePattern);
                     if (batchDescription == null) {
                         continue;
                     }
@@ -224,7 +209,67 @@ public final class AllBatchCompilerDriver {
         return succeeded;
     }
 
-    private static Class<? extends BatchDescription> getBatchDescription(Location location) {
+    private static List<File> extractEmbedResources(String path) {
+        if (path == null) {
+            return Collections.emptyList();
+        }
+        List<File> results = Lists.create();
+        for (String s : path.split(File.pathSeparator)) {
+            results.add(new File(s));
+        }
+        return results;
+    }
+
+    private static List<URL> extractPluginPath(String path) {
+        if (path == null) {
+            return Collections.emptyList();
+        }
+        List<URL> results = Lists.create();
+        for (String s : path.split(File.pathSeparator)) {
+            if (s.trim().isEmpty()) {
+                continue;
+            }
+            try {
+                File file = new File(s);
+                if (file.exists() == false) {
+                    throw new FileNotFoundException(file.getAbsolutePath());
+                }
+                URL url = file.toURI().toURL();
+                results.add(url);
+            } catch (IOException e) {
+                LOG.warn(MessageFormat.format(
+                        Messages.getString("AllBatchCompilerDriver.warnFailedToLoadPlugin"), //$NON-NLS-1$
+                        s),
+                        e);
+            }
+        }
+        return results;
+    }
+
+    private static Pattern extractIncludePattern(String pattern) {
+        if (pattern == null) {
+            return null;
+        }
+        StringBuilder buf = new StringBuilder();
+        int start = 0;
+        while (true) {
+            int next = pattern.indexOf('*', start);
+            if (next < 0) {
+                break;
+            }
+            if (start < next) {
+                buf.append(Pattern.quote(pattern.substring(start, next)));
+            }
+            buf.append(".*"); //$NON-NLS-1$
+            start = next + 1;
+        }
+        if (start < pattern.length()) {
+            buf.append(Pattern.quote(pattern.substring(start)));
+        }
+        return Pattern.compile(buf.toString());
+    }
+
+    private static Class<? extends BatchDescription> getBatchDescription(Location location, Pattern include) {
         assert location != null;
         if (isValidClassFileName(location) == false) {
             LOG.debug("invalid batch class name: {}", location); //$NON-NLS-1$
@@ -234,6 +279,12 @@ public final class AllBatchCompilerDriver {
         Class<? extends BatchDescription> batchClass = loadIfBatchClass(className);
         if (batchClass == null) {
             LOG.debug("not a batch class: {}", className); //$NON-NLS-1$
+            return null;
+        }
+        if (include != null && include.matcher(className).matches() == false) {
+            LOG.info(MessageFormat.format(
+                    Messages.getString("AllBatchCompilerDriver.infoSkipBatchClass"), //$NON-NLS-1$
+                    className));
             return null;
         }
         LOG.info(MessageFormat.format(

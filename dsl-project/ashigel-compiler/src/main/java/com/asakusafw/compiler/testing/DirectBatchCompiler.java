@@ -17,7 +17,6 @@ package com.asakusafw.compiler.testing;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.MessageFormat;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -84,7 +83,10 @@ public final class DirectBatchCompiler {
         Precondition.checkMustNotBeNull(flowCompilerOptions, "flowCompilerOptions"); //$NON-NLS-1$
 
         if (localWorkingDirectory.exists()) {
-            clean(localWorkingDirectory);
+            delete(localWorkingDirectory);
+        }
+        if (outputDirectory.exists()) {
+            delete(outputDirectory);
         }
         BatchDriver driver = BatchDriver.analyze(batchClass);
         if (driver.hasError()) {
@@ -125,16 +127,6 @@ public final class DirectBatchCompiler {
             }
         }
         return new BatchInfo(workflow, outputDirectory, jobflows);
-    }
-
-    private static void clean(File localWorkingDirectory) {
-        assert localWorkingDirectory != null;
-        if (localWorkingDirectory.exists()) {
-            LOG.info(MessageFormat.format(
-                    Messages.getString("DirectBatchCompiler.infoInitializeWorkingDirectory"), //$NON-NLS-1$
-                    localWorkingDirectory));
-        }
-        delete(localWorkingDirectory);
     }
 
     private static boolean delete(File target) {
