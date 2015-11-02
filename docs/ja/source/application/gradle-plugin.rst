@@ -917,6 +917,18 @@ IntelliJ IDEAプロジェクト用の定義ファイルを作成するには、:
     * インポートウィザードの次の画面の :guilabel:`Project format:` は :guilabel:`ipr (file based)` を選択してください。
       デフォルトの :guilabel:`.idea (directory based)` ではGradleの :program:`idea` タスクが生成した設定ファイルが使用されません。
 
+バッチコンパイルの対象をフィルタリング
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+:program:`compileBatchapp` タスクを指定して :program:`gradlew` コマンドを実行する際に、 ``compileBatchapp --update <バッチクラス名>`` と指定することで、指定したバッチクラス名のみをバッチコンパイルすることができます。
+
+また、バッチクラス名の文字列には ``*`` をワイルドカードとして使用することもできます。
+
+以下の例では、パッケージ名に ``com.example.target.batch`` を含むバッチクラスのみをバッチコンパイルしてデプロイメントアーカイブを作成しています。
+
+..  code-block:: sh
+
+    ./gradlew compileBatchapp --update com.example.target.batch.* assemble
 
 バッチテストランナーの実行
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
