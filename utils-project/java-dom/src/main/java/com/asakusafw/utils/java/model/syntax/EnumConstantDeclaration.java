@@ -18,39 +18,31 @@ package com.asakusafw.utils.java.model.syntax;
 import java.util.List;
 
 /**
- * 列挙定数の宣言を表現するインターフェース。
+ * An interface which represents enum constants.
  * <ul>
  *   <li> Specified In: <ul>
- *     <li> {@code [JLS3:8.9] Enums (<i>EnumConstant</i>)} </li>
+ *     <li> {@code [JLS3:8.9] Enums (EnumConstant)} </li>
  *   </ul> </li>
  * </ul>
  */
 public interface EnumConstantDeclaration
         extends TypeBodyDeclaration, Invocation {
 
-    // properties
-
     /**
-     * 列挙定数の名前を返す。
-     * @return
-     *     列挙定数の名前
+     * Returns the enum constant name.
+     * @return the enum constant name
      */
     SimpleName getName();
 
     /**
-     * コンストラクタ引数の一覧を返す。
-     * <p> コンストラクタ引数が指定されない場合は空が返される。 </p>
-     * @return
-     *     コンストラクタ引数の一覧
+     * Returns the constructor arguments.
+     * @return the constructor arguments
      */
     List<? extends Expression> getArguments();
 
     /**
-     * クラス本体の宣言を返す。
-     * <p> クラスの本体が宣言されない場合は{@code null}が返される。 </p>
-     * @return
-     *     クラス本体の宣言、
-     *     ただしクラスの本体が宣言されない場合は{@code null}
+     * Returns the class body.
+     * @return the class body, or {@code null} if it is not specified
      */
     ClassBody getBody();
 }

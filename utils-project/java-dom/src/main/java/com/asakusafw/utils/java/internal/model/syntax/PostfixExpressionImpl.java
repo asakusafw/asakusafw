@@ -22,18 +22,12 @@ import com.asakusafw.utils.java.model.syntax.PostfixOperator;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link PostfixExpression}の実装。
+ * An implementation of {@link PostfixExpression}.
  */
 public final class PostfixExpressionImpl extends ModelRoot implements PostfixExpression {
 
-    /**
-     * 後置演算項。
-     */
     private Expression operand;
 
-    /**
-     * 演算子。
-     */
     private PostfixOperator operator;
 
     @Override
@@ -42,11 +36,9 @@ public final class PostfixExpressionImpl extends ModelRoot implements PostfixExp
     }
 
     /**
-     * 後置演算項を設定する。
-     * @param operand
-     *     後置演算項
-     * @throws IllegalArgumentException
-     *     {@code operand}に{@code null}が指定された場合
+     * Sets the operand term.
+     * @param operand the operand term
+     * @throws IllegalArgumentException if {@code operand} was {@code null}
      */
     public void setOperand(Expression operand) {
         Util.notNull(operand, "operand"); //$NON-NLS-1$
@@ -59,11 +51,9 @@ public final class PostfixExpressionImpl extends ModelRoot implements PostfixExp
     }
 
     /**
-     * 演算子を設定する。
-     * @param operator
-     *     演算子
-     * @throws IllegalArgumentException
-     *     {@code operator}に{@code null}が指定された場合
+     * Sets the postfix operator.
+     * @param operator the postfix operator
+     * @throws IllegalArgumentException if {@code operator} was {@code null}
      */
     public void setOperator(PostfixOperator operator) {
         Util.notNull(operator, "operator"); //$NON-NLS-1$
@@ -71,7 +61,7 @@ public final class PostfixExpressionImpl extends ModelRoot implements PostfixExp
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#POSTFIX_EXPRESSION}を返す。
+     * Returns {@link ModelKind#POSTFIX_EXPRESSION} which represents this element kind.
      * @return {@link ModelKind#POSTFIX_EXPRESSION}
      */
     @Override
@@ -80,8 +70,7 @@ public final class PostfixExpressionImpl extends ModelRoot implements PostfixExp
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitPostfixExpression(this, context);
     }

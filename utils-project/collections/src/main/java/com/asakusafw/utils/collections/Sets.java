@@ -140,7 +140,7 @@ public final class Sets {
     }
 
     /**
-     * Returns a freezed set which has copy of the elements.
+     * Returns a frozen set which has copy of the elements.
      * @param <E> element type
      * @param elements the elements
      * @return created set
@@ -167,7 +167,7 @@ public final class Sets {
     }
 
     /**
-     * Returns a freezed set which has copy of the elements.
+     * Returns a frozen set which has copy of the elements.
      * @param <E> element type
      * @param elements the elements
      * @return created set

@@ -30,7 +30,7 @@ import com.asakusafw.vocabulary.flow.graph.PortConnection;
 
 
 /**
- * フロー上のパス。
+ * Represents element paths on flow graph.
  */
 public class FlowPath {
 
@@ -43,17 +43,15 @@ public class FlowPath {
     private final Set<FlowElement> arrivals;
 
     /**
-     * インスタンスを生成する。
-     * @param direction パスの方向
-     * @param startings 開始要素の一覧
-     * @param passings 途中要素の一覧
-     * @param arrivals 終了要素の一覧
+     * Creates a new instance.
+     * @param direction the path direction
+     * @param startings the head elements
+     * @param passings the body elements
+     * @param arrivals the tail elements
      */
     public FlowPath(
             Direction direction,
-            Set<FlowElement> startings,
-            Set<FlowElement> passings,
-            Set<FlowElement> arrivals) {
+            Set<FlowElement> startings, Set<FlowElement> passings, Set<FlowElement> arrivals) {
         Precondition.checkMustNotBeNull(direction, "direction"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(startings, "startings"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(passings, "passings"); //$NON-NLS-1$
@@ -65,59 +63,57 @@ public class FlowPath {
     }
 
     /**
-     * パスの方向を返す。
-     * @return パスの方向
+     * Returns the path direction.
+     * @return the path direction
      */
     public Direction getDirection() {
         return this.direction;
     }
 
     /**
-     * 開始要素の一覧を返す。
-     * @return 開始要素の一覧
+     * Returns the head elements.
+     * @return the head elements
      */
     public Set<FlowElement> getStartings() {
         return this.startings;
     }
 
     /**
-     * 途中要素の一覧を返す。
-     * @return 途中要素の一覧
+     * Returns the body elements (excludes head and tail elements).
+     * @return the head elements
      */
     public Set<FlowElement> getPassings() {
         return this.passings;
     }
 
     /**
-     * 終了要素の一覧を返す。
-     * @return 終了要素の一覧
+     * Returns the tail elements.
+     * @return the tail elements
      */
     public Set<FlowElement> getArrivals() {
         return this.arrivals;
     }
 
     /**
-     * このパスの情報を元にブロックを生成する。
-     * @param graph ブロックの元になるグラフ
-     * @param blockSequence ブロック番号
-     * @param includeStartings {@code true}ならばブロックに開始要素を含める
-     * @param includeArrivals {@code true}ならばブロックに終端要素を含める
-     * @return 生成したブロック
-     * @throws IllegalArgumentException 開始要素と終端要素を含めない状態で
-     *     かつ途中要素が存在しない場合、または引数に{@code null}が含まれる場合
+     * Creates a new {@link FlowBlock} object from this path (must be a forward path).
+     * @param graph the original flow graph
+     * @param blockSequence the block serial number
+     * @param includeStartings {@code true} to include the {@link #getStartings() head elements},
+     *     otherwise {@code false}
+     * @param includeArrivals {@code true} to include the {@link #getArrivals() tail elements},
+     *     otherwise {@code false}
+     * @return the created block
+     * @throws IllegalStateException if this is not a {@link Direction#FORWARD forward} path
+     * @throws IllegalArgumentException if the resulting block will be empty, or the parameters are {@code null}
      */
     public FlowBlock createBlock(
-            FlowGraph graph,
-            int blockSequence,
-            boolean includeStartings,
-            boolean includeArrivals) {
+            FlowGraph graph, int blockSequence,
+            boolean includeStartings, boolean includeArrivals) {
         Precondition.checkMustNotBeNull(graph, "graph"); //$NON-NLS-1$
         if (direction != Direction.FORWARD) {
             throw new IllegalStateException("direction must be FORWARD"); //$NON-NLS-1$
         }
-        if (includeStartings == false
-                && includeArrivals == false
-                && passings.isEmpty()) {
+        if (includeStartings == false && includeArrivals == false && passings.isEmpty()) {
             throw new IllegalArgumentException();
         }
         Set<FlowElement> elements = createBlockElements(includeStartings, includeArrivals);
@@ -186,10 +182,11 @@ public class FlowPath {
     }
 
     /**
-     * このパスと指定のパスを同時に含むパスを新しく作成して返す。
-     * @param other 対象のパス
-     * @return 作成したパス
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns a new union path consists of this and the specified path.
+     * @param other the target path
+     * @return the created path
+     * @throws IllegalArgumentException if the two paths have the different directions,
+     *     or the parameter is {@code null}
      */
     public FlowPath union(FlowPath other) {
         Precondition.checkMustNotBeNull(other, "other"); //$NON-NLS-1$
@@ -213,10 +210,11 @@ public class FlowPath {
     }
 
     /**
-     * 指定のパスの向きを逆にしたものと、このパスに共通する要素のみを含むパスを新しく作成して返す。
-     * @param other 対象のパス
-     * @return 作成したパス
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns a new intersect path which consists of this path and the transposed specified path.
+     * @param other the target path
+     * @return the created path
+     * @throws IllegalArgumentException if the two paths have the different directions,
+     *     or the parameter is {@code null}
      */
     public FlowPath transposeIntersect(FlowPath other) {
         Precondition.checkMustNotBeNull(other, "other"); //$NON-NLS-1$
@@ -249,17 +247,17 @@ public class FlowPath {
     }
 
     /**
-     * パスの方向。
+     * Represents directions of {@link FlowPath}.
      */
     public enum Direction {
 
         /**
-         * 開始位置に後続する方向。
+         * The forward direction.
          */
         FORWARD,
 
         /**
-         * 開始位置に先行する方向。
+         * The backward direction.
          */
         BACKWORD,
     }

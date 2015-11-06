@@ -21,21 +21,17 @@ import java.io.IOException;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
 
-import com.asakusafw.compiler.directio.testing.io.Line1Input;
-import com.asakusafw.compiler.directio.testing.io.Line1Output;
 import com.asakusafw.runtime.model.DataModel;
 import com.asakusafw.runtime.model.DataModelKind;
-import com.asakusafw.runtime.model.ModelInputLocation;
-import com.asakusafw.runtime.model.ModelOutputLocation;
 import com.asakusafw.runtime.model.PropertyOrder;
 import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.runtime.value.LongOption;
 import com.asakusafw.runtime.value.StringOption;
 /**
- * line1を表すデータモデルクラス。
+ * A data model class that represents line1.
  */
-@DataModelKind("DMDL")@ModelInputLocation(Line1Input.class)@ModelOutputLocation(Line1Output.class)@PropertyOrder({
-            "value", "first", "position", "length"}) public class Line1 implements DataModel<Line1>, Line, Writable {
+@DataModelKind("DMDL")@PropertyOrder({"value", "first", "position", "length"}) public class Line1 implements DataModel<
+        Line1>, Line, Writable {
     private final StringOption value = new StringOption();
     private final StringOption first = new StringOption();
     private final LongOption position = new LongOption();
@@ -53,24 +49,24 @@ import com.asakusafw.runtime.value.StringOption;
         this.length.copyFrom(other.length);
     }
     /**
-     * valueを返す。
+     * Returns value.
      * @return value
-     * @throws NullPointerException valueの値が<code>null</code>である場合
+     * @throws NullPointerException if value is <code>null</code>
      */
     @Override
     public Text getValue() {
         return this.value.get();
     }
     /**
-     * valueを設定する。
-     * @param value0 設定する値
+     * Sets value.
+     * @param value0 the value
      */
     @Override
     @SuppressWarnings("deprecation") public void setValue(Text value0) {
         this.value.modify(value0);
     }
     /**
-     * <code>null</code>を許すvalueを返す。
+     * Returns value which may be represent <code>null</code>.
      * @return value
      */
     @Override
@@ -78,32 +74,32 @@ import com.asakusafw.runtime.value.StringOption;
         return this.value;
     }
     /**
-     * valueを設定する。
-     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     * Sets value.
+     * @param option the value, or <code>null</code> to set this property to <code>null</code>
      */
     @Override
     @SuppressWarnings("deprecation") public void setValueOption(StringOption option) {
         this.value.copyFrom(option);
     }
     /**
-     * firstを返す。
+     * Returns first.
      * @return first
-     * @throws NullPointerException firstの値が<code>null</code>である場合
+     * @throws NullPointerException if first is <code>null</code>
      */
     @Override
     public Text getFirst() {
         return this.first.get();
     }
     /**
-     * firstを設定する。
-     * @param value0 設定する値
+     * Sets first.
+     * @param value0 the value
      */
     @Override
     @SuppressWarnings("deprecation") public void setFirst(Text value0) {
         this.first.modify(value0);
     }
     /**
-     * <code>null</code>を許すfirstを返す。
+     * Returns first which may be represent <code>null</code>.
      * @return first
      */
     @Override
@@ -111,32 +107,32 @@ import com.asakusafw.runtime.value.StringOption;
         return this.first;
     }
     /**
-     * firstを設定する。
-     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     * Sets first.
+     * @param option the value, or <code>null</code> to set this property to <code>null</code>
      */
     @Override
     @SuppressWarnings("deprecation") public void setFirstOption(StringOption option) {
         this.first.copyFrom(option);
     }
     /**
-     * positionを返す。
+     * Returns position.
      * @return position
-     * @throws NullPointerException positionの値が<code>null</code>である場合
+     * @throws NullPointerException if position is <code>null</code>
      */
     @Override
     public long getPosition() {
         return this.position.get();
     }
     /**
-     * positionを設定する。
-     * @param value0 設定する値
+     * Sets position.
+     * @param value0 the value
      */
     @Override
     @SuppressWarnings("deprecation") public void setPosition(long value0) {
         this.position.modify(value0);
     }
     /**
-     * <code>null</code>を許すpositionを返す。
+     * Returns position which may be represent <code>null</code>.
      * @return position
      */
     @Override
@@ -144,32 +140,32 @@ import com.asakusafw.runtime.value.StringOption;
         return this.position;
     }
     /**
-     * positionを設定する。
-     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     * Sets position.
+     * @param option the value, or <code>null</code> to set this property to <code>null</code>
      */
     @Override
     @SuppressWarnings("deprecation") public void setPositionOption(LongOption option) {
         this.position.copyFrom(option);
     }
     /**
-     * lengthを返す。
+     * Returns length.
      * @return length
-     * @throws NullPointerException lengthの値が<code>null</code>である場合
+     * @throws NullPointerException if length is <code>null</code>
      */
     @Override
     public int getLength() {
         return this.length.get();
     }
     /**
-     * lengthを設定する。
-     * @param value0 設定する値
+     * Sets length.
+     * @param value0 the value
      */
     @Override
     @SuppressWarnings("deprecation") public void setLength(int value0) {
         this.length.modify(value0);
     }
     /**
-     * <code>null</code>を許すlengthを返す。
+     * Returns length which may be represent <code>null</code>.
      * @return length
      */
     @Override
@@ -177,8 +173,8 @@ import com.asakusafw.runtime.value.StringOption;
         return this.length;
     }
     /**
-     * lengthを設定する。
-     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     * Sets length.
+     * @param option the value, or <code>null</code> to set this property to <code>null</code>
      */
     @Override
     @SuppressWarnings("deprecation") public void setLengthOption(IntOption option) {
@@ -215,53 +211,53 @@ import com.asakusafw.runtime.value.StringOption;
         if(obj == null) {
             return false;
         }
-        if(this.getClass()!= obj.getClass()) {
+        if(this.getClass() != obj.getClass()) {
             return false;
         }
         Line1 other = (Line1) obj;
-        if(this.value.equals(other.value)== false) {
+        if(this.value.equals(other.value) == false) {
             return false;
         }
-        if(this.first.equals(other.first)== false) {
+        if(this.first.equals(other.first) == false) {
             return false;
         }
-        if(this.position.equals(other.position)== false) {
+        if(this.position.equals(other.position) == false) {
             return false;
         }
-        if(this.length.equals(other.length)== false) {
+        if(this.length.equals(other.length) == false) {
             return false;
         }
         return true;
     }
     /**
-     * valueを返す。
+     * Returns value.
      * @return value
-     * @throws NullPointerException valueの値が<code>null</code>である場合
+     * @throws NullPointerException if value is <code>null</code>
      */
     @Override
     public String getValueAsString() {
         return this.value.getAsString();
     }
     /**
-     * valueを設定する。
-     * @param value0 設定する値
+     * Returns value.
+     * @param value0 the value
      */
     @Override
     @SuppressWarnings("deprecation") public void setValueAsString(String value0) {
         this.value.modify(value0);
     }
     /**
-     * firstを返す。
+     * Returns first.
      * @return first
-     * @throws NullPointerException firstの値が<code>null</code>である場合
+     * @throws NullPointerException if first is <code>null</code>
      */
     @Override
     public String getFirstAsString() {
         return this.first.getAsString();
     }
     /**
-     * firstを設定する。
-     * @param first0 設定する値
+     * Returns first.
+     * @param first0 the value
      */
     @Override
     @SuppressWarnings("deprecation") public void setFirstAsString(String first0) {

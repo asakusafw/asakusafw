@@ -18,24 +18,24 @@ package com.asakusafw.runtime.io;
 import java.io.IOException;
 
 /**
- * レコードの解析に失敗したことを表す例外。
+ * An exception that will occur for wrong record format.
  */
 public class RecordFormatException extends IOException {
 
     private static final long serialVersionUID = 1L;
 
     /**
-     * インスタンスを生成する。
-     * @param message 例外メッセージ (省略可)
+     * Creates a new instance.
+     * @param message the exception message (nullable)
      */
     public RecordFormatException(String message) {
         super(message);
     }
 
     /**
-     * インスタンスを生成する。
-     * @param message 例外メッセージ (省略可)
-     * @param cause この例外の原因 (省略可)
+     * Creates a new instance.
+     * @param message the exception message (nullable)
+     * @param cause the original cause (nullable)
      */
     public RecordFormatException(String message, Throwable cause) {
         super(message, cause);

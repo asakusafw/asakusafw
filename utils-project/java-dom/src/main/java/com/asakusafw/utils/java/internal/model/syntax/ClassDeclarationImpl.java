@@ -28,43 +28,22 @@ import com.asakusafw.utils.java.model.syntax.TypeParameterDeclaration;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link ClassDeclaration}の実装。
+ * An implementation of {@link ClassDeclaration}.
  */
 public final class ClassDeclarationImpl extends ModelRoot implements ClassDeclaration {
 
-    /**
-     * ドキュメンテーションコメント。
-     */
     private Javadoc javadoc;
 
-    /**
-     * 修飾子および注釈の一覧。
-     */
     private List<? extends Attribute> modifiers;
 
-    /**
-     * 型の単純名。
-     */
     private SimpleName name;
 
-    /**
-     * 仮型引数宣言の一覧。
-     */
     private List<? extends TypeParameterDeclaration> typeParameters;
 
-    /**
-     * 親クラス。
-     */
     private Type superClass;
 
-    /**
-     * 親インターフェースの一覧。
-     */
     private List<? extends Type> superInterfaceTypes;
 
-    /**
-     * メンバの一覧。
-     */
     private List<? extends TypeBodyDeclaration> bodyDeclarations;
 
     @Override
@@ -73,11 +52,8 @@ public final class ClassDeclarationImpl extends ModelRoot implements ClassDeclar
     }
 
     /**
-     * ドキュメンテーションコメントを設定する。
-     * <p> ドキュメンテーションコメントが存在しない場合、引数には{@code null}を指定する。 </p>
-     * @param javadoc
-     *     ドキュメンテーションコメント、
-     *     ただしドキュメンテーションコメントが存在しない場合は{@code null}
+     * Sets the documentation comment.
+     * @param javadoc the documentation comment, or {@code null} if it is not specified
      */
     public void setJavadoc(Javadoc javadoc) {
         this.javadoc = javadoc;
@@ -89,12 +65,9 @@ public final class ClassDeclarationImpl extends ModelRoot implements ClassDeclar
     }
 
     /**
-     * 修飾子および注釈の一覧を設定する。
-     * <p> 修飾子または注釈が一つも宣言されない場合、引数には空を指定する。 </p>
-     * @param modifiers
-     *     修飾子および注釈の一覧
-     * @throws IllegalArgumentException
-     *     {@code modifiers}に{@code null}が指定された場合
+     * Sets the modifiers and annotations.
+     * @param modifiers the modifiers and annotations
+     * @throws IllegalArgumentException if {@code modifiers} was {@code null}
      */
     public void setModifiers(List<? extends Attribute> modifiers) {
         Util.notNull(modifiers, "modifiers"); //$NON-NLS-1$
@@ -108,11 +81,9 @@ public final class ClassDeclarationImpl extends ModelRoot implements ClassDeclar
     }
 
     /**
-     * 型の単純名を設定する。
-     * @param name
-     *     型の単純名
-     * @throws IllegalArgumentException
-     *     {@code name}に{@code null}が指定された場合
+     * Sets the simple type name.
+     * @param name the simple type name
+     * @throws IllegalArgumentException if {@code name} was {@code null}
      */
     public void setName(SimpleName name) {
         Util.notNull(name, "name"); //$NON-NLS-1$
@@ -125,12 +96,9 @@ public final class ClassDeclarationImpl extends ModelRoot implements ClassDeclar
     }
 
     /**
-     * 仮型引数宣言の一覧を設定する。
-     * <p> 仮型引数が一つも宣言されない場合、引数には空を指定する。 </p>
-     * @param typeParameters
-     *     仮型引数宣言の一覧
-     * @throws IllegalArgumentException
-     *     {@code typeParameters}に{@code null}が指定された場合
+     * Sets the type parameter declarations.
+     * @param typeParameters the type parameter declarations
+     * @throws IllegalArgumentException if {@code typeParameters} was {@code null}
      */
     public void setTypeParameters(List<? extends TypeParameterDeclaration> typeParameters) {
         Util.notNull(typeParameters, "typeParameters"); //$NON-NLS-1$
@@ -144,11 +112,8 @@ public final class ClassDeclarationImpl extends ModelRoot implements ClassDeclar
     }
 
     /**
-     * 親クラスを設定する。
-     * <p> 親クラスが明示されない場合、引数には{@code null}を指定する。 </p>
-     * @param superClass
-     *     親クラス、
-     *     ただし親クラスが明示されない場合は{@code null}
+     * Sets the super class.
+     * @param superClass the super class, or {@code null} if there is no explicit super class
      */
     public void setSuperClass(Type superClass) {
         this.superClass = superClass;
@@ -160,12 +125,9 @@ public final class ClassDeclarationImpl extends ModelRoot implements ClassDeclar
     }
 
     /**
-     * 親インターフェースの一覧を設定する。
-     * <p> 親インターフェースが一つも宣言されない場合、引数には空を指定する。 </p>
-     * @param superInterfaceTypes
-     *     親インターフェースの一覧
-     * @throws IllegalArgumentException
-     *     {@code superInterfaceTypes}に{@code null}が指定された場合
+     * Sets the super interface types.
+     * @param superInterfaceTypes the super interface types
+     * @throws IllegalArgumentException if {@code superInterfaceTypes} was {@code null}
      */
     public void setSuperInterfaceTypes(List<? extends Type> superInterfaceTypes) {
         Util.notNull(superInterfaceTypes, "superInterfaceTypes"); //$NON-NLS-1$
@@ -179,12 +141,9 @@ public final class ClassDeclarationImpl extends ModelRoot implements ClassDeclar
     }
 
     /**
-     * メンバの一覧を設定する。
-     * <p> メンバが一つも宣言されない場合、引数には空を指定する。 </p>
-     * @param bodyDeclarations
-     *     メンバの一覧
-     * @throws IllegalArgumentException
-     *     {@code bodyDeclarations}に{@code null}が指定された場合
+     * Sets the type member declarations.
+     * @param bodyDeclarations the type member declarations
+     * @throws IllegalArgumentException if {@code bodyDeclarations} was {@code null}
      */
     public void setBodyDeclarations(List<? extends TypeBodyDeclaration> bodyDeclarations) {
         Util.notNull(bodyDeclarations, "bodyDeclarations"); //$NON-NLS-1$
@@ -193,7 +152,7 @@ public final class ClassDeclarationImpl extends ModelRoot implements ClassDeclar
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#CLASS_DECLARATION}を返す。
+     * Returns {@link ModelKind#CLASS_DECLARATION} which represents this element kind.
      * @return {@link ModelKind#CLASS_DECLARATION}
      */
     @Override
@@ -202,8 +161,7 @@ public final class ClassDeclarationImpl extends ModelRoot implements ClassDeclar
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitClassDeclaration(this, context);
     }

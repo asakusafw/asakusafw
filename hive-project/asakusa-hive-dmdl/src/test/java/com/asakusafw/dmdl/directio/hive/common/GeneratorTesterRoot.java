@@ -218,7 +218,6 @@ public class GeneratorTesterRoot {
         /**
          * Sets the class namespace and category.
          * @param namespace the namespace
-         * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
          */
         public final void setNamespace(String namespace) {
             this.namespace = namespace;

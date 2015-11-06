@@ -16,16 +16,16 @@
 package com.asakusafw.runtime.flow.join;
 
 /**
- * テーブル検索時のエラー。
+ * An exception while using {@link LookUpTable}.
  */
 public class LookUpException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
 
     /**
-     * インスタンスを生成する。
-     * @param message メッセージ
-     * @param cause 原因
+     * Creates a new instance.
+     * @param message message (nullable)
+     * @param cause original cause (nullable)
      */
     public LookUpException(String message, Throwable cause) {
         super(message, cause);

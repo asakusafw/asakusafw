@@ -58,7 +58,7 @@ import com.asakusafw.utils.java.model.util.TypeBuilder;
 import com.asakusafw.vocabulary.flow.graph.FlowElement;
 
 /**
- * Reducerプログラムを出力するエミッタ。
+ * An emitter for emitting Reducer classes.
  */
 public class ReducerEmitter {
 
@@ -67,9 +67,9 @@ public class ReducerEmitter {
     private final FlowCompilingEnvironment environment;
 
     /**
-     * インスタンスを生成する。
-     * @param environment 環境オブジェクト
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param environment the current environment
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public ReducerEmitter(FlowCompilingEnvironment environment) {
         Precondition.checkMustNotBeNull(environment, "environment"); //$NON-NLS-1$
@@ -77,11 +77,11 @@ public class ReducerEmitter {
     }
 
     /**
-     * 指定のステージ内のレデューサーに対するクラスを生成し、生成したクラスの完全限定名を返す。
-     * @param model 対象のステージ
-     * @return 生成したクラスの完全限定名
-     * @throws IOException クラスの生成に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new Reducer class, and returns the qualified name of its class.
+     * @param model the target stage
+     * @return qualified name of the created class
+     * @throws IOException if error was occurred while creating the class
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public CompiledType emit(StageModel model) throws IOException {
         Precondition.checkMustNotBeNull(model, "model"); //$NON-NLS-1$

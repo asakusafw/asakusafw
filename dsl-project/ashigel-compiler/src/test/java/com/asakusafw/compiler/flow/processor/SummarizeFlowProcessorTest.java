@@ -52,13 +52,13 @@ import com.asakusafw.utils.java.model.syntax.Name;
 public class SummarizeFlowProcessorTest extends JobflowCompilerTestRoot {
 
     /**
-     * テストヘルパ。
+     * A test helper
      */
     @Rule
     public CompilerTester tester = new CompilerTester();
 
     /**
-     * 単純なテスト。
+     * simple case.
      */
     @Test
     public void trivial() {
@@ -66,7 +66,7 @@ public class SummarizeFlowProcessorTest extends JobflowCompilerTestRoot {
     }
 
     /**
-     * Combinerつきの単純なテスト。
+     * w/ combiner.
      */
     @Test
     public void combine() {
@@ -74,7 +74,7 @@ public class SummarizeFlowProcessorTest extends JobflowCompilerTestRoot {
     }
 
     /**
-     * 単純なテスト。
+     * simple case.
      * @throws Exception if test was failed
      */
     @Test
@@ -83,7 +83,7 @@ public class SummarizeFlowProcessorTest extends JobflowCompilerTestRoot {
     }
 
     /**
-     * Combinerつきの単純なテスト。
+     * w/ combiner that modifying grouping keys.
      * @throws Exception if test was failed
      */
     @Test

@@ -62,7 +62,7 @@ import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 import com.asakusafw.vocabulary.operator.Identity;
 
 /**
- * Shuffleに対するフラグメントクラスを生成するエミッタ。
+ * An emitter which emits fragments of a shuffle action.
  */
 public class ShuffleFragmentEmitter {
 
@@ -71,9 +71,9 @@ public class ShuffleFragmentEmitter {
     private final FlowCompilingEnvironment environment;
 
     /**
-     * インスタンスを生成する。
-     * @param environment 環境オブジェクト
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param environment the current environment
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public ShuffleFragmentEmitter(FlowCompilingEnvironment environment) {
         Precondition.checkMustNotBeNull(environment, "environment"); //$NON-NLS-1$
@@ -81,14 +81,14 @@ public class ShuffleFragmentEmitter {
     }
 
     /**
-     * 指定のセグメントに対するクラスを生成し、生成したクラスの情報を返す。
-     * @param segment 処理対象のセグメント
-     * @param keyTypeName キー型の完全限定名
-     * @param valueTypeName 値型の完全限定名
-     * @param stageBlock 対象のセグメントが存在するステージ
-     * @return コンパイル結果
-     * @throws IOException クラスの生成に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new shuffle fragment class, and returns qualified name of its class.
+     * @param segment the target shuffle segment
+     * @param keyTypeName the qualified name of the target shuffle key class
+     * @param valueTypeName the qualified name of the target shuffle value class
+     * @param stageBlock the target stage which contains the target shuffle segment
+     * @return the compiled fragment
+     * @throws IOException if error was occurred while creating the class
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public CompiledShuffleFragment emit(
             ShuffleModel.Segment segment,

@@ -25,7 +25,7 @@ import javax.lang.model.SourceVersion;
 import javax.lang.model.element.TypeElement;
 
 /**
- * Mock Annotation Processor.
+ * Mock Annotation Processor for delegating to Callback.
  */
 @SupportedAnnotationTypes({
     "*"
@@ -33,11 +33,11 @@ import javax.lang.model.element.TypeElement;
 @SupportedSourceVersion(SourceVersion.RELEASE_6)
 public class DelegateProcessor extends AbstractProcessor {
 
-    private Callback callback;
+    private final Callback callback;
 
     /**
-     * インスタンスを生成する。
-     * @param callback コールバックオブジェクト
+     * Creates a new instance.
+     * @param callback the callback object
      */
     public DelegateProcessor(Callback callback) {
         this.callback = callback;

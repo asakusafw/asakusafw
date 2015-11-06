@@ -24,17 +24,16 @@ import com.asakusafw.vocabulary.model.Key;
 import com.asakusafw.vocabulary.operator.MasterBranch;
 import com.asakusafw.vocabulary.operator.MasterSelection;
 
-
 /**
- * {@link MasterBranchFlowProcessor}に対するテスト演算子。
+ * An operator class for testing {@link MasterBranchFlowProcessor}.
  */
 public abstract class MasterBranchFlow {
 
     /**
-     * 通常の演算子。
-     * @param master マスタ
-     * @param model 対象のモデル
-     * @return 分岐先
+     * simple.
+     * @param master the master data
+     * @param model target data model
+     * @return branch target
      */
     @MasterBranch
     public Speed simple(
@@ -44,11 +43,11 @@ public abstract class MasterBranchFlow {
     }
 
     /**
-     * パラメーター付きの演算子。
-     * @param master マスタ
-     * @param model 対象のモデル
-     * @param parameter 追加パラメータ
-     * @return 分岐先
+     * parameterized.
+     * @param master the master data
+     * @param model target data model
+     * @param parameter additional parameter
+     * @return branch target
      */
     @MasterBranch
     public Speed withParameter(
@@ -68,10 +67,10 @@ public abstract class MasterBranchFlow {
     }
 
     /**
-     * セレクタつきの演算子。
-     * @param master マスタ
-     * @param model 対象のモデル
-     * @return 分岐先
+     * w/ selector.
+     * @param master the master data
+     * @param model target data model
+     * @return branch target
      */
     @MasterBranch(selection = "selector")
     public Speed selection(
@@ -81,11 +80,11 @@ public abstract class MasterBranchFlow {
     }
 
     /**
-     * セレクタおよびパラメータつきの演算子 (セレクタのパラメータはなし)。
-     * @param master マスタ
-     * @param model 対象のモデル
-     * @param parameter 追加パラメータ
-     * @return 分岐先
+     * w/ parameter and (non-parameterized) selector.
+     * @param master the master data
+     * @param model target data model
+     * @param parameter additional parameter
+     * @return branch target
      */
     @MasterBranch(selection = "selector")
     public Speed selectionWithParameter0(
@@ -96,11 +95,11 @@ public abstract class MasterBranchFlow {
     }
 
     /**
-     * セレクタおよびパラメータつきの演算子 (セレクタのパラメータつき)。
-     * @param master マスタ
-     * @param model 対象のモデル
-     * @param parameter 追加パラメータ
-     * @return 分岐先
+     * w/ parameter and (parameterized) selector.
+     * @param master the master data
+     * @param model target data model
+     * @param parameter additional parameter
+     * @return branch target
      */
     @MasterBranch(selection = "selectorWithParameter")
     public Speed selectionWithParameter1(
@@ -111,10 +110,10 @@ public abstract class MasterBranchFlow {
     }
 
     /**
-     * 引数無しのセレクタ。
-     * @param masters マスタ一覧
-     * @param model 対象のモデル
-     * @return 選択したマスタ、利用しない場合は{@code null}
+     * non-parameterized selector.
+     * @param masters list of masters
+     * @param model the data model
+     * @return the selected master data, or {@code null} if there is no suitable master data
      */
     @MasterSelection
     public Ex2 selector(List<Ex2> masters, Ex1 model) {
@@ -127,11 +126,11 @@ public abstract class MasterBranchFlow {
     }
 
     /**
-     * 引数つきのセレクタ。
-     * @param masters マスタ一覧
-     * @param model 対象のモデル
-     * @param parameter 追加パラメータ
-     * @return 選択したマスタ、利用しない場合は{@code null}
+     * parameterized selector.
+     * @param masters list of masters
+     * @param model the data model
+     * @param parameter the additional parameter
+     * @return the selected master data, or {@code null} if there is no suitable master data
      */
     @MasterSelection
     public Ex2 selectorWithParameter(List<Ex2> masters, Ex1 model, int parameter) {
@@ -144,24 +143,23 @@ public abstract class MasterBranchFlow {
     }
 
     /**
-     * 速度。
+     * Speed kind.
      */
     public enum Speed {
 
         /**
-         * 速い。
+         * high speed.
          */
         HIGH,
 
         /**
-         * 遅い。
+         * low speed.
          */
         LOW,
 
         /**
-         * 停止。
+         * stopped.
          */
         STOP,
     }
-
 }

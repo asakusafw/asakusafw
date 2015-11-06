@@ -23,11 +23,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * 変数を含む文字列を解析して変数を展開した文字列を構築する。
+ * Parses strings which may contain variables.
  * <p>
- * それぞれのパス文字列には<code>${変数名}</code>の形式で変数を含めることができ、
- * 予め{@link #defineVariable(String, String)}で定義された変数名に対する
- * 文字列に置き換えられる。
+ * This can parse a string that contain variable in form of <code>${variable-name}</code>, and substitute them with
+ * defined variables by using {@link #defineVariable(String, String)}, etc.
  * </p>
  */
 public class VariableTable {
@@ -39,16 +38,17 @@ public class VariableTable {
     private final Map<String, String> variables = new HashMap<String, String>();
 
     /**
-     * 変数の再定義が不可能な空の変数表を生成する。
+     * Creates a new empty instance.
+     * This instance does not allow redefine any variables, or raises exceptions in such cases.
      */
     public VariableTable() {
         this(RedefineStrategy.ERROR);
     }
 
     /**
-     * 変数の再定義時の動作を指定して、空の変数表を作成する。
-     * @param redefineStrategy 再定義時の動作
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new empty instance.
+     * @param redefineStrategy a strategy for redefining variables
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public VariableTable(RedefineStrategy redefineStrategy) {
         if (redefineStrategy == null) {
@@ -58,10 +58,10 @@ public class VariableTable {
     }
 
     /**
-     * 指定の変数名を、このパーサーが理解できる変数の表記に変換して返す。
-     * @param name 変数名
-     * @return 対応する変数の表記
-     * @throws IllegalArgumentException 変数として適切でない場合
+     * Returns the variable expression for this parser.
+     * @param name the variable name
+     * @return the variable expression for the specified name
+     * @throws IllegalArgumentException if the variable name is not valid
      */
     public static String toVariable(String name) {
         if (name == null) {
@@ -77,11 +77,10 @@ public class VariableTable {
     }
 
     /**
-     * この変数表に新しい変数を定義する。
-     * @param name 変数の名前
-     * @param replacement 変数の値
-     * @throws IllegalArgumentException 変数の再定義が不可能で同名の変数が定義済みである場合、
-     *     または引数に{@code null}が指定された場合
+     * Adds a new variable into this.
+     * @param name the variable name
+     * @param replacement the replacement
+     * @throws IllegalArgumentException if this rejects the target variable, or some parameters are {@code null}
      */
     public void defineVariable(String name, String replacement) {
         if (name == null) {
@@ -103,10 +102,9 @@ public class VariableTable {
     }
 
     /**
-     * この変数表に新しい変数を定義する。
-     * @param variableMap 変数の一覧
-     * @throws IllegalArgumentException 変数の再定義が不可能で同名の変数が定義済みである場合、
-     *     または引数に{@code null}が指定された場合
+     * Adds new variables into this.
+     * @param variableMap the variable map ({@code name -> value})
+     * @throws IllegalArgumentException if this rejects some variables, or some parameters are {@code null}
      * @since 0.2.2
      */
     public void defineVariables(Map<String, String> variableMap) {
@@ -119,9 +117,10 @@ public class VariableTable {
     }
 
     /**
-     * この変数表の内容を、{@link #defineVariables(String)}で利用可能な文字列に変換して返す。
-     * @return 変数表の内容
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Serializes this variable table.
+     * Clients can restore variables using {@link #defineVariables(String)}.
+     * @return the serialized value
+     * @see #defineVariables(String)
      */
     public String toSerialString() {
         StringBuilder buf = new StringBuilder();
@@ -147,12 +146,8 @@ public class VariableTable {
     private static final Pattern KEY_VALUE = Pattern.compile("(?<!\\\\)="); //$NON-NLS-1$
 
     /**
-     * 変数表の一覧を定義する文字列を解析し、この変数表に追加する。
-     * <p>
-     * 変数表の形式は以下の{@code VariableList}をゴール記号とした、構文で表される。
-     * ここで定義された{@code Value_key}をキーに、{@code Value_value}を値とするような
-     * 変数を定義する。
-     * </p>
+     * Adds variables from the serialized variable table.
+     * The serialized string must be a form as like following:
 <pre><code>
 VariableList:
     VariableList "," Variable
@@ -170,9 +165,8 @@ Character:
     any character except ",", "=", "\\"
     "\" any character
 </code></pre>
-     * @param variableList 変数表の一覧を定義する文字列
-     * @throws IllegalArgumentException 変数の再定義が不可能で同名の変数が定義済みである場合、
-     *     または引数に{@code null}が指定された場合
+     * @param variableList the serialized variable table
+     * @throws IllegalArgumentException if this rejects some variables, or some parameters are {@code null}
      */
     public void defineVariables(String variableList) {
         if (variableList == null) {
@@ -185,7 +179,7 @@ Character:
             }
             String[] kv = KEY_VALUE.split(pair);
             if (kv.length == 0) {
-                // "=" returns a empty array
+                // "=" returns an empty array
                 defineVariable("", ""); //$NON-NLS-1$ //$NON-NLS-2$
             } else if (kv.length == 1 && kv[0].equals(pair) == false) {
                 // "key=" returns only its key
@@ -226,19 +220,18 @@ Character:
     }
 
     /**
-     * この変数表に登録された変数の一覧を返す。
-     * @return この変数表に登録された変数の一覧
+     * Returns the variables names and their replacements in this table.
+     * @return the variable map
      */
     public Map<String, String> getVariables() {
         return new TreeMap<String, String>(variables);
     }
 
     /**
-     * この変数表を利用して変数を含む文字列を展開する。
-     * @param string 展開対象の文字列
-     * @return 変数を展開した文字列
-     * @throws IllegalArgumentException 定義されていない変数が含まれる場合、
-     *     または引数に{@code null}が指定された場合
+     * Substitutes variables in the string and returns the substituted one.
+     * @param string the target string
+     * @return the substituted string
+     * @throws IllegalArgumentException if the string contains some undefined variables, or it is {@code null}
      * @see #defineVariable(String, String)
      */
     public String parse(String string) {
@@ -246,12 +239,13 @@ Character:
     }
 
     /**
-     * この変数表を利用して変数を含む文字列を展開する。
-     * @param string 展開対象の文字列
-     * @param strict 存在しない変数が含まれる場合にエラーとする場合は{@code true}、無視する場合は{@code false}
-     * @return 変数を展開した文字列
-     * @throws IllegalArgumentException {@code strict=true}で定義されていない変数が含まれる場合、
-     *     または引数に{@code null}が指定された場合
+     * Substitutes variables in the string and returns the substituted one.
+     * @param string the target string
+     * @param strict {@code true} to raise error if the string contain undefined variables, or {@code false} to
+     *     leave such variables
+     * @return the substituted string
+     * @throws IllegalArgumentException if the string contains some undefined variables (only if strict mode),
+     *     or it is {@code null}
      * @see #defineVariable(String, String)
      */
     public String parse(String string, boolean strict) {
@@ -293,22 +287,22 @@ Character:
     }
 
     /**
-     * 変数が再定義された際の動作。
+     * Represents strategies for redefining variables.
      */
     public enum RedefineStrategy {
 
         /**
-         * 最後の定義で上書きする。
+         * Overwrites by the last one.
          */
         OVERWRITE,
 
         /**
-         * 最後の定義を無視する。
+         * Ignores except the first one.
          */
         IGNORE,
 
         /**
-         * エラーとする。
+         * Raises errors.
          */
         ERROR,
     }

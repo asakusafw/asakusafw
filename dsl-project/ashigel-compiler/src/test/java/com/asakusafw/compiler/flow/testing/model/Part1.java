@@ -14,25 +14,19 @@
  * limitations under the License.
  */
 package com.asakusafw.compiler.flow.testing.model;
+import com.asakusafw.runtime.model.DataModel;
+import com.asakusafw.runtime.model.DataModelKind;
+import com.asakusafw.runtime.model.PropertyOrder;
+import com.asakusafw.runtime.value.IntOption;
+import com.asakusafw.runtime.value.LongOption;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-
 import org.apache.hadoop.io.Writable;
-
-import com.asakusafw.compiler.flow.testing.io.Part1Input;
-import com.asakusafw.compiler.flow.testing.io.Part1Output;
-import com.asakusafw.runtime.model.DataModel;
-import com.asakusafw.runtime.model.DataModelKind;
-import com.asakusafw.runtime.model.ModelInputLocation;
-import com.asakusafw.runtime.model.ModelOutputLocation;
-import com.asakusafw.runtime.value.IntOption;
-import com.asakusafw.runtime.value.LongOption;
 /**
- * part1を表すデータモデルクラス。
+ * A data model class that represents part1.
  */
-@DataModelKind("DMDL")@ModelInputLocation(Part1Input.class)@ModelOutputLocation(Part1Output.class) public class Part1 
-        implements DataModel<Part1>, Writable {
+@DataModelKind("DMDL")@PropertyOrder({"sid", "value"}) public class Part1 implements DataModel<Part1>, Writable {
     private final LongOption sid = new LongOption();
     private final IntOption value = new IntOption();
     @Override@SuppressWarnings("deprecation") public void reset() {
@@ -44,59 +38,59 @@ import com.asakusafw.runtime.value.LongOption;
         this.value.copyFrom(other.value);
     }
     /**
-     * sidを返す。
+     * Returns sid.
      * @return sid
-     * @throws NullPointerException sidの値が<code>null</code>である場合
+     * @throws NullPointerException if sid is <code>null</code>
      */
     public long getSid() {
         return this.sid.get();
     }
     /**
-     * sidを設定する。
-     * @param value0 設定する値
+     * Sets sid.
+     * @param value0 the value
      */
     @SuppressWarnings("deprecation") public void setSid(long value0) {
         this.sid.modify(value0);
     }
     /**
-     * <code>null</code>を許すsidを返す。
+     * Returns sid which may be represent <code>null</code>.
      * @return sid
      */
     public LongOption getSidOption() {
         return this.sid;
     }
     /**
-     * sidを設定する。
-     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     * Sets sid.
+     * @param option the value, or <code>null</code> to set this property to <code>null</code>
      */
     @SuppressWarnings("deprecation") public void setSidOption(LongOption option) {
         this.sid.copyFrom(option);
     }
     /**
-     * valueを返す。
+     * Returns value.
      * @return value
-     * @throws NullPointerException valueの値が<code>null</code>である場合
+     * @throws NullPointerException if value is <code>null</code>
      */
     public int getValue() {
         return this.value.get();
     }
     /**
-     * valueを設定する。
-     * @param value0 設定する値
+     * Sets value.
+     * @param value0 the value
      */
     @SuppressWarnings("deprecation") public void setValue(int value0) {
         this.value.modify(value0);
     }
     /**
-     * <code>null</code>を許すvalueを返す。
+     * Returns value which may be represent <code>null</code>.
      * @return value
      */
     public IntOption getValueOption() {
         return this.value;
     }
     /**
-     * valueを設定する。
-     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     * Sets value.
+     * @param option the value, or <code>null</code> to set this property to <code>null</code>
      */
     @SuppressWarnings("deprecation") public void setValueOption(IntOption option) {
         this.value.copyFrom(option);
@@ -126,14 +120,14 @@ import com.asakusafw.runtime.value.LongOption;
         if(obj == null) {
             return false;
         }
-        if(this.getClass()!= obj.getClass()) {
+        if(this.getClass() != obj.getClass()) {
             return false;
         }
         Part1 other = (Part1) obj;
-        if(this.sid.equals(other.sid)== false) {
+        if(this.sid.equals(other.sid) == false) {
             return false;
         }
-        if(this.value.equals(other.value)== false) {
+        if(this.value.equals(other.value) == false) {
             return false;
         }
         return true;

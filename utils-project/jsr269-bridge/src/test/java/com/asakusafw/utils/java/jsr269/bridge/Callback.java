@@ -18,6 +18,9 @@ package com.asakusafw.utils.java.jsr269.bridge;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
+import java.io.IOError;
+import java.io.IOException;
+
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.TypeElement;
@@ -26,7 +29,7 @@ import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
 /**
- * {@link DelegateProcessor}から呼び戻される。
+ * Call back from {@link DelegateProcessor}.
  */
 public abstract class Callback {
 
@@ -35,31 +38,29 @@ public abstract class Callback {
     private Error error;
 
     /**
-     * 環境オブジェクト。
+     * The processing environment.
      */
     protected ProcessingEnvironment env;
 
     /**
-     * 型環境。
+     * The type environment.
      */
     protected Types types;
 
     /**
-     * 要素環境。
+     * The element utilities.
      */
     protected Elements elements;
 
     /**
-     * ラウンドオブジェクト。
+     * The current rounding environment.
      */
     protected RoundEnvironment round;
 
     /**
-     * {@link #test()}を安全な環境で実行する。
-     * <p>
-     * </p>
-     * @param env 環境
-     * @param round ラウンド環境
+     * Runs {@link #test()} method.
+     * @param env processing environment
+     * @param round rounding environment
      */
     @SuppressWarnings("hiding")
     public void run(ProcessingEnvironment env, RoundEnvironment round) {
@@ -69,6 +70,8 @@ public abstract class Callback {
         this.elements = env.getElementUtils();
         try {
             test();
+        } catch (IOException e) {
+            this.error = new IOError(e);
         } catch (RuntimeException e) {
             this.runtimeException = e;
         } catch (Error e) {
@@ -77,7 +80,7 @@ public abstract class Callback {
     }
 
     /**
-     * {@link #test()}で実行されたエラーをスローする。
+     * Throws exceptions/errors which are thrown in {@link #test()}.
      */
     public void rethrow() {
         if (runtimeException != null) {
@@ -88,19 +91,20 @@ public abstract class Callback {
     }
 
     /**
-     * 実際のテストを実行する。
+     * Performs the test.
+     * @throws IOException if compilation was failed
      */
-    protected abstract void test();
+    protected abstract void test() throws IOException;
 
     /**
-     * 宣言型を返す。
-     * @param klass 対象のクラス
-     * @param arguments 型引数の一覧
-     * @return 宣言型
+     * Returns the type mirror.
+     * @param aClass target raw type
+     * @param arguments type arguments
+     * @return the declared type
      */
-    protected TypeMirror getType(Class<?> klass, TypeMirror...arguments) {
-        TypeElement type = elements.getTypeElement(klass.getName());
-        assertThat(klass.getName(), type, not(nullValue()));
+    protected TypeMirror getType(Class<?> aClass, TypeMirror...arguments) {
+        TypeElement type = elements.getTypeElement(aClass.getName());
+        assertThat(aClass.getName(), type, not(nullValue()));
         if (arguments.length == 0) {
             return types.erasure(type.asType());
         } else {

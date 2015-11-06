@@ -15,9 +15,8 @@
  */
 package com.asakusafw.utils.java.model.syntax;
 
-
 /**
- * 注釈を表現する基底インターフェース。
+ * An abstract super interface of annotations.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:9.7] Annotations} </li>
@@ -27,12 +26,9 @@ package com.asakusafw.utils.java.model.syntax;
 public interface Annotation
         extends Attribute, Expression {
 
-    // properties
-
     /**
-     * 注釈の型を返す。
-     * @return
-     *     注釈の型
+     * Returns the annotation type.
+     * @return the annotation type
      */
     NamedType getType();
 }

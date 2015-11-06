@@ -45,7 +45,7 @@ public class ImportBuilderTest {
     ModelFactory f = Models.getModelFactory();
 
     /**
-     * プリミティブ型。
+     * primitive types.
      */
     @Test
     public void primitive() {
@@ -55,7 +55,7 @@ public class ImportBuilderTest {
     }
 
     /**
-     * クラス型。
+     * named types.
      */
     @Test
     public void aClass() {
@@ -65,7 +65,7 @@ public class ImportBuilderTest {
     }
 
     /**
-     * 配列型。
+     * array types.
      */
     @Test
     public void array() {
@@ -77,7 +77,7 @@ public class ImportBuilderTest {
     }
 
     /**
-     * パラメータ化型。
+     * parameterized types.
      */
     @Test
     public void parameterized() {
@@ -89,7 +89,7 @@ public class ImportBuilderTest {
     }
 
     /**
-     * 限定型。
+     * qualified types.
      */
     @Test
     public void qualified() {
@@ -107,7 +107,7 @@ public class ImportBuilderTest {
     }
 
     /**
-     * java.lang。
+     * types declared in {@code java.lang}.
      */
     @Test
     public void javaLang() {
@@ -117,7 +117,7 @@ public class ImportBuilderTest {
     }
 
     /**
-     * 同一パッケージ。
+     * types declared in the same package.
      */
     @Test
     public void current() {
@@ -129,7 +129,7 @@ public class ImportBuilderTest {
     }
 
     /**
-     * 内部クラス型 (トップレベルのみインポート)。
+     * member types (import only their top-level types).
      */
     @Test
     public void enclosing() {
@@ -139,7 +139,7 @@ public class ImportBuilderTest {
     }
 
     /**
-     * 内部クラス型 (直接インポート)。
+     * member types (import them directly).
      */
     @Test
     public void enclosing_just() {
@@ -149,7 +149,7 @@ public class ImportBuilderTest {
     }
 
     /**
-     * デフォルトパッケージ。
+     * types declared in the default package.
      */
     @Test
     public void defaultPackage() {
@@ -164,7 +164,7 @@ public class ImportBuilderTest {
     }
 
     /**
-     * 重複。
+     * already imported.
      */
     @Test
     public void duplicate() {
@@ -176,7 +176,7 @@ public class ImportBuilderTest {
     }
 
     /**
-     * 衝突。
+     * conflict the simple name.
      */
     @Test
     public void conflict() {
@@ -187,7 +187,7 @@ public class ImportBuilderTest {
     }
 
     /**
-     * 衝突。
+     * conflict the simple name (w/ the default package).
      */
     @Test
     public void conflictInDefaultPackage() {

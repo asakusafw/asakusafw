@@ -56,22 +56,22 @@ import com.asakusafw.vocabulary.operator.OperatorFactory;
 import com.asakusafw.vocabulary.operator.OperatorInfo;
 
 /**
- * 演算子ファクトリークラスの情報を構築するジェネレータ。
+ * Generates operator factory classes for operator classes.
  */
 public class OperatorFactoryClassGenerator extends OperatorClassGenerator {
 
     /**
-     * {@link FlowElementResolver}を保持するフィールド名。
+     * The field name for holding {@link FlowElementResolver}.
      */
     static final String RESOLVER_FIELD_NAME = "$"; //$NON-NLS-1$
 
     /**
-     * インスタンスを生成する。
-     * @param environment 環境オブジェクト
-     * @param factory DOMを構築するためのファクトリ
-     * @param importer インポート宣言を構築するビルダー
-     * @param operatorClass 演算子クラスの情報
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Creates a new instance.
+     * @param environment the current environment
+     * @param factory the Java DOM factory
+     * @param importer the import declaration builder
+     * @param operatorClass the target operator class
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public OperatorFactoryClassGenerator(
             OperatorCompilingEnvironment environment,

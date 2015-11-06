@@ -26,28 +26,16 @@ import com.asakusafw.utils.java.model.syntax.TypeDeclaration;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link CompilationUnit}の実装。
+ * An implementation of {@link CompilationUnit}.
  */
 public final class CompilationUnitImpl extends ModelRoot implements CompilationUnit {
 
-    /**
-     * パッケージ宣言。
-     */
     private PackageDeclaration packageDeclaration;
 
-    /**
-     * このコンパイル単位で宣言されるインポート宣言の一覧。
-     */
     private List<? extends ImportDeclaration> importDeclarations;
 
-    /**
-     * このコンパイル単位で宣言される型の一覧。
-     */
     private List<? extends TypeDeclaration> typeDeclarations;
 
-    /**
-     * このコンパイル単位に記述されたコメントの一覧。
-     */
     private List<? extends Comment> comments;
 
     @Override
@@ -56,11 +44,8 @@ public final class CompilationUnitImpl extends ModelRoot implements CompilationU
     }
 
     /**
-     * パッケージ宣言を設定する。
-     * <p> 無名パッケージ上に存在するコンパイル単位を表現する場合、引数には{@code null}を指定する。 </p>
-     * @param packageDeclaration
-     *     パッケージ宣言、
-     *     ただし無名パッケージ上に存在するコンパイル単位を表現する場合は{@code null}
+     * Sets the package declaration.
+     * @param packageDeclaration the package declaration, or {@code null} for the default package
      */
     public void setPackageDeclaration(PackageDeclaration packageDeclaration) {
         this.packageDeclaration = packageDeclaration;
@@ -72,12 +57,9 @@ public final class CompilationUnitImpl extends ModelRoot implements CompilationU
     }
 
     /**
-     * このコンパイル単位で宣言されるインポート宣言の一覧を設定する。
-     * <p> インポート宣言が一つも宣言されない場合、引数には空を指定する。 </p>
-     * @param importDeclarations
-     *     このコンパイル単位で宣言されるインポート宣言の一覧
-     * @throws IllegalArgumentException
-     *     {@code importDeclarations}に{@code null}が指定された場合
+     * Sets the import declarations.
+     * @param importDeclarations the import declarations
+     * @throws IllegalArgumentException if {@code importDeclarations} was {@code null}
      */
     public void setImportDeclarations(List<? extends ImportDeclaration> importDeclarations) {
         Util.notNull(importDeclarations, "importDeclarations"); //$NON-NLS-1$
@@ -91,12 +73,9 @@ public final class CompilationUnitImpl extends ModelRoot implements CompilationU
     }
 
     /**
-     * このコンパイル単位で宣言される型の一覧を設定する。
-     * <p> 型が一つも宣言されない場合、引数には空を指定する。 </p>
-     * @param typeDeclarations
-     *     このコンパイル単位で宣言される型の一覧
-     * @throws IllegalArgumentException
-     *     {@code typeDeclarations}に{@code null}が指定された場合
+     * Sets the type declarations.
+     * @param typeDeclarations the type declarations
+     * @throws IllegalArgumentException if {@code typeDeclarations} was {@code null}
      */
     public void setTypeDeclarations(List<? extends TypeDeclaration> typeDeclarations) {
         Util.notNull(typeDeclarations, "typeDeclarations"); //$NON-NLS-1$
@@ -110,12 +89,9 @@ public final class CompilationUnitImpl extends ModelRoot implements CompilationU
     }
 
     /**
-     * このコンパイル単位に記述されたコメントの一覧を設定する。
-     * <p> コメントが一つも記述されない場合、引数には空を指定する。 </p>
-     * @param comments
-     *     このコンパイル単位に記述されたコメントの一覧
-     * @throws IllegalArgumentException
-     *     {@code comments}に{@code null}が指定された場合
+     * Sets the comments.
+     * @param comments the comments
+     * @throws IllegalArgumentException if {@code comments} was {@code null}
      */
     public void setComments(List<? extends Comment> comments) {
         Util.notNull(comments, "comments"); //$NON-NLS-1$
@@ -124,7 +100,7 @@ public final class CompilationUnitImpl extends ModelRoot implements CompilationU
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#COMPILATION_UNIT}を返す。
+     * Returns {@link ModelKind#COMPILATION_UNIT} which represents this element kind.
      * @return {@link ModelKind#COMPILATION_UNIT}
      */
     @Override
@@ -133,8 +109,7 @@ public final class CompilationUnitImpl extends ModelRoot implements CompilationU
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitCompilationUnit(this, context);
     }

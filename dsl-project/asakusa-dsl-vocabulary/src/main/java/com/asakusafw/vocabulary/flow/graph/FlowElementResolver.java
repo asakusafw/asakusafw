@@ -21,9 +21,8 @@ import java.util.NoSuchElementException;
 
 import com.asakusafw.vocabulary.flow.Source;
 
-
 /**
- * {@link FlowElement}の接続を解決する。
+ * Resolves connections of {@link FlowElement}.
  * @since 0.1.0
  * @version 0.4.0
  */
@@ -57,39 +56,28 @@ public class FlowElementResolver {
     }
 
     /**
-     * インスタンスを生成する。
-     * @param description {@link FlowElement}の元になる定義記述
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param description a description of the target {@link FlowElement}
+     * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public FlowElementResolver(FlowElementDescription description) {
-        if (description == null) {
-            throw new IllegalArgumentException("description must not be null"); //$NON-NLS-1$
-        }
-        this.inputPorts = new HashMap<String, FlowElementInput>();
-        this.outputPorts = new HashMap<String, FlowElementOutput>();
-        this.element = new FlowElement(description);
-        for (FlowElementInput port : element.getInputPorts()) {
-            inputPorts.put(port.getDescription().getName(), port);
-        }
-        for (FlowElementOutput port : element.getOutputPorts()) {
-            outputPorts.put(port.getDescription().getName(), port);
-        }
+        this(new FlowElement(description));
     }
 
     /**
-     * このオブジェクトが表現するフロー要素を返す。
-     * @return このオブジェクトが表現するフロー要素
+     * Returns the target flow element of this resolver.
+     * @return the target flow element
      */
     public FlowElement getElement() {
         return element;
     }
 
     /**
-     * 指定の名前を持つ入力ポートの表現を返す。
-     * @param name ポートの名前
-     * @return 対応するポート
-     * @throws NoSuchElementException ポートが発見できない場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns the input port of the target flow element.
+     * @param name the target port name
+     * @return the target port
+     * @throws NoSuchElementException if the target flow element does not have such a port
+     * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public FlowElementInput getInput(String name) {
         if (name == null) {
@@ -103,11 +91,11 @@ public class FlowElementResolver {
     }
 
     /**
-     * 指定の名前を持つ出力ポートの表現を返す。
-     * @param name ポートの名前
-     * @return 対応するポート
-     * @throws NoSuchElementException ポートが発見できない場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns the output port of the target flow element.
+     * @param name the target port name
+     * @return the target port
+     * @throws NoSuchElementException if the target flow element does not have such a port
+     * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public FlowElementOutput getOutput(String name) {
         if (name == null) {
@@ -121,11 +109,11 @@ public class FlowElementResolver {
     }
 
     /**
-     * 指定の名前を持つ入力ポートと、指定のソースを結合する。
-     * @param name ポートの名前
-     * @param source 結合するソース
-     * @throws NoSuchElementException ポートが発見できない場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Connects between an upstream source and the input port of the flow element.
+     * @param name the target port name
+     * @param source the upstream source
+     * @throws NoSuchElementException if the target flow element does not have such a port
+     * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public void resolveInput(String name, Source<?> source) {
         if (name == null) {
@@ -139,12 +127,12 @@ public class FlowElementResolver {
     }
 
     /**
-     * 指定の名前を持つ出力ポートを、ソースの表現にして返す。
-     * @param <T> データの種類
-     * @param name ポートの名前
-     * @return 対応するソースの表現
-     * @throws NoSuchElementException ポートが発見できない場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns the output port of the target flow element as upstream source.
+     * @param <T> the data type of the port
+     * @param name the target port name
+     * @return the target port
+     * @throws NoSuchElementException if the target flow element does not have such a port
+     * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public <T> Source<T> resolveOutput(String name) {
         if (name == null) {
@@ -155,10 +143,10 @@ public class FlowElementResolver {
     }
 
     /**
-     * 対象要素の名前を設定する。
-     * @param name 設定する名前
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
-     * @throws UnsupportedOperationException 対象要素が名前を変更できない要素である場合
+     * Sets the flow element name.
+     * @param name the name
+     * @throws UnsupportedOperationException if the target flow element does not support changing its name
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public void setName(String name) {
         if (name == null) {
@@ -169,17 +157,17 @@ public class FlowElementResolver {
     }
 
     /**
-     * {@link FlowElementOutput}を{@link Source}として取り扱うためのドライバ。
-     * @param <T> 取り扱うデータの種類
+     * An adapter class that enables {@link FlowElementOutput} performs as {@link Source}.
+     * @param <T> the data type
      */
     public static class OutputDriver<T> implements Source<T> {
 
         private final FlowElementOutput outputPort;
 
         /**
-         * インスタンスを生成する。
-         * @param outputPort 対応する出力ポート
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Creates a new instance.
+         * @param outputPort the original output port
+         * @throws IllegalArgumentException if the parameter is {@code null}
          */
         public OutputDriver(FlowElementOutput outputPort) {
             if (outputPort == null) {

@@ -19,30 +19,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * {@link JavadocParser}を生成する。
+ * A builder for building {@link JavadocParser}.
  */
 public class JavadocParserBuilder {
 
     private boolean generated;
-    private List<JavadocBlockParser> inlines;
-    private List<JavadocBlockParser> toplevels;
+    private final List<JavadocBlockParser> inlines;
+    private final List<JavadocBlockParser> toplevels;
 
     /**
-     * インスタンスを生成する。
+     * Creates a new instance.
      */
     public JavadocParserBuilder() {
-        super();
         this.generated = false;
         this.inlines = new ArrayList<JavadocBlockParser>();
         this.toplevels = new ArrayList<JavadocBlockParser>();
     }
 
     /**
-     * 特別な処理を行うインラインブロックの解析器を追加する。
-     * このメソッドによって先に追加された解析器より優先度は低くなる。
-     * @param parser 追加する解析器
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
-     * @throws IllegalStateException {@link #build()}を呼び出した後にこのメソッドが呼び出された場合
+     * Adds an inline block parser.
+     * @param parser the parser
+     * @throws IllegalArgumentException if the parameter is {@code null}
+     * @throws IllegalStateException if {@link #build()} has already been invoked
      */
     public synchronized void addSpecialInlineBlockParser(JavadocBlockParser parser) {
         if (parser == null) {
@@ -55,11 +53,10 @@ public class JavadocParserBuilder {
     }
 
     /**
-     * 特別な処理を行うトップレベルブロックの解析器を追加する。
-     * このメソッドによって先に追加された解析器より優先度は低くなる。
-     * @param parser 追加する解析器
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
-     * @throws IllegalStateException {@link #build()}を呼び出した後にこのメソッドが呼び出された場合
+     * Adds a top-level block parser.
+     * @param parser the parser
+     * @throws IllegalArgumentException if the parameter is {@code null}
+     * @throws IllegalStateException if {@link #build()} has already been invoked
      */
     public synchronized void addSpecialStandAloneBlockParser(JavadocBlockParser parser) {
         if (parser == null) {
@@ -72,9 +69,9 @@ public class JavadocParserBuilder {
     }
 
     /**
-     * ここまでの設定を利用して{@link JavadocParser}を作成し、返す。
-     * @return 作成した解析器
-     * @throws IllegalStateException このメソッドが同一インスタンスに対して二回以上呼び出された場合
+     * Builds a new {@link JavadocParser}.
+     * @return the built object
+     * @throws IllegalStateException if {@link #build()} has already been invoked
      */
     public synchronized JavadocParser build() {
         if (generated) {
@@ -82,17 +79,16 @@ public class JavadocParserBuilder {
         }
         generated = true;
 
-        // 任意のインラインブロックを処理できるように
+        // enable generic inline blocks
         inlines.add(new DefaultJavadocBlockParser());
 
-        // トップレベルブロックがインラインブロックを処理できるように
         for (JavadocBlockParser p: toplevels) {
             p.setBlockParsers(inlines);
         }
-        // 任意のトップレベルブロックを処理できるように
+
+        // enable generic top-level blocks
         toplevels.add(new DefaultJavadocBlockParser(inlines));
 
-        // トップレベルブロックを処理できるように
         JavadocParser parser = new JavadocParser(toplevels);
         return parser;
     }

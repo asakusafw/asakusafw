@@ -41,7 +41,7 @@ import com.asakusafw.utils.java.model.syntax.DocElement;
 import com.asakusafw.vocabulary.flow.FlowDescription;
 
 /**
- * フロー部品からなる演算子を集める。
+ * Collects flow-part classes.
  */
 public class FlowPartClassCollector {
 
@@ -52,9 +52,9 @@ public class FlowPartClassCollector {
     private boolean sawError;
 
     /**
-     * インスタンスを生成する。
-     * @param environment 環境オブジェクト
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Creates a new instance.
+     * @param environment the current environment
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public FlowPartClassCollector(OperatorCompilingEnvironment environment) {
         Precondition.checkMustNotBeNull(environment, "environment"); //$NON-NLS-1$
@@ -64,9 +64,9 @@ public class FlowPartClassCollector {
     }
 
     /**
-     * フロー部品としての注釈が付与された要素を追加する。
-     * @param element 追加する要素
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Adds an element that is annotated with flow-part annotation.
+     * @param element the target element
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public void add(Element element) {
         Precondition.checkMustNotBeNull(element, "element"); //$NON-NLS-1$
@@ -294,9 +294,9 @@ public class FlowPartClassCollector {
     }
 
     /**
-     * ここまでに{@link #add(Element)}に指定された要素を元に構築したフロー部品クラスの一覧を返す。
-     * @return 構築したフロー部品クラスの一覧
-     * @throws OperatorCompilerException 構築に失敗した場合
+     * Analyzes and returns the previously added flow-part classes.
+     * @return the analyzed flow-part classes
+     * @throws OperatorCompilerException if exception was occurred while analyzing operator classes
      */
     public List<FlowPartClass> collect() {
         if (sawError) {

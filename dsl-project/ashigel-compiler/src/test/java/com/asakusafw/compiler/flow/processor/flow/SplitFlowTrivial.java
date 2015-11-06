@@ -33,7 +33,7 @@ import com.asakusafw.vocabulary.flow.Out;
 
 
 /**
- * {@link SplitFlowProcessor}のテスト。
+ * test for {@link SplitFlowProcessor}.
  */
 @JobFlow(name = "testing")
 public class SplitFlowTrivial extends FlowDescription {
@@ -45,10 +45,10 @@ public class SplitFlowTrivial extends FlowDescription {
     private Out<Ex2> out2;
 
     /**
-     * インスタンスを生成する。
-     * @param in1 入力
-     * @param out1 出力1
-     * @param out2 出力2
+     * Creates a new instance.
+     * @param in1 input
+     * @param out1 output1
+     * @param out2 output2
      */
     public SplitFlowTrivial(
             @Import(name = "ej", description = ExJoinedMockImporterDescription.class)

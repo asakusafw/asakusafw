@@ -17,22 +17,22 @@ package com.asakusafw.compiler.flow.processor.operator;
 
 import java.util.List;
 
+import com.asakusafw.compiler.flow.processor.CoGroupFlowProcessor;
 import com.asakusafw.compiler.flow.testing.model.Ex1;
 import com.asakusafw.runtime.core.Result;
 import com.asakusafw.vocabulary.model.Key;
 import com.asakusafw.vocabulary.operator.CoGroup;
 import com.asakusafw.vocabulary.operator.GroupSort;
 
-
 /**
- * {@link GroupSort}のテスト。
+ * An operator class for testing {@link GroupSort} (it is merged into {@link CoGroupFlowProcessor}).
  */
 public abstract class GroupSortFlow {
 
     /**
-     * グループ内で値が最小のものを返す。
-     * @param a1 グループ
-     * @param r1 結果
+     * return min.
+     * @param a1 group
+     * @param r1 result
      */
     @GroupSort
     public void min(
@@ -42,9 +42,9 @@ public abstract class GroupSortFlow {
     }
 
     /**
-     * グループ内で値が最大のものを返す。
-     * @param a1 グループ
-     * @param r1 結果
+     * return max.
+     * @param a1 group
+     * @param r1 result
      */
     @GroupSort
     public void max(
@@ -54,11 +54,11 @@ public abstract class GroupSortFlow {
     }
 
     /**
-     * 値がパラメーター以下かそうでないかで結果の出力先を変える。
-     * @param a1 グループ
-     * @param r1 パラメーター以下の値を持つ結果
-     * @param r2 パラメーターを超える値を持つ結果
-     * @param parameter パラメーター
+     * Switches output target whether if the value is less than or equal to the parameter.
+     * @param a1 group
+     * @param r1 a1 where value of input is less than or equal to the parameter
+     * @param r2 a1 where value of input is greater than the parameter
+     * @param parameter the parameter for switching output target
      */
     @CoGroup
     public void withParameter(

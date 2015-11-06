@@ -23,13 +23,13 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 /**
- * {@link PrintWriter}への出力を行うコンテキストオブジェクト。
+ * An implementation of {@link EmitContext} for writing into {@link PrintWriter}.
  */
 public class PrintEmitContext implements EmitContext {
 
     private static final String INDENT = "    "; //$NON-NLS-1$
 
-    private PrintWriter writer;
+    private final PrintWriter writer;
 
     private State state;
 
@@ -43,12 +43,12 @@ public class PrintEmitContext implements EmitContext {
 
     private int bodyColumn;
 
-    private SortedMap<Integer, String> commentPool;
+    private final SortedMap<Integer, String> commentPool;
 
     /**
-     * インスタンスを生成する。
-     * @param writer 出力先
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Creates a new instance.
+     * @param writer the target writer
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public PrintEmitContext(PrintWriter writer) {
         if (writer == null) {
@@ -449,68 +449,65 @@ public class PrintEmitContext implements EmitContext {
         }
     }
 
-    /**
-     * コンテキストの状態を表現する。
-     */
     private enum State {
 
         /**
-         * 初期状態。
+         * The initial state.
          */
         INIT,
 
         /**
-         * シンボルを出力。
+         * After emit symbols.
          */
         SYMBOL,
 
         /**
-         * 即値を出力。
+         * After emit immediate.
          */
         IMMEDIATE,
 
         /**
-         * キーワードを出力。
+         * After emit keywords.
          */
         KEYWORD,
 
         /**
-         * 演算子を出力。
+         * After emit operators.
          */
         OPERATOR,
 
         /**
-         * 区切り子を出力。
+         * After emit separators.
          */
         SEPARATOR,
 
         /**
-         * パディングを出力。
+         * After emit paddings.
          */
         PADDING,
 
         /**
-         * 任意のブロック開始文字を出力。
+         * After emit block begin symbols.
          */
         BLOCK_START,
 
         /**
-         * 任意のブロック終了文字を出力。
+         * After emit block end symbols.
          */
         BLOCK_END,
 
         /**
-         * コメントを出力。
+         * After emit block comments.
          */
         BLOCK_COMMENT,
 
         /**
-         * 行内コメントを出力。
+         * After emit inline comments.
          */
         INLINE_COMMENT,
 
         /**
-         * 行末に差し掛かり、改行文字をまだ出力していない状態。
+         * End of line (before line break).
          */
         LINE_END,
     }

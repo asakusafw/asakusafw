@@ -62,7 +62,7 @@ import com.asakusafw.vocabulary.operator.Sticky;
 import com.asakusafw.vocabulary.operator.Volatile;
 
 /**
- * メソッドやコンストラクターの宣言を解析する。
+ * Analyzes operator methods and constructors.
  * @since 0.1.0
  * @version 0.7.1
  */
@@ -77,14 +77,12 @@ public class ExecutableAnalyzer {
     private boolean sawError;
 
     /**
-     * インスタンスを生成する。
-     * @param environment 注釈処理の環境
-     * @param executable メソッドやコンストラクタの宣言
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param environment the current environment
+     * @param executable the target executable element
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
-    public ExecutableAnalyzer(
-            OperatorCompilingEnvironment environment,
-            ExecutableElement executable) {
+    public ExecutableAnalyzer(OperatorCompilingEnvironment environment, ExecutableElement executable) {
         Precondition.checkMustNotBeNull(environment, "environment"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(executable, "executable"); //$NON-NLS-1$
         this.environment = environment;
@@ -94,10 +92,10 @@ public class ExecutableAnalyzer {
     }
 
     /**
-     * この要素に対してエラーを表示する。
-     * @param message 表示するメッセージ、引数を指定した場合はメッセージのフォーマット
-     * @param arguments メッセージの引数
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Raises an error to this element.
+     * @param message an error message, or message pattern if the arguments are not empty
+     * @param arguments the message arguments
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public void error(String message, Object...arguments) {
         Precondition.checkMustNotBeNull(message, "message"); //$NON-NLS-1$
@@ -109,11 +107,11 @@ public class ExecutableAnalyzer {
     }
 
     /**
-     * パラメーターに対してエラーを表示する。
-     * @param parameterIndex パラメーターの位置 (0起算)
-     * @param message 表示するメッセージ、引数を指定した場合はメッセージのフォーマット
-     * @param arguments メッセージの引数
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Raises an error to a parameter of this element.
+     * @param parameterIndex the target parameter index (0-origin)
+     * @param message an error message, or message pattern if the arguments are not empty
+     * @param arguments the message arguments
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public void error(int parameterIndex, String message, Object...arguments) {
         Precondition.checkMustNotBeNull(message, "message"); //$NON-NLS-1$
@@ -144,7 +142,6 @@ public class ExecutableAnalyzer {
         if (types.isSameType(a, b)) {
             return true;
         }
-        // EclipseJDTのバグでerasureは正しく計算されない模様
         DeclaredType at = (DeclaredType) a;
         DeclaredType bt = (DeclaredType) b;
         return at.asElement().equals(bt.asElement());
@@ -159,16 +156,16 @@ public class ExecutableAnalyzer {
     }
 
     /**
-     * {@code error()}メソッドが利用された場合に{@code true}を返す。
-     * @return {@code error()}メソッドが利用された場合に{@code true}
+     * Returns whether this analysis result contains any erroneous information or not.
+     * @return {@code true} if this contains any erroneous information, otherwise {@code false}
      */
     public boolean hasError() {
         return sawError;
     }
 
     /**
-     * この要素が{@code abstract}として宣言されている場合に{@code true}を返す。
-     * @return {@code abstract}として宣言されている場合に{@code true}
+     * Returns whether this element is declared as {@code abstract} or not.
+     * @return {@code true} if this element is declared as {@code abstract}, otherwise {@code false}
      */
     public boolean isAbstract() {
         return executable.getModifiers().contains(Modifier.ABSTRACT);
@@ -183,10 +180,10 @@ public class ExecutableAnalyzer {
     }
 
     /**
-     * この要素の観測回数に関する属性を計算する。
-     * @param defaults この要素が本質的に有する観測回数に関する制約
-     * @return 観測回数に関する属性
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns the {@link ObservationCount} attribute of this element.
+     * @param defaults the default constraints
+     * @return the extracted attribute
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public ObservationCount getObservationCount(ObservationCount... defaults) {
         Precondition.checkMustNotBeNull(defaults, "defaults"); //$NON-NLS-1$
@@ -208,10 +205,10 @@ public class ExecutableAnalyzer {
     }
 
     /**
-     * 指定の要素のドキュメンテーションを返す。
-     * @param element 対象の要素
-     * @return ドキュメンテーション、存在しない場合は空のリスト
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns the documentation of the target element.
+     * @param element the target element
+     * @return the documentation, or an empty list if the target element does not have any documentations
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public List<? extends DocElement> getDocument(Element element) {
         Precondition.checkMustNotBeNull(element, "element"); //$NON-NLS-1$
@@ -260,25 +257,25 @@ public class ExecutableAnalyzer {
     }
 
     /**
-     * この要素に宣言されたパラメーターの個数を返す。
-     * @return この要素に宣言されたパラメーターの個数
+     * Returns the number of parameters in this element.
+     * @return the number of parameters in this element
      */
     public int countParameters() {
         return executable.getParameters().size();
     }
 
     /**
-     * 戻り値の型に対する制約オブジェクトを返す。
-     * @return 戻り値の型に対する制約オブジェクト
+     * Returns the type constraint object of the return type.
+     * @return the return type constraint
      */
     public TypeConstraint getReturnType() {
         return new TypeConstraint(executable.getReturnType());
     }
 
     /**
-     * 指定の引数の型に対する制約オブジェクトを返す。
-     * @param index 対象の位置 (0起算)
-     * @return 指定の引数の型に対する制約オブジェクト
+     * Returns the type constraint object of the target parameter type.
+     * @param index the target parameter index (0-origin)
+     * @return the parameter type constraint
      */
     public TypeConstraint getParameterType(int index) {
         List<? extends VariableElement> parameters = executable.getParameters();
@@ -289,9 +286,9 @@ public class ExecutableAnalyzer {
     }
 
     /**
-     * 指定の位置の引数名を返す。
-     * @param index 対象の位置 (0起算)
-     * @return 指定の位置の引数名
+     * Returns the parameter name.
+     * @param index the target parameter index (0-origin)
+     * @return the parameter name
      */
     public String getParameterName(int index) {
         List<? extends VariableElement> parameters = executable.getParameters();
@@ -300,9 +297,9 @@ public class ExecutableAnalyzer {
     }
 
     /**
-     * 指定の位置の引数に付与されたキーを返す。
-     * @param index 対象の位置 (0起算)
-     * @return 指定の位置の引数に付与されたキー
+     * Returns the shuffle key of the target parameter.
+     * @param index the target parameter index (0-origin)
+     * @return the shuffle key of the target parameter
      * @deprecated Use {@link #getParameterKeySpec(int)} instead
      */
     @Deprecated
@@ -398,8 +395,8 @@ public class ExecutableAnalyzer {
     }
 
     /**
-     * この要素に対するドキュメント(概要のみ)を返す。
-     * @return この要素に対するドキュメント、存在しない場合は空のリスト
+     * Returns the documentation of this element (only abstract section).
+     * @return the documentation of this element, or an empty list if this does not have any documents
      */
     public List<? extends DocElement> getExecutableDocument() {
         Javadoc doc = documentation;
@@ -407,9 +404,9 @@ public class ExecutableAnalyzer {
     }
 
     /**
-     * この要素の引数に対するドキュメントを返す。
-     * @param index 対象の位置 (0起算)
-     * @return この要素の引数に対するドキュメント、存在しない場合は空のリスト
+     * Returns the documentation of the target parameter.
+     * @param index the target parameter index (0-origin)
+     * @return the documentation of the target parameter, or an empty list if this does not have any documents
      */
     public List<? extends DocElement> getParameterDocument(int index) {
         String name = getParameterName(index);
@@ -434,8 +431,8 @@ public class ExecutableAnalyzer {
     }
 
     /**
-     * この要素の戻り値に対するドキュメントを返す。
-     * @return この要素の戻り値に対するドキュメント、存在しない場合は空のリスト
+     * Returns the documentation of the return value.
+     * @return the documentation of the return value, or an empty list if this does not have any documents
      */
     public List<? extends DocElement> getReturnDocument() {
         for (DocBlock block : documentation.getBlocks()) {
@@ -647,7 +644,7 @@ public class ExecutableAnalyzer {
     }
 
     /**
-     * 型に関する制約。
+     * Represents constraints of the type.
      */
     public class TypeConstraint {
 
@@ -656,9 +653,9 @@ public class ExecutableAnalyzer {
         private final Element element;
 
         /**
-         * インスタンスを生成する。
-         * @param type 対象の型
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Creates a new instance.
+         * @param type the target type
+         * @throws IllegalArgumentException if the parameter is {@code null}
          */
         TypeConstraint(TypeMirror type) {
             Precondition.checkMustNotBeNull(type, "type"); //$NON-NLS-1$
@@ -667,41 +664,40 @@ public class ExecutableAnalyzer {
         }
 
         /**
-         * このオブジェクトが制約の対象としている型を返す。
-         * @return 対象の型
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Returns the target type.
+         * @return the target type
          */
         public TypeMirror getType() {
             return type;
         }
 
         /**
-         * この型が存在する場合のみ{@code true}を返す。
-         * @return この型が存在する場合のみ{@code true}
+         * Returns whether the target type is actual type or not.
+         * @return {@code true} if the target type is actual type, otherwise {@code false}
          */
         public boolean exists() {
             return type.getKind() != TypeKind.NONE;
         }
 
         /**
-         * この型が{@code void}を表現する場合のみ{@code true}を返す。
-         * @return {@code void}を表現する場合のみ{@code true}
+         * Returns whether the target type is void type or not.
+         * @return {@code true} if the target type is void type, otherwise {@code false}
          */
         public boolean isVoid() {
             return type.getKind() == TypeKind.VOID;
         }
 
         /**
-         * この型が型変数を表現する場合のみ{@code true}を返す。
-         * @return この型が型変数を表現する場合のみ{@code true}
+         * Returns whether the target type is a type variable or not.
+         * @return {@code true} if the target type is a type variable, otherwise {@code false}
          */
         public boolean isTypeVariable() {
             return type.getKind() == TypeKind.TYPEVAR;
         }
 
         /**
-         * この型が任意の列挙型を表現する場合のみ{@code true}を返す。
-         * @return 任意の列挙型を表現する場合のみ{@code true}
+         * Returns whether the target type is an enum type or not.
+         * @return {@code true} if the target type is an enum type, otherwise {@code false}
          */
         public boolean isEnum() {
             if (element == null) {
@@ -714,8 +710,8 @@ public class ExecutableAnalyzer {
         }
 
         /**
-         * この型が型要素で表現される場合にそれを返す。
-         * @return この型に対する型要素、存在しない場合は{@code null}
+         * Returns the type element of this type.
+         * @return the type element, or {@code null} if this does not have the type element
          */
         public TypeElement getTypeElement() {
             if (element instanceof TypeElement) {
@@ -725,9 +721,9 @@ public class ExecutableAnalyzer {
         }
 
         /**
-         * この型が列挙型である場合に、それらの定数一覧の情報を返す。
-         * @return 定数一覧の情報
-         * @throws IllegalStateException この型が列挙型を表さない場合
+         * Returns the enum constants of this enum type.
+         * @return the enum constants
+         * @throws IllegalStateException if this does not represents an enum type
          */
         public List<VariableElement> getEnumConstants() {
             if (isEnum() == false) {
@@ -764,16 +760,16 @@ public class ExecutableAnalyzer {
         }
 
         /**
-         * この型が演算子オブジェクトを表現する場合のみ{@code true}を返す。
-         * @return この型が演算子オブジェクトを表現する場合のみ{@code true}
+         * Returns whether the target type is an operator class or not.
+         * @return {@code true} if the target type is an operator class, otherwise {@code false}
          */
         public boolean isOperator() {
             return environment.getTypeUtils().isSubtype(type, environment.getDeclaredType(Operator.class));
         }
 
         /**
-         * この型がモデルを表現する場合のみ{@code true}を返す。
-         * @return この型がモデルを表現する場合のみ{@code true}
+         * Returns whether the target type is an data model type or not.
+         * @return {@code true} if the target type is an data model type, otherwise {@code false}
          */
         public boolean isModel() {
             DataModelMirror model = environment.loadDataModel(type);
@@ -781,8 +777,8 @@ public class ExecutableAnalyzer {
         }
 
         /**
-         * この型が射影でないモデルを表現する場合のみ{@code true}を返す。
-         * @return この型が射影でないモデルを表現する場合のみ{@code true}
+         * Returns whether the target type is a concrete data model type (not projective) or not.
+         * @return {@code true} if the target type is a concrete data model type, otherwise {@code false}
          */
         public boolean isConcreteModel() {
             DataModelMirror model = environment.loadDataModel(type);
@@ -790,8 +786,8 @@ public class ExecutableAnalyzer {
         }
 
         /**
-         * この型が射影モデルを表現する場合のみ{@code true}を返す。
-         * @return この型が射影モデルを表現する場合のみ{@code true}
+         * Returns whether the target type is a projective data model type or not.
+         * @return {@code true} if the target type is a projective data model type, otherwise {@code false}
          */
         public boolean isProjectiveModel() {
             DataModelMirror model = environment.loadDataModel(type);
@@ -799,10 +795,10 @@ public class ExecutableAnalyzer {
         }
 
         /**
-         * この型が結合モデルを表現する場合のみ{@code true}を返す。
-         * @param a 結合する型
-         * @param b 結合する型
-         * @return この型が結合モデルを表現する場合のみ{@code true}
+         * Returns whether the target type is joined data model type with the specified sources or not.
+         * @param a the first source type
+         * @param b the second source type
+         * @return {@code true} if the target type is a joined type with the specified sources, otherwise {@code false}
          */
         public boolean isJoinedModel(TypeMirror a, TypeMirror b) {
             AnnotationMirror annotation = findAnnotation(element, environment.getDeclaredType(Joined.class));
@@ -834,9 +830,10 @@ public class ExecutableAnalyzer {
         }
 
         /**
-         * この型が結合モデルを表現し、かつ指定の型が左結合項に出現する場合のみ{@code true}を返す。
-         * @param target 対象の型
-         * @return この型が結合モデルを表現する場合のみ{@code true}
+         * Returns whether the target type is a joined data model type and the specified type is a left source type,
+         * or not.
+         * @param target the target source type
+         * @return {@code true} if the target type is such the joined data model type, otherwise {@code false}
          */
         public boolean isJoinFrom(TypeMirror target) {
             Precondition.checkMustNotBeNull(target, "target"); //$NON-NLS-1$
@@ -860,10 +857,10 @@ public class ExecutableAnalyzer {
         }
 
         /**
-         * この型が結合をモデルを表す場合に、指定の型に関する結合キーを返す。
-         * @param target 対象の型
-         * @return 結合キー
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Returns the join key for the specified source type.
+         * @param target the source type
+         * @return the corresponded source type
+         * @throws IllegalArgumentException if the parameter is {@code null}
          */
         public ShuffleKey getJoinKey(TypeMirror target) {
             Precondition.checkMustNotBeNull(target, "target"); //$NON-NLS-1$
@@ -892,10 +889,9 @@ public class ExecutableAnalyzer {
         }
 
         /**
-         * この型が集計モデルを表現する場合のみ{@code true}を返す。
-         * @param target 集計する型
-         * @return この型が集計モデルを表現する場合のみ{@code true}
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Returns whether the target type is a summarized data model type with the specified source type or not.
+         * @param target the source type
+         * @return {@code true} if the target type is such a summarized data model type, otherwise {@code false}
          */
         public boolean isSummarizedModel(TypeMirror target) {
             Precondition.checkMustNotBeNull(target, "target"); //$NON-NLS-1$
@@ -916,9 +912,8 @@ public class ExecutableAnalyzer {
         }
 
         /**
-         * この型が集約をモデルを表す場合に、指定の型に関する結合キーを返す。
-         * @return 集約キー
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Returns grouping key of this summarized type.
+         * @return the grouping key
          */
         public ShuffleKey getSummarizeKey() {
             AnnotationMirror annotation = findAnnotation(element, environment.getDeclaredType(Summarized.class));
@@ -940,24 +935,24 @@ public class ExecutableAnalyzer {
         }
 
         /**
-         * この型が論理値を表現する場合のみ{@code true}を返す。
-         * @return 論理値を表現する場合のみ{@code true}
+         * Returns whether the target type is boolean type or not.
+         * @return {@code true} if the target type is boolean type, otherwise {@code false}
          */
         public boolean isBoolean() {
             return type.getKind() == TypeKind.BOOLEAN;
         }
 
         /**
-         * この型が文字列を表現する場合のみ{@code true}を返す。
-         * @return 文字列を表現する場合のみ{@code true}
+         * Returns whether the target type is a string type or not.
+         * @return {@code true} if the target type is a string type, otherwise {@code false}
          */
         public boolean isString() {
             return typeEqual(type, environment.getDeclaredType(String.class));
         }
 
         /**
-         * この型がリストを表現する場合のみ{@code true}を返す。
-         * @return リストを表現する場合のみ{@code true}
+         * Returns whether the target type is a list type or not.
+         * @return {@code true} if the target type is a list type, otherwise {@code false}
          * @see #getTypeArgument()
          */
         public boolean isList() {
@@ -965,8 +960,8 @@ public class ExecutableAnalyzer {
         }
 
         /**
-         * この型が結果を表現する場合のみ{@code true}を返す。
-         * @return 結果を表現する場合のみ{@code true}
+         * Returns whether the target type is a result type or not.
+         * @return {@code true} if the target type is a result type, otherwise {@code false}
          * @see #getTypeArgument()
          */
         public boolean isResult() {
@@ -974,8 +969,8 @@ public class ExecutableAnalyzer {
         }
 
         /**
-         * この型がフローへの入力を表現する場合のみ{@code true}を返す。
-         * @return フローへの入力を表現する場合のみ{@code true}
+         * Returns whether the target type is a flow input type or not.
+         * @return {@code true} if the target type is a flow input type, otherwise {@code false}
          * @see #getTypeArgument()
          */
         public boolean isIn() {
@@ -983,8 +978,8 @@ public class ExecutableAnalyzer {
         }
 
         /**
-         * この型がフローへの出力を表現する場合のみ{@code true}を返す。
-         * @return フローへの出力を表現する場合のみ{@code true}
+         * Returns whether the target type is a flow output type or not.
+         * @return {@code true} if the target type is a flow output type, otherwise {@code false}
          * @see #getTypeArgument()
          */
         public boolean isOut() {
@@ -992,8 +987,8 @@ public class ExecutableAnalyzer {
         }
 
         /**
-         * この型が文字列またはプリミティブ型を表現するする場合のみ{@code true}を返す。
-         * @return 文字列またはプリミティブ型を表現する場合のみ{@code true}
+         * Returns whether the target type is a user parameter type or not.
+         * @return {@code true} if the target type is a user parameter type, otherwise {@code false}
          * @see #getTypeArgument()
          */
         public boolean isBasic() {
@@ -1004,8 +999,8 @@ public class ExecutableAnalyzer {
         }
 
         /**
-         * この型の最初の型引数に対する制約オブジェクトを返す。
-         * @return この型の最初の型引数に対する制約オブジェクト
+         * Returns the type constraint object for the first type argument of this.
+         * @return the type constraint object for the first type argument of this
          */
         public TypeConstraint getTypeArgument() {
             if (type.getKind() != TypeKind.DECLARED) {

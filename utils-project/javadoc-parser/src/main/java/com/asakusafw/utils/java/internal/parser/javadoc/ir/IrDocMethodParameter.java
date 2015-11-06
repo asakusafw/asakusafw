@@ -18,7 +18,7 @@ package com.asakusafw.utils.java.internal.parser.javadoc.ir;
 import java.text.MessageFormat;
 
 /**
- * メソッド引数。
+ * Represents method or constructor parameters in {@link IrDocMethod}.
  */
 public class IrDocMethodParameter extends AbstractIrDocElement {
 
@@ -34,17 +34,17 @@ public class IrDocMethodParameter extends AbstractIrDocElement {
     }
 
     /**
-     * この引数の型を返す。
-     * @return この引数の型
+     * Returns the parameter type.
+     * @return the parameter type
      */
     public IrDocType getType() {
         return this.type;
     }
 
     /**
-     * この引数の型を設定する。
-     * @param type 設定する型
-     * @throws IllegalArgumentException 引数に{@code null}が含まれていた場合
+     * Sets the parameter type.
+     * @param type the parameter type
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public void setType(IrDocType type) {
         if (type == null) {
@@ -54,32 +54,32 @@ public class IrDocMethodParameter extends AbstractIrDocElement {
     }
 
     /**
-     * この引数が可変長引数として宣言されている場合のみ{@code true}を返す。
-     * @return 可変長引数として宣言されている場合のみ{@code true}
+     * Returns whether this parameter is variable arity or not.
+     * @return {@code true} if this parameter is variable arity, otherwise {@code false}
      */
     public boolean isVariableArity() {
         return this.variableArity;
     }
 
     /**
-     * この引数の可変長性を設定する。
-     * @param variableArity {@code true}ならばこの引数は可変長
+     * Sets the whether this parameter is variable arity.
+     * @param variableArity {@code true} if this parameter is variable arity, otherwise {@code false}
      */
     public void setVariableArity(boolean variableArity) {
         this.variableArity = variableArity;
     }
 
     /**
-     * この引数の名前を返す。
-     * @return この引数の名前
+     * Returns the parameter name.
+     * @return the parameter name, or {@code null} if it is not specified
      */
     public IrDocSimpleName getName() {
         return this.name;
     }
 
     /**
-     * この引数の名前を設定する。
-     * @param name 設定する名前(省略可能)
+     * Sets the parameter name.
+     * @param name the parameter name, or {@code null} to unset
      */
     public void setName(IrDocSimpleName name) {
         this.name = name;

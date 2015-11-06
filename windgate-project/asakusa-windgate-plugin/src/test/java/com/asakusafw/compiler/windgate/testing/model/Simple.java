@@ -14,25 +14,19 @@
  * limitations under the License.
  */
 package com.asakusafw.compiler.windgate.testing.model;
+import com.asakusafw.runtime.model.DataModel;
+import com.asakusafw.runtime.model.DataModelKind;
+import com.asakusafw.runtime.model.PropertyOrder;
+import com.asakusafw.runtime.value.StringOption;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
-
-import com.asakusafw.compiler.windgate.testing.io.SimpleInput;
-import com.asakusafw.compiler.windgate.testing.io.SimpleOutput;
-import com.asakusafw.runtime.model.DataModel;
-import com.asakusafw.runtime.model.DataModelKind;
-import com.asakusafw.runtime.model.ModelInputLocation;
-import com.asakusafw.runtime.model.ModelOutputLocation;
-import com.asakusafw.runtime.value.StringOption;
 /**
- * simpleを表すデータモデルクラス。
+ * A data model class that represents simple.
  */
-@DataModelKind("DMDL")@ModelInputLocation(SimpleInput.class)@ModelOutputLocation(SimpleOutput.class) public class Simple 
-        implements DataModel<Simple>, Writable {
+@DataModelKind("DMDL")@PropertyOrder({"value"}) public class Simple implements DataModel<Simple>, Writable {
     private final StringOption value = new StringOption();
     @Override@SuppressWarnings("deprecation") public void reset() {
         this.value.setNull();
@@ -41,30 +35,30 @@ import com.asakusafw.runtime.value.StringOption;
         this.value.copyFrom(other.value);
     }
     /**
-     * valueを返す。
+     * Returns value.
      * @return value
-     * @throws NullPointerException valueの値が<code>null</code>である場合
+     * @throws NullPointerException if value is <code>null</code>
      */
     public Text getValue() {
         return this.value.get();
     }
     /**
-     * valueを設定する。
-     * @param value0 設定する値
+     * Sets value.
+     * @param value0 the value
      */
     @SuppressWarnings("deprecation") public void setValue(Text value0) {
         this.value.modify(value0);
     }
     /**
-     * <code>null</code>を許すvalueを返す。
+     * Returns value which may be represent <code>null</code>.
      * @return value
      */
     public StringOption getValueOption() {
         return this.value;
     }
     /**
-     * valueを設定する。
-     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     * Sets value.
+     * @param option the value, or <code>null</code> to set this property to <code>null</code>
      */
     @SuppressWarnings("deprecation") public void setValueOption(StringOption option) {
         this.value.copyFrom(option);
@@ -91,26 +85,26 @@ import com.asakusafw.runtime.value.StringOption;
         if(obj == null) {
             return false;
         }
-        if(this.getClass()!= obj.getClass()) {
+        if(this.getClass() != obj.getClass()) {
             return false;
         }
         Simple other = (Simple) obj;
-        if(this.value.equals(other.value)== false) {
+        if(this.value.equals(other.value) == false) {
             return false;
         }
         return true;
     }
     /**
-     * valueを返す。
+     * Returns value.
      * @return value
-     * @throws NullPointerException valueの値が<code>null</code>である場合
+     * @throws NullPointerException if value is <code>null</code>
      */
     public String getValueAsString() {
         return this.value.getAsString();
     }
     /**
-     * valueを設定する。
-     * @param value0 設定する値
+     * Returns value.
+     * @param value0 the value
      */
     @SuppressWarnings("deprecation") public void setValueAsString(String value0) {
         this.value.modify(value0);

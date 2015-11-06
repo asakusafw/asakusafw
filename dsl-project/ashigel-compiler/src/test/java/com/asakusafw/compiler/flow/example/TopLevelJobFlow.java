@@ -23,26 +23,25 @@ import com.asakusafw.vocabulary.flow.In;
 import com.asakusafw.vocabulary.flow.JobFlow;
 import com.asakusafw.vocabulary.flow.Out;
 
-
 /**
- * トップレベルに配置されていないジョブフロー。
+ * A container class for not top-level jobflow class.
  */
 public class TopLevelJobFlow {
 
     /**
-     * トップレベルに配置されていない。
+     * A jobflow class which is not top-level class.
      */
     @JobFlow(name = "testing")
     public static class Inner extends FlowDescription {
 
-        private In<MockHoge> in;
+        private final In<MockHoge> in;
 
-        private Out<MockHoge> out;
+        private final Out<MockHoge> out;
 
         /**
-         * インスタンスを生成する。
-         * @param in 入力
-         * @param out 出力
+         * Creates a new instance.
+         * @param in input
+         * @param out output
          */
         public Inner(
                 @Import(name = "hoge", description = MockHogeImporterDescription.class)

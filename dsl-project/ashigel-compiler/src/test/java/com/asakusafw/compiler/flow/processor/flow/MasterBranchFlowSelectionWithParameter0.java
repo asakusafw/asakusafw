@@ -32,7 +32,7 @@ import com.asakusafw.vocabulary.flow.Out;
 
 
 /**
- * {@link MasterBranchFlowProcessor}のテスト。
+ * test for {@link MasterBranchFlowProcessor}.
  */
 @JobFlow(name = "testing")
 public class MasterBranchFlowSelectionWithParameter0 extends FlowDescription {
@@ -48,12 +48,12 @@ public class MasterBranchFlowSelectionWithParameter0 extends FlowDescription {
     private Out<Ex1> outStop;
 
     /**
-     * インスタンスを生成する。
-     * @param in1 入力1
-     * @param in2 入力2
-     * @param outHigh Highの出力
-     * @param outLow Lowの出力
-     * @param outStop Stopの出力
+     * Creates a new instance.
+     * @param in1 input1
+     * @param in2 input2
+     * @param outHigh output for High
+     * @param outLow output for Low
+     * @param outStop output for Stop
      */
     public MasterBranchFlowSelectionWithParameter0(
             @Import(name = "e1", description = Ex1MockImporterDescription.class)

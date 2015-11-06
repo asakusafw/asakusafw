@@ -19,7 +19,7 @@ import com.asakusafw.vocabulary.batch.Batch;
 import com.asakusafw.vocabulary.batch.BatchDescription;
 
 /**
- * 単一のバッチ。
+ * A simple batch class.
  */
 @Batch(name = "testing")
 public class SimpleBatch extends BatchDescription {

@@ -22,18 +22,12 @@ import com.asakusafw.utils.java.model.syntax.Statement;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link DoStatement}の実装。
+ * An implementation of {@link DoStatement}.
  */
 public final class DoStatementImpl extends ModelRoot implements DoStatement {
 
-    /**
-     * ループ本体。
-     */
     private Statement body;
 
-    /**
-     * 条件式。
-     */
     private Expression condition;
 
     @Override
@@ -42,11 +36,9 @@ public final class DoStatementImpl extends ModelRoot implements DoStatement {
     }
 
     /**
-     * ループ本体を設定する。
-     * @param body
-     *     ループ本体
-     * @throws IllegalArgumentException
-     *     {@code body}に{@code null}が指定された場合
+     * Sets the loop body.
+     * @param body the loop body
+     * @throws IllegalArgumentException if {@code body} was {@code null}
      */
     public void setBody(Statement body) {
         Util.notNull(body, "body"); //$NON-NLS-1$
@@ -59,11 +51,9 @@ public final class DoStatementImpl extends ModelRoot implements DoStatement {
     }
 
     /**
-     * 条件式を設定する。
-     * @param condition
-     *     条件式
-     * @throws IllegalArgumentException
-     *     {@code condition}に{@code null}が指定された場合
+     * Sets the condition expression.
+     * @param condition the condition expression
+     * @throws IllegalArgumentException if {@code condition} was {@code null}
      */
     public void setCondition(Expression condition) {
         Util.notNull(condition, "condition"); //$NON-NLS-1$
@@ -71,7 +61,7 @@ public final class DoStatementImpl extends ModelRoot implements DoStatement {
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#DO_STATEMENT}を返す。
+     * Returns {@link ModelKind#DO_STATEMENT} which represents this element kind.
      * @return {@link ModelKind#DO_STATEMENT}
      */
     @Override
@@ -80,8 +70,7 @@ public final class DoStatementImpl extends ModelRoot implements DoStatement {
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitDoStatement(this, context);
     }

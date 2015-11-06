@@ -18,7 +18,7 @@ package com.asakusafw.utils.java.model.syntax;
 import java.util.List;
 
 /**
- * ブロックを表現するインターフェース。
+ * An interface which represents statement block.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:14.2] Blocks} </li>
@@ -28,13 +28,9 @@ import java.util.List;
 public interface Block
         extends Statement {
 
-    // properties
-
     /**
-     * 文の一覧を返す。
-     * <p> 文が一つも宣言されない場合は空が返される。 </p>
-     * @return
-     *     文の一覧
+     * Returns the element statements.
+     * @return the element statements
      */
     List<? extends Statement> getStatements();
 }

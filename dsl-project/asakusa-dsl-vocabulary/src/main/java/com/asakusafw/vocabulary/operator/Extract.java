@@ -21,6 +21,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+//TODO i18n
 /**
  * 抽出演算子を表すメソッドに付与する注釈。
  * <p>
@@ -64,8 +65,8 @@ import java.lang.annotation.Target;
  * </p>
 <pre><code>
 // スレッド安全なので抽出結果のオブジェクトは再利用可能
-private A a = new A();
-private B b = new B();
+private final A a = new A();
+private final B b = new B();
 
 /**
  &#42; レコードに含まれるそれぞれのフィールドを抽出し、出力する。
@@ -94,7 +95,7 @@ public void extractFields(
 public @interface Extract {
 
     /**
-     * 入力ポートの番号。
+     * The input port number.
      */
     int ID_INPUT = 0;
 }

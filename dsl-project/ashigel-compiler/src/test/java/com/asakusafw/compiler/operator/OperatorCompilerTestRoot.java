@@ -59,7 +59,7 @@ import com.asakusafw.vocabulary.flow.graph.PortConnection;
 import com.asakusafw.vocabulary.flow.testing.MockIn;
 
 /**
- * 演算子コンパイラに関するテストの基底。
+ * A test root for operator compilers.
  */
 public class OperatorCompilerTestRoot {
 
@@ -72,8 +72,8 @@ public class OperatorCompilerTestRoot {
     private final List<JavaFileObject> sources = Lists.create();
 
     /**
-     * テストの情報を破棄する。
-     * @throws Exception 例外が発生した場合
+     * Disposes the internal compiler.
+     * @throws Exception if exception was occurred
      */
     @After
     public void tearDown() throws Exception {
@@ -81,10 +81,10 @@ public class OperatorCompilerTestRoot {
     }
 
     /**
-     * 指定のクラスローダーからクラスをロードし、そのクラスのインスタンスを生成して返す。
-     * @param loader クラスローダー
-     * @param name クラスの名前
-     * @return 生成したインスタンス
+     * Loads class and returns the instance of the loaded class.
+     * @param loader the class loader
+     * @param name the class name
+     * @return the created instance
      */
     protected Object create(ClassLoader loader, String name) {
         try {
@@ -96,11 +96,11 @@ public class OperatorCompilerTestRoot {
     }
 
     /**
-     * 指定の名前を持つメソッドを起動した結果を返す。
-     * @param object 対象のオブジェクト
-     * @param name メソッドの名前
-     * @param arguments 引数の一覧
-     * @return 起動結果
+     * Invokes the target method.
+     * @param object the target object
+     * @param name the method name
+     * @param arguments the method arguments
+     * @return the invocation result
      */
     protected Object invoke(Object object, String name, Object... arguments) {
         try {
@@ -116,10 +116,10 @@ public class OperatorCompilerTestRoot {
     }
 
     /**
-     * 指定の名前を持つフィールドの内容を返す。
-     * @param object 対象のオブジェクト
-     * @param name フィールドの名前
-     * @return 参照結果
+     * Returns the field value.
+     * @param object the target object
+     * @param name the field name
+     * @return the field value
      */
     protected Object access(Object object, String name) {
         try {
@@ -135,12 +135,12 @@ public class OperatorCompilerTestRoot {
     }
 
     /**
-     * 指定の名前を持つフィールドの内容を演算子の出力として返す。
-     * @param dataType データの種類
-     * @param object 対象のオブジェクト
-     * @param name フィールドの名前
-     * @param <T> データの種類
-     * @return 参照結果
+     * Returns the field value as operator output.
+     * @param dataType the data type
+     * @param object the target object
+     * @param name the field name
+     * @param <T> the data type
+     * @return the field value
      */
     @SuppressWarnings("unchecked")
     protected <T> Source<T> output(Class<T> dataType, Object object, String name) {
@@ -157,18 +157,18 @@ public class OperatorCompilerTestRoot {
     }
 
     /**
-     * 文字列の集合との比較を行う述語を返す。
-     * @param names 対象の文字列の一覧
-     * @return 述語
+     * Returns a matcher for comparing to a set of strings.
+     * @param names the strings
+     * @return the matcher
      */
     protected Matcher<? super Set<String>> isJust(String... names) {
         return Matchers.<Set<String>>is(Sets.from(names));
     }
 
     /**
-     * 指定の入力から辿れるすべての要素のグラフを返す。
-     * @param inputs 入力
-     * @return グラフ
+     * Returns the reachable elements from the specified inputs.
+     * @param inputs the inputs
+     * @return the graph
      */
     protected Graph<String> toGraph(MockIn<?>...inputs) {
         FlowElement[] elements = new FlowElement[inputs.length];
@@ -179,9 +179,9 @@ public class OperatorCompilerTestRoot {
     }
 
     /**
-     * 指定の入力から辿れるすべての要素のグラフを返す。
-     * @param inputs 入力
-     * @return グラフ
+     * Returns the reachable elements from the specified inputs.
+     * @param inputs the inputs
+     * @return the graph
      */
     protected Graph<String> toGraph(List<FlowIn<?>> inputs) {
         FlowElement[] elements = new FlowElement[inputs.size()];
@@ -192,9 +192,9 @@ public class OperatorCompilerTestRoot {
     }
 
     /**
-     * 指定の入力から辿れるすべての要素のグラフを返す。
-     * @param startingElements 開始要素の一覧
-     * @return グラフ
+     * Returns the reachable elements from the specified elements.
+     * @param startingElements the starting elements
+     * @return the graph
      */
     protected Graph<String> toGraph(FlowElement... startingElements) {
         Set<String> saw = Sets.create();
@@ -213,14 +213,12 @@ public class OperatorCompilerTestRoot {
             }
             saw.add(self);
 
-            // 逆辺をキューに追加
             for (FlowElementInput input : elem.getInputPorts()) {
                 for (PortConnection conn : input.getConnected()) {
                     work.add(conn.getUpstream().getOwner());
                 }
             }
 
-            // 順辺をグラフに追加
             for (FlowElementOutput output : elem.getOutputPorts()) {
                 for (PortConnection conn : output.getConnected()) {
                     FlowElement opposite = conn.getDownstream().getOwner();
@@ -235,8 +233,8 @@ public class OperatorCompilerTestRoot {
     }
 
     /**
-     * 指定のクラス名のファイルを追加する。
-     * @param name クラス名
+     * Adds a source file to be compiled.
+     * @param name the target class name
      */
     protected void add(String name) {
         Class<?> aClass = getClass();
@@ -271,9 +269,9 @@ public class OperatorCompilerTestRoot {
     }
 
     /**
-     * コンパイルを指定の注釈プロセッサを利用して実行し、コンパイル結果のローダーを返す。
-     * @param processor 利用する注釈プロセッサ
-     * @return コンパイル結果
+     * Compiles and returns the class loader for loading compilation results.
+     * @param processor the annotation processor
+     * @return the class loader
      */
     protected ClassLoader start(Processor processor) {
         SafeProcessor safe = new SafeProcessor(processor);
@@ -284,9 +282,9 @@ public class OperatorCompilerTestRoot {
     }
 
     /**
-     * コンパイルを指定のコールバックを利用して実行し、コンパイル結果のローダーを返す。
-     * @param callback 利用するコールバック
-     * @return コンパイル結果
+     * Compiles and returns the class loader for loading compilation results.
+     * @param callback the callback object
+     * @return the class loader
      */
     protected ClassLoader start(Callback callback) {
         compiler.addProcessor(new DelegateProcessor(callback));
@@ -296,9 +294,9 @@ public class OperatorCompilerTestRoot {
     }
 
     /**
-     * コンパイルを指定の演算子プロセッサを利用して実行し、コンパイル結果のローダーを返す。
-     * @param procs 利用する演算子プロセッサの一覧
-     * @return コンパイル結果
+     * Compiles and returns the class loader for loading compilation results.
+     * @param procs the operator processors
+     * @return the class loader
      */
     protected ClassLoader start(final OperatorProcessor... procs) {
         return start(new OperatorCompiler() {
@@ -310,8 +308,8 @@ public class OperatorCompilerTestRoot {
     }
 
     /**
-     * コンパイルを実行し、エラーが発生することを確認する。
-     * @param procs 利用する演算子プロセッサの一覧
+     * Compiles and check if compilation errors are occurred.
+     * @param procs the operator processors
      */
     protected void error(final OperatorProcessor... procs) {
         SafeProcessor proc = new SafeProcessor(new OperatorCompiler() {
@@ -327,8 +325,8 @@ public class OperatorCompilerTestRoot {
     }
 
     /**
-     * コンパイルを実行し、エラーが発生することを確認する。
-     * @param callback 呼び戻される
+     * Compiles and check if compilation errors are occurred.
+     * @param callback the callback object
      */
     protected void error(Callback callback) {
         compiler.addProcessor(new DelegateProcessor(callback));

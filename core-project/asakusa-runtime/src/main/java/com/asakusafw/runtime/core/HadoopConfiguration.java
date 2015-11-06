@@ -19,7 +19,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 
 /**
- * リソースの設定情報。
+ * Resource configuration object for Hadoop environment.
  * @since 0.1.0
  * @version 0.7.3
  */
@@ -28,16 +28,16 @@ public class HadoopConfiguration extends Configured implements ResourceConfigura
     private final Configuration configration;
 
     /**
-     * インスタンスを生成する。
+     * Creates a new instance with an empty Hadoop configuration.
      */
     public HadoopConfiguration() {
         this(new Configuration(false));
     }
 
     /**
-     * インスタンスを生成する。
-     * @param configuration ラップする設定情報
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param configuration configuration object to be wrapped
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public HadoopConfiguration(Configuration configuration) {
         super(configuration);

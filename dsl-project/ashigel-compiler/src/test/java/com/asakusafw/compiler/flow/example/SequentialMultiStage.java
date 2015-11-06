@@ -27,17 +27,16 @@ import com.asakusafw.vocabulary.flow.In;
 import com.asakusafw.vocabulary.flow.JobFlow;
 import com.asakusafw.vocabulary.flow.Out;
 
-
 /**
- * シーケンシャルにマルチステージになるジョブフロー。
+ * A jobflow class w/ sequential stages.
  */
 @SuppressWarnings("all")
 @JobFlow(name = "testing")
 public class SequentialMultiStage extends FlowDescription {
 
-    private In<Ex1> in;
+    private final In<Ex1> in;
 
-    private Out<Ex1> out;
+    private final Out<Ex1> out;
 
     public SequentialMultiStage(
             @Import(name = "ex1", description = Ex1MockImporterDescription.class) In<Ex1> in,

@@ -18,14 +18,13 @@ package com.asakusafw.runtime.stage.collector;
 import java.io.IOException;
 
 import org.apache.hadoop.io.Writable;
-import org.apache.hadoop.mapreduce.Reducer;
 
 import com.asakusafw.runtime.core.Result;
 import com.asakusafw.runtime.flow.ReducerWithRuntimeResource;
 import com.asakusafw.runtime.stage.output.StageOutputDriver;
 
 /**
- * スロットごとに出力を振り分ける{@link Reducer}の骨格。
+ * A skeletal implementation of Hadoop Reducer for partitioning by their slot.
  * @since 0.1.0
  * @version 0.5.1
  */
@@ -34,12 +33,12 @@ public abstract class SlotSorter extends ReducerWithRuntimeResource<
         Object, Object> {
 
     /**
-     * {@link #getOutputNames()}のメソッド名。
+     * The method name of {@link #getOutputNames()}.
      */
     public static final String NAME_GET_OUTPUT_NAMES = "getOutputNames"; //$NON-NLS-1$
 
     /**
-     * {@link #createSlotObjects()}のメソッド名。
+     * The method name of {@link #createSlotObjects()}.
      */
     public static final String NAME_CREATE_SLOT_OBJECTS = "createSlotObjects"; //$NON-NLS-1$
 
@@ -50,14 +49,14 @@ public abstract class SlotSorter extends ReducerWithRuntimeResource<
     private Result<Writable>[] results;
 
     /**
-     * スロット番号毎のオブジェクトの一覧を返す。
-     * @return スロット番号毎のオブジェクトの一覧
+     * Returns the array of buffer object for each slot.
+     * @return the buffer objects
      */
     protected abstract Writable[] createSlotObjects();
 
     /**
-     * スロット番号毎の出力の名前を返す。
-     * @return スロット番号毎の出力の名前の一覧
+     * Returns the array of names for each slot.
+     * @return the slot names
      */
     protected abstract String[] getOutputNames();
 

@@ -25,23 +25,14 @@ import com.asakusafw.utils.java.model.syntax.Type;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link DocMethod}の実装。
+ * An implementation of {@link DocMethod}.
  */
 public final class DocMethodImpl extends ModelRoot implements DocMethod {
 
-    /**
-     * メソッドまたはコンストラクタの宣言型。
-     */
     private Type type;
 
-    /**
-     * メソッドまたはコンストラクタの名前。
-     */
     private SimpleName name;
 
-    /**
-     * メソッドまたはコンストラクタの仮引数宣言の一覧。
-     */
     private List<? extends DocMethodParameter> formalParameters;
 
     @Override
@@ -50,11 +41,8 @@ public final class DocMethodImpl extends ModelRoot implements DocMethod {
     }
 
     /**
-     * メソッドまたはコンストラクタの宣言型を設定する。
-     * <p> 宣言型が指定されない場合、引数には{@code null}を指定する。 </p>
-     * @param type
-     *     メソッドまたはコンストラクタの宣言型、
-     *     ただし宣言型が指定されない場合は{@code null}
+     * Sets the owner type.
+     * @param type the owner type, or {@code null} if it is not specified
      */
     public void setType(Type type) {
         this.type = type;
@@ -66,11 +54,9 @@ public final class DocMethodImpl extends ModelRoot implements DocMethod {
     }
 
     /**
-     * メソッドまたはコンストラクタの名前を設定する。
-     * @param name
-     *     メソッドまたはコンストラクタの名前
-     * @throws IllegalArgumentException
-     *     {@code name}に{@code null}が指定された場合
+     * Sets the target method or constructor name.
+     * @param name the target method or constructor name
+     * @throws IllegalArgumentException if {@code name} was {@code null}
      */
     public void setName(SimpleName name) {
         Util.notNull(name, "name"); //$NON-NLS-1$
@@ -83,12 +69,9 @@ public final class DocMethodImpl extends ModelRoot implements DocMethod {
     }
 
     /**
-     * メソッドまたはコンストラクタの仮引数宣言の一覧を設定する。
-     * <p> 仮引数が一つも宣言されない場合、引数には空を指定する。 </p>
-     * @param formalParameters
-     *     メソッドまたはコンストラクタの仮引数宣言の一覧
-     * @throws IllegalArgumentException
-     *     {@code formalParameters}に{@code null}が指定された場合
+     * Sets the formal parameter declarations.
+     * @param formalParameters the formal parameter declarations
+     * @throws IllegalArgumentException if {@code formalParameters} was {@code null}
      */
     public void setFormalParameters(List<? extends DocMethodParameter> formalParameters) {
         Util.notNull(formalParameters, "formalParameters"); //$NON-NLS-1$
@@ -97,7 +80,7 @@ public final class DocMethodImpl extends ModelRoot implements DocMethod {
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#DOC_METHOD}を返す。
+     * Returns {@link ModelKind#DOC_METHOD} which represents this element kind.
      * @return {@link ModelKind#DOC_METHOD}
      */
     @Override
@@ -106,8 +89,7 @@ public final class DocMethodImpl extends ModelRoot implements DocMethod {
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitDocMethod(this, context);
     }

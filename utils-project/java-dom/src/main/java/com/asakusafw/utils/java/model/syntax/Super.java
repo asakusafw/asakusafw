@@ -17,8 +17,8 @@ package com.asakusafw.utils.java.model.syntax;
 
 
 /**
- * {@code super}キーワードを表現する疑似式を表現するインターフェース。
- * <p> この疑似式はフィールド参照式、メソッド起動式の限定子としてのみ利用できる </p>
+ * An interface which represents {@code super} qualifier (pseudo-expression).
+ * This pseudo-expression only can appear in qualifier of field accesses or method invocations.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:15.11.2] Accessing Superclass Members using super} </li>

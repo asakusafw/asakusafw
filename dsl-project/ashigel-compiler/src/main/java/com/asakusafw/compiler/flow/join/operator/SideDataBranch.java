@@ -23,10 +23,8 @@ import java.lang.annotation.Target;
 import com.asakusafw.vocabulary.operator.MasterBranch;
 
 /**
- * {@link MasterBranch}をサイドデータを利用して行う。
- * <p>
- * この演算子は演算子メソッドに直接指定しない。
- * </p>
+ * Process {@link MasterBranch} using side data.
+ * Application developers should not attach this to operator methods directly.
  * @see MasterBranch
  */
 @Target({ })
@@ -35,12 +33,12 @@ import com.asakusafw.vocabulary.operator.MasterBranch;
 public @interface SideDataBranch {
 
     /**
-     * トランザクションの入力ポート番号。
+     * The input port number of transaction input.
      */
     int ID_INPUT_TRANSACTION = 0;
 
     /**
-     * マスタ表のリソース番号。
+     * The external resource number of master input.
      */
     int ID_RESOURCE_MASTER = 0;
 }

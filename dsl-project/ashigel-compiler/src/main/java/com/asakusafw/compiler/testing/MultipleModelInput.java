@@ -23,17 +23,17 @@ import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.runtime.io.ModelInput;
 
 /**
- * 複数の入力を取り扱う{@link ModelInput}の実装。
- * @param <T> 入力の種類
+ * An implementation of {@link ModelInput} which can compose the multiple {@link ModelInput}.
+ * @param <T> the data type
  */
 public class MultipleModelInput<T> implements ModelInput<T> {
 
-    private LinkedList<ModelInput<T>> inputs;
+    private final LinkedList<ModelInput<T>> inputs;
 
     /**
-     * インスタンスを生成する。
-     * @param inputs 入力の一覧
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param inputs the internal data model inputs
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public MultipleModelInput(List<? extends ModelInput<T>> inputs) {
         Precondition.checkMustNotBeNull(inputs, "inputs"); //$NON-NLS-1$

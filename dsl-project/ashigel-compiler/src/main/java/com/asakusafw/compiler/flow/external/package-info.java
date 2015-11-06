@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * ジョブフローが利用する外部入出力を処理する。
+ * Handles external I/O description in jobflow.
  */
 package com.asakusafw.compiler.flow.external;

@@ -39,10 +39,10 @@ import com.asakusafw.utils.java.model.syntax.Name;
 public class SplitFlowProcessorTest extends JobflowCompilerTestRoot {
 
     /**
-     * 自明な構造を持つテスト。
+     * simple case.
      */
     @Test
-    public void trivial() {
+    public void simple() {
         List<StageModel> stages = compile(SplitFlowTrivial.class);
         Fragment fragment = stages.get(0).getMapUnits().get(0).getFragments().get(0);
         Name name = fragment.getCompiled().getQualifiedName();

@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 /**
- * テストドライバ用のクラス群。
- * <p>
- * アプリケーションテスト開発者は本パッケージで提供するクラス群を使用してテストメソッドを記述する。
- * </p>
+ * Test driver classes.
+ * Application developers will use classes in this package for testing Asakusa applications.
  */
 package com.asakusafw.testdriver;

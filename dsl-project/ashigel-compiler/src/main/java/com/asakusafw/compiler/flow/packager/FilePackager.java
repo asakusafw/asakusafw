@@ -61,7 +61,7 @@ import com.asakusafw.utils.java.model.syntax.Name;
 import com.asakusafw.utils.java.model.util.Filer;
 
 /**
- * ファイルシステム上に構成物を展開するパッケージャ。
+ * An implementation of {@link Packager} that generates packages into the local file system.
  * @since 0.1.0
  * @version 0.7.3
  */
@@ -106,14 +106,12 @@ public class FilePackager
     private final List<? extends ResourceRepository> fragmentRepositories;
 
     /**
-     * インスタンスを生成する。
-     * @param workingDirectory 作業ディレクトリ
-     * @param fragmentRepositories 最終結果に含めるリソースリポジトリの一覧
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param workingDirectory the working directory
+     * @param fragmentRepositories the resources for embedding to the generating packages
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
-    public FilePackager(
-            File workingDirectory,
-            List<? extends ResourceRepository> fragmentRepositories) {
+    public FilePackager(File workingDirectory, List<? extends ResourceRepository> fragmentRepositories) {
         Precondition.checkMustNotBeNull(workingDirectory, "workingDirectory"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(fragmentRepositories, "resourceRepositories"); //$NON-NLS-1$
         this.fragmentRepositories = fragmentRepositories;

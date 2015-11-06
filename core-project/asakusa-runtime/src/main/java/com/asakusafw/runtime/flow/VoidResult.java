@@ -18,8 +18,8 @@ package com.asakusafw.runtime.flow;
 import com.asakusafw.runtime.core.Result;
 
 /**
- * 利用しない結果。
- * @param <T> 結果のデータ型
+ * An implementation of {@link Result} that discards all results.
+ * @param <T> the data model type
  */
 public class VoidResult<T> implements Result<T> {
 

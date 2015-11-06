@@ -16,7 +16,7 @@
 package com.asakusafw.compiler.batch;
 
 /**
- * {@link WorkflowProcessor}の骨格実装。
+ * A skeletal implementation of {@link WorkflowProcessor}.
  */
 public abstract class AbstractWorkflowProcessor
         extends BatchCompilingEnvironment.Initialized

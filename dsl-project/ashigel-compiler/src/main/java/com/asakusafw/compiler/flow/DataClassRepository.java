@@ -16,20 +16,19 @@
 package com.asakusafw.compiler.flow;
 
 /**
- * データクラスを格納するリポジトリ。
+ * Repository of {@link DataClass}.
  * <p>
- * Adding data model kinds to Flow DSL compiler, clients can implement this
- * and put the class name in
- * {@code META-INF/services/com.asakusafw.compiler.operator.DataModelMirrorRepository}.
+ * Adding data model kinds to Flow DSL compiler, clients can implement this and put the class name in
+ * {@code META-INF/services/com.asakusafw.compiler.flow.DataClassRepository}.
  * </p>
  */
 public interface DataClassRepository extends FlowCompilingEnvironment.Initializable {
 
     /**
-     * 指定の型に対するデータクラスを返す。
-     * @param type 対象の型
-     * @return 対応するデータクラス、解析できない場合は{@code null}
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Loads a mirror of data model class.
+     * @param type the target type
+     * @return the corresponded data model mirror, or {@code null} if the target type is not a valid data model class
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     DataClass load(java.lang.reflect.Type type);
 }

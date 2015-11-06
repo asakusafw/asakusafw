@@ -17,17 +17,14 @@ package com.asakusafw.utils.java.model.syntax;
 
 
 /**
- * ドキュメンテーションコメント内のテキストを表現するインターフェース。
+ * An interface which represents text in documentation comments.
  */
 public interface DocText
         extends DocElement {
 
-    // properties
-
     /**
-     * テキストを構成する文字列を返す。
-     * @return
-     *     テキストを構成する文字列
+     * Returns the comment text.
+     * @return the comment text
      */
     String getString();
 }

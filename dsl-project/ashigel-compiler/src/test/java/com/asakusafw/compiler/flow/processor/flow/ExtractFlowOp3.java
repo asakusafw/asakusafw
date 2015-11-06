@@ -32,7 +32,7 @@ import com.asakusafw.vocabulary.flow.Out;
 
 
 /**
- * {@link ExtractFlowProcessor}のテスト。
+ * test for {@link ExtractFlowProcessor}.
  */
 @JobFlow(name = "testing")
 public class ExtractFlowOp3 extends FlowDescription {
@@ -46,11 +46,11 @@ public class ExtractFlowOp3 extends FlowDescription {
     private Out<Ex1> out3;
 
     /**
-     * インスタンスを生成する。
-     * @param in1 入力
-     * @param out1 出力1
-     * @param out2 出力2
-     * @param out3 出力3
+     * Creates a new instance.
+     * @param in1 input
+     * @param out1 output1
+     * @param out2 output2
+     * @param out3 output3
      */
     public ExtractFlowOp3(
             @Import(name = "in", description = Ex1MockImporterDescription.class)

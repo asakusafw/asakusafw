@@ -20,10 +20,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 import com.asakusafw.compiler.common.NameGenerator;
 import com.asakusafw.compiler.common.Precondition;
+import com.asakusafw.runtime.core.Result;
 import com.asakusafw.runtime.flow.ArrayListBuffer;
 import com.asakusafw.runtime.flow.FileMapListBuffer;
 import com.asakusafw.runtime.flow.ListBuffer;
@@ -48,83 +48,81 @@ import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 import com.asakusafw.vocabulary.flow.processor.InputBuffer;
 
 /**
- * フロー要素を処理するプロセッサ。
- * <p>
- * このインターフェースを直接実装すべきでない。
- * </p>
+ * An abstract super interface for processing flow elements.
+ * Developers should not inherit this interface directly, and inherit {@link AbstractFlowElementProcessor} instead.
  */
 public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializable {
 
     /**
-     * 結果オブジェクトに結果を追加する際のメソッド名。
+     * A method name of {@link Result#add(Object)}.
      */
     String RESULT_METHOD_NAME = "add"; //$NON-NLS-1$
 
     /**
-     * このプロセッサの種類を返す。
-     * @return このプロセッサの種類
+     * Returns the kind of this processor.
+     * @return the processor kind
      */
     FlowElementProcessor.Kind getKind();
 
     /**
-     * このプロセッサが対象とする注釈の型を返す。
-     * @return このプロセッサが対象とする注釈の型
+     * Returns the target operator annotation type of this processor.
+     * @return the target operator annotation type
      */
     Class<? extends Annotation> getTargetAnnotationType();
 
     /**
-     * 処理の文脈の基底となるクラス。
+     * The abstract implementation of context objects for {@link FlowElementProcessor}.
      * @since 0.1.0
      * @version 0.5.1
      */
     public abstract static class AbstractProcessorContext implements FlowElementAttributeProvider {
 
         /**
-         * コンパイル環境。
+         * The current environment.
          */
         protected final FlowCompilingEnvironment environment;
 
         private final FlowElementAttributeProvider element;
 
         /**
-         * Javaの構造を表すモデルオブジェクトを生成する。
+         * The Java DOM factory.
          */
         protected final ModelFactory factory;
 
         /**
-         * インポート宣言を行う。
+         * The import declaration builder.
          */
         protected final ImportBuilder importer;
 
         /**
-         * 名前を生成する。
+         * The unique name generator.
          */
         protected final NameGenerator names;
 
         /**
-         * 処理対象の演算子の定義記述。
+         * The target operator description.
          */
         protected final OperatorDescription description;
 
         /**
-         * リソースと式の対応表。
+         * The mapping between external resources and their Java expressions.
          */
         protected final Map<FlowResourceDescription, Expression> resources;
 
         /**
-         * 生成されたフィールドの一覧。
+         * The generated fields.
          */
         protected final List<FieldDeclaration> generatedFields;
 
         /**
-         * インスタンスを生成する。
-         * @param environment 環境
-         * @param element target element
-         * @param importer インポート
-         * @param names 名前生成
-         * @param desc 演算子の定義記述
-         * @param resources リソースと式の対応表
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Creates a new instance.
+         * @param environment the current context
+         * @param element the target element
+         * @param importer the import declaration builder
+         * @param names the unique name generator
+         * @param desc the target operator description
+         * @param resources the mapping between external resources and their Java expressions
+         * @throws IllegalArgumentException if the parameters are {@code null}
          */
         public AbstractProcessorContext(
                 FlowCompilingEnvironment environment,
@@ -150,8 +148,8 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
         }
 
         /**
-         * 処理中の演算子の定義記述を返す。
-         * @return 処理中の演算子の定義記述
+         * Returns the target operator description.
+         * @return the target operator description
          */
         public OperatorDescription getOperatorDescription() {
             return description;
@@ -166,11 +164,10 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
         }
 
         /**
-         * 指定の番号に割り振られた入力ポートの定義記述を返す。
-         * @param portNumber 対象のポート番号
-         * @return 入力ポートの定義記述
-         * @throws NoSuchElementException 指定のポートが見つからない場合
-         * @throws IllegalArgumentException 存在しないポート番号が指定され他場合
+         * Returns the port description of the target operator.
+         * @param portNumber the target port number
+         * @return the port description
+         * @throws IllegalArgumentException the target port is not found
          */
         public FlowElementPortDescription getInputPort(int portNumber) {
             if (portNumber < 0 || portNumber >= description.getInputPorts().size()) {
@@ -180,11 +177,10 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
         }
 
         /**
-         * 指定の番号に割り振られた出力ポートの定義記述を返す。
-         * @param portNumber 対象のポート番号
-         * @return 出力ポートの定義記述
-         * @throws NoSuchElementException 指定のポートが見つからない場合
-         * @throws IllegalArgumentException 存在しないポート番号が指定され他場合
+         * Returns the port description of the target operator.
+         * @param portNumber the target port number
+         * @return the port description
+         * @throws IllegalArgumentException the target port is not found
          */
         public FlowElementPortDescription getOutputPort(int portNumber) {
             if (portNumber < 0 || portNumber >= description.getOutputPorts().size()) {
@@ -194,10 +190,10 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
         }
 
         /**
-         * 指定の番号に割り振られたリソースを表すオブジェクトを返す。
-         * @param resourceNumber 対象のリソース番号
-         * @return リソースを表す式
-         * @throws IllegalArgumentException 存在しないリソース番号が指定された場合
+         * Returns the external resource description of the target operator.
+         * @param resourceNumber the target resource number
+         * @return the resource description
+         * @throws IllegalArgumentException the target resource is not found
          */
         public FlowResourceDescription getResourceDescription(int resourceNumber) {
             if (resourceNumber < 0 || resourceNumber >= description.getResources().size()) {
@@ -208,10 +204,10 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
         }
 
         /**
-         * 指定のリソースを表す式を返す。
-         * @param resource 対象のリソース
-         * @return リソースを表す式
-         * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+         * Returns the Java expression to access to the target external resource.
+         * @param resource the target resource description
+         * @return the expression
+         * @throws IllegalArgumentException if the target parameter is {@code null}
          */
         public Expression getResource(FlowResourceDescription resource) {
             Precondition.checkMustNotBeNull(resource, "resource"); //$NON-NLS-1$
@@ -221,8 +217,8 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
         }
 
         /**
-         * JavaのDOM構造を構築するためのファクトリーを返す。
-         * @return DOM構造を構築するためのファクトリー
+         * Returns the Java DOM factory.
+         * @return the Java DOM factory
          */
         public ModelFactory getModelFactory() {
             return factory;
@@ -247,18 +243,18 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
         }
 
         /**
-         * ここまでにこの文脈で生成されたフィールド宣言の一覧を返す。
-         * @return この文脈で生成されたフィールド宣言の一覧
+         * Returns the generated fields.
+         * @return the generated fields
          */
         public List<FieldDeclaration> getGeneratedFields() {
             return generatedFields;
         }
 
         /**
-         * 指定のヒント名を含む衝突しない新しい名前を返す。
-         * @param hint ヒント名
-         * @return 衝突しない新しい名前
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Returns a new unique name.
+         * @param hint the name hint
+         * @return the unique name
+         * @throws IllegalArgumentException if the parameter is {@code null}
          */
         public SimpleName createName(String hint) {
             Precondition.checkMustNotBeNull(hint, "hint"); //$NON-NLS-1$
@@ -266,8 +262,8 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
         }
 
         /**
-         * 演算子実装クラスのインスタンスを生成し、それを参照するための式を返す。
-         * @return 生成した式
+         * Returns an expression which creates a new instance of the target operator implementation class.
+         * @return the generated expression
          */
         public Expression createImplementation() {
             Class<?> implementing = description.getDeclaration().getImplementing();
@@ -278,20 +274,20 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
         }
 
         /**
-         * 任意の型を持つフィールドを生成する。
-         * @param type 対象の型
-         * @param name 名前のヒント
-         * @return 生成したフィールドを参照するための式
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Returns an expression which accesses a new field.
+         * @param type the target type
+         * @param name a name hint for the target field
+         * @return an expression to access the created field
+         * @throws IllegalArgumentException if the parameters are {@code null}
          */
         public Expression createField(java.lang.reflect.Type type, String name) {
             return createField(type, name, null);
         }
 
         /**
-         * Put a new field declaration into the current context.
-         * @param type field type
-         * @param name field name
+         * Returns an expression which accesses a new field.
+         * @param type the target type
+         * @param name a name hint for the target field
          * @param init field initialization expression (nullable)
          * @return an expression to access the created field
          * @throws IllegalArgumentException if some parameters were {@code null}
@@ -307,10 +303,10 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
         }
 
         /**
-         * モデルのキャッシュインスタンスを生成し、それを参照するための式を返す。
-         * @param type モデルの型
-         * @return 生成した式
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Returns a new data model object mirror.
+         * @param type the data model type
+         * @return the generated expression
+         * @throws IllegalArgumentException if the parameters are {@code null}
          */
         public DataObjectMirror createModelCache(java.lang.reflect.Type type) {
             Precondition.checkMustNotBeNull(type, "type"); //$NON-NLS-1$
@@ -330,11 +326,11 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
         }
 
         /**
-         * {@link ListBuffer}のインスタンスを生成し、それを参照するための式を返す。
-         * @param type リストの要素型
+         * Returns a new {@link ListBuffer} object mirror.
+         * @param type the element type of the {@link ListBuffer}
          * @param bufferKind the input buffer kind
-         * @return 生成した式
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * @return the generated expression
+         * @throws IllegalArgumentException if the parameters are {@code null}
          */
         public ListBufferMirror createListBuffer(java.lang.reflect.Type type, InputBuffer bufferKind) {
             Precondition.checkMustNotBeNull(type, "type"); //$NON-NLS-1$
@@ -373,10 +369,10 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
         }
 
         /**
-         * 指定の型をインポートし、JavaのDOMの表現に変換して返す。
-         * @param type 対象の型
-         * @return 変換後の型
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Returns an imported type for the specified one.
+         * @param type the target type
+         * @return the imported type
+         * @throws IllegalArgumentException if the parameter is {@code null}
          */
         public Type convert(java.lang.reflect.Type type) {
             Precondition.checkMustNotBeNull(type, "type"); //$NON-NLS-1$
@@ -384,10 +380,10 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
         }
 
         /**
-         * 指定の型をインポートして返す。
-         * @param type 対象の型
-         * @return 変換後の型
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Returns an imported type for the specified one.
+         * @param type the target type
+         * @return the imported type
+         * @throws IllegalArgumentException if the parameter is {@code null}
          */
         public Type simplify(Type type) {
             Precondition.checkMustNotBeNull(type, "type"); //$NON-NLS-1$
@@ -396,7 +392,7 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
     }
 
     /**
-     * データオブジェクトを操作するためのミラー。
+     * A mirror of data model objects.
      */
     public static class DataObjectMirror {
 
@@ -405,16 +401,13 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
         private final DataClass dataClass;
 
         /**
-         * インスタンスを生成する。
-         * @param factory ファクトリ
-         * @param object データオブジェクトを参照するための式
-         * @param dataClass データオブジェクトの型
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Creates a new instance.
+         * @param factory the Java DOM factory
+         * @param object an expression of the target data model object
+         * @param dataClass the data model class
+         * @throws IllegalArgumentException if the parameters are {@code null}
          */
-        public DataObjectMirror(
-                ModelFactory factory,
-                Expression object,
-                DataClass dataClass) {
+        public DataObjectMirror(ModelFactory factory, Expression object, DataClass dataClass) {
             Precondition.checkMustNotBeNull(factory, "factory"); //$NON-NLS-1$
             Precondition.checkMustNotBeNull(object, "object"); //$NON-NLS-1$
             Precondition.checkMustNotBeNull(dataClass, "dataClass"); //$NON-NLS-1$
@@ -423,19 +416,18 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
         }
 
         /**
-         * 操作対象のオブジェクトを表す式を返す。
-         * @return 操作対象のオブジェクトを表す式
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Returns an expression of the target data model object.
+         * @return an expression of the target data model object
          */
         public Expression get() {
             return object;
         }
 
         /**
-         * このデータオブジェクトに、別のデータオブジェクトの内容を設定する文を返す。
-         * @param value 別のデータオブジェクトを表す式
-         * @return 生成した文
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Returns a statement which copies the contents of the specified object into this mirror.
+         * @param value an expression which accesses the target object
+         * @return the generated statement
+         * @throws IllegalArgumentException the parameter is {@code null}
          */
         public Statement createSet(Expression value) {
             Precondition.checkMustNotBeNull(value, "value"); //$NON-NLS-1$
@@ -443,8 +435,8 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
         }
 
         /**
-         * このデータオブジェクトの内容を消去する文を返す。
-         * @return 生成した文
+         * Returns a statement which resets the contents of this mirror.
+         * @return the generated statement
          */
         public Statement createReset() {
             return dataClass.reset(object);
@@ -452,7 +444,7 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
     }
 
     /**
-     * 結果オブジェクトを操作するミラー。
+     * A mirror of a {@link Result} object.
      */
     public static class ResultMirror {
 
@@ -461,10 +453,10 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
         private final Expression object;
 
         /**
-         * インスタンスを生成する。
-         * @param factory ファクトリ
-         * @param object 結果オブジェクトを参照するための式
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Creates a new instance.
+         * @param factory the Java DOM factory
+         * @param object an expression of the target {@link Result} object
+         * @throws IllegalArgumentException if the parameters are {@code null}
          */
         public ResultMirror(ModelFactory factory, Expression object) {
             Precondition.checkMustNotBeNull(factory, "factory"); //$NON-NLS-1$
@@ -474,19 +466,18 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
         }
 
         /**
-         * 操作対象のオブジェクトを表す式を返す。
-         * @return 操作対象のオブジェクトを表す式
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Returns an expression of the target {@link Result} object.
+         * @return an expression of the target object
          */
         public Expression get() {
             return object;
         }
 
         /**
-         * この結果オブジェクトに、指定の式を追加する文を返す。
-         * @param value 追加する式
-         * @return 生成した文
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Returns a statement which adds a value into this.
+         * @param value an expression of the target value
+         * @return the generated statement
+         * @throws IllegalArgumentException if the parameter is {@code null}
          */
         public Statement createAdd(Expression value) {
             Precondition.checkMustNotBeNull(value, "value"); //$NON-NLS-1$
@@ -497,7 +488,7 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
     }
 
     /**
-     * {@link ListBuffer}を操作するミラー。
+     * A mirror of {@link ListBuffer}.
      */
     public static class ListBufferMirror {
 
@@ -522,18 +513,14 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
         private final Type elementType;
 
         /**
-         * インスタンスを生成する。
-         * @param factory ファクトリ
-         * @param object 結果オブジェクトを参照するための式
-         * @param dataClass リスト要素のデータ型
-         * @param elementType リスト要素のDOMでの型表現
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Creates a new instance.
+         * @param factory the Java DOM factory
+         * @param object an expression of the target {@link ListBuffer} object
+         * @param dataClass the element type
+         * @param elementType the element type
+         * @throws IllegalArgumentException if the parameters are {@code null}
          */
-        public ListBufferMirror(
-                ModelFactory factory,
-                Expression object,
-                DataClass dataClass,
-                Type elementType) {
+        public ListBufferMirror(ModelFactory factory, Expression object, DataClass dataClass, Type elementType) {
             Precondition.checkMustNotBeNull(factory, "factory"); //$NON-NLS-1$
             Precondition.checkMustNotBeNull(object, "object"); //$NON-NLS-1$
             Precondition.checkMustNotBeNull(dataClass, "dataClass"); //$NON-NLS-1$
@@ -544,17 +531,16 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
         }
 
         /**
-         * 操作対象のオブジェクトを表す式を返す。
-         * @return 操作対象のオブジェクトを表す式
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Returns an expression of the target {@link ListBuffer} object.
+         * @return the expression of the target object
          */
         public Expression get() {
             return object;
         }
 
         /**
-         * {@link ListBuffer}の開始処理を行う文を返す。
-         * @return 生成した文
+         * Returns a statement which initializes this object.
+         * @return the generated statement
          * @see ListBuffer#begin()
          */
         public Statement createBegin() {
@@ -564,13 +550,10 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
         }
 
         /**
-         * {@link ListBuffer}へのデータ追加処理を行う文を返す。
-         * <p>
-         * バッファの拡張などは自動的に行う。
-         * </p>
-         * @param value 追加するデータを表す式
-         * @return 生成した文
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Returns a statement which adds a copy of data model object into this object.
+         * @param value an expression of the target data model object
+         * @return the generated statement
+         * @throws IllegalArgumentException if the parameter is {@code null}
          * @see ListBuffer#advance()
          * @see ListBuffer#expand(Object)
          * @see ListBuffer#isExpandRequired()
@@ -603,8 +586,8 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
         }
 
         /**
-         * {@link ListBuffer}の更新終了処理を行う文を返す。
-         * @return 生成した文
+         * Returns a statement which finalizes this object.
+         * @return the generated statement
          * @see ListBuffer#end()
          */
         public Statement createEnd() {
@@ -614,9 +597,9 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
         }
 
         /**
-         * {@link ListBuffer}の参照終了処理を行う文を返す。
-         * @return 生成した文
-         * @see ListBuffer#end()
+         * Returns a statement which disposes this object.
+         * @return the generated statement
+         * @see ListBuffer#shrink()
          */
         public Statement createShrink() {
             return new ExpressionBuilder(factory, object)
@@ -626,58 +609,58 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
     }
 
     /**
-     * {@link FlowElementProcessor}を取得するためのリポジトリ。
+     * An abstract super interface of repository of {@link FlowElementProcessor}.
      */
     interface Repository extends FlowCompilingEnvironment.Initializable {
 
         /**
-         * 空要素に対するプロセッサを返す。
-         * @return 空要素に対するプロセッサ
+         * Returns a processor for the empty operators.
+         * @return the processor
          */
         LinePartProcessor getEmptyProcessor();
 
         /**
-         * 指定の要素に関するプロセッサを返す。
-         * @param description 対象の要素記述
-         * @return 対応するプロセッサ、存在しない場合は{@code null}
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Returns a {@link FlowElementProcessor} for processing the target operator.
+         * @param description the target element description
+         * @return the corresponded processor, or {@code null} if there is no available processors
+         * @throws IllegalArgumentException if the parameter is {@code null}
          */
         FlowElementProcessor findProcessor(FlowElementDescription description);
 
         /**
-         * 指定のライン要素に関するプロセッサを返す。
-         * @param description 対象の要素記述
-         * @return 対応するプロセッサ、存在しない場合は{@code null}
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Returns a {@link FlowElementProcessor} for processing the target extract-like operator.
+         * @param description the target element description
+         * @return the corresponded processor, or {@code null} if there is no available processors
+         * @throws IllegalArgumentException if the parameter is {@code null}
          */
         LineProcessor findLineProcessor(FlowElementDescription description);
 
         /**
-         * 指定の合流要素に関するプロセッサを返す。
-         * @param description 対象の要素記述
-         * @return 対応するプロセッサ、存在しない場合は{@code null}
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Returns a {@link FlowElementProcessor} for processing the target co-group like operator.
+         * @param description the target element description
+         * @return the corresponded processor, or {@code null} if there is no available processors
+         * @throws IllegalArgumentException if the parameter is {@code null}
          */
         RendezvousProcessor findRendezvousProcessor(FlowElementDescription description);
     }
 
     /**
-     * プロセッサの種類。
+     * Represents a kind of {@link FlowElementProcessor}.
      */
     enum Kind {
 
         /**
-         * {@link LinePartProcessor}として利用される。
+         * {@link LinePartProcessor}.
          */
         LINE_PART,
 
         /**
-         * {@link LineEndProcessor}として利用される。
+         * {@link LineEndProcessor}.
          */
         LINE_END,
 
         /**
-         * {@link RendezvousProcessor}として利用される。
+         * {@link RendezvousProcessor}.
          */
         RENDEZVOUS,
     }

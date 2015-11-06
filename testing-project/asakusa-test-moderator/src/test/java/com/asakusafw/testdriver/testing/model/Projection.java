@@ -18,47 +18,42 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
 
 import com.asakusafw.runtime.model.DataModelKind;
-import com.asakusafw.runtime.model.ModelInputLocation;
-import com.asakusafw.runtime.model.ModelOutputLocation;
 import com.asakusafw.runtime.model.PropertyOrder;
 import com.asakusafw.runtime.value.StringOption;
-import com.asakusafw.testdriver.testing.io.ProjectionInput;
-import com.asakusafw.testdriver.testing.io.ProjectionOutput;
 /**
- * projectionを表す射影モデルインターフェース。
+ * A projective data model interface that represents projection.
  */
-@DataModelKind("DMDL")@ModelInputLocation(ProjectionInput.class)@ModelOutputLocation(ProjectionOutput.class)@
-        PropertyOrder({"data"}) public interface Projection extends Writable {
+@DataModelKind("DMDL")@PropertyOrder({"data"}) public interface Projection extends Writable {
     /**
-     * dataを返す。
+     * Returns data.
      * @return data
-     * @throws NullPointerException dataの値が<code>null</code>である場合
+     * @throws NullPointerException if data is <code>null</code>
      */
     Text getData();
     /**
-     * dataを設定する。
-     * @param value 設定する値
+     * Sets data.
+     * @param value the value
      */
     void setData(Text value);
     /**
-     * <code>null</code>を許すdataを返す。
+     * Returns data which may be represent <code>null</code>.
      * @return data
      */
     StringOption getDataOption();
     /**
-     * dataを設定する。
-     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     * Sets data.
+     * @param option the value, or <code>null</code> to set this property to <code>null</code>
      */
     void setDataOption(StringOption option);
     /**
-     * dataを返す。
+     * Returns data.
      * @return data
-     * @throws NullPointerException dataの値が<code>null</code>である場合
+     * @throws NullPointerException if data is <code>null</code>
      */
     String getDataAsString();
     /**
-     * dataを設定する。
-     * @param data0 設定する値
+     * Returns data.
+     * @param data0 the value
      */
     void setDataAsString(String data0);
 }

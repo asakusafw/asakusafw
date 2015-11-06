@@ -22,23 +22,14 @@ import com.asakusafw.utils.java.model.syntax.Statement;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link IfStatement}の実装。
+ * An implementation of {@link IfStatement}.
  */
 public final class IfStatementImpl extends ModelRoot implements IfStatement {
 
-    /**
-     * 条件式。
-     */
     private Expression condition;
 
-    /**
-     * 条件成立時に実行される文。
-     */
     private Statement thenStatement;
 
-    /**
-     * 条件不成立時に実行される文。
-     */
     private Statement elseStatement;
 
     @Override
@@ -47,11 +38,9 @@ public final class IfStatementImpl extends ModelRoot implements IfStatement {
     }
 
     /**
-     * 条件式を設定する。
-     * @param condition
-     *     条件式
-     * @throws IllegalArgumentException
-     *     {@code condition}に{@code null}が指定された場合
+     * Sets the condition expression.
+     * @param condition the condition expression
+     * @throws IllegalArgumentException if {@code condition} was {@code null}
      */
     public void setCondition(Expression condition) {
         Util.notNull(condition, "condition"); //$NON-NLS-1$
@@ -64,11 +53,9 @@ public final class IfStatementImpl extends ModelRoot implements IfStatement {
     }
 
     /**
-     * 条件成立時に実行される文を設定する。
-     * @param thenStatement
-     *     条件成立時に実行される文
-     * @throws IllegalArgumentException
-     *     {@code thenStatement}に{@code null}が指定された場合
+     * Sets the truth statement.
+     * @param thenStatement the truth statement
+     * @throws IllegalArgumentException if {@code thenStatement} was {@code null}
      */
     public void setThenStatement(Statement thenStatement) {
         Util.notNull(thenStatement, "thenStatement"); //$NON-NLS-1$
@@ -81,18 +68,15 @@ public final class IfStatementImpl extends ModelRoot implements IfStatement {
     }
 
     /**
-     * 条件不成立時に実行される文を設定する。
-     * <p> この文が{@code if-then}文である場合、引数には{@code null}を指定する。 </p>
-     * @param elseStatement
-     *     条件不成立時に実行される文、
-     *     ただしこの文が{@code if-then}文である場合は{@code null}
+     * Sets the false statement.
+     * @param elseStatement the false statement, or {@code null} if it is not specified
      */
     public void setElseStatement(Statement elseStatement) {
         this.elseStatement = elseStatement;
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#IF_STATEMENT}を返す。
+     * Returns {@link ModelKind#IF_STATEMENT} which represents this element kind.
      * @return {@link ModelKind#IF_STATEMENT}
      */
     @Override
@@ -101,8 +85,7 @@ public final class IfStatementImpl extends ModelRoot implements IfStatement {
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitIfStatement(this, context);
     }

@@ -22,23 +22,14 @@ import com.asakusafw.utils.java.model.syntax.Type;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link DocMethodParameter}の実装。
+ * An implementation of {@link DocMethodParameter}.
  */
 public final class DocMethodParameterImpl extends ModelRoot implements DocMethodParameter {
 
-    /**
-     * 仮引数の型。
-     */
     private Type type;
 
-    /**
-     * 仮引数の名前。
-     */
     private SimpleName name;
 
-    /**
-     * 可変長引数。
-     */
     private boolean variableArity;
 
     @Override
@@ -47,11 +38,9 @@ public final class DocMethodParameterImpl extends ModelRoot implements DocMethod
     }
 
     /**
-     * 仮引数の型を設定する。
-     * @param type
-     *     仮引数の型
-     * @throws IllegalArgumentException
-     *     {@code type}に{@code null}が指定された場合
+     * Sets the parameter type.
+     * @param type the parameter type
+     * @throws IllegalArgumentException if {@code type} was {@code null}
      */
     public void setType(Type type) {
         Util.notNull(type, "type"); //$NON-NLS-1$
@@ -64,11 +53,8 @@ public final class DocMethodParameterImpl extends ModelRoot implements DocMethod
     }
 
     /**
-     * 仮引数の名前を設定する。
-     * <p> 仮引数の名前が省略される場合、引数には{@code null}を指定する。 </p>
-     * @param name
-     *     仮引数の名前、
-     *     ただし仮引数の名前が省略される場合は{@code null}
+     * Sets the parameter name.
+     * @param name the parameter name, or {@code null} if it is not specified
      */
     public void setName(SimpleName name) {
         this.name = name;
@@ -80,17 +66,15 @@ public final class DocMethodParameterImpl extends ModelRoot implements DocMethod
     }
 
     /**
-     * 可変長引数である場合に{@code true}を設定する。
-     * <p> そうでない場合、{@code false}を設定する。 </p>
-     * @param variableArity
-     *     可変長引数
+     * Sets whether this parameter is variable arity or not.
+     * @param variableArity {@code true} if this parameter is variable arity, otherwise {@code false}
      */
     public void setVariableArity(boolean variableArity) {
         this.variableArity = variableArity;
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#DOC_METHOD_PARAMETER}を返す。
+     * Returns {@link ModelKind#DOC_METHOD_PARAMETER} which represents this element kind.
      * @return {@link ModelKind#DOC_METHOD_PARAMETER}
      */
     @Override
@@ -99,8 +83,7 @@ public final class DocMethodParameterImpl extends ModelRoot implements DocMethod
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitDocMethodParameter(this, context);
     }

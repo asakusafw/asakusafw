@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * ジョブフローの可視化を行う。
+ * Classes for visualizing flow graphs.
  */
 package com.asakusafw.compiler.flow.visualizer;

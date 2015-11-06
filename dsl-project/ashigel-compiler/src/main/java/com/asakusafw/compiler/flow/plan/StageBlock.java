@@ -32,7 +32,7 @@ import com.asakusafw.vocabulary.flow.graph.FlowElement;
 import com.asakusafw.vocabulary.flow.graph.FlowElementOutput;
 
 /**
- * それぞれのステージに含まれるプログラムを表現するブロック。
+ * A sub-graph of flow graph that represents a MapReduce stage.
  */
 public class StageBlock {
 
@@ -47,10 +47,10 @@ public class StageBlock {
     private int stageNumber = NOT_SET;
 
     /**
-     * インスタンスを生成する。
-     * @param mapBlocks マップブロックの一覧
-     * @param reduceBlocks レデュースブロックの一覧
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param mapBlocks the Map blocks
+     * @param reduceBlocks the Reduce blocks
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public StageBlock(Set<FlowBlock> mapBlocks, Set<FlowBlock> reduceBlocks) {
         Precondition.checkMustNotBeNull(mapBlocks, "mapBlocks"); //$NON-NLS-1$
@@ -60,9 +60,10 @@ public class StageBlock {
     }
 
     /**
-     * このステージのステージ番号を返す。
-     * @return ステージ番号
-     * @throws IllegalStateException ステージ番号が未設定の場合
+     * Returns the serial number of this stage.
+     * @return the stage number
+     * @throws IllegalStateException if the stage number has been not set
+     * @see #setStageNumber(int)
      */
     public int getStageNumber() {
         if (stageNumber == NOT_SET) {
@@ -72,9 +73,8 @@ public class StageBlock {
     }
 
     /**
-     * このステージのステージ番号を設定する。
-     * @param stageNumber ステージ番号
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Sets the serial number of this stage.
+     * @param stageNumber the stage number
      */
     public void setStageNumber(int stageNumber) {
         if (stageNumber == NOT_SET) {
@@ -85,32 +85,32 @@ public class StageBlock {
     }
 
     /**
-     * マップブロックの一覧を返す。
-     * @return マップブロックの一覧
+     * Returns the map blocks in this stage.
+     * @return the map blocks
      */
     public Set<FlowBlock> getMapBlocks() {
         return mapBlocks;
     }
 
     /**
-     * レデュースブロックの一覧を返す。
-     * @return レデュースブロックの一覧
+     * Returns the reduce blocks in this stage.
+     * @return the reduce blocks
      */
     public Set<FlowBlock> getReduceBlocks() {
         return reduceBlocks;
     }
 
     /**
-     * このステージにレデュースブロックがひとつでも存在する場合に{@code true}を返す。
-     * @return レデュースブロックがひとつでも存在する場合に{@code true}
+     * Returns whether this stage block contains one or more reduce blocks or not.
+     * @return {@code true} if this stage block contains one or more reduce blocks, or otherwise {@code false}
      */
     public boolean hasReduceBlocks() {
         return reduceBlocks.isEmpty() == false;
     }
 
     /**
-     * このブロックが空のブロックである場合にのみ{@code true}を返す。
-     * @return 空のブロックである場合にのみ{@code true}
+     * Returns whether this stage block is an empty block or not.
+     * @return {@code true} if this stage block is an empty block, or otherwise {@code false}
      */
     public boolean isEmpty() {
         if (reduceBlocks.isEmpty() == false) {
@@ -125,24 +125,8 @@ public class StageBlock {
     }
 
     /**
-     * このステージブロックに含まれる余計なブロックを削除する。
-     * <p>
-     * これは次の手順で行われる。
-     * </p>
-     * <ul>
-     * <li>
-     *   それぞれのブロックに、入力が直接出力されているようなパスが含まれる場合、
-     *   前後のブロックの入出力を直接接続して、このブロックでの処理を行わないようにする。
-     * </li>
-     * <li>
-     *   上記の処理が行われた場合、さらにブロックから不要な入出力を除去する。
-     * </li>
-     * <li>
-     *   さらに、入出力の除去によってブロックに入出力が存在しなくなった場合、
-     *   ブロックそのものをステージブロックから削除する。
-     * </li>
-     * </ul>
-     * @return 一つでも変更があった場合のみ{@code true}
+     * Removes the redundant blocks from this stage block.
+     * @return {@code true} if one or more blocks are actually removed, otherwise {@code false}
      */
     public boolean compaction() {
         LOG.debug("applying compaction: {}", this); //$NON-NLS-1$
@@ -169,7 +153,7 @@ public class StageBlock {
 
     private boolean bypass(FlowBlock block) {
         assert block != null;
-        // FlowElementOutput -> FlowBlockOutput の逆参照表を作成
+        // create mapping: FlowElementOutput -> FlowBlockOutput
         Map<FlowElementOutput, FlowBlock.Output> outputs = Maps.create();
         for (FlowBlock.Output blockOutput : block.getBlockOutputs()) {
             outputs.put(blockOutput.getElementPort(), blockOutput);

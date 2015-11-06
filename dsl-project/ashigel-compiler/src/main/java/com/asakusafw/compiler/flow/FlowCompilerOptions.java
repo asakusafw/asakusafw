@@ -30,9 +30,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.compiler.common.Precondition;
+import com.asakusafw.vocabulary.flow.graph.Inline;
+import com.asakusafw.vocabulary.flow.processor.PartialAggregation;
+import com.asakusafw.vocabulary.operator.Logging;
 
 /**
- * Flowコンパイラのオプション設定。
+ * Options for flow DSL compiler.
  * @since 0.1.0
  * @version 0.7.3
  */
@@ -41,7 +44,26 @@ public class FlowCompilerOptions {
     static final Logger LOG = LoggerFactory.getLogger(FlowCompilerOptions.class);
 
     /**
-     * プロパティに指定する際の設定名。
+     * The system property key of serialized compiler options.
+     * The serialized compiler options is the form of the following rule:
+<pre><code>
+OptionList:
+    OptionList "," Option
+    Option
+Option:
+    Key "=" Value
+    (Empty String)
+Key:
+    EscapedCharacter+
+Value:
+    EscapedCharacter*
+EscapedString:
+    (character excludes "=", "," and "\")
+    "\="
+    "\,"
+    "\\"
+</code></pre>
+     * Note that, the {@code Key} must be one of {@link Item} or start with {@link #PREFIX_EXTRA_OPTION}.
      */
     public static final String K_OPTIONS = "com.asakusafw.compiler.options"; //$NON-NLS-1$
 
@@ -51,15 +73,14 @@ public class FlowCompilerOptions {
     public static final String PREFIX_EXTRA_OPTION = "X"; //$NON-NLS-1$
 
     /**
-     * オプションの項目一覧。
+     * Represents a kind of compiler option item.
      */
     public enum Item {
 
         /**
-         * オプション項目: Combinerを有効にする。
-         * <p>
-         * デフォルトでは無効 (false)。
-         * </p>
+         * The default value of whether combine operation is enabled or not.
+         * Default value: {@code false}.
+         * @see PartialAggregation#DEFAULT
          */
         enableCombiner(false) {
             @Override public void setTo(FlowCompilerOptions options, boolean value) {
@@ -68,10 +89,9 @@ public class FlowCompilerOptions {
         },
 
         /**
-         * オプション項目: フロー部品のインライン化の際に、可能な限りステージ数が少なくなるようにインライン化する。
-         * <p>
-         * デフォルトではステージが少なくなるように修正する (true)。
-         * </p>
+         * The default value of whether in-lining flow-part is enabled or not.
+         * Default value: {@code true}.
+         * @see Inline#DEFAULT
          */
         compressFlowPart(true) {
             @Override public void setTo(FlowCompilerOptions options, boolean value) {
@@ -80,10 +100,8 @@ public class FlowCompilerOptions {
         },
 
         /**
-         * オプション項目: 互いに影響のないステージを合成する。
-         * <p>
-         * デフォルトではステージを合成する (true)。
-         * </p>
+         * The default value of whether compressing concurrent stages is enabled or not.
+         * Default value: {@code true}.
          */
         compressConcurrentStage(true) {
             @Override public void setTo(FlowCompilerOptions options, boolean value) {
@@ -92,10 +110,8 @@ public class FlowCompilerOptions {
         },
 
         /**
-         * オプション項目: TINY指定のデータをハッシュ表で結合する。
-         * <p>
-         * デフォルトではハッシュ表で結合する (true)。
-         * </p>
+         * The default value of whether hash-join for tiny inputs is enabled or not.
+         * Default value: {@code true}.
          */
         hashJoinForTiny(true) {
             @Override public void setTo(FlowCompilerOptions options, boolean value) {
@@ -104,10 +120,8 @@ public class FlowCompilerOptions {
         },
 
         /**
-         * オプション項目: SMALL指定のデータをハッシュ表で結合する。
-         * <p>
-         * デフォルトではマージで結合する (false)。
-         * </p>
+         * The default value of whether hash-join for small inputs is enabled or not.
+         * Default value: {@code false}.
          */
         hashJoinForSmall(false) {
             @Override public void setTo(FlowCompilerOptions options, boolean value) {
@@ -116,10 +130,9 @@ public class FlowCompilerOptions {
         },
 
         /**
-         * オプション項目: デバッグロギングを有効にする。
-         * <p>
-         * デフォルトでは無効 (false)。
-         * </p>
+         * The default value of whether debug level logging is enabled or not.
+         * Default value: {@code false}.
+         * @see Logging#value()
          */
         enableDebugLogging(false) {
             @Override public void setTo(FlowCompilerOptions options, boolean value) {
@@ -129,7 +142,7 @@ public class FlowCompilerOptions {
         ;
 
         /**
-         * この項目の既定値。
+         * The default value.
          */
         public final boolean defaultValue;
 
@@ -138,9 +151,9 @@ public class FlowCompilerOptions {
         }
 
         /**
-         * オプション一覧のこの項目に対して値を設定する。
-         * @param options 対象のオプション一覧
-         * @param value 設定する値
+         * Sets this option item into the target options.
+         * @param options the target options
+         * @param value the option value
          * @throws IllegalArgumentException if any parameter is {@code null}
          */
         public abstract void setTo(FlowCompilerOptions options, boolean value);
@@ -239,7 +252,7 @@ public class FlowCompilerOptions {
     private final Map<String, String> extraAttributes = new ConcurrentHashMap<String, String>();
 
     /**
-     * デフォルトの設定でインスタンスを生成する。
+     * Creates a new instance with default option values.
      */
     public FlowCompilerOptions() {
         for (Item item : Item.values()) {
@@ -252,34 +265,10 @@ public class FlowCompilerOptions {
     private static final Pattern EXTRA_OPTION = Pattern.compile("\\s*X([0-9A-Za-z_\\-]+)\\s*=([^,]*)"); //$NON-NLS-1$
 
     /**
-     * デフォルトの設定をプロパティからロードする。
-     * <p>
-     * 利用するプロパティのキーは現在のところ{@link #K_OPTIONS}のみで、
-     * 以下のような{@code OptionList}の形式で指定すること。
-     * </p>
-<pre><code>
-OptionList:
-    OptionList "," OptionItem
-    OptionItem
-    (Empty)
-
-OptionItem:
-    "+" OptionName           ; OptionNameの項目をtrueに設定する
-    "-" OptionName           ; OptionNameの項目をfalseに設定する
-    "X" OptionName "=" Value ; Name, Valueのペアを extra attributes に設定する
-
-OptionName:
-    (項目名)
-</code></pre>
-     * <p>
-     * また、利用可能なオプション名は{@link FlowCompilerOptions.Item}
-     * に定義される列挙定数の名前に等しい。
-     * また、{@code D<key>=<value>}から始まる項目名は{@code X}を取り除いた上で
-     *
-     * </p>
-     * @param properties プロパティ一覧
-     * @return オプション設定
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance from the properties object.
+     * @param properties the target properties object
+     * @return the created instance
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static FlowCompilerOptions load(Properties properties) {
         Precondition.checkMustNotBeNull(properties, "properties"); //$NON-NLS-1$
@@ -318,96 +307,96 @@ OptionName:
     }
 
     /**
-     * Combinerを有効にする。
-     * @return 設定値
+     * Returns the option value of {@link Item#enableCombiner}.
+     * @return the option value
      */
     public boolean isEnableCombiner() {
         return enableCombiner;
     }
 
     /**
-     * Combinerを有効にする。
-     * @param enable 設定値
+     * Sets the option value of {@link Item#enableCombiner}.
+     * @param enable the option value
      */
     public void setEnableCombiner(boolean enable) {
         this.enableCombiner = enable;
     }
 
     /**
-     * フロー部品のインライン化の際に、可能な限りステージ数が少なくなるようにインライン化する。
-     * @return 設定値
+     * Returns the option value of {@link Item#compressFlowPart}.
+     * @return the option value
      */
     public boolean isCompressFlowPart() {
         return compressFlowPart;
     }
 
     /**
-     * フロー部品のインライン化の際に、可能な限りステージ数が少なくなるようにインライン化する。
-     * @param enable 設定値
+     * Sets the option value of {@link Item#compressFlowPart}.
+     * @param enable the option value
      */
     public void setCompressFlowPart(boolean enable) {
         this.compressFlowPart = enable;
     }
 
     /**
-     * 互いに影響のないステージを合成する。
-     * @return 設定値
+     * Returns the option value of {@link Item#compressConcurrentStage}.
+     * @return the option value
      */
     public boolean isCompressConcurrentStage() {
         return compressConcurrentStage;
     }
 
     /**
-     * 互いに影響のないステージを合成する。
-     * @param enable 設定値
+     * Sets the option value of {@link Item#compressConcurrentStage}.
+     * @param enable the option value
      */
     public void setCompressConcurrentStage(boolean enable) {
         this.compressConcurrentStage = enable;
     }
 
     /**
-     * VERY_SMALL指定のデータをハッシュ表で結合する。
-     * @return 設定値
+     * Returns the option value of {@link Item#hashJoinForTiny}.
+     * @return the option value
      */
     public boolean isHashJoinForTiny() {
         return hashJoinForTiny;
     }
 
     /**
-     * VERY_SMALL指定のデータをハッシュ表で結合する。
-     * @param enable 設定値
+     * Sets the option value of {@link Item#hashJoinForTiny}.
+     * @param enable the option value
      */
     public void setHashJoinForTiny(boolean enable) {
         this.hashJoinForTiny = enable;
     }
 
     /**
-     * SMALL指定のデータをハッシュ表で結合する。
-     * @return 設定値
+     * Returns the option value of {@link Item#hashJoinForSmall}.
+     * @return the option value
      */
     public boolean isHashJoinForSmall() {
         return hashJoinForSmall;
     }
 
     /**
-     * SMALL指定のデータをハッシュ表で結合する。
-     * @param enable 設定値
+     * Sets the option value of {@link Item#hashJoinForSmall}.
+     * @param enable the option value
      */
     public void setHashJoinForSmall(boolean enable) {
         this.hashJoinForSmall = enable;
     }
 
     /**
-     * デバッグロギングを利用する。
-     * @return 設定値
+     * Returns the option value of {@link Item#enableDebugLogging}.
+     * @return the option value
      */
     public boolean isEnableDebugLogging() {
         return this.enableDebugLogging;
     }
 
     /**
-     * デバッグロギングを利用する。
-     * @param enable 設定値
+     * Sets the option value of {@link Item#enableDebugLogging}.
+     * @param enable the option value
      */
     public void setEnableDebugLogging(boolean enable) {
         this.enableDebugLogging = enable;

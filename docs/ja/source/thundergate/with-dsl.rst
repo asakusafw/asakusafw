@@ -28,8 +28,8 @@ ThunderGateと連携してデータベースのテーブルからデータをイ
     このファイルの内容については :doc:`user-guide` を参照して下さい。
 
 ``Class<?> getModelType()``
-    インポータが処理対象とするモデルオブジェクトの型を表すクラスを戻り値に指定します。
-    インポータは実行時にモデルクラスを作成する元となったテーブル名に対してインポート処理を行います [#]_ 。
+    インポータが処理対象とするデータモデルオブジェクトの型を表すクラスを戻り値に指定します。
+    インポータは実行時にデータモデルクラスを作成する元となったテーブル名に対してインポート処理を行います [#]_ 。
 
 ``LockType getLockType()``
     インポータの処理時に行われるロックの種類を戻り値に指定します。
@@ -91,7 +91,7 @@ ThunderGateと連携してデータベースのテーブルからデータをイ
     }
 
 ..  [#] :javadoc:`com.asakusafw.vocabulary.bulkloader.DbImporterDescription`
-..  [#] DMDLを直接記述してモデルクラスを作成している場合、 ``DbImporterDescription`` の代わりに ``BulkLoadImporterDescription`` [#]_ を利用して下さい
+..  [#] DMDLを直接記述してデータモデルクラスを作成している場合、 ``DbImporterDescription`` の代わりに ``BulkLoadImporterDescription`` [#]_ を利用して下さい
 ..  [#] :javadoc:`com.asakusafw.vocabulary.bulkloader.BulkLoadImporterDescription.LockType`
 ..  [#] :javadoc:`com.asakusafw.vocabulary.bulkloader.BulkLoadImporterDescription`
 
@@ -106,8 +106,8 @@ ThunderGateと連携してジョブフローの処理結果をデータベース
     利用方法はインポータの ``getTargetName()`` と同様です。
 
 ``Class<?> getModelType()``
-    エクスポータが処理対象とするモデルオブジェクトの型を表すクラスを戻り値に指定します。
-    エクスポータは実行時にモデルクラスを作成する元となったテーブル名に対してエクスポート処理を行います [#]_ 。
+    エクスポータが処理対象とするデータモデルオブジェクトの型を表すクラスを戻り値に指定します。
+    エクスポータは実行時にデータモデルクラスを作成する元となったテーブル名に対してエクスポート処理を行います [#]_ 。
 
 以下の例では、テーブルから生成したデータモデルクラス ``Hoge`` に対応するテーブルに対して、ジョブフローの処理結果を書き戻します。
 
@@ -121,7 +121,7 @@ ThunderGateと連携してジョブフローの処理結果をデータベース
     }
 
 ..  [#] :javadoc:`com.asakusafw.vocabulary.bulkloader.DbExporterDescription`
-..  [#] DMDLを直接記述してモデルクラスを作成している場合、 ``DbExporterDescription`` の代わりに ``BulkLoadExporterDescription`` [#]_ を利用して下さい
+..  [#] DMDLを直接記述してデータモデルクラスを作成している場合、 ``DbExporterDescription`` の代わりに ``BulkLoadExporterDescription`` [#]_ を利用して下さい
 ..  [#] :javadoc:`com.asakusafw.vocabulary.bulkloader.BulkLoadExporterDescription`
 
 補助インポータ
@@ -143,7 +143,7 @@ ThunderGateと連携してジョブフローの処理結果をデータベース
     データベース接続情報定義ファイルの定義方法は通常のインポータと同様です。
 
 ``Class<?> getModelType()``
-    補助インポータが処理対象とするモデルオブジェクトの型を表すクラスを戻り値に指定します。
+    補助インポータが処理対象とするデータモデルオブジェクトの型を表すクラスを戻り値に指定します。
     利用方法は通常のインポータと同様です。
 
 ``String getWhere()``

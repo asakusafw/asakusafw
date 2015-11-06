@@ -1,2 +1,0 @@
-Asakusa DSLに記述されたThunderGate関連の情報を処理するコンパイラプラグイン。
-ThunderGate関連のDSLは別途"asakusa-thundergate-vocabulary"で提供している。

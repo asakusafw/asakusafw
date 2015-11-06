@@ -16,44 +16,40 @@
 package com.asakusafw.utils.java.model.syntax;
 
 /**
- * オブジェクト型の種類。
+ * Represents a kind of type declarations.
  */
 public enum ObjectTypeKind implements DeclarationKind {
 
     /**
-     * 通常の(列挙でない)クラス型。
+     * Regular class type (not {@link #ENUM enum type}).
      */
     CLASS(true),
 
     /**
-     * 通常の(注釈でない)インターフェース型。
+     * Regular interface type (not {@link #ENUM annotation type}).
      */
     INTERFACE(false),
 
     /**
-     * 列挙型。
+     * Enum type.
      */
     ENUM(true),
 
     /**
-     * 注釈型。
+     * Annotation type.
      */
     ANNOTATION(false),
     ;
 
     private final boolean classLike;
 
-    /**
-     * インスタンスを生成する。
-     * @param classLike クラスに分類される
-     */
     private ObjectTypeKind(boolean classLike) {
         this.classLike = classLike;
     }
 
     /**
-     * この種類がクラス型に分類される場合のみ{@code true}を返す。
-     * @return この種類がクラス型に分類される場合に{@code true}、そうでない場合は{@code false}
+     * Whether this type kind is class like type or not.
+     * @return {@code true} if this type kind is class like type, otherwise {@code false}
      */
     public boolean isClassLike() {
         return classLike;

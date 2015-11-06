@@ -14,10 +14,6 @@
  * limitations under the License.
  */
 package com.asakusafw.compiler.flow.processor.operator;
-import java.util.Arrays;
-
-import javax.annotation.Generated;
-
 import com.asakusafw.compiler.flow.testing.model.Ex1;
 import com.asakusafw.compiler.flow.testing.model.ExSummarized;
 import com.asakusafw.compiler.flow.testing.model.ExSummarized2;
@@ -29,19 +25,25 @@ import com.asakusafw.vocabulary.flow.graph.ObservationCount;
 import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 import com.asakusafw.vocabulary.flow.graph.ShuffleKey;
 import com.asakusafw.vocabulary.flow.processor.PartialAggregation;
+import com.asakusafw.vocabulary.operator.KeyInfo;
+import com.asakusafw.vocabulary.operator.OperatorFactory;
+import com.asakusafw.vocabulary.operator.OperatorInfo;
 import com.asakusafw.vocabulary.operator.Summarize;
+import java.util.Arrays;
+import javax.annotation.Generated;
 /**
- * {@link SummarizeFlow}に関する演算子ファクトリークラス。
+ * An operator factory class about <code>SummarizeFlow</code>.
  * @see SummarizeFlow
  */
-@Generated("OperatorFactoryClassGenerator:0.0.1") public class SummarizeFlowFactory {
+@Generated("OperatorFactoryClassGenerator:0.1.0")@OperatorFactory(SummarizeFlow.class) public class SummarizeFlowFactory 
+        {
     /**
-     * 通常の演算子。
+     * simple.
      */
     public static final class Simple implements Operator {
         private final FlowElementResolver $;
         /**
-         *  結果
+         *  result model
          */
         public final Source<ExSummarized> out;
         Simple(Source<Ex1> model) {
@@ -53,16 +55,16 @@ import com.asakusafw.vocabulary.operator.Summarize;
             builder.addOutput("out", ExSummarized.class);
             builder.addAttribute(FlowBoundary.SHUFFLE);
             builder.addAttribute(ObservationCount.DONT_CARE);
-            builder.addAttribute(PartialAggregation.DEFAULT);
+            builder.addAttribute(PartialAggregation.PARTIAL);
             this.$ = builder.toResolver();
             this.$.resolveInput("model", model);
             this.out = this.$.resolveOutput("out");
         }
         /**
-         * この演算子の名前を設定する。
-         * @param newName 設定する名前
-         * @return この演算子オブジェクト (this)
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Configures the name of this operator.
+         * @param newName the new operator name
+         * @return this operator object
+         * @throws IllegalArgumentException if the parameter is <code>null</code>
          */
         public SummarizeFlowFactory.Simple as(String newName) {
             this.$.setName(newName);
@@ -70,21 +72,24 @@ import com.asakusafw.vocabulary.operator.Summarize;
         }
     }
     /**
-     * 通常の演算子。
-     * @param model モデル
-     * @return 生成した演算子オブジェクト
+     * simple.
+     * @param model  target model
+     * @return the created operator object
      * @see SummarizeFlow#simple(Ex1)
      */
-    public SummarizeFlowFactory.Simple simple(Source<Ex1> model) {
+    @OperatorInfo(kind = Summarize.class, input = {@OperatorInfo.Input(name = "model", type = Ex1.class, position = 0)}, 
+            output = {@OperatorInfo.Output(name = "out", type = ExSummarized.class)}, parameter = {}) public 
+            SummarizeFlowFactory.Simple simple(@KeyInfo(group = {@KeyInfo.Group(expression = "string")}, order = {}) 
+            Source<Ex1> model) {
         return new SummarizeFlowFactory.Simple(model);
     }
     /**
-     * キーの名前変更を含む演算子。
+     * summarize w/ renaming its key.
      */
     public static final class RenameKey implements Operator {
         private final FlowElementResolver $;
         /**
-         *  結果
+         *  result model
          */
         public final Source<ExSummarized2> out;
         RenameKey(Source<Ex1> model) {
@@ -96,16 +101,16 @@ import com.asakusafw.vocabulary.operator.Summarize;
             builder0.addOutput("out", ExSummarized2.class);
             builder0.addAttribute(FlowBoundary.SHUFFLE);
             builder0.addAttribute(ObservationCount.DONT_CARE);
-            builder0.addAttribute(PartialAggregation.DEFAULT);
+            builder0.addAttribute(PartialAggregation.PARTIAL);
             this.$ = builder0.toResolver();
             this.$.resolveInput("model", model);
             this.out = this.$.resolveOutput("out");
         }
         /**
-         * この演算子の名前を設定する。
-         * @param newName0 設定する名前
-         * @return この演算子オブジェクト (this)
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Configures the name of this operator.
+         * @param newName0 the new operator name
+         * @return this operator object
+         * @throws IllegalArgumentException if the parameter is <code>null</code>
          */
         public SummarizeFlowFactory.RenameKey as(String newName0) {
             this.$.setName(newName0);
@@ -113,12 +118,15 @@ import com.asakusafw.vocabulary.operator.Summarize;
         }
     }
     /**
-     * キーの名前変更を含む演算子。
-     * @param model モデル
-     * @return 生成した演算子オブジェクト
+     * summarize w/ renaming its key.
+     * @param model  target model
+     * @return the created operator object
      * @see SummarizeFlow#renameKey(Ex1)
      */
-    public SummarizeFlowFactory.RenameKey renameKey(Source<Ex1> model) {
+    @OperatorInfo(kind = Summarize.class, input = {@OperatorInfo.Input(name = "model", type = Ex1.class, position = 0)}, 
+            output = {@OperatorInfo.Output(name = "out", type = ExSummarized2.class)}, parameter = {}) public 
+            SummarizeFlowFactory.RenameKey renameKey(@KeyInfo(group = {@KeyInfo.Group(expression = "string")}, order = {
+            }) Source<Ex1> model) {
         return new SummarizeFlowFactory.RenameKey(model);
     }
     /**
@@ -139,16 +147,16 @@ import com.asakusafw.vocabulary.operator.Summarize;
             builder1.addOutput("out", com.asakusafw.compiler.flow.testing.model.KeyConflict.class);
             builder1.addAttribute(FlowBoundary.SHUFFLE);
             builder1.addAttribute(ObservationCount.DONT_CARE);
-            builder1.addAttribute(PartialAggregation.DEFAULT);
+            builder1.addAttribute(PartialAggregation.PARTIAL);
             this.$ = builder1.toResolver();
             this.$.resolveInput("model", model);
             this.out = this.$.resolveOutput("out");
         }
         /**
-         * この演算子の名前を設定する。
-         * @param newName1 設定する名前
-         * @return この演算子オブジェクト (this)
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Configures the name of this operator.
+         * @param newName1 the new operator name
+         * @return this operator object
+         * @throws IllegalArgumentException if the parameter is <code>null</code>
          */
         public SummarizeFlowFactory.KeyConflict as(String newName1) {
             this.$.setName(newName1);
@@ -157,11 +165,14 @@ import com.asakusafw.vocabulary.operator.Summarize;
     }
     /**
      * Grouping key is also used for other aggregation operations.
-     * @param model target model
-     * @return 生成した演算子オブジェクト
+     * @param model  target model
+     * @return the created operator object
      * @see SummarizeFlow#keyConflict(Ex1)
      */
-    public SummarizeFlowFactory.KeyConflict keyConflict(Source<Ex1> model) {
+    @OperatorInfo(kind = Summarize.class, input = {@OperatorInfo.Input(name = "model", type = Ex1.class, position = 0)}, 
+            output = {@OperatorInfo.Output(name = "out", type = com.asakusafw.compiler.flow.testing.model.KeyConflict.
+                class)}, parameter = {}) public SummarizeFlowFactory.KeyConflict keyConflict(@KeyInfo(group = {@KeyInfo.
+                Group(expression = "string")}, order = {}) Source<Ex1> model) {
         return new SummarizeFlowFactory.KeyConflict(model);
     }
 }

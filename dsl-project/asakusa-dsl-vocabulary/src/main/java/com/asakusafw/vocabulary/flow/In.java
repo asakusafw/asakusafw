@@ -16,8 +16,8 @@
 package com.asakusafw.vocabulary.flow;
 
 /**
- * フローへの入力を表すインターフェース。
- * @param <T> 入力するデータの種類
+ * Represents a flow input.
+ * @param <T> the input data model type
  */
 public interface In<T> extends Source<T> {
 

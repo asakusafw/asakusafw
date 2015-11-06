@@ -18,38 +18,39 @@ package com.asakusafw.utils.java.internal.model.util;
 import java.io.Serializable;
 
 /**
- * リテラル一つ分を表現するトークン。
+ * Represents a Java literal token.
  */
 public class LiteralToken implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     /**
-     * 文字列{@value #TOKEN_TRUE}.
+     * {@value #TOKEN_TRUE}.
      */
     public static final String TOKEN_TRUE = "true"; //$NON-NLS-1$
 
     /**
-     * 文字列{@value #TOKEN_FALSE}.
+     * {@value #TOKEN_FALSE}.
      */
     public static final String TOKEN_FALSE = "false"; //$NON-NLS-1$
 
     /**
-     * 文字列{@value #TOKEN_NULL}.
+     * {@value #TOKEN_NULL}.
      */
     public static final String TOKEN_NULL = "null"; //$NON-NLS-1$
 
+    private final String text;
 
-    private String text;
     private transient LiteralTokenKind kind;
+
     private transient Object value;
 
     /**
-     * インスタンスを生成する。
-     * @param text トークン文字列
-     * @param kind トークンの種類
-     * @param value トークンが表現する値
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Creates a new instance.
+     * @param text the token image
+     * @param kind the literal kind
+     * @param value the literal value, or {@code null} only if the literal kind also represents {@code null}
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     LiteralToken(String text, LiteralTokenKind kind, Object value) {
         if (text == null) {
@@ -67,25 +68,25 @@ public class LiteralToken implements Serializable {
     }
 
     /**
-     * リテラルの種類を返す。
-     * @return リテラルの種類
+     * Returns the literal kind.
+     * @return the literal kind
      */
     public LiteralTokenKind getKind() {
         return this.kind;
     }
 
     /**
-     * リテラルを構成する文字列を返す。
-     * @return リテラルを構成する文字列
+     * Returns the token image.
+     * @return the token image
      */
     public String getText() {
         return this.text;
     }
 
     /**
-     * リテラルに対応する値(またはそのラッパーオブジェクト)を返す。
-     * 不明な値である場合、{@link LiteralTokenKind#UNKNOWN}を返す。
-     * @return リテラルに対応する値、または{@link LiteralTokenKind#UNKNOWN}
+     * Returns the value which this literal represent to.
+     * If this literal is primitive value, this method will return its wrapper object.
+     * @return the literal value, or {@link LiteralTokenKind#UNKNOWN}
      */
     public Object getValue() {
         return this.value;

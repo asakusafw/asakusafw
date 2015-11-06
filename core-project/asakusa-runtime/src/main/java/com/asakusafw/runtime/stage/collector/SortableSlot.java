@@ -31,35 +31,33 @@ import org.apache.hadoop.io.WritableUtils;
 import com.asakusafw.runtime.io.util.DataBuffer;
 
 /**
- * ソート可能なスロット。
+ * A sortable data slot.
  */
 public class SortableSlot implements WritableComparable<SortableSlot> {
 
     /**
-     * 同一のグループにデータをまとめるためのグループ化ビット数。
-     * <p>
-     * 作成したキー項目の下位ビット数で指定する。
-     * </p>
+     * The number of bits for grouping operation.
+     * This will be used for computing hash code with this bit length from this object.
      */
     static final int GROUPING_BITS = 10;
 
     /**
-     * {@link #begin(int)}のメソッド名。
+     * The method name of {@link #begin(int)}.
      */
     public static final String NAME_BEGIN = "begin"; //$NON-NLS-1$
 
     /**
-     * {@link #addByte(int)}のメソッド名。
+     * The method name of {@link #addByte(int)}.
      */
     public static final String NAME_ADD_BYTE = "addByte"; //$NON-NLS-1$
 
     /**
-     * {@link #addRandom()}のメソッド名。
+     * The method name of {@link #addRandom()}.
      */
     public static final String NAME_ADD_RANDOM = "addRandom"; //$NON-NLS-1$
 
     /**
-     * {@link #add(Writable)}のメソッド名。
+     * The method name of {@link #add(Writable)}.
      */
     public static final String NAME_ADD = "add"; //$NON-NLS-1$
 
@@ -70,8 +68,8 @@ public class SortableSlot implements WritableComparable<SortableSlot> {
     private int slotNumber = -1;
 
     /**
-     * このオブジェクトへの書き込みを開始する。
-     * @param slot 利用するスロットの番号
+     * Begins to write key items into this object.
+     * @param slot the target slot number
      */
     public void begin(int slot) {
         this.slotNumber = slot;
@@ -79,34 +77,34 @@ public class SortableSlot implements WritableComparable<SortableSlot> {
     }
 
     /**
-     * このオブジェクトに指定されたスロットの番号を返す。
-     * @return スロットの番号
+     * Returns the current slot number.
+     * @return the current target slot number specified by {@link #begin(int)}
      */
     public int getSlot() {
         return slotNumber;
     }
 
     /**
-     * このオブジェクトに符号無しのバイト値を追加する。
-     * @param data 追加する値 (下位8ビットのみ利用する)
-     * @throws IOException 追加に失敗した場合
+     * Adds an unsigned byte value.
+     * @param data the value (only use lower 8-bits)
+     * @throws IOException if failed to add the value
      */
     public void addByte(int data) throws IOException {
         buffer.writeByte(data);
     }
 
     /**
-     * このオブジェクトにランダムな値を追加する。
-     * @throws IOException 追加に失敗した場合
+     * Adds a 32-bits random value.
+     * @throws IOException if failed to add the value
      */
     public void addRandom() throws IOException {
         buffer.writeInt(random.nextInt());
     }
 
     /**
-     * このオブジェクトに指定のデータを追加する。
-     * @param data 追加するデータ
-     * @throws IOException 追加に失敗した場合
+     * Adds an object.
+     * @param data the object
+     * @throws IOException if failed to add the value
      */
     public void add(Writable data) throws IOException {
         data.write(buffer);
@@ -181,12 +179,12 @@ public class SortableSlot implements WritableComparable<SortableSlot> {
     }
 
     /**
-     * スロットの内容を(スロット番号, バイト列)で比較する比較器。
+     * A comparator for {@link SortableSlot}.
      */
     public static class Comparator extends WritableComparator implements Externalizable {
 
         /**
-         * インスタンスを生成する。
+         * Creates a new instance.
          */
         public Comparator() {
             super(SortableSlot.class);
@@ -241,7 +239,7 @@ public class SortableSlot implements WritableComparable<SortableSlot> {
     }
 
     /**
-     * スロットの内容を、バイト列の末尾数ビットを無視してパーティショニングする。
+     * A partitioner for {@link SortableSlot}.
      */
     public static class Partitioner extends org.apache.hadoop.mapreduce.Partitioner<SortableSlot, Object> {
 

@@ -29,7 +29,7 @@ import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 import com.asakusafw.vocabulary.operator.Extract;
 
 /**
- * {@link Extract 展開演算子}を処理する。
+ * Processes {@link Extract} operators.
  */
 @TargetOperator(Extract.class)
 public class ExtractFlowProcessor extends LineEndProcessor {

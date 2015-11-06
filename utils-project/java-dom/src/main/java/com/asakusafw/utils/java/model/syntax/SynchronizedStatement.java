@@ -15,9 +15,8 @@
  */
 package com.asakusafw.utils.java.model.syntax;
 
-
 /**
- * {@code synchronized}文を表現するインターフェース。
+ * An interface which represents synchronized statement.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:14.19] The synchronized Statement} </li>
@@ -27,19 +26,15 @@ package com.asakusafw.utils.java.model.syntax;
 public interface SynchronizedStatement
         extends Statement {
 
-    // properties
-
     /**
-     * 同期オブジェクトを返す。
-     * @return
-     *     同期オブジェクト
+     * Returns the monitor object.
+     * @return the monitor object
      */
     Expression getExpression();
 
     /**
-     * 本体ブロックを返す。
-     * @return
-     *     本体ブロック
+     * Returns the body block.
+     * @return the body block
      */
     Block getBody();
 }

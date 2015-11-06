@@ -28,16 +28,16 @@ import com.asakusafw.utils.collections.Tuples;
 import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
 
 /**
- * 列挙を取り扱うためのユーティリティ。
+ * Utilities for enum types.
  */
 public final class EnumUtil {
 
     /**
-     * 列挙をポート記述にマッピングして返す。
-     * @param enumType マッピングする列挙
-     * @param ports マッピング先のポート一覧
-     * @return マッピング結果
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Maps enum constants into the corresponded flow element ports.
+     * @param enumType the source enum type
+     * @param ports the target flow element ports
+     * @return the mapping results
+     * @throws IllegalArgumentException if some parameters are {@code null}
      */
     public static List<Tuple2<Enum<?>, FlowElementPortDescription>> extractConstants(
             Class<?> enumType,
@@ -78,9 +78,6 @@ public final class EnumUtil {
         return results;
     }
 
-    /**
-     * インスタンス化の禁止。
-     */
     private EnumUtil() {
         throw new AssertionError();
     }

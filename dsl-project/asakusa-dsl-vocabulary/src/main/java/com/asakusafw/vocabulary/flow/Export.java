@@ -23,13 +23,9 @@ import java.lang.annotation.Target;
 
 import com.asakusafw.vocabulary.external.ExporterDescription;
 
-
 /**
- * 利用するエクスポーターの内容を指定する注釈。
- * <p>
- * ジョブフロークラスのコンストラクターで{@link Out}型の引数を利用する場合、
- * 引数にこの注釈を付与してエクスポーターの動作を指定する必要がある。
- * </p>
+ * An annotation for specifying <em>export operations</em> of jobflows.
+ * This annotates each {@link Out} parameter of jobflow class constructors.
  */
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
@@ -37,12 +33,9 @@ import com.asakusafw.vocabulary.external.ExporterDescription;
 public @interface Export {
 
     /**
-     * この出力を識別する名前。
-     * <p>
-     * 出力の名前は、同一のフロー記述における出力内で重複してはならない。
-     * また、識別子には、下記の形式の名前 (Javaの変数名のうち、ASCIIコード表に収まるもののみ)
-     * を利用可能である。
-     * </p>
+     * The export operation identifier.
+     * Each <em>export operation</em> must have a unique identifier in the same jobflow,
+     * and must be in the form of the following rule:
 <pre><code>
 Name :
     NameStart NamePart*
@@ -54,11 +47,12 @@ NamePart: one of
     NameStart
     0-9
 </code></pre>
+     * In other words, the above rule is a subset of Java class or names.
      */
     String name();
 
     /**
-     * 利用するエクスポーターに対するエクスポーター記述クラス。
+     * The exporter description class for describing the export operation of the target flow output.
      */
     Class<? extends ExporterDescription> description();
 }

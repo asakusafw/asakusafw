@@ -27,26 +27,25 @@ import com.asakusafw.utils.java.internal.parser.javadoc.ir.JavadocToken;
 import com.asakusafw.utils.java.internal.parser.javadoc.ir.JavadocTokenKind;
 
 /**
- * Javadoc全体を解析して{@link IrDocComment}を生成する。
+ * A parser for Java documentation comments.
  */
 public final class JavadocParser extends JavadocBaseParser {
 
     /**
-     * インスタンスを生成する。
-     * @param blockParsers ブロックを解析するパーサ
-     * @throws IllegalArgumentException 引数が{@code null}であった場合
-     * @throws IllegalArgumentException 引数が空のリストであった場合
+     * Creates a new instance.
+     * @param blockParsers the block parsers
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocParser(List<? extends JavadocBlockParser> blockParsers) {
         super(blockParsers);
     }
 
     /**
-     * このパーサを利用して、後続するJavadocを解析する。
-     * @param scanner 読み込み元のスキャナ
-     * @return 後続するJavadoc
-     * @throws JavadocParseException 不正な形式のJavadocであった場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Parses the documentation comments.
+     * @param scanner the source scanner
+     * @return the analyzed element
+     * @throws JavadocParseException if the documentation comment is malformed
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public IrDocComment parse(JavadocScanner scanner) throws JavadocParseException {
         if (scanner == null) {
@@ -71,19 +70,18 @@ public final class JavadocParser extends JavadocBaseParser {
     }
 
     /**
-     * このパーサを利用して、後続するブロックを解析する。
-     * @param scanner 読み込み元のスキャナ
-     * @return 後続するブロック
-     * @throws JavadocParseException 不正な形式のJavadocであった場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
-     * @throws IllegalArgumentException 空のブロックが指定された場合
+     * Parses a block.
+     * @param scanner the source scanner
+     * @return the analyzed block
+     * @throws JavadocParseException if the block is malformed
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public IrDocBlock parseBlock(JavadocScanner scanner) throws JavadocParseException {
         if (scanner == null) {
             throw new IllegalArgumentException("scanner"); //$NON-NLS-1$
         }
 
-        // コメント終端を探す
+        // search for end of comment
         int eoc = JavadocScannerUtil.countUntilCommentEnd(scanner, true, 0);
         if (eoc >= 0) {
             throw new IllegalEndOfCommentException(scanner.lookahead(0).getLocation(), null);
@@ -116,30 +114,30 @@ public final class JavadocParser extends JavadocBaseParser {
 
         IrLocation firstLocation = scanner.lookahead(0).getLocation();
 
-        // "/" "*" "*"
+        // check: "/" "*" "*"
         if (!hasJavadocHead(scanner, offset)) {
             throw new IllegalDocCommentFormatException(true, scanner.lookahead(0).getLocation(), null);
         }
         offset += 3;
 
-        // "/" "*" "*" "/" の回避
+        // avoid: "/" "*" "*" "/"
         if (scanner.lookahead(offset).getKind() == JavadocTokenKind.SLASH) {
             throw new IllegalDocCommentFormatException(true, scanner.lookahead(0).getLocation(), null);
         }
 
-        // 本体ブロックの取得
+        // check content range
         int bodyStart = offset;
         offset += JavadocScannerUtil.countUntilCommentEnd(scanner, false, offset);
         int bodyEnd = offset;
 
-        // "*" "/"
+        // check: "*" "/"
         if (!hasJavadocTail(scanner, offset)) {
             throw new IllegalDocCommentFormatException(false, scanner.lookahead(0).getLocation(), null);
         }
 
         IrLocation lastLocation = scanner.lookahead(offset + 1).getLocation();
 
-        // Javadocの中身のみをスキャンするスキャナ
+        // create content scanner
         int base = scanner.getIndex();
         JavadocScanner bodyScanner = new DefaultJavadocScanner(
             scanner.getTokens().subList(base + bodyStart, base + bodyEnd),
@@ -157,7 +155,6 @@ public final class JavadocParser extends JavadocBaseParser {
     private static List<JavadocBlockInfo> splitBlocks(JavadocScanner scanner) {
         List<JavadocBlockInfo> blocks = new ArrayList<JavadocBlockInfo>();
 
-        // 概要ブロックの解析
         JavadocBlockInfo synopsis = fetchSynopsisBlock(scanner);
         if (synopsis != null) {
             blocks.add(synopsis);
@@ -191,7 +188,7 @@ public final class JavadocParser extends JavadocBaseParser {
 
         scanner.consume(1);
 
-        // タグ名を解析
+        // fetch: tag name
         int tagCount = JavadocBlockParserUtil.countWhileTagName(scanner, 0);
         List<JavadocToken> tagNames = new ArrayList<JavadocToken>(tagCount);
         for (int i = 0; i < tagCount; i++) {
@@ -199,11 +196,10 @@ public final class JavadocParser extends JavadocBaseParser {
         }
         String tagName = JavadocBlockParserUtil.buildString(tagNames);
 
-        // 本体を解析
+        // fetch: body
         int bodyStart = scanner.getIndex();
         int count = JavadocScannerUtil.countUntilBlockEnd(scanner, 0);
 
-        // 情報として作成
         int success = scanner.lookahead(count).getStartPosition();
         DefaultJavadocScanner bs = new DefaultJavadocScanner(
             new ArrayList<JavadocToken>(tokens.subList(bodyStart, bodyStart + count)),
@@ -223,19 +219,18 @@ public final class JavadocParser extends JavadocBaseParser {
 
         int offset = 0;
 
-        // 先頭に後続するアスタリスクの除去
+        // remove top "*"
         offset += JavadocScannerUtil.countWhile(EnumSet.of(JavadocTokenKind.ASTERISK), scanner, offset);
 
-        // 最初の表示可能文字までジャンプ
+        // remove white-spaces
         offset += JavadocScannerUtil.countUntilNextPrintable(scanner, offset);
 
         JavadocTokenKind kind = scanner.lookahead(offset).getKind();
         if (kind == JavadocTokenKind.AT || kind == JavadocTokenKind.EOF) {
-            // 概要ブロックが空の場合はnull
+            // no synopsis block
             scanner.consume(offset);
             return null;
         } else {
-            // 概要ブロックを解析
             int count = JavadocScannerUtil.countUntilBlockEnd(scanner, offset);
             int success = scanner.lookahead(offset + count).getStartPosition();
             DefaultJavadocScanner bs = new DefaultJavadocScanner(
@@ -279,23 +274,14 @@ public final class JavadocParser extends JavadocBaseParser {
         private final List<JavadocBlockInfo> blockScanners;
 
         JavadocInfo(IrLocation location, List<JavadocBlockInfo> blockScanners) {
-            super();
             this.location = location;
             this.blockScanners = blockScanners;
         }
 
-        /**
-         * 本体の位置。
-         * @return 本体の位置
-         */
         public IrLocation getLocation() {
             return this.location;
         }
 
-        /**
-         * ブロックスキャナの一覧。
-         * @return ブロックスキャナの一覧
-         */
         public List<JavadocBlockInfo> getBlocks() {
             return this.blockScanners;
         }

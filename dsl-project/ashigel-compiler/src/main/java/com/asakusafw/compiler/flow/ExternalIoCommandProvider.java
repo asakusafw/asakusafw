@@ -27,46 +27,45 @@ import com.asakusafw.compiler.flow.ExternalIoDescriptionProcessor.IoContext;
 import com.asakusafw.runtime.util.VariableTable;
 
 /**
- * ジョブフローを処理するためのコマンドを提供する。
+ * Provides commands for processing external I/Os.
  */
 public class ExternalIoCommandProvider implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     /**
-     * このコマンドプロバイダーの名前を返す。
-     * @return このコマンドプロバイダーの名前
+     * Returns the name of this command provider.
+     * @return the command provider name
      */
     public String getName() {
         return "default"; //$NON-NLS-1$
     }
 
     /**
-     * 出力するワークフローに対して、このインポーターに対するコマンド情報を返す。
-     * @param context コマンドの文脈情報
-     * @return 対応するコマンドの一覧
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns command list for launching the importer.
+     * @param context the command context
+     * @return the corresponding command list
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public List<Command> getImportCommand(CommandContext context) {
         return Collections.emptyList();
     }
 
     /**
-     * 出力するワークフローに対して、このエクスポーターに対するコマンド情報を返す。
-     * @param context コマンドの文脈情報
-     * @return 対応するコマンドの一覧
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns command list for launching the exporter.
+     * @param context the command context
+     * @return the corresponding command list
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public List<Command> getExportCommand(CommandContext context) {
         return Collections.emptyList();
     }
 
     /**
-     * 出力するワークフローに対して、このインポーターおよび
-     * エクスポーターに対するジョブ失敗時の復旧コマンド情報を返す。
-     * @param context コマンドの文脈情報
-     * @return 対応するコマンドの一覧
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns command list for recovering the target external I/O component.
+     * @param context the command context
+     * @return the corresponding command list
+     * @throws IllegalArgumentException if the parameter is {@code null}
      * @deprecated Please use {@link #getFinalizeCommand(CommandContext)} instead
      */
     @Deprecated
@@ -75,29 +74,27 @@ public class ExternalIoCommandProvider implements Serializable {
     }
 
     /**
-     * 出力するワークフローに対して、このインポーターおよび
-     * エクスポーターに対するジョブ開始前の初期化コマンド情報を返す。
-     * @param context コマンドの文脈情報
-     * @return 対応するコマンドの一覧
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns command list for initializing the target external I/O component.
+     * @param context the command context
+     * @return the corresponding command list
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public List<Command> getInitializeCommand(CommandContext context) {
         return Collections.emptyList();
     }
 
     /**
-     * 出力するワークフローに対して、このインポーターおよび
-     * エクスポーターに対するジョブ終了後の最終コマンド情報を返す。
-     * @param context コマンドの文脈情報
-     * @return 対応するコマンドの一覧
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns command list for finalizing the target external I/O component.
+     * @param context the command context
+     * @return the corresponding command list
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public List<Command> getFinalizeCommand(CommandContext context) {
         return Collections.emptyList();
     }
 
     /**
-     * コマンドの文脈情報。
+     * Represents a context for {@link ExternalIoCommandProvider}.
      */
     public static class CommandContext {
 
@@ -108,11 +105,11 @@ public class ExternalIoCommandProvider implements Serializable {
         private final String variableList;
 
         /**
-         * インスタンスを生成する。
-         * @param homePathPrefix コマンドホームディレクトリの接頭辞
-         * @param executionId 処理対象の実行ID
-         * @param variableList 変数表
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Creates a new instance.
+         * @param homePathPrefix the command path prefix (may be the framework installation path)
+         * @param executionId the target execution ID
+         * @param variableList the serialized batch arguments
+         * @throws IllegalArgumentException if the parameters are {@code null}
          */
         public CommandContext(String homePathPrefix, String executionId, String variableList) {
             Precondition.checkMustNotBeNull(homePathPrefix, "homePathPrefix"); //$NON-NLS-1$
@@ -124,11 +121,11 @@ public class ExternalIoCommandProvider implements Serializable {
         }
 
         /**
-         * インスタンスを生成する。
-         * @param homePathPrefix コマンドホームディレクトリの接頭辞
-         * @param executionId 処理対象の実行ID
-         * @param variables 変数表
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Creates a new instance.
+         * @param homePathPrefix the command path prefix (may be the framework installation path)
+         * @param executionId the target execution ID
+         * @param variables the batch arguments
+         * @throws IllegalArgumentException if the parameters are {@code null}
          */
         public CommandContext(String homePathPrefix, String executionId, Map<String, String> variables) {
             Precondition.checkMustNotBeNull(homePathPrefix, "homePathPrefix"); //$NON-NLS-1$
@@ -142,24 +139,24 @@ public class ExternalIoCommandProvider implements Serializable {
         }
 
         /**
-         * コマンドホームディレクトリの接頭辞を返す。
-         * @return コマンドホームディレクトリの接頭辞
+         * Returns the command path prefix (may be the framework installation path).
+         * @return the command path prefix
          */
         public String getHomePathPrefix() {
             return homePathPrefix;
         }
 
         /**
-         * 処理中のフローに対する実行IDを返す。
-         * @return 処理中のフローに対する実行ID
+         * Returns the target execution ID.
+         * @return the target execution ID
          */
         public String getExecutionId() {
             return executionId;
         }
 
         /**
-         * 変数表の文字列表現を返す。
-         * @return 変数表の文字列表現
+         * Returns the serialized batch arguments.
+         * @return the serialized batch arguments
          */
         public String getVariableList() {
             return variableList;
@@ -167,7 +164,7 @@ public class ExternalIoCommandProvider implements Serializable {
     }
 
     /**
-     * 各種コマンドを表す。
+     * Represents a command for launching external I/O components.
      * @since 0.1.0
      * @version 0.5.1
      */
@@ -186,12 +183,12 @@ public class ExternalIoCommandProvider implements Serializable {
         private final IoContext context;
 
         /**
-         * インスタンスを生成する。
-         * @param commandLine コマンドラインを構成するセグメント一覧
-         * @param moduleName この機能を提供するモジュールのID
-         * @param profileName この機能を利用するロールプロファイルのID、規定の場合は{@code null}
-         * @param environment 環境変数の一覧
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Creates a new instance.
+         * @param commandLine the command line tokens
+         * @param moduleName target module ID
+         * @param profileName target profile ID, or {@code null} for the default profile
+         * @param environment target environment variables
+         * @throws IllegalArgumentException if some parameters were {@code null}
          * @deprecated Use {@link IoContext} instead
          */
         @Deprecated
@@ -243,20 +240,21 @@ public class ExternalIoCommandProvider implements Serializable {
         }
 
         /**
-         * このコマンドのコマンドライントークンの一覧を返す。
-         * @return このコマンドのコマンドライントークン
+         * Returns the command line tokens.
+         * @return the command line tokens
          */
         public List<String> getCommandTokens() {
             return commandLine;
         }
 
         /**
-         * このコマンドのコマンドライン文字列を返す。
-         * @return このコマンドのコマンドライン文字列
+         * Returns the concatenated command line (for b-sh).
+         * @return the concatenated command line
+         * @deprecated use {@link #getCommandTokens()} instead
          */
+        @Deprecated
         public String getCommandLineString() {
             StringBuilder buf = new StringBuilder();
-            // TODO あらゆる文字に対応する
             for (Map.Entry<String, String> entry : environment.entrySet()) {
                 buf.append("'" + entry.getKey() + "'"); //$NON-NLS-1$ //$NON-NLS-2$
                 buf.append("="); //$NON-NLS-1$
@@ -275,24 +273,24 @@ public class ExternalIoCommandProvider implements Serializable {
         }
 
         /**
-         * この機能を提供するモジュールのIDを返す。
-         * @return この機能を提供するモジュールのID
+         * Returns the module ID of the target external I/O component.
+         * @return the module ID
          */
         public String getModuleName() {
             return moduleName;
         }
 
         /**
-         * この機能を利用する際のロールプロファイルのIDを返す。
-         * @return この機能を利用する際のロールプロファイルのID、デフォルトの場合は{@code null}
+         * Returns the profile ID for using this command.
+         * @return the profile ID, or {@code null} for using the default profile
          */
         public String getProfileName() {
             return profileName;
         }
 
         /**
-         * 環境変数の一覧を返す。
-         * @return 環境変数の一覧
+         * Returns the environment variables.
+         * @return the environment variables
          */
         public Map<String, String> getEnvironment() {
             return environment;

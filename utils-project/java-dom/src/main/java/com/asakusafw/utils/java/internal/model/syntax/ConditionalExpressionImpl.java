@@ -21,23 +21,14 @@ import com.asakusafw.utils.java.model.syntax.ModelKind;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link ConditionalExpression}の実装。
+ * An implementation of {@link ConditionalExpression}.
  */
 public final class ConditionalExpressionImpl extends ModelRoot implements ConditionalExpression {
 
-    /**
-     * 条件式。
-     */
     private Expression condition;
 
-    /**
-     * 条件成立時に評価される式。
-     */
     private Expression thenExpression;
 
-    /**
-     * 条件不成立時に評価される式。
-     */
     private Expression elseExpression;
 
     @Override
@@ -46,11 +37,9 @@ public final class ConditionalExpressionImpl extends ModelRoot implements Condit
     }
 
     /**
-     * 条件式を設定する。
-     * @param condition
-     *     条件式
-     * @throws IllegalArgumentException
-     *     {@code condition}に{@code null}が指定された場合
+     * Sets the condition term.
+     * @param condition the condition term
+     * @throws IllegalArgumentException if {@code condition} was {@code null}
      */
     public void setCondition(Expression condition) {
         Util.notNull(condition, "condition"); //$NON-NLS-1$
@@ -63,11 +52,9 @@ public final class ConditionalExpressionImpl extends ModelRoot implements Condit
     }
 
     /**
-     * 条件成立時に評価される式を設定する。
-     * @param thenExpression
-     *     条件成立時に評価される式
-     * @throws IllegalArgumentException
-     *     {@code thenExpression}に{@code null}が指定された場合
+     * Sets the truth term.
+     * @param thenExpression the truth term
+     * @throws IllegalArgumentException if {@code thenExpression} was {@code null}
      */
     public void setThenExpression(Expression thenExpression) {
         Util.notNull(thenExpression, "thenExpression"); //$NON-NLS-1$
@@ -80,11 +67,9 @@ public final class ConditionalExpressionImpl extends ModelRoot implements Condit
     }
 
     /**
-     * 条件不成立時に評価される式を設定する。
-     * @param elseExpression
-     *     条件不成立時に評価される式
-     * @throws IllegalArgumentException
-     *     {@code elseExpression}に{@code null}が指定された場合
+     * Sets the false term.
+     * @param elseExpression the false term
+     * @throws IllegalArgumentException if {@code elseExpression} was {@code null}
      */
     public void setElseExpression(Expression elseExpression) {
         Util.notNull(elseExpression, "elseExpression"); //$NON-NLS-1$
@@ -92,7 +77,7 @@ public final class ConditionalExpressionImpl extends ModelRoot implements Condit
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#CONDITIONAL_EXPRESSION}を返す。
+     * Returns {@link ModelKind#CONDITIONAL_EXPRESSION} which represents this element kind.
      * @return {@link ModelKind#CONDITIONAL_EXPRESSION}
      */
     @Override
@@ -101,8 +86,7 @@ public final class ConditionalExpressionImpl extends ModelRoot implements Condit
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitConditionalExpression(this, context);
     }

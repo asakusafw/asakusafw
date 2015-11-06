@@ -15,9 +15,8 @@
  */
 package com.asakusafw.utils.java.model.syntax;
 
-
 /**
- * コメントを表現する基底インターフェース。
+ * An abstract super interface of comments.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:3.7] Comments} </li>

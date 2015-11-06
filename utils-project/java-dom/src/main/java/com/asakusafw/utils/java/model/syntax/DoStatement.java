@@ -15,9 +15,8 @@
  */
 package com.asakusafw.utils.java.model.syntax;
 
-
 /**
- * {@code do}文を表現するインターフェース。
+ * An interface which represents {@code do-while} statement.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:14.13] The do Statement} </li>
@@ -27,19 +26,15 @@ package com.asakusafw.utils.java.model.syntax;
 public interface DoStatement
         extends Statement {
 
-    // properties
-
     /**
-     * ループ本体を返す。
-     * @return
-     *     ループ本体
+     * Returns the loop body.
+     * @return the loop body
      */
     Statement getBody();
 
     /**
-     * 条件式を返す。
-     * @return
-     *     条件式
+     * Returns the condition expression.
+     * @return the condition expression
      */
     Expression getCondition();
 }

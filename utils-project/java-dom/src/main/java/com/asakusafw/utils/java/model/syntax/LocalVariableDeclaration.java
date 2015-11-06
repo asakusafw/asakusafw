@@ -18,7 +18,7 @@ package com.asakusafw.utils.java.model.syntax;
 import java.util.List;
 
 /**
- * ローカル変数宣言を表現するインターフェース。
+ * An interface which represents local variable declaration.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:14.4] Local Variable Declaration Statements} </li>
@@ -28,27 +28,21 @@ import java.util.List;
 public interface LocalVariableDeclaration
         extends Statement, ForInitializer {
 
-    // properties
-
     /**
-     * 修飾子および注釈の一覧を返す。
-     * <p> 修飾子または注釈が一つも宣言されない場合は空が返される。 </p>
-     * @return
-     *     修飾子および注釈の一覧
+     * Returns the modifiers and annotations.
+     * @return the modifiers and annotations
      */
     List<? extends Attribute> getModifiers();
 
     /**
-     * 宣言する変数の型を返す。
-     * @return
-     *     宣言する変数の型
+     * Returns the variable type.
+     * @return the variable type
      */
     Type getType();
 
     /**
-     * 宣言する変数の一覧を返す。
-     * @return
-     *     宣言する変数の一覧
+     * Returns the variable declarators.
+     * @return the variable declarators
      */
     List<? extends VariableDeclarator> getVariableDeclarators();
 }

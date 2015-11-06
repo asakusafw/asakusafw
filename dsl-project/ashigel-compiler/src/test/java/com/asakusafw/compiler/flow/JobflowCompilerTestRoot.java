@@ -70,7 +70,7 @@ import com.asakusafw.vocabulary.flow.FlowDescription;
 import com.asakusafw.vocabulary.flow.graph.FlowGraph;
 
 /**
- * バッチコンパイラに関するテストの基底クラス。
+ * A test root for compiling jobflow compilers.
  */
 public class JobflowCompilerTestRoot {
 
@@ -81,7 +81,7 @@ public class JobflowCompilerTestRoot {
     private VolatilePackager packager = new VolatilePackager();
 
     /**
-     * 利用可能な環境。
+     * The environment.
      */
     protected FlowCompilingEnvironment environment;
 
@@ -120,9 +120,9 @@ public class JobflowCompilerTestRoot {
     }
 
     /**
-     * ジョブフローを解析してステージグラフを返す。
-     * @param aClass ジョブフロー記述クラス
-     * @return ステージグラフ
+     * Compiles a jobflow class and returns the stage models.
+     * @param aClass the jobflow class
+     * @return the compiled results
      */
     protected List<StageModel> compile(Class<? extends FlowDescription> aClass) {
         assert aClass != null;
@@ -131,9 +131,9 @@ public class JobflowCompilerTestRoot {
     }
 
     /**
-     * ジョブフローを解析してステージグラフを返す。
-     * @param aClass ジョブフロー記述クラス
-     * @return ステージグラフ
+     * Analyzes a jobflow class and returns the stage graph.
+     * @param aClass the jobflow class
+     * @return the stage graph
      */
     protected StageGraph jfToStageGraph(Class<? extends FlowDescription> aClass) {
         assert aClass != null;
@@ -157,10 +157,9 @@ public class JobflowCompilerTestRoot {
     }
 
     /**
-     * ステージグラフ全体をコンパイルして個々のステージの構造を返す。
-     * @param graph ステージグラフ全体
-     * @return コンパイル結果
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Compiles a stage graph and returns the stage models.
+     * @param graph the target stage graph
+     * @return the compile results
      */
     protected List<StageModel> compileStages(StageGraph graph) {
         try {
@@ -171,10 +170,10 @@ public class JobflowCompilerTestRoot {
     }
 
     /**
-     * ステージブロックを解析して断片までの解析が終わったステージの構造を返す。
-     * @param block ステージブロック
-     * @return 断片までの解析が終わったステージの構造
-     * @throws IOException 出力に失敗した場合
+     * Compiles a stage block and returns a stage model.
+     * @param block the stage block
+     * @return the stage model
+     * @throws IOException if failed to output
      */
     protected StageModel compileFragments(StageBlock block) throws IOException {
         ShuffleModel shuffle = compileShuffle(block);
@@ -208,10 +207,10 @@ public class JobflowCompilerTestRoot {
     }
 
     /**
-     * ステージブロックを解析してシャッフルの構造を返す。
-     * @param block ステージブロック
-     * @return シャッフルの構造、シャッフルしない場合は{@code null}
-     * @throws IOException 出力に失敗した場合
+     * Compiles a stage block and returns its shuffle operation.
+     * @param block the stage block
+     * @return the shuffle model, or {@code null} if the target has no shuffle operations
+     * @throws IOException if failed to output
      */
     protected ShuffleModel compileShuffle(StageBlock block) throws IOException {
         ShuffleModel shuffle = new ShuffleAnalyzer(environment).analyze(block);
@@ -235,11 +234,11 @@ public class JobflowCompilerTestRoot {
     }
 
     /**
-     * 指定のクラスローダーからクラスをロードし、そのクラスのインスタンスを生成して返す。
-     * @param loader クラスローダー
-     * @param name クラスの名前
-     * @param arguments 引数の一覧
-     * @return 生成したインスタンス
+     * Loads a class and returns its object.
+     * @param loader the class loader
+     * @param name the class name
+     * @param arguments the arguments
+     * @return the created instance
      */
     protected Object create(
             ClassLoader loader,
@@ -259,12 +258,12 @@ public class JobflowCompilerTestRoot {
     }
 
     /**
-     * 指定のクラスローダーからクラスをロードし、そのクラスのインスタンスを生成して返す。
-     * @param <T> 入力の型
-     * @param loader クラスローダー
-     * @param name クラスの名前
-     * @param arguments 引数の一覧
-     * @return 生成したインスタンス
+     * Loads a class and returns its object.
+     * @param <T> the data type
+     * @param loader the class loader
+     * @param name the class name
+     * @param arguments the arguments
+     * @return the created instance
      */
     @SuppressWarnings("unchecked")
     protected <T> Result<T> createResult(
@@ -275,13 +274,13 @@ public class JobflowCompilerTestRoot {
     }
 
     /**
-     * 指定のクラスローダーからクラスをロードし、そのクラスのインスタンスを生成して返す。
-     * @param <K> キーの型
-     * @param <V> 値の型
-     * @param loader クラスローダー
-     * @param name クラスの名前
-     * @param arguments 引数の一覧
-     * @return 生成したインスタンス
+     * Loads a class and returns its object.
+     * @param <K> the key type
+     * @param <V> the value type
+     * @param loader the class loader
+     * @param name the class name
+     * @param arguments the arguments
+     * @return the created instance
      */
     @SuppressWarnings("unchecked")
     protected <K extends Writable, V extends Writable> Rendezvous<V> createRendezvous(
@@ -292,11 +291,11 @@ public class JobflowCompilerTestRoot {
     }
 
     /**
-     * 指定の名前を持つメソッドを起動した結果を返す。
-     * @param object 対象のオブジェクト
-     * @param name メソッドの名前
-     * @param arguments 引数の一覧
-     * @return 起動結果
+     * Invokes the target method.
+     * @param object the target object
+     * @param name the target method name
+     * @param arguments the arguments
+     * @return the method result
      */
     protected Object invoke(Object object, String name, Object... arguments) {
         try {
@@ -312,10 +311,10 @@ public class JobflowCompilerTestRoot {
     }
 
     /**
-     * 指定の名前を持つフィールドの内容を返す。
-     * @param object 対象のオブジェクト
-     * @param name フィールドの名前
-     * @return 参照結果
+     * Returns the field value.
+     * @param object the target object
+     * @param name the field name
+     * @return the field value
      */
     protected Object access(Object object, String name) {
         try {
@@ -331,10 +330,10 @@ public class JobflowCompilerTestRoot {
     }
 
     /**
-     * 指定のステージのシャッフルキーを返す。
-     * @param loader 利用するローダー
-     * @param stage 対象のステージ
-     * @return 生成したシャッフルキー
+     * Returns the shuffle key of the target stage.
+     * @param loader the class loader
+     * @param stage the target stage
+     * @return the target shuffle key
      */
     protected SegmentedWritable createShuffleKey(
             ClassLoader loader,
@@ -345,10 +344,10 @@ public class JobflowCompilerTestRoot {
     }
 
     /**
-     * 指定のステージのシャッフル値を返す。
-     * @param loader 利用するローダー
-     * @param stage 対象のステージ
-     * @return 生成したシャッフル値
+     * Returns the shuffle value of the target stage.
+     * @param loader the class loader
+     * @param stage the target stage
+     * @return the target shuffle value
      */
     protected SegmentedWritable createShuffleValue(
             ClassLoader loader,
@@ -359,10 +358,10 @@ public class JobflowCompilerTestRoot {
     }
 
     /**
-     * 指定のシャッフルキーに値を設定する。
-     * @param segment 対象のセグメント
-     * @param key キー
-     * @param toSet 設定する値
+     * Sets a content into the target shuffle key.
+     * @param segment the target segment
+     * @param key the target object
+     * @param toSet the source object
      */
     protected void setShuffleKey(
             Segment segment,
@@ -378,10 +377,10 @@ public class JobflowCompilerTestRoot {
     }
 
     /**
-     * 指定のシャッフル値に値を設定する。
-     * @param segment 対象のセグメント
-     * @param value 対象のシャッフル値
-     * @param toSet 設定する値
+     * Sets a content into the target shuffle value.
+     * @param segment the target segment
+     * @param value the target object
+     * @param toSet the source object
      */
     protected void setShuffleValue(
             Segment segment,
@@ -397,11 +396,11 @@ public class JobflowCompilerTestRoot {
     }
 
     /**
-     * 指定のシャッフルキーとシャッフル値に値を設定する。
-     * @param segment 対象のセグメント
-     * @param key シャッフルキー
-     * @param value シャッフル値
-     * @param toSet 設定する値
+     * Sets a content into the target shuffle key and value.
+     * @param segment the target segment
+     * @param key the target key object
+     * @param value the target value object
+     * @param toSet the source object
      */
     protected void setShuffleKeyValue(
             Segment segment,
@@ -413,10 +412,10 @@ public class JobflowCompilerTestRoot {
     }
 
     /**
-     * 指定のシャッフル値から特定セグメントの値を設定する。
-     * @param segment 対象のセグメント
-     * @param value 対象のシャッフル値
-     * @return セグメントの値
+     * Restores a source object from the shuffle value.
+     * @param segment the target segment
+     * @param value the target shuffle value
+     * @return the source object for the target segment
      */
     protected Object getShuffleValue(
             Segment segment,
@@ -431,8 +430,8 @@ public class JobflowCompilerTestRoot {
     }
 
     /**
-     * エミッターに追加された結果を元にコンパイルを実行する。
-     * @return 結果をロードするためのローダー
+     * Compiles previously added sources.
+     * @return the class loader for loading results
      */
     protected ClassLoader start() {
         List<Diagnostic<? extends JavaFileObject>> diagnostics = doCompile();

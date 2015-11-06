@@ -16,7 +16,7 @@
 package com.asakusafw.utils.java.internal.parser.javadoc.ir;
 
 /**
- * テキスト。
+ * Represents plain text in {@link IrDocComment}.
  */
 public class IrDocText extends AbstractIrDocElement implements IrDocFragment {
 
@@ -26,10 +26,11 @@ public class IrDocText extends AbstractIrDocElement implements IrDocFragment {
 
     /**
      * Creates a new instance.
-     * @param content 内容のテキスト
+     * @param content the contents
+     * @throws IllegalArgumentException if the string contains comment delimiters (<code>&#47;&#42;</code>)
      */
     public IrDocText(String content) {
-        super();
+        checkContent(content);
         this.content = content;
     }
 
@@ -39,18 +40,18 @@ public class IrDocText extends AbstractIrDocElement implements IrDocFragment {
     }
 
     /**
-     * 内容のテキストを返す。
-     * @return 内容のテキスト
+     * Returns the contents.
+     * @return the contents
      */
     public String getContent() {
         return this.content;
     }
 
     /**
-     * 内容のテキストを設定する。
-     * @param content 設定するテキスト
-     * @throws IllegalArgumentException 引数に{@code null}が含まれていた場合
-     * @throws IllegalArgumentException 引数に{@code "*" "/"}の連続が含まれる場合
+     * Sets the contents.
+     * @param content the contents
+     * @throws IllegalArgumentException if the parameter is {@code null}
+     * @throws IllegalArgumentException if the string contains comment delimiters (<code>&#47;&#42;</code>)
      */
     public void setContent(String content) {
         if (content == null) {

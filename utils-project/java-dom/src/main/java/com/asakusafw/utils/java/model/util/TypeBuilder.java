@@ -32,23 +32,19 @@ import com.asakusafw.utils.java.model.syntax.SimpleName;
 import com.asakusafw.utils.java.model.syntax.Type;
 
 /**
- * 型に関連する要素を構築する。
- * <p>
- * このクラスのオブジェクトは、自身を破壊的に変更して型を構築する。
- * 特定の状態のビルダーを再利用する場合、{@link #copy()}を利用すること。
- * </p>
+ * A builder for building types or their related elements.
  */
 public class TypeBuilder {
 
-    private ModelFactory f;
+    private final ModelFactory f;
 
     private Type context;
 
     /**
-     * インスタンスを生成する。
-     * @param factory 利用するファクトリ
-     * @param context 対象の型
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Creates a new instance.
+     * @param factory the Java DOM factory
+     * @param context the context type
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public TypeBuilder(ModelFactory factory, Type context) {
         if (factory == null) {
@@ -62,25 +58,25 @@ public class TypeBuilder {
     }
 
     /**
-     * 現在のビルダーと同等の内容を持つビルダーを新しく作成して返す。
-     * @return コピーしたビルダー
+     * Returns a copy of this builder.
+     * @return the copy
      */
     public TypeBuilder copy() {
         return new TypeBuilder(f, context);
     }
 
     /**
-     * このビルダーで構築した型を返す。
-     * @return このビルダーで構築した型
+     * Returns the built type.
+     * @return the built type
      */
     public Type toType() {
         return context;
     }
 
     /**
-     * このビルダーで構築した型を、名前型として返す。
-     * @return このビルダーで構築した型
-     * @throws IllegalStateException 構築した型が名前型でない場合
+     * Returns the built type as a named type.
+     * @return the built type
+     * @throws IllegalStateException the building type is not a named type
      */
     public NamedType toNamedType() {
         if (context.getModelKind() != ModelKind.NAMED_TYPE) {
@@ -90,9 +86,9 @@ public class TypeBuilder {
     }
 
     /**
-     * このビルダーで構築した型を、配列型として返す。
-     * @return このビルダーで構築した型
-     * @throws IllegalStateException 構築した型が配列型でない場合
+     * Returns the built type as an array type.
+     * @return the built type
+     * @throws IllegalStateException the building type is not an array type
      */
     public ArrayType toArrayType() {
         if (context.getModelKind() != ModelKind.ARRAY_TYPE) {
@@ -102,10 +98,10 @@ public class TypeBuilder {
     }
 
     /**
-     * このビルダーで構築した型に型引数を適用して返す。
-     * @param typeArguments 型引数の一覧
-     * @return 適用した結果をさらに操作するビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the parameterized type.
+     * @param typeArguments the type arguments
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public TypeBuilder parameterize(Type... typeArguments) {
         if (typeArguments == null) {
@@ -115,10 +111,10 @@ public class TypeBuilder {
     }
 
     /**
-     * このビルダーで構築した型に型引数を適用して返す。
-     * @param typeArguments 型引数の一覧
-     * @return 適用した結果をさらに操作するビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the parameterized type.
+     * @param typeArguments the type arguments
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public TypeBuilder parameterize(List<? extends Type> typeArguments) {
         if (typeArguments == null) {
@@ -131,10 +127,10 @@ public class TypeBuilder {
     }
 
     /**
-     * このビルダーで構築した型に型引数を適用して返す。
-     * @param typeArguments 型引数の一覧
-     * @return 適用した結果をさらに操作するビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the parameterized type.
+     * @param typeArguments the type arguments
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public TypeBuilder parameterize(java.lang.reflect.Type... typeArguments) {
         if (typeArguments == null) {
@@ -148,10 +144,10 @@ public class TypeBuilder {
     }
 
     /**
-     * このビルダーで構築した型を限定子として、さらに名前を続けた型を構築する。
-     * @param name 続ける名前
-     * @return 適用した結果をさらに操作するビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the qualified type.
+     * @param name the enclosing type name
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public TypeBuilder enclose(Name name) {
         if (name == null) {
@@ -170,10 +166,10 @@ public class TypeBuilder {
     }
 
     /**
-     * このビルダーで構築した型を限定子として、さらに名前を続けた型を構築する。
-     * @param name 続ける名前
-     * @return 適用した結果をさらに操作するビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the qualified type.
+     * @param name the enclosing type name
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public TypeBuilder enclose(String name) {
         if (name == null) {
@@ -183,10 +179,10 @@ public class TypeBuilder {
     }
 
     /**
-     * このビルダーで構築した型を要素型として、指定の次元数の配列型を構築する。
-     * @param dimensions 次元数
-     * @return 適用した結果をさらに操作するビルダー
-     * @throws IllegalArgumentException 引数に負の値が指定された場合
+     * Returns the array type.
+     * @param dimensions the number of dimensions
+     * @return this
+     * @throws IllegalArgumentException if the parameter is a negative value
      */
     public TypeBuilder array(int dimensions) {
         if (dimensions < 0) {
@@ -200,19 +196,19 @@ public class TypeBuilder {
     }
 
     /**
-     * このビルダーで構築した型に対するクラスリテラルを構築する。
-     * @return 適用した結果をさらに操作するビルダー
+     * Returns a class literal.
+     * @return the chained expression builder
      */
     public ExpressionBuilder dotClass() {
         return expr(f.newClassLiteral(context));
     }
 
     /**
-     * このビルダーで構築した配列型に対する配列オブジェクトを構築する。
-     * @param dimensions 次元ごとの要素数一覧
-     * @return 適用した結果をさらに操作するビルダー
-     * @throws IllegalStateException 構築した型が配列型でない場合
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the array instance creation expression.
+     * @param dimensions the number of array elements for each dimension
+     * @return the chained expression builder
+     * @throws IllegalStateException if the building type is not an array type
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public ExpressionBuilder newArray(int... dimensions) {
         if (dimensions == null) {
@@ -226,11 +222,11 @@ public class TypeBuilder {
     }
 
     /**
-     * このビルダーで構築した配列型に対する配列オブジェクトを構築する。
-     * @param dimensions 次元ごとの要素数一覧
-     * @return 適用した結果をさらに操作するビルダー
-     * @throws IllegalStateException 構築した型が配列型でない場合
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the array instance creation expression.
+     * @param dimensions the number of array elements for each dimension
+     * @return the chained expression builder
+     * @throws IllegalStateException if the building type is not an array type
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public ExpressionBuilder newArray(Expression... dimensions) {
         if (dimensions == null) {
@@ -240,44 +236,38 @@ public class TypeBuilder {
     }
 
     /**
-     * このビルダーで構築した配列型に対する配列オブジェクトを構築する。
-     * @param dimensions 次元ごとの要素数一覧
-     * @return 適用した結果をさらに操作するビルダー
-     * @throws IllegalStateException 構築した型が配列型でない場合
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the array instance creation expression.
+     * @param dimensions the number of array elements for each dimension
+     * @return the chained expression builder
+     * @throws IllegalStateException if the building type is not an array type
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public ExpressionBuilder newArray(List<? extends Expression> dimensions) {
         if (dimensions == null) {
             throw new IllegalArgumentException("dimensions must not be null"); //$NON-NLS-1$
         }
-        return expr(f.newArrayCreationExpression(
-                toArrayType(),
-                dimensions,
-                null));
+        return expr(f.newArrayCreationExpression(toArrayType(), dimensions, null));
     }
 
     /**
-     * このビルダーで構築した配列型に対する配列オブジェクトを構築する。
-     * @param initializer 配列初期化子
-     * @return 適用した結果をさらに操作するビルダー
-     * @throws IllegalStateException 構築した型が配列型でない場合
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the array instance creation expression.
+     * @param initializer the array initializer
+     * @return the chained expression builder
+     * @throws IllegalStateException if the building type is not an array type
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public ExpressionBuilder newArray(ArrayInitializer initializer) {
         if (initializer == null) {
             throw new IllegalArgumentException("initializer must not be null"); //$NON-NLS-1$
         }
-        return expr(f.newArrayCreationExpression(
-                toArrayType(),
-                Collections.<Expression>emptyList(),
-                initializer));
+        return expr(f.newArrayCreationExpression(toArrayType(), Collections.<Expression> emptyList(), initializer));
     }
 
     /**
-     * このビルダーで構築した型に対するクラスインスタンスを構築する。
-     * @param arguments コンストラクタの引数一覧
-     * @return 適用した結果をさらに操作するビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the class instance creation expression.
+     * @param arguments the constructor arguments
+     * @return the chained expression builder
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public ExpressionBuilder newObject(Expression... arguments) {
         if (arguments == null) {
@@ -287,21 +277,21 @@ public class TypeBuilder {
     }
 
     /**
-     * このビルダーで構築した型に対するクラスインスタンスを構築する。
-     * @param arguments コンストラクタの引数一覧
-     * @return 適用した結果をさらに操作するビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the class instance creation expression.
+     * @param arguments the constructor arguments
+     * @return the chained expression builder
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public ExpressionBuilder newObject(List<? extends Expression> arguments) {
         return newObject(arguments, null);
     }
 
     /**
-     * このビルダーで構築した型に対するクラスインスタンスを構築する。
-     * @param arguments コンストラクタの引数一覧
-     * @param anonymousClassBlock 匿名クラスブロック
-     * @return 適用した結果をさらに操作するビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the class instance creation expression.
+     * @param arguments the constructor arguments
+     * @param anonymousClassBlock the anonymous class block (nullable)
+     * @return the chained expression builder
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public ExpressionBuilder newObject(
             List<? extends Expression> arguments,
@@ -318,10 +308,10 @@ public class TypeBuilder {
     }
 
     /**
-     * このビルダーで構築した型名を限定子に取るフィールド参照式を返す。
-     * @param name 参照するフィールドの名前
-     * @return 結果をさらに操作するビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the field access expression.
+     * @param name the target field name
+     * @return the chained expression builder
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public ExpressionBuilder field(String name) {
         if (name == null) {
@@ -331,10 +321,10 @@ public class TypeBuilder {
     }
 
     /**
-     * このビルダーで構築した型名を限定子に取るフィールド参照式を返す。
-     * @param name 参照するフィールドの名前
-     * @return 結果をさらに操作するビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the field access expression.
+     * @param name the target field name
+     * @return the chained expression builder
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public ExpressionBuilder field(SimpleName name) {
         if (name == null) {
@@ -344,41 +334,33 @@ public class TypeBuilder {
     }
 
     /**
-     * このビルダーで構築した型名を限定子に取るメソッド起動式を返す。
-     * @param name 起動するメソッドの名前
-     * @param arguments 起動引数の一覧
-     * @return 結果をさらに操作するビルダー
-     * @throws IllegalStateException 構築した型が名前のみからなる型でない場合
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the method invocation using the building type as its qualifier.
+     * @param name the target method name
+     * @param arguments the method arguments
+     * @return the chained expression builder
+     * @throws IllegalStateException the building type is not a named type
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
-    public ExpressionBuilder method(
-            String name,
-            Expression... arguments) {
+    public ExpressionBuilder method(String name, Expression... arguments) {
         if (name == null) {
             throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
         }
         if (arguments == null) {
             throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
         }
-        return method(
-                Collections.<Type>emptyList(),
-                name,
-                Arrays.asList(arguments));
+        return method(Collections.<Type> emptyList(), name, Arrays.asList(arguments));
     }
 
     /**
-     * このビルダーで構築した型名を限定子に取るメソッド起動式を返す。
-     * @param typeArguments 型変数の一覧
-     * @param name 起動するメソッドの名前
-     * @param arguments 起動引数の一覧
-     * @return 結果をさらに操作するビルダー
-     * @throws IllegalStateException 構築した型が名前のみからなる型でない場合
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the method invocation using the building type as its qualifier.
+     * @param typeArguments the type arguments
+     * @param name the target method name
+     * @param arguments the method arguments
+     * @return the chained expression builder
+     * @throws IllegalStateException the building type is not a named type
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
-    public ExpressionBuilder method(
-            List<? extends Type> typeArguments,
-            String name,
-            Expression... arguments) {
+    public ExpressionBuilder method(List<? extends Type> typeArguments, String name, Expression... arguments) {
         if (typeArguments == null) {
             throw new IllegalArgumentException("typeArguments must not be null"); //$NON-NLS-1$
         }
@@ -388,43 +370,35 @@ public class TypeBuilder {
         if (arguments == null) {
             throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
         }
-        return method(
-                typeArguments,
-                name,
-                Arrays.asList(arguments));
+        return method(typeArguments, name, Arrays.asList(arguments));
     }
 
     /**
-     * このビルダーで構築した型名を限定子に取るメソッド起動式を返す。
-     * @param name 起動するメソッドの名前
-     * @param arguments 起動引数の一覧
-     * @return 結果をさらに操作するビルダー
-     * @throws IllegalStateException 構築した型が名前のみからなる型でない場合
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the method invocation using the building type as its qualifier.
+     * @param name the target method name
+     * @param arguments the method arguments
+     * @return the chained expression builder
+     * @throws IllegalStateException the building type is not a named type
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
-    public ExpressionBuilder method(
-            String name,
-            List<? extends Expression> arguments) {
+    public ExpressionBuilder method(String name, List<? extends Expression> arguments) {
         if (name == null) {
             throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
         }
         if (arguments == null) {
             throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
         }
-        return method(
-                Collections.<Type>emptyList(),
-                name,
-                arguments);
+        return method(Collections.<Type> emptyList(), name, arguments);
     }
 
     /**
-     * このビルダーで構築した型名を限定子に取るメソッド起動式を返す。
-     * @param typeArguments 型変数の一覧
-     * @param name 起動するメソッドの名前
-     * @param arguments 起動引数の一覧
-     * @return 結果をさらに操作するビルダー
-     * @throws IllegalStateException 構築した型が名前のみからなる型でない場合
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the method invocation using the building type as its qualifier.
+     * @param typeArguments the type arguments
+     * @param name the target method name
+     * @param arguments the method arguments
+     * @return the chained expression builder
+     * @throws IllegalStateException the building type is not a named type
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public ExpressionBuilder method(
             List<? extends Type> typeArguments,
@@ -439,48 +413,37 @@ public class TypeBuilder {
         if (arguments == null) {
             throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
         }
-        return method(
-                typeArguments,
-                f.newSimpleName(name),
-                arguments);
+        return method(typeArguments, f.newSimpleName(name), arguments);
     }
 
     /**
-     * このビルダーで構築した型名を限定子に取るメソッド起動式を返す。
-     * @param name 起動するメソッドの名前
-     * @param arguments 起動引数の一覧
-     * @return 結果をさらに操作するビルダー
-     * @throws IllegalStateException 構築した型が名前のみからなる型でない場合
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the method invocation using the building type as its qualifier.
+     * @param name the target method name
+     * @param arguments the method arguments
+     * @return the chained expression builder
+     * @throws IllegalStateException the building type is not a named type
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
-    public ExpressionBuilder method(
-            SimpleName name,
-            Expression... arguments) {
+    public ExpressionBuilder method(SimpleName name, Expression... arguments) {
         if (name == null) {
             throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
         }
         if (arguments == null) {
             throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
         }
-        return method(
-                Collections.<Type>emptyList(),
-                name,
-                Arrays.asList(arguments));
+        return method(Collections.<Type> emptyList(), name, Arrays.asList(arguments));
     }
 
     /**
-     * このビルダーで構築した型名を限定子に取るメソッド起動式を返す。
-     * @param typeArguments 型変数の一覧
-     * @param name 起動するメソッドの名前
-     * @param arguments 起動引数の一覧
-     * @return 結果をさらに操作するビルダー
-     * @throws IllegalStateException 構築した型が名前のみからなる型でない場合
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the method invocation using the building type as its qualifier.
+     * @param typeArguments the type arguments
+     * @param name the target method name
+     * @param arguments the method arguments
+     * @return the chained expression builder
+     * @throws IllegalStateException the building type is not a named type
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
-    public ExpressionBuilder method(
-            List<? extends Type> typeArguments,
-            SimpleName name,
-            Expression... arguments) {
+    public ExpressionBuilder method(List<? extends Type> typeArguments, SimpleName name, Expression... arguments) {
         if (typeArguments == null) {
             throw new IllegalArgumentException("typeArguments must not be null"); //$NON-NLS-1$
         }
@@ -490,43 +453,35 @@ public class TypeBuilder {
         if (arguments == null) {
             throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
         }
-        return method(
-                typeArguments,
-                name,
-                Arrays.asList(arguments));
+        return method(typeArguments, name, Arrays.asList(arguments));
     }
 
     /**
-     * このビルダーで構築した型名を限定子に取るメソッド起動式を返す。
-     * @param name 起動するメソッドの名前
-     * @param arguments 起動引数の一覧
-     * @return 結果をさらに操作するビルダー
-     * @throws IllegalStateException 構築した型が名前のみからなる型でない場合
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the method invocation using the building type as its qualifier.
+     * @param name the target method name
+     * @param arguments the method arguments
+     * @return the chained expression builder
+     * @throws IllegalStateException the building type is not a named type
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
-    public ExpressionBuilder method(
-            SimpleName name,
-            List<? extends Expression> arguments) {
+    public ExpressionBuilder method(SimpleName name, List<? extends Expression> arguments) {
         if (name == null) {
             throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
         }
         if (arguments == null) {
             throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
         }
-        return method(
-                Collections.<Type>emptyList(),
-                name,
-                arguments);
+        return method(Collections.<Type> emptyList(), name, arguments);
     }
 
     /**
-     * このビルダーで構築した型名を限定子に取るメソッド起動式を返す。
-     * @param typeArguments 型変数の一覧
-     * @param name 起動するメソッドの名前
-     * @param arguments 起動引数の一覧
-     * @return 結果をさらに操作するビルダー
-     * @throws IllegalStateException 構築した型が名前のみからなる型でない場合
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the method invocation using the building type as its qualifier.
+     * @param typeArguments the type arguments
+     * @param name the target method name
+     * @param arguments the method arguments
+     * @return the chained expression builder
+     * @throws IllegalStateException the building type is not a named type
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public ExpressionBuilder method(
             List<? extends Type> typeArguments,
@@ -541,11 +496,7 @@ public class TypeBuilder {
         if (arguments == null) {
             throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
         }
-        return expr(f.newMethodInvocationExpression(
-                toNamedType().getName(),
-                typeArguments,
-                name,
-                arguments));
+        return expr(f.newMethodInvocationExpression(toNamedType().getName(), typeArguments, name, arguments));
     }
 
     private TypeBuilder chain(Type type) {

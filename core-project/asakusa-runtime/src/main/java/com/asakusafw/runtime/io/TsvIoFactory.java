@@ -23,17 +23,18 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 
 /**
- * TSVを利用したモデルの入出力に関するオブジェクトを生成するファクトリ。
- * @param <T> 取り扱うモデルオブジェクトの型
+ * An implementation of {@link ModelIoFactory} for using TSV files.
+ * @param <T> the target data model type
+ * @since 0.1.0
  */
 public class TsvIoFactory<T> extends ModelIoFactory<T> {
 
     private static final Charset CHARSET = Charset.forName("UTF-8"); //$NON-NLS-1$
 
     /**
-     * インスタンスを生成する。
-     * @param modelClass 取り扱うモデルオブジェクトの種類
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param modelClass the data model type
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public TsvIoFactory(Class<T> modelClass) {
         super(modelClass);

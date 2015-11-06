@@ -29,7 +29,7 @@ import com.asakusafw.utils.java.model.util.ExpressionBuilder;
 import com.asakusafw.utils.java.model.util.Models;
 
 /**
- * 演算子プロセッサのモック実装。
+ * Mock operator processor.
  */
 @TargetOperator(MockOperator.class)
 public class MockOperatorProcessor extends AbstractOperatorProcessor {
@@ -37,13 +37,11 @@ public class MockOperatorProcessor extends AbstractOperatorProcessor {
     @Override
     public OperatorMethodDescriptor describe(Context context) {
         if (context.element.getParameters().size() != 2) {
-            context.environment.getMessager().printMessage(Diagnostic.Kind.ERROR,
-                    "invalid parameters");
+            context.environment.getMessager().printMessage(Diagnostic.Kind.ERROR, "invalid parameters");
             return null;
         }
         if (context.element.getReturnType().getKind() == TypeKind.VOID) {
-            context.environment.getMessager().printMessage(Diagnostic.Kind.ERROR,
-                "invalid return type");
+            context.environment.getMessager().printMessage(Diagnostic.Kind.ERROR, "invalid return type");
             return null;
         }
 

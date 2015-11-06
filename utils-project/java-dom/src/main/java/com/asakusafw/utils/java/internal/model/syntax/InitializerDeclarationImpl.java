@@ -25,23 +25,14 @@ import com.asakusafw.utils.java.model.syntax.ModelKind;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link InitializerDeclaration}の実装。
+ * An implementation of {@link InitializerDeclaration}.
  */
 public final class InitializerDeclarationImpl extends ModelRoot implements InitializerDeclaration {
 
-    /**
-     * ドキュメンテーションコメント。
-     */
     private Javadoc javadoc;
 
-    /**
-     * 修飾子および注釈の一覧。
-     */
     private List<? extends Attribute> modifiers;
 
-    /**
-     * 初期化子の本体。
-     */
     private Block body;
 
     @Override
@@ -50,11 +41,8 @@ public final class InitializerDeclarationImpl extends ModelRoot implements Initi
     }
 
     /**
-     * ドキュメンテーションコメントを設定する。
-     * <p> ドキュメンテーションコメントが存在しない場合、引数には{@code null}を指定する。 </p>
-     * @param javadoc
-     *     ドキュメンテーションコメント、
-     *     ただしドキュメンテーションコメントが存在しない場合は{@code null}
+     * Sets the documentation comment.
+     * @param javadoc the documentation comment, or {@code null} if it is not specified
      */
     public void setJavadoc(Javadoc javadoc) {
         this.javadoc = javadoc;
@@ -66,12 +54,9 @@ public final class InitializerDeclarationImpl extends ModelRoot implements Initi
     }
 
     /**
-     * 修飾子および注釈の一覧を設定する。
-     * <p> 修飾子または注釈が一つも宣言されない場合、引数には空を指定する。 </p>
-     * @param modifiers
-     *     修飾子および注釈の一覧
-     * @throws IllegalArgumentException
-     *     {@code modifiers}に{@code null}が指定された場合
+     * Sets the modifiers and annotations.
+     * @param modifiers the modifiers and annotations
+     * @throws IllegalArgumentException if {@code modifiers} was {@code null}
      */
     public void setModifiers(List<? extends Attribute> modifiers) {
         Util.notNull(modifiers, "modifiers"); //$NON-NLS-1$
@@ -85,11 +70,9 @@ public final class InitializerDeclarationImpl extends ModelRoot implements Initi
     }
 
     /**
-     * 初期化子の本体を設定する。
-     * @param body
-     *     初期化子の本体
-     * @throws IllegalArgumentException
-     *     {@code body}に{@code null}が指定された場合
+     * Sets the initializer body block.
+     * @param body the initializer body block
+     * @throws IllegalArgumentException if {@code body} was {@code null}
      */
     public void setBody(Block body) {
         Util.notNull(body, "body"); //$NON-NLS-1$
@@ -97,7 +80,7 @@ public final class InitializerDeclarationImpl extends ModelRoot implements Initi
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#INITIALIZER_DECLARATION}を返す。
+     * Returns {@link ModelKind#INITIALIZER_DECLARATION} which represents this element kind.
      * @return {@link ModelKind#INITIALIZER_DECLARATION}
      */
     @Override
@@ -106,8 +89,7 @@ public final class InitializerDeclarationImpl extends ModelRoot implements Initi
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitInitializerDeclaration(this, context);
     }

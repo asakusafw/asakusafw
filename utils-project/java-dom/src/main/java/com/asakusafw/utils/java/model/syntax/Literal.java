@@ -15,9 +15,8 @@
  */
 package com.asakusafw.utils.java.model.syntax;
 
-
 /**
- * リテラル式を表現するインターフェース。
+ * An interface which represents literals.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:15.8.1] Lexical Literals} </li>
@@ -27,26 +26,17 @@ package com.asakusafw.utils.java.model.syntax;
 public interface Literal
         extends Expression {
 
-    // properties
-
     /**
-     * このリテラルを構成する字句を返す。
-     * <p>
-     * 整数のリテラルは基本的に負の値を表現しないが、
-     * {@link Integer#MIN_VALUE}と{@link Long#MIN_VALUE}だけは例外的に表現する。
-     * この場合、文字列の先頭には{@code -}が含まれる。
-     * </p>
-     * @return
-     *     このリテラルを構成する字句
+     * Returns the literal token.
+     * Literals do not represent negative value, except {@link Integer#MIN_VALUE} and {@link Long#MIN_VALUE}.
+     * In those exceptional cases, tokens start with a {@code -} character.
+     * @return the literal token
      */
     String getToken();
 
     /**
-     * このリテラルの種類を返す。
-     * <p> リテラルの種類が不明である場合は{@code null}が返される。 </p>
-     * @return
-     *     このリテラルの種類、
-     *     ただしリテラルの種類が不明である場合は{@code null}
+     * Returns the literal kind.
+     * @return the literal kind
      */
     LiteralKind getLiteralKind();
 }

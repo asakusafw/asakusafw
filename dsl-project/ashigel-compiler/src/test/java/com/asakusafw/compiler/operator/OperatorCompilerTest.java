@@ -54,7 +54,7 @@ import com.asakusafw.vocabulary.operator.Update;
 public class OperatorCompilerTest extends OperatorCompilerTestRoot {
 
     /**
-     * サポートしている演算子注釈。
+     * supported annotation types.
      */
     @Test
     public void types() {
@@ -82,7 +82,7 @@ public class OperatorCompilerTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * 単純なファクトリの例。
+     * simple generate factory.
      */
     @Test
     public void simple_Factory() {
@@ -121,7 +121,7 @@ public class OperatorCompilerTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * 単純な実装の例。
+     * simple generate implementation.
      */
     @Test
     public void simple_Impl() {

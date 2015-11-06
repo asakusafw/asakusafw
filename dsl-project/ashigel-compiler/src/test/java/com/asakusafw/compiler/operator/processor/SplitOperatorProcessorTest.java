@@ -33,7 +33,7 @@ import com.asakusafw.vocabulary.flow.testing.MockOut;
 public class SplitOperatorProcessorTest extends OperatorCompilerTestRoot {
 
     /**
-     * 単純な例。
+     * simple case.
      */
     @Test
     public void simple() {
@@ -56,7 +56,7 @@ public class SplitOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * 具象メソッド。
+     * not abstract method.
      */
     @Test
     public void NotAbstract() {
@@ -65,7 +65,7 @@ public class SplitOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * 結合モデルでない。
+     * does not return joined model.
      */
     @Test
     public void NotJoined() {
@@ -74,7 +74,7 @@ public class SplitOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * モデルでない。
+     * not a data model parameter.
      */
     @Test
     public void NotModel() {
@@ -83,7 +83,7 @@ public class SplitOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * 結果型でない。
+     * not a result parameter.
      */
     @Test
     public void NotResult() {
@@ -92,7 +92,7 @@ public class SplitOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * 値を返す。
+     * not void type method.
      */
     @Test
     public void NotVoid() {
@@ -101,7 +101,7 @@ public class SplitOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * パラメーター化。
+     * parameterized.
      */
     @Test
     public void Parameterized() {

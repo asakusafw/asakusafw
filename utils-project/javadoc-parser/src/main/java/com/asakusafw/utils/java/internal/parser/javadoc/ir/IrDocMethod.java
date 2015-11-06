@@ -21,7 +21,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * フィールドへの参照。
+ * Represents method or constructor references in {@link IrDocComment}.
  */
 public class IrDocMethod extends IrDocMember {
 
@@ -30,10 +30,9 @@ public class IrDocMethod extends IrDocMember {
     private List<? extends IrDocMethodParameter> parameters;
 
     /**
-     * インスタンスを生成する。
+     * Creates a new instance.
      */
     public IrDocMethod() {
-        super();
         this.parameters = Collections.emptyList();
     }
 
@@ -43,17 +42,17 @@ public class IrDocMethod extends IrDocMember {
     }
 
     /**
-     * 引数リストを返す。
-     * @return 引数リスト
+     * Returns the method or constructor parameters.
+     * @return the parameters
      */
     public List<? extends IrDocMethodParameter> getParameters() {
         return this.parameters;
     }
 
     /**
-     * 引数リストを設定する。
-     * @param parameters 設定する引数の一覧
-     * @throws IllegalArgumentException 引数に{@code null}が含まれていた場合
+     * Sets the method or constructor parameters.
+     * @param parameters the parameters
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public void setParameters(List<? extends IrDocMethodParameter> parameters) {
         if (parameters == null) {

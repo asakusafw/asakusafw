@@ -19,14 +19,13 @@ import java.io.IOException;
 import java.util.Iterator;
 
 import org.apache.hadoop.io.Writable;
-import org.apache.hadoop.mapreduce.Reducer;
 
 /**
- * {@link SegmentedWritable}をキーとして、セグメントごとの処理を行う{@link Reducer}の骨格実装。
- * @param <KEYIN> 入力するキーの種類
- * @param <VALUEIN> 入力する値の種類
- * @param <KEYOUT> 出力するキーの種類
- * @param <VALUEOUT> 出力する値の種類
+ * A skeletal implementation of Hadoop Reducer class which uses {@link SegmentedWritable} as it input key/value.
+ * @param <KEYIN> the input key type
+ * @param <VALUEIN> the input value type
+ * @param <KEYOUT> the output key type
+ * @param <VALUEOUT> the output value type
  * @since 0.1.0
  * @version 0.5.1
  */
@@ -38,15 +37,14 @@ public abstract class SegmentedReducer<
         extends ReducerWithRuntimeResource<KEYIN, VALUEIN, KEYOUT, VALUEOUT> {
 
     /**
-     * {@link #getRendezvous(SegmentedWritable)}のメソッド名。
+     * The method name of {@link #getRendezvous(SegmentedWritable)}.
      */
     public static final String GET_RENDEZVOUS = "getRendezvous"; //$NON-NLS-1$
 
     /**
-     * キーのグループが変更された際、または最初のキーに対して呼び出され、
-     * グループに対応する処理断片を返す。
-     * @param key 対象のキー
-     * @return 対応する処理断片
+     * Returns the {@link Rendezvous} object for processing the target segment.
+     * @param key the segment information
+     * @return the corresponded {@link Rendezvous} object
      */
     protected abstract Rendezvous<VALUEIN> getRendezvous(KEYIN key);
 

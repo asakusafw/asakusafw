@@ -21,87 +21,86 @@ import com.asakusafw.utils.java.model.syntax.InfixExpression;
 import com.asakusafw.utils.java.model.syntax.InfixOperator;
 
 /**
- * 式の優先順位。
+ * Represents an association priorities in expressions.
  */
 public enum ExpressionPriority {
 
     /**
-     * 一次式。
+     * The primary expressions.
      */
     PRIMARY,
 
     /**
-     * 配列初期化子。
+     * The array initializers.
      */
     ARRAY_INITIALIZER,
 
     /**
-     * 単項演算子。
+     * The unary operators.
      */
     UNARY,
 
     /**
-     * キャスト演算子。
+     * The cast operators.
      */
     CAST,
 
     /**
-     * 乗除演算子。
+     * The multiplicative (multiply, division, and remainder) operators.
      */
     MULTIPLICATIVE,
 
     /**
-     * 加減演算子。
+     * The additive (add and subtract) operators.
      */
     ADDITIVE,
 
     /**
-     * シフト演算子。
+     * The shift operators.
      */
     SHIFT,
 
     /**
-     * 比較演算子。
+     * The comparison operators.
      */
     RELATIONAL,
 
     /**
-     * 等価演算子。
+     * The equality operators.
      */
     EQUALITY,
 
     /**
-     * 論理演算子。
+     * The logical operators.
      */
     LOGICAL,
 
     /**
-     * 条件And演算子。
+     * The conditional {@code and} operators.
      */
     CONDITIONAL_AND,
 
     /**
-     * 条件Or演算子。
+     * The conditional {@code or} operators.
      */
     CONDITIONAL_OR,
 
     /**
-     * 三項演算子。
+     * The conditional operators.
      */
     CONDITIONAL,
 
     /**
-     * 代入演算子。
+     * The assignment operators.
      */
     ASSIGNMENT,
-
     ;
 
     /**
-     * 二項演算子をこの表現に変換して返す。
-     * @param operator 二項演算子
-     * @return 対応する表現
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns the priority about the target infix operator.
+     * @param operator the infix operator
+     * @return the corresponded priority
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static ExpressionPriority valueOf(InfixOperator operator) {
         if (operator == null) {
@@ -149,10 +148,10 @@ public enum ExpressionPriority {
     }
 
     /**
-     * 式をこの表現に変換して返す。
-     * @param expression 対象の式
-     * @return 対応する表現
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns the priority about the target expression.
+     * @param expression the target expression
+     * @return the corresponded priority
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static ExpressionPriority valueOf(Expression expression) {
         if (expression == null) {
@@ -185,12 +184,13 @@ public enum ExpressionPriority {
     }
 
     /**
-     * 指定の優先度比較で、かっこが必要となる場合のみ{@code true}を返す。
-     * @param required 要求された優先度
-     * @param requiredInRight 要求された優先度が二項演算子の右に出現する場合のみ{@code true}
-     * @param priority 検査する優先度
-     * @return かっこが必要となる場合のみ{@code true}
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns whether parentheses are required for comparing the priorities or not.
+     * @param required the required priority
+     * @param requiredInRight {@code true} if the required priority appears in the right term of infix expressions,
+     *     otherwise {@code false}
+     * @param priority the target priority
+     * @return {@code true} if parentheses are required, otherwise {@code false}
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public static boolean isParenthesesRequired(
             ExpressionPriority required,

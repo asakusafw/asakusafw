@@ -54,7 +54,6 @@ class WorkbookInfo {
         this.workbook = workbook;
 
         Font font = workbook.createFont();
-        // font.setFontName("ＭＳ ゴシック");
 
         commonStyle = workbook.createCellStyle();
         commonStyle.setFont(font);

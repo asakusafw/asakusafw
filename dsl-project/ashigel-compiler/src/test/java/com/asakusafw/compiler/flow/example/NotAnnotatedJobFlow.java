@@ -22,20 +22,19 @@ import com.asakusafw.vocabulary.flow.Import;
 import com.asakusafw.vocabulary.flow.In;
 import com.asakusafw.vocabulary.flow.Out;
 
-
 /**
- * 注釈のないジョブフロー。
+ * A jobflow class w/o mandatory annotations.
  */
 public class NotAnnotatedJobFlow extends FlowDescription {
 
-    private In<MockHoge> in;
+    private final In<MockHoge> in;
 
-    private Out<MockHoge> out;
+    private final Out<MockHoge> out;
 
     /**
-     * インスタンスを生成する。
-     * @param in 入力
-     * @param out 出力
+     * Creates a new instance.
+     * @param in input
+     * @param out output
      */
     public NotAnnotatedJobFlow(
             @Import(name = "hoge", description = MockHogeImporterDescription.class)

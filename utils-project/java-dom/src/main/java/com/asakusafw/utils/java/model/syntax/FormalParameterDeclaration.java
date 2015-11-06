@@ -18,7 +18,7 @@ package com.asakusafw.utils.java.model.syntax;
 import java.util.List;
 
 /**
- * 仮引数の宣言を表現するインターフェース。
+ * An interface which represents formal parameter declarations.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:8.4.1] Formal Parameters} </li>
@@ -28,42 +28,33 @@ import java.util.List;
 public interface FormalParameterDeclaration
         extends TypedElement {
 
-    // properties
-
     /**
-     * 修飾子および注釈の一覧を返す。
-     * <p> 修飾子または注釈が一つも宣言されない場合は空が返される。 </p>
-     * @return
-     *     修飾子および注釈の一覧
+     * Returns the modifiers and annotations.
+     * @return the modifiers and annotations
      */
     List<? extends Attribute> getModifiers();
 
     /**
-     * 宣言する変数の型を返す。
-     * @return
-     *     宣言する変数の型
+     * Returns the variable type.
+     * @return the variable type
      */
     Type getType();
 
     /**
-     * 可変長引数である場合に{@code true}を返す。
-     * <p> そうでない場合、この呼び出しは{@code false}を返す。 </p>
-     * @return
-     *     可変長引数
+     * Returns whether the parameter is variable arity or not.
+     * @return {@code true} if the parameter is variable arity, otherwise {@code false}
      */
     boolean isVariableArity();
 
     /**
-     * 仮引数の名前を返す。
-     * @return
-     *     仮引数の名前
+     * Returns the parameter name.
+     * @return the parameter name
      */
     SimpleName getName();
 
     /**
-     * 追加次元数の宣言を返す。
-     * @return
-     *     追加次元数の宣言
+     * Returns the extra variable dimensions.
+     * @return the extra variable dimensions
      */
     int getExtraDimensions();
 }

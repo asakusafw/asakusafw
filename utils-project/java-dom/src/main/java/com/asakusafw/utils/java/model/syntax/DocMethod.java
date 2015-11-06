@@ -18,34 +18,26 @@ package com.asakusafw.utils.java.model.syntax;
 import java.util.List;
 
 /**
- * ドキュメンテーションコメント内のメソッドやコンストラクタを表現するインターフェース。
+ * An interface which represents method and constructor references in the documentation comments.
  */
 public interface DocMethod
         extends DocElement {
 
-    // properties
-
     /**
-     * メソッドまたはコンストラクタの宣言型を返す。
-     * <p> 宣言型が指定されない場合は{@code null}が返される。 </p>
-     * @return
-     *     メソッドまたはコンストラクタの宣言型、
-     *     ただし宣言型が指定されない場合は{@code null}
+     * Returns the owner type.
+     * @return the owner type, or {@code null} if it is not specified
      */
     Type getType();
 
     /**
-     * メソッドまたはコンストラクタの名前を返す。
-     * @return
-     *     メソッドまたはコンストラクタの名前
+     * Returns the target method or constructor name.
+     * @return the target method or constructor name
      */
     SimpleName getName();
 
     /**
-     * メソッドまたはコンストラクタの仮引数宣言の一覧を返す。
-     * <p> 仮引数が一つも宣言されない場合は空が返される。 </p>
-     * @return
-     *     メソッドまたはコンストラクタの仮引数宣言の一覧
+     * Returns the formal parameters.
+     * @return the formal parameters
      */
     List<? extends DocMethodParameter> getFormalParameters();
 }

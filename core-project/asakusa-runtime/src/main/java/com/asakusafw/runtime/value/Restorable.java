@@ -18,17 +18,17 @@ package com.asakusafw.runtime.value;
 import java.io.IOException;
 
 /**
- * バイト配列の情報から復元可能であることを表すインターフェース。
+ * An abstract super interface of values that can restore their contents from a sequence of bytes.
  */
 public interface Restorable {
 
     /**
-     * バイト配列の指定の位置からこのオブジェクトの内容を復元する。
-     * @param bytes 復元に利用するバイト配列
-     * @param offset バイト配列の利用可能な位置の先頭 (inclusive)
-     * @param limit バイト配列の利用可能な位置の終端 (exclusive)
-     * @return 実際に利用したバイト数
-     * @throws IOException 復元に失敗した場合
+     * Restores the contents from the slice of the byte array.
+     * @param bytes the byte array
+     * @param offset the beginning index in the byte array (inclusive)
+     * @param limit the ending index in the byte array (exclusive)
+     * @return the number of bytes to restore the contents
+     * @throws IOException if failed to restore the contents
      */
     int restore(byte[] bytes, int offset, int limit) throws IOException;
 }

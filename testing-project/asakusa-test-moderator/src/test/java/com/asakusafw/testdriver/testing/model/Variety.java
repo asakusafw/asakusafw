@@ -24,8 +24,6 @@ import org.apache.hadoop.io.Writable;
 
 import com.asakusafw.runtime.model.DataModel;
 import com.asakusafw.runtime.model.DataModelKind;
-import com.asakusafw.runtime.model.ModelInputLocation;
-import com.asakusafw.runtime.model.ModelOutputLocation;
 import com.asakusafw.runtime.model.PropertyOrder;
 import com.asakusafw.runtime.value.BooleanOption;
 import com.asakusafw.runtime.value.ByteOption;
@@ -40,14 +38,12 @@ import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.runtime.value.LongOption;
 import com.asakusafw.runtime.value.ShortOption;
 import com.asakusafw.runtime.value.StringOption;
-import com.asakusafw.testdriver.testing.io.VarietyInput;
-import com.asakusafw.testdriver.testing.io.VarietyOutput;
 /**
- * varietyを表すデータモデルクラス。
+ * A data model class that represents variety.
  */
-@DataModelKind("DMDL")@ModelInputLocation(VarietyInput.class)@ModelOutputLocation(VarietyOutput.class)@PropertyOrder({
-            "p_int", "p_long", "p_byte", "p_short", "p_decimal", "p_float", "p_double", "p_text", "p_boolean", "p_date", 
-            "p_datetime"}) public class Variety implements DataModel<Variety>, Writable {
+@DataModelKind("DMDL")@PropertyOrder({"p_int", "p_long", "p_byte", "p_short", "p_decimal", "p_float", "p_double",
+            "p_text", "p_boolean", "p_date", "p_datetime"}) public class Variety implements DataModel<Variety>, Writable
+        {
     private final IntOption pInt = new IntOption();
     private final LongOption pLong = new LongOption();
     private final ByteOption pByte = new ByteOption();
@@ -86,320 +82,320 @@ import com.asakusafw.testdriver.testing.io.VarietyOutput;
         this.pDatetime.copyFrom(other.pDatetime);
     }
     /**
-     * p_intを返す。
+     * Returns p_int.
      * @return p_int
-     * @throws NullPointerException p_intの値が<code>null</code>である場合
+     * @throws NullPointerException if p_int is <code>null</code>
      */
     public int getPInt() {
         return this.pInt.get();
     }
     /**
-     * p_intを設定する。
-     * @param value 設定する値
+     * Sets p_int.
+     * @param value the value
      */
     @SuppressWarnings("deprecation") public void setPInt(int value) {
         this.pInt.modify(value);
     }
     /**
-     * <code>null</code>を許すp_intを返す。
+     * Returns p_int which may be represent <code>null</code>.
      * @return p_int
      */
     public IntOption getPIntOption() {
         return this.pInt;
     }
     /**
-     * p_intを設定する。
-     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     * Sets p_int.
+     * @param option the value, or <code>null</code> to set this property to <code>null</code>
      */
     @SuppressWarnings("deprecation") public void setPIntOption(IntOption option) {
         this.pInt.copyFrom(option);
     }
     /**
-     * p_longを返す。
+     * Returns p_long.
      * @return p_long
-     * @throws NullPointerException p_longの値が<code>null</code>である場合
+     * @throws NullPointerException if p_long is <code>null</code>
      */
     public long getPLong() {
         return this.pLong.get();
     }
     /**
-     * p_longを設定する。
-     * @param value 設定する値
+     * Sets p_long.
+     * @param value the value
      */
     @SuppressWarnings("deprecation") public void setPLong(long value) {
         this.pLong.modify(value);
     }
     /**
-     * <code>null</code>を許すp_longを返す。
+     * Returns p_long which may be represent <code>null</code>.
      * @return p_long
      */
     public LongOption getPLongOption() {
         return this.pLong;
     }
     /**
-     * p_longを設定する。
-     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     * Sets p_long.
+     * @param option the value, or <code>null</code> to set this property to <code>null</code>
      */
     @SuppressWarnings("deprecation") public void setPLongOption(LongOption option) {
         this.pLong.copyFrom(option);
     }
     /**
-     * p_byteを返す。
+     * Returns p_byte.
      * @return p_byte
-     * @throws NullPointerException p_byteの値が<code>null</code>である場合
+     * @throws NullPointerException if p_byte is <code>null</code>
      */
     public byte getPByte() {
         return this.pByte.get();
     }
     /**
-     * p_byteを設定する。
-     * @param value 設定する値
+     * Sets p_byte.
+     * @param value the value
      */
     @SuppressWarnings("deprecation") public void setPByte(byte value) {
         this.pByte.modify(value);
     }
     /**
-     * <code>null</code>を許すp_byteを返す。
+     * Returns p_byte which may be represent <code>null</code>.
      * @return p_byte
      */
     public ByteOption getPByteOption() {
         return this.pByte;
     }
     /**
-     * p_byteを設定する。
-     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     * Sets p_byte.
+     * @param option the value, or <code>null</code> to set this property to <code>null</code>
      */
     @SuppressWarnings("deprecation") public void setPByteOption(ByteOption option) {
         this.pByte.copyFrom(option);
     }
     /**
-     * p_shortを返す。
+     * Returns p_short.
      * @return p_short
-     * @throws NullPointerException p_shortの値が<code>null</code>である場合
+     * @throws NullPointerException if p_short is <code>null</code>
      */
     public short getPShort() {
         return this.pShort.get();
     }
     /**
-     * p_shortを設定する。
-     * @param value 設定する値
+     * Sets p_short.
+     * @param value the value
      */
     @SuppressWarnings("deprecation") public void setPShort(short value) {
         this.pShort.modify(value);
     }
     /**
-     * <code>null</code>を許すp_shortを返す。
+     * Returns p_short which may be represent <code>null</code>.
      * @return p_short
      */
     public ShortOption getPShortOption() {
         return this.pShort;
     }
     /**
-     * p_shortを設定する。
-     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     * Sets p_short.
+     * @param option the value, or <code>null</code> to set this property to <code>null</code>
      */
     @SuppressWarnings("deprecation") public void setPShortOption(ShortOption option) {
         this.pShort.copyFrom(option);
     }
     /**
-     * p_decimalを返す。
+     * Returns p_decimal.
      * @return p_decimal
-     * @throws NullPointerException p_decimalの値が<code>null</code>である場合
+     * @throws NullPointerException if p_decimal is <code>null</code>
      */
     public BigDecimal getPDecimal() {
         return this.pDecimal.get();
     }
     /**
-     * p_decimalを設定する。
-     * @param value 設定する値
+     * Sets p_decimal.
+     * @param value the value
      */
     @SuppressWarnings("deprecation") public void setPDecimal(BigDecimal value) {
         this.pDecimal.modify(value);
     }
     /**
-     * <code>null</code>を許すp_decimalを返す。
+     * Returns p_decimal which may be represent <code>null</code>.
      * @return p_decimal
      */
     public DecimalOption getPDecimalOption() {
         return this.pDecimal;
     }
     /**
-     * p_decimalを設定する。
-     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     * Sets p_decimal.
+     * @param option the value, or <code>null</code> to set this property to <code>null</code>
      */
     @SuppressWarnings("deprecation") public void setPDecimalOption(DecimalOption option) {
         this.pDecimal.copyFrom(option);
     }
     /**
-     * p_floatを返す。
+     * Returns p_float.
      * @return p_float
-     * @throws NullPointerException p_floatの値が<code>null</code>である場合
+     * @throws NullPointerException if p_float is <code>null</code>
      */
     public float getPFloat() {
         return this.pFloat.get();
     }
     /**
-     * p_floatを設定する。
-     * @param value 設定する値
+     * Sets p_float.
+     * @param value the value
      */
     @SuppressWarnings("deprecation") public void setPFloat(float value) {
         this.pFloat.modify(value);
     }
     /**
-     * <code>null</code>を許すp_floatを返す。
+     * Returns p_float which may be represent <code>null</code>.
      * @return p_float
      */
     public FloatOption getPFloatOption() {
         return this.pFloat;
     }
     /**
-     * p_floatを設定する。
-     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     * Sets p_float.
+     * @param option the value, or <code>null</code> to set this property to <code>null</code>
      */
     @SuppressWarnings("deprecation") public void setPFloatOption(FloatOption option) {
         this.pFloat.copyFrom(option);
     }
     /**
-     * p_doubleを返す。
+     * Returns p_double.
      * @return p_double
-     * @throws NullPointerException p_doubleの値が<code>null</code>である場合
+     * @throws NullPointerException if p_double is <code>null</code>
      */
     public double getPDouble() {
         return this.pDouble.get();
     }
     /**
-     * p_doubleを設定する。
-     * @param value 設定する値
+     * Sets p_double.
+     * @param value the value
      */
     @SuppressWarnings("deprecation") public void setPDouble(double value) {
         this.pDouble.modify(value);
     }
     /**
-     * <code>null</code>を許すp_doubleを返す。
+     * Returns p_double which may be represent <code>null</code>.
      * @return p_double
      */
     public DoubleOption getPDoubleOption() {
         return this.pDouble;
     }
     /**
-     * p_doubleを設定する。
-     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     * Sets p_double.
+     * @param option the value, or <code>null</code> to set this property to <code>null</code>
      */
     @SuppressWarnings("deprecation") public void setPDoubleOption(DoubleOption option) {
         this.pDouble.copyFrom(option);
     }
     /**
-     * p_textを返す。
+     * Returns p_text.
      * @return p_text
-     * @throws NullPointerException p_textの値が<code>null</code>である場合
+     * @throws NullPointerException if p_text is <code>null</code>
      */
     public Text getPText() {
         return this.pText.get();
     }
     /**
-     * p_textを設定する。
-     * @param value 設定する値
+     * Sets p_text.
+     * @param value the value
      */
     @SuppressWarnings("deprecation") public void setPText(Text value) {
         this.pText.modify(value);
     }
     /**
-     * <code>null</code>を許すp_textを返す。
+     * Returns p_text which may be represent <code>null</code>.
      * @return p_text
      */
     public StringOption getPTextOption() {
         return this.pText;
     }
     /**
-     * p_textを設定する。
-     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     * Sets p_text.
+     * @param option the value, or <code>null</code> to set this property to <code>null</code>
      */
     @SuppressWarnings("deprecation") public void setPTextOption(StringOption option) {
         this.pText.copyFrom(option);
     }
     /**
-     * p_booleanを返す。
+     * Returns p_boolean.
      * @return p_boolean
-     * @throws NullPointerException p_booleanの値が<code>null</code>である場合
+     * @throws NullPointerException if p_boolean is <code>null</code>
      */
     public boolean isPBoolean() {
         return this.pBoolean.get();
     }
     /**
-     * p_booleanを設定する。
-     * @param value 設定する値
+     * Sets p_boolean.
+     * @param value the value
      */
     @SuppressWarnings("deprecation") public void setPBoolean(boolean value) {
         this.pBoolean.modify(value);
     }
     /**
-     * <code>null</code>を許すp_booleanを返す。
+     * Returns p_boolean which may be represent <code>null</code>.
      * @return p_boolean
      */
     public BooleanOption getPBooleanOption() {
         return this.pBoolean;
     }
     /**
-     * p_booleanを設定する。
-     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     * Sets p_boolean.
+     * @param option the value, or <code>null</code> to set this property to <code>null</code>
      */
     @SuppressWarnings("deprecation") public void setPBooleanOption(BooleanOption option) {
         this.pBoolean.copyFrom(option);
     }
     /**
-     * p_dateを返す。
+     * Returns p_date.
      * @return p_date
-     * @throws NullPointerException p_dateの値が<code>null</code>である場合
+     * @throws NullPointerException if p_date is <code>null</code>
      */
     public Date getPDate() {
         return this.pDate.get();
     }
     /**
-     * p_dateを設定する。
-     * @param value 設定する値
+     * Sets p_date.
+     * @param value the value
      */
     @SuppressWarnings("deprecation") public void setPDate(Date value) {
         this.pDate.modify(value);
     }
     /**
-     * <code>null</code>を許すp_dateを返す。
+     * Returns p_date which may be represent <code>null</code>.
      * @return p_date
      */
     public DateOption getPDateOption() {
         return this.pDate;
     }
     /**
-     * p_dateを設定する。
-     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     * Sets p_date.
+     * @param option the value, or <code>null</code> to set this property to <code>null</code>
      */
     @SuppressWarnings("deprecation") public void setPDateOption(DateOption option) {
         this.pDate.copyFrom(option);
     }
     /**
-     * p_datetimeを返す。
+     * Returns p_datetime.
      * @return p_datetime
-     * @throws NullPointerException p_datetimeの値が<code>null</code>である場合
+     * @throws NullPointerException if p_datetime is <code>null</code>
      */
     public DateTime getPDatetime() {
         return this.pDatetime.get();
     }
     /**
-     * p_datetimeを設定する。
-     * @param value 設定する値
+     * Sets p_datetime.
+     * @param value the value
      */
     @SuppressWarnings("deprecation") public void setPDatetime(DateTime value) {
         this.pDatetime.modify(value);
     }
     /**
-     * <code>null</code>を許すp_datetimeを返す。
+     * Returns p_datetime which may be represent <code>null</code>.
      * @return p_datetime
      */
     public DateTimeOption getPDatetimeOption() {
         return this.pDatetime;
     }
     /**
-     * p_datetimeを設定する。
-     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     * Sets p_datetime.
+     * @param option the value, or <code>null</code> to set this property to <code>null</code>
      */
     @SuppressWarnings("deprecation") public void setPDatetimeOption(DateTimeOption option) {
         this.pDatetime.copyFrom(option);
@@ -456,56 +452,56 @@ import com.asakusafw.testdriver.testing.io.VarietyOutput;
         if(obj == null) {
             return false;
         }
-        if(this.getClass()!= obj.getClass()) {
+        if(this.getClass() != obj.getClass()) {
             return false;
         }
         Variety other = (Variety) obj;
-        if(this.pInt.equals(other.pInt)== false) {
+        if(this.pInt.equals(other.pInt) == false) {
             return false;
         }
-        if(this.pLong.equals(other.pLong)== false) {
+        if(this.pLong.equals(other.pLong) == false) {
             return false;
         }
-        if(this.pByte.equals(other.pByte)== false) {
+        if(this.pByte.equals(other.pByte) == false) {
             return false;
         }
-        if(this.pShort.equals(other.pShort)== false) {
+        if(this.pShort.equals(other.pShort) == false) {
             return false;
         }
-        if(this.pDecimal.equals(other.pDecimal)== false) {
+        if(this.pDecimal.equals(other.pDecimal) == false) {
             return false;
         }
-        if(this.pFloat.equals(other.pFloat)== false) {
+        if(this.pFloat.equals(other.pFloat) == false) {
             return false;
         }
-        if(this.pDouble.equals(other.pDouble)== false) {
+        if(this.pDouble.equals(other.pDouble) == false) {
             return false;
         }
-        if(this.pText.equals(other.pText)== false) {
+        if(this.pText.equals(other.pText) == false) {
             return false;
         }
-        if(this.pBoolean.equals(other.pBoolean)== false) {
+        if(this.pBoolean.equals(other.pBoolean) == false) {
             return false;
         }
-        if(this.pDate.equals(other.pDate)== false) {
+        if(this.pDate.equals(other.pDate) == false) {
             return false;
         }
-        if(this.pDatetime.equals(other.pDatetime)== false) {
+        if(this.pDatetime.equals(other.pDatetime) == false) {
             return false;
         }
         return true;
     }
     /**
-     * p_textを返す。
+     * Returns p_text.
      * @return p_text
-     * @throws NullPointerException p_textの値が<code>null</code>である場合
+     * @throws NullPointerException if p_text is <code>null</code>
      */
     public String getPTextAsString() {
         return this.pText.getAsString();
     }
     /**
-     * p_textを設定する。
-     * @param pText0 設定する値
+     * Returns p_text.
+     * @param pText0 the value
      */
     @SuppressWarnings("deprecation") public void setPTextAsString(String pText0) {
         this.pText.modify(pText0);

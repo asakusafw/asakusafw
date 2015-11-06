@@ -22,23 +22,14 @@ import com.asakusafw.utils.java.model.syntax.ModelKind;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link AssignmentExpression}の実装。
+ * An implementation of {@link AssignmentExpression}.
  */
 public final class AssignmentExpressionImpl extends ModelRoot implements AssignmentExpression {
 
-    /**
-     * 左辺式。
-     */
     private Expression leftHandSide;
 
-    /**
-     * 単純代入演算子、または複合する演算子。
-     */
     private InfixOperator operator;
 
-    /**
-     * 右辺式。
-     */
     private Expression rightHandSide;
 
     @Override
@@ -47,11 +38,9 @@ public final class AssignmentExpressionImpl extends ModelRoot implements Assignm
     }
 
     /**
-     * 左辺式を設定する。
-     * @param leftHandSide
-     *     左辺式
-     * @throws IllegalArgumentException
-     *     {@code leftHandSide}に{@code null}が指定された場合
+     * Sets the left hand side term.
+     * @param leftHandSide the left hand side term
+     * @throws IllegalArgumentException if {@code leftHandSide} was {@code null}
      */
     public void setLeftHandSide(Expression leftHandSide) {
         Util.notNull(leftHandSide, "leftHandSide"); //$NON-NLS-1$
@@ -64,11 +53,9 @@ public final class AssignmentExpressionImpl extends ModelRoot implements Assignm
     }
 
     /**
-     * 単純代入演算子、または複合する演算子を設定する。
-     * @param operator
-     *     単純代入演算子、または複合する演算子
-     * @throws IllegalArgumentException
-     *     {@code operator}に{@code null}が指定された場合
+     * Sets the simple assignment operator, or an infix operator for compound assignment expression.
+     * @param operator the assignment or infix operator
+     * @throws IllegalArgumentException if {@code operator} was {@code null}
      */
     public void setOperator(InfixOperator operator) {
         Util.notNull(operator, "operator"); //$NON-NLS-1$
@@ -81,11 +68,9 @@ public final class AssignmentExpressionImpl extends ModelRoot implements Assignm
     }
 
     /**
-     * 右辺式を設定する。
-     * @param rightHandSide
-     *     右辺式
-     * @throws IllegalArgumentException
-     *     {@code rightHandSide}に{@code null}が指定された場合
+     * Sets the right hand side term.
+     * @param rightHandSide the right hand side term
+     * @throws IllegalArgumentException if {@code rightHandSide} was {@code null}
      */
     public void setRightHandSide(Expression rightHandSide) {
         Util.notNull(rightHandSide, "rightHandSide"); //$NON-NLS-1$
@@ -93,7 +78,7 @@ public final class AssignmentExpressionImpl extends ModelRoot implements Assignm
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#ASSIGNMENT_EXPRESSION}を返す。
+     * Returns {@link ModelKind#ASSIGNMENT_EXPRESSION} which represents this element kind.
      * @return {@link ModelKind#ASSIGNMENT_EXPRESSION}
      */
     @Override
@@ -102,8 +87,7 @@ public final class AssignmentExpressionImpl extends ModelRoot implements Assignm
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitAssignmentExpression(this, context);
     }

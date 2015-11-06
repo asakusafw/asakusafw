@@ -22,17 +22,17 @@ import com.asakusafw.vocabulary.flow.graph.FlowElementResolver;
 import com.asakusafw.vocabulary.flow.graph.InputDescription;
 
 /**
- * {@link In}のモック。
- * @param <T> 取り扱うデータの種類
+ * Mock implementation of {@link In} (for testing).
+ * @param <T> the data type
  */
 public class MockIn<T> implements In<T> {
 
-    private FlowElementResolver resolver;
+    private final FlowElementResolver resolver;
 
     /**
-     * インスタンスを生成する。
-     * @param type 入力の型
-     * @param name 入力の名前
+     * Creates a new instance.
+     * @param type the input type
+     * @param name the input name
      */
     public MockIn(Class<T> type, String name) {
         InputDescription desc = new InputDescription(name, type);
@@ -40,11 +40,11 @@ public class MockIn<T> implements In<T> {
     }
 
     /**
-     * インスタンスを生成する。
-     * @param <T> 取り扱うデータの種類
-     * @param type 入力の型
-     * @param name 入力の名前
-     * @return 生成したインスタンス
+     * Creates a new instance.
+     * @param <T> the data type
+     * @param type the input type
+     * @param name the input name
+     * @return the created instance
      */
     public static <T> MockIn<T> of(Class<T> type, String name) {
         return new MockIn<T>(type, name);
@@ -56,8 +56,8 @@ public class MockIn<T> implements In<T> {
     }
 
     /**
-     * この要素に関連するフロー要素を返す。
-     * @return この要素に関連するフロー要素
+     * Returns the {@link FlowElement} representation of this object.
+     * @return the {@link FlowElement} representation
      */
     public FlowElement toElement() {
         return resolver.getElement();

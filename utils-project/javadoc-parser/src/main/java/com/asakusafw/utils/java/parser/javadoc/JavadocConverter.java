@@ -44,7 +44,7 @@ import com.asakusafw.utils.java.model.syntax.SimpleName;
 import com.asakusafw.utils.java.model.syntax.Type;
 
 /**
- * ドキュメンテーションコメントを{@code java-dom}のモデルに変換する。
+ * Converts {@link IrDocComment} models into Java DOM models.
  */
 public class JavadocConverter {
 
@@ -53,12 +53,11 @@ public class JavadocConverter {
     private final JavadocParser parser;
 
     /**
-     * インスタンスを生成する。
-     * @param factory モデルを構築するファクトリ
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Creates a new instance.
+     * @param factory the Java DOM factory
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocConverter(ModelFactory factory) {
-        super();
         this.factory = factory;
         JavadocParserBuilder builder = new JavadocParserBuilder();
         builder.addSpecialStandAloneBlockParser(new FollowsNamedTypeBlockParser(
@@ -83,12 +82,12 @@ public class JavadocConverter {
     }
 
     /**
-     * 指定の文字列で構成されたドキュメンテーションコメントを生成して返す。
-     * @param content 内容文字列
-     * @param offset 開始オフセット
-     * @return 解析結果
-     * @throws JavadocParseException ドキュメンテーションコメントの形式が不正である場合
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Analyzes the documentation comment string and returns the corresponded {@link Javadoc} object.
+     * @param content the documentation content
+     * @param offset the starting character offset of the comment string in the compilation unit
+     * @return the analyzed object
+     * @throws JavadocParseException if the documentation comment is malformed
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public Javadoc convert(String content, int offset) throws JavadocParseException {
         if (content == null) {

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 /**
- * フローDSLで利用可能な、標準的な演算子を提供する。
+ *
+ * Provides built-in Flow DSL vocabularies.
  */
 package com.asakusafw.vocabulary.flow.util;

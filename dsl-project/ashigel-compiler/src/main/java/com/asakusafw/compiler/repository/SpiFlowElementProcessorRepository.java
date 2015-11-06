@@ -34,7 +34,7 @@ import com.asakusafw.vocabulary.flow.graph.FlowElementKind;
 import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 
 /**
- * Service Provider Interfaceを利用してフロープロセッサーを探索するリポジトリー。
+ * Aggregates repositories of {@link FlowElementProcessor} using Service Provider Interface.
  */
 public class SpiFlowElementProcessorRepository
         extends FlowCompilingEnvironment.Initialized

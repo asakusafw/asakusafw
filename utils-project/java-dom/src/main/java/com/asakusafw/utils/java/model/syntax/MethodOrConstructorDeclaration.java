@@ -18,7 +18,7 @@ package com.asakusafw.utils.java.model.syntax;
 import java.util.List;
 
 /**
- * メソッドまたはコンストラクタの宣言を表現する基底インターフェース。
+ * An abstract super interface of method or constructor declarations.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:8.8] Constructor Declarations} </li>
@@ -28,45 +28,33 @@ import java.util.List;
 public interface MethodOrConstructorDeclaration
         extends TypeBodyDeclaration {
 
-    // properties
-
     /**
-     * 型引数宣言の一覧を返す。
-     * <p> 型引数が一つも宣言されない場合は空が返される。 </p>
-     * @return
-     *     型引数宣言の一覧
+     * Returns the type parameter declarations.
+     * @return the type parameter declarations
      */
     List<? extends TypeParameterDeclaration> getTypeParameters();
 
     /**
-     * メソッドまたはコンストラクタの名前を返す。
-     * @return
-     *     メソッドまたはコンストラクタの名前
+     * Returns the target method or constructor name.
+     * @return the target method or constructor name
      */
     SimpleName getName();
 
     /**
-     * 仮引数宣言の一覧を返す。
-     * <p> 仮引数が一つも宣言されない場合は空が返される。 </p>
-     * @return
-     *     仮引数宣言の一覧
+     * Returns the formal parameter declarations.
+     * @return the formal parameter declarations
      */
     List<? extends FormalParameterDeclaration> getFormalParameters();
 
     /**
-     * 例外型宣言の一覧を返す。
-     * <p> 例外型が一つも宣言されない場合は空が返される。 </p>
-     * @return
-     *     例外型宣言の一覧
+     * Returns the exception types.
+     * @return the exception types
      */
     List<? extends Type> getExceptionTypes();
 
     /**
-     * メソッドまたはコンストラクタ本体を返す。
-     * <p> このメソッドが本体を提供されない抽象メソッドやインターフェースメソッドである場合は{@code null}が返される。 </p>
-     * @return
-     *     メソッドまたはコンストラクタ本体、
-     *     ただしこのメソッドが本体を提供されない抽象メソッドやインターフェースメソッドである場合は{@code null}
+     * Returns the method or constructor body.
+     * @return the method or constructor body, or {@code null} if it is not specified
      */
     Block getBody();
 }

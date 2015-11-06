@@ -16,63 +16,63 @@
 package com.asakusafw.utils.java.model.syntax;
 
 /**
- * リテラルの種類。
+ * Represents a kind of literals.
  */
 public enum LiteralKind {
 
     /**
-     * 32bit整数リテラル。
+     * 32bit integer literal.
      */
     INT,
 
     /**
-     * 64bit整数リテラル。
+     * 64bit integer literal.
      */
     LONG,
 
     /**
-     * 単精度浮動小数点数リテラル。
+     * Single precision floating point number literal.
      */
     FLOAT,
 
     /**
-     * 倍精度浮動小数点数リテラル。
+     * Double precision floating point number literal.
      */
     DOUBLE,
 
     /**
-     * 文字リテラル。
+     * Character literal.
      */
     CHAR,
 
     /**
-     * ブールリテラル。
+     * Boolean literal.
      */
     BOOLEAN,
 
     /**
-     * 文字列リテラル。
+     * Character string literal.
      */
     STRING,
 
     /**
-     * {@code null}リテラル。
+     * {@code null} literal.
      */
     NULL,
     ;
 
     /**
-     * {@code null}リテラルを表現するトークン。
+     * The token image of {@code null} literal.
      */
     public static final String TOKEN_NULL = "null"; //$NON-NLS-1$
 
     /**
-     * {@code true}リテラルを表現するトークン。
+     * The token image of {@code true} literal.
      */
     public static final String TOKEN_TRUE = "true"; //$NON-NLS-1$
 
     /**
-     * {@code false}リテラルを表現するトークン。
+     * The token image of {@code false} literal.
      */
     public static final String TOKEN_FALSE = "false"; //$NON-NLS-1$
 }

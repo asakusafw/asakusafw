@@ -16,22 +16,20 @@
 package com.asakusafw.vocabulary.external;
 
 /**
- * エクスポーターの処理内容を記述するインターフェース。
- * <p>
- * このインターフェースを実装するクラスは次のようなクラスである必要がある。
- * </p>
+ * An abstract super interface for describing processing details of <em>export operations</em>
+ * (storing data to external components). Each sub-class must satisfy the following rules:
  * <ul>
- * <li> {@code public}で宣言されている </li>
- * <li> {@code abstract}で宣言されていない </li>
- * <li> 型引数が宣言されていない </li>
- * <li> 明示的なコンストラクターが宣言されていない </li>
+ * <li> declared as {@code public} </li>
+ * <li> NOT declared as {@code abstract} </li>
+ * <li> without any type parameter declarations </li>
+ * <li> with a public zero-parameter constructor (or no explicit constructors) </li>
  * </ul>
  */
 public interface ExporterDescription {
 
     /**
-     * エクスポーターが対象とするモデルオブジェクトの型を表すクラスを返す。
-     * @return エクスポーターが対象とするモデルオブジェクトの型を表すクラス
+     * Returns the data model class of exporting data.
+     * @return the data model class of exporting data
      */
     Class<?> getModelType();
 }

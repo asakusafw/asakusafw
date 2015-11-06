@@ -18,7 +18,7 @@ package com.asakusafw.utils.java.model.syntax;
 import java.util.List;
 
 /**
- * クラスの宣言を表現するインターフェース。
+ * An interface which represents class declarations.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:8.1] Class Declaration} </li>
@@ -28,30 +28,21 @@ import java.util.List;
 public interface ClassDeclaration
         extends TypeDeclaration {
 
-    // properties
-
     /**
-     * 仮型引数宣言の一覧を返す。
-     * <p> 仮型引数が一つも宣言されない場合は空が返される。 </p>
-     * @return
-     *     仮型引数宣言の一覧
+     * Returns the type parameter declarations.
+     * @return the type parameter declarations
      */
     List<? extends TypeParameterDeclaration> getTypeParameters();
 
     /**
-     * 親クラスを返す。
-     * <p> 親クラスが明示されない場合は{@code null}が返される。 </p>
-     * @return
-     *     親クラス、
-     *     ただし親クラスが明示されない場合は{@code null}
+     * Returns the super class.
+     * @return super class, or {@code null} if there is no explicit super class
      */
     Type getSuperClass();
 
     /**
-     * 親インターフェースの一覧を返す。
-     * <p> 親インターフェースが一つも宣言されない場合は空が返される。 </p>
-     * @return
-     *     親インターフェースの一覧
+     * Returns the super interface types.
+     * @return the super interface types
      */
     List<? extends Type> getSuperInterfaceTypes();
 }

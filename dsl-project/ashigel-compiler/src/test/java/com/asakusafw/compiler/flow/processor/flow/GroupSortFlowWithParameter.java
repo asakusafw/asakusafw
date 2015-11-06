@@ -30,7 +30,7 @@ import com.asakusafw.vocabulary.operator.GroupSort;
 
 
 /**
- * {@link GroupSort}のテスト。
+ * test for {@link GroupSort}.
  */
 @JobFlow(name = "testing")
 public class GroupSortFlowWithParameter extends FlowDescription {
@@ -42,10 +42,10 @@ public class GroupSortFlowWithParameter extends FlowDescription {
     private Out<Ex1> out2;
 
     /**
-     * インスタンスを生成する。
-     * @param in1 入力
-     * @param out1 出力1
-     * @param out2 出力2
+     * Creates a new instance.
+     * @param in1 input
+     * @param out1 output1
+     * @param out2 output2
      */
     public GroupSortFlowWithParameter(
             @Import(name = "e1", description = Ex1MockImporterDescription.class)

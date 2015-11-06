@@ -30,22 +30,22 @@ import com.asakusafw.utils.java.model.util.Models;
 import com.asakusafw.utils.java.model.util.TypeBuilder;
 
 /**
- * {@link ValueOption}を元にした{@code DataClass.Property}の実装。
+ * An implementation of {@code DataClass.Property} which property type is {@link ValueOption}.
  */
 public class ValueOptionProperty implements DataClass.Property {
 
-    private ModelFactory factory;
+    private final ModelFactory factory;
 
-    private String name;
+    private final String name;
 
-    private Class<? extends ValueOption<?>> optionClass;
+    private final Class<? extends ValueOption<?>> optionClass;
 
     /**
-     * インスタンスを生成する。
-     * @param factory ファクトリーオブジェクト
-     * @param name プロパティの名前
-     * @param optionClass プロパティのJavaでの型
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param factory the Java DOM factory
+     * @param name the target property name
+     * @param optionClass the target property type
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public ValueOptionProperty(
             ModelFactory factory,

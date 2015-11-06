@@ -15,7 +15,6 @@
  */
 package com.asakusafw.vocabulary.batch;
 
-import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,12 +26,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.asakusafw.vocabulary.flow.FlowDescription;
 
-
 /**
- * バッチを記述するための基底クラス。
- * <p>
- * サブクラスでは、{@link #describe()}を継承し、次のようにジョブフロー間の関係を記述する。
- * </p>
+ * An abstract super class for describing the details of a batch workflow.
+ * Subclasses must override {@link #describe()} method and build a workflow in the method, like as following:
 <pre><code>
 &#64;Batch(name = "hoge")
 public class HogeBatch extends BatchDescription {
@@ -46,25 +42,23 @@ public class HogeBatch extends BatchDescription {
     }
 }
 </code></pre>
- * <p>
- * 上記の例では、まず{@code FirstFlow}が実行され、その後に
- * {@code SecondFlow, ParallelFlow}が実行され、
- * いずれも完了したのちに{@code JoinFlow}が実行されるようなバッチを表す。
- * </p>
+ * In the above example, only {@code FirstFlow} will be started first. And then, after the {@code FirstFlow} was
+ * completed, {@code SecondFlow} and {@code ParallelFlow} will be concurrently processed. Finally,
+ * {@code JoinFlow} was processed after the all other jobflows were completed.
  */
 public abstract class BatchDescription {
 
     static final Work[] NOTHING = new Work[0];
 
-    private Map<String, Work> works = new LinkedHashMap<String, Work>();
+    private final Map<String, Work> works = new LinkedHashMap<String, Work>();
 
     private DependencyBuilder adding;
 
     private final AtomicBoolean described = new AtomicBoolean(false);
 
     /**
-     * バッチ記述メソッドを起動する。
-     * @throws IllegalStateException 別のジョブフローを登録している最中であった場合
+     * Analyzes batch DSL using {@link #describe() batch description method}.
+     * Application developers should not invoke this method directly.
      */
     public final void start() {
         if (described.compareAndSet(false, true) == false) {
@@ -75,64 +69,38 @@ public abstract class BatchDescription {
     }
 
     /**
-     * バッチ記述メソッド。
+     * Describes workflow structure.
+     * Subclasses must override this method and build a workflow using Asakusa batch DSL.
      */
     protected abstract void describe();
 
     /**
-     * このバッチで実行するスクリプトを定義したプロパティファイルを指定する。
-     * <p>
-     * プロパティファイルはこのクラスを継承したソースファイルが含まれるパッケージからの
-     * 相対パスとして指定する。
-     * たとえば、{@code com.example}以下にソースファイルを配置して
-     * {@code com.example.script}以下にプロパティファイル{@code hoge.properties}を
-     * 配置した場合、{@code run(script/hoge.properties)}のように指定する必要がある。
-     * </p>
-     * <p>
-     * それぞれのプロパティファイルに記載すべき内容については、{@link ScriptWorkDescription}
-     * のドキュメントを参照すること。
-     * </p>
-     * @param scriptDefinition このクラスを継承したクラスのパッケージから、
-     *      スクリプトを定義したプロパティファイルへの相対パス
-     * @return 依存関係を追加するためのビルダー
-     * @throws IllegalArgumentException 引数に不正なプロパティファイルが指定された場合
-     * @throws IllegalStateException 別の処理を登録している最中であった場合
+     * Start registering a new <em>script job</em> to this batch.
+     * @param scriptDefinition the script definition path
+     * @return a builder for specifying dependencies of the adding job
+     * @throws IllegalArgumentException if the script definition is something wrong
+     * @throws IllegalStateException if another job is building dependencies
+     * @deprecated does not supported
      */
+    @Deprecated
     protected DependencyBuilder run(String scriptDefinition) {
-        if (scriptDefinition == null) {
-            throw new IllegalArgumentException("scriptDefinition must not be null"); //$NON-NLS-1$
-        }
-        ScriptWorkDescription desc;
-        try {
-            desc = ScriptWorkDescription.load(getClass(), scriptDefinition);
-        } catch (IOException e) {
-            throw new IllegalArgumentException(MessageFormat.format(
-                    Messages.getString("BatchDescription.errorFailedToLoadScript"), //$NON-NLS-1$
-                    scriptDefinition,
-                    getClass().getName()),
-                    e);
-        }
-        return run0(desc);
+        throw new UnsupportedOperationException();
     }
 
     /**
-     * このバッチで実行するジョブフロークラスを指定する。
-     * <p>
-     * このメソッドだけではジョブフローが登録されたことにはならず、
-     * 返されるオブジェクトの次のいずれかを指定する必要がある。
-     * </p>
+     * Start registering a new <em>jobflow</em> to this batch.
+     * Clients must tell the dependencies of the target jobflow to the resulting builder of this method, by using
+     * either methods.
      * <ul>
      * <li> {@link DependencyBuilder#soon() run(...).soon()} </li>
      * <li> {@link DependencyBuilder#after(Work, Work...) run(...).after(...)} </li>
      * </ul>
-     * <p>
-     * 後者のメソッドは、現在のメソッドに指定したジョブフローを実行する際に、
-     * 前提となるジョブフローの一覧を表す。
-     * </p>
-     * @param jobflow バッチで実行するジョブフロークラス
-     * @return 依存関係を追加するためのビルダー
-     * @throws IllegalArgumentException 引数にジョブフロークラス以外が指定された場合
-     * @throws IllegalStateException 別の処理を登録している最中であった場合
+     * The both above methods will return a {@link Work} object which represents the registered jobflow.
+     * And then the latter method accepts {@link Work} objects as its dependencies.
+     * @param jobflow the target jobflow class
+     * @return a builder for specifying dependencies of the adding job
+     * @throws IllegalArgumentException if the jobflow class is something wrong
+     * @throws IllegalStateException if another job is building dependencies
      */
     protected DependencyBuilder run(Class<? extends FlowDescription> jobflow) {
         if (jobflow == null) {
@@ -158,19 +126,13 @@ public abstract class BatchDescription {
     }
 
     /**
-     * このバッチで記述された作業の一覧を返す。
-     * @return このバッチで記述された作業の一覧
+     * Returns a collection of Unit-of-Works which is represented in this batch.
+     * @return a collection of Unit-of-Works of this batch
      */
     public Collection<Work> getWorks() {
         return new ArrayList<Work>(works.values());
     }
 
-    /**
-     * このバッチ記述に指定の処理を追加する。
-     * @param work 追加する処理
-     * @return 追加した処理
-     * @throws IllegalStateException すでにこの名前の処理が存在する場合
-     */
     Work register(Work work) {
         assert work != null;
         String name = work.getDescription().getName();
@@ -195,7 +157,7 @@ public abstract class BatchDescription {
     }
 
     /**
-     * 依存関係を指定してバッチ内での処理を記述する。
+     * A builder for building batch by specifying Unit-of-Works and their dependencies.
      */
     protected class DependencyBuilder {
 
@@ -207,8 +169,8 @@ public abstract class BatchDescription {
         }
 
         /**
-         * 現在の処理を前提となる処理が存在しないものとして構成する。
-         * @return 構成した処理
+         * Completes registering job without any dependencies.
+         * @return the registered job
          */
         public Work soon() {
             return register(new Work(
@@ -218,11 +180,12 @@ public abstract class BatchDescription {
         }
 
         /**
-         * 前提とされる処理を指定して、現在の処理を構成する。
-         * @param dependency 前提とされる処理
-         * @param rest 前提とされる処理の残りの一覧
-         * @return 構成した処理
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Completes registering job with dependencies.
+         * The registered job will be executed after the precedent jobs were (successfully) completed.
+         * @param dependency the precedent job
+         * @param rest the other precedent job
+         * @return the registered job
+         * @throws IllegalArgumentException if some parameters are {@code null}
          */
         public Work after(Work dependency, Work... rest) {
             if (dependency == null) {

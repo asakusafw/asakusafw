@@ -15,9 +15,8 @@
  */
 package com.asakusafw.utils.java.model.syntax;
 
-
 /**
- * {@code while}文を表現するインターフェース。
+ * An interface which represents while statement.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:14.12] The while Statement} </li>
@@ -27,19 +26,15 @@ package com.asakusafw.utils.java.model.syntax;
 public interface WhileStatement
         extends Statement {
 
-    // properties
-
     /**
-     * 条件式を返す。
-     * @return
-     *     条件式
+     * Returns the condition expression.
+     * @return the condition expression
      */
     Expression getCondition();
 
     /**
-     * ループ文を返す。
-     * @return
-     *     ループ文
+     * Returns the loop body.
+     * @return the loop body
      */
     Statement getBody();
 }

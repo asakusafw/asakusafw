@@ -27,22 +27,20 @@ import com.asakusafw.vocabulary.flow.In;
 import com.asakusafw.vocabulary.flow.JobFlow;
 import com.asakusafw.vocabulary.flow.Out;
 
-
 /**
- * 入力に100を足す。
+ * Add 100 to each input.
  */
 @JobFlow(name = "simple")
 public class SimpleJobFlow extends FlowDescription {
 
-    private In<Ex1> in;
+    private final In<Ex1> in;
 
-    private Out<Ex1> out;
+    private final Out<Ex1> out;
 
     /**
-     * インスタンスを生成する。
-     * @param in 入力
-     * @param out 出力
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param in input
+     * @param out output
      */
     public SimpleJobFlow(
             @Import(name = "x", description = Ex1MockImporterDescription.class)

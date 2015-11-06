@@ -21,13 +21,10 @@ import com.asakusafw.utils.java.model.syntax.SwitchCaseLabel;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link SwitchCaseLabel}の実装。
+ * An implementation of {@link SwitchCaseLabel}.
  */
 public final class SwitchCaseLabelImpl extends ModelRoot implements SwitchCaseLabel {
 
-    /**
-     * {@code case}ラベルの値。
-     */
     private Expression expression;
 
     @Override
@@ -36,11 +33,9 @@ public final class SwitchCaseLabelImpl extends ModelRoot implements SwitchCaseLa
     }
 
     /**
-     * {@code case}ラベルの値を設定する。
-     * @param expression
-     *     {@code case}ラベルの値
-     * @throws IllegalArgumentException
-     *     {@code expression}に{@code null}が指定された場合
+     * Sets the {@code case} label value.
+     * @param expression the {@code case} label value
+     * @throws IllegalArgumentException if {@code expression} was {@code null}
      */
     public void setExpression(Expression expression) {
         Util.notNull(expression, "expression"); //$NON-NLS-1$
@@ -48,7 +43,7 @@ public final class SwitchCaseLabelImpl extends ModelRoot implements SwitchCaseLa
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#SWITCH_CASE_LABEL}を返す。
+     * Returns {@link ModelKind#SWITCH_CASE_LABEL} which represents this element kind.
      * @return {@link ModelKind#SWITCH_CASE_LABEL}
      */
     @Override
@@ -57,8 +52,7 @@ public final class SwitchCaseLabelImpl extends ModelRoot implements SwitchCaseLa
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitSwitchCaseLabel(this, context);
     }

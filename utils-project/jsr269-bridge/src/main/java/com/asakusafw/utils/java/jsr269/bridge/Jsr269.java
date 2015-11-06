@@ -42,6 +42,7 @@ import com.asakusafw.utils.java.model.syntax.ArrayType;
 import com.asakusafw.utils.java.model.syntax.BasicType;
 import com.asakusafw.utils.java.model.syntax.BasicTypeKind;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
+import com.asakusafw.utils.java.model.syntax.Model;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
 import com.asakusafw.utils.java.model.syntax.ModifierKind;
 import com.asakusafw.utils.java.model.syntax.Name;
@@ -56,7 +57,7 @@ import com.asakusafw.utils.java.model.util.Emitter;
 import com.asakusafw.utils.java.model.util.Models;
 
 /**
- * {@code JSR-269}が規定するモデルオブジェクトをこのライブラリに適した構造に変換する。
+ * Converts model objects defined in {@code JSR-269} into the {@link Model the Java DOM} objects.
  * @since 0.1.0
  * @version 0.7.0
  */
@@ -84,9 +85,9 @@ public class Jsr269 {
     private final ModelFactory factory;
 
     /**
-     * インスタンスを生成する。
-     * @param factory 変換に利用するファクトリオブジェクト
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Creates a new instance.
+     * @param factory the Java DOM factory
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public Jsr269(ModelFactory factory) {
         if (factory == null) {
@@ -96,11 +97,11 @@ public class Jsr269 {
     }
 
     /**
-     * パッケージ宣言を変換する。
-     * @param packageElement 変換するパッケージ宣言
-     * @return 変換後のパッケージ宣言、ドキュメンテーションや注釈は省略され、
-     *     無名パッケージの場合は{@code null}
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Converts the package element.
+     * Note that documentation comments and annotations are ignored.
+     * @param packageElement the target package element
+     * @return the corresponded package declaration, or {@code null} if the target is a default (unnamed) package
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public PackageDeclaration convert(PackageElement packageElement) {
         if (packageElement == null) {
@@ -117,10 +118,10 @@ public class Jsr269 {
     }
 
     /**
-     * 名前を変換する。
-     * @param name 変換する名前
-     * @return 変換後の名前
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Converts the name.
+     * @param name the target name
+     * @return the corresponded name
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public Name convert(javax.lang.model.element.Name name) {
         if (name == null) {
@@ -130,14 +131,11 @@ public class Jsr269 {
     }
 
     /**
-     * 任意の型オブジェクトを変換する。
-     * <p>
-     * 型として適切でないオブジェクトについては変換の対象にならない。
-     * ただし、{@code void}に関しては対応する型の表現を返す。
-     * </p>
-     * @param type 変換対象の型
-     * @return 対応する型、変換対象に取れない型の場合は{@code null}
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Converts the type mirror.
+     * This also can {@code void} pseudo-type.
+     * @param type the target type
+     * @return the corresponded type, or {@code null} if it is unsupported type
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public Type convert(TypeMirror type) {
         if (type == null) {
@@ -147,13 +145,10 @@ public class Jsr269 {
     }
 
     /**
-     * 配列型のオブジェクトを変換する。
-     * <p>
-     * 型として適切でないオブジェクトについては変換の対象にならない。
-     * </p>
-     * @param type 変換対象の型
-     * @return 対応する型、変換対象に取れない型の場合は{@code null}
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Converts the array type.
+     * @param type the target type
+     * @return the corresponded type, or {@code null} if it is unsupported type
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public ArrayType convert(javax.lang.model.type.ArrayType type) {
         if (type == null) {
@@ -178,13 +173,10 @@ public class Jsr269 {
     }
 
     /**
-     * 宣言型およびパラメータ化型のオブジェクトを変換する。
-     * <p>
-     * 型として適切でないオブジェクトについては変換の対象にならない。
-     * </p>
-     * @param type 変換対象の型
-     * @return 対応する型、変換対象に取れない型の場合は{@code null}
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Converts the class, interface type, or its parameterized type.
+     * @param type the target type
+     * @return the corresponded type, or {@code null} if it is unsupported type
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public Type convert(DeclaredType type) {
         if (type == null) {
@@ -210,13 +202,10 @@ public class Jsr269 {
     }
 
     /**
-     * {@code void}を表すオブジェクトを変換する。
-     * <p>
-     * {@code void}以外のオブジェクトについては変換の対象にならない。
-     * </p>
-     * @param type 変換対象の型
-     * @return 対応する型、変換対象に取れない型の場合は{@code null}
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Converts the {@code void} pseudo-type.
+     * @param type the target type
+     * @return the corresponded type, or {@code null} if it is unsupported type
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public Type convert(NoType type) {
         if (type == null) {
@@ -234,10 +223,10 @@ public class Jsr269 {
     }
 
     /**
-     * プリミティブ型のオブジェクトを変換する。
-     * @param type 変換対象の型
-     * @return 対応する型
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Converts the primitive type.
+     * @param type the target type
+     * @return the corresponded type
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public BasicType convert(PrimitiveType type) {
         if (type == null) {
@@ -266,10 +255,10 @@ public class Jsr269 {
     }
 
     /**
-     * 型変数のオブジェクトを変換する。
-     * @param type 変換対象の型変数
-     * @return 対応する型
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Converts the type variable.
+     * @param type the target type variable
+     * @return the corresponded type
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public NamedType convert(TypeVariable type) {
         if (type == null) {
@@ -280,13 +269,10 @@ public class Jsr269 {
     }
 
     /**
-     * ワイルドカードのオブジェクトを変換する。
-     * <p>
-     * ワイルドカードとして適切でないオブジェクトについては変換の対象にならない。
-     * </p>
-     * @param type 変換対象の型
-     * @return 対応する型、変換対象に取れない型の場合は{@code null}
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Converts the wildcard type.
+     * @param type the target type
+     * @return the corresponded type, or {@code null} if it is unsupported wildcard format
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public Wildcard convert(WildcardType type) {
         if (type == null) {
@@ -374,10 +360,10 @@ public class Jsr269 {
     }
 
     /**
-     * 修飾子を変換する。
-     * @param modifiers 対象の修飾子一覧
-     * @return 変換後の修飾子一覧
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Converts the modifiers.
+     * @param modifiers the target modifiers
+     * @return the converted modifier kinds
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public List<ModifierKind> convert(Collection<javax.lang.model.element.Modifier> modifiers) {
         if (modifiers == null) {
@@ -394,23 +380,23 @@ public class Jsr269 {
     }
 
     /**
-     * 指定のファイラーを利用して、コンパイル単位の内容を出力する。
-     * @param filer 利用するファイラー
-     * @param unit 出力するコンパイル単位
-     * @throws IOException 出力時にエラーが発生した場合
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Emits the target compilation unit using the filer.
+     * @param filer the filer
+     * @param unit the target compilation unit
+     * @throws IOException if error was occurred while emitting the target  compilation unit
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public void emit(Filer filer, CompilationUnit unit) throws IOException {
         emit(filer, unit, EMPTY_ELEMENTS);
     }
 
     /**
-     * 指定のファイラーを利用して、コンパイル単位の内容を出力する。
-     * @param filer 利用するファイラー
-     * @param unit 出力するコンパイル単位
-     * @param originatingElements 生成するコンパイル単位の元になった要素
-     * @throws IOException 出力時にエラーが発生した場合
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Emits the target compilation unit using the filer.
+     * @param filer the filer
+     * @param unit the target compilation unit
+     * @param originatingElements the original elements
+     * @throws IOException if error was occurred while emitting the target  compilation unit
+     * @throws IllegalArgumentException if the parameters are {@code null}
      * @since 0.7.0
      */
     public void emit(Filer filer, CompilationUnit unit, Element... originatingElements) throws IOException {

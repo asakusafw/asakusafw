@@ -19,14 +19,14 @@ import com.asakusafw.vocabulary.batch.Batch;
 import com.asakusafw.vocabulary.batch.BatchDescription;
 
 /**
- * 余計な引数を持つバッチ。
+ * A batch class which constructor has extra parameters.
  */
 @Batch(name = "testing")
 public class NoEmptyParameterConstructor extends BatchDescription {
 
     /**
-     * インスタンスを生成する。
-     * @param odd 余計な引数
+     * Creates a new instance.
+     * @param odd an extra parameter
      */
     public NoEmptyParameterConstructor(int odd) {
         return;

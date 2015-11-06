@@ -21,13 +21,10 @@ import com.asakusafw.utils.java.model.syntax.NamedType;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link NamedType}の実装。
+ * An implementation of {@link NamedType}.
  */
 public final class NamedTypeImpl extends ModelRoot implements NamedType {
 
-    /**
-     * 型の名前。
-     */
     private Name name;
 
     @Override
@@ -36,11 +33,9 @@ public final class NamedTypeImpl extends ModelRoot implements NamedType {
     }
 
     /**
-     * 型の名前を設定する。
-     * @param name
-     *     型の名前
-     * @throws IllegalArgumentException
-     *     {@code name}に{@code null}が指定された場合
+     * Sets the type name.
+     * @param name the type name
+     * @throws IllegalArgumentException if {@code name} was {@code null}
      */
     public void setName(Name name) {
         Util.notNull(name, "name"); //$NON-NLS-1$
@@ -48,7 +43,7 @@ public final class NamedTypeImpl extends ModelRoot implements NamedType {
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#NAMED_TYPE}を返す。
+     * Returns {@link ModelKind#NAMED_TYPE} which represents this element kind.
      * @return {@link ModelKind#NAMED_TYPE}
      */
     @Override
@@ -57,8 +52,7 @@ public final class NamedTypeImpl extends ModelRoot implements NamedType {
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitNamedType(this, context);
     }

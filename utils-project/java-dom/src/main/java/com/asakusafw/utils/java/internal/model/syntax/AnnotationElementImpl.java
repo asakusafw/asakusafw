@@ -22,18 +22,12 @@ import com.asakusafw.utils.java.model.syntax.SimpleName;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link AnnotationElement}の実装。
+ * An implementation of {@link AnnotationElement}.
  */
 public final class AnnotationElementImpl extends ModelRoot implements AnnotationElement {
 
-    /**
-     * 注釈要素の名前。
-     */
     private SimpleName name;
 
-    /**
-     * 注釈要素値の式。
-     */
     private Expression expression;
 
     @Override
@@ -42,11 +36,9 @@ public final class AnnotationElementImpl extends ModelRoot implements Annotation
     }
 
     /**
-     * 注釈要素の名前を設定する。
-     * @param name
-     *     注釈要素の名前
-     * @throws IllegalArgumentException
-     *     {@code name}に{@code null}が指定された場合
+     * Sets annotation element name.
+     * @param name annotation element name
+     * @throws IllegalArgumentException if {@code name} was {@code null}
      */
     public void setName(SimpleName name) {
         Util.notNull(name, "name"); //$NON-NLS-1$
@@ -59,11 +51,9 @@ public final class AnnotationElementImpl extends ModelRoot implements Annotation
     }
 
     /**
-     * 注釈要素値の式を設定する。
-     * @param expression
-     *     注釈要素値の式
-     * @throws IllegalArgumentException
-     *     {@code expression}に{@code null}が指定された場合
+     * Sets the annotation element value.
+     * @param expression the annotation element value
+     * @throws IllegalArgumentException if {@code expression} was {@code null}
      */
     public void setExpression(Expression expression) {
         Util.notNull(expression, "expression"); //$NON-NLS-1$
@@ -71,7 +61,7 @@ public final class AnnotationElementImpl extends ModelRoot implements Annotation
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#ANNOTATION_ELEMENT}を返す。
+     * Returns {@link ModelKind#ANNOTATION_ELEMENT} which represents this element kind.
      * @return {@link ModelKind#ANNOTATION_ELEMENT}
      */
     @Override
@@ -80,8 +70,7 @@ public final class AnnotationElementImpl extends ModelRoot implements Annotation
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitAnnotationElement(this, context);
     }

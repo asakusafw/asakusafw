@@ -26,21 +26,20 @@ import com.asakusafw.vocabulary.flow.In;
 import com.asakusafw.vocabulary.flow.Out;
 import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory;
 
-
 /**
- * Volatileのテスト。
+ * A jobflow class w/ volatile operator.
  */
 @FlowPart
 public class VolatileStage extends FlowDescription {
 
-    private In<Ex1> in;
+    private final In<Ex1> in;
 
-    private Out<Ex1> out;
+    private final Out<Ex1> out;
 
     /**
-     * インスタンスを生成する。
-     * @param in 入力
-     * @param out 出力
+     * Creates a new instance.
+     * @param in input
+     * @param out output
      */
     public VolatileStage(In<Ex1> in, Out<Ex1> out) {
         this.in = in;

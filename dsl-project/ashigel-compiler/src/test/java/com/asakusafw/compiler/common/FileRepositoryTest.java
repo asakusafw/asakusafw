@@ -43,14 +43,14 @@ import com.asakusafw.utils.collections.Maps;
 public class FileRepositoryTest {
 
     /**
-     * 作業用のテンポラリフォルダ。
+     * A temporary area for testing.
      */
     @Rule
     public FrameworkDeployer framework = new FrameworkDeployer(false);
 
     /**
-     * 単一のファイルのみを含む。
-     * @throws Exception テスト中に例外が発生した場合
+     * w/ single file.
+     * @throws Exception if exception was occurred
      */
     @Test
     public void single() throws Exception {
@@ -65,8 +65,8 @@ public class FileRepositoryTest {
     }
 
     /**
-     * 複数のファイルを含む。
-     * @throws Exception テスト中に例外が発生した場合
+     * w/ multiple files.
+     * @throws Exception if exception was occurred
      */
     @Test
     public void multiple() throws Exception {
@@ -83,8 +83,8 @@ public class FileRepositoryTest {
     }
 
     /**
-     * ディレクトリ構造を含む。
-     * @throws Exception テスト中に例外が発生した場合
+     * w/ sub-directories.
+     * @throws Exception if exception was occurred
      */
     @Test
     public void structured() throws Exception {
@@ -101,8 +101,8 @@ public class FileRepositoryTest {
     }
 
     /**
-     * 空のディレクトリ。
-     * @throws Exception テスト中に例外が発生した場合
+     * only an empty directory.
+     * @throws Exception if exception was occurred
      */
     @Test
     public void empty() throws Exception {

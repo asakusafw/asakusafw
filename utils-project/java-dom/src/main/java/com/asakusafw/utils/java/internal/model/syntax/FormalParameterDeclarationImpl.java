@@ -25,33 +25,18 @@ import com.asakusafw.utils.java.model.syntax.Type;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link FormalParameterDeclaration}の実装。
+ * An implementation of {@link FormalParameterDeclaration}.
  */
 public final class FormalParameterDeclarationImpl extends ModelRoot implements FormalParameterDeclaration {
 
-    /**
-     * 修飾子および注釈の一覧。
-     */
     private List<? extends Attribute> modifiers;
 
-    /**
-     * 宣言する変数の型。
-     */
     private Type type;
 
-    /**
-     * 可変長引数。
-     */
     private boolean variableArity;
 
-    /**
-     * 仮引数の名前。
-     */
     private SimpleName name;
 
-    /**
-     * 追加次元数の宣言。
-     */
     private int extraDimensions;
 
     @Override
@@ -60,12 +45,9 @@ public final class FormalParameterDeclarationImpl extends ModelRoot implements F
     }
 
     /**
-     * 修飾子および注釈の一覧を設定する。
-     * <p> 修飾子または注釈が一つも宣言されない場合、引数には空を指定する。 </p>
-     * @param modifiers
-     *     修飾子および注釈の一覧
-     * @throws IllegalArgumentException
-     *     {@code modifiers}に{@code null}が指定された場合
+     * Sets the modifiers and annotations.
+     * @param modifiers the modifiers and annotations
+     * @throws IllegalArgumentException if {@code modifiers} was {@code null}
      */
     public void setModifiers(List<? extends Attribute> modifiers) {
         Util.notNull(modifiers, "modifiers"); //$NON-NLS-1$
@@ -79,11 +61,9 @@ public final class FormalParameterDeclarationImpl extends ModelRoot implements F
     }
 
     /**
-     * 宣言する変数の型を設定する。
-     * @param type
-     *     宣言する変数の型
-     * @throws IllegalArgumentException
-     *     {@code type}に{@code null}が指定された場合
+     * Sets the variable type.
+     * @param type the variable type
+     * @throws IllegalArgumentException if {@code type} was {@code null}
      */
     public void setType(Type type) {
         Util.notNull(type, "type"); //$NON-NLS-1$
@@ -96,10 +76,8 @@ public final class FormalParameterDeclarationImpl extends ModelRoot implements F
     }
 
     /**
-     * 可変長引数である場合に{@code true}を設定する。
-     * <p> そうでない場合、{@code false}を設定する。 </p>
-     * @param variableArity
-     *     可変長引数
+     * Sets whether the parameter is variable arity or not.
+     * @param variableArity {@code true} if the parameter is variable arity, otherwise {@code false}
      */
     public void setVariableArity(boolean variableArity) {
         this.variableArity = variableArity;
@@ -111,11 +89,9 @@ public final class FormalParameterDeclarationImpl extends ModelRoot implements F
     }
 
     /**
-     * 仮引数の名前を設定する。
-     * @param name
-     *     仮引数の名前
-     * @throws IllegalArgumentException
-     *     {@code name}に{@code null}が指定された場合
+     * Sets the parameter name.
+     * @param name the parameter name
+     * @throws IllegalArgumentException if {@code name} was {@code null}
      */
     public void setName(SimpleName name) {
         Util.notNull(name, "name"); //$NON-NLS-1$
@@ -128,18 +104,16 @@ public final class FormalParameterDeclarationImpl extends ModelRoot implements F
     }
 
     /**
-     * 追加次元数の宣言を設定する。
-     * @param extraDimensions
-     *     追加次元数の宣言
-     * @throws IllegalArgumentException
-     *     {@code extraDimensions}に負の値が指定された場合
+     * Sets the extra variable dimensions.
+     * @param extraDimensions the extra variable dimensions
+     * @throws IllegalArgumentException if {@code extraDimensions} was negative value
      */
     public void setExtraDimensions(int extraDimensions) {
         this.extraDimensions = extraDimensions;
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#FORMAL_PARAMETER_DECLARATION}を返す。
+     * Returns {@link ModelKind#FORMAL_PARAMETER_DECLARATION} which represents this element kind.
      * @return {@link ModelKind#FORMAL_PARAMETER_DECLARATION}
      */
     @Override
@@ -148,8 +122,7 @@ public final class FormalParameterDeclarationImpl extends ModelRoot implements F
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitFormalParameterDeclaration(this, context);
     }

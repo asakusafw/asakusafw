@@ -38,7 +38,7 @@ import com.asakusafw.utils.java.model.syntax.Name;
 public class BranchFlowProcessorTest extends JobflowCompilerTestRoot {
 
     /**
-     * 単純なテスト。
+     * simple case.
      */
     @Test
     public void simple() {
@@ -114,7 +114,7 @@ public class BranchFlowProcessorTest extends JobflowCompilerTestRoot {
     }
 
     /**
-     * パラメーター付き。
+     * parameterized.
      */
     @Test
     public void withParameter() {

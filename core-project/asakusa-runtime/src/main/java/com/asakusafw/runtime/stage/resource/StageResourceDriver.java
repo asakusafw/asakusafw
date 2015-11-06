@@ -39,7 +39,7 @@ import com.asakusafw.runtime.compatibility.JobCompatibility;
 import com.asakusafw.runtime.stage.temporary.TemporaryStorage;
 
 /**
- * ステージリソースを利用するためのドライバ。
+ * A driver for configuring stage resources.
  * @since 0.1.0
  * @version 0.7.1
  */
@@ -64,10 +64,10 @@ public class StageResourceDriver implements Closeable {
     private final AccessMode accessMode;
 
     /**
-     * インスタンスを生成する。
-     * @param configuration 設定情報
-     * @throws IOException ファイルシステムの利用に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Creates a new instance.
+     * @param configuration the current configuration
+     * @throws IOException if failed to initialize this driver
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public StageResourceDriver(Configuration configuration) throws IOException {
         if (configuration == null) {
@@ -79,19 +79,19 @@ public class StageResourceDriver implements Closeable {
     }
 
     /**
-     * このオブジェクトが利用する設定情報の一覧を返す。
-     * @return 設定情報の一覧
+     * Returns the current configuration.
+     * @return the current configuration
      */
     public Configuration getConfiguration() {
         return configuration;
     }
 
     /**
-     * このドライバに登録されたリソースへのパスを返す。
-     * @param resourceName リソースの名前
-     * @return 対応するリソースへのパス一覧
-     * @throws IOException リソースの検索に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the paths for the specified resource.
+     * @param resourceName the target resource name
+     * @return the resource paths
+     * @throws IOException if error occurred while extracting resource paths
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public List<Path> findCache(String resourceName) throws IOException {
         if (resourceName == null) {
@@ -232,12 +232,12 @@ public class StageResourceDriver implements Closeable {
     }
 
     /**
-     * 指定のジョブにリソースの情報を追加する。
-     * @param job 対象の情報
-     * @param resourcePath リソースへのパス (for temporary storage)
-     * @param resourceName リソースの名前
-     * @throws IOException リソースの情報が不明であった場合
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Adds a resource path into the target job object.
+     * @param job the target job
+     * @param resourcePath the resource path expression (this must be accessible from task execution nodes)
+     * @param resourceName the resource name
+     * @throws IOException if failed to detect resources on the path
+     * @throws IllegalArgumentException if some parameters are {@code null}
      */
     public static void add(Job job, String resourcePath, String resourceName) throws IOException {
         if (job == null) {

@@ -16,25 +16,20 @@
 package com.asakusafw.utils.java.model.syntax;
 
 /**
- * {@link Model}を渡り歩くビジタ。
- * <p>
- * この実装では、すべてのメソッドが何も行わずに{@code null}を返す。
- * </p>
- * @param <R> 戻り値の型
- * @param <C> コンテキストオブジェクトの型
- * @param <E> 例外の型
+ * Visitor for {@link Model}.
+ * Each method in this implementation does nothing and always returns {@code null}.
+ * @param <C> type of visitor context
+ * @param <R> type of visitor result
+ * @param <E> type of visitor exception
  */
 public abstract class Visitor<R, C, E extends Throwable> {
 
     /**
-     * {@link AlternateConstructorInvocation#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link AlternateConstructorInvocation#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link AlternateConstructorInvocation} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitAlternateConstructorInvocation(
             AlternateConstructorInvocation elem,
@@ -43,14 +38,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link AnnotationDeclaration#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link AnnotationDeclaration#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link AnnotationDeclaration} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitAnnotationDeclaration(
             AnnotationDeclaration elem,
@@ -59,14 +51,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link AnnotationElement#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link AnnotationElement#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link AnnotationElement} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitAnnotationElement(
             AnnotationElement elem,
@@ -75,14 +64,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link AnnotationElementDeclaration#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link AnnotationElementDeclaration#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link AnnotationElementDeclaration} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitAnnotationElementDeclaration(
             AnnotationElementDeclaration elem,
@@ -91,14 +77,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link ArrayAccessExpression#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link ArrayAccessExpression#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link ArrayAccessExpression} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitArrayAccessExpression(
             ArrayAccessExpression elem,
@@ -107,14 +90,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link ArrayCreationExpression#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link ArrayCreationExpression#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link ArrayCreationExpression} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitArrayCreationExpression(
             ArrayCreationExpression elem,
@@ -123,14 +103,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link ArrayInitializer#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link ArrayInitializer#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link ArrayInitializer} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitArrayInitializer(
             ArrayInitializer elem,
@@ -139,14 +116,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link ArrayType#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link ArrayType#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link ArrayType} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitArrayType(
             ArrayType elem,
@@ -155,14 +129,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link AssertStatement#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link AssertStatement#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link AssertStatement} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitAssertStatement(
             AssertStatement elem,
@@ -171,14 +142,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link AssignmentExpression#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link AssignmentExpression#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link AssignmentExpression} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitAssignmentExpression(
             AssignmentExpression elem,
@@ -187,14 +155,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link BasicType#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link BasicType#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link BasicType} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitBasicType(
             BasicType elem,
@@ -203,14 +168,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link Block#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link Block#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link Block} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitBlock(
             Block elem,
@@ -219,14 +181,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link BlockComment#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link BlockComment#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link BlockComment} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitBlockComment(
             BlockComment elem,
@@ -235,14 +194,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link BreakStatement#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link BreakStatement#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link BreakStatement} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitBreakStatement(
             BreakStatement elem,
@@ -251,14 +207,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link CastExpression#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link CastExpression#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link CastExpression} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitCastExpression(
             CastExpression elem,
@@ -267,14 +220,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link CatchClause#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link CatchClause#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link CatchClause} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitCatchClause(
             CatchClause elem,
@@ -283,14 +233,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link ClassBody#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link ClassBody#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link ClassBody} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitClassBody(
             ClassBody elem,
@@ -299,14 +246,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link ClassDeclaration#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link ClassDeclaration#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link ClassDeclaration} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitClassDeclaration(
             ClassDeclaration elem,
@@ -315,14 +259,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link ClassInstanceCreationExpression#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link ClassInstanceCreationExpression#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link ClassInstanceCreationExpression} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitClassInstanceCreationExpression(
             ClassInstanceCreationExpression elem,
@@ -331,14 +272,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link ClassLiteral#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link ClassLiteral#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link ClassLiteral} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitClassLiteral(
             ClassLiteral elem,
@@ -347,14 +285,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link CompilationUnit#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link CompilationUnit#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link CompilationUnit} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitCompilationUnit(
             CompilationUnit elem,
@@ -363,14 +298,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link ConditionalExpression#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link ConditionalExpression#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link ConditionalExpression} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitConditionalExpression(
             ConditionalExpression elem,
@@ -379,14 +311,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link ConstructorDeclaration#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link ConstructorDeclaration#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link ConstructorDeclaration} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitConstructorDeclaration(
             ConstructorDeclaration elem,
@@ -395,14 +324,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link ContinueStatement#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link ContinueStatement#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link ContinueStatement} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitContinueStatement(
             ContinueStatement elem,
@@ -411,14 +337,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link DoStatement#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link DoStatement#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link DoStatement} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitDoStatement(
             DoStatement elem,
@@ -427,14 +350,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link DocBlock#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link DocBlock#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link DocBlock} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitDocBlock(
             DocBlock elem,
@@ -443,14 +363,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link DocField#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link DocField#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link DocField} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitDocField(
             DocField elem,
@@ -459,14 +376,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link DocMethod#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link DocMethod#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link DocMethod} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitDocMethod(
             DocMethod elem,
@@ -475,14 +389,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link DocMethodParameter#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link DocMethodParameter#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link DocMethodParameter} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitDocMethodParameter(
             DocMethodParameter elem,
@@ -491,14 +402,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link DocText#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link DocText#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link DocText} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitDocText(
             DocText elem,
@@ -507,14 +415,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link EmptyStatement#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link EmptyStatement#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link EmptyStatement} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitEmptyStatement(
             EmptyStatement elem,
@@ -523,14 +428,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link EnhancedForStatement#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link EnhancedForStatement#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link EnhancedForStatement} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitEnhancedForStatement(
             EnhancedForStatement elem,
@@ -539,14 +441,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link EnumConstantDeclaration#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link EnumConstantDeclaration#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link EnumConstantDeclaration} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitEnumConstantDeclaration(
             EnumConstantDeclaration elem,
@@ -555,14 +454,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link EnumDeclaration#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link EnumDeclaration#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link EnumDeclaration} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitEnumDeclaration(
             EnumDeclaration elem,
@@ -571,14 +467,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link ExpressionStatement#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link ExpressionStatement#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link ExpressionStatement} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitExpressionStatement(
             ExpressionStatement elem,
@@ -587,14 +480,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link FieldAccessExpression#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link FieldAccessExpression#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link FieldAccessExpression} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitFieldAccessExpression(
             FieldAccessExpression elem,
@@ -603,14 +493,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link FieldDeclaration#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link FieldDeclaration#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link FieldDeclaration} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitFieldDeclaration(
             FieldDeclaration elem,
@@ -619,14 +506,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link ForStatement#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link ForStatement#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link ForStatement} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitForStatement(
             ForStatement elem,
@@ -635,14 +519,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link FormalParameterDeclaration#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link FormalParameterDeclaration#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link FormalParameterDeclaration} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitFormalParameterDeclaration(
             FormalParameterDeclaration elem,
@@ -651,14 +532,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link IfStatement#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link IfStatement#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link IfStatement} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitIfStatement(
             IfStatement elem,
@@ -667,14 +545,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link ImportDeclaration#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link ImportDeclaration#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link ImportDeclaration} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitImportDeclaration(
             ImportDeclaration elem,
@@ -683,14 +558,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link InfixExpression#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link InfixExpression#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link InfixExpression} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitInfixExpression(
             InfixExpression elem,
@@ -699,14 +571,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link InitializerDeclaration#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link InitializerDeclaration#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link InitializerDeclaration} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitInitializerDeclaration(
             InitializerDeclaration elem,
@@ -715,14 +584,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link InstanceofExpression#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link InstanceofExpression#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link InstanceofExpression} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitInstanceofExpression(
             InstanceofExpression elem,
@@ -731,14 +597,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link InterfaceDeclaration#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link InterfaceDeclaration#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link InterfaceDeclaration} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitInterfaceDeclaration(
             InterfaceDeclaration elem,
@@ -747,14 +610,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link Javadoc#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link Javadoc#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link Javadoc} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitJavadoc(
             Javadoc elem,
@@ -763,14 +623,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link LabeledStatement#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link LabeledStatement#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link LabeledStatement} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitLabeledStatement(
             LabeledStatement elem,
@@ -779,14 +636,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link LineComment#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link LineComment#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link LineComment} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitLineComment(
             LineComment elem,
@@ -795,14 +649,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link Literal#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link Literal#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link Literal} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitLiteral(
             Literal elem,
@@ -811,14 +662,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link LocalClassDeclaration#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link LocalClassDeclaration#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link LocalClassDeclaration} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitLocalClassDeclaration(
             LocalClassDeclaration elem,
@@ -827,14 +675,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link LocalVariableDeclaration#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link LocalVariableDeclaration#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link LocalVariableDeclaration} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitLocalVariableDeclaration(
             LocalVariableDeclaration elem,
@@ -843,14 +688,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link MarkerAnnotation#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link MarkerAnnotation#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link MarkerAnnotation} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitMarkerAnnotation(
             MarkerAnnotation elem,
@@ -859,14 +701,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link MethodDeclaration#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link MethodDeclaration#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link MethodDeclaration} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitMethodDeclaration(
             MethodDeclaration elem,
@@ -875,14 +714,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link MethodInvocationExpression#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link MethodInvocationExpression#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link MethodInvocationExpression} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitMethodInvocationExpression(
             MethodInvocationExpression elem,
@@ -891,14 +727,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link Modifier#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link Modifier#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link Modifier} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitModifier(
             Modifier elem,
@@ -907,14 +740,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link NamedType#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link NamedType#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link NamedType} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitNamedType(
             NamedType elem,
@@ -923,14 +753,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link NormalAnnotation#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link NormalAnnotation#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link NormalAnnotation} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitNormalAnnotation(
             NormalAnnotation elem,
@@ -939,14 +766,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link PackageDeclaration#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link PackageDeclaration#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link PackageDeclaration} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitPackageDeclaration(
             PackageDeclaration elem,
@@ -955,14 +779,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link ParameterizedType#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link ParameterizedType#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link ParameterizedType} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitParameterizedType(
             ParameterizedType elem,
@@ -971,14 +792,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link ParenthesizedExpression#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link ParenthesizedExpression#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link ParenthesizedExpression} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitParenthesizedExpression(
             ParenthesizedExpression elem,
@@ -987,14 +805,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link PostfixExpression#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link PostfixExpression#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link PostfixExpression} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitPostfixExpression(
             PostfixExpression elem,
@@ -1003,14 +818,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link QualifiedName#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link QualifiedName#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link QualifiedName} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitQualifiedName(
             QualifiedName elem,
@@ -1019,14 +831,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link QualifiedType#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link QualifiedType#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link QualifiedType} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitQualifiedType(
             QualifiedType elem,
@@ -1035,14 +844,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link ReturnStatement#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link ReturnStatement#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link ReturnStatement} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitReturnStatement(
             ReturnStatement elem,
@@ -1051,14 +857,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link SimpleName#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link SimpleName#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link SimpleName} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitSimpleName(
             SimpleName elem,
@@ -1067,14 +870,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link SingleElementAnnotation#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link SingleElementAnnotation#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link SingleElementAnnotation} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitSingleElementAnnotation(
             SingleElementAnnotation elem,
@@ -1083,14 +883,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link StatementExpressionList#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link StatementExpressionList#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link StatementExpressionList} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitStatementExpressionList(
             StatementExpressionList elem,
@@ -1099,14 +896,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link Super#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link Super#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link Super} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitSuper(
             Super elem,
@@ -1115,14 +909,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link SuperConstructorInvocation#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link SuperConstructorInvocation#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link SuperConstructorInvocation} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitSuperConstructorInvocation(
             SuperConstructorInvocation elem,
@@ -1131,14 +922,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link SwitchCaseLabel#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link SwitchCaseLabel#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link SwitchCaseLabel} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitSwitchCaseLabel(
             SwitchCaseLabel elem,
@@ -1147,14 +935,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link SwitchDefaultLabel#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link SwitchDefaultLabel#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link SwitchDefaultLabel} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitSwitchDefaultLabel(
             SwitchDefaultLabel elem,
@@ -1163,14 +948,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link SwitchStatement#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link SwitchStatement#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link SwitchStatement} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitSwitchStatement(
             SwitchStatement elem,
@@ -1179,14 +961,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link SynchronizedStatement#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link SynchronizedStatement#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link SynchronizedStatement} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitSynchronizedStatement(
             SynchronizedStatement elem,
@@ -1195,14 +974,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link This#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link This#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link This} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitThis(
             This elem,
@@ -1211,14 +987,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link ThrowStatement#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link ThrowStatement#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link ThrowStatement} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitThrowStatement(
             ThrowStatement elem,
@@ -1227,14 +1000,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link TryStatement#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link TryStatement#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link TryStatement} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitTryStatement(
             TryStatement elem,
@@ -1243,14 +1013,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link TypeParameterDeclaration#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link TypeParameterDeclaration#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link TypeParameterDeclaration} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitTypeParameterDeclaration(
             TypeParameterDeclaration elem,
@@ -1259,14 +1026,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link UnaryExpression#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link UnaryExpression#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link UnaryExpression} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitUnaryExpression(
             UnaryExpression elem,
@@ -1275,14 +1039,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link VariableDeclarator#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link VariableDeclarator#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link VariableDeclarator} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitVariableDeclarator(
             VariableDeclarator elem,
@@ -1291,14 +1052,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link WhileStatement#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link WhileStatement#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link WhileStatement} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitWhileStatement(
             WhileStatement elem,
@@ -1307,14 +1065,11 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
-     * {@link Wildcard#accept(Visitor,Object)}
-     * が呼び出された際にコールバックされる。
-     * @param elem
-     *     {@link Wildcard#accept(Visitor,Object)}
-     *     が呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link Wildcard} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
      */
     public R visitWildcard(
             Wildcard elem,

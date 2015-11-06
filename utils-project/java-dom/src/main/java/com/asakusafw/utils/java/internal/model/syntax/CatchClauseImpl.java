@@ -22,18 +22,12 @@ import com.asakusafw.utils.java.model.syntax.ModelKind;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link CatchClause}の実装。
+ * An implementation of {@link CatchClause}.
  */
 public final class CatchClauseImpl extends ModelRoot implements CatchClause {
 
-    /**
-     * 例外仮引数。
-     */
     private FormalParameterDeclaration parameter;
 
-    /**
-     * {@code catch}ブロック。
-     */
     private Block body;
 
     @Override
@@ -42,11 +36,9 @@ public final class CatchClauseImpl extends ModelRoot implements CatchClause {
     }
 
     /**
-     * 例外仮引数を設定する。
-     * @param parameter
-     *     例外仮引数
-     * @throws IllegalArgumentException
-     *     {@code parameter}に{@code null}が指定された場合
+     * Sets the exception parameter.
+     * @param parameter the exception parameter
+     * @throws IllegalArgumentException if {@code parameter} was {@code null}
      */
     public void setParameter(FormalParameterDeclaration parameter) {
         Util.notNull(parameter, "parameter"); //$NON-NLS-1$
@@ -59,11 +51,9 @@ public final class CatchClauseImpl extends ModelRoot implements CatchClause {
     }
 
     /**
-     * {@code catch}ブロックを設定する。
-     * @param body
-     *     {@code catch}ブロック
-     * @throws IllegalArgumentException
-     *     {@code body}に{@code null}が指定された場合
+     * Sets the {@code catch} block body.
+     * @param body the {@code catch} block body
+     * @throws IllegalArgumentException if {@code body} was {@code null}
      */
     public void setBody(Block body) {
         Util.notNull(body, "body"); //$NON-NLS-1$
@@ -71,7 +61,7 @@ public final class CatchClauseImpl extends ModelRoot implements CatchClause {
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#CATCH_CLAUSE}を返す。
+     * Returns {@link ModelKind#CATCH_CLAUSE} which represents this element kind.
      * @return {@link ModelKind#CATCH_CLAUSE}
      */
     @Override
@@ -80,8 +70,7 @@ public final class CatchClauseImpl extends ModelRoot implements CatchClause {
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitCatchClause(this, context);
     }

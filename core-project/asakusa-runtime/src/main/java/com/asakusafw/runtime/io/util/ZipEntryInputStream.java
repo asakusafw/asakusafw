@@ -20,16 +20,16 @@ import java.io.InputStream;
 import java.util.zip.ZipInputStream;
 
 /**
- * {@link ZipInputStream}の一エントリ分だけを読み出すストリーム。
+ * A wrapper of {@link ZipInputStream} for reading single ZIP entry.
  */
 public class ZipEntryInputStream extends InputStream {
 
-    private ZipInputStream zipped;
+    private final ZipInputStream zipped;
 
     /**
-     * インスタンスを生成する。
-     * @param zipped 対象の{@link ZipInputStream}
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param zipped the target {@link ZipInputStream}
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public ZipEntryInputStream(ZipInputStream zipped) {
         if (zipped == null) {

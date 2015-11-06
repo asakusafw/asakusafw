@@ -16,92 +16,93 @@
 package com.asakusafw.runtime.io;
 
 /**
- * TSVパーサーとエミッターが共通して利用する定数。
+ * The constants about TSV format.
+ * @since 0.1.0
  */
 public final class TsvConstants {
 
     /**
-     * boolean型の{@code true}を表す文字。
+     * The string representation of {@code true}.
      */
     public static final char BOOLEAN_TRUE = '1';
 
     /**
-     * boolean型の{@code false}を表す文字。
+     * The string representation of {@code false}.
      */
     public static final char BOOLEAN_FALSE = '0';
 
     /**
-     * エスケープシーケンスの先頭文字。
+     * The escape character.
      */
     public static final char ESCAPE_CHAR = '\\';
 
     /**
-     * {@code NULL}カラムを表現するエスケープシーケンスの後続文字。
+     * The suffix character of {@code NULL} columns for escape sequence.
      */
     public static final char ESCAPE_NULL_COLUMN = 'N';
 
     /**
-     * 水平(HT)タブ文字を表現するエスケープシーケンスの後続文字。
+     * The suffix character of tabs (HT) for escape sequence.
      */
     public static final char ESCAPE_HT = '\t';
 
     /**
-     * 改行(LF)タブ文字を表現するエスケープシーケンスの後続文字。
+     * The suffix character of line breaks (LF) for escape sequence.
      */
     public static final char ESCAPE_LF = '\n';
 
     /**
-     * セルの区切り文字。
+     * The cell separator character.
      */
     public static final char CELL_SEPARATOR = '\t';
 
     /**
-     * レコードの区切り文字。
+     * The record separator character.
      */
     public static final char RECORD_SEPARATOR = '\n';
 
     /**
-     * 日付フィールドの区切り文字。
+     * The date field separator character.
      */
     public static final char DATE_FIELD_SEPARATOR = '-';
 
     /**
-     * 時刻フィールドの区切り文字。
+     * The time field separator character.
      */
     public static final char TIME_FIELD_SEPARATOR = ':';
 
     /**
-     * 日付と時刻間の区切り文字。
+     * The date-time separator character.
      */
     public static final char DATE_TIME_SEPARATOR = ' ';
 
     /**
-     * 年フィールドの文字列長。
+     * The character length of year fields.
      */
     public static final int YEAR_FIELD_LENGTH = 4;
 
     /**
-     * 月フィールドの文字列長。
+     * The character length of month fields.
      */
     public static final int MONTH_FIELD_LENGTH = 2;
 
     /**
-     * 日フィールドの文字列長。
+     * The character length of date fields.
      */
     public static final int DATE_FIELD_LENGTH = 2;
 
     /**
-     * 時フィールドの文字列長。
+     * The character length of hour fields.
      */
     public static final int HOUR_FIELD_LENGTH = 2;
 
     /**
-     * 分フィールドの文字列長。
+     * The character length of minute fields.
      */
     public static final int MINUTE_FIELD_LENGTH = 2;
 
     /**
-     * 秒フィールドの文字列長。
+     * The character length of second fields.
      */
     public static final int SECOND_FIELD_LENGTH = 2;
 

@@ -15,24 +15,20 @@
  */
 package com.asakusafw.utils.java.model.syntax;
 
-
 /**
- * 単一の要素を持つ略記された注釈を表現するインターフェース。
+ * An interface which represents single element annotations which only can have {@code value} element.
  * <ul>
  *   <li> Specified In: <ul>
- *     <li> {@code [JLS3:9.7] Annotations (<i>SingleElementAnnotation</i>)} </li>
+ *     <li> {@code [JLS3:9.7] Annotations (SingleElementAnnotation)} </li>
  *   </ul> </li>
  * </ul>
  */
 public interface SingleElementAnnotation
         extends Annotation, Invocation {
 
-    // properties
-
     /**
-     * {@code value}要素値の式を返す。
-     * @return
-     *     {@code value}要素値の式
+     * Returns the value for {@code value} element.
+     * @return the value for {@code value} element
      */
     Expression getExpression();
 }

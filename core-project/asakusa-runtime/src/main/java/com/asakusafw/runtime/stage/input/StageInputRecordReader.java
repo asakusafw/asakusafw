@@ -28,7 +28,7 @@ import org.apache.hadoop.util.ReflectionUtils;
 import com.asakusafw.runtime.stage.input.StageInputSplit.Source;
 
 /**
- * {@link StageInputSplit}を処理する{@link RecordReader}の実装。
+ * An implementation of Hadoop {@link RecordReader} for handling multiple Map operations.
  * @since 0.1.0
  * @version 0.2.6
  */

@@ -25,7 +25,7 @@ import org.apache.hadoop.io.WritableComparator;
 import com.asakusafw.runtime.io.util.WritableRawComparable;
 
 /**
- * {@code null}値を許容する{@code float}値。
+ * Represents a {@code float} value which can be {@code null}.
  */
 public final class FloatOption extends ValueOption<FloatOption> {
 
@@ -35,7 +35,7 @@ public final class FloatOption extends ValueOption<FloatOption> {
      * Creates a new instance which represents {@code null} value.
      */
     public FloatOption() {
-        super();
+        this.nullValue = true;
     }
 
     /**
@@ -43,15 +43,14 @@ public final class FloatOption extends ValueOption<FloatOption> {
      * @param value the initial value
      */
     public FloatOption(float value) {
-        super();
         this.value = value;
         this.nullValue = false;
     }
 
     /**
-     * このオブジェクトが表現する値を返す。
-     * @return このオブジェクトが表現する値
-     * @throws NullPointerException この値が{@code null}を表現する場合
+     * Returns the value which this object represents.
+     * @return the value which this object represents, never {@code null}
+     * @throws NullPointerException if this object represents {@code null}
      */
     public float get() {
         if (nullValue) {
@@ -61,9 +60,9 @@ public final class FloatOption extends ValueOption<FloatOption> {
     }
 
     /**
-     * このオブジェクトが表現する値を返す。
-     * @param alternate このオブジェクトが{@code null}を表現する場合に返す値
-     * @return このオブジェクトが表現する値、{@code null}を表現する場合は引数の値
+     * Returns the value which this object represents.
+     * @param alternate the alternative value for {@code null}
+     * @return the value which this object represents, or the alternative one if this object represents {@code null}
      */
     public float or(float alternate) {
         if (nullValue) {
@@ -73,9 +72,9 @@ public final class FloatOption extends ValueOption<FloatOption> {
     }
 
     /**
-     * このオブジェクトの内容と指定の値を合計した結果を、このオブジェクトに書き出す。
-     * @param delta 追加する値
-     * @throws NullPointerException このオブジェクトが{@code null}を表現する場合
+     * Adds a value into this object.
+     * @param delta the value to be add
+     * @throws NullPointerException if this object represents {@code null}
      */
     public void add(float delta) {
         if (nullValue) {
@@ -85,9 +84,9 @@ public final class FloatOption extends ValueOption<FloatOption> {
     }
 
     /**
-     * このオブジェクトの内容と指定のオブジェクトの内容を合計した結果を、このオブジェクトに書き出す。
-     * @param other 対象のオブジェクト、{@code null}が指定された場合には何も行わない
-     * @throws NullPointerException このオブジェクトが{@code null}を表現する場合
+     * Adds a value into this object.
+     * @param other the value to be add, or {@code null} to do nothing
+     * @throws NullPointerException if this object represents {@code null}
      */
     public void add(FloatOption other) {
         if (nullValue) {
@@ -100,11 +99,11 @@ public final class FloatOption extends ValueOption<FloatOption> {
     }
 
     /**
-     * このオブジェクトが表現する値を変更する。
-     * @param newValue 変更後の値
-     * @return 自身のオブジェクト
+     * Sets the value.
+     * @param newValue the value
+     * @return this
      * @see ValueOption#setNull()
-     * @deprecated アプリケーションからは利用しない
+     * @deprecated Application developer should not use this method directly
      */
     @Deprecated
     public FloatOption modify(float newValue) {
@@ -113,12 +112,6 @@ public final class FloatOption extends ValueOption<FloatOption> {
         return this;
     }
 
-    /**
-     * このオブジェクトの内容を、指定のオブジェクトの内容で上書きする。
-     * @param optionOrNull 上書きする内容、
-     *     {@code null}の場合はこのオブジェクトが{@code null}値を表すようになる
-     * @deprecated アプリケーションからは利用しない
-     */
     @Override
     @Deprecated
     public void copyFrom(FloatOption optionOrNull) {
@@ -164,9 +157,9 @@ public final class FloatOption extends ValueOption<FloatOption> {
     }
 
     /**
-     * この値と指定の値が同じものを表現する場合のみ{@code true}を返す。
-     * @param other 対象の値
-     * @return 指定の値が同じものを表現する場合のみ{@code true}
+     * Returns whether both this object and the specified value represents an equivalent value or not.
+     * @param other the target value
+     * @return {@code true} if this object has the specified value, otherwise {@code false}
      */
     public boolean has(float other) {
         if (isNull()) {
@@ -178,7 +171,6 @@ public final class FloatOption extends ValueOption<FloatOption> {
     @Override
     public int compareTo(WritableRawComparable o) {
         FloatOption other = (FloatOption) o;
-        // nullは他のどのような値よりも小さい
         if (nullValue | other.nullValue) {
             if (nullValue & other.nullValue) {
                 return 0;
@@ -257,25 +249,25 @@ public final class FloatOption extends ValueOption<FloatOption> {
     }
 
     /**
-     * このクラスの直列化された形式から、占有しているバイト長を返す。
-     * @param bytes 対象のバイト配列
-     * @param offset バイト配列の開始位置
-     * @param length バイト配列の制限長
-     * @return 占有しているバイト長
+     * Returns the actual number of bytes from the serialized byte array.
+     * @param bytes the target byte array
+     * @param offset the beginning index in the byte array (inclusive)
+     * @param length the limit length of the byte array
+     * @return the comparison result
      */
     public static int getBytesLength(byte[] bytes, int offset, int length) {
         return bytes[offset] == 0 ? 1 : 5;
     }
 
     /**
-     * このクラスの2つの直列化された値を比較する。
-     * @param b1 比較されるバイト配列
-     * @param s1 比較されるバイト配列の開始位置
-     * @param l1 比較されるバイト配列内で、このクラスの直列化形式が占有しているバイト長
-     * @param b2 比較するバイト配列
-     * @param s2 比較するバイト配列の開始位置
-     * @param l2 比較するバイト配列内で、このクラスの直列化形式が占有しているバイト長
-     * @return 比較結果
+     * Compares between the two objects in serialized form.
+     * @param b1 the first byte array to be compared
+     * @param s1 the beginning index in {@code b1}
+     * @param l1 the limit byte size in {@code b1}
+     * @param b2 the second byte array to be compared
+     * @param s2 the beginning index in {@code b2}
+     * @param l2 the limit byte size in {@code b2}
+     * @return the comparison result
      */
     public static int compareBytes(
             byte[] b1, int s1, int l1,

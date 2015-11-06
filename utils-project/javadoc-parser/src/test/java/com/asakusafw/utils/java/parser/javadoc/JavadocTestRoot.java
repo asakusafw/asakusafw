@@ -37,15 +37,15 @@ import com.asakusafw.utils.java.internal.parser.javadoc.ir.IrDocText;
 import com.asakusafw.utils.java.internal.parser.javadoc.ir.JavadocToken;
 
 /**
- * Javadoc関連のテスト。
+ * Test root for Javadoc parsers.
  */
 public class JavadocTestRoot {
 
     /**
-     * 指定の名前のリソースをUTF-8テキストとして読み出し、内容を返す。
-     * すべての改行文字は、単一の{@code U+000a}に置換される。
-     * @param name リソースの名前
-     * @return リソースの内容
+     * Loads the target resource as UTF-8 text, and returns its contents.
+     * The line-break characters will be replaced with single {@code U+000a}.
+     * @param name the target resource name
+     * @return the contents
      */
     public static String load(String name) {
         InputStream in = JavadocTestRoot.class.getResourceAsStream(name);
@@ -75,9 +75,9 @@ public class JavadocTestRoot {
     }
 
     /**
-     * 指定の文字列をトーカナイズして返す。
-     * @param text 対象の文字列
-     * @return トークンの列
+     * Returns a scanner for the string.
+     * @param text the target string
+     * @return the scanner
      */
     public static DefaultJavadocScanner string(String text) {
         Assert.assertNotNull(text);
@@ -85,9 +85,9 @@ public class JavadocTestRoot {
     }
 
     /**
-     * 指定の名前のリソースをUTF-8テキストとして読み出し、トーカナイズして返す。
-     * @param name リソースの名前
-     * @return リソースの内容
+     * Returns a scanner for the target resource.
+     * @param name the target resource name
+     * @return the scanner
      */
     public static DefaultJavadocScanner scanner(String name) {
         String resource = load(name);
@@ -95,18 +95,18 @@ public class JavadocTestRoot {
     }
 
     /**
-     * 指定の名前のリソースをUTF-8テキストとして読み出し、トークン列を返す。
-     * @param name リソースの名前
-     * @return リソースの内容
+     * Returns a token stream for the target resource.
+     * @param name the target resource name
+     * @return the scanner
      */
     public static DefaultJavadocTokenStream stream(String name) {
         return new DefaultJavadocTokenStream(scanner(name));
     }
 
     /**
-     * 指定のトークン列であることを表明する。
-     * @param tokens 対象のトークン列
-     * @param expected 表明する正解
+     * Checks the target tokens have the specified images, or raises an error.
+     * @param tokens the target tokens
+     * @param expected the expected token images
      */
     public static void assertTextSequence(List<? extends JavadocToken> tokens, String...expected) {
         if (tokens.size() != expected.length) {
@@ -127,9 +127,9 @@ public class JavadocTestRoot {
     }
 
     /**
-     * 指定のトークン列を連結させた文字列を返す。
-     * @param tokens 対象のトークン列
-     * @return 連結させた文字列
+     * Concatenates the target token images.
+     * @param tokens the target tokens
+     * @return the concatenated images
      */
     public static String toString(List<? extends JavadocToken> tokens) {
         StringBuilder buf = new StringBuilder();
@@ -140,9 +140,9 @@ public class JavadocTestRoot {
     }
 
     /**
-     * 指定の種類の要素列であることを表明する。
-     * @param elements 対象の要素列
-     * @param expected 表明する正解
+     * Checks the target elements are the specified element kinds, or raises an error.
+     * @param elements the target elements
+     * @param expected the expected element kinds
      */
     public static void assertKinds(List<? extends IrDocElement> elements, IrDocElementKind...expected) {
         if (elements.size() != expected.length) {
@@ -163,9 +163,9 @@ public class JavadocTestRoot {
     }
 
     /**
-     * 指定の断片がテキストで、かつ指定の内容を保持していることを表明する。
-     * @param content 表明するテキスト
-     * @param fragment 対象の断片
+     * Checks the target fragment represents just a text and it have the specified string, or raises an error.
+     * @param content the expected text
+     * @param fragment the target fragment
      */
     public static void assertTextEquals(String content, IrDocFragment fragment) {
         Assert.assertEquals(IrDocElementKind.TEXT, fragment.getKind());
@@ -173,10 +173,10 @@ public class JavadocTestRoot {
     }
 
     /**
-     * 指定の断片がブロックで、かつ指定の内容を保持していることを表明する。
-     * @param parser このブロックを解析したパーサ
-     * @param tag タグ名
-     * @param fragment 対象の断片
+     * Checks the target fragment represents a block and it have the specified tag, or raises an error.
+     * @param parser the parser which was generated the target fragment
+     * @param tag the expected tag
+     * @param fragment the target fragment
      */
     public static void assertMockBlockEquals(MockJavadocBlockParser parser, String tag, IrDocFragment fragment) {
         assertEquals(BLOCK, fragment.getKind());

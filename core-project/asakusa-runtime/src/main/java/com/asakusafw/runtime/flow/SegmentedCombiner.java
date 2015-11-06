@@ -21,9 +21,9 @@ import java.util.Iterator;
 import org.apache.hadoop.mapreduce.Reducer;
 
 /**
- * {@link SegmentedWritable}をキーとして、セグメントごとの処理を行う{@code Combiner}の骨格実装。
- * @param <KEY> キーの種類
- * @param <VALUE> 値の種類
+ * A skeletal implementation of Hadoop Combiner class which uses {@link SegmentedWritable} as it key/value.
+ * @param <KEY> the key type
+ * @param <VALUE> the value type
  * @since 0.1.0
  * @version 0.5.1
  */
@@ -33,15 +33,14 @@ public abstract class SegmentedCombiner<
         extends Reducer<KEY, VALUE, KEY, VALUE> {
 
     /**
-     * {@link #getRendezvous(SegmentedWritable)}のメソッド名。
+     * The method name of {@link #getRendezvous(SegmentedWritable)}.
      */
     public static final String GET_RENDEZVOUS = "getRendezvous"; //$NON-NLS-1$
 
     /**
-     * キーのグループが変更された際、または最初のキーに対して呼び出され、
-     * グループに対応する処理断片を返す。
-     * @param key 対象のキー
-     * @return 対応する処理断片
+     * Returns the {@link Rendezvous} object for processing the target segment.
+     * @param key the segment information
+     * @return the corresponded {@link Rendezvous} object
      */
     protected abstract Rendezvous<VALUE> getRendezvous(KEY key);
 

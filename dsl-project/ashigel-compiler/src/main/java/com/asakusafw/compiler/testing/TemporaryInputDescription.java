@@ -32,11 +32,12 @@ public abstract class TemporaryInputDescription implements ImporterDescription {
     }
 
     /**
-     * インポート対象のファイルへのパス一覧を返す。
+     * Returns the import target path prefix.
      * <p>
-     * パスは絶対パスとして指定し、パス内にはワイルドカードとして末尾に{@code -*}を付与することができる。
+     * Each path segment must be separated by {@code "/"}.
+     * And the file name (the last segment of the path prefix) must end with {@code "-*"}.
      * </p>
-     * @return インポート対象のファイルへのパス一覧
+     * @return the import target paths
      */
     public abstract Set<String> getPaths();
 

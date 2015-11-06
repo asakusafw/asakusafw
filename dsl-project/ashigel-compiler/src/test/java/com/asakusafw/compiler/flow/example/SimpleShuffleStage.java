@@ -28,17 +28,16 @@ import com.asakusafw.vocabulary.flow.In;
 import com.asakusafw.vocabulary.flow.JobFlow;
 import com.asakusafw.vocabulary.flow.Out;
 
-
 /**
- * シャッフルを行うジョブフロー。
+ * A jobflow class w/ shuffle operation.
  */
 @SuppressWarnings("all")
 @JobFlow(name = "testing")
 public class SimpleShuffleStage extends FlowDescription {
 
-    private In<Ex1> in;
+    private final In<Ex1> in;
 
-    private Out<ExSummarized> out;
+    private final Out<ExSummarized> out;
 
     public SimpleShuffleStage(
             @Import(name = "ex1", description = Ex1MockImporterDescription.class) In<Ex1> in,

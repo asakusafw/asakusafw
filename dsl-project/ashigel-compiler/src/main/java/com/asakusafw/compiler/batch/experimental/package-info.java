@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * 試験的なワークフロープラグイン。
+ * Compiler plug-ins for experimental features.
  */
 package com.asakusafw.compiler.batch.experimental;

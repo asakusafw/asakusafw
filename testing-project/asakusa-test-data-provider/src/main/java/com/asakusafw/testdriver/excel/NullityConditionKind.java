@@ -22,27 +22,27 @@ package com.asakusafw.testdriver.excel;
 public enum NullityConditionKind {
 
     /**
-     * Accepts if .
+     * Accepts like that {@code null} is a regular value.
      */
     NORMAL("-", Messages.getString("NullityConditionKind.titleNormal")), //$NON-NLS-1$ //$NON-NLS-2$
 
     /**
-     * Accepts if actual value is null.
+     * Accepts if actual value is {@code null}.
      */
     ACCEPT_ABSENT("AA", Messages.getString("NullityConditionKind.titleAcceptAbsent")), //$NON-NLS-1$ //$NON-NLS-2$
 
     /**
-     * Deny if actual value is null.
+     * Denies if actual value is {@code null}.
      */
     DENY_ABSENT("DA", Messages.getString("NullityConditionKind.titleDenyAbsent")), //$NON-NLS-1$ //$NON-NLS-2$
 
     /**
-     * Accepts if actual value is not null.
+     * Accepts if actual value is not {@code null}.
      */
     ACCEPT_PRESENT("AP", Messages.getString("NullityConditionKind.titleAcceptPresent")), //$NON-NLS-1$ //$NON-NLS-2$
 
     /**
-     * Deny if actual value is not null.
+     * Denies if actual value is not {@code null}.
      */
     DENY_PRESENT("DP", Messages.getString("NullityConditionKind.titleDenyPresent")), //$NON-NLS-1$ //$NON-NLS-2$
     ;

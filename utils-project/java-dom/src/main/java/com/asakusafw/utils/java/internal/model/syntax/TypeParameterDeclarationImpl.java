@@ -24,18 +24,12 @@ import com.asakusafw.utils.java.model.syntax.TypeParameterDeclaration;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link TypeParameterDeclaration}の実装。
+ * An implementation of {@link TypeParameterDeclaration}.
  */
 public final class TypeParameterDeclarationImpl extends ModelRoot implements TypeParameterDeclaration {
 
-    /**
-     * 型引数の名前。
-     */
     private SimpleName name;
 
-    /**
-     * 境界型の一覧。
-     */
     private List<? extends Type> typeBounds;
 
     @Override
@@ -44,11 +38,9 @@ public final class TypeParameterDeclarationImpl extends ModelRoot implements Typ
     }
 
     /**
-     * 型引数の名前を設定する。
-     * @param name
-     *     型引数の名前
-     * @throws IllegalArgumentException
-     *     {@code name}に{@code null}が指定された場合
+     * Sets the type variable name.
+     * @param name the type variable name
+     * @throws IllegalArgumentException if {@code name} was {@code null}
      */
     public void setName(SimpleName name) {
         Util.notNull(name, "name"); //$NON-NLS-1$
@@ -61,12 +53,9 @@ public final class TypeParameterDeclarationImpl extends ModelRoot implements Typ
     }
 
     /**
-     * 境界型の一覧を設定する。
-     * <p> 境界型が一つも指定されない場合、引数には空を指定する。 </p>
-     * @param typeBounds
-     *     境界型の一覧
-     * @throws IllegalArgumentException
-     *     {@code typeBounds}に{@code null}が指定された場合
+     * Sets the bound types.
+     * @param typeBounds the bound types
+     * @throws IllegalArgumentException if {@code typeBounds} was {@code null}
      */
     public void setTypeBounds(List<? extends Type> typeBounds) {
         Util.notNull(typeBounds, "typeBounds"); //$NON-NLS-1$
@@ -75,7 +64,7 @@ public final class TypeParameterDeclarationImpl extends ModelRoot implements Typ
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#TYPE_PARAMETER_DECLARATION}を返す。
+     * Returns {@link ModelKind#TYPE_PARAMETER_DECLARATION} which represents this element kind.
      * @return {@link ModelKind#TYPE_PARAMETER_DECLARATION}
      */
     @Override
@@ -84,8 +73,7 @@ public final class TypeParameterDeclarationImpl extends ModelRoot implements Typ
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitTypeParameterDeclaration(this, context);
     }

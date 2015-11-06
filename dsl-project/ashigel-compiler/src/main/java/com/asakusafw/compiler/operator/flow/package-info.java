@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /**
- * フローに関連する演算子DSLコンパイラ。
+ * Operator DSL compiler for flow-part classes.
  */
 package com.asakusafw.compiler.operator.flow;
 

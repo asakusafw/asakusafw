@@ -20,7 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * モデルにコメント出力を付与するトレイト。
+ * A Java DOM trait for attaching comment text.
  */
 public final class CommentEmitTrait {
 
@@ -29,9 +29,9 @@ public final class CommentEmitTrait {
     private List<String> contents;
 
     /**
-     * インスタンスを生成する。
-     * @param contents コメントの内容 (行区切りの文字列)
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Creates a new instance.
+     * @param contents the comment lines
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public CommentEmitTrait(List<String> contents) {
         if (contents == null) {
@@ -48,8 +48,8 @@ public final class CommentEmitTrait {
     }
 
     /**
-     * コメントの内容を返す。
-     * @return コメントの内容
+     * Returns the comment lines.
+     * @return the comment lines
      */
     public List<String> getContents() {
         return this.contents;

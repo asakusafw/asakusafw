@@ -15,9 +15,8 @@
  */
 package com.asakusafw.vocabulary.batch;
 
-
 /**
- * ジョブフローの名前が衝突するバッチ。
+ * Batch with jobflows with have the same flow ID.
  */
 public class NameConflictBatch extends BatchDescription {
 

@@ -28,16 +28,15 @@ import com.asakusafw.vocabulary.flow.processor.InputBuffer;
 import com.asakusafw.vocabulary.model.Key;
 import com.asakusafw.vocabulary.operator.CoGroup;
 
-
 /**
- * {@link CoGroupFlowProcessor}に対するテスト演算子。
+ * An operator class for testing {@link CoGroupFlowProcessor}.
  */
 public abstract class CoGroupFlow {
 
     /**
-     * valueの合計を返す。
-     * @param a1 グループ
-     * @param r1 結果
+     * returns total of values.
+     * @param a1 group
+     * @param r1 sink
      */
     @CoGroup
     public void op1(
@@ -48,9 +47,9 @@ public abstract class CoGroupFlow {
 
 
     /**
-     * valueの合計を返す。
-     * @param a1 グループ
-     * @param r1 結果
+     * returns total of values w/ using backing store.
+     * @param a1 group
+     * @param r1 sink
      */
     @CoGroup(inputBuffer = InputBuffer.ESCAPE)
     public void swap(
@@ -59,9 +58,9 @@ public abstract class CoGroupFlow {
         withParameter(a1, r1, 0);
     }
     /**
-     * valueの合計を返す。
-     * @param a1 グループ
-     * @param r1 結果
+     * returns total of values w/ ordered.
+     * @param a1 group
+     * @param r1 sink
      */
     @CoGroup
     public void sorted(
@@ -75,11 +74,11 @@ public abstract class CoGroupFlow {
     }
 
     /**
-     * valueの合計をグループを入れ替えて返す。
-     * @param a1 グループ1
-     * @param a2 グループ2
-     * @param r1 結果1
-     * @param r2 結果2
+     * a1 to r2, a2 to r1.
+     * @param a1 group 1
+     * @param a2 group 2
+     * @param r1 result 1
+     * @param r2 result 2
      */
     @CoGroup
     public void op2(
@@ -109,13 +108,13 @@ public abstract class CoGroupFlow {
     }
 
     /**
-     * valueの合計を1->2->3の順にローテートして返す。
-     * @param a1 グループ1
-     * @param a2 グループ2
-     * @param a3 グループ3
-     * @param r1 結果1
-     * @param r2 結果2
-     * @param r3 結果3
+     * a1 to r2, a2 to r3, a3 to r1.
+     * @param a1 group 1
+     * @param a2 group 2
+     * @param a3 group 3
+     * @param r1 result 1
+     * @param r2 result 2
+     * @param r3 result 3
      */
     @CoGroup
     public void op3(
@@ -131,10 +130,10 @@ public abstract class CoGroupFlow {
     }
 
     /**
-     * valueの合計 + 引数 * 個数を返す。
-     * @param a1 グループ
-     * @param r1 結果
-     * @param parameter パラメーター
+     * sum of value + parameter * size of a1.
+     * @param a1 group
+     * @param r1 result
+     * @param parameter additional parameter
      */
     @CoGroup
     public void withParameter(

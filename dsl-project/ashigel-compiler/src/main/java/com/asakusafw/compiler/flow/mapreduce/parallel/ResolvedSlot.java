@@ -22,25 +22,25 @@ import com.asakusafw.compiler.flow.DataClass;
 import com.asakusafw.compiler.flow.DataClass.Property;
 
 /**
- * 型に関連する情報を解決したスロット。
+ * Represents resolved information of {@link Slot}.
  */
 public class ResolvedSlot {
 
-    private Slot source;
+    private final Slot source;
 
-    private int slotNumber;
+    private final int slotNumber;
 
-    private DataClass valueClass;
+    private final DataClass valueClass;
 
-    private List<Property> sortProperties;
+    private final List<Property> sortProperties;
 
     /**
-     * インスタンスを生成する。
-     * @param source コンパイルしたソース
-     * @param slotNumber このスロットのスロット番号
-     * @param valueClass スロットの値を表すクラス
-     * @param sortProperties スロットのソート順序に関連するプロパティ一覧
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param source the source slot information
+     * @param slotNumber the slot number
+     * @param valueClass the resolved data type of the slot
+     * @param sortProperties the resolved properties of the sort key
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public ResolvedSlot(Slot source, int slotNumber, DataClass valueClass, List<Property> sortProperties) {
         Precondition.checkMustNotBeNull(source, "source"); //$NON-NLS-1$
@@ -53,32 +53,32 @@ public class ResolvedSlot {
     }
 
     /**
-     * コンパイルしたソースを返す。
-     * @return コンパイルしたソース
+     * Returns the source slot information.
+     * @return the source slot information
      */
     public Slot getSource() {
         return source;
     }
 
     /**
-     * このスロットのスロット番号を返す。
-     * @return このスロットのスロット番号
+     * Returns the slot number.
+     * @return the slot number
      */
     public int getSlotNumber() {
         return slotNumber;
     }
 
     /**
-     * スロットの値を表すクラスを返す。
-     * @return スロットの値を表すクラス
+     * Returns the resolved data type of the slot.
+     * @return the resolved data type of the slot
      */
     public DataClass getValueClass() {
         return valueClass;
     }
 
     /**
-     * スロットのソート順序に関連するプロパティ一覧を返す。
-     * @return スロットのソート順序に関連するプロパティ一覧
+     * Returns the resolved properties of the sort key.
+     * @return the resolved properties of the sort key
      */
     public List<DataClass.Property> getSortProperties() {
         return sortProperties;

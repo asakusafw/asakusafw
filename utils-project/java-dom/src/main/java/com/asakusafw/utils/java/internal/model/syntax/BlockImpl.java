@@ -23,13 +23,10 @@ import com.asakusafw.utils.java.model.syntax.Statement;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link Block}の実装。
+ * An implementation of {@link Block}.
  */
 public final class BlockImpl extends ModelRoot implements Block {
 
-    /**
-     * 文の一覧。
-     */
     private List<? extends Statement> statements;
 
     @Override
@@ -38,12 +35,9 @@ public final class BlockImpl extends ModelRoot implements Block {
     }
 
     /**
-     * 文の一覧を設定する。
-     * <p> 文が一つも宣言されない場合、引数には空を指定する。 </p>
-     * @param statements
-     *     文の一覧
-     * @throws IllegalArgumentException
-     *     {@code statements}に{@code null}が指定された場合
+     * Sets the element statements.
+     * @param statements the element statements
+     * @throws IllegalArgumentException if {@code statements} was {@code null}
      */
     public void setStatements(List<? extends Statement> statements) {
         Util.notNull(statements, "statements"); //$NON-NLS-1$
@@ -52,7 +46,7 @@ public final class BlockImpl extends ModelRoot implements Block {
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#BLOCK}を返す。
+     * Returns {@link ModelKind#BLOCK} which represents this element kind.
      * @return {@link ModelKind#BLOCK}
      */
     @Override
@@ -61,8 +55,7 @@ public final class BlockImpl extends ModelRoot implements Block {
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitBlock(this, context);
     }

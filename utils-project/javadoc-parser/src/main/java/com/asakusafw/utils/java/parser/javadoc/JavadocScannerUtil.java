@@ -25,35 +25,30 @@ import com.asakusafw.utils.java.internal.parser.javadoc.ir.JavadocToken;
 import com.asakusafw.utils.java.internal.parser.javadoc.ir.JavadocTokenKind;
 
 /**
- * {@link JavadocScanner}のユーティリティ群。
+ * Utilities for {@link JavadocScanner}.
  */
 public final class JavadocScannerUtil {
 
-    private static final Set<JavadocTokenKind> S_LINE_BREAK =
-        Collections.singleton(JavadocTokenKind.LINE_BREAK);
+    private static final Set<JavadocTokenKind> S_LINE_BREAK = Collections.singleton(JavadocTokenKind.LINE_BREAK);
 
-    private static final Set<JavadocTokenKind> S_WHITE_SPACES =
-        Collections.singleton(JavadocTokenKind.WHITE_SPACES);
+    private static final Set<JavadocTokenKind> S_WHITE_SPACES = Collections.singleton(JavadocTokenKind.WHITE_SPACES);
 
-    private static final Set<JavadocTokenKind> S_ASTERISK =
-        Collections.singleton(JavadocTokenKind.ASTERISK);
+    private static final Set<JavadocTokenKind> S_ASTERISK = Collections.singleton(JavadocTokenKind.ASTERISK);
 
-    private static final Set<JavadocTokenKind> S_RIGHT_BRACE =
-        Collections.singleton(JavadocTokenKind.RIGHT_BRACE);
+    private static final Set<JavadocTokenKind> S_RIGHT_BRACE = Collections.singleton(JavadocTokenKind.RIGHT_BRACE);
 
     private JavadocScannerUtil() {
         return;
     }
 
     /**
-     * 指定のレンジのトークン一覧を返す。
-     * 指定の開始位置から指定の個数だけトークンを返すが、
-     * その中に終端トークン({@link JavadocTokenKind#EOF})が含まれていた場合は
-     * そのトークンおよびそれ以降のトークンを結果に含めない。
-     * @param scanner 対象のスキャナ
-     * @param start 開始オフセット
-     * @param count トークンの個数 (EOFが出現した場合はこの数よりも少ないトークン数のリストが返される)
-     * @return トークン一覧
+     * Returns the a sequence of tokens.
+     * This will returns number of tokens specified by {@code count},
+     * except EOF token ({@link JavadocTokenKind#EOF}) and its trailing tokens.
+     * @param scanner the target scanner
+     * @param start the starting index
+     * @param count the max token count
+     * @return the tokens in the range
      */
     public static List<JavadocToken> lookaheadTokens(JavadocScanner scanner, int start, int count) {
         if (count < 0) {
@@ -71,45 +66,35 @@ public final class JavadocScannerUtil {
     }
 
     /**
-     * {@code kinds}で指定された種類を持つトークンが、開始オフセットから連続する個数を返す。
-     * @param kinds 対象の種類の一覧、{@link JavadocTokenKind#EOF}は無視される
-     * @param scanner 対象のスキャナ
-     * @param start 開始オフセット
-     * @return 開始オフセットから指定の種類のトークンが連続する個数
+     * Returns the number of tokens from the starting index while each token has the specified kind.
+     * @param kinds the target kinds ({@link JavadocTokenKind#EOF} will be ignored)
+     * @param scanner the target scanner
+     * @param start the starting index
+     * @return the number of tokens
      */
-    public static int countWhile(
-            Collection<JavadocTokenKind> kinds,
-            JavadocScanner scanner,
-            int start) {
+    public static int countWhile(Collection<JavadocTokenKind> kinds, JavadocScanner scanner, int start) {
         return countWhileUntil(kinds, scanner, start, false);
     }
 
     /**
-     * {@code kinds}で指定された種類を持つトークンが、開始オフセットから出現するまでの個数を返す。
-     * @param kinds 対象の種類の一覧、{@link JavadocTokenKind#EOF}は暗黙に追加される
-     * @param scanner 対象のスキャナ
-     * @param start 開始オフセット
-     * @return 開始オフセットから指定の種類のトークンが出現するまでの個数
+     * Returns the number of tokens from the starting index until each token has the specified kind.
+     * @param kinds the target kinds ({@link JavadocTokenKind#EOF} will be always enabled)
+     * @param scanner the target scanner
+     * @param start the starting index
+     * @return the number of tokens
      */
-    public static int countUntil(
-            Collection<JavadocTokenKind> kinds,
-            JavadocScanner scanner,
-            int start) {
+    public static int countUntil(Collection<JavadocTokenKind> kinds, JavadocScanner scanner, int start) {
         return countWhileUntil(kinds, scanner, start, true);
     }
 
     /**
-     * 指定の位置を起点として、このブロックの末尾となるトークンまでの個数を返す。
-     * この個数は、末端となるトークンを含まない。
-     * @param scanner 対象のスキャナ
-     * @param start 開始オフセット
-     * @return ブロックの終端となるトークンまでの個数
+     * Returns the number of tokens from the starting index until the current block was closed.
+     * The terminal token will be not in the count.
+     * @param scanner the target scanner
+     * @param start the starting index
+     * @return the number of tokens
      */
-    public static int countUntilBlockEnd(
-            JavadocScanner scanner,
-            int start) {
-
-        // カーソルを改行文字へ
+    public static int countUntilBlockEnd(JavadocScanner scanner, int start) {
         int offset = 0;
         while (true) {
             JavadocTokenKind kind = scanner.lookahead(start + offset).getKind();
@@ -135,19 +120,15 @@ public final class JavadocScannerUtil {
     }
 
     /**
-     * 指定の位置を基点として、このコメントの終端となるトークンまでの個数を返す。
-     * この個数は、末端となるトークンを含まない。
-     * @param scanner 対象のスキャナ
+     * Returns the number of tokens from the starting index until the end of this comment.
+     * @param scanner the target scanner
      * @param returnMinusIfMissing
-     *      {@code true}ならば発見できなかった場合に{@code -1}を返し、
-     *      {@code false}ならば発見できなかった場合に末尾までのトークン数を返す
-     * @param start 開始オフセット
-     * @return 終端となるトークンまでの個数
+     *      {@code true} to return {@code -1} if missing the end of comment,
+     *      or {@code false} to return the number of tokens if missing it
+     * @param start the starting index
+     * @return the number of tokens
      */
-    public static int countUntilCommentEnd(
-            JavadocScanner scanner,
-            boolean returnMinusIfMissing,
-            int start) {
+    public static int countUntilCommentEnd(JavadocScanner scanner, boolean returnMinusIfMissing, int start) {
         JavadocToken token = scanner.lookahead(start);
         if (token.getKind() == JavadocTokenKind.EOF) {
             return (returnMinusIfMissing ? -1 : 0);
@@ -181,9 +162,7 @@ public final class JavadocScannerUtil {
         while (true) {
             JavadocToken token = scanner.lookahead(start + offset);
             JavadocTokenKind kind = token.getKind();
-            if (
-                    kind == JavadocTokenKind.EOF
-                    || kinds.contains(kind) == breakOnFound) {
+            if (kind == JavadocTokenKind.EOF || kinds.contains(kind) == breakOnFound) {
                 return offset;
             } else {
                 offset++;
@@ -192,12 +171,11 @@ public final class JavadocScannerUtil {
     }
 
     /**
-     * 指定の位置を基点として、次の行の先頭となるトークンまでの個数を返す。
-     * その際、行頭の空白文字およびアスタリスクはすべてスキップされる。
-     * 次の行が存在しない場合、この呼び出しは終端までのトークン数を返す。
-     * @param scanner 対象のスキャナ
-     * @param start 開始オフセット
-     * @return 開始オフセットから次の行頭までのトークンが連続する個数
+     * Returns the number of tokens from the starting index until the next printable token.
+     * Note that white spaces and asterisks on beginning of lines are NOT printable.
+     * @param scanner the target scanner
+     * @param start the starting index
+     * @return the number of tokens
      */
     public static int countUntilNextPrintable(JavadocScanner scanner, int start) {
         int offset = 0;
@@ -215,12 +193,12 @@ public final class JavadocScannerUtil {
     }
 
     /**
-     * 指定の位置を基点として、次の行の先頭となるトークンまでの個数を返す。
-     * その際、行頭の空白文字およびアスタリスクはすべてスキップされる。
-     * 次の行が存在しない場合、この呼び出しは終端までのトークン数を返す。
-     * @param scanner 対象のスキャナ
-     * @param start 開始オフセット
-     * @return 開始オフセットから次の行頭までのトークンが連続する個数
+     * Returns the number of tokens from the starting index until the next printable token on the subsequent lines.
+     * If there is no subsequent lines or no such a printable token, this will returns the number of tokens until EOF.
+     * Note that white spaces and asterisks on beginning of lines are NOT printable.
+     * @param scanner the target scanner
+     * @param start the starting index
+     * @return the number of tokens
      */
     public static int countUntilNextLineStart(JavadocScanner scanner, int start) {
         int offset = 0;
@@ -237,11 +215,11 @@ public final class JavadocScannerUtil {
     }
 
     /**
-     * 行末文字と、それに後続する空白文字の列、アスタリスクの列、空白文字の列を消費する。
-     * {@code multiline}に{@code true}が指定された場合、連続する同様の構造を全て消費する。
-     * @param scanner 対象のスキャナ
-     * @param multiline 複数行に対して行末を消費する
-     * @return 消費した行数
+     * Consumes the next line-break, and its consequent white-space, and asterisk tokens.
+     * With {@code multiline} option, this also consumes them on the subsequent lines.
+     * @param scanner the target scanner
+     * @param multiline {@code true} to consume line end on multiple lines, otherwise {@code false}
+     * @return the consumed number of lines
      */
     public static int consumeLineEnd(JavadocScanner scanner, boolean multiline) {
         int consumed = 0;

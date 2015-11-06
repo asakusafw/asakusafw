@@ -16,83 +16,74 @@
 package com.asakusafw.testdriver.excel.legacy;
 
 /**
- * テスト条件のシート上のアイテムを表す列挙型。
+ * Represents a kind of cell on the Excel rule sheets.
  */
 public enum ConditionSheetItem {
 
     /**
-     * カラム番号。
+     * The column number.
      */
     NO("NO", 2, 0, ItemType.COLUMN_ITEM),
 
     /**
-     * カラム名。
+     * The column name.
      */
     COLUMN_NAME("カラム名", 2, 1, ItemType.COLUMN_ITEM),
 
     /**
-     * カラムコメント。
+     * The column comments.
      */
     COLUMN_COMMENT("カラムコメント", 2, 2, ItemType.COLUMN_ITEM),
 
     /**
-     * データ型。
+     * The data type.
      */
     DATA_TYPE("データ型", 2, 3, ItemType.COLUMN_ITEM),
 
     /**
-     * 桁数。
+     * The number of digits.
      */
     WIDTH("桁数", 2, 4, ItemType.COLUMN_ITEM),
 
     /**
-     * 制度。
+     * The degree of precision.
      */
     SCALE("精度", 2, 5, ItemType.COLUMN_ITEM),
 
     /**
-     * キー項目。
+     * The key item.
      */
     KEY_FLAG("KEY", 2, 6, ItemType.COLUMN_ITEM),
 
     /**
-     * NULL可。
+     * The nullability.
      */
     NULLABLE("NULL可", 2, 7, ItemType.COLUMN_ITEM),
 
     /**
-     * 比較条件。
+     * The matching condition.
      */
     MATCHING_CONDITION("比較条件", 2, 8, ItemType.COLUMN_ITEM),
 
     /**
-     * NULL比較条件。
+     * The nullity condition.
      */
     NULL_VALUE_CONDITION("NULL値", 2, 9, ItemType.COLUMN_ITEM),
 
     /**
-     * テーブル名。
+     * The table name.
      */
     TABLE_NAME("テーブル名", 0, 1, ItemType.TABLE_ITEM),
 
     /**
-     * 比較条件。
+     * The row matching condition.
      */
     ROW_MATCHING_CONDITION("比較条件", 1, 1, ItemType.TABLE_ITEM);
 
-    /**
-     * セルに表示する名称。
-     */
     private String name;
 
-    /**
-     * 行位置。
-     */
     private int row;
 
-    /**
-     * カラム位置。
-     */
     private int col;
 
     private ConditionSheetItem(String name, int row, int col, ItemType itemType) {
@@ -104,43 +95,40 @@ public enum ConditionSheetItem {
     }
 
     /**
-     * アイテムの種別を表す列挙型。
+     * Represents a kind of item.
      */
     public enum ItemType {
 
         /**
-         * テーブル。
+         * The table item.
          */
         TABLE_ITEM,
 
         /**
-         * カラム。
+         * The column item.
          */
         COLUMN_ITEM,
     }
 
     /**
-     * セルに表示する名称を取得します。
-     *
-     * @return セルに表示する名称
+     * Returns the cell name.
+     * @return the cell name
      */
     public String getName() {
         return name;
     }
 
     /**
-     * 行位置を取得します。
-     *
-     * @return 行位置
+     * Returns the row number.
+     * @return the row number (0-origin)
      */
     public int getRow() {
         return row;
     }
 
     /**
-     * カラム位置を取得します。
-     *
-     * @return カラム位置
+     * Returns the column number.
+     * @return the column number (0-origin)
      */
     public int getCol() {
         return col;

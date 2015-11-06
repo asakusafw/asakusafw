@@ -16,11 +16,11 @@
 package com.asakusafw.compiler.flow.processor.operator;
 import javax.annotation.Generated;
 /**
- * {@link CoGroupFlow}に関する演算子実装クラス。
+ * An operator implementation class for{@link CoGroupFlow}.
  */
-@Generated("OperatorImplementationClassGenerator:0.0.1") public class CoGroupFlowImpl extends CoGroupFlow {
+@Generated("OperatorImplementationClassGenerator:0.1.0") public class CoGroupFlowImpl extends CoGroupFlow {
     /**
-     * インスタンスを生成する。
+     * Creates a new instance.
      */
     public CoGroupFlowImpl() {
         return;

@@ -16,22 +16,22 @@
 package com.asakusafw.vocabulary.flow.graph;
 
 /**
- * フロー部品のインライン展開属性。
+ * Represents strategies how to flatten flow-parts.
  */
 public enum Inline implements FlowElementAttribute {
 
     /**
-     * インライン展開時にステージ構成を破棄し、可能な限り高速化する。
+     * Flattens flow-parts directly.
      */
     FORCE_AGGREGATE,
 
     /**
-     * インライン展開時にステージ構成を保ち、再現性を担保する。
+     * Flattens flow-parts with inserting stage boundaries into its I/O ports.
      */
     KEEP_SEGREGATED,
 
     /**
-     * 標準にしたがう。
+     * Flattens flow-parts with default manner (may be configured by compiler).
      */
     DEFAULT,
 }

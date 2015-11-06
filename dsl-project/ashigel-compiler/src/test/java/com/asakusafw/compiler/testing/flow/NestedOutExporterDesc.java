@@ -19,7 +19,7 @@ import com.asakusafw.compiler.flow.testing.model.Ex1;
 import com.asakusafw.compiler.testing.TemporaryOutputDescription;
 
 /**
- * テスト用の出力定義。
+ * An exporter description for testing - output to nested location.
  */
 public class NestedOutExporterDesc extends TemporaryOutputDescription {
 

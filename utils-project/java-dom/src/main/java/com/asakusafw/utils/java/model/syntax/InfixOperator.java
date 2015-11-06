@@ -22,12 +22,12 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 二項演算子。
+ * Represents infix operators.
  */
 public enum InfixOperator {
 
     /**
-     * 単一代入演算子。
+     * Assignment operator.
      */
     ASSIGN(
         "=", //$NON-NLS-1$
@@ -35,7 +35,7 @@ public enum InfixOperator {
         Category.ASSIGNMENT),
 
     /**
-     * 加算。
+     * Add operator.
      */
     PLUS(
         "+", //$NON-NLS-1$
@@ -43,7 +43,7 @@ public enum InfixOperator {
         Category.ADDITIVE),
 
     /**
-     * 減算。
+     * Subtract operator.
      */
     MINUS(
         "-", //$NON-NLS-1$
@@ -51,7 +51,7 @@ public enum InfixOperator {
         Category.ADDITIVE),
 
     /**
-     * 乗算。
+     * Multiply operator.
      */
     TIMES(
         "*", //$NON-NLS-1$
@@ -59,7 +59,7 @@ public enum InfixOperator {
         Category.MULTIPLICATIVE),
 
     /**
-     * 除算。
+     * Division operator.
      */
     DIVIDE(
         "/", //$NON-NLS-1$
@@ -67,7 +67,7 @@ public enum InfixOperator {
         Category.MULTIPLICATIVE),
 
     /**
-     * 剰余算。
+     * Remainder operator.
      */
     REMAINDER(
         "%", //$NON-NLS-1$
@@ -75,7 +75,7 @@ public enum InfixOperator {
         Category.MULTIPLICATIVE),
 
     /**
-     * 左シフト。
+     * Left shift operator.
      */
     LEFT_SHIFT(
         "<<", //$NON-NLS-1$
@@ -83,7 +83,7 @@ public enum InfixOperator {
         Category.SHIFT),
 
     /**
-     * 右算術シフト。
+     * Signed right shift operator.
      */
     RIGHT_SHIFT_SIGNED(
         ">>", //$NON-NLS-1$
@@ -91,7 +91,7 @@ public enum InfixOperator {
         Category.SHIFT),
 
     /**
-     * 右論理シフト。
+     * Unsigned right shift operator.
      */
     RIGHT_SHIFT_UNSIGNED(
         ">>>", //$NON-NLS-1$
@@ -99,7 +99,7 @@ public enum InfixOperator {
         Category.SHIFT),
 
     /**
-     * 論理和。
+     * Bitwise/logical or operator.
      */
     OR(
         "|", //$NON-NLS-1$
@@ -107,7 +107,7 @@ public enum InfixOperator {
         Category.BITWISE),
 
     /**
-     * 論理積。
+     * Bitwise/logical and operator.
      */
     AND(
         "&", //$NON-NLS-1$
@@ -115,7 +115,7 @@ public enum InfixOperator {
         Category.BITWISE),
 
     /**
-     * 排他的論理和。
+     * Bitwise/logical exclusive or operator.
      */
     XOR(
         "^", //$NON-NLS-1$
@@ -123,7 +123,7 @@ public enum InfixOperator {
         Category.BITWISE),
 
     /**
-     * 同一比較。
+     * Equal operator.
      */
     EQUALS(
         "==", //$NON-NLS-1$
@@ -131,7 +131,7 @@ public enum InfixOperator {
         Category.EQUALITY),
 
     /**
-     * 非同一比較。
+     * Not equal operator.
      */
     NOT_EQUALS(
         "!=", //$NON-NLS-1$
@@ -139,7 +139,7 @@ public enum InfixOperator {
         Category.EQUALITY),
 
     /**
-     * 超過。
+     * Greater than operator.
      */
     GREATER(
         ">", //$NON-NLS-1$
@@ -147,7 +147,7 @@ public enum InfixOperator {
         Category.RELATIONAL),
 
     /**
-     * 未満。
+     * Less than operator.
      */
     LESS(
         "<", //$NON-NLS-1$
@@ -155,7 +155,7 @@ public enum InfixOperator {
         Category.RELATIONAL),
 
     /**
-     * 以上。
+     * Greater than or equal to operator.
      */
     GREATER_EQUALS(
         ">=", //$NON-NLS-1$
@@ -163,7 +163,7 @@ public enum InfixOperator {
         Category.RELATIONAL),
 
     /**
-     * 以下。
+     * Less than or equal to operator.
      */
     LESS_EQUALS(
         "<=", //$NON-NLS-1$
@@ -171,7 +171,7 @@ public enum InfixOperator {
         Category.RELATIONAL),
 
     /**
-     * 短絡的論理和。
+     * Conditional or operator.
      */
     CONDITIONAL_OR(
         "||", //$NON-NLS-1$
@@ -179,7 +179,7 @@ public enum InfixOperator {
         Category.CONDITIONAL),
 
     /**
-     * 短絡的論理積。
+     * Conditional and operator.
      */
     CONDITIONAL_AND(
         "&&", //$NON-NLS-1$
@@ -195,10 +195,10 @@ public enum InfixOperator {
     private final Category category;
 
     /**
-     * インスタンスを生成する。
-     * @param symbol シンボル
-     * @param permitted 許可されたコンテキストの一覧
-     * @param category カテゴリ
+     * Creates a new instance.
+     * @param symbol the operator symbol
+     * @param permitted set of the permitted contexts
+     * @param category the operator category
      */
     private InfixOperator(String symbol, EnumSet<Context> permitted, Category category) {
         assert symbol != null;
@@ -210,16 +210,16 @@ public enum InfixOperator {
     }
 
     /**
-     * この演算子のシンボルを返す。
-     * @return この演算子のシンボル
+     * Returns the infix operator symbol.
+     * @return the infix operator symbol
      */
     public String getSymbol() {
         return this.symbol;
     }
 
     /**
-     * この演算子の代入シンボルを返す。
-     * @return 代入シンボル
+     * Returns the assignment operator symbol.
+     * @return the assignment operator symbol
      */
     public String getAssignmentSymbol() {
         if (this == ASSIGN) {
@@ -230,10 +230,10 @@ public enum InfixOperator {
     }
 
     /**
-     * 指定のシンボルに対応するこの列挙の定数を返す。
-     * @param symbol 対象のシンボル
-     * @return 対応する定数、存在しない場合は{@code null}
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns an operator from its symbol.
+     * @param symbol the target operator symbol
+     * @return the corresponded operator, or {@code null} if there is no such the operator
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static InfixOperator fromSymbol(String symbol) {
         if (symbol == null) {
@@ -243,10 +243,10 @@ public enum InfixOperator {
     }
 
     /**
-     * 指定したコンテキストでこの演算子を利用することが許可されている場合のみ{@code true}を返す。
-     * @param context コンテキストの種類
-     * @return この演算子を利用することが許可されている場合のみ{@code true}
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns whether this operator can be used in the specified context or not.
+     * @param context the target context
+     * @return {@code true} if this operator can be used in the specified context, otherwise {@code false}
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public boolean isPermitted(Context context) {
         if (context == null) {
@@ -256,71 +256,72 @@ public enum InfixOperator {
     }
 
     /**
-     * この演算子が属するカテゴリを返す。
-     * @return カテゴリ
+     * Returns the operator category.
+     * @return the operator category
      */
     public InfixOperator.Category getCategory() {
         return this.category;
     }
 
     /**
-     * 演算子を利用可能なコンテキストの種類。
+     * Represents a kind of permissive context.
      */
     public static enum Context {
 
         /**
-         * 二項演算子として使用可能。
+         * The operator can be used as infix operator.
          */
         INFIX,
 
         /**
-         * 単純代入および複合代入演算子として使用可能。
+         *
+         * The operator can be used as assignment operator.
          */
         ASSIGNMENT,
     }
 
     /**
-     * 演算子のカテゴリ。
+     * Represents an operator kind.
      */
     public static enum Category {
 
         /**
-         * 乗除演算子 ({@literal 15.17}).
+         * multiplicative operators ({@literal 15.17}).
          */
         MULTIPLICATIVE,
 
         /**
-         * 加減演算子 ({@literal 15.18}).
+         * additive operators ({@literal 15.18}).
          */
         ADDITIVE,
 
         /**
-         * シフト演算子 ({@literal 15.19}).
+         * shift operators ({@literal 15.19}).
          */
         SHIFT,
 
         /**
-         * 関係演算子 ({@literal 15.20}).
+         * relational operators ({@literal 15.20}).
          */
         RELATIONAL,
 
         /**
-         * 等値演算子 ({@literal 15.21}).
+         * equality operators ({@literal 15.21}).
          */
         EQUALITY,
 
         /**
-         * ビット演算子, 論理演算子 ({@literal 15.22}).
+         * bitwise/logical operators ({@literal 15.22}).
          */
         BITWISE,
 
         /**
-         * 条件演算子 ({@literal 15.23}, {@literal 15.24}).
+         * conditional operator ({@literal 15.23}, {@literal 15.24}).
          */
         CONDITIONAL,
 
         /**
-         * 代入演算子 ({@literal 15.23}, {@literal 15.26}).
+         * assignment operators ({@literal 15.23}, {@literal 15.26}).
          */
         ASSIGNMENT,
     }

@@ -45,7 +45,7 @@ import com.asakusafw.utils.java.model.util.ImportBuilder;
 import com.asakusafw.utils.java.model.util.TypeBuilder;
 
 /**
- * 演算子メソッドの実装を構築するビルダー。
+ * A builder for building operator implementation classes.
  */
 public class ImplementationBuilder {
 
@@ -64,9 +64,9 @@ public class ImplementationBuilder {
     private final List<FieldDeclaration> fields;
 
     /**
-     * インスタンスを生成する。
-     * @param context コンテキストオブジェクト
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param context the current context
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public ImplementationBuilder(OperatorProcessor.Context context) {
         Precondition.checkMustNotBeNull(context, "context"); //$NON-NLS-1$
@@ -80,9 +80,9 @@ public class ImplementationBuilder {
     }
 
     /**
-     * 引数の名前を返す。
-     * @param index 引数の番号 (0起算)
-     * @return 引数の名前
+     * Returns the parameter name.
+     * @param index the parameter number (0-origin)
+     * @return the parameter name
      */
     public SimpleName getParameterName(int index) {
         VariableElement parameter = element.getParameters().get(index);
@@ -90,9 +90,9 @@ public class ImplementationBuilder {
     }
 
     /**
-     * 引数の型を返す。
-     * @param index 引数の番号 (0起算)
-     * @return 引数の型
+     * Returns the parameter type.
+     * @param index the parameter number (0-origin)
+     * @return the parameter type
      */
     public Type getParameterType(int index) {
         VariableElement parameter = element.getParameters().get(index);
@@ -100,9 +100,9 @@ public class ImplementationBuilder {
     }
 
     /**
-     * 実装のメソッドに文を追加する。
-     * @param statement 対象の文
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Adds a statement into the implementation method.
+     * @param statement the target statement
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public void addStatement(Statement statement) {
         Precondition.checkMustNotBeNull(statement, "statement"); //$NON-NLS-1$
@@ -110,10 +110,10 @@ public class ImplementationBuilder {
     }
 
     /**
-     * 実装のメソッドにモデルのコピー文を追加する。
-     * @param from コピー元のモデルが含まれる式
-     * @param to コピー先のモデルが含まれる式
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Adds a statement of data model copy into the implementation method.
+     * @param from an expression which represents the source data model object
+     * @param to an expression which represents the destination data model object
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public void addCopyStatement(Expression from, Expression to) {
         Precondition.checkMustNotBeNull(from, "from"); //$NON-NLS-1$
@@ -124,11 +124,11 @@ public class ImplementationBuilder {
     }
 
     /**
-     * モデルオブジェクトを保持するフィールドを新たに生成する。
-     * @param type フィールドの型
-     * @param name フィールドの名前
-     * @return 生成したフィールドにアクセスするための式
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Adds a field that holds a data model object.
+     * @param type the field type
+     * @param name the field name
+     * @return the expression an expression which represents accessing the generated field
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public FieldAccessExpression addModelObjectField(TypeMirror type, String name) {
         Precondition.checkMustNotBeNull(type, "type"); //$NON-NLS-1$
@@ -137,11 +137,11 @@ public class ImplementationBuilder {
     }
 
     /**
-     * モデルオブジェクトを保持するフィールドを新たに生成する。
-     * @param type フィールドの型
-     * @param name フィールドの名前
-     * @return 生成したフィールドにアクセスするための式
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Adds a field that holds a data model object.
+     * @param type the field type
+     * @param name the field name
+     * @return the expression an expression which represents accessing the generated field
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public FieldAccessExpression addModelObjectField(Type type, String name) {
         Precondition.checkMustNotBeNull(type, "type"); //$NON-NLS-1$
@@ -162,8 +162,8 @@ public class ImplementationBuilder {
     }
 
     /**
-     * これまでに生成した情報を元に実装を返す。
-     * @return 生成した実装
+     * Returns the member declaration of operator implementations.
+     * @return the member declaration of operator implementations
      */
     public List<TypeBodyDeclaration> toImplementation() {
         List<TypeBodyDeclaration> results = Lists.create();

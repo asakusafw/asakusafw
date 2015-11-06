@@ -24,14 +24,13 @@ import java.util.Map;
 
 import com.asakusafw.vocabulary.external.ImporterDescription;
 
-
 /**
- * フローへの入力を表す要素の定義記述。
+ * A description of flow input.
  */
 public class InputDescription implements FlowElementDescription {
 
     /**
-     * この要素の出力ポート名。
+     * The port name.
      */
     public static final String OUTPUT_PORT_NAME = "port"; //$NON-NLS-1$
 
@@ -50,10 +49,10 @@ public class InputDescription implements FlowElementDescription {
     private final ImporterDescription importerDescription;
 
     /**
-     * インスタンスを生成する。
-     * @param name この入力の名前
-     * @param type この入力のデータ型
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param name the input name
+     * @param type the data type
+     * @throws IllegalArgumentException if some parameters are {@code null}
      */
     public InputDescription(String name, Type type) {
         if (name == null) {
@@ -68,10 +67,10 @@ public class InputDescription implements FlowElementDescription {
     }
 
     /**
-     * インスタンスを生成する。
-     * @param name この入力の名前
-     * @param importer インポーター処理の記述
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param name the input name
+     * @param importer the importer description of this input
+     * @throws IllegalArgumentException if some parameters are {@code null}
      */
     public InputDescription(String name, ImporterDescription importer) {
         if (name == null) {
@@ -107,8 +106,8 @@ public class InputDescription implements FlowElementDescription {
     }
 
     /**
-     * インポーター処理の記述を返す。
-     * @return インポーター処理の記述、利用しない場合は{@code null}
+     * Returns the importer description of this input.
+     * @return the importer description, or {@code null} if this input is not external
      */
     public ImporterDescription getImporterDescription() {
         return this.importerDescription;
@@ -125,8 +124,8 @@ public class InputDescription implements FlowElementDescription {
     }
 
     /**
-     * この入力が利用するデータの種類を返す。
-     * @return この入力が利用するデータの種類
+     * Returns the data type of this input.
+     * @return the data type
      */
     public Type getDataType() {
         return port.getDataType();

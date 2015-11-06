@@ -16,15 +16,15 @@
 package com.asakusafw.utils.graph;
 
 /**
- * 特定の値が条件に合致するどうか判断するインターフェース。
- * @param <T> 対象の値の型
+ * An interface for evaluating whether the value satisfies some conditions.
+ * @param <T> the value type
  */
 public interface Matcher<T> {
 
     /**
-     * 指定の値がこの条件に条件に合致する場合に{@code true}を返す。
-     * @param object 対象のオブジェクト
-     * @return 指定の値がこの条件に条件に合致する場合に{@code true}、そうでない場合は{@code false}
+     * Returns whether the target value satisfies this matcher's condition.
+     * @param object the target value
+     * @return {@code true} if the target value satisfies this matcher's condition, otherwise {@code false}
      */
     boolean matches(T object);
 }

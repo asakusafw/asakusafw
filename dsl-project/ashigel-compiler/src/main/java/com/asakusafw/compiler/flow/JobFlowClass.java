@@ -20,19 +20,19 @@ import com.asakusafw.vocabulary.flow.JobFlow;
 import com.asakusafw.vocabulary.flow.graph.FlowGraph;
 
 /**
- * ジョブフロークラスの内容。
+ * Represents a model of jobflow class.
  */
 public class JobFlowClass {
 
-    private JobFlow config;
+    private final JobFlow config;
 
-    private FlowGraph graph;
+    private final FlowGraph graph;
 
     /**
-     * インスタンスを生成する。
-     * @param config このジョブフローの設定
-     * @param graph このジョブフローの構造を表すグラフ
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param config the configuration of this jobflow
+     * @param graph a flow graph which represents the target jobflow
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public JobFlowClass(JobFlow config, FlowGraph graph) {
         Precondition.checkMustNotBeNull(config, "config"); //$NON-NLS-1$
@@ -42,16 +42,16 @@ public class JobFlowClass {
     }
 
     /**
-     * このジョブフローの設定を返す。
-     * @return このジョブフローの設定
+     * Returns the configuration of this jobflow.
+     * @return the configuration of this jobflow
      */
     public JobFlow getConfig() {
         return config;
     }
 
     /**
-     * このジョブフローの構造を表すグラフを返す。
-     * @return このジョブフローの構造を表すグラフ
+     * Returns the flow graph of this jobflow.
+     * @return the flow graph of this jobflow
      */
     public FlowGraph getGraph() {
         return this.graph;

@@ -14,21 +14,20 @@
  * limitations under the License.
  */
 package com.asakusafw.compiler.flow.testing.operator;
-import javax.annotation.Generated;
-
 import com.asakusafw.compiler.flow.testing.model.Ex1;
 import com.asakusafw.compiler.flow.testing.model.ExSummarized;
+import javax.annotation.Generated;
 /**
- * {@link ExOperator}に関する演算子実装クラス。
+ * An operator implementation class for{@link ExOperator}.
  */
-@Generated("OperatorImplementationClassGenerator:0.0.1") public class ExOperatorImpl extends ExOperator {
+@Generated("OperatorImplementationClassGenerator:0.1.0") public class ExOperatorImpl extends ExOperator {
     /**
-     * インスタンスを生成する。
+     * Creates a new instance.
      */
     public ExOperatorImpl() {
         return;
     }
     @Override public ExSummarized summarize(Ex1 model) {
-        throw new UnsupportedOperationException("単純集計演算子は組み込みの方法で処理されます");
+        throw new UnsupportedOperationException("summarize operator does not have method body");
     }
 }

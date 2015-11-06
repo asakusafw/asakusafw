@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * 演算子DSLで利用可能な、注釈やそれらに関連するクラスを提供する。
+ * Operator DSL vocabulary annotations/classes.
  */
 package com.asakusafw.vocabulary.operator;

@@ -18,10 +18,7 @@ package com.asakusafw.runtime.flow;
 import java.util.List;
 
 /**
- * 変更可能な要素を再利用しながらリストの機能を提供する。
- * <p>
- * 以下のように利用する。
- * </p>
+ * A List interface for reusing instances of element objects.
 <pre><code>
 Iterator&lt;Hoge&gt; iter = ...;
 ListBuffer&lt;Hoge&gt; hoges = ...;
@@ -41,76 +38,55 @@ hoges.end();
 
 hoges.shrink();
 </code></pre>
- * @param <E> 要素の型
+ * @param <E> the element type
  */
 public interface ListBuffer<E> extends List<E> {
 
     /**
-     * バッファの変更を開始する。
-     * <p>
-     * 内部カーソルはバッファの先頭を指し、{@link #advance()}を実行した際に
-     * 先頭から順にバッファの内容を返す。
-     * </p>
-     * <p>
-     * これによって{@link #end()}が起動されるまで、
-     * バッファの内容を読み出した際の動作を保証しない。
-     * </p>
+     * Begins changing the list buffer.
+     * Initially, the internal cursor is on the head of this buffer, and clients can move it to the next element
+     * by invoking {@link #advance()}.
+     * After changing the buffer, then clients must invoke {@link #end()} and the buffer can be used as the
+     * unmodifiable list.
      * @see #advance()
      * @throws BufferException if failed to prepare buffer
      */
     void begin();
 
     /**
-     * バッファの変更を終了する。
-     * <p>
-     * 以後、このリストは{@link #begin()}から{@link #advance()}を起動した
-     * 回数と同じだけの要素を持つことになる。
-     * </p>
+     * Ends changing the list buffer.
+     * After this, clients should not change the buffer contents.
+     * If clients want to change the buffer, must invoke {@link #begin()} once more.
      * @throws BufferException if failed to prepare buffer
      */
     void end();
 
     /**
-     * {@link #begin()}から{@link #end()}の期間に起動され、
-     * 処理中の内部カーソルがバッファサイズを超えた際に{@code true}を返す。
-     * <p>
-     * このメソッドが{@code true}を返す場合、{@link #advance()}は
-     * {@link IndexOutOfBoundsException}をスローする。
-     * {@link #expand(Object)}でバッファに要素を追加していやることで、
-     * 以後正しく{@link #advance()}メソッドを実行できる。
-     * </p>
-     * <p>
-     * なお、{@link #begin()}から{@link #end()}の期間の外で起動された場合、
-     * このメソッドの動作は保証されない。
-     * </p>
-     * @return 次の{@link #advance()}がバッファ内の要素を返せない場合に{@code true}
+     * Returns whether a new element object is required for the buffer or not.
+     * If it required, clients must use {@link #expand(Object)} to add a new object before invoke {@link #advance()}.
+     * This method must be invoked between {@link #begin()} and {@link #end()}.
+     * @return {@code true} if a new element object is required, otherwise {@code false}
      * @see #expand(Object)
      * @throws BufferException if failed to prepare buffer
      */
     boolean isExpandRequired();
 
     /**
-     * バッファの末尾に新しい要素を追加する。
-     * @param value 追加する要素
+     * Adds a new element object into the tail of this buffer.
+     * This method must be invoked between {@link #begin()} and {@link #end()}.
+     * @param value the object
      * @see #isExpandRequired()
-     * @throws IndexOutOfBoundsException if expand is not required (Optional)
+     * @throws IndexOutOfBoundsException if expand is not required (optional operation)
      * @see #isExpandRequired()
      * @throws BufferException if failed to prepare buffer
      */
     void expand(E value);
 
     /**
-     * {@link #begin()}から{@link #end()}の期間に起動され、
-     * 処理中の内部カーソルの位置にあるバッファの内容を返す。
-     * <p>
-     * この処理によって、カーソルは次の要素を指すように変更される。
-     * </p>
-     * <p>
-     * なお、{@link #begin()}から{@link #end()}の期間の外で起動された場合、
-     * このメソッドの動作は保証されない。
-     * </p>
-     * @return 内部カーソルの位置らにあるバッファの内容
-     * @throws IndexOutOfBoundsException バッファの容量を超えて要素を参照しようとした場合
+     * Returns the next element object on the internal cursor, and then move the cursor to the next element.
+     * This method must be invoked between {@link #begin()} and {@link #end()}.
+     * @return the next element object
+     * @throws IndexOutOfBoundsException if the next element object is not prepared
      * @see #isExpandRequired()
      * @see #expand(Object)
      * @throws BufferException if failed to prepare buffer

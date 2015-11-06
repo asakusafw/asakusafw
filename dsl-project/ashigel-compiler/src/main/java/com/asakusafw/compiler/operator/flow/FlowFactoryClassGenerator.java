@@ -57,12 +57,12 @@ import com.asakusafw.vocabulary.operator.OperatorFactory;
 import com.asakusafw.vocabulary.operator.OperatorInfo;
 
 /**
- * フロー部品クラスから演算子ファクトリークラスのJava DOMを構築する。
+ * Generates operator factory classes for flow-part classes.
  */
 public class FlowFactoryClassGenerator {
 
     /**
-     * {@link FlowElementResolver}を保持するフィールド名。
+     * The field name for holding {@link FlowElementResolver}.
      */
     static final String RESOLVER_FIELD_NAME = "$"; //$NON-NLS-1$
 
@@ -77,12 +77,12 @@ public class FlowFactoryClassGenerator {
     private final OperatorCompilingEnvironment environment;
 
     /**
-     * インスタンスを生成する。
-     * @param environment 環境オブジェクト
-     * @param factory DOMを構築するためのファクトリ
-     * @param importer インポート宣言を構築するビルダー
-     * @param flowClass フロー部品クラスの情報
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Creates a new instance.
+     * @param environment the current environment
+     * @param factory the Java DOM factory
+     * @param importer the import declaration builder
+     * @param flowClass the target flow-part class
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public FlowFactoryClassGenerator(
             OperatorCompilingEnvironment environment,
@@ -97,11 +97,11 @@ public class FlowFactoryClassGenerator {
     }
 
     /**
-     * このジェネレータの情報を利用して型宣言の情報を生成する。
-     * @return 生成したモデル
+     * Generates a declaration of support class.
+     * @return the generated type declaration
      */
     public TypeDeclaration generate() {
-        // 先に名前空間を退避する
+        // escape the current namesapce first
         SimpleName name = getClassName();
         importer.resolvePackageMember(Models.append(
                 factory,
@@ -109,7 +109,7 @@ public class FlowFactoryClassGenerator {
                 getObjectClassName()));
         return factory.newClassDeclaration(
                 new JavadocBuilder(factory)
-                    .code(Messages.getString("FlowFactoryClassGenerator.javadocClass"), //$NON-NLS-1$
+                    .text(Messages.getString("FlowFactoryClassGenerator.javadocClass"), //$NON-NLS-1$
                             flowClass.getElement().getSimpleName())
                     .seeType(new Jsr269(factory).convert(environment.getErasure(flowClass.getElement().asType())))
                     .toJavadoc(),

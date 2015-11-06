@@ -16,7 +16,7 @@
 package com.asakusafw.utils.java.internal.parser.javadoc.ir;
 
 /**
- * ブロック要素内に列挙できる要素。
+ * An abstract super interface of elements which can appear in {@link IrDocBlock}s.
  */
 public interface IrDocFragment extends IrDocElement {
     // no members

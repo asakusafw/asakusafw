@@ -15,28 +15,21 @@
  */
 package com.asakusafw.utils.java.model.syntax;
 
-
 /**
- * ドキュメンテーションコメント内のフィールドを表現するインターフェース。
+ * An interface which represents field references in the documentation comments.
  */
 public interface DocField
         extends DocElement {
 
-    // properties
-
     /**
-     * フィールドを宣言した型を返す。
-     * <p> 宣言型が指定されない場合は{@code null}が返される。 </p>
-     * @return
-     *     フィールドを宣言した型、
-     *     ただし宣言型が指定されない場合は{@code null}
+     * Returns the owner type.
+     * @return the owner type, or {@code null} if it is not specified
      */
     Type getType();
 
     /**
-     * フィールドの名称を返す。
-     * @return
-     *     フィールドの名称
+     * Returns the field name.
+     * @return the field name
      */
     SimpleName getName();
 }

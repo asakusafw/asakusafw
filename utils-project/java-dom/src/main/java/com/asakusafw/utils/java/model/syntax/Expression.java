@@ -17,7 +17,7 @@ package com.asakusafw.utils.java.model.syntax;
 
 
 /**
- * 式を表現する基底インターフェース。
+ * An abstract super interface of expressions.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:15] Expressions} </li>
