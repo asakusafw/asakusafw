@@ -54,6 +54,13 @@
 		</dependency>
 		<dependency>
 			<groupId>com.asakusafw</groupId>
+			<artifactId>asakusa-directio-dmdl</artifactId>
+			<version>${asakusafw.version}</version>
+			<classifier>tests</classifier>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.asakusafw</groupId>
 			<artifactId>jsr199-testing</artifactId>
 			<version>${asakusafw.version}</version>
 			<scope>test</scope>
