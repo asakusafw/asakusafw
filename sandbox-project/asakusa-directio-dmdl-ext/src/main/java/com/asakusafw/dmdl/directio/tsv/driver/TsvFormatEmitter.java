@@ -23,15 +23,14 @@ import java.io.OutputStreamWriter;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.dmdl.directio.tsv.driver.TsvFieldTrait.Kind;
 import com.asakusafw.dmdl.directio.tsv.driver.TsvFormatTrait.Configuration;
+import com.asakusafw.dmdl.directio.util.CodecNames;
 import com.asakusafw.dmdl.directio.util.DirectFileInputDescriptionGenerator;
 import com.asakusafw.dmdl.directio.util.DirectFileOutputDescriptionGenerator;
 import com.asakusafw.dmdl.java.emitter.EmitContext;
@@ -176,16 +175,6 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
         private static final String NAME_READER = "RecordReader"; //$NON-NLS-1$
 
         private static final String NAME_WRITER = "RecordWriter"; //$NON-NLS-1$
-
-        private static final Map<String, String> CODEC_SHORT_NAMES;
-        static {
-            Map<String, String> map = new HashMap<String, String>();
-            map.put("gzip", "org.apache.hadoop.io.compress.GzipCodec"); //$NON-NLS-1$ //$NON-NLS-2$
-            map.put("deflate", "org.apache.hadoop.io.compress.DeflateCodec"); //$NON-NLS-1$ //$NON-NLS-2$
-            map.put("bzip2", "org.apache.hadoop.io.compress.BZip2Codec"); //$NON-NLS-1$ //$NON-NLS-2$
-            map.put("snappy", "org.apache.hadoop.io.compress.SnappyCodec"); //$NON-NLS-1$ //$NON-NLS-2$
-            CODEC_SHORT_NAMES = map;
-        }
 
         private final EmitContext context;
 
@@ -557,14 +546,10 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
         }
 
         private Expression createCompressionCodec() {
-            String codecName = conf.getCodecName();
+            String codecName = CodecNames.resolveCodecName(conf.getCodecName());
             if (codecName == null) {
                 return null;
             }
-            if (CODEC_SHORT_NAMES.containsKey(codecName)) {
-                codecName = CODEC_SHORT_NAMES.get(codecName);
-            }
-            assert codecName != null;
             assert isHadoopConfRequired();
             return new TypeBuilder(f,
                     context.resolve(Models.toName(f, "org.apache.hadoop.util.ReflectionUtils"))) //$NON-NLS-1$
