@@ -41,8 +41,8 @@ import com.asakusafw.vocabulary.flow.FlowDescription;
 public class ShufflePartitionerEmitterTest extends JobflowCompilerTestRoot {
 
     /**
-     * 単純なパーティショニングのテスト。
-     * @throws Exception 出力に失敗した場合
+     * simple case.
+     * @throws Exception if error was occurred while output
      */
     @Test
     public void simple() throws Exception {

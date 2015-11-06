@@ -17,30 +17,13 @@ Asakusa Framework スタートガイド for Windows
 Windows環境の制約
 =================
 
-Asakusa Framework バージョン |version| では、Windows環境を運用環境として利用することができません。
-また、開発環境についてもLinux環境と比べて一部利用可能な機能に制約があります。
-
-Windowsの利用を検討する際には、以下の制約を確認してください。
-
-運用環境の制約
---------------
-
 Asakusa Frameworkが提供する以下の運用環境向けの機能はWindows環境で利用することができません。
 
 * :doc:`YAESS <../yaess/index>` を利用したアプリケーションの実行
-* :doc:`WindGate <../windgate/index>` [#]_ や :doc:`ThunderGate <../thundergate/index>` による外部システム連携モジュールの実行
+* :doc:`WindGate <../windgate/index>` [#]_ による外部システム連携モジュールの実行
 * シェルスクリプトとして提供している運用ツール系のコマンドラインインターフェース
 
 ..  [#] WindGate/JDBCを使ってWindowsに配置したデータベースと連携することは可能です。
-
-開発環境の制約
---------------
-
-Asakusa Framework が提供する以下の開発環境向けの機能はWindows環境で利用することができません。
-
-* :doc:`ThunderGate <../thundergate/index>` を使用するアプリケーションのテスト
-
-.. _startguide-windows-development-environment:
 
 開発環境の構築
 ==============
@@ -70,7 +53,7 @@ Asakusa Frameworkの利用に必要となる環境変数を設定します。
   ``ASAKUSA_HOME``
 
 変数値
-  任意のフォルダ (例: :file:`%USERPROFILE%¥asakusa` )
+  任意のフォルダ (例: :file:`%USERPROFILE%\\asakusa` )
 
 ..  figure:: images/windows-environment-valuables-setting.png
     :width: 50%
@@ -133,7 +116,7 @@ Eclipse経由で実行するJavaに `Java(JDK)のインストール`_ でイン�
 #. :guilabel:`JRE Definition` ダイアログの各項目にインストールしたJDKの情報が設定されたことを確認して :guilabel:`Finish` ボタンを押下します。
 #. :guilabel:`Installed JREs` ダイアログに追加したJDKの項目が表示されるので、その項目の :guilabel:`Name` 欄に表示されているチェックボックスを :guilabel:`ON` にします。JDKの項目が ``jdk1.7.0_XX (default)`` のような表示になれば設定完了です。
 
-..  [#] JDKのフォルダは例えば ``C:¥Program Files¥Java¥jdk1.7.0_XX`` のようなフォルダです。JREのフォルダを指定しないよう注意してください。
+..  [#] 開発環境にJDKとJREの両方がインストールされている場合、ここでJREのフォルダを指定しないよう注意してください。
 
 ..  figure:: images/eclipse-preferences-installed-jre.png
     :width: 100%
@@ -236,7 +219,7 @@ Asakusa Frameworkのアプリケーションのテストを行うには、開発
 
 ..  code-block:: none
 
-    ... 
+    ...
     :installAsakusafw
     Asakusa Framework is successfully installed: C:\Users\asakusa\asakusa
     
@@ -270,7 +253,7 @@ Windows上の開発環境で作成したアプリケーションを運用環境�
 
 ..  code-block:: none
 
-    ... 
+    ...
     :assemble
     
     BUILD SUCCESSFUL
@@ -353,7 +336,7 @@ Asakusa Frameworkのインストールに失敗する
 
 ..  code-block:: none
 
-    ... 
+    ...
     :updateAsakusafw FAILED
     
     FAILURE: Build failed with an exception.
@@ -381,7 +364,7 @@ Eclipseを起動中に環境変数を追加した場合は、Eclipseの再起動
 
 ..  code-block:: none
 
-    ... 
+    ...
     java.lang.AssertionError: 環境変数"ASAKUSA_HOME"が未設定です
       at com.asakusafw.testdriver.inprocess.InProcessJobExecutor.validateEnvironment(InProcessJobExecutor.java:108)
     ...
@@ -401,7 +384,7 @@ Eclipseを起動中に環境変数を追加した場合は、Eclipseの再起動
 
 ..  code-block:: none
 
-    ... 
+    ...
     java.lang.AssertionError: この環境ではJavaコンパイラを利用できません（JDKを利用してテストを実行してください）
         at com.asakusafw.testdriver.TestDriverContext.validateCompileEnvironment(TestDriverContext.java:227)
     ...
@@ -421,7 +404,7 @@ Eclipseがデフォルトで利用するJavaにJDKが登録されていない可
 
 ..  code-block:: none
 
-    ... 
+    ...
     java.lang.IllegalStateException: java.io.IOException: Asakusa Framework is not installed: C:\Users\asakusa\asakusa
       at com.asakusafw.testdriver.JobFlowTester.runTest(JobFlowTester.java:105)
     ...
@@ -441,7 +424,7 @@ Eclipseがデフォルトで利用するJavaにJDKが登録されていない可
 
 ..  code-block:: none
 
-    ... 
+    ...
     XX:YY:ZZ WARN  コマンド"hadoop"を検出できませんでした
     XX:YY:ZZ INFO  この環境では現在のテストを実行できないため、スキップします: com.example.jobflow.CategorySummaryJobTest
     ...

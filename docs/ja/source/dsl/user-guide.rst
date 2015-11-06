@@ -464,8 +464,8 @@ Flow DSLで記述できる構造は2種類あり、それぞれ異なる性質�
 インポータ記述はジョブフローの入力もととなるデータソースを記述するクラスです。
 データソースごとに指定されたクラスを継承して、必要な情報を記載します。
 
-Asakusa Frameworkは標準でWindGateやThunderGate, Direct I/Oというデータソースを提供しています。
-詳しくは :doc:`../windgate/index` , :doc:`../thundergate/with-dsl` , :doc:`../directio/index` をそれぞれ参照してください。
+Asakusa Frameworkは標準でDirect I/OやWindGateというデータソースを提供しています。
+詳しくは :doc:`../directio/index` , :doc:`../windgate/index` をそれぞれ参照してください。
 
 ..  caution::
     インポータ記述の中で定義するメソッドは、 `Batch DSLコンパイラ`_ の *コンパイル中に* 起動されます。
@@ -488,8 +488,8 @@ Asakusa Frameworkは標準でWindGateやThunderGate, Direct I/Oというデー�
 エクスポータ記述はジョブフローの結果を出力する先となるデータソースを記述するクラスです。
 データソースごとに指定されたクラスを継承して、必要な情報を記載します。
 
-Asakusa Frameworkは標準でWindGateやThunderGate, Direct I/Oというデータソースを提供しています。
-詳しくは :doc:`../windgate/index` , :doc:`../thundergate/with-dsl` , :doc:`../directio/index` をそれぞれ参照してください。
+Asakusa Frameworkは標準でDirect I/OやWindGateというデータソースを提供しています。
+詳しくは :doc:`../directio/index` , :doc:`../windgate/index` をそれぞれ参照してください。
 
 ..  caution::
     エクスポータ記述の中で定義するメソッドは、 `Batch DSLコンパイラ`_ の *コンパイル中に* 起動されます。
@@ -543,7 +543,7 @@ Asakusa Frameworkは標準でWindGateやThunderGate, Direct I/Oというデー�
 * 型引数を宣言していない
 * ``In`` [#]_ 型の仮引数を一つ以上宣言し、それぞれ型引数にデータモデル型を指定する
 * ``Out`` [#]_ 型の仮引数を一つ以上宣言し、それぞれ型引数にデータモデル型を指定する
-* ``In`` , ``Out`` 以外の仮引数を宣言しない 
+* ``In`` , ``Out`` 以外の仮引数を宣言しない
 
 それぞれの ``In`` 型の引数は、ジョブフローへの1つ分の入力を表しています。
 この仮引数には、注釈 ``Import`` [#]_ を付与し、要素 ``name`` に入力の名前を、要素 ``description`` に `インポータ記述`_ のクラスリテラルを指定します。
@@ -953,7 +953,7 @@ Batch DSLコンパイラ
 Batch DSLコンパイラは、バッチクラスから次のものを生成します。
 
 * `外部入出力を行うための設定情報`_ など
-* `データフロー処理を行うMapReduceプログラム群`_ 
+* `データフロー処理を行うMapReduceプログラム群`_
 * 上記の一連の流れを規定する `ワークフロー記述`_
 
 コマンドラインインターフェース
@@ -1099,9 +1099,9 @@ Batch DSLコンパイラが生成するバッチアプリケーションには�
 外部入出力を行うための設定情報
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Batch DSLコンパイラはコンパイル対象のバッチアプリケーションのジョブフロー記述の情報などから、WindGateやThunderGateがデータの入出力を行うための設定情報を生成します。
+Batch DSLコンパイラはコンパイル対象のバッチアプリケーションのジョブフロー記述の情報などから、Direct I/OやWindGateがデータの入出力を行うための設定情報を生成します。
 
-この設定情報はバッチアプリケーション実行時にWindGateやThunderGateが参照し、その設定内容に応じて入出力データを決定したり、入出力時に行われる制御（排他制御など）を行います。
+この設定情報はバッチアプリケーション実行時にDirect I/OやWindGateが参照し、その設定内容に応じて入出力データを決定したり、入出力時に行われる制御（排他制御など）を行います。
 
 データフロー処理を行うMapReduceプログラム群
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1119,7 +1119,7 @@ Batch DSLコンパイラが生成したMapReduceプログラム群のステー�
 ..  attention::
     現在のAsakusa Frameworkでは、Batch DSLコンパイラは同一のDSLソースコードに対してもコンパイルの度に異なるステージ構造を持ったバッチアプリケーションを生成することがあります。
 
-..  hint:: 
+..  hint::
     各ステージにはステージを一意に識別する「ステージID」が振られます。
     ステージIDは ``stageXXXX`` (XXXXは数値) という形式をもちます。
     ステージIDはYAESSを経由したバッチアプリケーション実行時にログとして出力されるほか、 :doc:`../application/dsl-visualization` で生成するステージグラフに出力されます。

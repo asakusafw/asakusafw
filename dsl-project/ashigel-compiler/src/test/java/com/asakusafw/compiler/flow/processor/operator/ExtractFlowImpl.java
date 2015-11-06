@@ -16,11 +16,11 @@
 package com.asakusafw.compiler.flow.processor.operator;
 import javax.annotation.Generated;
 /**
- * {@link ExtractFlow}に関する演算子実装クラス。
+ * An operator implementation class for{@link ExtractFlow}.
  */
-@Generated("OperatorImplementationClassGenerator:0.0.1") public class ExtractFlowImpl extends ExtractFlow {
+@Generated("OperatorImplementationClassGenerator:0.1.0") public class ExtractFlowImpl extends ExtractFlow {
     /**
-     * インスタンスを生成する。
+     * Creates a new instance.
      */
     public ExtractFlowImpl() {
         return;

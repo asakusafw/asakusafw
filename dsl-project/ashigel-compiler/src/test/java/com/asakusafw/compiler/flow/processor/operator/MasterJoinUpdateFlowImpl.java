@@ -16,12 +16,12 @@
 package com.asakusafw.compiler.flow.processor.operator;
 import javax.annotation.Generated;
 /**
- * {@link MasterJoinUpdateFlow}に関する演算子実装クラス。
+ * An operator implementation class for{@link MasterJoinUpdateFlow}.
  */
-@Generated("OperatorImplementationClassGenerator:0.0.1") public class MasterJoinUpdateFlowImpl extends 
+@Generated("OperatorImplementationClassGenerator:0.1.0") public class MasterJoinUpdateFlowImpl extends 
         MasterJoinUpdateFlow {
     /**
-     * インスタンスを生成する。
+     * Creates a new instance.
      */
     public MasterJoinUpdateFlowImpl() {
         return;

@@ -27,88 +27,85 @@ import com.asakusafw.utils.java.model.syntax.TypeBodyDeclaration;
 import com.asakusafw.utils.java.model.util.ImportBuilder;
 
 /**
- * 演算子DSLコンパイラのサブプロセッサとして動作する、個々の演算子注釈を処理するためのインターフェース。
+ * An abstract super interface of operator processors for compiling operator DSL.
  */
 public interface OperatorProcessor {
 
     /**
-     * このプロセッサの初期化が行われる際に起動される。
-     * <p>
-     * このメソッドはインスタンス生成後に、このオブジェクトへの他のあらゆる操作の前に一度だけ起動される。
-     * </p>
-     * @param env 環境オブジェクト
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Initializes this operator processor.
+     * @param env the current environment object
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     void initialize(OperatorCompilingEnvironment env);
 
     /**
-     * このプロセッサが対象とする注釈の型を返す。
-     * @return このプロセッサが対象とする注釈の型
+     * Returns the target operator annotation type.
+     * @return the target operator annotation type
      */
     Class<? extends Annotation> getTargetAnnotationType();
 
     /**
-     * 指定の要素に付与された、この演算子の注釈を返す。
-     * @param element 対象の要素
-     * @return この演算子の注釈、存在しない場合は{@code null}
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns the operator annotation for the target executable element.
+     * @param element the target executable element
+     * @return the operator annotation, or {@code null} if the target executable element does not have it
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     AnnotationMirror getOperatorAnnotation(ExecutableElement element);
 
     /**
-     * 演算子メソッドを解析して、出力に必要な情報を返す。
-     * @param context 解析に利用する文脈
-     * @return 演算子メソッドの情報、解釈できない場合は{@code null}
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Analyzes the operator method and returns the structural information of the target operator.
+     * @param context the current context
+     * @return the structural information object, or {@code null} if the target operator method is not valid
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     OperatorMethodDescriptor describe(Context context);
 
     /**
-     * 演算子メソッドを解析して、その実装となるメソッドを返す。
-     * @param context 解析に利用する文脈
-     * @return 演算子メソッドの実装、解釈できない場合は{@code null}
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns an implementation method for the target operator method.
+     * @param context the current context
+     * @return the implementation method declaration, or {@code null} if the target operator method is not valid
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     List<? extends TypeBodyDeclaration> implement(Context context);
 
     /**
-     * 演算子プロセッサの処理コンテキスト。
+     * The context object for operator processors.
      */
     class Context {
 
         /**
-         * 環境。
+         * The current environment.
          */
         public final OperatorCompilingEnvironment environment;
 
         /**
-         * 演算子注釈。
+         * The target operator annotation.
          */
         public final AnnotationMirror annotation;
 
         /**
-         * 処理対象の要素。
+         * The target executable element.
          */
         public final ExecutableElement element;
 
         /**
-         * 利用中のインポーター。
+         * The current import declaration builder.
          */
         public final ImportBuilder importer;
 
         /**
-         * 衝突しない名前の生成器。
+         * The current unique name generator.
          */
         public final NameGenerator names;
 
         /**
-         * インスタンスを生成する。
-         * @param environment 処理環境
-         * @param annotation 処理対象の演算子注釈
-         * @param element 処理対象の要素
-         * @param importer 利用中のインポーター
-         * @param names 衝突しない名前の生成器
-         * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+         * Creates a new instance.
+         * @param environment the current environment
+         * @param annotation the target operator annotation
+         * @param element the target executable element
+         * @param importer the current import declaration builder
+         * @param names the current unique name generator
+         * @throws IllegalArgumentException if the parameters are {@code null}
          */
         public Context(
                 OperatorCompilingEnvironment environment,

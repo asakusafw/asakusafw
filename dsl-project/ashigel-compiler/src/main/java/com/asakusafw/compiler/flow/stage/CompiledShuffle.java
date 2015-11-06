@@ -19,28 +19,28 @@ import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.utils.java.model.syntax.Name;
 
 /**
- * {@link ShuffleModel}をコンパイルした結果の、シャッフルフェーズで利用される情報。
+ * A compiled model of {@link ShuffleModel}.
  */
 public class CompiledShuffle {
 
-    private Name keyTypeName;
+    private final Name keyTypeName;
 
-    private Name valueTypeName;
+    private final Name valueTypeName;
 
-    private Name groupComparatorTypeName;
+    private final Name groupComparatorTypeName;
 
-    private Name sortComparatorTypeName;
+    private final Name sortComparatorTypeName;
 
-    private Name partitionerTypeName;
+    private final Name partitionerTypeName;
 
     /**
-     * インスタンスを生成する。
-     * @param keyTypeName キークラスの完全限定名
-     * @param valueTypeName 値クラスの完全限定名
-     * @param groupComparatorTypeName グループ比較器クラスの完全限定名
-     * @param sortComparatorTypeName 順序比較器クラスの完全限定名
-     * @param partitionerTypeName パーティショナークラスの完全限定名
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param keyTypeName the qualified class name of shuffle key
+     * @param valueTypeName the qualified class name of shuffle value
+     * @param groupComparatorTypeName the qualified class name of grouping comparator
+     * @param sortComparatorTypeName the qualified class name of sort comparator
+     * @param partitionerTypeName the qualified class name of shuffle partitioner
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public CompiledShuffle(
             Name keyTypeName,
@@ -61,40 +61,40 @@ public class CompiledShuffle {
     }
 
     /**
-     * シャッフル時に利用するキークラスの完全限定名を返す。
-     * @return キークラスの完全限定名
+     * Returns the qualified name of shuffle key class.
+     * @return the qualified class name of shuffle key
      */
     public Name getKeyTypeName() {
         return keyTypeName;
     }
 
     /**
-     * シャッフル時に利用する値クラスの完全限定名を返す。
-     * @return 値クラスの完全限定名
+     * Returns the qualified name of shuffle value class.
+     * @return the qualified class name of shuffle value
      */
     public Name getValueTypeName() {
         return valueTypeName;
     }
 
     /**
-     * シャッフル時に利用するグループ化比較器クラスの完全限定名を返す。
-     * @return グループ化比較器クラスの完全限定名
+     * Returns the qualified name of grouping comparator class.
+     * @return the qualified class name of grouping comparator
      */
     public Name getGroupComparatorTypeName() {
         return groupComparatorTypeName;
     }
 
     /**
-     * シャッフル時に利用する順序比較器クラスの完全限定名を返す。
-     * @return 順序比較器クラスの完全限定名
+     * Returns the qualified name of sort comparator class.
+     * @return the qualified class name of sort comparator
      */
     public Name getSortComparatorTypeName() {
         return sortComparatorTypeName;
     }
 
     /**
-     * シャッフル時に利用するパーティショナークラスの完全限定名を返す。
-     * @return パーティショナークラスの完全限定名
+     * Returns the qualified name of shuffle partitioner class.
+     * @return the qualified class name of shuffle partitioner
      */
     public Name getPartitionerTypeName() {
         return partitionerTypeName;

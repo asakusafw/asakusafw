@@ -14,22 +14,20 @@
  * limitations under the License.
  */
 package com.asakusafw.compiler.windgate.testing.jdbc;
-import java.sql.ParameterMetaData;
+import com.asakusafw.compiler.windgate.testing.model.Simple;
+import com.asakusafw.windgate.core.vocabulary.DataModelJdbcSupport;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-
 import org.apache.hadoop.io.Text;
-
-import com.asakusafw.compiler.windgate.testing.model.Simple;
-import com.asakusafw.windgate.core.vocabulary.DataModelJdbcSupport;
 /**
- * Supports JDBC interfaces for {@link Simple}.
+ * Supports JDBC interfaces for <code>Simple</code>.
  */
-public final class SimpleJdbcSupport implements DataModelJdbcSupport<Simple> {
+public class SimpleJdbcSupport implements DataModelJdbcSupport<Simple> {
     private static final Map<String, Integer> PROPERTY_POSITIONS;
     static {
         Map<String, Integer> map = new TreeMap<String, Integer>();
@@ -81,10 +79,10 @@ public final class SimpleJdbcSupport implements DataModelJdbcSupport<Simple> {
         for(int i = 0, n = columnNames.size(); i < n; i ++) {
             String column = columnNames.get(i);
             Integer position = PROPERTY_POSITIONS.get(column);
-            if(position == null || vector[position]!= 0) {
+            if(position == null || vector[position] != 0) {
                 throw new IllegalArgumentException(column);
             }
-            vector[position]= i + 1;
+            vector[position] = i + 1;
         }
         return vector;
     }
@@ -97,10 +95,10 @@ public final class SimpleJdbcSupport implements DataModelJdbcSupport<Simple> {
             this.properties = properties;
         }
         @Override public boolean next(Simple object) throws SQLException {
-            if(resultSet.next()== false) {
+            if(resultSet.next() == false) {
                 return false;
             }
-            if(properties[0]!= 0) {
+            if(properties[0] != 0) {
                 String value = resultSet.getString(properties[0]);
                 if(value != null) {
                     text.set(value);
@@ -117,27 +115,14 @@ public final class SimpleJdbcSupport implements DataModelJdbcSupport<Simple> {
             Simple> {
         private final PreparedStatement statement;
         private final int[] properties;
-        private final int[] types;
         PreparedStatementSupport(PreparedStatement statement, int[] properties) {
             this.statement = statement;
             this.properties = properties;
-            types = new int[properties.length];
-            try {
-                ParameterMetaData meta = statement.getParameterMetaData();
-                for(int i = 0; i < types.length; i ++) {
-                    if(properties[i]!= 0) {
-                        types[i]= meta.getParameterType(properties[i]);
-                    }
-                }
-            }
-            catch(SQLException e) {
-                throw new IllegalArgumentException(e);
-            }
         }
         @Override public void setParameters(Simple object) throws SQLException {
-            if(properties[0]!= 0) {
+            if(properties[0] != 0) {
                 if(object.getValueOption().isNull()) {
-                    statement.setNull(properties[0], types[0]);
+                    statement.setNull(properties[0], Types.VARCHAR);
                 }
                 else {
                     statement.setString(properties[0], object.getValue().toString());

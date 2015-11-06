@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * ジョブフローのエピローグ処理において、並行Reduceでの出力を行う。
+ * Generates sort only MapReduce stages.
  */
 package com.asakusafw.compiler.flow.mapreduce.parallel;

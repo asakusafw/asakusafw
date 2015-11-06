@@ -28,25 +28,25 @@ import java.util.Set;
 import com.asakusafw.utils.graph.Graph.Vertex;
 
 /**
- * {@link Graph}に関する操作を行うライブラリ。
+ * Operations for {@link Graph}.
  */
 public final class Graphs {
 
     /**
-     * 頂点を一つも持たない{@code Graph}のインスタンスを生成して返す。
-     * @param <V> ノードを識別する値
-     * @return 生成したインスタンス
+     * Creates a new {@link Graph} instance without any vertices.
+     * @param <V> the vertex value type
+     * @return the created instance
      */
     public static <V> Graph<V> newInstance() {
         return new HashGraph<V>();
     }
 
     /**
-     * 指定のグラフのコピーを返す。
-     * @param <V> ノードを識別する値
-     * @param graph 対象のグラフ
-     * @return コピーしたグラフ
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns a copy of the target graph.
+     * @param <V> the vertex value type
+     * @param graph the target graph
+     * @return the copy
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static <V> Graph<V> copy(Graph<? extends V> graph) {
         if (graph == null) {
@@ -60,11 +60,11 @@ public final class Graphs {
     }
 
     /**
-     * 指定のグラフに含まれるノードのうち、先行するノードが存在しないものの一覧を返す。
-     * @param <V> ノードを識別する値
-     * @param graph 対象のグラフ
-     * @return 指定のグラフに含まれ、かつ先行するノードが存在しないものの一覧
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns each head vertex in the graph, which has no preceding vertices.
+     * @param <V> the vertex value type
+     * @param graph the target graph
+     * @return the head vertices
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static <V> Set<V> collectHeads(Graph<? extends V> graph) {
         if (graph == null) {
@@ -78,11 +78,11 @@ public final class Graphs {
     }
 
     /**
-     * 指定のグラフに含まれるノードのうち、後続するノードが存在しないものの一覧を返す。
-     * @param <V> ノードを識別する値
-     * @param graph 対象のグラフ
-     * @return 指定のグラフに含まれ、かつ後続するノードが存在しないものの一覧
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns each tail vertex in the graph, which has no succeeding vertices.
+     * @param <V> the vertex value type
+     * @param graph the target graph
+     * @return the tail vertices
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static <V> Set<V> collectTails(Graph<? extends V> graph) {
         if (graph == null) {
@@ -98,29 +98,21 @@ public final class Graphs {
     }
 
     /**
-     * 指定のノード一覧から直接または間接的に後続する全てのノードを返す。
-     * <p>
-     * 返される集合に含まれる値は、{@code startNodes}に含まれるそれぞれの値から
-     * 直接接続されたノードに割り当てられた値か、
-     * 再帰的にそれらのノードから接続された別のノードに割り当てられた値のみである。
-     * つまり、{@code startNodes}自体の値は結果の集合に含まれない場合がある。
-     * それらが結果に含まれる場合は、{@code startNodes}に含まれるいずれかの値が
-     * 結果に含まれるノードに実際に接続されている場合のみである。
-     * </p>
-     * @param <V> ノードを識別する値
-     * @param graph 対象のグラフ
-     * @param startNodes 対象の開始ノードに割り当てられた値の一覧
-     * @return 開始ノードから直接または間接的に接続されたすべてのノード
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the transitively connected all vertices from the starting vertices.
+     * If a starting vertex is not connected to any vertices, the resulting set will not contain it even if it is a
+     * starting vertex.
+     * @param <V> the vertex value type
+     * @param graph the target graph
+     * @param startNodes the starting vertices
+     * @return the transitive connected vertices from the starting vertices
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
-    public static <V> Set<V> collectAllConnected(
-            Graph<? extends V> graph,
-            Collection<? extends V> startNodes) {
+    public static <V> Set<V> collectAllConnected(Graph<? extends V> graph, Collection<? extends V> startNodes) {
         if (graph == null) {
-            throw new IllegalArgumentException("graph is null"); //$NON-NLS-1$
+            throw new IllegalArgumentException("graph must not be null"); //$NON-NLS-1$
         }
         if (startNodes == null) {
-            throw new IllegalArgumentException("startNodes is null"); //$NON-NLS-1$
+            throw new IllegalArgumentException("startNodes must not be null"); //$NON-NLS-1$
         }
         Set<V> connected = new HashSet<V>();
         for (V start : startNodes) {
@@ -130,49 +122,42 @@ public final class Graphs {
     }
 
     /**
-     * 指定の開始ノードを起点に、後続するノードの中から条件に合致するノードの一覧を返す。
-     * <p>
-     * 返される集合は、次の条件を全て満たすような値{@code nearest}の集合である。
-     * </p>
+     * Returns the succeeding nearest vertices which match the condition, from the starting vertices.
+     * The nearest vertices must be a set of <em>nearest</em> which satisfies the following all conditions:
      * <ul>
      * <li>
-     *   開始ノードのいずれかから、直接または間接的に接続されている
-     *   ({@link #collectAllConnected(Graph, Collection)
-     *   findAllConnected(graph, startNodes).contains(nearest)})
+     *   Is transitively connected from any starting vertices
+     *   ({@link #collectAllConnected(Graph, Collection) collectAllConnected(graph, startNodes).contains(nearest)})
      * </li>
      * <li>
-     *   受け入れ可能である
-     *   {@link Matcher#matches(Object) acceptor.accept(nearest)}
+     *   Satisfies the {@code matcher} rule ({@link Matcher#matches(Object) matcher.matches(nearest)})
      * </li>
      * <li>
-     *   開始ノードのいずれかから、他の全ての{@code nearest}を経由せずに
-     *   対象の{@code nearest}に到達可能である。
+     *   Reachable from any starting vertices, NOT via other <em>nearest</em>
      * </li>
      * </ul>
      * <p>
-     * なお、返される一覧には、{@code startNodes}で指定された要素が通常含まれない。
-     * それらが結果に含まれる場合は、{@code startNodes}に含まれるいずれかの値が
-     * {@code startNodes}の後続にあり、かつ上記の条件を満たしている。
-     * </p>
-     * @param <V> ノードを識別する値
-     * @param graph 対象のグラフ
-     * @param startNodes 対象の開始ノードに割り当てられた値の一覧
-     * @param acceptor 利用する条件、合致するるものが条件に合致したとみなされる
-     * @return 後続するノードのうち条件に合致するノードの一覧
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * The resulting set may not contain the starting vertices, excepts the starting vertices also satisfies above
+     * the conditions.
+     * @param <V> the vertex value type
+     * @param graph the target graph
+     * @param startNodes the starting vertices
+     * @param matcher the matcher
+     * @return the nearest vertices
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public static <V> Set<V> findNearest(
             Graph<? extends V> graph,
             Collection<? extends V> startNodes,
-            Matcher<? super V> acceptor) {
+            Matcher<? super V> matcher) {
         if (graph == null) {
             throw new IllegalArgumentException("graph must not be null"); //$NON-NLS-1$
         }
         if (startNodes == null) {
             throw new IllegalArgumentException("startNodes must not be null"); //$NON-NLS-1$
         }
-        if (acceptor == null) {
-            throw new IllegalArgumentException("acceptor must not be null"); //$NON-NLS-1$
+        if (matcher == null) {
+            throw new IllegalArgumentException("matcher must not be null"); //$NON-NLS-1$
         }
         LinkedList<V> queue = new LinkedList<V>();
         for (V start : startNodes) {
@@ -183,20 +168,14 @@ public final class Graphs {
         Set<V> results = new HashSet<V>();
         while (queue.isEmpty() == false) {
             V first = queue.removeFirst();
-
-            // キャッシュを利用
             if (saw.contains(first)) {
                 continue;
             }
             saw.add(first);
-
-            // 該当するノードか検査
-            boolean accepted = acceptor.matches(first);
-
-            // 該当するノードならば結果に追加し、以降の探索を打ち切り
-            if (accepted) {
+            boolean matched = matcher.matches(first);
+            if (matched) {
                 results.add(first);
-            } else { // 該当するノードでなければ、続けて検索する
+            } else {
                 queue.addAll(graph.getConnected(first));
             }
         }
@@ -204,36 +183,29 @@ public final class Graphs {
     }
 
     /**
-     * 指定の開始ノードを起点に、後続するノードの中から条件に合致するノードの一覧と、
-     * そこまでのノードの一覧を返す。
-     * <p>
-     * このメソッドは、{@link #findNearest(Graph, Collection, Matcher)}の
-     * 探索経路上のすべてのノードを含めて返す。
-     * </p>
-     * <p>
-     * なお、返される一覧には、{@code startNodes}で指定された要素が通常含まれない。
-     * それらが結果に含まれる場合は、{@code startNodes}に含まれるいずれかの値が
-     * {@code startNodes}の後続にあり、かつ上記の条件を満たしている。
-     * </p>
-     * @param <V> ノードを識別する値
-     * @param graph 対象のグラフ
-     * @param startNodes 対象の開始ノードに割り当てられた値の一覧
-     * @param acceptor 利用する条件、合致するるものが条件に合致したとみなされる
-     * @return 後続するノードのうち条件に合致するノードと、そこまでのノードの一覧
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the succeeding nearest vertices which match the condition, from the starting vertices,
+     * and vertices on their routes. In other words, this method returns all vertices on the searching route on
+     * {@link #findNearest(Graph, Collection, Matcher)}. The resulting set may not contain the starting vertices,
+     * excepts the starting vertices also on their searching route.
+     * @param <V> the vertex value type
+     * @param graph the target graph
+     * @param startNodes the starting vertices
+     * @param matcher the vertices predicate
+     * @return the nearest vertices and vertices on their route
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public static <V> Set<V> collectNearest(
             Graph<? extends V> graph,
             Collection<? extends V> startNodes,
-            Matcher<? super V> acceptor) {
+            Matcher<? super V> matcher) {
         if (graph == null) {
             throw new IllegalArgumentException("graph must not be null"); //$NON-NLS-1$
         }
         if (startNodes == null) {
             throw new IllegalArgumentException("startNodes must not be null"); //$NON-NLS-1$
         }
-        if (acceptor == null) {
-            throw new IllegalArgumentException("acceptor must not be null"); //$NON-NLS-1$
+        if (matcher == null) {
+            throw new IllegalArgumentException("matcher must not be null"); //$NON-NLS-1$
         }
         LinkedList<V> queue = new LinkedList<V>();
         for (V start : startNodes) {
@@ -244,20 +216,14 @@ public final class Graphs {
         Set<V> results = new HashSet<V>();
         while (queue.isEmpty() == false) {
             V first = queue.removeFirst();
-
-            // キャッシュを利用
             if (saw.contains(first)) {
                 continue;
             }
             saw.add(first);
-
-            // 該当するノードか検査
-            boolean accepted = acceptor.matches(first);
-
-            // 該当するノードならば結果に追加し、以降の探索を打ち切り
-            if (accepted) {
+            boolean matched = matcher.matches(first);
+            if (matched) {
                 results.add(first);
-            } else { // 該当するノードでなければ、続けて検索する
+            } else {
                 results.add(first);
                 queue.addAll(graph.getConnected(first));
             }
@@ -266,23 +232,24 @@ public final class Graphs {
     }
 
     /**
-     * 指定の有向グラフ内で循環する要素の集合を検出して返す。
-     * @param <V> 頂点要素の型
-     * @param graph 対象の有向グラフ
-     * @return 循環依存する要素集合の一覧
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the all cyclic sub-graphs in the target graph.
+     * @param <V> the vertex value type
+     * @param graph the target graph
+     * @return the sets of cyclic connected vertices
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static <V> Set<Set<V>> findCircuit(Graph<? extends V> graph) {
         if (graph == null) {
-            throw new IllegalArgumentException("graph is null"); //$NON-NLS-1$
+            throw new IllegalArgumentException("graph must not be null"); //$NON-NLS-1$
         }
         Set<Set<V>> results = new HashSet<Set<V>>();
         Set<Set<V>> sccs = Graphs.findStronglyConnectedComponents(graph);
         for (Set<V> scc : sccs) {
-            // 強連結成分が2要素以上ならば、それらは循環
             if (scc.size() >= 2) {
+                // if SCC has > 2 vertices, it is cyclic
                 results.add(scc);
-            } else if (scc.size() == 1) { // 強連結成分が1要素ならば、自己参照がある場合のみ循環
+            } else if (scc.size() == 1) {
+                // if SCC has = 1 vertex, it is cyclic only if the vertex has self edge
                 V vertex = scc.iterator().next();
                 if (graph.isConnected(vertex, vertex)) {
                     results.add(scc);
@@ -293,15 +260,15 @@ public final class Graphs {
     }
 
     /**
-     * 指定の有向グラフに含まれる強連結成分を列挙する。
-     * @param <V> ノードを識別する値
-     * @param graph 対象のグラフ
-     * @return 強連結成分の一覧
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the all strongly connected components in the target graph.
+     * @param <V> the vertex value type
+     * @param graph the target graph
+     * @return the strongly connected components
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static <V> Set<Set<V>> findStronglyConnectedComponents(Graph<? extends V> graph) {
         if (graph == null) {
-            throw new IllegalArgumentException("graph is null"); //$NON-NLS-1$
+            throw new IllegalArgumentException("graph must not be null"); //$NON-NLS-1$
         }
         List<? extends V> postorder = computePostOrderByDepth(graph);
         Graph<? extends V> tgraph = transpose(graph);
@@ -336,49 +303,41 @@ public final class Graphs {
     }
 
     /**
-     * 指定の有向グラフに含まれるノードの一覧を、接続の末尾から順に列挙する。
-     * <p>
-     * 対象のグラフに循環が存在しない場合、返されるリスト{@code list}と
-     * 引数のグラフ{@code graph}には必ず次のような関係が成り立つ。
-     * </p>
-     * <pre>{@code
-     * for i = 0..list.size-1:
-     *   for j = i+1..list.size-1
-     *     assert graph.isConnected(list[i], list[j]) == false;
-     * }</pre>
-     * <p>
-     * 対象のグラフに循環が存在する場合は、循環部分を取り除けば上記の関係は成り立つ。
-     * </p>
-     * @param <V> ノードを識別する値
-     * @param graph 対象のグラフ
-     * @return ノードの一覧を接続の末尾から順に並べたリスト
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Sorts the vertices from the tail to head topologically, and returns their list.
+     * If the {@code graph} does not contain any cycles, the resulting result must satisfy the following:
+<pre>{@code
+for i = 0..list.size-1:
+  for j = i+1..list.size-1:
+    assert graph.isConnected(list[i], list[j]) == false;
+}</pre>
+     * @param <V> the vertex value type
+     * @param graph the target graph
+     * @return the sorted vertices
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static <V> List<V> sortPostOrder(Graph<? extends V> graph) {
         if (graph == null) {
-            throw new IllegalArgumentException("graph is null"); //$NON-NLS-1$
+            throw new IllegalArgumentException("graph must not be null"); //$NON-NLS-1$
         }
         List<? extends V> postorder = computePostOrderByDepth(graph);
         return new ArrayList<V>(postorder);
     }
 
     /**
-     * 指定のグラフに含まれるエッジを転置した新しいグラフを返す。
-     * <p>
-     * 返されるグラフ{@code reverse}は常に次が成り立つ。
-     * </p>
-     * <pre>{@code
-     * graph.contains(a) <=> reverse.contains(a);
-     * graph.isConnected(a, b) <=> reverse.isConnected(b, a)
-     * }</pre>
-     * @param <V> ノードを識別する値
-     * @param graph 対象のグラフ
-     * @return 生成したグラフ
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Creates a new transposed graph from the target graph.
+     * The transposed graph <em>reverse</em> must satisfy the following:
+<pre>{@code
+graph.contains(a) <=> reverse.contains(a), and
+graph.isConnected(a, b) <=> reverse.isConnected(b, a).
+}</pre>
+     * @param <V> the vertex value type
+     * @param graph the target graph
+     * @return the created graph
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static <V> Graph<V> transpose(Graph<V> graph) {
         if (graph == null) {
-            throw new IllegalArgumentException("graph is null"); //$NON-NLS-1$
+            throw new IllegalArgumentException("graph must not be null"); //$NON-NLS-1$
         }
         Graph<V> results = new HashGraph<V>();
         for (Graph.Vertex<V> vertex : graph) {
@@ -392,30 +351,28 @@ public final class Graphs {
     }
 
     /**
-     * 指定のグラフのうち、指定した頂点のみを持つ部分グラフを新しく作成して返す。
-     * @param <V> ノードを識別する値
-     * @param graph 対象のグラフ
-     * @param acceptor 部分グラフに含める頂点のみを許可するオブジェクト
-     * @return 生成した部分グラフ
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Creates a new subgraph from the target graph.
+     * @param <V> the vertex value type
+     * @param graph the target graph
+     * @param matcher only matches to the subgraph members
+     * @return the created subgraph
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
-    public static <V> Graph<V> subgraph(
-            Graph<? extends V> graph,
-            Matcher<? super V> acceptor) {
+    public static <V> Graph<V> subgraph(Graph<? extends V> graph, Matcher<? super V> matcher) {
         if (graph == null) {
             throw new IllegalArgumentException("graph must not be null"); //$NON-NLS-1$
         }
-        if (acceptor == null) {
-            throw new IllegalArgumentException("acceptor must not be null"); //$NON-NLS-1$
+        if (matcher == null) {
+            throw new IllegalArgumentException("matcher must not be null"); //$NON-NLS-1$
         }
         Graph<V> subgraph = newInstance();
-        Map<V, Boolean> accepted = new HashMap<V, Boolean>();
+        Map<V, Boolean> matchedSet = new HashMap<V, Boolean>();
         for (V vertex : graph.getNodeSet()) {
-            boolean matched = acceptor.matches(vertex);
+            boolean matched = matcher.matches(vertex);
             if (matched) {
                 subgraph.addNode(vertex);
             }
-            accepted.put(vertex, matched);
+            matchedSet.put(vertex, matched);
         }
         if (subgraph.isEmpty()) {
             return subgraph;
@@ -423,13 +380,13 @@ public final class Graphs {
 
         for (Graph.Vertex<? extends V> vertex : graph) {
             V from = vertex.getNode();
-            assert accepted.containsKey(from);
-            if (Boolean.FALSE.equals(accepted.get(from))) {
+            assert matchedSet.containsKey(from);
+            if (Boolean.FALSE.equals(matchedSet.get(from))) {
                 continue;
             }
             for (V to : vertex.getConnected()) {
-                assert accepted.containsKey(to);
-                if (Boolean.FALSE.equals(accepted.get(to))) {
+                assert matchedSet.containsKey(to);
+                if (Boolean.FALSE.equals(matchedSet.get(to))) {
                     continue;
                 }
                 subgraph.addEdge(from, to);
@@ -489,42 +446,21 @@ public final class Graphs {
         }
     }
 
-    /**
-     * インスタンス生成の禁止。
-     */
     private Graphs() {
-        throw new AssertionError();
+        return;
     }
 
-    /**
-     * グラフを渡り歩く際の経路を記憶するフレーム。
-     * @version $Date: 2009-08-19 19:09:34 +0900 (水, 19 8 2009) $
-     * @param <V> フレームで取り扱うノードの型
-     */
     private static final class VisitFrame<V> {
 
         private final Graph<? extends V> graph;
 
-        /**
-         * このフレームの手前のフレーム (ボトムの場合は{@code null})。
-         */
         final VisitFrame<V> previous;
 
-        /**
-         * このフレームで取り扱うノードの値。
-         */
         final V node;
 
-        /**
-         * このフレームで現在訪問しているneighborの一覧。
-         */
         final Iterator<? extends V> branches;
 
-        VisitFrame(
-                VisitFrame<V> previous,
-                Graph<? extends V> graph,
-                V node,
-                Iterator<? extends V> branch) {
+        VisitFrame(VisitFrame<V> previous, Graph<? extends V> graph, V node, Iterator<? extends V> branch) {
             assert graph != null;
             assert branch != null;
             this.graph = graph;

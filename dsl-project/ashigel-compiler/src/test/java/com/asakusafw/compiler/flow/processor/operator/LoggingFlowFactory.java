@@ -14,78 +14,116 @@
  * limitations under the License.
  */
 package com.asakusafw.compiler.flow.processor.operator;
-import javax.annotation.Generated;
-
 import com.asakusafw.compiler.flow.testing.model.Ex1;
 import com.asakusafw.vocabulary.flow.Operator;
 import com.asakusafw.vocabulary.flow.Source;
+import com.asakusafw.vocabulary.flow.graph.Connectivity;
 import com.asakusafw.vocabulary.flow.graph.FlowElementResolver;
 import com.asakusafw.vocabulary.flow.graph.ObservationCount;
 import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 import com.asakusafw.vocabulary.operator.Logging;
-
+import com.asakusafw.vocabulary.operator.OperatorFactory;
+import com.asakusafw.vocabulary.operator.OperatorInfo;
+import javax.annotation.Generated;
 /**
- * {@link LoggingFlow}に関する演算子ファクトリークラス。
+ * An operator factory class about <code>LoggingFlow</code>.
+ * @see LoggingFlow
  */
-@Generated("com.asakusafw.compiler.operator.OperatorFactoryClassGenerator") public class
-        LoggingFlowFactory {
+@Generated("OperatorFactoryClassGenerator:0.1.0")@OperatorFactory(LoggingFlow.class) public class LoggingFlowFactory {
     /**
-     * パラメーター付きの演算子。
-     */
-    public static final class WithParameter implements Operator {
-        /**
-         * 入力された内容
-         */
-        public final Source<Ex1> out;
-        WithParameter(Source<Ex1> model, String parameter) {
-            OperatorDescription.Builder builder = new OperatorDescription.Builder(Logging.class);
-            builder.declare(LoggingFlow.class, LoggingFlowImpl.class, "withParameter");
-            builder.declareParameter(Ex1.class);
-            builder.declareParameter(String.class);
-            builder.addInput("model", Ex1.class);
-            builder.addOutput("out", Ex1.class);
-            builder.addParameter("parameter", String.class, parameter);
-            builder.addAttribute(ObservationCount.AT_LEAST_ONCE);
-            FlowElementResolver resolver = builder.toResolver();
-            resolver.resolveInput("model", model);
-            this.out = resolver.resolveOutput("out");
-        }
-    }
-    /**
-     * パラメーター付きの演算子。
-     * @param model 対象のモデル
-     * @param parameter 返す文字列
-     * @return 生成した演算子オブジェクト
-     */
-    public LoggingFlowFactory.WithParameter withParameter(Source<Ex1> model, String parameter) {
-        return new LoggingFlowFactory.WithParameter(model, parameter);
-    }
-    /**
-     * 通常の演算子。
+     * simple. 
+             * <p>Note that, each output port of this operator will automatically connect to "stop" operator if not connected to any other ports.</p>
      */
     public static final class Simple implements Operator {
+        private final FlowElementResolver $;
         /**
-         * 入力された内容
+         * input data
          */
         public final Source<Ex1> out;
         Simple(Source<Ex1> model) {
             OperatorDescription.Builder builder = new OperatorDescription.Builder(Logging.class);
             builder.declare(LoggingFlow.class, LoggingFlowImpl.class, "simple");
             builder.declareParameter(Ex1.class);
-            builder.addInput("model", Ex1.class);
-            builder.addOutput("out", Ex1.class);
+            builder.addInput("model", model);
+            builder.addOutput("out", model);
             builder.addAttribute(ObservationCount.AT_LEAST_ONCE);
-            FlowElementResolver resolver = builder.toResolver();
-            resolver.resolveInput("model", model);
-            this.out = resolver.resolveOutput("out");
+            builder.addAttribute(Connectivity.OPTIONAL);
+            builder.addAttribute(Logging.Level.INFO);
+            this.$ = builder.toResolver();
+            this.$.resolveInput("model", model);
+            this.out = this.$.resolveOutput("out");
+        }
+        /**
+         * Configures the name of this operator.
+         * @param newName the new operator name
+         * @return this operator object
+         * @throws IllegalArgumentException if the parameter is <code>null</code>
+         */
+        public LoggingFlowFactory.Simple as(String newName) {
+            this.$.setName(newName);
+            return this;
         }
     }
     /**
-     * 通常の演算子。
-     * @param model 対象のモデル
-     * @return 生成した演算子オブジェクト
+     * simple. 
+             * <p>Note that, each output port of this operator will automatically connect to "stop" operator if not connected to any other ports.</p>
+     * @param model  target data model
+     * @return the created operator object
+     * @see LoggingFlow#simple(Ex1)
      */
-    public LoggingFlowFactory.Simple simple(Source<Ex1> model) {
+    @OperatorInfo(kind = Logging.class, input = {@OperatorInfo.Input(name = "model", type = Ex1.class, position = 0)}, 
+            output = {@OperatorInfo.Output(name = "out", type = Ex1.class)}, parameter = {}) public LoggingFlowFactory.
+            Simple simple(Source<Ex1> model) {
         return new LoggingFlowFactory.Simple(model);
+    }
+    /**
+     * parameterized. 
+             * <p>Note that, each output port of this operator will automatically connect to "stop" operator if not connected to any other ports.</p>
+     */
+    public static final class WithParameter implements Operator {
+        private final FlowElementResolver $;
+        /**
+         * input data
+         */
+        public final Source<Ex1> out;
+        WithParameter(Source<Ex1> model, String parameter) {
+            OperatorDescription.Builder builder0 = new OperatorDescription.Builder(Logging.class);
+            builder0.declare(LoggingFlow.class, LoggingFlowImpl.class, "withParameter");
+            builder0.declareParameter(Ex1.class);
+            builder0.declareParameter(String.class);
+            builder0.addInput("model", model);
+            builder0.addOutput("out", model);
+            builder0.addParameter("parameter", String.class, parameter);
+            builder0.addAttribute(ObservationCount.AT_LEAST_ONCE);
+            builder0.addAttribute(Connectivity.OPTIONAL);
+            builder0.addAttribute(Logging.Level.INFO);
+            this.$ = builder0.toResolver();
+            this.$.resolveInput("model", model);
+            this.out = this.$.resolveOutput("out");
+        }
+        /**
+         * Configures the name of this operator.
+         * @param newName0 the new operator name
+         * @return this operator object
+         * @throws IllegalArgumentException if the parameter is <code>null</code>
+         */
+        public LoggingFlowFactory.WithParameter as(String newName0) {
+            this.$.setName(newName0);
+            return this;
+        }
+    }
+    /**
+     * parameterized. 
+             * <p>Note that, each output port of this operator will automatically connect to "stop" operator if not connected to any other ports.</p>
+     * @param model  target data model
+     * @param parameter  additional parameter
+     * @return the created operator object
+     * @see LoggingFlow#withParameter(Ex1, String)
+     */
+    @OperatorInfo(kind = Logging.class, input = {@OperatorInfo.Input(name = "model", type = Ex1.class, position = 0)}, 
+            output = {@OperatorInfo.Output(name = "out", type = Ex1.class)}, parameter = {@OperatorInfo.Parameter(name = 
+                "parameter", type = String.class, position = 1)}) public LoggingFlowFactory.WithParameter withParameter(
+            Source<Ex1> model, String parameter) {
+        return new LoggingFlowFactory.WithParameter(model, parameter);
     }
 }

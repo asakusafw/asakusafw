@@ -42,7 +42,7 @@ import com.asakusafw.vocabulary.batch.BatchDescription;
 import com.asakusafw.vocabulary.external.ImporterDescription;
 
 /**
- * バッチ用のテストドライバクラス。
+ * A tester for {@code Batch batch} classes.
  * @since 0.2.0
  * @version 0.5.2
  */
@@ -53,38 +53,37 @@ public class BatchTester extends TesterBase {
     private final Map<String, JobFlowTester> jobFlowMap = new LinkedHashMap<String, JobFlowTester>();
 
     /**
-     * コンストラクタ。
-     *
-     * @param callerClass 呼出元クラス
+     * Creates a new instance.
+     * @param callerClass the caller class (usually it is a test class)
      */
     public BatchTester(Class<?> callerClass) {
         super(callerClass);
     }
 
     /**
-     * バッチに含まれるジョブフローを指定する。
-     *
-     * @param name ジョブフロー名。ジョブフロークラスのアノテーションnameの値を指定する。
-     * @return ジョブフローテストドライバ。
+     * Returns a jobflow tester for the target jobflow in the testing batch.
+     * @param flowId the target flow ID
+     * @return the corresponding jobflow tester
      */
-    public JobFlowTester jobflow(String name) {
-        JobFlowTester driver = jobFlowMap.get(name);
+    public JobFlowTester jobflow(String flowId) {
+        JobFlowTester driver = jobFlowMap.get(flowId);
         if (driver == null) {
             driver = new JobFlowTester(driverContext.getCallerClass());
-            jobFlowMap.put(name, driver);
+            jobFlowMap.put(flowId, driver);
         }
         return driver;
     }
 
     /**
-     * バッチのテストを実行し、テスト結果を検証します。
-     * @param batchDescriptionClass ジョブフロークラスのクラスオブジェクト
-     * @throws IllegalStateException バッチのコンパイル、入出力や検査ルールの用意に失敗した場合
+     * Executes a batch and then verifies the execution result.
+     * @param description the target batch class
+     * @throws IllegalStateException if error was occurred while building batch class or initializing this tester
+     * @throws AssertionError if verification was failed
      */
-    public void runTest(Class<? extends BatchDescription> batchDescriptionClass) {
+    public void runTest(Class<? extends BatchDescription> description) {
         try {
             try {
-                runTestInternal(batchDescriptionClass);
+                runTestInternal(description);
             } finally {
                 driverContext.cleanUpTemporaryResources();
             }
@@ -105,16 +104,13 @@ public class BatchTester extends TesterBase {
             validateTestCondition();
         }
 
-        // 初期化
         LOG.info(MessageFormat.format(
                 Messages.getString("BatchTester.infoCompile"), //$NON-NLS-1$
                 batchDescriptionClass.getName()));
 
-        // バッチコンパイラの実行
         BatchDriver batchDriver = BatchDriver.analyze(batchDescriptionClass);
         assertFalse(batchDriver.getDiagnostics().toString(), batchDriver.hasError());
 
-        // コンパイル環境の検証
         driverContext.validateCompileEnvironment();
 
         File compileWorkDir = driverContext.getCompilerWorkingDirectory();
@@ -137,7 +133,6 @@ public class BatchTester extends TesterBase {
                 batchDescriptionClass.getClassLoader(),
                 driverContext.getOptions());
 
-        // ジョブフロー名の検査
         for (String flowId : jobFlowMap.keySet()) {
             if (batchInfo.findJobflow(flowId) == null) {
                 throw new IllegalStateException(MessageFormat.format(
@@ -147,7 +142,6 @@ public class BatchTester extends TesterBase {
             }
         }
 
-        // 環境の検証
         driverContext.validateExecutionEnvironment();
 
         LOG.info(MessageFormat.format(

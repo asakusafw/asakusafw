@@ -63,7 +63,7 @@ public class LoggingFlowProcessorTest extends JobflowCompilerTestRoot {
     }
 
     /**
-     * 単純なテスト。
+     * simple case.
      */
     @Test
     public void simple() {
@@ -89,7 +89,7 @@ public class LoggingFlowProcessorTest extends JobflowCompilerTestRoot {
     }
 
     /**
-     * パラメーター付き。
+     * parameterized.
      */
     @Test
     public void withParameter() {

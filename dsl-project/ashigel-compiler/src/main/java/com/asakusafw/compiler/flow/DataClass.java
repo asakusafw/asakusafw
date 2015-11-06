@@ -31,75 +31,75 @@ import com.asakusafw.utils.java.model.util.CommentEmitTrait;
 import com.asakusafw.utils.java.model.util.Models;
 
 /**
- * エミッタが取り扱うデータの型。
+ * An abstract super interface of resolved data types.
  */
 public interface DataClass {
 
     /**
-     * このデータ型のJavaでの表現を返す。
-     * @return このデータ型のJavaでの表現
+     * Returns the representation of this data type as a Java class.
+     * @return the representation of this data type as a Java class
      */
     java.lang.reflect.Type getType();
 
     /**
-     * このデータで利用可能な全てのプロパティを返す。
-     * @return 利用可能な全てのプロパティ
+     * Returns the all available properties in this data type.
+     * @return the all available properties
      */
     Collection<? extends Property> getProperties();
 
     /**
-     * 指定の名前を持つプロパティを返す。
-     * @param propertyName 対象のプロパティ名
-     * @return 対象のプロパティを表すオブジェクト、存在しない場合は{@code null}
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns a property in this data type.
+     * @param propertyName the target property name
+     * @return the target property, or {@code null} if this data type does not contain such a property
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     Property findProperty(String propertyName);
 
     /**
-     * このデータ型に対する新しいインスタンスを生成する式を返す。
-     * @param type 対象のDOMでの表現
-     * @return 新しいインスタンスを生成する式
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns an expression that creates a new instance of this type.
+     * @param type a DOM for this data type
+     * @return the created expression
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     Expression createNewInstance(Type type);
 
     /**
-     * この型のデータを代入する文を返す。
-     * @param target 代入先
-     * @param source 代入元
-     * @return データを代入する文
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns a statement that assigns a value of this data type.
+     * @param target the assign target
+     * @param source the assign value
+     * @return the created statement
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     Statement assign(Expression target, Expression source);
 
     /**
-     * このデータオブジェクトの内容を消去する文を返す。
-     * @param object 対象のオブジェクト
-     * @return 対象の文
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns a statement that resets a value of this data type.
+     * @param object the expression of the target value
+     * @return the created statement
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     Statement reset(Expression object);
 
     /**
-     * この型のデータを指定の{@link DataOutput}に書き出す文を返す。
-     * @param object 書き出すオブジェクト
-     * @param dataOutput {@link DataOutput}型の式
-     * @return 指定の{@link DataOutput}に書き出す文
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns a statement that writes a value of this data type into {@link DataOutput}.
+     * @param object the expression of target value
+     * @param dataOutput the expression of the target {@link DataOutput}
+     * @return the created statement
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     Statement createWriter(Expression object, Expression dataOutput);
 
     /**
-     * この型のデータを指定の{@link DataInput}から読み出す式を返す。
-     * @param object 書き出し先のオブジェクト
-     * @param dataInput {@link DataInput}型の式
-     * @return 指定の{@link DataInput}から読み出す式
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns a statement that reads a contents of this data type from {@link DataInput}.
+     * @param object the expression of the target value
+     * @param dataInput the expression of the source {@link DataInput}
+     * @return the created statement
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     Statement createReader(Expression object, Expression dataInput);
 
     /**
-     * 解決に失敗したことを表す{@link DataClass}の実装。
+     * Represents an unresolved {@link DataClass}.
      */
     class Unresolved implements DataClass {
 
@@ -108,10 +108,10 @@ public interface DataClass {
         private final java.lang.reflect.Type runtimeType;
 
         /**
-         * インスタンスを生成する。
-         * @param factory ファクトリ
-         * @param runtimeType 対象の型
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Creates a new instance.
+         * @param factory the Java DOM factory
+         * @param runtimeType the target runtime type
+         * @throws IllegalArgumentException if the parameter is {@code null}
          */
         public Unresolved(ModelFactory factory, java.lang.reflect.Type runtimeType) {
             Precondition.checkMustNotBeNull(factory, "factory"); //$NON-NLS-1$
@@ -192,145 +192,136 @@ public interface DataClass {
     }
 
     /**
-     * それぞれのデータが有するプロパティ。
+     * Represents a property in {@link DataClass}.
      */
     interface Property {
 
         /**
-         * このプロパティの名前を返す。
-         * @return 名前
+         * Returns the name of this property.
+         * @return the property name
          */
         String getName();
 
         /**
-         * このプロパティのJavaでの型を返す。
-         * @return Javaでの型
+         * Returns the type of this property as a Java class.
+         * @return the representation of this property type as a Java class
          */
         java.lang.reflect.Type getType();
 
         /**
-         * このプロパティが{@code null}になりうる場合のみ{@code true}を返す。
-         * @return {@code null}になりうる場合のみ{@code true}
+         * Returns whether this property is nullable or not.
+         * @return {@code true} if this property is nullable, otherwise {@code false}
          */
         boolean canNull();
 
         /**
-         * このプロパティに対する新しいデータを生成する式を返す。
-         * @param target 対象の型
-         * @return 新しいデータを生成する式
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Returns an expression that creates a new value object for this property.
+         * @param target the target data type
+         * @return the created expression
+         * @throws IllegalArgumentException if the parameter is {@code null}
          */
         Expression createNewInstance(Type target);
 
         /**
-         * 指定のオブジェクトを表す式が有するこのプロパティが、{@code null}である場合に
-         * {@code true}を返すような式を返す。
-         * @param object オブジェクト
-         * @return 生成した式
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Returns an expression that returns whether this property is {@code null} or not.
+         * @param object the target object
+         * @return the created expression
+         * @throws IllegalArgumentException if the parameter is {@code null}
          */
         Expression createIsNull(Expression object);
 
         /**
-         * 指定のオブジェクトを表す式が有するこのプロパティをそのまま返す式を返す。
-         * @param object オブジェクト
-         * @return 生成した式
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Returns an expression that returns this property from the target object.
+         * @param object the target object
+         * @return the created expression
+         * @throws IllegalArgumentException if the parameter is {@code null}
          */
         Expression createGetter(Expression object);
 
         /**
-         * この型のデータを代入する文を返す。
-         * @param target 代入先
-         * @param source 代入元
-         * @return データを代入する文
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Returns a statement that assigns a value into this property.
+         * @param target the target property ({@link #createGetter(Expression)})
+         * @param source the value to be assigned
+         * @return the created statement
+         * @throws IllegalArgumentException if the parameters are {@code null}
          */
         Statement assign(Expression target, Expression source);
 
         /**
-         * 指定のオブジェクトを表す式が有するこのプロパティを、
-         * 指定の左辺式に設定する文を返す。
-         * @param object オブジェクト
-         * @param target 左辺式
-         * @return 生成した文
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Returns a statement that copies a value of this property into the other value object.
+         * @param object the property owner
+         * @param target the target value object
+         * @return the created statement
+         * @throws IllegalArgumentException if the parameters are {@code null}
          */
         Statement createGetter(Expression object, Expression target);
 
         /**
-         * 指定のオブジェクトを表す式が有するこのプロパティに対し、
-         * 指定の式を設定する文を返す。
-         * @param object オブジェクト
-         * @param value 設定する式
-         * @return 生成した文
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Returns a statement that assigns a value into the property of the target object.
+         * @param object the property owner
+         * @param value the value to be assigned
+         * @return the created statement
+         * @throws IllegalArgumentException if the parameters are {@code null}
          */
         Statement createSetter(Expression object, Expression value);
 
         /**
-         * 指定のオブジェクトを表す式が有するこのプロパティを、
-         * 指定の{@code java.io.DataOutput}を表す式に出力する。
-         * @param object オブジェクト
-         * @param dataOutput {@code java.io.DataOutput}を表す式
-         * @return 生成した文
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Returns a statement that writes the property of the target object into {@link DataOutput}.
+         * @param object the property owner
+         * @param dataOutput the target {@code java.io.DataOutput}
+         * @return the created statement
+         * @throws IllegalArgumentException if the parameters are {@code null}
          */
         Statement createWriter(Expression object, Expression dataOutput);
 
         /**
-         * 指定のオブジェクトを表す式が有するこのプロパティに、
-         * 指定の{@code java.io.DataInput}から読み出した値を設定する。
-         * @param object オブジェクト
-         * @param dataInput {@code java.io.DataInput}を表す式
-         * @return 生成した文
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Returns a statement that reads the property of the target object from {@link DataInput}.
+         * @param object the property owner
+         * @param dataInput the source {@code java.io.DataInput}
+         * @return the created statement
+         * @throws IllegalArgumentException if the parameters are {@code null}
          */
         Statement createReader(Expression object, Expression dataInput);
 
         /**
-         * 指定のオブジェクトを表す式が有するこのプロパティに対する、
-         * ハッシュコードを表す式を返す。
-         * @param object オブジェクト
-         * @return 生成した式
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Returns an expression that returns the hash code of the property.
+         * @param object the property owner
+         * @return the created expression
+         * @throws IllegalArgumentException if the parameter is {@code null}
          */
         Expression createHashCode(Expression object);
 
         /**
-         * このプロパティと同じ型の値が格納されたバイト列から、その値の格納バイト数を計算する式を返す。
-         * @param bytes 対象のバイト列を表す式
-         * @param start バイト列内の開始位置を表す式
-         * @param length 開始位置から見たバイト列の有効長を表す式
-         * @return 生成した式
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Returns an expression that returns the serialized length of the target value.
+         * @param bytes expression of the serialized bytes
+         * @param start expression of the start offset index in the serialized bytes
+         * @param length expression of the limit length in the serialized bytes
+         * @return the created expression
+         * @throws IllegalArgumentException if the parameters are {@code null}
          */
-        Expression createBytesSize(
-                Expression bytes,
-                Expression start,
-                Expression length);
+        Expression createBytesSize(Expression bytes, Expression start, Expression length);
 
         /**
-         * このプロパティと同じ型の値が格納された二つのバイト列を、その値の部分だけ比較する式を返す。
-         * @param bytes1 比較されるバイト列
-         * @param start1 {@code bytes1}内の開始位置
-         * @param length1 {@code bytes1}内の長さ
-         * @param bytes2 比較するバイト列
-         * @param start2 {@code bytes2}内の開始位置
-         * @param length2 {@code bytes2}内の長さ
-         * @return 生成した式
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Returns an expression that compares two serialized bytes.
+         * @param bytes1 expression of the first serialized bytes
+         * @param start1 expression of the start offset in {@code bytes1}
+         * @param length1 expression of the limit length in {@code bytes1}
+         * @param bytes2 expression of the second serialized bytes
+         * @param start2 expression of the start offset in {@code bytes2}
+         * @param length2 expression of the limit length in {@code bytes2}
+         * @return the created expression
+         * @throws IllegalArgumentException if the parameters are {@code null}
          */
         Expression createBytesDiff(
                 Expression bytes1, Expression start1, Expression length1,
                 Expression bytes2, Expression start2, Expression length2);
 
         /**
-         * このプロパティと同じ型を有する2つの値を比較する式を返す。
-         * @param value1 比較される値を表す式
-         * @param value2 比較する値を表す式
-         * @return 生成した式
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Returns an expression that compares two values.
+         * @param value1 expression of the first value
+         * @param value2 expression of the second value
+         * @return the created expression
+         * @throws IllegalArgumentException if the parameters are {@code null}
          */
         Expression createValueDiff(Expression value1, Expression value2);
     }

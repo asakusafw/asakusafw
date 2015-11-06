@@ -25,7 +25,7 @@ import com.asakusafw.vocabulary.operator.Update;
 
 
 /**
- * {@link Update 更新演算子}を処理する。
+ * Processes {@link Update} operators.
  */
 @TargetOperator(Update.class)
 public class UpdateOperatorProcessor extends AbstractOperatorProcessor {

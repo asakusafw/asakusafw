@@ -23,7 +23,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * シャッフル時に利用されるキープロパティの情報。
+ * Represents shuffle key properties.
  */
 public class ShuffleKey {
 
@@ -36,10 +36,10 @@ public class ShuffleKey {
     private final List<Order> orderings;
 
     /**
-     * インスタンスを生成する。
-     * @param groupProperties グループ化のためのプロパティ一覧
-     * @param orderings 整列順序
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param groupProperties grouping properties
+     * @param orderings ordering information
+     * @throws IllegalArgumentException if some parameters are {@code null}
      */
     public ShuffleKey(List<String> groupProperties, List<Order> orderings) {
         if (groupProperties == null) {
@@ -53,16 +53,16 @@ public class ShuffleKey {
     }
 
     /**
-     * グループ化のためのプロパティ一覧を返す。
-     * @return グループ化のためのプロパティ一覧
+     * Returns the grouping properties.
+     * @return the grouping properties
      */
     public List<String> getGroupProperties() {
         return groupProperties;
     }
 
     /**
-     * 整列順序を返す。
-     * @return 整列順序
+     * Returns ordering information.
+     * @return ordering information
      */
     public List<Order> getOrderings() {
         return orderings;
@@ -99,7 +99,7 @@ public class ShuffleKey {
     }
 
     /**
-     * 整列を表現する。
+     * Represents ordering information.
      */
     public static class Order {
 
@@ -108,10 +108,10 @@ public class ShuffleKey {
         private final Direction direction;
 
         /**
-         * インスタンスを生成する。
-         * @param property プロパティの名称
-         * @param direction 整列方向
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Creates a new instance.
+         * @param property the property name
+         * @param direction the ordering direction
+         * @throws IllegalArgumentException if some parameters are {@code null}
          */
         public Order(String property, Direction direction) {
             if (property == null) {
@@ -125,16 +125,16 @@ public class ShuffleKey {
         }
 
         /**
-         * 整列のキーに利用するプロパティの名称を返す。
-         * @return 整列のキーに利用するプロパティの名称
+         * Returns the property name of ordering key.
+         * @return the property name
          */
         public String getProperty() {
             return property;
         }
 
         /**
-         * 整列方向を返す。
-         * @return 整列方向
+         * Returns the ordering direction.
+         * @return the ordering direction
          */
         public Direction getDirection() {
             return direction;
@@ -171,10 +171,11 @@ public class ShuffleKey {
         }
 
         /**
-         * {@code プロパティ名, 整列方向} の形式の文字列から、相応する{@link Order}オブジェクトを生成して返す。
-         * @param string {@link Order#toString()}の文字列
-         * @return 対応するオブジェクト、解析に失敗した場合は{@code null}
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Parses a string form of {@code <property-name> <direction>} (as same as {@link Order#toString()}),
+         * and returns the corresponded {@link Order} object.
+         * @param string a string of {@link Order#toString()}
+         * @return the corresponded object, or {@code null} if the string is not valid form
+         * @throws IllegalArgumentException if the parameter is {@code null}
          */
         public static Order parse(String string) {
             if (string == null) {
@@ -209,17 +210,17 @@ public class ShuffleKey {
     }
 
     /**
-     * 整列順序。
+     * Represents ordering direction.
      */
     public enum Direction {
 
         /**
-         * 昇順。
+         * Ascendant.
          */
         ASC,
 
         /**
-         * 降順。
+         * Descendant.
          */
         DESC,
     }

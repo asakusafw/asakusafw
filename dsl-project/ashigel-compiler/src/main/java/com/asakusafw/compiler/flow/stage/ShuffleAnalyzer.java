@@ -42,7 +42,7 @@ import com.asakusafw.vocabulary.flow.graph.FlowElementInput;
 import com.asakusafw.vocabulary.flow.graph.ShuffleKey;
 
 /**
- * 各ステージのシャッフルフェーズで行われる内容を解析する。
+ * Analyzes shuffle action for stages.
  * @since 0.1.0
  * @version 0.7.1
  */
@@ -55,9 +55,9 @@ public class ShuffleAnalyzer {
     private boolean sawError;
 
     /**
-     * インスタンスを生成する。
-     * @param environment 環境オブジェクト
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param environment the current environment
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public ShuffleAnalyzer(FlowCompilingEnvironment environment) {
         Precondition.checkMustNotBeNull(environment, "environment"); //$NON-NLS-1$
@@ -65,15 +65,15 @@ public class ShuffleAnalyzer {
     }
 
     /**
-     * 現在までにエラーが発生していた場合に{@code true}を返す。
-     * @return 現在までにエラーが発生していた場合に{@code true}
+     * Returns whether this analysis result contains any erroneous information or not.
+     * @return {@code true} if this contains any erroneous information, otherwise {@code false}
      */
     public boolean hasError() {
         return sawError;
     }
 
     /**
-     * 現在までに発生したエラーの情報をクリアする。
+     * Clears analysis errors.
      * @see #hasError()
      */
     public void clearError() {
@@ -81,10 +81,12 @@ public class ShuffleAnalyzer {
     }
 
     /**
-     * 指定のステージブロックを解析し、対象ステージのシャッフルに関する情報を返す。
-     * @param block 対象のステージブロック
-     * @return シャッフルに関する情報、解析に失敗した場合は{@code null}
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Analyzes the target stage block and returns its shuffle model.
+     * @param block the target block
+     * @return the corresponded shuffle model, or {@code null} if the target stage does not have shuffle action or
+     *     the shuffle action is something wrong
+     * @throws IllegalArgumentException if the parameter is {@code null}
+     * @see #hasError()
      */
     public ShuffleModel analyze(StageBlock block) {
         Precondition.checkMustNotBeNull(block, "block"); //$NON-NLS-1$

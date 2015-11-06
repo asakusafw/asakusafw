@@ -15,9 +15,8 @@
  */
 package com.asakusafw.utils.java.model.syntax;
 
-
 /**
- * メソッドの宣言を表現するインターフェース。
+ * An interface which represents method declarations.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:8.4] Method Declarations} </li>
@@ -27,20 +26,15 @@ package com.asakusafw.utils.java.model.syntax;
 public interface MethodDeclaration
         extends MethodOrConstructorDeclaration, TypedElement {
 
-    // properties
-
     /**
-     * 戻り値の型を返す。
-     * @return
-     *     戻り値の型
+     * Returns the return type.
+     * @return the return type
      */
     Type getReturnType();
 
     /**
-     * 戻り値の次元数を返す。
-     * <p> この要素は古いJavaとの後方互換性のために用意されている。現在使用することは推奨されていない。 </p>
-     * @return
-     *     戻り値の次元数
+     * Returns the number of extra dimensions of the return type.
+     * @return the number of extra dimensions of the return type
      */
     int getExtraDimensions();
 }

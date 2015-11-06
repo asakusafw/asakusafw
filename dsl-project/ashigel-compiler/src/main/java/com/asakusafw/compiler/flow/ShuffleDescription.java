@@ -20,24 +20,23 @@ import java.lang.reflect.Type;
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.vocabulary.flow.graph.ShuffleKey;
 
-
 /**
- * シャッフル操作に関する情報。
+ * Describes shuffle operations.
  */
 public class ShuffleDescription {
 
-    private Type outputType;
+    private final Type outputType;
 
-    private ShuffleKey keyInfo;
+    private final ShuffleKey keyInfo;
 
-    private LinePartProcessor converter;
+    private final LinePartProcessor converter;
 
     /**
-     * インスタンスを生成する。
-     * @param outputType レデュースに入力される型
-     * @param keyInfo シャッフルで利用するキーの情報
-     * @param converter シャッフル前に適用される変換機
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Creates a new instance.
+     * @param outputType the shuffle output type
+     * @param keyInfo information of the shuffle key
+     * @param converter the data converter for shuffle input
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public ShuffleDescription(
             Type outputType,
@@ -52,24 +51,24 @@ public class ShuffleDescription {
     }
 
     /**
-     * シャッフルフェーズで転送されるデータの種類を返す。
-     * @return 出力するデータの種類
+     * Returns the shuffle output type.
+     * @return the shuffle output type
      */
     public Type getOutputType() {
         return outputType;
     }
 
     /**
-     * シャッフル時のキーの情報を返す。
-     * @return シャッフル時のキーの情報
+     * Returns information of the shuffle key.
+     * @return information of the shuffle key
      */
     public ShuffleKey getKeyInfo() {
         return keyInfo;
     }
 
     /**
-     * シャッフルフェーズの先頭 (マップブロックの末尾)で適用される変換器を返す。
-     * @return 適用される変換器
+     * Returns the data converter for shuffle input.
+     * @return the data converter for shuffle input
      */
     public LinePartProcessor getConverter() {
         return converter;

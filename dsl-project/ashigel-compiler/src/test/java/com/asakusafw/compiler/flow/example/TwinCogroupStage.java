@@ -28,17 +28,16 @@ import com.asakusafw.vocabulary.flow.Out;
 import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory;
 import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory.Confluent;
 
-
 /**
- * シャッフルを行わないジョブフロー。
+ * A jobflow class which contains two concurrent co-group operations.
  */
 @SuppressWarnings("all")
 @FlowPart
 public class TwinCogroupStage extends FlowDescription {
 
-    private In<Ex1> in1;
+    private final In<Ex1> in1;
 
-    private Out<Ex1> out1;
+    private final Out<Ex1> out1;
 
     public TwinCogroupStage(
             In<Ex1> in1,

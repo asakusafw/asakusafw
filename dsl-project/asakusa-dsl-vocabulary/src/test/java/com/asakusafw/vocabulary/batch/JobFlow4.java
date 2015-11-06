@@ -19,7 +19,7 @@ import com.asakusafw.vocabulary.flow.FlowDescription;
 import com.asakusafw.vocabulary.flow.JobFlow;
 
 /**
- * テスト用のジョブフロー (1)。
+ * Jobflow for testing (4).
  */
 @JobFlow(name = "testing4")
 public class JobFlow4 extends FlowDescription {

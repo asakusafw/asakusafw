@@ -1,24 +1,24 @@
--- package com.asakusafw.compiler.flow
+-- package com.asakusafw.compiler
 
-@namespace(value = testing)
+@namespace(value = flow.testing)
 part1 = {
     sid : LONG;
     value : INT;
 };
 
-@namespace(value = testing)
+@namespace(value = flow.testing)
 part2 = {
     sid : LONG;
     string : TEXT;
 };
 
-@namespace(value = testing)
+@namespace(value = flow.testing)
 ex1 = part1 + part2;
 
-@namespace(value = testing)
+@namespace(value = flow.testing)
 ex2 = ex1;
 
-@namespace(value = testing)
+@namespace(value = flow.testing)
 joined ex_joined
     = ex1 -> {
         sid -> sid1;
@@ -29,14 +29,14 @@ joined ex_joined
         value -> value;
     } % value;
 
-@namespace(value = testing)
+@namespace(value = flow.testing)
 summarized ex_summarized = ex1 => {
     any string -> string;
     sum value -> value;
     count sid -> count;
 } % string;
 
-@namespace(value = testing)
+@namespace(value = flow.testing)
 joined ex_joined2
     = ex1 -> {
         sid -> sid1;
@@ -47,14 +47,14 @@ joined ex_joined2
         value -> key;
     } % key;
 
-@namespace(value = testing)
+@namespace(value = flow.testing)
 summarized ex_summarized2 = ex1 => {
     any string -> key;
     sum value -> value;
     count sid -> count;
 } % key;
 
-@namespace(value = testing)
+@namespace(value = flow.testing)
 summarized key_conflict = ex1 => {
     any string -> key;
     count string -> count;

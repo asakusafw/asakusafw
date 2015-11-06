@@ -24,7 +24,7 @@ import java.lang.annotation.Target;
 import com.asakusafw.vocabulary.flow.processor.PartialAggregation;
 import com.asakusafw.vocabulary.model.Summarized;
 
-
+//TODO i18n
 /**
  * 単純集計演算子を表すメソッドに付与する注釈。
  * <p>
@@ -80,12 +80,12 @@ public abstract HogeTotal summarize(Hoge hoge);
 public @interface Summarize {
 
     /**
-     * 入力ポートの番号。
+     * The input port number.
      */
     int ID_INPUT = 0;
 
     /**
-     * 出力ポートの番号。
+     * The output port number.
      */
     int ID_OUTPUT = 0;
 
@@ -96,7 +96,7 @@ public @interface Summarize {
     PartialAggregation partialAggregation() default PartialAggregation.PARTIAL;
 
     /**
-     * 出力先のポート名。
+     * The default output port name.
      */
     String summarizedPort() default "out";
 }

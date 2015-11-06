@@ -15,9 +15,8 @@
  */
 package com.asakusafw.utils.java.model.syntax;
 
-
 /**
- * 何らかの型情報を持つ要素を表現する基底インターフェース。
+ * An abstract super interface of elements which have any type information.
  */
 public interface TypedElement
         extends Model {

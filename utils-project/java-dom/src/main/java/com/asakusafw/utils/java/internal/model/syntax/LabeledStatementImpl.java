@@ -22,18 +22,12 @@ import com.asakusafw.utils.java.model.syntax.Statement;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link LabeledStatement}の実装。
+ * An implementation of {@link LabeledStatement}.
  */
 public final class LabeledStatementImpl extends ModelRoot implements LabeledStatement {
 
-    /**
-     * ラベルの名前。
-     */
     private SimpleName label;
 
-    /**
-     * 対象の文。
-     */
     private Statement body;
 
     @Override
@@ -42,11 +36,9 @@ public final class LabeledStatementImpl extends ModelRoot implements LabeledStat
     }
 
     /**
-     * ラベルの名前を設定する。
-     * @param label
-     *     ラベルの名前
-     * @throws IllegalArgumentException
-     *     {@code label}に{@code null}が指定された場合
+     * Sets the label name.
+     * @param label the documentation blocks
+     * @throws IllegalArgumentException if {@code label} was {@code null}
      */
     public void setLabel(SimpleName label) {
         Util.notNull(label, "label"); //$NON-NLS-1$
@@ -59,11 +51,9 @@ public final class LabeledStatementImpl extends ModelRoot implements LabeledStat
     }
 
     /**
-     * 対象の文を設定する。
-     * @param body
-     *     対象の文
-     * @throws IllegalArgumentException
-     *     {@code body}に{@code null}が指定された場合
+     * Sets the body statement.
+     * @param body the body statement
+     * @throws IllegalArgumentException if {@code body} was {@code null}
      */
     public void setBody(Statement body) {
         Util.notNull(body, "body"); //$NON-NLS-1$
@@ -71,7 +61,7 @@ public final class LabeledStatementImpl extends ModelRoot implements LabeledStat
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#LABELED_STATEMENT}を返す。
+     * Returns {@link ModelKind#LABELED_STATEMENT} which represents this element kind.
      * @return {@link ModelKind#LABELED_STATEMENT}
      */
     @Override
@@ -80,8 +70,7 @@ public final class LabeledStatementImpl extends ModelRoot implements LabeledStat
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitLabeledStatement(this, context);
     }

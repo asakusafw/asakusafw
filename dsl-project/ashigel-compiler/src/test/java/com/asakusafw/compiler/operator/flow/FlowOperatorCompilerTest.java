@@ -35,8 +35,8 @@ import com.asakusafw.vocabulary.flow.testing.MockOut;
 public class FlowOperatorCompilerTest extends OperatorCompilerTestRoot {
 
     /**
-     * 単純な例。
-     * @throws Exception 例外が発生した場合
+     * simple case.
+     * @throws Exception if exception was occurred
      */
     @Test
     public void simple() throws Exception {

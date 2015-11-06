@@ -53,7 +53,7 @@ import com.asakusafw.vocabulary.flow.graph.InputDescription;
 import com.asakusafw.vocabulary.flow.graph.OutputDescription;
 
 /**
- * ジョブフローの構造を解析する。
+ * Analyzes the structure of jobflows.
  */
 public class JobflowAnalyzer {
 
@@ -64,9 +64,9 @@ public class JobflowAnalyzer {
     private boolean sawError;
 
     /**
-     * インスタンスを生成する。
-     * @param environment 環境オブジェクト
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param environment the current environment
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JobflowAnalyzer(FlowCompilingEnvironment environment) {
         Precondition.checkMustNotBeNull(environment, "environment"); //$NON-NLS-1$
@@ -74,15 +74,15 @@ public class JobflowAnalyzer {
     }
 
     /**
-     * 現在までにエラーが発生していた場合に{@code true}を返す。
-     * @return 現在までにエラーが発生していた場合に{@code true}
+     * Returns whether this analysis result contains any erroneous information or not.
+     * @return {@code true} if this contains any erroneous information, otherwise {@code false}
      */
     public boolean hasError() {
         return sawError;
     }
 
     /**
-     * 現在までに発生したエラーの情報をクリアする。
+     * Resets the current errors.
      * @see #hasError()
      */
     public void clearError() {
@@ -90,11 +90,12 @@ public class JobflowAnalyzer {
     }
 
     /**
-     * 指定のステージグラフを解析し、ジョブフロー全体のステージ構造に関する情報を返す。
-     * @param graph ステージグラフ
-     * @param stageModels 各ステージの情報
-     * @return ジョブフロー全体のステージ構造に関する情報、解析に失敗した場合は{@code null}
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Analyzes the target stage graph and returns the corresponding jobflow model object.
+     * @param graph the target jobflow object
+     * @param stageModels the stage model objects
+     * @return the analyzed jobflow model, or {@code null} if the target jobflow is not valid
+     * @throws IllegalArgumentException if the parameters are {@code null}
+     * @see #hasError()
      */
     public JobflowModel analyze(StageGraph graph, Collection<StageModel> stageModels) {
         Precondition.checkMustNotBeNull(graph, "graph"); //$NON-NLS-1$

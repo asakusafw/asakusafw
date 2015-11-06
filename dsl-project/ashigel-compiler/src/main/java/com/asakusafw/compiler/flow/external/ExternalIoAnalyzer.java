@@ -39,7 +39,7 @@ import com.asakusafw.vocabulary.flow.graph.InputDescription;
 import com.asakusafw.vocabulary.flow.graph.OutputDescription;
 
 /**
- * 外部I/Oとの連携に関する分析を行う。
+ * Analyzes external I/O descriptions in each jobflow.
  */
 public class ExternalIoAnalyzer {
 
@@ -48,9 +48,9 @@ public class ExternalIoAnalyzer {
     private final FlowCompilingEnvironment environment;
 
     /**
-     * インスタンスを生成する。
-     * @param environment 環境オブジェクト
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param environment the current environment
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public ExternalIoAnalyzer(FlowCompilingEnvironment environment) {
         Precondition.checkMustNotBeNull(environment, "environment"); //$NON-NLS-1$
@@ -58,10 +58,10 @@ public class ExternalIoAnalyzer {
     }
 
     /**
-     * 指定のフローグラフに対する入出力が正しい場合のみ{@code true}を返す。
-     * @param graph 対象のグラフ
-     * @return 指定のフローグラフに対する入出力が正しい場合のみ{@code true}
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns whether the external I/O descriptions in the target flow graph are valid or not.
+     * @param graph the target flow graph
+     * @return {@code true} if the all external I/O descriptions are valid, otherwise {@code false}
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public boolean validate(FlowGraph graph) {
         Precondition.checkMustNotBeNull(graph, "graph"); //$NON-NLS-1$

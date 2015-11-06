@@ -22,7 +22,7 @@ import com.asakusafw.vocabulary.batch.BatchDescription;
 import com.asakusafw.vocabulary.batch.WorkDescription;
 
 /**
- * バッチ一つ分処理を表すワークフロー構造。
+ * Represents a workflow structure for each batch.
  */
 public class Workflow {
 
@@ -31,10 +31,10 @@ public class Workflow {
     private final Graph<Unit> graph;
 
     /**
-     * インスタンスを生成する。
-     * @param description バッチの構造
-     * @param graph 処理単位の依存元から依存先へのグラフ
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param description the batch description
+     * @param graph the dependency graph of unit-of-works
+     * @throws IllegalArgumentException if some parameters are {@code null}
      */
     public Workflow(BatchDescription description, Graph<Unit> graph) {
         Precondition.checkMustNotBeNull(description, "description"); //$NON-NLS-1$
@@ -44,23 +44,23 @@ public class Workflow {
     }
 
     /**
-     * このバッチの構造を返す。
-     * @return このバッチの構造
+     * Returns the target batch description.
+     * @return the target batch description
      */
     public BatchDescription getDescription() {
         return description;
     }
 
     /**
-     * 処理単位の依存元から依存先へのグラフを返す。
-     * @return 処理単位の依存元から依存先へのグラフ
+     * Returns the dependency graph of unit-of-works in this batch.
+     * @return the dependency graph
      */
     public Graph<Unit> getGraph() {
         return graph;
     }
 
     /**
-     * ワークフロー中に含まれる処理の単位。
+     * Represents a unit-of-work in the {@link Workflow}.
      */
     public static class Unit {
 
@@ -71,9 +71,9 @@ public class Workflow {
         private Object processed;
 
         /**
-         * インスタンスを生成する。
-         * @param description この処理を表す記述
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Creates a new instance.
+         * @param description description of the target unit-of-work
+         * @throws IllegalArgumentException if the parameter is {@code null}
          */
         public Unit(WorkDescription description) {
             Precondition.checkMustNotBeNull(description, "description"); //$NON-NLS-1$
@@ -81,19 +81,17 @@ public class Workflow {
         }
 
         /**
-         * この処理を表す記述を返す。
-         * @return この処理を表す記述
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Returns the description of this unit-of-work.
+         * @return the description
          */
         public WorkDescription getDescription() {
             return description;
         }
 
         /**
-         * この単位に対する処理済みのデータを返す。
-         * @return この単位に対する処理済みのデータ、存在しない場合は{@code null}
-         * @throws IllegalStateException 処理が行われていない場合
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Returns the processed information.
+         * @return the processed information, or {@code null} if there is no such information for this
+         * @throws IllegalStateException if processing this has not been completed
          */
         public Object getProcessed() {
             if (isProcessed == false) {
@@ -103,10 +101,9 @@ public class Workflow {
         }
 
         /**
-         * この単位に対する処理済みのデータを設定する。
-         * @param result 設定するデータ、存在しない場合は{@code null}
-         * @throws IllegalStateException 処理が既に行われていた場合
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Sets the processed information.
+         * @param result the processed information, or {@code null} if there is no such information for this
+         * @throws IllegalStateException if processing this has been already completed
          */
         public void setProcessed(Object result) {
             if (isProcessed) {

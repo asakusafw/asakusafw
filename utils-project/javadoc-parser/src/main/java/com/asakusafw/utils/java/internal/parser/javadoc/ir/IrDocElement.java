@@ -16,36 +16,36 @@
 package com.asakusafw.utils.java.internal.parser.javadoc.ir;
 
 /**
- * Javadocに含まれる要素。
+ * An abstract super interface of elements in ({@link IrDocComment Java documentation comments}).
  */
 public interface IrDocElement {
 
     /**
-     * この要素の種類を返す。
-     * @return この要素の種類
+     * Returns the element kind.
+     * @return the element kind
      */
     IrDocElementKind getKind();
 
     /**
-     * この要素が配置されているレンジを返す。
-     * 未設定の場合、この呼び出しは{@code null}を返す。
-     * @return この要素が配置されているレンジ、未設定の場合は{@code null}
+     * Returns the location where this element appears.
+     * @return the location where this element appears, or {@code null} if it is not specified
      */
     IrLocation getLocation();
 
     /**
-     * この要素が配置されているレンジを設定する。
-     * @param location 設定するレンジ、{@code null}を指定すると未設定になる
+     * Sets the location where this element appears.
+     * @param location the location, or {@code null} to unset it
      */
     void setLocation(IrLocation location);
 
     /**
-     * ビジタを受け入れ、要素の種類に合ったビジタ上のメソッドを呼び出す。
-     * @param <R> 戻り値の型
-     * @param <P> 引数の型
-     * @param visitor ビジタ
-     * @param context コンテキストオブジェクト
-     * @return ビジタの実行結果
+     * Accepts and calls back the visitor.
+     * @param <P> type of visitor context
+     * @param <R> type of visitor result
+     * @param context the visitor context
+     * @param visitor the visitor to call back
+     * @return call back result
+     * @throws IllegalArgumentException if {@code visitor} was {@code null}
      */
     <R, P> R accept(IrDocElementVisitor<R, P> visitor, P context);
 }

@@ -25,7 +25,7 @@ import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.DocElement;
 
 /**
- * フロー部品クラスの情報。
+ * Structural information of flow-part classes.
  */
 public class FlowPartClass {
 
@@ -40,13 +40,13 @@ public class FlowPartClass {
     private final List<OperatorPortDeclaration> parameters;
 
     /**
-     * インスタンスを生成する。
-     * @param element このフロー部品クラスの宣言
-     * @param documentation フロー部品全体のドキュメンテーション
-     * @param inputPorts 入力ポート宣言の一覧
-     * @param outputPorts 出力ポート宣言の一覧
-     * @param parameters パラメーター宣言の一覧
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param element the declaration of this flow-part
+     * @param documentation the documentation of the operator
+     * @param inputPorts the input ports
+     * @param outputPorts the output ports
+     * @param parameters the user parameters
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public FlowPartClass(
             TypeElement element,
@@ -67,40 +67,41 @@ public class FlowPartClass {
     }
 
     /**
-     * このフロー部品クラスを表現するクラスを返す。
-     * @return フロー部品クラスを表現するクラス
+     *
+     * Returns the corresponded flow-part class.
+     * @return the corresponded flow-part class
      */
     public TypeElement getElement() {
         return element;
     }
 
     /**
-     * このフロー部品のドキュメンテーションを返す。
-     * @return このフロー部品のドキュメンテーション
+     * Returns the documentation of this flow-part.
+     * @return the documentation of this flow-part
      */
     public List<DocElement> getDocumentation() {
         return documentation;
     }
 
     /**
-     * このフロー部品の入力ポート宣言を返す。
-     * @return ポート宣言の一覧
+     * Returns the input ports.
+     * @return the input ports
      */
     public List<OperatorPortDeclaration> getInputPorts() {
         return inputPorts;
     }
 
     /**
-     * このフロー部品の出力ポート宣言を返す。
-     * @return ポート宣言の一覧
+     * Returns the output ports.
+     * @return the output ports
      */
     public List<OperatorPortDeclaration> getOutputPorts() {
         return outputPorts;
     }
 
     /**
-     * このフロー部品のパラメーター宣言を返す。
-     * @return パラメーター宣言
+     * Returns the user parameters.
+     * @return the user parameters
      */
     public List<OperatorPortDeclaration> getParameters() {
         return parameters;

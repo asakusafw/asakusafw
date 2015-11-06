@@ -22,18 +22,12 @@ import com.asakusafw.utils.java.model.syntax.Visitor;
 import com.asakusafw.utils.java.model.syntax.WhileStatement;
 
 /**
- * {@link WhileStatement}の実装。
+ * An implementation of {@link WhileStatement}.
  */
 public final class WhileStatementImpl extends ModelRoot implements WhileStatement {
 
-    /**
-     * 条件式。
-     */
     private Expression condition;
 
-    /**
-     * ループ文。
-     */
     private Statement body;
 
     @Override
@@ -42,11 +36,9 @@ public final class WhileStatementImpl extends ModelRoot implements WhileStatemen
     }
 
     /**
-     * 条件式を設定する。
-     * @param condition
-     *     条件式
-     * @throws IllegalArgumentException
-     *     {@code condition}に{@code null}が指定された場合
+     * Sets the condition expression.
+     * @param condition the condition expression
+     * @throws IllegalArgumentException if {@code condition} was {@code null}
      */
     public void setCondition(Expression condition) {
         Util.notNull(condition, "condition"); //$NON-NLS-1$
@@ -59,11 +51,9 @@ public final class WhileStatementImpl extends ModelRoot implements WhileStatemen
     }
 
     /**
-     * ループ文を設定する。
-     * @param body
-     *     ループ文
-     * @throws IllegalArgumentException
-     *     {@code body}に{@code null}が指定された場合
+     * Sets the loop body.
+     * @param body the loop body
+     * @throws IllegalArgumentException if {@code body} was {@code null}
      */
     public void setBody(Statement body) {
         Util.notNull(body, "body"); //$NON-NLS-1$
@@ -71,7 +61,7 @@ public final class WhileStatementImpl extends ModelRoot implements WhileStatemen
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#WHILE_STATEMENT}を返す。
+     * Returns {@link ModelKind#WHILE_STATEMENT} which represents this element kind.
      * @return {@link ModelKind#WHILE_STATEMENT}
      */
     @Override
@@ -80,8 +70,7 @@ public final class WhileStatementImpl extends ModelRoot implements WhileStatemen
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitWhileStatement(this, context);
     }

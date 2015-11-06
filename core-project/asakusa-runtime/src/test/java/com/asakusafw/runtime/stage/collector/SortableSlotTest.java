@@ -42,7 +42,7 @@ import com.asakusafw.runtime.value.IntOption;
 public class SortableSlotTest {
 
     /**
-     * {@link SortableSlot#begin(int)}のテスト。
+     * test for {@link SortableSlot#begin(int)}.
      */
     @Test
     public void begin() {
@@ -56,8 +56,8 @@ public class SortableSlotTest {
     }
 
     /**
-     * {@link SortableSlot#addByte(int)}のテスト。
-     * @throws Exception テストに失敗した場合
+     * test for {@link SortableSlot#addByte(int)}.
+     * @throws Exception if failed
      */
     @Test
     public void addByte() throws Exception {
@@ -102,8 +102,8 @@ public class SortableSlotTest {
     }
 
     /**
-     * {@link SortableSlot#addRandom()}のテスト。
-     * @throws Exception テストに失敗した場合
+     * test for {@link SortableSlot#addRandom()}.
+     * @throws Exception if failed
      */
     @Test
     public void addRandom() throws Exception {
@@ -123,8 +123,8 @@ public class SortableSlotTest {
     }
 
     /**
-     * {@link SortableSlot#add(Writable)}のテスト。
-     * @throws Exception テストに失敗した場合
+     * test for {@link SortableSlot#add(Writable)}.
+     * @throws Exception if failed
      */
     @Test
     public void add() throws Exception {
@@ -164,8 +164,8 @@ public class SortableSlotTest {
     }
 
     /**
-     * {@link Writable}のテスト。
-     * @throws Exception テストに失敗した場合
+     * test for {@link Writable}.
+     * @throws Exception if failed
      */
     @Test
     public void writable() throws Exception {
@@ -191,8 +191,8 @@ public class SortableSlotTest {
     }
 
     /**
-     * {@link SortableSlot.Comparator}のテスト。
-     * @throws Exception テストに失敗した場合
+     * test for {@link SortableSlot.Comparator}.
+     * @throws Exception if failed
      */
     @SuppressWarnings("unchecked")
     @Test
@@ -220,8 +220,8 @@ public class SortableSlotTest {
     }
 
     /**
-     * {@link SortableSlot.Partitioner}のテスト。
-     * @throws Exception テストに失敗した場合
+     * test for {@link SortableSlot.Partitioner}.
+     * @throws Exception if failed
      */
     @Test
     public void partitioner() throws Exception {
@@ -246,7 +246,6 @@ public class SortableSlotTest {
                 int partition = partitioner.getPartition(slot, null, partitions);
                 partitionMemberCount[partition]++;
 
-                // パーティションの切り替わりをカウントする
                 if (lastPartition != partition) {
                     partitionChanged++;
                 }
@@ -259,13 +258,13 @@ public class SortableSlotTest {
             max = Math.max(max, memberCount);
         }
 
-        assertThat("パーティションにメンバーが偏っている: " + Arrays.toString(partitionMemberCount),
+        assertThat("slant members: " + Arrays.toString(partitionMemberCount),
                 (double) max / records,
                 lessThan(1.2));
 
         double sequencialReadAve = records * partitions / partitionChanged;
-        assertThat("パーティションが細かい", sequencialReadAve, greaterThan(500.0));
-        assertThat("パーティションが粗い", sequencialReadAve, lessThan(10000.0));
+        assertThat("too fine partition", sequencialReadAve, greaterThan(500.0));
+        assertThat("too coarse partition", sequencialReadAve, lessThan(10000.0));
     }
 
     static byte[] write(Writable writable) {
@@ -292,7 +291,7 @@ public class SortableSlotTest {
 
     static class BinaryComparator implements Comparator<Writable> {
 
-        private RawComparator<?> comparator;
+        private final RawComparator<?> comparator;
 
         BinaryComparator(RawComparator<?> comparator) {
             this.comparator = comparator;

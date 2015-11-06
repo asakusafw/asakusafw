@@ -48,10 +48,7 @@ import com.asakusafw.runtime.flow.ResultOutput;
 import com.asakusafw.runtime.stage.StageOutput;
 
 /**
- * ステージ出力を設定するためのドライバ。
- * <p>
- * 現在のところ、{@link FileOutputFormat}およびそのサブクラスに関するもののみを取り扱う。
- * </p>
+ * A driver for configuring stage outputs.
  */
 public class StageOutputDriver {
 
@@ -72,11 +69,11 @@ public class StageOutputDriver {
     private final TaskInputOutputContext<?, ?, ?, ?> context;
 
     /**
-     * インスタンスを生成する。
-     * @param context 現在のタスク試行コンテキスト
-     * @throws IOException 出力の初期化に失敗した場合
-     * @throws InterruptedException 出力の初期化に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Creates a new instance.
+     * @param context the current context
+     * @throws IOException if failed to initialize this driver
+     * @throws InterruptedException if interrupted while initializing this driver
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public StageOutputDriver(
             TaskInputOutputContext<?, ?, ?, ?> context) throws IOException, InterruptedException {
@@ -115,17 +112,14 @@ public class StageOutputDriver {
     }
 
     /**
-     * 指定の名前を持つ出力のシンクオブジェクトを返す。
-     * <p>
-     * ここに指定する名前は、ジョブの起動時にあらかじめ
-     * {@link #set(Job, String, Collection)}で登録しておく必要がある。
-     * </p>
-     * @param <T> 出力の型
-     * @param name 出力の名前
-     * @return 対応するシンクオブジェクト
-     * @throws IOException 出力の作成に失敗した場合
-     * @throws InterruptedException 出力の作成時に割り込みが発行された場合
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the result sink object with the specified name.
+     * Clients must register the result sink before launching the job by using {@link #set(Job, String, Collection)}.
+     * @param <T> the output data type
+     * @param name the sink name
+     * @return the corresponded sink name
+     * @throws IOException if failed to initialize the target sink
+     * @throws InterruptedException if interrupted while initializing the target sink
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     @SuppressWarnings("unchecked")
     public synchronized <T extends Writable> Result<T> getResultSink(
@@ -237,10 +231,9 @@ public class StageOutputDriver {
     }
 
     /**
-     * 現在の出力を破棄する。
-     * @throws IOException 出力のフラッシュに失敗した場合
-     * @throws InterruptedException 出力の破棄に割り込みが発行された場合
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Closes this driver and finalizes all result sinks.
+     * @throws IOException if failed to finalize some result sinks
+     * @throws InterruptedException if interrupted while disposing the driver
      */
     public synchronized void close() throws IOException, InterruptedException {
         for (Map.Entry<String, ResultOutput<?>> entry : resultSinks.entrySet()) {

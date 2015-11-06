@@ -18,7 +18,7 @@ package com.asakusafw.utils.java.internal.parser.javadoc.ir;
 import java.io.Serializable;
 
 /**
- * {@link IrDocElement}の実装。
+ * A skeletal implementation of {@link IrDocElement}.
  */
 public abstract class AbstractIrDocElement implements IrDocElement, Serializable {
 

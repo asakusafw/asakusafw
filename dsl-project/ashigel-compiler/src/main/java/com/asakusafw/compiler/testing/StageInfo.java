@@ -18,16 +18,16 @@ package com.asakusafw.compiler.testing;
 import com.asakusafw.compiler.common.Precondition;
 
 /**
- * 各ステージの実行情報。
+ * Structural information of stages in the main phase.
  */
 public class StageInfo {
 
-    private String className;
+    private final String className;
 
     /**
-     * インスタンスを生成する。
-     * @param className ステージを起動するためのクライアントクラスの完全限定名
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param className the qualified class name of the stage client
+     * @throws IllegalArgumentException the parameter is {@code null}
      */
     public StageInfo(String className) {
         Precondition.checkMustNotBeNull(className, "className"); //$NON-NLS-1$
@@ -35,8 +35,8 @@ public class StageInfo {
     }
 
     /**
-     * ステージで起動されるクラスの名前を返す。
-     * @return ステージで起動されるクラスの名前
+     * Returns the stage client class name.
+     * @return the stage client class name
      */
     public String getClassName() {
         return className;

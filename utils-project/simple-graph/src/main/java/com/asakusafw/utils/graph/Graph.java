@@ -19,184 +19,127 @@ import java.util.Collection;
 import java.util.Set;
 
 /**
- * 各ノードに任意の値を持つグラフ。
- * <p>
- * 各ノードの識別は、ノードに割り当てられた値の{@link Object#equals(Object)}を利用する。
- * </p>
- * @param <V> ノードを識別する値
+ * Represents a directed graph.
+ * This identifies each vertex value by using its {@link Object#equals(Object)}.
+ * @param <V> the vertex value type
  * @see Graphs
  */
 public interface Graph<V> extends Iterable<Graph.Vertex<V>> {
 
     /**
-     * このグラフに指定の値を持つノードと、そこに直接接続されたノードを追加する。
-     * <p>
-     * すでにこのグラフに、指定の値が割り当てられたノードと、そこから接続されたノードが存在する場合、
-     * この呼び出しは何もしない。
-     * </p>
-     * <p>
-     * {@code from, to}のいずれかがこのグラフ上に存在しない場合、
-     * この呼び出しはまず{@link #addNode(Object)}によってそれぞれのノードを
-     * このグラフに登録したのち、{@code from}の接続先として{@code to}を登録する。
-     * </p>
-     * @param from 接続元のノードに割り当てられる値
-     * @param to 接続先のノードに割り当てられる値
+     * Adds a directed edge from the {@code source} to {@code destination}.
+     * This method ignores the edge if it is already in this graph.
+     * This method also {@link #addNode(Object)} {@code source} and {@code destination} vertices to this graph
+     * if they are not in this graph.
+     * @param source the source vertex value (predecessor)
+     * @param destination the destination vertex value (successor)
      */
-    void addEdge(V from, V to);
+    void addEdge(V source, V destination);
 
     /**
-     * このグラフに指定の値を持つノードと、そこに直接接続されたノードの一覧を追加する。
-     * <p>
-     * すでにこのグラフに、指定の値が割り当てられたノードと、そこから接続されたノードがすべて存在する場合、
-     * この呼び出しは何もしない。
-     * </p>
-     * <p>
-     * {@code from, to}のいずれかがこのグラフ上に存在しない場合、
-     * この呼び出しはまず{@link #addNode(Object)}によってそれぞれのノードを
-     * このグラフに登録したのち、{@code from}の接続先として{@code to}のそれぞれの値を登録する。
-     * </p>
-     * <p>
-     * {@code to}に空のコレクションが指定された場合、この呼び出しは{@code from}に指定された
-     * ノードをグラフに登録したのち、接続を一つも追加しない。
-     * </p>
-     * @param from 接続元のノードに割り当てられる値
-     * @param to 接続先のノードに割り当てられる値の一覧、
-     *     空の場合は{@code from}に指定されたノードのみを登録して接続を追加しない
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Adds directed edges from the {@code source} to each vertex in {@code destinations}.
+     * This method ignores an edge if it is already in this graph.
+     * This method also {@link #addNode(Object)} {@code source} and each vertex in {@code destinations} to this graph
+     * if they are not in this graph.
+     * If {@code destinations} is an empty collection, this method will only add the {@code source} vertex
+     * to this graph, and not add any edges.
+     * @param source the tail vertex value (predecessor)
+     * @param destinations the head vertex values (successors)
+     * @throws IllegalArgumentException if {@code to} is {@code null}
      */
-    void addEdges(V from, Collection<? extends V> to);
+    void addEdges(V source, Collection<? extends V> destinations);
 
     /**
-     * このグラフに指定の値を持つノードを追加する。
-     * <p>
-     * すでにこのグラフに指定の値が割り当てられたノードが存在する場合、
-     * この呼び出しは何も行わない。
-     * </p>
-     * @param node 追加するノードに割り当てる値
+     * Adds a vertex.
+     * This method ignores the vertex if it is already in this graph.
+     * @param node the vertex value
      */
     void addNode(V node);
 
     /**
-     * このグラフに含まれるノードや接続をすべて削除する。
-     * <p>
-     * この呼び出し後、 ノードが新しく追加されるまで{@link #isEmpty() this.isEmpty()}は
-     * {@code true}を返すようになる。
-     * </p>
+     * Removes the all vertices and edges in this graph.
      */
     void clear();
 
     /**
-     * 指定の値を持つノードがこのグラフ上に存在する場合のみ{@code true}を返す。
-     * @param node 対象のノード
-     * @return 指定の値を持つノードがこのグラフ上に存在する場合に{@code true}、
-     *     存在しない場合は{@code false}
+     * Returns whether this graph contains the target vertex or not.
+     * @param node the target vertex value
+     * @return {@code true} if this graph contains the target vertex, otherwise {@code false}
      */
     boolean contains(Object node);
 
     /**
-     * 指定の値を持つノードに接続されたノードの一覧を返す。
-     * <p>
-     * 存在しないノードを指定した場合、この呼び出しは空の集合を返す。
-     * 返される集合を変更した場合の動作は保証されない。
-     * </p>
-     * @param key キー
-     * @return 指定のノードに接続されたノードの一覧、
-     *     指定のノードがグラフ上に存在しない場合は空の集合
+     * Returns the vertices which are direct successors of the specified vertex.
+     * If the vertex is not in this graph, this method will return an empty set.
+     * Clients should not modify the resulting set.
+     * @param key the target vertex value
+     * @return the successors of the specified vertex
      */
     Set<V> getConnected(Object key);
 
     /**
-     * このグラフ上に存在する全てのノードに割り当てられた値の集合を返す。
-     * <p>
-     * 返される集合を変更した場合の動作は保証されない。
-     * </p>
-     * @return このグラフ上に存在する全てのノードに割り当てられた値の集合
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the all vertices in this graph.
+     * Clients should not modify the resulting set.
+     * @return the all vertices in this graph
      */
     Set<V> getNodeSet();
 
     /**
-     * {@code to}の値が割り当てられたノードが、{@code from}の値が割り当てられたノードに対して
-     * 直接接続されている場合のみ{@code true}を返す。
-     * @param from 接続元のノードに割り当てられた値
-     * @param to 接続先のノードに割り当てられた値
-     * @return 直接接続されている場合は{@code true}、そうでない場合は{@code false}
+     * Returns whether this graph contains the edge from {@code source} to {@code destination} or not.
+     * @param source the source vertex value (predecessor)
+     * @param destination the destination vertex value (successor)
+     * @return {@code true} if this graph contains the edge from {@code source} to {@code destination},
+     *     otherwise {@code false}
      */
-    boolean isConnected(Object from, Object to);
+    boolean isConnected(Object source, Object destination);
 
     /**
-     * このグラフに一つもノードが存在しない場合のみ{@code true}を返す。
-     * @return このグラフに一つもノードが存在しない場合のみ{@code true}
+     * Returns whether this graph is empty or not.
+     * @return {@code true} if this graph does not contains any vertices, otherwise {@code false}
      */
     boolean isEmpty();
 
     /**
-     * このグラフから指定の値を持つノード同士の接続を削除する。
-     * <p>
-     * このグラフ上にいずれかのノードが存在しない場合、またはそれらの接続が存在しない場合は、
-     * いずれもこの呼び出しは何も行わない。
-     * また、この操作によってグラフ上のノードが変化することはない。
-     * つまり、このメソッドの呼び出し前と後で{@link #getNodeSet()}が返す値は変化しない。
-     * </p>
-     * @param from 削除対象の接続元のノードに割り当てられた値
-     * @param to 削除対象の接続先のノードに割り当てられた値
+     * Removes the edge from {@code source} to {@code destination} in this graph.
+     * If this graph does not contain such the edge, this method will do nothing.
+     * @param source the source vertex value (predecessor)
+     * @param destination the destination vertex value (successor)
      */
-    void removeEdge(Object from, Object to);
+    void removeEdge(Object source, Object destination);
 
     /**
-     * このグラフから指定の値を持つノードを削除する。
-     * <p>
-     * この操作によって、指定の値が割り当てられたノードと、そのノードに関する接続はすべて削除される。
-     * すなわちこの操作が成功した場合、
-     * {@code this.contains(node)}は{@code false}を返すようになり、
-     * また任意の{@code x in this.getNodeSet()}に対し
-     * {@code this.isConnected(node, x), this.isConnected(x, node)}は
-     * いずれも{@code false}を返すようになる。
-     * </p>
-     * <p>
-     * 指定の値が割り当てられたノードが存在しない場合、この呼び出しは何も行わない。
-     * </p>
-     * @param node 削除するノードに割り当てられた値
+     * Removes the vertex in this graph.
+     * This method also removes edges which are connected to the target vertex.
+     * If this graph does not contain such the vertex, this method will do nothing.
+     * @param node the target vertex value
      */
     void removeNode(Object node);
 
     /**
-     * このグラフから指定の値を持つノードの一覧を削除する。
-     * <p>
-     * この操作によって、指定のコレクションに含まれるいずれかの値が割り当てられたノードと、
-     * そのノードに関する接続はすべて削除される。
-     * すなわちこの操作が成功した場合、{@code nodes}に含まれる任意の値{@code node}に対し、
-     * {@code this.contains(node)}は{@code false}を返すようになり、
-     * また任意の{@code x in this.getNodeSet()}に対し
-     * {@code this.isConnected(node, x), this.isConnected(x, node)}は
-     * いずれも{@code false}を返すようになる。
-     * </p>
-     * <p>
-     * 指定の値が割り当てられたノードが存在しない場合、この呼び出しは何も行わない。
-     * </p>
-     * @param nodes 削除対象のノードに割り当てられた値の一覧
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Removes the vertices in this graph.
+     * If this method also removes edges which are connected to vertex in the specified collection.
+     * This method ignores vertices which are not in this graph.
+     * @param nodes the target vertices
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     void removeNodes(Collection<?> nodes);
 
     /**
-     * 頂点とその隣接を表現するインターフェース。
-     * @param <V> ノードを識別する値
+     * Represents a vertex and its successor.
+     * @param <V> the vertex value type
      */
     public interface Vertex<V> {
 
         /**
-         * この辺の接続先のノードに割り当てられた値の一覧を返す。
-         * <p>
-         * 返される集合を変更した場合の動作は保証されない。
-         * </p>
-         * @return この辺の接続先のノードに割り当てられた値の一覧
+         * Returns the succeeding vertices from this vertex.
+         * Clients should not modify the resulting set.
+         * @return the successors
          */
         Set<V> getConnected();
 
         /**
-         * この辺の接続元のノードに割り当てられた値を返す。
-         * @return この辺の接続元のノードに割り当てられた値
+         * Returns the vertex value.
+         * @return the vertex value
          */
         V getNode();
     }

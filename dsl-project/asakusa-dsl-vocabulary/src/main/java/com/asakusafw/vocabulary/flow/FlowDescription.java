@@ -18,14 +18,16 @@ package com.asakusafw.vocabulary.flow;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * フローを記述するための基底クラス。
+ * An abstract super class for describing the details of a data-flow.
+ * Subclasses must override {@link #describe()} method and build a data-flow in the method.
  */
 public abstract class FlowDescription {
 
     private final AtomicBoolean described = new AtomicBoolean(false);
 
     /**
-     * フロー記述メソッドを起動する。
+     * Analyzes flow DSL using {@link #describe() flow description method}.
+     * Application developers should not invoke this method directly.
      */
     public final void start() {
         if (described.compareAndSet(false, true) == false) {
@@ -35,31 +37,35 @@ public abstract class FlowDescription {
     }
 
     /**
-     * フロー記述メソッド。
+     * Describes data-flow structure.
+     * Subclasses must override this method and build a data-flow using Asakusa flow DSL.
      */
     protected abstract void describe();
 
     /**
-     * このフローがジョブフローを表現するものである場合に{@code true}を返す。
-     * @return ジョブフローを表現するものである場合に{@code true}
+     * Returns whether this object represents a jobflow or not.
+     * @return {@code true} if this represents a jobflow, otherwise {@code false}
+     * @deprecated Use {@link #isJobFlow(Class)} instead
      */
+    @Deprecated
     public boolean isJobFlow() {
         return isJobFlow(getClass());
     }
 
     /**
-     * このフローがフロー部品を表現するものである場合に{@code true}を返す。
-     * @return フロー部品を表現するものである場合に{@code true}
+     * Returns whether this object represents a flow-part or not.
+     * @return {@code true} if this represents a flow-part, otherwise {@code false}
+     * @deprecated Use {@link #isFlowPart(Class)} instead
      */
+    @Deprecated
     public boolean isFlowPart() {
         return isFlowPart(getClass());
     }
 
     /**
-     * 指定のフロー記述がジョブフローを表現するものである場合に{@code true}を返す。
-     * @param aClass 対象のフロー記述クラス
-     * @return ジョブフローを表現するものである場合に{@code true}
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns whether the target class represents a jobflow or not.
+     * @param aClass the target flow description class
+     * @return {@code true} if the class represents a jobflow, otherwise {@code false}
      */
     public static boolean isJobFlow(Class<? extends FlowDescription> aClass) {
         if (aClass == null) {
@@ -69,10 +75,9 @@ public abstract class FlowDescription {
     }
 
     /**
-     * 指定のフロー記述がジョブフローを表現するものである場合に{@code true}を返す。
-     * @param aClass 対象のフロー記述クラス
-     * @return ジョブフローを表現するものである場合に{@code true}
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns the flow ID of the target jobflow class.
+     * @param aClass the target flow description class
+     * @return the flow ID, or {@code null} if the target class is not a valid jobflow class
      */
     public static String getJobFlowName(Class<? extends FlowDescription> aClass) {
         if (aClass == null) {
@@ -86,10 +91,9 @@ public abstract class FlowDescription {
     }
 
     /**
-     * 対象のフロー記述がフロー部品を表現するものである場合に{@code true}を返す。
-     * @param aClass 対象のフロー記述クラス
-     * @return フロー部品を表現するものである場合に{@code true}
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns whether the target class represents a flow-part or not.
+     * @param aClass the target flow description class
+     * @return {@code true} if the class represents a flow-part, otherwise {@code false}
      */
     public boolean isFlowPart(Class<? extends FlowDescription> aClass) {
         if (aClass == null) {

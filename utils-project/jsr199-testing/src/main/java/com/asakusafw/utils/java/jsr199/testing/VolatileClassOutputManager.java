@@ -16,7 +16,6 @@
 package com.asakusafw.utils.java.jsr199.testing;
 
 import java.io.IOException;
-import java.lang.instrument.ClassDefinition;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -34,18 +33,18 @@ import javax.tools.JavaFileObject.Kind;
 import javax.tools.StandardLocation;
 
 /**
- * コンパイル結果の出力を{@code Volatile(Java|Class)File}に保存するファイルマネージャ。
+ * An implementation of {@link JavaFileManager} which stores generated contents onto the heap.
  */
 public class VolatileClassOutputManager
         extends ForwardingJavaFileManager<JavaFileManager> {
 
     /**
-     * Javaの名前を区切る文字。
+     * The Java name separator character.
      */
     public static final char NAME_SEPARATOR = '.';
 
     /**
-     * パスセグメントを区切る文字。
+     * The path name separator character.
      */
     public static final char SEGMENT_SEPARATOR = '/';
 
@@ -58,9 +57,9 @@ public class VolatileClassOutputManager
     private SortedMap<String, VolatileResourceFile> resourceMap;
 
     /**
-     * インスタンスを生成する。
-     * @param fileManager 移譲先のファイルマネージャ
-     * @throws NullPointerException 引数に{@code null}が含まれる場合
+     * Creates a new instance.
+     * @param fileManager the delegation target file manager
+     * @throws NullPointerException if the parameter is {@code null}
      */
     public VolatileClassOutputManager(JavaFileManager fileManager) {
         super(fileManager);
@@ -70,24 +69,24 @@ public class VolatileClassOutputManager
     }
 
     /**
-     * このマネージャで生成されたソースファイルの一覧を返す。
-     * @return このマネージャで生成されたソースファイルの一覧
+     * Returns the generated Java source files.
+     * @return the generated Java source files
      */
     public Collection<VolatileJavaFile> getSources() {
         return new ArrayList<VolatileJavaFile>(sourceMap.values());
     }
 
     /**
-     * このマネージャで生成されたリソースファイルの一覧を返す。
-     * @return このマネージャで生成されたリソースファイルの一覧
+     * Returns the generated resource files.
+     * @return the generated resource files
      */
     public Collection<VolatileResourceFile> getResources() {
         return new ArrayList<VolatileResourceFile>(resourceMap.values());
     }
 
     /**
-     * このマネージャで作成されたクラスファイルの一覧を返す。
-     * @return 作成されたクラスファイルの一覧
+     * Returns the generated Java class files.
+     * @return the generated Java class files
      */
     public Collection<VolatileClassFile> getCompiled() {
         return new ArrayList<VolatileClassFile>(classMap.values());
@@ -95,11 +94,9 @@ public class VolatileClassOutputManager
 
     /**
      * {@inheritDoc}
-     * <p>
-     * この操作によって、{@link #getCompiled()}は空のコレクションを返すようになる。
-     * 先に同メソッドを呼び出しておけば、ファイルマネージャを閉じた後でも{@link ClassDefinition}を
-     * 利用することができる。
-     * </p>
+     * {@link #getSources()}, {@link #getResources()}, and  {@link #getCompiled()} will return empty collections
+     * after this operation. Please obtain the each result before closing this object, then the results will
+     * be still available after this was closed.
      */
     @Override
     public void close() throws IOException {
@@ -127,20 +124,14 @@ public class VolatileClassOutputManager
             String packageName,
             String relativeName) throws IOException {
         if (location == StandardLocation.CLASS_OUTPUT) {
-            String binaryName = normalizePath(
-                packageName,
-                relativeName,
-                JavaFileObject.Kind.CLASS);
+            String binaryName = normalizePath(packageName, relativeName, JavaFileObject.Kind.CLASS);
             if (binaryName == null) {
                 String path = toPath(packageName, relativeName);
                 return resourceMap.get(path);
             }
             return getJavaFileForInput(location, binaryName, JavaFileObject.Kind.CLASS);
         } else if (location == StandardLocation.SOURCE_OUTPUT) {
-            String binaryName = normalizePath(
-                packageName,
-                relativeName,
-                JavaFileObject.Kind.SOURCE);
+            String binaryName = normalizePath(packageName, relativeName, JavaFileObject.Kind.SOURCE);
             if (binaryName == null) {
                 String path = toPath(packageName, relativeName);
                 return resourceMap.get(path);
@@ -158,10 +149,7 @@ public class VolatileClassOutputManager
             String relativeName,
             FileObject sibling) throws IOException {
         if (location == StandardLocation.CLASS_OUTPUT) {
-            String binaryName = normalizePath(
-                packageName,
-                relativeName,
-                JavaFileObject.Kind.CLASS);
+            String binaryName = normalizePath(packageName, relativeName, JavaFileObject.Kind.CLASS);
             if (binaryName == null) {
                 String path = toPath(packageName, relativeName);
                 VolatileResourceFile file = resourceMap.get(path);
@@ -171,16 +159,9 @@ public class VolatileClassOutputManager
                 }
                 return file;
             }
-            return getJavaFileForOutput(
-                location,
-                binaryName,
-                JavaFileObject.Kind.CLASS,
-                sibling);
+            return getJavaFileForOutput(location, binaryName, JavaFileObject.Kind.CLASS, sibling);
         } else if (location == StandardLocation.SOURCE_OUTPUT) {
-            String binaryName = normalizePath(
-                packageName,
-                relativeName,
-                JavaFileObject.Kind.SOURCE);
+            String binaryName = normalizePath(packageName, relativeName, JavaFileObject.Kind.SOURCE);
             if (binaryName == null) {
                 String path = toPath(packageName, relativeName);
                 VolatileResourceFile file = resourceMap.get(path);
@@ -190,11 +171,7 @@ public class VolatileClassOutputManager
                 }
                 return file;
             }
-            return getJavaFileForOutput(
-                location,
-                binaryName,
-                JavaFileObject.Kind.SOURCE,
-                sibling);
+            return getJavaFileForOutput(location, binaryName, JavaFileObject.Kind.SOURCE, sibling);
         } else {
             return super.getFileForOutput(location, packageName, relativeName, sibling);
         }
@@ -272,12 +249,10 @@ public class VolatileClassOutputManager
 
     @Override
     public boolean isSameFile(FileObject a, FileObject b) {
-        if (a instanceof VolatileJavaFile
-                || a instanceof VolatileClassFile) {
+        if (a instanceof VolatileJavaFile || a instanceof VolatileClassFile) {
             return a.toUri().equals(b.toUri());
         }
-        if (b instanceof VolatileJavaFile
-                || b instanceof VolatileClassFile) {
+        if (b instanceof VolatileJavaFile || b instanceof VolatileClassFile) {
             return b.toUri().equals(a.toUri());
         }
         return super.isSameFile(a, b);
@@ -296,9 +271,7 @@ public class VolatileClassOutputManager
             prefix = 0;
         } else {
             String binaryName = normalizeClassName(packageName);
-            map = all.subMap(
-                binaryName + NAME_SEPARATOR,
-                binaryName + NAME_SEPARATOR_NEXT);
+            map = all.subMap(binaryName + NAME_SEPARATOR, binaryName + NAME_SEPARATOR_NEXT);
             prefix = binaryName.length() + 1;
         }
 
@@ -316,23 +289,16 @@ public class VolatileClassOutputManager
         return results;
     }
 
-    private String normalizePath(
-            String packageName,
-            String relativeName,
-            JavaFileObject.Kind kind) {
+    private String normalizePath(String packageName, String relativeName, JavaFileObject.Kind kind) {
         assert packageName != null;
         assert relativeName != null;
         if (relativeName.endsWith(kind.extension) == false) {
             return null;
         }
-        String strippedRelativeName = relativeName.substring(
-            0,
-            relativeName.length() - kind.extension.length());
-
+        String strippedRelativeName = relativeName.substring(0, relativeName.length() - kind.extension.length());
         if (packageName.isEmpty()) {
             return normalizeClassName(strippedRelativeName);
         }
-
         String className = packageName + SEGMENT_SEPARATOR + strippedRelativeName;
         return normalizeClassName(className);
     }

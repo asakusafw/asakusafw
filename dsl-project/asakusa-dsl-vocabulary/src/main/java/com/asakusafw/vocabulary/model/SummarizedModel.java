@@ -22,7 +22,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 他のモデルを集約したモデルを表す注釈。
+ * An annotation that represents <em>summarized models</em>.
  * @deprecated replaced into {@link Summarized} since 0.2.0
  */
 @Deprecated
@@ -32,43 +32,43 @@ import java.lang.annotation.Target;
 public @interface SummarizedModel {
 
     /**
-     * 集約先のモデルへの参照。
+     * A reference to summarize target model type.
      * <p>
-     * なお、ここにソート条件を指定した場合、それらは全て無視される。
+     * Note that, ordering information will be ignored even if the {@link ModelRef} contains it.
      * </p>
      */
     ModelRef from();
 
     /**
-     * この注釈が付けられるモデルに必要なメソッド。
+     * An interface that provides skeletal information of summarized models.
      * <p>
-     * 必ずしものこのインターフェースを実装する必要はないが、下記のメソッドが存在する前提で
-     * DSLの解釈がおこなれる。
+     * Each data model class may or may not implement this interface,
+     * but that class must provide methods in the interface.
      * </p>
-     * @param <T> モデルオブジェクトの型
-     * @param <O> 集計対象のモデルオブジェクトの型
+     * @param <T> summarized model type
+     * @param <O> target model type
      */
     interface Interface<T, O> extends DataModel.Interface<T> {
 
         /**
-         * {@link #startSummarization(Object)}のメソッド名。
+         * The method name of {@link #startSummarization(Object)}.
          */
         String METHOD_NAME_START_SUMMARIZATION = "startSummarization"; //$NON-NLS-1$
 
         /**
-         * {@link #combineSummarization(Object)}のメソッド名。
+         * The method name of {@link #combineSummarization(Object)}.
          */
         String METHOD_NAME_COMBINE_SUMMARIZATION = "combineSummarization"; //$NON-NLS-1$
 
         /**
-         * 指定のモデルを最初の要素として、このモデルの集計結果を初期化する。
-         * @param original 最初の要素となるモデル
+         * Initializes this object with the target model object as the first one.
+         * @param original the first target object
          */
         void startSummarization(O original);
 
         /**
-         * このモデルに、指定のモデルの集計結果を合成する。
-         * @param original 合成するモデル
+         * Summarizes the target model into this.
+         * @param original the target object
          */
         void combineSummarization(T original);
     }

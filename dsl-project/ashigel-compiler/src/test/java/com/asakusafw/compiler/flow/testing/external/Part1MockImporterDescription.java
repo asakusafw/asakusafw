@@ -22,7 +22,7 @@ import com.asakusafw.compiler.flow.testing.model.Part1;
 import com.asakusafw.compiler.testing.TemporaryInputDescription;
 
 /**
- * {@link Part1}のモックインポーター記述。
+ * Mock importer description for {@link Part1}.
  */
 public class Part1MockImporterDescription extends TemporaryInputDescription {
 

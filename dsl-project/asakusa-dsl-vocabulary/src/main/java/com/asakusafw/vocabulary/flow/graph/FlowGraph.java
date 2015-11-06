@@ -22,9 +22,8 @@ import java.util.List;
 
 import com.asakusafw.vocabulary.flow.FlowDescription;
 
-
 /**
- * フローの構造を表すグラフ。
+ * Represents a flow graph.
  * @since 0.1.0
  * @version 0.2.6
  */
@@ -39,11 +38,11 @@ public class FlowGraph {
     private FlowGraph origin;
 
     /**
-     * インスタンスを生成する。
-     * @param description このフローを記述するクラス
-     * @param flowInputs フローへの入力一覧
-     * @param flowOutputs フローからの出力一覧
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param description the description of this flow
+     * @param flowInputs input elements in this flow
+     * @param flowOutputs output elements in this flow
+     * @throws IllegalArgumentException if some parameters are {@code null}
      */
     public FlowGraph(
             Class<? extends FlowDescription> description,
@@ -65,9 +64,10 @@ public class FlowGraph {
     }
 
     /**
-     * このフローグラフの元の情報を設定する。
-     * @param origin このフローグラフの元の情報
+     * Sets the original flow graph object.
+     * @param origin the original flow graph
      * @since 0.2.6
+     * @see #getOrigin()
      */
     public void setOrigin(FlowGraph origin) {
         if (origin == null) {
@@ -78,8 +78,8 @@ public class FlowGraph {
     }
 
     /**
-     * このフローグラフの元の情報を返す。
-     * @return このフローグラフの元の情報
+     * Returns the original flow graph object.
+     * @return the original flow graph
      * @since 0.2.6
      */
     public FlowGraph getOrigin() {
@@ -87,24 +87,24 @@ public class FlowGraph {
     }
 
     /**
-     * このフローを記述するクラスを返す。
-     * @return このフローを記述するクラス
+     * Returns the description class.
+     * @return the description class
      */
     public Class<? extends FlowDescription> getDescription() {
         return description;
     }
 
     /**
-     * このグラフへの入力として利用される要素の一覧を返す。
-     * @return このグラフへの入力として利用される要素の一覧
+     * Returns input port elements which represent inputs of this flow graph.
+     * @return input port elements
      */
     public List<FlowIn<?>> getFlowInputs() {
         return flowInputs;
     }
 
     /**
-     * このグラフからの出力として利用される要素の一覧を返す。
-     * @return このグラフからの出力として利用される要素の一覧
+     * Returns output port elements which represent outputs of this flow graph.
+     * @return output port elements
      */
     public List<FlowOut<?>> getFlowOutputs() {
         return flowOutputs;

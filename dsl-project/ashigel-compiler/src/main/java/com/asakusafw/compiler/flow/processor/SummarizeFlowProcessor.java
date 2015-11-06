@@ -45,7 +45,7 @@ import com.asakusafw.vocabulary.model.Summarized.Aggregator;
 import com.asakusafw.vocabulary.operator.Summarize;
 
 /**
- * {@link Summarize 単純集計演算子}を処理する。
+ * Processes {@link Summarize} operators.
  */
 @TargetOperator(Summarize.class)
 public class SummarizeFlowProcessor extends RendezvousProcessor {

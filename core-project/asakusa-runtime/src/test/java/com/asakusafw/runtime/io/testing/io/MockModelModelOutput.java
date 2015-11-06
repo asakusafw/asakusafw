@@ -21,17 +21,16 @@ import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.runtime.io.RecordEmitter;
 import com.asakusafw.runtime.io.testing.model.MockModel;
 
-
 /**
- * {@link MockModel}のレコード出力。
+ * A data model output for {@link MockModel}.
  */
 public class MockModelModelOutput implements ModelOutput<MockModel> {
 
-    private RecordEmitter emitter;
+    private final RecordEmitter emitter;
 
     /**
-     * インスタンスを生成する。
-     * @param emitter 出力先のエミッタ
+     * Creates a new instance.
+     * @param emitter the record emitter
      */
     public MockModelModelOutput(RecordEmitter emitter) {
         this.emitter = emitter;

@@ -53,14 +53,14 @@ import com.asakusafw.runtime.value.ValueOption;
 public class DirectFlowCompilerTest {
 
     /**
-     * コンパイラのテストに利用する。
+     * A test helper.
      */
     @Rule
     public CompilerTester tester = new CompilerTester();
 
     /**
-     * フォルダの中を検索するクラスパス。
-     * @throws Exception テスト中に例外が発生した場合
+     * compute library path from Class object.
+     * @throws Exception if exception was occurred
      */
     @Test
     public void folderLibraryPath() throws Exception {
@@ -72,8 +72,8 @@ public class DirectFlowCompilerTest {
     }
 
     /**
-     * フォルダの中を検索するクラスパス。
-     * @throws Exception テスト中に例外が発生した場合
+     * compute library path from Class object - the path includes white-spaces.
+     * @throws Exception if exception was occurred
      */
     @Test
     public void folderLibraryPathWithSpace() throws Exception {
@@ -85,8 +85,8 @@ public class DirectFlowCompilerTest {
     }
 
     /**
-     * フォルダの中を検索するクラスパス。
-     * @throws Exception テスト中に例外が発生した場合
+     * compute library path from Class object - the class is not top-level.
+     * @throws Exception if exception was occurred
      */
     @Test
     public void folderLibraryPathWithInner() throws Exception {
@@ -98,8 +98,8 @@ public class DirectFlowCompilerTest {
     }
 
     /**
-     * JARの中を検索するクラスパス。
-     * @throws Exception テスト中に例外が発生した場合
+     * compute library path from Class object.
+     * @throws Exception if exception was occurred
      */
     @Test
     public void jarLibraryPath() throws Exception {
@@ -111,8 +111,8 @@ public class DirectFlowCompilerTest {
     }
 
     /**
-     * JARの中を検索するクラスパス。
-     * @throws Exception テスト中に例外が発生した場合
+     * compute library path from Class object - the class is not top-level.
+     * @throws Exception if exception was occurred
      */
     @Test
     public void jarLibraryPathWithInner() throws Exception {
@@ -124,8 +124,8 @@ public class DirectFlowCompilerTest {
     }
 
     /**
-     * ZIPの中を検索するクラスパス。
-     * @throws Exception テスト中に例外が発生した場合
+     * compute library path from Class object - the file is ZIP.
+     * @throws Exception if exception was occurred
      */
     @Test
     public void zipLibraryPath() throws Exception {
@@ -137,8 +137,8 @@ public class DirectFlowCompilerTest {
     }
 
     /**
-     * 単純な例のコンパイル。
-     * @throws Exception コンパイル中に例外が発生した場合
+     * compiles simple flow.
+     * @throws Exception if exception was occurred
      */
     @Test
     public void simpleCompile() throws Exception {
@@ -172,8 +172,8 @@ public class DirectFlowCompilerTest {
     }
 
     /**
-     * Mapper Fragmentが直列に並ぶ例のコンパイル。
-     * @throws Exception コンパイル中に例外が発生した場合
+     * compiles sequential map fragments.
+     * @throws Exception if exception was occurred
      */
     @Test
     public void straightFragmentsCompile() throws Exception {
@@ -216,8 +216,8 @@ public class DirectFlowCompilerTest {
     }
 
     /**
-     * 分岐のある例のコンパイル。
-     * @throws Exception コンパイル中に例外が発生した場合
+     * compiles flow - an operator appears twice or more.
+     * @throws Exception if exception was occurred
      */
     @Test
     public void duplicateCompile() throws Exception {
@@ -253,8 +253,8 @@ public class DirectFlowCompilerTest {
     }
 
     /**
-     * Reducer/Mapper Fragmentが直列に並ぶ例のコンパイル。
-     * @throws Exception コンパイル中に例外が発生した場合
+     * compiles reduce-map fragments.
+     * @throws Exception if exception was occurred
      */
     @Test
     public void straightRendezvousFragmentsCompile() throws Exception {

@@ -32,7 +32,7 @@ import com.asakusafw.vocabulary.flow.testing.MockOut;
 public class UniqueOperatorProcessorTest extends OperatorCompilerTestRoot {
 
     /**
-     * 単純な例。
+     * simple case.
      */
     @Test
     public void simple() {

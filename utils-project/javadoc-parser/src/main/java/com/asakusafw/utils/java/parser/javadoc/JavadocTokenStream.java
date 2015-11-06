@@ -18,43 +18,47 @@ package com.asakusafw.utils.java.parser.javadoc;
 import com.asakusafw.utils.java.internal.parser.javadoc.ir.JavadocToken;
 
 /**
- * {@link JavadocToken}のストリーム。
+ * Provides a stream of {@link JavadocToken}s.
+ * @see JavadocScanner
  */
 public interface JavadocTokenStream {
 
     /**
-     * 次のトークンを消費し、返す。
-     * @return 次のトークン
+     * Consumes the next token and returns it.
+     * @return the next token
      */
     JavadocToken nextToken();
 
     /**
-     * 次のトークンを返す。
-     * @return 次のトークン
+     * Returns the next token.
+     * @return the next token
      */
     JavadocToken peek();
 
     /**
-     * 厳密に次のトークンを調べて返す。
-     * @param k スキップする数
-     * @return 次のトークン
+     * Looks ahead the token after the offset.
+     * The next token's offset is {@code 0}.
+     * @param offset the token offset
+     * @return the look-ahead token
      */
-    JavadocToken lookahead(int k);
+    JavadocToken lookahead(int offset);
 
     /**
-     * 現在の位置をにマークをつけ、{@link #rewind()}によってこの位置に戻れるようにする。
+     * Marks the current stream position.
+     * A latter {@link #rewind()} invocation will restore the position.
      */
     void mark();
 
     /**
-     * 直前に{@link #mark()}を呼び出した位置に戻り、マークを破棄する。
-     * @throws IllegalStateException 直前の{@link #mark()}が存在しない場合
+     * Restores the stream position to the last {@link #mark() marked},
+     * and discards the last marked position.
+     * @throws IllegalStateException if the {@link #mark()} has not been invoked, or the mark was already discarded
      */
     void rewind();
 
     /**
-     * 直前の{@link #mark()}を破棄する。
-     * @throws IllegalStateException 直前の{@link #mark()}が存在しない場合
+     * Discards the last {@link #mark() marked position}.
+     * @throws IllegalStateException if the {@link #mark()} has not been invoked, or the mark was already discarded
      */
     void discard();
 }

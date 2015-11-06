@@ -25,16 +25,17 @@ import org.apache.hadoop.io.WritableUtils;
 import com.asakusafw.runtime.io.util.DataBuffer;
 
 /**
- * 任意の{@link Writable}を保持するスロット。
+ * A data slot.
+ * @see SortableSlot
  */
 public class WritableSlot implements Writable {
 
     private final DataBuffer buffer = new DataBuffer();
 
     /**
-     * このオブジェクトに指定の{@link Writable}オブジェクトの内容を書き出す。
-     * @param data 書き出すオブジェクト
-     * @throws IOException 書き出せなかった場合
+     * Stores the copy of the target object.
+     * @param data the target object
+     * @throws IOException if failed to store the object
      */
     public void store(Writable data) throws IOException {
         buffer.reset(0, 0);
@@ -42,9 +43,9 @@ public class WritableSlot implements Writable {
     }
 
     /**
-     * 指定のオブジェクトにこのオブジェクトの内容を書き出す。
-     * @param data 書き出すオブジェクト
-     * @throws IOException 書き出せなかった場合
+     * Loads the contents in this object into the target object.
+     * @param data the target object
+     * @throws IOException if failed to load the contents
      */
     public void loadTo(Writable data) throws IOException {
         buffer.reset(0, buffer.getReadLimit());

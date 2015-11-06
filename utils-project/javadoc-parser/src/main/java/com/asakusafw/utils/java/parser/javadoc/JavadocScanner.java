@@ -20,44 +20,45 @@ import java.util.List;
 import com.asakusafw.utils.java.internal.parser.javadoc.ir.JavadocToken;
 
 /**
- * {@link JavadocToken}を取り扱うスキャナ。
+ * An abstract super interface of scanners which provides a sequence of {@link JavadocToken}.
  */
 public interface JavadocScanner {
 
     /**
-     * トークンの一覧を返す。
-     * @return トークンの一覧
+     * Returns the tokens.
+     * @return the tokens
      */
     List<JavadocToken> getTokens();
 
     /**
-     * 指定の個数だけトークンを読み捨てる。
-     * @param count 読み捨てる個数
+     * Consumes the tokens.
+     * @param count the number of tokens to be consumed
      */
     void consume(int count);
 
     /**
-     * 次のトークンを返す。
-     * @return 次のトークン
+     * Consumes the next token and returns it.
+     * @return the next token
      */
     JavadocToken nextToken();
 
     /**
-     * 指定の位置から{@code offset}個先のトークンを返す。
-     * @param offset オフセット
-     * @return {@code offset}個先のトークン
+     * Looks ahead the token after the offset.
+     * The next token's offset is {@code 0}.
+     * @param offset the token offset
+     * @return the look-ahead token
      */
     JavadocToken lookahead(int offset);
 
     /**
-     * 次に{@link #nextToken()}が返すトークンの位置を返す。
-     * @return 次のトークンの位置
+     * Returns {@link #nextToken() the next token} index.
+     * @return the next token index
      */
     int getIndex();
 
     /**
-     * 次に{@link #nextToken()}が返すトークンの位置を設定する。
-     * @param position 次のトークンの位置
+     * Sets the index of the current scanner position.
+     * @param position the index which indicates {@link #nextToken() the next token}
      */
     void seek(int position);
 }

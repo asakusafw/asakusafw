@@ -22,18 +22,12 @@ import com.asakusafw.utils.java.model.syntax.Type;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link InstanceofExpression}の実装。
+ * An implementation of {@link InstanceofExpression}.
  */
 public final class InstanceofExpressionImpl extends ModelRoot implements InstanceofExpression {
 
-    /**
-     * 被演算項。
-     */
     private Expression expression;
 
-    /**
-     * 比較対象型。
-     */
     private Type type;
 
     @Override
@@ -42,11 +36,9 @@ public final class InstanceofExpressionImpl extends ModelRoot implements Instanc
     }
 
     /**
-     * 被演算項を設定する。
-     * @param expression
-     *     被演算項
-     * @throws IllegalArgumentException
-     *     {@code expression}に{@code null}が指定された場合
+     * Sets the target term.
+     * @param expression the target term
+     * @throws IllegalArgumentException if {@code expression} was {@code null}
      */
     public void setExpression(Expression expression) {
         Util.notNull(expression, "expression"); //$NON-NLS-1$
@@ -59,11 +51,9 @@ public final class InstanceofExpressionImpl extends ModelRoot implements Instanc
     }
 
     /**
-     * 比較対象型を設定する。
-     * @param type
-     *     比較対象型
-     * @throws IllegalArgumentException
-     *     {@code type}に{@code null}が指定された場合
+     * Sets the target type.
+     * @param type the target type
+     * @throws IllegalArgumentException if {@code type} was {@code null}
      */
     public void setType(Type type) {
         Util.notNull(type, "type"); //$NON-NLS-1$
@@ -71,7 +61,7 @@ public final class InstanceofExpressionImpl extends ModelRoot implements Instanc
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#INSTANCEOF_EXPRESSION}を返す。
+     * Returns {@link ModelKind#INSTANCEOF_EXPRESSION} which represents this element kind.
      * @return {@link ModelKind#INSTANCEOF_EXPRESSION}
      */
     @Override
@@ -80,8 +70,7 @@ public final class InstanceofExpressionImpl extends ModelRoot implements Instanc
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitInstanceofExpression(this, context);
     }

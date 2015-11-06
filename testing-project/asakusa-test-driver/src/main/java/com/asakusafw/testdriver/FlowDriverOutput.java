@@ -61,22 +61,22 @@ public abstract class FlowDriverOutput<T, S extends FlowDriverOutput<T, S>> exte
     protected abstract S getThis();
 
     /**
-     * テスト実行時に使用する初期データを指定する。
-     * @param sourceFactory 初期データを提供するファクトリ
+     * Sets the initial data set for this output.
+     * @param factory factory which provides test data set
      * @return this
      * @since 0.6.0
      */
-    public S prepare(DataModelSourceFactory sourceFactory) {
-        if (sourceFactory == null) {
-            throw new IllegalArgumentException("sourceFactory must not be null"); //$NON-NLS-1$
+    public S prepare(DataModelSourceFactory factory) {
+        if (factory == null) {
+            throw new IllegalArgumentException("factory must not be null"); //$NON-NLS-1$
         }
-        setSource(sourceFactory);
+        setSource(factory);
         return getThis();
     }
 
     /**
-     * テスト結果の検証データを指定する。
-     * @param factory 検証エンジンのファクトリ
+     * Sets how verify the execution results for this output.
+     * @param factory factory which provides result verifier
      * @return this
      * @since 0.2.3
      */
@@ -89,8 +89,9 @@ public abstract class FlowDriverOutput<T, S extends FlowDriverOutput<T, S>> exte
     }
 
     /**
-     * テスト結果のデータを検証前に変形するフィルタを指定する。
-     * @param filter 変形に利用するフィルタ
+     * Sets the result data set filter for this output.
+     * This can select or transform the results before verifying them.
+     * @param filter the data set filter
      * @return this
      * @since 0.7.0
      */
@@ -103,8 +104,8 @@ public abstract class FlowDriverOutput<T, S extends FlowDriverOutput<T, S>> exte
     }
 
     /**
-     * テスト結果のデータを受け取るオブジェクトのファクトリを指定する。
-     * @param factory テスト結果のデータを受け取るオブジェクトのファクトリ
+     * Sets the result data sink for this output.
+     * @param factory factory which provides result data sink
      * @return this
      * @since 0.2.3
      */
@@ -117,8 +118,8 @@ public abstract class FlowDriverOutput<T, S extends FlowDriverOutput<T, S>> exte
     }
 
     /**
-     * テスト結果の差異を受け取るオブジェクトのファクトリを指定する。
-     * @param factory テスト結果の差異を受け取るオブジェクトのファクトリ
+     * Sets the result differences sink for this output.
+     * @param factory factory which provides result differences sink
      * @return this
      * @since 0.2.3
      */
@@ -131,10 +132,10 @@ public abstract class FlowDriverOutput<T, S extends FlowDriverOutput<T, S>> exte
     }
 
     /**
-     * テスト実行時に使用する初期データを指定する。
-     * @param sourcePath 初期データのパス
+     * Sets the initial data set for this output.
+     * @param sourcePath path to the initial data set file
      * @return this
-     * @throws IllegalArgumentException 初期データのパスに対するリソースが見つからない場合
+     * @throws IllegalArgumentException if the source was not found on the path
      * @since 0.2.0
      */
     public S prepare(String sourcePath) {
@@ -145,37 +146,37 @@ public abstract class FlowDriverOutput<T, S extends FlowDriverOutput<T, S>> exte
     }
 
     /**
-     * テスト実行時に使用する初期データを指定する。
-     * @param sourceObjects 初期データを表すオブジェクト一覧
+     * Sets the initial data set for this output.
+     * @param objects the initial data objects
      * @return this
      * @since 0.6.0
      */
-    public S prepare(Iterable<? extends T> sourceObjects) {
-        if (sourceObjects == null) {
-            throw new IllegalArgumentException("sourceObjects must not be null"); //$NON-NLS-1$
+    public S prepare(Iterable<? extends T> objects) {
+        if (objects == null) {
+            throw new IllegalArgumentException("objects must not be null"); //$NON-NLS-1$
         }
-        return prepare(toDataModelSourceFactory(sourceObjects));
+        return prepare(toDataModelSourceFactory(objects));
     }
 
     /**
-     * テスト実行時に使用する初期データを指定する。
-     * @param sourceProvider 初期データを提供するプロバイダー
+     * Sets the initial data set for this output.
+     * @param provider the expected data set provider
      * @return this
      * @since 0.6.0
      */
-    public S prepare(Provider<? extends Source<? extends T>> sourceProvider) {
-        if (sourceProvider == null) {
-            throw new IllegalArgumentException("sourceProvider must not be null"); //$NON-NLS-1$
+    public S prepare(Provider<? extends Source<? extends T>> provider) {
+        if (provider == null) {
+            throw new IllegalArgumentException("provider must not be null"); //$NON-NLS-1$
         }
-        return prepare(toDataModelSourceFactory(sourceProvider));
+        return prepare(toDataModelSourceFactory(provider));
     }
 
     /**
-     * テスト結果の検証データを指定する。
-     * @param expectedFactory 期待値データを提供するファクトリ
-     * @param verifyRulePath 検証ルールのパス
+     * Enables to verify the results of this output.
+     * @param expectedFactory factory which provides the expected data set
+     * @param verifyRulePath the path to verification rule file
      * @return this
-     * @throws IllegalArgumentException 検証ルールのパスに対するリソースが見つからない場合
+     * @throws IllegalArgumentException if the verification rule file was not found
      * @since 0.6.0
      */
     public S verify(DataModelSourceFactory expectedFactory, String verifyRulePath) {
@@ -189,11 +190,11 @@ public abstract class FlowDriverOutput<T, S extends FlowDriverOutput<T, S>> exte
     }
 
     /**
-     * テスト結果の検証データを指定する。
-     * @param expectedPath 期待値データのパス
-     * @param verifyRulePath 検証ルールのパス
+     * Enables to verify the results of this output.
+     * @param expectedPath the path to the expected data set file
+     * @param verifyRulePath the path to verification rule file
      * @return this
-     * @throws IllegalArgumentException 期待値データまたは検証ルールのパスに対するリソースが見つからない場合
+     * @throws IllegalArgumentException if either the expected data set or verification rule file was not found
      * @since 0.2.0
      */
     public S verify(String expectedPath, String verifyRulePath) {
@@ -207,11 +208,11 @@ public abstract class FlowDriverOutput<T, S extends FlowDriverOutput<T, S>> exte
     }
 
     /**
-     * テスト結果の検証データを指定する。
-     * @param expectedObjects 期待値データを表すオブジェクト一覧
-     * @param verifyRulePath 検証ルールのパス
+     * Enables to verify the results of this output.
+     * @param expectedObjects the expected data objects
+     * @param verifyRulePath the path to verification rule file
      * @return this
-     * @throws IllegalArgumentException 検証ルールのパスに対するリソースが見つからない場合
+     * @throws IllegalArgumentException if the verification rule file was not found
      * @since 0.6.0
      */
     public S verify(Iterable<? extends T> expectedObjects, String verifyRulePath) {
@@ -225,11 +226,11 @@ public abstract class FlowDriverOutput<T, S extends FlowDriverOutput<T, S>> exte
     }
 
     /**
-     * テスト結果の検証データを指定する。
-     * @param expectedProvider 期待値データを提供するプロバイダー
-     * @param verifyRulePath 検証ルールのパス
+     * Enables to verify the results of this output.
+     * @param expectedProvider the expected data set provider
+     * @param verifyRulePath the path to verification rule file
      * @return this
-     * @throws IllegalArgumentException 検証ルールのパスに対するリソースが見つからない場合
+     * @throws IllegalArgumentException if the verification rule file was not found
      * @since 0.6.0
      */
     public S verify(Provider<? extends Source<? extends T>> expectedProvider, String verifyRulePath) {
@@ -243,12 +244,12 @@ public abstract class FlowDriverOutput<T, S extends FlowDriverOutput<T, S>> exte
     }
 
     /**
-     * テスト結果の検証データを指定する。
-     * @param expectedFactory 期待値データを提供するファクトリ
-     * @param verifyRulePath 検証ルールのパス
-     * @param tester 追加検証ルール (省略可能)
+     * Enables to verify the results of this output.
+     * @param expectedFactory factory which provides the expected data set
+     * @param verifyRulePath the path to verification rule file
+     * @param tester the extra verification rule for each data model object (nullable)
      * @return this
-     * @throws IllegalArgumentException 検証ルールのパスに対するリソースが見つからない場合
+     * @throws IllegalArgumentException if the verification rule file was not found
      * @since 0.6.0
      */
     public S verify(DataModelSourceFactory expectedFactory, String verifyRulePath, ModelTester<? super T> tester) {
@@ -269,12 +270,12 @@ public abstract class FlowDriverOutput<T, S extends FlowDriverOutput<T, S>> exte
     }
 
     /**
-     * テスト結果の検証データを指定する。
-     * @param expectedPath 期待値データのパス
-     * @param verifyRulePath 検証ルールのパス
-     * @param tester 追加検証ルール
+     * Enables to verify the results of this output.
+     * @param expectedPath the path to the expected data set file
+     * @param verifyRulePath the path to verification rule file
+     * @param tester the extra verification rule for each data model object (nullable)
      * @return this
-     * @throws IllegalArgumentException 期待値データまたは検証ルールのパスに対するリソースが見つからない場合
+     * @throws IllegalArgumentException if either the expected data set or verification rule file was not found
      * @since 0.2.3
      */
     public S verify(String expectedPath, String verifyRulePath, ModelTester<? super T> tester) {
@@ -284,19 +285,16 @@ public abstract class FlowDriverOutput<T, S extends FlowDriverOutput<T, S>> exte
         if (verifyRulePath == null) {
             throw new IllegalArgumentException("verifyRulePath must not be null"); //$NON-NLS-1$
         }
-        if (tester == null) {
-            throw new IllegalArgumentException("tester must not be null"); //$NON-NLS-1$
-        }
         return verify(toDataModelSourceFactory(expectedPath), verifyRulePath, tester);
     }
 
     /**
-     * テスト結果の検証データを指定する。
-     * @param expectedObjects 期待値データを表すオブジェクト一覧
-     * @param verifyRulePath 検証ルールのパス
-     * @param tester 追加検証ルール
+     * Enables to verify the results of this output.
+     * @param expectedObjects the expected data objects
+     * @param verifyRulePath the path to verification rule file
+     * @param tester the extra verification rule for each data model object (nullable)
      * @return this
-     * @throws IllegalArgumentException 検証ルールのパスに対するリソースが見つからない場合
+     * @throws IllegalArgumentException if the verification rule file was not found
      * @since 0.6.0
      */
     public S verify(Iterable<? extends T> expectedObjects, String verifyRulePath, ModelTester<? super T> tester) {
@@ -306,19 +304,16 @@ public abstract class FlowDriverOutput<T, S extends FlowDriverOutput<T, S>> exte
         if (verifyRulePath == null) {
             throw new IllegalArgumentException("verifyRulePath must not be null"); //$NON-NLS-1$
         }
-        if (tester == null) {
-            throw new IllegalArgumentException("tester must not be null"); //$NON-NLS-1$
-        }
         return verify(toDataModelSourceFactory(expectedObjects), verifyRulePath, tester);
     }
 
     /**
-     * テスト結果の検証データを指定する。
-     * @param expectedProvider 期待値データを提供するプロバイダー
-     * @param verifyRulePath 検証ルールのパス
-     * @param tester 追加検証ルール
+     * Enables to verify the results of this output.
+     * @param expectedProvider the expected data set provider
+     * @param verifyRulePath the path to verification rule file
+     * @param tester the extra verification rule for each data model object (nullable)
      * @return this
-     * @throws IllegalArgumentException 検証ルールのパスに対するリソースが見つからない場合
+     * @throws IllegalArgumentException if the verification rule file was not found
      * @since 0.6.0
      */
     public S verify(
@@ -330,16 +325,13 @@ public abstract class FlowDriverOutput<T, S extends FlowDriverOutput<T, S>> exte
         if (verifyRulePath == null) {
             throw new IllegalArgumentException("verifyRulePath must not be null"); //$NON-NLS-1$
         }
-        if (tester == null) {
-            throw new IllegalArgumentException("tester must not be null"); //$NON-NLS-1$
-        }
         return verify(toDataModelSourceFactory(expectedProvider), verifyRulePath, tester);
     }
 
     /**
-     * テスト結果の検証データを指定する。
-     * @param expectedFactory 期待値データを提供するファクトリ
-     * @param modelVerifier 検証ルール
+     * Enables to verify the results of this output.
+     * @param expectedFactory factory which provides the expected data set
+     * @param modelVerifier the verification rule
      * @return this
      * @since 0.6.0
      */
@@ -355,11 +347,11 @@ public abstract class FlowDriverOutput<T, S extends FlowDriverOutput<T, S>> exte
     }
 
     /**
-     * テスト結果の検証データを指定する。
-     * @param expectedPath 期待値データのパス
-     * @param modelVerifier 検証ルール
+     * Enables to verify the results of this output.
+     * @param expectedPath the path to the expected data set file
+     * @param modelVerifier the verification rule
      * @return this
-     * @throws IllegalArgumentException 期待値データのパスに対するリソースが見つからない場合
+     * @throws IllegalArgumentException if either the expected data set or verification rule file was not found
      * @since 0.2.0
      */
     public S verify(String expectedPath, ModelVerifier<? super T> modelVerifier) {
@@ -373,9 +365,9 @@ public abstract class FlowDriverOutput<T, S extends FlowDriverOutput<T, S>> exte
     }
 
     /**
-     * テスト結果の検証データを指定する。
-     * @param expectedObjects 期待値データ
-     * @param modelVerifier 検証ルール
+     * Enables to verify the results of this output.
+     * @param expectedObjects the expected data objects
+     * @param modelVerifier the verification rule
      * @return this
      * @since 0.6.0
      */
@@ -390,9 +382,9 @@ public abstract class FlowDriverOutput<T, S extends FlowDriverOutput<T, S>> exte
     }
 
     /**
-     * テスト結果の検証データを指定する。
-     * @param expectedProvider 期待値データを提供するプロバイダー
-     * @param modelVerifier 検証ルール
+     * Enables to verify the results of this output.
+     * @param expectedProvider the expected data set provider
+     * @param modelVerifier the verification rule
      * @return this
      * @since 0.6.0
      */
@@ -407,8 +399,8 @@ public abstract class FlowDriverOutput<T, S extends FlowDriverOutput<T, S>> exte
     }
 
     /**
-     * テスト結果のデータを検証前に変形する。
-     * @param transformer データモデルを変形する規則
+     * Enables to transform the result data before verifying the results of this output.
+     * @param transformer the data model object transformer
      * @return this
      * @since 0.7.0
      */
@@ -420,8 +412,8 @@ public abstract class FlowDriverOutput<T, S extends FlowDriverOutput<T, S>> exte
     }
 
     /**
-     * テスト結果のデータを書き出す先を指定する。
-     * @param outputPath テスト結果データの出力先
+     * Enables to store the result data set of this output.
+     * @param outputPath the output path
      * @return this
      * @since 0.2.3
      */
@@ -433,8 +425,8 @@ public abstract class FlowDriverOutput<T, S extends FlowDriverOutput<T, S>> exte
     }
 
     /**
-     * テスト結果のデータを書き出す先を指定する。
-     * @param outputPath テスト結果データの出力先
+     * Enables to store the result data set of this output.
+     * @param outputPath the output path
      * @return this
      * @since 0.2.3
      */
@@ -446,8 +438,8 @@ public abstract class FlowDriverOutput<T, S extends FlowDriverOutput<T, S>> exte
     }
 
     /**
-     * テスト結果の差異を書き出す先を指定する。
-     * @param outputPath 差分データの出力先
+     * Enables to store the result differences of this output.
+     * @param outputPath the output path
      * @return this
      * @since 0.2.3
      */
@@ -459,8 +451,8 @@ public abstract class FlowDriverOutput<T, S extends FlowDriverOutput<T, S>> exte
     }
 
     /**
-     * テスト結果の差異を書き出す先を指定する。
-     * @param outputPath 差分データの出力先
+     * Enables to store the result differences of this output.
+     * @param outputPath the output path
      * @return this
      * @since 0.2.3
      */

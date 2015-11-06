@@ -72,8 +72,8 @@ Asakusa Frameworkのバージョン |version| では、Hiveが対応するカラ
 * `ORC File <https://cwiki.apache.org/confluence/display/Hive/LanguageManual+ORC>`_
 * `Parquet <https://cwiki.apache.org/confluence/display/Hive/Parquet>`_
 
-モデルクラスの生成
-==================
+データモデルクラスの生成
+========================
 
 :doc:`csv-format` と同様に、データモデルクラス、及びファイル形式をマッピングする ``DataFormat`` の実装クラスは、DMDLコンパイラの拡張を利用して自動的に生成できます。
 
@@ -392,19 +392,19 @@ b) Hiveデータ型とカラムナフォーマットのデータ型とのマッ�
     * - ``INT``
       - ``INT``
       - ``-``
-      - 
+      -
     * - ``LONG``
       - ``BIGINT``
       - ``-``
-      - 
+      -
     * - ``FLOAT``
       - ``FLOAT``
       - ``-``
-      - 
+      -
     * - ``DOUBLE``
       - ``DOUBLE``
       - ``-``
-      - 
+      -
     * - ``TEXT``
       - ``STRING``
       - * ``VARCHAR``
@@ -427,15 +427,15 @@ b) Hiveデータ型とカラムナフォーマットのデータ型とのマッ�
     * - ``BOOLEAN``
       - ``BOOLEAN``
       - ``-``
-      - 
+      -
     * - ``BYTE``
       - ``TINYINT``
       - ``-``
-      - 
+      -
     * - ``SHORT``
       - ``SMALLINT``
       - ``-``
-      - 
+      -
 
 ..  attention::
     上表で記載が無いHiveデータ型( ``BINARY`` 、及び ``ARRAY`` などの Complex Types）には対応していません。

@@ -25,6 +25,7 @@ import java.util.List;
 import com.asakusafw.vocabulary.flow.processor.InputBuffer;
 import com.asakusafw.vocabulary.model.Key;
 
+//TODO i18n
 /**
  * グループ整列演算子を表すメソッドに付与する注釈。
  * <p>
@@ -82,7 +83,7 @@ import com.asakusafw.vocabulary.model.Key;
  &#42;&#47;
 &#64;GroupSort
 public void firstLast(
-        &#64;Key(group = "name", order = "age ASC") List&lt;Hoge&gt; hogeList,
+        &#64;Key(group = &quot;name&quot;, order = &quot;age ASC&quot;) List&lt;Hoge&gt; hogeList,
         Result&lt;Hoge&gt; first,
         Result&lt;Hoge&gt; last) {
     first.add(hogeList.get(0));
@@ -98,8 +99,7 @@ public @interface GroupSort {
     /**
      * 演算子の入力バッファの性質を指定する。
      * <p>
-     * デフォルトではヒープ上に高速な入力バッファを構築し、
-     * 巨大なグループに対しての処理は行えない。
+     * デフォルトではヒープ上に高速な入力バッファを構築し、巨大なグループに対しての処理は行えない。
      * </p>
      * @since 0.2.0
      * @see InputBuffer

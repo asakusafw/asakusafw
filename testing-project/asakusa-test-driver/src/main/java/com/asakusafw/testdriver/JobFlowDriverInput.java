@@ -16,19 +16,18 @@
 package com.asakusafw.testdriver;
 
 /**
- * ジョブフローのテスト入力データオブジェクト。
+ * A flow input driver for testing jobflows.
  * @since 0.2.0
  * @version 0.6.0
- * @param <T> モデルクラス
+ * @param <T> the data model type
  */
 public class JobFlowDriverInput<T> extends FlowDriverInput<T, JobFlowDriverInput<T>> {
 
     /**
-     * コンストラクタ。
-     *
-     * @param driverContext テストドライバコンテキスト。
-     * @param name 入力の名前。
-     * @param modelType モデルクラス。
+     * Creates a new instance.
+     * @param driverContext the current test driver context
+     * @param name the flow input name
+     * @param modelType the data model type
      */
     public JobFlowDriverInput(TestDriverContext driverContext, String name, Class<T> modelType) {
         super(driverContext.getCallerClass(), driverContext.getRepository(), name, modelType);

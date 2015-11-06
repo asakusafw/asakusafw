@@ -54,10 +54,10 @@ public abstract class FlowDriverInput<T, S extends FlowDriverInput<T, S>> extend
     protected abstract S getThis();
 
     /**
-     * テスト実行時に使用する入力データを指定する。
-     * @param sourcePath 入力データのパス
+     * Sets the test data set for this input.
+     * @param sourcePath the path to test data set
      * @return this
-     * @throws IllegalArgumentException 対象のリソースが見つからない場合
+     * @throws IllegalArgumentException if the source was not found on the path
      * @since 0.2.0
      */
     public S prepare(String sourcePath) {
@@ -68,8 +68,8 @@ public abstract class FlowDriverInput<T, S extends FlowDriverInput<T, S>> extend
     }
 
     /**
-     * テスト実行時の入力データを提供する、ファクトリオブジェクトを設定する。
-     * @param factory ファクトリオブジェクト
+     * Sets the test data set for this input.
+     * @param factory factory which provides test data set
      * @return this
      * @since 0.6.0
      */
@@ -85,8 +85,8 @@ public abstract class FlowDriverInput<T, S extends FlowDriverInput<T, S>> extend
     }
 
     /**
-     * テスト実行時の入力データを設定する。
-     * @param objects データモデルオブジェクトの一覧
+     * Sets the test data set for this input.
+     * @param objects the test data objects
      * @return this
      * @since 0.6.0
      */
@@ -98,8 +98,8 @@ public abstract class FlowDriverInput<T, S extends FlowDriverInput<T, S>> extend
     }
 
     /**
-     * テスト実行時の入力データを設定する。
-     * @param provider データモデルオブジェクトを提供するプロバイダー
+     * Sets the test data set for this input.
+     * @param provider the test data set provider
      * @return this
      * @since 0.6.0
      */

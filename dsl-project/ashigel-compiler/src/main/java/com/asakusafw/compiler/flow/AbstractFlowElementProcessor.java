@@ -20,9 +20,8 @@ import java.text.MessageFormat;
 
 import com.asakusafw.compiler.common.TargetOperator;
 
-
 /**
- * {@link FlowElementProcessor}の骨格実装。
+ * A skeletal implementation of {@link FlowElementProcessor}.
  */
 public abstract class AbstractFlowElementProcessor
         extends FlowCompilingEnvironment.Initialized
@@ -31,8 +30,8 @@ public abstract class AbstractFlowElementProcessor
     private Class<? extends Annotation> targetOperatorAnnotation;
 
     /**
-     * このクラスが対象とする注釈型を返す。
-     * @return 対象とする注釈型
+     * Returns the target annotation type from {@link TargetOperator} annotation.
+     * @return the target annotation type, or {@code null} if the sub-class is not annotated with the annotation
      */
     protected Class<? extends Annotation> loadTargetAnnotationType() {
         TargetOperator target = getClass().getAnnotation(TargetOperator.class);

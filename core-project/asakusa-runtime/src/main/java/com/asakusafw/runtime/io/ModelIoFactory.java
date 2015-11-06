@@ -30,35 +30,52 @@ import com.asakusafw.runtime.model.ModelInputLocation;
 import com.asakusafw.runtime.model.ModelOutputLocation;
 
 /**
- * モデルの入出力に関するオブジェクトを生成するファクトリの基底クラス。
- * @param <T> 取り扱うモデルオブジェクトの種類
+ * An abstract super class of reading/writing data model objects.
+ * @param <T> the target data model type
+ * @since 0.1.0
  */
 public abstract class ModelIoFactory<T> {
 
     static final Log LOG = LogFactory.getLog(ModelIoFactory.class);
 
     /**
-     * モデルクラスの名前のパターン ($1 - ベースパッケージ, $2 - 単純名)。
+     * The qualified data model class name pattern in regex.
+     * <ul>
+     * <li> <code>$1</code> - base package name </li>
+     * <li> <code>$2</code> - simple class name </li>
+     * </ul>
      */
     static final Pattern MODEL_CLASS_NAME_PATTERN = Pattern.compile(
             "(.*)\\.model\\.([^\\.]+)$"); //$NON-NLS-1$
 
     /**
-     * {@link ModelInput}の実装が配置してある場所の名前 ({0} - ベースパッケージ, {1} - モデルの単純名)。
+     * The qualified name pattern of {@link ModelInput} in MessageFormat.
+     * <ul>
+     * <li> <code>{0}</code> - base package name </li>
+     * <li> <code>{1}</code> - simple class name </li>
+     * </ul>
+     * @deprecated Use {@link ModelInputLocation} to specify {@link ModelInput} instead
      */
+    @Deprecated
     public static final String MODEL_INPUT_CLASS_FORMAT = "{0}.io.{1}ModelInput"; //$NON-NLS-1$
 
     /**
-     * {@link ModelOutput}の実装が配置してある場所の名前 ({0} - ベースパッケージ, {1} - モデルの単純名)。
+     * The qualified name pattern of {@link ModelOutput} in MessageFormat.
+     * <ul>
+     * <li> <code>{0}</code> - base package name </li>
+     * <li> <code>{1}</code> - simple class name </li>
+     * </ul>
+     * @deprecated Use {@link ModelOutputLocation} to specify {@link ModelOutput} instead
      */
+    @Deprecated
     public static final String MODEL_OUTPUT_CLASS_FORMAT = "{0}.io.{1}ModelOutput"; //$NON-NLS-1$
 
     private final Class<T> modelClass;
 
     /**
-     * インスタンスを生成する。
-     * @param modelClass 取り扱うモデルオブジェクトの種類
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param modelClass the data model class
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public ModelIoFactory(Class<T> modelClass) {
         if (modelClass == null) {
@@ -68,18 +85,17 @@ public abstract class ModelIoFactory<T> {
     }
 
     /**
-     * このファクトリが利用するモデルオブジェクトの型を表現するクラスを返す。
-     * @return このファクトリが利用するモデルオブジェクトの型を表現するクラス
+     * Returns the target data model class.
+     * @return the target data model class
      */
     protected Class<T> getModelClass() {
         return modelClass;
     }
 
     /**
-     * このファクトリが生成する {@link ModelInput}, {@link ModelOutput}
-     * の入出力に利用可能なモデルオブジェクトを新しく生成して返す。
-     * @return 生成したオブジェクト
-     * @throws IOException インスタンスの生成に失敗した場合
+     * Creates a new data model object.
+     * @return the created object
+     * @throws IOException if failed to create a new object
      */
     public T createModelObject() throws IOException {
         try {
@@ -93,11 +109,11 @@ public abstract class ModelIoFactory<T> {
     }
 
     /**
-     * このファクトリが対象とするモデルに対する{@link ModelInput}を新しく生成して返す。
-     * @param in モデルの情報を取り出す元の入力ストリーム
-     * @return 生成した{@code ModelInput}のインスタンス
-     * @throws IOException {@code ModelInput}の生成または初期化に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new {@link ModelInput} for the target {@link InputStream}.
+     * @param in an input stream that provides serialized data model objects
+     * @return the created instance
+     * @throws IOException if failed to initialize the {@code ModelInput}
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public ModelInput<T> createModelInput(InputStream in) throws IOException {
         if (in == null) {
@@ -108,11 +124,11 @@ public abstract class ModelIoFactory<T> {
     }
 
     /**
-     * このファクトリが対象とするモデルに対する{@link ModelInput}を新しく生成して返す。
-     * @param parser モデルの情報を取り出すパーサー
-     * @return 生成した{@code ModelInput}のインスタンス
-     * @throws IOException {@code ModelInput}の生成または初期化に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new {@link ModelInput} for the target {@link RecordParser}.
+     * @param parser a parser that provides records of data model objects
+     * @return the created instance
+     * @throws IOException if failed to initialize the {@code ModelInput}
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public ModelInput<T> createModelInput(RecordParser parser) throws IOException {
         if (parser == null) {
@@ -141,11 +157,11 @@ public abstract class ModelIoFactory<T> {
     }
 
     /**
-     * このファクトリが対象とするモデルに対する{@link ModelOutput}を新しく生成して返す。
-     * @param out モデルの情報を書き出す先の出力ストリーム
-     * @return 生成した{@code ModelOutput}のインスタンス
-     * @throws IOException {@code ModelOutput}の生成または初期化に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new {@link ModelOutput} for the target {@link OutputStream}.
+     * @param out an output stream that accepts serialized data model objects
+     * @return the created instance
+     * @throws IOException if failed to initialize the {@code ModelOutput}
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public ModelOutput<T> createModelOutput(OutputStream out) throws IOException {
         if (out == null) {
@@ -156,11 +172,11 @@ public abstract class ModelIoFactory<T> {
     }
 
     /**
-     * このファクトリが対象とするモデルに対する{@link ModelOutput}を新しく生成して返す。
-     * @param emitter モデルの情報を書き出す先のエミッター
-     * @return 生成した{@code ModelOutput}のインスタンス
-     * @throws IOException {@code ModelOutput}の生成または初期化に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new {@link ModelOutput} for the target {@link RecordEmitter}.
+     * @param emitter an emitter that accepts data model objects
+     * @return the created instance
+     * @throws IOException if failed to initialize the {@code ModelOutput}
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public ModelOutput<T> createModelOutput(RecordEmitter emitter) throws IOException {
         if (emitter == null) {
@@ -189,30 +205,28 @@ public abstract class ModelIoFactory<T> {
     }
 
     /**
-     * このファクトリが{@link #createModelInput(InputStream)}で利用するレコードパーサーを返す。
-     * @param in 対象の入力
-     * @return 利用するレコードパーサー
-     * @throws IOException パーサーの作成に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new default {@link RecordParser}.
+     * @param in the source input
+     * @return the created object
+     * @throws IOException if failed to initialize the parser
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     protected abstract RecordParser createRecordParser(InputStream in) throws IOException;
 
     /**
-     * このファクトリが{@link #createModelOutput(OutputStream)}で利用するレコードエミッターを返す。
-     * @param out 対象の出力
-     * @return 利用するレコードエミッター
-     * @throws IOException エミッターの作成に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new default {@link RecordEmitter}.
+     * @param out the target output
+     * @return the created object
+     * @throws IOException if failed to initialize the emitter
+     * @throws IllegalArgumentException if the parameter {@code null}
      */
     protected abstract RecordEmitter createRecordEmitter(OutputStream out) throws IOException;
 
     /**
-     * このファクトリが利用する{@link ModelInput}クラスを返す。
-     * <p>
-     * この実装では、{@code ...model.Hoge}に対して{@code ...io.HogeModelInput}を返す。
-     * </p>
-     * @return このファクトリが利用する{@link ModelInput}クラス
-     * @throws ClassNotFoundException クラスが見つからない場合
+     * Returns the {@link ModelInput} class for this factory.
+     * @return the {@link ModelInput} class
+     * @throws ClassNotFoundException if the target class is not found
+     * @see ModelInputLocation
      */
     protected Class<?> findModelInputClass() throws ClassNotFoundException {
         ModelInputLocation annotation = modelClass.getAnnotation(ModelInputLocation.class);
@@ -228,12 +242,10 @@ public abstract class ModelIoFactory<T> {
     }
 
     /**
-     * このファクトリが利用する{@link ModelOutput}クラスを返す。
-     * <p>
-     * この実装では、{@code ...model.Hoge}に対して{@code ...io.HogeModelOutput}を返す。
-     * </p>
-     * @return このファクトリが利用する{@link ModelOutput}クラス
-     * @throws ClassNotFoundException クラスが見つからない場合
+     * Returns the {@link ModelOutput} class for this factory.
+     * @return the {@link ModelOutput} class
+     * @throws ClassNotFoundException if the target class is not found
+     * @see ModelInputLocation
      */
     protected Class<?> findModelOutputClass() throws ClassNotFoundException {
         ModelOutputLocation annotation = modelClass.getAnnotation(ModelOutputLocation.class);

@@ -32,7 +32,7 @@ import com.asakusafw.vocabulary.flow.testing.MockOut;
 public class MasterJoinUpdateOperatorProcessorTest extends OperatorCompilerTestRoot {
 
     /**
-     * 単純なテスト。
+     * simple case.
      */
     @Test
     public void simple() {
@@ -57,7 +57,7 @@ public class MasterJoinUpdateOperatorProcessorTest extends OperatorCompilerTestR
     }
 
     /**
-     * マスタ選択つき。
+     * w/ master selection.
      */
     @Test
     public void selector() {
@@ -82,7 +82,7 @@ public class MasterJoinUpdateOperatorProcessorTest extends OperatorCompilerTestR
     }
 
     /**
-     * パラメータ化。
+     * parameterized.
      */
     @Test
     public void parameterized() {
@@ -107,7 +107,7 @@ public class MasterJoinUpdateOperatorProcessorTest extends OperatorCompilerTestR
     }
 
     /**
-     * マスタ選択つきパラメータ化 (セレクタのパラメータ無し)。
+     * w/ user parameter and selector (the selector w/o user parameters).
      */
     @Test
     public void parameterizedSelector() {
@@ -207,7 +207,7 @@ public class MasterJoinUpdateOperatorProcessorTest extends OperatorCompilerTestR
     }
 
     /**
-     * 抽象メソッド。
+     * w/ abstract modifier.
      */
     @Test
     public void Abstract() {
@@ -216,7 +216,7 @@ public class MasterJoinUpdateOperatorProcessorTest extends OperatorCompilerTestR
     }
 
     /**
-     * voidでない。
+     * not void type.
      */
     @Test
     public void Returns() {
@@ -225,7 +225,7 @@ public class MasterJoinUpdateOperatorProcessorTest extends OperatorCompilerTestR
     }
 
     /**
-     * モデルでない。
+     * not a data model parameter.
      */
     @Test
     public void NotModel() {
@@ -234,7 +234,7 @@ public class MasterJoinUpdateOperatorProcessorTest extends OperatorCompilerTestR
     }
 
     /**
-     * ユーザー定義パラメーターでない。
+     * not a valid user parameters.
      */
     @Test
     public void NotUserParameter() {
@@ -243,7 +243,7 @@ public class MasterJoinUpdateOperatorProcessorTest extends OperatorCompilerTestR
     }
 
     /**
-     * キーの指定がない。
+     * missing key annotation.
      */
     @Test
     public void NoKey() {

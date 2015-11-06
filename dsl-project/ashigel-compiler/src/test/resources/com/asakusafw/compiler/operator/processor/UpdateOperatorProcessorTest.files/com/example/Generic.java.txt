@@ -9,9 +9,9 @@ import com.asakusafw.vocabulary.operator.*;
 public abstract class Generic {
 
     /**
-     * 更新演算子のテスト。
-     * @param in 入力
-     * @param param パラメーター
+     * Update operator for testing.
+     * @param in input object
+     * @param param value parameter
      */
     @Update
     public <P extends MockProjection>

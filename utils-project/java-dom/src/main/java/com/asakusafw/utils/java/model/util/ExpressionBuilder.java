@@ -32,23 +32,19 @@ import com.asakusafw.utils.java.model.syntax.Type;
 import com.asakusafw.utils.java.model.syntax.UnaryOperator;
 
 /**
- * 式を構築するビルダー。
- * <p>
- * このクラスのオブジェクトは、自身を破壊的に変更して式を構築する。
- * 特定の状態のビルダーを再利用する場合、{@link #copy()}を利用すること。
- * </p>
+ * A builder for building Java expressions.
  */
 public class ExpressionBuilder {
 
-    private ModelFactory f;
+    private final ModelFactory f;
 
     private Expression context;
 
     /**
-     * インスタンスを生成する。
-     * @param factory モデルの構築に利用するファクトリー
-     * @param context 文脈として利用する式
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Creates a new instance.
+     * @param factory the Java DOM factory
+     * @param context the context expression
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public ExpressionBuilder(ModelFactory factory, Expression context) {
         if (factory == null) {
@@ -62,55 +58,53 @@ public class ExpressionBuilder {
     }
 
     /**
-     * 現在のビルダーと同等の内容を持つビルダーを新しく作成して返す。
-     * @return コピーしたビルダー
+     * Returns a copy of this builder.
+     * @return the copy
      */
     public ExpressionBuilder copy() {
         return new ExpressionBuilder(f, context);
     }
 
     /**
-     * このビルダーで構築した式を返す。
-     * @return このビルダーで構築した式
+     * Returns the built expression.
+     * @return the built expression
      */
     public Expression toExpression() {
         return context;
     }
 
     /**
-     * このビルダーで構築した式を式文に変換して返す。
-     * @return このビルダーで構築した式の式文
+     * Returns the built expression as expression statement.
+     * @return the built expression as expression statement
      */
     public ExpressionStatement toStatement() {
         return f.newExpressionStatement(toExpression());
     }
 
     /**
-     * このビルダーで構築した式を{@code throw}文に変換して返す。
-     * @return このビルダーで構築した式をスローする{@code throw}文
+     * Returns a {@code throw} statement which throws the built expression.
+     * @return a {@code throw} statement which throws the built expression
      */
     public ThrowStatement toThrowStatement() {
         return f.newThrowStatement(toExpression());
     }
 
     /**
-     * このビルダーで構築した式を{@code return}文に変換して返す。
-     * @return このビルダーで構築した式を返す{@code return}文
+     * Returns a {@code return} statement which passes the built expression.
+     * @return a {@code return} statement which passes the built expression
      */
     public ReturnStatement toReturnStatement() {
         return f.newReturnStatement(toExpression());
     }
 
     /**
-     * このビルダーで構築した式を初期化式に持つローカル変数宣言を生成して返す。
-     * @param type ローカル変数宣言の式
-     * @param name 生成するローカル変数の名前
-     * @return 生成したローカル変数宣言
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns a local variable declaration which is initialized by the built expression.
+     * @param type the variable type
+     * @param name the variable name
+     * @return a local variable declaration which is initialized by the built expression
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
-    public LocalVariableDeclaration toLocalVariableDeclaration(
-            Type type,
-            String name) {
+    public LocalVariableDeclaration toLocalVariableDeclaration(Type type, String name) {
         if (type == null) {
             throw new IllegalArgumentException("type must not be null"); //$NON-NLS-1$
         }
@@ -121,15 +115,13 @@ public class ExpressionBuilder {
     }
 
     /**
-     * このビルダーで構築した式を初期化式に持つローカル変数宣言を生成して返す。
-     * @param type ローカル変数宣言の式
-     * @param name 生成するローカル変数の名前
-     * @return 生成したローカル変数宣言
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns a local variable declaration which is initialized by the built expression.
+     * @param type the variable type
+     * @param name the variable name
+     * @return a local variable declaration which is initialized by the built expression
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
-    public LocalVariableDeclaration toLocalVariableDeclaration(
-            Type type,
-            SimpleName name) {
+    public LocalVariableDeclaration toLocalVariableDeclaration(Type type, SimpleName name) {
         if (type == null) {
             throw new IllegalArgumentException("type must not be null"); //$NON-NLS-1$
         }
@@ -140,11 +132,11 @@ public class ExpressionBuilder {
     }
 
     /**
-     * このビルダーで構築した式に中値演算を適用して返す。
-     * @param operator 演算子
-     * @param right 右項
-     * @return 適用した結果をさらに操作するビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns a binary expression which contains the building expression on the left term.
+     * @param operator the infix operator
+     * @param right the right term
+     * @return this
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public ExpressionBuilder apply(InfixOperator operator, Expression right) {
         if (operator == null) {
@@ -157,10 +149,10 @@ public class ExpressionBuilder {
     }
 
     /**
-     * このビルダーで構築した式に前置演算を適用して返す。
-     * @param operator 演算子
-     * @return 適用した結果をさらに操作するビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns a unary expression.
+     * @param operator the unary operator
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public ExpressionBuilder apply(UnaryOperator operator) {
         if (operator == null) {
@@ -170,10 +162,10 @@ public class ExpressionBuilder {
     }
 
     /**
-     * このビルダーで構築した式に後置演算を適用して返す。
-     * @param operator 演算子
-     * @return 適用した結果をさらに操作するビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns a postfix expression.
+     * @param operator the postfix operator
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public ExpressionBuilder apply(PostfixOperator operator) {
         if (operator == null) {
@@ -183,10 +175,10 @@ public class ExpressionBuilder {
     }
 
     /**
-     * このビルダーで構築した式を変数とみなし、指定の右辺式を代入する式を返す。
-     * @param rightHandSide 右辺式
-     * @return 結果をさらに操作するビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns an assignment expression which contains the building expression on the left hand side.
+     * @param rightHandSide the right hand side expression
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public ExpressionBuilder assignFrom(Expression rightHandSide) {
         if (rightHandSide == null) {
@@ -196,11 +188,11 @@ public class ExpressionBuilder {
     }
 
     /**
-     * このビルダーで構築した式を変数とみなし、指定の右辺式を代入する式を返す。
-     * @param operator 複合代入演算子
-     * @param rightHandSide 右辺式
-     * @return 結果をさらに操作するビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns an assignment expression which contains the building expression on the left hand side.
+     * @param operator infix operator for compound assignment
+     * @param rightHandSide the right hand side expression
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public ExpressionBuilder assignFrom(
             InfixOperator operator,
@@ -211,32 +203,27 @@ public class ExpressionBuilder {
         if (rightHandSide == null) {
             throw new IllegalArgumentException("rightHandSide must not be null"); //$NON-NLS-1$
         }
-        return chain(f.newAssignmentExpression(
-                context,
-                operator,
-                rightHandSide));
+        return chain(f.newAssignmentExpression(context, operator, rightHandSide));
     }
 
     /**
-     * このビルダーで構築した式を指定の型に変換して返す。
-     * @param type 変換先の型
-     * @return 結果をさらに操作するビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns a cast expression.
+     * @param type the target type
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public ExpressionBuilder castTo(Type type) {
         if (type == null) {
             throw new IllegalArgumentException("type must not be null"); //$NON-NLS-1$
         }
-        return chain(f.newCastExpression(
-                type,
-                context));
+        return chain(f.newCastExpression(type, context));
     }
 
     /**
-     * このビルダーで構築した式を指定の型に変換して返す。
-     * @param type 変換先の型
-     * @return 結果をさらに操作するビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns a cast expression.
+     * @param type the target type
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public ExpressionBuilder castTo(java.lang.reflect.Type type) {
         if (type == null) {
@@ -246,10 +233,10 @@ public class ExpressionBuilder {
     }
 
     /**
-     * このビルダーで構築した式に{@code instanceof}演算を適用する式を返す。
-     * @param type 変換先の型
-     * @return 結果をさらに操作するビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns an {@code instanceof} expression.
+     * @param type the target type
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public ExpressionBuilder instanceOf(Type type) {
         if (type == null) {
@@ -259,10 +246,10 @@ public class ExpressionBuilder {
     }
 
     /**
-     * このビルダーで構築した式に{@code instanceof}演算を適用する式を返す。
-     * @param type 変換先の型
-     * @return 結果をさらに操作するビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns an {@code instanceof} expression.
+     * @param type the target type
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public ExpressionBuilder instanceOf(java.lang.reflect.Type type) {
         if (type == null) {
@@ -272,10 +259,10 @@ public class ExpressionBuilder {
     }
 
     /**
-     * このビルダーで構築した式に、フィールド参照を適用した式を返す。
-     * @param name 参照するフィールドの名前
-     * @return 結果をさらに操作するビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns a field access expression which take the building expression as its owner object.
+     * @param name the target field name
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public ExpressionBuilder field(String name) {
         if (name == null) {
@@ -285,10 +272,10 @@ public class ExpressionBuilder {
     }
 
     /**
-     * このビルダーで構築した式に、フィールド参照を適用した式を返す。
-     * @param name 参照するフィールドの名前
-     * @return 結果をさらに操作するビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns a field access expression which take the building expression as its owner object.
+     * @param name the target field name
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public ExpressionBuilder field(SimpleName name) {
         if (name == null) {
@@ -298,19 +285,19 @@ public class ExpressionBuilder {
     }
 
     /**
-     * このビルダーで構築した式を配列式とみなし、それに配列参照を適用した式を返す。
-     * @param index 配列の添え字
-     * @return 結果をさらに操作するビルダー
+     * Returns an array access expression which contains the building expression as the target array.
+     * @param index the index
+     * @return this
      */
     public ExpressionBuilder array(int index) {
         return array(Models.toLiteral(f, index));
     }
 
     /**
-     * このビルダーで構築した式を配列式とみなし、それに配列参照を適用した式を返す。
-     * @param index 配列の添え字をあらわす式名
-     * @return 結果をさらに操作するビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns an array access expression which contains the building expression as the target array.
+     * @param index the index variable name
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public ExpressionBuilder array(String index) {
         if (index == null) {
@@ -320,10 +307,10 @@ public class ExpressionBuilder {
     }
 
     /**
-     * このビルダーで構築した式を配列式とみなし、それに配列参照を適用した式を返す。
-     * @param index 配列の添え字式
-     * @return 結果をさらに操作するビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns an array access expression which contains the building expression as the target array.
+     * @param index the index expression
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public ExpressionBuilder array(Expression index) {
         if (index == null) {
@@ -333,11 +320,11 @@ public class ExpressionBuilder {
     }
 
     /**
-     * このビルダーで構築した式を限定子に取るメソッド起動式を返す。
-     * @param name 起動するメソッドの名前
-     * @param arguments 起動引数の一覧
-     * @return 結果をさらに操作するビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the method invocation which take the building expression as its receiver object.
+     * @param name the target method name
+     * @param arguments the method arguments
+     * @return this
+     * @throws IllegalArgumentException the parameters are {@code null}
      */
     public ExpressionBuilder method(
             String name,
@@ -348,19 +335,16 @@ public class ExpressionBuilder {
         if (arguments == null) {
             throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
         }
-        return method(
-                Collections.<Type>emptyList(),
-                name,
-                Arrays.asList(arguments));
+        return method(Collections.<Type> emptyList(), name, Arrays.asList(arguments));
     }
 
     /**
-     * このビルダーで構築した式を限定子に取るメソッド起動式を返す。
-     * @param typeArguments 型変数の一覧
-     * @param name 起動するメソッドの名前
-     * @param arguments 起動引数の一覧
-     * @return 結果をさらに操作するビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the method invocation which take the building expression as its receiver object.
+     * @param typeArguments the type arguments
+     * @param name the target method name
+     * @param arguments the method arguments
+     * @return this
+     * @throws IllegalArgumentException the parameters are {@code null}
      */
     public ExpressionBuilder method(
             List<? extends Type> typeArguments,
@@ -375,18 +359,15 @@ public class ExpressionBuilder {
         if (arguments == null) {
             throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
         }
-        return method(
-                typeArguments,
-                name,
-                Arrays.asList(arguments));
+        return method(typeArguments, name, Arrays.asList(arguments));
     }
 
     /**
-     * このビルダーで構築した式を限定子に取るメソッド起動式を返す。
-     * @param name 起動するメソッドの名前
-     * @param arguments 起動引数の一覧
-     * @return 結果をさらに操作するビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the method invocation which take the building expression as its receiver object.
+     * @param name the target method name
+     * @param arguments the method arguments
+     * @return this
+     * @throws IllegalArgumentException the parameters are {@code null}
      */
     public ExpressionBuilder method(
             String name,
@@ -397,19 +378,16 @@ public class ExpressionBuilder {
         if (arguments == null) {
             throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
         }
-        return method(
-                Collections.<Type>emptyList(),
-                name,
-                arguments);
+        return method(Collections.<Type> emptyList(), name, arguments);
     }
 
     /**
-     * このビルダーで構築した式を限定子に取るメソッド起動式を返す。
-     * @param typeArguments 型変数の一覧
-     * @param name 起動するメソッドの名前
-     * @param arguments 起動引数の一覧
-     * @return 結果をさらに操作するビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the method invocation which take the building expression as its receiver object.
+     * @param typeArguments the type arguments
+     * @param name the target method name
+     * @param arguments the method arguments
+     * @return this
+     * @throws IllegalArgumentException the parameters are {@code null}
      */
     public ExpressionBuilder method(
             List<? extends Type> typeArguments,
@@ -424,18 +402,15 @@ public class ExpressionBuilder {
         if (arguments == null) {
             throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
         }
-        return method(
-                typeArguments,
-                f.newSimpleName(name),
-                arguments);
+        return method(typeArguments, f.newSimpleName(name), arguments);
     }
 
     /**
-     * このビルダーで構築した式を限定子に取るメソッド起動式を返す。
-     * @param name 起動するメソッドの名前
-     * @param arguments 起動引数の一覧
-     * @return 結果をさらに操作するビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the method invocation which take the building expression as its receiver object.
+     * @param name the target method name
+     * @param arguments the method arguments
+     * @return this
+     * @throws IllegalArgumentException the parameters are {@code null}
      */
     public ExpressionBuilder method(
             SimpleName name,
@@ -446,19 +421,16 @@ public class ExpressionBuilder {
         if (arguments == null) {
             throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
         }
-        return method(
-                Collections.<Type>emptyList(),
-                name,
-                Arrays.asList(arguments));
+        return method(Collections.<Type> emptyList(), name, Arrays.asList(arguments));
     }
 
     /**
-     * このビルダーで構築した式を限定子に取るメソッド起動式を返す。
-     * @param typeArguments 型変数の一覧
-     * @param name 起動するメソッドの名前
-     * @param arguments 起動引数の一覧
-     * @return 結果をさらに操作するビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the method invocation which take the building expression as its receiver object.
+     * @param typeArguments the type arguments
+     * @param name the target method name
+     * @param arguments the method arguments
+     * @return this
+     * @throws IllegalArgumentException the parameters are {@code null}
      */
     public ExpressionBuilder method(
             List<? extends Type> typeArguments,
@@ -473,18 +445,15 @@ public class ExpressionBuilder {
         if (arguments == null) {
             throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
         }
-        return method(
-                typeArguments,
-                name,
-                Arrays.asList(arguments));
+        return method(typeArguments, name, Arrays.asList(arguments));
     }
 
     /**
-     * このビルダーで構築した式を限定子に取るメソッド起動式を返す。
-     * @param name 起動するメソッドの名前
-     * @param arguments 起動引数の一覧
-     * @return 結果をさらに操作するビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the method invocation which take the building expression as its receiver object.
+     * @param name the target method name
+     * @param arguments the method arguments
+     * @return this
+     * @throws IllegalArgumentException the parameters are {@code null}
      */
     public ExpressionBuilder method(
             SimpleName name,
@@ -495,19 +464,16 @@ public class ExpressionBuilder {
         if (arguments == null) {
             throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
         }
-        return method(
-                Collections.<Type>emptyList(),
-                name,
-                arguments);
+        return method(Collections.<Type> emptyList(), name, arguments);
     }
 
     /**
-     * このビルダーで構築した式を限定子に取るメソッド起動式を返す。
-     * @param typeArguments 型変数の一覧
-     * @param name 起動するメソッドの名前
-     * @param arguments 起動引数の一覧
-     * @return 結果をさらに操作するビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the method invocation which take the building expression as its receiver object.
+     * @param typeArguments the type arguments
+     * @param name the target method name
+     * @param arguments the method arguments
+     * @return this
+     * @throws IllegalArgumentException the parameters are {@code null}
      */
     public ExpressionBuilder method(
             List<? extends Type> typeArguments,
@@ -522,11 +488,7 @@ public class ExpressionBuilder {
         if (arguments == null) {
             throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
         }
-        return chain(f.newMethodInvocationExpression(
-                context,
-                typeArguments,
-                name,
-                arguments));
+        return chain(f.newMethodInvocationExpression(context, typeArguments, name, arguments));
     }
 
     private ExpressionBuilder chain(Expression expression) {

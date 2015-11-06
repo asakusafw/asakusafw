@@ -70,18 +70,10 @@ public class ArrayListBuffer<E> extends AbstractList<E> implements ListBuffer<E>
     }
 
     /**
-     * {@link #begin()}から{@link #end()}の期間に起動され、
-     * 直前の{@link #begin()}以降に{@link #advance()}を起動した回数を返す。
-     * <p>
-     * 内部カーソルの位置は次に{@link #advance()}メソッドがオブジェクトを
-     * 返すリスト内の位置を表している。
-     * 例えば、{@link #begin()}の直後にこのメソッドを起動した場合には{@code 0}が返される。
-     * </p>
-     * <p>
-     * なお、{@link #begin()}から{@link #end()}の期間の外で起動された場合、
-     * このメソッドの動作は保証されない。
-     * </p>
-     * @return 直前の{@link #begin()}以降に{@link #advance()}を起動した回数
+     * Returns the current cursor position.
+     * This method must be invoked between {@link #begin()} and {@link #end()}, and it will return
+     * the number of invoking {@link #advance()} since the last {@link #begin()} was invoked.
+     * @return the number of invoking {@link #advance()}
      */
     public int getCursorPosition() {
         return cursor;

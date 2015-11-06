@@ -31,27 +31,27 @@ import java.nio.charset.Charset;
 import javax.tools.FileObject;
 
 /**
- * メモリ上でリソースファイルを取り扱うためのファイルオブジェクトクラス。
+ * A {@link FileObject} implementation which is stored on the heap.
  */
 public class VolatileResourceFile implements FileObject {
 
     /**
-     * このファイルのスキーマ名。
+     * The schema name of this kind of resources.
      */
     public static final String URI_SCHEME = VolatileResourceFile.class.getName();
 
     private static final Charset CHARSET = Charset.forName("UTF-8"); //$NON-NLS-1$
 
-    private URI uri;
+    private final URI uri;
 
     volatile byte[] contents;
 
     volatile long lastModified;
 
     /**
-     * インスタンスを生成する。
-     * @param path このファイルのフォルダからの相対パス
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Creates a new instance.
+     * @param path the relative path from the source path
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public VolatileResourceFile(String path) {
         this.uri = toUriFromPath(path);

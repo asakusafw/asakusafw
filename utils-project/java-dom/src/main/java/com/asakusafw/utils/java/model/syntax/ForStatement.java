@@ -15,9 +15,8 @@
  */
 package com.asakusafw.utils.java.model.syntax;
 
-
 /**
- * {@code for}文を表現するインターフェース。
+ * An interface which represents for statement.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:14.14.1] The basic for Statement} </li>
@@ -27,39 +26,27 @@ package com.asakusafw.utils.java.model.syntax;
 public interface ForStatement
         extends Statement {
 
-    // properties
-
     /**
-     * ループ初期化部を返す。
-     * <p> ループ初期化部が指定されない場合は{@code null}が返される。 </p>
-     * @return
-     *     ループ初期化部、
-     *     ただしループ初期化部が指定されない場合は{@code null}
+     * Returns the loop initialization part.
+     * @return the loop initialization part, or {@code null} if it is not specified
      */
     ForInitializer getInitialization();
 
     /**
-     * ループ条件式を返す。
-     * <p> ループ条件が指定されない場合は{@code null}が返される。 </p>
-     * @return
-     *     ループ条件式、
-     *     ただしループ条件が指定されない場合は{@code null}
+     * Returns the loop condition expression.
+     * @return the loop condition expression, or if it is not specified
      */
     Expression getCondition();
 
     /**
-     * ループ更新部を返す。
-     * <p> ループ更新部が指定されない場合は{@code null}が返される。 </p>
-     * @return
-     *     ループ更新部、
-     *     ただしループ更新部が指定されない場合は{@code null}
+     * Returns the loop update part.
+     * @return the loop update part, or {@code null} if it is not specified
      */
     StatementExpressionList getUpdate();
 
     /**
-     * ループ本体を返す。
-     * @return
-     *     ループ本体
+     * Returns the loop body.
+     * @return the loop body
      */
     Statement getBody();
 }

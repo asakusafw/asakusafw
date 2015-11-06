@@ -16,22 +16,22 @@
 package com.asakusafw.utils.java.model.syntax;
 
 /**
- * ワイルドカードが持つ型境界の種類。
+ * Represents a kind of wildcard type bounds.
  */
 public enum WildcardBoundKind {
 
     /**
-     * バウンドを持たない。
+     * Unbound.
      */
     UNBOUNDED(""), //$NON-NLS-1$
 
     /**
-     * 上界を持つ。
+     * With upper bound types.
      */
     UPPER_BOUNDED("extends"), //$NON-NLS-1$
 
     /**
-     * 下界を持つ。
+     * With lower bound types.
      */
     LOWER_BOUNDED("super"), //$NON-NLS-1$
     ;
@@ -39,8 +39,8 @@ public enum WildcardBoundKind {
     private final String representation;
 
     /**
-     * インスタンスを生成する。
-     * @param representation 表記
+     * Creates a new instance.
+     * @param representation the keyword
      */
     private WildcardBoundKind(String representation) {
         assert representation != null;
@@ -48,18 +48,17 @@ public enum WildcardBoundKind {
     }
 
     /**
-     * この要素の表記を返す。
-     * @return この要素の表記
+     * Returns the keyword.
+     * @return the keyword, or an empty string for unbound kind
      */
     public String getRepresentation() {
         return representation;
     }
 
     /**
-     * この種類を正規化する。
-     * {@link #UNBOUNDED}は{@link #UPPER_BOUNDED}に変換され、
-     * それ以外は自身を返す。
-     * @return 正規化した定数
+     * Normalizes this bound kind.
+     * Returns {@link #UPPER_BOUNDED} if this kind is {@link #UNBOUNDED}, or otherwise returns itself.
+     * @return the normalized kind
      */
     public WildcardBoundKind normalize() {
         return this == UNBOUNDED ? UPPER_BOUNDED : this;

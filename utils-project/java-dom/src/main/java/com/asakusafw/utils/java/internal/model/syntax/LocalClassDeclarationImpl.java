@@ -21,13 +21,10 @@ import com.asakusafw.utils.java.model.syntax.ModelKind;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link LocalClassDeclaration}の実装。
+ * An implementation of {@link LocalClassDeclaration}.
  */
 public final class LocalClassDeclarationImpl extends ModelRoot implements LocalClassDeclaration {
 
-    /**
-     * 宣言するクラス。
-     */
     private ClassDeclaration declaration;
 
     @Override
@@ -36,11 +33,9 @@ public final class LocalClassDeclarationImpl extends ModelRoot implements LocalC
     }
 
     /**
-     * 宣言するクラスを設定する。
-     * @param declaration
-     *     宣言するクラス
-     * @throws IllegalArgumentException
-     *     {@code declaration}に{@code null}が指定された場合
+     * Sets the declaring class.
+     * @param declaration the declaring class
+     * @throws IllegalArgumentException if {@code declaration} was {@code null}
      */
     public void setDeclaration(ClassDeclaration declaration) {
         Util.notNull(declaration, "declaration"); //$NON-NLS-1$
@@ -48,7 +43,7 @@ public final class LocalClassDeclarationImpl extends ModelRoot implements LocalC
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#LOCAL_CLASS_DECLARATION}を返す。
+     * Returns {@link ModelKind#LOCAL_CLASS_DECLARATION} which represents this element kind.
      * @return {@link ModelKind#LOCAL_CLASS_DECLARATION}
      */
     @Override
@@ -57,8 +52,7 @@ public final class LocalClassDeclarationImpl extends ModelRoot implements LocalC
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitLocalClassDeclaration(this, context);
     }

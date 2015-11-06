@@ -16,29 +16,25 @@
 package com.asakusafw.runtime.model;
 
 /**
- * Asakusaが利用する標準のデータモデルが実装すべきインターフェース。
- * <p>
- * このインターフェースにプロパティ{@code p}を追加する場合、以下のメソッドを定義する必要がある。
- * ただし、{@code p}の名前をCamelCaseの形式で表記したものを{@code <PropName>}とし、
- * {@code p}の型を{@code <PropType>}とする。
- * </p>
-<ul>
-<li> {@code get<PropName>Option():<PropType>} </li>
-<li> {@code set<PropName>Option(<PropType>):void} </li>
-</ul>
- * @param <T> 自分自身
+ * An abstract super interface of Asakusa data model classes.
+ * If clients define properties in the data model classes, the target class must have following methods.
+ * <ul>
+ * <li> {@code get<PropertyName>Option():<PropertyType>} </li>
+ * <li> {@code set<PropertyName>Option(<PropertyType>):void} </li>
+ * </ul>
+ * @param <T> the data model type
  * @since 0.2.0
  */
 public interface DataModel<T extends DataModel<T>> {
 
     /**
-     * このオブジェクトの内容をクリアして、インスタンス生成直後と同じ状態に戻す。
+     * Resets the properties in this to initial state.
      */
     void reset();
 
     /**
-     * 指定のオブジェクトの内容を、このオブジェクトに書き出す。
-     * @param other 対象のオブジェクト
+     * Copies the properties in the specified object into this.
+     * @param other the target object
      */
     void copyFrom(T other);
 }

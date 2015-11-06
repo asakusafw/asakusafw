@@ -18,7 +18,7 @@ package com.asakusafw.utils.java.model.syntax;
 import java.util.List;
 
 /**
- * 配列生成式を表現するインターフェース。
+ * An interface which represents array creation expression.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:15.10] Array Creation Expressions} </li>
@@ -28,29 +28,21 @@ import java.util.List;
 public interface ArrayCreationExpression
         extends Expression {
 
-    // properties
-
     /**
-     * 生成する配列の型を返す。
-     * @return
-     *     生成する配列の型
+     * Returns the target array type.
+     * @return the target array type
      */
     ArrayType getType();
 
     /**
-     * 要素数指定式を返す。
-     * <p> 次元ごとの要素数が一つも指定されない場合は空が返される。 </p>
-     * @return
-     *     要素数指定式
+     * Returns the dimension expressions.
+     * @return the dimension expressions
      */
     List<? extends Expression> getDimensionExpressions();
 
     /**
-     * 配列初期化子を返す。
-     * <p> 配列初期化子が指定されない場合は{@code null}が返される。 </p>
-     * @return
-     *     配列初期化子、
-     *     ただし配列初期化子が指定されない場合は{@code null}
+     * Returns the array initializer.
+     * @return the array initializer, or {@code null} if there is no initializer
      */
     ArrayInitializer getArrayInitializer();
 }

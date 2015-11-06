@@ -44,14 +44,14 @@ import com.asakusafw.utils.java.model.util.Models;
 import com.asakusafw.vocabulary.flow.FlowPart;
 
 /**
- * フロー部品をもとにした演算子ファクトリーを生成する。
+ * An implementation of Java annotation processor which generates a support class for flow-part classes.
  * @since 0.1.0
  * @version 0.7.0
  */
 public class FlowOperatorCompiler implements Processor {
 
     /**
-     * このコンパイラのバージョン。
+     * The compiler version.
      */
     public static final String VERSION = "0.1.0"; //$NON-NLS-1$
 

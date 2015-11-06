@@ -15,9 +15,8 @@
  */
 package com.asakusafw.vocabulary.batch;
 
-
 /**
- * グラフ構造。
+ * DAG structure.
  */
 public class GraphBatch extends BatchDescription {
 

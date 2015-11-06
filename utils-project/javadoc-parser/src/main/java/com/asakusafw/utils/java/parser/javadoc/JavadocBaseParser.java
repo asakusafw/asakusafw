@@ -22,48 +22,46 @@ import java.util.List;
 import com.asakusafw.utils.java.internal.parser.javadoc.ir.IrDocBlock;
 
 /**
- * Javadocのパーサの親クラス。
+ * An abstract super class of Java documentation comment parsers.
  */
 public abstract class JavadocBaseParser {
 
     private List<? extends JavadocBlockParser> blockParsers;
 
     /**
-     * インスタンスを生成する。
-     * @param blockParsers ブロックパーサの一覧
+     * Creates a new instance.
+     * @param blockParsers the block parsers
      */
     public JavadocBaseParser(List<? extends JavadocBlockParser> blockParsers) {
-        super();
         setBlockParsers(blockParsers);
     }
 
     /**
-     * ブロックを解析するインスタンスの一覧を返す。
-     * @return ブロックを解析するインスタンスの一覧
+     * Returns the block parsers.
+     * @return the block parsers
      */
     public final List<? extends JavadocBlockParser> getBlockParsers() {
         return this.blockParsers;
     }
 
     /**
-     * ブロックを解析するインスタンスの一覧を設定する。
-     * @param blockParsers 設定するパーサの一覧
-     * @throws IllegalArgumentException 引数が{@code null}であった場合
+     * Sets the block parsers.
+     * @param blockParsers the block parsers
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public final void setBlockParsers(List<? extends JavadocBlockParser> blockParsers) {
         if (blockParsers == null) {
             throw new IllegalArgumentException("blockParsers"); //$NON-NLS-1$
         }
-        this.blockParsers = Collections.unmodifiableList(
-            new ArrayList<JavadocBlockParser>(blockParsers));
+        this.blockParsers = Collections.unmodifiableList(new ArrayList<JavadocBlockParser>(blockParsers));
     }
 
     /**
-     * このパーサに登録されたブロックパーサを利用し、対象のブロックを解析する。
-     * @param block 対象のブロック
-     * @return 解析結果
-     * @throws JavadocParseException ブロックの解析に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Parses the target block and returns the block information.
+     * @param block the target block
+     * @return the parsed information
+     * @throws JavadocParseException if error was occurred while analyzing the target block
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public IrDocBlock parseBlock(JavadocBlockInfo block) throws JavadocParseException {
         if (block == null) {

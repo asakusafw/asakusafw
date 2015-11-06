@@ -22,20 +22,22 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * モデルへの参照。
+ * Represents references to data model classes.
+ * @deprecated Use {@link Joined} or {@link Summarized} instead
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
+@Deprecated
 public @interface ModelRef {
 
     /**
-     * モデルを表す型。
+     * The data model class.
      */
     Class<?> type();
 
     /**
-     * モデルのグループ化やソートに利用されるキー。
+     * Grouping/sort information.
      */
     Key key();
 }

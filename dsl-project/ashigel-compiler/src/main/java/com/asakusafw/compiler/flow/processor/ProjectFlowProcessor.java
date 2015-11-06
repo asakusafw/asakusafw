@@ -24,7 +24,7 @@ import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
 import com.asakusafw.vocabulary.operator.Project;
 
 /**
- * {@link Project 射影演算子}を処理する。
+ * Processes {@link Project} operators.
  */
 @TargetOperator(Project.class)
 public class ProjectFlowProcessor extends LinePartProcessor {

@@ -135,23 +135,23 @@ public abstract class DirectIoTester {
         }
 
         /**
-         * テスト実行時に使用する外部リソースのデータを指定する。
-         * @param source 入力データ
+         * Sets a data source for this external resource.
+         * @param source input data
          */
         public abstract void prepare(DataModelSourceFactory source);
 
         /**
-         * テスト実行時に使用する外部リソースのデータを指定する。
-         * @param sourcePath 入力データのパス
-         * @throws IllegalArgumentException 対象のリソースが見つからない場合
+         * Sets a data source path for this external resource.
+         * @param sourcePath the source path
+         * @throws IllegalArgumentException if the source is not found
          */
         public final void prepare(String sourcePath) {
             prepare(toDataModelSourceFactory(sourcePath));
         }
 
         /**
-         * テスト実行時の外部リソースのデータを設定する。
-         * @param objects データモデルオブジェクトの一覧
+         * Sets a data objects for this external resource.
+         * @param objects a list of data model objects
          */
         @SuppressWarnings({ "rawtypes", "unchecked" })
         public final void prepare(Iterable<?> objects) {
@@ -164,8 +164,8 @@ public abstract class DirectIoTester {
         }
 
         /**
-         * テスト実行時の外部リソースのデータを設定する。
-         * @param provider データモデルオブジェクトを提供するプロバイダー
+         * Sets a data source provider for this external resource.
+         * @param provider provider that provides data model objects
          */
         public final void prepare(Provider<? extends Source<?>> provider) {
             prepare(toDataModelSourceFactory(provider));

@@ -41,14 +41,14 @@ import com.asakusafw.vocabulary.external.ImporterDescription.DataSize;
 public class MasterJoinUpdateFlowProcessorTest {
 
     /**
-     * テストヘルパ。
+     * A test helper
      */
     @Rule
     public CompilerTester tester = new CompilerTester();
 
     /**
-     * 単純なテスト。
-     * @throws Exception テストが失敗した場合
+     * simple case.
+     * @throws Exception if exception was occurred
      */
     @Test
     public void simple() throws Exception {
@@ -56,8 +56,8 @@ public class MasterJoinUpdateFlowProcessorTest {
     }
 
     /**
-     * TINYを指定するテスト。
-     * @throws Exception テストが失敗した場合
+     * w/ TINY input.
+     * @throws Exception if exception was occurred
      */
     @Test
     public void tiny() throws Exception {
@@ -135,8 +135,8 @@ public class MasterJoinUpdateFlowProcessorTest {
     }
 
     /**
-     * パラメタつきのテスト。
-     * @throws Exception テストが失敗した場合
+     * w/ user parameters.
+     * @throws Exception if exception was occurred
      */
     @Test
     public void withParameter() throws Exception {
@@ -144,8 +144,8 @@ public class MasterJoinUpdateFlowProcessorTest {
     }
 
     /**
-     * TINY指定でパラメタつきのテスト。
-     * @throws Exception テストが失敗した場合
+     * w/ TINY input and user parameters.
+     * @throws Exception if exception was occurred
      */
     @Test
     public void tinyWithParameter() throws Exception {
@@ -223,8 +223,8 @@ public class MasterJoinUpdateFlowProcessorTest {
     }
 
     /**
-     * セレクタつき。
-     * @throws Exception テストが失敗した場合
+     * w/ selector.
+     * @throws Exception if exception was occurred
      */
     @Test
     public void selection() throws Exception {
@@ -232,8 +232,8 @@ public class MasterJoinUpdateFlowProcessorTest {
     }
 
     /**
-     * セレクタつき。
-     * @throws Exception テストが失敗した場合
+     * w/ selector.
+     * @throws Exception if exception was occurred
      */
     @Test
     public void tinySelection() throws Exception {

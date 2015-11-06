@@ -64,8 +64,8 @@ public final class PropertyInfo {
     }
 
     /**
-     * Returns the proeprty type.
-     * @return the proeprty type
+     * Returns the property type.
+     * @return the property type
      */
     public Class<?> getType() {
         return type;

@@ -17,7 +17,7 @@ package com.asakusafw.utils.java.model.syntax;
 
 
 /**
- * 二項演算式を表現するインターフェース。
+ * An interface which represents binary expression operator.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:15.17] Multiplicative Operators} </li>
@@ -35,26 +35,21 @@ package com.asakusafw.utils.java.model.syntax;
 public interface InfixExpression
         extends Expression {
 
-    // properties
-
     /**
-     * 第一演算項を返す。
-     * @return
-     *     第一演算項
+     * Returns the left term.
+     * @return the left term
      */
     Expression getLeftOperand();
 
     /**
-     * 二項演算子を返す。
-     * @return
-     *     二項演算子
+     * Returns the infix operator.
+     * @return the infix operator
      */
     InfixOperator getOperator();
 
     /**
-     * 第二演算項を返す。
-     * @return
-     *     第二演算項
+     * Returns the right term.
+     * @return the right term
      */
     Expression getRightOperand();
 }

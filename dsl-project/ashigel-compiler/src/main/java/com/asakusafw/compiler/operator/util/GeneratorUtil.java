@@ -54,7 +54,7 @@ import com.asakusafw.vocabulary.operator.KeyInfo;
 import com.asakusafw.vocabulary.operator.OperatorInfo;
 
 /**
- * JavaのDOMを構築する際のユーティリティ。
+ * Utilities about building Java DOM.
  * @since 0.1.0
  * @version 0.5.0
  */
@@ -67,11 +67,11 @@ public class GeneratorUtil {
     private final ImportBuilder importer;
 
     /**
-     * インスタンスを生成する。
-     * @param environment 環境オブジェクト
-     * @param factory DOMを構築するためのファクトリ
-     * @param importer インポート宣言を構築するビルダー
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Creates a new instance.
+     * @param environment the current environment
+     * @param factory the Java DOM factory
+     * @param importer the current import declaration builder
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public GeneratorUtil(
             OperatorCompilingEnvironment environment,
@@ -86,10 +86,10 @@ public class GeneratorUtil {
     }
 
     /**
-     * 指定の型に対する演算子ファクトリークラスの単純名を返す。
-     * @param type 対象の型
-     * @return 対応する単純名
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns a simple name of the operator factory class for the specified type.
+     * @param type the target type
+     * @return the corresponded simple name
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public final SimpleName getFactoryName(TypeElement type) {
         Precondition.checkMustNotBeNull(type, "type"); //$NON-NLS-1$
@@ -100,10 +100,10 @@ public class GeneratorUtil {
     }
 
     /**
-     * 指定の型に対する演算子実装クラスの単純名を返す。
-     * @param type 対象の型
-     * @return 対応する単純名
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns a simple name of the operator implementation class for the specified type.
+     * @param type the target type
+     * @return the corresponded simple name
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public final SimpleName getImplementorName(TypeElement type) {
         Precondition.checkMustNotBeNull(type, "type"); //$NON-NLS-1$
@@ -112,10 +112,10 @@ public class GeneratorUtil {
     }
 
     /**
-     * 指定の型に対する演算子実装クラスの名前を返す。
-     * @param typeName 対象の型名
-     * @return 対応する単純名
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns a simple name of the operator factory class for the specified type.
+     * @param typeName the target type name
+     * @return the corresponded simple name
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static final String getImplmentorName(String typeName) {
         Precondition.checkMustNotBeNull(typeName, "typeName"); //$NON-NLS-1$
@@ -126,10 +126,10 @@ public class GeneratorUtil {
     }
 
     /**
-     * 指定の型に対応する型のモデルを返す。
-     * @param type 対象の型
-     * @return 型のモデル
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the type model for the specified type.
+     * @param type the target type
+     * @return the type model
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public final Type t(TypeMirror type) {
         Precondition.checkMustNotBeNull(type, "type"); //$NON-NLS-1$
@@ -137,10 +137,10 @@ public class GeneratorUtil {
     }
 
     /**
-     * 指定の型に対応する型のモデルを返す。
-     * @param type 対象の型
-     * @return 型のモデル
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the type model for the specified type.
+     * @param type the target type
+     * @return the type model
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public final Type t(TypeElement type) {
         Precondition.checkMustNotBeNull(type, "type"); //$NON-NLS-1$
@@ -149,10 +149,10 @@ public class GeneratorUtil {
     }
 
     /**
-     * 指定の型に対応する型のモデルを返す。
-     * @param type 対象の型
-     * @return 型のモデル
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the type model for the specified type.
+     * @param type the target type
+     * @return the type model
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public final Type t(java.lang.reflect.Type type) {
         Precondition.checkMustNotBeNull(type, "type"); //$NON-NLS-1$
@@ -160,10 +160,10 @@ public class GeneratorUtil {
     }
 
     /**
-     * 指定の値に対応するリテラルのモデルを返す。
-     * @param value 対象の値
-     * @return 指定の値に対応するリテラルのモデル
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the literal model for the specified value.
+     * @param value the target value
+     * @return the literal model
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public Literal v(String value) {
         Precondition.checkMustNotBeNull(value, "value"); //$NON-NLS-1$
@@ -171,11 +171,11 @@ public class GeneratorUtil {
     }
 
     /**
-     * 指定の値に対応するリテラルのモデルを返す。
-     * @param pattern {@link MessageFormat}のパターン
-     * @param arguments {@link MessageFormat}の引数一覧
-     * @return 指定の値に対応するリテラルのモデル
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the literal model for the specified value.
+     * @param pattern the string patter ({@link MessageFormat} style)
+     * @param arguments the pattern arguments ({@link MessageFormat} style)
+     * @return the literal model
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public Literal v(String pattern, Object... arguments) {
         Precondition.checkMustNotBeNull(pattern, "pattern"); //$NON-NLS-1$
@@ -184,10 +184,10 @@ public class GeneratorUtil {
     }
 
     /**
-     * 指定のデータの種類に対する{@link Source 結果型}を返す。
-     * @param type 対象データの種類
-     * @return 対応する結果型
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns the {@link Source operator output} for the corresponding data type.
+     * @param type the target data type
+     * @return the corresponded operator output type
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public Type toSourceType(TypeMirror type) {
         Precondition.checkMustNotBeNull(type, "type"); //$NON-NLS-1$
@@ -197,10 +197,10 @@ public class GeneratorUtil {
     }
 
     /**
-     * 指定のデータの種類に対する{@link In 入力型}を返す。
-     * @param type 対象データの種類
-     * @return 対応する入力型
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns the {@link In flow input} for the corresponding data type.
+     * @param type the target data type
+     * @return the corresponded flow input type
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public Type toInType(TypeMirror type) {
         Precondition.checkMustNotBeNull(type, "type"); //$NON-NLS-1$
@@ -210,10 +210,10 @@ public class GeneratorUtil {
     }
 
     /**
-     * 指定のデータの種類に対する{@link Out 出力型}を返す。
-     * @param type 対象データの種類
-     * @return 対応する出力型
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns the {@link Out flow output type} for the corresponding data type.
+     * @param type the target data type
+     * @return the corresponded flow output type
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public Type toOutType(TypeMirror type) {
         Precondition.checkMustNotBeNull(type, "type"); //$NON-NLS-1$
@@ -226,7 +226,7 @@ public class GeneratorUtil {
      * Returns the representation for type parameter declarations of the executable element.
      * @param element target element
      * @return the corresponded representation
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public List<TypeParameterDeclaration> toTypeParameters(ExecutableElement element) {
         Precondition.checkMustNotBeNull(element, "element"); //$NON-NLS-1$
@@ -237,7 +237,7 @@ public class GeneratorUtil {
      * Returns the representation for type parameter declarations of the type element.
      * @param element target element
      * @return the corresponded representation
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public List<TypeParameterDeclaration> toTypeParameters(TypeElement element) {
         Precondition.checkMustNotBeNull(element, "element"); //$NON-NLS-1$
@@ -263,7 +263,7 @@ public class GeneratorUtil {
      * Returns the representation for type variables of the executable element.
      * @param element target element
      * @return the corresponded representation
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public List<Type> toTypeVariables(ExecutableElement element) {
         Precondition.checkMustNotBeNull(element, "element"); //$NON-NLS-1$
@@ -274,7 +274,7 @@ public class GeneratorUtil {
      * Returns the representation for type variables of the type element.
      * @param element target element
      * @return the corresponded representation
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public List<Type> toTypeVariables(TypeElement element) {
         Precondition.checkMustNotBeNull(element, "element"); //$NON-NLS-1$

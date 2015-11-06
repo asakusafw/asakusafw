@@ -1,3 +1,5 @@
+-- package com.asakusafw.compiler
+
 @namespace(value = operator)
 @auto_projection
 mock_foo = {

@@ -31,7 +31,7 @@ import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.utils.collections.Lists;
 
 /**
- * ファイルシステム上のディレクトリをリソースのリポジトリとする。
+ * An implementation of {@link ResourceRepository} which provides contents in a directory on the local file system.
  */
 public class FileRepository implements ResourceRepository {
 
@@ -40,10 +40,10 @@ public class FileRepository implements ResourceRepository {
     private final File root;
 
     /**
-     * インスタンスを生成する。
-     * @param root リポジトリのルートディレクトリ
+     * Creates a new instance.
+     * @param root the target directory
      * @throws IOException if failed to canonicalize path
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public FileRepository(File root) throws IOException {
         Precondition.checkMustNotBeNull(root, "root"); //$NON-NLS-1$

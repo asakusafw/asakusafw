@@ -23,7 +23,7 @@ import java.lang.annotation.Target;
 
 import com.asakusafw.vocabulary.model.Key;
 
-
+//TODO i18n
 /**
  * マスタ確認演算子を表すメソッドに付与する注釈。
  * <p>
@@ -77,12 +77,12 @@ import com.asakusafw.vocabulary.model.Key;
  &#42; レコードHogeTrnに対するHogeMstが存在する場合に{&#64;code true}を返す。
  &#42; &#64;param master マスタデータ
  &#42; &#64;param tx トランザクションデータ
- &#42; &#64;return HogeMstが存在する場合のみ{@code true}
+ &#42; &#64;return HogeMstが存在する場合のみ{&#64;code true}
  &#42;&#47;
 &#64;MasterCheck
 public abstract boolean exists(
-        &#64;Key(group = "id") HogeMst master,
-        &#64;Key(group = "masterId") HogeTrn tx);
+        &#64;Key(group = &quot;id&quot;) HogeMst master,
+        &#64;Key(group = &quot;masterId&quot;) HogeTrn tx);
 </code></pre>
  * @see MasterJoin
  * @see MasterSelection
@@ -93,37 +93,38 @@ public abstract boolean exists(
 public @interface MasterCheck {
 
     /**
-     * マスタの入力ポート番号。
+     * The input port number for the <em>master</em> data.
      */
     int ID_INPUT_MASTER = 0;
 
     /**
-     * トランザクションの入力ポート番号。
+     * The input port number for the <em>transaction</em> data.
      */
     int ID_INPUT_TRANSACTION = 1;
 
     /**
-     * 引き当てが成功した場合の出力先のポート番号。
+     * The output port number for the successfully checked data.
      */
     int ID_OUTPUT_FOUND = 0;
 
     /**
-     * 引き当てが失敗した場合の出力先のポート番号。
+     * The output port number for the <em>master</em> missing data.
      */
     int ID_OUTPUT_MISSED = 1;
 
     /**
-     * 引き当てが成功した場合の出力先のポート名。
+     * The default port name of {#ID_OUTPUT_FOUND}.
      */
     String foundPort() default "found";
 
     /**
-     * 引き当てが失敗した場合の出力先のポート名。
+     * The default port name of {@link #ID_OUTPUT_MISSED}.
      */
     String missedPort() default "missed";
 
     /**
-     * 利用するマスタ選択演算子のメソッド名。
+     * The selector method name.
+     * The target method must be declared in the same class.
      * @see MasterSelection
      */
     String selection() default MasterSelection.NO_SELECTION;

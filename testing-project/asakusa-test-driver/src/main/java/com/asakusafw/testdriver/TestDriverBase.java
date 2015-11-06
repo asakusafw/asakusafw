@@ -25,6 +25,7 @@ import java.util.Map;
 
 import com.asakusafw.compiler.flow.FlowCompilerOptions;
 import com.asakusafw.compiler.trace.TracepointWeaveRewriter;
+import com.asakusafw.runtime.core.Report;
 import com.asakusafw.testdriver.core.TestDataToolProvider;
 import com.asakusafw.testdriver.core.TestingEnvironmentConfigurator;
 import com.asakusafw.trace.io.TraceSettingSerializer;
@@ -36,7 +37,7 @@ import com.asakusafw.vocabulary.flow.FlowDescription;
 import com.asakusafw.vocabulary.flow.FlowPart;
 
 /**
- * テストドライバの基底クラス。
+ * An abstract super class of test-driver classes.
  * @since 0.2.0
  * @version 0.7.0
  */
@@ -48,8 +49,10 @@ public abstract class TestDriverBase extends DriverElementBase {
         TestingEnvironmentConfigurator.initialize();
     }
 
-    /** テストドライバコンテキスト。テスト実行時のコンテキスト情報が格納される。 */
-    protected TestDriverContext driverContext;
+    /**
+     * The internal test driver context object.
+     */
+    protected final TestDriverContext driverContext;
 
     /**
      * Creates a new instance.
@@ -74,14 +77,11 @@ public abstract class TestDriverBase extends DriverElementBase {
     }
 
     /**
-     * 設定項目を追加する。
-     *
-     * @param key
-     *            追加する項目のキー名
-     * @param value
-     *            追加する項目の値、{@code null}の場合には項目を削除する
-     * @throws IllegalArgumentException
-     *             引数に{@code null}が指定された場合
+     * Adds a runtime configuration item.
+     * This may customize behavior of some framework APIs (e.g. {@link Report report API}).
+     * @param key the configuration key name
+     * @param value the configuration value, or {@code null} to unset the target configuration
+     * @throws IllegalArgumentException if {@code key} is {@code null}
      */
     public void configure(String key, String value) {
         if (key == null) {
@@ -95,14 +95,10 @@ public abstract class TestDriverBase extends DriverElementBase {
     }
 
     /**
-     * バッチ実行時引数を設定する。
-     *
-     * @param key
-     *            追加する項目のキー名
-     * @param value
-     *            追加する項目の値、{@code null}の場合には項目を削除する
-     * @throws IllegalArgumentException
-     *             引数に{@code null}が指定された場合
+     * Adds a batch argument.
+     * @param key the argument name
+     * @param value the argument value, or {@code null} to unset the target argument
+     * @throws IllegalArgumentException if {@code key} is {@code null}
      */
     public void setBatchArg(String key, String value) {
         if (key == null) {
@@ -116,10 +112,13 @@ public abstract class TestDriverBase extends DriverElementBase {
     }
 
     /**
-     * コンパイラの最適化レベルを変更する。
-     *
-     * @param level
-     *            0: 設定可能な最適化を全て行わない、1: デフォルト、2~: 最適化を積極的に行う
+     * Configures the compiler optimization level.
+     * <ul>
+     * <li> 0: disables all optimizations </li>
+     * <li> 1: only enables default optimizations </li>
+     * <li> 2~: enables aggressive optimizations </li>
+     * </ul>
+     * @param level the compiler optimization level
      */
     public void setOptimize(int level) {
         FlowCompilerOptions options = driverContext.getOptions();
@@ -145,20 +144,18 @@ public abstract class TestDriverBase extends DriverElementBase {
     }
 
     /**
-     * コンパイラが生成するコードのデバッグ情報について変更する。
-     *
-     * @param enable
-     *            デバッグ情報を残す場合に{@code true}、捨てる場合に{@code false}
+     * Sets whether compiler should keep debugging information or not.
+     * @param enable {@code true} to keep debugging information, otherwise {@code false}
      */
     public void setDebug(boolean enable) {
         driverContext.getOptions().setEnableDebugLogging(enable);
     }
 
     /**
-     * コンパイラの追加オプション ({@code X<name>=<value>}) を設定する。
-     * オプション名を指定する際に、先頭の {@code "X"} を指定しないこと。
-     * @param name オプション名
-     * @param value オプションの値
+     * Sets an extra compiler option ({@code X<name>=<value>}).
+     * The compiler name MUST NOT start with {@code "X"}.
+     * @param name the option name
+     * @param value the option value
      * @since 0.7.3
      */
     public void setExtraCompilerOption(String name, String value) {
@@ -172,23 +169,18 @@ public abstract class TestDriverBase extends DriverElementBase {
     }
 
     /**
-     * フレームワークのホームパス({@code ASAKUSA_HOME})を設定する。
-     * <p>
-     * この値が未設定の場合、環境変数に設定された値を利用する。
-     * </p>
-     * @param frameworkHomePath フレームワークのホームパス、未設定に戻す場合は{@code null}
+     * Sets the Asakusa framework installation path ({@literal a.k.a.} {@code $ASAKUSA_HOME}).
+     * If this is not set, the installation path will be computed from the environment variable.
+     * @param frameworkHomePath the framework installation path
      */
     public void setFrameworkHomePath(File frameworkHomePath) {
         driverContext.setFrameworkHomePath(frameworkHomePath);
     }
 
-
     /**
-     * 外部ライブラリを格納するディレクトリのパスを設定する。
-     * <p>
-     * この値が未設定の場合、 {@link TestDriverContext#EXTERNAL_LIBRARIES_PATH} で指定されたパスを利用する。
-     * </p>
-     * @param librariesPath 外部ライブラリを格納するディレクトリのパス
+     * Sets the search path of the external library files.
+     * If this is not set, the search path will be {@link TestDriverContext#EXTERNAL_LIBRARIES_PATH}.
+     * @param librariesPath the search path of the external library files
      * @since 0.5.1
      */
     public void setLibrariesPath(File librariesPath) {
@@ -196,15 +188,10 @@ public abstract class TestDriverBase extends DriverElementBase {
     }
 
     /**
-     * このテストで利用するDSLコンパイラの作業ディレクトリを設定する。
-     * <p>
-     * ワーキングディレクトリが設定されていない場合、テストドライバは一時的なディレクトリを作成し、
-     * テスト終了時に作成したディレクトリを自動的に削除する。
-     * </p>
-     * <p>
-     * 通常この設定を行う必要はないが、コンパイラが生成したプログラムなどを分析する場合などに設定されることを想定している。
-     * </p>
-     * @param path 設定するコンパイラの作業ディレクトリ
+     * Sets the explicit compiler working directory.
+     * If this is not set, the compiler will create the working directory into the temporary area,
+     * and remove it after test was finished.
+     * @param path the explicit compiler working directory
      * @since 0.5.2
      */
     public void setCompilerWorkingDirectory(File path) {
@@ -212,9 +199,8 @@ public abstract class TestDriverBase extends DriverElementBase {
     }
 
     /**
-     * テスト条件の検証をスキップするかを設定する。
-     * @param skip
-     *            テスト条件の検証をスキップする場合は{@code true}、スキップしない場合は{@code false}
+     * Sets whether skips verifying test conditions.
+     * @param skip {@code true} if verifying test conditions, otherwise {@code false}
      * @since 0.7.0
      */
     public void skipValidateCondition(boolean skip) {
@@ -222,60 +208,48 @@ public abstract class TestDriverBase extends DriverElementBase {
     }
 
     /**
-     * 入力データのクリーニング(truncate)をスキップするかを設定する。
-     *
-     * @param skip
-     *            入力データのクリーニング(truncate)をスキップする場合は{@code true}、スキップしない場合は{@code false}
+     * Sets whether skips truncating test input data.
+     * @param skip {@code true} if truncating test input data, otherwise {@code false}
      */
     public void skipCleanInput(boolean skip) {
         driverContext.setSkipCleanInput(skip);
     }
 
     /**
-     * 出力データのクリーニング(truncate)をスキップするかを設定する。
-     *
-     * @param skip
-     *            出力データのクリーニング(truncate)をスキップする場合は{@code true}、スキップしない場合は{@code false}
+     * Sets whether skips truncating test output data.
+     * @param skip {@code true} if truncating test output data, otherwise {@code false}
      */
     public void skipCleanOutput(boolean skip) {
         driverContext.setSkipCleanOutput(skip);
     }
 
     /**
-     * 入力データのセットアップ(prepare)をスキップするかを設定する。
-     *
-     * @param skip
-     *            入力データのセットアップ(prepare)をスキップする場合は{@code true}、スキップしない場合は{@code false}
+     * Sets whether skips preparing test input data.
+     * @param skip {@code true} if preparing test input data, otherwise {@code false}
      */
     public void skipPrepareInput(boolean skip) {
         driverContext.setSkipPrepareInput(skip);
     }
 
     /**
-     * 出力データのセットアップ(prepare)をスキップするかを設定する。
-     *
-     * @param skip
-     *            出力データのセットアップ(prepare)をスキップする場合は{@code true}、スキップしない場合は{@code false}
+     * Sets whether skips preparing test output data.
+     * @param skip {@code true} if preparing test output data, otherwise {@code false}
      */
     public void skipPrepareOutput(boolean skip) {
         driverContext.setSkipPrepareOutput(skip);
     }
 
     /**
-     * ジョブフローの実行をスキップするかを設定する。
-     *
-     * @param skip
-     *            ジョブフローの実行をスキップする場合は{@code true}、スキップしない場合は{@code false}
+     * Sets whether skips executing jobflows.
+     * @param skip {@code true} if executing jobflows, otherwise {@code false}
      */
     public void skipRunJobflow(boolean skip) {
         driverContext.setSkipRunJobflow(skip);
     }
 
     /**
-     * テスト結果の検証をスキップするかを設定する。
-     *
-     * @param skip
-     *            テスト結果の検証をスキップする場合は{@code true}、スキップしない場合は{@code false}
+     * Sets whether skips verifying test results.
+     * @param skip {@code true} if verifying test results, otherwise {@code false}
      */
     public void skipVerify(boolean skip) {
         driverContext.setSkipVerify(skip);

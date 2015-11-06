@@ -16,22 +16,22 @@
 package com.asakusafw.utils.java.model.syntax;
 
 /**
- * 実行可能メンバの種類。
+ * Represents a kind of executable type members.
  */
 public enum ExecutableKind implements DeclarationKind {
 
     /**
-     * コンストラクタ。
+     * Constructors.
      */
     CONSTRUCTOR,
 
     /**
-     * 通常の(注釈要素でない)メソッド。
+     * Regular methods (not {@link #ANNOTATION_ELEMENT annotation elements}).
      */
     METHOD,
 
     /**
-     * 注釈要素。
+     * Annotation elements.
      */
     ANNOTATION_ELEMENT,
 }

@@ -36,28 +36,25 @@ import com.asakusafw.compiler.operator.OperatorProcessor;
 import com.asakusafw.vocabulary.operator.MasterSelection;
 
 /**
- * {@code Master*}系の演算子を解析する。
+ * Analyzes MasterJoin-like operators.
  */
 public final class MasterKindOperatorAnalyzer {
 
     /**
-     * 指定の演算子メソッドに対するマスタ選択補助演算子を検出する。
-     * @param environment コンパイラの環境
-     * @param context 現在の文脈
-     * @return 発見した補助演算子、指定しない場合は{@code null}
-     * @throws ResolveException 要素の解決に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns the selector method for the target operator method.
+     * @param context the current context
+     * @return the selector method, or {@code null} if the operator method does not use one
+     * @throws ResolveException if error occurred while resolving language elements
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
-    public static ExecutableElement findSelector(
-            OperatorCompilingEnvironment environment,
-            OperatorProcessor.Context context) throws ResolveException {
+    public static ExecutableElement findSelector(OperatorProcessor.Context context) throws ResolveException {
         Precondition.checkMustNotBeNull(context, "context"); //$NON-NLS-1$
         String selectorName = getSelectorName(context);
         if (selectorName == null) {
             return null;
         }
         ExecutableElement selectorMethod = getSelectorMethod(context, selectorName);
-        checkParameters(environment, context.element, selectorMethod);
+        checkParameters(context.environment, context.element, selectorMethod);
         return selectorMethod;
     }
 
@@ -234,24 +231,24 @@ public final class MasterKindOperatorAnalyzer {
     }
 
     /**
-     * 要素の解決に失敗したことを表す例外。
+     * An exception for tell that resolving elements are failed.
      */
     public static class ResolveException extends Exception {
 
         private static final long serialVersionUID = 1L;
 
         /**
-         * インスタンスを生成する。
-         * @param message 例外メッセージ
+         * Creates a new instance.
+         * @param message the exception message (nullable)
          */
         public ResolveException(String message) {
             super(message);
         }
 
         /**
-         * インスタンスを生成する。
-         * @param message 例外メッセージ
-         * @param cause 原因となった例外
+         * Creates a new instance.
+         * @param message the exception message (nullable)
+         * @param cause the original cause (nullable)
          */
         public ResolveException(String message, Throwable cause) {
             super(message, cause);

@@ -14,32 +14,26 @@
  * limitations under the License.
  */
 package com.asakusafw.compiler.flow.testing.model;
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
-
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.io.Writable;
-
-import com.asakusafw.compiler.flow.testing.io.ExSummarized2Input;
-import com.asakusafw.compiler.flow.testing.io.ExSummarized2Output;
 import com.asakusafw.runtime.model.DataModel;
 import com.asakusafw.runtime.model.DataModelKind;
-import com.asakusafw.runtime.model.ModelInputLocation;
-import com.asakusafw.runtime.model.ModelOutputLocation;
+import com.asakusafw.runtime.model.PropertyOrder;
 import com.asakusafw.runtime.value.LongOption;
 import com.asakusafw.runtime.value.StringOption;
 import com.asakusafw.vocabulary.model.Key;
 import com.asakusafw.vocabulary.model.Summarized;
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.Writable;
 /**
- * ex_summarized2を表すデータモデルクラス。
+ * A data model class that represents ex_summarized2.
  */
-@DataModelKind("DMDL")@ModelInputLocation(ExSummarized2Input.class)@ModelOutputLocation(ExSummarized2Output.class)@
-        Summarized(term = @Summarized.Term(source = Ex1.class, foldings = {@Summarized.Folding(aggregator = Summarized.
-            Aggregator.ANY, source = "string", destination = "key"),@Summarized.Folding(aggregator = Summarized.
-            Aggregator.SUM, source = "value", destination = "value"),@Summarized.Folding(aggregator = Summarized.
-            Aggregator.COUNT, source = "sid", destination = "count")}, shuffle = @Key(group = {"string"}))) public class 
-        ExSummarized2 implements DataModel<ExSummarized2>, Writable {
+@DataModelKind("DMDL")@PropertyOrder({"key", "value", "count"})@Summarized(term = @Summarized.Term(source = Ex1.class, 
+        foldings = {@Summarized.Folding(aggregator = Summarized.Aggregator.ANY, source = "string", destination = "key"),
+            @Summarized.Folding(aggregator = Summarized.Aggregator.SUM, source = "value", destination = "value"),@
+            Summarized.Folding(aggregator = Summarized.Aggregator.COUNT, source = "sid", destination = "count")}, 
+        shuffle = @Key(group = {"string"}))) public class ExSummarized2 implements DataModel<ExSummarized2>, Writable {
     private final StringOption key = new StringOption();
     private final LongOption value = new LongOption();
     private final LongOption count = new LongOption();
@@ -54,88 +48,88 @@ import com.asakusafw.vocabulary.model.Summarized;
         this.count.copyFrom(other.count);
     }
     /**
-     * keyを返す。
+     * Returns key.
      * @return key
-     * @throws NullPointerException keyの値が<code>null</code>である場合
+     * @throws NullPointerException if key is <code>null</code>
      */
     public Text getKey() {
         return this.key.get();
     }
     /**
-     * keyを設定する。
-     * @param value0 設定する値
+     * Sets key.
+     * @param value0 the value
      */
     @SuppressWarnings("deprecation") public void setKey(Text value0) {
         this.key.modify(value0);
     }
     /**
-     * <code>null</code>を許すkeyを返す。
+     * Returns key which may be represent <code>null</code>.
      * @return key
      */
     public StringOption getKeyOption() {
         return this.key;
     }
     /**
-     * keyを設定する。
-     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     * Sets key.
+     * @param option the value, or <code>null</code> to set this property to <code>null</code>
      */
     @SuppressWarnings("deprecation") public void setKeyOption(StringOption option) {
         this.key.copyFrom(option);
     }
     /**
-     * valueを返す。
+     * Returns value.
      * @return value
-     * @throws NullPointerException valueの値が<code>null</code>である場合
+     * @throws NullPointerException if value is <code>null</code>
      */
     public long getValue() {
         return this.value.get();
     }
     /**
-     * valueを設定する。
-     * @param value0 設定する値
+     * Sets value.
+     * @param value0 the value
      */
     @SuppressWarnings("deprecation") public void setValue(long value0) {
         this.value.modify(value0);
     }
     /**
-     * <code>null</code>を許すvalueを返す。
+     * Returns value which may be represent <code>null</code>.
      * @return value
      */
     public LongOption getValueOption() {
         return this.value;
     }
     /**
-     * valueを設定する。
-     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     * Sets value.
+     * @param option the value, or <code>null</code> to set this property to <code>null</code>
      */
     @SuppressWarnings("deprecation") public void setValueOption(LongOption option) {
         this.value.copyFrom(option);
     }
     /**
-     * countを返す。
+     * Returns count.
      * @return count
-     * @throws NullPointerException countの値が<code>null</code>である場合
+     * @throws NullPointerException if count is <code>null</code>
      */
     public long getCount() {
         return this.count.get();
     }
     /**
-     * countを設定する。
-     * @param value0 設定する値
+     * Sets count.
+     * @param value0 the value
      */
     @SuppressWarnings("deprecation") public void setCount(long value0) {
         this.count.modify(value0);
     }
     /**
-     * <code>null</code>を許すcountを返す。
+     * Returns count which may be represent <code>null</code>.
      * @return count
      */
     public LongOption getCountOption() {
         return this.count;
     }
     /**
-     * countを設定する。
-     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     * Sets count.
+     * @param option the value, or <code>null</code> to set this property to <code>null</code>
      */
     @SuppressWarnings("deprecation") public void setCountOption(LongOption option) {
         this.count.copyFrom(option);
@@ -168,32 +162,32 @@ import com.asakusafw.vocabulary.model.Summarized;
         if(obj == null) {
             return false;
         }
-        if(this.getClass()!= obj.getClass()) {
+        if(this.getClass() != obj.getClass()) {
             return false;
         }
         ExSummarized2 other = (ExSummarized2) obj;
-        if(this.key.equals(other.key)== false) {
+        if(this.key.equals(other.key) == false) {
             return false;
         }
-        if(this.value.equals(other.value)== false) {
+        if(this.value.equals(other.value) == false) {
             return false;
         }
-        if(this.count.equals(other.count)== false) {
+        if(this.count.equals(other.count) == false) {
             return false;
         }
         return true;
     }
     /**
-     * keyを返す。
+     * Returns key.
      * @return key
-     * @throws NullPointerException keyの値が<code>null</code>である場合
+     * @throws NullPointerException if key is <code>null</code>
      */
     public String getKeyAsString() {
         return this.key.getAsString();
     }
     /**
-     * keyを設定する。
-     * @param key0 設定する値
+     * Returns key.
+     * @param key0 the value
      */
     @SuppressWarnings("deprecation") public void setKeyAsString(String key0) {
         this.key.modify(key0);

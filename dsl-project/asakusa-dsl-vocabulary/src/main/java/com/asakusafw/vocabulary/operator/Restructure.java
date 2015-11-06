@@ -24,11 +24,9 @@ import com.asakusafw.vocabulary.flow.Source;
 import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory;
 
 /**
- * 再構築演算子を表す演算子注釈。
- * <p>
- * この演算子を表す演算子メソッドは作成できない。
- * 代わりに {@link CoreOperatorFactory#restructure(Source, Class)}を利用すること。
- * </p>
+ * Represents <em>restructure</em> operator annotation.
+ * Application developers should use {@link CoreOperatorFactory#restructure(Source)} instead of operator methods.
+ * @see CoreOperatorFactory#restructure(Source)
  * @see CoreOperatorFactory#restructure(Source, Class)
  * @since 0.2.1
  */
@@ -38,12 +36,12 @@ import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory;
 public @interface Restructure {
 
     /**
-     * 入力ポートの番号。
+     * The input port number.
      */
     int ID_INPUT = 0;
 
     /**
-     * 出力ポートの番号。
+     * The output port number.
      */
     int ID_OUTPUT = 0;
 }

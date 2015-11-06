@@ -17,7 +17,7 @@ package com.asakusafw.utils.java.model.syntax;
 
 
 /**
- * ブロック式を表現するインターフェース。
+ * An interface which represents parenthesized expressions.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:15.8.5] Parenthesized Expressions} </li>
@@ -27,12 +27,9 @@ package com.asakusafw.utils.java.model.syntax;
 public interface ParenthesizedExpression
         extends Expression {
 
-    // properties
-
     /**
-     * 内包する式を返す。
-     * @return
-     *     内包する式
+     * Returns the element expression.
+     * @return the element expression
      */
     Expression getExpression();
 }

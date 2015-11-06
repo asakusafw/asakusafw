@@ -3,17 +3,17 @@ package com.example;
 public enum ExampleEnum {
 
     /**
-     * 高い。
+     * High.
      */
     HIGH,
 
     /**
-     * 中間。
+     * Middle.
      */
     MIDDLE,
 
     /**
-     * 低い。
+     * Low.
      */
     LOW,
 }

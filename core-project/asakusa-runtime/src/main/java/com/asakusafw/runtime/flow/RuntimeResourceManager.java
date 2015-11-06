@@ -32,7 +32,7 @@ import com.asakusafw.runtime.core.HadoopConfiguration;
 import com.asakusafw.runtime.core.RuntimeResource;
 
 /**
- * 実行時リソースのライフサイクルを管理する。
+ * Manages lifecycle of {@link RuntimeResource} objects.
  * @since 0.1.0
  * @version 0.7.3
  */
@@ -41,7 +41,7 @@ public class RuntimeResourceManager extends Configured {
     static final Log LOG = LogFactory.getLog(RuntimeResourceManager.class);
 
     /**
-     * 標準的な設定ファイルの名前。
+     * The standard name of the framework configuration file.
      */
     public static final String CONFIGURATION_FILE_NAME = "asakusa-resources.xml"; //$NON-NLS-1$
 
@@ -56,9 +56,9 @@ public class RuntimeResourceManager extends Configured {
     private List<RuntimeResource> resources;
 
     /**
-     * インスタンスを生成する。
-     * @param configuration 設定情報
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param configuration the current configuration
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public RuntimeResourceManager(Configuration configuration) {
         super(configuration);
@@ -70,11 +70,11 @@ public class RuntimeResourceManager extends Configured {
     }
 
     /**
-     * このリソースを初期化する。
-     * @throws IOException リソースの初期化に失敗した場合
-     * @throws InterruptedException 初期化中に割り込みが発生した場合
-     * @throws IllegalArgumentException 設定が不正である場合
-     * @throws IllegalStateException 同一のリソースが複数回初期化された場合
+     * Initializes the managed resources.
+     * @throws IOException if failed to initialize resources
+     * @throws InterruptedException if interrupted while initializing resources
+     * @throws IllegalArgumentException if the configuration is something wrong
+     * @throws IllegalStateException if the current lifecycle is something wrong
      */
     public void setup() throws IOException, InterruptedException {
         if (LOG.isDebugEnabled()) {
@@ -99,11 +99,11 @@ public class RuntimeResourceManager extends Configured {
     }
 
     /**
-     * このリソースを解放する。
-     * @throws IOException リソースの初期化に失敗した場合
-     * @throws InterruptedException 初期化中に割り込みが発生した場合
-     * @throws IllegalArgumentException 設定が不正である場合
-     * @throws IllegalStateException 同一のリソースが複数回初期化された場合
+     * Finalizes and releases the managed resources.
+     * @throws IOException if failed to finalize resources
+     * @throws InterruptedException if interrupted while initializing resources
+     * @throws IllegalArgumentException if the configuration is something wrong
+     * @throws IllegalStateException if the current lifecycle is something wrong
      */
     public void cleanup() throws IOException, InterruptedException {
         int count = resources.size();
@@ -122,7 +122,6 @@ public class RuntimeResourceManager extends Configured {
                 resource.cleanup(configuration);
             }
         } finally {
-            // TODO もう少しbest effortで解放するか
             this.resources = Collections.emptyList();
         }
         if (LOG.isDebugEnabled()) {
@@ -133,14 +132,12 @@ public class RuntimeResourceManager extends Configured {
     }
 
     /**
-     * 利用可能なリソースの一覧をロードする。
-     * <p>
-     * 実行環境からロード可能な全てのクラスパスの
+     * Loads the available resources.
+     * In this implementation, the method collects service information from
      * {@code META-INF/services/com.asakusafw.runtime.core.RuntimeResource}
-     * に記載された内容を元に、必要なリソースの実体をロードする。
-     * </p>
-     * @return 利用可能なリソースの一覧
-     * @throws IOException ロードに失敗した場合
+     * and creates {@link RuntimeResource} implementations on them via SPI.
+     * @return the loaded resources
+     * @throws IOException if failed to load the resources
      */
     protected List<RuntimeResource> load() throws IOException {
         List<RuntimeResource> results = new ArrayList<RuntimeResource>();

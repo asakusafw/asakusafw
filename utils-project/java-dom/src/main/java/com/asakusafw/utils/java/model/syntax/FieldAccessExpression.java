@@ -15,9 +15,8 @@
  */
 package com.asakusafw.utils.java.model.syntax;
 
-
 /**
- * フィールド参照式を表現するインターフェース。
+ * An interface which represents field access expressions.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:15.11] Field Access Expressions} </li>
@@ -27,23 +26,19 @@ package com.asakusafw.utils.java.model.syntax;
 public interface FieldAccessExpression
         extends Expression {
 
-    // properties
-
     /**
-     * 限定式を返す。
-     * <p> フィールド参照式が名前のみによって表現可能な場合、名前式を利用しなければならない。つまり、この値は名前式であってはならない。 </p>
-     * <p> 親フィールドの参照式を表現する場合、{@code super}キーワードを表現する疑似式を利用する。 </p>
-     * @return
-     *     限定式
+     * Returns the qualifier expression.
+     * If a field access expression can be represented in just a qualified name, it must be {@link QualifiedName}.
+     * So that, the qualifier must not be a kind of {@link Name}.
+     * @return the qualifier expression
      * @see Name
      * @see Super
      */
     Expression getQualifier();
 
     /**
-     * フィールドの名前を返す。
-     * @return
-     *     フィールドの名前
+     * Returns the field name.
+     * @return the field name
      */
     SimpleName getName();
 }

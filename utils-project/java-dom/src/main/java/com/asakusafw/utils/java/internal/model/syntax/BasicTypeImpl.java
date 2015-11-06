@@ -21,13 +21,10 @@ import com.asakusafw.utils.java.model.syntax.ModelKind;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link BasicType}の実装。
+ * An implementation of {@link BasicType}.
  */
 public final class BasicTypeImpl extends ModelRoot implements BasicType {
 
-    /**
-     * 基本型の種類。
-     */
     private BasicTypeKind typeKind;
 
     @Override
@@ -36,11 +33,9 @@ public final class BasicTypeImpl extends ModelRoot implements BasicType {
     }
 
     /**
-     * 基本型の種類を設定する。
-     * @param typeKind
-     *     基本型の種類
-     * @throws IllegalArgumentException
-     *     {@code typeKind}に{@code null}が指定された場合
+     * Sets the type kind.
+     * @param typeKind the type kind
+     * @throws IllegalArgumentException if {@code typeKind} was {@code null}
      */
     public void setTypeKind(BasicTypeKind typeKind) {
         Util.notNull(typeKind, "typeKind"); //$NON-NLS-1$
@@ -48,7 +43,7 @@ public final class BasicTypeImpl extends ModelRoot implements BasicType {
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#BASIC_TYPE}を返す。
+     * Returns {@link ModelKind#BASIC_TYPE} which represents this element kind.
      * @return {@link ModelKind#BASIC_TYPE}
      */
     @Override
@@ -57,8 +52,7 @@ public final class BasicTypeImpl extends ModelRoot implements BasicType {
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitBasicType(this, context);
     }

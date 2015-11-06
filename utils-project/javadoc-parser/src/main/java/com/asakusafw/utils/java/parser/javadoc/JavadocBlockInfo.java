@@ -20,42 +20,42 @@ import java.text.MessageFormat;
 import com.asakusafw.utils.java.internal.parser.javadoc.ir.IrLocation;
 
 /**
- * 内部ブロックの情報。
- * {@link JavadocBlockParserUtil#fetchBlockInfo(JavadocScanner)}の結果に利用される。
+ * An internal Java documentation comment block information.
+ * @see JavadocBlockParserUtil#fetchBlockInfo(JavadocScanner)
  */
 public class JavadocBlockInfo {
 
-    private IrLocation location;
-    private String tagName;
-    private JavadocScanner blockScanner;
+    private final IrLocation location;
+
+    private final String tagName;
+
+    private final JavadocScanner blockScanner;
 
     JavadocBlockInfo(String tagName, JavadocScanner blockScanner, IrLocation location) {
-        super();
         this.tagName = tagName;
         this.blockScanner = blockScanner;
         this.location = location;
     }
 
     /**
-     * ブロックのレンジを返す。
-     * @return ブロックのレンジ
+     * Returns the location where this block was appeared.
+     * @return the location
      */
     public IrLocation getLocation() {
         return this.location;
     }
 
     /**
-     * タグ名を返す。
-     * @return タグ名
+     * Returns the tag name.
+     * @return the tag name (nullable)
      */
     public String getTagName() {
         return this.tagName;
     }
 
     /**
-     * ブロックに対するスキャナを返す。
-     * 返されるスキャナは、ブロック内のタグの次のトークンから、ブロック内部の終端トークンまでを保持する。
-     * @return ブロックに対するスキャナ
+     * Returns the scanner which provides the block contents.
+     * @return the scanner
      */
     public JavadocScanner getBlockScanner() {
         return this.blockScanner;

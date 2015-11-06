@@ -17,8 +17,9 @@ package com.asakusafw.utils.java.model.syntax;
 
 
 /**
- * インスタンス初期化子、およびクラス初期化子を表現するインターフェース。
- * <p> この要素が{@code static}の修飾子を伴って宣言される場合、この要素はクラス初期化子を表現する。そうでない場合、この要素はインスタンス初期化子を表現する。 </p>
+ * An interface which represents instance or class initializers.
+ * If this is declared with {@code static} modifier, then it will represent a class initializer.
+ * Otherwise it will represent an instance initializer.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:8.6] Instance Initializers} </li>
@@ -29,23 +30,17 @@ package com.asakusafw.utils.java.model.syntax;
 public interface InitializerDeclaration
         extends TypeBodyDeclaration {
 
-    // properties
-
     /**
-     * ドキュメンテーションコメントを返す。
-     * <p> ドキュメンテーションコメントが存在しない場合は{@code null}が返される。 </p>
-     * <p> インスタンス初期化子およびクラス初期化子のドキュメンテーションコメントは、通常無視される。そのため、この要素は通常の実装では{@code null}を返す。 </p>
-     * @return
-     *     ドキュメンテーションコメント、
-     *     ただしドキュメンテーションコメントが存在しない場合は{@code null}
+     * Returns the documentation comment.
+     * Note that, this documentation comment will be ignored in the current language specification.
+     * @return the documentation comment, or {@code null} if it is not specified
      */
     @Override
     Javadoc getJavadoc();
 
     /**
-     * 初期化子の本体を返す。
-     * @return
-     *     初期化子の本体
+     * Returns the initializer body block.
+     * @return the initializer body block
      */
     Block getBody();
 }

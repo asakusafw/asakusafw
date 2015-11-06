@@ -16,7 +16,6 @@
 package com.asakusafw.compiler.batch.experimental;
 
 import java.io.Closeable;
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -36,12 +35,10 @@ import com.asakusafw.compiler.batch.AbstractWorkflowProcessor;
 import com.asakusafw.compiler.batch.WorkDescriptionProcessor;
 import com.asakusafw.compiler.batch.Workflow;
 import com.asakusafw.compiler.batch.processor.JobFlowWorkDescriptionProcessor;
-import com.asakusafw.compiler.batch.processor.ScriptWorkDescriptionProcessor;
-import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.utils.collections.Lists;
 
 /**
- * 環境変数{@code ASAKUSA_*}、およびシステムプロパティ{@code com.asakusafw.*}の一覧を出力する。
+ * Dumps environment variables: {@code ASAKUSA_*} and system properties: {@code com.asakusafw.*}.
  */
 public class DumpEnvironmentProcessor extends AbstractWorkflowProcessor {
 
@@ -50,36 +47,24 @@ public class DumpEnvironmentProcessor extends AbstractWorkflowProcessor {
     static final Charset ENCODING = Charset.forName("UTF-8"); //$NON-NLS-1$
 
     /**
-     * 出力先のパス。
+     * The output path.
      */
     public static final String PATH = "etc/build.log"; //$NON-NLS-1$
 
     /**
-     * 出力する環境変数の接頭辞。
+     * The name prefix of target environment variables.
      */
     public static final String PREFIX_ENV = "ASAKUSA_"; //$NON-NLS-1$
 
     /**
-     * 出力するシステムプロパティの接頭辞。
+     * The key prefix of target system properties.
      */
     public static final String PREFIX_SYSPROP = "com.asakusafw."; //$NON-NLS-1$
-
-    /**
-     * 実験用のシェルスクリプトの出力先を返す。
-     * @param outputDir コンパイル結果の出力先ディレクトリ
-     * @return 実験用のシェルスクリプトの出力先
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
-     */
-    public static File getScriptOutput(File outputDir) {
-        Precondition.checkMustNotBeNull(outputDir, "outputDir"); //$NON-NLS-1$
-        return new File(outputDir, PATH);
-    }
 
     @Override
     public Collection<Class<? extends WorkDescriptionProcessor<?>>> getDescriptionProcessors() {
         List<Class<? extends WorkDescriptionProcessor<?>>> results = Lists.create();
         results.add(JobFlowWorkDescriptionProcessor.class);
-        results.add(ScriptWorkDescriptionProcessor.class);
         return results;
     }
 

@@ -20,46 +20,38 @@ import java.util.List;
 import javax.annotation.Generated;
 
 /**
- * {@link Model}を生成するファクトリのインターフェース。
+ * A factory for providing {@link Model} objects.
  */
 @Generated("com.asakusafw.utils.java.model.syntax.ModelFactory")
 public interface ModelFactory {
 
     /**
-     * 新しい{@link AlternateConstructorInvocation}を生成して返す。
-     * @param arguments
-     *     実引数の一覧
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code arguments}に{@code null}が指定された場合
+     * Returns a new {@link AlternateConstructorInvocation} object.
+     * @param arguments the arguments
+     * @return the created object
+     * @throws IllegalArgumentException if {@code arguments} was {@code null}
      */
     AlternateConstructorInvocation newAlternateConstructorInvocation(
             Expression... arguments
     );
 
     /**
-     * 新しい{@link AlternateConstructorInvocation}を生成して返す。
-     * @param arguments
-     *     実引数の一覧
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code arguments}に{@code null}が指定された場合
+     * Returns a new {@link AlternateConstructorInvocation} object.
+     * @param arguments the arguments
+     * @return the created object
+     * @throws IllegalArgumentException if {@code arguments} was {@code null}
      */
     AlternateConstructorInvocation newAlternateConstructorInvocation(
             List<? extends Expression> arguments
     );
 
     /**
-     * 新しい{@link AlternateConstructorInvocation}を生成して返す。
-     * @param typeArguments
-     *     型引数の一覧
-     * @param arguments
-     *     実引数の一覧
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code typeArguments}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code arguments}に{@code null}が指定された場合
+     * Returns a new {@link AlternateConstructorInvocation} object.
+     * @param typeArguments the type arguments
+     * @param arguments the arguments
+     * @return the created object
+     * @throws IllegalArgumentException if {@code typeArguments} was {@code null}
+     * @throws IllegalArgumentException if {@code arguments} was {@code null}
      */
     AlternateConstructorInvocation newAlternateConstructorInvocation(
             List<? extends Type> typeArguments,
@@ -67,23 +59,15 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link AnnotationDeclaration}を生成して返す。
-     * @param javadoc
-     *     ドキュメンテーションコメント、
-     *     ただしドキュメンテーションコメントが存在しない場合は{@code null}
-     * @param modifiers
-     *     修飾子および注釈の一覧
-     * @param name
-     *     型の単純名
-     * @param bodyDeclarations
-     *     メンバの一覧
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code modifiers}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code name}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code bodyDeclarations}に{@code null}が指定された場合
+     * Returns a new {@link AnnotationDeclaration} object.
+     * @param javadoc the documentation comments, or {@code null} if there is no documentation comments
+     * @param modifiers the modifiers and annotations
+     * @param name the simple type name
+     * @param bodyDeclarations the member declarations
+     * @return the created object
+     * @throws IllegalArgumentException if {@code modifiers} was {@code null}
+     * @throws IllegalArgumentException if {@code name} was {@code null}
+     * @throws IllegalArgumentException if {@code bodyDeclarations} was {@code null}
      */
     AnnotationDeclaration newAnnotationDeclaration(
             Javadoc javadoc,
@@ -93,16 +77,12 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link AnnotationElement}を生成して返す。
-     * @param name
-     *     注釈要素の名前
-     * @param expression
-     *     注釈要素値の式
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code name}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code expression}に{@code null}が指定された場合
+     * Returns a new {@link AnnotationElement} object.
+     * @param name annotation element name
+     * @param expression the expression value
+     * @return the created object
+     * @throws IllegalArgumentException if {@code name} was {@code null}
+     * @throws IllegalArgumentException if {@code expression} was {@code null}
      */
     AnnotationElement newAnnotationElement(
             SimpleName name,
@@ -110,26 +90,16 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link AnnotationElementDeclaration}を生成して返す。
-     * @param javadoc
-     *     ドキュメンテーションコメント、
-     *     ただしドキュメンテーションコメントが存在しない場合は{@code null}
-     * @param modifiers
-     *     修飾子および注釈の一覧
-     * @param type
-     *     注釈要素の型
-     * @param name
-     *     注釈要素の名前
-     * @param defaultExpression
-     *     注釈要素の規定値、
-     *     ただし規定値が存在しない場合は{@code null}
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code modifiers}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code type}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code name}に{@code null}が指定された場合
+     * Returns a new {@link AnnotationElementDeclaration} object.
+     * @param javadoc the documentation comments, or {@code null} if there is no documentation comments
+     * @param modifiers the modifiers and annotations
+     * @param type annotation element type
+     * @param name annotation element name
+     * @param defaultExpression the default expression value, or {@code null} if there is no default value
+     * @return the created object
+     * @throws IllegalArgumentException if {@code modifiers} was {@code null}
+     * @throws IllegalArgumentException if {@code type} was {@code null}
+     * @throws IllegalArgumentException if {@code name} was {@code null}
      */
     AnnotationElementDeclaration newAnnotationElementDeclaration(
             Javadoc javadoc,
@@ -140,16 +110,12 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link ArrayAccessExpression}を生成して返す。
-     * @param array
-     *     配列式
-     * @param index
-     *     添え字式
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code array}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code index}に{@code null}が指定された場合
+     * Returns a new {@link ArrayAccessExpression} object.
+     * @param array the array expression
+     * @param index the index expression
+     * @return the created object
+     * @throws IllegalArgumentException if {@code array} was {@code null}
+     * @throws IllegalArgumentException if {@code index} was {@code null}
      */
     ArrayAccessExpression newArrayAccessExpression(
             Expression array,
@@ -157,15 +123,11 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link ArrayCreationExpression}を生成して返す。
-     * @param type
-     *     生成する配列の型
-     * @param arrayInitializer
-     *     配列初期化子、
-     *     ただし配列初期化子が指定されない場合は{@code null}
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code type}に{@code null}が指定された場合
+     * Returns a new {@link ArrayCreationExpression} object.
+     * @param type the array type
+     * @param arrayInitializer the array initializer, or {@code null} if there is no array initializer
+     * @return the created object
+     * @throws IllegalArgumentException if {@code type} was {@code null}
      */
     ArrayCreationExpression newArrayCreationExpression(
             ArrayType type,
@@ -173,19 +135,13 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link ArrayCreationExpression}を生成して返す。
-     * @param type
-     *     生成する配列の型
-     * @param dimensionExpressions
-     *     要素数指定式
-     * @param arrayInitializer
-     *     配列初期化子、
-     *     ただし配列初期化子が指定されない場合は{@code null}
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code type}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code dimensionExpressions}に{@code null}が指定された場合
+     * Returns a new {@link ArrayCreationExpression} object.
+     * @param type the array type
+     * @param dimensionExpressions the dimension expressions
+     * @param arrayInitializer the array initializer, or {@code null} if there is no array initializer
+     * @return the created object
+     * @throws IllegalArgumentException if {@code type} was {@code null}
+     * @throws IllegalArgumentException if {@code dimensionExpressions} was {@code null}
      */
     ArrayCreationExpression newArrayCreationExpression(
             ArrayType type,
@@ -194,63 +150,51 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link ArrayInitializer}を生成して返す。
-     * @param elements
-     *     要素の一覧
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code elements}に{@code null}が指定された場合
+     * Returns a new {@link ArrayInitializer} object.
+     * @param elements the element expressions
+     * @return the created object
+     * @throws IllegalArgumentException if {@code elements} was {@code null}
      */
     ArrayInitializer newArrayInitializer(
             Expression... elements
     );
 
     /**
-     * 新しい{@link ArrayInitializer}を生成して返す。
-     * @param elements
-     *     要素の一覧
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code elements}に{@code null}が指定された場合
+     * Returns a new {@link ArrayInitializer} object.
+     * @param elements the element expressions
+     * @return the created object
+     * @throws IllegalArgumentException if {@code elements} was {@code null}
      */
     ArrayInitializer newArrayInitializer(
             List<? extends Expression> elements
     );
 
     /**
-     * 新しい{@link ArrayType}を生成して返す。
-     * @param componentType
-     *     要素型
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code componentType}に{@code null}が指定された場合
+     * Returns a new {@link ArrayType} object.
+     * @param componentType the element type
+     * @return the created object
+     * @throws IllegalArgumentException if {@code componentType} was {@code null}
      */
     ArrayType newArrayType(
             Type componentType
     );
 
     /**
-     * 新しい{@link AssertStatement}を生成して返す。
-     * @param expression
-     *     表明式
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code expression}に{@code null}が指定された場合
+     * Returns a new {@link AssertStatement} object.
+     * @param expression the assertion expression
+     * @return the created object
+     * @throws IllegalArgumentException if {@code expression} was {@code null}
      */
     AssertStatement newAssertStatement(
             Expression expression
     );
 
     /**
-     * 新しい{@link AssertStatement}を生成して返す。
-     * @param expression
-     *     表明式
-     * @param message
-     *     メッセージ式、
-     *     ただしメッセージ式が省略された場合は{@code null}
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code expression}に{@code null}が指定された場合
+     * Returns a new {@link AssertStatement} object.
+     * @param expression the assertion expression
+     * @param message the message expression, or {@code null} if there is no message expression
+     * @return the created object
+     * @throws IllegalArgumentException if {@code expression} was {@code null}
      */
     AssertStatement newAssertStatement(
             Expression expression,
@@ -258,16 +202,12 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link AssignmentExpression}を生成して返す。
-     * @param leftHandSide
-     *     左辺式
-     * @param rightHandSide
-     *     右辺式
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code leftHandSide}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code rightHandSide}に{@code null}が指定された場合
+     * Returns a new {@link AssignmentExpression} object.
+     * @param leftHandSide the left hand side expression
+     * @param rightHandSide the right hand side expression
+     * @return the created object
+     * @throws IllegalArgumentException if {@code leftHandSide} was {@code null}
+     * @throws IllegalArgumentException if {@code rightHandSide} was {@code null}
      */
     AssignmentExpression newAssignmentExpression(
             Expression leftHandSide,
@@ -275,20 +215,14 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link AssignmentExpression}を生成して返す。
-     * @param leftHandSide
-     *     左辺式
-     * @param operator
-     *     単純代入演算子、または複合する演算子
-     * @param rightHandSide
-     *     右辺式
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code leftHandSide}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code operator}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code rightHandSide}に{@code null}が指定された場合
+     * Returns a new {@link AssignmentExpression} object.
+     * @param leftHandSide the left hand side expression
+     * @param operator the simple assignment operator, or an infix operator for compound assignment
+     * @param rightHandSide the right hand side expression
+     * @return the created object
+     * @throws IllegalArgumentException if {@code leftHandSide} was {@code null}
+     * @throws IllegalArgumentException if {@code operator} was {@code null}
+     * @throws IllegalArgumentException if {@code rightHandSide} was {@code null}
      */
     AssignmentExpression newAssignmentExpression(
             Expression leftHandSide,
@@ -297,84 +231,68 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link BasicType}を生成して返す。
-     * @param typeKind
-     *     基本型の種類
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code typeKind}に{@code null}が指定された場合
+     * Returns a new {@link BasicType} object.
+     * @param typeKind the type kind
+     * @return the created object
+     * @throws IllegalArgumentException if {@code typeKind} was {@code null}
      */
     BasicType newBasicType(
             BasicTypeKind typeKind
     );
 
     /**
-     * 新しい{@link Block}を生成して返す。
-     * @param statements
-     *     文の一覧
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code statements}に{@code null}が指定された場合
+     * Returns a new {@link Block} object.
+     * @param statements the statements
+     * @return the created object
+     * @throws IllegalArgumentException if {@code statements} was {@code null}
      */
     Block newBlock(
             Statement... statements
     );
 
     /**
-     * 新しい{@link Block}を生成して返す。
-     * @param statements
-     *     文の一覧
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code statements}に{@code null}が指定された場合
+     * Returns a new {@link Block} object.
+     * @param statements the statements
+     * @return the created object
+     * @throws IllegalArgumentException if {@code statements} was {@code null}
      */
     Block newBlock(
             List<? extends Statement> statements
     );
 
     /**
-     * 新しい{@link BlockComment}を生成して返す。
-     * @param string
-     *     コメント文字列
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code string}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code string}に空が指定された場合
+     * Returns a new {@link BlockComment} object.
+     * @param string the comment text
+     * @return the created object
+     * @throws IllegalArgumentException if {@code string} was {@code null}
+     * @throws IllegalArgumentException if {@code string} was empty
      */
     BlockComment newBlockComment(
             String string
     );
 
     /**
-     * 新しい{@link BreakStatement}を生成して返す。
-     * @return 生成した要素
+     * Returns a new {@link BreakStatement} object.
+     * @return the created object
      */
-    BreakStatement newBreakStatement(
-    );
+    BreakStatement newBreakStatement();
 
     /**
-     * 新しい{@link BreakStatement}を生成して返す。
-     * @param target
-     *     分岐先ラベル、
-     *     ただし分岐先ラベルが指定されない場合は{@code null}
-     * @return 生成した要素
+     * Returns a new {@link BreakStatement} object.
+     * @param target the target label, or {@code null} if there is no target labels
+     * @return the created object
      */
     BreakStatement newBreakStatement(
             SimpleName target
     );
 
     /**
-     * 新しい{@link CastExpression}を生成して返す。
-     * @param type
-     *     キャスト対象の型
-     * @param expression
-     *     演算項
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code type}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code expression}に{@code null}が指定された場合
+     * Returns a new {@link CastExpression} object.
+     * @param type the target type
+     * @param expression the term
+     * @return the created object
+     * @throws IllegalArgumentException if {@code type} was {@code null}
+     * @throws IllegalArgumentException if {@code expression} was {@code null}
      */
     CastExpression newCastExpression(
             Type type,
@@ -382,16 +300,12 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link CatchClause}を生成して返す。
-     * @param parameter
-     *     例外仮引数
-     * @param body
-     *     {@code catch}ブロック
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code parameter}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code body}に{@code null}が指定された場合
+     * Returns a new {@link CatchClause} object.
+     * @param parameter the expression parameter
+     * @param body the {@code catch} block
+     * @return the created object
+     * @throws IllegalArgumentException if {@code parameter} was {@code null}
+     * @throws IllegalArgumentException if {@code body} was {@code null}
      */
     CatchClause newCatchClause(
             FormalParameterDeclaration parameter,
@@ -399,42 +313,28 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link ClassBody}を生成して返す。
-     * @param bodyDeclarations
-     *     メンバの一覧
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code bodyDeclarations}に{@code null}が指定された場合
+     * Returns a new {@link ClassBody} object.
+     * @param bodyDeclarations the member declarations
+     * @return the created object
+     * @throws IllegalArgumentException if {@code bodyDeclarations} was {@code null}
      */
     ClassBody newClassBody(
             List<? extends TypeBodyDeclaration> bodyDeclarations
     );
 
     /**
-     * 新しい{@link ClassDeclaration}を生成して返す。
-     * @param javadoc
-     *     ドキュメンテーションコメント、
-     *     ただしドキュメンテーションコメントが存在しない場合は{@code null}
-     * @param modifiers
-     *     修飾子および注釈の一覧
-     * @param name
-     *     型の単純名
-     * @param superClass
-     *     親クラス、
-     *     ただし親クラスが明示されない場合は{@code null}
-     * @param superInterfaceTypes
-     *     親インターフェースの一覧
-     * @param bodyDeclarations
-     *     メンバの一覧
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code modifiers}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code name}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code superInterfaceTypes}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code bodyDeclarations}に{@code null}が指定された場合
+     * Returns a new {@link ClassDeclaration} object.
+     * @param javadoc the documentation comments, or {@code null} if there is no documentation comments
+     * @param modifiers the modifiers and annotations
+     * @param name the simple type name
+     * @param superClass the super class, or {@code null} if there is no explicit super class
+     * @param superInterfaceTypes the super interface types
+     * @param bodyDeclarations the member declarations
+     * @return the created object
+     * @throws IllegalArgumentException if {@code modifiers} was {@code null}
+     * @throws IllegalArgumentException if {@code name} was {@code null}
+     * @throws IllegalArgumentException if {@code superInterfaceTypes} was {@code null}
+     * @throws IllegalArgumentException if {@code bodyDeclarations} was {@code null}
      */
     ClassDeclaration newClassDeclaration(
             Javadoc javadoc,
@@ -446,34 +346,20 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link ClassDeclaration}を生成して返す。
-     * @param javadoc
-     *     ドキュメンテーションコメント、
-     *     ただしドキュメンテーションコメントが存在しない場合は{@code null}
-     * @param modifiers
-     *     修飾子および注釈の一覧
-     * @param name
-     *     型の単純名
-     * @param typeParameters
-     *     仮型引数宣言の一覧
-     * @param superClass
-     *     親クラス、
-     *     ただし親クラスが明示されない場合は{@code null}
-     * @param superInterfaceTypes
-     *     親インターフェースの一覧
-     * @param bodyDeclarations
-     *     メンバの一覧
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code modifiers}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code name}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code typeParameters}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code superInterfaceTypes}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code bodyDeclarations}に{@code null}が指定された場合
+     * Returns a new {@link ClassDeclaration} object.
+     * @param javadoc the documentation comments, or {@code null} if there is no documentation comments
+     * @param modifiers the modifiers and annotations
+     * @param name the simple type name
+     * @param typeParameters the type parameters
+     * @param superClass the super class, or {@code null} if there is no explicit super class
+     * @param superInterfaceTypes the super interface types
+     * @param bodyDeclarations the member declarations
+     * @return the created object
+     * @throws IllegalArgumentException if {@code modifiers} was {@code null}
+     * @throws IllegalArgumentException if {@code name} was {@code null}
+     * @throws IllegalArgumentException if {@code typeParameters} was {@code null}
+     * @throws IllegalArgumentException if {@code superInterfaceTypes} was {@code null}
+     * @throws IllegalArgumentException if {@code bodyDeclarations} was {@code null}
      */
     ClassDeclaration newClassDeclaration(
             Javadoc javadoc,
@@ -486,16 +372,12 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link ClassInstanceCreationExpression}を生成して返す。
-     * @param type
-     *     インスタンスを生成する型
-     * @param arguments
-     *     実引数の一覧
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code type}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code arguments}に{@code null}が指定された場合
+     * Returns a new {@link ClassInstanceCreationExpression} object.
+     * @param type the target type
+     * @param arguments the arguments
+     * @return the created object
+     * @throws IllegalArgumentException if {@code type} was {@code null}
+     * @throws IllegalArgumentException if {@code arguments} was {@code null}
      */
     ClassInstanceCreationExpression newClassInstanceCreationExpression(
             Type type,
@@ -503,16 +385,12 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link ClassInstanceCreationExpression}を生成して返す。
-     * @param type
-     *     インスタンスを生成する型
-     * @param arguments
-     *     実引数の一覧
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code type}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code arguments}に{@code null}が指定された場合
+     * Returns a new {@link ClassInstanceCreationExpression} object.
+     * @param type the target type
+     * @param arguments the arguments
+     * @return the created object
+     * @throws IllegalArgumentException if {@code type} was {@code null}
+     * @throws IllegalArgumentException if {@code arguments} was {@code null}
      */
     ClassInstanceCreationExpression newClassInstanceCreationExpression(
             Type type,
@@ -520,26 +398,16 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link ClassInstanceCreationExpression}を生成して返す。
-     * @param qualifier
-     *     限定式、
-     *     ただし限定式が指定されない場合は{@code null}
-     * @param typeArguments
-     *     型引数の一覧
-     * @param type
-     *     インスタンスを生成する型
-     * @param arguments
-     *     実引数の一覧
-     * @param body
-     *     匿名クラス本体、
-     *     ただし匿名クラス本体が指定されない場合は{@code null}
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code typeArguments}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code type}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code arguments}に{@code null}が指定された場合
+     * Returns a new {@link ClassInstanceCreationExpression} object.
+     * @param qualifier the qualifier expression, or {@code null} if there is no qualifiers
+     * @param typeArguments the type arguments
+     * @param type the target type
+     * @param arguments the arguments
+     * @param body the anonymous class body, or {@code null} if the target is not an anonymous class
+     * @return the created object
+     * @throws IllegalArgumentException if {@code typeArguments} was {@code null}
+     * @throws IllegalArgumentException if {@code type} was {@code null}
+     * @throws IllegalArgumentException if {@code arguments} was {@code null}
      */
     ClassInstanceCreationExpression newClassInstanceCreationExpression(
             Expression qualifier,
@@ -550,35 +418,26 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link ClassLiteral}を生成して返す。
-     * @param type
-     *     対象の型
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code type}に{@code null}が指定された場合
+     * Returns a new {@link ClassLiteral} object.
+     * @param type the target type
+     * @return the created object
+     * @throws IllegalArgumentException if {@code type} was {@code null}
      */
     ClassLiteral newClassLiteral(
             Type type
     );
 
     /**
-     * 新しい{@link CompilationUnit}を生成して返す。
-     * @param packageDeclaration
-     *     パッケージ宣言、
-     *     ただし無名パッケージ上に存在するコンパイル単位を表現する場合は{@code null}
-     * @param importDeclarations
-     *     このコンパイル単位で宣言されるインポート宣言の一覧
-     * @param typeDeclarations
-     *     このコンパイル単位で宣言される型の一覧
-     * @param comments
-     *     このコンパイル単位に記述されたコメントの一覧
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code importDeclarations}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code typeDeclarations}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code comments}に{@code null}が指定された場合
+     * Returns a new {@link CompilationUnit} object.
+     * @param packageDeclaration the package declaration,
+     *     or {@code null} if this compilation unit is on the default (unnamed) package
+     * @param importDeclarations the import declarations
+     * @param typeDeclarations the type declarations
+     * @param comments the comments
+     * @return the created object
+     * @throws IllegalArgumentException if {@code importDeclarations} was {@code null}
+     * @throws IllegalArgumentException if {@code typeDeclarations} was {@code null}
+     * @throws IllegalArgumentException if {@code comments} was {@code null}
      */
     CompilationUnit newCompilationUnit(
             PackageDeclaration packageDeclaration,
@@ -588,20 +447,14 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link ConditionalExpression}を生成して返す。
-     * @param condition
-     *     条件式
-     * @param thenExpression
-     *     条件成立時に評価される式
-     * @param elseExpression
-     *     条件不成立時に評価される式
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code condition}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code thenExpression}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code elseExpression}に{@code null}が指定された場合
+     * Returns a new {@link ConditionalExpression} object.
+     * @param condition the condition expression
+     * @param thenExpression the truth expression
+     * @param elseExpression the false expression
+     * @return the created object
+     * @throws IllegalArgumentException if {@code condition} was {@code null}
+     * @throws IllegalArgumentException if {@code thenExpression} was {@code null}
+     * @throws IllegalArgumentException if {@code elseExpression} was {@code null}
      */
     ConditionalExpression newConditionalExpression(
             Expression condition,
@@ -610,27 +463,17 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link ConstructorDeclaration}を生成して返す。
-     * @param javadoc
-     *     ドキュメンテーションコメント、
-     *     ただしドキュメンテーションコメントが存在しない場合は{@code null}
-     * @param modifiers
-     *     修飾子および注釈の一覧
-     * @param name
-     *     メソッドまたはコンストラクタの名前
-     * @param formalParameters
-     *     仮引数宣言の一覧
-     * @param statements
-     *     コンストラクタ本体
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code modifiers}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code name}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code formalParameters}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code statements}に{@code null}が指定された場合
+     * Returns a new {@link ConstructorDeclaration} object.
+     * @param javadoc the documentation comments, or {@code null} if there is no documentation comments
+     * @param modifiers the modifiers and annotations
+     * @param name the constructor name (as the simple name of the owner class)
+     * @param formalParameters the formal parameters
+     * @param statements the constructor body statements
+     * @return the created object
+     * @throws IllegalArgumentException if {@code modifiers} was {@code null}
+     * @throws IllegalArgumentException if {@code name} was {@code null}
+     * @throws IllegalArgumentException if {@code formalParameters} was {@code null}
+     * @throws IllegalArgumentException if {@code statements} was {@code null}
      */
     ConstructorDeclaration newConstructorDeclaration(
             Javadoc javadoc,
@@ -641,35 +484,21 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link ConstructorDeclaration}を生成して返す。
-     * @param javadoc
-     *     ドキュメンテーションコメント、
-     *     ただしドキュメンテーションコメントが存在しない場合は{@code null}
-     * @param modifiers
-     *     修飾子および注釈の一覧
-     * @param typeParameters
-     *     型引数宣言の一覧
-     * @param name
-     *     メソッドまたはコンストラクタの名前
-     * @param formalParameters
-     *     仮引数宣言の一覧
-     * @param exceptionTypes
-     *     例外型宣言の一覧
-     * @param body
-     *     コンストラクタ本体
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code modifiers}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code typeParameters}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code name}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code formalParameters}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code exceptionTypes}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code body}に{@code null}が指定された場合
+     * Returns a new {@link ConstructorDeclaration} object.
+     * @param javadoc the documentation comments, or {@code null} if there is no documentation comments
+     * @param modifiers the modifiers and annotations
+     * @param typeParameters the type parameters
+     * @param name the constructor name (as the simple name of the owner class)
+     * @param formalParameters the formal parameters
+     * @param exceptionTypes the exception types
+     * @param body the constructor body
+     * @return the created object
+     * @throws IllegalArgumentException if {@code modifiers} was {@code null}
+     * @throws IllegalArgumentException if {@code typeParameters} was {@code null}
+     * @throws IllegalArgumentException if {@code name} was {@code null}
+     * @throws IllegalArgumentException if {@code formalParameters} was {@code null}
+     * @throws IllegalArgumentException if {@code exceptionTypes} was {@code null}
+     * @throws IllegalArgumentException if {@code body} was {@code null}
      */
     ConstructorDeclaration newConstructorDeclaration(
             Javadoc javadoc,
@@ -682,33 +511,27 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link ContinueStatement}を生成して返す。
-     * @return 生成した要素
+     * Returns a new {@link ContinueStatement} object.
+     * @return the created object
      */
     ContinueStatement newContinueStatement();
 
     /**
-     * 新しい{@link ContinueStatement}を生成して返す。
-     * @param target
-     *     分岐先ラベル、
-     *     ただし分岐先ラベルが指定されない場合は{@code null}
-     * @return 生成した要素
+     * Returns a new {@link ContinueStatement} object.
+     * @param target the target label, or {@code null} if there is no target labels
+     * @return the created object
      */
     ContinueStatement newContinueStatement(
             SimpleName target
     );
 
     /**
-     * 新しい{@link DoStatement}を生成して返す。
-     * @param body
-     *     ループ本体
-     * @param condition
-     *     条件式
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code body}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code condition}に{@code null}が指定された場合
+     * Returns a new {@link DoStatement} object.
+     * @param body the loop body
+     * @param condition the condition expression
+     * @return the created object
+     * @throws IllegalArgumentException if {@code body} was {@code null}
+     * @throws IllegalArgumentException if {@code condition} was {@code null}
      */
     DoStatement newDoStatement(
             Statement body,
@@ -716,16 +539,12 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link DocBlock}を生成して返す。
-     * @param tag
-     *     タグ文字列
-     * @param elements
-     *     インライン要素の一覧
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code tag}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code elements}に{@code null}が指定された場合
+     * Returns a new {@link DocBlock} object.
+     * @param tag the block tag
+     * @param elements the block elements
+     * @return the created object
+     * @throws IllegalArgumentException if {@code tag} was {@code null}
+     * @throws IllegalArgumentException if {@code elements} was {@code null}
      */
     DocBlock newDocBlock(
             String tag,
@@ -733,15 +552,11 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link DocField}を生成して返す。
-     * @param type
-     *     フィールドを宣言した型、
-     *     ただし宣言型が指定されない場合は{@code null}
-     * @param name
-     *     フィールドの名称
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code name}に{@code null}が指定された場合
+     * Returns a new {@link DocField} object.
+     * @param type the field owner type, or {@code null} if it is not specified
+     * @param name the field name
+     * @return the created object
+     * @throws IllegalArgumentException if {@code name} was {@code null}
      */
     DocField newDocField(
             Type type,
@@ -749,19 +564,13 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link DocMethod}を生成して返す。
-     * @param type
-     *     メソッドまたはコンストラクタの宣言型、
-     *     ただし宣言型が指定されない場合は{@code null}
-     * @param name
-     *     メソッドまたはコンストラクタの名前
-     * @param formalParameters
-     *     メソッドまたはコンストラクタの仮引数宣言の一覧
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code name}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code formalParameters}に{@code null}が指定された場合
+     * Returns a new {@link DocMethod} object.
+     * @param type the member owner type, or {@code null} if it is not specified
+     * @param name the target method (or constructor) name
+     * @param formalParameters the target method (or constructor) parameters
+     * @return the created object
+     * @throws IllegalArgumentException if {@code name} was {@code null}
+     * @throws IllegalArgumentException if {@code formalParameters} was {@code null}
      */
     DocMethod newDocMethod(
             Type type,
@@ -770,17 +579,12 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link DocMethodParameter}を生成して返す。
-     * @param type
-     *     仮引数の型
-     * @param name
-     *     仮引数の名前、
-     *     ただし仮引数の名前が省略される場合は{@code null}
-     * @param variableArity
-     *     可変長引数
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code type}に{@code null}が指定された場合
+     * Returns a new {@link DocMethodParameter} object.
+     * @param type the parameter type
+     * @param name the parameter name, or {@code null} if it is not specified
+     * @param variableArity {@code true} if this parameter is variable length, otherwise {@code false}
+     * @return the created object
+     * @throws IllegalArgumentException if {@code type} was {@code null}
      */
     DocMethodParameter newDocMethodParameter(
             Type type,
@@ -789,40 +593,32 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link DocText}を生成して返す。
-     * @param string
-     *     テキストを構成する文字列
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code string}に{@code null}が指定された場合
+     * Returns a new {@link DocText} object.
+     * @param string the contents string
+     * @return the created object
+     * @throws IllegalArgumentException if {@code string} was {@code null}
      */
     DocText newDocText(
             String string
     );
 
     /**
-     * 新しい{@link EmptyStatement}を生成して返す。
-     * @return 生成した要素
+     * Returns a new {@link EmptyStatement} object.
+     * @return the created object
      */
     EmptyStatement newEmptyStatement(
 
     );
 
     /**
-     * 新しい{@link EnhancedForStatement}を生成して返す。
-     * @param parameter
-     *     ループ変数
-     * @param expression
-     *     ループ対象式
-     * @param body
-     *     ループ本体
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code parameter}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code expression}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code body}に{@code null}が指定された場合
+     * Returns a new {@link EnhancedForStatement} object.
+     * @param parameter the loop parameter
+     * @param expression the loop target
+     * @param body the loop body
+     * @return the created object
+     * @throws IllegalArgumentException if {@code parameter} was {@code null}
+     * @throws IllegalArgumentException if {@code expression} was {@code null}
+     * @throws IllegalArgumentException if {@code body} was {@code null}
      */
     EnhancedForStatement newEnhancedForStatement(
             FormalParameterDeclaration parameter,
@@ -831,19 +627,13 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link EnumConstantDeclaration}を生成して返す。
-     * @param javadoc
-     *     ドキュメンテーションコメント、
-     *     ただしドキュメンテーションコメントが存在しない場合は{@code null}
-     * @param name
-     *     列挙定数の名前
-     * @param arguments
-     *     コンストラクタ引数の一覧
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code name}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code arguments}に{@code null}が指定された場合
+     * Returns a new {@link EnumConstantDeclaration} object.
+     * @param javadoc the documentation comments, or {@code null} if there is no documentation comments
+     * @param name the enum constant name
+     * @param arguments the constructor arguments
+     * @return the created object
+     * @throws IllegalArgumentException if {@code name} was {@code null}
+     * @throws IllegalArgumentException if {@code arguments} was {@code null}
      */
     EnumConstantDeclaration newEnumConstantDeclaration(
             Javadoc javadoc,
@@ -852,26 +642,16 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link EnumConstantDeclaration}を生成して返す。
-     * @param javadoc
-     *     ドキュメンテーションコメント、
-     *     ただしドキュメンテーションコメントが存在しない場合は{@code null}
-     * @param modifiers
-     *     修飾子および注釈の一覧
-     * @param name
-     *     列挙定数の名前
-     * @param arguments
-     *     コンストラクタ引数の一覧
-     * @param body
-     *     クラス本体の宣言、
-     *     ただしクラスの本体が宣言されない場合は{@code null}
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code modifiers}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code name}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code arguments}に{@code null}が指定された場合
+     * Returns a new {@link EnumConstantDeclaration} object.
+     * @param javadoc the documentation comments, or {@code null} if there is no documentation comments
+     * @param modifiers the modifiers and annotations
+     * @param name the enum constant name
+     * @param arguments the constructor arguments
+     * @param body the class body, or {@code null} if there is no class body
+     * @return the created object
+     * @throws IllegalArgumentException if {@code modifiers} was {@code null}
+     * @throws IllegalArgumentException if {@code name} was {@code null}
+     * @throws IllegalArgumentException if {@code arguments} was {@code null}
      */
     EnumConstantDeclaration newEnumConstantDeclaration(
             Javadoc javadoc,
@@ -882,27 +662,17 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link EnumDeclaration}を生成して返す。
-     * @param javadoc
-     *     ドキュメンテーションコメント、
-     *     ただしドキュメンテーションコメントが存在しない場合は{@code null}
-     * @param modifiers
-     *     修飾子および注釈の一覧
-     * @param name
-     *     型の単純名
-     * @param constantDeclarations
-     *     列挙定数の一覧
-     * @param bodyDeclarations
-     *     メンバの一覧
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code modifiers}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code name}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code constantDeclarations}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code bodyDeclarations}に{@code null}が指定された場合
+     * Returns a new {@link EnumDeclaration} object.
+     * @param javadoc the documentation comments, or {@code null} if there is no documentation comments
+     * @param modifiers the modifiers and annotations
+     * @param name the simple type name
+     * @param constantDeclarations the enum constant declarations
+     * @param bodyDeclarations the member declarations
+     * @return the created object
+     * @throws IllegalArgumentException if {@code modifiers} was {@code null}
+     * @throws IllegalArgumentException if {@code name} was {@code null}
+     * @throws IllegalArgumentException if {@code constantDeclarations} was {@code null}
+     * @throws IllegalArgumentException if {@code bodyDeclarations} was {@code null}
      */
     EnumDeclaration newEnumDeclaration(
             Javadoc javadoc,
@@ -913,31 +683,19 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link EnumDeclaration}を生成して返す。
-     * @param javadoc
-     *     ドキュメンテーションコメント、
-     *     ただしドキュメンテーションコメントが存在しない場合は{@code null}
-     * @param modifiers
-     *     修飾子および注釈の一覧
-     * @param name
-     *     型の単純名
-     * @param superInterfaceTypes
-     *     親インターフェースの一覧
-     * @param constantDeclarations
-     *     列挙定数の一覧
-     * @param bodyDeclarations
-     *     メンバの一覧
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code modifiers}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code name}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code superInterfaceTypes}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code constantDeclarations}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code bodyDeclarations}に{@code null}が指定された場合
+     * Returns a new {@link EnumDeclaration} object.
+     * @param javadoc the documentation comments, or {@code null} if there is no documentation comments
+     * @param modifiers the modifiers and annotations
+     * @param name the simple type name
+     * @param superInterfaceTypes the super interface types
+     * @param constantDeclarations the enum constant declarations
+     * @param bodyDeclarations the member declarations
+     * @return the created object
+     * @throws IllegalArgumentException if {@code modifiers} was {@code null}
+     * @throws IllegalArgumentException if {@code name} was {@code null}
+     * @throws IllegalArgumentException if {@code superInterfaceTypes} was {@code null}
+     * @throws IllegalArgumentException if {@code constantDeclarations} was {@code null}
+     * @throws IllegalArgumentException if {@code bodyDeclarations} was {@code null}
      */
     EnumDeclaration newEnumDeclaration(
             Javadoc javadoc,
@@ -949,28 +707,22 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link ExpressionStatement}を生成して返す。
-     * @param expression
-     *     内包する式
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code expression}に{@code null}が指定された場合
+     * Returns a new {@link ExpressionStatement} object.
+     * @param expression the internal expression
+     * @return the created object
+     * @throws IllegalArgumentException if {@code expression} was {@code null}
      */
     ExpressionStatement newExpressionStatement(
             Expression expression
     );
 
     /**
-     * 新しい{@link FieldAccessExpression}を生成して返す。
-     * @param qualifier
-     *     限定式
-     * @param name
-     *     フィールドの名前
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code qualifier}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code name}に{@code null}が指定された場合
+     * Returns a new {@link FieldAccessExpression} object.
+     * @param qualifier the qualifier expression
+     * @param name the target field name
+     * @return the created object
+     * @throws IllegalArgumentException if {@code qualifier} was {@code null}
+     * @throws IllegalArgumentException if {@code name} was {@code null}
      */
     FieldAccessExpression newFieldAccessExpression(
             Expression qualifier,
@@ -978,26 +730,16 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link FieldDeclaration}を生成して返す。
-     * @param javadoc
-     *     ドキュメンテーションコメント、
-     *     ただしドキュメンテーションコメントが存在しない場合は{@code null}
-     * @param modifiers
-     *     修飾子および注釈の一覧
-     * @param type
-     *     フィールドの型
-     * @param name
-     *     変数の名前
-     * @param initializer
-     *     初期化式、
-     *     ただし初期化式が指定されない場合は{@code null}
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code modifiers}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code type}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code name}に{@code null}が指定された場合
+     * Returns a new {@link FieldDeclaration} object.
+     * @param javadoc the documentation comments, or {@code null} if there is no documentation comments
+     * @param modifiers the modifiers and annotations
+     * @param type the field type
+     * @param name the field name
+     * @param initializer the initializer expression, or {@code null} if it is not specified
+     * @return the created object
+     * @throws IllegalArgumentException if {@code modifiers} was {@code null}
+     * @throws IllegalArgumentException if {@code type} was {@code null}
+     * @throws IllegalArgumentException if {@code name} was {@code null}
      */
     FieldDeclaration newFieldDeclaration(
             Javadoc javadoc,
@@ -1008,25 +750,16 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link FieldDeclaration}を生成して返す。
-     * @param javadoc
-     *     ドキュメンテーションコメント、
-     *     ただしドキュメンテーションコメントが存在しない場合は{@code null}
-     * @param modifiers
-     *     修飾子および注釈の一覧
-     * @param type
-     *     フィールドの型
-     * @param variableDeclarators
-     *     宣言するフィールドの一覧
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code modifiers}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code type}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code variableDeclarators}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code variableDeclarators}に空が指定された場合
+     * Returns a new {@link FieldDeclaration} object.
+     * @param javadoc the documentation comments, or {@code null} if there is no documentation comments
+     * @param modifiers the modifiers and annotations
+     * @param type the field type
+     * @param variableDeclarators the variable declarators
+     * @return the created object
+     * @throws IllegalArgumentException if {@code modifiers} was {@code null}
+     * @throws IllegalArgumentException if {@code type} was {@code null}
+     * @throws IllegalArgumentException if {@code variableDeclarators} was {@code null}
+     * @throws IllegalArgumentException if {@code variableDeclarators} was empty
      */
     FieldDeclaration newFieldDeclaration(
             Javadoc javadoc,
@@ -1036,21 +769,13 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link ForStatement}を生成して返す。
-     * @param initialization
-     *     ループ初期化部、
-     *     ただしループ初期化部が指定されない場合は{@code null}
-     * @param condition
-     *     ループ条件式、
-     *     ただしループ条件が指定されない場合は{@code null}
-     * @param update
-     *     ループ更新部、
-     *     ただしループ更新部が指定されない場合は{@code null}
-     * @param body
-     *     ループ本体
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code body}に{@code null}が指定された場合
+     * Returns a new {@link ForStatement} object.
+     * @param initialization the loop initialization part, or {@code null} if it is not specified
+     * @param condition the loop condition, or {@code null} if it is not specified
+     * @param update the loop update part, or {@code null} if it is not specified
+     * @param body the loop body
+     * @return the created object
+     * @throws IllegalArgumentException if {@code body} was {@code null}
      */
     ForStatement newForStatement(
             ForInitializer initialization,
@@ -1060,16 +785,12 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link FormalParameterDeclaration}を生成して返す。
-     * @param type
-     *     宣言する変数の型
-     * @param name
-     *     仮引数の名前
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code type}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code name}に{@code null}が指定された場合
+     * Returns a new {@link FormalParameterDeclaration} object.
+     * @param type the parameter type
+     * @param name the parameter name
+     * @return the created object
+     * @throws IllegalArgumentException if {@code type} was {@code null}
+     * @throws IllegalArgumentException if {@code name} was {@code null}
      */
     FormalParameterDeclaration newFormalParameterDeclaration(
             Type type,
@@ -1077,26 +798,17 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link FormalParameterDeclaration}を生成して返す。
-     * @param modifiers
-     *     修飾子および注釈の一覧
-     * @param type
-     *     宣言する変数の型
-     * @param variableArity
-     *     可変長引数
-     * @param name
-     *     仮引数の名前
-     * @param extraDimensions
-     *     追加次元数の宣言
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code modifiers}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code type}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code name}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code extraDimensions}に負の値が指定された場合
+     * Returns a new {@link FormalParameterDeclaration} object.
+     * @param modifiers the modifiers and annotations
+     * @param type the parameter type
+     * @param variableArity {@code true} if this parameter is variable arity, otherwise {@code false}
+     * @param name the parameter name
+     * @param extraDimensions the extra dimensions
+     * @return the created object
+     * @throws IllegalArgumentException if {@code modifiers} was {@code null}
+     * @throws IllegalArgumentException if {@code type} was {@code null}
+     * @throws IllegalArgumentException if {@code name} was {@code null}
+     * @throws IllegalArgumentException if {@code extraDimensions} was negative value
      */
     FormalParameterDeclaration newFormalParameterDeclaration(
             List<? extends Attribute> modifiers,
@@ -1107,16 +819,12 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link IfStatement}を生成して返す。
-     * @param condition
-     *     条件式
-     * @param thenStatement
-     *     条件成立時に実行される文
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code condition}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code thenStatement}に{@code null}が指定された場合
+     * Returns a new {@link IfStatement} object.
+     * @param condition the condition expression
+     * @param thenStatement the truth statement
+     * @return the created object
+     * @throws IllegalArgumentException if {@code condition} was {@code null}
+     * @throws IllegalArgumentException if {@code thenStatement} was {@code null}
      */
     IfStatement newIfStatement(
             Expression condition,
@@ -1124,19 +832,13 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link IfStatement}を生成して返す。
-     * @param condition
-     *     条件式
-     * @param thenStatement
-     *     条件成立時に実行される文
-     * @param elseStatement
-     *     条件不成立時に実行される文、
-     *     ただしこの文が{@code if-then}文である場合は{@code null}
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code condition}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code thenStatement}に{@code null}が指定された場合
+     * Returns a new {@link IfStatement} object.
+     * @param condition the condition expression
+     * @param thenStatement the truth statement
+     * @param elseStatement the false statement, or {@code null} if it is not specified
+     * @return the created object
+     * @throws IllegalArgumentException if {@code condition} was {@code null}
+     * @throws IllegalArgumentException if {@code thenStatement} was {@code null}
      */
     IfStatement newIfStatement(
             Expression condition,
@@ -1145,16 +847,12 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link ImportDeclaration}を生成して返す。
-     * @param importKind
-     *     インポートの種類
-     * @param name
-     *     インポートする型およびメンバの名前
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code importKind}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code name}に{@code null}が指定された場合
+     * Returns a new {@link ImportDeclaration} object.
+     * @param importKind the import kind
+     * @param name the import target name
+     * @return the created object
+     * @throws IllegalArgumentException if {@code importKind} was {@code null}
+     * @throws IllegalArgumentException if {@code name} was {@code null}
      */
     ImportDeclaration newImportDeclaration(
             ImportKind importKind,
@@ -1162,20 +860,14 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link InfixExpression}を生成して返す。
-     * @param leftOperand
-     *     第一演算項
-     * @param operator
-     *     二項演算子
-     * @param rightOperand
-     *     第二演算項
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code leftOperand}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code operator}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code rightOperand}に{@code null}が指定された場合
+     * Returns a new {@link InfixExpression} object.
+     * @param leftOperand the left term
+     * @param operator the infix operator
+     * @param rightOperand the right term
+     * @return the created object
+     * @throws IllegalArgumentException if {@code leftOperand} was {@code null}
+     * @throws IllegalArgumentException if {@code operator} was {@code null}
+     * @throws IllegalArgumentException if {@code rightOperand} was {@code null}
      */
     InfixExpression newInfixExpression(
             Expression leftOperand,
@@ -1184,31 +876,23 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link InitializerDeclaration}を生成して返す。
-     * @param body
-     *     初期化子の本体
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code body}に{@code null}が指定された場合
+     * Returns a new {@link InitializerDeclaration} object.
+     * @param body the initializer body
+     * @return the created object
+     * @throws IllegalArgumentException if {@code body} was {@code null}
      */
     InitializerDeclaration newInitializerDeclaration(
             List<? extends Statement> body
     );
 
     /**
-     * 新しい{@link InitializerDeclaration}を生成して返す。
-     * @param javadoc
-     *     ドキュメンテーションコメント、
-     *     ただしドキュメンテーションコメントが存在しない場合は{@code null}
-     * @param modifiers
-     *     修飾子および注釈の一覧
-     * @param body
-     *     初期化子の本体
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code modifiers}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code body}に{@code null}が指定された場合
+     * Returns a new {@link InitializerDeclaration} object.
+     * @param javadoc the documentation comments, or {@code null} if there is no documentation comments
+     * @param modifiers the modifiers and annotations
+     * @param body the initializer body
+     * @return the created object
+     * @throws IllegalArgumentException if {@code modifiers} was {@code null}
+     * @throws IllegalArgumentException if {@code body} was {@code null}
      */
     InitializerDeclaration newInitializerDeclaration(
             Javadoc javadoc,
@@ -1217,16 +901,12 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link InstanceofExpression}を生成して返す。
-     * @param expression
-     *     被演算項
-     * @param type
-     *     比較対象型
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code expression}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code type}に{@code null}が指定された場合
+     * Returns a new {@link InstanceofExpression} object.
+     * @param expression the left term
+     * @param type the target type
+     * @return the created object
+     * @throws IllegalArgumentException if {@code expression} was {@code null}
+     * @throws IllegalArgumentException if {@code type} was {@code null}
      */
     InstanceofExpression newInstanceofExpression(
             Expression expression,
@@ -1234,27 +914,17 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link InterfaceDeclaration}を生成して返す。
-     * @param javadoc
-     *     ドキュメンテーションコメント、
-     *     ただしドキュメンテーションコメントが存在しない場合は{@code null}
-     * @param modifiers
-     *     修飾子および注釈の一覧
-     * @param name
-     *     型の単純名
-     * @param superInterfaceTypes
-     *     親インターフェースの一覧
-     * @param bodyDeclarations
-     *     メンバの一覧
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code modifiers}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code name}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code superInterfaceTypes}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code bodyDeclarations}に{@code null}が指定された場合
+     * Returns a new {@link InterfaceDeclaration} object.
+     * @param javadoc the documentation comments, or {@code null} if there is no documentation comments
+     * @param modifiers the modifiers and annotations
+     * @param name the simple type name
+     * @param superInterfaceTypes the super interface types
+     * @param bodyDeclarations the member declarations
+     * @return the created object
+     * @throws IllegalArgumentException if {@code modifiers} was {@code null}
+     * @throws IllegalArgumentException if {@code name} was {@code null}
+     * @throws IllegalArgumentException if {@code superInterfaceTypes} was {@code null}
+     * @throws IllegalArgumentException if {@code bodyDeclarations} was {@code null}
      */
     InterfaceDeclaration newInterfaceDeclaration(
             Javadoc javadoc,
@@ -1265,31 +935,19 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link InterfaceDeclaration}を生成して返す。
-     * @param javadoc
-     *     ドキュメンテーションコメント、
-     *     ただしドキュメンテーションコメントが存在しない場合は{@code null}
-     * @param modifiers
-     *     修飾子および注釈の一覧
-     * @param name
-     *     型の単純名
-     * @param typeParameters
-     *     仮型引数宣言の一覧
-     * @param superInterfaceTypes
-     *     親インターフェースの一覧
-     * @param bodyDeclarations
-     *     メンバの一覧
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code modifiers}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code name}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code typeParameters}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code superInterfaceTypes}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code bodyDeclarations}に{@code null}が指定された場合
+     * Returns a new {@link InterfaceDeclaration} object.
+     * @param javadoc the documentation comments, or {@code null} if there is no documentation comments
+     * @param modifiers the modifiers and annotations
+     * @param name the simple type name
+     * @param typeParameters the type parameters
+     * @param superInterfaceTypes the super interface types
+     * @param bodyDeclarations the member declarations
+     * @return the created object
+     * @throws IllegalArgumentException if {@code modifiers} was {@code null}
+     * @throws IllegalArgumentException if {@code name} was {@code null}
+     * @throws IllegalArgumentException if {@code typeParameters} was {@code null}
+     * @throws IllegalArgumentException if {@code superInterfaceTypes} was {@code null}
+     * @throws IllegalArgumentException if {@code bodyDeclarations} was {@code null}
      */
     InterfaceDeclaration newInterfaceDeclaration(
             Javadoc javadoc,
@@ -1301,28 +959,22 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link Javadoc}を生成して返す。
-     * @param blocks
-     *     ブロックの一覧
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code blocks}に{@code null}が指定された場合
+     * Returns a new {@link Javadoc} object.
+     * @param blocks the doc blocks
+     * @return the created object
+     * @throws IllegalArgumentException if {@code blocks} was {@code null}
      */
     Javadoc newJavadoc(
             List<? extends DocBlock> blocks
     );
 
     /**
-     * 新しい{@link LabeledStatement}を生成して返す。
-     * @param label
-     *     ラベルの名前
-     * @param body
-     *     対象の文
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code label}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code body}に{@code null}が指定された場合
+     * Returns a new {@link LabeledStatement} object.
+     * @param label the label name
+     * @param body the body statement
+     * @return the created object
+     * @throws IllegalArgumentException if {@code label} was {@code null}
+     * @throws IllegalArgumentException if {@code body} was {@code null}
      */
     LabeledStatement newLabeledStatement(
             SimpleName label,
@@ -1330,59 +982,45 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link LineComment}を生成して返す。
-     * @param string
-     *     コメント文字列
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code string}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code string}に空が指定された場合
+     * Returns a new {@link LineComment} object.
+     * @param string the comment text
+     * @return the created object
+     * @throws IllegalArgumentException if {@code string} was {@code null}
+     * @throws IllegalArgumentException if {@code string} was empty
      */
     LineComment newLineComment(
             String string
     );
 
     /**
-     * 新しい{@link Literal}を生成して返す。
-     * @param token
-     *     このリテラルを構成する字句
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code token}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code token}に空が指定された場合
+     * Returns a new {@link Literal} object.
+     * @param token the literal token
+     * @return the created object
+     * @throws IllegalArgumentException if {@code token} was {@code null}
+     * @throws IllegalArgumentException if {@code token} was empty
      */
     Literal newLiteral(
             String token
     );
 
     /**
-     * 新しい{@link LocalClassDeclaration}を生成して返す。
-     * @param declaration
-     *     宣言するクラス
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code declaration}に{@code null}が指定された場合
+     * Returns a new {@link LocalClassDeclaration} object.
+     * @param declaration the target class declaration
+     * @return the created object
+     * @throws IllegalArgumentException if {@code declaration} was {@code null}
      */
     LocalClassDeclaration newLocalClassDeclaration(
             ClassDeclaration declaration
     );
 
     /**
-     * 新しい{@link LocalVariableDeclaration}を生成して返す。
-     * @param type
-     *     宣言する変数の型
-     * @param name
-     *     変数の名前
-     * @param initializer
-     *     初期化式、
-     *     ただし初期化式が指定されない場合は{@code null}
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code type}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code name}に{@code null}が指定された場合
+     * Returns a new {@link LocalVariableDeclaration} object.
+     * @param type the variable type
+     * @param name the variable name
+     * @param initializer the initializer expression, or {@code null} if it is not specified
+     * @return the created object
+     * @throws IllegalArgumentException if {@code type} was {@code null}
+     * @throws IllegalArgumentException if {@code name} was {@code null}
      */
     LocalVariableDeclaration newLocalVariableDeclaration(
             Type type,
@@ -1391,22 +1029,15 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link LocalVariableDeclaration}を生成して返す。
-     * @param modifiers
-     *     修飾子および注釈の一覧
-     * @param type
-     *     宣言する変数の型
-     * @param variableDeclarators
-     *     宣言する変数の一覧
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code modifiers}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code type}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code variableDeclarators}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code variableDeclarators}に空が指定された場合
+     * Returns a new {@link LocalVariableDeclaration} object.
+     * @param modifiers the modifiers and annotations
+     * @param type the variable type
+     * @param variableDeclarators the variable declarators
+     * @return the created object
+     * @throws IllegalArgumentException if {@code modifiers} was {@code null}
+     * @throws IllegalArgumentException if {@code type} was {@code null}
+     * @throws IllegalArgumentException if {@code variableDeclarators} was {@code null}
+     * @throws IllegalArgumentException if {@code variableDeclarators} was empty
      */
     LocalVariableDeclaration newLocalVariableDeclaration(
             List<? extends Attribute> modifiers,
@@ -1415,42 +1046,28 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link MarkerAnnotation}を生成して返す。
-     * @param type
-     *     注釈の型
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code type}に{@code null}が指定された場合
+     * Returns a new {@link MarkerAnnotation} object.
+     * @param type the annotation type
+     * @return the created object
+     * @throws IllegalArgumentException if {@code type} was {@code null}
      */
     MarkerAnnotation newMarkerAnnotation(
             NamedType type
     );
 
     /**
-     * 新しい{@link MethodDeclaration}を生成して返す。
-     * @param javadoc
-     *     ドキュメンテーションコメント、
-     *     ただしドキュメンテーションコメントが存在しない場合は{@code null}
-     * @param modifiers
-     *     修飾子および注釈の一覧
-     * @param returnType
-     *     戻り値の型
-     * @param name
-     *     メソッドまたはコンストラクタの名前
-     * @param formalParameters
-     *     仮引数宣言の一覧
-     * @param statements
-     *     メソッドまたはコンストラクタ本体、
-     *     ただしこのメソッドが本体を提供されない抽象メソッドやインターフェースメソッドである場合は{@code null}
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code modifiers}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code returnType}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code name}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code formalParameters}に{@code null}が指定された場合
+     * Returns a new {@link MethodDeclaration} object.
+     * @param javadoc the documentation comments, or {@code null} if there is no documentation comments
+     * @param modifiers the modifiers and annotations
+     * @param returnType the return type
+     * @param name the method name
+     * @param formalParameters the formal parameters
+     * @param statements the method body, or {@code null} if the method does not have any method body
+     * @return the created object
+     * @throws IllegalArgumentException if {@code modifiers} was {@code null}
+     * @throws IllegalArgumentException if {@code returnType} was {@code null}
+     * @throws IllegalArgumentException if {@code name} was {@code null}
+     * @throws IllegalArgumentException if {@code formalParameters} was {@code null}
      */
     MethodDeclaration newMethodDeclaration(
             Javadoc javadoc,
@@ -1462,42 +1079,24 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link MethodDeclaration}を生成して返す。
-     * @param javadoc
-     *     ドキュメンテーションコメント、
-     *     ただしドキュメンテーションコメントが存在しない場合は{@code null}
-     * @param modifiers
-     *     修飾子および注釈の一覧
-     * @param typeParameters
-     *     型引数宣言の一覧
-     * @param returnType
-     *     戻り値の型
-     * @param name
-     *     メソッドまたはコンストラクタの名前
-     * @param formalParameters
-     *     仮引数宣言の一覧
-     * @param extraDimensions
-     *     戻り値の次元数
-     * @param exceptionTypes
-     *     例外型宣言の一覧
-     * @param body
-     *     メソッドまたはコンストラクタ本体、
-     *     ただしこのメソッドが本体を提供されない抽象メソッドやインターフェースメソッドである場合は{@code null}
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code modifiers}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code typeParameters}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code returnType}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code name}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code formalParameters}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code extraDimensions}に負の値が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code exceptionTypes}に{@code null}が指定された場合
+     * Returns a new {@link MethodDeclaration} object.
+     * @param javadoc the documentation comments, or {@code null} if there is no documentation comments
+     * @param modifiers the modifiers and annotations
+     * @param typeParameters the type parameters
+     * @param returnType the return type
+     * @param name the method name
+     * @param formalParameters the formal parameters
+     * @param extraDimensions the extra dimensions
+     * @param exceptionTypes the exception types
+     * @param body the method body, or {@code null} if the method does not have any method body
+     * @return the created object
+     * @throws IllegalArgumentException if {@code modifiers} was {@code null}
+     * @throws IllegalArgumentException if {@code typeParameters} was {@code null}
+     * @throws IllegalArgumentException if {@code returnType} was {@code null}
+     * @throws IllegalArgumentException if {@code name} was {@code null}
+     * @throws IllegalArgumentException if {@code formalParameters} was {@code null}
+     * @throws IllegalArgumentException if {@code extraDimensions} was negative
+     * @throws IllegalArgumentException if {@code exceptionTypes} was {@code null}
      */
     MethodDeclaration newMethodDeclaration(
             Javadoc javadoc,
@@ -1512,19 +1111,14 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link MethodInvocationExpression}を生成して返す。
-     * @param qualifier
-     *     限定式、または型限定子、
-     *     ただし限定式が指定されない場合(単純メソッド起動)は{@code null}
-     * @param name
-     *     メソッドの名前
-     * @param arguments
-     *     実引数の一覧
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code name}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code arguments}に{@code null}が指定された場合
+     * Returns a new {@link MethodInvocationExpression} object.
+     * @param qualifier the qualifier expression or type qualifier,
+     *     or {@code null} if there is no qualifier expression (indicates a simple method invocation)
+     * @param name the method name
+     * @param arguments the arguments
+     * @return the created object
+     * @throws IllegalArgumentException if {@code name} was {@code null}
+     * @throws IllegalArgumentException if {@code arguments} was {@code null}
      */
     MethodInvocationExpression newMethodInvocationExpression(
             Expression qualifier,
@@ -1533,19 +1127,14 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link MethodInvocationExpression}を生成して返す。
-     * @param qualifier
-     *     限定式、または型限定子、
-     *     ただし限定式が指定されない場合(単純メソッド起動)は{@code null}
-     * @param name
-     *     メソッドの名前
-     * @param arguments
-     *     実引数の一覧
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code name}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code arguments}に{@code null}が指定された場合
+     * Returns a new {@link MethodInvocationExpression} object.
+     * @param qualifier the qualifier expression or type qualifier,
+     *     or {@code null} if there is no qualifier expression (indicates a simple method invocation)
+     * @param name the method name
+     * @param arguments the arguments
+     * @return the created object
+     * @throws IllegalArgumentException if {@code name} was {@code null}
+     * @throws IllegalArgumentException if {@code arguments} was {@code null}
      */
     MethodInvocationExpression newMethodInvocationExpression(
             Expression qualifier,
@@ -1554,23 +1143,16 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link MethodInvocationExpression}を生成して返す。
-     * @param qualifier
-     *     限定式、または型限定子、
-     *     ただし限定式が指定されない場合(単純メソッド起動)は{@code null}
-     * @param typeArguments
-     *     型引数の一覧
-     * @param name
-     *     メソッドの名前
-     * @param arguments
-     *     実引数の一覧
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code typeArguments}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code name}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code arguments}に{@code null}が指定された場合
+     * Returns a new {@link MethodInvocationExpression} object.
+     * @param qualifier the qualifier expression or type qualifier,
+     *     or {@code null} if there is no qualifier expression (indicates a simple method invocation)
+     * @param typeArguments the type arguments
+     * @param name the method name
+     * @param arguments the arguments
+     * @return the created object
+     * @throws IllegalArgumentException if {@code typeArguments} was {@code null}
+     * @throws IllegalArgumentException if {@code name} was {@code null}
+     * @throws IllegalArgumentException if {@code arguments} was {@code null}
      */
     MethodInvocationExpression newMethodInvocationExpression(
             Expression qualifier,
@@ -1580,40 +1162,32 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link Modifier}を生成して返す。
-     * @param modifierKind
-     *     修飾子の種類
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code modifierKind}に{@code null}が指定された場合
+     * Returns a new {@link Modifier} object.
+     * @param modifierKind the modifier kind
+     * @return the created object
+     * @throws IllegalArgumentException if {@code modifierKind} was {@code null}
      */
     Modifier newModifier(
             ModifierKind modifierKind
     );
 
     /**
-     * 新しい{@link NamedType}を生成して返す。
-     * @param name
-     *     型の名前
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code name}に{@code null}が指定された場合
+     * Returns a new {@link NamedType} object.
+     * @param name the type name
+     * @return the created object
+     * @throws IllegalArgumentException if {@code name} was {@code null}
      */
     NamedType newNamedType(
             Name name
     );
 
     /**
-     * 新しい{@link NormalAnnotation}を生成して返す。
-     * @param type
-     *     注釈の型
-     * @param elements
-     *     注釈要素の一覧
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code type}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code elements}に{@code null}が指定された場合
+     * Returns a new {@link NormalAnnotation} object.
+     * @param type the annotation type
+     * @param elements the annotation elements
+     * @return the created object
+     * @throws IllegalArgumentException if {@code type} was {@code null}
+     * @throws IllegalArgumentException if {@code elements} was {@code null}
      */
     NormalAnnotation newNormalAnnotation(
             NamedType type,
@@ -1621,31 +1195,23 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link PackageDeclaration}を生成して返す。
-     * @param name
-     *     宣言するパッケージの名称
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code name}に{@code null}が指定された場合
+     * Returns a new {@link PackageDeclaration} object.
+     * @param name the package name
+     * @return the created object
+     * @throws IllegalArgumentException if {@code name} was {@code null}
      */
     PackageDeclaration newPackageDeclaration(
             Name name
     );
 
     /**
-     * 新しい{@link PackageDeclaration}を生成して返す。
-     * @param javadoc
-     *     ドキュメンテーションコメント、
-     *     ただしドキュメンテーションコメントが存在しない場合は{@code null}
-     * @param annotations
-     *     注釈の一覧
-     * @param name
-     *     宣言するパッケージの名称
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code annotations}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code name}に{@code null}が指定された場合
+     * Returns a new {@link PackageDeclaration} object.
+     * @param javadoc the documentation comments, or {@code null} if there is no documentation comments
+     * @param annotations the annotations
+     * @param name the package name
+     * @return the created object
+     * @throws IllegalArgumentException if {@code annotations} was {@code null}
+     * @throws IllegalArgumentException if {@code name} was {@code null}
      */
     PackageDeclaration newPackageDeclaration(
             Javadoc javadoc,
@@ -1654,18 +1220,13 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link ParameterizedType}を生成して返す。
-     * @param type
-     *     パラメータ化されていない型
-     * @param typeArguments
-     *     型引数の一覧
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code type}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code typeArguments}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code typeArguments}に空が指定された場合
+     * Returns a new {@link ParameterizedType} object.
+     * @param type the non parameterized type
+     * @param typeArguments the type arguments
+     * @return the created object
+     * @throws IllegalArgumentException if {@code type} was {@code null}
+     * @throws IllegalArgumentException if {@code typeArguments} was {@code null}
+     * @throws IllegalArgumentException if {@code typeArguments} was empty
      */
     ParameterizedType newParameterizedType(
             Type type,
@@ -1673,18 +1234,13 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link ParameterizedType}を生成して返す。
-     * @param type
-     *     パラメータ化されていない型
-     * @param typeArguments
-     *     型引数の一覧
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code type}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code typeArguments}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code typeArguments}に空が指定された場合
+     * Returns a new {@link ParameterizedType} object.
+     * @param type the non parameterized type
+     * @param typeArguments the type arguments
+     * @return the created object
+     * @throws IllegalArgumentException if {@code type} was {@code null}
+     * @throws IllegalArgumentException if {@code typeArguments} was {@code null}
+     * @throws IllegalArgumentException if {@code typeArguments} was empty
      */
     ParameterizedType newParameterizedType(
             Type type,
@@ -1692,28 +1248,22 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link ParenthesizedExpression}を生成して返す。
-     * @param expression
-     *     内包する式
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code expression}に{@code null}が指定された場合
+     * Returns a new {@link ParenthesizedExpression} object.
+     * @param expression the internal expression
+     * @return the created object
+     * @throws IllegalArgumentException if {@code expression} was {@code null}
      */
     ParenthesizedExpression newParenthesizedExpression(
             Expression expression
     );
 
     /**
-     * 新しい{@link PostfixExpression}を生成して返す。
-     * @param operand
-     *     後置演算項
-     * @param operator
-     *     演算子
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code operand}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code operator}に{@code null}が指定された場合
+     * Returns a new {@link PostfixExpression} object.
+     * @param operand the term expression
+     * @param operator the postfix operator
+     * @return the created object
+     * @throws IllegalArgumentException if {@code operand} was {@code null}
+     * @throws IllegalArgumentException if {@code operator} was {@code null}
      */
     PostfixExpression newPostfixExpression(
             Expression operand,
@@ -1721,16 +1271,12 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link QualifiedName}を生成して返す。
-     * @param qualifier
-     *     限定子
-     * @param simpleName
-     *     この限定名の末尾にある単純名
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code qualifier}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code simpleName}に{@code null}が指定された場合
+     * Returns a new {@link QualifiedName} object.
+     * @param qualifier the qualifier
+     * @param simpleName the simple name
+     * @return the created object
+     * @throws IllegalArgumentException if {@code qualifier} was {@code null}
+     * @throws IllegalArgumentException if {@code simpleName} was {@code null}
      */
     QualifiedName newQualifiedName(
             Name qualifier,
@@ -1738,16 +1284,12 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link QualifiedType}を生成して返す。
-     * @param qualifier
-     *     型限定子
-     * @param simpleName
-     *     型の単純名
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code qualifier}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code simpleName}に{@code null}が指定された場合
+     * Returns a new {@link QualifiedType} object.
+     * @param qualifier the qualifier type
+     * @param simpleName the simple name
+     * @return the created object
+     * @throws IllegalArgumentException if {@code qualifier} was {@code null}
+     * @throws IllegalArgumentException if {@code simpleName} was {@code null}
      */
     QualifiedType newQualifiedType(
             Type qualifier,
@@ -1755,48 +1297,38 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link ReturnStatement}を生成して返す。
-     * @return 生成した要素
+     * Returns a new {@link ReturnStatement} object.
+     * @return the created object
      */
-    ReturnStatement newReturnStatement(
-    );
+    ReturnStatement newReturnStatement();
 
     /**
-     * 新しい{@link ReturnStatement}を生成して返す。
-     * @param expression
-     *     返戻値、
-     *     ただし返戻値が指定されない場合は{@code null}
-     * @return 生成した要素
+     * Returns a new {@link ReturnStatement} object.
+     * @param expression the expression, or {@code null} if this does not return anything
+     * @return the created object
      */
     ReturnStatement newReturnStatement(
             Expression expression
     );
 
     /**
-     * 新しい{@link SimpleName}を生成して返す。
-     * @param string
-     *     この単純名を表現する文字列
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code string}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code string}に空が指定された場合
+     * Returns a new {@link SimpleName} object.
+     * @param string the identifier
+     * @return the created object
+     * @throws IllegalArgumentException if {@code string} was {@code null}
+     * @throws IllegalArgumentException if {@code string} was empty
      */
     SimpleName newSimpleName(
             String string
     );
 
     /**
-     * 新しい{@link SingleElementAnnotation}を生成して返す。
-     * @param type
-     *     注釈の型
-     * @param expression
-     *     {@code value}要素値の式
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code type}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code expression}に{@code null}が指定された場合
+     * Returns a new {@link SingleElementAnnotation} object.
+     * @param type the annotation type
+     * @param expression the {@code value} element expression
+     * @return the created object
+     * @throws IllegalArgumentException if {@code type} was {@code null}
+     * @throws IllegalArgumentException if {@code expression} was {@code null}
      */
     SingleElementAnnotation newSingleElementAnnotation(
             NamedType type,
@@ -1804,89 +1336,70 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link StatementExpressionList}を生成して返す。
-     * @param expressions
-     *     式の一覧
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code expressions}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code expressions}に空が指定された場合
+     * Returns a new {@link StatementExpressionList} object.
+     * @param expressions the expression list
+     * @return the created object
+     * @throws IllegalArgumentException if {@code expressions} was {@code null}
+     * @throws IllegalArgumentException if {@code expressions} was empty
      */
     StatementExpressionList newStatementExpressionList(
             Expression... expressions
     );
 
     /**
-     * 新しい{@link StatementExpressionList}を生成して返す。
-     * @param expressions
-     *     式の一覧
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code expressions}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code expressions}に空が指定された場合
+     * Returns a new {@link StatementExpressionList} object.
+     * @param expressions the expression list
+     * @return the created object
+     * @throws IllegalArgumentException if {@code expressions} was {@code null}
+     * @throws IllegalArgumentException if {@code expressions} was empty
      */
     StatementExpressionList newStatementExpressionList(
             List<? extends Expression> expressions
     );
 
     /**
-     * 新しい{@link Super}を生成して返す。
-     * @return 生成した要素
+     * Returns a new {@link Super} object.
+     * @return the created object
      */
-    Super newSuper(
-    );
+    Super newSuper();
 
     /**
-     * 新しい{@link Super}を生成して返す。
-     * @param qualifier
-     *     型限定子、
-     *     ただし限定子が指定されない場合は{@code null}
-     * @return 生成した要素
+     * Returns a new {@link Super} object.
+     * @param qualifier the type qualifier, or {@code null} if there is no type qualifier
+     * @return the created object
      */
     Super newSuper(
             NamedType qualifier
     );
 
     /**
-     * 新しい{@link SuperConstructorInvocation}を生成して返す。
-     * @param arguments
-     *     実引数の一覧
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code arguments}に{@code null}が指定された場合
+     * Returns a new {@link SuperConstructorInvocation} object.
+     * @param arguments the arguments
+     * @return the created object
+     * @throws IllegalArgumentException if {@code arguments} was {@code null}
      */
     SuperConstructorInvocation newSuperConstructorInvocation(
             Expression... arguments
     );
 
     /**
-     * 新しい{@link SuperConstructorInvocation}を生成して返す。
-     * @param arguments
-     *     実引数の一覧
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code arguments}に{@code null}が指定された場合
+     * Returns a new {@link SuperConstructorInvocation} object.
+     * @param arguments the arguments
+     * @return the created object
+     * @throws IllegalArgumentException if {@code arguments} was {@code null}
      */
     SuperConstructorInvocation newSuperConstructorInvocation(
             List<? extends Expression> arguments
     );
 
     /**
-     * 新しい{@link SuperConstructorInvocation}を生成して返す。
-     * @param qualifier
-     *     限定式、
-     *     ただし限定式が指定されない場合は{@code null}
-     * @param typeArguments
-     *     型引数の一覧
-     * @param arguments
-     *     実引数の一覧
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code typeArguments}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code arguments}に{@code null}が指定された場合
+     * Returns a new {@link SuperConstructorInvocation} object.
+     * @param qualifier the qualifier expression, or {@code null} if there is no qualifier
+     * @param typeArguments the type arguments
+     * @param arguments the arguments
+     * @return the created object
+     * @throws IllegalArgumentException if {@code typeArguments} was {@code null}
+     * @throws IllegalArgumentException if {@code arguments} was {@code null}
      */
     SuperConstructorInvocation newSuperConstructorInvocation(
             Expression qualifier,
@@ -1895,36 +1408,30 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link SwitchCaseLabel}を生成して返す。
-     * @param expression
-     *     {@code case}ラベルの値
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code expression}に{@code null}が指定された場合
+     * Returns a new {@link SwitchCaseLabel} object.
+     * @param expression the {@code case} label value
+     * @return the created object
+     * @throws IllegalArgumentException if {@code expression} was {@code null}
      */
     SwitchCaseLabel newSwitchCaseLabel(
             Expression expression
     );
 
     /**
-     * 新しい{@link SwitchDefaultLabel}を生成して返す。
-     * @return 生成した要素
+     * Returns a new {@link SwitchDefaultLabel} object.
+     * @return the created object
      */
     SwitchDefaultLabel newSwitchDefaultLabel(
 
     );
 
     /**
-     * 新しい{@link SwitchStatement}を生成して返す。
-     * @param expression
-     *     セレクタ式
-     * @param statements
-     *     {@code switch}文の本体
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code expression}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code statements}に{@code null}が指定された場合
+     * Returns a new {@link SwitchStatement} object.
+     * @param expression the selector expression
+     * @param statements the {@code switch} body
+     * @return the created object
+     * @throws IllegalArgumentException if {@code expression} was {@code null}
+     * @throws IllegalArgumentException if {@code statements} was {@code null}
      */
     SwitchStatement newSwitchStatement(
             Expression expression,
@@ -1932,16 +1439,12 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link SynchronizedStatement}を生成して返す。
-     * @param expression
-     *     同期オブジェクト
-     * @param body
-     *     本体ブロック
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code expression}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code body}に{@code null}が指定された場合
+     * Returns a new {@link SynchronizedStatement} object.
+     * @param expression the lock expression
+     * @param body the body block
+     * @return the created object
+     * @throws IllegalArgumentException if {@code expression} was {@code null}
+     * @throws IllegalArgumentException if {@code body} was {@code null}
      */
     SynchronizedStatement newSynchronizedStatement(
             Expression expression,
@@ -1949,49 +1452,38 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link This}を生成して返す。
-     * @return 生成した要素
+     * Returns a new {@link This} object.
+     * @return the created object
      */
-    This newThis(
-    );
+    This newThis();
 
     /**
-     * 新しい{@link This}を生成して返す。
-     * @param qualifier
-     *     型限定子、
-     *     ただし限定子が指定されない場合は{@code null}
-     * @return 生成した要素
+     * Returns a new {@link This} object.
+     * @param qualifier the type qualifier, or {@code null} if there is no type qualifier
+     * @return the created object
      */
     This newThis(
             NamedType qualifier
     );
 
     /**
-     * 新しい{@link ThrowStatement}を生成して返す。
-     * @param expression
-     *     例外オブジェクト
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code expression}に{@code null}が指定された場合
+     * Returns a new {@link ThrowStatement} object.
+     * @param expression the expression to be thrown
+     * @return the created object
+     * @throws IllegalArgumentException if {@code expression} was {@code null}
      */
     ThrowStatement newThrowStatement(
             Expression expression
     );
 
     /**
-     * 新しい{@link TryStatement}を生成して返す。
-     * @param tryBlock
-     *     {@code try}節
-     * @param catchClauses
-     *     {@code catch}節の一覧
-     * @param finallyBlock
-     *     {@code finally}節、
-     *     ただし{@code finally}節が指定されない場合は{@code null}
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code tryBlock}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code catchClauses}に{@code null}が指定された場合
+     * Returns a new {@link TryStatement} object.
+     * @param tryBlock the {@code try} clause
+     * @param catchClauses the {@code catch} clauses
+     * @param finallyBlock the {@code finally} clause, or {@code null} if it is not specified
+     * @return the created object
+     * @throws IllegalArgumentException if {@code tryBlock} was {@code null}
+     * @throws IllegalArgumentException if {@code catchClauses} was {@code null}
      */
     TryStatement newTryStatement(
             Block tryBlock,
@@ -2000,16 +1492,12 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link TypeParameterDeclaration}を生成して返す。
-     * @param name
-     *     型引数の名前
-     * @param typeBounds
-     *     境界型の一覧
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code name}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code typeBounds}に{@code null}が指定された場合
+     * Returns a new {@link TypeParameterDeclaration} object.
+     * @param name the type variable name
+     * @param typeBounds the bound types
+     * @return the created object
+     * @throws IllegalArgumentException if {@code name} was {@code null}
+     * @throws IllegalArgumentException if {@code typeBounds} was {@code null}
      */
     TypeParameterDeclaration newTypeParameterDeclaration(
             SimpleName name,
@@ -2017,16 +1505,12 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link TypeParameterDeclaration}を生成して返す。
-     * @param name
-     *     型引数の名前
-     * @param typeBounds
-     *     境界型の一覧
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code name}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code typeBounds}に{@code null}が指定された場合
+     * Returns a new {@link TypeParameterDeclaration} object.
+     * @param name the type variable name
+     * @param typeBounds the bound types
+     * @return the created object
+     * @throws IllegalArgumentException if {@code name} was {@code null}
+     * @throws IllegalArgumentException if {@code typeBounds} was {@code null}
      */
     TypeParameterDeclaration newTypeParameterDeclaration(
             SimpleName name,
@@ -2034,16 +1518,12 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link UnaryExpression}を生成して返す。
-     * @param operator
-     *     単項演算子
-     * @param operand
-     *     演算項
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code operator}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code operand}に{@code null}が指定された場合
+     * Returns a new {@link UnaryExpression} object.
+     * @param operator the unary operator
+     * @param operand the term expression
+     * @return the created object
+     * @throws IllegalArgumentException if {@code operator} was {@code null}
+     * @throws IllegalArgumentException if {@code operand} was {@code null}
      */
     UnaryExpression newUnaryExpression(
             UnaryOperator operator,
@@ -2051,15 +1531,11 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link VariableDeclarator}を生成して返す。
-     * @param name
-     *     変数の名前
-     * @param initializer
-     *     初期化式、
-     *     ただし初期化式が指定されない場合は{@code null}
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code name}に{@code null}が指定された場合
+     * Returns a new {@link VariableDeclarator} object.
+     * @param name the variable name
+     * @param initializer the initializer expression, or {@code null} if it is not specified
+     * @return the created object
+     * @throws IllegalArgumentException if {@code name} was {@code null}
      */
     VariableDeclarator newVariableDeclarator(
             SimpleName name,
@@ -2067,19 +1543,13 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link VariableDeclarator}を生成して返す。
-     * @param name
-     *     変数の名前
-     * @param extraDimensions
-     *     追加次元数の宣言
-     * @param initializer
-     *     初期化式、
-     *     ただし初期化式が指定されない場合は{@code null}
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code name}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code extraDimensions}に負の値が指定された場合
+     * Returns a new {@link VariableDeclarator} object.
+     * @param name the variable name
+     * @param extraDimensions the extra dimensions
+     * @param initializer the initializer expression, or {@code null} if it is not specified
+     * @return the created object
+     * @throws IllegalArgumentException if {@code name} was {@code null}
+     * @throws IllegalArgumentException if {@code extraDimensions} was negative
      */
     VariableDeclarator newVariableDeclarator(
             SimpleName name,
@@ -2088,16 +1558,12 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link WhileStatement}を生成して返す。
-     * @param condition
-     *     条件式
-     * @param body
-     *     ループ文
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code condition}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code body}に{@code null}が指定された場合
+     * Returns a new {@link WhileStatement} object.
+     * @param condition the condition expression
+     * @param body the loop body
+     * @return the created object
+     * @throws IllegalArgumentException if {@code condition} was {@code null}
+     * @throws IllegalArgumentException if {@code body} was {@code null}
      */
     WhileStatement newWhileStatement(
             Expression condition,
@@ -2105,22 +1571,17 @@ public interface ModelFactory {
     );
 
     /**
-     * 新しい{@link Wildcard}を生成して返す。
-     * @return 生成した要素
+     * Returns a new {@link Wildcard} object.
+     * @return the created object
      */
-    Wildcard newWildcard(
-    );
+    Wildcard newWildcard();
 
     /**
-     * 新しい{@link Wildcard}を生成して返す。
-     * @param boundKind
-     *     型境界の種類
-     * @param typeBound
-     *     境界型、
-     *     ただし境界型が指定されない場合は{@code null}
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code boundKind}に{@code null}が指定された場合
+     * Returns a new {@link Wildcard} object.
+     * @param boundKind the bound type kind
+     * @param typeBound the bound type, or {@code null} if there is no bound types
+     * @return the created object
+     * @throws IllegalArgumentException if {@code boundKind} was {@code null}
      */
     Wildcard newWildcard(
             WildcardBoundKind boundKind,

@@ -19,7 +19,7 @@ import com.asakusafw.vocabulary.flow.FlowDescription;
 import com.asakusafw.vocabulary.flow.JobFlow;
 
 /**
- * 名前が不正なジョブフロー。
+ * Jobflow with invalid flow ID.
  */
 @JobFlow(name = "invalid-name")
 public class JobFlowInvalidName extends FlowDescription {

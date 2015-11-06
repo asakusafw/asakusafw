@@ -24,17 +24,17 @@ import com.asakusafw.vocabulary.flow.graph.OutputDescription;
 import com.asakusafw.vocabulary.flow.graph.PortConnection;
 
 /**
- * {@link Out}のモック。
- * @param <T> 取り扱うデータの種類
+ * Mock implementation of {@link Out} (for testing).
+ * @param <T> the data type
  */
 public class MockOut<T> implements Out<T> {
 
     private final FlowElementResolver resolver;
 
     /**
-     * インスタンスを生成する。
-     * @param type 出力の型
-     * @param name 出力の名前
+     * Creates a new instance.
+     * @param type the output type
+     * @param name the output name
      */
     public MockOut(Class<T> type, String name) {
         OutputDescription desc = new OutputDescription(name, type);
@@ -42,11 +42,11 @@ public class MockOut<T> implements Out<T> {
     }
 
     /**
-     * インスタンスを生成する。
-     * @param <T> 取り扱うデータの種類
-     * @param type 出力の型
-     * @param name 出力の名前
-     * @return 生成したインスタンス
+     * Creates a new instance.
+     * @param <T> the data type
+     * @param type the output type
+     * @param name the output name
+     * @return the created instance
      */
     public static <T> MockOut<T> of(Class<T> type, String name) {
         return new MockOut<T>(type, name);
@@ -60,8 +60,8 @@ public class MockOut<T> implements Out<T> {
     }
 
     /**
-     * この要素に関連するフロー要素を返す。
-     * @return この要素に関連するフロー要素
+     * Returns the {@link FlowElement} representation of this object.
+     * @return the {@link FlowElement} representation
      */
     public FlowElement toElement() {
         return resolver.getElement();

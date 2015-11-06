@@ -21,13 +21,10 @@ import com.asakusafw.utils.java.model.syntax.Type;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link ArrayType}の実装。
+ * An implementation of {@link ArrayType}.
  */
 public final class ArrayTypeImpl extends ModelRoot implements ArrayType {
 
-    /**
-     * 要素型。
-     */
     private Type componentType;
 
     @Override
@@ -36,11 +33,9 @@ public final class ArrayTypeImpl extends ModelRoot implements ArrayType {
     }
 
     /**
-     * 要素型を設定する。
-     * @param componentType
-     *     要素型
-     * @throws IllegalArgumentException
-     *     {@code componentType}に{@code null}が指定された場合
+     * Sets the element type.
+     * @param componentType the element type
+     * @throws IllegalArgumentException if {@code componentType} was {@code null}
      */
     public void setComponentType(Type componentType) {
         Util.notNull(componentType, "componentType"); //$NON-NLS-1$
@@ -48,7 +43,7 @@ public final class ArrayTypeImpl extends ModelRoot implements ArrayType {
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#ARRAY_TYPE}を返す。
+     * Returns {@link ModelKind#ARRAY_TYPE} which represents this element kind.
      * @return {@link ModelKind#ARRAY_TYPE}
      */
     @Override
@@ -57,8 +52,7 @@ public final class ArrayTypeImpl extends ModelRoot implements ArrayType {
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitArrayType(this, context);
     }

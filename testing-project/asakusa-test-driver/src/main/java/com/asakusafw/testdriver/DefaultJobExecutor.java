@@ -257,17 +257,17 @@ public class DefaultJobExecutor extends JobExecutor {
 
         @Override
         public void run() {
-            for (;;) {
-                try {
+            try {
+                while (true) {
                     String line = br.readLine();
                     if (line == null) {
                         break;
                     }
                     list.add(line);
                     System.out.println(line);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
                 }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
         }
     }

@@ -31,9 +31,8 @@ import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.vocabulary.flow.graph.FlowBoundary;
 import com.asakusafw.vocabulary.operator.CoGroup;
 
-
 /**
- * {@link CoGroup グループ結合演算子}を処理する。
+ * Processes {@link CoGroup} operators.
  */
 @TargetOperator(CoGroup.class)
 public class CoGroupOperatorProcessor extends AbstractOperatorProcessor {
@@ -62,7 +61,7 @@ public class CoGroupOperatorProcessor extends AbstractOperatorProcessor {
             }
             startResults++;
         }
-        if (startResults == 0) { // リスト型がない
+        if (startResults == 0) { // missing List<_>
             a.error(Messages.getString("CoGroupOperatorProcessor.errorMissingInput")); //$NON-NLS-1$
         }
 
@@ -77,7 +76,7 @@ public class CoGroupOperatorProcessor extends AbstractOperatorProcessor {
                 startParameters++;
             }
         }
-        if (startParameters == startResults) { // 結果型がない
+        if (startParameters == startResults) { // missing Result<_>
             a.error(Messages.getString("CoGroupOperatorProcessor.errorMissingOutput")); //$NON-NLS-1$
         }
         for (int i = startParameters, n = a.countParameters(); i < n; i++) {

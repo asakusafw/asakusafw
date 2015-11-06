@@ -22,35 +22,35 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * 実行時に利用され、ライフサイクルを持つリソース。
+ * Runtime resource which has resource lifecycle.
  */
 public interface RuntimeResource {
 
     /**
-     * このリソースを初期化する。
-     * @param configuration 初期化の設定
-     * @throws IOException リソースの初期化に失敗した場合
-     * @throws InterruptedException 初期化中に割り込みが発生した場合
-     * @throws IllegalArgumentException 設定が不正である場合
-     * @throws IllegalStateException 同一のリソースが複数回初期化された場合
+     * Initializes this resource.
+     * @param configuration the current configuration
+     * @throws IOException if failed to initialize this resource
+     * @throws InterruptedException if interrupted while initializing this resource
+     * @throws IllegalArgumentException if configuration is not valid
+     * @throws IllegalStateException if resource lifecycle has something wrong
      */
     void setup(ResourceConfiguration configuration)
         throws IOException, InterruptedException;
 
     /**
-     * このリソースを解放する。
-     * @param configuration 初期化の設定
-     * @throws IOException リソースの初期化に失敗した場合
-     * @throws InterruptedException 初期化中に割り込みが発生した場合
-     * @throws IllegalArgumentException 設定が不正である場合
-     * @throws IllegalStateException 同一のリソースが複数回初期化された場合
+     * Finalizes this resource.
+     * @param configuration the current configuration
+     * @throws IOException if failed to finalizing this resource
+     * @throws InterruptedException if interrupted while finalizing this resource
+     * @throws IllegalArgumentException if configuration is not valid
+     * @throws IllegalStateException if resource lifecycle has something wrong
      */
     void cleanup(ResourceConfiguration configuration)
         throws IOException, InterruptedException;
 
     /**
-     * 委譲オブジェクトの登録と解除を行う骨格実装。
-     * @param <D> 初期化対象の委譲オブジェクト型
+     * A skeletal implementation of registering/unregistering resource delegation objects.
+     * @param <D> the delegation object type
      */
     abstract class DelegateRegisterer<D> implements RuntimeResource {
 
@@ -58,13 +58,35 @@ public interface RuntimeResource {
 
         private D registered;
 
+        /**
+         * Returns the configuration key of the delegation object class name.
+         * @return the delegation object class name
+         */
         protected abstract String getClassNameKey();
 
+        /**
+         * Returns the interface type of the delegation object.
+         * @return the delegation object interface type
+         */
         protected abstract Class<? extends D> getInterfaceType();
 
+        /**
+         * Registers the delegation object.
+         * @param delegate the delegation object
+         * @param configuration the current configuration
+         * @throws IOException if failed to register the object by I/O error
+         * @throws InterruptedException if interrupted while registering the object
+         */
         protected abstract void register(D delegate, ResourceConfiguration configuration)
                 throws IOException, InterruptedException;
 
+        /**
+         * Unregisters the delegation object.
+         * @param delegate the delegation object
+         * @param configuration the current configuration
+         * @throws IOException if failed to unregister the object by I/O error
+         * @throws InterruptedException if interrupted while unregistering the object
+         */
         protected abstract void unregister(D delegate, ResourceConfiguration configuration)
                 throws IOException, InterruptedException;
 
@@ -139,5 +161,4 @@ public interface RuntimeResource {
             }
         }
     }
-
 }

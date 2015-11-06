@@ -37,7 +37,7 @@ import com.asakusafw.vocabulary.flow.graph.ShuffleKey;
 import com.asakusafw.vocabulary.operator.MasterJoin;
 
 /**
- * {@link MasterJoin マスタ結合演算子}を処理する。
+ * Processes {@link MasterJoin} operators.
  */
 @TargetOperator(MasterJoin.class)
 public class MasterJoinOperatorProcessor extends AbstractOperatorProcessor {
@@ -70,7 +70,7 @@ public class MasterJoinOperatorProcessor extends AbstractOperatorProcessor {
         }
         ExecutableElement selector = null;
         try {
-            selector = MasterKindOperatorAnalyzer.findSelector(context.environment, context);
+            selector = MasterKindOperatorAnalyzer.findSelector(context);
         } catch (ResolveException e) {
             a.error(e.getMessage());
         }

@@ -46,7 +46,7 @@ import com.asakusafw.utils.graph.Graphs;
 public class JobflowAnalyzerTest extends JobflowCompilerTestRoot {
 
     /**
-     * レデューサーのない単一ステージの解析。
+     * analyzes map only stage.
      */
     @Test
     public void mapperOnly() {
@@ -77,7 +77,7 @@ public class JobflowAnalyzerTest extends JobflowCompilerTestRoot {
     }
 
     /**
-     * 単一ステージの解析。
+     * analyzes single stage.
      */
     @Test
     public void single() {
@@ -108,7 +108,7 @@ public class JobflowAnalyzerTest extends JobflowCompilerTestRoot {
     }
 
     /**
-     * 複数ステージの解析。
+     * analyze multiple stages.
      */
     @Test
     public void multi() {

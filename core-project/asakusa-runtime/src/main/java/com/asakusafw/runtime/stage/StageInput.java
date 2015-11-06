@@ -23,7 +23,7 @@ import org.apache.hadoop.mapreduce.InputFormat;
 import org.apache.hadoop.mapreduce.Mapper;
 
 /**
- * ステージへの入力。
+ * Represents a stage input.
  * @since 0.1.0
  * @version 0.7.1
  */
@@ -86,24 +86,24 @@ public class StageInput {
     }
 
     /**
-     * 入力のパス文字列を返す。
-     * @return 入力のパス文字列
+     * Returns the path expression for the input.
+     * @return the path expression
      */
     public String getPathString() {
         return pathString;
     }
 
     /**
-     * 入力をキーと値の列に変換するフォーマットクラスを返す。
-     * @return 入力をキーと値の列に変換するフォーマットクラス
+     * Returns the input format class for handling this input.
+     * @return the input format class
      */
     public Class<? extends InputFormat<?, ?>> getFormatClass() {
         return formatClass;
     }
 
     /**
-     * 入力を処理するマッパークラスを返す。
-     * @return 入力を処理するマッパークラス
+     * Returns the mapper class for handling this input.
+     * @return the mapper class
      */
     public Class<? extends Mapper<?, ?, ?, ?>> getMapperClass() {
         return mapperClass;

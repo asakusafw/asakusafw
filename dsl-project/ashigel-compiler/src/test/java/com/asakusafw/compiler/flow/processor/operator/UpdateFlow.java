@@ -19,15 +19,14 @@ import com.asakusafw.compiler.flow.processor.UpdateFlowProcessor;
 import com.asakusafw.compiler.flow.testing.model.Ex1;
 import com.asakusafw.vocabulary.operator.Update;
 
-
 /**
- * {@link UpdateFlowProcessor}に対するテスト演算子。
+ * An operator class for testing {@link UpdateFlowProcessor}.
  */
 public abstract class UpdateFlow {
 
     /**
-     * 通常の演算子。
-     * @param model 対象のモデル
+     * simple.
+     * @param model target data model
      */
     @Update
     public void simple(Ex1 model) {
@@ -35,9 +34,9 @@ public abstract class UpdateFlow {
     }
 
     /**
-     * パラメーター付きの演算子。
-     * @param model 対象のモデル
-     * @param parameter 追加パラメータ
+     * parameterized.
+     * @param model target data model
+     * @param parameter additional parameter
      */
     @Update
     public void withParameter(Ex1 model, int parameter) {

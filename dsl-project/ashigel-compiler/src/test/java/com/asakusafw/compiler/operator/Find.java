@@ -30,14 +30,14 @@ import com.asakusafw.utils.java.model.syntax.TypeDeclaration;
 import com.asakusafw.utils.java.model.syntax.VariableDeclarator;
 
 /**
- * ツリー探索用のユーティリティ。
+ * Utility of searching language elements.
  */
 public class Find {
 
     /**
-     * 全ての修飾子を返す。
-     * @param decl メンバ宣言
-     * @return 全ての修飾子
+     * Returns all modifiers.
+     * @param decl the member declaration
+     * @return modifiers
      */
     public static Set<ModifierKind> modifiers(TypeBodyDeclaration decl) {
         Set<ModifierKind> results = EnumSet.noneOf(ModifierKind.class);
@@ -52,10 +52,10 @@ public class Find {
     }
 
     /**
-     * メソッドを探して返す。
-     * @param type 対象の型
-     * @param name メソッドの名前
-     * @return 発見したメソッド、存在しない場合は{@code null}
+     * Returns a method.
+     * @param type the owner type
+     * @param name the method name
+     * @return the target method, or {@code null} if it is not found
      */
     public static MethodDeclaration method(TypeDeclaration type, String name) {
         for (TypeBodyDeclaration member : type.getBodyDeclarations()) {
@@ -71,10 +71,10 @@ public class Find {
     }
 
     /**
-     * フィールドを探して返す。
-     * @param type 対象の型
-     * @param name フィールドの名前
-     * @return 発見したフィールド、存在しない場合は{@code null}
+     * Returns a field.
+     * @param type the owner type
+     * @param name the field name
+     * @return the target field, or {@code null} if it is not found
      */
     public static FieldDeclaration field(TypeDeclaration type, String name) {
         for (TypeBodyDeclaration member : type.getBodyDeclarations()) {
@@ -92,9 +92,9 @@ public class Find {
     }
 
     /**
-     * コンストラクタを探して返す。
-     * @param type 対象の型
-     * @return 発見したコンストラクタ、存在しない場合は{@code null}
+     * Returns a constructor.
+     * @param type the owner type
+     * @return the target constructor, or {@code null} if it is not found
      */
     public static ConstructorDeclaration constructor(TypeDeclaration type) {
         for (TypeBodyDeclaration member : type.getBodyDeclarations()) {
@@ -107,10 +107,10 @@ public class Find {
     }
 
     /**
-     * 型を探して返す。
-     * @param type 対象の型
-     * @param name 型の名前
-     * @return 発見した型、存在しない場合は{@code null}
+     * Returns a member type.
+     * @param type the owner type
+     * @param name the simple name
+     * @return the target member type, or {@code null} if it is not found
      */
     public static TypeDeclaration type(TypeDeclaration type, String name) {
         for (TypeBodyDeclaration member : type.getBodyDeclarations()) {

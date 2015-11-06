@@ -9,10 +9,10 @@ import com.asakusafw.vocabulary.operator.*;
 public abstract class Generic {
 
     /**
-     * 結合結果を返す。
-     * @param master 結合対象1
-     * @param tx 結合対象2
-     * @return 結合結果
+     * MasterJoin operator for testing.
+     * @param master master data
+     * @param tx transaction data
+     * @return joined result
      */
     @MasterJoin
     public abstract <P extends MockProjection>

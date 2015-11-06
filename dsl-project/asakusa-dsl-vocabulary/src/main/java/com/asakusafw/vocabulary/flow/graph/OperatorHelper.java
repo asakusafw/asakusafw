@@ -20,19 +20,19 @@ import java.text.MessageFormat;
 import java.util.List;
 
 /**
- * 補助演算子を表す。
+ * Represents an operator helper method.
  */
 public final class OperatorHelper implements FlowElementAttribute {
 
-    private String name;
+    private final String name;
 
-    private List<Class<?>> parameterTypes;
+    private final List<Class<?>> parameterTypes;
 
     /**
-     * インスタンスを生成する。
-     * @param name 補助演算子メソッドの名前
-     * @param parameterTypes 補助演算子メソッドの引数型(消去型)一覧
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param name the name of the operator helper method
+     * @param parameterTypes the erased parameter types of the operator helper method
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public OperatorHelper(String name, List<Class<?>> parameterTypes) {
         if (name == null) {
@@ -51,28 +51,25 @@ public final class OperatorHelper implements FlowElementAttribute {
     }
 
     /**
-     * 補助演算子メソッドの名前を返す。
-     * @return 補助演算子メソッドの名前
+     * Returns the name of the operator helper method.
+     * @return the method name
      */
     public String getName() {
         return name;
     }
 
     /**
-     * 補助演算子メソッドのパラメーター型一覧を返す。
-     * <p>
-     * これらの型は、消去型として返される。
-     * </p>
-     * @return 補助演算子メソッドのパラメーター型一覧
+     * Returns the erased parameter types of the operator helper method.
+     * @return the parameter types
      */
     public List<Class<?>> getParameterTypes() {
         return parameterTypes;
     }
 
     /**
-     * この宣言に対する実行時のメソッド表現を返す。
-     * @param owner 補助対象の演算子
-     * @return 実行時のメソッド表現、対応するものが存在しない場合は{@code null}
+     * Returns a reflective object of the target operator helper method.
+     * @param owner information of the owner operator method declaration
+     * @return a reflective object of the target operator helper method, or {@code null} if there is no such a method
      */
     public Method toMethod(OperatorDescription.Declaration owner) {
         if (owner == null) {

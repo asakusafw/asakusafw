@@ -16,9 +16,13 @@
 package com.asakusafw.compiler.flow.processor.operator;
 import javax.annotation.Generated;
 /**
- * {@link BranchFlow}に関する演算子実装クラス。
+ * An operator implementation class for{@link BranchFlow}.
  */
-@Generated("com.asakusafw.compiler.operator.OperatorImplementationClassGenerator") public class
-        BranchFlowImpl extends BranchFlow {
-    // empty
+@Generated("OperatorImplementationClassGenerator:0.1.0") public class BranchFlowImpl extends BranchFlow {
+    /**
+     * Creates a new instance.
+     */
+    public BranchFlowImpl() {
+        return;
+    }
 }

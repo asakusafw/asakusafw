@@ -24,16 +24,16 @@ import com.asakusafw.compiler.flow.FlowCompilingEnvironment;
 import com.asakusafw.utils.collections.Lists;
 
 /**
- * {@link Slot}を解析して{@link ResolvedSlot}に変換する。
+ * Resolved {@link Slot} objects into {@link ResolvedSlot}.
  */
 public class SlotResolver {
 
     private final FlowCompilingEnvironment environment;
 
     /**
-     * インスタンスを生成する。
-     * @param environment コンパイルに利用する環境
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param environment the current environment
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public SlotResolver(FlowCompilingEnvironment environment) {
         Precondition.checkMustNotBeNull(environment, "environment"); //$NON-NLS-1$
@@ -41,10 +41,10 @@ public class SlotResolver {
     }
 
     /**
-     * していのスロット一覧をコンパイルし、結果を返す。
-     * @param slots 対象のスロット一覧
-     * @return コンパイル結果
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Analyzes the target slot objects and returns resolved them.
+     * @param slots the target slots
+     * @return the resolved slots
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public List<ResolvedSlot> resolve(List<Slot> slots) {
         Precondition.checkMustNotBeNull(slots, "slots"); //$NON-NLS-1$

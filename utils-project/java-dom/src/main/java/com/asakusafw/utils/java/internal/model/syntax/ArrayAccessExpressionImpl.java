@@ -21,18 +21,12 @@ import com.asakusafw.utils.java.model.syntax.ModelKind;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link ArrayAccessExpression}の実装。
+ * An implementation of {@link ArrayAccessExpression}.
  */
 public final class ArrayAccessExpressionImpl extends ModelRoot implements ArrayAccessExpression {
 
-    /**
-     * 配列式。
-     */
     private Expression array;
 
-    /**
-     * 添え字式。
-     */
     private Expression index;
 
     @Override
@@ -41,11 +35,9 @@ public final class ArrayAccessExpressionImpl extends ModelRoot implements ArrayA
     }
 
     /**
-     * 配列式を設定する。
-     * @param array
-     *     配列式
-     * @throws IllegalArgumentException
-     *     {@code array}に{@code null}が指定された場合
+     * Sets the array expression.
+     * @param array the array expression
+     * @throws IllegalArgumentException if {@code array} was {@code null}
      */
     public void setArray(Expression array) {
         Util.notNull(array, "array"); //$NON-NLS-1$
@@ -58,11 +50,9 @@ public final class ArrayAccessExpressionImpl extends ModelRoot implements ArrayA
     }
 
     /**
-     * 添え字式を設定する。
-     * @param index
-     *     添え字式
-     * @throws IllegalArgumentException
-     *     {@code index}に{@code null}が指定された場合
+     * Sets the index expression.
+     * @param index the index expression
+     * @throws IllegalArgumentException if {@code index} was {@code null}
      */
     public void setIndex(Expression index) {
         Util.notNull(index, "index"); //$NON-NLS-1$
@@ -70,7 +60,7 @@ public final class ArrayAccessExpressionImpl extends ModelRoot implements ArrayA
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#ARRAY_ACCESS_EXPRESSION}を返す。
+     * Returns {@link ModelKind#ARRAY_ACCESS_EXPRESSION} which represents this element kind.
      * @return {@link ModelKind#ARRAY_ACCESS_EXPRESSION}
      */
     @Override
@@ -79,8 +69,7 @@ public final class ArrayAccessExpressionImpl extends ModelRoot implements ArrayA
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitArrayAccessExpression(this, context);
     }

@@ -16,19 +16,18 @@
 package com.asakusafw.testdriver;
 
 /**
- * ジョブフローのテスト出力データオブジェクト。
+ * A flow output driver for testing flow-parts.
  * @since 0.2.0
  * @version 0.6.0
- * @param <T> モデルクラス
+ * @param <T> the data model type
  */
 public class JobFlowDriverOutput<T> extends FlowDriverOutput<T, JobFlowDriverOutput<T>> {
 
     /**
-     * コンストラクタ。
-     *
-     * @param driverContext テストドライバコンテキスト
-     * @param name 入力の名前
-     * @param modelType モデルクラス
+     * Creates a new instance.
+     * @param driverContext the current test driver context
+     * @param name the flow output name
+     * @param modelType the data model class
      */
     public JobFlowDriverOutput(TestDriverContext driverContext, String name, Class<T> modelType) {
         super(driverContext.getCallerClass(), driverContext.getRepository(), name, modelType);

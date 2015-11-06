@@ -38,10 +38,10 @@ import com.asakusafw.testdriver.core.VerifierFactory;
 import com.asakusafw.testdriver.core.VerifyRuleFactory;
 
 /**
- * テストドライバのテスト出力データの親クラス。
+ * An abstract super class of test driver outputs.
  * @since 0.2.0
  * @version 0.7.0
- * @param <T> モデルクラス
+ * @param <T> the data model type
  */
 public class DriverOutputBase<T> extends DriverInputBase<T> {
 
@@ -99,8 +99,8 @@ public class DriverOutputBase<T> extends DriverInputBase<T> {
     }
 
     /**
-     * Returns the actual data sink for this output.
-     * @return the actual data sink, or {@code null} if not defined
+     * Returns the result data sink for this output.
+     * @return the result data sink, or {@code null} if not defined
      * @since 0.2.3
      */
     public DataModelSinkFactory getResultSink() {
@@ -108,9 +108,9 @@ public class DriverOutputBase<T> extends DriverInputBase<T> {
     }
 
     /**
-     * Sets the actual data sink for this output.
+     * Sets the result data sink for this output.
      * The specified object will save the actual result of this.
-     * @param resultSink the result sink to set, {@code null} to clear the sink
+     * @param resultSink the result data sink to set, or {@code null} to clear the sink
      * @since 0.2.3
      */
     protected final void setResultSink(DataModelSinkFactory resultSink) {

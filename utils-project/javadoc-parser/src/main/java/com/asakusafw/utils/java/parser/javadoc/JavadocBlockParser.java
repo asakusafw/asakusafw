@@ -34,7 +34,7 @@ import com.asakusafw.utils.java.internal.parser.javadoc.ir.IrDocType;
 import com.asakusafw.utils.java.internal.parser.javadoc.ir.JavadocTokenKind;
 
 /**
- * Javadocのタグブロックを解析するクラスの基底となるクラス。
+ * An abstract super class of Java documentation comment block parsers.
  */
 public abstract class JavadocBlockParser extends JavadocBaseParser {
 
@@ -48,49 +48,46 @@ public abstract class JavadocBlockParser extends JavadocBaseParser {
     }
 
     /**
-     * インスタンスを生成する。
-     * インラインブロックを解析するパーサは存在しない状態となる。
+     * Creates a new instance without any inline block parsers.
      */
     protected JavadocBlockParser() {
         this(Collections.<JavadocBlockParser>emptyList());
     }
 
     /**
-     * インスタンスを生成する。
-     * @param blockParsers インラインブロックを解析するパーサ
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance with inline block parsers.
+     * @param blockParsers the inline block parsers
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     protected JavadocBlockParser(List<? extends JavadocBlockParser> blockParsers) {
         super(blockParsers);
     }
 
     /**
-     * 指定の文字列からなるタグを持つブロック解析を可能な場合のみ{@code true}を返す。
-     * 概要ブロックについてこのメソッドが呼び出された場合、{@code tag}には{@code null}が指定される。
-     * @param tag 対象のタグ文字列(<code>&quot;&#64;&quot;を先頭に含まない</code>)、または{@code null}
-     * @return ブロックを解析可能な場合のみ{@code true}
+     * Returns whether this parser can accept the block with target tag name.
+     * If the target is an synopsis block, the tag name will be {@code null}.
+     * @param tag the target tag name (without <code>&quot;&#64;&quot;</code>), or {@code null} for synopsis blocks
+     * @return {@code true} if this parser can accept the target block, otherwise {@code false}
      */
     public abstract boolean canAccept(String tag);
 
     /**
-     * 指定されたスキャナを利用してブロックを解析する。
-     * {@code scanner}は先頭のタグを除いたブロックの先頭から
-     * ブロックの末尾までのトークンを保持しており、ブロックは基本的に
-     * スキャナ末尾までのトークンを元に構成する必要がある。
-     * @param tag 対象のタグ文字列(<code>&quot;&#64;&quot;を先頭に含む</code>)、または{@code null}
-     * @param scanner 対象のスキャナ
-     * @return ブロックを表現する要素
-     * @throws JavadocParseException 解析に失敗した場合
-     * @throws IllegalArgumentException 引数{@code scanner}に{@code null}が指定された場合
+     * Parses a block.
+     * The scanner will provides contents of the target block (without its block tag).
+     * @param tag the target tag name (without <code>&quot;&#64;&quot;</code>), or {@code null} for synopsis blocks
+     * @param scanner the scanner for providing block contents
+     * @return the parsed block
+     * @throws JavadocParseException if error occurred while parsing the target block
+     * @throws IllegalArgumentException if {@code scanner} is {@code null}
      */
     public abstract IrDocBlock parse(String tag, JavadocScanner scanner) throws JavadocParseException;
 
     /**
-     * 指定のタグと断片要素からなるブロックを生成して返す。
-     * @param tag タグの名前、概要ブロックについては{@code null}
-     * @param fragments 断片要素の一覧
-     * @return 生成したブロック
-     * @throws IllegalArgumentException 引数{@code fragments}に{@code null}が指定された場合
+     * Creates a new block from its tag and fragments.
+     * @param tag the tag name, or {@code null} for synopsis blocks
+     * @param fragments the fragments
+     * @return the created block
+     * @throws IllegalArgumentException if {@code fragments} is {@code null}
      */
     public IrDocBlock newBlock(String tag, List<? extends IrDocFragment> fragments) {
         if (fragments == null) {
@@ -103,12 +100,11 @@ public abstract class JavadocBlockParser extends JavadocBaseParser {
     }
 
     /**
-     * 対象のスキャナに含まれる残りすべての要素を、{@link IrDocFragment}の列として解析する。
-     * このメソッドの呼び出し後、
-     * @param scanner 対象のスキャナ
-     * @return 残りすべての要素
-     * @throws JavadocParseException ブロックの解析に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Consumes all tokens from the scanner, and converts them to a list of {@link IrDocFragment}s.
+     * @param scanner the target scanner
+     * @return the converted fragments
+     * @throws JavadocParseException if error was occurred while converting tokens
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public List<IrDocFragment> fetchRestFragments(JavadocScanner scanner) throws JavadocParseException {
         int index = scanner.getIndex();
@@ -139,108 +135,109 @@ public abstract class JavadocBlockParser extends JavadocBaseParser {
     }
 
     /**
-     * 対象のスキャナから、次の単純名を読み出して返す。
-     * 構造に含まれるすべての空白文字からなるトークンは読み飛ばされる。
-     * 解析に成功した場合、該当要素を構成するトークンはスキャナから消費される。
-     * @param scanner 対象のスキャナ
-     * @return 成功した場合は次の要素、失敗した場合は{@code null}
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Consumes tokens from the scanner and returns the corresponded simple name.
+     * This will ignore successive while space tokens, and tokens are removed from the scanner only if this operation
+     * was successfully completed.
+     * @param scanner the target scanner
+     * @return the analyzed element if this operation was successfully completed, otherwise {@code null}
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public IrDocSimpleName fetchSimpleName(JavadocScanner scanner) {
         return JavadocBlockParserUtil.fetchSimpleName(scanner, S_FOLLOW);
     }
 
     /**
-     * 対象のスキャナから、次の単純名または限定名を読み出して返す。
-     * 構造に含まれるすべての空白文字からなるトークンは読み飛ばされる。
-     * 解析に成功した場合、該当要素を構成するトークンはスキャナから消費される。
-     * @param scanner 対象のスキャナ
-     * @return 成功した場合は次の要素、失敗した場合は{@code null}
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Consumes tokens from the scanner and returns the corresponded (simple or qualified) name.
+     * This will ignore successive while space tokens, and tokens are removed from the scanner only if this operation
+     * was successfully completed.
+     * @param scanner the target scanner
+     * @return the analyzed element if this operation was successfully completed, otherwise {@code null}
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public IrDocName fetchName(JavadocScanner scanner) {
         return JavadocBlockParserUtil.fetchName(scanner, S_FOLLOW);
     }
 
     /**
-     * 対象のスキャナから、次の基本型を読み出して返す。
-     * 構造に含まれるすべての空白文字からなるトークンは読み飛ばされる。
-     * 解析に成功した場合、該当要素を構成するトークンはスキャナから消費される。
-     * @param scanner 対象のスキャナ
-     * @return 成功した場合は次の要素、失敗した場合は{@code null}
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Consumes tokens from the scanner and returns the corresponded basic type.
+     * This will ignore successive while space tokens, and tokens are removed from the scanner only if this operation
+     * was successfully completed.
+     * @param scanner the target scanner
+     * @return the analyzed element if this operation was successfully completed, otherwise {@code null}
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public IrDocBasicType fetchBasicType(JavadocScanner scanner) {
         return JavadocBlockParserUtil.fetchBasicType(scanner, S_FOLLOW);
     }
 
     /**
-     * 対象のスキャナから、次のプリミティブ型を読み出して返す。
-     * 構造に含まれるすべての空白文字からなるトークンは読み飛ばされる。
-     * 解析に成功した場合、該当要素を構成するトークンはスキャナから消費される。
-     * @param scanner 対象のスキャナ
-     * @return 成功した場合は次の要素、失敗した場合は{@code null}
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Consumes tokens from the scanner and returns the corresponded primitive type.
+     * This will ignore successive while space tokens, and tokens are removed from the scanner only if this operation
+     * was successfully completed.
+     * @param scanner the target scanner
+     * @return the analyzed element if this operation was successfully completed, otherwise {@code null}
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public IrDocBasicType fetchPrimitiveType(JavadocScanner scanner) {
         return JavadocBlockParserUtil.fetchPrimitiveType(scanner, S_FOLLOW);
     }
 
     /**
-     * 対象のスキャナから、次の名前つき型を読み出して返す。
-     * 構造に含まれるすべての空白文字からなるトークンは読み飛ばされる。
-     * 解析に成功した場合、該当要素を構成するトークンはスキャナから消費される。
-     * @param scanner 対象のスキャナ
-     * @return 成功した場合は次の要素、失敗した場合は{@code null}
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Consumes tokens from the scanner and returns the corresponded named type.
+     * This will ignore successive while space tokens, and tokens are removed from the scanner only if this operation
+     * was successfully completed.
+     * @param scanner the target scanner
+     * @return the analyzed element if this operation was successfully completed, otherwise {@code null}
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public IrDocNamedType fetchNamedType(JavadocScanner scanner) {
         return JavadocBlockParserUtil.fetchNamedType(scanner, S_FOLLOW);
     }
 
     /**
-     * 対象のスキャナから、次の型を読み出して返す。
-     * 構造に含まれるすべての空白文字からなるトークンは読み飛ばされる。
-     * 解析に成功した場合、該当要素を構成するトークンはスキャナから消費される。
-     * @param scanner 対象のスキャナ
-     * @return 成功した場合は次の要素、失敗した場合は{@code null}
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Consumes tokens from the scanner and returns the corresponded type.
+     * This will ignore successive while space tokens, and tokens are removed from the scanner only if this operation
+     * was successfully completed.
+     * @param scanner the target scanner
+     * @return the analyzed element if this operation was successfully completed, otherwise {@code null}
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public IrDocType fetchType(JavadocScanner scanner) {
         return JavadocBlockParserUtil.fetchType(scanner, S_FOLLOW);
     }
 
     /**
-     * 対象のスキャナから、次のフィールドを読み出して返す。
-     * 構造に含まれるすべての空白文字からなるトークンは読み飛ばされる。
-     * 解析に成功した場合、該当要素を構成するトークンはスキャナから消費される。
-     * @param scanner 対象のスキャナ
-     * @return 成功した場合は次の要素、失敗した場合は{@code null}
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Consumes tokens from the scanner and returns the corresponded field.
+     * This will ignore successive while space tokens, and tokens are removed from the scanner only if this operation
+     * was successfully completed.
+     * @param scanner the target scanner
+     * @return the analyzed element if this operation was successfully completed, otherwise {@code null}
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public IrDocField fetchField(JavadocScanner scanner) {
         return JavadocBlockParserUtil.fetchField(scanner, S_FOLLOW);
     }
 
     /**
-     * 対象のスキャナから、次のメソッドを読み出して返す。
-     * 構造に含まれるすべての空白文字からなるトークンは読み飛ばされる。
-     * 解析に成功した場合、該当要素を構成するトークンはスキャナから消費される。
-     * @param scanner 対象のスキャナ
-     * @return 成功した場合は次の要素、失敗した場合は{@code null}
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Consumes tokens from the scanner and returns the corresponded method or constructor.
+     * This will ignore successive while space tokens, and tokens are removed from the scanner only if this operation
+     * was successfully completed.
+     * @param scanner the target scanner
+     * @return the analyzed element if this operation was successfully completed, otherwise {@code null}
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public IrDocMethod fetchMethod(JavadocScanner scanner) {
         return JavadocBlockParserUtil.fetchMethod(scanner, S_FOLLOW);
     }
 
     /**
-     * 対象のスキャナから、次のメソッド、フィールド、型のいずれかのうち最もトークンの消費数が多いものを読み出して返す。
-     * 構造に含まれるすべての空白文字からなるトークンは読み飛ばされる。
-     * 解析に成功した場合、該当要素を構成するトークンはスキャナから消費される。
-     * @param scanner 対象のスキャナ
-     * @return 成功した場合は次の要素、失敗した場合は{@code null}
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Consumes tokens from the scanner and returns the corresponded link target.
+     * The link target means one of type, field, method, or constructor.
+     * This will ignore successive while space tokens, and tokens are removed from the scanner only if this operation
+     * was successfully completed.
+     * @param scanner the target scanner
+     * @return the analyzed element if this operation was successfully completed, otherwise {@code null}
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public IrDocFragment fetchLinkTarget(JavadocScanner scanner) {
         return JavadocBlockParserUtil.fetchLinkTarget(scanner, S_FOLLOW);

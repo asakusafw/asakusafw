@@ -11,7 +11,7 @@
 		<relativePath>../../asakusa-parent</relativePath>
 	</parent>
 
-	<description>Core Libraries for Data Model Definition Launguage</description>
+	<description>Core Libraries for Data Model Definition Language</description>
 	<url>http://asakusafw.com</url>
 	<licenses>
 		<license>

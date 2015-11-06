@@ -40,7 +40,7 @@ import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.vocabulary.operator.OperatorHelper;
 
 /**
- * 演算子クラスを集計する。
+ * Collects operator classes.
  * @since 0.1.0
  * @version 0.7.0
  */
@@ -55,14 +55,12 @@ public class OperatorClassCollector {
     private boolean sawError;
 
     /**
-     * インスタンスを生成する。
-     * @param environment 環境オブジェクト
-     * @param round ラウンドオブジェクト
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Creates a new instance.
+     * @param environment the current environment
+     * @param round the round environment
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
-    public OperatorClassCollector(
-            OperatorCompilingEnvironment environment,
-            RoundEnvironment round) {
+    public OperatorClassCollector(OperatorCompilingEnvironment environment, RoundEnvironment round) {
         Precondition.checkMustNotBeNull(environment, "environment"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(round, "round"); //$NON-NLS-1$
         this.environment = environment;
@@ -71,9 +69,9 @@ public class OperatorClassCollector {
     }
 
     /**
-     * コンパイラが利用する演算子プロセッサを追加する。
-     * @param processor 追加する演算子プロセッサ
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Adds an operator processor for detecting operator methods.
+     * @param processor the operator processor
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public void add(OperatorProcessor processor) {
         Precondition.checkMustNotBeNull(processor, "processor"); //$NON-NLS-1$
@@ -155,10 +153,9 @@ public class OperatorClassCollector {
     }
 
     /**
-     * ここまでに {@link #add(OperatorProcessor)} に指定された演算子プロセッサを元に
-     * 構築した演算子クラスの一覧を返す。
-     * @return 構築した演算子クラスの一覧
-     * @throws OperatorCompilerException 構築に失敗した場合
+     * Analyzes and returns the previously added operator classes.
+     * @return the analyzed operator classes
+     * @throws OperatorCompilerException if exception was occurred while analyzing operator classes
      */
     public List<OperatorClass> collect() {
         if (sawError) {

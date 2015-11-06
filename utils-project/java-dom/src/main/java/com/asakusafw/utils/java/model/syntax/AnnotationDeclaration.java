@@ -15,12 +15,11 @@
  */
 package com.asakusafw.utils.java.model.syntax;
 
-
 /**
- * 注釈型の宣言を表現するインターフェース。
+ * An interface which represents annotation declaration.
  * <ul>
  *   <li> Specified In: <ul>
- *     <li> {@code [JLS3:9.6] Annotaiton Declaration} </li>
+ *     <li> {@code [JLS3:9.6] Annotation Declaration} </li>
  *   </ul> </li>
  * </ul>
  */

@@ -20,28 +20,24 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * フロー内の任意の要素が持つ入力ポートを表現する。
- * <p>
- * DSL利用者はこのクラスのオブジェクトを直接操作すべきでない。
- * </p>
+ * Represents an input port of {@link FlowElement}.
+ * Application developers should not use this class directly.
  */
 public final class FlowElementInput extends FlowElementPort {
 
     /**
-     * インスタンスを生成する。
-     * @param description このポートの定義記述
-     * @param owner このポートを有するフロー要素
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param description the description of this port
+     * @param owner the owner element
+     * @throws IllegalArgumentException if some parameters are {@code null}
      */
-    public FlowElementInput(
-            FlowElementPortDescription description,
-            FlowElement owner) {
+    public FlowElementInput(FlowElementPortDescription description, FlowElement owner) {
         super(description, owner);
     }
 
     /**
-     * このポートに接続されている全ての出力ポートを返す。
-     * @return このポートに接続されている全ての出力ポート
+     * Returns the opposite ports of this.
+     * @return the opposite ports
      */
     public Collection<FlowElementOutput> getOpposites() {
         Collection<FlowElementOutput> results = new ArrayList<FlowElementOutput>();
@@ -52,8 +48,8 @@ public final class FlowElementInput extends FlowElementPort {
     }
 
     /**
-     * このポートに接続されている全ての出力ポートに対し、その接続を解除する。
-     * @return 解除した出力ポートの一覧
+     * Disconnects all opposite ports which connected into this.
+     * @return the disconnected ports
      */
     @Override
     public Collection<FlowElementOutput> disconnectAll() {

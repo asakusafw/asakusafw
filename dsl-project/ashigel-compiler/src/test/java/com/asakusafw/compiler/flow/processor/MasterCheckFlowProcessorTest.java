@@ -40,14 +40,14 @@ import com.asakusafw.vocabulary.external.ImporterDescription.DataSize;
 public class MasterCheckFlowProcessorTest {
 
     /**
-     * テストヘルパ。
+     * A test helper
      */
     @Rule
     public CompilerTester tester = new CompilerTester();
 
     /**
-     * 単純なテスト。
-     * @throws Exception テストが失敗した場合
+     * simple case.
+     * @throws Exception if exception was occurred
      */
     @Test
     public void trivial() throws Exception {
@@ -55,8 +55,8 @@ public class MasterCheckFlowProcessorTest {
     }
 
     /**
-     * TINYのテスト。
-     * @throws Exception テストが失敗した場合
+     * test for TINY.
+     * @throws Exception if exception was occurred
      */
     @Test
     public void tiny() throws Exception {
@@ -127,8 +127,8 @@ public class MasterCheckFlowProcessorTest {
     }
 
     /**
-     * セレクタつき。
-     * @throws Exception テストが失敗した場合
+     * w/ selector.
+     * @throws Exception if exception was occurred
      */
     @Test
     public void selection() throws Exception {
@@ -136,8 +136,8 @@ public class MasterCheckFlowProcessorTest {
     }
 
     /**
-     * TINYセレクタつき。
-     * @throws Exception テストが失敗した場合
+     * w/ TINY data and selector.
+     * @throws Exception if exception was occurred
      */
     @Test
     public void tinySelection() throws Exception {

@@ -34,114 +34,103 @@ import com.asakusafw.runtime.value.ValueOption;
 
 
 /**
- * {@link ValueOption}の内容をそれぞれのメンバーとして、レコードの形式で出力する。
- * <p>
- * 次のように利用する。
- * </p>
+ * Writes {@link ValueOption} instances as set of records format.
 <pre><code>
 Iterator&lt;SomeModel&gt; models = ...;
-try {
-    RecordEmitter emitter = ...;
-    while (models.hasNext();) {
+try (RecordEmitter emitter = ...) {
+    while (models.hasNext()) {
         SomeModel model = models.next();
         emitter.emit(model.getHogeOption());
         emitter.emit(model.getFooOption());
         emitter.emit(model.getBarOption());
         emitter.endRecord();
     }
-    emitter.close();
-} finally {
-    writer.close();
 }
 </code></pre>
- * <p>
- * 特に指定がない限り、このインターフェースのメソッドの引数に{@code null}を指定した場合には
- * {@link NullPointerException}がスローされる。
- * </p>
+ * Each method in this interface may raise {@link NullPointerException} if parameters were {@code null}.
  */
 public interface RecordEmitter extends Flushable, Closeable {
 
     /**
-     * 現在のレコードの出力を終了し、次のレコードの出力に備える。
-     * @throws IOException 書き出しに失敗した場合
+     * Finalizes the current record and prepares writing the next record.
+     * @throws IOException if error occurred while writing the value
      */
     void endRecord() throws IOException;
 
     /**
-     * 指定のオブジェクトの内容を、次のレコード上のセルとして書き出す。
-     * @param option 書き出す対象のオブジェクト
-     * @throws IOException 書き出しに失敗した場合
+     * Writes the value as the next cell on in current record.
+     * @param option the target value to be written
+     * @throws IOException if error occurred while writing the value
      */
     void emit(BooleanOption option) throws IOException;
 
     /**
-     * 指定のオブジェクトの内容を、次のレコード上のセルとして書き出す。
-     * @param option 書き出す対象のオブジェクト
-     * @throws IOException 書き出しに失敗した場合
+     * Writes the value as the next cell on in current record.
+     * @param option the target value to be written
+     * @throws IOException if error occurred while writing the value
      */
     void emit(ByteOption option) throws IOException;
 
     /**
-     * 指定のオブジェクトの内容を、次のレコード上のセルとして書き出す。
-     * @param option 書き出す対象のオブジェクト
-     * @throws IOException 書き出しに失敗した場合
+     * Writes the value as the next cell on in current record.
+     * @param option the target value to be written
+     * @throws IOException if error occurred while writing the value
      */
     void emit(ShortOption option) throws IOException;
 
     /**
-     * 指定のオブジェクトの内容を、次のレコード上のセルとして書き出す。
-     * @param option 書き出す対象のオブジェクト
-     * @throws IOException 書き出しに失敗した場合
+     * Writes the value as the next cell on in current record.
+     * @param option the target value to be written
+     * @throws IOException if error occurred while writing the value
      */
     void emit(IntOption option) throws IOException;
 
     /**
-     * 指定のオブジェクトの内容を、次のレコード上のセルとして書き出す。
-     * @param option 書き出す対象のオブジェクト
-     * @throws IOException 書き出しに失敗した場合
+     * Writes the value as the next cell on in current record.
+     * @param option the target value to be written
+     * @throws IOException if error occurred while writing the value
      */
     void emit(LongOption option) throws IOException;
 
     /**
-     * 指定のオブジェクトの内容を、次のレコード上のセルとして書き出す。
-     * @param option 書き出す対象のオブジェクト
-     * @throws IOException 書き出しに失敗した場合
+     * Writes the value as the next cell on in current record.
+     * @param option the target value to be written
+     * @throws IOException if error occurred while writing the value
      */
     void emit(FloatOption option) throws IOException;
 
     /**
-     * 指定のオブジェクトの内容を、次のレコード上のセルとして書き出す。
-     * @param option 書き出す対象のオブジェクト
-     * @throws IOException 書き出しに失敗した場合
+     * Writes the value as the next cell on in current record.
+     * @param option the target value to be written
+     * @throws IOException if error occurred while writing the value
      */
     void emit(DoubleOption option) throws IOException;
 
     /**
-     * 指定のオブジェクトの内容を、次のレコード上のセルとして書き出す。
-     * @param option 書き出す対象のオブジェクト
-     * @throws IOException 書き出しに失敗した場合
+     * Writes the value as the next cell on in current record.
+     * @param option the target value to be written
+     * @throws IOException if error occurred while writing the value
      */
     void emit(DecimalOption option) throws IOException;
 
     /**
-     * 指定のオブジェクトの内容を、次のレコード上のセルとして書き出す。
-     * @param option 書き出す対象のオブジェクト
-     * @throws IOException 書き出しに失敗した場合
+     * Writes the value as the next cell on in current record.
+     * @param option the target value to be written
+     * @throws IOException if error occurred while writing the value
      */
     void emit(StringOption option) throws IOException;
 
     /**
-     * 指定のオブジェクトの内容を、次のレコード上のセルとして書き出す。
-     * @param option 書き出す対象のオブジェクト
-     * @throws IOException 書き出しに失敗した場合
+     * Writes the value as the next cell on in current record.
+     * @param option the target value to be written
+     * @throws IOException if error occurred while writing the value
      */
     void emit(DateOption option) throws IOException;
 
     /**
-     * 指定のオブジェクトの内容を、次のレコード上のセルとして書き出す。
-     * @param option 書き出す対象のオブジェクト
-     * @throws IOException 書き出しに失敗した場合
+     * Writes the value as the next cell on in current record.
+     * @param option the target value to be written
+     * @throws IOException if error occurred while writing the value
      */
     void emit(DateTimeOption option) throws IOException;
-
 }

@@ -23,15 +23,15 @@ import com.asakusafw.compiler.operator.ExecutableAnalyzer;
 import com.asakusafw.utils.collections.Sets;
 
 /**
- *　演算子プロセッサに対するユーティリティ群。
+ * Utilities for operator processors.
  */
 public final class OperatorProcessorUtil {
 
     /**
-     * 指定のポート名一覧をチェックして、間違いがあればエラーを報告する。
-     * @param analyzer エラーの報告先
-     * @param names 名前の一覧
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Checks port names and raises errors if something is wrong.
+     * @param analyzer the source element
+     * @param names the port names
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public static void checkPortName(ExecutableAnalyzer analyzer, String[] names) {
         Precondition.checkMustNotBeNull(analyzer, "analyzer"); //$NON-NLS-1$

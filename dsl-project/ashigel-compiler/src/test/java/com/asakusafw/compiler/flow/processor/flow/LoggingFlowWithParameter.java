@@ -30,7 +30,7 @@ import com.asakusafw.vocabulary.flow.Out;
 
 
 /**
- * {@link LoggingFlowProcessor}のテスト。
+ * test for {@link LoggingFlowProcessor}.
  */
 @JobFlow(name = "testing")
 public class LoggingFlowWithParameter extends FlowDescription {
@@ -40,9 +40,9 @@ public class LoggingFlowWithParameter extends FlowDescription {
     private Out<Ex1> out1;
 
     /**
-     * インスタンスを生成する。
-     * @param in1 入力
-     * @param out1 出力
+     * Creates a new instance.
+     * @param in1 input
+     * @param out1 output
      */
     public LoggingFlowWithParameter(
             @Import(name = "e1", description = Ex1MockImporterDescription.class)

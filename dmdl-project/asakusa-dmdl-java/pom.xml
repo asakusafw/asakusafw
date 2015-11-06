@@ -11,7 +11,7 @@
 		<relativePath>../../asakusa-parent</relativePath>
 	</parent>
 
-	<description>Data Model Definition Launguage for Java Data Models</description>
+	<description>Data Model Definition Language for Java Data Models</description>
 	<url>http://asakusafw.com</url>
 	<licenses>
 		<license>

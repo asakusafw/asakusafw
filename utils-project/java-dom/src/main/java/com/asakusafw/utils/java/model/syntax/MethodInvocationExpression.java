@@ -18,7 +18,7 @@ package com.asakusafw.utils.java.model.syntax;
 import java.util.List;
 
 /**
- * メソッド起動式を表現するインターフェース。
+ * An interface which represents method invocation expressions.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:15.12] Method Invocation Expressions} </li>
@@ -28,41 +28,30 @@ import java.util.List;
 public interface MethodInvocationExpression
         extends Expression, Invocation {
 
-    // properties
-
     /**
-     * 限定式、または型限定子を返す。
-     * <p> 限定式が指定されない場合(単純メソッド起動)は{@code null}が返される。 </p>
-     * <p> 型限定子を指定する場合、名前で対象型を表現する。 </p>
-     * <p> 親メソッド呼び出しを表現する場合、{@code super}キーワードを表現する疑似式を利用する。 </p>
-     * @return
-     *     限定式、または型限定子、
-     *     ただし限定式が指定されない場合(単純メソッド起動)は{@code null}
+     * Returns the qualifier expression or type.
+     * If this represents a type, the expression must be a {@link Name}.
+     * @return the qualifier expression or type, or {@code null} if this represents a simple method invocation
      * @see Name
      * @see Super
      */
     Expression getQualifier();
 
     /**
-     * 型引数の一覧を返す。
-     * <p> 型引数が一つも指定されない場合は空が返される。 </p>
-     * @return
-     *     型引数の一覧
+     * Returns the type arguments.
+     * @return the type arguments
      */
     List<? extends Type> getTypeArguments();
 
     /**
-     * メソッドの名前を返す。
-     * @return
-     *     メソッドの名前
+     * Returns the target method name.
+     * @return the target method name
      */
     SimpleName getName();
 
     /**
-     * 実引数の一覧を返す。
-     * <p> 実引数が一つも指定されない場合は空が返される。 </p>
-     * @return
-     *     実引数の一覧
+     * Returns the actual arguments.
+     * @return the actual arguments
      */
     List<? extends Expression> getArguments();
 }

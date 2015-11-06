@@ -31,7 +31,7 @@ public class DataClassTest {
     ModelFactory f = Models.getModelFactory();
 
     /**
-     * {@link DataClass.Unresolved#getType()}のテスト。
+     * test for {@link DataClass.Unresolved#getType()}.
      */
     @Test
     public void unresolved_getType() {
@@ -40,7 +40,7 @@ public class DataClassTest {
     }
 
     /**
-     * {@link DataClass.Unresolved#findProperty(String)}のテスト。
+     * test for {@link DataClass.Unresolved#findProperty(String)}.
      */
     @Test
     public void unresolved_findProperty() {
@@ -49,7 +49,7 @@ public class DataClassTest {
     }
 
     /**
-     * {@link DataClass.Unresolved#createNewInstance(com.asakusafw.utils.java.model.syntax.Type)}のテスト。
+     * test for {@link DataClass.Unresolved#createNewInstance(com.asakusafw.utils.java.model.syntax.Type)}.
      */
     @Test
     public void unresolved_createNewInstance() {
@@ -60,7 +60,7 @@ public class DataClassTest {
     }
 
     /**
-     * {@link DataClass.Unresolved#assign(com.asakusafw.utils.java.model.syntax.Expression, com.asakusafw.utils.java.model.syntax.Expression)}のテスト。
+     * test for {@link DataClass.Unresolved#assign(com.asakusafw.utils.java.model.syntax.Expression, com.asakusafw.utils.java.model.syntax.Expression)}.
      */
     @Test
     public void unresolved_assign() {
@@ -71,7 +71,7 @@ public class DataClassTest {
     }
 
     /**
-     * {@link DataClass.Unresolved#createReader(com.asakusafw.utils.java.model.syntax.Expression, com.asakusafw.utils.java.model.syntax.Expression)}のテスト。
+     * test for {@link DataClass.Unresolved#createReader(com.asakusafw.utils.java.model.syntax.Expression, com.asakusafw.utils.java.model.syntax.Expression)}.
      */
     @Test
     public void unresolved_createReader() {
@@ -82,7 +82,7 @@ public class DataClassTest {
     }
 
     /**
-     * {@link DataClass.Unresolved#createWriter(com.asakusafw.utils.java.model.syntax.Expression, com.asakusafw.utils.java.model.syntax.Expression)}のテスト。
+     * test for {@link DataClass.Unresolved#createWriter(com.asakusafw.utils.java.model.syntax.Expression, com.asakusafw.utils.java.model.syntax.Expression)}.
      */
     @Test
     public void unresolved_createWriter() {

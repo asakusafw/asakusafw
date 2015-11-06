@@ -35,7 +35,7 @@ import com.asakusafw.utils.java.model.syntax.SimpleName;
 import com.asakusafw.utils.java.model.util.Models;
 
 /**
- * 個々のジョブフローをコンパイルする際の環境。
+ * Represents a compiler environment for flow DSL compiler.
  * @since 0.1.0
  * @version 0.2.6
  */
@@ -52,19 +52,19 @@ public class FlowCompilingEnvironment {
     private String firstError;
 
     /**
-     * インスタンスを生成する。
-     * @param config 設定
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param configuration the compiler settings
+     * @throws IllegalArgumentException if the parameter {@code null}
      */
-    public FlowCompilingEnvironment(FlowCompilerConfiguration config) {
-        Precondition.checkMustNotBeNull(config, "config"); //$NON-NLS-1$
-        this.config = config;
+    public FlowCompilingEnvironment(FlowCompilerConfiguration configuration) {
+        Precondition.checkMustNotBeNull(configuration, "configuration"); //$NON-NLS-1$
+        this.config = configuration;
         clearError();
     }
 
     /**
-     * この環境を初期化する。
-     * @return このオブジェクト
+     * Initializes this object.
+     * @return this
      */
     public FlowCompilingEnvironment bless() {
         if (initialized.compareAndSet(false, true) == false) {
@@ -88,15 +88,15 @@ public class FlowCompilingEnvironment {
     }
 
     /**
-     * ここまでのコンパイル結果にエラーが含まれている場合のみ{@code true}を返す。
-     * @return ここまでのコンパイル結果にエラーが含まれている場合のみ{@code true}
+     * Returns whether this saw any compile errors or not.
+     * @return {@code true} if saw any compile errors, or otherwise {@code false}
      */
     public final boolean hasError() {
         return firstError != null;
     }
 
     /**
-     * 現在までに発生したエラーの情報をクリアする。
+     * Clears compile errors.
      * @see #hasError()
      */
     public final void clearError() {
@@ -104,72 +104,72 @@ public class FlowCompilingEnvironment {
     }
 
     /**
-     * この環境で利用可能なモデルファクトリーを返す。
-     * @return 利用可能なモデルファクトリー
+     * Returns the Java DOM factory.
+     * @return the Java DOM factory
      */
     public ModelFactory getModelFactory() {
         return config.getFactory();
     }
 
     /**
-     * この環境で利用可能なプロセッサのリポジトリを返す。
-     * @return 利用可能なプロセッサのリポジトリ
+     * Returns the repository of available flow element processors in this environment.
+     * @return the repository of available
      */
     public FlowElementProcessor.Repository getProcessors() {
         return config.getProcessors();
     }
 
     /**
-     * この環境で利用可能なデータクラスのリポジトリを返す。
-     * @return 利用可能なデータクラスのリポジトリ
+     * Returns the repository of available data model classes in this environment.
+     * @return the repository of available
      */
     public DataClassRepository getDataClasses() {
         return config.getDataClasses();
     }
 
     /**
-     * この環境で利用可能な外部入出力プロセッサのリポジトリを返す。
-     * @return 利用可能な外部入出力プロセッサのリポジトリ
+     * Returns the repository of available external I/O processors in this environment.
+     * @return the repository of available
      */
     public ExternalIoDescriptionProcessor.Repository getExternals() {
         return config.getExternals();
     }
 
     /**
-     * 演算子グラフを書き換えるエンジンのリポジトリを返す。
-     * @return 演算子グラフを書き換えるエンジンのリポジトリ
+     * Returns the repository of available flow graph rewriters in this environment.
+     * @return the repository of available
      */
     public FlowGraphRewriter.Repository getGraphRewriters() {
         return config.getGraphRewriters();
     }
 
     /**
-     * コンパイル対象に対するバッチ識別子を返す。
-     * @return コンパイル対象に対するバッチ識別子
+     * Returns the ID of the target batch.
+     * @return the batch ID
      */
     public String getBatchId() {
         return config.getBatchId();
     }
 
     /**
-     * コンパイル対象に対するジョブフロー識別子を返す。
-     * @return コンパイル対象に対するジョブフロー識別子
+     * Returns the flow ID of the target jobflow.
+     * @return the flow ID
      */
     public String getFlowId() {
         return config.getFlowId();
     }
 
     /**
-     * コンパイル対象に対する識別子を返す。
-     * @return コンパイル対象に対する識別子
+     * Returns the qualified flow ID of the target jobflow.
+     * @return the qualified flow ID
      */
     public String getTargetId() {
         return MessageFormat.format("{0}.{1}", getBatchId(), getFlowId()); //$NON-NLS-1$
     }
 
     /**
-     * コンパイル対象に対するパッケージ名を返す。
-     * @return コンパイル対象に対するパッケージ名
+     * Returns the base package name for generated Java classes.
+     * @return the package name
      */
     public Name getTargetPackageName() {
         Name root = Models.toName(getModelFactory(), config.getRootPackageName());
@@ -199,10 +199,10 @@ public class FlowCompilingEnvironment {
     }
 
     /**
-     * 指定のステージの内容を書き出すパッケージ名を返す。
-     * @param stageNumber 対象のステージ番号
-     * @return 対応するパッケージ名
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns the Java package name for generating classes about main phase.
+     * @param stageNumber the target stage number
+     * @return the target package name
+     * @throws IllegalArgumentException if the stage number is negative
      */
     public Name getStagePackageName(int stageNumber) {
         if (stageNumber < 0) {
@@ -215,10 +215,10 @@ public class FlowCompilingEnvironment {
     }
 
     /**
-     * リソースを出力するパッケージ名を返す。
-     * @param resourceKind リソースの種類
-     * @return 対応するパッケージ名
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns the Java package name for generating resources.
+     * @param resourceKind the resource kind
+     * @return the target package name
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public Name getResourcePackage(String resourceKind) {
         Precondition.checkMustNotBeNull(resourceKind, "resourceKind"); //$NON-NLS-1$
@@ -228,10 +228,10 @@ public class FlowCompilingEnvironment {
     }
 
     /**
-     * 内蔵するシーケンス番号を元にユニークな名前を返す。
-     * @param prefix 接頭辞
-     * @return ユニークな名前
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns a unique name using the internal sequence number.
+     * @param prefix the prefix
+     * @return the unique name
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public SimpleName createUniqueName(String prefix) {
         Precondition.checkMustNotBeNull(prefix, "prefix"); //$NON-NLS-1$
@@ -239,10 +239,10 @@ public class FlowCompilingEnvironment {
     }
 
     /**
-     * 指定のモジュールに対するプロローグ処理の内容を書き出すパッケージ名を返す。
-     * @param moduleId 対象の識別子
-     * @return 対応するパッケージ名
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns the Java package name for generating classes about prologue phase.
+     * @param moduleId the target module ID
+     * @return the target package name
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public Name getProloguePackageName(String moduleId) {
         Precondition.checkMustNotBeNull(moduleId, "moduleId"); //$NON-NLS-1$
@@ -253,10 +253,10 @@ public class FlowCompilingEnvironment {
     }
 
     /**
-     * 指定のモジュールに対するエピローグ処理の内容を書き出すパッケージ名を返す。
-     * @param moduleId モジュール識別子
-     * @return 対応するパッケージ名
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns the Java package name for generating classes about epilogue phase.
+     * @param moduleId the target module ID
+     * @return the target package name
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public Name getEpiloguePackageName(String moduleId) {
         Precondition.checkMustNotBeNull(moduleId, "moduleId"); //$NON-NLS-1$
@@ -267,8 +267,8 @@ public class FlowCompilingEnvironment {
     }
 
     /**
-     * コンパイル対象が利用するリソース位置を返す。
-     * @return コンパイル対象が利用するリソース位置
+     * Returns the base location of runtime working area.
+     * @return the base location of runtime working area
      */
     public Location getTargetLocation() {
         return config
@@ -278,10 +278,10 @@ public class FlowCompilingEnvironment {
     }
 
     /**
-     * 指定のステージが利用するリソース位置を返す。
-     * @param stageNumber 対象のステージ番号
-     * @return 対応するリソース位置
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns the location of runtime working area for the stage.
+     * @param stageNumber the target stage number
+     * @return the target resource location
+     * @throws IllegalArgumentException if the stage number is negative
      */
     public Location getStageLocation(int stageNumber) {
         if (stageNumber < 0) {
@@ -292,10 +292,10 @@ public class FlowCompilingEnvironment {
     }
 
     /**
-     * 指定のモジュールに対するプロローグ処理が利用するリソース位置を返す。
-     * @param moduleId モジュール識別子
-     * @return 対応するリソース位置
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns the location of runtime working area for the prologue stage.
+     * @param moduleId the module ID
+     * @return the target resource location
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public Location getPrologueLocation(String moduleId) {
         Precondition.checkMustNotBeNull(moduleId, "moduleId"); //$NON-NLS-1$
@@ -305,10 +305,10 @@ public class FlowCompilingEnvironment {
     }
 
     /**
-     * 指定のモジュールに対するエピローグ処理が利用するリソース位置を返す。
-     * @param moduleId モジュール識別子
-     * @return 対応するリソース位置
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns the location of runtime working area for the epilogue stage.
+     * @param moduleId the module ID
+     * @return the target resource location
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public Location getEpilogueLocation(String moduleId) {
         Precondition.checkMustNotBeNull(moduleId, "moduleId"); //$NON-NLS-1$
@@ -318,10 +318,10 @@ public class FlowCompilingEnvironment {
     }
 
     /**
-     * 指定のソースプログラムを出力する。
-     * @param source 出力するソースプログラム
-     * @throws IOException 出力に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Emits a Java source program into the jobflow package.
+     * @param source the source program
+     * @throws IOException if failed to output
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public void emit(CompilationUnit source) throws IOException {
         Precondition.checkMustNotBeNull(source, "source"); //$NON-NLS-1$
@@ -334,12 +334,12 @@ public class FlowCompilingEnvironment {
     }
 
     /**
-     * 指定位置にリソースを出力するためのストリームを開いて返す。
-     * @param packageNameOrNull 対象のパッケージ
-     * @param subPath パッケージ下のサブパス
-     * @return 対象リソースに書き出すためのストリーム
-     * @throws IOException 出力に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a generic resource file into the jobflow package.
+     * @param packageNameOrNull the target package name
+     * @param subPath the sub-path from the target package
+     * @return the output stream for writing contents of the created resource
+     * @throws IOException if failed to output
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public OutputStream openResource(Name packageNameOrNull, String subPath) throws IOException {
         Precondition.checkMustNotBeNull(subPath, "subPath"); //$NON-NLS-1$
@@ -347,16 +347,16 @@ public class FlowCompilingEnvironment {
     }
 
     /**
-     * サービスをロードするためのクラスローダを返す。
-     * @return サービスをロードするためのクラスローダ
+     * Returns the class loader for loading compiler services.
+     * @return the class loader
      */
     public ClassLoader getServiceClassLoader() {
         return config.getServiceClassLoader();
     }
 
     /**
-     * コンパイラのオプション設定を返す。
-     * @return コンパイラのオプション設定
+     * Returns the compiler options.
+     * @return the compiler options
      */
     public FlowCompilerOptions getOptions() {
         return config.getOptions();
@@ -372,15 +372,15 @@ public class FlowCompilingEnvironment {
     }
 
     /**
-     * この環境に対してエラーメッセージを追加する。
-     * @param format メッセージのフォーマット ({@link MessageFormat}形式)
-     * @param args メッセージの引数、空の配列を指定した場合は{@code format}がそのままメッセージとなる
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Adds an erroneous information to this environment.
+     * @param format the message format ({@link MessageFormat} style)
+     * @param arguments the message arguments
+     * @throws IllegalArgumentException if some parameters are {@code null}
      */
-    public void error(String format, Object...args) {
+    public void error(String format, Object...arguments) {
         Precondition.checkMustNotBeNull(format, "format"); //$NON-NLS-1$
-        Precondition.checkMustNotBeNull(args, "args"); //$NON-NLS-1$
-        String text = format(format, args);
+        Precondition.checkMustNotBeNull(arguments, "arguments"); //$NON-NLS-1$
+        String text = format(format, arguments);
         LOG.error(text);
         if (firstError == null) {
             firstError = text;
@@ -397,25 +397,22 @@ public class FlowCompilingEnvironment {
     }
 
     /**
-     * この環境オブジェクトを取って初期化を行うインターフェース。
+     * An extension interface for classes that requires a {@link FlowCompilingEnvironment} for its initialization.
      */
     public interface Initializable {
 
         /**
-         * このオブジェクトを初期化する。
-         * @param environment 環境オブジェクト
+         * Initializes this object.
+         * @param environment the current environment
          */
         void initialize(FlowCompilingEnvironment environment);
     }
 
     /**
-     * {@link Initializable}の骨格実装。
+     * A skeletal implementation of {@link Initializable}.
      */
     public abstract static class Initialized implements Initializable {
 
-        /**
-         * コンパイル環境。
-         */
         private FlowCompilingEnvironment environment;
 
         @Override
@@ -426,15 +423,15 @@ public class FlowCompilingEnvironment {
         }
 
         /**
-         * サブクラスでこのオブジェクトの初期化を実行する。
+         * Initializes this object in sub-classes.
          */
         protected void doInitialize() {
             return;
         }
 
         /**
-         * 環境オブジェクトを返す。
-         * @return 環境オブジェクト
+         * Returns the current environment object.
+         * @return the current environment
          */
         protected FlowCompilingEnvironment getEnvironment() {
             return environment;

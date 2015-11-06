@@ -23,13 +23,9 @@ import java.lang.annotation.Target;
 import com.asakusafw.vocabulary.flow.Source;
 import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory;
 
-
 /**
- * チェックポイント演算子を表す演算子注釈。
- * <p>
- * この演算子を表す演算子メソッドは作成できない。
- * 代わりに {@link CoreOperatorFactory#checkpoint(Source)}を利用すること。
- * </p>
+ * Represents <em>checkpoint</em> operator annotation.
+ * Application developers should use {@link CoreOperatorFactory#checkpoint(Source)} instead of operator methods.
  * @see CoreOperatorFactory#checkpoint(Source)
  */
 @Target({ })

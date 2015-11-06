@@ -344,7 +344,7 @@ public class ExecutionTask {
 
     /**
      * Returns the view of flow IDs which should be skipped.
-     * @return the the view of skip targets
+     * @return the view of skip targets
      * @since 0.2.6
      */
     Set<String> getSkipFlows() {

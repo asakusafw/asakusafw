@@ -16,8 +16,9 @@
 package com.asakusafw.utils.java.model.syntax;
 
 /**
- * 宣言の種類。
+ * An abstract super interface of kind of declarations.
  */
 public interface DeclarationKind {
+
     // no members
 }

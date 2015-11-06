@@ -21,10 +21,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * フロー内の任意の要素が持つ入出力ポートを表現する。
- * <p>
- * DSL利用者はこのクラスのオブジェクトを直接操作すべきでない。
- * </p>
+ * An abstract super class of I/O ports of {@link FlowElement}.
+ * Application developers should not use this class directly.
  * @since 0.1.0
  * @version 0.5.1
  */
@@ -37,10 +35,10 @@ public abstract class FlowElementPort {
     private final Set<PortConnection> connected;
 
     /**
-     * インスタンスを生成する。
-     * @param description このポートの定義記述
-     * @param owner このポートを有するフロー要素
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param description the description of this port
+     * @param owner the owner element
+     * @throws IllegalArgumentException if some parameters are {@code null}
      */
     public FlowElementPort(
             FlowElementPortDescription description,
@@ -57,24 +55,24 @@ public abstract class FlowElementPort {
     }
 
     /**
-     * この入出力ポートをもつ要素を返す。
-     * @return この入出力ポートをもつ要素
+     * Returns the owner of this port.
+     * @return the owner
      */
     public FlowElement getOwner() {
         return owner;
     }
 
     /**
-     * この入出力ポートの定義記述を返す。
-     * @return この入出力ポートの定義記述
+     * Returns the description of this port.
+     * @return the description
      */
     public FlowElementPortDescription getDescription() {
         return description;
     }
 
     /**
-     * このポートへの接続を返す。
-     * @return このポートへの接続一覧
+     * Returns the set of connections into this port.
+     * @return the connections
      */
     public Set<PortConnection> getConnected() {
         return Collections.unmodifiableSet(connected);
@@ -87,11 +85,6 @@ public abstract class FlowElementPort {
      */
     public abstract Collection<? extends FlowElementPort> disconnectAll();
 
-    /**
-     * このポートに指定の接続を追加する。
-     * @param connection 追加する接続
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
-     */
     void register(PortConnection connection) {
         if (connection == null) {
             throw new IllegalArgumentException("connection must not be null"); //$NON-NLS-1$
@@ -99,11 +92,6 @@ public abstract class FlowElementPort {
         connected.add(connection);
     }
 
-    /**
-     * このポートから指定の接続を除去する。
-     * @param connection 追加する接続
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
-     */
     void unregister(PortConnection connection) {
         if (connection == null) {
             throw new IllegalArgumentException("connection must not be null"); //$NON-NLS-1$

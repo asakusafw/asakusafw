@@ -21,20 +21,19 @@ import com.asakusafw.utils.java.internal.parser.javadoc.ir.JavadocToken;
 import com.asakusafw.utils.java.internal.parser.javadoc.ir.JavadocTokenKind;
 
 /**
- * 標準的なJavadocTokenStreamの実装。
+ * A basic implementation of {@link JavadocTokenStream}.
  */
 public class DefaultJavadocTokenStream implements JavadocTokenStream {
 
-    private JavadocScanner scanner;
-    private LinkedList<Integer> marks;
+    private final JavadocScanner scanner;
+    private final LinkedList<Integer> marks;
 
     /**
-     * インスタンスを生成する。
-     * @param scanner 利用するスキャナ
-     * @throws IllegalArgumentException 引数に{@code null}が含まれていた場合
+     * Creates a new instance.
+     * @param scanner the element scanner
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public DefaultJavadocTokenStream(JavadocScanner scanner) {
-        super();
         if (scanner == null) {
             throw new IllegalArgumentException("scanner"); //$NON-NLS-1$
         }

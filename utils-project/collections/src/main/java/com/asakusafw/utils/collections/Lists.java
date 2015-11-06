@@ -141,7 +141,7 @@ public final class Lists {
     }
 
     /**
-     * Returns a freezed list which has copy of the elements.
+     * Returns a frozen list which has copy of the elements.
      * @param <E> element type
      * @param elements the elements
      * @return created list
@@ -169,7 +169,7 @@ public final class Lists {
     }
 
     /**
-     * Returns a freezed list which has copy of the elements.
+     * Returns a frozen list which has copy of the elements.
      * @param <E> element type
      * @param elements the elements
      * @return created list

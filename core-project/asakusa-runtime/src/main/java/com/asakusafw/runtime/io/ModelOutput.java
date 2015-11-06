@@ -19,15 +19,15 @@ import java.io.Closeable;
 import java.io.IOException;
 
 /**
- * モデルを書き出すオブジェクトのインターフェース。
- * @param <T> 読み出すモデルの種類
+ * An abstract super interface of writing data-sets.
+ * @param <T> the data model type
  */
 public interface ModelOutput<T> extends Closeable {
 
     /**
-     * 指定のモデルオブジェクトの内容を、このオブジェクトを利用して書き出す。
-     * @param model 書き出す対象のモデル
-     * @throws IOException モデルの書き出しに失敗した場合
+     * Writes the contents of the data model object.
+     * @param model the target data model object
+     * @throws IOException if error occurred while writing the data model object
      */
     void write(T model) throws IOException;
 }

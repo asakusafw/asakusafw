@@ -27,33 +27,18 @@ import com.asakusafw.utils.java.model.syntax.SimpleName;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link EnumConstantDeclaration}の実装。
+ * An implementation of {@link EnumConstantDeclaration}.
  */
 public final class EnumConstantDeclarationImpl extends ModelRoot implements EnumConstantDeclaration {
 
-    /**
-     * ドキュメンテーションコメント。
-     */
     private Javadoc javadoc;
 
-    /**
-     * 修飾子および注釈の一覧。
-     */
     private List<? extends Attribute> modifiers;
 
-    /**
-     * 列挙定数の名前。
-     */
     private SimpleName name;
 
-    /**
-     * コンストラクタ引数の一覧。
-     */
     private List<? extends Expression> arguments;
 
-    /**
-     * クラス本体の宣言。
-     */
     private ClassBody body;
 
     @Override
@@ -62,11 +47,8 @@ public final class EnumConstantDeclarationImpl extends ModelRoot implements Enum
     }
 
     /**
-     * ドキュメンテーションコメントを設定する。
-     * <p> ドキュメンテーションコメントが存在しない場合、引数には{@code null}を指定する。 </p>
-     * @param javadoc
-     *     ドキュメンテーションコメント、
-     *     ただしドキュメンテーションコメントが存在しない場合は{@code null}
+     * Sets the documentation comment.
+     * @param javadoc the documentation comment, or {@code null} if it is not specified
      */
     public void setJavadoc(Javadoc javadoc) {
         this.javadoc = javadoc;
@@ -78,12 +60,9 @@ public final class EnumConstantDeclarationImpl extends ModelRoot implements Enum
     }
 
     /**
-     * 修飾子および注釈の一覧を設定する。
-     * <p> 修飾子または注釈が一つも宣言されない場合、引数には空を指定する。 </p>
-     * @param modifiers
-     *     修飾子および注釈の一覧
-     * @throws IllegalArgumentException
-     *     {@code modifiers}に{@code null}が指定された場合
+     * Sets the modifiers and annotations.
+     * @param modifiers the modifiers and annotations
+     * @throws IllegalArgumentException if {@code modifiers} was {@code null}
      */
     public void setModifiers(List<? extends Attribute> modifiers) {
         Util.notNull(modifiers, "modifiers"); //$NON-NLS-1$
@@ -97,11 +76,9 @@ public final class EnumConstantDeclarationImpl extends ModelRoot implements Enum
     }
 
     /**
-     * 列挙定数の名前を設定する。
-     * @param name
-     *     列挙定数の名前
-     * @throws IllegalArgumentException
-     *     {@code name}に{@code null}が指定された場合
+     * Sets the enum constant name.
+     * @param name the enum constant name
+     * @throws IllegalArgumentException if {@code name} was {@code null}
      */
     public void setName(SimpleName name) {
         Util.notNull(name, "name"); //$NON-NLS-1$
@@ -114,12 +91,9 @@ public final class EnumConstantDeclarationImpl extends ModelRoot implements Enum
     }
 
     /**
-     * コンストラクタ引数の一覧を設定する。
-     * <p> コンストラクタ引数が指定されない場合、引数には空を指定する。 </p>
-     * @param arguments
-     *     コンストラクタ引数の一覧
-     * @throws IllegalArgumentException
-     *     {@code arguments}に{@code null}が指定された場合
+     * Sets the constructor arguments.
+     * @param arguments the constructor arguments
+     * @throws IllegalArgumentException if {@code arguments} was {@code null}
      */
     public void setArguments(List<? extends Expression> arguments) {
         Util.notNull(arguments, "arguments"); //$NON-NLS-1$
@@ -133,18 +107,15 @@ public final class EnumConstantDeclarationImpl extends ModelRoot implements Enum
     }
 
     /**
-     * クラス本体の宣言を設定する。
-     * <p> クラスの本体が宣言されない場合、引数には{@code null}を指定する。 </p>
-     * @param body
-     *     クラス本体の宣言、
-     *     ただしクラスの本体が宣言されない場合は{@code null}
+     * Sets the class body.
+     * @param body the class body, or {@code null} if it is not specified
      */
     public void setBody(ClassBody body) {
         this.body = body;
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#ENUM_CONSTANT_DECLARATION}を返す。
+     * Returns {@link ModelKind#ENUM_CONSTANT_DECLARATION} which represents this element kind.
      * @return {@link ModelKind#ENUM_CONSTANT_DECLARATION}
      */
     @Override
@@ -153,8 +124,7 @@ public final class EnumConstantDeclarationImpl extends ModelRoot implements Enum
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitEnumConstantDeclaration(this, context);
     }

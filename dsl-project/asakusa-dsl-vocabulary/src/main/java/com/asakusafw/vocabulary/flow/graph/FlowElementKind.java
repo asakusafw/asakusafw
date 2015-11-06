@@ -16,52 +16,36 @@
 package com.asakusafw.vocabulary.flow.graph;
 
 /**
- * {@link FlowElement}の種類。
+ * Represents a kind of {@link FlowElement}.
  */
 public enum FlowElementKind {
 
     /**
-     * 入力。
-     * <p>
-     * この種類である{@link FlowElement}は、
-     * その{@link FlowElement#getDescription() 定義記述}
-     * が必ず{@link InputDescription}である。
-     * </p>
+     * A flow input.
+     * The {@link FlowElement#getDescription()} must returns {@link InputDescription}.
      */
     INPUT,
 
     /**
-     * 出力。
-     * <p>
-     * この種類である{@link FlowElement}は、
-     * その{@link FlowElement#getDescription() 定義記述}
-     * が必ず{@link OutputDescription}である。
-     * </p>
+     * A flow output.
+     * The {@link FlowElement#getDescription()} must returns {@link OutputDescription}.
      */
     OUTPUT,
 
     /**
-     * 演算子。
-     * <p>
-     * この種類である{@link FlowElement}は、
-     * その{@link FlowElement#getDescription() 定義記述}
-     * が必ず{@link OperatorDescription}である。
-     * </p>
+     * An operator.
+     * The {@link FlowElement#getDescription()} must returns {@link OperatorDescription}.
      */
     OPERATOR,
 
     /**
-     * フロー部品。
-     * <p>
-     * この種類である{@link FlowElement}は、
-     * その{@link FlowElement#getDescription() 定義記述}
-     * が必ず{@link FlowPartDescription}である。
-     * </p>
+     * A flow-part.
+     * The {@link FlowElement#getDescription()} must returns {@link FlowPartDescription}.
      */
     FLOW_COMPONENT,
 
     /**
-     * 疑似要素。
+     * A pseudo-element.
      */
     PSEUD,
 }

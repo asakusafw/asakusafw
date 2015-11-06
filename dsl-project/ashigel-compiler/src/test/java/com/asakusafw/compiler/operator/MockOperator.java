@@ -20,7 +20,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * モックの演算子注釈。
+ * Mock operator annotation.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

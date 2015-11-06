@@ -22,10 +22,9 @@ import java.util.List;
 import com.asakusafw.runtime.util.TypeUtil;
 import com.asakusafw.vocabulary.batch.WorkDescription;
 
-
 /**
- * {@link WorkDescriptionProcessor}の骨格実装。
- * @param <T> 処理対象の{@link WorkDescription}クラス
+ * A skeletal implementation of {@link WorkDescriptionProcessor}.
+ * @param <T> the target {@link WorkDescription} class
  */
 public abstract class AbstractWorkDescriptionProcessor<T extends WorkDescription>
         extends BatchCompilingEnvironment.Initialized

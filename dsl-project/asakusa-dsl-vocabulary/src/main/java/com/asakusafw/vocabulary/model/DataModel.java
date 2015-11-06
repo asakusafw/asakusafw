@@ -22,7 +22,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 任意のデータモデルを表す注釈。
+ * An annotation for Asakusa data model classes.
  * @deprecated Use data model interface declared in asakusa-runtime.
  */
 @Deprecated
@@ -32,23 +32,23 @@ import java.lang.annotation.Target;
 public @interface DataModel {
 
     /**
-     * この注釈が付けられるモデルに必要なメソッド。
+     * An interface that provides skeletal information of data model classes.
      * <p>
-     * 必ずしものこのインターフェースを実装する必要はないが、下記のメソッドが存在する前提で
-     * DSLの解釈がおこなれる。
+     * Each data model class may or may not implement this interface,
+     * but that class must provide methods in the interface.
      * </p>
-     * @param <T> モデルオブジェクトの型
+     * @param <T> the data model type
      */
     interface Interface<T> {
 
         /**
-         * {@link #copyFrom(Object)}のメソッド名。
+         * The method name of {@link #copyFrom(Object)}.
          */
         String METHOD_NAME_COPY_FROM = "copyFrom"; //$NON-NLS-1$
 
         /**
-         * 指定のオブジェクトが持つプロパティの内容を全てこのオブジェクトにコピーする。
-         * @param source コピー元になるオブジェクト
+         * Copies each property value of the specified object into this data model.
+         * @param source the source data model object
          */
         void copyFrom(T source);
     }

@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * テスト時に利用するクラス群。
+ * Classes for testing.
  */
 package com.asakusafw.runtime.testing;

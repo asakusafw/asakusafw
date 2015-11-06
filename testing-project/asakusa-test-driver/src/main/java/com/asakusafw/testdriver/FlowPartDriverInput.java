@@ -24,11 +24,12 @@ import com.asakusafw.vocabulary.external.ImporterDescription.DataSize;
 import com.asakusafw.vocabulary.flow.In;
 import com.asakusafw.vocabulary.flow.graph.FlowElementOutput;
 
+// TODO i18n
 /**
- * フロー部品のテスト入力データオブジェクト。
+ * A flow input driver for testing flow-parts.
  * @since 0.2.0
  * @version 0.6.0
- * @param <T> モデルクラス
+ * @param <T> the data model type
  */
 public class FlowPartDriverInput<T> extends FlowDriverInput<T, FlowPartDriverInput<T>> implements In<T> {
 
@@ -39,11 +40,11 @@ public class FlowPartDriverInput<T> extends FlowDriverInput<T, FlowPartDriverInp
     private final In<T> in;
 
     /**
-     * コンストラクタ。
-     * @param driverContext テストドライバコンテキスト。
-     * @param descDriver フロー定義ドライバ。
-     * @param name 入力の名前。
-     * @param modelType モデルクラス。
+     * Creates a new instance.
+     * @param driverContext the current test driver context
+     * @param descDriver the flow description driver
+     * @param name the flow input name
+     * @param modelType the data model class
      */
     public FlowPartDriverInput(TestDriverContext driverContext, FlowDescriptionDriver descDriver, String name,
             Class<T> modelType) {
@@ -63,11 +64,9 @@ public class FlowPartDriverInput<T> extends FlowDriverInput<T, FlowPartDriverInp
     }
 
     /**
-     * テストデータのデータサイズを指定する。
-     * フロー部品のテスト時に Asakusa DSL Compiler に対して最適化のヒントを与えます。
-     * @param dataSize データサイズ
+     * Configures the estimated data size for this input.
+     * @param dataSize the estimated data size (nullable)
      * @return this
-     * @throws UnsupportedOperationException DirectImpoterDescription以外に対する操作が行われた
      */
     public FlowPartDriverInput<T> withDataSize(DataSize dataSize) {
         importerDescription.setDataSize(dataSize);

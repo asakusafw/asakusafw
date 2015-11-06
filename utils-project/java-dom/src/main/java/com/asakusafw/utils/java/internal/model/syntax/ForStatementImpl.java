@@ -24,28 +24,16 @@ import com.asakusafw.utils.java.model.syntax.StatementExpressionList;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link ForStatement}の実装。
+ * An implementation of {@link ForStatement}.
  */
 public final class ForStatementImpl extends ModelRoot implements ForStatement {
 
-    /**
-     * ループ初期化部。
-     */
     private ForInitializer initialization;
 
-    /**
-     * ループ条件式。
-     */
     private Expression condition;
 
-    /**
-     * ループ更新部。
-     */
     private StatementExpressionList update;
 
-    /**
-     * ループ本体。
-     */
     private Statement body;
 
     @Override
@@ -54,11 +42,8 @@ public final class ForStatementImpl extends ModelRoot implements ForStatement {
     }
 
     /**
-     * ループ初期化部を設定する。
-     * <p> ループ初期化部が指定されない場合、引数には{@code null}を指定する。 </p>
-     * @param initialization
-     *     ループ初期化部、
-     *     ただしループ初期化部が指定されない場合は{@code null}
+     * Sets the loop initialization part.
+     * @param initialization the loop initialization part, or {@code null} if it is not specified
      */
     public void setInitialization(ForInitializer initialization) {
         this.initialization = initialization;
@@ -70,11 +55,8 @@ public final class ForStatementImpl extends ModelRoot implements ForStatement {
     }
 
     /**
-     * ループ条件式を設定する。
-     * <p> ループ条件が指定されない場合、引数には{@code null}を指定する。 </p>
-     * @param condition
-     *     ループ条件式、
-     *     ただしループ条件が指定されない場合は{@code null}
+     * Sets the loop condition expression.
+     * @param condition the loop condition expression, or {@code null} if it is not specified
      */
     public void setCondition(Expression condition) {
         this.condition = condition;
@@ -86,11 +68,8 @@ public final class ForStatementImpl extends ModelRoot implements ForStatement {
     }
 
     /**
-     * ループ更新部を設定する。
-     * <p> ループ更新部が指定されない場合、引数には{@code null}を指定する。 </p>
-     * @param update
-     *     ループ更新部、
-     *     ただしループ更新部が指定されない場合は{@code null}
+     * Sets the loop update part.
+     * @param update the loop update part, or {@code null} if it is not specified
      */
     public void setUpdate(StatementExpressionList update) {
         this.update = update;
@@ -102,11 +81,9 @@ public final class ForStatementImpl extends ModelRoot implements ForStatement {
     }
 
     /**
-     * ループ本体を設定する。
-     * @param body
-     *     ループ本体
-     * @throws IllegalArgumentException
-     *     {@code body}に{@code null}が指定された場合
+     * Sets the loop body.
+     * @param body the loop body
+     * @throws IllegalArgumentException if {@code body} was {@code null}
      */
     public void setBody(Statement body) {
         Util.notNull(body, "body"); //$NON-NLS-1$
@@ -114,7 +91,7 @@ public final class ForStatementImpl extends ModelRoot implements ForStatement {
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#FOR_STATEMENT}を返す。
+     * Returns {@link ModelKind#FOR_STATEMENT} which represents this element kind.
      * @return {@link ModelKind#FOR_STATEMENT}
      */
     @Override
@@ -123,8 +100,7 @@ public final class ForStatementImpl extends ModelRoot implements ForStatement {
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitForStatement(this, context);
     }

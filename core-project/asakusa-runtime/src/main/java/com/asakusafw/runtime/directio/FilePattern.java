@@ -436,7 +436,7 @@ public class FilePattern implements ResourcePattern {
 
     /**
      * Each segment in {@link FilePattern}.
-     * This means a file/directory name pattern, or a any directories ({@code "**"}).
+     * This means a file/directory name pattern, or any directories ({@code "**"}).
      * @since 0.2.5
      */
     public static final class Segment {

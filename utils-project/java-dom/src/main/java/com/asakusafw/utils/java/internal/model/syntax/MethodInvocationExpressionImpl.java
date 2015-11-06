@@ -25,28 +25,16 @@ import com.asakusafw.utils.java.model.syntax.Type;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link MethodInvocationExpression}の実装。
+ * An implementation of {@link MethodInvocationExpression}.
  */
 public final class MethodInvocationExpressionImpl extends ModelRoot implements MethodInvocationExpression {
 
-    /**
-     * 限定式、または型限定子。
-     */
     private Expression qualifier;
 
-    /**
-     * 型引数の一覧。
-     */
     private List<? extends Type> typeArguments;
 
-    /**
-     * メソッドの名前。
-     */
     private SimpleName name;
 
-    /**
-     * 実引数の一覧。
-     */
     private List<? extends Expression> arguments;
 
     @Override
@@ -55,11 +43,8 @@ public final class MethodInvocationExpressionImpl extends ModelRoot implements M
     }
 
     /**
-     * 限定式、または型限定子を設定する。
-     * <p> 限定式が指定されない場合(単純メソッド起動)、引数には{@code null}を指定する。 </p>
-     * @param qualifier
-     *     限定式、または型限定子、
-     *     ただし限定式が指定されない場合(単純メソッド起動)は{@code null}
+     * Sets the qualifier expression or type.
+     * @param qualifier the qualifier expression or type, or {@code null} if this represents a simple method invocation
      */
     public void setQualifier(Expression qualifier) {
         this.qualifier = qualifier;
@@ -71,12 +56,9 @@ public final class MethodInvocationExpressionImpl extends ModelRoot implements M
     }
 
     /**
-     * 型引数の一覧を設定する。
-     * <p> 型引数が一つも指定されない場合、引数には空を指定する。 </p>
-     * @param typeArguments
-     *     型引数の一覧
-     * @throws IllegalArgumentException
-     *     {@code typeArguments}に{@code null}が指定された場合
+     * Sets the type arguments.
+     * @param typeArguments the type arguments
+     * @throws IllegalArgumentException if {@code typeArguments} was {@code null}
      */
     public void setTypeArguments(List<? extends Type> typeArguments) {
         Util.notNull(typeArguments, "typeArguments"); //$NON-NLS-1$
@@ -90,11 +72,9 @@ public final class MethodInvocationExpressionImpl extends ModelRoot implements M
     }
 
     /**
-     * メソッドの名前を設定する。
-     * @param name
-     *     メソッドの名前
-     * @throws IllegalArgumentException
-     *     {@code name}に{@code null}が指定された場合
+     * Sets the target method name.
+     * @param name the target method name
+     * @throws IllegalArgumentException if {@code name} was {@code null}
      */
     public void setName(SimpleName name) {
         Util.notNull(name, "name"); //$NON-NLS-1$
@@ -107,12 +87,9 @@ public final class MethodInvocationExpressionImpl extends ModelRoot implements M
     }
 
     /**
-     * 実引数の一覧を設定する。
-     * <p> 実引数が一つも指定されない場合、引数には空を指定する。 </p>
-     * @param arguments
-     *     実引数の一覧
-     * @throws IllegalArgumentException
-     *     {@code arguments}に{@code null}が指定された場合
+     * Sets the actual arguments.
+     * @param arguments the actual arguments
+     * @throws IllegalArgumentException if {@code arguments} was {@code null}
      */
     public void setArguments(List<? extends Expression> arguments) {
         Util.notNull(arguments, "arguments"); //$NON-NLS-1$
@@ -121,7 +98,7 @@ public final class MethodInvocationExpressionImpl extends ModelRoot implements M
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#METHOD_INVOCATION_EXPRESSION}を返す。
+     * Returns {@link ModelKind#METHOD_INVOCATION_EXPRESSION} which represents this element kind.
      * @return {@link ModelKind#METHOD_INVOCATION_EXPRESSION}
      */
     @Override
@@ -130,8 +107,7 @@ public final class MethodInvocationExpressionImpl extends ModelRoot implements M
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitMethodInvocationExpression(this, context);
     }

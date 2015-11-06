@@ -26,7 +26,7 @@ import com.asakusafw.compiler.flow.FlowGraphRewriter;
 import com.asakusafw.utils.collections.Lists;
 
 /**
- * Service Provider Interfaceを利用してグラフ書き換えエンジンを探索するリポジトリー。
+ * Aggregates repositories of {@link FlowGraphRewriter} using Service Provider Interface.
  */
 public class SpiFlowGraphRewriterRepository
         extends FlowCompilingEnvironment.Initialized

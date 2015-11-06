@@ -51,7 +51,7 @@ import com.asakusafw.utils.java.model.util.Models;
 import com.asakusafw.utils.java.model.util.TypeBuilder;
 
 /**
- * {@link JoinResourceDescription}から{@link JoinResource}を生成する。
+ * Generates a {@link JoinResource} from {@link JoinResourceDescription}.
  */
 public final class JoinResourceEmitter {
 
@@ -79,12 +79,12 @@ public final class JoinResourceEmitter {
     }
 
     /**
-     * リソースを表すプログラムを生成する。
-     * @param environment 環境オブジェクト
-     * @param resource 対象のリソースの情報
-     * @return 生成したプログラムのクラス名
-     * @throws IOException プログラムの生成に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Emits a {@link JoinResource}.
+     * @param environment the current environment
+     * @param resource information of the target join resource
+     * @return the qualified name of the generated class
+     * @throws IOException if error was occurred while generating sources
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public static Name emit(
             FlowCompilingEnvironment environment,

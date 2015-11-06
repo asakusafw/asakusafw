@@ -55,7 +55,7 @@ import com.asakusafw.utils.java.model.util.Models;
 import com.asakusafw.utils.java.model.util.TypeBuilder;
 
 /**
- * parallel reduceを行うレデューサークラスを出力ごとに生成する。
+ * Generates Reducer classes for {@link ParallelSortClientEmitter}.
  * @since 0.1.0
  * @version 0.5.1
  */
@@ -66,23 +66,15 @@ final class ParallelSortReducerEmitter {
     private final FlowCompilingEnvironment environment;
 
     /**
-     * インスタンスを生成する。
-     * @param environment 環境オブジェクト
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param environment the current environment
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public ParallelSortReducerEmitter(FlowCompilingEnvironment environment) {
         Precondition.checkMustNotBeNull(environment, "environment"); //$NON-NLS-1$
         this.environment = environment;
     }
 
-    /**
-     * 指定のスロットに対するエピローグ用のレデューサーを生成する。
-     * @param moduleId モジュール識別子
-     * @param slots 対象のスロット一覧
-     * @return 生成したクラス
-     * @throws IOException 出力に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
-     */
     public CompiledType emit(String moduleId, List<ResolvedSlot> slots) throws IOException {
         LOG.debug("start generating a reducer for distributed sort: {}", moduleId); //$NON-NLS-1$
         Engine engine = new Engine(environment, moduleId, slots);

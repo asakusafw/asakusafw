@@ -16,17 +16,17 @@
 package com.asakusafw.vocabulary.flow.graph;
 
 /**
- * ポートの方向。
+ * Represents the direction of each port.
  */
 public enum PortDirection {
 
     /**
-     * 入力ポートであることを表す。
+     * An input port.
      */
     INPUT,
 
     /**
-     * 出力ポートであることを表す。
+     * An output port.
      */
     OUTPUT,
 }

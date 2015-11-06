@@ -19,7 +19,7 @@
 
 コンポーネント
   Asakusa Frameworkのそれぞれのコンポーネントです。
-  Asakusa Frameworkコア [#]_ や、YAESS、WindGate、ThunderGateなどがコンポーネントの単位となります。
+  Asakusa Frameworkコア [#]_ や、YAESS、WindGateなどがコンポーネントの単位となります。
 
 ..  [#] 現在のところ、Direct I/Oに関するライブラリやツールはすべてAsakusa Frameworkコアに含まれています。
 
@@ -72,14 +72,6 @@ WindGate Hadoopブリッジ
   外部システム連携モジュールとHadoopクライアントモジュールが同じマシン上に配置されている場合、WindGate Hadoopブリッジは不要です。
   この場合、WindGateはHadoopブリッジを経由せず、Hadoopファイルシステムに直接アクセスします。
 
-ThunderGate
-  :doc:`ThunderGate <../thundergate/index>` 本体です [#]_ 。
-  外部システム連携モジュールが利用します。
-
-ThunderGate Hadoopブリッジ
-  ThunderGateがHadoopと通信するために中継するソフトウェアです [#]_ 。
-  Hadoopクライアントモジュールが利用します。
-
 YAESS
   :doc:`YAESS <../yaess/index>` 本体です。
   バッチ起動モジュールが利用します。
@@ -87,10 +79,6 @@ YAESS
 YAESS Hadoopブリッジ
   YAESSがHadoopと通信するために中継するソフトウェアです。
   Hadoopクライアントモジュールが利用します。
-
-..  [#] ThunderGate本体には インポータ, エクスポータが含まれます。
-        また、コマンドラインツールとして提供される運用ツールとして リカバラ, DBクリーナ, 及びキャッシュ操作用の各種コマンドが含まれます。
-..  [#] ThunderGate Hadoopブリッジには エクストラクタ, コレクタが含まれます。
 
 Direct I/Oのシステム構成
 ========================
@@ -185,39 +173,3 @@ WindGateをRDBMSと連携し、かつHadoopクライアントモジュールと�
     この構成の利点は、ゲートウェイマシンとHadoopクライアントマシンに異なるセキュリティレベルを設定できる点です。
     ゲートウェイマシン *から* Hadoopクライアントマシンに対してSSHでログイン出来ればよく、HadoopクラスターやHadoopクライアントマシンに不正侵入されても、そこからゲートウェイマシンに侵入するにはもう一手間必要です。
     データベースやバッチの起動部分を保護するという点では重要な意味合いがあります。
-
-ThunderGateのシステム構成
-=========================
-
-ThunderGateを用いた場合のシステム構成を見ていきます
-
-ThunderGateによる標準的な構成例
--------------------------------
-
-ThunderGateを利用した構成例を以下に示します。
-
-..  figure:: images/deployment-with-thundergate-constitution.png
-
-上記の構成はバッチ実行モジュールがデータベースノード上に配置されていますが、これは独立したマシンに配置することも可能です。
-その他のモジュール構成については、ThunderGateは基本的に上記の構成のみを想定しています。
-
-データベースノードではローカルのデータベースとJDBCを利用して通信し、Hadoopクライアントマシン上の各種HadoopブリッジとはSSHを利用して通信しています。
-そのため、以下の準備があらかじめ必要です。
-
-* データベースノードからHadoopクライアントマシンにSSH経由（パスフレーズなしの公開鍵認証）でアクセスできるようにする [#]_ 
-
-下図は、この構成でデータベースノードが利用するコンポーネントの一覧です。
-
-..  figure:: images/deployment-with-thundergate-dbnode.png
-
-同様に、下図はHadoopクライアントマシンが利用するコンポーネントの一覧です。
-
-..  figure:: images/deployment-with-thundergate-client.png
-
-..  hint::
-    この構成の利点は、データベースノードとHadoopクライアントマシンに異なるセキュリティレベルを設定できる点です。
-    データベースノード *から* Hadoopクライアントマシンに対してSSHでログイン出来ればよく、HadoopクラスターやHadoopクライアントマシンに不正侵入されても、そこからデータベースノードに侵入するにはもう一手間必要です。
-    データベースやバッチの起動部分を保護するという点では重要な意味合いがあります。
-
-..  [#] データベースノードとHadoopクライアントマシンを同一マシンにする構成も可能です。
-        その場合でもThunderGateはローカルのHadoopクライアントモジュールに対してssh経由でアクセスします。

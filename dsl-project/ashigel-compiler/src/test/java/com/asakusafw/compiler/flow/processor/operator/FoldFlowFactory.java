@@ -14,10 +14,6 @@
  * limitations under the License.
  */
 package com.asakusafw.compiler.flow.processor.operator;
-import java.util.Arrays;
-
-import javax.annotation.Generated;
-
 import com.asakusafw.compiler.flow.testing.model.Ex1;
 import com.asakusafw.vocabulary.flow.Operator;
 import com.asakusafw.vocabulary.flow.Source;
@@ -28,18 +24,23 @@ import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 import com.asakusafw.vocabulary.flow.graph.ShuffleKey;
 import com.asakusafw.vocabulary.flow.processor.PartialAggregation;
 import com.asakusafw.vocabulary.operator.Fold;
+import com.asakusafw.vocabulary.operator.KeyInfo;
+import com.asakusafw.vocabulary.operator.OperatorFactory;
+import com.asakusafw.vocabulary.operator.OperatorInfo;
+import java.util.Arrays;
+import javax.annotation.Generated;
 /**
- * {@link FoldFlow}に関する演算子ファクトリークラス。
+ * An operator factory class about <code>FoldFlow</code>.
  * @see FoldFlow
  */
-@Generated("OperatorFactoryClassGenerator:0.0.1") public class FoldFlowFactory {
+@Generated("OperatorFactoryClassGenerator:0.1.0")@OperatorFactory(FoldFlow.class) public class FoldFlowFactory {
     /**
-     * 通常の演算子。
+     * simple.
      */
     public static final class Simple implements Operator {
         private final FlowElementResolver $;
         /**
-         * 畳み込みの結果
+         * the folding result
          */
         public final Source<Ex1> out;
         Simple(Source<Ex1> in) {
@@ -58,10 +59,10 @@ import com.asakusafw.vocabulary.operator.Fold;
             this.out = this.$.resolveOutput("out");
         }
         /**
-         * この演算子の名前を設定する。
-         * @param newName 設定する名前
-         * @return この演算子オブジェクト (this)
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Configures the name of this operator.
+         * @param newName the new operator name
+         * @return this operator object
+         * @throws IllegalArgumentException if the parameter is <code>null</code>
          */
         public FoldFlowFactory.Simple as(String newName) {
             this.$.setName(newName);
@@ -69,21 +70,23 @@ import com.asakusafw.vocabulary.operator.Fold;
         }
     }
     /**
-     * 通常の演算子。
-     * @param in 畳み込む値
-     * @return 生成した演算子オブジェクト
+     * simple.
+     * @param in  fold source
+     * @return the created operator object
      * @see FoldFlow#simple(Ex1, Ex1)
      */
-    public FoldFlowFactory.Simple simple(Source<Ex1> in) {
+    @OperatorInfo(kind = Fold.class, input = {@OperatorInfo.Input(name = "in", type = Ex1.class, position = 0)}, output 
+            = {@OperatorInfo.Output(name = "out", type = Ex1.class)}, parameter = {}) public FoldFlowFactory.Simple 
+            simple(@KeyInfo(group = {@KeyInfo.Group(expression = "string")}, order = {}) Source<Ex1> in) {
         return new FoldFlowFactory.Simple(in);
     }
     /**
-     * 引数つきの演算子。
+     * parameterized.
      */
     public static final class WithParameter implements Operator {
         private final FlowElementResolver $;
         /**
-         * 畳み込みの結果
+         * the folding result
          */
         public final Source<Ex1> out;
         WithParameter(Source<Ex1> in, int parameter) {
@@ -104,10 +107,10 @@ import com.asakusafw.vocabulary.operator.Fold;
             this.out = this.$.resolveOutput("out");
         }
         /**
-         * この演算子の名前を設定する。
-         * @param newName0 設定する名前
-         * @return この演算子オブジェクト (this)
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Configures the name of this operator.
+         * @param newName0 the new operator name
+         * @return this operator object
+         * @throws IllegalArgumentException if the parameter is <code>null</code>
          */
         public FoldFlowFactory.WithParameter as(String newName0) {
             this.$.setName(newName0);
@@ -115,13 +118,16 @@ import com.asakusafw.vocabulary.operator.Fold;
         }
     }
     /**
-     * 引数つきの演算子。
-     * @param in 畳み込む値
-     * @param parameter 追加パラメータ
-     * @return 生成した演算子オブジェクト
+     * parameterized.
+     * @param in  fold source
+     * @param parameter  additional parameter
+     * @return the created operator object
      * @see FoldFlow#withParameter(Ex1, Ex1, int)
      */
-    public FoldFlowFactory.WithParameter withParameter(Source<Ex1> in, int parameter) {
+    @OperatorInfo(kind = Fold.class, input = {@OperatorInfo.Input(name = "in", type = Ex1.class, position = 0)}, output 
+            = {@OperatorInfo.Output(name = "out", type = Ex1.class)}, parameter = {@OperatorInfo.Parameter(name = 
+                "parameter", type = int.class, position = 1)}) public FoldFlowFactory.WithParameter withParameter(@
+            KeyInfo(group = {@KeyInfo.Group(expression = "string")}, order = {}) Source<Ex1> in, int parameter) {
         return new FoldFlowFactory.WithParameter(in, parameter);
     }
 }

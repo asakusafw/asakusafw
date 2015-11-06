@@ -20,55 +20,53 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 基本型の種類。
- * <p>
- * 基本型はプリミティブ型と{@code void}型からなる。
- * </p>
+ * Represents a kind of basic type.
+ * This consists of primitive types and {@code void}.
  */
 public enum BasicTypeKind {
 
     /**
-     * {@code void}型。
+     * The void type.
      */
     VOID('V', void.class),
 
     /**
-     * {@code int}型。
+     * The int type.
      */
     INT('I', int.class),
 
     /**
-     * {@code long}型。
+     * The long type.
      */
     LONG('J', long.class),
 
     /**
-     * {@code float}型。
+     * The float type.
      */
     FLOAT('F', float.class),
 
     /**
-     * {@code double}型。
+     * The double type.
      */
     DOUBLE('D', double.class),
 
     /**
-     * {@code short}型。
+     * The short type.
      */
     SHORT('S', short.class),
 
     /**
-     * {@code char}型。
+     * The char type.
      */
     CHAR('C', char.class),
 
     /**
-     * {@code byte}型。
+     * The byte type.
      */
     BYTE('B', byte.class),
 
     /**
-     * {@code boolean}型。
+     * The boolean type.
      */
     BOOLEAN('Z', boolean.class),
     ;
@@ -78,9 +76,9 @@ public enum BasicTypeKind {
     private Class<?> javaRepresentation;
 
     /**
-     * インスタンスを生成する。
-     * @param descriptor デスクリプタ
-     * @param klass Javaでの表現
+     * Creates a new instance.
+     * @param descriptor the type descriptor
+     * @param klass the related Java reflection type
      */
     private BasicTypeKind(char descriptor, Class<?> klass) {
         assert klass != null;
@@ -90,38 +88,35 @@ public enum BasicTypeKind {
     }
 
     /**
-     * 指定のデスクリプタで表現されるこの型の要素を返す。
-     * @param descriptor 対象のデスクリプタ文字
-     * @return 対応する要素、存在しない場合は{@code null}
+     * Returns the type which is represented in the specified descriptor.
+     * @param descriptor the descriptor
+     * @return the corresponded type kind, or {@code null} if there is no such the type kind
      */
     public static BasicTypeKind descriptorOf(char descriptor) {
         return DescriptorToBasicTypeKind.get(descriptor);
     }
 
     /**
-     * この基本型の種類を表現するデスクリプタを返す。
-     * @return この基本型の種類を表現するデスクリプタ
+     * Returns the type descriptor.
+     * @return the type descriptor
      */
     public char getDescriptor() {
         return descriptor;
     }
 
     /**
-     * この基本型のJavaでの表現({@link java.lang.Class})を返す。
-     * @return この基本型のJavaでの表現
+     * Returns the reflection type ({@link java.lang.Class}) of this kind.
+     * @return the related reflection type
      */
     public Class<?> getJavaRepresentation() {
         return javaRepresentation;
     }
 
     /**
-     * Javaでの表現に対応するこの列挙型の定数を返す。
-     * <p>
-     * 対応する定数が存在しない場合、この呼び出しは{@code null}を返す。
-     * </p>
-     * @param klass Javaでの表現
-     * @return 対応する定数、存在しない場合は{@code null}
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the type kind about the target Java type.
+     * @param klass the Java type
+     * @return the related type kind, or {@code null} if there is no such the type kind
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static BasicTypeKind valueOf(Class<?> klass) {
         if (klass == null) {
@@ -131,21 +126,18 @@ public enum BasicTypeKind {
     }
 
     /**
-     * この型を表現するキーワードを返す。
-     * @return この型を表現するキーワード
+     * Returns the Java keyword of this type.
+     * @return the Java keyword
      */
     public String getKeyword() {
         return name().toLowerCase();
     }
 
     /**
-     * Javaでのキーワードに対応するこの列挙型の定数を返す。
-     * <p>
-     * 対応する定数が存在しない場合、この呼び出しは{@code null}を返す。
-     * </p>
-     * @param keyword Javaでのキーワード
-     * @return 対応する定数、存在しない場合は{@code null}
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the type kind about the Java keyword.
+     * @param keyword the Java keyword
+     * @return the related type kind, or {@code null} if there is no such the type kind
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static BasicTypeKind keywordOf(String keyword) {
         if (keyword == null) {

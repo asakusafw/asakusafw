@@ -21,48 +21,44 @@ import java.util.Set;
 
 import com.asakusafw.vocabulary.batch.WorkDescription;
 
-
 /**
- * {@link Workflow}を解釈するエンジン。
+ * An abstract interface of processing {@link Workflow}.
  */
 public interface WorkflowProcessor extends BatchCompilingEnvironment.Initializable {
 
     /**
-     * このエンジンが利用する{@link WorkDescriptionProcessor}の一覧を返す。
-     * @return 利用する{@link WorkDescriptionProcessor}の一覧
+     * Returns the target {@link WorkDescriptionProcessor}s for this.
+     * @return the target {@link WorkDescriptionProcessor}s
      */
     Collection<Class<? extends WorkDescriptionProcessor<?>>> getDescriptionProcessors();
 
     /**
-     * このエンジンを利用して{@link Workflow}の処理を返す。
-     * @param workflow 対象のワークフロー
-     * @throws IOException 処理に失敗した場合
+     * Processes the target {@link Workflow}.
+     * @param workflow the target {@link Workflow}
+     * @throws IOException if failed to process the target workflow
      */
     void process(Workflow workflow) throws IOException;
 
     /**
-     * {@link WorkflowProcessor}を検出するリポジトリ。
+     * A repository for {@link WorkflowProcessor}s.
      */
     interface Repository extends BatchCompilingEnvironment.Initializable {
 
         /**
-         * 指定の{@link WorkDescription}に対して
-         * 利用可能な{@link WorkflowProcessor}の一覧を返す。
-         * @param descriptions 対象の{@link WorkDescription}一覧
-         * @return 利用可能な{@link WorkflowProcessor}の一覧
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Returns the available workflow processors for the target descriptions.
+         * @param descriptions the target descriptions
+         * @return the available {@link WorkflowProcessor}s
+         * @throws IllegalArgumentException if the parameter is {@code null}
          */
-        Set<WorkflowProcessor> findWorkflowProcessors(
-                Set<? extends WorkDescription> descriptions);
+        Set<WorkflowProcessor> findWorkflowProcessors(Set<? extends WorkDescription> descriptions);
 
         /**
-         * 指定の{@link WorkDescription}に対して、それ自身を処理する
-         * {@link WorkDescriptionProcessor}を返す。
-         * @param workDescription 対象の{@link WorkDescription}
-         * @return 対応する{@link WorkDescriptionProcessor}、存在しない場合は{@code null}
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Returns the work description processor for the target object.
+         * @param workDescription the target {@link WorkDescription}
+         * @return the corresponded {@link WorkDescriptionProcessor}, or {@code null}
+         *     if there is no suitable processors
+         * @throws IllegalArgumentException if the parameter is {@code null}
          */
-        WorkDescriptionProcessor<?> findDescriptionProcessor(
-                WorkDescription workDescription);
+        WorkDescriptionProcessor<?> findDescriptionProcessor(WorkDescription workDescription);
     }
 }

@@ -26,7 +26,7 @@ import org.junit.Test;
 public class VariableTableTest {
 
     /**
-     * 変数なし。
+     * parses raw string.
      */
     @Test
     public void raw() {
@@ -35,7 +35,7 @@ public class VariableTableTest {
     }
 
     /**
-     * 単一の変数。
+     * parses a string w/ a variable.
      */
     @Test
     public void single() {
@@ -45,7 +45,7 @@ public class VariableTableTest {
     }
 
     /**
-     * 複数の変数。
+     * parses a string w/ multiple variables.
      */
     @Test
     public void multi() {
@@ -57,7 +57,7 @@ public class VariableTableTest {
     }
 
     /**
-     * 空の変数表。
+     * restores variables from empty string.
      */
     @Test
     public void list_empty() {
@@ -67,7 +67,7 @@ public class VariableTableTest {
     }
 
     /**
-     * 変数表を利用して単一の変数を追加。
+     * restores a variable from string.
      */
     @Test
     public void list_single() {
@@ -78,7 +78,7 @@ public class VariableTableTest {
     }
 
     /**
-     * 変数表を利用して複数の変数を追加。
+     * restores multiple variables from string.
      */
     @Test
     public void list_multi() {
@@ -91,7 +91,7 @@ public class VariableTableTest {
     }
 
     /**
-     * 変数表を利用して複数の変数を追加。
+     * restores variables from string w/ escape sequence.
      */
     @Test
     public void list_escaped() {
@@ -103,7 +103,7 @@ public class VariableTableTest {
     }
 
     /**
-     * 末尾に\が着た場合はそのままの文字として使う。
+     * restores variables from string which ends w/ escape symbol.
      */
     @Test
     public void list_escapeSequenceFragment() {
@@ -114,7 +114,7 @@ public class VariableTableTest {
     }
 
     /**
-     * キーと値の区切りが無い。
+     * missing key-value separator.
      */
     @Test(expected = IllegalArgumentException.class)
     public void list_notKeyValue() {
@@ -123,7 +123,7 @@ public class VariableTableTest {
     }
 
     /**
-     * キーと値の区切りが無い。
+     * duplicate variables.
      */
     @Test(expected = IllegalArgumentException.class)
     public void list_redefine() {
@@ -132,7 +132,7 @@ public class VariableTableTest {
     }
 
     /**
-     * 空のキー。
+     * empty key name.
      */
     @Test
     public void list_emptyKey() {
@@ -143,7 +143,7 @@ public class VariableTableTest {
     }
 
     /**
-     * 空の値。
+     * empty value.
      */
     @Test
     public void list_emptyValue() {
@@ -153,7 +153,7 @@ public class VariableTableTest {
     }
 
     /**
-     * 空の値。
+     * empty key name and value.
      */
     @Test
     public void list_emptyKeyValue() {
@@ -163,7 +163,7 @@ public class VariableTableTest {
     }
 
     /**
-     * 変数名を変数形式に変換。
+     * test for {@code toVariable()}.
      */
     @Test
     public void toVariable() {
@@ -174,7 +174,7 @@ public class VariableTableTest {
     }
 
     /**
-     * 変数表を文字列に変換 (単一)。
+     * serialize a variable.
      */
     @Test
     public void toSerialString_simple() {
@@ -188,7 +188,7 @@ public class VariableTableTest {
     }
 
     /**
-     * 変数表を文字列に変換 (複数)。
+     * serialize multiple variables.
      */
     @Test
     public void toSerialString_multiple() {
@@ -206,7 +206,7 @@ public class VariableTableTest {
     }
 
     /**
-     * 変数表を文字列に変換 (複数)。
+     * serialize variables w/ meta-characters.
      */
     @Test
     public void toSerialString_escaped() {
@@ -226,7 +226,7 @@ public class VariableTableTest {
     }
 
     /**
-     * 未定義。
+     * undefined variables.
      */
     @Test(expected = IllegalArgumentException.class)
     public void undefined() {
@@ -237,7 +237,7 @@ public class VariableTableTest {
     }
 
     /**
-     * 再定義。
+     * redefine variables.
      */
     @Test(expected = IllegalArgumentException.class)
     public void redefined() {

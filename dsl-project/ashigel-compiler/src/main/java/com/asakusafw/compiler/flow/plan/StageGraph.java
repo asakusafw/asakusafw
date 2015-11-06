@@ -21,27 +21,24 @@ import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.utils.collections.Lists;
 
 /**
- * 実行ステージ間の関係を示したグラフ。
+ * Represents a graph of {@link StageBlock}s.
  */
 public class StageGraph {
 
-    private FlowBlock input;
+    private final FlowBlock input;
 
-    private FlowBlock output;
+    private final FlowBlock output;
 
-    private List<StageBlock> stages;
+    private final List<StageBlock> stages;
 
     /**
-     * インスタンスを生成する。
-     * @param input プログラム全体の入力が含まれるブロック
-     * @param output プログラム全体の出力が含まれるブロック
-     * @param stages 入力から出力の間に存在するブロックの一覧
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param input the flow input block
+     * @param output the flow output block
+     * @param stages the stage blocks
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
-    public StageGraph(
-            FlowBlock input,
-            FlowBlock output,
-            List<StageBlock> stages) {
+    public StageGraph(FlowBlock input, FlowBlock output, List<StageBlock> stages) {
         Precondition.checkMustNotBeNull(input, "input"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(output, "output"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(stages, "stages"); //$NON-NLS-1$
@@ -51,24 +48,24 @@ public class StageGraph {
     }
 
     /**
-     * ステージグラフへの入力のみを含むブロックを返す。
-     * @return ステージグラフへの入力のみを含むブロック
+     * Returns the block which contains flow inputs of the graph.
+     * @return the input block
      */
     public FlowBlock getInput() {
         return input;
     }
 
     /**
-     * ステージグラフからの出力のみを含むブロックを返す。
-     * @return ステージグラフからの出力のみを含むブロック
+     * Returns the block which contains flow outputs of the graph.
+     * @return the output block
      */
     public FlowBlock getOutput() {
         return output;
     }
 
     /**
-     * このステージグラフに含まれるステージブロックの一覧を返す。
-     * @return ステージブロックの一覧
+     * Returns the stage blocks.
+     * @return the stage blocks
      */
     public List<StageBlock> getStages() {
         return stages;

@@ -43,12 +43,12 @@ public class MultipleOutputJob extends FlowDescription {
     private final Out<Ex1> output4;
 
     /**
-     * インスタンスを生成する。
-     * @param input 入力
-     * @param output1 出力(1)
-     * @param output2 出力(2)
-     * @param output3 出力(3)
-     * @param output4 出力(4)
+     * Creates a new instance.
+     * @param input input
+     * @param output1 output (1)
+     * @param output2 output (2)
+     * @param output3 output (3)
+     * @param output4 output (4)
      */
     public MultipleOutputJob(
             @Import(name = "input", description = Ex1MockImporterDescription.class)

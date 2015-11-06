@@ -15,9 +15,8 @@
  */
 package com.asakusafw.utils.java.model.syntax;
 
-
 /**
- * 後置式を表現するインターフェース。
+ * An interface which represents postfix expressions.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:15.14] Postfix Expressions} </li>
@@ -27,19 +26,15 @@ package com.asakusafw.utils.java.model.syntax;
 public interface PostfixExpression
         extends Expression {
 
-    // properties
-
     /**
-     * 後置演算項を返す。
-     * @return
-     *     後置演算項
+     * Returns the operand term.
+     * @return the operand term
      */
     Expression getOperand();
 
     /**
-     * 演算子を返す。
-     * @return
-     *     演算子
+     * Returns the postfix operator.
+     * @return the postfix operator
      */
     PostfixOperator getOperator();
 }

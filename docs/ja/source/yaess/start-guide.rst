@@ -88,7 +88,7 @@ YAESSはプロファイルセットとよぶ実行環境の構成をもってお
 * バッチのログメッセージの通知方法
 * バッチ内のジョブスケジューリング方法
 * Hadoopジョブの起動方法
-* ThunderGateやWindGateの起動方法
+* WindGateなどの外部システム連携モジュールの起動方法
 
 ここでは、いくつかの設定を変更する方法について紹介します。
 
@@ -143,7 +143,7 @@ YAESSを利用すると、SSHを経由してリモートコンピューターに
     hadoop.ssh.host = hadoop.example.com
     hadoop.ssh.port = 22
     hadoop.ssh.privateKey = ${HOME}/.ssh/id_dsa
-    hadoop.ssh.passPhrase = 
+    hadoop.ssh.passPhrase =
     hadoop.resource = hadoop-master
     hadoop.env.HADOOP_CMD = /usr/bin/hadoop
     hadoop.env.ASAKUSA_HOME = /opt/hadoop/asakusa
@@ -153,10 +153,10 @@ YAESSを利用すると、SSHを経由してリモートコンピューターに
         詳しくは :doc:`user-guide` を参照してください。
 ..  [#] デフォルトで定義されているローカルのHadoopを実行するための設定は不要なため、これらの行は削除するか、行頭に ``#`` を追加してコメントアウトします。
 
-SSHを経由したThunderGate/WindGateの実行
----------------------------------------
+SSHを経由したWindGateの実行
+---------------------------
 
-Hadoopと同様に、ThunderGateやWindGateなどの外部連携コマンドもSSHを経由してリモートコンピュータから実行できます。
+Hadoopと同様に、WindGateなどの外部連携コマンドもSSHを経由してリモートコンピュータから実行できます。
 
 上記と同様、ローカルのYAESSの構成ファイル ( :file:`$ASAKUSA_HOME/yaess/conf/yaess.properties` ) を編集します。
 既定の構成は以下のようになっており、これはローカルのコンピューターにインストールされたコマンドを実行するよう設定されています。
@@ -209,9 +209,9 @@ Hadoopと同様に、ThunderGateやWindGateなどの外部連携コマンドもS
 コマンド実行方法の振り分け
 --------------------------
 
-複数のThunderGateやWindGateが異なるコンピューターにインストールされている場合、YAESSでは「プロファイル」という考え方でそれぞれのコマンドを振り分けて実行できます。
+複数のWindGateが異なるコンピューターにインストールされている場合、YAESSでは「プロファイル」という考え方でそれぞれのコマンドを振り分けて実行できます。
 
-ThunderGateには「ターゲット名」、WindGateには「プロファイル名」という実行構成の名前がそれぞれあります。
+WindGateには「プロファイル名」という実行構成の名前がそれぞれあります。
 これらの名前別に実行構成を指定するには、YAESSの構成ファイル ( :file:`$ASAKUSA_HOME/yaess/conf/yaess.properties` ) 内で ``command.<構成の名前>`` から始まる設定を追加します。
 
 以下は ``asakusa`` という名前のプロファイルに対するコマンド実行方法の記述です。

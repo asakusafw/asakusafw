@@ -24,10 +24,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * フロー内の任意の要素の接続構造を表現する。
- * <p>
- * DSL利用者はこのクラスのオブジェクトを直接操作すべきでない。
- * </p>
+ * Represents a node in flow graph.
+ * Application developers should not use this class directly.
  * @since 0.1.0
  * @version 0.4.0
  */
@@ -116,34 +114,34 @@ public final class FlowElement implements FlowElementAttributeProvider {
     }
 
     /**
-     * この要素の定義を返す。
-     * @return この要素の定義
+     * Returns the description of this element.
+     * @return the description
      */
     public FlowElementDescription getDescription() {
         return description;
     }
 
     /**
-     * この要素への入力ポートの一覧を返す。
-     * @return この要素への入力ポートの一覧
+     * Returns input ports of this element.
+     * @return input ports
      */
     public List<FlowElementInput> getInputPorts() {
         return inputPorts;
     }
 
     /**
-     * この要素からの出力ポートの一覧を返す。
-     * @return この要素空の出力ポートの一覧
+     * Returns input ports of this element.
+     * @return output ports
      */
     public List<FlowElementOutput> getOutputPorts() {
         return outputPorts;
     }
 
     /**
-     * この要素に指定の属性が設定されている場合のみ{@code true}を返す。
-     * @param attribute 対象の属性
-     * @return 指定の属性が設定されている場合のみ{@code true}
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns whether this element has the specified attribute or not.
+     * @param attribute the target attribute
+     * @return {@code true} if this element has the specified attribute, otherwise {@code false}
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public boolean hasAttribute(FlowElementAttribute attribute) {
         if (attribute == null) {
@@ -157,11 +155,11 @@ public final class FlowElement implements FlowElementAttributeProvider {
     }
 
     /**
-     * この要素に指定された指定の属性を返す。
-     * @param <T> 属性の種類
-     * @param attributeClass 属性の種類
-     * @return 対象の属性値、未設定の場合は{@code null}
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns the attribute of the specified kind.
+     * @param <T> the attribute kind
+     * @param attributeClass the attribute type
+     * @return the target attribute, or {@code null} if this element does not have such an attribute
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     @Override
     public <T extends FlowElementAttribute> T getAttribute(Class<T> attributeClass) {
@@ -176,11 +174,9 @@ public final class FlowElement implements FlowElementAttributeProvider {
     }
 
     /**
-     * 指定の属性をこの要素のインスタンスにおいてのみ上書きする。
-     * <p>
-     * 上書きした値は{@link #getDescription()}の属性に影響しない。
-     * </p>
-     * @param attribute 上書きする属性
+     * Overwrites the attribute into this element.
+     * This does not change the attribute of the description.
+     * @param attribute the attribute to be overwritten
      */
     public void override(FlowElementAttribute attribute) {
         if (attribute == null) {
@@ -190,8 +186,8 @@ public final class FlowElement implements FlowElementAttributeProvider {
     }
 
     /**
-     * この要素で上書きされた属性の一覧を返す。
-     * @return この要素で上書きされた属性の一覧
+     * Returns the overwritten attributes.
+     * @return the overwritten attributes
      */
     public Collection<FlowElementAttribute> getAttributeOverride() {
         return new ArrayList<FlowElementAttribute>(attributeOverride.values());

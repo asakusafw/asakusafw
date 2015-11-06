@@ -23,7 +23,7 @@ import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.utils.collections.Sets;
 
 /**
- * 可視化用のグラフ。
+ * A visual model for flow graphs.
  */
 public class VisualGraph implements VisualNode {
 
@@ -34,10 +34,10 @@ public class VisualGraph implements VisualNode {
     private final Set<VisualNode> nodes;
 
     /**
-     * インスタンスを生成する。
-     * @param label このグラフのラベル、省略する場合は{@code null}
-     * @param nodes このグラフに含まれるノード一覧
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param label the label of this element (nullable)
+     * @param nodes the element nodes
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public VisualGraph(String label, Set<? extends VisualNode> nodes) {
         Precondition.checkMustNotBeNull(nodes, "nodes"); //$NON-NLS-1$
@@ -46,8 +46,8 @@ public class VisualGraph implements VisualNode {
     }
 
     /**
-     * このグラフのラベルを返す。
-     * @return このグラフのラベル、省略された場合は{@code null}
+     * Returns the label of this graph.
+     * @return the block label, or {@code null} if it was not specified
      */
     public String getLabel() {
         return label;
@@ -59,8 +59,8 @@ public class VisualGraph implements VisualNode {
     }
 
     /**
-     * このグラフに含まれるノード一覧を返す。
-     * @return このグラフに含まれるノード一覧
+     * Returns the element nodes of this graph.
+     * @return the element nodes
      */
     public Set<VisualNode> getNodes() {
         return Collections.unmodifiableSet(nodes);

@@ -32,7 +32,7 @@ import com.asakusafw.vocabulary.flow.testing.MockOut;
 public class ConvertOperatorProcessorTest extends OperatorCompilerTestRoot {
 
     /**
-     * 単純な例。
+     * simple case.
      */
     @Test
     public void simple() {
@@ -54,7 +54,7 @@ public class ConvertOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * パラメータ化。
+     * parameterized.
      */
     @Test
     public void parameterized() {
@@ -76,7 +76,7 @@ public class ConvertOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * ジェネリックメソッド。
+     * generic method.
      */
     @Test
     public void generics() {
@@ -98,7 +98,7 @@ public class ConvertOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * 抽象メソッド。
+     * w/ abstract modifier.
      */
     @Test
     public void _abstract() {
@@ -107,7 +107,7 @@ public class ConvertOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * ユーザー定義パラメーターでない。
+     * not a valid user parameters.
      */
     @Test
     public void notUserParameter() {
@@ -116,7 +116,7 @@ public class ConvertOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * voidを返す。
+     * returns void type.
      */
     @Test
     public void returnsVoid() {
@@ -125,7 +125,7 @@ public class ConvertOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * モデルでない。
+     * not a data model parameter.
      */
     @Test
     public void notModel() {
@@ -134,7 +134,7 @@ public class ConvertOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * 戻り値型が型変数。
+     * returns type variables.
      */
     @Test
     public void returnsTypeVariable() {

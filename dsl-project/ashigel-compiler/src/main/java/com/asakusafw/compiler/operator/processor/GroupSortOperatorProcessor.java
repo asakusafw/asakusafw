@@ -31,7 +31,7 @@ import com.asakusafw.vocabulary.operator.GroupSort;
 
 
 /**
- * {@link GroupSort グループ整列演算子}を処理する。
+ * Processes {@link GroupSort} operators.
  */
 @TargetOperator(GroupSort.class)
 public class GroupSortOperatorProcessor extends AbstractOperatorProcessor {
@@ -66,7 +66,7 @@ public class GroupSortOperatorProcessor extends AbstractOperatorProcessor {
                 startParameters++;
             }
         }
-        if (startParameters == RESULT_START) { // 結果型がない
+        if (startParameters == RESULT_START) { // missing Result<_>
             a.error(Messages.getString("GroupSortOperatorProcessor.errorMissingOutput")); //$NON-NLS-1$
         }
         for (int i = startParameters, n = a.countParameters(); i < n; i++) {

@@ -39,7 +39,7 @@ import com.asakusafw.vocabulary.flow.Out;
 import com.asakusafw.vocabulary.flow.graph.FlowGraph;
 
 /**
- * {@link JobFlow}が付与されている要素について、フローの構造を解析する。
+ * Analyzes jobflow classes (which annotated with {@link JobFlow}).
  */
 public final class JobFlowDriver {
 
@@ -58,10 +58,10 @@ public final class JobFlowDriver {
     }
 
     /**
-     * インスタンスを生成する。
-     * @param description 対象のジョブフロークラス
-     * @return 生成したインスタンス
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param description the target jobflow class
+     * @return the created instance
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static JobFlowDriver analyze(Class<? extends FlowDescription> description) {
         Precondition.checkMustNotBeNull(description, "description"); //$NON-NLS-1$
@@ -71,24 +71,24 @@ public final class JobFlowDriver {
     }
 
     /**
-     * 解析結果のジョブフロークラス情報を返す。
-     * @return 解析結果のジョブフロークラス情報、解析に失敗した場合は{@code null}
+     * Returns information of the target jobflow class.
+     * @return information of the target jobflow class, or {@code null} if the target jobflow class is not valid
      */
     public JobFlowClass getJobFlowClass() {
         return jobFlowClass;
     }
 
     /**
-     * 解析対象のジョブフロークラスを返す。
-     * @return 解析対象のジョブフロークラス
+     * Returns the target jobflow class.
+     * @return the target jobflow class
      */
     public Class<? extends FlowDescription> getDescription() {
         return description;
     }
 
     /**
-     * 解析結果の診断メッセージを返す。
-     * @return 解析結果の診断メッセージ
+     * Returns the diagnostics messages.
+     * @return the diagnostics messages
      */
     public List<String> getDiagnostics() {
         return diagnostics;
@@ -164,8 +164,8 @@ public final class JobFlowDriver {
     }
 
     /**
-     * この解析結果にエラーが含まれている場合のみ{@code true}を返す。
-     * @return 解析結果にエラーが含まれている場合のみ{@code true}
+     * Returns whether this analysis result contains any erroneous information or not.
+     * @return {@code true} if this contains any erroneous information, otherwise {@code false}
      */
     public boolean hasError() {
         return diagnostics.isEmpty() == false;

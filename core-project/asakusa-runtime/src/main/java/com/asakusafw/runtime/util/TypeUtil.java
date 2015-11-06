@@ -27,15 +27,15 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 /**
- * 型に関するユーティリティ。
+ * Utilities for types.
  */
 public final class TypeUtil {
 
     /**
-     * 指定のクラス型またはインターフェース型から派生した型の消去型を返す。
-     * @param type 対象のクラス型またはインターフェース型
-     * @return 対応する消去型
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns the type erasure of the class or interface type.
+     * @param type the target class or interface type
+     * @return the type erasure
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static Class<?> erase(Type type) {
         if (type == null) {
@@ -49,11 +49,11 @@ public final class TypeUtil {
     }
 
     /**
-     * 指定の型を起動する。
-     * @param target 起動する型
-     * @param context 起動に利用するコンテキスト
-     * @return 起動した型
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns the invocation of the target class or interface type.
+     * @param target the target type
+     * @param context the context type (should be a sub-type of the target type)
+     * @return the type arguments of the invoked type, {@code null} if the target type cannot be invoked
+     * @throws IllegalArgumentException if some parameters are {@code null}
      */
     public static List<Type> invoke(Class<?> target, Type context) {
         if (target == null) {
@@ -161,7 +161,7 @@ public final class TypeUtil {
             return new GenericContext((Class<?>) context);
         }
         if (context instanceof ParameterizedType) {
-            // 簡易版なのでQualified Typeについては考慮しない
+            // this implementation does not support qualified types
             ParameterizedType t = (ParameterizedType) context;
             Class<?> raw = (Class<?>) t.getRawType();
             TypeVariable<?>[] params = raw.getTypeParameters();
@@ -179,9 +179,6 @@ public final class TypeUtil {
         return null;
     }
 
-    /**
-     * インスタンス生成の禁止。
-     */
     private TypeUtil() {
         throw new AssertionError();
     }
@@ -207,11 +204,11 @@ public final class TypeUtil {
             return type;
         }
         if (type instanceof TypeVariable<?>) {
-            // 簡易版のため無限型について考慮しない
+            // this implementation does not support infinite types
             return mapping.get(type);
         }
         if (type instanceof ParameterizedType) {
-            // 簡易版のためQualified Typeについては考慮しない
+            // this implementation does not support qualified types
             ParameterizedType pt = (ParameterizedType) type;
             Class<?> raw = (Class<?>) pt.getRawType();
             List<Type> arguments = new ArrayList<Type>();

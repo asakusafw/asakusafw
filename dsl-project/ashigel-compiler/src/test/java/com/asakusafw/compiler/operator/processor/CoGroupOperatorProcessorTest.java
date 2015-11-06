@@ -32,7 +32,7 @@ import com.asakusafw.vocabulary.flow.testing.MockOut;
 public class CoGroupOperatorProcessorTest extends OperatorCompilerTestRoot {
 
     /**
-     * 単純なテスト。
+     * simple case.
      */
     @Test
     public void simple() {
@@ -57,7 +57,7 @@ public class CoGroupOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * パラメータ化。
+     * parameterized.
      */
     @Test
     public void parameterized() {
@@ -82,7 +82,7 @@ public class CoGroupOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * ジェネリックメソッド。
+     * generic method.
      */
     @Test
     public void generics() {
@@ -107,7 +107,7 @@ public class CoGroupOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * 抽象メソッド。
+     * w/ abstract modifier.
      */
     @Test
     public void _abstract() {
@@ -116,7 +116,7 @@ public class CoGroupOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * 結果がない。
+     * w/o result parameters.
      */
     @Test
     public void noResult() {
@@ -125,7 +125,7 @@ public class CoGroupOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * リストでない。
+     * not a list parameter.
      */
     @Test
     public void notList() {
@@ -134,16 +134,16 @@ public class CoGroupOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * 結果でない。
+     * not a result parameter.
      */
     @Test
     public void notResult() {
-        add("com.example.NotList");
+        add("com.example.NotResult");
         error(new CoGroupOperatorProcessor());
     }
 
     /**
-     * モデルでない。
+     * not a data model parameter.
      */
     @Test
     public void notModel() {
@@ -152,7 +152,7 @@ public class CoGroupOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * voidでない。
+     * not void type.
      */
     @Test
     public void notVoid() {
@@ -206,7 +206,7 @@ public class CoGroupOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * ユーザー引数でない。
+     * not a valid user parameters.
      */
     @Test
     public void notUserParameter() {
@@ -215,7 +215,7 @@ public class CoGroupOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * 出力が不明なジェネリックメソッド。
+     * unbound generic method.
      */
     @Test
     public void unboundGenerics() {

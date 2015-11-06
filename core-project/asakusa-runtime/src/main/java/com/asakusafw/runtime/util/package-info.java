@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * 実行時に利用するユーティリティ群。
+ * Utilities for Asakusa runtime.
  */
 package com.asakusafw.runtime.util;

@@ -14,75 +14,107 @@
  * limitations under the License.
  */
 package com.asakusafw.compiler.flow.processor.operator;
-import javax.annotation.Generated;
-
 import com.asakusafw.compiler.flow.testing.model.Ex1;
 import com.asakusafw.vocabulary.flow.Operator;
 import com.asakusafw.vocabulary.flow.Source;
 import com.asakusafw.vocabulary.flow.graph.FlowElementResolver;
+import com.asakusafw.vocabulary.flow.graph.ObservationCount;
 import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
+import com.asakusafw.vocabulary.operator.OperatorFactory;
+import com.asakusafw.vocabulary.operator.OperatorInfo;
 import com.asakusafw.vocabulary.operator.Update;
-
+import javax.annotation.Generated;
 /**
- * {@link UpdateFlow}に関する演算子ファクトリークラス。
+ * An operator factory class about <code>UpdateFlow</code>.
+ * @see UpdateFlow
  */
-@Generated("com.asakusafw.compiler.operator.OperatorFactoryClassGenerator") public class
-        UpdateFlowFactory {
+@Generated("OperatorFactoryClassGenerator:0.1.0")@OperatorFactory(UpdateFlow.class) public class UpdateFlowFactory {
     /**
-     * 通常の演算子。
+     * simple.
      */
     public static final class Simple implements Operator {
+        private final FlowElementResolver $;
         /**
-         * 結果
+         * the results
          */
         public final Source<Ex1> out;
         Simple(Source<Ex1> model) {
             OperatorDescription.Builder builder = new OperatorDescription.Builder(Update.class);
             builder.declare(UpdateFlow.class, UpdateFlowImpl.class, "simple");
             builder.declareParameter(Ex1.class);
-            builder.addInput("model", Ex1.class);
-            builder.addOutput("out", Ex1.class);
-            FlowElementResolver resolver = builder.toResolver();
-            resolver.resolveInput("model", model);
-            this.out = resolver.resolveOutput("out");
+            builder.addInput("model", model);
+            builder.addOutput("out", model);
+            builder.addAttribute(ObservationCount.DONT_CARE);
+            this.$ = builder.toResolver();
+            this.$.resolveInput("model", model);
+            this.out = this.$.resolveOutput("out");
+        }
+        /**
+         * Configures the name of this operator.
+         * @param newName the new operator name
+         * @return this operator object
+         * @throws IllegalArgumentException if the parameter is <code>null</code>
+         */
+        public UpdateFlowFactory.Simple as(String newName) {
+            this.$.setName(newName);
+            return this;
         }
     }
     /**
-     * 通常の演算子。
-     * @param model 対象のモデル
-     * @return 生成した演算子オブジェクト
+     * simple.
+     * @param model  target data model
+     * @return the created operator object
+     * @see UpdateFlow#simple(Ex1)
      */
-    public UpdateFlowFactory.Simple simple(Source<Ex1> model) {
+    @OperatorInfo(kind = Update.class, input = {@OperatorInfo.Input(name = "model", type = Ex1.class, position = 0)}, 
+            output = {@OperatorInfo.Output(name = "out", type = Ex1.class)}, parameter = {}) public UpdateFlowFactory.
+            Simple simple(Source<Ex1> model) {
         return new UpdateFlowFactory.Simple(model);
     }
     /**
-     * パラメーター付きの演算子。
+     * parameterized.
      */
     public static final class WithParameter implements Operator {
+        private final FlowElementResolver $;
         /**
-         * 結果
+         * the results
          */
         public final Source<Ex1> out;
         WithParameter(Source<Ex1> model, int parameter) {
-            OperatorDescription.Builder builder = new OperatorDescription.Builder(Update.class);
-            builder.declare(UpdateFlow.class, UpdateFlowImpl.class, "withParameter");
-            builder.declareParameter(Ex1.class);
-            builder.declareParameter(int.class);
-            builder.addInput("model", Ex1.class);
-            builder.addOutput("out", Ex1.class);
-            builder.addParameter("parameter", int.class, parameter);
-            FlowElementResolver resolver = builder.toResolver();
-            resolver.resolveInput("model", model);
-            this.out = resolver.resolveOutput("out");
+            OperatorDescription.Builder builder0 = new OperatorDescription.Builder(Update.class);
+            builder0.declare(UpdateFlow.class, UpdateFlowImpl.class, "withParameter");
+            builder0.declareParameter(Ex1.class);
+            builder0.declareParameter(int.class);
+            builder0.addInput("model", model);
+            builder0.addOutput("out", model);
+            builder0.addParameter("parameter", int.class, parameter);
+            builder0.addAttribute(ObservationCount.DONT_CARE);
+            this.$ = builder0.toResolver();
+            this.$.resolveInput("model", model);
+            this.out = this.$.resolveOutput("out");
+        }
+        /**
+         * Configures the name of this operator.
+         * @param newName0 the new operator name
+         * @return this operator object
+         * @throws IllegalArgumentException if the parameter is <code>null</code>
+         */
+        public UpdateFlowFactory.WithParameter as(String newName0) {
+            this.$.setName(newName0);
+            return this;
         }
     }
     /**
-     * パラメーター付きの演算子。
-     * @param model 対象のモデル
-     * @param parameter 追加パラメータ
-     * @return 生成した演算子オブジェクト
+     * parameterized.
+     * @param model  target data model
+     * @param parameter  additional parameter
+     * @return the created operator object
+     * @see UpdateFlow#withParameter(Ex1, int)
      */
-    public UpdateFlowFactory.WithParameter withParameter(Source<Ex1> model, int parameter) {
+    @OperatorInfo(kind = Update.class, input = {@OperatorInfo.Input(name = "model", type = Ex1.class, position = 0)}, 
+            output = {@OperatorInfo.Output(name = "out", type = Ex1.class)}, parameter = {@OperatorInfo.Parameter(name = 
+                "parameter", type = int.class, position = 1)}) public UpdateFlowFactory.WithParameter withParameter(
+            Source<Ex1> model, int parameter) {
         return new UpdateFlowFactory.WithParameter(model, parameter);
     }
 }

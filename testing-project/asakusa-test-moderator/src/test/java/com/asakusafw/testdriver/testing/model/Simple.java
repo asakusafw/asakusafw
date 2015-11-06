@@ -23,17 +23,12 @@ import org.apache.hadoop.io.Writable;
 
 import com.asakusafw.runtime.model.DataModel;
 import com.asakusafw.runtime.model.DataModelKind;
-import com.asakusafw.runtime.model.ModelInputLocation;
-import com.asakusafw.runtime.model.ModelOutputLocation;
 import com.asakusafw.runtime.model.PropertyOrder;
 import com.asakusafw.runtime.value.StringOption;
-import com.asakusafw.testdriver.testing.io.SimpleInput;
-import com.asakusafw.testdriver.testing.io.SimpleOutput;
 /**
- * simpleを表すデータモデルクラス。
+ * A data model class that represents simple.
  */
-@DataModelKind("DMDL")@ModelInputLocation(SimpleInput.class)@ModelOutputLocation(SimpleOutput.class)@PropertyOrder({
-            "data"}) public class Simple implements DataModel<Simple>, Projection, Writable {
+@DataModelKind("DMDL")@PropertyOrder({"data"}) public class Simple implements DataModel<Simple>, Projection, Writable {
     private final StringOption data = new StringOption();
     @Override@SuppressWarnings("deprecation") public void reset() {
         this.data.setNull();
@@ -42,24 +37,24 @@ import com.asakusafw.testdriver.testing.io.SimpleOutput;
         this.data.copyFrom(other.data);
     }
     /**
-     * dataを返す。
+     * Returns data.
      * @return data
-     * @throws NullPointerException dataの値が<code>null</code>である場合
+     * @throws NullPointerException if data is <code>null</code>
      */
     @Override
     public Text getData() {
         return this.data.get();
     }
     /**
-     * dataを設定する。
-     * @param value 設定する値
+     * Sets data.
+     * @param value the value
      */
     @Override
     @SuppressWarnings("deprecation") public void setData(Text value) {
         this.data.modify(value);
     }
     /**
-     * <code>null</code>を許すdataを返す。
+     * Returns data which may be represent <code>null</code>.
      * @return data
      */
     @Override
@@ -67,8 +62,8 @@ import com.asakusafw.testdriver.testing.io.SimpleOutput;
         return this.data;
     }
     /**
-     * dataを設定する。
-     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     * Sets data.
+     * @param option the value, or <code>null</code> to set this property to <code>null</code>
      */
     @Override
     @SuppressWarnings("deprecation") public void setDataOption(StringOption option) {
@@ -96,27 +91,27 @@ import com.asakusafw.testdriver.testing.io.SimpleOutput;
         if(obj == null) {
             return false;
         }
-        if(this.getClass()!= obj.getClass()) {
+        if(this.getClass() != obj.getClass()) {
             return false;
         }
         Simple other = (Simple) obj;
-        if(this.data.equals(other.data)== false) {
+        if(this.data.equals(other.data) == false) {
             return false;
         }
         return true;
     }
     /**
-     * dataを返す。
+     * Returns data.
      * @return data
-     * @throws NullPointerException dataの値が<code>null</code>である場合
+     * @throws NullPointerException if data is <code>null</code>
      */
     @Override
     public String getDataAsString() {
         return this.data.getAsString();
     }
     /**
-     * dataを設定する。
-     * @param data0 設定する値
+     * Returns data.
+     * @param data0 the value
      */
     @Override
     @SuppressWarnings("deprecation") public void setDataAsString(String data0) {
