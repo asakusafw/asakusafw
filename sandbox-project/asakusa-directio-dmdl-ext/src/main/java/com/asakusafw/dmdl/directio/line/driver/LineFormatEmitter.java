@@ -13,28 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.dmdl.directio.csv.driver;
+package com.asakusafw.dmdl.directio.line.driver;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.asakusafw.dmdl.directio.csv.driver.CsvFieldTrait.Kind;
-import com.asakusafw.dmdl.directio.csv.driver.CsvFormatTrait.Configuration;
+import com.asakusafw.dmdl.directio.line.driver.LineFormatTrait.Configuration;
 import com.asakusafw.dmdl.directio.util.CodecNames;
 import com.asakusafw.dmdl.directio.util.DirectFileInputDescriptionGenerator;
 import com.asakusafw.dmdl.directio.util.DirectFileOutputDescriptionGenerator;
 import com.asakusafw.dmdl.java.emitter.EmitContext;
 import com.asakusafw.dmdl.java.spi.JavaDataModelDriver;
+import com.asakusafw.dmdl.model.BasicTypeKind;
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
 import com.asakusafw.dmdl.semantics.PropertyDeclaration;
 import com.asakusafw.dmdl.semantics.Type;
@@ -44,9 +45,9 @@ import com.asakusafw.runtime.directio.hadoop.ConfigurableBinaryStreamFormat;
 import com.asakusafw.runtime.directio.util.DelimiterRangeInputStream;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
-import com.asakusafw.runtime.io.csv.CsvConfiguration;
-import com.asakusafw.runtime.io.csv.CsvEmitter;
-import com.asakusafw.runtime.io.csv.CsvParser;
+import com.asakusafw.runtime.io.line.LineConfiguration;
+import com.asakusafw.runtime.io.line.LineInput;
+import com.asakusafw.runtime.io.line.LineOutput;
 import com.asakusafw.runtime.value.StringOption;
 import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.ClassDeclaration;
@@ -70,27 +71,80 @@ import com.asakusafw.utils.java.model.util.Models;
 import com.asakusafw.utils.java.model.util.TypeBuilder;
 
 /**
- * Emits {@link BinaryStreamFormat} implementations.
- * @since 0.2.5
+ * Emits {@link BinaryStreamFormat} implementation for line based text.
+ * @since 0.7.5
  */
-public class CsvFormatEmitter extends JavaDataModelDriver {
+public class LineFormatEmitter extends JavaDataModelDriver {
 
-    static final Logger LOG = LoggerFactory.getLogger(CsvFormatEmitter.class);
+    static final Logger LOG = LoggerFactory.getLogger(LineFormatEmitter.class);
 
     /**
-     * Category name for CSV format.
+     * Category name for line format.
      */
-    public static final String CATEGORY_STREAM = "csv"; //$NON-NLS-1$
+    public static final String CATEGORY_STREAM = "line"; //$NON-NLS-1$
 
     @Override
     public void generateResources(EmitContext context, ModelDeclaration model) throws IOException {
         if (isTarget(model) == false) {
             return;
         }
-        checkPropertyType(model);
+        validate(model);
         Name supportName = generateFormat(context, model);
         generateInputDescription(context, supportName, model);
         generateOutputDescription(context, supportName, model);
+    }
+
+    private void validate(ModelDeclaration model) throws IOException {
+        boolean sawBody = false;
+        for (PropertyDeclaration property : model.getDeclaredProperties()) {
+            LineFieldTrait.Kind kind = LineFieldTrait.getKind(property);
+            switch (kind) {
+            case BODY:
+                if (sawBody) {
+                    throw new IOException(MessageFormat.format(
+                            Messages.getString("LineFormatEmitter.errorDuplicateBody"), //$NON-NLS-1$
+                            model.getName().identifier));
+                }
+                sawBody = true;
+                checkType(property, BasicTypeKind.TEXT);
+                break;
+            case FILE_NAME:
+                checkType(property, BasicTypeKind.TEXT);
+                break;
+            case LINE_NUMBER:
+                checkType(property, BasicTypeKind.INT, BasicTypeKind.LONG);
+                break;
+            default:
+                break;
+            }
+        }
+        if (sawBody == false) {
+            throw new IOException(MessageFormat.format(
+                    Messages.getString("LineFormatEmitter.errorMissingBody"), //$NON-NLS-1$
+                    model.getName().identifier));
+        }
+    }
+
+    private void checkType(PropertyDeclaration property, BasicTypeKind... kinds) throws IOException {
+        Set<BasicTypeKind> set = EnumSet.noneOf(BasicTypeKind.class);
+        Collections.addAll(set, kinds);
+        Type type = property.getType();
+        if ((type instanceof BasicType) == false || set.contains(((BasicType) type).getKind()) == false) {
+            throw new IOException(MessageFormat.format(
+                    Messages.getString("LineFormatEmitter.errorInconsistentType"), //$NON-NLS-1$
+                    kinds.length == 1 ? kinds[0] : set,
+                    property.getOwner().getName().identifier,
+                    property.getName().identifier));
+        }
+    }
+
+    static PropertyDeclaration findProperty(ModelDeclaration model, LineFieldTrait.Kind kind) {
+        for (PropertyDeclaration property : model.getDeclaredProperties()) {
+            if (LineFieldTrait.getKind(property) == kind) {
+                return property;
+            }
+        }
+        return null;
     }
 
     private Name generateFormat(EmitContext context, ModelDeclaration model) throws IOException {
@@ -101,11 +155,11 @@ public class CsvFormatEmitter extends JavaDataModelDriver {
                 context.getConfiguration(),
                 model,
                 CATEGORY_STREAM,
-                "{0}CsvFormat"); //$NON-NLS-1$
-        LOG.debug("Generating CSV format for {}", //$NON-NLS-1$
+                "{0}LineFormat"); //$NON-NLS-1$
+        LOG.debug("Generating line format for {}", //$NON-NLS-1$
                 context.getQualifiedTypeName().toNameString());
-        FormatGenerator.emit(next, model, model.getTrait(CsvFormatTrait.class).getConfiguration());
-        LOG.debug("Generated CSV format for {}: {}", //$NON-NLS-1$
+        FormatGenerator.emit(next, model, model.getTrait(LineFormatTrait.class).getConfiguration());
+        LOG.debug("Generated line format for {}: {}", //$NON-NLS-1$
                 context.getQualifiedTypeName().toNameString(),
                 next.getQualifiedTypeName().toNameString());
         return next.getQualifiedTypeName();
@@ -118,9 +172,9 @@ public class CsvFormatEmitter extends JavaDataModelDriver {
                 context.getConfiguration(),
                 model,
                 CATEGORY_STREAM,
-                "Abstract{0}CsvInputDescription"); //$NON-NLS-1$
+                "Abstract{0}LineInputDescription"); //$NON-NLS-1$
         DirectFileInputDescriptionGenerator.Description desc = new DirectFileInputDescriptionGenerator.Description(
-                "CSV file input", context.getQualifiedTypeName()); //$NON-NLS-1$
+                "Line file input", context.getQualifiedTypeName()); //$NON-NLS-1$
         desc.setFormatClassName(formatClassName);
         DirectFileInputDescriptionGenerator.generate(next, desc);
     }
@@ -132,45 +186,24 @@ public class CsvFormatEmitter extends JavaDataModelDriver {
                 context.getConfiguration(),
                 model,
                 CATEGORY_STREAM,
-                "Abstract{0}CsvOutputDescription"); //$NON-NLS-1$
+                "Abstract{0}LineOutputDescription"); //$NON-NLS-1$
         DirectFileOutputDescriptionGenerator.Description desc = new DirectFileOutputDescriptionGenerator.Description(
-                "CSV file output", context.getQualifiedTypeName()); //$NON-NLS-1$
+                "Line file output", context.getQualifiedTypeName()); //$NON-NLS-1$
         desc.setFormatClassName(formatClassName);
         DirectFileOutputDescriptionGenerator.generate(next, desc);
     }
 
     private boolean isTarget(ModelDeclaration model) {
         assert model != null;
-        CsvFormatTrait trait = model.getTrait(CsvFormatTrait.class);
+        LineFormatTrait trait = model.getTrait(LineFormatTrait.class);
         return trait != null;
-    }
-
-    private void checkPropertyType(ModelDeclaration model) throws IOException {
-        assert model != null;
-        for (PropertyDeclaration prop : model.getDeclaredProperties()) {
-            if (isValueField(prop)) {
-                Type type = prop.getType();
-                if ((type instanceof BasicType) == false) {
-                    throw new IOException(MessageFormat.format(
-                            Messages.getString("CsvFormatEmitter.errorUnsupportedType"), //$NON-NLS-1$
-                            type,
-                            prop.getOwner().getName().identifier,
-                            prop.getName().identifier));
-                }
-            }
-        }
-    }
-
-    static boolean isValueField(PropertyDeclaration property) {
-        assert property != null;
-        return CsvFieldTrait.getKind(property, Kind.VALUE) == Kind.VALUE;
     }
 
     private static final class FormatGenerator {
 
-        private static final String NAME_READER = "Reader"; //$NON-NLS-1$
+        private static final String NAME_READER = "RecordReader"; //$NON-NLS-1$
 
-        private static final String NAME_WRITER = "Writer"; //$NON-NLS-1$
+        private static final String NAME_WRITER = "RecordWriter"; //$NON-NLS-1$
 
         private static final String METHOD_CONFIG = "getConfiguration"; //$NON-NLS-1$
 
@@ -207,7 +240,7 @@ public class CsvFormatEmitter extends JavaDataModelDriver {
                     : BinaryStreamFormat.class;
             ClassDeclaration decl = f.newClassDeclaration(
                     new JavadocBuilder(f)
-                        .text("CSV format for ") //$NON-NLS-1$
+                        .text("Line format for ") //$NON-NLS-1$
                         .linkType(context.resolve(model.getSymbol()))
                         .text(".") //$NON-NLS-1$
                         .toJavadoc(),
@@ -235,74 +268,30 @@ public class CsvFormatEmitter extends JavaDataModelDriver {
             results.add(createWriterClass());
             return results;
         }
-
         private MethodDeclaration createGetConfiguration() {
             SimpleName head = f.newSimpleName("head"); //$NON-NLS-1$
-            List<Statement> statements = Lists.create();
-            List<Expression> arguments = Lists.create();
-            arguments.add(new TypeBuilder(f, context.resolve(Charset.class))
-                .method("forName", Models.toLiteral(f, conf.getCharsetName())) //$NON-NLS-1$
-                .toExpression());
-            if (conf.isEnableHeader() || conf.isForceHeader()) {
-                SimpleName headers = f.newSimpleName("headers"); //$NON-NLS-1$
-                statements.add(new TypeBuilder(f, context.resolve(ArrayList.class))
-                    .parameterize(context.resolve(String.class))
-                    .newObject()
-                    .toLocalVariableDeclaration(
-                            new TypeBuilder(f, context.resolve(List.class))
-                                .parameterize(context.resolve(String.class))
-                                .toType(),
-                            headers));
-                List<Statement> headerStatements = Lists.create();
-                for (PropertyDeclaration property : model.getDeclaredProperties()) {
-                    if (isValueField(property)) {
-                        String fieldName = CsvFieldTrait.getFieldName(property);
-                        headerStatements.add(new ExpressionBuilder(f, headers)
-                            .method("add", Models.toLiteral(f, fieldName)) //$NON-NLS-1$
-                            .toStatement());
-                    }
-                }
-                statements.add(f.newIfStatement(head, f.newBlock(headerStatements)));
-                arguments.add(headers);
-            } else {
-                arguments.add(new TypeBuilder(f, context.resolve(CsvConfiguration.class))
-                    .field("DEFAULT_HEADER_CELLS") //$NON-NLS-1$
-                    .toExpression());
-            }
-            arguments.add(Models.toLiteral(f, conf.getTrueFormat()));
-            arguments.add(Models.toLiteral(f, conf.getFalseFormat()));
-            arguments.add(Models.toLiteral(f, conf.getDateFormat()));
-            arguments.add(Models.toLiteral(f, conf.getDateTimeFormat()));
 
-            SimpleName config = f.newSimpleName("config"); //$NON-NLS-1$
-            statements.add(new TypeBuilder(f, context.resolve(CsvConfiguration.class))
-                        .newObject(arguments)
-                        .toLocalVariableDeclaration(context.resolve(CsvConfiguration.class), config));
-            if (conf.isForceHeader()) {
-                statements.add(f.newIfStatement(head, f.newBlock(new ExpressionBuilder(f, config)
-                        .method("setForceConsumeHeader", Models.toLiteral(f, conf.isForceHeader())) //$NON-NLS-1$
-                        .toStatement())));
-            }
-            statements.add(new ExpressionBuilder(f, config)
-                .method("setLineBreakInValue", Models.toLiteral(f, conf.isAllowLinefeed())) //$NON-NLS-1$
-                .toStatement());
-            statements.add(new ExpressionBuilder(f, config).toReturnStatement());
+            ExpressionBuilder builder = new TypeBuilder(f, context.resolve(LineConfiguration.class))
+                .newObject()
+                .method("withCharset", new TypeBuilder(f, context.resolve(Charset.class)) //$NON-NLS-1$
+                    .method("forName", Models.toLiteral(f, conf.getCharsetName())) //$NON-NLS-1$
+                    .toExpression());
             return f.newMethodDeclaration(
                     new JavadocBuilder(f)
-                        .text("Returns this CSV format configuration.") //$NON-NLS-1$
+                        .text("Returns this line format configuration.") //$NON-NLS-1$
                         .param(head)
-                            .text("whether configure for head of file or not") //$NON-NLS-1$
+                            .text("whether or not configure for head of the file") //$NON-NLS-1$
                         .returns()
-                            .text("CSV format configuration") //$NON-NLS-1$
+                            .text("line format configuration") //$NON-NLS-1$
                         .toJavadoc(),
                     new AttributeBuilder(f)
                         .Protected()
                         .toAttributes(),
-                    context.resolve(CsvConfiguration.class),
+                    context.resolve(LineConfiguration.class),
                     f.newSimpleName(METHOD_CONFIG),
                     Arrays.asList(
                             f.newFormalParameterDeclaration(context.resolve(boolean.class), head)),
-                    statements);
+                    Arrays.asList(builder.toReturnStatement()));
         }
 
         private MethodDeclaration createGetSupportedType() {
@@ -343,7 +332,7 @@ public class CsvFormatEmitter extends JavaDataModelDriver {
             boolean fastMode = isFastMode();
             Expression value = fastMode
                 ? new TypeBuilder(f, context.resolve(Long.class)).field("MAX_VALUE").toExpression() //$NON-NLS-1$
-                : Models.toLiteral(f, -1);
+                : Models.toLiteral(f, -1L);
             return f.newMethodDeclaration(
                     null,
                     new AttributeBuilder(f)
@@ -357,15 +346,12 @@ public class CsvFormatEmitter extends JavaDataModelDriver {
         }
 
         private boolean isFastMode() {
-            if (conf.isAllowLinefeed()) {
-                return false;
-            }
             if (conf.getCodecName() != null) {
                 return false;
             }
             for (PropertyDeclaration property : model.getDeclaredProperties()) {
-                switch (CsvFieldTrait.getKind(property, Kind.VALUE)) {
-                case VALUE:
+                switch (LineFieldTrait.getKind(property)) {
+                case BODY:
                 case FILE_NAME:
                 case IGNORE:
                     break;
@@ -398,7 +384,7 @@ public class CsvFormatEmitter extends JavaDataModelDriver {
                         isNotHead,
                         f.newBlock(new TypeBuilder(f, context.resolve(IllegalArgumentException.class))
                             .newObject(Models.toLiteral(f, MessageFormat.format(
-                                    Messages.getString("CsvFormatEmitter.messageNotSupportFragmentation"), //$NON-NLS-1$
+                                    "{0} does not support fragmentation.", //$NON-NLS-1$
                                     context.getQualifiedTypeName().toNameString())))
                             .toThrowStatement())));
             }
@@ -425,13 +411,13 @@ public class CsvFormatEmitter extends JavaDataModelDriver {
             }
 
             SimpleName parser = f.newSimpleName("parser"); //$NON-NLS-1$
-            statements.add(new TypeBuilder(f, context.resolve(CsvParser.class))
-                .newObject(fragmentInput, path, new ExpressionBuilder(f, f.newThis())
-                    .method(METHOD_CONFIG, new ExpressionBuilder(f, offset)
-                        .apply(InfixOperator.EQUALS, Models.toLiteral(f, 0L))
+            statements.add(new TypeBuilder(f, context.resolve(LineInput.class))
+                    .method("newInstance", fragmentInput, path, new ExpressionBuilder(f, f.newThis()) //$NON-NLS-1$
+                        .method(METHOD_CONFIG, new ExpressionBuilder(f, offset)
+                            .apply(InfixOperator.EQUALS, Models.toLiteral(f, 0L))
+                            .toExpression())
                         .toExpression())
-                    .toExpression())
-                .toLocalVariableDeclaration(context.resolve(CsvParser.class), parser));
+                    .toLocalVariableDeclaration(context.resolve(LineInput.class), parser));
 
             statements.add(new TypeBuilder(f, f.newNamedType(f.newSimpleName(NAME_READER)))
                 .newObject(parser)
@@ -474,11 +460,12 @@ public class CsvFormatEmitter extends JavaDataModelDriver {
             statements.add(createNullCheck(stream));
 
             SimpleName emitter = f.newSimpleName("emitter"); //$NON-NLS-1$
-            statements.add(new TypeBuilder(f, context.resolve(CsvEmitter.class))
-                .newObject(blessOutputStream(stream), path, new ExpressionBuilder(f, f.newThis())
+            Expression output = blessOutputStream(stream);
+            statements.add(new TypeBuilder(f, context.resolve(LineOutput.class))
+                .method("newInstance", output, path, new ExpressionBuilder(f, f.newThis()) //$NON-NLS-1$
                     .method(METHOD_CONFIG, Models.toLiteral(f, true))
                     .toExpression())
-                .toLocalVariableDeclaration(context.resolve(CsvEmitter.class), emitter));
+                .toLocalVariableDeclaration(context.resolve(LineOutput.class), emitter));
 
             statements.add(new TypeBuilder(f, f.newNamedType(f.newSimpleName(NAME_WRITER)))
                 .newObject(emitter)
@@ -565,8 +552,10 @@ public class CsvFormatEmitter extends JavaDataModelDriver {
         private ClassDeclaration createReaderClass() {
             SimpleName parser = f.newSimpleName("parser"); //$NON-NLS-1$
             List<TypeBodyDeclaration> members = Lists.create();
-            members.add(createPrivateField(CsvParser.class, parser));
             List<ExpressionStatement> constructorStatements = Lists.create();
+            List<FormalParameterDeclaration> constructorParameters = Lists.create();
+            members.add(createPrivateField(LineInput.class, parser));
+            constructorParameters.add(f.newFormalParameterDeclaration(context.resolve(LineInput.class), parser));
             constructorStatements.add(mapField(parser));
             if (hasFileName()) {
                 members.add(createPrivateField(StringOption.class, f.newSimpleName(FIELD_PATH_NAME)));
@@ -583,55 +572,44 @@ public class CsvFormatEmitter extends JavaDataModelDriver {
                     null,
                     new AttributeBuilder(f).toAttributes(),
                     f.newSimpleName(NAME_READER),
-                    Arrays.asList(
-                            f.newFormalParameterDeclaration(context.resolve(CsvParser.class), parser)),
+                    constructorParameters,
                     constructorStatements));
 
             SimpleName object = f.newSimpleName("object"); //$NON-NLS-1$
             List<Statement> statements = Lists.create();
+            PropertyDeclaration body = findProperty(model, LineFieldTrait.Kind.BODY);
             statements.add(f.newIfStatement(
                     new ExpressionBuilder(f, parser)
-                        .method("next") //$NON-NLS-1$
+                        .method("readTo", new ExpressionBuilder(f, object) //$NON-NLS-1$
+                                .method(context.getOptionGetterName(body))
+                                .toExpression())
                         .apply(InfixOperator.EQUALS, Models.toLiteral(f, false))
                         .toExpression(),
                     f.newBlock(new ExpressionBuilder(f, Models.toLiteral(f, false))
                         .toReturnStatement())));
+
             for (PropertyDeclaration property : model.getDeclaredProperties()) {
-                switch (CsvFieldTrait.getKind(property, Kind.VALUE)) {
-                case VALUE:
-                    statements.add(new ExpressionBuilder(f, parser)
-                        .method("fill", new ExpressionBuilder(f, object) //$NON-NLS-1$
-                            .method(context.getOptionGetterName(property))
-                            .toExpression())
-                        .toStatement());
-                    break;
+                switch (LineFieldTrait.getKind(property)) {
                 case FILE_NAME:
                     statements.add(new ExpressionBuilder(f, object)
                         .method(context.getOptionSetterName(property), f.newSimpleName(FIELD_PATH_NAME))
                         .toStatement());
                     break;
+
                 case LINE_NUMBER:
                     statements.add(new ExpressionBuilder(f, object)
-                        .method(context.getValueSetterName(property), new ExpressionBuilder(f, parser)
-                            .method("getCurrentLineNumber") //$NON-NLS-1$
-                            .toExpression())
+                        .method(context.getValueSetterName(property),
+                                castIfInt(property.getType(), new ExpressionBuilder(f, parser)
+                                    .method("getLineNumber") //$NON-NLS-1$
+                                    .toExpression()))
                         .toStatement());
                     break;
-                case RECORD_NUMBER:
-                    statements.add(new ExpressionBuilder(f, object)
-                        .method(context.getValueSetterName(property), new ExpressionBuilder(f, parser)
-                            .method("getCurrentRecordNumber") //$NON-NLS-1$
-                            .toExpression())
-                        .toStatement());
-                    break;
+
                 default:
                     // ignored
                     break;
                 }
             }
-            statements.add(new ExpressionBuilder(f, parser)
-                .method("endRecord") //$NON-NLS-1$
-                .toStatement());
             statements.add(new ExpressionBuilder(f, Models.toLiteral(f, true))
                 .toReturnStatement());
             members.add(f.newMethodDeclaration(
@@ -678,31 +656,35 @@ public class CsvFormatEmitter extends JavaDataModelDriver {
                     members);
         }
 
+        private Expression castIfInt(Type type, Expression expression) {
+            assert type instanceof BasicType;
+            BasicTypeKind kind = ((BasicType) type).getKind();
+            assert kind == BasicTypeKind.INT || kind == BasicTypeKind.LONG;
+            if (kind == BasicTypeKind.LONG) {
+                return expression;
+            } else {
+                return new ExpressionBuilder(f, expression).castTo(context.resolve(int.class)).toExpression();
+            }
+        }
+
         private ClassDeclaration createWriterClass() {
             SimpleName emitter = f.newSimpleName("emitter"); //$NON-NLS-1$
             List<TypeBodyDeclaration> members = Lists.create();
-            members.add(createPrivateField(CsvEmitter.class, emitter));
+            members.add(createPrivateField(LineOutput.class, emitter));
             members.add(f.newConstructorDeclaration(
                     null,
                     new AttributeBuilder(f).toAttributes(),
                     f.newSimpleName(NAME_WRITER),
-                    Arrays.asList(f.newFormalParameterDeclaration(context.resolve(CsvEmitter.class), emitter)),
+                    Arrays.asList(f.newFormalParameterDeclaration(context.resolve(LineOutput.class), emitter)),
                     Arrays.asList(mapField(emitter))));
 
             SimpleName object = f.newSimpleName("object"); //$NON-NLS-1$
-            List<Statement> statements = Lists.create();
-            for (PropertyDeclaration property : model.getDeclaredProperties()) {
-                if (isValueField(property)) {
-                    statements.add(new ExpressionBuilder(f, emitter)
-                        .method("emit", new ExpressionBuilder(f, object) //$NON-NLS-1$
-                            .method(context.getOptionGetterName(property))
+            PropertyDeclaration body = findProperty(model, LineFieldTrait.Kind.BODY);
+            Statement statement = new ExpressionBuilder(f, emitter)
+                        .method("write", new ExpressionBuilder(f, object) //$NON-NLS-1$
+                            .method(context.getOptionGetterName(body))
                             .toExpression())
-                        .toStatement());
-                }
-            }
-            statements.add(new ExpressionBuilder(f, emitter)
-                .method("endRecord") //$NON-NLS-1$
-                .toStatement());
+                        .toStatement();
 
             members.add(f.newMethodDeclaration(
                     null,
@@ -716,7 +698,7 @@ public class CsvFormatEmitter extends JavaDataModelDriver {
                     Arrays.asList(f.newFormalParameterDeclaration(context.resolve(model.getSymbol()), object)),
                     0,
                     Arrays.asList(context.resolve(IOException.class)),
-                    f.newBlock(statements)));
+                    f.newBlock(statement)));
             members.add(f.newMethodDeclaration(
                     null,
                     new AttributeBuilder(f)
@@ -749,12 +731,7 @@ public class CsvFormatEmitter extends JavaDataModelDriver {
         }
 
         private boolean hasFileName() {
-            for (PropertyDeclaration property : model.getDeclaredProperties()) {
-                if (CsvFieldTrait.getKind(property, Kind.VALUE) == Kind.FILE_NAME) {
-                    return true;
-                }
-            }
-            return false;
+            return findProperty(model, LineFieldTrait.Kind.FILE_NAME) != null;
         }
 
         private ExpressionStatement mapField(SimpleName name) {

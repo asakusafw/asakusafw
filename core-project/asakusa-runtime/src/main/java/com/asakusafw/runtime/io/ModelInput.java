@@ -26,6 +26,7 @@ public interface ModelInput<T> extends Closeable {
 
     /**
      * Reads contents and write them into the target data model object.
+     * The target data model object will be changed even if the next data does not exist.
      * @param model the target data model object
      * @return {@code true} if the next data was successfully read, or {@code false} if there is no any more
      * @throws IOException if error occurred while reading the next data
