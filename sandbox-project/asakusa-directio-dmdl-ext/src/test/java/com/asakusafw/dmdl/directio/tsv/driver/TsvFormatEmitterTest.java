@@ -27,6 +27,7 @@ import org.apache.hadoop.io.Text;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.asakusafw.dmdl.directio.common.driver.GeneratorTesterRoot;
 import com.asakusafw.dmdl.java.emitter.driver.ObjectDriver;
 import com.asakusafw.runtime.directio.BinaryStreamFormat;
 import com.asakusafw.runtime.io.ModelInput;
