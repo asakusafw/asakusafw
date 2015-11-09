@@ -12,6 +12,7 @@ Sandboxは試験的機能 (Experimental Feature) として提供しているAsak
 
     windgate-tsv
     directio-tsv
+    directio-line
     asakusa-on-emr
     asakusa-with-hive
 

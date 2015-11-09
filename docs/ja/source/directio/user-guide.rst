@@ -655,7 +655,8 @@ Direct I/Oが提供する各ファイルフォーマットの利用方法につ�
 * :doc:`csv-format`
 * :doc:`sequencefile-format`
 * :doc:`using-hive` (カラムナフォーマットファイルの利用)
-* :doc:`../sandbox/directio-tsv` (Sandbox)
+* :doc:`../sandbox/directio-tsv` (Sandbox:特定フォーマットを持つTSVの入出力)
+* :doc:`../sandbox/directio-line` (Sandbox:任意の行文字列の入出力)
 
 .. _directio-dsl-input-description:
 

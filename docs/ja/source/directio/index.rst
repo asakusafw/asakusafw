@@ -42,4 +42,9 @@ Asakusa Frameworkの外部で作成されたシーケンスファイルを利用
     sequencefile-format
     using-hive
     tools-guide
+    
+Sandbox (試験的機能)
+--------------------
 
+* :doc:`../sandbox/directio-tsv`
+* :doc:`../sandbox/directio-line`
