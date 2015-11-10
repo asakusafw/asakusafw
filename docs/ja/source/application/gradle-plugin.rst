@@ -76,12 +76,12 @@ Asakusa Gradle Pluginを使った標準的なアプリケーション開発環�
 Asakusa Gradle Plugin 用プロジェクトテンプレート
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-* `asakusa-project-template-0.7.4.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-project-template-0.7.4.tar.gz>`_
+* `asakusa-project-template-0.7.5.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-project-template-0.7.5.tar.gz>`_
 
 Asakusa Gradle Plugin 用サンプルアプリケーションプロジェクト
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-* `asakusa-example-project-0.7.4.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-example-project-0.7.4.tar.gz>`_
+* `asakusa-example-project-0.7.5.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-example-project-0.7.5.tar.gz>`_
 
 ..  seealso::
     サンプルアプリケーションの内容や利用方法については、 :doc:`../introduction/start-guide` - :ref:`startguide-running-example`  を参照してください。
@@ -1466,7 +1466,7 @@ Asakusa Gradle Pluginのバージョン指定
 
 ..  attention::
     ここで指定するバージョン番号は、 Asakusa Gradle Pluginのバージョン番号です。
-    例えば Asakusa Framework バージョン ``0.7.4`` では ``0.7.4`` のような値となります。
+    例えば Asakusa Framework バージョン ``0.7.5`` では ``0.7.5`` のような値となります。
     
     次の手順の `Asakusa Frameworkのバージョン指定`_ とは異なり、バージョン番号に ``-hadoop1`` や ``-hadoop2`` といった接尾辞は付かないことに注意してください。
 
@@ -1491,7 +1491,7 @@ Asakusa Frameworkのバージョン指定
 
 ..  attention::
     ここで指定するバージョン番号は、 Asakusa Framework本体のバージョン番号です。
-    例えば Asakusa Framework バージョン ``0.7.4`` では ``0.7.4-hadoop1`` のような値となります。
+    例えば Asakusa Framework バージョン ``0.7.5`` では ``0.7.5-hadoop1`` のような値となります。
     バージョン番号に ``-hadoop1`` や ``-hadoop2`` といった接尾辞が必要となることに注意してください
     
     バージョン ``0.6.x`` からのマイグレーションを検討する場合は、 :doc:`migration-guide` - :ref:`versioning-sysytem-changing` の内容を必ず確認してください。

@@ -88,7 +88,7 @@ Batch Application Pluginに設定しているソースコードのバージョ�
 ..  code-block:: groovy
     
     asakusafw {
-        asakusafwVersion '0.7.4-hadoop1'
+        asakusafwVersion '0.7.5-hadoop1'
     
         modelgen {
             modelgenSourcePackage 'com.example.modelgen'
