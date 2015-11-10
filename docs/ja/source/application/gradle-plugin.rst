@@ -917,6 +917,8 @@ IntelliJ IDEAプロジェクト用の定義ファイルを作成するには、:
     * インポートウィザードの次の画面の :guilabel:`Project format:` は :guilabel:`ipr (file based)` を選択してください。
       デフォルトの :guilabel:`.idea (directory based)` ではGradleの :program:`idea` タスクが生成した設定ファイルが使用されません。
 
+..  _gradle-plugin-dslcompile-filter:
+
 バッチコンパイルの対象をフィルタリング
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

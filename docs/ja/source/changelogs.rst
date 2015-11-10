@@ -2,6 +2,49 @@
 Changelogs
 ==========
 
+Release 0.7.5
+=============
+
+Nov XX, 2015
+
+Enhancements
+------------
+
+* [ :pr:`511` ] - i18n - messages in compilers and test-driver.
+* [ :pr:`513` ] - Make `-Dhadoop.builtin` default enabled on building framework.
+* [ :pr:`514` ] - i18n - documentation comments.
+* [ :pr:`518` ] - i18n - test resources.
+* [ :pr:`522` ] - i18n - documentation comments.
+* [ :pr:`524` ] - Revise code style.
+* [ :pr:`526` ] - Introduce `-include` option to compiler CLI.
+* [ :pr:`527` ] - Add description for `--update` option to compileBatchapp task
+* [ :pr:`528` ] - Bumps maven license plugin version
+* [ :pr:`529` ] - Add Direct I/O line to asakusa-directio-dmdl-ext.
+* [ :pr:`530` ] - Add document for Direct I/O line
+* [ :pr:`531` ] - Bumps support platform version
+* [ :pr-sdk:`40` ] - Bumps up Gradle version of application template
+* [ :pr-sdk:`41` ] - Bumps up Gradle version of application template
+* [ :pr-sdk:`42` ] - Bumps up Gradle version of application template
+* [ :pr-sdk:`44` ] - Add `--update` option to compileBatchapp task.
+
+Bug fixes
+---------
+
+* [ :pr:`512` ] - Fix a test case for Mac OS X.
+* [ :pr:`515` ] - Fix dependency exclusions in pom.xml.
+* [ :pr:`523` ] - Fix typo.
+
+Others
+------
+
+* [ :pr:`516` ] - Revise document to remove description of ThunderGate.
+* [ :pr:`517` ] - Migrate javadoc of dsl-vocabulary to sphinx doc
+* [ :pr:`519` ] - Remove unmaintained README
+* [ :pr:`520` ] - Revise document for unifying terms "Data Model"
+* [ :pr:`521` ] - Delete old migration document
+* [ :pr:`525` ] - Remove yen sign on document.
+* [ :pr-sdk:`43` ] - Replace non-ASCII character.
+
 Release 0.7.4
 =============
 
