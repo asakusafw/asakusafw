@@ -91,7 +91,7 @@ Hadoopバージョンに関するプロジェクト設定
 Hadoop2系向けのAsakusa Frameworkライブラリを指定する場合、 ``0.7.5-hadoop2`` のように指定します。
 
 ``dependencies`` ブロックの ``org.apache.hadoop:hadoop-client`` で指定している ``version`` は、開発環境で使用するHadoopのライブラリバージョンを指定します。
-Hadoop2系向けのHadoopライブラリを指定する場合、 ``2.4.1`` のように指定します。
+Hadoop2系向けのHadoopライブラリを指定する場合、 ``2.6.0`` のように指定します。
 
 ..  attention::
     Asakusa FrameworkのライブラリバージョンとHadoopのライブラリバージョンで異なるHadoopバージョン系を指定した場合、テスト実行時にバリデーションエラーとなります。
