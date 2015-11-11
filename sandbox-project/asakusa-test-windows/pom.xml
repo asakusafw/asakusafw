@@ -2,35 +2,19 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<name>Extended Test Driver Helpers for Windows</name>
-	<groupId>com.asakusafw.sandbox</groupId>
 	<artifactId>asakusa-test-windows</artifactId>
 	<parent>
-		<artifactId>asakusa-sandbox-parent</artifactId>
+		<artifactId>asakusa-sandbox-project</artifactId>
 		<groupId>com.asakusafw.sandbox</groupId>
 		<version>0.7-SNAPSHOT</version>
-		<relativePath>../asakusa-sandbox-parent</relativePath>
 	</parent>
-
-	<description>Test Driver Extensions for Windows</description>
-	<url>http://asakusafw.com</url>
-	<licenses>
-		<license>
-			<name>Apache License, Version 2.0</name>
-			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-			<distribution>manual</distribution>
-		</license>
-	</licenses>
-
-	<properties>
-		<asakusafw.version>${project.version}</asakusafw.version>
-	</properties>
 
 	<packaging>jar</packaging>
 	<dependencies>
 		<dependency>
 			<groupId>com.asakusafw</groupId>
 			<artifactId>asakusa-test-driver</artifactId>
-			<version>${asakusafw.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>

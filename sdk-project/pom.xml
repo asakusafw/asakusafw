@@ -8,26 +8,9 @@
 		<artifactId>asakusa-parent</artifactId>
 		<groupId>com.asakusafw</groupId>
 		<version>0.7-SNAPSHOT</version>
-		<relativePath>../asakusa-parent</relativePath>
 	</parent>
 
 	<packaging>pom</packaging>
-
-	<description>Asakusa Application SDK Project</description>
-	<url>http://asakusafw.com</url>
-	<licenses>
-		<license>
-			<name>Apache License, Version 2.0</name>
-			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-			<distribution>repo</distribution>
-		</license>
-	</licenses>
-
-	<inceptionYear>2011</inceptionYear>
-	<organization>
-		<name>Asakusa Framework Team</name>
-		<url>http://asakusafw.com</url>
-	</organization>
 
 	<modules>
 		<module>asakusa-sdk-app-core</module>
