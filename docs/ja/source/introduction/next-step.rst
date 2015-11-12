@@ -7,6 +7,7 @@
 Asakusa Frameworkを使ったアプリケーションの開発の流れの概要を、下図に示します。
 
 ..  figure:: next-step-process.png
+    :width: 640px
 
 アプリケーションの設計
 ======================

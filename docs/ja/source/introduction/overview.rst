@@ -47,11 +47,13 @@ MapReduceプログラム
 以下は、上記の内容を俯瞰する図です。
 
 ..  figure:: overview-develop.png
+    :width: 640px
 
 また、実行時にはそれぞれのコンポーネントに対し、DSLから生成されたそれぞれの情報を渡します。
 それぞれのコンポーネントは、これらの情報を元にバッチアプリケーションを分散システム上で協調しながら処理を進めていきます。
 
 ..  figure:: overview-execute.png
+    :width: 640px
 
 Asakusa Frameworkのコンポーネント
 =================================

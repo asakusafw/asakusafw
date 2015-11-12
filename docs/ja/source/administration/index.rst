@@ -22,21 +22,6 @@ Asakusa Frameworkが提供する運用ツールに関するドキュメントで
 
 * :doc:`utility-tool-user-guide`
 
-プラットフォーム関連
-====================
-
-特定のプラットフォームでAsakusa Frameworkを利用することに関するドキュメントです。
-
-クラウドプラットフォーム
-------------------------
-
-* :doc:`../sandbox/asakusa-on-emr` (Sandbox Document)
-
-Hadoopエコシステム連携
-----------------------
-
-* :doc:`../sandbox/asakusa-with-hive` (Sandbox Document)
-
 その他
 ======
 
