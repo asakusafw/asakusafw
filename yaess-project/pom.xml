@@ -1,27 +1,27 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<name>Asakusa Framework yaess project</name>
-	<artifactId>asakusa-yaess-project</artifactId>
-	<parent>
-		<artifactId>asakusa-parent</artifactId>
-		<groupId>com.asakusafw</groupId>
-		<version>0.7-SNAPSHOT</version>
-	</parent>
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <name>Asakusa Framework yaess project</name>
+  <artifactId>asakusa-yaess-project</artifactId>
+  <parent>
+    <artifactId>asakusa-parent</artifactId>
+    <groupId>com.asakusafw</groupId>
+    <version>0.7-SNAPSHOT</version>
+  </parent>
 
-	<packaging>pom</packaging>
+  <packaging>pom</packaging>
 
-	<modules>
-		<module>asakusa-yaess-bootstrap</module>
-		<module>asakusa-yaess-core</module>
-		<module>asakusa-yaess-flowlog</module>
-		<module>asakusa-yaess-jobqueue</module>
-		<module>asakusa-yaess-jsch</module>
-		<module>asakusa-yaess-multidispatch</module>
-		<module>asakusa-yaess-paralleljob</module>
-		<module>asakusa-yaess-plugin</module>
-		<module>asakusa-yaess-tools</module>
-		<module>asakusa-yaess-log-analyzer</module>
-	</modules>
+  <modules>
+    <module>asakusa-yaess-bootstrap</module>
+    <module>asakusa-yaess-core</module>
+    <module>asakusa-yaess-flowlog</module>
+    <module>asakusa-yaess-jobqueue</module>
+    <module>asakusa-yaess-jsch</module>
+    <module>asakusa-yaess-multidispatch</module>
+    <module>asakusa-yaess-paralleljob</module>
+    <module>asakusa-yaess-plugin</module>
+    <module>asakusa-yaess-tools</module>
+    <module>asakusa-yaess-log-analyzer</module>
+  </modules>
 
 </project>

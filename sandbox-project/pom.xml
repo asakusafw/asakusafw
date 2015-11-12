@@ -1,24 +1,24 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<name>Asakusa Framework sandbox project</name>
-	<groupId>com.asakusafw.sandbox</groupId>
-	<artifactId>asakusa-sandbox-project</artifactId>
-	<parent>
-		<artifactId>asakusa-parent</artifactId>
-		<groupId>com.asakusafw</groupId>
-		<version>0.7-SNAPSHOT</version>
-	</parent>
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <name>Asakusa Framework sandbox project</name>
+  <groupId>com.asakusafw.sandbox</groupId>
+  <artifactId>asakusa-sandbox-project</artifactId>
+  <parent>
+    <artifactId>asakusa-parent</artifactId>
+    <groupId>com.asakusafw</groupId>
+    <version>0.7-SNAPSHOT</version>
+  </parent>
 
-	<packaging>pom</packaging>
+  <packaging>pom</packaging>
 
-	<modules>
-		<module>asakusa-runtime-ext</module>
-		<module>asakusa-windgate-dmdl-ext</module>
-		<module>asakusa-directio-dmdl-ext</module>
-		<module>asakusa-directio-runtime-ext</module>
-		<module>asakusa-directio-test-driver-ext</module>
-		<module>asakusa-test-windows</module>
-	</modules>
+  <modules>
+    <module>asakusa-runtime-ext</module>
+    <module>asakusa-windgate-dmdl-ext</module>
+    <module>asakusa-directio-dmdl-ext</module>
+    <module>asakusa-directio-runtime-ext</module>
+    <module>asakusa-directio-test-driver-ext</module>
+    <module>asakusa-test-windows</module>
+  </modules>
 
 </project>

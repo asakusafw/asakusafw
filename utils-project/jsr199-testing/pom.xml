@@ -1,30 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	<modelVersion>4.0.0</modelVersion>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
 
-	<name>JSR-199 Testing Utils</name>
-	<artifactId>jsr199-testing</artifactId>
-	<parent>
-		<artifactId>asakusa-utils-project</artifactId>
-		<groupId>com.asakusafw</groupId>
-		<version>0.7-SNAPSHOT</version>
-	</parent>
+  <name>JSR-199 Testing Utils</name>
+  <artifactId>jsr199-testing</artifactId>
+  <parent>
+    <artifactId>asakusa-utils-project</artifactId>
+    <groupId>com.asakusafw</groupId>
+    <version>0.7-SNAPSHOT</version>
+  </parent>
 
-	<packaging>jar</packaging>
+  <packaging>jar</packaging>
 
-	<dependencies>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.hamcrest</groupId>
-			<artifactId>hamcrest-library</artifactId>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest-library</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 
 </project>

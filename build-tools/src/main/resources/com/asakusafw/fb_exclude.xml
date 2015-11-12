@@ -1,69 +1,69 @@
 <FindBugsFilter>
-  <Match classregex=".*\.EscapeDecoder" />
-  <Match classregex=".*\.LiteralParser" />
-  <Match classregex=".*\.JavadocTokenizer" />
-  <Match classregex=".*\.ParseException" />
-  <Match classregex=".*\.Jj.*" />
-  <Match classregex=".*\.SimpleCharStream" />
-  <Match classregex=".*Test(Root|Utils?)?([\.\$].*)?" />
-  <Match classregex=".*TesterRoot([\.\$].*)?" />
-  <Match classregex=".*\.(Mock|Dummy|Stub).*" />
+  <Match classregex=".*\.EscapeDecoder"/>
+  <Match classregex=".*\.LiteralParser"/>
+  <Match classregex=".*\.JavadocTokenizer"/>
+  <Match classregex=".*\.ParseException"/>
+  <Match classregex=".*\.Jj.*"/>
+  <Match classregex=".*\.SimpleCharStream"/>
+  <Match classregex=".*Test(Root|Utils?)?([\.\$].*)?"/>
+  <Match classregex=".*TesterRoot([\.\$].*)?"/>
+  <Match classregex=".*\.(Mock|Dummy|Stub).*"/>
   <Match>
-    <Bug pattern="AM_CREATES_EMPTY_ZIP_FILE_ENTRY" />
+    <Bug pattern="AM_CREATES_EMPTY_ZIP_FILE_ENTRY"/>
   </Match>
   <Match>
-    <Bug pattern="SE_BAD_FIELD" />
+    <Bug pattern="SE_BAD_FIELD"/>
   </Match>
   <Match class="com.asakusafw.testtools.TestDataHolder">
     <Or>
-      <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+      <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING"/>
     </Or>
   </Match>
   <Match class="com.asakusafw.testtools.db.DbUtils">
     <Or>
-      <Bug pattern="SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE" />
+      <Bug pattern="SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE"/>
     </Or>
   </Match>
   <Match class="com.asakusafw.testtools.templategen.ExcelBookBuilder">
     <Or>
-      <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+      <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING"/>
     </Or>
   </Match>
   <Match class="com.asakusafw.bulkloader.exporter.ExportFileLoad">
     <Or>
-      <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
+      <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING"/>
     </Or>
   </Match>
   <Match class="com.asakusafw.runtime.flow.MapperWithRuntimeResource">
     <Or>
-      <Bug pattern="URF_UNREAD_FIELD" />
+      <Bug pattern="URF_UNREAD_FIELD"/>
     </Or>
   </Match>
   <Match class="com.asakusafw.runtime.flow.ReducerWithRuntimeResource">
     <Or>
-      <Bug pattern="URF_UNREAD_FIELD" />
+      <Bug pattern="URF_UNREAD_FIELD"/>
     </Or>
   </Match>
   <Match class="com.asakusafw.runtime.io.util.BufferedFileInput">
     <Or>
-      <Bug pattern="EI_EXPOSE_REP2" />
+      <Bug pattern="EI_EXPOSE_REP2"/>
     </Or>
   </Match>
   <Match class="com.asakusafw.runtime.io.util.BufferedFileOutput">
     <Or>
-      <Bug pattern="EI_EXPOSE_REP2" />
+      <Bug pattern="EI_EXPOSE_REP2"/>
     </Or>
   </Match>
   <Match class="com.asakusafw.runtime.io.util.DataBuffer">
     <Or>
-      <Bug pattern="EI_EXPOSE_REP" />
-      <Bug pattern="EI_EXPOSE_REP2" />
+      <Bug pattern="EI_EXPOSE_REP"/>
+      <Bug pattern="EI_EXPOSE_REP2"/>
     </Or>
   </Match>
   <Match class="com.asakusafw.runtime.mapreduce.simple.KeyValueSlice">
     <Or>
-      <Bug pattern="EI_EXPOSE_REP" />
-      <Bug pattern="EI_EXPOSE_REP2" />
+      <Bug pattern="EI_EXPOSE_REP"/>
+      <Bug pattern="EI_EXPOSE_REP2"/>
     </Or>
   </Match>
 </FindBugsFilter>
