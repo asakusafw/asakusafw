@@ -120,7 +120,7 @@ Hadoop2系向けの構成に変更するには、 ``profile.prod`` ブロック�
    
     asakusafwOrganizer {
         profiles.prod {
-            asakusafwVersion '0.7.4-hadoop2'
+            asakusafwVersion '0.7.5-hadoop2'
         }
     }
 

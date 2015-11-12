@@ -56,7 +56,7 @@ Asakusa Frameworkの利用に必要となる環境変数を設定します。
   任意のフォルダ (例: :file:`%USERPROFILE%\\asakusa` )
 
 ..  figure:: images/windows-environment-valuables-setting.png
-    :width: 50%
+    :width: 480px
 
 ..  tip::
     環境変数の設定方法は利用するWindowsのバージョンによって異なります。
@@ -93,7 +93,7 @@ Asakusa Frameworkのバッチアプリケーション開発をサポートする
 #. Eclipseの再起動が完了したら、 :guilabel:`Java` パースペクティブを表示してメニューバーから :menuselection:`Window --> Reset Perspective..` を選択して :guilabel:`Java` パースペクティブを初期化します。
 
 ..  figure:: images/eclipse-shafu-add-repository.png
-    :width: 80%
+    :width: 640px
 
 Eclipseの設定
 -------------
@@ -119,7 +119,7 @@ Eclipse経由で実行するJavaに `Java(JDK)のインストール`_ でイン�
 ..  [#] 開発環境にJDKとJREの両方がインストールされている場合、ここでJREのフォルダを指定しないよう注意してください。
 
 ..  figure:: images/eclipse-preferences-installed-jre.png
-    :width: 100%
+    :width: 640px
 
 ..  attention::
     Asakusa Frameworkのバッチアプリケーションのコンパイルやテストの実行にはJDKを使用する必要があります。
@@ -139,7 +139,7 @@ Shafuの設定を行います。
 上記の設定が完了したら、Eclipseの設定画面 の :guilabel:`OK` ボタンを押下します。
 
 ..  figure:: images/eclipse-preferences-shafu-emulationmode.png
-    :width: 100%
+    :width: 640px
 
 アプリケーションの開発
 ======================
@@ -175,7 +175,7 @@ Shafuを導入した開発環境では、オンライン上に公開されてい
 #. :guilabel:`Finish` ボタンを押すと選択したプロジェクトテンプレートを読み込み、Eclipseプロジェクトとして新規プロジェクトが作成されます。
 
 ..  figure:: images/shafu-create-project.png
-    :width: 100%
+    :width: 640px
 
 ..  attention::
     開発環境で初めてAsakusa Frameworkのプロジェクトを作成する際にはリモートからプロジェクトに必要なライブラリをダウンロードするため、初回のプロジェクト作成には時間がかかることがあります。
@@ -228,7 +228,7 @@ Asakusa Frameworkのアプリケーションのテストを行うには、開発
     Total time: 4.352 secs
 
 ..  figure:: images/shafu-install-asakusafw.png
-    :width: 100%
+    :width: 640px
 
 アプリケーションのテスト
 ------------------------
@@ -240,7 +240,7 @@ Asakusa Frameworkのアプリケーションのテストを行うには、開発
 テストが失敗する場合は、巻末の `トラブルシューティング`_ - `テスト実行に失敗する`_ を確認してください。
 
 ..  figure:: images/eclipse-junit.png
-    :width: 100%
+    :width: 640px
 
 デプロイメントアーカイブの作成
 ------------------------------

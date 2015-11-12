@@ -74,7 +74,7 @@ Graphvizを使って、dotファイルからPDF形式 [#]_ でグラフを作成
     jar -xf example-app-batchapps-1.0-SNAPSHOT.jar
     # バッチアプリケーションアーカイブに含まれるdotファイルをPDFに変換する
     cd example.summarizeSales/opt/dsl-analysis/jobflow/byCategory
-    dot -Tpdf -o stagegraph.pdf stagegraph.dot 
+    dot -Tpdf -o stagegraph.pdf stagegraph.dot
 
 ..  [#] GraphvizではPDF形式の他に、 PNGやJPEG形式など様々な形式でグラフを出力することができます。詳しくは Graphviz のマニュアルなどを参照してください。
 
@@ -89,7 +89,7 @@ Graphvizを使って、dotファイルからPDF形式 [#]_ でグラフを作成
 :file:`jobflow/<フローID>/stagegraph.dot` は、ジョブフローが持つステージ [#]_ 全体の構造を示すグラフを提供します。
 
 ..  figure:: analysis-examples/stagegraph.png
-    :width: 100%
+    :width: 640px
 
 ステージ全体の構造のうち、特定のステージのみのグラフを参照したい場合は、 :file:`jobflow/<フローID>/stageblock-XX.dot` を参照します。
 
@@ -102,7 +102,7 @@ Graphvizを使って、dotファイルからPDF形式 [#]_ でグラフを作成
 :file:`jobflow/<フローID>/flowgraph.dot` は、ジョブフローの入出力、及びジョブフローに含まれる演算子間の入出力の関係を示すグラフを提供します。
 
 ..  figure:: analysis-examples/flowgraph.png
-    :width: 100%
+    :width: 640px
 
 バッチ構造を示すテキストファイルの出力例
 ========================================
@@ -126,7 +126,7 @@ Graphvizを使って、dotファイルからPDF形式 [#]_ でグラフを作成
             categorySummary (hoge.jobflow.CategorySummaryToCsv)
             errorRecord (hoge.jobflow.ErrorRecordToCsv)
         flow: hoge.jobflow.CategorySummaryJob
-            operator: hoge.operator.CategorySummaryOperator#setErrorMessage([class hoge.modelgen.dmdl.model.ErrorRecord, class java.lang.String])[message[class java.lang.String]=店舗不明] 
+            operator: hoge.operator.CategorySummaryOperator#setErrorMessage([class hoge.modelgen.dmdl.model.ErrorRecord, class java.lang.String])[message[class java.lang.String]=店舗不明]
             input: InputDescription{name=itemInfo, type=class hoge.modelgen.dmdl.model.ItemInfo}
             output: OutputDescription{name=errorRecord, type=class hoge.modelgen.dmdl.model.ErrorRecord}
             input: InputDescription{name=salesDetail, type=class hoge.modelgen.dmdl.model.SalesDetail}

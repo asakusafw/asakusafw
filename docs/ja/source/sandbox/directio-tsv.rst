@@ -17,6 +17,9 @@ Direct I/OのTSVファイル連携モジュールはAsakusa FrameworkのMavenリ
       - アーティファクトID
     * - ``com.asakusafw.sandbox``
       - ``asakusa-directio-dmdl-ext``
+      
+..  note::
+    Sandoxモジュールとして提供するDirect I/Oの各フォーマット拡張機能は同一のMavenアーティファクトで提供しています。
 
 TSVファイル連携モジュールの利用方法
 ===================================
@@ -82,7 +85,7 @@ TSV形式の設定
       - ``TRUE`` に設定すると、読み込み時に先頭行をスキップし、書き込み時にモデルの定義内容に応じたヘッダ行を生成する。
     * - ``compression``
       - 文字列
-      - なし
+      - なし（非圧縮）
       - ファイルの圧縮コーデック
 
 ``compression`` には、 ``"gzip"`` または ``org.apache.hadoop.io.compress.CompressionCodec`` のサブタイプのクラス名を指定します [#]_ 。
@@ -97,7 +100,7 @@ TSV形式の設定
 ..  code-block:: none
 
     @directio.tsv(
-        charset = "ISO-2022-JP",
+        charset = "ISO-2022-jp",
         has_header = TRUE,
         compression = "gzip",
     )

@@ -27,7 +27,7 @@ Asakusa Framework は、以下のHadoopディストリビューションと組�
       - JDK 8 (1.8.0_51)
       - |version|-hadoop2
     * - Hortonworks Data Platform
-      - 2.3
+      - 2.3.2
       - CentOS 7 (7.1)
       - JDK 8 (1.8.0_40)
       - |version|-hadoop2
@@ -37,9 +37,9 @@ Asakusa Framework は、以下のHadoopディストリビューションと組�
       - JDK 7 (1.7.0_45)
       - |version|-hadoop2
     * - Amazon EMR
-      - Hadoop 2.4.0
-      - AMI 3.8.0
-      - JDK 7 (1.7.0_71)
+      - Hadoop 2.6.0
+      - AMI 4.1.0
+      - JDK 7 (1.7.0_85)
       - |version|-hadoop2
 
 ..  [#] 検証バージョンとは、Hadoopディストリビューションの動作検証に使用したAsakusa Frameworkのバージョンです。
@@ -64,22 +64,22 @@ Asakusa Frameworkを利用したバッチアプリケーションの開発環境
       - 12.04 / 14.04
     * - OS
       - MacOSX [#]_
-      - 10.7 / 10.9
+      - 10.9 / 10.11
     * - OS
       - Windows [#]_
-      - 7(SP1) / 8.1
+      - 7(SP1) / 10
     * - Java
       - JDK [#]_
-      - 1.7.0_76 [#]_ [#]_
+      - 1.7.0_76 / 1.8.0.66 [#]_
     * - ビルドツール
       - Gradle [#]_
-      - 2.2.1
+      - 2.8
     * - ビルドツール
       - Apache Maven
       - 3.0.5 [#]_
     * - IDE
       - Eclipse IDE for Java Developers
-      - 4.4.2 / 4.5.0
+      - 4.4.2 / 4.5.1
     * - IDE
       - IntelliJ IDEA Community Edition [#]_
       - 14.0.3
@@ -91,7 +91,6 @@ Asakusa Frameworkを利用したバッチアプリケーションの開発環境
 ..  [#] Windows上ではテストドライバを利用したテストは :doc:`エミュレーションモード <../testing/emulation-mode>` のみ使用できます。Windowsの利用については、 :doc:`../introduction/start-guide-windows` を参照してください。
 ..  [#] JREでは一部の機能が動作しません。必ずJDKを使用してください。
 ..  [#] JDK6の利用は非推奨です。JDK6の利用については、 :doc:`../application/using-jdk` を参照してください。
-..  [#] JDK8の利用は基本的な動作のみ検証しています。
 ..  [#] Gradleの利用については、 :doc:`../application/gradle-plugin` を参照してください。
 ..  [#] Mavenの利用は非推奨です。Mavenの利用については、 :doc:`../application/maven-archetype` を参照してください。
 ..  [#] IntelliJ IDEAの利用は試験的機能として提供しています。IntelliJ IDEAの利用については :doc:`../application/gradle-plugin` - :ref:`gradle-plugin-using-idea` を参照してください。
