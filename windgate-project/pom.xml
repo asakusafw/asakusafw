@@ -1,46 +1,28 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<name>Asakusa Framework windgate project</name>
-	<groupId>com.asakusafw</groupId>
-	<artifactId>asakusa-windgate-project</artifactId>
-	<parent>
-		<artifactId>asakusa-parent</artifactId>
-		<groupId>com.asakusafw</groupId>
-		<version>0.7-SNAPSHOT</version>
-		<relativePath>../asakusa-parent</relativePath>
-	</parent>
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <name>Asakusa Framework windgate project</name>
+  <artifactId>asakusa-windgate-project</artifactId>
+  <parent>
+    <artifactId>asakusa-parent</artifactId>
+    <groupId>com.asakusafw</groupId>
+    <version>0.7-SNAPSHOT</version>
+  </parent>
 
-	<packaging>pom</packaging>
+  <packaging>pom</packaging>
 
-	<description>Asakusa Framework windgate project</description>
-	<url>http://asakusafw.com</url>
-	<licenses>
-		<license>
-			<name>Apache License, Version 2.0</name>
-			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-			<distribution>repo</distribution>
-		</license>
-	</licenses>
-
-	<inceptionYear>2011</inceptionYear>
-	<organization>
-		<name>Asakusa Framework Team</name>
-		<url>http://asakusafw.com</url>
-	</organization>
-
-	<modules>
-		<module>asakusa-windgate-bootstrap</module>
-		<module>asakusa-windgate-core</module>
-		<module>asakusa-windgate-dmdl</module>
-		<module>asakusa-windgate-hadoopfs</module>
-		<module>asakusa-windgate-jdbc</module>
-		<module>asakusa-windgate-plugin</module>
-		<module>asakusa-windgate-retryable</module>
-		<module>asakusa-windgate-stream</module>
-		<module>asakusa-windgate-test-moderator</module>
-		<module>asakusa-windgate-vocabulary</module>
-		<module>asakusa-windgate-test-inprocess</module>
-	</modules>
+  <modules>
+    <module>asakusa-windgate-bootstrap</module>
+    <module>asakusa-windgate-core</module>
+    <module>asakusa-windgate-dmdl</module>
+    <module>asakusa-windgate-hadoopfs</module>
+    <module>asakusa-windgate-jdbc</module>
+    <module>asakusa-windgate-plugin</module>
+    <module>asakusa-windgate-retryable</module>
+    <module>asakusa-windgate-stream</module>
+    <module>asakusa-windgate-test-moderator</module>
+    <module>asakusa-windgate-vocabulary</module>
+    <module>asakusa-windgate-test-inprocess</module>
+  </modules>
 
 </project>
