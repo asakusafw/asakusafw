@@ -46,8 +46,8 @@ import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory;
 public class FlowClassEmitterTest extends OperatorCompilerTestRoot {
 
     /**
-     * 単純な例。
-     * @throws Exception 例外が発生した場合
+     * simple case.
+     * @throws Exception if exception was occurred
      */
     @Test
     public void simple() throws Exception {
@@ -96,8 +96,8 @@ public class FlowClassEmitterTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * パラメータ化。
-     * @throws Exception 例外が発生した場合
+     * parameterized.
+     * @throws Exception if exception was occurred
      */
     @Test
     public void parameterized() throws Exception {
@@ -128,8 +128,8 @@ public class FlowClassEmitterTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * 多相化。
-     * @throws Exception 例外が発生した場合
+     * w/ generics.
+     * @throws Exception if exception was occurred
      */
     @Test
     public void generics() throws Exception {
@@ -178,8 +178,8 @@ public class FlowClassEmitterTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * クラスを指定した多相化。
-     * @throws Exception 例外が発生した場合
+     * w/ generics - use classes.
+     * @throws Exception if exception was occurred
      */
     @Test
     public void genericWithClass() throws Exception {
@@ -262,7 +262,7 @@ public class FlowClassEmitterTest extends OperatorCompilerTestRoot {
                 FlowClassEmitter emitter = new FlowClassEmitter(env);
                 emitter.emit(results.get(0));
             } catch (OperatorCompilerException e) {
-                // 大域脱出のためだけなのでスキップ
+                // ignores exception
             }
         }
     }

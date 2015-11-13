@@ -16,7 +16,7 @@
 package com.asakusafw.utils.java.model.util;
 
 /**
- * スローしない例外。
+ * An exception which is never thrown.
  */
 public final class NoThrow extends RuntimeException {
 

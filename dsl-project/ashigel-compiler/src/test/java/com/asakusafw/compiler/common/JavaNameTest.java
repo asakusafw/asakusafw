@@ -30,7 +30,7 @@ import org.junit.Test;
 public class JavaNameTest {
 
     /**
-     * {@link JavaName#of(String)}のテスト (snake_name)。
+     * of w/ snake_name.
      */
     @Test
     public void snake_name_of() {
@@ -39,7 +39,7 @@ public class JavaNameTest {
     }
 
     /**
-     * {@link JavaName#of(String)}のテスト (CONSTANT_NAME)。
+     * of w/ CONSTANT_NAME.
      */
     @Test
     public void CONSTANT_NAME_OF() {
@@ -48,7 +48,7 @@ public class JavaNameTest {
     }
 
     /**
-     * {@link JavaName#of(String)}のテスト (memberName)。
+     * of w/ memberName.
      */
     @Test
     public void memberNameOf() {
@@ -57,7 +57,7 @@ public class JavaNameTest {
     }
 
     /**
-     * {@link JavaName#of(String)}のテスト (TypeName)。
+     * of w/ TypeName.
      */
     @Test
     public void TypeNameOf() {
@@ -66,7 +66,7 @@ public class JavaNameTest {
     }
 
     /**
-     * {@link JavaName#of(String)}のテスト (UPPER single word)。
+     * of w/ UPPER single word.
      */
     @Test
     public void constantSingleWordOf() {
@@ -75,7 +75,7 @@ public class JavaNameTest {
     }
 
     /**
-     * {@link JavaName#of(String)}のテスト (Capital single word)。
+     * of w/ Capital single word.
      */
     @Test
     public void capitalSingleWordOf() {
@@ -84,7 +84,7 @@ public class JavaNameTest {
     }
 
     /**
-     * {@link JavaName#of(String)}のテスト (lower single word)。
+     * of w/ lower single word.
      */
     @Test
     public void lowerSingleWordOf() {
@@ -93,7 +93,7 @@ public class JavaNameTest {
     }
 
     /**
-     * {@link JavaName#of(String)}のテスト (empty)。
+     * of w/ empty.
      */
     @Test(expected = IllegalArgumentException.class)
     public void of_empty() {
@@ -101,7 +101,7 @@ public class JavaNameTest {
     }
 
     /**
-     * {@link JavaName#of(String)}のテスト (only underscore)。
+     * of w/ only underscore.
      */
     @Test
     public void of_underscore() {
@@ -113,7 +113,7 @@ public class JavaNameTest {
     }
 
     /**
-     * {@link JavaName#of(String)}のテスト (reduplicate underscore)。
+     * of w/ reduplicate underscore.
      */
     @Test
     public void of_reduplicate_underscore() {
@@ -122,7 +122,7 @@ public class JavaNameTest {
     }
 
     /**
-     * {@link JavaName#of(String)}のテスト (starts with underscore)。
+     * of w/ starts with underscore.
      */
     @Test
     public void of_starts_with_underscore() {
@@ -131,7 +131,7 @@ public class JavaNameTest {
     }
 
     /**
-     * {@link JavaName#toTypeName()}のテスト。
+     * test for {@link JavaName#toTypeName()}.
      */
     @Test
     public void toTypeName() {
@@ -140,7 +140,7 @@ public class JavaNameTest {
     }
 
     /**
-     * {@link JavaName#toMemberName()}のテスト。
+     * test for {@link JavaName#toMemberName()}.
      */
     @Test
     public void toMemberName() {
@@ -149,7 +149,7 @@ public class JavaNameTest {
     }
 
     /**
-     * {@link JavaName#toConstantName()}のテスト。
+     * test for {@link JavaName#toConstantName()}.
      */
     @Test
     public void toConstantName() {
@@ -158,7 +158,7 @@ public class JavaNameTest {
     }
 
     /**
-     * {@link JavaName#addFirst(String)}のテスト。
+     * test for {@link JavaName#addFirst(String)}.
      */
     @Test
     public void addFirst() {
@@ -168,7 +168,7 @@ public class JavaNameTest {
     }
 
     /**
-     * {@link JavaName#addLast(String)}のテスト。
+     * test for {@link JavaName#addLast(String)}.
      */
     @Test
     public void addLast() {

@@ -23,18 +23,12 @@ import com.asakusafw.utils.java.model.syntax.ModelKind;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link DocBlock}の実装。
+ * An implementation of {@link DocBlock}.
  */
 public final class DocBlockImpl extends ModelRoot implements DocBlock {
 
-    /**
-     * タグ文字列。
-     */
     private String tag;
 
-    /**
-     * インライン要素の一覧。
-     */
     private List<? extends DocElement> elements;
 
     @Override
@@ -43,12 +37,9 @@ public final class DocBlockImpl extends ModelRoot implements DocBlock {
     }
 
     /**
-     * タグ文字列を設定する。
-     * <p> タグが省略された場合、引数には空を指定する。 </p>
-     * @param tag
-     *     タグ文字列
-     * @throws IllegalArgumentException
-     *     {@code tag}に{@code null}が指定された場合
+     * Sets the tag text.
+     * @param tag the tag text
+     * @throws IllegalArgumentException if {@code tag} was {@code null}
      */
     public void setTag(String tag) {
         Util.notNull(tag, "tag"); //$NON-NLS-1$
@@ -61,12 +52,9 @@ public final class DocBlockImpl extends ModelRoot implements DocBlock {
     }
 
     /**
-     * インライン要素の一覧を設定する。
-     * <p> インライン要素が一つも指定されない場合、引数には空を指定する。 </p>
-     * @param elements
-     *     インライン要素の一覧
-     * @throws IllegalArgumentException
-     *     {@code elements}に{@code null}が指定された場合
+     * Sets the inline elements.
+     * @param elements the inline elements
+     * @throws IllegalArgumentException if {@code elements} was {@code null}
      */
     public void setElements(List<? extends DocElement> elements) {
         Util.notNull(elements, "elements"); //$NON-NLS-1$
@@ -75,7 +63,7 @@ public final class DocBlockImpl extends ModelRoot implements DocBlock {
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#DOC_BLOCK}を返す。
+     * Returns {@link ModelKind#DOC_BLOCK} which represents this element kind.
      * @return {@link ModelKind#DOC_BLOCK}
      */
     @Override
@@ -84,8 +72,7 @@ public final class DocBlockImpl extends ModelRoot implements DocBlock {
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitDocBlock(this, context);
     }

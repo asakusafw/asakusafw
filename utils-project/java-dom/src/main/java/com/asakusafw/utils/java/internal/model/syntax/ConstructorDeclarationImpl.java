@@ -29,43 +29,22 @@ import com.asakusafw.utils.java.model.syntax.TypeParameterDeclaration;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link ConstructorDeclaration}の実装。
+ * An implementation of {@link ConstructorDeclaration}.
  */
 public final class ConstructorDeclarationImpl extends ModelRoot implements ConstructorDeclaration {
 
-    /**
-     * ドキュメンテーションコメント。
-     */
     private Javadoc javadoc;
 
-    /**
-     * 修飾子および注釈の一覧。
-     */
     private List<? extends Attribute> modifiers;
 
-    /**
-     * 型引数宣言の一覧。
-     */
     private List<? extends TypeParameterDeclaration> typeParameters;
 
-    /**
-     * メソッドまたはコンストラクタの名前。
-     */
     private SimpleName name;
 
-    /**
-     * 仮引数宣言の一覧。
-     */
     private List<? extends FormalParameterDeclaration> formalParameters;
 
-    /**
-     * 例外型宣言の一覧。
-     */
     private List<? extends Type> exceptionTypes;
 
-    /**
-     * コンストラクタ本体。
-     */
     private Block body;
 
     @Override
@@ -74,11 +53,8 @@ public final class ConstructorDeclarationImpl extends ModelRoot implements Const
     }
 
     /**
-     * ドキュメンテーションコメントを設定する。
-     * <p> ドキュメンテーションコメントが存在しない場合、引数には{@code null}を指定する。 </p>
-     * @param javadoc
-     *     ドキュメンテーションコメント、
-     *     ただしドキュメンテーションコメントが存在しない場合は{@code null}
+     * Sets the documentation comment.
+     * @param javadoc the documentation comment, or {@code null} if it is not specified
      */
     public void setJavadoc(Javadoc javadoc) {
         this.javadoc = javadoc;
@@ -90,12 +66,9 @@ public final class ConstructorDeclarationImpl extends ModelRoot implements Const
     }
 
     /**
-     * 修飾子および注釈の一覧を設定する。
-     * <p> 修飾子または注釈が一つも宣言されない場合、引数には空を指定する。 </p>
-     * @param modifiers
-     *     修飾子および注釈の一覧
-     * @throws IllegalArgumentException
-     *     {@code modifiers}に{@code null}が指定された場合
+     * Sets the modifiers and annotations.
+     * @param modifiers the modifiers and annotations
+     * @throws IllegalArgumentException if {@code modifiers} was {@code null}
      */
     public void setModifiers(List<? extends Attribute> modifiers) {
         Util.notNull(modifiers, "modifiers"); //$NON-NLS-1$
@@ -109,12 +82,9 @@ public final class ConstructorDeclarationImpl extends ModelRoot implements Const
     }
 
     /**
-     * 型引数宣言の一覧を設定する。
-     * <p> 型引数が一つも宣言されない場合、引数には空を指定する。 </p>
-     * @param typeParameters
-     *     型引数宣言の一覧
-     * @throws IllegalArgumentException
-     *     {@code typeParameters}に{@code null}が指定された場合
+     * Sets the type parameter declarations.
+     * @param typeParameters the type parameter declarations
+     * @throws IllegalArgumentException if {@code typeParameters} was {@code null}
      */
     public void setTypeParameters(List<? extends TypeParameterDeclaration> typeParameters) {
         Util.notNull(typeParameters, "typeParameters"); //$NON-NLS-1$
@@ -128,11 +98,10 @@ public final class ConstructorDeclarationImpl extends ModelRoot implements Const
     }
 
     /**
-     * メソッドまたはコンストラクタの名前を設定する。
-     * @param name
-     *     メソッドまたはコンストラクタの名前
-     * @throws IllegalArgumentException
-     *     {@code name}に{@code null}が指定された場合
+     * Sets the constructor name.
+     * This must be the same name for a simple name of the owner class.
+     * @param name the constructor name
+     * @throws IllegalArgumentException if {@code name} was {@code null}
      */
     public void setName(SimpleName name) {
         Util.notNull(name, "name"); //$NON-NLS-1$
@@ -145,12 +114,9 @@ public final class ConstructorDeclarationImpl extends ModelRoot implements Const
     }
 
     /**
-     * 仮引数宣言の一覧を設定する。
-     * <p> 仮引数が一つも宣言されない場合、引数には空を指定する。 </p>
-     * @param formalParameters
-     *     仮引数宣言の一覧
-     * @throws IllegalArgumentException
-     *     {@code formalParameters}に{@code null}が指定された場合
+     * Sets the formal parameter declarations.
+     * @param formalParameters the formal parameter declarations
+     * @throws IllegalArgumentException if {@code formalParameters} was {@code null}
      */
     public void setFormalParameters(List<? extends FormalParameterDeclaration> formalParameters) {
         Util.notNull(formalParameters, "formalParameters"); //$NON-NLS-1$
@@ -164,12 +130,9 @@ public final class ConstructorDeclarationImpl extends ModelRoot implements Const
     }
 
     /**
-     * 例外型宣言の一覧を設定する。
-     * <p> 例外型が一つも宣言されない場合、引数には空を指定する。 </p>
-     * @param exceptionTypes
-     *     例外型宣言の一覧
-     * @throws IllegalArgumentException
-     *     {@code exceptionTypes}に{@code null}が指定された場合
+     * Sets the exception types.
+     * @param exceptionTypes the exception types
+     * @throws IllegalArgumentException if {@code exceptionTypes} was {@code null}
      */
     public void setExceptionTypes(List<? extends Type> exceptionTypes) {
         Util.notNull(exceptionTypes, "exceptionTypes"); //$NON-NLS-1$
@@ -183,11 +146,9 @@ public final class ConstructorDeclarationImpl extends ModelRoot implements Const
     }
 
     /**
-     * コンストラクタ本体を設定する。
-     * @param body
-     *     コンストラクタ本体
-     * @throws IllegalArgumentException
-     *     {@code body}に{@code null}が指定された場合
+     * Sets the constructor body block.
+     * @param body the constructor body block
+     * @throws IllegalArgumentException if {@code body} was {@code null}
      */
     public void setBody(Block body) {
         Util.notNull(body, "body"); //$NON-NLS-1$
@@ -195,7 +156,7 @@ public final class ConstructorDeclarationImpl extends ModelRoot implements Const
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#CONSTRUCTOR_DECLARATION}を返す。
+     * Returns {@link ModelKind#CONSTRUCTOR_DECLARATION} which represents this element kind.
      * @return {@link ModelKind#CONSTRUCTOR_DECLARATION}
      */
     @Override
@@ -204,8 +165,7 @@ public final class ConstructorDeclarationImpl extends ModelRoot implements Const
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitConstructorDeclaration(this, context);
     }

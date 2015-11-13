@@ -30,7 +30,7 @@ import org.junit.Test;
 public class DateTest {
 
     /**
-     * 西暦1583-1600の範囲で、日付からyear, month, dayを正しく計算できるか確認。
+     * check year, month, and day between 1583-1600.
      */
     @Test
     public void get1583_1600() {
@@ -38,7 +38,7 @@ public class DateTest {
     }
 
     /**
-     * 西暦1601-1700の範囲で、日付からyear, month, dayを正しく計算できるか確認。
+     * check year, month, and day between 1601-1700.
      */
     @Test
     public void get1601_1700() {
@@ -46,7 +46,7 @@ public class DateTest {
     }
 
     /**
-     * 西暦1701-1800の範囲で、日付からyear, month, dayを正しく計算できるか確認。
+     * check year, month, and day between 1701-1800.
      */
     @Test
     public void get1701_1800() {
@@ -54,7 +54,7 @@ public class DateTest {
     }
 
     /**
-     * 西暦1801-1900の範囲で、日付からyear, month, dayを正しく計算できるか確認。
+     * check year, month, and day between 1801-1900.
      */
     @Test
     public void get1801_1900() {
@@ -62,7 +62,7 @@ public class DateTest {
     }
 
     /**
-     * 西暦1901-2000の範囲で、日付からyear, month, dayを正しく計算できるか確認。
+     * check year, month, and day between 1901-2000.
      */
     @Test
     public void get1901_2000() {
@@ -70,7 +70,7 @@ public class DateTest {
     }
 
     /**
-     * 西暦2001-2100の範囲で、日付からyear, month, dayを正しく計算できるか確認。
+     * check year, month, and day between 2001-2100.
      */
     @Test
     public void get2001_2100() {
@@ -78,7 +78,7 @@ public class DateTest {
     }
 
     /**
-     * 西暦2101-2200の範囲で、日付からyear, month, dayを正しく計算できるか確認。
+     * check year, month, and day between 2101-2200.
      */
     @Test
     public void get2101_2200() {
@@ -86,7 +86,7 @@ public class DateTest {
     }
 
     /**
-     * 西暦2201-2300の範囲で、日付からyear, month, dayを正しく計算できるか確認。
+     * check year, month, and day between 2201-2300.
      */
     @Test
     public void get2201_2300() {
@@ -94,7 +94,7 @@ public class DateTest {
     }
 
     /**
-     * 西暦2301-2400の範囲で、日付からyear, month, dayを正しく計算できるか確認。
+     * check year, month, and day between 2301-2400.
      */
     @Test
     public void get2301_2400() {
@@ -102,7 +102,7 @@ public class DateTest {
     }
 
     /**
-     * 西暦2401-2500の範囲で、日付からyear, month, dayを正しく計算できるか確認。
+     * check year, month, and day between 2401-2500.
      */
     @Test
     public void get2401_2500() {
@@ -110,7 +110,7 @@ public class DateTest {
     }
 
     /**
-     * 単純な文字列解析。
+     * parse simple.
      */
     @Test
     public void parse() {
@@ -132,7 +132,7 @@ public class DateTest {
     }
 
     /**
-     * 最初の日付の文字列解析。
+     * parse the epoch date.
      */
     @Test
     public void parse_zero() {
@@ -143,7 +143,7 @@ public class DateTest {
     }
 
     /**
-     * 大きな日付の文字列解析。
+     * parse long-term future date.
      */
     @Test
     public void parse_big() {
@@ -154,7 +154,7 @@ public class DateTest {
     }
 
     /**
-     * optionの解析。
+     * parse w/ option value.
      */
     @Test
     public void parse_option() {
@@ -166,7 +166,7 @@ public class DateTest {
     }
 
     /**
-     * nullの解析。
+     * parse w/ null.
      */
     @Test
     public void parse_null() {

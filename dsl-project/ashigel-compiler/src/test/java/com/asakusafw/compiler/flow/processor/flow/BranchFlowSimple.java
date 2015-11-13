@@ -30,7 +30,7 @@ import com.asakusafw.vocabulary.flow.Out;
 
 
 /**
- * {@link BranchFlowProcessor}のテスト。
+ * test for {@link BranchFlowProcessor}.
  */
 @JobFlow(name = "testing")
 public class BranchFlowSimple extends FlowDescription {
@@ -44,11 +44,11 @@ public class BranchFlowSimple extends FlowDescription {
     private Out<Ex1> outStop;
 
     /**
-     * インスタンスを生成する。
-     * @param in1 入力
-     * @param outHigh Highの出力
-     * @param outLow Lowの出力
-     * @param outStop Stopの出力
+     * Creates a new instance.
+     * @param in1 input
+     * @param outHigh output for High
+     * @param outLow output for Low
+     * @param outStop output for Stop
      */
     public BranchFlowSimple(
             @Import(name = "e1", description = Ex1MockImporterDescription.class)

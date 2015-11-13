@@ -60,7 +60,7 @@ import com.asakusafw.vocabulary.flow.graph.FlowElementInput;
 import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
 
 /**
- * Mapperプログラムを出力するエミッタ。
+ * An emitter for emitting Hadoop Mapper classes.
  */
 public class MapperEmitter {
 
@@ -69,9 +69,9 @@ public class MapperEmitter {
     private final FlowCompilingEnvironment environment;
 
     /**
-     * インスタンスを生成する。
-     * @param environment 環境オブジェクト
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param environment the current environment
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public MapperEmitter(FlowCompilingEnvironment environment) {
         Precondition.checkMustNotBeNull(environment, "environment"); //$NON-NLS-1$
@@ -79,16 +79,14 @@ public class MapperEmitter {
     }
 
     /**
-     * 指定のフラグメントに対するクラスを生成し、生成したクラスの完全限定名を返す。
-     * @param model 処理対象のモデル全体
-     * @param unit 処理対象のマッパー単位
-     * @return 生成したクラスの完全限定名
-     * @throws IOException クラスの生成に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new mapper class, and returns the qualified name of its class.
+     * @param model the target stage model
+     * @param unit the target map unit
+     * @return qualified name of the created class
+     * @throws IOException if error was occurred while creating the class
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
-    public CompiledType emit(
-            StageModel model,
-            StageModel.MapUnit unit) throws IOException {
+    public CompiledType emit(StageModel model, StageModel.MapUnit unit) throws IOException {
         Precondition.checkMustNotBeNull(model, "model"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(unit, "unit"); //$NON-NLS-1$
         LOG.debug("start generating mapper class: {}", unit); //$NON-NLS-1$
@@ -159,7 +157,8 @@ public class MapperEmitter {
                 .getDataClasses()
                 .load(getInputTypeAsReflect());
             if (dataClass == null) {
-                environment.error("{0}のデータモデルを解析できませんでした", getInputTypeAsReflect());
+                environment.error(Messages.getString("MapperEmitter.errorMissingDataClass"), //$NON-NLS-1$
+                        getInputTypeAsReflect());
                 dataClass = new DataClass.Unresolved(factory, getInputTypeAsReflect());
             }
         }

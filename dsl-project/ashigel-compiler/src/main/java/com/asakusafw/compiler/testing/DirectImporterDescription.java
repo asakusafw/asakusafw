@@ -34,10 +34,10 @@ public class DirectImporterDescription extends TemporaryInputDescription {
     private DataSize dataSize;
 
     /**
-     * インスタンスを生成する。
-     * @param modelType インポートするモデルのデータ型
-     * @param paths インポート対象のパス一覧 (相対パス)
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param modelType the target data model type
+     * @param paths the import target locations (relative from the base working area)
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public DirectImporterDescription(Class<?> modelType, Set<String> paths) {
         Precondition.checkMustNotBeNull(modelType, "modelType"); //$NON-NLS-1$
@@ -50,11 +50,11 @@ public class DirectImporterDescription extends TemporaryInputDescription {
     }
 
     /**
-     * インスタンスを生成する。
-     * @param modelType インポートするモデルのデータ型
-     * @param path インポート対象のパス (相対パス)
-     * @param pathRest インポート対象のパス一覧 (相対パス)
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param modelType the target data model type
+     * @param path the import target location (relative from the base working area)
+     * @param pathRest the rest of locations (relative from the base working area)
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public DirectImporterDescription(Class<?> modelType, String path, String... pathRest) {
         Precondition.checkMustNotBeNull(modelType, "modelType"); //$NON-NLS-1$
@@ -78,8 +78,8 @@ public class DirectImporterDescription extends TemporaryInputDescription {
     }
 
     /**
-     * データサイズのヒントを設定する。
-     * @param dataSize データサイズのヒント、不明の場合は{@code null}
+     * Configures a data size hint for the target input.
+     * @param dataSize the data size hint (nullable)
      */
     public void setDataSize(DataSize dataSize) {
         this.dataSize = dataSize;

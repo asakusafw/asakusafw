@@ -43,7 +43,7 @@ public interface StripedDataFormat<T> extends DataFormat<T> {
     List<DirectInputFragment> computeInputFragments(InputContext context) throws IOException, InterruptedException;
 
     /**
-     * A input context for computing {@link DirectInputFragment}s.
+     * An input context for computing {@link DirectInputFragment}s.
      * @since 0.7.0
      */
     public static class InputContext {

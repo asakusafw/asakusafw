@@ -26,17 +26,13 @@ import com.asakusafw.vocabulary.external.ExporterDescription;
 public abstract class TemporaryOutputDescription implements ExporterDescription {
 
     /**
-     * エクスポート先のファイルへのパスの接頭辞を返す。
+     * Returns the export target path prefix.
      * <p>
-     * パスの各セグメントは{@code /}で区切り、末尾には{@code -*}を付与すること。
-     * また、末尾のセグメント(ファイル名の接頭辞)には数字とアルファベットのみ指定できる。
+     * Each path segment must be separated by {@code "/"}.
+     * The file name (the last segment of the path prefix) must consist of digits and alphabets,
+     * and must end with {@code "-*"}.
      * </p>
-     * <p>
-     * パスには必ずひとつ以上のディレクトリを含めなければならない。
-     * また、同ディレクトリがエクスポートの実行時に存在していた場合、
-     * エクスポート処理が失敗する可能性がある。
-     * </p>
-     * @return エクスポート先のファイルが出力されるパスの接頭辞
+     * @return the export target path prefix
      */
     public abstract String getPathPrefix();
 

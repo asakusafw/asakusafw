@@ -62,17 +62,20 @@ public final class BatchTestRunner {
 
     private static final Options OPTIONS;
     static {
-        OPT_BATCH_ID = new Option("b", "batch", true, "batch ID"); //$NON-NLS-1$ //$NON-NLS-2$
+        OPT_BATCH_ID = new Option("b", "batch", true, //$NON-NLS-1$ //$NON-NLS-2$
+                Messages.getString("BatchTestRunner.optBatch")); //$NON-NLS-1$ 
         OPT_BATCH_ID.setArgName("batch_id"); //$NON-NLS-1$
         OPT_BATCH_ID.setRequired(true);
 
-        OPT_ARGUMENT = new Option("A", "argument", true, "batch argument"); //$NON-NLS-1$ //$NON-NLS-2$
+        OPT_ARGUMENT = new Option("A", "argument", true, //$NON-NLS-1$ //$NON-NLS-2$
+                Messages.getString("BatchTestRunner.optArgument")); //$NON-NLS-1$ 
         OPT_ARGUMENT.setArgs(2);
         OPT_ARGUMENT.setValueSeparator('=');
         OPT_ARGUMENT.setArgName("name=value"); //$NON-NLS-1$
         OPT_ARGUMENT.setRequired(false);
 
-        OPT_PROPERTY = new Option("D", "property", true, "hadoop property"); //$NON-NLS-1$ //$NON-NLS-2$
+        OPT_PROPERTY = new Option("D", "property", true, //$NON-NLS-1$ //$NON-NLS-2$
+                Messages.getString("BatchTestRunner.optProperty")); //$NON-NLS-1$ 
         OPT_PROPERTY.setArgs(2);
         OPT_PROPERTY.setValueSeparator('=');
         OPT_PROPERTY.setArgName("name=value"); //$NON-NLS-1$
@@ -101,7 +104,7 @@ public final class BatchTestRunner {
         Batch annotation = batchClass.getAnnotation(Batch.class);
         if (annotation == null) {
             throw new IllegalArgumentException(MessageFormat.format(
-                    "\"{0}\" must be annotated with @{1}",
+                    Messages.getString("BatchTestRunner.errorMissingBatchAnnotation"), //$NON-NLS-1$
                     batchClass.getName(),
                     Batch.class.getSimpleName()));
         }
@@ -219,12 +222,12 @@ public final class BatchTestRunner {
             task.perform();
         } catch (AssertionError e) {
             LOG.error(MessageFormat.format(
-                    "Failed to executes batch application: {0}",
+                    Messages.getString("BatchTestRunner.errorFailedToExecute"), //$NON-NLS-1$
                     batchId), e);
             return 1;
         } catch (Exception e) {
             LOG.error(MessageFormat.format(
-                    "Failed to executes batch application: {0}",
+                    Messages.getString("BatchTestRunner.errorFailedToExecute"), //$NON-NLS-1$
                     batchId), e);
             return 1;
         } finally {
@@ -233,7 +236,7 @@ public final class BatchTestRunner {
         if (LOG.isInfoEnabled()) {
             long t1 = System.currentTimeMillis();
             LOG.info(MessageFormat.format(
-                    "Elapsed: {0}ms",
+                    Messages.getString("BatchTestRunner.infoElapsedTime"), //$NON-NLS-1$
                     t1 - t0));
         }
         return 0;
@@ -270,7 +273,7 @@ public final class BatchTestRunner {
                     OPTIONS,
                     true);
             LOG.error(MessageFormat.format(
-                    "Failed to parse the program arguments: {0}",
+                    Messages.getString("BatchTestRunner.errorInvalidArgument"), //$NON-NLS-1$
                     Arrays.toString(args)), e);
             return 1;
         }
@@ -327,7 +330,7 @@ public final class BatchTestRunner {
             script = BatchScript.load(properties);
         } catch (Exception e) {
             throw new IllegalArgumentException(MessageFormat.format(
-                    "Invalid script \"{0}\".",
+                    Messages.getString("BatchTestRunner.errorInvalidYaessScript"), //$NON-NLS-1$
                     scriptFile), e);
         }
 

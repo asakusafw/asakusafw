@@ -15,9 +15,8 @@
  */
 package com.asakusafw.utils.java.model.syntax;
 
-
 /**
- * {@code if}文を表現するインターフェース。
+ * An interface which represents if statement.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:14.9] The if Statement} </li>
@@ -27,28 +26,21 @@ package com.asakusafw.utils.java.model.syntax;
 public interface IfStatement
         extends Statement {
 
-    // properties
-
     /**
-     * 条件式を返す。
-     * @return
-     *     条件式
+     * Returns the condition expression.
+     * @return the condition expression
      */
     Expression getCondition();
 
     /**
-     * 条件成立時に実行される文を返す。
-     * @return
-     *     条件成立時に実行される文
+     * Returns the truth statement.
+     * @return the truth statement
      */
     Statement getThenStatement();
 
     /**
-     * 条件不成立時に実行される文を返す。
-     * <p> この文が{@code if-then}文である場合は{@code null}が返される。 </p>
-     * @return
-     *     条件不成立時に実行される文、
-     *     ただしこの文が{@code if-then}文である場合は{@code null}
+     * Returns the false statement.
+     * @return the false statement, or {@code null} if it is not specified
      */
     Statement getElseStatement();
 }

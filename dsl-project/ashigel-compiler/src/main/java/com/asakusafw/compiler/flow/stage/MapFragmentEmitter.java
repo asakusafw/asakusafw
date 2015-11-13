@@ -67,7 +67,7 @@ import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 import com.asakusafw.vocabulary.operator.Identity;
 
 /**
- * Shuffleを必要としない1入力の要素を処理するフラグメントクラスを生成するエミッタ。
+ * An emitter which emits fragments of a map action.
  */
 public class MapFragmentEmitter {
 
@@ -76,9 +76,9 @@ public class MapFragmentEmitter {
     private final FlowCompilingEnvironment environment;
 
     /**
-     * インスタンスを生成する。
-     * @param environment 環境オブジェクト
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param environment the current environment
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public MapFragmentEmitter(FlowCompilingEnvironment environment) {
         Precondition.checkMustNotBeNull(environment, "environment"); //$NON-NLS-1$
@@ -86,16 +86,14 @@ public class MapFragmentEmitter {
     }
 
     /**
-     * 指定のフラグメントに対するクラスを生成し、生成したクラスの完全限定名を返す。
-     * @param fragment 処理対象のフラグメント (Rendezvousでない)
-     * @param stageBlock 対象のフラグメントが存在するステージ
-     * @return 生成したクラスの完全限定名
-     * @throws IOException クラスの生成に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new map fragment class, and returns the qualified name of its class.
+     * @param fragment the target fragment (must not be a rendezvous)
+     * @param stageBlock the target stage
+     * @return qualified name of the created class
+     * @throws IOException if error was occurred while creating the class
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
-    public CompiledType emit(
-            StageModel.Fragment fragment,
-            StageBlock stageBlock) throws IOException {
+    public CompiledType emit(StageModel.Fragment fragment, StageBlock stageBlock) throws IOException {
         Precondition.checkMustNotBeNull(fragment, "fragment"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(stageBlock, "stageBlock"); //$NON-NLS-1$
         if (fragment.isRendezvous()) {
@@ -283,8 +281,6 @@ public class MapFragmentEmitter {
             LOG.debug("generating map fragment terminator: {}", fragment); //$NON-NLS-1$
 
             List<FlowElementOutput> outputs = fragment.getOutputPorts();
-            // implicit endになりうるelementの出力ポートは
-            // 基本的にひとつ。これが崩れたら修正を行うこと
             assert outputs.size() == 1 : "number of implicit end output port must be = 1"; //$NON-NLS-1$
 
             LineEndProcessor.Context context = createEndConext(null, input);

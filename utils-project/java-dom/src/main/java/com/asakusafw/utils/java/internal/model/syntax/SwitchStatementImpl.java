@@ -24,18 +24,12 @@ import com.asakusafw.utils.java.model.syntax.SwitchStatement;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link SwitchStatement}の実装。
+ * An implementation of {@link SwitchStatement}.
  */
 public final class SwitchStatementImpl extends ModelRoot implements SwitchStatement {
 
-    /**
-     * セレクタ式。
-     */
     private Expression expression;
 
-    /**
-     * {@code switch}文の本体。
-     */
     private List<? extends Statement> statements;
 
     @Override
@@ -44,11 +38,9 @@ public final class SwitchStatementImpl extends ModelRoot implements SwitchStatem
     }
 
     /**
-     * セレクタ式を設定する。
-     * @param expression
-     *     セレクタ式
-     * @throws IllegalArgumentException
-     *     {@code expression}に{@code null}が指定された場合
+     * Sets the {@code switch} selector expression.
+     * @param expression the {@code switch} selector expression
+     * @throws IllegalArgumentException if {@code expression} was {@code null}
      */
     public void setExpression(Expression expression) {
         Util.notNull(expression, "expression"); //$NON-NLS-1$
@@ -61,12 +53,9 @@ public final class SwitchStatementImpl extends ModelRoot implements SwitchStatem
     }
 
     /**
-     * {@code switch}文の本体を設定する。
-     * <p> 本体に一つもラベルが指定されない場合、引数には空を指定する。 </p>
-     * @param statements
-     *     {@code switch}文の本体
-     * @throws IllegalArgumentException
-     *     {@code statements}に{@code null}が指定された場合
+     * Sets the {@code switch} body statements.
+     * @param statements the {@code switch} body statements
+     * @throws IllegalArgumentException if {@code statements} was {@code null}
      */
     public void setStatements(List<? extends Statement> statements) {
         Util.notNull(statements, "statements"); //$NON-NLS-1$
@@ -75,7 +64,7 @@ public final class SwitchStatementImpl extends ModelRoot implements SwitchStatem
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#SWITCH_STATEMENT}を返す。
+     * Returns {@link ModelKind#SWITCH_STATEMENT} which represents this element kind.
      * @return {@link ModelKind#SWITCH_STATEMENT}
      */
     @Override
@@ -84,8 +73,7 @@ public final class SwitchStatementImpl extends ModelRoot implements SwitchStatem
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitSwitchStatement(this, context);
     }

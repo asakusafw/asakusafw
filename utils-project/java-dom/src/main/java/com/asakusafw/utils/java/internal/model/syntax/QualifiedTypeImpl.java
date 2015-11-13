@@ -22,18 +22,12 @@ import com.asakusafw.utils.java.model.syntax.Type;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link QualifiedType}の実装。
+ * An implementation of {@link QualifiedType}.
  */
 public final class QualifiedTypeImpl extends ModelRoot implements QualifiedType {
 
-    /**
-     * 型限定子。
-     */
     private Type qualifier;
 
-    /**
-     * 型の単純名。
-     */
     private SimpleName simpleName;
 
     @Override
@@ -42,11 +36,9 @@ public final class QualifiedTypeImpl extends ModelRoot implements QualifiedType 
     }
 
     /**
-     * 型限定子を設定する。
-     * @param qualifier
-     *     型限定子
-     * @throws IllegalArgumentException
-     *     {@code qualifier}に{@code null}が指定された場合
+     * Sets the type qualifier.
+     * @param qualifier the type qualifier
+     * @throws IllegalArgumentException if {@code qualifier} was {@code null}
      */
     public void setQualifier(Type qualifier) {
         Util.notNull(qualifier, "qualifier"); //$NON-NLS-1$
@@ -59,11 +51,9 @@ public final class QualifiedTypeImpl extends ModelRoot implements QualifiedType 
     }
 
     /**
-     * 型の単純名を設定する。
-     * @param simpleName
-     *     型の単純名
-     * @throws IllegalArgumentException
-     *     {@code simpleName}に{@code null}が指定された場合
+     * Sets the simple type name.
+     * @param simpleName the simple type name
+     * @throws IllegalArgumentException if {@code simpleName} was {@code null}
      */
     public void setSimpleName(SimpleName simpleName) {
         Util.notNull(simpleName, "simpleName"); //$NON-NLS-1$
@@ -71,7 +61,7 @@ public final class QualifiedTypeImpl extends ModelRoot implements QualifiedType 
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#QUALIFIED_TYPE}を返す。
+     * Returns {@link ModelKind#QUALIFIED_TYPE} which represents this element kind.
      * @return {@link ModelKind#QUALIFIED_TYPE}
      */
     @Override
@@ -80,8 +70,7 @@ public final class QualifiedTypeImpl extends ModelRoot implements QualifiedType 
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitQualifiedType(this, context);
     }

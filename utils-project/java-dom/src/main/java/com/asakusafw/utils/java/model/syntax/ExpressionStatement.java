@@ -17,7 +17,7 @@ package com.asakusafw.utils.java.model.syntax;
 
 
 /**
- * 式文を表現するインターフェース。
+ * An interface which represents expression statement.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:14.8] Expression Statements} </li>
@@ -27,12 +27,9 @@ package com.asakusafw.utils.java.model.syntax;
 public interface ExpressionStatement
         extends Statement {
 
-    // properties
-
     /**
-     * 内包する式を返す。
-     * @return
-     *     内包する式
+     * Returns the element expression.
+     * @return the element expression
      */
     Expression getExpression();
 }

@@ -1,60 +1,44 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<name>Extended Test Driver Helpers for Windows</name>
-	<groupId>com.asakusafw.sandbox</groupId>
-	<artifactId>asakusa-test-windows</artifactId>
-	<parent>
-		<artifactId>asakusa-sandbox-parent</artifactId>
-		<groupId>com.asakusafw.sandbox</groupId>
-		<version>0.7.4-hadoop1</version>
-		<relativePath>../asakusa-sandbox-parent</relativePath>
-	</parent>
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <name>Extended Test Driver Helpers for Windows</name>
+  <artifactId>asakusa-test-windows</artifactId>
+  <parent>
+    <artifactId>asakusa-sandbox-project</artifactId>
+    <groupId>com.asakusafw.sandbox</groupId>
+    <version>0.7.5-RC1-hadoop1</version>
+  </parent>
 
-	<description>Test Driver Extensions for Windows</description>
-	<url>http://asakusafw.com</url>
-	<licenses>
-		<license>
-			<name>Apache License, Version 2.0</name>
-			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-			<distribution>manual</distribution>
-		</license>
-	</licenses>
-
-	<properties>
-		<asakusafw.version>${project.version}</asakusafw.version>
-	</properties>
-
-	<packaging>jar</packaging>
-	<dependencies>
-		<dependency>
-			<groupId>com.asakusafw</groupId>
-			<artifactId>asakusa-test-driver</artifactId>
-			<version>${asakusafw.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.hadoop</groupId>
-			<artifactId>${hadoop.artifact.id}</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-simple</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.hamcrest</groupId>
-			<artifactId>hamcrest-library</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
+  <packaging>jar</packaging>
+  <dependencies>
+    <dependency>
+      <groupId>com.asakusafw</groupId>
+      <artifactId>asakusa-test-driver</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.hadoop</groupId>
+      <artifactId>${hadoop.artifact.id}</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest-library</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 </project>

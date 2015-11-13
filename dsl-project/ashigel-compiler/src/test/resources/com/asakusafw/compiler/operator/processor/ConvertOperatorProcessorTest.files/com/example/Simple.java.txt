@@ -11,9 +11,9 @@ public abstract class Simple {
     MockFoo foo = new MockFoo();
     
     /**
-     * 変換結果を返す。
-     * @param in 変換対象
-     * @return 変換結果
+     * Returns the converted result.
+     * @param in the target object
+     * @return the converted result
      */
     @Convert
     public MockFoo example(MockHoge in) {

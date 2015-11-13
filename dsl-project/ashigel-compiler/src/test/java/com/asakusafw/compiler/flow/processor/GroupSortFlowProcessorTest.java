@@ -45,7 +45,7 @@ import com.asakusafw.vocabulary.operator.GroupSort;
 public class GroupSortFlowProcessorTest extends JobflowCompilerTestRoot {
 
     /**
-     * グループごとの最大値を求めるテスト。
+     * max.
      */
     @Test
     public void max() {
@@ -92,7 +92,7 @@ public class GroupSortFlowProcessorTest extends JobflowCompilerTestRoot {
     }
 
     /**
-     * グループごとの最小値を求めるテスト。
+     * min.
      */
     @Test
     public void min() {
@@ -139,7 +139,7 @@ public class GroupSortFlowProcessorTest extends JobflowCompilerTestRoot {
     }
 
     /**
-     * グループごとの最小値を求めるテスト。
+     * parameterized.
      */
     @Test
     public void withParameter() {

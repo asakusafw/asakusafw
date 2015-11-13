@@ -88,4 +88,4 @@ YAESS Log Analyzerツールを利用するには、コマンドラインコン�
 見やすいように、併せて棒グラフを表示しています。
 
 ..  figure:: yaess-attachment/yaess-log-analysis-example.png
-    :width: 100%
+    :width: 640px

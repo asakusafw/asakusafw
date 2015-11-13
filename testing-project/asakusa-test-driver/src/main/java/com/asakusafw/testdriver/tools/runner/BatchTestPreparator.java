@@ -50,21 +50,25 @@ public class BatchTestPreparator extends BatchTestTool {
 
     private static final Options OPTIONS;
     static {
-        OPT_IMPORTER = new Option(null, "importer", true, "importer description class"); //$NON-NLS-1$ //$NON-NLS-2$
+        OPT_IMPORTER = new Option(null, "importer", true, //$NON-NLS-1$
+                Messages.getString("BatchTestPreparator.optImporter")); //$NON-NLS-1$
         OPT_IMPORTER.setArgName("importer class name"); //$NON-NLS-1$
         OPT_IMPORTER.setRequired(true);
 
-        OPT_DATA = new Option(null, "data", true, "input data path"); //$NON-NLS-1$ //$NON-NLS-2$
+        OPT_DATA = new Option(null, "data", true, //$NON-NLS-1$
+                Messages.getString("BatchTestPreparator.optData")); //$NON-NLS-1$
         OPT_DATA.setArgName("data URI"); //$NON-NLS-1$
         OPT_DATA.setRequired(true);
 
-        OPT_ARGUMENT = new Option("A", "argument", true, "batch argument"); //$NON-NLS-1$ //$NON-NLS-2$
+        OPT_ARGUMENT = new Option("A", "argument", true, //$NON-NLS-1$ //$NON-NLS-2$
+                Messages.getString("BatchTestPreparator.optArgument")); //$NON-NLS-1$
         OPT_ARGUMENT.setArgs(2);
         OPT_ARGUMENT.setValueSeparator('=');
         OPT_ARGUMENT.setArgName("name=value"); //$NON-NLS-1$
         OPT_ARGUMENT.setRequired(false);
 
-        OPT_PROPERTY = new Option("D", "property", true, "hadoop property"); //$NON-NLS-1$ //$NON-NLS-2$
+        OPT_PROPERTY = new Option("D", "property", true, //$NON-NLS-1$ //$NON-NLS-2$
+                Messages.getString("BatchTestPreparator.optProperty")); //$NON-NLS-1$
         OPT_PROPERTY.setArgs(2);
         OPT_PROPERTY.setValueSeparator('=');
         OPT_PROPERTY.setArgName("name=value"); //$NON-NLS-1$
@@ -115,7 +119,7 @@ public class BatchTestPreparator extends BatchTestTool {
                     OPTIONS,
                     true);
             LOG.error(MessageFormat.format(
-                    "Failed to parse the program arguments: {0}",
+                    Messages.getString("BatchTestPreparator.errorInvalidArgument"), //$NON-NLS-1$
                     Arrays.toString(args)), e);
             return 1;
         }
@@ -125,7 +129,7 @@ public class BatchTestPreparator extends BatchTestTool {
             return 0;
         } catch (Exception e) {
             LOG.error(MessageFormat.format(
-                    "failed to prepare input: {0}",
+                    Messages.getString("BatchTestPreparator.errorFailedToPrepareInput"), //$NON-NLS-1$
                     Arrays.toString(args)), e);
             return 1;
         }
@@ -142,7 +146,7 @@ public class BatchTestPreparator extends BatchTestTool {
             conf.importer = Class.forName(importerClass).asSubclass(ImporterDescription.class).newInstance();
         } catch (Exception e) {
             throw new IllegalArgumentException(MessageFormat.format(
-                    "failed to instantiate importer description: {0}",
+                    Messages.getString("BatchTestPreparator.errorInvalidImporterDescription"), //$NON-NLS-1$
                     importerClass), e);
         }
         conf.data = cmd.getOptionValue(OPT_DATA.getLongOpt());

@@ -49,7 +49,7 @@ import org.apache.hadoop.mapreduce.Mapper;
 import com.asakusafw.runtime.stage.StageInput;
 
 /**
- * ステージ入力を設定するためのドライバ。
+ * A driver for configuring stage inputs.
  * @since 0.1.0
  * @version 0.6.0
  */
@@ -153,11 +153,11 @@ public final class StageInputDriver {
     }
 
     /**
-     * ジョブに設定されたステージ入力の一覧を返す。
-     * @param conf 設定情報
-     * @return ジョブに設定されたステージ入力の一覧、未設定の場合は空のリスト
-     * @throws IOException ステージ一覧の情報を復元できなかった場合
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the configured stage inputs.
+     * @param conf the current configuration
+     * @return the configured inputs, or an empty list if they has not been configured
+     * @throws IOException if failed to restore the stage inputs
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     static List<StageInput> getInputs(Configuration conf) throws IOException {
         if (conf == null) {

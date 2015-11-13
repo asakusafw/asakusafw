@@ -70,7 +70,7 @@ import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
 import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 
 /**
- * Shuffleを必要とする要素を処理するフラグメントクラスを生成するエミッタ。
+ * An emitter which emits fragments of a reduce action.
  */
 public class ReduceFragmentEmitter {
 
@@ -79,9 +79,9 @@ public class ReduceFragmentEmitter {
     private final FlowCompilingEnvironment environment;
 
     /**
-     * インスタンスを生成する。
-     * @param environment 環境オブジェクト
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param environment the current environment
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public ReduceFragmentEmitter(FlowCompilingEnvironment environment) {
         Precondition.checkMustNotBeNull(environment, "environment"); //$NON-NLS-1$
@@ -89,13 +89,13 @@ public class ReduceFragmentEmitter {
     }
 
     /**
-     * 指定のフラグメントに対するクラスを生成し、生成したクラスの完全限定名を返す。
-     * @param fragment 処理対象のフラグメント (Rendezvous)
-     * @param shuffle シャッフルフェーズの情報 (コンパイル済み)
-     * @param stageBlock 対象のフラグメントが存在するステージ
-     * @return コンパイル結果
-     * @throws IOException クラスの生成に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new reduce fragment class, and returns the qualified name of its class.
+     * @param fragment the target fragment (Rendezvous)
+     * @param shuffle the compiled shuffle model
+     * @param stageBlock the target stage block
+     * @return the compiled result
+     * @throws IOException if error was occurred while creating the class
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public CompiledType emit(
             StageModel.Fragment fragment,

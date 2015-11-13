@@ -18,7 +18,7 @@ package com.asakusafw.utils.java.parser.javadoc;
 import com.asakusafw.utils.java.internal.parser.javadoc.ir.IrLocation;
 
 /**
- * コメント内に不正にコメントの終端が出現したことを表す例外。
+ * An exception which represents a documentation comment has unexpected end of comment.
  */
 public class IllegalEndOfCommentException extends JavadocParseException {
 
@@ -26,8 +26,8 @@ public class IllegalEndOfCommentException extends JavadocParseException {
 
     /**
      * Creates a new instance.
-     * @param location 位置
-     * @param cause この原因の元となった例外
+     * @param location the location
+     * @param cause the original cause
      */
     public IllegalEndOfCommentException(IrLocation location, Throwable cause) {
         super(buildMessage(), location, cause);

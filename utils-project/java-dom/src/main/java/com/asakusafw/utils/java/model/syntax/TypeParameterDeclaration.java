@@ -18,7 +18,7 @@ package com.asakusafw.utils.java.model.syntax;
 import java.util.List;
 
 /**
- * 型引数の宣言を表現するインターフェース。
+ * An interface which represents type parameter declarations.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:4.4] Type Variables} </li>
@@ -28,20 +28,15 @@ import java.util.List;
 public interface TypeParameterDeclaration
         extends Model {
 
-    // properties
-
     /**
-     * 型引数の名前を返す。
-     * @return
-     *     型引数の名前
+     * Returns the type variable name.
+     * @return the type variable name
      */
     SimpleName getName();
 
     /**
-     * 境界型の一覧を返す。
-     * <p> 境界型が一つも指定されない場合は空が返される。 </p>
-     * @return
-     *     境界型の一覧
+     * Returns the bound types.
+     * @return the bound types
      */
     List<? extends Type> getTypeBounds();
 }

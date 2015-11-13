@@ -15,43 +15,41 @@
  */
 package com.asakusafw.compiler.flow.stage;
 
+import com.asakusafw.compiler.common.Precondition;
+
 /**
- * コンパイルされたReduceフェーズの処理。
+ * A compiled model of shuffle fragment.
  */
 public class CompiledShuffleFragment {
 
-    private CompiledType mapOutputType;
+    private final CompiledType mapOutputType;
 
-    private CompiledType combineOutputType;
+    private final CompiledType combineOutputType;
 
     /**
-     * インスタンスを生成する。
-     * @param mapOutput Mapの出力型
-     * @param combineOutput Combineの出力型
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param mapOutput the output type of map action
+     * @param combineOutput the output type of combine action
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public CompiledShuffleFragment(CompiledType mapOutput, CompiledType combineOutput) {
-        if (mapOutput == null) {
-            throw new IllegalArgumentException("reducerType must not be null"); //$NON-NLS-1$
-        }
-        if (combineOutput == null) {
-            throw new IllegalArgumentException("combineOutput must not be null"); //$NON-NLS-1$
-        }
+        Precondition.checkMustNotBeNull(mapOutput, "mapOutput"); //$NON-NLS-1$
+        Precondition.checkMustNotBeNull(combineOutput, "combineOutput"); //$NON-NLS-1$
         this.mapOutputType = mapOutput;
         this.combineOutputType = combineOutput;
     }
 
     /**
-     * Mapの出力型の情報を返す。
-     * @return Reducerの型情報
+     * Returns the output type of map action.
+     * @return the output type of map action
      */
     public CompiledType getMapOutputType() {
         return mapOutputType;
     }
 
     /**
-     * Combineの出力型の情報を返す。
-     * @return Combineの出力型の情報
+     * Returns the output type of combine action.
+     * @return the output type of combine action
      */
     public CompiledType getCombineOutputType() {
         return combineOutputType;

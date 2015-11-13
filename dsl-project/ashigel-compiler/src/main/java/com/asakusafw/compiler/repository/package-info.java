@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /**
- * 環境依存を閉じ込めたリポジトリーの実装。
+ * Implementation of repositories.
  */
 package com.asakusafw.compiler.repository;
 

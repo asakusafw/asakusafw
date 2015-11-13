@@ -196,6 +196,21 @@ public class GeneratorTesterRoot {
         }
     }
 
+    /**
+     * Requires to raise error from specified DMDL text.
+     * @param lines DMDL lines
+     */
+    protected void shouldSemanticErrorFromLines(String... lines) {
+        try {
+            emit(new DmdlSourceFile(
+                    Arrays.asList(emitDmdl(lines)),
+                    Charset.forName("UTF-8")));
+            throw new AssertionError("semantic error should be raised");
+        } catch (Exception e) {
+            // ok.
+        }
+    }
+
     private ClassLoader compile(List<VolatileJavaFile> files) {
         if (files.isEmpty()) {
             throw new AssertionError();
@@ -271,7 +286,6 @@ public class GeneratorTesterRoot {
         /**
          * Sets the class namespace and category.
          * @param namespace the namespace
-         * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
          */
         public final void setNamespace(String namespace) {
             this.namespace = namespace;
@@ -377,11 +391,16 @@ public class GeneratorTesterRoot {
 
         private final DataModel instance;
 
-        private Class<?> interfaceType;
-
         ModelWrapper(Object instance) {
             this.instance = (DataModel) instance;
-            this.interfaceType = instance.getClass();
+        }
+
+        /**
+         * Returns the data model class.
+         * @return the data model class
+         */
+        public Class<?> getModelClass() {
+            return instance.getClass();
         }
 
         /**
@@ -390,14 +409,6 @@ public class GeneratorTesterRoot {
          */
         public Object unwrap() {
             return instance;
-        }
-
-        /**
-         * Sets interface type of wrapped object.
-         * @param interfaceType the interface type to set
-         */
-        public void setInterfaceType(Class<?> interfaceType) {
-            this.interfaceType = interfaceType;
         }
 
         /**
@@ -481,7 +492,7 @@ public class GeneratorTesterRoot {
          * @return the result
          */
         public Object invoke(String name, Object... arguments) {
-            for (Method method : interfaceType.getMethods()) {
+            for (Method method : instance.getClass().getMethods()) {
                 if (method.getName().equals(name)) {
                     try {
                         return method.invoke(instance, arguments);

@@ -30,7 +30,7 @@ import com.asakusafw.vocabulary.flow.graph.ObservationCount;
 import com.asakusafw.vocabulary.operator.Logging;
 
 /**
- * {@link Logging ロギング演算子}を処理する。
+ * Processes {@link Logging} operators.
  */
 @TargetOperator(Logging.class)
 public class LoggingOperatorProcessor extends AbstractOperatorProcessor {
@@ -41,22 +41,22 @@ public class LoggingOperatorProcessor extends AbstractOperatorProcessor {
 
         ExecutableAnalyzer a = new ExecutableAnalyzer(context.environment, context.element);
         if (a.isAbstract()) {
-            a.error("ロギング演算子はabstractで宣言できません");
+            a.error(Messages.getString("LoggingOperatorProcessor.errorAbstract")); //$NON-NLS-1$
         }
         if (a.getReturnType().isString() == false) {
-            a.error("ロギング演算子は戻り値にString型を指定する必要があります");
+            a.error(Messages.getString("LoggingOperatorProcessor.errorNotStringResult")); //$NON-NLS-1$
         }
         if (a.getParameterType(0).isModel() == false) {
-            a.error(0, "ロギング演算子の最初の引数はモデルオブジェクト型である必要があります");
+            a.error(0, Messages.getString("LoggingOperatorProcessor.errorNotModelInput")); //$NON-NLS-1$
         }
         for (int i = 1, n = a.countParameters(); i < n; i++) {
             if (a.getParameterType(i).isBasic() == false) {
-                a.error(i, "ロギング演算子の2つ目以降の引数は文字列またはプリミティブ型である必要があります");
+                a.error(i, Messages.getString("LoggingOperatorProcessor.errorInvalidOptionParameter")); //$NON-NLS-1$
             }
         }
         Logging annotation = context.element.getAnnotation(Logging.class);
         if (annotation == null) {
-            a.error("注釈の解釈に失敗しました");
+            a.error(Messages.getString("LoggingOperatorProcessor.errorInvalidAnnotation")); //$NON-NLS-1$
             return null;
         }
         OperatorProcessorUtil.checkPortName(a, new String[] {
@@ -69,7 +69,7 @@ public class LoggingOperatorProcessor extends AbstractOperatorProcessor {
         List<DocElement> elements = Lists.create();
         elements.addAll(a.getExecutableDocument());
         elements.add(context.environment.getFactory().newDocText(
-                "<p>なお、この演算子の出力は結線しなくても自動的に停止演算子に結線される。</p>"));
+                Messages.getString("LoggingOperatorProcessor.javadocOptionalBody"))); //$NON-NLS-1$
 
         Builder builder = new Builder(getTargetAnnotationType(), context);
         builder.addAttribute(a.getObservationCount(ObservationCount.AT_LEAST_ONCE));
@@ -82,7 +82,7 @@ public class LoggingOperatorProcessor extends AbstractOperatorProcessor {
                 a.getParameterType(0).getType(),
                 0);
         builder.addOutput(
-                "入力された内容",
+                Messages.getString("LoggingOperatorProcessor.javadocOutput"), //$NON-NLS-1$
                 annotation.outputPort(),
                 a.getParameterType(0).getType(),
                 a.getParameterName(0),

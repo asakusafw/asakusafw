@@ -23,7 +23,7 @@ import java.lang.annotation.Target;
 
 import com.asakusafw.vocabulary.model.Key;
 
-
+//TODO i18n
 /**
  * マスタ分岐演算子を表すメソッドに付与する注釈。
  * <p>
@@ -82,48 +82,48 @@ public abstract class &lt;Operator-Class&gt; {
     ...
 
     /**
-     &#42; レコードの状態ごとに処理を分岐する。
-     &#42; &#64;param master マスタデータ、存在しない場合は{&#64;code null}
-     &#42; &#64;param tx トランザクションデータ
-     &#42; &#64;return 分岐先を表すオブジェクト
+     &#42; Returns the record status.
+     &#42; &#64;param master the master data, or {&#64;code null} if there is no suitable data for the record
+     &#42; &#64;param tx the target record
+     &#42; &#64;return the branch target status
      &#42;&#47;
     &#64;MasterBranch
     public Status branchWithJoin(
-            &#64;Key(group = "id") ItemMst master,
-            &#64;Key(group = "itemId") HogeTrn tx) {
+            &#64;Key(group = &quot;id&quot;) ItemMst master,
+            &#64;Key(group = &quot;itemId&quot;) HogeTrn tx) {
         if (master == null) {
             return Status.ERROR;
         }
         int price = master.getPrice();
         if (price &lt; 0) {
             return Status.ERROR;
-        }
-        if (price &gt;= 1000000) {
+        } else if (price &lt; 1000000) {
+            return Status.CHEAP;
+        } else {
             return Status.EXPENSIVE;
         }
-        return Status.CHEAP;
     }
 
     /**
-     &#42; 値段に関するレコードの状態。
+     &#42; Represents price status.
      &#42;&#47;
     public enum Status {
+
         /**
-         &#42; 高い。
+         &#42; Expensive price.
          &#42;&#47;
         EXPENSIVE,
 
         /**
-         &#42; 安い。
+         &#42; Cheap price.
          &#42;&#47;
         CHEAP,
 
         /**
-         &#42; エラー。
+         &#42; Erroneous price.
          &#42;&#47;
         ERROR,
     }
-
     ...
 }
 </code></pre>
@@ -139,17 +139,18 @@ public abstract class &lt;Operator-Class&gt; {
 public @interface MasterBranch {
 
     /**
-     * マスタの入力ポート番号。
+     * The input port number for the <em>master</em> data.
      */
     int ID_INPUT_MASTER = 0;
 
     /**
-     * トランザクションの入力ポート番号。
+     * The input port number for the <em>transaction</em> data.
      */
     int ID_INPUT_TRANSACTION = 1;
 
     /**
-     * 利用するマスタ選択演算子のメソッド名。
+     * The selector method name.
+     * The target method must be declared in the same class.
      * @see MasterSelection
      */
     String selection() default MasterSelection.NO_SELECTION;

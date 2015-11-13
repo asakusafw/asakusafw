@@ -16,66 +16,65 @@
 package com.asakusafw.compiler.flow.visualizer;
 
 /**
- * {@link VisualNode}を渡り歩くビジタ。
- * <p>
- * この実装では、すべてのメソッドが何も行わずに{@code null}を返す。
- * </p>
- * @param <R> 戻り値の型
- * @param <C> コンテキストオブジェクトの型
- * @param <E> 例外の型
+ * A visitor for {@link VisualNode}.
+ * Methods in this implementation always returns {@code null}.
+ * @param <C> type of visitor context
+ * @param <R> type of visitor result
+ * @param <E> type of visitor exception
+ * @see VisualNode#accept(VisualNodeVisitor, Object)
  */
 public abstract class VisualNodeVisitor<R, C, E extends Throwable> {
 
     /**
-     * {@link VisualGraph#accept(VisualNodeVisitor, Object)}が呼び出された際にコールバックされる。
-     * @param node コールバック元のが呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link VisualGraph}.
+     * @param node the target node
+     * @param context the current context (nullable)
+     * @return the result of this invocation
+     * @throws E if error occurred while processing the target node
      */
     protected R visitGraph(C context, VisualGraph node) throws E {
         return null;
     }
 
     /**
-     * {@link VisualBlock#accept(VisualNodeVisitor, Object)}が呼び出された際にコールバックされる。
-     * @param node コールバック元のが呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link VisualBlock}.
+     * @param node the target node
+     * @param context the current context (nullable)
+     * @return the result of this invocation
+     * @throws E if error occurred while processing the target node
      */
     protected R visitBlock(C context, VisualBlock node) throws E {
         return null;
     }
 
     /**
-     * {@link VisualFlowPart#accept(VisualNodeVisitor, Object)}が呼び出された際にコールバックされる。
-     * @param node コールバック元のが呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link VisualFlowPart}.
+     * @param node the target node
+     * @param context the current context (nullable)
+     * @return the result of this invocation
+     * @throws E if error occurred while processing the target node
      */
     protected R visitFlowPart(C context, VisualFlowPart node) throws E {
         return null;
     }
 
     /**
-     * {@link VisualElement#accept(VisualNodeVisitor, Object)}が呼び出された際にコールバックされる。
-     * @param node コールバック元のが呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link VisualElement}.
+     * @param node the target node
+     * @param context the current context (nullable)
+     * @return the result of this invocation
+     * @throws E if error occurred while processing the target node
      */
     protected R visitElement(C context, VisualElement node) throws E {
         return null;
     }
 
     /**
-     * {@link VisualLabel#accept(VisualNodeVisitor, Object)}が呼び出された際にコールバックされる。
-     * @param node コールバック元のが呼び出されたオブジェクト。
-     * @param context コンテキストオブジェクト(省略可)
-     * @return このビジタの実行結果
-     * @throws E この処理中に例外が発生した場合
+     * Processes {@link VisualLabel}.
+     * @param node the target node
+     * @param context the current context (nullable)
+     * @return the result of this invocation
+     * @throws E if error occurred while processing the target node
      */
     protected R visitLabel(C context, VisualLabel node) throws E {
         return null;

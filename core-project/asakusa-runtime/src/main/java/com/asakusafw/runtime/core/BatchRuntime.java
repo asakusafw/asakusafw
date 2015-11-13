@@ -18,7 +18,7 @@ package com.asakusafw.runtime.core;
 import java.text.MessageFormat;
 
 /**
- * ランタイムのコアクラス。
+ * Provides runtime structural information.
  * @since 0.1.0
  * @version 0.4.1
  */
@@ -35,10 +35,10 @@ public final class BatchRuntime {
     public static final int VERSION_MINOR = 1;
 
     /**
-     * バージョンチェックを行い、互換性がなければ例外をスローする。
-     * @param major メジャーバージョン
-     * @param minor マイナーバージョン
-     * @throws IllegalStateException バージョンに互換性が無い場合
+     * Checks runtime version and raises an exception if the version is inconsistent.
+     * @param major the major version
+     * @param minor the minor version
+     * @throws IllegalStateException if versions are inconsistent
      */
     public static void require(int major, int minor) {
         if (major != VERSION_MAJOR || minor != VERSION_MINOR) {

@@ -17,7 +17,7 @@ package com.asakusafw.utils.java.model.syntax;
 
 
 /**
- * {@code break}文を表現するインターフェース。
+ * An interface which represents break statement.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:14.15] The break Statement} </li>

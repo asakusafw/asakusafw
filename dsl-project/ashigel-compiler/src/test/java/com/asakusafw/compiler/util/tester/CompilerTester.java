@@ -73,7 +73,7 @@ import com.asakusafw.vocabulary.flow.Out;
 import com.asakusafw.vocabulary.flow.graph.FlowGraph;
 
 /**
- * コンパイラのテストを行う。
+ * Testing utilities for compiler.
  * @since 0.1.0
  * @version 0.6.1
  */
@@ -228,11 +228,10 @@ public class CompilerTester implements TestRule {
     }
 
     /**
-     * 指定のフロー記述を元にプログラムを生成し、実行する。
-     * @param description 対象のフロー記述
-     * @return 実行に成功した場合のみ{@code true}
-     * @throws IOException コンパイルや実行に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Compiles the target flow description and executes it.
+     * @param description the target flow description
+     * @return {@code true} if compile and execution were successfully finished
+     * @throws IOException if compile or execution were failed
      */
     public boolean runFlow(FlowDescription description) throws IOException {
         if (description == null) {
@@ -242,10 +241,9 @@ public class CompilerTester implements TestRule {
     }
 
     /**
-     * 指定のフロー記述を解析してフローグラフの形式で返す。
-     * @param description 対象のフロー記述
-     * @return 解析結果のフローグラフ
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Analyzes the target flow description.
+     * @param description the target flow description
+     * @return the analyzed flow graph
      */
     public FlowGraph analyzeFlow(FlowDescription description) {
         if (description == null) {
@@ -255,11 +253,10 @@ public class CompilerTester implements TestRule {
     }
 
     /**
-     * 指定のフロー記述を元にプログラムを生成する。
-     * @param description 対象のフロー記述
-     * @return コンパイル結果
-     * @throws IOException コンパイルに失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Compiles the target flow description.
+     * @param description the target flow description
+     * @return the compilation results
+     * @throws IOException if compile was failed
      */
     public JobflowInfo compileFlow(FlowDescription description) throws IOException {
         if (description == null) {
@@ -280,11 +277,10 @@ public class CompilerTester implements TestRule {
     }
 
     /**
-     * 指定のジョブフロークラスを元にプログラムを生成する。
-     * @param description 対象のフロー記述
-     * @return コンパイル結果
-     * @throws IOException コンパイルに失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Compiles the target jobflow class.
+     * @param description the target flow description
+     * @return the compilation results
+     * @throws IOException if compile was failed
      */
     public JobflowInfo compileJobflow(Class<? extends FlowDescription> description) throws IOException {
         JobFlowDriver driver = JobFlowDriver.analyze(description);
@@ -304,11 +300,10 @@ public class CompilerTester implements TestRule {
     }
 
     /**
-     * 指定のジョブフロークラスを元にプログラムを生成し、実行する。
-     * @param description 対象のフロー記述
-     * @return 実行に成功した場合のみ{@code true}
-     * @throws IOException コンパイルや実行に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Compiles the target jobflow class and executes it.
+     * @param description the target flow description
+     * @return {@code true} if successfully executed, otherwise {@code false}
+     * @throws IOException if compile or execution were failed
      */
     public boolean runJobflow(Class<? extends FlowDescription> description) throws IOException {
         if (description == null) {
@@ -319,11 +314,10 @@ public class CompilerTester implements TestRule {
     }
 
     /**
-     * 指定のバッチ記述を元にプログラムを生成する。
-     * @param description 対象のバッチ記述
-     * @return 実行に成功した場合のみ{@code true}
-     * @throws IOException コンパイルに失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Compiles the target batch class.
+     * @param description the target batch description
+     * @return {@code true} if successfully executed, otherwise {@code false}
+     * @throws IOException if compile was failed
      */
     public BatchInfo compileBatch(Class<? extends BatchDescription> description) throws IOException {
         if (description == null) {
@@ -343,11 +337,10 @@ public class CompilerTester implements TestRule {
     }
 
     /**
-     * 指定のバッチクラスを元にプログラムを生成し、実行する。
-     * @param description 対象のバッチ記述
-     * @return 実行に成功した場合のみ{@code true}
-     * @throws IOException コンパイルや実行に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Compiles the target batch class and executes it.
+     * @param description the target batch description
+     * @return {@code true} if successfully executed, otherwise {@code false}
+     * @throws IOException if compile or execution were failed
      */
     public boolean runBatch(Class<? extends BatchDescription> description) throws IOException {
         if (description == null) {
@@ -357,11 +350,10 @@ public class CompilerTester implements TestRule {
     }
 
     /**
-     * 指定のバッチを実行する。
-     * @param info 対象のバッチ情報
-     * @return 実行に成功した場合のみ{@code true}
-     * @throws IOException 実行に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Executes the target batch.
+     * @param info the target batch information
+     * @return {@code true} if successfully executed, otherwise {@code false}
+     * @throws IOException if failed to execute
      */
     public boolean run(BatchInfo info) throws IOException {
         if (info == null) {
@@ -492,13 +484,12 @@ public class CompilerTester implements TestRule {
     }
 
     /**
-     * フローへの入力を構築するオブジェクトを返す。
-     * @param <T> 入力するデータの種類
-     * @param type 入力するデータの種類
-     * @param name 入力の名前
-     * @return 生成したオブジェクト
-     * @throws IOException 入力に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns a utility object for handling flow input.
+     * @param <T> the input data type
+     * @param type the input data type
+     * @param name the input name
+     * @return the created object
+     * @throws IOException if the operation was failed by I/O error
      */
     public <T extends Writable> TestInput<T> input(
             Class<T> type,
@@ -507,14 +498,13 @@ public class CompilerTester implements TestRule {
     }
 
     /**
-     * フローへの入力を構築するオブジェクトを返す。
-     * @param <T> 入力するデータの種類
-     * @param type 入力するデータの種類
-     * @param name 入力の名前
-     * @param dataSize 入力するデータに関するサイズのヒント
-     * @return 生成したオブジェクト
-     * @throws IOException 入力に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns a utility object for handling flow input.
+     * @param <T> the input data type
+     * @param type the input data type
+     * @param name the input name
+     * @param dataSize the data size hint
+     * @return the created object
+     * @throws IOException if the operation was failed by I/O error
      */
     public <T extends Writable> TestInput<T> input(
             Class<T> type,
@@ -525,12 +515,11 @@ public class CompilerTester implements TestRule {
     }
 
     /**
-     * フローへの入力を構築するオブジェクトを返す。
-     * @param <T> 入力するデータの種類
-     * @param importer 利用するインポーター
-     * @param name 入力の名前
-     * @return 生成したオブジェクト
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns a utility object for handling flow input.
+     * @param <T> the input data type
+     * @param importer the importer description
+     * @param name the input name
+     * @return the created object
      */
     public <T> In<T> input(
             String name,
@@ -545,12 +534,11 @@ public class CompilerTester implements TestRule {
     }
 
     /**
-     * フローへの入力を構築するオブジェクトを返す。
-     * @param <T> 入力するデータの種類
-     * @param exporter 利用するエクスポーター
-     * @param name 入力の名前
-     * @return 生成したオブジェクト
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns a utility object for handling flow input.
+     * @param <T> the input data type
+     * @param exporter the exporter description
+     * @param name the input name
+     * @return the created object
      */
     public <T> Out<T> output(
             String name,
@@ -565,13 +553,12 @@ public class CompilerTester implements TestRule {
     }
 
     /**
-     * フローからの出力を構築するオブジェクトを返す。
-     * @param <T> 出力するデータの種類
-     * @param type 出力するデータの種類
-     * @param name 出力の名前
-     * @return 生成したオブジェクト
-     * @throws IOException 出力に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns a utility object for handling flow output.
+     * @param <T> the output data type
+     * @param type the output data type
+     * @param name the output name
+     * @return the created object
+     * @throws IOException if error occurred while output
      */
     public <T extends Writable> TestOutput<T> output(
             Class<T> type,
@@ -581,13 +568,12 @@ public class CompilerTester implements TestRule {
     }
 
     /**
-     * 指定位置のファイルを開き、モデルオブジェクトの列をテンポラリファイルとして書き出す。
-     * @param <T> モデルオブジェクトの種類
-     * @param type モデルオブジェクトの種類
-     * @param location 対象の位置
-     * @return 出力用のオブジェクト
-     * @throws IOException 出力の作成に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a data model output for writing data into the target location.
+     * @param <T> the data model type
+     * @param type the data model type
+     * @param location the target location
+     * @return the data model output
+     * @throws IOException if error occurred while initializing output
      */
     public <T extends Writable> ModelOutput<T> openOutput(
             Class<T> type,
@@ -596,13 +582,12 @@ public class CompilerTester implements TestRule {
     }
 
     /**
-     * 対象のインポーターが書き出す先をテンポラリファイルとして書き出す。
-     * @param <T> モデルオブジェクトの種類
-     * @param type モデルオブジェクトの種類
-     * @param importer 対象のインポーター
-     * @return 出力用のオブジェクト
-     * @throws IOException 出力の作成に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a data model output for writing data into the target importer source.
+     * @param <T> the data model type
+     * @param type the data model type
+     * @param importer the target importer
+     * @return the data model output
+     * @throws IOException if error occurred while initializing output
      */
     public <T extends Writable> ModelOutput<T> openOutput(
             Class<T> type,
@@ -614,13 +599,12 @@ public class CompilerTester implements TestRule {
     }
 
     /**
-     * 指定位置のファイルを開き、テンポラリファイルをモデルオブジェクトの列として読みだす。
-     * @param <T> モデルオブジェクトの種類
-     * @param type モデルオブジェクトの種類
-     * @param location 対象の位置
-     * @return 入力用のオブジェクト
-     * @throws IOException 入力の取得に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a data model input for reading data on the target location.
+     * @param <T> the data model type
+     * @param type the data model type
+     * @param location the target location
+     * @return the data model input
+     * @throws IOException if the operation was failed by I/O error
      */
     public <T extends Writable> ModelInput<T> openInput(
             Class<T> type,
@@ -629,10 +613,10 @@ public class CompilerTester implements TestRule {
     }
 
     /**
-     * 指定の名前を持つインポーター記述を返す。
-     * @param info バッチの情報
-     * @param name 出力の名前
-     * @return インポーター記述
+     * Returns the importer description in the target batch.
+     * @param info the target batch
+     * @param name the output name
+     * @return the importer description
      */
     public Import getImporter(BatchInfo info, String name) {
         for (JobflowInfo jf : info.getJobflows()) {
@@ -646,11 +630,10 @@ public class CompilerTester implements TestRule {
     }
 
     /**
-     * 指定の名前を持つエクスポーター記述を返す。
-     * @param info バッチの情報
-     * @param name 出力の名前
-     * @return エクスポーター記述
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns the exporter description in the target batch.
+     * @param info the target batch
+     * @param name the output name
+     * @return the exporter description
      */
     public Export getExporter(BatchInfo info, String name) {
         for (JobflowInfo jf : info.getJobflows()) {
@@ -664,10 +647,10 @@ public class CompilerTester implements TestRule {
     }
 
     /**
-     * 指定の名前を持つインポーター記述を返す。
-     * @param info ジョブフローの情報
-     * @param name 出力の名前
-     * @return インポーター記述
+     * Returns the importer description in the target jobflow.
+     * @param info the compiled jobflow information
+     * @param name the output name
+     * @return the importer description
      */
     public Import getImporter(JobflowInfo info, String name) {
         for (Import in : info.getJobflow().getImports()) {
@@ -679,11 +662,10 @@ public class CompilerTester implements TestRule {
     }
 
     /**
-     * 指定の名前を持つエクスポーター記述を返す。
-     * @param info ジョブフローの情報
-     * @param name 出力の名前
-     * @return エクスポーター記述
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns the exporter description in the target jobflow.
+     * @param info the compiled jobflow information
+     * @param name the output name
+     * @return the exporter description
      */
     public Export getExporter(JobflowInfo info, String name) {
         for (Export out : info.getJobflow().getExports()) {
@@ -695,13 +677,12 @@ public class CompilerTester implements TestRule {
     }
 
     /**
-     * 指定位置のファイルを開き、テンポラリファイルをモデルオブジェクトの列として読みだす。
-     * @param <T> モデルオブジェクトの種類
-     * @param type モデルオブジェクトの種類
-     * @param location 対象の位置
-     * @return 入力用のオブジェクト
-     * @throws IOException 入力の取得に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Collects data model objects from the target file.
+     * @param <T> the data model type
+     * @param type the data model type
+     * @param location the target location
+     * @return the data model input
+     * @throws IOException if the operation was failed by I/O error
      */
     public <T extends Writable> List<T> getList(
             Class<T> type,
@@ -727,14 +708,13 @@ public class CompilerTester implements TestRule {
     }
 
     /**
-     * 指定位置のファイルを開き、テンポラリファイルをモデルオブジェクトの列として読みだす。
-     * @param <T> モデルオブジェクトの種類
-     * @param type モデルオブジェクトの種類
-     * @param location 対象の位置
-     * @param comparator 順序比較用のオブジェクト
-     * @return 入力用のオブジェクト
-     * @throws IOException 入力の取得に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Collects data model objects from the target file.
+     * @param <T> the data model type
+     * @param type the data model type
+     * @param location the target location
+     * @param comparator the data model comparator
+     * @return the data model input
+     * @throws IOException if the operation was failed by I/O error
      */
     public <T extends Writable> List<T> getList(
             Class<T> type,
@@ -754,8 +734,8 @@ public class CompilerTester implements TestRule {
     }
 
     /**
-     * フローへの入力を構築する。
-     * @param <T> 入力するデータの種類
+     * A testing utility for flow inputs.
+     * @param <T> the input data type
      */
     public class TestInput<T extends Writable> implements Closeable {
 
@@ -781,19 +761,18 @@ public class CompilerTester implements TestRule {
         }
 
         /**
-         * 指定のモデルを入力データとして追加する。
-         * @param model 追加するモデルオブジェクト
-         * @throws IOException 追加に失敗した場合
+         * Adds an input data.
+         * @param model the data model object
+         * @throws IOException if the operation was failed by I/O error
          */
         public void add(T model) throws IOException {
             output.write(model);
         }
 
         /**
-         * この入力への編集を終了して、フローへの入力オブジェクトを生成する。
-         * @return フローへの入力オブジェクト
-         * @throws IOException 終了処理に失敗した場合
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Deploys previously added input data and returns a flow in object to read them.
+         * @return the flow in object
+         * @throws IOException if the operation was failed by I/O error
          */
         public In<T> flow() throws IOException {
             close();
@@ -809,8 +788,8 @@ public class CompilerTester implements TestRule {
     }
 
     /**
-     * フローからの出力を構築する。
-     * @param <T> 出力するデータの種類
+     * A testing utility for flow outputs.
+     * @param <T> the output data type
      */
     public class TestOutput<T extends Writable> {
 
@@ -830,10 +809,9 @@ public class CompilerTester implements TestRule {
         }
 
         /**
-         * フローへの出力オブジェクトを生成する。
-         * @return フローへの入力オブジェクト
-         * @throws IOException 終了処理に失敗した場合
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Creates a new flow out.
+         * @return the flow out
+         * @throws IOException if the operation was failed by I/O error
          */
         public Out<T> flow() throws IOException {
             return flow.createOut(name, new DirectExporterDescription(
@@ -842,10 +820,9 @@ public class CompilerTester implements TestRule {
         }
 
         /**
-         * 出力されたデータをリストに詰めて返す。
-         * @return 出力されたデータの一覧
-         * @throws IOException 出力されたデータの取得に失敗した場合
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Returns the output data list.
+         * @return the output data list
+         * @throws IOException if the operation was failed by I/O error
          */
         public List<T> toList() throws IOException {
             ModelInput<T> input = hadoopDriver.openInput(type, pathPrefix);
@@ -869,11 +846,10 @@ public class CompilerTester implements TestRule {
         }
 
         /**
-         * 出力されたデータをリストに詰めて返す。
-         * @param cmp データの順序
-         * @return 出力されたデータの一覧
-         * @throws IOException 出力されたデータの取得に失敗した場合
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Returns the output data list.
+         * @param cmp the comparator
+         * @return the output data list
+         * @throws IOException if the operation was failed by I/O error
          */
         public List<T> toList(Comparator<? super T> cmp) throws IOException {
             List<T> results = toList();

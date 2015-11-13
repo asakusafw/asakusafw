@@ -28,8 +28,8 @@ import com.asakusafw.runtime.value.IntOption;
 public class LookUpKeyTest {
 
     /**
-     * {@link LookUpKey#add(org.apache.hadoop.io.Writable)}のテスト。
-     * @throws Exception テストに失敗した場合
+     * test for {@link LookUpKey#add(org.apache.hadoop.io.Writable)}.
+     * @throws Exception if failed
      */
     @Test
     public void add() throws Exception {
@@ -54,8 +54,8 @@ public class LookUpKeyTest {
     }
 
     /**
-     * {@link LookUpKey#copy()}のテスト。
-     * @throws Exception テストに失敗した場合
+     * test for {@link LookUpKey#copy()}.
+     * @throws Exception if failed
      */
     @Test
     public void copy() throws Exception {
@@ -75,8 +75,8 @@ public class LookUpKeyTest {
     }
 
     /**
-     * {@link LookUpKey#reset()}のテスト。
-     * @throws Exception テストに失敗した場合
+     * test for {@link LookUpKey#reset()}.
+     * @throws Exception if failed
      */
     @Test
     public void reset() throws Exception {

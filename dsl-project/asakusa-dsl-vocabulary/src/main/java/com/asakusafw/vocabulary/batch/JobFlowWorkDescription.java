@@ -21,18 +21,18 @@ import com.asakusafw.vocabulary.flow.FlowDescription;
 import com.asakusafw.vocabulary.flow.JobFlow;
 
 /**
- * ジョブフローを実行する記述。
+ * A description of jobflow in batch.
  */
 public class JobFlowWorkDescription extends WorkDescription {
 
-    private String name;
+    private final String name;
 
-    private Class<? extends FlowDescription> flowClass;
+    private final Class<? extends FlowDescription> flowClass;
 
     /**
-     * インスタンスを生成する。
-     * @param flowClass ジョブフローの内容を記述したクラス
-     * @throws IllegalArgumentException 引数がジョブフローの内容を記述したクラスでない場合
+     * Creates a new instance.
+     * @param flowClass the jobflow class
+     * @throws IllegalArgumentException if the {@code jobflowClass} does not represent a jobflow
      */
     public JobFlowWorkDescription(Class<? extends FlowDescription> flowClass) {
         if (flowClass == null) {
@@ -40,14 +40,14 @@ public class JobFlowWorkDescription extends WorkDescription {
         }
         if (FlowDescription.isJobFlow(flowClass) == false) {
             throw new IllegalArgumentException(MessageFormat.format(
-                    "{0}はジョブフローではありません (@{1}をクラスに付与して下さい)",
+                    Messages.getString("JobFlowWorkDescription.errorMissingAnnotation"), //$NON-NLS-1$
                     flowClass.getName(),
                     JobFlow.class.getSimpleName()));
         }
         this.name = FlowDescription.getJobFlowName(flowClass);
         if (isValidName(name) == false) {
             throw new IllegalArgumentException(MessageFormat.format(
-                    "{0}はジョブフローの名前として正しくありません ({0})",
+                    Messages.getString("JobFlowWorkDescription.errorInvalidId"), //$NON-NLS-1$
                     name,
                     flowClass.getName()));
         }
@@ -60,8 +60,8 @@ public class JobFlowWorkDescription extends WorkDescription {
     }
 
     /**
-     * ジョブフローの内容を記述したクラスを返す。
-     * @return ジョブフローの内容を記述したクラス
+     * Returns the jobflow class.
+     * @return the jobflow class
      */
     public Class<? extends FlowDescription> getFlowClass() {
         return flowClass;

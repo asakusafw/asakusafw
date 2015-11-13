@@ -40,7 +40,7 @@ import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.vocabulary.operator.OperatorHelper;
 
 /**
- * 演算子クラスを集計する。
+ * Collects operator classes.
  * @since 0.1.0
  * @version 0.7.0
  */
@@ -55,14 +55,12 @@ public class OperatorClassCollector {
     private boolean sawError;
 
     /**
-     * インスタンスを生成する。
-     * @param environment 環境オブジェクト
-     * @param round ラウンドオブジェクト
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Creates a new instance.
+     * @param environment the current environment
+     * @param round the round environment
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
-    public OperatorClassCollector(
-            OperatorCompilingEnvironment environment,
-            RoundEnvironment round) {
+    public OperatorClassCollector(OperatorCompilingEnvironment environment, RoundEnvironment round) {
         Precondition.checkMustNotBeNull(environment, "environment"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(round, "round"); //$NON-NLS-1$
         this.environment = environment;
@@ -71,9 +69,9 @@ public class OperatorClassCollector {
     }
 
     /**
-     * コンパイラが利用する演算子プロセッサを追加する。
-     * @param processor 追加する演算子プロセッサ
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Adds an operator processor for detecting operator methods.
+     * @param processor the operator processor
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public void add(OperatorProcessor processor) {
         Precondition.checkMustNotBeNull(processor, "processor"); //$NON-NLS-1$
@@ -91,7 +89,8 @@ public class OperatorClassCollector {
             }
             AnnotationMirror annotationMirror = findAnnotation(annotationType, method);
             if (annotationMirror == null) {
-                raiseInvalid(element, "演算子{0}の注釈を正しく解析できませんでした");
+                raiseInvalid(element,
+                        Messages.getString("OperatorClassCollector.errorMissingAnnotation")); //$NON-NLS-1$
                 continue;
             }
             registerMethod(annotationMirror, processor, method);
@@ -120,7 +119,7 @@ public class OperatorClassCollector {
     private ExecutableElement toOperatorMethodElement(Element element) {
         assert element != null;
         if (element.getKind() != ElementKind.METHOD) {
-            raiseInvalid(element, "演算子{0}はメソッドとして宣言する必要があります");
+            raiseInvalid(element, Messages.getString("OperatorClassCollector.errorNotMethod")); //$NON-NLS-1$
             return null;
         }
         ExecutableElement method = (ExecutableElement) element;
@@ -132,13 +131,13 @@ public class OperatorClassCollector {
     private void validateMethodModifiers(ExecutableElement method) {
         assert method != null;
         if (method.getModifiers().contains(Modifier.PUBLIC) == false) {
-            raiseInvalid(method, "演算子メソッド{0}はpublicとして宣言する必要があります");
+            raiseInvalid(method, Messages.getString("OperatorClassCollector.errorNotPublicMethod")); //$NON-NLS-1$
         }
         if (method.getModifiers().contains(Modifier.STATIC)) {
-            raiseInvalid(method, "演算子メソッド{0}はstaticとして宣言してはいけません");
+            raiseInvalid(method, Messages.getString("OperatorClassCollector.errorStaticMethod")); //$NON-NLS-1$
         }
         if (method.getThrownTypes().isEmpty() == false) {
-            raiseInvalid(method, "演算子メソッド{0}には例外型を指定できません");
+            raiseInvalid(method, Messages.getString("OperatorClassCollector.errorThrowsMethod")); //$NON-NLS-1$
         }
     }
 
@@ -154,14 +153,14 @@ public class OperatorClassCollector {
     }
 
     /**
-     * ここまでに {@link #add(OperatorProcessor)} に指定された演算子プロセッサを元に
-     * 構築した演算子クラスの一覧を返す。
-     * @return 構築した演算子クラスの一覧
-     * @throws OperatorCompilerException 構築に失敗した場合
+     * Analyzes and returns the previously added operator classes.
+     * @return the analyzed operator classes
+     * @throws OperatorCompilerException if exception was occurred while analyzing operator classes
      */
     public List<OperatorClass> collect() {
         if (sawError) {
-            throw new OperatorCompilerException(null, "演算子メソッドの分析に失敗したため、処理を中止します");
+            throw new OperatorCompilerException(null,
+                    Messages.getString("OperatorClassCollector.errorFailedToAnalyzeMethod")); //$NON-NLS-1$
         }
         Map<TypeElement, List<TargetMethod>> mapping = Maps.create();
         for (TargetMethod target : targetMethods) {
@@ -175,7 +174,8 @@ public class OperatorClassCollector {
         }
 
         if (sawError) {
-            throw new OperatorCompilerException(null, "演算子クラスの分析に失敗したため、処理を中止します");
+            throw new OperatorCompilerException(null,
+                    Messages.getString("OperatorClassCollector.errorFailedToAnalyzeClass")); //$NON-NLS-1$
         }
         return results;
     }
@@ -200,19 +200,24 @@ public class OperatorClassCollector {
     private void validateClassModifiers(TypeElement type) {
         assert type != null;
         if (type.getKind() != ElementKind.CLASS) {
-            raiseInvalidClass(type, "演算子クラス{0}はクラスとして宣言する必要があります");
+            raiseInvalidClass(type,
+                    Messages.getString("OperatorClassCollector.errorNotClass")); //$NON-NLS-1$
         }
         if (type.getEnclosingElement().getKind() != ElementKind.PACKAGE) {
-            raiseInvalidClass(type, "演算子クラス{0}はパッケージ直下のトップレベルクラスとして宣言する必要があります");
+            raiseInvalidClass(type,
+                    Messages.getString("OperatorClassCollector.errorEnclosedClass")); //$NON-NLS-1$
         }
         if (type.getTypeParameters().isEmpty() == false) {
-            raiseInvalidClass(type, "演算子クラス{0}には型引数を指定できません");
+            raiseInvalidClass(type,
+                    Messages.getString("OperatorClassCollector.errorTypeParameterClass")); //$NON-NLS-1$
         }
         if (type.getModifiers().contains(Modifier.PUBLIC) == false) {
-            raiseInvalidClass(type, "演算子クラス{0}はpublicとして宣言する必要があります");
+            raiseInvalidClass(type,
+                    Messages.getString("OperatorClassCollector.errorNotPublicClass")); //$NON-NLS-1$
         }
         if (type.getModifiers().contains(Modifier.ABSTRACT) == false) {
-            raiseInvalidClass(type, "演算子クラス{0}はabstractとして宣言する必要があります");
+            raiseInvalidClass(type,
+                    Messages.getString("OperatorClassCollector.errorNotAbstractClass")); //$NON-NLS-1$
         }
     }
 
@@ -229,7 +234,8 @@ public class OperatorClassCollector {
                 return;
             }
         }
-        raiseInvalidClass(type, "演算子クラス{0}には引数、型引数、例外宣言がないpublicなコンストラクタを宣言する必要があります");
+        raiseInvalidClass(type,
+                Messages.getString("OperatorClassCollector.errorMissingDefaultConstructor")); //$NON-NLS-1$
     }
 
     private void validateMemberNames(TypeElement type) {
@@ -246,7 +252,8 @@ public class OperatorClassCollector {
             }
             String id = member.getSimpleName().toString().toUpperCase();
             if (saw.containsKey(id)) {
-                raiseInvalid(member, "{0}は演算子クラス内のほかの演算子メソッドと異なる名前を指定してください(名前判定は大文字、小文字を無視します)");
+                raiseInvalid(member,
+                        Messages.getString("OperatorClassCollector.errorConflictMethodName")); //$NON-NLS-1$
             } else {
                 saw.put(id, member);
             }
@@ -264,7 +271,8 @@ public class OperatorClassCollector {
         for (TargetMethod target : targets) {
             ExecutableElement method = target.method;
             if (saw.contains(method)) {
-                raiseInvalid(method, "演算子メソッド{0}には複数の演算子注釈が付与されています");
+                raiseInvalid(method,
+                        Messages.getString("OperatorClassCollector.errorConflictOperatorAnnotation")); //$NON-NLS-1$
             } else {
                 saw.add(method);
                 boolean removed = methods.remove(method);
@@ -275,9 +283,11 @@ public class OperatorClassCollector {
             boolean helper = isOperatorHelper(method);
             boolean open = method.getModifiers().contains(Modifier.PUBLIC);
             if (helper && open == false) {
-                raiseInvalid(method, "演算子補助注釈の付いたメソッドはpublicである必要があります");
+                raiseInvalid(method,
+                        Messages.getString("OperatorClassCollector.errorNotPublicHelperMethod")); //$NON-NLS-1$
             } else if (helper == false && open) {
-                raiseInvalid(method, "演算子クラスには演算子メソッド以外のpublicメソッドを宣言できません");
+                raiseInvalid(method,
+                        Messages.getString("OperatorClassCollector.errorPublicOtherMethod")); //$NON-NLS-1$
             }
         }
     }

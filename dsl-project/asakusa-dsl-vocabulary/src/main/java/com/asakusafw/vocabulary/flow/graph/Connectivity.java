@@ -16,24 +16,24 @@
 package com.asakusafw.vocabulary.flow.graph;
 
 /**
- * 要素の出力の結線に関する制約。
+ * Represents a kind of connectivity.
  */
 public enum Connectivity implements FlowElementAttribute {
 
     /**
-     * 結線されていなくてもよい。
+     * The port may or may not be connected.
      */
     OPTIONAL,
 
     /**
-     * 結線されていなければならない。
+     * The port must be connected.
      */
     MANDATORY,
-
     ;
+
     /**
-     * 規定の制約を返す。
-     * @return 規定の制約
+     * Returns the default connectivity.
+     * @return the default connectivity.
      */
     public static Connectivity getDefault() {
         return MANDATORY;

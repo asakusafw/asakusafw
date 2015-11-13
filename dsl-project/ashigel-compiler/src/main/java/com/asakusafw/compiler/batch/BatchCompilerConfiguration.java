@@ -28,7 +28,7 @@ import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
 
 /**
- * 個々のジョブフローをコンパイルするコンパイラの設定。
+ * Represents compiler settings for compiling individual jobflows.
  */
 public class BatchCompilerConfiguration {
 
@@ -61,225 +61,224 @@ public class BatchCompilerConfiguration {
     private FlowCompilerOptions flowCompilerOptions;
 
     /**
-     * コンパイラが利用するJava DOMのファクトリーを返す。
-     * @return Java DOMのファクトリー
+     * Returns the Java DOM factory for generating Java sources.
+     * @return Java DOM factory
      */
     public ModelFactory getFactory() {
         return factory;
     }
 
     /**
-     * コンパイラが利用するJava DOMのファクトリーを設定する。
-     * @param factory 設定するファクトリー
+     * Sets the Java DOM factory for generating Java sources.
+     * @param factory the Java DOM factory
      */
     public void setFactory(ModelFactory factory) {
         this.factory = factory;
     }
 
     /**
-     * ワークフロー全体を処理するプロセッサーのリポジトリーを返す。
-     * @return ワークフロー全体を処理するプロセッサーのリポジトリー
+     * Returns the repository of the workflow processors.
+     * @return the repository of the workflow processors
      */
     public WorkflowProcessor.Repository getWorkflows() {
         return workflows;
     }
 
     /**
-     * ワークフロー全体を処理するプロセッサーのリポジトリーを設定する。
-     * @param workflows 設定するリポジトリー
+     * Sets the repository of the workflow processors.
+     * @param workflows the repository
      */
     public void setWorkflows(Repository workflows) {
         this.workflows = workflows;
     }
 
     /**
-     * フロー要素を処理するプロセッサーのリポジトリーを返す。
-     * @return フロー要素を処理するプロセッサーのリポジトリー
+     * Returns the repository of the flow element processors.
+     * @return the repository of the flow element processors
      */
     public FlowElementProcessor.Repository getFlowElements() {
         return flowElements;
     }
 
     /**
-     * フロー要素を処理するプロセッサーのリポジトリーを設定する。
-     * @param flowElements 設定するリポジトリー
+     * Sets the repository of the flow element processors.
+     * @param flowElements the repository
      */
     public void setFlowElements(FlowElementProcessor.Repository flowElements) {
         this.flowElements = flowElements;
     }
 
     /**
-     * データモデルを操作するオブジェクトのリポジトリーを返す。
-     * @return データモデルを操作するオブジェクトのリポジトリー
+     * Returns the repository of the data model classes.
+     * @return the repository of the data model classes
      */
     public DataClassRepository getDataClasses() {
         return dataClasses;
     }
 
     /**
-     * データモデルを操作するオブジェクトのリポジトリーを設定する。
-     * @param dataClasses 設定するリポジトリー
+     * Sets the repository of the data model classes.
+     * @param dataClasses the repository
      */
     public void setDataClasses(DataClassRepository dataClasses) {
         this.dataClasses = dataClasses;
     }
 
     /**
-     * 外部入出力の記述を処理するプロセッサーのリポジトリーを返す。
-     * @return 外部入出力の記述を処理するプロセッサーのリポジトリー
+     * Returns the repository of external I/O processors.
+     * @return the repository of external I/O processors
      */
     public ExternalIoDescriptionProcessor.Repository getExternals() {
         return externals;
     }
 
     /**
-     * 外部入出力の記述を処理するプロセッサーのリポジトリーを返す。
-     * @param externals 設定するリポジトリー
+     * Sets the repository of external I/O processors.
+     * @param externals the repository
      */
     public void setExternals(ExternalIoDescriptionProcessor.Repository externals) {
         this.externals = externals;
     }
 
     /**
-     * 演算子グラフを書き換えるエンジンのリポジトリーを返す。
-     * @return 演算子グラフを書き換えるエンジンのリポジトリー
+     * Returns the repository of the flow graph rewriters.
+     * @return the repository of the flow graph rewriter
      */
     public FlowGraphRewriter.Repository getGraphRewriters() {
         return graphRewriters;
     }
 
     /**
-     * 演算子グラフを書き換えるエンジンのリポジトリーを設定する。
-     * @param graphRewriters 設定するリポジトリー
+     * Sets the repository of the flow graph rewriters.
+     * @param graphRewriters the repository
      */
     public void setGraphRewriters(FlowGraphRewriter.Repository graphRewriters) {
         this.graphRewriters = graphRewriters;
     }
 
     /**
-     * コンパイラーが対象とするバッチの識別子を返す。
-     * @return コンパイラーが対象とするバッチの識別子
+     * Returns the target batch ID.
+     * @return the target batch ID
      */
     public String getBatchId() {
         return batchId;
     }
 
     /**
-     * コンパイラーが対象とするバッチの識別子を設定する。
-     * @param batchId 設定する識別子
+     * Sets the target batch ID.
+     * @param batchId the batch ID
      */
     public void setBatchId(String batchId) {
         this.batchId = batchId;
     }
 
     /**
-     * コンパイラーが生成するクラスの基底となるパッケージ名を返す。
-     * @return コンパイラーが生成するクラスの基底となるパッケージ名
+     * Returns the root package name of the generated Java sources.
+     * @return the root package name
      */
     public String getRootPackageName() {
         return rootPackageName;
     }
 
     /**
-     * コンパイラーが生成するクラスの基底となるパッケージ名を設定する。
-     * @param rootPackageName 設定するパッケージ名
+     * Sets the root package name of the generated Java sources.
+     * @param rootPackageName the root package name
      */
     public void setRootPackageName(String rootPackageName) {
         this.rootPackageName = rootPackageName;
     }
 
     /**
-     * ジョブフローが利用するファイルシステム上のルート位置を返す。
-     * @return ジョブフローが利用するファイルシステム上のルート位置
+     * Returns the base location of the remote file system for runtime working area.
+     * @return the base location of the remote file system
      */
     public Location getRootLocation() {
         return rootLocation;
     }
 
     /**
-     * ジョブフローが利用するファイルシステム上のルート位置を設定する。
-     * @param rootLocation 設定するルート位置
+     * Sets the base location of the remote file system for runtime working area.
+     * @param rootLocation the base location of the remote file system
      */
     public void setRootLocation(Location rootLocation) {
         this.rootLocation = rootLocation;
     }
 
     /**
-     * コンパイラのワーキングディレクトリを返す。
-     * @return コンパイラのワーキングディレクトリ
+     * Returns the compiler working directory.
+     * @return the compiler working directory
      */
     public File getWorkingDirectory() {
         return workingDirectory;
     }
 
     /**
-     * コンパイラのワーキングディレクトリを設定する。
-     * @param workingDirectory コンパイラのワーキングディレクトリ
+     * Sets the compiler working directory.
+     * @param workingDirectory the compiler working directory
      */
     public void setWorkingDirectory(File workingDirectory) {
         this.workingDirectory = workingDirectory;
     }
 
     /**
-     * それぞれのジョブフローのコンパイル結果に含めるリソースの一覧を返す。
-     * @return それぞれのジョブフローのコンパイル結果に含めるリソースの一覧
+     * Returns the resource repositories for embedding into the jobflow packages.
+     * @return the resource repositories
      */
     public List<? extends ResourceRepository> getLinkingResources() {
         return linkingResources;
     }
 
     /**
-     * それぞれのジョブフローのコンパイル結果に含めるリソースの一覧を設定する。
-     * @param linkingResources 設定するリソースの一覧
+     * Sets the resource repositories for embedding into the jobflow packages.
+     * @param linkingResources the resource repositories
      */
-    public void setLinkingResources(
-            List<? extends ResourceRepository> linkingResources) {
+    public void setLinkingResources(List<? extends ResourceRepository> linkingResources) {
         this.linkingResources = linkingResources;
     }
 
     /**
-     * コンパイル結果の出力先ディレクトリを返す。
-     * @return コンパイル結果の出力先ディレクトリ
+     * Returns the output directory.
+     * @return the output directory
      */
     public File getOutputDirectory() {
         return outputDirectory;
     }
 
     /**
-     * コンパイル結果の出力先ディレクトリを設定する。
-     * @param outputDirectory コンパイル結果の出力先ディレクトリ
+     * Sets the output directory.
+     * @param outputDirectory the output directory
      */
     public void setOutputDirectory(File outputDirectory) {
         this.outputDirectory = outputDirectory;
     }
 
     /**
-     * サービスをロードするためのクラスローダを返す。
-     * @return サービスをロードするためのクラスローダ
+     * Returns the class loader for loading compiler service classes.
+     * @return the class loader
      */
     public ClassLoader getServiceClassLoader() {
         return serviceClassLoader;
     }
 
     /**
-     * サービスをロードするためのクラスローダを設定する。
-     * @param serviceClassLoader 設定するクラスローダ
+     * Sets the class loader for loading compiler service classes.
+     * @param serviceClassLoader the class loader
      */
     public void setServiceClassLoader(ClassLoader serviceClassLoader) {
         this.serviceClassLoader = serviceClassLoader;
     }
 
     /**
-     * フローDSLコンパイラのオプション設定情報を返す。
-     * @return フローDSLコンパイラのオプション設定情報
+     * Returns the flow DSL compiler options.
+     * @return the flow DSL compiler options
      */
     public FlowCompilerOptions getFlowCompilerOptions() {
         return flowCompilerOptions;
     }
 
     /**
-     * フローDSLコンパイラのオプション設定情報を設定する。
-     * @param flowCompilerOptions 設定するオプションの一覧
+     * Sets the flow DSL compiler options.
+     * @param flowCompilerOptions the flow DSL compiler options
      */
     public void setFlowCompilerOptions(FlowCompilerOptions flowCompilerOptions) {
         this.flowCompilerOptions = flowCompilerOptions;

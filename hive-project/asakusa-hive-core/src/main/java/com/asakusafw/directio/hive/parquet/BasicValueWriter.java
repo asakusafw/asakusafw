@@ -133,7 +133,7 @@ public enum BasicValueWriter implements ValueWriter {
             int days = TemporalUtil.getDaysSinceEpoch(option.get());
             if (days < 0) {
                 throw new IllegalStateException(MessageFormat.format(
-                        "failed to write date: {0} (must be after {1})",
+                        Messages.getString("BasicValueWriter.errorBeforeEpoch"), //$NON-NLS-1$
                         option,
                         new Date(TemporalUtil.DATE_EPOCH_OFFSET)));
             }

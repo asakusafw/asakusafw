@@ -31,64 +31,68 @@ import com.asakusafw.vocabulary.flow.graph.FlowElementResolver;
 import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 
 /**
- * 標準的な演算子オブジェクトを生成するファクトリ。
+ * Provides factory methods for core operators.
  * @since 0.1.0
  * @version 0.7.3
  */
 public class CoreOperatorFactory {
 
     /**
-     * 空演算子の共通インスタンス名。
+     * The common instance name of <em>empty operator</em>.
      */
     public static final String EMPTY_NAME = "empty"; //$NON-NLS-1$
 
     /**
-     * 停止演算子の共通インスタンス名。
+     * The common instance name of <em>stop operator</em>.
      */
     public static final String STOP_NAME = "stop"; //$NON-NLS-1$
 
     /**
-     * 合流演算子の共通インスタンス名。
+     * The common instance name of <em>confluent operator</em>.
      */
     public static final String CONFLUENT_NAME = "confluent"; //$NON-NLS-1$
 
     /**
-     * チェックポイント演算子の共通インスタンス名。
+     * The common instance name of <em>checkpoint operator</em>.
      */
     public static final String CHECKPOINT_NAME = "checkpoint"; //$NON-NLS-1$
 
     /**
-     * 射影演算子の共通インスタンス名。
+     * The common instance name of <em>project operator</em>.
      */
     public static final String PROJECT_NAME = "project"; //$NON-NLS-1$
 
     /**
-     * 拡張演算子の共通インスタンス名。
+     * The common instance name of <em>extend operator</em>.
      */
     public static final String EXTEND_NAME = "extend"; //$NON-NLS-1$
 
     /**
-     * 再構築演算子の共通インスタンス名。
+     * The common instance name of <em>restructure operator</em>.
      */
     public static final String RESTRUCTURE_NAME = "restructure"; //$NON-NLS-1$
 
     /**
-     * 出力先に何もデータを流さない疑似演算子。入力のダミーとして振る舞う。
-     * @param <T> 取り扱うデータの種類
-     * @param type 取り扱うデータの種類
-     * @return 空(から)演算子
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns a new <em>empty operator</em> instance.
+     * The resulting operator acts like a dummy input which provides an empty data-sets.
+     * @param <T> the data model type
+     * @param type the data model type
+     * @return a new instance of <em>empty operator</em>
+     * @throws IllegalArgumentException if the parameter is {@code null}
+     * @see com.asakusafw.vocabulary.operator.Empty
      */
     public <T> Empty<T> empty(Class<T> type) {
         return empty((Type) type);
     }
 
     /**
-     * 出力先に何もデータを流さない疑似演算子。入力のダミーとして振る舞う。
-     * @param <T> 取り扱うデータの種類
-     * @param type 取り扱うデータの種類
-     * @return 空(から)演算子
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns a new <em>empty operator</em> instance.
+     * The resulting operator acts like a dummy input which provides an empty data-sets.
+     * @param <T> the data model type
+     * @param type the data model type
+     * @return a new instance of <em>empty operator</em>
+     * @throws IllegalArgumentException if the parameter is {@code null}
+     * @see com.asakusafw.vocabulary.operator.Empty
      */
     public <T> Empty<T> empty(Type type) {
         if (type == null) {
@@ -98,11 +102,9 @@ public class CoreOperatorFactory {
     }
 
     /**
-     * 空演算子の断片を生成する。
-     * <p>
-     * この演算子の断片は、対象の演算子が取り扱うデータの型を指定することで、演算子として利用できるようになる。
-     * </p>
-     * @return 空(から)演算子の断片
+     * Returns a new fragment which will be provide an <em>empty operator</em>.
+     * The resulting object will require the target (downstream) data model type.
+     * @return a new fragment of <em>empty operator</em>
      * @since 0.7.3
      * @see #empty(Class)
      */
@@ -111,9 +113,13 @@ public class CoreOperatorFactory {
     }
 
     /**
-     * 入力に対して何も行わない疑似演算子。出力のダミーとして振る舞う。
-     * @param in 入力
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Terminates the upstream source.
+     * Generally, each operator output must be connected to at least one operator inputs (or flow outputs) for
+     * terminating data flow. This method internally connects the upstream source to a <em>stop</em> operator input.
+     * It operator will do nothing for any inputs and just drops them.
+     * @param in the upstream source
+     * @throws IllegalArgumentException if the parameter is {@code null}
+     * @see com.asakusafw.vocabulary.operator.Stop
      */
     public void stop(Source<?> in) {
         if (in == null) {
@@ -130,12 +136,14 @@ public class CoreOperatorFactory {
     }
 
     /**
-     * 複数の入力をまとめ、それらの流れるすべてのデータを単一の出力に流す。
-     * @param <T> 取り扱うデータの種類
-     * @param a 入力1
-     * @param b 入力2
-     * @return 合流演算子
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns a new <em>confluent operator</em> instance.
+     * The resulting operator puts the data from each upstream source together and provides them as the output.
+     * @param <T> the data model type
+     * @param a the upstream source (1)
+     * @param b the upstream source (2)
+     * @return a new instance of <em>confluent operator</em>
+     * @throws IllegalArgumentException if the parameters are {@code null}
+     * @see com.asakusafw.vocabulary.operator.Confluent
      */
     public <T> Confluent<T> confluent(Source<T> a, Source<T> b) {
         if (a == null) {
@@ -152,13 +160,15 @@ public class CoreOperatorFactory {
     }
 
     /**
-     * 複数の入力をまとめ、それらの流れるすべてのデータを単一の出力に流す。
-     * @param <T> 取り扱うデータの種類
-     * @param a 入力1
-     * @param b 入力2
-     * @param c 入力3
-     * @return 合流演算子
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns a new <em>confluent operator</em> instance.
+     * The resulting operator puts the data from each upstream source together and provides them as the output.
+     * @param <T> the data model type
+     * @param a the upstream source (1)
+     * @param b the upstream source (2)
+     * @param c the upstream source (3)
+     * @return a new instance of <em>confluent operator</em>
+     * @throws IllegalArgumentException if the parameters are {@code null}
+     * @see com.asakusafw.vocabulary.operator.Confluent
      */
     public <T> Confluent<T> confluent(Source<T> a, Source<T> b, Source<T> c) {
         if (a == null) {
@@ -179,20 +189,18 @@ public class CoreOperatorFactory {
     }
 
     /**
-     * 複数の入力をまとめ、それらの流れるすべてのデータを単一の出力に流す。
-     * @param <T> 取り扱うデータの種類
-     * @param a 入力1
-     * @param b 入力2
-     * @param c 入力3
-     * @param d 入力4
-     * @return 合流演算子
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns a new <em>confluent operator</em> instance.
+     * The resulting operator puts the data from each upstream source together and provides them as the output.
+     * @param <T> the data model type
+     * @param a the upstream source (1)
+     * @param b the upstream source (2)
+     * @param c the upstream source (3)
+     * @param d the upstream source (4)
+     * @return a new instance of <em>confluent operator</em>
+     * @throws IllegalArgumentException if the parameters are {@code null}
+     * @see com.asakusafw.vocabulary.operator.Confluent
      */
-    public <T> Confluent<T> confluent(
-            Source<T> a,
-            Source<T> b,
-            Source<T> c,
-            Source<T> d) {
+    public <T> Confluent<T> confluent(Source<T> a, Source<T> b, Source<T> c, Source<T> d) {
         if (a == null) {
             throw new IllegalArgumentException("a must not be null"); //$NON-NLS-1$
         }
@@ -216,11 +224,13 @@ public class CoreOperatorFactory {
     }
 
     /**
-     * 複数の入力をまとめ、それらの流れるすべてのデータを単一の出力に流す。
-     * @param <T> 取り扱うデータの種類
-     * @param inputs 入力の一覧
-     * @return 合流演算子
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns a new <em>confluent operator</em> instance.
+     * The resulting operator puts the data from each upstream source together and provides them as the output.
+     * @param <T> the data model type
+     * @param inputs the upstream sources
+     * @return a new instance of <em>confluent operator</em>
+     * @throws IllegalArgumentException if the parameter is {@code null}
+     * @see com.asakusafw.vocabulary.operator.Confluent
      */
     public <T> Confluent<T> confluent(Iterable<? extends Source<T>> inputs) {
         if (inputs == null) {
@@ -241,12 +251,15 @@ public class CoreOperatorFactory {
     }
 
     /**
-     * 入力されたデータをそのまま出力するが、その際にデータを永続化し、
-     * 以降に失敗した場合に永続化したデータを利用して再試行できるようにする。
-     * @param <T> 取り扱うデータの種類
-     * @param in 永続化対象の入力
-     * @return チェックポイント演算子
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns a new <em>checkpoint operator</em>.
+     * The resulting operator will provide a restarting point for the (partial) failure.
+     * Note that, this will acts as an <em>identity operator</em> in some implementations, because the checkpoint is an
+     * optional operation.
+     * @param <T> the data model type
+     * @param in the upstream source
+     * @return a new instance of <em>checkpoint operator</em>
+     * @throws IllegalArgumentException if the parameter is {@code null}
+     * @see com.asakusafw.vocabulary.operator.Checkpoint
      */
     public <T> Checkpoint<T> checkpoint(Source<T> in) {
         if (in == null) {
@@ -257,23 +270,19 @@ public class CoreOperatorFactory {
     }
 
     /**
-     * 入力されたデータを指定のデータ型に射影する。
-     * <p>
-     * 入力するデータ型は変換後のデータ型の全てのプロパティを有していなければならない。
-     * この演算子の処理結果は、入力されたデータのうち変換後のデータ型に含まれる
-     * 全てのプロパティをコピーしたデータになる。
-     * </p>
-     * <p>
-     * 入力されたデータの型と出力先のデータの型に、同じ名前で異なる型のプロパティが存在する場合、
-     * この演算子を含むフローのコンパイルは失敗する。
-     * </p>
-     * @param <T> 変換後のデータの種類
-     * @param in 射影対象の入力
-     * @param targetType 射影する型
-     * @return 射影演算子
-     * @throws IllegalArgumentException if some parameters were {@code null}
+     * Returns a new <em>project operator</em> instance.
+     * The source (upstream) data type must have all properties declared in the target (downstream) data type.
+     * This operator will copy such properties in the upstream data into the each resulting data.
+     * If the target data model type has extra properties for the upstream data type, or if there are type incompatible
+     * properties between the source and target data model, compiling this operator must be failed.
+     * @param <T> the target data model type
+     * @param in the upstream source
+     * @param targetType the target data model class
+     * @return a new instance of <em>project operator</em>
+     * @throws IllegalArgumentException if the parameters are {@code null}
      * @since 0.2.0
      * @see #project(Source)
+     * @see com.asakusafw.vocabulary.operator.Project
      */
     public <T> Project<T> project(Source<?> in, Class<T> targetType) {
         if (in == null) {
@@ -286,13 +295,11 @@ public class CoreOperatorFactory {
     }
 
     /**
-     * 射影演算子の断片を返す。
-     * <p>
-     * この演算子の断片は、射影演算子の変換後の型を指定することで、演算子として利用できるようになる。
-     * </p>
-     * @param in 射影対象の入力
-     * @return 射影演算子の断片
-     * @throws IllegalArgumentException if some parameters were {@code null}
+     * Returns a new fragment which will be provide a <em>project operator</em>.
+     * The resulting fragment object will require the target (downstream) data model type.
+     * @param in the upstream source
+     * @return a new fragment of <em>project operator</em>
+     * @throws IllegalArgumentException if the parameters are {@code null}
      * @since 0.7.3
      * @see #project(Source, Class)
      */
@@ -304,23 +311,19 @@ public class CoreOperatorFactory {
     }
 
     /**
-     * 入力されたデータを指定のデータ型に拡張する。
-     * <p>
-     * 変換後のデータ型は入力するデータ型の全てのプロパティを有していなければならない。
-     * この演算子の処理結果は、入力されたデータ型に含まれる全てのプロパティをコピーしたデータになる。
-     * また、入力されたデータに含まれないプロパティは、それぞれの初期値となる。
-     * </p>
-     * <p>
-     * 入力されたデータの型と出力先のデータの型に、同じ名前で異なる型のプロパティが存在する場合、
-     * この演算子を含むフローのコンパイルは失敗する。
-     * </p>
-     * @param <T> 変換後のデータの種類
-     * @param in 拡張対象の入力
-     * @param targetType 射影する型
-     * @return 拡張演算子
-     * @throws IllegalArgumentException if some parameters were {@code null}
+     * Returns a new <em>extend operator</em> instance.
+     * The target (downstream) data type must have all properties declared in the source (upstream) data type.
+     * This operator will copy such properties in the upstream data into the each resulting data.
+     * If the target data model type does not have some properties in the upstream data type, or if there are type
+     * incompatible properties between the source and target data model, compiling this operator must be failed.
+     * @param <T> the target data model type
+     * @param in the upstream source
+     * @param targetType the target data model class
+     * @return a new instance of <em>extend operator</em>
+     * @throws IllegalArgumentException if the parameters are {@code null}
      * @since 0.2.0
      * @see #extend(Source)
+     * @see com.asakusafw.vocabulary.operator.Extend
      */
     public <T> Extend<T> extend(Source<?> in, Class<T> targetType) {
         if (in == null) {
@@ -333,13 +336,11 @@ public class CoreOperatorFactory {
     }
 
     /**
-     * 拡張演算子の断片を返す。
-     * <p>
-     * この演算子の断片は、拡張演算子の変換後の型を指定することで、演算子として利用できるようになる。
-     * </p>
-     * @param in 拡張対象の入力
-     * @return 拡張演算子の断片
-     * @throws IllegalArgumentException if some parameters were {@code null}
+     * Returns a new fragment which will be provide an <em>extend operator</em>.
+     * The resulting fragment object will require the target (downstream) data model type.
+     * @param in the upstream source
+     * @return a new fragment of <em>extend operator</em>
+     * @throws IllegalArgumentException if the parameters are {@code null}
      * @since 0.7.3
      * @see #extend(Source, Class)
      */
@@ -351,23 +352,19 @@ public class CoreOperatorFactory {
     }
 
     /**
-     * 入力されたデータを指定のデータ型に再構築する。
-     * <p>
-     * この演算子の処理結果は、入力されたデータ型に含まれるプロパティのうち、
-     * 対象のデータ型にも含まれるプロパティのみをすべてコピーしたデータになる。
-     * また、入力されたデータに含まれないプロパティは、それぞれの初期値となる。
-     * </p>
-     * <p>
-     * 入力されたデータの型と出力先のデータの型に、同じ名前で異なる型のプロパティが存在する場合、
-     * この演算子を含むフローのコンパイルは失敗する。
-     * </p>
-     * @param <T> 変換後のデータの種類
-     * @param in 再構築対象の入力
-     * @param targetType 射影する型
-     * @return 再構築演算子
-     * @throws IllegalArgumentException if some parameters were {@code null}
+     * Returns a new <em>restructure operator</em> instance.
+     * The target (downstream) data type must have one or more properties declared in the source (upstream) data type.
+     * This operator will copy such properties in the upstream data into the each resulting data.
+     * If there are type incompatible properties between the source and target data model, compiling this operator must
+     * be failed.
+     * @param <T> the target data model type
+     * @param in the upstream source
+     * @param targetType the target data model class
+     * @return a new instance of <em>restructure operator</em>
+     * @throws IllegalArgumentException if the parameters are {@code null}
      * @since 0.2.1
      * @see #restructure(Source)
+     * @see com.asakusafw.vocabulary.operator.Restructure
      */
     public <T> Restructure<T> restructure(Source<?> in, Class<T> targetType) {
         if (in == null) {
@@ -380,13 +377,11 @@ public class CoreOperatorFactory {
     }
 
     /**
-     * 再構築演算子の断片を返す。
-     * <p>
-     * この演算子の断片は、再構築演算子の変換後の型を指定することで、演算子として利用できるようになる。
-     * </p>
-     * @param in 再構築対象の入力
-     * @return 再構築演算子の断片
-     * @throws IllegalArgumentException if some parameters were {@code null}
+     * Returns a new fragment which will be provide a <em>restructure operator</em>.
+     * The resulting fragment object will require the target (downstream) data model type.
+     * @param in the upstream source
+     * @return a new fragment of <em>restructure operator</em>
+     * @throws IllegalArgumentException if the parameters are {@code null}
      * @since 0.7.3
      * @see #restructure(Source, Class)
      */
@@ -405,13 +400,13 @@ public class CoreOperatorFactory {
     }
 
     /**
-     * 出力先に何もデータを流さない疑似演算子。入力のダミーとして振る舞う。
-     * @param <T> 取り扱うデータの種類
+     * Represents an <em>empty operator</em> which provides empty data-sets.
+     * @param <T> the data model type
      */
     public static final class Empty<T> implements Source<T> {
 
         /**
-         * この演算子の唯一の出力。
+         * The singleton output of this operator.
          */
         public final Source<T> out;
 
@@ -436,13 +431,13 @@ public class CoreOperatorFactory {
     }
 
     /**
-     * 複数の入力をまとめて、単一の出力とする演算子。
-     * @param <T> 取り扱うデータの種類
+     * Represents a <em>confluent operator</em> which provides union of data-sets.
+     * @param <T> the data model type
      */
     public static final class Confluent<T> implements Source<T> {
 
         /**
-         * この演算子の唯一の出力。
+         * The singleton output of this operator.
          */
         public final Source<T> out;
 
@@ -470,14 +465,13 @@ public class CoreOperatorFactory {
     }
 
     /**
-     * 入力されたデータをそのまま出力するが、その際にデータを永続化し、
-     * 以降に失敗した場合に永続化したデータを利用して再試行できるようにする。
-     * @param <T> 取り扱うデータの種類
+     * Represents a <em>checkpoint operator</em> which provides restarting point for (partial) failures.
+     * @param <T> the data model type
      */
     public static final class Checkpoint<T> implements Source<T> {
 
         /**
-         * この演算子の唯一の出力。
+         * The singleton output of this operator.
          */
         public final Source<T> out;
 
@@ -504,14 +498,14 @@ public class CoreOperatorFactory {
     }
 
     /**
-     * 入力されたデータを指定のデータ型に射影する。
-     * @param <T> 変換後の型
+     * Represents a <em>project operator</em> which transforms data model objects into other data model types.
+     * @param <T> the result data model type
      * @since 0.2.0
      */
     public static final class Project<T> implements Operator, Source<T> {
 
         /**
-         * この演算子の唯一の出力。
+         * The singleton output of this operator.
          */
         public final Source<T> out;
 
@@ -540,14 +534,14 @@ public class CoreOperatorFactory {
     }
 
     /**
-     * 入力されたデータを指定のデータ型に拡張する。
-     * @param <T> 変換後の型
+     * Represents a <em>extend operator</em> which transforms data model objects into other data model types.
+     * @param <T> the result data model type
      * @since 0.2.0
      */
     public static final class Extend<T> implements Operator, Source<T> {
 
         /**
-         * この演算子の唯一の出力。
+         * The singleton output of this operator.
          */
         public final Source<T> out;
 
@@ -576,14 +570,14 @@ public class CoreOperatorFactory {
     }
 
     /**
-     * 入力されたデータを指定のデータ型に再構築する。
-     * @param <T> 変換後の型
+     * Represents a <em>restructure operator</em> which transforms data model objects into other data model types.
+     * @param <T> the result data model type
      * @since 0.2.1
      */
     public static final class Restructure<T> implements Operator, Source<T> {
 
         /**
-         * この演算子の唯一の出力。
+         * The singleton output of this operator.
          */
         public final Source<T> out;
 
@@ -622,30 +616,32 @@ public class CoreOperatorFactory {
         }
 
         /**
-         * 対象の型を指定し、空演算子を生成する。
-         * @param <T> 対象の型
-         * @param target 対象の型
-         * @return 生成した演算子
+         * Creates a new <em>empty operator</em> instance from the target (downstream) data model class.
+         * @param <T> the target data model type
+         * @param target the target data model class
+         * @return the created operator instance
          */
         public <T> Empty<T> as(Class<T> target) {
             return new Empty<T>(target);
         }
 
         /**
-         * 対象の型と同様の型を持つ入力を指定し、空演算子を生成する。
-         * @param <T> 対象の型
-         * @param target 対象の型と同様の型を持つ入力
-         * @return 生成した演算子
+         * Creates a new <em>empty operator</em> instance from a source object which has the same type as the
+         * target (downstream) data model type.
+         * @param <T> the target data model type
+         * @param target a source object which has the target data model type
+         * @return the created operator instance
          */
         public <T> Empty<T> as(Source<T> target) {
             return as(classOf(target));
         }
 
         /**
-         * 対象の型と同様の型を持つ出力を指定し、空演算子を生成する。
-         * @param <T> 対象の型
-         * @param target 対象の型と同様の型を持つ出力
-         * @return 生成した演算子
+         * Creates a new <em>empty operator</em> instance from a flow output object which has the same type as the
+         * target (downstream) data model type.
+         * @param <T> the target data model type
+         * @param target a flow output object which has the target data model type
+         * @return the created operator instance
          */
         public <T> Empty<T> as(Out<T> target) {
             return as(classOf(target));
@@ -665,30 +661,32 @@ public class CoreOperatorFactory {
         }
 
         /**
-         * 変換対象の型を指定し、射影演算子を生成する。
-         * @param <T> 変換対象の型
-         * @param target 変換対象の型
-         * @return 生成した演算子
+         * Creates a new <em>project operator</em> instance from the target (downstream) data model class.
+         * @param <T> the target data model type
+         * @param target the target data model class
+         * @return the created operator instance
          */
         public <T> Project<T> as(Class<T> target) {
             return new Project<T>(in, target);
         }
 
         /**
-         * 変換対象の型と同様の型を持つ入力を指定し、射影演算子を生成する。
-         * @param <T> 変換対象の型
-         * @param target 対象の型と同様の型を持つ入力
-         * @return 生成した演算子
+         * Creates a new <em>project operator</em> instance from a source object which has the same type as the
+         * target (downstream) data model type.
+         * @param <T> the target data model type
+         * @param target a source object which has the target data model type
+         * @return the created operator instance
          */
         public <T> Project<T> as(Source<T> target) {
             return as(classOf(target));
         }
 
         /**
-         * 変換対象の型と同様の型を持つ出力を指定し、射影演算子を生成する。
-         * @param <T> 変換対象の型
-         * @param target 対象の型と同様の型を持つ出力
-         * @return 生成した演算子
+         * Creates a new <em>project operator</em> instance from a flow output object which has the same type as the
+         * target (downstream) data model type.
+         * @param <T> the target data model type
+         * @param target a flow output object which has the target data model type
+         * @return the created operator instance
          */
         public <T> Project<T> as(Out<T> target) {
             return as(classOf(target));
@@ -708,30 +706,32 @@ public class CoreOperatorFactory {
         }
 
         /**
-         * 変換対象の型を指定し、拡張演算子を生成する。
-         * @param <T> 変換対象の型
-         * @param target 変換対象の型
-         * @return 生成した演算子
+         * Creates a new <em>extend operator</em> instance from the target (downstream) data model class.
+         * @param <T> the target data model type
+         * @param target the target data model class
+         * @return the created operator instance
          */
         public <T> Extend<T> as(Class<T> target) {
             return new Extend<T>(in, target);
         }
 
         /**
-         * 変換対象の型と同様の型を持つ入力を指定し、拡張演算子を生成する。
-         * @param <T> 変換対象の型
-         * @param target 対象の型と同様の型を持つ入力
-         * @return 生成した演算子
+         * Creates a new <em>extend operator</em> instance from a source object which has the same type as the
+         * target (downstream) data model type.
+         * @param <T> the target data model type
+         * @param target a source object which has the target data model type
+         * @return the created operator instance
          */
         public <T> Extend<T> as(Source<T> target) {
             return as(classOf(target));
         }
 
         /**
-         * 変換対象の型と同様の型を持つ出力を指定し、拡張演算子を生成する。
-         * @param <T> 変換対象の型
-         * @param target 対象の型と同様の型を持つ出力
-         * @return 生成した演算子
+         * Creates a new <em>extend operator</em> instance from a flow output object which has the same type as the
+         * target (downstream) data model type.
+         * @param <T> the target data model type
+         * @param target a flow output object which has the target data model type
+         * @return the created operator instance
          */
         public <T> Extend<T> as(Out<T> target) {
             return as(classOf(target));
@@ -751,30 +751,32 @@ public class CoreOperatorFactory {
         }
 
         /**
-         * 変換対象の型を指定し、再構築演算子を生成する。
-         * @param <T> 変換対象の型
-         * @param target 変換対象の型
-         * @return 生成した演算子
+         * Creates a new <em>restructure operator</em> instance from the target (downstream) data model class.
+         * @param <T> the target data model type
+         * @param target the target data model class
+         * @return the created operator instance
          */
         public <T> Restructure<T> as(Class<T> target) {
             return new Restructure<T>(in, target);
         }
 
         /**
-         * 変換対象の型と同様の型を持つ入力を指定し、再構築演算子を生成する。
-         * @param <T> 変換対象の型
-         * @param target 対象の型と同様の型を持つ入力
-         * @return 生成した演算子
+         * Creates a new <em>restructure operator</em> instance from a source object which has the same type as the
+         * target (downstream) data model type.
+         * @param <T> the target data model type
+         * @param target a source object which has the target data model type
+         * @return the created operator instance
          */
         public <T> Restructure<T> as(Source<T> target) {
             return as(classOf(target));
         }
 
         /**
-         * 変換対象の型と同様の型を持つ出力を指定し、再構築演算子を生成する。
-         * @param <T> 変換対象の型
-         * @param target 対象の型と同様の型を持つ出力
-         * @return 生成した演算子
+         * Creates a new <em>restructure operator</em> instance from a flow output object which has the same type as
+         * the target (downstream) data model type.
+         * @param <T> the target data model type
+         * @param target a flow output object which has the target data model type
+         * @return the created operator instance
          */
         public <T> Restructure<T> as(Out<T> target) {
             return as(classOf(target));
@@ -785,7 +787,7 @@ public class CoreOperatorFactory {
         Type type = source.toOutputPort().getDescription().getDataType();
         if ((type instanceof Class<?>) == false) {
             throw new IllegalArgumentException(MessageFormat.format(
-                    "type must be a class: {0}",
+                    Messages.getString("CoreOperatorFactory.errorRequireClass"), //$NON-NLS-1$
                     type));
         }
         @SuppressWarnings("unchecked")
@@ -797,7 +799,7 @@ public class CoreOperatorFactory {
         Type type = out.toInputPort().getDescription().getDataType();
         if ((type instanceof Class<?>) == false) {
             throw new IllegalArgumentException(MessageFormat.format(
-                    "type must be a class: {0}",
+                    Messages.getString("CoreOperatorFactory.errorRequireClass"), //$NON-NLS-1$
                     type));
         }
         @SuppressWarnings("unchecked")

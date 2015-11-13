@@ -141,7 +141,7 @@ public abstract class AbstractWindGateCommandEmulator extends CommandEmulator {
             return GateProfile.loadFrom(CommandLineUtil.toName(uri), properties, profileContext);
         } catch (Exception e) {
             throw new IllegalArgumentException(MessageFormat.format(
-                    "Invalid profile \"{0}\".",
+                    Messages.getString("AbstractWindGateCommandEmulator.errorInvalidProfile"), //$NON-NLS-1$
                     profile), e);
         }
     }

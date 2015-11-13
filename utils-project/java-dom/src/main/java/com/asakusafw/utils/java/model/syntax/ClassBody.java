@@ -18,7 +18,7 @@ package com.asakusafw.utils.java.model.syntax;
 import java.util.List;
 
 /**
- * 匿名クラス等に利用するクラス本体を表現するインターフェース。
+ * An interface which represents an anonymous class body.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:15.9.5 Anonymous Class Declarations} </li>
@@ -28,13 +28,9 @@ import java.util.List;
 public interface ClassBody
         extends TypedElement {
 
-    // properties
-
     /**
-     * メンバの一覧を返す。
-     * <p> メンバが一つも宣言されない場合は空が返される。 </p>
-     * @return
-     *     メンバの一覧
+     * Returns class members.
+     * @return class members
      */
     List<? extends TypeBodyDeclaration> getBodyDeclarations();
 }

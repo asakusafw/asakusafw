@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * 実行時に利用するコアクラス。
+ * Runtime core classes.
  */
 package com.asakusafw.runtime.core;

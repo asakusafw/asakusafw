@@ -157,21 +157,21 @@ public class DataModelDriver {
         assert mapping.source != null || mapping.target != null;
         if (mapping.source == null) {
             handleException(configuration.getOnMissingSource(), MessageFormat.format(
-                    "Source field is not found: model={0}, field={1}:{2}",
+                    Messages.getString("DataModelDriver.errorMissingSource"), //$NON-NLS-1$
                     descriptor.getDataModelClass().getName(),
                     mapping.target.getFieldName(),
                     mapping.target.getFieldObjectInspector().getTypeName()));
             return false;
         } else if (mapping.target == null) {
             handleException(configuration.getOnMissingTarget(), MessageFormat.format(
-                    "Target field is not found: model={0}, field={1}:{2}",
+                    Messages.getString("DataModelDriver.errorMissingTarget"), //$NON-NLS-1$
                     descriptor.getDataModelClass().getName(),
                     mapping.source.getFieldName(),
                     mapping.source.getFieldObjectInspector().getTypeName()));
             return false;
         } else if (isCompatible(mapping.source, mapping.target) == false) {
             handleException(configuration.getOnIncompatibleType(), MessageFormat.format(
-                    "Field type is incompatible: model={0}, source={1}:{2}, target={3}:{4}",
+                    Messages.getString("DataModelDriver.errorIncompatibleType"), //$NON-NLS-1$
                     descriptor.getDataModelClass().getName(),
                     mapping.source.getFieldName(),
                     mapping.source.getFieldObjectInspector().getTypeName(),

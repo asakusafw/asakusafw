@@ -30,7 +30,7 @@ import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory;
 import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory.Restructure;
 
 /**
- * Test flow for {@link RestructureFlowProcessor}。
+ * Test flow for {@link RestructureFlowProcessor}.
  */
 @JobFlow(name = "testing")
 public class RestructureFlowSimple extends FlowDescription {

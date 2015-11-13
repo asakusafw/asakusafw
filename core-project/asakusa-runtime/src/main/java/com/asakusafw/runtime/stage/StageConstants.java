@@ -27,33 +27,33 @@ import com.asakusafw.runtime.util.VariableTable;
 public final class StageConstants {
 
     /**
-     * 実行ユーザー名のプロパティキー。
+     * The property key name of the user name.
      */
     public static final String PROP_USER = "com.asakusafw.user"; //$NON-NLS-1$
 
     /**
-     * 実行IDのプロパティキー。
+     * The property key name of the execution ID.
      */
     public static final String PROP_EXECUTION_ID = "com.asakusafw.executionId"; //$NON-NLS-1$
 
     /**
-     * The property key name of batch ID.
+     * The property key name of the batch ID.
      */
     public static final String PROP_BATCH_ID = "com.asakusafw.batchId"; //$NON-NLS-1$
 
     /**
-     * The property key name of flow ID.
+     * The property key name of the flow ID.
      */
     public static final String PROP_FLOW_ID = "com.asakusafw.flowId"; //$NON-NLS-1$
 
     /**
-     * The property key name of tracking ID.
+     * The property key name of the tracking ID.
      * @since 0.5.0
      */
     public static final String PROP_TRACKING_ID = "com.asakusafw.trackingId"; //$NON-NLS-1$
 
     /**
-     * 環境変数表のプロパティキー。
+     * The property key name of the batch arguments.
      */
     public static final String PROP_ASAKUSA_BATCH_ARGS = "com.asakusafw.batchArgs"; //$NON-NLS-1$
 
@@ -70,62 +70,67 @@ public final class StageConstants {
     public static final String PROP_JOB_RUNNER = "com.asakusafw.jobRunner"; //$NON-NLS-1$
 
     /**
-     * 実行ユーザー名の変数名。
+     * The variable name of the user name.
+     * @see #PROP_USER
      */
     public static final String VAR_USER = "user"; //$NON-NLS-1$
 
     /**
-     * 実行IDの変数名。
+     * The variable name of the execution ID.
      */
     public static final String VAR_EXECUTION_ID = "execution_id"; //$NON-NLS-1$
 
     /**
-     * バッチIDの変数名。
+     * The variable name of the batch ID.
      */
     public static final String VAR_BATCH_ID = "batch_id"; //$NON-NLS-1$
 
     /**
-     * フローIDの変数名。
+     * The variable name of the flow ID.
      */
     public static final String VAR_FLOW_ID = "flow_id"; //$NON-NLS-1$
 
     /**
-     * 定義IDの変数名。
+     * The variable name of the definition ID.
      */
     public static final String VAR_DEFINITION_ID = "jobflow_name"; //$NON-NLS-1$
 
     /**
-     * ステージ名の変数名。
+     * The variable name of the stage ID.
      */
     public static final String VAR_STAGE_ID = "stage_name"; //$NON-NLS-1$
 
     /**
-     * 実行ユーザー名の変数表記。
+     * The expression of the user name.
+     * @see VariableTable
      */
     public static final String EXPR_USER = VariableTable.toVariable(VAR_USER);
 
     /**
-     * 実行IDの変数表記。
+     * The expression of the execution ID.
+     * @see VariableTable
      */
     public static final String EXPR_EXECUTION_ID = VariableTable.toVariable(VAR_EXECUTION_ID);
 
     /**
-     * 定義IDの変数表記。
+     * The expression of the qualified stage ID.
+     * @see VariableTable
      */
     public static final String EXPR_DEFINITION_ID = VariableTable.toVariable(VAR_DEFINITION_ID);
 
     /**
-     * ステージ名の変数表記。
+     * The expression of the stage ID.
+     * @see VariableTable
      */
     public static final String EXPR_STAGE_ID = VariableTable.toVariable(VAR_STAGE_ID);
 
     /**
-     * 指定のIDの組から、対象ジョブの定義IDを算出して返す。
-     * @param batchId バッチID
-     * @param flowId フローID
-     * @param stageId ステージID
-     * @return ジョブの定義ID
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns the qualified stage ID from individual IDs.
+     * @param batchId the batch ID
+     * @param flowId the flow ID
+     * @param stageId the stage ID
+     * @return the qualified stage ID (a.k.a. stage definition ID)
+     * @throws IllegalArgumentException if some parameters are {@code null}
      */
     public static String getDefinitionId(String batchId, String flowId, String stageId) {
         if (batchId == null) {

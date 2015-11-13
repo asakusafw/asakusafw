@@ -24,7 +24,7 @@ import com.asakusafw.compiler.flow.plan.FlowBlock;
 import com.asakusafw.utils.collections.Sets;
 
 /**
- * 可視化用のグラフ。
+ * A visual model for flow blocks.
  */
 public class VisualBlock implements VisualNode {
 
@@ -39,12 +39,12 @@ public class VisualBlock implements VisualNode {
     private final Set<VisualNode> nodes;
 
     /**
-     * インスタンスを生成する。
-     * @param label このグラフのラベル (省略可)
-     * @param inputs ブロックへの入力一覧
-     * @param outputs ブロックへの出力一覧
-     * @param nodes このグラフに含まれるノード一覧
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param label the label of this element (nullable)
+     * @param inputs the input ports
+     * @param outputs the output ports
+     * @param nodes the element nodes
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public VisualBlock(
             String label,
@@ -61,8 +61,8 @@ public class VisualBlock implements VisualNode {
     }
 
     /**
-     * このブロックのラベルを返す。
-     * @return このブロックのラベル、省略された場合は{@code null}
+     * Returns the label of this block.
+     * @return the block label, or {@code null} if it was not specified
      */
     public String getLabel() {
         return label;
@@ -74,24 +74,24 @@ public class VisualBlock implements VisualNode {
     }
 
     /**
-     * ブロックの入力一覧を返す。
-     * @return ブロックの入力一覧
+     * Returns the input ports of this block.
+     * @return the input ports of this block
      */
     public Set<FlowBlock.Input> getInputs() {
         return inputs;
     }
 
     /**
-     * ブロックの出力一覧を返す。
-     * @return ブロックの出力一覧
+     * Returns the output ports of this block.
+     * @return the output ports
      */
     public Set<FlowBlock.Output> getOutputs() {
         return outputs;
     }
 
     /**
-     * このグラフに含まれるノード一覧を返す。
-     * @return このグラフに含まれるノード一覧
+     * Returns the element nodes of this block.
+     * @return the element nodes
      */
     public Set<VisualNode> getNodes() {
         return Collections.unmodifiableSet(nodes);

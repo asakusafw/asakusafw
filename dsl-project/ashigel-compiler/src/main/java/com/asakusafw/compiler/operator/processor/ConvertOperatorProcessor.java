@@ -23,9 +23,8 @@ import com.asakusafw.compiler.operator.OperatorMethodDescriptor;
 import com.asakusafw.compiler.operator.OperatorMethodDescriptor.Builder;
 import com.asakusafw.vocabulary.operator.Convert;
 
-
 /**
- * {@link Convert 変換演算子}を処理する。
+ * Processes {@link Convert} operators.
  */
 @TargetOperator(Convert.class)
 public class ConvertOperatorProcessor extends AbstractOperatorProcessor {
@@ -36,22 +35,22 @@ public class ConvertOperatorProcessor extends AbstractOperatorProcessor {
 
         ExecutableAnalyzer a = new ExecutableAnalyzer(context.environment, context.element);
         if (a.isAbstract()) {
-            a.error("変換演算子はabstractで宣言できません");
+            a.error(Messages.getString("ConvertOperatorProcessor.errorAbstract")); //$NON-NLS-1$
         }
         if (a.getReturnType().isConcreteModel() == false) {
-            a.error("変換演算子は戻り値にモデルオブジェクト型を指定する必要があります");
+            a.error(Messages.getString("ConvertOperatorProcessor.errorNotModelResult")); //$NON-NLS-1$
         }
         if (a.getParameterType(0).isModel() == false) {
-            a.error(0, "変換演算子の最初の引数はモデルオブジェクト型である必要があります");
+            a.error(0, Messages.getString("ConvertOperatorProcessor.errorNotModel")); //$NON-NLS-1$
         }
         for (int i = 1, n = a.countParameters(); i < n; i++) {
             if (a.getParameterType(i).isBasic() == false) {
-                a.error(i, "変換演算子の2つ目以降の引数は文字列またはプリミティブ型である必要があります");
+                a.error(i, Messages.getString("ConvertOperatorProcessor.errorInvalidOptionParameter")); //$NON-NLS-1$
             }
         }
         Convert annotation = context.element.getAnnotation(Convert.class);
         if (annotation == null) {
-            a.error("注釈の解釈に失敗しました");
+            a.error(Messages.getString("ConvertOperatorProcessor.errorInvalidAnnotation")); //$NON-NLS-1$
             return null;
         }
         OperatorProcessorUtil.checkPortName(a, new String[] {
@@ -71,7 +70,7 @@ public class ConvertOperatorProcessor extends AbstractOperatorProcessor {
                 a.getParameterType(0).getType(),
                 0);
         builder.addOutput(
-                "入力された内容",
+                Messages.getString("ConvertOperatorProcessor.javadocInput"), //$NON-NLS-1$
                 annotation.originalPort(),
                 a.getParameterType(0).getType(),
                 a.getParameterName(0),

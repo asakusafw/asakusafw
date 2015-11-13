@@ -32,17 +32,16 @@ public class MockJavadocBlockParser extends JavadocBlockParser {
     private Pattern acceptable;
 
     /**
-     * インスタンスを生成する。
+     * Creates a new instance.
      */
     public MockJavadocBlockParser() {
-        super();
         this.acceptable = null;
     }
 
     /**
-     * インスタンスを生成する。
-     * @param inline インラインパーサ
-     * @param inlineRest インラインパーサ
+     * Creates a new instance.
+     * @param inline the first inline parser
+     * @param inlineRest the rest inline parsers
      */
     public MockJavadocBlockParser(JavadocBlockParser inline, JavadocBlockParser...inlineRest) {
         super(list(inline, inlineRest));

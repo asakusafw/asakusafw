@@ -26,7 +26,7 @@ import java.io.IOException;
 public final class NullWritableRawComparable implements WritableRawComparable {
 
     /**
-     * A invariant instance.
+     * An invariant instance.
      */
     public static final NullWritableRawComparable INSTANCE = new NullWritableRawComparable();
 

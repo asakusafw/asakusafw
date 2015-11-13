@@ -248,7 +248,7 @@ public enum ParquetValueDrivers implements ParquetValueDriver {
         ParquetValueDriver result = find(typeInfo, valueClass);
         if (result == null) {
             throw new IllegalArgumentException(MessageFormat.format(
-                    "Parquet value driver is not found: {0} <-> {1}",
+                    Messages.getString("ParquetValueDrivers.errorUndefinedValueDriver"), //$NON-NLS-1$
                     typeInfo.getQualifiedName(),
                     valueClass.getSimpleName()));
         }

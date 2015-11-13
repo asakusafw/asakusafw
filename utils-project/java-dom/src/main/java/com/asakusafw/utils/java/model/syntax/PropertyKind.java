@@ -16,12 +16,12 @@
 package com.asakusafw.utils.java.model.syntax;
 
 /**
- * {@link Model}が持つプロパティの種類。
+ * Represents a kind of properties in {@link Model}.
  */
 public enum PropertyKind {
 
     /**
-     * {@link Annotation#getType()}を表現する。
+     * Represents {@link Annotation#getType()}.
      */
     ANNOTATION_TYPE(
         Annotation.class,
@@ -29,7 +29,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link AnnotationElement#getName()}を表現する。
+     * Represents {@link AnnotationElement#getName()}.
      */
     ANNOTATION_ELEMENT_NAME(
         AnnotationElement.class,
@@ -37,7 +37,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link AnnotationElement#getExpression()}を表現する。
+     * Represents {@link AnnotationElement#getExpression()}.
      */
     ANNOTATION_ELEMENT_EXPRESSION(
         AnnotationElement.class,
@@ -45,7 +45,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link AnnotationElementDeclaration#getType()}を表現する。
+     * Represents {@link AnnotationElementDeclaration#getType()}.
      */
     ANNOTATION_ELEMENT_DECLARATION_TYPE(
         AnnotationElementDeclaration.class,
@@ -53,7 +53,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link AnnotationElementDeclaration#getName()}を表現する。
+     * Represents {@link AnnotationElementDeclaration#getName()}.
      */
     ANNOTATION_ELEMENT_DECLARATION_NAME(
         AnnotationElementDeclaration.class,
@@ -61,7 +61,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link AnnotationElementDeclaration#getDefaultExpression()}を表現する。
+     * Represents {@link AnnotationElementDeclaration#getDefaultExpression()}.
      */
     ANNOTATION_ELEMENT_DECLARATION_DEFAULT_EXPRESSION(
         AnnotationElementDeclaration.class,
@@ -69,7 +69,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link ArrayAccessExpression#getArray()}を表現する。
+     * Represents {@link ArrayAccessExpression#getArray()}.
      */
     ARRAY_ACCESS_EXPRESSION_ARRAY(
         ArrayAccessExpression.class,
@@ -77,7 +77,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link ArrayAccessExpression#getIndex()}を表現する。
+     * Represents {@link ArrayAccessExpression#getIndex()}.
      */
     ARRAY_ACCESS_EXPRESSION_INDEX(
         ArrayAccessExpression.class,
@@ -85,7 +85,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link ArrayCreationExpression#getType()}を表現する。
+     * Represents {@link ArrayCreationExpression#getType()}.
      */
     ARRAY_CREATION_EXPRESSION_TYPE(
         ArrayCreationExpression.class,
@@ -93,7 +93,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link ArrayCreationExpression#getDimensionExpressions()}を表現する。
+     * Represents {@link ArrayCreationExpression#getDimensionExpressions()}.
      */
     ARRAY_CREATION_EXPRESSION_DIMENSION_EXPRESSIONS(
         ArrayCreationExpression.class,
@@ -101,7 +101,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link ArrayCreationExpression#getArrayInitializer()}を表現する。
+     * Represents {@link ArrayCreationExpression#getArrayInitializer()}.
      */
     ARRAY_CREATION_EXPRESSION_ARRAY_INITIALIZER(
         ArrayCreationExpression.class,
@@ -109,7 +109,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link ArrayInitializer#getElements()}を表現する。
+     * Represents {@link ArrayInitializer#getElements()}.
      */
     ARRAY_INITIALIZER_ELEMENTS(
         ArrayInitializer.class,
@@ -117,7 +117,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link ArrayType#getComponentType()}を表現する。
+     * Represents {@link ArrayType#getComponentType()}.
      */
     ARRAY_TYPE_COMPONENT_TYPE(
         ArrayType.class,
@@ -125,7 +125,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link AssertStatement#getExpression()}を表現する。
+     * Represents {@link AssertStatement#getExpression()}.
      */
     ASSERT_STATEMENT_EXPRESSION(
         AssertStatement.class,
@@ -133,7 +133,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link AssertStatement#getMessage()}を表現する。
+     * Represents {@link AssertStatement#getMessage()}.
      */
     ASSERT_STATEMENT_MESSAGE(
         AssertStatement.class,
@@ -141,7 +141,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link AssignmentExpression#getLeftHandSide()}を表現する。
+     * Represents {@link AssignmentExpression#getLeftHandSide()}.
      */
     ASSIGNMENT_EXPRESSION_LEFT_HAND_SIDE(
         AssignmentExpression.class,
@@ -149,7 +149,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link AssignmentExpression#getOperator()}を表現する。
+     * Represents {@link AssignmentExpression#getOperator()}.
      */
     ASSIGNMENT_EXPRESSION_OPERATOR(
         AssignmentExpression.class,
@@ -157,7 +157,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link AssignmentExpression#getRightHandSide()}を表現する。
+     * Represents {@link AssignmentExpression#getRightHandSide()}.
      */
     ASSIGNMENT_EXPRESSION_RIGHT_HAND_SIDE(
         AssignmentExpression.class,
@@ -165,7 +165,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link BasicType#getTypeKind()}を表現する。
+     * Represents {@link BasicType#getTypeKind()}.
      */
     BASIC_TYPE_TYPE_KIND(
         BasicType.class,
@@ -173,7 +173,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link Block#getStatements()}を表現する。
+     * Represents {@link Block#getStatements()}.
      */
     BLOCK_STATEMENTS(
         Block.class,
@@ -181,7 +181,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link BlockComment#getString()}を表現する。
+     * Represents {@link BlockComment#getString()}.
      */
     BLOCK_COMMENT_STRING(
         BlockComment.class,
@@ -189,7 +189,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link BranchStatement#getTarget()}を表現する。
+     * Represents {@link BranchStatement#getTarget()}.
      */
     BRANCH_STATEMENT_TARGET(
         BranchStatement.class,
@@ -197,7 +197,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link CastExpression#getType()}を表現する。
+     * Represents {@link CastExpression#getType()}.
      */
     CAST_EXPRESSION_TYPE(
         CastExpression.class,
@@ -205,7 +205,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link CastExpression#getExpression()}を表現する。
+     * Represents {@link CastExpression#getExpression()}.
      */
     CAST_EXPRESSION_EXPRESSION(
         CastExpression.class,
@@ -213,7 +213,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link CatchClause#getParameter()}を表現する。
+     * Represents {@link CatchClause#getParameter()}.
      */
     CATCH_CLAUSE_PARAMETER(
         CatchClause.class,
@@ -221,7 +221,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link CatchClause#getBody()}を表現する。
+     * Represents {@link CatchClause#getBody()}.
      */
     CATCH_CLAUSE_BODY(
         CatchClause.class,
@@ -229,7 +229,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link ClassBody#getBodyDeclarations()}を表現する。
+     * Represents {@link ClassBody#getBodyDeclarations()}.
      */
     CLASS_BODY_BODY_DECLARATIONS(
         ClassBody.class,
@@ -237,7 +237,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link ClassDeclaration#getTypeParameters()}を表現する。
+     * Represents {@link ClassDeclaration#getTypeParameters()}.
      */
     CLASS_DECLARATION_TYPE_PARAMETERS(
         ClassDeclaration.class,
@@ -245,7 +245,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link ClassDeclaration#getSuperClass()}を表現する。
+     * Represents {@link ClassDeclaration#getSuperClass()}.
      */
     CLASS_DECLARATION_SUPER_CLASS(
         ClassDeclaration.class,
@@ -253,7 +253,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link ClassDeclaration#getSuperInterfaceTypes()}を表現する。
+     * Represents {@link ClassDeclaration#getSuperInterfaceTypes()}.
      */
     CLASS_DECLARATION_SUPER_INTERFACE_TYPES(
         ClassDeclaration.class,
@@ -261,7 +261,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link ClassInstanceCreationExpression#getQualifier()}を表現する。
+     * Represents {@link ClassInstanceCreationExpression#getQualifier()}.
      */
     CLASS_INSTANCE_CREATION_EXPRESSION_QUALIFIER(
         ClassInstanceCreationExpression.class,
@@ -269,7 +269,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link ClassInstanceCreationExpression#getTypeArguments()}を表現する。
+     * Represents {@link ClassInstanceCreationExpression#getTypeArguments()}.
      */
     CLASS_INSTANCE_CREATION_EXPRESSION_TYPE_ARGUMENTS(
         ClassInstanceCreationExpression.class,
@@ -277,7 +277,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link ClassInstanceCreationExpression#getType()}を表現する。
+     * Represents {@link ClassInstanceCreationExpression#getType()}.
      */
     CLASS_INSTANCE_CREATION_EXPRESSION_TYPE(
         ClassInstanceCreationExpression.class,
@@ -285,7 +285,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link ClassInstanceCreationExpression#getArguments()}を表現する。
+     * Represents {@link ClassInstanceCreationExpression#getArguments()}.
      */
     CLASS_INSTANCE_CREATION_EXPRESSION_ARGUMENTS(
         ClassInstanceCreationExpression.class,
@@ -293,7 +293,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link ClassInstanceCreationExpression#getBody()}を表現する。
+     * Represents {@link ClassInstanceCreationExpression#getBody()}.
      */
     CLASS_INSTANCE_CREATION_EXPRESSION_BODY(
         ClassInstanceCreationExpression.class,
@@ -301,7 +301,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link ClassLiteral#getType()}を表現する。
+     * Represents {@link ClassLiteral#getType()}.
      */
     CLASS_LITERAL_TYPE(
         ClassLiteral.class,
@@ -309,7 +309,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link CompilationUnit#getPackageDeclaration()}を表現する。
+     * Represents {@link CompilationUnit#getPackageDeclaration()}.
      */
     COMPILATION_UNIT_PACKAGE_DECLARATION(
         CompilationUnit.class,
@@ -317,7 +317,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link CompilationUnit#getImportDeclarations()}を表現する。
+     * Represents {@link CompilationUnit#getImportDeclarations()}.
      */
     COMPILATION_UNIT_IMPORT_DECLARATIONS(
         CompilationUnit.class,
@@ -325,7 +325,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link CompilationUnit#getTypeDeclarations()}を表現する。
+     * Represents {@link CompilationUnit#getTypeDeclarations()}.
      */
     COMPILATION_UNIT_TYPE_DECLARATIONS(
         CompilationUnit.class,
@@ -333,7 +333,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link CompilationUnit#getComments()}を表現する。
+     * Represents {@link CompilationUnit#getComments()}.
      */
     COMPILATION_UNIT_COMMENTS(
         CompilationUnit.class,
@@ -341,7 +341,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link ConditionalExpression#getCondition()}を表現する。
+     * Represents {@link ConditionalExpression#getCondition()}.
      */
     CONDITIONAL_EXPRESSION_CONDITION(
         ConditionalExpression.class,
@@ -349,7 +349,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link ConditionalExpression#getThenExpression()}を表現する。
+     * Represents {@link ConditionalExpression#getThenExpression()}.
      */
     CONDITIONAL_EXPRESSION_THEN_EXPRESSION(
         ConditionalExpression.class,
@@ -357,7 +357,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link ConditionalExpression#getElseExpression()}を表現する。
+     * Represents {@link ConditionalExpression#getElseExpression()}.
      */
     CONDITIONAL_EXPRESSION_ELSE_EXPRESSION(
         ConditionalExpression.class,
@@ -365,7 +365,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link ConstructorInvocation#getTypeArguments()}を表現する。
+     * Represents {@link ConstructorInvocation#getTypeArguments()}.
      */
     CONSTRUCTOR_INVOCATION_TYPE_ARGUMENTS(
         ConstructorInvocation.class,
@@ -373,7 +373,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link ConstructorInvocation#getArguments()}を表現する。
+     * Represents {@link ConstructorInvocation#getArguments()}.
      */
     CONSTRUCTOR_INVOCATION_ARGUMENTS(
         ConstructorInvocation.class,
@@ -381,7 +381,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link DoStatement#getBody()}を表現する。
+     * Represents {@link DoStatement#getBody()}.
      */
     DO_STATEMENT_BODY(
         DoStatement.class,
@@ -389,7 +389,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link DoStatement#getCondition()}を表現する。
+     * Represents {@link DoStatement#getCondition()}.
      */
     DO_STATEMENT_CONDITION(
         DoStatement.class,
@@ -397,7 +397,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link DocBlock#getTag()}を表現する。
+     * Represents {@link DocBlock#getTag()}.
      */
     DOC_BLOCK_TAG(
         DocBlock.class,
@@ -405,7 +405,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link DocBlock#getElements()}を表現する。
+     * Represents {@link DocBlock#getElements()}.
      */
     DOC_BLOCK_ELEMENTS(
         DocBlock.class,
@@ -413,7 +413,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link DocField#getType()}を表現する。
+     * Represents {@link DocField#getType()}.
      */
     DOC_FIELD_TYPE(
         DocField.class,
@@ -421,7 +421,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link DocField#getName()}を表現する。
+     * Represents {@link DocField#getName()}.
      */
     DOC_FIELD_NAME(
         DocField.class,
@@ -429,7 +429,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link DocMethod#getType()}を表現する。
+     * Represents {@link DocMethod#getType()}.
      */
     DOC_METHOD_TYPE(
         DocMethod.class,
@@ -437,7 +437,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link DocMethod#getName()}を表現する。
+     * Represents {@link DocMethod#getName()}.
      */
     DOC_METHOD_NAME(
         DocMethod.class,
@@ -445,7 +445,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link DocMethod#getFormalParameters()}を表現する。
+     * Represents {@link DocMethod#getFormalParameters()}.
      */
     DOC_METHOD_FORMAL_PARAMETERS(
         DocMethod.class,
@@ -453,7 +453,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link DocMethodParameter#getType()}を表現する。
+     * Represents {@link DocMethodParameter#getType()}.
      */
     DOC_METHOD_PARAMETER_TYPE(
         DocMethodParameter.class,
@@ -461,7 +461,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link DocMethodParameter#getName()}を表現する。
+     * Represents {@link DocMethodParameter#getName()}.
      */
     DOC_METHOD_PARAMETER_NAME(
         DocMethodParameter.class,
@@ -469,7 +469,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link DocMethodParameter#isVariableArity()}を表現する。
+     * Represents {@link DocMethodParameter#isVariableArity()}.
      */
     DOC_METHOD_PARAMETER_VARIABLE_ARITY(
         DocMethodParameter.class,
@@ -477,7 +477,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link DocText#getString()}を表現する。
+     * Represents {@link DocText#getString()}.
      */
     DOC_TEXT_STRING(
         DocText.class,
@@ -485,7 +485,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link EnhancedForStatement#getParameter()}を表現する。
+     * Represents {@link EnhancedForStatement#getParameter()}.
      */
     ENHANCED_FOR_STATEMENT_PARAMETER(
         EnhancedForStatement.class,
@@ -493,7 +493,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link EnhancedForStatement#getExpression()}を表現する。
+     * Represents {@link EnhancedForStatement#getExpression()}.
      */
     ENHANCED_FOR_STATEMENT_EXPRESSION(
         EnhancedForStatement.class,
@@ -501,7 +501,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link EnhancedForStatement#getBody()}を表現する。
+     * Represents {@link EnhancedForStatement#getBody()}.
      */
     ENHANCED_FOR_STATEMENT_BODY(
         EnhancedForStatement.class,
@@ -509,7 +509,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link EnumConstantDeclaration#getName()}を表現する。
+     * Represents {@link EnumConstantDeclaration#getName()}.
      */
     ENUM_CONSTANT_DECLARATION_NAME(
         EnumConstantDeclaration.class,
@@ -517,7 +517,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link EnumConstantDeclaration#getArguments()}を表現する。
+     * Represents {@link EnumConstantDeclaration#getArguments()}.
      */
     ENUM_CONSTANT_DECLARATION_ARGUMENTS(
         EnumConstantDeclaration.class,
@@ -525,7 +525,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link EnumConstantDeclaration#getBody()}を表現する。
+     * Represents {@link EnumConstantDeclaration#getBody()}.
      */
     ENUM_CONSTANT_DECLARATION_BODY(
         EnumConstantDeclaration.class,
@@ -533,7 +533,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link EnumDeclaration#getSuperInterfaceTypes()}を表現する。
+     * Represents {@link EnumDeclaration#getSuperInterfaceTypes()}.
      */
     ENUM_DECLARATION_SUPER_INTERFACE_TYPES(
         EnumDeclaration.class,
@@ -541,7 +541,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link EnumDeclaration#getConstantDeclarations()}を表現する。
+     * Represents {@link EnumDeclaration#getConstantDeclarations()}.
      */
     ENUM_DECLARATION_CONSTANT_DECLARATIONS(
         EnumDeclaration.class,
@@ -549,7 +549,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link ExpressionStatement#getExpression()}を表現する。
+     * Represents {@link ExpressionStatement#getExpression()}.
      */
     EXPRESSION_STATEMENT_EXPRESSION(
         ExpressionStatement.class,
@@ -557,7 +557,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link FieldAccessExpression#getQualifier()}を表現する。
+     * Represents {@link FieldAccessExpression#getQualifier()}.
      */
     FIELD_ACCESS_EXPRESSION_QUALIFIER(
         FieldAccessExpression.class,
@@ -565,7 +565,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link FieldAccessExpression#getName()}を表現する。
+     * Represents {@link FieldAccessExpression#getName()}.
      */
     FIELD_ACCESS_EXPRESSION_NAME(
         FieldAccessExpression.class,
@@ -573,7 +573,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link FieldDeclaration#getType()}を表現する。
+     * Represents {@link FieldDeclaration#getType()}.
      */
     FIELD_DECLARATION_TYPE(
         FieldDeclaration.class,
@@ -581,7 +581,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link FieldDeclaration#getVariableDeclarators()}を表現する。
+     * Represents {@link FieldDeclaration#getVariableDeclarators()}.
      */
     FIELD_DECLARATION_VARIABLE_DECLARATORS(
         FieldDeclaration.class,
@@ -589,7 +589,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link ForStatement#getInitialization()}を表現する。
+     * Represents {@link ForStatement#getInitialization()}.
      */
     FOR_STATEMENT_INITIALIZATION(
         ForStatement.class,
@@ -597,7 +597,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link ForStatement#getCondition()}を表現する。
+     * Represents {@link ForStatement#getCondition()}.
      */
     FOR_STATEMENT_CONDITION(
         ForStatement.class,
@@ -605,7 +605,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link ForStatement#getUpdate()}を表現する。
+     * Represents {@link ForStatement#getUpdate()}.
      */
     FOR_STATEMENT_UPDATE(
         ForStatement.class,
@@ -613,7 +613,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link ForStatement#getBody()}を表現する。
+     * Represents {@link ForStatement#getBody()}.
      */
     FOR_STATEMENT_BODY(
         ForStatement.class,
@@ -621,7 +621,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link FormalParameterDeclaration#getModifiers()}を表現する。
+     * Represents {@link FormalParameterDeclaration#getModifiers()}.
      */
     FORMAL_PARAMETER_DECLARATION_MODIFIERS(
         FormalParameterDeclaration.class,
@@ -629,7 +629,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link FormalParameterDeclaration#getType()}を表現する。
+     * Represents {@link FormalParameterDeclaration#getType()}.
      */
     FORMAL_PARAMETER_DECLARATION_TYPE(
         FormalParameterDeclaration.class,
@@ -637,7 +637,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link FormalParameterDeclaration#isVariableArity()}を表現する。
+     * Represents {@link FormalParameterDeclaration#isVariableArity()}.
      */
     FORMAL_PARAMETER_DECLARATION_VARIABLE_ARITY(
         FormalParameterDeclaration.class,
@@ -645,7 +645,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link FormalParameterDeclaration#getName()}を表現する。
+     * Represents {@link FormalParameterDeclaration#getName()}.
      */
     FORMAL_PARAMETER_DECLARATION_NAME(
         FormalParameterDeclaration.class,
@@ -653,7 +653,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link FormalParameterDeclaration#getExtraDimensions()}を表現する。
+     * Represents {@link FormalParameterDeclaration#getExtraDimensions()}.
      */
     FORMAL_PARAMETER_DECLARATION_EXTRA_DIMENSIONS(
         FormalParameterDeclaration.class,
@@ -661,7 +661,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link IfStatement#getCondition()}を表現する。
+     * Represents {@link IfStatement#getCondition()}.
      */
     IF_STATEMENT_CONDITION(
         IfStatement.class,
@@ -669,7 +669,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link IfStatement#getThenStatement()}を表現する。
+     * Represents {@link IfStatement#getThenStatement()}.
      */
     IF_STATEMENT_THEN_STATEMENT(
         IfStatement.class,
@@ -677,7 +677,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link IfStatement#getElseStatement()}を表現する。
+     * Represents {@link IfStatement#getElseStatement()}.
      */
     IF_STATEMENT_ELSE_STATEMENT(
         IfStatement.class,
@@ -685,7 +685,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link ImportDeclaration#getImportKind()}を表現する。
+     * Represents {@link ImportDeclaration#getImportKind()}.
      */
     IMPORT_DECLARATION_IMPORT_KIND(
         ImportDeclaration.class,
@@ -693,7 +693,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link ImportDeclaration#getName()}を表現する。
+     * Represents {@link ImportDeclaration#getName()}.
      */
     IMPORT_DECLARATION_NAME(
         ImportDeclaration.class,
@@ -701,7 +701,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link InfixExpression#getLeftOperand()}を表現する。
+     * Represents {@link InfixExpression#getLeftOperand()}.
      */
     INFIX_EXPRESSION_LEFT_OPERAND(
         InfixExpression.class,
@@ -709,7 +709,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link InfixExpression#getOperator()}を表現する。
+     * Represents {@link InfixExpression#getOperator()}.
      */
     INFIX_EXPRESSION_OPERATOR(
         InfixExpression.class,
@@ -717,7 +717,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link InfixExpression#getRightOperand()}を表現する。
+     * Represents {@link InfixExpression#getRightOperand()}.
      */
     INFIX_EXPRESSION_RIGHT_OPERAND(
         InfixExpression.class,
@@ -725,7 +725,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link InitializerDeclaration#getBody()}を表現する。
+     * Represents {@link InitializerDeclaration#getBody()}.
      */
     INITIALIZER_DECLARATION_BODY(
         InitializerDeclaration.class,
@@ -733,7 +733,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link InstanceofExpression#getExpression()}を表現する。
+     * Represents {@link InstanceofExpression#getExpression()}.
      */
     INSTANCEOF_EXPRESSION_EXPRESSION(
         InstanceofExpression.class,
@@ -741,7 +741,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link InstanceofExpression#getType()}を表現する。
+     * Represents {@link InstanceofExpression#getType()}.
      */
     INSTANCEOF_EXPRESSION_TYPE(
         InstanceofExpression.class,
@@ -749,7 +749,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link InterfaceDeclaration#getTypeParameters()}を表現する。
+     * Represents {@link InterfaceDeclaration#getTypeParameters()}.
      */
     INTERFACE_DECLARATION_TYPE_PARAMETERS(
         InterfaceDeclaration.class,
@@ -757,7 +757,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link InterfaceDeclaration#getSuperInterfaceTypes()}を表現する。
+     * Represents {@link InterfaceDeclaration#getSuperInterfaceTypes()}.
      */
     INTERFACE_DECLARATION_SUPER_INTERFACE_TYPES(
         InterfaceDeclaration.class,
@@ -765,7 +765,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link Javadoc#getBlocks()}を表現する。
+     * Represents {@link Javadoc#getBlocks()}.
      */
     JAVADOC_BLOCKS(
         Javadoc.class,
@@ -773,7 +773,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link Keyword#getQualifier()}を表現する。
+     * Represents {@link Keyword#getQualifier()}.
      */
     KEYWORD_QUALIFIER(
         Keyword.class,
@@ -781,7 +781,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link LabeledStatement#getLabel()}を表現する。
+     * Represents {@link LabeledStatement#getLabel()}.
      */
     LABELED_STATEMENT_LABEL(
         LabeledStatement.class,
@@ -789,7 +789,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link LabeledStatement#getBody()}を表現する。
+     * Represents {@link LabeledStatement#getBody()}.
      */
     LABELED_STATEMENT_BODY(
         LabeledStatement.class,
@@ -797,7 +797,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link LineComment#getString()}を表現する。
+     * Represents {@link LineComment#getString()}.
      */
     LINE_COMMENT_STRING(
         LineComment.class,
@@ -805,7 +805,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link Literal#getToken()}を表現する。
+     * Represents {@link Literal#getToken()}.
      */
     LITERAL_TOKEN(
         Literal.class,
@@ -813,7 +813,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link LocalClassDeclaration#getDeclaration()}を表現する。
+     * Represents {@link LocalClassDeclaration#getDeclaration()}.
      */
     LOCAL_CLASS_DECLARATION_DECLARATION(
         LocalClassDeclaration.class,
@@ -821,7 +821,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link LocalVariableDeclaration#getModifiers()}を表現する。
+     * Represents {@link LocalVariableDeclaration#getModifiers()}.
      */
     LOCAL_VARIABLE_DECLARATION_MODIFIERS(
         LocalVariableDeclaration.class,
@@ -829,7 +829,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link LocalVariableDeclaration#getType()}を表現する。
+     * Represents {@link LocalVariableDeclaration#getType()}.
      */
     LOCAL_VARIABLE_DECLARATION_TYPE(
         LocalVariableDeclaration.class,
@@ -837,7 +837,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link LocalVariableDeclaration#getVariableDeclarators()}を表現する。
+     * Represents {@link LocalVariableDeclaration#getVariableDeclarators()}.
      */
     LOCAL_VARIABLE_DECLARATION_VARIABLE_DECLARATORS(
         LocalVariableDeclaration.class,
@@ -845,7 +845,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link MethodDeclaration#getReturnType()}を表現する。
+     * Represents {@link MethodDeclaration#getReturnType()}.
      */
     METHOD_DECLARATION_RETURN_TYPE(
         MethodDeclaration.class,
@@ -853,7 +853,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link MethodDeclaration#getExtraDimensions()}を表現する。
+     * Represents {@link MethodDeclaration#getExtraDimensions()}.
      */
     METHOD_DECLARATION_EXTRA_DIMENSIONS(
         MethodDeclaration.class,
@@ -861,7 +861,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link MethodInvocationExpression#getQualifier()}を表現する。
+     * Represents {@link MethodInvocationExpression#getQualifier()}.
      */
     METHOD_INVOCATION_EXPRESSION_QUALIFIER(
         MethodInvocationExpression.class,
@@ -869,7 +869,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link MethodInvocationExpression#getTypeArguments()}を表現する。
+     * Represents {@link MethodInvocationExpression#getTypeArguments()}.
      */
     METHOD_INVOCATION_EXPRESSION_TYPE_ARGUMENTS(
         MethodInvocationExpression.class,
@@ -877,7 +877,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link MethodInvocationExpression#getName()}を表現する。
+     * Represents {@link MethodInvocationExpression#getName()}.
      */
     METHOD_INVOCATION_EXPRESSION_NAME(
         MethodInvocationExpression.class,
@@ -885,7 +885,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link MethodInvocationExpression#getArguments()}を表現する。
+     * Represents {@link MethodInvocationExpression#getArguments()}.
      */
     METHOD_INVOCATION_EXPRESSION_ARGUMENTS(
         MethodInvocationExpression.class,
@@ -893,7 +893,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link MethodOrConstructorDeclaration#getTypeParameters()}を表現する。
+     * Represents {@link MethodOrConstructorDeclaration#getTypeParameters()}.
      */
     METHOD_OR_CONSTRUCTOR_DECLARATION_TYPE_PARAMETERS(
         MethodOrConstructorDeclaration.class,
@@ -901,7 +901,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link MethodOrConstructorDeclaration#getName()}を表現する。
+     * Represents {@link MethodOrConstructorDeclaration#getName()}.
      */
     METHOD_OR_CONSTRUCTOR_DECLARATION_NAME(
         MethodOrConstructorDeclaration.class,
@@ -909,7 +909,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link MethodOrConstructorDeclaration#getFormalParameters()}を表現する。
+     * Represents {@link MethodOrConstructorDeclaration#getFormalParameters()}.
      */
     METHOD_OR_CONSTRUCTOR_DECLARATION_FORMAL_PARAMETERS(
         MethodOrConstructorDeclaration.class,
@@ -917,7 +917,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link MethodOrConstructorDeclaration#getExceptionTypes()}を表現する。
+     * Represents {@link MethodOrConstructorDeclaration#getExceptionTypes()}.
      */
     METHOD_OR_CONSTRUCTOR_DECLARATION_EXCEPTION_TYPES(
         MethodOrConstructorDeclaration.class,
@@ -925,7 +925,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link MethodOrConstructorDeclaration#getBody()}を表現する。
+     * Represents {@link MethodOrConstructorDeclaration#getBody()}.
      */
     METHOD_OR_CONSTRUCTOR_DECLARATION_BODY(
         MethodOrConstructorDeclaration.class,
@@ -933,7 +933,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link Modifier#getModifierKind()}を表現する。
+     * Represents {@link Modifier#getModifierKind()}.
      */
     MODIFIER_MODIFIER_KIND(
         Modifier.class,
@@ -941,7 +941,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link NamedType#getName()}を表現する。
+     * Represents {@link NamedType#getName()}.
      */
     NAMED_TYPE_NAME(
         NamedType.class,
@@ -949,7 +949,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link NormalAnnotation#getElements()}を表現する。
+     * Represents {@link NormalAnnotation#getElements()}.
      */
     NORMAL_ANNOTATION_ELEMENTS(
         NormalAnnotation.class,
@@ -957,7 +957,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link PackageDeclaration#getJavadoc()}を表現する。
+     * Represents {@link PackageDeclaration#getJavadoc()}.
      */
     PACKAGE_DECLARATION_JAVADOC(
         PackageDeclaration.class,
@@ -965,7 +965,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link PackageDeclaration#getAnnotations()}を表現する。
+     * Represents {@link PackageDeclaration#getAnnotations()}.
      */
     PACKAGE_DECLARATION_ANNOTATIONS(
         PackageDeclaration.class,
@@ -973,7 +973,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link PackageDeclaration#getName()}を表現する。
+     * Represents {@link PackageDeclaration#getName()}.
      */
     PACKAGE_DECLARATION_NAME(
         PackageDeclaration.class,
@@ -981,7 +981,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link ParameterizedType#getType()}を表現する。
+     * Represents {@link ParameterizedType#getType()}.
      */
     PARAMETERIZED_TYPE_TYPE(
         ParameterizedType.class,
@@ -989,7 +989,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link ParameterizedType#getTypeArguments()}を表現する。
+     * Represents {@link ParameterizedType#getTypeArguments()}.
      */
     PARAMETERIZED_TYPE_TYPE_ARGUMENTS(
         ParameterizedType.class,
@@ -997,7 +997,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link ParenthesizedExpression#getExpression()}を表現する。
+     * Represents {@link ParenthesizedExpression#getExpression()}.
      */
     PARENTHESIZED_EXPRESSION_EXPRESSION(
         ParenthesizedExpression.class,
@@ -1005,7 +1005,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link PostfixExpression#getOperand()}を表現する。
+     * Represents {@link PostfixExpression#getOperand()}.
      */
     POSTFIX_EXPRESSION_OPERAND(
         PostfixExpression.class,
@@ -1013,7 +1013,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link PostfixExpression#getOperator()}を表現する。
+     * Represents {@link PostfixExpression#getOperator()}.
      */
     POSTFIX_EXPRESSION_OPERATOR(
         PostfixExpression.class,
@@ -1021,7 +1021,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link QualifiedName#getQualifier()}を表現する。
+     * Represents {@link QualifiedName#getQualifier()}.
      */
     QUALIFIED_NAME_QUALIFIER(
         QualifiedName.class,
@@ -1029,7 +1029,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link QualifiedName#getSimpleName()}を表現する。
+     * Represents {@link QualifiedName#getSimpleName()}.
      */
     QUALIFIED_NAME_SIMPLE_NAME(
         QualifiedName.class,
@@ -1037,7 +1037,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link QualifiedType#getQualifier()}を表現する。
+     * Represents {@link QualifiedType#getQualifier()}.
      */
     QUALIFIED_TYPE_QUALIFIER(
         QualifiedType.class,
@@ -1045,7 +1045,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link QualifiedType#getSimpleName()}を表現する。
+     * Represents {@link QualifiedType#getSimpleName()}.
      */
     QUALIFIED_TYPE_SIMPLE_NAME(
         QualifiedType.class,
@@ -1053,7 +1053,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link ReturnStatement#getExpression()}を表現する。
+     * Represents {@link ReturnStatement#getExpression()}.
      */
     RETURN_STATEMENT_EXPRESSION(
         ReturnStatement.class,
@@ -1061,7 +1061,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link SimpleName#getToken()}を表現する。
+     * Represents {@link SimpleName#getToken()}.
      */
     SIMPLE_NAME_STRING(
         SimpleName.class,
@@ -1069,7 +1069,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link SingleElementAnnotation#getExpression()}を表現する。
+     * Represents {@link SingleElementAnnotation#getExpression()}.
      */
     SINGLE_ELEMENT_ANNOTATION_EXPRESSION(
         SingleElementAnnotation.class,
@@ -1077,7 +1077,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link StatementExpressionList#getExpressions()}を表現する。
+     * Represents {@link StatementExpressionList#getExpressions()}.
      */
     STATEMENT_EXPRESSION_LIST_EXPRESSIONS(
         StatementExpressionList.class,
@@ -1085,7 +1085,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link SuperConstructorInvocation#getQualifier()}を表現する。
+     * Represents {@link SuperConstructorInvocation#getQualifier()}.
      */
     SUPER_CONSTRUCTOR_INVOCATION_QUALIFIER(
         SuperConstructorInvocation.class,
@@ -1093,7 +1093,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link SwitchCaseLabel#getExpression()}を表現する。
+     * Represents {@link SwitchCaseLabel#getExpression()}.
      */
     SWITCH_CASE_LABEL_EXPRESSION(
         SwitchCaseLabel.class,
@@ -1101,7 +1101,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link SwitchStatement#getExpression()}を表現する。
+     * Represents {@link SwitchStatement#getExpression()}.
      */
     SWITCH_STATEMENT_EXPRESSION(
         SwitchStatement.class,
@@ -1109,7 +1109,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link SwitchStatement#getStatements()}を表現する。
+     * Represents {@link SwitchStatement#getStatements()}.
      */
     SWITCH_STATEMENT_STATEMENTS(
         SwitchStatement.class,
@@ -1117,7 +1117,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link SynchronizedStatement#getExpression()}を表現する。
+     * Represents {@link SynchronizedStatement#getExpression()}.
      */
     SYNCHRONIZED_STATEMENT_EXPRESSION(
         SynchronizedStatement.class,
@@ -1125,7 +1125,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link SynchronizedStatement#getBody()}を表現する。
+     * Represents {@link SynchronizedStatement#getBody()}.
      */
     SYNCHRONIZED_STATEMENT_BODY(
         SynchronizedStatement.class,
@@ -1133,7 +1133,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link ThrowStatement#getExpression()}を表現する。
+     * Represents {@link ThrowStatement#getExpression()}.
      */
     THROW_STATEMENT_EXPRESSION(
         ThrowStatement.class,
@@ -1141,7 +1141,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link TryStatement#getTryBlock()}を表現する。
+     * Represents {@link TryStatement#getTryBlock()}.
      */
     TRY_STATEMENT_TRY_BLOCK(
         TryStatement.class,
@@ -1149,7 +1149,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link TryStatement#getCatchClauses()}を表現する。
+     * Represents {@link TryStatement#getCatchClauses()}.
      */
     TRY_STATEMENT_CATCH_CLAUSES(
         TryStatement.class,
@@ -1157,7 +1157,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link TryStatement#getFinallyBlock()}を表現する。
+     * Represents {@link TryStatement#getFinallyBlock()}.
      */
     TRY_STATEMENT_FINALLY_BLOCK(
         TryStatement.class,
@@ -1165,7 +1165,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link TypeBodyDeclaration#getJavadoc()}を表現する。
+     * Represents {@link TypeBodyDeclaration#getJavadoc()}.
      */
     TYPE_BODY_DECLARATION_JAVADOC(
         TypeBodyDeclaration.class,
@@ -1173,7 +1173,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link TypeBodyDeclaration#getModifiers()}を表現する。
+     * Represents {@link TypeBodyDeclaration#getModifiers()}.
      */
     TYPE_BODY_DECLARATION_MODIFIERS(
         TypeBodyDeclaration.class,
@@ -1181,7 +1181,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link TypeDeclaration#getName()}を表現する。
+     * Represents {@link TypeDeclaration#getName()}.
      */
     TYPE_DECLARATION_NAME(
         TypeDeclaration.class,
@@ -1189,7 +1189,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link TypeDeclaration#getBodyDeclarations()}を表現する。
+     * Represents {@link TypeDeclaration#getBodyDeclarations()}.
      */
     TYPE_DECLARATION_BODY_DECLARATIONS(
         TypeDeclaration.class,
@@ -1197,7 +1197,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link TypeParameterDeclaration#getName()}を表現する。
+     * Represents {@link TypeParameterDeclaration#getName()}.
      */
     TYPE_PARAMETER_DECLARATION_NAME(
         TypeParameterDeclaration.class,
@@ -1205,7 +1205,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link TypeParameterDeclaration#getTypeBounds()}を表現する。
+     * Represents {@link TypeParameterDeclaration#getTypeBounds()}.
      */
     TYPE_PARAMETER_DECLARATION_TYPE_BOUNDS(
         TypeParameterDeclaration.class,
@@ -1213,7 +1213,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link UnaryExpression#getOperator()}を表現する。
+     * Represents {@link UnaryExpression#getOperator()}.
      */
     UNARY_EXPRESSION_OPERATOR(
         UnaryExpression.class,
@@ -1221,7 +1221,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link UnaryExpression#getOperand()}を表現する。
+     * Represents {@link UnaryExpression#getOperand()}.
      */
     UNARY_EXPRESSION_OPERAND(
         UnaryExpression.class,
@@ -1229,7 +1229,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link VariableDeclarator#getName()}を表現する。
+     * Represents {@link VariableDeclarator#getName()}.
      */
     VARIABLE_DECLARATOR_NAME(
         VariableDeclarator.class,
@@ -1237,7 +1237,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link VariableDeclarator#getExtraDimensions()}を表現する。
+     * Represents {@link VariableDeclarator#getExtraDimensions()}.
      */
     VARIABLE_DECLARATOR_EXTRA_DIMENSIONS(
         VariableDeclarator.class,
@@ -1245,7 +1245,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link VariableDeclarator#getInitializer()}を表現する。
+     * Represents {@link VariableDeclarator#getInitializer()}.
      */
     VARIABLE_DECLARATOR_INITIALIZER(
         VariableDeclarator.class,
@@ -1253,7 +1253,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link WhileStatement#getCondition()}を表現する。
+     * Represents {@link WhileStatement#getCondition()}.
      */
     WHILE_STATEMENT_CONDITION(
         WhileStatement.class,
@@ -1261,7 +1261,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link WhileStatement#getBody()}を表現する。
+     * Represents {@link WhileStatement#getBody()}.
      */
     WHILE_STATEMENT_BODY(
         WhileStatement.class,
@@ -1269,7 +1269,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link Wildcard#getBoundKind()}を表現する。
+     * Represents {@link Wildcard#getBoundKind()}.
      */
     WILDCARD_BOUND_KIND(
         Wildcard.class,
@@ -1277,7 +1277,7 @@ public enum PropertyKind {
     ),
 
     /**
-     * {@link Wildcard#getTypeBound()}を表現する。
+     * Represents {@link Wildcard#getTypeBound()}.
      */
     WILDCARD_TYPE_BOUND(
         Wildcard.class,
@@ -1297,16 +1297,16 @@ public enum PropertyKind {
     }
 
     /**
-     * このプロパティを公開するインターフェース型を返す。
-     * @return このプロパティを公開するインターフェース型
+     * Returns the interface type of the property owner.
+     * @return the interface type of the property owner
      */
     public Class<? extends Model> getOwnerType() {
         return ownerType;
     }
 
     /**
-     * このプロパティの名称を返す。
-     * @return このプロパティの名称
+     * Returns the name of this property.
+     * @return the property name
      */
     public String getPropertyName() {
         return name;

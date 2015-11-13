@@ -24,16 +24,15 @@ import com.asakusafw.vocabulary.model.Key;
 import com.asakusafw.vocabulary.operator.MasterJoinUpdate;
 import com.asakusafw.vocabulary.operator.MasterSelection;
 
-
 /**
- * {@link MasterCheckFlowProcessor}に対するテスト演算子。
+ * An operator class for testing {@link MasterCheckFlowProcessor}.
  */
 public abstract class MasterJoinUpdateFlow {
 
     /**
-     * 通常の演算子。
-     * @param master マスタ
-     * @param model モデル
+     * simple.
+     * @param master the master data
+     * @param model target data model
      */
     @MasterJoinUpdate
     public void simple(
@@ -44,10 +43,10 @@ public abstract class MasterJoinUpdateFlow {
     }
 
     /**
-     * パラメータつき演算子。
-     * @param master マスタ
-     * @param model モデル
-     * @param parameter 追加パラメータ
+     * parameterized.
+     * @param master the master data
+     * @param model target data model
+     * @param parameter additional parameter
      */
     @MasterJoinUpdate
     public void withParameter(
@@ -58,9 +57,9 @@ public abstract class MasterJoinUpdateFlow {
     }
 
     /**
-     * セレクタつき演算子。
-     * @param master マスタ
-     * @param model モデル
+     * w/ selector.
+     * @param master the master data
+     * @param model target data model
      */
     @MasterJoinUpdate(selection = "selector")
     public void selection(
@@ -70,10 +69,10 @@ public abstract class MasterJoinUpdateFlow {
     }
 
     /**
-     * 引数無しのセレクタ。
-     * @param masters マスタ一覧
-     * @param model 対象のモデル
-     * @return 選択したマスタ、利用しない場合は{@code null}
+     * non-parameterized selector.
+     * @param masters list of masters
+     * @param model the data model
+     * @return the selected master data, or {@code null} if there is no suitable master data
      */
     @MasterSelection
     public Ex2 selector(List<Ex2> masters, Ex1 model) {

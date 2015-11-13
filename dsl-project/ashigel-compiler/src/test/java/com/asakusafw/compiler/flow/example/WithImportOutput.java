@@ -23,21 +23,20 @@ import com.asakusafw.vocabulary.flow.In;
 import com.asakusafw.vocabulary.flow.JobFlow;
 import com.asakusafw.vocabulary.flow.Out;
 
-
 /**
- * インポーターの指定がある出力を持つジョブフロー。
+ * A jobflow class which has output w/ importer description.
  */
 @JobFlow(name = "testing")
 public class WithImportOutput extends FlowDescription {
 
-    private In<MockHoge> in;
+    private final In<MockHoge> in;
 
-    private Out<MockHoge> out;
+    private final Out<MockHoge> out;
 
     /**
-     * インスタンスを生成する。
-     * @param in 入力
-     * @param out 出力
+     * Creates a new instance.
+     * @param in input
+     * @param out output
      */
     public WithImportOutput(
             @Import(name = "hoge", description = MockHogeImporterDescription.class)

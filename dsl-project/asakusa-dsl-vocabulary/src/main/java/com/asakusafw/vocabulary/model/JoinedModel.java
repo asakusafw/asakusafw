@@ -22,7 +22,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 他のモデルを結合したモデルを表す注釈。
+ * An annotation that represents <em>joined models</em>.
  * @deprecated replaced into {@link Joined} since 0.2.0
  */
 @Deprecated
@@ -32,48 +32,48 @@ import java.lang.annotation.Target;
 public @interface JoinedModel {
 
     /**
-     * 結合先のモデル({@code FROM ...})への参照。
+     * A reference to join target model type.
      */
     ModelRef from();
 
     /**
-     * 結合元のモデル({@code JOIN ...})への参照。
+     * A reference to join source model type.
      */
     ModelRef join();
 
     /**
-     * この注釈が付けられるモデルに必要なメソッド。
+     * An interface that provides skeletal information of joined models.
      * <p>
-     * 必ずしものこのインターフェースを実装する必要はないが、下記のメソッドが存在する前提で
-     * DSLの解釈がおこなれる。
+     * Each data model class may or may not implement this interface,
+     * but that class must provide methods in the interface.
      * </p>
-     * @param <T> モデルオブジェクトの型
-     * @param <A> 結合されるモデルオブジェクトの型
-     * @param <B> 結合するモデルオブジェクトの型
+     * @param <T> joined model type
+     * @param <A> join target model type
+     * @param <B> join source model type
      */
     interface Interface<T, A, B> extends DataModel.Interface<T> {
 
         /**
-         * {@link #joinFrom(Object, Object)}のメソッド名。
+         * The method name of {@link #joinFrom(Object, Object)}.
          */
         String METHOD_NAME_JOIN_FROM = "joinFrom"; //$NON-NLS-1$
 
         /**
-         * {@link #splitInto(Object, Object)}のメソッド名。
+         * The method name of {@link #splitInto(Object, Object)}.
          */
         String METHOD_NAME_SPLIT_INTO = "splitInto"; //$NON-NLS-1$
 
         /**
-         * 2つのモデルオブジェクトを結合した結果を、このオブジェクトに設定する。
-         * @param left 結合されるモデルのオブジェクト
-         * @param right 結合するモデルのオブジェクト
+         * Sets properties of the joined result into this.
+         * @param left the join target model object
+         * @param right the join source model object
          */
         void joinFrom(A left, B right);
 
         /**
-         * この結合されたモデルを、もとの2つのモデルに分解して書き出す。
-         * @param left 結合されるモデルのオブジェクト
-         * @param right 結合するモデルのオブジェクト
+         * Sets properties of the joined result into original data models.
+         * @param left the join target model object
+         * @param right the join source model object
          */
         void splitInto(A left, B right);
     }

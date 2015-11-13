@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * 外部の機器との通信に関するクラスを提供する。
+ * Flow DSL vocabulary annotations/classes about external I/O.
  */
 package com.asakusafw.vocabulary.external;

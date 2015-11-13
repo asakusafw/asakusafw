@@ -18,68 +18,68 @@ package com.asakusafw.runtime.value;
 import java.text.MessageFormat;
 
 /**
- * 日付時刻に関する軽量クラス。
+ * A light weight class about date and time.
+ * @see DateUtil
+ * @see DateTimeOption
  */
 public class DateTime implements Comparable<DateTime> {
 
     /**
-     * 日付時刻のフォーマット。
+     * The default date and time format.
      */
     public static final String FORMAT = "yyyy-MM-dd HH:mm:ss"; //$NON-NLS-1$
 
     private long elapsedSeconds = 0L;
 
     /**
-     * 0001/01/01 00:00:00 を表すインスタンスを生成する。
+     * Creates a new instance which represents {@code 0001/01/01 (YYYY/MM/DD) 00:00:00}.
      */
     public DateTime() {
         this(0L);
     }
 
     /**
-     * インスタンスを生成する。
-     * @param elapsedSeconds 0001/01/01 00:00:00 からの経過秒数(0起算)
+     * Creates a new instance.
+     * @param elapsedSeconds the number of elapsed seconds from {@code 0001/01/01 (YYYY/MM/DD) 00:00:00} (0-origin)
      */
     public DateTime(long elapsedSeconds) {
         this.elapsedSeconds = elapsedSeconds;
     }
 
     /**
-     * インスタンスを生成する。
-     * @param year 年 (1-...)
-     * @param month 月 (1-12)
-     * @param day 日 (1-31)
-     * @param hour 時 (0-23)
-     * @param minute 分 (0-59)
-     * @param second 秒 (0-59)
+     * Creates a new instance.
+     * @param year year (1-...)
+     * @param month month (1-12)
+     * @param day day (1-31)
+     * @param hour hour (0-23)
+     * @param minute minute (0-59)
+     * @param second second (0-59)
      */
-    public DateTime(
-            int year, int month, int day,
-            int hour, int minute, int second) {
+    public DateTime(int year, int month, int day, int hour, int minute, int second) {
         int date = DateUtil.getDayFromDate(year, month, day);
         int secondsInDay = DateUtil.getSecondFromTime(hour, minute, second);
         this.elapsedSeconds = (long) date * 86400 + secondsInDay;
     }
 
     /**
-     * 0001/01/01 00:00:00 からの経過秒数を返す。
-     * @return 0001/01/01 00:00:00 からの経過秒数(0起算)
+     * Returns the number of elapsed seconds from {@code 0001/01/01 (YYYY/MM/DD) 00:00:00}.
+     * @return the number of elapsed seconds (0-origin)
      */
     public long getElapsedSeconds() {
         return elapsedSeconds;
     }
 
     /**
-     * 0001/01/01 00:00:00 からの経過秒数を変更する。
-     * @param elapsed 設定する経過秒数 (0起算)
+     * Sets the date and time as number of elapsed seconds from {@code 0001/01/01 (YYYY/MM/DD) 00:00:00}.
+     * @param elapsed the elapsed seconds (0-origin)
      */
     public void setElapsedSeconds(long elapsed) {
         this.elapsedSeconds = elapsed;
     }
 
     /**
-     * この日付の西暦年(1-)を返す。
-     * @return この日付の西暦年
+     * Returns the year of this date and time.
+     * @return the year (1-)
      */
     public int getYear() {
         int days = DateUtil.getDayFromSeconds(elapsedSeconds);
@@ -87,8 +87,8 @@ public class DateTime implements Comparable<DateTime> {
     }
 
     /**
-     * この日付の月(1-12)を返す。
-     * @return この日付の月
+     * Returns the month of this date and time.
+     * @return the month (1-12)
      */
     public int getMonth() {
         int days = DateUtil.getDayFromSeconds(elapsedSeconds);
@@ -98,8 +98,8 @@ public class DateTime implements Comparable<DateTime> {
     }
 
     /**
-     * この日付の日(1-31)を返す。
-     * @return この日付の日
+     * Returns the day of this date and time.
+     * @return the day (1-31)
      */
     public int getDay() {
         int year = getYear();
@@ -109,8 +109,8 @@ public class DateTime implements Comparable<DateTime> {
     }
 
     /**
-     * この時刻の時間(0-23)を返す。
-     * @return この時刻の時間
+     * Returns the hour of this date time.
+     * @return the hour (0-23)
      */
     public int getHour() {
         int sec = DateUtil.getSecondOfDay(elapsedSeconds);
@@ -118,8 +118,8 @@ public class DateTime implements Comparable<DateTime> {
     }
 
     /**
-     * この時刻の分(0-59)を返す。
-     * @return この時刻の分
+     * Returns the minute of this date time.
+     * @return the minute (0-59)
      */
     public int getMinute() {
         int sec = DateUtil.getSecondOfDay(elapsedSeconds);
@@ -127,8 +127,8 @@ public class DateTime implements Comparable<DateTime> {
     }
 
     /**
-     * この時刻の秒(0-59)を返す。
-     * @return この時刻の秒
+     * Returns the second of this date time.
+     * @return the second (0-59)
      */
     public int getSecond() {
         int sec = DateUtil.getSecondOfDay(elapsedSeconds);
@@ -187,11 +187,12 @@ public class DateTime implements Comparable<DateTime> {
     }
 
     /**
-     * 指定の文字列を指定のフォーマットで解析し、対応する時刻を返す。
-     * @param timeString 解析対象の文字列
-     * @param format フォーマット形式
-     * @return 対応する時刻
-     * @throws IllegalArgumentException 引数が時刻を表さない場合
+     * Parses the target string using the specified format, and returns the corresponding date and time as the elapsed
+     * seconds from {@code 0001/01/01 (YYYY/MM/DD) 00:00:00}.
+     * @param timeString the target string
+     * @param format the format kind
+     * @return the elapsed seconds (0-origin)
+     * @throws IllegalArgumentException if the target string is malformed
      */
     public static DateTime valueOf(StringOption timeString, DateTime.Format format) {
         if (timeString == null) {
@@ -207,11 +208,11 @@ public class DateTime implements Comparable<DateTime> {
     }
 
     /**
-     * 指定の文字列を指定のフォーマットで解析し、対応する時刻を返す。
-     * @param timeString 解析対象の文字列
-     * @param format フォーマット形式
-     * @return 対応する時刻
-     * @throws IllegalArgumentException 引数が時刻を表さない場合
+     * Parses the target string using the specified format, and returns the corresponding date and time object.
+     * @param timeString the target string
+     * @param format the format kind
+     * @return the corresponding date and time object
+     * @throws IllegalArgumentException if the target string is malformed
      */
     public static DateTime valueOf(String timeString, DateTime.Format format) {
         if (timeString == null) {
@@ -226,14 +227,14 @@ public class DateTime implements Comparable<DateTime> {
     }
 
     /**
-     * 日付のフォーマット。
+     * Represents kinds of date and time formats.
      * @since 0.1.0
      * @version 0.7.0
      */
     public enum Format {
 
         /**
-         * {@code YYYYMMDDhhmmss}の形式 (24時間表記)。
+         * {@code YYYYMMDDhhmmss}.
          */
         SIMPLE {
             @Override
@@ -260,7 +261,7 @@ public class DateTime implements Comparable<DateTime> {
             }
         },
         /**
-         * {@code YYYY-MM-DD hh:mm:ss}の形式。
+         * {@code YYYY-MM-DD hh:mm:ss}.
          * @since 0.7.0
          */
         STANDARD {
@@ -282,10 +283,11 @@ public class DateTime implements Comparable<DateTime> {
         ;
 
         /**
-         * 指定の文字列をこのフォーマットで解析し、0001/01/01 00:00:00からの経過秒数を返す。
-         * @param timeString 対象の文字列
-         * @return 0001/01/01 00:00:00からの経過秒数
-         * @throws IllegalArgumentException 引数に不正な文字列が指定された場合
+         * Parses the target string and returns the corresponding date and time as the elapsed seconds from
+         * {@code 0001/01/01 (YYYY/MM/DD) 00:00:00}.
+         * @param timeString the target string
+         * @return the elapsed seconds (0-origin)
+         * @throws IllegalArgumentException if the target string is malformed
          */
         public abstract long parse(String timeString);
 

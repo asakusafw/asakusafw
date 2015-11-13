@@ -36,8 +36,8 @@ import com.asakusafw.runtime.core.RuntimeResource;
 public class RuntimeResourceManagerTest {
 
     /**
-     * ServiceProviderに関するテスト。
-     * @throws Exception エラー
+     * test for loading services.
+     * @throws Exception if failed
      */
     @Test
     public void load() throws Exception {
@@ -56,8 +56,8 @@ public class RuntimeResourceManagerTest {
     }
 
     /**
-     * 単一リソースのセットアップ。
-     * @throws Exception エラー
+     * setup single resource.
+     * @throws Exception if failed
      */
     @Test
     public void setup() throws Exception {
@@ -81,8 +81,8 @@ public class RuntimeResourceManagerTest {
     }
 
     /**
-     * セットアップ時に例外発生。
-     * @throws Exception エラー
+     * error occurred during setup resources.
+     * @throws Exception if failed
      */
     @Test(expected = IOException.class)
     public void setup_exception() throws Exception {
@@ -102,8 +102,8 @@ public class RuntimeResourceManagerTest {
     }
 
     /**
-     * 複数リソースのセットアップ。
-     * @throws Exception エラー
+     * setup multiple resources.
+     * @throws Exception if failed
      */
     @Test
     public void setup_multi() throws Exception {
@@ -128,8 +128,8 @@ public class RuntimeResourceManagerTest {
     }
 
     /**
-     * 単一リソースのクリーンアップ。
-     * @throws Exception エラー
+     * cleanup single resource.
+     * @throws Exception if failed
      */
     @Test
     public void cleanup() throws Exception {
@@ -155,8 +155,8 @@ public class RuntimeResourceManagerTest {
     }
 
     /**
-     * クリーンアップ時に例外発生。
-     * @throws Exception エラー
+     * error occurred during cleanup resources.
+     * @throws Exception if failed
      */
     @Test(expected = IOException.class)
     public void cleanup_exception() throws Exception {
@@ -177,8 +177,8 @@ public class RuntimeResourceManagerTest {
     }
 
     /**
-     * 複数リソースのクリーンアップ。
-     * @throws Exception エラー
+     * cleanup multiple resources.
+     * @throws Exception if failed
      */
     @Test
     public void cleanup_multi() throws Exception {
@@ -204,8 +204,8 @@ public class RuntimeResourceManagerTest {
     }
 
     /**
-     * セットアップ時に途中でエラーが発生し、そこまでのセットアップしたものをクリーンアップ。
-     * @throws Exception エラー
+     * cleanup resource manager which is partially set-up but error was occurred during setup some resources.
+     * @throws Exception if failed
      */
     @Test
     public void partial_setup_cleanup() throws Exception {
@@ -236,9 +236,9 @@ public class RuntimeResourceManagerTest {
         } catch (IOException e) {
             // ok
         }
-        assertThat("途中までは成功している", passed.get(), is(3));
+        assertThat("partially set-up", passed.get(), is(3));
         manager.cleanup();
-        assertThat("成功したものだけクリーンナップ", passed.get(), is(0));
+        assertThat(passed.get(), is(0));
     }
 
     static class Adapter implements RuntimeResource {

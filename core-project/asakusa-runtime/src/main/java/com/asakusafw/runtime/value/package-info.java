@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * 実行時に利用する値に関するクラス群。
+ * Classes for runtime values.
  */
 package com.asakusafw.runtime.value;

@@ -20,6 +20,7 @@ import java.io.IOException;
 
 import com.asakusafw.compiler.batch.AbstractWorkDescriptionProcessor;
 import com.asakusafw.compiler.batch.BatchCompilerConfiguration;
+import com.asakusafw.compiler.batch.WorkDescriptionProcessor;
 import com.asakusafw.compiler.common.Naming;
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.flow.FlowCompiler;
@@ -34,18 +35,18 @@ import com.asakusafw.vocabulary.flow.FlowDescription;
 
 
 /**
- * {@link JobFlowWorkDescription}を処理するプロセッサ。
+ * An implementation of {@link WorkDescriptionProcessor} for {@link JobFlowWorkDescription}.
  */
 public class JobFlowWorkDescriptionProcessor
         extends AbstractWorkDescriptionProcessor<JobFlowWorkDescription> {
 
     /**
-     * ジョブフローパッケージ(JAR)の出力先ディレクトリ (バッチ結果出力先の相対パス)。
+     * The output directory name of resulting jobflow packages (JAR).
      */
     public static final String JOBFLOW_PACKAGE = "lib"; //$NON-NLS-1$
 
     /**
-     * ジョブフローのビルド用作業ディレクトリ。
+     * The temporary directory name of building jobflow packages.
      */
     private static final String JOBFLOW_TEMPORARY = "build"; //$NON-NLS-1$
 
@@ -117,11 +118,10 @@ public class JobFlowWorkDescriptionProcessor
     }
 
     /**
-     * 対象のジョブフローをコンパイルした結果のクラスパッケージファイルへのパスを返す。
-     * @param batchOutput バッチの出力先ディレクトリ
-     * @param flowId 対象のフローID
-     * @return 対象ファイルへのパス
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the jobflow package file path.
+     * @param batchOutput the batch output path
+     * @param flowId the target flow ID
+     * @return the package file path
      */
     public static File getPackageLocation(File batchOutput, String flowId) {
         Precondition.checkMustNotBeNull(batchOutput, "batchOutput"); //$NON-NLS-1$
@@ -132,11 +132,10 @@ public class JobFlowWorkDescriptionProcessor
     }
 
     /**
-     * 対象のジョブフローをコンパイルした結果のソースバンドルファイルへのパスを返す。
-     * @param batchOutput バッチの出力先ディレクトリ
-     * @param flowId 対象のフローID
-     * @return 対象ファイルへのパス
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the generated source package file path.
+     * @param batchOutput the batch output path
+     * @param flowId the target flow ID
+     * @return the package file path
      */
     public static File getSourceLocation(File batchOutput, String flowId) {
         Precondition.checkMustNotBeNull(batchOutput, "batchOutput"); //$NON-NLS-1$

@@ -118,7 +118,7 @@ public class TemporaryInputPreparator extends BaseImporterPreparator<TemporaryIn
             TemporaryInputDescription description) throws IOException {
         if (definition.getModelClass() != description.getModelType()) {
             throw new IOException(MessageFormat.format(
-                    "型が一致しません: モデルの型={0}, 入力の型={1} ({2})",
+                    Messages.getString("TemporaryInputPreparator.errorInconsistentDataType"), //$NON-NLS-1$
                     definition.getModelClass().getName(),
                     description.getModelType().getName(),
                     description));

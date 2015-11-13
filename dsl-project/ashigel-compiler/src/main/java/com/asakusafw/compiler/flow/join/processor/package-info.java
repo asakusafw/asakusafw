@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * Joinの最適化に関する演算子を解釈するプロセッサ。
+ * Processors for optimized join operators.
  */
 package com.asakusafw.compiler.flow.join.processor;

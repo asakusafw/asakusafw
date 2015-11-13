@@ -22,7 +22,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * ジョブフロークラスに付与されるべき注釈。
+ * An annotation for jobflow classes.
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
@@ -30,12 +30,8 @@ import java.lang.annotation.Target;
 public @interface JobFlow {
 
     /**
-     * このジョブフローの識別子。
-     * <p>
-     * この識別子は、同一のバッチ内で重複してはならない。
-     * また、識別子には、下記の形式の名前 (Javaの変数名のうち、ASCIIコード表に収まるもののみ)
-     * を利用可能である。
-     * </p>
+     * The identifier for the target jobflow ({@literal a.k.a.} <em>flow ID</em>).
+     * The flow ID must be unique in each batch, and must be in the form of the following rule:
 <pre><code>
 Name :
     NameStart NamePart*
@@ -47,6 +43,7 @@ NamePart: one of
     NameStart
     0-9
 </code></pre>
+     * In other words, the above rule is a subset of Java class or names.
      */
     String name();
 }

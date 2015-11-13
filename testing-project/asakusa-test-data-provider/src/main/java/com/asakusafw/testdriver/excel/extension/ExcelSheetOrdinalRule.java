@@ -72,7 +72,7 @@ public class ExcelSheetOrdinalRule implements ExcelSheetRuleExtension {
             return new CalendarCompare(operator);
         default:
             throw new FormatException(MessageFormat.format(
-                    "Property does not support compare(\"{0}\") expression: {1}",
+                    Messages.getString("ExcelSheetOrdinalRule.errorUnsupportedType"), //$NON-NLS-1$
                     operator.getSymbol(),
                     name));
         }

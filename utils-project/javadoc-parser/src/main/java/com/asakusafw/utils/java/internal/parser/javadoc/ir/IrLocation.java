@@ -19,23 +19,23 @@ import java.io.Serializable;
 import java.text.MessageFormat;
 
 /**
- * 位置を表すオブジェクト。
+ * Represents locations on {@link IrDocComment}.
  */
 public class IrLocation implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     private final int startPosition;
+
     private final int length;
 
     /**
-     * インスタンスを生成する。
-     * @param startPosition 開始位置
-     * @param length 長さ
-     * @throws IllegalArgumentException 引数が負であった場合
+     * Creates a new instance.
+     * @param startPosition the starting position (0-origin)
+     * @param length the character length
+     * @throws IllegalArgumentException if some parameters are negative value
      */
     public IrLocation(int startPosition, int length) {
-        super();
         if (startPosition < 0 || length < 0) {
             throw new IllegalArgumentException();
         }
@@ -44,28 +44,27 @@ public class IrLocation implements Serializable {
     }
 
     /**
-     * 開始位置を返す。
-     * @return 開始位置
+     * Returns the starting position.
+     * @return the starting position
      */
     public int getStartPosition() {
         return this.startPosition;
     }
 
     /**
-     * 長さを返す。
-     * @return 長さ
+     * Returns the character length.
+     * @return the character length
      */
     public int getLength() {
         return this.length;
     }
 
     /**
-     * 指定の位置オブジェクトに指定のオフセットを足した新しい位置オブジェクトを返す。
-     * 元となる位置オブジェクトに{@code null}が指定された場合、この呼び出しは{@code null}を返す。
-     * @param base 元となる位置オブジェクト、または{@code null}
-     * @param offset オフセット
-     * @return 移動した位置オブジェクト、または{@code null}
-     * @throws IllegalArgumentException 移動の結果、開始位置が負になる場合
+     * Returns a new location object which is moved the base location as the specified offset.
+     * @param base the base location (nullable)
+     * @param offset the moving offset
+     * @return the moved location, or {@code null} if the base location is also {@code null}
+     * @throws IllegalArgumentException if the moved location starts with negative position
      */
     public static IrLocation move(IrLocation base, int offset) {
         if (base == null) {

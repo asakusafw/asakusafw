@@ -16,53 +16,44 @@
 package com.asakusafw.utils.java.internal.parser.javadoc.ir;
 
 /**
- * フィールドまたはメソッド。
+ * An abstract super class of member references in {@link IrDocComment}.
  */
 public abstract class IrDocMember extends AbstractIrDocElement implements IrDocFragment {
 
-    /**
-     * serialVersionUID を表す。
-     */
     private static final long serialVersionUID = -7631714928819729918L;
+
     private IrDocNamedType declaringType;
+
     private IrDocSimpleName name;
 
     /**
-     * インスタンスを生成する。
-     */
-    public IrDocMember() {
-        super();
-    }
-
-    /**
-     * このメンバを宣言した型を返す。
-     * 省略されている場合、この呼び出しは{@code null}を返す。
-     * @return メンバを宣言した型、省略されていた場合は{@code null}
+     * Returns the declaring type.
+     * @return the declaring type, or {@code null} if it is not specified
      */
     public IrDocNamedType getDeclaringType() {
         return this.declaringType;
     }
 
     /**
-     * 今メンバを宣言した型を設定する。
-     * @param declaringType 設定する型、省略する場合は{@code null}
+     * Sets the declaring type.
+     * @param declaringType the declaring type, or {@code null} to unset
      */
     public void setDeclaringType(IrDocNamedType declaringType) {
         this.declaringType = declaringType;
     }
 
     /**
-     * このメンバの名前を返す。
-     * @return このメンバの名前
+     * Returns the member name.
+     * @return the member name
      */
     public IrDocSimpleName getName() {
         return this.name;
     }
 
     /**
-     * このメンバの名前を設定する。
-     * @param name このメンバの名前
-     * @throws IllegalArgumentException 引数に{@code null}が含まれていた場合
+     * Sets the member name.
+     * @param name the member name
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public void setName(IrDocSimpleName name) {
         if (name == null) {

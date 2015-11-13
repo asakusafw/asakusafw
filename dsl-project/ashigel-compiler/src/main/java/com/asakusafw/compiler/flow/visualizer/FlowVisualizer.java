@@ -26,7 +26,7 @@ import com.asakusafw.compiler.flow.plan.StageGraph;
 import com.asakusafw.vocabulary.flow.graph.FlowGraph;
 
 /**
- * 各種要素を可視化のためのモデルに変換する。
+ * Visualizes flow graphs.
  * @since 0.1.0
  * @version 0.4.0
  */
@@ -41,9 +41,9 @@ public class FlowVisualizer {
     private final FlowCompilingEnvironment environment;
 
     /**
-     * インスタンスを生成する。
-     * @param environment 環境オブジェクト
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param environment the current environment
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public FlowVisualizer(FlowCompilingEnvironment environment) {
         Precondition.checkMustNotBeNull(environment, "environment"); //$NON-NLS-1$
@@ -51,10 +51,10 @@ public class FlowVisualizer {
     }
 
     /**
-     * ステージグラフの構造を可視化して環境に書き出す。
-     * @param graph 対象のグラフ
-     * @throws IOException 出力に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Visualizes the stage graph and write it to the current context.
+     * @param graph the target graph
+     * @throws IOException if error occurred while visualizing the target element
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public void visualize(StageGraph graph) throws IOException {
         Precondition.checkMustNotBeNull(graph, "graph"); //$NON-NLS-1$
@@ -63,10 +63,10 @@ public class FlowVisualizer {
     }
 
     /**
-     * ステージブロックの構造を可視化して環境に書き出す。
-     * @param block 対象のブロック
-     * @throws IOException 出力に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Visualizes the stage block and write it to the current context.
+     * @param block the target block
+     * @throws IOException if error occurred while visualizing the target element
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public void visualize(StageBlock block) throws IOException {
         Precondition.checkMustNotBeNull(block, "block"); //$NON-NLS-1$
@@ -75,10 +75,10 @@ public class FlowVisualizer {
     }
 
     /**
-     * 演算子グラフの構造を可視化して環境に書き出す。
-     * @param graph 対象のグラフ
-     * @throws IOException 出力に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Visualizes the flow graph and write it to the current context.
+     * @param graph the target graph
+     * @throws IOException if error occurred while visualizing the target element
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public void visualize(FlowGraph graph) throws IOException {
         Precondition.checkMustNotBeNull(graph, "graph"); //$NON-NLS-1$

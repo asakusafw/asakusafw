@@ -17,7 +17,7 @@ package com.asakusafw.utils.java.model.syntax;
 
 
 /**
- * ラベル付き文を表現するインターフェース。
+ * An interface which represents labeled statement.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:14.7] Labeled Statements} </li>
@@ -27,19 +27,15 @@ package com.asakusafw.utils.java.model.syntax;
 public interface LabeledStatement
         extends Statement {
 
-    // properties
-
     /**
-     * ラベルの名前を返す。
-     * @return
-     *     ラベルの名前
+     * Returns the documentation blocks.
+     * @return the documentation blocks
      */
     SimpleName getLabel();
 
     /**
-     * 対象の文を返す。
-     * @return
-     *     対象の文
+     * Returns the body statement.
+     * @return the body statement
      */
     Statement getBody();
 }

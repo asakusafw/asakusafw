@@ -22,7 +22,7 @@ import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
 import com.asakusafw.vocabulary.operator.MasterCheck;
 
 /**
- * {@link MasterCheck マスタ確認演算子}を処理する。
+ * Processes {@link MasterCheck} operators.
  */
 @TargetOperator(MasterCheck.class)
 public class MasterCheckFlowProcessor extends RendezvousProcessor {

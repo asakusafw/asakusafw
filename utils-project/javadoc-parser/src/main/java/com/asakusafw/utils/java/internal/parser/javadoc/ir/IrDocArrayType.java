@@ -16,7 +16,7 @@
 package com.asakusafw.utils.java.internal.parser.javadoc.ir;
 
 /**
- * 配列型。
+ * Represents array types.
  */
 public class IrDocArrayType extends AbstractIrDocElement implements IrDocType {
 
@@ -25,12 +25,11 @@ public class IrDocArrayType extends AbstractIrDocElement implements IrDocType {
     private IrDocType componentType;
 
     /**
-     * インスタンスを生成する。
-     * @param componentType 要素型
-     * @throws IllegalArgumentException 引数に{@code null}が含まれていた場合
+     * Creates a new instance.
+     * @param componentType the element type
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public IrDocArrayType(IrDocType componentType) {
-        super();
         if (componentType == null) {
             throw new IllegalArgumentException("componentType"); //$NON-NLS-1$
         }
@@ -43,18 +42,18 @@ public class IrDocArrayType extends AbstractIrDocElement implements IrDocType {
     }
 
     /**
-     * 要素型を返す。
-     * @return 要素型
+     * Returns the element type.
+     * @return the element type
      */
     public IrDocType getComponentType() {
         return this.componentType;
     }
 
     /**
-     * 要素型を設定する。
-     * @param componentType 設定する要素型
-     * @throws IllegalArgumentException 引数に{@code null}が含まれていた場合
-     * @throws IllegalArgumentException 引数がこのオブジェクトを含む場合
+     * Sets the the element type.
+     * @param componentType the element type
+     * @throws IllegalArgumentException if the parameter is {@code null}
+     * @throws IllegalArgumentException if the component type contains this type
      */
     public void setComponentType(IrDocType componentType) {
         if (componentType == null) {

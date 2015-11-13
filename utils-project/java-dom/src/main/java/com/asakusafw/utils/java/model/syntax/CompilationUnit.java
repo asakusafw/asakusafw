@@ -18,7 +18,7 @@ package com.asakusafw.utils.java.model.syntax;
 import java.util.List;
 
 /**
- * コンパイル単位を表現するインターフェース。
+ * An interface which represents compilation units.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:7.3] Compilation Units} </li>
@@ -28,38 +28,27 @@ import java.util.List;
 public interface CompilationUnit
         extends Model {
 
-    // properties
-
     /**
-     * パッケージ宣言を返す。
-     * <p> 無名パッケージ上に存在するコンパイル単位を表現する場合は{@code null}が返される。 </p>
-     * @return
-     *     パッケージ宣言、
-     *     ただし無名パッケージ上に存在するコンパイル単位を表現する場合は{@code null}
+     * Returns the package declaration.
+     * @return the package declaration, or {@code null} if the compilation unit is on the default package
      */
     PackageDeclaration getPackageDeclaration();
 
     /**
-     * このコンパイル単位で宣言されるインポート宣言の一覧を返す。
-     * <p> インポート宣言が一つも宣言されない場合は空が返される。 </p>
-     * @return
-     *     このコンパイル単位で宣言されるインポート宣言の一覧
+     * Returns the import declarations.
+     * @return the import declarations
      */
     List<? extends ImportDeclaration> getImportDeclarations();
 
     /**
-     * このコンパイル単位で宣言される型の一覧を返す。
-     * <p> 型が一つも宣言されない場合は空が返される。 </p>
-     * @return
-     *     このコンパイル単位で宣言される型の一覧
+     * Returns the type declarations.
+     * @return the type declarations
      */
     List<? extends TypeDeclaration> getTypeDeclarations();
 
     /**
-     * このコンパイル単位に記述されたコメントの一覧を返す。
-     * <p> コメントが一つも記述されない場合は空が返される。 </p>
-     * @return
-     *     このコンパイル単位に記述されたコメントの一覧
+     * Returns the comments.
+     * @return the comments
      */
     List<? extends Comment> getComments();
 }

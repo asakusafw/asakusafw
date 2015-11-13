@@ -119,7 +119,7 @@ public abstract class AbstractParquetFileFormat<T> extends HadoopFileFormat<T>
         }
         if (LOG.isInfoEnabled()) {
             LOG.info(MessageFormat.format(
-                    "Loading Parquet {1} file(s) metadata ({0})",
+                    Messages.getString("AbstractParquetFileFormat.infoLoadMetadata"), //$NON-NLS-1$
                     context.getDataType().getSimpleName(),
                     files.size()));
         }
@@ -133,7 +133,7 @@ public abstract class AbstractParquetFileFormat<T> extends HadoopFileFormat<T>
             }
             if (LOG.isInfoEnabled()) {
                 LOG.info(MessageFormat.format(
-                        "Analyzing Parquet file metadata ({0}): {1}",
+                        Messages.getString("AbstractParquetFileFormat.infoAnalyzeMetadata"), //$NON-NLS-1$
                         context.getDataType().getSimpleName(),
                         status.getPath()));
             }

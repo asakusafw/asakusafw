@@ -77,28 +77,28 @@ public class TemporaryIoProcessor extends ExternalIoDescriptionProcessor {
             if (pathPrefix == null) {
                 valid = false;
                 getEnvironment().error(
-                        "{0}のパスが指定されていません",
+                        Messages.getString("TemporaryIoProcessor.errorMissingOutputPath"), //$NON-NLS-1$
                         desc.getClass().getName());
             } else {
                 Location location = Location.fromPath(pathPrefix, '/');
                 if (location.isPrefix() == false) {
                     valid = false;
                     getEnvironment().error(
-                            "{0}はパスの接尾辞(-*)でなければなりません: {1}",
+                            Messages.getString("TemporaryIoProcessor.errorMissingOutputPathSuffix"), //$NON-NLS-1$
                             desc.getClass().getName(),
                             pathPrefix);
                 }
                 if (location.getParent() == null) {
                     valid = false;
                     getEnvironment().error(
-                            "{0}には最低ひとつのディレクトリの指定が必要です: {1}",
+                            Messages.getString("TemporaryIoProcessor.errorMissingOutputParentDirectory"), //$NON-NLS-1$
                             desc.getClass().getName(),
                             pathPrefix);
                 }
                 if (VALID_OUTPUT_NAME.matcher(location.getName()).matches() == false) {
                     valid = false;
                     getEnvironment().error(
-                            "{0}のファイル名(末尾のセグメント)は英数字のみ利用できます: {1}",
+                            Messages.getString("TemporaryIoProcessor.errorInvalidOutputName"), //$NON-NLS-1$
                             desc.getClass().getName(),
                             pathPrefix);
                 }
@@ -182,21 +182,12 @@ public class TemporaryIoProcessor extends ExternalIoDescriptionProcessor {
         Map<Location, List<Slot>> results = new TreeMap<Location, List<Slot>>(new Comparator<Location>() {
             @Override
             public int compare(Location o1, Location o2) {
-                // o1.parent が o2.parent の祖先パスである場合に、o1がo2より手前に来るように並び替える。
-                // これは、Hadoopの出力先にディレクトリが既に存在する場合にエラーとするため。
-                // 逆もまた然り。
-
-                // 親パスを文字列で比較
-                // AがBの祖先パス => A.toString < B.toString
-                // と言う関係をもとに、親パスの文字列が異なればその順序で整列
                 String parentPath1 = (o1.getParent() == null) ? "" : o1.getParent().toPath('/'); //$NON-NLS-1$
                 String parentPath2 = (o2.getParent() == null) ? "" : o2.getParent().toPath('/'); //$NON-NLS-1$
                 int parentDiff = parentPath1.compareTo(parentPath2);
                 if (parentDiff != 0) {
                     return (parentDiff > 0) ? +1 : -1;
                 }
-
-                // 親パスまでが同じなので名前のみ比較
                 return o1.getName().compareTo(o2.getName());
             }
         });

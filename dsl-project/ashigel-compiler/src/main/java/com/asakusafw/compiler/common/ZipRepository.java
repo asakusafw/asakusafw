@@ -31,7 +31,7 @@ import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.runtime.io.util.ZipEntryInputStream;
 
 /**
- * ファイルシステム上のZIPアーカイブをリソースのリポジトリとする。
+ * An implementation of {@link ResourceRepository} which provides contents in a ZIP archive on the local file system.
  */
 public class ZipRepository implements ResourceRepository {
 
@@ -40,16 +40,16 @@ public class ZipRepository implements ResourceRepository {
     private final File archive;
 
     /**
-     * インスタンスを生成する。
-     * @param archive リポジトリのルートディレクトリ
-     * @throws IOException 指定されたファイルを読み出せない場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param archive the target ZIP archive file
+     * @throws IOException if failed to open the target archive file
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public ZipRepository(File archive) throws IOException {
         Precondition.checkMustNotBeNull(archive, "archive"); //$NON-NLS-1$
         if (archive.isFile() == false) {
             throw new IOException(MessageFormat.format(
-                    "{0} is not a directory",
+                    Messages.getString("ZipRepository.errorInputNotRegular"), //$NON-NLS-1$
                     archive));
         }
         this.archive = archive.getAbsoluteFile().getCanonicalFile();
@@ -95,7 +95,7 @@ public class ZipRepository implements ResourceRepository {
                 if (current == null) {
                     if (entries == 0) {
                         throw new IOException(MessageFormat.format(
-                                "Invalid ZIP format: {0}",
+                                Messages.getString("ZipRepository.errorMalformedZipFile"), //$NON-NLS-1$
                                 source));
                     }
                     return false;

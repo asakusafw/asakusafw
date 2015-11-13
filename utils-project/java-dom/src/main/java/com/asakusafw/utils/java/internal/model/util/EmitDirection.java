@@ -16,17 +16,17 @@
 package com.asakusafw.utils.java.internal.model.util;
 
 /**
- * 開始と終了を表現する定数。
+ * Represents a direction of emitting blocks.
  */
 public enum EmitDirection {
 
     /**
-     * 開始を表現する。
+     * Beginning of blocks.
      */
     BEGIN,
 
     /**
-     * 終了を表現する。
+     * Ending of blocks.
      */
     END,
 }

@@ -38,7 +38,7 @@ import com.asakusafw.utils.java.model.util.ExpressionBuilder;
 import com.asakusafw.utils.java.model.util.TypeBuilder;
 
 /**
- * {@link DataModel}を利用した{@link DataClass}の実装。
+ * An implementation of {@link DataClass} which represents a subtype of {@link DataModel}.
  */
 public class DataModelClass implements DataClass {
 
@@ -49,11 +49,11 @@ public class DataModelClass implements DataClass {
     private final Map<String, DataClass.Property> properties;
 
     /**
-     * インスタンスを生成して返す。
-     * @param environment コンパイラの環境
-     * @param type このデータのJava上での型
-     * @return 生成したインスタンス
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param environment the current environment
+     * @param type the data type
+     * @return the created instance
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public static DataModelClass create(FlowCompilingEnvironment environment, Class<?> type) {
         Precondition.checkMustNotBeNull(environment, "environment"); //$NON-NLS-1$
@@ -104,11 +104,11 @@ public class DataModelClass implements DataClass {
     }
 
     /**
-     * インスタンスを生成する。
-     * @param factory 利用するファクトリー
-     * @param type このデータクラスのJava上での型
-     * @param properties プロパティの一覧
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param factory the Java DOM factory
+     * @param type the target data type
+     * @param properties the properties
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     protected DataModelClass(ModelFactory factory, Class<?> type, Map<String, Property> properties) {
         Precondition.checkMustNotBeNull(factory, "factory"); //$NON-NLS-1$

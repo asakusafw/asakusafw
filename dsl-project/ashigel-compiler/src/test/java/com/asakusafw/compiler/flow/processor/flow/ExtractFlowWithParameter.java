@@ -31,7 +31,7 @@ import com.asakusafw.vocabulary.flow.Out;
 
 
 /**
- * {@link ExtractFlowProcessor}のテスト。
+ * test for {@link ExtractFlowProcessor}.
  */
 @JobFlow(name = "testing")
 public class ExtractFlowWithParameter extends FlowDescription {
@@ -41,9 +41,9 @@ public class ExtractFlowWithParameter extends FlowDescription {
     private Out<Ex2> out1;
 
     /**
-     * インスタンスを生成する。
-     * @param in1 入力
-     * @param out1 出力
+     * Creates a new instance.
+     * @param in1 input
+     * @param out1 output
      */
     public ExtractFlowWithParameter(
             @Import(name = "in", description = Ex1MockImporterDescription.class)

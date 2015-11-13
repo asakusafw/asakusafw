@@ -79,7 +79,7 @@ public class ExcelSheetDataModelSource implements DataModelSource {
         Row row = sheet.getRow(0);
         if (row == null) {
             throw new IOException(MessageFormat.format(
-                    "最初の行はプロパティ名の一覧でなければなりません: (id={0})",
+                    Messages.getString("ExcelSheetDataModelSource.errorInvalidHeader"), //$NON-NLS-1$
                     id));
         }
         nextRowNumber = 1;
@@ -92,7 +92,7 @@ public class ExcelSheetDataModelSource implements DataModelSource {
             }
             if (type != Cell.CELL_TYPE_STRING || cell.getStringCellValue().isEmpty()) {
                 throw new IOException(MessageFormat.format(
-                        "最初の行はプロパティ名を文字列で指定してください: (id={0}, column={1})",
+                        Messages.getString("ExcelSheetDataModelSource.errorInvalidHeaderCell"), //$NON-NLS-1$
                         id,
                         cell.getColumnIndex() + 1));
             }
@@ -100,7 +100,7 @@ public class ExcelSheetDataModelSource implements DataModelSource {
             PropertyName property = toPropertyName(cell, name);
             if (definition.getType(property) == null) {
                 throw new IOException(MessageFormat.format(
-                        "{0}にプロパティ\"{1}\"は定義されていません: (id={2}, column={3})",
+                        Messages.getString("ExcelSheetDataModelSource.errorMissingProperty"), //$NON-NLS-1$
                         definition.getModelClass().getName(),
                         property,
                         id,
@@ -110,7 +110,7 @@ public class ExcelSheetDataModelSource implements DataModelSource {
         }
         if (results.isEmpty()) {
             throw new IOException(MessageFormat.format(
-                    "最初の行はプロパティ名の一覧でなければなりません: (id={0})",
+                    Messages.getString("ExcelSheetDataModelSource.errorEmptyProperty"), //$NON-NLS-1$
                     id));
         }
         return results;
@@ -129,7 +129,7 @@ public class ExcelSheetDataModelSource implements DataModelSource {
             Row row = sheet.getRow(nextRowNumber++);
             if (row == null) {
                 LOG.warn(MessageFormat.format(
-                        "有効な値を含まない行はスキップします: (row={1}, id={0})",
+                        Messages.getString("ExcelSheetDataModelSource.warnSkipEmptyRow"), //$NON-NLS-1$
                         id,
                         nextRowNumber));
                 continue;
@@ -145,7 +145,7 @@ public class ExcelSheetDataModelSource implements DataModelSource {
                 }
                 if (type == Cell.CELL_TYPE_ERROR) {
                     throw new IOException(MessageFormat.format(
-                            "セルの値にエラーがあります: (pos=({1}, {2}), id={0})",
+                            Messages.getString("ExcelSheetDataModelSource.errorErroneousCell"), //$NON-NLS-1$
                             id,
                             row.getRowNum() + 1,
                             cell.getColumnIndex() + 1));
@@ -157,7 +157,7 @@ public class ExcelSheetDataModelSource implements DataModelSource {
                 return driver.getReflection();
             } else {
                 LOG.warn(MessageFormat.format(
-                        "有効な値を含まない行はスキップします: (row={1}, id={0})",
+                        Messages.getString("ExcelSheetDataModelSource.warnSkipEmptyRow"), //$NON-NLS-1$
                         id,
                         row.getRowNum() + 1));
             }
@@ -172,7 +172,7 @@ public class ExcelSheetDataModelSource implements DataModelSource {
             formulaEvaluator.evaluateInCell(cell);
         } catch (RuntimeException e) {
             throw new IOException(MessageFormat.format(
-                    "セルの数式を計算できませんでした: (pos=({1}, {2}), id={0})",
+                    Messages.getString("ExcelSheetDataModelSource.errorFailedToResolveFormulaCell"), //$NON-NLS-1$
                     id,
                     cell.getRowIndex() + 1,
                     cell.getColumnIndex() + 1), e);

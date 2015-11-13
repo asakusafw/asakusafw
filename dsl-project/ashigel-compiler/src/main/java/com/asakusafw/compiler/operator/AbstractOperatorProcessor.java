@@ -32,10 +32,8 @@ import com.asakusafw.compiler.common.TargetOperator;
 import com.asakusafw.utils.java.model.syntax.TypeBodyDeclaration;
 
 /**
- * {@link OperatorProcessor}の骨格実装。
- * <p>
- * サブクラスは{@link TargetOperator}の注釈を付与することで、対象にする演算子注釈を判断する。
- * </p>
+ * An skeletal implementation of {@link OperatorProcessor}.
+ * Sub-classes should use {@link TargetOperator} annotation to declare the target operator kind.
  * @since 0.1.0
  * @version 0.7.0
  */
@@ -56,7 +54,7 @@ public abstract class AbstractOperatorProcessor implements OperatorProcessor {
             env.getMessager().printMessage(
                 Diagnostic.Kind.WARNING,
                 MessageFormat.format(
-                    "{0}に@{1}の指定がありません",
+                    Messages.getString("AbstractOperatorProcessor.errorMissingAnnotation"), //$NON-NLS-1$
                     getClass().getName(),
                     TargetOperator.class.getName()));
         }
@@ -92,10 +90,10 @@ public abstract class AbstractOperatorProcessor implements OperatorProcessor {
     }
 
     /**
-     * 演算子メソッドを解析して、その実装となるメソッドを返す。
-     * @param context 解析に利用する文脈
-     * @return 演算子メソッドの実装、解釈できない場合は{@code null}
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns an implementation method of the target operator method.
+     * @param context the current context
+     * @return the implementation method body, or {@code null} if the target operator is not valid
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     protected List<? extends TypeBodyDeclaration> override(Context context) {
         return null;

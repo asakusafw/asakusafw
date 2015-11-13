@@ -15,9 +15,8 @@
  */
 package com.asakusafw.vocabulary.batch;
 
-
 /**
- * 単純なバッチ。
+ * Batch with a simple jobflow only.
  */
 public class SimpleBatch extends BatchDescription {
 

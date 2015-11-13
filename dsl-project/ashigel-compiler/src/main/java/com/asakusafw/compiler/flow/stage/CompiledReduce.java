@@ -15,40 +15,40 @@
  */
 package com.asakusafw.compiler.flow.stage;
 
+import com.asakusafw.compiler.common.Precondition;
+
 /**
- * コンパイルされたReduceフェーズの処理。
+ * Represents a compiled reduce actions.
  */
 public class CompiledReduce {
 
-    private CompiledType reducerType;
+    private final CompiledType reducerType;
 
-    private CompiledType combinerTypeOrNull;
+    private final CompiledType combinerTypeOrNull;
 
     /**
-     * インスタンスを生成する。
-     * @param reducerType Reducerの型
-     * @param combinerTypeOrNull Combinerの型、利用しない場合は{@code null}
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param reducerType the target reducer type
+     * @param combinerTypeOrNull the target combiner type (nullable)
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public CompiledReduce(CompiledType reducerType, CompiledType combinerTypeOrNull) {
-        if (reducerType == null) {
-            throw new IllegalArgumentException("reducerType must not be null"); //$NON-NLS-1$
-        }
+        Precondition.checkMustNotBeNull(reducerType, "reducerType"); //$NON-NLS-1$
         this.reducerType = reducerType;
         this.combinerTypeOrNull = combinerTypeOrNull;
     }
 
     /**
-     * Reducerの型情報を返す。
-     * @return Reducerの型情報
+     * Returns the target reducer type.
+     * @return the target reducer type
      */
     public CompiledType getReducerType() {
         return reducerType;
     }
 
     /**
-     * Combinerの型情報を返す。
-     * @return Combinerの型情報、利用しない場合は{@code null}
+     * Returns the target combiner type.
+     * @return the target combiner type, or {@code null} if this does not use combiner
      */
     public CompiledType getCombinerTypeOrNull() {
         return combinerTypeOrNull;

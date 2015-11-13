@@ -44,14 +44,14 @@ import com.asakusafw.utils.java.model.util.Models;
 import com.asakusafw.vocabulary.flow.FlowPart;
 
 /**
- * フロー部品をもとにした演算子ファクトリーを生成する。
+ * An implementation of Java annotation processor which generates a support class for flow-part classes.
  * @since 0.1.0
  * @version 0.7.0
  */
 public class FlowOperatorCompiler implements Processor {
 
     /**
-     * このコンパイラのバージョン。
+     * The compiler version.
      */
     public static final String VERSION = "0.1.0"; //$NON-NLS-1$
 
@@ -115,7 +115,7 @@ public class FlowOperatorCompiler implements Processor {
     private String toDetailString(RuntimeException e) {
         StringWriter writer = new StringWriter();
         PrintWriter pw = new PrintWriter(writer);
-        pw.println("フロー演算子のコンパイルに失敗しました:");
+        pw.println(Messages.getString("FlowOperatorCompiler.errorDetailHeader")); //$NON-NLS-1$
         e.printStackTrace(pw);
         pw.close();
         return writer.toString();

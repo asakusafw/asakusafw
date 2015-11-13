@@ -17,124 +17,119 @@ package com.asakusafw.compiler.directio.testing.model;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
 
-import com.asakusafw.compiler.directio.testing.io.LineInput;
-import com.asakusafw.compiler.directio.testing.io.LineOutput;
 import com.asakusafw.runtime.model.DataModelKind;
-import com.asakusafw.runtime.model.ModelInputLocation;
-import com.asakusafw.runtime.model.ModelOutputLocation;
 import com.asakusafw.runtime.model.PropertyOrder;
 import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.runtime.value.LongOption;
 import com.asakusafw.runtime.value.StringOption;
 /**
- * lineを表す射影モデルインターフェース。
+ * A projective data model interface that represents line.
  */
-@DataModelKind("DMDL")@ModelInputLocation(LineInput.class)@ModelOutputLocation(LineOutput.class)@PropertyOrder({"value", 
-            "first", "position", "length"}) public interface Line extends Writable {
+@DataModelKind("DMDL")@PropertyOrder({"value", "first", "position", "length"}) public interface Line extends Writable {
     /**
-     * valueを返す。
+     * Returns value.
      * @return value
-     * @throws NullPointerException valueの値が<code>null</code>である場合
+     * @throws NullPointerException if value is <code>null</code>
      */
     Text getValue();
     /**
-     * valueを設定する。
-     * @param value0 設定する値
+     * Sets value.
+     * @param value0 the value
      */
     void setValue(Text value0);
     /**
-     * <code>null</code>を許すvalueを返す。
+     * Returns value which may be represent <code>null</code>.
      * @return value
      */
     StringOption getValueOption();
     /**
-     * valueを設定する。
-     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     * Sets value.
+     * @param option the value, or <code>null</code> to set this property to <code>null</code>
      */
     void setValueOption(StringOption option);
     /**
-     * firstを返す。
+     * Returns first.
      * @return first
-     * @throws NullPointerException firstの値が<code>null</code>である場合
+     * @throws NullPointerException if first is <code>null</code>
      */
     Text getFirst();
     /**
-     * firstを設定する。
-     * @param value0 設定する値
+     * Sets first.
+     * @param value0 the value
      */
     void setFirst(Text value0);
     /**
-     * <code>null</code>を許すfirstを返す。
+     * Returns first which may be represent <code>null</code>.
      * @return first
      */
     StringOption getFirstOption();
     /**
-     * firstを設定する。
-     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     * Sets first.
+     * @param option the value, or <code>null</code> to set this property to <code>null</code>
      */
     void setFirstOption(StringOption option);
     /**
-     * positionを返す。
+     * Returns position.
      * @return position
-     * @throws NullPointerException positionの値が<code>null</code>である場合
+     * @throws NullPointerException if position is <code>null</code>
      */
     long getPosition();
     /**
-     * positionを設定する。
-     * @param value0 設定する値
+     * Sets position.
+     * @param value0 the value
      */
     void setPosition(long value0);
     /**
-     * <code>null</code>を許すpositionを返す。
+     * Returns position which may be represent <code>null</code>.
      * @return position
      */
     LongOption getPositionOption();
     /**
-     * positionを設定する。
-     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     * Sets position.
+     * @param option the value, or <code>null</code> to set this property to <code>null</code>
      */
     void setPositionOption(LongOption option);
     /**
-     * lengthを返す。
+     * Returns length.
      * @return length
-     * @throws NullPointerException lengthの値が<code>null</code>である場合
+     * @throws NullPointerException if length is <code>null</code>
      */
     int getLength();
     /**
-     * lengthを設定する。
-     * @param value0 設定する値
+     * Sets length.
+     * @param value0 the value
      */
     void setLength(int value0);
     /**
-     * <code>null</code>を許すlengthを返す。
+     * Returns length which may be represent <code>null</code>.
      * @return length
      */
     IntOption getLengthOption();
     /**
-     * lengthを設定する。
-     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     * Sets length.
+     * @param option the value, or <code>null</code> to set this property to <code>null</code>
      */
     void setLengthOption(IntOption option);
     /**
-     * valueを返す。
+     * Returns value.
      * @return value
-     * @throws NullPointerException valueの値が<code>null</code>である場合
+     * @throws NullPointerException if value is <code>null</code>
      */
     String getValueAsString();
     /**
-     * valueを設定する。
-     * @param value0 設定する値
+     * Returns value.
+     * @param value0 the value
      */
     void setValueAsString(String value0);
     /**
-     * firstを返す。
+     * Returns first.
      * @return first
-     * @throws NullPointerException firstの値が<code>null</code>である場合
+     * @throws NullPointerException if first is <code>null</code>
      */
     String getFirstAsString();
     /**
-     * firstを設定する。
-     * @param first0 設定する値
+     * Returns first.
+     * @param first0 the value
      */
     void setFirstAsString(String first0);
 }

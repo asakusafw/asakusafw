@@ -64,12 +64,12 @@ public class DescribeCompiledStructureProcessor extends AbstractWorkflowProcesso
 
     static final Logger LOG = LoggerFactory.getLogger(DescribeCompiledStructureProcessor.class);
 
-    static final Charset ENCODING = Charset.forName("UTF-8");
+    static final Charset ENCODING = Charset.forName("UTF-8"); //$NON-NLS-1$
 
     /**
      * Output path.
      */
-    public static final String PATH = Constants.PATH_BATCH + "compiled-structure.txt";
+    public static final String PATH = Constants.PATH_BATCH + "compiled-structure.txt"; //$NON-NLS-1$
 
     @Override
     public Collection<Class<? extends WorkDescriptionProcessor<?>>> getDescriptionProcessors() {
@@ -83,7 +83,7 @@ public class DescribeCompiledStructureProcessor extends AbstractWorkflowProcesso
         OutputStream output = getEnvironment().openResource(PATH);
         try {
             Context context = new Context(output);
-            context.put("batch: {0}", getEnvironment().getConfiguration().getBatchId());
+            context.put("batch: {0}", getEnvironment().getConfiguration().getBatchId()); //$NON-NLS-1$
             dump(context, workflow.getGraph());
             context.close();
         } finally {
@@ -121,20 +121,20 @@ public class DescribeCompiledStructureProcessor extends AbstractWorkflowProcesso
         assert desc != null;
         assert model != null;
 
-        context.put("flow: {0}", model.getFlowId());
+        context.put("flow: {0}", model.getFlowId()); //$NON-NLS-1$
         context.push();
 
-        context.put("input:");
+        context.put("input:"); //$NON-NLS-1$
         context.push();
         writeInput(context, model);
         context.pop();
 
-        context.put("output:");
+        context.put("output:"); //$NON-NLS-1$
         context.push();
         writeOutput(context, model);
         context.pop();
 
-        context.put("stages:");
+        context.put("stages:"); //$NON-NLS-1$
         context.push();
         writeBody(context, model);
         context.pop();
@@ -144,7 +144,7 @@ public class DescribeCompiledStructureProcessor extends AbstractWorkflowProcesso
 
     private void writeInput(Context context, JobflowModel model) {
         for (Import ext : model.getImports()) {
-            context.put("{0} ({1})",
+            context.put("{0} ({1})", //$NON-NLS-1$
                     ext.getDescription().getName(),
                     ext.getDescription().getImporterDescription().getClass().getName());
         }
@@ -152,7 +152,7 @@ public class DescribeCompiledStructureProcessor extends AbstractWorkflowProcesso
 
     private void writeOutput(Context context, JobflowModel model) {
         for (Export ext : model.getExports()) {
-            context.put("{0} ({1})",
+            context.put("{0} ({1})", //$NON-NLS-1$
                     ext.getDescription().getName(),
                     ext.getDescription().getExporterDescription().getClass().getName());
         }
@@ -160,17 +160,17 @@ public class DescribeCompiledStructureProcessor extends AbstractWorkflowProcesso
 
     private void writeBody(Context context, JobflowModel model) {
         assert model != null;
-        context.put("prologue:");
+        context.put("prologue:"); //$NON-NLS-1$
         context.push();
         writeCompiledStages(context, model.getCompiled().getPrologueStages());
         context.pop();
 
-        context.put("main:");
+        context.put("main:"); //$NON-NLS-1$
         context.push();
         writeStages(context, model);
         context.pop();
 
-        context.put("epilogue:");
+        context.put("epilogue:"); //$NON-NLS-1$
         context.push();
         writeCompiledStages(context, model.getCompiled().getEpilogueStages());
         context.pop();
@@ -180,13 +180,13 @@ public class DescribeCompiledStructureProcessor extends AbstractWorkflowProcesso
         Graph<Stage> predGraph = model.getDependencyGraph();
         Graph<Stage> succGraph = Graphs.transpose(predGraph);
         for (Stage stage : model.getStages()) {
-            context.put("stage: {0}", stage.getCompiled().getQualifiedName().toNameString());
+            context.put("stage: {0}", stage.getCompiled().getQualifiedName().toNameString()); //$NON-NLS-1$
             context.push();
             for (Stage pred : sort(predGraph.getConnected(stage))) {
-                context.put("predecessor: {0}", pred.getCompiled().getQualifiedName().toNameString());
+                context.put("predecessor: {0}", pred.getCompiled().getQualifiedName().toNameString()); //$NON-NLS-1$
             }
             for (Stage succ : sort(succGraph.getConnected(stage))) {
-                context.put("successor: {0}", succ.getCompiled().getQualifiedName().toNameString());
+                context.put("successor: {0}", succ.getCompiled().getQualifiedName().toNameString()); //$NON-NLS-1$
             }
             writeStageBody(context, stage);
             context.pop();
@@ -208,13 +208,13 @@ public class DescribeCompiledStructureProcessor extends AbstractWorkflowProcesso
         StageModel model = stage.getModel();
 
         for (MapUnit unit : model.getMapUnits()) {
-            context.put("mapper: {0}", name(unit.getCompiled().getQualifiedName()));
+            context.put("mapper: {0}", name(unit.getCompiled().getQualifiedName())); //$NON-NLS-1$
             context.push();
             writeFragments(context, unit.getFragments());
             context.pop();
         }
         if (stage.getReduceOrNull() != null) {
-            context.put("reducer: {0}", name(stage.getReduceOrNull().getReducerTypeName()));
+            context.put("reducer: {0}", name(stage.getReduceOrNull().getReducerTypeName())); //$NON-NLS-1$
             context.push();
             for (ReduceUnit unit : model.getReduceUnits()) {
                 writeFragments(context, unit.getFragments());
@@ -225,23 +225,23 @@ public class DescribeCompiledStructureProcessor extends AbstractWorkflowProcesso
 
     private String name(Name name) {
         if (name == null) {
-            return "N/A";
+            return "N/A"; //$NON-NLS-1$
         }
         return name.toNameString();
     }
 
     private void writeFragments(Context context, List<Fragment> fragments) {
         for (Fragment fragment : fragments) {
-            context.put("fragment: {0}", name(fragment.getCompiled().getQualifiedName()));
+            context.put("fragment: {0}", name(fragment.getCompiled().getQualifiedName())); //$NON-NLS-1$
             context.push();
             for (Factor factor : fragment.getFactors()) {
                 FlowElementDescription description = factor.getElement().getDescription();
                 if (description.getKind() != FlowElementKind.PSEUD) {
-                    context.put("{0}: {1}", description.getKind().name().toLowerCase(), description);
+                    context.put("{0}: {1}", description.getKind().name().toLowerCase(), description); //$NON-NLS-1$
                     context.push();
                     for (FlowResourceDescription resource : factor.getElement().getDescription().getResources()) {
                         for (InputDescription input : resource.getSideDataInputs()) {
-                            context.put("side-data: {0} ({1})",
+                            context.put("side-data: {0} ({1})", //$NON-NLS-1$
                                     input.getName(),
                                     input.getImporterDescription().getClass().getName());
                         }
@@ -255,7 +255,7 @@ public class DescribeCompiledStructureProcessor extends AbstractWorkflowProcesso
 
     private void writeCompiledStages(Context context, List<CompiledStage> stages) {
         for (CompiledStage stage : stages) {
-            context.put("stage: {0}", stage.getQualifiedName().toNameString());
+            context.put("stage: {0}", stage.getQualifiedName().toNameString()); //$NON-NLS-1$
         }
     }
 
@@ -286,7 +286,7 @@ public class DescribeCompiledStructureProcessor extends AbstractWorkflowProcesso
             assert arguments != null;
             StringBuilder buf = new StringBuilder();
             for (int i = 0, n = indent; i < n; i++) {
-                buf.append("    ");
+                buf.append("    "); //$NON-NLS-1$
             }
             if (arguments.length == 0) {
                 buf.append(pattern);

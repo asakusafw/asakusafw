@@ -31,7 +31,7 @@ import com.asakusafw.vocabulary.operator.GroupSort;
 
 
 /**
- * {@link GroupSort グループ整列演算子}を処理する。
+ * Processes {@link GroupSort} operators.
  */
 @TargetOperator(GroupSort.class)
 public class GroupSortOperatorProcessor extends AbstractOperatorProcessor {
@@ -44,15 +44,15 @@ public class GroupSortOperatorProcessor extends AbstractOperatorProcessor {
 
         ExecutableAnalyzer a = new ExecutableAnalyzer(context.environment, context.element);
         if (a.isAbstract()) {
-            a.error("グループ整列演算子はabstractで宣言できません");
+            a.error(Messages.getString("GroupSortOperatorProcessor.errorAbstract")); //$NON-NLS-1$
         }
         if (a.getReturnType().isVoid() == false) {
-            a.error("グループ整列演算子は戻り値にvoidを指定する必要があります");
+            a.error(Messages.getString("GroupSortOperatorProcessor.errorNotVoidResult")); //$NON-NLS-1$
         }
         if (a.getParameterType(0).isList() == false) {
-            a.error(0, "グループ整列演算子の最初の引数はリスト型(java.util.List)である必要があります");
+            a.error(0, Messages.getString("GroupSortOperatorProcessor.errorNotListInput")); //$NON-NLS-1$
         } else if (a.getParameterType(0).getTypeArgument().isModel() == false) {
-            a.error(0, "グループ整列演算子の最初の引数はリストのモデルオブジェクト型である必要があります");
+            a.error(0, Messages.getString("GroupSortOperatorProcessor.errorNotModelInput")); //$NON-NLS-1$
         }
 
         int startParameters = RESULT_START;
@@ -61,20 +61,20 @@ public class GroupSortOperatorProcessor extends AbstractOperatorProcessor {
             if (param.isResult() == false) {
                 break;
             } else if (param.getTypeArgument().isModel() == false) {
-                a.error(i, "グループ整列演算子の結果は結果のモデルオブジェクト型である必要があります");
+                a.error(i, Messages.getString("GroupSortOperatorProcessor.errorNotModelOutput")); //$NON-NLS-1$
             } else {
                 startParameters++;
             }
         }
-        if (startParameters == RESULT_START) { // 結果型がない
-            a.error("グループ整列演算子の引数には一つ以上の結果(Result)型を指定する必要があります");
+        if (startParameters == RESULT_START) { // missing Result<_>
+            a.error(Messages.getString("GroupSortOperatorProcessor.errorMissingOutput")); //$NON-NLS-1$
         }
         for (int i = startParameters, n = a.countParameters(); i < n; i++) {
             TypeConstraint param = a.getParameterType(i);
             if (param.isResult()) {
-                a.error(i, "ユーザー引数の後には結果型を含められません");
+                a.error(i, Messages.getString("GroupSortOperatorProcessor.errorInvalidResult")); //$NON-NLS-1$
             } else if (param.isBasic() == false) {
-                a.error(i, "ユーザー引数は文字列またはプリミティブ型である必要があります");
+                a.error(i, Messages.getString("GroupSortOperatorProcessor.errorInvalidOptionParameter")); //$NON-NLS-1$
             }
         }
         if (a.hasError()) {
@@ -83,13 +83,13 @@ public class GroupSortOperatorProcessor extends AbstractOperatorProcessor {
 
         ShuffleKeySpec key = a.getParameterKeySpec(0);
         if (key == null) {
-            a.error("グループ整列演算子の引数には@Key注釈によってグループ化項目を指定する必要があります");
+            a.error(Messages.getString("GroupSortOperatorProcessor.errorMissingKeyAnnotation")); //$NON-NLS-1$
             return null;
         }
         a.validateShuffleKeys(key);
         GroupSort annotation = context.element.getAnnotation(GroupSort.class);
         if (annotation == null) {
-            a.error("注釈の解釈に失敗しました");
+            a.error(Messages.getString("GroupSortOperatorProcessor.errorInvalidAnnotation")); //$NON-NLS-1$
             return null;
         }
 
@@ -110,7 +110,8 @@ public class GroupSortOperatorProcessor extends AbstractOperatorProcessor {
             TypeMirror outputTypeMirror = outputType.getType();
             String found = builder.findInput(outputTypeMirror);
             if (found == null && outputType.isProjectiveModel()) {
-                a.error("出力型{0}に対する入力が見つかりません", outputTypeMirror);
+                a.error(Messages.getString("GroupSortOperatorProcessor.errorUnboundOutput"), //$NON-NLS-1$
+                        outputTypeMirror);
             }
             builder.addOutput(
                     a.getParameterDocument(i),

@@ -18,13 +18,12 @@ package com.asakusafw.runtime.stage.collector;
 import java.io.IOException;
 
 import org.apache.hadoop.io.Writable;
-import org.apache.hadoop.mapreduce.Mapper;
 
 import com.asakusafw.runtime.flow.MapperWithRuntimeResource;
 
 /**
- * {@link SlotSorter}にオブジェクトを配布する{@link Mapper}の骨格。
- * @param <T> 配布する{@link Writable}の種類
+ * The skeletal implementation of Hadoop Mapper for distributing values into {@link SlotSorter}.
+ * @param <T> the data type
  * @since 0.1.0
  * @version 0.5.1
  */
@@ -33,7 +32,7 @@ public abstract class SlotDistributor<T extends Writable> extends MapperWithRunt
         SortableSlot, WritableSlot> {
 
     /**
-     * {@link #setSlotSpec(Writable, SortableSlot)}のメソッド名。
+     * The method name of {@link #setSlotSpec(Writable, SortableSlot)}.
      */
     public static final String NAME_SET_SLOT_SPEC = "setSlotSpec"; //$NON-NLS-1$
 
@@ -42,19 +41,17 @@ public abstract class SlotDistributor<T extends Writable> extends MapperWithRunt
     private final WritableSlot valueOut = new WritableSlot();
 
     /**
-     * 指定の値のソート情報を指定のスロットに設定する。
-     * <p>
-     * スロットは{@link SortableSlot#begin(int)}でスロット番号を設定するところから始めること。
-     * </p>
+     * Sets sorting information into the target slot.
+     * Sub-class must set its slot number before write any properties as like following:
 <pre><code>
 slot.begin(MY_SLOT_NUMBER);
 slot.addWritable(value.getPrimaryKey());
 slot.addWritable(value.getSecondaryKey());
 ...
 </code></pre>
-     * @param value スロットの情報
-     * @param slot 書き込み先のスロット
-     * @throws IOException 出力似失敗した場合
+     * @param value the target value
+     * @param slot the target slot
+     * @throws IOException if failed to write
      */
     protected abstract void setSlotSpec(T value, SortableSlot slot) throws IOException;
 

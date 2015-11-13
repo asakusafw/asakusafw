@@ -33,29 +33,29 @@ import com.asakusafw.vocabulary.flow.graph.FlowResourceDescription;
 import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 
 /**
- * ラインに配置される演算子を処理する。
+ * An abstract super class of operator processors which are on line.
  */
 public abstract class LineProcessor extends AbstractFlowElementProcessor {
 
     /**
-     * ラインに配置される演算子の処理文脈の基底となるクラス。
+     * An abstract super class of context class for sub-classes of {@link LineProcessor}.
      */
     public abstract static class LineProcessorContext extends AbstractProcessorContext {
 
         /**
-         * 生成された文の一覧。
+         * The generated statements.
          */
         protected final List<Statement> generatedStatements;
 
         /**
-         * インスタンスを生成する。
-         * @param environment 環境
-         * @param element target element
-         * @param importer インポート
-         * @param names 名前生成
-         * @param desc 演算子の定義記述
-         * @param resources リソースと式の対応表
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Creates a new instance.
+         * @param environment the current context
+         * @param element the target element
+         * @param importer the import declaration builder
+         * @param names the unique name generator
+         * @param desc the target operator description
+         * @param resources the mapping between external resources and their Java expressions
+         * @throws IllegalArgumentException if the parameters are {@code null}
          */
         protected LineProcessorContext(
                 FlowCompilingEnvironment environment,
@@ -69,9 +69,9 @@ public abstract class LineProcessor extends AbstractFlowElementProcessor {
         }
 
         /**
-         * 指定の文を追加する。
-         * @param statement 追加する文
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Adds a statement for the current operator implementation.
+         * @param statement the statement
+         * @throws IllegalArgumentException if the statement is {@code null}
          */
         public void add(Statement statement) {
             Precondition.checkMustNotBeNull(statement, "statement"); //$NON-NLS-1$
@@ -79,19 +79,19 @@ public abstract class LineProcessor extends AbstractFlowElementProcessor {
         }
 
         /**
-         * ここまでにこの文脈で生成された文の一覧を返す。
-         * @return この文脈で生成された文の一覧
+         * Returns the added statements.
+         * @return the added statements
          */
         public List<Statement> getGeneratedStatements() {
             return generatedStatements;
         }
 
         /**
-         * 指定の型を持つローカル変数宣言を追加する。
-         * @param type 対象の型
-         * @param initializer 初期化子 (省略可)
-         * @return 生成したローカル変数を参照するための式
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Adds a local variable declaration for the current operator implementation.
+         * @param type the variable type
+         * @param initializer the variable initializer (nullable)
+         * @return an expression which accesses the declared variable
+         * @throws IllegalArgumentException if {@code type} is {@code null}
          */
         public Expression createLocalVariable(java.lang.reflect.Type type, Expression initializer) {
             Precondition.checkMustNotBeNull(type, "type"); //$NON-NLS-1$
@@ -99,11 +99,11 @@ public abstract class LineProcessor extends AbstractFlowElementProcessor {
         }
 
         /**
-         * 指定の型を持つローカル変数宣言を追加する。
-         * @param type 対象の型
-         * @param initializer 初期化子 (省略可)
-         * @return 生成したローカル変数を参照するための式
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Adds a local variable declaration for the current operator implementation.
+         * @param type the variable type
+         * @param initializer the variable initializer (nullable)
+         * @return an expression which accesses the declared variable
+         * @throws IllegalArgumentException if {@code type} is {@code null}
          */
         public Expression createLocalVariable(Type type, Expression initializer) {
             Precondition.checkMustNotBeNull(type, "type"); //$NON-NLS-1$

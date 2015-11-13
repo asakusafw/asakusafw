@@ -39,7 +39,7 @@ import com.asakusafw.vocabulary.batch.Work;
 public class BatchDriverTest {
 
     /**
-     * 単純な例。
+     * simple case.
      */
     @Test
     public void simple() {
@@ -57,7 +57,7 @@ public class BatchDriverTest {
     }
 
     /**
-     * 抽象クラス。
+     * w/ abstract.
      */
     @Test
     public void Abstract() {
@@ -66,7 +66,7 @@ public class BatchDriverTest {
     }
 
     /**
-     * publicでない。
+     * w/o public.
      */
     @Test
     public void NotPublic() {
@@ -75,7 +75,7 @@ public class BatchDriverTest {
     }
 
     /**
-     * トップレベルでない。
+     * w/o top-level.
      */
     @Test
     public void NotTopLevel() {
@@ -84,7 +84,7 @@ public class BatchDriverTest {
     }
 
     /**
-     * 注釈がない。
+     * w/o annotation.
      */
     @Test
     public void NotAnnotated() {
@@ -93,7 +93,7 @@ public class BatchDriverTest {
     }
 
     /**
-     * 引数なしのコンストラクタがない。
+     * w/o zero-parameters ctor.
      */
     @Test
     public void NoEmptyParameterConstructor() {
@@ -102,7 +102,7 @@ public class BatchDriverTest {
     }
 
     /**
-     * インスタンス化できない。
+     * cannot instantiate.
      */
     @Test
     public void InstantiateFailure() {
@@ -111,7 +111,7 @@ public class BatchDriverTest {
     }
 
     /**
-     * 記述を利用できない。
+     * cannot describe.
      */
     @Test
     public void DescribeFailure() {

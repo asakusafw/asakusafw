@@ -60,17 +60,17 @@ public class WindowsEnvironmentConfigurator extends TestingEnvironmentConfigurat
         try {
             LOG.debug("checking winutils.exe"); //$NON-NLS-1$
             if (WinUtilsInstaller.isAlreadyInstalled()) {
-                LOG.info("winutils.exe is already installed");
+                LOG.info(Messages.getString("WindowsEnvironmentConfigurator.infoAlreadyInstalled")); //$NON-NLS-1$
                 return;
             }
             File install = prepare();
             assert install != null;
             WinUtilsInstaller.register(install);
             LOG.info(MessageFormat.format(
-                    "winutils.exe is successfully installed: {0}",
+                    Messages.getString("WindowsEnvironmentConfigurator.infoCompleteInstall"), //$NON-NLS-1$
                     install));
         } catch (Exception e) {
-            LOG.warn("failed to install winutils.exe", e);
+            LOG.warn(Messages.getString("WindowsEnvironmentConfigurator.warnFailedToInstall"), e); //$NON-NLS-1$
         }
     }
 

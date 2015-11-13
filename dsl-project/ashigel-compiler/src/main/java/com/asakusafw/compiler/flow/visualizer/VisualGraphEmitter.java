@@ -223,7 +223,7 @@ public final class VisualGraphEmitter {
         private static void resolveFailed(Port port) {
             assert port != null;
             LOG.warn(MessageFormat.format(
-                    "failed to resolve an element {0}",
+                    Messages.getString("VisualGraphEmitter.warnInvalidPort"), //$NON-NLS-1$
                     port.element));
         }
 

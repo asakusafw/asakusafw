@@ -1,0 +1,41 @@
+-- package com.asakusafw.compiler
+
+@namespace(value = operator)
+@auto_projection
+mock_foo = {
+    value : INT;
+};
+
+@namespace(value = operator)
+@auto_projection
+mock_hoge = {
+    value : INT;
+};
+
+@namespace(value = operator)
+projective mock_projection = {
+    value : INT;
+};
+
+@namespace(value = operator)
+joined mock_joined
+= mock_hoge -> { value -> hoge_value; } % hoge_value
++ mock_foo -> { value -> foo_value; } % foo_value
+;
+
+@namespace(value = operator)
+summarized mock_summarized = mock_hoge => {
+    any value -> key;
+    count value -> count;
+} % key;
+
+@namespace(value = operator)
+projective mock_key = {
+    key : TEXT;
+};
+
+@namespace(value = operator)
+mock_key_value1 = mock_key + mock_projection;
+
+@namespace(value = operator)
+mock_key_value2 = mock_key + mock_projection;

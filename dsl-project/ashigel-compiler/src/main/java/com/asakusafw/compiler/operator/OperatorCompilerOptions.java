@@ -23,7 +23,7 @@ import com.asakusafw.compiler.repository.SpiDataModelMirrorRepository;
 import com.asakusafw.utils.collections.Maps;
 
 /**
- * Operator DSLコンパイラのオプション一覧。
+ * Options for Operator DSL compiler.
  * @since 0.1.0
  * @version 0.7.0
  */
@@ -45,11 +45,11 @@ public final class OperatorCompilerOptions {
     }
 
     /**
-     * 注釈プロセッサのオプションを解析してこのオブジェクトを返す。
-     * @param options 注釈プロセッサのオプション一覧
-     * @return 解析結果
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
-     * @throws OperatorCompilerException 引数の解析に失敗した場合
+     * Analyzes options for annotation processor and picks up options for the operator DSL compiler.
+     * @param options the annotation processor options
+     * @return the corresponded operator DSL compiler options
+     * @throws IllegalArgumentException if the parameter is {@code null}
+     * @throws OperatorCompilerException if failed to extract compiler options
      */
     public static OperatorCompilerOptions parse(Map<String, String> options) {
         Precondition.checkMustNotBeNull(options, "options"); //$NON-NLS-1$

@@ -21,9 +21,8 @@ import java.lang.annotation.RetentionPolicy;
 
 import com.asakusafw.vocabulary.operator.OperatorHelper;
 
-
 /**
- * モックの演算子補助注釈。
+ * Mock operator helper annotation.
  */
 @OperatorHelper
 @Retention(RetentionPolicy.RUNTIME)

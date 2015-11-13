@@ -47,7 +47,7 @@ public final class WinUtilsInstaller {
                 f.setAccessible(true);
                 if (f.getType() != String.class) {
                     throw new IllegalStateException(MessageFormat.format(
-                            "incompatible Shell.WINUTILS return type: {0}",
+                            Messages.getString("WinUtilsInstaller.errorIncompatibleTargetFieldType"), //$NON-NLS-1$
                             f.getType().getName()));
                 }
 
@@ -118,7 +118,7 @@ public final class WinUtilsInstaller {
         File file = new File(directory, TARGET_PREFIX + TARGET_SUFFIX);
         try {
             LOG.info(MessageFormat.format(
-                    "installing winutils.exe into {0}",
+                    Messages.getString("WinUtilsInstaller.infoInstallToDefaultLocation"), //$NON-NLS-1$
                     file));
             installer.install(file, true);
             return file;
@@ -132,7 +132,7 @@ public final class WinUtilsInstaller {
         try {
             temp = File.createTempFile(TARGET_PREFIX + '-', TARGET_SUFFIX, directory);
             LOG.info(MessageFormat.format(
-                    "installing winutils.exe into {0}",
+                    Messages.getString("WinUtilsInstaller.infoInstallToTemporaryLocation"), //$NON-NLS-1$
                     temp));
             installer.install(temp, false);
             temp.deleteOnExit();
@@ -144,14 +144,14 @@ public final class WinUtilsInstaller {
             if (success == false) {
                 if (temp != null && temp.delete() == false) {
                     LOG.warn(MessageFormat.format(
-                            "failed to delete a temporary file: {0}",
+                            Messages.getString("WinUtilsInstaller.warnFailedToDeleteTemporaryFile"), //$NON-NLS-1$
                             temp));
                 }
             }
         }
 
         throw new IOException(MessageFormat.format(
-                "error occurred while installing winutils: {0}",
+                Messages.getString("WinUtilsInstaller.errorFailedToInstall"), //$NON-NLS-1$
                 file));
     }
 

@@ -33,7 +33,7 @@ import com.asakusafw.vocabulary.flow.testing.MockOut;
 public class MasterJoinOperatorProcessorTest extends OperatorCompilerTestRoot {
 
     /**
-     * 単純なテスト。
+     * simple case.
      */
     @Test
     public void simple() {
@@ -56,7 +56,7 @@ public class MasterJoinOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * マスタ選択つき。
+     * w/ master selection.
      */
     @Test
     public void selector() {
@@ -79,7 +79,7 @@ public class MasterJoinOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * 抽象メソッドでない。
+     * not abstract method.
      */
     @Test
     public void NotAbstract() {
@@ -88,7 +88,7 @@ public class MasterJoinOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * 結合モデルでない。
+     * not returns joined model.
      */
     @Test
     public void NotJoined() {
@@ -97,7 +97,7 @@ public class MasterJoinOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * モデルでない。
+     * not a data model parameter.
      */
     @Test
     public void NotModel() {
@@ -106,7 +106,7 @@ public class MasterJoinOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * パラメータ化。
+     * parameterized.
      */
     @Test
     public void Parameterized() {

@@ -30,12 +30,11 @@ import com.asakusafw.utils.java.model.syntax.TypeBodyDeclaration;
 import com.asakusafw.utils.java.model.util.Models;
 import com.asakusafw.utils.java.model.util.TypeBuilder;
 import com.asakusafw.vocabulary.flow.graph.FlowBoundary;
-import com.asakusafw.vocabulary.operator.GroupSort;
 import com.asakusafw.vocabulary.operator.Unique;
 
 /**
- * {@link Unique 重複検出演算子}を処理する。
- * @deprecated 基本的に{@link GroupSort}を利用する
+ * Processes {@link Unique} operators.
+ * @deprecated operator is not supported
  */
 @Deprecated
 @TargetOperator(Unique.class)
@@ -47,16 +46,16 @@ public class UniqueOperatorProcessor extends AbstractOperatorProcessor {
 
         ExecutableAnalyzer a = new ExecutableAnalyzer(context.environment, context.element);
         if (a.isAbstract() == false) {
-            a.error("重複検出演算子はabstractで宣言する必要があります");
+            a.error(Messages.getString("UniqueOperatorProcessor.errorNotAbstract")); //$NON-NLS-1$
         }
         if (a.getReturnType().isVoid() == false) {
-            a.error("重複検出演算子は戻り値にvoidを指定する必要があります");
+            a.error(Messages.getString("UniqueOperatorProcessor.errorNotVoid")); //$NON-NLS-1$
         }
         if (a.getParameterType(0).isModel() == false) {
-            a.error(0, "重複検出演算子の最初の引数はモデルオブジェクト型である必要があります");
+            a.error(0, Messages.getString("UniqueOperatorProcessor.errorNotModel")); //$NON-NLS-1$
         }
         for (int i = 1, n = a.countParameters(); i < n; i++) {
-            a.error(i, "重複検出演算子にはユーザー引数を利用できません");
+            a.error(i, Messages.getString("UniqueOperatorProcessor.errorExtraParameter")); //$NON-NLS-1$
         }
         if (a.hasError()) {
             return null;
@@ -64,7 +63,7 @@ public class UniqueOperatorProcessor extends AbstractOperatorProcessor {
 
         ShuffleKeySpec key = a.getParameterKeySpec(0);
         if (key == null) {
-            a.error("重複検出演算子の引数には@Key注釈によってグループ化項目を指定する必要があります");
+            a.error(Messages.getString("UniqueOperatorProcessor.errorMissingKeyAnnotation")); //$NON-NLS-1$
             return null;
         }
         a.validateShuffleKeys(key);
@@ -83,13 +82,13 @@ public class UniqueOperatorProcessor extends AbstractOperatorProcessor {
                 0,
                 key.getKey());
         builder.addOutput(
-                "項目の内容が一意であるデータが流れる出力",
+                Messages.getString("UniqueOperatorProcessor.javadocUnique"), //$NON-NLS-1$
                 "unique", //$NON-NLS-1$
                 a.getParameterType(0).getType(),
                 a.getParameterName(0),
                 null);
         builder.addOutput(
-                "項目の内容が一意でないデータが流れる出力",
+                Messages.getString("UniqueOperatorProcessor.javadocDuplicated"), //$NON-NLS-1$
                 "duplicated", //$NON-NLS-1$
                 a.getParameterType(0).getType(),
                 a.getParameterName(0),
@@ -102,7 +101,8 @@ public class UniqueOperatorProcessor extends AbstractOperatorProcessor {
         ImplementationBuilder builder = new ImplementationBuilder(context);
         ModelFactory f = context.environment.getFactory();
         builder.addStatement(new TypeBuilder(f, context.importer.toType(UnsupportedOperationException.class))
-            .newObject(Models.toLiteral(f, "重複検出演算子は組み込みの方法で処理されます"))
+            .newObject(Models.toLiteral(f,
+                    Messages.getString("UniqueOperatorProcessor.messageMethodBody"))) //$NON-NLS-1$
             .toThrowStatement());
         return builder.toImplementation();
     }

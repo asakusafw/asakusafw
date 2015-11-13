@@ -18,36 +18,31 @@ package com.asakusafw.runtime.value;
 import com.asakusafw.runtime.io.util.WritableRawComparable;
 
 /**
- * {@code null}値を許容する変更可能な値。
- * <p>
- * このクラスのサブクラスの実装は、基本的にスレッドセーフでない。
- * </p>
- * @param <V> 値の種類
+ * Represents nullable and modifiable value.
+ * Note that, the sub-classes may be thread unsafe.
+ * @param <V> self type
  * @since 0.1.0
  * @version 0.2.5
  */
 public abstract class ValueOption<V extends ValueOption<V>> implements WritableRawComparable, Restorable {
 
     /**
-     * この値が{@code null}を表す場合に{@code true}となる。
-     * <p>
-     * サブクラスのインスタンスで{@code null}以外の値が設定された場合、この値を{@code false}にすること。
-     * </p>
+     * Whether this value represents {@code null} or not.
      */
     protected boolean nullValue = true;
 
     /**
-     * この値が{@code null}値を表す場合のみ{@code true}を返す。
-     * @return この値が{@code null}値を表す場合のみ{@code true}
+     * Returns whether this object represents {@code null} or not.
+     * @return {@code true} if this object represents {@code null}, otherwise {@code false}
      */
     public final boolean isNull() {
         return nullValue;
     }
 
     /**
-     * この値が{@code null}値であるかどうかを変更する。
-     * @deprecated アプリケーションからは利用しない
-     * @return 自身のオブジェクト
+     * Makes this value represent {@code null}.
+     * @deprecated Application developer should not use this method directly
+     * @return this
      */
     @Deprecated
     public final ValueOption<V> setNull() {
@@ -56,21 +51,17 @@ public abstract class ValueOption<V extends ValueOption<V>> implements WritableR
     }
 
     /**
-     * このオブジェクトの内容を、指定のオブジェクトの内容で上書きする。
-     * @param otherOrNull 上書きする内容、
-     *     {@code null}の場合はこのオブジェクトが{@code null}値を表すようになる
-     * @deprecated アプリケーションからは利用しない
+     * Copies the value from the specified values into this.
+     * @param otherOrNull the source object, or {@code null} to make this value represent {@code null}
+     * @deprecated Application developer should not use this method directly
      */
     @Deprecated
     public abstract void copyFrom(V otherOrNull);
 
     /**
-     * この値と指定された値を比較し、小さいものをこの値の内容とする。
-     * <p>
-     * ただし、この値または比較対象の値が{@code null}を表す場合、
-     * この値は{@code null}を表す値となる。
-     * </p>
-     * @param other 対象の値
+     * Sets the specified value to this object only if the specified value is less than this object. However, if either
+     * this object or the specified value represents {@code null}, this object will also turn to {@code null}.
+     * @param other the target value
      */
     public final void min(V other) {
         if (this == other) {
@@ -84,12 +75,9 @@ public abstract class ValueOption<V extends ValueOption<V>> implements WritableR
     }
 
     /**
-     * この値と指定された値を比較し、大きなものをこの値の内容とする。
-     * <p>
-     * ただし、この値または比較対象の値が{@code null}を表す場合、
-     * この値は{@code null}を表す値となる。
-     * </p>
-     * @param other 対象の値
+     * Sets the specified value to this object only if the specified value is greater than this object. However, if
+     * either this object or the specified value represents {@code null}, this object will also turn to {@code null}.
+     * @param other the target value
      */
     public final void max(V other) {
         if (this == other) {

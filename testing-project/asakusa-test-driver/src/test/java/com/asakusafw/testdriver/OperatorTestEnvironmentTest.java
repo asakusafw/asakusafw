@@ -35,8 +35,8 @@ import com.asakusafw.runtime.flow.RuntimeResourceManager;
 public class OperatorTestEnvironmentTest {
 
     /**
-     * 設定ファイルをロードして確認。
-     * @throws Throwable エラーが発生した場合
+     * test for loading configuration file.
+     * @throws Throwable if failed
      */
     @Test
     public void load() throws Throwable {
@@ -55,8 +55,8 @@ public class OperatorTestEnvironmentTest {
     }
 
     /**
-     * 設定ファイルをロードして確認後、上書きしてリロード。
-     * @throws Throwable エラーが発生した場合
+     * test for reloading user configurations.
+     * @throws Throwable if failed
      */
     @Test
     public void reload() throws Throwable {
@@ -75,8 +75,8 @@ public class OperatorTestEnvironmentTest {
     }
 
     /**
-     * 設定ファイルをロードして確認後、上書きしてリロード。
-     * @throws Throwable エラーが発生した場合
+     * test for reconfigure configurations.
+     * @throws Throwable if failed
      */
     @Test
     public void variable() throws Throwable {
@@ -140,7 +140,7 @@ public class OperatorTestEnvironmentTest {
     }
 
     /**
-     * エラーレポートを集計する。
+     * Collects report contents.
      */
     public static final class Collector extends Report.Delegate {
 

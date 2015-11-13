@@ -22,10 +22,8 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.util.ReflectionUtils;
 
 /**
- * ステージ入力に対する{@link Mapper}の実装。
- * <p>
- * {@link StageInputDriver}に指定された実際のMapperに処理を移譲する。
- * </p>
+ * An implementation of Hadoop {@link Mapper} for dispatching multiple Map operations.
+ * @since 0.1.0
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class StageInputMapper extends Mapper {
@@ -40,7 +38,7 @@ public class StageInputMapper extends Mapper {
             this.mapper = ReflectionUtils.newInstance(split.getMapperClass(), context.getConfiguration());
         } catch (Exception e) {
             throw new IOException(MessageFormat.format(
-                    "Failed to instantiate {0}",
+                    "failed to instantiate {0}",
                     split.getMapperClass().getName()), e);
         }
     }

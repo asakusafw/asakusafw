@@ -47,13 +47,11 @@ import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.utils.java.model.util.Models;
 
 /**
- * 演算子DSLで利用する演算子に関するプロセッサ。
+ * An implementation of Java annotation processor which generates a support class for operator classes.
  * <p>
- * このプロセッサは、サブプロセッサとして
- * {@link com.asakusafw.compiler.operator.OperatorProcessor}
- * インターフェースを実装したクラスを利用する。
- * 同クラスを{@code META-INF/services/}下に指定のインターフェースに対する
- * サービスとして登録しておくことで、このプロセッサから自動的に参照する。
+ * This annotation processor can enhance by using {@link com.asakusafw.compiler.operator.OperatorProcessor}.
+ * Developers can inherit it and put the sub-class name into
+ * {@code META-INF/services/com.asakusafw.compiler.operator.OperatorProcessor} to use the custom operators.
  * </p>
  * @since 0.1.0
  * @version 0.7.0
@@ -61,7 +59,7 @@ import com.asakusafw.utils.java.model.util.Models;
 public class OperatorCompiler implements Processor {
 
     /**
-     * このコンパイラのバージョン。
+     * The compiler version.
      */
     public static final String VERSION = "0.1.0"; //$NON-NLS-1$
 
@@ -89,11 +87,11 @@ public class OperatorCompiler implements Processor {
     }
 
     /**
-     * このコンパイラに対するオプション項目の一覧を返す。
-     * @param processingEnv 処理環境
-     * @return オプション項目の一覧
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
-     * @throws OperatorCompilerException 引数の解析に失敗した場合
+     * Returns the compiler options.
+     * @param processingEnv the annotation processing environment
+     * @return the compiler options
+     * @throws IllegalArgumentException if the parameter is {@code null}
+     * @throws OperatorCompilerException if error occurred while extracting operator compiler options
      */
     protected OperatorCompilerOptions loadOptions(ProcessingEnvironment processingEnv) {
         Precondition.checkMustNotBeNull(processingEnv, "processingEnv"); //$NON-NLS-1$
@@ -110,13 +108,13 @@ public class OperatorCompiler implements Processor {
                 env.getMessager().printMessage(
                     Diagnostic.Kind.WARNING,
                     MessageFormat.format(
-                        "{0}は正しくロードされなかったため、スキップされます",
+                        Messages.getString("OperatorCompiler.warnSkipInvalidProcessor"), //$NON-NLS-1$
                         proc.getClass().getName()));
             } else if (results.containsKey(target)) {
                 env.getMessager().printMessage(
                         Diagnostic.Kind.WARNING,
                         MessageFormat.format(
-                            "{0}の対象演算子{1}はすでに{2}によって対象となっているため、スキップされます",
+                            Messages.getString("OperatorCompiler.warnSkipConflictProcessor"), //$NON-NLS-1$
                             proc.getClass().getName(),
                             target.getName(),
                             results.get(target).getClass().getName()));
@@ -128,10 +126,10 @@ public class OperatorCompiler implements Processor {
     }
 
     /**
-     * この注釈プロセッサが内部的に利用する演算子プロセッサの一覧を返す。
-     * @param env コンパイラの実行環境
-     * @return 演算子プロセッサの一覧
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the available operator processors.
+     * @param env the current environment
+     * @return the available operator processors
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     protected Iterable<OperatorProcessor> findOperatorProcessors(OperatorCompilingEnvironment env) {
         List<OperatorProcessor> results = Lists.create();
@@ -214,7 +212,7 @@ public class OperatorCompiler implements Processor {
     private String toDetailString(RuntimeException e) {
         StringWriter writer = new StringWriter();
         PrintWriter pw = new PrintWriter(writer);
-        pw.println("演算子のコンパイルに失敗しました:");
+        pw.println(Messages.getString("OperatorCompiler.errorDetailHeader")); //$NON-NLS-1$
         e.printStackTrace(pw);
         pw.close();
         return writer.toString();
@@ -223,14 +221,14 @@ public class OperatorCompiler implements Processor {
     private void start(RoundEnvironment roundEnv) {
         assert roundEnv != null;
 
-        // 演算子クラスの情報を収集
+        // collects operator classes
         OperatorClassCollector collector = new OperatorClassCollector(environment, roundEnv);
         for (OperatorProcessor proc : subProcessors) {
             collector.add(proc);
         }
         List<OperatorClass> classes = collector.collect();
 
-        // 演算子クラスを出力
+        // emits operator factory/implementation classes
         OperatorClassEmitter emitter = new OperatorClassEmitter(environment);
         for (OperatorClass operatorClass : classes) {
             emitter.emit(operatorClass);

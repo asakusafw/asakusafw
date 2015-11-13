@@ -1,74 +1,58 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<name>Extended Test Driver Helpers for Direct I/O</name>
-	<groupId>com.asakusafw.sandbox</groupId>
-	<artifactId>asakusa-directio-test-driver-ext</artifactId>
-	<parent>
-		<artifactId>asakusa-sandbox-parent</artifactId>
-		<groupId>com.asakusafw.sandbox</groupId>
-		<version>0.7.4-hadoop1</version>
-		<relativePath>../asakusa-sandbox-parent</relativePath>
-	</parent>
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <name>Extended Test Driver Helpers for Direct I/O</name>
+  <artifactId>asakusa-directio-test-driver-ext</artifactId>
+  <parent>
+    <artifactId>asakusa-sandbox-project</artifactId>
+    <groupId>com.asakusafw.sandbox</groupId>
+    <version>0.7.5-RC1-hadoop1</version>
+  </parent>
 
-	<description>Test Driver Extensions for Direct I/O</description>
-	<url>http://asakusafw.com</url>
-	<licenses>
-		<license>
-			<name>Apache License, Version 2.0</name>
-			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-			<distribution>manual</distribution>
-		</license>
-	</licenses>
-
-	<properties>
-		<asakusafw.version>${project.version}</asakusafw.version>
-	</properties>
-
-	<packaging>jar</packaging>
-	<dependencies>
-		<dependency>
-			<groupId>com.asakusafw</groupId>
-			<artifactId>asakusa-directio-vocabulary</artifactId>
-			<version>${asakusafw.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.asakusafw</groupId>
-			<artifactId>asakusa-directio-test-moderator</artifactId>
-			<version>${asakusafw.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.asakusafw</groupId>
-			<artifactId>asakusa-test-driver</artifactId>
-			<version>${asakusafw.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.hadoop</groupId>
-			<artifactId>${hadoop.artifact.id}</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-simple</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>asakusa-directio-runtime-ext</artifactId>
-			<version>${project.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.hamcrest</groupId>
-			<artifactId>hamcrest-library</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-		</dependency>
-	</dependencies>
+  <packaging>jar</packaging>
+  <dependencies>
+    <dependency>
+      <groupId>com.asakusafw</groupId>
+      <artifactId>asakusa-directio-vocabulary</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.asakusafw</groupId>
+      <artifactId>asakusa-directio-test-moderator</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.asakusafw</groupId>
+      <artifactId>asakusa-test-driver</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.hadoop</groupId>
+      <artifactId>${hadoop.artifact.id}</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>asakusa-directio-runtime-ext</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest-library</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+    </dependency>
+  </dependencies>
 </project>

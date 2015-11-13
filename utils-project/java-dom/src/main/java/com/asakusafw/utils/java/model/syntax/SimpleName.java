@@ -17,7 +17,7 @@ package com.asakusafw.utils.java.model.syntax;
 
 
 /**
- * 単純名を表現するインターフェース。
+ * An interface which represents simple names.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:6.2] Names and Identifiers} </li>
@@ -27,12 +27,9 @@ package com.asakusafw.utils.java.model.syntax;
 public interface SimpleName
         extends Name {
 
-    // properties
-
     /**
-     * この単純名を表現する文字列を返す。
-     * @return
-     *     この単純名を表現する文字列
+     * Returns the identifier.
+     * @return the identifier
      */
     String getToken();
 }

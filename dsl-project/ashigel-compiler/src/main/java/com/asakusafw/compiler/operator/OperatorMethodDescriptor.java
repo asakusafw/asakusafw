@@ -42,7 +42,7 @@ import com.asakusafw.vocabulary.flow.graph.OperatorHelper;
 import com.asakusafw.vocabulary.flow.graph.ShuffleKey;
 
 /**
- * 演算子メソッドの内容を記述する情報。
+ * Structural information of operator methods.
  */
 public class OperatorMethodDescriptor {
 
@@ -61,15 +61,15 @@ public class OperatorMethodDescriptor {
     private final List<Expression> attributes;
 
     /**
-     * インスタンスを生成する。
-     * @param annotationType この演算子の種類をあらわす注釈型
-     * @param documentation 演算子に関するドキュメンテーション
-     * @param name 演算子の名前
-     * @param inputPorts 入力ポートの一覧
-     * @param outputPorts 出力ポートの一覧
-     * @param parameters 入出力に関連のないパラメーターの一覧
-     * @param attributes 属性の一覧
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Creates a new instance.
+     * @param annotationType the operator annotation type
+     * @param documentation the documentation of the operator
+     * @param name the operator name
+     * @param inputPorts the input ports
+     * @param outputPorts the output ports
+     * @param parameters the user parameters
+     * @param attributes the operator attributes
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public OperatorMethodDescriptor(
             Class<? extends Annotation> annotationType,
@@ -95,63 +95,63 @@ public class OperatorMethodDescriptor {
     }
 
     /**
-     * この演算子の種類をあらわす注釈型を返す。
-     * @return 演算子の種類をあらわす注釈型
+     * Returns the operator annotation type.
+     * @return the operator annotation type
      */
     public Class<? extends Annotation> getAnnotationType() {
         return annotationType;
     }
 
     /**
-     * 演算子に関する説明を返す。
-     * @return 演算子に関する説明、存在しない場合は{@code null}
+     * Returns the documentation of the operator.
+     * @return the documentation of the operator
      */
     public List<DocElement> getDocumentation() {
         return documentation;
     }
 
     /**
-     * 演算子の名前を返す。
-     * @return 演算子の名前
+     * Returns the operator name.
+     * @return the operator name
      */
     public String getName() {
         return name;
     }
 
     /**
-     * 入力ポートの一覧を返す。
-     * @return 入力ポートの一覧
+     * Returns the input ports.
+     * @return the input ports
      */
     public List<OperatorPortDeclaration> getInputPorts() {
         return inputPorts;
     }
 
     /**
-     * 出力ポートの一覧を返す。
-     * @return 出力ポートの一覧
+     * Returns the output ports.
+     * @return the output ports
      */
     public List<OperatorPortDeclaration> getOutputPorts() {
         return outputPorts;
     }
 
     /**
-     * 入出力に関連のないパラメーターの一覧を返す。
-     * @return 入出力に関連のないパラメーターの一覧
+     * Returns the user parameters.
+     * @return the user parameters
      */
     public List<OperatorPortDeclaration> getParameters() {
         return parameters;
     }
 
     /**
-     * この演算子の属性一覧を返す。
-     * @return この演算子の属性一覧
+     * Returns the operator annotations.
+     * @return the operator annotations
      */
     public List<Expression> getAttributes() {
         return attributes;
     }
 
     /**
-     * {@link OperatorMethodDescriptor}を構築するビルダー。
+     * A builder for building {@link OperatorMethodDescriptor}.
      */
     public static class Builder {
 
@@ -172,10 +172,10 @@ public class OperatorMethodDescriptor {
         private final Context context;
 
         /**
-         * インスタンスを生成する。
-         * @param annotationType 構築対象の演算子の種類を表す注釈型
-         * @param context 文脈情報
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Creates a new instance.
+         * @param annotationType the target operator annotation
+         * @param context the current context
+         * @throws IllegalArgumentException if the parameters are {@code null}
          */
         public Builder(
                 Class<? extends Annotation> annotationType,
@@ -196,7 +196,7 @@ public class OperatorMethodDescriptor {
          * Returns an input name which has the specified type variable.
          * @param type target type
          * @return the matched input name, or {@code null} if not exists or is not a projective model
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * @throws IllegalArgumentException if the parameter is {@code null}
          */
         public String findInput(TypeMirror type) {
             Precondition.checkMustNotBeNull(type, "type"); //$NON-NLS-1$
@@ -213,8 +213,9 @@ public class OperatorMethodDescriptor {
         }
 
         /**
-         * 演算子の説明を設定する。
-         * @param description 設定する説明
+         * Sets a documentation for the operator.
+         * @param description the document
+         * @throws IllegalArgumentException if the parameter is {@code null}
          */
         public void setDocumentation(List<? extends DocElement> description) {
             Precondition.checkMustNotBeNull(description, "description"); //$NON-NLS-1$
@@ -222,12 +223,12 @@ public class OperatorMethodDescriptor {
         }
 
         /**
-         * 入力を追加する。
-         * @param documentation 変数の説明
-         * @param varName 変数の名前
-         * @param type 変数の型
-         * @param position 宣言されたパラメーター上での位置、パラメーターから導出されていない場合は{@code null}
-         * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+         * Adds an input port.
+         * @param documentation the port documentation
+         * @param varName the port name
+         * @param type the port type
+         * @param position the original parameter index, or {@code null} if it was not derived from any parameters
+         * @throws IllegalArgumentException if the parameters are {@code null}
          */
         public void addInput(
                 List<? extends DocElement> documentation,
@@ -238,13 +239,13 @@ public class OperatorMethodDescriptor {
         }
 
         /**
-         * 入力を追加する。
-         * @param documentation 変数の説明
-         * @param varName 変数の名前
-         * @param type 変数の型
-         * @param position 宣言されたパラメーター上での位置、パラメーターから導出されていない場合は{@code null}
-         * @param shuffleKey シャッフル条件
-         * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+         * Adds an input port.
+         * @param documentation the port documentation
+         * @param varName the port name
+         * @param type the port type
+         * @param position the original parameter index, or {@code null} if it was not derived from any parameters
+         * @param shuffleKey the shuffle key
+         * @throws IllegalArgumentException if the parameters are {@code null}
          */
         public void addInput(
                 List<? extends DocElement> documentation,
@@ -264,13 +265,13 @@ public class OperatorMethodDescriptor {
         }
 
         /**
-         * 出力を追加する。
-         * @param documentation 変数の説明
-         * @param varName 変数の名前
-         * @param type 変数の型
-         * @param correspondedInputName この出力と同じ型を持つ変数の名前
-         * @param position 宣言されたパラメーター上での位置、パラメーターから導出されていない場合は{@code null}
-         * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+         * Adds an output port.
+         * @param documentation the port documentation
+         * @param varName the port name
+         * @param type the port type
+         * @param correspondedInputName the port name which has the same type to this port
+         * @param position the original parameter index, or {@code null} if it was not derived from any parameters
+         * @throws IllegalArgumentException if the parameters are {@code null}
          */
         public void addOutput(
                 List<? extends DocElement> documentation,
@@ -297,13 +298,13 @@ public class OperatorMethodDescriptor {
         }
 
         /**
-         * 出力を追加する。
-         * @param documentation 変数の説明
-         * @param varName 変数の名前
-         * @param type 変数の型
-         * @param correspondedInputName この出力と同じ型を持つ変数の名前
-         * @param position 宣言されたパラメーター上での位置、パラメーターから導出されていない場合は{@code null}
-         * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+         * Adds an output port.
+         * @param documentation the port documentation
+         * @param varName the port name
+         * @param type the port type
+         * @param correspondedInputName the port name which has the same type to this port
+         * @param position the original parameter index, or {@code null} if it was not derived from any parameters
+         * @throws IllegalArgumentException if the parameters are {@code null}
          */
         public void addOutput(
                 String documentation,
@@ -323,12 +324,12 @@ public class OperatorMethodDescriptor {
         }
 
         /**
-         * 入出力以外のパラメーターを追加する。
-         * @param documentation 変数の説明
-         * @param varName 変数の名前
-         * @param type 変数の型
-         * @param position 宣言されたパラメーター上での位置、パラメーターから導出されていない場合は{@code null}
-         * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+         * Adds an user parameter.
+         * @param documentation the documentation
+         * @param varName the variable name
+         * @param type the variable type
+         * @param position the original parameter index, or {@code null} if it was not derived from any parameters
+         * @throws IllegalArgumentException if the parameters are {@code null}
          */
         public void addParameter(
                 List<? extends DocElement> documentation,
@@ -348,9 +349,9 @@ public class OperatorMethodDescriptor {
         }
 
         /**
-         * 属性を追加する。
-         * @param attribute 追加する属性
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Adds an operator attribute.
+         * @param attribute the target attribute
+         * @throws IllegalArgumentException if the parameter is {@code null}
          */
         public void addAttribute(Expression attribute) {
             Precondition.checkMustNotBeNull(attribute, "attribute"); //$NON-NLS-1$
@@ -358,9 +359,9 @@ public class OperatorMethodDescriptor {
         }
 
         /**
-         * 属性を追加する。
-         * @param constant 定数表記の{@link FlowElementAttribute}
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Adds an attribute.
+         * @param constant the {@link FlowElementAttribute}
+         * @throws IllegalArgumentException if the parameter is {@code null}
          */
         public void addAttribute(Enum<? extends FlowElementAttribute> constant) {
             Precondition.checkMustNotBeNull(constant, "constant"); //$NON-NLS-1$
@@ -373,9 +374,9 @@ public class OperatorMethodDescriptor {
         }
 
         /**
-         * 属性を追加する。
-         * @param helperMethod 補助演算子を表すメソッド
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Adds an operator helper method.
+         * @param helperMethod the operator helper method
+         * @throws IllegalArgumentException if the parameter is {@code null}
          */
         public void addOperatorHelper(ExecutableElement helperMethod) {
             Precondition.checkMustNotBeNull(helperMethod, "helperMethod"); //$NON-NLS-1$
@@ -406,8 +407,8 @@ public class OperatorMethodDescriptor {
         }
 
         /**
-         * これまでに構築した情報を元に{@link OperatorMethodDescriptor}を生成して返す。
-         * @return 生成した{@link OperatorMethodDescriptor}
+         * Builds a {@link OperatorMethodDescriptor}.
+         * @return the created object
          */
         public OperatorMethodDescriptor toDescriptor() {
             return new OperatorMethodDescriptor(

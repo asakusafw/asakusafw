@@ -40,8 +40,8 @@ public class VolatileCompilerTest {
     private VolatileCompiler compiler;
 
     /**
-     * テストを初期化する。
-     * @throws Exception if occur
+     * Initializes this test.
+     * @throws Exception if exception was occurred
      */
     @Before
     public void setUp() throws Exception {
@@ -49,18 +49,19 @@ public class VolatileCompilerTest {
     }
 
     /**
-     * テストの情報を破棄する。
-     * @throws Exception 例外が発生した場合
+     * Finalizes this test.
+     * @throws Exception if exception was occurred
      */
     @After
     public void tearDown() throws Exception {
         if (compiler != null) {
             compiler.close();
+            compiler = null;
         }
     }
 
     /**
-     * 注釈つき。
+     * w/ annotation.
      */
     @Test
     public void annotated() {
@@ -73,7 +74,7 @@ public class VolatileCompilerTest {
     }
 
     /**
-     * 注釈なし。
+     * w/o annotation.
      */
     @Test
     public void noAnnotated() {
@@ -85,7 +86,7 @@ public class VolatileCompilerTest {
     }
 
     /**
-     * 複数注釈。
+     * w/ multiple annotations.
      */
     @Test
     public void multiAnnotated() {

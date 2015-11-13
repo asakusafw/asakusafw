@@ -52,7 +52,7 @@ public class Jsr269Test {
     private VolatileCompiler compiler;
 
     /**
-     * テストを初期化する。
+     * Initializes this test object.
      * @throws Exception if occur
      */
     @Before
@@ -63,8 +63,8 @@ public class Jsr269Test {
     }
 
     /**
-     * テストの情報を破棄する。
-     * @throws Exception 例外が発生した場合
+     * Finalizes this test object.
+     * @throws Exception if exception was occurred
      */
     @After
     public void tearDown() throws Exception {
@@ -74,7 +74,7 @@ public class Jsr269Test {
     }
 
     /**
-     * 名前の変換。
+     * convert names.
      */
     @Test
     public void name() {
@@ -91,7 +91,7 @@ public class Jsr269Test {
     }
 
     /**
-     * プリミティブ型の変換。
+     * convert primitive types.
      */
     @Test
     public void primitiveTypes() {
@@ -126,7 +126,7 @@ public class Jsr269Test {
     }
 
     /**
-     * 宣言型の変換。
+     * convert declared types.
      */
     @Test
     public void declaredType() {
@@ -146,7 +146,7 @@ public class Jsr269Test {
     }
 
     /**
-     * パラメータ化型の変換。
+     * convert parameterized types.
      */
     @Test
     public void parameterizedType() {
@@ -174,7 +174,7 @@ public class Jsr269Test {
     }
 
     /**
-     * 非型の変換。
+     * convert non types.
      */
     @Test
     public void noType() {
@@ -191,7 +191,7 @@ public class Jsr269Test {
     }
 
     /**
-     * 型変数の変換。
+     * convert type variables.
      */
     @Test
     public void typeVariable() {
@@ -213,7 +213,7 @@ public class Jsr269Test {
     }
 
     /**
-     * 配列型の変換。
+     * convert array types.
      */
     @Test
     public void arrayTypes() {
@@ -233,7 +233,7 @@ public class Jsr269Test {
     }
 
     /**
-     * ワイルドカードの変換。
+     * convert wildcards.
      */
     @Test
     public void wildcard() {

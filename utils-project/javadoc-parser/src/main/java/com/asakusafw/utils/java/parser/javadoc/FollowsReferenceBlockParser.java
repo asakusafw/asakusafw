@@ -21,14 +21,13 @@ import com.asakusafw.utils.java.internal.parser.javadoc.ir.IrDocBlock;
 import com.asakusafw.utils.java.internal.parser.javadoc.ir.IrDocFragment;
 
 /**
- * タグの直後に参照を指定するブロックを解析する。
+ * An implementation of {@link JavadocBaseParser} which parses blocks that tag follows a reference.
  */
 public class FollowsReferenceBlockParser extends AcceptableJavadocBlockParser {
 
     /**
-     * インスタンスを生成する。
-     * インラインブロックを解析するパーサは存在しない状態となる。
-     * @param tagNames タグ名の一覧
+     * Creates a new instance.
+     * @param tagNames the acceptable tag names
      */
     public FollowsReferenceBlockParser(String...tagNames) {
         super(tagNames);

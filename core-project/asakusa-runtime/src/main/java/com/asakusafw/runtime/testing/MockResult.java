@@ -20,20 +20,18 @@ import java.util.List;
 
 import com.asakusafw.runtime.core.Result;
 
-
 /**
- * {@link Result}のモック用実装。
- * @param <T> 取り扱うデータの型
+ * Mock implementation of {@link Result}.
+ * @param <T> the data type
  */
 public class MockResult<T> implements Result<T> {
 
-    private List<T> results = new ArrayList<T>();
+    private final List<T> results = new ArrayList<T>();
 
     /**
-     * インスタンスを生成して返す。
-     * @param <T> 取り扱う要素の型
-     * @return 生成したインスタンス
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Creates a new instance.
+     * @param <T> the target data type
+     * @return the created instance
      */
     public static <T> MockResult<T> create() {
         return new MockResult<T>();
@@ -46,18 +44,19 @@ public class MockResult<T> implements Result<T> {
     }
 
     /**
-     * {@link #add(Object)}に渡された結果が{@link #getResults()}のバッファに渡る前に
-     * 結果の値に対して呼び出される(拡張ポイント)。
-     * @param result 結果の値
-     * @return {@link #getResults()}に渡す値
+     * Handles the {@link #add(Object) added} object.
+     * Clients can override this method, and replace the added object with another object.
+     * @param result the original added object
+     * @return the blessed object
      */
     protected T bless(T result) {
         return result;
     }
 
     /**
-     * これまでに追加された要素の一覧を返す。
-     * @return これまでに追加された要素の一覧
+     * Returns the previously {@link #add(Object) added} objects.
+     * Clients can edit the result objects by overriding {@link #bless(Object)} method.
+     * @return the previously added objects
      */
     public List<T> getResults() {
         return results;

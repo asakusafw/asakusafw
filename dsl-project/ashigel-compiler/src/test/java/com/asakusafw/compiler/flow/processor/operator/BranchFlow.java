@@ -19,16 +19,15 @@ import com.asakusafw.compiler.flow.processor.BranchFlowProcessor;
 import com.asakusafw.compiler.flow.testing.model.Ex1;
 import com.asakusafw.vocabulary.operator.Branch;
 
-
 /**
- * {@link BranchFlowProcessor}に対するテスト演算子。
+ * An operator class for testing {@link BranchFlowProcessor}.
  */
 public abstract class BranchFlow {
 
     /**
-     * 通常の演算子。
-     * @param model 対象のモデル
-     * @return 分岐先
+     * simple.
+     * @param model target data model
+     * @return branch target
      */
     @Branch
     public Speed simple(Ex1 model) {
@@ -36,10 +35,10 @@ public abstract class BranchFlow {
     }
 
     /**
-     * パラメーター付きの演算子。
-     * @param model 対象のモデル
-     * @param parameter 追加パラメータ
-     * @return 分岐先
+     * parameterized.
+     * @param model target data model
+     * @param parameter additional parameter
+     * @return branch target
      */
     @Branch
     public Speed withParameter(Ex1 model, int parameter) {
@@ -53,22 +52,22 @@ public abstract class BranchFlow {
     }
 
     /**
-     * 速度。
+     * Speed kind.
      */
     public enum Speed {
 
         /**
-         * 速い。
+         * High speed.
          */
         HIGH,
 
         /**
-         * 遅い。
+         * Low speed.
          */
         LOW,
 
         /**
-         * 停止。
+         * Stopped.
          */
         STOP,
     }

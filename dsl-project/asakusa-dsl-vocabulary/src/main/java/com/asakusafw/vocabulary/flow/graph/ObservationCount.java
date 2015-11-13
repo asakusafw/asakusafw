@@ -18,12 +18,12 @@ package com.asakusafw.vocabulary.flow.graph;
 import java.text.MessageFormat;
 
 /**
- * 要素に対して個々のデータを観測してよい回数に関する制約。
+ * Represents an operator constraint how many each operator can perform for individual data-sets.
  */
 public enum ObservationCount implements FlowElementAttribute {
 
     /**
-     * どのように計測してもよい。
+     * Don't care.
      */
     DONT_CARE(false, false) {
         @Override
@@ -36,7 +36,7 @@ public enum ObservationCount implements FlowElementAttribute {
     },
 
     /**
-     * 個々のデータは高々1度のみ観測してよい。
+     * The operator must perform at most once for the data-set.
      */
     AT_MOST_ONCE(true, false) {
         @Override
@@ -52,7 +52,7 @@ public enum ObservationCount implements FlowElementAttribute {
     },
 
     /**
-     * 個々のデータは最低1度は観測する必要がある。
+     * The operator must perform at least once for the data-set.
      */
     AT_LEAST_ONCE(false, true) {
         @Override
@@ -68,7 +68,7 @@ public enum ObservationCount implements FlowElementAttribute {
     },
 
     /**
-     * 個々のデータはデータ数と同じ回数だけ観測する必要がある。
+     * The operator must perform exactly once for the data-set.
      */
     EXACTLY_ONCE(true, true) {
         @Override
@@ -79,15 +79,15 @@ public enum ObservationCount implements FlowElementAttribute {
             return EXACTLY_ONCE;
         }
     },
-
     ;
+
     /**
-     * 高々一度のみ観測してよい。
+     * The operator must perform at most once.
      */
     public final boolean atMostOnce;
 
     /**
-     * 最低一度は観測する必要がある。
+     * The operator must perform at least once.
      */
     public final boolean atLeastOnce;
 
@@ -97,10 +97,10 @@ public enum ObservationCount implements FlowElementAttribute {
     }
 
     /**
-     * この定数に指定の制約を結合したものを返す。
-     * @param other 結合する制約
-     * @return 結合結果
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns the combined constraint.
+     * @param other the target constraint
+     * @return the combined result
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public abstract ObservationCount and(ObservationCount other);
 

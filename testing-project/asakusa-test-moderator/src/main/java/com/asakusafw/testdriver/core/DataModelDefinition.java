@@ -138,14 +138,14 @@ public interface DataModelDefinition<T> {
             }
             if (properties.containsKey(name)) {
                 throw new IllegalStateException(MessageFormat.format(
-                        "The property \"{0}\" was already set in {1}",
+                        Messages.getString("DataModelDefinition.errorConflictProperty"), //$NON-NLS-1$
                         name,
                         definition));
             }
             PropertyType type = definition.getType(name);
             if (type != null && value != null && type.getRepresentation().isInstance(value) == false) {
                 throw new IllegalArgumentException(MessageFormat.format(
-                        "The property \"{0}\" must be type of {1}, but was {2} ({3})",
+                        Messages.getString("DataModelDefinition.errorInconsistentPropertyValue"), //$NON-NLS-1$
                         name,
                         type,
                         value,

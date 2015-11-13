@@ -39,17 +39,17 @@ import com.asakusafw.vocabulary.flow.Out;
 import com.asakusafw.vocabulary.flow.graph.FlowGraph;
 
 /**
- * {@link JobFlow}が付与されている要素について、フローの構造を解析する。
+ * Analyzes jobflow classes (which annotated with {@link JobFlow}).
  */
 public final class JobFlowDriver {
 
     static final Logger LOG = LoggerFactory.getLogger(JobFlowDriver.class);
 
-    private Class<? extends FlowDescription> description;
+    private final Class<? extends FlowDescription> description;
 
     private JobFlowClass jobFlowClass;
 
-    private List<String> diagnostics;
+    private final List<String> diagnostics;
 
     private JobFlowDriver(Class<? extends FlowDescription> description) {
         assert description != null;
@@ -58,10 +58,10 @@ public final class JobFlowDriver {
     }
 
     /**
-     * インスタンスを生成する。
-     * @param description 対象のジョブフロークラス
-     * @return 生成したインスタンス
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param description the target jobflow class
+     * @return the created instance
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static JobFlowDriver analyze(Class<? extends FlowDescription> description) {
         Precondition.checkMustNotBeNull(description, "description"); //$NON-NLS-1$
@@ -71,24 +71,24 @@ public final class JobFlowDriver {
     }
 
     /**
-     * 解析結果のジョブフロークラス情報を返す。
-     * @return 解析結果のジョブフロークラス情報、解析に失敗した場合は{@code null}
+     * Returns information of the target jobflow class.
+     * @return information of the target jobflow class, or {@code null} if the target jobflow class is not valid
      */
     public JobFlowClass getJobFlowClass() {
         return jobFlowClass;
     }
 
     /**
-     * 解析対象のジョブフロークラスを返す。
-     * @return 解析対象のジョブフロークラス
+     * Returns the target jobflow class.
+     * @return the target jobflow class
      */
     public Class<? extends FlowDescription> getDescription() {
         return description;
     }
 
     /**
-     * 解析結果の診断メッセージを返す。
-     * @return 解析結果の診断メッセージ
+     * Returns the diagnostics messages.
+     * @return the diagnostics messages
      */
     public List<String> getDiagnostics() {
         return diagnostics;
@@ -112,7 +112,8 @@ public final class JobFlowDriver {
             FlowGraph graph = driver.createFlowGraph(instance);
             this.jobFlowClass = new JobFlowClass(config, graph);
         } catch (Exception e) {
-            error(e, "{0}の解析に失敗しました ({1})", description.getName(), e.toString());
+            error(e, Messages.getString("JobFlowDriver.errorFailedToAnalyzeFlow"), //$NON-NLS-1$
+                    description.getName(), e.toString());
         }
     }
 
@@ -124,24 +125,25 @@ public final class JobFlowDriver {
         try {
             return ctor.newInstance(ports.toArray());
         } catch (Exception e) {
-            error(e, "{0}のインスタンス生成に失敗しました ({1})", description.getName(), e.toString());
+            error(e, Messages.getString("JobFlowDriver.errorFailedToInstantiate"), //$NON-NLS-1$
+                    description.getName(), e.toString());
             return null;
         }
     }
 
     private JobFlow findConfig() {
         if (description.getEnclosingClass() != null) {
-            error(null, "ジョブフロークラスはトップレベルクラスとして宣言する必要があります");
+            error(null, Messages.getString("JobFlowDriver.errorEnclosingClass")); //$NON-NLS-1$
         }
         if (Modifier.isPublic(description.getModifiers()) == false) {
-            error(null, "ジョブフロークラスはpublicで宣言する必要があります");
+            error(null, Messages.getString("JobFlowDriver.errorNotPublic")); //$NON-NLS-1$
         }
         if (Modifier.isAbstract(description.getModifiers())) {
-            error(null, "ジョブフロークラスはabstractで宣言できません");
+            error(null, Messages.getString("JobFlowDriver.errorAbstract")); //$NON-NLS-1$
         }
         JobFlow conf = description.getAnnotation(JobFlow.class);
         if (conf == null) {
-            error(null, "ジョブフロークラスには@JobFlow注釈の付与が必要です");
+            error(null, Messages.getString("JobFlowDriver.errorMissingAnnotation")); //$NON-NLS-1$
         }
         return conf;
     }
@@ -151,10 +153,10 @@ public final class JobFlowDriver {
         Constructor<? extends FlowDescription>[] ctors =
             (Constructor<? extends FlowDescription>[]) description.getConstructors();
         if (ctors.length == 0) {
-            error(null, "ジョブフロークラスにはpublicコンストラクターの宣言が必要です");
+            error(null, Messages.getString("JobFlowDriver.errorMissingPublicConstructor")); //$NON-NLS-1$
             return null;
         } else if (ctors.length >= 2) {
-            error(null, "ジョブフロークラスにはpublicコンストラクターを一つだけ宣言できます");
+            error(null, Messages.getString("JobFlowDriver.errorExtraPublicConstructor")); //$NON-NLS-1$
             return ctors[0];
         } else {
             return ctors[0];
@@ -162,8 +164,8 @@ public final class JobFlowDriver {
     }
 
     /**
-     * この解析結果にエラーが含まれている場合のみ{@code true}を返す。
-     * @return 解析結果にエラーが含まれている場合のみ{@code true}
+     * Returns whether this analysis result contains any erroneous information or not.
+     * @return {@code true} if this contains any erroneous information, otherwise {@code false}
      */
     public boolean hasError() {
         return diagnostics.isEmpty() == false;
@@ -189,7 +191,7 @@ public final class JobFlowDriver {
         } else {
             error(
                     null,
-                    "ジョブフローのコンストラクターにはInかOutの入出力のみを指定できます ({0}番目の引数)",
+                    Messages.getString("JobFlowDriver.errorUnsupportedConstructorParameter"), //$NON-NLS-1$
                     parameter.getPosition());
         }
     }
@@ -201,20 +203,20 @@ public final class JobFlowDriver {
         if (dataType == null) {
             error(
                     null,
-                    "ジョブフローの入力には型引数としてデータの種類を指定する必要があります ({0}番目の引数)",
+                    Messages.getString("JobFlowDriver.errorMissingInputType"), //$NON-NLS-1$
                     parameter.getPosition());
             return;
         }
         if (parameter.exporter != null) {
             error(
                     null,
-                    "ジョブフローの入力には@Exportを指定できません ({0}番目の引数)",
+                    Messages.getString("JobFlowDriver.errorInputWithExporter"), //$NON-NLS-1$
                     parameter.getPosition());
         }
         if (parameter.importer == null) {
             error(
                     null,
-                    "ジョブフローの入力には@Importを指定する必要があります ({0}番目の引数)",
+                    Messages.getString("JobFlowDriver.errorMissingImporter"), //$NON-NLS-1$
                     parameter.getPosition());
             return;
         } else {
@@ -222,7 +224,7 @@ public final class JobFlowDriver {
             if (driver.isValidName(name) == false) {
                 error(
                         null,
-                        "ジョブフローの入力の名前 \"{1}\" が正しくありません ({0}番目の引数)",
+                        Messages.getString("JobFlowDriver.errorInvalidInputName"), //$NON-NLS-1$
                         parameter.getPosition(),
                         name);
                 return;
@@ -234,7 +236,7 @@ public final class JobFlowDriver {
             } catch (Exception e) {
                 error(
                         e,
-                        "インポーター記述{0} ({1}番目の引数) の解析に失敗しました (インスタンス化に失敗しました)",
+                        Messages.getString("JobFlowDriver.errorImporterFailedToInstantiate"), //$NON-NLS-1$
                         aClass.getName(),
                         parameter.getPosition());
                 return;
@@ -243,7 +245,7 @@ public final class JobFlowDriver {
             if (importer.getModelType() == null) {
                 error(
                         null,
-                        "インポーター記述{0} ({1}番目の引数) の解析に失敗しました (インポーター記述にデータの種類が指定されていません)",
+                        Messages.getString("JobFlowDriver.errorImporterMissingDataType"), //$NON-NLS-1$
                         aClass.getName(),
                         parameter.getPosition());
                 return;
@@ -251,7 +253,7 @@ public final class JobFlowDriver {
             if (dataType.equals(importer.getModelType()) == false) {
                 error(
                         null,
-                        "インポーター記述{0} ({1}番目の引数) の解析に失敗しました (入力の型とインポーター記述の型が一致しません)",
+                        Messages.getString("JobFlowDriver.errorImporterInconsistentDataType"), //$NON-NLS-1$
                         aClass.getName(),
                         parameter.getPosition());
                 return;
@@ -267,20 +269,20 @@ public final class JobFlowDriver {
         if (dataType == null) {
             error(
                     null,
-                    "ジョブフローの出力には型引数としてデータの種類を指定する必要があります ({0}番目の引数)",
+                    Messages.getString("JobFlowDriver.errorMissingTypeParameterInfo"), //$NON-NLS-1$
                     parameter.getPosition());
             return;
         }
         if (parameter.importer != null) {
             error(
                     null,
-                    "ジョブフローの出力には@Importを指定できません ({0}番目の引数)",
+                    Messages.getString("JobFlowDriver.errorOutputWithImporter"), //$NON-NLS-1$
                     parameter.getPosition());
         }
         if (parameter.exporter == null) {
             error(
                     null,
-                    "ジョブフローの出力には@Exportを指定する必要があります ({0}番目の引数)",
+                    Messages.getString("JobFlowDriver.errorMissingExporter"), //$NON-NLS-1$
                     parameter.getPosition());
             return;
         } else {
@@ -288,7 +290,7 @@ public final class JobFlowDriver {
             if (driver.isValidName(name) == false) {
                 error(
                         null,
-                        "ジョブフローの出力の名前 \"{1}\" が正しくありません ({0}番目の引数)",
+                        Messages.getString("JobFlowDriver.errorInvalidOutputName"), //$NON-NLS-1$
                         parameter.getPosition(),
                         name);
                 return;
@@ -301,7 +303,7 @@ public final class JobFlowDriver {
             } catch (Exception e) {
                 error(
                         e,
-                        "エクスポーター記述{0} ({1}番目の引数) の解析に失敗しました (インスタンス化に失敗しました)",
+                        Messages.getString("JobFlowDriver.errorExporterFailedToInstantiate"), //$NON-NLS-1$
                         aClass.getName(),
                         parameter.getPosition());
                 return;
@@ -310,7 +312,7 @@ public final class JobFlowDriver {
             if (exporter.getModelType() == null) {
                 error(
                         null,
-                        "エクスポーター記述{0} ({1}番目の引数) の解析に失敗しました (エクスポーター記述にデータの種類が指定されていません)",
+                        Messages.getString("JobFlowDriver.errorExporterMissingDataType"), //$NON-NLS-1$
                         aClass.getName(),
                         parameter.getPosition());
                 return;
@@ -318,7 +320,7 @@ public final class JobFlowDriver {
             if (dataType.equals(exporter.getModelType()) == false) {
                 error(
                         null,
-                        "エクスポーター記述{0} ({1}番目の引数) の解析に失敗しました (出力の型とエクスポーター記述の型が一致しません)",
+                        Messages.getString("JobFlowDriver.errorExporterInconsistentDataType"), //$NON-NLS-1$
                         aClass.getName(),
                         parameter.getPosition());
                 return;

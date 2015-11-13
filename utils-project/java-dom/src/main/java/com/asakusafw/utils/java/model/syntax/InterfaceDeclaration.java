@@ -18,7 +18,7 @@ package com.asakusafw.utils.java.model.syntax;
 import java.util.List;
 
 /**
- * インターフェースの宣言を表現するインターフェース。
+ * An interface which represents interface type declarations.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:9.1] Interface Declarations} </li>
@@ -28,21 +28,15 @@ import java.util.List;
 public interface InterfaceDeclaration
         extends TypeDeclaration {
 
-    // properties
-
     /**
-     * 仮型引数宣言の一覧を返す。
-     * <p> 仮型引数が一つも宣言されない場合は空が返される。 </p>
-     * @return
-     *     仮型引数宣言の一覧
+     * Returns the type parameter declarations.
+     * @return the type parameter declarations
      */
     List<? extends TypeParameterDeclaration> getTypeParameters();
 
     /**
-     * 親インターフェースの一覧を返す。
-     * <p> 親インターフェースが一つも宣言されない場合は空が返される。 </p>
-     * @return
-     *     親インターフェースの一覧
+     * Returns the super interface types.
+     * @return the super interface types
      */
     List<? extends Type> getSuperInterfaceTypes();
 }

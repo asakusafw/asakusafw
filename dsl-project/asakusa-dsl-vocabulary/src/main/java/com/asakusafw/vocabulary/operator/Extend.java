@@ -24,11 +24,9 @@ import com.asakusafw.vocabulary.flow.Source;
 import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory;
 
 /**
- * 拡張演算子を表す演算子注釈。
- * <p>
- * この演算子を表す演算子メソッドは作成できない。
- * 代わりに {@link CoreOperatorFactory#extend(Source, Class)}を利用すること。
- * </p>
+ * Represents <em>extend</em> operator annotation.
+ * Application developers should use {@link CoreOperatorFactory#extend(Source)} instead of operator methods.
+ * @see CoreOperatorFactory#extend(Source)
  * @see CoreOperatorFactory#extend(Source, Class)
  * @since 0.2.0
  */
@@ -38,12 +36,12 @@ import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory;
 public @interface Extend {
 
     /**
-     * 入力ポートの番号。
+     * The input port number.
      */
     int ID_INPUT = 0;
 
     /**
-     * 出力ポートの番号。
+     * The output port number.
      */
     int ID_OUTPUT = 0;
 }

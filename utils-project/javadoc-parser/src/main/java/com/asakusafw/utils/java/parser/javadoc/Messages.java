@@ -18,9 +18,6 @@ package com.asakusafw.utils.java.parser.javadoc;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-/**
- * 自動生成されたメッセージバンドルクラス。
- */
 final class Messages {
 
     private static final String BUNDLE_NAME = "com.asakusafw.utils.java.parser.javadoc.messages"; //$NON-NLS-1$
@@ -28,7 +25,7 @@ final class Messages {
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 
     private Messages() {
-        super();
+        return;
     }
 
     static String getString(String key) {

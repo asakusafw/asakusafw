@@ -18,18 +18,18 @@ package com.asakusafw.runtime.flow;
 import org.apache.hadoop.io.Writable;
 
 /**
- * セグメント化可能な{@link Writable}。
+ * A {@link Writable} object with its segment ID.
  */
 public interface SegmentedWritable extends Writable {
 
     /**
-     * {@link #getSegmentId()}のメソッド名。
+     * The method name of {@link #getSegmentId()}.
      */
     String ID_GETTER = "getSegmentId"; //$NON-NLS-1$
 
     /**
-     * このオブジェクトのセグメント番号を返す。
-     * @return このオブジェクトのセグメント番号
+     * Returns the segment ID of this object.
+     * @return the segment ID
      */
     int getSegmentId();
 }

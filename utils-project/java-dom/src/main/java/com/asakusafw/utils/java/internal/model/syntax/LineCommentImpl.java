@@ -20,13 +20,10 @@ import com.asakusafw.utils.java.model.syntax.ModelKind;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link LineComment}の実装。
+ * An implementation of {@link LineComment}.
  */
 public final class LineCommentImpl extends ModelRoot implements LineComment {
 
-    /**
-     * コメント文字列。
-     */
     private String string;
 
     @Override
@@ -35,13 +32,11 @@ public final class LineCommentImpl extends ModelRoot implements LineComment {
     }
 
     /**
-     * コメント文字列を設定する。
-     * @param string
-     *     コメント文字列
-     * @throws IllegalArgumentException
-     *     {@code string}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code string}に空が指定された場合
+     * Sets the comment text.
+     * This must start with the starting symbol (<code>&#47;&#47;</code>).
+     * @param string the comment text
+     * @throws IllegalArgumentException if {@code string} was {@code null}
+     * @throws IllegalArgumentException if {@code string} was empty
      */
     public void setString(String string) {
         Util.notNull(string, "string"); //$NON-NLS-1$
@@ -49,7 +44,7 @@ public final class LineCommentImpl extends ModelRoot implements LineComment {
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#LINE_COMMENT}を返す。
+     * Returns {@link ModelKind#LINE_COMMENT} which represents this element kind.
      * @return {@link ModelKind#LINE_COMMENT}
      */
     @Override
@@ -58,8 +53,7 @@ public final class LineCommentImpl extends ModelRoot implements LineComment {
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitLineComment(this, context);
     }

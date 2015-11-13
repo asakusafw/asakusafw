@@ -21,13 +21,10 @@ import com.asakusafw.utils.java.model.syntax.NamedType;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link MarkerAnnotation}の実装。
+ * An implementation of {@link MarkerAnnotation}.
  */
 public final class MarkerAnnotationImpl extends ModelRoot implements MarkerAnnotation {
 
-    /**
-     * 注釈の型。
-     */
     private NamedType type;
 
     @Override
@@ -36,11 +33,9 @@ public final class MarkerAnnotationImpl extends ModelRoot implements MarkerAnnot
     }
 
     /**
-     * 注釈の型を設定する。
-     * @param type
-     *     注釈の型
-     * @throws IllegalArgumentException
-     *     {@code type}に{@code null}が指定された場合
+     * Sets the annotation type.
+     * @param type the annotation type
+     * @throws IllegalArgumentException if {@code type} was {@code null}
      */
     public void setType(NamedType type) {
         Util.notNull(type, "type"); //$NON-NLS-1$
@@ -48,7 +43,7 @@ public final class MarkerAnnotationImpl extends ModelRoot implements MarkerAnnot
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#MARKER_ANNOTATION}を返す。
+     * Returns {@link ModelKind#MARKER_ANNOTATION} which represents this element kind.
      * @return {@link ModelKind#MARKER_ANNOTATION}
      */
     @Override
@@ -57,8 +52,7 @@ public final class MarkerAnnotationImpl extends ModelRoot implements MarkerAnnot
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitMarkerAnnotation(this, context);
     }

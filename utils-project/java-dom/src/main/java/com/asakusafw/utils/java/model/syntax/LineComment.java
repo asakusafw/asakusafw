@@ -15,25 +15,21 @@
  */
 package com.asakusafw.utils.java.model.syntax;
 
-
 /**
- * 行コメントを表現するインターフェース。
+ * An interface which represents line comments.
  * <ul>
  *   <li> Specified In: <ul>
- *     <li> {@code [JLS3:3.7] Comments (<i>EndOfLineComment</i>)} </li>
+ *     <li> {@code [JLS3:3.7] Comments (EndOfLineComment)} </li>
  *   </ul> </li>
  * </ul>
  */
 public interface LineComment
         extends Comment {
 
-    // properties
-
     /**
-     * コメント文字列を返す。
-     * <p> コメント文字列には行コメントの区切り子<code>&#47;&#47;</code>が含まれる。 </p>
-     * @return
-     *     コメント文字列
+     * Returns the comment text.
+     * This must start with the starting symbol (<code>&#47;&#47;</code>).
+     * @return the comment text
      */
     String getString();
 }

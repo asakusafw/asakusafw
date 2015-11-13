@@ -23,20 +23,19 @@ import com.asakusafw.vocabulary.flow.In;
 import com.asakusafw.vocabulary.flow.Out;
 import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory;
 
-
 /**
- * Fragmentが直列に並ぶようなパターン。
+ * A flow which some operators appear twice.
  */
 public class DuplicateFragments extends FlowDescription {
 
-    private In<Ex1> in1;
+    private final In<Ex1> in1;
 
-    private Out<Ex1> out1;
+    private final Out<Ex1> out1;
 
     /**
-     * インスタンスを生成する。
-     * @param in1 入力
-     * @param out1 出力
+     * Creates a new instance.
+     * @param in1 the input
+     * @param out1 the output
      */
     public DuplicateFragments(In<Ex1> in1, Out<Ex1> out1) {
         this.in1 = in1;

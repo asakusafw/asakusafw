@@ -20,7 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * 単純名を表す。
+ * Represents simple names in {@link IrDocComment}.
  */
 public final class IrDocSimpleName extends IrDocName {
 
@@ -29,13 +29,12 @@ public final class IrDocSimpleName extends IrDocName {
     private String identifier;
 
     /**
-     * インスタンスを生成する。
-     * @param identifier この名前を構成する文字列
-     * @throws IllegalArgumentException 引数に{@code null}が含まれていた場合
-     * @throws IllegalArgumentException 名前に適切でない文字列が設定された場合
+     * Creates a new instance.
+     * @param identifier the identifier
+     * @throws IllegalArgumentException if the parameter is {@code null}
+     * @throws IllegalArgumentException if the string is not suitable for Java identifiers
      */
     public IrDocSimpleName(String identifier) {
-        super();
         setIdentifier0(identifier);
     }
 
@@ -45,18 +44,18 @@ public final class IrDocSimpleName extends IrDocName {
     }
 
     /**
-     * この名前を構成する文字列を返す。
-     * @return この名前を構成する文字列
+     * Returns the identifier.
+     * @return the identifier
      */
     public String getIdentifier() {
         return this.identifier;
     }
 
     /**
-     * この名前を構成する文字列を変更する。
-     * @param identifier 設定する文字列
-     * @throws IllegalArgumentException 引数に{@code null}が含まれていた場合
-     * @throws IllegalArgumentException 名前に適切でない文字列が設定された場合
+     * Sets the identifier.
+     * @param identifier the identifier
+     * @throws IllegalArgumentException if the parameter is {@code null}
+     * @throws IllegalArgumentException if the string is not suitable for Java identifiers
      */
     public void setIdentifier(String identifier) {
         setIdentifier0(identifier);

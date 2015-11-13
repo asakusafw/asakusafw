@@ -26,7 +26,7 @@ import org.junit.Test;
 public class LocationTest {
 
     /**
-     * ルート直下の位置。
+     * the root location.
      */
     @Test
     public void root() {
@@ -36,7 +36,7 @@ public class LocationTest {
     }
 
     /**
-     * ルート直下でない位置。
+     * child locations.
      */
     @Test
     public void child() {
@@ -47,7 +47,7 @@ public class LocationTest {
     }
 
     /**
-     * 接頭辞かどうか。
+     * test for prefix locations.
      */
     @Test
     public void prefix() {
@@ -60,7 +60,7 @@ public class LocationTest {
     }
 
     /**
-     * 名前を末尾に追加。
+     * test for append w/ string.
      */
     @Test
     public void appendString() {
@@ -71,7 +71,7 @@ public class LocationTest {
     }
 
     /**
-     * 相対パスを末尾に追加。
+     * test for append w/ relative location.
      */
     @Test
     public void appendLocation() {
@@ -86,7 +86,7 @@ public class LocationTest {
     }
 
     /**
-     * パスと文字列の相互変換。
+     * test for from/to path for trivial location.
      */
     @Test
     public void convert_trivial() {
@@ -95,7 +95,7 @@ public class LocationTest {
     }
 
     /**
-     * パスと文字列の相互変換。
+     * test for from/to path.
      */
     @Test
     public void convert_path() {
@@ -104,7 +104,7 @@ public class LocationTest {
     }
 
     /**
-     * パスと文字列の相互変換。
+     * test for from/to path for strange path.
      */
     @Test
     public void convert_normalize() {
@@ -113,7 +113,7 @@ public class LocationTest {
     }
 
     /**
-     * 接頭辞付きのパスの相互変換。
+     * test for from/to path for prefix locations.
      */
     @Test
     public void convert_prefix() {

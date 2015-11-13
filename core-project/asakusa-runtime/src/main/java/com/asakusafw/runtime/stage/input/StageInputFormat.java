@@ -50,10 +50,7 @@ import com.asakusafw.runtime.stage.StageInput;
 import com.asakusafw.runtime.stage.input.StageInputSplit.Source;
 
 /**
- * ステージへの複数の入力を処理する{@link InputFormat}。
- * <p>
- * {@link StageInputDriver}に指定された実際のInputFormatに処理を移譲する。
- * </p>
+ * An implementation of Hadoop {@link InputFormat} for handling handling multiple Map operations.
  * @since 0.1.0
  * @version 0.7.1
  */
@@ -82,7 +79,7 @@ public class StageInputFormat extends InputFormat {
         if (LOG.isDebugEnabled()) {
             if ((combiner instanceof IdentitySplitCombiner) == false) {
                 LOG.debug(MessageFormat.format(
-                        "Combines {0} splits: {1}", //$NON-NLS-1$
+                        "combines {0} splits: {1}", //$NON-NLS-1$
                         splits.size(),
                         combiner.getClass().getName()));
             }
@@ -90,7 +87,7 @@ public class StageInputFormat extends InputFormat {
         List<StageInputSplit> combined = combiner.combine(context, splits);
         if (LOG.isDebugEnabled() && splits.size() != combined.size()) {
             LOG.debug(MessageFormat.format(
-                    "Input splits are combined: {0} -> {1}", //$NON-NLS-1$
+                    "input splits are combined: {0} -> {1}", //$NON-NLS-1$
                     splits.size(),
                     combined.size()));
         }
@@ -166,7 +163,7 @@ public class StageInputFormat extends InputFormat {
             return conf.getClassByName(combinerType).asSubclass(SplitCombiner.class);
         } catch (Exception e) {
             LOG.warn(MessageFormat.format(
-                    "Failed to load a combiner \"{0}\"",
+                    "failed to load a combiner \"{0}\"",
                     combinerType), e);
             return IdentitySplitCombiner.class;
         }

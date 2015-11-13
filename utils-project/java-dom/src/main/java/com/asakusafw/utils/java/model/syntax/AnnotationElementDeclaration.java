@@ -17,8 +17,8 @@ package com.asakusafw.utils.java.model.syntax;
 
 
 /**
- * 注釈要素の宣言を表現するインターフェース。
- * <p> この要素は注釈型宣言の本体にのみ出現できる </p>
+ * An interface which represents annotation element declaration.
+ * This can only appear in body of annotation type declaration.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:9.6] Annotation Types} </li>
@@ -28,28 +28,21 @@ package com.asakusafw.utils.java.model.syntax;
 public interface AnnotationElementDeclaration
         extends TypeBodyDeclaration, TypedElement {
 
-    // properties
-
     /**
-     * 注釈要素の型を返す。
-     * @return
-     *     注釈要素の型
+     * Returns the annotation element type.
+     * @return annotation element type
      */
     Type getType();
 
     /**
-     * 注釈要素の名前を返す。
-     * @return
-     *     注釈要素の名前
+     * Returns the annotation element name.
+     * @return annotation element name
      */
     SimpleName getName();
 
     /**
-     * 注釈要素の規定値を返す。
-     * <p> 規定値が存在しない場合は{@code null}が返される。 </p>
-     * @return
-     *     注釈要素の規定値、
-     *     ただし規定値が存在しない場合は{@code null}
+     * Returns the default value of the element.
+     * @return the default value, or {@code null} if there is no default value
      */
     Expression getDefaultExpression();
 }

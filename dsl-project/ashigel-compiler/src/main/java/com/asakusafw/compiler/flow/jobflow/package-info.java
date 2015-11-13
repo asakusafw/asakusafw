@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 /**
- * ジョブフロー全体のコンパイル結果を出力する。
+ * Compiles jobflows.
  */
 package com.asakusafw.compiler.flow.jobflow;
-

@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Javadoc全体。
+ * Represents Java documentation comments.
  */
 public class IrDocComment extends AbstractIrDocElement {
 
@@ -31,11 +31,9 @@ public class IrDocComment extends AbstractIrDocElement {
     private List<? extends IrDocBlock> blocks;
 
     /**
-     * インスタンスを生成する。
-     * @throws IllegalArgumentException 引数に{@code null}が含まれていた場合
+     * Creates a new instance.
      */
     public IrDocComment() {
-        super();
         this.blocks = Collections.emptyList();
     }
 
@@ -45,17 +43,17 @@ public class IrDocComment extends AbstractIrDocElement {
     }
 
     /**
-     * このコメントに含まれるブロックの一覧を返す。
-     * @return このコメントに含まれるブロックの一覧
+     * Returns the element blocks.
+     * @return the element blocks
      */
     public List<? extends IrDocBlock> getBlocks() {
         return this.blocks;
     }
 
     /**
-     * このコメントに含まれるブロックの一覧を設定する。
-     * @param blocks このコメントに含まれるブロックの一覧
-     * @throws IllegalArgumentException 引数に{@code null}が含まれていた場合
+     * Sets the element blocks.
+     * @param blocks the element blocks
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public void setBlocks(List<? extends IrDocBlock> blocks) {
         if (blocks == null) {

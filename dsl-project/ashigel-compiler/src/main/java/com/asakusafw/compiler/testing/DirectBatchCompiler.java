@@ -17,7 +17,6 @@ package com.asakusafw.compiler.testing;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.MessageFormat;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -46,25 +45,25 @@ import com.asakusafw.vocabulary.batch.BatchDescription;
 import com.asakusafw.vocabulary.batch.JobFlowWorkDescription;
 
 /**
- * バッチを直接コンパイルして、JARのパッケージを作成する。
+ * Compiles batch classes and generates batch applications.
  */
 public final class DirectBatchCompiler {
 
     static final Logger LOG = LoggerFactory.getLogger(DirectBatchCompiler.class);
 
     /**
-     * バッチ記述をコンパイルして、JARのパッケージを作成する。
-     * @param batchClass 対象のバッチクラス
-     * @param basePackageName 対象フローのプログラムを出力する既定のパッケージ名
-     * @param clusterWorkingDirectory 対象フローのプログラムが利用するクラスター上のディレクトリ
-     * @param outputDirectory コンパイル結果の出力先
-     * @param localWorkingDirectory コンパイル時に利用するローカル環境のワーキングディレクトリ
-     * @param extraResources 追加リソースのディレクトリまたはZIPアーカイブの一覧
-     * @param serviceClassLoader サービス情報をロードするためのクラスローダ
-     * @param flowCompilerOptions フローDSLコンパイラのオプション設定
-     * @return コンパイル結果
-     * @throws IOException コンパイルに失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Compiles the target batch class and returns its structural information.
+     * @param batchClass the target batch class
+     * @param basePackageName the base package name of generated Java source files
+     * @param clusterWorkingDirectory the runtime working directory
+     * @param outputDirectory the output directory
+     * @param localWorkingDirectory the working directory for compiler
+     * @param extraResources the extra resources for embedding contents into each jobflow package file
+     * @param serviceClassLoader the class loader for loading compiler services
+     * @param flowCompilerOptions the compiler options for flow DSL
+     * @return the compile results
+     * @throws IOException if failed to compile
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public static BatchInfo compile(
             Class<? extends BatchDescription> batchClass,
@@ -84,7 +83,10 @@ public final class DirectBatchCompiler {
         Precondition.checkMustNotBeNull(flowCompilerOptions, "flowCompilerOptions"); //$NON-NLS-1$
 
         if (localWorkingDirectory.exists()) {
-            clean(localWorkingDirectory);
+            delete(localWorkingDirectory);
+        }
+        if (outputDirectory.exists()) {
+            delete(outputDirectory);
         }
         BatchDriver driver = BatchDriver.analyze(batchClass);
         if (driver.hasError()) {
@@ -108,11 +110,11 @@ public final class DirectBatchCompiler {
     }
 
     /**
-     * コンパイル済みのワークフローをバッチの簡易実行計画に変換して返す。
-     * @param workflow 対象のワークフロー
-     * @param outputDirectory ワークフロー情報の出力先
-     * @return バッチの簡易実行計画
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns the structural information of the batch application from a compiled workflow.
+     * @param workflow the target workflow
+     * @param outputDirectory the output directory
+     * @return the structural information
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public static BatchInfo toInfo(Workflow workflow, File outputDirectory) {
         Precondition.checkMustNotBeNull(workflow, "workflow"); //$NON-NLS-1$
@@ -125,16 +127,6 @@ public final class DirectBatchCompiler {
             }
         }
         return new BatchInfo(workflow, outputDirectory, jobflows);
-    }
-
-    private static void clean(File localWorkingDirectory) {
-        assert localWorkingDirectory != null;
-        if (localWorkingDirectory.exists()) {
-            LOG.info(MessageFormat.format(
-                    "作業ディレクトリを初期化しています: {0}",
-                    localWorkingDirectory));
-        }
-        delete(localWorkingDirectory);
     }
 
     private static boolean delete(File target) {
@@ -150,18 +142,18 @@ public final class DirectBatchCompiler {
     }
 
     /**
-     * 指定の情報を含む設定を返す。
-     * @param batchId バッチID
-     * @param basePackageName パッケージ名
-     * @param clusterWorkingLocation クラスタ上のワーキングディレクトリ
-     * @param outputDirectory 出力先のディレクトリ
-     * @param localWorkingDirectory ローカルワーキングディレクトリ
-     * @param extraResources 追加するクラスライブラリの一覧
-     * @param serviceClassLoader サービス情報をロードするためのクラスローダ
-     * @param flowCompilerOptions フローDSLコンパイラの設定
-     * @return 生成した設定
-     * @throws IOException 設定の展開中に解析に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a compiler configuration object.
+     * @param batchId the target batch ID
+     * @param basePackageName the base package name of generated Java source files
+     * @param clusterWorkingLocation the runtime working directory
+     * @param outputDirectory the output directory
+     * @param localWorkingDirectory the working directory for compiler
+     * @param extraResources the extra resources for embedding contents into each jobflow package file
+     * @param serviceClassLoader the class loader for loading compiler services
+     * @param flowCompilerOptions the compiler options for flow DSL
+     * @return the created object
+     * @throws IOException if failed to extract the configuration
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public static BatchCompilerConfiguration createConfig(
             String batchId,

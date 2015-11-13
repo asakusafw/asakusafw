@@ -20,12 +20,12 @@ import com.asakusafw.utils.java.model.syntax.SwitchDefaultLabel;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link SwitchDefaultLabel}の実装。
+ * An implementation of {@link SwitchDefaultLabel}.
  */
 public final class SwitchDefaultLabelImpl extends ModelRoot implements SwitchDefaultLabel {
 
     /**
-     * この要素の種類を表す{@link ModelKind#SWITCH_DEFAULT_LABEL}を返す。
+     * Returns {@link ModelKind#SWITCH_DEFAULT_LABEL} which represents this element kind.
      * @return {@link ModelKind#SWITCH_DEFAULT_LABEL}
      */
     @Override
@@ -34,8 +34,7 @@ public final class SwitchDefaultLabelImpl extends ModelRoot implements SwitchDef
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitSwitchDefaultLabel(this, context);
     }

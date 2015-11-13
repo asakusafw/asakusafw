@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /**
- * フローDSLの実行計画に関する機能群。
+ * Classes for execution planning on flow DSL.
  */
 package com.asakusafw.compiler.flow.plan;
 

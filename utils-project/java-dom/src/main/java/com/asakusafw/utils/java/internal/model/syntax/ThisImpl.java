@@ -21,13 +21,10 @@ import com.asakusafw.utils.java.model.syntax.This;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link This}の実装。
+ * An implementation of {@link This}.
  */
 public final class ThisImpl extends ModelRoot implements This {
 
-    /**
-     * 型限定子。
-     */
     private NamedType qualifier;
 
     @Override
@@ -36,18 +33,15 @@ public final class ThisImpl extends ModelRoot implements This {
     }
 
     /**
-     * 型限定子を設定する。
-     * <p> 限定子が指定されない場合、引数には{@code null}を指定する。 </p>
-     * @param qualifier
-     *     型限定子、
-     *     ただし限定子が指定されない場合は{@code null}
+     * Sets the type qualifier.
+     * @param qualifier the type qualifier, or {@code null} if it is not specified
      */
     public void setQualifier(NamedType qualifier) {
         this.qualifier = qualifier;
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#THIS}を返す。
+     * Returns {@link ModelKind#THIS} which represents this element kind.
      * @return {@link ModelKind#THIS}
      */
     @Override
@@ -56,8 +50,7 @@ public final class ThisImpl extends ModelRoot implements This {
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitThis(this, context);
     }

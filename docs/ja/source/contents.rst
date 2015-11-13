@@ -15,7 +15,6 @@
     testing/index
     directio/index
     windgate/index
-    thundergate/index
     yaess/index
     application/index
     administration/index

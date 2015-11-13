@@ -39,7 +39,7 @@ import com.asakusafw.runtime.value.StringOption;
 public class ShuffleAnalyzerTest extends JobflowCompilerTestRoot {
 
     /**
-     * シャッフルが存在しない。
+     * w/o shuffle operations.
      */
     @Test
     public void nothing() {
@@ -53,7 +53,7 @@ public class ShuffleAnalyzerTest extends JobflowCompilerTestRoot {
     }
 
     /**
-     * シャッフルが存在する。
+     * w/ shuffle operations.
      */
     @Test
     public void simple() {

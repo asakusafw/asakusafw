@@ -21,6 +21,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+//TODO i18n
 /**
  * 多重化に関する最適化を抑止すべきメソッドに付与する注釈。
  * <p>

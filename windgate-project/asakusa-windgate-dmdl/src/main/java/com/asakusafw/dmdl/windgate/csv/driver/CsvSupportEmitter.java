@@ -117,7 +117,7 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
                 CATEGORY_STREAM,
                 "Abstract{0}CsvImporterDescription"); //$NON-NLS-1$
         FsProcessDescriptionGenerator.Description desc = new FsProcessDescriptionGenerator.Description(
-                "WindGate CSV importer",
+                Messages.getString("CsvSupportEmitter.javadocImporterClass"), //$NON-NLS-1$
                 context.getQualifiedTypeName());
         desc.setSupportClassName(supportName);
         FsProcessDescriptionGenerator.generateImporter(next, desc);
@@ -134,7 +134,7 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
                 CATEGORY_STREAM,
                 "Abstract{0}CsvExporterDescription"); //$NON-NLS-1$
         FsProcessDescriptionGenerator.Description desc = new FsProcessDescriptionGenerator.Description(
-                "WindGate CSV exporter",
+                Messages.getString("CsvSupportEmitter.javadocExporterClass"), //$NON-NLS-1$
                 context.getQualifiedTypeName());
         desc.setSupportClassName(supportName);
         FsProcessDescriptionGenerator.generateExporter(next, desc);
@@ -153,7 +153,7 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
                 Type type = prop.getType();
                 if ((type instanceof BasicType) == false) {
                     throw new IOException(MessageFormat.format(
-                            "Type \"{0}\" can not map to CSV field: {1}.{2} ",
+                            Messages.getString("CsvSupportEmitter.errorUnsupportedType"), //$NON-NLS-1$
                             type,
                             prop.getOwner().getName().identifier,
                             prop.getName().identifier));
@@ -206,9 +206,8 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
         private void emit() throws IOException {
             ClassDeclaration decl = f.newClassDeclaration(
                     new JavadocBuilder(f)
-                        .text("Supports CSV for ")
-                        .linkType(context.resolve(model.getSymbol()))
-                        .text(".")
+                        .text(Messages.getString("CsvSupportEmitter.javadocClass"), //$NON-NLS-1$
+                                context.getTypeName(model.getSymbol()))
                         .toJavadoc(),
                     new AttributeBuilder(f)
                         .Public()
@@ -280,9 +279,9 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
             statements.add(new ExpressionBuilder(f, config).toReturnStatement());
             return f.newMethodDeclaration(
                     new JavadocBuilder(f)
-                        .text("Returns this CSV format configuration.")
+                        .text(Messages.getString("CsvSupportEmitter.javadocGetConfiguration")) //$NON-NLS-1$
                         .returns()
-                            .text("CSV format configuration")
+                            .text(Messages.getString("CsvSupportEmitter.javadocGetConfigurationResult")) //$NON-NLS-1$
                         .toJavadoc(),
                     new AttributeBuilder(f)
                         .Protected()

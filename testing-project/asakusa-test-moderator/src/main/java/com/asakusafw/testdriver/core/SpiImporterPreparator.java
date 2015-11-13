@@ -73,7 +73,7 @@ public class SpiImporterPreparator implements ImporterPreparator<ImporterDescrip
             }
         }
         throw new IOException(MessageFormat.format(
-                "Failed to truncate {0} (does not supported)",
+                Messages.getString("SpiImporterPreparator.errorFailedToTruncate"), //$NON-NLS-1$
                 description));
     }
 
@@ -98,7 +98,7 @@ public class SpiImporterPreparator implements ImporterPreparator<ImporterDescrip
             }
         }
         throw new IOException(MessageFormat.format(
-                "Failed to open results of {0} (does not supported)",
+                Messages.getString("SpiImporterPreparator.errorFailedToCreateOutput"), //$NON-NLS-1$
                 description));
     }
 

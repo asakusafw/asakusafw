@@ -39,7 +39,7 @@ import com.asakusafw.vocabulary.flow.graph.FlowElement;
 import com.asakusafw.vocabulary.flow.graph.FlowResourceDescription;
 
 /**
- * ステージ内で利用されるプログラムをコンパイルする。
+ * Compiles {@link StageGraph}.
  * @since 0.1.0
  * @version 0.4.0
  */
@@ -68,9 +68,9 @@ public class StageCompiler {
     private final CombinerEmitter combinerEmitter;
 
     /**
-     * インスタンスを生成する。
-     * @param environment 環境オブジェクト
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param environment the current environment
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public StageCompiler(FlowCompilingEnvironment environment) {
         Precondition.checkMustNotBeNull(environment, "environment"); //$NON-NLS-1$
@@ -96,11 +96,11 @@ public class StageCompiler {
     }
 
     /**
-     * 指定のステージグラフに含まれるすべてのステージをコンパイルし、モデルオブジェクトとして返す。
-     * @param graph コンパイル対象のグラフ
-     * @return 対応するコンパイル済みのステージ一覧
-     * @throws IOException コンパイル結果の出力に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Compiles execution stages in the {@link StageGraph}, and returns model objects of the compiled stages.
+     * @param graph the target stage graph
+     * @return the compiled model objects of each stage
+     * @throws IOException if error was occurred while compiling the target element
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public List<StageModel> compile(StageGraph graph) throws IOException {
         Precondition.checkMustNotBeNull(graph, "graph"); //$NON-NLS-1$
@@ -115,7 +115,7 @@ public class StageCompiler {
         }
         if (environment.hasError()) {
             throw new IOException(MessageFormat.format(
-                    "エラーによりコンパイルは中断されました ({0})",
+                    Messages.getString("StageCompiler.errorFailedToCompileResource"), //$NON-NLS-1$
                     environment.getErrorMessage()));
         }
         return results;
@@ -199,12 +199,12 @@ public class StageCompiler {
         ShuffleModel shuffle = shuffleAnalyzer.analyze(block);
         if (shuffleAnalyzer.hasError()) {
             shuffleAnalyzer.clearError();
-            throw new IOException("ステージのコンパイルは中断されました");
+            throw new IOException(Messages.getString("StageCompiler.errorFailedToCompileShuffle")); //$NON-NLS-1$
         }
         StageModel model = mapredAnalyzer.analyze(block, shuffle);
         if (mapredAnalyzer.hasError()) {
             mapredAnalyzer.clearError();
-            throw new IOException("ステージのコンパイルは中断されました");
+            throw new IOException(Messages.getString("StageCompiler.errorFailedToCompileBlock")); //$NON-NLS-1$
         }
         return model;
     }
@@ -277,7 +277,7 @@ public class StageCompiler {
             if (resolved == null) {
                 if (saw.contains(fragment.getDescription()) == false) {
                     environment.error(
-                            "{0}が解決されていません",
+                            Messages.getString("StageCompiler.errorUnresolvedResource"), //$NON-NLS-1$
                             fragment.getDescription());
                     saw.add(fragment.getDescription());
                 }

@@ -17,7 +17,7 @@ package com.asakusafw.utils.java.model.syntax;
 
 
 /**
- * 型キャスト式を表現するインターフェース。
+ * An interface which represents type cast expression.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:15.16] Cast Expressions} </li>
@@ -27,19 +27,15 @@ package com.asakusafw.utils.java.model.syntax;
 public interface CastExpression
         extends Expression {
 
-    // properties
-
     /**
-     * キャスト対象の型を返す。
-     * @return
-     *     キャスト対象の型
+     * Returns the target type.
+     * @return the target type
      */
     Type getType();
 
     /**
-     * 演算項を返す。
-     * @return
-     *     演算項
+     * Returns the target term.
+     * @return the target term
      */
     Expression getExpression();
 }

@@ -15,9 +15,6 @@
  */
 package com.asakusafw.testdriver;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.asakusafw.compiler.flow.FlowDescriptionDriver;
 import com.asakusafw.compiler.testing.DirectExporterDescription;
 import com.asakusafw.vocabulary.flow.Out;
@@ -25,39 +22,28 @@ import com.asakusafw.vocabulary.flow.Source;
 import com.asakusafw.vocabulary.flow.graph.FlowElementInput;
 
 /**
- * フロー部品のテスト出力データオブジェクト。
+ * A flow output driver for testing flow-parts.
  * @since 0.2.0
  * @version 0.6.0
- * @param <T> モデルクラス
+ * @param <T> the data model type
  */
 public class FlowPartDriverOutput<T> extends FlowDriverOutput<T, FlowPartDriverOutput<T>> implements Out<T> {
-
-    private static final Logger LOG = LoggerFactory.getLogger(FlowPartDriverOutput.class);
-
-    /** フロー記述ドライバ 。*/
-    protected FlowDescriptionDriver descDriver;
 
     private final DirectExporterDescription exporterDescription;
 
     private final Out<T> out;
 
     /**
-     * コンストラクタ。
-     *
-     * @param driverContext テストドライバコンテキスト。
-     * @param descDriver フロー定義ドライバ。
-     * @param name 入力の名前。
-     * @param modelType モデルクラス。
+     * Creates a new instance.
+     * @param driverContext the current test driver context
+     * @param descDriver the flow description driver
+     * @param name the flow output name
+     * @param modelType the data model class
      */
     public FlowPartDriverOutput(TestDriverContext driverContext, FlowDescriptionDriver descDriver, String name,
             Class<T> modelType) {
         super(driverContext.getCallerClass(), driverContext.getRepository(), name, modelType);
-        this.descDriver = descDriver;
-
         String exportPath = FlowPartDriverUtils.createOutputLocation(driverContext, name).toPath('/');
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Export Path: {}", exportPath); //$NON-NLS-1$
-        }
         this.exporterDescription = new DirectExporterDescription(modelType, exportPath);
         this.out = descDriver.createOut(name, exporterDescription);
     }

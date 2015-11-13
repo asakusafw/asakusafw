@@ -1,17 +1,3 @@
-環境変数について
-
-        NS_MODELGEN_PACKAGE
-            出力先のパッケージ名: プロジェクトModelGeneratorの環境変数
-        NS_TESTTOOLS_CONF
-            プロパティファイルへのパス。
-            以下の項目が存在すること
-                jdbc.driver = 使用するJDBC Driver
-                jdbc.url = 接続先のJDBC URL
-                jdbc.user = 接続ユーザー名
-                jdbc.password = 接続パスワード
-                database.name = データベース名
-                output.directory = 出力ディレクトリ => ModelGeneratorに合わせて別の環境変数にする予定
-
 ====
 ## Launch a configured Eclipse IDE for unit testing (on Linux environment)
 

@@ -27,10 +27,8 @@ import org.apache.hadoop.io.WritableUtils;
 import com.asakusafw.runtime.io.util.WritableRawComparable;
 
 /**
- * {@code null}値を許容する文字列。
- * <p>
- * この文字列を比較する場合、次のように書くとよい。
- * </p>
+ * Represents a character string value which can be {@code null}.
+ * The following snippet works well for comparing {@link StringOption} with a constant value:
 <pre><code>
 class Something {
     static final StringOption TARGET = new StringOption("something");
@@ -55,15 +53,15 @@ public final class StringOption extends ValueOption<StringOption> {
     private final Text entity = new Text();
 
     /**
-     * インスタンスを生成する。
+     * Creates a new instance which represents {@code null} value.
      */
     public StringOption() {
         this.nullValue = true;
     }
 
     /**
-     * インスタンスを生成する。
-     * @param textOrNull 生成するインスタンスの初期値
+     * Creates a new instance which represents the specified value.
+     * @param textOrNull the initial value (nullable)
      */
     public StringOption(String textOrNull) {
         if (textOrNull == null) {
@@ -75,9 +73,9 @@ public final class StringOption extends ValueOption<StringOption> {
     }
 
     /**
-     * このオブジェクトが表現する値を返す。
-     * @return このオブジェクトが表現する値
-     * @throws NullPointerException この値が{@code null}を表現する場合
+     * Returns the value which this object represents.
+     * @return the value which this object represents, never {@code null}
+     * @throws NullPointerException if this object represents {@code null}
      */
     public Text get() {
         if (nullValue) {
@@ -87,11 +85,11 @@ public final class StringOption extends ValueOption<StringOption> {
     }
 
     /**
-     * このオブジェクトが表現する値を返す。
-     * @return このオブジェクトが表現する値
-     * @throws NullPointerException この値が{@code null}を表現する場合
+     * Returns the value which this object represents.
+     * @return the value which this object represents, never {@code null}
+     * @throws NullPointerException if this object represents {@code null}
      */
-    public String getAsString() { // メソッド名は getAs<Type> の形式で表現すること
+    public String getAsString() {
         if (nullValue) {
             throw new NullPointerException();
         }
@@ -99,9 +97,9 @@ public final class StringOption extends ValueOption<StringOption> {
     }
 
     /**
-     * このオブジェクトが表現する値を返す。
-     * @param alternate このオブジェクトが{@code null}を表現する場合に返す値
-     * @return このオブジェクトが表現する値、{@code null}を表現する場合は引数の値
+     * Returns the value which this object represents.
+     * @param alternate the alternative value for {@code null}
+     * @return the value which this object represents, or the alternative one if this object represents {@code null}
      */
     public Text or(Text alternate) {
         if (nullValue) {
@@ -111,9 +109,9 @@ public final class StringOption extends ValueOption<StringOption> {
     }
 
     /**
-     * このオブジェクトが表現する値を返す。
-     * @param alternate このオブジェクトが{@code null}を表現する場合に返す値
-     * @return このオブジェクトが表現する値、{@code null}を表現する場合は引数の値
+     * Returns the value which this object represents.
+     * @param alternate the alternative value for {@code null}
+     * @return the value which this object represents, or the alternative one if this object represents {@code null}
      */
     public String or(String alternate) {
         if (nullValue) {
@@ -123,11 +121,8 @@ public final class StringOption extends ValueOption<StringOption> {
     }
 
     /**
-     * このオブジェクトを空の文字列に変更。
-     * <p>
-     * このオブジェクトが{@code null}を表していた場合にも、この呼び出しによって
-     * 空の文字列を表すようになる。
-     * </p>
+     * Reset this object to an empty character string.
+     * This method makes the object non-null, an empty string even if the object just represents {@code null}.
      */
     public void reset() {
         nullValue = false;
@@ -135,10 +130,10 @@ public final class StringOption extends ValueOption<StringOption> {
     }
 
     /**
-     * このオブジェクトが表現する値を変更する。
-     * @param newText 変更後のテキスト、{@code null}を指定した場合はこの値が{@code null}を表すようになる
-     * @return 自身のオブジェクト
-     * @deprecated アプリケーションからは利用しない
+     * Sets the value.
+     * @param newText the value (nullable)
+     * @return this
+     * @deprecated Application developer should not use this method directly
      */
     @Deprecated
     public StringOption modify(Text newText) {
@@ -152,10 +147,10 @@ public final class StringOption extends ValueOption<StringOption> {
     }
 
     /**
-     * このオブジェクトが表現する値を変更する。
-     * @param newText 変更後のテキスト、{@code null}を指定した場合はこの値が{@code null}を表すようになる
-     * @return 自身のオブジェクト
-     * @deprecated アプリケーションからは利用しない
+     * Sets the value.
+     * @param newText the value (nullable)
+     * @return this
+     * @deprecated Application developer should not use this method directly
      */
     @Deprecated
     public StringOption modify(String newText) {
@@ -168,12 +163,6 @@ public final class StringOption extends ValueOption<StringOption> {
         return this;
     }
 
-    /**
-     * このオブジェクトの内容を、指定のオブジェクトの内容で上書きする。
-     * @param optionOrNull 上書きする内容、
-     *     {@code null}の場合はこのオブジェクトが{@code null}値を表すようになる
-     * @deprecated アプリケーションからは利用しない
-     */
     @Override
     @Deprecated
     public void copyFrom(StringOption optionOrNull) {
@@ -219,9 +208,9 @@ public final class StringOption extends ValueOption<StringOption> {
     }
 
     /**
-     * この値と指定の値が同じものを表現する場合のみ{@code true}を返す。
-     * @param other 対象の値、または{@code null}
-     * @return 指定の値が同じものを表現する場合のみ{@code true}
+     * Returns whether both this object and the specified value represents an equivalent value or not.
+     * @param other the target value (nullable)
+     * @return {@code true} if this object has the specified value, otherwise {@code false}
      */
     public boolean has(String other) {
         if (isNull()) {
@@ -236,9 +225,9 @@ public final class StringOption extends ValueOption<StringOption> {
     }
 
     /**
-     * この値と指定の値が同じものを表現する場合のみ{@code true}を返す。
-     * @param other 対象の値、または{@code null}
-     * @return 指定の値が同じものを表現する場合のみ{@code true}
+     * Returns whether both this object and the specified value represents an equivalent value or not.
+     * @param other the target value (nullable)
+     * @return {@code true} if this object has the specified value, otherwise {@code false}
      */
     public boolean has(Text other) {
         if (isNull()) {
@@ -253,7 +242,6 @@ public final class StringOption extends ValueOption<StringOption> {
     @Override
     public int compareTo(WritableRawComparable o) {
         StringOption other = (StringOption) o;
-        // nullは他のどのような値よりも小さい
         if (nullValue | other.nullValue) {
             if (nullValue & other.nullValue) {
                 return 0;
@@ -334,11 +322,11 @@ public final class StringOption extends ValueOption<StringOption> {
     }
 
     /**
-     * このクラスの直列化された形式から、占有しているバイト長を返す。
-     * @param bytes 対象のバイト配列
-     * @param offset バイト配列の開始位置
-     * @param length バイト配列の制限長
-     * @return 比較結果
+     * Returns the actual number of bytes from the serialized byte array.
+     * @param bytes the target byte array
+     * @param offset the beginning index in the byte array (inclusive)
+     * @param length the limit length of the byte array
+     * @return the comparison result
      */
     public static int getBytesLength(byte[] bytes, int offset, int length) {
         if (bytes[offset] == 0) {
@@ -350,14 +338,14 @@ public final class StringOption extends ValueOption<StringOption> {
     }
 
     /**
-     * このクラスの2つの直列化された値を比較する。
-     * @param b1 比較されるバイト配列
-     * @param s1 比較されるバイト配列の開始位置
-     * @param l1 比較されるバイト配列内で、このクラスの直列化形式が占有しているバイト長
-     * @param b2 比較するバイト配列
-     * @param s2 比較するバイト配列の開始位置
-     * @param l2 比較するバイト配列内で、このクラスの直列化形式が占有しているバイト長
-     * @return 比較結果
+     * Compares between the two objects in serialized form.
+     * @param b1 the first byte array to be compared
+     * @param s1 the beginning index in {@code b1}
+     * @param l1 the limit byte size in {@code b1}
+     * @param b2 the second byte array to be compared
+     * @param s2 the beginning index in {@code b2}
+     * @param l2 the limit byte size in {@code b2}
+     * @return the comparison result
      */
     public static int compareBytes(
             byte[] b1, int s1, int l1,

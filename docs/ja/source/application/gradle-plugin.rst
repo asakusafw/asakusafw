@@ -76,12 +76,12 @@ Asakusa Gradle Pluginを使った標準的なアプリケーション開発環�
 Asakusa Gradle Plugin 用プロジェクトテンプレート
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-* `asakusa-project-template-0.7.4.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-project-template-0.7.4.tar.gz>`_
+* `asakusa-project-template-0.7.5.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-project-template-0.7.5.tar.gz>`_
 
 Asakusa Gradle Plugin 用サンプルアプリケーションプロジェクト
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-* `asakusa-example-project-0.7.4.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-example-project-0.7.4.tar.gz>`_
+* `asakusa-example-project-0.7.5.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-example-project-0.7.5.tar.gz>`_
 
 ..  seealso::
     サンプルアプリケーションの内容や利用方法については、 :doc:`../introduction/start-guide` - :ref:`startguide-running-example`  を参照してください。
@@ -459,7 +459,7 @@ Asakusa Gradle Plugin固有の設定情報は、ビルドスクリプトの ``as
 以下の例では、トップレベルの階層にプロジェクトで使用するAsakusa Frameworkのバージョンを示す ``asakusafwVersion`` が指定され、続いてデータモデルクラスの生成に関する ``modelgen`` ブロック、DSLコンパイルの設定に関する ``compiler`` ブロックが指定されています。
 ブロック内には複数のプロパティを指定することができます。
 
-以下の例では、プロジェクトテンプレートのデフォルト設定に対して、モデルクラス名のパッケージ名の変更、DSLコンパイルオプションを指定するプロパティの追加を行っています。
+以下の例では、プロジェクトテンプレートのデフォルト設定に対して、データモデルクラス名のパッケージ名の変更、DSLコンパイルオプションを指定するプロパティの追加を行っています。
 
 **build.gradle**
 
@@ -562,7 +562,7 @@ Batch Application Plugin [#]_ は、Asakusa Framework の バッチアプリケ�
 
 Batch Application Plugin はAsakusa Framework の バッチアプリケーションプロジェクトに対して、以下のような機能を提供します。
 
-* DMDLスクリプト から モデルクラスを生成するタスクの提供
+* DMDLスクリプト から データモデルクラスを生成するタスクの提供
 * Gradle標準のJavaコンパイルタスクに対して、Operator DSLコンパイラによる演算子実装クラス、演算子ファクトリクラスの生成を行うための設定を追加
 * Asakusa DSLとして記述したJavaソースファイル一式に対して、Batch DSLコンパイラによるバッチアプリケーション実行モジュールの生成を行うタスクの提供
 * テストドライバを利用したテストケースを作成するためのテストデータ定義シートのテンプレートファイルを生成するタスクの提供
@@ -596,9 +596,9 @@ Batch Application Plugin は、以下のタスクをプロジェクトに追加�
       - 型
       - 説明
     * - :program:`compileDMDL`
-      - ``-`` [#]_
+      - ``-``
       - ``CompileDmdlTask`` [#]_
-      - DMDLコンパイラを使ってモデルクラスを生成する
+      - DMDLコンパイラを使ってデータモデルクラスを生成する
     * - :program:`compileBatchapp`
       - :program:`compileJava`, :program:`processResources`
       - ``CompileBatchappTask`` [#]_
@@ -611,10 +611,6 @@ Batch Application Plugin は、以下のタスクをプロジェクトに追加�
       - ``-``
       - ``GenerateTestbookTask`` [#]_
       - テストデータ定義シートを生成する
-    * - :program:`generateThunderGateDataModel`
-      - ``-``
-      - ``GenerateThunderGateDataModelTask`` [#]_
-      - ThunderGate用のMySQLメタデータからDMDLスクリプトを生成する
     * - :program:`testRunBatchapp`
       - ``-``
       - ``RunBatchappTask`` [#]_
@@ -628,11 +624,9 @@ Batch Application Plugin は、以下のタスクをプロジェクトに追加�
       - ``GenerateHiveDdlTask`` [#]_
       - DMDLからHive用のDDLファイルを生成する
 
-..  [#] ThunderGateの設定を有効にした場合、:program:`generateThunderGateDataModel` タスクが依存先に追加されます
 ..  [#] :gradledoc:`com.asakusafw.gradle.tasks.CompileDmdlTask`
 ..  [#] :gradledoc:`com.asakusafw.gradle.tasks.CompileBatchappTask`
 ..  [#] :gradledoc:`com.asakusafw.gradle.tasks.GenerateTestbookTask`
-..  [#] :gradledoc:`com.asakusafw.gradle.tasks.GenerateThunderGateDataModelTask`
 ..  [#] :gradledoc:`com.asakusafw.gradle.tasks.RunBatchappTask`
 ..  [#] :gradledoc:`com.asakusafw.gradle.tasks.AnalyzeYaessLogTask`
 ..  [#] YAESS Log Analyzerやその使い方については、 :doc:`yaess-log-visualization` を参照してください。
@@ -878,76 +872,6 @@ DSLコンパイラ関する規約プロパティは、 ``asakusafw`` ブロッ�
 ..  [#] これらのプロパティは規約オブジェクト :gradledoc:`com.asakusafw.gradle.plugins.AsakusafwPluginConvention.TestToolsConfiguration` が提供します。
 ..  [#] テストデータ定義シートのフォーマット指定値は、 :doc:`../testing/using-excel` - :ref:`testdata-generator-excel-format` を参照してください。
 
-ThunderGateプロパティ
-^^^^^^^^^^^^^^^^^^^^^
-
-ThunderGateに関する規約プロパティは、 ``asakusafw`` ブロック内の参照名 ``thundergate`` でアクセスできます [#]_ 。
-この規約オブジェクトは以下のプロパティを持ちます。
-
-..  list-table:: Batch Application Plugin - ThunderGateプロパティ ( ``thundergate`` ブロック )
-    :widths: 2 1 2 5
-    :header-rows: 1
-
-    * - プロパティ名
-      - 型
-      - デフォルト値
-      - 説明
-    * - ``target``
-      - String
-      - ``未指定``
-      - ThunderGateのターゲット。この値をセットすることでThunderGate用のビルド設定が有効になる [#]_
-    * - ``jdbcFile``
-      - String
-      - ``未指定``
-      - ``generateThunderGateDataModel`` タスクの実行時に使用するJDBC接続設定ファイルのパス。この値をセットすることでThunderGate用のビルド設定が有効になる [#]_
-    * - ``ddlEncoding``
-      - String
-      - ``未指定``
-      - MySQLメタデータ登録用DDLファイルのエンコーディング
-    * - ``ddlSourceDirectory``
-      - String
-      - ``src/${project.sourceSets.main.name}/sql/modelgen``
-      - MySQLメタデータ登録用DDLファイルのソースディレクトリ
-    * - ``includes``
-      - String
-      - ``未指定``
-      - モデルジェネレータ、およびテストデータテンプレート生成ツールが生成対象とするモデル名を正規表現の書式で指定
-    * - ``excludes``
-      - String
-      - ``未指定``
-      - モデルジェネレータ、およびテストデータテンプレート生成ツールが生成対象外とするモデル名を正規表現の書式で指定
-    * - ``dmdlOutputDirectory``
-      - String
-      - ``${project.buildDir}/thundergate/dmdl``
-      - MySQLメタデータから生成されるDMDLスクリプトの出力先
-    * - ``ddlOutputDirectory``
-      - String
-      - ``${project.buildDir}/thundergate/sql``
-      - ThunderGate管理テーブル用DDLスクリプトの出力先
-    * - ``sidColumn``
-      - String
-      - ``SID``
-      - ThunderGateが入出力を行う業務テーブルのシステムIDカラム名
-    * - ``timestampColumn``
-      - String
-      - ``UPDT_DATETIME``
-      - ThunderGateが入出力を行う業務テーブルの更新日時カラム名
-    * - ``deleteColumn``
-      - String
-      - ``DELETE_FLAG``
-      - ThunderGateが入出力を行う論理削除フラグカラム名
-    * - ``deleteValue``
-      - String
-      - ``'1'``
-      - ThunderGateが入出力を行う業務テーブルの論理削除フラグが削除されたことを示す値
-
-..  [#] これらのプロパティは規約オブジェクト :gradledoc:`com.asakusafw.gradle.plugins.AsakusafwPluginConvention.ThunderGateConfiguration` が提供します。
-
-..  [#] この設定を利用する場合、タスク実行時にAsakusa Frameworkがインストール済みとなっている必要があります。
-        または ``jdbcFile`` をプロパティを設定することで、インストールを行わない状態でタスクが実行できるようになります。
-
-..  [#] ``target`` プロパティを同時に有効にした場合、 ``jdbcFile`` プロパティが優先されます。
-
 Eclipse Pluginの拡張
 ~~~~~~~~~~~~~~~~~~~~
 
@@ -993,6 +917,20 @@ IntelliJ IDEAプロジェクト用の定義ファイルを作成するには、:
     * インポートウィザードの次の画面の :guilabel:`Project format:` は :guilabel:`ipr (file based)` を選択してください。
       デフォルトの :guilabel:`.idea (directory based)` ではGradleの :program:`idea` タスクが生成した設定ファイルが使用されません。
 
+..  _gradle-plugin-dslcompile-filter:
+
+バッチコンパイルの対象をフィルタリング
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+:program:`compileBatchapp` タスクを指定して :program:`gradlew` コマンドを実行する際に、 ``compileBatchapp --update <バッチクラス名>`` と指定することで、指定したバッチクラス名のみをバッチコンパイルすることができます。
+
+また、バッチクラス名の文字列には ``*`` をワイルドカードとして使用することもできます。
+
+以下の例では、パッケージ名に ``com.example.target.batch`` を含むバッチクラスのみをバッチコンパイルしてデプロイメントアーカイブを作成しています。
+
+..  code-block:: sh
+
+    ./gradlew compileBatchapp --update com.example.target.batch.* assemble
 
 バッチテストランナーの実行
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1259,31 +1197,6 @@ Direct I/O Hiveの構成に関する規約プロパティは、 ``asakusafwOrgan
       - この値をtrueにするとテストモジュール用の構成を行う
 
 ..  [#] これらのプロパティは規約オブジェクト :gradledoc:`com.asakusafw.gradle.plugins.AsakusafwOrganizerPluginConvention.TestingConfiguration` が提供します。
-
-ThunderGateプロパティ
-^^^^^^^^^^^^^^^^^^^^^
-
-ThunderGateの構成に関する規約プロパティは、 ``asakusafwOrganizer`` ブロック内の参照名 ``thundergate`` でアクセスできます [#]_ 。
-この規約オブジェクトは以下のプロパティを持ちます。
-
-..  list-table:: Framework Organizer Plugin - ThunderGateプロパティ ( ``thundergate`` ブロック )
-    :widths: 2 1 2 5
-    :header-rows: 1
-
-    * - プロパティ名
-      - 型
-      - デフォルト値
-      - 説明
-    * - ``enabled``
-      - boolean
-      - false
-      - この値をtrueにするとThunderGate用の構成を行う
-    * - ``target``
-      - String
-      - ``未指定``
-      - デプロイメントアーカイブに含める既定のThunderGateのターゲット名。
-
-..  [#] これらのプロパティは規約オブジェクト :gradledoc:`com.asakusafw.gradle.plugins.AsakusafwOrganizerPluginConvention.ThunderGateConfiguration` が提供します。
 
 WindGateプロパティ
 ^^^^^^^^^^^^^^^^^^
@@ -1555,7 +1468,7 @@ Asakusa Gradle Pluginのバージョン指定
 
 ..  attention::
     ここで指定するバージョン番号は、 Asakusa Gradle Pluginのバージョン番号です。
-    例えば Asakusa Framework バージョン ``0.7.4`` では ``0.7.4`` のような値となります。
+    例えば Asakusa Framework バージョン ``0.7.5`` では ``0.7.5`` のような値となります。
     
     次の手順の `Asakusa Frameworkのバージョン指定`_ とは異なり、バージョン番号に ``-hadoop1`` や ``-hadoop2`` といった接尾辞は付かないことに注意してください。
 
@@ -1580,7 +1493,7 @@ Asakusa Frameworkのバージョン指定
 
 ..  attention::
     ここで指定するバージョン番号は、 Asakusa Framework本体のバージョン番号です。
-    例えば Asakusa Framework バージョン ``0.7.4`` では ``0.7.4-hadoop1`` のような値となります。
+    例えば Asakusa Framework バージョン ``0.7.5`` では ``0.7.5-hadoop1`` のような値となります。
     バージョン番号に ``-hadoop1`` や ``-hadoop2`` といった接尾辞が必要となることに注意してください
     
     バージョン ``0.6.x`` からのマイグレーションを検討する場合は、 :doc:`migration-guide` - :ref:`versioning-sysytem-changing` の内容を必ず確認してください。
@@ -1756,7 +1669,7 @@ Gradleではこれらのプロパティについてビルドスクリプト上�
       - DSLコンパイラが生成する各クラスに使用されるパッケージ名
     * - ``asakusa.modelgen.package``
       - ``asakusafw.modelgen.modelgenSourcePackage``
-      - モデルクラスに使用されるパッケージ名
+      - データモデルクラスに使用されるパッケージ名
 
 その他の項目については、 :file:`build.properties` をデフォルト値のまま利用している場合は移行作業は不要です。
 変更しているものがある場合はBatch Application Plugin上の規約プロパティを確認し、設定を反映してください。

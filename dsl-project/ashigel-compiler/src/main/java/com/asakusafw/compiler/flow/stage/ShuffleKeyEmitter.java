@@ -58,7 +58,7 @@ import com.asakusafw.utils.java.model.util.Models;
 import com.asakusafw.utils.java.model.util.TypeBuilder;
 
 /**
- * シャッフルフェーズで利用するキーを生成する。
+ * An emitter for emitting shuffle key classes.
  */
 public class ShuffleKeyEmitter {
 
@@ -67,9 +67,9 @@ public class ShuffleKeyEmitter {
     private final FlowCompilingEnvironment environment;
 
     /**
-     * インスタンスを生成する。
-     * @param environment 環境オブジェクト
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param environment the current environment
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public ShuffleKeyEmitter(FlowCompilingEnvironment environment) {
         Precondition.checkMustNotBeNull(environment, "environment"); //$NON-NLS-1$
@@ -77,11 +77,11 @@ public class ShuffleKeyEmitter {
     }
 
     /**
-     * 指定のモデルに対するキーを表すクラスを生成し、生成したクラスの完全限定名を返す。
-     * @param model 対象のモデル
-     * @return 生成したクラスの完全限定名
-     * @throws IOException クラスの生成に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new shuffle key class, and returns the qualified name of its class.
+     * @param model the target shuffle model
+     * @return qualified name of the created class
+     * @throws IOException if error was occurred while creating the class
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public Name emit(ShuffleModel model) throws IOException {
         Precondition.checkMustNotBeNull(model, "model"); //$NON-NLS-1$

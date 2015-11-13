@@ -20,16 +20,16 @@ import java.io.OutputStream;
 import java.util.zip.ZipOutputStream;
 
 /**
- * {@link ZipOutputStream}の一エントリ分だけを書き出すストリーム。
+ * A wrapper of {@link ZipOutputStream} for writing single ZIP entry.
  */
 public class ZipEntryOutputStream extends OutputStream {
 
-    private ZipOutputStream zipped;
+    private final ZipOutputStream zipped;
 
     /**
-     * インスタンスを生成する。
-     * @param zipped 対象の{@link ZipOutputStream}
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param zipped the target {@link ZipOutputStream}
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public ZipEntryOutputStream(ZipOutputStream zipped) {
         if (zipped == null) {

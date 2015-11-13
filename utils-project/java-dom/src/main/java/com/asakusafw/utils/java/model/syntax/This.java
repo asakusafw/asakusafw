@@ -17,7 +17,7 @@ package com.asakusafw.utils.java.model.syntax;
 
 
 /**
- * {@code this}キーワードを表現するインターフェース。
+ * An interface which represents this keyword.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:15.8.3] this} </li>

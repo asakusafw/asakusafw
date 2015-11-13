@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /**
- * 演算子DSLコンパイラの、個々の注釈に対する処理。
+ * Implementation of operator processors.
  */
 package com.asakusafw.compiler.operator.processor;
 

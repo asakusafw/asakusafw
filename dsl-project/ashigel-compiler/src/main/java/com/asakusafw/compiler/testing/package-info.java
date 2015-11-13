@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /**
- * テスト用にDSLを直接コンパイルするためのライブラリ。
+ * Classes for compiling DSL programs directly.
  */
 package com.asakusafw.compiler.testing;
 

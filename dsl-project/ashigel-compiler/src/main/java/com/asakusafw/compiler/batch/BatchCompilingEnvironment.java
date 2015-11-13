@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 import com.asakusafw.compiler.common.Precondition;
 
 /**
- * バッチのコンパイル環境。
+ * Represents a compiler environment for batch DSL compiler.
  */
 public class BatchCompilingEnvironment {
 
@@ -44,9 +44,9 @@ public class BatchCompilingEnvironment {
     private String firstError;
 
     /**
-     * インスタンスを生成する。
-     * @param configuration コンパイラの設定情報
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param configuration the compiler settings
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public BatchCompilingEnvironment(BatchCompilerConfiguration configuration) {
         Precondition.checkMustNotBeNull(configuration, "configuration"); //$NON-NLS-1$
@@ -54,8 +54,8 @@ public class BatchCompilingEnvironment {
     }
 
     /**
-     * この環境を初期化する。
-     * @return このオブジェクト
+     * Initializes this object.
+     * @return this
      */
     public BatchCompilingEnvironment bless() {
         if (initialized.compareAndSet(false, true) == false) {
@@ -84,15 +84,15 @@ public class BatchCompilingEnvironment {
     }
 
     /**
-     * ここまでのコンパイル結果にエラーが含まれている場合のみ{@code true}を返す。
-     * @return ここまでのコンパイル結果にエラーが含まれている場合のみ{@code true}
+     * Returns whether this saw any compile errors or not.
+     * @return {@code true} if saw any compile errors, or otherwise {@code false}
      */
     public boolean hasError() {
         return firstError != null;
     }
 
     /**
-     * 現在までに発生したエラーの情報をクリアする。
+     * Clears compile errors.
      * @see #hasError()
      */
     public void clearError() {
@@ -100,28 +100,27 @@ public class BatchCompilingEnvironment {
     }
 
     /**
-     * このコンパイラの設定情報を返す。
-     * @return このコンパイラの設定情報
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns the configuration object.
+     * @return the configuration object
      */
     public BatchCompilerConfiguration getConfiguration() {
         return configuration;
     }
 
     /**
-     * ワークフロー全体を処理するプロセッサーのリポジトリーを返す。
-     * @return ワークフロー全体を処理するプロセッサーのリポジトリー
+     * Returns the repository of workflow processors.
+     * @return the repository of workflow processors
      */
     public WorkflowProcessor.Repository getWorkflows() {
         return configuration.getWorkflows();
     }
 
     /**
-     * 指定位置にリソースを出力するためのストリームを開いて返す。
-     * @param path 出力先からの相対パス
-     * @return 対象リソースに書き出すためのストリーム
-     * @throws IOException 出力に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Opens an output stream for creating the target resource file.
+     * @param path the relative path from the compiler output
+     * @return the created output
+     * @throws IOException if failed to open the target resource
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public OutputStream openResource(String path) throws IOException {
         Precondition.checkMustNotBeNull(path, "path"); //$NON-NLS-1$
@@ -130,17 +129,17 @@ public class BatchCompilingEnvironment {
         File parent = file.getParentFile();
         if (parent.mkdirs() == false && parent.isDirectory() == false) {
             throw new IOException(MessageFormat.format(
-                    "Failed to create output directory {0}",
+                    Messages.getString("BatchCompilingEnvironment.errorFailedToCreateParentDirectory"), //$NON-NLS-1$
                     parent));
         }
         return new FileOutputStream(file);
     }
 
     /**
-     * この環境に対してエラーメッセージを追加する。
-     * @param format メッセージのフォーマット ({@link MessageFormat}形式)
-     * @param arguments メッセージの引数、空の配列を指定した場合は{@code format}がそのままメッセージとなる
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Adds an erroneous information to this environment.
+     * @param format the message format ({@link MessageFormat} style)
+     * @param arguments the message arguments
+     * @throws IllegalArgumentException if some parameters are {@code null}
      */
     public void error(String format, Object... arguments) {
         Precondition.checkMustNotBeNull(format, "format"); //$NON-NLS-1$
@@ -158,25 +157,22 @@ public class BatchCompilingEnvironment {
     }
 
     /**
-     * この環境オブジェクトを取って初期化を行うインターフェース。
+     * An extension interface for classes that requires a {@link BatchCompilingEnvironment} for its initialization.
      */
     public interface Initializable {
 
         /**
-         * このオブジェクトを初期化する。
-         * @param environment 環境オブジェクト
+         * Initializes this object.
+         * @param environment the current environment
          */
         void initialize(BatchCompilingEnvironment environment);
     }
 
     /**
-     * {@link Initializable}の骨格実装。
+     * A skeletal implementation of {@link Initializable}.
      */
     public abstract static class Initialized implements Initializable {
 
-        /**
-         * コンパイル環境。
-         */
         private BatchCompilingEnvironment environment;
 
         @Override
@@ -187,15 +183,15 @@ public class BatchCompilingEnvironment {
         }
 
         /**
-         * サブクラスでこのオブジェクトの初期化を実行する。
+         * Initializes this object in sub-classes.
          */
         protected void doInitialize() {
             return;
         }
 
         /**
-         * 環境オブジェクトを返す。
-         * @return 環境オブジェクト
+         * Returns the current environment object.
+         * @return the current environment
          */
         protected BatchCompilingEnvironment getEnvironment() {
             return environment;

@@ -47,7 +47,20 @@ import com.asakusafw.runtime.value.StringOption;
 @SuppressWarnings("deprecation")
 public class TsvEmitterTest {
 
-    private static final String LONG_STRING = "あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよわをんーがぎぐげごだぢづ";
+    static final String HELLO_JP = "\u3053\u3093\u306b\u3061\u306f\u3001\u4e16\u754c\uff01";
+
+    static final String LONG_STRING;
+    static {
+        int count = 4000;
+        StringBuilder buf = new StringBuilder(count);
+        char first = '\u3041';
+        char last = '\u3093';
+        for (int i = 0; i < count; i++) {
+            int offset = i % (last - first + 1);
+            buf.append((char) (first + offset));
+        }
+        LONG_STRING = buf.toString();
+    }
 
     private final StringWriter buffer = new StringWriter();
 
@@ -68,8 +81,8 @@ public class TsvEmitterTest {
     }
 
     /**
-     * booleanの値を出力するテスト。
-     * @throws Exception 例外が発生した場合
+     * test for emitting {@code boolean} values.
+     * @throws Exception if failed
      */
     @Test
     public void emitBoolean() throws Exception {
@@ -115,8 +128,8 @@ public class TsvEmitterTest {
     }
 
     /**
-     * byteの値を出力するテスト。
-     * @throws Exception 例外が発生した場合
+     * test for emitting {@code byte} values.
+     * @throws Exception if failed
      */
     @Test
     public void emitByte() throws Exception {
@@ -161,8 +174,8 @@ public class TsvEmitterTest {
     }
 
     /**
-     * shortの値を出力するテスト。
-     * @throws Exception 例外が発生した場合
+     * test for emitting {@code short} values.
+     * @throws Exception if failed
      */
     @Test
     public void emitShort() throws Exception {
@@ -207,8 +220,8 @@ public class TsvEmitterTest {
     }
 
     /**
-     * intの値を出力するテスト。
-     * @throws Exception 例外が発生した場合
+     * test for emitting {@code int} values.
+     * @throws Exception if failed
      */
     @Test
     public void emitInt() throws Exception {
@@ -253,8 +266,8 @@ public class TsvEmitterTest {
     }
 
     /**
-     * longの値を出力するテスト。
-     * @throws Exception 例外が発生した場合
+     * test for emitting {@code long} values.
+     * @throws Exception if failed
      */
     @Test
     public void emitLong() throws Exception {
@@ -300,8 +313,8 @@ public class TsvEmitterTest {
     }
 
     /**
-     * floatの値を出力するテスト。
-     * @throws Exception 例外が発生した場合
+     * test for emitting {@code float} values.
+     * @throws Exception if failed
      */
     @Test
     public void emitFloat() throws Exception {
@@ -355,8 +368,8 @@ public class TsvEmitterTest {
     }
 
     /**
-     * doubleの値を出力するテスト。
-     * @throws Exception 例外が発生した場合
+     * test for emitting {@code double} values.
+     * @throws Exception if failed
      */
     @Test
     public void emitDouble() throws Exception {
@@ -410,8 +423,8 @@ public class TsvEmitterTest {
     }
 
     /**
-     * decimalの値を出力するテスト。
-     * @throws Exception 例外が発生した場合
+     * test for emitting {@code decimal} values.
+     * @throws Exception if failed
      */
     @Test
     public void emitDecimal() throws Exception {
@@ -456,8 +469,8 @@ public class TsvEmitterTest {
     }
 
     /**
-     * 文字列を出力するテスト。
-     * @throws Exception 例外が発生した場合
+     * test for emitting {@code string} values.
+     * @throws Exception if failed
      */
     @Test
     public void emitString() throws Exception {
@@ -467,7 +480,7 @@ public class TsvEmitterTest {
         emitter.emit(value);
         value.modify("Hello, world!");
         emitter.emit(value);
-        value.modify("こんにちは、世界！");
+        value.modify(HELLO_JP);
         emitter.emit(value);
         emitter.endRecord();
 
@@ -488,7 +501,7 @@ public class TsvEmitterTest {
         parser.fill(value);
         assertThat(value.getAsString(), is("Hello, world!"));
         parser.fill(value);
-        assertThat(value.getAsString(), is("こんにちは、世界！"));
+        assertThat(value.getAsString(), is(HELLO_JP));
 
         assertThat(parser.next(), is(true));
         parser.fill(value);
@@ -502,8 +515,8 @@ public class TsvEmitterTest {
     }
 
     /**
-     * 日付の値を出力するテスト。
-     * @throws Exception 例外が発生した場合
+     * test for emitting {@code date} values.
+     * @throws Exception if failed
      */
     @Test
     public void emitDate() throws Exception {
@@ -549,8 +562,8 @@ public class TsvEmitterTest {
 
 
     /**
-     * 時刻の値を出力するテスト。
-     * @throws Exception 例外が発生した場合
+     * test for emitting {@code date-time} values.
+     * @throws Exception if failed
      */
     @Test
     public void emitDateTime() throws Exception {

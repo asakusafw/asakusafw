@@ -24,7 +24,7 @@ import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
 import com.asakusafw.vocabulary.operator.Extend;
 
 /**
- * {@link Extend 拡張演算子}を処理する。
+ * Processes {@link Extend} operators.
  */
 @TargetOperator(Extend.class)
 public class ExtendFlowProcessor extends LinePartProcessor {
@@ -49,14 +49,14 @@ public class ExtendFlowProcessor extends LinePartProcessor {
             Property sinkProperty = sinkType.findProperty(sourceProperty.getName());
             if (sinkProperty == null) {
                 getEnvironment().error(
-                        "{0}において、{2}.{3}に対応するプロパティが{1}に定義されていません",
+                        Messages.getString("ExtendFlowProcessor.errorMissingSourceProperty"), //$NON-NLS-1$
                         context.getOperatorDescription().getName(),
                         sinkType,
                         sourceType,
                         sourceProperty.getName());
             } else if (sourceProperty.getType().equals(sinkProperty.getType()) == false) {
                 getEnvironment().error(
-                        "{0}において、{1}.{2}と{3}.{4}のプロパティ型が一致しません",
+                        Messages.getString("ExtendFlowProcessor.errorInconsistentProperty"), //$NON-NLS-1$
                         context.getOperatorDescription().getName(),
                         sourceType,
                         sourceProperty.getName(),
@@ -73,7 +73,7 @@ public class ExtendFlowProcessor extends LinePartProcessor {
         DataClass resolved = getEnvironment().getDataClasses().load(port.getDataType());
         if (resolved == null) {
             getEnvironment().error(
-                    "型{0}を解決できませんでした",
+                    Messages.getString("ExtendFlowProcessor.errorMissingDataClass"), //$NON-NLS-1$
                     port.getDataType());
         }
         return resolved;

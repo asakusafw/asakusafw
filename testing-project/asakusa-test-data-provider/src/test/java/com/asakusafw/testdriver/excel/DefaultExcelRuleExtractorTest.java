@@ -57,7 +57,7 @@ public class DefaultExcelRuleExtractorTest {
     }
 
     /**
-     * not supported because is not a excel rule.
+     * not supported because is not an excel rule.
      * @throws Exception if occur
      */
     @Test

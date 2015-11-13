@@ -27,35 +27,32 @@ import com.asakusafw.vocabulary.flow.graph.FlowResourceDescription;
 import com.asakusafw.vocabulary.flow.graph.InputDescription;
 
 /**
- * サイドデータの結合を行うためのリソース。
+ * Represents an external resource for enabling side-data join operations.
  */
 public class JoinResourceDescription implements FlowResourceDescription {
 
-    private InputDescription masterInput;
+    private final InputDescription masterInput;
 
-    private DataClass masterDataClass;
+    private final DataClass masterDataClass;
 
-    private List<DataClass.Property> masterJoinKeys;
+    private final List<DataClass.Property> masterJoinKeys;
 
-    private DataClass transactionDataClass;
+    private final DataClass transactionDataClass;
 
-    private List<DataClass.Property> transactionJoinKeys;
+    private final List<DataClass.Property> transactionJoinKeys;
 
     /**
-     * インスタンスを生成する。
-     * @param masterInput マスタへの入力
-     * @param masterDataClass マスタのデータクラス
-     * @param masterJoinKeys マスタの結合キー一覧
-     * @param transactionDataClass トランザクションのデータクラス
-     * @param transactionJoinKeys トランザクションの結合キー一覧
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param masterInput the source input of the master data
+     * @param masterDataClass the type of the master data
+     * @param masterJoinKeys the join key of the master data
+     * @param transactionDataClass the type of the transaction data
+     * @param transactionJoinKeys the join key of the transaction data
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public JoinResourceDescription(
-            InputDescription masterInput,
-            DataClass masterDataClass,
-            List<Property> masterJoinKeys,
-            DataClass transactionDataClass,
-            List<Property> transactionJoinKeys) {
+            InputDescription masterInput, DataClass masterDataClass, List<Property> masterJoinKeys,
+            DataClass transactionDataClass, List<Property> transactionJoinKeys) {
         Precondition.checkMustNotBeNull(masterInput, "masterInput"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(masterDataClass, "masterDataClass"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(masterJoinKeys, "masterJoinKeys"); //$NON-NLS-1$
@@ -74,40 +71,40 @@ public class JoinResourceDescription implements FlowResourceDescription {
     }
 
     /**
-     * 利用する分散キャッシュのファイル名を返す。
-     * @return 利用する分散キャッシュのファイル名
+     * Returns the local name of the external resource that provides the master data.
+     * @return the local name of the external resource
      */
     public String getCacheName() {
         return masterInput.getName();
     }
 
     /**
-     * マスタデータのデータクラスを返す。
-     * @return マスタデータのデータクラス
+     * Returns the type of the master data.
+     * @return the type of the master data
      */
     public DataClass getMasterDataClass() {
         return masterDataClass;
     }
 
     /**
-     * トランザクションデータのデータクラスを返す。
-     * @return トランザクションデータのデータクラス
+     * Returns the type of the transaction data.
+     * @return the type of the transaction data
      */
     public DataClass getTransactionDataClass() {
         return transactionDataClass;
     }
 
     /**
-     * マスタ側の結合キー一覧を返す。
-     * @return マスタ側の結合キー一覧
+     * Returns the join key of the master data.
+     * @return the join key of the master data
      */
     public List<DataClass.Property> getMasterJoinKeys() {
         return masterJoinKeys;
     }
 
     /**
-     * トランザクション側の結合キー一覧を返す。
-     * @return トランザクション側の結合キー一覧
+     * Returns the join key of the master data.
+     * @return the join key of the master data
      */
     public List<DataClass.Property> getTransactionJoinKeys() {
         return transactionJoinKeys;

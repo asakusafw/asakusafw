@@ -34,7 +34,7 @@ import com.asakusafw.utils.java.model.syntax.Name;
 import com.asakusafw.vocabulary.flow.graph.FlowResourceDescription;
 
 /**
- * {@link FlowResourceDescription}をコンパイルして{@link FlowResource}を生成する。
+ * Compiles {@link FlowResourceDescription} and provides the corresponding {@link FlowResource}.
  */
 public class FlowResourceEmitter {
 
@@ -45,9 +45,9 @@ public class FlowResourceEmitter {
     private final List<FlowGraphRewriter> rewriters;
 
     /**
-     * インスタンスを生成する。
-     * @param environment 環境オブジェクト
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param environment the current environment
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public FlowResourceEmitter(FlowCompilingEnvironment environment) {
         Precondition.checkMustNotBeNull(environment, "environment"); //$NON-NLS-1$
@@ -56,11 +56,11 @@ public class FlowResourceEmitter {
     }
 
     /**
-     * リソースの一覧をコンパイルして返す。
-     * @param resources コンパイル対象の一覧
-     * @return リソースとコンパイル結果の対応表
-     * @throws IOException ファイルの出力に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Compiles a set of {@link FlowResourceDescription}.
+     * @param resources the target descriptions
+     * @return a mapping of {@link FlowResourceDescription} and its compiled type
+     * @throws IOException if error was occurred while creating the class
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public Map<FlowResourceDescription, CompiledType> emit(Set<FlowResourceDescription> resources) throws IOException {
         Precondition.checkMustNotBeNull(resources, "resources"); //$NON-NLS-1$
@@ -85,17 +85,18 @@ public class FlowResourceEmitter {
                 }
             } catch (RewriteException e) {
                 environment.error(
-                        "リソース{0}のコンパイルに失敗しました: {1}",
+                        Messages.getString("FlowResourceEmitter.errorFailedToCompile") //$NON-NLS-1$
+                        + ": {0}", //$NON-NLS-1$
                         resource,
                         e.getMessage());
                 LOG.error(MessageFormat.format(
-                        "リソース{0}をコンパイルできませんでした",
+                        Messages.getString("FlowResourceEmitter.errorFailedToCompile"), //$NON-NLS-1$
                         resource),
                         e);
             }
         }
         environment.error(
-                "リソース{0}をコンパイルするエンジンが見つかりませんでした",
+                Messages.getString("FlowResourceEmitter.errorMissingProcessor"), //$NON-NLS-1$
                 resource);
         return null;
     }

@@ -22,13 +22,13 @@ import com.asakusafw.utils.java.internal.parser.javadoc.ir.IrDocFragment;
 import com.asakusafw.utils.java.internal.parser.javadoc.ir.IrDocNamedType;
 
 /**
- * タグの直後に名前付き型を指定するブロックを解析する。
+ * An implementation of {@link JavadocBaseParser} which parses blocks that tag follows a named type.
  */
 public class FollowsNamedTypeBlockParser extends AcceptableJavadocBlockParser {
 
     /**
-     * インスタンスを生成する。
-     * @param tagNames タグ名の一覧
+     * Creates a new instance.
+     * @param tagNames the acceptable tag names
      */
     public FollowsNamedTypeBlockParser(String...tagNames) {
         super(tagNames);

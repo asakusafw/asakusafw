@@ -23,18 +23,17 @@ import com.asakusafw.vocabulary.flow.FlowPart;
 import com.asakusafw.vocabulary.flow.In;
 import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory;
 
-
 /**
- * Stickyのテスト。
+ * A simple jobflow class w/ sticky operator.
  */
 @FlowPart
 public class StickyStage extends FlowDescription {
 
-    private In<Ex1> in;
+    private final In<Ex1> in;
 
     /**
-     * インスタンスを生成する。
-     * @param in 入力
+     * Creates a new instance.
+     * @param in input
      */
     public StickyStage(In<Ex1> in) {
         this.in = in;

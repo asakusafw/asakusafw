@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 /**
- * フロー全体の出力結果を収集する処理に関するクラス群。
- * <p>
- * アプリケーション作成者はこのパッケージ内のクラスやインターフェースを直接利用しない。
- * </p>
+ * Classes for collecting output data-sets of jobflow execution.
+ * Application developer should not use APIs in this package directly.
  */
 package com.asakusafw.runtime.stage.collector;

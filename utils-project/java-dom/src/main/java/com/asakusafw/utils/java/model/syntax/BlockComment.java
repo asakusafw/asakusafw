@@ -15,25 +15,21 @@
  */
 package com.asakusafw.utils.java.model.syntax;
 
-
 /**
- * ブロックコメントを表現するインターフェース。
+ * An interface which represents block comments.
  * <ul>
  *   <li> Specified In: <ul>
- *     <li> {@code [JLS3:3.7] Comments (<i>TraditionalComment</i>)} </li>
+ *     <li> {@code [JLS3:3.7] Comments (TraditionalComment)} </li>
  *   </ul> </li>
  * </ul>
  */
 public interface BlockComment
         extends Comment {
 
-    // properties
-
     /**
-     * コメント文字列を返す。
-     * <p> コメント文字列にはブロックコメントの区切り子<code>&#47;&#42;&#42;&#47;</code>が含まれる。 </p>
-     * @return
-     *     コメント文字列
+     * Returns the comment text.
+     * This will contain comment separator <code>&#47;&#42;&#42;&#47;</code>.
+     * @return the comment text
      */
     String getString();
 }

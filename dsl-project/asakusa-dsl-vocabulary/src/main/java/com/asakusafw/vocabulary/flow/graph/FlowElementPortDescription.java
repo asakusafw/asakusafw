@@ -19,24 +19,24 @@ import java.lang.reflect.Type;
 import java.text.MessageFormat;
 
 /**
- * 入出力ポートの定義記述。
+ * A description of I/O port of flow elements.
  */
 public class FlowElementPortDescription {
 
-    private String name;
+    private final String name;
 
-    private Type dataType;
+    private final Type dataType;
 
-    private PortDirection direction;
+    private final PortDirection direction;
 
-    private ShuffleKey shuffleKey;
+    private final ShuffleKey shuffleKey;
 
     /**
-     * インスタンスを生成する。
-     * @param name ポートの名称
-     * @param dataType ポートが取り扱うデータの種類
-     * @param direction ポートの入出力方向
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param name the port name
+     * @param dataType the data type of the port
+     * @param direction the port direction
+     * @throws IllegalArgumentException if some parameters are {@code null}
      */
     public FlowElementPortDescription(String name, Type dataType, PortDirection direction) {
         if (name == null) {
@@ -55,11 +55,11 @@ public class FlowElementPortDescription {
     }
 
     /**
-     * シャッフルを含む入力のインスタンスを生成する。
-     * @param name ポートの名称
-     * @param dataType ポートが取り扱うデータの種類
-     * @param shuffleKey シャッフル条件
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param name the port name
+     * @param dataType the data type of the port
+     * @param shuffleKey information of the shuffle operation
+     * @throws IllegalArgumentException if some parameters are {@code null}
      */
     public FlowElementPortDescription(
             String name,
@@ -81,32 +81,32 @@ public class FlowElementPortDescription {
     }
 
     /**
-     * このポートの名前を返す。
-     * @return このポートの名前
+     * Returns the port name.
+     * @return the port name.
      */
     public String getName() {
         return name;
     }
 
     /**
-     * このポートに流れるデータの種類を返す。
-     * @return このポートに流れるデータの種類
+     * Return the data type of this port.
+     * @return the data type
      */
     public Type getDataType() {
         return dataType;
     }
 
     /**
-     * ポートの入出力方向を返す。
-     * @return ポートの入出力方向
+     * Returns the port direction.
+     * @return the port direction
      */
     public PortDirection getDirection() {
         return direction;
     }
 
     /**
-     * シャッフル条件を返す。
-     * @return シャッフル条件、存在しない場合は{@code null}
+     * Returns information of the shuffle operation which will performs on this port.
+     * @return shuffle operation information, or {@code null} if this port does not support shuffle operations
      */
     public ShuffleKey getShuffleKey() {
         return shuffleKey;

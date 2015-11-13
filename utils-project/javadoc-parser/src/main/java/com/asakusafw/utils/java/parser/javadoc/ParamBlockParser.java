@@ -25,22 +25,21 @@ import com.asakusafw.utils.java.internal.parser.javadoc.ir.JavadocToken;
 import com.asakusafw.utils.java.internal.parser.javadoc.ir.JavadocTokenKind;
 
 /**
- * {@code param}を解析する。
+ * An implementation of {@link JavadocBaseParser} which parses {@code param} blocks.
  */
 public class ParamBlockParser extends AcceptableJavadocBlockParser {
 
     /**
-     * インスタンスを生成する。
-     * インラインブロックを解析するパーサは存在しない状態となる。
+     * Creates a new instance.
      */
     public ParamBlockParser() {
         super("param"); //$NON-NLS-1$
     }
 
     /**
-     * インスタンスを生成する。
-     * @param tagName 処理可能なタグ名
-     * @param tagNames 処理可能なタグ名の一覧
+     * Creates a new instance.
+     * @param tagName the first acceptable tag name
+     * @param tagNames the rest acceptable tag names
      */
     public ParamBlockParser(String tagName, String... tagNames) {
         super(tagName, tagNames);

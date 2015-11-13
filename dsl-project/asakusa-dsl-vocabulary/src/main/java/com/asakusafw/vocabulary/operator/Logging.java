@@ -23,6 +23,7 @@ import java.lang.annotation.Target;
 
 import com.asakusafw.vocabulary.flow.graph.FlowElementAttribute;
 
+//TODO i18n
 /**
  * ロギング演算子を表すメソッドに付与する注釈。
  * <p>
@@ -85,17 +86,17 @@ public String error(Hoge hoge) {
 public @interface Logging {
 
     /**
-     * 入力ポートの番剛。
+     * The input port number.
      */
     int ID_INPUT = 0;
 
     /**
-     * 出力ポートの番号。
+     * The output port number.
      */
     int ID_OUTPUT = 0;
 
     /**
-     * 出力ポートの名前。
+     * The default output port name.
      */
     String outputPort() default "out";
 

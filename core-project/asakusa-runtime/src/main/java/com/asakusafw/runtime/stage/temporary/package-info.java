@@ -15,6 +15,6 @@
  */
 /**
  * Temporary storage for each stage.
- * Application developper should not use these APIs directly.
+ * Application developer should not use these APIs directly.
  */
 package com.asakusafw.runtime.stage.temporary;

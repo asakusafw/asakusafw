@@ -35,11 +35,11 @@ import com.asakusafw.vocabulary.flow.graph.OperatorHelper;
 import com.asakusafw.vocabulary.flow.processor.InputBuffer;
 
 /**
- * {@code Master*}系の演算子を解析する。
+ * Analyzes {@code Master*} operators.
  */
 public class MasterKindFlowAnalyzer {
 
-    // FIXME 現在のところ、ソート順序がマスタ、トランザクション、と言うようになっていることが前提
+    // FIXME input ports must be ordered: master -> transaction
 
     private Expression hasMasterExpresion;
 
@@ -48,9 +48,9 @@ public class MasterKindFlowAnalyzer {
     private Expression getCheckedMasterExpression;
 
     /**
-     * インスタンスを生成する。
-     * @param context 文脈オブジェクト
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param context the current context
+     * @throws IllegalArgumentException the parameter is {@code null}
      */
     public MasterKindFlowAnalyzer(RendezvousProcessor.Context context) {
         Precondition.checkMustNotBeNull(context, "context"); //$NON-NLS-1$
@@ -63,32 +63,27 @@ public class MasterKindFlowAnalyzer {
     }
 
     /**
-     * マスタデータが存在するか確認するための式を返す。
-     * @return マスタデータが存在するか確認するための式
+     * Returns a Java expression for checking whether the join target data exists or not.
+     * @return a Java expression for checking whether the join target data exists or not
      */
     public Expression getHasMasterExpresion() {
         return hasMasterExpresion;
     }
 
     /**
-     * マスタデータを取得するための式を返す。
-     * <p>
-     * ただし、{@link #getHasMasterExpresion()}が{@code false}をあらわす場合、
-     * この式の内容は不定である。
-     * </p>
-     * @return マスタデータを取得するための式
+     * Returns a Java expression for obtaining the join target data.
+     * The expression will be resolved only if the join target data exists.
+     * @return a Java expression for obtaining the join target data
+     * @see #getHasMasterExpresion()
      */
     public Expression getGetRawMasterExpression() {
         return getMasterExpression;
     }
 
     /**
-     * マスタデータを取得するための式を返す。
-     * <p>
-     * ただし、{@link #getHasMasterExpresion()}が{@code false}をあらわす場合、
-     * この式は常に{@code null}をあらわす。
-     * </p>
-     * @return マスタデータを取得するための式
+     * Returns a Java expression for obtaining the join target data.
+     * This expression will become {@code null} if the join target data does not exist.
+     * @return a Java expression for obtaining the join target data
      */
     public Expression getGetCheckedMasterExpression() {
         return getCheckedMasterExpression;

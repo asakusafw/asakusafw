@@ -66,7 +66,7 @@ import com.asakusafw.utils.java.model.util.Models;
 import com.asakusafw.utils.java.model.util.TypeBuilder;
 
 /**
- * parallel sortを行うステージクライアントクラスを生成する。
+ * Generates a MapReduce stage client for generating sorted data-set files.
  * @since 0.1.0
  * @version 0.5.1
  */
@@ -82,9 +82,9 @@ public class ParallelSortClientEmitter {
     private final FlowCompilingEnvironment environment;
 
     /**
-     * インスタンスを生成する。
-     * @param environment 環境オブジェクト
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param environment the current environment
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public ParallelSortClientEmitter(FlowCompilingEnvironment environment) {
         Precondition.checkMustNotBeNull(environment, "environment"); //$NON-NLS-1$
@@ -96,13 +96,13 @@ public class ParallelSortClientEmitter {
     }
 
     /**
-     * 指定のステージ情報を元にステージクライアントクラスを生成し、生成したステージの情報を返す。
-     * @param moduleId モジュール識別子
-     * @param slots 処理対象のスロット一覧
-     * @param outputDirectory 出力先のディレクトリ
-     * @return ステージクライアントクラス
-     * @throws IOException 生成に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Emits a MapReduce stage client class for generating sorted data-set files.
+     * @param moduleId the external I/O module ID
+     * @param slots the target slots
+     * @param outputDirectory the output location
+     * @return the generated client class
+     * @throws IOException if error was occurred while generating the class
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public CompiledStage emit(
             String moduleId,

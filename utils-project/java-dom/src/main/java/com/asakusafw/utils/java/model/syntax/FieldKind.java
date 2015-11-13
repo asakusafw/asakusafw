@@ -16,17 +16,17 @@
 package com.asakusafw.utils.java.model.syntax;
 
 /**
- * クラス変数の種類。
+ * Represents a kind of fields.
  */
 public enum FieldKind implements DeclarationKind {
 
     /**
-     * 通常の(列挙定数でない)フィールド。
+     * Regular fields (not {@link #ENUM_CONSTANT enum constants}).
      */
     FIELD,
 
     /**
-     * 列挙定数。
+     * Enum constants.
      */
     ENUM_CONSTANT,
 }

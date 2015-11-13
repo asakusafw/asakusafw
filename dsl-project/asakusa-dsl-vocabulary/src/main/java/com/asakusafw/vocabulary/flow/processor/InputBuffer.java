@@ -18,59 +18,44 @@ package com.asakusafw.vocabulary.flow.processor;
 import com.asakusafw.vocabulary.flow.graph.FlowElementAttribute;
 
 /**
- * Listを引数に取る演算子の、入力バッファの性質。
+ * Represents buffering strategies of list-style operator inputs.
  * @since 0.2.0
  */
 public enum InputBuffer implements FlowElementAttribute {
 
     /**
-     * 入力バッファをヒープ上に構築し、バッファが足りなくなったら自動的に拡張する。
-     * <p>
-     * 高速なバッファとして利用できる代わりに、
-     * ヒープ上に乗る程度のサイズのグループのみを取り扱える。
-     * </p>
+     * Builds a buffer onto the JVM heap, and will <em>expand its area</em> each time the buffer is full.
+     * This strategy is relatively fast, but it is limited by JVM heap constraints.
+     * For example, it is hard to handle a large input group for this strategy.
      */
     EXPAND,
 
     /**
-     * 巨大な入力データを取り扱えるようにするが、<em>{@code List}の動作に制約がかかる</em>。
-     * <p>
-     * 入力バッファをヒープ上に構築し、バッファが足りなくなったら内部的な
-     * スワップ領域にオブジェクトを退避する。
-     * ヒープ上に配置されるオブジェクトは全体の一部で、残りはファイルシステム上などの
-     * ヒープを利用しない領域に保存する。
-     * </p>
-     * <p>
-     * このオプションを指定した場合、それぞれの{@code List}からはひとつずつしかオブジェクトを取り出せなくなる。
-     * 2つ以上オブジェクトを取り出した場合、最後に取り出したオブジェクト以外は
-     * まったく別の内容に変更されている可能性がある。
-     * また、リストから取り出したオブジェクトを変更しても、リストの別の要素にアクセスしただけで
-     * 変更したオブジェクトの内容が失われる可能性がある。
-     * </p>
-     * <p>
-     * つまり、次のようなプログラムを書いた場合の動作は保証されない。
-     * </p>
+     * Builds a buffer onto the JVM heap, and will <em>escape it to disks</em> each time the buffer is full.
+     * With this strategy, the operator can handle a large input group, but clients retrieve only one by one object
+     * from it (old objects may by changed when retrieving another one). Additionally, even if an object in the list
+     * was changed, its change may be lost when another object was retrieved from the list.
+     *
+     * For example, the operations are not guaranteed in the following case:
 <pre><code>
 &#64;CoGroup(inputBuffer = InputBuffer.ESCAPE)
-public void invalid(List&lt;Hoge&gt; list, Result&lt;Hoge&gt; result) {
-    // 二つ取り出すとaの内容が保証されない
+public void invalid(&#64;Key(...) List&lt;Hoge&gt; list, Result&lt;Hoge&gt; result) {
+    // contents of 'a' is not guaranteed after 'list.get(1)'
     Hoge a = list.get(0);
     Hoge b = list.get(1);
 
-    // 内容を変更しても、別の要素を参照しただけでオブジェクトの内容が変わる場合がある
+    // the change may be lost after 'list.get(2)'
     b.setValue(100);
     list.get(2);
 }
 </code></pre>
-     * <p>
-     * 上記のようなプログラムを書きたい場合には、かならず<em>オブジェクトのコピーを作成する</em>こと。
-     * </p>
+     * In such the case, application developers should create a copy of the object:
 <pre><code>
 Hoge a = new Hoge();
 Hoge b = new Hoge();
 
 &#64;CoGroup(inputBuffer = InputBuffer.ESCAPE)
-public void invalid(List&lt;Hoge&gt; list, Result&lt;Hoge&gt; result) {
+public void invalid(&#64;Key(...) List&lt;Hoge&gt; list, Result&lt;Hoge&gt; result) {
     a.copyFrom(list.get(0));
     b.copyFrom(list.get(1));
     b.setValue(100);
@@ -78,12 +63,10 @@ public void invalid(List&lt;Hoge&gt; list, Result&lt;Hoge&gt; result) {
     ...
 }
 </code></pre>
-     * <p>
-     * 下記のようにひとつずつ取り出して使う場合にはコピーは必要ない。
-     * </p>
+     * Note that, copy is not necessary if objects are only used one by one:
 <pre><code>
 &#64;CoGroup(inputBuffer = InputBuffer.ESCAPE)
-public void invalid(List&lt;Hoge&gt; list, Result&lt;Hoge&gt; result) {
+public void invalid(&#64;Key(...) List&lt;Hoge&gt; list, Result&lt;Hoge&gt; result) {
     for (Hoge hoge : list) {
         hoge.setValue(100);
         result.add(hoge);

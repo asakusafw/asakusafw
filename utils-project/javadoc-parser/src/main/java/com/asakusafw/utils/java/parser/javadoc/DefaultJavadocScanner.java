@@ -27,7 +27,7 @@ import com.asakusafw.utils.java.internal.parser.javadoc.ir.JavadocToken;
 import com.asakusafw.utils.java.internal.parser.javadoc.ir.JavadocTokenKind;
 
 /**
- * {@link JavadocToken}を取り扱うスキャナ。
+ * A basic implementation of {@link JavadocScanner}.
  */
 public class DefaultJavadocScanner implements JavadocScanner {
 
@@ -36,22 +36,21 @@ public class DefaultJavadocScanner implements JavadocScanner {
     private final JavadocToken eof;
 
     /**
-     * インスタンスを生成する。
-     * @param tokens トークンの一覧
-     * @param successorStartsAt 後続する文字の位置
+     * Creates a new instance.
+     * @param tokens the tokens
+     * @param successorStartsAt the character position of the successive EOF token
      */
     public DefaultJavadocScanner(List<JavadocToken> tokens, int successorStartsAt) {
-        super();
         this.index = 0;
         this.tokens = tokens;
         this.eof = eof(successorStartsAt);
     }
 
     /**
-     * インスタンスを生成する。
-     * @param text 対象の文字列
-     * @return 生成したインスタンス
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance from the documentation comment string.
+     * @param text the target text
+     * @return the created instance
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static DefaultJavadocScanner newInstance(String text) {
         if (text == null) {

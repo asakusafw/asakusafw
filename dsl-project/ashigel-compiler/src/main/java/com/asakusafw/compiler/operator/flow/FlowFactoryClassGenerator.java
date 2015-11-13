@@ -57,12 +57,12 @@ import com.asakusafw.vocabulary.operator.OperatorFactory;
 import com.asakusafw.vocabulary.operator.OperatorInfo;
 
 /**
- * フロー部品クラスから演算子ファクトリークラスのJava DOMを構築する。
+ * Generates operator factory classes for flow-part classes.
  */
 public class FlowFactoryClassGenerator {
 
     /**
-     * {@link FlowElementResolver}を保持するフィールド名。
+     * The field name for holding {@link FlowElementResolver}.
      */
     static final String RESOLVER_FIELD_NAME = "$"; //$NON-NLS-1$
 
@@ -77,12 +77,12 @@ public class FlowFactoryClassGenerator {
     private final OperatorCompilingEnvironment environment;
 
     /**
-     * インスタンスを生成する。
-     * @param environment 環境オブジェクト
-     * @param factory DOMを構築するためのファクトリ
-     * @param importer インポート宣言を構築するビルダー
-     * @param flowClass フロー部品クラスの情報
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Creates a new instance.
+     * @param environment the current environment
+     * @param factory the Java DOM factory
+     * @param importer the import declaration builder
+     * @param flowClass the target flow-part class
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public FlowFactoryClassGenerator(
             OperatorCompilingEnvironment environment,
@@ -97,11 +97,11 @@ public class FlowFactoryClassGenerator {
     }
 
     /**
-     * このジェネレータの情報を利用して型宣言の情報を生成する。
-     * @return 生成したモデル
+     * Generates a declaration of support class.
+     * @return the generated type declaration
      */
     public TypeDeclaration generate() {
-        // 先に名前空間を退避する
+        // escape the current namesapce first
         SimpleName name = getClassName();
         importer.resolvePackageMember(Models.append(
                 factory,
@@ -109,8 +109,8 @@ public class FlowFactoryClassGenerator {
                 getObjectClassName()));
         return factory.newClassDeclaration(
                 new JavadocBuilder(factory)
-                    .code(flowClass.getElement().getSimpleName().toString())
-                    .text("に対する演算子ファクトリークラス。")
+                    .text(Messages.getString("FlowFactoryClassGenerator.javadocClass"), //$NON-NLS-1$
+                            flowClass.getElement().getSimpleName())
                     .seeType(new Jsr269(factory).convert(environment.getErasure(flowClass.getElement().asType())))
                     .toJavadoc(),
                 new AttributeBuilder(factory)
@@ -205,13 +205,13 @@ public class FlowFactoryClassGenerator {
         SimpleName newName = names.create("newName"); //$NON-NLS-1$
         return factory.newMethodDeclaration(
                 new JavadocBuilder(factory)
-                    .text("この演算子の名前を設定する。")
+                    .text(Messages.getString("FlowFactoryClassGenerator.javadocSetName")) //$NON-NLS-1$
                     .param(newName)
-                        .text("設定する名前")
+                        .text(Messages.getString("FlowFactoryClassGenerator.javadocSetNameParameter")) //$NON-NLS-1$
                     .returns()
-                        .text("この演算子オブジェクト (this)")
+                        .text(Messages.getString("FlowFactoryClassGenerator.javadocSetNameReturn")) //$NON-NLS-1$
                     .exception(util.t(IllegalArgumentException.class))
-                        .text("引数に<code>null</code>が指定された場合")
+                        .text(Messages.getString("FlowFactoryClassGenerator.javadocSetNameNullParameter")) //$NON-NLS-1$
                     .toJavadoc(),
                 new AttributeBuilder(factory)
                     .Public()
@@ -237,11 +237,11 @@ public class FlowFactoryClassGenerator {
         SimpleName optimize = names.create("optimize"); //$NON-NLS-1$
         return factory.newMethodDeclaration(
                 new JavadocBuilder(factory)
-                    .text("このフロー部品のインライン化状態を設定する。")
+                    .text(Messages.getString("FlowFactoryClassGenerator.javadocInline")) //$NON-NLS-1$
                     .param(optimize)
-                        .text("trueならば最適化を行い、falseならばステージ構成を保持する")
+                        .text(Messages.getString("FlowFactoryClassGenerator.javadocInlineParameter")) //$NON-NLS-1$
                     .returns()
-                        .text("この演算子オブジェクト (this)")
+                        .text(Messages.getString("FlowFactoryClassGenerator.javadocInlineReturn")) //$NON-NLS-1$
                     .toJavadoc(),
                 new AttributeBuilder(factory)
                     .Public()
@@ -448,7 +448,7 @@ public class FlowFactoryClassGenerator {
             arguments.add(name);
         }
         Type type = getType(objectType);
-        javadoc.returns().text("生成した演算子オブジェクト");
+        javadoc.returns().text(Messages.getString("FlowFactoryClassGenerator.javadocFactoryReturn")); //$NON-NLS-1$
         javadoc.seeType(util.t(flowClass.getElement()));
         return factory.newMethodDeclaration(
                 javadoc.toJavadoc(),

@@ -23,13 +23,10 @@ import com.asakusafw.utils.java.model.syntax.TypeBodyDeclaration;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link ClassBody}の実装。
+ * An implementation of {@link ClassBody}.
  */
 public final class ClassBodyImpl extends ModelRoot implements ClassBody {
 
-    /**
-     * メンバの一覧。
-     */
     private List<? extends TypeBodyDeclaration> bodyDeclarations;
 
     @Override
@@ -38,12 +35,9 @@ public final class ClassBodyImpl extends ModelRoot implements ClassBody {
     }
 
     /**
-     * メンバの一覧を設定する。
-     * <p> メンバが一つも宣言されない場合、引数には空を指定する。 </p>
-     * @param bodyDeclarations
-     *     メンバの一覧
-     * @throws IllegalArgumentException
-     *     {@code bodyDeclarations}に{@code null}が指定された場合
+     * Sets the type member declarations.
+     * @param bodyDeclarations the type member declarations
+     * @throws IllegalArgumentException if {@code bodyDeclarations} was {@code null}
      */
     public void setBodyDeclarations(List<? extends TypeBodyDeclaration> bodyDeclarations) {
         Util.notNull(bodyDeclarations, "bodyDeclarations"); //$NON-NLS-1$
@@ -52,7 +46,7 @@ public final class ClassBodyImpl extends ModelRoot implements ClassBody {
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#CLASS_BODY}を返す。
+     * Returns {@link ModelKind#CLASS_BODY} which represents this element kind.
      * @return {@link ModelKind#CLASS_BODY}
      */
     @Override
@@ -61,8 +55,7 @@ public final class ClassBodyImpl extends ModelRoot implements ClassBody {
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitClassBody(this, context);
     }

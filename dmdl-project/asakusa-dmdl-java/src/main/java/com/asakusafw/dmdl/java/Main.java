@@ -53,28 +53,34 @@ public final class Main {
 
     private static final Options OPTIONS;
     static {
-        OPT_OUTPUT = new Option("output", true, "output directory location"); //$NON-NLS-1$
+        OPT_OUTPUT = new Option("output", true, //$NON-NLS-1$
+                Messages.getString("Main.optOutput")); //$NON-NLS-1$
         OPT_OUTPUT.setArgName("/path/to/output"); //$NON-NLS-1$
         OPT_OUTPUT.setRequired(true);
 
-        OPT_SOURCE_PATH = new Option("source", true, "source file or source directory paths"); //$NON-NLS-1$
+        OPT_SOURCE_PATH = new Option("source", true, //$NON-NLS-1$
+                Messages.getString("Main.optSource")); //$NON-NLS-1$
         OPT_SOURCE_PATH.setArgName(
                 "source-file.dmdl" + File.pathSeparatorChar + "/path/to/source"); //$NON-NLS-1$ //$NON-NLS-2$
         OPT_SOURCE_PATH.setRequired(true);
 
-        OPT_PACKAGE = new Option("package", true, "package name of output Java files"); //$NON-NLS-1$
+        OPT_PACKAGE = new Option("package", true, //$NON-NLS-1$
+                Messages.getString("Main.optPackage")); //$NON-NLS-1$
         OPT_PACKAGE.setArgName("pkg.name"); //$NON-NLS-1$
         OPT_PACKAGE.setRequired(true);
 
-        OPT_SOURCE_ENCODING = new Option("sourceencoding", true, "input DMDL charset encoding"); //$NON-NLS-1$
+        OPT_SOURCE_ENCODING = new Option("sourceencoding", true, //$NON-NLS-1$
+                Messages.getString("Main.optSourceencoding")); //$NON-NLS-1$
         OPT_SOURCE_ENCODING.setArgName("source-encoding"); //$NON-NLS-1$
         OPT_SOURCE_ENCODING.setRequired(false);
 
-        OPT_TARGET_ENCODING = new Option("targetencoding", true, "output Java charset encoding"); //$NON-NLS-1$
+        OPT_TARGET_ENCODING = new Option("targetencoding", true, //$NON-NLS-1$
+                Messages.getString("Main.optTargetencoding")); //$NON-NLS-1$
         OPT_TARGET_ENCODING.setArgName("target-encoding"); //$NON-NLS-1$
         OPT_TARGET_ENCODING.setRequired(false);
 
-        OPT_PLUGIN = new Option("plugin", true, "DMDL processor plug-ins"); //$NON-NLS-1$
+        OPT_PLUGIN = new Option("plugin", true, //$NON-NLS-1$
+                Messages.getString("Main.optPlugin")); //$NON-NLS-1$
         OPT_PLUGIN.setArgName("plugin-1.jar" + File.pathSeparatorChar + "plugin-2.jar"); //$NON-NLS-1$ //$NON-NLS-2$
         OPT_PLUGIN.setValueSeparator(File.pathSeparatorChar);
         OPT_PLUGIN.setRequired(false);

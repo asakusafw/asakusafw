@@ -30,7 +30,7 @@ import com.asakusafw.compiler.testing.DirectFlowCompiler;
 import com.asakusafw.runtime.stage.StageConstants;
 
 /**
- * {@link BatchCompilingEnvironment}をテスト向けに提供する。
+ * Provides {@link BatchCompilingEnvironment} for testing.
  */
 public class BatchCompilerEnvironmentProvider implements TestRule {
 
@@ -70,16 +70,16 @@ public class BatchCompilerEnvironmentProvider implements TestRule {
     }
 
     /**
-     * コンパイラの環境設定を返す。
-     * @return コンパイラの環境設定
+     * Returns the compiler configuration.
+     * @return the compiler configuration
      */
     public BatchCompilerConfiguration getConfig() {
         return config;
     }
 
     /**
-     * 環境オブジェクトを返す。
-     * @return 環境オブジェクト
+     * Returns the environment object.
+     * @return the environment object
      */
     public BatchCompilingEnvironment getEnvironment() {
         if (environment == null) {

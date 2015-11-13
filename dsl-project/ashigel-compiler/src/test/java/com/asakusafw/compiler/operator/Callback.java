@@ -28,7 +28,7 @@ import javax.lang.model.util.Types;
 import com.asakusafw.utils.java.model.util.Models;
 
 /**
- * {@link DelegateProcessor}から呼び戻される。
+ * A simple callback object for handling operator processors.
  */
 public abstract class Callback {
 
@@ -37,29 +37,29 @@ public abstract class Callback {
     private Error error;
 
     /**
-     * 環境オブジェクト。
+     * the environment object.
      */
     protected OperatorCompilingEnvironment env;
 
     /**
-     * 型環境。
+     * the type environment.
      */
     protected Types types;
 
     /**
-     * 要素環境。
+     * the element environment.
      */
     protected Elements elements;
 
     /**
-     * ラウンドオブジェクト。
+     * the round environment.
      */
     protected RoundEnvironment round;
 
     /**
-     * {@link #test()}を安全な環境で実行する。
-     * @param pEnv 環境
-     * @param rEnv ラウンド環境
+     * Invokes {@link #test()}.
+     * @param pEnv the processing environment
+     * @param rEnv the round environment
      */
     public void run(ProcessingEnvironment pEnv, RoundEnvironment rEnv) {
         this.env = new OperatorCompilingEnvironment(
@@ -79,7 +79,7 @@ public abstract class Callback {
     }
 
     /**
-     * {@link #test()}で実行されたエラーをスローする。
+     * Re-throws exceptions during {@link #test()}.
      */
     public void rethrow() {
         if (runtimeException != null) {
@@ -90,15 +90,15 @@ public abstract class Callback {
     }
 
     /**
-     * 実際のテストを実行する。
+     * Executes tests.
      */
     protected abstract void test();
 
     /**
-     * 宣言型を返す。
-     * @param klass 対象のクラス
-     * @param arguments 型引数の一覧
-     * @return 宣言型
+     * Returns a type mirror.
+     * @param klass the target type
+     * @param arguments the type arguments
+     * @return the type mirror
      */
     protected TypeMirror getType(Class<?> klass, TypeMirror...arguments) {
         TypeElement type = elements.getTypeElement(klass.getName());

@@ -40,7 +40,7 @@ import com.asakusafw.utils.java.model.util.ImportBuilder;
 import com.asakusafw.utils.java.model.util.ImportBuilder.Strategy;
 
 /**
- * {@link OperatorClass}をファイルに出力する。
+ * Emits support classes for operator classes.
  */
 public class OperatorClassEmitter {
 
@@ -55,9 +55,9 @@ public class OperatorClassEmitter {
     private boolean sawError;
 
     /**
-     * インスタンスを生成する。
-     * @param environment 環境オブジェクト
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Creates a new instance.
+     * @param environment the current environment
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public OperatorClassEmitter(OperatorCompilingEnvironment environment) {
         Precondition.checkMustNotBeNull(environment, "environment"); //$NON-NLS-1$
@@ -65,9 +65,9 @@ public class OperatorClassEmitter {
     }
 
     /**
-     * 指定の演算子クラスから演算子実装クラスと演算子ファクトリークラスを生成して出力する。
-     * @param operatorClass 演算子クラス
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Emits new classes for the target operator class.
+     * @param operatorClass the target operator class
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public void emit(OperatorClass operatorClass) {
         Precondition.checkMustNotBeNull(operatorClass, "operatorClass"); //$NON-NLS-1$
@@ -78,8 +78,8 @@ public class OperatorClassEmitter {
     }
 
     /**
-     * これまでの処理でエラーが発生していた場合にのみ{@code true}を返す。
-     * @return これまでの処理でエラーが発生していた場合にのみ{@code true}
+     * Returns whether this has been saw any erroneous situations or not.
+     * @return {@code true} if has been saw any erroneous situations, otherwise {@code false}
      */
     public boolean hasError() {
         return sawError;
@@ -112,7 +112,8 @@ public class OperatorClassEmitter {
             LOG.debug(e.getMessage(), e);
             environment.getMessager().printMessage(Diagnostic.Kind.ERROR,
                     MessageFormat.format(
-                            "{0}に対する演算子実装クラスの作成に失敗しました ({1})",
+                            Messages.getString(
+                                    "OperatorClassEmitter.errorFailedToCreateOperatorImplementation"), //$NON-NLS-1$
                             operatorClass.getElement().getQualifiedName().toString(),
                             e.getMessage()));
         }
@@ -145,7 +146,7 @@ public class OperatorClassEmitter {
             LOG.debug(e.getMessage(), e);
             environment.getMessager().printMessage(Diagnostic.Kind.ERROR,
                     MessageFormat.format(
-                            "{0}に対する演算子ファクトリークラスの作成に失敗しました ({1})",
+                            Messages.getString("OperatorClassEmitter.errorFailedToCreateOperatorFactory"), //$NON-NLS-1$
                             operatorClass.getElement().getQualifiedName().toString(),
                             e.getMessage()));
         }

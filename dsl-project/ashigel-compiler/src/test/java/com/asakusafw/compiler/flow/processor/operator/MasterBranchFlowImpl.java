@@ -16,11 +16,11 @@
 package com.asakusafw.compiler.flow.processor.operator;
 import javax.annotation.Generated;
 /**
- * {@link MasterBranchFlow}に関する演算子実装クラス。
+ * An operator implementation class for{@link MasterBranchFlow}.
  */
-@Generated("OperatorImplementationClassGenerator:0.0.1") public class MasterBranchFlowImpl extends MasterBranchFlow {
+@Generated("OperatorImplementationClassGenerator:0.1.0") public class MasterBranchFlowImpl extends MasterBranchFlow {
     /**
-     * インスタンスを生成する。
+     * Creates a new instance.
      */
     public MasterBranchFlowImpl() {
         return;

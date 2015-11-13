@@ -15,9 +15,8 @@
  */
 package com.asakusafw.utils.java.model.syntax;
 
-
 /**
- * インポート宣言を表現するインターフェース。
+ * An interface which represents import declarations.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:7.5] Import Declarations} </li>
@@ -27,20 +26,15 @@ package com.asakusafw.utils.java.model.syntax;
 public interface ImportDeclaration
         extends Model {
 
-    // properties
-
     /**
-     * インポートの種類を返す。
-     * @return
-     *     インポートの種類
+     * Returns the import kind.
+     * @return the import kind
      */
     ImportKind getImportKind();
 
     /**
-     * インポートする型およびメンバの名前を返す。
-     * <p> この宣言がオンデマンドインポートの類である場合、末尾の<code>*</code>は返される名前に含まれない。 </p>
-     * @return
-     *     インポートする型およびメンバの名前
+     * Returns the import target type or member name.
+     * @return the import target type or member name
      */
     Name getName();
 }

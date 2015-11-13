@@ -24,19 +24,18 @@ import com.asakusafw.vocabulary.flow.FlowPart;
 import com.asakusafw.vocabulary.flow.In;
 import com.asakusafw.vocabulary.flow.Out;
 
-
 /**
- * シャッフルを行わないジョブフロー。
+ * A jobflow class w/ combiner operations.
  */
 @SuppressWarnings("all")
 @FlowPart
 public class CombineStage extends FlowDescription {
 
-    private In<Ex1> in1;
+    private final In<Ex1> in1;
 
-    private Out<Ex1> out1;
+    private final Out<Ex1> out1;
 
-    private Out<Ex1> out2;
+    private final Out<Ex1> out2;
 
     public CombineStage(In<Ex1> in1, Out<Ex1> out1, Out<Ex1> out2) {
         this.in1 = in1;

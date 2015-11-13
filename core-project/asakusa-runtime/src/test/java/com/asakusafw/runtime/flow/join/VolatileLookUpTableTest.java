@@ -33,8 +33,8 @@ import com.asakusafw.runtime.value.IntOption;
 public class VolatileLookUpTableTest {
 
     /**
-     * 空のテーブル。
-     * @throws Exception テストに失敗した場合
+     * empty table.
+     * @throws Exception if failed
      */
     @Test
     public void empty() throws Exception {
@@ -45,8 +45,8 @@ public class VolatileLookUpTableTest {
     }
 
     /**
-     * 単純なテスト。
-     * @throws Exception テストに失敗した場合
+     * simple case.
+     * @throws Exception if failed
      */
     @Test
     public void simple() throws Exception {
@@ -59,8 +59,8 @@ public class VolatileLookUpTableTest {
     }
 
     /**
-     * 同じキーの重複。
-     * @throws Exception テストに失敗した場合
+     * conflict keys.
+     * @throws Exception if failed
      */
     @Test
     public void duplicate() throws Exception {
@@ -75,8 +75,8 @@ public class VolatileLookUpTableTest {
     }
 
     /**
-     * 同じキーの重複。
-     * @throws Exception テストに失敗した場合
+     * reuses the same key object.
+     * @throws Exception if failed
      */
     @Test
     public void reuseKeys() throws Exception {

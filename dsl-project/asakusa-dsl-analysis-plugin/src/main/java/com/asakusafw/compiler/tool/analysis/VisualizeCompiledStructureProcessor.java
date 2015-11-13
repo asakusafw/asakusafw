@@ -62,17 +62,17 @@ public class VisualizeCompiledStructureProcessor extends AbstractWorkflowProcess
 
     static final Logger LOG = LoggerFactory.getLogger(VisualizeCompiledStructureProcessor.class);
 
-    static final Charset ENCODING = Charset.forName("UTF-8");
+    static final Charset ENCODING = Charset.forName("UTF-8"); //$NON-NLS-1$
 
     /**
      * Output path.
      */
-    public static final String NAIVE_PATH = Constants.PATH_BATCH + "compiled-structure.dot";
+    public static final String NAIVE_PATH = Constants.PATH_BATCH + "compiled-structure.dot"; //$NON-NLS-1$
 
     /**
      * Output path.
      */
-    public static final String MERGED_PATH = Constants.PATH_BATCH + "compiled-merged-structure.dot";
+    public static final String MERGED_PATH = Constants.PATH_BATCH + "compiled-merged-structure.dot"; //$NON-NLS-1$
 
     @Override
     public Collection<Class<? extends WorkDescriptionProcessor<?>>> getDescriptionProcessors() {
@@ -91,14 +91,15 @@ public class VisualizeCompiledStructureProcessor extends AbstractWorkflowProcess
         OutputStream output = getEnvironment().openResource(path);
         try {
             Context context = new Context(output, merged);
-            context.put("digraph {");
+            context.put("digraph {"); //$NON-NLS-1$
             context.push();
-            context.put("rankdir = LR;");
+            context.put("rankdir = LR;"); //$NON-NLS-1$
             Class<? extends BatchDescription> desc = workflow.getDescription().getClass();
-            String batchId = context.label(desc, "Batch", getEnvironment().getConfiguration().getBatchId());
+            String batchId = context.label(desc, "Batch", //$NON-NLS-1$
+                    getEnvironment().getConfiguration().getBatchId());
             dump(context, batchId, workflow.getGraph());
             context.pop();
-            context.put("}");
+            context.put("}"); //$NON-NLS-1$
             context.close();
         } finally {
             output.close();
@@ -135,7 +136,7 @@ public class VisualizeCompiledStructureProcessor extends AbstractWorkflowProcess
         assert context != null;
         assert desc != null;
         assert model != null;
-        String id = context.label(desc.getFlowClass(), "JobFlow", model.getFlowId());
+        String id = context.label(desc.getFlowClass(), "JobFlow", model.getFlowId()); //$NON-NLS-1$
         for (Stage stage : model.getStages()) {
             String stageId = dumpStage(context, stage);
             context.connect(id, stageId);
@@ -146,9 +147,11 @@ public class VisualizeCompiledStructureProcessor extends AbstractWorkflowProcess
     private String dumpStage(Context context, Stage stage) {
         assert context != null;
         assert stage != null;
-        String id = context.label(stage, "Stage", stage.getCompiled().getQualifiedName().toNameString());
+        String id = context.label(stage, "Stage", //$NON-NLS-1$
+                stage.getCompiled().getQualifiedName().toNameString());
         for (MapUnit unit : stage.getModel().getMapUnits()) {
-            String unitId = context.label(unit, "Mapper", unit.getCompiled().getQualifiedName().toNameString());
+            String unitId = context.label(unit, "Mapper", //$NON-NLS-1$
+                    unit.getCompiled().getQualifiedName().toNameString());
             context.connect(id, unitId);
             for (Fragment fragment : unit.getFragments()) {
                 String fragmentId = dumpFragment(context, fragment);
@@ -157,7 +160,8 @@ public class VisualizeCompiledStructureProcessor extends AbstractWorkflowProcess
         }
         Reduce reducer = stage.getReduceOrNull();
         if (reducer != null) {
-            String unitId = context.label(reducer, "Reducer", reducer.getReducerTypeName().toNameString());
+            String unitId = context.label(reducer, "Reducer", //$NON-NLS-1$
+                    reducer.getReducerTypeName().toNameString());
             context.connect(id, unitId);
             for (ReduceUnit unit : stage.getModel().getReduceUnits()) {
                 for (Fragment fragment : unit.getFragments()) {
@@ -172,7 +176,8 @@ public class VisualizeCompiledStructureProcessor extends AbstractWorkflowProcess
     private String dumpFragment(Context context, Fragment fragment) {
         assert context != null;
         assert fragment != null;
-        String id = context.label(fragment, "Fragment", fragment.getCompiled().getQualifiedName().toNameString());
+        String id = context.label(fragment, "Fragment", //$NON-NLS-1$
+                fragment.getCompiled().getQualifiedName().toNameString());
         for (Factor factor : fragment.getFactors()) {
             String factorId = dumpFactor(context, factor);
             if (factorId != null) {
@@ -187,12 +192,12 @@ public class VisualizeCompiledStructureProcessor extends AbstractWorkflowProcess
         switch (desc.getKind()) {
         case OPERATOR:
             Declaration decl = ((OperatorDescription) desc).getDeclaration();
-            if (decl.getDeclaring().getName().startsWith("com.asakusafw.vocabulary.") == false) {
+            if (decl.getDeclaring().getName().startsWith("com.asakusafw.vocabulary.") == false) { //$NON-NLS-1$
                 String id = context.label(
                         decl.toMethod(),
                         decl.getAnnotationType().getSimpleName(),
                         MessageFormat.format(
-                                "{0}#{1}",
+                                "{0}#{1}", //$NON-NLS-1$
                                 decl.getDeclaring().getSimpleName(),
                                 decl.toMethod().getName()));
                 return id;
@@ -252,7 +257,7 @@ public class VisualizeCompiledStructureProcessor extends AbstractWorkflowProcess
 
         String newLabel(String kind, String detail) {
             String id = UUID.randomUUID().toString();
-            put("\"{0}\" [shape=box, label=\"{1}\\n{2}\"];", id, kind, detail);
+            put("\"{0}\" [shape=box, label=\"{1}\\n{2}\"];", id, kind, detail); //$NON-NLS-1$
             return id;
         }
 
@@ -261,10 +266,10 @@ public class VisualizeCompiledStructureProcessor extends AbstractWorkflowProcess
                 String id = src + '|' + dst;
                 if (sawConnections.contains(id) == false) {
                     sawConnections.add(id);
-                    put("\"{0}\" -> \"{1}\";", src, dst);
+                    put("\"{0}\" -> \"{1}\";", src, dst); //$NON-NLS-1$
                 }
             } else {
-                put("\"{0}\" -> \"{1}\";", src, dst);
+                put("\"{0}\" -> \"{1}\";", src, dst); //$NON-NLS-1$
             }
         }
 
@@ -273,7 +278,7 @@ public class VisualizeCompiledStructureProcessor extends AbstractWorkflowProcess
             assert arguments != null;
             StringBuilder buf = new StringBuilder();
             for (int i = 0, n = indent; i < n; i++) {
-                buf.append("    ");
+                buf.append("    "); //$NON-NLS-1$
             }
             if (arguments.length == 0) {
                 buf.append(pattern);

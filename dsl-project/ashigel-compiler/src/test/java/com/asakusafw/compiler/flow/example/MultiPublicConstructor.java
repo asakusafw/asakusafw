@@ -24,21 +24,20 @@ import com.asakusafw.vocabulary.flow.In;
 import com.asakusafw.vocabulary.flow.JobFlow;
 import com.asakusafw.vocabulary.flow.Out;
 
-
 /**
- * 複数の公開コンストラクタを持つジョブフロー。
+ * A jobflow class w/ multiple public constructors.
  */
 @JobFlow(name = "testing")
 public class MultiPublicConstructor extends FlowDescription {
 
-    private In<MockHoge> in;
+    private final In<MockHoge> in;
 
-    private Out<MockHoge> out;
+    private final Out<MockHoge> out;
 
     /**
-     * インスタンスを生成する。
-     * @param in 入力
-     * @param out 出力
+     * Creates a new instance.
+     * @param in input
+     * @param out output
      */
     public MultiPublicConstructor(
             @Import(name = "hoge", description = MockHogeImporterDescription.class)
@@ -50,10 +49,10 @@ public class MultiPublicConstructor extends FlowDescription {
     }
 
     /**
-     * インスタンスを生成する。
-     * @param in 入力
-     * @param out 出力
-     * @param odd オーバーロード用
+     * Creates a new instance.
+     * @param in input
+     * @param out output
+     * @param odd for constructor overload
      */
     public MultiPublicConstructor(
             @Import(name = "hoge", description = MockHogeImporterDescription.class)

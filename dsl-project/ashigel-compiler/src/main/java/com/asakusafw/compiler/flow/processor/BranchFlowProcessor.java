@@ -35,7 +35,7 @@ import com.asakusafw.vocabulary.operator.Branch;
 import com.asakusafw.vocabulary.operator.Update;
 
 /**
- * {@link Update 分岐演算子}を処理する。
+ * Processes {@link Update} operators.
  */
 @TargetOperator(Branch.class)
 public class BranchFlowProcessor extends LineEndProcessor {

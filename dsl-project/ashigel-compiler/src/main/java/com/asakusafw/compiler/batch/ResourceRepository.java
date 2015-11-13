@@ -21,41 +21,40 @@ import java.io.InputStream;
 
 import com.asakusafw.compiler.flow.Location;
 
-
 /**
- * リソースを保持するリポジトリ。
+ * A repository for providing resources.
  */
 public interface ResourceRepository {
 
     /**
-     * このリポジトリの内容を反復するカーソルを、新しく作成して返す。
-     * @return 新しいカーソル
-     * @throws IOException カーソルの作成に失敗した場合
+     * Creates a new cursor for iterating resources in this repository.
+     * @return the created cursor
+     * @throws IOException if failed to create a cursor
      */
     Cursor createCursor() throws IOException;
 
     /**
-     * リポジトリの内部を反復するカーソル。
+     * A cursor for iterating resources in {@link ResourceRepository}.
      */
     interface Cursor extends Closeable {
 
         /**
-         * 次の要素にカーソルを移動し、存在する場合のみ{@code true}を返す。
-         * @return 次の要素が存在する場合のみ{@code true}
-         * @throws IOException カーソルの移動に失敗した場合
+         * Advances this cursor and returns whether the next item exists or not.
+         * @return {@code true} if the next item exists, otherwise {@code false}
+         * @throws IOException if failed to advance this cursor
          */
         boolean next() throws IOException;
 
         /**
-         * 現在の要素に関する位置を返す。
-         * @return 現在の要素に関する位置
+         * Returns the location of the current item.
+         * @return the location of the current item
          */
         Location getLocation();
 
         /**
-         * 現在の要素の内容を開く。
-         * @return 現在の要素の内容を返すストリーム
-         * @throws IOException 要素を開けなかった場合
+         * Returns the byte contents of the current item.
+         * @return the input stream for obtaining the contents of the current item
+         * @throws IOException if failed to open the resource
          */
         InputStream openResource() throws IOException;
     }

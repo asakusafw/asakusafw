@@ -25,11 +25,11 @@ import com.asakusafw.utils.java.model.syntax.PackageDeclaration;
 import com.asakusafw.utils.java.model.util.Emitter;
 
 /**
- * メモリ上にエミットする{@link Emitter}の実装。
+ * Mock {@link Emitter} implementation.
  */
 public class MockEmitter extends Emitter {
 
-    private List<VolatileJavaFile> emitted = Lists.create();
+    private final List<VolatileJavaFile> emitted = Lists.create();
 
     @Override
     public PrintWriter openFor(
@@ -52,8 +52,8 @@ public class MockEmitter extends Emitter {
     }
 
     /**
-     * これまでにエミットされたファイルの一覧を返す。
-     * @return これまでにエミットされたファイルの一覧
+     * Returns the emitted files.
+     * @return the emitted files
      */
     public List<VolatileJavaFile> getEmitted() {
         return emitted;
