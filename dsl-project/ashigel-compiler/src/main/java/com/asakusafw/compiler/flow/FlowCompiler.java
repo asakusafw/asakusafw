@@ -43,7 +43,7 @@ import com.asakusafw.runtime.core.context.RuntimeContext;
 import com.asakusafw.vocabulary.flow.graph.FlowGraph;
 
 /**
- * 演算子グラフをコンパイルする。
+ * Compiles {@link FlowGraph}.
  */
 public class FlowCompiler {
 
@@ -54,9 +54,9 @@ public class FlowCompiler {
     private final FlowCompilingEnvironment environment;
 
     /**
-     * インスタンスを生成する。
-     * @param configuration このコンパイラの設定
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param configuration the current configuration
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public FlowCompiler(FlowCompilerConfiguration configuration) {
         Precondition.checkMustNotBeNull(configuration, "configuration"); //$NON-NLS-1$
@@ -65,19 +65,20 @@ public class FlowCompiler {
     }
 
     /**
-     * 処理対象のフローIDを返す。
-     * @return 処理対象のフローID
+     * Returns the target flow ID.
+     * @return the target flow ID
      */
     public String getTargetFlowId() {
         return configuration.getFlowId();
     }
 
     /**
-     * コンパイルを実行する。
-     * @param graph コンパイル結果を出力する先のグラフ
-     * @return コンパイル結果のモデル
-     * @throws IOException 出力に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Compiles the target flow graph and returns its jobflow model.
+     * @param graph the target flow graph
+     * @return the compiled model
+     * @throws IOException if error was occurred while creating artifacts
+     * @throws IllegalArgumentException if the parameter is {@code null}
+     * @see #buildSources(File)
      */
     public JobflowModel compile(FlowGraph graph) throws IOException {
         Precondition.checkMustNotBeNull(graph, "graph"); //$NON-NLS-1$
@@ -91,10 +92,10 @@ public class FlowCompiler {
     }
 
     /**
-     * ここまでのコンパイル結果をビルドして出力する。
-     * @param output 出力先のファイル
-     * @throws IOException 出力に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Builds the generated Java source files, and create a new archive file from them.
+     * @param output the target file
+     * @throws IOException if error was occurred while creating artifacts
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public void buildSources(File output) throws IOException {
         Precondition.checkMustNotBeNull(output, "output"); //$NON-NLS-1$
@@ -107,10 +108,10 @@ public class FlowCompiler {
     }
 
     /**
-     * ここまでのコンパイル結果をそのままアーカイブして出力する。
-     * @param output 出力先のファイル
-     * @throws IOException 出力に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Collects the generated Java source files, and create a new archive file from them.
+     * @param output the target file
+     * @throws IOException if error was occurred while creating artifacts
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public void collectSources(File output) throws IOException {
         Precondition.checkMustNotBeNull(output, "output"); //$NON-NLS-1$
@@ -129,7 +130,7 @@ public class FlowCompiler {
             assert parent != null;
             if (parent.isDirectory() == false && parent.mkdirs() == false) {
                 throw new IOException(MessageFormat.format(
-                        "Failed to create {0} (cannot create parent directory)",
+                        Messages.getString("FlowCompiler.errorFailedToCreateParentDirectory"), //$NON-NLS-1$
                         file));
             }
         }
@@ -137,10 +138,10 @@ public class FlowCompiler {
     }
 
     /**
-     * ここまでのコンパイル結果をビルドして出力する。
-     * @param output 出力先のストリーム
-     * @throws IOException 出力に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Builds the generated Java source files, and create a new archive file from them.
+     * @param output the target output stream
+     * @throws IOException if error was occurred while creating artifacts
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public void buildSources(OutputStream output) throws IOException {
         Precondition.checkMustNotBeNull(output, "output"); //$NON-NLS-1$
@@ -148,10 +149,10 @@ public class FlowCompiler {
     }
 
     /**
-     * ここまでのコンパイル結果をそのままアーカイブして出力する。
-     * @param output 出力先のストリーム
-     * @throws IOException 出力に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Collects the generated Java source files, and create a new archive file from them.
+     * @param output the target output stream
+     * @throws IOException if error was occurred while creating artifacts
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public void collectSources(OutputStream output) throws IOException {
         Precondition.checkMustNotBeNull(output, "output"); //$NON-NLS-1$
@@ -170,7 +171,7 @@ public class FlowCompiler {
         ExternalIoAnalyzer analyzer = new ExternalIoAnalyzer(environment);
         if (analyzer.validate(graph) == false) {
             throw new IOException(MessageFormat.format(
-                    "フローの入出力が正しくないため、コンパイルを中止します ({0})",
+                    Messages.getString("FlowCompiler.errorInvalidFlow"), //$NON-NLS-1$
                     environment.getErrorMessage()));
         }
     }
@@ -185,7 +186,7 @@ public class FlowCompiler {
             for (Diagnostic diagnostic : planner.getDiagnostics()) {
                 LOG.error(diagnostic.toString());
             }
-            throw new IOException("実行計画の作成に失敗しました");
+            throw new IOException(Messages.getString("FlowCompiler.errorFailedToGenerateExecutionPlan")); //$NON-NLS-1$
         }
         return plan;
     }
@@ -206,12 +207,13 @@ public class FlowCompiler {
         properties.put(RuntimeContext.KEY_BATCH_ID, environment.getBatchId());
         properties.put(RuntimeContext.KEY_FLOW_ID, environment.getFlowId());
         properties.put(RuntimeContext.KEY_BUILD_ID, environment.getBuildId());
-        properties.put(RuntimeContext.KEY_BUILD_DATE, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+        properties.put(RuntimeContext.KEY_BUILD_DATE,
+                new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())); //$NON-NLS-1$
         properties.put(RuntimeContext.KEY_RUNTIME_VERSION, RuntimeContext.getRuntimeVersion());
 
         OutputStream output = environment.openResource(null, RuntimeContext.PATH_APPLICATION_INFO);
         try {
-            properties.store(output, "Created by Asakusa DSL compiler");
+            properties.store(output, "Created by Asakusa DSL compiler"); //$NON-NLS-1$
         } finally {
             output.close();
         }

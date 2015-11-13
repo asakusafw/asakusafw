@@ -16,7 +16,7 @@
 package com.asakusafw.utils.java.internal.parser.javadoc.ir;
 
 /**
- * 基本型。
+ * Represents basic types.
  */
 public class IrDocBasicType extends AbstractIrDocElement implements IrDocType {
 
@@ -25,12 +25,11 @@ public class IrDocBasicType extends AbstractIrDocElement implements IrDocType {
     private IrBasicTypeKind typeKind;
 
     /**
-     * インスタンスを生成する。
-     * @param typeKind 型の種類
-     * @throws IllegalArgumentException 省略可能でない引数に{@code null}が含まれていた場合
+     * Creates a new instance.
+     * @param typeKind the type kind
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public IrDocBasicType(IrBasicTypeKind typeKind) {
-        super();
         if (typeKind == null) {
             throw new IllegalArgumentException("typeKind"); //$NON-NLS-1$
         }
@@ -43,17 +42,17 @@ public class IrDocBasicType extends AbstractIrDocElement implements IrDocType {
     }
 
     /**
-     * この型の種類を返す。
-     * @return この型の種類
+     * Returns the type kind.
+     * @return the type kind
      */
     public IrBasicTypeKind getTypeKind() {
         return this.typeKind;
     }
 
     /**
-     * この型の種類を設定する。
-     * @param typeKind 設定する種類
-     * @throws IllegalArgumentException 引数に{@code null}が含まれていた場合
+     * Sets the type kind.
+     * @param typeKind the type kind
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public void setTypeKind(IrBasicTypeKind typeKind) {
         if (typeKind == null) {

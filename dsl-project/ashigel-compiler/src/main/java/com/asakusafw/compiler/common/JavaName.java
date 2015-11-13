@@ -24,7 +24,7 @@ import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.collections.Sets;
 
 /**
- * Javaで使用する名前。
+ * Naming rules for Java source files.
  */
 public class JavaName {
 
@@ -100,9 +100,9 @@ public class JavaName {
     }
 
     /**
-     * 名前を表す文字列をこのオブジェクトに変換して返す。
-     * @param nameString 対象の文字列
-     * @return 対応するこのクラスのオブジェクト
+     * Parses a name string.
+     * @param nameString the target string
+     * @return the created object
      */
     public static JavaName of(String nameString) {
         if (nameString.isEmpty()) {
@@ -125,16 +125,16 @@ public class JavaName {
     }
 
     /**
-     * この名前のセグメント一覧を、全て小文字で返す。
-     * @return セグメント一覧
+     * Returns words of this name as lower case string.
+     * @return a segments in this name
      */
     public List<String> getSegments() {
         return Lists.from(words);
     }
 
     /**
-     * 型の名前と同様の形式に変換して返す ({@code CamelCase})。
-     * @return 型の名前と同様の形式
+     * Returns this name as upper CamelCase.
+     * @return upper CamelCase name - as a Java type name
      */
     public String toTypeName() {
         if (words.isEmpty()) {
@@ -148,8 +148,8 @@ public class JavaName {
     }
 
     /**
-     * メンバーの名前と同様の形式に変換して返す ({@code camelCase})。
-     * @return メンバーの名前と同様の形式
+     * Returns this name as lower camelCase.
+     * @return lower camelCase name - as a Java member name
      */
     public String toMemberName() {
         if (words.isEmpty()) {
@@ -173,8 +173,8 @@ public class JavaName {
     }
 
     /**
-     * 定数の名前と同様の形式に変換して返す ({@code UPPER_CASE})。
-     * @return 定数の名前と同様の形式
+     * Returns this name as UPPER_CASE.
+     * @return UPPER_CASE name - as a Java constant name
      */
     public String toConstantName() {
         if (words.isEmpty()) {
@@ -190,17 +190,17 @@ public class JavaName {
     }
 
     /**
-     * この名前の先頭に指定のセグメントを追加する。
-     * @param segment 追加するセグメント
-     * @throws IllegalArgumentException 不正なセグメントが指定された場合
+     * Adds a word into the head of this name.
+     * @param segment the word
+     * @throws IllegalArgumentException if the word is not valid
      */
     public void addFirst(String segment) {
         words.add(0, normalize(segment));
     }
 
     /**
-     * この名前の先頭のセグメントを削除する。
-     * @throws IllegalStateException この名前が空の場合
+     * Removes the first word of this name.
+     * @throws IllegalStateException if the name is empty
      */
     public void removeFirst() {
         if (words.isEmpty()) {
@@ -210,17 +210,17 @@ public class JavaName {
     }
 
     /**
-     * この名前の末尾に指定のセグメントを追加する。
-     * @param segment 追加するセグメント
-     * @throws IllegalArgumentException 不正なセグメントが指定された場合
+     * Adds a word into the tail of this name.
+     * @param segment the word
+     * @throws IllegalArgumentException if the word is not valid
      */
     public void addLast(String segment) {
         words.add(normalize(segment));
     }
 
     /**
-     * この名前の末尾のセグメントを削除する。
-     * @throws IllegalStateException この名前が空の場合
+     * Removes the last word of this name.
+     * @throws IllegalStateException if the name is empty
      */
     public void removeLast() {
         if (words.isEmpty()) {

@@ -15,9 +15,8 @@
  */
 package com.asakusafw.vocabulary.batch;
 
-
 /**
- * 連結リスト。
+ * sequential structure.
  */
 public class ListBatch extends BatchDescription {
 

@@ -15,10 +15,8 @@
  */
 package com.asakusafw.utils.java.model.syntax;
 
-
 /**
- * 親コンストラクタ起動文を表現するインターフェース。
- * <p> この要素は、コンストラクタ宣言本体の1つ目の文としてのみ出現できる。 </p>
+ * An interface which represents super constructor statement.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:8.8.7.1] Explicit Constructor Invocations} </li>
@@ -28,14 +26,9 @@ package com.asakusafw.utils.java.model.syntax;
 public interface SuperConstructorInvocation
         extends ConstructorInvocation {
 
-    // properties
-
     /**
-     * 限定式を返す。
-     * <p> 限定式が指定されない場合は{@code null}が返される。 </p>
-     * @return
-     *     限定式、
-     *     ただし限定式が指定されない場合は{@code null}
+     * Returns the qualifier expression.
+     * @return the qualifier expression, or {@code null} if it is not specified
      */
     Expression getQualifier();
 }

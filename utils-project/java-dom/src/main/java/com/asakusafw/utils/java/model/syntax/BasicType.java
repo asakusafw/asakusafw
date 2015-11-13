@@ -17,8 +17,8 @@ package com.asakusafw.utils.java.model.syntax;
 
 
 /**
- * 基本型を表現するインターフェース。
- * <p> 疑似型{@code void}もこのクラスで表現する </p>
+ * An interface which represents basic types.
+ * Note that this can represent a pseudo-type of {@code void}.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:4.2] Primitive Types and Values} </li>
@@ -28,12 +28,9 @@ package com.asakusafw.utils.java.model.syntax;
 public interface BasicType
         extends Type {
 
-    // properties
-
     /**
-     * 基本型の種類を返す。
-     * @return
-     *     基本型の種類
+     * Returns the type kind.
+     * @return the type kind
      */
     BasicTypeKind getTypeKind();
 }

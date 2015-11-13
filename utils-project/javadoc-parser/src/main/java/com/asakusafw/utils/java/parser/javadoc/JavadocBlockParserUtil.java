@@ -45,12 +45,12 @@ import com.asakusafw.utils.java.internal.parser.javadoc.ir.JavadocToken;
 import com.asakusafw.utils.java.internal.parser.javadoc.ir.JavadocTokenKind;
 
 /**
- * Javadocタグブロックの構文解析に利用するツール集。
+ * Utilities for {@link JavadocBlockParser}.
  */
 public final class JavadocBlockParserUtil {
 
     /**
-     * 空白文字の一覧。
+     * The white-space token kinds.
      */
     public static final Set<JavadocTokenKind> S_WHITE;
     static {
@@ -101,18 +101,15 @@ public final class JavadocBlockParserUtil {
     }
 
     /**
-     * 指定の要素に位置情報を付与する。
-     * 元となる位置情報が不明確である場合、この呼び出しは何も行わない。
-     * @param <T> 要素の型
-     * @param elem 位置情報を与える対象の要素
-     * @param start 指定の要素を構成する先頭のトークン
-     * @param stop 指定の要素を構成する末尾のトークン
-     * @return 位置情報を付与した要素
+     * Sets the location information for the target element.
+     * This will do nothing if some locations are unknown.
+     * @param <T> the element type
+     * @param elem the target element
+     * @param start the first token
+     * @param stop the last token
+     * @return the target element (location may be set)
      */
-    public static <T extends IrDocElement> T setLocation(
-            T elem,
-            JavadocToken start,
-            JavadocToken stop) {
+    public static <T extends IrDocElement> T setLocation(T elem, JavadocToken start, JavadocToken stop) {
         int s = start.getStartPosition();
         int e = stop.getStartPosition() + stop.getText().length();
         IrLocation location = new IrLocation(s, e - s);
@@ -121,18 +118,15 @@ public final class JavadocBlockParserUtil {
     }
 
     /**
-     * 指定の要素に位置情報を付与する。
-     * 元となる位置情報が不明確である場合、この呼び出しは何も行わない。
-     * @param <T> 要素の型
-     * @param elem 位置情報を与える対象の要素
-     * @param start 指定の要素を構成する先頭の要素
-     * @param stop 指定の要素を構成する末尾のトークン
-     * @return 位置情報を付与した要素
+     * Sets the location information for the target element.
+     * This will do nothing if some locations are unknown.
+     * @param <T> the element type
+     * @param elem the target element
+     * @param start the first location
+     * @param stop the last location
+     * @return the target element (location may be set)
      */
-    public static <T extends IrDocElement> T setLocation(
-            T elem,
-            IrLocation start,
-            IrLocation stop) {
+    public static <T extends IrDocElement> T setLocation(T elem, IrLocation start, IrLocation stop) {
         if (start == null || stop == null) {
             return elem;
         }
@@ -144,31 +138,22 @@ public final class JavadocBlockParserUtil {
     }
 
     /**
-     * 対象のスキャナから、次の任意テキストを読み出して返す。
-     * 結果としてのテキストが空となる場合、解析は失敗したとみなされ{@code null}が返される。
-     * 解析に成功した場合、該当要素を構成するトークンはスキャナから消費される。
-     * 任意テキストの終端となるシーケンスは次のとおりである。
-     * <ul>
-     * <li> 単一の改行 ({@link JavadocTokenKind#LINE_BREAK}) </li>
-     * <li> インラインブロックの開始 (<code>&quot;{&quot; &quot;&#64;&quot;</code>) </li>
-     * </ul>
-     * @param scanner 対象のスキャナ
-     * @param trimHead テキスト先頭の空白を除去する
-     * @param trimTail テキスト末尾の空白を除去する
-     * @return {@code null}
-     * @throws IllegalArgumentException 引数に{@code null}が含まれていた場合
+     * Consumes tokens from the scanner and returns the corresponded plain text.
+     * Tokens will be removed from the scanner only if this operation was successfully completed.
+     * If the next plain text will be empty, this returns {@code null} (operation failed).
+     * @param scanner the target scanner
+     * @param trimHead {@code true} to trim leading white-spaces
+     * @param trimTail {@code true} to trim trailing while-spaces
+     * @return the consumed plain text, or {@code null} if it will be {@code empty}
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
-    public static IrDocText fetchText(
-            JavadocScanner scanner,
-            boolean trimHead,
-            boolean trimTail) {
+    public static IrDocText fetchText(JavadocScanner scanner, boolean trimHead, boolean trimTail) {
         if (scanner == null) {
             throw new IllegalArgumentException("scanner"); //$NON-NLS-1$
         }
         int offset = 0;
         while (true) {
-            offset += JavadocScannerUtil.countUntil(S_TEXT_DELIM, scanner,
-                offset);
+            offset += JavadocScannerUtil.countUntil(S_TEXT_DELIM, scanner, offset);
             JavadocTokenKind kind = scanner.lookahead(offset).getKind();
             if (kind == LEFT_BRACE) {
                 JavadocToken la = scanner.lookahead(offset + 1);
@@ -184,12 +169,12 @@ public final class JavadocBlockParserUtil {
     }
 
     /**
-     * 対象のスキャナから、次のインラインブロックを読み出して{@link JavadocBlockInfo}として返す。
-     * ブロックが後続しない場合、この呼び出しは{@code null}を返しスキャナの状態を変更しない。
-     * ブロックの読み出しに成功した場合、インラインブロックを構成するトークンが消費される。
-     * @param scanner 対象のスキャナ
-     * @return 後続するインラインブロックの情報、存在しない場合は{@code null}
-     * @throws IllegalArgumentException 引数に{@code null}が含まれていた場合
+     * Consumes tokens from the scanner and returns the corresponded inline block.
+     * This will ignore successive while space tokens, and tokens are removed from the scanner only if this operation
+     * was successfully completed.
+     * @param scanner the target scanner
+     * @return the next inline block if this operation was succeeded, or {@code null}
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static JavadocBlockInfo fetchBlockInfo(JavadocScanner scanner) {
         if (scanner == null) {
@@ -199,36 +184,32 @@ public final class JavadocBlockParserUtil {
         int offset = 0;
         offset += JavadocScannerUtil.countUntilNextPrintable(scanner, offset);
 
-        // 先頭の "{"
+        // block start: {
         JavadocToken head = scanner.lookahead(offset);
         if (head.getKind() != LEFT_BRACE) {
             return null;
         }
 
-        // タグ開始文字 "@"
+        // tag start: @
         offset++;
         JavadocToken at = scanner.lookahead(offset);
         if (at.getKind() != AT) {
             return null;
         }
 
-        // タグ名
+        // tag name
         offset++;
         int nameCount = countWhileTagName(scanner, offset);
-        String tagName = buildString(JavadocScannerUtil.lookaheadTokens(
-            scanner, offset, nameCount));
+        String tagName = buildString(JavadocScannerUtil.lookaheadTokens(scanner, offset, nameCount));
 
         offset += nameCount;
 
-        // 末端の検出
-        int blockEnd = JavadocScannerUtil.countUntil(S_INLINE_BLOCK_DELIM,
-            scanner,
-            offset);
+        // find for block end
+        int blockEnd = JavadocScannerUtil.countUntil(S_INLINE_BLOCK_DELIM, scanner, offset);
 
         JavadocToken token = scanner.lookahead(offset + blockEnd);
         JavadocTokenKind kind = token.getKind();
 
-        // 次のブロックの開始を検出すると、このブロックは長さ0になる
         if (kind == LEFT_BRACE) {
             blockEnd = 0;
         }
@@ -246,10 +227,8 @@ public final class JavadocBlockParserUtil {
         }
 
         IrLocation blockLocation = new IrLocation(startPos, endPos - startPos);
-        DefaultJavadocScanner blockScanner = new DefaultJavadocScanner(
-            new ArrayList<JavadocToken>(scanner.getTokens().subList(startIndex,
-            stopIndex)),
-            endPos);
+        DefaultJavadocScanner blockScanner = new DefaultJavadocScanner(new ArrayList<JavadocToken>(
+                scanner.getTokens().subList(startIndex, stopIndex)), endPos);
 
         scanner.consume(offset + blockEnd);
         if (legalBlock) {
@@ -260,26 +239,25 @@ public final class JavadocBlockParserUtil {
     }
 
     /**
-     * 指定の位置から後続するタグ名と認識可能なトークン数を返す。
-     * @param scanner 対象のスキャナ
-     * @param start 開始オフセット
-     * @return タグ名と認識可能なトークン数
+     * Returns the number of tokens in the current block body.
+     * @param scanner the target scanner
+     * @param start the starting offset
+     * @return the number of tokens
      */
     public static int countWhileTagName(JavadocScanner scanner, int start) {
         return JavadocScannerUtil.countUntil(S_TAG_NAME_DELIM, scanner, start);
     }
 
     /**
-     * 対象のスキャナから、次の単純名を読み出して返す。
-     * 構造に含まれるすべての空白文字からなるトークンは読み飛ばされる。
-     * 解析に成功した場合、該当要素を構成するトークンはスキャナから消費される。
-     * @param scanner 対象のスキャナ
-     * @param follow この要素に後続可能なトークン、後続しない場合は解析が失敗する (省略可)
-     * @return 成功した場合は次の要素、失敗した場合は{@code null}
-     * @throws IllegalArgumentException 省略可能でない引数に{@code null}が含まれていた場合
+     * Consumes tokens from the scanner and returns the corresponded simple name.
+     * This will ignore successive while space tokens, and tokens are removed from the scanner only if this operation
+     * was successfully completed.
+     * @param scanner the target scanner
+     * @param follow the acceptable token kinds after this operation was finished, or {@code null} to accept anything
+     * @return the next element if this operation was succeeded, or {@code null}
+     * @throws IllegalArgumentException if {@code scanner} is {@code null}
      */
-    public static IrDocSimpleName fetchSimpleName(JavadocScanner scanner,
-            Set<JavadocTokenKind> follow) {
+    public static IrDocSimpleName fetchSimpleName(JavadocScanner scanner, Set<JavadocTokenKind> follow) {
         DefaultJavadocTokenStream stream = new DefaultJavadocTokenStream(
             scanner);
         stream.mark();
@@ -297,16 +275,15 @@ public final class JavadocBlockParserUtil {
     }
 
     /**
-     * 対象のスキャナから、次の単純名または限定名を読み出して返す。
-     * 構造に含まれるすべての空白文字からなるトークンは読み飛ばされる。
-     * 解析に成功した場合、該当要素を構成するトークンはスキャナから消費される。
-     * @param scanner 対象のスキャナ
-     * @param follow この要素に後続可能なトークン、後続しない場合は解析が失敗する (省略可)
-     * @return 成功した場合は次の要素、失敗した場合は{@code null}
-     * @throws IllegalArgumentException 省略可能でない引数に{@code null}が含まれていた場合
+     * Consumes tokens from the scanner and returns the corresponded (simple or qualified) name.
+     * This will ignore successive while space tokens, and tokens are removed from the scanner only if this operation
+     * was successfully completed.
+     * @param scanner the target scanner
+     * @param follow the acceptable token kinds after this operation was finished, or {@code null} to accept anything
+     * @return the next element if this operation was succeeded, or {@code null}
+     * @throws IllegalArgumentException if {@code scanner} is {@code null}
      */
-    public static IrDocName fetchName(JavadocScanner scanner,
-            Set<JavadocTokenKind> follow) {
+    public static IrDocName fetchName(JavadocScanner scanner, Set<JavadocTokenKind> follow) {
         DefaultJavadocTokenStream stream = new DefaultJavadocTokenStream(
             scanner);
         stream.mark();
@@ -324,16 +301,15 @@ public final class JavadocBlockParserUtil {
     }
 
     /**
-     * 対象のスキャナから、次の基本型を読み出して返す。
-     * 構造に含まれるすべての空白文字からなるトークンは読み飛ばされる。
-     * 解析に成功した場合、該当要素を構成するトークンはスキャナから消費される。
-     * @param scanner 対象のスキャナ
-     * @param follow この要素に後続可能なトークン、後続しない場合は解析が失敗する (省略可)
-     * @return 成功した場合は次の要素、失敗した場合は{@code null}
-     * @throws IllegalArgumentException 省略可能でない引数に{@code null}が含まれていた場合
+     * Consumes tokens from the scanner and returns the corresponded basic type.
+     * This will ignore successive while space tokens, and tokens are removed from the scanner only if this operation
+     * was successfully completed.
+     * @param scanner the target scanner
+     * @param follow the acceptable token kinds after this operation was finished, or {@code null} to accept anything
+     * @return the next element if this operation was succeeded, or {@code null}
+     * @throws IllegalArgumentException if {@code scanner} is {@code null}
      */
-    public static IrDocBasicType fetchBasicType(JavadocScanner scanner,
-            Set<JavadocTokenKind> follow) {
+    public static IrDocBasicType fetchBasicType(JavadocScanner scanner, Set<JavadocTokenKind> follow) {
         JavadocTokenStream stream = new DefaultJavadocTokenStream(scanner);
         stream.mark();
         IrDocBasicType elem = fetchBasicType(stream);
@@ -347,16 +323,15 @@ public final class JavadocBlockParserUtil {
     }
 
     /**
-     * 対象のスキャナから、次のプリミティブ型を読み出して返す。
-     * 構造に含まれるすべての空白文字からなるトークンは読み飛ばされる。
-     * 解析に成功した場合、該当要素を構成するトークンはスキャナから消費される。
-     * @param scanner 対象のスキャナ
-     * @param follow この要素に後続可能なトークン、後続しない場合は解析が失敗する (省略可)
-     * @return 成功した場合は次の要素、失敗した場合は{@code null}
-     * @throws IllegalArgumentException 省略可能でない引数に{@code null}が含まれていた場合
+     * Consumes tokens from the scanner and returns the corresponded primitive type.
+     * This will ignore successive while space tokens, and tokens are removed from the scanner only if this operation
+     * was successfully completed.
+     * @param scanner the target scanner
+     * @param follow the acceptable token kinds after this operation was finished, or {@code null} to accept anything
+     * @return the next element if this operation was succeeded, or {@code null}
+     * @throws IllegalArgumentException if {@code scanner} is {@code null}
      */
-    public static IrDocBasicType fetchPrimitiveType(JavadocScanner scanner,
-            Set<JavadocTokenKind> follow) {
+    public static IrDocBasicType fetchPrimitiveType(JavadocScanner scanner, Set<JavadocTokenKind> follow) {
         JavadocTokenStream stream = new DefaultJavadocTokenStream(scanner);
         stream.mark();
         IrDocBasicType elem = fetchBasicType(stream);
@@ -374,16 +349,15 @@ public final class JavadocBlockParserUtil {
     }
 
     /**
-     * 対象のスキャナから、次の名前つき型を読み出して返す。
-     * 構造に含まれるすべての空白文字からなるトークンは読み飛ばされる。
-     * 解析に成功した場合、該当要素を構成するトークンはスキャナから消費される。
-     * @param scanner 対象のスキャナ
-     * @param follow この要素に後続可能なトークン、後続しない場合は解析が失敗する (省略可)
-     * @return 成功した場合は次の要素、失敗した場合は{@code null}
-     * @throws IllegalArgumentException 省略可能でない引数に{@code null}が含まれていた場合
+     * Consumes tokens from the scanner and returns the corresponded named type.
+     * This will ignore successive while space tokens, and tokens are removed from the scanner only if this operation
+     * was successfully completed.
+     * @param scanner the target scanner
+     * @param follow the acceptable token kinds after this operation was finished, or {@code null} to accept anything
+     * @return the next element if this operation was succeeded, or {@code null}
+     * @throws IllegalArgumentException if {@code scanner} is {@code null}
      */
-    public static IrDocNamedType fetchNamedType(JavadocScanner scanner,
-            Set<JavadocTokenKind> follow) {
+    public static IrDocNamedType fetchNamedType(JavadocScanner scanner, Set<JavadocTokenKind> follow) {
         JavadocTokenStream stream = new DefaultJavadocTokenStream(scanner);
         stream.mark();
         IrDocNamedType elem = fetchNamedType(stream);
@@ -397,16 +371,15 @@ public final class JavadocBlockParserUtil {
     }
 
     /**
-     * 対象のスキャナから、次の型を読み出して返す。
-     * 構造に含まれるすべての空白文字からなるトークンは読み飛ばされる。
-     * 解析に成功した場合、該当要素を構成するトークンはスキャナから消費される。
-     * @param scanner 対象のスキャナ
-     * @param follow この要素に後続可能なトークン、後続しない場合は解析が失敗する (省略可)
-     * @return 成功した場合は次の要素、失敗した場合は{@code null}
-     * @throws IllegalArgumentException 省略可能でない引数に{@code null}が含まれていた場合
+     * Consumes tokens from the scanner and returns the corresponded type.
+     * This will ignore successive while space tokens, and tokens are removed from the scanner only if this operation
+     * was successfully completed.
+     * @param scanner the target scanner
+     * @param follow the acceptable token kinds after this operation was finished, or {@code null} to accept anything
+     * @return the next element if this operation was succeeded, or {@code null}
+     * @throws IllegalArgumentException if {@code scanner} is {@code null}
      */
-    public static IrDocType fetchType(JavadocScanner scanner,
-            Set<JavadocTokenKind> follow) {
+    public static IrDocType fetchType(JavadocScanner scanner, Set<JavadocTokenKind> follow) {
         JavadocTokenStream stream = new DefaultJavadocTokenStream(scanner);
         stream.mark();
         IrDocType elem = fetchType(stream);
@@ -420,16 +393,15 @@ public final class JavadocBlockParserUtil {
     }
 
     /**
-     * 対象のスキャナから、次のフィールドを読み出して返す。
-     * 構造に含まれるすべての空白文字からなるトークンは読み飛ばされる。
-     * 解析に成功した場合、該当要素を構成するトークンはスキャナから消費される。
-     * @param scanner 対象のスキャナ
-     * @param follow この要素に後続可能なトークン、後続しない場合は解析が失敗する (省略可)
-     * @return 成功した場合は次の要素、失敗した場合は{@code null}
-     * @throws IllegalArgumentException 省略可能でない引数に{@code null}が含まれていた場合
+     * Consumes tokens from the scanner and returns the corresponded field.
+     * This will ignore successive while space tokens, and tokens are removed from the scanner only if this operation
+     * was successfully completed.
+     * @param scanner the target scanner
+     * @param follow the acceptable token kinds after this operation was finished, or {@code null} to accept anything
+     * @return the next element if this operation was succeeded, or {@code null}
+     * @throws IllegalArgumentException if {@code scanner} is {@code null}
      */
-    public static IrDocField fetchField(JavadocScanner scanner,
-            Set<JavadocTokenKind> follow) {
+    public static IrDocField fetchField(JavadocScanner scanner, Set<JavadocTokenKind> follow) {
         JavadocTokenStream stream = new DefaultJavadocTokenStream(scanner);
         stream.mark();
         IrDocField elem = fetchField(stream);
@@ -443,16 +415,15 @@ public final class JavadocBlockParserUtil {
     }
 
     /**
-     * 対象のスキャナから、次のメソッドを読み出して返す。
-     * 構造に含まれるすべての空白文字からなるトークンは読み飛ばされる。
-     * 解析に成功した場合、該当要素を構成するトークンはスキャナから消費される。
-     * @param scanner 対象のスキャナ
-     * @param follow この要素に後続可能なトークン、後続しない場合は解析が失敗する (省略可)
-     * @return 成功した場合は次の要素、失敗した場合は{@code null}
-     * @throws IllegalArgumentException 省略可能でない引数に{@code null}が含まれていた場合
+     * Consumes tokens from the scanner and returns the corresponded method or constructor.
+     * This will ignore successive while space tokens, and tokens are removed from the scanner only if this operation
+     * was successfully completed.
+     * @param scanner the target scanner
+     * @param follow the acceptable token kinds after this operation was finished, or {@code null} to accept anything
+     * @return the next element if this operation was succeeded, or {@code null}
+     * @throws IllegalArgumentException if {@code scanner} is {@code null}
      */
-    public static IrDocMethod fetchMethod(JavadocScanner scanner,
-            Set<JavadocTokenKind> follow) {
+    public static IrDocMethod fetchMethod(JavadocScanner scanner, Set<JavadocTokenKind> follow) {
         JavadocTokenStream stream = new DefaultJavadocTokenStream(scanner);
         stream.mark();
         IrDocMethod elem = fetchMethod(stream);
@@ -466,16 +437,16 @@ public final class JavadocBlockParserUtil {
     }
 
     /**
-     * 対象のスキャナから、次のメソッド、フィールド、型のいずれかのうち最もトークンの消費数が多いものを読み出して返す。
-     * 構造に含まれるすべての空白文字からなるトークンは読み飛ばされる。
-     * 解析に成功した場合、該当要素を構成するトークンはスキャナから消費される。
-     * @param scanner 対象のスキャナ
-     * @param follow この要素に後続可能なトークン、後続しない場合は解析が失敗する (省略可)
-     * @return 成功した場合は次の要素、失敗した場合は{@code null}
-     * @throws IllegalArgumentException 省略可能でない引数に{@code null}が含まれていた場合
+     * Consumes tokens from the scanner and returns the corresponded link target.
+     * The link target means one of type, field, method, or constructor.
+     * This will ignore successive while space tokens, and tokens are removed from the scanner only if this operation
+     * was successfully completed.
+     * @param scanner the target scanner
+     * @param follow the acceptable token kinds after this operation was finished, or {@code null} to accept anything
+     * @return the next element if this operation was succeeded, or {@code null}
+     * @throws IllegalArgumentException if {@code scanner} is {@code null}
      */
-    public static IrDocFragment fetchLinkTarget(JavadocScanner scanner,
-            Set<JavadocTokenKind> follow) {
+    public static IrDocFragment fetchLinkTarget(JavadocScanner scanner, Set<JavadocTokenKind> follow) {
         IrDocMethod method = fetchMethod(scanner, follow);
         if (method != null) {
             return method;
@@ -545,8 +516,7 @@ public final class JavadocBlockParserUtil {
         return elem;
     }
 
-    private static IrDocMethodParameter fetchMethodParameter(
-            JavadocTokenStream stream) {
+    private static IrDocMethodParameter fetchMethodParameter(JavadocTokenStream stream) {
         stream.mark();
         IrDocType type = fetchType(stream);
         if (type == null) {
@@ -558,8 +528,7 @@ public final class JavadocBlockParserUtil {
         IrLocation delim = type.getLocation();
         boolean varargs;
         if (consumeIfMatch(stream, DOT) != null) {
-            if ((stream.lookahead(0).getKind() != DOT)
-                    || (stream.lookahead(1).getKind() != DOT)) {
+            if ((stream.lookahead(0).getKind() != DOT) || (stream.lookahead(1).getKind() != DOT)) {
                 stream.rewind();
                 return null;
             }
@@ -604,8 +573,7 @@ public final class JavadocBlockParserUtil {
         IrDocField elem = new IrDocField();
         elem.setDeclaringType(decl);
         elem.setName(name);
-        setLocation(elem, decl == null ? sharp.getLocation() : decl
-            .getLocation(), name.getLocation());
+        setLocation(elem, decl == null ? sharp.getLocation() : decl.getLocation(), name.getLocation());
 
         return elem;
     }
@@ -670,8 +638,7 @@ public final class JavadocBlockParserUtil {
                 stream.rewind();
                 break;
             } else {
-                IrDocQualifiedName qualified = new IrDocQualifiedName(name,
-                    simple);
+                IrDocQualifiedName qualified = new IrDocQualifiedName(name, simple);
                 setLocation(qualified, name.getLocation(), simple.getLocation());
                 name = qualified;
                 stream.discard();
@@ -714,8 +681,7 @@ public final class JavadocBlockParserUtil {
         return set.contains(kind);
     }
 
-    private static JavadocToken consumeIfMatch(JavadocTokenStream stream,
-            JavadocTokenKind kind) {
+    private static JavadocToken consumeIfMatch(JavadocTokenStream stream, JavadocTokenKind kind) {
         JavadocToken token = stream.peek();
         if (token.getKind() == kind) {
             return stream.nextToken();
@@ -723,16 +689,11 @@ public final class JavadocBlockParserUtil {
         return null;
     }
 
-    private static IrDocText consumeAsText(
-            JavadocScanner scanner,
-            int count,
-            boolean trimHead,
-            boolean trimTail) {
+    private static IrDocText consumeAsText(JavadocScanner scanner, int count, boolean trimHead, boolean trimTail) {
         assert scanner != null;
         assert count >= 0;
         int mark = scanner.getIndex();
-        List<JavadocToken> tokens = consumeTokens(scanner, count, trimHead,
-            trimTail);
+        List<JavadocToken> tokens = consumeTokens(scanner, count, trimHead, trimTail);
         IrDocText elem = buildText(tokens);
         if (elem == null) {
             scanner.seek(mark);
@@ -756,9 +717,9 @@ public final class JavadocBlockParserUtil {
     }
 
     /**
-     * 指定のトークン列を一連のテキストとしてまとめあげる。
-     * @param tokens トークン列
-     * @return テキスト列
+     * Concatenates the token images.
+     * @param tokens the target tokens
+     * @return the concatenated string
      */
     public static String buildString(List<? extends JavadocToken> tokens) {
         if (tokens == null) {

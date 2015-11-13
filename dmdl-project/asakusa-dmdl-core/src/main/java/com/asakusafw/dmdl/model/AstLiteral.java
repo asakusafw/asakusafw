@@ -113,7 +113,7 @@ public class AstLiteral extends AbstractAstNode implements AstAttributeValue {
     /**
      * Returns the integer value of this literal.
      * @return the integer value
-     * @throws IllegalStateException if this is not a integer literal
+     * @throws IllegalStateException if this is not an integer literal
      */
     public BigInteger toIntegerValue() {
         checkKind(LiteralKind.INTEGER);

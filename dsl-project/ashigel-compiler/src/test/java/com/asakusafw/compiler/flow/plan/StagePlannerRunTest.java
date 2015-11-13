@@ -62,7 +62,7 @@ import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory.Confluent;
 public class StagePlannerRunTest {
 
     /**
-     * テストへルパ。
+     * A test helper.
      */
     @Rule
     public final CompilerTester tester;
@@ -89,8 +89,8 @@ public class StagePlannerRunTest {
     }
 
     /**
-     * Stickyの確認。
-     * @throws Exception テストに失敗した場合
+     * Sticky annotation.
+     * @throws Exception if exception was occurred
      */
     @Test
     public void keep_sticky() throws Exception {
@@ -102,8 +102,8 @@ public class StagePlannerRunTest {
     }
 
     /**
-     * Stickyの確認。
-     * @throws Exception テストに失敗した場合
+     * Volatile annotation.
+     * @throws Exception if exception was occurred
      */
     @Test
     public void unify_volatile() throws Exception {
@@ -120,8 +120,8 @@ public class StagePlannerRunTest {
     }
 
     /**
-     * duplicateの確認。
-     * @throws Exception テストに失敗した場合
+     * duplicate flow.
+     * @throws Exception if exception was occurred
      */
     @Test
     public void duplicate() throws Exception {
@@ -138,8 +138,8 @@ public class StagePlannerRunTest {
     }
 
     /**
-     * confluentの確認。
-     * @throws Exception テストに失敗した場合
+     * confluent flow.
+     * @throws Exception if exception was occurred
      */
     @Test
     public void confluent() throws Exception {
@@ -159,8 +159,8 @@ public class StagePlannerRunTest {
     }
 
     /**
-     * branchの確認。
-     * @throws Exception テストに失敗した場合
+     * branch flow.
+     * @throws Exception if exception was occurred
      */
     @Test
     public void branch() throws Exception {
@@ -244,8 +244,8 @@ public class StagePlannerRunTest {
     }
 
     /**
-     * combineの確認。
-     * @throws Exception テストに失敗した場合
+     * combine.
+     * @throws Exception if exception was occurred
      */
     @Test
     public void combine() throws Exception {

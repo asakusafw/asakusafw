@@ -17,7 +17,7 @@ package com.asakusafw.utils.java.model.syntax;
 
 
 /**
- * クラスリテラルを表現するインターフェース。
+ * An interface which represents class literals.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:15.8.2] Class Literals} </li>
@@ -27,12 +27,9 @@ package com.asakusafw.utils.java.model.syntax;
 public interface ClassLiteral
         extends Expression {
 
-    // properties
-
     /**
-     * 対象の型を返す。
-     * @return
-     *     対象の型
+     * Returns the target type.
+     * @return the target type
      */
     Type getType();
 }

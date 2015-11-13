@@ -264,7 +264,7 @@ public class DecimalValueDriver implements ParquetValueDriver {
                 binary = Binary.fromByteArray(newBytes);
             } else {
                 throw new IllegalStateException(MessageFormat.format(
-                        "failed to write decimal: {0} (precision={1} is too small)",
+                        Messages.getString("DecimalValueDriver.errorPrecisionTooSmall"), //$NON-NLS-1$
                         original,
                         precision));
             }

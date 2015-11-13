@@ -36,7 +36,7 @@ import com.asakusafw.vocabulary.flow.testing.MockOut;
 public class BranchOperatorProcessorTest extends OperatorCompilerTestRoot {
 
     /**
-     * 単純な例。
+     * simple case.
      */
     @Test
     public void simple() {
@@ -61,7 +61,7 @@ public class BranchOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * パラメータ化。
+     * parameterized.
      */
     @Test
     public void parameterized() {
@@ -86,7 +86,7 @@ public class BranchOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * ジェネリックメソッド。
+     * generic method.
      */
     @Test
     public void generics() {
@@ -143,7 +143,7 @@ public class BranchOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * 空の列挙。
+     * w/ empty enum.
      */
     @Test
     public void emptyEnum() {
@@ -153,7 +153,7 @@ public class BranchOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * 非列挙。
+     * w/ not enum.
      */
     @Test
     public void notEnum() {
@@ -172,7 +172,7 @@ public class BranchOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * 非モデル。
+     * w/ not data model type.
      */
     @Test
     public void notModel() {
@@ -182,7 +182,7 @@ public class BranchOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * 抽象メソッド。
+     * is an abstract class.
      */
     @Test
     public void _abstract() {
@@ -192,7 +192,7 @@ public class BranchOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * ユーザー定義パラメーターでない。
+     * invalid user parameters.
      */
     @Test
     public void notUserParameter() {

@@ -42,20 +42,20 @@ import com.asakusafw.vocabulary.batch.JobFlowWorkDescription;
 public class JobFlowWorkDescriptionProcessorTest {
 
     /**
-     * テスト環境。
+     * The environment provider.
      */
     @Rule
     public BatchCompilerEnvironmentProvider prov = new BatchCompilerEnvironmentProvider();
 
     /**
-     * テストヘルパー。
+     * The test helper.
      */
     @Rule
     public CompilerTester tester = new CompilerTester();
 
     /**
-     * 単純なテスト。
-     * @throws Exception 例外が発生した場合
+     * simple case.
+     * @throws Exception if exception was occurred
      */
     @Test
     public void simple() throws Exception {

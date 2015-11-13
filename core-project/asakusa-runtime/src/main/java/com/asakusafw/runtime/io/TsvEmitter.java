@@ -44,32 +44,8 @@ import com.asakusafw.runtime.value.StringOption;
 import com.asakusafw.runtime.value.ValueOption;
 
 /**
- * {@link ValueOption}の内容をTSV形式で出力する。
- * <p>
- * 次のように利用する。
- * </p>
-<pre><code>
-Writer writer = ...;
-Iterator&lt;SomeModel&gt; models = ...;
-try {
-    TsvEmitter emitter = new TsvEmitter(writer);
-    while (models.hasNext();) {
-        SomeModel model = models.next();
-        emitter.emit(model.getHogeOption());
-        emitter.emit(model.getFooOption());
-        emitter.emit(model.getBarOption());
-        emitter.endRecord();
-    }
-    emitter.close();
-}
-finally {
-    writer.close();
-}
-</code></pre>
- * <p>
- * 特に指定がない限り、このクラスのメソッドの引数に{@code null}を指定した場合には
- * {@link NullPointerException}がスローされる。
- * </p>
+ * Writes {@link ValueOption} instances as TSV format text.
+ * Each method in this class may raise {@link NullPointerException} if parameters were {@code null}.
  */
 public class TsvEmitter implements RecordEmitter {
 
@@ -89,14 +65,13 @@ public class TsvEmitter implements RecordEmitter {
 
     private final CharBuffer decodeBuffer;
 
-    // MEMO: 全体的に throws IOException は残しておく
-    // これは拡張時に互換性を保つため。
+    // MEMO: keep "throws IOException" for forward compatibility
 
     /**
-     * インスタンスを生成する。
-     * @param writer 出力先のライター
-     * @throws IOException 初期化に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param writer the target writer
+     * @throws IOException if failed to initialize this emitter
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public TsvEmitter(Writer writer) throws IOException {
         if (writer == null) {

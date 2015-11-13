@@ -29,17 +29,17 @@ import com.asakusafw.vocabulary.batch.Batch;
 import com.asakusafw.vocabulary.batch.BatchDescription;
 
 /**
- * {@link Batch}が付与されている要素について、フローの構造を解析する。
+ * Analyzes batch classes (which annotated with {@link Batch}).
  */
 public final class BatchDriver {
 
     static final Logger LOG = LoggerFactory.getLogger(BatchDriver.class);
 
-    private Class<? extends BatchDescription> description;
+    private final Class<? extends BatchDescription> description;
 
     private BatchClass batchClass;
 
-    private List<String> diagnostics;
+    private final List<String> diagnostics;
 
     private BatchDriver(Class<? extends BatchDescription> description) {
         Precondition.checkMustNotBeNull(description, "description"); //$NON-NLS-1$
@@ -48,10 +48,10 @@ public final class BatchDriver {
     }
 
     /**
-     * インスタンスを生成する。
-     * @param description 対象のバッチクラス
-     * @return 生成したインスタンス
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param description the target batch class
+     * @return the created instance
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static BatchDriver analyze(Class<? extends BatchDescription> description) {
         Precondition.checkMustNotBeNull(description, "description"); //$NON-NLS-1$
@@ -61,24 +61,24 @@ public final class BatchDriver {
     }
 
     /**
-     * 解析結果のバッチクラス情報を返す。
-     * @return 解析結果のバッチクラス情報、解析に失敗した場合は{@code null}
+     * Returns information of the target batch class.
+     * @return information of the target batch class, or {@code null} if the target batch class is not valid
      */
     public BatchClass getBatchClass() {
         return batchClass;
     }
 
     /**
-     * 解析対象のバッチクラスを返す。
-     * @return 解析対象のバッチクラス
+     * Returns the target batch class.
+     * @return the target batch class
      */
     public Class<? extends BatchDescription> getDescription() {
         return this.description;
     }
 
     /**
-     * 解析結果の診断メッセージを返す。
-     * @return 解析結果の診断メッセージ
+     * Returns the diagnostics messages.
+     * @return the diagnostics messages
      */
     public List<String> getDiagnostics() {
         return diagnostics;
@@ -95,17 +95,17 @@ public final class BatchDriver {
 
     private Batch findConfig() {
         if (description.getEnclosingClass() != null) {
-            error(null, "バッチクラスはトップレベルクラスとして宣言する必要があります");
+            error(null, Messages.getString("BatchDriver.errorEnclosingClass")); //$NON-NLS-1$
         }
         if (Modifier.isPublic(description.getModifiers()) == false) {
-            error(null, "バッチクラスはpublicで宣言する必要があります");
+            error(null, Messages.getString("BatchDriver.errorNotPublic")); //$NON-NLS-1$
         }
         if (Modifier.isAbstract(description.getModifiers())) {
-            error(null, "バッチクラスはabstractで宣言できません");
+            error(null, Messages.getString("BatchDriver.errorAbstract")); //$NON-NLS-1$
         }
         Batch conf = description.getAnnotation(Batch.class);
         if (conf == null) {
-            error(null, "バッチクラスには@Batch注釈の付与が必要です");
+            error(null, Messages.getString("BatchDriver.errorMissingAnnotation")); //$NON-NLS-1$
         }
         return conf;
     }
@@ -117,7 +117,7 @@ public final class BatchDriver {
         } catch (Exception e) {
             error(
                     e,
-                    "バッチクラス{0}には引数を取らないコンストラクター(またはデフォルトコンストラクター)が必要です ({1})",
+                    Messages.getString("BatchDriver.errorMissingDefaultConstructor"), //$NON-NLS-1$
                     description.getName(),
                     e.toString());
             return null;
@@ -126,13 +126,15 @@ public final class BatchDriver {
         try {
             instance = ctor.newInstance();
         } catch (Exception e) {
-            error(e, "{0}のインスタンス生成に失敗しました ({1})", description.getName(), e.toString());
+            error(e, Messages.getString("BatchDriver.errorFailedToInstantiate"), //$NON-NLS-1$
+                    description.getName(), e.toString());
             return null;
         }
         try {
             instance.start();
         } catch (Exception e) {
-            error(e, "{0}の解析に失敗しました ({1})", description.getName(), e.toString());
+            error(e, Messages.getString("BatchDriver.errorFailedToAnalyze"), //$NON-NLS-1$
+                    description.getName(), e.toString());
             return null;
         }
         return instance;
@@ -162,8 +164,8 @@ public final class BatchDriver {
     }
 
     /**
-     * この解析結果にエラーが含まれている場合のみ{@code true}を返す。
-     * @return 解析結果にエラーが含まれている場合のみ{@code true}
+     * Returns whether this analysis result contains any erroneous information or not.
+     * @return {@code true} if this contains any erroneous information, otherwise {@code false}
      */
     public boolean hasError() {
         return getDiagnostics().isEmpty() == false;

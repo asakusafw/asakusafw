@@ -18,23 +18,19 @@ package com.asakusafw.utils.java.model.syntax;
 import java.util.List;
 
 /**
- * 通常の注釈を表現するインターフェース。
+ * An interface which represents regular annotations which can have any annotation elements.
  * <ul>
  *   <li> Specified In: <ul>
- *     <li> {@code [JLS3:9.7] Annotations (<i>NormalAnnotation</i>)} </li>
+ *     <li> {@code [JLS3:9.7] Annotations (NormalAnnotation)} </li>
  *   </ul> </li>
  * </ul>
  */
 public interface NormalAnnotation
         extends Annotation {
 
-    // properties
-
     /**
-     * 注釈要素の一覧を返す。
-     * <p> 注釈要素が一つも指定されない場合は空が返される。 </p>
-     * @return
-     *     注釈要素の一覧
+     * Returns the annotation elements.
+     * @return the annotation elements
      */
     List<? extends AnnotationElement> getElements();
 }

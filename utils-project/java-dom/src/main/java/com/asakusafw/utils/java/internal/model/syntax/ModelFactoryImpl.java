@@ -26,7 +26,7 @@ import com.asakusafw.utils.java.model.syntax.*;
 
 //CHECKSTYLE:OFF
 /**
- * {@link ModelFactory}の実装。
+ * An implementation of {@link ModelFactory}.
  */
 @Generated("com.asakusafw.utils.java.model.syntax.ModelFactory")
 public class ModelFactoryImpl implements ModelFactory {
@@ -427,20 +427,6 @@ public class ModelFactoryImpl implements ModelFactory {
         return result;
     }
 
-    /**
-     * 新しい{@link CatchClause}を生成して返す。
-     * @param parameter
-     *     例外仮引数
-     * @param body
-     *     {@code catch}ブロック
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code region}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code parameter}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code body}に{@code null}が指定された場合
-     */
     @Override
     public CatchClause newCatchClause(
             FormalParameterDeclaration parameter,
@@ -462,16 +448,6 @@ public class ModelFactoryImpl implements ModelFactory {
         return result;
     }
 
-    /**
-     * 新しい{@link ClassBody}を生成して返す。
-     * @param bodyDeclarations
-     *     メンバの一覧
-     * @return 生成した要素
-     * @throws IllegalArgumentException
-     *     {@code region}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code bodyDeclarations}に{@code null}が指定された場合
-     */
     @Override
     public ClassBody newClassBody(
             List<? extends TypeBodyDeclaration> bodyDeclarations) {

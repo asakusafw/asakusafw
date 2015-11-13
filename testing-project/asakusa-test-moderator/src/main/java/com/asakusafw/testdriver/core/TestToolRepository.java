@@ -70,7 +70,7 @@ public class TestToolRepository extends AbstractTestDataToolProvider {
         DataModelDefinition<T> def = dataModelAdapter.get(dataModelClass);
         if (def == null) {
             throw new IOException(MessageFormat.format(
-                    "Failed to inspect a data model class (provider not found): {0}",
+                    Messages.getString("TestToolRepository.errorMissingDataModelDefinition"), //$NON-NLS-1$
                     dataModelClass.getName()));
         }
         return def;
@@ -117,7 +117,7 @@ public class TestToolRepository extends AbstractTestDataToolProvider {
                 DataModelSource source = dataModelSourceProvider.open(definition, uri, context);
                 if (source == null) {
                     throw new IOException(MessageFormat.format(
-                            "Failed to open a data model sink (provider not found): {0}",
+                            Messages.getString("TestToolRepository.errorMissingDataModelSource"), //$NON-NLS-1$
                             uri));
                 }
                 return source;
@@ -144,7 +144,7 @@ public class TestToolRepository extends AbstractTestDataToolProvider {
                 DataModelSink sink = dataModelSinkProvider.create(definition, uri, context);
                 if (sink == null) {
                     throw new IOException(MessageFormat.format(
-                            "Failed to create a data model sink (provider not found): {0}",
+                            Messages.getString("TestToolRepository.errorMissingDataModelSink"), //$NON-NLS-1$
                             uri));
                 }
                 return sink;
@@ -171,7 +171,7 @@ public class TestToolRepository extends AbstractTestDataToolProvider {
                 DifferenceSink sink = differenceSinkProvider.create(definition, uri, context);
                 if (sink == null) {
                     throw new IOException(MessageFormat.format(
-                            "Failed to create a difference sink (provider not found): {0}",
+                            Messages.getString("TestToolRepository.errorMissingDifferenceSink"), //$NON-NLS-1$
                             uri));
                 }
                 return sink;
@@ -197,7 +197,7 @@ public class TestToolRepository extends AbstractTestDataToolProvider {
                 VerifyRule verifyRule = verifyRuleProvider.get(definition, context, ruleUri);
                 if (verifyRule == null) {
                     throw new IOException(MessageFormat.format(
-                            "Failed to create a verify rule (provider not found): {0}",
+                            Messages.getString("TestToolRepository.errorMissingVerifyRule"), //$NON-NLS-1$
                             ruleUri));
                 }
                 if (extraRules.isEmpty() == false) {

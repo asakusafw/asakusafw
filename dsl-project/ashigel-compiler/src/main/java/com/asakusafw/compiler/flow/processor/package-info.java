@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /**
- * フローDSLのそれぞれの演算子を解釈するプロセッサ。
+ * Implementations of flow element processors for built-in operators.
  */
 package com.asakusafw.compiler.flow.processor;
 

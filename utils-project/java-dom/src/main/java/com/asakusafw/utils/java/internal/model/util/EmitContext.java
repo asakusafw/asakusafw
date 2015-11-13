@@ -17,155 +17,156 @@ package com.asakusafw.utils.java.internal.model.util;
 
 import java.util.List;
 
+import com.asakusafw.utils.java.model.syntax.Model;
+
 /**
- * 出力に関するコンテキストオブジェクト。
+ * An interface of emitting {@link Model} objects.
  */
 public interface EmitContext {
 
     /**
-     * このコンテキストに登録されたすべてのコメントを出力する。
+     * Flushes the previously registered comments.
+     * @see #comment(int, String)
      */
     void flushComments();
 
     /**
-     * このコンテキストに登録されたコメントのうち、指定の位置よりも手前にある(排他的)ものを出力する。
-     * @param location 対象の位置
+     * Flushes the previously registered comments before the specified character position.
+     * @param location the character position (exclusive)
+     * @see #comment(int, String)
      */
     void flushComments(int location);
 
     /**
-     * キーワードを出力する。
-     * @param keyword 出力する文字列
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Emits a keyword.
+     * @param keyword the keyword string
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     void keyword(String keyword);
 
     /**
-     * シンボルを出力する。
-     * @param symbol 出力する文字列
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Emits a symbol.
+     * @param symbol the symbol string
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     void symbol(String symbol);
 
     /**
-     * 通常の文字列を出力する。
-     * @param immediate 出力する文字列
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Emits a normal text.
+     * @param immediate the string
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     void immediate(String immediate);
 
     /**
-     * 演算子を出力する。
-     * @param symbol 演算子
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Emits an operator symbol.
+     * @param symbol the operator symbol
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     void operator(String symbol);
 
     /**
-     * 区切り子を出力する。
-     * @param symbol 区切り子
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Emits a separator symbol.
+     * @param symbol the separator symbol
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     void separator(String symbol);
 
     /**
-     * 強制的にパディングを挿入する。
+     * Emits a padding.
      */
     void padding();
 
     /**
-     * コメントを登録する。
-     * <p>
-     * 登録されたコメントは{@link #flushComments(int)}等を呼び出した際に
-     * 必要に応じて出力される。
-     * </p>
-     * @param location コメントの位置
-     * @param content コメントの内容
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Registers a comment.
+     * The comment will be emitted by {@link #flushComments(int)}.
+     * @param location the character position of the comment
+     * @param content contents of the comment
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     void comment(int location, String content);
 
     /**
-     * クラスブロックへの出入りを出力する。
-     * @param direction 出入りの方向
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Emits a begin or end of a class block.
+     * @param direction indicates either begin or end
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     void classBlock(EmitDirection direction);
 
     /**
-     * 配列初期化子ブロックへの出入りを出力する。
-     * @param direction 出入りの方向
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Emits a begin or end of an array initializer block.
+     * @param direction indicates either begin or end
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     void arrayInitializerBlock(EmitDirection direction);
 
     /**
-     * 文としてのブロックへの出入りを出力する。
-     * @param direction 出入りの方向
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Emits a begin or end of a statement block.
+     * @param direction indicates either begin or end
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     void statementBlock(EmitDirection direction);
 
     /**
-     * {@code switch}ラベルにぶら下がる文の列への出入りを出力する。
-     * @param direction 出入りの方向
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Emits a begin or end of a {@code switch} label block.
+     * @param direction indicates either begin or end
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     void switchLabel(EmitDirection direction);
 
     /**
-     * 文への出入りを出力する。
-     * @param direction 出入りの方向
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Emits a begin or end of a statement.
+     * @param direction indicates either begin or end
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     void statement(EmitDirection direction);
 
     /**
-     * 型やメンバ等の宣言への出入りを出力する。
-     * @param direction 出入りの方向
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Emits a begin or end of a type or member declaration.
+     * @param direction indicates either begin or end
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     void declaration(EmitDirection direction);
 
     /**
-     * クラスブロックへの出入りを出力する。
-     * @param direction 出入りの方向
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Emits a begin or end of a documentation comment.
+     * @param direction indicates either begin or end
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     void docComment(EmitDirection direction);
 
     /**
-     * クラスブロックへの出入りを出力する。
-     * @param direction 出入りの方向
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Emits a begin or end of a block in documentation comments.
+     * @param direction indicates either begin or end
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     void docBlock(EmitDirection direction);
 
     /**
-     * クラスブロックへの出入りを出力する。
-     * @param direction 出入りの方向
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Emits a begin or end of an inline block in documentation comments.
+     * @param direction indicates either begin or end
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     void docInlineBlock(EmitDirection direction);
 
     /**
-     * ブロックコメントを追加する。
-     * @param contents コメントの内容
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Adds a block comment.
+     * @param contents contents of the comment
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     void putBlockComment(List<String> contents);
 
     /**
-     * 行コメントを追加する。
-     * @param content コメントの内容
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Puts a line comment.
+     * @param content contents of the comment
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     void putLineComment(String content);
 
     /**
-     * 行内コメントを追加する。
-     * @param content コメントの内容
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Puts an inline comment.
+     * @param content contents of the comment
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     void putInlineComment(String content);
 }

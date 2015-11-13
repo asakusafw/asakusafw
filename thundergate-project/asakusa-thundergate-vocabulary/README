@@ -1,7 +1,0 @@
-Asakusa DSLの外部入出力にThunderGateを利用するためのボキャブラリ。
-
-Flow DSLでジョブフローを記述する際に、このプロジェクトが提供する入出力記述を
-利用することで、ThunderGateと連携したバッチを記述できるようになる。
-
-このボキャブラリを利用する場合、Batch DSLのコンパイル時に
-「asakusa-thundergate-plugin」をクラスパスに指定する必要がある。

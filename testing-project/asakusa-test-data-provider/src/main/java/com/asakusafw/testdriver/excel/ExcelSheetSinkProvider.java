@@ -55,7 +55,7 @@ public class ExcelSheetSinkProvider implements DataModelSinkProvider {
             return null;
         }
         LOG.info(MessageFormat.format(
-                "Excelシートをデータシンクに利用します: {0}",
+                Messages.getString("ExcelSheetSinkProvider.infoCreate"), //$NON-NLS-1$
                 sink));
         return new ExcelSheetSinkFactory(file).createSink(definition, context);
     }

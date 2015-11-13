@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 /**
- * 実行時に利用する入出力に関するクラス群。
- * <p>
- * アプリケーション作成者はこのパッケージ内のクラスやインターフェースを直接利用しない。
- * </p>
+ * Classes for data model input/output.
+ * Application developer should not use APIs in this package directly.
  */
 package com.asakusafw.runtime.io;

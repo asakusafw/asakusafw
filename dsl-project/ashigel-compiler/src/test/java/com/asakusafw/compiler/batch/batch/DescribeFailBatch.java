@@ -19,7 +19,7 @@ import com.asakusafw.vocabulary.batch.Batch;
 import com.asakusafw.vocabulary.batch.BatchDescription;
 
 /**
- * {@link #describe()}に失敗するバッチ。
+ * A batch class which {@link #describe()} method will raise an exception.
  */
 @Batch(name = "testing")
 public class DescribeFailBatch extends BatchDescription {

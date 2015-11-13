@@ -23,13 +23,10 @@ import com.asakusafw.utils.java.model.syntax.StatementExpressionList;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link StatementExpressionList}の実装。
+ * An implementation of {@link StatementExpressionList}.
  */
 public final class StatementExpressionListImpl extends ModelRoot implements StatementExpressionList {
 
-    /**
-     * 式の一覧。
-     */
     private List<? extends Expression> expressions;
 
     @Override
@@ -38,13 +35,10 @@ public final class StatementExpressionListImpl extends ModelRoot implements Stat
     }
 
     /**
-     * 式の一覧を設定する。
-     * @param expressions
-     *     式の一覧
-     * @throws IllegalArgumentException
-     *     {@code expressions}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code expressions}に空が指定された場合
+     * Sets the expression list.
+     * @param expressions the expression list
+     * @throws IllegalArgumentException if {@code expressions} was {@code null}
+     * @throws IllegalArgumentException if {@code expressions} was empty
      */
     public void setExpressions(List<? extends Expression> expressions) {
         Util.notNull(expressions, "expressions"); //$NON-NLS-1$
@@ -54,7 +48,7 @@ public final class StatementExpressionListImpl extends ModelRoot implements Stat
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#STATEMENT_EXPRESSION_LIST}を返す。
+     * Returns {@link ModelKind#STATEMENT_EXPRESSION_LIST} which represents this element kind.
      * @return {@link ModelKind#STATEMENT_EXPRESSION_LIST}
      */
     @Override
@@ -63,8 +57,7 @@ public final class StatementExpressionListImpl extends ModelRoot implements Stat
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitStatementExpressionList(this, context);
     }

@@ -32,19 +32,19 @@ final class FsDescriptionUtil {
             String path) {
         if (path == null) {
             throw new IllegalStateException(MessageFormat.format(
-                    "{1} must not be null: {0}",
+                    Messages.getString("FsDescriptionUtil.errorNullProperty"), //$NON-NLS-1$
                     descriptionClass,
                     "getPath()")); //$NON-NLS-1$
         }
         if (path.isEmpty()) {
             throw new IllegalStateException(MessageFormat.format(
-                    "{1} must not be empty string: {0}",
+                    Messages.getString("FsDescriptionUtil.errorEmptyStringProperty"), //$NON-NLS-1$
                     descriptionClass,
                     "getPath()")); //$NON-NLS-1$
         }
         if (supportClass == null) {
             throw new IllegalStateException(MessageFormat.format(
-                    "{1} must not be null: {0}",
+                    Messages.getString("FsDescriptionUtil.errorNullProperty"), //$NON-NLS-1$
                     descriptionClass,
                     "getStreamSupport()")); //$NON-NLS-1$
         }
@@ -53,13 +53,13 @@ final class FsDescriptionUtil {
             support = supportClass.newInstance();
         } catch (Exception e) {
             throw new IllegalStateException(MessageFormat.format(
-                    "Failed to instantiate {1}: {0}",
+                    Messages.getString("FsDescriptionUtil.errorFailedToInstantiate"), //$NON-NLS-1$
                     descriptionClass,
                     supportClass.getName()), e);
         }
         if (support.getSupportedType().isAssignableFrom(modelType) == false) {
             throw new IllegalStateException(MessageFormat.format(
-                    "{1} must support {2}: {0}",
+                    Messages.getString("FsDescriptionUtil.errorIncompatibleDataType"), //$NON-NLS-1$
                     descriptionClass,
                     supportClass.getName(),
                     modelType.getName()));

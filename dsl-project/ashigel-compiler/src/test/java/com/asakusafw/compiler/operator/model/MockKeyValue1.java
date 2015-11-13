@@ -21,19 +21,16 @@ import java.io.IOException;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
 
-import com.asakusafw.compiler.operator.io.MockKeyValue1Input;
-import com.asakusafw.compiler.operator.io.MockKeyValue1Output;
 import com.asakusafw.runtime.model.DataModel;
 import com.asakusafw.runtime.model.DataModelKind;
-import com.asakusafw.runtime.model.ModelInputLocation;
-import com.asakusafw.runtime.model.ModelOutputLocation;
+import com.asakusafw.runtime.model.PropertyOrder;
 import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.runtime.value.StringOption;
 /**
- * mock_key_value1を表すデータモデルクラス。
+ * A data model class that represents mock_key_value1.
  */
-@DataModelKind("DMDL")@ModelInputLocation(MockKeyValue1Input.class)@ModelOutputLocation(MockKeyValue1Output.class) 
-        public class MockKeyValue1 implements DataModel<MockKeyValue1>, MockKey, MockProjection, Writable {
+@DataModelKind("DMDL")@PropertyOrder({"key", "value"}) public class MockKeyValue1 implements DataModel<MockKeyValue1>,
+        MockKey, MockProjection, Writable {
     private final StringOption key = new StringOption();
     private final IntOption value = new IntOption();
     @Override@SuppressWarnings("deprecation") public void reset() {
@@ -45,24 +42,24 @@ import com.asakusafw.runtime.value.StringOption;
         this.value.copyFrom(other.value);
     }
     /**
-     * keyを返す。
+     * Returns key.
      * @return key
-     * @throws NullPointerException keyの値が<code>null</code>である場合
+     * @throws NullPointerException if key is <code>null</code>
      */
     @Override
     public Text getKey() {
         return this.key.get();
     }
     /**
-     * keyを設定する。
-     * @param value0 設定する値
+     * Sets key.
+     * @param value0 the value
      */
     @Override
     @SuppressWarnings("deprecation") public void setKey(Text value0) {
         this.key.modify(value0);
     }
     /**
-     * <code>null</code>を許すkeyを返す。
+     * Returns key which may be represent <code>null</code>.
      * @return key
      */
     @Override
@@ -70,32 +67,32 @@ import com.asakusafw.runtime.value.StringOption;
         return this.key;
     }
     /**
-     * keyを設定する。
-     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     * Sets key.
+     * @param option the value, or <code>null</code> to set this property to <code>null</code>
      */
     @Override
     @SuppressWarnings("deprecation") public void setKeyOption(StringOption option) {
         this.key.copyFrom(option);
     }
     /**
-     * valueを返す。
+     * Returns value.
      * @return value
-     * @throws NullPointerException valueの値が<code>null</code>である場合
+     * @throws NullPointerException if value is <code>null</code>
      */
     @Override
     public int getValue() {
         return this.value.get();
     }
     /**
-     * valueを設定する。
-     * @param value0 設定する値
+     * Sets value.
+     * @param value0 the value
      */
     @Override
     @SuppressWarnings("deprecation") public void setValue(int value0) {
         this.value.modify(value0);
     }
     /**
-     * <code>null</code>を許すvalueを返す。
+     * Returns value which may be represent <code>null</code>.
      * @return value
      */
     @Override
@@ -103,8 +100,8 @@ import com.asakusafw.runtime.value.StringOption;
         return this.value;
     }
     /**
-     * valueを設定する。
-     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     * Sets value.
+     * @param option the value, or <code>null</code> to set this property to <code>null</code>
      */
     @Override
     @SuppressWarnings("deprecation") public void setValueOption(IntOption option) {
@@ -135,30 +132,30 @@ import com.asakusafw.runtime.value.StringOption;
         if(obj == null) {
             return false;
         }
-        if(this.getClass()!= obj.getClass()) {
+        if(this.getClass() != obj.getClass()) {
             return false;
         }
         MockKeyValue1 other = (MockKeyValue1) obj;
-        if(this.key.equals(other.key)== false) {
+        if(this.key.equals(other.key) == false) {
             return false;
         }
-        if(this.value.equals(other.value)== false) {
+        if(this.value.equals(other.value) == false) {
             return false;
         }
         return true;
     }
     /**
-     * keyを返す。
+     * Returns key.
      * @return key
-     * @throws NullPointerException keyの値が<code>null</code>である場合
+     * @throws NullPointerException if key is <code>null</code>
      */
     @Override
     public String getKeyAsString() {
         return this.key.getAsString();
     }
     /**
-     * keyを設定する。
-     * @param key0 設定する値
+     * Returns key.
+     * @param key0 the value
      */
     @Override
     @SuppressWarnings("deprecation") public void setKeyAsString(String key0) {

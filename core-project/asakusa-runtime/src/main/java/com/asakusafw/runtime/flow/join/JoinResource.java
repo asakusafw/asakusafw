@@ -32,9 +32,9 @@ import com.asakusafw.runtime.stage.resource.StageResourceDriver;
 import com.asakusafw.runtime.stage.temporary.TemporaryStorage;
 
 /**
- * 結合を行うためのリソース。
- * @param <L> 結合表を構成する結合先の型、通常はマスタ
- * @param <R> 結合する型、通常はトランザクション
+ * An abstract implementation of resource for providing lookup table.
+ * @param <L> the left value type (provides lookup table for this type)
+ * @param <R> the right value type (looking up using this type)
  */
 public abstract class JoinResource<L extends Writable, R> implements FlowResource {
 
@@ -120,50 +120,50 @@ public abstract class JoinResource<L extends Writable, R> implements FlowResourc
     }
 
     /**
-     * 検索表を構築するためのオブジェクトを返す。
-     * @return 検索表を構築するためのオブジェクト
+     * Returns a builder for building a new lookup table.
+     * @return the created builder
      */
     protected LookUpTable.Builder<L> createLookUpTable() {
         return new VolatileLookUpTable.Builder<L>();
     }
 
     /**
-     * キャッシュのファイル名を返す。
-     * @return キャッシュのファイル名
+     * Returns the name of Hadoop distributed cache which provides contents of the lookup table.
+     * @return the name of Hadoop distributed cache
      */
     protected abstract String getCacheName();
 
     /**
-     * 結合先の値オブジェクトを返す。
-     * @return 結合先の値オブジェクト
+     * Returns a new left value object.
+     * @return the created object
      */
     protected abstract L createValueObject();
 
     /**
-     * 結合先の値から検索キーを作成する。
-     * @param value 結合先の値
-     * @param buffer 検索キーバッファ
-     * @return 検索キー
-     * @throws IOException キーの生成に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns a lookup key from a left value.
+     * @param value the left value
+     * @param buffer the key buffer
+     * @return the key object
+     * @throws IOException if error occurred while building the lookup key
+     * @throws IllegalArgumentException if some parameters are {@code null}
      */
     protected abstract LookUpKey buildLeftKey(L value, LookUpKey buffer) throws IOException;
 
     /**
-     * 結合元の値から検索キーを作成する。
-     * @param value 結合元の値
-     * @param buffer 検索キーバッファ
-     * @return 検索キー
-     * @throws IOException キーの生成に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns a lookup key from a right value.
+     * @param value the right value
+     * @param buffer the key buffer
+     * @return the key object
+     * @throws IOException if error occurred while building the lookup key
+     * @throws IllegalArgumentException if some parameters are {@code null}
      */
     protected abstract LookUpKey buildRightKey(R value, LookUpKey buffer) throws IOException;
 
     /**
-     * 指定の値に対する結合先を探す。
-     * @param value 結合する値
-     * @return 結合先
-     * @throws LookUpException 結合に失敗した場合
+     * Looks up left values from the related right value.
+     * @param value the right value
+     * @return the related left values
+     * @throws LookUpException if error was occurred while looking up the values
      */
     public List<L> find(R value) {
         try {

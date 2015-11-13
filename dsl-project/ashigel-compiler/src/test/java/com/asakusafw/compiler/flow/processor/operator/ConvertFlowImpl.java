@@ -16,13 +16,11 @@
 package com.asakusafw.compiler.flow.processor.operator;
 import javax.annotation.Generated;
 /**
- * {@link ConvertFlow}に関する演算子実装クラス。
+ * An operator implementation class for{@link ConvertFlow}.
  */
-@Generated("com.asakusafw.compiler.operator.OperatorImplementationClassGenerator") public class
-        ConvertFlowImpl extends ConvertFlow {
-
+@Generated("OperatorImplementationClassGenerator:0.1.0") public class ConvertFlowImpl extends ConvertFlow {
     /**
-     * インスタンスを生成する。
+     * Creates a new instance.
      */
     public ConvertFlowImpl() {
         return;

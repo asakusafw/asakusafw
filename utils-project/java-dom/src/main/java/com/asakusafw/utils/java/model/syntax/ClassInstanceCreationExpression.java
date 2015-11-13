@@ -18,7 +18,7 @@ package com.asakusafw.utils.java.model.syntax;
 import java.util.List;
 
 /**
- * クラスインスタンス生成式を表現するインターフェース。
+ * An interface which represents class instance creation expression.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:15.9] Class Instance Creation Expressions} </li>
@@ -28,46 +28,33 @@ import java.util.List;
 public interface ClassInstanceCreationExpression
         extends Expression, Invocation {
 
-    // properties
-
     /**
-     * 限定式を返す。
-     * <p> 限定式が指定されない場合は{@code null}が返される。 </p>
-     * @return
-     *     限定式、
-     *     ただし限定式が指定されない場合は{@code null}
+     * Returns the qualifier expression.
+     * @return the qualifier expression, or {@code null} if it is not specified
      */
     Expression getQualifier();
 
     /**
-     * 型引数の一覧を返す。
-     * <p> 型引数が一つも指定されない場合は空が返される。 </p>
-     * @return
-     *     型引数の一覧
+     * Returns the type arguments.
+     * @return the type arguments
      */
     List<? extends Type> getTypeArguments();
 
     /**
-     * インスタンスを生成する型を返す。
-     * @return
-     *     インスタンスを生成する型
+     * Returns the target type.
+     * @return the target type
      */
     Type getType();
 
     /**
-     * 実引数の一覧を返す。
-     * <p> 実引数が一つも指定されない場合は空が返される。 </p>
-     * @return
-     *     実引数の一覧
+     * Returns the actual arguments.
+     * @return the actual arguments
      */
     List<? extends Expression> getArguments();
 
     /**
-     * 匿名クラス本体を返す。
-     * <p> 匿名クラス本体が指定されない場合は{@code null}が返される。 </p>
-     * @return
-     *     匿名クラス本体、
-     *     ただし匿名クラス本体が指定されない場合は{@code null}
+     * Returns the anonymous class body.
+     * @return the anonymous class body, or {@code null} if the target class is not anonymous
      */
     ClassBody getBody();
 }

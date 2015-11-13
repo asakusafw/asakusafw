@@ -16,17 +16,17 @@
 package com.asakusafw.utils.java.internal.parser.javadoc.ir;
 
 /**
- * Javadocのトークン文字列。
+ * Represents a kind of {@link JavadocToken}.
  */
 public enum JavadocTokenKind {
 
     /**
-     * 空白文字の列。改行文字は含まれない。
+     * A sequence of white-space characters (except line-break characters).
      */
     WHITE_SPACES,
 
     /**
-     * 改行文字。
+     * A line-break character.
      */
     LINE_BREAK,
 
@@ -36,7 +36,7 @@ public enum JavadocTokenKind {
     ASTERISK,
 
     /**
-     * 単語構成文字列。
+     * An identifier.
      */
     IDENTIFIER,
 
@@ -111,12 +111,12 @@ public enum JavadocTokenKind {
     QUESTION,
 
     /**
-     * それ以外のテキスト。
+     * Regular text.
      */
     TEXT,
 
     /**
-     * 終端を表す0文字幅のトークン。
+     * End-Of-File (pseudo-token kind).
      */
     EOF,
 }

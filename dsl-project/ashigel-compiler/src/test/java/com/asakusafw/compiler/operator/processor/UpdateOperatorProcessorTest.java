@@ -31,7 +31,7 @@ import com.asakusafw.vocabulary.flow.testing.MockOut;
 public class UpdateOperatorProcessorTest extends OperatorCompilerTestRoot {
 
     /**
-     * 単純な例。
+     * simple case.
      */
     @Test
     public void simple() {
@@ -71,7 +71,7 @@ public class UpdateOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * 抽象を返す。
+     * abstract method.
      */
     @Test
     public void isAbstract() {
@@ -80,7 +80,7 @@ public class UpdateOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * 値を返す。
+     * not void type method.
      */
     @Test
     public void returns() {
@@ -89,7 +89,7 @@ public class UpdateOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * パラメーターの宣言がない。
+     * missing parameters.
      */
     @Test
     public void noParameters() {
@@ -98,12 +98,11 @@ public class UpdateOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * 入力が多い。
+     * too many parameters.
      */
     @Test
     public void tooManyInput() {
         add("com.example.TooManyInput");
         error(new UpdateOperatorProcessor());
     }
-
 }

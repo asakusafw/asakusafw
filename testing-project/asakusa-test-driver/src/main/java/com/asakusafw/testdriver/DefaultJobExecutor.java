@@ -94,12 +94,12 @@ public class DefaultJobExecutor extends JobExecutor {
         }
         if (context.getFrameworkHomePathOrNull() == null) {
             raiseInvalid(MessageFormat.format(
-                    "環境変数\"{0}\"が未設定です",
+                    Messages.getString("DefaultJobExecutor.errorUndefinedEnvironmentVariable"), //$NON-NLS-1$
                     TestDriverContext.ENV_FRAMEWORK_PATH));
         }
         if (configurations.getHadoopCommand() == null) {
             raiseInvalid(MessageFormat.format(
-                    "コマンド\"{0}\"を検出できませんでした",
+                    Messages.getString("DefaultJobExecutor.errorMissingCommand"), //$NON-NLS-1$
                     "hadoop")); //$NON-NLS-1$
         }
         String runtime = context.getRuntimeEnvironmentVersion();
@@ -109,7 +109,7 @@ public class DefaultJobExecutor extends JobExecutor {
             String develop = context.getDevelopmentEnvironmentVersion();
             if (develop.equals(runtime) == false) {
                 raiseInvalid(MessageFormat.format(
-                        "開発環境とテスト実行環境でフレームワークのバージョンが一致しません（開発環境：{0}, 実行環境：{1}）",
+                        Messages.getString("DefaultJobExecutor.errorIncompatibleSdkVersion"), //$NON-NLS-1$
                         develop,
                         runtime));
             }
@@ -130,7 +130,7 @@ public class DefaultJobExecutor extends JobExecutor {
         if (SystemUtils.IS_OS_WINDOWS) {
             LOG.warn(message);
             LOG.info(MessageFormat.format(
-                    "この環境では現在のテストを実行できないため、スキップします: {0}",
+                    Messages.getString("DefaultJobExecutor.infoSkipExecution"), //$NON-NLS-1$
                     context.getCallerClass().getName()));
             Assume.assumeTrue(false);
         } else {
@@ -157,7 +157,7 @@ public class DefaultJobExecutor extends JobExecutor {
         int exitValue = runCommand(commandLine, environmentVariables);
         if (exitValue != 0) {
             throw new AssertionError(MessageFormat.format(
-                    "Hadoopジョブの実行に失敗しました (exitCode={0}, flowId={1}, command=\"{2}\")", exitValue,
+                    Messages.getString("DefaultJobExecutor.errorNonZeroHadoopExitCode"), exitValue, //$NON-NLS-1$
                     context.getCurrentFlowId(),
                     toCommandLineString(commandLine)));
         }
@@ -181,7 +181,7 @@ public class DefaultJobExecutor extends JobExecutor {
         int exitCode = runCommand(command.getCommandTokens(), environmentVariables);
         if (exitCode != 0) {
             throw new AssertionError(MessageFormat.format(
-                    "コマンドの実行に失敗しました (exitCode={0}, flowId={1}, command=\"{2}\")",
+                    Messages.getString("DefaultJobExecutor.errorNonZeroCommandExitCode"), //$NON-NLS-1$
                     exitCode,
                     context.getCurrentFlowId(),
                     toCommandLineString(command.getCommandTokens())));
@@ -191,7 +191,9 @@ public class DefaultJobExecutor extends JobExecutor {
     private int runCommand(
             List<String> commandLine,
             Map<String, String> environmentVariables) throws IOException {
-        LOG.info("[COMMAND] {}", toCommandLineString(commandLine));
+        LOG.info(MessageFormat.format(
+                Messages.getString("DefaultJobExecutor.infoEchoCommandLine"), //$NON-NLS-1$
+                toCommandLineString(commandLine)));
 
         ProcessBuilder builder = new ProcessBuilder(commandLine);
         builder.redirectErrorStream(true);
@@ -215,7 +217,7 @@ public class DefaultJobExecutor extends JobExecutor {
             it.join();
         } catch (InterruptedException e) {
             throw new IOException(MessageFormat.format(
-                    "コマンドの実行中に割り込みが指定されました: {0}",
+                    Messages.getString("DefaultJobExecutor.errorExecutionInterrupted"), //$NON-NLS-1$
                     toCommandLineString(commandLine)), e);
         } finally {
             try {
@@ -255,17 +257,17 @@ public class DefaultJobExecutor extends JobExecutor {
 
         @Override
         public void run() {
-            for (;;) {
-                try {
+            try {
+                while (true) {
                     String line = br.readLine();
                     if (line == null) {
                         break;
                     }
                     list.add(line);
                     System.out.println(line);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
                 }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
         }
     }

@@ -28,7 +28,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 /**
- * 修飾子の種類。
+ * Represents a kind of declaration modifiers.
  */
 public enum ModifierKind {
 
@@ -171,40 +171,43 @@ public enum ModifierKind {
     }
 
     /**
-     * この要素をソースコード上に明記できない場合のみ{@code true}を返す。
-     * @return この要素をソースコード上に明記できない場合のみ{@code true}
+     * Returns whether this modifier kind is implicit or not.
+     * Implicit modifiers cannot be described on any source code.
+     * @return {@code true} if this modifier kind is implicit, otherwise {@code false}
      */
     public boolean isImplicit() {
         return declarable.isEmpty();
     }
 
     /**
-     * この修飾子を指定の種類の要素に対し、ソースコード上で付与できる場合のみ{@code true}を返す。
-     * @param kind 付与先の要素の種類
-     * @return この修飾子をソースコード上で付与できる場合のみ{@code true}
+     * Returns whether this modifier can be explicitly declared on the target declaration or not.
+     * @param kind the target declaration kind
+     * @return {@code true} if this modifier can be declared on the target declaration, otherwise {@code false}
      */
     public boolean canBeDeclaredIn(DeclarationKind kind) {
         return declarable.contains(kind);
     }
 
     /**
-     * この修飾子を指定の種類の要素に対し、ソースコードまたはクラスファイル上に付与できる場合のみ{@code true}を返す。
-     * @param kind 付与先の要素の種類
-     * @return この修飾子をソースコードまたはクラスファイル上に付与できる場合のみ{@code true}
+     * Returns whether this modifier can be implicitly declared on the target declaration or not.
+     * For example, the {@code public} modifier cannot be explicitly declared on enum constants,
+     * but it modifier is implicitly declared on their enum constants in class files.
+     * @param kind the target declaration kind
+     * @return {@code true} if this modifier can be declared on the target declaration, otherwise {@code false}
      */
     public boolean canBeGrantedIn(DeclarationKind kind) {
         return grantable.contains(kind);
     }
 
     /**
-     * 指定の修飾子一覧を文字列化して返す。
-     * @param modifiers 対象の修飾子一覧
-     * @return 対応する文字列
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns a string representation of the set of modifier kinds.
+     * @param modifiers the target modifier kinds
+     * @return the string representation
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static String toStringAll(Set<ModifierKind> modifiers) {
         if (modifiers == null) {
-            throw new IllegalArgumentException("modifiers is null"); //$NON-NLS-1$
+            throw new IllegalArgumentException("modifiers must not be null"); //$NON-NLS-1$
         }
         StringBuilder buf = new StringBuilder();
         Iterator<ModifierKind> iter = modifiers.iterator();
@@ -219,12 +222,11 @@ public enum ModifierKind {
     }
 
     /**
-     * 修飾子一覧を文字列化したものを、修飾子の一覧に復元する。
-     * @param values 修飾子一覧を文字列化したもの
-     * @return 対応する修飾子の一覧
-     * @throws IllegalArgumentException
-     *     復元できない場合
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Restores modifier kinds from its string representation.
+     * @param values the string representation of modifier kinds (in form of {@link #toStringAll(Set)})
+     * @return a set of the restored modifier kinds
+     * @throws IllegalArgumentException if the string representation is malformed
+     * @throws IllegalArgumentException if the parameter is {@code null}
      * @see #toStringAll(Set)
      */
     public static Set<ModifierKind> allValueOf(String values) {
@@ -250,8 +252,8 @@ public enum ModifierKind {
     }
 
     /**
-     * この修飾子を表現するキーワードを返す。
-     * @return この修飾子を表現するキーワード、存在しないキーワードの場合は特殊な文字列
+     * Returns the keyword of this modifier.
+     * @return the modifier keyword, or a special keyword if this modifier kind {@link #isImplicit() is implicit}
      */
     public String getKeyword() {
         if (isImplicit()) {
@@ -261,10 +263,6 @@ public enum ModifierKind {
         }
     }
 
-    /**
-     * この修飾子の種類を表現する文字列を返す。
-     * @return この修飾子の種類を表現する文字列
-     */
     @Override
     public String toString() {
         return getKeyword();

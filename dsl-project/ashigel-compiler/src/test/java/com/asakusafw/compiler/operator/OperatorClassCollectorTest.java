@@ -32,7 +32,7 @@ import com.asakusafw.utils.collections.Lists;
 public class OperatorClassCollectorTest extends OperatorCompilerTestRoot {
 
     /**
-     * 単純な例。
+     * simple case.
      */
     @Test
     public void simple() {
@@ -62,7 +62,7 @@ public class OperatorClassCollectorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * すべての公開メソッドは演算子メソッドだが、補助演算子注釈が付与されていれば問題ない。
+     * w/ operator helper methods.
      */
     @Test
     public void withHelper() {
@@ -90,7 +90,7 @@ public class OperatorClassCollectorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * 演算子メソッドはそもそもメソッド。
+     * not a method.
      */
     @Test
     public void methodValidate_notMethod() {
@@ -99,7 +99,7 @@ public class OperatorClassCollectorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * publicでないメソッドはエラー。
+     * not public method.
      */
     @Test
     public void methodValidate_notPublic() {
@@ -108,7 +108,7 @@ public class OperatorClassCollectorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * staticなメソッドはエラー。
+     * static method.
      */
     @Test
     public void methodValidate_Static() {
@@ -117,7 +117,7 @@ public class OperatorClassCollectorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * 重複するメソッドはエラー。
+     * conflict operator name.
      */
     @Test
     public void methodValidate_duplicateOperator() {
@@ -126,7 +126,7 @@ public class OperatorClassCollectorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * 演算子クラスはそもそもクラス。
+     * not a class.
      */
     @Test
     public void classValidate_notClass() {
@@ -135,7 +135,7 @@ public class OperatorClassCollectorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * 明示的なコンストラクタは禁止。
+     * w/o simple constructor.
      */
     @Test
     public void classValidate_noSimpleConstructor() {
@@ -144,7 +144,7 @@ public class OperatorClassCollectorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * publicでないクラスはエラー。
+     * not public class.
      */
     @Test
     public void classValidate_notPublic() {
@@ -153,7 +153,7 @@ public class OperatorClassCollectorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * abstractでないクラスはエラー。
+     * not abstract class.
      */
     @Test
     public void classValidate_notAbstract() {
@@ -162,7 +162,7 @@ public class OperatorClassCollectorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * 総称クラスはエラー。
+     * generic class.
      */
     @Test
     public void classValidate_generic() {
@@ -171,7 +171,7 @@ public class OperatorClassCollectorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * トップレベルでないクラスはエラー。
+     * not top-level class.
      */
     @Test
     public void classValidate_enclosing() {
@@ -180,7 +180,7 @@ public class OperatorClassCollectorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * すべての公開メソッドは演算子メソッド。
+     * public method w/o operator annotations.
      */
     @Test
     public void classValidate_notCovered() {
@@ -189,7 +189,7 @@ public class OperatorClassCollectorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * メソッド名の衝突。
+     * conflict method name.
      */
     @Test
     public void classValidate_methodConflicted() {
@@ -198,7 +198,7 @@ public class OperatorClassCollectorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * メンバ名の衝突。
+     * conflict member name.
      */
     @Test
     public void classValidate_memberConflicted() {
@@ -207,7 +207,7 @@ public class OperatorClassCollectorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * 補助演算子注釈が付与されたメソッドはpublicで宣言されなければならない。
+     * not public operator helper methods.
      */
     @Test
     public void classValidate_withHelper() {
@@ -238,13 +238,13 @@ public class OperatorClassCollectorTest extends OperatorCompilerTestRoot {
                 List<OperatorClass> results = collector.collect();
                 onCollected(results);
             } catch (OperatorCompilerException e) {
-                // 大域脱出のためだけなのでスキップ
+                // ignore exception
             }
         }
 
         /**
-         * {@link OperatorClassCollector}によって回収されたメソッドとそのクラス一覧が渡される。
-         * @param classes クラス一覧
+         * invoked with the collected classes.
+         * @param classes the collected classes
          */
         protected void onCollected(List<OperatorClass> classes) {
             return;

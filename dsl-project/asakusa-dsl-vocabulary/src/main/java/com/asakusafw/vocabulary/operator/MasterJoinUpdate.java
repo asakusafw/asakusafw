@@ -23,7 +23,7 @@ import java.lang.annotation.Target;
 
 import com.asakusafw.vocabulary.model.Key;
 
-
+//TODO i18n
 /**
  * マスタつき更新演算子を表すメソッドに付与する注釈。
  * <p>
@@ -83,8 +83,8 @@ import com.asakusafw.vocabulary.model.Key;
  &#42;&#47;
 &#64;MasterJoinUpdate
 public void updateWithMaster(
-        &#64;Key(group = "id") ItemMst master,
-        &#64;Key(group = "itemId") HogeTrn tx) {
+        &#64;Key(group = &quot;id&quot;) ItemMst master,
+        &#64;Key(group = &quot;itemId&quot;) HogeTrn tx) {
     tx.setPrice(master.getPrice());
 }
 </code></pre>
@@ -98,37 +98,38 @@ public void updateWithMaster(
 public @interface MasterJoinUpdate {
 
     /**
-     * マスタの入力ポート番号。
+     * The input port number for the <em>master</em> data.
      */
     int ID_INPUT_MASTER = 0;
 
     /**
-     * トランザクションの入力ポート番号。
+     * The input port number for the <em>transaction</em> data.
      */
     int ID_INPUT_TRANSACTION = 1;
 
     /**
-     * 引き当てが成功した場合の出力先のポート番号。
+     * The output port number for the successfully updated data.
      */
     int ID_OUTPUT_UPDATED = 0;
 
     /**
-     * 引き当てが失敗した場合の出力先のポート番号。
+     * The output port number for the <em>master</em> missing data.
      */
     int ID_OUTPUT_MISSED = 1;
 
     /**
-     * 引き当ておよび更新が成功した場合の出力先のポート名。
+     * The default port name of {@link #ID_OUTPUT_UPDATED}.
      */
     String updatedPort() default "updated";
 
     /**
-     * 引き当てが失敗した場合の出力先のポート名。
+     * The default port name of {@link #ID_OUTPUT_MISSED}.
      */
     String missedPort() default "missed";
 
     /**
-     * 利用するマスタ選択演算子のメソッド名。
+     * The selector method name.
+     * The target method must be declared in the same class.
      * @see MasterSelection
      */
     String selection() default MasterSelection.NO_SELECTION;

@@ -27,7 +27,7 @@ import org.junit.Test;
 public class IntOptionTest extends ValueOptionTestRoot {
 
     /**
-     * 初期状態のテスト。
+     * test for initial state.
      */
     @Test
     public void init() {
@@ -36,7 +36,7 @@ public class IntOptionTest extends ValueOptionTestRoot {
     }
 
     /**
-     * 値の取得。
+     * test for get.
      */
     @Test
     public void get() {
@@ -47,7 +47,7 @@ public class IntOptionTest extends ValueOptionTestRoot {
     }
 
     /**
-     * nullに対するor。
+     * test for or w/ absent value.
      */
     @Test
     public void or() {
@@ -57,7 +57,7 @@ public class IntOptionTest extends ValueOptionTestRoot {
     }
 
     /**
-     * すでに値が設定された状態のor。
+     * test for or w/ present value.
      */
     @Test
     public void orNotNull() {
@@ -67,7 +67,7 @@ public class IntOptionTest extends ValueOptionTestRoot {
     }
 
     /**
-     * copyFromのテスト。
+     * test for copyFrom.
      */
     @Test
     public void copy() {
@@ -82,7 +82,7 @@ public class IntOptionTest extends ValueOptionTestRoot {
     }
 
     /**
-     * copyFromにnullを指定するテスト。
+     * test for copyFrom w/ null.
      */
     @Test
     public void copyNull() {
@@ -99,7 +99,7 @@ public class IntOptionTest extends ValueOptionTestRoot {
     }
 
     /**
-     * 比較のテスト。
+     * test for compare.
      */
     @Test
     public void compareTo() {
@@ -123,7 +123,7 @@ public class IntOptionTest extends ValueOptionTestRoot {
     }
 
     /**
-     * nullに関する順序付けのテスト。
+     * test for compare w/ null.
      */
     @Test
     public void compareNull() {
@@ -139,7 +139,7 @@ public class IntOptionTest extends ValueOptionTestRoot {
     }
 
     /**
-     * Writableのテスト。
+     * test for Writable.
      */
     @Test
     public void write() {
@@ -150,7 +150,7 @@ public class IntOptionTest extends ValueOptionTestRoot {
     }
 
     /**
-     * Writableのテスト。
+     * test for Writable w/ max.
      */
     @Test
     public void write_max() {
@@ -161,7 +161,7 @@ public class IntOptionTest extends ValueOptionTestRoot {
     }
 
     /**
-     * Writableのテスト。
+     * test for Writable w/ zero.
      */
     @Test
     public void write_0() {
@@ -172,7 +172,7 @@ public class IntOptionTest extends ValueOptionTestRoot {
     }
 
     /**
-     * null-Writableのテスト。
+     * test for Writable w/ null.
      */
     @Test
     public void writeNull() {

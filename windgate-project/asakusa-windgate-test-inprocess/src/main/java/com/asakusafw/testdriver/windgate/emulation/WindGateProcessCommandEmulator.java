@@ -118,7 +118,7 @@ public class WindGateProcessCommandEmulator extends AbstractWindGateCommandEmula
             return GateScript.loadFrom(CommandLineUtil.toName(uri), properties, classLoader);
         } catch (Exception e) {
             throw new IllegalArgumentException(MessageFormat.format(
-                    "Invalid script \"{0}\".",
+                    Messages.getString("WindGateProcessCommandEmulator.errorInvalidScript"), //$NON-NLS-1$
                     script), e);
         }
     }

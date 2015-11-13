@@ -20,19 +20,18 @@ import com.asakusafw.vocabulary.batch.Batch;
 import com.asakusafw.vocabulary.batch.BatchDescription;
 
 /**
- * バッチクラスの内容。
+ * Represents a model of batch class.
  */
 public class BatchClass {
 
-    private Batch config;
+    private final Batch config;
 
-    private BatchDescription description;
+    private final BatchDescription description;
 
     /**
-     * インスタンスを生成する。
-     * @param config このバッチの設定
-     * @param description このバッチを記述するクラスのインスタンス (結線済み)
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Creates a new instance.
+     * @param config the configuration of this batch
+     * @param description the batch description object (must be already run)
      */
     public BatchClass(Batch config, BatchDescription description) {
         Precondition.checkMustNotBeNull(config, "config"); //$NON-NLS-1$
@@ -42,16 +41,16 @@ public class BatchClass {
     }
 
     /**
-     * このバッチの設定を返す。
-     * @return このバッチの設定
+     * Returns the configuration of this batch.
+     * @return the configuration
      */
     public Batch getConfig() {
         return config;
     }
 
     /**
-     * このバッチを記述するクラスのインスタンスを返す。
-     * @return このバッチを記述するクラスのインスタンス
+     * Returns the instance which describes this batch.
+     * @return the instance which describes this batch
      */
     public BatchDescription getDescription() {
         return description;

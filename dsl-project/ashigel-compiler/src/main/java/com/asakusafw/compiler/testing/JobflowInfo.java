@@ -28,9 +28,8 @@ import com.asakusafw.utils.collections.Maps;
 import com.asakusafw.vocabulary.external.ExporterDescription;
 import com.asakusafw.vocabulary.external.ImporterDescription;
 
-
 /**
- * テストで利用するジョブフローの構成情報。
+ * Structural information of jobflows.
  */
 public class JobflowInfo {
 
@@ -43,12 +42,12 @@ public class JobflowInfo {
     private final JobflowModel jobflow;
 
     /**
-     * インスタンスを生成する。
-     * @param jobflow 元となったジョブフロー
-     * @param packageArchive 構築したパッケージアーカイブ
-     * @param sourceArchive 構築したソースアーカイブ
-     * @param stages ステージの実行順序
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param jobflow the original jobflow
+     * @param packageArchive the compiled jobflow package
+     * @param sourceArchive the jobflow source package
+     * @param stages the stages in the jobflow
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public JobflowInfo(
             JobflowModel jobflow,
@@ -134,33 +133,32 @@ public class JobflowInfo {
     }
 
     /**
-     * 元となったジョブフローを返す。
-     * @return 元となったジョブフロー
+     * Returns the original jobflow.
+     * @return the original jobflow
      */
     public JobflowModel getJobflow() {
         return jobflow;
     }
 
     /**
-     * 構築したパッケージファイルを返す。
-     * @return 構築したパッケージファイル
+     * Returns the compiled jobflow package file.
+     * @return the compiled jobflow package file
      */
     public File getPackageFile() {
         return packageFile;
     }
 
     /**
-     * 生成したソースプログラムのアーカイブファイルを返す。
-     * @return 生成したソースプログラムのアーカイブファイル
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns the jobflow source package file.
+     * @return the jobflow source package file
      */
     public File getSourceArchive() {
         return sourceArchive;
     }
 
     /**
-     * 各ステージの実行順序を返す。
-     * @return ステージの実行順序
+     * Returns the list of stages in this jobflow (sorted by their dependencies).
+     * @return the stages
      */
     public List<StageInfo> getStages() {
         return stages;

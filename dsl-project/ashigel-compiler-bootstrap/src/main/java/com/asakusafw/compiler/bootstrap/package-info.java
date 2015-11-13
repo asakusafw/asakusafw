@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /**
- * コンパイラの様々なコマンドを起動するためのエントリ。
+ * Program entries for Asakusa DSL compilers.
  */
 package com.asakusafw.compiler.bootstrap;
 

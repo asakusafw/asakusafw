@@ -21,6 +21,8 @@ import java.util.Map;
 
 import com.asakusafw.compiler.common.NameGenerator;
 import com.asakusafw.compiler.common.Precondition;
+import com.asakusafw.runtime.core.Result;
+import com.asakusafw.runtime.flow.Rendezvous;
 import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.collections.Maps;
 import com.asakusafw.utils.java.model.syntax.Expression;
@@ -33,7 +35,7 @@ import com.asakusafw.vocabulary.flow.graph.FlowResourceDescription;
 import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 
 /**
- * 合流地点に配置される演算子を処理する。
+ * Processes a rendezvous operator.
  */
 public abstract class RendezvousProcessor extends AbstractFlowElementProcessor {
 
@@ -43,27 +45,16 @@ public abstract class RendezvousProcessor extends AbstractFlowElementProcessor {
     }
 
     /**
-     * 指定のポートに対するシャッフルの情報を返す。
-     * <p>
-     * この情報は、次の構造で成り立っている。
-     * </p>
-     * <ul>
-     * <li> シャッフル時に転送するデータの型 </li>
-     * <li> シャッフル時に転送するデータのグループかおよびソート条件 </li>
-     * <li> この演算子への入力をシャッフル時に転送するデータへ変換する{@link LinePartProcessor} </li>
-     * </ul>
-     * <p>
-     * なお、この実装では演算子のポートに入力されたデータを、そのままシャッフルフェーズに渡す。
-     * </p>
-     * @param element 対象の要素
-     * @param port 対象のポート
-     * @return シャッフルの情報
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns information of the shuffle operation for the target flow element port.
+     * @param element the target flow element
+     * @param port the target port
+     * @return the analyzed information
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public ShuffleDescription getShuffleDescription(
             FlowElementDescription element,
             FlowElementPortDescription port) {
-        Precondition.checkMustNotBeNull(element, "element"); //$NON-NLS-1$
+        Precondition.checkMustNotBeNull(element, "description"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(port, "port"); //$NON-NLS-1$
         LinePartProcessor nop = new LinePartProcessor.Nop();
         nop.initialize(getEnvironment());
@@ -74,30 +65,17 @@ public abstract class RendezvousProcessor extends AbstractFlowElementProcessor {
     }
 
     /**
-     * このプロセッサによる処理を実行する。
-     * @param context 文脈オブジェクト
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Performs this processor for the context.
+     * @param context the current context
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public abstract void emitRendezvous(Context context);
 
     /**
-     * 指定の演算子が部分的な合流処理を行える場合のみ{@code true}を返す。
-     * <p>
-     * このメソッドが{@code true}を返す場合、次の要件を全て満たす必要がある。
-     * </p>
-     * <ul>
-     * <li> FlowResourceを利用しない </li>
-     * <li> 入力と出力が次の関係を満たす:
-     *   <ul>
-     *   <li> 個数が一致 </li>
-     *   <li> 同じ位置の入力と出力の型が同一 </li>
-     *   <li> TODO 形式化 </li>
-     *   </ul>
-     * </li>
-     * </ul>
-     * @param description 対象の演算子
-     * @return 部分的な合流処理を行える場合のみ{@code true}
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns whether the target operator supports combine operation or not.
+     * @param description the target operator
+     * @return {@code true} if the target operator supports combine operation, otherwise {@code false}
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public boolean isPartial(FlowElementDescription description) {
         Precondition.checkMustNotBeNull(description, "description"); //$NON-NLS-1$
@@ -105,7 +83,7 @@ public abstract class RendezvousProcessor extends AbstractFlowElementProcessor {
     }
 
     /**
-     * 処理の文脈を表す。
+     * A context object for {@link RendezvousProcessor}.
      */
     public static class Context extends AbstractProcessorContext {
 
@@ -120,16 +98,16 @@ public abstract class RendezvousProcessor extends AbstractFlowElementProcessor {
         private final List<Statement> endStatements;
 
         /**
-         * インスタンスを生成する。
-         * @param environment 環境
-         * @param element target element
-         * @param importer インポート
-         * @param names 名前生成
-         * @param desc 演算子の定義記述
-         * @param inputs 入力と対応するデータオブジェクトの式
-         * @param outputs 出力と対応する結果オブジェクトの式
-         * @param resources リソースと式の対応表
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Creates a new instance.
+         * @param environment the current context
+         * @param element the target element
+         * @param importer the import declaration builder
+         * @param names the unique name generator
+         * @param desc the target operator description
+         * @param inputs a mapping of input ports to their expression
+         * @param outputs a mapping of output ports to their expression
+         * @param resources the mapping between external resources and their Java expressions
+         * @throws IllegalArgumentException if the parameters are {@code null}
          */
         public Context(
                 FlowCompilingEnvironment environment,
@@ -154,10 +132,10 @@ public abstract class RendezvousProcessor extends AbstractFlowElementProcessor {
         }
 
         /**
-         * 現在の文脈において、指定のポートに対する演算子の結果オブジェクトを返す。
-         * @param port 対象のポート
-         * @return 対応する結果オブジェクト
-         * @throws IllegalArgumentException 指定のポートを発見できない場合
+         * Returns the mirror of {@link Result} object for the target output port.
+         * @param port the target output port
+         * @return the corresponded output port
+         * @throws IllegalArgumentException if there is no such a corresponding a {@link Result} mirror
          */
         public ResultMirror getOutput(FlowElementPortDescription port) {
             Precondition.checkMustNotBeNull(port, "port"); //$NON-NLS-1$
@@ -169,10 +147,11 @@ public abstract class RendezvousProcessor extends AbstractFlowElementProcessor {
         }
 
         /**
-         * 指定のポートに対する{@code process phase}で利用する入力データを表す式を返す。
-         * @param port 対象のポート
-         * @return {@code begin phase}で利用する入力データを表す式
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Returns an expression of the input value for the target port
+         * in {@link Rendezvous#process(org.apache.hadoop.io.Writable)}.
+         * @param port the target input
+         * @return an expression of the input value
+         * @throws IllegalArgumentException if the parameter is {@code null}
          */
         public Expression getProcessInput(FlowElementPortDescription port) {
             Precondition.checkMustNotBeNull(port, "port"); //$NON-NLS-1$
@@ -189,9 +168,9 @@ public abstract class RendezvousProcessor extends AbstractFlowElementProcessor {
         }
 
         /**
-         * 指定のポートに対する{@code begin phase}に関する文を追加する。
-         * @param statement 追加する文
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Adds a statement for {@link Rendezvous#begin()} of the current operator implementation.
+         * @param statement the statement
+         * @throws IllegalArgumentException if the statement is {@code null}
          */
         public void addBegin(Statement statement) {
             Precondition.checkMustNotBeNull(statement, "statement"); //$NON-NLS-1$
@@ -199,10 +178,11 @@ public abstract class RendezvousProcessor extends AbstractFlowElementProcessor {
         }
 
         /**
-         * 指定のポートに対する{@code process phase}に関する文を追加する。
-         * @param port 対象のポート
-         * @param statement 追加する文
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Adds a statement for {@link Rendezvous#process(org.apache.hadoop.io.Writable)}
+         * of the current operator implementation about the target input port.
+         * @param port the target input port
+         * @param statement the statement
+         * @throws IllegalArgumentException if the statement is {@code null}
          */
         public void addProcess(FlowElementPortDescription port, Statement statement) {
             Precondition.checkMustNotBeNull(port, "port"); //$NON-NLS-1$
@@ -215,9 +195,9 @@ public abstract class RendezvousProcessor extends AbstractFlowElementProcessor {
         }
 
         /**
-         * {@code end phase}に関する文を追加する。
-         * @param statement 追加する文
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Adds a statement for {@link Rendezvous#end()} of the current operator implementation.
+         * @param statement the statement
+         * @throws IllegalArgumentException if the statement is {@code null}
          */
         public void addEnd(Statement statement) {
             Precondition.checkMustNotBeNull(statement, "statement"); //$NON-NLS-1$
@@ -225,19 +205,19 @@ public abstract class RendezvousProcessor extends AbstractFlowElementProcessor {
         }
 
         /**
-         * この文脈に追加された{@code begin phase}に関する文を返す。
-         * @return 追加された文の一覧
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Returns the added statements in {@link Rendezvous#begin()}.
+         * @return the added statements
          */
         public List<Statement> getBeginStatements() {
             return beginStatements;
         }
 
         /**
-         * この文脈に追加された{@code process phase}に関する文を返す。
-         * @param port 対象の入力ポート
-         * @return 追加された文の一覧
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Returns the added statements in {@link Rendezvous#process(org.apache.hadoop.io.Writable)}
+         * for the target input port.
+         * @param port the target input port
+         * @return the added statements
+         * @throws IllegalArgumentException if the parameter is {@code null}
          */
         public List<Statement> getProcessStatements(FlowElementPortDescription port) {
             Precondition.checkMustNotBeNull(port, "port"); //$NON-NLS-1$
@@ -249,9 +229,8 @@ public abstract class RendezvousProcessor extends AbstractFlowElementProcessor {
         }
 
         /**
-         * この文脈に追加された{@code end phase}に関する文を返す。
-         * @return 追加された文の一覧
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Returns the added statements in {@link Rendezvous#end()}.
+         * @return the added statements
          */
         public List<Statement> getEndStatements() {
             return endStatements;

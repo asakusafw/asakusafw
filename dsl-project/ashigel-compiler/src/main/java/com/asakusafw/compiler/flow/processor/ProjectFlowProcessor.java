@@ -24,7 +24,7 @@ import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
 import com.asakusafw.vocabulary.operator.Project;
 
 /**
- * {@link Project 射影演算子}を処理する。
+ * Processes {@link Project} operators.
  */
 @TargetOperator(Project.class)
 public class ProjectFlowProcessor extends LinePartProcessor {
@@ -49,14 +49,14 @@ public class ProjectFlowProcessor extends LinePartProcessor {
             Property sourceProperty = sourceType.findProperty(sinkProperty.getName());
             if (sourceProperty == null) {
                 getEnvironment().error(
-                        "{0}において、{2}.{3}に対応するプロパティが{1}に定義されていません",
+                        Messages.getString("ProjectFlowProcessor.errorMissingTargetProperty"), //$NON-NLS-1$
                         context.getOperatorDescription().getName(),
                         sourceType,
                         sinkType,
                         sinkProperty.getName());
             } else if (sourceProperty.getType().equals(sinkProperty.getType()) == false) {
                 getEnvironment().error(
-                        "{0}において、{1}.{2}と{3}.{4}のプロパティ型が一致しません",
+                        Messages.getString("ProjectFlowProcessor.errorInconsistentProperty"), //$NON-NLS-1$
                         context.getOperatorDescription().getName(),
                         sourceType,
                         sourceProperty.getName(),
@@ -73,7 +73,7 @@ public class ProjectFlowProcessor extends LinePartProcessor {
         DataClass resolved = getEnvironment().getDataClasses().load(port.getDataType());
         if (resolved == null) {
             getEnvironment().error(
-                    "型{0}を解決できませんでした",
+                    Messages.getString("ProjectFlowProcessor.errorMissingDataClass"), //$NON-NLS-1$
                     port.getDataType());
         }
         return resolved;

@@ -20,24 +20,20 @@ import java.io.IOException;
 
 import org.apache.hadoop.io.Writable;
 
-import com.asakusafw.compiler.operator.io.MockSummarizedInput;
-import com.asakusafw.compiler.operator.io.MockSummarizedOutput;
 import com.asakusafw.runtime.model.DataModel;
 import com.asakusafw.runtime.model.DataModelKind;
-import com.asakusafw.runtime.model.ModelInputLocation;
-import com.asakusafw.runtime.model.ModelOutputLocation;
+import com.asakusafw.runtime.model.PropertyOrder;
 import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.runtime.value.LongOption;
 import com.asakusafw.vocabulary.model.Key;
 import com.asakusafw.vocabulary.model.Summarized;
 /**
- * mock_summarizedを表すデータモデルクラス。
+ * A data model class that represents mock_summarized.
  */
-@DataModelKind("DMDL")@ModelInputLocation(MockSummarizedInput.class)@ModelOutputLocation(MockSummarizedOutput.class)@
-        Summarized(term = @Summarized.Term(source = MockHoge.class, foldings = {@Summarized.Folding(aggregator = 
-            Summarized.Aggregator.ANY, source = "value", destination = "key"),@Summarized.Folding(aggregator = 
-            Summarized.Aggregator.COUNT, source = "value", destination = "count")}, shuffle = @Key(group = {"value"}))) 
-        public class MockSummarized implements DataModel<MockSummarized>, Writable {
+@DataModelKind("DMDL")@PropertyOrder({"key", "count"})@Summarized(term = @Summarized.Term(source = MockHoge.class,
+        foldings = {@Summarized.Folding(aggregator = Summarized.Aggregator.ANY, source = "value", destination = "key"),@
+            Summarized.Folding(aggregator = Summarized.Aggregator.COUNT, source = "value", destination = "count")},
+        shuffle = @Key(group = {"value"}))) public class MockSummarized implements DataModel<MockSummarized>, Writable {
     private final IntOption key = new IntOption();
     private final LongOption count = new LongOption();
     @Override@SuppressWarnings("deprecation") public void reset() {
@@ -49,59 +45,59 @@ import com.asakusafw.vocabulary.model.Summarized;
         this.count.copyFrom(other.count);
     }
     /**
-     * keyを返す。
+     * Returns key.
      * @return key
-     * @throws NullPointerException keyの値が<code>null</code>である場合
+     * @throws NullPointerException if key is <code>null</code>
      */
     public int getKey() {
         return this.key.get();
     }
     /**
-     * keyを設定する。
-     * @param value 設定する値
+     * Sets key.
+     * @param value the value
      */
     @SuppressWarnings("deprecation") public void setKey(int value) {
         this.key.modify(value);
     }
     /**
-     * <code>null</code>を許すkeyを返す。
+     * Returns key which may be represent <code>null</code>.
      * @return key
      */
     public IntOption getKeyOption() {
         return this.key;
     }
     /**
-     * keyを設定する。
-     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     * Sets key.
+     * @param option the value, or <code>null</code> to set this property to <code>null</code>
      */
     @SuppressWarnings("deprecation") public void setKeyOption(IntOption option) {
         this.key.copyFrom(option);
     }
     /**
-     * countを返す。
+     * Returns count.
      * @return count
-     * @throws NullPointerException countの値が<code>null</code>である場合
+     * @throws NullPointerException if count is <code>null</code>
      */
     public long getCount() {
         return this.count.get();
     }
     /**
-     * countを設定する。
-     * @param value 設定する値
+     * Sets count.
+     * @param value the value
      */
     @SuppressWarnings("deprecation") public void setCount(long value) {
         this.count.modify(value);
     }
     /**
-     * <code>null</code>を許すcountを返す。
+     * Returns count which may be represent <code>null</code>.
      * @return count
      */
     public LongOption getCountOption() {
         return this.count;
     }
     /**
-     * countを設定する。
-     * @param option 設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる
+     * Sets count.
+     * @param option the value, or <code>null</code> to set this property to <code>null</code>
      */
     @SuppressWarnings("deprecation") public void setCountOption(LongOption option) {
         this.count.copyFrom(option);
@@ -131,14 +127,14 @@ import com.asakusafw.vocabulary.model.Summarized;
         if(obj == null) {
             return false;
         }
-        if(this.getClass()!= obj.getClass()) {
+        if(this.getClass() != obj.getClass()) {
             return false;
         }
         MockSummarized other = (MockSummarized) obj;
-        if(this.key.equals(other.key)== false) {
+        if(this.key.equals(other.key) == false) {
             return false;
         }
-        if(this.count.equals(other.count)== false) {
+        if(this.count.equals(other.count) == false) {
             return false;
         }
         return true;

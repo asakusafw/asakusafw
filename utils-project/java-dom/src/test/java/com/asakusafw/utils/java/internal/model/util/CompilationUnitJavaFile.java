@@ -29,21 +29,21 @@ import com.asakusafw.utils.java.model.syntax.PackageDeclaration;
 import com.asakusafw.utils.java.model.syntax.TypeDeclaration;
 
 /**
- * {@link CompilationUnit}をJavaのソースファイルとみなす。
+ * A java file object implementation of {@link CompilationUnit}.
  */
 public class CompilationUnitJavaFile extends SimpleJavaFileObject {
 
     /**
-     * このファイルのスキーマ名。
+     * The scheme name.
      */
     public static final String URI_SCHEME = CompilationUnitJavaFile.class.getName();
 
-    private CompilationUnit unit;
+    private final CompilationUnit unit;
 
     /**
-     * インスタンスを生成する。
-     * @param unit コンパイル対象のモデル
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Creates a new instance.
+     * @param unit the target compilation unit
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public CompilationUnitJavaFile(CompilationUnit unit) {
         super(toUri(unit), JavaFileObject.Kind.SOURCE);

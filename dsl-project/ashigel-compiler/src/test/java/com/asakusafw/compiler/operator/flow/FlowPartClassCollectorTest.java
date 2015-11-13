@@ -44,7 +44,7 @@ import com.asakusafw.vocabulary.flow.FlowPart;
 public class FlowPartClassCollectorTest extends OperatorCompilerTestRoot {
 
     /**
-     * 単純な例。
+     * simple case.
      */
     @Test
     public void simple() {
@@ -71,7 +71,7 @@ public class FlowPartClassCollectorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * パラメータ化。
+     * parameterized.
      */
     @Test
     public void parameterized() {
@@ -182,7 +182,7 @@ public class FlowPartClassCollectorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * 抽象クラス。
+     * abstract class.
      */
     @Test
     public void Abstract() {
@@ -191,7 +191,7 @@ public class FlowPartClassCollectorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * トップレベルでない。
+     * not a top-level class.
      */
     @Test
     public void Enclosing() {
@@ -200,7 +200,7 @@ public class FlowPartClassCollectorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * 公開コンストラクタがない。
+     * w/o public constructors.
      */
     @Test
     public void NoPublicCtors() {
@@ -209,7 +209,7 @@ public class FlowPartClassCollectorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * FlowDescriptionを継承しない。
+     * not a subtype of FlowDescription.
      */
     @Test
     public void NotInherited() {
@@ -218,7 +218,7 @@ public class FlowPartClassCollectorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * クラスが非公開。
+     * not public class.
      */
     @Test
     public void NotPublic() {
@@ -227,7 +227,7 @@ public class FlowPartClassCollectorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * コンストラクターが例外持ち。
+     * constructor w/ exception types.
      */
     @Test
     public void ThrownCtor() {
@@ -236,7 +236,7 @@ public class FlowPartClassCollectorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * パブリックコンストラクタが2つ以上。
+     * multiple public constructors.
      */
     @Test
     public void TooManyCtors() {
@@ -245,7 +245,7 @@ public class FlowPartClassCollectorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * コンストラクタに型引数。
+     * constructor w/ type parameters.
      */
     @Test
     public void TypeParametersCtor() {
@@ -254,7 +254,7 @@ public class FlowPartClassCollectorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * コンストラクタに入出力がない。
+     * constructor w/o input/output.
      */
     @Test
     public void NoIoCtor() {
@@ -263,7 +263,7 @@ public class FlowPartClassCollectorTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * モデルでない入出力。
+     * input/output type argument is not data model type.
      */
     @Test
     public void NotModel() {
@@ -317,13 +317,13 @@ public class FlowPartClassCollectorTest extends OperatorCompilerTestRoot {
                 List<FlowPartClass> results = collector.collect();
                 onCollected(results);
             } catch (OperatorCompilerException e) {
-                // 大域脱出のためだけなのでスキップ
+                // ignore exception
             }
         }
 
         /**
-         * {@link FlowPartClassCollector}によって回収されたメソッドとそのクラス一覧が渡される。
-         * @param results クラス一覧
+         * Invokes w/ collected classes by {@link FlowPartClassCollector}.
+         * @param results the collected classes
          */
         protected void onCollected(List<FlowPartClass> results) {
             return;

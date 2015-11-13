@@ -99,7 +99,8 @@ public class ConcreteModelEmitter {
         driver.generateResources(context, model);
         context.emit(f.newClassDeclaration(
                 new JavadocBuilder(f)
-                    .text("{0}を表すデータモデルクラス。", context.getDescription(model))
+                    .text(Messages.getString("ConcreteModelEmitter.javadocClass"), //$NON-NLS-1$
+                            context.getDescription(model))
                     .toJavadoc(),
                 createModifiers(),
                 context.getTypeName(),
@@ -230,13 +231,14 @@ public class ConcreteModelEmitter {
 
         return f.newMethodDeclaration(
                 new JavadocBuilder(f)
-                    .text("{0}を返す。",
+                    .text(Messages.getString("ConcreteModelEmitter.javadocGetter"), //$NON-NLS-1$
                             context.getDescription(property))
                     .returns()
                         .text("{0}", //$NON-NLS-1$
                                 context.getDescription(property))
                     .exception(context.resolve(NullPointerException.class))
-                        .text("{0}の値が<code>null</code>である場合",
+                        .text(Messages.getString(
+                                "ConcreteModelEmitter.javadocGetterNullPointerException"), //$NON-NLS-1$
                                 context.getDescription(property))
                     .toJavadoc(),
                 attributes,
@@ -255,10 +257,10 @@ public class ConcreteModelEmitter {
         Type valueType = context.getValueType(property);
         return f.newMethodDeclaration(
                 new JavadocBuilder(f)
-                    .text("{0}を設定する。",
+                    .text(Messages.getString("ConcreteModelEmitter.javadocSetter"), //$NON-NLS-1$
                             context.getDescription(property))
                     .param(paramName)
-                        .text("設定する値",
+                        .text(Messages.getString("ConcreteModelEmitter.javadocSetterParameter"), //$NON-NLS-1$
                                 context.getDescription(property))
                     .toJavadoc(),
                 new AttributeBuilder(f)
@@ -288,7 +290,7 @@ public class ConcreteModelEmitter {
 
         return f.newMethodDeclaration(
                 new JavadocBuilder(f)
-                    .text("<code>null</code>を許す{0}を返す。",
+                    .text(Messages.getString("ConcreteModelEmitter.javadocOptionGetter"), //$NON-NLS-1$
                             context.getDescription(property))
                     .returns()
                         .text("{0}", //$NON-NLS-1$
@@ -309,10 +311,10 @@ public class ConcreteModelEmitter {
         Type optionType = context.getFieldType(property);
         return f.newMethodDeclaration(
                 new JavadocBuilder(f)
-                    .text("{0}を設定する。",
+                    .text(Messages.getString("ConcreteModelEmitter.javadocOptionSetter"), //$NON-NLS-1$
                             context.getDescription(property))
                     .param(paramName)
-                        .text("設定する値、<code>null</code>の場合にはこのプロパティが<code>null</code>を表すようになる",
+                        .text(Messages.getString("ConcreteModelEmitter.javadocOptionSetterParameter"), //$NON-NLS-1$
                                 context.getDescription(property))
                     .toJavadoc(),
                 new AttributeBuilder(f)

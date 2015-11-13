@@ -19,13 +19,13 @@ import com.asakusafw.vocabulary.batch.Batch;
 import com.asakusafw.vocabulary.batch.BatchDescription;
 
 /**
- * インスタンス化に失敗するバッチ。
+ * A batch class which constructor raises an exception.
  */
 @Batch(name = "testing")
 public class InstantiateFailBatch extends BatchDescription {
 
     /**
-     * インスタンスを生成する。
+     * Creates a new instance.
      */
     public InstantiateFailBatch() {
         throw new RuntimeException();

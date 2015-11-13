@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /**
- * Joinの最適化に関する一時的な演算子注釈。
+ * Internal operator annotation for optimized join operations.
  */
 package com.asakusafw.compiler.flow.join.operator;
 

@@ -31,30 +31,36 @@ public enum TotalConditionKind {
     /**
      * Accepts iff all data matched.
      */
-    STRICT("Strict", "全てのデータを検査"), //$NON-NLS-1$
+    STRICT("Strict", //$NON-NLS-1$
+            Messages.getString("TotalConditionKind.titleStrict")), //$NON-NLS-1$
 
     /**
      * Accepts iff only existing expected data matched.
      */
-    SKIP_UNEXPECTED("Expect", "余計なデータを無視", DataModelCondition.IGNORE_UNEXPECTED), //$NON-NLS-1$
+    SKIP_UNEXPECTED("Expect", //$NON-NLS-1$
+            Messages.getString("TotalConditionKind.titleExpect"), //$NON-NLS-1$
+            DataModelCondition.IGNORE_UNEXPECTED),
 
     /**
      * Accepts iff only existing actual data matched.
      */
-    SKIP_ABSENT("Actual", "存在しないデータを無視", DataModelCondition.IGNORE_ABSENT), //$NON-NLS-1$
-
-    /**
-     * Accepts iff only existing expected and actual data matched.
-     */
-    INTERSECT("Intersect", "お互い存在するデータのみ検査", DataModelCondition.IGNORE_UNEXPECTED, //$NON-NLS-1$
+    SKIP_ABSENT("Actual", //$NON-NLS-1$
+            Messages.getString("TotalConditionKind.titleActual"), //$NON-NLS-1$
             DataModelCondition.IGNORE_ABSENT),
 
     /**
      * Accepts iff only existing expected and actual data matched.
      */
-    SKIP_ALL("-", "検査しない", DataModelCondition.IGNORE_UNEXPECTED, //$NON-NLS-1$
-            DataModelCondition.IGNORE_ABSENT,
-            DataModelCondition.IGNORE_MATCHED),
+    INTERSECT("Intersect", //$NON-NLS-1$
+            Messages.getString("TotalConditionKind.titleIntersect"), //$NON-NLS-1$
+            DataModelCondition.IGNORE_UNEXPECTED, DataModelCondition.IGNORE_ABSENT),
+
+    /**
+     * Always accepts.
+     */
+    SKIP_ALL("-", //$NON-NLS-1$
+            Messages.getString("TotalConditionKind.titleIgnore"), //$NON-NLS-1$
+            DataModelCondition.IGNORE_UNEXPECTED, DataModelCondition.IGNORE_ABSENT, DataModelCondition.IGNORE_MATCHED),
 
     ;
     private final String symbol;

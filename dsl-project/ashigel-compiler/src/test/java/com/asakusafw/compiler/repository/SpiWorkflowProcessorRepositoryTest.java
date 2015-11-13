@@ -47,7 +47,7 @@ import com.asakusafw.vocabulary.batch.WorkDescription;
 public class SpiWorkflowProcessorRepositoryTest {
 
     /**
-     * テスト環境。
+     * The compiler environment.
      */
     @Rule
     public BatchCompilerEnvironmentProvider prov = new BatchCompilerEnvironmentProvider();

@@ -23,17 +23,17 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * メモリ上にデータを保持する{@link LookUpTable}の実装。
- * @param <T> 要素の種類
+ * An implementation of {@link LookUpTable} that holds objects on the memory.
+ * @param <T> the element type
  */
 public class VolatileLookUpTable<T> implements LookUpTable<T> {
 
     private final Map<LookUpKey, List<T>> entity;
 
     /**
-     * インスタンスを生成する。
-     * @param entity テーブルが保持すべきキーと値のマップ
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param entity the table entries
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public VolatileLookUpTable(Map<LookUpKey, List<T>> entity) {
         if (entity == null) {
@@ -55,8 +55,8 @@ public class VolatileLookUpTable<T> implements LookUpTable<T> {
     }
 
     /**
-     * {@link VolatileLookUpTable}を構築するビルダー。
-     * @param <T> 要素の型
+     * A builder for {@link VolatileLookUpTable}.
+     * @param <T> the element type
      */
     public static class Builder<T> implements LookUpTable.Builder<T> {
 

@@ -18,19 +18,19 @@ package com.asakusafw.utils.java.parser.javadoc;
 import com.asakusafw.utils.java.internal.parser.javadoc.ir.IrLocation;
 
 /**
- * ドキュメンテーションコメントの形式が不正であることを表す例外。
+ * An exception which represents a comment is malformed.
  */
 public class IllegalDocCommentFormatException extends JavadocParseException {
 
     private static final long serialVersionUID = 1L;
 
-    private boolean head;
+    private final boolean head;
 
     /**
      * Creates a new instance.
-     * @param head {@code true}ならばコメントの先頭がない、{@code false}ならば末尾がない
-     * @param location 位置
-     * @param cause この原因の元となった例外
+     * @param head {@code true} if missing comment header, or {@code false} if missing comment footer
+     * @param location the location
+     * @param cause the exception cause
      */
     public IllegalDocCommentFormatException(boolean head, IrLocation location, Throwable cause) {
         super(buildMessage(head), location, cause);
@@ -38,16 +38,17 @@ public class IllegalDocCommentFormatException extends JavadocParseException {
     }
 
     /**
-     * コメントの先頭が存在しない場合のみ{@code true}を返す。
-     * @return コメントの先頭が存在しない場合のみ{@code true}
+     * Returns whether this is occurred by missing comment header or not.
+     * @return {@code true} if this is occurred by missing comment header, otherwise {@code false}
+     * @see #isMissingTail()
      */
     public boolean isMissingHead() {
         return head;
     }
 
     /**
-     * コメントの末尾が存在しない場合のみ{@code true}を返す。
-     * @return コメントの末尾が存在しない場合のみ{@code true}
+     * Returns whether this is occurred by missing comment footer or not.
+     * @return {@code true} if this is occurred by missing comment footer, otherwise {@code false}
      */
     public boolean isMissingTail() {
         return !isMissingHead();

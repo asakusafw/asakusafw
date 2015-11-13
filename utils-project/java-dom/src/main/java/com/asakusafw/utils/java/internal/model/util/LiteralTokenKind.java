@@ -16,52 +16,52 @@
 package com.asakusafw.utils.java.internal.model.util;
 
 /**
- * リテラルの種類。
+ * Represents a kind of literal.
  */
 public enum LiteralTokenKind {
 
     /**
-     * 32bit整数リテラル。
+     * 32bit integer literal.
      */
     INT,
 
     /**
-     * 64bit整数リテラル。
+     * 64bit integer literal.
      */
     LONG,
 
     /**
-     * 単精度浮動小数点数リテラル。
+     * 32bit floating point number literal.
      */
     FLOAT,
 
     /**
-     * 倍精度浮動小数点数リテラル。
+     * 64bit floating point number literal.
      */
     DOUBLE,
 
     /**
-     * 真偽値リテラル。
+     * boolean literal.
      */
     BOOLEAN,
 
     /**
-     * 文字リテラル。
+     * character literal.
      */
     CHAR,
 
     /**
-     * 文字列リテラル。
+     * character string literal.
      */
     STRING,
 
     /**
-     * {@code null}リテラル。
+     * {@code null} literal.
      */
     NULL,
 
     /**
-     * 不明なリテラル。
+     * Unknown (may be malformed) literal.
      */
     UNKNOWN,
 }

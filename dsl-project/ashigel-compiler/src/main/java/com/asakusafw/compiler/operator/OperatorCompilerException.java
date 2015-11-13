@@ -18,10 +18,7 @@ package com.asakusafw.compiler.operator;
 import javax.tools.Diagnostic;
 
 /**
- * これ以上のコンパイル処理を続けても有用な結果が得られないことを表す例外。
- * <p>
- * 必要なメッセージはこの例外をスローする前に出力しておくこと。
- * </p>
+ * An exception while compiling operator DSL programs.
  * @since 0.1.0
  * @version 0.7.0
  */
@@ -34,26 +31,26 @@ public class OperatorCompilerException extends RuntimeException {
     private final Diagnostic.Kind kind;
 
     /**
-     * インスタンスを生成する。
-     * @param message メッセージ
+     * Creates a new instance.
+     * @param message the exception message (nullable)
      */
     public OperatorCompilerException(String message) {
         this(DEFAULT_KIND, message);
     }
 
     /**
-     * インスタンスを生成する。
-     * @param message メッセージ
-     * @param cause この例外の原因となった例外
+     * Creates a new instance.
+     * @param message the exception message (nullable)
+     * @param cause the original cause (nullable)
      */
     public OperatorCompilerException(String message, Throwable cause) {
         this(DEFAULT_KIND, message, cause);
     }
 
     /**
-     * インスタンスを生成する。
-     * @param kind 診断情報の種類
-     * @param message メッセージ
+     * Creates a new instance.
+     * @param kind the diagnostics kind
+     * @param message the exception message (nullable)
      * @since 0.7.0
      */
     public OperatorCompilerException(Diagnostic.Kind kind, String message) {
@@ -62,10 +59,10 @@ public class OperatorCompilerException extends RuntimeException {
     }
 
     /**
-     * インスタンスを生成する。
-     * @param kind 診断情報の種類
-     * @param message メッセージ
-     * @param cause この例外の原因となった例外
+     * Creates a new instance.
+     * @param kind the diagnostics kind
+     * @param message the exception message (nullable)
+     * @param cause the original cause (nullable)
      * @since 0.7.0
      */
     public OperatorCompilerException(Diagnostic.Kind kind, String message, Throwable cause) {
@@ -74,8 +71,8 @@ public class OperatorCompilerException extends RuntimeException {
     }
 
     /**
-     * 診断情報の種類を返す。
-     * @return 診断情報の種類、診断情報を出力しない場合は{@code null}
+     * Returns the diagnostics kind of this exception.
+     * @return the diagnostics kind of this exception, or {@code null} if it was not defined
      * @since 0.7.0
      */
     public Diagnostic.Kind getKind() {

@@ -18,39 +18,41 @@ package com.asakusafw.runtime.flow;
 import org.apache.hadoop.io.Writable;
 
 /**
- * 合流地点に配置される演算子を処理する要素。
- * @param <V> 処理するデータの種類
+ * An abstract super interface for processing co-group like operations.
+ * @param <V> the data type
  */
 public abstract class Rendezvous<V extends Writable> {
 
     /**
-     * {@link #begin()}メソッドの名前。
+     * The method name of {@link #begin()}.
      */
     public static final String BEGIN = "begin"; //$NON-NLS-1$
 
     /**
-     * {@link #process(Writable)}メソッドの名前。
+     * The method name of {@link #process(Writable)}.
      */
     public static final String PROCESS = "process"; //$NON-NLS-1$
 
     /**
-     * {@link #end()}メソッドの名前。
+     * The method name of {@link #end()}.
      */
     public static final String END = "end"; //$NON-NLS-1$
 
     /**
-     * 特定グループの処理を開始する際に起動される。
+     * Begins processing an input group.
      */
     public abstract void begin();
 
     /**
-     * 演算子への個々の入力に対する処理を実行する。
-     * @param value 処理する値
+     * Processes an input data.
+     * This must be invoked between {@link #begin()} and {@link #end()},
+     * and the input data must be a member of the current group.
+     * @param value the input data
      */
     public abstract void process(V value);
 
     /**
-     * 演算子に対するすべての入力が完了した際に起動される。
+     * Ends processing the current input group.
      */
     public abstract void end();
 }

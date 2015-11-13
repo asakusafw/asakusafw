@@ -23,15 +23,14 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.dmdl.directio.csv.driver.CsvFieldTrait.Kind;
 import com.asakusafw.dmdl.directio.csv.driver.CsvFormatTrait.Configuration;
+import com.asakusafw.dmdl.directio.util.CodecNames;
 import com.asakusafw.dmdl.directio.util.DirectFileInputDescriptionGenerator;
 import com.asakusafw.dmdl.directio.util.DirectFileOutputDescriptionGenerator;
 import com.asakusafw.dmdl.java.emitter.EmitContext;
@@ -153,7 +152,7 @@ public class CsvFormatEmitter extends JavaDataModelDriver {
                 Type type = prop.getType();
                 if ((type instanceof BasicType) == false) {
                     throw new IOException(MessageFormat.format(
-                            "Type \"{0}\" can not map to CSV field: {1}.{2} ",
+                            Messages.getString("CsvFormatEmitter.errorUnsupportedType"), //$NON-NLS-1$
                             type,
                             prop.getOwner().getName().identifier,
                             prop.getName().identifier));
@@ -176,16 +175,6 @@ public class CsvFormatEmitter extends JavaDataModelDriver {
         private static final String METHOD_CONFIG = "getConfiguration"; //$NON-NLS-1$
 
         private static final String FIELD_PATH_NAME = "pathText"; //$NON-NLS-1$
-
-        private static final Map<String, String> CODEC_SHORT_NAMES;
-        static {
-            Map<String, String> map = new HashMap<String, String>();
-            map.put("gzip", "org.apache.hadoop.io.compress.GzipCodec"); //$NON-NLS-1$ //$NON-NLS-2$
-            map.put("deflate", "org.apache.hadoop.io.compress.DeflateCodec"); //$NON-NLS-1$ //$NON-NLS-2$
-            map.put("bzip2", "org.apache.hadoop.io.compress.BZip2Codec"); //$NON-NLS-1$ //$NON-NLS-2$
-            map.put("snappy", "org.apache.hadoop.io.compress.SnappyCodec"); //$NON-NLS-1$ //$NON-NLS-2$
-            CODEC_SHORT_NAMES = map;
-        }
 
         private final EmitContext context;
 
@@ -409,7 +398,7 @@ public class CsvFormatEmitter extends JavaDataModelDriver {
                         isNotHead,
                         f.newBlock(new TypeBuilder(f, context.resolve(IllegalArgumentException.class))
                             .newObject(Models.toLiteral(f, MessageFormat.format(
-                                    "{0} does not support fragmentation.",
+                                    Messages.getString("CsvFormatEmitter.messageNotSupportFragmentation"), //$NON-NLS-1$
                                     context.getQualifiedTypeName().toNameString())))
                             .toThrowStatement())));
             }
@@ -543,14 +532,10 @@ public class CsvFormatEmitter extends JavaDataModelDriver {
         }
 
         private Expression createCompressionCodec() {
-            String codecName = conf.getCodecName();
+            String codecName = CodecNames.resolveCodecName(conf.getCodecName());
             if (codecName == null) {
                 return null;
             }
-            if (CODEC_SHORT_NAMES.containsKey(codecName)) {
-                codecName = CODEC_SHORT_NAMES.get(codecName);
-            }
-            assert codecName != null;
             assert isHadoopConfRequired();
             return new TypeBuilder(f,
                     context.resolve(Models.toName(f, "org.apache.hadoop.util.ReflectionUtils"))) //$NON-NLS-1$
@@ -585,7 +570,8 @@ public class CsvFormatEmitter extends JavaDataModelDriver {
             constructorStatements.add(mapField(parser));
             if (hasFileName()) {
                 members.add(createPrivateField(StringOption.class, f.newSimpleName(FIELD_PATH_NAME)));
-                constructorStatements.add(new ExpressionBuilder(f, f.newSimpleName(FIELD_PATH_NAME))
+                constructorStatements.add(new ExpressionBuilder(f, f.newThis())
+                    .field(FIELD_PATH_NAME)
                     .assignFrom(new TypeBuilder(f, context.resolve(StringOption.class))
                         .newObject(new ExpressionBuilder(f, parser)
                             .method("getPath") //$NON-NLS-1$

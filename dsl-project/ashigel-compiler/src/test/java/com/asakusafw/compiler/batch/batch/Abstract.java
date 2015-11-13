@@ -19,7 +19,7 @@ import com.asakusafw.vocabulary.batch.Batch;
 import com.asakusafw.vocabulary.batch.BatchDescription;
 
 /**
- * 抽象クラスのバッチ。
+ * A batch class with {@code abstract} modifier.
  */
 @Batch(name = "testing")
 public abstract class Abstract extends BatchDescription {

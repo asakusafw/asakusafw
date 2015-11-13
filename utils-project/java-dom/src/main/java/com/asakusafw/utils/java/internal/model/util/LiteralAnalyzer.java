@@ -18,7 +18,7 @@ package com.asakusafw.utils.java.internal.model.util;
 import java.math.BigInteger;
 
 /**
- * リテラルを解析する。
+ * Analyzes Java literals.
  */
 public final class LiteralAnalyzer {
 
@@ -30,10 +30,10 @@ public final class LiteralAnalyzer {
     }
 
     /**
-     * 指定の文字列をリテラルとして解析し、解析結果のトークンを返す。
-     * @param literal 解析する文字列
-     * @return 解析結果のトークン
-     * @throws IllegalArgumentException 引数に{@code null}を指定した場合
+     * Analyzes the literal token.
+     * @param literal the target literal
+     * @return the analyzed token
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static LiteralToken parse(String literal) {
         if (literal == null) {
@@ -70,10 +70,10 @@ public final class LiteralAnalyzer {
     }
 
     /**
-     * 指定のリテラルが表現する{@code boolean}型の値を返す。
-     * @param literal 対象のリテラル文字列
-     * @return 指定のリテラルが表現する値
-     * @throws IllegalArgumentException リテラルの形式が不正である場合
+     * Analyzes a literal which represents {@code boolean} value and returns it value.
+     * @param literal the target literal token
+     * @return the corresponded value
+     * @throws IllegalArgumentException if the target literal is malformed
      */
     public static boolean booleanValueOf(String literal) {
         if (LiteralToken.TOKEN_TRUE.equals(literal)) {
@@ -86,10 +86,10 @@ public final class LiteralAnalyzer {
     }
 
     /**
-     * 指定のリテラルが表現する{@code char}型の値を返す。
-     * @param literal 対象のリテラル文字列
-     * @return 指定のリテラルが表現する値
-     * @throws IllegalArgumentException リテラルの形式が不正である場合
+     * Analyzes a literal which represents {@code char} value and returns it value.
+     * @param literal the target literal token
+     * @return the corresponded value
+     * @throws IllegalArgumentException if the target literal is malformed
      */
     public static char charValueOf(String literal) {
         int length = literal.length();
@@ -104,30 +104,30 @@ public final class LiteralAnalyzer {
     }
 
     /**
-     * 指定のリテラルが表現する{@code double}型の値を返す。
-     * @param literal 対象のリテラル文字列
-     * @return 指定のリテラルが表現する値
-     * @throws NumberFormatException リテラルの形式が不正である場合
+     * Analyzes a literal which represents {@code double} value and returns it value.
+     * @param literal the target literal token
+     * @return the corresponded value
+     * @throws NumberFormatException if the target literal is malformed
      */
     public static double doubleValueOf(String literal) {
         return Double.parseDouble(literal);
     }
 
     /**
-     * 指定のリテラルが表現する{@code float}型の値を返す。
-     * @param literal 対象のリテラル文字列
-     * @return 指定のリテラルが表現する値
-     * @throws NumberFormatException リテラルの形式が不正である場合
+     * Analyzes a literal which represents {@code float} value and returns it value.
+     * @param literal the target literal token
+     * @return the corresponded value
+     * @throws NumberFormatException if the target literal is malformed
      */
     public static float floatValueOf(String literal) {
         return Float.parseFloat(literal);
     }
 
     /**
-     * 指定のリテラルが表現する{@code int}型の値を返す。
-     * @param literal 対象のリテラル文字列
-     * @return 指定のリテラルが表現する値
-     * @throws NumberFormatException リテラルの形式が不正である場合
+     * Analyzes a literal which represents {@code int} value and returns it value.
+     * @param literal the target literal token
+     * @return the corresponded value
+     * @throws NumberFormatException if the target literal is malformed
      */
     public static int intValueOf(String literal) {
         IntegerHolder h = parseInteger(literal);
@@ -146,10 +146,10 @@ public final class LiteralAnalyzer {
     }
 
     /**
-     * 指定のリテラルが表現する{@code long}型の値を返す。
-     * @param literal 対象のリテラル文字列
-     * @return 指定のリテラルが表現する値
-     * @throws NumberFormatException リテラルの形式が不正である場合
+     * Analyzes a literal which represents {@code long} value and returns it value.
+     * @param literal the target literal token
+     * @return the corresponded value
+     * @throws NumberFormatException if the target literal is malformed
      */
     public static long longValueOf(String literal) {
         String target;
@@ -175,10 +175,10 @@ public final class LiteralAnalyzer {
 
 
     /**
-     * 指定のリテラルが表現する{@link String}型の値を返す。
-     * @param literal 対象のリテラル文字列
-     * @return 指定のリテラルが表現する値
-     * @throws IllegalArgumentException リテラルの形式が不正である場合
+     * Analyzes a literal which represents a value of {@link String} and returns its value.
+     * @param literal the target literal token
+     * @return the corresponded value
+     * @throws IllegalArgumentException if the target literal is malformed
      */
     public static String stringValueOf(String literal) {
         int length = literal.length();
@@ -189,10 +189,10 @@ public final class LiteralAnalyzer {
     }
 
     /**
-     * 指定の値を表現可能なリテラル文字列を返す。
-     * @param value リテラル化可能な値
-     * @return 対象の値を表現するリテラル文字列
-     * @throws IllegalArgumentException リテラル化可能な値でない場合
+     * Returns the literal token of the target value.
+     * @param value the target value
+     * @return the corresponded literal string
+     * @throws IllegalArgumentException if there is no suitable literal for the target value
      */
     public static String literalOf(Object value) {
         if (value == null) {
@@ -219,36 +219,36 @@ public final class LiteralAnalyzer {
     }
 
     /**
-     * 指定の{@code boolean}型の値を表現可能なリテラル文字列を返す。
-     * @param value 対象の値
-     * @return 対象の値を表現するリテラル文字列
+     * Returns the literal token of target {@code boolean} value.
+     * @param value the target value
+     * @return the corresponded literal token
      */
     public static String booleanLiteralOf(boolean value) {
         return String.valueOf(value);
     }
 
     /**
-     * 指定の{@code char}型の値を表現可能なリテラル文字列を返す。
-     * @param value 対象の値
-     * @return 対象の値を表現するリテラル文字列
+     * Returns the literal token of target {@code char} value.
+     * @param value the target value
+     * @return the corresponded literal token
      */
     public static String charLiteralOf(char value) {
         return '\'' + JavaEscape.escape(String.valueOf(value), true, false) + '\'';
     }
 
     /**
-     * 指定の{@code double}型の値を表現可能なリテラル文字列を返す。
-     * @param value 対象の値
-     * @return 対象の値を表現するリテラル文字列
+     * Returns the literal token of target {@code double} value.
+     * @param value the target value
+     * @return the corresponded literal token
      */
     public static String doubleLiteralOf(double value) {
         return String.valueOf(value);
     }
 
     /**
-     * 指定の{@code float}型の値を表現可能なリテラル文字列を返す。
-     * @param value 対象の値
-     * @return 対象の値を表現するリテラル文字列
+     * Returns the literal token of target {@code float} value.
+     * @param value the target value
+     * @return the corresponded literal token
      */
     public static String floatLiteralOf(float value) {
         if (Float.isInfinite(value) || Float.isNaN(value)) {
@@ -259,45 +259,40 @@ public final class LiteralAnalyzer {
     }
 
     /**
-     * 指定の{@code int}型の値を表現可能なリテラル文字列を返す。
-     * @param value 対象の値
-     * @return 対象の値を表現するリテラル文字列
+     * Returns the literal token of target {@code int} value.
+     * @param value the target value
+     * @return the corresponded literal token
      */
     public static String intLiteralOf(int value) {
         return String.valueOf(value);
     }
 
     /**
-     * 指定の{@code long}型の値を表現可能なリテラル文字列を返す。
-     * @param value 対象の値
-     * @return 対象の値を表現するリテラル文字列
+     * Returns the literal token of target {@code long} value.
+     * @param value the target value
+     * @return the corresponded literal token
      */
     public static String longLiteralOf(long value) {
         return String.valueOf(value) + 'L';
     }
 
     /**
-     * 指定の{@link String}型の値を表現可能なリテラル文字列を返す。
-     * @param value 対象の値
-     * @return 対象の値を表現するリテラル文字列
+     * Returns a literal token for the {@code String} value.
+     * @param value the target value
+     * @return the corresponded literal token
      */
     public static String stringLiteralOf(String value) {
         return '\"' + JavaEscape.escape(value, false, false) + '\"';
     }
 
     /**
-     * 指定の{@code null}型の値を表現可能なリテラル文字列を返す。
-     * @return 対象の値を表現するリテラル文字列
+     * Returns the literal token of {@code null}.
+     * @return the {@code null} literal token
      */
     public static String nullLiteral() {
         return LiteralToken.TOKEN_NULL;
     }
 
-    /**
-     * リテラル文字列を、先頭の基数修飾を加味して解釈し、対応する整数を返す。
-     * @param literal 処理対象の文字列
-     * @return 対応する整数
-     */
     private static IntegerHolder parseInteger(String literal) {
         assert literal != null;
         String target;

@@ -20,25 +20,25 @@ import com.asakusafw.vocabulary.flow.In;
 import com.asakusafw.vocabulary.flow.Out;
 
 /**
- * テスト用の恒等フロー。
- * @param <T> フローのデータ種
+ * Dual input/output identity flow.
+ * @param <T> data type
  */
 public class DualIdentityFlow<T> extends FlowDescription {
 
-    private In<T> in1;
+    private final In<T> in1;
 
-    private In<T> in2;
+    private final In<T> in2;
 
-    private Out<T> out1;
+    private final Out<T> out1;
 
-    private Out<T> out2;
+    private final Out<T> out2;
 
     /**
-     * インスタンスを生成する。
-     * @param in1 入力
-     * @param in2 入力
-     * @param out1 出力
-     * @param out2 出力
+     * Creates a new instance.
+     * @param in1 input
+     * @param in2 input
+     * @param out1 output
+     * @param out2 output
      */
     public DualIdentityFlow(In<T> in1, In<T> in2, Out<T> out1, Out<T> out2) {
         this.in1 = in1;

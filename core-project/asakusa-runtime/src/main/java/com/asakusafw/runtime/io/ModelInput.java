@@ -19,17 +19,17 @@ import java.io.Closeable;
 import java.io.IOException;
 
 /**
- * モデルを読み出すオブジェクトのインターフェース。
- * @param <T> 読み出すモデルの種類
+ * An abstract interface of reading data-sets.
+ * @param <T> the data model type
  */
 public interface ModelInput<T> extends Closeable {
 
     /**
-     * このオブジェクトからモデルを読み出して、指定のオブジェクトに書き出す。
-     * @param model 書き出す先のモデル
-     * @return モデルを読み出した場合は{@code true}、
-     *     これ以上読み出すモデルが存在しない場合は{@code false}
-     * @throws IOException モデルの読み出しに失敗した場合
+     * Reads contents and write them into the target data model object.
+     * The target data model object will be changed even if the next data does not exist.
+     * @param model the target data model object
+     * @return {@code true} if the next data was successfully read, or {@code false} if there is no any more
+     * @throws IOException if error occurred while reading the next data
      */
     boolean readTo(T model) throws IOException;
 }

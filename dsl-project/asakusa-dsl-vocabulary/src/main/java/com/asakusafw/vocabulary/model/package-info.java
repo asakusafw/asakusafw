@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * モデルに付与する注釈を提供する。
+ * Provides annotations for data model classes.
  */
 package com.asakusafw.vocabulary.model;

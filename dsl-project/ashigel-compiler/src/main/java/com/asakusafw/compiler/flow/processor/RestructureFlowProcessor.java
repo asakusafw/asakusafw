@@ -24,7 +24,7 @@ import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
 import com.asakusafw.vocabulary.operator.Restructure;
 
 /**
- * {@link Restructure 再構築演算子}を処理する。
+ * Processes {@link Restructure} operators.
  */
 @TargetOperator(Restructure.class)
 public class RestructureFlowProcessor extends LinePartProcessor {
@@ -52,7 +52,7 @@ public class RestructureFlowProcessor extends LinePartProcessor {
                 continue;
             } else if (sourceProperty.getType().equals(sinkProperty.getType()) == false) {
                 getEnvironment().error(
-                        "{0}において、{1}.{2}と{3}.{4}のプロパティ型が一致しません",
+                        Messages.getString("RestructureFlowProcessor.errorInconsistentProperty"), //$NON-NLS-1$
                         context.getOperatorDescription().getName(),
                         sourceType,
                         sourceProperty.getName(),
@@ -69,7 +69,7 @@ public class RestructureFlowProcessor extends LinePartProcessor {
         DataClass resolved = getEnvironment().getDataClasses().load(port.getDataType());
         if (resolved == null) {
             getEnvironment().error(
-                    "型{0}を解決できませんでした",
+                    Messages.getString("RestructureFlowProcessor.errorMissingDataClass"), //$NON-NLS-1$
                     port.getDataType());
         }
         return resolved;

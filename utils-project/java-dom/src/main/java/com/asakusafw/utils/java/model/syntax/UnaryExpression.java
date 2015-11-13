@@ -15,9 +15,8 @@
  */
 package com.asakusafw.utils.java.model.syntax;
 
-
 /**
- * 単項演算式を表現するインターフェース。
+ * An interface which represents unary expressions.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:15.15] Unary Operators} </li>
@@ -27,19 +26,15 @@ package com.asakusafw.utils.java.model.syntax;
 public interface UnaryExpression
         extends Expression {
 
-    // properties
-
     /**
-     * 単項演算子を返す。
-     * @return
-     *     単項演算子
+     * Returns the unary operator.
+     * @return the unary operator
      */
     UnaryOperator getOperator();
 
     /**
-     * 演算項を返す。
-     * @return
-     *     演算項
+     * Returns the operand term.
+     * @return the operand term
      */
     Expression getOperand();
 }

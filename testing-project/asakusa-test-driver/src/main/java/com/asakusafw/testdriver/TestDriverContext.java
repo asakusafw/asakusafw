@@ -48,7 +48,7 @@ import com.asakusafw.testdriver.core.TestingEnvironmentConfigurator;
 import com.asakusafw.utils.collections.Maps;
 
 /**
- * テスト実行時のコンテキスト情報を管理する。
+ * Represents contextual information for test drivers.
  * @since 0.2.0
  * @version 0.6.1
  */
@@ -236,7 +236,7 @@ public class TestDriverContext implements TestContext {
         if (ToolProvider.getSystemJavaCompiler() == null) {
             // validates runtime environment first
             validateExecutionEnvironment();
-            throw new AssertionError("この環境ではJavaコンパイラを利用できません（JDKを利用してテストを実行してください）");
+            throw new AssertionError(Messages.getString("TestDriverContext.errorMissingJavaCompiler")); //$NON-NLS-1$
         }
     }
 
@@ -251,10 +251,9 @@ public class TestDriverContext implements TestContext {
             String version = INFORMATION.getString(KEY_FRAMEWORK_VERSION);
             return version;
         } catch (MissingResourceException e) {
-            throw new IllegalStateException(
-                    MessageFormat.format(
-                            "この開発環境のバージョンが不明です ({e})",
-                            KEY_COMPILER_WORKING_DIRECTORY), e);
+            throw new IllegalStateException(MessageFormat.format(
+                    Messages.getString("TestDriverContext.errorUnknownRunningSdkVersion"), //$NON-NLS-1$
+                    KEY_FRAMEWORK_VERSION), e);
         }
     }
 
@@ -271,7 +270,7 @@ public class TestDriverContext implements TestContext {
         File version = new File(path, FRAMEWORK_VERSION_PATH);
         if (version.isFile() == false) {
             LOG.warn(MessageFormat.format(
-                    "テスト実行環境にバージョン情報が見つかりませんでした：{0}",
+                    Messages.getString("TestDriverContext.warnMissingDeployedSdkVersionFile"), //$NON-NLS-1$
                     version.getAbsolutePath()));
             return null;
         }
@@ -285,14 +284,14 @@ public class TestDriverContext implements TestContext {
             }
         } catch (IOException e) {
             LOG.warn(MessageFormat.format(
-                    "テスト実行環境のバージョン情報を読み出せませんでした：{0}",
+                    Messages.getString("TestDriverContext.warnInvalidDeployedSdkVersionFile"), //$NON-NLS-1$
                     version.getAbsolutePath()), e);
             return null;
         }
         String value = p.getProperty(KEY_FRAMEWORK_VERSION);
         if (value == null) {
             LOG.warn(MessageFormat.format(
-                    "テスト実行環境のバージョン情報が欠落しています：{0} ({1})",
+                    Messages.getString("TestDriverContext.warnMissingDeployedSdkVersionProperty"), //$NON-NLS-1$
                     version.getAbsolutePath(),
                     KEY_FRAMEWORK_VERSION));
             return null;
@@ -335,7 +334,7 @@ public class TestDriverContext implements TestContext {
         File result = getFrameworkHomePathOrNull();
         if (result == null) {
             throw new IllegalStateException(MessageFormat.format(
-                    "環境変数{0}が未設定です",
+                    Messages.getString("TestDriverContext.errorUndefinedEnvironmentVariable"), //$NON-NLS-1$
                     ENV_FRAMEWORK_PATH));
         }
         return result;
@@ -508,13 +507,15 @@ public class TestDriverContext implements TestContext {
         try {
             File file = File.createTempFile("asakusa", ".tmp"); //$NON-NLS-1$ //$NON-NLS-2$
             if (file.delete() == false) {
-                throw new AssertionError(MessageFormat.format(
-                        "テスト用のテンポラリディレクトリの作成に失敗しました: {0}",
+                throw new IOException(MessageFormat.format(
+                        Messages.getString("TestDriverContext.errorFailedToPrepareTemporaryDirectory"), //$NON-NLS-1$
                         file));
             }
             return file;
         } catch (IOException e) {
-            throw (AssertionError) new AssertionError("テスト用のテンポラリディレクトリの作成に失敗しました").initCause(e);
+            throw (AssertionError) new AssertionError(
+                    Messages.getString("TestDriverContext.errorFailedToCreateTemporaryDirectory")) //$NON-NLS-1$
+                .initCause(e);
         }
     }
 
@@ -895,7 +896,7 @@ public class TestDriverContext implements TestContext {
             this.jobExecutorFactory = aClass.asSubclass(JobExecutorFactory.class).newInstance();
         } catch (Exception e) {
             throw (AssertionError) new AssertionError(MessageFormat.format(
-                    "Failed to create job executor factory from \"{0}\": {1}",
+                    Messages.getString("TestDriverContext.errorFailedToCreateJobExecutorFactory"), //$NON-NLS-1$
                     KEY_JOB_EXECUTOR_FACTORY,
                     className)).initCause(e);
         }
@@ -913,7 +914,7 @@ public class TestDriverContext implements TestContext {
         if (deleted) {
             if (path.delete() == false) {
                 LOG.warn(MessageFormat.format(
-                        "テスト用のテンポラリファイルの削除に失敗しました: {0}",
+                        Messages.getString("TestDriverContext.warnFailedToDeleteTemporaryFile"), //$NON-NLS-1$
                         path.getAbsolutePath()));
                 deleted = false;
             }

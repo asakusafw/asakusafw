@@ -55,7 +55,7 @@ import com.asakusafw.utils.java.model.util.Models;
 import com.asakusafw.vocabulary.flow.graph.FlowGraph;
 
 /**
- * フロー部品やジョブフローを直接コンパイルして、JARのパッケージを作成する。
+ * Compiles jobflow/flow-part classes and generates batch applications.
  * @since 0.1.0
  * @version 0.6.0
  */
@@ -64,19 +64,19 @@ public final class DirectFlowCompiler {
     static final Logger LOG = LoggerFactory.getLogger(DirectFlowCompiler.class);
 
     /**
-     * フロー部品やジョブフローををコンパイルして、JARのパッケージを作成する。
-     * @param flowGraph 対象フローの演算子グラフ
-     * @param batchId 対象バッチの識別子
-     * @param flowId 対象フローの識別子
-     * @param basePackageName 対象フローのプログラムを出力する既定のパッケージ名
-     * @param clusterWorkingDirectory 対象フローのプログラムが利用するクラスター上のディレクトリ
-     * @param localWorkingDirectory コンパイル時に利用するローカル環境のワーキングディレクトリ
-     * @param extraResources 追加リソースのディレクトリまたはZIPアーカイブの一覧
-     * @param serviceClassLoader サービス情報をロードするためのクラスローダ
-     * @param flowCompilerOptions フローDSLコンパイラのオプション設定一覧
-     * @return コンパイル結果
-     * @throws IOException コンパイルに失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Compiles the target batch class and returns its structural information.
+     * @param flowGraph the target flow graph
+     * @param batchId the target batch ID
+     * @param flowId the target flow ID
+     * @param basePackageName the base package name of generated Java source files
+     * @param clusterWorkingDirectory the runtime working directory
+     * @param localWorkingDirectory the working directory for compiler
+     * @param extraResources the extra resources for embedding contents into each jobflow package file
+     * @param serviceClassLoader the class loader for loading compiler services
+     * @param flowCompilerOptions the compiler options for flow DSL
+     * @return the compile results
+     * @throws IOException if failed to compile
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public static JobflowInfo compile(
             FlowGraph flowGraph,
@@ -98,7 +98,7 @@ public final class DirectFlowCompiler {
         Precondition.checkMustNotBeNull(flowCompilerOptions, "flowCompilerOptions"); //$NON-NLS-1$
 
         if (localWorkingDirectory.exists()) {
-            clean(localWorkingDirectory);
+            delete(localWorkingDirectory);
         }
         List<ResourceRepository> repositories = createRepositories(serviceClassLoader, extraResources);
         FlowCompilerConfiguration config = createConfig(
@@ -127,12 +127,12 @@ public final class DirectFlowCompiler {
     }
 
     /**
-     * コンパイル済みのジョブフローを簡易実行計画に変換して返す。
-     * @param jobflow 対象のジョブフロー
-     * @param sourceBundle ソースバンドルファイル
-     * @param packageFile パッケージアーカイブ
-     * @return 簡易実行計画
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns the structural information of the jobflow from a compiled one.
+     * @param jobflow the target jobflow (compiled)
+     * @param sourceBundle the jobflow source package
+     * @param packageFile the jobflow package
+     * @return the structural information
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public static JobflowInfo toInfo(
             JobflowModel jobflow,
@@ -153,16 +153,6 @@ public final class DirectFlowCompiler {
             stages.add(toInfo(compiled));
         }
         return new JobflowInfo(jobflow, packageFile, sourceBundle, stages);
-    }
-
-    private static void clean(File localWorkingDirectory) {
-        assert localWorkingDirectory != null;
-        if (localWorkingDirectory.exists()) {
-            LOG.info(MessageFormat.format(
-                    "作業ディレクトリを初期化しています: {0}",
-                    localWorkingDirectory));
-        }
-        delete(localWorkingDirectory);
     }
 
     private static boolean delete(File target) {
@@ -203,7 +193,7 @@ public final class DirectFlowCompiler {
                 results.add(new ZipRepository(file));
             } else {
                 LOG.warn(MessageFormat.format(
-                        "{0}は不明な形式のため、無視されます",
+                        Messages.getString("DirectFlowCompiler.warnIgnoredUnknownFormat"), //$NON-NLS-1$
                         file));
             }
         }
@@ -252,10 +242,10 @@ public final class DirectFlowCompiler {
     }
 
     /**
-     * 指定のクラスを含むライブラリへのパスを返す。
-     * @param memberClass 対象のライブラリパス下のクラス
-     * @return 対応するライブラリへのパス、不明の場合は{@code null}
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Returns the library path which contains the target class.
+     * @param memberClass the target class
+     * @return the related library path, or {@code null} if it is not found
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static File toLibraryPath(Class<?> memberClass) {
         Precondition.checkMustNotBeNull(memberClass, "memberClass"); //$NON-NLS-1$
@@ -273,7 +263,7 @@ public final class DirectFlowCompiler {
             File library = findLibraryFromUrl(url, path);
             if (library != null) {
                 LOG.info(MessageFormat.format(
-                        "フラグメントクラスライブラリを取り込みます: {0}",
+                        Messages.getString("DirectFlowCompiler.infoLoadFragmentClassLibrary"), //$NON-NLS-1$
                         library));
                 results.add(library);
             }
@@ -289,7 +279,7 @@ public final class DirectFlowCompiler {
         URL resource = aClass.getResource(name + ".class"); //$NON-NLS-1$
         if (resource == null) {
             LOG.warn(MessageFormat.format(
-                    "Failed to locate the class file: {0}",
+                    Messages.getString("DirectFlowCompiler.warnFailedToLocateClassFile"), //$NON-NLS-1$
                     aClass.getName()));
             return null;
         }
@@ -307,7 +297,7 @@ public final class DirectFlowCompiler {
                 return toClassPathRoot(file, resourcePath);
             } catch (URISyntaxException e) {
                 LOG.warn(MessageFormat.format(
-                        "Failed to locate the library path (cannot convert to local file): {0}",
+                        Messages.getString("DirectFlowCompiler.warnInvalidLibraryUri"), //$NON-NLS-1$
                         resource), e);
                 return null;
             }
@@ -317,8 +307,8 @@ public final class DirectFlowCompiler {
             return toClassPathRoot(path, resourcePath);
         } else {
             LOG.warn(MessageFormat.format(
-                    "Failed to locate the library path (unsupported protocol {0}): {1}",
-                    resource,
+                    Messages.getString("DirectFlowCompiler.warnUnsupportedLibraryScheme"), //$NON-NLS-1$
+                    protocol,
                     resourcePath));
             return null;
         }
@@ -334,7 +324,7 @@ public final class DirectFlowCompiler {
             current = current.getParentFile();
             if (current == null || current.isDirectory() == false) {
                 LOG.warn(MessageFormat.format(
-                        "Failed to locate the library path: {0} ({1})",
+                        Messages.getString("DirectFlowCompiler.warnUnsupportedLibraryLocation"), //$NON-NLS-1$
                         resourceFile,
                         resourcePath));
                 return null;
@@ -358,7 +348,7 @@ public final class DirectFlowCompiler {
             archive = new URI(qualifier);
         } catch (URISyntaxException e) {
             LOG.warn(MessageFormat.format(
-                    "Failed to locate the JAR library file {0}: {1}",
+                    Messages.getString("DirectFlowCompiler.warnUnexpedtedLibraryPath"), //$NON-NLS-1$
                     qualifier,
                     resourceName),
                     e);
@@ -366,9 +356,9 @@ public final class DirectFlowCompiler {
         }
         if (archive.getScheme().equals("file") == false) { //$NON-NLS-1$
             LOG.warn(MessageFormat.format(
-                    "Failed to locate the library path (unsupported protocol {}): {}",
-                    archive,
-                    resourceName));
+                    Messages.getString("DirectFlowCompiler.warnUnsupportedLibraryScheme"), //$NON-NLS-1$
+                    archive.getScheme(),
+                    archive));
             return null;
         }
         File file = new File(archive);

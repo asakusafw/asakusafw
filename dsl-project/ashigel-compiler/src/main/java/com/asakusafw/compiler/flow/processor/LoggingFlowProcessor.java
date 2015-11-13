@@ -31,7 +31,7 @@ import com.asakusafw.vocabulary.operator.Logging;
 import com.asakusafw.vocabulary.operator.Logging.Level;
 
 /**
- * {@link Logging ロギング演算子}を処理する。
+ * Processes {@link Logging} operators.
  */
 @TargetOperator(Logging.class)
 public class LoggingFlowProcessor extends LinePartProcessor {

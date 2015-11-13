@@ -36,28 +36,25 @@ import com.asakusafw.compiler.operator.OperatorProcessor;
 import com.asakusafw.vocabulary.operator.MasterSelection;
 
 /**
- * {@code Master*}系の演算子を解析する。
+ * Analyzes MasterJoin-like operators.
  */
 public final class MasterKindOperatorAnalyzer {
 
     /**
-     * 指定の演算子メソッドに対するマスタ選択補助演算子を検出する。
-     * @param environment コンパイラの環境
-     * @param context 現在の文脈
-     * @return 発見した補助演算子、指定しない場合は{@code null}
-     * @throws ResolveException 要素の解決に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns the selector method for the target operator method.
+     * @param context the current context
+     * @return the selector method, or {@code null} if the operator method does not use one
+     * @throws ResolveException if error occurred while resolving language elements
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
-    public static ExecutableElement findSelector(
-            OperatorCompilingEnvironment environment,
-            OperatorProcessor.Context context) throws ResolveException {
+    public static ExecutableElement findSelector(OperatorProcessor.Context context) throws ResolveException {
         Precondition.checkMustNotBeNull(context, "context"); //$NON-NLS-1$
         String selectorName = getSelectorName(context);
         if (selectorName == null) {
             return null;
         }
         ExecutableElement selectorMethod = getSelectorMethod(context, selectorName);
-        checkParameters(environment, context.element, selectorMethod);
+        checkParameters(context.environment, context.element, selectorMethod);
         return selectorMethod;
     }
 
@@ -77,7 +74,7 @@ public final class MasterKindOperatorAnalyzer {
                 environment, selectorMethod, selectorParams.get(0).asType());
         if (isValidMaster(operatorMaster, selectorMaster) == false) {
             throw new ResolveException(MessageFormat.format(
-                    "マスタ選択を行うメソッド{0}の1つめの引数は、List<{1}>の形式でなければなりません",
+                    Messages.getString("MasterKindOperatorAnalyzer.errorInvalidSelectorMaster"), //$NON-NLS-1$
                     selectorMethod.getSimpleName(),
                     operatorMaster));
         }
@@ -88,14 +85,14 @@ public final class MasterKindOperatorAnalyzer {
         DataModelMirror selectorTx = environment.loadDataModel(selectorParams.get(1).asType());
         if (isValidTx(operatorTx, selectorTx) == false) {
             throw new ResolveException(MessageFormat.format(
-                    "マスタ選択を行うメソッド{0}の2つめの引数は、{1}のスーパータイプでなければなりません",
+                    Messages.getString("MasterKindOperatorAnalyzer.errorInvalidSelectorTransaction"), //$NON-NLS-1$
                     selectorMethod.getSimpleName(),
                     operatorTx));
         }
         DataModelMirror selectorResult = environment.loadDataModel(selectorMethod.getReturnType());
         if (isValidResult(operatorMaster, selectorMaster, selectorResult) == false) {
             throw new ResolveException(MessageFormat.format(
-                    "マスタ選択を行うメソッド{0}の戻り値は、{1}のサブタイプでなければなりません",
+                    Messages.getString("MasterKindOperatorAnalyzer.errorInvalidSelectorResult"), //$NON-NLS-1$
                     selectorMethod.getSimpleName(),
                     operatorMaster));
         }
@@ -104,7 +101,8 @@ public final class MasterKindOperatorAnalyzer {
             TypeMirror actual = selectorParams.get(i).asType();
             if (environment.getTypeUtils().isSubtype(expected, actual) == false) {
                 throw new ResolveException(MessageFormat.format(
-                        "マスタ選択を行うメソッド{0}の{2}つめの引数は、{1}のスーパータイプでなければなりません",
+                        Messages.getString(
+                                "MasterKindOperatorAnalyzer.errorInconsistentSelectorOptionParameter"), //$NON-NLS-1$
                         selectorMethod.getSimpleName(),
                         expected,
                         String.valueOf(i + 1)));
@@ -152,12 +150,12 @@ public final class MasterKindOperatorAnalyzer {
         List<? extends VariableElement> selectorParams = selectorMethod.getParameters();
         if (operatorParams.size() < selectorParams.size()) {
             throw new ResolveException(MessageFormat.format(
-                    "マスタ選択を行うメソッド{0}は、この演算子の引数と同じかそれよりも少ない数の引数のみ宣言できます",
+                    Messages.getString("MasterKindOperatorAnalyzer.errorExtraSelectorParameter"), //$NON-NLS-1$
                     selectorMethod.getSimpleName()));
         }
         if (selectorParams.size() == 0) {
             throw new ResolveException(MessageFormat.format(
-                    "マスタ選択を行うメソッド{0}には、{1}のリストをとる第1引数が必要です",
+                    Messages.getString("MasterKindOperatorAnalyzer.errorInconsistentSelectorMasterType"), //$NON-NLS-1$
                     selectorMethod.getSimpleName(),
                     operatorParams.get(0).asType()));
         }
@@ -174,13 +172,15 @@ public final class MasterKindOperatorAnalyzer {
         Types types = environment.getTypeUtils();
         if (types.isSameType(erasedSelector, environment.getDeclaredType(List.class)) == false) {
             throw new ResolveException(MessageFormat.format(
-                    "マスタ選択を行うメソッド{0}の1つめの引数は、List<...>の形式でなければなりません",
+                    Messages.getString(
+                            "MasterKindOperatorAnalyzer.errorInvalidSelectorMasterContainer"), //$NON-NLS-1$
                     selectorMethod.getSimpleName()));
         }
         DeclaredType list = (DeclaredType) firstParameter;
         if (list.getTypeArguments().size() != 1) {
             throw new ResolveException(MessageFormat.format(
-                    "マスタ選択を行うメソッド{0}の1つめの引数は、List<...>の形式でなければなりません",
+                    Messages.getString(
+                            "MasterKindOperatorAnalyzer.errorInvalidSelectorMasterTypeArgument"), //$NON-NLS-1$
                     selectorMethod.getSimpleName()));
         }
         TypeMirror selectorElement = list.getTypeArguments().get(0);
@@ -199,7 +199,8 @@ public final class MasterKindOperatorAnalyzer {
             if (member.getSimpleName().contentEquals(selectorName)) {
                 if (member.getAnnotation(MasterSelection.class) == null) {
                     throw new ResolveException(MessageFormat.format(
-                            "マスタ選択の補助演算子{0}には@{1}が付与されている必要があります",
+                            Messages.getString(
+                                    "MasterKindOperatorAnalyzer.errorMissingSelectorAnnotation"), //$NON-NLS-1$
                             selectorName,
                             MasterSelection.class.getSimpleName()));
                 }
@@ -207,7 +208,7 @@ public final class MasterKindOperatorAnalyzer {
             }
         }
         throw new ResolveException(MessageFormat.format(
-                "マスタ選択の補助演算子{0}が見つかりません",
+                Messages.getString("MasterKindOperatorAnalyzer.errorMissingSelectorMethod"), //$NON-NLS-1$
                 selectorName));
     }
 
@@ -230,24 +231,24 @@ public final class MasterKindOperatorAnalyzer {
     }
 
     /**
-     * 要素の解決に失敗したことを表す例外。
+     * An exception for tell that resolving elements are failed.
      */
     public static class ResolveException extends Exception {
 
         private static final long serialVersionUID = 1L;
 
         /**
-         * インスタンスを生成する。
-         * @param message 例外メッセージ
+         * Creates a new instance.
+         * @param message the exception message (nullable)
          */
         public ResolveException(String message) {
             super(message);
         }
 
         /**
-         * インスタンスを生成する。
-         * @param message 例外メッセージ
-         * @param cause 原因となった例外
+         * Creates a new instance.
+         * @param message the exception message (nullable)
+         * @param cause the original cause (nullable)
          */
         public ResolveException(String message, Throwable cause) {
             super(message, cause);

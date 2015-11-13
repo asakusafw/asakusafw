@@ -15,9 +15,8 @@
  */
 package com.asakusafw.utils.java.model.syntax;
 
-
 /**
- * {@code throw}文を表現するインターフェース。
+ * An interface which represents throw statement.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:14.18] The throw Statement} </li>
@@ -27,12 +26,9 @@ package com.asakusafw.utils.java.model.syntax;
 public interface ThrowStatement
         extends Statement, TypedElement {
 
-    // properties
-
     /**
-     * 例外オブジェクトを返す。
-     * @return
-     *     例外オブジェクト
+     * Returns the thrown object.
+     * @return the thrown object
      */
     Expression getExpression();
 }

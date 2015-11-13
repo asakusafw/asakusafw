@@ -112,12 +112,12 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
                 validateCommonProperties(desc);
                 if (desc.getDriverScript() == null) {
                     throw new IllegalStateException(MessageFormat.format(
-                            "Driver script is not defined: {0}",
+                            Messages.getString("WindGateIoProcessor.errorMissingDriverScript"), //$NON-NLS-1$
                             desc.getClass().getName()));
                 }
             } catch (IllegalStateException e) {
                 getEnvironment().error(
-                        "Importer description \"{0}\" is invalid (batch={1}, flow={2}): {3}",
+                        Messages.getString("WindGateIoProcessor.errorInvalidImporter"), //$NON-NLS-1$
                         input.getName(),
                         getEnvironment().getBatchId(),
                         getEnvironment().getFlowId(),
@@ -131,12 +131,12 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
                 validateCommonProperties(desc);
                 if (desc.getDriverScript() == null) {
                     throw new IllegalStateException(MessageFormat.format(
-                            "Driver script is not defined: {0}",
+                            Messages.getString("WindGateIoProcessor.errorMissingDriverScript"), //$NON-NLS-1$
                             desc.getClass().getName()));
                 }
             } catch (IllegalStateException e) {
                 getEnvironment().error(
-                        "Exporter description \"{0}\" is invalid (batch={1}, flow={2}): {3}",
+                        Messages.getString("WindGateIoProcessor.errorInvalidExporter"), //$NON-NLS-1$
                         output.getName(),
                         getEnvironment().getBatchId(),
                         getEnvironment().getFlowId(),
@@ -151,13 +151,13 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
         String profileName = desc.getProfileName();
         if (profileName == null) {
             throw new IllegalStateException(MessageFormat.format(
-                    "{1} must not be null: {0}",
+                    Messages.getString("WindGateIoProcessor.errorNullProperty"), //$NON-NLS-1$
                     desc.getClass().getName(),
                     "getProfileName()")); //$NON-NLS-1$
         }
         if (profileName.isEmpty()) {
             throw new IllegalStateException(MessageFormat.format(
-                    "{1} must not be empty string: {0}",
+                    Messages.getString("WindGateIoProcessor.errorEmptyProperty"), //$NON-NLS-1$
                     desc.getClass().getName(),
                     "getProfileName()")); //$NON-NLS-1$
         }

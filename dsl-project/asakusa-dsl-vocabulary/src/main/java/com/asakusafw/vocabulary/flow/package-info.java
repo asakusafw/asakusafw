@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /**
- * フローDSLで利用可能な、注釈やそれらに関連するクラスを提供する。
+ * Flow DSL vocabulary annotations/classes about data flow representations.
  */
 package com.asakusafw.vocabulary.flow;
 

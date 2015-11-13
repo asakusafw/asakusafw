@@ -17,6 +17,8 @@ package com.asakusafw.compiler.operator;
 
 import javax.lang.model.type.TypeMirror;
 
+import com.asakusafw.compiler.common.Precondition;
+
 /**
  * Represents the data type of each port.
  * @since 0.2.0
@@ -45,29 +47,23 @@ public final class PortTypeDescription {
      * Creates a new instance as a direct typed.
      * @param type the type
      * @return the created instance
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static PortTypeDescription direct(TypeMirror type) {
-        if (type == null) {
-            throw new IllegalArgumentException("representation must not be null"); //$NON-NLS-1$
-        }
+        Precondition.checkMustNotBeNull(type, "type"); //$NON-NLS-1$
         return new PortTypeDescription(Kind.DIRECT, type, type, null);
     }
 
     /**
      * Creates a new instance as a reference typed.
      * @param representation the representation type
-     * @param variableName the referencial variable name holding the actual type
+     * @param variableName the referential variable name holding the actual type
      * @return the created instance
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public static PortTypeDescription reference(TypeMirror representation, String variableName) {
-        if (representation == null) {
-            throw new IllegalArgumentException("representation must not be null"); //$NON-NLS-1$
-        }
-        if (variableName == null) {
-            throw new IllegalArgumentException("variableName must not be null"); //$NON-NLS-1$
-        }
+        Precondition.checkMustNotBeNull(representation, "representation"); //$NON-NLS-1$
+        Precondition.checkMustNotBeNull(variableName, "variableName"); //$NON-NLS-1$
         return new PortTypeDescription(Kind.REFERENCE, representation, null, variableName);
     }
 

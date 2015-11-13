@@ -39,7 +39,7 @@ import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 public class StageAnalyzerTest extends JobflowCompilerTestRoot {
 
     /**
-     * 単純なマップ単位のみ。
+     * map only stage.
      */
     @Test
     public void mapOnly() {
@@ -69,7 +69,7 @@ public class StageAnalyzerTest extends JobflowCompilerTestRoot {
     }
 
     /**
-     * 単純なレデュース単位を含む。
+     * w/ reduce block.
      */
     @Test
     public void withReduce() {
@@ -99,7 +99,7 @@ public class StageAnalyzerTest extends JobflowCompilerTestRoot {
     }
 
     /**
-     * フラグメント内にfactorが連続する。
+     * fragment contains multiple factors.
      */
     @Test
     public void sequencialFactors() {

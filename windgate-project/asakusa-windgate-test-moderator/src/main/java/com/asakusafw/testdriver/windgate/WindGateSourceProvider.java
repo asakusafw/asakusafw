@@ -64,7 +64,7 @@ public class WindGateSourceProvider implements DataModelSourceProvider {
             instance = target.newInstance();
         } catch (Exception e) {
             throw new IOException(MessageFormat.format(
-                    "Failed to create object: {0}",
+                    Messages.getString("WindGateSourceProvider.errorFailedToCreateDescription"), //$NON-NLS-1$
                     rest), e);
         }
         if (instance instanceof WindGateImporterDescription) {
@@ -89,7 +89,7 @@ public class WindGateSourceProvider implements DataModelSourceProvider {
             return new WindGateSource<T>(WindGateTestHelper.prepare(driver), definition);
         } else {
             throw new IOException(MessageFormat.format(
-                    "URI must represent a subclass of {1} or {2}: {0}",
+                    Messages.getString("WindGateSourceProvider.errorInvalidDescription"), //$NON-NLS-1$
                     source,
                     WindGateImporterDescription.class.getSimpleName(),
                     WindGateExporterDescription.class.getSimpleName()));

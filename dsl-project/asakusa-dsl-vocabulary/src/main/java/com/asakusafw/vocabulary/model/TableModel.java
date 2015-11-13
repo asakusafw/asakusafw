@@ -22,7 +22,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * テーブルから構築されたモデルを表す注釈。
+ * An annotation that represents <em>table models</em>.
  * @deprecated moved to asakusa-thundergate-vocabulary
  */
 @Deprecated
@@ -32,27 +32,27 @@ import java.lang.annotation.Target;
 public @interface TableModel {
 
     /**
-     * 元となるテーブルの名前。
+     * The original table name.
      */
     String name();
 
     /**
-     * プロパティとして利用しているカラム名の一覧。
+     * The column names which are used as data model properties.
      */
     String[] columns() default "*";
 
     /**
-     * 主プロパティとして利用しているカラム名の一覧。
+     * The set of primary key column names.
      */
     String[] primary();
 
     /**
-     * この注釈が付けられるモデルに必要なメソッド。
+     * An interface that provides skeletal information of table models.
      * <p>
-     * 必ずしものこのインターフェースを実装する必要はないが、下記のメソッドが存在する前提で
-     * DSLの解釈がおこなれる。
+     * Each data model class may or may not implement this interface,
+     * but that class must provide methods in the interface.
      * </p>
-     * @param <T> モデルオブジェクトの型
+     * @param <T> data model type
      */
     interface Interface<T> extends DataModel.Interface<T> {
         // no members

@@ -41,7 +41,7 @@ public final class JdbcDriverCleaner implements Runnable {
         ClassLoader loader = getClass().getClassLoader();
         if ((loader instanceof PluginClassLoader) == false) {
             throw new IllegalStateException(MessageFormat.format(
-                    "{0} must be loaded on plugin class loader: {1}",
+                    Messages.getString("JdbcDriverCleaner.errorInvalidClassLoader"), //$NON-NLS-1$
                     getClass().getName(),
                     loader));
         }
@@ -62,7 +62,7 @@ public final class JdbcDriverCleaner implements Runnable {
             runnable.run();
         } catch (Exception e) {
             LOG.warn(MessageFormat.format(
-                    "error occurred while unloading JDBC drivers: {0}",
+                    Messages.getString("JdbcDriverCleaner.warnFailedToRun"), //$NON-NLS-1$
                     loader), e);
         }
     }
@@ -89,7 +89,7 @@ public final class JdbcDriverCleaner implements Runnable {
                         DriverManager.deregisterDriver(driver);
                     } catch (SQLException e) {
                         LOG.warn(MessageFormat.format(
-                                "failed to unload {0} ({1})",
+                                Messages.getString("JdbcDriverCleaner.warnFailedToDeregisterDriver"), //$NON-NLS-1$
                                 driver,
                                 loader), e);
                     }

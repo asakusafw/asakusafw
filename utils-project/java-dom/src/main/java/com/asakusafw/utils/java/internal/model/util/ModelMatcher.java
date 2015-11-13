@@ -21,12 +21,12 @@ import com.asakusafw.utils.java.model.syntax.*;
 import com.asakusafw.utils.java.model.util.NoThrow;
 
 /**
- * {@link Model}どうしを比較するビジタ。
+ * Compares between two {@link Model} objects.
  */
 public final class ModelMatcher extends StrictVisitor<Boolean, Model, NoThrow> {
 
     /**
-     * このクラスのインスタンス。
+     * The singleton instance.
      */
     public static final ModelMatcher INSTANCE = new ModelMatcher();
 

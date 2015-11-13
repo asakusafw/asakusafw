@@ -28,20 +28,21 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 
 /**
- * 発生した例外情報を保持するプロセッサ。
+ * An annotation processor that handles occurred exceptions.
+ * @see #rethrow()
  */
 public class SafeProcessor implements Processor {
 
-    private Processor delegate;
+    private final Processor delegate;
 
     private RuntimeException runtimeException;
 
     private Error error;
 
     /**
-     * インスタンスを生成する。
-     * @param delegate 委譲先のプロセッサ
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Creates a new instance.
+     * @param delegate the delegation target
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public SafeProcessor(Processor delegate) {
         if (delegate == null) {
@@ -51,7 +52,7 @@ public class SafeProcessor implements Processor {
     }
 
     /**
-     * {@link #process(Set, RoundEnvironment)}で実行されたエラーをスローする。
+     * Throws the exception occurred while running {@link #process(Set, RoundEnvironment)} only if it exists.
      */
     public void rethrow() {
         if (runtimeException != null) {

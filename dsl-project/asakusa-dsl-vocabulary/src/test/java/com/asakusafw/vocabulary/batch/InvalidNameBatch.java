@@ -15,9 +15,8 @@
  */
 package com.asakusafw.vocabulary.batch;
 
-
 /**
- * 不正な名前のジョブフローを含むバッチ。
+ * Batch which includes jobflow with invalid name.
  */
 public class InvalidNameBatch extends BatchDescription {
 

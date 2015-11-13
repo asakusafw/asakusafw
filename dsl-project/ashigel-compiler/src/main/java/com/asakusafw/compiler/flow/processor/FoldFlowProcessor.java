@@ -32,7 +32,7 @@ import com.asakusafw.vocabulary.flow.processor.PartialAggregation;
 import com.asakusafw.vocabulary.operator.Fold;
 
 /**
- * {@link Fold 畳み込み演算子}を処理する。
+ * Processes {@link Fold} operators.
  */
 @TargetOperator(Fold.class)
 public class FoldFlowProcessor extends RendezvousProcessor {

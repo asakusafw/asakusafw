@@ -17,7 +17,7 @@ package com.asakusafw.utils.java.model.syntax;
 
 
 /**
- * 修飾子または注釈を表現する基底インターフェース。
+ * An abstract super interface of declaration modifiers or annotations.
  * @see Modifier
  * @see Annotation
  */

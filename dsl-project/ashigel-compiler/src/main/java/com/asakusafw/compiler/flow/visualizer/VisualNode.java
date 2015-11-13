@@ -18,61 +18,63 @@ package com.asakusafw.compiler.flow.visualizer;
 import java.util.UUID;
 
 /**
- * 可視化ノード。
+ * An abstract super interface of visual models about flow elements.
  */
 public interface VisualNode {
 
     /**
-     * このノードの種類を返す。
-     * @return このノードの種類
+     * Returns the node kind.
+     * @return the node kind
      */
     Kind getKind();
 
     /**
-     * このノードに割り当てられたUUIDを返す。
-     * @return このノードに割り当てられたUUID
+     * Returns the ID of this node.
+     * @return the node ID
      */
     UUID getId();
 
     /**
-     * 指定のビジタを受け入れる。
-     * @param <R> 戻り値の型
-     * @param <C> コンテキストオブジェクトの型
-     * @param <E> ビジタで発生する例外の型
-     * @param visitor 受け入れるビジタ
-     * @param context コンテキストオブジェクト(省略可)
-     * @return ビジタの実行結果
-     * @throws E ビジタでの処理中に例外が発生した場合
+     * Accepts the target visitor and invokes the corresponding visitor method.
+     * Accepts and calls back the visitor.
+     * @param <C> type of visitor context
+     * @param <R> type of visitor result
+     * @param <E> type of visitor exception
+     * @param context the visitor context
+     * @param visitor the visitor to call back
+     * @return call back result
+     * @throws E if visitor raises an exception
+     * @throws IllegalArgumentException if {@code visitor} was {@code null}
      */
     <R, C, E extends Throwable> R accept(VisualNodeVisitor<R, C, E> visitor, C context) throws E;
 
     /**
-     * ノードの種類。
+     * Represents a node kind.
      */
     enum Kind {
 
         /**
-         * グラフ。
+         * A graph.
          */
         GRAPH,
 
         /**
-         * ブロック。
+         * A block.
          */
         BLOCK,
 
         /**
-         * フロー部品。
+         * A flow-part.
          */
         FLOW_PART,
 
         /**
-         * フロー部品以外の要素。
+         * A generic element.
          */
         ELEMENT,
 
         /**
-         * ラベル。
+         * A label.
          */
         LABEL,
     }

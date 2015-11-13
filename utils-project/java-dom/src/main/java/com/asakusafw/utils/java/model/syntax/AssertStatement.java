@@ -15,9 +15,8 @@
  */
 package com.asakusafw.utils.java.model.syntax;
 
-
 /**
- * {@code assert}文を表現するインターフェース。
+ * An interface which represents assert statement.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:14.10] The assert Statement} </li>
@@ -27,21 +26,15 @@ package com.asakusafw.utils.java.model.syntax;
 public interface AssertStatement
         extends Statement {
 
-    // properties
-
     /**
-     * 表明式を返す。
-     * @return
-     *     表明式
+     * Returns the assertion expression.
+     * @return the assertion expression
      */
     Expression getExpression();
 
     /**
-     * メッセージ式を返す。
-     * <p> メッセージ式が省略された場合は{@code null}が返される。 </p>
-     * @return
-     *     メッセージ式、
-     *     ただしメッセージ式が省略された場合は{@code null}
+     * Returns the assertion expression.
+     * @return the message expression, or {@code null} if it is not specified
      */
     Expression getMessage();
 }

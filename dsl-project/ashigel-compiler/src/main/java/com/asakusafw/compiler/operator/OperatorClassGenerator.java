@@ -31,44 +31,44 @@ import com.asakusafw.utils.java.model.syntax.TypeParameterDeclaration;
 import com.asakusafw.utils.java.model.util.ImportBuilder;
 
 /**
- * 演算子クラスの派生生成物の情報を構築するジェネレータ。
+ * An abstract super class of generating support classes for operator classes.
  * @since 0.1.0
  * @version 0.5.0
  */
 public abstract class OperatorClassGenerator {
 
     /**
-     * 環境オブジェクト。
+     * The current environment.
      */
     protected final OperatorCompilingEnvironment environment;
 
     /**
-     * このジェネレータで利用するモデルファクトリ。
+     * The Java DOM factory.
      */
     protected final ModelFactory factory;
 
     /**
-     * このジェネレータで利用するインポート宣言を構築するためのビルダー。
+     * The current import declaration builder.
      */
     protected final ImportBuilder importer;
 
     /**
-     * このジェネレータが対象とする演算子クラスの情報。
+     * The target operator class.
      */
     protected final OperatorClass operatorClass;
 
     /**
-     * このジェネレータが利用するユーティリティ。
+     * The utility object for this generator.
      */
     protected final GeneratorUtil util;
 
     /**
-     * インスタンスを生成する。
-     * @param environment 環境オブジェクト
-     * @param factory DOMを構築するためのファクトリ
-     * @param importer インポート宣言を構築するビルダー
-     * @param operatorClass 演算子クラスの情報
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Creates a new instance.
+     * @param environment the current environment
+     * @param factory the Java DOM factory
+     * @param importer the import declaration builder
+     * @param operatorClass the target operator class
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public OperatorClassGenerator(
             OperatorCompilingEnvironment environment,
@@ -87,8 +87,8 @@ public abstract class OperatorClassGenerator {
     }
 
     /**
-     * このジェネレータの情報を利用して型宣言の情報を生成する。
-     * @return 生成したモデル
+     * Generates a declaration of support class.
+     * @return the generated type declaration
      */
     public TypeDeclaration generate() {
         SimpleName name = getClassName();
@@ -104,35 +104,35 @@ public abstract class OperatorClassGenerator {
     }
 
     /**
-     * 生成する型の名前を返す。
-     * @return 生成する型の名前
+     * Returns the simple name of the generating type.
+     * @return the simple name of the generating type
      */
     protected abstract SimpleName getClassName();
 
     /**
-     * 生成する型の属性一覧を返す。
-     * @return 生成する型の属性一覧
+     * Returns the attributes for the generating type.
+     * @return the attributes for the generating type
      * @since 0.5.0
      */
     protected abstract List<? extends Attribute> getAttributes();
 
     /**
-     * 生成する型のスーパータイプを返す。
-     * @return 生成する型のスーパータイプ、明示的に利用しない場合は{@code null}
+     * Returns the super class for the generating type.
+     * @return the super class, or {@code null} if the generating type will not have any explicit super type
      */
     protected Type getSuperClass() {
         return null;
     }
 
     /**
-     * 生成する型へのJavadocを返す。
-     * @return 生成する型へのJavadoc
+     * Returns the documentation comments for the generating type.
+     * @return the documentation comments for the generating type
      */
     protected abstract Javadoc createJavadoc();
 
     /**
-     * 生成する型のメンバー一覧を返す。
-     * @return 生成する型のメンバー一覧
+     * Returns the members for the generating type.
+     * @return the members for the generating type
      */
     protected abstract List<TypeBodyDeclaration> createMembers();
 }

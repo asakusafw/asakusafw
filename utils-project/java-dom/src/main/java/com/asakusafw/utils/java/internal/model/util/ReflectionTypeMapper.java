@@ -33,19 +33,15 @@ import com.asakusafw.utils.java.model.util.Models;
 import com.asakusafw.utils.java.model.util.NoThrow;
 
 /**
- * {@link java.lang.reflect.Type}をモデルに変換する。
+ * Maps {@link java.lang.reflect.Type} into Java DOM types.
  */
-public class ReflectionTypeMapper
-        extends ReflectionTypeVisitor<Type, ModelFactory, NoThrow> {
+public class ReflectionTypeMapper extends ReflectionTypeVisitor<Type, ModelFactory, NoThrow> {
 
     private static final Map<Class<?>, BasicTypeKind> BASIC_TYPES;
     static {
-        Map<Class<?>, BasicTypeKind> map =
-            new HashMap<Class<?>, BasicTypeKind>();
+        Map<Class<?>, BasicTypeKind> map = new HashMap<Class<?>, BasicTypeKind>();
         for (BasicTypeKind kind : BasicTypeKind.values()) {
-            map.put(
-                kind.getJavaRepresentation(),
-                kind);
+            map.put(kind.getJavaRepresentation(), kind);
         }
         BASIC_TYPES = Collections.unmodifiableMap(map);
     }
@@ -63,17 +59,13 @@ public class ReflectionTypeMapper
     }
 
     @Override
-    protected Type visitGenericArrayType(
-            GenericArrayType type,
-            ModelFactory context) {
+    protected Type visitGenericArrayType(GenericArrayType type, ModelFactory context) {
         Type component = dispatch(type.getGenericComponentType(), context);
         return context.newArrayType(component);
     }
 
     @Override
-    protected Type visitParameterizedType(
-            ParameterizedType type,
-            ModelFactory context) {
+    protected Type visitParameterizedType(ParameterizedType type, ModelFactory context) {
         java.lang.reflect.Type owner = type.getOwnerType();
         java.lang.reflect.Type rawType = type.getRawType();
         Type candidate;
@@ -86,7 +78,6 @@ public class ReflectionTypeMapper
                 enclosing,
                 context.newSimpleName(((Class<?>) rawType).getSimpleName()));
         }
-
         List<Type> typeArguments = new ArrayList<Type>();
         for (java.lang.reflect.Type t : type.getActualTypeArguments()) {
             typeArguments.add(dispatch(t, context));
@@ -103,19 +94,12 @@ public class ReflectionTypeMapper
     protected Type visitWildcardType(WildcardType type, ModelFactory context) {
         java.lang.reflect.Type[] lower = type.getLowerBounds();
         if (lower.length == 1) {
-            return context.newWildcard(
-                WildcardBoundKind.LOWER_BOUNDED,
-                dispatch(lower[0], context));
+            return context.newWildcard(WildcardBoundKind.LOWER_BOUNDED, dispatch(lower[0], context));
         }
         java.lang.reflect.Type[] upper = type.getUpperBounds();
         if (upper.length == 1 && upper[0] != Object.class) {
-            return context.newWildcard(
-                WildcardBoundKind.UPPER_BOUNDED,
-                dispatch(upper[0], context));
+            return context.newWildcard(WildcardBoundKind.UPPER_BOUNDED, dispatch(upper[0], context));
         }
-
-        return context.newWildcard(
-            WildcardBoundKind.UNBOUNDED,
-            null);
+        return context.newWildcard(WildcardBoundKind.UNBOUNDED, null);
     }
 }

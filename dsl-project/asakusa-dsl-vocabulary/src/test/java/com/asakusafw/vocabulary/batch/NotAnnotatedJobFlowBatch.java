@@ -15,9 +15,8 @@
  */
 package com.asakusafw.vocabulary.batch;
 
-
 /**
- * 注釈を持たないジョブフローを含むバッチ。
+ * Batch with {@link JobFlowNotAnnotated}.
  */
 public class NotAnnotatedJobFlowBatch extends BatchDescription {
 

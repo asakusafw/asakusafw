@@ -17,8 +17,8 @@ package com.asakusafw.utils.java.model.syntax;
 
 
 /**
- * 代替コンストラクタ起動文を表現するインターフェース。
- * <p> この要素は、コンストラクタ宣言本体の1つ目の文としてのみ出現できる。 </p>
+ * An interface which represents alternate constructor invocation.
+ * This can appear the top of constructor declaration bodies as a statement.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:8.8.7.1] Explicit Constructor Invocations} </li>

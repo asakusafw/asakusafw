@@ -27,33 +27,18 @@ import com.asakusafw.utils.java.model.syntax.Type;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link AnnotationElementDeclaration}の実装。
+ * An implementation of {@link AnnotationElementDeclaration}.
  */
 public final class AnnotationElementDeclarationImpl extends ModelRoot implements AnnotationElementDeclaration {
 
-    /**
-     * ドキュメンテーションコメント。
-     */
     private Javadoc javadoc;
 
-    /**
-     * 修飾子および注釈の一覧。
-     */
     private List<? extends Attribute> modifiers;
 
-    /**
-     * 注釈要素の型。
-     */
     private Type type;
 
-    /**
-     * 注釈要素の名前。
-     */
     private SimpleName name;
 
-    /**
-     * 注釈要素の規定値。
-     */
     private Expression defaultExpression;
 
     @Override
@@ -62,11 +47,8 @@ public final class AnnotationElementDeclarationImpl extends ModelRoot implements
     }
 
     /**
-     * ドキュメンテーションコメントを設定する。
-     * <p> ドキュメンテーションコメントが存在しない場合、引数には{@code null}を指定する。 </p>
-     * @param javadoc
-     *     ドキュメンテーションコメント、
-     *     ただしドキュメンテーションコメントが存在しない場合は{@code null}
+     * Sets the documentation comment.
+     * @param javadoc the documentation comment, or {@code null} if it is not specified
      */
     public void setJavadoc(Javadoc javadoc) {
         this.javadoc = javadoc;
@@ -78,12 +60,9 @@ public final class AnnotationElementDeclarationImpl extends ModelRoot implements
     }
 
     /**
-     * 修飾子および注釈の一覧を設定する。
-     * <p> 修飾子または注釈が一つも宣言されない場合、引数には空を指定する。 </p>
-     * @param modifiers
-     *     修飾子および注釈の一覧
-     * @throws IllegalArgumentException
-     *     {@code modifiers}に{@code null}が指定された場合
+     * Sets the modifiers and annotations.
+     * @param modifiers the modifiers and annotations
+     * @throws IllegalArgumentException if {@code modifiers} was {@code null}
      */
     public void setModifiers(List<? extends Attribute> modifiers) {
         Util.notNull(modifiers, "modifiers"); //$NON-NLS-1$
@@ -97,11 +76,9 @@ public final class AnnotationElementDeclarationImpl extends ModelRoot implements
     }
 
     /**
-     * 注釈要素の型を設定する。
-     * @param type
-     *     注釈要素の型
-     * @throws IllegalArgumentException
-     *     {@code type}に{@code null}が指定された場合
+     * Sets annotation element type.
+     * @param type annotation element type
+     * @throws IllegalArgumentException if {@code type} was {@code null}
      */
     public void setType(Type type) {
         Util.notNull(type, "type"); //$NON-NLS-1$
@@ -114,11 +91,9 @@ public final class AnnotationElementDeclarationImpl extends ModelRoot implements
     }
 
     /**
-     * 注釈要素の名前を設定する。
-     * @param name
-     *     注釈要素の名前
-     * @throws IllegalArgumentException
-     *     {@code name}に{@code null}が指定された場合
+     * Sets annotation element name.
+     * @param name annotation element name
+     * @throws IllegalArgumentException if {@code name} was {@code null}
      */
     public void setName(SimpleName name) {
         Util.notNull(name, "name"); //$NON-NLS-1$
@@ -131,18 +106,15 @@ public final class AnnotationElementDeclarationImpl extends ModelRoot implements
     }
 
     /**
-     * 注釈要素の規定値を設定する。
-     * <p> 規定値が存在しない場合、引数には{@code null}を指定する。 </p>
-     * @param defaultExpression
-     *     注釈要素の規定値、
-     *     ただし規定値が存在しない場合は{@code null}
+     * Sets the default annotation element value.
+     * @param defaultExpression the default annotation element value, or {@code null} if it is not specified
      */
     public void setDefaultExpression(Expression defaultExpression) {
         this.defaultExpression = defaultExpression;
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#ANNOTATION_ELEMENT_DECLARATION}を返す。
+     * Returns {@link ModelKind#ANNOTATION_ELEMENT_DECLARATION} which represents this element kind.
      * @return {@link ModelKind#ANNOTATION_ELEMENT_DECLARATION}
      */
     @Override
@@ -151,8 +123,7 @@ public final class AnnotationElementDeclarationImpl extends ModelRoot implements
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitAnnotationElementDeclaration(this, context);
     }

@@ -61,7 +61,7 @@ import com.asakusafw.utils.java.model.syntax.Name;
 import com.asakusafw.utils.java.model.util.Filer;
 
 /**
- * ファイルシステム上に構成物を展開するパッケージャ。
+ * An implementation of {@link Packager} that generates packages into the local file system.
  * @since 0.1.0
  * @version 0.7.3
  */
@@ -106,14 +106,12 @@ public class FilePackager
     private final List<? extends ResourceRepository> fragmentRepositories;
 
     /**
-     * インスタンスを生成する。
-     * @param workingDirectory 作業ディレクトリ
-     * @param fragmentRepositories 最終結果に含めるリソースリポジトリの一覧
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param workingDirectory the working directory
+     * @param fragmentRepositories the resources for embedding to the generating packages
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
-    public FilePackager(
-            File workingDirectory,
-            List<? extends ResourceRepository> fragmentRepositories) {
+    public FilePackager(File workingDirectory, List<? extends ResourceRepository> fragmentRepositories) {
         Precondition.checkMustNotBeNull(workingDirectory, "workingDirectory"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(fragmentRepositories, "resourceRepositories"); //$NON-NLS-1$
         this.fragmentRepositories = fragmentRepositories;
@@ -144,7 +142,7 @@ public class FilePackager
         if (file.isDirectory() == false) {
             if (file.mkdirs() == false) {
                 throw new IOException(MessageFormat.format(
-                        "ディレクトリの作成に失敗しました ({0})",
+                        Messages.getString("FilePackager.errorFailedToCreateDirectory"), //$NON-NLS-1$
                         file));
             }
         }
@@ -168,7 +166,7 @@ public class FilePackager
                     repos,
                     fragmentRepositories);
             if (exists == false) {
-                LOG.warn("ビルド結果にファイルがひとつも存在しません");
+                LOG.warn(Messages.getString("FilePackager.warnEmptyBuild")); //$NON-NLS-1$
                 addDummyEntry(jar);
             }
         } finally {
@@ -193,7 +191,7 @@ public class FilePackager
                     Collections.singletonList(new FileRepository(sourceDirectory)),
                     Collections.<ResourceRepository>emptyList());
             if (exists == false) {
-                LOG.warn("ソースファイルがひとつも存在しません");
+                LOG.warn(Messages.getString("FilePackager.warnEmptySource")); //$NON-NLS-1$
                 addDummyEntry(jar);
             }
         } finally {
@@ -238,7 +236,7 @@ public class FilePackager
                 }
                 if (saw.contains(location)) {
                     LOG.warn(MessageFormat.format(
-                            "{0} is already added to JAR",
+                            Messages.getString("FilePackager.warnConflictResource"), //$NON-NLS-1$
                             location));
                     continue;
                 }
@@ -286,7 +284,7 @@ public class FilePackager
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         if (compiler == null) {
             throw new IllegalStateException(
-                    "この環境ではJavaコンパイラーを利用できません (JREにはコンパイラーが含まれていません)");
+                    Messages.getString("FilePackager.errorMissingJavaCompiler")); //$NON-NLS-1$
         }
         if (sourceDirectory.isDirectory() == false) {
             return;
@@ -359,7 +357,7 @@ public class FilePackager
             }
             if (Boolean.TRUE.equals(succeeded) == false) {
                 throw new IOException(MessageFormat.format(
-                        "{0}のコンパイルに失敗しました: {1}",
+                        Messages.getString("FilePackager.errorFailedToCompile"), //$NON-NLS-1$
                         getEnvironment().getTargetId(),
                         errors.toString()));
             }
@@ -403,7 +401,7 @@ public class FilePackager
                 .getGenericExtraAttribute(KEY_OPTION_PACKAGING, GenericOptionValue.ENABLED);
         if (option == GenericOptionValue.INVALID) {
             getEnvironment().error(
-                    "Invalid valud for compiler option \"{0}\" ({1}), this must be {2}",
+                    Messages.getString("FilePackager.errorInvalidCompilerOption"), //$NON-NLS-1$
                     getEnvironment().getOptions().getExtraAttributeKeyName(KEY_OPTION_PACKAGING),
                     getEnvironment().getOptions().getExtraAttribute(KEY_OPTION_PACKAGING),
                     GenericOptionValue.ENABLED.getSymbol() + '|' + GenericOptionValue.DISABLED.getSymbol());

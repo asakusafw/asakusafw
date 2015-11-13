@@ -18,26 +18,24 @@ package com.asakusafw.vocabulary.flow.processor;
 import com.asakusafw.vocabulary.flow.graph.FlowElementAttribute;
 
 /**
- * 部分集約の性質。
+ * Represents strategies of aggregate operation.
  * @since 0.2.0
  */
 public enum PartialAggregation implements FlowElementAttribute {
 
     /**
-     * 部分集約を許さない。
+     * Partial aggregation is NOT performed.
      */
     TOTAL,
 
     /**
-     * 部分集約を許す。
-     * <p>
-     * 部分集約を可能にした演算子の内部では、フレームワークAPIを利用できない。
-     * </p>
+     * Uses partial aggregation.
+     * With this strategy, framework API is disabled in the target operator.
      */
     PARTIAL,
 
     /**
-     * デフォルトの設定に従う。
+     * Follows the default settings.
      */
     DEFAULT,
 }

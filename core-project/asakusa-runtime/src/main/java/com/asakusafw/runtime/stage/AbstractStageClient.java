@@ -53,64 +53,64 @@ import com.asakusafw.runtime.util.VariableTable;
 import com.asakusafw.runtime.util.VariableTable.RedefineStrategy;
 
 /**
- * ステージごとの処理を起動するクライアントの基底クラス。
+ * An abstract implementation of Hadoop MapReduce stage client class.
  * @since 0.1.0
  * @version 0.7.1
  */
 public abstract class AbstractStageClient extends BaseStageClient {
 
     /**
-     * {@link #getStageOutputPath()}のメソッド名。
+     * The method name of {@link #getStageOutputPath()}.
      */
     public static final String METHOD_STAGE_OUTPUT_PATH = "getStageOutputPath"; //$NON-NLS-1$
 
     /**
-     * {@link #getStageInputs()}のメソッド名。
+     * The method name of {@link #getStageInputs()}.
      */
     public static final String METHOD_STAGE_INPUTS = "getStageInputs"; //$NON-NLS-1$
 
     /**
-     * {@link #getStageOutputs()}のメソッド名。
+     * The method name of {@link #getStageOutputs()}.
      */
     public static final String METHOD_STAGE_OUTPUTS = "getStageOutputs"; //$NON-NLS-1$
 
     /**
-     * {@link #getStageResources()}のメソッド名。
+     * The method name of {@link #getStageResources()}.
      */
     public static final String METHOD_STAGE_RESOURCES = "getStageResources"; //$NON-NLS-1$
 
     /**
-     * {@link #getShuffleKeyClassOrNull()}のメソッド名。
+     * The method name of {@link #getShuffleKeyClassOrNull()}.
      */
     public static final String METHOD_SHUFFLE_KEY_CLASS = "getShuffleKeyClassOrNull"; //$NON-NLS-1$
 
     /**
-     * {@link #getShuffleValueClassOrNull()}のメソッド名。
+     * The method name of {@link #getShuffleValueClassOrNull()}.
      */
     public static final String METHOD_SHUFFLE_VALUE_CLASS = "getShuffleValueClassOrNull"; //$NON-NLS-1$
 
     /**
-     * {@link #getPartitionerClassOrNull()}のメソッド名。
+     * The method name of {@link #getPartitionerClassOrNull()}.
      */
     public static final String METHOD_PARTITIONER_CLASS = "getPartitionerClassOrNull"; //$NON-NLS-1$
 
     /**
-     * {@link #getCombinerClassOrNull()}のメソッド名。
+     * The method name of {@link #getCombinerClassOrNull()}.
      */
     public static final String METHOD_COMBINER_CLASS = "getCombinerClassOrNull"; //$NON-NLS-1$
 
     /**
-     * {@link #getSortComparatorClassOrNull()}のメソッド名。
+     * The method name of {@link #getSortComparatorClassOrNull()}.
      */
     public static final String METHOD_SORT_COMPARATOR_CLASS = "getSortComparatorClassOrNull"; //$NON-NLS-1$
 
     /**
-     * {@link #getGroupingComparatorClassOrNull()}のメソッド名。
+     * The method name of {@link #getGroupingComparatorClassOrNull()}.
      */
     public static final String METHOD_GROUPING_COMPARATOR_CLASS = "getGroupingComparatorClassOrNull"; //$NON-NLS-1$
 
     /**
-     * {@link #getReducerClassOrNull()}のメソッド名。
+     * The method name of {@link #getReducerClassOrNull()}.
      */
     public static final String METHOD_REDUCER_CLASS = "getReducerClassOrNull"; //$NON-NLS-1$
 
@@ -131,52 +131,55 @@ public abstract class AbstractStageClient extends BaseStageClient {
     }
 
     /**
-     * このステージへの入力一覧を返す。
-     * @return 入力一覧
+     * Returns the stage inputs.
+     * @return the stage inputs
+     * @see StageInputDriver
      */
     protected abstract List<StageInput> getStageInputs();
 
     /**
-     * このステージからの出力に利用するベースパスを返す。
-     * @return ベースパス
+     * Returns the base path of stage output.
+     * @return the base path
      */
     protected abstract String getStageOutputPath();
 
     /**
-     * このステージからの出力一覧を返す。
-     * @return 出力一覧
+     * Returns the stage outputs.
+     * @return the stage outputs
+     * @see StageOutputDriver
      */
     protected List<StageOutput> getStageOutputs() {
         return Collections.emptyList();
     }
 
     /**
-     * このステージで利用するキャッシュファイルの一覧を返す。
-     * @return キャッシュファイル一覧
+     * Returns the stage resources.
+     * @return the stage resources
+     * @see StageResourceDriver
      */
     protected List<StageResource> getStageResources() {
         return Collections.emptyList();
     }
 
     /**
-     * このステージのシャッフルフェーズで利用するキークラスを返す。
-     * @return シャッフルフェーズで利用するキークラス、利用しない場合は{@code null}
+     * Returns the shuffle key class.
+     * @return the shuffle key class, or {@code null} if a reduce operation is not required in this stage
      */
     protected Class<? extends Writable> getShuffleKeyClassOrNull() {
         return null;
     }
 
     /**
-     * このステージのシャッフルフェーズで利用する値クラスを返す。
-     * @return シャッフルフェーズで利用する値クラス、利用しない場合は{@code null}
+     * Returns the shuffle value class.
+     * @return the shuffle value class, or {@code null} if a reduce operation is not required in this stage
      */
     protected Class<? extends Writable> getShuffleValueClassOrNull() {
         return null;
     }
 
     /**
-     * このステージで利用するパーティショナークラスを返す。
-     * @return パーティショナークラス、利用しない場合は{@code null}
+     * Returns the partitioner class.
+     * @return the partitioner class, or {@code null} if a reduce operation is not required in this stage
      */
     @SuppressWarnings("rawtypes")
     protected Class<? extends Partitioner> getPartitionerClassOrNull() {
@@ -184,8 +187,8 @@ public abstract class AbstractStageClient extends BaseStageClient {
     }
 
     /**
-     * このステージで利用するコンバイナークラスを返す。
-     * @return コンバイナークラス、利用しない場合は{@code null}
+     * Returns the combiner class.
+     * @return the combiner class, or {@code null} if a combine operation is not required in this stage
      */
     @SuppressWarnings("rawtypes")
     protected Class<? extends Reducer> getCombinerClassOrNull() {
@@ -193,8 +196,8 @@ public abstract class AbstractStageClient extends BaseStageClient {
     }
 
     /**
-     * キーの整列に利用する比較クラスを返す。
-     * @return 比較クラス、利用しない場合は{@code null}
+     * Returns the sort comparator class (for shuffle keys).
+     * @return the sort comparator class, or {@code null} if a reduce operation is not required in this stage
      */
     @SuppressWarnings("rawtypes")
     protected Class<? extends RawComparator> getSortComparatorClassOrNull() {
@@ -202,8 +205,8 @@ public abstract class AbstractStageClient extends BaseStageClient {
     }
 
     /**
-     * キーのグループ化に利用する比較クラスを返す。
-     * @return 比較クラス、利用しない場合は{@code null}
+     * Returns the grouping comparator class (for shuffle keys).
+     * @return the grouping comparator class, or {@code null} if a reduce operation is not required in this stage
      */
     @SuppressWarnings("rawtypes")
     protected Class<? extends RawComparator> getGroupingComparatorClassOrNull() {
@@ -211,8 +214,8 @@ public abstract class AbstractStageClient extends BaseStageClient {
     }
 
     /**
-     * このステージで利用するレデューサークラスを返す。
-     * @return レデューサークラス、利用しない場合は{@code null}
+     * Returns the reducer class.
+     * @return the reducer class, or {@code null} if a reduce operation is not required in this stage
      */
     @SuppressWarnings("rawtypes")
     protected Class<? extends Reducer> getReducerClassOrNull() {

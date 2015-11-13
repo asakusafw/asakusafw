@@ -10,13 +10,16 @@ Mavenアーティファクト
 Direct I/OのTSVファイル連携モジュールはAsakusa FrameworkのMavenリポジトリにグループID ``com.asakusafw.sandbox`` を持つMavenアーティファクトとして登録されています。
 
 ..  list-table:: Direct I/OのTSVファイル連携で使用するMavenアーティファクト
-    :widths: 5 5 
+    :widths: 5 5
     :header-rows: 1
 
     * - グループID
       - アーティファクトID
     * - ``com.asakusafw.sandbox``
       - ``asakusa-directio-dmdl-ext``
+      
+..  note::
+    Sandoxモジュールとして提供するDirect I/Oの各フォーマット拡張機能は同一のMavenアーティファクトで提供しています。
 
 TSVファイル連携モジュールの利用方法
 ===================================
@@ -29,8 +32,8 @@ TSVファイル連携モジュールを使用する場合はアプリケーシ�
         ...
         compile group: 'com.asakusafw.sandbox', name: 'asakusa-directio-dmdl-ext', version: asakusafw.asakusafwVersion
 
-モデルクラスの生成
-==================
+データモデルクラスの生成
+========================
 
 DMDLに対するTSVファイル用拡張属性の追加
 ---------------------------------------
@@ -82,7 +85,7 @@ TSV形式の設定
       - ``TRUE`` に設定すると、読み込み時に先頭行をスキップし、書き込み時にモデルの定義内容に応じたヘッダ行を生成する。
     * - ``compression``
       - 文字列
-      - なし
+      - なし（非圧縮）
       - ファイルの圧縮コーデック
 
 ``compression`` には、 ``"gzip"`` または ``org.apache.hadoop.io.compress.CompressionCodec`` のサブタイプのクラス名を指定します [#]_ 。
@@ -97,7 +100,7 @@ TSV形式の設定
 ..  code-block:: none
 
     @directio.tsv(
-        charset = "ISO-2022-JP",
+        charset = "ISO-2022-jp",
         has_header = TRUE,
         compression = "gzip",
     )
@@ -161,8 +164,8 @@ TSVから除外するプロパティ
 
 特定のプロパティをCSVのフィールドとして取り扱いたくない場合、プロパティに ``@directio.tsv.ignore`` を指定します。
 
-データモデルクラスの生成
-~~~~~~~~~~~~~~~~~~~~~~~~
+データモデルクラス生成コマンド
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 データモデルクラスの生成は通常のDMDLで提供する方法と同様に、Gradleの :program:`compileDMDL` タスクを実行して生成します。
 
@@ -241,16 +244,16 @@ DMDLスクリプトに対応するTSVファイルの例を以下に示します�
 ..  code-block:: java
 
     "テーブルEX1"
-    ... 
+    ...
     @directio.tsv
-    ex1 = { 
+    ex1 = {
         "SID"
         sid : LONG;
         "VALUE"
         value : INT;
         "STRING"
         string : TEXT;
-    };  
+    };
 
 サンプル:TSVファイル
 ~~~~~~~~~~~~~~~~~~~~

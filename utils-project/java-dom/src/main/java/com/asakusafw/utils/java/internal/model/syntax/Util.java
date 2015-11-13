@@ -21,7 +21,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * このパッケージ共通のユーティリティ。
+ * A common utilities for this package members.
  */
 final class Util {
 

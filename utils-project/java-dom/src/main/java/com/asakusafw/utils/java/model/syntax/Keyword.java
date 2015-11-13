@@ -17,21 +17,16 @@ package com.asakusafw.utils.java.model.syntax;
 
 
 /**
- * {@code super}, {@code this}キーワードを表現する疑似式を表現する基底インターフェース。
+ * An abstract super interface of {@code super} and {@code this} qualifiers (pseudo-expressions).
  * @see Super
  * @see This
  */
 public interface Keyword
         extends Expression {
 
-    // properties
-
     /**
-     * 型限定子を返す。
-     * <p> 限定子が指定されない場合は{@code null}が返される。 </p>
-     * @return
-     *     型限定子、
-     *     ただし限定子が指定されない場合は{@code null}
+     * Returns the type qualifier.
+     * @return the type qualifier, or {@code null} if it is not specified
      */
     NamedType getQualifier();
 }

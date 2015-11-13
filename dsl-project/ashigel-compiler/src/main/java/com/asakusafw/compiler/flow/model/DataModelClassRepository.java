@@ -33,7 +33,7 @@ import com.asakusafw.runtime.model.DataModelKind;
 import com.asakusafw.utils.collections.Maps;
 
 /**
- * {@link DataModelClass}を生成する{@code DataClass.Repository}の実装。
+ * An implementation of {@link DataClassRepository} for basic data model classes.
  */
 public class DataModelClassRepository
         extends FlowCompilingEnvironment.Initialized

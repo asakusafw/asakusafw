@@ -33,141 +33,121 @@ import com.asakusafw.runtime.value.ValueOption;
 
 
 /**
- * レコードを表現するデータを解析し、それぞれのメンバーを{@link ValueOption}にその値を設定する。
- * <p>
- * 次のように利用する。
- * </p>
+ * Reads set of records and set each cell into {@link ValueOption}.
 <pre><code>
-Reader reader = ...;
 SomeModel model = new SomeModel();
-try {
-    RecordParser parser = ...;
+try (RecordParser parser = ...) {
     while (parser.next()) {
         parser.fill(model.getHogeOption());
         parser.fill(model.getFooOption());
         parser.fill(model.getBarOption());
         parser.endRecord();
-        // 任意の処理
-        performModelAction(model);
+        performSomeAction(model);
     }
-} finally {
-    reader.close();
 }
 </code></pre>
- * <p>
- * 特に指定がない限り、このインターフェースのメソッドの引数に{@code null}を指定した場合には
- * {@link NullPointerException}がスローされる。
- * </p>
+ * Each method in this interface may raise {@link NullPointerException} if parameters were {@code null}.
  * @since 0.1.0
  * @version 0.2.4
  */
 public interface RecordParser extends Closeable {
 
     /**
-     * 次のレコードに処理を移す。
-     * <p>
-     * このメソッドは、オブジェクトの初期化直後、またはレコードを読み終わった後に
-     * 実行される事を想定しており、それ以外で呼び出された場合には
-     * レコードの形式が間違っているとみなされる。
-     * </p>
-     * 次のレコードが存在する場合のみ{@code true}を返す。
-     * @return 次のレコードが存在する場合のみ{@code true}
-     * @throws RecordFormatException レコードの形式が正しくない場合
-     * @throws IOException レコードの読み出しに失敗した場合
+     * Prepare for reading the next record.
+     * If the current record has any more remaining cells, this will raise an {@link RecordFormatException}.
+     * @return {@code true} if the next record exists, or otherwise {@code false}
+     * @throws RecordFormatException if the record format is something wrong
+     * @throws IOException if error occurred while reading the head of the next record
      */
     boolean next() throws RecordFormatException, IOException;
 
     /**
-     * このパーサーが読む次のセルの内容を、指定のオブジェクトに格納する。
-     * @param option 格納先のオブジェクト
-     * @throws RecordFormatException レコードの内容を解釈できない場合
-     * @throws IOException レコードの読み出しに失敗した場合
+     * Reads the next cell and set the value into the target object.
+     * @param option the target object
+     * @throws RecordFormatException if the record format is something wrong
+     * @throws IOException if error occurred while reading the next cell
      */
     void fill(BooleanOption option) throws RecordFormatException, IOException;
 
     /**
-     * このパーサーが読む次のセルの内容を、指定のオブジェクトに格納する。
-     * @param option 格納先のオブジェクト
-     * @throws RecordFormatException レコードの内容を解釈できない場合
-     * @throws IOException レコードの読み出しに失敗した場合
+     * Reads the next cell and set the value into the target object.
+     * @param option the target object
+     * @throws RecordFormatException if the record format is something wrong
+     * @throws IOException if error occurred while reading the next cell
      */
     void fill(ByteOption option) throws RecordFormatException, IOException;
 
     /**
-     * このパーサーが読む次のセルの内容を、指定のオブジェクトに格納する。
-     * @param option 格納先のオブジェクト
-     * @throws RecordFormatException レコードの内容を解釈できない場合
-     * @throws IOException レコードの読み出しに失敗した場合
+     * Reads the next cell and set the value into the target object.
+     * @param option the target object
+     * @throws RecordFormatException if the record format is something wrong
+     * @throws IOException if error occurred while reading the next cell
      */
     void fill(ShortOption option) throws RecordFormatException, IOException;
 
     /**
-     * このパーサーが読む次のセルの内容を、指定のオブジェクトに格納する。
-     * @param option 格納先のオブジェクト
-     * @throws RecordFormatException レコードの内容を解釈できない場合
-     * @throws IOException レコードの読み出しに失敗した場合
+     * Reads the next cell and set the value into the target object.
+     * @param option the target object
+     * @throws RecordFormatException if the record format is something wrong
+     * @throws IOException if error occurred while reading the next cell
      */
     void fill(IntOption option) throws RecordFormatException, IOException;
 
     /**
-     * このパーサーが読む次のセルの内容を、指定のオブジェクトに格納する。
-     * @param option 格納先のオブジェクト
-     * @throws RecordFormatException レコードの内容を解釈できない場合
-     * @throws IOException レコードの読み出しに失敗した場合
+     * Reads the next cell and set the value into the target object.
+     * @param option the target object
+     * @throws RecordFormatException if the record format is something wrong
+     * @throws IOException if error occurred while reading the next cell
      */
     void fill(LongOption option) throws RecordFormatException, IOException;
 
     /**
-     * このパーサーが読む次のセルの内容を、指定のオブジェクトに格納する。
-     * @param option 格納先のオブジェクト
-     * @throws RecordFormatException レコードの内容を解釈できない場合
-     * @throws IOException レコードの読み出しに失敗した場合
+     * Reads the next cell and set the value into the target object.
+     * @param option the target object
+     * @throws RecordFormatException if the record format is something wrong
+     * @throws IOException if error occurred while reading the next cell
      */
     void fill(FloatOption option) throws RecordFormatException, IOException;
 
     /**
-     * このパーサーが読む次のセルの内容を、指定のオブジェクトに格納する。
-     * @param option 格納先のオブジェクト
-     * @throws RecordFormatException レコードの内容を解釈できない場合
-     * @throws IOException レコードの読み出しに失敗した場合
+     * Reads the next cell and set the value into the target object.
+     * @param option the target object
+     * @throws RecordFormatException if the record format is something wrong
+     * @throws IOException if error occurred while reading the next cell
      */
     void fill(DoubleOption option) throws RecordFormatException, IOException;
 
     /**
-     * このパーサーが読む次のセルの内容を、指定のオブジェクトに格納する。
-     * @param option 格納先のオブジェクト
-     * @throws RecordFormatException レコードの内容を解釈できない場合
-     * @throws IOException レコードの読み出しに失敗した場合
+     * Reads the next cell and set the value into the target object.
+     * @param option the target object
+     * @throws RecordFormatException if the record format is something wrong
+     * @throws IOException if error occurred while reading the next cell
      */
     void fill(DecimalOption option) throws RecordFormatException, IOException;
 
     /**
-     * このパーサーが読む次のセルの内容を、指定のオブジェクトに格納する。
-     * @param option 格納先のオブジェクト
-     * @throws RecordFormatException レコードの内容を解釈できない場合
-     * @throws IOException レコードの読み出しに失敗した場合
+     * Reads the next cell and set the value into the target object.
+     * @param option the target object
+     * @throws RecordFormatException if the record format is something wrong
+     * @throws IOException if error occurred while reading the next cell
      */
     void fill(StringOption option) throws RecordFormatException, IOException;
 
     /**
-     * このパーサーが読む次のセルの内容を、指定のオブジェクトに格納する。
-     * <p>
-     * 年、月、日のいずれかに0が指定された場合、同セルを空のセルとして取扱う。
-     * </p>
-     * @param option 格納先のオブジェクト
-     * @throws RecordFormatException レコードの内容を解釈できない場合
-     * @throws IOException レコードの読み出しに失敗した場合
+     * Reads the next cell and set the value into the target object.
+     * If either year, month, or day field was {@code 0}, this set {@code null} to the target object.
+     * @param option the target object
+     * @throws RecordFormatException if the record format is something wrong
+     * @throws IOException if error occurred while reading the next cell
      */
     void fill(DateOption option) throws RecordFormatException, IOException;
 
     /**
-     * このパーサーが読む次のセルの内容を、指定のオブジェクトに格納する。
-     * <p>
-     * 年、月、日のいずれかに0が指定された場合、同セルを空のセルとして取扱う。
-     * </p>
-     * @param option 格納先のオブジェクト
-     * @throws RecordFormatException レコードの内容を解釈できない場合
-     * @throws IOException レコードの読み出しに失敗した場合
+     * Reads the next cell and set the value into the target object.
+     * If either year, month, or day field was {@code 0}, this set {@code null} to the target object.
+     * @param option the target object
+     * @throws RecordFormatException if the record format is something wrong
+     * @throws IOException if error occurred while reading the next cell
      */
     void fill(DateTimeOption option) throws RecordFormatException, IOException;
 
@@ -177,5 +157,4 @@ public interface RecordParser extends Closeable {
      * @throws IOException if failed to finalize this record
      */
     void endRecord() throws RecordFormatException, IOException;
-
 }

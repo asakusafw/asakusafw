@@ -14,29 +14,28 @@
  * limitations under the License.
  */
 package com.asakusafw.compiler.flow.processor.operator;
-import javax.annotation.Generated;
-
 import com.asakusafw.compiler.flow.testing.model.Ex1;
 import com.asakusafw.compiler.flow.testing.model.ExSummarized;
 import com.asakusafw.compiler.flow.testing.model.ExSummarized2;
 import com.asakusafw.compiler.flow.testing.model.KeyConflict;
+import javax.annotation.Generated;
 /**
- * {@link SummarizeFlow}に関する演算子実装クラス。
+ * An operator implementation class for{@link SummarizeFlow}.
  */
-@Generated("OperatorImplementationClassGenerator:0.0.1") public class SummarizeFlowImpl extends SummarizeFlow {
+@Generated("OperatorImplementationClassGenerator:0.1.0") public class SummarizeFlowImpl extends SummarizeFlow {
     /**
-     * インスタンスを生成する。
+     * Creates a new instance.
      */
     public SummarizeFlowImpl() {
         return;
     }
     @Override public ExSummarized simple(Ex1 model) {
-        throw new UnsupportedOperationException("単純集計演算子は組み込みの方法で処理されます");
+        throw new UnsupportedOperationException("summarize operator does not have method body");
     }
     @Override public ExSummarized2 renameKey(Ex1 model) {
-        throw new UnsupportedOperationException("単純集計演算子は組み込みの方法で処理されます");
+        throw new UnsupportedOperationException("summarize operator does not have method body");
     }
     @Override public KeyConflict keyConflict(Ex1 model) {
-        throw new UnsupportedOperationException("単純集計演算子は組み込みの方法で処理されます");
+        throw new UnsupportedOperationException("summarize operator does not have method body");
     }
 }

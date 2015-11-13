@@ -18,18 +18,11 @@ package com.asakusafw.utils.java.internal.parser.javadoc.ir;
 import java.text.MessageFormat;
 
 /**
- * フィールドへの参照。
+ * Represents field references.
  */
 public class IrDocField extends IrDocMember {
 
     private static final long serialVersionUID = 1L;
-
-    /**
-     * インスタンスを生成する。
-     */
-    public IrDocField() {
-        super();
-    }
 
     @Override
     public IrDocElementKind getKind() {

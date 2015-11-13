@@ -41,7 +41,7 @@ import com.asakusafw.utils.java.model.util.Models;
 public class OperatorImplementationClassGeneratorTest extends OperatorCompilerTestRoot {
 
     /**
-     * 具象メソッドに対する実装が存在しない。
+     * w/o abstract operator methods.
      */
     @Test
     public void concrete() {
@@ -52,12 +52,11 @@ public class OperatorImplementationClassGeneratorTest extends OperatorCompilerTe
         assertThat(tree.getName().getToken(), is("ConcreteImpl"));
         assertThat(tree.getSuperClass().toString(), is("Concrete"));
 
-        // オーバーライド
         assertThat(Find.method(tree, "example"), is(nullValue()));
     }
 
     /**
-     * 抽象メソッドに対する実装が行われる。
+     * w/ abstract operator methods.
      */
     @Test
     public void skeleton() {
@@ -68,7 +67,6 @@ public class OperatorImplementationClassGeneratorTest extends OperatorCompilerTe
         assertThat(tree.getName().getToken(), is("AbstractImpl"));
         assertThat(tree.getSuperClass().toString(), is("Abstract"));
 
-        // オーバーライド
         MethodDeclaration method = Find.method(tree, "example");
         assertThat(method, not(nullValue()));
         assertThat(Find.modifiers(method), hasItem(PUBLIC));
@@ -91,7 +89,7 @@ public class OperatorImplementationClassGeneratorTest extends OperatorCompilerTe
 
     private static class Engine extends Callback {
 
-        private OperatorProcessor[] procs;
+        private final OperatorProcessor[] procs;
 
         TypeDeclaration collected;
 

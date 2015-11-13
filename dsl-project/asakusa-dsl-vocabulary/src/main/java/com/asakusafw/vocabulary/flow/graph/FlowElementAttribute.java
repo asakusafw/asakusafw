@@ -16,13 +16,13 @@
 package com.asakusafw.vocabulary.flow.graph;
 
 /**
- * {@link FlowElement}が有する属性の種類。
+ * An abstract interface which represents attribute of {@link FlowElement}.
  */
 public interface FlowElementAttribute {
 
     /**
-     * この属性を宣言したクラスを返す。
-     * @return この属性を宣言したクラス
+     * Returns the declaring class of this attribute.
+     * @return the declaring class
      */
     Class<? extends FlowElementAttribute> getDeclaringClass();
 }

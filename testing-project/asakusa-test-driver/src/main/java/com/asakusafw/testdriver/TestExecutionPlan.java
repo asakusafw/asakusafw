@@ -47,15 +47,15 @@ public class TestExecutionPlan implements Serializable {
     private final List<Task> finalizers;
 
     /**
-     * インスタンスを生成する。
-     * @param definitionId このトランザクションの定義識別子
-     * @param executionId このトランザクションの実行識別子
-     * @param initializers 初期化フェーズに実行するべきコマンド
-     * @param importers インポートフェーズに実行するべきコマンド
-     * @param jobs 本体フェーズに実行するべきジョブ
-     * @param exporters エクスポートフェーズに実行するべきコマンド
-     * @param finalizers 終了フェーズに実行するべきコマンド
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param definitionId the static definition ID of this plan
+     * @param executionId the runtime execution ID of this plan
+     * @param initializers tasks in initialize phase
+     * @param importers tasks in import phase
+     * @param jobs tasks in main phase
+     * @param exporters tasks in export phase
+     * @param finalizers tasks in finalize phase
+     * @throws IllegalArgumentException if some parameters are {@code null}
      */
     public TestExecutionPlan(
             String definitionId,
@@ -82,56 +82,56 @@ public class TestExecutionPlan implements Serializable {
     }
 
     /**
-     * このトランザクション単位の定義識別子を返す。
-     * @return このトランザクション単位の定義識別子
+     * Returns the static definition ID of this plan.
+     * @return the static definition ID
      */
     public String getDefinitionId() {
         return definitionId;
     }
 
     /**
-     * このトランザクション単位の実行識別子を返す。
-     * @return このトランザクション単位の実行識別子
+     * Returns the runtime execution ID of this plan.
+     * @return the runtime execution ID
      */
     public String getExecutionId() {
         return executionId;
     }
 
     /**
-     * フェーズの一覧を返す。
-     * @return フェーズの一覧
+     * Returns tasks in initialize phase.
+     * @return tasks
      */
     public List<Task> getInitializers() {
         return initializers;
     }
 
     /**
-     * フェーズの一覧を返す。
-     * @return フェーズの一覧
+     * Returns tasks in import phase.
+     * @return tasks
      */
     public List<Task> getImporters() {
         return importers;
     }
 
     /**
-     * フェーズの一覧を返す。
-     * @return フェーズの一覧
+     * Returns tasks in main phase.
+     * @return tasks
      */
     public List<Task> getJobs() {
         return jobs;
     }
 
     /**
-     * フェーズの一覧を返す。
-     * @return フェーズの一覧
+     * Returns tasks in export phase.
+     * @return tasks
      */
     public List<Task> getExporters() {
         return exporters;
     }
 
     /**
-     * フェーズの一覧を返す。
-     * @return フェーズの一覧
+     * Returns tasks in finalize phase.
+     * @return tasks
      */
     public List<Task> getFinalizers() {
         return finalizers;

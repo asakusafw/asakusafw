@@ -39,14 +39,14 @@ import com.asakusafw.vocabulary.external.ExporterDescription;
 public class BatchCompilerTest {
 
     /**
-     * テストヘルパー。
+     * The test helper.
      */
     @Rule
     public CompilerTester tester = new CompilerTester();
 
     /**
-     * 単純なバッチ。
-     * @throws Exception テストに失敗した場合
+     * simple case
+     * @throws Exception if exception was occurred
      */
     @Test
     public void simple() throws Exception {
@@ -83,8 +83,8 @@ public class BatchCompilerTest {
     }
 
     /**
-     * 順序付きのバッチ。
-     * @throws Exception テストに失敗した場合
+     * ordered jobflows.
+     * @throws Exception if exception was occurred
      */
     @Test
     public void ordered() throws Exception {
@@ -106,8 +106,8 @@ public class BatchCompilerTest {
     }
 
     /**
-     * 合流付きのバッチ。
-     * @throws Exception テストに失敗した場合
+     * w/ flow rendezvous.
+     * @throws Exception if exception was occurred
      */
     @Test
     public void join() throws Exception {

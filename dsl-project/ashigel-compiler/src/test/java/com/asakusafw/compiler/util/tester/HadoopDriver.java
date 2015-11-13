@@ -52,7 +52,7 @@ import com.asakusafw.utils.collections.Lists;
 /**
  * A driver for control Hadoop jobs for testing.
  * @since 0.1.0
- * @version 0.7.1
+ * @version 0.7.5
  */
 public final class HadoopDriver implements Closeable {
 
@@ -92,16 +92,20 @@ public final class HadoopDriver implements Closeable {
         this.configurations = configurations;
         this.configuration = configurations.newInstance();
         this.logger = LOG;
-        this.simpleMr = isSet(KEY_BUILTIN_MAPREDUCE) || isSet(KEY_SMALLJOB);
+        this.simpleMr = isSet(KEY_BUILTIN_MAPREDUCE, true) || isSet(KEY_SMALLJOB);
         this.inProcess = simpleMr || isSet(KEY_INPROCESS);
     }
 
-    private static boolean isSet(String key) {
+    private static boolean isSet(String key, boolean defaultValue) {
         String value = System.getProperty(key);
         if (value == null) {
-            return false;
+            return defaultValue;
         }
         return value.isEmpty() || value.equalsIgnoreCase("true");
+    }
+
+    private static boolean isSet(String key) {
+        return isSet(key, false);
     }
 
     /**
@@ -133,10 +137,9 @@ public final class HadoopDriver implements Closeable {
     }
 
     /**
-     * 指定のセグメント一覧をHadoopが認識するファイルシステムのパスに変換して返す。
-     * @param segments 対象のセグメント一覧
-     * @return ファイルシステムのパス
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Converts the path segments into the temporary file system path.
+     * @param segments the path segments
+     * @return the temporary path
      */
     public Location toPath(String...segments) {
         if (segments == null) {
@@ -150,8 +153,8 @@ public final class HadoopDriver implements Closeable {
     }
 
     /**
-     * インスタンスを生成する。
-     * @return 生成したインスタンス
+     * Creates a new instance.
+     * @return the created instance
      */
     public static HadoopDriver createInstance() {
         return new HadoopDriver(new ConfigurationProvider());
@@ -168,13 +171,12 @@ public final class HadoopDriver implements Closeable {
     }
 
     /**
-     * 指定のディレクトリパスの内容をすべて含めた入力を返す。
-     * @param <T> モデルの種類
-     * @param modelType モデルの種類
-     * @param location 対象のパス
-     * @return 入力
-     * @throws IOException 情報の取得に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a data model input for reading data model objects in the target path.
+     * @param <T> the data model type
+     * @param modelType the data model type
+     * @param location the target location
+     * @return the created input
+     * @throws IOException if failed to create the input
      */
     public <T extends Writable> ModelInput<T> openInput(
             Class<T> modelType,
@@ -187,7 +189,7 @@ public final class HadoopDriver implements Closeable {
         }
         final File temp = createTempFile(modelType);
         if (temp.delete() == false) {
-            logger.debug("Failed to delete a placeholder file: {}", temp);
+            logger.debug("failed to delete a placeholder file: {}", temp); //$NON-NLS-1$
         }
         if (temp.mkdirs() == false) {
             throw new IOException(temp.getAbsolutePath());
@@ -230,13 +232,12 @@ public final class HadoopDriver implements Closeable {
     }
 
     /**
-     * 指定のパスにモデルの内容を出力する。
-     * @param <T> モデルの種類
-     * @param modelType モデルの種類
-     * @param path 出力先のファイルパス
-     * @return 出力
-     * @throws IOException 情報の取得に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a data model output to write objects into the specified location.
+     * @param <T> the data model type
+     * @param modelType data model type
+     * @param path the target location
+     * @return the created output
+     * @throws IOException if failed to initialize the output
      */
     public <T extends Writable> ModelOutput<T> openOutput(
             Class<T> modelType,
@@ -454,8 +455,8 @@ public final class HadoopDriver implements Closeable {
     }
 
     /**
-     * クラスタ上のユーザーディレクトリ以下のリソースを削除する。
-     * @throws IOException 起動に失敗した場合
+     * Cleans up the temporary working area.
+     * @throws IOException if failed to clean up
      */
     public void clean() throws IOException {
         logger.info("clean user directory");

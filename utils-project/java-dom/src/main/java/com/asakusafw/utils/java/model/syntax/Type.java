@@ -15,9 +15,8 @@
  */
 package com.asakusafw.utils.java.model.syntax;
 
-
 /**
- * 型を表現する基底インターフェース。
+ * An abstract super interface of types.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:4] Types, Values, and Variables} </li>

@@ -67,7 +67,7 @@ import com.asakusafw.utils.java.model.util.Models;
 /**
  * Emitting context.
  * @since 0.2.0
- * @version 0.7.0
+ * @version 0.7.5
  */
 public final class EmitContext {
 
@@ -199,6 +199,44 @@ public final class EmitContext {
     }
 
     /**
+     * Returns the simple name of the target data model class.
+     * @param model the target symbol
+     * @return the simple name of the target symbol
+     * @since 0.7.5
+     */
+    public SimpleName getTypeName(ModelSymbol model) {
+        if (model == null) {
+            throw new IllegalArgumentException("model must not be null"); //$NON-NLS-1$
+        }
+        ModelDeclaration decl = model.findDeclaration();
+        if (decl == null) {
+            throw new IllegalArgumentException();
+        }
+        return getTypeName(decl, NameConstants.PATTERN_DATA_MODEL);
+    }
+
+    /**
+     * Returns the simple name of the target data model class.
+     * @param model the target symbol
+     * @return the simple name of the target symbol
+     * @since 0.7.5
+     */
+    public QualifiedName getQualifiedTypeName(ModelSymbol model) {
+        if (model == null) {
+            throw new IllegalArgumentException("model must not be null"); //$NON-NLS-1$
+        }
+        ModelDeclaration decl = model.findDeclaration();
+        if (decl == null) {
+            throw new IllegalArgumentException();
+        }
+        return (QualifiedName) Models.append(factory,
+                config.getBasePackage(),
+                getNamespace(decl),
+                factory.newSimpleName(NameConstants.CATEGORY_DATA_MODEL),
+                getTypeName(decl, NameConstants.PATTERN_DATA_MODEL));
+    }
+
+    /**
      * Emits the type declaration as the suitable Java source program.
      * @param type the declaration
      * @throws IOException if failed to emit a Java program
@@ -228,18 +266,7 @@ public final class EmitContext {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public Type resolve(ModelSymbol model) {
-        if (model == null) {
-            throw new IllegalArgumentException("model must not be null"); //$NON-NLS-1$
-        }
-        ModelDeclaration decl = model.findDeclaration();
-        if (decl == null) {
-            throw new IllegalArgumentException();
-        }
-        Name qualifiedName = Models.append(factory,
-                config.getBasePackage(),
-                getNamespace(decl),
-                factory.newSimpleName(NameConstants.CATEGORY_DATA_MODEL),
-                getTypeName(decl, NameConstants.PATTERN_DATA_MODEL));
+        Name qualifiedName = getQualifiedTypeName(model);
         return imports.toType(qualifiedName);
     }
 

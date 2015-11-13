@@ -23,7 +23,7 @@ import java.text.MessageFormat;
 import com.asakusafw.runtime.io.util.WritableRawComparable;
 
 /**
- * {@code null}値を許容する{@code boolean}値。
+ * Represents a {@code boolean} value which can be {@code null}.
  */
 public final class BooleanOption extends ValueOption<BooleanOption> {
 
@@ -37,7 +37,7 @@ public final class BooleanOption extends ValueOption<BooleanOption> {
      * Creates a new instance which represents {@code null} value.
      */
     public BooleanOption() {
-        super();
+        this.nullValue = true;
     }
 
     /**
@@ -45,15 +45,14 @@ public final class BooleanOption extends ValueOption<BooleanOption> {
      * @param value the initial value
      */
     public BooleanOption(boolean value) {
-        super();
         this.value = value;
         this.nullValue = false;
     }
 
     /**
-     * このオブジェクトが表現する値を返す。
-     * @return このオブジェクトが表現する値
-     * @throws NullPointerException この値が{@code null}を表現する場合
+     * Returns the value which this object represents.
+     * @return the value which this object represents, never {@code null}
+     * @throws NullPointerException if this object represents {@code null}
      */
     public boolean get() {
         if (nullValue) {
@@ -63,9 +62,9 @@ public final class BooleanOption extends ValueOption<BooleanOption> {
     }
 
     /**
-     * このオブジェクトが表現する値を返す。
-     * @param alternate このオブジェクトが{@code null}を表現する場合に返す値
-     * @return このオブジェクトが表現する値、{@code null}を表現する場合は引数の値
+     * Returns the value which this object represents.
+     * @param alternate the alternative value for {@code null}
+     * @return the value which this object represents, or the alternative one if this object represents {@code null}
      */
     public boolean or(boolean alternate) {
         if (nullValue) {
@@ -75,11 +74,11 @@ public final class BooleanOption extends ValueOption<BooleanOption> {
     }
 
     /**
-     * このオブジェクトが表現する値を変更する。
-     * @param newValue 変更後の値
-     * @return 自身のオブジェクト
+     * Sets the value.
+     * @param newValue the value
+     * @return this
      * @see ValueOption#setNull()
-     * @deprecated アプリケーションからは利用しない
+     * @deprecated Application developer should not use this method directly
      */
     @Deprecated
     public BooleanOption modify(boolean newValue) {
@@ -88,12 +87,6 @@ public final class BooleanOption extends ValueOption<BooleanOption> {
         return this;
     }
 
-    /**
-     * このオブジェクトの内容を、指定のオブジェクトの内容で上書きする。
-     * @param optionOrNull 上書きする内容、
-     *     {@code null}の場合はこのオブジェクトが{@code null}値を表すようになる
-     * @deprecated アプリケーションからは利用しない
-     */
     @Override
     @Deprecated
     public void copyFrom(BooleanOption optionOrNull) {
@@ -138,9 +131,9 @@ public final class BooleanOption extends ValueOption<BooleanOption> {
     }
 
     /**
-     * この値と指定の値が同じものを表現する場合のみ{@code true}を返す。
-     * @param other 対象の値
-     * @return 指定の値が同じものを表現する場合のみ{@code true}
+     * Returns whether both this object and the specified value represents an equivalent value or not.
+     * @param other the target value
+     * @return {@code true} if this object has the specified value, otherwise {@code false}
      */
     public boolean has(boolean other) {
         if (isNull()) {
@@ -230,25 +223,25 @@ public final class BooleanOption extends ValueOption<BooleanOption> {
     }
 
     /**
-     * このクラスの直列化された形式から、占有しているバイト長を返す。
-     * @param bytes 対象のバイト配列
-     * @param offset バイト配列の開始位置
-     * @param length バイト配列の制限長
-     * @return 比較結果
+     * Returns the actual number of bytes from the serialized byte array.
+     * @param bytes the target byte array
+     * @param offset the beginning index in the byte array (inclusive)
+     * @param length the limit length of the byte array
+     * @return the comparison result
      */
     public static int getBytesLength(byte[] bytes, int offset, int length) {
         return 1;
     }
 
     /**
-     * このクラスの2つの直列化された値を比較する。
-     * @param b1 比較されるバイト配列
-     * @param s1 比較されるバイト配列の開始位置
-     * @param l1 比較されるバイト配列内で、このクラスの直列化形式が占有しているバイト長
-     * @param b2 比較するバイト配列
-     * @param s2 比較するバイト配列の開始位置
-     * @param l2 比較するバイト配列内で、このクラスの直列化形式が占有しているバイト長
-     * @return 比較結果
+     * Compares between the two objects in serialized form.
+     * @param b1 the first byte array to be compared
+     * @param s1 the beginning index in {@code b1}
+     * @param l1 the limit byte size in {@code b1}
+     * @param b2 the second byte array to be compared
+     * @param s2 the beginning index in {@code b2}
+     * @param l2 the limit byte size in {@code b2}
+     * @return the comparison result
      */
     public static int compareBytes(
             byte[] b1, int s1, int l1,

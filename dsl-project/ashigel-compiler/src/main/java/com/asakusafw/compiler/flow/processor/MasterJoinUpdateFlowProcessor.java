@@ -30,7 +30,7 @@ import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 import com.asakusafw.vocabulary.operator.MasterJoinUpdate;
 
 /**
- * {@link MasterJoinUpdate マスタつき更新演算子}を処理する。
+ * Processes {@link MasterJoinUpdate} operators.
  */
 @TargetOperator(MasterJoinUpdate.class)
 public class MasterJoinUpdateFlowProcessor extends RendezvousProcessor {

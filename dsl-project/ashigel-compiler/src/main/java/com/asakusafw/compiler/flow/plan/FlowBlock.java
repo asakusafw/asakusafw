@@ -41,7 +41,7 @@ import com.asakusafw.vocabulary.flow.graph.FlowGraph;
 import com.asakusafw.vocabulary.flow.graph.PortConnection;
 
 /**
- * 演算子グラフの一部を切り出したブロック。
+ * A sub-graph of {@link FlowGraph}.
  */
 public class FlowBlock {
 
@@ -60,17 +60,15 @@ public class FlowBlock {
     private boolean detached;
 
     /**
-     * 境界にあるポート一覧からこのインスタンスを生成する。
-     * <p>
-     * 生成されるインスタンスは初期状態で{@link #detach()}されていない。
-     * </p>
-     * @param serialNumber シリアル番号
-     * @param source このブロックの元になった演算子グラフ
-     * @param inputs このブロックへの入力に利用するフロー要素への入力
-     * @param outputs このブロックへの出力に利用するフロー要素からの出力
-     * @param elements このブロックに含まれる要素の一覧
-     * @return 生成したインスタンス
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance from boundary ports.
+     * Note that, the created instance will not be {@link #detach() detached}.
+     * @param serialNumber the serial number
+     * @param source the original flow graph
+     * @param inputs the input ports of this block
+     * @param outputs the output ports of this block
+     * @param elements the elements of this block
+     * @return the created instance
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public static FlowBlock fromPorts(
             int serialNumber,
@@ -137,16 +135,14 @@ public class FlowBlock {
     }
 
     /**
-     * インスタンスを生成する。
-     * <p>
-     * 生成されるインスタンスは初期状態で{@link #detach()}されていない。
-     * </p>
-     * @param serialNumber シリアル番号
-     * @param source このブロックの元になった演算子グラフ
-     * @param inputs このブロックへの入力に利用するフロー要素への入力
-     * @param outputs このブロックへの出力に利用するフロー要素からの出力
-     * @param elements このブロックに含まれる要素の一覧
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * Note that, the created instance will not be {@link #detach() detached}.
+     * @param serialNumber the serial number
+     * @param source the original flow graph
+     * @param inputs the input connections of this block
+     * @param outputs the output connections of this block
+     * @param elements the elements of this block
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public FlowBlock(
             int serialNumber,
@@ -220,59 +216,53 @@ public class FlowBlock {
     }
 
     /**
-     * このブロックの元になった演算子グラフを返す。
-     * @return このブロックの元になった演算子グラフ
+     * Returns the original flow graph.
+     * @return the original flow graph
      */
     public FlowGraph getSource() {
         return source;
     }
 
     /**
-     * このブロックのシリアル番号を返す。
-     * <p>
-     * 番号自体は特に意味を持たないが、同一の実行計画時に作成された
-     * それぞれのブロックは異なる番号を持つことが保証される。
-     * </p>
-     * @return このブロックのシリアル番号
+     * Returns the serial number of this block.
+     * @return the serial number
      */
     public int getSerialNumber() {
         return serialNumber;
     }
 
     /**
-     * このブロックへの入力一覧を返す。
-     * @return このブロックへの入力一覧
+     * Returns the input ports of this block.
+     * @return the input ports
      */
     public List<FlowBlock.Input> getBlockInputs() {
         return blockInputs;
     }
 
     /**
-     * このブロックからの出力一覧を返す。
-     * @return このブロックからの出力一覧
+     * Returns the output ports of this block.
+     * @return the output ports
      */
     public List<FlowBlock.Output> getBlockOutputs() {
         return blockOutputs;
     }
 
     /**
-     * このブロックに含まれる要素の一覧を返す。
-     * @return このブロックに含まれる要素の一覧
+     * Returns the elements of this block.
+     * @return the elements
      */
     public Set<FlowElement> getElements() {
         return elements;
     }
 
     /**
-     * 指定の出力と指定の入力が接続されている場合のみ{@code true}を返す。
-     * @param upstream 上流の出力
-     * @param downstream 下流の入力
-     * @return 指定の出力と指定の入力が接続されている場合のみ{@code true}
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns whether the target input and output are connected or not.
+     * @param upstream the upstream output
+     * @param downstream the downstream input
+     * @return {@code true} if the target inputs and output are connected, otherwise {@code false}
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
-    public static boolean isConnected(
-            FlowBlock.Output upstream,
-            FlowBlock.Input downstream) {
+    public static boolean isConnected(FlowBlock.Output upstream, FlowBlock.Input downstream) {
         Precondition.checkMustNotBeNull(upstream, "upstream"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(downstream, "downstream"); //$NON-NLS-1$
         for (FlowBlock.Connection conn : upstream.getConnections()) {
@@ -284,10 +274,10 @@ public class FlowBlock {
     }
 
     /**
-     * 指定の出力と指定の入力を接続する。
-     * @param upstream 上流の出力
-     * @param downstream 下流の入力
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Connects between the target upstream output and downstream input.
+     * @param upstream the upstream output
+     * @param downstream the downstream input
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public static void connect(
             FlowBlock.Output upstream,
@@ -306,19 +296,16 @@ public class FlowBlock {
     }
 
     /**
-     * このブロックが空のブロックである場合にのみ{@code true}を返す。
-     * <p>
-     * ブロックが空であるとは、入力も出力も存在しないことをいう。
-     * </p>
-     * @return 空のブロックである場合にのみ{@code true}
+     * Returns whether this block is empty or not.
+     * @return {@code true} if this block is empty, otherwise {@code false}
      */
     public boolean isEmpty() {
         return blockInputs.isEmpty() && blockOutputs.isEmpty();
     }
 
     /**
-     * このブロックがレデュースブロックを表現する場合のみ{@code true}を返す。
-     * @return レデュースブロックを表現する場合のみ{@code true}
+     * Returns whether this block represents a reduce block or not.
+     * @return {@code true} if this block represents a reduce block, otherwise {@code false}
      */
     public boolean isReduceBlock() {
         if (blockInputs.isEmpty()) {
@@ -329,15 +316,11 @@ public class FlowBlock {
     }
 
     /**
-     * このブロックに後続するブロックがレデュースブロックである場合のみ{@code true}を返す。
-     * <p>
-     * このブロックに後続するブロックが存在しない場合、このメソッドは常に{@code false}を返す。
-     * </p>
-     * <p>
-     * この操作はあらかじめ{@link #detach()}が行われている必要がある。
-     * </p>
-     * @return 後続するブロックがレデュースブロックである場合のみ{@code true}
-     * @throws IllegalStateException このブロックがデタッチされていない場合
+     * Returns whether the succeeding blocks of this are reduce block or not.
+     * Note that this always returns {@code true} if there are no succeeding blocks.
+     * This method requires that this block has been {@link #detach() detached}.
+     * @return {@code true} if the succeeding blocks of this are reduce block, otherwise {@code false}
+     * @throws IllegalStateException if this block has not been {@link #detach() detached}
      */
     public boolean isSucceedingReduceBlock() {
         if (detached == false) {
@@ -347,7 +330,6 @@ public class FlowBlock {
         }
         for (FlowBlock.Output output : blockOutputs) {
             for (FlowBlock.Connection conn : output.getConnections()) {
-                // TODO 後続にReduce/Stageが混在する場合には修正
                 FlowBlock successor = conn.getDownstream().getOwner();
                 return successor.isReduceBlock();
             }
@@ -356,12 +338,8 @@ public class FlowBlock {
     }
 
     /**
-     * このブロック内のフロー要素を全体のフローグラフから切り離す。
-     * <p>
-     * この操作によって、まずブロックが内包するフロー要素のコピーが作成される。
-     * コピーされたフロー要素はブロック内のほかの要素とのみ結線された状態となり、
-     * それ以外の要素との結線はすべて解除される。
-     * </p>
+     * Detaches this block from the original flow graph.
+     * This operation will create a copy of this block, and the copy will be disconnected from other blocks.
      */
     public void detach() {
         if (detached) {
@@ -573,27 +551,10 @@ public class FlowBlock {
     }
 
     /**
-     * このブロックに含まれる不要な要素を削除する。
-     * <p>
-     * 次のような特性を持つ要素は、不要な要素として判断される。
-     * </p>
-     * <ul>
-     * <li>
-     *   他のいずれのブロックにも接続されていないブロックの入出力
-     * </li>
-     * <li>
-     *   ひとつ以上の入力が存在し、かつすべての入力が他のいずれの要素にも結線されていない要素
-     * </li>
-     * <li>
-     *   ひとつ以上の出力が存在し、かつすべての出力が他のいずれの要素にも結線されていない、
-     *   かつat least onceの特性を持たない要素
-     * </li>
-     * </ul>
-     * <p>
-     * この操作は、あらかじめ{@link #detach()}が行われている必要がある。
-     * </p>
-     * @return ブロックが変更された場合は{@code true}、変更しなかった場合は{@code false}
-     * @throws IllegalStateException このブロックがデタッチされていない場合
+     * Removes unnecessary elements from this block.
+     * This method requires that this block has been {@link #detach() detached}.
+     * @return {@code true} if this block was modified, or otherwise {@code false}
+     * @throws IllegalStateException this block has not been {@link #detach() detached}
      */
     public boolean compaction() {
         if (detached == false) {
@@ -660,7 +621,7 @@ public class FlowBlock {
         boolean changed = false;
         LOG.debug("Searching for disconnected block edges: {}", this); //$NON-NLS-1$
 
-        // 他のブロックと接続されていない入力を削除
+        // remove orphaned inputs
         Iterator<FlowBlock.Input> inputs = blockInputs.iterator();
         while (inputs.hasNext()) {
             FlowBlock.Input port = inputs.next();
@@ -671,7 +632,7 @@ public class FlowBlock {
             }
         }
 
-        // 他のブロックと接続されていない出力を削除
+        // remove orphaned outputs
         Iterator<FlowBlock.Output> outputs = blockOutputs.iterator();
         while (outputs.hasNext()) {
             FlowBlock.Output port = outputs.next();
@@ -696,32 +657,25 @@ public class FlowBlock {
         while (work.isEmpty() == false) {
             FlowElement element = work.removeFirst();
 
-            // このセッションで削除済みのものについては処理対象としない
+            // ignore already removed in this round
             if (removed.contains(element)) {
                 continue;
             }
 
-            // 入出力に関係する要素についてはここでは取り扱わない
+            // ignore edge elements
             if (blockEdge.contains(element)) {
                 continue;
             }
 
             if (FlowGraphUtil.isAlwaysEmpty(element)) {
-                // ひとつ以上の入力が存在し、かつすべての入力が他のいずれの要素にも結線されていない要素
                 LOG.debug("Deleting operator without input: {} on {}", element, this); //$NON-NLS-1$
-
-                // 後続する要素に対する処理を発火させたのち、この要素を除去
                 work.addAll(FlowGraphUtil.getSuccessors(element));
                 remove(element);
                 removed.add(element);
                 changed = true;
             } else if (FlowGraphUtil.isAlwaysStop(element)
                     && FlowGraphUtil.hasMandatorySideEffect(element) == false) {
-                // ひとつ以上の出力が存在し、かつすべての出力が他のいずれの要素にも結線されていない、
-                // かつat least onceの特性を持たない要素
                 LOG.debug("Deleting operator without output: {} on {}", element, this); //$NON-NLS-1$
-
-                // 先行する要素に対する処理を発火させたのち、この要素を除去
                 work.addAll(FlowGraphUtil.getPredecessors(element));
                 remove(element);
                 removed.add(element);
@@ -742,7 +696,7 @@ public class FlowBlock {
             outputElements.add(output.getElementPort().getOwner());
         }
 
-        // 利用しない入力は削除
+        // remove unused inputs
         Iterator<FlowBlock.Input> inputs = blockInputs.iterator();
         while (inputs.hasNext()) {
             FlowBlock.Input port = inputs.next();
@@ -759,7 +713,7 @@ public class FlowBlock {
             }
         }
 
-        // 利用しない出力は削除
+        // remove unused outputs
         Iterator<FlowBlock.Output> outputs = blockOutputs.iterator();
         while (outputs.hasNext()) {
             FlowBlock.Output port = outputs.next();
@@ -841,8 +795,8 @@ public class FlowBlock {
     }
 
     /**
-     * 不要になった要素を削除する。
-     * @return 実際に削除した場合は{@code true}
+     * Removes unused elements.
+     * @return {@code true} if this operation removed at least one element
      */
     public boolean collectGarbages() {
         LOG.debug("removing dead operators: {}", this); //$NON-NLS-1$
@@ -896,7 +850,7 @@ public class FlowBlock {
     }
 
     /**
-     * ブロックへの入力。
+     * Represents an input port of {@link FlowBlock}.
      */
     public class Input {
 
@@ -907,10 +861,10 @@ public class FlowBlock {
         private Set<PortConnection> originalConnections;
 
         /**
-         * インスタンスを生成する。
-         * @param input 要素への入力
-         * @param originalConnections 要素への本来の接続先
-         * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+         * Creates a new instance.
+         * @param input the corresponding element port
+         * @param originalConnections the original connections for this port
+         * @throws IllegalArgumentException if the parameters are {@code null}
          */
         public Input(FlowElementInput input, Set<PortConnection> originalConnections) {
             Precondition.checkMustNotBeNull(input, "input"); //$NON-NLS-1$
@@ -920,32 +874,32 @@ public class FlowBlock {
         }
 
         /**
-         * この入力への本来の接続元を返す。
-         * @return この入力への本来の接続元
+         * Returns the original connections for this port.
+         * @return the original connections for this port
          */
         public Set<PortConnection> getOriginalConnections() {
             return originalConnections;
         }
 
         /**
-         * この出力を所有するブロックを返す。
-         * @return この出力を所有するブロック
+         * Returns the owner of this port.
+         * @return the owner
          */
         public FlowBlock getOwner() {
             return FlowBlock.this;
         }
 
         /**
-         * この入力に対応するフロー要素への入力を返す。
-         * @return 対応するフロー要素への入力
+         * Returns the corresponding element port.
+         * @return the corresponding element port
          */
         public FlowElementInput getElementPort() {
             return this.input;
         }
 
         /**
-         * この入力への結線情報を返す。
-         * @return この入力への結線情報
+         * Returns the connections for other ports.
+         * @return the connections
          */
         public List<Connection> getConnections() {
             return this.connections;
@@ -978,7 +932,7 @@ public class FlowBlock {
     }
 
     /**
-     * ブロックからの出力。
+     * Represents an output port of {@link FlowBlock}.
      */
     public class Output {
 
@@ -989,10 +943,10 @@ public class FlowBlock {
         private Set<PortConnection> originalConnections;
 
         /**
-         * インスタンスを生成する。
-         * @param output 要素への出力
-         * @param originalConnections 要素への本来の接続先
-         * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+         * Creates a new instance.
+         * @param output the corresponding element port
+         * @param originalConnections the original connections for this port
+         * @throws IllegalArgumentException if the parameters are {@code null}
          */
         public Output(FlowElementOutput output, Set<PortConnection> originalConnections) {
             Precondition.checkMustNotBeNull(output, "output"); //$NON-NLS-1$
@@ -1011,32 +965,32 @@ public class FlowBlock {
         }
 
         /**
-         * この出力からの本来の接続先を返す。
-         * @return この出力からの本来の接続先
+         * Returns the original connections for this port.
+         * @return the original connections for this port
          */
         public Set<PortConnection> getOriginalConnections() {
             return originalConnections;
         }
 
         /**
-         * この出力を所有するブロックを返す。
-         * @return この出力を所有するブロック
+         * Returns the owner of this port.
+         * @return the owner
          */
         public FlowBlock getOwner() {
             return FlowBlock.this;
         }
 
         /**
-         * この出力に対応するフロー要素からの出力を返す。
-         * @return 対応するフロー要素からの出力
+         * Returns the corresponding element port.
+         * @return the corresponding element port
          */
         public FlowElementOutput getElementPort() {
             return this.output;
         }
 
         /**
-         * この出力からの結線情報を返す。
-         * @return この出力からの結線情報
+         * Returns the connections of this port.
+         * @return the connections of this port
          */
         public List<Connection> getConnections() {
             return this.connections;
@@ -1069,7 +1023,7 @@ public class FlowBlock {
     }
 
     /**
-     * ブロック間の接続。
+     * Represents connections between {@link Input} and {@link Output}.
      */
     public static class Connection {
 
@@ -1078,10 +1032,10 @@ public class FlowBlock {
         private final FlowBlock.Input downstream;
 
         /**
-         * インスタンスを生成する。
-         * @param upstream 上流の出力
-         * @param downstream 下流の入力
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Creates a new instance.
+         * @param upstream the upstream output port
+         * @param downstream the downstream input port
+         * @throws IllegalArgumentException if the parameters are {@code null}
          */
         public Connection(Output upstream, Input downstream) {
             Precondition.checkMustNotBeNull(upstream, "upstream"); //$NON-NLS-1$
@@ -1091,23 +1045,23 @@ public class FlowBlock {
         }
 
         /**
-         * 上流の出力を返す。
-         * @return 上流の出力
+         * Returns the upstream output port.
+         * @return the upstream output port
          */
         public FlowBlock.Output getUpstream() {
             return upstream;
         }
 
         /**
-         * 下流の入力を返す。
-         * @return 下流の入力
+         * Returns the downstream input port.
+         * @return the downstream input port
          */
         public FlowBlock.Input getDownstream() {
             return downstream;
         }
 
         /**
-         * この接続を解除する。
+         * Disposes this connection.
          */
         public void disconnect() {
             upstream.getConnections().remove(this);

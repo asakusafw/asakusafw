@@ -17,13 +17,16 @@ package com.asakusafw.compiler.flow;
 
 import java.util.List;
 
-import com.asakusafw.runtime.flow.FlowResource;
 import com.asakusafw.utils.java.model.syntax.Name;
 import com.asakusafw.vocabulary.flow.graph.FlowGraph;
 import com.asakusafw.vocabulary.flow.graph.FlowResourceDescription;
 
 /**
- * {@link FlowGraph}を書き換えるエンジンのインターフェース。
+ * An abstract super interface of rewriting flow graphs.
+ * <p>
+ * Adding flow graph rewriter to Flow DSL compiler, clients can implement this and put the class name in
+ * {@code META-INF/services/com.asakusafw.compiler.flow.FlowGraphRewriter}.
+ * </p>
  * @since 0.1.0
  * @version 0.5.1
  */
@@ -37,20 +40,21 @@ public interface FlowGraphRewriter extends FlowCompilingEnvironment.Initializabl
     Phase getPhase();
 
     /**
-     * このエンジンを利用して指定のグラフを書き換える。
-     * @param graph 書き換える対象のグラフオブジェクト
-     * @return ひとつでも書き換えた可能性がある場合に{@code true}、そうでなければ{@code false}
-     * @throws RewriteException 書き換えに失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Rewrites the target flow graph.
+     * @param graph the target flow graph
+     * @return {@code true} if this was actually rewrite the target graph, otherwise {@code false}
+     * @throws RewriteException if error occurred while rewriting the flow graph
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     boolean rewrite(FlowGraph graph) throws RewriteException;
 
     /**
-     * このエンジンによって指定されたリソースを解決し、{@link FlowResource}の実装クラスとして返す。
-     * @param resource 対象のリソース
-     * @return コンパイル結果、対象としない場合は{@code null}
-     * @throws RewriteException 解決に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Returns the target external resource and returns the qualified class name of the corresponding
+     * {@link FlowResourceDescription}.
+     * @param resource the target resource description
+     * @return the target class name, or {@code null} if this does not handle the target resource
+     * @throws RewriteException if error occurred while resolving the description
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     Name resolve(FlowResourceDescription resource) throws RewriteException;
 
@@ -82,39 +86,39 @@ public interface FlowGraphRewriter extends FlowCompilingEnvironment.Initializabl
     }
 
     /**
-     * 書き換えに失敗したことを表す例外。
+     * An exception which is occurred when rewriting flow graphs.
      */
     class RewriteException extends Exception {
 
         private static final long serialVersionUID = 1L;
 
         /**
-         * インスタンスを生成する。
+         * Creates a new instance.
          */
         public RewriteException() {
             super();
         }
 
         /**
-         * インスタンスを生成する。
-         * @param message メッセージ (省略可)
-         * @param cause この例外の原因となった別の例外 (省略可)
+         * Creates a new instance.
+         * @param message the exception message (nullable)
+         * @param cause the original cause (nullable)
          */
         public RewriteException(String message, Throwable cause) {
             super(message, cause);
         }
 
         /**
-         * インスタンスを生成する。
-         * @param message メッセージ (省略可)
+         * Creates a new instance.
+         * @param message the exception message (nullable)
          */
         public RewriteException(String message) {
             super(message);
         }
 
         /**
-         * インスタンスを生成する。
-         * @param cause この例外の原因となった別の例外 (省略可)
+         * Creates a new instance.
+         * @param cause the original cause (nullable)
          */
         public RewriteException(Throwable cause) {
             super(cause);
@@ -122,7 +126,7 @@ public interface FlowGraphRewriter extends FlowCompilingEnvironment.Initializabl
     }
 
     /**
-     * {@link FlowGraphRewriter}を取得するためのリポジトリ。
+     * An abstract super interface of repository for {@link FlowGraphRewriter}.
      */
     interface Repository extends FlowCompilingEnvironment.Initializable {
 

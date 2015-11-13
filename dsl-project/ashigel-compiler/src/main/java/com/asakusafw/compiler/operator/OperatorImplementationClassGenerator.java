@@ -36,17 +36,17 @@ import com.asakusafw.utils.java.model.util.ImportBuilder;
 import com.asakusafw.utils.java.model.util.JavadocBuilder;
 
 /**
- * 演算子実装クラスの情報を構築するジェネレータ。
+ * Generates operator implementation classes.
  */
 public class OperatorImplementationClassGenerator extends OperatorClassGenerator {
 
     /**
-     * インスタンスを生成する。
-     * @param environment 環境オブジェクト
-     * @param factory DOMを構築するためのファクトリ
-     * @param importer インポート宣言を構築するビルダー
-     * @param operatorClass 演算子クラスの情報
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Creates a new instance.
+     * @param environment the current environment
+     * @param factory the Java DOM factory
+     * @param importer the import declaration builder
+     * @param operatorClass the target operator class
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public OperatorImplementationClassGenerator(
             OperatorCompilingEnvironment environment,

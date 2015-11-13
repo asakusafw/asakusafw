@@ -25,23 +25,14 @@ import com.asakusafw.utils.java.model.syntax.VariableDeclarator;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link LocalVariableDeclaration}の実装。
+ * An implementation of {@link LocalVariableDeclaration}.
  */
 public final class LocalVariableDeclarationImpl extends ModelRoot implements LocalVariableDeclaration {
 
-    /**
-     * 修飾子および注釈の一覧。
-     */
     private List<? extends Attribute> modifiers;
 
-    /**
-     * 宣言する変数の型。
-     */
     private Type type;
 
-    /**
-     * 宣言する変数の一覧。
-     */
     private List<? extends VariableDeclarator> variableDeclarators;
 
     @Override
@@ -50,12 +41,9 @@ public final class LocalVariableDeclarationImpl extends ModelRoot implements Loc
     }
 
     /**
-     * 修飾子および注釈の一覧を設定する。
-     * <p> 修飾子または注釈が一つも宣言されない場合、引数には空を指定する。 </p>
-     * @param modifiers
-     *     修飾子および注釈の一覧
-     * @throws IllegalArgumentException
-     *     {@code modifiers}に{@code null}が指定された場合
+     * Sets the modifiers and annotations.
+     * @param modifiers the modifiers and annotations
+     * @throws IllegalArgumentException if {@code modifiers} was {@code null}
      */
     public void setModifiers(List<? extends Attribute> modifiers) {
         Util.notNull(modifiers, "modifiers"); //$NON-NLS-1$
@@ -69,11 +57,9 @@ public final class LocalVariableDeclarationImpl extends ModelRoot implements Loc
     }
 
     /**
-     * 宣言する変数の型を設定する。
-     * @param type
-     *     宣言する変数の型
-     * @throws IllegalArgumentException
-     *     {@code type}に{@code null}が指定された場合
+     * Sets the variable type.
+     * @param type the variable type
+     * @throws IllegalArgumentException if {@code type} was {@code null}
      */
     public void setType(Type type) {
         Util.notNull(type, "type"); //$NON-NLS-1$
@@ -86,13 +72,10 @@ public final class LocalVariableDeclarationImpl extends ModelRoot implements Loc
     }
 
     /**
-     * 宣言する変数の一覧を設定する。
-     * @param variableDeclarators
-     *     宣言する変数の一覧
-     * @throws IllegalArgumentException
-     *     {@code variableDeclarators}に{@code null}が指定された場合
-     * @throws IllegalArgumentException
-     *     {@code variableDeclarators}に空が指定された場合
+     * Sets the variable declarators.
+     * @param variableDeclarators the variable declarators
+     * @throws IllegalArgumentException if {@code variableDeclarators} was {@code null}
+     * @throws IllegalArgumentException if {@code variableDeclarators} was empty
      */
     public void setVariableDeclarators(List<? extends VariableDeclarator> variableDeclarators) {
         Util.notNull(variableDeclarators, "variableDeclarators"); //$NON-NLS-1$
@@ -102,7 +85,7 @@ public final class LocalVariableDeclarationImpl extends ModelRoot implements Loc
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#LOCAL_VARIABLE_DECLARATION}を返す。
+     * Returns {@link ModelKind#LOCAL_VARIABLE_DECLARATION} which represents this element kind.
      * @return {@link ModelKind#LOCAL_VARIABLE_DECLARATION}
      */
     @Override
@@ -111,8 +94,7 @@ public final class LocalVariableDeclarationImpl extends ModelRoot implements Loc
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitLocalVariableDeclaration(this, context);
     }

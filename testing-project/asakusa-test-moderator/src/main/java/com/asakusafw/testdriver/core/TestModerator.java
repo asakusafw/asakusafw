@@ -113,7 +113,7 @@ public class TestModerator {
             }
         } catch (IOException e) {
             throw new IOException(MessageFormat.format(
-                    "テストデータの検証に失敗しました: {0}",
+                    Messages.getString("TestModerator.errorFailedToVerifyData"), //$NON-NLS-1$
                     label), e);
         }
     }
@@ -152,7 +152,7 @@ public class TestModerator {
             }
         } catch (IOException e) {
             throw new IOException(MessageFormat.format(
-                    "テスト条件の検証に失敗しました: {0}",
+                    Messages.getString("TestModerator.errorFailedToVerifyRule"), //$NON-NLS-1$
                     label), e);
         }
     }
@@ -354,7 +354,7 @@ public class TestModerator {
             DataModelSource input = source.createSource(definition, context);
             if (input == null) {
                 throw new IOException(MessageFormat.format(
-                        "Failed to open source: {0} (handler not found)",
+                        Messages.getString("TestModerator.errorMissingDataModelSource"), //$NON-NLS-1$
                         source));
             }
             try {

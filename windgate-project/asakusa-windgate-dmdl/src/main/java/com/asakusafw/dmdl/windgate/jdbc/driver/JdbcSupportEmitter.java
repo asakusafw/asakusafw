@@ -131,7 +131,7 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
                 CATEGORY_JDBC,
                 "Abstract{0}JdbcImporterDescription"); //$NON-NLS-1$
         JdbcProcessDescriptionGenerator.Description desc = new JdbcProcessDescriptionGenerator.Description(
-                "WindGate JDBC importer",
+                Messages.getString("JdbcSupportEmitter.javadocImporter"), //$NON-NLS-1$
                 context.getQualifiedTypeName());
         desc.setTableName(getTableName(model));
         desc.setColumnNames(getColumnNames(model));
@@ -153,7 +153,7 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
                 CATEGORY_JDBC,
                 "Abstract{0}JdbcExporterDescription"); //$NON-NLS-1$
         JdbcProcessDescriptionGenerator.Description desc = new JdbcProcessDescriptionGenerator.Description(
-                "WindGate JDBC exporter",
+                Messages.getString("JdbcSupportEmitter.javadocExporter"), //$NON-NLS-1$
                 context.getQualifiedTypeName());
         desc.setTableName(getTableName(model));
         desc.setColumnNames(getColumnNames(model));
@@ -202,7 +202,7 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
         assert model != null;
         if (hasColumnTrait(model) == false) {
             throw new IOException(MessageFormat.format(
-                    "Model \"{0}\" has no columns, please specify @{1} into properties ",
+                    Messages.getString("JdbcSupportEmitter.errorNoColumns"), //$NON-NLS-1$
                     model.getName().identifier,
                     JdbcColumnDriver.TARGET_NAME));
         }
@@ -217,7 +217,7 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
             Type type = prop.getType();
             if ((type instanceof BasicType) == false) {
                 throw new IOException(MessageFormat.format(
-                        "Type \"{0}\" can not map to a column: {1}.{2} ",
+                        Messages.getString("JdbcSupportEmitter.errorUnsupportedType"), //$NON-NLS-1$
                         type,
                         model.getName().identifier,
                         prop.getName().identifier));
@@ -237,7 +237,7 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
             if (saw.containsKey(name)) {
                 PropertyDeclaration other = saw.get(name);
                 throw new IOException(MessageFormat.format(
-                        "Column name \"{0}\" is already declared in \"{3}\": {1}.{2}",
+                        Messages.getString("JdbcSupportEmitter.errorConflictColumnName"), //$NON-NLS-1$
                         name,
                         model.getName().identifier,
                         prop.getName().identifier,
@@ -289,10 +289,8 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
         private void emit() throws IOException {
             ClassDeclaration decl = f.newClassDeclaration(
                     new JavadocBuilder(f)
-                        .text("Supports JDBC interfaces for ",
-                                model.getName())
-                        .linkType(context.resolve(model.getSymbol()))
-                        .text(".")
+                        .text(Messages.getString("JdbcSupportEmitter.javadocClass"), //$NON-NLS-1$
+                                context.getTypeName(model.getSymbol()))
                         .toJavadoc(),
                     new AttributeBuilder(f)
                         .Public()

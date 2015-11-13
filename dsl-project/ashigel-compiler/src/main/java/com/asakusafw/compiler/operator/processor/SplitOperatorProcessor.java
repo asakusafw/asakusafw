@@ -32,7 +32,7 @@ import com.asakusafw.utils.java.model.util.TypeBuilder;
 import com.asakusafw.vocabulary.operator.Split;
 
 /**
- * {@link Split 分割演算子}を処理する。
+ * Processes {@link Split} operators.
  */
 @TargetOperator(Split.class)
 public class SplitOperatorProcessor extends AbstractOperatorProcessor {
@@ -42,26 +42,26 @@ public class SplitOperatorProcessor extends AbstractOperatorProcessor {
         Precondition.checkMustNotBeNull(context, "context"); //$NON-NLS-1$
         ExecutableAnalyzer a = new ExecutableAnalyzer(context.environment, context.element);
         if (a.isGeneric()) {
-            a.error("分割演算子はジェネリックメソッドで宣言できません");
+            a.error(Messages.getString("SplitOperatorProcessor.errorGeneric")); //$NON-NLS-1$
         }
         if (a.isAbstract() == false) {
-            a.error("分割演算子はabstractを指定する必要があります");
+            a.error(Messages.getString("SplitOperatorProcessor.errorNotAbstract")); //$NON-NLS-1$
         }
         if (a.getReturnType().isVoid() == false) {
-            a.error("分割演算子は戻り値にvoidを指定する必要があります");
+            a.error(Messages.getString("SplitOperatorProcessor.errorNotVoid")); //$NON-NLS-1$
         }
         if (a.getParameterType(0).isConcreteModel() == false) {
-            a.error(0, "分割演算子の最初の引数はモデルオブジェクト型である必要があります");
+            a.error(0, Messages.getString("SplitOperatorProcessor.errorNotModelInput")); //$NON-NLS-1$
         }
         for (int i = 1; i <= 2; i++) {
             if (a.getParameterType(i).isResult() == false) {
-                a.error(i, "分割演算子の{0}つ目の引数は結果型である必要があります", i + 1);
+                a.error(i, Messages.getString("SplitOperatorProcessor.errorNotResultOutput"), i + 1); //$NON-NLS-1$
             } else if (a.getParameterType(i).getTypeArgument().isModel() == false) {
-                a.error(i, "分割演算子の{0}つ目の引数は結果のモデル型である必要があります", i + 1);
+                a.error(i, Messages.getString("SplitOperatorProcessor.errorNotModelOutput"), i + 1); //$NON-NLS-1$
             }
         }
         for (int i = 3, n = a.countParameters(); i < n; i++) {
-            a.error(i, "分割演算子にはユーザー引数を利用できません");
+            a.error(i, Messages.getString("SplitOperatorProcessor.errorExtraParameter")); //$NON-NLS-1$
         }
         if (a.hasError()) {
             return null;
@@ -71,7 +71,7 @@ public class SplitOperatorProcessor extends AbstractOperatorProcessor {
         TypeConstraint from = a.getParameterType(1).getTypeArgument();
         TypeConstraint join = a.getParameterType(2).getTypeArgument();
         if (joined.isJoinedModel(from.getType(), join.getType()) == false) {
-            a.error(0, "分割演算子の最初の引数は結果の2つの型を結合した型である必要があります");
+            a.error(0, Messages.getString("SplitOperatorProcessor.errorNotJoinedModel")); //$NON-NLS-1$
             return null;
         }
 
@@ -104,7 +104,8 @@ public class SplitOperatorProcessor extends AbstractOperatorProcessor {
         ImplementationBuilder builder = new ImplementationBuilder(context);
         ModelFactory f = context.environment.getFactory();
         builder.addStatement(new TypeBuilder(f, context.importer.toType(UnsupportedOperationException.class))
-            .newObject(Models.toLiteral(f, "分割演算子は組み込みの方法で処理されます"))
+            .newObject(Models.toLiteral(f,
+                    Messages.getString("SplitOperatorProcessor.messageMethodBody"))) //$NON-NLS-1$
             .toThrowStatement());
         return builder.toImplementation();
     }

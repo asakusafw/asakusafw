@@ -16,13 +16,11 @@
 package com.asakusafw.compiler.flow.processor.operator;
 import javax.annotation.Generated;
 /**
- * {@link UpdateFlow}に関する演算子実装クラス。
+ * An operator implementation class for{@link UpdateFlow}.
  */
-@Generated("com.asakusafw.compiler.operator.OperatorImplementationClassGenerator") public class
-        UpdateFlowImpl extends UpdateFlow {
-
+@Generated("OperatorImplementationClassGenerator:0.1.0") public class UpdateFlowImpl extends UpdateFlow {
     /**
-     * インスタンスを生成する。
+     * Creates a new instance.
      */
     public UpdateFlowImpl() {
         return;

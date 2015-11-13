@@ -22,7 +22,7 @@ import java.util.TreeMap;
 import org.apache.hadoop.mapreduce.OutputFormat;
 
 /**
- * ステージからの出力。
+ * Represents a stage output.
  * @since 0.1.0
  * @version 0.2.5
  */
@@ -94,32 +94,32 @@ public class StageOutput {
     }
 
     /**
-     * この出力を識別する名前を返す。
-     * @return 出力を識別する名前
+     * Returns the simple name of this output.
+     * @return the simple name
      */
     public String getName() {
         return name;
     }
 
     /**
-     * この出力に利用するキーの型を返す。
-     * @return この出力に利用するデータの型
+     * Returns the key class of this output.
+     * @return the key class
      */
     public Class<?> getKeyClass() {
         return keyClass;
     }
 
     /**
-     * この出力に利用するデータの型を返す。
-     * @return この出力に利用するデータの型
+     * Returns the value class of this output.
+     * @return the value class
      */
     public Class<?> getValueClass() {
         return valueClass;
     }
 
     /**
-     * この出力に利用するフォーマットクラスを返す。
-     * @return 利用するフォーマットクラス
+     * Returns the output format class for handling this output.
+     * @return the output format class
      */
     public Class<? extends OutputFormat<?, ?>> getFormatClass() {
         return formatClass;

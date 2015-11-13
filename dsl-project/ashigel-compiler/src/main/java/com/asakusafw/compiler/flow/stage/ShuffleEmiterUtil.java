@@ -36,17 +36,17 @@ import com.asakusafw.utils.java.model.util.ExpressionBuilder;
 import com.asakusafw.utils.java.model.util.Models;
 
 /**
- * シャッフルに関するソースコードを出力する際に、共通して利用するコード。
+ * Utilities for emitters about shuffle operations.
  */
 final class ShuffleEmiterUtil {
 
     /**
-     * 整数を比較するメソッドの名前。
+     * The method name of comparing {@code int} values.
      */
     public static final String COMPARE_INT = "compareInt"; //$NON-NLS-1$
 
     /**
-     * ポート番号から要素番号を算出するメソッドの名前。
+     * The method name of extracting element ID from its port ID.
      */
     public static final String PORT_TO_ELEMENT = "portIdToElementId"; //$NON-NLS-1$
 

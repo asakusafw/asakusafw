@@ -18,15 +18,15 @@ package com.asakusafw.vocabulary.flow.graph;
 import java.util.List;
 
 /**
- * フロー要素の定義記述。
+ * A description of flow elements.
  * @since 0.1.0
  * @version 0.5.1
  */
 public interface FlowElementDescription extends FlowElementAttributeProvider {
 
     /**
-     * この要素の種類を返す。
-     * @return この要素の種類
+     * Returns the kind of this element.
+     * @return the element kind
      */
     FlowElementKind getKind();
 
@@ -38,34 +38,34 @@ public interface FlowElementDescription extends FlowElementAttributeProvider {
     FlowElementDescription getOrigin();
 
     /**
-     * この要素の名前を返す。
-     * @return この要素の名前
+     * Returns the name of this element.
+     * @return the name
      */
     String getName();
 
     /**
-     * この要素の名前を設定する。
-     * @param newName 設定する名前
-     * @throws UnsupportedOperationException この要素の名前を変更できない場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Sets name of this element.
+     * @param newName the name
+     * @throws UnsupportedOperationException if this does not support changing name
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     void setName(String newName);
 
     /**
-     * この要素への入力ポートの一覧を返す。
-     * @return この要素への入力ポートの一覧
+     * Returns the input ports of this element.
+     * @return the input ports
      */
     List<FlowElementPortDescription> getInputPorts();
 
     /**
-     * この要素からの出力ポートの一覧を返す。
-     * @return この要素からの出力ポートの一覧
+     * Returns the output ports of this element.
+     * @return the output ports
      */
     List<FlowElementPortDescription> getOutputPorts();
 
     /**
-     * この要素が利用するリソースの一覧を返す。
-     * @return この要素が利用するリソースの一覧
+     * Returns the external resources of this element.
+     * @return the external resources
      */
     List<FlowResourceDescription> getResources();
 }

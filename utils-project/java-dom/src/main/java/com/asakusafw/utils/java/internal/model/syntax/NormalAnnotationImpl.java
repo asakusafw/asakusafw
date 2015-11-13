@@ -24,18 +24,12 @@ import com.asakusafw.utils.java.model.syntax.NormalAnnotation;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link NormalAnnotation}の実装。
+ * An implementation of {@link NormalAnnotation}.
  */
 public final class NormalAnnotationImpl extends ModelRoot implements NormalAnnotation {
 
-    /**
-     * 注釈の型。
-     */
     private NamedType type;
 
-    /**
-     * 注釈要素の一覧。
-     */
     private List<? extends AnnotationElement> elements;
 
     @Override
@@ -44,11 +38,9 @@ public final class NormalAnnotationImpl extends ModelRoot implements NormalAnnot
     }
 
     /**
-     * 注釈の型を設定する。
-     * @param type
-     *     注釈の型
-     * @throws IllegalArgumentException
-     *     {@code type}に{@code null}が指定された場合
+     * Sets the annotation type.
+     * @param type the annotation type
+     * @throws IllegalArgumentException if {@code type} was {@code null}
      */
     public void setType(NamedType type) {
         Util.notNull(type, "type"); //$NON-NLS-1$
@@ -61,12 +53,9 @@ public final class NormalAnnotationImpl extends ModelRoot implements NormalAnnot
     }
 
     /**
-     * 注釈要素の一覧を設定する。
-     * <p> 注釈要素が一つも指定されない場合、引数には空を指定する。 </p>
-     * @param elements
-     *     注釈要素の一覧
-     * @throws IllegalArgumentException
-     *     {@code elements}に{@code null}が指定された場合
+     * Sets the annotation elements.
+     * @param elements the annotation elements
+     * @throws IllegalArgumentException if {@code elements} was {@code null}
      */
     public void setElements(List<? extends AnnotationElement> elements) {
         Util.notNull(elements, "elements"); //$NON-NLS-1$
@@ -75,7 +64,7 @@ public final class NormalAnnotationImpl extends ModelRoot implements NormalAnnot
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#NORMAL_ANNOTATION}を返す。
+     * Returns {@link ModelKind#NORMAL_ANNOTATION} which represents this element kind.
      * @return {@link ModelKind#NORMAL_ANNOTATION}
      */
     @Override
@@ -84,8 +73,7 @@ public final class NormalAnnotationImpl extends ModelRoot implements NormalAnnot
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitNormalAnnotation(this, context);
     }

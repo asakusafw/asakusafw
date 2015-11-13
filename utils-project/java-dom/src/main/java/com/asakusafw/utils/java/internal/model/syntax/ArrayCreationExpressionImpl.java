@@ -25,23 +25,14 @@ import com.asakusafw.utils.java.model.syntax.ModelKind;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link ArrayCreationExpression}の実装。
+ * An implementation of {@link ArrayCreationExpression}.
  */
 public final class ArrayCreationExpressionImpl extends ModelRoot implements ArrayCreationExpression {
 
-    /**
-     * 生成する配列の型。
-     */
     private ArrayType type;
 
-    /**
-     * 要素数指定式。
-     */
     private List<? extends Expression> dimensionExpressions;
 
-    /**
-     * 配列初期化子。
-     */
     private ArrayInitializer arrayInitializer;
 
     @Override
@@ -50,11 +41,9 @@ public final class ArrayCreationExpressionImpl extends ModelRoot implements Arra
     }
 
     /**
-     * 生成する配列の型を設定する。
-     * @param type
-     *     生成する配列の型
-     * @throws IllegalArgumentException
-     *     {@code type}に{@code null}が指定された場合
+     * Sets the target array type.
+     * @param type the target array type
+     * @throws IllegalArgumentException if {@code type} was {@code null}
      */
     public void setType(ArrayType type) {
         Util.notNull(type, "type"); //$NON-NLS-1$
@@ -67,12 +56,9 @@ public final class ArrayCreationExpressionImpl extends ModelRoot implements Arra
     }
 
     /**
-     * 要素数指定式を設定する。
-     * <p> 次元ごとの要素数が一つも指定されない場合、引数には空を指定する。 </p>
-     * @param dimensionExpressions
-     *     要素数指定式
-     * @throws IllegalArgumentException
-     *     {@code dimensionExpressions}に{@code null}が指定された場合
+     * Sets expressions which represent the number of dimensions for the creating array.
+     * @param dimensionExpressions the dimension expression
+     * @throws IllegalArgumentException if {@code dimensionExpressions} was {@code null}
      */
     public void setDimensionExpressions(List<? extends Expression> dimensionExpressions) {
         Util.notNull(dimensionExpressions, "dimensionExpressions"); //$NON-NLS-1$
@@ -86,18 +72,15 @@ public final class ArrayCreationExpressionImpl extends ModelRoot implements Arra
     }
 
     /**
-     * 配列初期化子を設定する。
-     * <p> 配列初期化子が指定されない場合、引数には{@code null}を指定する。 </p>
-     * @param arrayInitializer
-     *     配列初期化子、
-     *     ただし配列初期化子が指定されない場合は{@code null}
+     * Sets the array initializer.
+     * @param arrayInitializer the array initializer, or {@code null} if it is not specified
      */
     public void setArrayInitializer(ArrayInitializer arrayInitializer) {
         this.arrayInitializer = arrayInitializer;
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#ARRAY_CREATION_EXPRESSION}を返す。
+     * Returns {@link ModelKind#ARRAY_CREATION_EXPRESSION} which represents this element kind.
      * @return {@link ModelKind#ARRAY_CREATION_EXPRESSION}
      */
     @Override
@@ -106,8 +89,7 @@ public final class ArrayCreationExpressionImpl extends ModelRoot implements Arra
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitArrayCreationExpression(this, context);
     }

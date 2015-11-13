@@ -16,11 +16,11 @@
 package com.asakusafw.compiler.flow.processor.operator;
 import javax.annotation.Generated;
 /**
- * {@link FoldFlow}に関する演算子実装クラス。
+ * An operator implementation class for{@link FoldFlow}.
  */
-@Generated("OperatorImplementationClassGenerator:0.0.1") public class FoldFlowImpl extends FoldFlow {
+@Generated("OperatorImplementationClassGenerator:0.1.0") public class FoldFlowImpl extends FoldFlow {
     /**
-     * インスタンスを生成する。
+     * Creates a new instance.
      */
     public FoldFlowImpl() {
         return;

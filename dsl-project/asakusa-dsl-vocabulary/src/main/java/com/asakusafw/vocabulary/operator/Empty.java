@@ -22,13 +22,10 @@ import java.lang.annotation.Target;
 
 import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory;
 
-
 /**
- * 空演算子を表す演算子注釈。
- * <p>
- * この演算子を表す演算子メソッドは作成できない。
- * 代わりに {@link CoreOperatorFactory#empty(Class)}を利用すること。
- * </p>
+ * Represents <em>empty</em> operator annotation.
+ * Application developers should use {@link CoreOperatorFactory#empty()} instead of operator methods.
+ * @see CoreOperatorFactory#empty()
  * @see CoreOperatorFactory#empty(Class)
  */
 @Target({ })

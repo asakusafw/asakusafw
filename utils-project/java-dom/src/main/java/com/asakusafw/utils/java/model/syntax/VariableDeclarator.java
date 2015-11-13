@@ -15,9 +15,8 @@
  */
 package com.asakusafw.utils.java.model.syntax;
 
-
 /**
- * 一つ分の変数宣言を表現するインターフェース。
+ * An interface which represents variable declarators.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:8.3] Field Declarations} </li>
@@ -27,28 +26,21 @@ package com.asakusafw.utils.java.model.syntax;
 public interface VariableDeclarator
         extends TypedElement {
 
-    // properties
-
     /**
-     * 変数の名前を返す。
-     * @return
-     *     変数の名前
+     * Returns the variable name.
+     * @return the variable name
      */
     SimpleName getName();
 
     /**
-     * 追加次元数の宣言を返す。
-     * @return
-     *     追加次元数の宣言
+     * Returns the extra variable dimensions.
+     * @return the extra variable dimensions
      */
     int getExtraDimensions();
 
     /**
-     * 初期化式を返す。
-     * <p> 初期化式が指定されない場合は{@code null}が返される。 </p>
-     * @return
-     *     初期化式、
-     *     ただし初期化式が指定されない場合は{@code null}
+     * Returns the variable initializer expression.
+     * @return the variable initializer expression, or {@code null} if there is not specified
      */
     Expression getInitializer();
 }

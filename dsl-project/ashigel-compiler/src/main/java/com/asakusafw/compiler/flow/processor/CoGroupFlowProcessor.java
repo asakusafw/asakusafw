@@ -30,7 +30,7 @@ import com.asakusafw.vocabulary.flow.processor.InputBuffer;
 import com.asakusafw.vocabulary.operator.CoGroup;
 
 /**
- * {@link CoGroup グループ化結合演算子}を処理する。
+ * Processes {@link CoGroup} operators.
  */
 @TargetOperator(CoGroup.class)
 public class CoGroupFlowProcessor extends RendezvousProcessor {

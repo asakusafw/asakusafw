@@ -15,9 +15,8 @@
  */
 package com.asakusafw.utils.java.model.syntax;
 
-
 /**
- * {@code return}文を表現するインターフェース。
+ * An interface which represents return statement.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:14.17] The return Statement} </li>
@@ -27,14 +26,9 @@ package com.asakusafw.utils.java.model.syntax;
 public interface ReturnStatement
         extends Statement, TypedElement {
 
-    // properties
-
     /**
-     * 返戻値を返す。
-     * <p> 返戻値が指定されない場合は{@code null}が返される。 </p>
-     * @return
-     *     返戻値、
-     *     ただし返戻値が指定されない場合は{@code null}
+     * Returns the return value.
+     * @return the return value, or {@code null} if it is not specified
      */
     Expression getExpression();
 }

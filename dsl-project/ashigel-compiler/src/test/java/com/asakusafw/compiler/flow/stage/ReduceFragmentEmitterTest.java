@@ -44,8 +44,8 @@ import com.asakusafw.vocabulary.flow.FlowDescription;
 public class ReduceFragmentEmitterTest extends JobflowCompilerTestRoot {
 
     /**
-     * 単純なシャッフルのテスト。
-     * @throws Exception 出力に失敗した場合
+     * simple case.
+     * @throws Exception if error was occurred while output
      */
     @SuppressWarnings("deprecation")
     @Test

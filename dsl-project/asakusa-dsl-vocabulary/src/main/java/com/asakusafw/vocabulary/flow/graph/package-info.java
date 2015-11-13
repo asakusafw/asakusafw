@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /**
- * フローDSLのグラフ表現。
+ * Internal graphical representation of Flow DSL.
+ * Application developers should not use classes in this package directly.
  */
 package com.asakusafw.vocabulary.flow.graph;
-

@@ -15,9 +15,8 @@
  */
 package com.asakusafw.utils.java.model.syntax;
 
-
 /**
- * 名前によって指定される型を表現するインターフェース。
+ * An interface which represents types which can be identified by their name.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:4.3] Reference Types and Values} </li>
@@ -28,12 +27,9 @@ package com.asakusafw.utils.java.model.syntax;
 public interface NamedType
         extends Type, DocElement {
 
-    // properties
-
     /**
-     * 型の名前を返す。
-     * @return
-     *     型の名前
+     * Returns the type name.
+     * @return the type name
      */
     Name getName();
 }

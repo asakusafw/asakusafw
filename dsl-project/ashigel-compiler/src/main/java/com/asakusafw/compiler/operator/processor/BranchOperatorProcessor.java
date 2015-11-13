@@ -29,9 +29,8 @@ import com.asakusafw.compiler.operator.OperatorMethodDescriptor;
 import com.asakusafw.compiler.operator.OperatorMethodDescriptor.Builder;
 import com.asakusafw.vocabulary.operator.Branch;
 
-
 /**
- * {@link Branch 分岐演算子}を処理する。
+ * Processes {@link Branch} operators.
  */
 @TargetOperator(Branch.class)
 public class BranchOperatorProcessor extends AbstractOperatorProcessor {
@@ -42,23 +41,23 @@ public class BranchOperatorProcessor extends AbstractOperatorProcessor {
 
         ExecutableAnalyzer a = new ExecutableAnalyzer(context.environment, context.element);
         if (a.isAbstract()) {
-            a.error("分岐演算子はabstractで宣言できません");
+            a.error(Messages.getString("BranchOperatorProcessor.errorAbstract")); //$NON-NLS-1$
         }
         List<VariableElement> constants = Collections.emptyList();
         if (a.getReturnType().isEnum() == false) {
-            a.error("分岐演算子は戻り値にpublicで宣言された列挙型を指定する必要があります");
+            a.error(Messages.getString("BranchOperatorProcessor.errorNotEnumResult")); //$NON-NLS-1$
         } else {
             constants = a.getReturnType().getEnumConstants();
             if (constants.isEmpty()) {
-                a.error("分岐演算子の戻り値は定数が一つ以上宣言された列挙型である必要があります");
+                a.error(Messages.getString("BranchOperatorProcessor.errorEmptyEnumResult")); //$NON-NLS-1$
             }
         }
         if (a.getParameterType(0).isModel() == false) {
-            a.error(0, "分岐演算子の最初の引数はモデルオブジェクト型である必要があります");
+            a.error(0, Messages.getString("BranchOperatorProcessor.errorNotModelInput")); //$NON-NLS-1$
         }
         for (int i = 1, n = a.countParameters(); i < n; i++) {
             if (a.getParameterType(i).isBasic() == false) {
-                a.error(i, "分岐演算子の2つ目以降の引数は文字列またはプリミティブ型である必要があります");
+                a.error(i, Messages.getString("BranchOperatorProcessor.errorInvalidOptionParameter")); //$NON-NLS-1$
             }
         }
         if (a.hasError()) {

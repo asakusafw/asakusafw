@@ -18,83 +18,85 @@ package com.asakusafw.runtime.value;
 import java.text.MessageFormat;
 
 /**
- * 日付に関する軽量クラス。
+ * A light weight class about date.
+ * @see DateUtil
+ * @see DateOption
  */
 public class Date implements Comparable<Date> {
 
     /**
-     * 日付のフォーマット。
+     * The default date format.
      */
     public static final String FORMAT = "yyyy-MM-dd"; //$NON-NLS-1$
 
-    private int elapsed = 0;
+    private int elapsedDays = 0;
 
     /**
-     * 0001/01/01を表すインスタンスを生成する。
+     * Creates a new instance which represents {@code 0001/01/01 (YYYY/MM/DD)}.
      */
     public Date() {
         this(0);
     }
 
     /**
-     * インスタンスを生成する。
-     * @param year 年 (1-...)
-     * @param month 月 (1-12)
-     * @param day 日 (1-31)
+     * Creates a new instance.
+     * @param year year (1-...)
+     * @param month month (1-12)
+     * @param day day (1-31)
      */
     public Date(int year, int month, int day) {
         this(DateUtil.getDayFromDate(year, month, day));
     }
 
     /**
-     * インスタンスを生成する。
-     * @param elapsedDays 表す日付の0001/01/01からの経過日数(0起算)
+     * Creates a new instance.
+     * @param elapsedDays the number of elapsed days from {@code 0001/01/01 (YYYY/MM/DD)} (0-origin)
      */
     public Date(int elapsedDays) {
-        this.elapsed = elapsedDays;
+        this.elapsedDays = elapsedDays;
     }
 
     /**
-     * 0001/01/01 からの経過日数を返す。
-     * @return 0001/01/01 からの経過日数(0起算)
+     * Returns the number of elapsed days from {@code 0001/01/01 (YYYY/MM/DD)}.
+     * @return the number of elapsed days (0-origin)
      */
     public int getElapsedDays() {
-        return elapsed;
+        return elapsedDays;
     }
 
     /**
-     * 0001/01/01 からの経過日数を変更する。
-     * @param days 設定する経過日数(0起算)
+     * Sets the date as number of elapsed days from {@code 0001/01/01}.
+     * @param elapsed the elapsed days (0-origin)
      */
-    public void setElapsedDays(int days) {
-        this.elapsed = days;
+    public void setElapsedDays(int elapsed) {
+        this.elapsedDays = elapsed;
     }
 
     /**
-     * この日付の西暦年(1-)を返す。
-     * @return この日付の西暦年
+     * Returns the year of this date.
+     * @return the year (1-)
      */
     public int getYear() {
-        return DateUtil.getYearFromDay(elapsed);
+        return DateUtil.getYearFromDay(elapsedDays);
     }
 
     /**
-     * この日付の月(1-12)を返す。
-     * @return この日付の月
+     * Returns the month of this date.
+     * @return the month (1-12)
      */
     public int getMonth() {
         int year = getYear();
-        int dayInYear = elapsed - DateUtil.getDayFromYear(year);
+        int dayInYear = elapsedDays - DateUtil.getDayFromYear(year);
         return DateUtil.getMonthOfYear(dayInYear, DateUtil.isLeap(year));
     }
 
     /**
-     * この日付の日(1-31)を返す。
-     * @return この日付の日
+     * Returns the day of this date.
+     * @return the day (1-31)
      */
     public int getDay() {
         int year = getYear();
-        int dayInYear = elapsed - DateUtil.getDayFromYear(year);
+        int dayInYear = elapsedDays - DateUtil.getDayFromYear(year);
         return DateUtil.getDayOfMonth(dayInYear, DateUtil.isLeap(year));
     }
 
@@ -102,7 +104,7 @@ public class Date implements Comparable<Date> {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + elapsed;
+        result = prime * result + elapsedDays;
         return result;
     }
 
@@ -118,7 +120,7 @@ public class Date implements Comparable<Date> {
             return false;
         }
         Date other = (Date) obj;
-        if (elapsed != other.elapsed) {
+        if (elapsedDays != other.elapsedDays) {
             return false;
         }
         return true;
@@ -126,8 +128,8 @@ public class Date implements Comparable<Date> {
 
     @Override
     public int compareTo(Date o) {
-        int a = elapsed;
-        int b = o.elapsed;
+        int a = elapsedDays;
+        int b = o.elapsedDays;
         if (a == b) {
             return 0;
         }
@@ -147,11 +149,12 @@ public class Date implements Comparable<Date> {
     }
 
     /**
-     * 指定の文字列を指定のフォーマットで解析し、対応する日付を返す。
-     * @param dateString 解析対象の文字列
-     * @param format フォーマット形式
-     * @return 対応する日付、文字列が{@code null}を表す場合は{@code null}
-     * @throws IllegalArgumentException 引数が日付を表さない場合
+     * Parses the target string and returns the corresponding date as the elapsed days from
+     * {@code 0001/01/01 (YYYY/MM/DD)}.
+     * @param dateString the target string
+     * @param format the format kind
+     * @return the elapsed days (0-origin)
+     * @throws IllegalArgumentException if the target string is malformed
      */
     public static Date valueOf(StringOption dateString, Date.Format format) {
         if (dateString == null) {
@@ -167,11 +170,11 @@ public class Date implements Comparable<Date> {
     }
 
     /**
-     * 指定の文字列を指定のフォーマットで解析し、対応する日付を返す。
-     * @param dateString 解析対象の文字列
-     * @param format フォーマット形式
-     * @return 対応する日付
-     * @throws IllegalArgumentException 引数が日付を表さない場合
+     * Parses the target string and returns the corresponding date object.
+     * @param dateString the target string
+     * @param format the format kind
+     * @return the corresponding date object
+     * @throws IllegalArgumentException if the target string is malformed
      */
     public static Date valueOf(String dateString, Date.Format format) {
         if (dateString == null) {
@@ -186,14 +189,14 @@ public class Date implements Comparable<Date> {
     }
 
     /**
-     * 日付のフォーマット。
+     * Represents kinds of date formats.
      * @since 0.1.0
      * @version 0.7.0
      */
     public enum Format {
 
         /**
-         * {@code YYYYMMDD}の形式。
+         * {@code YYYYMMDD}.
          */
         SIMPLE {
             @Override
@@ -215,7 +218,7 @@ public class Date implements Comparable<Date> {
         },
 
         /**
-         * {@code YYYY-MM-DD}の形式。
+         * {@code YYYY-MM-DD}.
          * @since 0.7.0
          */
         STANDARD {
@@ -237,10 +240,11 @@ public class Date implements Comparable<Date> {
         ;
 
         /**
-         * 指定の文字列をこのフォーマットで解析し、0001/01/01からの経過日数を返す。
-         * @param dateString 対象の文字列
-         * @return 0001/01/01からの経過日数
-         * @throws IllegalArgumentException 引数に不正な文字列が指定された場合
+         * Parses the target string and returns the corresponding date as the elapsed days from
+         * {@code 0001/01/01 (YYYY/MM/DD)}.
+         * @param dateString the target string
+         * @return the elapsed days (0-origin)
+         * @throws IllegalArgumentException if the target string is malformed
          */
         public abstract int parse(String dateString);
 

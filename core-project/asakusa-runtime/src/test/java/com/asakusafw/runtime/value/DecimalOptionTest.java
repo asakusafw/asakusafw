@@ -33,7 +33,7 @@ import org.junit.Test;
 public class DecimalOptionTest extends ValueOptionTestRoot {
 
     /**
-     * 初期状態のテスト。
+     * test for initial state.
      */
     @Test
     public void init() {
@@ -42,7 +42,7 @@ public class DecimalOptionTest extends ValueOptionTestRoot {
     }
 
     /**
-     * 値の取得。
+     * test for get.
      */
     @Test
     public void get() {
@@ -53,7 +53,7 @@ public class DecimalOptionTest extends ValueOptionTestRoot {
     }
 
     /**
-     * nullに対するor。
+     * test for or w/ null.
      */
     @Test
     public void or() {
@@ -63,7 +63,7 @@ public class DecimalOptionTest extends ValueOptionTestRoot {
     }
 
     /**
-     * すでに値が設定された状態のor。
+     * test for or w/ present value.
      */
     @Test
     public void orNotNull() {
@@ -73,7 +73,7 @@ public class DecimalOptionTest extends ValueOptionTestRoot {
     }
 
     /**
-     * copyFromのテスト。
+     * test for copyFrom.
      */
     @Test
     public void copy() {
@@ -88,7 +88,7 @@ public class DecimalOptionTest extends ValueOptionTestRoot {
     }
 
     /**
-     * copyFromにnullを指定するテスト。
+     * test for copyFrom w/ null.
      */
     @Test
     public void copyNull() {
@@ -105,7 +105,7 @@ public class DecimalOptionTest extends ValueOptionTestRoot {
     }
 
     /**
-     * 比較のテスト。
+     * test for comapre.
      */
     @Test
     public void compareTo() {
@@ -132,7 +132,7 @@ public class DecimalOptionTest extends ValueOptionTestRoot {
     }
 
     /**
-     * 比較のテスト。
+     * test for compare w/ different scales.
      */
     @Test
     public void compareTo_scale() {
@@ -178,7 +178,7 @@ public class DecimalOptionTest extends ValueOptionTestRoot {
     }
 
     /**
-     * nullに関する順序付けのテスト。
+     * test for compare w/ null.
      */
     @Test
     public void compareNull() {
@@ -194,7 +194,7 @@ public class DecimalOptionTest extends ValueOptionTestRoot {
     }
 
     /**
-     * Writableのテスト。
+     * test for Writable.
      */
     @Test
     public void write() {
@@ -205,7 +205,7 @@ public class DecimalOptionTest extends ValueOptionTestRoot {
     }
 
     /**
-     * Writableのテスト。
+     * test for Writable w/ max.
      */
     @Test
     public void write_max() {
@@ -216,7 +216,7 @@ public class DecimalOptionTest extends ValueOptionTestRoot {
     }
 
     /**
-     * Writableのテスト。
+     * test for Writable w/ min.
      */
     @Test
     public void write_min() {
@@ -227,7 +227,7 @@ public class DecimalOptionTest extends ValueOptionTestRoot {
     }
 
     /**
-     * null-Writableのテスト。
+     * test for Writable w/ null.
      */
     @Test
     public void writeNull() {

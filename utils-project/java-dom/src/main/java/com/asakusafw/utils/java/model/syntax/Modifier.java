@@ -17,17 +17,14 @@ package com.asakusafw.utils.java.model.syntax;
 
 
 /**
- * 修飾子を表現するインターフェース。
+ * An interface which represents modifiers.
  */
 public interface Modifier
         extends Attribute {
 
-    // properties
-
     /**
-     * 修飾子の種類を返す。
-     * @return
-     *     修飾子の種類
+     * Returns the modifier kind.
+     * @return the modifier kind
      */
     ModifierKind getModifierKind();
 }

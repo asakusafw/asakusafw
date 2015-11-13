@@ -21,7 +21,7 @@ import com.asakusafw.vocabulary.batch.BatchDescription;
 
 
 /**
- * publicでないバッチ。
+ * A batch class which is not public.
  */
 @Batch(name = "testing")
 class NotPublic extends BatchDescription {

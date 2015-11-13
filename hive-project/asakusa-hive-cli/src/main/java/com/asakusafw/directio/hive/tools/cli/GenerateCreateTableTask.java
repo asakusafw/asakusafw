@@ -55,7 +55,7 @@ public class GenerateCreateTableTask {
         ClassCollector collector = collect(configuration);
         for (File file : configuration.sources) {
             LOG.info(MessageFormat.format(
-                    "Inspecting class path: {0}",
+                    Messages.getString("GenerateCreateTableTask.infoInspectClassPath"), //$NON-NLS-1$
                     file));
             collector.inspect(file);
         }
@@ -63,17 +63,12 @@ public class GenerateCreateTableTask {
         Writer writer = open(configuration);
         try {
             for (Class<?> aClass : collector.getClasses()) {
-                HiveTableInfo table;
-                try {
-                    table = aClass.asSubclass(HiveTableInfo.class).newInstance();
-                } catch (Exception e) {
-                    LOG.warn(MessageFormat.format(
-                            "Failed to instantiate: {0}",
-                            aClass.getName()), e);
+                HiveTableInfo table = newTableInfo(aClass);
+                if (table == null) {
                     continue;
                 }
                 LOG.info(MessageFormat.format(
-                        "Generating DDL for {0}",
+                        Messages.getString("GenerateCreateTableTask.infoStartGenerateDdl"), //$NON-NLS-1$
                         table.getTableName()));
                 HiveQlEmitter.emit(new Ql(table, configuration), writer);
                 writer.write(STATEMENT_SEPARATOR);
@@ -83,7 +78,7 @@ public class GenerateCreateTableTask {
             writer.close();
         }
         LOG.info(MessageFormat.format(
-                "Generated {0} DDL(s): {1}",
+                Messages.getString("GenerateCreateTableTask.infoFinishGenerateDdl"), //$NON-NLS-1$
                 count,
                 configuration.output));
     }
@@ -93,7 +88,7 @@ public class GenerateCreateTableTask {
         File parent = file.getParentFile();
         if (parent.mkdirs() == false && parent.isDirectory() == false) {
             throw new IOException(MessageFormat.format(
-                    "Failed to create parent directory: {0}",
+                    Messages.getString("GenerateCreateTableTask.errorFailedToCreateOutputDirectory"), //$NON-NLS-1$
                     file));
         }
         return new OutputStreamWriter(new FileOutputStream(file), ENCODING);
@@ -111,13 +106,8 @@ public class GenerateCreateTableTask {
                     return false;
                 }
                 if (pattern != null) {
-                    HiveTableInfo info;
-                    try {
-                        info = aClass.asSubclass(HiveTableInfo.class).newInstance();
-                    } catch (Exception e) {
-                        LOG.warn(MessageFormat.format(
-                                "Failed to instantiate: {0}",
-                                aClass.getName()), e);
+                    HiveTableInfo info = newTableInfo(aClass);
+                    if (info == null) {
                         return false;
                     }
                     if (pattern.matcher(info.getTableName()).matches() == false) {
@@ -129,6 +119,17 @@ public class GenerateCreateTableTask {
             }
         });
         return collector;
+    }
+
+    static HiveTableInfo newTableInfo(Class<?> aClass) {
+        try {
+            return aClass.asSubclass(HiveTableInfo.class).newInstance();
+        } catch (Exception e) {
+            LOG.warn(MessageFormat.format(
+                    Messages.getString("GenerateCreateTableTask.warnFailedToInstantiate"), //$NON-NLS-1$
+                    aClass.getName()), e);
+            return null;
+        }
     }
 
     /**

@@ -170,7 +170,7 @@ public class RunTask {
             return script.resolve(context, handler);
         } catch (Exception e) {
             throw new IOException(MessageFormat.format(
-                    "Failed to resolve a job: id={1}, context={0}",
+                    Messages.getString("RunTask.errorFailedToResolveJob"), //$NON-NLS-1$
                     context,
                     script.getId()), e);
         }
@@ -210,13 +210,13 @@ public class RunTask {
         assert plan != null;
         TestDriverContext context = configuration.context;
         JobExecutor executor = context.getJobExecutor();
-        LOG.info("Executing plan: batchId={}, flowId={}, execId={}, args={}, executor={}", new Object[] {
+        LOG.info(MessageFormat.format(
+                Messages.getString("RunTask.infoStart"), //$NON-NLS-1$
                 context.getCurrentBatchId(),
                 context.getCurrentFlowId(),
                 context.getExecutionId(),
                 context.getBatchArgs(),
-                executor.getClass().getName(),
-        });
+                executor.getClass().getName()));
         try {
             runJobflowTasks(executor, plan.getInitializers());
             runJobflowTasks(executor, plan.getImporters());

@@ -61,7 +61,7 @@ import com.asakusafw.vocabulary.flow.graph.FlowElement;
 import com.asakusafw.vocabulary.flow.graph.FlowElementInput;
 
 /**
- * Combinerプログラムを出力するエミッタ。
+ * An emitter for emitting Combiner classes.
  */
 public class CombinerEmitter {
 
@@ -70,9 +70,9 @@ public class CombinerEmitter {
     private final FlowCompilingEnvironment environment;
 
     /**
-     * インスタンスを生成する。
-     * @param environment 環境オブジェクト
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance.
+     * @param environment the current environment
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public CombinerEmitter(FlowCompilingEnvironment environment) {
         Precondition.checkMustNotBeNull(environment, "environment"); //$NON-NLS-1$
@@ -80,11 +80,11 @@ public class CombinerEmitter {
     }
 
     /**
-     * 指定のステージ内のCombinerに対するクラスを生成し、生成したクラスの完全限定名を返す。
-     * @param model 対象のステージ
-     * @return 生成したクラスの完全限定名、不要の場合は{@code null}
-     * @throws IOException クラスの生成に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a combiner class for the stage, and returns qualified name of the created class.
+     * @param model the target stage
+     * @return the created class name, or {@code null} if the target stage does not use a combiner
+     * @throws IOException if error was occurred while creating the class
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public CompiledType emit(StageModel model) throws IOException {
         Precondition.checkMustNotBeNull(model, "model"); //$NON-NLS-1$

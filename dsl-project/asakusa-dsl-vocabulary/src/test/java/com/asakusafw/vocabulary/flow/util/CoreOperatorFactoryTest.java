@@ -51,7 +51,7 @@ public class CoreOperatorFactoryTest {
     MockOut<String> out = new MockOut<String>(String.class, "out");
 
     /**
-     * {@link CoreOperatorFactory#empty(Class)}のテスト。
+     * test for {@link CoreOperatorFactory#empty(Class)}.
      */
     @Test
     public void empty() {
@@ -72,7 +72,7 @@ public class CoreOperatorFactoryTest {
     }
 
     /**
-     * {@link CoreOperatorFactory#stop(Source)}のテスト。
+     * test for {@link CoreOperatorFactory#stop(Source)}.
      */
     @Test
     public void stop() {
@@ -89,7 +89,7 @@ public class CoreOperatorFactoryTest {
     }
 
     /**
-     * {@link CoreOperatorFactory#confluent(Source, Source)}のテスト。
+     * test for {@link CoreOperatorFactory#confluent(Source, Source)}.
      */
     @Test
     public void confluent() {
@@ -109,7 +109,7 @@ public class CoreOperatorFactoryTest {
     }
 
     /**
-     * {@link CoreOperatorFactory#checkpoint(Source)}のテスト。
+     * test for {@link CoreOperatorFactory#checkpoint(Source)}.
      */
     @Test
     public void checkpoint() {
@@ -143,21 +143,16 @@ public class CoreOperatorFactoryTest {
 
         while (work.isEmpty() == false) {
             FlowElement elem = work.removeFirst();
-
             String self = elem.getDescription().getName();
             if (saw.contains(self)) {
                 continue;
             }
             saw.add(self);
-
-            // 逆辺をキューに追加
             for (FlowElementInput input : elem.getInputPorts()) {
                 for (PortConnection conn : input.getConnected()) {
                     work.add(conn.getUpstream().getOwner());
                 }
             }
-
-            // 順辺をグラフに追加
             for (FlowElementOutput output : elem.getOutputPorts()) {
                 for (PortConnection conn : output.getConnected()) {
                     FlowElement opposite = conn.getDownstream().getOwner();

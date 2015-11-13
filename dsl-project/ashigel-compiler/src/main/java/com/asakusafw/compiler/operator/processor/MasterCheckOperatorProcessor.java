@@ -38,7 +38,7 @@ import com.asakusafw.vocabulary.flow.graph.FlowBoundary;
 import com.asakusafw.vocabulary.operator.MasterCheck;
 
 /**
- * {@link MasterCheck マスタ確認演算子}を処理する。
+ * Processes {@link MasterCheck} operators.
  */
 @TargetOperator(MasterCheck.class)
 public class MasterCheckOperatorProcessor extends AbstractOperatorProcessor {
@@ -49,21 +49,21 @@ public class MasterCheckOperatorProcessor extends AbstractOperatorProcessor {
 
         ExecutableAnalyzer a = new ExecutableAnalyzer(context.environment, context.element);
         if (a.isAbstract() == false) {
-            a.error("マスタ確認演算子はabstractで宣言する必要があります");
+            a.error(Messages.getString("MasterCheckOperatorProcessor.errorNotAbstract")); //$NON-NLS-1$
         }
         if (a.getReturnType().isBoolean() == false) {
-            a.error("マスタ確認演算子は戻り値にboolean型を指定する必要があります");
+            a.error(Messages.getString("MasterCheckOperatorProcessor.errorNotBooleanResult")); //$NON-NLS-1$
         }
         TypeConstraint master = a.getParameterType(0);
         if (master.isModel() == false) {
-            a.error(0, "マスタ確認演算子の一つ目の引数はモデルオブジェクト型である必要があります");
+            a.error(0, Messages.getString("MasterCheckOperatorProcessor.errorNotModelMaster")); //$NON-NLS-1$
         }
         TypeConstraint transaction = a.getParameterType(1);
         if (transaction.isModel() == false) {
-            a.error(1, "マスタ確認演算子の二つ目の引数はモデルオブジェクト型である必要があります");
+            a.error(1, Messages.getString("MasterCheckOperatorProcessor.errorNotModelTransaction")); //$NON-NLS-1$
         }
         for (int i = 2, n = a.countParameters(); i < n; i++) {
-            a.error(i, "マスタ確認演算子にはユーザー引数を利用できません");
+            a.error(i, Messages.getString("MasterCheckOperatorProcessor.errorExtraParameter")); //$NON-NLS-1$
         }
         if (a.hasError()) {
             return null;
@@ -71,22 +71,24 @@ public class MasterCheckOperatorProcessor extends AbstractOperatorProcessor {
 
         ShuffleKeySpec masterKey = a.getParameterKeySpec(0);
         if (masterKey == null) {
-            a.error("マスタ確認演算子の引数には@Key注釈によってグループ化項目を指定する必要があります");
+            a.error(Messages.getString(
+                    "MasterCheckOperatorProcessor.errorMissingKeyAnnotationMaster")); //$NON-NLS-1$
         }
         ShuffleKeySpec transactionKey = a.getParameterKeySpec(1);
         if (transactionKey == null) {
-            a.error("マスタ確認演算子の引数には@Key注釈によってグループ化項目を指定する必要があります");
+            a.error(Messages.getString(
+                    "MasterCheckOperatorProcessor.errorMissingKeyAnnotationTransaction")); //$NON-NLS-1$
         }
         a.validateShuffleKeys(masterKey, transactionKey);
         ExecutableElement selector = null;
         try {
-            selector = MasterKindOperatorAnalyzer.findSelector(context.environment, context);
+            selector = MasterKindOperatorAnalyzer.findSelector(context);
         } catch (ResolveException e) {
             a.error(e.getMessage());
         }
         MasterCheck annotation = context.element.getAnnotation(MasterCheck.class);
         if (annotation == null) {
-            a.error("注釈の解釈に失敗しました");
+            a.error(Messages.getString("MasterCheckOperatorProcessor.errorInvalidAnnoation")); //$NON-NLS-1$
             return null;
         }
         OperatorProcessorUtil.checkPortName(a, new String[] {
@@ -120,7 +122,7 @@ public class MasterCheckOperatorProcessor extends AbstractOperatorProcessor {
                 transactionKey.getKey());
         builder.addOutput(
                 MessageFormat.format(
-                        "{0}の引き当てに成功した{1}",
+                        Messages.getString("MasterCheckOperatorProcessor.javadocFound"), //$NON-NLS-1$
                         a.getParameterName(0), a.getParameterName(1)),
                 annotation.foundPort(),
                 a.getParameterType(1).getType(),
@@ -128,7 +130,7 @@ public class MasterCheckOperatorProcessor extends AbstractOperatorProcessor {
                 null);
         builder.addOutput(
                 MessageFormat.format(
-                        "{0}の引き当てに失敗した{1}",
+                        Messages.getString("MasterCheckOperatorProcessor.javadocMissed"), //$NON-NLS-1$
                         a.getParameterName(0), a.getParameterName(1)),
                 annotation.missedPort(),
                 a.getParameterType(1).getType(),
@@ -142,7 +144,8 @@ public class MasterCheckOperatorProcessor extends AbstractOperatorProcessor {
         ImplementationBuilder builder = new ImplementationBuilder(context);
         ModelFactory f = context.environment.getFactory();
         builder.addStatement(new TypeBuilder(f, context.importer.toType(UnsupportedOperationException.class))
-            .newObject(Models.toLiteral(f, "マスタ確認演算子は組み込みの方法で処理されます"))
+            .newObject(Models.toLiteral(f,
+                    Messages.getString("MasterCheckOperatorProcessor.messageMethodBody"))) //$NON-NLS-1$
             .toThrowStatement());
         return builder.toImplementation();
     }

@@ -18,7 +18,7 @@ package com.asakusafw.utils.java.internal.parser.javadoc.ir;
 import java.io.Serializable;
 
 /**
- * Javadocのトークン。
+ * Represents a token in Java documentation comments.
  */
 public final class JavadocToken implements Serializable {
 
@@ -29,11 +29,11 @@ public final class JavadocToken implements Serializable {
     private final int start;
 
     /**
-     * インスタンスを生成する。
-     * @param kind トークンの種類
-     * @param text トークンを構成する文字列
-     * @param start 開始位置
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Creates a new instance.
+     * @param kind the token kind
+     * @param text the token image
+     * @param start the starting position
+     * @throws IllegalArgumentException if the parameters are {@code null}
      */
     public JavadocToken(JavadocTokenKind kind, String text, int start) {
         if (kind == null) {
@@ -48,32 +48,32 @@ public final class JavadocToken implements Serializable {
     }
 
     /**
-     * このトークンの種類を返す。
-     * @return このトークンの種類
+     * Returns the token kind.
+     * @return the token kind
      */
     public JavadocTokenKind getKind() {
         return this.kind;
     }
 
     /**
-     * このトークンを構成する文字列を返す。
-     * @return このトークンを構成する文字列
+     * Returns the token image.
+     * @return the token image
      */
     public String getText() {
         return this.text;
     }
 
     /**
-     * このトークンの開始オフセットを返す。
-     * @return このトークンの開始オフセット
+     * Returns the starting position (0-origin).
+     * @return the starting position
      */
     public int getStartPosition() {
         return this.start;
     }
 
     /**
-     * このトークンの位置を返す。
-     * @return このトークンの位置
+     * Returns the location of this token.
+     * @return the location of this token
      */
     public IrLocation getLocation() {
         return new IrLocation(getStartPosition(), getText().length());

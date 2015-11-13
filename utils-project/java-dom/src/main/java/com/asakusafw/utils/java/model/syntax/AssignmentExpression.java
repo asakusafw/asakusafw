@@ -15,9 +15,8 @@
  */
 package com.asakusafw.utils.java.model.syntax;
 
-
 /**
- * 代入式を表現するインターフェース。
+ * An interface which represents assignment expression.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:15.26] Assignment Operators} </li>
@@ -27,26 +26,21 @@ package com.asakusafw.utils.java.model.syntax;
 public interface AssignmentExpression
         extends Expression {
 
-    // properties
-
     /**
-     * 左辺式を返す。
-     * @return
-     *     左辺式
+     * Returns the left hand side term.
+     * @return the left hand side term
      */
     Expression getLeftHandSide();
 
     /**
-     * 単純代入演算子、または複合する演算子を返す。
-     * @return
-     *     単純代入演算子、または複合する演算子
+     * Returns the simple assignment operator, or an infix operator for compound assignment expression.
+     * @return the assignment or infix operator
      */
     InfixOperator getOperator();
 
     /**
-     * 右辺式を返す。
-     * @return
-     *     右辺式
+     * Returns the right hand side term.
+     * @return the right hand side term
      */
     Expression getRightHandSide();
 }

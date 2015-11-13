@@ -42,7 +42,7 @@ import com.asakusafw.utils.java.model.util.Models;
 public class OperatorFactoryClassGeneratorTest extends OperatorCompilerTestRoot {
 
     /**
-     * 単純なテスト。
+     * simple case.
      */
     @Test
     public void simple() {

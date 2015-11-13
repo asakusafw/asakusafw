@@ -181,7 +181,7 @@ public class CleanupStageClientEmitter {
 
         private Javadoc createJavadoc() {
             return new JavadocBuilder(factory)
-                .text("A cleanup stage client.")
+                .text(Messages.getString("CleanupStageClientEmitter.javadocClass")) //$NON-NLS-1$
                 .toJavadoc();
         }
 

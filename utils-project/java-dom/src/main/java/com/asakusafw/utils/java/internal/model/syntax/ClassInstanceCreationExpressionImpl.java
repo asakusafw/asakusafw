@@ -25,33 +25,18 @@ import com.asakusafw.utils.java.model.syntax.Type;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link ClassInstanceCreationExpression}の実装。
+ * An implementation of {@link ClassInstanceCreationExpression}.
  */
 public final class ClassInstanceCreationExpressionImpl extends ModelRoot implements ClassInstanceCreationExpression {
 
-    /**
-     * 限定式。
-     */
     private Expression qualifier;
 
-    /**
-     * 型引数の一覧。
-     */
     private List<? extends Type> typeArguments;
 
-    /**
-     * インスタンスを生成する型。
-     */
     private Type type;
 
-    /**
-     * 実引数の一覧。
-     */
     private List<? extends Expression> arguments;
 
-    /**
-     * 匿名クラス本体。
-     */
     private ClassBody body;
 
     @Override
@@ -60,11 +45,8 @@ public final class ClassInstanceCreationExpressionImpl extends ModelRoot impleme
     }
 
     /**
-     * 限定式を設定する。
-     * <p> 限定式が指定されない場合、引数には{@code null}を指定する。 </p>
-     * @param qualifier
-     *     限定式、
-     *     ただし限定式が指定されない場合は{@code null}
+     * Sets the qualifier expression.
+     * @param qualifier the qualifier expression, or {@code null} if it is not specified
      */
     public void setQualifier(Expression qualifier) {
         this.qualifier = qualifier;
@@ -76,12 +58,9 @@ public final class ClassInstanceCreationExpressionImpl extends ModelRoot impleme
     }
 
     /**
-     * 型引数の一覧を設定する。
-     * <p> 型引数が一つも指定されない場合、引数には空を指定する。 </p>
-     * @param typeArguments
-     *     型引数の一覧
-     * @throws IllegalArgumentException
-     *     {@code typeArguments}に{@code null}が指定された場合
+     * Sets the type arguments.
+     * @param typeArguments the type arguments
+     * @throws IllegalArgumentException if {@code typeArguments} was {@code null}
      */
     public void setTypeArguments(List<? extends Type> typeArguments) {
         Util.notNull(typeArguments, "typeArguments"); //$NON-NLS-1$
@@ -95,11 +74,9 @@ public final class ClassInstanceCreationExpressionImpl extends ModelRoot impleme
     }
 
     /**
-     * インスタンスを生成する型を設定する。
-     * @param type
-     *     インスタンスを生成する型
-     * @throws IllegalArgumentException
-     *     {@code type}に{@code null}が指定された場合
+     * Sets the target type.
+     * @param type the target type
+     * @throws IllegalArgumentException if {@code type} was {@code null}
      */
     public void setType(Type type) {
         Util.notNull(type, "type"); //$NON-NLS-1$
@@ -112,12 +89,9 @@ public final class ClassInstanceCreationExpressionImpl extends ModelRoot impleme
     }
 
     /**
-     * 実引数の一覧を設定する。
-     * <p> 実引数が一つも指定されない場合、引数には空を指定する。 </p>
-     * @param arguments
-     *     実引数の一覧
-     * @throws IllegalArgumentException
-     *     {@code arguments}に{@code null}が指定された場合
+     * Sets the actual arguments.
+     * @param arguments the actual arguments
+     * @throws IllegalArgumentException if {@code arguments} was {@code null}
      */
     public void setArguments(List<? extends Expression> arguments) {
         Util.notNull(arguments, "arguments"); //$NON-NLS-1$
@@ -131,18 +105,15 @@ public final class ClassInstanceCreationExpressionImpl extends ModelRoot impleme
     }
 
     /**
-     * 匿名クラス本体を設定する。
-     * <p> 匿名クラス本体が指定されない場合、引数には{@code null}を指定する。 </p>
-     * @param body
-     *     匿名クラス本体、
-     *     ただし匿名クラス本体が指定されない場合は{@code null}
+     * Sets the anonymous class body.
+     * @param body the anonymous class body, or {@code null} if the target is not an anonymous class
      */
     public void setBody(ClassBody body) {
         this.body = body;
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#CLASS_INSTANCE_CREATION_EXPRESSION}を返す。
+     * Returns {@link ModelKind#CLASS_INSTANCE_CREATION_EXPRESSION} which represents this element kind.
      * @return {@link ModelKind#CLASS_INSTANCE_CREATION_EXPRESSION}
      */
     @Override
@@ -151,8 +122,7 @@ public final class ClassInstanceCreationExpressionImpl extends ModelRoot impleme
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitClassInstanceCreationExpression(this, context);
     }

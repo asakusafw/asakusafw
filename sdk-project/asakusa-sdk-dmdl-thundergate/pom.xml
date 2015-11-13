@@ -1,33 +1,21 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<name>Asakusa App SDK/DMDL ThunderGate</name>
-	<groupId>com.asakusafw.sdk</groupId>
-	<artifactId>asakusa-sdk-dmdl-thundergate</artifactId>
-	<parent>
-		<artifactId>asakusa-parent</artifactId>
-		<groupId>com.asakusafw</groupId>
-		<version>0.7.4-hadoop2</version>
-		<relativePath>../../asakusa-parent</relativePath>
-	</parent>
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <name>Asakusa App SDK/DMDL ThunderGate</name>
+  <artifactId>asakusa-sdk-dmdl-thundergate</artifactId>
+  <parent>
+    <artifactId>asakusa-sdk-project</artifactId>
+    <groupId>com.asakusafw.sdk</groupId>
+    <version>0.7.5-RC1-hadoop2</version>
+  </parent>
 
-	<description>Asakusa Application SDK/DMDL for ThunderGate</description>
-	<url>http://asakusafw.com</url>
-	<licenses>
-		<license>
-			<name>Apache License, Version 2.0</name>
-			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-			<distribution>repo</distribution>
-		</license>
-	</licenses>
+  <packaging>jar</packaging>
 
-	<packaging>jar</packaging>
-
-	<dependencies>
-		<dependency>
-			<groupId>com.asakusafw</groupId>
-			<artifactId>asakusa-thundergate-dmdl</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-	</dependencies>
+  <dependencies>
+    <dependency>
+      <groupId>com.asakusafw</groupId>
+      <artifactId>asakusa-thundergate-dmdl</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
 </project>

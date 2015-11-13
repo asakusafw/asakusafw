@@ -16,117 +16,117 @@
 package com.asakusafw.utils.java.internal.parser.javadoc.ir;
 
 /**
- * {@link IrDocElement}を走査するビジタ。
- * @param <R> 戻り値の型
- * @param <P> 引数の型
+ * A visitor for {@link IrDocElement}.
+ * @param <R> type of visitor result
+ * @param <P> type of visitor context
  */
 public abstract class IrDocElementVisitor<R, P> {
 
     /**
-     * {@link IrDocComment}の{@link IrDocElement#accept(IrDocElementVisitor, Object)}から呼び出される。
-     * @param elem ビジタを受け入れた要素
-     * @param context コンテキストオブジェクト
-     * @return 処理結果
+     * Processes {@link IrDocComment}.
+     * @param elem the target element
+     * @param context the current context
+     * @return the processing result
      */
     public R visitComment(IrDocComment elem, P context) {
         return null;
     }
 
     /**
-     * {@link IrDocBlock}の{@link IrDocElement#accept(IrDocElementVisitor, Object)}から呼び出される。
-     * @param elem ビジタを受け入れた要素
-     * @param context コンテキストオブジェクト
-     * @return 処理結果
+     * Processes {@link IrDocBlock}.
+     * @param elem the target element
+     * @param context the current context
+     * @return the processing result
      */
     public R visitBlock(IrDocBlock elem, P context) {
         return null;
     }
 
     /**
-     * {@link IrDocSimpleName}の{@link IrDocElement#accept(IrDocElementVisitor, Object)}から呼び出される。
-     * @param elem ビジタを受け入れた要素
-     * @param context コンテキストオブジェクト
-     * @return 処理結果
+     * Processes {@link IrDocSimpleName}.
+     * @param elem the target element
+     * @param context the current context
+     * @return the processing result
      */
     public R visitSimpleName(IrDocSimpleName elem, P context) {
         return null;
     }
 
     /**
-     * {@link IrDocQualifiedName}の{@link IrDocElement#accept(IrDocElementVisitor, Object)}から呼び出される。
-     * @param elem ビジタを受け入れた要素
-     * @param context コンテキストオブジェクト
-     * @return 処理結果
+     * Processes {@link IrDocQualifiedName}.
+     * @param elem the target element
+     * @param context the current context
+     * @return the processing result
      */
     public R visitQualifiedName(IrDocQualifiedName elem, P context) {
         return null;
     }
 
     /**
-     * {@link IrDocField}の{@link IrDocElement#accept(IrDocElementVisitor, Object)}から呼び出される。
-     * @param elem ビジタを受け入れた要素
-     * @param context コンテキストオブジェクト
-     * @return 処理結果
+     * Processes {@link IrDocField}.
+     * @param elem the target element
+     * @param context the current context
+     * @return the processing result
      */
     public R visitField(IrDocField elem, P context) {
         return null;
     }
 
     /**
-     * {@link IrDocMethod}の{@link IrDocElement#accept(IrDocElementVisitor, Object)}から呼び出される。
-     * @param elem ビジタを受け入れた要素
-     * @param context コンテキストオブジェクト
-     * @return 処理結果
+     * Processes {@link IrDocMethod}.
+     * @param elem the target element
+     * @param context the current context
+     * @return the processing result
      */
     public R visitMethod(IrDocMethod elem, P context) {
         return null;
     }
 
     /**
-     * {@link IrDocText}の{@link IrDocElement#accept(IrDocElementVisitor, Object)}から呼び出される。
-     * @param elem ビジタを受け入れた要素
-     * @param context コンテキストオブジェクト
-     * @return 処理結果
+     * Processes {@link IrDocText}.
+     * @param elem the target element
+     * @param context the current context
+     * @return the processing result
      */
     public R visitText(IrDocText elem, P context) {
         return null;
     }
 
     /**
-     * {@link IrDocMethodParameter}の{@link IrDocElement#accept(IrDocElementVisitor, Object)}から呼び出される。
-     * @param elem ビジタを受け入れた要素
-     * @param context コンテキストオブジェクト
-     * @return 処理結果
+     * Processes {@link IrDocMethodParameter}.
+     * @param elem the target element
+     * @param context the current context
+     * @return the processing result
      */
     public R visitMethodParameter(IrDocMethodParameter elem, P context) {
         return null;
     }
 
     /**
-     * {@link IrDocBasicType}の{@link IrDocElement#accept(IrDocElementVisitor, Object)}から呼び出される。
-     * @param elem ビジタを受け入れた要素
-     * @param context コンテキストオブジェクト
-     * @return 処理結果
+     * Processes {@link IrDocBasicType}.
+     * @param elem the target element
+     * @param context the current context
+     * @return the processing result
      */
     public R visitBasicType(IrDocBasicType elem, P context) {
         return null;
     }
 
     /**
-     * {@link IrDocNamedType}の{@link IrDocElement#accept(IrDocElementVisitor, Object)}から呼び出される。
-     * @param elem ビジタを受け入れた要素
-     * @param context コンテキストオブジェクト
-     * @return 処理結果
+     * Processes {@link IrDocNamedType}.
+     * @param elem the target element
+     * @param context the current context
+     * @return the processing result
      */
     public R visitNamedType(IrDocNamedType elem, P context) {
         return null;
     }
 
     /**
-     * {@link IrDocArrayType}の{@link IrDocElement#accept(IrDocElementVisitor, Object)}から呼び出される。
-     * @param elem ビジタを受け入れた要素
-     * @param context コンテキストオブジェクト
-     * @return 処理結果
+     * Processes {@link IrDocArrayType}.
+     * @param elem the target element
+     * @param context the current context
+     * @return the processing result
      */
     public R visitArrayType(IrDocArrayType elem, P context) {
         return null;

@@ -54,26 +54,31 @@ public final class Main {
 
     private static final Options OPTIONS;
     static {
-        OPT_OUTPUT = new Option("output", true, "output directory location"); //$NON-NLS-1$
+        OPT_OUTPUT = new Option("output", true, //$NON-NLS-1$
+                Messages.getString("Main.optOutput")); //$NON-NLS-1$
         OPT_OUTPUT.setArgName("/path/to/output"); //$NON-NLS-1$
         OPT_OUTPUT.setRequired(true);
 
-        OPT_SOURCE_PATH = new Option("source", true, "source file or source directory paths"); //$NON-NLS-1$
+        OPT_SOURCE_PATH = new Option("source", true, //$NON-NLS-1$
+                Messages.getString("Main.optSource")); //$NON-NLS-1$
         OPT_SOURCE_PATH.setArgName(
                 "source-file.dmdl" + File.pathSeparatorChar + "/path/to/source"); //$NON-NLS-1$ //$NON-NLS-2$
         OPT_SOURCE_PATH.setRequired(true);
 
-        OPT_FORMAT = new Option("format", true, "output format"); //$NON-NLS-1$
+        OPT_FORMAT = new Option("format", true, //$NON-NLS-1$
+                Messages.getString("Main.optFormat")); //$NON-NLS-1$
         OPT_FORMAT.setArgName(MessageFormat.format(
                 "one-of-{0}", //$NON-NLS-1$
                 Arrays.toString(WorkbookFormat.values())));
         OPT_FORMAT.setRequired(true);
 
-        OPT_ENCODING = new Option("encoding", true, "input DMDL charset encoding"); //$NON-NLS-1$
+        OPT_ENCODING = new Option("encoding", true, //$NON-NLS-1$
+                Messages.getString("Main.optEncoding")); //$NON-NLS-1$
         OPT_ENCODING.setArgName("source-encoding"); //$NON-NLS-1$
         OPT_ENCODING.setRequired(false);
 
-        OPT_PLUGIN = new Option("plugin", true, "DMDL processor plug-ins"); //$NON-NLS-1$
+        OPT_PLUGIN = new Option("plugin", true, //$NON-NLS-1$
+                Messages.getString("Main.optPlugin")); //$NON-NLS-1$
         OPT_PLUGIN.setArgName("plugin-1.jar" + File.pathSeparatorChar + "plugin-2.jar"); //$NON-NLS-1$ //$NON-NLS-2$
         OPT_PLUGIN.setValueSeparator(File.pathSeparatorChar);
         OPT_PLUGIN.setRequired(false);
@@ -117,17 +122,27 @@ public final class Main {
                             Main.class.getName()),
                     OPTIONS,
                     true);
-            System.out.printf("output formats (specify in \"-%s\"):%n", OPT_FORMAT.getOpt());
-            System.out.printf(" %8s - %s%n", WorkbookFormat.DATA, "only data sheet (Excel97)");
-            System.out.printf(" %8s - %s%n", WorkbookFormat.RULE, "only rule sheet (Excel97)");
-            System.out.printf(" %8s - %s%n", WorkbookFormat.INOUT, "input/output data sheet (Excel97)");
-            System.out.printf(" %8s - %s%n", WorkbookFormat.INSPECT, "expected data and its rule sheets (Excel97)");
-            System.out.printf(" %8s - %s%n", WorkbookFormat.ALL, "input/output data and rule sheets (Excel97)");
-            System.out.printf(" %8s - %s%n", WorkbookFormat.DATAX, "only data sheet (Excel2007)");
-            System.out.printf(" %8s - %s%n", WorkbookFormat.RULEX, "only rule sheet (Excel2007)");
-            System.out.printf(" %8s - %s%n", WorkbookFormat.INOUTX, "input/output data sheet (Excel2007)");
-            System.out.printf(" %8s - %s%n", WorkbookFormat.INSPECTX, "expected data and its rule sheets (Excel2007)");
-            System.out.printf(" %8s - %s%n", WorkbookFormat.ALLX, "input/output data and rule sheets (Excel2007)");
+            System.out.printf(Messages.getString("Main.helpFormatHead"), OPT_FORMAT.getOpt()); //$NON-NLS-1$
+            System.out.printf(" %8s - %s%n", WorkbookFormat.DATA, //$NON-NLS-1$
+                    Messages.getString("Main.helpFormatData")); //$NON-NLS-1$
+            System.out.printf(" %8s - %s%n", WorkbookFormat.RULE, //$NON-NLS-1$
+                    Messages.getString("Main.helpFormatRule")); //$NON-NLS-1$
+            System.out.printf(" %8s - %s%n", WorkbookFormat.INOUT, //$NON-NLS-1$
+                    Messages.getString("Main.helpFormatInout")); //$NON-NLS-1$
+            System.out.printf(" %8s - %s%n", WorkbookFormat.INSPECT, //$NON-NLS-1$
+                    Messages.getString("Main.helpFormatInspect")); //$NON-NLS-1$
+            System.out.printf(" %8s - %s%n", WorkbookFormat.ALL, //$NON-NLS-1$
+                    Messages.getString("Main.helpFormatAll")); //$NON-NLS-1$
+            System.out.printf(" %8s - %s%n", WorkbookFormat.DATAX, //$NON-NLS-1$
+                    Messages.getString("Main.helpFormatDataX")); //$NON-NLS-1$
+            System.out.printf(" %8s - %s%n", WorkbookFormat.RULEX, //$NON-NLS-1$
+                    Messages.getString("Main.helpFormatRuleX")); //$NON-NLS-1$
+            System.out.printf(" %8s - %s%n", WorkbookFormat.INOUTX, //$NON-NLS-1$
+                    Messages.getString("Main.helpFormatInoutX")); //$NON-NLS-1$
+            System.out.printf(" %8s - %s%n", WorkbookFormat.INSPECTX, //$NON-NLS-1$
+                    Messages.getString("Main.helpFormatInspectX")); //$NON-NLS-1$
+            System.out.printf(" %8s - %s%n", WorkbookFormat.ALLX, //$NON-NLS-1$
+                    Messages.getString("Main.helpFormatAllX")); //$NON-NLS-1$
             e.printStackTrace(System.out);
             return 1;
         }
@@ -149,7 +164,7 @@ public final class Main {
         WorkbookFormat format = WorkbookFormat.findByName(formatCmd);
         if (format == null) {
             throw new IllegalArgumentException(MessageFormat.format(
-                    "Command line option -{0} ({1}) must be one of {2}",
+                    Messages.getString("Main.errorUnknownFormat"), //$NON-NLS-1$
                     OPT_FORMAT.getOpt(),
                     formatCmd,
                     Arrays.toString(WorkbookFormat.values())));

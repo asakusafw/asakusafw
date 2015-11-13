@@ -23,7 +23,7 @@ import com.asakusafw.utils.java.model.syntax.DocElement;
 import com.asakusafw.vocabulary.flow.graph.ShuffleKey;
 
 /**
- * 演算子メソッドが利用する変数。
+ * Structural information of operator ports.
  */
 public class OperatorPortDeclaration {
 
@@ -40,14 +40,14 @@ public class OperatorPortDeclaration {
     private final ShuffleKey shuffleKey;
 
     /**
-     * インスタンスを生成する。
-     * @param kind 変数の種類
-     * @param documentation 変数に対するドキュメンテーション
-     * @param name 変数の名前
-     * @param type 変数の型
-     * @param position パラメーターの位置、パラメーターで宣言されていない場合は{@code null}
-     * @param shuffleKey シャッフル条件、存在しない場合は{@code null}
-     * @throws IllegalArgumentException 引数に{@code null}が含まれる場合
+     * Creates a new instance.
+     * @param kind the port kind
+     * @param documentation the documentation of the port
+     * @param name the port name
+     * @param type the port type
+     * @param position the declaring parameter index (nullable)
+     * @param shuffleKey the shuffle key (nullable)
+     * @throws IllegalArgumentException if some parameters are {@code null}
      */
     public OperatorPortDeclaration(
             Kind kind,
@@ -69,70 +69,70 @@ public class OperatorPortDeclaration {
     }
 
     /**
-     * このポートのパラメーターでの位置を返す。
-     * @return このポートのパラメーターでの位置、パラメーターから導出されていない場合は{@code null}
+     * Returns the parameter index in the declaring method of this port.
+     * @return the parameter index, or {@code null} if the port is not derived from a method parameter
      */
     public Integer getParameterPosition() {
         return position;
     }
 
     /**
-     * 変数の種類を返す。
-     * @return 変数の種類
+     * Returns the port kind.
+     * @return the port kind
      */
     public Kind getKind() {
         return this.kind;
     }
 
     /**
-     * 変数に対するドキュメンテーションを返す。
-     * @return 変数に対するドキュメンテーション、存在しない場合は{@code null}
+     * Returns the documentation element of the target port.
+     * @return the documentation element, or {@code null} if the target port does not have any documentation
      */
     public List<DocElement> getDocumentation() {
         return this.documentation;
     }
 
     /**
-     * 変数の名前を返す。
-     * @return 変数の名前
+     * Returns the port name.
+     * @return the port name
      */
     public String getName() {
         return this.name;
     }
 
     /**
-     * ポートの型を返す。
-     * @return ポートの型
+     * Returns the port type.
+     * @return the port type
      */
     public PortTypeDescription getType() {
         return this.type;
     }
 
     /**
-     * 変数に関連するキー情報を返す。
-     * @return 変数に関連するキー情報、存在しない場合は{@code null}
+     * Returns the shuffle key for the target port.
+     * @return the shuffle key, or {@code null} if the target port does not have shuffle key information
      */
     public ShuffleKey getShuffleKey() {
         return shuffleKey;
     }
 
     /**
-     * 変数の種類。
+     * Represents kinds of operator port.
      */
     public enum Kind {
 
         /**
-         * 入力。
+         * The input.
          */
         INPUT,
 
         /**
-         * 出力。
+         * The output.
          */
         OUTPUT,
 
         /**
-         * 定数の定義。
+         * The user parameter.
          */
         CONSTANT,
     }

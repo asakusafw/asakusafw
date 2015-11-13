@@ -31,7 +31,7 @@ import com.asakusafw.vocabulary.flow.Out;
 
 
 /**
- * {@link SummarizeFlowProcessor}のテスト。
+ * test for {@link SummarizeFlowProcessor}.
  */
 @JobFlow(name = "testing")
 public class SummarizeFlowTrivial extends FlowDescription {
@@ -41,9 +41,9 @@ public class SummarizeFlowTrivial extends FlowDescription {
     private Out<ExSummarized> out1;
 
     /**
-     * インスタンスを生成する。
-     * @param in1 入力
-     * @param out1 出力
+     * Creates a new instance.
+     * @param in1 input
+     * @param out1 output
      */
     public SummarizeFlowTrivial(
             @Import(name = "e1", description = Ex1MockImporterDescription.class)

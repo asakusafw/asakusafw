@@ -99,7 +99,7 @@ public class SharedObjectCleaner extends ExternalResource {
             }
             if (Modifier.isStatic(f.getModifiers()) == false) {
                 LOG.warn(MessageFormat.format(
-                        "shared field should be static: {0}#{1}",
+                        Messages.getString("SharedObjectCleaner.warnNotStatic"), //$NON-NLS-1$
                         aClass.getName(),
                         f.getName()));
                 continue;
@@ -109,7 +109,7 @@ public class SharedObjectCleaner extends ExternalResource {
                 Shared<?> s = (Shared<?>) f.get(null);
                 if (s == null) {
                     LOG.warn(MessageFormat.format(
-                            "shared field is not initialized: {0}#{1}",
+                            Messages.getString("SharedObjectCleaner.warnNotInitialized"), //$NON-NLS-1$
                             aClass.getName(),
                             f.getName()));
                 } else {
@@ -117,7 +117,7 @@ public class SharedObjectCleaner extends ExternalResource {
                 }
             } catch (Exception e) {
                 LOG.warn(MessageFormat.format(
-                        "failed to collect shared field: {0}#{1}",
+                        Messages.getString("SharedObjectCleaner.warnNotAccesible"), //$NON-NLS-1$
                         aClass.getName(),
                         f.getName()), e);
             }

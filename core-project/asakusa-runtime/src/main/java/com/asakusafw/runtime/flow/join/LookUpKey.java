@@ -23,7 +23,7 @@ import org.apache.hadoop.io.Writable;
 import com.asakusafw.runtime.io.util.DataBuffer;
 
 /**
- * {@link LookUpTable}に利用可能なキー。
+ * A key for {@link LookUpTable}.
  */
 public class LookUpKey {
 
@@ -32,33 +32,33 @@ public class LookUpKey {
     private final DataBuffer buffer;
 
     /**
-     * インスタンスを生成する。
+     * Creates a new instance w/ default initial buffer size.
      */
     public LookUpKey() {
         this(INITIAL_SIZE);
     }
 
     /**
-     * 初期バッファサイズを指定してインスタンスを生成する。
-     * @param bufferSize 初期バッファサイズ
+     * Creates a new instance.
+     * @param bufferSize the initial buffer size
      */
     public LookUpKey(int bufferSize) {
         this.buffer = new DataBuffer(bufferSize);
     }
 
     /**
-     * バッファの内容をリセットする。
-     * @throws IOException リセットに失敗した場合
+     * Clears the buffer.
+     * @throws IOException if failed to initialize the buffer
      */
     public void reset() throws IOException {
         buffer.reset(0, 0);
     }
 
     /**
-     * 指定の要素をキーに追加する。
-     * @param writable 追加する要素
-     * @throws IOException 追加に失敗した場合
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Appends an element into the buffer.
+     * @param writable the target element
+     * @throws IOException if error occurred while appending the element
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public void add(Writable writable) throws IOException {
         if (writable == null) {
@@ -68,9 +68,9 @@ public class LookUpKey {
     }
 
     /**
-     * ここまでに追加した要素の情報を持つ、このオブジェクトのコピーを返す。
-     * @return このオブジェクトのコピー
-     * @throws IOException コピーに失敗した場合
+     * Returns a copy of this key.
+     * @return a copy of this
+     * @throws IOException if error occurred while creating a copy
      */
     public LookUpKey copy() throws IOException {
         LookUpKey result = new LookUpKey(0);

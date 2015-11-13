@@ -7,6 +7,7 @@
 Asakusa Frameworkを使ったアプリケーションの開発の流れの概要を、下図に示します。
 
 ..  figure:: next-step-process.png
+    :width: 640px
 
 アプリケーションの設計
 ======================
@@ -27,44 +28,13 @@ Asakusa Frameworkでは、このバッチの実行単位毎にAsakusa DSLの最�
 バッチアプリケーションは何かしらの外部システムから処理対象データを入力し、また実行結果を外部システムに出力します。
 ここでは連携する外部システムとの入出力方式に関する検討を行います。
 
-現在のAsakusa Frameworkには、外部システムと連携するためのツールとして :doc:`ThunderGate <../thundergate/index>` と :doc:`WindGate <../windgate/index>` の2つが標準で同梱されています。
-
-前者のThunderGateは「オンラインシステムのRDBMSとHadoopの連携」を目指したもので、さまざまな機能を提供する反面、 :doc:`../product/target-platform` がMySQLのみであるなどの厳しい動作要件があります。
-
-後者のWindGateは逆に「ポータブルなデータ転送ツール」を目指したもので、さまざまなRDBMSやローカルファイルシステム上のフラットファイルなどを利用できますが、特定環境向けの最適化を行っておらず、またThunderGateに比べて機能の面でも劣ります。
-
-以下はRDBMSとの連携を行う際に、ThunderGateとWindGateの特性を比較したものです。
-
-..  list-table:: 外部システム連携の比較 (RDBMS)
-    :widths: 10 50 50
-    :header-rows: 1
-
-    * - 特徴
-      - ThunderGate
-      - WindGate
-
-    * - メリット
-
-      - * MySQL向けにチューニングされており、比較的高速に動作する
-        * オンラインシステムとの連携が想定されていて、バッチ実行中の排他制御などが可能
-        * ロングランニングトランザクションをサポート
-
-      - * さまざまなRDBMS上で動作する
-        * 特別な管理テーブルや管理カラムが不要
-        * RDBMS, Hadoop, WindGateを柔軟な構成で配置して利用できる
-
-    * - デメリット
-
-      - * MySQL以外で動作しない
-        * ThunderGate用の管理テーブルや管理カラムがデータベース上に必要
-        * データベースサーバー上でThunderGateを直接動作させる必要がある
-
-      - * ThunderGateに性能面で劣る
-        * バッチ実行中の排他制御やロングランニングトランザクションなどのサポートがない
-
-また、Asakusa Frameworkの外部でHadoopとデータのやり取りを行ったうえで、バッチからは :doc:`Direct I/O <../directio/index>` という直接のデータ入出力を行う機能を利用することもできます。
+Asakusa Frameworkには、Hadoopが管理する分散ファイルシステム上に配置したデータに対して、 :doc:`Direct I/O <../directio/index>` というデータ入出力機能を利用してデータを読み書きすることができます。
 
 Direct I/OはHadoopを利用する上での様々な最適化機構を備えており、またデータ入出力に外部システム連携ツールを経由しないため高速に動作するというメリットがある反面、データの投入や保全などの運用面を個別に考える必要があります。
+
+また、Asakusa Frameworkには、外部システムと連携するためのツールとして :doc:`WindGate <../windgate/index>` という外部システム連携ツールが標準で同梱されています。
+
+WindGateは「ポータブルなデータ転送ツール」を目指したもので、さまざまなRDBMSやローカルファイルシステム上のフラットファイルなどを利用できますが、特定環境向けの最適化を行っておらず、大容量データの入出力には不向きです。
 
 以下はフラットファイルをデータの入出力に利用する際に、Direct I/OとWindGateの特性を比較したものです。
 
@@ -154,7 +124,7 @@ Asakusa DSLでは、データフローの最小単位で、主にデータの加
 Asakusa Frameworkは、Asakusa DSLの単位でテストを行うための仕組みが提供されています。
 
 Operator DSLついては、通常のJavaのクラスと同様にテストを行うことが出来ます。
-Flow DSLおよびBatch DSLについては、DSLをHadoopや外部システム連携モジュール(WindGate/ThunderGate)上で実行可能な形式にコンパイルし、テストツールと連携してテストを行う TestDriver と呼ばれるテスト部品を使用してテストを行います。
+Flow DSLおよびBatch DSLについては、DSLをHadoopや外部システム連携モジュール上で実行可能な形式にコンパイルし、テストツールと連携してテストを行う TestDriver と呼ばれるテスト部品を使用してテストを行います。
 
 TestDriverを利用したテストは、テストセットとして、JUnitなどのテストハーネス上でTestDriver APIを使用したテストクラス、およびテストの入力データ、テスト結果の期待値、及びテスト検討のルールを定義したテストデータを作成します。
 TestDriver APIでは、テストデータをExcelやJSONファイルとして作成するための仕組みが提供されています。
@@ -171,7 +141,6 @@ Asakusa DSLのジョブフローについては、外部システムとの連携
 
 * :doc:`../directio/start-guide`
 * :doc:`../windgate/start-guide`
-* :doc:`../thundergate/start-guide`
 
 運用環境の構築とアプリケーションの実行
 ======================================

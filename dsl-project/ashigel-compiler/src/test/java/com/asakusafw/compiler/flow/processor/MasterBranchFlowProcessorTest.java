@@ -43,14 +43,14 @@ import com.asakusafw.vocabulary.external.ImporterDescription.DataSize;
 public class MasterBranchFlowProcessorTest {
 
     /**
-     * テストヘルパ。
+     * A test helper
      */
     @Rule
     public CompilerTester tester = new CompilerTester();
 
     /**
-     * 単純なテスト。
-     * @throws Exception テストが失敗した場合
+     * simple case.
+     * @throws Exception if exception was occurred
      */
     @Test
     public void simple() throws Exception {
@@ -58,8 +58,8 @@ public class MasterBranchFlowProcessorTest {
     }
 
     /**
-     * TINYのテスト。
-     * @throws Exception テストが失敗した場合
+     * test for TINY.
+     * @throws Exception if exception was occurred
      */
     @Test
     public void tiny() throws Exception {
@@ -131,8 +131,8 @@ public class MasterBranchFlowProcessorTest {
     }
 
     /**
-     * パラメーター付き。
-     * @throws Exception テストが失敗した場合
+     * parameterized.
+     * @throws Exception if exception was occurred
      */
     @Test
     public void withParameter() throws Exception {
@@ -197,8 +197,8 @@ public class MasterBranchFlowProcessorTest {
     }
 
     /**
-     * セレクタつき。
-     * @throws Exception テストが失敗した場合
+     * w/ selector.
+     * @throws Exception if exception was occurred
      */
     @Test
     public void selection() throws Exception {
@@ -206,8 +206,8 @@ public class MasterBranchFlowProcessorTest {
     }
 
     /**
-     * TINYセレクタつき。
-     * @throws Exception テストが失敗した場合
+     * w/ TINY data and selector.
+     * @throws Exception if exception was occurred
      */
     @Test
     public void tinySelection() throws Exception {
@@ -297,8 +297,8 @@ public class MasterBranchFlowProcessorTest {
     }
 
     /**
-     * セレクタおよびパラメタ (セレクタのパラメタはなし)。
-     * @throws Exception テストが失敗した場合
+     * w/ selector and user parameter (selector has no user parameters).
+     * @throws Exception if exception was occurred
      */
     @Test
     public void selectionWithParameter0() throws Exception {
@@ -306,8 +306,8 @@ public class MasterBranchFlowProcessorTest {
     }
 
     /**
-     * TINYデータに対するセレクタおよびパラメタ (セレクタのパラメタはなし)。
-     * @throws Exception テストが失敗した場合
+     * w/ TINY data, and selector and user parameter (selector has no user parameters).
+     * @throws Exception if exception was occurred
      */
     @Test
     public void tinySelectionWithParameter0() throws Exception {
@@ -397,8 +397,8 @@ public class MasterBranchFlowProcessorTest {
     }
 
     /**
-     * セレクタおよびパラメタ (セレクタのパラメタつき)。
-     * @throws Exception テストが失敗した場合
+     * w/ selector and user parameter (selector also has user parameters).
+     * @throws Exception if exception was occurred
      */
     @Test
     public void selectionWithParameter1() throws Exception {
@@ -406,8 +406,8 @@ public class MasterBranchFlowProcessorTest {
     }
 
     /**
-     * TINYデータに対するセレクタおよびパラメタ (セレクタのパラメタつき)。
-     * @throws Exception テストが失敗した場合
+     * w/ TINY input, and selector and user parameter (selector also has user parameters).
+     * @throws Exception if exception was occurred
      */
     @Test
     public void tinySelectionWithParameter1() throws Exception {

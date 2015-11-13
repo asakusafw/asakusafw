@@ -27,17 +27,16 @@ import org.junit.Test;
 public class DateTimeOptionTest extends ValueOptionTestRoot {
 
     /**
-     * 初期値。
+     * test for initial state.
      */
     @Test
     public void init() {
         DateTimeOption option = new DateTimeOption();
-        assertThat("初期値はnull",
-                option.isNull(), is(true));
+        assertThat(option.isNull(), is(true));
     }
 
     /**
-     * longの設定。
+     * test for set elapsed seconds.
      */
     @Test
     public void setLong() {
@@ -48,7 +47,7 @@ public class DateTimeOptionTest extends ValueOptionTestRoot {
     }
 
     /**
-     * intのor。
+     * test for or w/ int.
      */
     @Test
     public void intOr() {
@@ -61,7 +60,7 @@ public class DateTimeOptionTest extends ValueOptionTestRoot {
     }
 
     /**
-     * Dateの設定。
+     * test for date-time type.
      */
     @Test
     public void string() {
@@ -72,7 +71,7 @@ public class DateTimeOptionTest extends ValueOptionTestRoot {
     }
 
     /**
-     * Stringのor。
+     * test for or w/ date-time type.
      */
     @Test
     public void stringOr() {
@@ -85,7 +84,7 @@ public class DateTimeOptionTest extends ValueOptionTestRoot {
     }
 
     /**
-     * modifyにnullを設定。
+     * test for modify w/ null.
      */
     @Test
     public void modifyNull() {
@@ -98,7 +97,7 @@ public class DateTimeOptionTest extends ValueOptionTestRoot {
     }
 
     /**
-     * copyFromでコピー。
+     * test for copyFrom.
      */
     @Test
     public void copy() {
@@ -114,7 +113,7 @@ public class DateTimeOptionTest extends ValueOptionTestRoot {
     }
 
     /**
-     * copyFromでnullをコピー。
+     * test for copyFrom w/ null.
      */
     @Test
     public void copyNull() {
@@ -133,7 +132,7 @@ public class DateTimeOptionTest extends ValueOptionTestRoot {
     }
 
     /**
-     * 順序付けのテスト。
+     * test for compare.
      */
     @Test
     public void compare() {
@@ -158,7 +157,7 @@ public class DateTimeOptionTest extends ValueOptionTestRoot {
     }
 
     /**
-     * nullに関する順序付けのテスト。
+     * test for compare w/ null.
      */
     @Test
     public void compareNull() {
@@ -174,7 +173,7 @@ public class DateTimeOptionTest extends ValueOptionTestRoot {
     }
 
     /**
-     * 最大値のテスト。
+     * test for max.
      */
     @Test
     public void max() {
@@ -197,7 +196,7 @@ public class DateTimeOptionTest extends ValueOptionTestRoot {
     }
 
     /**
-     * 最小値のテスト。
+     * test for min.
      */
     @Test
     public void min() {
@@ -220,7 +219,7 @@ public class DateTimeOptionTest extends ValueOptionTestRoot {
     }
 
     /**
-     * Writable対応のテスト。
+     * test for Writable.
      */
     @Test
     public void writable() {
@@ -231,7 +230,7 @@ public class DateTimeOptionTest extends ValueOptionTestRoot {
     }
 
     /**
-     * Writable対応のテスト。
+     * test for Writable w/ max.
      */
     @Test
     public void writable_max() {
@@ -242,7 +241,7 @@ public class DateTimeOptionTest extends ValueOptionTestRoot {
     }
 
     /**
-     * Writable対応のテスト。
+     * test for Writable w/ min.
      */
     @Test
     public void writable_0() {
@@ -253,7 +252,7 @@ public class DateTimeOptionTest extends ValueOptionTestRoot {
     }
 
     /**
-     * null-Writable対応のテスト。
+     * test for Writable w/ null.
      */
     @Test
     public void writableOption() {

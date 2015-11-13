@@ -477,7 +477,7 @@ Amazon Simple Storage Service ( `Amazon S3`_ )の入出力を行う場合の設�
          <property>
              <name>com.asakusafw.directio.s3.output.streaming</name>
              <value>false</value>
-         </property>    
+         </property>
          <property>
              <name>com.asakusafw.output.local.tempdir</name>
              <value>/mnt/asakusa-directio</value>
@@ -655,7 +655,8 @@ Direct I/Oが提供する各ファイルフォーマットの利用方法につ�
 * :doc:`csv-format`
 * :doc:`sequencefile-format`
 * :doc:`using-hive` (カラムナフォーマットファイルの利用)
-* :doc:`../sandbox/directio-tsv` (Sandbox)
+* :doc:`../sandbox/directio-tsv` (試験的機能:特定フォーマットを持つTSVの入出力)
+* :doc:`../sandbox/directio-line` (試験的機能:任意の行文字列の入出力)
 
 .. _directio-dsl-input-description:
 
@@ -679,7 +680,7 @@ Direct I/Oを利用してファイルからデータを読み出す場合、 ``D
   形式については `入力ファイル名のパターン`_ を参照してください。
 
 ``Class<?> getModelType()``
-  処理対象とするモデルオブジェクトの型を表すクラスを戻り値に指定します。
+  処理対象とするデータモデルオブジェクトの型を表すクラスを戻り値に指定します。
 
   このメソッドは、自動生成される骨格ではすでに宣言されています。
 
@@ -916,7 +917,7 @@ Direct I/Oを利用してデータをファイルに書き出す場合、 ``Dire
   省略した場合、ファイルの削除を行いません。
 
 ``Class<?> getModelType()``
-  処理対象とするモデルオブジェクトの型を表すクラスを戻り値に指定します。
+  処理対象とするデータモデルオブジェクトの型を表すクラスを戻り値に指定します。
 
   このメソッドは、自動生成される骨格ではすでに宣言されています。
 
@@ -1084,7 +1085,7 @@ Direct I/Oを利用してデータをファイルに書き出す場合、 ``Dire
     出力するデータが存在しない場合、ファイルは一つも作成されません。
     これは、ファイル名にプレースホルダを指定していない場合でも同様です。
 
-..  [#] ``DirectFileOutputDescription.getOrder()`` ( `ファイルを出力に利用するDSL`_ を参照 ) 
+..  [#] ``DirectFileOutputDescription.getOrder()`` ( `ファイルを出力に利用するDSL`_ を参照 )
 ..  [#] ``java.text.SimpleDateFormat``
 
 アプリケーションのテスト

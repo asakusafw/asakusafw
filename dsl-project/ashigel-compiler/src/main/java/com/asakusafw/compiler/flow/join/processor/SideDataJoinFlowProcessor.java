@@ -35,7 +35,7 @@ import com.asakusafw.vocabulary.flow.graph.FlowResourceDescription;
 import com.asakusafw.vocabulary.model.Joined;
 
 /**
- * {@link SideDataJoin}を処理する。
+ * Processes {@link SideDataJoin}.
  */
 @TargetOperator(SideDataJoin.class)
 public class SideDataJoinFlowProcessor extends LineEndProcessor {

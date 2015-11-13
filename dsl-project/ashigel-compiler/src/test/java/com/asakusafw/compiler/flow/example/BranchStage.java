@@ -24,27 +24,26 @@ import com.asakusafw.vocabulary.flow.In;
 import com.asakusafw.vocabulary.flow.Out;
 import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory;
 
-
 /**
- * Volatileのテスト。
+ * A test flow for branched stages.
  */
 @FlowPart
 public class BranchStage extends FlowDescription {
 
-    private In<Ex1> in;
+    private final In<Ex1> in;
 
-    private Out<Ex1> out1;
+    private final Out<Ex1> out1;
 
-    private Out<Ex1> out2;
+    private final Out<Ex1> out2;
 
-    private Out<Ex1> out3;
+    private final Out<Ex1> out3;
 
     /**
-     * インスタンスを生成する。
-     * @param in 入力
-     * @param out1 出力
-     * @param out2 出力
-     * @param out3 出力
+     * Creates a new instance.
+     * @param in input
+     * @param out1 output
+     * @param out2 output
+     * @param out3 output
      */
     public BranchStage(In<Ex1> in, Out<Ex1> out1, Out<Ex1> out2, Out<Ex1> out3) {
         this.in = in;

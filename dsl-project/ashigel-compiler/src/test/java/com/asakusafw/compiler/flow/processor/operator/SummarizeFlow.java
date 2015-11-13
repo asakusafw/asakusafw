@@ -22,24 +22,23 @@ import com.asakusafw.compiler.flow.testing.model.ExSummarized2;
 import com.asakusafw.compiler.flow.testing.model.KeyConflict;
 import com.asakusafw.vocabulary.operator.Summarize;
 
-
 /**
- * {@link SummarizeFlowProcessor}に対するテスト演算子。
+ * An operator class for testing {@link SummarizeFlowProcessor}.
  */
 public abstract class SummarizeFlow {
 
     /**
-     * 通常の演算子。
-     * @param model モデル
-     * @return 結果
+     * simple.
+     * @param model target model
+     * @return result model
      */
     @Summarize
     public abstract ExSummarized simple(Ex1 model);
 
     /**
-     * キーの名前変更を含む演算子。
-     * @param model モデル
-     * @return 結果
+     * summarize w/ renaming its key.
+     * @param model target model
+     * @return result model
      */
     @Summarize
     public abstract ExSummarized2 renameKey(Ex1 model);

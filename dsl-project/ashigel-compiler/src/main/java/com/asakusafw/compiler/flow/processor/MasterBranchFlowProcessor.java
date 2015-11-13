@@ -35,7 +35,7 @@ import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 import com.asakusafw.vocabulary.operator.MasterBranch;
 
 /**
- * {@link MasterBranch マスタ分岐演算子}を処理する。
+ * Processes {@link MasterBranch} operators.
  */
 @TargetOperator(MasterBranch.class)
 public class MasterBranchFlowProcessor extends RendezvousProcessor {

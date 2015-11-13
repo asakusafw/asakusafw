@@ -36,31 +36,31 @@ public abstract class BaseStageClient extends Configured implements Tool {
     }
 
     /**
-     * {@link #getBatchId()}のメソッド名。
+     * The method name of {@link #getBatchId()}.
      */
     public static final String METHOD_BATCH_ID = "getBatchId"; //$NON-NLS-1$
 
     /**
-     * {@link #getFlowId()}のメソッド名。
+     * The method name of {@link #getFlowId()}.
      */
     public static final String METHOD_FLOW_ID = "getFlowId"; //$NON-NLS-1$
 
     /**
-     * {@link #getStageId()}のメソッド名。
+     * The method name of {@link #getStageId()}.
      */
     public static final String METHOD_STAGE_ID = "getStageId"; //$NON-NLS-1$
 
     /**
-     * 処理中のユーザー名を返す。
-     * @return 処理中のユーザー名
+     * Returns the current user name.
+     * @return the current user name
      */
     protected String getUser() {
         return getMandatoryProperty(PROP_USER);
     }
 
     /**
-     * このフロー全体(一連のステージ)の実行時識別子を返す。
-     * @return 実行時識別子
+     * Returns the execution ID of the current jobflow.
+     * @return the execution ID
      */
     protected String getExecutionId() {
         return getMandatoryProperty(PROP_EXECUTION_ID);
@@ -78,26 +78,26 @@ public abstract class BaseStageClient extends Configured implements Tool {
     }
 
     /**
-     * このクライアントによって起動されるジョブのバッチIDを返す。
-     * @return バッチID
+     * Returns the batch ID.
+     * @return the batch ID
      */
     protected abstract String getBatchId();
 
     /**
-     * このクライアントによって起動されるジョブのフローIDを返す。
-     * @return フローID
+     * Returns the flow ID.
+     * @return the flow ID
      */
     protected abstract String getFlowId();
 
     /**
-     * このクライアントによって起動されるジョブのステージ名を返す。
-     * @return ステージ名
+     * Returns the stage ID.
+     * @return the stage ID
      */
     protected abstract String getStageId();
 
     /**
-     * このクライアントによって起動されるジョブの定義IDを返す。
-     * @return 定義ID
+     * Returns the qualified stage ID {@literal (a.k.a. stage definition ID)}.
+     * @return the qualified stage ID
      */
     protected String getDefinitionId() {
         String batchId = getBatchId();

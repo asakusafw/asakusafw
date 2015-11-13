@@ -24,18 +24,12 @@ import com.asakusafw.utils.java.model.syntax.Type;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link AlternateConstructorInvocation}の実装。
+ * An implementation of {@link AlternateConstructorInvocation}.
  */
 public final class AlternateConstructorInvocationImpl extends ModelRoot implements AlternateConstructorInvocation {
 
-    /**
-     * 型引数の一覧。
-     */
     private List<? extends Type> typeArguments;
 
-    /**
-     * 実引数の一覧。
-     */
     private List<? extends Expression> arguments;
 
     @Override
@@ -44,12 +38,9 @@ public final class AlternateConstructorInvocationImpl extends ModelRoot implemen
     }
 
     /**
-     * 型引数の一覧を設定する。
-     * <p> 型引数を一つも指定しない場合、引数には空を指定する。 </p>
-     * @param typeArguments
-     *     型引数の一覧
-     * @throws IllegalArgumentException
-     *     {@code typeArguments}に{@code null}が指定された場合
+     * Sets the type arguments.
+     * @param typeArguments the type arguments
+     * @throws IllegalArgumentException if {@code typeArguments} was {@code null}
      */
     public void setTypeArguments(List<? extends Type> typeArguments) {
         Util.notNull(typeArguments, "typeArguments"); //$NON-NLS-1$
@@ -63,12 +54,9 @@ public final class AlternateConstructorInvocationImpl extends ModelRoot implemen
     }
 
     /**
-     * 実引数の一覧を設定する。
-     * <p> 実引数を一つも指定しない場合、引数には空を指定する。 </p>
-     * @param arguments
-     *     実引数の一覧
-     * @throws IllegalArgumentException
-     *     {@code arguments}に{@code null}が指定された場合
+     * Sets the actual arguments.
+     * @param arguments the actual arguments
+     * @throws IllegalArgumentException if {@code arguments} was {@code null}
      */
     public void setArguments(List<? extends Expression> arguments) {
         Util.notNull(arguments, "arguments"); //$NON-NLS-1$
@@ -77,7 +65,7 @@ public final class AlternateConstructorInvocationImpl extends ModelRoot implemen
     }
 
     /**
-     * この要素の種類を表す{@link ModelKind#ALTERNATE_CONSTRUCTOR_INVOCATION}を返す。
+     * Returns {@link ModelKind#ALTERNATE_CONSTRUCTOR_INVOCATION} which represents this element kind.
      * @return {@link ModelKind#ALTERNATE_CONSTRUCTOR_INVOCATION}
      */
     @Override
@@ -86,8 +74,7 @@ public final class AlternateConstructorInvocationImpl extends ModelRoot implemen
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitAlternateConstructorInvocation(this, context);
     }

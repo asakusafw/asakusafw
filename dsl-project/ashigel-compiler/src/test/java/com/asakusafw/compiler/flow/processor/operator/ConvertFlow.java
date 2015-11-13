@@ -20,18 +20,17 @@ import com.asakusafw.compiler.flow.testing.model.Ex1;
 import com.asakusafw.compiler.flow.testing.model.Ex2;
 import com.asakusafw.vocabulary.operator.Convert;
 
-
 /**
- * {@link ConvertFlowProcessor}に対するテスト演算子。
+ * An operator class for testing {@link ConvertFlowProcessor}.
  */
 public abstract class ConvertFlow {
 
-    private Ex2 ex2 = new Ex2();
+    private final Ex2 ex2 = new Ex2();
 
     /**
-     * 通常の演算子。
-     * @param model 対象のモデル
-     * @return 変換結果
+     * simple.
+     * @param model target data model
+     * @return result
      */
     @Convert
     public Ex2 simple(Ex1 model) {
@@ -39,10 +38,10 @@ public abstract class ConvertFlow {
     }
 
     /**
-     * パラメーター付きの演算子。
-     * @param model 対象のモデル
-     * @param parameter 追加パラメータ
-     * @return 変換結果
+     * parameterized.
+     * @param model target data model
+     * @param parameter additional parameter
+     * @return result
      */
     @Convert
     public Ex2 withParameter(Ex1 model, int parameter) {

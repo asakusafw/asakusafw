@@ -20,12 +20,12 @@ import com.asakusafw.utils.java.model.syntax.ModelKind;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
- * {@link EmptyStatement}の実装。
+ * An implementation of {@link EmptyStatement}.
  */
 public final class EmptyStatementImpl extends ModelRoot implements EmptyStatement {
 
     /**
-     * この要素の種類を表す{@link ModelKind#EMPTY_STATEMENT}を返す。
+     * Returns {@link ModelKind#EMPTY_STATEMENT} which represents this element kind.
      * @return {@link ModelKind#EMPTY_STATEMENT}
      */
     @Override
@@ -34,8 +34,7 @@ public final class EmptyStatementImpl extends ModelRoot implements EmptyStatemen
     }
 
     @Override
-    public <R, C, E extends Throwable> R accept(
-            Visitor<R, C, E> visitor, C context) throws E {
+    public <R, C, E extends Throwable> R accept(Visitor<R, C, E> visitor, C context) throws E {
         Util.notNull(visitor, "visitor"); //$NON-NLS-1$
         return visitor.visitEmptyStatement(this, context);
     }

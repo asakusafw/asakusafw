@@ -23,21 +23,20 @@ import com.asakusafw.vocabulary.flow.In;
 import com.asakusafw.vocabulary.flow.JobFlow;
 import com.asakusafw.vocabulary.flow.Out;
 
-
 /**
- * 入力ポート名に不備があるジョブフロー。
+ * A jobflow class which has invalid input name.
  */
 @JobFlow(name = "testing")
 public class WithInvalidInputName extends FlowDescription {
 
-    private In<MockHoge> in;
+    private final In<MockHoge> in;
 
-    private Out<MockHoge> out;
+    private final Out<MockHoge> out;
 
     /**
-     * インスタンスを生成する。
-     * @param in 入力
-     * @param out 出力
+     * Creates a new instance.
+     * @param in input
+     * @param out output
      */
     public WithInvalidInputName(
             @Import(name = "hoge*", description = MockHogeImporterDescription.class)

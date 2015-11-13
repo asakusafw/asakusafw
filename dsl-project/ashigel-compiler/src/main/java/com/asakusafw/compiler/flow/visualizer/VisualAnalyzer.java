@@ -33,7 +33,7 @@ import com.asakusafw.vocabulary.flow.graph.FlowGraph;
 import com.asakusafw.vocabulary.flow.graph.FlowPartDescription;
 
 /**
- * 各種要素を可視化のためのモデルに変換する。
+ * Analyzes flow elements and convert them to visual models.
  * @since 0.1.0
  * @version 0.4.0
  */
@@ -48,10 +48,10 @@ public final class VisualAnalyzer {
     }
 
     /**
-     * 演算子グラフを可視化モデルに変換する。
-     * @param graph 対象のグラフ
-     * @return 変換後のモデル
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Converts a flow graph into a corresponded visual model.
+     * @param graph the target graph
+     * @return the corresponded visual model
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static VisualGraph convertFlowGraph(FlowGraph graph) {
         Precondition.checkMustNotBeNull(graph, "graph"); //$NON-NLS-1$
@@ -68,10 +68,10 @@ public final class VisualAnalyzer {
     }
 
     /**
-     * ステージグラフを可視化モデルに変換する。
-     * @param graph 対象のグラフ
-     * @return 変換後のモデル
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Converts a stage graph into a corresponded visual model.
+     * @param graph the target graph
+     * @return the corresponded visual model
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static VisualGraph convertStageGraph(StageGraph graph) {
         Precondition.checkMustNotBeNull(graph, "graph"); //$NON-NLS-1$
@@ -87,10 +87,10 @@ public final class VisualAnalyzer {
     }
 
     /**
-     * ステージグラフを可視化モデルに変換する。
-     * @param stage 対象のブロック
-     * @return 変換後のモデル
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Converts a stage block into a corresponded visual model.
+     * @param stage the target block
+     * @return the corresponded visual model
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static VisualGraph convertStageBlock(StageBlock stage) {
         Precondition.checkMustNotBeNull(stage, "stage"); //$NON-NLS-1$
@@ -125,10 +125,10 @@ public final class VisualAnalyzer {
     }
 
     /**
-     * Converts {@link FlowBlock} into {@link VisualGraph}.
-     * @param block target block
-     * @return converted graph
-     * @throws IllegalArgumentException if some parameters were {@code null}
+     * Converts a flow block into a corresponded visual model.
+     * @param block the target block
+     * @return the corresponded visual model
+     * @throws IllegalArgumentException if the parameter is {@code null}
      * @since 0.4.0
      */
     public static VisualGraph convertFlowBlock(FlowBlock block) {

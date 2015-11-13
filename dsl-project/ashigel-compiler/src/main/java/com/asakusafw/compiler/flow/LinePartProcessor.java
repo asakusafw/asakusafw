@@ -29,7 +29,7 @@ import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 import com.asakusafw.vocabulary.operator.Identity;
 
 /**
- * ラインのいずれかに配置される演算子を処理する。
+ * Processes an operator which is part of line.
  */
 public abstract class LinePartProcessor extends LineProcessor {
 
@@ -39,14 +39,14 @@ public abstract class LinePartProcessor extends LineProcessor {
     }
 
     /**
-     * このプロセッサによる処理を実行する。
-     * @param context 文脈オブジェクト
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Performs this processor for the context.
+     * @param context the current context
+     * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public abstract void emitLinePart(Context context);
 
     /**
-     * 処理の文脈を表す。
+     * The context object for {@link LinePartProcessor}.
      */
     public static class Context extends LineProcessorContext {
 
@@ -55,15 +55,15 @@ public abstract class LinePartProcessor extends LineProcessor {
         private Expression resultValue;
 
         /**
-         * インスタンスを生成する。
-         * @param environment 環境
-         * @param element target element
-         * @param importer インポート
-         * @param names 名前生成
-         * @param desc 演算子の定義記述
-         * @param input 演算子への入力
-         * @param resources リソースと式の対応表
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Creates a new instance.
+         * @param environment the current context
+         * @param element the target element
+         * @param importer the import declaration builder
+         * @param names the unique name generator
+         * @param desc the target operator description
+         * @param input an expression of the input value for the operator
+         * @param resources the mapping between external resources and their Java expressions
+         * @throws IllegalArgumentException if the parameters are {@code null}
          */
         public Context(
                 FlowCompilingEnvironment environment,
@@ -80,17 +80,18 @@ public abstract class LinePartProcessor extends LineProcessor {
         }
 
         /**
-         * 現在の文脈における入力データを表す式を返す。
-         * @return 入力データを表す式
+         * Returns an expression of the input value.
+         * @return the expression of the input value
          */
         public Expression getInput() {
             return input;
         }
 
         /**
-         * 現在の文脈において、指定の式を演算子の適用結果に設定する。
-         * @param expresion 演算子の適用結果を表す式
-         * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+         * Sets an expression of the output value.
+         * @param expresion the expression of the output value
+         * @throws IllegalStateException if the expression has been already set
+         * @throws IllegalArgumentException if the parameter is {@code null}
          */
         public void setOutput(Expression expresion) {
             Precondition.checkMustNotBeNull(expresion, "expresion"); //$NON-NLS-1$
@@ -101,8 +102,10 @@ public abstract class LinePartProcessor extends LineProcessor {
         }
 
         /**
-         * 現在の文脈において、演算子の適用結果として指定された式を返す。
-         * @return 演算子の適用結果として指定された式
+         * Returns the expression of the output value.
+         * @return the expression of the output value
+         * @throws IllegalStateException if the expression has not been set
+         * @see #setOutput(Expression)
          */
         public Expression getOutput() {
             if (resultValue == null) {
@@ -113,7 +116,7 @@ public abstract class LinePartProcessor extends LineProcessor {
     }
 
     /**
-     * 何も行わない{@link LinePartProcessor}の実装。
+     * An implementation of {@link LinePartProcessor} that does nothing.
      */
     @TargetOperator(Identity.class)
     public static class Nop extends LinePartProcessor {

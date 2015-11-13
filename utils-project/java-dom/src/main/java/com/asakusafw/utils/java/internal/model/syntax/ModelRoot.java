@@ -27,7 +27,7 @@ import com.asakusafw.utils.java.internal.model.util.PrintEmitContext;
 import com.asakusafw.utils.java.model.syntax.Model;
 
 /**
- * {@link Model}の基底となるクラス。
+ * A skeletal implementation of all {@link Model}.
  */
 abstract class ModelRoot implements Model {
 

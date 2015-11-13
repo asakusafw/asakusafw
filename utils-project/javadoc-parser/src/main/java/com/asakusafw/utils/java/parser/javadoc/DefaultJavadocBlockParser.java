@@ -21,22 +21,20 @@ import com.asakusafw.utils.java.internal.parser.javadoc.ir.IrDocBlock;
 import com.asakusafw.utils.java.internal.parser.javadoc.ir.IrDocFragment;
 
 /**
- * 特に構造化されていないブロックを解析する。
+ * An implementation of {@link JavadocBaseParser} which parses generic blocks.
  */
 public class DefaultJavadocBlockParser extends JavadocBlockParser {
 
     /**
-     * インスタンスを生成する。
-     * インラインブロックを解析するパーサは存在しない状態となる。
+     * Creates a new instance without any inline block parsers.
      */
     public DefaultJavadocBlockParser() {
-        super();
+        return;
     }
 
     /**
-     * インスタンスを生成する。
-     * @param blockParsers インラインブロックを解析するパーサ
-     * @throws IllegalArgumentException 引数に{@code null}が指定された場合
+     * Creates a new instance with inline block parsers.
+     * @param blockParsers the supported inline block parsers
      */
     public DefaultJavadocBlockParser(List<? extends JavadocBlockParser> blockParsers) {
         super(blockParsers);

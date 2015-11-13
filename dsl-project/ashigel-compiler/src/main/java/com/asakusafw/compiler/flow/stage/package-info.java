@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /**
- * ステージごとのコンパイル結果を出力する。
+ * Compiles each MapReduce stage.
  */
 package com.asakusafw.compiler.flow.stage;
 

@@ -56,7 +56,7 @@ public class DirectFileOutputRetriever extends BaseExporterRetriever<DirectFileO
             DirectFileOutputDescription description,
             TestContext context) throws IOException {
         throw new UnsupportedOperationException(MessageFormat.format(
-                "Preparing Direct Output is not supported ({0})",
+                Messages.getString("DirectFileOutputRetriever.errorPrepareOutput"), //$NON-NLS-1$
                 description.getClass().getName()));
     }
 

@@ -16,53 +16,51 @@
 package com.asakusafw.vocabulary.external;
 
 /**
- * インポーターの処理内容を記述するインターフェース。
- * <p>
- * このインターフェースを実装するクラスは次のようなクラスである必要がある。
- * </p>
+ * An abstract super interface for describing processing details of importers (loading data from external components).
+ * Each sub-class must satisfy the following rules:
  * <ul>
- * <li> {@code public}で宣言されている </li>
- * <li> {@code abstract}で宣言されていない </li>
- * <li> 型引数が宣言されていない </li>
- * <li> 明示的なコンストラクターが宣言されていない </li>
+ * <li> declared as {@code public} </li>
+ * <li> NOT declared as {@code abstract} </li>
+ * <li> without any type parameter declarations </li>
+ * <li> with a public zero-parameter constructor (or no explicit constructors) </li>
  * </ul>
  */
 public interface ImporterDescription {
 
     /**
-     * インポーターが対象とするモデルオブジェクトの型を表すクラスを返す。
-     * @return インポーターが対象とするモデルオブジェクトの型を表すクラス
+     * Returns the data model class of importing data.
+     * @return the data model class of importing data
      */
     Class<?> getModelType();
 
     /**
-     * このインポート処理によって取得するおおよそのデータサイズを返す。
-     * @return おおよそのデータサイズ
+     * Returns the estimated data size.
+     * @return the estimated data size
      */
     DataSize getDataSize();
 
     /**
-     * インポートするおおよそのデータサイズ。
+     * Represents a kind of estimated input data size.
      */
     public enum DataSize {
 
         /**
-         * 不明。
+         * Unknown or not estimated.
          */
         UNKNOWN,
 
         /**
-         * データサイズがおよそ10メガバイト未満。
+         * Tiny data (~10MB in uncompressed form).
          */
         TINY,
 
         /**
-         * データサイズがおよそ10メガバイト以上、200メガバイト未満。
+         * Small data (10~200MB in uncompressed form).
          */
         SMALL,
 
         /**
-         * データサイズがおよそ200メガバイト以上。
+         * Large data (200MB~ in uncompressed form).
          */
         LARGE,
     }

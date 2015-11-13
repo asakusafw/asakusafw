@@ -64,7 +64,7 @@ import com.asakusafw.vocabulary.operator.MasterJoin;
 import com.asakusafw.vocabulary.operator.MasterJoinUpdate;
 
 /**
- * フローグラフを書き換えてJoinを最適化する。
+ * Rewrites flow graphs for optimizing join operations.
  * @since 0.1.0
  * @version 0.7.1
  */
@@ -284,7 +284,7 @@ public class JoinRewriter extends FlowCompilingEnvironment.Initialized implement
         DataClass type = getEnvironment().getDataClasses().load(runtime);
         if (type == null) {
             getEnvironment().error(
-                    "型{0}の解析に失敗しました",
+                    Messages.getString("JoinRewriter.errorMissingDataClass"), //$NON-NLS-1$
                     runtime);
             return new DataClass.Unresolved(getEnvironment().getModelFactory(), runtime);
         }
@@ -301,7 +301,7 @@ public class JoinRewriter extends FlowCompilingEnvironment.Initialized implement
             Property property = dataClass.findProperty(name);
             if (property == null) {
                 getEnvironment().error(
-                        "型{0}にプロパティ{1}が見つかりませんでした",
+                        Messages.getString("JoinRewriter.errorMissingGroupProperty"), //$NON-NLS-1$
                         dataClass,
                         name);
             } else {
@@ -358,7 +358,7 @@ public class JoinRewriter extends FlowCompilingEnvironment.Initialized implement
             return compiled;
         } catch (IOException e) {
             throw new RewriteException(
-                    "サイドデータ結合の解析に失敗しました",
+                    Messages.getString("JoinRewriter.errorFailedToResolve"), //$NON-NLS-1$
                     e);
         }
     }

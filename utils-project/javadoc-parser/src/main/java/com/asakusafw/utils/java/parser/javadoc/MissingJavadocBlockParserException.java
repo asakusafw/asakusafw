@@ -20,7 +20,7 @@ import java.text.MessageFormat;
 import com.asakusafw.utils.java.internal.parser.javadoc.ir.IrLocation;
 
 /**
- * ブロックの解析を行うパーサが検出できなかったことを表す例外。
+ * An exception which is occurred when the suitable {@link JavadocBlockParser} is not found while parsing documents.
  */
 public class MissingJavadocBlockParserException extends JavadocParseException {
 
@@ -29,10 +29,10 @@ public class MissingJavadocBlockParserException extends JavadocParseException {
     private final String tagName;
 
     /**
-     * インスタンスを生成する。
-     * @param tagName 解析対象のタグ名
-     * @param location 解析中の位置
-     * @param cause この例外の元となった例外
+     * Creates a new instance.
+     * @param tagName the target tag name
+     * @param location the parsing location
+     * @param cause the original exception (nullable)
      */
     public MissingJavadocBlockParserException(String tagName, IrLocation location, Throwable cause) {
         super(buildMessage(tagName), location, cause);
@@ -49,10 +49,8 @@ public class MissingJavadocBlockParserException extends JavadocParseException {
     }
 
     /**
-     * 解析を行おうとしたタグの名前を返す。
-     * 概要ブロックの解析に対するパーサが発見できなかったことを表す場合、
-     * この呼び出しは{@code null}を返す。
-     * @return 解析を行おうとしたタグの名前
+     * Returns the target tag name.
+     * @return the target tag name, or {@code null} if the target is a synopsis block
      */
     public String getTagName() {
         return this.tagName;

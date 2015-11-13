@@ -18,7 +18,7 @@ package com.asakusafw.utils.java.model.syntax;
 import java.util.List;
 
 /**
- * パラメータ化型を表現するインターフェース。
+ * An interface which represents parameterized types.
  * <ul>
  *   <li> Specified In: <ul>
  *     <li> {@code [JLS3:4.5] Parameterized Types} </li>
@@ -28,19 +28,15 @@ import java.util.List;
 public interface ParameterizedType
         extends Type {
 
-    // properties
-
     /**
-     * パラメータ化されていない型を返す。
-     * @return
-     *     パラメータ化されていない型
+     * Returns the non-parameterized type.
+     * @return the non-parameterized type
      */
     Type getType();
 
     /**
-     * 型引数の一覧を返す。
-     * @return
-     *     型引数の一覧
+     * Returns the type arguments.
+     * @return the type arguments
      */
     List<? extends Type> getTypeArguments();
 }
