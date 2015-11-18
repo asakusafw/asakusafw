@@ -5,7 +5,7 @@
 Release 0.7.5
 =============
 
-Nov XX, 2015
+Nov 19, 2015
 
 `Asakusa Framework 0.7.5 documentation`_
 

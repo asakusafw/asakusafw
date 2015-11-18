@@ -95,7 +95,7 @@ Hadoop2系向けAsakusa Framework
 ..  attention::
     ``build.gradle`` には先頭に ``buildscript`` ブロックでAsakusa Gradle Plugin のバージョンを指定しますが、このバージョンはAsakusa Frameworkのバージョン指定とは異なり、以下のようにバージョン番号に ``-hadoop1`` や ``-hadoop2`` といった接尾辞は付かないことに注意してください。
 
-**build.gradle** 
+**build.gradle**
 
 ..  literalinclude:: gradle-attachment/build.gradle
     :language: groovy
@@ -134,7 +134,7 @@ Java 7に対応していないHadoopディストリビューション上でア�
 
 プロジェクトで利用するJavaバージョンをJDK 6に変更する手順は、以下のドキュメントを参照してください。
 
-* :doc:`using-jdk` - :ref:`using-jdk6`
+* :doc:`using-jdk`
 
 プロジェクトテンプレートのGradleバージョンの変更
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
