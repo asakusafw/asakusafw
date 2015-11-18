@@ -5,11 +5,13 @@ Changelogs
 Release 0.7.5
 =============
 
-Nov XX, 2015
+Nov 19, 2015
 
 Enhancements
 ------------
 
+* [ :issue:`33` ] - Javadoc i18n (still working)
+* [ :issue:`34` ] - Message Resources i18n
 * [ :pr:`511` ] - i18n - messages in compilers and test-driver.
 * [ :pr:`513` ] - Make `-Dhadoop.builtin` default enabled on building framework.
 * [ :pr:`514` ] - i18n - documentation comments.
@@ -22,6 +24,7 @@ Enhancements
 * [ :pr:`529` ] - Add Direct I/O line to asakusa-directio-dmdl-ext.
 * [ :pr:`530` ] - Add document for Direct I/O line
 * [ :pr:`531` ] - Bumps support platform version
+* [ :pr:`534` ] - Modify pom structure and format
 * [ :pr-sdk:`40` ] - Bumps up Gradle version of application template
 * [ :pr-sdk:`41` ] - Bumps up Gradle version of application template
 * [ :pr-sdk:`42` ] - Bumps up Gradle version of application template
@@ -43,6 +46,10 @@ Others
 * [ :pr:`520` ] - Revise document for unifying terms "Data Model"
 * [ :pr:`521` ] - Delete old migration document
 * [ :pr:`525` ] - Remove yen sign on document.
+* [ :pr:`532` ] - 0.7.5 Documents
+* [ :pr:`533` ] - Fix figure size on document
+* [ :pr:`535` ] - Revise about operator performance characteristics
+* [ :pr:`536` ] - Revise document for project JDK configuration
 * [ :pr-sdk:`43` ] - Replace non-ASCII character.
 
 Release 0.7.4
