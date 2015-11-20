@@ -9,16 +9,12 @@
     <version>0.7-SNAPSHOT</version>
   </parent>
 
-  <properties>
-    <asakusafw.version>${project.version}</asakusafw.version>
-  </properties>
-
   <packaging>jar</packaging>
   <dependencies>
     <dependency>
       <groupId>com.asakusafw</groupId>
       <artifactId>asakusa-yaess-core</artifactId>
-      <version>${asakusafw.version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>

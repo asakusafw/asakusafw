@@ -23,6 +23,13 @@
     <url>http://asakusafw.com</url>
   </organization>
 
+  <scm>
+    <connection>scm:git:git@github.com:asakusafw/asakusafw.git</connection>
+    <developerConnection>scm:git:git@github.com:asakusafw/asakusafw.git</developerConnection>
+    <url>https://github.com/asakusafw/asakusafw</url>
+    <tag>HEAD</tag>
+  </scm>
+
   <modules>
     <module>build-tools</module>
     <module>utils-project</module>
@@ -254,6 +261,10 @@
         <artifactId>maven-assembly-plugin</artifactId>
       </plugin>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+      </plugin>
+      <plugin>
         <groupId>com.mycila</groupId>
         <artifactId>license-maven-plugin</artifactId>
       </plugin>
@@ -449,6 +460,16 @@ encoding/<project>=UTF-8
             <configLocation>com/asakusafw/checkstyle.xml</configLocation>
             <suppressionsLocation>com/asakusafw/checkstyle-suppressions.xml</suppressionsLocation>
             <suppressionsFileExpression>checkstyle.suppressions.file</suppressionsFileExpression>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-release-plugin</artifactId>
+          <version>2.5.2</version>
+          <configuration>
+            <autoVersionSubmodules>true</autoVersionSubmodules>
+            <pushChanges>false</pushChanges>
+            <tagNameFormat>@{project.version}</tagNameFormat>
           </configuration>
         </plugin>
       </plugins>
