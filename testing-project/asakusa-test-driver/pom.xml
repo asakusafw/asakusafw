@@ -91,23 +91,23 @@
             </goals>
             <configuration>
               <target name="modelgen" description="generates model classes from DMDL">
-                <mkdir dir="target/generated-sources/test-dmdl"/>
+                <mkdir dir="target/generated-sources/test-dmdl" />
                 <delete>
-                  <fileset dir="target/generated-sources/test-dmdl" includes="**/*.java"/>
+                  <fileset dir="target/generated-sources/test-dmdl" includes="**/*.java" />
                 </delete>
                 <java classname="com.asakusafw.dmdl.java.Main" classpathref="maven.test.classpath" fork="true">
-                  <jvmarg value="-Duser.language=en"/>
-                  <jvmarg value="-Dlogback.configurationFile=src/test/resources/logback-test.xml"/>
-                  <arg value="-output"/>
-                  <arg value="target/generated-test-sources/test-dmdl"/>
-                  <arg value="-package"/>
-                  <arg value="com.asakusafw.testdriver"/>
-                  <arg value="-source"/>
-                  <arg path="src/test/dmdl"/>
-                  <arg value="-sourceencoding"/>
-                  <arg value="${project.build.sourceEncoding}"/>
-                  <arg value="-targetencoding"/>
-                  <arg value="${project.build.sourceEncoding}"/>
+                  <jvmarg value="-Duser.language=en" />
+                  <jvmarg value="-Dlogback.configurationFile=src/test/resources/logback-test.xml" />
+                  <arg value="-output" />
+                  <arg value="target/generated-test-sources/test-dmdl" />
+                  <arg value="-package" />
+                  <arg value="com.asakusafw.testdriver" />
+                  <arg value="-source" />
+                  <arg path="src/test/dmdl" />
+                  <arg value="-sourceencoding" />
+                  <arg value="${project.build.sourceEncoding}" />
+                  <arg value="-targetencoding" />
+                  <arg value="${project.build.sourceEncoding}" />
                 </java>
               </target>
             </configuration>
