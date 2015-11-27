@@ -69,7 +69,8 @@ public final class CoreCompatibility {
                 detected = version;
                 LOG.debug(MessageFormat.format(
                         "detect target Hadoop version: {1} ({0})", //$NON-NLS-1$
-                        detected));
+                        detected,
+                        value));
             }
         } catch (IOException e) {
             LOG.warn("failed to detect current target Hadoop version", e);
