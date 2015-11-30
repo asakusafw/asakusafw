@@ -2,6 +2,22 @@
 Changelogs
 ==========
 
+Release 0.7.6
+=============
+
+Dec 02, 2015
+
+Bug fixes
+---------
+
+* [ :pr:`542` ] - Fix debug log.
+* [ :pr:`543` ] - Fix side-data join detection algorithm.
+
+Others
+------
+
+* [ :pr:`541` ] - Add description about `${name-default}` syntax
+
 Release 0.7.5
 =============
 
