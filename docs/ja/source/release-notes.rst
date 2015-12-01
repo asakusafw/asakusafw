@@ -2,6 +2,21 @@
 リリースノート
 ==============
 
+Release 0.7.6
+=============
+
+Dec 02, 2015
+
+`Asakusa Framework 0.7.6 documentation`_
+
+..  _`Asakusa Framework 0.7.6 documentation`: http://docs.asakusafw.com/0.7.6/release/ja/html/index.html
+
+このバージョンはAsakusa DSLコンパイラの以下の問題に対応したメンテナンスリリースです。
+
+* MasterJoin系演算子のマスタ側入力に、 ``DataSize.TINY`` を含む2つ以上の入力を指定した場合に正しく動作しない問題を修正
+
+その他、軽微なバグフィックスやドキュメント修正を含みます。
+
 Release 0.7.5
 =============
 
