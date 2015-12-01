@@ -159,6 +159,9 @@ public class JoinRewriter extends FlowCompilingEnvironment.Initialized implement
                 continue;
             }
             saw.add(element);
+            if (next.getConnected().size() != 1) {
+                continue;
+            }
             if (element.getDescription().getKind() == FlowElementKind.PSEUD) {
                 for (FlowElementOutput output : element.getOutputPorts()) {
                     successors.addAll(output.getOpposites());

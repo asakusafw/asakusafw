@@ -85,7 +85,7 @@ build.gradleの設定
 ..  code-block:: groovy
     
     asakusafw {
-        asakusafwVersion '0.7.5-hadoop1'
+        asakusafwVersion '0.7.6-hadoop1'
         ...
         javac {
             sourceCompatibility '1.8'
