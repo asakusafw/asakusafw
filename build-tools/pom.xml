@@ -4,7 +4,7 @@
   <name>Asakusa Framework Build Tools</name>
   <groupId>com.asakusafw</groupId>
   <artifactId>build-tools</artifactId>
-  <version>0.7.5-hadoop1</version>
+  <version>0.7.6-RC1-hadoop1</version>
 
   <description>Asakusa Framework Build Tools</description>
   <url>http://asakusafw.com</url>
