@@ -6,7 +6,7 @@
   <parent>
     <artifactId>asakusa-legacy-project</artifactId>
     <groupId>com.asakusafw</groupId>
-    <version>0.7.6-RC1-hadoop2</version>
+    <version>0.7.6-hadoop2</version>
   </parent>
 
   <packaging>jar</packaging>
