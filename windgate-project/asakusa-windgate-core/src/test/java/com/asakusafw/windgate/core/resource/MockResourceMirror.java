@@ -55,12 +55,12 @@ public class MockResourceMirror extends ResourceMirror {
 
     @Override
     public <T> SourceDriver<T> createSource(ProcessScript<T> script) throws IOException {
-        return new MockSourceDriver<T>(getName());
+        return new MockSourceDriver<>(getName());
     }
 
     @Override
     public <T> DrainDriver<T> createDrain(ProcessScript<T> script) throws IOException {
-        return new MockDrainDriver<T>(getName());
+        return new MockDrainDriver<>(getName());
     }
 
     @Override

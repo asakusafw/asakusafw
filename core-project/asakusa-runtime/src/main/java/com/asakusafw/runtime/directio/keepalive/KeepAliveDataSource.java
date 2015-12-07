@@ -68,7 +68,7 @@ public class KeepAliveDataSource implements DirectDataSource {
             DirectInputFragment fragment,
             Counter counter) throws IOException, InterruptedException {
         ModelInput<T> input = entity.openInput(definition, fragment, counter);
-        return new WrappedModelInput<T>(input, heartbeat, counter);
+        return new WrappedModelInput<>(input, heartbeat, counter);
     }
 
     @Override
@@ -79,7 +79,7 @@ public class KeepAliveDataSource implements DirectDataSource {
             String resourcePath,
             Counter counter) throws IOException, InterruptedException {
         ModelOutput<T> output = entity.openOutput(context, definition, basePath, resourcePath, counter);
-        return new WrappedModelOutput<T>(output, heartbeat, counter);
+        return new WrappedModelOutput<>(output, heartbeat, counter);
     }
 
     @Override

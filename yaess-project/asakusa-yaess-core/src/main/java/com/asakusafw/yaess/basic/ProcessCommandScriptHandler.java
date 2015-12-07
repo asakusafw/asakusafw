@@ -222,7 +222,7 @@ public abstract class ProcessCommandScriptHandler extends ExecutionScriptHandler
             ExecutionContext context,
             ExecutionScript script) throws InterruptedException, IOException {
         assert script != null;
-        Map<String, String> env = new HashMap<String, String>();
+        Map<String, String> env = new HashMap<>();
         env.putAll(getEnvironmentVariables(context, script));
         env.putAll(context.getEnvironmentVariables());
         env.putAll(script.getEnvironmentVariables());

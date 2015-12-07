@@ -65,9 +65,7 @@ import com.asakusafw.utils.java.model.util.Filer;
  * @since 0.1.0
  * @version 0.7.3
  */
-public class FilePackager
-        extends FlowCompilingEnvironment.Initialized
-        implements Packager {
+public class FilePackager extends FlowCompilingEnvironment.Initialized implements Packager {
 
     static final Logger LOG = LoggerFactory.getLogger(FilePackager.class);
 
@@ -128,8 +126,7 @@ public class FilePackager
     }
 
     @Override
-    public OutputStream openStream(Name packageNameOrNull, String relativePath)
-            throws IOException {
+    public OutputStream openStream(Name packageNameOrNull, String relativePath) throws IOException {
         Precondition.checkMustNotBeNull(relativePath, "relativePath"); //$NON-NLS-1$
         File directory = resourceFiler.getFolderFor(packageNameOrNull);
         File file = new File(directory, relativePath);
@@ -154,8 +151,7 @@ public class FilePackager
             return;
         }
         compile();
-        JarOutputStream jar = new JarOutputStream(buffering(output));
-        try {
+        try (JarOutputStream jar = new JarOutputStream(buffering(output))) {
             LOG.debug("creating a package of compilation results"); //$NON-NLS-1$
             List<ResourceRepository> repos = Lists.create();
             if (classDirectory.exists()) {
@@ -169,12 +165,6 @@ public class FilePackager
                 LOG.warn(Messages.getString("FilePackager.warnEmptyBuild")); //$NON-NLS-1$
                 addDummyEntry(jar);
             }
-        } finally {
-            try {
-                jar.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
     }
 
@@ -184,8 +174,7 @@ public class FilePackager
             return;
         }
         LOG.debug("creating a package of generated source files"); //$NON-NLS-1$
-        JarOutputStream jar = new JarOutputStream(buffering(output));
-        try {
+        try (JarOutputStream jar = new JarOutputStream(buffering(output))) {
             boolean exists = drain(
                     jar,
                     Collections.singletonList(new FileRepository(sourceDirectory)),
@@ -193,12 +182,6 @@ public class FilePackager
             if (exists == false) {
                 LOG.warn(Messages.getString("FilePackager.warnEmptySource")); //$NON-NLS-1$
                 addDummyEntry(jar);
-            }
-        } finally {
-            try {
-                jar.close();
-            } catch (IOException e) {
-                e.printStackTrace();
             }
         }
     }
@@ -225,8 +208,7 @@ public class FilePackager
         assert repo != null;
         assert jar != null;
         assert saw != null;
-        Cursor cursor = repo.createCursor();
-        try {
+        try (Cursor cursor = repo.createCursor()) {
             while (cursor.next()) {
                 Location location = cursor.getLocation();
                 if (allowFrameworkInfo == false
@@ -243,8 +225,6 @@ public class FilePackager
                 saw.add(location);
                 addEntry(jar, buffering(cursor.openResource()), location);
             }
-        } finally {
-            cursor.close();
         }
     }
 
@@ -305,13 +285,11 @@ public class FilePackager
         mkdir(sourceDirectory);
         mkdir(classDirectory);
 
-        DiagnosticCollector<JavaFileObject> diagnostics =
-            new DiagnosticCollector<JavaFileObject>();
-        StandardJavaFileManager fileManager = compiler.getStandardFileManager(
+        DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
+        try (StandardJavaFileManager fileManager = compiler.getStandardFileManager(
                 diagnostics,
                 Locale.getDefault(),
-                CHARSET);
-        try {
+                CHARSET)) {
             List<String> arguments = Lists.create();
             String javaVersion = getJavaVersion();
             Collections.addAll(arguments, "-source", javaVersion); //$NON-NLS-1$
@@ -327,20 +305,19 @@ public class FilePackager
             Collections.addAll(arguments, "-Xlint:all"); //$NON-NLS-1$
             Collections.addAll(arguments, "-Xlint:-options"); //$NON-NLS-1$
 
+            Boolean succeeded;
             StringWriter errors = new StringWriter();
-            PrintWriter pw = new PrintWriter(errors);
-
-            LOG.debug("Java compile options: {}", arguments); //$NON-NLS-1$
-            CompilationTask task = compiler.getTask(
-                    pw,
-                    fileManager,
-                    diagnostics,
-                    arguments,
-                    Collections.<String>emptyList(),
-                    fileManager.getJavaFileObjectsFromFiles(sources));
-
-            Boolean succeeded = task.call();
-            pw.close();
+            try (PrintWriter pw = new PrintWriter(errors)) {
+                LOG.debug("Java compile options: {}", arguments); //$NON-NLS-1$
+                CompilationTask task = compiler.getTask(
+                        pw,
+                        fileManager,
+                        diagnostics,
+                        arguments,
+                        Collections.<String>emptyList(),
+                        fileManager.getJavaFileObjectsFromFiles(sources));
+                succeeded = task.call();
+            }
             for (Diagnostic<?> diagnostic : diagnostics.getDiagnostics()) {
                 switch (diagnostic.getKind()) {
                 case ERROR:
@@ -361,8 +338,6 @@ public class FilePackager
                         getEnvironment().getTargetId(),
                         errors.toString()));
             }
-        } finally {
-            fileManager.close();
         }
     }
 

@@ -115,7 +115,7 @@ public class MainTest {
     }
 
     private Matcher<DmdlSourceRepository> source(String... fileNames) {
-        final Set<String> files = new TreeSet<String>();
+        final Set<String> files = new TreeSet<>();
         Collections.addAll(files, fileNames);
         return new BaseMatcher<DmdlSourceRepository>() {
             @Override
@@ -123,21 +123,16 @@ public class MainTest {
                 if ((target instanceof DmdlSourceRepository) == false) {
                     return false;
                 }
-                Set<String> saw = new TreeSet<String>();
-                try {
-                    DmdlSourceRepository repo = (DmdlSourceRepository) target;
-                    Cursor cursor = repo.createCursor();
-                    try {
-                        while (cursor.next()) {
-                            String path = cursor.getIdentifier().getRawPath();
-                            if (path.endsWith("/")) {
-                                path = path.substring(0, path.length() - 1);
-                            }
-                            String file = path.substring(path.lastIndexOf('/') + 1);
-                            saw.add(file);
+                Set<String> saw = new TreeSet<>();
+                DmdlSourceRepository repo = (DmdlSourceRepository) target;
+                try (Cursor cursor = repo.createCursor()) {
+                    while (cursor.next()) {
+                        String path = cursor.getIdentifier().getRawPath();
+                        if (path.endsWith("/")) {
+                            path = path.substring(0, path.length() - 1);
                         }
-                    } finally {
-                        cursor.close();
+                        String file = path.substring(path.lastIndexOf('/') + 1);
+                        saw.add(file);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -161,13 +156,8 @@ public class MainTest {
                     return false;
                 }
                 Emitter emitter = (Emitter) target;
-                try {
-                    PrintWriter writer = emitter.openFor(null, "__TESTING__");
-                    try {
-                        writer.println("testing!");
-                    } finally {
-                        writer.close();
-                    }
+                try (PrintWriter writer = emitter.openFor(null, "__TESTING__")) {
+                    writer.println("testing!");
                 } catch (IOException e) {
                     e.printStackTrace();
                     return false;

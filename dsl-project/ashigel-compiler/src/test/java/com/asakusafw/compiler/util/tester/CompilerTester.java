@@ -134,20 +134,16 @@ public class CompilerTester implements TestRule {
      * @since 0.6.1
      */
     public CompilerTester(ConfigurationProvider configurations, boolean createFramework) {
-        HadoopDriver driver;
-        if (configurations == null) {
-            driver = HadoopDriver.createInstance();
-        } else {
-            driver = HadoopDriver.createInstance(configurations);
-        }
-        this.hadoopDriver = driver;
+        this.hadoopDriver = configurations == null
+                ? HadoopDriver.createInstance()
+                : HadoopDriver.createInstance(configurations);
         this.frameworkDeployer = new FrameworkDeployer(createFramework);
         this.flow = new FlowDescriptionDriver();
         this.testClass = getClass();
         this.testName = "unknown";
         this.variables = new VariableTable(RedefineStrategy.ERROR);
         this.options = new FlowCompilerOptions();
-        this.libraries = new ArrayList<File>();
+        this.libraries = new ArrayList<>();
     }
 
     @Override
@@ -399,12 +395,12 @@ public class CompilerTester implements TestRule {
             LOG.warn("execute hadoop with no configuration file (missing: {})", confFile.getAbsolutePath());
         }
 
-        Map<String, String> definitions = new HashMap<String, String>();
+        Map<String, String> definitions = new HashMap<>();
         definitions.put(StageConstants.PROP_USER, System.getProperty("user.name"));
         definitions.put(StageConstants.PROP_EXECUTION_ID, UUID.randomUUID().toString());
         definitions.put(StageConstants.PROP_ASAKUSA_BATCH_ARGS, variables.toSerialString());
 
-        List<File> libjars = new ArrayList<File>();
+        List<File> libjars = new ArrayList<>();
         libjars.add(info.getPackageFile());
         libjars.add(frameworkDeployer.getCoreRuntimeLibrary());
         libjars.addAll(frameworkDeployer.getRuntimeLibraries());
@@ -511,7 +507,7 @@ public class CompilerTester implements TestRule {
             String name,
             DataSize dataSize) throws IOException {
         Location path = hadoopDriver.toPath(path("input", JavaName.of(name).toMemberName()));
-        return new TestInput<T>(type, name, path, dataSize);
+        return new TestInput<>(type, name, path, dataSize);
     }
 
     /**
@@ -564,7 +560,7 @@ public class CompilerTester implements TestRule {
             Class<T> type,
             String name) throws IOException {
         Location path = hadoopDriver.toPath(testName, "output", name).asPrefix();
-        return new TestOutput<T>(type, name, path);
+        return new TestOutput<>(type, name, path);
     }
 
     /**
@@ -687,8 +683,7 @@ public class CompilerTester implements TestRule {
     public <T extends Writable> List<T> getList(
             Class<T> type,
             Location location) throws IOException {
-        ModelInput<T> input = hadoopDriver.openInput(type, location);
-        try {
+        try (ModelInput<T> input = hadoopDriver.openInput(type, location)) {
             List<T> results = Lists.create();
             while (true) {
                 T target = type.newInstance();
@@ -702,8 +697,6 @@ public class CompilerTester implements TestRule {
             throw e;
         } catch (Exception e) {
             throw new IOException(e);
-        } finally {
-            input.close();
         }
     }
 
@@ -825,8 +818,7 @@ public class CompilerTester implements TestRule {
          * @throws IOException if the operation was failed by I/O error
          */
         public List<T> toList() throws IOException {
-            ModelInput<T> input = hadoopDriver.openInput(type, pathPrefix);
-            try {
+            try (ModelInput<T> input = hadoopDriver.openInput(type, pathPrefix)) {
                 List<T> results = Lists.create();
                 while (true) {
                     T target = type.newInstance();
@@ -840,8 +832,6 @@ public class CompilerTester implements TestRule {
                 throw e;
             } catch (Exception e) {
                 throw new IOException(e);
-            } finally {
-                input.close();
             }
         }
 

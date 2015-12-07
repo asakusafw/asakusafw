@@ -39,9 +39,7 @@ public class AstAttributeValueArray extends AbstractAstNode implements AstAttrib
      * @param elements the elements in this array
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public AstAttributeValueArray(
-            Region region,
-            List<? extends AstAttributeValue> elements) {
+    public AstAttributeValueArray(Region region, List<? extends AstAttributeValue> elements) {
         this.region = region;
         this.elements = Lists.freeze(elements);
     }

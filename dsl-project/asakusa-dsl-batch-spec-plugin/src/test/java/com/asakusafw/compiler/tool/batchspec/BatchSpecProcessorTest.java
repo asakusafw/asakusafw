@@ -38,8 +38,8 @@ import com.asakusafw.compiler.testing.DirectBatchCompiler;
 import com.asakusafw.compiler.testing.DirectFlowCompiler;
 import com.asakusafw.runtime.stage.StageConstants;
 import com.asakusafw.vocabulary.batch.Batch;
-import com.asakusafw.vocabulary.batch.BatchDescription;
 import com.asakusafw.vocabulary.batch.Batch.Parameter;
+import com.asakusafw.vocabulary.batch.BatchDescription;
 import com.google.gson.Gson;
 
 /**
@@ -167,14 +167,10 @@ public class BatchSpecProcessorTest {
 
     private BatchSpec load(File file) throws IOException {
         Gson gson = new Gson();
-        InputStream in = new FileInputStream(file);
-        try {
-            Reader reader = new InputStreamReader(in, Constants.ENCODING);
+        try (InputStream in = new FileInputStream(file);
+                Reader reader = new InputStreamReader(in, Constants.ENCODING);) {
             BatchSpec result = gson.fromJson(reader, BatchSpec.class);
-            reader.close();
             return result;
-        } finally {
-            in.close();
         }
     }
 

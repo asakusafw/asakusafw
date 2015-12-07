@@ -419,7 +419,7 @@ public class HadoopDataSourceProfile {
         if (conf == null) {
             throw new IllegalArgumentException("conf must not be null"); //$NON-NLS-1$
         }
-        Map<String, String> attributes = new HashMap<String, String>(profile.getAttributes());
+        Map<String, String> attributes = new HashMap<>(profile.getAttributes());
         Path fsPath = takeFsPath(profile, attributes, conf);
         if (fsPath == null) {
             throw new IOException(MessageFormat.format(
@@ -459,7 +459,7 @@ public class HadoopDataSourceProfile {
             throw new IOException(MessageFormat.format(
                     "Unknown attributes in \"{0}\": {1}",
                     profile.getId(),
-                    new TreeSet<String>(attributes.keySet())));
+                    new TreeSet<>(attributes.keySet())));
         }
         return result;
     }

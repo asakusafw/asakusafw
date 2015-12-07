@@ -144,9 +144,7 @@ public interface RuntimeResource {
             }
         }
 
-        private D loadDelegate(
-                ResourceConfiguration configuration,
-                String className) throws IOException {
+        private D loadDelegate(ResourceConfiguration configuration, String className) throws IOException {
             assert configuration != null;
             assert className != null;
             try {

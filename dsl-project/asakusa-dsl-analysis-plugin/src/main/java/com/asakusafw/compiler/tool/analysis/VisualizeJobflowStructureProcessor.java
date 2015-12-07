@@ -117,11 +117,8 @@ public class VisualizeJobflowStructureProcessor extends AbstractWorkflowProcesso
     private void emit(String path, boolean partial, VisualGraph model) throws IOException {
         assert path != null;
         assert model != null;
-        OutputStream output = getEnvironment().openResource(path);
-        try {
+        try (OutputStream output = getEnvironment().openResource(path)) {
             VisualGraphEmitter.emit(model, partial, output);
-        } finally {
-            output.close();
         }
     }
 }

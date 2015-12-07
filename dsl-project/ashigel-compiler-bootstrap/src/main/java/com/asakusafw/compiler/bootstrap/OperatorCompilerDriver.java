@@ -128,8 +128,7 @@ public final class OperatorCompilerDriver {
             throw new IOException(
                     Messages.getString("OperatorCompilerDriver.errorFailedToCreateJavaCompiler")); //$NON-NLS-1$
         }
-        StandardJavaFileManager files = compiler.getStandardFileManager(null, null, encoding);
-        try {
+        try (StandardJavaFileManager files = compiler.getStandardFileManager(null, null, encoding)) {
             CompilationTask task = compiler.getTask(
                     null,
                     files,
@@ -140,8 +139,6 @@ public final class OperatorCompilerDriver {
             if (task.call() == false) {
                 LOG.error(Messages.getString("OperatorCompilerDriver.errorFailedToCompile")); //$NON-NLS-1$
             }
-        } finally {
-            files.close();
         }
         LOG.info(Messages.getString("OperatorCompilerDriver.infoCompleted")); //$NON-NLS-1$
     }
@@ -168,7 +165,7 @@ public final class OperatorCompilerDriver {
             List<Class<?>> operatorClasses) throws IOException {
         assert sourcePath != null;
         assert operatorClasses != null;
-        Set<File> results = new LinkedHashSet<File>();
+        Set<File> results = new LinkedHashSet<>();
         for (Class<?> aClass : operatorClasses) {
             File source = findSource(sourcePath, aClass);
             if (results.contains(source) == false) {

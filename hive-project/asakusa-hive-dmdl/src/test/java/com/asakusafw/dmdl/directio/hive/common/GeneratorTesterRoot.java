@@ -83,14 +83,11 @@ public class GeneratorTesterRoot {
     private File emitDmdl(String... lines) {
         try {
             File file = folder.newFile(UUID.randomUUID() + ".dmdl");
-            PrintWriter writer = new PrintWriter(file, "UTF-8");
-            try {
+            try (PrintWriter writer = new PrintWriter(file, "UTF-8")) {
                 for (String line : lines) {
                     String s = line.replace('\'', '"');
                     writer.println(s);
                 }
-            } finally {
-                writer.close();
             }
             return file;
         } catch (IOException e) {

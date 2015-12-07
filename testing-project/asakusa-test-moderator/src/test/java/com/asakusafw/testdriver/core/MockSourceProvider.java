@@ -28,7 +28,7 @@ import java.util.Map;
  */
 public class MockSourceProvider implements DataModelSourceProvider {
 
-    private final Map<URI, DataModelSource> sources = new HashMap<URI, DataModelSource>();
+    private final Map<URI, DataModelSource> sources = new HashMap<>();
 
     /**
      * Creates a new instance only includes {@code default:source=MOCK}.

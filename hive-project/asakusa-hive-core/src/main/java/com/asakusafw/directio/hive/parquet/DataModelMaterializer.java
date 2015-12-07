@@ -64,8 +64,8 @@ public class DataModelMaterializer extends RecordMaterializer<Object> {
             MessageType schema,
             DataModelMapping configuration) {
         List<Mapping> mappings = computeMapping(descriptor, schema, configuration);
-        List<Type> fields = new ArrayList<Type>();
-        List<PropertyDescriptor> properties = new ArrayList<PropertyDescriptor>();
+        List<Type> fields = new ArrayList<>();
+        List<PropertyDescriptor> properties = new ArrayList<>();
         for (Mapping mapping : mappings) {
             if (mapping != null) {
                 fields.add(new PrimitiveType(
@@ -120,7 +120,7 @@ public class DataModelMaterializer extends RecordMaterializer<Object> {
         default:
             throw new AssertionError(configuration.getFieldMappingStrategy());
         }
-        TreeMap<Integer, Mapping> propertyMap = new TreeMap<Integer, Mapping>();
+        TreeMap<Integer, Mapping> propertyMap = new TreeMap<>();
         for (Mapping mapping : mappings) {
             if (checkMapping(descriptor, mapping, configuration)) {
                 assert mapping.source != null;
@@ -155,8 +155,8 @@ public class DataModelMaterializer extends RecordMaterializer<Object> {
                     "Mapping columns by their name: model={0}", //$NON-NLS-1$
                     target.getDataModelClass().getName()));
         }
-        Set<PropertyDescriptor> rest = new LinkedHashSet<PropertyDescriptor>(target.getPropertyDescriptors());
-        List<Mapping> mappings = new ArrayList<Mapping>();
+        Set<PropertyDescriptor> rest = new LinkedHashSet<>(target.getPropertyDescriptors());
+        List<Mapping> mappings = new ArrayList<>();
         for (ColumnDescriptor s : source.getColumns()) {
             String name = s.getPath()[0];
             Type sType = source.getType(s.getPath());
@@ -183,7 +183,7 @@ public class DataModelMaterializer extends RecordMaterializer<Object> {
         }
         List<ColumnDescriptor> sources = source.getColumns();
         List<? extends PropertyDescriptor> targets = target.getPropertyDescriptors();
-        List<Mapping> mappings = new ArrayList<Mapping>();
+        List<Mapping> mappings = new ArrayList<>();
         int limit = Math.min(sources.size(), targets.size());
         for (int i = 0; i < limit; i++) {
             ColumnDescriptor s = sources.get(i);

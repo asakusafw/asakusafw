@@ -44,11 +44,11 @@ import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory.Empty;
  */
 public class CoreOperatorFactoryTest {
 
-    MockIn<String> in = new MockIn<String>(String.class, "in");
+    MockIn<String> in = new MockIn<>(String.class, "in");
 
-    MockIn<String> in2 = new MockIn<String>(String.class, "in2");
+    MockIn<String> in2 = new MockIn<>(String.class, "in2");
 
-    MockOut<String> out = new MockOut<String>(String.class, "out");
+    MockOut<String> out = new MockOut<>(String.class, "out");
 
     /**
      * test for {@link CoreOperatorFactory#empty(Class)}.
@@ -130,12 +130,12 @@ public class CoreOperatorFactoryTest {
     }
 
     private Matcher<? super Set<String>> connected(String... names) {
-        return Matchers.<Set<String>>is(new HashSet<String>(Arrays.asList(names)));
+        return Matchers.<Set<String>>is(new HashSet<>(Arrays.asList(names)));
     }
 
     private Graph<String> toGraph() {
-        Set<String> saw = new HashSet<String>();
-        LinkedList<FlowElement> work = new LinkedList<FlowElement>();
+        Set<String> saw = new HashSet<>();
+        LinkedList<FlowElement> work = new LinkedList<>();
         work.add(in.toElement());
         work.add(in2.toElement());
         work.add(out.toElement());

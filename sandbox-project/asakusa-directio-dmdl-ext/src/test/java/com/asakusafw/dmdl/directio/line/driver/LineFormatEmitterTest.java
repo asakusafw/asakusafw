@@ -21,6 +21,7 @@ import static org.junit.Assert.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.Scanner;
@@ -145,24 +146,24 @@ public class LineFormatEmitterTest extends GeneratorTesterRoot {
                 "Hello2",
                 "Hello3",
         }).getBytes("UTF-8");
-        ModelInput<Object> reader = format.createInput(
+        try (ModelInput<Object> reader = format.createInput(
                 format.getSupportedType(), "testing", new ByteArrayInputStream(contents),
-                0, contents.length);
-
-        ModelWrapper model = loader.newModel("Complex");
-        assertThat(reader.readTo(model.unwrap()), is(true));
-        assertThat(model.get("value"), is((Object) new Text("Hello1")));
-        assertThat(model.get("path"), is((Object) new Text("testing")));
-        model.reset();
-        assertThat(reader.readTo(model.unwrap()), is(true));
-        assertThat(model.get("value"), is((Object) new Text("Hello2")));
-        assertThat(model.get("path"), is((Object) new Text("testing")));
-        model.reset();
-        assertThat(reader.readTo(model.unwrap()), is(true));
-        assertThat(model.get("value"), is((Object) new Text("Hello3")));
-        assertThat(model.get("path"), is((Object) new Text("testing")));
-        model.reset();
-        assertThat(reader.readTo(model.unwrap()), is(false));
+                0, contents.length)) {
+            ModelWrapper model = loader.newModel("Complex");
+            assertThat(reader.readTo(model.unwrap()), is(true));
+            assertThat(model.get("value"), is((Object) new Text("Hello1")));
+            assertThat(model.get("path"), is((Object) new Text("testing")));
+            model.reset();
+            assertThat(reader.readTo(model.unwrap()), is(true));
+            assertThat(model.get("value"), is((Object) new Text("Hello2")));
+            assertThat(model.get("path"), is((Object) new Text("testing")));
+            model.reset();
+            assertThat(reader.readTo(model.unwrap()), is(true));
+            assertThat(model.get("value"), is((Object) new Text("Hello3")));
+            assertThat(model.get("path"), is((Object) new Text("testing")));
+            model.reset();
+            assertThat(reader.readTo(model.unwrap()), is(false));
+        }
     }
 
     /**
@@ -188,24 +189,24 @@ public class LineFormatEmitterTest extends GeneratorTesterRoot {
                 "Hello2",
                 "Hello3",
         }).getBytes("UTF-8");
-        ModelInput<Object> reader = format.createInput(
+        try (ModelInput<Object> reader = format.createInput(
                 format.getSupportedType(), "testing", new ByteArrayInputStream(contents),
-                0, contents.length);
-
-        ModelWrapper model = loader.newModel("Complex");
-        assertThat(reader.readTo(model.unwrap()), is(true));
-        assertThat(model.get("value"), is((Object) new Text("Hello1")));
-        assertThat(model.get("line_num"), is((Object) 1));
-        model.reset();
-        assertThat(reader.readTo(model.unwrap()), is(true));
-        assertThat(model.get("value"), is((Object) new Text("Hello2")));
-        assertThat(model.get("line_num"), is((Object) 2));
-        model.reset();
-        assertThat(reader.readTo(model.unwrap()), is(true));
-        assertThat(model.get("value"), is((Object) new Text("Hello3")));
-        assertThat(model.get("line_num"), is((Object) 3));
-        model.reset();
-        assertThat(reader.readTo(model.unwrap()), is(false));
+                0, contents.length)) {
+            ModelWrapper model = loader.newModel("Complex");
+            assertThat(reader.readTo(model.unwrap()), is(true));
+            assertThat(model.get("value"), is((Object) new Text("Hello1")));
+            assertThat(model.get("line_num"), is((Object) 1));
+            model.reset();
+            assertThat(reader.readTo(model.unwrap()), is(true));
+            assertThat(model.get("value"), is((Object) new Text("Hello2")));
+            assertThat(model.get("line_num"), is((Object) 2));
+            model.reset();
+            assertThat(reader.readTo(model.unwrap()), is(true));
+            assertThat(model.get("value"), is((Object) new Text("Hello3")));
+            assertThat(model.get("line_num"), is((Object) 3));
+            model.reset();
+            assertThat(reader.readTo(model.unwrap()), is(false));
+        }
     }
 
     /**
@@ -231,24 +232,24 @@ public class LineFormatEmitterTest extends GeneratorTesterRoot {
                 "Hello2",
                 "Hello3",
         }).getBytes("UTF-8");
-        ModelInput<Object> reader = format.createInput(
+        try (ModelInput<Object> reader = format.createInput(
                 format.getSupportedType(), "testing", new ByteArrayInputStream(contents),
-                0, contents.length);
-
-        ModelWrapper model = loader.newModel("Complex");
-        assertThat(reader.readTo(model.unwrap()), is(true));
-        assertThat(model.get("value"), is((Object) new Text("Hello1")));
-        assertThat(model.get("line_num"), is((Object) 1L));
-        model.reset();
-        assertThat(reader.readTo(model.unwrap()), is(true));
-        assertThat(model.get("value"), is((Object) new Text("Hello2")));
-        assertThat(model.get("line_num"), is((Object) 2L));
-        model.reset();
-        assertThat(reader.readTo(model.unwrap()), is(true));
-        assertThat(model.get("value"), is((Object) new Text("Hello3")));
-        assertThat(model.get("line_num"), is((Object) 3L));
-        model.reset();
-        assertThat(reader.readTo(model.unwrap()), is(false));
+                0, contents.length)) {
+            ModelWrapper model = loader.newModel("Complex");
+            assertThat(reader.readTo(model.unwrap()), is(true));
+            assertThat(model.get("value"), is((Object) new Text("Hello1")));
+            assertThat(model.get("line_num"), is((Object) 1L));
+            model.reset();
+            assertThat(reader.readTo(model.unwrap()), is(true));
+            assertThat(model.get("value"), is((Object) new Text("Hello2")));
+            assertThat(model.get("line_num"), is((Object) 2L));
+            model.reset();
+            assertThat(reader.readTo(model.unwrap()), is(true));
+            assertThat(model.get("value"), is((Object) new Text("Hello3")));
+            assertThat(model.get("line_num"), is((Object) 3L));
+            model.reset();
+            assertThat(reader.readTo(model.unwrap()), is(false));
+        }
     }
 
     private Matcher<? super FragmentableDataFormat<?>> splittable() {
@@ -281,17 +282,15 @@ public class LineFormatEmitterTest extends GeneratorTesterRoot {
         });
         BinaryStreamFormat<Object> format = unsafe(loader.newObject("line", "SimpleLineFormat"));
         ByteArrayOutputStream contents = new ByteArrayOutputStream();
-        ModelOutput<Object> writer = writer(format, contents);
-
-        ModelWrapper model = loader.newModel("Simple");
-        model.set("value", new Text("Hello1"));
-        writer.write(model.unwrap());
-        model.set("value", new Text("Hello2"));
-        writer.write(model.unwrap());
-        model.set("value", new Text("Hello3"));
-        writer.write(model.unwrap());
-        writer.close();
-
+        try (ModelOutput<Object> writer = writer(format, contents)) {
+            ModelWrapper model = loader.newModel("Simple");
+            model.set("value", new Text("Hello1"));
+            writer.write(model.unwrap());
+            model.set("value", new Text("Hello2"));
+            writer.write(model.unwrap());
+            model.set("value", new Text("Hello3"));
+            writer.write(model.unwrap());
+        }
         assertThat(new String(contents.toByteArray(), "UTF-8"), is(contents(new String[] {
                 "Hello1",
                 "Hello2",
@@ -338,17 +337,15 @@ public class LineFormatEmitterTest extends GeneratorTesterRoot {
         });
         BinaryStreamFormat<Object> format = unsafe(loader.newObject("line", "SimpleLineFormat"));
         ByteArrayOutputStream contents = new ByteArrayOutputStream();
-        ModelOutput<Object> writer = writer(format, contents);
-
-        ModelWrapper model = loader.newModel("Simple");
-        model.set("value", new Text(HELLO_JP + "1"));
-        writer.write(model.unwrap());
-        model.set("value", new Text(HELLO_JP + "2"));
-        writer.write(model.unwrap());
-        model.set("value", new Text(HELLO_JP + "3"));
-        writer.write(model.unwrap());
-        writer.close();
-
+        try (ModelOutput<Object> writer = writer(format, contents)) {
+            ModelWrapper model = loader.newModel("Simple");
+            model.set("value", new Text(HELLO_JP + "1"));
+            writer.write(model.unwrap());
+            model.set("value", new Text(HELLO_JP + "2"));
+            writer.write(model.unwrap());
+            model.set("value", new Text(HELLO_JP + "3"));
+            writer.write(model.unwrap());
+        }
         assertThat(new String(contents.toByteArray(), "MS932"), is(contents(new String[] {
                 HELLO_JP + "1",
                 HELLO_JP + "2",
@@ -395,28 +392,25 @@ public class LineFormatEmitterTest extends GeneratorTesterRoot {
         });
         BinaryStreamFormat<Object> format = unsafe(loader.newObject("line", "SimpleLineFormat"));
         ByteArrayOutputStream contents = new ByteArrayOutputStream();
-        ModelOutput<Object> writer = writer(format, contents);
-
-        ModelWrapper model = loader.newModel("Simple");
-        model.set("value", new Text("Hello1"));
-        writer.write(model.unwrap());
-        model.set("value", new Text("Hello2"));
-        writer.write(model.unwrap());
-        model.set("value", new Text("Hello3"));
-        writer.write(model.unwrap());
-        writer.close();
-
-        GZIPInputStream input = new GZIPInputStream(new ByteArrayInputStream(contents.toByteArray()));
-
-        Scanner scanner = new Scanner(new InputStreamReader(input, "UTF-8"));
-        assertThat(scanner.hasNextLine(), is(true));
-        assertThat(scanner.nextLine(), is("Hello1"));
-        assertThat(scanner.hasNextLine(), is(true));
-        assertThat(scanner.nextLine(), is("Hello2"));
-        assertThat(scanner.hasNextLine(), is(true));
-        assertThat(scanner.nextLine(), is("Hello3"));
-        assertThat(scanner.hasNextLine(), is(false));
-        scanner.close();
+        try (ModelOutput<Object> writer = writer(format, contents)) {
+            ModelWrapper model = loader.newModel("Simple");
+            model.set("value", new Text("Hello1"));
+            writer.write(model.unwrap());
+            model.set("value", new Text("Hello2"));
+            writer.write(model.unwrap());
+            model.set("value", new Text("Hello3"));
+            writer.write(model.unwrap());
+        }
+        try (InputStream input = new GZIPInputStream(new ByteArrayInputStream(contents.toByteArray()));
+                Scanner scanner = new Scanner(new InputStreamReader(input, "UTF-8"));) {
+            assertThat(scanner.hasNextLine(), is(true));
+            assertThat(scanner.nextLine(), is("Hello1"));
+            assertThat(scanner.hasNextLine(), is(true));
+            assertThat(scanner.nextLine(), is("Hello2"));
+            assertThat(scanner.hasNextLine(), is(true));
+            assertThat(scanner.nextLine(), is("Hello3"));
+            assertThat(scanner.hasNextLine(), is(false));
+        }
     }
 
     /**
@@ -575,16 +569,16 @@ public class LineFormatEmitterTest extends GeneratorTesterRoot {
         model.set("value", new Text("Hello, world!"));
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
-        ModelOutput<Object> writer = writer(format, output);
-        writer.write(model.unwrap());
-        writer.close();
-
+        try (ModelOutput<Object> writer = writer(format, output)) {
+            writer.write(model.unwrap());
+        }
         Object buffer = loader.newModel(name).unwrap();
-        ModelInput<Object> reader = reader(format, output.toByteArray());
-        assertThat(reader.readTo(buffer), is(true));
-        assertThat(buffer, is(model.unwrap()));
-        assertThat(reader.readTo(buffer), is(false));
-        assertThat(buffer, is(model.unwrap()));
+        try (ModelInput<Object> reader = reader(format, output.toByteArray())) {
+            assertThat(reader.readTo(buffer), is(true));
+            assertThat(buffer, is(model.unwrap()));
+            assertThat(reader.readTo(buffer), is(false));
+            assertThat(buffer, is(model.unwrap()));
+        }
     }
 
     private ModelInput<Object> reader(

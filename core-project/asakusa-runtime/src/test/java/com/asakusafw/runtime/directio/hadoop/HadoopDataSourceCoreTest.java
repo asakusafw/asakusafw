@@ -231,16 +231,13 @@ public class HadoopDataSourceCoreTest {
     public void output() throws Exception {
         HadoopDataSourceCore core = new HadoopDataSourceCore(profile);
         setup(core);
-        ModelOutput<StringBuilder> output = core.openOutput(
+        try (ModelOutput<StringBuilder> output = core.openOutput(
                 context,
                 definition,
                 "output",
                 "file.txt",
-                counter);
-        try {
+                counter)){
             output.write(new StringBuilder("Hello, world!"));
-        } finally {
-            output.close();
         }
         assertThat(counter.get(), is(greaterThan(0L)));
 
@@ -265,16 +262,13 @@ public class HadoopDataSourceCoreTest {
         profile.setOutputStaging(false);
         HadoopDataSourceCore core = new HadoopDataSourceCore(profile);
         setup(core);
-        ModelOutput<StringBuilder> output = core.openOutput(
+        try (ModelOutput<StringBuilder> output = core.openOutput(
                 context,
                 definition,
                 "output",
                 "file.txt",
-                counter);
-        try {
+                counter)) {
             output.write(new StringBuilder("Hello, world!"));
-        } finally {
-            output.close();
         }
         assertThat(counter.get(), is(greaterThan(0L)));
 
@@ -302,16 +296,13 @@ public class HadoopDataSourceCoreTest {
                 localtemp.getPath());
         HadoopDataSourceCore core = new HadoopDataSourceCore(profile);
         setup(core);
-        ModelOutput<StringBuilder> output = core.openOutput(
+        try (ModelOutput<StringBuilder> output = core.openOutput(
                 context,
                 definition,
                 "output",
                 "file.txt",
-                counter);
-        try {
+                counter)) {
             output.write(new StringBuilder("Hello, world!"));
-        } finally {
-            output.close();
         }
         assertThat(counter.get(), is(greaterThan(0L)));
 
@@ -340,16 +331,13 @@ public class HadoopDataSourceCoreTest {
                 localtemp.getPath());
         HadoopDataSourceCore core = new HadoopDataSourceCore(profile);
         setup(core);
-        ModelOutput<StringBuilder> output = core.openOutput(
+        try (ModelOutput<StringBuilder> output = core.openOutput(
                 context,
                 definition,
                 "output",
                 "file.txt",
-                counter);
-        try {
+                counter)) {
             output.write(new StringBuilder("Hello, world!"));
-        } finally {
-            output.close();
         }
         assertThat(counter.get(), is(greaterThan(0L)));
 
@@ -373,16 +361,13 @@ public class HadoopDataSourceCoreTest {
     public void output_multirecord() throws Exception {
         HadoopDataSourceCore core = new HadoopDataSourceCore(profile);
         setup(core);
-        ModelOutput<StringBuilder> output = core.openOutput(
+        try (ModelOutput<StringBuilder> output = core.openOutput(
                 context,
                 definition,
                 "output",
                 "file.txt",
-                counter);
-        try {
+                counter)) {
             output.write(new StringBuilder("Hello, world!"));
-        } finally {
-            output.close();
         }
 
         File target = new File(mapping, "output/file.txt");
@@ -406,18 +391,15 @@ public class HadoopDataSourceCoreTest {
         HadoopDataSourceCore core = new HadoopDataSourceCore(profile);
         setup(core);
         for (int i = 0; i < 3; i++) {
-            ModelOutput<StringBuilder> output = core.openOutput(
+            try (ModelOutput<StringBuilder> output = core.openOutput(
                     context,
                     definition,
                     "output",
                     "file" + i + ".txt",
-                    counter);
-            try {
+                    counter)) {
                 for (int j = 0; j < i + 1; j++) {
                     output.write(new StringBuilder("Hello" + j));
                 }
-            } finally {
-                output.close();
             }
         }
         commit(core);
@@ -434,16 +416,13 @@ public class HadoopDataSourceCoreTest {
     public void output_rollback() throws Exception {
         HadoopDataSourceCore core = new HadoopDataSourceCore(profile);
         setup(core);
-        ModelOutput<StringBuilder> output = core.openOutput(
+        try (ModelOutput<StringBuilder> output = core.openOutput(
                 context,
                 definition,
                 "output",
                 "file.txt",
-                counter);
-        try {
+                counter)) {
             output.write(new StringBuilder("Hello, world!"));
-        } finally {
-            output.close();
         }
         cleanup(core);
         assertThat(new File(mapping, "output/file.txt").exists(), is(false));
@@ -544,43 +523,34 @@ public class HadoopDataSourceCoreTest {
 
     private List<String> consume(
             HadoopDataSourceCore core, List<DirectInputFragment> fragments) throws IOException, InterruptedException {
-        List<String> results = new ArrayList<String>();
+        List<String> results = new ArrayList<>();
         for (DirectInputFragment fragment : fragments) {
-            ModelInput<StringBuilder> input = core.openInput(definition, fragment, counter);
-            try {
+            try (ModelInput<StringBuilder> input = core.openInput(definition, fragment, counter)) {
                 StringBuilder buf = new StringBuilder();
                 while (input.readTo(buf)) {
                     results.add(buf.toString());
                 }
-            } finally {
-                input.close();
             }
         }
         return results;
     }
 
     private List<String> get(File target) throws IOException {
-        Scanner s = new Scanner(target, "UTF-8");
-        try {
-            List<String> results = new ArrayList<String>();
+        try (Scanner s = new Scanner(target, "UTF-8")) {
+            List<String> results = new ArrayList<>();
             while (s.hasNextLine()) {
                 results.add(s.nextLine());
             }
             return results;
-        } finally {
-            s.close();
         }
     }
 
     private void put(File target, String... contents) throws IOException {
         target.getParentFile().mkdirs();
-        PrintWriter w = new PrintWriter(target, "UTF-8");
-        try {
+        try (PrintWriter w = new PrintWriter(target, "UTF-8")) {
             for (String line : contents) {
                 w.println(line);
             }
-        } finally {
-            w.close();
         }
     }
 
@@ -588,17 +558,13 @@ public class HadoopDataSourceCoreTest {
         byte[] buf = "Hello, world\n".getBytes();
         long rest = size;
         target.getParentFile().mkdirs();
-        OutputStream out = new FileOutputStream(target);
-        try {
-            OutputStream bufferred = new BufferedOutputStream(out);
+
+        try (OutputStream out = new BufferedOutputStream(new FileOutputStream(target))) {
             while (rest > 0) {
                 int count = (int) Math.min(buf.length, rest);
-                bufferred.write(buf, 0, count);
+                out.write(buf, 0, count);
                 rest -= count;
             }
-            bufferred.close();
-        } finally {
-            out.close();
         }
     }
 

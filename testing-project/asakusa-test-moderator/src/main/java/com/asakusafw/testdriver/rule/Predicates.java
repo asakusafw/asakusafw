@@ -30,7 +30,7 @@ public final class Predicates {
      * @return the created predicate
      */
     public static ValuePredicate<Object> equalTo(Object value) {
-        return new ExpectConstant<Object>(value, new Equals());
+        return new ExpectConstant<>(value, new Equals());
     }
 
     /**
@@ -44,7 +44,7 @@ public final class Predicates {
         if (predicate == null) {
             throw new IllegalArgumentException("predicate must not be null"); //$NON-NLS-1$
         }
-        return new Not<T>(predicate);
+        return new Not<>(predicate);
     }
 
     /**

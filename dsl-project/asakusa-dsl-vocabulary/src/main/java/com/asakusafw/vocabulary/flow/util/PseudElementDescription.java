@@ -94,7 +94,7 @@ public class PseudElementDescription implements FlowElementDescription {
                 OUTPUT_PORT_NAME,
                 type,
                 PortDirection.OUTPUT);
-        this.attributes = new HashMap<Class<? extends FlowElementAttribute>, FlowElementAttribute>();
+        this.attributes = new HashMap<>();
         for (FlowElementAttribute attribute : attributes) {
             this.attributes.put(attribute.getDeclaringClass(), attribute);
         }

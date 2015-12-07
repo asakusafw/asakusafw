@@ -70,14 +70,10 @@ public class DescribeOriginalStructureProcessor extends AbstractWorkflowProcesso
 
     @Override
     public void process(Workflow workflow) throws IOException {
-        OutputStream output = getEnvironment().openResource(PATH);
-        try {
-            Context context = new Context(output);
+        try (OutputStream output = getEnvironment().openResource(PATH);
+                Context context = new Context(output)) {
             context.put("batch: {0}", getEnvironment().getConfiguration().getBatchId()); //$NON-NLS-1$
             dump(context, workflow.getGraph());
-            context.close();
-        } finally {
-            output.close();
         }
     }
 

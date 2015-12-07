@@ -41,7 +41,7 @@ import com.asakusafw.testdriver.rule.DataModelCondition;
  */
 public class ExcelSheetRuleProviderTest {
 
-    static final DataModelDefinition<Simple> SIMPLE = new SimpleDataModelDefinition<Simple>(Simple.class);
+    static final DataModelDefinition<Simple> SIMPLE = new SimpleDataModelDefinition<>(Simple.class);
 
     /**
      * simple verification.

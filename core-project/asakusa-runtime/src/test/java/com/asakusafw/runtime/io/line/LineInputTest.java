@@ -103,7 +103,7 @@ public class LineInputTest {
      */
     @Test
     public void large() throws Exception {
-        List<String> lines = new ArrayList<String>();
+        List<String> lines = new ArrayList<>();
         for (int i = 0; i <= LineConfiguration.DEFAULT_BUFFER_SIZE; i++) {
             lines.add(String.valueOf(i));
         }
@@ -155,17 +155,14 @@ public class LineInputTest {
 
     private List<String> fetch(String data) throws IOException {
         LineConfiguration conf = new LineConfiguration().withCharset(charset);
-        ModelInput<StringOption> input = LineInput.newInstance(
-                new ByteArrayInputStream(data.getBytes(charset)), "testing", conf);
-        try {
+        try (ModelInput<StringOption> input = LineInput.newInstance(
+                new ByteArrayInputStream(data.getBytes(charset)), "testing", conf);) {
             StringOption buf = new StringOption();
-            List<String> results = new ArrayList<String>();
+            List<String> results = new ArrayList<>();
             while (input.readTo(buf)) {
                 results.add(buf.getAsString());
             }
             return results;
-        } finally {
-            input.close();
         }
     }
 }

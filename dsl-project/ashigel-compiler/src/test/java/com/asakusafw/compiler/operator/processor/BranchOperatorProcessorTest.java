@@ -135,7 +135,7 @@ public class BranchOperatorProcessorTest extends OperatorCompilerTestRoot {
         MockIn<MockHoge> in = MockIn.of(MockHoge.class, "in");
         Object branch = invoke(factory, "example", in);
 
-        Set<String> fieldNames = new HashSet<String>();
+        Set<String> fieldNames = new HashSet<>();
         for (Field field : branch.getClass().getFields()) {
             fieldNames.add(field.getName());
         }

@@ -54,7 +54,7 @@ public class JdbcProfileTest {
      */
     @Test
     public void convert() throws Exception {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put(JdbcProfile.KEY_DRIVER, org.h2.Driver.class.getName());
         map.put(JdbcProfile.KEY_URL, h2.getJdbcUrl());
 
@@ -62,14 +62,10 @@ public class JdbcProfileTest {
         JdbcProfile profile = JdbcProfile.convert(rp);
         assertThat(profile.getResourceName(), is(rp.getName()));
         assertThat(profile.getBatchPutUnit(), greaterThan(0L));
-        Connection conn = profile.openConnection();
-        try {
-            Statement stmt = conn.createStatement();
+        try (Connection conn = profile.openConnection();
+                Statement stmt = conn.createStatement()) {
             stmt.execute("INSERT INTO SIMPLE (VALUE) VALUES ('Hello, world!')");
-            stmt.close();
             conn.commit();
-        } finally {
-            conn.close();
         }
         assertThat(h2.count("SIMPLE"), is(1));
     }
@@ -80,7 +76,7 @@ public class JdbcProfileTest {
      */
     @Test
     public void convert_all() throws Exception {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put(JdbcProfile.KEY_DRIVER, org.h2.Driver.class.getName());
         map.put(JdbcProfile.KEY_URL, h2.getJdbcUrl());
         map.put(JdbcProfile.KEY_USER, "");
@@ -98,7 +94,7 @@ public class JdbcProfileTest {
         assertThat(profile.getBatchGetUnit(), is(5000));
         assertThat(profile.getBatchPutUnit(), is(10000L));
 
-        Map<String, String> extra = new HashMap<String, String>();
+        Map<String, String> extra = new HashMap<>();
         extra.put("hello1", "world1");
         extra.put("hello2", "world2");
         extra.put("hello3", "world3");
@@ -106,14 +102,10 @@ public class JdbcProfileTest {
 
         assertThat(profile.getTruncateStatement("HELLO").trim(), startsWith("DELETE"));
 
-        Connection conn = profile.openConnection();
-        try {
-            Statement stmt = conn.createStatement();
+        try (Connection conn = profile.openConnection();
+                Statement stmt = conn.createStatement()) {
             stmt.execute("INSERT INTO SIMPLE (VALUE) VALUES ('Hello, world!')");
-            stmt.close();
             conn.commit();
-        } finally {
-            conn.close();
         }
         assertThat(h2.count("SIMPLE"), is(1));
     }
@@ -124,7 +116,7 @@ public class JdbcProfileTest {
      */
     @Test
     public void convert_parameterized() throws Exception {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put(JdbcProfile.KEY_DRIVER, VariableTable.toVariable(JdbcProfile.KEY_DRIVER));
         map.put(JdbcProfile.KEY_URL, VariableTable.toVariable(JdbcProfile.KEY_URL));
         map.put(JdbcProfile.KEY_USER, VariableTable.toVariable(JdbcProfile.KEY_USER));
@@ -138,7 +130,7 @@ public class JdbcProfileTest {
         map.put(JdbcProfile.KEY_PREFIX_PROPERTIES + "hello2", VariableTable.toVariable(JdbcProfile.KEY_PREFIX_PROPERTIES + "hello2"));
         map.put(JdbcProfile.KEY_PREFIX_PROPERTIES + "hello3", VariableTable.toVariable(JdbcProfile.KEY_PREFIX_PROPERTIES + "hello3"));
 
-        Map<String, String> parameters = new HashMap<String, String>();
+        Map<String, String> parameters = new HashMap<>();
         parameters.put(JdbcProfile.KEY_DRIVER, org.h2.Driver.class.getName());
         parameters.put(JdbcProfile.KEY_URL, h2.getJdbcUrl());
         parameters.put(JdbcProfile.KEY_USER, "");
@@ -156,7 +148,7 @@ public class JdbcProfileTest {
         assertThat(profile.getBatchGetUnit(), is(5000));
         assertThat(profile.getBatchPutUnit(), is(10000L));
 
-        Map<String, String> extra = new HashMap<String, String>();
+        Map<String, String> extra = new HashMap<>();
         extra.put("hello1", "world1");
         extra.put("hello2", "world2");
         extra.put("hello3", "world3");
@@ -164,14 +156,10 @@ public class JdbcProfileTest {
 
         assertThat(profile.getTruncateStatement("HELLO").trim(), startsWith("DELETE"));
 
-        Connection conn = profile.openConnection();
-        try {
-            Statement stmt = conn.createStatement();
+        try (Connection conn = profile.openConnection();
+                Statement stmt = conn.createStatement()) {
             stmt.execute("INSERT INTO SIMPLE (VALUE) VALUES ('Hello, world!')");
-            stmt.close();
             conn.commit();
-        } finally {
-            conn.close();
         }
         assertThat(h2.count("SIMPLE"), is(1));
     }
@@ -182,7 +170,7 @@ public class JdbcProfileTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void convert_empty() throws Exception {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         JdbcProfile.convert(toProfile(map));
     }
 
@@ -192,7 +180,7 @@ public class JdbcProfileTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void convert_negative_batchPutUnit() throws Exception {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put(JdbcProfile.KEY_DRIVER, org.h2.Driver.class.getName());
         map.put(JdbcProfile.KEY_URL, h2.getJdbcUrl());
         map.put(JdbcProfile.KEY_BATCH_PUT_UNIT, "-1");
@@ -205,7 +193,7 @@ public class JdbcProfileTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void convert_invalid_batchPutUnit() throws Exception {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put(JdbcProfile.KEY_DRIVER, org.h2.Driver.class.getName());
         map.put(JdbcProfile.KEY_URL, h2.getJdbcUrl());
         map.put(JdbcProfile.KEY_BATCH_PUT_UNIT, "Hello, world!");
@@ -218,12 +206,13 @@ public class JdbcProfileTest {
      */
     @Test(expected = Exception.class)
     public void openConnection_invalid_driver() throws Exception {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put(JdbcProfile.KEY_DRIVER, ".INVALID");
         map.put(JdbcProfile.KEY_URL, h2.getJdbcUrl());
         JdbcProfile profile = JdbcProfile.convert(toProfile(map));
-        Connection conn = profile.openConnection();
-        conn.close();
+        try (Connection conn = profile.openConnection()) {
+            // do nothing
+        }
     }
 
     /**
@@ -232,12 +221,13 @@ public class JdbcProfileTest {
      */
     @Test(expected = Exception.class)
     public void openConnection_invalid_url() throws Exception {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put(JdbcProfile.KEY_DRIVER, org.h2.Driver.class.getName());
         map.put(JdbcProfile.KEY_URL, ".INVALID");
         JdbcProfile profile = JdbcProfile.convert(toProfile(map));
-        Connection conn = profile.openConnection();
-        conn.close();
+        try (Connection conn = profile.openConnection()) {
+            // do nothing
+        }
     }
 
     private ResourceProfile toProfile(Map<String, String> map) {

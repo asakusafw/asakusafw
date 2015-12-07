@@ -82,7 +82,7 @@ public class StageInput {
         this.pathString = pathString;
         this.formatClass = (Class<? extends InputFormat<?, ?>>) formatClass;
         this.mapperClass = (Class<? extends Mapper<?, ?, ?, ?>>) mapperClass;
-        this.attributes = Collections.unmodifiableMap(new TreeMap<String, String>(attributes));
+        this.attributes = Collections.unmodifiableMap(new TreeMap<>(attributes));
     }
 
     /**

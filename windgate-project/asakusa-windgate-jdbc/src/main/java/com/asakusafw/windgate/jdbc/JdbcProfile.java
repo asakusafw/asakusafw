@@ -272,7 +272,7 @@ public class JdbcProfile {
         Map<String, String> raw = PropertiesUtil.createPrefixMap(
                 profile.getConfiguration(),
                 KEY_PREFIX_PROPERTIES);
-        Map<String, String> results = new HashMap<String, String>();
+        Map<String, String> results = new HashMap<>();
         for (Map.Entry<String, String> entry : raw.entrySet()) {
             String value = resolve(profile, KEY_PREFIX_PROPERTIES + entry.getKey(), entry.getValue());
             results.put(entry.getKey(), value);

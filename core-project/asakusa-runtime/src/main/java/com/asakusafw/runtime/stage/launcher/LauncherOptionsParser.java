@@ -140,9 +140,9 @@ public final class LauncherOptionsParser {
 
     private final List<String> arguments;
 
-    private final Set<Object> applicationResources = new HashSet<Object>();
+    private final Set<Object> applicationResources = new HashSet<>();
 
-    private final Set<File> applicationCacheFiles = new HashSet<File>();
+    private final Set<File> applicationCacheFiles = new HashSet<>();
 
     private LauncherOptionsParser(Configuration configuration, String[] args) {
         this.configuration = configuration;
@@ -173,7 +173,7 @@ public final class LauncherOptionsParser {
     }
 
     private LauncherOptions analyze() throws IOException, InterruptedException {
-        LinkedList<String> copy = new LinkedList<String>(arguments);
+        LinkedList<String> copy = new LinkedList<>(arguments);
         String applicationClassName = consumeApplicationClassName(copy);
         List<Path> libraryPaths = consumeLibraryPaths(copy);
         GenericOptionsParser genericOptions = processGenericOptions(copy);
@@ -200,7 +200,7 @@ public final class LauncherOptionsParser {
         if (names.isEmpty()) {
             return Collections.emptyList();
         }
-        List<Path> results = new ArrayList<Path>();
+        List<Path> results = new ArrayList<>();
         LocalFileSystem local = FileSystem.getLocal(configuration);
         for (String name : names) {
             Path path = new Path(name);
@@ -220,7 +220,7 @@ public final class LauncherOptionsParser {
     }
 
     private List<String> consumeLibraryNames(LinkedList<String> rest) {
-        List<String> results = new ArrayList<String>();
+        List<String> results = new ArrayList<>();
         for (Iterator<String> iter = rest.iterator(); iter.hasNext();) {
             String token = iter.next();
             if (token.equals(KEY_ARG_LIBRARIES)) {
@@ -268,8 +268,8 @@ public final class LauncherOptionsParser {
             return Collections.emptyList();
         }
         Map<Path, Path> resolved = processLibraryCache(libraryPaths);
-        List<URL> localUrls = new ArrayList<URL>();
-        List<Path> remotePaths = new ArrayList<Path>();
+        List<URL> localUrls = new ArrayList<>();
+        List<Path> remotePaths = new ArrayList<>();
         for (Path path : libraryPaths) {
             URI uri = path.toUri();
             assert uri.getScheme() != null;
@@ -325,13 +325,8 @@ public final class LauncherOptionsParser {
     }
 
     private boolean isInclude(File file, String className) {
-        try {
-            ZipFile zip = new ZipFile(file);
-            try {
-                return zip.getEntry(className.replace('.', '/') + ".class") != null; //$NON-NLS-1$
-            } finally {
-                zip.close();
-            }
+        try (ZipFile zip = new ZipFile(file)) {
+            return zip.getEntry(className.replace('.', '/') + ".class") != null; //$NON-NLS-1$
         } catch (Exception e) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(

@@ -35,8 +35,7 @@ import com.asakusafw.testdriver.rule.ValuePredicate;
  */
 class ExcelSheetRuleExtensionRepository implements ExcelSheetRuleExtension {
 
-    private static final Map<ClassLoader, Reference<ExcelSheetRuleExtensionRepository>> CACHE =
-            new WeakHashMap<ClassLoader, Reference<ExcelSheetRuleExtensionRepository>>();
+    private static final Map<ClassLoader, Reference<ExcelSheetRuleExtensionRepository>> CACHE = new WeakHashMap<>();
 
     /**
      * Returns a {@link ExcelSheetRuleExtensionRepository} for the target context.
@@ -61,16 +60,16 @@ class ExcelSheetRuleExtensionRepository implements ExcelSheetRuleExtension {
     static void setCached(VerifyContext context, ExcelSheetRuleExtensionRepository repository) {
         Reference<ExcelSheetRuleExtensionRepository> ref;
         if (repository.getClass().getClassLoader() == ClassLoader.getSystemClassLoader()) {
-            ref = new SoftReference<ExcelSheetRuleExtensionRepository>(repository);
+            ref = new SoftReference<>(repository);
         } else {
-            ref = new WeakReference<ExcelSheetRuleExtensionRepository>(repository);
+            ref = new WeakReference<>(repository);
         }
         CACHE.put(context.getTestContext().getClassLoader(), ref);
     }
 
     private static ExcelSheetRuleExtensionRepository newInstance(VerifyContext context) {
         ClassLoader classLoader = context.getTestContext().getClassLoader();
-        List<ExcelSheetRuleExtension> extensions = new ArrayList<ExcelSheetRuleExtension>();
+        List<ExcelSheetRuleExtension> extensions = new ArrayList<>();
         for (ExcelSheetRuleExtension extension : ServiceLoader.load(ExcelSheetRuleExtension.class, classLoader)) {
             extensions.add(extension);
         }

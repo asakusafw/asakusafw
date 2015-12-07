@@ -26,7 +26,7 @@ import java.util.Map;
  */
 public class MockVerifyRuleProvider implements VerifyRuleProvider {
 
-    private final Map<URI, VerifyRule> rules = new HashMap<URI, VerifyRule>();
+    private final Map<URI, VerifyRule> rules = new HashMap<>();
 
     /**
      * Creates a new instance includes {@code default:rule=<perfect matcher>}.

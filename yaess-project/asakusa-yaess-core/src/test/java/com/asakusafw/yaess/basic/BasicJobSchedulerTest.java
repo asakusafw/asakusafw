@@ -54,13 +54,13 @@ public class BasicJobSchedulerTest {
      */
     @Test
     public void simple() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         ServiceProfile<JobScheduler> profile = new ServiceProfile<JobScheduler>(
                 "testing", BasicJobScheduler.class, conf, ProfileContext.system(getClass().getClassLoader()));
 
         JobScheduler instance = profile.newInstance();
 
-        List<Mock> jobs = new ArrayList<Mock>();
+        List<Mock> jobs = new ArrayList<>();
         jobs.add(new Mock("a"));
         instance.execute(PhaseMonitor.NULL, CONTEXT, jobs, JobScheduler.STRICT);
         Set<String> rest = collectRest(jobs);
@@ -73,13 +73,13 @@ public class BasicJobSchedulerTest {
      */
     @Test
     public void multiple() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         ServiceProfile<JobScheduler> profile = new ServiceProfile<JobScheduler>(
                 "testing", BasicJobScheduler.class, conf, ProfileContext.system(getClass().getClassLoader()));
 
         JobScheduler instance = profile.newInstance();
 
-        List<Mock> jobs = new ArrayList<Mock>();
+        List<Mock> jobs = new ArrayList<>();
         jobs.add(new Mock("a"));
         jobs.add(new Mock("b"));
         jobs.add(new Mock("c"));
@@ -94,14 +94,14 @@ public class BasicJobSchedulerTest {
      */
     @Test
     public void dependencies() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         ServiceProfile<JobScheduler> profile = new ServiceProfile<JobScheduler>(
                 "testing", BasicJobScheduler.class, conf, ProfileContext.system(getClass().getClassLoader()));
 
         JobScheduler instance = profile.newInstance();
 
         AtomicInteger group = new AtomicInteger();
-        List<Mock> jobs = new ArrayList<Mock>();
+        List<Mock> jobs = new ArrayList<>();
         jobs.add(new Mock(group, "b", "a"));
         jobs.add(new Mock(group, "d", "b", "c"));
         jobs.add(new Mock(group, "a"));
@@ -122,14 +122,14 @@ public class BasicJobSchedulerTest {
      */
     @Test
     public void cyclic() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         ServiceProfile<JobScheduler> profile = new ServiceProfile<JobScheduler>(
                 "testing", BasicJobScheduler.class, conf, ProfileContext.system(getClass().getClassLoader()));
 
         JobScheduler instance = profile.newInstance();
 
         AtomicInteger group = new AtomicInteger();
-        List<Mock> jobs = new ArrayList<Mock>();
+        List<Mock> jobs = new ArrayList<>();
         jobs.add(new Mock(group, "a"));
         jobs.add(new Mock(group, "b", "a", "d"));
         jobs.add(new Mock(group, "c", "b"));
@@ -155,13 +155,13 @@ public class BasicJobSchedulerTest {
      */
     @Test
     public void fail_job() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         ServiceProfile<JobScheduler> profile = new ServiceProfile<JobScheduler>(
                 "testing", BasicJobScheduler.class, conf, ProfileContext.system(getClass().getClassLoader()));
 
         JobScheduler instance = profile.newInstance();
 
-        List<Mock> jobs = new ArrayList<Mock>();
+        List<Mock> jobs = new ArrayList<>();
         jobs.add(new Mock("a") {
             @Override
             protected void hook() throws IOException {
@@ -184,13 +184,13 @@ public class BasicJobSchedulerTest {
      */
     @Test
     public void fail_besteffort() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         ServiceProfile<JobScheduler> profile = new ServiceProfile<JobScheduler>(
                 "testing", BasicJobScheduler.class, conf, ProfileContext.system(getClass().getClassLoader()));
 
         JobScheduler instance = profile.newInstance();
 
-        List<Mock> jobs = new ArrayList<Mock>();
+        List<Mock> jobs = new ArrayList<>();
         jobs.add(new Mock("a") {
             @Override
             protected void hook() throws IOException {
@@ -215,13 +215,13 @@ public class BasicJobSchedulerTest {
      */
     @Test
     public void fail_stuck() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         ServiceProfile<JobScheduler> profile = new ServiceProfile<JobScheduler>(
                 "testing", BasicJobScheduler.class, conf, ProfileContext.system(getClass().getClassLoader()));
 
         JobScheduler instance = profile.newInstance();
 
-        List<Mock> jobs = new ArrayList<Mock>();
+        List<Mock> jobs = new ArrayList<>();
         jobs.add(new Mock("a") {
             @Override
             protected void hook() throws IOException {
@@ -251,7 +251,7 @@ public class BasicJobSchedulerTest {
     }
 
     private Set<String> collectRest(List<Mock> jobs) {
-        Set<String> results = new HashSet<String>();
+        Set<String> results = new HashSet<>();
         for (Mock mock : jobs) {
             if (mock.executed == false) {
                 results.add(mock.id);
@@ -281,7 +281,7 @@ public class BasicJobSchedulerTest {
             assert blockers != null;
             this.counter = c;
             this.id = id;
-            this.blockers = new HashSet<String>(Arrays.asList(blockers));
+            this.blockers = new HashSet<>(Arrays.asList(blockers));
         }
 
         @Override

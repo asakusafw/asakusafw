@@ -103,7 +103,7 @@ public class EmulatorUtilsTest {
     }
 
     private Set<String> normalize(Iterable<File> paths) throws IOException {
-        Set<String> results = new HashSet<String>();
+        Set<String> results = new HashSet<>();
         for (File file : paths) {
             results.add(file.getCanonicalPath());
         }
@@ -111,14 +111,9 @@ public class EmulatorUtilsTest {
     }
 
     private void deploy(String source, File dest) {
-        InputStream in = getClass().getResourceAsStream(source);
-        assertThat(in, is(notNullValue()));
-        try {
-            try {
-                framework.dump(in, dest);
-            } finally {
-                in.close();
-            }
+        try (InputStream in = getClass().getResourceAsStream(source)) {
+            assertThat(in, is(notNullValue()));
+            framework.dump(in, dest);
         } catch (IOException e) {
             throw new AssertionError(e);
         }

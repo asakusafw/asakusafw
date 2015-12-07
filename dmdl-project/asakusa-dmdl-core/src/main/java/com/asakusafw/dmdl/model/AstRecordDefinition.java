@@ -39,9 +39,7 @@ public class AstRecordDefinition extends AbstractAstNode implements AstRecord {
      * @param properties the property definitions
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public AstRecordDefinition(
-            Region region,
-            List<AstPropertyDefinition> properties) {
+    public AstRecordDefinition(Region region, List<AstPropertyDefinition> properties) {
         this.region = region;
         this.properties = Lists.freeze(properties);
     }

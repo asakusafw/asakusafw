@@ -29,7 +29,7 @@ import com.asakusafw.utils.java.model.util.Emitter;
  */
 public class VolatileEmitter extends Emitter {
 
-    private final List<VolatileJavaFile> emitted = new ArrayList<VolatileJavaFile>();
+    private final List<VolatileJavaFile> emitted = new ArrayList<>();
 
     @Override
     public PrintWriter openFor(

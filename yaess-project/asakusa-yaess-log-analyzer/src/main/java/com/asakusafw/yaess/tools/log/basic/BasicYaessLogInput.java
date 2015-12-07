@@ -43,7 +43,7 @@ public class BasicYaessLogInput implements YaessLogInput {
 
     @Override
     public Map<String, String> getOptionsInformation() {
-        Map<String, String> results = new LinkedHashMap<String, String>();
+        Map<String, String> results = new LinkedHashMap<>();
         results.put(KEY_FILE, "source log file");
         results.put(KEY_ENCODING, "source log file encoding (optional)");
         return results;

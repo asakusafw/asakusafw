@@ -324,17 +324,17 @@ public class QueueHadoopScriptHandler extends ExecutionScriptHandlerBase impleme
         result.setFlowId(context.getFlowId());
         result.setExecutionId(context.getExecutionId());
         result.setPhase(context.getPhase());
-        result.setArguments(new HashMap<String, String>(context.getArguments()));
+        result.setArguments(new HashMap<>(context.getArguments()));
         result.setStageId(script.getId());
         result.setMainClassName(script.getClassName());
 
-        Map<String, String> props = new HashMap<String, String>();
+        Map<String, String> props = new HashMap<>();
         props.putAll(getProperties(context, script));
         props.putAll(script.getHadoopProperties());
         props.put(HadoopScriptUtil.PROP_TRACKING_ID, Job.computeTrackingId(context, script));
         result.setProperties(props);
 
-        Map<String, String> env = new HashMap<String, String>();
+        Map<String, String> env = new HashMap<>();
         // NOTE: Handler has only dummy environment variables
         // env.putAll(getEnvironmentVariables(context, script));
         env.putAll(context.getEnvironmentVariables());

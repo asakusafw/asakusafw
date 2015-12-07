@@ -47,7 +47,7 @@ public class ParamBlockParser extends AcceptableJavadocBlockParser {
 
     @Override
     public IrDocBlock parse(String tag, JavadocScanner scanner) throws JavadocParseException {
-        ArrayList<IrDocFragment> fragments = new ArrayList<IrDocFragment>();
+        ArrayList<IrDocFragment> fragments = new ArrayList<>();
 
         IrDocSimpleName name = fetchSimpleName(scanner);
         if (name != null) {

@@ -70,7 +70,7 @@ public abstract class ExecutionScriptHandlerDispatcher<T extends ExecutionScript
 
     private volatile File confDirectory;
 
-    private volatile Reference<Map<String, Properties>> confCache = new SoftReference<Map<String, Properties>>(null);
+    private volatile Reference<Map<String, Properties>> confCache = new SoftReference<>(null);
 
     private volatile Map<String, ExecutionScriptHandler<T>> delegations;
 
@@ -154,7 +154,7 @@ public abstract class ExecutionScriptHandlerDispatcher<T extends ExecutionScript
             properties.setProperty(key, value);
         }
 
-        Map<String, ExecutionScriptHandler<T>> results = new HashMap<String, ExecutionScriptHandler<T>>();
+        Map<String, ExecutionScriptHandler<T>> results = new HashMap<>();
         for (String key : keys) {
             String subPrefix = profile.getPrefix() + "." + key;
             ServiceProfile<? extends ExecutionScriptHandler<T>> subProfile;
@@ -257,8 +257,8 @@ public abstract class ExecutionScriptHandlerDispatcher<T extends ExecutionScript
         synchronized (this) {
             cached = confCache.get();
             if (cached == null) {
-                cached = new HashMap<String, Properties>();
-                confCache = new SoftReference<Map<String, Properties>>(cached);
+                cached = new HashMap<>();
+                confCache = new SoftReference<>(cached);
             }
             cached.put(context.getBatchId(), batchConf);
         }
@@ -275,15 +275,10 @@ public abstract class ExecutionScriptHandlerDispatcher<T extends ExecutionScript
             return null;
         }
         LOG.debug("Loading multidispatch configuration file: batchId={}, file={}", context.getBatchId(), file);
-        try {
-            InputStream in = new FileInputStream(file);
-            try {
-                Properties properties = new Properties();
-                properties.load(in);
-                return properties;
-            } finally {
-                in.close();
-            }
+        try (InputStream in = new FileInputStream(file)) {
+            Properties properties = new Properties();
+            properties.load(in);
+            return properties;
         } catch (IOException e) {
             YSLOG.error(e, "E01001",
                     context.getBatchId(),

@@ -46,7 +46,7 @@ public class JsonObjectDriverTest {
      */
     @Test
     public void simple() throws Exception {
-        DataModelDefinition<Simple> def = new SimpleDataModelDefinition<Simple>(Simple.class);
+        DataModelDefinition<Simple> def = new SimpleDataModelDefinition<>(Simple.class);
         JsonObject json = new JsonObject();
         json.addProperty("number", 100);
         json.addProperty("text", "Hello, world!");
@@ -64,7 +64,7 @@ public class JsonObjectDriverTest {
      */
     @Test
     public void invalid_property() throws Exception {
-        DataModelDefinition<Simple> def = new SimpleDataModelDefinition<Simple>(Simple.class);
+        DataModelDefinition<Simple> def = new SimpleDataModelDefinition<>(Simple.class);
         JsonObject json = new JsonObject();
         json.addProperty("invalid", 100);
         json.addProperty("text", "Hello, world!");
@@ -82,7 +82,7 @@ public class JsonObjectDriverTest {
      */
     @Test(expected = IOException.class)
     public void inconsistent_type() throws Exception {
-        DataModelDefinition<Simple> def = new SimpleDataModelDefinition<Simple>(Simple.class);
+        DataModelDefinition<Simple> def = new SimpleDataModelDefinition<>(Simple.class);
         JsonObject json = new JsonObject();
         json.addProperty("number", "QQQ");
         json.addProperty("text", "Hello, world!");
@@ -96,7 +96,7 @@ public class JsonObjectDriverTest {
      */
     @Test
     public void types() throws Exception {
-        DataModelDefinition<Simple> def = new SimpleDataModelDefinition<Simple>(Simple.class);
+        DataModelDefinition<Simple> def = new SimpleDataModelDefinition<>(Simple.class);
         JsonObject json = new JsonObject();
         json.addProperty("boolean_value", true);
         json.addProperty("byte_value", (byte) 100);

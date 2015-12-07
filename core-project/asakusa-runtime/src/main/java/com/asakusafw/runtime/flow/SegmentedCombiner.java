@@ -45,10 +45,7 @@ public abstract class SegmentedCombiner<
     protected abstract Rendezvous<VALUE> getRendezvous(KEY key);
 
     @Override
-    protected void reduce(
-            KEY key,
-            Iterable<VALUE> values,
-            Context context) throws IOException, InterruptedException {
+    protected void reduce(KEY key, Iterable<VALUE> values, Context context) throws IOException, InterruptedException {
         Iterator<VALUE> iter = values.iterator();
         if (iter.hasNext() == false) {
             // may not occur

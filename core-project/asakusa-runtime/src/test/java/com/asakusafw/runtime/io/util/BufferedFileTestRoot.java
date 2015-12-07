@@ -58,7 +58,7 @@ public class BufferedFileTestRoot {
         }
     };
 
-    final List<Closeable> closeables = new ArrayList<Closeable>();
+    final List<Closeable> closeables = new ArrayList<>();
 
     /**
      * Manages the target resource.

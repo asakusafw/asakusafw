@@ -48,8 +48,9 @@ public class MockJavadocBlockParser extends JavadocBlockParser {
         this.acceptable = null;
     }
 
+    @SafeVarargs
     private static <T> List<T> list(T t, T...rest) {
-        List<T> list = new ArrayList<T>(rest.length + 1);
+        List<T> list = new ArrayList<>(rest.length + 1);
         list.add(t);
         for (T r: rest) {
             list.add(r);

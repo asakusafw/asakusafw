@@ -168,7 +168,7 @@ public class SequenceFileFormatEmitter extends JavaDataModelDriver {
         }
 
         private List<TypeBodyDeclaration> createMembers() {
-            List<TypeBodyDeclaration> results = new ArrayList<TypeBodyDeclaration>();
+            List<TypeBodyDeclaration> results = new ArrayList<>();
             results.add(createGetSupportedType());
             results.add(createCreateKeyObject());
             results.add(createCreateValueObject());

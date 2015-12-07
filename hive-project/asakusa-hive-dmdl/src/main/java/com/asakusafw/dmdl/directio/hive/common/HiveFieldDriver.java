@@ -53,10 +53,7 @@ public class HiveFieldDriver extends PropertyAttributeDriver {
     }
 
     @Override
-    public void process(
-            DmdlSemantics environment,
-            PropertyDeclaration declaration,
-            AstAttribute attribute) {
+    public void process(DmdlSemantics environment, PropertyDeclaration declaration, AstAttribute attribute) {
         HiveFieldTrait trait = HiveFieldTrait.get(declaration);
         trait.setOriginalAst(attribute, true);
         Map<String, AstAttributeElement> elements = AttributeUtil.getElementMap(attribute);

@@ -102,7 +102,7 @@ public class JavadocConverter {
         assert comment != null;
         Mapper mapper = new Mapper(factory, offset);
 
-        List<DocBlock> blocks = new ArrayList<DocBlock>();
+        List<DocBlock> blocks = new ArrayList<>();
         for (IrDocBlock block : comment.getBlocks()) {
             blocks.add((DocBlock) block.accept(mapper, null));
         }
@@ -125,7 +125,7 @@ public class JavadocConverter {
         @Override
         public DocElement visitBlock(IrDocBlock elem, Void context) {
             String tag = elem.getTag();
-            List<DocElement> elements = new ArrayList<DocElement>();
+            List<DocElement> elements = new ArrayList<>();
             for (IrDocFragment f : elem.getFragments()) {
                 elements.add(f.accept(this, null));
             }
@@ -162,7 +162,7 @@ public class JavadocConverter {
         public DocElement visitMethod(IrDocMethod elem, Void context) {
             Type type = declaring(elem.getDeclaringType());
             SimpleName name = (SimpleName) elem.getName().accept(this, null);
-            List<DocMethodParameter> params = new ArrayList<DocMethodParameter>();
+            List<DocMethodParameter> params = new ArrayList<>();
             for (IrDocMethodParameter p : elem.getParameters()) {
                 params.add(convert(p));
             }

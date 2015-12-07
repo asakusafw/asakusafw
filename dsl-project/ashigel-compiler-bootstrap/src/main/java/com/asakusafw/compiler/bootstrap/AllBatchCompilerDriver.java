@@ -165,8 +165,7 @@ public final class AllBatchCompilerDriver {
         boolean succeeded = true;
         try {
             ResourceRepository scanner = getScanner(new File(scanPath));
-            Cursor cursor = scanner.createCursor();
-            try {
+            try (Cursor cursor = scanner.createCursor()) {
                 while (cursor.next()) {
                     Location location = cursor.getLocation();
                     Class<? extends BatchDescription> batchDescription = getBatchDescription(location, includePattern);
@@ -189,8 +188,6 @@ public final class AllBatchCompilerDriver {
                         }
                     }
                 }
-            } finally {
-                cursor.close();
             }
         } catch (Exception e) {
             LOG.error(MessageFormat.format(

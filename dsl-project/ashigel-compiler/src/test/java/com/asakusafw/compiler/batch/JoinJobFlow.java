@@ -74,7 +74,7 @@ public class JoinJobFlow extends FlowDescription {
 
         @Override
         public Set<String> getPaths() {
-            return new HashSet<String>(Arrays.asList(
+            return new HashSet<>(Arrays.asList(
                     "target/testing/sequencefile/second/out-*",
                     "target/testing/sequencefile/side/out-*"));
         }

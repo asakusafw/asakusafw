@@ -109,7 +109,7 @@ public final class RuntimeContext {
      */
     public static final String KEY_RUNTIME_VERSION = "_ASAKUSA_RUNTIME_VERSION"; //$NON-NLS-1$
 
-    private static final AtomicReference<RuntimeContext> GLOBAL =  new AtomicReference<RuntimeContext>(DEFAULT);
+    private static final AtomicReference<RuntimeContext> GLOBAL =  new AtomicReference<>(DEFAULT);
 
     private final String batchId;
 
@@ -121,10 +121,7 @@ public final class RuntimeContext {
         this(ExecutionMode.PRODUCTION, null, null);
     }
 
-    private RuntimeContext(
-            ExecutionMode mode,
-            String batchId,
-            String verificationCode) {
+    private RuntimeContext(ExecutionMode mode, String batchId, String verificationCode) {
         assert mode != null;
         this.mode = mode;
         this.batchId = batchId;
@@ -235,7 +232,7 @@ public final class RuntimeContext {
      * @see #apply(Map)
      */
     public Map<String, String> unapply() {
-        Map<String, String> results = new HashMap<String, String>();
+        Map<String, String> results = new HashMap<>();
         put(results, KEY_EXECUTION_MODE, mode.getSymbol());
         put(results, KEY_BATCH_ID, batchId);
         put(results, KEY_BUILD_ID, buildId);
@@ -307,11 +304,8 @@ public final class RuntimeContext {
                     LOG.fine(MessageFormat.format("Loading application info: {0}", url)); //$NON-NLS-1$
                 }
                 Properties properties = new Properties();
-                InputStream in = url.openStream();
-                try {
+                try (InputStream in = url.openStream()) {
                     properties.load(in);
-                } finally {
-                    in.close();
                 }
                 verifyRuntime(url, properties);
                 verified |= verifyBuildId(url, properties);

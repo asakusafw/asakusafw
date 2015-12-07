@@ -65,7 +65,7 @@ public class VerifyRuleInterpretor implements VerifyRule {
 
     @Override
     public Map<PropertyName, Object> getKey(DataModelReflection target) {
-        Map<PropertyName, Object> results = new LinkedHashMap<PropertyName, Object>();
+        Map<PropertyName, Object> results = new LinkedHashMap<>();
         for (PropertyName name : keys) {
             results.put(name, target.getValue(name));
         }
@@ -99,7 +99,7 @@ public class VerifyRuleInterpretor implements VerifyRule {
     }
 
     private Object checkProperties(DataModelReflection expected, DataModelReflection actual) {
-        List<String> differences = new ArrayList<String>(1);
+        List<String> differences = new ArrayList<>(1);
         for (PropertyCondition<?> condition : propertyConditions) {
             Object e = expected.getValue(condition.getPropertyName());
             Object a = actual.getValue(condition.getPropertyName());

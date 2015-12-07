@@ -86,7 +86,7 @@ public class StageOutputDriver {
 
     private static Map<String, ResultOutput<?>> prepareSinks(TaskInputOutputContext<?, ?, ?, ?> context) {
         assert context != null;
-        Map<String, ResultOutput<?>> results = new HashMap<String, ResultOutput<?>>();
+        Map<String, ResultOutput<?>> results = new HashMap<>();
         Configuration conf = context.getConfiguration();
         for (String name : conf.getStringCollection(K_NAMES)) {
             results.put(name, null);
@@ -178,7 +178,7 @@ public class StageOutputDriver {
     private List<Counter> getCounters(String name) {
         assert name != null;
         try {
-            List<Counter> results = new ArrayList<Counter>();
+            List<Counter> results = new ArrayList<>();
             results.add(JobCompatibility.getTaskOutputRecordCounter(context));
             results.add(context.getCounter(COUNTER_GROUP, name));
             return results;
@@ -196,7 +196,7 @@ public class StageOutputDriver {
         assert name != null;
         assert valueClass != null;
         assert counters != null;
-        TemporaryOutputFormat<?> format = new TemporaryOutputFormat<Object>();
+        TemporaryOutputFormat<?> format = new TemporaryOutputFormat<>();
         RecordWriter<?, ?> writer = format.createRecordWriter(context, name, valueClass);
         return new ResultOutput<Writable>(context, writer, counters);
     }
@@ -264,8 +264,8 @@ public class StageOutputDriver {
         if (outputList == null) {
             throw new IllegalArgumentException("outputList must not be null"); //$NON-NLS-1$
         }
-        List<StageOutput> brigeOutputs = new ArrayList<StageOutput>();
-        List<StageOutput> normalOutputs = new ArrayList<StageOutput>();
+        List<StageOutput> brigeOutputs = new ArrayList<>();
+        List<StageOutput> normalOutputs = new ArrayList<>();
         boolean sawFileOutput = false;
         boolean sawTemporaryOutput = false;
         for (StageOutput output : outputList) {
@@ -313,7 +313,7 @@ public class StageOutputDriver {
                     name));
         }
         Configuration conf = job.getConfiguration();
-        Set<String> names = new TreeSet<String>(conf.getStringCollection(K_NAMES));
+        Set<String> names = new TreeSet<>(conf.getStringCollection(K_NAMES));
         if (names.contains(name)) {
             throw new IllegalArgumentException(MessageFormat.format(
                     "Output name \"{0}\" is already declared",

@@ -119,7 +119,7 @@ public class LineOutputTest {
      */
     @Test
     public void large() throws Exception {
-        List<String> lines = new ArrayList<String>();
+        List<String> lines = new ArrayList<>();
         for (int i = 0; i <= LineConfiguration.DEFAULT_BUFFER_SIZE; i++) {
             lines.add(String.valueOf(i));
         }
@@ -148,8 +148,7 @@ public class LineOutputTest {
     private byte[] dump(String[] lines) throws IOException {
         LineConfiguration conf = new LineConfiguration().withCharset(charset);
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        ModelOutput<StringOption> output = LineOutput.newInstance(bytes, "testing", conf);
-        try {
+        try (ModelOutput<StringOption> output = LineOutput.newInstance(bytes, "testing", conf)) {
             StringOption buf = new StringOption();
             for (String line : lines) {
                 if (line == null) {
@@ -159,23 +158,18 @@ public class LineOutputTest {
                 }
                 output.write(buf);
             }
-        } finally {
-            output.close();
         }
         return bytes.toByteArray();
     }
 
     private List<String> restore(byte[] bytes) {
-        Scanner scanner = new Scanner(new InputStreamReader(new ByteArrayInputStream(bytes), charset));
-        try {
-            List<String> results = new ArrayList<String>();
+        try (Scanner scanner = new Scanner(new InputStreamReader(new ByteArrayInputStream(bytes), charset))) {
+            List<String> results = new ArrayList<>();
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
                 results.add(line);
             }
             return results;
-        } finally {
-            scanner.close();
         }
     }
 }

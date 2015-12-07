@@ -112,7 +112,7 @@ public class AstQualifiedName extends AbstractAstNode implements AstName {
 
     @Override
     public String toString() {
-        LinkedList<AstSimpleName> names = new LinkedList<AstSimpleName>();
+        LinkedList<AstSimpleName> names = new LinkedList<>();
         AstName current = this;
         while (current.getQualifier() != null) {
             names.addFirst(current.getSimpleName());

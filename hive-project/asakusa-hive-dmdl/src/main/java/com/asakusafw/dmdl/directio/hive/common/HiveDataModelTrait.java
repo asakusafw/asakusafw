@@ -26,7 +26,7 @@ import com.asakusafw.dmdl.semantics.ModelDeclaration;
  */
 public class HiveDataModelTrait extends BaseTrait<HiveDataModelTrait> {
 
-    private final List<Namer> dataFormatNamer = new ArrayList<Namer>();
+    private final List<Namer> dataFormatNamer = new ArrayList<>();
 
     /**
      * Returns the {@link HiveDataModelTrait} for the target data model declaration.

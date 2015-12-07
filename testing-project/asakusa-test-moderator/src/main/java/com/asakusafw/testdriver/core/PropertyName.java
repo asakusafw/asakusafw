@@ -70,7 +70,7 @@ public final class PropertyName implements Comparable<PropertyName>, Serializabl
 
     private static List<String> normalize(List<String> words) {
         assert words != null;
-        List<String> results = new ArrayList<String>(words.size());
+        List<String> results = new ArrayList<>(words.size());
         Iterator<String> iter = words.iterator();
         assert iter.hasNext();
         String last = iter.next();
@@ -102,7 +102,7 @@ public final class PropertyName implements Comparable<PropertyName>, Serializabl
         if (words.isEmpty()) {
             throw new IllegalArgumentException("words must not be empty"); //$NON-NLS-1$
         }
-        List<String> work = new ArrayList<String>(words.size());
+        List<String> work = new ArrayList<>(words.size());
         for (String w : words) {
             work.add(normalize(w));
         }

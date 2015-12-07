@@ -45,8 +45,8 @@ public class VerifyEngine {
             throw new IllegalArgumentException("rule must not be null"); //$NON-NLS-1$
         }
         this.rule = rule;
-        this.expectedRest = new LinkedHashMap<Object, DataModelReflection>();
-        this.sawActual = new HashMap<Object, DataModelReflection>();
+        this.expectedRest = new LinkedHashMap<>();
+        this.sawActual = new HashMap<>();
     }
 
     /**
@@ -117,7 +117,7 @@ public class VerifyEngine {
         if (input == null) {
             throw new IllegalArgumentException("input must not be null"); //$NON-NLS-1$
         }
-        List<Difference> results = new ArrayList<Difference>();
+        List<Difference> results = new ArrayList<>();
         try {
             while (true) {
                 DataModelReflection actual = input.next();
@@ -163,7 +163,7 @@ public class VerifyEngine {
      * @see #inspectInput(DataModelSource)
      */
     public List<Difference> inspectRest() {
-        List<Difference> results = new ArrayList<Difference>();
+        List<Difference> results = new ArrayList<>();
         for (Map.Entry<Object, DataModelReflection> entry : expectedRest.entrySet()) {
             Difference diff = verify(entry.getKey(), entry.getValue(), null);
             if (diff != null) {

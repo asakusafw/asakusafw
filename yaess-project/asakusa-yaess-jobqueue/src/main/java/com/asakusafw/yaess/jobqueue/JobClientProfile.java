@@ -92,7 +92,7 @@ public class JobClientProfile {
             throw new IllegalArgumentException("pollingInterval must be >= 0"); //$NON-NLS-1$
         }
         this.prefix = prefix;
-        this.clients = Collections.unmodifiableList(new ArrayList<JobClient>(clients));
+        this.clients = Collections.unmodifiableList(new ArrayList<>(clients));
         this.timeout = timeout;
         this.pollingInterval = pollingInterval;
     }
@@ -139,7 +139,7 @@ public class JobClientProfile {
         if (profile == null) {
             throw new IllegalArgumentException("profile must not be null"); //$NON-NLS-1$
         }
-        Map<String, String> conf = new HashMap<String, String>(profile.getConfiguration());
+        Map<String, String> conf = new HashMap<>(profile.getConfiguration());
         conf.remove(ExecutionScriptHandler.KEY_RESOURCE);
         removeKeyPrefix(conf, ExecutionScriptHandler.KEY_PROP_PREFIX);
         long timeout = extractLong(profile, conf, KEY_TIMEOUT, DEFAULT_TIMEOUT);
@@ -195,7 +195,7 @@ public class JobClientProfile {
             Map<String, String> conf) {
         assert profile != null;
         Set<String> keys = PropertiesUtil.getChildKeys(conf, "", ".");
-        Map<Integer, JobClient> results = new TreeMap<Integer, JobClient>();
+        Map<Integer, JobClient> results = new TreeMap<>();
         for (String key : keys) {
             if (isClientPrefix(key) == false) {
                 throw new IllegalArgumentException(MessageFormat.format(
@@ -222,7 +222,7 @@ public class JobClientProfile {
                 results.put(number, new HttpJobClient(url, user, password));
             }
         }
-        return new ArrayList<JobClient>(results.values());
+        return new ArrayList<>(results.values());
     }
 
     private static String resolve(

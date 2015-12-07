@@ -110,7 +110,7 @@ public enum StringValueDrivers implements ParquetValueDriver {
 
         static final Map<Class<?>, StringValueDrivers> FROM_CLASS;
         static {
-            Map<Class<?>, StringValueDrivers> map = new HashMap<Class<?>, StringValueDrivers>();
+            Map<Class<?>, StringValueDrivers> map = new HashMap<>();
             for (StringValueDrivers element : StringValueDrivers.values()) {
                 map.put(element.valueOptionClass, element);
             }

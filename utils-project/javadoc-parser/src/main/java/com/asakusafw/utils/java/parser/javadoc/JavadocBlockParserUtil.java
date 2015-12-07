@@ -89,7 +89,7 @@ public final class JavadocBlockParserUtil {
 
     private static final Map<String, IrBasicTypeKind> BASIC_TYPE_NAMES;
     static {
-        Map<String, IrBasicTypeKind> map = new HashMap<String, IrBasicTypeKind>();
+        Map<String, IrBasicTypeKind> map = new HashMap<>();
         for (IrBasicTypeKind k : IrBasicTypeKind.values()) {
             map.put(k.getSymbol().intern(), k);
         }
@@ -227,7 +227,7 @@ public final class JavadocBlockParserUtil {
         }
 
         IrLocation blockLocation = new IrLocation(startPos, endPos - startPos);
-        DefaultJavadocScanner blockScanner = new DefaultJavadocScanner(new ArrayList<JavadocToken>(
+        DefaultJavadocScanner blockScanner = new DefaultJavadocScanner(new ArrayList<>(
                 scanner.getTokens().subList(startIndex, stopIndex)), endPos);
 
         scanner.consume(offset + blockEnd);
@@ -487,7 +487,7 @@ public final class JavadocBlockParserUtil {
             }
             parameters = Collections.emptyList();
         } else {
-            parameters = new ArrayList<IrDocMethodParameter>();
+            parameters = new ArrayList<>();
             parameters.add(first);
             while (true) {
                 delim = stream.nextToken();
@@ -749,7 +749,7 @@ public final class JavadocBlockParserUtil {
                 return Collections.emptyList();
             }
         }
-        List<JavadocToken> tokens = new ArrayList<JavadocToken>(rest);
+        List<JavadocToken> tokens = new ArrayList<>(rest);
         for (int i = 0; i < rest; i++) {
             JavadocToken t = scanner.nextToken();
             if (t.getKind() == JavadocTokenKind.EOF) {

@@ -144,7 +144,7 @@ public interface ExecutionScript {
 
             static final Map<String, Kind> SYMBOLS;
             static {
-                Map<String, Kind> map = new HashMap<String, Kind>();
+                Map<String, Kind> map = new HashMap<>();
                 for (Kind phase : values()) {
                     map.put(phase.getSymbol(), phase);
                 }
@@ -194,7 +194,7 @@ public interface ExecutionScript {
             if (handler == null) {
                 throw new IllegalArgumentException("handler must not be null"); //$NON-NLS-1$
             }
-            replacements = new HashMap<String, String>();
+            replacements = new HashMap<>();
             replacements.put(PLACEHOLDER_HOME, getAsakusaHomePath(context, script, handler));
             replacements.put(PLACEHOLDER_EXECUTION_ID, context.getExecutionId());
             replacements.put(PLACEHOLDER_ARGUMENTS, context.getArgumentsAsString());

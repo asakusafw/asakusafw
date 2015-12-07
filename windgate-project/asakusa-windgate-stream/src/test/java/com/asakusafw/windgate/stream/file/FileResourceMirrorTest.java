@@ -70,14 +70,11 @@ public class FileResourceMirrorTest {
      */
     @Test
     public void prepare() throws Exception {
-        FileResourceMirror resource = new FileResourceMirror(profile(), new ParameterList());
-        try {
+        try (FileResourceMirror resource = new FileResourceMirror(profile(), new ParameterList())) {
             ProcessScript<StringBuilder> a = process("a", driver("source"), dummy());
             ProcessScript<StringBuilder> b = process("b", dummy(), driver("drain"));
             GateScript gate = script(a, b);
             resource.prepare(gate);
-        } finally {
-            resource.close();
         }
     }
 
@@ -87,15 +84,12 @@ public class FileResourceMirrorTest {
      */
     @Test(expected = IOException.class)
     public void prepare_invalid_variable() throws Exception {
-        FileResourceMirror resource = new FileResourceMirror(profile(), new ParameterList());
-        try {
+        try (FileResourceMirror resource = new FileResourceMirror(profile(), new ParameterList())) {
             ProcessScript<StringBuilder> a = process("a", driver("${invalid_var}"), dummy());
             ProcessScript<StringBuilder> b = process("b", dummy(), driver("drain"));
             GateScript gate = script(a, b);
             resource.prepare(gate);
             fail();
-        } finally {
-            resource.close();
         }
     }
 
@@ -105,18 +99,14 @@ public class FileResourceMirrorTest {
      */
     @Test(expected = IOException.class)
     public void prepare_invalid_source() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         DriverScript driverScript = new DriverScript("file", conf);
-
-        FileResourceMirror resource = new FileResourceMirror(profile(), new ParameterList());
-        try {
+        try (FileResourceMirror resource = new FileResourceMirror(profile(), new ParameterList())) {
             ProcessScript<StringBuilder> a = process("a", driverScript, dummy());
             ProcessScript<StringBuilder> b = process("b", dummy(), driver("drain"));
             GateScript gate = script(a, b);
             resource.prepare(gate);
             fail();
-        } finally {
-            resource.close();
         }
     }
 
@@ -126,18 +116,14 @@ public class FileResourceMirrorTest {
      */
     @Test(expected = IOException.class)
     public void prepare_invalid_drain() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         DriverScript driverScript = new DriverScript("file", conf);
-
-        FileResourceMirror resource = new FileResourceMirror(profile(), new ParameterList());
-        try {
+        try (FileResourceMirror resource = new FileResourceMirror(profile(), new ParameterList())) {
             ProcessScript<StringBuilder> a = process("a", driver("source"), dummy());
             ProcessScript<StringBuilder> b = process("b", dummy(), driverScript);
             GateScript gate = script(a, b);
             resource.prepare(gate);
             fail();
-        } finally {
-            resource.close();
         }
     }
 
@@ -149,21 +135,13 @@ public class FileResourceMirrorTest {
     public void source() throws Exception {
         File file = folder.newFile("file");
         put(file, "Hello, world!");
-
-        FileResourceMirror resource = new FileResourceMirror(profile(), new ParameterList());
-        try {
+        try (FileResourceMirror resource = new FileResourceMirror(profile(), new ParameterList())) {
             ProcessScript<StringBuilder> process = process("a", driver(file.getName()), dummy());
             resource.prepare(script(process));
-
-            SourceDriver<StringBuilder> driver = resource.createSource(process);
-            try {
+            try (SourceDriver<StringBuilder> driver = resource.createSource(process)) {
                 driver.prepare();
                 test(driver, "Hello, world!");
-            } finally {
-                driver.close();
             }
-        } finally {
-            resource.close();
         }
     }
 
@@ -175,23 +153,15 @@ public class FileResourceMirrorTest {
     public void source_parameterized() throws Exception {
         File file = folder.newFile("file");
         put(file, "Hello, world!");
-
-        FileResourceMirror resource = new FileResourceMirror(
+        try (FileResourceMirror resource = new FileResourceMirror(
                 profile(),
-                new ParameterList(Collections.singletonMap("var", file.getName())));
-        try {
+                new ParameterList(Collections.singletonMap("var", file.getName())))) {
             ProcessScript<StringBuilder> process = process("a", driver("${var}"), dummy());
             resource.prepare(script(process));
-
-            SourceDriver<StringBuilder> driver = resource.createSource(process);
-            try {
+            try (SourceDriver<StringBuilder> driver = resource.createSource(process)) {
                 driver.prepare();
                 test(driver, "Hello, world!");
-            } finally {
-                driver.close();
             }
-        } finally {
-            resource.close();
         }
     }
 
@@ -204,20 +174,13 @@ public class FileResourceMirrorTest {
         File file = folder.newFile("file");
         put(file, "Hello1, world!", "Hello2, world!", "Hello3, world!");
 
-        FileResourceMirror resource = new FileResourceMirror(profile(), new ParameterList());
-        try {
+        try (FileResourceMirror resource = new FileResourceMirror(profile(), new ParameterList())) {
             ProcessScript<StringBuilder> process = process("a", driver(file.getName()), dummy());
             resource.prepare(script(process));
-
-            SourceDriver<StringBuilder> driver = resource.createSource(process);
-            try {
+            try (SourceDriver<StringBuilder> driver = resource.createSource(process)) {
                 driver.prepare();
                 test(driver, "Hello1, world!", "Hello2, world!", "Hello3, world!");
-            } finally {
-                driver.close();
             }
-        } finally {
-            resource.close();
         }
     }
 
@@ -230,20 +193,13 @@ public class FileResourceMirrorTest {
         File file = folder.newFile("file");
         Assume.assumeTrue(file.delete());
 
-        FileResourceMirror resource = new FileResourceMirror(profile(), new ParameterList());
-        try {
+        try (FileResourceMirror resource = new FileResourceMirror(profile(), new ParameterList())) {
             ProcessScript<StringBuilder> process = process("a", driver(file.getName()), dummy());
             resource.prepare(script(process));
-
-            SourceDriver<StringBuilder> driver = resource.createSource(process);
-            try {
+            try (SourceDriver<StringBuilder> driver = resource.createSource(process)) {
                 driver.prepare();
                 test(driver, "Hello, world!");
-            } finally {
-                driver.close();
             }
-        } finally {
-            resource.close();
         }
     }
 
@@ -258,21 +214,13 @@ public class FileResourceMirrorTest {
         File file = folder.newFile("file");
         file.delete();
 
-        FileResourceMirror resource = new FileResourceMirror(profile(), new ParameterList());
-        try {
+        try (FileResourceMirror resource = new FileResourceMirror(profile(), new ParameterList())) {
             assertThat(RuntimeContext.get().canExecute(resource), is(true));
-
             ProcessScript<StringBuilder> process = process("a", driver(file.getName()), dummy());
             resource.prepare(script(process));
-
-            SourceDriver<StringBuilder> driver = resource.createSource(process);
-            try {
+            try (SourceDriver<StringBuilder> driver = resource.createSource(process)) {
                 assertThat(RuntimeContext.get().canExecute(driver), is(false));
-            } finally {
-                driver.close();
             }
-        } finally {
-            resource.close();
         }
     }
 
@@ -283,20 +231,13 @@ public class FileResourceMirrorTest {
     @Test
     public void drain() throws Exception {
         File file = folder.newFile("file");
-        FileResourceMirror resource = new FileResourceMirror(profile(), new ParameterList());
-        try {
+        try (FileResourceMirror resource = new FileResourceMirror(profile(), new ParameterList())) {
             ProcessScript<StringBuilder> process = process("a", dummy(), driver(file.getName()));
             resource.prepare(script(process));
-
-            DrainDriver<StringBuilder> driver = resource.createDrain(process);
-            try {
+            try (DrainDriver<StringBuilder> driver = resource.createDrain(process)) {
                 driver.prepare();
                 driver.put(new StringBuilder("Hello, world!"));
-            } finally {
-                driver.close();
             }
-        } finally {
-            resource.close();
         }
         test(file, "Hello, world!");
     }
@@ -308,22 +249,15 @@ public class FileResourceMirrorTest {
     @Test
     public void drain_parameterized() throws Exception {
         File file = folder.newFile("file");
-        FileResourceMirror resource = new FileResourceMirror(
+        try (FileResourceMirror resource = new FileResourceMirror(
                 profile(),
-                new ParameterList(Collections.singletonMap("var", file.getName())));
-        try {
+                new ParameterList(Collections.singletonMap("var", file.getName())))) {
             ProcessScript<StringBuilder> process = process("a", dummy(), driver("${var}"));
             resource.prepare(script(process));
-
-            DrainDriver<StringBuilder> driver = resource.createDrain(process);
-            try {
+            try (DrainDriver<StringBuilder> driver = resource.createDrain(process)) {
                 driver.prepare();
                 driver.put(new StringBuilder("Hello, world!"));
-            } finally {
-                driver.close();
             }
-        } finally {
-            resource.close();
         }
         test(file, "Hello, world!");
     }
@@ -338,20 +272,13 @@ public class FileResourceMirrorTest {
         Assume.assumeTrue(parent.delete());
         File file = new File(parent, "file");
 
-        FileResourceMirror resource = new FileResourceMirror(profile(), new ParameterList());
-        try {
+        try (FileResourceMirror resource = new FileResourceMirror(profile(), new ParameterList())) {
             ProcessScript<StringBuilder> process = process("a", dummy(), driver("parent/file"));
             resource.prepare(script(process));
-
-            DrainDriver<StringBuilder> driver = resource.createDrain(process);
-            try {
+            try (DrainDriver<StringBuilder> driver = resource.createDrain(process)) {
                 driver.prepare();
                 driver.put(new StringBuilder("Hello, world!"));
-            } finally {
-                driver.close();
             }
-        } finally {
-            resource.close();
         }
         test(file, "Hello, world!");
     }
@@ -363,22 +290,15 @@ public class FileResourceMirrorTest {
     @Test
     public void drain_multi() throws Exception {
         File file = folder.newFile("file");
-        FileResourceMirror resource = new FileResourceMirror(profile(), new ParameterList());
-        try {
+        try (FileResourceMirror resource = new FileResourceMirror(profile(), new ParameterList())) {
             ProcessScript<StringBuilder> process = process("a", dummy(), driver(file.getName()));
             resource.prepare(script(process));
-
-            DrainDriver<StringBuilder> driver = resource.createDrain(process);
-            try {
+            try (DrainDriver<StringBuilder> driver = resource.createDrain(process)) {
                 driver.prepare();
                 driver.put(new StringBuilder("Hello1, world!"));
                 driver.put(new StringBuilder("Hello2, world!"));
                 driver.put(new StringBuilder("Hello3, world!"));
-            } finally {
-                driver.close();
             }
-        } finally {
-            resource.close();
         }
         test(file, "Hello1, world!", "Hello2, world!", "Hello3, world!");
     }
@@ -391,20 +311,13 @@ public class FileResourceMirrorTest {
     public void drain_invalid() throws Exception {
         File file = folder.newFolder("file");
 
-        FileResourceMirror resource = new FileResourceMirror(profile(), new ParameterList());
-        try {
+        try (FileResourceMirror resource = new FileResourceMirror(profile(), new ParameterList())) {
             ProcessScript<StringBuilder> process = process("a", dummy(), driver(file.getName()));
             resource.prepare(script(process));
-
-            DrainDriver<StringBuilder> driver = resource.createDrain(process);
-            try {
+            try (DrainDriver<StringBuilder> driver = resource.createDrain(process)) {
                 driver.prepare();
                 driver.put(new StringBuilder("Hello, world!"));
-            } finally {
-                driver.close();
             }
-        } finally {
-            resource.close();
         }
     }
 
@@ -419,37 +332,27 @@ public class FileResourceMirrorTest {
         File file = folder.newFile("file");
         file.delete();
 
-        FileResourceMirror resource = new FileResourceMirror(profile(), new ParameterList());
-        try {
+        try (FileResourceMirror resource = new FileResourceMirror(profile(), new ParameterList())) {
             assertThat(RuntimeContext.get().canExecute(resource), is(true));
             ProcessScript<StringBuilder> process = process("a", dummy(), driver(file.getName()));
             resource.prepare(script(process));
-
-            DrainDriver<StringBuilder> driver = resource.createDrain(process);
-            try {
+            try (DrainDriver<StringBuilder> driver = resource.createDrain(process)) {
                 assertThat(RuntimeContext.get().canExecute(driver), is(false));
-            } finally {
-                driver.close();
             }
-        } finally {
-            resource.close();
         }
         assertThat(file.exists(), is(false));
     }
 
     private void put(File file, String... lines) throws IOException {
-        PrintWriter writer = new PrintWriter(file.getAbsolutePath(), "UTF-8");
-        try {
+        try (PrintWriter writer = new PrintWriter(file.getAbsolutePath(), "UTF-8")) {
             for (String line : lines) {
                 writer.println(line);
             }
-        } finally {
-            writer.close();
         }
     }
 
     private void test(SourceDriver<StringBuilder> source, String... expected) throws IOException {
-        List<String> actual = new ArrayList<String>();
+        List<String> actual = new ArrayList<>();
         while (source.next()) {
             StringBuilder pair = source.get();
             actual.add(pair.toString());
@@ -460,12 +363,12 @@ public class FileResourceMirrorTest {
     }
 
     private void test(File file, String... expected) throws IOException {
-        List<String> actual = new ArrayList<String>();
-        Scanner scanner = new Scanner(file, "UTF-8");
-        while (scanner.hasNextLine()) {
-            actual.add(scanner.nextLine());
+        List<String> actual = new ArrayList<>();
+        try (Scanner scanner = new Scanner(file, "UTF-8")) {
+            while (scanner.hasNextLine()) {
+                actual.add(scanner.nextLine());
+            }
         }
-        scanner.close();
         Collections.sort(actual);
         Arrays.sort(expected);
         assertThat(actual, is(Arrays.asList(expected)));
@@ -476,7 +379,7 @@ public class FileResourceMirrorTest {
     }
 
     private ProcessScript<StringBuilder> process(String name, DriverScript source, DriverScript drain) {
-        return new ProcessScript<StringBuilder>(
+        return new ProcessScript<>(
                 name,
                 "dummy",
                 StringBuilder.class,
@@ -486,7 +389,7 @@ public class FileResourceMirrorTest {
     }
 
     private DriverScript driver(String file) {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(FileProcess.FILE.key(), file);
         conf.put(StreamProcess.STREAM_SUPPORT.key(), StringBuilderSupport.class.getName());
         return new DriverScript("file", conf);

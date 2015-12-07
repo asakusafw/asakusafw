@@ -39,7 +39,7 @@ public class ReflectionTypeMapper extends ReflectionTypeVisitor<Type, ModelFacto
 
     private static final Map<Class<?>, BasicTypeKind> BASIC_TYPES;
     static {
-        Map<Class<?>, BasicTypeKind> map = new HashMap<Class<?>, BasicTypeKind>();
+        Map<Class<?>, BasicTypeKind> map = new HashMap<>();
         for (BasicTypeKind kind : BasicTypeKind.values()) {
             map.put(kind.getJavaRepresentation(), kind);
         }
@@ -78,7 +78,7 @@ public class ReflectionTypeMapper extends ReflectionTypeVisitor<Type, ModelFacto
                 enclosing,
                 context.newSimpleName(((Class<?>) rawType).getSimpleName()));
         }
-        List<Type> typeArguments = new ArrayList<Type>();
+        List<Type> typeArguments = new ArrayList<>();
         for (java.lang.reflect.Type t : type.getActualTypeArguments()) {
             typeArguments.add(dispatch(t, context));
         }

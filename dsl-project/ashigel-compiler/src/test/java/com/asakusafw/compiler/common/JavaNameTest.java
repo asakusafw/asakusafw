@@ -177,7 +177,8 @@ public class JavaNameTest {
         assertThat(name.getSegments(), contains("one", "two", "three", "four", "five"));
     }
 
-    private <T> Matcher<? super List<T>> contains(T... values) {
+    @SafeVarargs
+    private static <T> Matcher<? super List<T>> contains(T... values) {
         return is(Arrays.asList(values));
     }
 }

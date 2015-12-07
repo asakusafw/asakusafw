@@ -65,7 +65,7 @@ public class DataModelReflection implements Serializable {
 
     private static Map<PropertyName, ?> normalize(Map<PropertyName, ?> properties) {
         assert properties != null;
-        Map<PropertyName, Object> results = new LinkedHashMap<PropertyName, Object>();
+        Map<PropertyName, Object> results = new LinkedHashMap<>();
         for (Map.Entry<PropertyName, ?> entry : properties.entrySet()) {
             if (entry.getKey() != null) {
                 results.put(entry.getKey(), entry.getValue());

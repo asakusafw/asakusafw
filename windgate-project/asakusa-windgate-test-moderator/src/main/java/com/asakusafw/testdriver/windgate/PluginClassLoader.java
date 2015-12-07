@@ -36,9 +36,9 @@ import java.util.WeakHashMap;
  */
 public class PluginClassLoader extends URLClassLoader {
 
-    private static final Map<Class<?>, byte[]> CACHE_CLASS_BYTES = new WeakHashMap<Class<?>, byte[]>();
+    private static final Map<Class<?>, byte[]> CACHE_CLASS_BYTES = new WeakHashMap<>();
 
-    private final Map<String, Class<?>> directLoaded = new HashMap<String, Class<?>>();
+    private final Map<String, Class<?>> directLoaded = new HashMap<>();
 
     /**
      * Creates a new instance.
@@ -111,16 +111,15 @@ public class PluginClassLoader extends URLClassLoader {
             }
         }
         ClassLoader cl = aClass.getClassLoader();
-        InputStream input = cl.getResourceAsStream(aClass.getName().replace('.', '/') + ".class"); //$NON-NLS-1$
-        if (input == null) {
-            throw new FileNotFoundException(MessageFormat.format(
-                    Messages.getString("PluginClassLoader.errorFailedToLoadClassBytes"), //$NON-NLS-1$
-                    aClass.getName()));
-        }
+        String path = aClass.getName().replace('.', '/') + ".class"; //$NON-NLS-1$
         byte[] results;
-        try {
-            ByteArrayOutputStream output = new ByteArrayOutputStream();
-            try {
+        try (InputStream input = cl.getResourceAsStream(path)) {
+            if (input == null) {
+                throw new FileNotFoundException(MessageFormat.format(
+                        Messages.getString("PluginClassLoader.errorFailedToLoadClassBytes"), //$NON-NLS-1$
+                        aClass.getName()));
+            }
+            try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
                 byte[] buf = new byte[256];
                 while (true) {
                     int read = input.read(buf);
@@ -129,12 +128,8 @@ public class PluginClassLoader extends URLClassLoader {
                     }
                     output.write(buf, 0, read);
                 }
-            } finally {
-                output.close();
+                results = output.toByteArray();
             }
-            results = output.toByteArray();
-        } finally {
-            input.close();
         }
         synchronized (CACHE_CLASS_BYTES) {
             CACHE_CLASS_BYTES.put(aClass, results);

@@ -19,7 +19,6 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URI;
@@ -274,14 +273,10 @@ public abstract class DmdlTesterRoot {
                 uri = null;
             }
 
-            InputStream in = url.openStream();
-            try {
-                Reader r = new InputStreamReader(in, "UTF-8");
+            try (Reader r = new InputStreamReader(url.openStream(), "UTF-8");) {
                 DmdlParser parser = new DmdlParser();
                 AstScript script = parser.parse(r, uri);
                 return script;
-            } finally {
-                in.close();
             }
         } catch (IOException e) {
             throw new AssertionError();

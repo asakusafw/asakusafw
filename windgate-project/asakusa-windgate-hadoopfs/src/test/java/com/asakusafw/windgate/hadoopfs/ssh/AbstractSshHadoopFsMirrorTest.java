@@ -110,19 +110,13 @@ public class AbstractSshHadoopFsMirrorTest {
         stdOut = folder.newFile("stdout");
         exit = 0;
 
-        MockSshHadoopFsMirror resource = new MockSshHadoopFsMirror(new Configuration(), profile, new ParameterList());
-        try {
+        try (MockSshHadoopFsMirror resource = new MockSshHadoopFsMirror(new Configuration(), profile, new ParameterList())) {
             ProcessScript<Text> proc = p("p", "INVALID", "", "dummy", "testing");
             resource.prepare(script(proc));
-            DrainDriver<Text> driver = resource.createDrain(proc);
-            try {
+            try (DrainDriver<Text> driver = resource.createDrain(proc)) {
                 driver.prepare();
                 driver.put(new Text("Hello, world!"));
-            } finally {
-                driver.close();
             }
-        } finally {
-            resource.close();
         }
 
         assertThat(lastCommand, is(Arrays.asList("put")));
@@ -141,22 +135,16 @@ public class AbstractSshHadoopFsMirrorTest {
         stdOut = folder.newFile("stdout");
         exit = 0;
 
-        MockSshHadoopFsMirror resource = new MockSshHadoopFsMirror(
+        try (MockSshHadoopFsMirror resource = new MockSshHadoopFsMirror(
                 new Configuration(),
                 profile,
-                new ParameterList(Collections.singletonMap("var", "replacement")));
-        try {
+                new ParameterList(Collections.singletonMap("var", "replacement")))) {
             ProcessScript<Text> proc = p("p", "INVALID", "", "dummy", "testing-${var}");
             resource.prepare(script(proc));
-            DrainDriver<Text> driver = resource.createDrain(proc);
-            try {
+            try (DrainDriver<Text> driver = resource.createDrain(proc)) {
                 driver.prepare();
                 driver.put(new Text("Hello, world!"));
-            } finally {
-                driver.close();
             }
-        } finally {
-            resource.close();
         }
 
         assertThat(lastCommand, is(Arrays.asList("put")));
@@ -175,21 +163,15 @@ public class AbstractSshHadoopFsMirrorTest {
         stdOut = folder.newFile("stdout");
         exit = 0;
 
-        MockSshHadoopFsMirror resource = new MockSshHadoopFsMirror(new Configuration(), profile, new ParameterList());
-        try {
+        try (MockSshHadoopFsMirror resource = new MockSshHadoopFsMirror(new Configuration(), profile, new ParameterList())) {
             ProcessScript<Text> proc = p("p", "INVALID", "", "dummy", "testing");
             resource.prepare(script(proc));
-            DrainDriver<Text> driver = resource.createDrain(proc);
-            try {
+            try (DrainDriver<Text> driver = resource.createDrain(proc)) {
                 driver.prepare();
                 driver.put(new Text("Hello1, world!"));
                 driver.put(new Text("Hello2, world!"));
                 driver.put(new Text("Hello3, world!"));
-            } finally {
-                driver.close();
             }
-        } finally {
-            resource.close();
         }
 
         Map<String, List<String>> results = read(stdIn);
@@ -210,17 +192,15 @@ public class AbstractSshHadoopFsMirrorTest {
         stdOut = folder.newFile("stdout");
         exit = 0;
 
-        MockSshHadoopFsMirror resource = new MockSshHadoopFsMirror(new Configuration(), profile, new ParameterList());
-        try {
+        try (MockSshHadoopFsMirror resource = new MockSshHadoopFsMirror(new Configuration(), profile, new ParameterList())) {
             ProcessScript<Text> proc = p("p", "INVALID", "", "dummy", null);
             resource.prepare(script(proc));
-            DrainDriver<Text> driver = resource.createDrain(proc);
-            driver.close();
+            try (DrainDriver<Text> driver = resource.createDrain(proc)) {
+                // do nothing
+            }
             fail();
         } catch (IOException e) {
             // ok.
-        } finally {
-            resource.close();
         }
     }
 
@@ -234,17 +214,15 @@ public class AbstractSshHadoopFsMirrorTest {
         stdOut = folder.newFile("stdout");
         exit = 0;
 
-        MockSshHadoopFsMirror resource = new MockSshHadoopFsMirror(new Configuration(), profile, new ParameterList());
-        try {
+        try (MockSshHadoopFsMirror resource = new MockSshHadoopFsMirror(new Configuration(), profile, new ParameterList())) {
             ProcessScript<Text> proc = p("p", "INVALID", "", "dummy", "");
             resource.prepare(script(proc));
-            DrainDriver<Text> driver = resource.createDrain(proc);
-            driver.close();
+            try (DrainDriver<Text> driver = resource.createDrain(proc)) {
+                // do nothing
+            }
             fail();
         } catch (IOException e) {
             // ok.
-        } finally {
-            resource.close();
         }
     }
 
@@ -258,20 +236,18 @@ public class AbstractSshHadoopFsMirrorTest {
         stdOut = folder.newFile("stdout");
         exit = 0;
 
-        MockSshHadoopFsMirror resource = new MockSshHadoopFsMirror(
+        try (MockSshHadoopFsMirror resource = new MockSshHadoopFsMirror(
                 new Configuration(),
                 profile,
-                new ParameterList(Collections.singletonMap("var", "replacement")));
-        try {
+                new ParameterList(Collections.singletonMap("var", "replacement")))) {
             ProcessScript<Text> proc = p("p", "INVALID", "", "dummy", "testing-${INVALID}");
             resource.prepare(script(proc));
-            DrainDriver<Text> driver = resource.createDrain(proc);
-            driver.close();
+            try (DrainDriver<Text> driver = resource.createDrain(proc)) {
+                // do nothing
+            }
             fail();
         } catch (IOException e) {
             // ok.
-        } finally {
-            resource.close();
         }
     }
 
@@ -285,19 +261,13 @@ public class AbstractSshHadoopFsMirrorTest {
         stdOut = folder.newFile("stdout");
         exit = 1;
 
-        MockSshHadoopFsMirror resource = new MockSshHadoopFsMirror(new Configuration(), profile, new ParameterList());
-        try {
+        try (MockSshHadoopFsMirror resource = new MockSshHadoopFsMirror(new Configuration(), profile, new ParameterList())) {
             ProcessScript<Text> proc = p("p", "INVALID", "", "dummy", "testing");
             resource.prepare(script(proc));
-            DrainDriver<Text> driver = resource.createDrain(proc);
-            try {
+            try (DrainDriver<Text> driver = resource.createDrain(proc);) {
                 driver.prepare();
                 driver.put(new Text("Hello, world!"));
-            } finally {
-                driver.close();
             }
-        } finally {
-            resource.close();
         }
     }
 
@@ -314,21 +284,15 @@ public class AbstractSshHadoopFsMirrorTest {
         stdOut = folder.newFile("stdout");
         exit = 0;
 
-        MockSshHadoopFsMirror resource = new MockSshHadoopFsMirror(new Configuration(), profile, new ParameterList());
-        try {
+        try (MockSshHadoopFsMirror resource = new MockSshHadoopFsMirror(new Configuration(), profile, new ParameterList())) {
             assertThat(RuntimeContext.get().canExecute(resource), is(true));
             ProcessScript<Text> proc = p("p", "INVALID", "", "dummy", "testing");
             resource.prepare(script(proc));
-            DrainDriver<Text> driver = resource.createDrain(proc);
-            try {
+            try (DrainDriver<Text> driver = resource.createDrain(proc)) {
                 assertThat(RuntimeContext.get().canExecute(driver), is(true));
                 driver.prepare();
                 driver.put(new Text("Hello, world!"));
-            } finally {
-                driver.close();
             }
-        } finally {
-            resource.close();
         }
 
         assertThat(lastCommand, is(Arrays.asList("put")));
@@ -347,31 +311,21 @@ public class AbstractSshHadoopFsMirrorTest {
         stdOut = folder.newFile("stdout");
         exit = 0;
 
-        FileOutputStream output = new FileOutputStream(stdOut);
-        try {
-            FileList.Writer writer = FileList.createWriter(output);
+        try (FileOutputStream output = new FileOutputStream(stdOut);
+                FileList.Writer writer = FileList.createWriter(output)) {
             put(writer, "testing-1", "Hello, world!");
-            writer.close();
-        } finally {
-            output.close();
         }
 
-        List<String> results = new ArrayList<String>();
-        MockSshHadoopFsMirror resource = new MockSshHadoopFsMirror(new Configuration(), profile, new ParameterList());
-        try {
+        List<String> results = new ArrayList<>();
+        try (MockSshHadoopFsMirror resource = new MockSshHadoopFsMirror(new Configuration(), profile, new ParameterList())) {
             ProcessScript<Text> proc = p("p", "dummy", "testing-1", "INVALID", "");
             resource.prepare(script(proc));
-            SourceDriver<Text> driver = resource.createSource(proc);
-            try {
+            try (SourceDriver<Text> driver = resource.createSource(proc)) {
                 driver.prepare();
                 while (driver.next()) {
                     results.add(driver.get().toString());
                 }
-            } finally {
-                driver.close();
             }
-        } finally {
-            resource.close();
         }
         Collections.sort(results);
 
@@ -389,34 +343,24 @@ public class AbstractSshHadoopFsMirrorTest {
         stdOut = folder.newFile("stdout");
         exit = 0;
 
-        FileOutputStream output = new FileOutputStream(stdOut);
-        try {
-            FileList.Writer writer = FileList.createWriter(output);
+        try (FileOutputStream output = new FileOutputStream(stdOut);
+                FileList.Writer writer = FileList.createWriter(output)) {
             put(writer, "testing-replacement", "Hello, world!");
-            writer.close();
-        } finally {
-            output.close();
         }
 
-        List<String> results = new ArrayList<String>();
-        MockSshHadoopFsMirror resource = new MockSshHadoopFsMirror(
+        List<String> results = new ArrayList<>();
+        try (MockSshHadoopFsMirror resource = new MockSshHadoopFsMirror(
                 new Configuration(),
                 profile,
-                new ParameterList(Collections.singletonMap("var", "replacement")));
-        try {
+                new ParameterList(Collections.singletonMap("var", "replacement")))) {
             ProcessScript<Text> proc = p("p", "dummy", "testing-${var}", "INVALID", "");
             resource.prepare(script(proc));
-            SourceDriver<Text> driver = resource.createSource(proc);
-            try {
+            try (SourceDriver<Text> driver = resource.createSource(proc)) {
                 driver.prepare();
                 while (driver.next()) {
                     results.add(driver.get().toString());
                 }
-            } finally {
-                driver.close();
             }
-        } finally {
-            resource.close();
         }
         Collections.sort(results);
 
@@ -434,31 +378,21 @@ public class AbstractSshHadoopFsMirrorTest {
         stdOut = folder.newFile("stdout");
         exit = 0;
 
-        FileOutputStream output = new FileOutputStream(stdOut);
-        try {
-            FileList.Writer writer = FileList.createWriter(output);
+        try (FileOutputStream output = new FileOutputStream(stdOut);
+                FileList.Writer writer = FileList.createWriter(output)) {
             put(writer, "testing-1", "Hello1, world!", "Hello2, world!", "Hello3, world!");
-            writer.close();
-        } finally {
-            output.close();
         }
 
-        List<String> results = new ArrayList<String>();
-        MockSshHadoopFsMirror resource = new MockSshHadoopFsMirror(new Configuration(), profile, new ParameterList());
-        try {
+        List<String> results = new ArrayList<>();
+        try (MockSshHadoopFsMirror resource = new MockSshHadoopFsMirror(new Configuration(), profile, new ParameterList())) {
             ProcessScript<Text> proc = p("p", "dummy", "testing-1", "INVALID", "");
             resource.prepare(script(proc));
-            SourceDriver<Text> driver = resource.createSource(proc);
-            try {
+            try (SourceDriver<Text> driver = resource.createSource(proc)) {
                 driver.prepare();
                 while (driver.next()) {
                     results.add(driver.get().toString());
                 }
-            } finally {
-                driver.close();
             }
-        } finally {
-            resource.close();
         }
         Collections.sort(results);
 
@@ -476,33 +410,23 @@ public class AbstractSshHadoopFsMirrorTest {
         stdOut = folder.newFile("stdout");
         exit = 0;
 
-        FileOutputStream output = new FileOutputStream(stdOut);
-        try {
-            FileList.Writer writer = FileList.createWriter(output);
+        try (FileOutputStream output = new FileOutputStream(stdOut);
+                FileList.Writer writer = FileList.createWriter(output)) {
             put(writer, "testing-1", "Hello1, world!");
             put(writer, "testing-2", "Hello2, world!");
             put(writer, "testing-3", "Hello3, world!");
-            writer.close();
-        } finally {
-            output.close();
         }
 
-        List<String> results = new ArrayList<String>();
-        MockSshHadoopFsMirror resource = new MockSshHadoopFsMirror(new Configuration(), profile, new ParameterList());
-        try {
+        List<String> results = new ArrayList<>();
+        try (MockSshHadoopFsMirror resource = new MockSshHadoopFsMirror(new Configuration(), profile, new ParameterList())) {
             ProcessScript<Text> proc = p("p", "dummy", " testing-1 testing-2  testing-3 ", "INVALID", "");
             resource.prepare(script(proc));
-            SourceDriver<Text> driver = resource.createSource(proc);
-            try {
+            try (SourceDriver<Text> driver = resource.createSource(proc)) {
                 driver.prepare();
                 while (driver.next()) {
                     results.add(driver.get().toString());
                 }
-            } finally {
-                driver.close();
             }
-        } finally {
-            resource.close();
         }
         Collections.sort(results);
 
@@ -521,34 +445,25 @@ public class AbstractSshHadoopFsMirrorTest {
         stdOut = folder.newFile("stdout");
         exit = 0;
 
-        FileOutputStream output = new FileOutputStream(stdOut);
-        try {
+        try (FileOutputStream output = new FileOutputStream(stdOut)) {
             FileList.Writer writer = FileList.createWriter(output);
             put(writer, "testing-1", "Hello, world!");
-            // writer.close();
-        } finally {
-            output.close();
+            // FileList.Writer is not closed
         }
 
-        List<String> results = new ArrayList<String>();
-        MockSshHadoopFsMirror resource = new MockSshHadoopFsMirror(new Configuration(), profile, new ParameterList());
-        try {
+        List<String> results = new ArrayList<>();
+        try (MockSshHadoopFsMirror resource = new MockSshHadoopFsMirror(new Configuration(), profile, new ParameterList())) {
             ProcessScript<Text> proc = p("p", "dummy", "testing-1", "INVALID", "");
             resource.prepare(script(proc));
-            SourceDriver<Text> driver = resource.createSource(proc);
-            try {
+            try (SourceDriver<Text> driver = resource.createSource(proc)) {
                 driver.prepare();
                 while (driver.next()) {
                     results.add(driver.get().toString());
                 }
                 fail();
-            } finally {
-                driver.close();
             }
         } catch (IOException e) {
             // ok.
-        } finally {
-            resource.close();
         }
     }
 
@@ -562,34 +477,24 @@ public class AbstractSshHadoopFsMirrorTest {
         stdOut = folder.newFile("stdout");
         exit = 0;
 
-        FileOutputStream output = new FileOutputStream(stdOut);
-        try {
-            FileList.Writer writer = FileList.createWriter(output);
+        try (FileOutputStream output = new FileOutputStream(stdOut);
+                FileList.Writer writer = FileList.createWriter(output)) {
             put(writer, "testing-1", "Hello, world!");
-            // writer.close();
-        } finally {
-            output.close();
         }
 
-        List<String> results = new ArrayList<String>();
-        MockSshHadoopFsMirror resource = new MockSshHadoopFsMirror(new Configuration(), profile, new ParameterList());
-        try {
+        List<String> results = new ArrayList<>();
+        try (MockSshHadoopFsMirror resource = new MockSshHadoopFsMirror(new Configuration(), profile, new ParameterList())) {
             ProcessScript<Text> proc = p("p", "dummy", null, "INVALID", "");
             resource.prepare(script(proc));
-            SourceDriver<Text> driver = resource.createSource(proc);
-            try {
+            try (SourceDriver<Text> driver = resource.createSource(proc)) {
                 driver.prepare();
                 while (driver.next()) {
                     results.add(driver.get().toString());
                 }
                 fail();
-            } finally {
-                driver.close();
             }
         } catch (IOException e) {
             // ok.
-        } finally {
-            resource.close();
         }
     }
 
@@ -603,34 +508,24 @@ public class AbstractSshHadoopFsMirrorTest {
         stdOut = folder.newFile("stdout");
         exit = 0;
 
-        FileOutputStream output = new FileOutputStream(stdOut);
-        try {
-            FileList.Writer writer = FileList.createWriter(output);
+        try (FileOutputStream output = new FileOutputStream(stdOut);
+                FileList.Writer writer = FileList.createWriter(output)) {
             put(writer, "testing-1", "Hello, world!");
-            // writer.close();
-        } finally {
-            output.close();
         }
 
-        List<String> results = new ArrayList<String>();
-        MockSshHadoopFsMirror resource = new MockSshHadoopFsMirror(new Configuration(), profile, new ParameterList());
-        try {
+        List<String> results = new ArrayList<>();
+        try (MockSshHadoopFsMirror resource = new MockSshHadoopFsMirror(new Configuration(), profile, new ParameterList())) {
             ProcessScript<Text> proc = p("p", "dummy", "", "INVALID", "");
             resource.prepare(script(proc));
-            SourceDriver<Text> driver = resource.createSource(proc);
-            try {
+            try (SourceDriver<Text> driver = resource.createSource(proc)) {
                 driver.prepare();
                 while (driver.next()) {
                     results.add(driver.get().toString());
                 }
                 fail();
-            } finally {
-                driver.close();
             }
         } catch (IOException e) {
             // ok.
-        } finally {
-            resource.close();
         }
     }
 
@@ -644,31 +539,21 @@ public class AbstractSshHadoopFsMirrorTest {
         stdOut = folder.newFile("stdout");
         exit = 1;
 
-        FileOutputStream output = new FileOutputStream(stdOut);
-        try {
-            FileList.Writer writer = FileList.createWriter(output);
+        try (FileOutputStream output = new FileOutputStream(stdOut);
+                FileList.Writer writer = FileList.createWriter(output)) {
             put(writer, "testing-1", "Hello, world!");
-            writer.close();
-        } finally {
-            output.close();
         }
 
-        List<String> results = new ArrayList<String>();
-        MockSshHadoopFsMirror resource = new MockSshHadoopFsMirror(new Configuration(), profile, new ParameterList());
-        try {
+        List<String> results = new ArrayList<>();
+        try (MockSshHadoopFsMirror resource = new MockSshHadoopFsMirror(new Configuration(), profile, new ParameterList())) {
             ProcessScript<Text> proc = p("p", "dummy", "testing-1", "INVALID", "");
             resource.prepare(script(proc));
-            SourceDriver<Text> driver = resource.createSource(proc);
-            try {
+            try (SourceDriver<Text> driver = resource.createSource(proc)) {
                 driver.prepare();
                 while (driver.next()) {
                     results.add(driver.get().toString());
                 }
-            } finally {
-                driver.close();
             }
-        } finally {
-            resource.close();
         }
     }
 
@@ -685,33 +570,23 @@ public class AbstractSshHadoopFsMirrorTest {
         stdOut = folder.newFile("stdout");
         exit = 0;
 
-        FileOutputStream output = new FileOutputStream(stdOut);
-        try {
-            FileList.Writer writer = FileList.createWriter(output);
+        try (FileOutputStream output = new FileOutputStream(stdOut);
+                FileList.Writer writer = FileList.createWriter(output)) {
             put(writer, "testing-1", "Hello, world!");
-            writer.close();
-        } finally {
-            output.close();
         }
 
-        List<String> results = new ArrayList<String>();
-        MockSshHadoopFsMirror resource = new MockSshHadoopFsMirror(new Configuration(), profile, new ParameterList());
-        try {
+        List<String> results = new ArrayList<>();
+        try (MockSshHadoopFsMirror resource = new MockSshHadoopFsMirror(new Configuration(), profile, new ParameterList())) {
             assertThat(RuntimeContext.get().canExecute(resource), is(true));
             ProcessScript<Text> proc = p("p", "dummy", "testing-1", "INVALID", "");
             resource.prepare(script(proc));
-            SourceDriver<Text> driver = resource.createSource(proc);
-            try {
+            try (SourceDriver<Text> driver = resource.createSource(proc)) {
                 driver.prepare();
                 assertThat(RuntimeContext.get().canExecute(driver), is(true));
                 while (driver.next()) {
                     results.add(driver.get().toString());
                 }
-            } finally {
-                driver.close();
             }
-        } finally {
-            resource.close();
         }
         Collections.sort(results);
 
@@ -723,18 +598,14 @@ public class AbstractSshHadoopFsMirrorTest {
         Configuration conf = new Configuration();
         File temp = folder.newFile(path);
         FileSystem fs = FileSystem.getLocal(conf);
-        ModelOutput<Text> output = TemporaryStorage.openOutput(conf, Text.class, new Path(temp.toURI()));
-        try {
+        try (ModelOutput<Text> output = TemporaryStorage.openOutput(conf, Text.class, new Path(temp.toURI()))) {
             for (String content : contents) {
                 output.write(new Text(content));
             }
-        } finally {
-            output.close();
         }
         FileStatus status = fs.getFileStatus(new Path(temp.toURI()));
-        FSDataInputStream src = fs.open(status.getPath());
-        try {
-            OutputStream dst = writer.openNext(status.getPath());
+        try (FSDataInputStream src = fs.open(status.getPath());
+                OutputStream dst = writer.openNext(status.getPath())) {
             byte[] buf = new byte[256];
             while (true) {
                 int read = src.read(buf);
@@ -743,23 +614,18 @@ public class AbstractSshHadoopFsMirrorTest {
                 }
                 dst.write(buf, 0, read);
             }
-            dst.close();
-        } finally {
-            src.close();
         }
     }
 
     private Map<String, List<String>> read(File file) throws IOException {
-        List<File> files = new ArrayList<File>();
-        FileInputStream in = new FileInputStream(file);
-        try {
-            FileList.Reader reader = FileList.createReader(in);
+        List<File> files = new ArrayList<>();
+        try (FileInputStream in = new FileInputStream(file);
+                FileList.Reader reader = FileList.createReader(in)) {
             while (reader.next()) {
                 Path path = reader.getCurrentPath();
                 File entry = folder.newFile(path.getName());
-                FileOutputStream dst = new FileOutputStream(entry);
-                try {
-                    InputStream src = reader.openContent();
+                try (FileOutputStream dst = new FileOutputStream(entry);
+                        InputStream src = reader.openContent()) {
                     byte[] buf = new byte[256];
                     while (true) {
                         int read = src.read(buf);
@@ -768,28 +634,21 @@ public class AbstractSshHadoopFsMirrorTest {
                         }
                         dst.write(buf, 0, read);
                     }
-                } finally {
-                    dst.close();
                 }
                 files.add(entry);
             }
-        } finally {
-            in.close();
         }
 
         Configuration conf = new Configuration();
-        Map<String, List<String>> results = new HashMap<String, List<String>>();
+        Map<String, List<String>> results = new HashMap<>();
         Text text = new Text();
         for (File entry : files) {
-            List<String> lines = new ArrayList<String>();
+            List<String> lines = new ArrayList<>();
             results.put(entry.getName(), lines);
-            ModelInput<Text> input = TemporaryStorage.openInput(conf, Text.class, new Path(entry.toURI()));
-            try {
+            try (ModelInput<Text> input = TemporaryStorage.openInput(conf, Text.class, new Path(entry.toURI()))) {
                 while (input.readTo(text)) {
                     lines.add(text.toString());
                 }
-            } finally {
-                input.close();
             }
         }
         return results;
@@ -803,7 +662,7 @@ public class AbstractSshHadoopFsMirrorTest {
     private ProcessScript<Text> p(String name,
             String sourceName, String sourceFile,
             String drainName, String drainFile) {
-        return new ProcessScript<Text>(
+        return new ProcessScript<>(
                 name, "default", Text.class,
                 d(sourceName, sourceFile),
                 d(drainName, drainFile));

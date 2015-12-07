@@ -214,20 +214,16 @@ public class WindGateHadoopGetTest {
     }
 
     private void put(Path path, String string) throws IOException {
-        FSDataOutputStream out = fs.create(path, true);
-        try {
+        try (FSDataOutputStream out = fs.create(path, true)) {
             out.write(string.getBytes("UTF-8"));
-        } finally {
-            out.close();
         }
     }
 
     private Map<String, String> get(byte[] contents) throws IOException {
         FileList.Reader reader = FileList.createReader(new ByteArrayInputStream(contents));
-        Map<String, String> results = new HashMap<String, String>();
+        Map<String, String> results = new HashMap<>();
         while (reader.next()) {
-            InputStream f = reader.openContent();
-            try {
+            try (InputStream f = reader.openContent()) {
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 byte[] buf = new byte[256];
                 while (true) {
@@ -239,8 +235,6 @@ public class WindGateHadoopGetTest {
                 }
                 String result = new String(baos.toByteArray(), "UTF-8");
                 results.put(reader.getCurrentPath().getName(), result);
-            } finally {
-                f.close();
             }
         }
         return results;

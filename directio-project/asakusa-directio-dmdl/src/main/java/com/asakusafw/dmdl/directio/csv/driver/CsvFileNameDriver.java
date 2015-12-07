@@ -46,9 +46,7 @@ public class CsvFileNameDriver  extends PropertyAttributeDriver {
         environment.reportAll(AttributeUtil.reportInvalidElements(attribute, attribute.elements));
         CsvFieldDriver.checkFieldType(environment, declaration, attribute, BasicTypeKind.TEXT);
         if (CsvFieldDriver.checkConflict(environment, declaration, attribute)) {
-            declaration.putTrait(
-                    CsvFieldTrait.class,
-                    new CsvFieldTrait(attribute, Kind.FILE_NAME, null));
+            declaration.putTrait(CsvFieldTrait.class, new CsvFieldTrait(attribute, Kind.FILE_NAME, null));
         }
     }
 }

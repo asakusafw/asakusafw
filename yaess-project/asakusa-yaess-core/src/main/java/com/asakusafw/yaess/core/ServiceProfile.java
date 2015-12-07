@@ -78,7 +78,7 @@ public class ServiceProfile<T extends Service> {
         }
         this.prefix = prefix;
         this.serviceClass = serviceClass;
-        this.configuration = Collections.unmodifiableMap(new TreeMap<String, String>(configuration));
+        this.configuration = Collections.unmodifiableMap(new TreeMap<>(configuration));
         this.context = context;
     }
 
@@ -314,7 +314,7 @@ public class ServiceProfile<T extends Service> {
         }
         Class<? extends T> targetClass = loaded.asSubclass(serviceBaseClass);
         Map<String, String> conf = PropertiesUtil.createPrefixMap(properties, prefix + '.');
-        return new ServiceProfile<T>(prefix, targetClass, conf, context);
+        return new ServiceProfile<>(prefix, targetClass, conf, context);
     }
 
     /**

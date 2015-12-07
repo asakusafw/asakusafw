@@ -179,7 +179,7 @@ public class TemporaryIoProcessor extends ExternalIoDescriptionProcessor {
 
     private Map<Location, List<Slot>> groupByOutputLocation(IoContext context) {
         assert context != null;
-        Map<Location, List<Slot>> results = new TreeMap<Location, List<Slot>>(new Comparator<Location>() {
+        Map<Location, List<Slot>> results = new TreeMap<>(new Comparator<Location>() {
             @Override
             public int compare(Location o1, Location o2) {
                 String parentPath1 = (o1.getParent() == null) ? "" : o1.getParent().toPath('/'); //$NON-NLS-1$

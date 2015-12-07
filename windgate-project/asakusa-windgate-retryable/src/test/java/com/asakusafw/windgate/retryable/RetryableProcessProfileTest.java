@@ -241,7 +241,7 @@ public class RetryableProcessProfileTest {
 
     private Map<String, String> map(String... keyValuePairs) {
         assertThat(keyValuePairs.length % 2, is(0));
-        Map<String, String> results = new HashMap<String, String>();
+        Map<String, String> results = new HashMap<>();
         for (int i = 0; i < keyValuePairs.length; i += 2) {
             results.put(keyValuePairs[i], keyValuePairs[i + 1]);
         }

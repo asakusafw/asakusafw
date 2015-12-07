@@ -42,7 +42,7 @@ final class Util {
     }
 
     static <T> List<T> freeze(List<? extends T> list) {
-        return Collections.unmodifiableList(new ArrayList<T>(list));
+        return Collections.unmodifiableList(new ArrayList<>(list));
     }
 
     static void notEmpty(Collection<?> collection, String name) {

@@ -100,19 +100,14 @@ public class WindGateImporterPreparatorTest {
                 "testing",
                 driver);
         WindGateImporterPreparator preparator = new WindGateImporterPreparator();
-        ModelOutput<String> output = preparator.createOutput(
-                ValueDefinition.of(String.class), description, context.get());
-        try {
+        try (ModelOutput<String> output = preparator.createOutput(
+                ValueDefinition.of(String.class), description, context.get())) {
             output.write("Hello1, world!");
             output.write("Hello2, world!");
             output.write("Hello3, world!");
-        } finally {
-            output.close();
         }
-
-        FileInputStream input = new FileInputStream(file);
-        try {
-            ObjectInputStream in = new ObjectInputStream(input);
+        try (FileInputStream input = new FileInputStream(file);
+                ObjectInputStream in = new ObjectInputStream(input)) {
             assertThat(in.readObject(), is((Object) "Hello1, world!"));
             assertThat(in.readObject(), is((Object) "Hello2, world!"));
             assertThat(in.readObject(), is((Object) "Hello3, world!"));
@@ -122,9 +117,6 @@ public class WindGateImporterPreparatorTest {
             } catch (IOException e) {
                 // ok.
             }
-            in.close();
-        } finally {
-            input.close();
         }
     }
 }

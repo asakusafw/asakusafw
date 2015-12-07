@@ -131,7 +131,7 @@ class JschConnection implements SshConnection {
         assert commandLineTokens != null;
         assert environmentVariables != null;
 
-        Map<String, String> env = new HashMap<String, String>();
+        Map<String, String> env = new HashMap<>();
         env.putAll(environmentVariables);
         env.putAll(RuntimeContext.get().unapply());
 

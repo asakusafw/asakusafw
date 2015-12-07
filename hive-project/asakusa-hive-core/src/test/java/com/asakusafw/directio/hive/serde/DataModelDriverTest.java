@@ -82,7 +82,7 @@ public class DataModelDriverTest {
         obj.number.modify(12345);
         obj.string.modify("Hello, world!");
 
-        List<PropertyDescriptor> properties = new ArrayList<PropertyDescriptor>();
+        List<PropertyDescriptor> properties = new ArrayList<>();
         for (final PropertyDescriptor property : descriptor.getPropertyDescriptors()) {
             properties.add(new PropertyDescriptor(String.format("_col%d", properties.size()), property) {
                 @Override

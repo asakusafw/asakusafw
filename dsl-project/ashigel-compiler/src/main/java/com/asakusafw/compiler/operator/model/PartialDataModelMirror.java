@@ -120,7 +120,7 @@ final class PartialDataModelMirror implements DataModelMirror {
     }
 
     private Map<String, PropertyMirror> buildProperties() {
-        Map<String, PropertyMirror> results = new LinkedHashMap<String, PropertyMirror>();
+        Map<String, PropertyMirror> results = new LinkedHashMap<>();
         Elements elementUtils = environment.getElementUtils();
         for (TypeElement element : collectUpperBounds()) {
             for (ExecutableElement method : ElementFilter.methodsIn(elementUtils.getAllMembers(element))) {
@@ -134,7 +134,7 @@ final class PartialDataModelMirror implements DataModelMirror {
     }
 
     private List<TypeElement> collectUpperBounds() {
-        LinkedList<TypeMirror> works = new LinkedList<TypeMirror>();
+        LinkedList<TypeMirror> works = new LinkedList<>();
         works.add(type);
         Set<TypeMirror> saw = Sets.create();
         List<TypeElement> types = Lists.create();

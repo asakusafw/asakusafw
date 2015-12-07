@@ -64,7 +64,7 @@ public class ExcelSheetRuleProvider implements VerifyRuleProvider {
 
     private static final List<ExcelRuleExtractor> EXTRACTORS;
     static {
-        List<ExcelRuleExtractor> drivers = new ArrayList<ExcelRuleExtractor>();
+        List<ExcelRuleExtractor> drivers = new ArrayList<>();
         drivers.add(new DefaultExcelRuleExtractor());
         drivers.add(new LegacyExcelRuleExtractor());
         EXTRACTORS = Collections.unmodifiableList(drivers);

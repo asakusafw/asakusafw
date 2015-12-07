@@ -99,16 +99,13 @@ public abstract class AbstractOrcFileFormat<T> extends HadoopFileFormat<T>
     @Override
     public Map<String, String> getTableProperties() {
         OrcFormatConfiguration conf = getFormatConfiguration();
-        Map<String, String> results = new HashMap<String, String>();
+        Map<String, String> results = new HashMap<>();
         putTableProperty(results, OrcTableProperties.COMPRESSION, conf.getCompressionKind());
         putTableProperty(results, OrcTableProperties.STRIPE_SIZE, conf.getStripeSize());
         return results;
     }
 
-    private void putTableProperty(
-            Map<String, String> results,
-            OrcTableProperties property,
-            Object value) {
+    private void putTableProperty(Map<String, String> results, OrcTableProperties property, Object value) {
         if (value == null) {
             return;
         }
@@ -125,7 +122,7 @@ public abstract class AbstractOrcFileFormat<T> extends HadoopFileFormat<T>
     public List<DirectInputFragment> computeInputFragments(
             InputContext context) throws IOException, InterruptedException {
         // TODO parallel?
-        List<DirectInputFragment> results = new ArrayList<DirectInputFragment>();
+        List<DirectInputFragment> results = new ArrayList<>();
         for (FileStatus status : context.getInputFiles()) {
             if (LOG.isInfoEnabled()) {
                 LOG.info(MessageFormat.format(
@@ -203,7 +200,7 @@ public abstract class AbstractOrcFileFormat<T> extends HadoopFileFormat<T>
         if (conf.getOnIncompatibleType() != null) {
             driverConf.setOnIncompatibleType(conf.getOnIncompatibleType());
         }
-        return new OrcFileInput<T>(
+        return new OrcFileInput<>(
                 getDataModelDescriptor(), driverConf,
                 fileSystem, path,
                 offset, fragmentSize, counter);
@@ -238,6 +235,6 @@ public abstract class AbstractOrcFileFormat<T> extends HadoopFileFormat<T>
             options.stripeSize(stripeSize);
         }
 
-        return new OrcFileOutput<T>(getDataModelDescriptor(), path, options, counter);
+        return new OrcFileOutput<>(getDataModelDescriptor(), path, options, counter);
     }
 }

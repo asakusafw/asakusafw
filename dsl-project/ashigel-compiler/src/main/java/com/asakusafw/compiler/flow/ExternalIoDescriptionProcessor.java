@@ -193,9 +193,9 @@ public abstract class ExternalIoDescriptionProcessor extends FlowCompilingEnviro
      */
     public static class IoContextBuilder {
 
-        private final Set<Input> inputs = new LinkedHashSet<Input>();
+        private final Set<Input> inputs = new LinkedHashSet<>();
 
-        private final Set<Output> outputs = new LinkedHashSet<Output>();
+        private final Set<Output> outputs = new LinkedHashSet<>();
 
         /**
          * Adds a new output.

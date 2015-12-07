@@ -76,7 +76,7 @@ public class MockImporterPreparator extends AbstractImporterPreparator<MockImpor
         /**
          * Contents.
          */
-        public final List<String> lines = new ArrayList<String>();
+        public final List<String> lines = new ArrayList<>();
 
         @Override
         public Class<?> getModelType() {

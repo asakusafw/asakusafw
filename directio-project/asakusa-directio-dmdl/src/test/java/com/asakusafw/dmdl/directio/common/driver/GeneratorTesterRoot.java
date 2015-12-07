@@ -97,17 +97,19 @@ public class GeneratorTesterRoot {
      */
     protected void emitDmdl(AstModelDefinition<?> model) {
         AstScript script = new AstScript(null, Collections.singletonList(model));
-        StringWriter buffer = new StringWriter();
-        PrintWriter output = new PrintWriter(buffer);
-        DmdlEmitter.emit(script, output);
-        output.close();
+        String source;
+        try (StringWriter buffer = new StringWriter();
+                PrintWriter output = new PrintWriter(buffer)) {
+            DmdlEmitter.emit(script, output);
+            output.flush();
+            source = buffer.toString();
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
         try {
             File file = folder.newFile(model.name.identifier + ".dmdl");
-            PrintWriter writer = new PrintWriter(file, "UTF-8");
-            try {
-                writer.print(buffer.toString());
-            } finally {
-                writer.close();
+            try (PrintWriter writer = new PrintWriter(file, "UTF-8");) {
+                writer.print(source);
             }
         } catch (IOException e) {
             throw new AssertionError(e);
@@ -167,15 +169,12 @@ public class GeneratorTesterRoot {
     private File emitDmdl(String... lines) {
         try {
             File file = folder.newFile(UUID.randomUUID() + ".dmdl");
-            PrintWriter writer = new PrintWriter(file, "UTF-8");
-            try {
+            try (PrintWriter writer = new PrintWriter(file, "UTF-8");) {
                 for (String line : lines) {
                     String s = line.replace('\'', '"');
                     writer.println(s);
                     System.out.println(s);
                 }
-            } finally {
-                writer.close();
             }
             return file;
         } catch (IOException e) {

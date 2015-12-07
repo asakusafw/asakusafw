@@ -178,17 +178,12 @@ public class BasicYaessLogSourceTest {
     }
 
     private List<YaessLogRecord> parse(String... lines) {
-        BasicYaessLogSource source = new BasicYaessLogSource(Sources.wrap(Arrays.asList(lines).iterator()));
-        try {
-            try {
-                List<YaessLogRecord> results = new ArrayList<YaessLogRecord>();
-                while (source.next()) {
-                    results.add(source.get());
-                }
-                return results;
-            } finally {
-                source.close();
+        try (BasicYaessLogSource source = new BasicYaessLogSource(Sources.wrap(Arrays.asList(lines).iterator()))) {
+            List<YaessLogRecord> results = new ArrayList<>();
+            while (source.next()) {
+                results.add(source.get());
             }
+            return results;
         } catch (Exception e) {
             throw new AssertionError(e);
         }

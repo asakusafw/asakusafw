@@ -66,8 +66,8 @@ public class ConcurrentBatchFileCacheRepositoryTest extends FileCacheRepositoryT
      */
     @Test
     public void multiple() throws Exception {
-        List<File> sources = new ArrayList<File>();
-        List<Path> paths = new ArrayList<Path>();
+        List<File> sources = new ArrayList<>();
+        List<Path> paths = new ArrayList<>();
         for (int i = 0; i < 100; i++) {
             File source = put(newFile(), String.format("hello%02d", i));
             sources.add(source);

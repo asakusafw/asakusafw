@@ -90,8 +90,7 @@ public class TemporaryExporterRetrieverTest {
         putText("target/testing/hello", "Hello, world!", "This is a test.");
 
         MockTextDefinition definition = new MockTextDefinition();
-        DataModelSource result = retriever.createSource(definition, exporter, EMPTY);
-        try {
+        try (DataModelSource result = retriever.createSource(definition, exporter, EMPTY)) {
             DataModelReflection ref;
             ref = result.next();
             assertThat(ref, is(not(nullValue())));
@@ -103,19 +102,14 @@ public class TemporaryExporterRetrieverTest {
 
             ref = result.next();
             assertThat(ref, is(nullValue()));
-        } finally {
-            result.close();
         }
     }
 
     private void putText(String path, String... lines) throws IOException {
-        ModelOutput<Text> output = TemporaryStorage.openOutput(factory.newInstance(), Text.class, new Path(path));
-        try {
+        try (ModelOutput<Text> output = TemporaryStorage.openOutput(factory.newInstance(), Text.class, new Path(path))) {
             for (String s : lines) {
                 output.write(new Text(s));
             }
-        } finally {
-            output.close();
         }
     }
 

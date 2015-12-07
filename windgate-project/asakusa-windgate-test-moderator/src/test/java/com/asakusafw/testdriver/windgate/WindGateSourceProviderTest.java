@@ -70,15 +70,11 @@ public class WindGateSourceProviderTest {
         Properties profile = context.getTemplate();
         profile.setProperty("resource.file", FileResourceProvider.class.getName());
         context.put("testing", profile);
-        FileOutputStream output = new FileOutputStream(file);
-        try {
-            ObjectOutputStream out = new ObjectOutputStream(output);
+        try (FileOutputStream output = new FileOutputStream(file);
+                ObjectOutputStream out = new ObjectOutputStream(output)) {
             out.writeObject("Hello1, world!");
             out.writeObject("Hello2, world!");
             out.writeObject("Hello3, world!");
-            out.close();
-        } finally {
-            output.close();
         }
     }
 
@@ -91,8 +87,7 @@ public class WindGateSourceProviderTest {
         DataModelSourceProvider provider = new SpiDataModelSourceProvider(getClass().getClassLoader());
         URI uri = new URI("windgate:" + MockImporter.class.getName());
         ValueDefinition<String> definition = ValueDefinition.of(String.class);
-        DataModelSource source = provider.open(definition, uri, context.get());
-        try {
+        try (DataModelSource source = provider.open(definition, uri, context.get())) {
             DataModelReflection r1 = source.next();
             assertThat(r1, is(notNullValue()));
             assertThat(definition.toObject(r1), is("Hello1, world!"));
@@ -107,8 +102,6 @@ public class WindGateSourceProviderTest {
 
             DataModelReflection r4 = source.next();
             assertThat(r4, is(nullValue()));
-        } finally {
-            source.close();
         }
     }
 
@@ -121,8 +114,7 @@ public class WindGateSourceProviderTest {
         DataModelSourceProvider provider = new SpiDataModelSourceProvider(getClass().getClassLoader());
         URI uri = new URI("windgate:" + MockExporter.class.getName());
         ValueDefinition<String> definition = ValueDefinition.of(String.class);
-        DataModelSource source = provider.open(definition, uri, context.get());
-        try {
+        try (DataModelSource source = provider.open(definition, uri, context.get())) {
             DataModelReflection r1 = source.next();
             assertThat(r1, is(notNullValue()));
             assertThat(definition.toObject(r1), is("Hello1, world!"));
@@ -137,8 +129,6 @@ public class WindGateSourceProviderTest {
 
             DataModelReflection r4 = source.next();
             assertThat(r4, is(nullValue()));
-        } finally {
-            source.close();
         }
     }
 

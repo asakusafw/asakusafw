@@ -48,13 +48,13 @@ public class OperatorClassEmitterTest extends OperatorCompilerTestRoot {
         ClassLoader loader = compile(new MockOperatorProcessor());
         Object factory = create(loader, "com.example.ConcreteFactory");
 
-        MockIn<String> in = new MockIn<String>(String.class, "in");
+        MockIn<String> in = new MockIn<>(String.class, "in");
         Object example = invoke(factory, "example", in, 5);
 
         @SuppressWarnings("unchecked")
         Source<CharSequence> op = (Source<CharSequence>) access(example, "out");
 
-        MockOut<CharSequence> out = new MockOut<CharSequence>(CharSequence.class, "out");
+        MockOut<CharSequence> out = new MockOut<>(CharSequence.class, "out");
         out.add(op);
 
         FlowElementOutput port = op.toOutputPort();
@@ -116,14 +116,12 @@ public class OperatorClassEmitterTest extends OperatorCompilerTestRoot {
         return start(new Callback() {
             @Override
             protected void test() {
-                OperatorClassCollector collector =
-                        new OperatorClassCollector(env, round);
+                OperatorClassCollector collector = new OperatorClassCollector(env, round);
                 for (OperatorProcessor proc : procs) {
                     proc.initialize(env);
                     collector.add(proc);
                 }
                 List<OperatorClass> classes = collector.collect();
-
                 OperatorClassEmitter emitter = new OperatorClassEmitter(env);
                 for (OperatorClass aClass : classes) {
                     emitter.emit(aClass);

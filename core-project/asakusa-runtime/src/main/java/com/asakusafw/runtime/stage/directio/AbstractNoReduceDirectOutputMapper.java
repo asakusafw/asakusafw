@@ -132,13 +132,12 @@ public abstract class AbstractNoReduceDirectOutputMapper<T> extends MapperWithRu
             }
 
             int records = 0;
-            ModelOutput<? super T> output = datasource.openOutput(
+            try (ModelOutput<? super T> output = datasource.openOutput(
                     outputContext,
                     definition,
                     basePath,
                     resourcePath,
-                    outputContext.getCounter());
-            try {
+                    outputContext.getCounter())) {
                 do {
                     output.write(context.getCurrentValue());
                     records++;
@@ -150,7 +149,6 @@ public abstract class AbstractNoReduceDirectOutputMapper<T> extends MapperWithRu
                             getClass().getName(),
                             context.getTaskAttemptID()));
                 }
-                output.close();
             }
             org.apache.hadoop.mapreduce.Counter recordCounter = JobCompatibility.getTaskOutputRecordCounter(context);
             recordCounter.increment(records);

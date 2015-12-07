@@ -312,7 +312,7 @@ public enum ParquetValueDrivers implements ParquetValueDriver {
 
         static final Map<Class<?>, ParquetValueDrivers> FROM_CLASS;
         static {
-            Map<Class<?>, ParquetValueDrivers> map = new HashMap<Class<?>, ParquetValueDrivers>();
+            Map<Class<?>, ParquetValueDrivers> map = new HashMap<>();
             for (ParquetValueDrivers element : ParquetValueDrivers.values()) {
                 if (element.standard) {
                     map.put(element.getValueOptionClass(), element);

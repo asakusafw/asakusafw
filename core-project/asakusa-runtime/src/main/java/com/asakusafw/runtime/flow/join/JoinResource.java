@@ -51,8 +51,7 @@ public abstract class JoinResource<L extends Writable, R> implements FlowResourc
                     "Building join-table from \"{0}\" on distributed cache", //$NON-NLS-1$
                     getCacheName()));
         }
-        StageResourceDriver driver = new StageResourceDriver(configuration);
-        try {
+        try (StageResourceDriver driver = new StageResourceDriver(configuration)) {
             List<Path> paths = driver.findCache(getCacheName());
             if (paths.isEmpty()) {
                 throw new FileNotFoundException(MessageFormat.format(
@@ -77,8 +76,6 @@ public abstract class JoinResource<L extends Writable, R> implements FlowResourc
                         "Built join-table from \"{0}\"", //$NON-NLS-1$
                         getCacheName()));
             }
-        } finally {
-            driver.close();
         }
     }
     private LookUpTable<L> createTable(
@@ -95,20 +92,17 @@ public abstract class JoinResource<L extends Writable, R> implements FlowResourc
                         getCacheName(),
                         path));
             }
-            @SuppressWarnings("unchecked")
-            ModelInput<L> input = (ModelInput<L>) TemporaryStorage.openInput(
+
+            try (@SuppressWarnings("unchecked") ModelInput<L> input = (ModelInput<L>) TemporaryStorage.openInput(
                     driver.getConfiguration(),
                     value.getClass(),
-                    path);
-            try {
+                    path)) {
                 while (input.readTo(value)) {
                     lookupKeyBuffer.reset();
                     LookUpKey k = buildLeftKey(value, lookupKeyBuffer);
                     builder.add(k, value);
                     value = createValueObject();
                 }
-            } finally {
-                input.close();
             }
         }
         return builder.build();
@@ -124,7 +118,7 @@ public abstract class JoinResource<L extends Writable, R> implements FlowResourc
      * @return the created builder
      */
     protected LookUpTable.Builder<L> createLookUpTable() {
-        return new VolatileLookUpTable.Builder<L>();
+        return new VolatileLookUpTable.Builder<>();
     }
 
     /**

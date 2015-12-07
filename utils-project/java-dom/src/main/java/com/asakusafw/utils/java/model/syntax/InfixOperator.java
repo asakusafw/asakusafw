@@ -330,7 +330,7 @@ public enum InfixOperator {
 
         private static final Map<String, InfixOperator> REVERSE_DICTIONARY;
         static {
-            Map<String, InfixOperator> map = new HashMap<String, InfixOperator>();
+            Map<String, InfixOperator> map = new HashMap<>();
             for (InfixOperator elem : InfixOperator.values()) {
                 map.put(elem.getSymbol(), elem);
             }

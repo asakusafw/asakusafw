@@ -210,7 +210,7 @@ public final class JobCompatibilityHadoop1 extends JobCompatibilityHadoop {
             RecordWriter<KEYOUT, VALUEOUT> writer,
             OutputCommitter committer,
             InputSplit split) throws IOException, InterruptedException {
-        Mapper<KEYIN, VALUEIN, KEYOUT, VALUEOUT> mapper = new Mapper<KEYIN, VALUEIN, KEYOUT, VALUEOUT>();
+        Mapper<KEYIN, VALUEIN, KEYOUT, VALUEOUT> mapper = new Mapper<>();
         return mapper.new Context(
                 configuration,
                 id,
@@ -229,7 +229,7 @@ public final class JobCompatibilityHadoop1 extends JobCompatibilityHadoop {
             RecordWriter<KEYOUT, VALUEOUT> writer,
             OutputCommitter committer,
             RawComparator<KEYIN> comparator) throws IOException, InterruptedException {
-        Reducer<KEYIN, VALUEIN, KEYOUT, VALUEOUT> reducer = new Reducer<KEYIN, VALUEIN, KEYOUT, VALUEOUT>();
+        Reducer<KEYIN, VALUEIN, KEYOUT, VALUEOUT> reducer = new Reducer<>();
         StatusReporter reporter = new MockStatusReporter();
         return reducer.new Context(
                 configuration,
@@ -246,7 +246,7 @@ public final class JobCompatibilityHadoop1 extends JobCompatibilityHadoop {
     newTaskOutputContext(
             Configuration configuration, TaskAttemptID id,
             KeyValueConsumer<? super KEYOUT, ? super VALUEOUT> consumer) {
-        return new MockTaskInputOutputContext<KEYIN, VALUEIN, KEYOUT, VALUEOUT>(configuration, id, consumer);
+        return new MockTaskInputOutputContext<>(configuration, id, consumer);
     }
 
     private static class MockTaskInputOutputContext<KEYIN, VALUEIN, KEYOUT, VALUEOUT>

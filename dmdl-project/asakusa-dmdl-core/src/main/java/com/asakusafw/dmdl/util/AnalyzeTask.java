@@ -133,13 +133,11 @@ public class AnalyzeTask {
                 ServiceLoader.load(TypeDriver.class, serviceClassLoader),
                 ServiceLoader.load(AttributeDriver.class, serviceClassLoader));
         int count = 0;
-        Cursor cursor = source.createCursor();
-        try {
+        try (Cursor cursor = source.createCursor()) {
             while (cursor.next()) {
                 URI name = cursor.getIdentifier();
                 LOG.info(Messages.getString("AnalyzeTask.monitorParseStarting"), name); //$NON-NLS-1$
-                Reader resource = cursor.openResource();
-                try {
+                try (Reader resource = cursor.openResource()) {
                     AstScript script = parser.parse(resource, name);
                     for (AstModelDefinition<?> model : script.models) {
                         LOG.debug(Messages.getString("AnalyzeTask.monitorFoundModel"), model.name); //$NON-NLS-1$
@@ -151,13 +149,9 @@ public class AnalyzeTask {
                             Messages.getString("AnalyzeTask.monitorParseFailed"), //$NON-NLS-1$
                             name), e);
                     green = false;
-                } finally {
-                    resource.close();
                 }
             }
             LOG.debug(Messages.getString("AnalyzeTask.monitorCountModel"), count); //$NON-NLS-1$
-        } finally {
-            cursor.close();
         }
         if (green == false) {
             throw new IOException(MessageFormat.format(

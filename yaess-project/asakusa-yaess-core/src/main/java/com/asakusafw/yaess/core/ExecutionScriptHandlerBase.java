@@ -94,7 +94,7 @@ public abstract class ExecutionScriptHandlerBase implements Service {
         NavigableMap<String, String> vars = PropertiesUtil.createPrefixMap(
                 profile.getConfiguration(),
                 ExecutionScriptHandler.KEY_PROP_PREFIX);
-        Map<String, String> resolved = new TreeMap<String, String>();
+        Map<String, String> resolved = new TreeMap<>();
         for (Map.Entry<String, String> entry : vars.entrySet()) {
             String key = entry.getKey();
             String unresolved = entry.getValue();
@@ -126,7 +126,7 @@ public abstract class ExecutionScriptHandlerBase implements Service {
         NavigableMap<String, String> vars = PropertiesUtil.createPrefixMap(
                 profile.getConfiguration(),
                 ExecutionScriptHandler.KEY_ENV_PREFIX);
-        Map<String, String> resolved = new TreeMap<String, String>();
+        Map<String, String> resolved = new TreeMap<>();
         for (Map.Entry<String, String> entry : vars.entrySet()) {
             String key = entry.getKey();
             String unresolved = entry.getValue();

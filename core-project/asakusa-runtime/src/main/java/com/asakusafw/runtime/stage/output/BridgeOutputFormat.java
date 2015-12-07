@@ -22,6 +22,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.InterruptedIOException;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.nio.charset.Charset;
@@ -33,6 +34,7 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.TreeMap;
 import java.util.WeakHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -42,7 +44,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataInputStream;
-import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.WritableUtils;
@@ -80,8 +81,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
 
     private static final String KEY = "com.asakusafw.output.bridge"; //$NON-NLS-1$
 
-    private final Map<TaskAttemptID, OutputCommitter> commiterCache =
-            new WeakHashMap<TaskAttemptID, OutputCommitter>();
+    private final Map<TaskAttemptID, OutputCommitter> commiterCache = new WeakHashMap<>();
 
     /**
      * Returns whether this stage has an output corresponding this format.
@@ -109,7 +109,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
         if (outputList == null) {
             throw new IllegalArgumentException("outputList must not be null"); //$NON-NLS-1$
         }
-        List<OutputSpec> specs = new ArrayList<OutputSpec>();
+        List<OutputSpec> specs = new ArrayList<>();
         for (StageOutput output : outputList) {
             List<String> deletePatterns = getDeletePatterns(output);
             OutputSpec spec = new OutputSpec(output.getName(), deletePatterns);
@@ -120,7 +120,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
 
     private static List<String> getDeletePatterns(StageOutput output) {
         assert output != null;
-        List<String> results = new ArrayList<String>();
+        List<String> results = new ArrayList<>();
         for (Map.Entry<String, String> entry : output.getAttributes().entrySet()) {
             if (entry.getKey().startsWith(DirectDataSourceConstants.PREFIX_DELETE_PATTERN)) {
                 String rawDeletePattern = entry.getValue();
@@ -138,9 +138,8 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
                 throw new IllegalStateException();
             }
         }
-        try {
-            ByteArrayOutputStream sink = new ByteArrayOutputStream();
-            DataOutputStream output = new DataOutputStream(new GZIPOutputStream(new Base64OutputStream(sink)));
+        ByteArrayOutputStream sink = new ByteArrayOutputStream();
+        try (DataOutputStream output = new DataOutputStream(new GZIPOutputStream(new Base64OutputStream(sink)))) {
             WritableUtils.writeVLong(output, SERIAL_VERSION);
             WritableUtils.writeVInt(output, specs.size());
             for (OutputSpec spec : specs) {
@@ -150,11 +149,10 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
                     WritableUtils.writeString(output, pattern);
                 }
             }
-            output.close();
-            conf.set(KEY, new String(sink.toByteArray(), ASCII));
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
+        conf.set(KEY, new String(sink.toByteArray(), ASCII));
     }
 
     private static List<OutputSpec> getSpecs(JobContext context) {
@@ -174,7 +172,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
                         SERIAL_VERSION,
                         version));
             }
-            List<OutputSpec> results = new ArrayList<OutputSpec>();
+            List<OutputSpec> results = new ArrayList<>();
             int specCount = WritableUtils.readVInt(input);
             for (int specIndex = 0; specIndex < specCount; specIndex++) {
                 String basePath = WritableUtils.readString(input);
@@ -186,7 +184,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
                             basePath), e);
                 }
                 int patternCount = WritableUtils.readVInt(input);
-                List<String> patterns = new ArrayList<String>();
+                List<String> patterns = new ArrayList<>();
                 for (int patternIndex = 0; patternIndex < patternCount; patternIndex++) {
                     String pattern = WritableUtils.readString(input);
                     try {
@@ -325,7 +323,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
                 List<OutputSpec> specs) throws IOException {
             assert repo != null;
             assert specs != null;
-            Map<String, String> results = new TreeMap<String, String>();
+            Map<String, String> results = new TreeMap<>();
             for (OutputSpec spec : specs) {
                 String containerPath = repo.getContainerPath(spec.basePath);
                 String id = repo.getRelatedId(spec.basePath);
@@ -643,11 +641,9 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
                             jobContext.getJobName(),
                             fs.makeQualified(transactionInfo)));
                 }
-                FSDataOutputStream output = fs.create(transactionInfo, false);
-                boolean closed = false;
-                try {
-                    PrintWriter writer = new PrintWriter(
-                            new OutputStreamWriter(output, HadoopDataSourceUtil.COMMENT_CHARSET));
+                try (OutputStream output = new SafeOutputStream(fs.create(transactionInfo, false));
+                        PrintWriter writer = new PrintWriter(
+                                new OutputStreamWriter(output, HadoopDataSourceUtil.COMMENT_CHARSET))) {
                     writer.printf("      User Name: %s%n", //$NON-NLS-1$
                             conf.getRaw(StageConstants.PROP_USER));
                     writer.printf("       Batch ID: %s%n", //$NON-NLS-1$
@@ -662,13 +658,6 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
                             jobContext.getJobID());
                     writer.printf("Hadoop Job Name: %s%n", //$NON-NLS-1$
                             jobContext.getJobName());
-                    writer.close();
-                    closed = true;
-                } finally {
-                    // avoid double close
-                    if (closed == false) {
-                        output.close();
-                    }
                 }
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(MessageFormat.format(
@@ -678,17 +667,13 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
                             fs.makeQualified(transactionInfo)));
                 }
                 if (LOG.isTraceEnabled()) {
-                    FSDataInputStream input = fs.open(transactionInfo);
-                    try {
-                        Scanner scanner = new Scanner(
-                                new InputStreamReader(input, HadoopDataSourceUtil.COMMENT_CHARSET));
+                    try (FSDataInputStream input = fs.open(transactionInfo);
+                            Scanner scanner = new Scanner(new InputStreamReader(
+                                    input, HadoopDataSourceUtil.COMMENT_CHARSET))) {
                         while (scanner.hasNextLine()) {
                             String line = scanner.nextLine();
                             LOG.trace(">> " + line); //$NON-NLS-1$
                         }
-                        scanner.close();
-                    } finally {
-                        input.close();
                     }
                 }
             } else {
@@ -868,6 +853,34 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
             Configuration conf = context.getConfiguration();
             String executionId = conf.get(StageConstants.PROP_EXECUTION_ID);
             return HadoopDataSourceUtil.getCommitMarkPath(conf, executionId);
+        }
+    }
+
+    private static class SafeOutputStream extends OutputStream {
+
+        private final OutputStream delegate;
+
+        private final AtomicBoolean closed = new AtomicBoolean();
+
+        SafeOutputStream(OutputStream delegate) {
+            this.delegate = delegate;
+        }
+
+        @Override
+        public void write(int b) throws IOException {
+            delegate.write(b);
+        }
+
+        @Override
+        public void write(byte[] b, int off, int len) throws IOException {
+            delegate.write(b, off, len);
+        }
+
+        @Override
+        public void close() throws IOException {
+            if (closed.compareAndSet(false, true)) {
+                delegate.close();
+            }
         }
     }
 }

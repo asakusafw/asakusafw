@@ -155,7 +155,7 @@ public class OrcFileInput<T> implements ModelInput<T> {
         assert driver != null;
         StructObjectInspector inspector = driver.getSourceInspector();
         List<? extends StructField> all = inspector.getAllStructFieldRefs();
-        Set<StructField> projected = new HashSet<StructField>(driver.getSourceFields());
+        Set<StructField> projected = new HashSet<>(driver.getSourceFields());
         // the first type must be a root type
         boolean[] availables = new boolean[all.size() + 1];
         availables[0] = true;

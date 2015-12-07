@@ -402,7 +402,7 @@ public class DirectFileOutputRetrieverTest {
     private List<String> get(DataModelSource input) throws IOException {
         try {
             MockTextDefinition def = new MockTextDefinition();
-            List<String> results = new ArrayList<String>();
+            List<String> results = new ArrayList<>();
             while (true) {
                 DataModelReflection next = input.next();
                 if (next == null) {
@@ -419,13 +419,10 @@ public class DirectFileOutputRetrieverTest {
     private File put(String targetPath, String... contents) throws IOException {
         File target = new File(folder.getRoot(), targetPath);
         target.getParentFile().mkdirs();
-        PrintWriter w = new PrintWriter(target, "UTF-8");
-        try {
+        try (PrintWriter w = new PrintWriter(target, "UTF-8")) {
             for (String line : contents) {
                 w.println(line);
             }
-        } finally {
-            w.close();
         }
         return target;
     }

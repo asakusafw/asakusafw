@@ -134,7 +134,7 @@ public class FileSessionProvider extends SessionProvider {
                 return true;
             }
         });
-        List<String> results = new ArrayList<String>();
+        List<String> results = new ArrayList<>();
         for (File file : files) {
             results.add(fileToId(file));
         }

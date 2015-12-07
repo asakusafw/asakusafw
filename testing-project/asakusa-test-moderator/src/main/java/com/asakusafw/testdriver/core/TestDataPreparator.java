@@ -278,24 +278,19 @@ public class TestDataPreparator {
             DataModelDefinition<T> definition,
             ModelOutput<T> output,
             URI source) throws IOException {
-        try {
-            DataModelSource input = sources.open(definition, source, context);
+        try (DataModelSource input = sources.open(definition, source, context)) {
             if (input == null) {
                 throw new IOException(MessageFormat.format(
                         Messages.getString("TestDataPreparator.errorMissingDataModelSource"), //$NON-NLS-1$
                         source));
             }
-            try {
-                while (true) {
-                    DataModelReflection next = input.next();
-                    if (next == null) {
-                        break;
-                    }
-                    T object = definition.toObject(next);
-                    output.write(object);
+            while (true) {
+                DataModelReflection next = input.next();
+                if (next == null) {
+                    break;
                 }
-            } finally {
-                input.close();
+                T object = definition.toObject(next);
+                output.write(object);
             }
         } finally {
             output.close();

@@ -46,10 +46,7 @@ public class AstAttribute extends AbstractAstNode {
      * @param elements sub-elements of this attribute
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public AstAttribute(
-            Region region,
-            AstName name,
-            List<AstAttributeElement> elements) {
+    public AstAttribute(Region region, AstName name, List<AstAttributeElement> elements) {
         if (name == null) {
             throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
         }
@@ -68,10 +65,7 @@ public class AstAttribute extends AbstractAstNode {
      * @param elements sub-elements of this attribute
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public AstAttribute(
-            Region region,
-            AstName name,
-            AstAttributeElement... elements) {
+    public AstAttribute(Region region, AstName name, AstAttributeElement... elements) {
         if (name == null) {
             throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
         }

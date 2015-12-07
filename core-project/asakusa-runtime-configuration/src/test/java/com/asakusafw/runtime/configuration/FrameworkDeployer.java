@@ -62,8 +62,7 @@ public class FrameworkDeployer implements TestRule {
 
     static final Logger LOG = LoggerFactory.getLogger(FrameworkDeployer.class);
 
-    private static final AtomicReference<Reference<byte[]>> BOOTSTRAP_JAR_CACHE =
-            new AtomicReference<Reference<byte[]>>();
+    private static final AtomicReference<Reference<byte[]>> BOOTSTRAP_JAR_CACHE = new AtomicReference<>();
 
     final TemporaryFolder folder = new TemporaryFolder();
 
@@ -75,7 +74,7 @@ public class FrameworkDeployer implements TestRule {
 
     private File bootstrapJar;
 
-    private final List<File> runtimeJars = new ArrayList<File>();
+    private final List<File> runtimeJars = new ArrayList<>();
 
     /**
      * Creates a new instance with creating default layout.
@@ -164,17 +163,10 @@ public class FrameworkDeployer implements TestRule {
                     Snappy.class);
             int length = (int) bootstrapJar.length();
             ByteArrayOutputStream buffer = new ByteArrayOutputStream(Math.min(1024, length));
-            try {
-                InputStream in = new FileInputStream(bootstrapJar);
-                try {
-                    copyStream(in, buffer);
-                } finally {
-                    in.close();
-                }
-            } finally {
-                buffer.close();
+            try (InputStream in = new FileInputStream(bootstrapJar)) {
+                copyStream(in, buffer);
             }
-            BOOTSTRAP_JAR_CACHE.set(new SoftReference<byte[]>(buffer.toByteArray()));
+            BOOTSTRAP_JAR_CACHE.set(new SoftReference<>(buffer.toByteArray()));
         }
     }
 
@@ -182,7 +174,7 @@ public class FrameworkDeployer implements TestRule {
         if (classes.length == 1) {
             return deployLibrary(classes[0], targetPath);
         }
-        List<File> paths = new ArrayList<File>();
+        List<File> paths = new ArrayList<>();
         for (Class<?> aClass : classes) {
             File path = findLibraryPathFromClass(aClass);
             if (path == null) {
@@ -199,9 +191,8 @@ public class FrameworkDeployer implements TestRule {
 
     private void deployFatLibrary(List<File> paths, File target) throws IOException {
         prepareParent(target);
-        Set<String> saw = new HashSet<String>();
-        ZipOutputStream zip = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(target)));
-        try {
+        Set<String> saw = new HashSet<>();
+        try (ZipOutputStream zip = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(target)))) {
             for (File path : paths) {
                 if (path.isDirectory()) {
                     putEntry(zip, path, null, saw);
@@ -209,14 +200,11 @@ public class FrameworkDeployer implements TestRule {
                     mergeEntries(zip, path, saw);
                 }
             }
-        } finally {
-            zip.close();
         }
     }
 
     private void mergeEntries(ZipOutputStream zip, File file, Set<String> saw) throws IOException {
-        ZipInputStream in = new ZipInputStream(new BufferedInputStream(new FileInputStream(file)));
-        try {
+        try (ZipInputStream in = new ZipInputStream(new BufferedInputStream(new FileInputStream(file)))) {
             while (true) {
                 ZipEntry entry = in.getNextEntry();
                 if (entry == null) {
@@ -234,8 +222,6 @@ public class FrameworkDeployer implements TestRule {
                 zip.putNextEntry(new ZipEntry(entry.getName()));
                 copyStream(in, zip);
             }
-        } finally {
-            in.close();
         }
     }
 
@@ -370,13 +356,9 @@ public class FrameworkDeployer implements TestRule {
         } else {
             LOG.debug("Package into archive: {} -> {}", source, target);
             prepareParent(target);
-            OutputStream output = new BufferedOutputStream(new FileOutputStream(target));
-            try {
-                ZipOutputStream zip = new ZipOutputStream(output);
+            try (OutputStream output = new BufferedOutputStream(new FileOutputStream(target));
+                    ZipOutputStream zip = new ZipOutputStream(output)) {
                 putEntry(zip, source, null, new HashSet<String>());
-                zip.close();
-            } finally {
-                output.close();
             }
         }
         return target;
@@ -400,12 +382,9 @@ public class FrameworkDeployer implements TestRule {
             }
             saw.add(path);
             zip.putNextEntry(new ZipEntry(path));
-            InputStream in = new BufferedInputStream(new FileInputStream(source));
-            try {
+            try (InputStream in = new BufferedInputStream(new FileInputStream(source))) {
                 LOG.trace("Copy into archive: {} -> {}", source, path);
                 copyStream(in, zip);
-            } finally {
-                in.close();
             }
             zip.closeEntry();
         }
@@ -452,11 +431,8 @@ public class FrameworkDeployer implements TestRule {
             throw new IllegalArgumentException("target must not be null"); //$NON-NLS-1$
         }
         prepareParent(target);
-        OutputStream output = new BufferedOutputStream(new FileOutputStream(target));
-        try {
+        try (OutputStream output = new BufferedOutputStream(new FileOutputStream(target))) {
             copyStream(input, output);
-        } finally {
-            output.close();
         }
         return target;
     }
@@ -464,17 +440,10 @@ public class FrameworkDeployer implements TestRule {
     private void copyFile(File source, File target) throws FileNotFoundException, IOException {
         assert source != null;
         assert target != null;
-        InputStream input = new BufferedInputStream(new FileInputStream(source));
-        try {
-            prepareParent(target);
-            OutputStream output = new BufferedOutputStream(new FileOutputStream(target));
-            try {
-                copyStream(input, output);
-            } finally {
-                output.close();
-            }
-        } finally {
-            input.close();
+        prepareParent(target);
+        try (InputStream input = new BufferedInputStream(new FileInputStream(source));
+                OutputStream output = new BufferedOutputStream(new FileOutputStream(target))) {
+            copyStream(input, output);
         }
         if (source.canExecute()) {
             target.setExecutable(true);
@@ -516,12 +485,9 @@ public class FrameworkDeployer implements TestRule {
         if (target == null) {
             throw new IllegalArgumentException("target must not be null"); //$NON-NLS-1$
         }
-        InputStream input = new BufferedInputStream(new FileInputStream(target));
-        try {
+        try (InputStream input = new BufferedInputStream(new FileInputStream(target))) {
             ZipInputStream zip = new ZipInputStream(input);
             extract(zip, target);
-        } finally {
-            input.close();
         }
         return target;
     }

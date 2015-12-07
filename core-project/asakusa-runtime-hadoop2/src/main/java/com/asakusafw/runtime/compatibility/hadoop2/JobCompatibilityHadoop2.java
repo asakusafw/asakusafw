@@ -296,7 +296,7 @@ public final class JobCompatibilityHadoop2 extends JobCompatibilityHadoop {
             RecordWriter<KEYOUT, VALUEOUT> writer,
             OutputCommitter committer,
             InputSplit split) throws IOException, InterruptedException {
-        MapContext<KEYIN, VALUEIN, KEYOUT, VALUEOUT> context = new MapContextImpl<KEYIN, VALUEIN, KEYOUT, VALUEOUT>(
+        MapContext<KEYIN, VALUEIN, KEYOUT, VALUEOUT> context = new MapContextImpl<>(
                 configuration, id, reader, writer, committer, new MockStatusReporter(), split);
         return new WrappedMapper<KEYIN, VALUEIN, KEYOUT, VALUEOUT>().getMapContext(context);
     }
@@ -312,12 +312,11 @@ public final class JobCompatibilityHadoop2 extends JobCompatibilityHadoop {
             OutputCommitter committer,
             RawComparator<KEYIN> comparator) throws IOException, InterruptedException {
         StatusReporter reporter = new MockStatusReporter();
-        ReduceContext<KEYIN, VALUEIN, KEYOUT, VALUEOUT> context =
-                new ReduceContextImpl<KEYIN, VALUEIN, KEYOUT, VALUEOUT>(
-                        configuration, id, reader,
-                        reporter.getCounter("asakusafw", "inputKey"), //$NON-NLS-1$ //$NON-NLS-2$
-                        reporter.getCounter("asakusafw", "inputValue"), //$NON-NLS-1$ //$NON-NLS-2$
-                        writer, committer, reporter, comparator, inputKeyClass, inputValueClass);
+        ReduceContext<KEYIN, VALUEIN, KEYOUT, VALUEOUT> context = new ReduceContextImpl<>(
+                configuration, id, reader,
+                reporter.getCounter("asakusafw", "inputKey"), //$NON-NLS-1$ //$NON-NLS-2$
+                reporter.getCounter("asakusafw", "inputValue"), //$NON-NLS-1$ //$NON-NLS-2$
+                writer, committer, reporter, comparator, inputKeyClass, inputValueClass);
         return new WrappedReducer<KEYIN, VALUEIN, KEYOUT, VALUEOUT>().getReducerContext(context);
     }
 
@@ -326,7 +325,7 @@ public final class JobCompatibilityHadoop2 extends JobCompatibilityHadoop {
     newTaskOutputContext(
             Configuration configuration, TaskAttemptID id,
             KeyValueConsumer<? super KEYOUT, ? super VALUEOUT> consumer) {
-        return new MockTaskInputOutputContext<KEYIN, VALUEIN, KEYOUT, VALUEOUT>(configuration, id, consumer);
+        return new MockTaskInputOutputContext<>(configuration, id, consumer);
     }
 
     private static class MockTaskInputOutputContext<KEYIN, VALUEIN, KEYOUT, VALUEOUT>

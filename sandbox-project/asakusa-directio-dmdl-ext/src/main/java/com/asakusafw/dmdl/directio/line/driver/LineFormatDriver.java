@@ -152,8 +152,8 @@ public class LineFormatDriver extends ModelAttributeDriver {
     }
 
     private void processImplicitBody(DmdlSemantics environment, ModelDeclaration model, AstAttribute attribute) {
-        List<PropertyDeclaration> bodies = new ArrayList<PropertyDeclaration>();
-        List<PropertyDeclaration> implicits = new ArrayList<PropertyDeclaration>();
+        List<PropertyDeclaration> bodies = new ArrayList<>();
+        List<PropertyDeclaration> implicits = new ArrayList<>();
         for (PropertyDeclaration property : model.getDeclaredProperties()) {
             switch (LineFieldTrait.getKind(property)) {
             case BODY:

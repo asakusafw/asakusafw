@@ -139,7 +139,7 @@ public class BatchTestRunnerTest {
         deploy(info);
 
         put(info, "simple", "Hello1", "Hello2", "Hello3");
-        Map<String, String> args = new HashMap<String, String>();
+        Map<String, String> args = new HashMap<>();
         args.put("t1", "x");
         args.put("t2", "y");
         args.put("t3", "z");
@@ -207,17 +207,12 @@ public class BatchTestRunnerTest {
     }
 
     private void put(BatchInfo info, String name, String... values) {
-        try {
-            Import importer = tester.getImporter(info, name);
-            ModelOutput<Simple> output = tester.openOutput(Simple.class, importer);
-            try {
-                Simple model = new Simple();
-                for (String value : values) {
-                    model.setValueAsString(value);
-                    output.write(model);
-                }
-            } finally {
-                output.close();
+        Import importer = tester.getImporter(info, name);
+        try (ModelOutput<Simple> output = tester.openOutput(Simple.class, importer);) {
+            Simple model = new Simple();
+            for (String value : values) {
+                model.setValueAsString(value);
+                output.write(model);
             }
         } catch (IOException e) {
             throw new AssertionError(e);
@@ -225,24 +220,19 @@ public class BatchTestRunnerTest {
     }
 
     private List<String> get(BatchInfo info, String name) {
-        try {
-            List<String> results = new ArrayList<String>();
-            Export exporter = tester.getExporter(info, name);
-            for (Location location : getLocations(exporter)) {
-                ModelInput<Simple> input = tester.openInput(Simple.class, location);
-                try {
-                    Simple model = new Simple();
-                    while (input.readTo(model)) {
-                        results.add(model.getValueAsString());
-                    }
-                } finally {
-                    input.close();
+        List<String> results = new ArrayList<>();
+        Export exporter = tester.getExporter(info, name);
+        for (Location location : getLocations(exporter)) {
+            try (ModelInput<Simple> input = tester.openInput(Simple.class, location)) {
+                Simple model = new Simple();
+                while (input.readTo(model)) {
+                    results.add(model.getValueAsString());
                 }
+            } catch (IOException e) {
+                throw new AssertionError(e);
             }
-            return results;
-        } catch (IOException e) {
-            throw new AssertionError(e);
         }
+        return results;
     }
 
     private Set<Location> getLocations(Export exporter) {

@@ -193,7 +193,7 @@ EscapedString:
         private GenericOptionValue(String symbols) {
             assert symbols != null;
             String first = null;
-            this.symbols = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
+            this.symbols = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
             for (String s : symbols.split(",")) { //$NON-NLS-1$
                 String token = s.trim();
                 if (token.isEmpty() == false) {
@@ -249,7 +249,7 @@ EscapedString:
 
     private volatile boolean enableDebugLogging;
 
-    private final Map<String, String> extraAttributes = new ConcurrentHashMap<String, String>();
+    private final Map<String, String> extraAttributes = new ConcurrentHashMap<>();
 
     /**
      * Creates a new instance with default option values.

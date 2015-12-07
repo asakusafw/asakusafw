@@ -120,8 +120,7 @@ public class Context {
         return results;
     }
 
-    private Map<String, AttributeDriver> buildAttributeDriverMap(
-            Iterable<? extends AttributeDriver> flatDrivers) {
+    private Map<String, AttributeDriver> buildAttributeDriverMap(Iterable<? extends AttributeDriver> flatDrivers) {
         assert flatDrivers != null;
         Map<String, List<AttributeDriver>> group = Maps.create();
         for (AttributeDriver driver : flatDrivers) {
@@ -166,20 +165,14 @@ public class Context {
         }
 
         @Override
-        public void process(
-                DmdlSemantics environment,
-                Declaration declaration,
-                AstAttribute attribute) {
+        public void process(DmdlSemantics environment, Declaration declaration, AstAttribute attribute) {
             for (AttributeDriver driver : drivers) {
                 driver.process(environment, declaration, attribute);
             }
         }
 
         @Override
-        public void verify(
-                DmdlSemantics environment,
-                Declaration declaration,
-                AstAttribute attribute) {
+        public void verify(DmdlSemantics environment, Declaration declaration, AstAttribute attribute) {
             for (AttributeDriver driver : drivers) {
                 driver.verify(environment, declaration, attribute);
             }

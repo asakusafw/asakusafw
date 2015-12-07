@@ -251,11 +251,8 @@ public final class EmitContext {
                 imports.toImportDeclarations(),
                 Collections.singletonList(type),
                 Collections.<Comment>emptyList());
-        PrintWriter writer = config.getOutput().openFor(compilationUnit);
-        try {
+        try (PrintWriter writer = config.getOutput().openFor(compilationUnit)) {
             Models.emit(compilationUnit, writer);
-        } finally {
-            writer.close();
         }
     }
 

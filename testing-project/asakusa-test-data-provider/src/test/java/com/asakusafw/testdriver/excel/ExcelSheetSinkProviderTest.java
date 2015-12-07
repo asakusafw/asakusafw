@@ -37,7 +37,7 @@ import com.asakusafw.testdriver.model.SimpleDataModelDefinition;
  */
 public class ExcelSheetSinkProviderTest {
 
-    static final DataModelDefinition<Simple> SIMPLE = new SimpleDataModelDefinition<Simple>(Simple.class);
+    static final DataModelDefinition<Simple> SIMPLE = new SimpleDataModelDefinition<>(Simple.class);
 
     /**
      * temporary folder.
@@ -57,13 +57,10 @@ public class ExcelSheetSinkProviderTest {
         file.delete();
 
         DataModelSinkFactory factory = repo.getDataModelSinkFactory(file.toURI());
-        DataModelSink sink = factory.createSink(SIMPLE, new TestContext.Empty());
-        try {
+        try (DataModelSink sink = factory.createSink(SIMPLE, new TestContext.Empty())) {
             Simple model = new Simple();
             model.text = "expected";
             sink.put(SIMPLE.toReflection(model));
-        } finally {
-            sink.close();
         }
         assertThat(file.exists(), is(true));
     }
@@ -80,8 +77,7 @@ public class ExcelSheetSinkProviderTest {
         file.delete();
 
         DataModelSinkFactory factory = repo.getDataModelSinkFactory(file.toURI());
-        try {
-            DataModelSink sink = factory.createSink(SIMPLE, new TestContext.Empty());
+        try (DataModelSink sink = factory.createSink(SIMPLE, new TestContext.Empty())) {
             sink.close();
             fail();
         } catch (IOException e) {

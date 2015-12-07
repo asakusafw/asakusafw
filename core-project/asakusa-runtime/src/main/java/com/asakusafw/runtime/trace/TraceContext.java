@@ -65,7 +65,7 @@ public final class TraceContext {
         this.portDirection = portDirection;
         this.portName = portName;
         this.dataType = dataType;
-        this.attributes = Collections.unmodifiableMap(new HashMap<String, String>(attributes));
+        this.attributes = Collections.unmodifiableMap(new HashMap<>(attributes));
     }
 
     /**
@@ -96,7 +96,7 @@ public final class TraceContext {
         if (attributeKeyValuePairs.length % 2 != 0) {
             throw new IllegalArgumentException();
         }
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         for (int i = 0; i < attributeKeyValuePairs.length; i += 2) {
             String key = attributeKeyValuePairs[i + 0];
             String value = attributeKeyValuePairs[i + 1];

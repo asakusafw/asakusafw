@@ -112,7 +112,7 @@ public class FileResourceMirror extends ResourceMirror {
                 script.getName(),
         });
         FileInputStreamProvider provider = new FileInputStreamProvider(path);
-        return new StreamSourceDriver<T>(getName(), script.getName(), provider, support, model);
+        return new StreamSourceDriver<>(getName(), script.getName(), provider, support, model);
     }
 
     @Override
@@ -132,7 +132,7 @@ public class FileResourceMirror extends ResourceMirror {
                 script.getName(),
         });
         FileOutputStreamProvider provider = new FileOutputStreamProvider(path);
-        return new StreamDrainDriver<T>(getName(), script.getName(), provider, support);
+        return new StreamDrainDriver<>(getName(), script.getName(), provider, support);
     }
 
     @Override

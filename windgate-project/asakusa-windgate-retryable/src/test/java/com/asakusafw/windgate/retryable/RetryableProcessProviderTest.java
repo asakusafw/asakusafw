@@ -182,7 +182,7 @@ public class RetryableProcessProviderTest {
     }
 
     private ProcessProfile profile(int retryCount, long retryInterval, Action... actions) {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(RetryableProcessProfile.KEY_RETRY_COUNT, String.valueOf(retryCount));
         conf.put(RetryableProcessProfile.KEY_RETRY_INTERVAL, String.valueOf(retryInterval));
         conf.put(RetryableProcessProfile.KEY_COMPONENT, Mock.class.getName());
@@ -207,7 +207,7 @@ public class RetryableProcessProviderTest {
     }
 
     private ProcessScript<String> script() {
-        return new ProcessScript<String>(
+        return new ProcessScript<>(
                 "dummy",
                 "testing",
                 String.class,
@@ -230,7 +230,7 @@ public class RetryableProcessProviderTest {
             if (attemptsString == null) {
                 throw new IOException();
             }
-            List<Action> actions = new ArrayList<Action>();
+            List<Action> actions = new ArrayList<>();
             for (String string : attemptsString.split(",")) {
                 actions.add(Action.valueOf(string));
             }

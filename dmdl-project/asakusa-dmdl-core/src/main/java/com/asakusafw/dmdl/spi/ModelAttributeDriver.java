@@ -30,10 +30,7 @@ import com.asakusafw.dmdl.semantics.ModelDeclaration;
 public abstract class ModelAttributeDriver extends AttributeDriver {
 
     @Override
-    public final void process(
-            DmdlSemantics environment,
-            Declaration declaration,
-            AstAttribute attribute) {
+    public final void process(DmdlSemantics environment, Declaration declaration, AstAttribute attribute) {
         assert attribute.name.toString().equals(getTargetName());
         if ((declaration instanceof ModelDeclaration) == false) {
             environment.report(new Diagnostic(
@@ -47,10 +44,7 @@ public abstract class ModelAttributeDriver extends AttributeDriver {
     }
 
     @Override
-    public final void verify(
-            DmdlSemantics environment,
-            Declaration declaration,
-            AstAttribute attribute) {
+    public final void verify(DmdlSemantics environment, Declaration declaration, AstAttribute attribute) {
         assert attribute.name.toString().equals(getTargetName());
         if ((declaration instanceof ModelDeclaration) == false) {
             return;
@@ -65,10 +59,7 @@ public abstract class ModelAttributeDriver extends AttributeDriver {
      * @param declaration the model declaration with the {@code attribute}
      * @see #getTargetName()
      */
-    public abstract void process(
-            DmdlSemantics environment,
-            ModelDeclaration declaration,
-            AstAttribute attribute);
+    public abstract void process(DmdlSemantics environment, ModelDeclaration declaration, AstAttribute attribute);
 
     /**
      * Verifies the attributed declaration.
@@ -80,10 +71,7 @@ public abstract class ModelAttributeDriver extends AttributeDriver {
      * @see #getTargetName()
      * @since 0.7.0
      */
-    public void verify(
-            DmdlSemantics environment,
-            ModelDeclaration declaration,
-            AstAttribute attribute) {
+    public void verify(DmdlSemantics environment, ModelDeclaration declaration, AstAttribute attribute) {
         return;
     }
 }

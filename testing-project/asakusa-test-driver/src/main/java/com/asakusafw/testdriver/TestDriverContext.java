@@ -200,9 +200,9 @@ public class TestDriverContext implements TestContext {
         }
         this.callerClass = contextClass;
         this.repository = new TestToolRepository(contextClass.getClassLoader());
-        this.extraConfigurations = new TreeMap<String, String>();
-        this.batchArgs = new TreeMap<String, String>();
-        this.environmentVariables = new HashMap<String, String>(System.getenv());
+        this.extraConfigurations = new TreeMap<>();
+        this.batchArgs = new TreeMap<>();
+        this.environmentVariables = new HashMap<>(System.getenv());
         this.options = new FlowCompilerOptions();
         configureOptions();
         this.skipPhases = EnumSet.noneOf(TestExecutionPhase.class);
@@ -275,13 +275,8 @@ public class TestDriverContext implements TestContext {
             return null;
         }
         Properties p = new Properties();
-        try {
-            InputStream in = new FileInputStream(version);
-            try {
-                p.load(in);
-            } finally {
-                in.close();
-            }
+        try (InputStream in = new FileInputStream(version)) {
+            p.load(in);
         } catch (IOException e) {
             LOG.warn(MessageFormat.format(
                     Messages.getString("TestDriverContext.warnInvalidDeployedSdkVersionFile"), //$NON-NLS-1$

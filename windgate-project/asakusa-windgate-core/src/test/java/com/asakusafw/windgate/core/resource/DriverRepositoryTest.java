@@ -39,7 +39,7 @@ public class DriverRepositoryTest {
     @Test
     public void createSource() throws Exception {
         DriverRepository repo = new DriverRepository(Arrays.asList(new MockResourceMirror("test1")));
-        ProcessScript<String> script = new ProcessScript<String>(
+        ProcessScript<String> script = new ProcessScript<>(
                 "testing", "simple", String.class, driver("test1"), driver("test2"));
 
         SourceDriver<String> source = repo.createSource(script);
@@ -56,7 +56,7 @@ public class DriverRepositoryTest {
     @Test(expected = IOException.class)
     public void createSource_missing() throws Exception {
         DriverRepository repo = new DriverRepository(Arrays.asList(new MockResourceMirror("test")));
-        ProcessScript<String> script = new ProcessScript<String>(
+        ProcessScript<String> script = new ProcessScript<>(
                 "testing", "simple", String.class, driver("MISSING"), driver("test"));
 
         repo.createSource(script);
@@ -69,7 +69,7 @@ public class DriverRepositoryTest {
     @Test
     public void testCreateDrain() throws Exception {
         DriverRepository repo = new DriverRepository(Arrays.asList(new MockResourceMirror("test2")));
-        ProcessScript<String> script = new ProcessScript<String>(
+        ProcessScript<String> script = new ProcessScript<>(
                 "testing", "simple", String.class, driver("test1"), driver("test2"));
 
         DrainDriver<String> source = repo.createDrain(script);
@@ -86,7 +86,7 @@ public class DriverRepositoryTest {
     @Test(expected = IOException.class)
     public void createDrain_missing() throws Exception {
         DriverRepository repo = new DriverRepository(Arrays.asList(new MockResourceMirror("test")));
-        ProcessScript<String> script = new ProcessScript<String>(
+        ProcessScript<String> script = new ProcessScript<>(
                 "testing", "simple", String.class, driver("test"), driver("MISSING"));
 
         repo.createDrain(script);

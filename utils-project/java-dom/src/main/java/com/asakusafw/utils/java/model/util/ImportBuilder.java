@@ -60,10 +60,7 @@ public class ImportBuilder {
      * @param strategy the import strategy
      * @throws IllegalArgumentException if the parameters are {@code null}
      */
-    public ImportBuilder(
-            ModelFactory factory,
-            PackageDeclaration packageDecl,
-            Strategy strategy) {
+    public ImportBuilder(ModelFactory factory, PackageDeclaration packageDecl, Strategy strategy) {
         if (factory == null) {
             throw new IllegalArgumentException("factory must not be null"); //$NON-NLS-1$
         }
@@ -178,7 +175,7 @@ public class ImportBuilder {
         Map<QualifiedName, SimpleName> imported = resolver.imported;
         Set<Name> implicit = createImplicit();
 
-        List<ImportDeclaration> results = new ArrayList<ImportDeclaration>();
+        List<ImportDeclaration> results = new ArrayList<>();
         for (QualifiedName name : imported.keySet()) {
             if (implicit.contains(name.getQualifier())) {
                 continue;
@@ -198,7 +195,7 @@ public class ImportBuilder {
     }
 
     private Set<Name> createImplicit() {
-        Set<Name> implicit = new HashSet<Name>();
+        Set<Name> implicit = new HashSet<>();
         implicit.add(Models.toName(resolver.factory, "java.lang")); //$NON-NLS-1$
         if (packageDecl != null) {
             implicit.add(packageDecl.getName());
@@ -228,7 +225,7 @@ public class ImportBuilder {
 
         final Map<SimpleName, Name> reserved;
 
-        private Set<Name> knownPackageNames = new HashSet<Name>();
+        private Set<Name> knownPackageNames = new HashSet<>();
 
         final ModelFactory factory;
 
@@ -238,7 +235,7 @@ public class ImportBuilder {
                 PackageDeclaration packageDecl) {
             this.factory = factory;
             this.strategy = strategy;
-            this.knownPackageNames = new HashSet<Name>();
+            this.knownPackageNames = new HashSet<>();
             if (packageDecl != null) {
                 Name current = packageDecl.getName();
                 while (current instanceof QualifiedName) {
@@ -247,8 +244,8 @@ public class ImportBuilder {
                 }
                 this.knownPackageNames.add(current);
             }
-            this.imported = new HashMap<QualifiedName, SimpleName>();
-            this.reserved = new HashMap<SimpleName, Name>();
+            this.imported = new HashMap<>();
+            this.reserved = new HashMap<>();
         }
 
         @Override
@@ -274,7 +271,7 @@ public class ImportBuilder {
                 return elem;
             }
 
-            LinkedList<SimpleName> segments = new LinkedList<SimpleName>();
+            LinkedList<SimpleName> segments = new LinkedList<>();
             name = normalize(name, segments);
             if (name.getModelKind() == ModelKind.SIMPLE_NAME) {
                 reserved.put((SimpleName) name, elem.getName());
@@ -296,9 +293,7 @@ public class ImportBuilder {
                 segments.toArray(new Name[segments.size()])));
         }
 
-        private Name normalize(
-                Name name,
-                LinkedList<SimpleName> segments) {
+        private Name normalize(Name name, LinkedList<SimpleName> segments) {
             Name current = name;
             if (strategy == Strategy.TOP_LEVEL) {
                 while (isLikeEnclosingType(current)) {
@@ -346,7 +341,7 @@ public class ImportBuilder {
         @Override
         public Type visitParameterizedType(ParameterizedType elem, Void context) {
             Type nonparameterized = elem.getType().accept(this, null);
-            List<Type> arguments = new ArrayList<Type>();
+            List<Type> arguments = new ArrayList<>();
             for (Type t : elem.getTypeArguments()) {
                 arguments.add(t.accept(this, null));
             }

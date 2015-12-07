@@ -46,7 +46,7 @@ public class SummarizeYaessLogOutputTest {
     @Rule
     public final TemporaryFolder temporary = new TemporaryFolder();
 
-    private final List<YaessLogRecord> records = new ArrayList<YaessLogRecord>();
+    private final List<YaessLogRecord> records = new ArrayList<>();
 
     private final YaessJobIdProvider provider = new YaessJobIdProvider() {
         @Override
@@ -163,7 +163,7 @@ public class SummarizeYaessLogOutputTest {
      */
     @Test
     public void wo_file() {
-        Map<String, String> opts = new HashMap<String, String>();
+        Map<String, String> opts = new HashMap<>();
         opts.put("code", ".*");
         assertInvalid(opts);
     }
@@ -174,7 +174,7 @@ public class SummarizeYaessLogOutputTest {
      */
     @Test
     public void wo_code() throws Exception {
-        Map<String, String> opts = new HashMap<String, String>();
+        Map<String, String> opts = new HashMap<>();
         opts.put("file", temporary.newFile().getAbsolutePath());
         assertInvalid(opts);
     }
@@ -185,7 +185,7 @@ public class SummarizeYaessLogOutputTest {
      */
     @Test
     public void invalid_code() throws Exception {
-        Map<String, String> opts = new HashMap<String, String>();
+        Map<String, String> opts = new HashMap<>();
         opts.put("file", temporary.newFile().getAbsolutePath());
         opts.put("code", "?");
         assertInvalid(opts);
@@ -197,7 +197,7 @@ public class SummarizeYaessLogOutputTest {
      */
     @Test
     public void invalid_encoding() throws Exception {
-        Map<String, String> opts = new HashMap<String, String>();
+        Map<String, String> opts = new HashMap<>();
         opts.put("file", temporary.newFile().getAbsolutePath());
         opts.put("code", ".*");
         opts.put("encoding", "??INVALID??");
@@ -210,7 +210,7 @@ public class SummarizeYaessLogOutputTest {
      */
     @Test
     public void unknown_opts() throws Exception {
-        Map<String, String> opts = new HashMap<String, String>();
+        Map<String, String> opts = new HashMap<>();
         opts.put("file", temporary.newFile().getAbsolutePath());
         opts.put("code", ".*");
         opts.put("__UNKNOWN__", "__UNKNOWN__");
@@ -221,23 +221,19 @@ public class SummarizeYaessLogOutputTest {
         try {
             File file = temporary.newFile();
 
-            Map<String, String> opts = new HashMap<String, String>();
+            Map<String, String> opts = new HashMap<>();
             opts.put("file", file.getAbsolutePath());
             opts.put("encoding", "UTF-8");
             opts.put("code", code);
 
-            Sink<? super YaessLogRecord> sink = new SummarizeYaessLogOutput().createSink(opts);
-            try {
+            try (Sink<? super YaessLogRecord> sink = new SummarizeYaessLogOutput().createSink(opts)) {
                 for (YaessLogRecord record : records) {
                     sink.put(record);
                 }
-            } finally {
-                sink.close();
             }
 
-            CsvReader reader = new CsvReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
-            try {
-                Map<YaessJobId, List<String>> results = new HashMap<YaessJobId, List<String>>();
+            try (CsvReader reader = new CsvReader(new InputStreamReader(new FileInputStream(file), "UTF-8"))) {
+                Map<YaessJobId, List<String>> results = new HashMap<>();
                 assertThat("skip header", reader.next(), is(true));
                 while (reader.next()) {
                     List<String> record = reader.get();
@@ -250,11 +246,9 @@ public class SummarizeYaessLogOutputTest {
                     id.setJobId(record.get(5));
                     id.setTrackingId(record.get(6));
                     assertThat(results.get(id), is(nullValue()));
-                    results.put(id, new ArrayList<String>(record.subList(7, record.size())));
+                    results.put(id, new ArrayList<>(record.subList(7, record.size())));
                 }
                 return results;
-            } finally {
-                reader.close();
             }
         } catch (Exception e) {
             throw new AssertionError(e);

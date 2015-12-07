@@ -112,16 +112,11 @@ public class ZipRepositoryTest {
 
     private File open(String name) {
         String path = getClass().getSimpleName() + ".files/" + name;
-        InputStream input = getClass().getResourceAsStream(path);
-        assertThat(path, input, not(nullValue()));
-        try {
-            try {
-                File file = new File(framework.getWork("temp"), name);
-                framework.dump(input, file);
-                return file;
-            } finally {
-                input.close();
-            }
+        try (InputStream input = getClass().getResourceAsStream(path)) {
+            assertThat(path, input, not(nullValue()));
+            File file = new File(framework.getWork("temp"), name);
+            framework.dump(input, file);
+            return file;
         } catch (IOException e) {
             throw new AssertionError(e);
         }
@@ -129,21 +124,17 @@ public class ZipRepositoryTest {
 
     private Map<String, List<String>> drain(Cursor cur) throws IOException {
         try {
-            Map<String, List<String>> entries = new TreeMap<String, List<String>>();
+            Map<String, List<String>> entries = new TreeMap<>();
             while (cur.next()) {
-                Location location = cur.getLocation();
-                InputStream input = cur.openResource();
-                try {
+                try (InputStream input = cur.openResource();
+                        Scanner scanner = new Scanner(input, "UTF-8");) {
                     List<String> contents = Lists.create();
-                    Scanner scanner = new Scanner(input, "UTF-8");
                     while (scanner.hasNextLine()) {
                         String line = scanner.nextLine();
                         contents.add(line);
                     }
+                    Location location = cur.getLocation();
                     entries.put(location.toPath('/'), contents);
-                    scanner.close();
-                } finally {
-                    input.close();
                 }
             }
             return entries;

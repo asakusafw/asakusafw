@@ -40,7 +40,7 @@ public abstract class AcceptableJavadocBlockParser extends JavadocBlockParser {
      * @param tagNames the rest acceptable tag names
      */
     public AcceptableJavadocBlockParser(String tagName, String...tagNames) {
-        this.acceptable = new HashSet<String>();
+        this.acceptable = new HashSet<>();
         this.acceptable.add(tagName);
         Collections.addAll(this.acceptable, tagNames);
     }
@@ -50,7 +50,7 @@ public abstract class AcceptableJavadocBlockParser extends JavadocBlockParser {
      * @param tagNames the acceptable tag names
      */
     public AcceptableJavadocBlockParser(String[] tagNames) {
-        this.acceptable = new HashSet<String>();
+        this.acceptable = new HashSet<>();
         this.acceptable.addAll(Arrays.asList(tagNames));
     }
 

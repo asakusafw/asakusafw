@@ -50,7 +50,7 @@ public abstract class BatchDescription {
 
     static final Work[] NOTHING = new Work[0];
 
-    private final Map<String, Work> works = new LinkedHashMap<String, Work>();
+    private final Map<String, Work> works = new LinkedHashMap<>();
 
     private DependencyBuilder adding;
 
@@ -130,7 +130,7 @@ public abstract class BatchDescription {
      * @return a collection of Unit-of-Works of this batch
      */
     public Collection<Work> getWorks() {
-        return new ArrayList<Work>(works.values());
+        return new ArrayList<>(works.values());
     }
 
     Work register(Work work) {
@@ -173,10 +173,7 @@ public abstract class BatchDescription {
          * @return the registered job
          */
         public Work soon() {
-            return register(new Work(
-                    BatchDescription.this,
-                    description,
-                    Collections.<Work>emptyList()));
+            return register(new Work(BatchDescription.this, description, Collections.<Work> emptyList()));
         }
 
         /**
@@ -194,7 +191,7 @@ public abstract class BatchDescription {
             if (rest == null) {
                 throw new IllegalArgumentException("rest must not be null"); //$NON-NLS-1$
             }
-            List<Work> dependencies = new ArrayList<Work>();
+            List<Work> dependencies = new ArrayList<>();
             dependencies.add(dependency);
             Collections.addAll(dependencies, rest);
             for (Work p : dependencies) {
@@ -204,10 +201,7 @@ public abstract class BatchDescription {
                             p));
                 }
             }
-            return register(new Work(
-                    BatchDescription.this,
-                    description,
-                    dependencies));
+            return register(new Work(BatchDescription.this, description, dependencies));
         }
     }
 }

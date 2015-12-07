@@ -44,14 +44,13 @@ public class TraceDriverLifecycleManager implements RuntimeResource {
 
     static final Log LOG = LogFactory.getLog(TraceDriverLifecycleManager.class);
 
-    private static final ThreadLocal<TraceDriverLifecycleManager> INSTANCES =
-            new ThreadLocal<TraceDriverLifecycleManager>();
+    private static final ThreadLocal<TraceDriverLifecycleManager> INSTANCES = new ThreadLocal<>();
 
     private ResourceConfiguration conf;
 
     private TraceActionFactory factory;
 
-    private final Map<TraceContext, TraceAction> actions = new HashMap<TraceContext, TraceAction>();
+    private final Map<TraceContext, TraceAction> actions = new HashMap<>();
 
     @Override
     public void setup(ResourceConfiguration configuration) throws IOException, InterruptedException {
@@ -136,16 +135,10 @@ public class TraceDriverLifecycleManager implements RuntimeResource {
 
     static void error(Throwable info) throws IOException, InterruptedException {
         TraceDriverLifecycleManager instance = INSTANCES.get();
-        TraceAction action = instance == null
-                ? new TraceErrorReportAction() : instance.factory.createErrorTraceAction(instance.conf);
-        try {
+        try (TraceAction action = instance == null
+                ? new TraceErrorReportAction()
+                : instance.factory.createErrorTraceAction(instance.conf)) {
             action.trace(info);
-        } finally {
-            try {
-                action.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
     }
 }

@@ -34,7 +34,7 @@ public class VariableResolverTest {
      */
     @Test
     public void simple() {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put("message", "Hello, world!");
         VariableResolver resolver = new VariableResolver(map);
         assertThat(resolver.replace("${message}", true), is("Hello, world!"));
@@ -45,7 +45,7 @@ public class VariableResolverTest {
      */
     @Test
     public void inLine() {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put("message", "Hello, world!");
         VariableResolver resolver = new VariableResolver(map);
         assertThat(resolver.replace(">>> ${message} <<<", true), is(">>> Hello, world! <<<"));
@@ -56,7 +56,7 @@ public class VariableResolverTest {
      */
     @Test
     public void multiple() {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put("m1", "Hello1");
         map.put("m2", "Hello2");
         map.put("m3", "Hello3");
@@ -69,7 +69,7 @@ public class VariableResolverTest {
      */
     @Test
     public void with_default_present() {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put("message", "Hello, world!");
         VariableResolver resolver = new VariableResolver(map);
         assertThat(resolver.replace("${message-MISSING}", true), is("Hello, world!"));
@@ -80,7 +80,7 @@ public class VariableResolverTest {
      */
     @Test
     public void with_default_missing() {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         VariableResolver resolver = new VariableResolver(map);
         assertThat(resolver.replace("${message-MISSING}", true), is("MISSING"));
     }
@@ -90,7 +90,7 @@ public class VariableResolverTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void invalid_strict() {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         VariableResolver resolver = new VariableResolver(map);
         resolver.replace("${MISSING}", true);
     }
@@ -100,7 +100,7 @@ public class VariableResolverTest {
      */
     @Test
     public void invalid_keep() {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         VariableResolver resolver = new VariableResolver(map);
         assertThat(resolver.replace("${MISSING}", false), is("${MISSING}"));
     }

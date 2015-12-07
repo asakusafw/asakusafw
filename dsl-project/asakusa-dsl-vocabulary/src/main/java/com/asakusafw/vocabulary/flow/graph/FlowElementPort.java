@@ -40,9 +40,7 @@ public abstract class FlowElementPort {
      * @param owner the owner element
      * @throws IllegalArgumentException if some parameters are {@code null}
      */
-    public FlowElementPort(
-            FlowElementPortDescription description,
-            FlowElement owner) {
+    public FlowElementPort(FlowElementPortDescription description, FlowElement owner) {
         if (owner == null) {
             throw new IllegalArgumentException("owner must not be null"); //$NON-NLS-1$
         }
@@ -51,7 +49,7 @@ public abstract class FlowElementPort {
         }
         this.owner = owner;
         this.description = description;
-        this.connected = new HashSet<PortConnection>();
+        this.connected = new HashSet<>();
     }
 
     /**

@@ -55,7 +55,7 @@ public class GenerateTaskTest {
     }
 
     private DmdlSourceRepository repo(String...files) {
-        List<URL> resources = new ArrayList<URL>();
+        List<URL> resources = new ArrayList<>();
         for (String s : files) {
             URL r = getClass().getResource(s);
             assertThat(s, r, not(nullValue()));
@@ -66,7 +66,7 @@ public class GenerateTaskTest {
 
     static class Mock implements TemplateGenerator {
 
-        final Set<String> saw = new HashSet<String>();
+        final Set<String> saw = new HashSet<>();
 
         @Override
         public void generate(ModelDeclaration model) throws IOException {

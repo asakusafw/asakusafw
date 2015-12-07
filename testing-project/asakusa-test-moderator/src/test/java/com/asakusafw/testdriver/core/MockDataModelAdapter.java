@@ -39,13 +39,13 @@ public class MockDataModelAdapter implements DataModelAdapter {
      * @param accepts acceptable classes
      */
     public MockDataModelAdapter(Class<?>... accepts) {
-        this.accepts = new HashSet<Class<?>>(Arrays.asList(accepts));
+        this.accepts = new HashSet<>(Arrays.asList(accepts));
     }
 
     @Override
     public <T> DataModelDefinition<T> get(Class<T> modelClass) {
         if (accepts == null || accepts.contains(modelClass)) {
-            return new ValueDefinition<T>(modelClass);
+            return new ValueDefinition<>(modelClass);
         }
         return null;
     }

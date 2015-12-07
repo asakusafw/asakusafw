@@ -34,7 +34,7 @@ public class TesterBase extends TestDriverBase {
     private static final Logger LOG = LoggerFactory.getLogger(TesterBase.class);
 
     private final Map<ImporterDescription, DataModelSourceFactory> externalResources
-        = new HashMap<ImporterDescription, DataModelSourceFactory>();
+        = new HashMap<>();
 
     /**
      * Creates a new instance.

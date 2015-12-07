@@ -77,7 +77,7 @@ public enum TotalConditionKind {
         assert conditions != null;
         this.symbol = symbol;
         this.title = title;
-        this.predicates = Collections.unmodifiableSet(new HashSet<DataModelCondition>(Arrays.asList(conditions)));
+        this.predicates = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(conditions)));
         this.text = Util.buildText(symbol, title);
     }
 

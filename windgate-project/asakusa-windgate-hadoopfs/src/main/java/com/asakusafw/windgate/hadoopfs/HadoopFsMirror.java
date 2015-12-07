@@ -129,8 +129,8 @@ public class HadoopFsMirror extends ResourceMirror {
         boolean succeeded = false;
         try {
             FileSystem fs = FileSystem.get(profile.getBasePath().toUri(), configuration);
-            provider = new FileSystemModelInputProvider<T>(configuration, fs, pathList, script.getDataClass());
-            SourceDriver<T> result = new ModelInputSourceDriver<T>(provider, value);
+            provider = new FileSystemModelInputProvider<>(configuration, fs, pathList, script.getDataClass());
+            SourceDriver<T> result = new ModelInputSourceDriver<>(provider, value);
             succeeded = true;
             return result;
         } finally {
@@ -165,11 +165,11 @@ public class HadoopFsMirror extends ResourceMirror {
         boolean succeeded = false;
         try {
             if (RuntimeContext.get().isSimulation()) {
-                output = new VoidModelOutput<T>();
+                output = new VoidModelOutput<>();
             } else {
                 output = TemporaryStorage.openOutput(configuration, script.getDataClass(), path);
             }
-            DrainDriver<T> result = new ModelOutputDrainDriver<T>(output);
+            DrainDriver<T> result = new ModelOutputDrainDriver<>(output);
             succeeded = true;
             return result;
         } finally {
@@ -251,7 +251,7 @@ public class HadoopFsMirror extends ResourceMirror {
         assert pathString != null;
         Path basePath = profile.getBasePath();
         String[] paths = pathString.split("[ \t\r\n]+");
-        List<Path> results = new ArrayList<Path>();
+        List<Path> results = new ArrayList<>();
         for (String path : paths) {
             if (path.isEmpty()) {
                 continue;

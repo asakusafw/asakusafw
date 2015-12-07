@@ -107,7 +107,7 @@ public class Location {
      */
     public Location append(Location suffix) {
         Precondition.checkMustNotBeNull(suffix, "suffix"); //$NON-NLS-1$
-        LinkedList<String> segments = new LinkedList<String>();
+        LinkedList<String> segments = new LinkedList<>();
         Location current = suffix;
         while (current != null) {
             segments.addFirst(current.name);
@@ -158,7 +158,7 @@ public class Location {
      * @return the path string
      */
     public String toPath(char separator) {
-        LinkedList<String> segments = new LinkedList<String>();
+        LinkedList<String> segments = new LinkedList<>();
         Location current = this;
         while (current != null) {
             segments.addFirst(current.name);

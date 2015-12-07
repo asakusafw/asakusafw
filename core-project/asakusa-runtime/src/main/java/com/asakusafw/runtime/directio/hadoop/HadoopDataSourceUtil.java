@@ -114,11 +114,11 @@ public final class HadoopDataSourceUtil {
         if (conf == null) {
             throw new IllegalArgumentException("conf must not be null"); //$NON-NLS-1$
         }
-        Map<String, String> pathToKey = new HashMap<String, String>();
+        Map<String, String> pathToKey = new HashMap<>();
         Map<String, String> map = getConfigMap(conf);
         Set<String> keys = getChildKeys(map, "."); //$NON-NLS-1$
         try {
-            List<DirectDataSourceProfile> results = new ArrayList<DirectDataSourceProfile>();
+            List<DirectDataSourceProfile> results = new ArrayList<>();
             for (String key : keys) {
                 String className = map.get(key);
                 Map<String, String> config = createPrefixMap(map, key + "."); //$NON-NLS-1$
@@ -185,7 +185,7 @@ public final class HadoopDataSourceUtil {
     private static NavigableMap<String, String> createPrefixMap(Map<?, ?> properties, String prefix) {
         assert properties != null;
         assert prefix != null;
-        NavigableMap<String, String> results = new TreeMap<String, String>();
+        NavigableMap<String, String> results = new TreeMap<>();
         for (Map.Entry<?, ?> entry : properties.entrySet()) {
             if ((entry.getKey() instanceof String) == false || (entry.getValue() instanceof String) == false) {
                 continue;
@@ -202,7 +202,7 @@ public final class HadoopDataSourceUtil {
     private static Set<String> getChildKeys(Map<String, String> properties, String delimitier) {
         assert properties != null;
         assert delimitier != null;
-        Set<String> results = new TreeSet<String>();
+        Set<String> results = new TreeSet<>();
         for (Map.Entry<String, String> entry : properties.entrySet()) {
             String name = entry.getKey();
             int index = name.indexOf(delimitier);
@@ -234,7 +234,7 @@ public final class HadoopDataSourceUtil {
             List<DirectDataSourceProfile> profiles) {
         assert conf != null;
         assert profiles != null;
-        List<DirectDataSourceProvider> providers = new ArrayList<DirectDataSourceProvider>();
+        List<DirectDataSourceProvider> providers = new ArrayList<>();
         for (DirectDataSourceProfile profile : profiles) {
             providers.add(createProvider(conf, profile));
         }
@@ -461,7 +461,7 @@ public final class HadoopDataSourceUtil {
         if (statusArray == null || statusArray.length == 0) {
             return Collections.emptyList();
         }
-        Collection<FileStatus> results = new ArrayList<FileStatus>();
+        Collection<FileStatus> results = new ArrayList<>();
         for (FileStatus stat : statusArray) {
             if (getTransactionInfoExecutionId(stat.getPath()) != null) {
                 results.add(stat);
@@ -504,7 +504,7 @@ public final class HadoopDataSourceUtil {
                     base,
                     pattern));
         }
-        List<FileStatus> current = new ArrayList<FileStatus>(1);
+        List<FileStatus> current = new ArrayList<>(1);
         try {
             FileStatus stat = fs.getFileStatus(base);
             current.add(stat);
@@ -512,7 +512,7 @@ public final class HadoopDataSourceUtil {
             return Collections.emptyList();
         }
         int steps = 0;
-        LinkedList<Segment> segments = new LinkedList<Segment>(pattern.getSegments());
+        LinkedList<Segment> segments = new LinkedList<>(pattern.getSegments());
         while (segments.isEmpty() == false) {
             if (segments.getFirst().isTraverse()) {
                 segments.removeFirst();
@@ -538,7 +538,7 @@ public final class HadoopDataSourceUtil {
         assert segments != null;
         assert segments.isEmpty() == false;
         assert segments.getFirst().isTraverse() == false;
-        List<Path> results = new ArrayList<Path>();
+        List<Path> results = new ArrayList<>();
 
         Segment current = segments.removeFirst();
         for (String segment : resolve(current)) {
@@ -554,7 +554,7 @@ public final class HadoopDataSourceUtil {
                     i.set(new Path(parent, suffix));
                 }
             } else {
-                List<Path> nextResults = new ArrayList<Path>();
+                List<Path> nextResults = new ArrayList<>();
                 for (Path parent : results) {
                     for (String suffix : suffixCandidates) {
                         nextResults.add(new Path(parent, suffix));
@@ -564,7 +564,7 @@ public final class HadoopDataSourceUtil {
             }
         }
 
-        Set<Path> saw = new HashSet<Path>();
+        Set<Path> saw = new HashSet<>();
         for (Iterator<Path> iter = results.iterator(); iter.hasNext();) {
             Path path = iter.next();
             if (saw.contains(path)) {
@@ -590,7 +590,7 @@ public final class HadoopDataSourceUtil {
     private static Set<String> resolve(Segment segment) {
         assert segment != null;
         assert segment.isTraverse() == false;
-        List<Set<String>> candidates = new ArrayList<Set<String>>();
+        List<Set<String>> candidates = new ArrayList<>();
         for (PatternElement element : segment.getElements()) {
             switch (element.getKind()) {
             case TOKEN:
@@ -600,20 +600,20 @@ public final class HadoopDataSourceUtil {
                 candidates.add(Collections.singleton("*")); //$NON-NLS-1$
                 break;
             case SELECTION:
-                candidates.add(new TreeSet<String>(((Selection) element).getContents()));
+                candidates.add(new TreeSet<>(((Selection) element).getContents()));
                 break;
             default:
                 throw new AssertionError();
             }
         }
         List<String> results = stringCrossJoin(candidates);
-        return new TreeSet<String>(results);
+        return new TreeSet<>(results);
     }
 
     private static List<String> stringCrossJoin(List<Set<String>> candidates) {
         assert candidates != null;
         assert candidates.isEmpty() == false;
-        List<String> results = new ArrayList<String>();
+        List<String> results = new ArrayList<>();
         Iterator<Set<String>> iter = candidates.iterator();
         assert iter.hasNext();
         results.addAll(iter.next());
@@ -626,7 +626,7 @@ public final class HadoopDataSourceUtil {
                     i.set(vaule + suffix);
                 }
             } else {
-                List<String> nextResults = new ArrayList<String>();
+                List<String> nextResults = new ArrayList<>();
                 for (String value : results) {
                     for (String suffix : next) {
                         nextResults.add(value + suffix);
@@ -641,9 +641,9 @@ public final class HadoopDataSourceUtil {
     private static List<FileStatus> recursiveStep(FileSystem fs, List<FileStatus> current) throws IOException {
         assert fs != null;
         assert current != null;
-        Set<Path> paths = new HashSet<Path>();
-        List<FileStatus> results = new ArrayList<FileStatus>();
-        LinkedList<FileStatus> work = new LinkedList<FileStatus>(current);
+        Set<Path> paths = new HashSet<>();
+        List<FileStatus> results = new ArrayList<>();
+        LinkedList<FileStatus> work = new LinkedList<>(current);
         while (work.isEmpty() == false) {
             FileStatus next = work.removeFirst();
             Path path = next.getPath();
@@ -676,8 +676,8 @@ public final class HadoopDataSourceUtil {
         assert fs != null;
         assert current != null;
         assert expressions != null;
-        Set<Path> paths = new HashSet<Path>();
-        List<FileStatus> results = new ArrayList<FileStatus>();
+        Set<Path> paths = new HashSet<>();
+        List<FileStatus> results = new ArrayList<>();
         for (FileStatus status : current) {
             if (FileSystemCompatibility.isDirectory(status) == false) {
                 continue;
@@ -721,7 +721,7 @@ public final class HadoopDataSourceUtil {
                 }
             }
         }
-        List<FileStatus> results = new ArrayList<FileStatus>();
+        List<FileStatus> results = new ArrayList<>();
         for (int i = 0; i < stats.length; i++) {
             FileStatus stat = stats[i];
             if (stat != null) {
@@ -845,7 +845,7 @@ public final class HadoopDataSourceUtil {
                     to,
                     list.size()));
         }
-        Set<Path> directoryCreated = new HashSet<Path>();
+        Set<Path> directoryCreated = new HashSet<>();
         for (Path path : list) {
             Path sourceFile = new Path(source, path);
             Path targetFile = new Path(target, path);
@@ -934,7 +934,7 @@ public final class HadoopDataSourceUtil {
                     baseUri,
                     all.size()));
         }
-        List<Path> results = new ArrayList<Path>();
+        List<Path> results = new ArrayList<>();
         for (FileStatus stat : all) {
             if (FileSystemCompatibility.isDirectory(stat)) {
                 continue;

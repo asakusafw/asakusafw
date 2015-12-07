@@ -27,13 +27,13 @@ import java.util.WeakHashMap;
  */
 public class SerialExecutionTracker implements ExecutionTracker {
 
-    private static final Map<Id, List<Record>> map = new WeakHashMap<ExecutionTracker.Id, List<Record>>();
+    private static final Map<Id, List<Record>> map = new WeakHashMap<>();
 
     @Override
     public synchronized void add(Id id, Record record) throws IOException, InterruptedException {
         List<Record> history = map.get(id);
         if (history == null) {
-            history = new ArrayList<Record>();
+            history = new ArrayList<>();
             map.put(id, history);
         }
         history.add(record);
@@ -56,6 +56,6 @@ public class SerialExecutionTracker implements ExecutionTracker {
         if (results == null) {
             results = Collections.emptyList();
         }
-        return new ArrayList<Record>(results);
+        return new ArrayList<>(results);
     }
 }

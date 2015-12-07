@@ -26,7 +26,7 @@ import com.asakusafw.runtime.core.Result;
  */
 public class MockResult<T> implements Result<T> {
 
-    private final List<T> results = new ArrayList<T>();
+    private final List<T> results = new ArrayList<>();
 
     /**
      * Creates a new instance.
@@ -34,7 +34,7 @@ public class MockResult<T> implements Result<T> {
      * @return the created instance
      */
     public static <T> MockResult<T> create() {
-        return new MockResult<T>();
+        return new MockResult<>();
     }
 
     @Override

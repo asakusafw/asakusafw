@@ -147,7 +147,7 @@ public class HadoopDataSourceCore implements DirectDataSource {
     }
 
     private List<FileStatus> applyFilter(List<FileStatus> stats, DataFilter<?> filter) {
-        List<FileStatus> results = new ArrayList<FileStatus>();
+        List<FileStatus> results = new ArrayList<>();
         for (FileStatus stat : stats) {
             String path = stat.getPath().toString();
             if (filter.acceptsPath(path)) {
@@ -175,7 +175,7 @@ public class HadoopDataSourceCore implements DirectDataSource {
     }
 
     private List<FileStatus> filesOnly(List<FileStatus> stats, Path temporary) {
-        List<FileStatus> results = new ArrayList<FileStatus>();
+        List<FileStatus> results = new ArrayList<>();
         for (FileStatus stat : stats) {
             if (FileSystemCompatibility.isDirectory(stat) == false && isIn(stat, temporary) == false) {
                 results.add(stat);
@@ -187,7 +187,7 @@ public class HadoopDataSourceCore implements DirectDataSource {
     private List<DirectInputFragment> computeInputFragments(
             FragmentComputer fragmentComputer,
             List<FileStatus> stats) throws IOException {
-        List<DirectInputFragment> results = new ArrayList<DirectInputFragment>();
+        List<DirectInputFragment> results = new ArrayList<>();
         for (FileStatus stat : stats) {
             String path = stat.getPath().toString();
             long fileSize = stat.getLen();
@@ -253,7 +253,7 @@ public class HadoopDataSourceCore implements DirectDataSource {
         if (filter == null) {
             return input;
         } else {
-            return new FilteredModelInput<T>(input, filter);
+            return new FilteredModelInput<>(input, filter);
         }
     }
 
@@ -264,31 +264,17 @@ public class HadoopDataSourceCore implements DirectDataSource {
             String basePath,
             String resourcePath,
             Counter counter) throws IOException, InterruptedException {
-        FileSystem fs;
-        Path attempt;
-        if (isLocalAttemptOutput()) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug(MessageFormat.format(
-                        "Start opening output (id={0}, path={1}, resource={2}, streaming={3})", //$NON-NLS-1$
-                        profile.getId(),
-                        basePath,
-                        resourcePath,
-                        true));
-            }
-            fs = profile.getLocalFileSystem();
-            attempt = getLocalAttemptOutput(context);
-        } else {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug(MessageFormat.format(
-                        "Start opening output (id={0}, path={1}, resource={2}, streaming={3})", //$NON-NLS-1$
-                        profile.getId(),
-                        basePath,
-                        resourcePath,
-                        false));
-            }
-            fs = profile.getFileSystem();
-            attempt = getAttemptOutput(context);
+        boolean local = isLocalAttemptOutput();
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "Start opening output (id={0}, path={1}, resource={2}, streaming={3})", //$NON-NLS-1$
+                    profile.getId(),
+                    basePath,
+                    resourcePath,
+                    local == false));
         }
+        FileSystem fs = local ? profile.getLocalFileSystem() : profile.getFileSystem();
+        Path attempt = local ? getLocalAttemptOutput(context) : getAttemptOutput(context);
         DataFormat<T> format = definition.getDataFormat();
         Class<? extends T> dataType = definition.getDataClass();
         Path file = append(append(attempt, basePath), resourcePath);
@@ -327,7 +313,7 @@ public class HadoopDataSourceCore implements DirectDataSource {
         if (format instanceof HadoopFileFormat<?>) {
             return (HadoopFileFormat<T>) format;
         } else {
-            return new HadoopFileFormatAdapter<T>(validateStream(format), profile.getFileSystem().getConf());
+            return new HadoopFileFormatAdapter<>(validateStream(format), profile.getFileSystem().getConf());
         }
     }
 
@@ -364,7 +350,7 @@ public class HadoopDataSourceCore implements DirectDataSource {
         List<FileStatus> stats = HadoopDataSourceUtil.search(fs, base, pattern);
         stats = normalize(stats, root, temporary);
 
-        List<ResourceInfo> results = new ArrayList<ResourceInfo>();
+        List<ResourceInfo> results = new ArrayList<>();
         for (FileStatus stat : stats) {
             counter.add(1);
             ResourceInfo resource = new ResourceInfo(
@@ -454,7 +440,7 @@ public class HadoopDataSourceCore implements DirectDataSource {
         assert stats != null;
         assert root != null;
         assert temporary != null;
-        List<FileStatus> results = new ArrayList<FileStatus>();
+        List<FileStatus> results = new ArrayList<>();
         for (FileStatus stat : stats) {
             if (root.equals(stat.getPath()) == false && isIn(stat, temporary) == false) {
                 results.add(stat);

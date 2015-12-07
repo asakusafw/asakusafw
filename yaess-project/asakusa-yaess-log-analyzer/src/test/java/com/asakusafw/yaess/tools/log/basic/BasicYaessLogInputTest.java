@@ -75,7 +75,7 @@ public class BasicYaessLogInputTest {
      */
     @Test
     public void wo_file() {
-        Map<String, String> opts = new HashMap<String, String>();
+        Map<String, String> opts = new HashMap<>();
         opts.put("encoding", "UTF-8");
         assertInvalid(opts);
     }
@@ -85,7 +85,7 @@ public class BasicYaessLogInputTest {
      */
     @Test
     public void missing_file() {
-        Map<String, String> opts = new HashMap<String, String>();
+        Map<String, String> opts = new HashMap<>();
         opts.put("file", new File(temporary.getRoot(), "__MISSING__").getAbsolutePath());
         assertInvalid(opts);
     }
@@ -96,7 +96,7 @@ public class BasicYaessLogInputTest {
      */
     @Test
     public void invalid_encoding() throws Exception {
-        Map<String, String> opts = new HashMap<String, String>();
+        Map<String, String> opts = new HashMap<>();
         opts.put("file", temporary.newFile().getAbsolutePath());
         opts.put("encoding", "??INVALID??");
         assertInvalid(opts);
@@ -108,7 +108,7 @@ public class BasicYaessLogInputTest {
      */
     @Test
     public void unknown_opts() throws Exception {
-        Map<String, String> opts = new HashMap<String, String>();
+        Map<String, String> opts = new HashMap<>();
         opts.put("file", temporary.newFile().getAbsolutePath());
         opts.put("__UNKNOWN__", "__UNKNOWN__");
         assertInvalid(opts);
@@ -117,27 +117,20 @@ public class BasicYaessLogInputTest {
     private List<YaessLogRecord> parse(String[] contents) {
         try {
             File f = temporary.newFile();
-            PrintWriter writer = new PrintWriter(f, "UTF-8");
-            try {
+            try (PrintWriter writer = new PrintWriter(f, "UTF-8")) {
                 for (String line : contents) {
                     writer.printf("%s\n", line);
                 }
-            } finally {
-                writer.close();
             }
-            Map<String, String> opts = new HashMap<String, String>();
+            Map<String, String> opts = new HashMap<>();
             opts.put("file", f.getAbsolutePath());
             opts.put("encoding", "UTF-8");
-
-            Source<? extends YaessLogRecord> source = new BasicYaessLogInput().createSource(opts);
-            try {
-                List<YaessLogRecord> results = new ArrayList<YaessLogRecord>();
+            try (Source<? extends YaessLogRecord> source = new BasicYaessLogInput().createSource(opts)) {
+                List<YaessLogRecord> results = new ArrayList<>();
                 while (source.next()) {
                     results.add(source.get());
                 }
                 return results;
-            } finally {
-                source.close();
             }
         } catch (Exception e) {
             throw new AssertionError(e);

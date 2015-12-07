@@ -15,7 +15,6 @@
  */
 package com.asakusafw.testdriver.tools.runner;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -63,19 +62,19 @@ public final class BatchTestRunner {
     private static final Options OPTIONS;
     static {
         OPT_BATCH_ID = new Option("b", "batch", true, //$NON-NLS-1$ //$NON-NLS-2$
-                Messages.getString("BatchTestRunner.optBatch")); //$NON-NLS-1$ 
+                Messages.getString("BatchTestRunner.optBatch")); //$NON-NLS-1$
         OPT_BATCH_ID.setArgName("batch_id"); //$NON-NLS-1$
         OPT_BATCH_ID.setRequired(true);
 
         OPT_ARGUMENT = new Option("A", "argument", true, //$NON-NLS-1$ //$NON-NLS-2$
-                Messages.getString("BatchTestRunner.optArgument")); //$NON-NLS-1$ 
+                Messages.getString("BatchTestRunner.optArgument")); //$NON-NLS-1$
         OPT_ARGUMENT.setArgs(2);
         OPT_ARGUMENT.setValueSeparator('=');
         OPT_ARGUMENT.setArgName("name=value"); //$NON-NLS-1$
         OPT_ARGUMENT.setRequired(false);
 
         OPT_PROPERTY = new Option("D", "property", true, //$NON-NLS-1$ //$NON-NLS-2$
-                Messages.getString("BatchTestRunner.optProperty")); //$NON-NLS-1$ 
+                Messages.getString("BatchTestRunner.optProperty")); //$NON-NLS-1$
         OPT_PROPERTY.setArgs(2);
         OPT_PROPERTY.setValueSeparator('=');
         OPT_PROPERTY.setArgName("name=value"); //$NON-NLS-1$
@@ -352,7 +351,7 @@ public final class BatchTestRunner {
 
     private static Map<String, String> toMap(Properties p) {
         assert p != null;
-        Map<String, String> results = new TreeMap<String, String>();
+        Map<String, String> results = new TreeMap<>();
         for (Map.Entry<Object, Object> entry : p.entrySet()) {
             results.put((String) entry.getKey(), (String) entry.getValue());
         }
@@ -361,15 +360,10 @@ public final class BatchTestRunner {
 
     private static Properties loadProperties(File path) throws IOException {
         assert path != null;
-        FileInputStream in = new FileInputStream(path);
-        try {
+        try (FileInputStream in = new FileInputStream(path)) {
             Properties properties = new Properties();
-            BufferedInputStream bin = new BufferedInputStream(in);
-            properties.load(bin);
-            bin.close();
+            properties.load(in);
             return properties;
-        } finally {
-            in.close();
         }
     }
 }

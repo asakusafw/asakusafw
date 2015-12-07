@@ -45,8 +45,8 @@ public class FlowElementResolver {
             throw new IllegalArgumentException("element must not be null"); //$NON-NLS-1$
         }
         this.element = element;
-        this.inputPorts = new HashMap<String, FlowElementInput>();
-        this.outputPorts = new HashMap<String, FlowElementOutput>();
+        this.inputPorts = new HashMap<>();
+        this.outputPorts = new HashMap<>();
         for (FlowElementInput input : element.getInputPorts()) {
             inputPorts.put(input.getDescription().getName(), input);
         }
@@ -139,7 +139,7 @@ public class FlowElementResolver {
             throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
         }
         FlowElementOutput port = getOutput(name);
-        return new OutputDriver<T>(port);
+        return new OutputDriver<>(port);
     }
 
     /**

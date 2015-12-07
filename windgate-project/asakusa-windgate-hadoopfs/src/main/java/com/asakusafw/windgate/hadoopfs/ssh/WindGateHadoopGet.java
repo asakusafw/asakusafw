@@ -102,14 +102,13 @@ public class WindGateHadoopGet extends WindGateHadoopBase {
                     WindGateHadoopGet.class.getName());
             return 1;
         }
-        List<Path> paths = new ArrayList<Path>();
+        List<Path> paths = new ArrayList<>();
         for (String arg : args) {
             paths.add(new Path(arg));
         }
-        try {
-            WGLOG.info("I20001",
-                    paths);
-            FileList.Writer writer = FileList.createWriter(new BufferedOutputStream(out, BUFFER_SIZE));
+        WGLOG.info("I20001",
+                paths);
+        try (FileList.Writer writer = FileList.createWriter(new BufferedOutputStream(out, BUFFER_SIZE))) {
             doGet(paths, writer);
             WGLOG.info("I20002",
                     paths);
@@ -129,7 +128,7 @@ public class WindGateHadoopGet extends WindGateHadoopBase {
     void doGet(final List<Path> paths, FileList.Writer drain) throws IOException, InterruptedException {
         assert paths != null;
         assert drain != null;
-        final BlockingQueue<Pair> queue = new SynchronousQueue<Pair>();
+        final BlockingQueue<Pair> queue = new SynchronousQueue<>();
         final FileSystem fs = FileSystem.get(conf);
         ExecutorService executor = Executors.newFixedThreadPool(1, new ThreadFactory() {
             @Override
@@ -213,12 +212,7 @@ public class WindGateHadoopGet extends WindGateHadoopBase {
                         continue;
                     }
                     found = true;
-                    InputStream in;
-                    if (RuntimeContext.get().isSimulation()) {
-                        in = new VoidInputStream();
-                    } else {
-                        in = fs.open(status.getPath(), BUFFER_SIZE);
-                    }
+                    InputStream in = getInput(fs, status);
                     boolean succeed = false;
                     try {
                         queue.put(new Pair(in, status));
@@ -236,6 +230,14 @@ public class WindGateHadoopGet extends WindGateHadoopBase {
         }
     }
 
+    private InputStream getInput(FileSystem fs, FileStatus status) throws IOException {
+        if (RuntimeContext.get().isSimulation()) {
+            return new VoidInputStream();
+        } else {
+            return fs.open(status.getPath(), BUFFER_SIZE);
+        }
+    }
+
     private void transfer(FileSystem fs, FileStatus status, InputStream input, Writer drain) throws IOException {
         assert fs != null;
         assert status != null;
@@ -247,8 +249,7 @@ public class WindGateHadoopGet extends WindGateHadoopBase {
         long transferred = 0;
         try {
             if (RuntimeContext.get().isSimulation() == false) {
-                OutputStream output = drain.openNext(status.getPath());
-                try {
+                try (OutputStream output = drain.openNext(status.getPath())) {
                     byte[] buf = new byte[1024];
                     while (true) {
                         int read = input.read(buf);
@@ -258,8 +259,6 @@ public class WindGateHadoopGet extends WindGateHadoopBase {
                         output.write(buf, 0, read);
                         transferred += read;
                     }
-                } finally {
-                    output.close();
                 }
             }
         } finally {

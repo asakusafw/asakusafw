@@ -68,7 +68,7 @@ public class ClassCollector {
     public ClassCollector(ClassLoader classLoader, Selector selector) {
         this.classLoader = classLoader;
         this.selector = selector;
-        this.classes = new HashMap<String, Class<?>>();
+        this.classes = new HashMap<>();
     }
 
     /**
@@ -76,7 +76,7 @@ public class ClassCollector {
      * @param classPath target class file or directory
      */
     public void inspect(File classPath) {
-        LinkedList<Entry> work = new LinkedList<Entry>();
+        LinkedList<Entry> work = new LinkedList<>();
         work.add(new Entry(Collections.<String>emptyList(), classPath));
         while (work.isEmpty() == false) {
             Entry next = work.removeFirst();
@@ -84,7 +84,7 @@ public class ClassCollector {
                 continue;
             } else if (next.file.isDirectory()) {
                 for (File child : next.file.listFiles()) {
-                    List<String> segments = new ArrayList<String>(next.segments);
+                    List<String> segments = new ArrayList<>(next.segments);
                     segments.add(child.getName());
                     Entry entry = new Entry(segments, child);
                     work.add(entry);

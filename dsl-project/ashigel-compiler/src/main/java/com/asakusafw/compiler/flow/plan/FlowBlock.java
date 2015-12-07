@@ -189,7 +189,7 @@ public class FlowBlock {
 
     private List<FlowBlock.Input> toBlockInputs(List<PortConnection> inputs) {
         assert inputs != null;
-        Map<FlowElementInput, Set<PortConnection>> map = new LinkedHashMap<FlowElementInput, Set<PortConnection>>();
+        Map<FlowElementInput, Set<PortConnection>> map = new LinkedHashMap<>();
         for (PortConnection input : inputs) {
             FlowElementInput port = input.getDownstream();
             Maps.addToSet(map, port, input);
@@ -203,7 +203,7 @@ public class FlowBlock {
 
     private List<FlowBlock.Output> toBlockOutputs(List<PortConnection> outputs) {
         assert outputs != null;
-        Map<FlowElementOutput, Set<PortConnection>> map = new LinkedHashMap<FlowElementOutput, Set<PortConnection>>();
+        Map<FlowElementOutput, Set<PortConnection>> map = new LinkedHashMap<>();
         for (PortConnection output : outputs) {
             FlowElementOutput port = output.getUpstream();
             Maps.addToSet(map, port, output);
@@ -651,7 +651,7 @@ public class FlowBlock {
 
         Set<FlowElement> blockEdge = collectBlockEdges();
         Set<FlowElement> removed = Sets.create();
-        LinkedList<FlowElement> work = new LinkedList<FlowElement>();
+        LinkedList<FlowElement> work = new LinkedList<>();
         work.addAll(elements);
 
         while (work.isEmpty() == false) {
@@ -745,7 +745,7 @@ public class FlowBlock {
             FlowBlock.Input opposite = output.getConnections().get(0).getDownstream();
             List<FlowBlock.Output> list = targets.get(opposite);
             if (list == null) {
-                list = new ArrayList<FlowBlock.Output>();
+                list = new ArrayList<>();
                 targets.put(opposite, list);
             } else {
                 foundTarget = true;

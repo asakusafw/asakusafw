@@ -29,7 +29,7 @@ public class SimpleTableInfo implements HiveTableInfo {
 
     private final String tableName;
 
-    private final List<HiveFieldInfo> fields = new ArrayList<HiveFieldInfo>();
+    private final List<HiveFieldInfo> fields = new ArrayList<>();
 
     private Class<?> dataModelClass;
 
@@ -39,7 +39,7 @@ public class SimpleTableInfo implements HiveTableInfo {
 
     private String formatName;
 
-    private final Map<String, String> tableProperties = new LinkedHashMap<String, String>();
+    private final Map<String, String> tableProperties = new LinkedHashMap<>();
 
     /**
      * Creates a new instance.

@@ -20,6 +20,7 @@ import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 
 import org.apache.hadoop.io.Text;
@@ -63,15 +64,10 @@ public class StreamSupportEmitterTest extends GeneratorTesterRoot {
         DataModelStreamSupport<Object> unsafe = unsafe(support);
 
         model.set("value", new Text("Hello, world!"));
-
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        DataModelWriter<Object> writer = unsafe.createWriter("example", output);
-        writer.write(model.unwrap());
-        writer.flush();
-        output.close();
+        byte[] data = write(unsafe, model);
 
         Object buffer = loaded.newModel("Simple").unwrap();
-        DataModelReader<Object> reader = unsafe.createReader("example", new ByteArrayInputStream(output.toByteArray()));
+        DataModelReader<Object> reader = unsafe.createReader("example", new ByteArrayInputStream(data));
         assertThat(reader.readTo(buffer), is(true));
         assertThat(buffer, is(buffer));
         assertThat(reader.readTo(buffer), is(false));
@@ -104,16 +100,10 @@ public class StreamSupportEmitterTest extends GeneratorTesterRoot {
         all.set("c_datetime", new DateTime(2011, 12, 31, 23, 59, 59));
 
         DataModelStreamSupport<Object> unsafe = unsafe(support);
-
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        DataModelWriter<Object> writer = unsafe.createWriter("example", output);
-        writer.write(empty.unwrap());
-        writer.write(all.unwrap());
-        writer.flush();
-        output.close();
+        byte[] data = write(unsafe, empty, all);
 
         Object buffer = loaded.newModel("Types").unwrap();
-        DataModelReader<Object> reader = unsafe.createReader("example", new ByteArrayInputStream(output.toByteArray()));
+        DataModelReader<Object> reader = unsafe.createReader("example", new ByteArrayInputStream(data));
         assertThat(reader.readTo(buffer), is(true));
         assertThat(buffer, is(empty.unwrap()));
         assertThat(reader.readTo(buffer), is(true));
@@ -143,5 +133,18 @@ public class StreamSupportEmitterTest extends GeneratorTesterRoot {
     @SuppressWarnings("unchecked")
     private DataModelStreamSupport<Object> unsafe(DataModelStreamSupport<?> support) {
         return (DataModelStreamSupport<Object>) support;
+    }
+
+    private byte[] write(DataModelStreamSupport<Object> support, ModelWrapper... models) {
+        try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
+            DataModelWriter<Object> writer = support.createWriter("example", output);
+            for (ModelWrapper model : models) {
+                writer.write(model.unwrap());
+            }
+            writer.flush();
+            return output.toByteArray();
+        } catch (IOException e) {
+            throw new AssertionError();
+        }
     }
 }

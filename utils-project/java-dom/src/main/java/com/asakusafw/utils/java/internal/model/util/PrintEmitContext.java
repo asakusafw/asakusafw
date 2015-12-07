@@ -60,7 +60,7 @@ public class PrintEmitContext implements EmitContext {
         this.inDocComment = false;
         this.column = 0;
         this.bodyColumn = 0;
-        this.commentPool = new TreeMap<Integer, String>();
+        this.commentPool = new TreeMap<>();
     }
 
     @Override

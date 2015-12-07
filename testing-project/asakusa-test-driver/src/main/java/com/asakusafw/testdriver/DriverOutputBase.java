@@ -222,7 +222,7 @@ public class DriverOutputBase<T> extends DriverInputBase<T> {
             List<? extends ModelTester<? super T>> extraRules) {
         try {
             TestDataToolProvider tools = getTestTools();
-            List<TestRule> fragments = new ArrayList<TestRule>();
+            List<TestRule> fragments = new ArrayList<>();
             for (ModelTester<? super T> tester : extraRules) {
                 fragments.add(tools.toVerifyRuleFragment(getDataModelDefinition(), tester));
             }

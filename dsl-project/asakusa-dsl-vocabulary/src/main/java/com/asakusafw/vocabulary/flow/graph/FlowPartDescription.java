@@ -35,8 +35,7 @@ public class FlowPartDescription implements FlowElementDescription {
 
     private static final Map<Class<? extends FlowElementAttribute>, FlowElementAttribute> ATTRIBUTES;
     static {
-        Map<Class<? extends FlowElementAttribute>, FlowElementAttribute> map =
-            new HashMap<Class<? extends FlowElementAttribute>, FlowElementAttribute>();
+        Map<Class<? extends FlowElementAttribute>, FlowElementAttribute> map = new HashMap<>();
         map.put(FlowBoundary.class, FlowBoundary.STAGE);
         ATTRIBUTES = Collections.unmodifiableMap(map);
     }
@@ -75,11 +74,11 @@ public class FlowPartDescription implements FlowElementDescription {
             throw new IllegalArgumentException("parameters must not be null"); //$NON-NLS-1$
         }
         this.flowGraph = flowGraph;
-        List<FlowElementPortDescription> inputs = new ArrayList<FlowElementPortDescription>();
-        List<FlowElementPortDescription> outputs = new ArrayList<FlowElementPortDescription>();
+        List<FlowElementPortDescription> inputs = new ArrayList<>();
+        List<FlowElementPortDescription> outputs = new ArrayList<>();
         this.inputPorts = Collections.unmodifiableList(inputs);
         this.outputPorts = Collections.unmodifiableList(outputs);
-        this.parameters = Collections.unmodifiableList(new ArrayList<Parameter>(parameters));
+        this.parameters = Collections.unmodifiableList(new ArrayList<>(parameters));
 
         for (FlowIn<?> in : flowGraph.getFlowInputs()) {
             inputs.add(new FlowElementPortDescription(
@@ -297,9 +296,9 @@ public class FlowPartDescription implements FlowElementDescription {
                 throw new IllegalArgumentException("declaring must not be null"); //$NON-NLS-1$
             }
             this.declaring = declaring;
-            this.flowInputs = new ArrayList<FlowIn<?>>();
-            this.flowOutputs = new ArrayList<FlowOut<?>>();
-            this.parameters = new ArrayList<Parameter>();
+            this.flowInputs = new ArrayList<>();
+            this.flowOutputs = new ArrayList<>();
+            this.parameters = new ArrayList<>();
         }
 
         /**
@@ -317,7 +316,7 @@ public class FlowPartDescription implements FlowElementDescription {
             if (type == null) {
                 throw new IllegalArgumentException("type must not be null"); //$NON-NLS-1$
             }
-            FlowIn<T> in = new FlowIn<T>(new InputDescription(name, type));
+            FlowIn<T> in = new FlowIn<>(new InputDescription(name, type));
             flowInputs.add(in);
             return in;
         }
@@ -337,7 +336,7 @@ public class FlowPartDescription implements FlowElementDescription {
             if (type == null) {
                 throw new IllegalArgumentException("type must not be null"); //$NON-NLS-1$
             }
-            FlowOut<T> out = new FlowOut<T>(new OutputDescription(name, type));
+            FlowOut<T> out = new FlowOut<>(new OutputDescription(name, type));
             flowOutputs.add(out);
             return out;
         }
@@ -389,10 +388,7 @@ public class FlowPartDescription implements FlowElementDescription {
          * @throws IllegalArgumentException if some parameters were {@code null}
          * @since 0.5.0
          */
-        public void addParameter(
-                String parameterName,
-                Type parameterType,
-                Object argument) {
+        public void addParameter(String parameterName, Type parameterType, Object argument) {
             if (parameterName == null) {
                 throw new IllegalArgumentException("parameterName must not be null"); //$NON-NLS-1$
             }

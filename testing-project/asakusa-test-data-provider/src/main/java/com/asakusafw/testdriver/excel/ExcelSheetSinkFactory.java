@@ -103,11 +103,8 @@ public class ExcelSheetSinkFactory extends DataModelSinkFactory {
                 LOG.info(MessageFormat.format(
                         Messages.getString("ExcelSheetSinkFactory.infoStartOutput"), //$NON-NLS-1$
                         output));
-                OutputStream stream = new FileOutputStream(output);
-                try {
+                try (OutputStream stream = new FileOutputStream(output);) {
                     workbook.write(stream);
-                } finally {
-                    stream.close();
                 }
             }
         };

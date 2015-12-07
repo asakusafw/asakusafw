@@ -81,7 +81,7 @@ public class RuntimeResourceManager extends Configured {
             LOG.debug("Loading runtime plugins"); //$NON-NLS-1$
         }
         List<? extends RuntimeResource> loaded = load();
-        this.resources = new ArrayList<RuntimeResource>();
+        this.resources = new ArrayList<>();
         for (RuntimeResource resource : loaded) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
@@ -140,7 +140,7 @@ public class RuntimeResourceManager extends Configured {
      * @throws IOException if failed to load the resources
      */
     protected List<RuntimeResource> load() throws IOException {
-        List<RuntimeResource> results = new ArrayList<RuntimeResource>();
+        List<RuntimeResource> results = new ArrayList<>();
         ClassLoader loader = configuration.getClassLoader();
         try {
             for (RuntimeResource resource : ServiceLoader.load(RuntimeResource.class, loader)) {

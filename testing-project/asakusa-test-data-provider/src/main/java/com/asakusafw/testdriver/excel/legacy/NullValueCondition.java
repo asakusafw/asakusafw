@@ -63,7 +63,7 @@ public enum NullValueCondition {
         return japaneseName;
     }
 
-    private static Map<String, NullValueCondition> japaneseNameMap = new HashMap<String, NullValueCondition>();
+    private static Map<String, NullValueCondition> japaneseNameMap = new HashMap<>();
     static {
         for (NullValueCondition conditon : NullValueCondition.values()) {
             String key = conditon.getJapaneseName();

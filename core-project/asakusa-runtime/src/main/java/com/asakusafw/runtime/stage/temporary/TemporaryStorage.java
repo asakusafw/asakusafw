@@ -74,7 +74,7 @@ public final class TemporaryStorage {
         if (statusList.isEmpty()) {
             return Collections.emptyList();
         }
-        List<Path> results = new ArrayList<Path>();
+        List<Path> results = new ArrayList<>();
         for (FileStatus status : statusList) {
             results.add(status.getPath());
         }
@@ -143,10 +143,10 @@ public final class TemporaryStorage {
                     fs.getUri()));
         }
         if (Writable.class.isAssignableFrom(dataType)) {
-            return (ModelInput<V>) new TemporaryFileInput<Writable>(fs.open(path), 0);
+            return (ModelInput<V>) new TemporaryFileInput<>(fs.open(path), 0);
         }
         SequenceFile.Reader reader = new SequenceFile.Reader(fs, path, conf);
-        return (ModelInput<V>) new SequenceFileModelInput<Writable>(reader);
+        return (ModelInput<V>) new SequenceFileModelInput<>(reader);
     }
 
     /**
@@ -179,10 +179,10 @@ public final class TemporaryStorage {
             throw new IllegalArgumentException("input must not be null"); //$NON-NLS-1$
         }
         if (Writable.class.isAssignableFrom(dataType)) {
-            return (ModelInput<V>) new TemporaryFileInput<Writable>(input, 0);
+            return (ModelInput<V>) new TemporaryFileInput<>(input, 0);
         }
         SequenceFile.Reader reader = SequenceFileUtil.openReader(input, status, conf);
-        return (ModelInput<V>) new SequenceFileModelInput<Writable>(reader, input);
+        return (ModelInput<V>) new SequenceFileModelInput<>(reader, input);
     }
 
     /**
@@ -217,7 +217,7 @@ public final class TemporaryStorage {
                     fs.getUri()));
         }
         if (Writable.class.isAssignableFrom(dataType)) {
-            return (ModelOutput<V>) new TemporaryFileOutput<Writable>(
+            return (ModelOutput<V>) new TemporaryFileOutput<>(
                     fs.create(path, true),
                     dataType.getName(),
                     OUTPUT_INIT_BUFFER_SIZE, OUTPUT_PAGE_SIZE);
@@ -228,7 +228,7 @@ public final class TemporaryStorage {
                 path,
                 NullWritable.class,
                 dataType);
-        return new SequenceFileModelOutput<V>(out);
+        return new SequenceFileModelOutput<>(out);
     }
 
     /**
@@ -265,14 +265,21 @@ public final class TemporaryStorage {
                     fs.getUri()));
         }
         if (Writable.class.isAssignableFrom(dataType)) {
-            return (ModelOutput<V>) new TemporaryFileOutput<Writable>(
+            return (ModelOutput<V>) new TemporaryFileOutput<>(
                     fs.create(path, true),
                     dataType.getName(),
                     OUTPUT_INIT_BUFFER_SIZE, OUTPUT_PAGE_SIZE);
         }
-        SequenceFile.Writer out;
+        SequenceFile.Writer out = newWriter(conf, fs, dataType, path, compressionCodec);
+        return new SequenceFileModelOutput<>(out);
+    }
+
+    private static <V> SequenceFile.Writer newWriter(
+            Configuration conf, FileSystem fs,
+            Class<V> dataType, Path path,
+            CompressionCodec compressionCodec) throws IOException {
         if (compressionCodec == null) {
-            out = SequenceFile.createWriter(
+            return SequenceFile.createWriter(
                     fs,
                     conf,
                     path,
@@ -280,7 +287,7 @@ public final class TemporaryStorage {
                     dataType,
                     CompressionType.NONE);
         } else {
-            out = SequenceFile.createWriter(
+            return SequenceFile.createWriter(
                     fs,
                     conf,
                     path,
@@ -289,7 +296,6 @@ public final class TemporaryStorage {
                     CompressionType.BLOCK,
                     compressionCodec);
         }
-        return new SequenceFileModelOutput<V>(out);
     }
 
     /**
@@ -336,14 +342,14 @@ public final class TemporaryStorage {
             throw new IllegalArgumentException("output must not be null"); //$NON-NLS-1$
         }
         if (Writable.class.isAssignableFrom(dataType)) {
-            return (ModelOutput<V>) new TemporaryFileOutput<Writable>(
+            return (ModelOutput<V>) new TemporaryFileOutput<>(
                     output,
                     dataType.getName(),
                     OUTPUT_INIT_BUFFER_SIZE, OUTPUT_PAGE_SIZE);
         }
         SequenceFile.Writer out = SequenceFileUtil.openWriter(
                 output, conf, NullWritable.class, dataType, compressionCodec);
-        return new SequenceFileModelOutput<V>(out);
+        return new SequenceFileModelOutput<>(out);
     }
 
     private TemporaryStorage() {

@@ -39,6 +39,7 @@ import com.asakusafw.windgate.core.GateTask;
 import com.asakusafw.windgate.core.ParameterList;
 import com.asakusafw.windgate.core.ProfileContext;
 import com.asakusafw.windgate.core.WindGateLogger;
+import com.asakusafw.windgate.core.util.SafeCloser;
 
 /**
  * A WindGate main entry point.
@@ -122,37 +123,37 @@ public final class WindGate {
     }
 
     static int execute(String[] args) {
-        GateTask task;
-        try {
-            Configuration conf = parseConfiguration(args);
-            task = new GateTask(
-                    conf.profile,
-                    conf.script,
-                    conf.sessionId,
-                    conf.mode.createsSession,
-                    conf.mode.completesSession,
-                    conf.arguments);
-        } catch (Exception e) {
-            HelpFormatter formatter = new HelpFormatter();
-            formatter.setWidth(Integer.MAX_VALUE);
-            formatter.printHelp(
-                    MessageFormat.format(
-                            "java -classpath ... {0}",
-                            WindGate.class.getName()),
-                    OPTIONS,
-                    true);
-            System.out.println("Note:");
-            System.out.println("  Profile and script path accept following URI formats:");
-            System.out.println("    no scheme -");
-            System.out.println("      Local file system path");
-            System.out.println("    \"classpath\" scheme -");
-            System.out.println("      Absolute path on class path (includes plugin libraries)");
-            System.out.println("    other schemes (e.g. http://...)-");
-            System.out.println("      Processed as a URL");
-            WGLOG.error(e, "E00001");
-            return 1;
-        }
-        try {
+        try (SafeCloser<GateTask> closer = new SafeCloser<>()) {
+            try {
+                Configuration conf = parseConfiguration(args);
+                closer.set(new GateTask(
+                        conf.profile,
+                        conf.script,
+                        conf.sessionId,
+                        conf.mode.createsSession,
+                        conf.mode.completesSession,
+                        conf.arguments));
+            } catch (Exception e) {
+                HelpFormatter formatter = new HelpFormatter();
+                formatter.setWidth(Integer.MAX_VALUE);
+                formatter.printHelp(
+                        MessageFormat.format(
+                                "java -classpath ... {0}",
+                                WindGate.class.getName()),
+                        OPTIONS,
+                        true);
+                System.out.println("Note:");
+                System.out.println("  Profile and script path accept following URI formats:");
+                System.out.println("    no scheme -");
+                System.out.println("      Local file system path");
+                System.out.println("    \"classpath\" scheme -");
+                System.out.println("      Absolute path on class path (includes plugin libraries)");
+                System.out.println("    other schemes (e.g. http://...)-");
+                System.out.println("      Processed as a URL");
+                WGLOG.error(e, "E00001");
+                return 1;
+            }
+            GateTask task = closer.get();
             if (RuntimeContext.get().canExecute(task)) {
                 task.execute();
             }
@@ -160,8 +161,6 @@ public final class WindGate {
         } catch (Exception e) {
             WGLOG.error(e, "E00002");
             return 1;
-        } finally {
-            task.close();
         }
     }
 

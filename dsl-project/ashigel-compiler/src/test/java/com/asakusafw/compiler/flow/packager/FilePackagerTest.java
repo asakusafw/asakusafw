@@ -208,13 +208,13 @@ public class FilePackagerTest extends JobflowCompilerTestRoot {
 
     private void build(Set<String> entries, FilePackager packager)
             throws IOException {
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        packager.build(output);
-        output.close();
-
-        ByteArrayInputStream input = new ByteArrayInputStream(output.toByteArray());
-        JarInputStream jar = new JarInputStream(input);
-        try {
+        byte[] bytes;
+        try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
+            packager.build(output);
+            bytes = output.toByteArray();
+        }
+        ByteArrayInputStream input = new ByteArrayInputStream(bytes);
+        try (JarInputStream jar = new JarInputStream(input)) {
             while (true) {
                 JarEntry entry = jar.getNextJarEntry();
                 if (entry == null) {
@@ -222,29 +222,21 @@ public class FilePackagerTest extends JobflowCompilerTestRoot {
                 }
                 entries.add(entry.getName());
             }
-        } finally {
-            jar.close();
         }
     }
 
     private void emit(Packager packager, CompilationUnit java) throws IOException {
-        PrintWriter writer = packager.openWriter(java);
-        try {
+        try (PrintWriter writer = packager.openWriter(java)) {
             Models.emit(java, writer);
-        } finally {
-            writer.close();
         }
     }
 
     private void write(Packager packager, String pkg, String rel, String value) throws IOException {
         ModelFactory f = Models.getModelFactory();
-        OutputStream output = packager.openStream(
+        try (OutputStream output = packager.openStream(
                 pkg == null ? null : Models.toName(f, pkg),
-                rel);
-        try {
+                rel)) {
             output.write(value.getBytes("UTF-8"));
-        } finally {
-            output.close();
         }
     }
 

@@ -140,7 +140,7 @@ public abstract class ExecutionLock implements Closeable {
 
             static final Map<String, Scope> SYMBOLS;
             static {
-                Map<String, Scope> map = new HashMap<String, Scope>();
+                Map<String, Scope> map = new HashMap<>();
                 for (Scope phase : values()) {
                     map.put(phase.getSymbol(), phase);
                 }

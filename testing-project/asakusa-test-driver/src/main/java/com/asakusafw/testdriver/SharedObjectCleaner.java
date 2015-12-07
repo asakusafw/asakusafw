@@ -63,7 +63,7 @@ public class SharedObjectCleaner extends ExternalResource {
 
     static final Logger LOG = LoggerFactory.getLogger(SharedObjectCleaner.class);
 
-    private final List<Shared<?>> sharedValues = new ArrayList<Shared<?>>();
+    private final List<Shared<?>> sharedValues = new ArrayList<>();
 
     /**
      * Registers {@link Shared} objects.
@@ -92,7 +92,7 @@ public class SharedObjectCleaner extends ExternalResource {
 
     private List<Shared<?>> collect(Class<?> aClass) {
         LOG.debug("collecting Shared fields: {}", aClass.getName()); //$NON-NLS-1$
-        List<Shared<?>> results = new ArrayList<Shared<?>>();
+        List<Shared<?>> results = new ArrayList<>();
         for (Field f : aClass.getDeclaredFields()) {
             if (Shared.class.isAssignableFrom(f.getType()) == false) {
                 continue;

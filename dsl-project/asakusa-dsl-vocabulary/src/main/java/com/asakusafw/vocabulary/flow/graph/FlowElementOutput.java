@@ -40,7 +40,7 @@ public final class FlowElementOutput extends FlowElementPort {
      * @return the opposite ports
      */
     public Collection<FlowElementInput> getOpposites() {
-        Collection<FlowElementInput> results = new ArrayList<FlowElementInput>();
+        Collection<FlowElementInput> results = new ArrayList<>();
         for (PortConnection conn : getConnected()) {
             results.add(conn.getDownstream());
         }
@@ -53,8 +53,8 @@ public final class FlowElementOutput extends FlowElementPort {
      */
     @Override
     public Collection<FlowElementInput> disconnectAll() {
-        Collection<FlowElementInput> results = new ArrayList<FlowElementInput>();
-        for (PortConnection conn : new ArrayList<PortConnection>(getConnected())) {
+        Collection<FlowElementInput> results = new ArrayList<>();
+        for (PortConnection conn : new ArrayList<>(getConnected())) {
             results.add(conn.getDownstream());
             conn.disconnect();
         }

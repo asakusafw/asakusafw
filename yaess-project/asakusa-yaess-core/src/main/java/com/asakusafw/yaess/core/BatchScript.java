@@ -88,7 +88,7 @@ public class BatchScript {
         }
         this.id = batchId;
         this.buildId = buildId;
-        SortedMap<String, FlowScript> map = new TreeMap<String, FlowScript>();
+        SortedMap<String, FlowScript> map = new TreeMap<>();
         for (FlowScript flow : flows) {
             map.put(flow.getId(), flow);
         }
@@ -129,10 +129,10 @@ public class BatchScript {
      * @return {@link FlowScript}s
      */
     public List<FlowScript> getAllFlows() {
-        LinkedList<FlowScript> work = new LinkedList<FlowScript>(flows.values());
-        Set<String> blockerIds = new HashSet<String>(flows.keySet());
+        LinkedList<FlowScript> work = new LinkedList<>(flows.values());
+        Set<String> blockerIds = new HashSet<>(flows.keySet());
         // tiny topological sort
-        List<FlowScript> results = new ArrayList<FlowScript>();
+        List<FlowScript> results = new ArrayList<>();
         while (work.isEmpty() == false) {
             boolean worked = false;
             for (Iterator<FlowScript> iter = work.iterator(); iter.hasNext();) {
@@ -178,7 +178,7 @@ public class BatchScript {
         String batchId = properties.getProperty(KEY_ID);
         String verificationCode = properties.getProperty(KEY_VERIFICATION_CODE);
         Set<String> flowIds = FlowScript.extractFlowIds(properties);
-        List<FlowScript> flowScripts = new ArrayList<FlowScript>();
+        List<FlowScript> flowScripts = new ArrayList<>();
         for (String flowId : flowIds) {
             FlowScript flowScript = FlowScript.load(properties, flowId);
             flowScripts.add(flowScript);

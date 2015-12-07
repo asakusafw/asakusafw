@@ -403,28 +403,18 @@ public class DirectFlowCompilerTest {
     }
 
     private void find(File file, String path) {
-        try {
-            JarFile jar = new JarFile(file);
-            try {
-                assertThat(path, jar.getEntry(path), is(notNullValue()));
-            } finally {
-                jar.close();
-            }
+        try (JarFile jar = new JarFile(file)) {
+            assertThat(path, jar.getEntry(path), is(notNullValue()));
         } catch (IOException e) {
             throw new AssertionError(e);
         }
     }
 
     private File copy(String name) {
-        InputStream input = open(name);
-        try {
-            try {
-                File target = new File(tester.framework().getWork("temp"), name);
-                tester.framework().dump(input, target);
-                return target;
-            } finally {
-                input.close();
-            }
+        try (InputStream input = open(name)){
+            File target = new File(tester.framework().getWork("temp"), name);
+            tester.framework().dump(input, target);
+            return target;
         } catch (IOException e) {
             throw new AssertionError(e);
         }
@@ -435,17 +425,11 @@ public class DirectFlowCompilerTest {
     }
 
     private File extract(String source, String into) {
-        InputStream input = open(source);
-        try {
-            try {
-                ZipInputStream zip = new ZipInputStream(input);
-                File target = new File(tester.framework().getWork("temp"), into);
-                tester.framework().extract(zip, target);
-                zip.close();
-                return target;
-            } finally {
-                input.close();
-            }
+        try (InputStream input = open(source);
+                ZipInputStream zip = new ZipInputStream(input)) {
+            File target = new File(tester.framework().getWork("temp"), into);
+            tester.framework().extract(zip, target);
+            return target;
         } catch (IOException e) {
             throw new AssertionError(e);
         }

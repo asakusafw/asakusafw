@@ -325,11 +325,8 @@ public class FlowCompilingEnvironment {
      */
     public void emit(CompilationUnit source) throws IOException {
         Precondition.checkMustNotBeNull(source, "source"); //$NON-NLS-1$
-        PrintWriter writer = config.getPackager().openWriter(source);
-        try {
+        try (PrintWriter writer = config.getPackager().openWriter(source)) {
             Models.emit(source, writer);
-        } finally {
-            writer.close();
         }
     }
 

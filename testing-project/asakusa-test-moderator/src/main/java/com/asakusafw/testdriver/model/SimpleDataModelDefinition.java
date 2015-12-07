@@ -52,7 +52,7 @@ public class SimpleDataModelDefinition<T> implements DataModelDefinition<T> {
 
     private static final Map<Class<?>, PropertyType> TYPES;
     static {
-        Map<Class<?>, PropertyType> map = new HashMap<Class<?>, PropertyType>();
+        Map<Class<?>, PropertyType> map = new HashMap<>();
         for (PropertyType type : PropertyType.values()) {
             map.put(type.getRepresentation(), type);
         }
@@ -79,7 +79,7 @@ public class SimpleDataModelDefinition<T> implements DataModelDefinition<T> {
     }
 
     private Map<PropertyName, Field> collectProperties() {
-        Map<PropertyName, Field> results = new HashMap<PropertyName, Field>();
+        Map<PropertyName, Field> results = new HashMap<>();
         for (Field field : modelClass.getDeclaredFields()) {
             PropertyName name = extract(field);
             if (name != null) {
@@ -102,7 +102,7 @@ public class SimpleDataModelDefinition<T> implements DataModelDefinition<T> {
         if (NAME.matcher(name).matches() == false) {
             return null;
         }
-        List<String> words = new ArrayList<String>();
+        List<String> words = new ArrayList<>();
         int start = 0;
         for (int i = 1, n = name.length(); i < n; i++) {
             char c = name.charAt(i);
@@ -175,7 +175,7 @@ public class SimpleDataModelDefinition<T> implements DataModelDefinition<T> {
 
     @Override
     public Builder<T> newReflection() {
-        return new Builder<T>(this);
+        return new Builder<>(this);
     }
 
     @Override

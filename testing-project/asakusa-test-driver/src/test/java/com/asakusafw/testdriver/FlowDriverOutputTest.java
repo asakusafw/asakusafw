@@ -511,32 +511,18 @@ public class FlowDriverOutputTest {
     }
 
     private List<Difference> test(VerifierFactory factory, String... pattern) {
-        try {
-            Verifier v = factory.createVerifier(DEFINITION, new VerifyContext(CONTEXT));
-            try {
-                DataModelSource a = source(pattern);
-                try {
-                    return v.verify(a);
-                } finally {
-                    a.close();
-                }
-            } finally {
-                v.close();
-            }
+        try (Verifier v = factory.createVerifier(DEFINITION, new VerifyContext(CONTEXT));
+                DataModelSource a = source(pattern)) {
+            return v.verify(a);
         } catch (IOException e) {
             throw new AssertionError(e);
         }
     }
 
     private void insert(DataModelSinkFactory sinkFactory, String... values) {
-        try {
-            DataModelSink sink = sinkFactory.createSink(DEFINITION, CONTEXT);
-            try {
-                for (Text text : list(values)) {
-                    sink.put(DEFINITION.toReflection(text));
-                }
-            } finally {
-                sink.close();
+        try (DataModelSink sink = sinkFactory.createSink(DEFINITION, CONTEXT)) {
+            for (Text text : list(values)) {
+                sink.put(DEFINITION.toReflection(text));
             }
         } catch (IOException e) {
             throw new AssertionError(e);
@@ -544,26 +530,16 @@ public class FlowDriverOutputTest {
     }
 
     private void checkInstance(DataModelSinkFactory factory, DataModelSink instance) {
-        try {
-            DataModelSink sink = factory.createSink(DEFINITION, CONTEXT);
-            try {
-                assertThat(sink, is(sameInstance(instance)));
-            } finally {
-                sink.close();
-            }
+        try (DataModelSink sink = factory.createSink(DEFINITION, CONTEXT)) {
+            assertThat(sink, is(sameInstance(instance)));
         } catch (IOException e) {
             throw new AssertionError(e);
         }
     }
 
     private void checkInstance(DifferenceSinkFactory factory, DifferenceSink instance) {
-        try {
-            DifferenceSink sink = factory.createSink(DEFINITION, CONTEXT);
-            try {
-                assertThat(sink, is(sameInstance(instance)));
-            } finally {
-                sink.close();
-            }
+        try (DifferenceSink sink = factory.createSink(DEFINITION, CONTEXT)) {
+            assertThat(sink, is(sameInstance(instance)));
         } catch (IOException e) {
             throw new AssertionError(e);
         }
@@ -577,7 +553,7 @@ public class FlowDriverOutputTest {
 
         MockVerifyRuleFactory(List<? extends TestRule> extraRules, String... fail) {
             this.extras = extraRules == null ? Collections.<TestRule>emptyList() : extraRules;
-            this.fail = new HashSet<String>(Arrays.asList(fail));
+            this.fail = new HashSet<>(Arrays.asList(fail));
         }
 
         @Override

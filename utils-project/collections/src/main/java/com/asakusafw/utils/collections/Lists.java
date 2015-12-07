@@ -33,7 +33,7 @@ public final class Lists {
      * @return created list
      */
     public static <E> List<E> create() {
-        return new ArrayList<E>();
+        return new ArrayList<>();
     }
 
     /**
@@ -44,7 +44,7 @@ public final class Lists {
      * @return created list
      */
     public static <E> List<E> of(E elem) {
-        ArrayList<E> result = new ArrayList<E>();
+        ArrayList<E> result = new ArrayList<>();
         result.add(elem);
         return result;
     }
@@ -58,7 +58,7 @@ public final class Lists {
      * @return created list
      */
     public static <E> List<E> of(E elem1, E elem2) {
-        ArrayList<E> result = new ArrayList<E>();
+        ArrayList<E> result = new ArrayList<>();
         result.add(elem1);
         result.add(elem2);
         return result;
@@ -74,7 +74,7 @@ public final class Lists {
      * @return created list
      */
     public static <E> List<E> of(E elem1, E elem2, E elem3) {
-        ArrayList<E> result = new ArrayList<E>();
+        ArrayList<E> result = new ArrayList<>();
         result.add(elem1);
         result.add(elem2);
         result.add(elem3);
@@ -92,11 +92,12 @@ public final class Lists {
      * @param rest the rest elements
      * @return created list
      */
+    @SafeVarargs
     public static <E> List<E> of(E elem1, E elem2, E elem3, E elem4, E... rest) {
         if (rest == null) {
             throw new IllegalArgumentException("rest must not be null"); //$NON-NLS-1$
         }
-        ArrayList<E> result = new ArrayList<E>();
+        ArrayList<E> result = new ArrayList<>();
         result.add(elem1);
         result.add(elem2);
         result.add(elem3);
@@ -116,7 +117,7 @@ public final class Lists {
         if (elements == null) {
             throw new IllegalArgumentException("elements must not be null"); //$NON-NLS-1$
         }
-        ArrayList<E> result = new ArrayList<E>();
+        ArrayList<E> result = new ArrayList<>();
         Collections.addAll(result, elements);
         return result;
     }
@@ -133,7 +134,7 @@ public final class Lists {
         if (elements == null) {
             throw new IllegalArgumentException("elements must not be null"); //$NON-NLS-1$
         }
-        ArrayList<E> copy = new ArrayList<E>();
+        ArrayList<E> copy = new ArrayList<>();
         for (E element : elements) {
             copy.add(element);
         }
@@ -159,7 +160,7 @@ public final class Lists {
         if (iter.hasNext() == false) {
             return Collections.singletonList(first);
         }
-        ArrayList<E> copy = new ArrayList<E>();
+        ArrayList<E> copy = new ArrayList<>();
         copy.add(first);
         while (iter.hasNext()) {
             copy.add(iter.next());

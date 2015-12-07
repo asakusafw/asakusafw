@@ -67,15 +67,14 @@ public class CsvReaderTest {
     }
 
     private List<List<String>> parse(String contents) {
-        try {
-            List<List<String>> results = new ArrayList<List<String>>();
-            CsvReader reader = new CsvReader(new StringReader(contents));
+        List<List<String>> results = new ArrayList<>();
+        try (CsvReader reader = new CsvReader(new StringReader(contents))) {
             while (reader.next()) {
                 results.add(reader.get());
             }
-            return results;
         } catch (Exception e) {
             throw new AssertionError(e);
         }
+        return results;
     }
 }

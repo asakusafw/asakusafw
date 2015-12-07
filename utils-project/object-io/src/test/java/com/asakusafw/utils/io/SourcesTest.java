@@ -60,7 +60,7 @@ public class SourcesTest {
      */
     @Test
     public void wrap_empty() throws Exception {
-        List<String> objects = dump(Sources.wrap(this.<String>iter()));
+        List<String> objects = dump(Sources.wrap(SourcesTest.<String>iter()));
         assertThat(objects, hasSize(0));
     }
 
@@ -70,7 +70,7 @@ public class SourcesTest {
      */
     @Test
     public void concat() throws Exception {
-        List<Source<String>> sources = new ArrayList<Source<String>>();
+        List<Source<String>> sources = new ArrayList<>();
         sources.add(Sources.wrap(iter("1", "2")));
         sources.add(Sources.wrap(iter("3", "4")));
         sources.add(Sources.wrap(iter("5", "6")));
@@ -85,7 +85,7 @@ public class SourcesTest {
      */
     @Test
     public void concat_empty() throws Exception {
-        List<Source<String>> sources = new ArrayList<Source<String>>();
+        List<Source<String>> sources = new ArrayList<>();
         List<String> objects = dump(Sources.concat(sources));
 
         assertThat(objects, hasSize(0));
@@ -96,7 +96,7 @@ public class SourcesTest {
      */
     @Test
     public void merge() {
-        List<Source<IntBuf>> cursors = new ArrayList<Source<IntBuf>>();
+        List<Source<IntBuf>> cursors = new ArrayList<>();
         cursors.add(Sources.wrap(array(1, 4, 7)));
         cursors.add(Sources.wrap(array(2, 5, 8)));
         cursors.add(Sources.wrap(array(3, 6, 9)));
@@ -108,7 +108,7 @@ public class SourcesTest {
      */
     @Test
     public void merge_empty() {
-        List<Source<IntBuf>> cursors = new ArrayList<Source<IntBuf>>();
+        List<Source<IntBuf>> cursors = new ArrayList<>();
         check(Sources.merge(cursors, IntBuf.COMPARATOR));
     }
 
@@ -117,7 +117,7 @@ public class SourcesTest {
      */
     @Test
     public void merge_single() {
-        List<Source<IntBuf>> cursors = new ArrayList<Source<IntBuf>>();
+        List<Source<IntBuf>> cursors = new ArrayList<>();
         cursors.add(Sources.wrap(array(1, 2, 3)));
         check(Sources.merge(cursors, IntBuf.COMPARATOR), 1, 2, 3);
     }
@@ -129,22 +129,19 @@ public class SourcesTest {
     @Test
     public void merge_large() throws Exception {
         int base = 1000000;
-        List<Source<IntBuf>> cursors = new ArrayList<Source<IntBuf>>();
+        List<Source<IntBuf>> cursors = new ArrayList<>();
         cursors.add(new IntSource(random(new Random(6502 + 0), base * 3)));
         cursors.add(new IntSource(random(new Random(6502 + 1), base * 3)));
         cursors.add(new IntSource(random(new Random(6502 + 2), base * 4)));
         int last = -1;
         int count = 0;
-        Source<IntBuf> c = Sources.merge(cursors, IntBuf.COMPARATOR);
-        try {
+        try (Source<IntBuf> c = Sources.merge(cursors, IntBuf.COMPARATOR)) {
             while (c.next()) {
                 int next = c.get().value;
                 assertTrue(last <= next);
                 last = next;
                 count++;
             }
-        } finally {
-            c.close();
         }
         assertThat(count, is(base * 10));
     }
@@ -157,22 +154,19 @@ public class SourcesTest {
     public void merge_many() throws Exception {
         int numSources = 1000;
         int base = 1000;
-        List<Source<IntBuf>> cursors = new ArrayList<Source<IntBuf>>();
+        List<Source<IntBuf>> cursors = new ArrayList<>();
         for (int i = 0; i < numSources; i++) {
             cursors.add(new IntSource(random(new Random(6502 + i), base)));
         }
         int last = -1;
         int count = 0;
-        Source<IntBuf> c = Sources.merge(cursors, IntBuf.COMPARATOR);
-        try {
+        try (Source<IntBuf> c = Sources.merge(cursors, IntBuf.COMPARATOR)) {
             while (c.next()) {
                 int next = c.get().value;
                 assertTrue(last <= next);
                 last = next;
                 count++;
             }
-        } finally {
-            c.close();
         }
         assertThat(count, is(base * numSources));
     }
@@ -303,13 +297,14 @@ public class SourcesTest {
         }
     }
 
-    private <T> Iterator<T> iter(T... values) {
+    @SafeVarargs
+    private static <T> Iterator<T> iter(T... values) {
         return Arrays.asList(values).iterator();
     }
 
     private <T> List<T> dump(Source<T> source) throws IOException, InterruptedException {
         try {
-            List<T> results = new ArrayList<T>();
+            List<T> results = new ArrayList<>();
             while (source.next()) {
                 results.add(source.get());
             }

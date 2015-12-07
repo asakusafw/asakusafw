@@ -85,7 +85,7 @@ public class LibraryCopySuppressionConfigurator extends StageConfigurator {
         if (libraries == null || libraries.isEmpty()) {
             return;
         }
-        Set<String> loaded = new HashSet<String>();
+        Set<String> loaded = new HashSet<>();
         ClassLoader loader = conf.getClassLoader();
         if (loader instanceof URLClassLoader) {
             for (URL url : ((URLClassLoader) loader).getURLs()) {

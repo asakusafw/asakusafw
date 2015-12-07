@@ -33,7 +33,7 @@ import com.asakusafw.testdriver.model.SimpleDataModelDefinition;
  */
 public class JsonDataModelSourceTest {
 
-    static final DataModelDefinition<Simple> SIMPLE = new SimpleDataModelDefinition<Simple>(Simple.class);
+    static final DataModelDefinition<Simple> SIMPLE = new SimpleDataModelDefinition<>(Simple.class);
 
     /**
      * simple JSON.
@@ -41,13 +41,10 @@ public class JsonDataModelSourceTest {
      */
     @Test
     public void simple() throws Exception {
-        JsonDataModelSource source = open("simple");
-        try {
+        try (JsonDataModelSource source = open("simple")) {
             Simple s1 = SIMPLE.toObject(source.next());
             assertThat(s1.number, is(100));
             assertThat(source.next(), is(nullValue()));
-        } finally {
-            source.close();
         }
     }
 
@@ -57,8 +54,7 @@ public class JsonDataModelSourceTest {
      */
     @Test
     public void multiple() throws Exception {
-        JsonDataModelSource source = open("multiple");
-        try {
+        try (JsonDataModelSource source = open("multiple")) {
             Simple s1 = SIMPLE.toObject(source.next());
             assertThat(s1.number, is(100));
 
@@ -71,8 +67,6 @@ public class JsonDataModelSourceTest {
             assertThat(s3.doubleValue, is(100.5));
 
             assertThat(source.next(), is(nullValue()));
-        } finally {
-            source.close();
         }
     }
 
@@ -92,11 +86,8 @@ public class JsonDataModelSourceTest {
      */
     @Test
     public void empty_file() throws Exception {
-        JsonDataModelSource source = open("empty");
-        try {
+        try (JsonDataModelSource source = open("empty")) {
             assertThat(source.next(), is(nullValue()));
-        } finally {
-            source.close();
         }
     }
 

@@ -28,7 +28,7 @@ public class DataModelDescriptorBuilder {
 
     private String comment;
 
-    private final List<PropertyDescriptor> properties = new ArrayList<PropertyDescriptor>();
+    private final List<PropertyDescriptor> properties = new ArrayList<>();
 
     /**
      * Creates a new instance.

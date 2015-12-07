@@ -54,7 +54,7 @@ public final class JavadocParser extends JavadocBaseParser {
         int index = scanner.getIndex();
         try {
             JavadocInfo info = fetchJavadocInfo(scanner);
-            List<IrDocBlock> blocks = new ArrayList<IrDocBlock>(info.getBlocks().size());
+            List<IrDocBlock> blocks = new ArrayList<>(info.getBlocks().size());
             for (JavadocBlockInfo b: info.getBlocks()) {
                 IrDocBlock block = parseBlock(b);
                 blocks.add(block);
@@ -153,7 +153,7 @@ public final class JavadocParser extends JavadocBaseParser {
     }
 
     private static List<JavadocBlockInfo> splitBlocks(JavadocScanner scanner) {
-        List<JavadocBlockInfo> blocks = new ArrayList<JavadocBlockInfo>();
+        List<JavadocBlockInfo> blocks = new ArrayList<>();
 
         JavadocBlockInfo synopsis = fetchSynopsisBlock(scanner);
         if (synopsis != null) {
@@ -190,7 +190,7 @@ public final class JavadocParser extends JavadocBaseParser {
 
         // fetch: tag name
         int tagCount = JavadocBlockParserUtil.countWhileTagName(scanner, 0);
-        List<JavadocToken> tagNames = new ArrayList<JavadocToken>(tagCount);
+        List<JavadocToken> tagNames = new ArrayList<>(tagCount);
         for (int i = 0; i < tagCount; i++) {
             tagNames.add(scanner.nextToken());
         }
@@ -202,7 +202,7 @@ public final class JavadocParser extends JavadocBaseParser {
 
         int success = scanner.lookahead(count).getStartPosition();
         DefaultJavadocScanner bs = new DefaultJavadocScanner(
-            new ArrayList<JavadocToken>(tokens.subList(bodyStart, bodyStart + count)),
+            new ArrayList<>(tokens.subList(bodyStart, bodyStart + count)),
             success);
         int init = first.getStartPosition();
         IrLocation location = new IrLocation(init, success - init);
@@ -234,7 +234,7 @@ public final class JavadocParser extends JavadocBaseParser {
             int count = JavadocScannerUtil.countUntilBlockEnd(scanner, offset);
             int success = scanner.lookahead(offset + count).getStartPosition();
             DefaultJavadocScanner bs = new DefaultJavadocScanner(
-                new ArrayList<JavadocToken>(tokens.subList(start + offset, start + offset + count)),
+                new ArrayList<>(tokens.subList(start + offset, start + offset + count)),
                 success);
             JavadocToken first = scanner.lookahead(offset);
             int init = first.getStartPosition();

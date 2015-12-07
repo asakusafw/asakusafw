@@ -97,7 +97,7 @@ public class ProcessProfile extends BaseProfile<ProcessProfile, ProcessProvider>
         this.name = name;
         this.providerClass = providerClass;
         this.context = context;
-        this.configuration = Collections.unmodifiableMap(new TreeMap<String, String>(configuration));
+        this.configuration = Collections.unmodifiableMap(new TreeMap<>(configuration));
     }
 
     /**
@@ -165,7 +165,7 @@ public class ProcessProfile extends BaseProfile<ProcessProfile, ProcessProvider>
             throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
         }
         LOG.debug("Restoring processes profile");
-        List<ProcessProfile> results = new ArrayList<ProcessProfile>();
+        List<ProcessProfile> results = new ArrayList<>();
         Map<String, Map<String, String>> processs = partitioning(properties);
         for (Map.Entry<String, Map<String, String>> partitionPair : processs.entrySet()) {
             String name = partitionPair.getKey();
@@ -189,7 +189,7 @@ public class ProcessProfile extends BaseProfile<ProcessProfile, ProcessProvider>
     private static Map<String, Map<String, String>> partitioning(Properties properties) {
         assert properties != null;
         NavigableMap<String, String> map = PropertiesUtil.createPrefixMap(properties, KEY_PREFIX);
-        Map<String, Map<String, String>> results = new TreeMap<String, Map<String, String>>();
+        Map<String, Map<String, String>> results = new TreeMap<>();
         while (map.isEmpty() == false) {
             String name = map.firstKey();
             if (isValidName(name) == false) {
@@ -201,7 +201,7 @@ public class ProcessProfile extends BaseProfile<ProcessProfile, ProcessProvider>
             }
             String first = name + QUALIFIER;
             String last = name + (char) (QUALIFIER + 1);
-            Map<String, String> partition = new TreeMap<String, String>(map.subMap(first, false, last, false));
+            Map<String, String> partition = new TreeMap<>(map.subMap(first, false, last, false));
             partition.put(map.firstKey(), map.firstEntry().getValue());
             results.put(name, partition);
             for (String key : partition.keySet()) {

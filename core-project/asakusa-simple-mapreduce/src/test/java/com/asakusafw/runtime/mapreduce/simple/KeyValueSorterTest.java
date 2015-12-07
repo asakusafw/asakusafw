@@ -45,7 +45,7 @@ public class KeyValueSorterTest {
     @Rule
     public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-    final LinkedList<Object> resources = new LinkedList<Object>();
+    final LinkedList<Object> resources = new LinkedList<>();
 
     /**
      * Closer.
@@ -174,7 +174,7 @@ public class KeyValueSorterTest {
 
     private KeyValueSorter<IntWritable, Text> sorter() throws IOException {
         if (sorter == null) {
-            sorter = manage(new KeyValueSorter<IntWritable, Text>(
+            sorter = manage(new KeyValueSorter<>(
                     new SerializationFactory(new ConfigurationProvider().newInstance()),
                     IntWritable.class,
                     Text.class,

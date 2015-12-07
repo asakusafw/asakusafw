@@ -97,7 +97,7 @@ public abstract class AbstractParquetFileFormat<T> extends HadoopFileFormat<T>
 
     @Override
     public Map<String, String> getTableProperties() {
-        Map<String, String> results = new HashMap<String, String>();
+        Map<String, String> results = new HashMap<>();
         // no special items
         return results;
     }
@@ -111,9 +111,9 @@ public abstract class AbstractParquetFileFormat<T> extends HadoopFileFormat<T>
     @Override
     public List<DirectInputFragment> computeInputFragments(
             InputContext context) throws IOException, InterruptedException {
-        List<DirectInputFragment> results = new ArrayList<DirectInputFragment>();
-        List<FileStatus> files = new ArrayList<FileStatus>(context.getInputFiles());
-        Map<Path, FileStatus> pathMap = new HashMap<Path, FileStatus>();
+        List<DirectInputFragment> results = new ArrayList<>();
+        List<FileStatus> files = new ArrayList<>(context.getInputFiles());
+        Map<Path, FileStatus> pathMap = new HashMap<>();
         for (FileStatus status : files) {
             pathMap.put(status.getPath(), status);
         }
@@ -209,7 +209,7 @@ public abstract class AbstractParquetFileFormat<T> extends HadoopFileFormat<T>
         if (conf.getOnIncompatibleType() != null) {
             driverConf.setOnIncompatibleType(conf.getOnIncompatibleType());
         }
-        return new ParquetFileInput<T>(
+        return new ParquetFileInput<>(
                 getDataModelDescriptor(),
                 driverConf,
                 getConf(), path,
@@ -258,7 +258,7 @@ public abstract class AbstractParquetFileFormat<T> extends HadoopFileFormat<T>
         if (version != null) {
             options.setWriterVersion(version);
         }
-        return new ParquetFileOutput<T>(
+        return new ParquetFileOutput<>(
                 getDataModelDescriptor(),
                 getConf(), path,
                 options,

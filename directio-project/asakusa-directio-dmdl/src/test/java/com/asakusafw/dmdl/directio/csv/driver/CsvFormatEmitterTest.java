@@ -87,18 +87,19 @@ public class CsvFormatEmitterTest extends GeneratorTesterRoot {
         model.set("value", new Text("hello-world"));
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
-        ModelOutput<Object> writer = unsafe.createOutput(model.unwrap().getClass(), "hello", output);
-        writer.write(model.unwrap());
-        writer.close();
+        try (ModelOutput<Object> writer = unsafe.createOutput(model.unwrap().getClass(), "hello", output)) {
+            writer.write(model.unwrap());
+        }
 
         assertThat(scan(output.toByteArray()), is(Arrays.asList("hello-world")));
 
         Object buffer = loaded.newModel("Simple").unwrap();
-        ModelInput<Object> reader = unsafe.createInput(model.unwrap().getClass(), "hello", in(output),
-                0, size(output));
-        assertThat(reader.readTo(buffer), is(true));
-        assertThat(buffer, is(model.unwrap()));
-        assertThat(reader.readTo(buffer), is(false));
+        try (ModelInput<Object> reader = unsafe.createInput(model.unwrap().getClass(), "hello", in(output),
+                0, size(output))) {
+            assertThat(reader.readTo(buffer), is(true));
+            assertThat(buffer, is(model.unwrap()));
+            assertThat(reader.readTo(buffer), is(false));
+        }
     }
 
     /**
@@ -130,19 +131,20 @@ public class CsvFormatEmitterTest extends GeneratorTesterRoot {
         BinaryStreamFormat<Object> unsafe = unsafe(support);
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
-        ModelOutput<Object> writer = unsafe.createOutput(model.unwrap().getClass(), "hello", output);
-        writer.write(empty.unwrap());
-        writer.write(all.unwrap());
-        writer.close();
+        try (ModelOutput<Object> writer = unsafe.createOutput(model.unwrap().getClass(), "hello", output)) {
+            writer.write(empty.unwrap());
+            writer.write(all.unwrap());
+        }
 
         Object buffer = loaded.newModel("Types").unwrap();
-        ModelInput<Object> reader = unsafe.createInput(model.unwrap().getClass(), "hello", in(output),
-                0, size(output));
-        assertThat(reader.readTo(buffer), is(true));
-        assertThat(buffer, is(empty.unwrap()));
-        assertThat(reader.readTo(buffer), is(true));
-        assertThat(buffer, is(all.unwrap()));
-        assertThat(reader.readTo(buffer), is(false));
+        try (ModelInput<Object> reader = unsafe.createInput(model.unwrap().getClass(), "hello", in(output),
+                0, size(output))) {
+            assertThat(reader.readTo(buffer), is(true));
+            assertThat(buffer, is(empty.unwrap()));
+            assertThat(reader.readTo(buffer), is(true));
+            assertThat(buffer, is(all.unwrap()));
+            assertThat(reader.readTo(buffer), is(false));
+        }
     }
 
     /**
@@ -161,9 +163,9 @@ public class CsvFormatEmitterTest extends GeneratorTesterRoot {
         BinaryStreamFormat<Object> support = unsafe(loaded.newObject("csv", "ModelCsvFormat"));
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
-        ModelOutput<Object> writer = support.createOutput(model.unwrap().getClass(), "hello", output);
-        writer.write(model.unwrap());
-        writer.close();
+        try (ModelOutput<Object> writer = support.createOutput(model.unwrap().getClass(), "hello", output)) {
+            writer.write(model.unwrap());
+        }
 
         String[][] results = parse(5, new String(dump(new GZIPInputStream(new ByteArrayInputStream(output.toByteArray()))), "ISO-2022-jp"));
         assertThat(results, is(new String[][] {
@@ -190,20 +192,21 @@ public class CsvFormatEmitterTest extends GeneratorTesterRoot {
         model.set("value", new Text("hello"));
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
-        ModelOutput<Object> writer = unsafe.createOutput(model.unwrap().getClass(), "hello", output);
-        writer.write(model.unwrap());
-        writer.close();
+        try (ModelOutput<Object> writer = unsafe.createOutput(model.unwrap().getClass(), "hello", output)) {
+            writer.write(model.unwrap());
+        }
 
         assertThat(
                 scan(dump(new GZIPInputStream(new ByteArrayInputStream(output.toByteArray())))),
                 is(Arrays.asList("hello")));
 
         Object buffer = loaded.newModel("Compress").unwrap();
-        ModelInput<Object> reader = unsafe.createInput(model.unwrap().getClass(), "hello", in(output),
-                0, size(output));
-        assertThat(reader.readTo(buffer), is(true));
-        assertThat(buffer, is(model.unwrap()));
-        assertThat(reader.readTo(buffer), is(false));
+        try (ModelInput<Object> reader = unsafe.createInput(model.unwrap().getClass(), "hello", in(output),
+                0, size(output))) {
+            assertThat(reader.readTo(buffer), is(true));
+            assertThat(buffer, is(model.unwrap()));
+            assertThat(reader.readTo(buffer), is(false));
+        }
     }
 
     /**
@@ -217,10 +220,10 @@ public class CsvFormatEmitterTest extends GeneratorTesterRoot {
         BinaryStreamFormat<Object> support = unsafe(loaded.newObject("csv", "ModelCsvFormat"));
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
-        ModelOutput<Object> writer = support.createOutput(model.unwrap().getClass(), "hello", output);
-        model.set("value", new Text("Hello, world!"));
-        writer.write(model.unwrap());
-        writer.close();
+        try (ModelOutput<Object> writer = support.createOutput(model.unwrap().getClass(), "hello", output)) {
+            model.set("value", new Text("Hello, world!"));
+            writer.write(model.unwrap());
+        }
 
         String[][] results = parse(1, new String(output.toByteArray(), "UTF-8"));
         assertThat(results, is(new String[][] {
@@ -240,10 +243,10 @@ public class CsvFormatEmitterTest extends GeneratorTesterRoot {
         BinaryStreamFormat<Object> support = unsafe(loaded.newObject("csv", "ModelCsvFormat"));
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
-        ModelOutput<Object> writer = support.createOutput(model.unwrap().getClass(), "hello", output);
-        model.set("value", new Text("Hello, world!"));
-        writer.write(model.unwrap());
-        writer.close();
+        try (ModelOutput<Object> writer = support.createOutput(model.unwrap().getClass(), "hello", output)) {
+            model.set("value", new Text("Hello, world!"));
+            writer.write(model.unwrap());
+        }
 
         String[][] results = parse(1, new String(output.toByteArray(), "UTF-8"));
         assertThat(results, is(new String[][] {
@@ -263,10 +266,10 @@ public class CsvFormatEmitterTest extends GeneratorTesterRoot {
         BinaryStreamFormat<Object> support = unsafe(loaded.newObject("csv", "ModelCsvFormat"));
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
-        ModelOutput<Object> writer = support.createOutput(model.unwrap().getClass(), "hello", output);
-        model.set("value", new Text("Hello, world!"));
-        writer.write(model.unwrap());
-        writer.close();
+        try (ModelOutput<Object> writer = support.createOutput(model.unwrap().getClass(), "hello", output)) {
+            model.set("value", new Text("Hello, world!"));
+            writer.write(model.unwrap());
+        }
 
         String[][] results = parse(1, new String(output.toByteArray(), "UTF-8"));
         assertThat(results, is(new String[][] {
@@ -288,17 +291,18 @@ public class CsvFormatEmitterTest extends GeneratorTesterRoot {
         assertThat(support.getMinimumFragmentSize(), is(greaterThan(0L)));
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
-        ModelOutput<Object> writer = support.createOutput(model.unwrap().getClass(), "hello", output);
-        model.set("value", new Text("Hello, world!"));
-        writer.write(model.unwrap());
-        writer.close();
+        try (ModelOutput<Object> writer = support.createOutput(model.unwrap().getClass(), "hello", output)) {
+            model.set("value", new Text("Hello, world!"));
+            writer.write(model.unwrap());
+        }
 
-        ModelInput<Object> reader = support.createInput(model.unwrap().getClass(), "testing", in(output),
-                0, size(output));
-        assertThat(reader.readTo(buffer.unwrap()), is(true));
-        assertThat(buffer.getOption("value"), is((Object) new StringOption("Hello, world!")));
-        assertThat(buffer.getOption("path"), is((Object) new StringOption("testing")));
-        assertThat(reader.readTo(buffer.unwrap()), is(false));
+        try (ModelInput<Object> reader = support.createInput(model.unwrap().getClass(), "testing", in(output),
+                0, size(output))) {
+            assertThat(reader.readTo(buffer.unwrap()), is(true));
+            assertThat(buffer.getOption("value"), is((Object) new StringOption("Hello, world!")));
+            assertThat(buffer.getOption("path"), is((Object) new StringOption("testing")));
+            assertThat(reader.readTo(buffer.unwrap()), is(false));
+        }
     }
 
     /**
@@ -314,20 +318,21 @@ public class CsvFormatEmitterTest extends GeneratorTesterRoot {
         BinaryStreamFormat<Object> support = unsafe(loaded.newObject("csv", "ModelCsvFormat"));
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
-        ModelOutput<Object> writer = support.createOutput(model.unwrap().getClass(), "hello", output);
-        writer.write(model.unwrap());
-        writer.write(model.unwrap());
-        writer.close();
+        try (ModelOutput<Object> writer = support.createOutput(model.unwrap().getClass(), "hello", output)) {
+            writer.write(model.unwrap());
+            writer.write(model.unwrap());
+        }
 
-        ModelInput<Object> reader = support.createInput(model.unwrap().getClass(), "testing", in(output),
-                0, size(output));
-        assertThat(reader.readTo(buffer.unwrap()), is(true));
-        assertThat(buffer.getOption("value"), is((Object) new StringOption("Hello\nworld!")));
-        assertThat(buffer.getOption("number"), is((Object) new IntOption(1)));
-        assertThat(reader.readTo(buffer.unwrap()), is(true));
-        assertThat(buffer.getOption("value"), is((Object) new StringOption("Hello\nworld!")));
-        assertThat(buffer.getOption("number"), is((Object) new IntOption(3)));
-        assertThat(reader.readTo(buffer.unwrap()), is(false));
+        try (ModelInput<Object> reader = support.createInput(model.unwrap().getClass(), "testing", in(output),
+                0, size(output))) {
+            assertThat(reader.readTo(buffer.unwrap()), is(true));
+            assertThat(buffer.getOption("value"), is((Object) new StringOption("Hello\nworld!")));
+            assertThat(buffer.getOption("number"), is((Object) new IntOption(1)));
+            assertThat(reader.readTo(buffer.unwrap()), is(true));
+            assertThat(buffer.getOption("value"), is((Object) new StringOption("Hello\nworld!")));
+            assertThat(buffer.getOption("number"), is((Object) new IntOption(3)));
+            assertThat(reader.readTo(buffer.unwrap()), is(false));
+        }
     }
 
     /**
@@ -343,20 +348,20 @@ public class CsvFormatEmitterTest extends GeneratorTesterRoot {
         BinaryStreamFormat<Object> support = unsafe(loaded.newObject("csv", "ModelCsvFormat"));
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
-        ModelOutput<Object> writer = support.createOutput(model.unwrap().getClass(), "hello", output);
-        writer.write(model.unwrap());
-        writer.write(model.unwrap());
-        writer.close();
-
-        ModelInput<Object> reader = support.createInput(model.unwrap().getClass(), "testing", in(output),
-                0, size(output));
-        assertThat(reader.readTo(buffer.unwrap()), is(true));
-        assertThat(buffer.getOption("value"), is((Object) new StringOption("Hello\nworld!")));
-        assertThat(buffer.getOption("number"), is((Object) new LongOption(1)));
-        assertThat(reader.readTo(buffer.unwrap()), is(true));
-        assertThat(buffer.getOption("value"), is((Object) new StringOption("Hello\nworld!")));
-        assertThat(buffer.getOption("number"), is((Object) new LongOption(2)));
-        assertThat(reader.readTo(buffer.unwrap()), is(false));
+        try (ModelOutput<Object> writer = support.createOutput(model.unwrap().getClass(), "hello", output)) {
+            writer.write(model.unwrap());
+            writer.write(model.unwrap());
+        }
+        try (ModelInput<Object> reader = support.createInput(model.unwrap().getClass(), "testing", in(output),
+                0, size(output))) {
+            assertThat(reader.readTo(buffer.unwrap()), is(true));
+            assertThat(buffer.getOption("value"), is((Object) new StringOption("Hello\nworld!")));
+            assertThat(buffer.getOption("number"), is((Object) new LongOption(1)));
+            assertThat(reader.readTo(buffer.unwrap()), is(true));
+            assertThat(buffer.getOption("value"), is((Object) new StringOption("Hello\nworld!")));
+            assertThat(buffer.getOption("number"), is((Object) new LongOption(2)));
+            assertThat(reader.readTo(buffer.unwrap()), is(false));
+        }
     }
 
     /**
@@ -373,16 +378,16 @@ public class CsvFormatEmitterTest extends GeneratorTesterRoot {
         BinaryStreamFormat<Object> support = unsafe(loaded.newObject("csv", "ModelCsvFormat"));
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
-        ModelOutput<Object> writer = support.createOutput(model.unwrap().getClass(), "hello", output);
-        writer.write(model.unwrap());
-        writer.close();
-
-        ModelInput<Object> reader = support.createInput(model.unwrap().getClass(), "testing", in(output),
-                0, size(output));
-        assertThat(reader.readTo(buffer.unwrap()), is(true));
-        assertThat(buffer.getOption("value"), is((Object) new StringOption("Hello, world!")));
-        assertThat(buffer.getOption("ignored"), is((Object) new StringOption()));
-        assertThat(reader.readTo(buffer.unwrap()), is(false));
+        try (ModelOutput<Object> writer = support.createOutput(model.unwrap().getClass(), "hello", output)) {
+            writer.write(model.unwrap());
+        }
+        try (ModelInput<Object> reader = support.createInput(model.unwrap().getClass(), "testing", in(output),
+                0, size(output))) {
+            assertThat(reader.readTo(buffer.unwrap()), is(true));
+            assertThat(buffer.getOption("value"), is((Object) new StringOption("Hello, world!")));
+            assertThat(buffer.getOption("ignored"), is((Object) new StringOption()));
+            assertThat(reader.readTo(buffer.unwrap()), is(false));
+        }
     }
 
     /**
@@ -419,18 +424,18 @@ public class CsvFormatEmitterTest extends GeneratorTesterRoot {
 
         BinaryStreamFormat<Object> unsafe = unsafe(support);
 
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        ModelOutput<Object> writer = unsafe.createOutput(model.unwrap().getClass(), "hello", output);
         List<Object> expected = Lists.create();
-        for (int line = 0; line < 100; line++) {
-            ModelWrapper buffer = loaded.newModel("Tuple");
-            buffer.set("f1", new Text("f1:" + (line * 1)));
-            buffer.set("f2", new Text("f2:" + random.nextInt()));
-            buffer.set("f3", new Text("f3:" + random.nextInt()));
-            writer.write(buffer.unwrap());
-            expected.add(buffer.unwrap());
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        try (ModelOutput<Object> writer = unsafe.createOutput(model.unwrap().getClass(), "hello", output)) {
+            for (int line = 0; line < 100; line++) {
+                ModelWrapper buffer = loaded.newModel("Tuple");
+                buffer.set("f1", new Text("f1:" + (line * 1)));
+                buffer.set("f2", new Text("f2:" + random.nextInt()));
+                buffer.set("f3", new Text("f3:" + random.nextInt()));
+                writer.write(buffer.unwrap());
+                expected.add(buffer.unwrap());
+            }
         }
-        writer.close();
         byte[] bytes = output.toByteArray();
 
         for (int attempt = 0; attempt < 100; attempt++) {
@@ -447,9 +452,8 @@ public class CsvFormatEmitterTest extends GeneratorTesterRoot {
                 int length = fragment[i] - offset;
                 InputStream in = new ByteArrayInputStream(bytes, offset, bytes.length - offset);
                 in.mark(bytes.length - offset);
-                ModelInput<Object> reader = unsafe.createInput(model.unwrap().getClass(), "hello", in,
-                        offset, length);
-                try {
+                try (ModelInput<Object> reader = unsafe.createInput(model.unwrap().getClass(), "hello", in,
+                        offset, length)) {
                     while (true) {
                         Object buffer = loaded.newModel("Tuple").unwrap();
                         if (reader.readTo(buffer) == false) {
@@ -458,10 +462,10 @@ public class CsvFormatEmitterTest extends GeneratorTesterRoot {
                         actual.add(buffer);
                     }
                 } catch (CsvFormatException e) {
-                    InputStream reIn = new ByteArrayInputStream(bytes, offset, bytes.length - offset);
-                    InputStream copy = new DelimiterRangeInputStream(reIn, '\n', length, offset > 0);
-                    System.out.println(copy.read());
-                    copy.close();
+                    try (InputStream reIn = new ByteArrayInputStream(bytes, offset, bytes.length - offset);
+                            InputStream copy = new DelimiterRangeInputStream(reIn, '\n', length, offset > 0)) {
+                        System.out.println(copy.read());
+                    }
                     throw new IOException(MessageFormat.format(
                             "attempt={0}, f-offset={1}, f-size={2}, total={3}: [[{4}]]",
                             attempt,
@@ -492,10 +496,9 @@ public class CsvFormatEmitterTest extends GeneratorTesterRoot {
         model.set("f3", new Text("Hello1"));
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
-        ModelOutput<Object> writer = unsafe.createOutput(model.unwrap().getClass(), "hello", output);
-        writer.write(model.unwrap());
-        writer.close();
-
+        try (ModelOutput<Object> writer = unsafe.createOutput(model.unwrap().getClass(), "hello", output)) {
+            writer.write(model.unwrap());
+        }
         try {
             unsafe.createInput(model.unwrap().getClass(), "hello", in(output), 1, size(output));
             fail();
@@ -549,10 +552,9 @@ public class CsvFormatEmitterTest extends GeneratorTesterRoot {
                 CsvConfiguration.DEFAULT_FALSE_FORMAT,
                 CsvConfiguration.DEFAULT_DATE_FORMAT,
                 CsvConfiguration.DEFAULT_DATE_TIME_FORMAT);
-        ByteArrayInputStream input = new ByteArrayInputStream(string.getBytes(conf.getCharset()));
-        CsvParser parser = new CsvParser(input, string, conf);
         List<String[]> results = Lists.create();
-        try {
+        ByteArrayInputStream input = new ByteArrayInputStream(string.getBytes(conf.getCharset()));
+        try (CsvParser parser = new CsvParser(input, string, conf)) {
             StringOption buffer = new StringOption();
             while (parser.next()) {
                 String[] line = new String[columns];
@@ -563,7 +565,6 @@ public class CsvFormatEmitterTest extends GeneratorTesterRoot {
                 parser.endRecord();
                 results.add(line);
             }
-            parser.close();
         } catch (Exception e) {
             throw new AssertionError(e);
         }
@@ -593,8 +594,7 @@ public class CsvFormatEmitterTest extends GeneratorTesterRoot {
     }
 
     private byte[] dump(InputStream input) throws IOException {
-        try {
-            ByteArrayOutputStream output = new ByteArrayOutputStream();
+        try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
             byte[] buf = new byte[1024];
             while (true) {
                 int read = input.read(buf);
@@ -611,15 +611,12 @@ public class CsvFormatEmitterTest extends GeneratorTesterRoot {
     }
 
     private List<String> scan(byte[] bytes) {
-        Scanner scanner = new Scanner(new ByteArrayInputStream(bytes), DEFAULT_ENCODING.name());
-        try {
+        try (Scanner scanner = new Scanner(new ByteArrayInputStream(bytes), DEFAULT_ENCODING.name())) {
             List<String> results = Lists.create();
             while (scanner.hasNextLine()) {
                 results.add(scanner.nextLine());
             }
             return results;
-        } finally {
-            scanner.close();
         }
     }
 }

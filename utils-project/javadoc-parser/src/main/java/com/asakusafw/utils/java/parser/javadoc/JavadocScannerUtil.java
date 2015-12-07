@@ -54,7 +54,7 @@ public final class JavadocScannerUtil {
         if (count < 0) {
             throw new IllegalArgumentException();
         }
-        List<JavadocToken> tokens = new ArrayList<JavadocToken>(count);
+        List<JavadocToken> tokens = new ArrayList<>(count);
         for (int i = 0; i < count; i++) {
             JavadocToken token = scanner.lookahead(start + i);
             if (token.getKind() == JavadocTokenKind.EOF) {

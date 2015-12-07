@@ -90,7 +90,7 @@ public final class DirectIoTransactionEditor extends Configured {
      */
     public List<TransactionInfo> list() throws IOException {
         LOG.info("Start listing Direct I/O transactions");
-        List<FileStatus> list = new ArrayList<FileStatus>(HadoopDataSourceUtil.findAllTransactionInfoFiles(getConf()));
+        List<FileStatus> list = new ArrayList<>(HadoopDataSourceUtil.findAllTransactionInfoFiles(getConf()));
         if (list.isEmpty()) {
             LOG.info("There are no Direct I/O transactions");
             return Collections.emptyList();
@@ -111,7 +111,7 @@ public final class DirectIoTransactionEditor extends Configured {
         LOG.info(MessageFormat.format(
                 "Start extracting {0} Direct I/O commit information",
                 list.size()));
-        List<TransactionInfo> results = new ArrayList<TransactionInfo>();
+        List<TransactionInfo> results = new ArrayList<>();
         for (FileStatus stat : list) {
             TransactionInfo commitObject = toInfoObject(stat);
             if (commitObject != null) {
@@ -183,20 +183,14 @@ public final class DirectIoTransactionEditor extends Configured {
         Path path = stat.getPath();
         String executionId = HadoopDataSourceUtil.getTransactionInfoExecutionId(path);
         long timestamp = stat.getModificationTime();
-        List<String> comment = new ArrayList<String>();
+        List<String> comment = new ArrayList<>();
         Path commitMarkPath = HadoopDataSourceUtil.getCommitMarkPath(getConf(), executionId);
         FileSystem fs = path.getFileSystem(getConf());
         boolean committed = fs.exists(commitMarkPath);
-        try {
-            FSDataInputStream input = fs.open(path);
-            try {
-                Scanner scanner = new Scanner(new InputStreamReader(input, HadoopDataSourceUtil.COMMENT_CHARSET));
-                while (scanner.hasNextLine()) {
-                    comment.add(scanner.nextLine());
-                }
-                scanner.close();
-            } finally {
-                input.close();
+        try (FSDataInputStream input = fs.open(path);
+                Scanner scanner = new Scanner(new InputStreamReader(input, HadoopDataSourceUtil.COMMENT_CHARSET))) {
+            while (scanner.hasNextLine()) {
+                comment.add(scanner.nextLine());
             }
         } catch (IOException e) {
             comment.add(e.toString());

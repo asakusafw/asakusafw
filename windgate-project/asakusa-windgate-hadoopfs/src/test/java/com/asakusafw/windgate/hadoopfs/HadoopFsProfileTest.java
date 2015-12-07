@@ -58,7 +58,7 @@ public class HadoopFsProfileTest {
     public void convert() throws Exception {
         hadoopConf.set("fs.default.name", "file:/");
 
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         ResourceProfile resourceProfile = new ResourceProfile(
                 "testing",
                 HadoopFsProvider.class,
@@ -78,7 +78,7 @@ public class HadoopFsProfileTest {
     public void convert_basePath() throws Exception {
         File current = new File(".").getAbsoluteFile().getCanonicalFile();
 
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(HadoopFsProfile.KEY_BASE_PATH, current.toURI().toString());
         ResourceProfile resourceProfile = new ResourceProfile(
                 "testing",
@@ -97,7 +97,7 @@ public class HadoopFsProfileTest {
      */
     @Test
     public void convert_basePath_relative() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(HadoopFsProfile.KEY_BASE_PATH, "target");
         ResourceProfile resourceProfile = new ResourceProfile(
                 "testing",
@@ -118,10 +118,10 @@ public class HadoopFsProfileTest {
     public void convert_basePath_parameterize() throws Exception {
         File current = new File(".").getAbsoluteFile().getCanonicalFile();
 
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(HadoopFsProfile.KEY_BASE_PATH, current.toURI().toString() + "/${var}");
 
-        Map<String, String> env = new HashMap<String, String>();
+        Map<String, String> env = new HashMap<>();
         env.put("var", "replacement");
         ResourceProfile resourceProfile = new ResourceProfile(
                 "testing",
@@ -140,7 +140,7 @@ public class HadoopFsProfileTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void convert_basePath_unresolved() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(HadoopFsProfile.KEY_BASE_PATH, "${__UNDEFINED__}");
         ResourceProfile resourceProfile = new ResourceProfile(
                 "testing",
@@ -157,7 +157,7 @@ public class HadoopFsProfileTest {
      */
     @Test(expected = IOException.class)
     public void convert_basePath_invalid() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(HadoopFsProfile.KEY_BASE_PATH, "INVALIDFS:UNKNOWN");
         ResourceProfile resourceProfile = new ResourceProfile(
                 "testing",
@@ -174,7 +174,7 @@ public class HadoopFsProfileTest {
      */
     @Test
     public void convert_compression() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(HadoopFsProfile.KEY_COMPRESSION, DefaultCodec.class.getName());
         ResourceProfile resourceProfile = new ResourceProfile(
                 "testing",

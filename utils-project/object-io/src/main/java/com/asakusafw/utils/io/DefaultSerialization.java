@@ -37,12 +37,12 @@ public class DefaultSerialization<T> implements Serialization<T> {
 
     @Override
     public Source<T> createSource(InputStream stream) throws IOException, InterruptedException {
-        return new ObjectSource<T>(createObjectInput(stream));
+        return new ObjectSource<>(createObjectInput(stream));
     }
 
     @Override
     public Sink<T> createSink(OutputStream stream) throws IOException, InterruptedException {
-        return new ObjectSink<T>(createObjectOutput(stream));
+        return new ObjectSink<>(createObjectOutput(stream));
     }
 
     /**

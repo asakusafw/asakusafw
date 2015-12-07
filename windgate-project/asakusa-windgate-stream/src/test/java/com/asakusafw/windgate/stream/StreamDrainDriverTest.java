@@ -50,17 +50,13 @@ public class StreamDrainDriverTest {
     @Test
     public void simple() throws Exception {
         File file = folder.newFile("testing");
-
-        StreamDrainDriver<StringBuilder> driver = new StreamDrainDriver<StringBuilder>(
+        try (StreamDrainDriver<StringBuilder> driver = new StreamDrainDriver<>(
                 "streaming",
                 "testing",
                 wrap(new FileOutputStreamProvider(file)),
-                new StringBuilderSupport());
-        try {
+                new StringBuilderSupport())) {
             driver.prepare();
             driver.put(new StringBuilder("Hello, world!"));
-        } finally {
-            driver.close();
         }
         test(file, "Hello, world!");
     }
@@ -72,15 +68,12 @@ public class StreamDrainDriverTest {
     @Test
     public void empty() throws Exception {
         File file = folder.newFile("testing");
-        StreamDrainDriver<StringBuilder> driver = new StreamDrainDriver<StringBuilder>(
+        try (StreamDrainDriver<StringBuilder> driver = new StreamDrainDriver<>(
                 "streaming",
                 "testing",
                 wrap(new FileOutputStreamProvider(file)),
-                new StringBuilderSupport());
-        try {
+                new StringBuilderSupport())) {
             driver.prepare();
-        } finally {
-            driver.close();
         }
         test(file);
     }
@@ -93,18 +86,15 @@ public class StreamDrainDriverTest {
     public void multiple() throws Exception {
         File file = folder.newFile("testing");
 
-        StreamDrainDriver<StringBuilder> driver = new StreamDrainDriver<StringBuilder>(
+        try (StreamDrainDriver<StringBuilder> driver = new StreamDrainDriver<>(
                 "streaming",
                 "testing",
                 wrap(new FileOutputStreamProvider(file)),
-                new StringBuilderSupport());
-        try {
+                new StringBuilderSupport())) {
             driver.prepare();
             driver.put(new StringBuilder("Hello1, world!"));
             driver.put(new StringBuilder("Hello2, world!"));
             driver.put(new StringBuilder("Hello3, world!"));
-        } finally {
-            driver.close();
         }
         test(file, "Hello1, world!", "Hello2, world!", "Hello3, world!");
     }
@@ -119,17 +109,14 @@ public class StreamDrainDriverTest {
         Assume.assumeTrue(file.delete());
         Assume.assumeTrue(file.mkdirs());
 
-        StreamDrainDriver<StringBuilder> driver = new StreamDrainDriver<StringBuilder>(
+        try (StreamDrainDriver<StringBuilder> driver = new StreamDrainDriver<>(
                 "streaming",
                 "testing",
                 wrap(new FileOutputStreamProvider(file)),
-                new StringBuilderSupport());
-        try {
+                new StringBuilderSupport())) {
             driver.prepare();
             driver.put(new StringBuilder("Hello, world!"));
             fail();
-        } finally {
-            driver.close();
         }
     }
 
@@ -139,7 +126,7 @@ public class StreamDrainDriverTest {
      */
     @Test(expected = IOException.class)
     public void invalid_flush_failed() throws Exception {
-        StreamDrainDriver<StringBuilder> driver = new StreamDrainDriver<StringBuilder>(
+        try (StreamDrainDriver<StringBuilder> driver = new StreamDrainDriver<>(
                 "streaming",
                 "testing",
                 wrap(new StreamProvider<OutputStream>() {
@@ -161,24 +148,18 @@ public class StreamDrainDriverTest {
                         };
                     }
                 }),
-                new StringBuilderSupport());
-        try {
+                new StringBuilderSupport())) {
             driver.prepare();
             driver.put(new StringBuilder("Hello, world!"));
-        } finally {
-            driver.close();
         }
     }
 
     private void test(File file, String... lines) throws IOException {
-        List<String> actual = new ArrayList<String>();
-        Scanner scanner = new Scanner(file, "UTF-8");
-        try {
+        List<String> actual = new ArrayList<>();
+        try (Scanner scanner = new Scanner(file, "UTF-8")) {
             while (scanner.hasNextLine()) {
                 actual.add(scanner.nextLine());
             }
-        } finally {
-            scanner.close();
         }
         assertThat(actual, is(Arrays.asList(lines)));
     }

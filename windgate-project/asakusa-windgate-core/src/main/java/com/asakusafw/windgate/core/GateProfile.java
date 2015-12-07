@@ -79,8 +79,8 @@ public class GateProfile {
         this.name = name;
         this.core = core;
         this.session = session;
-        this.processes = Collections.unmodifiableList(new ArrayList<ProcessProfile>(processes));
-        this.resources = Collections.unmodifiableList(new ArrayList<ResourceProfile>(resources));
+        this.processes = Collections.unmodifiableList(new ArrayList<>(processes));
+        this.resources = Collections.unmodifiableList(new ArrayList<>(resources));
     }
 
     /**

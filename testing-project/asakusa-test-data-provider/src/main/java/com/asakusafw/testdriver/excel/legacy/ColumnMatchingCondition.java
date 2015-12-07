@@ -67,7 +67,7 @@ public enum ColumnMatchingCondition {
     }
 
     private static Map<String, ColumnMatchingCondition> japaneseNameMap
-        = new HashMap<String, ColumnMatchingCondition>();
+        = new HashMap<>();
     static {
         for (ColumnMatchingCondition conditon : ColumnMatchingCondition.values()) {
             String key = conditon.getJapaneseName();

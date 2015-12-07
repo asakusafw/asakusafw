@@ -44,19 +44,17 @@ public class BasicMonitorProviderTest {
      */
     @Test
     public void simple() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         ServiceProfile<ExecutionMonitorProvider> profile = new ServiceProfile<ExecutionMonitorProvider>(
                 "testing", BasicMonitorProvider.class, conf, ProfileContext.system(getClass().getClassLoader()));
 
         ExecutionMonitorProvider instance = profile.newInstance();
-        ExecutionMonitor monitor = instance.newInstance(CONTEXT);
-        monitor.open(3);
-        try {
+
+        try (ExecutionMonitor monitor = instance.newInstance(CONTEXT)) {
+            monitor.open(3);
             monitor.progressed(1);
             monitor.progressed(1);
             monitor.progressed(1);
-        } finally {
-            monitor.close();
         }
     }
 
@@ -66,20 +64,17 @@ public class BasicMonitorProviderTest {
      */
     @Test
     public void with_stepUnit() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(BasicMonitorProvider.KEY_STEP_UNIT, "0.1");
         ServiceProfile<ExecutionMonitorProvider> profile = new ServiceProfile<ExecutionMonitorProvider>(
                 "testing", BasicMonitorProvider.class, conf, ProfileContext.system(getClass().getClassLoader()));
 
         ExecutionMonitorProvider instance = profile.newInstance();
-        ExecutionMonitor monitor = instance.newInstance(CONTEXT);
-        monitor.open(100);
-        try {
+        try (ExecutionMonitor monitor = instance.newInstance(CONTEXT)) {
+            monitor.open(100);
             for (int i = 0; i < 100; i++) {
                 monitor.progressed(1);
             }
-        } finally {
-            monitor.close();
         }
     }
 
@@ -89,20 +84,17 @@ public class BasicMonitorProviderTest {
      */
     @Test
     public void large_stepUnit() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(BasicMonitorProvider.KEY_STEP_UNIT, "0.5");
         ServiceProfile<ExecutionMonitorProvider> profile = new ServiceProfile<ExecutionMonitorProvider>(
                 "testing", BasicMonitorProvider.class, conf, ProfileContext.system(getClass().getClassLoader()));
 
         ExecutionMonitorProvider instance = profile.newInstance();
-        ExecutionMonitor monitor = instance.newInstance(CONTEXT);
-        monitor.open(100);
-        try {
+        try (ExecutionMonitor monitor = instance.newInstance(CONTEXT)) {
+            monitor.open(100);
             for (int i = 0; i < 100; i++) {
                 monitor.progressed(1);
             }
-        } finally {
-            monitor.close();
         }
     }
 
@@ -112,7 +104,7 @@ public class BasicMonitorProviderTest {
      */
     @Test(expected = IOException.class)
     public void invalid_stepUnit() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(BasicMonitorProvider.KEY_STEP_UNIT, "INVALID");
         ServiceProfile<ExecutionMonitorProvider> profile = new ServiceProfile<ExecutionMonitorProvider>(
                 "testing", BasicMonitorProvider.class, conf, ProfileContext.system(getClass().getClassLoader()));

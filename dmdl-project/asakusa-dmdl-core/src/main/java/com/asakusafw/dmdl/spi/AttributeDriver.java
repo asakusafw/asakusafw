@@ -20,7 +20,7 @@ import com.asakusafw.dmdl.semantics.Declaration;
 import com.asakusafw.dmdl.semantics.DmdlSemantics;
 
 /**
- * Analyzes and processes attribtues in form of {@link AstAttribute AST}.
+ * Analyzes and processes attributes in form of {@link AstAttribute AST}.
  * <p>
  * To enhance DMDL compiler, clients can implement this
  * and put the class name in
@@ -40,14 +40,11 @@ public abstract class AttributeDriver {
     /**
      * Processes and modifies the attributed declaration.
      * @param environment the processing environment
-     * @param attribute the attribtue with the {@link #getTargetName() target name}
+     * @param attribute the attribute with the {@link #getTargetName() target name}
      * @param declaration the declaration with the {@code attribute}
      * @see #getTargetName()
      */
-    public abstract void process(
-            DmdlSemantics environment,
-            Declaration declaration,
-            AstAttribute attribute);
+    public abstract void process(DmdlSemantics environment, Declaration declaration, AstAttribute attribute);
 
     /**
      * Verifies the attributed declaration.
@@ -59,10 +56,7 @@ public abstract class AttributeDriver {
      * @see #getTargetName()
      * @since 0.7.0
      */
-    public void verify(
-            DmdlSemantics environment,
-            Declaration declaration,
-            AstAttribute attribute) {
+    public void verify(DmdlSemantics environment, Declaration declaration, AstAttribute attribute) {
         return;
     }
 

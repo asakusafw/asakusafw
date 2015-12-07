@@ -59,6 +59,6 @@ public class WindGateImporterPreparator extends BaseImporterPreparator<WindGateI
         ResourceManipulator manipulator =
             WindGateTestHelper.createResourceManipulator(context, description, parameterList);
         DrainDriver<V> driver = manipulator.createDrainForSource(process);
-        return new WindGateOutput<V>(WindGateTestHelper.prepare(driver));
+        return new WindGateOutput<>(WindGateTestHelper.prepare(driver));
     }
 }

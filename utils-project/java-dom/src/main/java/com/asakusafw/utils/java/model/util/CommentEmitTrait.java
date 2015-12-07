@@ -37,7 +37,7 @@ public final class CommentEmitTrait {
         if (contents == null) {
             throw new IllegalArgumentException("contents must not be null"); //$NON-NLS-1$
         }
-        this.contents = new ArrayList<String>(contents.size());
+        this.contents = new ArrayList<>(contents.size());
         for (String line: contents) {
             String[] splitted = line.split(REGEX_LINE_DELIMITER);
             for (String s : splitted) {

@@ -57,13 +57,10 @@ public abstract class SpiTestRoot {
         try {
             File serviceFolder = new File(classpath, "META-INF/services");
             serviceFolder.mkdirs();
-            PrintWriter output = new PrintWriter(new File(serviceFolder, api.getName()));
-            try {
+            try (PrintWriter output = new PrintWriter(new File(serviceFolder, api.getName()))) {
                 for (Class<?> serviceClass : services) {
                     output.println(serviceClass.getName());
                 }
-            } finally {
-                output.close();
             }
             return new URLClassLoader(new URL[] { classpath.toURI().toURL() });
         } catch (IOException e) {
@@ -78,6 +75,7 @@ public abstract class SpiTestRoot {
      * @param values source values
      * @return the created object
      */
+    @SafeVarargs
     public static <E> DataModelSource source(DataModelDefinition<E> definition, E... values) {
         return new IteratorDataModelSource(definition, Arrays.asList(values).iterator());
     }

@@ -60,7 +60,7 @@ public class VolatileLookUpTable<T> implements LookUpTable<T> {
      */
     public static class Builder<T> implements LookUpTable.Builder<T> {
 
-        private final Map<LookUpKey, List<T>> entity = new HashMap<LookUpKey, List<T>>();
+        private final Map<LookUpKey, List<T>> entity = new HashMap<>();
 
         @Override
         public void add(LookUpKey key, T value) throws IOException {
@@ -69,7 +69,7 @@ public class VolatileLookUpTable<T> implements LookUpTable<T> {
             }
             List<T> list = entity.get(key);
             if (list == null) {
-                list = new ArrayList<T>();
+                list = new ArrayList<>();
                 entity.put(key.copy(), list);
             }
             list.add(value);
@@ -77,7 +77,7 @@ public class VolatileLookUpTable<T> implements LookUpTable<T> {
 
         @Override
         public LookUpTable<T> build() throws IOException {
-            return new VolatileLookUpTable<T>(entity);
+            return new VolatileLookUpTable<>(entity);
         }
     }
 }

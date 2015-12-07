@@ -49,22 +49,18 @@ public class JdbcDrainDriverTest {
      */
     @Test
     public void simple() throws Exception {
-        Connection conn = h2.open();
-        try {
-            JdbcScript<Pair> script = new JdbcScript<Pair>(
+        try (Connection conn = h2.open()) {
+            JdbcScript<Pair> script = new JdbcScript<>(
                     "testing",
                     new PairSupport(),
                     "PAIR",
                     Arrays.asList("KEY", "VALUE"),
                     null);
-            JdbcDrainDriver<Pair> driver = new JdbcDrainDriver<Pair>(profile(), script, conn, true);
-            driver.prepare();
-            driver.put(new Pair(1, "Hello, world!"));
-            driver.close();
-
+            try (JdbcDrainDriver<Pair> driver = new JdbcDrainDriver<>(profile(), script, conn, true)) {
+                driver.prepare();
+                driver.put(new Pair(1, "Hello, world!"));
+            }
             test("Hello, world!");
-        } finally {
-            conn.close();
         }
     }
 
@@ -74,21 +70,17 @@ public class JdbcDrainDriverTest {
      */
     @Test
     public void empty() throws Exception {
-        Connection conn = h2.open();
-        try {
-            JdbcScript<Pair> script = new JdbcScript<Pair>(
+        try (Connection conn = h2.open()) {
+            JdbcScript<Pair> script = new JdbcScript<>(
                     "testing",
                     new PairSupport(),
                     "PAIR",
                     Arrays.asList("KEY", "VALUE"),
                     null);
-            JdbcDrainDriver<Pair> driver = new JdbcDrainDriver<Pair>(profile(), script, conn, true);
-            driver.prepare();
-            driver.close();
-
+            try (JdbcDrainDriver<Pair> driver = new JdbcDrainDriver<>(profile(), script, conn, true)) {
+                driver.prepare();
+            }
             test();
-        } finally {
-            conn.close();
         }
     }
 
@@ -98,27 +90,23 @@ public class JdbcDrainDriverTest {
      */
     @Test
     public void large() throws Exception {
-        Connection conn = h2.open();
-        try {
-            JdbcScript<Pair> script = new JdbcScript<Pair>(
+        try (Connection conn = h2.open()) {
+            JdbcScript<Pair> script = new JdbcScript<>(
                     "testing",
                     new PairSupport(),
                     "PAIR",
                     Arrays.asList("KEY", "VALUE"),
                     null);
-            JdbcDrainDriver<Pair> driver = new JdbcDrainDriver<Pair>(profile(), script, conn, true);
-            driver.prepare();
             String[] expected = new String[3333];
-            for (int i = 1; i <= 3333; i++) {
-                String value = "Hello" + i;
-                expected[i - 1] = value;
-                driver.put(new Pair(i, value));
+            try (JdbcDrainDriver<Pair> driver = new JdbcDrainDriver<>(profile(), script, conn, true)) {
+                driver.prepare();
+                for (int i = 1; i <= expected.length; i++) {
+                    String value = "Hello" + i;
+                    expected[i - 1] = value;
+                    driver.put(new Pair(i, value));
+                }
             }
-            driver.close();
-
             test(expected);
-        } finally {
-            conn.close();
         }
     }
 
@@ -128,27 +116,23 @@ public class JdbcDrainDriverTest {
      */
     @Test
     public void large_align() throws Exception {
-        Connection conn = h2.open();
-        try {
-            JdbcScript<Pair> script = new JdbcScript<Pair>(
+        try (Connection conn = h2.open()) {
+            JdbcScript<Pair> script = new JdbcScript<>(
                     "testing",
                     new PairSupport(),
                     "PAIR",
                     Arrays.asList("KEY", "VALUE"),
                     null);
-            JdbcDrainDriver<Pair> driver = new JdbcDrainDriver<Pair>(profile(), script, conn, true);
-            driver.prepare();
             String[] expected = new String[1000];
-            for (int i = 1; i <= 1000; i++) {
-                String value = "Hello" + i;
-                expected[i - 1] = value;
-                driver.put(new Pair(i, value));
+            try (JdbcDrainDriver<Pair> driver = new JdbcDrainDriver<>(profile(), script, conn, true)) {
+                driver.prepare();
+                for (int i = 1; i <= expected.length; i++) {
+                    String value = "Hello" + i;
+                    expected[i - 1] = value;
+                    driver.put(new Pair(i, value));
+                }
             }
-            driver.close();
-
             test(expected);
-        } finally {
-            conn.close();
         }
     }
 
@@ -159,22 +143,18 @@ public class JdbcDrainDriverTest {
     @Test
     public void truncate() throws Exception {
         h2.execute("INSERT INTO PAIR (KEY, VALUE) VALUES (1, 'Hello, world!')");
-        Connection conn = h2.open();
-        try {
-            JdbcScript<Pair> script = new JdbcScript<Pair>(
+        try (Connection conn = h2.open()) {
+            JdbcScript<Pair> script = new JdbcScript<>(
                     "testing",
                     new PairSupport(),
                     "PAIR",
                     Arrays.asList("KEY", "VALUE"),
                     null);
-            JdbcDrainDriver<Pair> driver = new JdbcDrainDriver<Pair>(profile(), script, conn, true);
-            driver.prepare();
-            driver.put(new Pair(2, "Other"));
-            driver.close();
-
+            try (JdbcDrainDriver<Pair> driver = new JdbcDrainDriver<>(profile(), script, conn, true)) {
+                driver.prepare();
+                driver.put(new Pair(2, "Other"));
+            }
             test("Other");
-        } finally {
-            conn.close();
         }
     }
 
@@ -185,10 +165,9 @@ public class JdbcDrainDriverTest {
     @Test
     public void truncate_with_delete() throws Exception {
         h2.execute("INSERT INTO PAIR (KEY, VALUE) VALUES (1, 'Hello, world!')");
-        Connection conn = h2.open();
-        conn.setAutoCommit(false);
-        try {
-            JdbcScript<Pair> script = new JdbcScript<Pair>(
+        try (Connection conn = h2.open()) {
+            conn.setAutoCommit(false);
+            JdbcScript<Pair> script = new JdbcScript<>(
                     "testing",
                     new PairSupport(),
                     "PAIR",
@@ -196,16 +175,12 @@ public class JdbcDrainDriverTest {
                     null);
             JdbcProfile profile = profile();
             profile.setTruncateStatement("DELETE FROM {0}");
-            JdbcDrainDriver<Pair> driver = new JdbcDrainDriver<Pair>(profile, script, conn, true);
-            driver.prepare();
-            test(new String[]{});
-
-            driver.put(new Pair(2, "Other"));
-            driver.close();
-
+            try (JdbcDrainDriver<Pair> driver = new JdbcDrainDriver<>(profile, script, conn, true)) {
+                driver.prepare();
+                test(new String[]{});
+                driver.put(new Pair(2, "Other"));
+            }
             test("Other");
-        } finally {
-            conn.close();
         }
     }
 
@@ -218,23 +193,19 @@ public class JdbcDrainDriverTest {
         h2.execute("INSERT INTO PAIR (KEY, VALUE) VALUES (1, 'Hello1')");
         h2.execute("INSERT INTO PAIR (KEY, VALUE) VALUES (2, 'Hello2')");
         h2.execute("INSERT INTO PAIR (KEY, VALUE) VALUES (3, 'Hello2')");
-        Connection conn = h2.open();
-        try {
-            JdbcScript<Pair> script = new JdbcScript<Pair>(
+        try (Connection conn = h2.open()) {
+            JdbcScript<Pair> script = new JdbcScript<>(
                     "testing",
                     new PairSupport(),
                     "PAIR",
                     Arrays.asList("KEY", "VALUE"),
                     null,
                     "DELETE FROM PAIR WHERE KEY = 2");
-            JdbcDrainDriver<Pair> driver = new JdbcDrainDriver<Pair>(profile(), script, conn, true);
-            driver.prepare();
-            driver.put(new Pair(2, "Other"));
-            driver.close();
-
+            try (JdbcDrainDriver<Pair> driver = new JdbcDrainDriver<>(profile(), script, conn, true)) {
+                driver.prepare();
+                driver.put(new Pair(2, "Other"));
+            }
             test("Hello1", "Other", "Hello2");
-        } finally {
-            conn.close();
         }
     }
 
@@ -245,22 +216,18 @@ public class JdbcDrainDriverTest {
     @Test
     public void suppress_truncate() throws Exception {
         h2.execute("INSERT INTO PAIR (KEY, VALUE) VALUES (1, 'Hello, world!')");
-        Connection conn = h2.open();
-        try {
-            JdbcScript<Pair> script = new JdbcScript<Pair>(
+        try (Connection conn = h2.open()) {
+            JdbcScript<Pair> script = new JdbcScript<>(
                     "testing",
                     new PairSupport(),
                     "PAIR",
                     Arrays.asList("KEY", "VALUE"),
                     null);
-            JdbcDrainDriver<Pair> driver = new JdbcDrainDriver<Pair>(profile(), script, conn, false);
-            driver.prepare();
-            driver.put(new Pair(2, "Other"));
-            driver.close();
-
+            try (JdbcDrainDriver<Pair> driver = new JdbcDrainDriver<>(profile(), script, conn, false)) {
+                driver.prepare();
+                driver.put(new Pair(2, "Other"));
+            }
             test("Hello, world!", "Other");
-        } finally {
-            conn.close();
         }
     }
 
@@ -270,61 +237,56 @@ public class JdbcDrainDriverTest {
      */
     @Test
     public void suppress_error_on_close() throws Exception {
-        Connection conn = h2.open();
-        try {
-            JdbcScript<Pair> script = new JdbcScript<Pair>(
+        try (Connection conn = h2.open()) {
+            JdbcScript<Pair> script = new JdbcScript<>(
                     "testing",
                     new PairSupport(),
                     "PAIR",
                     Arrays.asList("KEY", "VALUE"),
                     null);
-            JdbcDrainDriver<Pair> driver = new JdbcDrainDriver<Pair>(profile(), script, conn, true);
-            driver.prepare();
-            conn.close();
-            try {
-                driver.put(new Pair(1, "Hello, world!"));
-                fail();
-            } catch (IOException e) {
-                // ok.
+            try (JdbcDrainDriver<Pair> driver = new JdbcDrainDriver<>(profile(), script, conn, true)) {
+                driver.prepare();
+                conn.close();
+                try {
+                    driver.put(new Pair(1, "Hello, world!"));
+                    fail();
+                } catch (IOException e) {
+                    // ok.
+                }
             }
-            driver.close();
-        } finally {
-            conn.close();
         }
     }
 
     /**
-     * Whether close method awares commit failure.
+     * Whether close method aware commit failure.
      * @throws Exception if failed
      */
     @Test
     public void aware_commit_failure() throws Exception {
-        Connection conn = h2.open();
-        try {
-            JdbcScript<Pair> script = new JdbcScript<Pair>(
+        try (Connection conn = h2.open()) {
+            JdbcScript<Pair> script = new JdbcScript<>(
                     "testing",
                     new PairSupport(),
                     "PAIR",
                     Arrays.asList("KEY", "VALUE"),
                     null);
-            JdbcDrainDriver<Pair> driver = new JdbcDrainDriver<Pair>(profile(), script, conn, true);
-            driver.prepare();
-            driver.put(new Pair(1, "Hello, world!"));
-            conn.close();
-            try {
-                driver.close();
-                fail();
-            } catch (IOException e) {
-                // ok.
+            try (JdbcDrainDriver<Pair> driver = new JdbcDrainDriver<>(profile(), script, conn, true)) {
+                driver.prepare();
+                driver.put(new Pair(1, "Hello, world!"));
+                conn.close();
+                try {
+                    driver.close();
+                    fail();
+                } catch (IOException e) {
+                    // ok.
+                }
             }
-        } finally {
-            conn.close();
         }
     }
 
     private void test(String... expected) {
         List<List<Object>> results = h2.query("SELECT VALUE FROM PAIR ORDER BY KEY ASC");
-        List<String> actual = new ArrayList<String>();
+        List<String> actual = new ArrayList<>();
         for (List<Object> row : results) {
             actual.add((String) row.get(0));
         }

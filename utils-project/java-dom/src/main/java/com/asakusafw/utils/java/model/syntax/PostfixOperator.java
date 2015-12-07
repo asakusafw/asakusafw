@@ -72,7 +72,7 @@ public enum PostfixOperator {
 
         private static final Map<String, PostfixOperator> REVERSE_DICTIONARY;
         static {
-            Map<String, PostfixOperator> map = new HashMap<String, PostfixOperator>();
+            Map<String, PostfixOperator> map = new HashMap<>();
             for (PostfixOperator elem : PostfixOperator.values()) {
                 map.put(elem.getSymbol(), elem);
             }

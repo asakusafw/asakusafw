@@ -63,7 +63,7 @@ public final class DirectIoDelete extends Configured implements Tool {
 
     @Override
     public int run(String[] args) throws Exception {
-        LinkedList<String> argList = new LinkedList<String>();
+        LinkedList<String> argList = new LinkedList<>();
         Collections.addAll(argList, args);
         boolean recursive = false;
         while (argList.isEmpty() == false) {
@@ -88,7 +88,7 @@ public final class DirectIoDelete extends Configured implements Tool {
             return 1;
         }
         String path = argList.removeFirst();
-        List<FilePattern> patterns = new ArrayList<FilePattern>();
+        List<FilePattern> patterns = new ArrayList<>();
         for (String arg : argList) {
             patterns.add(FilePattern.compile(arg));
         }

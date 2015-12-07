@@ -70,7 +70,7 @@ public class OrcFileFormatTest {
             Class<T> type,
             Map<String, ? extends ValueSerde> edits,
             String... removes) {
-        OrcFileFormat<T> format = new OrcFileFormat<T>(
+        OrcFileFormat<T> format = new OrcFileFormat<>(
                 "testing",
                 new OrcFormatConfiguration(),
                 new DataModelDescriptorEditor(FieldPropertyDescriptor.extract(type))
@@ -171,14 +171,11 @@ public class OrcFileFormatTest {
 
         OrcFileFormat<MockSimple> format = format(MockSimple.class);
         LocalFileSystem fs = FileSystem.getLocal(format.getConf());
-        ModelOutput<MockSimple> output = format.createOutput(
+        try (ModelOutput<MockSimple> output = format.createOutput(
                 MockSimple.class,
                 fs, new Path(file.toURI()),
-                new Counter());
-        try {
+                new Counter());) {
             output.write(new MockSimple(100, "Hello, world!"));
-        } finally {
-            output.close();
         }
         assertThat(file.exists(), is(true));
 
@@ -192,20 +189,17 @@ public class OrcFileFormatTest {
         assertThat(fragments, hasSize(1));
         DirectInputFragment first = fragments.get(0);
 
-        ModelInput<MockSimple> input = format.createInput(
+        try (ModelInput<MockSimple> input = format.createInput(
                 MockSimple.class,
                 fs, new Path(first.getPath()),
                 first.getOffset(), first.getSize(),
-                new Counter());
-        try {
+                new Counter())) {
             MockSimple buf = new MockSimple();
             assertThat(input.readTo(buf), is(true));
             assertThat(buf.number, is(new IntOption(100)));
             assertThat(buf.string, is(new StringOption("Hello, world!")));
 
             assertThat(input.readTo(buf), is(false));
-        } finally {
-            input.close();
         }
     }
 
@@ -225,7 +219,7 @@ public class OrcFileFormatTest {
     }
 
     private <T> T restore(OrcFileFormat<T> format, T value) throws IOException, InterruptedException {
-        List<T> in = new ArrayList<T>();
+        List<T> in = new ArrayList<>();
         in.add(value);
         return restore(format, in).get(0);
     }
@@ -241,16 +235,13 @@ public class OrcFileFormatTest {
         File file = folder.newFile();
         Assume.assumeThat(file.delete() || file.exists() == false, is(true));
         LocalFileSystem fs = FileSystem.getLocal(format.getConf());
-        ModelOutput<T> output = format.createOutput(
+        try (ModelOutput<T> output = format.createOutput(
                 format.getSupportedType(),
                 fs, new Path(file.toURI()),
-                new Counter());
-        try {
+                new Counter())) {
             for (T value : values) {
                 output.write(value);
             }
-        } finally {
-            output.close();
         }
         assertThat(file.exists(), is(true));
         return file;
@@ -258,13 +249,12 @@ public class OrcFileFormatTest {
 
     private <T> List<T> load(OrcFileFormat<T> format, File file) throws IOException, InterruptedException {
         LocalFileSystem fs = FileSystem.getLocal(format.getConf());
-        ModelInput<T> input = format.createInput(
+        try (ModelInput<T> input = format.createInput(
                 format.getSupportedType(),
                 fs, new Path(file.toURI()),
                 0, file.length(),
-                new Counter());
-        try {
-            List<T> results = new ArrayList<T>();
+                new Counter())) {
+            List<T> results = new ArrayList<>();
             while (true) {
                 @SuppressWarnings("unchecked")
                 T value = (T) format.getDataModelDescriptor().createDataModelObject();
@@ -274,8 +264,6 @@ public class OrcFileFormatTest {
                 results.add(value);
             }
             return results;
-        } finally {
-            input.close();
         }
     }
 }

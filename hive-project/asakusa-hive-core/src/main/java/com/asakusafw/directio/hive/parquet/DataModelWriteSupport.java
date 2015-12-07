@@ -84,7 +84,7 @@ public class DataModelWriteSupport extends WriteSupport<Object> {
     }
 
     private MessageType computeSchema(DataModelDescriptor descriptor) {
-        List<Type> fields = new ArrayList<Type>();
+        List<Type> fields = new ArrayList<>();
         for (PropertyDescriptor property : descriptor.getPropertyDescriptors()) {
             Type field = computeParquetType(property);
             fields.add(field);

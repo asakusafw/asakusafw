@@ -112,11 +112,11 @@ public class OperatorDescription implements FlowElementDescription {
         }
         this.origin = origin == null ? this : origin;
         this.declaration = declaration;
-        this.inputPorts = Collections.unmodifiableList(new ArrayList<FlowElementPortDescription>(inputPorts));
-        this.outputPorts = Collections.unmodifiableList(new ArrayList<FlowElementPortDescription>(outputPorts));
-        this.resources = Collections.unmodifiableList(new ArrayList<FlowResourceDescription>(resources));
-        this.parameters = Collections.unmodifiableList(new ArrayList<Parameter>(parameters));
-        this.attributes = new HashMap<Class<? extends FlowElementAttribute>, FlowElementAttribute>();
+        this.inputPorts = Collections.unmodifiableList(new ArrayList<>(inputPorts));
+        this.outputPorts = Collections.unmodifiableList(new ArrayList<>(outputPorts));
+        this.resources = Collections.unmodifiableList(new ArrayList<>(resources));
+        this.parameters = Collections.unmodifiableList(new ArrayList<>(parameters));
+        this.attributes = new HashMap<>();
         for (FlowElementAttribute attribute : attributes) {
             this.attributes.put(attribute.getDeclaringClass(), attribute);
         }
@@ -197,7 +197,7 @@ public class OperatorDescription implements FlowElementDescription {
      * @return the attributes
      */
     public Set<FlowElementAttribute> getAttributes() {
-        return new HashSet<FlowElementAttribute>(attributes.values());
+        return new HashSet<>(attributes.values());
     }
 
     @Override
@@ -427,12 +427,12 @@ public class OperatorDescription implements FlowElementDescription {
                 throw new IllegalArgumentException("annotationType must not be null"); //$NON-NLS-1$
             }
             this.annotationType = annotationType;
-            this.parameterTypes = new ArrayList<Class<?>>();
-            this.inputPorts = new ArrayList<FlowElementPortDescription>();
-            this.outputPorts = new ArrayList<FlowElementPortDescription>();
-            this.resources = new ArrayList<FlowResourceDescription>();
-            this.parameters = new ArrayList<OperatorDescription.Parameter>();
-            this.attributes = new ArrayList<FlowElementAttribute>();
+            this.parameterTypes = new ArrayList<>();
+            this.inputPorts = new ArrayList<>();
+            this.outputPorts = new ArrayList<>();
+            this.resources = new ArrayList<>();
+            this.parameters = new ArrayList<>();
+            this.attributes = new ArrayList<>();
         }
 
         /**
@@ -444,10 +444,7 @@ public class OperatorDescription implements FlowElementDescription {
          * @return this
          * @throws IllegalArgumentException if some parameters are {@code null}
          */
-        public Builder declare(
-                Class<?> operatorClass,
-                Class<?> implementorClass,
-                String methodName) {
+        public Builder declare(Class<?> operatorClass, Class<?> implementorClass, String methodName) {
             if (operatorClass == null) {
                 throw new IllegalArgumentException("operatorClass must not be null"); //$NON-NLS-1$
             }
@@ -634,10 +631,7 @@ public class OperatorDescription implements FlowElementDescription {
          * @return this
          * @throws IllegalArgumentException if some parameters are {@code null}
          */
-        public Builder addParameter(
-                String parameterName,
-                Type parameterType,
-                Object argument) {
+        public Builder addParameter(String parameterName, Type parameterType, Object argument) {
             if (parameterName == null) {
                 throw new IllegalArgumentException("parameterName must not be null"); //$NON-NLS-1$
             }

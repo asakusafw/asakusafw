@@ -109,7 +109,7 @@ public abstract class JavadocBlockParser extends JavadocBaseParser {
     public List<IrDocFragment> fetchRestFragments(JavadocScanner scanner) throws JavadocParseException {
         int index = scanner.getIndex();
         try {
-            ArrayList<IrDocFragment> fragments = new ArrayList<IrDocFragment>();
+            ArrayList<IrDocFragment> fragments = new ArrayList<>();
             while (true) {
                 JavadocTokenKind la = scanner.lookahead(0).getKind();
                 if (la == JavadocTokenKind.LINE_BREAK) {

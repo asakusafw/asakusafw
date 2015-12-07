@@ -31,7 +31,7 @@ public class NullBatchFileCacheRepository implements BatchFileCacheRepository {
 
     @Override
     public Map<Path, Path> resolve(List<? extends Path> files) throws IOException, InterruptedException {
-        Map<Path, Path> results = new LinkedHashMap<Path, Path>();
+        Map<Path, Path> results = new LinkedHashMap<>();
         for (Path path : files) {
             results.put(path, null);
         }

@@ -45,7 +45,7 @@ public class DriverRepository implements DriverFactory {
         if (resources == null) {
             throw new IllegalArgumentException("resources must not be null"); //$NON-NLS-1$
         }
-        HashMap<String, ResourceMirror> map = new HashMap<String, ResourceMirror>();
+        HashMap<String, ResourceMirror> map = new HashMap<>();
         for (ResourceMirror resource : resources) {
             map.put(resource.getName(), resource);
         }

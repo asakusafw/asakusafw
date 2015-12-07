@@ -65,7 +65,7 @@ public final class SimpleDataDefinition<T> implements DataDefinition<T> {
             Class<?> dataClass,
             DataFormat<T> dataFormat,
             DataFilter<?> dataFilter) {
-        return new SimpleDataDefinition<T>(
+        return new SimpleDataDefinition<>(
                 dataClass.asSubclass(dataFormat.getSupportedType()),
                 dataFormat,
                 (DataFilter<? super T>) dataFilter);

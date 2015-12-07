@@ -38,7 +38,7 @@ import com.asakusafw.testdriver.model.SimpleDataModelDefinition;
  */
 public class JsonSourceProviderTest {
 
-    static final DataModelDefinition<Simple> SIMPLE = new SimpleDataModelDefinition<Simple>(Simple.class);
+    static final DataModelDefinition<Simple> SIMPLE = new SimpleDataModelDefinition<>(Simple.class);
 
     /**
      * simple.
@@ -47,14 +47,11 @@ public class JsonSourceProviderTest {
     @Test
     public void simple() throws Exception {
         JsonSourceProvider provider = new JsonSourceProvider();
-        DataModelSource source = provider.open(SIMPLE, uri("simple.json"), new TestContext.Empty());
-        assertThat(source, not(nullValue()));
-        try {
+        try (DataModelSource source = provider.open(SIMPLE, uri("simple.json"), new TestContext.Empty())) {
+            assertThat(source, not(nullValue()));
             Simple s1 = SIMPLE.toObject(source.next());
             assertThat(s1.number, is(100));
             assertThat(source.next(), is(nullValue()));
-        } finally {
-            source.close();
         }
     }
 
@@ -65,14 +62,11 @@ public class JsonSourceProviderTest {
     @Test
     public void spi() throws Exception {
         DataModelSourceProvider provider = new SpiDataModelSourceProvider(JsonSourceProvider.class.getClassLoader());
-        DataModelSource source = provider.open(SIMPLE, uri("simple.json"), new TestContext.Empty());
-        assertThat(source, not(nullValue()));
-        try {
+        try (DataModelSource source = provider.open(SIMPLE, uri("simple.json"), new TestContext.Empty())) {
+            assertThat(source, not(nullValue()));
             Simple s1 = SIMPLE.toObject(source.next());
             assertThat(s1.number, is(100));
             assertThat(source.next(), is(nullValue()));
-        } finally {
-            source.close();
         }
     }
 

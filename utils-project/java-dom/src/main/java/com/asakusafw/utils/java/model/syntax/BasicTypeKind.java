@@ -155,7 +155,7 @@ public enum BasicTypeKind {
 
         private static final Map<Class<?>, BasicTypeKind> REVERSE_DICTIONARY;
         static {
-            Map<Class<?>, BasicTypeKind> map = new HashMap<Class<?>, BasicTypeKind>();
+            Map<Class<?>, BasicTypeKind> map = new HashMap<>();
             for (BasicTypeKind elem : BasicTypeKind.values()) {
                 map.put(elem.getJavaRepresentation(), elem);
             }
@@ -170,7 +170,7 @@ public enum BasicTypeKind {
     private static class DescriptorToBasicTypeKind {
         private static final Map<Character, BasicTypeKind> REVERSE_DICTIONARY;
         static {
-            Map<Character, BasicTypeKind> map = new HashMap<Character, BasicTypeKind>();
+            Map<Character, BasicTypeKind> map = new HashMap<>();
             for (BasicTypeKind elem : BasicTypeKind.values()) {
                 map.put(elem.getDescriptor(), elem);
             }
@@ -185,7 +185,7 @@ public enum BasicTypeKind {
     private static class KeywordToBasicTypeKind {
         private static final Map<String, BasicTypeKind> REVERSE_DICTIONARY;
         static {
-            Map<String, BasicTypeKind> map = new HashMap<String, BasicTypeKind>();
+            Map<String, BasicTypeKind> map = new HashMap<>();
             for (BasicTypeKind elem : BasicTypeKind.values()) {
                 map.put(elem.getKeyword(), elem);
             }

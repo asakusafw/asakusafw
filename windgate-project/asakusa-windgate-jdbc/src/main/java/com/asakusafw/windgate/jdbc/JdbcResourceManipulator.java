@@ -121,7 +121,7 @@ public class JdbcResourceManipulator extends ResourceManipulator {
         boolean succeed = false;
         Connection conn = profile.openConnection();
         try {
-            JdbcSourceDriver<T> result = new JdbcSourceDriver<T>(profile, jdbc, conn, object);
+            JdbcSourceDriver<T> result = new JdbcSourceDriver<>(profile, jdbc, conn, object);
             succeed = true;
             return result;
         } finally {
@@ -141,7 +141,7 @@ public class JdbcResourceManipulator extends ResourceManipulator {
         boolean succeed = false;
         Connection conn = profile.openConnection();
         try {
-            JdbcDrainDriver<T> result = new JdbcDrainDriver<T>(profile, jdbc, conn, false);
+            JdbcDrainDriver<T> result = new JdbcDrainDriver<>(profile, jdbc, conn, false);
             succeed = true;
             return result;
         } finally {
@@ -161,7 +161,7 @@ public class JdbcResourceManipulator extends ResourceManipulator {
         boolean succeed = false;
         Connection conn = profile.openConnection();
         try {
-            JdbcSourceDriver<T> result = new JdbcSourceDriver<T>(profile, jdbc, conn, object);
+            JdbcSourceDriver<T> result = new JdbcSourceDriver<>(profile, jdbc, conn, object);
             succeed = true;
             return result;
         } finally {
@@ -180,7 +180,7 @@ public class JdbcResourceManipulator extends ResourceManipulator {
         boolean succeed = false;
         Connection conn = profile.openConnection();
         try {
-            JdbcDrainDriver<T> result = new JdbcDrainDriver<T>(profile, jdbc, conn, false);
+            JdbcDrainDriver<T> result = new JdbcDrainDriver<>(profile, jdbc, conn, false);
             succeed = true;
             return result;
         } finally {
@@ -242,10 +242,10 @@ public class JdbcResourceManipulator extends ResourceManipulator {
 
     private <T> ProcessScript<T> createSourceProcessFromDrain(ProcessScript<T> script) {
         assert script != null;
-        Map<String, String> rebuilt = new HashMap<String, String>(script.getDrainScript().getConfiguration());
+        Map<String, String> rebuilt = new HashMap<>(script.getDrainScript().getConfiguration());
         rebuilt.remove(JdbcProcess.CONDITION.key());
         rebuilt.remove(JdbcProcess.OPERATION.key());
-        return new ProcessScript<T>(
+        return new ProcessScript<>(
                 script.getName(),
                 script.getProcessType(),
                 script.getDataClass(),
@@ -255,10 +255,10 @@ public class JdbcResourceManipulator extends ResourceManipulator {
 
     private <T> ProcessScript<T> createDrainProcessFromSource(ProcessScript<T> script) {
         assert script != null;
-        Map<String, String> rebuilt = new HashMap<String, String>(script.getSourceScript().getConfiguration());
+        Map<String, String> rebuilt = new HashMap<>(script.getSourceScript().getConfiguration());
         rebuilt.remove(JdbcProcess.CONDITION.key());
         rebuilt.put(JdbcProcess.OPERATION.key(), JdbcProcess.OperationKind.INSERT_AFTER_TRUNCATE.value());
-        return new ProcessScript<T>(
+        return new ProcessScript<>(
                 script.getName(),
                 script.getProcessType(),
                 script.getDataClass(),

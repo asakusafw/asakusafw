@@ -105,7 +105,7 @@ public class IrDocQualifiedName extends IrDocName {
 
     @Override
     public String asString() {
-        LinkedList<IrDocSimpleName> names = new LinkedList<IrDocSimpleName>();
+        LinkedList<IrDocSimpleName> names = new LinkedList<>();
         IrDocName current = getQualifier();
         while (current.getKind() == IrDocElementKind.QUALIFIED_NAME) {
             IrDocQualifiedName qName = (IrDocQualifiedName) current;
@@ -126,7 +126,7 @@ public class IrDocQualifiedName extends IrDocName {
 
     @Override
     public List<IrDocSimpleName> asSimpleNameList() {
-        LinkedList<IrDocSimpleName> names = new LinkedList<IrDocSimpleName>();
+        LinkedList<IrDocSimpleName> names = new LinkedList<>();
 
         names.addFirst(getName());
         IrDocName current = this.getQualifier();
@@ -136,7 +136,7 @@ public class IrDocQualifiedName extends IrDocName {
             current = q.getQualifier();
         }
         names.addFirst((IrDocSimpleName) current);
-        return new ArrayList<IrDocSimpleName>(names);
+        return new ArrayList<>(names);
     }
 
     @Override

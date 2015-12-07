@@ -29,15 +29,15 @@ public class MockTestExecutionPlanBuilder {
 
     final String executionId;
 
-    final List<TestExecutionPlan.Command> initializers = new ArrayList<TestExecutionPlan.Command>();
+    final List<TestExecutionPlan.Command> initializers = new ArrayList<>();
 
-    final List<TestExecutionPlan.Command> importers = new ArrayList<TestExecutionPlan.Command>();
+    final List<TestExecutionPlan.Command> importers = new ArrayList<>();
 
-    final List<TestExecutionPlan.Job> jobs = new ArrayList<TestExecutionPlan.Job>();
+    final List<TestExecutionPlan.Job> jobs = new ArrayList<>();
 
-    final List<TestExecutionPlan.Command> exporters = new ArrayList<TestExecutionPlan.Command>();
+    final List<TestExecutionPlan.Command> exporters = new ArrayList<>();
 
-    final List<TestExecutionPlan.Command> finalizers = new ArrayList<TestExecutionPlan.Command>();
+    final List<TestExecutionPlan.Command> finalizers = new ArrayList<>();
 
     /**
      * Creates a new instance.

@@ -104,19 +104,14 @@ public class WindGateExporterRetrieverTest {
                 "testing",
                 driver);
         WindGateExporterRetriever retriever = new WindGateExporterRetriever();
-        ModelOutput<String> output = retriever.createOutput(
-                ValueDefinition.of(String.class), description, context.get());
-        try {
+        try (ModelOutput<String> output = retriever.createOutput(
+                ValueDefinition.of(String.class), description, context.get())) {
             output.write("Hello1, world!");
             output.write("Hello2, world!");
             output.write("Hello3, world!");
-        } finally {
-            output.close();
         }
-
-        FileInputStream input = new FileInputStream(file);
-        try {
-            ObjectInputStream in = new ObjectInputStream(input);
+        try (FileInputStream input = new FileInputStream(file);
+                ObjectInputStream in = new ObjectInputStream(input);) {
             assertThat(in.readObject(), is((Object) "Hello1, world!"));
             assertThat(in.readObject(), is((Object) "Hello2, world!"));
             assertThat(in.readObject(), is((Object) "Hello3, world!"));
@@ -126,9 +121,6 @@ public class WindGateExporterRetrieverTest {
             } catch (IOException e) {
                 // ok.
             }
-            in.close();
-        } finally {
-            input.close();
         }
     }
 
@@ -144,15 +136,11 @@ public class WindGateExporterRetrieverTest {
         context.put("testing", profile);
 
         File file = folder.newFile("file");
-        FileOutputStream output = new FileOutputStream(file);
-        try {
-            ObjectOutputStream out = new ObjectOutputStream(output);
+        try (FileOutputStream output = new FileOutputStream(file);
+                ObjectOutputStream out = new ObjectOutputStream(output)) {
             out.writeObject("Hello1, world!");
             out.writeObject("Hello2, world!");
             out.writeObject("Hello3, world!");
-            out.close();
-        } finally {
-            output.close();
         }
 
         DriverScript driver = new DriverScript(
@@ -164,8 +152,7 @@ public class WindGateExporterRetrieverTest {
                 driver);
         WindGateExporterRetriever retriever = new WindGateExporterRetriever();
         ValueDefinition<String> stringDef = ValueDefinition.of(String.class);
-        DataModelSource source = retriever.createSource(stringDef, description, context.get());
-        try {
+        try (DataModelSource source = retriever.createSource(stringDef, description, context.get())) {
             DataModelReflection r1 = source.next();
             assertThat(r1, is(notNullValue()));
             assertThat(stringDef.toObject(r1), is("Hello1, world!"));
@@ -180,8 +167,6 @@ public class WindGateExporterRetrieverTest {
 
             DataModelReflection r4 = source.next();
             assertThat(r4, is(nullValue()));
-        } finally {
-            source.close();
         }
     }
 }

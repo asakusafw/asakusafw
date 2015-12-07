@@ -107,7 +107,7 @@ public class FileResourceManipulator extends ResourceManipulator {
                 profile, script, DriverScript.Kind.SOURCE);
         T model = ProcessUtil.newDataModel(profile.getResourceName(), script);
         FileInputStreamProvider provider = new FileInputStreamProvider(path);
-        return new StreamSourceDriver<T>(profile.getResourceName(), script.getName(), provider, support, model);
+        return new StreamSourceDriver<>(profile.getResourceName(), script.getName(), provider, support, model);
     }
 
     @Override
@@ -119,7 +119,7 @@ public class FileResourceManipulator extends ResourceManipulator {
         DataModelStreamSupport<? super T> support = FileResourceUtil.loadSupport(
                 profile, script, DriverScript.Kind.SOURCE);
         FileOutputStreamProvider provider = new FileOutputStreamProvider(path);
-        return new StreamDrainDriver<T>(profile.getResourceName(), script.getName(), provider, support);
+        return new StreamDrainDriver<>(profile.getResourceName(), script.getName(), provider, support);
     }
 
     @Override
@@ -132,7 +132,7 @@ public class FileResourceManipulator extends ResourceManipulator {
                 profile, script, DriverScript.Kind.DRAIN);
         T model = ProcessUtil.newDataModel(profile.getResourceName(), script);
         FileInputStreamProvider provider = new FileInputStreamProvider(path);
-        return new StreamSourceDriver<T>(profile.getResourceName(), script.getName(), provider, support, model);
+        return new StreamSourceDriver<>(profile.getResourceName(), script.getName(), provider, support, model);
     }
 
     @Override
@@ -144,6 +144,6 @@ public class FileResourceManipulator extends ResourceManipulator {
         DataModelStreamSupport<? super T> support = FileResourceUtil.loadSupport(
                 profile, script, DriverScript.Kind.DRAIN);
         FileOutputStreamProvider provider = new FileOutputStreamProvider(path);
-        return new StreamDrainDriver<T>(profile.getResourceName(), script.getName(), provider, support);
+        return new StreamDrainDriver<>(profile.getResourceName(), script.getName(), provider, support);
     }
 }

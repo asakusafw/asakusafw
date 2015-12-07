@@ -57,7 +57,7 @@ public abstract class FileCacheRepositoryTestRoot {
      * @return the converted files
      */
     protected Map<File, File> files(Map<Path, Path> paths) {
-        Map<File, File> results = new LinkedHashMap<File, File>();
+        Map<File, File> results = new LinkedHashMap<>();
         for (Map.Entry<Path, Path> entry : paths.entrySet()) {
             results.put(file(entry.getKey()), entry.getValue() == null ? null : file(entry.getValue()));
         }
@@ -82,11 +82,8 @@ public abstract class FileCacheRepositoryTestRoot {
      * @throws IOException if failed by I/O error
      */
     protected File put(File file, String contents) throws IOException {
-        PrintWriter writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(file), ENCODING));
-        try {
+        try (PrintWriter writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(file), ENCODING))) {
             writer.print(contents);
-        } finally {
-            writer.close();
         }
         return file;
     }
@@ -98,14 +95,11 @@ public abstract class FileCacheRepositoryTestRoot {
      * @throws IOException if failed by I/O error
      */
     protected String get(File file) throws IOException {
-        Scanner scanner = new Scanner(file, ENCODING.name());
-        try {
+        try (Scanner scanner = new Scanner(file, ENCODING.name())) {
             if (scanner.hasNextLine()) {
                 return scanner.nextLine();
             }
             throw new IOException();
-        } finally {
-            scanner.close();
         }
     }
 

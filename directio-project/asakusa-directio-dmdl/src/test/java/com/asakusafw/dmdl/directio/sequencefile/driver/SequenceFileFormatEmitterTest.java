@@ -96,22 +96,16 @@ public class SequenceFileFormatEmitterTest extends GeneratorTesterRoot {
 
         model.set("value", new Text("Hello, world!"));
 
-        ModelOutput<Object> writer = unsafe.createOutput(model.unwrap().getClass(),  fs, path, new Counter());
-        try {
+        try (ModelOutput<Object> writer = unsafe.createOutput(model.unwrap().getClass(),  fs, path, new Counter())) {
             writer.write(model.unwrap());
-        } finally {
-            writer.close();
         }
 
-        ModelInput<Object> reader = unsafe.createInput(
-                model.unwrap().getClass(), fs, path, 0, fs.getFileStatus(path).getLen(), new Counter());
-        try {
+        try (ModelInput<Object> reader = unsafe.createInput(
+                model.unwrap().getClass(), fs, path, 0, fs.getFileStatus(path).getLen(), new Counter())) {
             Object buffer = loaded.newModel("Simple").unwrap();
             assertThat(reader.readTo(buffer), is(true));
             assertThat(buffer, is(buffer));
             assertThat(reader.readTo(buffer), is(false));
-        } finally {
-            reader.close();
         }
     }
 

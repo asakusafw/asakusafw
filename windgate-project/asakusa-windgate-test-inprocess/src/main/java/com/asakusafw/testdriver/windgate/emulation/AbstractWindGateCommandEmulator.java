@@ -105,7 +105,7 @@ public abstract class AbstractWindGateCommandEmulator extends CommandEmulator {
             TestDriverContext context,
             ConfigurationFactory configurations) throws IOException {
         ClassLoader parent = configurations.newInstance().getClassLoader();
-        List<URL> libraries = new ArrayList<URL>();
+        List<URL> libraries = new ArrayList<>();
         libraries.add(new File(context.getFrameworkHomePath(), PATH_CONF).toURI().toURL());
         libraries.add(EmulatorUtils.getJobflowLibraryPath(context).toURI().toURL());
         for (File file : EmulatorUtils.getBatchLibraryPaths(context)) {
@@ -131,7 +131,7 @@ public abstract class AbstractWindGateCommandEmulator extends CommandEmulator {
             File profilePath = new File(
                     context.getFrameworkHomePath(),
                     MessageFormat.format(PATTERN_PROFILE, profile)).getAbsoluteFile();
-            Map<String, String> variables = new HashMap<String, String>(context.getEnvironmentVariables());
+            Map<String, String> variables = new HashMap<>(context.getEnvironmentVariables());
             variables.put("WINDGATE_PROFILE", profile); //$NON-NLS-1$
             ParameterList contextParameters = new ParameterList(variables);
             ProfileContext profileContext = new ProfileContext(classLoader, contextParameters);

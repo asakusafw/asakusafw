@@ -38,7 +38,7 @@ public final class Graphs {
      * @return the created instance
      */
     public static <V> Graph<V> newInstance() {
-        return new HashGraph<V>();
+        return new HashGraph<>();
     }
 
     /**
@@ -70,7 +70,7 @@ public final class Graphs {
         if (graph == null) {
             throw new IllegalArgumentException("graph must not be null"); //$NON-NLS-1$
         }
-        Set<V> results = new HashSet<V>(graph.getNodeSet());
+        Set<V> results = new HashSet<>(graph.getNodeSet());
         for (Vertex<? extends V> vertex : graph) {
             results.removeAll(vertex.getConnected());
         }
@@ -88,7 +88,7 @@ public final class Graphs {
         if (graph == null) {
             throw new IllegalArgumentException("graph must not be null"); //$NON-NLS-1$
         }
-        Set<V> results = new HashSet<V>();
+        Set<V> results = new HashSet<>();
         for (Vertex<? extends V> vertex : graph) {
             if (vertex.getConnected().isEmpty()) {
                 results.add(vertex.getNode());
@@ -114,7 +114,7 @@ public final class Graphs {
         if (startNodes == null) {
             throw new IllegalArgumentException("startNodes must not be null"); //$NON-NLS-1$
         }
-        Set<V> connected = new HashSet<V>();
+        Set<V> connected = new HashSet<>();
         for (V start : startNodes) {
             findAllConnected(graph, start, connected);
         }
@@ -159,13 +159,13 @@ public final class Graphs {
         if (matcher == null) {
             throw new IllegalArgumentException("matcher must not be null"); //$NON-NLS-1$
         }
-        LinkedList<V> queue = new LinkedList<V>();
+        LinkedList<V> queue = new LinkedList<>();
         for (V start : startNodes) {
             queue.addAll(graph.getConnected(start));
         }
 
-        Set<V> saw = new HashSet<V>();
-        Set<V> results = new HashSet<V>();
+        Set<V> saw = new HashSet<>();
+        Set<V> results = new HashSet<>();
         while (queue.isEmpty() == false) {
             V first = queue.removeFirst();
             if (saw.contains(first)) {
@@ -207,13 +207,13 @@ public final class Graphs {
         if (matcher == null) {
             throw new IllegalArgumentException("matcher must not be null"); //$NON-NLS-1$
         }
-        LinkedList<V> queue = new LinkedList<V>();
+        LinkedList<V> queue = new LinkedList<>();
         for (V start : startNodes) {
             queue.addAll(graph.getConnected(start));
         }
 
-        Set<V> saw = new HashSet<V>();
-        Set<V> results = new HashSet<V>();
+        Set<V> saw = new HashSet<>();
+        Set<V> results = new HashSet<>();
         while (queue.isEmpty() == false) {
             V first = queue.removeFirst();
             if (saw.contains(first)) {
@@ -242,7 +242,7 @@ public final class Graphs {
         if (graph == null) {
             throw new IllegalArgumentException("graph must not be null"); //$NON-NLS-1$
         }
-        Set<Set<V>> results = new HashSet<Set<V>>();
+        Set<Set<V>> results = new HashSet<>();
         Set<Set<V>> sccs = Graphs.findStronglyConnectedComponents(graph);
         for (Set<V> scc : sccs) {
             if (scc.size() >= 2) {
@@ -273,15 +273,15 @@ public final class Graphs {
         List<? extends V> postorder = computePostOrderByDepth(graph);
         Graph<? extends V> tgraph = transpose(graph);
 
-        List<Set<V>> results = new ArrayList<Set<V>>();
-        Set<V> saw = new HashSet<V>();
+        List<Set<V>> results = new ArrayList<>();
+        Set<V> saw = new HashSet<>();
         for (int i = postorder.size() - 1; i >= 0; --i) {
             V start = postorder.get(i);
             if (saw.contains(start)) {
                 continue;
             }
             saw.add(start);
-            Set<V> connected = new HashSet<V>();
+            Set<V> connected = new HashSet<>();
             connected.add(start);
             VisitFrame<V> top = VisitFrame.build(tgraph, start);
             while (top != null) {
@@ -299,7 +299,7 @@ public final class Graphs {
             results.add(connected);
         }
 
-        return new HashSet<Set<V>>(results);
+        return new HashSet<>(results);
     }
 
     /**
@@ -320,7 +320,7 @@ for i = 0..list.size-1:
             throw new IllegalArgumentException("graph must not be null"); //$NON-NLS-1$
         }
         List<? extends V> postorder = computePostOrderByDepth(graph);
-        return new ArrayList<V>(postorder);
+        return new ArrayList<>(postorder);
     }
 
     /**
@@ -339,7 +339,7 @@ graph.isConnected(a, b) <=> reverse.isConnected(b, a).
         if (graph == null) {
             throw new IllegalArgumentException("graph must not be null"); //$NON-NLS-1$
         }
-        Graph<V> results = new HashGraph<V>();
+        Graph<V> results = new HashGraph<>();
         for (Graph.Vertex<V> vertex : graph) {
             V from = vertex.getNode();
             results.addNode(from);
@@ -366,7 +366,7 @@ graph.isConnected(a, b) <=> reverse.isConnected(b, a).
             throw new IllegalArgumentException("matcher must not be null"); //$NON-NLS-1$
         }
         Graph<V> subgraph = newInstance();
-        Map<V, Boolean> matchedSet = new HashMap<V, Boolean>();
+        Map<V, Boolean> matchedSet = new HashMap<>();
         for (V vertex : graph.getNodeSet()) {
             boolean matched = matcher.matches(vertex);
             if (matched) {
@@ -397,9 +397,9 @@ graph.isConnected(a, b) <=> reverse.isConnected(b, a).
 
     private static <V> List<V> computePostOrderByDepth(Graph<? extends V> graph) {
         assert graph != null;
-        List<V> results = new ArrayList<V>();
+        List<V> results = new ArrayList<>();
 
-        Set<V> saw = new HashSet<V>();
+        Set<V> saw = new HashSet<>();
         for (Graph.Vertex<? extends V> start : graph) {
             if (saw.contains(start.getNode())) {
                 continue;
@@ -472,12 +472,12 @@ graph.isConnected(a, b) <=> reverse.isConnected(b, a).
         static <V> VisitFrame<V> build(Graph<? extends V> graph, V node) {
             assert graph != null;
             Iterator<? extends V> branch = graph.getConnected(node).iterator();
-            return new VisitFrame<V>(null, graph, node, branch);
+            return new VisitFrame<>(null, graph, node, branch);
         }
 
         VisitFrame<V> push(V nextNode) {
             Iterator<? extends V> nextBranch = graph.getConnected(nextNode).iterator();
-            return new VisitFrame<V>(this, graph, nextNode, nextBranch);
+            return new VisitFrame<>(this, graph, nextNode, nextBranch);
         }
     }
 }

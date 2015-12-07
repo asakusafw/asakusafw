@@ -85,29 +85,23 @@ public class TemporaryImporterPreparatorTest {
     @Test
     public void simple() throws Exception {
         TemporaryInputPreparator target = new TemporaryInputPreparator(factory);
-        ModelOutput<Text> open = target.createOutput(
+        try (ModelOutput<Text> open = target.createOutput(
                 new MockTextDefinition(),
                 new MockTemporaryImporter(Text.class, "target/testing/input"),
-                EMPTY);
-        try {
+                EMPTY)) {
             open.write(new Text("Hello, world!"));
             open.write(new Text("This is a test."));
-        } finally {
-            open.close();
         }
-        ModelInput<Text> input = TemporaryStorage.openInput(
+        try (ModelInput<Text> input = TemporaryStorage.openInput(
                 factory.newInstance(),
                 Text.class,
-                new Path("target/testing/input"));
-        try {
+                new Path("target/testing/input"))) {
             Text text = new Text();
             assertThat(input.readTo(text), is(true));
             assertThat(text.toString(), is("Hello, world!"));
             assertThat(input.readTo(text), is(true));
             assertThat(text.toString(), is("This is a test."));
             assertThat(input.readTo(text), is(false));
-        } finally {
-            input.close();
         }
     }
 

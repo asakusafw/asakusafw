@@ -1311,14 +1311,11 @@ public class CsvParserTest {
             }
         };
         CsvConfiguration conf = createConfiguration();
-        CsvParser parser = new CsvParser(infinite, "testing", conf);
-        try {
+        try (CsvParser parser = new CsvParser(infinite, "testing", conf)) {
             assertThat(parser.next(), is(true));
             fail();
         } catch (IOException e) {
             // ok.
-        } finally {
-            parser.close();
         }
     }
 
@@ -1372,10 +1369,9 @@ public class CsvParserTest {
     public void stress_decimal() throws Exception {
         int count = 5000000;
         CsvConfiguration conf = createConfiguration();
-        RCReader reader = new RCReader("3.141592\r\n".getBytes(conf.getCharset()), count);
-        try {
+        try (RCReader reader = new RCReader("3.141592\r\n".getBytes(conf.getCharset()), count);
+                CsvParser parser = new CsvParser(reader, "testing", conf)) {
             int rows = 0;
-            CsvParser parser = new CsvParser(reader, "testing", conf);
             DecimalOption date = new DecimalOption();
             while (parser.next()) {
                 parser.fill(date);
@@ -1385,10 +1381,7 @@ public class CsvParserTest {
                 }
                 rows++;
             }
-            parser.close();
             assertThat(rows, is(count));
-        } finally {
-            reader.close();
         }
     }
 
@@ -1400,10 +1393,10 @@ public class CsvParserTest {
     public void stress_date() throws Exception {
         int count = 5000000;
         CsvConfiguration conf = createConfiguration();
-        RCReader reader = new RCReader("1999-12-31\r\n".getBytes(conf.getCharset()), count);
-        try {
+
+        try (RCReader reader = new RCReader("1999-12-31\r\n".getBytes(conf.getCharset()), count);
+                CsvParser parser = new CsvParser(reader, "testing", conf)) {
             int rows = 0;
-            CsvParser parser = new CsvParser(reader, "testing", conf);
             DateOption date = new DateOption();
             while (parser.next()) {
                 parser.fill(date);
@@ -1415,8 +1408,6 @@ public class CsvParserTest {
             }
             parser.close();
             assertThat(rows, is(count));
-        } finally {
-            reader.close();
         }
     }
 
@@ -1428,10 +1419,9 @@ public class CsvParserTest {
     public void stress_datetime() throws Exception {
         int count = 5000000;
         CsvConfiguration conf = createConfiguration();
-        RCReader reader = new RCReader("1999-12-31 01:23:45\r\n".getBytes(conf.getCharset()), count);
-        try {
+        try (RCReader reader = new RCReader("1999-12-31 01:23:45\r\n".getBytes(conf.getCharset()), count);
+                CsvParser parser = new CsvParser(reader, "testing", conf)) {
             int rows = 0;
-            CsvParser parser = new CsvParser(reader, "testing", conf);
             DateTimeOption date = new DateTimeOption();
             while (parser.next()) {
                 parser.fill(date);
@@ -1443,8 +1433,6 @@ public class CsvParserTest {
             }
             parser.close();
             assertThat(rows, is(count));
-        } finally {
-            reader.close();
         }
     }
 

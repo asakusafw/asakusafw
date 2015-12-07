@@ -338,7 +338,7 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
         assert modelType != null;
         assert source != null;
         assert drain != null;
-        return new ProcessScript<T>(
+        return new ProcessScript<>(
                 profileName,
                 Constants.DEFAULT_PROCESS_NAME,
                 modelType,
@@ -348,7 +348,7 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
 
     private Map<String, GateScript> toGateScripts(Map<String, List<ProcessScript<?>>> processes) {
         assert processes != null;
-        Map<String, GateScript> results = new TreeMap<String, GateScript>();
+        Map<String, GateScript> results = new TreeMap<>();
         for (Map.Entry<String, List<ProcessScript<?>>> entry : processes.entrySet()) {
             results.put(entry.getKey(), new GateScript(entry.getKey(), entry.getValue()));
         }
@@ -360,12 +360,8 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
         assert script != null;
         Properties properties = new Properties();
         script.storeTo(properties);
-
-        OutputStream output = getEnvironment().openResource(null, path);
-        try {
+        try (OutputStream output = getEnvironment().openResource(null, path)) {
             properties.store(output, getEnvironment().getTargetId());
-        } finally {
-            output.close();
         }
     }
 
@@ -423,7 +419,7 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
     }
 
     private Map<String, IoContext> build(Map<String, IoContextBuilder> builders) {
-        Map<String, IoContext> results = new TreeMap<String, IoContext>();
+        Map<String, IoContext> results = new TreeMap<>();
         for (Map.Entry<String, IoContextBuilder> entry : builders.entrySet()) {
             results.put(entry.getKey(), entry.getValue().build());
         }
@@ -472,8 +468,8 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
             assert exporters != null;
             this.batchId = batchId;
             this.flowId = flowId;
-            this.importers = new TreeMap<String, IoContext>(importers);
-            this.exporters = new TreeMap<String, IoContext>(exporters);
+            this.importers = new TreeMap<>(importers);
+            this.exporters = new TreeMap<>(exporters);
         }
 
         @Override
@@ -541,7 +537,7 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
 
         @Override
         public List<Command> getFinalizeCommand(CommandContext context) {
-            Map<String, IoContextBuilder> union = new TreeMap<String, IoContextBuilder>();
+            Map<String, IoContextBuilder> union = new TreeMap<>();
             for (Map.Entry<String, IoContext> entry : importers.entrySet()) {
                 add(union, entry.getKey(), entry.getValue());
             }

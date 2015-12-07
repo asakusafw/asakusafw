@@ -49,7 +49,7 @@ public class MockOut<T> implements Out<T> {
      * @return the created instance
      */
     public static <T> MockOut<T> of(Class<T> type, String name) {
-        return new MockOut<T>(type, name);
+        return new MockOut<>(type, name);
     }
 
     @Override

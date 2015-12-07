@@ -222,7 +222,7 @@ public class DefaultSplitCombinerTest {
                 { "e", "f" },
                 { "a", "g" },
         };
-        List<StageInputSplit> splits = new ArrayList<StageInputSplit>();
+        List<StageInputSplit> splits = new ArrayList<>();
         long total = 0;
         for (int i = 0; i < 1000; i++) {
             long size = i * 10 + 100;
@@ -268,7 +268,7 @@ public class DefaultSplitCombinerTest {
     }
 
     private void assertSan(List<StageInputSplit> splits) {
-        Set<Integer> saw = new HashSet<Integer>();
+        Set<Integer> saw = new HashSet<>();
         for (StageInputSplit stage : splits) {
             for (Source source : stage.getSources()) {
                 MockInputSplit split = (MockInputSplit) source.getSplit();
@@ -291,11 +291,11 @@ public class DefaultSplitCombinerTest {
     }
 
     private void assertTags(StageInputSplit split, int... tags) {
-        Set<Integer> expected = new TreeSet<Integer>();
+        Set<Integer> expected = new TreeSet<>();
         for (int tag : tags) {
             expected.add(tag);
         }
-        Set<Integer> actual = new TreeSet<Integer>();
+        Set<Integer> actual = new TreeSet<>();
         for (Source source : split.getSources()) {
             MockInputSplit mock = (MockInputSplit) source.getSplit();
             actual.add(mock.tag);
@@ -304,13 +304,13 @@ public class DefaultSplitCombinerTest {
     }
 
     private Matcher<String[]> locations(String... locations) {
-        final Set<String> set = new TreeSet<String>();
+        final Set<String> set = new TreeSet<>();
         Collections.addAll(set, locations);
         return new BaseMatcher<String[]>() {
             @Override
             public boolean matches(Object arg) {
                 String[] actualArray = (String[]) arg;
-                Set<String> actual = new TreeSet<String>();
+                Set<String> actual = new TreeSet<>();
                 if (actualArray != null) {
                     Collections.addAll(actual, actualArray);
                 }

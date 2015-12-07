@@ -60,7 +60,7 @@ abstract class ModelRoot implements Model {
         } else {
             assert traitClass.isInstance(traitObject);
             if (traits == null) {
-                traits = new WeakHashMap<Class<?>, Object>(4, 0.75f);
+                traits = new WeakHashMap<>(4, 0.75f);
             }
             traits.put(traitClass, traitObject);
         }

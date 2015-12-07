@@ -73,7 +73,7 @@ public abstract class DataFilter<T> {
          * @param batchArguments the target batch arguments
          */
         public Context(Map<String, String> batchArguments) {
-            this.batchArguments = Collections.unmodifiableMap(new HashMap<String, String>(batchArguments));
+            this.batchArguments = Collections.unmodifiableMap(new HashMap<>(batchArguments));
         }
 
         /**

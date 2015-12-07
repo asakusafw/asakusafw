@@ -45,7 +45,7 @@ public class MockOutput {
             Result<K> keyOut,
             Result<V> valueOut) {
         TaskAttemptID id = newTaskAttemptId(newTaskId(newJobId()));
-        return newTaskOutputContext(new Configuration(false), id, new ResultBridge<K, V>(keyOut, valueOut));
+        return newTaskOutputContext(new Configuration(false), id, new ResultBridge<>(keyOut, valueOut));
     }
 
     private static class ResultBridge<K, V> implements KeyValueConsumer<K, V> {

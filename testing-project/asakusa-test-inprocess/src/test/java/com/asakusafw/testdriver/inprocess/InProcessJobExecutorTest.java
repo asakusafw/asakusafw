@@ -422,7 +422,7 @@ public class InProcessJobExecutorTest {
     }
 
     private TestExecutionPlan.Job job(String className, String... properties) {
-        Map<String, String> props = new HashMap<String, String>();
+        Map<String, String> props = new HashMap<>();
         for (int i = 0, n = properties.length; i < n; i+=2) {
             props.put(properties[i], properties[i + 1]);
         }
@@ -435,14 +435,9 @@ public class InProcessJobExecutorTest {
     }
 
     private void putPropertiesFile(Properties props, File file) {
-        try {
-            file.getParentFile().mkdirs();
-            OutputStream output = new FileOutputStream(file);
-            try {
-                props.store(output, null);
-            } finally {
-                output.close();
-            }
+        file.getParentFile().mkdirs();
+        try (OutputStream output = new FileOutputStream(file)) {
+            props.store(output, null);
         } catch (IOException e) {
             throw new AssertionError(e);
         }
@@ -456,14 +451,9 @@ public class InProcessJobExecutorTest {
     }
 
     private void deploy(String source, File dest) {
-        InputStream in = getClass().getResourceAsStream(source);
-        assertThat(in, is(notNullValue()));
-        try {
-            try {
-                framework.dump(in, dest);
-            } finally {
-                in.close();
-            }
+        try (InputStream in = getClass().getResourceAsStream(source)) {
+            assertThat(in, is(notNullValue()));
+            framework.dump(in, dest);
         } catch (IOException e) {
             throw new AssertionError(e);
         }

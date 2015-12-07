@@ -32,9 +32,9 @@ public class DataModelDescriptorEditor {
 
     private final DataModelDescriptor origin;
 
-    private final Set<PropertyDescriptor> removes = new HashSet<PropertyDescriptor>();
+    private final Set<PropertyDescriptor> removes = new HashSet<>();
 
-    private final Map<PropertyDescriptor, ValueSerde> edits = new HashMap<PropertyDescriptor, ValueSerde>();
+    private final Map<PropertyDescriptor, ValueSerde> edits = new HashMap<>();
 
     /**
      * Creates a new instance.
@@ -106,7 +106,7 @@ public class DataModelDescriptorEditor {
      * @return the result
      */
     public DataModelDescriptor build() {
-        List<PropertyDescriptor> properties = new ArrayList<PropertyDescriptor>();
+        List<PropertyDescriptor> properties = new ArrayList<>();
         for (final PropertyDescriptor property : origin.getPropertyDescriptors()) {
             if (removes.contains(property)) {
                 continue;

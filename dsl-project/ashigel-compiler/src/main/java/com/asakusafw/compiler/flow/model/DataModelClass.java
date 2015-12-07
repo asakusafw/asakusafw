@@ -71,14 +71,12 @@ public class DataModelClass implements DataClass {
         for (Method method : aClass.getMethods()) {
             String propertyName = toPropertyName(method);
             Class<?> propertyType = method.getReturnType();
-            if (propertyType == ValueOption.class
-                    || ValueOption.class.isAssignableFrom(propertyType) == false) {
+            if (propertyType == ValueOption.class || ValueOption.class.isAssignableFrom(propertyType) == false) {
                 continue;
             }
 
             @SuppressWarnings("unchecked")
-            Class<? extends ValueOption<?>> valueOptionType =
-                (Class<? extends ValueOption<?>>) propertyType;
+            Class<? extends ValueOption<?>> valueOptionType = (Class<? extends ValueOption<?>>) propertyType;
             results.put(propertyName, new ValueOptionProperty(
                     environment.getModelFactory(),
                     propertyName,

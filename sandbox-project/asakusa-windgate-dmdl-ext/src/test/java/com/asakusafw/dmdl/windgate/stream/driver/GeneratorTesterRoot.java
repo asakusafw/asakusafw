@@ -76,7 +76,7 @@ public class GeneratorTesterRoot {
     /**
      * {@link JavaDataModelDriver}s.
      */
-    protected final List<JavaDataModelDriver> emitDrivers = new ArrayList<JavaDataModelDriver>();
+    protected final List<JavaDataModelDriver> emitDrivers = new ArrayList<>();
 
     /**
      * Cleans up the test.
@@ -95,16 +95,13 @@ public class GeneratorTesterRoot {
     protected void emitDmdl(AstModelDefinition<?> model) {
         AstScript script = new AstScript(null, Collections.singletonList(model));
         StringWriter buffer = new StringWriter();
-        PrintWriter output = new PrintWriter(buffer);
-        DmdlEmitter.emit(script, output);
-        output.close();
+        try (PrintWriter output = new PrintWriter(buffer)) {
+            DmdlEmitter.emit(script, output);
+        }
         try {
             File file = folder.newFile(model.name.identifier + ".dmdl");
-            PrintWriter writer = new PrintWriter(file, "UTF-8");
-            try {
+            try (PrintWriter writer = new PrintWriter(file, "UTF-8")) {
                 writer.print(buffer.toString());
-            } finally {
-                writer.close();
             }
         } catch (IOException e) {
             throw new AssertionError(e);

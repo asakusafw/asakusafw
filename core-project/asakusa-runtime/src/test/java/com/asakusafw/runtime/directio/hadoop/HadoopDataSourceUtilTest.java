@@ -147,7 +147,7 @@ public class HadoopDataSourceUtilTest {
 
     private Map<String, String> map(String... kvs) {
         assertThat(kvs.length % 2, is(0));
-        Map<String, String> results = new HashMap<String, String>();
+        Map<String, String> results = new HashMap<>();
         for (int i = 0; i < kvs.length; i += 2) {
             results.put(kvs[i], kvs[i + 1]);
         }
@@ -219,7 +219,7 @@ public class HadoopDataSourceUtilTest {
         assertThat(c2, is(not(t2)));
         c2.getFileSystem(conf).create(c2).close();
 
-        List<Path> paths = new ArrayList<Path>();
+        List<Path> paths = new ArrayList<>();
         for (FileStatus stat : HadoopDataSourceUtil.findAllTransactionInfoFiles(conf)) {
             paths.add(stat.getPath());
         }
@@ -487,7 +487,7 @@ public class HadoopDataSourceUtilTest {
 
     private List<String> collect() throws IOException {
         List<FileStatus> all = HadoopDataSourceUtil.search(getTempFileSystem(), getBase(), FilePattern.compile("**"));
-        List<FileStatus> files = new ArrayList<FileStatus>();
+        List<FileStatus> files = new ArrayList<>();
         for (FileStatus stat : all) {
             if (FileSystemCompatibility.isDirectory(stat) == false) {
                 files.add(stat);
@@ -498,7 +498,7 @@ public class HadoopDataSourceUtilTest {
 
     private List<String> normalize(List<FileStatus> stats) throws IOException {
         File base = folder.getRoot().getCanonicalFile();
-        List<String> normalized = new ArrayList<String>();
+        List<String> normalized = new ArrayList<>();
         for (FileStatus stat : stats) {
             URI uri = stat.getPath().toUri();
             try {
@@ -528,8 +528,8 @@ public class HadoopDataSourceUtilTest {
             public boolean matches(Object obj) {
                 @SuppressWarnings("unchecked")
                 List<String> actuals = (List<String>) obj;
-                List<String> normalized = new ArrayList<String>(actuals);
-                List<String> expected = new ArrayList<String>();
+                List<String> normalized = new ArrayList<>(actuals);
+                List<String> expected = new ArrayList<>();
                 Collections.addAll(expected, paths);
                 Collections.sort(expected);
                 Collections.sort(normalized);

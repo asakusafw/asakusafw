@@ -46,16 +46,14 @@ public class LineSourceTest {
     }
 
     private List<String> consume(String lines) {
-        try {
-            List<String> results = new ArrayList<String>();
-            LineSource source = new LineSource(new StringReader(lines));
+        List<String> results = new ArrayList<>();
+        try (LineSource source = new LineSource(new StringReader(lines))) {
             while (source.next()) {
                 results.add(source.get());
             }
-            source.close();
-            return results;
         } catch (Exception e) {
             throw new AssertionError(e);
         }
+        return results;
     }
 }

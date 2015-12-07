@@ -42,8 +42,7 @@ import com.asakusafw.runtime.io.ModelInput;
  */
 public class DirectIoDelegate extends Configured {
 
-    private final AtomicReference<DirectDataSourceRepository> repository =
-            new AtomicReference<DirectDataSourceRepository>();
+    private final AtomicReference<DirectDataSourceRepository> repository = new AtomicReference<>();
 
     /**
      * Creates a new instance.
@@ -94,7 +93,7 @@ public class DirectIoDelegate extends Configured {
         DirectDataSource source = repo.getRelatedDataSource(originalBasePath);
         DataDefinition<T> definition = createDataDefinition(formatClass);
         List<DirectInputFragment> fragments = source.findInputFragments(definition, basePath, resourcePattern);
-        return new DirectInputFragmentInput<T>(source, definition, fragments.iterator(), new Counter());
+        return new DirectInputFragmentInput<>(source, definition, fragments.iterator(), new Counter());
     }
 
     private <T> DataDefinition<T> createDataDefinition(Class<? extends DataFormat<T>> formatClass) {

@@ -102,7 +102,7 @@ public enum ExecutionPhase {
 
         static final Map<String, ExecutionPhase> SYMBOLS;
         static {
-            Map<String, ExecutionPhase> map = new HashMap<String, ExecutionPhase>();
+            Map<String, ExecutionPhase> map = new HashMap<>();
             for (ExecutionPhase phase : values()) {
                 map.put(phase.getSymbol(), phase);
             }

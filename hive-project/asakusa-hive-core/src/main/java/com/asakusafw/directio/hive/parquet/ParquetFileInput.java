@@ -197,7 +197,7 @@ public class ParquetFileInput<T> implements ModelInput<T> {
                     this.offset,
                     this.fragmentSize));
         }
-        List<BlockMetaData> results = new ArrayList<BlockMetaData>();
+        List<BlockMetaData> results = new ArrayList<>();
         for (BlockMetaData block : blocks) {
             List<ColumnChunkMetaData> columns = block.getColumns();
             if (columns.isEmpty()) {

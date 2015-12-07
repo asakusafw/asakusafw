@@ -124,15 +124,12 @@ abstract class ValueOptionTestRoot {
     }
 
     byte[] toBytes(Writable value) {
-        try {
-            ByteArrayOutputStream write = new ByteArrayOutputStream();
-            DataOutputStream out = new DataOutputStream(write);
+        ByteArrayOutputStream write = new ByteArrayOutputStream();
+        try (DataOutputStream out = new DataOutputStream(write)) {
             value.write(out);
-            out.close();
-            byte[] bytes = write.toByteArray();
-            return bytes;
         } catch (IOException e) {
             throw new AssertionError(e);
         }
+        return write.toByteArray();
     }
 }

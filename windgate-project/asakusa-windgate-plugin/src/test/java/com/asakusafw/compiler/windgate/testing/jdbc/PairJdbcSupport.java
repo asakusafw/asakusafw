@@ -30,7 +30,7 @@ import org.apache.hadoop.io.Text;
 public class PairJdbcSupport implements DataModelJdbcSupport<Pair> {
     private static final Map<String, Integer> PROPERTY_POSITIONS;
     static {
-        Map<String, Integer> map = new TreeMap<String, Integer>();
+        Map<String, Integer> map = new TreeMap<>();
         map.put("KEY", 0);
         map.put("VALUE", 1);
         PROPERTY_POSITIONS = map;

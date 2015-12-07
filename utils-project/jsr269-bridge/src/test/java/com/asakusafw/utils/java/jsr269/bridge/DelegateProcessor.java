@@ -44,9 +44,7 @@ public class DelegateProcessor extends AbstractProcessor {
     }
 
     @Override
-    public boolean process(
-            Set<? extends TypeElement> annotations,
-            RoundEnvironment env) {
+    public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment env) {
         callback.run(processingEnv, env);
         return true;
     }

@@ -19,6 +19,9 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.runtime.io.ModelInput;
 
@@ -27,6 +30,8 @@ import com.asakusafw.runtime.io.ModelInput;
  * @param <T> the data type
  */
 public class MultipleModelInput<T> implements ModelInput<T> {
+
+    static final Logger LOG = LoggerFactory.getLogger(MultipleModelInput.class);
 
     private final LinkedList<ModelInput<T>> inputs;
 
@@ -37,7 +42,7 @@ public class MultipleModelInput<T> implements ModelInput<T> {
      */
     public MultipleModelInput(List<? extends ModelInput<T>> inputs) {
         Precondition.checkMustNotBeNull(inputs, "inputs"); //$NON-NLS-1$
-        this.inputs = new LinkedList<ModelInput<T>>(inputs);
+        this.inputs = new LinkedList<>(inputs);
     }
 
     @Override
@@ -56,12 +61,13 @@ public class MultipleModelInput<T> implements ModelInput<T> {
     public void close() throws IOException {
         IOException first = null;
         while (inputs.isEmpty() == false) {
-            ModelInput<T> input = inputs.removeFirst();
-            try {
-                input.close();
+            try (ModelInput<T> input = inputs.removeFirst()) {
+                LOG.trace("closing input: {}", input); //$NON-NLS-1$
             } catch (IOException e) {
                 if (first == null) {
                     first = e;
+                } else {
+                    first.addSuppressed(e);
                 }
             }
         }

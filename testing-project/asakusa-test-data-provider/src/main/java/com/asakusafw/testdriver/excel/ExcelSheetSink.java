@@ -98,7 +98,7 @@ public class ExcelSheetSink implements DataModelSink {
             assert info != null;
             this.definition = definition;
             this.info = info;
-            List<PropertyName> props = new ArrayList<PropertyName>(definition.getProperties());
+            List<PropertyName> props = new ArrayList<>(definition.getProperties());
             if (props.size() > maxColumns) {
                 props = props.subList(0, maxColumns);
             }

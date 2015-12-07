@@ -39,23 +39,20 @@ public class TsvIoFactoryTest {
      */
     @Test
     public void input() throws Exception {
-        TsvIoFactory<MockModel> factory = new TsvIoFactory<MockModel>(MockModel.class);
+        TsvIoFactory<MockModel> factory = new TsvIoFactory<>(MockModel.class);
         MockModel object = factory.createModelObject();
         InputStream in = new ByteArrayInputStream(
                 "Hello\nWorld\nTSV\nINPUT\n".getBytes("UTF-8"));
 
-        LinkedList<String> expected = new LinkedList<String>();
+        LinkedList<String> expected = new LinkedList<>();
         Collections.addAll(expected, "Hello", "World", "TSV", "INPUT");
 
-        ModelInput<MockModel> modelIn = factory.createModelInput(in);
-        try {
+        try (ModelInput<MockModel> modelIn = factory.createModelInput(in)) {
             while (modelIn.readTo(object)) {
                 assertThat(expected.isEmpty(), is(false));
                 object.assertValueIs(expected.removeFirst());
             }
             assertThat(expected.isEmpty(), is(true));
-        } finally {
-            modelIn.close();
         }
     }
 
@@ -66,12 +63,11 @@ public class TsvIoFactoryTest {
     @SuppressWarnings("deprecation")
     @Test
     public void output() throws Exception {
-        TsvIoFactory<MockModel> factory = new TsvIoFactory<MockModel>(MockModel.class);
+        TsvIoFactory<MockModel> factory = new TsvIoFactory<>(MockModel.class);
         MockModel object = factory.createModelObject();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-        ModelOutput<MockModel> modelOut = factory.createModelOutput(out);
-        try {
+        try (ModelOutput<MockModel> modelOut = factory.createModelOutput(out)) {
             object.value.modify("Hello");
             modelOut.write(object);
             object.value.modify("World");
@@ -80,8 +76,6 @@ public class TsvIoFactoryTest {
             modelOut.write(object);
             object.value.modify("OUTPUT");
             modelOut.write(object);
-        } finally {
-            modelOut.close();
         }
 
         String result = new String(out.toByteArray(), "UTF-8");

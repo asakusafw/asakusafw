@@ -36,7 +36,7 @@ public final class Maps {
      * @return created map
      */
     public static <K, V> Map<K, V> create() {
-        return new HashMap<K, V>();
+        return new HashMap<>();
     }
 
     /**
@@ -48,7 +48,7 @@ public final class Maps {
      * @return created map
      */
     public static <K, V> Map<K, V> from(Map<? extends K, ? extends V> map) {
-        return new HashMap<K, V>(map);
+        return new HashMap<>(map);
     }
 
     /**
@@ -90,6 +90,7 @@ public final class Maps {
      * @param <T> the key and value type
      * @return created map
      */
+    @SafeVarargs
     public static <T> Map<T, T> pairs(T... pairs) {
         if (pairs == null) {
             throw new IllegalArgumentException("pairs must not be null"); //$NON-NLS-1$
@@ -97,7 +98,7 @@ public final class Maps {
         if (pairs.length % 2 != 0) {
             throw new IllegalArgumentException("pairs must have even numbers of elements"); //$NON-NLS-1$
         }
-        Map<T, T> result = new HashMap<T, T>();
+        Map<T, T> result = new HashMap<>();
         for (int i = 0; i < pairs.length; i += 2) {
             result.put(pairs[i + 0], pairs[i + 1]);
         }
@@ -221,7 +222,7 @@ public final class Maps {
         }
         Set<V> set = map.get(key);
         if (set == null) {
-            set = new HashSet<V>();
+            set = new HashSet<>();
             map.put(key, set);
         }
         set.add(value);

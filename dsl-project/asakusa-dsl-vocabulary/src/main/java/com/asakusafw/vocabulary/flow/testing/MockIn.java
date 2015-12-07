@@ -47,7 +47,7 @@ public class MockIn<T> implements In<T> {
      * @return the created instance
      */
     public static <T> MockIn<T> of(Class<T> type, String name) {
-        return new MockIn<T>(type, name);
+        return new MockIn<>(type, name);
     }
 
     @Override

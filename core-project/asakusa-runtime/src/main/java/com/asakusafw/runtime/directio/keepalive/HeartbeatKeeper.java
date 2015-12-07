@@ -38,7 +38,7 @@ class HeartbeatKeeper implements Closeable {
 
     static final AtomicInteger THREAD_SERIAL = new AtomicInteger();
 
-    final List<Counter> counters = new CopyOnWriteArrayList<Counter>();
+    final List<Counter> counters = new CopyOnWriteArrayList<>();
 
     private final long interval;
 

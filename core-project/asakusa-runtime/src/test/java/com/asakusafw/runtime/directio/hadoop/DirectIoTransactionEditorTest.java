@@ -306,16 +306,13 @@ public class DirectIoTransactionEditorTest {
 
             ds.setupTransactionOutput(txContext);
             ds.setupAttemptOutput(aContext);
-            ModelOutput<StringBuilder> output = ds.openOutput(
+            try (ModelOutput<StringBuilder> output = ds.openOutput(
                     aContext,
                     SimpleDataDefinition.newInstance(StringBuilder.class, new MockFormat()),
                     "",
                     executionId,
-                    new Counter());
-            try {
+                    new Counter())) {
                 output.write(new StringBuilder("Hello, world!"));
-            } finally {
-                output.close();
             }
             ds.commitAttemptOutput(aContext);
             ds.cleanupAttemptOutput(aContext);

@@ -56,12 +56,12 @@ public class JobFlowTester extends TesterBase {
     /**
      * The flow inputs.
      */
-    protected final List<JobFlowDriverInput<?>> inputs = new LinkedList<JobFlowDriverInput<?>>();
+    protected final List<JobFlowDriverInput<?>> inputs = new LinkedList<>();
 
     /**
      * The flow outputs.
      */
-    protected final List<JobFlowDriverOutput<?>> outputs = new LinkedList<JobFlowDriverOutput<?>>();
+    protected final List<JobFlowDriverOutput<?>> outputs = new LinkedList<>();
 
     /**
      * Creates a new instance.
@@ -79,7 +79,7 @@ public class JobFlowTester extends TesterBase {
      * @return object for configuring the target input
      */
     public <T> JobFlowDriverInput<T> input(String name, Class<T> modelType) {
-        JobFlowDriverInput<T> input = new JobFlowDriverInput<T>(driverContext, name, modelType);
+        JobFlowDriverInput<T> input = new JobFlowDriverInput<>(driverContext, name, modelType);
         inputs.add(input);
         return input;
     }
@@ -92,7 +92,7 @@ public class JobFlowTester extends TesterBase {
      * @return object for configuring the target output
      */
     public <T> JobFlowDriverOutput<T> output(String name, Class<T> modelType) {
-        JobFlowDriverOutput<T> output = new JobFlowDriverOutput<T>(driverContext, name, modelType);
+        JobFlowDriverOutput<T> output = new JobFlowDriverOutput<>(driverContext, name, modelType);
         outputs.add(output);
         return output;
     }

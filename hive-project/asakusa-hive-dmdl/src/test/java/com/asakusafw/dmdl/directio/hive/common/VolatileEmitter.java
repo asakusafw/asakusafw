@@ -32,9 +32,7 @@ public class VolatileEmitter extends Emitter {
     private final List<VolatileJavaFile> emitted = Lists.create();
 
     @Override
-    public PrintWriter openFor(
-            PackageDeclaration packageDeclOrNull,
-            String subPath) throws IOException {
+    public PrintWriter openFor(PackageDeclaration packageDeclOrNull, String subPath) throws IOException {
         StringBuilder buf = new StringBuilder();
         if (packageDeclOrNull != null) {
             buf.append(packageDeclOrNull.getName().toNameString().replace('.', '/'));

@@ -61,7 +61,7 @@ public class HadoopFileCacheRepositoryTest extends FileCacheRepositoryTestRoot {
     public void simple() throws Exception {
         File cacheRepo = folder.newFolder();
         Configuration configuration = new ConfigurationProvider().newInstance();
-        LockProvider<Path> locks = new LocalFileLockProvider<Path>(folder.newFolder());
+        LockProvider<Path> locks = new LocalFileLockProvider<>(folder.newFolder());
         RetryStrategy retrier = new ConstantRetryStrategy();
         HadoopFileCacheRepository cache = new HadoopFileCacheRepository(configuration, path(cacheRepo), locks, retrier);
 
@@ -81,7 +81,7 @@ public class HadoopFileCacheRepositoryTest extends FileCacheRepositoryTestRoot {
     public void update() throws Exception {
         File cacheRepo = folder.newFolder();
         Configuration configuration = new ConfigurationProvider().newInstance();
-        LockProvider<Path> locks = new LocalFileLockProvider<Path>(folder.newFolder());
+        LockProvider<Path> locks = new LocalFileLockProvider<>(folder.newFolder());
         RetryStrategy retrier = new ConstantRetryStrategy();
         HadoopFileCacheRepository cache = new HadoopFileCacheRepository(configuration, path(cacheRepo), locks, retrier);
 
@@ -103,7 +103,7 @@ public class HadoopFileCacheRepositoryTest extends FileCacheRepositoryTestRoot {
     public void cached() throws Exception {
         File cacheRepo = folder.newFolder();
         Configuration configuration = new ConfigurationProvider().newInstance();
-        LockProvider<Path> locks = new LocalFileLockProvider<Path>(folder.newFolder());
+        LockProvider<Path> locks = new LocalFileLockProvider<>(folder.newFolder());
         RetryStrategy retrier = new ConstantRetryStrategy();
         HadoopFileCacheRepository cache = new HadoopFileCacheRepository(configuration, path(cacheRepo), locks, retrier);
 
@@ -133,23 +133,20 @@ public class HadoopFileCacheRepositoryTest extends FileCacheRepositoryTestRoot {
     public void conflict() throws Exception {
         File source = folder.newFile();
         byte[] bytes = new byte[1024 * 1024];
-        OutputStream output = new FileOutputStream(source);
-        try {
+        try (OutputStream output = new FileOutputStream(source)) {
             for (int i = 0, n = 50; i < n; i++) {
                 output.write(bytes);
             }
-        } finally {
-            output.close();
         }
 
         final Path path = path(source);
         File cacheRepo = folder.newFolder();
         Configuration configuration = new ConfigurationProvider().newInstance();
-        LockProvider<Path> locks = new LocalFileLockProvider<Path>(folder.newFolder());
+        LockProvider<Path> locks = new LocalFileLockProvider<>(folder.newFolder());
         RetryStrategy retrier = new ConstantRetryStrategy(30, 100, 200);
         final FileCacheRepository cache = new HadoopFileCacheRepository(configuration, path(cacheRepo), locks, retrier);
 
-        List<Future<Path>> futures = new ArrayList<Future<Path>>();
+        List<Future<Path>> futures = new ArrayList<>();
         int count = 10;
         final CountDownLatch latch = new CountDownLatch(count);
         ExecutorService executor = Executors.newFixedThreadPool(count);

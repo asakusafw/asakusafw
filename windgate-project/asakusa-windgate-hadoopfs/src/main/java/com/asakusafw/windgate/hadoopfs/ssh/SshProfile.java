@@ -314,7 +314,7 @@ public class SshProfile {
     private static Map<String, String> extractEnv(ResourceProfile profile) {
         assert profile != null;
         Map<String, String> map = PropertiesUtil.createPrefixMap(profile.getConfiguration(), PREFIX_ENV);
-        Map<String, String> results = new HashMap<String, String>();
+        Map<String, String> results = new HashMap<>();
         for (Map.Entry<String, String> entry : map.entrySet()) {
             String resolved =  resolve(profile, PREFIX_ENV + entry.getKey(), entry.getValue());
             results.put(entry.getKey(), resolved);

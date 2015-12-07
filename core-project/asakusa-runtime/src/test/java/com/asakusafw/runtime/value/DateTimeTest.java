@@ -205,8 +205,7 @@ public class DateTimeTest {
     }
 
     void checkCalendar(int start, int end) {
-        GregorianCalendar calendar =
-            new GregorianCalendar(TimeZone.getTimeZone("GMT"));
+        GregorianCalendar calendar = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
         calendar.clear();
 
         calendar.set(Calendar.YEAR, start);

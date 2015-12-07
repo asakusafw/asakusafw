@@ -52,7 +52,7 @@ public class AttributeBuilder {
             throw new IllegalArgumentException("factory must not be null"); //$NON-NLS-1$
         }
         this.f = factory;
-        this.attributes = new ArrayList<Attribute>();
+        this.attributes = new ArrayList<>();
     }
 
     /**
@@ -70,7 +70,7 @@ public class AttributeBuilder {
      * @return the attributes
      */
     public List<Attribute> toAttributes() {
-        return new ArrayList<Attribute>(attributes);
+        return new ArrayList<>(attributes);
     }
 
     /**
@@ -79,7 +79,7 @@ public class AttributeBuilder {
      * @return the Java modifiers
      */
     public List<Modifier> toModifiers() {
-        List<Modifier> results = new ArrayList<Modifier>();
+        List<Modifier> results = new ArrayList<>();
         for (Attribute attribute : toAttributes()) {
             if (attribute instanceof Modifier) {
                 results.add((Modifier) attribute);
@@ -94,7 +94,7 @@ public class AttributeBuilder {
      * @return the Java annotations
      */
     public List<Annotation> toAnnotations() {
-        List<Annotation> results = new ArrayList<Annotation>();
+        List<Annotation> results = new ArrayList<>();
         for (Attribute attribute : toAttributes()) {
             if (attribute instanceof Annotation) {
                 results.add((Annotation) attribute);
@@ -286,7 +286,7 @@ public class AttributeBuilder {
         if (elements == null) {
             throw new IllegalArgumentException("elements must not be null"); //$NON-NLS-1$
         }
-        List<AnnotationElement> elems = new ArrayList<AnnotationElement>();
+        List<AnnotationElement> elems = new ArrayList<>();
         for (Map.Entry<? extends String, ? extends Expression> entry : elements.entrySet()) {
             elems.add(f.newAnnotationElement(f.newSimpleName(entry.getKey()), entry.getValue()));
         }
@@ -316,7 +316,7 @@ public class AttributeBuilder {
         if (elementValue == null) {
             throw new IllegalArgumentException("elementValue must not be null"); //$NON-NLS-1$
         }
-        List<AnnotationElement> elements = new ArrayList<AnnotationElement>();
+        List<AnnotationElement> elements = new ArrayList<>();
         elements.add(f.newAnnotationElement(f.newSimpleName(elementName), elementValue));
         return annotation(f.newNormalAnnotation((NamedType) type, elements));
     }
@@ -353,7 +353,7 @@ public class AttributeBuilder {
         if (elementValue2 == null) {
             throw new IllegalArgumentException("elementValue2 must not be null"); //$NON-NLS-1$
         }
-        List<AnnotationElement> elements = new ArrayList<AnnotationElement>();
+        List<AnnotationElement> elements = new ArrayList<>();
         elements.add(f.newAnnotationElement(f.newSimpleName(elementName1), elementValue1));
         elements.add(f.newAnnotationElement(f.newSimpleName(elementName2), elementValue2));
         return annotation(f.newNormalAnnotation((NamedType) type, elements));
@@ -400,7 +400,7 @@ public class AttributeBuilder {
         if (elementValue3 == null) {
             throw new IllegalArgumentException("elementValue3 must not be null"); //$NON-NLS-1$
         }
-        List<AnnotationElement> elements = new ArrayList<AnnotationElement>();
+        List<AnnotationElement> elements = new ArrayList<>();
         elements.add(f.newAnnotationElement(f.newSimpleName(elementName1), elementValue1));
         elements.add(f.newAnnotationElement(f.newSimpleName(elementName2), elementValue2));
         elements.add(f.newAnnotationElement(f.newSimpleName(elementName3), elementValue3));
@@ -457,7 +457,7 @@ public class AttributeBuilder {
         if (elementValue4 == null) {
             throw new IllegalArgumentException("elementValue4 must not be null"); //$NON-NLS-1$
         }
-        List<AnnotationElement> elements = new ArrayList<AnnotationElement>();
+        List<AnnotationElement> elements = new ArrayList<>();
         elements.add(f.newAnnotationElement(f.newSimpleName(elementName1), elementValue1));
         elements.add(f.newAnnotationElement(f.newSimpleName(elementName2), elementValue2));
         elements.add(f.newAnnotationElement(f.newSimpleName(elementName3), elementValue3));
@@ -526,7 +526,7 @@ public class AttributeBuilder {
         if (elementValue5 == null) {
             throw new IllegalArgumentException("elementValue5 must not be null"); //$NON-NLS-1$
         }
-        List<AnnotationElement> elements = new ArrayList<AnnotationElement>();
+        List<AnnotationElement> elements = new ArrayList<>();
         elements.add(f.newAnnotationElement(f.newSimpleName(elementName1), elementValue1));
         elements.add(f.newAnnotationElement(f.newSimpleName(elementName2), elementValue2));
         elements.add(f.newAnnotationElement(f.newSimpleName(elementName3), elementValue3));

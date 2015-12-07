@@ -33,8 +33,7 @@ public abstract class AbstractWorkDescriptionProcessor<T extends WorkDescription
     @SuppressWarnings("unchecked")
     @Override
     public Class<T> getTargetType() {
-        List<Type> typeArguments =
-            TypeUtil.invoke(WorkDescriptionProcessor.class, getClass());
+        List<Type> typeArguments = TypeUtil.invoke(WorkDescriptionProcessor.class, getClass());
         if (typeArguments == null || typeArguments.size() != 1) {
             throw new IllegalStateException(MessageFormat.format(
                     Messages.getString("AbstractWorkDescriptionProcessor.errorUnboundTypeParameter"), //$NON-NLS-1$

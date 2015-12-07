@@ -119,10 +119,10 @@ public abstract class AbstractJobScheduler extends JobScheduler {
             this.monitor = monitor;
             this.context = context;
             this.handler = handler;
-            this.waiting = new LinkedList<Job>(waiting);
-            this.executing = new HashMap<String, Executing>();
-            this.doneQueue = new LinkedBlockingQueue<Executing>();
-            this.blockers = new TreeSet<String>();
+            this.waiting = new LinkedList<>(waiting);
+            this.executing = new HashMap<>();
+            this.doneQueue = new LinkedBlockingQueue<>();
+            this.blockers = new TreeSet<>();
             for (Job job : waiting) {
                 blockers.add(job.getId());
             }

@@ -49,7 +49,7 @@ public final class PropertiesUtil {
             throw new IllegalArgumentException("delimitier must not be null"); //$NON-NLS-1$
         }
         int parentLength = parentPrefix.length();
-        Set<String> results = new TreeSet<String>();
+        Set<String> results = new TreeSet<>();
         for (Map.Entry<?, ?> entry : properties.entrySet()) {
             if ((entry.getKey() instanceof String) == false || (entry.getValue() instanceof String) == false) {
                 continue;
@@ -84,7 +84,7 @@ public final class PropertiesUtil {
         if (prefix == null) {
             throw new IllegalArgumentException("prefix must not be null"); //$NON-NLS-1$
         }
-        NavigableMap<String, String> results = new TreeMap<String, String>();
+        NavigableMap<String, String> results = new TreeMap<>();
         for (Map.Entry<?, ?> entry : properties.entrySet()) {
             if ((entry.getKey() instanceof String) == false || (entry.getValue() instanceof String) == false) {
                 continue;

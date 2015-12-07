@@ -50,7 +50,7 @@ public class BatchTester extends TesterBase {
 
     static final Logger LOG = LoggerFactory.getLogger(BatchTester.class);
 
-    private final Map<String, JobFlowTester> jobFlowMap = new LinkedHashMap<String, JobFlowTester>();
+    private final Map<String, JobFlowTester> jobFlowMap = new LinkedHashMap<>();
 
     /**
      * Creates a new instance.

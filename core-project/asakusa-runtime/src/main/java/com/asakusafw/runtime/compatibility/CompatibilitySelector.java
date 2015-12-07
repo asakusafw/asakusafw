@@ -40,7 +40,7 @@ final class CompatibilitySelector {
     static final Map<Class<?>, Class<?>> IMPLEMENTATIONS;
     static {
         FrameworkVersion version = FrameworkVersion.get();
-        Map<Class<?>, Class<?>> map = new HashMap<Class<?>, Class<?>>();
+        Map<Class<?>, Class<?>> map = new HashMap<>();
         if (version.isCompatibleTo(FrameworkVersion.HADOOP_V1)) {
             map.put(FileSystemCompatibilityHadoop.class, FileSystemCompatibilityHadoop1.class);
             map.put(JobCompatibilityHadoop.class, JobCompatibilityHadoop1.class);

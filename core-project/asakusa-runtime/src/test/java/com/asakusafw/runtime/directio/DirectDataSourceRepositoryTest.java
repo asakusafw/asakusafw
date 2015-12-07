@@ -73,7 +73,7 @@ public class DirectDataSourceRepositoryTest {
     }
 
     private DirectDataSourceRepository repo(String... specs) {
-        List<MockProvider> providers = new ArrayList<MockProvider>();
+        List<MockProvider> providers = new ArrayList<>();
         for (String spec : specs) {
             String[] fields = spec.split(":", 2);
             providers.add(new MockProvider(fields[0], fields[1]));

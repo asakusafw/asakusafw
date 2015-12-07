@@ -134,9 +134,9 @@ public class SessionProfileTest {
 
         SessionProfile profile = SessionProfile.loadFrom(p, ProfileContext.system(getClass().getClassLoader()));
         SessionProvider provider = profile.createProvider();
-        SessionMirror session = provider.create("hello");
-        session.close();
-
+        try (SessionMirror session = provider.create("hello")) {
+            // do nothing
+        }
         assertThat(path.isDirectory(), is(true));
     }
 }

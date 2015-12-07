@@ -109,12 +109,11 @@ public class CommandScript implements ExecutionScript {
             throw new IllegalArgumentException("environmentVariables must not be null"); //$NON-NLS-1$
         }
         this.id = id;
-        this.blockerIds = Collections.unmodifiableSet(new TreeSet<String>(blockerIds));
+        this.blockerIds = Collections.unmodifiableSet(new TreeSet<>(blockerIds));
         this.profileName = profileName;
-        this.command = Collections.unmodifiableList(new ArrayList<String>(command));
+        this.command = Collections.unmodifiableList(new ArrayList<>(command));
         this.moduleName = moduleName;
-        this.environmentVariables = Collections.unmodifiableMap(
-                new LinkedHashMap<String, String>(environmentVariables));
+        this.environmentVariables = Collections.unmodifiableMap(new LinkedHashMap<>(environmentVariables));
         this.resolved = resolved;
     }
 
@@ -185,13 +184,13 @@ public class CommandScript implements ExecutionScript {
         LOG.debug("Resolving {}", this);
 
         PlaceholderResolver resolver = new PlaceholderResolver(this, context, handler);
-        List<String> resolvedCommands = new ArrayList<String>();
+        List<String> resolvedCommands = new ArrayList<>();
         for (String token : getCommandLineTokens()) {
             resolvedCommands.add(resolver.resolve(token));
         }
         LOG.debug("Resolved command line tokens: {}", resolvedCommands);
 
-        Map<String, String> resolvedEnvironments = new LinkedHashMap<String, String>();
+        Map<String, String> resolvedEnvironments = new LinkedHashMap<>();
         for (Map.Entry<String, String> entry : getEnvironmentVariables().entrySet()) {
             resolvedEnvironments.put(entry.getKey(), resolver.resolve(entry.getValue()));
         }

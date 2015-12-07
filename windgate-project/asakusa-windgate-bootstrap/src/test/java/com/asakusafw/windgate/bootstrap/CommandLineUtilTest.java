@@ -141,7 +141,7 @@ public class CommandLineUtilTest {
     }
 
     private List<File> canonicalize(List<File> list) {
-        List<File> results = new ArrayList<File>();
+        List<File> results = new ArrayList<>();
         for (File f : list) {
             try {
                 results.add(f.getCanonicalFile());
@@ -190,7 +190,7 @@ public class CommandLineUtilTest {
     @Test
     public void parseArguments() {
         Map<String, String> parsed = CommandLineUtil.parseArguments("hello=world!").getPairs();
-        Map<String, String> answer = new HashMap<String, String>();
+        Map<String, String> answer = new HashMap<>();
         answer.put("hello", "world!");
         assertThat(parsed, is(answer));
     }
@@ -201,7 +201,7 @@ public class CommandLineUtilTest {
     @Test
     public void parseArguments_multiple() {
         Map<String, String> parsed = CommandLineUtil.parseArguments("a=b,c=d,e=f").getPairs();
-        Map<String, String> answer = new HashMap<String, String>();
+        Map<String, String> answer = new HashMap<>();
         answer.put("a", "b");
         answer.put("c", "d");
         answer.put("e", "f");
@@ -214,7 +214,7 @@ public class CommandLineUtilTest {
     @Test
     public void parseArguments_escaped() {
         Map<String, String> parsed = CommandLineUtil.parseArguments("\\\\\\,\\==\\=\\,\\\\").getPairs();
-        Map<String, String> answer = new HashMap<String, String>();
+        Map<String, String> answer = new HashMap<>();
         answer.put("\\,=", "=,\\");
         assertThat(parsed, is(answer));
     }
@@ -225,7 +225,7 @@ public class CommandLineUtilTest {
     @Test
     public void parseArguments_empty_keyvaule() {
         Map<String, String> parsed = CommandLineUtil.parseArguments("=").getPairs();
-        Map<String, String> answer = new HashMap<String, String>();
+        Map<String, String> answer = new HashMap<>();
         answer.put("", "");
         assertThat(parsed, is(answer));
     }
@@ -236,7 +236,7 @@ public class CommandLineUtilTest {
     @Test
     public void parseArguments_empty_key() {
         Map<String, String> parsed = CommandLineUtil.parseArguments("=world!").getPairs();
-        Map<String, String> answer = new HashMap<String, String>();
+        Map<String, String> answer = new HashMap<>();
         answer.put("", "world!");
         assertThat(parsed, is(answer));
     }
@@ -247,7 +247,7 @@ public class CommandLineUtilTest {
     @Test
     public void parseArguments_empty_value() {
         Map<String, String> parsed = CommandLineUtil.parseArguments("hello=").getPairs();
-        Map<String, String> answer = new HashMap<String, String>();
+        Map<String, String> answer = new HashMap<>();
         answer.put("hello", "");
         assertThat(parsed, is(answer));
     }
@@ -258,7 +258,7 @@ public class CommandLineUtilTest {
     @Test
     public void parseArguments_duplicate_pair() {
         Map<String, String> parsed = CommandLineUtil.parseArguments("a=b,a=c").getPairs();
-        Map<String, String> answer = new HashMap<String, String>();
+        Map<String, String> answer = new HashMap<>();
         answer.put("a", "b");
         assertThat(parsed, is(answer));
     }
@@ -269,7 +269,7 @@ public class CommandLineUtilTest {
     @Test
     public void parseArguments_empty() {
         Map<String, String> parsed = CommandLineUtil.parseArguments("").getPairs();
-        Map<String, String> answer = new HashMap<String, String>();
+        Map<String, String> answer = new HashMap<>();
         assertThat(parsed, is(answer));
     }
 
@@ -279,7 +279,7 @@ public class CommandLineUtilTest {
     @Test
     public void parseArguments_null() {
         Map<String, String> parsed = CommandLineUtil.parseArguments(null).getPairs();
-        Map<String, String> answer = new HashMap<String, String>();
+        Map<String, String> answer = new HashMap<>();
         assertThat(parsed, is(answer));
     }
 
@@ -289,7 +289,7 @@ public class CommandLineUtilTest {
     @Test
     public void parseArguments_empty_pair() {
         Map<String, String> parsed = CommandLineUtil.parseArguments("a=b,,c=d").getPairs();
-        Map<String, String> answer = new HashMap<String, String>();
+        Map<String, String> answer = new HashMap<>();
         answer.put("a", "b");
         answer.put("c", "d");
         assertThat(parsed, is(answer));
@@ -301,7 +301,7 @@ public class CommandLineUtilTest {
     @Test
     public void parseArguments_invalid_pair() {
         Map<String, String> parsed = CommandLineUtil.parseArguments("a=b=c").getPairs();
-        Map<String, String> answer = new HashMap<String, String>();
+        Map<String, String> answer = new HashMap<>();
         assertThat(parsed, is(answer));
     }
 
@@ -311,18 +311,15 @@ public class CommandLineUtilTest {
     @Test
     public void parseArguments_keyonly() {
         Map<String, String> parsed = CommandLineUtil.parseArguments("a,b=c").getPairs();
-        Map<String, String> answer = new HashMap<String, String>();
+        Map<String, String> answer = new HashMap<>();
         answer.put("b", "c");
         assertThat(parsed, is(answer));
     }
 
     private File store(Properties p) throws IOException, FileNotFoundException {
         File file = folder.newFile("testing.properties");
-        FileOutputStream out = new FileOutputStream(file);
-        try {
+        try (FileOutputStream out = new FileOutputStream(file)) {
             p.store(out, "testing");
-        } finally {
-            out.close();
         }
         return file;
     }

@@ -45,7 +45,7 @@ public class SummarizeYaessLogSink implements Sink<YaessLogRecord> {
 
     private final RecordWriter writer;
 
-    private final Map<YaessJobId, Summary> entries = new HashMap<YaessJobId, Summary>();
+    private final Map<YaessJobId, Summary> entries = new HashMap<>();
 
     private boolean closed = false;
 
@@ -136,7 +136,7 @@ public class SummarizeYaessLogSink implements Sink<YaessLogRecord> {
     }
 
     private Iterable<Summary> sort(Collection<Summary> values) {
-        List<Summary> results = new ArrayList<Summary>(values);
+        List<Summary> results = new ArrayList<>(values);
         Collections.sort(results, new Comparator<Summary>() {
             @Override
             public int compare(Summary o1, Summary o2) {

@@ -117,17 +117,12 @@ public class FileRepositoryTest {
 
     private File open(String name) {
         String path = getClass().getSimpleName() + ".files/" + name;
-        InputStream input = getClass().getResourceAsStream(path);
-        assertThat(path, input, not(nullValue()));
-        try {
-            try {
-                ZipInputStream zip = new ZipInputStream(input);
+        try (InputStream input = getClass().getResourceAsStream(path)) {
+            assertThat(path, input, not(nullValue()));
+            try (ZipInputStream zip = new ZipInputStream(input)) {
                 File result = new File(framework.getWork("work"), name);
                 framework.extract(zip, result);
-                zip.close();
                 return result;
-            } finally {
-                input.close();
             }
         } catch (IOException e) {
             throw new AssertionError(e);
@@ -136,21 +131,17 @@ public class FileRepositoryTest {
 
     private Map<String, List<String>> drain(Cursor cur) throws IOException {
         try {
-            Map<String, List<String>> entries = new TreeMap<String, List<String>>();
+            Map<String, List<String>> entries = new TreeMap<>();
             while (cur.next()) {
                 Location location = cur.getLocation();
-                InputStream input = cur.openResource();
-                try {
+                try (InputStream input = cur.openResource();
+                        Scanner scanner = new Scanner(input, "UTF-8")) {
                     List<String> contents = Lists.create();
-                    Scanner scanner = new Scanner(input, "UTF-8");
                     while (scanner.hasNextLine()) {
                         String line = scanner.nextLine();
                         contents.add(line);
                     }
                     entries.put(location.toPath('/'), contents);
-                    scanner.close();
-                } finally {
-                    input.close();
                 }
             }
             return entries;

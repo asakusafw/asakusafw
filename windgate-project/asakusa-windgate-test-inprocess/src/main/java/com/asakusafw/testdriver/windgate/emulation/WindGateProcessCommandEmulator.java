@@ -79,11 +79,8 @@ public class WindGateProcessCommandEmulator extends AbstractWindGateCommandEmula
             ClassLoader classLoader,
             GateProfile profile,
             TestExecutionPlan.Command command) throws IOException, InterruptedException {
-        GateTask task = createTask(context, classLoader, profile, command);
-        try {
+        try (GateTask task = createTask(context, classLoader, profile, command)) {
             task.execute();
-        } finally {
-            task.close();
         }
     }
 

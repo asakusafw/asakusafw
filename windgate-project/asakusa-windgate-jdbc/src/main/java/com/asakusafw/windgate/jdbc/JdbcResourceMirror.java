@@ -105,7 +105,7 @@ public class JdbcResourceMirror extends ResourceMirror {
         Connection connection = profile.openConnection();
         boolean succeed = false;
         try {
-            JdbcSourceDriver<T> driver = new JdbcSourceDriver<T>(profile, jdbcScript, connection, object);
+            JdbcSourceDriver<T> driver = new JdbcSourceDriver<>(profile, jdbcScript, connection, object);
             succeed = true;
             return driver;
         } finally {
@@ -141,7 +141,7 @@ public class JdbcResourceMirror extends ResourceMirror {
         Connection connection = profile.openConnection();
         boolean succeed = false;
         try {
-            JdbcDrainDriver<T> driver = new JdbcDrainDriver<T>(profile, jdbcScript, connection, true);
+            JdbcDrainDriver<T> driver = new JdbcDrainDriver<>(profile, jdbcScript, connection, true);
             succeed = true;
             return driver;
         } finally {

@@ -78,8 +78,8 @@ public class DataModelDriver {
         default:
             throw new AssertionError(configuration.getFieldMappingStrategy());
         }
-        List<StructField> sources = new ArrayList<StructField>();
-        List<PropertyDescriptor> targets = new ArrayList<PropertyDescriptor>();
+        List<StructField> sources = new ArrayList<>();
+        List<PropertyDescriptor> targets = new ArrayList<>();
         for (Mapping mapping : mappings) {
             if (checkMapping(descriptor, mapping, configuration)) {
                 assert mapping.source != null;
@@ -112,8 +112,8 @@ public class DataModelDriver {
                     "Mapping columns by their name: model={0}", //$NON-NLS-1$
                     target.getDataModelClass().getName()));
         }
-        Set<PropertyDescriptor> rest = new LinkedHashSet<PropertyDescriptor>(target.getPropertyDescriptors());
-        List<Mapping> mappings = new ArrayList<Mapping>();
+        Set<PropertyDescriptor> rest = new LinkedHashSet<>(target.getPropertyDescriptors());
+        List<Mapping> mappings = new ArrayList<>();
         for (StructField s : source.getAllStructFieldRefs()) {
             String name = s.getFieldName();
             PropertyDescriptor t = target.findPropertyDescriptor(name);
@@ -139,7 +139,7 @@ public class DataModelDriver {
         }
         List<? extends StructField> sources = source.getAllStructFieldRefs();
         List<? extends PropertyDescriptor> targets = target.getPropertyDescriptors();
-        List<Mapping> mappings = new ArrayList<Mapping>();
+        List<Mapping> mappings = new ArrayList<>();
         int limit = Math.min(sources.size(), targets.size());
         for (int i = 0; i < limit; i++) {
             mappings.add(new Mapping(sources.get(i), targets.get(i)));
@@ -227,7 +227,7 @@ public class DataModelDriver {
      * @return source field references
      */
     public List<StructField> getSourceFields() {
-        List<StructField> results = new ArrayList<StructField>();
+        List<StructField> results = new ArrayList<>();
         Collections.addAll(results, this.sourceFields);
         return results;
     }

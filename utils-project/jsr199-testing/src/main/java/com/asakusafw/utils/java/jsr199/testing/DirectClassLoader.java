@@ -31,7 +31,7 @@ public class DirectClassLoader extends ClassLoader {
      */
     public DirectClassLoader(ClassLoader parent) {
         super(parent);
-        this.classes = new HashMap<String, byte[]>();
+        this.classes = new HashMap<>();
     }
 
     /**

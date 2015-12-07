@@ -170,7 +170,7 @@ public class SshCommandScriptHandlerTest extends SshScriptHandlerTestRoot {
         ExecutionContext context = new ExecutionContext("b", "f", "e", ExecutionPhase.MAIN, map(), rc.unapply());
         execute(context, script, handler);
 
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         for (String line : getOutput(shell)) {
             if (line.trim().isEmpty()) {
                 continue;

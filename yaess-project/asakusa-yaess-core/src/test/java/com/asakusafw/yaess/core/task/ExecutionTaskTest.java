@@ -709,7 +709,7 @@ public class ExecutionTaskTest {
     }
 
     private Set<String> id(List<Record> records) {
-        TreeSet<String> results = new TreeSet<String>();
+        TreeSet<String> results = new TreeSet<>();
         for (Record r : records) {
             results.add(id(r));
         }
@@ -721,7 +721,7 @@ public class ExecutionTaskTest {
     }
 
     private Set<String> set(String... values) {
-        return new TreeSet<String>(Arrays.asList(values));
+        return new TreeSet<>(Arrays.asList(values));
     }
 
     private void verifyPhaseOrder(List<Record> results) {
@@ -739,12 +739,12 @@ public class ExecutionTaskTest {
     }
 
     private Map<String, List<Record>> flowPartition(List<Record> records) {
-        Map<String, List<Record>> results = new HashMap<String, List<Record>>();
+        Map<String, List<Record>> results = new HashMap<>();
         for (Record r : records) {
             String flowId = r.context.getFlowId();
             List<Record> list = results.get(flowId);
             if (list == null) {
-                list = new ArrayList<ExecutionTracker.Record>();
+                list = new ArrayList<>();
                 results.put(flowId, list);
             }
             list.add(r);
@@ -753,7 +753,7 @@ public class ExecutionTaskTest {
     }
 
     private List<Record> flow(List<Record> records, String flowId) {
-        List<Record> results = new ArrayList<Record>();
+        List<Record> results = new ArrayList<>();
         for (Record r : records) {
             if (r.context.getFlowId().equals(flowId)) {
                 results.add(r);
@@ -763,7 +763,7 @@ public class ExecutionTaskTest {
     }
 
     private List<Record> phase(List<Record> records, String flowId, ExecutionPhase phase) {
-        List<Record> results = new ArrayList<Record>();
+        List<Record> results = new ArrayList<>();
         for (Record r : flow(records, flowId)) {
             if (r.context.getPhase() == phase) {
                 results.add(r);
@@ -866,7 +866,7 @@ public class ExecutionTaskTest {
             this.asakusaHome = new File(working, "asakusa");
             this.lockDir = new File(working, "lock");
             this.trackingId = ExecutionTracker.Id.get("testing");
-            this.replacement = new HashMap<String, String>();
+            this.replacement = new HashMap<>();
             this.replacement.put("home", asakusaHome.getAbsolutePath());
             this.replacement.put("scope", ExecutionLock.Scope.WORLD.getSymbol());
             this.replacement.put("locker", BasicLockProvider.class.getName());
@@ -927,12 +927,9 @@ public class ExecutionTaskTest {
 
         private Properties load(String name) throws IOException {
             Properties result = new Properties();
-            InputStream in = getClass().getResourceAsStream(name);
-            assertThat(in, is(notNullValue()));
-            try {
+            try (InputStream in = getClass().getResourceAsStream(name)) {
+                assertThat(in, is(notNullValue()));
                 result.load(in);
-            } finally {
-                in.close();
             }
             return result;
         }

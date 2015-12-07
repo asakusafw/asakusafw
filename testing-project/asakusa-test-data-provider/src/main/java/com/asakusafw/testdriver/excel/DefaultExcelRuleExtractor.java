@@ -36,7 +36,7 @@ public class DefaultExcelRuleExtractor implements ExcelRuleExtractor {
      * Format IDs which this extractor supports.
      * @since 0.7.0
      */
-    public static final Set<String> SUPPORTED_FORMATS = new HashSet<String>(Arrays.asList(new String[] {
+    public static final Set<String> SUPPORTED_FORMATS = new HashSet<>(Arrays.asList(new String[] {
             "EVR-1.0.0", //$NON-NLS-1$
             RuleSheetFormat.FORMAT_VERSION,
     }));

@@ -105,14 +105,11 @@ public class YaessWorkflowProcessor extends AbstractWorkflowProcessor {
         }
 
         LOG.debug("Exporting YAESS Batch Script"); //$NON-NLS-1$
-        OutputStream output = getEnvironment().openResource(PATH);
-        try {
+        try (OutputStream output = getEnvironment().openResource(PATH)) {
             properties.store(output, MessageFormat.format(
                     "YAESS Batch Script for \"{0}\", version {1}", //$NON-NLS-1$
                     getBatchId(),
                     BatchScript.VERSION));
-        } finally {
-            output.close();
         }
         LOG.debug("Exported YAESS Batch Script"); //$NON-NLS-1$
     }

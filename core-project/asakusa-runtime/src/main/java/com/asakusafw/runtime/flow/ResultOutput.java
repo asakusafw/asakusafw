@@ -56,9 +56,7 @@ public class ResultOutput<T> implements Result<T> {
      * @throws IllegalArgumentException if some parameters are {@code null}
      */
     @SuppressWarnings({ "rawtypes" })
-    public ResultOutput(
-            TaskAttemptContext context,
-            RecordWriter writer) throws IOException, InterruptedException {
+    public ResultOutput(TaskAttemptContext context, RecordWriter writer) throws IOException, InterruptedException {
         this(context, writer, Collections.<Counter>emptyList());
     }
 

@@ -33,7 +33,7 @@ public final class ExtremeSplitCombiner extends SplitCombiner {
     @Override
     protected List<StageInputSplit> combine(JobContext context, List<StageInputSplit> splits) {
         Map<Class<? extends Mapper<?, ?, ?, ?>>, List<Source>> groups = Util.groupByMapper(splits);
-        List<StageInputSplit> results = new ArrayList<StageInputSplit>();
+        List<StageInputSplit> results = new ArrayList<>();
         for (Map.Entry<Class<? extends Mapper<?, ?, ?, ?>>, List<Source>> entry : groups.entrySet()) {
             results.add(new StageInputSplit(entry.getKey(), entry.getValue()));
         }

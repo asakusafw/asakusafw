@@ -64,6 +64,7 @@ public final class Sources {
      * @param values the target array
      * @return the wrapped source
      */
+    @SafeVarargs
     public static <T> Source<T> wrap(final T... values) {
         return new Source<T>() {
 
@@ -204,7 +205,7 @@ public final class Sources {
             Source<T> source = (Source<T>) sortedSources.get(0);
             return source;
         }
-        return new HeapSource<T>(sortedSources, comparator);
+        return new HeapSource<>(sortedSources, comparator);
     }
 
     private static final class HeapSource<T> implements Source<T> {
@@ -223,7 +224,7 @@ public final class Sources {
             this.heap = new HeapElement[sortedSources.size()];
             this.comparator = comparator;
             for (int i = 0; i < heap.length; i++) {
-                this.heap[i] = new HeapElement<T>(sortedSources.get(i));
+                this.heap[i] = new HeapElement<>(sortedSources.get(i));
             }
         }
 

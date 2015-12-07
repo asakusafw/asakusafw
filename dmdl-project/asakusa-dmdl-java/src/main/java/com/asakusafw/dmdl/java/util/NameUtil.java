@@ -34,7 +34,7 @@ public final class NameUtil {
         if (name == null) {
             throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
         }
-        LinkedList<String> simples = new LinkedList<String>();
+        LinkedList<String> simples = new LinkedList<>();
         for (AstName current = name; current != null; current = current.getQualifier()) {
             simples.addFirst(JavaName.of(current.getSimpleName()).toMemberName());
         }

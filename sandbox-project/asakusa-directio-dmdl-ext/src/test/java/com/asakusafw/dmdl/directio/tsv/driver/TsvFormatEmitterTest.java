@@ -70,16 +70,17 @@ public class TsvFormatEmitterTest extends GeneratorTesterRoot {
         model.set("value", new Text("Hello, world!"));
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
-        ModelOutput<Object> writer = unsafe.createOutput(model.unwrap().getClass(), "hello", output);
-        writer.write(model.unwrap());
-        writer.close();
+        try (ModelOutput<Object> writer = unsafe.createOutput(model.unwrap().getClass(), "hello", output)) {
+            writer.write(model.unwrap());
+        }
 
         Object buffer = loaded.newModel("Simple").unwrap();
-        ModelInput<Object> reader = unsafe.createInput(model.unwrap().getClass(), "hello", in(output),
-                0, size(output));
-        assertThat(reader.readTo(buffer), is(true));
-        assertThat(buffer, is(model.unwrap()));
-        assertThat(reader.readTo(buffer), is(false));
+        try (ModelInput<Object> reader = unsafe.createInput(model.unwrap().getClass(), "hello", in(output),
+                0, size(output))) {
+            assertThat(reader.readTo(buffer), is(true));
+            assertThat(buffer, is(model.unwrap()));
+            assertThat(reader.readTo(buffer), is(false));
+        }
     }
 
     /**
@@ -111,19 +112,20 @@ public class TsvFormatEmitterTest extends GeneratorTesterRoot {
         BinaryStreamFormat<Object> unsafe = unsafe(support);
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
-        ModelOutput<Object> writer = unsafe.createOutput(model.unwrap().getClass(), "hello", output);
-        writer.write(empty.unwrap());
-        writer.write(all.unwrap());
-        writer.close();
+        try (ModelOutput<Object> writer = unsafe.createOutput(model.unwrap().getClass(), "hello", output)) {
+            writer.write(empty.unwrap());
+            writer.write(all.unwrap());
+        }
 
         Object buffer = loaded.newModel("Types").unwrap();
-        ModelInput<Object> reader = unsafe.createInput(model.unwrap().getClass(), "hello", in(output),
-                0, size(output));
-        assertThat(reader.readTo(buffer), is(true));
-        assertThat(buffer, is(empty.unwrap()));
-        assertThat(reader.readTo(buffer), is(true));
-        assertThat(buffer, is(all.unwrap()));
-        assertThat(reader.readTo(buffer), is(false));
+        try (ModelInput<Object> reader = unsafe.createInput(model.unwrap().getClass(), "hello", in(output),
+                0, size(output))) {
+            assertThat(reader.readTo(buffer), is(true));
+            assertThat(buffer, is(empty.unwrap()));
+            assertThat(reader.readTo(buffer), is(true));
+            assertThat(buffer, is(all.unwrap()));
+            assertThat(reader.readTo(buffer), is(false));
+        }
     }
 
     /**
@@ -144,16 +146,17 @@ public class TsvFormatEmitterTest extends GeneratorTesterRoot {
         model.set("value", new Text("Hello, world!"));
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
-        ModelOutput<Object> writer = unsafe.createOutput(model.unwrap().getClass(), "hello", output);
-        writer.write(model.unwrap());
-        writer.close();
+        try (ModelOutput<Object> writer = unsafe.createOutput(model.unwrap().getClass(), "hello", output)) {
+            writer.write(model.unwrap());
+        }
 
         Object buffer = loaded.newModel("Simple").unwrap();
-        ModelInput<Object> reader = unsafe.createInput(model.unwrap().getClass(), "hello", in(output),
-                0, size(output));
-        assertThat(reader.readTo(buffer), is(true));
-        assertThat(buffer, is(model.unwrap()));
-        assertThat(reader.readTo(buffer), is(false));
+        try (ModelInput<Object> reader = unsafe.createInput(model.unwrap().getClass(), "hello", in(output),
+                0, size(output))) {
+            assertThat(reader.readTo(buffer), is(true));
+            assertThat(buffer, is(model.unwrap()));
+            assertThat(reader.readTo(buffer), is(false));
+        }
     }
 
     /**
@@ -175,16 +178,17 @@ public class TsvFormatEmitterTest extends GeneratorTesterRoot {
         model.set("value", new Text("Hello, world!"));
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
-        ModelOutput<Object> writer = unsafe.createOutput(model.unwrap().getClass(), "hello", output);
-        writer.write(model.unwrap());
-        writer.close();
+        try (ModelOutput<Object> writer = unsafe.createOutput(model.unwrap().getClass(), "hello", output)) {
+            writer.write(model.unwrap());
+        }
 
         Object buffer = loaded.newModel("Compression").unwrap();
-        ModelInput<Object> reader = unsafe.createInput(model.unwrap().getClass(), "hello", in(output),
-                0, size(output));
-        assertThat(reader.readTo(buffer), is(true));
-        assertThat(buffer, is(model.unwrap()));
-        assertThat(reader.readTo(buffer), is(false));
+        try (ModelInput<Object> reader = unsafe.createInput(model.unwrap().getClass(), "hello", in(output),
+                0, size(output))) {
+            assertThat(reader.readTo(buffer), is(true));
+            assertThat(buffer, is(model.unwrap()));
+            assertThat(reader.readTo(buffer), is(false));
+        }
     }
 
     /**
@@ -205,15 +209,17 @@ public class TsvFormatEmitterTest extends GeneratorTesterRoot {
         model.set("value", new Text("Hello, world!"));
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
-        ModelOutput<Object> writer = unsafe.createOutput(model.unwrap().getClass(), "hello", output);
-        writer.write(model.unwrap());
-        writer.close();
+        try (ModelOutput<Object> writer = unsafe.createOutput(model.unwrap().getClass(), "hello", output)) {
+            writer.write(model.unwrap());
+        }
 
         Object buffer = loaded.newModel("Header").unwrap();
-        ModelInput<Object> reader = unsafe.createInput(model.unwrap().getClass(), "hello", in(output), 0, size(output));
-        assertThat(reader.readTo(buffer), is(true));
-        assertThat(buffer, is(model.unwrap()));
-        assertThat(reader.readTo(buffer), is(false));
+        try (ModelInput<Object> reader = unsafe.createInput(model.unwrap().getClass(), "hello", in(output),
+                0, size(output))) {
+            assertThat(reader.readTo(buffer), is(true));
+            assertThat(buffer, is(model.unwrap()));
+            assertThat(reader.readTo(buffer), is(false));
+        }
     }
 
     /**
@@ -233,16 +239,17 @@ public class TsvFormatEmitterTest extends GeneratorTesterRoot {
         model.set("value", new Text("Hello, world!"));
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
-        ModelOutput<Object> writer = unsafe.createOutput(model.unwrap().getClass(), "hello", output);
-        writer.write(model.unwrap());
-        writer.close();
+        try (ModelOutput<Object> writer = unsafe.createOutput(model.unwrap().getClass(), "hello", output)) {
+            writer.write(model.unwrap());
+        }
 
         Object buffer = loaded.newModel("Ignore").unwrap();
-        ModelInput<Object> reader = unsafe.createInput(model.unwrap().getClass(), "hello", in(output),
-                0, size(output));
-        assertThat(reader.readTo(buffer), is(true));
-        assertThat(buffer, is(model.unwrap()));
-        assertThat(reader.readTo(buffer), is(false));
+        try (ModelInput<Object> reader = unsafe.createInput(model.unwrap().getClass(), "hello", in(output),
+                0, size(output))) {
+            assertThat(reader.readTo(buffer), is(true));
+            assertThat(buffer, is(model.unwrap()));
+            assertThat(reader.readTo(buffer), is(false));
+        }
     }
 
     /**
@@ -262,17 +269,18 @@ public class TsvFormatEmitterTest extends GeneratorTesterRoot {
         model.set("value", new Text("Hello, world!"));
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
-        ModelOutput<Object> writer = unsafe.createOutput(model.unwrap().getClass(), "hello.tsv", output);
-        writer.write(model.unwrap());
-        writer.close();
+        try (ModelOutput<Object> writer = unsafe.createOutput(model.unwrap().getClass(), "hello.tsv", output)) {
+            writer.write(model.unwrap());
+        }
 
         ModelWrapper buffer = loaded.newModel("FileName");
-        ModelInput<Object> reader = unsafe.createInput(model.unwrap().getClass(), "hello.tsv", in(output),
-                0, size(output));
-        assertThat(reader.readTo(buffer.unwrap()), is(true));
-        assertThat(buffer.getOption("value"), is((Object) new StringOption("Hello, world!")));
-        assertThat(buffer.getOption("path"), is((Object) new StringOption("hello.tsv")));
-        assertThat(reader.readTo(buffer.unwrap()), is(false));
+        try (ModelInput<Object> reader = unsafe.createInput(model.unwrap().getClass(), "hello.tsv", in(output),
+                0, size(output))) {
+            assertThat(reader.readTo(buffer.unwrap()), is(true));
+            assertThat(buffer.getOption("value"), is((Object) new StringOption("Hello, world!")));
+            assertThat(buffer.getOption("path"), is((Object) new StringOption("hello.tsv")));
+            assertThat(reader.readTo(buffer.unwrap()), is(false));
+        }
     }
 
     @SuppressWarnings("unchecked")

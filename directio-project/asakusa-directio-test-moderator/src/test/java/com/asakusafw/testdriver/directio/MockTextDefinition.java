@@ -63,7 +63,7 @@ public class MockTextDefinition implements DataModelDefinition<Text> {
 
     @Override
     public Builder<Text> newReflection() {
-        return new Builder<Text>(this);
+        return new Builder<>(this);
     }
 
     @Override

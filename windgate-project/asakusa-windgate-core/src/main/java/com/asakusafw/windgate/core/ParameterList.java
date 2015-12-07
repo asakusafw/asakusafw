@@ -56,7 +56,7 @@ public class ParameterList {
         if (parameters == null) {
             throw new IllegalArgumentException("parameters must not be null"); //$NON-NLS-1$
         }
-        this.parameters = Collections.unmodifiableMap(new TreeMap<String, String>(parameters));
+        this.parameters = Collections.unmodifiableMap(new TreeMap<>(parameters));
     }
 
 

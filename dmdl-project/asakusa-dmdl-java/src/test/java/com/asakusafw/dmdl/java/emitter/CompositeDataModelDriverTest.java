@@ -108,11 +108,8 @@ public class CompositeDataModelDriverTest extends GeneratorTesterRoot {
             File services = new File(folder.getRoot(), "META-INF/services");
             Assume.assumeTrue(services.mkdirs());
             File spi = new File(services, JavaDataModelDriver.class.getName());
-            PrintWriter output = new PrintWriter(spi, "UTF-8");
-            try {
+            try (PrintWriter output = new PrintWriter(spi, "UTF-8")) {
                 output.println(HelloDriver.class.getName());
-            } finally {
-                output.close();
             }
             serviceClassLoader = new URLClassLoader(new URL[] {
                     folder.getRoot().toURI().toURL()

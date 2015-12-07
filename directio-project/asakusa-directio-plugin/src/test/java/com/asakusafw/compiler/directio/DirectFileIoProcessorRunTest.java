@@ -97,7 +97,7 @@ public class DirectFileIoProcessorRunTest {
         put("input/input.txt", "1Hello", "2Hello", "3Hello");
         In<Line1> in = tester.input("in1", new Input(format, "input", "*"));
         Out<Line1> out = tester.output("out1", new Output(format, "output", "output.txt"));
-        assertThat(tester.runFlow(new IdentityFlow<Line1>(in, out)), is(true));
+        assertThat(tester.runFlow(new IdentityFlow<>(in, out)), is(true));
 
         List<String> list = get("output/output.txt");
         assertThat(list.size(), is(3));
@@ -116,7 +116,7 @@ public class DirectFileIoProcessorRunTest {
         In<Line1> in = tester.input("in1",
                 new Input(Line1.class, format, "input", "*", DataSize.TINY));
         Out<Line1> out = tester.output("out1", new Output(format, "output", "output.txt"));
-        assertThat(tester.runFlow(new IdentityFlow<Line1>(in, out)), is(true));
+        assertThat(tester.runFlow(new IdentityFlow<>(in, out)), is(true));
 
         List<String> list = get("output/output.txt");
         assertThat(list.size(), is(3));
@@ -137,7 +137,7 @@ public class DirectFileIoProcessorRunTest {
         put("input/other.txt", "4Hello");
         In<Line1> in = tester.input("in1", new Input(format, "input", "input-*"));
         Out<Line1> out = tester.output("out1", new Output(format, "output", "output.txt"));
-        assertThat(tester.runFlow(new IdentityFlow<Line1>(in, out)), is(true));
+        assertThat(tester.runFlow(new IdentityFlow<>(in, out)), is(true));
 
         List<String> list = get("output/output.txt");
         assertThat(list.size(), is(3));
@@ -155,7 +155,7 @@ public class DirectFileIoProcessorRunTest {
         put("input/input.txt", "1Hello", "2Hello", "3Hello");
         In<Line1> in = tester.input("in1", new Input(format, "input", "*"));
         Out<Line1> out = tester.output("out1", new Output(format, "output", "output.txt", "-value"));
-        assertThat(tester.runFlow(new IdentityFlow<Line1>(in, out)), is(true));
+        assertThat(tester.runFlow(new IdentityFlow<>(in, out)), is(true));
 
         assertThat(get("output/output.txt"), is(list("3Hello", "2Hello", "1Hello")));
     }
@@ -169,7 +169,7 @@ public class DirectFileIoProcessorRunTest {
         put("input/input.txt", "a1", "b1", "b2", "c1", "c2", "c3");
         In<Line1> in = tester.input("in1", new Input(format, "input", "*"));
         Out<Line1> out = tester.output("out1", new Output(format, "output", "{first}-output.txt", "+value"));
-        assertThat(tester.runFlow(new IdentityFlow<Line1>(in, out)), is(true));
+        assertThat(tester.runFlow(new IdentityFlow<>(in, out)), is(true));
 
         assertThat(get("output/a-output.txt"), is(list("a1")));
         assertThat(get("output/b-output.txt"), is(list("b1", "b2")));
@@ -189,7 +189,7 @@ public class DirectFileIoProcessorRunTest {
         put("input/input.txt", lines.toArray(new String[lines.size()]));
         In<Line1> in = tester.input("in1", new Input(format, "input", "*"));
         Out<Line1> out = tester.output("out1", new Output(format, "output", "output-[1..4].txt", "+value"));
-        assertThat(tester.runFlow(new IdentityFlow<Line1>(in, out)), is(true));
+        assertThat(tester.runFlow(new IdentityFlow<>(in, out)), is(true));
 
         List<String> o1 = get("output/output-1.txt");
         List<String> o2 = get("output/output-2.txt");
@@ -221,7 +221,7 @@ public class DirectFileIoProcessorRunTest {
         put("input/input.txt", "1Hello", "2Hello", "3Hello");
         In<Line1> in = tester.input("in1", new Input(format, "input", "*"));
         Out<Line1> out = tester.output("out1", new Output(format, "output", "output-*.txt"));
-        assertThat(tester.runFlow(new IdentityFlow<Line1>(in, out)), is(true));
+        assertThat(tester.runFlow(new IdentityFlow<>(in, out)), is(true));
 
         List<String> list = get("output/output-*.txt");
         assertThat(list.size(), is(3));
@@ -247,7 +247,7 @@ public class DirectFileIoProcessorRunTest {
         tester.variables().defineVariable("input-pattern", "input-*");
         tester.variables().defineVariable("output-dir", "output");
         tester.variables().defineVariable("output-pattern", "output.txt");
-        assertThat(tester.runFlow(new IdentityFlow<Line1>(in, out)), is(true));
+        assertThat(tester.runFlow(new IdentityFlow<>(in, out)), is(true));
 
         List<String> list = get("output/output.txt");
         assertThat(list.size(), is(3));
@@ -273,7 +273,7 @@ public class DirectFileIoProcessorRunTest {
         tester.variables().defineVariable("input-pattern", "input-*");
         tester.variables().defineVariable("output-dir", "output");
         tester.variables().defineVariable("output-pattern", "output");
-        assertThat(tester.runFlow(new IdentityFlow<Line1>(in, out)), is(true));
+        assertThat(tester.runFlow(new IdentityFlow<>(in, out)), is(true));
 
         List<String> list = get("output/output-*.txt");
         assertThat(list.size(), is(3));
@@ -296,7 +296,7 @@ public class DirectFileIoProcessorRunTest {
 
         tester.variables().defineVariable("input", "input");
         tester.variables().defineVariable("output", "output");
-        assertThat(tester.runFlow(new IdentityFlow<Line1>(in, out)), is(true));
+        assertThat(tester.runFlow(new IdentityFlow<>(in, out)), is(true));
 
         List<String> list = get("output-split/output.txt");
         assertThat(list.size(), is(1));
@@ -319,7 +319,7 @@ public class DirectFileIoProcessorRunTest {
         Out<Line1> out = tester.output("out1", new Output(format, "output", "output.txt")
             .delete("deleted.txt")
             .delete("deleted-*.txt"));
-        assertThat(tester.runFlow(new IdentityFlow<Line1>(in, out)), is(true));
+        assertThat(tester.runFlow(new IdentityFlow<>(in, out)), is(true));
 
         List<String> list = get("output/*.txt");
         assertThat(list.size(), is(4));
@@ -345,7 +345,7 @@ public class DirectFileIoProcessorRunTest {
             .delete("${pattern}-*.txt"));
 
         tester.variables().defineVariable("pattern", "deleted");
-        assertThat(tester.runFlow(new IdentityFlow<Line1>(in, out)), is(true));
+        assertThat(tester.runFlow(new IdentityFlow<>(in, out)), is(true));
 
         List<String> list = get("output/*.txt");
         assertThat(list.size(), is(4));
@@ -367,7 +367,7 @@ public class DirectFileIoProcessorRunTest {
         put("input/other.txt", "Hello");
         In<Line1> in = tester.input("in1", new Input(format, "input", "input-*"));
         Out<Line1> out = tester.output("out1", new Output(format, "output-1", "output.txt"));
-        assertThat(tester.runFlow(new IdentityFlow<Line1>(in, out)), is(true));
+        assertThat(tester.runFlow(new IdentityFlow<>(in, out)), is(true));
 
         List<Path> list = find("output/output-*.txt");
         assertThat(list.toString(), list.size(), is(0));
@@ -385,7 +385,7 @@ public class DirectFileIoProcessorRunTest {
         put("input/other.txt", "Hello");
         In<Line1> in = tester.input("in1", new Input(format, "input", "input-*"));
         Out<Line1> out = tester.output("out1", new Output(format, "output", "output.txt"));
-        assertThat(tester.runFlow(new IdentityFlow<Line1>(in, out)), is(true));
+        assertThat(tester.runFlow(new IdentityFlow<>(in, out)), is(true));
 
         List<Path> list = find("output/output-*.txt");
         assertThat(list.toString(), list.size(), is(0));
@@ -400,7 +400,7 @@ public class DirectFileIoProcessorRunTest {
         put("input/input.txt", "1Hello", "2Hello", "3Hello");
         In<Line1> in = tester.input("in1", new Input(format, "input", "*", true));
         Out<Line1> out = tester.output("out1", new Output(format, "output", "output.txt"));
-        assertThat(tester.runFlow(new IdentityFlow<Line1>(in, out)), is(true));
+        assertThat(tester.runFlow(new IdentityFlow<>(in, out)), is(true));
 
         List<String> list = get("output/output.txt");
         assertThat(list.size(), is(3));
@@ -422,7 +422,7 @@ public class DirectFileIoProcessorRunTest {
         In<Line1> in = tester.input("in1", new Input(format, "input", "input-*").withFilter(MockFilterPath.class));
         Out<Line1> out = tester.output("out1", new Output(format, "output", "output.txt"));
         tester.variables().defineVariable("filter", ".*input-2\\.txt");
-        assertThat(tester.runFlow(new IdentityFlow<Line1>(in, out)), is(true));
+        assertThat(tester.runFlow(new IdentityFlow<>(in, out)), is(true));
 
         List<String> list = get("output/output.txt");
         assertThat(list.size(), is(2));
@@ -443,7 +443,7 @@ public class DirectFileIoProcessorRunTest {
         In<Line1> in = tester.input("in1", new Input(format, "input", "input-*").withFilter(MockFilterObject.class));
         Out<Line1> out = tester.output("out1", new Output(format, "output", "output.txt"));
         tester.variables().defineVariable("filter", "3Hello");
-        assertThat(tester.runFlow(new IdentityFlow<Line1>(in, out)), is(true));
+        assertThat(tester.runFlow(new IdentityFlow<>(in, out)), is(true));
 
         List<String> list = get("output/output.txt");
         assertThat(list.size(), is(2));
@@ -465,7 +465,7 @@ public class DirectFileIoProcessorRunTest {
         Out<Line1> out = tester.output("out1", new Output(format, "output", "output.txt"));
         tester.variables().defineVariable("filter", ".*input-2\\.txt");
         tester.options().putExtraAttribute(DirectFileIoProcessor.OPTION_FILTER_ENABLED, "false");
-        assertThat(tester.runFlow(new IdentityFlow<Line1>(in, out)), is(true));
+        assertThat(tester.runFlow(new IdentityFlow<>(in, out)), is(true));
 
         List<String> list = get("output/output.txt");
         assertThat(list.size(), is(3));
@@ -488,7 +488,7 @@ public class DirectFileIoProcessorRunTest {
         Out<Line1> out = tester.output("out1", new Output(format, "output", "output.txt"));
         tester.variables().defineVariable("filter", "3Hello");
         tester.options().putExtraAttribute(DirectFileIoProcessor.OPTION_FILTER_ENABLED, "false");
-        assertThat(tester.runFlow(new IdentityFlow<Line1>(in, out)), is(true));
+        assertThat(tester.runFlow(new IdentityFlow<>(in, out)), is(true));
 
         List<String> list = get("output/output.txt");
         assertThat(list.size(), is(3));
@@ -513,7 +513,7 @@ public class DirectFileIoProcessorRunTest {
                 new Output(Line1.class, format, "output-1", "output.txt"));
         Out<Line2> out2 = tester.output("out2",
                 new Output(Line2.class, format, "output-2", "output.txt"));
-        assertThat(tester.runFlow(new DualIdentityFlow<Line1, Line2>(in1, in2, out1, out2)), is(true));
+        assertThat(tester.runFlow(new DualIdentityFlow<>(in1, in2, out1, out2)), is(true));
 
         assertThat(get("output-1/output.txt"), is(list("Hello1")));
         assertThat(get("output-2/output.txt"), is(list("Hello2")));
@@ -535,7 +535,7 @@ public class DirectFileIoProcessorRunTest {
                 new Output(Line1.class, format, "output-1", "output-*.txt"));
         Out<Line2> out2 = tester.output("out2",
                 new Output(Line2.class, format, "output-2", "output-*.txt"));
-        assertThat(tester.runFlow(new DualIdentityFlow<Line1, Line2>(in1, in2, out1, out2)), is(true));
+        assertThat(tester.runFlow(new DualIdentityFlow<>(in1, in2, out1, out2)), is(true));
 
         assertThat(get("output-1/output-*.txt"), is(list("Hello1")));
         assertThat(get("output-2/output-*.txt"), is(list("Hello2")));
@@ -557,7 +557,7 @@ public class DirectFileIoProcessorRunTest {
                 new Output(Line1.class, format, "output-1", "output-1.txt"));
         Out<Line2> out2 = tester.output("out2",
                 new Output(Line2.class, format, "output-2", "output-*.txt"));
-        assertThat(tester.runFlow(new DualIdentityFlow<Line1, Line2>(in1, in2, out1, out2)), is(true));
+        assertThat(tester.runFlow(new DualIdentityFlow<>(in1, in2, out1, out2)), is(true));
 
         assertThat(get("output-1/output-*.txt"), is(list("Hello1")));
         assertThat(get("output-2/output-*.txt"), is(list("Hello2")));
@@ -571,7 +571,7 @@ public class DirectFileIoProcessorRunTest {
     public void input_missing() throws Exception {
         In<Line1> in = tester.input("in1", new Input(format, "input", "*"));
         Out<Line1> out = tester.output("out1", new Output(format, "output", "output.txt"));
-        assertThat(tester.runFlow(new IdentityFlow<Line1>(in, out)), is(false));
+        assertThat(tester.runFlow(new IdentityFlow<>(in, out)), is(false));
     }
 
     /**
@@ -582,7 +582,7 @@ public class DirectFileIoProcessorRunTest {
     public void input_missing_optional() throws Exception {
         In<Line1> in = tester.input("in1", new Input(format, "input", "*", true));
         Out<Line1> out = tester.output("out1", new Output(format, "output", "output.txt"));
-        assertThat(tester.runFlow(new IdentityFlow<Line1>(in, out)), is(true));
+        assertThat(tester.runFlow(new IdentityFlow<>(in, out)), is(true));
     }
 
     private List<String> list(String... values) {
@@ -610,15 +610,10 @@ public class DirectFileIoProcessorRunTest {
         FileSystem fs = FileSystem.get(tester.configuration());
         List<String> results = Lists.create();
         for (Path path : find(target)) {
-            InputStream input = fs.open(path);
-            try {
-                Scanner s = new Scanner(new InputStreamReader(input, "UTF-8"));
+            try (InputStream input = fs.open(path); Scanner s = new Scanner(new InputStreamReader(input, "UTF-8"))) {
                 while (s.hasNextLine()) {
                     results.add(s.nextLine());
                 }
-                s.close();
-            } finally {
-                input.close();
             }
         }
         return results;
@@ -626,15 +621,11 @@ public class DirectFileIoProcessorRunTest {
 
     private void put(String target, String... contents) throws IOException {
         FileSystem fs = FileSystem.get(tester.configuration());
-        OutputStream output = fs.create(getPath(target), true);
-        try {
-            PrintWriter w = new PrintWriter(new OutputStreamWriter(output, "UTF-8"));
+        try (OutputStream output = fs.create(getPath(target), true);
+                PrintWriter w = new PrintWriter(new OutputStreamWriter(output, "UTF-8"))) {
             for (String line : contents) {
                 w.println(line);
             }
-            w.close();
-        } finally {
-            output.close();
         }
     }
 
@@ -643,25 +634,16 @@ public class DirectFileIoProcessorRunTest {
         if (file == null) {
             throw new AssertionError("Missing original framework conf");
         }
-        InputStream input = getClass().getResourceAsStream(name);
-        assertThat(name, input, is(notNullValue()));
-        try {
-            try {
-                OutputStream output = new FileOutputStream(file);
-                try {
-                    byte[] buf = new byte[256];
-                    while (true) {
-                        int read = input.read(buf);
-                        if (read < 0) {
-                            break;
-                        }
-                        output.write(buf, 0, read);
-                    }
-                } finally {
-                    output.close();
+        try (InputStream input = getClass().getResourceAsStream(name);
+                OutputStream output = new FileOutputStream(file)) {
+            assertThat(name, input, is(notNullValue()));
+            byte[] buf = new byte[256];
+            while (true) {
+                int read = input.read(buf);
+                if (read < 0) {
+                    break;
                 }
-            } finally {
-                input.close();
+                output.write(buf, 0, read);
             }
         } catch (IOException e) {
             throw new AssertionError(e);

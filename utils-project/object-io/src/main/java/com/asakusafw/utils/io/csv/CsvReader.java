@@ -48,7 +48,7 @@ public class CsvReader implements Source<List<String>> {
     }
 
     private List<String> prepare() throws IOException {
-        List<String> line = new ArrayList<String>();
+        List<String> line = new ArrayList<>();
         StringBuilder buf = new StringBuilder();
         State state = State.INIT;
         LOOP: while (true) {

@@ -110,8 +110,7 @@ public class TemporaryFileInstallerTest {
 
     private void check(File f, byte[] contents) throws IOException {
         ByteArrayOutputStream buf = new ByteArrayOutputStream();
-        InputStream in = new FileInputStream(f);
-        try {
+        try (InputStream in = new FileInputStream(f)) {
             byte[] b = new byte[256];
             while (true) {
                 int read = in.read(b);
@@ -120,8 +119,6 @@ public class TemporaryFileInstallerTest {
                 }
                 buf.write(b, 0, read);
             }
-        } finally {
-            in.close();
         }
         assertThat(buf.toByteArray(), equalTo(contents));
     }

@@ -360,7 +360,7 @@ public final class HadoopDriver implements Closeable {
             File confFile,
             Map<String, String> properties) {
         logger.info("EMULATE: {} with {}", className, libjars);
-        List<String> arguments = new ArrayList<String>();
+        List<String> arguments = new ArrayList<>();
         arguments.add(className);
         addHadoopConf(arguments, confFile);
         addHadoopLibjars(libjars, arguments);
@@ -490,13 +490,11 @@ public final class HadoopDriver implements Closeable {
             .command(commands)
             .redirectErrorStream(true);
         Process process = builder.start();
-        try {
-            InputStream stream = process.getInputStream();
-            Scanner scanner = new Scanner(stream);
+        try (InputStream stream = process.getInputStream();
+                Scanner scanner = new Scanner(stream)) {
             while (scanner.hasNextLine()) {
                 logger.info(scanner.nextLine());
             }
-            scanner.close();
             return process.waitFor();
         } catch (InterruptedException e) {
             throw new IOException(e);

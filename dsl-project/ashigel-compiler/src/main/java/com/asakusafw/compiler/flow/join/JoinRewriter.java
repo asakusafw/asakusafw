@@ -146,7 +146,7 @@ public class JoinRewriter extends FlowCompilingEnvironment.Initialized implement
 
     private boolean rewriteSuccessors(InputDescription source, FlowIn<?> input) {
         assert input != null;
-        LinkedList<FlowElementInput> successors = new LinkedList<FlowElementInput>();
+        LinkedList<FlowElementInput> successors = new LinkedList<>();
         for (FlowElementOutput output : input.getFlowElement().getOutputPorts()) {
             successors.addAll(output.getOpposites());
         }

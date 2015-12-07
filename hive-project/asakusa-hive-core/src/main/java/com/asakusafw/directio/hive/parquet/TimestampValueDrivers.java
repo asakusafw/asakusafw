@@ -93,7 +93,7 @@ public enum TimestampValueDrivers implements ParquetValueDriver {
 
         static final Map<Class<?>, TimestampValueDrivers> FROM_CLASS;
         static {
-            Map<Class<?>, TimestampValueDrivers> map = new HashMap<Class<?>, TimestampValueDrivers>();
+            Map<Class<?>, TimestampValueDrivers> map = new HashMap<>();
             for (TimestampValueDrivers element : TimestampValueDrivers.values()) {
                 map.put(element.valueOptionClass, element);
             }

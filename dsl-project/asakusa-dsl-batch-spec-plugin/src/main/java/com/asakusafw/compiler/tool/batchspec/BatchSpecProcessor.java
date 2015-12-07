@@ -70,16 +70,10 @@ public class BatchSpecProcessor extends AbstractWorkflowProcessor {
         Gson gson = new GsonBuilder()
             .setPrettyPrinting()
             .create();
-
-        OutputStream output = getEnvironment().openResource(Constants.PATH);
-        try {
-            Writer writer = new OutputStreamWriter(output, Constants.ENCODING);
+        try (OutputStream output = getEnvironment().openResource(Constants.PATH);
+                Writer writer = new OutputStreamWriter(output, Constants.ENCODING)) {
             gson.toJson(spec, BatchSpec.class, writer);
-            writer.close();
-        } finally {
-            output.close();
         }
-
         if (LOG.isDebugEnabled()) {
             LOG.debug("{} => {}", description.getName(), gson.toJson(spec, BatchSpec.class)); //$NON-NLS-1$
         }

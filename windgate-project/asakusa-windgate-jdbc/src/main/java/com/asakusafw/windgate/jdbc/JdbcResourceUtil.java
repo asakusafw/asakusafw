@@ -162,7 +162,7 @@ final class JdbcResourceUtil {
                         operationString));
             }
         }
-        return new JdbcScript<T>(process.getName(), support, tableName, columnNames, condition, customTruncate);
+        return new JdbcScript<>(process.getName(), support, tableName, columnNames, condition, customTruncate);
     }
 
     private static String extract(

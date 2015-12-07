@@ -29,9 +29,9 @@ import com.asakusafw.windgate.core.resource.SourceDriver;
  */
 public class MockDriverFactory implements DriverFactory {
 
-    private final Map<String, SourceDriver<?>> sources = new HashMap<String, SourceDriver<?>>();
+    private final Map<String, SourceDriver<?>> sources = new HashMap<>();
 
-    private final Map<String, DrainDriver<?>> drains = new HashMap<String, DrainDriver<?>>();
+    private final Map<String, DrainDriver<?>> drains = new HashMap<>();
 
     /**
      * Adds a driver for the process which has the specified name.

@@ -103,7 +103,7 @@ public class JdbcScript<T> {
                 throw new IllegalArgumentException("columnNames must not contain empty"); //$NON-NLS-1$
             }
         }
-        this.columnNames = Collections.unmodifiableList(new ArrayList<String>(columnNames));
+        this.columnNames = Collections.unmodifiableList(new ArrayList<>(columnNames));
         this.condition = condition;
         this.customTruncate = customTruncate;
     }

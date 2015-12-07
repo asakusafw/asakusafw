@@ -115,7 +115,7 @@ public class StageResourceDriver implements Closeable {
 
     private List<Path> findCacheFromRemote(String resourceName) {
         assert resourceName != null;
-        List<Path> results = new ArrayList<Path>();
+        List<Path> results = new ArrayList<>();
         for (String remotePath : restoreStrings(getConfiguration(), getRemotePathKey(resourceName))) {
             results.add(new Path(remotePath));
         }
@@ -124,7 +124,7 @@ public class StageResourceDriver implements Closeable {
 
     private List<Path> findCacheFromCached(String resourceName) throws IOException {
         assert resourceName != null;
-        List<Path> results = new ArrayList<Path>();
+        List<Path> results = new ArrayList<>();
         for (String localName : restoreStrings(getConfiguration(), getLocalCacheNameKey(resourceName))) {
             Path resolvedPath = findLocalCache(resourceName, localName);
             if (resolvedPath == null) {
@@ -297,7 +297,7 @@ public class StageResourceDriver implements Closeable {
     private static ArrayList<String> restoreStrings(Configuration conf, String key) {
         assert conf != null;
         assert key != null;
-        ArrayList<String> results = new ArrayList<String>();
+        ArrayList<String> results = new ArrayList<>();
         String[] old = conf.getStrings(key);
         if (old != null && old.length >= 1) {
             Collections.addAll(results, old);

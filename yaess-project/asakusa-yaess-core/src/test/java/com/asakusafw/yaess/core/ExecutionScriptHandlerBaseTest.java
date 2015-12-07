@@ -36,7 +36,7 @@ public class ExecutionScriptHandlerBaseTest {
      */
     @Test
     public void simple() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         ServiceProfile<CommandScriptHandler> profile = new ServiceProfile<CommandScriptHandler>(
                 "command.*",
                 MockCommandScriptHandler.class,
@@ -55,7 +55,7 @@ public class ExecutionScriptHandlerBaseTest {
      */
     @Test
     public void environment_variables() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(ExecutionScriptHandler.KEY_ENV_PREFIX + "a", "A");
         conf.put(ExecutionScriptHandler.KEY_ENV_PREFIX + "b", "B");
         ServiceProfile<CommandScriptHandler> profile = new ServiceProfile<CommandScriptHandler>(
@@ -77,7 +77,7 @@ public class ExecutionScriptHandlerBaseTest {
      */
     @Test
     public void resource() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(ExecutionScriptHandler.KEY_RESOURCE, "testing");
         ServiceProfile<CommandScriptHandler> profile = new ServiceProfile<CommandScriptHandler>(
                 "command.*",
@@ -96,11 +96,11 @@ public class ExecutionScriptHandlerBaseTest {
      */
     @Test
     public void variables() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(ExecutionScriptHandler.KEY_ENV_PREFIX + "hoge", "${VAR}");
         conf.put(ExecutionScriptHandler.KEY_RESOURCE, "alt");
 
-        Map<String, String> entries = new HashMap<String, String>();
+        Map<String, String> entries = new HashMap<>();
         entries.put("VAR", "foo");
         ServiceProfile<CommandScriptHandler> profile = new ServiceProfile<CommandScriptHandler>(
                 "command.*",
@@ -122,10 +122,10 @@ public class ExecutionScriptHandlerBaseTest {
      */
     @Test(expected = IOException.class)
     public void variables_unresolved() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(ExecutionScriptHandler.KEY_ENV_PREFIX + "hoge", "${__INVALID__}");
         conf.put(ExecutionScriptHandler.KEY_RESOURCE, "alt");
-        Map<String, String> entries = new HashMap<String, String>();
+        Map<String, String> entries = new HashMap<>();
         ServiceProfile<CommandScriptHandler> profile = new ServiceProfile<CommandScriptHandler>(
                 "command.*",
                 MockCommandScriptHandler.class,

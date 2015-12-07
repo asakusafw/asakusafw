@@ -59,7 +59,7 @@ public class JdbcResourceManipulatorTest {
      */
     @Test
     public void cleanupSource() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(JdbcProcess.TABLE.key(), "PAIR");
         conf.put(JdbcProcess.COLUMNS.key(), "KEY,VALUE");
         conf.put(JdbcProcess.JDBC_SUPPORT.key(), PairSupport.class.getName());
@@ -83,7 +83,7 @@ public class JdbcResourceManipulatorTest {
      */
     @Test
     public void cleanupSource_with_condition() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(JdbcProcess.TABLE.key(), "PAIR");
         conf.put(JdbcProcess.COLUMNS.key(), "KEY,VALUE");
         conf.put(JdbcProcess.CONDITION.key(), "KEY = 10");
@@ -108,7 +108,7 @@ public class JdbcResourceManipulatorTest {
      */
     @Test
     public void cleanupSource_with_custom_truncate() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(JdbcProcess.TABLE.key(), "PAIR");
         conf.put(JdbcProcess.COLUMNS.key(), "KEY,VALUE");
         conf.put(JdbcProcess.CUSTOM_TRUNCATE.key(), "DELETE FROM PAIR WHERE 0=1");
@@ -133,7 +133,7 @@ public class JdbcResourceManipulatorTest {
      */
     @Test
     public void cleanupSource_modified() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(JdbcProcess.TABLE.key(), "PAIR");
         conf.put(JdbcProcess.COLUMNS.key(), "KEY,VALUE");
         conf.put(JdbcProcess.JDBC_SUPPORT.key(), PairSupport.class.getName());
@@ -159,7 +159,7 @@ public class JdbcResourceManipulatorTest {
      */
     @Test
     public void cleanupSource_missing_table() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(JdbcProcess.TABLE.key(), "MISSING");
         conf.put(JdbcProcess.COLUMNS.key(), "KEY,VALUE");
         conf.put(JdbcProcess.JDBC_SUPPORT.key(), PairSupport.class.getName());
@@ -177,7 +177,7 @@ public class JdbcResourceManipulatorTest {
      */
     @Test
     public void cleanupDrain() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(JdbcProcess.TABLE.key(), "PAIR");
         conf.put(JdbcProcess.COLUMNS.key(), "KEY,VALUE");
         conf.put(JdbcProcess.JDBC_SUPPORT.key(), PairSupport.class.getName());
@@ -202,7 +202,7 @@ public class JdbcResourceManipulatorTest {
      */
     @Test
     public void cleanupDrain_with_custom_truncate() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(JdbcProcess.TABLE.key(), "PAIR");
         conf.put(JdbcProcess.COLUMNS.key(), "KEY,VALUE");
         conf.put(JdbcProcess.JDBC_SUPPORT.key(), PairSupport.class.getName());
@@ -228,7 +228,7 @@ public class JdbcResourceManipulatorTest {
      */
     @Test
     public void cleanupDrain_modified() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(JdbcProcess.TABLE.key(), "PAIR");
         conf.put(JdbcProcess.COLUMNS.key(), "KEY,VALUE");
         conf.put(JdbcProcess.JDBC_SUPPORT.key(), PairSupport.class.getName());
@@ -255,7 +255,7 @@ public class JdbcResourceManipulatorTest {
      */
     @Test
     public void cleanupDrain_missing_table() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(JdbcProcess.TABLE.key(), "__MISSING__");
         conf.put(JdbcProcess.COLUMNS.key(), "KEY,VALUE");
         conf.put(JdbcProcess.JDBC_SUPPORT.key(), PairSupport.class.getName());
@@ -274,7 +274,7 @@ public class JdbcResourceManipulatorTest {
      */
     @Test
     public void createSourceForSource() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(JdbcProcess.TABLE.key(), "PAIR");
         conf.put(JdbcProcess.COLUMNS.key(), "KEY,VALUE");
         conf.put(JdbcProcess.CONDITION.key(), "KEY > 2"); // should be ignored
@@ -290,12 +290,9 @@ public class JdbcResourceManipulatorTest {
 
         JdbcResourceManipulator manipulator = new JdbcResourceManipulator(profile(), new ParameterList());
 
-        SourceDriver<Pair> driver = manipulator.createSourceForSource(process);
-        try {
+        try (SourceDriver<Pair> driver = manipulator.createSourceForSource(process)) {
             driver.prepare();
             test(driver, "Hello3, world!", "Hello4, world!", "Hello5, world!");
-        } finally {
-            driver.close();
         }
     }
 
@@ -305,7 +302,7 @@ public class JdbcResourceManipulatorTest {
      */
     @Test
     public void createDrainForSource() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(JdbcProcess.TABLE.key(), "PAIR");
         conf.put(JdbcProcess.COLUMNS.key(), "KEY,VALUE");
         conf.put(JdbcProcess.CONDITION.key(), "KEY > 10"); // should be ignored
@@ -316,13 +313,10 @@ public class JdbcResourceManipulatorTest {
         ProcessScript<Pair> process = process(new DriverScript("jdbc", conf), dummy());
 
         JdbcResourceManipulator manipulator = new JdbcResourceManipulator(profile(), new ParameterList());
-        DrainDriver<Pair> driver = manipulator.createDrainForSource(process);
-        try {
+        try (DrainDriver<Pair> driver = manipulator.createDrainForSource(process)) {
             driver.prepare();
             driver.put(new Pair(2, "Hello2, world!"));
             driver.put(new Pair(3, "Hello3, world!"));
-        } finally {
-            driver.close();
         }
 
         test("Hello1, world!", "Hello2, world!", "Hello3, world!");
@@ -334,7 +328,7 @@ public class JdbcResourceManipulatorTest {
      */
     @Test
     public void createSourceForDrain() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(JdbcProcess.TABLE.key(), "PAIR");
         conf.put(JdbcProcess.COLUMNS.key(), "KEY,VALUE");
         conf.put(JdbcProcess.JDBC_SUPPORT.key(), PairSupport.class.getName());
@@ -349,12 +343,9 @@ public class JdbcResourceManipulatorTest {
 
         JdbcResourceManipulator manipulator = new JdbcResourceManipulator(profile(), new ParameterList());
 
-        SourceDriver<Pair> driver = manipulator.createSourceForDrain(process);
-        try {
+        try (SourceDriver<Pair> driver = manipulator.createSourceForDrain(process)) {
             driver.prepare();
             test(driver, "Hello1, world!", "Hello2, world!", "Hello3, world!");
-        } finally {
-            driver.close();
         }
     }
 
@@ -364,7 +355,7 @@ public class JdbcResourceManipulatorTest {
      */
     @Test
     public void createDrainForDrain() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(JdbcProcess.TABLE.key(), "PAIR");
         conf.put(JdbcProcess.COLUMNS.key(), "KEY,VALUE");
         conf.put(JdbcProcess.JDBC_SUPPORT.key(), PairSupport.class.getName());
@@ -376,26 +367,23 @@ public class JdbcResourceManipulatorTest {
         ProcessScript<Pair> process = process(dummy(), new DriverScript("jdbc", conf));
 
         JdbcResourceManipulator manipulator = new JdbcResourceManipulator(profile(), new ParameterList());
-        DrainDriver<Pair> driver = manipulator.createDrainForDrain(process);
-        try {
+        try (DrainDriver<Pair> driver = manipulator.createDrainForDrain(process)) {
             driver.prepare();
             driver.put(new Pair(2, "Hello2, world!"));
             driver.put(new Pair(3, "Hello3, world!"));
-        } finally {
-            driver.close();
         }
 
         test("Hello1, world!", "Hello2, world!", "Hello3, world!");
     }
 
     private void test(SourceDriver<Pair> source, String... expected) throws IOException {
-        List<Pair> results = new ArrayList<Pair>();
+        List<Pair> results = new ArrayList<>();
         while (source.next()) {
             Pair pair = source.get();
             results.add(new Pair(pair.key, pair.value));
         }
         Collections.sort(results);
-        List<String> actual = new ArrayList<String>();
+        List<String> actual = new ArrayList<>();
         for (Pair row : results) {
             actual.add(row.value);
         }
@@ -404,7 +392,7 @@ public class JdbcResourceManipulatorTest {
 
     private void test(String... expected) {
         List<List<Object>> results = h2.query("SELECT VALUE FROM PAIR ORDER BY KEY ASC");
-        List<String> actual = new ArrayList<String>();
+        List<String> actual = new ArrayList<>();
         for (List<Object> row : results) {
             actual.add((String) row.get(0));
         }
@@ -412,7 +400,7 @@ public class JdbcResourceManipulatorTest {
     }
 
     private ProcessScript<Pair> process(DriverScript source, DriverScript drain) {
-        return new ProcessScript<Pair>(
+        return new ProcessScript<>(
                 "testing",
                 "dummy",
                 Pair.class,

@@ -29,7 +29,7 @@ public class MockDataModelSink implements DataModelSink {
 
     private static final MockTextDefinition DEF = new MockTextDefinition();
 
-    private final List<String> buffer = new ArrayList<String>();
+    private final List<String> buffer = new ArrayList<>();
 
     /**
      * Returns the buffer of this sink.

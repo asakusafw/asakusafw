@@ -71,7 +71,7 @@ public final class FlowElement implements FlowElementAttributeProvider {
         assert attributeOverride != null;
         this.identity = identity;
         this.description = description;
-        this.inputPorts = new ArrayList<FlowElementInput>();
+        this.inputPorts = new ArrayList<>();
         for (FlowElementPortDescription port : description.getInputPorts()) {
             if (port.getDirection() != PortDirection.INPUT) {
                 throw new IllegalArgumentException(MessageFormat.format(
@@ -80,7 +80,7 @@ public final class FlowElement implements FlowElementAttributeProvider {
             }
             inputPorts.add(new FlowElementInput(port, this));
         }
-        this.outputPorts = new ArrayList<FlowElementOutput>();
+        this.outputPorts = new ArrayList<>();
         for (FlowElementPortDescription port : description.getOutputPorts()) {
             if (port.getDirection() != PortDirection.OUTPUT) {
                 throw new IllegalArgumentException(MessageFormat.format(
@@ -89,7 +89,7 @@ public final class FlowElement implements FlowElementAttributeProvider {
             }
             outputPorts.add(new FlowElementOutput(port, this));
         }
-        this.attributeOverride = new HashMap<Class<? extends FlowElementAttribute>, FlowElementAttribute>();
+        this.attributeOverride = new HashMap<>();
         for (FlowElementAttribute attribute : attributeOverride) {
             this.attributeOverride.put(attribute.getDeclaringClass(), attribute);
         }
@@ -190,7 +190,7 @@ public final class FlowElement implements FlowElementAttributeProvider {
      * @return the overwritten attributes
      */
     public Collection<FlowElementAttribute> getAttributeOverride() {
-        return new ArrayList<FlowElementAttribute>(attributeOverride.values());
+        return new ArrayList<>(attributeOverride.values());
     }
 
     @Override

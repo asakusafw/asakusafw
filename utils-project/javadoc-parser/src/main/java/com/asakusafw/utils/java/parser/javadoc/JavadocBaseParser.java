@@ -53,7 +53,7 @@ public abstract class JavadocBaseParser {
         if (blockParsers == null) {
             throw new IllegalArgumentException("blockParsers"); //$NON-NLS-1$
         }
-        this.blockParsers = Collections.unmodifiableList(new ArrayList<JavadocBlockParser>(blockParsers));
+        this.blockParsers = Collections.unmodifiableList(new ArrayList<>(blockParsers));
     }
 
     /**

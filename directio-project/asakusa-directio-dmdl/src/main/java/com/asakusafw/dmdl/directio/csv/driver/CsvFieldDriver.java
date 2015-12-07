@@ -64,9 +64,7 @@ public class CsvFieldDriver  extends PropertyAttributeDriver {
         environment.reportAll(AttributeUtil.reportInvalidElements(attribute, elements.values()));
         checkFieldType(environment, declaration, attribute, BasicTypeKind.values());
         if (CsvFieldDriver.checkConflict(environment, declaration, attribute)) {
-            declaration.putTrait(
-                    CsvFieldTrait.class,
-                    new CsvFieldTrait(attribute, Kind.VALUE, value));
+            declaration.putTrait(CsvFieldTrait.class, new CsvFieldTrait(attribute, Kind.VALUE, value));
         }
     }
 

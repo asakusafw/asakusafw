@@ -84,7 +84,7 @@ public final class TemporaryInputFormat<T> extends InputFormat<NullWritable, T> 
         if (inputList == null) {
             throw new IllegalArgumentException("inputList must not be null"); //$NON-NLS-1$
         }
-        List<Path> paths = new ArrayList<Path>();
+        List<Path> paths = new ArrayList<>();
         for (StageInput input : inputList) {
             paths.add(new Path(input.getPathString()));
         }
@@ -93,7 +93,7 @@ public final class TemporaryInputFormat<T> extends InputFormat<NullWritable, T> 
 
     private List<InputSplit> getSplits(Configuration configuration, List<Path> paths) throws IOException {
         long splitSize = configuration.getLong(KEY_DEFAULT_SPLIT_SIZE, DEFAULT_SPLIT_SIZE);
-        List<InputSplit> results = new ArrayList<InputSplit>();
+        List<InputSplit> results = new ArrayList<>();
         for (Path path : paths) {
             FileSystem fs = path.getFileSystem(configuration);
             FileStatus[] statuses = fs.globStatus(path);
@@ -129,7 +129,7 @@ public final class TemporaryInputFormat<T> extends InputFormat<NullWritable, T> 
         }
         long size = blockMap.getFileSize();
         long start = 0;
-        List<FileSplit> results = new ArrayList<FileSplit>();
+        List<FileSplit> results = new ArrayList<>();
         for (BlockInfo block : blockMap.getBlocks()) {
             assert start % TemporaryFile.BLOCK_SIZE == 0;
             long end = block.getEnd();
@@ -156,7 +156,7 @@ public final class TemporaryInputFormat<T> extends InputFormat<NullWritable, T> 
             return Collections.singletonList(split);
         }
         long threashold = (long) (splitSize * 1.2);
-        List<FileSplit> results = new ArrayList<FileSplit>();
+        List<FileSplit> results = new ArrayList<>();
         long current = start;
         while (current < end) {
             long next;
@@ -234,7 +234,7 @@ public final class TemporaryInputFormat<T> extends InputFormat<NullWritable, T> 
      */
     @SuppressWarnings("unchecked")
     static <T> RecordReader<NullWritable, T> createRecordReader() {
-        return (RecordReader<NullWritable, T>) new Reader<Writable>();
+        return (RecordReader<NullWritable, T>) new Reader<>();
     }
 
     private static final class Reader<T extends Writable> extends RecordReader<NullWritable, T> {
@@ -264,7 +264,7 @@ public final class TemporaryInputFormat<T> extends InputFormat<NullWritable, T> 
                     assert s.getStart() % TemporaryFile.BLOCK_SIZE == 0;
                     stream.seek(s.getStart());
                 }
-                this.input = (TemporaryFileInput<T>) new TemporaryFileInput<Writable>(stream, blocks);
+                this.input = (TemporaryFileInput<T>) new TemporaryFileInput<>(stream, blocks);
                 Class<?> aClass = context.getConfiguration().getClassByName(input.getDataTypeName());
                 this.value = (T) ReflectionUtils.newInstance(aClass, context.getConfiguration());
                 succeed = true;

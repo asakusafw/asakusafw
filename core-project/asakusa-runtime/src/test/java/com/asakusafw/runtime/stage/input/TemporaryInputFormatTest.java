@@ -161,8 +161,7 @@ public class TemporaryInputFormatTest {
     public void reader_simple() throws Exception {
         Configuration conf = new ConfigurationProvider().newInstance();
         FileStatus stat = write(conf, 1);
-        RecordReader<NullWritable, Text> reader = TemporaryInputFormat.createRecordReader();
-        try {
+        try (RecordReader<NullWritable, Text> reader = TemporaryInputFormat.createRecordReader()) {
             reader.initialize(
                     new FileSplit(stat.getPath(), 0, stat.getLen(), null),
                     JobCompatibility.newTaskAttemptContext(conf, id()));
@@ -172,8 +171,6 @@ public class TemporaryInputFormatTest {
 
             assertThat(reader.nextKeyValue(), is(false));
             assertThat((double) reader.getProgress(), closeTo(1.0, 0.01));
-        } finally {
-            reader.close();
         }
     }
 
@@ -183,14 +180,11 @@ public class TemporaryInputFormatTest {
 
     private FileStatus write(Configuration conf, int count) throws IOException {
         Path path = new Path(folder.newFile().toURI());
-        ModelOutput<Text> output = TemporaryStorage.openOutput(conf, Text.class, path);
-        try {
+        try (ModelOutput<Text> output = TemporaryStorage.openOutput(conf, Text.class, path)) {
             Text buffer = new Text("Hello, world!");
             for (int i = 0; i < count; i++) {
                 output.write(buffer);
             }
-        } finally {
-            output.close();
         }
         return path.getFileSystem(conf).getFileStatus(path);
     }
@@ -209,7 +203,7 @@ public class TemporaryInputFormatTest {
     }
 
     private BlockMap blocks(String path, long... blockSizes) {
-        List<BlockInfo> blockList = new ArrayList<BlockInfo>();
+        List<BlockInfo> blockList = new ArrayList<>();
         long totalSize = 0;
         for (long blockSize : blockSizes) {
             long next = totalSize + blockSize;

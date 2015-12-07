@@ -209,12 +209,12 @@ public class SimpleJobRunnerTest {
     }
 
     private Set<String> set(String... values) {
-        return new LinkedHashSet<String>(Arrays.asList(values));
+        return new LinkedHashSet<>(Arrays.asList(values));
     }
 
     private Map<String, String> map(String... keyValuePairs) {
         assert keyValuePairs.length % 2 == 0;
-        Map<String, String> results = new LinkedHashMap<String, String>();
+        Map<String, String> results = new LinkedHashMap<>();
         for (int i = 0; i < keyValuePairs.length; i += 2) {
             results.put(keyValuePairs[i + 0], keyValuePairs[i + 1]);
         }
@@ -222,7 +222,7 @@ public class SimpleJobRunnerTest {
     }
 
     private Set<String> trimHead(Set<String> values) {
-        Set<String> results = new LinkedHashSet<String>();
+        Set<String> results = new LinkedHashSet<>();
         for (String string : values) {
             int index = string.indexOf('\t');
             if (index >= 0) {
@@ -235,7 +235,7 @@ public class SimpleJobRunnerTest {
     }
 
     private Map<String, String> toMap(Set<String> values) {
-        Map<String, String> results = new LinkedHashMap<String, String>();
+        Map<String, String> results = new LinkedHashMap<>();
         for (String string : values) {
             int index = string.indexOf('\t');
             assertThat(string, index, greaterThanOrEqualTo(0));
@@ -247,13 +247,10 @@ public class SimpleJobRunnerTest {
     }
 
     private void write(File file, String... lines) throws IOException {
-        PrintWriter writer = new PrintWriter(file, "UTF-8");
-        try {
+        try (PrintWriter writer = new PrintWriter(file, "UTF-8")) {
             for (String line : lines) {
                 writer.println(line);
             }
-        } finally {
-            writer.close();
         }
     }
 
@@ -274,22 +271,19 @@ public class SimpleJobRunnerTest {
         if (filter.accept(file) == false) {
             return Collections.emptySet();
         }
-        Set<String> results = new LinkedHashSet<String>();
+        Set<String> results = new LinkedHashSet<>();
         if (file.isDirectory()) {
             for (File f : file.listFiles()) {
                 results.addAll(read(f, filter));
             }
         } else {
-            Scanner scanner = new Scanner(file, "UTF-8");
-            try {
+            try (Scanner scanner = new Scanner(file, "UTF-8")) {
                 while (scanner.hasNextLine()) {
                     String line = scanner.nextLine().trim();
                     if (line.isEmpty() == false) {
                         results.add(line);
                     }
                 }
-            } finally {
-                scanner.close();
             }
         }
         return results;

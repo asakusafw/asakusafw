@@ -101,7 +101,7 @@ public class ExecutionTask {
 
     private final Map<String, String> batchArguments;
 
-    private final Map<String, String> subprocessEnvironmentVaritables = new ConcurrentHashMap<String, String>();
+    private final Map<String, String> subprocessEnvironmentVaritables = new ConcurrentHashMap<>();
 
     private final Set<String> skipFlows = Collections.synchronizedSet(new HashSet<String>());
 
@@ -153,9 +153,9 @@ public class ExecutionTask {
         this.locks = locks;
         this.scheduler = scheduler;
         this.hadoopHandler = hadoopHandler;
-        this.commandHandlers = Collections.unmodifiableMap(new HashMap<String, CommandScriptHandler>(commandHandlers));
+        this.commandHandlers = Collections.unmodifiableMap(new HashMap<>(commandHandlers));
         this.script = script;
-        this.batchArguments = Collections.unmodifiableMap(new LinkedHashMap<String, String>(batchArguments));
+        this.batchArguments = Collections.unmodifiableMap(new LinkedHashMap<>(batchArguments));
         this.runtimeContext = RuntimeContext.get();
     }
 
@@ -218,7 +218,7 @@ public class ExecutionTask {
         HadoopScriptHandler hadoopHandler = profile.getHadoopHandler().newInstance();
 
         LOG.debug("Loading command execution features");
-        Map<String, CommandScriptHandler> commandHandlers = new HashMap<String, CommandScriptHandler>();
+        Map<String, CommandScriptHandler> commandHandlers = new HashMap<>();
         for (Map.Entry<String, ServiceProfile<CommandScriptHandler>> entry
                 : profile.getCommandHandlers().entrySet()) {
             commandHandlers.put(entry.getKey(), entry.getValue().newInstance());
@@ -237,7 +237,7 @@ public class ExecutionTask {
                 batchArguments);
 
         LOG.debug("Applying definitions");
-        Map<String, String> copyDefinitions = new TreeMap<String, String>(yaessArguments);
+        Map<String, String> copyDefinitions = new TreeMap<>(yaessArguments);
         consumeRuntimeContext(result, copyDefinitions, batch);
         consumeSkipFlows(result, copyDefinitions, batch);
         consumeSerializeFlows(result, copyDefinitions, batch);
@@ -399,12 +399,9 @@ public class ExecutionTask {
         YSLOG.info("I01000", batchId);
         long start = System.currentTimeMillis();
         try {
-            ExecutionLock lock = acquireExecutionLock(batchId);
-            try {
+            try (ExecutionLock lock = acquireExecutionLock(batchId)) {
                 BatchScheduler batchScheduler = new BatchScheduler(batchId, script, lock, executor);
                 batchScheduler.run();
-            } finally {
-                lock.close();
             }
             YSLOG.info("I01001", batchId);
         } catch (ExitCodeException e) {
@@ -493,13 +490,10 @@ public class ExecutionTask {
                     flowId,
                     executionId));
         }
-        ExecutionLock lock = acquireExecutionLock(batchId);
-        try {
+        try (ExecutionLock lock = acquireExecutionLock(batchId)) {
             lock.beginFlow(flowId, executionId);
             executeFlow(batchId, flow, executionId);
             lock.endFlow(flowId, executionId);
-        } finally {
-            lock.close();
         }
     }
 
@@ -556,13 +550,10 @@ public class ExecutionTask {
                     context.getExecutionId()));
         }
         Set<ExecutionScript> executions = flow.getScripts().get(context.getPhase());
-        ExecutionLock lock = acquireExecutionLock(context.getBatchId());
-        try {
+        try (ExecutionLock lock = acquireExecutionLock(context.getBatchId())) {
             lock.beginFlow(context.getFlowId(), context.getExecutionId());
             executePhase(context, executions);
             lock.endFlow(context.getFlowId(), context.getExecutionId());
-        } finally {
-            lock.close();
         }
     }
 
@@ -666,11 +657,8 @@ public class ExecutionTask {
                 handler = JobScheduler.STRICT;
                 break;
             }
-            PhaseMonitor monitor = obtainPhaseMonitor(context);
-            try {
+            try (PhaseMonitor monitor = obtainPhaseMonitor(context)) {
                 scheduler.execute(monitor, context, jobs, handler);
-            } finally {
-                monitor.close();
             }
             YSLOG.info("I03001",
                     context.getBatchId(), context.getFlowId(), context.getExecutionId(), context.getPhase());
@@ -696,7 +684,7 @@ public class ExecutionTask {
 
     private List<SetupJob> buildSetupJobs(ExecutionContext context) {
         assert context != null;
-        List<SetupJob> results = new ArrayList<SetupJob>();
+        List<SetupJob> results = new ArrayList<>();
         results.add(new SetupJob(hadoopHandler));
         for (CommandScriptHandler commandHandler : commandHandlers.values()) {
             results.add(new SetupJob(commandHandler));
@@ -706,7 +694,7 @@ public class ExecutionTask {
 
     private List<CleanupJob> buildCleanupJobs(ExecutionContext context) {
         assert context != null;
-        List<CleanupJob> results = new ArrayList<CleanupJob>();
+        List<CleanupJob> results = new ArrayList<>();
         results.add(new CleanupJob(hadoopHandler));
         for (CommandScriptHandler commandHandler : commandHandlers.values()) {
             results.add(new CleanupJob(commandHandler));
@@ -719,7 +707,7 @@ public class ExecutionTask {
             Set<ExecutionScript> executions) throws IOException, InterruptedException {
         assert context != null;
         assert executions != null;
-        List<ScriptJob<?>> results = new ArrayList<ScriptJob<?>>();
+        List<ScriptJob<?>> results = new ArrayList<>();
         for (ExecutionScript execution : executions) {
             switch (execution.getKind()) {
             case COMMAND: {
@@ -742,12 +730,12 @@ public class ExecutionTask {
                             exec.getId(),
                             profileName));
                 }
-                results.add(new ScriptJob<CommandScript>(exec.resolve(context, handler), handler));
+                results.add(new ScriptJob<>(exec.resolve(context, handler), handler));
                 break;
             }
             case HADOOP: {
                 HadoopScript exec = (HadoopScript) execution;
-                results.add(new ScriptJob<HadoopScript>(exec.resolve(context, hadoopHandler), hadoopHandler));
+                results.add(new ScriptJob<>(exec.resolve(context, hadoopHandler), hadoopHandler));
                 break;
             }
             default:
@@ -781,15 +769,15 @@ public class ExecutionTask {
             assert lock != null;
             assert executor != null;
             this.batchId = batchId;
-            this.flows = new LinkedList<FlowScript>(batchScript.getAllFlows());
+            this.flows = new LinkedList<>(batchScript.getAllFlows());
             this.lock = lock;
             this.executor = executor;
-            this.running = new HashMap<String, FlowScriptTask>();
-            this.blocking = new HashSet<String>();
+            this.running = new HashMap<>();
+            this.blocking = new HashSet<>();
             for (FlowScript flow : flows) {
                 blocking.add(flow.getId());
             }
-            this.doneQueue = new LinkedBlockingQueue<FlowScriptTask>();
+            this.doneQueue = new LinkedBlockingQueue<>();
         }
 
         public void run() throws InterruptedException, IOException {

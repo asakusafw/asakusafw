@@ -72,7 +72,7 @@ public class VolatilePackager
      */
     public VolatilePackager() {
         this.emitter = new MockEmitter();
-        this.contents = new TreeMap<String, byte[]>();
+        this.contents = new TreeMap<>();
     }
 
     /**
@@ -114,21 +114,15 @@ public class VolatilePackager
 
     @Override
     public void build(OutputStream output) throws IOException {
-        JarOutputStream jar = new JarOutputStream(output);
-        try {
+        try (JarOutputStream jar = new JarOutputStream(output)) {
             compile(jar);
-        } finally {
-            jar.close();
         }
     }
 
     @Override
     public void packageSources(OutputStream output) throws IOException {
-        JarOutputStream jar = new JarOutputStream(output);
-        try {
+        try (JarOutputStream jar = new JarOutputStream(output)) {
             collect(jar);
-        } finally {
-            jar.close();
         }
     }
 
@@ -151,38 +145,32 @@ public class VolatilePackager
         compile(compiler, jar);
     }
 
-    private void compile(
-            JavaCompiler compiler,
-            JarOutputStream jar) throws IOException {
+    private void compile(JavaCompiler compiler, JarOutputStream jar) throws IOException {
         assert compiler != null;
         assert jar != null;
-
-        DiagnosticCollector<JavaFileObject> diagnostics =
-            new DiagnosticCollector<JavaFileObject>();
-        VolatileClassOutputManager fileManager = new VolatileClassOutputManager(
+        DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
+        try (VolatileClassOutputManager fileManager = new VolatileClassOutputManager(
                 compiler.getStandardFileManager(
                         diagnostics,
                         Locale.getDefault(),
-                        CHARSET));
-        try {
+                        CHARSET))) {
             List<String> arguments = Lists.create();
             Collections.addAll(arguments, "-source", FilePackager.DEFAULT_JAVA_VERSION);
             Collections.addAll(arguments, "-target", FilePackager.DEFAULT_JAVA_VERSION);
             Collections.addAll(arguments, "-encoding", CHARSET.name());
 
             StringWriter errors = new StringWriter();
-            PrintWriter pw = new PrintWriter(errors);
-
-            CompilationTask task = compiler.getTask(
-                    pw,
-                    fileManager,
-                    diagnostics,
-                    arguments,
-                    Collections.<String>emptyList(),
-                    emitter.getEmitted());
-
-            Boolean successed = task.call();
-            pw.close();
+            Boolean successed;
+            try (PrintWriter pw = new PrintWriter(errors)) {
+                CompilationTask task = compiler.getTask(
+                        pw,
+                        fileManager,
+                        diagnostics,
+                        arguments,
+                        Collections.<String>emptyList(),
+                        emitter.getEmitted());
+                successed = task.call();
+            }
             for (Diagnostic<?> diagnostic : diagnostics.getDiagnostics()) {
                 switch (diagnostic.getKind()) {
                 case ERROR:
@@ -213,8 +201,6 @@ public class VolatilePackager
             for (Map.Entry<String, byte[]> entry : contents.entrySet()) {
                 addEntry(jar, entry.getKey(), entry.getValue());
             }
-        } finally {
-            fileManager.close();
         }
     }
 
@@ -236,8 +222,7 @@ public class VolatilePackager
         }
         JarEntry entry = new JarEntry(path);
         jar.putNextEntry(entry);
-        InputStream input = file.openInputStream();
-        try {
+        try (InputStream input = file.openInputStream()) {
             byte[] buffer = new byte[1024];
             while (true) {
                 int read = input.read(buffer);
@@ -247,8 +232,6 @@ public class VolatilePackager
                 jar.write(buffer, 0, read);
             }
             jar.closeEntry();
-        } finally {
-            input.close();
         }
     }
 }

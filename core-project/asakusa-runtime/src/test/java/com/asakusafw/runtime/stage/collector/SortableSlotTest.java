@@ -61,7 +61,7 @@ public class SortableSlotTest {
      */
     @Test
     public void addByte() throws Exception {
-        Map<String, SortableSlot> slots = new HashMap<String, SortableSlot>();
+        Map<String, SortableSlot> slots = new HashMap<>();
         slots.put("min", createWithByte(Byte.MIN_VALUE));
         slots.put("min-half", createWithByte(Byte.MIN_VALUE / 2));
         slots.put("-1", createWithByte(-1));
@@ -79,7 +79,7 @@ public class SortableSlotTest {
         slots.put("0,1", createWithByte(0));
         slots.get("0,1").addByte(-1);
 
-        List<SortableSlot> copy = new ArrayList<SortableSlot>(slots.values());
+        List<SortableSlot> copy = new ArrayList<>(slots.values());
         Collections.sort(copy);
 
         assertThat(copy.get(0), is(slots.get("min")));
@@ -128,7 +128,7 @@ public class SortableSlotTest {
      */
     @Test
     public void add() throws Exception {
-        Map<String, SortableSlot> slots = new HashMap<String, SortableSlot>();
+        Map<String, SortableSlot> slots = new HashMap<>();
         slots.put("0", createWithInt(0));
         slots.put("-1", createWithInt(-1));
         slots.put("1", createWithInt(1));
@@ -138,7 +138,7 @@ public class SortableSlotTest {
         slots.put("0.1", createWithInt(0));
         slots.get("0.1").add(new IntOption(1));
 
-        List<SortableSlot> copy = new ArrayList<SortableSlot>(slots.values());
+        List<SortableSlot> copy = new ArrayList<>(slots.values());
         Collections.sort(copy);
 
         assertThat(copy.get(0), is(slots.get("null")));
@@ -197,7 +197,7 @@ public class SortableSlotTest {
     @SuppressWarnings("unchecked")
     @Test
     public void comparator() throws Exception {
-        LinkedList<SortableSlot> slots = new LinkedList<SortableSlot>();
+        LinkedList<SortableSlot> slots = new LinkedList<>();
         slots.add(createWithByte(Byte.MIN_VALUE));
         slots.add(createWithByte(Byte.MIN_VALUE / 2));
         slots.add(createWithByte(-1));
@@ -212,7 +212,7 @@ public class SortableSlotTest {
         slots.add(createWithByte(0));
         slots.getLast().addByte(1);
 
-        LinkedList<SortableSlot> copy = new LinkedList<SortableSlot>(slots);
+        LinkedList<SortableSlot> copy = new LinkedList<>(slots);
         Collections.sort(slots, new SortableSlot.Comparator());
         Collections.sort(copy, new BinaryComparator(new SortableSlot.Comparator()));
 
@@ -229,7 +229,7 @@ public class SortableSlotTest {
         final int records = 50000;
 
         SortableSlot.Partitioner partitioner = new SortableSlot.Partitioner();
-        List<List<SortableSlot>> slotsParts = new ArrayList<List<SortableSlot>>();
+        List<List<SortableSlot>> slotsParts = new ArrayList<>();
         for (int i = 0; i < partitions; i++) {
             slotsParts.add(new ArrayList<SortableSlot>());
         }

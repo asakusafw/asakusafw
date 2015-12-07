@@ -100,8 +100,8 @@ public class ExecutionContext {
         this.flowId = flowId;
         this.executionId = executionId;
         this.phase = phase;
-        this.arguments = Collections.unmodifiableMap(new HashMap<String, String>(arguments));
-        this.environmentVariables = Collections.unmodifiableMap(new HashMap<String, String>(environmentVariables));
+        this.arguments = Collections.unmodifiableMap(new HashMap<>(arguments));
+        this.environmentVariables = Collections.unmodifiableMap(new HashMap<>(environmentVariables));
     }
 
     /**

@@ -35,7 +35,7 @@ public class MockInputStreamProvider extends InputStreamProvider {
      * @param provider the provider
      */
     public MockInputStreamProvider(StreamProvider<? extends InputStream> provider) {
-        List<StreamProvider<? extends InputStream>> list = new ArrayList<StreamProvider<? extends InputStream>>();
+        List<StreamProvider<? extends InputStream>> list = new ArrayList<>();
         list.add(provider);
         iterator = list.iterator();
     }

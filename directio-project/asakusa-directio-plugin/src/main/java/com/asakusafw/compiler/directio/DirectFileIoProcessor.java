@@ -258,13 +258,13 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
         assert inputs != null;
         assert outputs != null;
         boolean valid = true;
-        TreeMap<String, InputDescription> inputPaths = new TreeMap<String, InputDescription>();
+        TreeMap<String, InputDescription> inputPaths = new TreeMap<>();
         for (InputDescription input : inputs) {
             DirectFileInputDescription desc = extract(input);
             String path = normalizePath(desc.getBasePath());
             inputPaths.put(path, input);
         }
-        TreeMap<String, OutputDescription> outputPaths = new TreeMap<String, OutputDescription>();
+        TreeMap<String, OutputDescription> outputPaths = new TreeMap<>();
         for (OutputDescription output : outputs) {
             DirectFileOutputDescription desc = extract(output);
             String path = normalizePath(desc.getBasePath());

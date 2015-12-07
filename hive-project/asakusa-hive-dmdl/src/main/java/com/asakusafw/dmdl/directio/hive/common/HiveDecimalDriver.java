@@ -63,10 +63,7 @@ public class HiveDecimalDriver extends PropertyAttributeDriver {
     }
 
     @Override
-    public void process(
-            DmdlSemantics environment,
-            PropertyDeclaration declaration,
-            AstAttribute attribute) {
+    public void process(DmdlSemantics environment, PropertyDeclaration declaration, AstAttribute attribute) {
         if (Util.checkProperty(environment, declaration, attribute, HiveFieldTrait.TypeKind.DECIMAL) == false) {
             return;
         }
