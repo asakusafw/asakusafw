@@ -287,8 +287,8 @@
           <configuration>
             <fork>true</fork>
             <encoding>UTF-8</encoding>
-            <source>1.6</source>
-            <target>1.6</target>
+            <source>1.7</source>
+            <target>1.7</target>
             <proc>none</proc>
           </configuration>
         </plugin>
@@ -336,7 +336,7 @@
             <downloadSources>true</downloadSources>
             <downloadJavadocs>false</downloadJavadocs>
             <classpathContainers>
-              <classpathContainer>org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6</classpathContainer>
+              <classpathContainer>org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7</classpathContainer>
             </classpathContainers>
             <additionalConfig>
               <file>

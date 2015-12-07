@@ -73,8 +73,8 @@ public class VolatileCompiler implements Closeable {
         this.targets = new ArrayList<JavaFileObject>();
         this.processors = new ArrayList<Processor>();
 
-        Collections.addAll(arguments, "-source", "1.6"); //$NON-NLS-1$ //$NON-NLS-2$
-        Collections.addAll(arguments, "-target", "1.6"); //$NON-NLS-1$ //$NON-NLS-2$
+        Collections.addAll(arguments, "-source", "1.7"); //$NON-NLS-1$ //$NON-NLS-2$
+        Collections.addAll(arguments, "-target", "1.7"); //$NON-NLS-1$ //$NON-NLS-2$
         Collections.addAll(arguments, "-encoding", "UTF-8"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
@@ -125,8 +125,8 @@ public class VolatileCompiler implements Closeable {
      * Adds compiler arguments.
      * Initially the compiler has the following arguments:
      * <ul>
-     * <li> {@code -source 1.6} </li>
-     * <li> {@code -target 1.6} </li>
+     * <li> {@code -source 1.7} </li>
+     * <li> {@code -target 1.7} </li>
      * <li> {@code -encoding UTF-8} </li>
      * </ul>
      * @param compilerArguments the compiler arguments to add

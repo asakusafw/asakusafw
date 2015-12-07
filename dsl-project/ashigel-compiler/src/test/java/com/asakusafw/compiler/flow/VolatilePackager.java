@@ -43,6 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.compiler.batch.batch.MockEmitter;
+import com.asakusafw.compiler.flow.packager.FilePackager;
 import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.jsr199.testing.VolatileClassFile;
 import com.asakusafw.utils.java.jsr199.testing.VolatileClassOutputManager;
@@ -165,8 +166,8 @@ public class VolatilePackager
                         CHARSET));
         try {
             List<String> arguments = Lists.create();
-            Collections.addAll(arguments, "-source", "1.6");
-            Collections.addAll(arguments, "-target", "1.6");
+            Collections.addAll(arguments, "-source", FilePackager.DEFAULT_JAVA_VERSION);
+            Collections.addAll(arguments, "-target", FilePackager.DEFAULT_JAVA_VERSION);
             Collections.addAll(arguments, "-encoding", CHARSET.name());
 
             StringWriter errors = new StringWriter();
