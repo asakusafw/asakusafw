@@ -290,7 +290,7 @@ public abstract class ProcessHadoopScriptHandler extends ExecutionScriptHandlerB
             ExecutionContext context,
             ExecutionScript script) throws InterruptedException, IOException {
         assert script != null;
-        Map<String, String> env = new HashMap<String, String>();
+        Map<String, String> env = new HashMap<>();
         env.putAll(getEnvironmentVariables(context, script));
         env.putAll(context.getEnvironmentVariables());
         env.putAll(script.getEnvironmentVariables());
@@ -302,7 +302,7 @@ public abstract class ProcessHadoopScriptHandler extends ExecutionScriptHandlerB
             HadoopScript script) throws IOException, InterruptedException {
         assert context != null;
         assert script != null;
-        List<String> command = new ArrayList<String>();
+        List<String> command = new ArrayList<>();
         command.add(getCommand(context, PATH_EXECUTE, script));
         command.add(script.getClassName());
         command.add(context.getBatchId());
@@ -326,7 +326,7 @@ public abstract class ProcessHadoopScriptHandler extends ExecutionScriptHandlerB
             HadoopScript script) throws InterruptedException, IOException {
         assert context != null;
         assert script != null;
-        Map<String, String> props = new TreeMap<String, String>();
+        Map<String, String> props = new TreeMap<>();
         props.putAll(getProperties(context, script));
         props.putAll(script.getHadoopProperties());
         props.put(HadoopScriptUtil.PROP_TRACKING_ID, Job.computeTrackingId(context, script));

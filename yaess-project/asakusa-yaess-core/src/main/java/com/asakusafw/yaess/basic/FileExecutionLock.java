@@ -82,7 +82,7 @@ class FileExecutionLock extends ExecutionLock {
         this.lockScope = lockScope;
         this.batchId = batchId;
         this.directory = directory;
-        this.flowLocks = new HashMap<String, LockObject>();
+        this.flowLocks = new HashMap<>();
         try {
             this.batchLock = acquireForBatch();
         } catch (IOException e) {

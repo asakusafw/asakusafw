@@ -136,7 +136,7 @@ public class YaessWorkflowProcessorTest {
     }
 
     private Matcher<Set<ExecutionScript>> hasCommands(String... executables) {
-        final Set<String> expected = new TreeSet<String>();
+        final Set<String> expected = new TreeSet<>();
         Collections.addAll(expected, executables);
         return new BaseMatcher<Set<ExecutionScript>>() {
             @Override
@@ -146,7 +146,7 @@ public class YaessWorkflowProcessorTest {
                 }
                 @SuppressWarnings("unchecked")
                 Set<ExecutionScript> scripts = (Set<ExecutionScript>) target;
-                Set<String> actual = new TreeSet<String>();
+                Set<String> actual = new TreeSet<>();
                 for (ExecutionScript ex : scripts) {
                     if ((ex instanceof CommandScript) == false) {
                         return false;
@@ -165,7 +165,7 @@ public class YaessWorkflowProcessorTest {
     }
 
     private Set<String> set(String... values) {
-        return new TreeSet<String>(Arrays.asList(values));
+        return new TreeSet<>(Arrays.asList(values));
     }
 
     private Properties compile(Class<? extends BatchDescription> batchClass) throws IOException {
@@ -181,13 +181,10 @@ public class YaessWorkflowProcessorTest {
                 new FlowCompilerOptions());
         File script = YaessWorkflowProcessor.getScriptOutput(output);
         assertThat(script.isFile(), is(true));
-        FileInputStream in = new FileInputStream(script);
-        try {
+        try (FileInputStream in = new FileInputStream(script)) {
             Properties result = new Properties();
             result.load(in);
             return result;
-        } finally {
-            in.close();
         }
     }
 }

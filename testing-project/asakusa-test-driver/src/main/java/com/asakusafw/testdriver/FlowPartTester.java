@@ -49,8 +49,8 @@ public class FlowPartTester extends TesterBase {
 
     static final Logger LOG = LoggerFactory.getLogger(FlowPartTester.class);
 
-    private final List<FlowPartDriverInput<?>> inputs = new LinkedList<FlowPartDriverInput<?>>();
-    private final List<FlowPartDriverOutput<?>> outputs = new LinkedList<FlowPartDriverOutput<?>>();
+    private final List<FlowPartDriverInput<?>> inputs = new LinkedList<>();
+    private final List<FlowPartDriverOutput<?>> outputs = new LinkedList<>();
 
     private final FlowDescriptionDriver descDriver = new FlowDescriptionDriver();
 
@@ -72,7 +72,7 @@ public class FlowPartTester extends TesterBase {
      * @return object for configuring the target input
      */
     public <T> FlowPartDriverInput<T> input(String name, Class<T> modelType) {
-        FlowPartDriverInput<T> input = new FlowPartDriverInput<T>(driverContext, descDriver, name, modelType);
+        FlowPartDriverInput<T> input = new FlowPartDriverInput<>(driverContext, descDriver, name, modelType);
         inputs.add(input);
         return input;
     }
@@ -87,7 +87,7 @@ public class FlowPartTester extends TesterBase {
      * @return object for configuring the target output
      */
     public <T> FlowPartDriverOutput<T> output(String name, Class<T> modelType) {
-        FlowPartDriverOutput<T> output = new FlowPartDriverOutput<T>(driverContext, descDriver, name, modelType);
+        FlowPartDriverOutput<T> output = new FlowPartDriverOutput<>(driverContext, descDriver, name, modelType);
         outputs.add(output);
         return output;
     }

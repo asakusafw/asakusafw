@@ -59,7 +59,7 @@ public class ParallelJobSchedulerTest {
     public void simple() throws Exception {
         JobScheduler instance = create("parallel.default", "1");
 
-        List<Mock> jobs = new ArrayList<Mock>();
+        List<Mock> jobs = new ArrayList<>();
         jobs.add(new Mock("a"));
         instance.execute(PhaseMonitor.NULL, CONTEXT, jobs, JobScheduler.STRICT);
         Set<String> rest = collectRest(jobs);
@@ -74,7 +74,7 @@ public class ParallelJobSchedulerTest {
     public void multiple() throws Exception {
         JobScheduler instance = create("parallel.default", "1");
 
-        List<Mock> jobs = new ArrayList<Mock>();
+        List<Mock> jobs = new ArrayList<>();
         jobs.add(new Mock("a"));
         jobs.add(new Mock("b"));
         jobs.add(new Mock("c"));
@@ -92,7 +92,7 @@ public class ParallelJobSchedulerTest {
         JobScheduler instance = create("parallel.default", "1");
 
         AtomicInteger group = new AtomicInteger();
-        List<Mock> jobs = new ArrayList<Mock>();
+        List<Mock> jobs = new ArrayList<>();
         jobs.add(new Mock(group, "b", "a"));
         jobs.add(new Mock(group, "d", "b", "c"));
         jobs.add(new Mock(group, "a"));
@@ -118,7 +118,7 @@ public class ParallelJobSchedulerTest {
                 "parallel.para", "2");
 
         final CyclicBarrier barrier = new CyclicBarrier(3);
-        List<Mock> jobs = new ArrayList<Mock>();
+        List<Mock> jobs = new ArrayList<>();
         jobs.add(new Mock("a0") {
             @Override
             protected void hook() throws InterruptedException, IOException {
@@ -163,7 +163,7 @@ public class ParallelJobSchedulerTest {
         JobScheduler instance = create("parallel.default", "1");
 
         AtomicInteger group = new AtomicInteger();
-        List<Mock> jobs = new ArrayList<Mock>();
+        List<Mock> jobs = new ArrayList<>();
         jobs.add(new Mock(group, "a"));
         jobs.add(new Mock(group, "b", "a", "d"));
         jobs.add(new Mock(group, "c", "b"));
@@ -191,7 +191,7 @@ public class ParallelJobSchedulerTest {
     public void fail_job() throws Exception {
         JobScheduler instance = create("parallel.default", "1");
 
-        List<Mock> jobs = new ArrayList<Mock>();
+        List<Mock> jobs = new ArrayList<>();
         jobs.add(new Mock("a") {
             @Override
             protected void hook() throws IOException {
@@ -216,7 +216,7 @@ public class ParallelJobSchedulerTest {
     public void fail_besteffort() throws Exception {
         JobScheduler instance = create("parallel.default", "1");
 
-        List<Mock> jobs = new ArrayList<Mock>();
+        List<Mock> jobs = new ArrayList<>();
         jobs.add(new Mock("a") {
             @Override
             protected void hook() throws IOException {
@@ -243,7 +243,7 @@ public class ParallelJobSchedulerTest {
     public void fail_stuck() throws Exception {
         JobScheduler instance = create("parallel.default", "1");
 
-        List<Mock> jobs = new ArrayList<Mock>();
+        List<Mock> jobs = new ArrayList<>();
         jobs.add(new Mock("a") {
             @Override
             protected void hook() throws IOException {
@@ -309,7 +309,7 @@ public class ParallelJobSchedulerTest {
     }
 
     private Set<String> collectRest(List<Mock> jobs) {
-        Set<String> results = new HashSet<String>();
+        Set<String> results = new HashSet<>();
         for (Mock mock : jobs) {
             if (mock.executed == false) {
                 results.add(mock.id);
@@ -325,7 +325,7 @@ public class ParallelJobSchedulerTest {
      */
     protected Map<String, String> map(String... keyValuePairs) {
         assert keyValuePairs.length % 2 == 0;
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         for (int i = 0; i < keyValuePairs.length - 1; i += 2) {
             conf.put(keyValuePairs[i], keyValuePairs[i + 1]);
         }
@@ -355,7 +355,7 @@ public class ParallelJobSchedulerTest {
             assert blockers != null;
             this.counter = c;
             this.id = id;
-            this.blockers = new HashSet<String>(Arrays.asList(blockers));
+            this.blockers = new HashSet<>(Arrays.asList(blockers));
         }
 
         Mock resource(String rid) {

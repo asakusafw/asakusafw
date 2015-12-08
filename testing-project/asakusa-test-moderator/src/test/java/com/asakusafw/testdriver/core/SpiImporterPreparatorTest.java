@@ -54,10 +54,9 @@ public class SpiImporterPreparatorTest extends SpiTestRoot {
         Desc desc = MockImporterPreparator.create();
         ClassLoader cl = register(ImporterPreparator.class, MockImporterPreparator.class);
         SpiImporterPreparator target = new SpiImporterPreparator(cl);
-        ModelOutput<? super String> source = target.createOutput(ValueDefinition.of(String.class), desc, EMPTY);
-        source.write("Hello, world!");
-        source.close();
-
+        try (ModelOutput<? super String> source = target.createOutput(ValueDefinition.of(String.class), desc, EMPTY)) {
+            source.write("Hello, world!");
+        }
         assertThat(desc.lines, is(Arrays.asList("Hello, world!")));
     }
 

@@ -48,7 +48,7 @@ public class SummarizeYaessLogOutput implements YaessLogOutput {
 
     @Override
     public Map<String, String> getOptionsInformation() {
-        Map<String, String> results = new LinkedHashMap<String, String>();
+        Map<String, String> results = new LinkedHashMap<>();
         results.put(KEY_FILE, "output file");
         results.put(KEY_CODE, "target log code pattern in regex");
         results.put(KEY_ENCODING, "output file encoding (optional)");

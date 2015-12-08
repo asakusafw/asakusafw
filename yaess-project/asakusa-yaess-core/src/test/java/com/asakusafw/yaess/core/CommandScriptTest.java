@@ -111,12 +111,12 @@ public class CommandScriptTest {
     }
 
     private Set<String> set(String... values) {
-        return new TreeSet<String>(Arrays.asList(values));
+        return new TreeSet<>(Arrays.asList(values));
     }
 
     private Map<String, String> map(String... keyValuePairs) {
         assert keyValuePairs.length % 2 == 0;
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         for (int i = 0; i < keyValuePairs.length - 1; i += 2) {
             conf.put(keyValuePairs[i], keyValuePairs[i + 1]);
         }

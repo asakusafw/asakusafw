@@ -181,7 +181,7 @@ public class BasicYaessLogSource implements Source<YaessLogRecord> {
         KEY_TRACKING_ID,
     };
     private Map<String, String> extractFields(String line) {
-        Map<String, String> results = new HashMap<String, String>();
+        Map<String, String> results = new HashMap<>();
         for (String key : KEY_FIELDS) {
             int index = line.indexOf(key + '=');
             if (index >= 0) {

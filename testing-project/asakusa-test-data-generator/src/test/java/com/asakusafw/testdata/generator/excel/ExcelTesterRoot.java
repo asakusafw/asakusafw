@@ -154,8 +154,7 @@ public class ExcelTesterRoot {
      * @throws IOException if failed
      */
     protected Workbook openWorkbook(File file) throws IOException {
-        InputStream in = new FileInputStream(file);
-        try {
+        try (InputStream in = new FileInputStream(file)) {
             if (file.getName().endsWith(".xls")) {
                 return new HSSFWorkbook(in);
             } else if (file.getName().endsWith(".xlsx")) {
@@ -163,8 +162,6 @@ public class ExcelTesterRoot {
             } else {
                 throw new IOException(file.getPath());
             }
-        } finally {
-            in.close();
         }
     }
 }

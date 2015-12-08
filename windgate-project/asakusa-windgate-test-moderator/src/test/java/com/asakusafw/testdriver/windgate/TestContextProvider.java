@@ -51,7 +51,7 @@ public class TestContextProvider extends ExternalResource {
 
     private ClassLoader classLoader;
 
-    private final List<PluginClassLoader> loaders = new ArrayList<PluginClassLoader>();
+    private final List<PluginClassLoader> loaders = new ArrayList<>();
 
     @Override
     protected void before() throws Throwable {
@@ -100,18 +100,12 @@ public class TestContextProvider extends ExternalResource {
      */
     public Properties getTemplate() {
         Properties p = new Properties();
-        InputStream in = TestContextProvider.class.getResourceAsStream("windgate-template.properties");
-        assertThat(in, is(notNullValue()));
-        try {
+
+        try (InputStream in = TestContextProvider.class.getResourceAsStream("windgate-template.properties")) {
+            assertThat(in, is(notNullValue()));
             p.load(in);
         } catch (IOException e) {
             throw new AssertionError(e);
-        } finally {
-            try {
-                in.close();
-            } catch (IOException e) {
-                throw new AssertionError(e);
-            }
         }
         return p;
     }
@@ -122,16 +116,11 @@ public class TestContextProvider extends ExternalResource {
      * @param properties profile contents
      */
     public void put(String profileName, Properties properties) {
-        try {
-            File file = new File(classes, MessageFormat.format(
-                    WindGateTestHelper.TESTING_PROFILE_PATH,
-                    profileName));
-            FileOutputStream out = new FileOutputStream(file);
-            try {
-                properties.store(out, "testing");
-            } finally {
-                out.close();
-            }
+        File file = new File(classes, MessageFormat.format(
+                WindGateTestHelper.TESTING_PROFILE_PATH,
+                profileName));
+        try (FileOutputStream out = new FileOutputStream(file)) {
+            properties.store(out, "testing");
         } catch (IOException e) {
             throw new AssertionError(e);
         }
@@ -145,25 +134,16 @@ public class TestContextProvider extends ExternalResource {
     public void put(String jarName, URL source) {
         File plugins = new File(frameworkHome, WindGateTestHelper.PRODUCTION_PLUGIN_DIRECTORY);
         plugins.mkdirs();
-        try {
-            File file = new File(plugins, jarName);
-            FileOutputStream out = new FileOutputStream(file);
-            try {
-                InputStream in = source.openStream();
-                try {
-                    byte[] buf = new byte[256];
-                    while (true) {
-                        int read = in.read(buf);
-                        if (read < 0) {
-                            break;
-                        }
-                        out.write(buf, 0, read);
-                    }
-                } finally {
-                    in.close();
+        File file = new File(plugins, jarName);
+        try (FileOutputStream out = new FileOutputStream(file);
+                InputStream in = source.openStream();){
+            byte[] buf = new byte[256];
+            while (true) {
+                int read = in.read(buf);
+                if (read < 0) {
+                    break;
                 }
-            } finally {
-                out.close();
+                out.write(buf, 0, read);
             }
         } catch (IOException e) {
             throw new AssertionError(e);
@@ -180,7 +160,7 @@ public class TestContextProvider extends ExternalResource {
 
         public MockTestContext(ClassLoader classLoader, File frameworkHome) {
             this.classLoader = classLoader;
-            this.envp = new HashMap<String, String>();
+            this.envp = new HashMap<>();
             envp.putAll(DELEGATE.getEnvironmentVariables());
             envp.put(WindGateTestHelper.ENV_FRAMEWORK_HOME, frameworkHome.getAbsolutePath());
         }

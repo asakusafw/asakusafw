@@ -46,8 +46,7 @@ public final class CoreCompatibility {
     static final FrameworkVersion TARGET;
     static {
         FrameworkVersion detected = FrameworkVersion.DONT_CARE;
-        try {
-            InputStream input = CoreCompatibility.class.getClassLoader().getResourceAsStream(PATH_HADOOP_INFO);
+        try (InputStream input = CoreCompatibility.class.getClassLoader().getResourceAsStream(PATH_HADOOP_INFO)) {
             if (input == null) {
                 throw new FileNotFoundException(PATH_HADOOP_INFO);
             }

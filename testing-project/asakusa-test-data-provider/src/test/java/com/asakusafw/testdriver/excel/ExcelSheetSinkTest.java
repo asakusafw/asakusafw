@@ -50,7 +50,7 @@ import com.asakusafw.testdriver.model.SimpleDataModelDefinition;
  */
 public class ExcelSheetSinkTest {
 
-    static final DataModelDefinition<Simple> SIMPLE = new SimpleDataModelDefinition<Simple>(Simple.class);
+    static final DataModelDefinition<Simple> SIMPLE = new SimpleDataModelDefinition<>(Simple.class);
 
     /**
      * Temporary folder.
@@ -89,11 +89,8 @@ public class ExcelSheetSinkTest {
         assertThat(file.isFile(), is(false));
 
         ExcelSheetSinkFactory factory = new ExcelSheetSinkFactory(file);
-        DataModelSink sink = factory.createSink(SIMPLE, new TestContext.Empty());
-        try {
+        try (DataModelSink sink = factory.createSink(SIMPLE, new TestContext.Empty())) {
             sink.put(SIMPLE.toReflection(new Simple()));
-        } finally {
-            sink.close();
         }
         assertThat(file.isFile(), is(true));
     }
@@ -258,7 +255,7 @@ public class ExcelSheetSinkTest {
     @Test
     public void many_columns() throws Exception {
         Object[] value = new Object[256];
-        Map<PropertyName, PropertyType> map = new TreeMap<PropertyName, PropertyType>();
+        Map<PropertyName, PropertyType> map = new TreeMap<>();
         for (int i = 0; i < value.length; i++) {
             map.put(PropertyName.newInstance(String.format("p%04x", i)), PropertyType.INT);
             value[i] = i;
@@ -267,15 +264,11 @@ public class ExcelSheetSinkTest {
 
         File file = folder.newFile("temp.xls");
         ExcelSheetSinkFactory factory = new ExcelSheetSinkFactory(file);
-        DataModelSink sink = factory.createSink(def, new TestContext.Empty());
-        try {
+        try (DataModelSink sink = factory.createSink(def, new TestContext.Empty())) {
             sink.put(def.toReflection(value));
-        } finally {
-            sink.close();
         }
 
-        InputStream in = new FileInputStream(file);
-        try {
+        try (InputStream in = new FileInputStream(file)) {
             Workbook workbook = Util.openWorkbookFor(file.getPath(), in);
             Sheet sheet = workbook.getSheetAt(0);
             Row title = sheet.getRow(0);
@@ -285,8 +278,6 @@ public class ExcelSheetSinkTest {
             for (int i = 0; i < title.getLastCellNum(); i++) {
                 assertThat(content.getCell(i).getNumericCellValue(), is((double) (Integer) value[i]));
             }
-        } finally {
-            in.close();
         }
     }
 
@@ -298,13 +289,10 @@ public class ExcelSheetSinkTest {
         Set<DataModelReflection> expected = collect(open(file));
         File temp = folder.newFile("temp" + extension);
         ExcelSheetSinkFactory factory = new ExcelSheetSinkFactory(temp);
-        DataModelSink sink = factory.createSink(SIMPLE, new TestContext.Empty());
-        try {
+        try (DataModelSink sink = factory.createSink(SIMPLE, new TestContext.Empty())) {
             for (DataModelReflection model : expected) {
                 sink.put(model);
             }
-        } finally {
-            sink.close();
         }
 
         Set<DataModelReflection> actual = collect(open(temp.toURI().toURL()));
@@ -312,7 +300,7 @@ public class ExcelSheetSinkTest {
     }
 
     private Set<DataModelReflection> collect(ExcelSheetDataModelSource source) throws IOException {
-        Set<DataModelReflection> results = new HashSet<DataModelReflection>();
+        Set<DataModelReflection> results = new HashSet<>();
         try {
             while (true) {
                 DataModelReflection next = source.next();

@@ -91,21 +91,21 @@ public class CsvEmitterTest {
     private void assertRestorable(ValueOption<?> option) {
         CsvConfiguration conf = createConfiguration();
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        CsvEmitter emitter = new CsvEmitter(buffer, testName.getMethodName(), conf);
-        try {
+        try (CsvEmitter emitter = new CsvEmitter(buffer, testName.getMethodName(), conf)) {
             emit(emitter, option);
             emitter.endRecord();
             emitter.close();
 
-            CsvParser parser = new CsvParser(
-                    new ByteArrayInputStream(buffer.toByteArray()), testName.getMethodName(), conf);
-            assertThat(parser.next(), is(true));
-            ValueOption<?> copy = option.getClass().newInstance();
-            fill(parser, copy);
-            parser.endRecord();
-            assertThat(parser.next(), is(false));
+            try (CsvParser parser = new CsvParser(
+                    new ByteArrayInputStream(buffer.toByteArray()), testName.getMethodName(), conf)) {
+                assertThat(parser.next(), is(true));
+                ValueOption<?> copy = option.getClass().newInstance();
+                fill(parser, copy);
+                parser.endRecord();
+                assertThat(parser.next(), is(false));
 
-            assertThat(copy, is((Object) option));
+                assertThat(copy, is((Object) option));
+            }
         } catch (Exception e) {
             throw new AssertionError(e);
         }
@@ -358,22 +358,22 @@ public class CsvEmitterTest {
      */
     @Test
     public void multi_cells() throws Exception {
-        CsvEmitter emitter = createEmitter();
-        emitter.emit(new StringOption("a"));
-        emitter.emit(new StringOption("b"));
-        emitter.emit(new StringOption("c"));
-        emitter.endRecord();
-        emitter.close();
+        try (CsvEmitter emitter = createEmitter()) {
+            emitter.emit(new StringOption("a"));
+            emitter.emit(new StringOption("b"));
+            emitter.emit(new StringOption("c"));
+            emitter.endRecord();
+        }
 
-        CsvParser parser = createParser();
-        assertThat(parser.next(), is(true));
-        assertThat(fill(parser, new StringOption()), is(new StringOption("a")));
-        assertThat(fill(parser, new StringOption()), is(new StringOption("b")));
-        assertThat(fill(parser, new StringOption()), is(new StringOption("c")));
-        parser.endRecord();
+        try (CsvParser parser = createParser()) {
+            assertThat(parser.next(), is(true));
+            assertThat(fill(parser, new StringOption()), is(new StringOption("a")));
+            assertThat(fill(parser, new StringOption()), is(new StringOption("b")));
+            assertThat(fill(parser, new StringOption()), is(new StringOption("c")));
+            parser.endRecord();
 
-        assertThat(parser.next(), is(false));
-        parser.close();
+            assertThat(parser.next(), is(false));
+        }
     }
 
     /**
@@ -382,28 +382,27 @@ public class CsvEmitterTest {
      */
     @Test
     public void multi_records() throws Exception {
-        CsvEmitter emitter = createEmitter();
-        emitter.emit(new StringOption("a"));
-        emitter.endRecord();
-        emitter.emit(new StringOption("b"));
-        emitter.endRecord();
-        emitter.emit(new StringOption("c"));
-        emitter.endRecord();
-        emitter.close();
+        try (CsvEmitter emitter = createEmitter()) {
+            emitter.emit(new StringOption("a"));
+            emitter.endRecord();
+            emitter.emit(new StringOption("b"));
+            emitter.endRecord();
+            emitter.emit(new StringOption("c"));
+            emitter.endRecord();
+        }
+        try (CsvParser parser = createParser()) {
+            assertThat(parser.next(), is(true));
+            assertThat(fill(parser, new StringOption()), is(new StringOption("a")));
+            parser.endRecord();
+            assertThat(parser.next(), is(true));
+            assertThat(fill(parser, new StringOption()), is(new StringOption("b")));
+            parser.endRecord();
+            assertThat(parser.next(), is(true));
+            assertThat(fill(parser, new StringOption()), is(new StringOption("c")));
+            parser.endRecord();
 
-        CsvParser parser = createParser();
-        assertThat(parser.next(), is(true));
-        assertThat(fill(parser, new StringOption()), is(new StringOption("a")));
-        parser.endRecord();
-        assertThat(parser.next(), is(true));
-        assertThat(fill(parser, new StringOption()), is(new StringOption("b")));
-        parser.endRecord();
-        assertThat(parser.next(), is(true));
-        assertThat(fill(parser, new StringOption()), is(new StringOption("c")));
-        parser.endRecord();
-
-        assertThat(parser.next(), is(false));
-        parser.close();
+            assertThat(parser.next(), is(false));
+        }
     }
 
     /**
@@ -412,40 +411,40 @@ public class CsvEmitterTest {
      */
     @Test
     public void matrix() throws Exception {
-        CsvEmitter emitter = createEmitter();
-        emitter.emit(new StringOption("a-1"));
-        emitter.emit(new StringOption("a-2"));
-        emitter.emit(new StringOption("a-3"));
-        emitter.endRecord();
-        emitter.emit(new StringOption("b-1"));
-        emitter.emit(new StringOption("b-2"));
-        emitter.emit(new StringOption("b-3"));
-        emitter.endRecord();
-        emitter.emit(new StringOption("c-1"));
-        emitter.emit(new StringOption("c-2"));
-        emitter.emit(new StringOption("c-3"));
-        emitter.endRecord();
-        emitter.close();
+        try (CsvEmitter emitter = createEmitter()) {
+            emitter.emit(new StringOption("a-1"));
+            emitter.emit(new StringOption("a-2"));
+            emitter.emit(new StringOption("a-3"));
+            emitter.endRecord();
+            emitter.emit(new StringOption("b-1"));
+            emitter.emit(new StringOption("b-2"));
+            emitter.emit(new StringOption("b-3"));
+            emitter.endRecord();
+            emitter.emit(new StringOption("c-1"));
+            emitter.emit(new StringOption("c-2"));
+            emitter.emit(new StringOption("c-3"));
+            emitter.endRecord();
+        }
 
-        CsvParser parser = createParser();
-        assertThat(parser.next(), is(true));
-        assertThat(fill(parser, new StringOption()), is(new StringOption("a-1")));
-        assertThat(fill(parser, new StringOption()), is(new StringOption("a-2")));
-        assertThat(fill(parser, new StringOption()), is(new StringOption("a-3")));
-        parser.endRecord();
-        assertThat(parser.next(), is(true));
-        assertThat(fill(parser, new StringOption()), is(new StringOption("b-1")));
-        assertThat(fill(parser, new StringOption()), is(new StringOption("b-2")));
-        assertThat(fill(parser, new StringOption()), is(new StringOption("b-3")));
-        parser.endRecord();
-        assertThat(parser.next(), is(true));
-        assertThat(fill(parser, new StringOption()), is(new StringOption("c-1")));
-        assertThat(fill(parser, new StringOption()), is(new StringOption("c-2")));
-        assertThat(fill(parser, new StringOption()), is(new StringOption("c-3")));
-        parser.endRecord();
+        try (CsvParser parser = createParser()) {
+            assertThat(parser.next(), is(true));
+            assertThat(fill(parser, new StringOption()), is(new StringOption("a-1")));
+            assertThat(fill(parser, new StringOption()), is(new StringOption("a-2")));
+            assertThat(fill(parser, new StringOption()), is(new StringOption("a-3")));
+            parser.endRecord();
+            assertThat(parser.next(), is(true));
+            assertThat(fill(parser, new StringOption()), is(new StringOption("b-1")));
+            assertThat(fill(parser, new StringOption()), is(new StringOption("b-2")));
+            assertThat(fill(parser, new StringOption()), is(new StringOption("b-3")));
+            parser.endRecord();
+            assertThat(parser.next(), is(true));
+            assertThat(fill(parser, new StringOption()), is(new StringOption("c-1")));
+            assertThat(fill(parser, new StringOption()), is(new StringOption("c-2")));
+            assertThat(fill(parser, new StringOption()), is(new StringOption("c-3")));
+            parser.endRecord();
 
-        assertThat(parser.next(), is(false));
-        parser.close();
+            assertThat(parser.next(), is(false));
+        }
     }
 
     /**
@@ -455,28 +454,28 @@ public class CsvEmitterTest {
     @Test
     public void with_header() throws Exception {
         headers = Arrays.asList("key", "value");
-        CsvEmitter emitter = createEmitter();
-        emitter.emit(new StringOption("a"));
-        emitter.emit(new StringOption("b"));
-        emitter.endRecord();
-        emitter.close();
+        try (CsvEmitter emitter = createEmitter()) {
+            emitter.emit(new StringOption("a"));
+            emitter.emit(new StringOption("b"));
+            emitter.endRecord();
+        }
 
         // directly read a header
         headers = Arrays.asList();
-        CsvParser parser = createParser();
+        try (CsvParser parser = createParser()) {
 
-        assertThat(parser.next(), is(true));
-        assertThat(fill(parser, new StringOption()), is(new StringOption("key")));
-        assertThat(fill(parser, new StringOption()), is(new StringOption("value")));
-        parser.endRecord();
+            assertThat(parser.next(), is(true));
+            assertThat(fill(parser, new StringOption()), is(new StringOption("key")));
+            assertThat(fill(parser, new StringOption()), is(new StringOption("value")));
+            parser.endRecord();
 
-        assertThat(parser.next(), is(true));
-        assertThat(fill(parser, new StringOption()), is(new StringOption("a")));
-        assertThat(fill(parser, new StringOption()), is(new StringOption("b")));
-        parser.endRecord();
+            assertThat(parser.next(), is(true));
+            assertThat(fill(parser, new StringOption()), is(new StringOption("a")));
+            assertThat(fill(parser, new StringOption()), is(new StringOption("b")));
+            parser.endRecord();
 
-        assertThat(parser.next(), is(false));
-        parser.close();
+            assertThat(parser.next(), is(false));
+        }
     }
 
     /**
@@ -486,28 +485,27 @@ public class CsvEmitterTest {
     @Test
     public void with_malformed_header() throws Exception {
         headers = Arrays.asList("\"malformed,\r\nheader\"", "");
-        CsvEmitter emitter = createEmitter();
-        emitter.emit(new StringOption("a"));
-        emitter.emit(new StringOption("b"));
-        emitter.endRecord();
-        emitter.close();
+        try (CsvEmitter emitter = createEmitter()) {
+            emitter.emit(new StringOption("a"));
+            emitter.emit(new StringOption("b"));
+            emitter.endRecord();
+        }
 
         // directly read a header
         headers = Arrays.asList();
-        CsvParser parser = createParser();
+        try (CsvParser parser = createParser()) {
+            assertThat(parser.next(), is(true));
+            assertThat(fill(parser, new StringOption()), is(new StringOption("\"malformed,\r\nheader\"")));
+            assertThat(fill(parser, new StringOption()), is(new StringOption()));
+            parser.endRecord();
 
-        assertThat(parser.next(), is(true));
-        assertThat(fill(parser, new StringOption()), is(new StringOption("\"malformed,\r\nheader\"")));
-        assertThat(fill(parser, new StringOption()), is(new StringOption()));
-        parser.endRecord();
+            assertThat(parser.next(), is(true));
+            assertThat(fill(parser, new StringOption()), is(new StringOption("a")));
+            assertThat(fill(parser, new StringOption()), is(new StringOption("b")));
+            parser.endRecord();
 
-        assertThat(parser.next(), is(true));
-        assertThat(fill(parser, new StringOption()), is(new StringOption("a")));
-        assertThat(fill(parser, new StringOption()), is(new StringOption("b")));
-        parser.endRecord();
-
-        assertThat(parser.next(), is(false));
-        parser.close();
+            assertThat(parser.next(), is(false));
+        }
     }
 
     /**
@@ -517,20 +515,20 @@ public class CsvEmitterTest {
     @Test
     public void empty_with_header() throws Exception {
         headers = Arrays.asList("key", "value");
-        CsvEmitter emitter = createEmitter();
-        emitter.close();
+        try (CsvEmitter emitter = createEmitter()) {
+            // does nothing
+        }
 
         // directly read a header
         headers = Arrays.asList();
-        CsvParser parser = createParser();
+        try (CsvParser parser = createParser()) {
+            assertThat(parser.next(), is(true));
+            assertThat(fill(parser, new StringOption()), is(new StringOption("key")));
+            assertThat(fill(parser, new StringOption()), is(new StringOption("value")));
+            parser.endRecord();
 
-        assertThat(parser.next(), is(true));
-        assertThat(fill(parser, new StringOption()), is(new StringOption("key")));
-        assertThat(fill(parser, new StringOption()), is(new StringOption("value")));
-        parser.endRecord();
-
-        assertThat(parser.next(), is(false));
-        parser.close();
+            assertThat(parser.next(), is(false));
+        }
     }
 
     /**
@@ -540,15 +538,12 @@ public class CsvEmitterTest {
     @Test
     public void stress_date() throws Exception {
         int count = 5000000;
-        CsvEmitter emitter = new CsvEmitter(new VoidOutputStream(), "testing", createConfiguration());
-        try {
+        try (CsvEmitter emitter = new CsvEmitter(new VoidOutputStream(), "testing", createConfiguration())) {
             DateOption value = new DateOption(new Date(1999, 12, 31));
             for (int i = 0; i < count; i++) {
                 emitter.emit(value);
                 emitter.endRecord();
             }
-        } finally {
-            emitter.close();
         }
     }
 
@@ -559,15 +554,12 @@ public class CsvEmitterTest {
     @Test
     public void stress_datetime() throws Exception {
         int count = 5000000;
-        CsvEmitter emitter = new CsvEmitter(new VoidOutputStream(), "testing", createConfiguration());
-        try {
+        try (CsvEmitter emitter = new CsvEmitter(new VoidOutputStream(), "testing", createConfiguration())) {
             DateTimeOption value = new DateTimeOption(new DateTime(1999, 12, 31, 1, 23, 45));
             for (int i = 0; i < count; i++) {
                 emitter.emit(value);
                 emitter.endRecord();
             }
-        } finally {
-            emitter.close();
         }
     }
 }

@@ -36,7 +36,7 @@ public class FollowsNamedTypeBlockParser extends AcceptableJavadocBlockParser {
 
     @Override
     public IrDocBlock parse(String tag, JavadocScanner scanner) throws JavadocParseException {
-        ArrayList<IrDocFragment> fragments = new ArrayList<IrDocFragment>();
+        ArrayList<IrDocFragment> fragments = new ArrayList<>();
         IrDocNamedType namedType = fetchNamedType(scanner);
         if (namedType != null) {
             fragments.add(namedType);

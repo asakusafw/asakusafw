@@ -106,7 +106,7 @@ public class ParquetFileFormatTest {
             Class<T> type,
             Map<String, ? extends ValueSerde> edits,
             String... removes) {
-        ParquetFileFormat<T> format = new ParquetFileFormat<T>(
+        ParquetFileFormat<T> format = new ParquetFileFormat<>(
                 "testing",
                 new ParquetFormatConfiguration(),
                 new DataModelDescriptorEditor(FieldPropertyDescriptor.extract(type))
@@ -162,7 +162,7 @@ public class ParquetFileFormatTest {
     @SuppressWarnings("deprecation")
     @Test
     public void io_types() throws Exception {
-        Map<String, ValueSerde> edits = new HashMap<String, ValueSerde>();
+        Map<String, ValueSerde> edits = new HashMap<>();
         edits.put("decimalOption", ValueSerdeFactory.getDecimal(10, 2));
 
         ParquetFileFormat<MockTypes> format = format(MockTypes.class, edits);
@@ -201,7 +201,7 @@ public class ParquetFileFormatTest {
     @Test
     public void io_decimals() throws Exception {
         for (int p = 2; p <= HiveDecimal.MAX_PRECISION; p++) {
-            Map<String, ValueSerde> edits = new HashMap<String, ValueSerde>();
+            Map<String, ValueSerde> edits = new HashMap<>();
             edits.put("decimalOption", ValueSerdeFactory.getDecimal(p, 2));
 
             ParquetFileFormat<MockTypes> format = format(MockTypes.class, edits);
@@ -223,12 +223,12 @@ public class ParquetFileFormatTest {
     @SuppressWarnings("deprecation")
     @Test
     public void io_decimals_int32() throws Exception {
-        Map<String, ValueSerde> edits = new HashMap<String, ValueSerde>();
+        Map<String, ValueSerde> edits = new HashMap<>();
         edits.put("decimalOption", ValueSerdeFactory.getDecimal(9, 2));
 
         int count = 100;
         ParquetFileFormat<MockTypes> format = format(MockTypes.class, edits);
-        List<MockTypes> inputs = new ArrayList<MockTypes>();
+        List<MockTypes> inputs = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             MockTypes in = new MockTypes();
             in.decimalOption.modify(new BigDecimal("7.89"));
@@ -249,12 +249,12 @@ public class ParquetFileFormatTest {
     @SuppressWarnings("deprecation")
     @Test
     public void io_decimals_int64() throws Exception {
-        Map<String, ValueSerde> edits = new HashMap<String, ValueSerde>();
+        Map<String, ValueSerde> edits = new HashMap<>();
         edits.put("decimalOption", ValueSerdeFactory.getDecimal(18, 2));
 
         int count = 100;
         ParquetFileFormat<MockTypes> format = format(MockTypes.class, edits);
-        List<MockTypes> inputs = new ArrayList<MockTypes>();
+        List<MockTypes> inputs = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             MockTypes in = new MockTypes();
             in.decimalOption.modify(new BigDecimal("7.89"));
@@ -275,12 +275,12 @@ public class ParquetFileFormatTest {
     @SuppressWarnings("deprecation")
     @Test
     public void io_decimals_binary() throws Exception {
-        Map<String, ValueSerde> edits = new HashMap<String, ValueSerde>();
+        Map<String, ValueSerde> edits = new HashMap<>();
         edits.put("decimalOption", ValueSerdeFactory.getDecimal(38, 2));
 
         int count = 100;
         ParquetFileFormat<MockTypes> format = format(MockTypes.class, edits);
-        List<MockTypes> inputs = new ArrayList<MockTypes>();
+        List<MockTypes> inputs = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             MockTypes in = new MockTypes();
             in.decimalOption.modify(new BigDecimal("-7.89"));
@@ -301,12 +301,12 @@ public class ParquetFileFormatTest {
     @SuppressWarnings("deprecation")
     @Test
     public void io_types_large() throws Exception {
-        Map<String, ValueSerde> edits = new HashMap<String, ValueSerde>();
+        Map<String, ValueSerde> edits = new HashMap<>();
         edits.put("decimalOption", ValueSerdeFactory.getDecimal(10, 2));
 
         int count = 1000;
         ParquetFileFormat<MockTypes> format = format(MockTypes.class, edits);
-        List<MockTypes> inputs = new ArrayList<MockTypes>();
+        List<MockTypes> inputs = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             MockTypes in = new MockTypes();
             in.booleanOption.modify(true);
@@ -346,7 +346,7 @@ public class ParquetFileFormatTest {
      */
     @Test
     public void io_nulls() throws Exception {
-        Map<String, ValueSerde> edits = new HashMap<String, ValueSerde>();
+        Map<String, ValueSerde> edits = new HashMap<>();
         edits.put("decimalOption", ValueSerdeFactory.getDecimal(10, 2));
 
         ParquetFileFormat<MockTypes> format = format(MockTypes.class, edits);
@@ -376,14 +376,11 @@ public class ParquetFileFormatTest {
 
         ParquetFileFormat<MockSimple> format = format(MockSimple.class);
         LocalFileSystem fs = FileSystem.getLocal(format.getConf());
-        ModelOutput<MockSimple> output = format.createOutput(
+        try (ModelOutput<MockSimple> output = format.createOutput(
                 MockSimple.class,
                 fs, new Path(file.toURI()),
-                new Counter());
-        try {
+                new Counter())) {
             output.write(new MockSimple(100, "Hello, world!"));
-        } finally {
-            output.close();
         }
         assertThat(file.exists(), is(true));
 
@@ -397,20 +394,17 @@ public class ParquetFileFormatTest {
         assertThat(fragments, hasSize(1));
         DirectInputFragment first = fragments.get(0);
 
-        ModelInput<MockSimple> input = format.createInput(
+        try (ModelInput<MockSimple> input = format.createInput(
                 MockSimple.class,
                 fs, new Path(first.getPath()),
                 first.getOffset(), first.getSize(),
-                new Counter());
-        try {
+                new Counter())) {
             MockSimple buf = new MockSimple();
             assertThat(input.readTo(buf), is(true));
             assertThat(buf.number, is(new IntOption(100)));
             assertThat(buf.string, is(new StringOption("Hello, world!")));
 
             assertThat(input.readTo(buf), is(false));
-        } finally {
-            input.close();
         }
     }
 
@@ -578,7 +572,7 @@ public class ParquetFileFormatTest {
     @SuppressWarnings("deprecation")
     @Test
     public void io_string() throws Exception {
-        Map<String, ValueSerde> edits = new HashMap<String, ValueSerde>();
+        Map<String, ValueSerde> edits = new HashMap<>();
         edits.put("decimal", StringValueSerdeFactory.DECIMAL);
         edits.put("date", StringValueSerdeFactory.DATE);
         edits.put("datetime", StringValueSerdeFactory.DATETIME);
@@ -602,14 +596,14 @@ public class ParquetFileFormatTest {
     @SuppressWarnings("deprecation")
     @Test
     public void io_string_dict() throws Exception {
-        Map<String, ValueSerde> edits = new HashMap<String, ValueSerde>();
+        Map<String, ValueSerde> edits = new HashMap<>();
         edits.put("decimal", StringValueSerdeFactory.DECIMAL);
         edits.put("date", StringValueSerdeFactory.DATE);
         edits.put("datetime", StringValueSerdeFactory.DATETIME);
         ParquetFileFormat<WithStringSupports> format = format(WithStringSupports.class, edits);
 
         int count = 1000;
-        List<WithStringSupports> inputs = new ArrayList<WithStringSupports>();
+        List<WithStringSupports> inputs = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             WithStringSupports object = new WithStringSupports();
             object.decimal.modify(new BigDecimal("123.45"));
@@ -633,7 +627,7 @@ public class ParquetFileFormatTest {
     @SuppressWarnings("deprecation")
     @Test
     public void io_timestamp() throws Exception {
-        Map<String, ValueSerde> edits = new HashMap<String, ValueSerde>();
+        Map<String, ValueSerde> edits = new HashMap<>();
         edits.put("date", TimestampValueSerdeFactory.DATE);
         edits.put("datetime", ValueSerdeFactory.DATETIME);
         ParquetFileFormat<WithTimestampSupports> format = format(WithTimestampSupports.class, edits);
@@ -654,7 +648,7 @@ public class ParquetFileFormatTest {
     @SuppressWarnings("deprecation")
     @Test
     public void io_char() throws Exception {
-        Map<String, ValueSerde> edits = new HashMap<String, ValueSerde>();
+        Map<String, ValueSerde> edits = new HashMap<>();
         edits.put("value", ValueSerdeFactory.getChar(10));
         ParquetFileFormat<WithString> format = format(WithString.class, edits);
 
@@ -672,7 +666,7 @@ public class ParquetFileFormatTest {
     @SuppressWarnings("deprecation")
     @Test
     public void io_varchar() throws Exception {
-        Map<String, ValueSerde> edits = new HashMap<String, ValueSerde>();
+        Map<String, ValueSerde> edits = new HashMap<>();
         edits.put("value", ValueSerdeFactory.getVarchar(10));
         ParquetFileFormat<WithString> format = format(WithString.class, edits);
 
@@ -690,12 +684,12 @@ public class ParquetFileFormatTest {
     @SuppressWarnings("deprecation")
     @Test
     public void io_varchar_dict() throws Exception {
-        Map<String, ValueSerde> edits = new HashMap<String, ValueSerde>();
+        Map<String, ValueSerde> edits = new HashMap<>();
         edits.put("value", ValueSerdeFactory.getVarchar(10));
         ParquetFileFormat<WithString> format = format(WithString.class, edits);
 
         int count = 1000;
-        List<WithString> inputs = new ArrayList<WithString>();
+        List<WithString> inputs = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             WithString in = new WithString();
             in.value.modify("Hello");
@@ -734,12 +728,9 @@ public class ParquetFileFormatTest {
         ParquetFileFormat<WithString> format = format(
                 WithString.class,
                 Collections.singletonMap("value", serde));
-        ModelInput<WithString> input = load(format, file);
-        try {
+        try (ModelInput<WithString> input = load(format, file)) {
             assertThat(input.readTo(buf), is(true));
             assertThat(input.readTo(new WithString()), is(false));
-        } finally {
-            input.close();
         }
         assertThat(buf.value, is(new StringOption(expected)));
     }
@@ -766,12 +757,9 @@ public class ParquetFileFormatTest {
         ParquetFileFormat<WithDecimal> format = format(
                 WithDecimal.class,
                 Collections.singletonMap("value", ValueSerdeFactory.getDecimal(precision, scale)));
-        ModelInput<WithDecimal> input = load(format, file);
-        try {
+        try (ModelInput<WithDecimal> input = load(format, file)) {
             assertThat(input.readTo(buf), is(true));
             assertThat(input.readTo(new WithDecimal()), is(false));
-        } finally {
-            input.close();
         }
         BigDecimal expected = new BigDecimal(matcher.group(3).replace('_', '.'));
         assertThat(buf.value, is(new DecimalOption(expected)));
@@ -794,12 +782,9 @@ public class ParquetFileFormatTest {
         Matcher matcher = p.matcher(file);
         assertThat(matcher.matches(), is(true));
         WithDateTime buf = new WithDateTime();
-        ModelInput<WithDateTime> input = load(WithDateTime.class, file);
-        try {
+        try (ModelInput<WithDateTime> input = load(WithDateTime.class, file)) {
             assertThat(input.readTo(buf), is(true));
             assertThat(input.readTo(new WithDateTime()), is(false));
-        } finally {
-            input.close();
         }
         // fix timezone
         buf.value.modify(buf.value.get().getElapsedSeconds() + TESTDATA_TIMEZONE_OFFSET - LOCAL_TIMEZONE_OFFSET);
@@ -829,12 +814,9 @@ public class ParquetFileFormatTest {
         Matcher matcher = p.matcher(file);
         assertThat(matcher.matches(), is(true));
         WithDate buf = new WithDate();
-        ModelInput<WithDate> input = load(WithDate.class, file);
-        try {
+        try (ModelInput<WithDate> input = load(WithDate.class, file)) {
             assertThat(input.readTo(buf), is(true));
             assertThat(input.readTo(new WithDate()), is(false));
-        } finally {
-            input.close();
         }
         Date expected = new Date(
                 Integer.parseInt(matcher.group(1)),
@@ -850,12 +832,9 @@ public class ParquetFileFormatTest {
 
     private <T> ModelInput<T> load(ParquetFileFormat<T> format, String name) throws IOException, InterruptedException {
         File target = folder.newFile();
-        InputStream in = getClass().getResourceAsStream(name);
-        assertThat(in, is(notNullValue()));
-        try {
+        try (InputStream in = getClass().getResourceAsStream(name)) {
+            assertThat(in, is(notNullValue()));
             IOUtils.copyBytes(in, new FileOutputStream(target), 1024, true);
-        } finally {
-            in.close();
         }
         FileSystem fs = FileSystem.getLocal(format.getConf());
         return format.createInput(
@@ -866,7 +845,7 @@ public class ParquetFileFormatTest {
     }
 
     private <T> T restore(ParquetFileFormat<T> format, T value) throws IOException, InterruptedException {
-        List<T> in = new ArrayList<T>();
+        List<T> in = new ArrayList<>();
         in.add(value);
         return restore(format, in).get(0);
     }
@@ -882,16 +861,13 @@ public class ParquetFileFormatTest {
         File file = folder.newFile();
         Assume.assumeThat(file.delete() || file.exists() == false, is(true));
         LocalFileSystem fs = FileSystem.getLocal(format.getConf());
-        ModelOutput<T> output = format.createOutput(
+        try (ModelOutput<T> output = format.createOutput(
                 format.getSupportedType(),
                 fs, new Path(file.toURI()),
-                new Counter());
-        try {
+                new Counter())) {
             for (T value : values) {
                 output.write(value);
             }
-        } finally {
-            output.close();
         }
         assertThat(file.exists(), is(true));
         return file;
@@ -899,13 +875,12 @@ public class ParquetFileFormatTest {
 
     private <T> List<T> load(ParquetFileFormat<T> format, File file) throws IOException, InterruptedException {
         LocalFileSystem fs = FileSystem.getLocal(format.getConf());
-        ModelInput<T> input = format.createInput(
+        try (ModelInput<T> input = format.createInput(
                 format.getSupportedType(),
                 fs, new Path(file.toURI()),
                 0, file.length(),
-                new Counter());
-        try {
-            List<T> results = new ArrayList<T>();
+                new Counter())) {
+            List<T> results = new ArrayList<>();
             while (true) {
                 @SuppressWarnings("unchecked")
                 T value = (T) format.getDataModelDescriptor().createDataModelObject();
@@ -915,8 +890,6 @@ public class ParquetFileFormatTest {
                 results.add(value);
             }
             return results;
-        } finally {
-            input.close();
         }
     }
 }

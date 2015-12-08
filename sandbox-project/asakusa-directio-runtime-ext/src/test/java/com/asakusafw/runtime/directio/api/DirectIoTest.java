@@ -68,13 +68,9 @@ public class DirectIoTest {
         put(new File(root, "testing.txt"), "Hello, world!");
 
         Set<String> results;
-        ModelInput<StringBuilder> input = DirectIo.open(MockFormat.class, "testing", "*.txt");
-        try {
+        try (ModelInput<StringBuilder> input = DirectIo.open(MockFormat.class, "testing", "*.txt")) {
             results = consume(input);
-        } finally {
-            input.close();
         }
-
         assertThat(results, is(set("Hello, world!")));
     }
 
@@ -87,11 +83,8 @@ public class DirectIoTest {
         injectDataSource("testing", folder.newFolder());
         env.reload();
         Set<String> results;
-        ModelInput<StringBuilder> input = DirectIo.open(MockFormat.class, "testing", "*.txt");
-        try {
+        try (ModelInput<StringBuilder> input = DirectIo.open(MockFormat.class, "testing", "*.txt")) {
             results = consume(input);
-        } finally {
-            input.close();
         }
         assertThat(results, is(empty()));
     }
@@ -109,11 +102,8 @@ public class DirectIoTest {
         put(new File(root, "t3.txt"), "Hello3");
 
         Set<String> results;
-        ModelInput<StringBuilder> input = DirectIo.open(MockFormat.class, "testing", "*.txt");
-        try {
+        try (ModelInput<StringBuilder> input = DirectIo.open(MockFormat.class, "testing", "*.txt")) {
             results = consume(input);
-        } finally {
-            input.close();
         }
 
         assertThat(results, is(set("Hello1", "Hello2", "Hello3")));
@@ -135,24 +125,21 @@ public class DirectIoTest {
     }
 
     private Set<String> set(String... values) {
-        return new HashSet<String>(Arrays.asList(values));
+        return new HashSet<>(Arrays.asList(values));
     }
 
     private File put(File file, String... lines) throws IOException {
         file.getAbsoluteFile().getParentFile().mkdirs();
-        PrintWriter writer = new PrintWriter(file, "UTF-8");
-        try {
+        try (PrintWriter writer = new PrintWriter(file, "UTF-8")) {
             for (String line : lines) {
                 writer.println(line);
             }
-        } finally {
-            writer.close();
         }
         return file;
     }
 
     private Set<String> consume(ModelInput<StringBuilder> input) throws IOException {
-        Set<String> results = new HashSet<String>();
+        Set<String> results = new HashSet<>();
         StringBuilder buf = new StringBuilder();
         while (input.readTo(buf)) {
             results.add(buf.toString());

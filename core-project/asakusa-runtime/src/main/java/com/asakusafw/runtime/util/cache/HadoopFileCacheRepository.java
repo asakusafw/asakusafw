@@ -110,34 +110,29 @@ public class HadoopFileCacheRepository implements FileCacheRepository {
                 sourcePath,
                 cachePath));
         do {
-            try {
+            try (LockObject<? super Path> lock = lockProvider.tryLock(cachePath)) {
                 // TODO reduce lock scope?
-                LockObject<? super Path> lock = lockProvider.tryLock(cachePath);
                 if (lock == null) {
                     continue;
                 }
-                try {
-                    if (isCached(cachePath, cacheChecksumPath, sourceChecksum)) {
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug(MessageFormat.format(
-                                    "cache hit: {0} -> {1}", //$NON-NLS-1$
-                                    sourcePath,
-                                    cachePath));
-                        }
-                        // just returns cached file
-                    } else {
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug(MessageFormat.format(
-                                    "cache miss: {0} -> {1}", //$NON-NLS-1$
-                                    sourcePath,
-                                    cachePath));
-                        }
-                        updateCache(sourcePath, sourceChecksum, cachePath, cacheChecksumPath);
+                if (isCached(cachePath, cacheChecksumPath, sourceChecksum)) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug(MessageFormat.format(
+                                "cache hit: {0} -> {1}", //$NON-NLS-1$
+                                sourcePath,
+                                cachePath));
                     }
-                    return cachePath;
-                } finally {
-                    lock.close();
+                    // just returns cached file
+                } else {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug(MessageFormat.format(
+                                "cache miss: {0} -> {1}", //$NON-NLS-1$
+                                sourcePath,
+                                cachePath));
+                    }
+                    updateCache(sourcePath, sourceChecksum, cachePath, cacheChecksumPath);
                 }
+                return cachePath;
             } catch (IOException e) {
                 LOG.warn(MessageFormat.format(
                         "Failed to prepare cache: {0} -> {1}",
@@ -165,8 +160,7 @@ public class HadoopFileCacheRepository implements FileCacheRepository {
         }
         Checksum checksum = new CRC32();
         byte[] buf = byteBuffers.get();
-        FSDataInputStream input = fs.open(file);
-        try {
+        try (FSDataInputStream input = fs.open(file)) {
             while (true) {
                 int read = input.read(buf);
                 if (read < 0) {
@@ -174,8 +168,6 @@ public class HadoopFileCacheRepository implements FileCacheRepository {
                 }
                 checksum.update(buf, 0, read);
             }
-        } finally {
-            input.close();
         }
         return checksum.getValue();
     }
@@ -221,11 +213,8 @@ public class HadoopFileCacheRepository implements FileCacheRepository {
                         cacheFilePath));
             }
             long other;
-            FSDataInputStream input = fs.open(cacheChecksumPath);
-            try {
+            try (FSDataInputStream input = fs.open(cacheChecksumPath)) {
                 other = input.readLong();
-            } finally {
-                input.close();
             }
             return checksum == other;
         }
@@ -247,12 +236,9 @@ public class HadoopFileCacheRepository implements FileCacheRepository {
         delete(cacheFs, cachePath);
 
         // sync source file to cache file
-        FSDataOutputStream checksumOutput = cacheFs.create(cacheChecksumPath, false);
-        try {
+        try (FSDataOutputStream checksumOutput = cacheFs.create(cacheChecksumPath, false)) {
             checksumOutput.writeLong(checksum);
             syncFile(sourceFs, file, cacheFs, cachePath);
-        } finally {
-            checksumOutput.close();
         }
     }
 
@@ -267,22 +253,15 @@ public class HadoopFileCacheRepository implements FileCacheRepository {
             FileSystem sourceFs, Path sourceFile,
             FileSystem targetFs, Path targetFile) throws IOException {
         byte[] buf = byteBuffers.get();
-        FSDataOutputStream output = targetFs.create(targetFile, false);
-        try {
-            FSDataInputStream input = sourceFs.open(sourceFile);
-            try {
-                while (true) {
-                    int read = input.read(buf);
-                    if (read < 0) {
-                        break;
-                    }
-                    output.write(buf, 0, read);
+        try (FSDataOutputStream output = targetFs.create(targetFile, false);
+                FSDataInputStream input = sourceFs.open(sourceFile)) {
+            while (true) {
+                int read = input.read(buf);
+                if (read < 0) {
+                    break;
                 }
-            } finally {
-                input.close();
+                output.write(buf, 0, read);
             }
-        } finally {
-            output.close();
         }
     }
 }

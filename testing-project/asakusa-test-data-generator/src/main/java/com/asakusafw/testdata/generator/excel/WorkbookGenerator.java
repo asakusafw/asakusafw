@@ -99,11 +99,8 @@ public class WorkbookGenerator implements TemplateGenerator {
         File file = new File(output, format.getFileName(model));
         LOG.debug("Emitting workbook: {}", file); //$NON-NLS-1$
 
-        OutputStream out = new FileOutputStream(file);
-        try {
+        try (OutputStream out = new FileOutputStream(file)) {
             workbook.write(out);
-        } finally {
-            out.close();
         }
         LOG.info(MessageFormat.format(
                 Messages.getString("WorkbookGenerator.infoFinish"), //$NON-NLS-1$

@@ -51,7 +51,7 @@ public final class FlowOut<T> implements Out<T> {
      * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static <T> FlowOut<T> newInstance(OutputDescription description) {
-        return new FlowOut<T>(description);
+        return new FlowOut<>(description);
     }
 
     /**

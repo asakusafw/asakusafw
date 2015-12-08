@@ -98,7 +98,7 @@ public class CoreOperatorFactory {
         if (type == null) {
             throw new IllegalArgumentException("type must not be null"); //$NON-NLS-1$
         }
-        return new Empty<T>(type);
+        return new Empty<>(type);
     }
 
     /**
@@ -153,10 +153,10 @@ public class CoreOperatorFactory {
             throw new IllegalArgumentException("b must not be null"); //$NON-NLS-1$
         }
         Type type = getPortType(a);
-        List<Source<T>> input = new ArrayList<Source<T>>();
+        List<Source<T>> input = new ArrayList<>();
         input.add(a);
         input.add(b);
-        return new Confluent<T>(type, input);
+        return new Confluent<>(type, input);
     }
 
     /**
@@ -181,11 +181,11 @@ public class CoreOperatorFactory {
             throw new IllegalArgumentException("b must not be null"); //$NON-NLS-1$
         }
         Type type = getPortType(a);
-        List<Source<T>> input = new ArrayList<Source<T>>();
+        List<Source<T>> input = new ArrayList<>();
         input.add(a);
         input.add(b);
         input.add(c);
-        return new Confluent<T>(type, input);
+        return new Confluent<>(type, input);
     }
 
     /**
@@ -215,12 +215,12 @@ public class CoreOperatorFactory {
         }
 
         Type type = getPortType(a);
-        List<Source<T>> input = new ArrayList<Source<T>>();
+        List<Source<T>> input = new ArrayList<>();
         input.add(a);
         input.add(b);
         input.add(c);
         input.add(d);
-        return new Confluent<T>(type, input);
+        return new Confluent<>(type, input);
     }
 
     /**
@@ -236,7 +236,7 @@ public class CoreOperatorFactory {
         if (inputs == null) {
             throw new IllegalArgumentException("inputs must not be null"); //$NON-NLS-1$
         }
-        List<Source<T>> input = new ArrayList<Source<T>>();
+        List<Source<T>> input = new ArrayList<>();
         for (Source<T> in : inputs) {
             if (in == null) {
                 throw new IllegalArgumentException("inputs must not contain null"); //$NON-NLS-1$
@@ -247,7 +247,7 @@ public class CoreOperatorFactory {
             throw new IllegalArgumentException("inputs must not be empty"); //$NON-NLS-1$
         }
         Type type = getPortType(input.get(0));
-        return new Confluent<T>(type, input);
+        return new Confluent<>(type, input);
     }
 
     /**
@@ -266,7 +266,7 @@ public class CoreOperatorFactory {
             throw new IllegalArgumentException("in must not be null"); //$NON-NLS-1$
         }
         Type type = getPortType(in);
-        return new Checkpoint<T>(type, in);
+        return new Checkpoint<>(type, in);
     }
 
     /**
@@ -291,7 +291,7 @@ public class CoreOperatorFactory {
         if (targetType == null) {
             throw new IllegalArgumentException("targetType must not be null"); //$NON-NLS-1$
         }
-        return new Project<T>(in, targetType);
+        return new Project<>(in, targetType);
     }
 
     /**
@@ -332,7 +332,7 @@ public class CoreOperatorFactory {
         if (targetType == null) {
             throw new IllegalArgumentException("targetType must not be null"); //$NON-NLS-1$
         }
-        return new Extend<T>(in, targetType);
+        return new Extend<>(in, targetType);
     }
 
     /**
@@ -373,7 +373,7 @@ public class CoreOperatorFactory {
         if (targetType == null) {
             throw new IllegalArgumentException("targetType must not be null"); //$NON-NLS-1$
         }
-        return new Restructure<T>(in, targetType);
+        return new Restructure<>(in, targetType);
     }
 
     /**
@@ -622,7 +622,7 @@ public class CoreOperatorFactory {
          * @return the created operator instance
          */
         public <T> Empty<T> as(Class<T> target) {
-            return new Empty<T>(target);
+            return new Empty<>(target);
         }
 
         /**
@@ -667,7 +667,7 @@ public class CoreOperatorFactory {
          * @return the created operator instance
          */
         public <T> Project<T> as(Class<T> target) {
-            return new Project<T>(in, target);
+            return new Project<>(in, target);
         }
 
         /**
@@ -712,7 +712,7 @@ public class CoreOperatorFactory {
          * @return the created operator instance
          */
         public <T> Extend<T> as(Class<T> target) {
-            return new Extend<T>(in, target);
+            return new Extend<>(in, target);
         }
 
         /**
@@ -757,7 +757,7 @@ public class CoreOperatorFactory {
          * @return the created operator instance
          */
         public <T> Restructure<T> as(Class<T> target) {
-            return new Restructure<T>(in, target);
+            return new Restructure<>(in, target);
         }
 
         /**

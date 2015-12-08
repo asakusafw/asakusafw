@@ -31,6 +31,7 @@ import com.asakusafw.windgate.core.resource.ResourceProfile;
 import com.asakusafw.windgate.core.resource.ResourceProvider;
 import com.asakusafw.windgate.core.session.SessionException;
 import com.asakusafw.windgate.core.session.SessionException.Reason;
+import com.asakusafw.windgate.core.util.SafeCloser;
 import com.asakusafw.windgate.core.session.SessionMirror;
 import com.asakusafw.windgate.core.session.SessionProfile;
 import com.asakusafw.windgate.core.session.SessionProvider;
@@ -46,7 +47,7 @@ public class AbortTask {
 
     static final Logger LOG = LoggerFactory.getLogger(AbortTask.class);
 
-    private final GateProfile profile;
+    final GateProfile profile;
 
     private final String sessionId;
 
@@ -82,7 +83,7 @@ public class AbortTask {
     private Map<String, ResourceProvider> loadResourceProviders(
             List<ResourceProfile> resources) throws IOException {
         assert resources != null;
-        Map<String, ResourceProvider> results = new TreeMap<String, ResourceProvider>();
+        Map<String, ResourceProvider> results = new TreeMap<>();
         for (ResourceProfile resourceProfile : resources) {
             LOG.debug("Loading resource provider \"{}\": {}",
                     resourceProfile.getName(),
@@ -140,28 +141,25 @@ public class AbortTask {
         }
     }
 
-    private boolean doAbortSingle(String targetSessionId) throws IOException {
+    private boolean doAbortSingle(final String targetSessionId) throws IOException {
         assert targetSessionId != null;
-        SessionMirror session;
-        try {
+        try (SafeCloser<SessionMirror> session = new SafeCloser<SessionMirror>() {
+            @Override
+            protected void handle(IOException exception) throws IOException {
+                WGLOG.warn(exception, "W01003",
+                        targetSessionId,
+                        profile.getName());
+            }
+        }) {
             WGLOG.info("I01001",
                     targetSessionId,
                     profile.getName());
-            if (RuntimeContext.get().canExecute(sessionProvider)) {
-                session = sessionProvider.open(targetSessionId);
+            boolean executable = RuntimeContext.get().canExecute(sessionProvider);
+            if (executable) {
+                session.set(sessionProvider.open(targetSessionId));
             } else {
-                session = new SessionMirror.Null(targetSessionId);
+                session.set(new SessionMirror.Null(targetSessionId));
             }
-        } catch (SessionException e) {
-            if (e.getReason() == Reason.NOT_EXIST) {
-                WGLOG.info("I01002",
-                        targetSessionId,
-                        profile.getName());
-                return false;
-            }
-            throw e;
-        }
-        try {
             WGLOG.info("I01003",
                     targetSessionId,
                     profile.getName());
@@ -174,7 +172,7 @@ public class AbortTask {
                         targetSessionId);
                 try {
                     if (RuntimeContext.get().isSimulation() == false) {
-                        provider.abort(session.getId());
+                        provider.abort(session.get().getId());
                     }
                 } catch (IOException e) {
                     failureCount++;
@@ -192,16 +190,16 @@ public class AbortTask {
             WGLOG.info("I01004",
                     targetSessionId,
                     profile.getName());
-            session.abort();
+            session.get().abort();
             return true;
-        } finally {
-            try {
-                session.close();
-            } catch (IOException e) {
-                WGLOG.warn(e, "W01003",
+        } catch (SessionException e) {
+            if (e.getReason() == Reason.NOT_EXIST) {
+                WGLOG.info("I01002",
                         targetSessionId,
                         profile.getName());
+                return false;
             }
+            throw e;
         }
     }
 }

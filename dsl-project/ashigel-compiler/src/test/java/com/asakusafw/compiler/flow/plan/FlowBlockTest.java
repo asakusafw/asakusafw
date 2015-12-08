@@ -26,8 +26,6 @@ import org.junit.Test;
 import com.asakusafw.compiler.flow.FlowGraphGenerator;
 import com.asakusafw.vocabulary.flow.graph.FlowBoundary;
 import com.asakusafw.vocabulary.flow.graph.FlowElement;
-import com.asakusafw.vocabulary.flow.graph.FlowElementInput;
-import com.asakusafw.vocabulary.flow.graph.FlowElementOutput;
 import com.asakusafw.vocabulary.flow.graph.ObservationCount;
 
 /**
@@ -49,8 +47,8 @@ public class FlowBlockTest {
         FlowBlock block = FlowBlock.fromPorts(
                 0,
                 gen.toGraph(),
-                new ArrayList<FlowElementInput>(gen.inputs()),
-                new ArrayList<FlowElementOutput>(gen.outputs()),
+                new ArrayList<>(gen.inputs()),
+                new ArrayList<>(gen.outputs()),
                 gen.getAsSet("op"));
 
         assertThat(block.isEmpty(), is(true));
@@ -70,8 +68,8 @@ public class FlowBlockTest {
         FlowBlock block = FlowBlock.fromPorts(
                 0,
                 gen.toGraph(),
-                new ArrayList<FlowElementInput>(gen.inputs("op")),
-                new ArrayList<FlowElementOutput>(gen.outputs()),
+                new ArrayList<>(gen.inputs("op")),
+                new ArrayList<>(gen.outputs()),
                 gen.getAsSet("op"));
 
         assertThat(block.isEmpty(), is(false));
@@ -91,8 +89,8 @@ public class FlowBlockTest {
         FlowBlock block = FlowBlock.fromPorts(
                 0,
                 gen.toGraph(),
-                new ArrayList<FlowElementInput>(gen.inputs()),
-                new ArrayList<FlowElementOutput>(gen.outputs("op")),
+                new ArrayList<>(gen.inputs()),
+                new ArrayList<>(gen.outputs("op")),
                 gen.getAsSet("op"));
 
         assertThat(block.isEmpty(), is(false));
@@ -112,8 +110,8 @@ public class FlowBlockTest {
         FlowBlock block = FlowBlock.fromPorts(
                 0,
                 gen.toGraph(),
-                new ArrayList<FlowElementInput>(gen.inputs("op")),
-                new ArrayList<FlowElementOutput>(gen.outputs("op")),
+                new ArrayList<>(gen.inputs("op")),
+                new ArrayList<>(gen.outputs("op")),
                 gen.getAsSet("op"));
 
         assertThat(block.isReduceBlock(), is(true));
@@ -133,8 +131,8 @@ public class FlowBlockTest {
         FlowBlock block = FlowBlock.fromPorts(
                 0,
                 gen.toGraph(),
-                new ArrayList<FlowElementInput>(gen.inputs("op")),
-                new ArrayList<FlowElementOutput>(gen.outputs("op")),
+                new ArrayList<>(gen.inputs("op")),
+                new ArrayList<>(gen.outputs("op")),
                 gen.getAsSet("op"));
 
         assertThat(block.isReduceBlock(), is(false));
@@ -154,8 +152,8 @@ public class FlowBlockTest {
         FlowBlock block = FlowBlock.fromPorts(
                 0,
                 gen.toGraph(),
-                new ArrayList<FlowElementInput>(gen.inputs("op")),
-                new ArrayList<FlowElementOutput>(gen.outputs("op")),
+                new ArrayList<>(gen.inputs("op")),
+                new ArrayList<>(gen.outputs("op")),
                 gen.getAsSet("op"));
 
         block.detach();
@@ -193,8 +191,8 @@ public class FlowBlockTest {
         FlowBlock block = FlowBlock.fromPorts(
                 0,
                 gen.toGraph(),
-                new ArrayList<FlowElementInput>(gen.inputs("op1")),
-                new ArrayList<FlowElementOutput>(gen.outputs("op2")),
+                new ArrayList<>(gen.inputs("op1")),
+                new ArrayList<>(gen.outputs("op2")),
                 gen.getAsSet("op1", "op2"));
 
         block.detach();
@@ -235,15 +233,15 @@ public class FlowBlockTest {
         FlowBlock b1 = FlowBlock.fromPorts(
                 0,
                 gen.toGraph(),
-                new ArrayList<FlowElementInput>(gen.inputs("op1")),
-                new ArrayList<FlowElementOutput>(gen.outputs("op1")),
+                new ArrayList<>(gen.inputs("op1")),
+                new ArrayList<>(gen.outputs("op1")),
                 gen.getAsSet("op1"));
 
         FlowBlock b2 = FlowBlock.fromPorts(
                 0,
                 gen.toGraph(),
-                new ArrayList<FlowElementInput>(gen.inputs("op2")),
-                new ArrayList<FlowElementOutput>(gen.outputs("op2")),
+                new ArrayList<>(gen.inputs("op2")),
+                new ArrayList<>(gen.outputs("op2")),
                 gen.getAsSet("op2"));
 
         FlowBlock.connect(b1.getBlockOutputs().get(0), b2.getBlockInputs().get(0));
@@ -279,15 +277,15 @@ public class FlowBlockTest {
         FlowBlock b1 = FlowBlock.fromPorts(
                 0,
                 gen.toGraph(),
-                new ArrayList<FlowElementInput>(gen.inputs("op1")),
-                new ArrayList<FlowElementOutput>(gen.outputs("op1")),
+                new ArrayList<>(gen.inputs("op1")),
+                new ArrayList<>(gen.outputs("op1")),
                 gen.getAsSet("op1"));
 
         FlowBlock b2 = FlowBlock.fromPorts(
                 0,
                 gen.toGraph(),
-                new ArrayList<FlowElementInput>(gen.inputs("op2")),
-                new ArrayList<FlowElementOutput>(gen.outputs("op2")),
+                new ArrayList<>(gen.inputs("op2")),
+                new ArrayList<>(gen.outputs("op2")),
                 gen.getAsSet("op2"));
 
         FlowBlock.connect(b1.getBlockOutputs().get(0), b2.getBlockInputs().get(0));
@@ -311,15 +309,15 @@ public class FlowBlockTest {
         FlowBlock b1 = FlowBlock.fromPorts(
                 0,
                 gen.toGraph(),
-                new ArrayList<FlowElementInput>(gen.inputs("op1")),
-                new ArrayList<FlowElementOutput>(gen.outputs("op1")),
+                new ArrayList<>(gen.inputs("op1")),
+                new ArrayList<>(gen.outputs("op1")),
                 gen.getAsSet("op1"));
 
         FlowBlock b2 = FlowBlock.fromPorts(
                 0,
                 gen.toGraph(),
-                new ArrayList<FlowElementInput>(gen.inputs("op2")),
-                new ArrayList<FlowElementOutput>(gen.outputs("op2")),
+                new ArrayList<>(gen.inputs("op2")),
+                new ArrayList<>(gen.outputs("op2")),
                 gen.getAsSet("op2"));
 
         FlowBlock.connect(b1.getBlockOutputs().get(0), b2.getBlockInputs().get(0));
@@ -343,15 +341,15 @@ public class FlowBlockTest {
         FlowBlock b1 = FlowBlock.fromPorts(
                 0,
                 gen.toGraph(),
-                new ArrayList<FlowElementInput>(gen.inputs("op1")),
-                new ArrayList<FlowElementOutput>(gen.outputs("op1")),
+                new ArrayList<>(gen.inputs("op1")),
+                new ArrayList<>(gen.outputs("op1")),
                 gen.getAsSet("op1"));
 
         FlowBlock b2 = FlowBlock.fromPorts(
                 0,
                 gen.toGraph(),
-                new ArrayList<FlowElementInput>(gen.inputs("op2")),
-                new ArrayList<FlowElementOutput>(gen.outputs("op2")),
+                new ArrayList<>(gen.inputs("op2")),
+                new ArrayList<>(gen.outputs("op2")),
                 gen.getAsSet("op2"));
 
         b1.detach();
@@ -375,7 +373,7 @@ public class FlowBlockTest {
         FlowBlock bin = FlowBlock.fromPorts(
                 0,
                 gen.toGraph(),
-                new ArrayList<FlowElementInput>(gen.inputs()),
+                new ArrayList<>(gen.inputs()),
                 Arrays.asList(gen.output("in1"), gen.output("in2")),
                 gen.getAsSet("in1", "in2"));
         FlowBlock b1 = FlowBlock.fromPorts(
@@ -388,7 +386,7 @@ public class FlowBlockTest {
                 0,
                 gen.toGraph(),
                 Arrays.asList(gen.input("out1"), gen.input("out2")),
-                new ArrayList<FlowElementOutput>(gen.outputs()),
+                new ArrayList<>(gen.outputs()),
                 gen.getAsSet("out1", "out2"));
         FlowBlock.connect(bin.getBlockOutputs().get(0), b1.getBlockInputs().get(0));
         FlowBlock.connect(b1.getBlockOutputs().get(0), bout.getBlockInputs().get(0));
@@ -422,7 +420,7 @@ public class FlowBlockTest {
         FlowBlock bin = FlowBlock.fromPorts(
                 0,
                 gen.toGraph(),
-                new ArrayList<FlowElementInput>(gen.inputs()),
+                new ArrayList<>(gen.inputs()),
                 Arrays.asList(gen.output("in1"), gen.output("in2")),
                 gen.getAsSet("in1", "in2"));
         FlowBlock b1 = FlowBlock.fromPorts(
@@ -435,7 +433,7 @@ public class FlowBlockTest {
                 0,
                 gen.toGraph(),
                 Arrays.asList(gen.input("out1"), gen.input("out2")),
-                new ArrayList<FlowElementOutput>(gen.outputs()),
+                new ArrayList<>(gen.outputs()),
                 gen.getAsSet("out1", "out2"));
         FlowBlock.connect(bin.getBlockOutputs().get(0), b1.getBlockInputs().get(0));
         FlowBlock.connect(bin.getBlockOutputs().get(1), b1.getBlockInputs().get(1));
@@ -467,7 +465,7 @@ public class FlowBlockTest {
         FlowBlock bin = FlowBlock.fromPorts(
                 0,
                 gen.toGraph(),
-                new ArrayList<FlowElementInput>(gen.inputs()),
+                new ArrayList<>(gen.inputs()),
                 Arrays.asList(gen.output("in1")),
                 gen.getAsSet("in1"));
         FlowBlock b1 = FlowBlock.fromPorts(
@@ -480,7 +478,7 @@ public class FlowBlockTest {
                 0,
                 gen.toGraph(),
                 Arrays.asList(gen.input("out1")),
-                new ArrayList<FlowElementOutput>(gen.outputs()),
+                new ArrayList<>(gen.outputs()),
                 gen.getAsSet("out1"));
         FlowBlock.connect(b1.getBlockOutputs().get(0), bout.getBlockInputs().get(0));
         bin.detach();
@@ -507,7 +505,7 @@ public class FlowBlockTest {
         FlowBlock bin = FlowBlock.fromPorts(
                 0,
                 gen.toGraph(),
-                new ArrayList<FlowElementInput>(gen.inputs()),
+                new ArrayList<>(gen.inputs()),
                 Arrays.asList(gen.output("in1")),
                 gen.getAsSet("in1"));
         FlowBlock b1 = FlowBlock.fromPorts(
@@ -520,7 +518,7 @@ public class FlowBlockTest {
                 0,
                 gen.toGraph(),
                 Arrays.asList(gen.input("out1")),
-                new ArrayList<FlowElementOutput>(gen.outputs()),
+                new ArrayList<>(gen.outputs()),
                 gen.getAsSet("out1"));
         FlowBlock.connect(bin.getBlockOutputs().get(0), b1.getBlockInputs().get(0));
         bin.detach();
@@ -547,7 +545,7 @@ public class FlowBlockTest {
         FlowBlock bin = FlowBlock.fromPorts(
                 0,
                 gen.toGraph(),
-                new ArrayList<FlowElementInput>(gen.inputs()),
+                new ArrayList<>(gen.inputs()),
                 Arrays.asList(gen.output("in1")),
                 gen.getAsSet("in1"));
         FlowBlock b1 = FlowBlock.fromPorts(
@@ -560,7 +558,7 @@ public class FlowBlockTest {
                 0,
                 gen.toGraph(),
                 Arrays.asList(gen.input("out1")),
-                new ArrayList<FlowElementOutput>(gen.outputs()),
+                new ArrayList<>(gen.outputs()),
                 gen.getAsSet("out1"));
         FlowBlock.connect(bin.getBlockOutputs().get(0), b1.getBlockInputs().get(0));
         bin.detach();
@@ -587,7 +585,7 @@ public class FlowBlockTest {
         FlowBlock bin = FlowBlock.fromPorts(
                 0,
                 gen.toGraph(),
-                new ArrayList<FlowElementInput>(gen.inputs()),
+                new ArrayList<>(gen.inputs()),
                 Arrays.asList(gen.output("in1")),
                 gen.getAsSet("in1"));
         FlowBlock b1 = FlowBlock.fromPorts(
@@ -600,7 +598,7 @@ public class FlowBlockTest {
                 0,
                 gen.toGraph(),
                 Arrays.asList(gen.input("out1")),
-                new ArrayList<FlowElementOutput>(gen.outputs()),
+                new ArrayList<>(gen.outputs()),
                 gen.getAsSet("out1"));
         FlowBlock.connect(b1.getBlockOutputs().get(0), bout.getBlockInputs().get(0));
         FlowBlock.connect(bin.getBlockOutputs().get(0), b1.getBlockInputs().get(0));

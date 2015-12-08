@@ -39,7 +39,7 @@ import com.asakusafw.testdriver.model.SimpleDataModelDefinition;
  */
 public class HtmlDifferenceSinkProviderTest {
 
-    static final DataModelDefinition<Simple> SIMPLE = new SimpleDataModelDefinition<Simple>(Simple.class);
+    static final DataModelDefinition<Simple> SIMPLE = new SimpleDataModelDefinition<>(Simple.class);
 
     /**
      * temporary folder.
@@ -59,8 +59,7 @@ public class HtmlDifferenceSinkProviderTest {
         file.delete();
 
         DifferenceSinkFactory factory = repo.getDifferenceSinkFactory(file.toURI());
-        DifferenceSink sink = factory.createSink(SIMPLE, new TestContext.Empty());
-        try {
+        try (DifferenceSink sink = factory.createSink(SIMPLE, new TestContext.Empty())) {
             Simple expected = new Simple();
             expected.text = "expected";
             Simple actual = new Simple();
@@ -69,8 +68,6 @@ public class HtmlDifferenceSinkProviderTest {
                     SIMPLE.toReflection(expected),
                     SIMPLE.toReflection(actual),
                     "testing"));
-        } finally {
-            sink.close();
         }
 
         assertThat(file.exists(), is(true));
@@ -88,8 +85,7 @@ public class HtmlDifferenceSinkProviderTest {
         file.delete();
 
         DifferenceSinkFactory factory = repo.getDifferenceSinkFactory(file.toURI());
-        try {
-            DifferenceSink sink = factory.createSink(SIMPLE, new TestContext.Empty());
+        try (DifferenceSink sink = factory.createSink(SIMPLE, new TestContext.Empty())) {
             sink.close();
             fail();
         } catch (IOException e) {

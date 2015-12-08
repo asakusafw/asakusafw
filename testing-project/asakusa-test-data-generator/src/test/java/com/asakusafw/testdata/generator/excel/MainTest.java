@@ -44,7 +44,7 @@ public class MainTest extends ExcelTesterRoot {
         File output = folder.newFolder("output");
         File source = folder.newFolder("source");
         deploy("simple.dmdl", source);
-        List<String> args = new ArrayList<String>();
+        List<String> args = new ArrayList<>();
         Collections.addAll(args, "-output", output.getAbsolutePath());
         Collections.addAll(args, "-source", source.getAbsolutePath());
         Collections.addAll(args, "-format", WorkbookFormat.DATA.name());
@@ -64,7 +64,7 @@ public class MainTest extends ExcelTesterRoot {
         File output = folder.newFolder("output");
         File source = folder.newFolder("source");
         deploy("simple.dmdl", source);
-        List<String> args = new ArrayList<String>();
+        List<String> args = new ArrayList<>();
         Collections.addAll(args, "-output", output.getAbsolutePath());
         Collections.addAll(args, "-source", source.getAbsolutePath());
         Collections.addAll(args, "-format", WorkbookFormat.DATAX.name());
@@ -80,7 +80,7 @@ public class MainTest extends ExcelTesterRoot {
      */
     @Test
     public void less() {
-        List<String> args = new ArrayList<String>();
+        List<String> args = new ArrayList<>();
         Collections.addAll(args);
         int exit = Main.start(args.toArray(new String[args.size()]));
         assertThat(exit, not(0));
@@ -95,7 +95,7 @@ public class MainTest extends ExcelTesterRoot {
         File output = folder.newFolder("output");
         File source = folder.newFolder("source");
         deploy("invalid.dmdl", source);
-        List<String> args = new ArrayList<String>();
+        List<String> args = new ArrayList<>();
         Collections.addAll(args, "-output", output.getAbsolutePath());
         Collections.addAll(args, "-source", source.getAbsolutePath());
         Collections.addAll(args, "-format", WorkbookFormat.DATA.name());
@@ -112,7 +112,7 @@ public class MainTest extends ExcelTesterRoot {
         File output = folder.newFile("output");
         File source = folder.newFolder("source");
         deploy("simple.dmdl", source);
-        List<String> args = new ArrayList<String>();
+        List<String> args = new ArrayList<>();
         Collections.addAll(args, "-output", output.getAbsolutePath());
         Collections.addAll(args, "-source", source.getAbsolutePath());
         Collections.addAll(args, "-format", WorkbookFormat.DATA.name());
@@ -127,7 +127,7 @@ public class MainTest extends ExcelTesterRoot {
     @Test
     public void invalid_source() throws Exception {
         File output = folder.newFolder("output");
-        List<String> args = new ArrayList<String>();
+        List<String> args = new ArrayList<>();
         Collections.addAll(args, "-output", output.getAbsolutePath());
         Collections.addAll(args, "-source", "INVALID_SOURCE_PATH");
         Collections.addAll(args, "-format", WorkbookFormat.DATA.name());
@@ -144,7 +144,7 @@ public class MainTest extends ExcelTesterRoot {
         File output = folder.newFolder("output");
         File source = folder.newFolder("source");
         deploy("simple.dmdl", source);
-        List<String> args = new ArrayList<String>();
+        List<String> args = new ArrayList<>();
         Collections.addAll(args, "-output", output.getAbsolutePath());
         Collections.addAll(args, "-source", source.getAbsolutePath());
         Collections.addAll(args, "-format", "INVALID_FORMAT");
@@ -153,11 +153,10 @@ public class MainTest extends ExcelTesterRoot {
     }
 
     private void deploy(String name, File target) throws IOException {
-        InputStream in = getClass().getResourceAsStream(name);
-        assertThat(name, in, not(nullValue()));
-        try {
-            OutputStream out = new FileOutputStream(new File(target, name));
-            try {
+
+        try (InputStream in = getClass().getResourceAsStream(name)) {
+            assertThat(name, in, not(nullValue()));
+            try (OutputStream out = new FileOutputStream(new File(target, name))) {
                 byte[] buf = new byte[1024];
                 while (true) {
                     int read = in.read(buf);
@@ -166,11 +165,7 @@ public class MainTest extends ExcelTesterRoot {
                     }
                     out.write(buf, 0, read);
                 }
-            } finally {
-                out.close();
             }
-        } finally {
-            in.close();
         }
     }
 

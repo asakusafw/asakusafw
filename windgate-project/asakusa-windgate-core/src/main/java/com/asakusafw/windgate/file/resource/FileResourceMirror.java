@@ -61,13 +61,13 @@ public class FileResourceMirror extends ResourceMirror {
     @Override
     public <T> SourceDriver<T> createSource(ProcessScript<T> script) throws IOException {
         File file = getPath(script, DriverScript.Kind.SOURCE);
-        return new FileSourceDriver<T>(script.getDataClass(), file);
+        return new FileSourceDriver<>(script.getDataClass(), file);
     }
 
     @Override
     public <T> DrainDriver<T> createDrain(ProcessScript<T> script) throws IOException {
         File file = getPath(script, DriverScript.Kind.DRAIN);
-        return new FileDrainDriver<T>(script.getDataClass(), file);
+        return new FileDrainDriver<>(script.getDataClass(), file);
     }
 
     @Override

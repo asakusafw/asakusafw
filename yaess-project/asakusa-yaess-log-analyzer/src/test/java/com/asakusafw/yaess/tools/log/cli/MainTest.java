@@ -79,15 +79,15 @@ public class MainTest {
      */
     @Test
     public void smoke() {
-        List<String> arguments = new ArrayList<String>();
+        List<String> arguments = new ArrayList<>();
         Collections.addAll(arguments, "-i", Input.class.getName());
         Collections.addAll(arguments, "-I", "testing=ok");
         Collections.addAll(arguments, "-o", Output.class.getName());
         Collections.addAll(arguments, "-O", "testing=ok");
 
-        List<YaessLogRecord> buffer = new ArrayList<YaessLogRecord>();
+        List<YaessLogRecord> buffer = new ArrayList<>();
         Input.SOURCE.set(Sources.wrap(Arrays.asList(mark).iterator()));
-        Output.SINK.set(new ListSink<YaessLogRecord>(buffer));
+        Output.SINK.set(new ListSink<>(buffer));
 
         int exit = Main.execute(arguments.toArray(new String[arguments.size()]));
         assertThat(exit, is(0));
@@ -104,7 +104,7 @@ public class MainTest {
      */
     @Test
     public void wo_input() {
-        List<String> arguments = new ArrayList<String>();
+        List<String> arguments = new ArrayList<>();
         Collections.addAll(arguments, "-I", "testing=ok");
         Collections.addAll(arguments, "-o", Output.class.getName());
         Collections.addAll(arguments, "-O", "testing=ok");
@@ -118,7 +118,7 @@ public class MainTest {
      */
     @Test
     public void unknown_input() {
-        List<String> arguments = new ArrayList<String>();
+        List<String> arguments = new ArrayList<>();
         Collections.addAll(arguments, "-i", Input.class.getName() + "__MISSING__");
         Collections.addAll(arguments, "-I", "testing=ok");
         Collections.addAll(arguments, "-o", Output.class.getName());
@@ -133,7 +133,7 @@ public class MainTest {
      */
     @Test
     public void invalid_input() {
-        List<String> arguments = new ArrayList<String>();
+        List<String> arguments = new ArrayList<>();
         Collections.addAll(arguments, "-i", String.class.getName());
         Collections.addAll(arguments, "-I", "testing=ok");
         Collections.addAll(arguments, "-o", Output.class.getName());
@@ -148,7 +148,7 @@ public class MainTest {
      */
     @Test
     public void unknown_output() {
-        List<String> arguments = new ArrayList<String>();
+        List<String> arguments = new ArrayList<>();
         Collections.addAll(arguments, "-i", Input.class.getName());
         Collections.addAll(arguments, "-I", "testing=ok");
         Collections.addAll(arguments, "-o", Output.class.getName() + "__MISSING__");
@@ -163,7 +163,7 @@ public class MainTest {
      */
     @Test
     public void invalid_output() {
-        List<String> arguments = new ArrayList<String>();
+        List<String> arguments = new ArrayList<>();
         Collections.addAll(arguments, "-i", Input.class.getName());
         Collections.addAll(arguments, "-I", "testing=ok");
         Collections.addAll(arguments, "-o", String.class.getName());
@@ -178,7 +178,7 @@ public class MainTest {
      */
     @Test
     public void wo_output() {
-        List<String> arguments = new ArrayList<String>();
+        List<String> arguments = new ArrayList<>();
         Collections.addAll(arguments, "-i", Input.class.getName());
         Collections.addAll(arguments, "-I", "testing=ok");
         Collections.addAll(arguments, "-O", "testing=ok");
@@ -192,7 +192,7 @@ public class MainTest {
      */
     @Test
     public void wo_input_argument() {
-        List<String> arguments = new ArrayList<String>();
+        List<String> arguments = new ArrayList<>();
         Collections.addAll(arguments, "-i", Input.class.getName());
         Collections.addAll(arguments, "-o", Output.class.getName());
         Collections.addAll(arguments, "-O", "testing=ok");
@@ -209,7 +209,7 @@ public class MainTest {
      */
     @Test
     public void wo_output_argument() {
-        List<String> arguments = new ArrayList<String>();
+        List<String> arguments = new ArrayList<>();
         Collections.addAll(arguments, "-i", Input.class.getName());
         Collections.addAll(arguments, "-I", "testing=ok");
         Collections.addAll(arguments, "-o", Output.class.getName());
@@ -226,7 +226,7 @@ public class MainTest {
      */
     @Test
     public void fail_process() {
-        List<String> arguments = new ArrayList<String>();
+        List<String> arguments = new ArrayList<>();
         Collections.addAll(arguments, "-i", Input.class.getName());
         Collections.addAll(arguments, "-I", "testing=ok");
         Collections.addAll(arguments, "-o", Output.class.getName());
@@ -250,8 +250,7 @@ public class MainTest {
      */
     public static class Input implements YaessLogInput {
 
-        static final AtomicReference<Source<? extends YaessLogRecord>> SOURCE =
-                new AtomicReference<Source<? extends YaessLogRecord>>();
+        static final AtomicReference<Source<? extends YaessLogRecord>> SOURCE = new AtomicReference<>();
 
         @Override
         public Map<String, String> getOptionsInformation() {
@@ -274,8 +273,7 @@ public class MainTest {
      */
     public static class Output implements YaessLogOutput {
 
-        static final AtomicReference<Sink<? super YaessLogRecord>> SINK =
-                new AtomicReference<Sink<? super YaessLogRecord>>();
+        static final AtomicReference<Sink<? super YaessLogRecord>> SINK = new AtomicReference<>();
 
         @Override
         public Map<String, String> getOptionsInformation() {

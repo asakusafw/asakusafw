@@ -85,8 +85,7 @@ public class IrDocBlock extends AbstractIrDocElement implements IrDocFragment {
         if (fragments == null) {
             throw new IllegalArgumentException("fragments"); //$NON-NLS-1$
         }
-        this.fragments = Collections.unmodifiableList(
-            new ArrayList<IrDocFragment>(fragments));
+        this.fragments = Collections.unmodifiableList(new ArrayList<>(fragments));
     }
 
     @Override

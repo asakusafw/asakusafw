@@ -287,8 +287,7 @@ public enum ValueSerdeFactory implements ValueSerde {
 
         static final Map<Class<? extends ValueOption<?>>, ValueSerdeFactory> FROM_CLASS;
         static {
-            Map<Class<? extends ValueOption<?>>, ValueSerdeFactory> map =
-                    new HashMap<Class<? extends ValueOption<?>>, ValueSerdeFactory>();
+            Map<Class<? extends ValueOption<?>>, ValueSerdeFactory> map = new HashMap<>();
             for (ValueSerdeFactory serde : ValueSerdeFactory.values()) {
                 map.put(serde.getValueClass(), serde);
             }

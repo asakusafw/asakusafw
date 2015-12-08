@@ -36,7 +36,7 @@ public class BatchContext {
         }
     };
 
-    private Map<String, String> variables = new HashMap<String, String>();
+    private Map<String, String> variables = new HashMap<>();
 
     /**
      * Creates a new instance.
@@ -47,7 +47,7 @@ public class BatchContext {
         if (variables == null) {
             throw new IllegalArgumentException("variables must not be null"); //$NON-NLS-1$
         }
-        this.variables = new HashMap<String, String>(variables);
+        this.variables = new HashMap<>(variables);
     }
 
     /**

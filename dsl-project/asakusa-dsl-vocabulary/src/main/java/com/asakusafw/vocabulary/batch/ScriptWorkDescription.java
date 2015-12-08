@@ -63,11 +63,7 @@ public class ScriptWorkDescription extends WorkDescription {
      * @param variables the environment variables
      * @throws IllegalArgumentException if some parameters are {@code null}
      */
-    public ScriptWorkDescription(
-            String name,
-            String command,
-            String profileName,
-            Map<String, String> variables) {
+    public ScriptWorkDescription(String name, String command, String profileName, Map<String, String> variables) {
         if (name == null) {
             throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
         }
@@ -89,7 +85,7 @@ public class ScriptWorkDescription extends WorkDescription {
         this.name = name;
         this.command = command;
         this.profileName = profileName;
-        this.variables = Collections.unmodifiableSortedMap(new TreeMap<String, String>(variables));
+        this.variables = Collections.unmodifiableSortedMap(new TreeMap<>(variables));
     }
 
     @Override

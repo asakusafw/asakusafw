@@ -37,7 +37,7 @@ final class Util {
         assert loader != null;
         LOG.debug("registering plug-in of {}", spi.getSimpleName()); //$NON-NLS-1$
         ServiceLoader<T> services = ServiceLoader.load(spi, loader);
-        List<T> results = new ArrayList<T>();
+        List<T> results = new ArrayList<>();
         for (T service : services) {
             LOG.debug("activating {}", service.getClass().getName()); //$NON-NLS-1$
             results.add(service);

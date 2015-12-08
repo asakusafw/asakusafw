@@ -76,7 +76,7 @@ public abstract class JdbcImporterDescription extends WindGateImporterDescriptio
 
         JdbcDescriptionUtil.checkCommonConfig(descriptionClass, modelType, supportClass, table, columns);
 
-        Map<String, String> configuration = new HashMap<String, String>();
+        Map<String, String> configuration = new HashMap<>();
         configuration.put(JdbcProcess.TABLE.key(), table);
         configuration.put(JdbcProcess.COLUMNS.key(), JdbcDescriptionUtil.join(columns));
         configuration.put(JdbcProcess.JDBC_SUPPORT.key(), supportClass.getName());

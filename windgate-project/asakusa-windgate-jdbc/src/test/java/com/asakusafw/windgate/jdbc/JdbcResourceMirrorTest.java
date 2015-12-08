@@ -68,7 +68,7 @@ public class JdbcResourceMirrorTest {
      */
     @Test
     public void source_simple() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(JdbcProcess.TABLE.key(), "PAIR");
         conf.put(JdbcProcess.COLUMNS.key(), "KEY,VALUE");
         conf.put(JdbcProcess.JDBC_SUPPORT.key(), PairSupport.class.getName());
@@ -77,19 +77,12 @@ public class JdbcResourceMirrorTest {
         GateScript script = script(process);
 
         h2.execute("INSERT INTO PAIR (KEY, VALUE) VALUES (1, 'Hello, world!')");
-
-        JdbcResourceMirror resource = new JdbcResourceMirror(profile(), new ParameterList());
-        try {
+        try (JdbcResourceMirror resource = new JdbcResourceMirror(profile(), new ParameterList())) {
             resource.prepare(script);
-            SourceDriver<Pair> source = resource.createSource(process);
-            try {
+            try (SourceDriver<Pair> source = resource.createSource(process)) {
                 source.prepare();
                 test(source, "Hello, world!");
-            } finally {
-                source.close();
             }
-        } finally {
-            resource.close();
         }
     }
 
@@ -99,7 +92,7 @@ public class JdbcResourceMirrorTest {
      */
     @Test
     public void source_many() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(JdbcProcess.TABLE.key(), "PAIR");
         conf.put(JdbcProcess.COLUMNS.key(), "KEY,VALUE");
         conf.put(JdbcProcess.JDBC_SUPPORT.key(), PairSupport.class.getName());
@@ -111,18 +104,12 @@ public class JdbcResourceMirrorTest {
         h2.execute("INSERT INTO PAIR (KEY, VALUE) VALUES (2, 'Hello2, world!')");
         h2.execute("INSERT INTO PAIR (KEY, VALUE) VALUES (3, 'Hello3, world!')");
 
-        JdbcResourceMirror resource = new JdbcResourceMirror(profile(), new ParameterList());
-        try {
+        try (JdbcResourceMirror resource = new JdbcResourceMirror(profile(), new ParameterList())) {
             resource.prepare(script);
-            SourceDriver<Pair> source = resource.createSource(process);
-            try {
+            try (SourceDriver<Pair> source = resource.createSource(process)) {
                 source.prepare();
                 test(source, "Hello1, world!", "Hello2, world!", "Hello3, world!");
-            } finally {
-                source.close();
             }
-        } finally {
-            resource.close();
         }
     }
 
@@ -132,7 +119,7 @@ public class JdbcResourceMirrorTest {
      */
     @Test
     public void source_condition() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(JdbcProcess.TABLE.key(), "PAIR");
         conf.put(JdbcProcess.COLUMNS.key(), "KEY,VALUE");
         conf.put(JdbcProcess.JDBC_SUPPORT.key(), PairSupport.class.getName());
@@ -147,18 +134,12 @@ public class JdbcResourceMirrorTest {
         h2.execute("INSERT INTO PAIR (KEY, VALUE) VALUES (4, 'Hello4, world!')");
         h2.execute("INSERT INTO PAIR (KEY, VALUE) VALUES (5, 'Hello5, world!')");
 
-        JdbcResourceMirror resource = new JdbcResourceMirror(profile(), new ParameterList());
-        try {
+        try (JdbcResourceMirror resource = new JdbcResourceMirror(profile(), new ParameterList())) {
             resource.prepare(script);
-            SourceDriver<Pair> source = resource.createSource(process);
-            try {
+            try (SourceDriver<Pair> source = resource.createSource(process)) {
                 source.prepare();
                 test(source, "Hello4, world!", "Hello5, world!");
-            } finally {
-                source.close();
             }
-        } finally {
-            resource.close();
         }
     }
 
@@ -168,7 +149,7 @@ public class JdbcResourceMirrorTest {
      */
     @Test
     public void source_condition_parameterized() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(JdbcProcess.TABLE.key(), "PAIR");
         conf.put(JdbcProcess.COLUMNS.key(), "KEY,VALUE");
         conf.put(JdbcProcess.JDBC_SUPPORT.key(), PairSupport.class.getName());
@@ -183,20 +164,14 @@ public class JdbcResourceMirrorTest {
         h2.execute("INSERT INTO PAIR (KEY, VALUE) VALUES (4, 'Hello4, world!')");
         h2.execute("INSERT INTO PAIR (KEY, VALUE) VALUES (5, 'Hello5, world!')");
 
-        JdbcResourceMirror resource = new JdbcResourceMirror(
+        try (JdbcResourceMirror resource = new JdbcResourceMirror(
                 profile(),
-                new ParameterList(Collections.singletonMap("max", "2")));
-        try {
+                new ParameterList(Collections.singletonMap("max", "2")))) {
             resource.prepare(script);
-            SourceDriver<Pair> source = resource.createSource(process);
-            try {
+            try (SourceDriver<Pair> source = resource.createSource(process)) {
                 source.prepare();
                 test(source, "Hello1, world!", "Hello2, world!");
-            } finally {
-                source.close();
             }
-        } finally {
-            resource.close();
         }
     }
 
@@ -209,7 +184,7 @@ public class JdbcResourceMirrorTest {
         RuntimeContext.set(RuntimeContext.DEFAULT.mode(ExecutionMode.SIMULATION));
         h2.execute("DROP TABLE PAIR;");
 
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(JdbcProcess.TABLE.key(), "PAIR");
         conf.put(JdbcProcess.COLUMNS.key(), "KEY,VALUE");
         conf.put(JdbcProcess.JDBC_SUPPORT.key(), PairSupport.class.getName());
@@ -217,18 +192,12 @@ public class JdbcResourceMirrorTest {
         ProcessScript<Pair> process = process(new DriverScript("jdbc", conf), dummy());
         GateScript script = script(process);
 
-        JdbcResourceMirror resource = new JdbcResourceMirror(profile(), new ParameterList());
-        try {
+        try (JdbcResourceMirror resource = new JdbcResourceMirror(profile(), new ParameterList())) {
             assertThat(RuntimeContext.get().canExecute(resource), is(true));
             resource.prepare(script);
-            SourceDriver<Pair> source = resource.createSource(process);
-            try {
+            try (SourceDriver<Pair> source = resource.createSource(process)) {
                 assertThat(RuntimeContext.get().canExecute(source), is(false));
-            } finally {
-                source.close();
             }
-        } finally {
-            resource.close();
         }
     }
 
@@ -238,7 +207,7 @@ public class JdbcResourceMirrorTest {
      */
     @Test
     public void source_condition_invalid_parameterized() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(JdbcProcess.TABLE.key(), "PAIR");
         conf.put(JdbcProcess.COLUMNS.key(), "KEY,VALUE");
         conf.put(JdbcProcess.JDBC_SUPPORT.key(), PairSupport.class.getName());
@@ -247,16 +216,13 @@ public class JdbcResourceMirrorTest {
         ProcessScript<Pair> process = process(new DriverScript("jdbc", conf), dummy());
         GateScript script = script(process);
 
-        JdbcResourceMirror resource = new JdbcResourceMirror(profile(), new ParameterList());
-        try {
+        try (JdbcResourceMirror resource = new JdbcResourceMirror(profile(), new ParameterList())) {
             try {
                 resource.prepare(script);
                 fail();
             } catch (IOException e) {
                 // ok.
             }
-        } finally {
-            resource.close();
         }
     }
 
@@ -266,12 +232,12 @@ public class JdbcResourceMirrorTest {
      */
     @Test
     public void source_invalid_model() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(JdbcProcess.TABLE.key(), "PAIR");
         conf.put(JdbcProcess.COLUMNS.key(), "KEY,VALUE");
         conf.put(JdbcProcess.JDBC_SUPPORT.key(), VoidSupport.class.getName());
 
-        ProcessScript<Void> process = new ProcessScript<Void>(
+        ProcessScript<Void> process = new ProcessScript<>(
                 "invalid",
                 "testing",
                 Void.class,
@@ -279,16 +245,13 @@ public class JdbcResourceMirrorTest {
                 dummy());
         GateScript script = script(process);
 
-        JdbcResourceMirror resource = new JdbcResourceMirror(profile(), new ParameterList());
-        try {
+        try (JdbcResourceMirror resource = new JdbcResourceMirror(profile(), new ParameterList())) {
             try {
                 resource.prepare(script);
                 fail();
             } catch (IOException e) {
                 // ok.
             }
-        } finally {
-            resource.close();
         }
     }
 
@@ -298,7 +261,7 @@ public class JdbcResourceMirrorTest {
      */
     @Test
     public void drain_simple() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(JdbcProcess.TABLE.key(), "PAIR");
         conf.put(JdbcProcess.COLUMNS.key(), "KEY,VALUE");
         conf.put(JdbcProcess.JDBC_SUPPORT.key(), PairSupport.class.getName());
@@ -307,19 +270,13 @@ public class JdbcResourceMirrorTest {
         ProcessScript<Pair> process = process(dummy(), new DriverScript("jdbc", conf));
         GateScript script = script(process);
 
-        JdbcResourceMirror resource = new JdbcResourceMirror(profile(), new ParameterList());
-        try {
+        try (JdbcResourceMirror resource = new JdbcResourceMirror(profile(), new ParameterList())) {
             resource.prepare(script);
-            DrainDriver<Pair> drain = resource.createDrain(process);
-            try {
+            try (DrainDriver<Pair> drain = resource.createDrain(process)) {
                 drain.prepare();
                 drain.put(new Pair(1, "Hello, world!"));
-            } finally {
-                drain.close();
             }
             test("Hello, world!");
-        } finally {
-            resource.close();
         }
     }
 
@@ -329,7 +286,7 @@ public class JdbcResourceMirrorTest {
      */
     @Test
     public void drain_many() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(JdbcProcess.TABLE.key(), "PAIR");
         conf.put(JdbcProcess.COLUMNS.key(), "KEY,VALUE");
         conf.put(JdbcProcess.JDBC_SUPPORT.key(), PairSupport.class.getName());
@@ -338,21 +295,15 @@ public class JdbcResourceMirrorTest {
         ProcessScript<Pair> process = process(dummy(), new DriverScript("jdbc", conf));
         GateScript script = script(process);
 
-        JdbcResourceMirror resource = new JdbcResourceMirror(profile(), new ParameterList());
-        try {
+        try (JdbcResourceMirror resource = new JdbcResourceMirror(profile(), new ParameterList())) {
             resource.prepare(script);
-            DrainDriver<Pair> drain = resource.createDrain(process);
-            try {
+            try (DrainDriver<Pair> drain = resource.createDrain(process)) {
                 drain.prepare();
                 drain.put(new Pair(1, "Hello1, world!"));
                 drain.put(new Pair(2, "Hello2, world!"));
                 drain.put(new Pair(3, "Hello3, world!"));
-            } finally {
-                drain.close();
             }
             test("Hello1, world!", "Hello2, world!", "Hello3, world!");
-        } finally {
-            resource.close();
         }
     }
 
@@ -366,7 +317,7 @@ public class JdbcResourceMirrorTest {
 
         h2.execute("DROP TABLE PAIR;");
 
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(JdbcProcess.TABLE.key(), "PAIR");
         conf.put(JdbcProcess.COLUMNS.key(), "KEY,VALUE");
         conf.put(JdbcProcess.JDBC_SUPPORT.key(), PairSupport.class.getName());
@@ -375,18 +326,12 @@ public class JdbcResourceMirrorTest {
         ProcessScript<Pair> process = process(dummy(), new DriverScript("jdbc", conf));
         GateScript script = script(process);
 
-        JdbcResourceMirror resource = new JdbcResourceMirror(profile(), new ParameterList());
-        try {
+        try (JdbcResourceMirror resource = new JdbcResourceMirror(profile(), new ParameterList())) {
             assertThat(RuntimeContext.get().canExecute(resource), is(true));
             resource.prepare(script);
-            DrainDriver<Pair> drain = resource.createDrain(process);
-            try {
+            try (DrainDriver<Pair> drain = resource.createDrain(process)) {
                 assertThat(RuntimeContext.get().canExecute(drain), is(false));
-            } finally {
-                drain.close();
             }
-        } finally {
-            resource.close();
         }
     }
 
@@ -396,7 +341,7 @@ public class JdbcResourceMirrorTest {
      */
     @Test
     public void invalid_drain_operation_missing() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(JdbcProcess.TABLE.key(), "PAIR");
         conf.put(JdbcProcess.COLUMNS.key(), "KEY,VALUE");
         conf.put(JdbcProcess.JDBC_SUPPORT.key(), PairSupport.class.getName());
@@ -404,16 +349,13 @@ public class JdbcResourceMirrorTest {
         ProcessScript<Pair> process = process(dummy(), new DriverScript("jdbc", conf));
         GateScript script = script(process);
 
-        JdbcResourceMirror resource = new JdbcResourceMirror(profile(), new ParameterList());
-        try {
+        try (JdbcResourceMirror resource = new JdbcResourceMirror(profile(), new ParameterList())) {
             try {
                 resource.prepare(script);
                 fail();
             } catch (IOException e) {
                 // ok.
             }
-        } finally {
-            resource.close();
         }
     }
 
@@ -423,7 +365,7 @@ public class JdbcResourceMirrorTest {
      */
     @Test
     public void invalid_drain_operation_unknown() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(JdbcProcess.TABLE.key(), "PAIR");
         conf.put(JdbcProcess.COLUMNS.key(), "KEY,VALUE");
         conf.put(JdbcProcess.JDBC_SUPPORT.key(), PairSupport.class.getName());
@@ -432,16 +374,13 @@ public class JdbcResourceMirrorTest {
         ProcessScript<Pair> process = process(dummy(), new DriverScript("jdbc", conf));
         GateScript script = script(process);
 
-        JdbcResourceMirror resource = new JdbcResourceMirror(profile(), new ParameterList());
-        try {
+        try (JdbcResourceMirror resource = new JdbcResourceMirror(profile(), new ParameterList())) {
             try {
                 resource.prepare(script);
                 fail();
             } catch (IOException e) {
                 // ok.
             }
-        } finally {
-            resource.close();
         }
     }
 
@@ -451,23 +390,20 @@ public class JdbcResourceMirrorTest {
      */
     @Test
     public void invalid_table_missing() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(JdbcProcess.COLUMNS.key(), "KEY,VALUE");
         conf.put(JdbcProcess.JDBC_SUPPORT.key(), PairSupport.class.getName());
 
         ProcessScript<Pair> process = process(new DriverScript("jdbc", conf), dummy());
         GateScript script = script(process);
 
-        JdbcResourceMirror resource = new JdbcResourceMirror(profile(), new ParameterList());
-        try {
+        try (JdbcResourceMirror resource = new JdbcResourceMirror(profile(), new ParameterList())) {
             try {
                 resource.prepare(script);
                 fail();
             } catch (IOException e) {
                 // ok.
             }
-        } finally {
-            resource.close();
         }
     }
 
@@ -477,7 +413,7 @@ public class JdbcResourceMirrorTest {
      */
     @Test
     public void invalid_table_empty() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(JdbcProcess.TABLE.key(), "");
         conf.put(JdbcProcess.COLUMNS.key(), "KEY,VALUE");
         conf.put(JdbcProcess.JDBC_SUPPORT.key(), PairSupport.class.getName());
@@ -485,16 +421,13 @@ public class JdbcResourceMirrorTest {
         ProcessScript<Pair> process = process(new DriverScript("jdbc", conf), dummy());
         GateScript script = script(process);
 
-        JdbcResourceMirror resource = new JdbcResourceMirror(profile(), new ParameterList());
-        try {
+        try (JdbcResourceMirror resource = new JdbcResourceMirror(profile(), new ParameterList())) {
             try {
                 resource.prepare(script);
                 fail();
             } catch (IOException e) {
                 // ok.
             }
-        } finally {
-            resource.close();
         }
     }
 
@@ -504,23 +437,20 @@ public class JdbcResourceMirrorTest {
      */
     @Test
     public void invalid_columns_missing() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(JdbcProcess.TABLE.key(), "PAIR");
         conf.put(JdbcProcess.JDBC_SUPPORT.key(), PairSupport.class.getName());
 
         ProcessScript<Pair> process = process(new DriverScript("jdbc", conf), dummy());
         GateScript script = script(process);
 
-        JdbcResourceMirror resource = new JdbcResourceMirror(profile(), new ParameterList());
-        try {
+        try (JdbcResourceMirror resource = new JdbcResourceMirror(profile(), new ParameterList())) {
             try {
                 resource.prepare(script);
                 fail();
             } catch (IOException e) {
                 // ok.
             }
-        } finally {
-            resource.close();
         }
     }
 
@@ -530,7 +460,7 @@ public class JdbcResourceMirrorTest {
      */
     @Test
     public void invalid_columns_empty() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(JdbcProcess.TABLE.key(), "PAIR");
         conf.put(JdbcProcess.COLUMNS.key(), "");
         conf.put(JdbcProcess.JDBC_SUPPORT.key(), PairSupport.class.getName());
@@ -538,16 +468,13 @@ public class JdbcResourceMirrorTest {
         ProcessScript<Pair> process = process(new DriverScript("jdbc", conf), dummy());
         GateScript script = script(process);
 
-        JdbcResourceMirror resource = new JdbcResourceMirror(profile(), new ParameterList());
-        try {
+        try (JdbcResourceMirror resource = new JdbcResourceMirror(profile(), new ParameterList())) {
             try {
                 resource.prepare(script);
                 fail();
             } catch (IOException e) {
                 // ok.
             }
-        } finally {
-            resource.close();
         }
     }
 
@@ -557,23 +484,20 @@ public class JdbcResourceMirrorTest {
      */
     @Test
     public void invalid_support_missing() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(JdbcProcess.TABLE.key(), "PAIR");
         conf.put(JdbcProcess.COLUMNS.key(), "KEY,VALUE");
 
         ProcessScript<Pair> process = process(new DriverScript("jdbc", conf), dummy());
         GateScript script = script(process);
 
-        JdbcResourceMirror resource = new JdbcResourceMirror(profile(), new ParameterList());
-        try {
+        try (JdbcResourceMirror resource = new JdbcResourceMirror(profile(), new ParameterList())) {
             try {
                 resource.prepare(script);
                 fail();
             } catch (IOException e) {
                 // ok.
             }
-        } finally {
-            resource.close();
         }
     }
 
@@ -583,7 +507,7 @@ public class JdbcResourceMirrorTest {
      */
     @Test
     public void invalid_support_unknown() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(JdbcProcess.TABLE.key(), "PAIR");
         conf.put(JdbcProcess.COLUMNS.key(), "KEY,VALUE");
         conf.put(JdbcProcess.JDBC_SUPPORT.key(), "__INVALID");
@@ -591,16 +515,13 @@ public class JdbcResourceMirrorTest {
         ProcessScript<Pair> process = process(new DriverScript("jdbc", conf), dummy());
         GateScript script = script(process);
 
-        JdbcResourceMirror resource = new JdbcResourceMirror(profile(), new ParameterList());
-        try {
+        try (JdbcResourceMirror resource = new JdbcResourceMirror(profile(), new ParameterList())) {
             try {
                 resource.prepare(script);
                 fail();
             } catch (IOException e) {
                 // ok.
             }
-        } finally {
-            resource.close();
         }
     }
 
@@ -610,7 +531,7 @@ public class JdbcResourceMirrorTest {
      */
     @Test
     public void invalid_support_class() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(JdbcProcess.TABLE.key(), "PAIR");
         conf.put(JdbcProcess.COLUMNS.key(), "KEY,VALUE");
         conf.put(JdbcProcess.JDBC_SUPPORT.key(), Pair.class.getName());
@@ -618,16 +539,13 @@ public class JdbcResourceMirrorTest {
         ProcessScript<Pair> process = process(new DriverScript("jdbc", conf), dummy());
         GateScript script = script(process);
 
-        JdbcResourceMirror resource = new JdbcResourceMirror(profile(), new ParameterList());
-        try {
+        try (JdbcResourceMirror resource = new JdbcResourceMirror(profile(), new ParameterList())) {
             try {
                 resource.prepare(script);
                 fail();
             } catch (IOException e) {
                 // ok.
             }
-        } finally {
-            resource.close();
         }
     }
 
@@ -637,7 +555,7 @@ public class JdbcResourceMirrorTest {
      */
     @Test
     public void invalid_support_failnew() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(JdbcProcess.TABLE.key(), "PAIR");
         conf.put(JdbcProcess.COLUMNS.key(), "KEY,VALUE");
         conf.put(JdbcProcess.JDBC_SUPPORT.key(), SupportWithPrivateConstructor.class.getName());
@@ -645,16 +563,13 @@ public class JdbcResourceMirrorTest {
         ProcessScript<Pair> process = process(new DriverScript("jdbc", conf), dummy());
         GateScript script = script(process);
 
-        JdbcResourceMirror resource = new JdbcResourceMirror(profile(), new ParameterList());
-        try {
+        try (JdbcResourceMirror resource = new JdbcResourceMirror(profile(), new ParameterList())) {
             try {
                 resource.prepare(script);
                 fail();
             } catch (IOException e) {
                 // ok.
             }
-        } finally {
-            resource.close();
         }
     }
 
@@ -664,7 +579,7 @@ public class JdbcResourceMirrorTest {
      */
     @Test
     public void invalid_support_inconsistent() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(JdbcProcess.TABLE.key(), "PAIR");
         conf.put(JdbcProcess.COLUMNS.key(), "KEY,VALUE");
         conf.put(JdbcProcess.JDBC_SUPPORT.key(), VoidSupport.class.getName());
@@ -672,16 +587,13 @@ public class JdbcResourceMirrorTest {
         ProcessScript<Pair> process = process(new DriverScript("jdbc", conf), dummy());
         GateScript script = script(process);
 
-        JdbcResourceMirror resource = new JdbcResourceMirror(profile(), new ParameterList());
-        try {
+        try (JdbcResourceMirror resource = new JdbcResourceMirror(profile(), new ParameterList())) {
             try {
                 resource.prepare(script);
                 fail();
             } catch (IOException e) {
                 // ok.
             }
-        } finally {
-            resource.close();
         }
     }
 
@@ -691,7 +603,7 @@ public class JdbcResourceMirrorTest {
      */
     @Test
     public void invalid_support_unsupported() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(JdbcProcess.TABLE.key(), "PAIR");
         conf.put(JdbcProcess.COLUMNS.key(), "VALUE,KEY");
         conf.put(JdbcProcess.JDBC_SUPPORT.key(), PairSupport.class.getName());
@@ -699,27 +611,24 @@ public class JdbcResourceMirrorTest {
         ProcessScript<Pair> process = process(new DriverScript("jdbc", conf), dummy());
         GateScript script = script(process);
 
-        JdbcResourceMirror resource = new JdbcResourceMirror(profile(), new ParameterList());
-        try {
+        try (JdbcResourceMirror resource = new JdbcResourceMirror(profile(), new ParameterList())) {
             try {
                 resource.prepare(script);
                 fail();
             } catch (IOException e) {
                 // ok.
             }
-        } finally {
-            resource.close();
         }
     }
 
     private void test(SourceDriver<Pair> source, String... expected) throws IOException {
-        List<Pair> results = new ArrayList<Pair>();
+        List<Pair> results = new ArrayList<>();
         while (source.next()) {
             Pair pair = source.get();
             results.add(new Pair(pair.key, pair.value));
         }
         Collections.sort(results);
-        List<String> actual = new ArrayList<String>();
+        List<String> actual = new ArrayList<>();
         for (Pair row : results) {
             actual.add(row.value);
         }
@@ -728,7 +637,7 @@ public class JdbcResourceMirrorTest {
 
     private void test(String... expected) {
         List<List<Object>> results = h2.query("SELECT VALUE FROM PAIR ORDER BY KEY ASC");
-        List<String> actual = new ArrayList<String>();
+        List<String> actual = new ArrayList<>();
         for (List<Object> row : results) {
             actual.add((String) row.get(0));
         }
@@ -740,7 +649,7 @@ public class JdbcResourceMirrorTest {
     }
 
     private ProcessScript<Pair> process(DriverScript source, DriverScript drain) {
-        return new ProcessScript<Pair>(
+        return new ProcessScript<>(
                 "testing",
                 "dummy",
                 Pair.class,

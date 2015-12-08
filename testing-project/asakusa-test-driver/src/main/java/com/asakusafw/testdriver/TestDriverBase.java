@@ -365,7 +365,7 @@ public abstract class TestDriverBase extends DriverElementBase {
     }
 
     private String appendTraceSetting(String option, TraceSetting setting) {
-        List<TraceSetting> settings = new ArrayList<TraceSetting>();
+        List<TraceSetting> settings = new ArrayList<>();
         if (option != null) {
             Collection<? extends TraceSetting> loaded = TraceSettingSerializer.deserialize(option);
             settings.addAll(loaded);

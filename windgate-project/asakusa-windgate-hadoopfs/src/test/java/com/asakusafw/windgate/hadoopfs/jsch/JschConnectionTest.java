@@ -75,16 +75,13 @@ public class JschConnectionTest {
     @Before
     public void setUp() throws Exception {
         Properties p = new Properties();
-        InputStream in = getClass().getResourceAsStream("ssh.properties");
-        if (in == null) {
-            System.err.println("ssh.properties does not exist, skip this class");
-            Assume.assumeNotNull(in);
-            return;
-        }
-        try {
+        try (InputStream in = getClass().getResourceAsStream("ssh.properties")) {
+            if (in == null) {
+                System.err.println("ssh.properties does not exist, skip this class");
+                Assume.assumeNotNull(in);
+                return;
+            }
             p.load(in);
-        } finally {
-            in.close();
         }
         target = folder.newFolder("dummy-install");
         putScript(target, SshProfile.COMMAND_GET);
@@ -107,24 +104,21 @@ public class JschConnectionTest {
     }
 
     private void putScript(File directory, String sourcePath, String targetPath) throws IOException {
-        InputStream in = getClass().getResourceAsStream(sourcePath);
-        assertThat(sourcePath, in, is(notNullValue()));
-        try {
+        try (InputStream in = getClass().getResourceAsStream(sourcePath)) {
+            assertThat(sourcePath, in, is(notNullValue()));
             File targetFile = new File(directory, targetPath);
             targetFile.getParentFile().mkdirs();
-            FileOutputStream output = new FileOutputStream(targetFile);
-            byte[] buf = new byte[256];
-            while (true) {
-                int read = in.read(buf);
-                if (read < 0) {
-                    break;
+            try (FileOutputStream output = new FileOutputStream(targetFile)) {
+                byte[] buf = new byte[256];
+                while (true) {
+                    int read = in.read(buf);
+                    if (read < 0) {
+                        break;
+                    }
+                    output.write(buf, 0, read);
                 }
-                output.write(buf, 0, read);
             }
-            output.close();
             assertThat(targetFile.getName(), targetFile.setExecutable(true), is(true));
-        } finally {
-            in.close();
         }
     }
 
@@ -136,18 +130,15 @@ public class JschConnectionTest {
     public void get() throws Exception {
         File file = folder.newFile("testing");
         put(file, "Hello, world!");
-        JschConnection conn = new JschConnection(
+        try (JschConnection conn = new JschConnection(
                 profile,
-                Arrays.asList(profile.getGetCommand(), file.getAbsolutePath()));
-        try {
+                Arrays.asList(profile.getGetCommand(), file.getAbsolutePath()))) {
             InputStream output = conn.openStandardOutput();
             conn.connect();
             String result = get(output);
             assertThat(result, is("Hello, world!"));
             int exit = conn.waitForExit(10000);
             assertThat(exit, is(0));
-        } finally {
-            conn.close();
         }
     }
 
@@ -159,19 +150,16 @@ public class JschConnectionTest {
     public void put() throws Exception {
         File file = folder.newFile("testing");
         file.delete();
-        JschConnection conn = new JschConnection(
+        try (JschConnection conn = new JschConnection(
                 profile,
-                Arrays.asList(profile.getPutCommand(), file.getAbsolutePath()));
-        try {
+                Arrays.asList(profile.getPutCommand(), file.getAbsolutePath()))) {
             conn.redirectStandardOutput(System.out, true);
-            OutputStream out = conn.openStandardInput();
-            conn.connect();
-            out.write("Hello, world!".getBytes("UTF-8"));
-            out.close();
+            try (OutputStream out = conn.openStandardInput()) {
+                conn.connect();
+                out.write("Hello, world!".getBytes("UTF-8"));
+            }
             int exit = conn.waitForExit(10000);
             assertThat(exit, is(0));
-        } finally {
-            conn.close();
         }
         String result = get(file);
         assertThat(result, is("Hello, world!"));
@@ -184,19 +172,16 @@ public class JschConnectionTest {
     @Test
     public void delete() throws Exception {
         File file = folder.newFile("testing");
-        JschConnection conn = new JschConnection(
+        try (JschConnection conn = new JschConnection(
                 profile,
-                Arrays.asList(profile.getDeleteCommand(), file.getAbsolutePath()));
-        try {
+                Arrays.asList(profile.getDeleteCommand(), file.getAbsolutePath()))) {
             conn.redirectStandardOutput(System.out, true);
-            OutputStream out = conn.openStandardInput();
-            conn.connect();
-            out.write("Hello, world!".getBytes("UTF-8"));
-            out.close();
+            try (OutputStream out = conn.openStandardInput()) {
+                conn.connect();
+                out.write("Hello, world!".getBytes("UTF-8"));
+            }
             int exit = conn.waitForExit(10000);
             assertThat(exit, is(0));
-        } finally {
-            conn.close();
         }
         assertThat(file.toString(), file.exists(), is(false));
     }
@@ -208,18 +193,15 @@ public class JschConnectionTest {
     @Test
     public void env() throws Exception {
         putScript(target, "libexec/check-env.sh", SshProfile.COMMAND_GET);
-        JschConnection conn = new JschConnection(
+        try (JschConnection conn = new JschConnection(
                 profile,
-                Arrays.asList(profile.getGetCommand()));
-        try {
+                Arrays.asList(profile.getGetCommand()))) {
             InputStream output = conn.openStandardOutput();
             conn.connect();
             String result = get(output);
             assertThat(result, is("1"));
             int exit = conn.waitForExit(10000);
             assertThat(exit, is(0));
-        } finally {
-            conn.close();
         }
     }
 
@@ -237,23 +219,20 @@ public class JschConnectionTest {
         RuntimeContext.set(context);
 
         putScript(target, "libexec/check-context.sh", SshProfile.COMMAND_GET);
-        Map<String, String> results = new HashMap<String, String>();
-        JschConnection conn = new JschConnection(profile, Arrays.asList(profile.getGetCommand()));
-        try {
+        Map<String, String> results = new HashMap<>();
+        try (JschConnection conn = new JschConnection(profile, Arrays.asList(profile.getGetCommand()))) {
             InputStream output = conn.openStandardOutput();
             conn.connect();
-            Scanner s = new Scanner(output, "UTF-8");
-            while (s.hasNextLine()) {
-                String[] pair = s.nextLine().split("=", 2);
-                if (pair.length == 2) {
-                    results.put(pair[0], pair[1]);
+            try (Scanner s = new Scanner(output, "UTF-8")) {
+                while (s.hasNextLine()) {
+                    String[] pair = s.nextLine().split("=", 2);
+                    if (pair.length == 2) {
+                        results.put(pair[0], pair[1]);
+                    }
                 }
             }
-            s.close();
             int exit = conn.waitForExit(10000);
             assertThat(exit, is(0));
-        } finally {
-            conn.close();
         }
 
         RuntimeContext restored = RuntimeContext.DEFAULT.apply(results);
@@ -261,20 +240,14 @@ public class JschConnectionTest {
     }
 
     private void put(File file, String content) throws IOException {
-        FileOutputStream out = new FileOutputStream(file);
-        try {
+        try (FileOutputStream out = new FileOutputStream(file)) {
             out.write(content.getBytes("UTF-8"));
-        } finally {
-            out.close();
         }
     }
 
     private String get(File file) throws IOException {
-        InputStream in = new FileInputStream(file);
-        try {
+        try (InputStream in = new FileInputStream(file)) {
             return get(in);
-        } finally {
-            in.close();
         }
     }
 

@@ -53,7 +53,7 @@ public enum RowMatchingCondition {
         return japaneseName;
     }
 
-    private static Map<String, RowMatchingCondition> japaneseNameMap = new HashMap<String, RowMatchingCondition>();
+    private static Map<String, RowMatchingCondition> japaneseNameMap = new HashMap<>();
     static {
         for (RowMatchingCondition conditon : RowMatchingCondition.values()) {
             String key = conditon.getJapaneseName();

@@ -82,7 +82,7 @@ public class FileListModelInputProvider<T> implements ModelInputProvider<T> {
         try {
             LOG.debug("Opening next temporary file: {}", path);
             // FIXME should use TemporaryStorage.openInput()
-            ModelInput<Writable> input = new TemporaryFileInput<Writable>(content, 0);
+            ModelInput<Writable> input = new TemporaryFileInput<>(content, 0);
             succeeded = true;
             return (ModelInput<T>) input;
         } finally {

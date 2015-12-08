@@ -435,7 +435,7 @@ public class ExecutionScriptHandlerDispatcherTest {
      */
     @Test(expected = IOException.class)
     public void missing_confdir() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         declare(conf, "default", MockCommandScriptHandler.class);
         create(conf);
     }
@@ -470,7 +470,7 @@ public class ExecutionScriptHandlerDispatcherTest {
      */
     @Test(expected = IOException.class)
     public void invalid_confdir() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(ExecutionScriptHandlerDispatcher.KEY_DIRECTORY, "${invalid}");
         declare(conf, "default", MockCommandScriptHandler.class);
         create(conf);
@@ -482,7 +482,7 @@ public class ExecutionScriptHandlerDispatcherTest {
      */
     @Test
     public void confdir_not_exist() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(ExecutionScriptHandlerDispatcher.KEY_DIRECTORY, new File(folder.getRoot(), "empty").getAbsolutePath());
         declare(conf, "default", MockCommandScriptHandler.class);
         CommandScriptHandlerDispatcher dispatcher = create(conf);
@@ -513,7 +513,7 @@ public class ExecutionScriptHandlerDispatcherTest {
     }
 
     private CommandScriptHandlerDispatcher create(Map<String, String> conf) throws InterruptedException, IOException {
-        ServiceProfile<CommandScriptHandlerDispatcher> profile = new ServiceProfile<CommandScriptHandlerDispatcher>(
+        ServiceProfile<CommandScriptHandlerDispatcher> profile = new ServiceProfile<>(
                 PREFIX,
                 CommandScriptHandlerDispatcher.class,
                 conf,
@@ -524,7 +524,7 @@ public class ExecutionScriptHandlerDispatcherTest {
     }
 
     private Map<String, String> createConf() {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(ExecutionScriptHandlerDispatcher.KEY_DIRECTORY, folder.getRoot().getAbsolutePath());
         return conf;
     }
@@ -547,11 +547,8 @@ public class ExecutionScriptHandlerDispatcherTest {
             p.setProperty(atoms[0], atoms[1]);
         }
         File file = folder.newFile(BATCH_ID + ExecutionScriptHandlerDispatcher.SUFFIX_CONF);
-        OutputStream output = new FileOutputStream(file);
-        try {
+        try (OutputStream output = new FileOutputStream(file)) {
             p.store(output, BATCH_ID);
-        } finally {
-            output.close();
         }
     }
 

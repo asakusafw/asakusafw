@@ -66,7 +66,7 @@ public class WindGateIoProcessorRunTest {
         In<Simple> in = tester.input("in1", new Import(Simple.class, "testing", dummy("dummy")));
         Out<Simple> out = tester.output("out1", new Export(Simple.class, "testing", dummy("dummy")));
 
-        JobflowInfo info = tester.compileFlow(new IdentityFlow<Simple>(in, out));
+        JobflowInfo info = tester.compileFlow(new IdentityFlow<>(in, out));
 
         // extract importer destination
         GateScript importerScript = loadScript(info, "testing", true);
@@ -89,15 +89,15 @@ public class WindGateIoProcessorRunTest {
         Location exporterLocation = Location.fromPath(exporterPath, '/');
         assertThat(exporterLocation.isPrefix(), is(true));
 
-        ModelOutput<Simple> source = tester.openOutput(Simple.class, importerLocation);
-        Simple model = new Simple();
-        model.setValueAsString("Hello1, world!");
-        source.write(model);
-        model.setValueAsString("Hello2, world!");
-        source.write(model);
-        model.setValueAsString("Hello3, world!");
-        source.write(model);
-        source.close();
+        try (ModelOutput<Simple> source = tester.openOutput(Simple.class, importerLocation)) {
+            Simple model = new Simple();
+            model.setValueAsString("Hello1, world!");
+            source.write(model);
+            model.setValueAsString("Hello2, world!");
+            source.write(model);
+            model.setValueAsString("Hello3, world!");
+            source.write(model);
+        }
 
         assertThat(tester.runStages(info), is(true));
 
@@ -116,18 +116,15 @@ public class WindGateIoProcessorRunTest {
 
     private GateScript loadScript(JobflowInfo info, String profile, boolean importer) throws IOException {
         File file = info.getPackageFile();
-        ZipFile zip = new ZipFile(file);
-        try {
+        try (ZipFile zip = new ZipFile(file)) {
             String location = WindGateIoProcessor.getScriptLocation(importer, profile);
             ZipEntry entry = zip.getEntry(location);
             assertThat(entry, is(notNullValue()));
-            InputStream input = zip.getInputStream(entry);
             Properties p = new Properties();
-            p.load(input);
-            input.close();
+            try (InputStream input = zip.getInputStream(entry)) {
+                p.load(input);
+            }
             return GateScript.loadFrom("dummy", p, getClass().getClassLoader());
-        } finally {
-            zip.close();
         }
     }
 

@@ -214,7 +214,8 @@ public class SpiWorkflowProcessorRepositoryTest {
         return results;
     }
 
-    private <T> Matcher<? super Set<T>> contains(T... values) {
+    @SafeVarargs
+    private static <T> Matcher<? super Set<T>> contains(T... values) {
         Set<T> expect = Sets.create();
         Collections.addAll(expect, values);
         return is(expect);

@@ -30,7 +30,7 @@ import org.apache.hadoop.io.Text;
 public class SimpleJdbcSupport implements DataModelJdbcSupport<Simple> {
     private static final Map<String, Integer> PROPERTY_POSITIONS;
     static {
-        Map<String, Integer> map = new TreeMap<String, Integer>();
+        Map<String, Integer> map = new TreeMap<>();
         map.put("VALUE", 0);
         PROPERTY_POSITIONS = map;
     }

@@ -132,13 +132,12 @@ public final class FlowScript {
             throw new IllegalArgumentException("scripts must not be null"); //$NON-NLS-1$
         }
         this.id = id;
-        this.blockerIds = Collections.unmodifiableSet(new LinkedHashSet<String>(blockerIds));
+        this.blockerIds = Collections.unmodifiableSet(new LinkedHashSet<>(blockerIds));
 
-        EnumMap<ExecutionPhase, Set<ExecutionScript>> map =
-            new EnumMap<ExecutionPhase, Set<ExecutionScript>>(ExecutionPhase.class);
+        EnumMap<ExecutionPhase, Set<ExecutionScript>> map = new EnumMap<>(ExecutionPhase.class);
         for (ExecutionPhase phase : ExecutionPhase.values()) {
             if (scripts.containsKey(phase)) {
-                TreeSet<ExecutionScript> set = new TreeSet<ExecutionScript>(SCRIPT_COMPARATOR);
+                TreeSet<ExecutionScript> set = new TreeSet<>(SCRIPT_COMPARATOR);
                 set.addAll(scripts.get(phase));
                 if (set.size() != scripts.get(phase).size()) {
                     throw new IllegalArgumentException(MessageFormat.format(
@@ -219,8 +218,7 @@ public final class FlowScript {
         NavigableMap<String, String> flowMap = PropertiesUtil.createPrefixMap(properties, prefix);
         String blockersString = extract(flowMap, prefix, KEY_BLOCKERS);
         Set<String> blockerIds = parseTokens(blockersString);
-        EnumMap<ExecutionPhase, List<ExecutionScript>> scripts =
-            new EnumMap<ExecutionPhase, List<ExecutionScript>>(ExecutionPhase.class);
+        EnumMap<ExecutionPhase, List<ExecutionScript>> scripts = new EnumMap<>(ExecutionPhase.class);
         for (ExecutionPhase phase : ExecutionPhase.values()) {
             scripts.put(phase, Collections.<ExecutionScript>emptyList());
         }
@@ -279,7 +277,7 @@ public final class FlowScript {
         List<ExecutionScript> scripts = loadScripts(flowId, phase, contents);
         LOG.debug("Loaded {} execution scripts: {}*", scripts.size(), prefix);
         LOG.trace("Loaded {}*: {}", prefix, scripts);
-        TreeSet<ExecutionScript> results = new TreeSet<ExecutionScript>(SCRIPT_COMPARATOR);
+        TreeSet<ExecutionScript> results = new TreeSet<>(SCRIPT_COMPARATOR);
         results.addAll(scripts);
         return results;
     }
@@ -294,7 +292,7 @@ public final class FlowScript {
         if (contents.isEmpty()) {
             return Collections.emptyList();
         }
-        List<ExecutionScript> results = new ArrayList<ExecutionScript>();
+        List<ExecutionScript> results = new ArrayList<>();
         Map<String, NavigableMap<String, String>> scripts = partitioning(contents);
         for (Map.Entry<String, NavigableMap<String, String>> entry : scripts.entrySet()) {
             String scriptId = entry.getKey();
@@ -342,7 +340,7 @@ public final class FlowScript {
                         "\"{0}*\" is not defined",
                         prefix + KEY_COMMAND_PREFIX));
             }
-            List<String> command = new ArrayList<String>(commandMap.values());
+            List<String> command = new ArrayList<>(commandMap.values());
             script = new CommandScript(
                     scriptId,
                     blockers,
@@ -379,7 +377,7 @@ public final class FlowScript {
 
     private static Map<String, NavigableMap<String, String>> partitioning(NavigableMap<String, String> map) {
         assert map != null;
-        Map<String, NavigableMap<String, String>> results = new TreeMap<String, NavigableMap<String, String>>();
+        Map<String, NavigableMap<String, String>> results = new TreeMap<>();
         while (map.isEmpty() == false) {
             String name = map.firstKey();
             int index = name.indexOf('.');
@@ -388,7 +386,7 @@ public final class FlowScript {
             }
             String first = name + '.';
             String last = name + (char) ('.' + 1);
-            NavigableMap<String, String> partition = new TreeMap<String, String>();
+            NavigableMap<String, String> partition = new TreeMap<>();
             for (Map.Entry<String, String> entry : map.subMap(first, last).entrySet()) {
                 String key = entry.getKey();
                 partition.put(key.substring(name.length() + 1), entry.getValue());
@@ -413,7 +411,7 @@ public final class FlowScript {
         LOG.debug("Extracting Flow IDs");
         Set<String> childKeys = PropertiesUtil.getChildKeys(properties, KEY_FLOW_PREFIX, String.valueOf('.'));
         int prefixLength = KEY_FLOW_PREFIX.length();
-        Set<String> results = new TreeSet<String>();
+        Set<String> results = new TreeSet<>();
         for (String childKey : childKeys) {
             assert childKey.startsWith(KEY_FLOW_PREFIX);
             results.add(childKey.substring(prefixLength));
@@ -478,7 +476,7 @@ public final class FlowScript {
         if (trimmed.isEmpty()) {
             return Collections.emptySet();
         }
-        Set<String> results = new LinkedHashSet<String>();
+        Set<String> results = new LinkedHashSet<>();
         for (String token : trimmed.split("\\s*,\\s*")) {
             if (token.isEmpty()) {
                 continue;

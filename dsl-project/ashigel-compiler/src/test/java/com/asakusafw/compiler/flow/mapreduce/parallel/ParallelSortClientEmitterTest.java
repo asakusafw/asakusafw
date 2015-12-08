@@ -76,9 +76,9 @@ public class ParallelSortClientEmitterTest {
     private void single0() throws IOException {
         JobflowInfo info = tester.compileJobflow(SingleOutputJob.class);
 
-        ModelOutput<Ex1> source = tester.openOutput(Ex1.class, tester.getImporter(info, "input"));
-        writeTestData(source);
-        source.close();
+        try (ModelOutput<Ex1> source = tester.openOutput(Ex1.class, tester.getImporter(info, "input"))) {
+            writeTestData(source);
+        }
 
         assertThat(tester.run(info), is(true));
 
@@ -109,9 +109,9 @@ public class ParallelSortClientEmitterTest {
     private void multiple0() throws IOException {
         JobflowInfo info = tester.compileJobflow(MultipleOutputJob.class);
 
-        ModelOutput<Ex1> source = tester.openOutput(Ex1.class, tester.getImporter(info, "input"));
-        writeTestData(source);
-        source.close();
+        try (ModelOutput<Ex1> source = tester.openOutput(Ex1.class, tester.getImporter(info, "input"))) {
+            writeTestData(source);
+        }
 
         assertThat(tester.run(info), is(true));
 
@@ -154,9 +154,9 @@ public class ParallelSortClientEmitterTest {
     private void independent0() throws IOException {
         JobflowInfo info = tester.compileJobflow(IndependentOutputJob.class);
 
-        ModelOutput<Ex1> source = tester.openOutput(Ex1.class, tester.getImporter(info, "input"));
-        writeTestData(source);
-        source.close();
+        try (ModelOutput<Ex1> source = tester.openOutput(Ex1.class, tester.getImporter(info, "input"))) {
+            writeTestData(source);
+        }
 
         assertThat(tester.run(info), is(true));
 
@@ -191,9 +191,9 @@ public class ParallelSortClientEmitterTest {
     private void nested0() throws IOException {
         JobflowInfo info = tester.compileJobflow(NestedOutputJob.class);
 
-        ModelOutput<Ex1> source = tester.openOutput(Ex1.class, tester.getImporter(info, "input"));
-        writeTestData(source);
-        source.close();
+        try (ModelOutput<Ex1> source = tester.openOutput(Ex1.class, tester.getImporter(info, "input"))) {
+            writeTestData(source);
+        }
 
         assertThat(tester.run(info), is(true));
 

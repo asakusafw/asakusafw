@@ -77,24 +77,24 @@ public class FileResourceManipulator extends ResourceManipulator {
     @Override
     public <T> SourceDriver<T> createSourceForSource(ProcessScript<T> script) throws IOException {
         File file = FileResourceMirror.getPath(script, DriverScript.Kind.SOURCE);
-        return new FileSourceDriver<T>(script.getDataClass(), file);
+        return new FileSourceDriver<>(script.getDataClass(), file);
     }
 
     @Override
     public <T> DrainDriver<T> createDrainForSource(ProcessScript<T> script) throws IOException {
         File file = FileResourceMirror.getPath(script, DriverScript.Kind.SOURCE);
-        return new FileDrainDriver<T>(script.getDataClass(), file);
+        return new FileDrainDriver<>(script.getDataClass(), file);
     }
 
     @Override
     public <T> SourceDriver<T> createSourceForDrain(ProcessScript<T> script) throws IOException {
         File file = FileResourceMirror.getPath(script, DriverScript.Kind.DRAIN);
-        return new FileSourceDriver<T>(script.getDataClass(), file);
+        return new FileSourceDriver<>(script.getDataClass(), file);
     }
 
     @Override
     public <T> DrainDriver<T> createDrainForDrain(ProcessScript<T> script) throws IOException {
         File file = FileResourceMirror.getPath(script, DriverScript.Kind.DRAIN);
-        return new FileDrainDriver<T>(script.getDataClass(), file);
+        return new FileDrainDriver<>(script.getDataClass(), file);
     }
 }

@@ -269,9 +269,7 @@ public class FlowFactoryClassGenerator {
                 }));
     }
 
-    private TypeBodyDeclaration createObjectOutputField(
-            OperatorPortDeclaration var,
-            NameGenerator names) {
+    private TypeBodyDeclaration createObjectOutputField(OperatorPortDeclaration var, NameGenerator names) {
         assert var != null;
         assert names != null;
         return factory.newFieldDeclaration(
@@ -287,15 +285,10 @@ public class FlowFactoryClassGenerator {
                 null);
     }
 
-    private TypeBodyDeclaration createObjectConstructor(
-            NamedType objectType,
-            NameGenerator names) {
+    private TypeBodyDeclaration createObjectConstructor(NamedType objectType, NameGenerator names) {
         assert objectType != null;
-        List<FormalParameterDeclaration> parameters =
-                createParametersForConstructor(names);
-
+        List<FormalParameterDeclaration> parameters = createParametersForConstructor(names);
         List<Statement> statements = createBodyForConstructor(parameters, names);
-
         return factory.newConstructorDeclaration(
                 null,
                 new AttributeBuilder(factory)
@@ -306,8 +299,7 @@ public class FlowFactoryClassGenerator {
                 statements);
     }
 
-    private List<FormalParameterDeclaration> createParametersForConstructor(
-            NameGenerator names) {
+    private List<FormalParameterDeclaration> createParametersForConstructor(NameGenerator names) {
         List<FormalParameterDeclaration> parameters = Lists.create();
         for (OperatorPortDeclaration var : flowClass.getInputPorts()) {
             SimpleName name = factory.newSimpleName(names.reserve(var.getName()));

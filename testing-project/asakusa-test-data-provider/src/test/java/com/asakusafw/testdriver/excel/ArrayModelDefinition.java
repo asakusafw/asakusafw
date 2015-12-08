@@ -42,7 +42,7 @@ public class ArrayModelDefinition implements DataModelDefinition<Object[]> {
         if (nameAndTypes == null) {
             throw new IllegalArgumentException("nameAndTypes must not be null"); //$NON-NLS-1$
         }
-        this.nameAndTypes = Collections.unmodifiableMap(new LinkedHashMap<PropertyName, PropertyType>(nameAndTypes));
+        this.nameAndTypes = Collections.unmodifiableMap(new LinkedHashMap<>(nameAndTypes));
     }
 
     @Override
@@ -72,7 +72,7 @@ public class ArrayModelDefinition implements DataModelDefinition<Object[]> {
 
     @Override
     public DataModelDefinition.Builder<Object[]> newReflection() {
-        return new Builder<Object[]>(this);
+        return new Builder<>(this);
     }
 
     @Override

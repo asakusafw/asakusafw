@@ -32,7 +32,7 @@ final class Util {
 
     static Map<Object, String> formatMap(Map<?, ?> map) {
         assert map != null;
-        Map<Object, String> results = new LinkedHashMap<Object, String>();
+        Map<Object, String> results = new LinkedHashMap<>();
         for (Map.Entry<?, ?> entry : map.entrySet()) {
             results.put(entry.getKey(), format(entry.getValue()));
         }

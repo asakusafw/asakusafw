@@ -65,7 +65,7 @@ public class DefaultJavadocScanner implements JavadocScanner {
         } catch (IOException e) {
             throw (AssertionError) new AssertionError(tokenizer.getStore()).initCause(e);
         }
-        ArrayList<JavadocToken> list = new ArrayList<JavadocToken>(tokenizer.getStore());
+        ArrayList<JavadocToken> list = new ArrayList<>(tokenizer.getStore());
         list.trimToSize();
         return new DefaultJavadocScanner(list, text.length());
     }

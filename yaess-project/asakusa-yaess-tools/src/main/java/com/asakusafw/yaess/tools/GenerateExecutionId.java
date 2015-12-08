@@ -143,7 +143,7 @@ public final class GenerateExecutionId {
         String flowId = cmd.getOptionValue(OPT_FLOW_ID.getOpt());
         Properties arguments = cmd.getOptionProperties(OPT_ARGUMENT.getOpt());
 
-        SortedMap<String, String> pairs = new TreeMap<String, String>();
+        SortedMap<String, String> pairs = new TreeMap<>();
         for (Map.Entry<Object, Object> entry : arguments.entrySet()) {
             Object key = entry.getKey();
             Object value = entry.getValue();

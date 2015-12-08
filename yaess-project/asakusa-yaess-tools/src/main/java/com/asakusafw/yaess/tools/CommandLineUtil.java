@@ -15,7 +15,6 @@
  */
 package com.asakusafw.yaess.tools;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -52,15 +51,10 @@ public final class CommandLineUtil {
         if (path == null) {
             throw new IllegalArgumentException("path must not be null"); //$NON-NLS-1$
         }
-        FileInputStream in = new FileInputStream(path);
-        try {
+        try (FileInputStream in = new FileInputStream(path)) {
             Properties properties = new Properties();
-            BufferedInputStream bin = new BufferedInputStream(in);
-            properties.load(bin);
-            bin.close();
+            properties.load(in);
             return properties;
-        } finally {
-            in.close();
         }
     }
 
@@ -73,7 +67,7 @@ public final class CommandLineUtil {
         if (fileListOrNull == null || fileListOrNull.isEmpty()) {
             return Collections.emptyList();
         }
-        List<File> results = new ArrayList<File>();
+        List<File> results = new ArrayList<>();
         int start = 0;
         while (true) {
             int index = fileListOrNull.indexOf(File.pathSeparatorChar, start);
@@ -100,7 +94,7 @@ public final class CommandLineUtil {
         if (files == null) {
             throw new IllegalArgumentException("files must not be null"); //$NON-NLS-1$
         }
-        final List<URL> pluginLocations = new ArrayList<URL>();
+        final List<URL> pluginLocations = new ArrayList<>();
         for (File file : files) {
             try {
                 if (file.exists() == false) {

@@ -125,7 +125,7 @@ public class RunTask {
         assert flow != null;
         List<TestExecutionPlan.Task> initializers = resolveTasks(flow, ExecutionPhase.INITIALIZE);
         List<TestExecutionPlan.Task> importers = resolveTasks(flow, ExecutionPhase.IMPORT);
-        List<TestExecutionPlan.Task> jobs = new ArrayList<TestExecutionPlan.Task>();
+        List<TestExecutionPlan.Task> jobs = new ArrayList<>();
         jobs.addAll(resolveTasks(flow, ExecutionPhase.PROLOGUE));
         jobs.addAll(resolveTasks(flow, ExecutionPhase.MAIN));
         jobs.addAll(resolveTasks(flow, ExecutionPhase.EPILOGUE));
@@ -143,7 +143,7 @@ public class RunTask {
 
     private List<TestExecutionPlan.Task> resolveTasks(FlowScript flow, ExecutionPhase phase) throws IOException {
         ExecutionContext context = createExecutionContext(flow, phase);
-        List<TestExecutionPlan.Task> results = new ArrayList<TestExecutionPlan.Task>();
+        List<TestExecutionPlan.Task> results = new ArrayList<>();
         for (ExecutionScript script : flow.getScripts().get(phase)) {
             if (script.getKind() == ExecutionScript.Kind.COMMAND) {
                 CommandScript resolved = (CommandScript) resolveScript(script, context);
@@ -154,7 +154,7 @@ public class RunTask {
                         resolved.getEnvironmentVariables()));
             } else if (script.getKind() == ExecutionScript.Kind.HADOOP) {
                 HadoopScript resolved = (HadoopScript) resolveScript(script, context);
-                Map<String, String> props = new TreeMap<String, String>();
+                Map<String, String> props = new TreeMap<>();
                 props.putAll(getHadoopProperties());
                 props.putAll(resolved.getHadoopProperties());
                 results.add(new TestExecutionPlan.Job(resolved.getClassName(), props));

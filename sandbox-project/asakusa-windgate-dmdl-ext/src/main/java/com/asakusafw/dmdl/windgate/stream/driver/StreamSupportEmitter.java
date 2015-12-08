@@ -218,7 +218,7 @@ public class StreamSupportEmitter extends JavaDataModelDriver {
         }
 
         private List<TypeBodyDeclaration> createMembers() {
-            List<TypeBodyDeclaration> results = new ArrayList<TypeBodyDeclaration>();
+            List<TypeBodyDeclaration> results = new ArrayList<>();
             results.add(createGetSupportedType());
             results.add(createCreateReader());
             results.add(createCreateWriter());
@@ -249,7 +249,7 @@ public class StreamSupportEmitter extends JavaDataModelDriver {
 
         private MethodDeclaration createCreateReader() {
             SimpleName stream = f.newSimpleName("stream"); //$NON-NLS-1$
-            List<Statement> statements = new ArrayList<Statement>();
+            List<Statement> statements = new ArrayList<>();
             statements.add(createNullCheck(stream));
 
             SimpleName reader = f.newSimpleName("reader"); //$NON-NLS-1$
@@ -288,7 +288,7 @@ public class StreamSupportEmitter extends JavaDataModelDriver {
 
         private MethodDeclaration createCreateWriter() {
             SimpleName stream = f.newSimpleName("stream"); //$NON-NLS-1$
-            List<Statement> statements = new ArrayList<Statement>();
+            List<Statement> statements = new ArrayList<>();
             statements.add(createNullCheck(stream));
 
             SimpleName writer = f.newSimpleName("writer"); //$NON-NLS-1$
@@ -341,7 +341,7 @@ public class StreamSupportEmitter extends JavaDataModelDriver {
 
         private ClassDeclaration createReaderClass() {
             SimpleName parser = f.newSimpleName("parser"); //$NON-NLS-1$
-            List<TypeBodyDeclaration> members = new ArrayList<TypeBodyDeclaration>();
+            List<TypeBodyDeclaration> members = new ArrayList<>();
             members.add(createPrivateField(RecordParser.class, parser));
             members.add(f.newConstructorDeclaration(
                     null,
@@ -352,7 +352,7 @@ public class StreamSupportEmitter extends JavaDataModelDriver {
                     Arrays.asList(mapField(parser))));
 
             SimpleName object = f.newSimpleName("object"); //$NON-NLS-1$
-            List<Statement> statements = new ArrayList<Statement>();
+            List<Statement> statements = new ArrayList<>();
             statements.add(f.newIfStatement(
                     new ExpressionBuilder(f, parser)
                         .method("next") //$NON-NLS-1$
@@ -400,7 +400,7 @@ public class StreamSupportEmitter extends JavaDataModelDriver {
 
         private ClassDeclaration createWriterClass() {
             SimpleName emitter = f.newSimpleName("emitter"); //$NON-NLS-1$
-            List<TypeBodyDeclaration> members = new ArrayList<TypeBodyDeclaration>();
+            List<TypeBodyDeclaration> members = new ArrayList<>();
             members.add(createPrivateField(RecordEmitter.class, emitter));
             members.add(f.newConstructorDeclaration(
                     null,
@@ -411,7 +411,7 @@ public class StreamSupportEmitter extends JavaDataModelDriver {
                     Arrays.asList(mapField(emitter))));
 
             SimpleName object = f.newSimpleName("object"); //$NON-NLS-1$
-            List<Statement> statements = new ArrayList<Statement>();
+            List<Statement> statements = new ArrayList<>();
             for (PropertyDeclaration property : model.getDeclaredProperties()) {
                 statements.add(new ExpressionBuilder(f, emitter)
                     .method("emit", new ExpressionBuilder(f, object) //$NON-NLS-1$

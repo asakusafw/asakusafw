@@ -82,10 +82,9 @@ public class ConfigurationProvider {
 
     private static final AtomicBoolean SAW_HADOOP_CONF_MISSING = new AtomicBoolean();
 
-    private static final WeakHashMap<ClassLoader, ClassLoaderHolder> CACHE_CLASS_LOADER =
-            new WeakHashMap<ClassLoader, ClassLoaderHolder>();
+    private static final WeakHashMap<ClassLoader, ClassLoaderHolder> CACHE_CLASS_LOADER = new WeakHashMap<>();
 
-    private static final Map<File, File> CACHE_HADOOP_CMD_CONF = new HashMap<File, File>();
+    private static final Map<File, File> CACHE_HADOOP_CMD_CONF = new HashMap<>();
 
     private final ClassLoader loader;
 
@@ -377,7 +376,7 @@ public class ConfigurationProvider {
         prepareClasspath(temporary, ConfigurationDetecter.class);
         File resultOutput = new File(temporary, PATH_SUBPROC_OUTPUT);
 
-        List<String> arguments = new ArrayList<String>();
+        List<String> arguments = new ArrayList<>();
         arguments.add(command.getAbsolutePath());
         arguments.add(ConfigurationDetecter.class.getName());
         arguments.add(resultOutput.getAbsolutePath());
@@ -438,15 +437,13 @@ public class ConfigurationProvider {
         File target = new File(current, name.substring(start) + CLASS_EXTENSION);
 
         String path = name.replace('.', '/') + CLASS_EXTENSION;
-        InputStream in = aClass.getClassLoader().getResourceAsStream(path);
-        if (in == null) {
-            throw new FileNotFoundException(MessageFormat.format(
-                    "A class file binary does not found in classpath: {0}",
-                    path));
-        }
-        try {
-            OutputStream out = new FileOutputStream(target);
-            try {
+        try (InputStream in = aClass.getClassLoader().getResourceAsStream(path)) {
+            if (in == null) {
+                throw new FileNotFoundException(MessageFormat.format(
+                        "A class file binary does not found in classpath: {0}",
+                        path));
+            }
+            try (OutputStream out = new FileOutputStream(target)) {
                 byte[] buf = new byte[1024];
                 while (true) {
                     int read = in.read(buf);
@@ -455,11 +452,7 @@ public class ConfigurationProvider {
                     }
                     out.write(buf, 0, read);
                 }
-            } finally {
-                out.close();
             }
-        } finally {
-            in.close();
         }
     }
 

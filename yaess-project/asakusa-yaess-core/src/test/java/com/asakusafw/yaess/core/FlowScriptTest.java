@@ -48,7 +48,7 @@ public class FlowScriptTest {
      */
     @Test
     public void simple() throws Exception {
-        Map<ExecutionPhase, List<? extends ExecutionScript>> exec = new HashMap<ExecutionPhase, List<? extends ExecutionScript>>();
+        Map<ExecutionPhase, List<? extends ExecutionScript>> exec = new HashMap<>();
         exec.put(ExecutionPhase.MAIN, Arrays.asList(hadoop(1)));
         FlowScript script = new FlowScript("testing", set("b1", "b2"), exec);
 
@@ -64,7 +64,7 @@ public class FlowScriptTest {
      */
     @Test
     public void loadFlow() throws Exception {
-        Map<ExecutionPhase, List<? extends ExecutionScript>> exec = new HashMap<ExecutionPhase, List<? extends ExecutionScript>>();
+        Map<ExecutionPhase, List<? extends ExecutionScript>> exec = new HashMap<>();
         exec.put(ExecutionPhase.IMPORT, Arrays.asList(command(0)));
         exec.put(ExecutionPhase.MAIN, Arrays.asList(hadoop(1), command(2, 1)));
         exec.put(ExecutionPhase.EXPORT, Arrays.asList(command(100)));
@@ -98,7 +98,7 @@ public class FlowScriptTest {
      */
     @Test
     public void loadPhase() throws Exception {
-        Map<ExecutionPhase, List<? extends ExecutionScript>> exec = new HashMap<ExecutionPhase, List<? extends ExecutionScript>>();
+        Map<ExecutionPhase, List<? extends ExecutionScript>> exec = new HashMap<>();
         exec.put(ExecutionPhase.IMPORT, Arrays.asList(command(0)));
         exec.put(ExecutionPhase.MAIN, Arrays.asList(hadoop(1), command(2, 1)));
         exec.put(ExecutionPhase.EXPORT, Arrays.asList(command(100)));
@@ -124,7 +124,7 @@ public class FlowScriptTest {
      */
     @Test
     public void loadPhase_empty() throws Exception {
-        Map<ExecutionPhase, List<? extends ExecutionScript>> exec = new HashMap<ExecutionPhase, List<? extends ExecutionScript>>();
+        Map<ExecutionPhase, List<? extends ExecutionScript>> exec = new HashMap<>();
         FlowScript script = new FlowScript("testing", set("b1", "b2"), exec);
 
         exec.put(ExecutionPhase.INITIALIZE, Arrays.asList(command(100)));
@@ -174,7 +174,7 @@ public class FlowScriptTest {
     }
 
     private Set<String> toBlockerIds(int... blockers) {
-        Set<String> blockerIds = new HashSet<String>();
+        Set<String> blockerIds = new HashSet<>();
         for (int blocker : blockers) {
             blockerIds.add(toId(blocker));
         }
@@ -182,12 +182,12 @@ public class FlowScriptTest {
     }
 
     private Set<String> set(String... values) {
-        return new TreeSet<String>(Arrays.asList(values));
+        return new TreeSet<>(Arrays.asList(values));
     }
 
     private Map<String, String> map(String... keyValuePairs) {
         assert keyValuePairs.length % 2 == 0;
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         for (int i = 0; i < keyValuePairs.length - 1; i += 2) {
             conf.put(keyValuePairs[i], keyValuePairs[i + 1]);
         }

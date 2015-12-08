@@ -81,9 +81,7 @@ public abstract class Emitter {
         return first;
     }
 
-    private PrintWriter openFor(
-            PackageDeclaration packageDecl,
-            TypeDeclaration typeDecl) throws IOException {
+    private PrintWriter openFor(PackageDeclaration packageDecl, TypeDeclaration typeDecl) throws IOException {
         assert typeDecl != null;
         String fileName = typeDecl.getName().getToken() + EXTENSION;
         return openFor(packageDecl, fileName);

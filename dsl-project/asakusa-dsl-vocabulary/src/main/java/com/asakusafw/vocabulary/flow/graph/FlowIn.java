@@ -50,7 +50,7 @@ public final class FlowIn<T> implements In<T> {
      * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static <T> FlowIn<T> newInstance(InputDescription description) {
-        return new FlowIn<T>(description);
+        return new FlowIn<>(description);
     }
 
     /**

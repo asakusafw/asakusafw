@@ -94,9 +94,7 @@ public final class TypeUtil {
         assert context != null;
         assert target.isInterface() == false;
         assert context.raw.isInterface() == false;
-        for (GenericContext current = context.getSuperClass();
-                current != null;
-                current = current.getSuperClass()) {
+        for (GenericContext current = context.getSuperClass(); current != null; current = current.getSuperClass()) {
             if (current.raw == target) {
                 return current.getTypeArguments();
             }
@@ -118,9 +116,7 @@ public final class TypeUtil {
         return findInterface(target, bottom);
     }
 
-    private static List<Type> findInterface(
-            Class<?> target,
-            GenericContext context) {
+    private static List<Type> findInterface(Class<?> target, GenericContext context) {
         assert target != null;
         assert context != null;
         assert target.isAssignableFrom(context.raw);
@@ -137,15 +133,11 @@ public final class TypeUtil {
         throw new AssertionError(target);
     }
 
-    private static GenericContext findBottomClass(
-            Class<?> target,
-            GenericContext context) {
+    private static GenericContext findBottomClass(Class<?> target, GenericContext context) {
         assert target != null;
         assert context != null;
         GenericContext bottom = null;
-        for (GenericContext current = context;
-                current != null;
-                current = current.getSuperClass()) {
+        for (GenericContext current = context; current != null; current = current.getSuperClass()) {
             if (target.isAssignableFrom(current.raw)) {
                 bottom = current;
             } else {
@@ -169,8 +161,7 @@ public final class TypeUtil {
             if (params.length != args.length) {
                 return new GenericContext(raw);
             }
-            LinkedHashMap<TypeVariable<?>, Type> mapping =
-                new LinkedHashMap<TypeVariable<?>, Type>();
+            LinkedHashMap<TypeVariable<?>, Type> mapping = new LinkedHashMap<>();
             for (int i = 0; i < params.length; i++) {
                 mapping.put(params[i], args[i]);
             }
@@ -183,9 +174,7 @@ public final class TypeUtil {
         throw new AssertionError();
     }
 
-    static GenericContext analyze(
-            Type type,
-            Map<TypeVariable<?>, Type> mapping) {
+    static GenericContext analyze(Type type, Map<TypeVariable<?>, Type> mapping) {
         assert type != null;
         assert mapping != null;
         Type subst = substitute(type, mapping);
@@ -195,9 +184,7 @@ public final class TypeUtil {
         return toGenericContext(subst);
     }
 
-    private static Type substitute(
-            Type type,
-            Map<TypeVariable<?>, Type> mapping) {
+    private static Type substitute(Type type, Map<TypeVariable<?>, Type> mapping) {
         assert type != null;
         assert mapping != null;
         if (type instanceof Class<?>) {
@@ -211,7 +198,7 @@ public final class TypeUtil {
             // this implementation does not support qualified types
             ParameterizedType pt = (ParameterizedType) type;
             Class<?> raw = (Class<?>) pt.getRawType();
-            List<Type> arguments = new ArrayList<Type>();
+            List<Type> arguments = new ArrayList<>();
             for (Type t : pt.getActualTypeArguments()) {
                 Type subst = substitute(t, mapping);
                 if (subst == null) {
@@ -232,18 +219,16 @@ public final class TypeUtil {
 
         GenericContext(Class<?> raw) {
             this.raw = raw;
-            this.mapping = new LinkedHashMap<TypeVariable<?>, Type>();
+            this.mapping = new LinkedHashMap<>();
         }
 
-        GenericContext(
-                Class<?> raw,
-                LinkedHashMap<TypeVariable<?>, Type> mapping) {
+        GenericContext(Class<?> raw, LinkedHashMap<TypeVariable<?>, Type> mapping) {
             this.raw = raw;
             this.mapping = mapping;
         }
 
         public List<Type> getTypeArguments() {
-            return new ArrayList<Type>(mapping.values());
+            return new ArrayList<>(mapping.values());
         }
 
         public GenericContext getSuperClass() {
@@ -286,9 +271,7 @@ public final class TypeUtil {
 
         private final List<Type> typeArguments;
 
-        SimpleParameterizedType(
-                Class<?> rawType,
-                List<Type> typeArguments) {
+        SimpleParameterizedType(Class<?> rawType, List<Type> typeArguments) {
             this.rawType = rawType;
             this.typeArguments = typeArguments;
         }

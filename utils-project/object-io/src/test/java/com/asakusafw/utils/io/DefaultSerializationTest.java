@@ -36,21 +36,14 @@ public class DefaultSerializationTest {
      */
     @Test
     public void simple() throws Exception {
-        DefaultSerialization<String> ser = new DefaultSerialization<String>();
-        Sink<String> sink = ser.createSink(output);
-        try {
+        DefaultSerialization<String> ser = new DefaultSerialization<>();
+        try (Sink<String> sink = ser.createSink(output)) {
             sink.put("Hello, world!");
-        } finally {
-            sink.close();
         }
-
-        Source<String> source = ser.createSource(flip());
-        try {
+        try (Source<String> source = ser.createSource(flip())) {
             assertThat(source.next(), is(true));
             assertThat(source.get(), is("Hello, world!"));
             assertThat(source.next(), is(false));
-        } finally {
-            source.close();
         }
     }
 
@@ -60,15 +53,12 @@ public class DefaultSerializationTest {
      */
     @Test
     public void empty() throws Exception {
-        DefaultSerialization<String> ser = new DefaultSerialization<String>();
-        Sink<String> sink = ser.createSink(output);
-        sink.close();
-
-        Source<String> source = ser.createSource(flip());
-        try {
+        DefaultSerialization<String> ser = new DefaultSerialization<>();
+        try (Sink<String> sink = ser.createSink(output)) {
+            // do nothing
+        }
+        try (Source<String> source = ser.createSource(flip())) {
             assertThat(source.next(), is(false));
-        } finally {
-            source.close();
         }
     }
 
@@ -78,18 +68,13 @@ public class DefaultSerializationTest {
      */
     @Test
     public void multiple() throws Exception {
-        DefaultSerialization<String> ser = new DefaultSerialization<String>();
-        Sink<String> sink = ser.createSink(output);
-        try {
+        DefaultSerialization<String> ser = new DefaultSerialization<>();
+        try (Sink<String> sink = ser.createSink(output)) {
             sink.put("Hello1");
             sink.put("Hello2");
             sink.put("Hello3");
-        } finally {
-            sink.close();
         }
-
-        Source<String> source = ser.createSource(flip());
-        try {
+        try (Source<String> source = ser.createSource(flip())) {
             assertThat(source.next(), is(true));
             assertThat(source.get(), is("Hello1"));
             assertThat(source.next(), is(true));
@@ -97,8 +82,6 @@ public class DefaultSerializationTest {
             assertThat(source.next(), is(true));
             assertThat(source.get(), is("Hello3"));
             assertThat(source.next(), is(false));
-        } finally {
-            source.close();
         }
     }
 

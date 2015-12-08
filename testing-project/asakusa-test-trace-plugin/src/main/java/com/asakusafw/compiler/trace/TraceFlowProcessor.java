@@ -62,7 +62,7 @@ public class TraceFlowProcessor extends LinePartProcessor {
         }
         Tracepoint tracepoint = attribute.getSetting().getTracepoint();
         ModelFactory f = Models.getModelFactory();
-        List<Expression> arguments = new ArrayList<Expression>();
+        List<Expression> arguments = new ArrayList<>();
 
         // serial number
         arguments.add(Models.toLiteral(f, attribute.getSerialNumber()));
@@ -86,7 +86,7 @@ public class TraceFlowProcessor extends LinePartProcessor {
         arguments.add(f.newClassLiteral(context.convert(context.getInputPort(0).getDataType())));
 
         // attributes
-        Map<String, String> traceAttributes = new TreeMap<String, String>(attribute.getSetting().getAttributes());
+        Map<String, String> traceAttributes = new TreeMap<>(attribute.getSetting().getAttributes());
         for (Map.Entry<String, String> entry : traceAttributes.entrySet()) {
             arguments.add(Models.toLiteral(f, entry.getKey()));
             arguments.add(Models.toLiteral(f, entry.getValue()));

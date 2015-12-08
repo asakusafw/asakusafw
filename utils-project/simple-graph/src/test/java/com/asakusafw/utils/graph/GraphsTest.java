@@ -698,7 +698,8 @@ public class GraphsTest {
         assertThat(Graphs.collectTails(graph), is(set()));
     }
 
-    private <V> void addPath(Graph<V> graph, V first, V...vertexes) {
+    @SafeVarargs
+    private static <V> void addPath(Graph<V> graph, V first, V...vertexes) {
         graph.addNode(first);
         V current = first;
         for (V v : vertexes) {
@@ -717,7 +718,8 @@ public class GraphsTest {
         }
     }
 
-    private <T> void prepare(Graph<T> graph, T from, T...to) {
+    @SafeVarargs
+    private static <T> void prepare(Graph<T> graph, T from, T...to) {
         graph.addNode(from);
         for (T t : to) {
             graph.addEdge(from, t);
@@ -725,13 +727,13 @@ public class GraphsTest {
     }
 
     private Set<Integer> set(Integer...values) {
-        return new HashSet<Integer>(Arrays.asList(values));
+        return new HashSet<>(Arrays.asList(values));
     }
 
     private <T> Set<Set<T>> toPartition(T[][] tss) {
-        Set<Set<T>> results = new HashSet<Set<T>>();
+        Set<Set<T>> results = new HashSet<>();
         for (T[] ts : tss) {
-            Set<T> part = new HashSet<T>();
+            Set<T> part = new HashSet<>();
             for (T t : ts) {
                 part.add(t);
             }

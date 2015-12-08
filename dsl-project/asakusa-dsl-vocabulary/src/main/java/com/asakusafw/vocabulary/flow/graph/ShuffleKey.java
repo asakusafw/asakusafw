@@ -48,8 +48,8 @@ public class ShuffleKey {
         if (orderings == null) {
             throw new IllegalArgumentException("orderings must not be null"); //$NON-NLS-1$
         }
-        this.groupProperties = Collections.unmodifiableList(new ArrayList<String>(groupProperties));
-        this.orderings = Collections.unmodifiableList(new ArrayList<Order>(orderings));
+        this.groupProperties = Collections.unmodifiableList(new ArrayList<>(groupProperties));
+        this.orderings = Collections.unmodifiableList(new ArrayList<>(orderings));
     }
 
     /**

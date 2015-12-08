@@ -64,11 +64,8 @@ public class KeepAliveDataSourceTest {
      */
     @Test
     public void testOpenInput() throws Exception {
-        ModelInput<Object> input = ds.openInput(null, null, counter);
-        try {
+        try (ModelInput<Object> input = ds.openInput(null, null, counter)) {
             assertKeepAlive(true);
-        } finally {
-            input.close();
         }
         assertKeepAlive(false);
     }
@@ -79,11 +76,8 @@ public class KeepAliveDataSourceTest {
      */
     @Test
     public void testOpenOutput() throws Exception {
-        ModelOutput<Object> output = ds.openOutput(null, null, null, null, counter);
-        try {
+        try (ModelOutput<Object> output = ds.openOutput(null, null, null, null, counter)) {
             assertKeepAlive(true);
-        } finally {
-            output.close();
         }
         assertKeepAlive(false);
     }

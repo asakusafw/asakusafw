@@ -97,7 +97,7 @@ public interface ExecutionTracker {
      */
     public class Id {
 
-        private static final Map<String, Id> CACHE = new HashMap<String, Id>();
+        private static final Map<String, Id> CACHE = new HashMap<>();
 
         private final String token;
 

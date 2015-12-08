@@ -134,18 +134,12 @@ public abstract class LauncherTestRoot {
 
     private File putFile(String path, File target) throws FileNotFoundException, IOException {
         assert target != null;
-        InputStream input = getClass().getResourceAsStream(path);
-        assertThat(path, input, is(notNullValue()));
-        try {
+        try (InputStream input = getClass().getResourceAsStream(path)) {
+            assertThat(path, input, is(notNullValue()));
             prepareParent(target);
-            OutputStream output = new FileOutputStream(target);
-            try {
+            try (OutputStream output = new FileOutputStream(target)) {
                 copyStream(input, output);
-            } finally {
-                output.close();
             }
-        } finally {
-            input.close();
         }
         return target;
     }

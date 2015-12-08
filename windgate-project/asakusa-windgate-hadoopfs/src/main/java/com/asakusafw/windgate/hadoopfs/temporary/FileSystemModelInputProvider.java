@@ -92,7 +92,7 @@ public class FileSystemModelInputProvider<T> implements ModelInputProvider<T> {
             throw new IllegalArgumentException("dataModelClass must not be null"); //$NON-NLS-1$
         }
         this.fileSystem = fileSystem;
-        this.queue = new SynchronousQueue<Entry<T>>();
+        this.queue = new SynchronousQueue<>();
         this.executor = Executors.newFixedThreadPool(1, new ThreadFactory() {
             @Override
             public Thread newThread(Runnable r) {
@@ -126,7 +126,7 @@ public class FileSystemModelInputProvider<T> implements ModelInputProvider<T> {
                                 status.getPath());
                         boolean succeed = false;
                         try {
-                            queue.put(new Entry<T>(status, input));
+                            queue.put(new Entry<>(status, input));
                             succeed = true;
                         } finally {
                             if (succeed == false) {
@@ -232,7 +232,7 @@ public class FileSystemModelInputProvider<T> implements ModelInputProvider<T> {
 
     private static class Entry<T> {
 
-        static final Entry<?> EOF = new Entry<Object>(null, null);
+        static final Entry<?> EOF = new Entry<>(null, null);
 
         final FileStatus status;
 

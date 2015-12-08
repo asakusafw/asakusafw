@@ -83,7 +83,7 @@ public final class BlockMap {
      */
     public static List<BlockInfo> computeBlocks(FileSystem fs, FileStatus status) throws IOException {
         BlockLocation[] locations = fs.getFileBlockLocations(status, 0, status.getLen());
-        List<BlockInfo> results = new ArrayList<BlockInfo>();
+        List<BlockInfo> results = new ArrayList<>();
         for (BlockLocation location : locations) {
             long length = location.getLength();
             long start = location.getOffset();
@@ -118,7 +118,7 @@ public final class BlockMap {
             }
         });
         long lastOffset = 0;
-        List<BlockInfo> results = new ArrayList<BlockInfo>();
+        List<BlockInfo> results = new ArrayList<>();
         for (BlockInfo block : blocks) {
             // if block is out of bounds, skip it
             if (block.start >= fileSize) {
@@ -153,7 +153,7 @@ public final class BlockMap {
 
     private static List<BlockInfo> combine(List<BlockInfo> blocks) {
         assert blocks != null;
-        List<BlockInfo> results = new ArrayList<BlockInfo>(blocks.size());
+        List<BlockInfo> results = new ArrayList<>(blocks.size());
         Iterator<BlockInfo> iter = blocks.iterator();
         assert iter.hasNext();
         BlockInfo last = iter.next();
@@ -195,7 +195,7 @@ public final class BlockMap {
             return Collections.emptyList();
         }
         long threshold = (long) (max * PRUNE_REL_LOCALITY);
-        List<String> results = new ArrayList<String>();
+        List<String> results = new ArrayList<>();
         for (int i = 0, n = rank.size(); i < n; i++) {
             Map.Entry<String, Long> block = rank.get(i);
             if (block.getValue() < threshold) {
@@ -207,7 +207,7 @@ public final class BlockMap {
     }
 
     private List<Map.Entry<String, Long>> computeLocalityRank(long start, long end) {
-        Map<String, Long> ownBytes = new HashMap<String, Long>();
+        Map<String, Long> ownBytes = new HashMap<>();
         for (BlockInfo block : blocks) {
             if (block.end < start) {
                 continue;
@@ -230,7 +230,7 @@ public final class BlockMap {
         if (ownBytes.isEmpty()) {
             return Collections.emptyList();
         }
-        List<Map.Entry<String, Long>> entries = new ArrayList<Map.Entry<String, Long>>(ownBytes.entrySet());
+        List<Map.Entry<String, Long>> entries = new ArrayList<>(ownBytes.entrySet());
         Collections.sort(entries, new Comparator<Map.Entry<String, Long>>() {
             @Override
             public int compare(Map.Entry<String, Long> o1, Map.Entry<String, Long> o2) {

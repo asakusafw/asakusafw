@@ -57,8 +57,7 @@ public final class TemporaryOutputFormat<T> extends OutputFormat<NullWritable, T
 
     private static final String KEY_OUTPUT_PATH = "com.asakusafw.temporary.output"; //$NON-NLS-1$
 
-    private final Map<TaskAttemptID, FileOutputCommitter> commiterCache =
-            new WeakHashMap<TaskAttemptID, FileOutputCommitter>();
+    private final Map<TaskAttemptID, FileOutputCommitter> commiterCache = new WeakHashMap<>();
 
     @Override
     public void checkOutputSpecs(JobContext context) throws IOException, InterruptedException {

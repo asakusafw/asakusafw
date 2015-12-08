@@ -54,10 +54,7 @@ public class OriginalNameDriver extends AttributeDriver {
     }
 
     @Override
-    public void process(
-            DmdlSemantics environment,
-            Declaration declaration,
-            AstAttribute attribute) {
+    public void process(DmdlSemantics environment, Declaration declaration, AstAttribute attribute) {
         assert attribute.name.toString().equals(TARGET_NAME);
         String value = getString(environment, attribute);
         if (value != null) {

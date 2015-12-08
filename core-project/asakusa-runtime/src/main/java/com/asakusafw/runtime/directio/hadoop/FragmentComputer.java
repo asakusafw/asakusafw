@@ -94,7 +94,7 @@ class FragmentComputer {
         List<BlockInfo> blocks = map.getBlocks();
         BitSet processed = new BitSet(blocks.size());
         assert size == blocks.get(blocks.size() - 1).end;
-        List<DirectInputFragment> results = new ArrayList<DirectInputFragment>();
+        List<DirectInputFragment> results = new ArrayList<>();
         for (int index = processed.nextClearBit(0); index < blocks.size(); index = processed.nextClearBit(index + 1)) {
             int lastIndex = index + 1;
             BlockInfo startBlock = blocks.get(index);

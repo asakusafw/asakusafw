@@ -101,7 +101,7 @@ public class TracepointWeaveRewriter extends FlowCompilingEnvironment.Initialize
 
     private static boolean rewrite(TracepointWeaver editor, FlowGraph graph) {
         boolean modify = false;
-        LinkedList<FlowGraph> work = new LinkedList<FlowGraph>();
+        LinkedList<FlowGraph> work = new LinkedList<>();
         work.add(graph);
         while (work.isEmpty() == false) {
             FlowGraph flow = work.removeFirst();
@@ -125,7 +125,7 @@ public class TracepointWeaveRewriter extends FlowCompilingEnvironment.Initialize
     private Collection<? extends TraceSetting> normalize(
             Collection<? extends TraceSetting> settings) throws RewriteException {
         ClassLoader loader = getEnvironment().getServiceClassLoader();
-        List<TraceSetting> results = new ArrayList<TraceSetting>();
+        List<TraceSetting> results = new ArrayList<>();
         for (TraceSetting setting : settings) {
             Tracepoint orig = setting.getTracepoint();
             Class<?> operatorClass;
@@ -165,7 +165,7 @@ public class TracepointWeaveRewriter extends FlowCompilingEnvironment.Initialize
                 }
             }
             if (found == false) {
-                List<String> list = new ArrayList<String>();
+                List<String> list = new ArrayList<>();
                 for (OperatorInfo.Input port : info.input()) {
                     list.add(port.name());
                 }
@@ -185,7 +185,7 @@ public class TracepointWeaveRewriter extends FlowCompilingEnvironment.Initialize
                 }
             }
             if (found == false) {
-                List<String> list = new ArrayList<String>();
+                List<String> list = new ArrayList<>();
                 for (OperatorInfo.Output port : info.output()) {
                     list.add(port.name());
                 }

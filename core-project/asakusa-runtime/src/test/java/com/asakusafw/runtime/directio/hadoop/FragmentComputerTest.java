@@ -246,7 +246,7 @@ public class FragmentComputerTest {
 
         long offset;
 
-        List<BlockInfo> blocks = new ArrayList<BlockInfo>();
+        List<BlockInfo> blocks = new ArrayList<>();
 
         BlockBuilder() {
             return;
@@ -268,7 +268,7 @@ public class FragmentComputerTest {
         }
 
         private List<DirectInputFragment> validate(List<DirectInputFragment> fragments) {
-            List<DirectInputFragment> results = new ArrayList<DirectInputFragment>(fragments);
+            List<DirectInputFragment> results = new ArrayList<>(fragments);
             Collections.sort(results, new Comparator<DirectInputFragment>() {
                 @Override
                 public int compare(DirectInputFragment o1, DirectInputFragment o2) {

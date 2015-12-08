@@ -53,7 +53,7 @@ public class DriverScript {
             throw new IllegalArgumentException("configuration must not be null"); //$NON-NLS-1$
         }
         this.resourceName = resource;
-        this.configuration = Collections.unmodifiableMap(new TreeMap<String, String>(configuration));
+        this.configuration = Collections.unmodifiableMap(new TreeMap<>(configuration));
     }
 
     /**

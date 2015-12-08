@@ -285,19 +285,12 @@ public class LegacyExcelRuleExtractorTest {
     }
 
     private Sheet sheet(String name) {
-        InputStream in = getClass().getResourceAsStream(name);
-        assertThat(name, in, not(nullValue()));
-        try {
+        try (InputStream in = getClass().getResourceAsStream(name)) {
+            assertThat(name, in, not(nullValue()));
             Workbook book = new HSSFWorkbook(in);
             return book.getSheetAt(0);
         } catch (IOException e) {
             throw new AssertionError(e);
-        } finally {
-            try {
-                in.close();
-            } catch (IOException e) {
-                throw new AssertionError(e);
-            }
         }
     }
 }

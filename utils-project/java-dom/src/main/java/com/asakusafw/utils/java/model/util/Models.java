@@ -48,7 +48,7 @@ public final class Models {
 
     private static final Map<Class<?>, BasicTypeKind> WRAPPER_TYPE_KINDS;
     static {
-        Map<Class<?>, BasicTypeKind> map = new HashMap<Class<?>, BasicTypeKind>();
+        Map<Class<?>, BasicTypeKind> map = new HashMap<>();
         map.put(Byte.class, BasicTypeKind.BYTE);
         map.put(Short.class, BasicTypeKind.SHORT);
         map.put(Integer.class, BasicTypeKind.INT);
@@ -82,7 +82,7 @@ public final class Models {
         if (kind == ModelKind.SIMPLE_NAME) {
             return Collections.singletonList((SimpleName) name);
         } else {
-            LinkedList<SimpleName> result = new LinkedList<SimpleName>();
+            LinkedList<SimpleName> result = new LinkedList<>();
             Name current = name;
             do {
                 QualifiedName qname = (QualifiedName) current;
@@ -466,7 +466,7 @@ public final class Models {
         if (array == null) {
             throw new IllegalArgumentException("array must not be null"); //$NON-NLS-1$
         }
-        List<Expression> literals = new ArrayList<Expression>();
+        List<Expression> literals = new ArrayList<>();
         for (int value : array) {
             literals.add(Models.toLiteral(factory, value));
         }
@@ -487,7 +487,7 @@ public final class Models {
         if (array == null) {
             throw new IllegalArgumentException("array must not be null"); //$NON-NLS-1$
         }
-        List<Expression> literals = new ArrayList<Expression>();
+        List<Expression> literals = new ArrayList<>();
         for (float value : array) {
             literals.add(Models.toLiteral(factory, value));
         }
@@ -508,7 +508,7 @@ public final class Models {
         if (array == null) {
             throw new IllegalArgumentException("array must not be null"); //$NON-NLS-1$
         }
-        List<Expression> literals = new ArrayList<Expression>();
+        List<Expression> literals = new ArrayList<>();
         for (long value : array) {
             literals.add(Models.toLiteral(factory, value));
         }
@@ -529,7 +529,7 @@ public final class Models {
         if (array == null) {
             throw new IllegalArgumentException("array must not be null"); //$NON-NLS-1$
         }
-        List<Expression> literals = new ArrayList<Expression>();
+        List<Expression> literals = new ArrayList<>();
         for (double value : array) {
             literals.add(Models.toLiteral(factory, value));
         }
@@ -550,7 +550,7 @@ public final class Models {
         if (array == null) {
             throw new IllegalArgumentException("array must not be null"); //$NON-NLS-1$
         }
-        List<Expression> literals = new ArrayList<Expression>();
+        List<Expression> literals = new ArrayList<>();
         for (char value : array) {
             literals.add(Models.toLiteral(factory, value));
         }
@@ -571,7 +571,7 @@ public final class Models {
         if (array == null) {
             throw new IllegalArgumentException("array must not be null"); //$NON-NLS-1$
         }
-        List<Expression> literals = new ArrayList<Expression>();
+        List<Expression> literals = new ArrayList<>();
         for (boolean value : array) {
             literals.add(Models.toLiteral(factory, value));
         }
@@ -592,7 +592,7 @@ public final class Models {
         if (array == null) {
             throw new IllegalArgumentException("array must not be null"); //$NON-NLS-1$
         }
-        List<Expression> literals = new ArrayList<Expression>();
+        List<Expression> literals = new ArrayList<>();
         for (byte value : array) {
             literals.add(Models.toLiteral(factory, value));
         }
@@ -613,7 +613,7 @@ public final class Models {
         if (array == null) {
             throw new IllegalArgumentException("array must not be null"); //$NON-NLS-1$
         }
-        List<Expression> literals = new ArrayList<Expression>();
+        List<Expression> literals = new ArrayList<>();
         for (short value : array) {
             literals.add(Models.toLiteral(factory, value));
         }
@@ -634,7 +634,7 @@ public final class Models {
         if (array == null) {
             throw new IllegalArgumentException("array must not be null"); //$NON-NLS-1$
         }
-        List<Expression> literals = new ArrayList<Expression>();
+        List<Expression> literals = new ArrayList<>();
         for (String value : array) {
             if (value == null) {
                 literals.add(Models.toNullLiteral(factory));
@@ -659,7 +659,7 @@ public final class Models {
         if (array == null) {
             throw new IllegalArgumentException("array must not be null"); //$NON-NLS-1$
         }
-        List<Expression> literals = new ArrayList<Expression>();
+        List<Expression> literals = new ArrayList<>();
         for (java.lang.reflect.Type value : array) {
             if (value == null) {
                 literals.add(Models.toNullLiteral(factory));

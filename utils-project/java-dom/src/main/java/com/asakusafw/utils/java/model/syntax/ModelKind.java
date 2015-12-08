@@ -708,14 +708,11 @@ public enum ModelKind {
 
     private List<PropertyKind> properties;
 
-    private ModelKind(
-            Class<? extends Model> interfaceType,
-            PropertyKind[] properties) {
+    private ModelKind(Class<? extends Model> interfaceType, PropertyKind[] properties) {
         assert interfaceType != null;
         assert properties != null;
         this.interfaceType = interfaceType;
-        this.properties =
-            Collections.unmodifiableList(Arrays.asList(properties));
+        this.properties = Collections.unmodifiableList(Arrays.asList(properties));
     }
 
     /**

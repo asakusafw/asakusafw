@@ -116,16 +116,13 @@ public class GenerateCeateTableTestRoot {
      */
     protected List<String> collectStatements(File target) throws IOException {
         StringBuilder buf = new StringBuilder();
-        Scanner scanner = new Scanner(target, "UTF-8");
-        try {
+        try (Scanner scanner = new Scanner(target, "UTF-8")) {
             while (scanner.hasNextLine()) {
                 buf.append(scanner.nextLine());
                 buf.append('\n');
             }
-        } finally {
-            scanner.close();
         }
-        List<String> results = new ArrayList<String>();
+        List<String> results = new ArrayList<>();
         for (String ql : buf.toString().split(";")) {
             String s = ql.trim();
             if (s.isEmpty() == false) {

@@ -105,22 +105,15 @@ public class DependencyLibrariesProcessor extends AbstractWorkflowProcessor {
     private void copyFile(File source, File destination) throws IOException {
         LOG.debug("Copying library file: {} -> {}", source, destination); //$NON-NLS-1$
         byte[] buf = new byte[1024];
-        InputStream in = new FileInputStream(source);
-        try {
-            OutputStream out = new FileOutputStream(destination);
-            try {
-                while (true) {
-                    int read = in.read(buf);
-                    if (read < 0) {
-                        break;
-                    }
-                    out.write(buf, 0, read);
+        try (InputStream in = new FileInputStream(source);
+                OutputStream out = new FileOutputStream(destination)) {
+            while (true) {
+                int read = in.read(buf);
+                if (read < 0) {
+                    break;
                 }
-            } finally {
-                out.close();
+                out.write(buf, 0, read);
             }
-        } finally {
-            in.close();
         }
     }
 }

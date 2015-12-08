@@ -116,7 +116,7 @@ final class ConcreteDataModelMirror implements DataModelMirror {
     }
 
     private Map<String, PropertyMirror> buildProperties() {
-        Map<String, PropertyMirror> results = new LinkedHashMap<String, PropertyMirror>();
+        Map<String, PropertyMirror> results = new LinkedHashMap<>();
         Elements elementUtils = environment.getElementUtils();
         TypeElement element = (TypeElement) type.asElement();
         for (ExecutableElement method : ElementFilter.methodsIn(elementUtils.getAllMembers(element))) {

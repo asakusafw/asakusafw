@@ -77,7 +77,7 @@ public class MockDataModelAdapter implements DataModelAdapter {
 
         @Override
         public Builder<StringBuilder> newReflection() {
-            return new Builder<StringBuilder>(this);
+            return new Builder<>(this);
         }
 
         @Override

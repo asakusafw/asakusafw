@@ -27,7 +27,7 @@ public class MockDrainDriver<T> implements DrainDriver<T> {
 
     final String name;
 
-    final List<T> results = new ArrayList<T>();
+    final List<T> results = new ArrayList<>();
 
     /**
      * Creates a new instance.

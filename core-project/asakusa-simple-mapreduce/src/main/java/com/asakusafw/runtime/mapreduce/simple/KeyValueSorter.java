@@ -91,7 +91,7 @@ public class KeyValueSorter<K, V> implements Closeable {
             Options options) {
         this.keyClass = keyClass;
         this.valueClass = valueClass;
-        this.pageBuffer = new KeyValuePageBuffer<K, V>(
+        this.pageBuffer = new KeyValuePageBuffer<>(
                 options.getPageSize() / 4, options.getPageSize(),
                 serialization, keyClass, valueClass, comparator);
         this.blockBuffer = new BlockBuffer(0, options.getBlockSize());
@@ -170,7 +170,7 @@ public class KeyValueSorter<K, V> implements Closeable {
                     blockBuffer.getSizeInBytes(),
                     blockStore.getSizeInBytes()));
         }
-        List<Source<KeyValueSlice>> sources = new ArrayList<Source<KeyValueSlice>>();
+        List<Source<KeyValueSlice>> sources = new ArrayList<>();
         sources.addAll(pageBuffer.createSources());
         sources.addAll(blockBuffer.createSources());
         sources.addAll(blockStore.createSources());
@@ -205,11 +205,8 @@ public class KeyValueSorter<K, V> implements Closeable {
     }
 
     private void spillOut() throws IOException, InterruptedException {
-        Source<KeyValueSlice> merged = Sources.merge(blockBuffer.createSources(), comparator);
-        try {
+        try (Source<KeyValueSlice> merged = Sources.merge(blockBuffer.createSources(), comparator)) {
             blockStore.put(merged, blockBuffer.getSizeInBytes());
-        } finally {
-            merged.close();
         }
         blockBuffer.reset();
     }
@@ -504,7 +501,7 @@ public class KeyValueSorter<K, V> implements Closeable {
         }
 
         List<Source<KeyValueSlice>> createSources() {
-            List<Source<KeyValueSlice>> sources = new ArrayList<Source<KeyValueSlice>>();
+            List<Source<KeyValueSlice>> sources = new ArrayList<>();
             byte[] bytes = buffer.getData();
             int last = 0;
             for (int i = 0, n = pageCount; i < n; i++) {
@@ -528,7 +525,7 @@ public class KeyValueSorter<K, V> implements Closeable {
 
         private static final int OUTPUT_BUFFER_SIZE = 256 * 1024;
 
-        private final List<File> files = new ArrayList<File>();
+        private final List<File> files = new ArrayList<>();
 
         private final File temporaryDirectory;
 
@@ -553,8 +550,7 @@ public class KeyValueSorter<K, V> implements Closeable {
             File file = createTemporaryFile();
             boolean success = false;
             try {
-                DataOutputStream output = createBlockFileOutput(file);
-                try {
+                try (DataOutputStream output = createBlockFileOutput(file)) {
                     while (source.next()) {
                         KeyValueSlice slice = source.get();
                         output.writeInt(slice.getKeyLength());
@@ -563,8 +559,6 @@ public class KeyValueSorter<K, V> implements Closeable {
                     }
                     // EOF
                     output.writeInt(-1);
-                } finally {
-                    output.close();
                 }
                 files.add(file);
                 success = true;
@@ -599,7 +593,7 @@ public class KeyValueSorter<K, V> implements Closeable {
         }
 
         List<Source<KeyValueSlice>> createSources() throws IOException {
-            List<Source<KeyValueSlice>> sources = new ArrayList<Source<KeyValueSlice>>();
+            List<Source<KeyValueSlice>> sources = new ArrayList<>();
             boolean succeed = false;
             try {
                 for (File file : files) {

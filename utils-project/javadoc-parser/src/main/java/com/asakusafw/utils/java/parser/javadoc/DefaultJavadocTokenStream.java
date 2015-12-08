@@ -38,7 +38,7 @@ public class DefaultJavadocTokenStream implements JavadocTokenStream {
             throw new IllegalArgumentException("scanner"); //$NON-NLS-1$
         }
         this.scanner = scanner;
-        this.marks = new LinkedList<Integer>();
+        this.marks = new LinkedList<>();
     }
 
     @Override

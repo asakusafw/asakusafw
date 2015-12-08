@@ -239,7 +239,7 @@ public final class FlowGraphUtil {
 
     private static void collect(Set<FlowElement> collected) {
         assert collected != null;
-        LinkedList<FlowElement> work = new LinkedList<FlowElement>(collected);
+        LinkedList<FlowElement> work = new LinkedList<>(collected);
         while (work.isEmpty() == false) {
             FlowElement first = work.removeFirst();
             if (collected.contains(first) == false) {
@@ -481,7 +481,7 @@ public final class FlowGraphUtil {
         Set<FlowElement> arrivals = Sets.create();
         Set<FlowElement> saw = Sets.create();
 
-        LinkedList<FlowElement> successors = new LinkedList<FlowElement>();
+        LinkedList<FlowElement> successors = new LinkedList<>();
         for (FlowElement starting : startings) {
             addSuccessors(successors, starting);
         }
@@ -526,7 +526,7 @@ public final class FlowGraphUtil {
         Set<FlowElement> arrivals = Sets.create();
         Set<FlowElement> saw = Sets.create();
 
-        LinkedList<FlowElement> predecessors = new LinkedList<FlowElement>();
+        LinkedList<FlowElement> predecessors = new LinkedList<>();
         for (FlowElement starting : startings) {
             addPredecessors(predecessors, starting);
         }
@@ -663,7 +663,7 @@ public final class FlowGraphUtil {
      */
     public static Set<FlowElement> getSucceedingBoundaries(FlowElementOutput output) {
         Precondition.checkMustNotBeNull(output, "output"); //$NON-NLS-1$
-        LinkedList<FlowElement> nextSuccessors = new LinkedList<FlowElement>();
+        LinkedList<FlowElement> nextSuccessors = new LinkedList<>();
         for (FlowElementInput next : output.getOpposites()) {
             nextSuccessors.add(next.getOwner());
         }
@@ -701,7 +701,7 @@ public final class FlowGraphUtil {
             Set<PortConnection> connections) {
         Precondition.checkMustNotBeNull(start, "start"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(connections, "connections"); //$NON-NLS-1$
-        LinkedList<PortConnection> next = new LinkedList<PortConnection>();
+        LinkedList<PortConnection> next = new LinkedList<>();
         next.add(start);
         Set<PortConnection> results = Sets.create();
         while (next.isEmpty() == false) {
@@ -879,12 +879,10 @@ public final class FlowGraphUtil {
                 attributes);
         FlowElementResolver resolver = new FlowElementResolver(desc);
 
-        FlowElementInput insertIn =
-            resolver.getInput(PseudElementDescription.INPUT_PORT_NAME);
+        FlowElementInput insertIn = resolver.getInput(PseudElementDescription.INPUT_PORT_NAME);
         PortConnection.connect(output, insertIn);
 
-        FlowElementOutput insertOut =
-            resolver.getOutput(PseudElementDescription.OUTPUT_PORT_NAME);
+        FlowElementOutput insertOut = resolver.getOutput(PseudElementDescription.OUTPUT_PORT_NAME);
         for (FlowElementInput downstream : originalDownstreams) {
             PortConnection.connect(insertOut, downstream);
         }

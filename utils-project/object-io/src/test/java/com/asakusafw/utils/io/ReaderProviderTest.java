@@ -37,7 +37,7 @@ public class ReaderProviderTest {
 
     static final Charset CHARSET = Charset.forName("UTF-8");
 
-    private final List<Object> closeables = new ArrayList<Object>();
+    private final List<Object> closeables = new ArrayList<>();
 
     /**
      * Close all.

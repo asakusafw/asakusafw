@@ -201,7 +201,7 @@ public class FlowLoggerProfile {
         if (profile == null) {
             throw new IllegalArgumentException("profile must not be null"); //$NON-NLS-1$
         }
-        Map<String, String> copy = new TreeMap<String, String>(profile.getConfiguration());
+        Map<String, String> copy = new TreeMap<>(profile.getConfiguration());
         String dirString = extract(profile, copy, KEY_DIRECTORY, null);
         String encString = extract(profile, copy, KEY_ENCODING, DEFAULT_ENCODING);
         String dfString = extract(profile, copy, KEY_DATE_FORMAT, DEFAULT_DATE_FORMAT);

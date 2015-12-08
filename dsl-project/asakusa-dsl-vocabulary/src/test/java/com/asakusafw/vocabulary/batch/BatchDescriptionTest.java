@@ -108,11 +108,9 @@ public class BatchDescriptionTest {
         exec(new LastUnderConstructionBatch());
     }
 
-    private Set<Class<?>> dependencies(
-            Collection<Work> works,
-            Class<? extends FlowDescription> target) {
+    private Set<Class<?>> dependencies(Collection<Work> works, Class<? extends FlowDescription> target) {
         Work found = findWork(works, target);
-        Set<Class<?>> result = new HashSet<Class<?>>();
+        Set<Class<?>> result = new HashSet<>();
         for (Work work : found.getDependencies()) {
             result.add(asJobFlow(work));
         }
@@ -124,9 +122,7 @@ public class BatchDescriptionTest {
         return ((JobFlowWorkDescription) work.getDescription()).getFlowClass();
     }
 
-    private Work findWork(
-            Collection<Work> works,
-            Class<? extends FlowDescription> target) {
+    private Work findWork(Collection<Work> works, Class<? extends FlowDescription> target) {
         JobFlowWorkDescription desc = new JobFlowWorkDescription(target);
         for (Work work : works) {
             if (work.getDescription().equals(desc)) {
@@ -137,7 +133,7 @@ public class BatchDescriptionTest {
     }
 
     private Matcher<? super Set<Class<?>>> isJust(Class<?>... classes) {
-        Set<Class<?>> result = new HashSet<Class<?>>();
+        Set<Class<?>> result = new HashSet<>();
         Collections.addAll(result, classes);
         return is(result);
     }

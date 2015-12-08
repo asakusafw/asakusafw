@@ -41,15 +41,9 @@ public final class TestingUtils {
      */
     public static void append(String path, String message) {
         File file = new File(path);
-        try {
-            OutputStream output = new FileOutputStream(file, true);
-            try {
-                PrintWriter w = new PrintWriter(new OutputStreamWriter(output, "UTF-8")); //$NON-NLS-1$
-                w.println(message);
-                w.close();
-            } finally {
-                output.close();
-            }
+        try (OutputStream output = new FileOutputStream(file, true);
+                PrintWriter w = new PrintWriter(new OutputStreamWriter(output, "UTF-8"))) { //$NON-NLS-1$
+            w.println(message);
         } catch (IOException e) {
             throw new IOError(e);
         }

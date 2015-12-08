@@ -132,7 +132,7 @@ public class ParquetFileOutput<T> implements ModelOutput<T> {
                     WriteSupport<T> writeSupport,
                     ParquetFileOutput.Options options,
                     Configuration configuration) throws IOException {
-                return new ParquetWriter<T>(
+                return new ParquetWriter<>(
                         path,
                         writeSupport,
                         options.getCompressionCodecName(),
@@ -153,7 +153,7 @@ public class ParquetFileOutput<T> implements ModelOutput<T> {
                     WriteSupport<T> writeSupport,
                     ParquetFileOutput.Options options,
                     Configuration configuration) throws IOException {
-                return new ParquetWriter<T>(
+                return new ParquetWriter<>(
                         path,
                         writeSupport,
                         options.getCompressionCodecName(),
@@ -173,7 +173,7 @@ public class ParquetFileOutput<T> implements ModelOutput<T> {
                     WriteSupport<T> writeSupport,
                     ParquetFileOutput.Options options,
                     Configuration configuration) throws IOException {
-                return new ParquetWriter<T>(
+                return new ParquetWriter<>(
                         path,
                         writeSupport,
                         options.getCompressionCodecName(),
@@ -192,7 +192,7 @@ public class ParquetFileOutput<T> implements ModelOutput<T> {
                     WriteSupport<T> writeSupport,
                     ParquetFileOutput.Options options,
                     Configuration configuration) throws IOException {
-                return new ParquetWriter<T>(path, writeSupport);
+                return new ParquetWriter<>(path, writeSupport);
             }
         },
         ;

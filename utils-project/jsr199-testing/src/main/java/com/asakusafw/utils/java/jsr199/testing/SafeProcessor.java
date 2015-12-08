@@ -83,9 +83,7 @@ public class SafeProcessor implements Processor {
     }
 
     @Override
-    public boolean process(
-            Set<? extends TypeElement> annotations,
-            RoundEnvironment roundEnv) {
+    public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         try {
             return this.delegate.process(annotations, roundEnv);
         } catch (RuntimeException e) {

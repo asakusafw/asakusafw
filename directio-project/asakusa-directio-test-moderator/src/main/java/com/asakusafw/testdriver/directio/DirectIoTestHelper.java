@@ -68,8 +68,7 @@ public final class DirectIoTestHelper {
 
     static final Logger LOG = LoggerFactory.getLogger(DirectIoTestHelper.class);
 
-    private static final WeakHashMap<TestContext, DirectDataSourceRepository> REPOSITORY_CACHE =
-        new WeakHashMap<TestContext, DirectDataSourceRepository>();
+    private static final WeakHashMap<TestContext, DirectDataSourceRepository> REPOSITORY_CACHE = new WeakHashMap<>();
 
     private final TestContext context;
 

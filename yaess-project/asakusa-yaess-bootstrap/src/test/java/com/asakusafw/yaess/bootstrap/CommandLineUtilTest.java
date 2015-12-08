@@ -95,7 +95,7 @@ public class CommandLineUtilTest {
     }
 
     private List<File> canonicalize(List<File> list) {
-        List<File> results = new ArrayList<File>();
+        List<File> results = new ArrayList<>();
         for (File f : list) {
             try {
                 results.add(f.getCanonicalFile());
@@ -140,11 +140,8 @@ public class CommandLineUtilTest {
 
     private File store(Properties p) throws IOException, FileNotFoundException {
         File file = folder.newFile("testing.properties");
-        FileOutputStream out = new FileOutputStream(file);
-        try {
+        try (FileOutputStream out = new FileOutputStream(file)) {
             p.store(out, "testing");
-        } finally {
-            out.close();
         }
         return file;
     }

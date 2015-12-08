@@ -55,18 +55,15 @@ public class BasicLockProviderTest {
         File lockDir = folder.getRoot();
         int start = lockDir.list().length;
 
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(BasicLockProvider.KEY_DIRECTORY, lockDir.getAbsolutePath());
 
         ServiceProfile<ExecutionLockProvider> profile = new ServiceProfile<ExecutionLockProvider>(
                 "testing", BasicLockProvider.class, conf, ProfileContext.system(getClass().getClassLoader()));
         ExecutionLockProvider instance = profile.newInstance();
-        ExecutionLock lock = instance.newInstance("batch");
-        try {
+        try (ExecutionLock lock = instance.newInstance("batch")) {
             lock.beginFlow("flow", "exec");
             assertThat(lockDir.list().length, is(greaterThan(start)));
-        } finally {
-            lock.close();
         }
         assertThat(lockDir.list().length, is(start));
     }
@@ -81,18 +78,15 @@ public class BasicLockProviderTest {
         int start = lockDir.list().length;
         VariableResolver var = new VariableResolver(Collections.singletonMap(
                 "LOCATION", lockDir.getAbsolutePath()));
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(BasicLockProvider.KEY_DIRECTORY, "${LOCATION}");
 
         ServiceProfile<ExecutionLockProvider> profile = new ServiceProfile<ExecutionLockProvider>(
                 "testing", BasicLockProvider.class, conf, new ProfileContext(getClass().getClassLoader(), var));
         ExecutionLockProvider instance = profile.newInstance();
-        ExecutionLock lock = instance.newInstance("batch");
-        try {
+        try (ExecutionLock lock = instance.newInstance("batch")) {
             lock.beginFlow("flow", "exec");
             assertThat(lockDir.list().length, is(greaterThan(start)));
-        } finally {
-            lock.close();
         }
         assertThat(lockDir.list().length, is(start));
     }
@@ -106,7 +100,7 @@ public class BasicLockProviderTest {
         File lockDir = folder.getRoot();
         VariableResolver var = new VariableResolver(Collections.singletonMap(
                 "LOCATION", lockDir.getAbsolutePath()));
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(BasicLockProvider.KEY_DIRECTORY, "${__INVALID__}");
 
         ServiceProfile<ExecutionLockProvider> profile = new ServiceProfile<ExecutionLockProvider>(
@@ -120,7 +114,7 @@ public class BasicLockProviderTest {
      */
     @Test
     public void world() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(BasicLockProvider.KEY_DIRECTORY, folder.getRoot().getAbsolutePath());
         conf.put(ExecutionLockProvider.KEY_SCOPE, ExecutionLock.Scope.WORLD.getSymbol());
 
@@ -129,8 +123,7 @@ public class BasicLockProviderTest {
         ExecutionLockProvider instance1 = profile.newInstance();
         ExecutionLockProvider instance2 = profile.newInstance();
 
-        ExecutionLock lock = instance1.newInstance("batch1");
-        try {
+        try (ExecutionLock lock = instance1.newInstance("batch1")) {
             try {
                 instance2.newInstance("batch1");
                 fail("cannot run same batch");
@@ -152,8 +145,6 @@ public class BasicLockProviderTest {
             } catch (IOException e) {
                 // ok.
             }
-        } finally {
-            lock.close();
         }
     }
 
@@ -163,7 +154,7 @@ public class BasicLockProviderTest {
      */
     @Test
     public void batch() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(BasicLockProvider.KEY_DIRECTORY, folder.getRoot().getAbsolutePath());
         conf.put(ExecutionLockProvider.KEY_SCOPE, ExecutionLock.Scope.BATCH.getSymbol());
 
@@ -172,8 +163,7 @@ public class BasicLockProviderTest {
         ExecutionLockProvider instance1 = profile.newInstance();
         ExecutionLockProvider instance2 = profile.newInstance();
 
-        ExecutionLock lock = instance1.newInstance("batch1");
-        try {
+        try (ExecutionLock lock = instance1.newInstance("batch1")) {
             lock.beginFlow("flow1", "exec1");
             try {
                 instance2.newInstance("batch1");
@@ -181,8 +171,7 @@ public class BasicLockProviderTest {
             } catch (IOException e) {
                 // ok.
             }
-            ExecutionLock other = instance2.newInstance("batch2");
-            try {
+            try (ExecutionLock other = instance2.newInstance("batch2")) {
                 // can acquire any flow/exec lock
                 other.beginFlow("flow2", "exec1");
                 other.endFlow("flow2", "exec1");
@@ -190,11 +179,7 @@ public class BasicLockProviderTest {
                 other.endFlow("flow1", "exec2");
                 other.beginFlow("flow2", "exec2");
                 other.endFlow("flow2", "exec2");
-            } finally {
-                other.close();
             }
-        } finally {
-            lock.close();
         }
     }
 
@@ -204,7 +189,7 @@ public class BasicLockProviderTest {
      */
     @Test
     public void flow() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(BasicLockProvider.KEY_DIRECTORY, folder.getRoot().getAbsolutePath());
         conf.put(ExecutionLockProvider.KEY_SCOPE, ExecutionLock.Scope.FLOW.getSymbol());
 
@@ -213,36 +198,25 @@ public class BasicLockProviderTest {
         ExecutionLockProvider instance1 = profile.newInstance();
         ExecutionLockProvider instance2 = profile.newInstance();
 
-        ExecutionLock lock = instance1.newInstance("batch1");
-        try {
+        try (ExecutionLock lock = instance1.newInstance("batch1")) {
             lock.beginFlow("flow1", "exec1");
-            ExecutionLock other = instance2.newInstance("batch1");
-            try {
+            try (ExecutionLock other = instance2.newInstance("batch1")) {
                 // can acquire other flow lock
                 other.beginFlow("flow2", "exec1");
                 other.endFlow("flow2", "exec1");
                 other.beginFlow("flow2", "exec2");
                 other.endFlow("flow2", "exec2");
-
                 try {
                     other.beginFlow("flow1", "exec2");
                     fail("cannot run same flow");
                 } catch (IOException e) {
                     // ok.
                 }
-            } finally {
-                other.close();
             }
-
-            other = instance2.newInstance("batch2");
-            try {
+            try (ExecutionLock other = instance2.newInstance("batch2")) {
                 // can acquire any flow lock if batch is different
                 other.beginFlow("flow1", "exec1");
-            } finally {
-                other.close();
             }
-        } finally {
-            lock.close();
         }
     }
 
@@ -252,7 +226,7 @@ public class BasicLockProviderTest {
      */
     @Test
     public void execution() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(BasicLockProvider.KEY_DIRECTORY, folder.getRoot().getAbsolutePath());
         conf.put(ExecutionLockProvider.KEY_SCOPE, ExecutionLock.Scope.EXECUTION.getSymbol());
 
@@ -261,11 +235,9 @@ public class BasicLockProviderTest {
         ExecutionLockProvider instance1 = profile.newInstance();
         ExecutionLockProvider instance2 = profile.newInstance();
 
-        ExecutionLock lock = instance1.newInstance("batch1");
-        try {
+        try (ExecutionLock lock = instance1.newInstance("batch1")) {
             lock.beginFlow("flow1", "exec1");
-            ExecutionLock other = instance2.newInstance("batch1");
-            try {
+            try (ExecutionLock other = instance2.newInstance("batch1")) {
                 // can acquire other flow lock
                 other.beginFlow("flow2", "exec1");
                 other.endFlow("flow2", "exec1");
@@ -282,19 +254,11 @@ public class BasicLockProviderTest {
                 } catch (IOException e) {
                     // ok.
                 }
-            } finally {
-                other.close();
             }
-
-            other = instance2.newInstance("batch2");
-            try {
+            try (ExecutionLock other = instance2.newInstance("batch2")) {
                 // can acquire any flow lock if batch is different
                 other.beginFlow("flow1", "exec1");
-            } finally {
-                other.close();
             }
-        } finally {
-            lock.close();
         }
     }
 
@@ -307,18 +271,15 @@ public class BasicLockProviderTest {
         File lockDir = folder.newFolder("missing");
         Assume.assumeThat(lockDir.delete(), is(true));
 
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(BasicLockProvider.KEY_DIRECTORY, lockDir.getAbsolutePath());
 
         ServiceProfile<ExecutionLockProvider> profile = new ServiceProfile<ExecutionLockProvider>(
                 "testing", BasicLockProvider.class, conf, ProfileContext.system(getClass().getClassLoader()));
         ExecutionLockProvider instance = profile.newInstance();
-        ExecutionLock lock = instance.newInstance("batch");
-        try {
+        try (ExecutionLock lock = instance.newInstance("batch")) {
             lock.beginFlow("a", "b");
             lock.endFlow("a", "b");
-        } finally {
-            lock.close();
         }
     }
 
@@ -328,7 +289,7 @@ public class BasicLockProviderTest {
      */
     @Test(expected = IOException.class)
     public void missing_directory_config() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         ServiceProfile<ExecutionLockProvider> profile = new ServiceProfile<ExecutionLockProvider>(
                 "testing", BasicLockProvider.class, conf, ProfileContext.system(getClass().getClassLoader()));
         ExecutionLockProvider instance = profile.newInstance();
@@ -343,7 +304,7 @@ public class BasicLockProviderTest {
     public void invalid_directory() throws Exception {
         File lockDir = folder.newFile("INVALID");
 
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(BasicLockProvider.KEY_DIRECTORY, lockDir.getAbsolutePath());
 
         ServiceProfile<ExecutionLockProvider> profile = new ServiceProfile<ExecutionLockProvider>(

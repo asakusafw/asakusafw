@@ -205,7 +205,7 @@ public class MapperEmitter {
         }
 
         private Map<String, Expression> createTraceLocationElements() {
-            Map<String, Expression> results = new LinkedHashMap<String, Expression>();
+            Map<String, Expression> results = new LinkedHashMap<>();
             results.put("batchId", Models.toLiteral(factory, environment.getBatchId())); //$NON-NLS-1$
             results.put("flowId", Models.toLiteral(factory, environment.getFlowId())); //$NON-NLS-1$
             results.put("stageId", //$NON-NLS-1$

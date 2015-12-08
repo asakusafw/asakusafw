@@ -38,7 +38,7 @@ public class FileMapListBufferTest {
      */
     @Test
     public void createEmpty() {
-        FileMapListBuffer<Holder> buf = new FileMapListBuffer<Holder>();
+        FileMapListBuffer<Holder> buf = new FileMapListBuffer<>();
         buf.begin();
         buf.end();
         assertThat(buf.size(), is(0));
@@ -51,7 +51,7 @@ public class FileMapListBufferTest {
      */
     @Test
     public void createSingle() {
-        FileMapListBuffer<Holder> buf = new FileMapListBuffer<Holder>();
+        FileMapListBuffer<Holder> buf = new FileMapListBuffer<>();
         buf.begin();
         assertThat(buf.isExpandRequired(), is(true));
         buf.expand(new Holder(""));
@@ -69,7 +69,7 @@ public class FileMapListBufferTest {
      */
     @Test
     public void reuse() {
-        FileMapListBuffer<Holder> buf = new FileMapListBuffer<Holder>();
+        FileMapListBuffer<Holder> buf = new FileMapListBuffer<>();
         buf.begin();
         assertThat(buf.isExpandRequired(), is(true));
         buf.expand(new Holder(""));
@@ -93,7 +93,7 @@ public class FileMapListBufferTest {
     public void createBigList() {
         int size = 10000000;
         long begin = System.currentTimeMillis();
-        ListBuffer<Holder> buf = new FileMapListBuffer<Holder>();
+        ListBuffer<Holder> buf = new FileMapListBuffer<>();
         buf.begin();
         for (int i = 0; i < size; i++) {
             if (buf.isExpandRequired()) {
@@ -129,7 +129,7 @@ public class FileMapListBufferTest {
      */
     @Test(expected = IndexOutOfBoundsException.class)
     public void over_expand() {
-        FileMapListBuffer<Holder> buf = new FileMapListBuffer<Holder>();
+        FileMapListBuffer<Holder> buf = new FileMapListBuffer<>();
         try {
             buf.begin();
             while (true) {
@@ -145,7 +145,7 @@ public class FileMapListBufferTest {
      */
     @Test(expected = IndexOutOfBoundsException.class)
     public void get_UpperOutOfBounds() {
-        FileMapListBuffer<Holder> buf = new FileMapListBuffer<Holder>();
+        FileMapListBuffer<Holder> buf = new FileMapListBuffer<>();
         try {
             buf.begin();
             buf.end();
@@ -160,7 +160,7 @@ public class FileMapListBufferTest {
      */
     @Test(expected = IndexOutOfBoundsException.class)
     public void get_LowerOutOfBounds() {
-        FileMapListBuffer<Holder> buf = new FileMapListBuffer<Holder>();
+        FileMapListBuffer<Holder> buf = new FileMapListBuffer<>();
         try {
             buf.begin();
             buf.end();

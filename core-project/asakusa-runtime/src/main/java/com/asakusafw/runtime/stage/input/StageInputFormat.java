@@ -65,7 +65,7 @@ public class StageInputFormat extends InputFormat {
 
     private static final Map<String, Class<? extends SplitCombiner>> SPLIT_COMBINERS;
     static {
-        Map<String, Class<? extends SplitCombiner>> map = new HashMap<String, Class<? extends SplitCombiner>>();
+        Map<String, Class<? extends SplitCombiner>> map = new HashMap<>();
         map.put(DEFAULT_SPLIT_COMBINER, DefaultSplitCombiner.class);
         map.put("disabled", IdentitySplitCombiner.class); //$NON-NLS-1$
         map.put("extreme", ExtremeSplitCombiner.class); //$NON-NLS-1$
@@ -105,7 +105,7 @@ public class StageInputFormat extends InputFormat {
         Map<Class<? extends InputFormat<?, ?>>, InputFormat<?, ?>> formats =
             instantiateFormats(context, paths.keySet());
         Job temporaryJob = JobCompatibility.newJob(context.getConfiguration());
-        List<StageInputSplit> results = new ArrayList<StageInputSplit>();
+        List<StageInputSplit> results = new ArrayList<>();
         for (Map.Entry<FormatAndMapper, List<StageInput>> entry : paths.entrySet()) {
             FormatAndMapper formatAndMapper = entry.getKey();
             List<StageInput> current = entry.getValue();
@@ -187,7 +187,7 @@ public class StageInputFormat extends InputFormat {
 
     private static Path[] toPathArray(List<StageInput> inputs) {
         assert inputs != null;
-        List<Path> paths = new ArrayList<Path>();
+        List<Path> paths = new ArrayList<>();
         for (StageInput input : inputs) {
             paths.add(new Path(input.getPathString()));
         }
@@ -196,12 +196,12 @@ public class StageInputFormat extends InputFormat {
 
     private static Map<FormatAndMapper, List<StageInput>> groupByFormatAndMapper(List<StageInput> inputs) {
         assert inputs != null;
-        Map<FormatAndMapper, List<StageInput>> paths = new HashMap<FormatAndMapper, List<StageInput>>();
+        Map<FormatAndMapper, List<StageInput>> paths = new HashMap<>();
         for (StageInput input : inputs) {
             FormatAndMapper fam = new FormatAndMapper(input.getFormatClass(), input.getMapperClass());
             List<StageInput> list = paths.get(fam);
             if (list == null) {
-                list = new ArrayList<StageInput>();
+                list = new ArrayList<>();
                 paths.put(fam, list);
             }
             list.add(input);
@@ -215,8 +215,7 @@ public class StageInputFormat extends InputFormat {
         assert context != null;
         assert pairs != null;
         Configuration conf = context.getConfiguration();
-        Map<Class<? extends InputFormat<?, ?>>, InputFormat<?, ?>> results =
-            new HashMap<Class<? extends InputFormat<?, ?>>, InputFormat<?, ?>>();
+        Map<Class<? extends InputFormat<?, ?>>, InputFormat<?, ?>> results = new HashMap<>();
         for (FormatAndMapper pair : pairs) {
             Class<? extends InputFormat<?, ?>> type = pair.formatClass;
             if (results.containsKey(type) == false) {
@@ -303,7 +302,7 @@ public class StageInputFormat extends InputFormat {
                 Collection<? extends StageInput> key,
                 List<StageInputSplit> splits) throws IOException {
             this.id = UUID.randomUUID().toString();
-            this.key = new HashSet<StageInput>(key);
+            this.key = new HashSet<>(key);
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
                         "saving input splits into cache: id={0}", //$NON-NLS-1$
@@ -327,7 +326,7 @@ public class StageInputFormat extends InputFormat {
             DataBuffer buffer = new DataBuffer();
             buffer.reset(value, 0, value.length);
             int count = buffer.readInt();
-            List<StageInputSplit> results = new ArrayList<StageInputSplit>();
+            List<StageInputSplit> results = new ArrayList<>();
             for (int i = 0; i < count; i++) {
                 StageInputSplit split = new StageInputSplit();
                 split.setConf(conf);
@@ -352,7 +351,7 @@ public class StageInputFormat extends InputFormat {
                 if (cached == null || id.equals(cached.id) == false) {
                     return null;
                 }
-                Set<StageInput> k = new HashSet<StageInput>(key);
+                Set<StageInput> k = new HashSet<>(key);
                 if (k.equals(cached.key) == false) {
                     return null;
                 }
@@ -368,7 +367,7 @@ public class StageInputFormat extends InputFormat {
             assert value != null;
             Cache cache = new Cache(key, value);
             synchronized (Cache.class) {
-                data = new SoftReference<Cache>(cache);
+                data = new SoftReference<>(cache);
             }
             context.getConfiguration().set(KEY_CACHE_ID, cache.id);
         }

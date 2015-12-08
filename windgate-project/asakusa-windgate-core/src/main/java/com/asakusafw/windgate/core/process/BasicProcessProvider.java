@@ -28,6 +28,8 @@ import com.asakusafw.windgate.core.WindGateLogger;
 import com.asakusafw.windgate.core.resource.DrainDriver;
 import com.asakusafw.windgate.core.resource.DriverFactory;
 import com.asakusafw.windgate.core.resource.SourceDriver;
+import com.asakusafw.windgate.core.util.ExceptionHolder;
+import com.asakusafw.windgate.core.util.SafeCloser;
 
 /**
  * A plain implementation of {@link ProcessProvider}.
@@ -49,66 +51,44 @@ public class BasicProcessProvider extends ProcessProvider {
     }
 
     @Override
-    public <T> void execute(DriverFactory drivers, ProcessScript<T> script) throws IOException {
+    public <T> void execute(DriverFactory drivers, final ProcessScript<T> script) throws IOException {
         WGLOG.info("I05000",
                 script.getName(),
                 script.getSourceScript().getResourceName(),
                 script.getDrainScript().getResourceName());
         long start = System.currentTimeMillis();
         long count = 0;
-        try {
-            IOException exception = null;
-            SourceDriver<T> source = null;
-            DrainDriver<T> drain = null;
-            try {
-                LOG.debug("Creating source driver for resource \"{}\" in process \"{}\"",
-                        script.getSourceScript().getResourceName(),
-                        script.getName());
-                source = drivers.createSource(script);
-                LOG.debug("Creating drain driver for resource \"{}\" in process \"{}\"",
-                        script.getDrainScript().getResourceName(),
-                        script.getName());
-                drain = drivers.createDrain(script);
-
-                performPrepare(script, source, drain);
-                count = performTransfer(script, source, drain);
-            } catch (IOException e) {
-                exception = e;
-                WGLOG.error(e, "E05001",
+        final ExceptionHolder<IOException> exceptions = new ExceptionHolder<>();
+        try (SafeCloser<SourceDriver<T>> source = new SafeCloser<SourceDriver<T>>() {
+            @Override
+            protected void handle(IOException exception) throws IOException {
+                exceptions.record(exception);
+                WGLOG.error(exception, "E05002",
                         script.getName(),
                         script.getSourceScript().getResourceName(),
                         script.getDrainScript().getResourceName());
-            } finally {
-                try {
-                    if (source != null) {
-                        LOG.debug("Closing source driver in process \"{}\"",
-                                script.getName());
-                        source.close();
-                    }
-                } catch (IOException e) {
-                    exception = exception == null ? e : exception;
-                    WGLOG.error(e, "E05002",
-                            script.getName(),
-                            script.getSourceScript().getResourceName(),
-                            script.getDrainScript().getResourceName());
-                }
-                try {
-                    if (drain != null) {
-                        LOG.debug("Closing drain driver in process \"{}\"",
-                                script.getName());
-                        drain.close();
-                    }
-                } catch (IOException e) {
-                    exception = exception == null ? e : exception;
-                    WGLOG.error(e, "E05003",
-                            script.getName(),
-                            script.getSourceScript().getResourceName(),
-                            script.getDrainScript().getResourceName());
-                }
             }
-            if (exception != null) {
-                throw exception;
+        }; SafeCloser<DrainDriver<T>> drain = new SafeCloser<DrainDriver<T>>() {
+            @Override
+            protected void handle(IOException exception) throws IOException {
+                exceptions.record(exception);
+                WGLOG.error(exception, "E05003",
+                        script.getName(),
+                        script.getSourceScript().getResourceName(),
+                        script.getDrainScript().getResourceName());
             }
+        }) {
+            LOG.debug("Creating source driver for resource \"{}\" in process \"{}\"",
+                    script.getSourceScript().getResourceName(),
+                    script.getName());
+            source.set(drivers.createSource(script));
+            LOG.debug("Creating drain driver for resource \"{}\" in process \"{}\"",
+                    script.getDrainScript().getResourceName(),
+                    script.getName());
+            drain.set(drivers.createDrain(script));
+            performPrepare(script, source.get(), drain.get());
+            count = performTransfer(script, source.get(), drain.get());
+            exceptions.throwRecorded();
             WGLOG.info("I05001",
                     script.getName(),
                     script.getSourceScript().getResourceName(),

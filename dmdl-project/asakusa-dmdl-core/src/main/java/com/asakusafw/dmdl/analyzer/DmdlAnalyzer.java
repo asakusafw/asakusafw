@@ -244,9 +244,7 @@ public class DmdlAnalyzer {
         }
     }
 
-    private void resolveRecord(
-            ModelDeclaration model,
-            AstExpression<AstRecord> expression) {
+    private void resolveRecord(ModelDeclaration model, AstExpression<AstRecord> expression) {
         assert model != null;
         assert expression != null;
         LOG.debug("Resolving record: {}", model.getName()); //$NON-NLS-1$
@@ -257,9 +255,7 @@ public class DmdlAnalyzer {
         model.putTrait(ProjectionsTrait.class, projections);
     }
 
-    private void resolveJoined(
-            ModelDeclaration model,
-            AstExpression<AstJoin> expression) {
+    private void resolveJoined(ModelDeclaration model, AstExpression<AstJoin> expression) {
         assert model != null;
         assert expression != null;
         LOG.debug("Resolving joined: {}", model.getName()); //$NON-NLS-1$
@@ -285,7 +281,7 @@ public class DmdlAnalyzer {
             Map<String, PropertyDeclaration> properties = resolveJoinProperties(model, source, term);
             List<MappingFactor> mappings = resolveMapping(model, source, term.mapping);
             List<PropertySymbol> grouping = resolveGrouping(model, properties, term.grouping);
-            results.add(new ReduceTerm<AstJoin>(term, source, mappings, grouping));
+            results.add(new ReduceTerm<>(term, source, mappings, grouping));
         }
         if (context.getWorld().hasError() == false && checkJoinTerms(model, results)) {
             model.putTrait(JoinTrait.class, new JoinTrait(expression, results));
@@ -309,7 +305,7 @@ public class DmdlAnalyzer {
         }
         ModelDeclaration sourceDecl = sourceModel.findDeclaration();
         assert sourceDecl != null;
-        Map<String, PropertyDeclaration> results = new HashMap<String, PropertyDeclaration>();
+        Map<String, PropertyDeclaration> results = new HashMap<>();
         if (term.mapping == null) {
             for (PropertyDeclaration prop : sourceDecl.getDeclaredProperties()) {
                 PropertyDeclaration declared = model.findPropertyDeclaration(prop.getName().identifier);
@@ -429,9 +425,7 @@ public class DmdlAnalyzer {
         return green;
     }
 
-    private void resolveSummarize(
-            ModelDeclaration model,
-            AstExpression<AstSummarize> expression) {
+    private void resolveSummarize(ModelDeclaration model, AstExpression<AstSummarize> expression) {
         assert model != null;
         assert expression != null;
         LOG.debug("Resolving summarized: {}", model.getName()); //$NON-NLS-1$
@@ -450,7 +444,7 @@ public class DmdlAnalyzer {
             Map<String, PropertyDeclaration> properties = resolveSummarizeProperties(model, source, term);
             List<MappingFactor> foldings = resolveFolding(model, source, term.folding);
             List<PropertySymbol> grouping = resolveGrouping(model, properties, term.grouping);
-            results.add(new ReduceTerm<AstSummarize>(term, source, foldings, grouping));
+            results.add(new ReduceTerm<>(term, source, foldings, grouping));
         }
         if (checkSummarizeTerms(model, results)) {
             model.putTrait(SummarizeTrait.class, new SummarizeTrait(expression, results));
@@ -466,7 +460,7 @@ public class DmdlAnalyzer {
 
         ModelDeclaration decl = source.findDeclaration();
         assert decl != null;
-        Map<String, PropertyDeclaration> results = new HashMap<String, PropertyDeclaration>();
+        Map<String, PropertyDeclaration> results = new HashMap<>();
         for (AstPropertyFolding property : term.folding.properties) {
             PropertyDeclaration original = decl.findPropertyDeclaration(property.source.identifier);
             if (original == null) {
@@ -627,11 +621,11 @@ public class DmdlAnalyzer {
 
     private List<PropertyDeclaration> resolveGroupingSources(ReduceTerm<?> term) {
         assert term != null;
-        Map<PropertySymbol, PropertySymbol> rmap = new HashMap<PropertySymbol, PropertySymbol>();
+        Map<PropertySymbol, PropertySymbol> rmap = new HashMap<>();
         for (MappingFactor entry : term.getMappings()) {
             rmap.put(entry.getTarget(), entry.getSource());
         }
-        List<PropertyDeclaration> results = new ArrayList<PropertyDeclaration>();
+        List<PropertyDeclaration> results = new ArrayList<>();
         for (PropertySymbol prop : term.getGrouping()) {
             PropertySymbol source = rmap.get(prop);
             if (source == null) {
@@ -719,9 +713,7 @@ public class DmdlAnalyzer {
         }
 
         @Override
-        public <T extends AstTerm<T>> Void visitUnionExpression(
-                ModelDeclaration model,
-                AstUnionExpression<T> node) {
+        public <T extends AstTerm<T>> Void visitUnionExpression(ModelDeclaration model, AstUnionExpression<T> node) {
             for (T term : node.terms) {
                 term.accept(model, this);
             }

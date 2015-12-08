@@ -30,7 +30,7 @@ public class ArrayListBufferTest {
      */
     @Test
     public void createEmpty() {
-        ArrayListBuffer<Holder> buf = new ArrayListBuffer<Holder>();
+        ArrayListBuffer<Holder> buf = new ArrayListBuffer<>();
         buf.begin();
         buf.end();
         assertThat(buf.size(), is(0));
@@ -43,7 +43,7 @@ public class ArrayListBufferTest {
      */
     @Test
     public void createSingle() {
-        ArrayListBuffer<Holder> buf = new ArrayListBuffer<Holder>();
+        ArrayListBuffer<Holder> buf = new ArrayListBuffer<>();
         buf.begin();
         assertThat(buf.isExpandRequired(), is(true));
         buf.expand(new Holder(""));
@@ -61,7 +61,7 @@ public class ArrayListBufferTest {
      */
     @Test
     public void reuse() {
-        ArrayListBuffer<Holder> buf = new ArrayListBuffer<Holder>();
+        ArrayListBuffer<Holder> buf = new ArrayListBuffer<>();
         buf.begin();
         assertThat(buf.isExpandRequired(), is(true));
         buf.expand(new Holder(""));
@@ -86,7 +86,7 @@ public class ArrayListBufferTest {
     public void createBigList() {
         int size = 100000;
 
-        ArrayListBuffer<Holder> buf = new ArrayListBuffer<Holder>();
+        ArrayListBuffer<Holder> buf = new ArrayListBuffer<>();
         buf.begin();
         for (int i = 0; i < size; i++) {
             if (buf.isExpandRequired()) {
@@ -110,7 +110,7 @@ public class ArrayListBufferTest {
      */
     @Test(expected = IndexOutOfBoundsException.class)
     public void advance_OutOfBounds() {
-        ArrayListBuffer<Holder> buf = new ArrayListBuffer<Holder>();
+        ArrayListBuffer<Holder> buf = new ArrayListBuffer<>();
         try {
             buf.begin();
             while (true) {
@@ -126,7 +126,7 @@ public class ArrayListBufferTest {
      */
     @Test(expected = IndexOutOfBoundsException.class)
     public void get_UpperOutOfBounds() {
-        ArrayListBuffer<Holder> buf = new ArrayListBuffer<Holder>();
+        ArrayListBuffer<Holder> buf = new ArrayListBuffer<>();
         try {
             buf.begin();
             buf.end();
@@ -141,7 +141,7 @@ public class ArrayListBufferTest {
      */
     @Test(expected = IndexOutOfBoundsException.class)
     public void get_LowerOutOfBounds() {
-        ArrayListBuffer<Holder> buf = new ArrayListBuffer<Holder>();
+        ArrayListBuffer<Holder> buf = new ArrayListBuffer<>();
         try {
             buf.begin();
             buf.end();

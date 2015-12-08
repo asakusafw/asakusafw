@@ -127,9 +127,9 @@ public abstract class AbstractSshHadoopFsMirror extends ResourceMirror {
             InputStream output = connection.openStandardOutput();
             connection.connect();
             FileList.Reader fileList = FileList.createReader(output);
-            ModelInputProvider<T> provider = new FileListModelInputProvider<T>(
+            ModelInputProvider<T> provider = new FileListModelInputProvider<>(
                     configuration, fileList, script.getDataClass());
-            ModelInputSourceDriver<T> result = new SshSourceDriver<T>(provider, value, script, connection, path);
+            ModelInputSourceDriver<T> result = new SshSourceDriver<>(provider, value, script, connection, path);
             succeeded = true;
             return result;
         } finally {
@@ -165,7 +165,7 @@ public abstract class AbstractSshHadoopFsMirror extends ResourceMirror {
                     configuration,
                     script.getDataClass(),
                     fileList.openNext(new Path(path.get(0))));
-            ModelOutputDrainDriver<T> result = new SshDrainDriver<T>(output, connection, path, fileList, script);
+            ModelOutputDrainDriver<T> result = new SshDrainDriver<>(output, connection, path, fileList, script);
             succeeded = true;
             return result;
         } finally {
@@ -184,7 +184,7 @@ public abstract class AbstractSshHadoopFsMirror extends ResourceMirror {
 
     private SshConnection openGet(List<String> paths) throws IOException {
         assert paths != null;
-        List<String> tokens = new ArrayList<String>();
+        List<String> tokens = new ArrayList<>();
         tokens.add(profile.getGetCommand());
         tokens.addAll(paths);
         SshConnection connection = openConnection(profile, tokens);
@@ -243,7 +243,7 @@ public abstract class AbstractSshHadoopFsMirror extends ResourceMirror {
                     FILE.key()));
         }
         String[] paths = pathString.split("[ \t\r\n]+");
-        List<String> results = new ArrayList<String>();
+        List<String> results = new ArrayList<>();
         for (String path : paths) {
             if (path.isEmpty()) {
                 continue;

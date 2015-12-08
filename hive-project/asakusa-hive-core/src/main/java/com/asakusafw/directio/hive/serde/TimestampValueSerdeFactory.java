@@ -89,8 +89,7 @@ public enum TimestampValueSerdeFactory implements ValueSerde {
 
         static final Map<Class<? extends ValueOption<?>>, TimestampValueSerdeFactory> FROM_CLASS;
         static {
-            Map<Class<? extends ValueOption<?>>, TimestampValueSerdeFactory> map =
-                    new HashMap<Class<? extends ValueOption<?>>, TimestampValueSerdeFactory>();
+            Map<Class<? extends ValueOption<?>>, TimestampValueSerdeFactory> map = new HashMap<>();
             for (TimestampValueSerdeFactory serde : TimestampValueSerdeFactory.values()) {
                 map.put(serde.getValueClass(), serde);
             }

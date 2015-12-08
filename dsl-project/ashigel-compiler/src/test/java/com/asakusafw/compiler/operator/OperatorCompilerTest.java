@@ -90,12 +90,12 @@ public class OperatorCompilerTest extends OperatorCompilerTestRoot {
         ClassLoader loader = start(new MockOperatorProcessor());
         Object factory = create(loader, "com.example.SimpleFactory");
 
-        MockIn<String> in = new MockIn<String>(String.class, "in");
+        MockIn<String> in = new MockIn<>(String.class, "in");
         Object example = invoke(factory, "example", in, 5);
 
         Source<CharSequence> op = output(CharSequence.class, example, "out");
 
-        MockOut<CharSequence> out = new MockOut<CharSequence>(CharSequence.class, "out");
+        MockOut<CharSequence> out = new MockOut<>(CharSequence.class, "out");
         out.add(op);
 
         FlowElementOutput port = op.toOutputPort();

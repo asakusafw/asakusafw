@@ -50,8 +50,8 @@ public class VerifyRuleBuilder {
             throw new IllegalArgumentException("definition must not be null"); //$NON-NLS-1$
         }
         this.definition = definition;
-        this.dataModelConditions = new HashSet<DataModelCondition>();
-        this.propertyConditions = new LinkedHashMap<PropertyName, VerifyRuleBuilder.Property>();
+        this.dataModelConditions = new HashSet<>();
+        this.propertyConditions = new LinkedHashMap<>();
     }
 
     /**
@@ -108,8 +108,8 @@ public class VerifyRuleBuilder {
      * @return the created {@link VerifyRule}
      */
     public VerifyRule toVerifyRule() {
-        List<PropertyName> keys = new ArrayList<PropertyName>();
-        List<PropertyCondition<?>> properties = new ArrayList<PropertyCondition<?>>();
+        List<PropertyName> keys = new ArrayList<>();
+        List<PropertyCondition<?>> properties = new ArrayList<>();
         for (Map.Entry<PropertyName, Property> entry : propertyConditions.entrySet()) {
             Property property = entry.getValue();
             if (property.key) {
@@ -147,7 +147,7 @@ public class VerifyRuleBuilder {
             this.name = name;
             this.type = type;
             this.key = false;
-            this.predicates = new ArrayList<ValuePredicate<?>>();
+            this.predicates = new ArrayList<>();
         }
 
         /**

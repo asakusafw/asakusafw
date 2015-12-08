@@ -193,7 +193,7 @@ public class MapFragmentEmitter {
         }
 
         private Map<String, Expression> createTraceLocationElements() {
-            Map<String, Expression> results = new LinkedHashMap<String, Expression>();
+            Map<String, Expression> results = new LinkedHashMap<>();
             results.put("batchId", //$NON-NLS-1$
                     Models.toLiteral(factory, environment.getBatchId()));
             results.put("flowId", //$NON-NLS-1$

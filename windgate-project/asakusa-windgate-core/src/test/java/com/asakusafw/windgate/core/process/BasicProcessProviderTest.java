@@ -64,7 +64,7 @@ public class BasicProcessProviderTest {
         MockDriverFactory factory = new MockDriverFactory();
         MockSourceDriver<String> source = factory.add("testing", new MockSourceDriver<String>("source"));
         MockDrainDriver<String> drain = factory.add("testing", new MockDrainDriver<String>("drain"));
-        ProcessScript<String> script = new ProcessScript<String>(
+        ProcessScript<String> script = new ProcessScript<>(
                 "testing", "plain", String.class, driver("source"), driver("drain"));
 
         List<String> data = Arrays.asList("Hello", "world", "!");
@@ -81,7 +81,7 @@ public class BasicProcessProviderTest {
     @Test(expected = IOException.class)
     public void execute_invalid_source() throws IOException {
         MockDriverFactory factory = new MockDriverFactory();
-        ProcessScript<String> script = new ProcessScript<String>(
+        ProcessScript<String> script = new ProcessScript<>(
                 "testing", "plain", String.class, driver("source"), driver("drain"));
 
         provider.execute(factory, script);
@@ -95,7 +95,7 @@ public class BasicProcessProviderTest {
     public void execute_invalid_drain() throws IOException {
         MockDriverFactory factory = new MockDriverFactory();
         MockSourceDriver<String> source = factory.add("testing", new MockSourceDriver<String>("source"));
-        ProcessScript<String> script = new ProcessScript<String>(
+        ProcessScript<String> script = new ProcessScript<>(
                 "testing", "plain", String.class, driver("source"), driver("drain"));
 
         List<String> data = Arrays.asList("Hello", "world", "!");
@@ -112,7 +112,7 @@ public class BasicProcessProviderTest {
         MockDriverFactory factory = new MockDriverFactory();
         factory.add("testing", new MockSourceDriver<String>("source"));
         factory.add("testing", new MockDrainDriver<String>("drain"));
-        ProcessScript<String> script = new ProcessScript<String>(
+        ProcessScript<String> script = new ProcessScript<>(
                 "testing", "plain", String.class, driver("source"), driver("drain"));
 
         provider.execute(factory, script);
@@ -166,7 +166,7 @@ public class BasicProcessProviderTest {
                 return;
             }
         });
-        ProcessScript<String> script = new ProcessScript<String>(
+        ProcessScript<String> script = new ProcessScript<>(
                 "testing", "plain", String.class, driver("source"), driver("drain"));
 
         provider.execute(factory, script); // no exceptions

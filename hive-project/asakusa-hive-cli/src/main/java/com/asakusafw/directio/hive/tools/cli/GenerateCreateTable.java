@@ -157,7 +157,7 @@ public final class GenerateCreateTable {
 
         List<File> sources = parseFileList(classpath);
         List<File> plugins = parseFileList(pluginpath);
-        List<File> classpathAdditions = new ArrayList<File>();
+        List<File> classpathAdditions = new ArrayList<>();
         classpathAdditions.addAll(sources);
         classpathAdditions.addAll(plugins);
 
@@ -218,7 +218,7 @@ public final class GenerateCreateTable {
         if (fileListOrNull == null || fileListOrNull.isEmpty()) {
             return Collections.emptyList();
         }
-        List<File> results = new ArrayList<File>();
+        List<File> results = new ArrayList<>();
         int start = 0;
         while (true) {
             int index = fileListOrNull.indexOf(File.pathSeparatorChar, start);
@@ -245,7 +245,7 @@ public final class GenerateCreateTable {
         if (files == null) {
             throw new IllegalArgumentException("files must not be null"); //$NON-NLS-1$
         }
-        final List<URL> locations = new ArrayList<URL>();
+        final List<URL> locations = new ArrayList<>();
         for (File file : files) {
             try {
                 if (file.exists() == false) {

@@ -58,16 +58,21 @@ public class FlowLoggerTest {
 
         int l00 = 0;
 
-        FlowLogger log1 = new FlowLogger(context(MAIN), profile);
-        log1.open(1);
-        int l11 = checkLines(log, l00, MAIN);
-        log1.close();
-        int l12 = checkLines(log, l11, MAIN);
+        int l11;
+        int l12;
+        int l21;
+        try (FlowLogger log1 = new FlowLogger(context(MAIN), profile)) {
+            log1.open(1);
+            l11 = checkLines(log, l00, MAIN);
+            log1.close();
+            l12 = checkLines(log, l11, MAIN);
+        }
 
-        FlowLogger log2 = new FlowLogger(context(CLEANUP), profile);
-        log2.open(1);
-        int l21 = checkLines(log, l12, CLEANUP);
-        log2.close();
+        try (FlowLogger log2 = new FlowLogger(context(CLEANUP), profile)) {
+            log2.open(1);
+            l21 = checkLines(log, l12, CLEANUP);
+            log2.close();
+        }
 
         assertThat(log.isFile(), is(false));
         checkLines(escape, l21, CLEANUP);
@@ -85,24 +90,30 @@ public class FlowLoggerTest {
 
         int l00 = 0;
 
-        FlowLogger log1 = new FlowLogger(context(MAIN), profile);
-        log1.open(1);
-        int l11 = checkLines(log, l00, MAIN);
-        log1.close();
-        int l12 = checkLines(log, l11, MAIN);
+        int l11;
+        int l12;
+        int l21;
+        int l31;
 
-        FlowLogger log2 = new FlowLogger(context(CLEANUP), profile);
-        log2.open(1);
-        int l21 = checkLines(log, l12, CLEANUP);
-        log2.close();
-        assertThat(log.isFile(), is(false));
-        checkLines(escape, l21, CLEANUP);
-
-        FlowLogger log3 = new FlowLogger(context(SETUP), profile);
-        log3.open(1);
-        int l31 = checkLines(log, l00, SETUP);
-        log3.close();
-        checkLines(log, l31, SETUP);
+        try (FlowLogger log1 = new FlowLogger(context(MAIN), profile)) {
+            log1.open(1);
+            l11 = checkLines(log, l00, MAIN);
+            log1.close();
+            l12 = checkLines(log, l11, MAIN);
+        }
+        try (FlowLogger log2 = new FlowLogger(context(CLEANUP), profile)) {
+            log2.open(1);
+            l21 = checkLines(log, l12, CLEANUP);
+            log2.close();
+            assertThat(log.isFile(), is(false));
+            checkLines(escape, l21, CLEANUP);
+        }
+        try (FlowLogger log3 = new FlowLogger(context(SETUP), profile)) {
+            log3.open(1);
+            l31 = checkLines(log, l00, SETUP);
+            log3.close();
+            checkLines(log, l31, SETUP);
+        }
     }
 
     /**
@@ -116,17 +127,23 @@ public class FlowLoggerTest {
 
         int l00 = 0;
 
-        FlowLogger log1 = new FlowLogger(context(MAIN), profile);
-        log1.open(1);
-        int l11 = checkLines(log, l00, MAIN);
-        log1.close();
-        int l12 = checkLines(log, l11, MAIN);
+        int l11;
+        int l12;
+        int l21;
 
-        FlowLogger log2 = new FlowLogger(context(SETUP), profile);
-        log2.open(1);
-        int l21 = checkLines(log, l00, SETUP);
-        log2.close();
-        checkLines(log, l21, SETUP);
+        try (FlowLogger log1 = new FlowLogger(context(MAIN), profile)) {
+            log1.open(1);
+            l11 = checkLines(log, l00, MAIN);
+            log1.close();
+            l12 = checkLines(log, l11, MAIN);
+        }
+
+        try (FlowLogger log2 = new FlowLogger(context(SETUP), profile)) {
+            log2.open(1);
+            l21 = checkLines(log, l00, SETUP);
+            log2.close();
+            checkLines(log, l21, SETUP);
+        }
 
         assertThat(l21, is(lessThan(l12)));
     }
@@ -142,18 +159,20 @@ public class FlowLoggerTest {
         File escape = profile.getEscapeFile(context(MAIN));
 
         int l00 = 0;
+        int l11;
+        int l12;
 
-        FlowLogger log1 = new FlowLogger(context(MAIN), profile);
-        log1.open(1);
-        int l11 = checkLines(log, l00, MAIN);
-        log1.close();
-        int l12 = checkLines(log, l11, MAIN);
-
-        FlowLogger log2 = new FlowLogger(context(CLEANUP), profile);
-        log2.open(1);
-        checkLines(log, l12, CLEANUP);
-        log2.close();
-
+        try (FlowLogger log1 = new FlowLogger(context(MAIN), profile)) {
+            log1.open(1);
+            l11 = checkLines(log, l00, MAIN);
+            log1.close();
+            l12 = checkLines(log, l11, MAIN);
+        }
+        try (FlowLogger log2 = new FlowLogger(context(CLEANUP), profile)) {
+            log2.open(1);
+            checkLines(log, l12, CLEANUP);
+            log2.close();
+        }
         assertThat(log.isFile(), is(false));
         assertThat(escape.isFile(), is(false));
     }
@@ -169,23 +188,23 @@ public class FlowLoggerTest {
         File escape = profile.getEscapeFile(context(MAIN));
 
         int l00 = 0;
+        int l11;
+        int l12;
 
-        FlowLogger log1 = new FlowLogger(context(MAIN), profile);
-        log1.open(1);
-        int l11 = checkLines(log, l00, MAIN);
-        log1.close();
-        int l12 = checkLines(log, l11, MAIN);
+        try (FlowLogger log1 = new FlowLogger(context(MAIN), profile)) {
+            log1.open(1);
+            l11 = checkLines(log, l00, MAIN);
+            log1.close();
+            l12 = checkLines(log, l11, MAIN);
+        }
 
-        FlowLogger log2 = new FlowLogger(context(CLEANUP), profile);
-        log2.open(1);
-        try {
+        try (FlowLogger log2 = new FlowLogger(context(CLEANUP), profile)) {
+            log2.open(1);
             checkLines(log, l12, CLEANUP);
-            ExecutionMonitor jm = log2.createJobMonitor("hoge", 1);
-            jm.open(1);
-            jm.close();
+            try (ExecutionMonitor jm = log2.createJobMonitor("hoge", 1)) {
+                jm.open(1);
+            }
             log2.reportJobStatus("hoge", JobStatus.FAILED, new Exception());
-        } finally {
-            log2.close();
         }
         assertThat(log.isFile(), is(true));
         assertThat(escape.isFile(), is(false));
@@ -196,8 +215,7 @@ public class FlowLoggerTest {
         boolean found = false;
         assertThat(log.isFile(), is(true));
         String pattern = phase.toString();
-        Scanner scanner = new Scanner(log, "UTF-8");
-        try {
+        try (Scanner scanner = new Scanner(log, "UTF-8")) {
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
                 if (found == false && count >= last) {
@@ -205,8 +223,6 @@ public class FlowLoggerTest {
                 }
                 count++;
             }
-        } finally {
-            scanner.close();
         }
         assertThat(pattern, found, is(true));
         assertThat(count, greaterThan(last));

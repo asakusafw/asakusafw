@@ -118,11 +118,7 @@ public final class CoreOperators {
      * @throws IllegalArgumentException if the parameters are {@code null}
      * @see CoreOperatorFactory#confluent(Source, Source, Source, Source)
      */
-    public static <T> Confluent<T> confluent(
-            Source<T> a,
-            Source<T> b,
-            Source<T> c,
-            Source<T> d) {
+    public static <T> Confluent<T> confluent(Source<T> a, Source<T> b, Source<T> c, Source<T> d) {
         return FACTORY.confluent(a, b, c, d);
     }
 

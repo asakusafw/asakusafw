@@ -160,7 +160,7 @@ public class VerifyEngineTest {
         }
 
         static DataModelSource calendars(String... values) {
-            List<Calendar> calendars = new ArrayList<Calendar>();
+            List<Calendar> calendars = new ArrayList<>();
             for (String value : values) {
                 try {
                     java.util.Date date = new SimpleDateFormat("yyyy-MM-dd").parse(value);

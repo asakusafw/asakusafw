@@ -93,20 +93,13 @@ public class HadoopFsMirrorTest {
     public void source() throws Exception {
         set("testing", "Hello, world!");
 
-        HadoopFsMirror resource = new HadoopFsMirror(conf, profile(), new ParameterList());
-        try {
+        try (HadoopFsMirror resource = new HadoopFsMirror(conf, profile(), new ParameterList())) {
             ProcessScript<Text> process = source("target", "testing");
             resource.prepare(script(process));
-
-            SourceDriver<Text> driver = resource.createSource(process);
-            try {
+            try (SourceDriver<Text> driver = resource.createSource(process)) {
                 driver.prepare();
                 test(driver, "Hello, world!");
-            } finally {
-                driver.close();
             }
-        } finally {
-            resource.close();
         }
     }
 
@@ -118,23 +111,16 @@ public class HadoopFsMirrorTest {
     public void source_parameterized() throws Exception {
         set("testing", "Hello, world!");
 
-        HadoopFsMirror resource = new HadoopFsMirror(
+        try (HadoopFsMirror resource = new HadoopFsMirror(
                 conf,
                 profile(),
-                new ParameterList(Collections.singletonMap("var", "testing")));
-        try {
+                new ParameterList(Collections.singletonMap("var", "testing")))) {
             ProcessScript<Text> process = source("target", "${var}");
             resource.prepare(script(process));
-
-            SourceDriver<Text> driver = resource.createSource(process);
-            try {
+            try (SourceDriver<Text> driver = resource.createSource(process)) {
                 driver.prepare();
                 test(driver, "Hello, world!");
-            } finally {
-                driver.close();
             }
-        } finally {
-            resource.close();
         }
     }
 
@@ -145,21 +131,13 @@ public class HadoopFsMirrorTest {
     @Test
     public void source_multivalue() throws Exception {
         set("testing", "Hello1, world!", "Hello2, world!", "Hello3, world!");
-
-        HadoopFsMirror resource = new HadoopFsMirror(conf, profile(), new ParameterList());
-        try {
+        try (HadoopFsMirror resource = new HadoopFsMirror(conf, profile(), new ParameterList())) {
             ProcessScript<Text> process = source("target", "testing");
             resource.prepare(script(process));
-
-            SourceDriver<Text> driver = resource.createSource(process);
-            try {
+            try (SourceDriver<Text> driver = resource.createSource(process)) {
                 driver.prepare();
                 test(driver, "Hello1, world!", "Hello2, world!", "Hello3, world!");
-            } finally {
-                driver.close();
             }
-        } finally {
-            resource.close();
         }
     }
 
@@ -173,20 +151,13 @@ public class HadoopFsMirrorTest {
         set("testing2", "Hello2, world!");
         set("testing3", "Hello3, world!");
 
-        HadoopFsMirror resource = new HadoopFsMirror(conf, profile(), new ParameterList());
-        try {
+        try (HadoopFsMirror resource = new HadoopFsMirror(conf, profile(), new ParameterList())) {
             ProcessScript<Text> process = source("target", "testing1", "testing2", "testing3");
             resource.prepare(script(process));
-
-            SourceDriver<Text> driver = resource.createSource(process);
-            try {
+            try (SourceDriver<Text> driver = resource.createSource(process)) {
                 driver.prepare();
                 test(driver, "Hello1, world!", "Hello2, world!", "Hello3, world!");
-            } finally {
-                driver.close();
             }
-        } finally {
-            resource.close();
         }
     }
 
@@ -200,20 +171,13 @@ public class HadoopFsMirrorTest {
         set("testing-2", "Hello2, world!");
         set("testing-3", "Hello3, world!");
 
-        HadoopFsMirror resource = new HadoopFsMirror(conf, profile(), new ParameterList());
-        try {
+        try (HadoopFsMirror resource = new HadoopFsMirror(conf, profile(), new ParameterList())) {
             ProcessScript<Text> process = source("target", "testing-*");
             resource.prepare(script(process));
-
-            SourceDriver<Text> driver = resource.createSource(process);
-            try {
+            try (SourceDriver<Text> driver = resource.createSource(process)) {
                 driver.prepare();
                 test(driver, "Hello1, world!", "Hello2, world!", "Hello3, world!");
-            } finally {
-                driver.close();
             }
-        } finally {
-            resource.close();
         }
     }
 
@@ -224,22 +188,13 @@ public class HadoopFsMirrorTest {
     @Test
     public void source_sim() throws Exception {
         RuntimeContext.set(RuntimeContext.DEFAULT.mode(ExecutionMode.SIMULATION));
-
-        HadoopFsMirror resource = new HadoopFsMirror(conf, profile(), new ParameterList());
-        try {
+        try (HadoopFsMirror resource = new HadoopFsMirror(conf, profile(), new ParameterList())) {
             assertThat(RuntimeContext.get().canExecute(resource), is(true));
-
             ProcessScript<Text> process = source("target", "testing");
             resource.prepare(script(process));
-
-            SourceDriver<Text> driver = resource.createSource(process);
-            try {
+            try (SourceDriver<Text> driver = resource.createSource(process)) {
                 assertThat(RuntimeContext.get().canExecute(driver), is(false));
-            } finally {
-                driver.close();
             }
-        } finally {
-            resource.close();
         }
     }
 
@@ -249,20 +204,16 @@ public class HadoopFsMirrorTest {
      */
     @Test
     public void source_missing() throws Exception {
-        HadoopFsMirror resource = new HadoopFsMirror(conf, profile(), new ParameterList());
-        try {
+        try (HadoopFsMirror resource = new HadoopFsMirror(conf, profile(), new ParameterList());) {
             ProcessScript<Text> process = source("target", "MISSING");
             resource.prepare(script(process));
-
-            SourceDriver<Text> driver = resource.createSource(process);
-            driver.prepare();
-            driver.get();
-            driver.close();
+            try (SourceDriver<Text> driver = resource.createSource(process)) {
+                driver.prepare();
+                driver.get();
+            }
             fail();
         } catch (IOException e) {
             // ok.
-        } finally {
-            resource.close();
         }
     }
 
@@ -272,18 +223,15 @@ public class HadoopFsMirrorTest {
      */
     @Test
     public void source_nosource() throws Exception {
-        HadoopFsMirror resource = new HadoopFsMirror(conf, profile(), new ParameterList());
-        try {
+        try (HadoopFsMirror resource = new HadoopFsMirror(conf, profile(), new ParameterList())) {
             ProcessScript<Text> process = source("target");
             resource.prepare(script(process));
-
-            SourceDriver<Text> driver = resource.createSource(process);
-            driver.close();
+            try (SourceDriver<Text> driver = resource.createSource(process)) {
+                // do nothing
+            }
             fail();
         } catch (IOException e) {
             // ok.
-        } finally {
-            resource.close();
         }
     }
 
@@ -293,18 +241,15 @@ public class HadoopFsMirrorTest {
      */
     @Test
     public void source_invalid_parameter() throws Exception {
-        HadoopFsMirror resource = new HadoopFsMirror(conf, profile(), new ParameterList());
-        try {
+        try (HadoopFsMirror resource = new HadoopFsMirror(conf, profile(), new ParameterList())) {
             ProcessScript<Text> process = source("target", "${INVALID}");
             resource.prepare(script(process));
-
-            SourceDriver<Text> driver = resource.createSource(process);
-            driver.close();
+            try (SourceDriver<Text> driver = resource.createSource(process)) {
+                // do nothing
+            }
             fail();
         } catch (IOException e) {
             // ok.
-        } finally {
-            resource.close();
         }
     }
 
@@ -314,19 +259,13 @@ public class HadoopFsMirrorTest {
      */
     @Test
     public void drain() throws Exception {
-        HadoopFsMirror resource = new HadoopFsMirror(conf, profile(), new ParameterList());
-        try {
+        try (HadoopFsMirror resource = new HadoopFsMirror(conf, profile(), new ParameterList())) {
             ProcessScript<Text> process = drain("target", "testing");
             resource.prepare(script(process));
-            DrainDriver<Text> driver = resource.createDrain(process);
-            try {
+            try (DrainDriver<Text> driver = resource.createDrain(process)) {
                 driver.prepare();
                 driver.put(new Text("Hello, world!"));
-            } finally {
-                driver.close();
             }
-        } finally {
-            resource.close();
         }
 
         test("testing", "Hello, world!");
@@ -338,23 +277,16 @@ public class HadoopFsMirrorTest {
      */
     @Test
     public void drain_parameterized() throws Exception {
-        HadoopFsMirror resource = new HadoopFsMirror(
+        try (HadoopFsMirror resource = new HadoopFsMirror(
                 conf,
                 profile(),
-                new ParameterList(Collections.singletonMap("var", "testing")));
-        try {
+                new ParameterList(Collections.singletonMap("var", "testing")))) {
             ProcessScript<Text> process = drain("target", "${var}");
             resource.prepare(script(process));
-
-            DrainDriver<Text> driver = resource.createDrain(process);
-            try {
+            try (DrainDriver<Text> driver = resource.createDrain(process)) {
                 driver.prepare();
                 driver.put(new Text("Hello, world!"));
-            } finally {
-                driver.close();
             }
-        } finally {
-            resource.close();
         }
 
         test("testing", "Hello, world!");
@@ -366,22 +298,15 @@ public class HadoopFsMirrorTest {
      */
     @Test
     public void drain_multivalue() throws Exception {
-        HadoopFsMirror resource = new HadoopFsMirror(conf, profile(), new ParameterList());
-        try {
+        try (HadoopFsMirror resource = new HadoopFsMirror(conf, profile(), new ParameterList())) {
             ProcessScript<Text> process = drain("target", "testing");
             resource.prepare(script(process));
-
-            DrainDriver<Text> driver = resource.createDrain(process);
-            try {
+            try (DrainDriver<Text> driver = resource.createDrain(process)) {
                 driver.prepare();
                 driver.put(new Text("Hello1, world!"));
                 driver.put(new Text("Hello2, world!"));
                 driver.put(new Text("Hello3, world!"));
-            } finally {
-                driver.close();
             }
-        } finally {
-            resource.close();
         }
 
         test("testing", "Hello1, world!", "Hello2, world!", "Hello3, world!");
@@ -393,18 +318,15 @@ public class HadoopFsMirrorTest {
      */
     @Test
     public void drain_multisource() throws Exception {
-        HadoopFsMirror resource = new HadoopFsMirror(conf, profile(), new ParameterList());
-        try {
+        try (HadoopFsMirror resource = new HadoopFsMirror(conf, profile(), new ParameterList())) {
             ProcessScript<Text> process = drain("target", "testing1", "testing2", "testing3");
             resource.prepare(script(process));
-
-            DrainDriver<Text> driver = resource.createDrain(process);
-            driver.close();
+            try (DrainDriver<Text> driver = resource.createDrain(process)) {
+                // do nothing
+            }
             fail();
         } catch (IOException e) {
             // ok.
-        } finally {
-            resource.close();
         }
     }
 
@@ -415,19 +337,15 @@ public class HadoopFsMirrorTest {
     @Test
     public void drain_conflict() throws Exception {
         fs.mkdirs(new Path(working, "CONFLICT"));
-
-        HadoopFsMirror resource = new HadoopFsMirror(conf, profile(), new ParameterList());
-        try {
+        try (HadoopFsMirror resource = new HadoopFsMirror(conf, profile(), new ParameterList())) {
             ProcessScript<Text> process = drain("target", "CONFLICT");
             resource.prepare(script(process));
-
-            DrainDriver<Text> driver = resource.createDrain(process);
-            driver.close();
+            try (DrainDriver<Text> driver = resource.createDrain(process)) {
+                // do nothing
+            }
             fail();
         } catch (IOException e) {
             // ok.
-        } finally {
-            resource.close();
         }
     }
 
@@ -437,18 +355,15 @@ public class HadoopFsMirrorTest {
      */
     @Test
     public void drain_invalid_parameter() throws Exception {
-        HadoopFsMirror resource = new HadoopFsMirror(conf, profile(), new ParameterList());
-        try {
+        try (HadoopFsMirror resource = new HadoopFsMirror(conf, profile(), new ParameterList())) {
             ProcessScript<Text> process = drain("target", "${INVALID}");
             resource.prepare(script(process));
-
-            DrainDriver<Text> driver = resource.createDrain(process);
-            driver.close();
+            try (DrainDriver<Text> driver = resource.createDrain(process)) {
+                // do nothing
+            }
             fail();
         } catch (IOException e) {
             // ok.
-        } finally {
-            resource.close();
         }
     }
 
@@ -459,20 +374,13 @@ public class HadoopFsMirrorTest {
     @Test
     public void drain_sim() throws Exception {
         RuntimeContext.set(RuntimeContext.DEFAULT.mode(ExecutionMode.SIMULATION));
-
-        HadoopFsMirror resource = new HadoopFsMirror(conf, profile(), new ParameterList());
-        try {
+        try (HadoopFsMirror resource = new HadoopFsMirror(conf, profile(), new ParameterList())) {
             assertThat(RuntimeContext.get().canExecute(resource), is(true));
             ProcessScript<Text> process = drain("target", "testing");
             resource.prepare(script(process));
-            DrainDriver<Text> driver = resource.createDrain(process);
-            try {
+            try (DrainDriver<Text> driver = resource.createDrain(process)) {
                 assertThat(RuntimeContext.get().canExecute(driver), is(false));
-            } finally {
-                driver.close();
             }
-        } finally {
-            resource.close();
         }
         try {
             FileStatus status = fs.getFileStatus(getPath("testing"));
@@ -496,7 +404,7 @@ public class HadoopFsMirrorTest {
             buf.append(file);
             buf.append(" ");
         }
-        return new ProcessScript<Text>(
+        return new ProcessScript<>(
                 "testing", "default", Text.class,
                 d(resource, buf.toString().trim()),
                 new DriverScript("DUMMY", Collections.<String, String>emptyMap()));
@@ -508,7 +416,7 @@ public class HadoopFsMirrorTest {
             buf.append(file);
             buf.append(" ");
         }
-        return new ProcessScript<Text>(
+        return new ProcessScript<>(
                 "testing", "default", Text.class,
                 new DriverScript("DUMMY", Collections.<String, String>emptyMap()),
                 d(resource, buf.toString().trim()));
@@ -523,7 +431,7 @@ public class HadoopFsMirrorTest {
     }
 
     private void test(SourceDriver<Text> source, String... expects) throws IOException {
-        List<String> results = new ArrayList<String>();
+        List<String> results = new ArrayList<>();
         while (source.next()) {
             results.add(source.get().toString());
         }
@@ -533,29 +441,23 @@ public class HadoopFsMirrorTest {
     }
 
     private void test(String path, String... expects) throws IOException {
-        List<String> results = new ArrayList<String>();
+        List<String> results = new ArrayList<>();
         Path resolved = getPath(path);
-        ModelInput<Text> input = TemporaryStorage.openInput(conf, Text.class, resolved);
-        try {
+        try (ModelInput<Text> input = TemporaryStorage.openInput(conf, Text.class, resolved)) {
             Text text = new Text();
             while (input.readTo(text)) {
                 results.add(text.toString());
             }
-        } finally {
-            input.close();
         }
         assertThat(results, is(Arrays.asList(expects)));
     }
 
     private void set(String path, String... values) throws IOException {
         Path resolved = getPath(path);
-        ModelOutput<Text> output = TemporaryStorage.openOutput(conf, Text.class, resolved);
-        try {
+        try (ModelOutput<Text> output = TemporaryStorage.openOutput(conf, Text.class, resolved)) {
             for (String string : values) {
                 output.write(new Text(string));
             }
-        } finally {
-            output.close();
         }
     }
 

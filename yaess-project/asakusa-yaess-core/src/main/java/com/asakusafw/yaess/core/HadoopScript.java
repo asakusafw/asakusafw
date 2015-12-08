@@ -89,11 +89,10 @@ public class HadoopScript implements ExecutionScript {
             throw new IllegalArgumentException("environmentVariables must not be null"); //$NON-NLS-1$
         }
         this.id = id;
-        this.blockerIds = Collections.unmodifiableSet(new TreeSet<String>(blockerIds));
+        this.blockerIds = Collections.unmodifiableSet(new TreeSet<>(blockerIds));
         this.className = className;
-        this.hadoopProperties = Collections.unmodifiableMap(new LinkedHashMap<String, String>(hadoopProperties));
-        this.environmentVariables = Collections.unmodifiableMap(
-                new LinkedHashMap<String, String>(environmentVariables));
+        this.hadoopProperties = Collections.unmodifiableMap(new LinkedHashMap<>(hadoopProperties));
+        this.environmentVariables = Collections.unmodifiableMap(new LinkedHashMap<>(environmentVariables));
         this.resolved = resolved;
     }
 
@@ -154,13 +153,13 @@ public class HadoopScript implements ExecutionScript {
         LOG.debug("Resolving {}", this);
 
         PlaceholderResolver resolver = new PlaceholderResolver(this, context, handler);
-        Map<String, String> resolvedProperties = new LinkedHashMap<String, String>();
+        Map<String, String> resolvedProperties = new LinkedHashMap<>();
         for (Map.Entry<String, String> entry : getHadoopProperties().entrySet()) {
             resolvedProperties.put(entry.getKey(), resolver.resolve(entry.getValue()));
         }
         LOG.debug("Resolved Hadoop properties: {}", resolvedProperties);
 
-        Map<String, String> resolvedEnvironments = new LinkedHashMap<String, String>();
+        Map<String, String> resolvedEnvironments = new LinkedHashMap<>();
         for (Map.Entry<String, String> entry : getEnvironmentVariables().entrySet()) {
             resolvedEnvironments.put(entry.getKey(), resolver.resolve(entry.getValue()));
         }

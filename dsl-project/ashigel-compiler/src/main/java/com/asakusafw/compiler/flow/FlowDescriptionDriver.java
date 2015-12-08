@@ -41,9 +41,9 @@ public class FlowDescriptionDriver {
 
     private final List<Object> ports = Lists.create();
 
-    private final Map<String, FlowIn<?>> inputs = new LinkedHashMap<String, FlowIn<?>>();
+    private final Map<String, FlowIn<?>> inputs = new LinkedHashMap<>();
 
-    private final Map<String, FlowOut<?>> outputs = new LinkedHashMap<String, FlowOut<?>>();
+    private final Map<String, FlowOut<?>> outputs = new LinkedHashMap<>();
 
     /**
      * Returns a new flow input.
@@ -67,7 +67,7 @@ public class FlowDescriptionDriver {
                     Messages.getString("FlowDescriptionDriver.errorConflictInputName"), //$NON-NLS-1$
                     name));
         }
-        FlowIn<T> in = new FlowIn<T>(new InputDescription(name, importer));
+        FlowIn<T> in = new FlowIn<>(new InputDescription(name, importer));
         inputs.put(name, in);
         ports.add(in);
         return in;
@@ -95,7 +95,7 @@ public class FlowDescriptionDriver {
                     Messages.getString("FlowDescriptionDriver.errorConflictOutputName"), //$NON-NLS-1$
                     name));
         }
-        FlowOut<T> out = new FlowOut<T>(new OutputDescription(name, exporter));
+        FlowOut<T> out = new FlowOut<>(new OutputDescription(name, exporter));
         outputs.put(name, out);
         ports.add(out);
         return out;

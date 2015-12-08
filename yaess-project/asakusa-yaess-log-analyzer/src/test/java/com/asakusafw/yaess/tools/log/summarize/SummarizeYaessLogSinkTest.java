@@ -36,7 +36,7 @@ import com.asakusafw.yaess.tools.log.util.LogCodeRegexFilter;
  */
 public class SummarizeYaessLogSinkTest {
 
-    private final List<YaessLogRecord> records = new ArrayList<YaessLogRecord>();
+    private final List<YaessLogRecord> records = new ArrayList<>();
 
     private final YaessJobIdProvider provider = new YaessJobIdProvider() {
         @Override
@@ -146,21 +146,18 @@ public class SummarizeYaessLogSinkTest {
     }
 
     private Map<YaessJobId, List<String>> summarize(Filter<? super YaessLogRecord> filter) {
-        ListWriter writer = new ListWriter();
-        try {
-            SummarizeYaessLogSink sink = new SummarizeYaessLogSink(writer, filter);
+        List<List<String>> lines;
+        try (ListWriter writer = new ListWriter();
+                SummarizeYaessLogSink sink = new SummarizeYaessLogSink(writer, filter)) {
             for (YaessLogRecord record : records) {
                 sink.put(record);
             }
             sink.flush();
-            sink.close();
+            lines = writer.getLines();
         } catch (Exception e) {
             throw new AssertionError(e);
-        } finally {
-            writer.close();
         }
-        Map<YaessJobId, List<String>> results = new HashMap<YaessJobId, List<String>>();
-        List<List<String>> lines = writer.getLines();
+        Map<YaessJobId, List<String>> results = new HashMap<>();
         if (lines.isEmpty() == false) {
             // ignore header
             lines = lines.subList(1, lines.size());
@@ -175,7 +172,7 @@ public class SummarizeYaessLogSinkTest {
             id.setJobId(record.get(5));
             id.setTrackingId(record.get(6));
             assertThat(results.get(id), is(nullValue()));
-            results.put(id, new ArrayList<String>(record.subList(7, record.size())));
+            results.put(id, new ArrayList<>(record.subList(7, record.size())));
         }
         return results;
     }

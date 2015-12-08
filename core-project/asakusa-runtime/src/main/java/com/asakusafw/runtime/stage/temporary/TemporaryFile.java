@@ -73,7 +73,7 @@ public final class TemporaryFile {
         }
     };
 
-    private static final ThreadLocal<byte[]> INSTANT_BUFFER = new ThreadLocal<byte[]>();
+    private static final ThreadLocal<byte[]> INSTANT_BUFFER = new ThreadLocal<>();
 
     static byte[] getInstantBuffer(int minSize) {
         byte[] buffer = INSTANT_BUFFER.get();

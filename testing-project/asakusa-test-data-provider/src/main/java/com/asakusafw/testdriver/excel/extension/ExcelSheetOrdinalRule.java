@@ -39,7 +39,7 @@ public class ExcelSheetOrdinalRule implements ExcelSheetRuleExtension {
 
     private static final Map<String, CompareOperator> OPERATORS;
     static {
-        Map<String, CompareOperator> map = new HashMap<String, CompareOperator>();
+        Map<String, CompareOperator> map = new HashMap<>();
         for (CompareOperator operator : CompareOperator.values()) {
             map.put(operator.getSymbol(), operator);
         }

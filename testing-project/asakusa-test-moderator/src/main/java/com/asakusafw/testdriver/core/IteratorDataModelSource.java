@@ -52,7 +52,7 @@ public class IteratorDataModelSource implements DataModelSource {
         if (iterator == null) {
             throw new IllegalArgumentException("iterator must not be null"); //$NON-NLS-1$
         }
-        this.iterator = new IteratorDriver<E>(definition, iterator);
+        this.iterator = new IteratorDriver<>(definition, iterator);
     }
 
     @Override

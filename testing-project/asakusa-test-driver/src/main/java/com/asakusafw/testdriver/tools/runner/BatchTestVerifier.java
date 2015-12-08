@@ -184,7 +184,7 @@ public class BatchTestVerifier extends BatchTestTool {
 
     private static Map<String, String> toMap(Properties p) {
         assert p != null;
-        Map<String, String> results = new TreeMap<String, String>();
+        Map<String, String> results = new TreeMap<>();
         for (Map.Entry<Object, Object> entry : p.entrySet()) {
             results.put((String) entry.getKey(), (String) entry.getValue());
         }

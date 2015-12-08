@@ -58,7 +58,7 @@ public class HadoopDataSourceProfileTest {
      */
     @Test
     public void convert() throws Exception {
-        Map<String, String> attributes = new HashMap<String, String>();
+        Map<String, String> attributes = new HashMap<>();
         attributes.put(KEY_PATH, folder.getRoot().getCanonicalFile().toURI().toString());
         DirectDataSourceProfile profile = new DirectDataSourceProfile(
                 "testing",
@@ -91,7 +91,7 @@ public class HadoopDataSourceProfileTest {
      */
     @Test(expected = IOException.class)
     public void convert_nopath() throws Exception {
-        Map<String, String> attributes = new HashMap<String, String>();
+        Map<String, String> attributes = new HashMap<>();
         DirectDataSourceProfile profile = new DirectDataSourceProfile(
                 "testing",
                 HadoopDataSource.class,
@@ -107,7 +107,7 @@ public class HadoopDataSourceProfileTest {
      */
     @Test
     public void convert_relpath() throws Exception {
-        Map<String, String> attributes = new HashMap<String, String>();
+        Map<String, String> attributes = new HashMap<>();
         attributes.put(KEY_PATH, "relative");
         DirectDataSourceProfile profile = new DirectDataSourceProfile(
                 "testing",
@@ -131,7 +131,7 @@ public class HadoopDataSourceProfileTest {
     public void convert_all() throws Exception {
         File prod = folder.newFolder("path");
         File temp = folder.newFolder("temp");
-        Map<String, String> attributes = new HashMap<String, String>();
+        Map<String, String> attributes = new HashMap<>();
         attributes.put(KEY_PATH, prod.getCanonicalFile().toURI().toString());
         attributes.put(KEY_TEMP, temp.getCanonicalFile().toURI().toString());
         attributes.put(KEY_MIN_FRAGMENT, "123");
@@ -182,7 +182,7 @@ public class HadoopDataSourceProfileTest {
     public void convert_inconsistent_fs() throws Exception {
         Configuration conf = new Configuration();
         conf.setClass("fs.mock.impl", MockFs.class, FileSystem.class);
-        Map<String, String> attributes = new HashMap<String, String>();
+        Map<String, String> attributes = new HashMap<>();
         attributes.put(KEY_PATH, folder.getRoot().toURI().toString());
         attributes.put(KEY_TEMP, "mock://" + folder.getRoot().toURI().toString());
         DirectDataSourceProfile profile = new DirectDataSourceProfile(
@@ -200,7 +200,7 @@ public class HadoopDataSourceProfileTest {
     @Test(expected = IOException.class)
     public void convert_minSize_notInt() throws Exception {
         Configuration conf = new Configuration();
-        Map<String, String> attributes = new HashMap<String, String>();
+        Map<String, String> attributes = new HashMap<>();
         attributes.put(KEY_MIN_FRAGMENT, "INVALID");
         DirectDataSourceProfile profile = new DirectDataSourceProfile(
                 "testing",
@@ -217,7 +217,7 @@ public class HadoopDataSourceProfileTest {
     @Test(expected = IOException.class)
     public void convert_minSize_zero() throws Exception {
         Configuration conf = new Configuration();
-        Map<String, String> attributes = new HashMap<String, String>();
+        Map<String, String> attributes = new HashMap<>();
         attributes.put(KEY_MIN_FRAGMENT, "0");
         DirectDataSourceProfile profile = new DirectDataSourceProfile(
                 "testing",
@@ -234,7 +234,7 @@ public class HadoopDataSourceProfileTest {
     @Test(expected = IOException.class)
     public void convert_prefSize_notInt() throws Exception {
         Configuration conf = new Configuration();
-        Map<String, String> attributes = new HashMap<String, String>();
+        Map<String, String> attributes = new HashMap<>();
         attributes.put(KEY_PREF_FRAGMENT, "INVALID");
         DirectDataSourceProfile profile = new DirectDataSourceProfile(
                 "testing",
@@ -251,7 +251,7 @@ public class HadoopDataSourceProfileTest {
     @Test(expected = IOException.class)
     public void convert_prefSize_zero() throws Exception {
         Configuration conf = new Configuration();
-        Map<String, String> attributes = new HashMap<String, String>();
+        Map<String, String> attributes = new HashMap<>();
         attributes.put(KEY_PREF_FRAGMENT, "0");
         DirectDataSourceProfile profile = new DirectDataSourceProfile(
                 "testing",
@@ -268,7 +268,7 @@ public class HadoopDataSourceProfileTest {
     @Test(expected = IOException.class)
     public void convert_unknown_properties() throws Exception {
         Configuration conf = new Configuration();
-        Map<String, String> attributes = new HashMap<String, String>();
+        Map<String, String> attributes = new HashMap<>();
         attributes.put(KEY_PATH, folder.getRoot().getCanonicalFile().toURI().toString());
         attributes.put("__INVALID__", "value");
         DirectDataSourceProfile profile = new DirectDataSourceProfile(

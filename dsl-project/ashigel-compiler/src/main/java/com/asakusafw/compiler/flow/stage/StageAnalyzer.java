@@ -209,7 +209,7 @@ public class StageAnalyzer {
         assert fragments != null;
         assert fgraph != null;
         LOG.debug("extracting mapper information: {}", block); //$NON-NLS-1$
-        Map<FlowBlock.Input, Graph<Fragment>> streams = new LinkedHashMap<FlowBlock.Input, Graph<Fragment>>();
+        Map<FlowBlock.Input, Graph<Fragment>> streams = new LinkedHashMap<>();
         for (FlowBlock.Input blockInput : block.getBlockInputs()) {
             FlowElementInput input = blockInput.getElementPort();
             Fragment head = fragments.get(input.getOwner());
@@ -239,7 +239,7 @@ public class StageAnalyzer {
         assert block != null;
         assert fragments != null;
         assert fgraph != null;
-        Map<FlowElement, List<FlowBlock.Input>> inputGroups = new LinkedHashMap<FlowElement, List<FlowBlock.Input>>();
+        Map<FlowElement, List<FlowBlock.Input>> inputGroups = new LinkedHashMap<>();
         for (FlowBlock.Input blockInput : block.getBlockInputs()) {
             FlowElement element = blockInput.getElementPort().getOwner();
             Maps.addToList(inputGroups, element, blockInput);
@@ -325,8 +325,7 @@ public class StageAnalyzer {
     private Graph<Fragment> createSubgraph(Fragment head, Graph<Fragment> fgraph) {
         assert head != null;
         assert fgraph != null;
-        Set<Fragment> path =
-            Graphs.collectAllConnected(fgraph, Collections.singleton(head));
+        Set<Fragment> path = Graphs.collectAllConnected(fgraph, Collections.singleton(head));
         path.add(head);
         Graph<Fragment> result = Graphs.newInstance();
         for (Fragment fragment : path) {

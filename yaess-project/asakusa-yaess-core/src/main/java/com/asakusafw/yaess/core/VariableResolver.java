@@ -50,7 +50,7 @@ public class VariableResolver {
         if (entries == null) {
             throw new IllegalArgumentException("entries must not be null"); //$NON-NLS-1$
         }
-        this.entries = Collections.unmodifiableMap(new TreeMap<String, String>(entries));
+        this.entries = Collections.unmodifiableMap(new TreeMap<>(entries));
     }
 
     /**
@@ -59,7 +59,7 @@ public class VariableResolver {
      * @return the created instance
      */
     public static VariableResolver system() {
-        Map<String, String> entries = new HashMap<String, String>();
+        Map<String, String> entries = new HashMap<>();
         entries.putAll(System.getenv());
         for (Map.Entry<Object, Object> entry : System.getProperties().entrySet()) {
             Object key = entry.getKey();

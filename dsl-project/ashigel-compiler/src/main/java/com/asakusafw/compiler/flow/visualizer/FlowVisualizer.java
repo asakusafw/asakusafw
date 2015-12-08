@@ -89,11 +89,8 @@ public class FlowVisualizer {
     private void emit(String path, boolean partial, VisualGraph model) throws IOException {
         assert path != null;
         assert model != null;
-        OutputStream output = environment.openResource(null, path);
-        try {
+        try (OutputStream output = environment.openResource(null, path)) {
             VisualGraphEmitter.emit(model, partial, output);
-        } finally {
-            output.close();
         }
     }
 }

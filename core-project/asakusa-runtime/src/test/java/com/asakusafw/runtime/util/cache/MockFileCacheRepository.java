@@ -48,23 +48,16 @@ public class MockFileCacheRepository implements FileCacheRepository {
         }
         File source = new File(uri);
         File target = new File(repository, source.getName());
-        InputStream in = new FileInputStream(source);
-        try {
-            OutputStream out = new FileOutputStream(target);
-            try {
-                byte[] buf = new byte[256];
-                while (true) {
-                    int read = in.read(buf);
-                    if (read < 0) {
-                        break;
-                    }
-                    out.write(buf, 0, read);
+        try (InputStream in = new FileInputStream(source);
+                OutputStream out = new FileOutputStream(target);) {
+            byte[] buf = new byte[256];
+            while (true) {
+                int read = in.read(buf);
+                if (read < 0) {
+                    break;
                 }
-            } finally {
-                out.close();
+                out.write(buf, 0, read);
             }
-        } finally {
-            in.close();
         }
         return new Path(target.toURI());
     }

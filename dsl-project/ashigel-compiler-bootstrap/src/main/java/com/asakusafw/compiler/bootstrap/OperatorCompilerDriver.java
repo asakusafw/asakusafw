@@ -39,6 +39,7 @@ import org.apache.commons.cli.Options;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.compiler.flow.packager.FilePackager;
 import com.asakusafw.utils.collections.Lists;
 
 /**
@@ -127,8 +128,7 @@ public final class OperatorCompilerDriver {
             throw new IOException(
                     Messages.getString("OperatorCompilerDriver.errorFailedToCreateJavaCompiler")); //$NON-NLS-1$
         }
-        StandardJavaFileManager files = compiler.getStandardFileManager(null, null, encoding);
-        try {
+        try (StandardJavaFileManager files = compiler.getStandardFileManager(null, null, encoding)) {
             CompilationTask task = compiler.getTask(
                     null,
                     files,
@@ -139,8 +139,6 @@ public final class OperatorCompilerDriver {
             if (task.call() == false) {
                 LOG.error(Messages.getString("OperatorCompilerDriver.errorFailedToCompile")); //$NON-NLS-1$
             }
-        } finally {
-            files.close();
         }
         LOG.info(Messages.getString("OperatorCompilerDriver.infoCompleted")); //$NON-NLS-1$
     }
@@ -154,8 +152,8 @@ public final class OperatorCompilerDriver {
         assert encoding != null;
         List<String> results = Lists.create();
         Collections.addAll(results, "-proc:only"); //$NON-NLS-1$
-        Collections.addAll(results, "-source", "1.6"); //$NON-NLS-1$ //$NON-NLS-2$
-        Collections.addAll(results, "-target", "1.6"); //$NON-NLS-1$ //$NON-NLS-2$
+        Collections.addAll(results, "-source", FilePackager.DEFAULT_JAVA_VERSION); //$NON-NLS-1$
+        Collections.addAll(results, "-target", FilePackager.DEFAULT_JAVA_VERSION); //$NON-NLS-1$
         Collections.addAll(results, "-encoding", encoding.displayName()); //$NON-NLS-1$
         Collections.addAll(results, "-sourcepath", sourcePath.getAbsolutePath()); //$NON-NLS-1$
         Collections.addAll(results, "-s", outputPath.getAbsolutePath()); //$NON-NLS-1$
@@ -167,7 +165,7 @@ public final class OperatorCompilerDriver {
             List<Class<?>> operatorClasses) throws IOException {
         assert sourcePath != null;
         assert operatorClasses != null;
-        Set<File> results = new LinkedHashSet<File>();
+        Set<File> results = new LinkedHashSet<>();
         for (Class<?> aClass : operatorClasses) {
             File source = findSource(sourcePath, aClass);
             if (results.contains(source) == false) {

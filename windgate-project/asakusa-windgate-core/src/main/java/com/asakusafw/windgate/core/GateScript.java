@@ -60,7 +60,7 @@ public class GateScript {
             throw new IllegalArgumentException("processes must not be null"); //$NON-NLS-1$
         }
         this.name = name;
-        this.processes = Collections.unmodifiableList(new ArrayList<ProcessScript<?>>(processes));
+        this.processes = Collections.unmodifiableList(new ArrayList<>(processes));
     }
 
     /**
@@ -99,7 +99,7 @@ public class GateScript {
         }
         LOG.debug("Restoring WindGate script");
         Map<String, Map<String, String>> partitions = partitioning(properties);
-        List<ProcessScript<?>> processes = new ArrayList<ProcessScript<?>>();
+        List<ProcessScript<?>> processes = new ArrayList<>();
         for (Map.Entry<String, Map<String, String>> entry : partitions.entrySet()) {
             LOG.debug("Restoring WindGate process: {}", entry.getKey());
             ProcessScript<?> process = loadProcess(entry.getKey(), entry.getValue(), loader);
@@ -110,7 +110,7 @@ public class GateScript {
 
     private static Map<String, Map<String, String>> partitioning(Properties properties) {
         assert properties != null;
-        Map<String, Map<String, String>> results = new HashMap<String, Map<String, String>>();
+        Map<String, Map<String, String>> results = new HashMap<>();
         for (Map.Entry<?, ?> entry : properties.entrySet()) {
             if ((entry.getKey() instanceof String) == false || (entry.getValue() instanceof String) == false) {
                 continue;
@@ -128,7 +128,7 @@ public class GateScript {
             String name = key.substring(0, index);
             Map<String, String> partition = results.get(name);
             if (partition == null) {
-                partition = new TreeMap<String, String>();
+                partition = new TreeMap<>();
                 results.put(name, partition);
             }
             partition.put(key.substring(index + 1), (String) entry.getValue());
@@ -192,7 +192,7 @@ public class GateScript {
         assert kind != null;
         assert conf != null;
         String resourceName = consume(conf, name, kind.prefix);
-        Map<String, String> driverConf = new HashMap<String, String>();
+        Map<String, String> driverConf = new HashMap<>();
         String prefix = kind.prefix + QUALIFIER;
         for (Iterator<Map.Entry<String, String>> iter = conf.entrySet().iterator(); iter.hasNext();) {
             Map.Entry<String, String> entry = iter.next();
@@ -211,7 +211,7 @@ public class GateScript {
             Class<T> dataClass,
             DriverScript sourceScript,
             DriverScript drainScript) {
-        return new ProcessScript<T>(name, processType, dataClass, sourceScript, drainScript);
+        return new ProcessScript<>(name, processType, dataClass, sourceScript, drainScript);
     }
 
     /**

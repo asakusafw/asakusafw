@@ -532,7 +532,7 @@ public class CleanTest {
     }
 
     private String[] args(int keep, String... args) {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         Collections.addAll(list, OPT_KEEP, String.valueOf(keep));
         Collections.addAll(list, args);
         return list.toArray(new String[list.size()]);

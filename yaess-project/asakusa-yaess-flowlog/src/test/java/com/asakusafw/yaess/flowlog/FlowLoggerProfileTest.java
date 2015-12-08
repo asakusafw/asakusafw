@@ -122,7 +122,7 @@ public class FlowLoggerProfileTest {
     }
 
     ServiceProfile<FlowLoggerProvider> profile(Map<String, String> conf, Map<String, String> vars) {
-        ServiceProfile<FlowLoggerProvider> profile = new ServiceProfile<FlowLoggerProvider>(
+        ServiceProfile<FlowLoggerProvider> profile = new ServiceProfile<>(
                 "testing",
                 FlowLoggerProvider.class,
                 conf,
@@ -132,7 +132,7 @@ public class FlowLoggerProfileTest {
 
     private Map<String, String> map(String... keyValuePairs) {
         assert keyValuePairs.length % 2 == 0;
-        Map<String, String> results = new HashMap<String, String>();
+        Map<String, String> results = new HashMap<>();
         for (int i = 0; i < keyValuePairs.length; i += 2) {
             results.put(keyValuePairs[i + 0], keyValuePairs[i + 1]);
         }

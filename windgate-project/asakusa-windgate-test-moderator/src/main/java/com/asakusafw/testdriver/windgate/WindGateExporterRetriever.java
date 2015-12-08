@@ -61,7 +61,7 @@ public class WindGateExporterRetriever extends BaseExporterRetriever<WindGateExp
         ResourceManipulator manipulator =
             WindGateTestHelper.createResourceManipulator(context, description, parameterList);
         DrainDriver<V> driver = manipulator.createDrainForDrain(process);
-        return new WindGateOutput<V>(WindGateTestHelper.prepare(driver));
+        return new WindGateOutput<>(WindGateTestHelper.prepare(driver));
     }
 
     @Override
@@ -76,6 +76,6 @@ public class WindGateExporterRetriever extends BaseExporterRetriever<WindGateExp
         ResourceManipulator manipulator =
             WindGateTestHelper.createResourceManipulator(context, description, parameterList);
         SourceDriver<V> driver = manipulator.createSourceForDrain(process);
-        return new WindGateSource<V>(WindGateTestHelper.prepare(driver), definition);
+        return new WindGateSource<>(WindGateTestHelper.prepare(driver), definition);
     }
 }

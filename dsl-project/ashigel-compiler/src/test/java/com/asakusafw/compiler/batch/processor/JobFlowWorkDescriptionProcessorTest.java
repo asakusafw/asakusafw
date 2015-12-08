@@ -71,20 +71,20 @@ public class JobFlowWorkDescriptionProcessorTest {
                 model.getFlowId());
         JobflowInfo info = DirectFlowCompiler.toInfo(model, jar, jar);
 
-        ModelOutput<Ex1> output = tester.openOutput(
+        try (ModelOutput<Ex1> output = tester.openOutput(
                 Ex1.class,
-                Location.fromPath("target/testing/SimpleJobFlow/importer/out", '/'));
-        Ex1 ex1 = new Ex1();
-        ex1.setSid(100);
-        ex1.setValue(100);
-        output.write(ex1);
-        ex1.setSid(300);
-        ex1.setValue(300);
-        output.write(ex1);
-        ex1.setSid(200);
-        ex1.setValue(200);
-        output.write(ex1);
-        output.close();
+                Location.fromPath("target/testing/SimpleJobFlow/importer/out", '/'))) {
+            Ex1 ex1 = new Ex1();
+            ex1.setSid(100);
+            ex1.setValue(100);
+            output.write(ex1);
+            ex1.setSid(300);
+            ex1.setValue(300);
+            output.write(ex1);
+            ex1.setSid(200);
+            ex1.setValue(200);
+            output.write(ex1);
+        }
 
         tester.run(info);
 

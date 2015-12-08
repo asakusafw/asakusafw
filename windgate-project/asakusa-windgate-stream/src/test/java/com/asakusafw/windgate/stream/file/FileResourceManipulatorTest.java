@@ -99,12 +99,9 @@ public class FileResourceManipulatorTest {
         ProcessScript<StringBuilder> process = process("testing", driver(file.getName()), dummy());
         FileResourceManipulator manipulator = new FileResourceManipulator(profile(), new ParameterList());
 
-        SourceDriver<StringBuilder> driver = manipulator.createSourceForSource(process);
-        try {
+        try (SourceDriver<StringBuilder> driver = manipulator.createSourceForSource(process)) {
             driver.prepare();
             test(driver, "Hello1, world!", "Hello2, world!", "Hello3, world!");
-        } finally {
-            driver.close();
         }
     }
 
@@ -118,14 +115,11 @@ public class FileResourceManipulatorTest {
         ProcessScript<StringBuilder> process = process("testing", driver(file.getName()), dummy());
         FileResourceManipulator manipulator = new FileResourceManipulator(profile(), new ParameterList());
 
-        DrainDriver<StringBuilder> driver = manipulator.createDrainForSource(process);
-        try {
+        try (DrainDriver<StringBuilder> driver = manipulator.createDrainForSource(process)) {
             driver.prepare();
             driver.put(new StringBuilder("Hello1, world!"));
             driver.put(new StringBuilder("Hello2, world!"));
             driver.put(new StringBuilder("Hello3, world!"));
-        } finally {
-            driver.close();
         }
 
         test(file, "Hello1, world!", "Hello2, world!", "Hello3, world!");
@@ -143,12 +137,9 @@ public class FileResourceManipulatorTest {
         ProcessScript<StringBuilder> process = process("testing", dummy(), driver(file.getName()));
         FileResourceManipulator manipulator = new FileResourceManipulator(profile(), new ParameterList());
 
-        SourceDriver<StringBuilder> driver = manipulator.createSourceForDrain(process);
-        try {
+        try (SourceDriver<StringBuilder> driver = manipulator.createSourceForDrain(process)) {
             driver.prepare();
             test(driver, "Hello1, world!", "Hello2, world!", "Hello3, world!");
-        } finally {
-            driver.close();
         }
     }
 
@@ -162,32 +153,26 @@ public class FileResourceManipulatorTest {
         ProcessScript<StringBuilder> process = process("testing", dummy(), driver(file.getName()));
         FileResourceManipulator manipulator = new FileResourceManipulator(profile(), new ParameterList());
 
-        DrainDriver<StringBuilder> driver = manipulator.createDrainForDrain(process);
-        try {
+        try (DrainDriver<StringBuilder> driver = manipulator.createDrainForDrain(process)) {
             driver.prepare();
             driver.put(new StringBuilder("Hello1, world!"));
             driver.put(new StringBuilder("Hello2, world!"));
             driver.put(new StringBuilder("Hello3, world!"));
-        } finally {
-            driver.close();
         }
 
         test(file, "Hello1, world!", "Hello2, world!", "Hello3, world!");
     }
 
     private void put(File file, String... lines) throws IOException {
-        PrintWriter writer = new PrintWriter(file.getAbsolutePath(), "UTF-8");
-        try {
+        try (PrintWriter writer = new PrintWriter(file.getAbsolutePath(), "UTF-8")) {
             for (String line : lines) {
                 writer.println(line);
             }
-        } finally {
-            writer.close();
         }
     }
 
     private void test(SourceDriver<StringBuilder> source, String... expected) throws IOException {
-        List<String> actual = new ArrayList<String>();
+        List<String> actual = new ArrayList<>();
         while (source.next()) {
             StringBuilder pair = source.get();
             actual.add(pair.toString());
@@ -198,19 +183,19 @@ public class FileResourceManipulatorTest {
     }
 
     private void test(File file, String... expected) throws IOException {
-        List<String> actual = new ArrayList<String>();
-        Scanner scanner = new Scanner(file, "UTF-8");
-        while (scanner.hasNextLine()) {
-            actual.add(scanner.nextLine());
+        List<String> actual = new ArrayList<>();
+        try (Scanner scanner = new Scanner(file, "UTF-8")) {
+            while (scanner.hasNextLine()) {
+                actual.add(scanner.nextLine());
+            }
         }
-        scanner.close();
         Collections.sort(actual);
         Arrays.sort(expected);
         assertThat(actual, is(Arrays.asList(expected)));
     }
 
     private ProcessScript<StringBuilder> process(String name, DriverScript source, DriverScript drain) {
-        return new ProcessScript<StringBuilder>(
+        return new ProcessScript<>(
                 name,
                 "dummy",
                 StringBuilder.class,
@@ -220,7 +205,7 @@ public class FileResourceManipulatorTest {
     }
 
     private DriverScript driver(String file) {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(FileProcess.FILE.key(), file);
         conf.put(StreamProcess.STREAM_SUPPORT.key(), StringBuilderSupport.class.getName());
         return new DriverScript("file", conf);

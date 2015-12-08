@@ -70,8 +70,8 @@ public class BatchTestTool extends DriverElementBase implements TestContext {
     public BatchTestTool(Class<?> callerClass) {
         this.callerClass = callerClass;
         this.classLoader = callerClass.getClassLoader();
-        this.batchArguments = new LinkedHashMap<String, String>();
-        this.environmentVariables = new LinkedHashMap<String, String>(System.getenv());
+        this.batchArguments = new LinkedHashMap<>();
+        this.environmentVariables = new LinkedHashMap<>(System.getenv());
         this.tools = new TestToolRepository(classLoader);
     }
 
@@ -100,8 +100,8 @@ public class BatchTestTool extends DriverElementBase implements TestContext {
      */
     protected BatchTestTool(Class<?> callerClass, TestContext context, TestToolRepository tools) {
         this.classLoader = context.getClassLoader();
-        this.batchArguments = new LinkedHashMap<String, String>(context.getArguments());
-        this.environmentVariables = new LinkedHashMap<String, String>(context.getEnvironmentVariables());
+        this.batchArguments = new LinkedHashMap<>(context.getArguments());
+        this.environmentVariables = new LinkedHashMap<>(context.getEnvironmentVariables());
         this.callerClass = callerClass;
         this.tools = new TestToolRepository(classLoader);
     }
@@ -244,7 +244,7 @@ public class BatchTestTool extends DriverElementBase implements TestContext {
             ModelTester<?>... extraRules) throws URISyntaxException, IOException {
         DataModelDefinition<T> definition = getTestTools().toDataModelDefinition(dataType);
         DataModelSourceFactory source = toDataModelSourceFactory(expectedPath);
-        List<TestRule> fragments = new ArrayList<TestRule>();
+        List<TestRule> fragments = new ArrayList<>();
         for (ModelTester<?> tester : extraRules) {
             TestRule rule = getTestTools().toVerifyRuleFragment(definition, (ModelTester<? super T>) tester);
             fragments.add(rule);

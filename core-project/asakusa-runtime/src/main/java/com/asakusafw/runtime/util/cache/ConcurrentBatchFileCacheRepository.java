@@ -84,8 +84,8 @@ public class ConcurrentBatchFileCacheRepository implements BatchFileCacheReposit
 
     @Override
     public Map<Path, Path> resolve(List<? extends Path> files) throws IOException, InterruptedException {
-        Map<Path, Future<Path>> futures = new LinkedHashMap<Path, Future<Path>>();
-        Map<Path, Path> results = new HashMap<Path, Path>();
+        Map<Path, Future<Path>> futures = new LinkedHashMap<>();
+        Map<Path, Path> results = new HashMap<>();
         for (Path file : files) {
             if (futures.containsKey(file)) {
                 // skip same file

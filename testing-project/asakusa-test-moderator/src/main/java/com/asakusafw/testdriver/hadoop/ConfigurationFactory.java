@@ -137,7 +137,7 @@ public class ConfigurationFactory extends ConfigurationProvider {
 
         private File explicitCommandPath;
 
-        private final Map<String, String> environmentVariables = new HashMap<String, String>(System.getenv());
+        private final Map<String, String> environmentVariables = new HashMap<>(System.getenv());
 
         /**
          * Sets the implementation class name of {@link LocalFileSystem}.

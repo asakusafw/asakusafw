@@ -58,9 +58,9 @@ public class JavadocBuilder {
             throw new IllegalArgumentException("factory must not be null"); //$NON-NLS-1$
         }
         this.f = factory;
-        this.blocks = new ArrayList<DocBlock>();
+        this.blocks = new ArrayList<>();
         this.currentTag = ""; // overview //$NON-NLS-1$
-        this.elements = new ArrayList<DocElement>();
+        this.elements = new ArrayList<>();
     }
 
     /**
@@ -69,9 +69,9 @@ public class JavadocBuilder {
      */
     public JavadocBuilder copy() {
         JavadocBuilder copy = new JavadocBuilder(f);
-        copy.blocks = new ArrayList<DocBlock>(blocks);
+        copy.blocks = new ArrayList<>(blocks);
         copy.currentTag = currentTag;
-        copy.elements = new ArrayList<DocElement>(elements);
+        copy.elements = new ArrayList<>(elements);
         return copy;
     }
 
@@ -454,7 +454,7 @@ public class JavadocBuilder {
         if (parameterTypes == null) {
             throw new IllegalArgumentException("parameterTypes must not be null"); //$NON-NLS-1$
         }
-        List<DocMethodParameter> parameters = new ArrayList<DocMethodParameter>();
+        List<DocMethodParameter> parameters = new ArrayList<>();
         for (Type parameterType : parameterTypes) {
             parameters.add(f.newDocMethodParameter(parameterType, null, false));
         }
@@ -712,7 +712,7 @@ public class JavadocBuilder {
         if (parameterTypes == null) {
             throw new IllegalArgumentException("parameterTypes must not be null"); //$NON-NLS-1$
         }
-        List<DocMethodParameter> parameters = new ArrayList<DocMethodParameter>();
+        List<DocMethodParameter> parameters = new ArrayList<>();
         for (Type parameterType : parameterTypes) {
             parameters.add(f.newDocMethodParameter(parameterType, null, false));
         }

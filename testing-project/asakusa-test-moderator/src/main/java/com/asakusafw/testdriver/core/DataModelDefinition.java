@@ -118,7 +118,7 @@ public interface DataModelDefinition<T> {
                 throw new IllegalArgumentException("definition must not be null"); //$NON-NLS-1$
             }
             this.definition = definition;
-            this.properties = new HashMap<PropertyName, Object>();
+            this.properties = new HashMap<>();
         }
 
         /**

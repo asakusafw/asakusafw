@@ -359,19 +359,12 @@ public class DefaultExcelRuleExtractorTest {
     }
 
     private Sheet sheet(String name) {
-        InputStream in = getClass().getResourceAsStream("rule/" + name);
-        assertThat(name, in, not(nullValue()));
-        try {
+        try (InputStream in = getClass().getResourceAsStream("rule/" + name)) {
+            assertThat(name, in, not(nullValue()));
             Workbook book = Util.openWorkbookFor(name, in);
             return book.getSheetAt(0);
         } catch (IOException e) {
             throw new AssertionError(e);
-        } finally {
-            try {
-                in.close();
-            } catch (IOException e) {
-                throw new AssertionError(e);
-            }
         }
     }
 }

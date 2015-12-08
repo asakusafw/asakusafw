@@ -50,19 +50,16 @@ public class StreamSourceDriverTest {
         put(file, "Hello, world!");
 
         StringBuilder buf = new StringBuilder();
-        StreamSourceDriver<StringBuilder> driver = new StreamSourceDriver<StringBuilder>(
+        try (StreamSourceDriver<StringBuilder> driver = new StreamSourceDriver<>(
                 "streaming",
                 "testing",
                 wrap(new FileInputStreamProvider(file)),
                 new StringBuilderSupport(),
-                buf);
-        try {
+                buf)) {
             driver.prepare();
             assertThat(driver.next(), is(true));
             assertThat(driver.get().toString(), is("Hello, world!"));
             assertThat(driver.next(), is(false));
-        } finally {
-            driver.close();
         }
     }
 
@@ -74,17 +71,14 @@ public class StreamSourceDriverTest {
     public void empty() throws Exception {
         File file = folder.newFile("testing");
         StringBuilder buf = new StringBuilder();
-        StreamSourceDriver<StringBuilder> driver = new StreamSourceDriver<StringBuilder>(
+        try (StreamSourceDriver<StringBuilder> driver = new StreamSourceDriver<>(
                 "streaming",
                 "testing",
                 wrap(new FileInputStreamProvider(file)),
                 new StringBuilderSupport(),
-                buf);
-        try {
+                buf)) {
             driver.prepare();
             assertThat(driver.next(), is(false));
-        } finally {
-            driver.close();
         }
     }
 
@@ -98,13 +92,12 @@ public class StreamSourceDriverTest {
         put(file, "Hello1, world!", "Hello2, world!", "Hello3, world!");
 
         StringBuilder buf = new StringBuilder();
-        StreamSourceDriver<StringBuilder> driver = new StreamSourceDriver<StringBuilder>(
+        try (StreamSourceDriver<StringBuilder> driver = new StreamSourceDriver<>(
                 "streaming",
                 "testing",
                 wrap(new FileInputStreamProvider(file)),
                 new StringBuilderSupport(),
-                buf);
-        try {
+                buf)) {
             driver.prepare();
             assertThat(driver.next(), is(true));
             assertThat(driver.get().toString(), is("Hello1, world!"));
@@ -113,8 +106,6 @@ public class StreamSourceDriverTest {
             assertThat(driver.next(), is(true));
             assertThat(driver.get().toString(), is("Hello3, world!"));
             assertThat(driver.next(), is(false));
-        } finally {
-            driver.close();
         }
     }
 
@@ -128,18 +119,15 @@ public class StreamSourceDriverTest {
         Assume.assumeTrue(file.delete());
 
         StringBuilder buf = new StringBuilder();
-        StreamSourceDriver<StringBuilder> driver = new StreamSourceDriver<StringBuilder>(
+        try (StreamSourceDriver<StringBuilder> driver = new StreamSourceDriver<>(
                 "streaming",
                 "testing",
                 wrap(new FileInputStreamProvider(file)),
                 new StringBuilderSupport(),
-                buf);
-        try {
+                buf)) {
             driver.prepare();
             driver.next();
             fail();
-        } finally {
-            driver.close();
         }
     }
 
@@ -153,7 +141,7 @@ public class StreamSourceDriverTest {
         put(file, "Hello, world!");
 
         StringBuilder buf = new StringBuilder();
-        StreamSourceDriver<StringBuilder> driver = new StreamSourceDriver<StringBuilder>(
+        try (StreamSourceDriver<StringBuilder> driver = new StreamSourceDriver<>(
                 "streaming",
                 "testing",
                 wrap(new StreamProvider<InputStream>() {
@@ -176,23 +164,17 @@ public class StreamSourceDriverTest {
                     }
                 }),
                 new StringBuilderSupport(),
-                buf);
-        try {
+                buf)) {
             driver.prepare();
             assertThat(driver.next(), is(false));
-        } finally {
-            driver.close();
         }
     }
 
     private void put(File file, String... lines) throws IOException {
-        PrintWriter writer = new PrintWriter(file.getAbsolutePath(), "UTF-8");
-        try {
+        try (PrintWriter writer = new PrintWriter(file.getAbsolutePath(), "UTF-8")) {
             for (String line : lines) {
                 writer.println(line);
             }
-        } finally {
-            writer.close();
         }
     }
 

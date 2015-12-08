@@ -63,13 +63,12 @@ public abstract class SplitCombiner {
             if (splits == null) {
                 throw new IllegalArgumentException("splits must not be null"); //$NON-NLS-1$
             }
-            Map<Class<? extends Mapper<?, ?, ?, ?>>, List<StageInputSplit.Source>> results =
-                new HashMap<Class<? extends Mapper<?, ?, ?, ?>>, List<StageInputSplit.Source>>();
+            Map<Class<? extends Mapper<?, ?, ?, ?>>, List<StageInputSplit.Source>> results = new HashMap<>();
             for (StageInputSplit split : splits) {
                 Class<? extends Mapper<?, ?, ?, ?>> mapper = split.getMapperClass();
                 List<StageInputSplit.Source> group = results.get(mapper);
                 if (group == null) {
-                    group = new ArrayList<StageInputSplit.Source>();
+                    group = new ArrayList<>();
                     results.put(mapper, group);
                 }
                 group.addAll(split.getSources());

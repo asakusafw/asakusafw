@@ -78,8 +78,8 @@ public class TracepointWeaver {
         if (settings == null) {
             throw new IllegalArgumentException("settings must not be null"); //$NON-NLS-1$
         }
-        HashMap<Tracepoint, TraceSetting> all = new HashMap<Tracepoint, TraceSetting>();
-        Map<String, Map<Tracepoint, TraceSetting>> map = new HashMap<String, Map<Tracepoint, TraceSetting>>();
+        HashMap<Tracepoint, TraceSetting> all = new HashMap<>();
+        Map<String, Map<Tracepoint, TraceSetting>> map = new HashMap<>();
         for (TraceSetting setting : settings) {
             all.put(setting.getTracepoint(), setting);
             Map<Tracepoint, TraceSetting> entry = map.get(setting.getTracepoint().getOperatorClassName());

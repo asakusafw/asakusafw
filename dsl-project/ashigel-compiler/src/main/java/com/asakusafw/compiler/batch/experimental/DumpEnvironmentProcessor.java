@@ -70,15 +70,10 @@ public class DumpEnvironmentProcessor extends AbstractWorkflowProcessor {
 
     @Override
     public void process(Workflow workflow) throws IOException {
-        OutputStream output = getEnvironment().openResource(PATH);
-        try {
-            Context context = new Context(output);
+        try (Context context = new Context(getEnvironment().openResource(PATH))) {
             dumpInternal(context);
             dumpEnv(context);
             dumpSystemProperties(context);
-            context.close();
-        } finally {
-            output.close();
         }
     }
 
@@ -114,7 +109,7 @@ public class DumpEnvironmentProcessor extends AbstractWorkflowProcessor {
     private <T> SortedMap<String, T> sortFilter(Map<?, T> map, String prefix) {
         assert map != null;
         assert prefix != null;
-        SortedMap<String, T> results = new TreeMap<String, T>();
+        SortedMap<String, T> results = new TreeMap<>();
         for (Map.Entry<?, T> entry : map.entrySet()) {
             String key = String.valueOf(entry.getKey());
             if (key.startsWith(prefix)) {

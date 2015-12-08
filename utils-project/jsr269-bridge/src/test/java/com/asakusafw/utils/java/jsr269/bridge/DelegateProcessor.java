@@ -30,7 +30,7 @@ import javax.lang.model.element.TypeElement;
 @SupportedAnnotationTypes({
     "*"
 })
-@SupportedSourceVersion(SourceVersion.RELEASE_6)
+@SupportedSourceVersion(SourceVersion.RELEASE_7)
 public class DelegateProcessor extends AbstractProcessor {
 
     private final Callback callback;
@@ -44,9 +44,7 @@ public class DelegateProcessor extends AbstractProcessor {
     }
 
     @Override
-    public boolean process(
-            Set<? extends TypeElement> annotations,
-            RoundEnvironment env) {
+    public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment env) {
         callback.run(processingEnv, env);
         return true;
     }

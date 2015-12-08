@@ -59,34 +59,24 @@ public class HtmlDifferenceSink implements DifferenceSink {
     static final List<String> CSS;
 
     static {
-        List<String> lines = new ArrayList<String>();
-        InputStream in = HtmlDifferenceSink.class.getResourceAsStream(CSS_FILE_NAME);
-        if (in != null) {
-            try {
-                Scanner scanner = new Scanner(in, CHARSET.name());
-                while (scanner.hasNextLine()) {
-                    IOException exception = scanner.ioException();
-                    if (exception != null) {
-                        scanner.close();
-                        throw exception;
+        List<String> lines = new ArrayList<>();
+        try (InputStream in = HtmlDifferenceSink.class.getResourceAsStream(CSS_FILE_NAME)) {
+            if (in != null) {
+                try (Scanner scanner = new Scanner(in, CHARSET.name())) {
+                    while (scanner.hasNextLine()) {
+                        IOException exception = scanner.ioException();
+                        if (exception != null) {
+                            scanner.close();
+                            throw exception;
+                        }
+                        lines.add(scanner.nextLine());
                     }
-                    lines.add(scanner.nextLine());
-                }
-                scanner.close();
-            } catch (IOException e) {
-                LOG.warn(Messages.getString("HtmlDifferenceSink.warnFailedToInitialize"), e); //$NON-NLS-1$
-                lines.clear();
-            } finally {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug(MessageFormat.format(
-                                "Failed to close CSS file: {}", //$NON-NLS-1$
-                                HtmlDifferenceSink.class.getResource(CSS_FILE_NAME)), e);
-                    }
+                    scanner.close();
                 }
             }
+        } catch (IOException e) {
+            LOG.warn(Messages.getString("HtmlDifferenceSink.warnFailedToInitialize"), e); //$NON-NLS-1$
+            lines.clear();
         }
         CSS = Collections.unmodifiableList(lines);
     }

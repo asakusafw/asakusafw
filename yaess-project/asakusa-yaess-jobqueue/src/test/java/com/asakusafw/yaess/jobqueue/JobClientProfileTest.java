@@ -278,7 +278,7 @@ public class JobClientProfileTest {
 
     private Map<String, String> map(String[] keyValuePairs) {
         assert keyValuePairs.length % 2 == 0;
-        Map<String, String> results = new HashMap<String, String>();
+        Map<String, String> results = new HashMap<>();
         for (int i = 0; i < keyValuePairs.length; i += 2) {
             results.put(keyValuePairs[i + 0], keyValuePairs[i + 1]);
         }

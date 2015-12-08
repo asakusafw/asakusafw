@@ -169,7 +169,7 @@ public class Clean extends Configured implements Tool {
         LOG.debug("Option {}: {}", OPT_KEEP_DAYS.getLongOpt(), keepDays); //$NON-NLS-1$
         LOG.debug("Option {}: {}", OPT_DRY_RUN.getLongOpt(), dryRun); //$NON-NLS-1$
 
-        List<Path> paths = new ArrayList<Path>();
+        List<Path> paths = new ArrayList<>();
         for (String pathString : rest) {
             if (pathString.trim().isEmpty()) {
                 continue;

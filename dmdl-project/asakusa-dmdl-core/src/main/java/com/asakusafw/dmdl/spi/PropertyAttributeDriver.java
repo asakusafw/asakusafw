@@ -30,10 +30,7 @@ import com.asakusafw.dmdl.semantics.PropertyDeclaration;
 public abstract class PropertyAttributeDriver extends AttributeDriver {
 
     @Override
-    public final void process(
-            DmdlSemantics environment,
-            Declaration declaration,
-            AstAttribute attribute) {
+    public final void process(DmdlSemantics environment, Declaration declaration, AstAttribute attribute) {
         assert attribute.name.toString().equals(getTargetName());
         if ((declaration instanceof PropertyDeclaration) == false) {
             environment.report(new Diagnostic(
@@ -47,10 +44,7 @@ public abstract class PropertyAttributeDriver extends AttributeDriver {
     }
 
     @Override
-    public final void verify(
-            DmdlSemantics environment,
-            Declaration declaration,
-            AstAttribute attribute) {
+    public final void verify(DmdlSemantics environment, Declaration declaration, AstAttribute attribute) {
         assert attribute.name.toString().equals(getTargetName());
         if ((declaration instanceof PropertyDeclaration) == false) {
             return;
@@ -61,14 +55,11 @@ public abstract class PropertyAttributeDriver extends AttributeDriver {
     /**
      * Processes and modifies the attributed property declaration.
      * @param environment the processing environment
-     * @param attribute the attribtue with the {@link #getTargetName() target name}
+     * @param attribute the attribute with the {@link #getTargetName() target name}
      * @param declaration the property declaration with the {@code attribute}
      * @see #getTargetName()
      */
-    public abstract void process(
-            DmdlSemantics environment,
-            PropertyDeclaration declaration,
-            AstAttribute attribute);
+    public abstract void process(DmdlSemantics environment, PropertyDeclaration declaration, AstAttribute attribute);
 
     /**
      * Verifies the attributed declaration.
@@ -80,10 +71,7 @@ public abstract class PropertyAttributeDriver extends AttributeDriver {
      * @see #getTargetName()
      * @since 0.7.0
      */
-    public void verify(
-            DmdlSemantics environment,
-            PropertyDeclaration declaration,
-            AstAttribute attribute) {
+    public void verify(DmdlSemantics environment, PropertyDeclaration declaration, AstAttribute attribute) {
         return;
     }
 }

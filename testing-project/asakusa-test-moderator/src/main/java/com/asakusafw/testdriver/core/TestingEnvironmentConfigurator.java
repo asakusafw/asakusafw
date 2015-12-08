@@ -88,7 +88,7 @@ public abstract class TestingEnvironmentConfigurator {
         if (classLoader == null) {
             classLoader = TestingEnvironmentConfigurator.class.getClassLoader();
         }
-        List<TestingEnvironmentConfigurator> results = new ArrayList<TestingEnvironmentConfigurator>();
+        List<TestingEnvironmentConfigurator> results = new ArrayList<>();
         ServiceLoader<TestingEnvironmentConfigurator> loader =
                 ServiceLoader.load(TestingEnvironmentConfigurator.class, classLoader);
         for (TestingEnvironmentConfigurator service : loader) {

@@ -39,7 +39,7 @@ public class LauncherOptionsParserTest extends LauncherTestRoot {
 
     private final Configuration conf = new ConfigurationProvider().newInstance();
 
-    private final List<LauncherOptions> optionsManager = new ArrayList<LauncherOptions>();
+    private final List<LauncherOptions> optionsManager = new ArrayList<>();
 
     /**
      * Disposes {@link LauncherOptions}.

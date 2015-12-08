@@ -211,10 +211,10 @@ public class OperatorCompiler implements Processor {
 
     private String toDetailString(RuntimeException e) {
         StringWriter writer = new StringWriter();
-        PrintWriter pw = new PrintWriter(writer);
-        pw.println(Messages.getString("OperatorCompiler.errorDetailHeader")); //$NON-NLS-1$
-        e.printStackTrace(pw);
-        pw.close();
+        try (PrintWriter pw = new PrintWriter(writer)) {
+            pw.println(Messages.getString("OperatorCompiler.errorDetailHeader")); //$NON-NLS-1$
+            e.printStackTrace(pw);
+        }
         return writer.toString();
     }
 

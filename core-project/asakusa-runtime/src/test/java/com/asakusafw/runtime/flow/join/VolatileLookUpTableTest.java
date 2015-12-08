@@ -38,7 +38,7 @@ public class VolatileLookUpTableTest {
      */
     @Test
     public void empty() throws Exception {
-        VolatileLookUpTable.Builder<IntOption> builder = new VolatileLookUpTable.Builder<IntOption>();
+        VolatileLookUpTable.Builder<IntOption> builder = new VolatileLookUpTable.Builder<>();
 
         LookUpTable<IntOption> table = builder.build();
         assertThat(sort(table.get(key(100))), is(values()));
@@ -50,7 +50,7 @@ public class VolatileLookUpTableTest {
      */
     @Test
     public void simple() throws Exception {
-        VolatileLookUpTable.Builder<IntOption> builder = new VolatileLookUpTable.Builder<IntOption>();
+        VolatileLookUpTable.Builder<IntOption> builder = new VolatileLookUpTable.Builder<>();
         builder.add(key(100), new IntOption(100));
 
         LookUpTable<IntOption> table = builder.build();
@@ -64,7 +64,7 @@ public class VolatileLookUpTableTest {
      */
     @Test
     public void duplicate() throws Exception {
-        VolatileLookUpTable.Builder<IntOption> builder = new VolatileLookUpTable.Builder<IntOption>();
+        VolatileLookUpTable.Builder<IntOption> builder = new VolatileLookUpTable.Builder<>();
         builder.add(key(100), new IntOption(100));
         builder.add(key(100), new IntOption(101));
         builder.add(key(100), new IntOption(102));
@@ -80,7 +80,7 @@ public class VolatileLookUpTableTest {
      */
     @Test
     public void reuseKeys() throws Exception {
-        VolatileLookUpTable.Builder<IntOption> builder = new VolatileLookUpTable.Builder<IntOption>();
+        VolatileLookUpTable.Builder<IntOption> builder = new VolatileLookUpTable.Builder<>();
         LookUpKey key = key();
 
         key.add(new IntOption(100));
@@ -115,7 +115,7 @@ public class VolatileLookUpTableTest {
     }
 
     private List<IntOption> values(int...values) {
-        List<IntOption> options = new ArrayList<IntOption>();
+        List<IntOption> options = new ArrayList<>();
         for (int value : values) {
             options.add(new IntOption(value));
         }

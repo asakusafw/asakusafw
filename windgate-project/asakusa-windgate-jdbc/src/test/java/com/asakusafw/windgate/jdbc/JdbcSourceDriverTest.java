@@ -52,22 +52,18 @@ public class JdbcSourceDriverTest {
     @Test
     public void simple() throws Exception {
         h2.execute("INSERT INTO PAIR (KEY, VALUE) VALUES (1, 'Hello, world!')");
-        Connection conn = h2.open();
-        try {
-            JdbcScript<Pair> script = new JdbcScript<Pair>(
+        try (Connection conn = h2.open()) {
+            JdbcScript<Pair> script = new JdbcScript<>(
                     "testing",
                     new PairSupport(),
                     "PAIR",
                     Arrays.asList("KEY", "VALUE"),
                     null);
-            JdbcSourceDriver<Pair> driver = new JdbcSourceDriver<Pair>(profile(), script, conn, new Pair());
-            driver.prepare();
-            List<String> values = values(driver);
-            driver.close();
-
-            assertThat(values, is(Arrays.asList("Hello, world!")));
-        } finally {
-            conn.close();
+            try (JdbcSourceDriver<Pair> driver = new JdbcSourceDriver<>(profile(), script, conn, new Pair())) {
+                driver.prepare();
+                List<String> values = values(driver);
+                assertThat(values, is(Arrays.asList("Hello, world!")));
+            }
         }
     }
 
@@ -77,22 +73,18 @@ public class JdbcSourceDriverTest {
      */
     @Test
     public void empty() throws Exception {
-        Connection conn = h2.open();
-        try {
-            JdbcScript<Pair> script = new JdbcScript<Pair>(
+        try (Connection conn = h2.open()) {
+            JdbcScript<Pair> script = new JdbcScript<>(
                     "testing",
                     new PairSupport(),
                     "PAIR",
                     Arrays.asList("KEY", "VALUE"),
                     null);
-            JdbcSourceDriver<Pair> driver = new JdbcSourceDriver<Pair>(profile(), script, conn, new Pair());
-            driver.prepare();
-            List<String> values = values(driver);
-            driver.close();
-
-            assertThat(values, is(Arrays.<String>asList()));
-        } finally {
-            conn.close();
+            try (JdbcSourceDriver<Pair> driver = new JdbcSourceDriver<>(profile(), script, conn, new Pair())) {
+                driver.prepare();
+                List<String> values = values(driver);
+                assertThat(values, is(Arrays.<String>asList()));
+            }
         }
     }
 
@@ -102,7 +94,7 @@ public class JdbcSourceDriverTest {
      */
     @Test
     public void large() throws Exception {
-        List<String> answer = new ArrayList<String>();
+        List<String> answer = new ArrayList<>();
         for (int i = 0; i < 3000; i++) {
             String value = MessageFormat.format(
                     "Hello{0}",
@@ -113,22 +105,18 @@ public class JdbcSourceDriverTest {
                     String.valueOf(i + 1),
                     value));
         }
-        Connection conn = h2.open();
-        try {
-            JdbcScript<Pair> script = new JdbcScript<Pair>(
+        try (Connection conn = h2.open()) {
+            JdbcScript<Pair> script = new JdbcScript<>(
                     "testing",
                     new PairSupport(),
                     "PAIR",
                     Arrays.asList("KEY", "VALUE"),
                     null);
-            JdbcSourceDriver<Pair> driver = new JdbcSourceDriver<Pair>(profile(), script, conn, new Pair());
-            driver.prepare();
-            List<String> values = values(driver);
-            driver.close();
-
-            assertThat(values, is(answer));
-        } finally {
-            conn.close();
+            try (JdbcSourceDriver<Pair> driver = new JdbcSourceDriver<>(profile(), script, conn, new Pair())) {
+                driver.prepare();
+                List<String> values = values(driver);
+                assertThat(values, is(answer));
+            }
         }
     }
 
@@ -147,22 +135,18 @@ public class JdbcSourceDriverTest {
                     String.valueOf(i + 1),
                     value));
         }
-        Connection conn = h2.open();
-        try {
-            JdbcScript<Pair> script = new JdbcScript<Pair>(
+        try (Connection conn = h2.open()) {
+            JdbcScript<Pair> script = new JdbcScript<>(
                     "testing",
                     new PairSupport(),
                     "PAIR",
                     Arrays.asList("KEY", "VALUE"),
                     "KEY BETWEEN 80 AND 81");
-            JdbcSourceDriver<Pair> driver = new JdbcSourceDriver<Pair>(profile(), script, conn, new Pair());
-            driver.prepare();
-            List<String> values = values(driver);
-            driver.close();
-
-            assertThat(values, is(Arrays.asList("Hello80", "Hello81")));
-        } finally {
-            conn.close();
+            try (JdbcSourceDriver<Pair> driver = new JdbcSourceDriver<>(profile(), script, conn, new Pair())) {
+                driver.prepare();
+                List<String> values = values(driver);
+                assertThat(values, is(Arrays.asList("Hello80", "Hello81")));
+            }
         }
     }
 
@@ -173,31 +157,28 @@ public class JdbcSourceDriverTest {
     @Test
     public void suppress_error_on_close() throws Exception {
         h2.execute("INSERT INTO PAIR (KEY, VALUE) VALUES (1, 'Hello, world!')");
-        Connection conn = h2.open();
-        try {
-            JdbcScript<Pair> script = new JdbcScript<Pair>(
+        try (Connection conn = h2.open()) {
+            JdbcScript<Pair> script = new JdbcScript<>(
                     "testing",
                     new PairSupport(),
                     "PAIR",
                     Arrays.asList("KEY", "VALUE"),
                     null);
-            JdbcSourceDriver<Pair> driver = new JdbcSourceDriver<Pair>(profile(), script, conn, new Pair());
-            driver.prepare();
-            conn.close();
-            try {
-                driver.next();
-                fail();
-            } catch (IOException e) {
-                // ok.
+            try (JdbcSourceDriver<Pair> driver = new JdbcSourceDriver<>(profile(), script, conn, new Pair())) {
+                driver.prepare();
+                conn.close();
+                try {
+                    driver.next();
+                    fail();
+                } catch (IOException e) {
+                    // ok.
+                }
             }
-            driver.close();
-        } finally {
-            conn.close();
         }
     }
 
     private List<String> values(JdbcSourceDriver<Pair> driver) throws IOException {
-        List<Pair> results = new ArrayList<Pair>();
+        List<Pair> results = new ArrayList<>();
         while (driver.next()) {
             Pair got = driver.get();
             Pair copy = new Pair();
@@ -207,7 +188,7 @@ public class JdbcSourceDriverTest {
         }
         Collections.sort(results);
 
-        List<String> values = new ArrayList<String>();
+        List<String> values = new ArrayList<>();
         for (Pair p : results) {
             values.add(p.value);
         }

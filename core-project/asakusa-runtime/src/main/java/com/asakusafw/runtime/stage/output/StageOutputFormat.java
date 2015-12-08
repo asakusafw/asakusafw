@@ -49,10 +49,9 @@ public final class StageOutputFormat extends OutputFormat<Object, Object> {
 
     private final FileOutputFormat<Object, Object> dummyFileOutputFormat = new EmptyFileOutputFormat();
 
-    private final TemporaryOutputFormat<Object> temporaryOutputFormat = new TemporaryOutputFormat<Object>();
+    private final TemporaryOutputFormat<Object> temporaryOutputFormat = new TemporaryOutputFormat<>();
 
-    private final Map<TaskAttemptID, OutputCommitter> commiterCache =
-            new WeakHashMap<TaskAttemptID, OutputCommitter>();
+    private final Map<TaskAttemptID, OutputCommitter> commiterCache = new WeakHashMap<>();
 
     @Override
     public void checkOutputSpecs(JobContext context) throws IOException, InterruptedException {
@@ -90,7 +89,7 @@ public final class StageOutputFormat extends OutputFormat<Object, Object> {
     private OutputCommitter createOutputCommitter(
             TaskAttemptContext context) throws IOException, InterruptedException {
         assert context != null;
-        Set<OutputCommitter> components = new LinkedHashSet<OutputCommitter>();
+        Set<OutputCommitter> components = new LinkedHashSet<>();
         if (isBridgeOutputEnabled(context)) {
             OutputCommitter committer = bridgeOutputFormat.getOutputCommitter(context);
             if (components.contains(committer) == false) {
@@ -114,7 +113,7 @@ public final class StageOutputFormat extends OutputFormat<Object, Object> {
                     "Created stage output committers: {0}", //$NON-NLS-1$
                     components));
         }
-        return new CombinedOutputCommitter(new ArrayList<OutputCommitter>(components));
+        return new CombinedOutputCommitter(new ArrayList<>(components));
     }
 
     private boolean isBridgeOutputEnabled(JobContext context) {

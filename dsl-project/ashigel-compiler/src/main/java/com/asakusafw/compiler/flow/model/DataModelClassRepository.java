@@ -70,7 +70,7 @@ public class DataModelClassRepository
         DataModelClass created = DataModelClass.create(getEnvironment(), aClass);
         if (cacheMap == null) {
             cacheMap = Maps.create();
-            cache = new SoftReference<Map<Type, DataClass>>(cacheMap);
+            cache = new SoftReference<>(cacheMap);
         }
         cacheMap.put(type, created);
 

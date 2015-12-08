@@ -80,7 +80,7 @@ public class OperatorFactoryClassGeneratorTest extends OperatorCompilerTestRoot 
 
     private static class Engine extends Callback {
 
-        private OperatorProcessor[] procs;
+        private final OperatorProcessor[] procs;
 
         TypeDeclaration collected;
 
@@ -90,8 +90,7 @@ public class OperatorFactoryClassGeneratorTest extends OperatorCompilerTestRoot 
 
         @Override
         protected final void test() {
-            OperatorClassCollector collector =
-                    new OperatorClassCollector(env, round);
+            OperatorClassCollector collector = new OperatorClassCollector(env, round);
             for (OperatorProcessor proc : procs) {
                 proc.initialize(env);
                 collector.add(proc);

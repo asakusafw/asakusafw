@@ -303,7 +303,7 @@ public class GeneratorUtil {
         AttributeBuilder attributes = new AttributeBuilder(factory);
         ShuffleKey key = var.getShuffleKey();
         if (key != null) {
-            List<Expression> group = new ArrayList<Expression>();
+            List<Expression> group = new ArrayList<>();
             for (String entry : key.getGroupProperties()) {
                 group.addAll(new AttributeBuilder(factory)
                         .annotation(
@@ -312,7 +312,7 @@ public class GeneratorUtil {
                                 Models.toLiteral(factory, entry))
                         .toAnnotations());
             }
-            List<Expression> order = new ArrayList<Expression>();
+            List<Expression> order = new ArrayList<>();
             for (ShuffleKey.Order entry : key.getOrderings()) {
                 order.addAll(new AttributeBuilder(factory)
                         .annotation(

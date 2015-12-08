@@ -564,7 +564,7 @@ public class DmdlParserTest extends DmdlTesterRoot {
     @SuppressWarnings("unchecked")
     private <T extends AstTerm<T>> List<T> extract(AstExpression<T> expression) {
         List<T> results = Lists.create();
-        LinkedList<AstExpression<T>> work = new LinkedList<AstExpression<T>>();
+        LinkedList<AstExpression<T>> work = new LinkedList<>();
         work.add(expression);
         int count = 0;
         while (work.isEmpty() == false) {
@@ -647,10 +647,9 @@ public class DmdlParserTest extends DmdlTesterRoot {
 
     private AstScript restore(AstScript script) {
         StringWriter output = new StringWriter();
-        PrintWriter writer = new PrintWriter(output);
-        DmdlEmitter.emit(script, writer);
-        writer.close();
-
+        try (PrintWriter writer = new PrintWriter(output)) {
+            DmdlEmitter.emit(script, writer);
+        }
         LOG.debug("{}", script.getRegion().sourceFile);
         LOG.debug("{}", output);
 

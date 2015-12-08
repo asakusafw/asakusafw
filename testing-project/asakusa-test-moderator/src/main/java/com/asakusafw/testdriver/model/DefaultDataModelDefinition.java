@@ -66,7 +66,7 @@ public class DefaultDataModelDefinition<T> implements DataModelDefinition<T> {
 
     private static final Map<Class<?>, ValueDriver<?>> VALUE_DRIVERS;
     static {
-        Map<Class<?>, ValueDriver<?>> map = new HashMap<Class<?>, ValueDriver<?>>();
+        Map<Class<?>, ValueDriver<?>> map = new HashMap<>();
         map.put(BooleanOption.class, new ValueDriver<BooleanOption>(PropertyType.BOOLEAN) {
             @SuppressWarnings("deprecation")
             @Override
@@ -233,7 +233,7 @@ public class DefaultDataModelDefinition<T> implements DataModelDefinition<T> {
     }
 
     private Map<PropertyName, Method> extractAccessors() {
-        Map<PropertyName, Method> results = new TreeMap<PropertyName, Method>();
+        Map<PropertyName, Method> results = new TreeMap<>();
         for (Method method : modelClass.getMethods()) {
             if (VALUE_DRIVERS.containsKey(method.getReturnType()) == false) {
                 continue;
@@ -255,7 +255,7 @@ public class DefaultDataModelDefinition<T> implements DataModelDefinition<T> {
             }
             return results;
         }
-        Map<PropertyName, Method> ordered = new LinkedHashMap<PropertyName, Method>();
+        Map<PropertyName, Method> ordered = new LinkedHashMap<>();
         for (String name : annotation.value()) {
             String[] words = name.split("(_|-)+"); //$NON-NLS-1$
             PropertyName propertyName = PropertyName.newInstance(words);
@@ -286,7 +286,7 @@ public class DefaultDataModelDefinition<T> implements DataModelDefinition<T> {
             return null;
         }
         String name = matcher.group(1);
-        List<String> words = new ArrayList<String>();
+        List<String> words = new ArrayList<>();
         int start = 0;
         for (int i = 1, n = name.length(); i < n; i++) {
             char c = name.charAt(i);
@@ -350,7 +350,7 @@ public class DefaultDataModelDefinition<T> implements DataModelDefinition<T> {
 
     @Override
     public Builder<T> newReflection() {
-        return new Builder<T>(this);
+        return new Builder<>(this);
     }
 
     @Override

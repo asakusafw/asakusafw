@@ -70,8 +70,7 @@ public class FileSessionProviderTest {
      */
     @Test
     public void create() throws Exception {
-        SessionMirror session = provider.create("testing");
-        session.close();
+        createAndClose("testing");
     }
 
     /**
@@ -80,12 +79,9 @@ public class FileSessionProviderTest {
      */
     @Test
     public void create_multiple() throws Exception {
-        SessionMirror session1 = provider.create("testing1");
-        try {
-            SessionMirror session2 = provider.create("testing2");
-            session2.close();
-        } finally {
-            session1.close();
+
+        try (SessionMirror session1 = provider.create("testing1")){
+            createAndClose("testing2");
         }
     }
 
@@ -95,11 +91,9 @@ public class FileSessionProviderTest {
      */
     @Test
     public void create_exists() throws Exception {
-        SessionMirror session = provider.create("testing");
-        session.close();
+        createAndClose("testing");
         try {
-            SessionMirror reopen = provider.create("testing");
-            reopen.close();
+            createAndClose("testing");
             fail();
         } catch (SessionException e) {
             assertThat(e.getSessionId(), is("testing"));
@@ -113,18 +107,14 @@ public class FileSessionProviderTest {
      */
     @Test
     public void create_acquired() throws Exception {
-        SessionMirror session = provider.create("testing");
-        try {
+        try (SessionMirror session = provider.create("testing")) {
             try {
-                SessionMirror reopen = provider.create("testing");
-                reopen.close();
+                createAndClose("testing");
                 fail();
             } catch (SessionException e) {
                 assertThat(e.getSessionId(), is("testing"));
                 assertThat(e.getReason(), is(Reason.ACQUIRED));
             }
-        } finally {
-            session.close();
         }
     }
 
@@ -134,10 +124,8 @@ public class FileSessionProviderTest {
      */
     @Test
     public void open() throws Exception {
-        SessionMirror session = provider.create("testing");
-        session.close();
-        SessionMirror reopen = provider.open("testing");
-        reopen.close();
+        createAndClose("testing");
+        openAndClose("testing");
     }
 
     /**
@@ -147,13 +135,12 @@ public class FileSessionProviderTest {
     @Test
     public void open_missing() throws Exception {
         try {
-            SessionMirror session = provider.open("testing");
-            session.close();
+            openAndClose("testing");
             fail();
         } catch (SessionException e) {
             assertThat(e.getSessionId(), is("testing"));
             assertThat(e.getReason(), is(Reason.NOT_EXIST));
-            List<String> all = new ArrayList<String>(provider.getCreatedIds());
+            List<String> all = new ArrayList<>(provider.getCreatedIds());
             assertThat(all.isEmpty(), is(true));
         }
     }
@@ -164,18 +151,14 @@ public class FileSessionProviderTest {
      */
     @Test
     public void open_acquired() throws Exception {
-        SessionMirror session = provider.create("testing");
-        try {
+        try (SessionMirror session = provider.create("testing")) {
             try {
-                SessionMirror reopen = provider.open("testing");
-                reopen.close();
+                openAndClose("testing");
                 fail();
             } catch (SessionException e) {
                 assertThat(e.getSessionId(), is("testing"));
                 assertThat(e.getReason(), is(Reason.ACQUIRED));
             }
-        } finally {
-            session.close();
         }
     }
 
@@ -185,20 +168,15 @@ public class FileSessionProviderTest {
      */
     @Test
     public void open_conflict() throws Exception {
-        SessionMirror session = provider.create("testing");
-        session.close();
-
-        SessionMirror other = provider.open("testing");
-        try {
+        createAndClose("testing");
+        try (SessionMirror other = provider.open("testing")) {
             try {
-                SessionMirror reopen = provider.open("testing");
-                reopen.close();
+                openAndClose("testing");
+                fail();
             } catch (SessionException e) {
                 assertThat(e.getSessionId(), is("testing"));
                 assertThat(e.getReason(), is(Reason.ACQUIRED));
             }
-        } finally {
-            other.close();
         }
     }
 
@@ -208,14 +186,13 @@ public class FileSessionProviderTest {
      */
     @Test
     public void getIds() throws Exception {
-        SessionMirror session1 = provider.create("testing1");
-        session1.close();
-        SessionMirror session2 = provider.create("testing2");
-        session2.complete();
-        SessionMirror session3 = provider.create("testing3");
-        session3.close();
+        createAndClose("testing1");
+        try (SessionMirror session2 = provider.create("testing2")) {
+            session2.complete();
+        }
+        createAndClose("testing3");
 
-        List<String> all = new ArrayList<String>(provider.getCreatedIds());
+        List<String> all = new ArrayList<>(provider.getCreatedIds());
         assertThat(all, hasItems("testing1", "testing3"));
         assertThat(all.size(), is(2));
     }
@@ -226,11 +203,10 @@ public class FileSessionProviderTest {
      */
     @Test
     public void delete() throws Exception {
-        SessionMirror session = provider.create("testing");
-        session.close();
+        createAndClose("testing");
         provider.delete("testing");
 
-        List<String> all = new ArrayList<String>(provider.getCreatedIds());
+        List<String> all = new ArrayList<>(provider.getCreatedIds());
         assertThat(all.isEmpty(), is(true));
     }
 
@@ -247,7 +223,7 @@ public class FileSessionProviderTest {
             assertThat(e.getReason(), is(SessionException.Reason.NOT_EXIST));
         }
 
-        List<String> all = new ArrayList<String>(provider.getCreatedIds());
+        List<String> all = new ArrayList<>(provider.getCreatedIds());
         assertThat(all.isEmpty(), is(true));
     }
 
@@ -257,11 +233,8 @@ public class FileSessionProviderTest {
      */
     @Test
     public void getId() throws Exception {
-        SessionMirror session = provider.create("testing");
-        try {
+        try (SessionMirror session = provider.create("testing")) {
             assertThat(session.getId(), is("testing"));
-        } finally {
-            session.close();
         }
     }
 
@@ -271,10 +244,10 @@ public class FileSessionProviderTest {
      */
     @Test
     public void complete() throws Exception {
-        SessionMirror session = provider.create("testing");
-        session.complete();
-        SessionMirror reopen = provider.create("testing");
-        reopen.close();
+        try (SessionMirror session = provider.create("testing")) {
+            session.complete();
+        }
+        createAndClose("testing");
     }
 
     /**
@@ -283,10 +256,10 @@ public class FileSessionProviderTest {
      */
     @Test
     public void abort() throws Exception {
-        SessionMirror session = provider.create("testing");
-        session.abort();
-        SessionMirror reopen = provider.create("testing");
-        reopen.close();
+        try (SessionMirror session = provider.create("testing")) {
+            session.abort();
+        }
+        createAndClose("testing");
     }
 
     /**
@@ -332,5 +305,17 @@ public class FileSessionProviderTest {
                 Collections.singletonMap(
                         FileSessionProvider.KEY_DIRECTORY,
                         file.getAbsolutePath())));
+    }
+
+    private void createAndClose(String id) throws IOException, SessionException {
+        try (SessionMirror session = provider.create(id)) {
+            // do nothing
+        }
+    }
+
+    private void openAndClose(String id) throws IOException, SessionException {
+        try (SessionMirror session = provider.open(id)) {
+            // do nothing
+        }
     }
 }

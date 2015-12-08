@@ -48,9 +48,8 @@ public class JavadocTestRoot {
      * @return the contents
      */
     public static String load(String name) {
-        InputStream in = JavadocTestRoot.class.getResourceAsStream(name);
-        Assert.assertNotNull(name, in);
-        try {
+        try (InputStream in = JavadocTestRoot.class.getResourceAsStream(name)) {
+            Assert.assertNotNull(name, in);
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             byte[] buf = new byte[256];
             while (true) {
@@ -65,12 +64,6 @@ public class JavadocTestRoot {
             return content;
         } catch(IOException e) {
             throw new AssertionError(e);
-        } finally {
-            try {
-                in.close();
-            } catch (IOException e) {
-                throw new AssertionError(e);
-            }
         }
     }
 
@@ -192,7 +185,7 @@ public class JavadocTestRoot {
     }
 
     private static List<String> format(String...list) {
-        List<String> formatted = new ArrayList<String>(list.length);
+        List<String> formatted = new ArrayList<>(list.length);
         for (String s: list) {
             formatted.add(format(s));
         }
@@ -200,7 +193,7 @@ public class JavadocTestRoot {
     }
 
     private static List<String> format(List<? extends JavadocToken> list) {
-        List<String> formatted = new ArrayList<String>(list.size());
+        List<String> formatted = new ArrayList<>(list.size());
         for (JavadocToken t: list) {
             formatted.add(format(t.getText()));
         }

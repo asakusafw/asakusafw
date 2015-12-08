@@ -305,8 +305,8 @@ public class DirectFileInputPreparatorTest {
     }
 
     private List<File> find(String targetPath) {
-        List<File> results = new ArrayList<File>();
-        LinkedList<File> work = new LinkedList<File>();
+        List<File> results = new ArrayList<>();
+        LinkedList<File> work = new LinkedList<>();
         work.add(new File(folder.getRoot(), targetPath));
         while (work.isEmpty() == false) {
             File file = work.removeFirst();
@@ -327,15 +327,12 @@ public class DirectFileInputPreparatorTest {
     }
 
     private List<String> get(File target) throws FileNotFoundException {
-        Scanner s = new Scanner(target, "UTF-8");
-        try {
-            List<String> results = new ArrayList<String>();
+        try (Scanner s = new Scanner(target, "UTF-8")) {
+            List<String> results = new ArrayList<>();
             while (s.hasNextLine()) {
                 results.add(s.nextLine());
             }
             return results;
-        } finally {
-            s.close();
         }
     }
 
@@ -354,13 +351,10 @@ public class DirectFileInputPreparatorTest {
     private File put(String targetPath, String... contents) throws IOException {
         File target = new File(folder.getRoot(), targetPath);
         target.getParentFile().mkdirs();
-        PrintWriter w = new PrintWriter(target, "UTF-8");
-        try {
+        try (PrintWriter w = new PrintWriter(target, "UTF-8")) {
             for (String line : contents) {
                 w.println(line);
             }
-        } finally {
-            w.close();
         }
         return target;
     }

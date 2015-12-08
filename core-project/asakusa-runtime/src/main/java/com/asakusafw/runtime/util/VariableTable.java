@@ -35,7 +35,7 @@ public class VariableTable {
 
     private final RedefineStrategy redefineStrategy;
 
-    private final Map<String, String> variables = new HashMap<String, String>();
+    private final Map<String, String> variables = new HashMap<>();
 
     /**
      * Creates a new empty instance.
@@ -224,7 +224,7 @@ Character:
      * @return the variable map
      */
     public Map<String, String> getVariables() {
-        return new TreeMap<String, String>(variables);
+        return new TreeMap<>(variables);
     }
 
     /**

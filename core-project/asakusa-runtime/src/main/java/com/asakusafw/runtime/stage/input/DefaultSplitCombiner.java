@@ -129,7 +129,7 @@ public class DefaultSplitCombiner extends SplitCombiner {
             List<StageInputSplit> splits) throws IOException, InterruptedException {
         assert splits != null;
         Map<Class<? extends Mapper<?, ?, ?, ?>>, List<Source>> groups = Util.groupByMapper(splits);
-        List<StageInputSplit> results = new ArrayList<StageInputSplit>();
+        List<StageInputSplit> results = new ArrayList<>();
         for (Map.Entry<Class<? extends Mapper<?, ?, ?, ?>>, List<Source>> entry : groups.entrySet()) {
             Class<? extends Mapper<?, ?, ?, ?>> mapper = entry.getKey();
             List<Source> sources = entry.getValue();
@@ -169,7 +169,7 @@ public class DefaultSplitCombiner extends SplitCombiner {
             return Collections.singletonList(new StageInputSplit(mapper, sources));
         }
         if (sources.size() <= configuration.slotsPerInput) {
-            List<StageInputSplit> results = new ArrayList<StageInputSplit>();
+            List<StageInputSplit> results = new ArrayList<>();
             for (Source source : sources) {
                 results.add(new StageInputSplit(mapper, Collections.singletonList(source)));
             }
@@ -227,7 +227,7 @@ public class DefaultSplitCombiner extends SplitCombiner {
     }
 
     private List<StageInputSplit> resolve(Environment env, Gene gene, Class<? extends Mapper<?, ?, ?, ?>> mapper) {
-        List<List<SplitDef>> slots = new ArrayList<List<SplitDef>>();
+        List<List<SplitDef>> slots = new ArrayList<>();
         for (int i = 0, n = env.slots.length; i < n; i++) {
             slots.add(new ArrayList<SplitDef>());
         }
@@ -236,10 +236,10 @@ public class DefaultSplitCombiner extends SplitCombiner {
             int slotId = schema[splitId];
             slots.get(slotId).add(env.splits[splitId]);
         }
-        List<StageInputSplit> results = new ArrayList<StageInputSplit>();
+        List<StageInputSplit> results = new ArrayList<>();
         for (List<SplitDef> splits : slots) {
             if (splits.isEmpty() == false) {
-                List<Source> sources = new ArrayList<Source>();
+                List<Source> sources = new ArrayList<>();
                 for (SplitDef split : splits) {
                     sources.add(split.origin);
                 }
@@ -269,7 +269,7 @@ public class DefaultSplitCombiner extends SplitCombiner {
         if (first == 0) {
             return null;
         }
-        List<String> locations = new ArrayList<String>();
+        List<String> locations = new ArrayList<>();
         locations.add(locationNames[pairs[0].location]);
         for (int i = 1; i < pairs.length; i++) {
             double totalScore = pairs[i].time / totalLocalTime;
@@ -289,8 +289,8 @@ public class DefaultSplitCombiner extends SplitCombiner {
             Configuration configuration,
             List<Source> sources) throws IOException, InterruptedException {
         assert sources != null;
-        Map<String, Integer> locationIds = new HashMap<String, Integer>();
-        List<SplitDef> results = new ArrayList<SplitDef>(sources.size());
+        Map<String, Integer> locationIds = new HashMap<>();
+        List<SplitDef> results = new ArrayList<>(sources.size());
         for (Source source : sources) {
             String[] locationArray = source.getSplit().getLocations();
             long length = source.getSplit().getLength();

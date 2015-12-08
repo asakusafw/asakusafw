@@ -85,7 +85,7 @@ public abstract class JdbcExporterDescription extends WindGateExporterDescriptio
                     "getCustomTruncate()")); //$NON-NLS-1$
         }
 
-        Map<String, String> configuration = new HashMap<String, String>();
+        Map<String, String> configuration = new HashMap<>();
         configuration.put(JdbcProcess.TABLE.key(), table);
         configuration.put(JdbcProcess.COLUMNS.key(), JdbcDescriptionUtil.join(columns));
         configuration.put(JdbcProcess.JDBC_SUPPORT.key(), supportClass.getName());

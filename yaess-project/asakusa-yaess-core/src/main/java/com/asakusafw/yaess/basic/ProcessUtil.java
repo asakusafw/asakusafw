@@ -102,7 +102,7 @@ final class ProcessUtil {
             throw new IllegalArgumentException("configuration must not be null"); //$NON-NLS-1$
         }
         NavigableMap<String, String> map = PropertiesUtil.createPrefixMap(configuration, prefix);
-        SortedMap<Integer, String> ordered = new TreeMap<Integer, String>();
+        SortedMap<Integer, String> ordered = new TreeMap<>();
         for (Map.Entry<String, String> entry : map.entrySet()) {
             Integer position;
             try {
@@ -122,7 +122,7 @@ final class ProcessUtil {
                 ordered.put(position, entry.getValue());
             }
         }
-        List<String> results = new ArrayList<String>();
+        List<String> results = new ArrayList<>();
         if (variables == null) {
             results.addAll(ordered.values());
         } else {
@@ -137,7 +137,7 @@ final class ProcessUtil {
 
     /**
      * Builds command line tokens.
-     * The resulting tokens are concatinated as {@code head}, {@code original}, and {@code tail}.
+     * The resulting tokens are concatenated as {@code head}, {@code original}, and {@code tail}.
      * Additionally, {@code head} and {@code tail} <code>&#64;[&lt;position&gt;]</code>
      * in {@code head} and {@code tail} are replaced into {@code original.get(<position>)}.
      * @param head head of command line (resolved)
@@ -159,7 +159,7 @@ final class ProcessUtil {
         if (tail == null) {
             throw new IllegalArgumentException("tail must not be null"); //$NON-NLS-1$
         }
-        List<String> results = new ArrayList<String>();
+        List<String> results = new ArrayList<>();
         results.addAll(resolveCommand(head, original));
         results.addAll(original);
         results.addAll(resolveCommand(tail, original));
@@ -170,7 +170,7 @@ final class ProcessUtil {
     private static List<String> resolveCommand(List<String> target, List<String> original) {
         assert target != null;
         assert original != null;
-        List<String> results = new ArrayList<String>();
+        List<String> results = new ArrayList<>();
         for (String token : target) {
             StringBuilder buf = new StringBuilder();
             int start = 0;

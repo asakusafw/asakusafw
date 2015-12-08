@@ -17,7 +17,6 @@ package com.asakusafw.utils.java.jsr269.bridge;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -67,8 +66,7 @@ public class Jsr269 {
 
     private static final EnumMap<javax.lang.model.element.Modifier, ModifierKind> MODIFIERS;
     static {
-        MODIFIERS =
-            new EnumMap<javax.lang.model.element.Modifier, ModifierKind>(javax.lang.model.element.Modifier.class);
+        MODIFIERS = new EnumMap<>(javax.lang.model.element.Modifier.class);
         MODIFIERS.put(javax.lang.model.element.Modifier.ABSTRACT, ModifierKind.ABSTRACT);
         MODIFIERS.put(javax.lang.model.element.Modifier.FINAL, ModifierKind.FINAL);
         MODIFIERS.put(javax.lang.model.element.Modifier.NATIVE, ModifierKind.NATIVE);
@@ -190,7 +188,7 @@ public class Jsr269 {
         if (typeArguments.isEmpty()) {
             return raw;
         }
-        List<Type> arguments = new ArrayList<Type>();
+        List<Type> arguments = new ArrayList<>();
         for (TypeMirror mirror : typeArguments) {
             Type argument = convert0(mirror);
             if (argument == null) {
@@ -369,7 +367,7 @@ public class Jsr269 {
         if (modifiers == null) {
             throw new IllegalArgumentException("modifiers must not be null"); //$NON-NLS-1$
         }
-        List<ModifierKind> results = new ArrayList<ModifierKind>();
+        List<ModifierKind> results = new ArrayList<>();
         for (javax.lang.model.element.Modifier modifier : modifiers) {
             ModifierKind kind = MODIFIERS.get(modifier);
             if (kind != null) {
@@ -418,13 +416,8 @@ public class Jsr269 {
             name.append(primary.getName());
         }
         JavaFileObject source = filer.createSourceFile(name, originatingElements);
-        Writer writer = source.openWriter();
-        try {
-            PrintWriter output = new PrintWriter(writer);
+        try (PrintWriter output = new PrintWriter(source.openWriter())) {
             Models.emit(unit, output);
-            output.close();
-        } finally {
-            writer.close();
         }
     }
 }

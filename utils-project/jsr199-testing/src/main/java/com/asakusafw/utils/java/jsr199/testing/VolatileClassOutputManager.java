@@ -63,9 +63,9 @@ public class VolatileClassOutputManager
      */
     public VolatileClassOutputManager(JavaFileManager fileManager) {
         super(fileManager);
-        this.classMap = new TreeMap<String, VolatileClassFile>();
-        this.sourceMap = new TreeMap<String, VolatileJavaFile>();
-        this.resourceMap = new TreeMap<String, VolatileResourceFile>();
+        this.classMap = new TreeMap<>();
+        this.sourceMap = new TreeMap<>();
+        this.resourceMap = new TreeMap<>();
     }
 
     /**
@@ -73,7 +73,7 @@ public class VolatileClassOutputManager
      * @return the generated Java source files
      */
     public Collection<VolatileJavaFile> getSources() {
-        return new ArrayList<VolatileJavaFile>(sourceMap.values());
+        return new ArrayList<>(sourceMap.values());
     }
 
     /**
@@ -81,7 +81,7 @@ public class VolatileClassOutputManager
      * @return the generated resource files
      */
     public Collection<VolatileResourceFile> getResources() {
-        return new ArrayList<VolatileResourceFile>(resourceMap.values());
+        return new ArrayList<>(resourceMap.values());
     }
 
     /**
@@ -89,7 +89,7 @@ public class VolatileClassOutputManager
      * @return the generated Java class files
      */
     public Collection<VolatileClassFile> getCompiled() {
-        return new ArrayList<VolatileClassFile>(classMap.values());
+        return new ArrayList<>(classMap.values());
     }
 
     /**
@@ -103,9 +103,9 @@ public class VolatileClassOutputManager
         try {
             super.close();
         } finally {
-            this.sourceMap = new TreeMap<String, VolatileJavaFile>();
-            this.classMap = new TreeMap<String, VolatileClassFile>();
-            this.resourceMap = new TreeMap<String, VolatileResourceFile>();
+            this.sourceMap = new TreeMap<>();
+            this.classMap = new TreeMap<>();
+            this.resourceMap = new TreeMap<>();
         }
     }
 
@@ -276,10 +276,10 @@ public class VolatileClassOutputManager
         }
 
         if (recurse) {
-            return new ArrayList<JavaFileObject>(map.values());
+            return new ArrayList<>(map.values());
         }
 
-        List<JavaFileObject> results = new ArrayList<JavaFileObject>();
+        List<JavaFileObject> results = new ArrayList<>();
         for (Map.Entry<String, ? extends JavaFileObject> entry : map.entrySet()) {
             String className = entry.getKey();
             if (className.indexOf(NAME_SEPARATOR, prefix) < 0) {

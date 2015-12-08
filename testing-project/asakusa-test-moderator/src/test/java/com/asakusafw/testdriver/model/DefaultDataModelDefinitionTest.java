@@ -47,7 +47,7 @@ public class DefaultDataModelDefinitionTest {
      */
     @Test
     public void simple() {
-        DefaultDataModelDefinition<Simple> def = new DefaultDataModelDefinition<Simple>(Simple.class);
+        DefaultDataModelDefinition<Simple> def = new DefaultDataModelDefinition<>(Simple.class);
         assertThat(def.getModelClass(), equalTo(Simple.class));
     }
 
@@ -56,7 +56,7 @@ public class DefaultDataModelDefinitionTest {
      */
     @Test
     public void naming() {
-        DefaultDataModelDefinition<Naming> def = new DefaultDataModelDefinition<Naming>(Naming.class);
+        DefaultDataModelDefinition<Naming> def = new DefaultDataModelDefinition<>(Naming.class);
         assertThat(def.getType(p("a")), not(nullValue()));
         assertThat(def.getType(p("very_very_very_long_name")), not(nullValue()));
     }
@@ -66,7 +66,7 @@ public class DefaultDataModelDefinitionTest {
      */
     @Test
     public void getType() {
-        DefaultDataModelDefinition<Variety> def = new DefaultDataModelDefinition<Variety>(Variety.class);
+        DefaultDataModelDefinition<Variety> def = new DefaultDataModelDefinition<>(Variety.class);
         assertThat(def.getType(p("missing")), is(nullValue()));
         assertThat(def.getType(p("p_int")), is(PropertyType.INT));
         assertThat(def.getType(p("p_long")), is(PropertyType.LONG));
@@ -86,8 +86,8 @@ public class DefaultDataModelDefinitionTest {
      */
     @Test
     public void getProperties() {
-        DefaultDataModelDefinition<Ordered> def = new DefaultDataModelDefinition<Ordered>(Ordered.class);
-        List<PropertyName> properties = new ArrayList<PropertyName>(def.getProperties());
+        DefaultDataModelDefinition<Ordered> def = new DefaultDataModelDefinition<>(Ordered.class);
+        List<PropertyName> properties = new ArrayList<>(def.getProperties());
 
         assertThat(properties.size(), is(4));
         assertThat(properties.get(0), is(PropertyName.newInstance("first")));
@@ -101,7 +101,7 @@ public class DefaultDataModelDefinitionTest {
      */
     @Test
     public void toReflection() {
-        DefaultDataModelDefinition<Variety> def = new DefaultDataModelDefinition<Variety>(Variety.class);
+        DefaultDataModelDefinition<Variety> def = new DefaultDataModelDefinition<>(Variety.class);
         Variety object = new Variety();
         object.setPInt(100);
         object.setPLong(200);
@@ -136,7 +136,7 @@ public class DefaultDataModelDefinitionTest {
      */
     @Test
     public void toObject() {
-        DefaultDataModelDefinition<Variety> def = new DefaultDataModelDefinition<Variety>(Variety.class);
+        DefaultDataModelDefinition<Variety> def = new DefaultDataModelDefinition<>(Variety.class);
         Variety object = new Variety();
         object.setPInt(100);
         object.setPLong(200);

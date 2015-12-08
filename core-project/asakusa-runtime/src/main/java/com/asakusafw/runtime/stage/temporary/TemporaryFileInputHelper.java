@@ -54,7 +54,7 @@ final class TemporaryFileInputHelper implements Closeable {
 
     private final ExecutorService executor = Executors.newFixedThreadPool(1, DAEMON_THREAD_FACTORY);
 
-    private final LinkedList<DataBuffer> available = new LinkedList<DataBuffer>();
+    private final LinkedList<DataBuffer> available = new LinkedList<>();
 
     private Future<Result> running;
 

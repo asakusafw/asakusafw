@@ -180,8 +180,8 @@ public class DirectDataSourceRepository {
      * @throws InterruptedException if interrupted
      */
     public Collection<String> getContainerPaths() throws IOException, InterruptedException {
-        Collection<String> results = new ArrayList<String>();
-        LinkedList<Node> work = new LinkedList<Node>();
+        Collection<String> results = new ArrayList<>();
+        LinkedList<Node> work = new LinkedList<>();
         work.add(root);
         while (work.isEmpty() == false) {
             Node node = work.removeFirst();
@@ -199,7 +199,7 @@ public class DirectDataSourceRepository {
 
         final NodePath path;
 
-        final Map<String, Node> children = new HashMap<String, Node>();
+        final Map<String, Node> children = new HashMap<>();
 
         volatile DirectDataSourceProvider provider;
 
@@ -273,7 +273,7 @@ public class DirectDataSourceRepository {
 
         public NodePath append(String name) {
             assert name != null;
-            ArrayList<String> newSegments = new ArrayList<String>(segments.size() + 1);
+            ArrayList<String> newSegments = new ArrayList<>(segments.size() + 1);
             newSegments.addAll(segments);
             newSegments.add(name);
             return new NodePath(newSegments);
@@ -287,7 +287,7 @@ public class DirectDataSourceRepository {
                 return ROOT;
             }
             String[] fields = pathString.split("/"); //$NON-NLS-1$
-            ArrayList<String> segments = new ArrayList<String>();
+            ArrayList<String> segments = new ArrayList<>();
             for (String s : fields) {
                 if (s.isEmpty() == false) {
                     segments.add(s);
@@ -297,7 +297,7 @@ public class DirectDataSourceRepository {
         }
 
         public NodePath subPath(int start, int end) {
-            ArrayList<String> other = new ArrayList<String>(end - start);
+            ArrayList<String> other = new ArrayList<>(end - start);
             for (int i = start; i < end; i++) {
                 other.add(segments.get(i));
             }

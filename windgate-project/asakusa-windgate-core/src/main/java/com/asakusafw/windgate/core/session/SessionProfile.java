@@ -75,7 +75,7 @@ public class SessionProfile extends BaseProfile<SessionProfile, SessionProvider>
         }
         this.providerClass = providerClass;
         this.context = context;
-        this.configuration = Collections.unmodifiableMap(new TreeMap<String, String>(configuration));
+        this.configuration = Collections.unmodifiableMap(new TreeMap<>(configuration));
     }
 
     @Override

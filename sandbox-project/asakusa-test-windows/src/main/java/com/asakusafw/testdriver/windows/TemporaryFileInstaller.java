@@ -52,17 +52,13 @@ public final class TemporaryFileInstaller {
      */
     public static TemporaryFileInstaller newInstance(InputStream contents, boolean executable) throws IOException {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
-        try {
-            byte[] buf = new byte[256];
-            while (true) {
-                int read = contents.read(buf);
-                if (read < 0) {
-                    break;
-                }
-                output.write(buf, 0, read);
+        byte[] buf = new byte[256];
+        while (true) {
+            int read = contents.read(buf);
+            if (read < 0) {
+                break;
             }
-        } finally {
-            output.close();
+            output.write(buf, 0, read);
         }
         byte[] bytes = output.toByteArray();
         return new TemporaryFileInstaller(bytes, executable);

@@ -69,7 +69,7 @@ public class FlowGraphGenerator {
      */
     public FlowElement defineInput(String name) {
         InputDescription desc = new InputDescription(name, TYPE);
-        FlowIn<?> node = new FlowIn<Object>(desc);
+        FlowIn<?> node = new FlowIn<>(desc);
         flowInputs.add(node);
         return register(name, node.getFlowElement());
     }
@@ -81,7 +81,7 @@ public class FlowGraphGenerator {
      */
     public FlowElement defineOutput(String name) {
         OutputDescription desc = new OutputDescription(name, TYPE);
-        FlowOut<?> node = new FlowOut<Object>(desc);
+        FlowOut<?> node = new FlowOut<>(desc);
         flowOutputs.add(node);
         return register(name, node.getFlowElement());
     }
@@ -294,7 +294,7 @@ public class FlowGraphGenerator {
      * @return the all elements
      */
     public Set<FlowElement> all() {
-        return new HashSet<FlowElement>(elements.values());
+        return new HashSet<>(elements.values());
     }
 
     /**

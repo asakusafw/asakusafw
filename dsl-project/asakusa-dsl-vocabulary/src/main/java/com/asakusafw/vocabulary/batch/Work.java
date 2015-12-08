@@ -38,10 +38,7 @@ public final class Work {
      * @param dependencies the dependencies of this work in the batch
      * @throws IllegalArgumentException if some parameters are {@code null}
      */
-    public Work(
-            BatchDescription declaring,
-            WorkDescription description,
-            List<Work> dependencies) {
+    public Work(BatchDescription declaring, WorkDescription description, List<Work> dependencies) {
         if (declaring == null) {
             throw new IllegalArgumentException("declaring must not be null"); //$NON-NLS-1$
         }
@@ -53,8 +50,7 @@ public final class Work {
         }
         this.declaring = declaring;
         this.description = description;
-        this.dependencies = Collections.unmodifiableList(
-                new ArrayList<Work>(dependencies));
+        this.dependencies = Collections.unmodifiableList(new ArrayList<>(dependencies));
     }
 
     /**

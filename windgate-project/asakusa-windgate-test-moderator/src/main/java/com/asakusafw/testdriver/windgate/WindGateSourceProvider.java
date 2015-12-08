@@ -76,7 +76,7 @@ public class WindGateSourceProvider implements DataModelSourceProvider {
             ResourceManipulator manipulator =
                 WindGateTestHelper.createResourceManipulator(context, description, parameterList);
             SourceDriver<T> driver = manipulator.createSourceForSource(process);
-            return new WindGateSource<T>(WindGateTestHelper.prepare(driver), definition);
+            return new WindGateSource<>(WindGateTestHelper.prepare(driver), definition);
         } else if (instance instanceof WindGateExporterDescription) {
             WindGateExporterDescription description = (WindGateExporterDescription) instance;
             ProcessScript<T> process = WindGateTestHelper.createProcessScript(
@@ -86,7 +86,7 @@ public class WindGateSourceProvider implements DataModelSourceProvider {
             ResourceManipulator manipulator =
                 WindGateTestHelper.createResourceManipulator(context, description, parameterList);
             SourceDriver<T> driver = manipulator.createSourceForDrain(process);
-            return new WindGateSource<T>(WindGateTestHelper.prepare(driver), definition);
+            return new WindGateSource<>(WindGateTestHelper.prepare(driver), definition);
         } else {
             throw new IOException(MessageFormat.format(
                     Messages.getString("WindGateSourceProvider.errorInvalidDescription"), //$NON-NLS-1$

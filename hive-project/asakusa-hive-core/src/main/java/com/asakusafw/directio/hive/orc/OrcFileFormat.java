@@ -37,10 +37,7 @@ public class OrcFileFormat<T> extends AbstractOrcFileFormat<T> {
      * @param configuration the format configuration
      * @param descriptor the data model descriptor
      */
-    public OrcFileFormat(
-            String tableName,
-            OrcFormatConfiguration configuration,
-            DataModelDescriptor descriptor) {
+    public OrcFileFormat(String tableName, OrcFormatConfiguration configuration, DataModelDescriptor descriptor) {
         this.tableName = tableName;
         this.descriptor = descriptor;
         this.configuration = configuration;

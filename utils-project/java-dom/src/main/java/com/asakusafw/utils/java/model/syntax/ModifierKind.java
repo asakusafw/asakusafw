@@ -164,7 +164,7 @@ public enum ModifierKind {
         if (grant.isEmpty()) {
             allGrants = declarable;
         } else {
-            allGrants = new HashSet<DeclarationKind>(grant);
+            allGrants = new HashSet<>(grant);
             allGrants.addAll(declarable);
         }
         this.grantable = Collections.unmodifiableSet(allGrants);
@@ -269,6 +269,6 @@ public enum ModifierKind {
     }
 
     private static Set<DeclarationKind> of(DeclarationKind...kinds) {
-        return new HashSet<DeclarationKind>(Arrays.asList(kinds));
+        return new HashSet<>(Arrays.asList(kinds));
     }
 }

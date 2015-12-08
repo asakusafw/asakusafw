@@ -65,7 +65,7 @@ public class RuntimeContextTest {
      */
     @Test
     public void apply_batchId() {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put(RuntimeContext.KEY_BATCH_ID, "testing.batch");
         RuntimeContext applied = RuntimeContext.DEFAULT.apply(map);
         assertThat(applied, is(not(RuntimeContext.DEFAULT)));
@@ -77,7 +77,7 @@ public class RuntimeContextTest {
      */
     @Test
     public void apply_mode_prod() {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put(RuntimeContext.KEY_EXECUTION_MODE, ExecutionMode.PRODUCTION.getSymbol());
         RuntimeContext applied = RuntimeContext.DEFAULT.apply(map);
         assertThat(applied, is(RuntimeContext.DEFAULT.mode(ExecutionMode.PRODUCTION)));
@@ -88,7 +88,7 @@ public class RuntimeContextTest {
      */
     @Test
     public void apply_mode_sim() {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put(RuntimeContext.KEY_EXECUTION_MODE, ExecutionMode.SIMULATION.getSymbol());
         RuntimeContext applied = RuntimeContext.DEFAULT.apply(map);
         assertThat(applied, is(RuntimeContext.DEFAULT.mode(ExecutionMode.SIMULATION)));
@@ -99,7 +99,7 @@ public class RuntimeContextTest {
      */
     @Test
     public void apply_mode_invalid() {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put(RuntimeContext.KEY_EXECUTION_MODE, "==INVALID==");
         RuntimeContext applied = RuntimeContext.DEFAULT.apply(map);
         assertThat(applied, is(RuntimeContext.DEFAULT));
@@ -110,7 +110,7 @@ public class RuntimeContextTest {
      */
     @Test
     public void apply_verificationCode() {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put(RuntimeContext.KEY_BUILD_ID, "testing.verify");
         RuntimeContext applied = RuntimeContext.DEFAULT.apply(map);
         assertThat(applied, is(not(RuntimeContext.DEFAULT)));
@@ -254,15 +254,10 @@ public class RuntimeContextTest {
         p.setProperty(RuntimeContext.KEY_BUILD_ID, buildId);
         p.setProperty(RuntimeContext.KEY_RUNTIME_VERSION, rtVersion);
         try {
-            OutputStream s = new FileOutputStream(file);
-            try {
+            try (OutputStream s = new FileOutputStream(file)) {
                 p.store(s, "testing");
-            } finally {
-                s.close();
             }
-            return new URLClassLoader(new URL[] {
-                    folder.getRoot().toURI().toURL(),
-            });
+            return URLClassLoader.newInstance(new URL[] { folder.getRoot().toURI().toURL(), });
         } catch (IOException e) {
             throw new AssertionError(e);
         }

@@ -238,7 +238,7 @@ public final class Yaess {
         file = findCustomProfile(file, definitions.getProperty(KEY_CUSTOM_PROFILE));
         try {
             definitions.remove(KEY_CUSTOM_PROFILE);
-            Map<String, String> env = new HashMap<String, String>();
+            Map<String, String> env = new HashMap<>();
             env.putAll(System.getenv());
             env.putAll(toMap(variables));
             result.context = new ProfileContext(loader, new VariableResolver(env));
@@ -300,7 +300,7 @@ public final class Yaess {
 
     private static Map<String, String> toMap(Properties p) {
         assert p != null;
-        Map<String, String> results = new TreeMap<String, String>();
+        Map<String, String> results = new TreeMap<>();
         for (Map.Entry<Object, Object> entry : p.entrySet()) {
             results.put((String) entry.getKey(), (String) entry.getValue());
         }

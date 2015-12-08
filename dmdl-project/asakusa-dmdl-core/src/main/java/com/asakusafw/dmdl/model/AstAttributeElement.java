@@ -42,10 +42,7 @@ public class AstAttributeElement extends AbstractAstNode {
      * @param value the holding value
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public AstAttributeElement(
-            Region region,
-            AstSimpleName name,
-            AstAttributeValue value) {
+    public AstAttributeElement(Region region, AstSimpleName name, AstAttributeValue value) {
         if (name == null) {
             throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
         }

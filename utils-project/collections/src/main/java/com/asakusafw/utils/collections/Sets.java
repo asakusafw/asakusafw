@@ -32,7 +32,7 @@ public final class Sets {
      * @return created set
      */
     public static <E> Set<E> create() {
-        return new HashSet<E>();
+        return new HashSet<>();
     }
 
     /**
@@ -43,7 +43,7 @@ public final class Sets {
      * @return created set
      */
     public static <E> Set<E> of(E elem) {
-        HashSet<E> result = new HashSet<E>();
+        HashSet<E> result = new HashSet<>();
         result.add(elem);
         return result;
     }
@@ -57,7 +57,7 @@ public final class Sets {
      * @return created set
      */
     public static <E> Set<E> of(E elem1, E elem2) {
-        HashSet<E> result = new HashSet<E>();
+        HashSet<E> result = new HashSet<>();
         result.add(elem1);
         result.add(elem2);
         return result;
@@ -73,7 +73,7 @@ public final class Sets {
      * @return created set
      */
     public static <E> Set<E> of(E elem1, E elem2, E elem3) {
-        HashSet<E> result = new HashSet<E>();
+        HashSet<E> result = new HashSet<>();
         result.add(elem1);
         result.add(elem2);
         result.add(elem3);
@@ -91,11 +91,12 @@ public final class Sets {
      * @param rest the rest elements
      * @return created set
      */
+    @SafeVarargs
     public static <E> Set<E> of(E elem1, E elem2, E elem3, E elem4, E... rest) {
         if (rest == null) {
             throw new IllegalArgumentException("rest must not be null"); //$NON-NLS-1$
         }
-        HashSet<E> result = new HashSet<E>();
+        HashSet<E> result = new HashSet<>();
         result.add(elem1);
         result.add(elem2);
         result.add(elem3);
@@ -115,7 +116,7 @@ public final class Sets {
         if (elements == null) {
             throw new IllegalArgumentException("elements must not be null"); //$NON-NLS-1$
         }
-        HashSet<E> result = new HashSet<E>();
+        HashSet<E> result = new HashSet<>();
         Collections.addAll(result, elements);
         return result;
     }
@@ -132,7 +133,7 @@ public final class Sets {
         if (elements == null) {
             throw new IllegalArgumentException("elements must not be null"); //$NON-NLS-1$
         }
-        HashSet<E> copy = new HashSet<E>();
+        HashSet<E> copy = new HashSet<>();
         for (E element : elements) {
             copy.add(element);
         }
@@ -158,7 +159,7 @@ public final class Sets {
         if (iter.hasNext() == false) {
             return Collections.singleton(first);
         }
-        HashSet<E> copy = new HashSet<E>();
+        HashSet<E> copy = new HashSet<>();
         copy.add(first);
         while (iter.hasNext()) {
             copy.add(iter.next());

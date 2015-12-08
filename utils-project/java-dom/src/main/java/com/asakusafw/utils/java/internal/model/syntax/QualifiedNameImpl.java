@@ -92,7 +92,7 @@ public final class QualifiedNameImpl extends ModelRoot implements QualifiedName 
 
     @Override
     public List<SimpleName> toNameList() {
-        LinkedList<SimpleName> result = new LinkedList<SimpleName>();
+        LinkedList<SimpleName> result = new LinkedList<>();
         result.addFirst(getSimpleName());
         Name current = getQualifier();
         while (current.getModelKind() == ModelKind.QUALIFIED_NAME) {

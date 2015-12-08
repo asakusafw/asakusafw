@@ -76,8 +76,7 @@ public class SequenceFileFormatTest {
         final int count = 10000;
         LocalFileSystem fs = FileSystem.getLocal(conf);
         Path path = new Path(folder.newFile("testing").toURI());
-        SequenceFile.Writer writer = SequenceFile.createWriter(fs, conf, path, LongWritable.class, Text.class);
-        try {
+        try (SequenceFile.Writer writer = SequenceFile.createWriter(fs, conf, path, LongWritable.class, Text.class)) {
             LongWritable k = new LongWritable();
             Text v = new Text();
             for (int i = 0; i < count; i++) {
@@ -85,18 +84,15 @@ public class SequenceFileFormatTest {
                 v.set("Hello, world at " + i);
                 writer.append(k, v);
             }
-        } finally {
-            writer.close();
         }
 
-        ModelInput<StringOption> in = format.createInput(
+        try (ModelInput<StringOption> in = format.createInput(
                 StringOption.class,
                 fs,
                 path,
                 0,
                 fs.getFileStatus(path).getLen(),
-                new Counter());
-        try {
+                new Counter())) {
             StringOption value = new StringOption();
             for (int i = 0; i < count; i++) {
                 String answer = "Hello, world at " + i;
@@ -104,8 +100,6 @@ public class SequenceFileFormatTest {
                 assertThat(value.getAsString(), is(answer));
             }
             assertThat("eof", in.readTo(value), is(false));
-        } finally {
-            in.close();
         }
     }
 
@@ -119,8 +113,7 @@ public class SequenceFileFormatTest {
         Random rand = new Random();
         LocalFileSystem fs = FileSystem.getLocal(conf);
         Path path = new Path(folder.newFile("testing").toURI());
-        SequenceFile.Writer writer = SequenceFile.createWriter(fs, conf, path, LongWritable.class, Text.class);
-        try {
+        try (SequenceFile.Writer writer = SequenceFile.createWriter(fs, conf, path, LongWritable.class, Text.class)) {
             LongWritable k = new LongWritable();
             Text v = new Text();
             for (int i = 0; i < count; i++) {
@@ -128,8 +121,6 @@ public class SequenceFileFormatTest {
                 v.set("Hello, world at " + i);
                 writer.append(k, v);
             }
-        } finally {
-            writer.close();
         }
 
         long fileLen = fs.getFileStatus(path).getLen();
@@ -140,22 +131,19 @@ public class SequenceFileFormatTest {
             while (offset < fileLen) {
                 long length = SequenceFile.SYNC_INTERVAL * (rand.nextInt(10) + 2);
                 length = Math.min(length, fileLen - offset);
-                ModelInput<StringOption> in = format.createInput(
+                try (ModelInput<StringOption> in = format.createInput(
                         StringOption.class,
                         fs,
                         path,
                         offset,
                         length,
-                        new Counter());
-                try {
+                        new Counter())) {
                     while (in.readTo(value)) {
                         String answer = "Hello, world at " + index;
                         assertThat(value.getAsString(), is(answer));
                         index++;
                     }
                     assertThat("eof", in.readTo(value), is(false));
-                } finally {
-                    in.close();
                 }
                 offset += length;
             }
@@ -178,8 +166,7 @@ public class SequenceFileFormatTest {
         final int count = 5;
         LocalFileSystem fs = FileSystem.getLocal(conf);
         Path path = new Path(folder.newFile("testing").toURI());
-        SequenceFile.Writer writer = SequenceFile.createWriter(fs, conf, path, LongWritable.class, Text.class);
-        try {
+        try (SequenceFile.Writer writer = SequenceFile.createWriter(fs, conf, path, LongWritable.class, Text.class)) {
             LongWritable k = new LongWritable();
             Text v = new Text();
             for (int i = 0; i < count; i++) {
@@ -187,8 +174,6 @@ public class SequenceFileFormatTest {
                 v.set(record);
                 writer.append(k, v);
             }
-        } finally {
-            writer.close();
         }
 
         long fileLen = fs.getFileStatus(path).getLen();
@@ -198,21 +183,18 @@ public class SequenceFileFormatTest {
         while (offset < fileLen) {
             long length = SequenceFile.SYNC_INTERVAL * 2;
             length = Math.min(length, fileLen - offset);
-            ModelInput<StringOption> in = format.createInput(
+            try (ModelInput<StringOption> in = format.createInput(
                     StringOption.class,
                     fs,
                     path,
                     offset,
                     length,
-                    new Counter());
-            try {
+                    new Counter())) {
                 while (in.readTo(value)) {
                     assertThat(value.get(), is(record));
                     index++;
                 }
                 assertThat("eof", in.readTo(value), is(false));
-            } finally {
-                in.close();
             }
             offset += length;
         }
@@ -228,17 +210,14 @@ public class SequenceFileFormatTest {
         LocalFileSystem fs = FileSystem.getLocal(conf);
         Path path = new Path(folder.newFile("testing").toURI());
         fs.create(path).close();
-        ModelInput<StringOption> in = format.createInput(
+        try (ModelInput<StringOption> in = format.createInput(
                 StringOption.class,
                 fs,
                 path,
                 0,
                 fs.getFileStatus(path).getLen(),
-                new Counter());
-        try {
+                new Counter())) {
             assertThat("eof", in.readTo(new StringOption()), is(false));
-        } finally {
-            in.close();
         }
     }
 
@@ -250,20 +229,18 @@ public class SequenceFileFormatTest {
     public void input_invalid() throws Exception {
         LocalFileSystem fs = FileSystem.getLocal(conf);
         Path path = new Path(folder.newFile("testing").toURI());
-        FSDataOutputStream output = fs.create(path);
-        try {
+        try (FSDataOutputStream output = fs.create(path)) {
             output.writeUTF("Hello, world!");
-        } finally {
-            output.close();
         }
-        ModelInput<StringOption> in = format.createInput(
+        try (ModelInput<StringOption> in = format.createInput(
                 StringOption.class,
                 fs,
                 path,
                 0,
                 fs.getFileStatus(path).getLen(),
-                new Counter());
-        in.close();
+                new Counter())) {
+            // do nothing
+        }
     }
 
     /**
@@ -276,19 +253,14 @@ public class SequenceFileFormatTest {
         final int count = 10000;
         LocalFileSystem fs = FileSystem.getLocal(conf);
         Path path = new Path(folder.newFile("testing").toURI());
-        ModelOutput<StringOption> out = format.createOutput(StringOption.class, fs, path, new Counter());
-        try {
+        try (ModelOutput<StringOption> out = format.createOutput(StringOption.class, fs, path, new Counter())) {
             StringOption value = new StringOption();
             for (int i = 0; i < count; i++) {
                 value.modify("Hello, world at " + i);
                 out.write(value);
             }
-        } finally {
-            out.close();
         }
-
-        SequenceFile.Reader reader = new SequenceFile.Reader(fs, path, conf);
-        try {
+        try (SequenceFile.Reader reader = new SequenceFile.Reader(fs, path, conf)) {
             LongWritable k = new LongWritable();
             Text v = new Text();
             for (int i = 0; i < count; i++) {
@@ -298,8 +270,6 @@ public class SequenceFileFormatTest {
                 assertThat(answer, v.toString(), is(answer));
             }
             assertThat("eof", reader.next(k), is(false));
-        } finally {
-            reader.close();
         }
     }
 
@@ -311,19 +281,13 @@ public class SequenceFileFormatTest {
     public void output_compressed() throws Exception {
         LocalFileSystem fs = FileSystem.getLocal(conf);
         Path path = new Path(folder.newFile("testing").toURI());
-        ModelOutput<StringOption> out = format.codec(new DefaultCodec())
-            .createOutput(StringOption.class, fs, path, new Counter());
-        try {
+        try (ModelOutput<StringOption> out = format.codec(new DefaultCodec())
+                .createOutput(StringOption.class, fs, path, new Counter())) {
             out.write(new StringOption("Hello, world!"));
-        } finally {
-            out.close();
         }
 
-        SequenceFile.Reader reader = new SequenceFile.Reader(fs, path, conf);
-        try {
+        try (SequenceFile.Reader reader = new SequenceFile.Reader(fs, path, conf)) {
             assertThat(reader.getCompressionCodec(), instanceOf(DefaultCodec.class));
-        } finally {
-            reader.close();
         }
     }
 
@@ -335,19 +299,12 @@ public class SequenceFileFormatTest {
     public void output_no_compressed() throws Exception {
         LocalFileSystem fs = FileSystem.getLocal(conf);
         Path path = new Path(folder.newFile("testing.gz").toURI());
-        ModelOutput<StringOption> out = format.codec(null)
-            .createOutput(StringOption.class, fs, path, new Counter());
-        try {
+        try (ModelOutput<StringOption> out = format.codec(null)
+                .createOutput(StringOption.class, fs, path, new Counter())) {
             out.write(new StringOption("Hello, world!"));
-        } finally {
-            out.close();
         }
-
-        SequenceFile.Reader reader = new SequenceFile.Reader(fs, path, conf);
-        try {
+        try (SequenceFile.Reader reader = new SequenceFile.Reader(fs, path, conf)) {
             assertThat(reader.getCompressionCodec(), is(nullValue()));
-        } finally {
-            reader.close();
         }
     }
 
@@ -360,18 +317,11 @@ public class SequenceFileFormatTest {
         LocalFileSystem fs = FileSystem.getLocal(conf);
         Path path = new Path(folder.newFile("testing").toURI());
         format.getConf().set(SequenceFileFormat.KEY_COMPRESSION_CODEC, DefaultCodec.class.getName());
-        ModelOutput<StringOption> out = format.createOutput(StringOption.class, fs, path, new Counter());
-        try {
+        try (ModelOutput<StringOption> out = format.createOutput(StringOption.class, fs, path, new Counter())) {
             out.write(new StringOption("Hello, world!"));
-        } finally {
-            out.close();
         }
-
-        SequenceFile.Reader reader = new SequenceFile.Reader(fs, path, conf);
-        try {
+        try (SequenceFile.Reader reader = new SequenceFile.Reader(fs, path, conf)) {
             assertThat(reader.getCompressionCodec(), instanceOf(DefaultCodec.class));
-        } finally {
-            reader.close();
         }
     }
 
@@ -384,18 +334,11 @@ public class SequenceFileFormatTest {
         LocalFileSystem fs = FileSystem.getLocal(conf);
         Path path = new Path(folder.newFile("testing").toURI());
         format.getConf().set(SequenceFileFormat.KEY_COMPRESSION_CODEC, "__INVALID__");
-        ModelOutput<StringOption> out = format.createOutput(StringOption.class, fs, path, new Counter());
-        try {
+        try (ModelOutput<StringOption> out = format.createOutput(StringOption.class, fs, path, new Counter())) {
             out.write(new StringOption("Hello, world!"));
-        } finally {
-            out.close();
         }
-
-        SequenceFile.Reader reader = new SequenceFile.Reader(fs, path, conf);
-        try {
+        try (SequenceFile.Reader reader = new SequenceFile.Reader(fs, path, conf)) {
             assertThat(reader.getCompressionCodec(), is(nullValue()));
-        } finally {
-            reader.close();
         }
     }
 

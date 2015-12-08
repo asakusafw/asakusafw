@@ -34,12 +34,11 @@ public class CsvWriterTest {
     @Test
     public void simple() throws Exception {
         StringBuilder buf = new StringBuilder();
-        CsvWriter writer = new CsvWriter(buf);
-        writer.putField("Hello");
-        writer.putField("World");
-        writer.putEndOfRecord();
-        writer.close();
-
+        try (CsvWriter writer = new CsvWriter(buf)) {
+            writer.putField("Hello");
+            writer.putField("World");
+            writer.putEndOfRecord();
+        }
         assertThat(buf.toString(), is("Hello,World\r\n"));
     }
 
@@ -50,21 +49,20 @@ public class CsvWriterTest {
     @Test
     public void multiple() throws Exception {
         StringBuilder buf = new StringBuilder();
-        CsvWriter writer = new CsvWriter(buf);
-        writer.putField("1-1");
-        writer.putField("1-2");
-        writer.putField("1-3");
-        writer.putEndOfRecord();
-        writer.putField("2-1");
-        writer.putField("2-2");
-        writer.putField("2-3");
-        writer.putEndOfRecord();
-        writer.putField("3-1");
-        writer.putField("3-2");
-        writer.putField("3-3");
-        writer.putEndOfRecord();
-        writer.close();
-
+        try (CsvWriter writer = new CsvWriter(buf)) {
+            writer.putField("1-1");
+            writer.putField("1-2");
+            writer.putField("1-3");
+            writer.putEndOfRecord();
+            writer.putField("2-1");
+            writer.putField("2-2");
+            writer.putField("2-3");
+            writer.putEndOfRecord();
+            writer.putField("3-1");
+            writer.putField("3-2");
+            writer.putField("3-3");
+            writer.putEndOfRecord();
+        }
         assertThat(buf.toString(), is("1-1,1-2,1-3\r\n2-1,2-2,2-3\r\n3-1,3-2,3-3\r\n"));
     }
 
@@ -75,13 +73,12 @@ public class CsvWriterTest {
     @Test
     public void escape() throws Exception {
         StringBuilder buf = new StringBuilder();
-        CsvWriter writer = new CsvWriter(buf);
-        writer.putField("Hello, world!");
-        writer.putField("He said \"Hello!\".");
-        writer.putField("Name:\r\n  Value");
-        writer.putEndOfRecord();
-        writer.close();
-
+        try (CsvWriter writer = new CsvWriter(buf)) {
+            writer.putField("Hello, world!");
+            writer.putField("He said \"Hello!\".");
+            writer.putField("Name:\r\n  Value");
+            writer.putEndOfRecord();
+        }
         assertThat(buf.toString(), is("\"Hello, world!\",\"He said \"\"Hello!\"\".\",\"Name:\r\n  Value\"\r\n"));
     }
 }

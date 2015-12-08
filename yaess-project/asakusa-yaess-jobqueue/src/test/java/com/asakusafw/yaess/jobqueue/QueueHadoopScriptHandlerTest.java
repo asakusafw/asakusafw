@@ -273,7 +273,7 @@ public class QueueHadoopScriptHandlerTest {
     }
 
     QueueHadoopScriptHandler create() {
-        ServiceProfile<QueueHadoopScriptHandler> profile = new ServiceProfile<QueueHadoopScriptHandler>(
+        ServiceProfile<QueueHadoopScriptHandler> profile = new ServiceProfile<>(
                 "testing",
                 QueueHadoopScriptHandler.class,
                 map("prop.s", "service", "1.url", "http://example.com"),
@@ -286,28 +286,29 @@ public class QueueHadoopScriptHandlerTest {
     }
 
     private HadoopScript script() {
-        Map<String, String> prop = new HashMap<String, String>();
+        Map<String, String> prop = new HashMap<>();
         prop.put("p", "prop");
 
-        Map<String, String> env = new HashMap<String, String>();
+        Map<String, String> env = new HashMap<>();
         env.put("e", "env");
 
         return new HadoopScript("s", Collections.<String>emptySet(), "Cls", prop, env);
     }
 
     private ExecutionContext context() {
-        Map<String, String> args = new HashMap<String, String>();
+        Map<String, String> args = new HashMap<>();
         args.put("a", "arg");
         return new ExecutionContext("b", "f", "e", ExecutionPhase.MAIN, args);
     }
 
-    private <T> List<T> list(T... values) {
+    @SafeVarargs
+    private static <T> List<T> list(T... values) {
         return Arrays.asList(values);
     }
 
     private Map<String, String> map(String... keyValuePairs) {
         assert keyValuePairs.length % 2 == 0;
-        Map<String, String> results = new HashMap<String, String>();
+        Map<String, String> results = new HashMap<>();
         for (int i = 0; i < keyValuePairs.length; i += 2) {
             results.put(keyValuePairs[i + 0], keyValuePairs[i + 1]);
         }
@@ -318,7 +319,7 @@ public class QueueHadoopScriptHandlerTest {
 
         volatile int count;
 
-        final Map<String, JobScript> registered = new ConcurrentHashMap<String, JobScript>();
+        final Map<String, JobScript> registered = new ConcurrentHashMap<>();
 
         private final JobId jobId;
 
@@ -328,7 +329,7 @@ public class QueueHadoopScriptHandlerTest {
 
         public MockJobClient(String id, JobStatus.Kind... sequence) {
             this.jobId = id == null ? null : new JobId(id);
-            this.sequence = new LinkedList<JobStatus>();
+            this.sequence = new LinkedList<>();
             for (JobStatus.Kind kind : sequence) {
                 JobStatus result = new JobStatus();
                 result.setKind(kind);

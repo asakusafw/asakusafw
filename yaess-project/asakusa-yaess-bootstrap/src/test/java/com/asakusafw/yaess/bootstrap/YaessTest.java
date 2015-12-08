@@ -67,7 +67,7 @@ public class YaessTest {
         File profile = builder.getProfile();
         File script = builder.getScript();
 
-        List<String> arguments = new ArrayList<String>();
+        List<String> arguments = new ArrayList<>();
         Collections.addAll(arguments, "-profile", profile.getAbsolutePath());
         Collections.addAll(arguments, "-script", script.getAbsolutePath());
         Collections.addAll(arguments, "-batch", "tbatch");
@@ -91,7 +91,7 @@ public class YaessTest {
         File profile = builder.getProfile();
         File script = builder.getScript();
 
-        List<String> arguments = new ArrayList<String>();
+        List<String> arguments = new ArrayList<>();
         Collections.addAll(arguments, "-profile", profile.getAbsolutePath());
         Collections.addAll(arguments, "-script", script.getAbsolutePath());
         Collections.addAll(arguments, "-batch", "tbatch");
@@ -117,7 +117,7 @@ public class YaessTest {
         File profile = builder.getProfile();
         File script = builder.getScript();
 
-        List<String> arguments = new ArrayList<String>();
+        List<String> arguments = new ArrayList<>();
         Collections.addAll(arguments, "-profile", profile.getAbsolutePath());
         Collections.addAll(arguments, "-script", script.getAbsolutePath());
         Collections.addAll(arguments, "-batch", "tbatch");
@@ -144,7 +144,7 @@ public class YaessTest {
         File profile = builder.getProfile();
         File script = builder.getScript();
 
-        List<String> arguments = new ArrayList<String>();
+        List<String> arguments = new ArrayList<>();
         Collections.addAll(arguments, "-profile", profile.getAbsolutePath());
         Collections.addAll(arguments, "-script", script.getAbsolutePath());
         Collections.addAll(arguments, "-batch", "tbatch");
@@ -174,7 +174,7 @@ public class YaessTest {
         File profile = builder.getProfile();
         File script = builder.getScript();
 
-        List<String> arguments = new ArrayList<String>();
+        List<String> arguments = new ArrayList<>();
         Collections.addAll(arguments, "-profile", profile.getAbsolutePath());
         Collections.addAll(arguments, "-script", script.getAbsolutePath());
         Collections.addAll(arguments, "-batch", "tbatch");
@@ -200,7 +200,7 @@ public class YaessTest {
         File profile = builder.getProfile();
         File script = builder.getScript();
 
-        List<String> arguments = new ArrayList<String>();
+        List<String> arguments = new ArrayList<>();
         Collections.addAll(arguments, "-profile", profile.getAbsolutePath() + ".MISSING");
         Collections.addAll(arguments, "-script", script.getAbsolutePath());
         Collections.addAll(arguments, "-batch", "tbatch");
@@ -228,7 +228,7 @@ public class YaessTest {
 
         File script = builder.getScript();
 
-        List<String> arguments = new ArrayList<String>();
+        List<String> arguments = new ArrayList<>();
         Collections.addAll(arguments, "-profile", profile.getAbsolutePath());
         Collections.addAll(arguments, "-script", script.getAbsolutePath());
         Collections.addAll(arguments, "-batch", "tbatch");
@@ -250,7 +250,7 @@ public class YaessTest {
         File profile = builder.getProfile();
         File script = builder.getScript();
 
-        List<String> arguments = new ArrayList<String>();
+        List<String> arguments = new ArrayList<>();
         Collections.addAll(arguments, "-profile", profile.getAbsolutePath());
         Collections.addAll(arguments, "-script", script.getAbsolutePath() + ".MISSING");
         Collections.addAll(arguments, "-batch", "tbatch");
@@ -268,7 +268,7 @@ public class YaessTest {
         File profile = builder.getProfile();
         File script = builder.getScript();
 
-        List<String> arguments = new ArrayList<String>();
+        List<String> arguments = new ArrayList<>();
         Collections.addAll(arguments, "-profile", profile.getAbsolutePath());
         Collections.addAll(arguments, "-script", script.getAbsolutePath());
         Collections.addAll(arguments, "-batch", "tbatch");
@@ -289,7 +289,7 @@ public class YaessTest {
         File profile = builder.getProfile();
         File script = builder.getScript();
 
-        List<String> arguments = new ArrayList<String>();
+        List<String> arguments = new ArrayList<>();
         Collections.addAll(arguments, "-profile", profile.getAbsolutePath());
         Collections.addAll(arguments, "-script", script.getAbsolutePath());
         Collections.addAll(arguments, "-batch", "tbatch");
@@ -308,7 +308,7 @@ public class YaessTest {
         File profile = builder.getProfile();
         File script = builder.getScript();
 
-        List<String> arguments = new ArrayList<String>();
+        List<String> arguments = new ArrayList<>();
         Collections.addAll(arguments, "-profile", profile.getAbsolutePath());
         Collections.addAll(arguments, "-script", script.getAbsolutePath());
         Collections.addAll(arguments, "-batch", "tbatch");
@@ -327,7 +327,7 @@ public class YaessTest {
         File profile = builder.getProfile();
         File script = builder.getScript();
 
-        List<String> arguments = new ArrayList<String>();
+        List<String> arguments = new ArrayList<>();
         Collections.addAll(arguments, "-profile", profile.getAbsolutePath());
         Collections.addAll(arguments, "-script", script.getAbsolutePath());
         Collections.addAll(arguments, "-batch", "tbatch");
@@ -346,7 +346,7 @@ public class YaessTest {
         File profile = builder.getProfile();
         File script = builder.getScript();
 
-        List<String> arguments = new ArrayList<String>();
+        List<String> arguments = new ArrayList<>();
         Collections.addAll(arguments, "-profile", profile.getAbsolutePath());
         Collections.addAll(arguments, "-script", script.getAbsolutePath());
         Collections.addAll(arguments, "-batch", "tbatch");
@@ -360,7 +360,7 @@ public class YaessTest {
         assertThat(flow(records, "right").size(), is(greaterThan(0)));
         assertThat(flow(records, "last").size(), is(greaterThan(0)));
 
-        Set<String> execs = new HashSet<String>();
+        Set<String> execs = new HashSet<>();
         execs.add(flow(records, "testing").get(0).context.getExecutionId());
         execs.add(flow(records, "left").get(0).context.getExecutionId());
         execs.add(flow(records, "right").get(0).context.getExecutionId());
@@ -378,7 +378,7 @@ public class YaessTest {
         File profile = builder.getProfile();
         File script = builder.getScript();
 
-        List<String> arguments = new ArrayList<String>();
+        List<String> arguments = new ArrayList<>();
         Collections.addAll(arguments, "-profile", profile.getAbsolutePath());
         Collections.addAll(arguments, "-script", script.getAbsolutePath());
         Collections.addAll(arguments, "-batch", "tbatch");
@@ -408,7 +408,7 @@ public class YaessTest {
         File profile = builder.getProfile();
         File script = builder.getScript();
 
-        List<String> arguments = new ArrayList<String>();
+        List<String> arguments = new ArrayList<>();
         Collections.addAll(arguments, "-profile", profile.getAbsolutePath());
         Collections.addAll(arguments, "-script", script.getAbsolutePath());
         Collections.addAll(arguments, "-batch", "tbatch");
@@ -443,7 +443,7 @@ public class YaessTest {
         File profile = builder.getProfile();
         File script = builder.getScript();
 
-        List<String> arguments = new ArrayList<String>();
+        List<String> arguments = new ArrayList<>();
         Collections.addAll(arguments, "-profile", profile.getAbsolutePath());
         Collections.addAll(arguments, "-script", script.getAbsolutePath());
         Collections.addAll(arguments, "-batch", "tbatch");
@@ -469,7 +469,7 @@ public class YaessTest {
      */
     @Test
     public void execute_invalid_config() throws Exception {
-        List<String> arguments = new ArrayList<String>();
+        List<String> arguments = new ArrayList<>();
         int exit = Yaess.execute(arguments.toArray(new String[arguments.size()]));
         assertThat(exit, is(not(0)));
     }
@@ -486,7 +486,7 @@ public class YaessTest {
         File profile = builder.getProfile();
         File script = builder.getScript();
 
-        List<String> arguments = new ArrayList<String>();
+        List<String> arguments = new ArrayList<>();
         Collections.addAll(arguments, "-profile", profile.getAbsolutePath());
         Collections.addAll(arguments, "-script", script.getAbsolutePath());
         Collections.addAll(arguments, "-batch", "tbatch");
@@ -499,7 +499,7 @@ public class YaessTest {
     }
 
     private List<Record> flow(List<Record> records, String flowId) {
-        List<Record> results = new ArrayList<Record>();
+        List<Record> results = new ArrayList<>();
         for (Record r : records) {
             if (r.context.getFlowId().equals(flowId)) {
                 results.add(r);
@@ -509,7 +509,7 @@ public class YaessTest {
     }
 
     private List<Record> phase(List<Record> records, String flowId, ExecutionPhase phase) {
-        List<Record> results = new ArrayList<Record>();
+        List<Record> results = new ArrayList<>();
         for (Record r : flow(records, flowId)) {
             if (r.context.getPhase() == phase) {
                 results.add(r);
@@ -539,7 +539,7 @@ public class YaessTest {
             this.lockDir = new File(working, "lock");
             this.tempDir = new File(working, "properties");
             this.trackingId = ExecutionTracker.Id.get("testing");
-            this.replacement = new HashMap<String, String>();
+            this.replacement = new HashMap<>();
             this.replacement.put("home", asakusaHome.getAbsolutePath());
             this.replacement.put("scope", ExecutionLock.Scope.WORLD.getSymbol());
             this.replacement.put("lock", lockDir.getAbsolutePath());
@@ -595,23 +595,17 @@ public class YaessTest {
         private File createPropertiesFile(String name, Properties properties) throws IOException {
             tempDir.mkdirs();
             File file = new File(tempDir, name);
-            FileOutputStream out = new FileOutputStream(file);
-            try {
+            try (FileOutputStream out = new FileOutputStream(file)) {
                 properties.store(out, name);
-            } finally {
-                out.close();
             }
             return file;
         }
 
         private Properties load(String name) throws IOException {
             Properties result = new Properties();
-            InputStream in = getClass().getResourceAsStream(name);
-            assertThat(in, is(notNullValue()));
-            try {
+            try (InputStream in = getClass().getResourceAsStream(name)) {
+                assertThat(in, is(notNullValue()));
                 result.load(in);
-            } finally {
-                in.close();
             }
             return result;
         }

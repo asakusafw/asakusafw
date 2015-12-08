@@ -126,7 +126,7 @@ public class DirectIoOperatorTesterTest {
     }
 
     static List<StringBuilder> objects(String...values) {
-        List<StringBuilder> results = new ArrayList<StringBuilder>();
+        List<StringBuilder> results = new ArrayList<>();
         for (String s : values) {
             results.add(new StringBuilder(s));
         }
@@ -159,11 +159,11 @@ public class DirectIoOperatorTesterTest {
     }
 
     private Set<String> set(String... values) {
-        return new HashSet<String>(Arrays.asList(values));
+        return new HashSet<>(Arrays.asList(values));
     }
 
     private Set<String> consume(ModelInput<StringBuilder> input) throws IOException {
-        Set<String> results = new HashSet<String>();
+        Set<String> results = new HashSet<>();
         StringBuilder buf = new StringBuilder();
         while (input.readTo(buf)) {
             results.add(buf.toString());

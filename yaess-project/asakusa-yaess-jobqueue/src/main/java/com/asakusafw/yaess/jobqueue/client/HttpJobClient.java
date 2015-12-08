@@ -17,7 +17,6 @@ package com.asakusafw.yaess.jobqueue.client;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.reflect.Field;
@@ -301,9 +300,7 @@ public class HttpJobClient implements JobClient {
                     response.getStatusLine()));
         }
 
-        InputStream input = entity.getContent();
-        try {
-            Reader reader = new BufferedReader(new InputStreamReader(input, ENCODING));
+        try (Reader reader = new BufferedReader(new InputStreamReader(entity.getContent(), ENCODING));) {
             JsonParser parser = new JsonParser();
             JsonElement element = parser.parse(reader);
             if ((element instanceof JsonObject) == false) {
@@ -323,8 +320,6 @@ public class HttpJobClient implements JobClient {
                     "Response message was invalid (not JSON): {0} ({1})",
                     request.getURI(),
                     response.getStatusLine()), e);
-        } finally {
-            input.close();
         }
     }
 

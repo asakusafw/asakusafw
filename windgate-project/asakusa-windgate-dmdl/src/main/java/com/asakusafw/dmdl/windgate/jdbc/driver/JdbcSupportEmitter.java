@@ -188,7 +188,7 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
     }
 
     private List<String> getColumnNames(ModelDeclaration model) {
-        List<String> results = new ArrayList<String>();
+        List<String> results = new ArrayList<>();
         for (PropertyDeclaration property : model.getDeclaredProperties()) {
             JdbcColumnTrait columnTrait = property.getTrait(JdbcColumnTrait.class);
             if (columnTrait != null) {

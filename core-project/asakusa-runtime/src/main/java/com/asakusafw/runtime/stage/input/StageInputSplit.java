@@ -43,7 +43,7 @@ public class StageInputSplit extends InputSplit implements Writable, Configurabl
 
     private Class<? extends Mapper<?, ?, ?, ?>> mapperClass;
 
-    private List<Source> sources = new ArrayList<Source>();
+    private List<Source> sources = new ArrayList<>();
 
     private Configuration configuration;
 
@@ -127,8 +127,8 @@ public class StageInputSplit extends InputSplit implements Writable, Configurabl
         if (locations != null) {
             return locations.clone();
         }
-        List<String> results = new ArrayList<String>();
-        Set<String> saw = new HashSet<String>();
+        List<String> results = new ArrayList<>();
+        Set<String> saw = new HashSet<>();
         for (Source source : sources) {
             String[] elements = source.getSplit().getLocations();
             if (elements != null) {
@@ -211,7 +211,7 @@ public class StageInputSplit extends InputSplit implements Writable, Configurabl
     public void readFields(DataInput in) throws IOException {
         this.mapperClass = (Class<? extends Mapper<?, ?, ?, ?>>) readClassByName(Mapper.class, in);
         int sourceCount = WritableUtils.readVInt(in);
-        List<Source> newSources = new ArrayList<Source>();
+        List<Source> newSources = new ArrayList<>();
         for (int i = 0; i < sourceCount; i++) {
             Class<? extends InputFormat<?, ?>> formatClass =
                 (Class<? extends InputFormat<?, ?>>) readClassByName(InputFormat.class, in);

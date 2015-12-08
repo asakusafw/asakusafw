@@ -58,8 +58,7 @@ public class IrDocMethod extends IrDocMember {
         if (parameters == null) {
             throw new IllegalArgumentException("parameters"); //$NON-NLS-1$
         }
-        this.parameters = Collections.unmodifiableList(
-            new ArrayList<IrDocMethodParameter>(parameters));
+        this.parameters = Collections.unmodifiableList(new ArrayList<>(parameters));
     }
 
     @Override

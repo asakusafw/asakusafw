@@ -42,7 +42,7 @@ public class SingleLinkedListTest {
      */
     @Test
     public void new_empty() {
-        SingleLinkedList<String> list = new SingleLinkedList<String>();
+        SingleLinkedList<String> list = new SingleLinkedList<>();
         assertThat(list.size(), is(0));
     }
 
@@ -52,7 +52,7 @@ public class SingleLinkedListTest {
     @Test
     public void new_list() {
         List<String> from = Arrays.asList("a", "b", "c");
-        SingleLinkedList<String> list = new SingleLinkedList<String>(from);
+        SingleLinkedList<String> list = new SingleLinkedList<>(from);
         assertThat(list.size(), is(3));
         assertThat(list.get(0), is("a"));
         assertThat(list.get(1), is("b"));
@@ -65,13 +65,13 @@ public class SingleLinkedListTest {
     @Test
     public void new_collection() {
         List<String> from = Arrays.asList("a", "b", "c");
-        SingleLinkedList<String> list = new SingleLinkedList<String>(new HashSet<String>(from));
+        SingleLinkedList<String> list = new SingleLinkedList<>(new HashSet<>(from));
         assertThat(list.size(), is(3));
-        Set<String> to = new HashSet<String>();
+        Set<String> to = new HashSet<>();
         to.add(list.get(0));
         to.add(list.get(1));
         to.add(list.get(2));
-        assertThat(to, is((Object) new HashSet<String>(from)));
+        assertThat(to, is((Object) new HashSet<>(from)));
     }
 
     /**
@@ -80,17 +80,17 @@ public class SingleLinkedListTest {
     @Test
     public void isEmpty() {
         {
-            SingleLinkedList<String> list = new SingleLinkedList<String>();
+            SingleLinkedList<String> list = new SingleLinkedList<>();
             assertTrue(list.isEmpty());
         }
         {
             List<String> from = Arrays.asList("a");
-            SingleLinkedList<String> list = new SingleLinkedList<String>(from);
+            SingleLinkedList<String> list = new SingleLinkedList<>(from);
             assertFalse(list.isEmpty());
         }
         {
             List<String> from = Arrays.asList("a", "b", "c");
-            SingleLinkedList<String> list = new SingleLinkedList<String>(from);
+            SingleLinkedList<String> list = new SingleLinkedList<>(from);
             assertFalse(list.isEmpty());
         }
     }
@@ -101,17 +101,17 @@ public class SingleLinkedListTest {
     @Test
     public void size() {
         {
-            SingleLinkedList<String> list = new SingleLinkedList<String>();
+            SingleLinkedList<String> list = new SingleLinkedList<>();
             assertThat(list.size(), is(0));
         }
         {
             List<String> from = Arrays.asList("a");
-            SingleLinkedList<String> list = new SingleLinkedList<String>(from);
+            SingleLinkedList<String> list = new SingleLinkedList<>(from);
             assertThat(list.size(), is(1));
         }
         {
             List<String> from = Arrays.asList("a", "b", "c");
-            SingleLinkedList<String> list = new SingleLinkedList<String>(from);
+            SingleLinkedList<String> list = new SingleLinkedList<>(from);
             assertThat(list.size(), is(3));
         }
     }
@@ -122,7 +122,7 @@ public class SingleLinkedListTest {
     @Test
     public void concat() {
         {
-            SingleLinkedList<String> list0 = new SingleLinkedList<String>();
+            SingleLinkedList<String> list0 = new SingleLinkedList<>();
             assertThat(list0.size(), is(0));
 
             SingleLinkedList<String> list1 = list0.concat("a");
@@ -152,7 +152,7 @@ public class SingleLinkedListTest {
         }
         {
             List<String> from = Arrays.asList("a", "b", "c");
-            SingleLinkedList<String> list = new SingleLinkedList<String>(from);
+            SingleLinkedList<String> list = new SingleLinkedList<>(from);
             assertThat(list.size(), is(3));
             assertThat(list.get(0), is("a"));
             assertThat(list.get(1), is("b"));
@@ -178,11 +178,11 @@ public class SingleLinkedListTest {
     public void first() {
         {
             List<String> from = Arrays.asList("a", "b", "c");
-            SingleLinkedList<String> list = new SingleLinkedList<String>(from);
+            SingleLinkedList<String> list = new SingleLinkedList<>(from);
             assertThat(list.first(), is("a"));
         }
         {
-            SingleLinkedList<String> list = new SingleLinkedList<String>();
+            SingleLinkedList<String> list = new SingleLinkedList<>();
             try {
                 list.first();
                 fail();
@@ -199,14 +199,14 @@ public class SingleLinkedListTest {
     public void rest() {
         {
             List<String> from = Arrays.asList("a", "b", "c");
-            SingleLinkedList<String> list = new SingleLinkedList<String>(from);
+            SingleLinkedList<String> list = new SingleLinkedList<>(from);
             SingleLinkedList<String> rest = list.rest();
             assertThat(rest.size(), is(2));
             assertThat(rest.get(0), is("b"));
             assertThat(rest.get(1), is("c"));
         }
         {
-            SingleLinkedList<String> list = new SingleLinkedList<String>();
+            SingleLinkedList<String> list = new SingleLinkedList<>();
             try {
                 list.rest();
                 fail();
@@ -223,7 +223,7 @@ public class SingleLinkedListTest {
     public void iterator() {
         {
             List<String> from = Arrays.asList("a", "b", "c");
-            SingleLinkedList<String> list = new SingleLinkedList<String>(from);
+            SingleLinkedList<String> list = new SingleLinkedList<>(from);
             Iterator<String> iter = list.iterator();
             assertTrue(iter.hasNext());
             assertThat(iter.next(), is("a"));
@@ -241,7 +241,7 @@ public class SingleLinkedListTest {
             }
         }
         {
-            SingleLinkedList<String> list = new SingleLinkedList<String>();
+            SingleLinkedList<String> list = new SingleLinkedList<>();
             Iterator<String> iter = list.iterator();
             assertFalse(iter.hasNext());
             try {
@@ -260,8 +260,8 @@ public class SingleLinkedListTest {
     public void fill() {
         {
             List<String> from = Arrays.asList("a", "b", "c");
-            SingleLinkedList<String> list = new SingleLinkedList<String>(from);
-            List<String> to = new ArrayList<String>();
+            SingleLinkedList<String> list = new SingleLinkedList<>(from);
+            List<String> to = new ArrayList<>();
             list.fill(to);
             assertThat(list.size(), is(3));
             assertThat(list.get(0), is("a"));
@@ -271,8 +271,8 @@ public class SingleLinkedListTest {
             assertThat(to, is(from));
         }
         {
-            SingleLinkedList<String> list = new SingleLinkedList<String>();
-            List<String> to = new ArrayList<String>();
+            SingleLinkedList<String> list = new SingleLinkedList<>();
+            List<String> to = new ArrayList<>();
             list.fill(to);
             assertThat(list.size(), is(0));
             assertThat(to.size(), is(0));
@@ -285,50 +285,50 @@ public class SingleLinkedListTest {
     @Test
     public void equals() {
         {
-            SingleLinkedList<?> a = new SingleLinkedList<String>(Arrays.<String>asList());
-            SingleLinkedList<?> b = new SingleLinkedList<String>(Arrays.<String>asList());
+            SingleLinkedList<?> a = new SingleLinkedList<>(Arrays.<String>asList());
+            SingleLinkedList<?> b = new SingleLinkedList<>(Arrays.<String>asList());
             assertTrue(a.equals(b));
             assertTrue(b.equals(a));
         }
         {
-            SingleLinkedList<?> a = new SingleLinkedList<String>(Arrays.asList("a"));
-            SingleLinkedList<?> b = new SingleLinkedList<String>(Arrays.<String>asList());
+            SingleLinkedList<?> a = new SingleLinkedList<>(Arrays.asList("a"));
+            SingleLinkedList<?> b = new SingleLinkedList<>(Arrays.<String>asList());
             assertFalse(a.equals(b));
             assertFalse(b.equals(a));
         }
         {
-            SingleLinkedList<?> a = new SingleLinkedList<String>(Arrays.asList("a"));
-            SingleLinkedList<?> b = new SingleLinkedList<String>(Arrays.asList("a"));
+            SingleLinkedList<?> a = new SingleLinkedList<>(Arrays.asList("a"));
+            SingleLinkedList<?> b = new SingleLinkedList<>(Arrays.asList("a"));
             assertTrue(a.equals(b));
             assertTrue(b.equals(a));
         }
         {
-            SingleLinkedList<?> a = new SingleLinkedList<String>(Arrays.asList("a"));
-            SingleLinkedList<?> b = new SingleLinkedList<String>(Arrays.asList("b"));
+            SingleLinkedList<?> a = new SingleLinkedList<>(Arrays.asList("a"));
+            SingleLinkedList<?> b = new SingleLinkedList<>(Arrays.asList("b"));
             assertFalse(a.equals(b));
             assertFalse(b.equals(a));
         }
         {
-            SingleLinkedList<?> a = new SingleLinkedList<String>(Arrays.asList("a", "b"));
-            SingleLinkedList<?> b = new SingleLinkedList<String>(Arrays.asList("b"));
+            SingleLinkedList<?> a = new SingleLinkedList<>(Arrays.asList("a", "b"));
+            SingleLinkedList<?> b = new SingleLinkedList<>(Arrays.asList("b"));
             assertFalse(a.equals(b));
             assertFalse(b.equals(a));
         }
         {
-            SingleLinkedList<?> a = new SingleLinkedList<String>(Arrays.asList("a", "b"));
-            SingleLinkedList<?> b = new SingleLinkedList<String>(Arrays.asList("a", "b"));
+            SingleLinkedList<?> a = new SingleLinkedList<>(Arrays.asList("a", "b"));
+            SingleLinkedList<?> b = new SingleLinkedList<>(Arrays.asList("a", "b"));
             assertTrue(a.equals(b));
             assertTrue(b.equals(a));
         }
         {
-            SingleLinkedList<?> a = new SingleLinkedList<String>(Arrays.asList("a", "b", "c"));
-            SingleLinkedList<?> b = new SingleLinkedList<String>(Arrays.asList("a", "b"));
+            SingleLinkedList<?> a = new SingleLinkedList<>(Arrays.asList("a", "b", "c"));
+            SingleLinkedList<?> b = new SingleLinkedList<>(Arrays.asList("a", "b"));
             assertFalse(a.equals(b));
             assertFalse(b.equals(a));
         }
         {
-            SingleLinkedList<?> a = new SingleLinkedList<String>(Arrays.asList("a", "b", "c"));
-            SingleLinkedList<?> b = new SingleLinkedList<String>(Arrays.asList("a", "b", "c"));
+            SingleLinkedList<?> a = new SingleLinkedList<>(Arrays.asList("a", "b", "c"));
+            SingleLinkedList<?> b = new SingleLinkedList<>(Arrays.asList("a", "b", "c"));
             assertTrue(a.equals(b));
             assertTrue(b.equals(a));
         }
@@ -341,31 +341,39 @@ public class SingleLinkedListTest {
     @Test
     public void serialize() throws Exception {
         {
-            SingleLinkedList<String> list = new SingleLinkedList<String>();
+            SingleLinkedList<String> list = new SingleLinkedList<>();
 
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            ObjectOutputStream oo = new ObjectOutputStream(out);
-            oo.writeObject(list);
-            oo.close();
-
-            ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-            ObjectInputStream oi = new ObjectInputStream(in);
-            SingleLinkedList<?> serialized = (SingleLinkedList<?>) oi.readObject();
+            byte[] bytes;
+            try (ByteArrayOutputStream out = new ByteArrayOutputStream();
+                    ObjectOutputStream oo = new ObjectOutputStream(out)) {
+                oo.writeObject(list);
+                oo.flush();
+                bytes = out.toByteArray();
+            }
+            SingleLinkedList<?> serialized;
+            try (ByteArrayInputStream in = new ByteArrayInputStream(bytes);
+                    ObjectInputStream oi = new ObjectInputStream(in)) {
+                serialized = (SingleLinkedList<?>) oi.readObject();
+            }
 
             assertThat(serialized.size(), is(0));
         }
         {
             List<String> from = Arrays.asList("a", "b", "c");
-            SingleLinkedList<String> list = new SingleLinkedList<String>(from);
+            SingleLinkedList<String> list = new SingleLinkedList<>(from);
 
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            ObjectOutputStream oo = new ObjectOutputStream(out);
-            oo.writeObject(list);
-            oo.close();
-
-            ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-            ObjectInputStream oi = new ObjectInputStream(in);
-            SingleLinkedList<?> serialized = (SingleLinkedList<?>) oi.readObject();
+            byte[] bytes;
+            try (ByteArrayOutputStream out = new ByteArrayOutputStream();
+                    ObjectOutputStream oo = new ObjectOutputStream(out)) {
+                oo.writeObject(list);
+                oo.flush();
+                bytes = out.toByteArray();
+            }
+            SingleLinkedList<?> serialized;
+            try (ByteArrayInputStream in = new ByteArrayInputStream(bytes);
+                    ObjectInputStream oi = new ObjectInputStream(in)) {
+                serialized = (SingleLinkedList<?>) oi.readObject();
+            }
 
             assertThat(serialized.size(), is(3));
             assertThat(serialized.get(0), is((Object) "a"));

@@ -87,7 +87,7 @@ public class ParallelJobExecutor implements JobExecutor {
                 return thread;
             }
         });
-        HashMap<String, ExecutorService> map = new HashMap<String, ExecutorService>();
+        HashMap<String, ExecutorService> map = new HashMap<>();
         for (Map.Entry<String, Integer> entry : threadConfig.entrySet()) {
             final String name = entry.getKey();
             Integer value = entry.getValue();
@@ -145,7 +145,7 @@ public class ParallelJobExecutor implements JobExecutor {
             throw new IllegalArgumentException("variables must not be null"); //$NON-NLS-1$
         }
         NavigableMap<String, String> segment = PropertiesUtil.createPrefixMap(configuration, KEY_PARALLEL_PREFIX);
-        Map<String, Integer> conf = new HashMap<String, Integer>();
+        Map<String, Integer> conf = new HashMap<>();
         for (Map.Entry<String, String> entry : segment.entrySet()) {
             String name = entry.getKey();
             String valueString = entry.getValue();

@@ -46,10 +46,7 @@ public final class SequenceFileCompatibility {
      * @throws IOException if failed to open the sequence file
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public static SequenceFile.Reader openReader(
-            InputStream in,
-            long length,
-            Configuration conf) throws IOException {
+    public static SequenceFile.Reader openReader(InputStream in, long length, Configuration conf) throws IOException {
         return DELEGATE.openReader(in, length, conf);
     }
 }

@@ -144,7 +144,8 @@ public class ReportTest {
         assertThat(Mock.messages, is(list("hello")));
     }
 
-    private <T> List<T> list(T...values) {
+    @SafeVarargs
+    private static <T> List<T> list(T...values) {
         return Arrays.asList(values);
     }
 
@@ -153,8 +154,8 @@ public class ReportTest {
      */
     public static class Mock extends Report.Delegate {
 
-        static final List<Level> levels = new ArrayList<Level>();
-        static final List<String> messages = new ArrayList<String>();
+        static final List<Level> levels = new ArrayList<>();
+        static final List<String> messages = new ArrayList<>();
 
         @Override
         public void report(Level level, String message) throws IOException {

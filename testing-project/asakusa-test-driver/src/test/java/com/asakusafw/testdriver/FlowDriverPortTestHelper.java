@@ -45,7 +45,7 @@ final class FlowDriverPortTestHelper {
     static final TestContext.Empty CONTEXT = new TestContext.Empty();
 
     static List<Text> list(String... texts) {
-        List<Text> results = new ArrayList<Text>();
+        List<Text> results = new ArrayList<>();
         for (String text : texts) {
             results.add(new Text(text));
         }
@@ -53,7 +53,7 @@ final class FlowDriverPortTestHelper {
     }
 
     static DataModelSource source(String... texts) {
-        return new SourceDataModelSource<Text>(DEFINITION, Sources.wrap(list(texts).iterator()));
+        return new SourceDataModelSource<>(DEFINITION, Sources.wrap(list(texts).iterator()));
     }
 
     static Provider<Source<Text>> provider(final String... texts) {
@@ -74,23 +74,18 @@ final class FlowDriverPortTestHelper {
     }
 
     static <T> void verify(DataModelSourceFactory target, DataModelDefinition<T> def, Collection<T> expected) {
-        try {
+        try (DataModelSource source = target.createSource(def, CONTEXT)) {
             Set<Object> set = new HashSet<Object>(expected);
-            DataModelSource source = target.createSource(def, CONTEXT);
-            try {
-                while (true) {
-                    DataModelReflection next = source.next();
-                    if (next == null) {
-                        break;
-                    }
-                    T object = def.toObject(next);
-                    assertThat(object.toString(), set.contains(object), is(true));
-                    set.remove(object);
+            while (true) {
+                DataModelReflection next = source.next();
+                if (next == null) {
+                    break;
                 }
-                assertThat(set, hasSize(0));
-            } finally {
-                source.close();
+                T object = def.toObject(next);
+                assertThat(object.toString(), set.contains(object), is(true));
+                set.remove(object);
             }
+            assertThat(set, hasSize(0));
         } catch (IOException e) {
             throw new AssertionError(e);
         }

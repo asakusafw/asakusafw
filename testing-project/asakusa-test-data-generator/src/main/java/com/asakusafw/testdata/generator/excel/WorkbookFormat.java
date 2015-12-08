@@ -119,7 +119,7 @@ public enum WorkbookFormat {
         assert sheets != null;
         this.namePattern = namePattern;
         this.version = version;
-        List<SheetFormat> results = new ArrayList<SheetFormat>(sheets.length);
+        List<SheetFormat> results = new ArrayList<>(sheets.length);
         Collections.addAll(results, sheets);
         this.sheets = Collections.unmodifiableList(results);
     }

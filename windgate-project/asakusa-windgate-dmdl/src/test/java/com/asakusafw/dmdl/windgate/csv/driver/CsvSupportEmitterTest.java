@@ -20,6 +20,7 @@ import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -71,15 +72,10 @@ public class CsvSupportEmitterTest extends GeneratorTesterRoot {
         DataModelStreamSupport<Object> unsafe = unsafe(support);
 
         model.set("value", new Text("Hello, world!"));
-
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        DataModelWriter<Object> writer = unsafe.createWriter("hello", output);
-        writer.write(model.unwrap());
-        writer.flush();
-        output.close();
+        byte[] data = write(unsafe, model);
 
         Object buffer = loaded.newModel("Simple").unwrap();
-        DataModelReader<Object> reader = unsafe.createReader("hello", new ByteArrayInputStream(output.toByteArray()));
+        DataModelReader<Object> reader = unsafe.createReader("hello", new ByteArrayInputStream(data));
         assertThat(reader.readTo(buffer), is(true));
         assertThat(buffer, is(buffer));
         assertThat(reader.readTo(buffer), is(false));
@@ -112,16 +108,10 @@ public class CsvSupportEmitterTest extends GeneratorTesterRoot {
         all.set("c_datetime", new DateTime(2011, 12, 31, 23, 59, 59));
 
         DataModelStreamSupport<Object> unsafe = unsafe(support);
-
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        DataModelWriter<Object> writer = unsafe.createWriter("hello", output);
-        writer.write(empty.unwrap());
-        writer.write(all.unwrap());
-        writer.flush();
-        output.close();
+        byte[] data = write(unsafe, empty, all);
 
         Object buffer = loaded.newModel("Types").unwrap();
-        DataModelReader<Object> reader = unsafe.createReader("hello", new ByteArrayInputStream(output.toByteArray()));
+        DataModelReader<Object> reader = unsafe.createReader("hello", new ByteArrayInputStream(data));
         assertThat(reader.readTo(buffer), is(true));
         assertThat(buffer, is(empty.unwrap()));
         assertThat(reader.readTo(buffer), is(true));
@@ -143,14 +133,9 @@ public class CsvSupportEmitterTest extends GeneratorTesterRoot {
         model.set("date_value", new Date(2011, 10, 11));
         model.set("date_time_value", new DateTime(2011, 1, 2, 13, 14, 15));
         DataModelStreamSupport<Object> support = unsafe(loaded.newObject("csv", "ModelCsvSupport"));
+        byte[] data = write(support, model);
 
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        DataModelWriter<Object> writer = support.createWriter("hello", output);
-        writer.write(model.unwrap());
-        writer.flush();
-        output.close();
-
-        String[][] results = parse(5, new String(output.toByteArray(), "ISO-2022-jp"));
+        String[][] results = parse(5, new String(data, "ISO-2022-jp"));
         assertThat(results, is(new String[][] {
                 {"text_value", "true_value", "false_value", "date_value", "date_time_value"},
                 {"\u3042\u3044\u3046\u3048\u304a", "T", "F", "2011/10/11", "2011/01/02+13:14:15"},
@@ -164,17 +149,13 @@ public class CsvSupportEmitterTest extends GeneratorTesterRoot {
     @Test
     public void header() throws Exception {
         ModelLoader loaded = generateJava("field_name");
-        ModelWrapper model = loaded.newModel("Model");
         DataModelStreamSupport<Object> support = unsafe(loaded.newObject("csv", "ModelCsvSupport"));
-
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        DataModelWriter<Object> writer = support.createWriter("hello", output);
+        
+        ModelWrapper model = loaded.newModel("Model");
         model.set("value", new Text("Hello, world!"));
-        writer.write(model.unwrap());
-        writer.flush();
-        output.close();
+        byte[] data = write(support, model);
 
-        String[][] results = parse(1, new String(output.toByteArray(), "UTF-8"));
+        String[][] results = parse(1, new String(data, "UTF-8"));
         assertThat(results, is(new String[][] {
                 {"title"},
                 {"Hello, world!"},
@@ -188,17 +169,13 @@ public class CsvSupportEmitterTest extends GeneratorTesterRoot {
     @Test
     public void force_header() throws Exception {
         ModelLoader loaded = generateJava("force_header");
-        ModelWrapper model = loaded.newModel("Model");
         DataModelStreamSupport<Object> support = unsafe(loaded.newObject("csv", "ModelCsvSupport"));
 
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        DataModelWriter<Object> writer = support.createWriter("hello", output);
+        ModelWrapper model = loaded.newModel("Model");
         model.set("value", new Text("Hello, world!"));
-        writer.write(model.unwrap());
-        writer.flush();
-        output.close();
+        byte[] data = write(support, model);
 
-        String[][] results = parse(1, new String(output.toByteArray(), "UTF-8"));
+        String[][] results = parse(1, new String(data, "UTF-8"));
         assertThat(results, is(new String[][] {
                 {"title"},
                 {"Hello, world!"},
@@ -212,17 +189,13 @@ public class CsvSupportEmitterTest extends GeneratorTesterRoot {
     @Test
     public void implicit_field_name() throws Exception {
         ModelLoader loaded = generateJava("implicit_field_name");
-        ModelWrapper model = loaded.newModel("Model");
         DataModelStreamSupport<Object> support = unsafe(loaded.newObject("csv", "ModelCsvSupport"));
 
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        DataModelWriter<Object> writer = support.createWriter("hello", output);
+        ModelWrapper model = loaded.newModel("Model");
         model.set("value", new Text("Hello, world!"));
-        writer.write(model.unwrap());
-        writer.flush();
-        output.close();
+        byte[] data = write(support, model);
 
-        String[][] results = parse(1, new String(output.toByteArray(), "UTF-8"));
+        String[][] results = parse(1, new String(data, "UTF-8"));
         assertThat(results, is(new String[][] {
                 {"value"},
                 {"Hello, world!"},
@@ -236,18 +209,14 @@ public class CsvSupportEmitterTest extends GeneratorTesterRoot {
     @Test
     public void file_name() throws Exception {
         ModelLoader loaded = generateJava("file_name");
-        ModelWrapper model = loaded.newModel("Model");
-        ModelWrapper buffer = loaded.newModel("Model");
         DataModelStreamSupport<Object> support = unsafe(loaded.newObject("csv", "ModelCsvSupport"));
 
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        DataModelWriter<Object> writer = support.createWriter("hello", output);
+        ModelWrapper model = loaded.newModel("Model");
         model.set("value", new Text("Hello, world!"));
-        writer.write(model.unwrap());
-        writer.flush();
-        output.close();
+        byte[] data = write(support, model);
 
-        DataModelReader<Object> reader = support.createReader("testing", new ByteArrayInputStream(output.toByteArray()));
+        ModelWrapper buffer = loaded.newModel("Model");
+        DataModelReader<Object> reader = support.createReader("testing", new ByteArrayInputStream(data));
         assertThat(reader.readTo(buffer.unwrap()), is(true));
         assertThat(buffer.getOption("value"), is((Object) new StringOption("Hello, world!")));
         assertThat(buffer.getOption("path"), is((Object) new StringOption("testing")));
@@ -265,15 +234,9 @@ public class CsvSupportEmitterTest extends GeneratorTesterRoot {
         model.set("value", new Text("Hello\nworld!"));
         ModelWrapper buffer = loaded.newModel("Model");
         DataModelStreamSupport<Object> support = unsafe(loaded.newObject("csv", "ModelCsvSupport"));
+        byte[] data = write(support, model, model);
 
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        DataModelWriter<Object> writer = support.createWriter("hello", output);
-        writer.write(model.unwrap());
-        writer.write(model.unwrap());
-        writer.flush();
-        output.close();
-
-        DataModelReader<Object> reader = support.createReader("testing", new ByteArrayInputStream(output.toByteArray()));
+        DataModelReader<Object> reader = support.createReader("testing", new ByteArrayInputStream(data));
         assertThat(reader.readTo(buffer.unwrap()), is(true));
         assertThat(buffer.getOption("value"), is((Object) new StringOption("Hello\nworld!")));
         assertThat(buffer.getOption("number"), is((Object) new IntOption(1)));
@@ -294,15 +257,9 @@ public class CsvSupportEmitterTest extends GeneratorTesterRoot {
         model.set("value", new Text("Hello\nworld!"));
         ModelWrapper buffer = loaded.newModel("Model");
         DataModelStreamSupport<Object> support = unsafe(loaded.newObject("csv", "ModelCsvSupport"));
+        byte[] data = write(support, model, model);
 
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        DataModelWriter<Object> writer = support.createWriter("hello", output);
-        writer.write(model.unwrap());
-        writer.write(model.unwrap());
-        writer.flush();
-        output.close();
-
-        DataModelReader<Object> reader = support.createReader("testing", new ByteArrayInputStream(output.toByteArray()));
+        DataModelReader<Object> reader = support.createReader("testing", new ByteArrayInputStream(data));
         assertThat(reader.readTo(buffer.unwrap()), is(true));
         assertThat(buffer.getOption("value"), is((Object) new StringOption("Hello\nworld!")));
         assertThat(buffer.getOption("number"), is((Object) new LongOption(1)));
@@ -324,14 +281,9 @@ public class CsvSupportEmitterTest extends GeneratorTesterRoot {
         model.set("ignored", new Text("ignored"));
         ModelWrapper buffer = loaded.newModel("Model");
         DataModelStreamSupport<Object> support = unsafe(loaded.newObject("csv", "ModelCsvSupport"));
+        byte[] data = write(support, model);
 
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        DataModelWriter<Object> writer = support.createWriter("hello", output);
-        writer.write(model.unwrap());
-        writer.flush();
-        output.close();
-
-        DataModelReader<Object> reader = support.createReader("testing", new ByteArrayInputStream(output.toByteArray()));
+        DataModelReader<Object> reader = support.createReader("testing", new ByteArrayInputStream(data));
         assertThat(reader.readTo(buffer.unwrap()), is(true));
         assertThat(buffer.getOption("value"), is((Object) new StringOption("Hello, world!")));
         assertThat(buffer.getOption("ignored"), is((Object) new StringOption()));
@@ -383,10 +335,9 @@ public class CsvSupportEmitterTest extends GeneratorTesterRoot {
                 CsvConfiguration.DEFAULT_FALSE_FORMAT,
                 CsvConfiguration.DEFAULT_DATE_FORMAT,
                 CsvConfiguration.DEFAULT_DATE_TIME_FORMAT);
-        ByteArrayInputStream input = new ByteArrayInputStream(string.getBytes(conf.getCharset()));
-        CsvParser parser = new CsvParser(input, string, conf);
         List<String[]> results = Lists.create();
-        try {
+        try (CsvParser parser = new CsvParser(
+                new ByteArrayInputStream(string.getBytes(conf.getCharset())), string, conf)) {
             StringOption buffer = new StringOption();
             while (parser.next()) {
                 String[] line = new String[columns];
@@ -397,7 +348,6 @@ public class CsvSupportEmitterTest extends GeneratorTesterRoot {
                 parser.endRecord();
                 results.add(line);
             }
-            parser.close();
         } catch (Exception e) {
             throw new AssertionError(e);
         }
@@ -416,5 +366,18 @@ public class CsvSupportEmitterTest extends GeneratorTesterRoot {
     @SuppressWarnings("unchecked")
     private DataModelStreamSupport<Object> unsafe(Object support) {
         return (DataModelStreamSupport<Object>) support;
+    }
+
+    private byte[] write(DataModelStreamSupport<Object> support, ModelWrapper... models) {
+        try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
+            DataModelWriter<Object> writer = support.createWriter("testing", output);
+            for (ModelWrapper model : models) {
+                writer.write(model.unwrap());
+            }
+            writer.flush();
+            return output.toByteArray();
+        } catch (IOException e) {
+            throw new AssertionError();
+        }
     }
 }

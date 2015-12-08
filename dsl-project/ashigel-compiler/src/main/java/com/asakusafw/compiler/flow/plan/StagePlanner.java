@@ -109,7 +109,7 @@ public class StagePlanner {
 
     private List<? extends FlowGraphRewriter> sortRewriters(List<? extends FlowGraphRewriter> rw) {
         // for rewriting stability, we sort rewriters
-        List<FlowGraphRewriter> results = new ArrayList<FlowGraphRewriter>(rw);
+        List<FlowGraphRewriter> results = new ArrayList<>(rw);
         Collections.sort(results, REWRITER_COMPARATOR);
         return results;
     }
@@ -393,7 +393,7 @@ public class StagePlanner {
         assert blocks != null;
         LOG.debug("collecting concurrent stages"); //$NON-NLS-1$
 
-        LinkedList<FlowBlockGroup> groups = new LinkedList<FlowBlockGroup>();
+        LinkedList<FlowBlockGroup> groups = new LinkedList<>();
         for (FlowBlock block : blocks) {
             // ignores map blocks with following reduce blocks
             if (block.isReduceBlock() == false && block.isSucceedingReduceBlock()) {
@@ -430,7 +430,7 @@ public class StagePlanner {
     private void computeCriticalPaths(List<FlowBlockGroup> groups) {
         assert groups != null;
         Map<FlowBlock, FlowBlockGroup> mapping = Maps.create();
-        LinkedList<FlowBlockGroup> work = new LinkedList<FlowBlockGroup>();
+        LinkedList<FlowBlockGroup> work = new LinkedList<>();
         for (FlowBlockGroup group : groups) {
             work.add(group);
             mapping.put(group.founder, group);
@@ -800,7 +800,7 @@ public class StagePlanner {
 
     private void insertCheckpointsWithPushDown(FlowElementOutput start) {
         assert start != null;
-        LinkedList<FlowElementOutput> work = new LinkedList<FlowElementOutput>();
+        LinkedList<FlowElementOutput> work = new LinkedList<>();
         work.add(start);
         while (work.isEmpty() == false) {
             FlowElementOutput output = work.removeFirst();
@@ -1174,7 +1174,7 @@ public class StagePlanner {
         private Set<FlowBlock> collectPredeceaseBlocks(FlowBlock flowBlock) {
             assert flowBlock != null;
             Set<FlowBlock> results = Sets.create();
-            LinkedList<FlowBlock> work = new LinkedList<FlowBlock>();
+            LinkedList<FlowBlock> work = new LinkedList<>();
             work.addLast(flowBlock);
             while (work.isEmpty() == false) {
                 FlowBlock first = work.removeFirst();

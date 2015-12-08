@@ -60,8 +60,7 @@ public class GenerateCreateTableTask {
             collector.inspect(file);
         }
         int count = 0;
-        Writer writer = open(configuration);
-        try {
+        try (Writer writer = open(configuration)) {
             for (Class<?> aClass : collector.getClasses()) {
                 HiveTableInfo table = newTableInfo(aClass);
                 if (table == null) {
@@ -74,8 +73,6 @@ public class GenerateCreateTableTask {
                 writer.write(STATEMENT_SEPARATOR);
                 count++;
             }
-        } finally {
-            writer.close();
         }
         LOG.info(MessageFormat.format(
                 Messages.getString("GenerateCreateTableTask.infoFinishGenerateDdl"), //$NON-NLS-1$

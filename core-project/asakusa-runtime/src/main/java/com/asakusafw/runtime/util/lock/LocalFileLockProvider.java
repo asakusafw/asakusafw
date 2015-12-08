@@ -80,7 +80,7 @@ public class LocalFileLockProvider<T> implements LockProvider<T> {
                     fd.setLength(0L);
                     fd.write(String.valueOf(target).getBytes(ENCODING));
                     success = true;
-                    return new LocalFileLockObject<T>(target, lockFile, fd, lockEntity);
+                    return new LocalFileLockObject<>(target, lockFile, fd, lockEntity);
                 } finally {
                     if (success == false) {
                         lockEntity.release();

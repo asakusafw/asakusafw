@@ -76,15 +76,14 @@ public class JdbcSupportEmitterTest extends GeneratorTesterRoot {
 
         assertThat(support.isSupported(list("VALUE")), is(true));
         assertThat(support.isSupported(list("VALUE", "VALUE")), is(false));
-        assertThat(support.isSupported(this.<String>list()), is(false));
+        assertThat(support.isSupported(JdbcSupportEmitterTest.<String>list()), is(false));
         assertThat(support.isSupported(list("INVALID")), is(false));
         assertThat(support.isSupported(list("VALUE", "INVALID")), is(false));
 
         DataModelJdbcSupport<Object> unsafe = unsafe(support);
         h2.executeFile("simple.sql");
-        Connection conn = h2.open();
-        try {
-            PreparedStatement ps = conn.prepareStatement("INSERT INTO SIMPLE (VALUE) VALUES (?)");
+        try (Connection conn = h2.open();
+                PreparedStatement ps = conn.prepareStatement("INSERT INTO SIMPLE (VALUE) VALUES (?)")) {
             DataModelPreparedStatement<Object> p = unsafe.createPreparedStatementSupport(ps, list("VALUE"));
             model.set("value", new Text("Hello, world!"));
             p.setParameters(model.unwrap());
@@ -97,8 +96,6 @@ public class JdbcSupportEmitterTest extends GeneratorTesterRoot {
             assertThat(r.next(model.unwrap()), is(true));
             assertThat(model.get("value"), is((Object) new Text("Hello, world!")));
             assertThat(r.next(model.unwrap()), is(false));
-        } finally {
-            conn.close();
         }
     }
 
@@ -130,12 +127,11 @@ public class JdbcSupportEmitterTest extends GeneratorTesterRoot {
 
         DataModelJdbcSupport<Object> unsafe = unsafe(support);
         h2.executeFile("types.sql");
-        Connection conn = h2.open();
-        try {
-            PreparedStatement ps = conn.prepareStatement(MessageFormat.format(
-                    "INSERT INTO TYPES ({0}) VALUES ({1})",
-                    join(list),
-                    join(Collections.nCopies(list.size(), "?"))));
+        try (Connection conn = h2.open();
+                PreparedStatement ps = conn.prepareStatement(MessageFormat.format(
+                        "INSERT INTO TYPES ({0}) VALUES ({1})",
+                        join(list),
+                        join(Collections.nCopies(list.size(), "?"))))) {
             DataModelPreparedStatement<Object> p = unsafe.createPreparedStatementSupport(ps, list);
 
             // set nulls
@@ -184,8 +180,6 @@ public class JdbcSupportEmitterTest extends GeneratorTesterRoot {
             assertThat(buffer.unwrap(), is(all.unwrap()));
 
             assertThat(r.next(buffer.unwrap()), is(false));
-        } finally {
-            conn.close();
         }
     }
 
@@ -214,7 +208,8 @@ public class JdbcSupportEmitterTest extends GeneratorTesterRoot {
         return (DataModelJdbcSupport<Object>) support;
     }
 
-    private <T> List<T> list(T... values) {
+    @SafeVarargs
+    private static <T> List<T> list(T... values) {
         return Arrays.asList(values);
     }
 }

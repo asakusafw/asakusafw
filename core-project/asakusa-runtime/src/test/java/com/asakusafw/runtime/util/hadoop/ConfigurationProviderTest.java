@@ -81,7 +81,7 @@ public class ConfigurationProviderTest {
     public void findHadoopCommand_explicit() {
         putExec("bin/hadoop");
 
-        Map<String, String> envp = new HashMap<String, String>();
+        Map<String, String> envp = new HashMap<>();
         envp.put("HADOOP_HOME", folder.getRoot().getAbsolutePath());
 
         File file = ConfigurationProvider.findHadoopCommand(envp);
@@ -96,7 +96,7 @@ public class ConfigurationProviderTest {
     public void findHadoopCommand_path() {
         putExec("bin/hadoop");
 
-        Map<String, String> envp = new HashMap<String, String>();
+        Map<String, String> envp = new HashMap<>();
         envp.put("PATH", new File(folder.getRoot(), "bin").getAbsolutePath());
 
         File file = ConfigurationProvider.findHadoopCommand(envp);
@@ -112,7 +112,7 @@ public class ConfigurationProviderTest {
         putExec("home/bin/hadoop");
         putExec("path/hadoop");
 
-        Map<String, String> envp = new HashMap<String, String>();
+        Map<String, String> envp = new HashMap<>();
         envp.put("HADOOP_HOME", new File(folder.getRoot(), "home").getAbsolutePath());
         envp.put("PATH", new File(folder.getRoot(), "path").getAbsolutePath());
 
@@ -140,7 +140,7 @@ public class ConfigurationProviderTest {
         buf.append(new File(folder.getRoot(), "path3").getAbsolutePath());
         buf.append(File.pathSeparator);
 
-        Map<String, String> envp = new HashMap<String, String>();
+        Map<String, String> envp = new HashMap<>();
         envp.put("PATH", buf.toString());
 
         File file = ConfigurationProvider.findHadoopCommand(envp);
@@ -156,7 +156,7 @@ public class ConfigurationProviderTest {
     public void newInstance_explicit() {
         putConf("conf/core-site.xml");
 
-        Map<String, String> envp = new HashMap<String, String>();
+        Map<String, String> envp = new HashMap<>();
         envp.put("HADOOP_CONF", new File(folder.getRoot(), "conf").getAbsolutePath());
 
         Configuration conf = new ConfigurationProvider(envp).newInstance();
@@ -172,7 +172,7 @@ public class ConfigurationProviderTest {
         create("conf/hadoop-env.sh");
         putConf("conf/core-site.xml");
 
-        Map<String, String> envp = new HashMap<String, String>();
+        Map<String, String> envp = new HashMap<>();
         envp.put("HADOOP_CMD", cmd.getAbsolutePath());
 
         Configuration conf = new ConfigurationProvider(envp).newInstance();
@@ -187,7 +187,7 @@ public class ConfigurationProviderTest {
         File cmd = putExec("bin/hadoop");
         putConf("conf/core-site.xml");
 
-        Map<String, String> envp = new HashMap<String, String>();
+        Map<String, String> envp = new HashMap<>();
         envp.put("HADOOP_CMD", cmd.getAbsolutePath());
 
         Configuration conf = new ConfigurationProvider(envp).newInstance();
@@ -202,7 +202,7 @@ public class ConfigurationProviderTest {
         File cmd = putExec("bin/hadoop");
         putConf("etc/hadoop/core-site.xml");
 
-        Map<String, String> envp = new HashMap<String, String>();
+        Map<String, String> envp = new HashMap<>();
         envp.put("HADOOP_CMD", cmd.getAbsolutePath());
 
         Configuration conf = new ConfigurationProvider(envp).newInstance();
@@ -218,7 +218,7 @@ public class ConfigurationProviderTest {
         create("conf/hadoop-env.sh");
         putConf("conf/core-site.xml");
 
-        Map<String, String> envp = new HashMap<String, String>();
+        Map<String, String> envp = new HashMap<>();
         envp.put("HADOOP_HOME", folder.getRoot().getAbsolutePath());
 
         Configuration conf = new ConfigurationProvider(envp).newInstance();
@@ -233,7 +233,7 @@ public class ConfigurationProviderTest {
         putExec("bin/hadoop");
         putConf("conf/core-site.xml");
 
-        Map<String, String> envp = new HashMap<String, String>();
+        Map<String, String> envp = new HashMap<>();
         envp.put("HADOOP_HOME", folder.getRoot().getAbsolutePath());
 
         Configuration conf = new ConfigurationProvider(envp).newInstance();
@@ -248,7 +248,7 @@ public class ConfigurationProviderTest {
         putExec("bin/hadoop");
         putConf("etc/hadoop/core-site.xml");
 
-        Map<String, String> envp = new HashMap<String, String>();
+        Map<String, String> envp = new HashMap<>();
         envp.put("HADOOP_HOME", folder.getRoot().getAbsolutePath());
 
         Configuration conf = new ConfigurationProvider(envp).newInstance();
@@ -264,7 +264,7 @@ public class ConfigurationProviderTest {
         create("conf/hadoop-env.sh");
         putConf("conf/core-site.xml");
 
-        Map<String, String> envp = new HashMap<String, String>();
+        Map<String, String> envp = new HashMap<>();
         envp.put("PATH", new File(folder.getRoot(), "bin").getAbsolutePath());
 
         Configuration conf = new ConfigurationProvider(envp).newInstance();
@@ -279,7 +279,7 @@ public class ConfigurationProviderTest {
         putExec("bin/hadoop");
         putConf("conf/core-site.xml");
 
-        Map<String, String> envp = new HashMap<String, String>();
+        Map<String, String> envp = new HashMap<>();
         envp.put("PATH", new File(folder.getRoot(), "bin").getAbsolutePath());
 
         Configuration conf = new ConfigurationProvider(envp).newInstance();
@@ -294,7 +294,7 @@ public class ConfigurationProviderTest {
         putExec("bin/hadoop");
         putConf("etc/hadoop/core-site.xml");
 
-        Map<String, String> envp = new HashMap<String, String>();
+        Map<String, String> envp = new HashMap<>();
         envp.put("PATH", new File(folder.getRoot(), "bin").getAbsolutePath());
 
         Configuration conf = new ConfigurationProvider(envp).newInstance();
@@ -347,7 +347,7 @@ public class ConfigurationProviderTest {
             Assume.assumeNoException(e);
         }
 
-        Map<String, String> envp = new HashMap<String, String>();
+        Map<String, String> envp = new HashMap<>();
         envp.put("PATH", path.getAbsolutePath());
 
         Configuration conf = new ConfigurationProvider(envp).newInstance();
@@ -368,8 +368,7 @@ public class ConfigurationProviderTest {
         File cmd = putExec("testing/testcmd");
         File site = putConf("auto/core-site.xml");
 
-        PrintWriter writer = new PrintWriter(cmd);
-        try {
+        try (PrintWriter writer = new PrintWriter(cmd)) {
             writer.printf("#/bin/sh\n");
             writer.printf("if [ $# -eq 0 ]\n");
             writer.printf("then\n");
@@ -385,8 +384,6 @@ public class ConfigurationProviderTest {
             writer.printf("  echo '%s' > \"$2\"\n", site.getParentFile().getAbsolutePath());
             writer.printf("  exit 0\n");
             writer.printf("fi\n");
-        } finally {
-            writer.close();
         }
         try {
             Process proc = new ProcessBuilder(cmd.getAbsolutePath()).start();
@@ -402,7 +399,7 @@ public class ConfigurationProviderTest {
             Assume.assumeNoException(e);
         }
 
-        Map<String, String> envp = new HashMap<String, String>();
+        Map<String, String> envp = new HashMap<>();
         envp.put("HADOOP_CMD", cmd.getAbsolutePath());
 
         Configuration conf = new ConfigurationProvider(envp).newInstance();
@@ -431,13 +428,8 @@ public class ConfigurationProviderTest {
         Configuration c = new Configuration(false);
         c.set("testing.conf", "added");
         File file = create(path);
-        try {
-            OutputStream s = new FileOutputStream(file);
-            try {
-                c.writeXml(s);
-            } finally {
-                s.close();
-            }
+        try (OutputStream s = new FileOutputStream(file)) {
+            c.writeXml(s);
         } catch (IOException e) {
             throw new AssertionError(e);
         }

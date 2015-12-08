@@ -145,9 +145,7 @@ public final class DmdlEmitter {
         }
 
         @Override
-        public <T extends AstTerm<T>> Void visitModelDefinition(
-                Context context,
-                AstModelDefinition<T> node) {
+        public <T extends AstTerm<T>> Void visitModelDefinition(Context context, AstModelDefinition<T> node) {
             if (node.description != null) {
                 node.description.accept(context, this);
                 context.println();
@@ -333,7 +331,7 @@ public final class DmdlEmitter {
 
         @Override
         public Void visitQualifiedName(Context context, AstQualifiedName node) {
-            LinkedList<AstSimpleName> names = new LinkedList<AstSimpleName>();
+            LinkedList<AstSimpleName> names = new LinkedList<>();
             AstName current = node;
             while (current.getQualifier() != null) {
                 names.addFirst(current.getSimpleName());

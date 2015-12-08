@@ -116,20 +116,10 @@ public class SimpleJobRunner implements JobRunner {
             if (job.getNumReduceTasks() == 0) {
                 runMap(job, null);
             } else {
-                KeyValueSorter<?, ?> sorter = createSorter(job,
-                        job.getMapOutputKeyClass(), job.getMapOutputValueClass());
-                try {
+                try (KeyValueSorter<?, ?> sorter = createSorter(job,
+                        job.getMapOutputKeyClass(), job.getMapOutputValueClass())) {
                     runMap(job, sorter);
                     runReduce(job, sorter);
-                } finally {
-                    try {
-                        sorter.close();
-                    } catch (IOException e) {
-                        LOG.warn(MessageFormat.format(
-                                "error occurred while closing sorter: {0} ({1})",
-                                job.getJobID(),
-                                job.getJobName()), e);
-                    }
                 }
             }
             committer.commitJob(job);
@@ -172,34 +162,22 @@ public class SimpleJobRunner implements JobRunner {
             OutputCommitter committer = output.getOutputCommitter(context);
             committer.setupTask(context);
             boolean succeed = false;
-            try {
-                RecordReader<?, ?> reader = input.createRecordReader(split, newTaskAttemptContext(conf, id));
+            try (RecordReader<?, ?> reader = input.createRecordReader(split, newTaskAttemptContext(conf, id))) {
+                RecordWriter<?, ?> writer;
+                if (sorter != null) {
+                    writer = new ShuffleWriter(sorter);
+                } else {
+                    writer = output.getRecordWriter(newTaskAttemptContext(conf, id));
+                }
                 try {
-                    RecordWriter<?, ?> writer;
-                    if (sorter != null) {
-                        writer = new ShuffleWriter(sorter);
-                    } else {
-                        writer = output.getRecordWriter(newTaskAttemptContext(conf, id));
-                    }
-                    try {
-                        Mapper.Context c = newMapperContext(
-                                conf, id,
-                                reader, writer,
-                                committer, split);
-                        reader.initialize(split, c);
-                        mapper.run(c);
-                    } finally {
-                        writer.close(newTaskAttemptContext(conf, id));
-                    }
+                    Mapper.Context c = newMapperContext(
+                            conf, id,
+                            reader, writer,
+                            committer, split);
+                    reader.initialize(split, c);
+                    mapper.run(c);
                 } finally {
-                    try {
-                        reader.close();
-                    } catch (IOException e) {
-                        LOG.warn(MessageFormat.format(
-                                "error occurred while closing mapper input: {0} ({1})",
-                                id,
-                                job.getJobName()), e);
-                    }
+                    writer.close(newTaskAttemptContext(conf, id));
                 }
                 doCommitTask(context, committer);
                 succeed = true;
@@ -291,7 +269,7 @@ public class SimpleJobRunner implements JobRunner {
                     options.getBlockSize(),
                     options.isCompressBlock()));
         }
-        return new KeyValueSorter<K, V>(
+        return new KeyValueSorter<>(
                 new SerializationFactory(job.getConfiguration()),
                 key, value, job.getSortComparator(),
                 options);

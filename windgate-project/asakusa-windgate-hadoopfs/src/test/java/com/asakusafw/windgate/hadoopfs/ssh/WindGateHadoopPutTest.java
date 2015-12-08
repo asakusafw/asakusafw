@@ -99,12 +99,10 @@ public class WindGateHadoopPutTest {
     @Test
     public void simple() throws Exception {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        FileList.Writer writer = FileList.createWriter(buffer);
-
-        Path testing = new Path(PREFIX, "testing");
-        put(writer, testing, "Hello, world!");
-
-        writer.close();
+        try (FileList.Writer writer = FileList.createWriter(buffer)) {
+            Path testing = new Path(PREFIX, "testing");
+            put(writer, testing, "Hello, world!");
+        }
 
         ByteArrayInputStream in = new ByteArrayInputStream(buffer.toByteArray());
         int result = new WindGateHadoopPut(conf).execute(in);
@@ -122,16 +120,14 @@ public class WindGateHadoopPutTest {
     @Test
     public void multiple() throws Exception {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        FileList.Writer writer = FileList.createWriter(buffer);
-
-        Path testing1 = new Path(PREFIX, "testing-1");
-        Path testing2 = new Path(PREFIX, "testing-2");
-        Path testing3 = new Path(PREFIX, "testing-3");
-        put(writer, testing1, "Hello1, world!");
-        put(writer, testing2, "Hello2, world!");
-        put(writer, testing3, "Hello3, world!");
-
-        writer.close();
+        try (FileList.Writer writer = FileList.createWriter(buffer)) {
+            Path testing1 = new Path(PREFIX, "testing-1");
+            Path testing2 = new Path(PREFIX, "testing-2");
+            Path testing3 = new Path(PREFIX, "testing-3");
+            put(writer, testing1, "Hello1, world!");
+            put(writer, testing2, "Hello2, world!");
+            put(writer, testing3, "Hello3, world!");
+        }
         ByteArrayInputStream in = new ByteArrayInputStream(buffer.toByteArray());
         int result = new WindGateHadoopPut(conf).execute(in);
         assertThat(result, is(0));
@@ -144,15 +140,15 @@ public class WindGateHadoopPutTest {
     }
 
     /**
-     * Attemts to empty files.
+     * Attempts to empty files.
      * @throws Exception if failed
      */
     @Test
     public void empty() throws Exception {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        FileList.Writer writer = FileList.createWriter(buffer);
-
-        writer.close();
+        try (FileList.Writer writer = FileList.createWriter(buffer)) {
+            // empty
+        }
         ByteArrayInputStream in = new ByteArrayInputStream(buffer.toByteArray());
         int result = new WindGateHadoopPut(conf).execute(in);
         assertThat(result, is(0));
@@ -167,13 +163,11 @@ public class WindGateHadoopPutTest {
      */
     @Test
     public void arguments() throws Exception {
-        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        FileList.Writer writer = FileList.createWriter(buffer);
-
         Path testing = new Path(PREFIX, "testing");
-        put(writer, testing, "Hello, world!");
-
-        writer.close();
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        try (FileList.Writer writer = FileList.createWriter(buffer)) {
+            put(writer, testing, "Hello, world!");
+        }
         ByteArrayInputStream in = new ByteArrayInputStream(buffer.toByteArray());
         int result = new WindGateHadoopPut(conf).execute(in, testing.toString());
         assertThat(result, is(not(0)));
@@ -206,13 +200,11 @@ public class WindGateHadoopPutTest {
     public void simulated() throws Exception {
         RuntimeContext.set(RuntimeContext.DEFAULT.mode(ExecutionMode.SIMULATION));
 
-        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        FileList.Writer writer = FileList.createWriter(buffer);
-
         Path testing = new Path(PREFIX, "testing");
-        put(writer, testing, "Hello, world!");
-
-        writer.close();
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        try (FileList.Writer writer = FileList.createWriter(buffer)) {
+            put(writer, testing, "Hello, world!");
+        }
         ByteArrayInputStream in = new ByteArrayInputStream(buffer.toByteArray());
         int result = new WindGateHadoopPut(conf).execute(in);
         assertThat(result, is(0));
@@ -222,11 +214,8 @@ public class WindGateHadoopPutTest {
     }
 
     private void put(FileList.Writer writer, Path path, String string) throws IOException {
-        OutputStream out = writer.openNext(path);
-        try {
+        try (OutputStream out = writer.openNext(path)) {
             out.write(string.getBytes("UTF-8"));
-        } finally {
-            out.close();
         }
     }
 
@@ -240,13 +229,12 @@ public class WindGateHadoopPutTest {
         if (files == null) {
             return Collections.emptyMap();
         }
-        Map<String, String> results = new HashMap<String, String>();
+        Map<String, String> results = new HashMap<>();
         for (FileStatus status : files) {
             if (FileSystemCompatibility.isDirectory(status)) {
                 continue;
             }
-            InputStream f = fs.open(status.getPath());
-            try {
+            try (InputStream f = fs.open(status.getPath())) {
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 byte[] buf = new byte[256];
                 while (true) {
@@ -258,8 +246,6 @@ public class WindGateHadoopPutTest {
                 }
                 String result = new String(baos.toByteArray(), "UTF-8");
                 results.put(status.getPath().getName(), result);
-            } finally {
-                f.close();
             }
         }
         return results;

@@ -227,7 +227,7 @@ public class FilePattern implements ResourcePattern {
     private static List<Segment> compileSegments(String patternString) {
         assert patternString != null;
         Cursor cursor = new Cursor(patternString.toCharArray());
-        List<Segment> segments = new ArrayList<Segment>();
+        List<Segment> segments = new ArrayList<>();
         cursor.skipWhile(CHAR_SEPARATOR);
         while (cursor.get(0) != CHAR_EOF) {
             Segment segment = consumeSegment(cursor);
@@ -256,7 +256,7 @@ public class FilePattern implements ResourcePattern {
 
     private static List<PatternElement> consumeElements(Cursor cursor) {
         assert cursor != null;
-        ArrayList<PatternElement> results = new ArrayList<PatternElement>();
+        ArrayList<PatternElement> results = new ArrayList<>();
         LOOP: while (true) {
             int c = cursor.get(0);
             switch (c) {
@@ -394,7 +394,7 @@ public class FilePattern implements ResourcePattern {
             assert get(0) == CHAR_OPEN_BRACE;
             int start = cursor;
             skip();
-            List<String> contents = new ArrayList<String>();
+            List<String> contents = new ArrayList<>();
             boolean head = true;
             while (true) {
                 int first = get(0);

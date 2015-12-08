@@ -87,8 +87,7 @@ public class ModelEmitter {
 class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
 
     @Override
-    public Void visitAlternateConstructorInvocation(
-            AlternateConstructorInvocation elem, EmitContext context) {
+    public Void visitAlternateConstructorInvocation(AlternateConstructorInvocation elem, EmitContext context) {
         begin(elem, context);
         processBlockComment(elem, context);
         context.statement(EmitDirection.BEGIN);
@@ -101,8 +100,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
-    public Void visitAnnotationDeclaration(AnnotationDeclaration elem,
-            EmitContext context) {
+    public Void visitAnnotationDeclaration(AnnotationDeclaration elem, EmitContext context) {
         begin(elem, context);
         context.declaration(EmitDirection.BEGIN);
         process(elem.getJavadoc(), context);
@@ -119,8 +117,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
-    public Void visitAnnotationElement(AnnotationElement elem,
-            EmitContext context) {
+    public Void visitAnnotationElement(AnnotationElement elem, EmitContext context) {
         begin(elem, context);
         processInlineComment(elem, context);
         process(elem.getName(), context);
@@ -130,8 +127,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
-    public Void visitAnnotationElementDeclaration(
-            AnnotationElementDeclaration elem, EmitContext context) {
+    public Void visitAnnotationElementDeclaration(AnnotationElementDeclaration elem, EmitContext context) {
         begin(elem, context);
         context.declaration(EmitDirection.END);
         process(elem.getJavadoc(), context);
@@ -139,7 +135,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         process(elem.getModifiers(), context);
         process(elem.getType(), context);
         process(elem.getName(), context);
-        processParameters(Collections.<Model>emptyList(), context);
+        processParameters(Collections.<Model> emptyList(), context);
         if (appears(elem.getDefaultExpression())) {
             context.keyword("default"); //$NON-NLS-1$
             process(elem.getDefaultExpression(), context);
@@ -150,8 +146,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
-    public Void visitArrayAccessExpression(ArrayAccessExpression elem,
-            EmitContext context) {
+    public Void visitArrayAccessExpression(ArrayAccessExpression elem, EmitContext context) {
         begin(elem, context);
         processInlineComment(elem, context);
         process(elem.getArray(), context);
@@ -162,8 +157,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
-    public Void visitArrayCreationExpression(ArrayCreationExpression elem,
-            EmitContext context) {
+    public Void visitArrayCreationExpression(ArrayCreationExpression elem, EmitContext context) {
         begin(elem, context);
         processInlineComment(elem, context);
         Type scalar;
@@ -194,8 +188,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
-    public Void visitArrayInitializer(ArrayInitializer elem,
-            EmitContext context) {
+    public Void visitArrayInitializer(ArrayInitializer elem, EmitContext context) {
         begin(elem, context);
         processInlineComment(elem, context);
         context.arrayInitializerBlock(EmitDirection.BEGIN);
@@ -215,8 +208,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
-    public Void visitAssertStatement(AssertStatement elem,
-            EmitContext context) {
+    public Void visitAssertStatement(AssertStatement elem, EmitContext context) {
         begin(elem, context);
         processBlockComment(elem, context);
         context.statement(EmitDirection.BEGIN);
@@ -232,8 +224,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
-    public Void visitAssignmentExpression(AssignmentExpression elem,
-            EmitContext context) {
+    public Void visitAssignmentExpression(AssignmentExpression elem, EmitContext context) {
         begin(elem, context);
         processInlineComment(elem, context);
         process(elem.getLeftHandSide(), context);
@@ -261,6 +252,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     private static final Pattern HEAD_ASTER = Pattern.compile("^ ?\\* ?"); //$NON-NLS-1$
+
     @Override
     public Void visitBlockComment(BlockComment elem, EmitContext context) {
         String content = elem.getString();
@@ -270,7 +262,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         if (content.endsWith("*/")) { //$NON-NLS-1$
             content = content.substring(0, content.length() - 2);
         }
-        List<String> results = new ArrayList<String>();
+        List<String> results = new ArrayList<>();
         String[] lines = content.split("\\n|\\r|\\r\\n"); //$NON-NLS-1$
         for (String line : lines) {
             if (line.startsWith(" * ")) { //$NON-NLS-1$
@@ -287,8 +279,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
-    public Void visitBreakStatement(BreakStatement elem,
-            EmitContext context) {
+    public Void visitBreakStatement(BreakStatement elem, EmitContext context) {
         begin(elem, context);
         processBlockComment(elem, context);
         context.statement(EmitDirection.BEGIN);
@@ -300,8 +291,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
-    public Void visitCastExpression(CastExpression elem,
-            EmitContext context) {
+    public Void visitCastExpression(CastExpression elem, EmitContext context) {
         begin(elem, context);
         processInlineComment(elem, context);
         context.symbol("("); //$NON-NLS-1$
@@ -334,8 +324,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
-    public Void visitClassDeclaration(ClassDeclaration elem,
-            EmitContext context) {
+    public Void visitClassDeclaration(ClassDeclaration elem, EmitContext context) {
         begin(elem, context);
         context.declaration(EmitDirection.BEGIN);
         process(elem.getJavadoc(), context);
@@ -360,8 +349,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
-    public Void visitClassInstanceCreationExpression(
-            ClassInstanceCreationExpression elem, EmitContext context) {
+    public Void visitClassInstanceCreationExpression(ClassInstanceCreationExpression elem, EmitContext context) {
         begin(elem, context);
         processInlineComment(elem, context);
         if (process(elem.getQualifier(), context)) {
@@ -386,8 +374,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
-    public Void visitCompilationUnit(CompilationUnit elem,
-            EmitContext context) {
+    public Void visitCompilationUnit(CompilationUnit elem, EmitContext context) {
         begin(elem, context);
         processCompilationUnitComment(elem, context);
         process(elem.getPackageDeclaration(), context);
@@ -397,8 +384,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
-    public Void visitConditionalExpression(ConditionalExpression elem,
-            EmitContext context) {
+    public Void visitConditionalExpression(ConditionalExpression elem, EmitContext context) {
         begin(elem, context);
         processInlineComment(elem, context);
         process(elem.getCondition(), context);
@@ -410,8 +396,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
-    public Void visitConstructorDeclaration(ConstructorDeclaration elem,
-            EmitContext context) {
+    public Void visitConstructorDeclaration(ConstructorDeclaration elem, EmitContext context) {
         begin(elem, context);
         context.declaration(EmitDirection.BEGIN);
         process(elem.getJavadoc(), context);
@@ -430,8 +415,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
-    public Void visitContinueStatement(ContinueStatement elem,
-            EmitContext context) {
+    public Void visitContinueStatement(ContinueStatement elem, EmitContext context) {
         begin(elem, context);
         processBlockComment(elem, context);
         context.statement(EmitDirection.BEGIN);
@@ -459,8 +443,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
-    public Void visitEmptyStatement(EmptyStatement elem,
-            EmitContext context) {
+    public Void visitEmptyStatement(EmptyStatement elem, EmitContext context) {
         begin(elem, context);
         processBlockComment(elem, context);
         context.statement(EmitDirection.BEGIN);
@@ -470,8 +453,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
-    public Void visitEnhancedForStatement(EnhancedForStatement elem,
-            EmitContext context) {
+    public Void visitEnhancedForStatement(EnhancedForStatement elem, EmitContext context) {
         begin(elem, context);
         processBlockComment(elem, context);
         context.statement(EmitDirection.BEGIN);
@@ -487,8 +469,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
-    public Void visitEnumConstantDeclaration(EnumConstantDeclaration elem,
-            EmitContext context) {
+    public Void visitEnumConstantDeclaration(EnumConstantDeclaration elem, EmitContext context) {
         begin(elem, context);
         context.declaration(EmitDirection.BEGIN);
         process(elem.getJavadoc(), context);
@@ -505,8 +486,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
-    public Void visitEnumDeclaration(EnumDeclaration elem,
-            EmitContext context) {
+    public Void visitEnumDeclaration(EnumDeclaration elem, EmitContext context) {
         begin(elem, context);
         context.declaration(EmitDirection.BEGIN);
         process(elem.getJavadoc(), context);
@@ -532,8 +512,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
-    public Void visitExpressionStatement(ExpressionStatement elem,
-            EmitContext context) {
+    public Void visitExpressionStatement(ExpressionStatement elem, EmitContext context) {
         begin(elem, context);
         processBlockComment(elem, context);
         context.statement(EmitDirection.BEGIN);
@@ -544,8 +523,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
-    public Void visitFieldAccessExpression(FieldAccessExpression elem,
-            EmitContext context) {
+    public Void visitFieldAccessExpression(FieldAccessExpression elem, EmitContext context) {
         begin(elem, context);
         processInlineComment(elem, context);
         process(elem.getQualifier(), context);
@@ -555,8 +533,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
-    public Void visitFieldDeclaration(FieldDeclaration elem,
-            EmitContext context) {
+    public Void visitFieldDeclaration(FieldDeclaration elem, EmitContext context) {
         begin(elem, context);
         context.declaration(EmitDirection.BEGIN);
         process(elem.getJavadoc(), context);
@@ -570,8 +547,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
-    public Void visitFormalParameterDeclaration(
-            FormalParameterDeclaration elem, EmitContext context) {
+    public Void visitFormalParameterDeclaration(FormalParameterDeclaration elem, EmitContext context) {
         begin(elem, context);
         processInlineComment(elem, context);
         process(elem.getModifiers(), context);
@@ -595,8 +571,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         context.keyword("for"); //$NON-NLS-1$
         context.symbol("("); //$NON-NLS-1$
         if (elem.getInitialization() instanceof LocalVariableDeclaration) {
-            LocalVariableDeclaration decl =
-                (LocalVariableDeclaration) elem.getInitialization();
+            LocalVariableDeclaration decl = (LocalVariableDeclaration) elem.getInitialization();
             processLocalVaribale(decl, context);
         } else {
             process(elem.getInitialization(), context);
@@ -630,8 +605,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
-    public Void visitImportDeclaration(ImportDeclaration elem,
-            EmitContext context) {
+    public Void visitImportDeclaration(ImportDeclaration elem, EmitContext context) {
         begin(elem, context);
         processBlockComment(elem, context);
         context.declaration(EmitDirection.BEGIN);
@@ -650,8 +624,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
-    public Void visitInfixExpression(InfixExpression elem,
-            EmitContext context) {
+    public Void visitInfixExpression(InfixExpression elem, EmitContext context) {
         begin(elem, context);
         processInlineComment(elem, context);
         process(elem.getLeftOperand(), context);
@@ -661,8 +634,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
-    public Void visitInitializerDeclaration(InitializerDeclaration elem,
-            EmitContext context) {
+    public Void visitInitializerDeclaration(InitializerDeclaration elem, EmitContext context) {
         begin(elem, context);
         context.declaration(EmitDirection.BEGIN);
         processBlockComment(elem, context);
@@ -673,8 +645,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
-    public Void visitInstanceofExpression(InstanceofExpression elem,
-            EmitContext context) {
+    public Void visitInstanceofExpression(InstanceofExpression elem, EmitContext context) {
         begin(elem, context);
         processInlineComment(elem, context);
         process(elem.getExpression(), context);
@@ -684,8 +655,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
-    public Void visitInterfaceDeclaration(InterfaceDeclaration elem,
-            EmitContext context) {
+    public Void visitInterfaceDeclaration(InterfaceDeclaration elem, EmitContext context) {
         begin(elem, context);
         context.declaration(EmitDirection.BEGIN);
         process(elem.getJavadoc(), context);
@@ -706,8 +676,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
-    public Void visitLabeledStatement(LabeledStatement elem,
-            EmitContext context) {
+    public Void visitLabeledStatement(LabeledStatement elem, EmitContext context) {
         begin(elem, context);
         processBlockComment(elem, context);
         context.statement(EmitDirection.BEGIN);
@@ -740,8 +709,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
-    public Void visitLocalClassDeclaration(LocalClassDeclaration elem,
-            EmitContext context) {
+    public Void visitLocalClassDeclaration(LocalClassDeclaration elem, EmitContext context) {
         begin(elem, context);
         processBlockComment(elem, context);
         context.statement(EmitDirection.BEGIN);
@@ -751,8 +719,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
-    public Void visitLocalVariableDeclaration(LocalVariableDeclaration elem,
-            EmitContext context) {
+    public Void visitLocalVariableDeclaration(LocalVariableDeclaration elem, EmitContext context) {
         begin(elem, context);
         processBlockComment(elem, context);
         context.statement(EmitDirection.BEGIN);
@@ -762,8 +729,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         return null;
     }
 
-    private void processLocalVaribale(LocalVariableDeclaration elem,
-            EmitContext context) {
+    private void processLocalVaribale(LocalVariableDeclaration elem, EmitContext context) {
         begin(elem, context);
         process(elem.getModifiers(), context);
         process(elem.getType(), context);
@@ -771,8 +737,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
-    public Void visitMarkerAnnotation(MarkerAnnotation elem,
-            EmitContext context) {
+    public Void visitMarkerAnnotation(MarkerAnnotation elem, EmitContext context) {
         begin(elem, context);
         processInlineComment(elem, context);
         context.symbol("@"); //$NON-NLS-1$
@@ -781,8 +746,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
-    public Void visitMethodDeclaration(MethodDeclaration elem,
-            EmitContext context) {
+    public Void visitMethodDeclaration(MethodDeclaration elem, EmitContext context) {
         begin(elem, context);
         context.declaration(EmitDirection.BEGIN);
         process(elem.getJavadoc(), context);
@@ -810,8 +774,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
-    public Void visitMethodInvocationExpression(
-            MethodInvocationExpression elem, EmitContext context) {
+    public Void visitMethodInvocationExpression(MethodInvocationExpression elem, EmitContext context) {
         begin(elem, context);
         processInlineComment(elem, context);
         if (process(elem.getQualifier(), context)) {
@@ -840,8 +803,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
-    public Void visitNormalAnnotation(NormalAnnotation elem,
-            EmitContext context) {
+    public Void visitNormalAnnotation(NormalAnnotation elem, EmitContext context) {
         begin(elem, context);
         processInlineComment(elem, context);
         context.symbol("@"); //$NON-NLS-1$
@@ -851,8 +813,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
-    public Void visitPackageDeclaration(PackageDeclaration elem,
-            EmitContext context) {
+    public Void visitPackageDeclaration(PackageDeclaration elem, EmitContext context) {
         begin(elem, context);
         context.declaration(EmitDirection.BEGIN);
         process(elem.getJavadoc(), context);
@@ -865,8 +826,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
-    public Void visitParameterizedType(ParameterizedType elem,
-            EmitContext context) {
+    public Void visitParameterizedType(ParameterizedType elem, EmitContext context) {
         begin(elem, context);
         processInlineComment(elem, context);
         process(elem.getType(), context);
@@ -875,8 +835,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
-    public Void visitParenthesizedExpression(ParenthesizedExpression elem,
-            EmitContext context) {
+    public Void visitParenthesizedExpression(ParenthesizedExpression elem, EmitContext context) {
         begin(elem, context);
         processInlineComment(elem, context);
         context.symbol("("); //$NON-NLS-1$
@@ -886,8 +845,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
-    public Void visitPostfixExpression(PostfixExpression elem,
-            EmitContext context) {
+    public Void visitPostfixExpression(PostfixExpression elem, EmitContext context) {
         begin(elem, context);
         processInlineComment(elem, context);
         process(elem.getOperand(), context);
@@ -916,8 +874,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
-    public Void visitReturnStatement(ReturnStatement elem,
-            EmitContext context) {
+    public Void visitReturnStatement(ReturnStatement elem, EmitContext context) {
         begin(elem, context);
         processBlockComment(elem, context);
         context.statement(EmitDirection.BEGIN);
@@ -937,8 +894,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
-    public Void visitSingleElementAnnotation(SingleElementAnnotation elem,
-            EmitContext context) {
+    public Void visitSingleElementAnnotation(SingleElementAnnotation elem, EmitContext context) {
         begin(elem, context);
         processInlineComment(elem, context);
         context.symbol("@"); //$NON-NLS-1$
@@ -950,8 +906,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
-    public Void visitStatementExpressionList(StatementExpressionList elem,
-            EmitContext context) {
+    public Void visitStatementExpressionList(StatementExpressionList elem, EmitContext context) {
         begin(elem, context);
         processInlineComment(elem, context);
         processJoinWithComma(elem.getExpressions(), context);
@@ -970,8 +925,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
-    public Void visitSuperConstructorInvocation(
-            SuperConstructorInvocation elem, EmitContext context) {
+    public Void visitSuperConstructorInvocation(SuperConstructorInvocation elem, EmitContext context) {
         begin(elem, context);
         processBlockComment(elem, context);
         context.statement(EmitDirection.BEGIN);
@@ -987,8 +941,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
-    public Void visitSwitchCaseLabel(SwitchCaseLabel elem,
-            EmitContext context) {
+    public Void visitSwitchCaseLabel(SwitchCaseLabel elem, EmitContext context) {
         begin(elem, context);
         processBlockComment(elem, context);
         context.statement(EmitDirection.BEGIN);
@@ -1000,8 +953,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
-    public Void visitSwitchDefaultLabel(SwitchDefaultLabel elem,
-            EmitContext context) {
+    public Void visitSwitchDefaultLabel(SwitchDefaultLabel elem, EmitContext context) {
         begin(elem, context);
         processBlockComment(elem, context);
         context.statement(EmitDirection.BEGIN);
@@ -1012,8 +964,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
-    public Void visitSwitchStatement(SwitchStatement elem,
-            EmitContext context) {
+    public Void visitSwitchStatement(SwitchStatement elem, EmitContext context) {
         begin(elem, context);
         processBlockComment(elem, context);
         context.statement(EmitDirection.BEGIN);
@@ -1051,8 +1002,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
-    public Void visitSynchronizedStatement(SynchronizedStatement elem,
-            EmitContext context) {
+    public Void visitSynchronizedStatement(SynchronizedStatement elem, EmitContext context) {
         begin(elem, context);
         processBlockComment(elem, context);
         context.statement(EmitDirection.BEGIN);
@@ -1077,8 +1027,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
-    public Void visitThrowStatement(ThrowStatement elem,
-            EmitContext context) {
+    public Void visitThrowStatement(ThrowStatement elem, EmitContext context) {
         begin(elem, context);
         processBlockComment(elem, context);
         context.statement(EmitDirection.BEGIN);
@@ -1106,8 +1055,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
-    public Void visitTypeParameterDeclaration(TypeParameterDeclaration elem,
-            EmitContext context) {
+    public Void visitTypeParameterDeclaration(TypeParameterDeclaration elem, EmitContext context) {
         begin(elem, context);
         processInlineComment(elem, context);
         process(elem.getName(), context);
@@ -1124,8 +1072,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
-    public Void visitUnaryExpression(UnaryExpression elem,
-            EmitContext context) {
+    public Void visitUnaryExpression(UnaryExpression elem, EmitContext context) {
         begin(elem, context);
         processInlineComment(elem, context);
         context.operator(elem.getOperator().getSymbol());
@@ -1134,8 +1081,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
-    public Void visitVariableDeclarator(VariableDeclarator elem,
-            EmitContext context) {
+    public Void visitVariableDeclarator(VariableDeclarator elem, EmitContext context) {
         begin(elem, context);
         processInlineComment(elem, context);
         process(elem.getName(), context);
@@ -1151,8 +1097,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
-    public Void visitWhileStatement(WhileStatement elem,
-            EmitContext context) {
+    public Void visitWhileStatement(WhileStatement elem, EmitContext context) {
         begin(elem, context);
         processBlockComment(elem, context);
         context.statement(EmitDirection.BEGIN);
@@ -1279,8 +1224,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
-    public Void visitDocMethodParameter(DocMethodParameter elem,
-            EmitContext context) {
+    public Void visitDocMethodParameter(DocMethodParameter elem, EmitContext context) {
         begin(elem, context);
         process(elem.getType(), context);
         if (elem.isVariableArity()) {
@@ -1321,16 +1265,14 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         return true;
     }
 
-    private boolean process(List<? extends Model> elements,
-            EmitContext context) {
+    private boolean process(List<? extends Model> elements, EmitContext context) {
         for (Model element : elements) {
             element.accept(this, context);
         }
         return true;
     }
 
-    private void processJoinWithComma(List<? extends Model> elements,
-            EmitContext context) {
+    private void processJoinWithComma(List<? extends Model> elements, EmitContext context) {
         Iterator<? extends Model> iter = elements.iterator();
         if (iter.hasNext()) {
             process(iter.next(), context);
@@ -1341,15 +1283,13 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         }
     }
 
-    private void processParameters(List<? extends Model> elements,
-            EmitContext context) {
+    private void processParameters(List<? extends Model> elements, EmitContext context) {
         context.symbol("("); //$NON-NLS-1$
         processJoinWithComma(elements, context);
         context.separator(")"); //$NON-NLS-1$
     }
 
-    private void processTypeParameters(List<? extends Model> elements,
-            EmitContext context) {
+    private void processTypeParameters(List<? extends Model> elements, EmitContext context) {
         if (appears(elements)) {
             context.symbol("<"); //$NON-NLS-1$
             processJoinWithComma(elements, context);
@@ -1357,11 +1297,8 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         }
     }
 
-    private void processCompilationUnitComment(
-            CompilationUnit elem,
-            EmitContext context) {
-        CommentEmitTrait comment =
-            elem.findModelTrait(CommentEmitTrait.class);
+    private void processCompilationUnitComment(CompilationUnit elem, EmitContext context) {
+        CommentEmitTrait comment = elem.findModelTrait(CommentEmitTrait.class);
         if (comment == null) {
             return;
         }
@@ -1369,8 +1306,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     private void processBlockComment(Model elem, EmitContext context) {
-        CommentEmitTrait comment =
-            elem.findModelTrait(CommentEmitTrait.class);
+        CommentEmitTrait comment = elem.findModelTrait(CommentEmitTrait.class);
         if (comment == null) {
             return;
         }
@@ -1380,8 +1316,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     private void processInlineComment(Model elem, EmitContext context) {
-        CommentEmitTrait comment =
-            elem.findModelTrait(CommentEmitTrait.class);
+        CommentEmitTrait comment = elem.findModelTrait(CommentEmitTrait.class);
         if (comment == null) {
             return;
         }

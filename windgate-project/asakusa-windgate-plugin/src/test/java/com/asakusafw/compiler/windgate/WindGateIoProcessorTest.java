@@ -64,7 +64,7 @@ public class WindGateIoProcessorTest {
         In<Simple> in = flow.createIn("in1", new Import(Simple.class, "testing", dummy()));
         Out<Simple> out = flow.createOut("out1", new Export(Simple.class, "testing", dummy()));
 
-        FlowDescription desc = new IdentityFlow<Simple>(in, out);
+        FlowDescription desc = new IdentityFlow<>(in, out);
 
         JobflowInfo info = compile(flow, desc);
         assertThat(info, not(nullValue()));
@@ -94,7 +94,7 @@ public class WindGateIoProcessorTest {
         In<Simple> in = flow.createIn("in1", new Import(Simple.class, "testing", dummy()));
         Out<Simple> out = flow.createOut("out1", new Export(Simple.class, "other", dummy()));
 
-        FlowDescription desc = new IdentityFlow<Simple>(in, out);
+        FlowDescription desc = new IdentityFlow<>(in, out);
 
         JobflowInfo info = compile(flow, desc);
         assertThat(info, not(nullValue()));
@@ -127,7 +127,7 @@ public class WindGateIoProcessorTest {
         Out<Simple> out1 = flow.createOut("out1", new Export(Simple.class, "testing", dummy()));
         Out<Simple> out2 = flow.createOut("out2", new Export(Simple.class, "testing", dummy()));
 
-        FlowDescription desc = new DualIdentityFlow<Simple>(in1, in2, out1, out2);
+        FlowDescription desc = new DualIdentityFlow<>(in1, in2, out1, out2);
 
         JobflowInfo info = compile(flow, desc);
         assertThat(info, not(nullValue()));
@@ -159,7 +159,7 @@ public class WindGateIoProcessorTest {
         Out<Simple> out1 = flow.createOut("out1", new Export(Simple.class, "testing", dummy()));
         Out<Simple> out2 = flow.createOut("out2", new Export(Simple.class, "testing", dummy()));
 
-        FlowDescription desc = new DualIdentityFlow<Simple>(in1, in2, out1, out2);
+        FlowDescription desc = new DualIdentityFlow<>(in1, in2, out1, out2);
 
         JobflowInfo info = compile(flow, desc);
         assertThat(info, not(nullValue()));
@@ -193,7 +193,7 @@ public class WindGateIoProcessorTest {
         Out<Simple> out1 = flow.createOut("out1", new Export(Simple.class, "testing", dummy()));
         Out<Simple> out2 = flow.createOut("out2", new Export(Simple.class, "other", dummy()));
 
-        FlowDescription desc = new DualIdentityFlow<Simple>(in1, in2, out1, out2);
+        FlowDescription desc = new DualIdentityFlow<>(in1, in2, out1, out2);
 
         JobflowInfo info = compile(flow, desc);
         assertThat(info, not(nullValue()));
@@ -227,7 +227,7 @@ public class WindGateIoProcessorTest {
         Out<Simple> out1 = flow.createOut("out1", new Export(Simple.class, "testing", dummy()));
         Out<Simple> out2 = flow.createOut("out2", new Export(Simple.class, "other", dummy()));
 
-        FlowDescription desc = new DualIdentityFlow<Simple>(in1, in2, out1, out2);
+        FlowDescription desc = new DualIdentityFlow<>(in1, in2, out1, out2);
 
         JobflowInfo info = compile(flow, desc);
         assertThat(info, not(nullValue()));
@@ -260,7 +260,7 @@ public class WindGateIoProcessorTest {
         In<Simple> in = flow.createIn("in1", new Import(Simple.class, "testing", null));
         Out<Simple> out = flow.createOut("out1", new Export(Simple.class, "testing", dummy()));
 
-        FlowDescription desc = new IdentityFlow<Simple>(in, out);
+        FlowDescription desc = new IdentityFlow<>(in, out);
 
         JobflowInfo info = compile(flow, desc);
         assertThat(info, is(nullValue()));
@@ -276,7 +276,7 @@ public class WindGateIoProcessorTest {
         In<Simple> in = flow.createIn("in1", new Import(Simple.class, "testing", dummy()));
         Out<Simple> out = flow.createOut("out1", new Export(Simple.class, "testing", null));
 
-        FlowDescription desc = new IdentityFlow<Simple>(in, out);
+        FlowDescription desc = new IdentityFlow<>(in, out);
 
         JobflowInfo info = compile(flow, desc);
         assertThat(info, is(nullValue()));
@@ -292,7 +292,7 @@ public class WindGateIoProcessorTest {
         In<Simple> in = flow.createIn("in1", new Import(Simple.class, null, dummy()));
         Out<Simple> out = flow.createOut("out1", new Export(Simple.class, "testing", dummy()));
 
-        FlowDescription desc = new IdentityFlow<Simple>(in, out);
+        FlowDescription desc = new IdentityFlow<>(in, out);
 
         JobflowInfo info = compile(flow, desc);
         assertThat(info, nullValue());
@@ -308,7 +308,7 @@ public class WindGateIoProcessorTest {
         In<Simple> in = flow.createIn("in1", new Import(Simple.class, "", dummy()));
         Out<Simple> out = flow.createOut("out1", new Export(Simple.class, "testing", dummy()));
 
-        FlowDescription desc = new IdentityFlow<Simple>(in, out);
+        FlowDescription desc = new IdentityFlow<>(in, out);
 
         JobflowInfo info = compile(flow, desc);
         assertThat(info, nullValue());
@@ -324,7 +324,7 @@ public class WindGateIoProcessorTest {
         In<Simple> in = flow.createIn("in1", new Import(Simple.class, "testing", dummy()));
         Out<Simple> out = flow.createOut("out1", new Export(Simple.class, null, dummy()));
 
-        FlowDescription desc = new IdentityFlow<Simple>(in, out);
+        FlowDescription desc = new IdentityFlow<>(in, out);
 
         JobflowInfo info = compile(flow, desc);
         assertThat(info, nullValue());
@@ -340,7 +340,7 @@ public class WindGateIoProcessorTest {
         In<Simple> in = flow.createIn("in1", new Import(Simple.class, "testing", dummy()));
         Out<Simple> out = flow.createOut("out1", new Export(Simple.class, "", dummy()));
 
-        FlowDescription desc = new IdentityFlow<Simple>(in, out);
+        FlowDescription desc = new IdentityFlow<>(in, out);
 
         JobflowInfo info = compile(flow, desc);
         assertThat(info, nullValue());

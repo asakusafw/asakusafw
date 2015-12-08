@@ -82,9 +82,7 @@ public class Filer extends Emitter {
     }
 
     @Override
-    public PrintWriter openFor(
-            PackageDeclaration packageDeclOrNull,
-            String subPath) throws IOException {
+    public PrintWriter openFor(PackageDeclaration packageDeclOrNull, String subPath) throws IOException {
         if (subPath == null) {
             throw new IllegalArgumentException("fileName must not be null"); //$NON-NLS-1$
         }

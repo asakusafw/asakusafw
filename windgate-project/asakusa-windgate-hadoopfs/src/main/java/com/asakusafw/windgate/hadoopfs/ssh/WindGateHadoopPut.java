@@ -85,9 +85,8 @@ public class WindGateHadoopPut extends WindGateHadoopBase {
                     WindGateHadoopPut.class.getName());
             return 1;
         }
-        try {
-            WGLOG.info("I21001");
-            FileList.Reader reader = FileList.createReader(new BufferedInputStream(in, BUFFER_SIZE));
+        WGLOG.info("I21001");
+        try (FileList.Reader reader = FileList.createReader(new BufferedInputStream(in, BUFFER_SIZE))) {
             doPut(reader);
             WGLOG.info("I21002");
             reader.close();
@@ -103,11 +102,8 @@ public class WindGateHadoopPut extends WindGateHadoopBase {
         FileSystem fs = FileSystem.get(conf);
         while (source.next()) {
             Path path = source.getCurrentPath();
-            InputStream input = source.openContent();
-            try {
+            try (InputStream input = source.openContent()) {
                 doPut(fs, path, input);
-            } finally {
-                input.close();
             }
         }
     }
@@ -120,13 +116,7 @@ public class WindGateHadoopPut extends WindGateHadoopBase {
                 fs.getUri(),
                 path);
         long transferred = 0;
-        OutputStream output;
-        if (RuntimeContext.get().isSimulation()) {
-            output = new VoidOutputStream();
-        } else {
-            output = fs.create(path, true, BUFFER_SIZE);
-        }
-        try {
+        try (OutputStream output = getOutput(fs, path)) {
             byte[] buf = new byte[256];
             while (true) {
                 int read = input.read(buf);
@@ -136,12 +126,18 @@ public class WindGateHadoopPut extends WindGateHadoopBase {
                 output.write(buf, 0, read);
                 transferred += read;
             }
-        } finally {
-            output.close();
         }
         WGLOG.info("I21004",
                 fs.getUri(),
                 path,
                 transferred);
+    }
+
+    private OutputStream getOutput(FileSystem fs, Path path) throws IOException {
+        if (RuntimeContext.get().isSimulation()) {
+            return new VoidOutputStream();
+        } else {
+            return fs.create(path, true, BUFFER_SIZE);
+        }
     }
 }

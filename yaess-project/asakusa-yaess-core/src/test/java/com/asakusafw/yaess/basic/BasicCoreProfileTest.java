@@ -39,7 +39,7 @@ public class BasicCoreProfileTest {
      */
     @Test
     public void version() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         conf.put(CoreProfile.KEY_VERSION, "TESTING");
 
         ServiceProfile<CoreProfile> profile = new ServiceProfile<CoreProfile>(
@@ -55,7 +55,7 @@ public class BasicCoreProfileTest {
      */
     @Test(expected = IOException.class)
     public void version_missing() throws Exception {
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         ServiceProfile<CoreProfile> profile = new ServiceProfile<CoreProfile>(
                 "testing", BasicCoreProfile.class, conf, ProfileContext.system(getClass().getClassLoader()));
         profile.newInstance();

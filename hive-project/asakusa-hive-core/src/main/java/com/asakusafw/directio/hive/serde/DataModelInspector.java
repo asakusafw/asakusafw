@@ -69,7 +69,7 @@ public class DataModelInspector extends StructObjectInspector {
     @Override
     public List<Object> getStructFieldsDataAsList(Object data) {
         List<? extends StructField> refs = getAllStructFieldRefs();
-        List<Object> results = new ArrayList<Object>(refs.size());
+        List<Object> results = new ArrayList<>(refs.size());
         for (StructField field : refs) {
             results.add(getStructFieldData(data, field));
         }

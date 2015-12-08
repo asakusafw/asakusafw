@@ -131,29 +131,23 @@ public class TemporaryFileTest {
         Snappy.getNativeLibraryVersion();
 
         File file = folder.newFile();
-        ModelOutput<NullWritable> out = new TemporaryFileOutput<NullWritable>(
+        try (ModelOutput<NullWritable> out = new TemporaryFileOutput<>(
                 new BufferedOutputStream(new FileOutputStream(file)),
                 NullWritable.class.getName(),
                 1024,
-                256 * 1024);
-        try {
+                256 * 1024)) {
             out.write(NullWritable.get());
             out.write(NullWritable.get());
             out.write(NullWritable.get());
-        } finally {
-            out.close();
         }
 
-        TemporaryFileInput<NullWritable> in = new TemporaryFileInput<NullWritable>(
+        try (TemporaryFileInput<NullWritable> in = new TemporaryFileInput<>(
                 new BufferedInputStream(new FileInputStream(file)),
-                0);
-        try {
+                0)) {
             assertThat(in.readTo(NullWritable.get()), is(true));
             assertThat(in.readTo(NullWritable.get()), is(true));
             assertThat(in.readTo(NullWritable.get()), is(true));
             assertThat(in.readTo(NullWritable.get()), is(false));
-        } finally {
-            in.close();
         }
     }
 
@@ -165,17 +159,14 @@ public class TemporaryFileTest {
         Text value = new Text("Hello, world!");
 
         long t0 = System.currentTimeMillis();
-        ModelOutput<Text> out = new TemporaryFileOutput<Text>(
+        try (ModelOutput<Text> out = new TemporaryFileOutput<>(
                 new BufferedOutputStream(new FileOutputStream(file)),
                 Text.class.getName(),
                 530 * 1024,
-                512 * 1024);
-        try {
+                512 * 1024)) {
             for (int i = 0; i < count; i++) {
                 out.write(value);
             }
-        } finally {
-            out.close();
         }
         long t1 = System.currentTimeMillis();
         System.out.println(MessageFormat.format(
@@ -184,10 +175,9 @@ public class TemporaryFileTest {
                 count,
                 file.length()));
 
-        TemporaryFileInput<Text> in = new TemporaryFileInput<Text>(
+        try (TemporaryFileInput<Text> in = new TemporaryFileInput<>(
                 new BufferedInputStream(new FileInputStream(file)),
-                0);
-        try {
+                0)) {
             Text result = new Text();
             assertThat(in.getDataTypeName(), is(Text.class.getName()));
             for (int i = 0; i < count; i++) {
@@ -197,8 +187,6 @@ public class TemporaryFileTest {
                 }
             }
             assertThat(in.readTo(result), is(false));
-        } finally {
-            in.close();
         }
 
         long t2 = System.currentTimeMillis();
@@ -214,16 +202,13 @@ public class TemporaryFileTest {
         Text value = new Text("Hello, world!");
 
         long t0 = System.currentTimeMillis();
-        ModelOutput<Text> out = TemporaryStorage.openOutput(
+        try (ModelOutput<Text> out = TemporaryStorage.openOutput(
                 new Configuration(),
                 Text.class,
-                new Path(file.toURI()));
-        try {
+                new Path(file.toURI()))) {
             for (int i = 0; i < count; i++) {
                 out.write(value);
             }
-        } finally {
-            out.close();
         }
         long t1 = System.currentTimeMillis();
         System.out.println(MessageFormat.format(
@@ -232,11 +217,10 @@ public class TemporaryFileTest {
                 count,
                 file.length()));
 
-        ModelInput<Text> in = TemporaryStorage.openInput(
+        try (ModelInput<Text> in = TemporaryStorage.openInput(
                 new Configuration(),
                 Text.class,
-                new Path(file.toURI()));
-        try {
+                new Path(file.toURI()))) {
             Text result = new Text();
             for (int i = 0; i < count; i++) {
                 assertTrue(in.readTo(result));
@@ -245,8 +229,6 @@ public class TemporaryFileTest {
                 }
             }
             assertThat(in.readTo(result), is(false));
-        } finally {
-            in.close();
         }
 
         long t2 = System.currentTimeMillis();

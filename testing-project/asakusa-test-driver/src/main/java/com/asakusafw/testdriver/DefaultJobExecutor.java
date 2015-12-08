@@ -205,13 +205,9 @@ public class DefaultJobExecutor extends JobExecutor {
         builder.directory(new File(System.getProperty("user.home", "."))); //$NON-NLS-1$ //$NON-NLS-2$
 
         int exitCode;
-        Process process = null;
-        InputStream is = null;
-        try {
-            process = builder.start();
-            is = process.getInputStream();
+        Process process = builder.start();
+        try (InputStream is = process.getInputStream()) {
             InputStreamThread it = new InputStreamThread(is);
-
             it.start();
             exitCode = process.waitFor();
             it.join();
@@ -220,18 +216,9 @@ public class DefaultJobExecutor extends JobExecutor {
                     Messages.getString("DefaultJobExecutor.errorExecutionInterrupted"), //$NON-NLS-1$
                     toCommandLineString(commandLine)), e);
         } finally {
-            try {
-                if (is != null) {
-                    is.close();
-                }
-                if (process != null) {
-                    process.getOutputStream().close();
-                    process.getErrorStream().close();
-                    process.destroy();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            process.getOutputStream().close();
+            process.getErrorStream().close();
+            process.destroy();
         }
         return exitCode;
     }
@@ -245,21 +232,22 @@ public class DefaultJobExecutor extends JobExecutor {
         return sb.toString().trim();
     }
 
-    private static class InputStreamThread extends Thread {
+    private static final class InputStreamThread extends Thread {
 
-        private final BufferedReader br;
+        private final BufferedReader reader;
 
         private final List<String> list = Lists.create();
 
         public InputStreamThread(InputStream is) {
-            br = new BufferedReader(new InputStreamReader(is, Charset.defaultCharset()));
+            reader = new BufferedReader(new InputStreamReader(is, Charset.defaultCharset()));
+            setDaemon(true);
         }
 
         @Override
         public void run() {
             try {
                 while (true) {
-                    String line = br.readLine();
+                    String line = reader.readLine();
                     if (line == null) {
                         break;
                     }

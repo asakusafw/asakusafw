@@ -259,7 +259,7 @@ public class BatchTestTruncator extends BatchTestTool {
 
     private static Map<String, String> toMap(Properties p) {
         assert p != null;
-        Map<String, String> results = new TreeMap<String, String>();
+        Map<String, String> results = new TreeMap<>();
         for (Map.Entry<Object, Object> entry : p.entrySet()) {
             results.put((String) entry.getKey(), (String) entry.getValue());
         }
@@ -268,9 +268,9 @@ public class BatchTestTruncator extends BatchTestTool {
 
     private static final class Conf {
 
-        final List<ImporterDescription> importers = new ArrayList<ImporterDescription>();
+        final List<ImporterDescription> importers = new ArrayList<>();
 
-        final List<ExporterDescription> exporters = new ArrayList<ExporterDescription>();
+        final List<ExporterDescription> exporters = new ArrayList<>();
 
         TestDriverContext context;
 

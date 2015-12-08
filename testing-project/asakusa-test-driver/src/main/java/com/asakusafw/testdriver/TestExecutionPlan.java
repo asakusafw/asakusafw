@@ -74,11 +74,11 @@ public class TestExecutionPlan implements Serializable {
         Precondition.checkMustNotBeNull(finalizers, "finalizers"); //$NON-NLS-1$
         this.definitionId = definitionId;
         this.executionId = executionId;
-        this.initializers = new ArrayList<Task>(initializers);
-        this.importers = new ArrayList<Task>(importers);
-        this.jobs = new ArrayList<Task>(jobs);
-        this.exporters = new ArrayList<Task>(exporters);
-        this.finalizers = new ArrayList<Task>(finalizers);
+        this.initializers = new ArrayList<>(initializers);
+        this.importers = new ArrayList<>(importers);
+        this.jobs = new ArrayList<>(jobs);
+        this.exporters = new ArrayList<>(exporters);
+        this.finalizers = new ArrayList<>(finalizers);
     }
 
     /**

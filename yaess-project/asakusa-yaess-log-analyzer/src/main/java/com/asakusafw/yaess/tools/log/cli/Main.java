@@ -200,7 +200,7 @@ public final class Main {
 
     private static Map<String, String> parseArgs(CommandLine cmd, Option opt) {
         Properties props = cmd.getOptionProperties(opt.getOpt());
-        Map<String, String> results = new TreeMap<String, String>();
+        Map<String, String> results = new TreeMap<>();
         for (Map.Entry<Object, Object> entry : props.entrySet()) {
             results.put((String) entry.getKey(), (String) entry.getValue());
         }
@@ -211,19 +211,12 @@ public final class Main {
         assert conf != null;
         LOG.info("Start analyzing YAESS log");
         long count = 0L;
-        Source<? extends YaessLogRecord> source = conf.sourceFactory.createSource(conf.sourceOptions);
-        try {
-            Sink<? super YaessLogRecord> sink = conf.sinkFactory.createSink(conf.sinkOptions);
-            try {
-                while (source.next()) {
-                    count++;
-                    sink.put(source.get());
-                }
-            } finally {
-                sink.close();
+        try (Source<? extends YaessLogRecord> source = conf.sourceFactory.createSource(conf.sourceOptions);
+                Sink<? super YaessLogRecord> sink = conf.sinkFactory.createSink(conf.sinkOptions)) {
+            while (source.next()) {
+                count++;
+                sink.put(source.get());
             }
-        } finally {
-            source.close();
         }
         LOG.info("Finish analyzing YAESS log: {} records", count);
     }

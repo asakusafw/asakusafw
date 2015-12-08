@@ -34,7 +34,7 @@ public final class SimpleNameImpl extends ModelRoot implements SimpleName {
     private static final Set<String> RESERVED;
     static {
         // see http://docs.oracle.com/javase/specs/jls/se7/html/jls-3.html#jls-3.8
-        Set<String> set = new HashSet<String>();
+        Set<String> set = new HashSet<>();
         set.add("abstract"); //$NON-NLS-1$
         set.add("continue"); //$NON-NLS-1$
         set.add("for"); //$NON-NLS-1$

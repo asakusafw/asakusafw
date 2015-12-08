@@ -72,18 +72,13 @@ final class Util {
 
         LOG.debug("Processing Excel workbook: {}", source); //$NON-NLS-1$
         URL url = source.toURL();
-        InputStream in = url.openStream();
         Workbook book;
-        try {
-            InputStream bin = new BufferedInputStream(in);
-            book = openWorkbookFor(path, bin);
-            bin.close();
+        try (InputStream in = new BufferedInputStream(url.openStream())) {
+            book = openWorkbookFor(path, in);
         } catch (IOException e) {
             throw new IOException(MessageFormat.format(
                     Messages.getString("Util.errorFailedToOpenWorkbook"), //$NON-NLS-1$
                     source));
-        } finally {
-            in.close();
         }
 
         if (matcher.group(1) != null) {

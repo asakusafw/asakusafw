@@ -313,7 +313,7 @@ public abstract class AbstractStageClient extends BaseStageClient {
     }
 
     private void configureStageInput(Job job, VariableTable variables) {
-        List<StageInput> inputList = new ArrayList<StageInput>();
+        List<StageInput> inputList = new ArrayList<>();
         for (StageInput input : getStageInputs()) {
             Class<? extends Mapper<?, ?, ?, ?>> mapperClass = input.getMapperClass();
             String pathString = input.getPathString();
@@ -431,7 +431,7 @@ public abstract class AbstractStageClient extends BaseStageClient {
 
     private void configureStageOutput(Job job, VariableTable variables) throws IOException {
         String outputPath = variables.parse(getStageOutputPath());
-        List<StageOutput> outputList = new ArrayList<StageOutput>();
+        List<StageOutput> outputList = new ArrayList<>();
         for (StageOutput output : getStageOutputs()) {
             String name = output.getName();
             Class<?> keyClass = output.getKeyClass();

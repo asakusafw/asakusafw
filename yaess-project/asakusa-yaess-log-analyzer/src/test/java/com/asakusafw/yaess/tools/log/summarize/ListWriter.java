@@ -25,9 +25,9 @@ import com.asakusafw.utils.io.RecordWriter;
  */
 public class ListWriter implements RecordWriter {
 
-    private final List<List<String>> lines = new ArrayList<List<String>>();
+    private final List<List<String>> lines = new ArrayList<>();
 
-    private final List<String> current = new ArrayList<String>();
+    private final List<String> current = new ArrayList<>();
 
     /**
      * Returns the written lines.
@@ -44,7 +44,7 @@ public class ListWriter implements RecordWriter {
 
     @Override
     public void putEndOfRecord() {
-        lines.add(new ArrayList<String>(current));
+        lines.add(new ArrayList<>(current));
         current.clear();
     }
 

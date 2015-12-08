@@ -145,8 +145,7 @@ public class JdbcDrainDriver<T> implements DrainDriver<T> {
         } else {
             sql = script.getCustomTruncate();
         }
-        Statement truncater = connection.createStatement();
-        try {
+        try (Statement truncater = connection.createStatement()) {
             WGLOG.info("I04001",
                     profile.getResourceName(),
                     script.getName(),
@@ -156,8 +155,6 @@ public class JdbcDrainDriver<T> implements DrainDriver<T> {
             LOG.debug("Executed SQL: {}", sql);
             connection.commit();
             LOG.debug("Committed {}", sql);
-        } finally {
-            truncater.close();
         }
     }
 

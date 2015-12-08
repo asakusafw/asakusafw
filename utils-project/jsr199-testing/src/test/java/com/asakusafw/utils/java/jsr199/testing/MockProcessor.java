@@ -41,41 +41,36 @@ import javax.tools.StandardLocation;
 @SupportedAnnotationTypes({
     "java.lang.SuppressWarnings"
 })
-@SupportedSourceVersion(SourceVersion.RELEASE_6)
+@SupportedSourceVersion(SourceVersion.RELEASE_7)
 public class MockProcessor extends AbstractProcessor {
 
     @Override
-    public boolean process(
-            Set<? extends TypeElement> annotations,
-            RoundEnvironment env) {
-        Set<Element> elements = new HashSet<Element>();
+    public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment env) {
+        Set<Element> elements = new HashSet<>();
         for (TypeElement annotationType : annotations) {
-            Set<? extends Element> annotated =
-                env.getElementsAnnotatedWith(annotationType);
+            Set<? extends Element> annotated = env.getElementsAnnotatedWith(annotationType);
             elements.addAll(annotated);
         }
         if (elements.isEmpty() == false) {
             try {
-                JavaFileObject file =
-                    processingEnv.getFiler().createSourceFile("Generated");
-                Writer writer = file.openWriter();
-                PrintWriter pw = new PrintWriter(writer);
-                pw.println("public class Generated {");
-                pw.println("    public static final String[] ELEMENTS = {");
-                for (Element element : elements) {
-                    pw.println("        \"" + element.getSimpleName() + "\",");
+                JavaFileObject file = processingEnv.getFiler().createSourceFile("Generated");
+                try (PrintWriter pw = new PrintWriter(file.openWriter())) {
+                    pw.println("public class Generated {");
+                    pw.println("    public static final String[] ELEMENTS = {");
+                    for (Element element : elements) {
+                        pw.println("        \"" + element.getSimpleName() + "\",");
+                    }
+                    pw.println("    };");
+                    pw.println("}");
                 }
-                pw.println("    };");
-                pw.println("}");
-                pw.close();
 
                 FileObject resource = processingEnv.getFiler().createResource(
                         StandardLocation.CLASS_OUTPUT,
                         "com.example",
                         "example.properties");
-                Writer rw = resource.openWriter();
-                rw.write("example=OK");
-                rw.close();
+                try (Writer rw = resource.openWriter()) {
+                    rw.write("example=OK");
+                }
             } catch (IOException e) {
                 throw new AssertionError(e);
             }
@@ -87,7 +82,7 @@ public class MockProcessor extends AbstractProcessor {
         try {
             Class<?> klass = Class.forName("Generated", true, loader);
             Field field = klass.getDeclaredField("ELEMENTS");
-            return new HashSet<String>(Arrays.asList((String[]) field.get(null)));
+            return new HashSet<>(Arrays.asList((String[]) field.get(null)));
         } catch (ClassNotFoundException e) {
             return Collections.emptySet();
         } catch (Exception e) {

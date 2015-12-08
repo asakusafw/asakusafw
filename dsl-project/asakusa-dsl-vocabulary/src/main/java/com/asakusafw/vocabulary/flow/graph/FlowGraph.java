@@ -58,8 +58,8 @@ public class FlowGraph {
             throw new IllegalArgumentException("flowOutputs must not be null"); //$NON-NLS-1$
         }
         this.description = description;
-        this.flowInputs = Collections.unmodifiableList(new ArrayList<FlowIn<?>>(flowInputs));
-        this.flowOutputs = Collections.unmodifiableList(new ArrayList<FlowOut<?>>(flowOutputs));
+        this.flowInputs = Collections.unmodifiableList(new ArrayList<>(flowInputs));
+        this.flowOutputs = Collections.unmodifiableList(new ArrayList<>(flowOutputs));
         this.origin = this;
     }
 

@@ -202,7 +202,7 @@ public class ImportBuilderTest {
             java.lang.reflect.Type... arguments) {
         Type result = Models.toType(f, type);
         if (arguments.length != 0) {
-            List<Type> args = new ArrayList<Type>();
+            List<Type> args = new ArrayList<>();
             for (java.lang.reflect.Type t : arguments) {
                 args.add(Models.toType(f, t));
             }
@@ -216,7 +216,7 @@ public class ImportBuilderTest {
             String... arguments) {
         Type result = f.newNamedType(Models.toName(f, name));
         if (arguments.length != 0) {
-            List<Type> args = new ArrayList<Type>();
+            List<Type> args = new ArrayList<>();
             for (String t : arguments) {
                 args.add(f.newNamedType(Models.toName(f, t)));
             }
@@ -235,7 +235,7 @@ public class ImportBuilderTest {
 
     private void assertImportedNames(ImportBuilder importer, String... types) {
         List<ImportDeclaration> decls = importer.toImportDeclarations();
-        Set<String> actual = new TreeSet<String>();
+        Set<String> actual = new TreeSet<>();
         for (ImportDeclaration d : decls) {
             assertThat(d.getImportKind(), is(ImportKind.SINGLE_TYPE));
             String name = d.getName().toNameString();
@@ -243,7 +243,7 @@ public class ImportBuilderTest {
             actual.add(name);
         }
 
-        Set<String> expect = new TreeSet<String>();
+        Set<String> expect = new TreeSet<>();
         Collections.addAll(expect, types);
 
         assertThat(actual, is(expect));

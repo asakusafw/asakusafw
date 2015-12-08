@@ -59,8 +59,7 @@ public class IrDocComment extends AbstractIrDocElement {
         if (blocks == null) {
             throw new IllegalArgumentException("blocks"); //$NON-NLS-1$
         }
-        this.blocks = Collections.unmodifiableList(
-            new ArrayList<IrDocBlock>(blocks));
+        this.blocks = Collections.unmodifiableList(new ArrayList<>(blocks));
     }
 
     @Override

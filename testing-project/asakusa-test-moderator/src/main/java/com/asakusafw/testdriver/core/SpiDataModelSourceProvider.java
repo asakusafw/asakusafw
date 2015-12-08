@@ -39,7 +39,7 @@ public class SpiDataModelSourceProvider implements DataModelSourceProvider {
         if (serviceClassLoader == null) {
             throw new IllegalArgumentException("serviceClassLoader must not be null"); //$NON-NLS-1$
         }
-        this.elements = new ArrayList<DataModelSourceProvider>();
+        this.elements = new ArrayList<>();
         this.elements.addAll(Util.loadService(SourceProvider.class, serviceClassLoader));
         this.elements.addAll(Util.loadService(DataModelSourceProvider.class, serviceClassLoader));
     }

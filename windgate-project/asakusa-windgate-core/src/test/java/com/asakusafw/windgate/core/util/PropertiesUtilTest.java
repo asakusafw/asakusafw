@@ -46,7 +46,7 @@ public class PropertiesUtilTest {
         properties.put(array, "abc[]");
         properties.put("abc[]", array);
 
-        Map<String, String> answer = new HashMap<String, String>();
+        Map<String, String> answer = new HashMap<>();
         answer.put("de", "abcde");
         answer.put("0", "abc0");
         answer.put("", "abc");

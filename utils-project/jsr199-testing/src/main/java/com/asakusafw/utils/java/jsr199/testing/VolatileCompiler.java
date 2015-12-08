@@ -69,12 +69,12 @@ public class VolatileCompiler implements Closeable {
                 null,
                 Locale.ENGLISH,
                 Charset.forName("UTF-8"))); //$NON-NLS-1$
-        this.arguments = new ArrayList<String>();
-        this.targets = new ArrayList<JavaFileObject>();
-        this.processors = new ArrayList<Processor>();
+        this.arguments = new ArrayList<>();
+        this.targets = new ArrayList<>();
+        this.processors = new ArrayList<>();
 
-        Collections.addAll(arguments, "-source", "1.6"); //$NON-NLS-1$ //$NON-NLS-2$
-        Collections.addAll(arguments, "-target", "1.6"); //$NON-NLS-1$ //$NON-NLS-2$
+        Collections.addAll(arguments, "-source", "1.7"); //$NON-NLS-1$ //$NON-NLS-2$
+        Collections.addAll(arguments, "-target", "1.7"); //$NON-NLS-1$ //$NON-NLS-2$
         Collections.addAll(arguments, "-encoding", "UTF-8"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
@@ -125,8 +125,8 @@ public class VolatileCompiler implements Closeable {
      * Adds compiler arguments.
      * Initially the compiler has the following arguments:
      * <ul>
-     * <li> {@code -source 1.6} </li>
-     * <li> {@code -target 1.6} </li>
+     * <li> {@code -source 1.7} </li>
+     * <li> {@code -target 1.7} </li>
      * <li> {@code -encoding UTF-8} </li>
      * </ul>
      * @param compilerArguments the compiler arguments to add
@@ -147,9 +147,7 @@ public class VolatileCompiler implements Closeable {
      * @return the diagnostic objects
      */
     public List<Diagnostic<? extends JavaFileObject>> doCompile() {
-        DiagnosticCollector<JavaFileObject> collector =
-            new DiagnosticCollector<JavaFileObject>();
-
+        DiagnosticCollector<JavaFileObject> collector = new DiagnosticCollector<>();
         CompilationTask task = compiler.getTask(
             new PrintWriter(new OutputStreamWriter(System.err, Charset.defaultCharset()), true),
             files,
@@ -157,9 +155,7 @@ public class VolatileCompiler implements Closeable {
             arguments,
             Arrays.<String>asList(),
             targets);
-
         task.setProcessors(processors);
-
         task.call();
         return collector.getDiagnostics();
     }

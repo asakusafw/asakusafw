@@ -55,7 +55,7 @@ public class VerifyRuleVerifier implements Verifier, Verifier.Validatable {
         } finally {
             expected.close();
         }
-        List<Difference> differences = new ArrayList<Difference>();
+        List<Difference> differences = new ArrayList<>();
         differences.addAll(engine.inspectInput(results));
         differences.addAll(engine.inspectRest());
         return differences;

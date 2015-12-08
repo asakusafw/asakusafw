@@ -61,10 +61,7 @@ public class FlowElementPortDescription {
      * @param shuffleKey information of the shuffle operation
      * @throws IllegalArgumentException if some parameters are {@code null}
      */
-    public FlowElementPortDescription(
-            String name,
-            Type dataType,
-            ShuffleKey shuffleKey) {
+    public FlowElementPortDescription(String name, Type dataType, ShuffleKey shuffleKey) {
         if (name == null) {
             throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
         }

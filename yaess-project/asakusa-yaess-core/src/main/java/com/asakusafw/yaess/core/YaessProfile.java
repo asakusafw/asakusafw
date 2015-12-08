@@ -133,8 +133,7 @@ public class YaessProfile {
         this.locks = locks;
         this.scheduler = scheduler;
         this.hadoopHandler = hadoopHandler;
-        Map<String, ServiceProfile<CommandScriptHandler>> map =
-            new TreeMap<String, ServiceProfile<CommandScriptHandler>>();
+        Map<String, ServiceProfile<CommandScriptHandler>> map = new TreeMap<>();
         for (ServiceProfile<CommandScriptHandler> profile : commandHandlers) {
             if (profile.getPrefix().startsWith(GROUP_PREFIX_COMMAND) == false) {
                 throw new IllegalArgumentException(MessageFormat.format(
@@ -212,8 +211,7 @@ public class YaessProfile {
             ServiceProfile.load(properties, PREFIX_SCHEDULER, JobScheduler.class, context);
         ServiceProfile<HadoopScriptHandler> hadoopHandler =
             ServiceProfile.load(properties, PREFIX_HADOOP, HadoopScriptHandler.class, context);
-        List<ServiceProfile<CommandScriptHandler>> commandHandlers =
-            new ArrayList<ServiceProfile<CommandScriptHandler>>();
+        List<ServiceProfile<CommandScriptHandler>> commandHandlers = new ArrayList<>();
         for (String commandHandlerPrefix : PropertiesUtil.getChildKeys(properties, GROUP_PREFIX_COMMAND, ".")) {
             ServiceProfile<CommandScriptHandler> profile =
                 ServiceProfile.load(properties, commandHandlerPrefix, CommandScriptHandler.class, context);

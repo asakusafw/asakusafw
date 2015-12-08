@@ -90,18 +90,16 @@ public class WindGateHadoopDelete extends WindGateHadoopBase {
                     WindGateHadoopDelete.class.getName());
             return 1;
         }
-        List<Path> paths = new ArrayList<Path>();
+        List<Path> paths = new ArrayList<>();
         for (String arg : args) {
             paths.add(new Path(arg));
         }
-        try {
-            WGLOG.info("I22001",
-                    paths);
-            FileList.Writer writer = FileList.createWriter(new BufferedOutputStream(out, BUFFER_SIZE));
+        WGLOG.info("I22001",
+                paths);
+        try (FileList.Writer writer = FileList.createWriter(new BufferedOutputStream(out, BUFFER_SIZE))) {
             doDelete(paths, writer);
             WGLOG.info("I22002",
                     paths);
-            writer.close();
             return 0;
         } catch (IOException e) {
             WGLOG.error(e, "E22002",
@@ -135,8 +133,7 @@ public class WindGateHadoopDelete extends WindGateHadoopBase {
         WGLOG.info("I22004",
                 fs.getUri(),
                 status.getPath());
-        OutputStream output = drain.openNext(status.getPath());
-        try {
+        try (OutputStream output = drain.openNext(status.getPath())) {
             String failReason = null;
             try {
                 boolean deleted;
@@ -162,8 +159,6 @@ public class WindGateHadoopDelete extends WindGateHadoopBase {
             if (failReason != null) {
                 output.write(failReason.getBytes(UTF8));
             }
-        } finally {
-            output.close();
         }
     }
 }

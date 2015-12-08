@@ -234,7 +234,7 @@ public class MasterBranchOperatorProcessorTest extends OperatorCompilerTestRoot 
 
         Object masterBranch = invoke(factory, "example", a, b);
 
-        Set<String> fieldNames = new HashSet<String>();
+        Set<String> fieldNames = new HashSet<>();
         for (Field field : masterBranch.getClass().getFields()) {
             fieldNames.add(field.getName());
         }

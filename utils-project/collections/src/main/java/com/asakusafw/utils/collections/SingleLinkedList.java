@@ -98,8 +98,8 @@ public class SingleLinkedList<E> implements Iterable<E>, Serializable {
      * @return the created list
      */
     public SingleLinkedList<E> concat(E element) {
-        Node<E> next = new Node<E>(element, head);
-        return new SingleLinkedList<E>(next);
+        Node<E> next = new Node<>(element, head);
+        return new SingleLinkedList<>(next);
     }
 
     /**
@@ -123,7 +123,7 @@ public class SingleLinkedList<E> implements Iterable<E>, Serializable {
         if (isEmpty()) {
             throw new NoSuchElementException();
         }
-        return new SingleLinkedList<E>(head.next);
+        return new SingleLinkedList<>(head.next);
     }
 
     /**
@@ -148,7 +148,7 @@ public class SingleLinkedList<E> implements Iterable<E>, Serializable {
 
     @Override
     public Iterator<E> iterator() {
-        return new NodeIterator<E>(head);
+        return new NodeIterator<>(head);
     }
 
     /**
@@ -270,7 +270,7 @@ public class SingleLinkedList<E> implements Iterable<E>, Serializable {
         if (size == 0) {
             head = null;
         } else {
-            List<E> store = new ArrayList<E>(size);
+            List<E> store = new ArrayList<>(size);
             for (int i = 0; i < size; i++) {
                 @SuppressWarnings("unchecked")
                 E value = (E) stream.readObject();
@@ -285,7 +285,7 @@ public class SingleLinkedList<E> implements Iterable<E>, Serializable {
         Node<E> node = null;
         for (ListIterator<? extends E> iter = store.listIterator(store.size()); iter.hasPrevious();) {
             E value = iter.previous();
-            Node<E> prev = new Node<E>(value, node);
+            Node<E> prev = new Node<>(value, node);
             node = prev;
         }
         return node;

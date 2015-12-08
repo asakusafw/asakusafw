@@ -98,12 +98,12 @@ public class BasicScriptHandlerTestRoot {
      */
     protected List<String> getOutput(File copier) throws IOException {
         File output = new File(copier.getParentFile(), copier.getName() + ".out");
-        List<String> results = new ArrayList<String>();
-        Scanner scanner = new Scanner(output);
-        while (scanner.hasNextLine()) {
-            results.add(scanner.nextLine());
+        List<String> results = new ArrayList<>();
+        try (Scanner scanner = new Scanner(output)) {
+            while (scanner.hasNextLine()) {
+                results.add(scanner.nextLine());
+            }
         }
-        scanner.close();
         return results;
     }
 
@@ -137,12 +137,9 @@ public class BasicScriptHandlerTestRoot {
     protected File putScript(String source, File file) throws IOException {
         Assume.assumeThat("Windows does not supported", SystemUtils.IS_OS_WINDOWS, is(false));
         LOG.debug("Deploy script: {} -> {}", source, file);
-        InputStream in = getClass().getResourceAsStream(source);
-        assertThat(source, in, is(notNullValue()));
-        try {
+        try (InputStream in = getClass().getResourceAsStream(source)) {
+            assertThat(source, in, is(notNullValue()));
             copyTo(in, file);
-        } finally {
-            in.close();
         }
         file.setExecutable(true);
         return file;
@@ -154,7 +151,7 @@ public class BasicScriptHandlerTestRoot {
      * @return result
      */
     protected Set<String> set(String... values) {
-        return new TreeSet<String>(Arrays.asList(values));
+        return new TreeSet<>(Arrays.asList(values));
     }
 
     /**
@@ -164,7 +161,7 @@ public class BasicScriptHandlerTestRoot {
      */
     protected Map<String, String> map(String... keyValuePairs) {
         assert keyValuePairs.length % 2 == 0;
-        Map<String, String> conf = new HashMap<String, String>();
+        Map<String, String> conf = new HashMap<>();
         for (int i = 0; i < keyValuePairs.length - 1; i += 2) {
             conf.put(keyValuePairs[i], keyValuePairs[i + 1]);
         }
@@ -179,9 +176,7 @@ public class BasicScriptHandlerTestRoot {
         if (parent.isDirectory() == false) {
             assertThat(parent.getAbsolutePath(), parent.mkdirs(), is(true));
         }
-
-        FileOutputStream output = new FileOutputStream(target);
-        try {
+        try (FileOutputStream output = new FileOutputStream(target)) {
             byte[] buf = new byte[1024];
             while (true) {
                 int read = input.read(buf);
@@ -190,8 +185,6 @@ public class BasicScriptHandlerTestRoot {
                 }
                 output.write(buf, 0, read);
             }
-        } finally {
-            output.close();
         }
     }
 

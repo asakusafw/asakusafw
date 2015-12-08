@@ -54,7 +54,7 @@ public class ModelEmitterTest {
 
     private PackageDeclaration packageDecl = null;
 
-    private final List<ImportDeclaration> importDecls = new ArrayList<ImportDeclaration>();
+    private final List<ImportDeclaration> importDecls = new ArrayList<>();
 
     private final VolatileCompiler compiler = new VolatileCompiler();
 
@@ -218,8 +218,7 @@ public class ModelEmitterTest {
                 })));
 
         assertThat(type, instanceOf(java.lang.reflect.ParameterizedType.class));
-        java.lang.reflect.Type p =
-            ((java.lang.reflect.ParameterizedType) type).getActualTypeArguments()[0];
+        java.lang.reflect.Type p = ((java.lang.reflect.ParameterizedType) type).getActualTypeArguments()[0];
 
         assertThat(p, instanceOf(WildcardType.class));
         WildcardType w = (WildcardType) p;
@@ -244,8 +243,7 @@ public class ModelEmitterTest {
                 })));
 
         assertThat(type, instanceOf(java.lang.reflect.ParameterizedType.class));
-        java.lang.reflect.Type p =
-            ((java.lang.reflect.ParameterizedType) type).getActualTypeArguments()[0];
+        java.lang.reflect.Type p = ((java.lang.reflect.ParameterizedType) type).getActualTypeArguments()[0];
 
         assertThat(p, instanceOf(WildcardType.class));
         WildcardType w = (WildcardType) p;
@@ -270,8 +268,7 @@ public class ModelEmitterTest {
                 })));
 
         assertThat(type, instanceOf(java.lang.reflect.ParameterizedType.class));
-        java.lang.reflect.Type p =
-            ((java.lang.reflect.ParameterizedType) type).getActualTypeArguments()[0];
+        java.lang.reflect.Type p = ((java.lang.reflect.ParameterizedType) type).getActualTypeArguments()[0];
 
         assertThat(p, instanceOf(WildcardType.class));
         WildcardType w = (WildcardType) p;
@@ -2388,7 +2385,7 @@ public class ModelEmitterTest {
     }
 
     private Class<?> compile(CompilationUnit unit, String name) {
-        List<String> lines = new ArrayList<String>();
+        List<String> lines = new ArrayList<>();
         StackTraceElement[] elements = Thread.currentThread().getStackTrace();
         for (int i = 1; i < elements.length; i++) {
             if (getClass().getName().equals(elements[i].getClassName()) == false) {

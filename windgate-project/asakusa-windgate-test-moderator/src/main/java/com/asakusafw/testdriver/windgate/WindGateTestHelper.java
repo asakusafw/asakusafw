@@ -92,8 +92,7 @@ public final class WindGateTestHelper {
 
     private static final String DUMMY_PROCESS_NAME = "test-moderator"; //$NON-NLS-1$
 
-    private static final WeakHashMap<TestContext, Holder> CACHE_TEMPORARY_LOADER =
-            new WeakHashMap<TestContext, Holder>();
+    private static final WeakHashMap<TestContext, Holder> CACHE_TEMPORARY_LOADER = new WeakHashMap<>();
 
     /**
      * Creates a new {@link ProcessScript} for testing.
@@ -115,7 +114,7 @@ public final class WindGateTestHelper {
         }
         Holder.clean();
         LOG.debug("Create process script: {}", description.getClass().getName()); //$NON-NLS-1$
-        return new ProcessScript<T>(
+        return new ProcessScript<>(
                 DUMMY_PROCESS_NAME,
                 DUMMY_PROCESS_NAME,
                 modelType,
@@ -143,7 +142,7 @@ public final class WindGateTestHelper {
         }
         Holder.clean();
         LOG.debug("Create process script: {}", description.getClass().getName()); //$NON-NLS-1$
-        return new ProcessScript<T>(
+        return new ProcessScript<>(
                 DUMMY_PROCESS_NAME,
                 DUMMY_PROCESS_NAME,
                 modelType,
@@ -256,13 +255,9 @@ public final class WindGateTestHelper {
         LOG.debug("Loading a WindGate profile: {}", url); //$NON-NLS-1$
         try {
             Properties p = new Properties();
-            InputStream input = url.openStream();
-            try {
+            try (InputStream input = url.openStream()) {
                 p.load(input);
-            } finally {
-                input.close();
             }
-
             LOG.debug("Resolving a WindGate profile: {}", url); //$NON-NLS-1$
             GateProfile profile = GateProfile.loadFrom(profileName, p, profileContext);
             return profile;
@@ -325,7 +320,7 @@ public final class WindGateTestHelper {
                     return holder.loader;
                 }
             }
-            final List<URL> pluginLibraries = new ArrayList<URL>();
+            final List<URL> pluginLibraries = new ArrayList<>();
             for (File file : pluginDirectory.listFiles()) {
                 if (file.isFile() && file.getName().endsWith(PLUGIN_EXTENSION)) {
                     try {
@@ -401,7 +396,7 @@ public final class WindGateTestHelper {
 
     private static final class Holder extends WeakReference<TestContext> {
 
-        private static final ReferenceQueue<TestContext> QUEUE = new ReferenceQueue<TestContext>();
+        private static final ReferenceQueue<TestContext> QUEUE = new ReferenceQueue<>();
 
         final PluginClassLoader loader;
 

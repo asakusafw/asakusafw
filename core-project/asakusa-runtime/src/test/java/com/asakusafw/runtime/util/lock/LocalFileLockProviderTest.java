@@ -34,6 +34,7 @@ import com.asakusafw.runtime.util.lock.LocalFileLockProvider;
 /**
  * Test for {@link LocalFileLockProvider}.
  */
+@SuppressWarnings("resource")
 public class LocalFileLockProviderTest {
 
     /**
@@ -42,7 +43,7 @@ public class LocalFileLockProviderTest {
     @Rule
     public final TemporaryFolder folder = new TemporaryFolder();
 
-    private final List<Closeable> closeables = new ArrayList<Closeable>();
+    private final List<Closeable> closeables = new ArrayList<>();
 
     /**
      * Closes all.
@@ -109,7 +110,7 @@ public class LocalFileLockProviderTest {
     }
 
     private LocalFileLockObject<?> acquire(int value) throws IOException {
-        LocalFileLockObject<Object> result = new LocalFileLockProvider<Object>(folder.getRoot()).tryLock(value);
+        LocalFileLockObject<Object> result = new LocalFileLockProvider<>(folder.getRoot()).tryLock(value);
         closeables.add(result);
         return result;
     }

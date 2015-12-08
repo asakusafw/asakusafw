@@ -51,19 +51,18 @@ public class BatchCompilerTest {
     @Test
     public void simple() throws Exception {
         BatchInfo info = tester.compileBatch(SimpleBatch.class);
-        ModelOutput<Ex1> output = tester.openOutput(Ex1.class, tester.getImporter(info, "x"));
-
-        Ex1 ex1 = new Ex1();
-        ex1.setSid(100);
-        ex1.setValue(100);
-        output.write(ex1);
-        ex1.setSid(300);
-        ex1.setValue(300);
-        output.write(ex1);
-        ex1.setSid(200);
-        ex1.setValue(200);
-        output.write(ex1);
-        output.close();
+        try (ModelOutput<Ex1> output = tester.openOutput(Ex1.class, tester.getImporter(info, "x"))) {
+            Ex1 ex1 = new Ex1();
+            ex1.setSid(100);
+            ex1.setValue(100);
+            output.write(ex1);
+            ex1.setSid(300);
+            ex1.setValue(300);
+            output.write(ex1);
+            ex1.setSid(200);
+            ex1.setValue(200);
+            output.write(ex1);
+        }
 
         assertThat(tester.run(info), is(true));
 
@@ -89,13 +88,11 @@ public class BatchCompilerTest {
     @Test
     public void ordered() throws Exception {
         BatchInfo info = tester.compileBatch(OrderedBatch.class);
-        ModelOutput<Ex1> output = tester.openOutput(Ex1.class, tester.getImporter(info, "first"));
-
-        Ex1 ex1 = new Ex1();
-        ex1.setValue(100);
-        output.write(ex1);
-        output.close();
-
+        try (ModelOutput<Ex1> output = tester.openOutput(Ex1.class, tester.getImporter(info, "first"))) {
+            Ex1 ex1 = new Ex1();
+            ex1.setValue(100);
+            output.write(ex1);
+        }
         assertThat(tester.run(info), is(true));
 
         List<Ex1> input = tester.getList(
@@ -112,13 +109,11 @@ public class BatchCompilerTest {
     @Test
     public void join() throws Exception {
         BatchInfo info = tester.compileBatch(JoinBatch.class);
-        ModelOutput<Ex1> output = tester.openOutput(Ex1.class, tester.getImporter(info, "first"));
-
-        Ex1 ex1 = new Ex1();
-        ex1.setValue(100);
-        output.write(ex1);
-        output.close();
-
+        try (ModelOutput<Ex1> output = tester.openOutput(Ex1.class, tester.getImporter(info, "first"))) {
+            Ex1 ex1 = new Ex1();
+            ex1.setValue(100);
+            output.write(ex1);
+        }
         assertThat(tester.run(info), is(true));
 
         List<Ex1> input = tester.getList(

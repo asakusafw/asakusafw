@@ -113,7 +113,7 @@ public class HiveDataModelEmitter extends JavaDataModelDriver {
             return Collections.emptyList();
         }
         ModelFactory f = context.getModelFactory();
-        List<Expression> values = new ArrayList<Expression>();
+        List<Expression> values = new ArrayList<>();
         for (Namer namer : trait.getDataFormatNamers()) {
             Name name = namer.computeName(context, model);
             values.add(f.newClassLiteral(context.resolve(name)));

@@ -38,6 +38,6 @@ public class DefaultDataModelAdapter implements DataModelAdapter {
         if (kind == null || kind.value().equals(KIND_NAME) == false) {
             return null;
         }
-        return new DefaultDataModelDefinition<T>(modelClass);
+        return new DefaultDataModelDefinition<>(modelClass);
     }
 }

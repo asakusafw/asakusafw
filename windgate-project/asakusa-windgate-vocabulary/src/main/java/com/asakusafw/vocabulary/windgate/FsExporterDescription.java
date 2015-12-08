@@ -58,7 +58,7 @@ public abstract class FsExporterDescription extends WindGateExporterDescription 
 
         FsDescriptionUtil.checkCommonConfig(descriptionClass, modelType, supportClass, path);
 
-        Map<String, String> configuration = new HashMap<String, String>();
+        Map<String, String> configuration = new HashMap<>();
         configuration.put(FileProcess.FILE.key(), path);
         configuration.put(StreamProcess.STREAM_SUPPORT.key(), supportClass.getName());
         return new DriverScript(Constants.LOCAL_FILE_RESOURCE_NAME, configuration);

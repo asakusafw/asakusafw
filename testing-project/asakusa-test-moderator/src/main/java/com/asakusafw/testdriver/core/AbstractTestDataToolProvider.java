@@ -33,7 +33,7 @@ public abstract class AbstractTestDataToolProvider implements TestDataToolProvid
         if (verifier == null) {
             throw new IllegalArgumentException("verifier must not be null"); //$NON-NLS-1$
         }
-        final ModelVerifierDriver<T> rule = new ModelVerifierDriver<T>(verifier, dataModel);
+        final ModelVerifierDriver<T> rule = new ModelVerifierDriver<>(verifier, dataModel);
         return new VerifyRuleFactory() {
             @Override
             public <S> VerifyRule createRule(
@@ -56,7 +56,7 @@ public abstract class AbstractTestDataToolProvider implements TestDataToolProvid
         if (tester == null) {
             throw new IllegalArgumentException("tester must not be null"); //$NON-NLS-1$
         }
-        return new TesterDriver<T>(tester, dataModelClass);
+        return new TesterDriver<>(tester, dataModelClass);
     }
 
     @Override

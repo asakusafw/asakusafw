@@ -131,7 +131,7 @@ public enum UnaryOperator {
 
         private static final Map<String, UnaryOperator> REVERSE_DICTIONARY;
         static {
-            Map<String, UnaryOperator> map = new HashMap<String, UnaryOperator>();
+            Map<String, UnaryOperator> map = new HashMap<>();
             for (UnaryOperator elem : UnaryOperator.values()) {
                 map.put(elem.getSymbol(), elem);
             }

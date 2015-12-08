@@ -90,7 +90,7 @@ public class StageOutput {
         this.keyClass = keyClass;
         this.valueClass = valueClass;
         this.formatClass = (Class<? extends OutputFormat<?, ?>>) formatClass;
-        this.attributes = Collections.unmodifiableMap(new TreeMap<String, String>(attributes));
+        this.attributes = Collections.unmodifiableMap(new TreeMap<>(attributes));
     }
 
     /**

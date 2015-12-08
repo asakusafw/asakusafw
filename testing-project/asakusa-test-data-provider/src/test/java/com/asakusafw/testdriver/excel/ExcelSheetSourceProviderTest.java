@@ -38,7 +38,7 @@ import com.asakusafw.testdriver.model.SimpleDataModelDefinition;
  */
 public class ExcelSheetSourceProviderTest {
 
-    static final DataModelDefinition<Simple> SIMPLE = new SimpleDataModelDefinition<Simple>(Simple.class);
+    static final DataModelDefinition<Simple> SIMPLE = new SimpleDataModelDefinition<>(Simple.class);
 
     /**
      * opens sheet by its number.

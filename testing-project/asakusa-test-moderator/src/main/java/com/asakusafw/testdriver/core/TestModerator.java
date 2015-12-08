@@ -99,17 +99,12 @@ public class TestModerator {
             throw new IllegalArgumentException("target must not be null"); //$NON-NLS-1$
         }
         DataModelDefinition<?> definition = repository.toDataModelDefinition(modelClass);
-        try {
-            DataModelSource s = target.createSource(definition, context);
-            try {
-                while (true) {
-                    DataModelReflection next = s.next();
-                    if (next == null) {
-                        break;
-                    }
+        try (DataModelSource s = target.createSource(definition, context)) {
+            while (true) {
+                DataModelReflection next = s.next();
+                if (next == null) {
+                    break;
                 }
-            } finally {
-                s.close();
             }
         } catch (IOException e) {
             throw new IOException(MessageFormat.format(
@@ -141,14 +136,9 @@ public class TestModerator {
         verifyContext.testFinished();
 
         DataModelDefinition<?> definition = repository.toDataModelDefinition(modelClass);
-        try {
-            Verifier verifier = target.createVerifier(definition, verifyContext);
-            try {
-                if (verifier instanceof Verifier.Validatable) {
-                    ((Verifier.Validatable) verifier).validate();
-                }
-            } finally {
-                verifier.close();
+        try (Verifier verifier = target.createVerifier(definition, verifyContext)) {
+            if (verifier instanceof Verifier.Validatable) {
+                ((Verifier.Validatable) verifier).validate();
             }
         } catch (IOException e) {
             throw new IOException(MessageFormat.format(
@@ -260,22 +250,15 @@ public class TestModerator {
             throw new IllegalArgumentException("resultDataSink must not be null"); //$NON-NLS-1$
         }
         DataModelDefinition<?> definition = repository.toDataModelDefinition(modelClass);
-        DataModelSource source = getDriver(description).createSource(definition, description, context);
-        try {
-            DataModelSink sink = resultDataSink.createSink(definition, context);
-            try {
-                while (true) {
-                    DataModelReflection next = source.next();
-                    if (next == null) {
-                        break;
-                    }
-                    sink.put(next);
+        try (DataModelSource source = getDriver(description).createSource(definition, description, context);
+                DataModelSink sink = resultDataSink.createSink(definition, context);) {
+            while (true) {
+                DataModelReflection next = source.next();
+                if (next == null) {
+                    break;
                 }
-            } finally {
-                sink.close();
+                sink.put(next);
             }
-        } finally {
-            source.close();
         }
     }
 
@@ -301,13 +284,10 @@ public class TestModerator {
             throw new IllegalArgumentException("differenceSink must not be null"); //$NON-NLS-1$
         }
         DataModelDefinition<?> definition = repository.toDataModelDefinition(modelClass);
-        DifferenceSink sink = differenceSink.createSink(definition, context);
-        try {
+        try (DifferenceSink sink = differenceSink.createSink(definition, context)) {
             for (Difference difference : differences) {
                 sink.put(difference);
             }
-        } finally {
-            sink.close();
         }
     }
 
@@ -350,24 +330,19 @@ public class TestModerator {
         assert definition != null;
         assert output != null;
         assert source != null;
-        try {
-            DataModelSource input = source.createSource(definition, context);
+        try (DataModelSource input = source.createSource(definition, context)) {
             if (input == null) {
                 throw new IOException(MessageFormat.format(
                         Messages.getString("TestModerator.errorMissingDataModelSource"), //$NON-NLS-1$
                         source));
             }
-            try {
-                while (true) {
-                    DataModelReflection next = input.next();
-                    if (next == null) {
-                        break;
-                    }
-                    T object = definition.toObject(next);
-                    output.write(object);
+            while (true) {
+                DataModelReflection next = input.next();
+                if (next == null) {
+                    break;
                 }
-            } finally {
-                input.close();
+                T object = definition.toObject(next);
+                output.write(object);
             }
         } finally {
             output.close();
@@ -383,16 +358,9 @@ public class TestModerator {
         assert description != null;
         assert verifier != null;
         List<Difference> results;
-        DataModelSource target = getDriver(description).createSource(definition, description, context);
-        try {
-            Verifier engine = verifier.createVerifier(definition, verifyContext);
-            try {
-                results = engine.verify(target);
-            } finally {
-                engine.close();
-            }
-        } finally {
-            target.close();
+        try (DataModelSource target = getDriver(description).createSource(definition, description, context);
+                Verifier engine = verifier.createVerifier(definition, verifyContext)) {
+            results = engine.verify(target);
         }
         Collections.sort(results, new DifferenceComparator(definition));
         return results;

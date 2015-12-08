@@ -60,9 +60,7 @@ public class NamespaceDriver extends ModelAttributeDriver {
             AstAttribute attribute) {
         AstName name = getName(environment, attribute);
         if (name != null) {
-            declaration.putTrait(
-                    NamespaceTrait.class,
-                    new NamespaceTrait(attribute, name));
+            declaration.putTrait(NamespaceTrait.class, new NamespaceTrait(attribute, name));
         }
     }
 

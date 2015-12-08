@@ -100,7 +100,7 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
             t0 = System.currentTimeMillis();
         }
         DirectDataSourceRepository repo = getDataSourceRepository(context);
-        List<InputSplit> results = new ArrayList<InputSplit>();
+        List<InputSplit> results = new ArrayList<>();
         Map<DirectInputGroup, List<InputPath>> patternGroups = extractInputList(context, repo, inputList);
         long totalSize = 0;
         for (Map.Entry<DirectInputGroup, List<InputPath>> entry : patternGroups.entrySet()) {
@@ -196,7 +196,7 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
         assert repo != null;
         assert inputList != null;
         VariableTable variables = createBatchArgumentsTable(context.getConfiguration());
-        Map<DirectInputGroup, List<InputPath>> results = new HashMap<DirectInputGroup, List<InputPath>>();
+        Map<DirectInputGroup, List<InputPath>> results = new HashMap<>();
         for (StageInput input : inputList) {
             String fullBasePath = variables.parse(extractBasePath(input));
             String basePath = repo.getComponentPath(fullBasePath);
@@ -207,7 +207,7 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
             DirectInputGroup group = new DirectInputGroup(fullBasePath, dataClass, formatClass, filterClass);
             List<InputPath> paths = results.get(group);
             if (paths == null) {
-                paths = new ArrayList<InputPath>();
+                paths = new ArrayList<>();
                 results.put(group, paths);
             }
             paths.add(new InputPath(basePath, pattern, extractOptional(input)));
@@ -363,12 +363,12 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
         T buffer = ReflectionUtils.newInstance(definition.getDataClass(), conf);
         Counter counter = new Counter();
         ModelInput<T> input = createInput(context, split.group.containerPath, definition, counter, split.fragment);
-        return new BridgeRecordReader<T>(input, buffer, counter, split.fragment.getSize());
+        return new BridgeRecordReader<>(input, buffer, counter, split.fragment.getSize());
     }
 
     private RecordReader<NullWritable, Object> createNullRecordReader(TaskAttemptContext context) {
         assert context != null;
-        return new NullRecordReader<NullWritable, Object>();
+        return new NullRecordReader<>();
     }
 
     private <T> ModelInput<T> createInput(
@@ -567,7 +567,7 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
             if (attributeCount == 0) {
                 attributes = Collections.emptyMap();
             } else {
-                attributes = new HashMap<String, String>();
+                attributes = new HashMap<>();
                 for (int i = 0; i < attributeCount; i++) {
                     String key = WritableUtils.readString(in);
                     String value = WritableUtils.readString(in);

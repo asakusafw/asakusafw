@@ -99,8 +99,7 @@ public class OperatorImplementationClassGeneratorTest extends OperatorCompilerTe
 
         @Override
         protected final void test() {
-            OperatorClassCollector collector =
-                    new OperatorClassCollector(env, round);
+            OperatorClassCollector collector = new OperatorClassCollector(env, round);
             for (OperatorProcessor proc : procs) {
                 proc.initialize(env);
                 collector.add(proc);

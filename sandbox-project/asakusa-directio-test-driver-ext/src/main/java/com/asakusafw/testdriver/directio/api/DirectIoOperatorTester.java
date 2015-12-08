@@ -66,23 +66,16 @@ final class DirectIoOperatorTester extends DirectIoTester {
                         description.getBasePath(),
                         environment.getConfiguration());
                 helper.truncate(description.getResourcePattern());
-                ModelOutput<T> output = helper.openOutput(type, description);
-                try {
-                    DataModelSource source = factory.createSource(definition, environment.getTestContext());
-                    try {
-                        while (true) {
-                            DataModelReflection r = source.next();
-                            if (r == null) {
-                                break;
-                            }
-                            T object = definition.toObject(r);
-                            output.write(object);
+                try (ModelOutput<T> output = helper.openOutput(type, description);
+                        DataModelSource source = factory.createSource(definition, environment.getTestContext())) {
+                    while (true) {
+                        DataModelReflection r = source.next();
+                        if (r == null) {
+                            break;
                         }
-                    } finally {
-                        source.close();
+                        T object = definition.toObject(r);
+                        output.write(object);
                     }
-                } finally {
-                    output.close();
                 }
             } catch (IOException e) {
                 throw new IllegalStateException(MessageFormat.format(

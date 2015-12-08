@@ -78,12 +78,9 @@ public final class VisualGraphEmitter {
         Precondition.checkMustNotBeNull(graph, "graph"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(stream, "stream"); //$NON-NLS-1$
         LOG.debug("Emitting a visual graph: {}", graph.getId()); //$NON-NLS-1$
-        EmitContext context = new EmitContext(stream);
-        try {
+        try (EmitContext context = new EmitContext(stream)) {
             List<Relation> relations = analyzeRelations(graph, partial);
             dump(context, graph.getNodes(), relations);
-        } finally {
-            context.close();
         }
     }
 
@@ -99,11 +96,8 @@ public final class VisualGraphEmitter {
     public static void emit(VisualGraph graph, boolean partial, File file) throws IOException {
         Precondition.checkMustNotBeNull(graph, "graph"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(file, "file"); //$NON-NLS-1$
-        OutputStream output = new FileOutputStream(file);
-        try {
+        try (OutputStream output = new FileOutputStream(file)) {
             emit(graph, partial, output);
-        } finally {
-            output.close();
         }
     }
 

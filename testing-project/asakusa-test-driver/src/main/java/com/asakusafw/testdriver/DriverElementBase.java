@@ -97,7 +97,7 @@ public abstract class DriverElementBase {
         if (sourceObjects == null) {
             throw new IllegalArgumentException("sourceObjects must not be null"); //$NON-NLS-1$
         }
-        final ArrayList<DataModelReflection> results = new ArrayList<DataModelReflection>();
+        final ArrayList<DataModelReflection> results = new ArrayList<>();
         for (T dataModel : sourceObjects) {
             results.add(definition.toReflection(dataModel));
         }
@@ -134,7 +134,7 @@ public abstract class DriverElementBase {
                     DataModelDefinition definition,
                     TestContext context) throws IOException {
                 try {
-                    return new SourceDataModelSource<T>(definition, sourceProvider.open());
+                    return new SourceDataModelSource<>(definition, sourceProvider.open());
                 } catch (InterruptedException e) {
                     throw (InterruptedIOException) new InterruptedIOException().initCause(e);
                 }

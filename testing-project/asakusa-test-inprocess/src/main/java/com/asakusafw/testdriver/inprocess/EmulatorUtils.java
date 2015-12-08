@@ -40,7 +40,7 @@ public final class EmulatorUtils {
      * @return the batch library paths
      */
     public static Collection<File> getBatchLibraryPaths(TestDriverContext context) {
-        Collection<File> results = new ArrayList<File>();
+        Collection<File> results = new ArrayList<>();
         File librariesPath = context.getLibrariesPackageLocation(context.getCurrentBatchId());
         if (librariesPath.isDirectory()) {
             for (File file : librariesPath.listFiles()) {

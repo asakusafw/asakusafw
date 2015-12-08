@@ -54,11 +54,7 @@ public class AstJoin extends AbstractAstNode implements AstTerm<AstJoin> {
      * @param grouping the grouping properties, or {@code null} on total grouping
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public AstJoin(
-            Region region,
-            AstModelReference reference,
-            AstModelMapping mapping,
-            AstGrouping grouping) {
+    public AstJoin(Region region, AstModelReference reference, AstModelMapping mapping, AstGrouping grouping) {
         if (reference == null) {
             throw new IllegalArgumentException("reference must not be null"); //$NON-NLS-1$
         }

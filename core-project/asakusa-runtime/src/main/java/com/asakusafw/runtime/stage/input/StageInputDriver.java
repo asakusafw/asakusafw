@@ -195,21 +195,21 @@ public final class StageInputDriver {
         assert inputList != null;
         String[] dictionary = buildDictionary(inputList);
         ByteArrayOutputStream sink = new ByteArrayOutputStream();
-        DataOutputStream output = new DataOutputStream(new GZIPOutputStream(new Base64OutputStream(sink)));
-        WritableUtils.writeVLong(output, SERIAL_VERSION);
-        WritableUtils.writeStringArray(output, dictionary);
-        WritableUtils.writeVInt(output, inputList.size());
-        for (StageInput input : inputList) {
-            writeEncoded(output, dictionary, input.getPathString());
-            writeEncoded(output, dictionary, input.getFormatClass().getName());
-            writeEncoded(output, dictionary, input.getMapperClass().getName());
-            WritableUtils.writeVInt(output, input.getAttributes().size());
-            for (Map.Entry<String, String> attribute : input.getAttributes().entrySet()) {
-                writeEncoded(output, dictionary, attribute.getKey());
-                writeEncoded(output, dictionary, attribute.getValue());
+        try (DataOutputStream output = new DataOutputStream(new GZIPOutputStream(new Base64OutputStream(sink)))) {
+            WritableUtils.writeVLong(output, SERIAL_VERSION);
+            WritableUtils.writeStringArray(output, dictionary);
+            WritableUtils.writeVInt(output, inputList.size());
+            for (StageInput input : inputList) {
+                writeEncoded(output, dictionary, input.getPathString());
+                writeEncoded(output, dictionary, input.getFormatClass().getName());
+                writeEncoded(output, dictionary, input.getMapperClass().getName());
+                WritableUtils.writeVInt(output, input.getAttributes().size());
+                for (Map.Entry<String, String> attribute : input.getAttributes().entrySet()) {
+                    writeEncoded(output, dictionary, attribute.getKey());
+                    writeEncoded(output, dictionary, attribute.getValue());
+                }
             }
         }
-        output.close();
         return new String(sink.toByteArray(), ASCII);
     }
 
@@ -230,13 +230,13 @@ public final class StageInputDriver {
         }
         String[] dictionary = WritableUtils.readStringArray(input);
         int inputListSize = WritableUtils.readVInt(input);
-        List<StageInput> results = new ArrayList<StageInput>();
+        List<StageInput> results = new ArrayList<>();
         for (int inputListIndex = 0; inputListIndex < inputListSize; inputListIndex++) {
             String pathString = readEncoded(input, dictionary);
             String formatName = readEncoded(input, dictionary);
             String mapperName = readEncoded(input, dictionary);
             int attributeCount = WritableUtils.readVInt(input);
-            Map<String, String> attributes = new HashMap<String, String>();
+            Map<String, String> attributes = new HashMap<>();
             for (int attributeIndex = 0; attributeIndex < attributeCount; attributeIndex++) {
                 String keyString = readEncoded(input, dictionary);
                 String valueString = readEncoded(input, dictionary);
@@ -251,7 +251,7 @@ public final class StageInputDriver {
 
     private static String[] buildDictionary(List<StageInput> inputList) {
         assert inputList != null;
-        SortedSet<String> values = new TreeSet<String>();
+        SortedSet<String> values = new TreeSet<>();
         for (StageInput input : inputList) {
             values.add(input.getPathString());
             values.add(input.getFormatClass().getName());

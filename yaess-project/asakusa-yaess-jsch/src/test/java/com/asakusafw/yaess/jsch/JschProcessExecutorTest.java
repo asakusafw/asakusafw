@@ -74,12 +74,12 @@ public class JschProcessExecutorTest {
      */
     @Test
     public void extract() throws Exception {
-        Map<String, String> config = new HashMap<String, String>();
+        Map<String, String> config = new HashMap<>();
         config.put(JschProcessExecutor.KEY_USER, "tester");
         config.put(JschProcessExecutor.KEY_HOST, "example.com");
         config.put(JschProcessExecutor.KEY_PRIVATE_KEY, privateKey.getAbsolutePath());
 
-        Map<String, String> variables = new HashMap<String, String>();
+        Map<String, String> variables = new HashMap<>();
         VariableResolver resolver = new VariableResolver(variables);
 
         JschProcessExecutor extracted = JschProcessExecutor.extract("testing", config, resolver);
@@ -96,13 +96,13 @@ public class JschProcessExecutorTest {
      */
     @Test
     public void extract_with_port() throws Exception {
-        Map<String, String> config = new HashMap<String, String>();
+        Map<String, String> config = new HashMap<>();
         config.put(JschProcessExecutor.KEY_USER, "tester");
         config.put(JschProcessExecutor.KEY_HOST, "example.com");
         config.put(JschProcessExecutor.KEY_PORT, "10022");
         config.put(JschProcessExecutor.KEY_PRIVATE_KEY, privateKey.getAbsolutePath());
 
-        Map<String, String> variables = new HashMap<String, String>();
+        Map<String, String> variables = new HashMap<>();
         VariableResolver resolver = new VariableResolver(variables);
 
         JschProcessExecutor extracted = JschProcessExecutor.extract("testing", config, resolver);
@@ -119,13 +119,13 @@ public class JschProcessExecutorTest {
      */
     @Test
     public void extract_with_passphrase() throws Exception {
-        Map<String, String> config = new HashMap<String, String>();
+        Map<String, String> config = new HashMap<>();
         config.put(JschProcessExecutor.KEY_USER, "tester");
         config.put(JschProcessExecutor.KEY_HOST, "example.com");
         config.put(JschProcessExecutor.KEY_PRIVATE_KEY, privateKey.getAbsolutePath());
         config.put(JschProcessExecutor.KEY_PASS_PHRASE, "Hello, world!");
 
-        Map<String, String> variables = new HashMap<String, String>();
+        Map<String, String> variables = new HashMap<>();
         VariableResolver resolver = new VariableResolver(variables);
 
         JschProcessExecutor extracted = JschProcessExecutor.extract("testing", config, resolver);
@@ -142,12 +142,12 @@ public class JschProcessExecutorTest {
      */
     @Test
     public void extract_variables() throws Exception {
-        Map<String, String> config = new HashMap<String, String>();
+        Map<String, String> config = new HashMap<>();
         config.put(JschProcessExecutor.KEY_USER, "${user}");
         config.put(JschProcessExecutor.KEY_HOST, "${host}");
         config.put(JschProcessExecutor.KEY_PRIVATE_KEY, "${id}");
 
-        Map<String, String> variables = new HashMap<String, String>();
+        Map<String, String> variables = new HashMap<>();
         variables.put("user", "variable");
         variables.put("host", "variables.example.com");
         variables.put("id", privateKey.getAbsolutePath());
@@ -165,11 +165,11 @@ public class JschProcessExecutorTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void extract_without_user() throws Exception {
-        Map<String, String> config = new HashMap<String, String>();
+        Map<String, String> config = new HashMap<>();
         config.put(JschProcessExecutor.KEY_HOST, "example.com");
         config.put(JschProcessExecutor.KEY_PRIVATE_KEY, privateKey.getAbsolutePath());
 
-        Map<String, String> variables = new HashMap<String, String>();
+        Map<String, String> variables = new HashMap<>();
         VariableResolver resolver = new VariableResolver(variables);
 
         JschProcessExecutor.extract("testing", config, resolver);
@@ -181,11 +181,11 @@ public class JschProcessExecutorTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void extract_without_host() throws Exception {
-        Map<String, String> config = new HashMap<String, String>();
+        Map<String, String> config = new HashMap<>();
         config.put(JschProcessExecutor.KEY_USER, "tester");
         config.put(JschProcessExecutor.KEY_PRIVATE_KEY, privateKey.getAbsolutePath());
 
-        Map<String, String> variables = new HashMap<String, String>();
+        Map<String, String> variables = new HashMap<>();
         VariableResolver resolver = new VariableResolver(variables);
 
         JschProcessExecutor.extract("testing", config, resolver);
@@ -197,11 +197,11 @@ public class JschProcessExecutorTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void extract_without_id() throws Exception {
-        Map<String, String> config = new HashMap<String, String>();
+        Map<String, String> config = new HashMap<>();
         config.put(JschProcessExecutor.KEY_USER, "tester");
         config.put(JschProcessExecutor.KEY_HOST, "example.com");
 
-        Map<String, String> variables = new HashMap<String, String>();
+        Map<String, String> variables = new HashMap<>();
         VariableResolver resolver = new VariableResolver(variables);
 
         JschProcessExecutor.extract("testing", config, resolver);
@@ -213,12 +213,12 @@ public class JschProcessExecutorTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void extract_invalid_variables() throws Exception {
-        Map<String, String> config = new HashMap<String, String>();
+        Map<String, String> config = new HashMap<>();
         config.put(JschProcessExecutor.KEY_USER, "${__INVALID__}");
         config.put(JschProcessExecutor.KEY_HOST, "example.com");
         config.put(JschProcessExecutor.KEY_PRIVATE_KEY, privateKey.getAbsolutePath());
 
-        Map<String, String> variables = new HashMap<String, String>();
+        Map<String, String> variables = new HashMap<>();
         VariableResolver resolver = new VariableResolver(variables);
 
         JschProcessExecutor.extract("testing", config, resolver);
@@ -230,13 +230,13 @@ public class JschProcessExecutorTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void extract_invalid_port() throws Exception {
-        Map<String, String> config = new HashMap<String, String>();
+        Map<String, String> config = new HashMap<>();
         config.put(JschProcessExecutor.KEY_USER, "tester");
         config.put(JschProcessExecutor.KEY_HOST, "example.com");
         config.put(JschProcessExecutor.KEY_PORT, "__INVALID__");
         config.put(JschProcessExecutor.KEY_PRIVATE_KEY, privateKey.getAbsolutePath());
 
-        Map<String, String> variables = new HashMap<String, String>();
+        Map<String, String> variables = new HashMap<>();
         VariableResolver resolver = new VariableResolver(variables);
 
         JschProcessExecutor.extract("testing", config, resolver);
@@ -248,12 +248,12 @@ public class JschProcessExecutorTest {
      */
     @Test(expected = JSchException.class)
     public void extract_invalid_id() throws Exception {
-        Map<String, String> config = new HashMap<String, String>();
+        Map<String, String> config = new HashMap<>();
         config.put(JschProcessExecutor.KEY_USER, "tester");
         config.put(JschProcessExecutor.KEY_HOST, "example.com");
         config.put(JschProcessExecutor.KEY_PRIVATE_KEY, privateKey.getAbsolutePath() + "__INVALID__");
 
-        Map<String, String> variables = new HashMap<String, String>();
+        Map<String, String> variables = new HashMap<>();
         VariableResolver resolver = new VariableResolver(variables);
 
         JschProcessExecutor.extract("testing", config, resolver);
@@ -268,7 +268,7 @@ public class JschProcessExecutorTest {
         File file = folder.newFile("testing");
         Assume.assumeTrue(file.delete());
 
-        Map<String, String> config = new HashMap<String, String>();
+        Map<String, String> config = new HashMap<>();
         config.put(JschProcessExecutor.KEY_USER, System.getProperty("user.name"));
         config.put(JschProcessExecutor.KEY_HOST, "localhost");
         config.put(JschProcessExecutor.KEY_PRIVATE_KEY, privateKey.getAbsolutePath());
@@ -300,17 +300,14 @@ public class JschProcessExecutorTest {
         File file2 = folder.newFile("testing2");
         Assume.assumeTrue(file2.delete());
         File script = folder.newFile("script.sh");
-        PrintWriter writer = new PrintWriter(script);
-        try {
+        try (PrintWriter writer = new PrintWriter(script)) {
             writer.print("#!/bin/sh\n");
             writer.print("touch ${file1}\n");
             writer.print("touch ${file2}\n");
-        } finally {
-            writer.close();
         }
         script.setExecutable(true);
 
-        Map<String, String> config = new HashMap<String, String>();
+        Map<String, String> config = new HashMap<>();
         config.put(JschProcessExecutor.KEY_USER, System.getProperty("user.name"));
         config.put(JschProcessExecutor.KEY_HOST, "localhost");
         config.put(JschProcessExecutor.KEY_PRIVATE_KEY, privateKey.getAbsolutePath());
@@ -319,7 +316,7 @@ public class JschProcessExecutorTest {
 
         JschProcessExecutor extracted = JschProcessExecutor.extract("testing", config, resolver);
         try {
-            Map<String, String> env = new HashMap<String, String>();
+            Map<String, String> env = new HashMap<>();
             env.put("file1", file1.getAbsolutePath());
             env.put("file2", file2.getAbsolutePath());
             int exit = extracted.execute(
@@ -342,7 +339,7 @@ public class JschProcessExecutorTest {
      */
     @Test
     public void execute_missing() throws Exception {
-        Map<String, String> config = new HashMap<String, String>();
+        Map<String, String> config = new HashMap<>();
         config.put(JschProcessExecutor.KEY_USER, System.getProperty("user.name"));
         config.put(JschProcessExecutor.KEY_HOST, "localhost");
         config.put(JschProcessExecutor.KEY_PRIVATE_KEY, privateKey.getAbsolutePath());
@@ -371,7 +368,7 @@ public class JschProcessExecutorTest {
         File file = folder.newFile("$\"'`\\ file");
         Assume.assumeTrue(file.delete());
 
-        Map<String, String> config = new HashMap<String, String>();
+        Map<String, String> config = new HashMap<>();
         config.put(JschProcessExecutor.KEY_USER, System.getProperty("user.name"));
         config.put(JschProcessExecutor.KEY_HOST, "localhost");
         config.put(JschProcessExecutor.KEY_PRIVATE_KEY, privateKey.getAbsolutePath());
@@ -401,16 +398,13 @@ public class JschProcessExecutorTest {
         File file = folder.newFile("$\"'`\\= file");
         Assume.assumeTrue(file.delete());
         File script = folder.newFile("script.sh");
-        PrintWriter writer = new PrintWriter(script);
-        try {
+        try (PrintWriter writer = new PrintWriter(script)) {
             writer.print("#!/bin/sh\n");
             writer.print("touch \"${file}\"\n");
-        } finally {
-            writer.close();
         }
         script.setExecutable(true);
 
-        Map<String, String> config = new HashMap<String, String>();
+        Map<String, String> config = new HashMap<>();
         config.put(JschProcessExecutor.KEY_USER, System.getProperty("user.name"));
         config.put(JschProcessExecutor.KEY_HOST, "localhost");
         config.put(JschProcessExecutor.KEY_PRIVATE_KEY, privateKey.getAbsolutePath());
@@ -419,7 +413,7 @@ public class JschProcessExecutorTest {
 
         JschProcessExecutor extracted = JschProcessExecutor.extract("testing", config, resolver);
         try {
-            Map<String, String> env = new HashMap<String, String>();
+            Map<String, String> env = new HashMap<>();
             env.put("file", file.getAbsolutePath());
             int exit = extracted.execute(
                     new ExecutionContext("b", "f", "e", ExecutionPhase.MAIN, Collections.<String, String>emptyMap()),

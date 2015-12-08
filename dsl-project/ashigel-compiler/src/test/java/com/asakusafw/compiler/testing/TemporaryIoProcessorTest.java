@@ -112,9 +112,9 @@ public class TemporaryIoProcessorTest {
     public void single() throws Exception {
         JobflowInfo info = tester.compileJobflow(SingleOutputJob.class);
 
-        ModelOutput<Ex1> source = tester.openOutput(Ex1.class, tester.getImporter(info, "input"));
-        writeTestData(source);
-        source.close();
+        try (ModelOutput<Ex1> source = tester.openOutput(Ex1.class, tester.getImporter(info, "input"))) {
+            writeTestData(source);
+        }
 
         assertThat(tester.run(info), is(true));
 
@@ -131,9 +131,9 @@ public class TemporaryIoProcessorTest {
     public void multiple() throws Exception {
         JobflowInfo info = tester.compileJobflow(MultipleOutputJob.class);
 
-        ModelOutput<Ex1> source = tester.openOutput(Ex1.class, tester.getImporter(info, "input"));
-        writeTestData(source);
-        source.close();
+        try (ModelOutput<Ex1> source = tester.openOutput(Ex1.class, tester.getImporter(info, "input"))) {
+            writeTestData(source);
+        }
 
         assertThat(tester.run(info), is(true));
 
@@ -162,9 +162,9 @@ public class TemporaryIoProcessorTest {
     public void independent() throws Exception {
         JobflowInfo info = tester.compileJobflow(IndependentOutputJob.class);
 
-        ModelOutput<Ex1> source = tester.openOutput(Ex1.class, tester.getImporter(info, "input"));
-        writeTestData(source);
-        source.close();
+        try (ModelOutput<Ex1> source = tester.openOutput(Ex1.class, tester.getImporter(info, "input"))) {
+            writeTestData(source);
+        }
 
         assertThat(tester.run(info), is(true));
 
@@ -185,9 +185,9 @@ public class TemporaryIoProcessorTest {
     public void nested() throws Exception {
         JobflowInfo info = tester.compileJobflow(NestedOutputJob.class);
 
-        ModelOutput<Ex1> source = tester.openOutput(Ex1.class, tester.getImporter(info, "input"));
-        writeTestData(source);
-        source.close();
+        try (ModelOutput<Ex1> source = tester.openOutput(Ex1.class, tester.getImporter(info, "input"))) {
+            writeTestData(source);
+        }
 
         assertThat(tester.run(info), is(true));
 

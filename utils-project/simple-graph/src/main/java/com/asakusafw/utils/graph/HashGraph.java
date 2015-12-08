@@ -29,7 +29,7 @@ import java.util.Set;
  */
 public class HashGraph<V> implements Graph<V> {
 
-    private final HashMap<V, HashVertex<V>> entity = new HashMap<V, HashVertex<V>>();
+    private final HashMap<V, HashVertex<V>> entity = new HashMap<>();
 
     @Override
     public void addEdge(V from, V to) {
@@ -163,7 +163,7 @@ public class HashGraph<V> implements Graph<V> {
     private HashVertex<V> prepare(V node) {
         HashVertex<V> vertex = entity.get(node);
         if (vertex == null) {
-            vertex = new HashVertex<V>(node);
+            vertex = new HashVertex<>(node);
             entity.put(node, vertex);
         }
         return vertex;
@@ -177,7 +177,7 @@ public class HashGraph<V> implements Graph<V> {
 
         public HashVertex(V node) {
             this.from = node;
-            this.to = new HashSet<V>();
+            this.to = new HashSet<>();
         }
 
         @Override

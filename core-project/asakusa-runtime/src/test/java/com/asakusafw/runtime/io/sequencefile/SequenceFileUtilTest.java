@@ -89,28 +89,21 @@ public class SequenceFileUtilTest {
 
         Text key = new Text();
         Text value = new Text();
-        SequenceFile.Writer writer = SequenceFile.createWriter(fs, conf, path, key.getClass(), value.getClass());
-        try {
+        try (SequenceFile.Writer writer = SequenceFile.createWriter(fs, conf, path, key.getClass(), value.getClass())) {
             key.set("Hello");
             value.set("World");
             writer.append(key, value);
-        } finally {
-            writer.close();
         }
         key.clear();
         value.clear();
 
         FileStatus status = fs.getFileStatus(path);
-        InputStream in = new FileInputStream(fs.pathToFile(path));
-        try {
-            SequenceFile.Reader reader = SequenceFileUtil.openReader(in, status, conf);
+        try (InputStream in = new FileInputStream(fs.pathToFile(path));
+                SequenceFile.Reader reader = SequenceFileUtil.openReader(in, status, conf)) {
             assertThat(reader.next(key, value), is(true));
             assertThat(key.toString(), is("Hello"));
             assertThat(value.toString(), is("World"));
             assertThat(reader.next(key, value), is(false));
-            reader.close();
-        } finally {
-            in.close();
         }
     }
 
@@ -124,28 +117,21 @@ public class SequenceFileUtilTest {
 
         Text key = new Text();
         Text value = new Text();
-        SequenceFile.Writer writer = SequenceFile.createWriter(fs, conf, path, key.getClass(), value.getClass());
-        try {
+        try (SequenceFile.Writer writer = SequenceFile.createWriter(fs, conf, path, key.getClass(), value.getClass())) {
             key.set("Hello");
             value.set("World");
             writer.append(key, value);
-        } finally {
-            writer.close();
         }
         key.clear();
         value.clear();
 
         FileStatus status = fs.getFileStatus(path);
-        InputStream in = new FileInputStream(fs.pathToFile(path));
-        try {
-            SequenceFile.Reader reader = SequenceFileUtil.openReader(in, status.getLen(), conf);
+        try (InputStream in = new FileInputStream(fs.pathToFile(path));
+                SequenceFile.Reader reader = SequenceFileUtil.openReader(in, status.getLen(), conf)) {
             assertThat(reader.next(key, value), is(true));
             assertThat(key.toString(), is("Hello"));
             assertThat(value.toString(), is("World"));
             assertThat(reader.next(key, value), is(false));
-            reader.close();
-        } finally {
-            in.close();
         }
     }
 
@@ -160,27 +146,21 @@ public class SequenceFileUtilTest {
         LongWritable key = new LongWritable();
         LongWritable value = new LongWritable();
 
-        SequenceFile.Writer writer = SequenceFile.createWriter(fs, conf, path, key.getClass(), value.getClass());
-        try {
+        try (SequenceFile.Writer writer = SequenceFile.createWriter(fs, conf, path, key.getClass(), value.getClass())) {
             for (long i = 0; i < 300000; i++) {
                 key.set(i);
                 value.set(i + 1);
                 writer.append(key, value);
             }
-        } finally {
-            writer.close();
         }
 
-        SequenceFile.Reader reader = new SequenceFile.Reader(fs, path, conf);
-        try {
+        try (SequenceFile.Reader reader = new SequenceFile.Reader(fs, path, conf)) {
             for (long i = 0; i < 300000; i++) {
                 assertThat(reader.next(key, value), is(true));
                 assertThat(key.get(), is(i));
                 assertThat(value.get(), is(i + 1));
             }
             assertThat(reader.next(key, value), is(false));
-        } finally {
-            reader.close();
         }
     }
 
@@ -195,30 +175,23 @@ public class SequenceFileUtilTest {
         LongWritable key = new LongWritable();
         LongWritable value = new LongWritable();
 
-        SequenceFile.Writer writer = SequenceFile.createWriter(fs, conf, path, key.getClass(), value.getClass());
-        try {
+        try (SequenceFile.Writer writer = SequenceFile.createWriter(fs, conf, path, key.getClass(), value.getClass())) {
             for (long i = 0; i < 300000; i++) {
                 key.set(i);
                 value.set(i + 1);
                 writer.append(key, value);
             }
-        } finally {
-            writer.close();
         }
 
         FileStatus status = fs.getFileStatus(path);
-        InputStream in = new FileInputStream(fs.pathToFile(path));
-        try {
-            SequenceFile.Reader reader = SequenceFileUtil.openReader(in, status, conf);
+        try (InputStream in = new FileInputStream(fs.pathToFile(path));
+                SequenceFile.Reader reader = SequenceFileUtil.openReader(in, status, conf)) {
             for (long i = 0; i < 300000; i++) {
                 assertThat(reader.next(key, value), is(true));
                 assertThat(key.get(), is(i));
                 assertThat(value.get(), is(i + 1));
             }
             assertThat(reader.next(key, value), is(false));
-            reader.close();
-        } finally {
-            in.close();
         }
     }
 
@@ -232,28 +205,21 @@ public class SequenceFileUtilTest {
 
         Text key = new Text();
         Text value = new Text();
-        OutputStream out = new FileOutputStream(fs.pathToFile(path));
-        try {
-            SequenceFile.Writer writer = SequenceFileUtil.openWriter(
-                    new BufferedOutputStream(out), conf, key.getClass(), value.getClass(), null);
+        try (OutputStream out = new FileOutputStream(fs.pathToFile(path));
+                SequenceFile.Writer writer = SequenceFileUtil.openWriter(
+                        new BufferedOutputStream(out), conf, key.getClass(), value.getClass(), null)) {
             key.set("Hello");
             value.set("World");
             writer.append(key, value);
-            writer.close();
-        } finally {
-            out.close();
         }
         key.clear();
         value.clear();
 
-        SequenceFile.Reader reader = new SequenceFile.Reader(fs, path, conf);
-        try {
+        try (SequenceFile.Reader reader = new SequenceFile.Reader(fs, path, conf)) {
             assertThat(reader.next(key, value), is(true));
             assertThat(key.toString(), is("Hello"));
             assertThat(value.toString(), is("World"));
             assertThat(reader.next(key, value), is(false));
-        } finally {
-            reader.close();
         }
     }
 
@@ -267,30 +233,23 @@ public class SequenceFileUtilTest {
 
         LongWritable key = new LongWritable();
         LongWritable value = new LongWritable();
-        OutputStream out = new FileOutputStream(fs.pathToFile(path));
-        try {
-            SequenceFile.Writer writer = SequenceFileUtil.openWriter(
-                    new BufferedOutputStream(out), conf, key.getClass(), value.getClass(), null);
+        try (OutputStream out = new FileOutputStream(fs.pathToFile(path));
+                SequenceFile.Writer writer = SequenceFileUtil.openWriter(
+                        new BufferedOutputStream(out), conf, key.getClass(), value.getClass(), null)) {
             for (long i = 0; i < 300000; i++) {
                 key.set(i);
                 value.set(i + 1);
                 writer.append(key, value);
             }
-            writer.close();
-        } finally {
-            out.close();
         }
 
-        SequenceFile.Reader reader = new SequenceFile.Reader(fs, path, conf);
-        try {
+        try (SequenceFile.Reader reader = new SequenceFile.Reader(fs, path, conf)) {
             for (long i = 0; i < 300000; i++) {
                 assertThat(reader.next(key, value), is(true));
                 assertThat(key.get(), is(i));
                 assertThat(value.get(), is(i + 1));
             }
             assertThat(reader.next(key, value), is(false));
-        } finally {
-            reader.close();
         }
     }
 
@@ -307,30 +266,23 @@ public class SequenceFileUtilTest {
 
         LongWritable key = new LongWritable();
         LongWritable value = new LongWritable();
-        OutputStream out = new FileOutputStream(fs.pathToFile(path));
-        try {
-            SequenceFile.Writer writer = SequenceFileUtil.openWriter(
-                    new BufferedOutputStream(out), conf, key.getClass(), value.getClass(), codec);
+        try (OutputStream out = new FileOutputStream(fs.pathToFile(path));
+                SequenceFile.Writer writer = SequenceFileUtil.openWriter(
+                        new BufferedOutputStream(out), conf, key.getClass(), value.getClass(), codec);) {
             for (long i = 0; i < 300000; i++) {
                 key.set(i);
                 value.set(i + 1);
                 writer.append(key, value);
             }
-            writer.close();
-        } finally {
-            out.close();
         }
 
-        SequenceFile.Reader reader = new SequenceFile.Reader(fs, path, conf);
-        try {
+        try (SequenceFile.Reader reader = new SequenceFile.Reader(fs, path, conf)) {
             for (long i = 0; i < 300000; i++) {
                 assertThat(reader.next(key, value), is(true));
                 assertThat(key.get(), is(i));
                 assertThat(value.get(), is(i + 1));
             }
             assertThat(reader.next(key, value), is(false));
-        } finally {
-            reader.close();
         }
     }
 }

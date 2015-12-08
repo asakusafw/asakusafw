@@ -136,7 +136,7 @@ public class TypeBuilder {
         if (typeArguments == null) {
             throw new IllegalArgumentException("typeArguments must not be null"); //$NON-NLS-1$
         }
-        List<Type> args = new ArrayList<Type>();
+        List<Type> args = new ArrayList<>();
         for (java.lang.reflect.Type type : typeArguments) {
             args.add(Models.toType(f, type));
         }
@@ -214,7 +214,7 @@ public class TypeBuilder {
         if (dimensions == null) {
             throw new IllegalArgumentException("dimensions must not be null"); //$NON-NLS-1$
         }
-        List<Expression> exprs = new ArrayList<Expression>();
+        List<Expression> exprs = new ArrayList<>();
         for (int dim : dimensions) {
             exprs.add(Models.toLiteral(f, dim));
         }
@@ -293,9 +293,7 @@ public class TypeBuilder {
      * @return the chained expression builder
      * @throws IllegalArgumentException if the parameter is {@code null}
      */
-    public ExpressionBuilder newObject(
-            List<? extends Expression> arguments,
-            ClassBody anonymousClassBlock) {
+    public ExpressionBuilder newObject(List<? extends Expression> arguments, ClassBody anonymousClassBlock) {
         if (arguments == null) {
             throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
         }

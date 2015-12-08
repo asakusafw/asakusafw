@@ -45,7 +45,7 @@ public class ValueDefinition<T> implements DataModelDefinition<T> {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public static <T> ValueDefinition<T> of(Class<T> type) {
-        return new ValueDefinition<T>(type);
+        return new ValueDefinition<>(type);
     }
 
     /**
@@ -94,7 +94,7 @@ public class ValueDefinition<T> implements DataModelDefinition<T> {
 
     @Override
     public Builder<T> newReflection() {
-        return new Builder<T>(this);
+        return new Builder<>(this);
     }
 
     @Override

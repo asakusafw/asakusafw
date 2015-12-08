@@ -118,13 +118,11 @@ public class VolatileCompilerTest {
     private JavaFileObject load(String path) {
         Class<?> klass = getClass();
         String name = klass.getSimpleName() + ".img/" + path + ".txt";
-        InputStream in = klass.getResourceAsStream(name);
-        assertThat(name, in, not(nullValue()));
         StringBuilder content = new StringBuilder();
-        try {
+        try (InputStream in = klass.getResourceAsStream(name)) {
+            assertThat(name, in, not(nullValue()));
             char[] buf = new char[1024];
-            Reader r = new InputStreamReader(in, "UTF-8");
-            try {
+            try (Reader r = new InputStreamReader(in, "UTF-8")) {
                 while (true) {
                     int read = r.read(buf);
                     if (read < 0) {
@@ -132,8 +130,6 @@ public class VolatileCompilerTest {
                     }
                     content.append(buf, 0, read);
                 }
-            } finally {
-                in.close();
             }
         } catch (IOException e) {
             throw new AssertionError(e);

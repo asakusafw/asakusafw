@@ -36,8 +36,7 @@ public class InputDescription implements FlowElementDescription {
 
     private static final Map<Class<? extends FlowElementAttribute>, FlowElementAttribute> ATTRIBUTES;
     static {
-        Map<Class<? extends FlowElementAttribute>, FlowElementAttribute> map =
-            new HashMap<Class<? extends FlowElementAttribute>, FlowElementAttribute>();
+        Map<Class<? extends FlowElementAttribute>, FlowElementAttribute> map = new HashMap<>();
         map.put(FlowBoundary.class, FlowBoundary.STAGE);
         ATTRIBUTES = Collections.unmodifiableMap(map);
     }

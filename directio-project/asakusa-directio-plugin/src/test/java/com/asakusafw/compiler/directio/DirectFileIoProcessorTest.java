@@ -97,7 +97,7 @@ public class DirectFileIoProcessorTest {
         In<Line1> in = flow.createIn("in1", new Input(format, "input", "input.txt"));
         Out<Line1> out = flow.createOut("out1", new Output(format, "output", "output.txt"));
 
-        FlowDescription desc = new IdentityFlow<Line1>(in, out);
+        FlowDescription desc = new IdentityFlow<>(in, out);
         JobflowInfo info = compile(flow, desc);
         assertThat(info, is(not(nullValue())));
     }
@@ -117,7 +117,7 @@ public class DirectFileIoProcessorTest {
         Out<Line2> out2 = flow.createOut("out2",
                 new Output(Line2.class, format, "output-2", "output.txt"));
 
-        FlowDescription desc = new DualIdentityFlow<Line1, Line2>(in1, in2, out1, out2);
+        FlowDescription desc = new DualIdentityFlow<>(in1, in2, out1, out2);
         JobflowInfo info = compile(flow, desc);
         assertThat(info, is(not(nullValue())));
     }
@@ -131,7 +131,7 @@ public class DirectFileIoProcessorTest {
         In<Line1> in = flow.createIn("in1", new DirectImporterDescription(Line1.class, "some/file-*"));
         Out<Line1> out = flow.createOut("out1", new Output(format, "something", "output.txt"));
 
-        FlowDescription desc = new IdentityFlow<Line1>(in, out);
+        FlowDescription desc = new IdentityFlow<>(in, out);
         JobflowInfo info = compile(flow, desc);
         assertThat(info, is(not(nullValue())));
     }
@@ -145,7 +145,7 @@ public class DirectFileIoProcessorTest {
         In<Line1> in = flow.createIn("in1", new Input(format, "something", "input.txt"));
         Out<Line1> out = flow.createOut("out1", new DirectExporterDescription(Line1.class, "some/file-*"));
 
-        FlowDescription desc = new IdentityFlow<Line1>(in, out);
+        FlowDescription desc = new IdentityFlow<>(in, out);
         JobflowInfo info = compile(flow, desc);
         assertThat(info, is(not(nullValue())));
     }
@@ -160,7 +160,7 @@ public class DirectFileIoProcessorTest {
                 Line1.class, format, "input", "input.txt", DataSize.TINY));
         Out<Line1> out = flow.createOut("out1", new Output(format, "output", "output.txt"));
 
-        FlowDescription desc = new IdentityFlow<Line1>(in, out);
+        FlowDescription desc = new IdentityFlow<>(in, out);
         JobflowInfo info = compile(flow, desc);
         assertThat(info, is(not(nullValue())));
     }
@@ -174,7 +174,7 @@ public class DirectFileIoProcessorTest {
         In<Line1> in = flow.createIn("in1", new Input(format, "input", "${input}.txt"));
         Out<Line1> out = flow.createOut("out1", new Output(format, "output", "output.txt"));
 
-        FlowDescription desc = new IdentityFlow<Line1>(in, out);
+        FlowDescription desc = new IdentityFlow<>(in, out);
         JobflowInfo info = compile(flow, desc);
         assertThat(info, is(not(nullValue())));
     }
@@ -188,7 +188,7 @@ public class DirectFileIoProcessorTest {
         In<Line1> in = flow.createIn("in1", new Input(format, "input", "input.txt"));
         Out<Line1> out = flow.createOut("out1", new Output(format, "output", "{first}.txt"));
 
-        FlowDescription desc = new IdentityFlow<Line1>(in, out);
+        FlowDescription desc = new IdentityFlow<>(in, out);
         JobflowInfo info = compile(flow, desc);
         assertThat(info, is(not(nullValue())));
     }
@@ -202,7 +202,7 @@ public class DirectFileIoProcessorTest {
         In<Line1> in = flow.createIn("in1", new Input(format, "input", "input.txt"));
         Out<Line1> out = flow.createOut("out1", new Output(format, "output", "${output}.txt"));
 
-        FlowDescription desc = new IdentityFlow<Line1>(in, out);
+        FlowDescription desc = new IdentityFlow<>(in, out);
         JobflowInfo info = compile(flow, desc);
         assertThat(info, is(not(nullValue())));
     }
@@ -216,7 +216,7 @@ public class DirectFileIoProcessorTest {
         In<Line1> in = flow.createIn("in1", new Input(format, "input", "input.txt"));
         Out<Line1> out = flow.createOut("out1", new Output(format, "output", "*.txt"));
 
-        FlowDescription desc = new IdentityFlow<Line1>(in, out);
+        FlowDescription desc = new IdentityFlow<>(in, out);
         JobflowInfo info = compile(flow, desc);
         assertThat(info, is(not(nullValue())));
     }
@@ -230,7 +230,7 @@ public class DirectFileIoProcessorTest {
         In<Line1> in = flow.createIn("in1", new Input(format, "input", "input.txt"));
         Out<Line1> out = flow.createOut("out1", new Output(format, "output", "output.txt", "+value"));
 
-        FlowDescription desc = new IdentityFlow<Line1>(in, out);
+        FlowDescription desc = new IdentityFlow<>(in, out);
         JobflowInfo info = compile(flow, desc);
         assertThat(info, is(not(nullValue())));
     }
@@ -244,7 +244,7 @@ public class DirectFileIoProcessorTest {
         In<Line1> in = flow.createIn("in1", new Input(format, "input", "input.txt"));
         Out<Line1> out = flow.createOut("out1", new Output(format, "output", "output.txt", "-value"));
 
-        FlowDescription desc = new IdentityFlow<Line1>(in, out);
+        FlowDescription desc = new IdentityFlow<>(in, out);
         JobflowInfo info = compile(flow, desc);
         assertThat(info, is(not(nullValue())));
     }
@@ -258,7 +258,7 @@ public class DirectFileIoProcessorTest {
         In<Line1> in = flow.createIn("in1", new Input(format, "input", "input.txt"));
         Out<Line1> out = flow.createOut("out1", new Output(format, "output", "output.txt", "-length", "+position"));
 
-        FlowDescription desc = new IdentityFlow<Line1>(in, out);
+        FlowDescription desc = new IdentityFlow<>(in, out);
         JobflowInfo info = compile(flow, desc);
         assertThat(info, is(not(nullValue())));
     }
@@ -273,7 +273,7 @@ public class DirectFileIoProcessorTest {
         Out<Line1> out = flow.createOut("out1", new Output(format, "output", "output.txt")
             .delete("**"));
 
-        FlowDescription desc = new IdentityFlow<Line1>(in, out);
+        FlowDescription desc = new IdentityFlow<>(in, out);
         JobflowInfo info = compile(flow, desc);
         assertThat(info, is(not(nullValue())));
     }
@@ -288,7 +288,7 @@ public class DirectFileIoProcessorTest {
         Out<Line1> out = flow.createOut("out1", new Output(format, "output", "output.txt")
             .delete("*.txt").delete("*.csv"));
 
-        FlowDescription desc = new IdentityFlow<Line1>(in, out);
+        FlowDescription desc = new IdentityFlow<>(in, out);
         JobflowInfo info = compile(flow, desc);
         assertThat(info, is(not(nullValue())));
     }
@@ -304,7 +304,7 @@ public class DirectFileIoProcessorTest {
                 new Input(Line1.class, format, "input/*", "input.txt", DataSize.UNKNOWN));
         Out<Line1> out = flow.createOut("out1", new Output(format, "output", "output.txt"));
 
-        FlowDescription desc = new IdentityFlow<Line1>(in, out);
+        FlowDescription desc = new IdentityFlow<>(in, out);
         JobflowInfo info = compile(flow, desc);
         assertThat(info, is(nullValue()));
     }
@@ -320,7 +320,7 @@ public class DirectFileIoProcessorTest {
                 new Input(Line1.class, format, "input", "?", DataSize.UNKNOWN));
         Out<Line1> out = flow.createOut("out1", new Output(format, "output", "output.txt"));
 
-        FlowDescription desc = new IdentityFlow<Line1>(in, out);
+        FlowDescription desc = new IdentityFlow<>(in, out);
         JobflowInfo info = compile(flow, desc);
         assertThat(info, is(nullValue()));
     }
@@ -336,7 +336,7 @@ public class DirectFileIoProcessorTest {
                 new Input(Line1.class, null, "input", "*", DataSize.UNKNOWN));
         Out<Line1> out = flow.createOut("out1", new Output(format, "output", "output.txt"));
 
-        FlowDescription desc = new IdentityFlow<Line1>(in, out);
+        FlowDescription desc = new IdentityFlow<>(in, out);
         JobflowInfo info = compile(flow, desc);
         assertThat(info, is(nullValue()));
     }
@@ -352,7 +352,7 @@ public class DirectFileIoProcessorTest {
                 new Input(Line1.class, PrivateFormat.class, "input", "*", DataSize.UNKNOWN));
         Out<Line1> out = flow.createOut("out1", new Output(format, "output", "output.txt"));
 
-        FlowDescription desc = new IdentityFlow<Line1>(in, out);
+        FlowDescription desc = new IdentityFlow<>(in, out);
         JobflowInfo info = compile(flow, desc);
         assertThat(info, is(nullValue()));
     }
@@ -368,7 +368,7 @@ public class DirectFileIoProcessorTest {
                 new Input(Line1.class, VoidFormat.class, "input", "*", DataSize.UNKNOWN));
         Out<Line1> out = flow.createOut("out1", new Output(format, "output", "output.txt"));
 
-        FlowDescription desc = new IdentityFlow<Line1>(in, out);
+        FlowDescription desc = new IdentityFlow<>(in, out);
         JobflowInfo info = compile(flow, desc);
         assertThat(info, is(nullValue()));
     }
@@ -383,7 +383,7 @@ public class DirectFileIoProcessorTest {
         Out<Line1> out = flow.createOut("out1",
                 new Output(Line1.class, format, "output/*", "output.txt", "position"));
 
-        FlowDescription desc = new IdentityFlow<Line1>(in, out);
+        FlowDescription desc = new IdentityFlow<>(in, out);
         JobflowInfo info = compile(flow, desc);
         assertThat(info, is(nullValue()));
     }
@@ -398,7 +398,7 @@ public class DirectFileIoProcessorTest {
         Out<Line1> out = flow.createOut("out1",
                 new Output(Line1.class, format, "output", "?", "position"));
 
-        FlowDescription desc = new IdentityFlow<Line1>(in, out);
+        FlowDescription desc = new IdentityFlow<>(in, out);
         JobflowInfo info = compile(flow, desc);
         assertThat(info, is(nullValue()));
     }
@@ -413,7 +413,7 @@ public class DirectFileIoProcessorTest {
         Out<Line1> out = flow.createOut("out1",
                 new Output(Line1.class, format, "output", "output.txt", "?"));
 
-        FlowDescription desc = new IdentityFlow<Line1>(in, out);
+        FlowDescription desc = new IdentityFlow<>(in, out);
         JobflowInfo info = compile(flow, desc);
         assertThat(info, is(nullValue()));
     }
@@ -428,7 +428,7 @@ public class DirectFileIoProcessorTest {
         Out<Line1> out = flow.createOut("out1",
                 new Output(Line1.class, format, "output", "{value}-*"));
 
-        FlowDescription desc = new IdentityFlow<Line1>(in, out);
+        FlowDescription desc = new IdentityFlow<>(in, out);
         JobflowInfo info = compile(flow, desc);
         assertThat(info, is(nullValue()));
     }
@@ -443,7 +443,7 @@ public class DirectFileIoProcessorTest {
         Out<Line1> out = flow.createOut("out1",
                 new Output(Line1.class, format, "output", "*-[1..10]"));
 
-        FlowDescription desc = new IdentityFlow<Line1>(in, out);
+        FlowDescription desc = new IdentityFlow<>(in, out);
         JobflowInfo info = compile(flow, desc);
         assertThat(info, is(nullValue()));
     }
@@ -458,7 +458,7 @@ public class DirectFileIoProcessorTest {
         Out<Line1> out = flow.createOut("out1",
                 new Output(Line1.class, format, "output", "*.csv", "position"));
 
-        FlowDescription desc = new IdentityFlow<Line1>(in, out);
+        FlowDescription desc = new IdentityFlow<>(in, out);
         JobflowInfo info = compile(flow, desc);
         assertThat(info, is(nullValue()));
     }
@@ -473,7 +473,7 @@ public class DirectFileIoProcessorTest {
         Out<Line1> out = flow.createOut("out1", new Output(format, "output", "output.txt")
             .delete("?"));
 
-        FlowDescription desc = new IdentityFlow<Line1>(in, out);
+        FlowDescription desc = new IdentityFlow<>(in, out);
         JobflowInfo info = compile(flow, desc);
         assertThat(info, is(nullValue()));
     }
@@ -488,7 +488,7 @@ public class DirectFileIoProcessorTest {
         Out<Line1> out = flow.createOut("out1",
                 new Output(Line1.class, null, "output", "output.txt", "position"));
 
-        FlowDescription desc = new IdentityFlow<Line1>(in, out);
+        FlowDescription desc = new IdentityFlow<>(in, out);
         JobflowInfo info = compile(flow, desc);
         assertThat(info, is(nullValue()));
     }
@@ -503,7 +503,7 @@ public class DirectFileIoProcessorTest {
         Out<Line1> out = flow.createOut("out1",
                 new Output(Line1.class, PrivateFormat.class, "output", "output.txt", "position"));
 
-        FlowDescription desc = new IdentityFlow<Line1>(in, out);
+        FlowDescription desc = new IdentityFlow<>(in, out);
         JobflowInfo info = compile(flow, desc);
         assertThat(info, is(nullValue()));
     }
@@ -518,7 +518,7 @@ public class DirectFileIoProcessorTest {
         Out<Line1> out = flow.createOut("out1",
                 new Output(Line1.class, VoidFormat.class, "output", "output.txt", "position"));
 
-        FlowDescription desc = new IdentityFlow<Line1>(in, out);
+        FlowDescription desc = new IdentityFlow<>(in, out);
         JobflowInfo info = compile(flow, desc);
         assertThat(info, is(nullValue()));
     }
@@ -532,7 +532,7 @@ public class DirectFileIoProcessorTest {
         In<Line1> in = flow.createIn("in1", new Input(format, "path/conflict", "input.txt"));
         Out<Line1> out = flow.createOut("out1", new Output(format, "path/conflict", "output.txt"));
 
-        FlowDescription desc = new IdentityFlow<Line1>(in, out);
+        FlowDescription desc = new IdentityFlow<>(in, out);
         JobflowInfo info = compile(flow, desc);
         assertThat(info, is(nullValue()));
     }
@@ -546,7 +546,7 @@ public class DirectFileIoProcessorTest {
         In<Line1> in = flow.createIn("in1", new Input(format, "conflict", "input.txt"));
         Out<Line1> out = flow.createOut("out1", new Output(format, "conflict/output", "output.txt"));
 
-        FlowDescription desc = new IdentityFlow<Line1>(in, out);
+        FlowDescription desc = new IdentityFlow<>(in, out);
         JobflowInfo info = compile(flow, desc);
         assertThat(info, is(not(nullValue())));
     }
@@ -560,7 +560,7 @@ public class DirectFileIoProcessorTest {
         In<Line1> in = flow.createIn("in1", new Input(format, "conflict/input", "input.txt"));
         Out<Line1> out = flow.createOut("out1", new Output(format, "conflict", "output.txt"));
 
-        FlowDescription desc = new IdentityFlow<Line1>(in, out);
+        FlowDescription desc = new IdentityFlow<>(in, out);
         JobflowInfo info = compile(flow, desc);
         assertThat(info, is(nullValue()));
     }
@@ -576,7 +576,7 @@ public class DirectFileIoProcessorTest {
         Out<Line1> out1 = flow.createOut("out1", new Output(format, "conflict", "output.txt"));
         Out<Line1> out2 = flow.createOut("out2", new Output(format, "conflict", "output.txt"));
 
-        FlowDescription desc = new DualIdentityFlow<Line1, Line1>(in1, in2, out1, out2);
+        FlowDescription desc = new DualIdentityFlow<>(in1, in2, out1, out2);
         JobflowInfo info = compile(flow, desc);
         assertThat(info, is(nullValue()));
     }
@@ -592,7 +592,7 @@ public class DirectFileIoProcessorTest {
         Out<Line1> out1 = flow.createOut("out1", new Output(format, "conflict/a", "output.txt"));
         Out<Line1> out2 = flow.createOut("out2", new Output(format, "conflict/aa", "output.txt"));
 
-        FlowDescription desc = new DualIdentityFlow<Line1, Line1>(in1, in2, out1, out2);
+        FlowDescription desc = new DualIdentityFlow<>(in1, in2, out1, out2);
         JobflowInfo info = compile(flow, desc);
         assertThat(info, is(not(nullValue())));
     }
@@ -608,7 +608,7 @@ public class DirectFileIoProcessorTest {
         Out<Line1> out1 = flow.createOut("out1", new Output(format, "conflict", "output.txt"));
         Out<Line1> out2 = flow.createOut("out2", new Output(format, "conflict/internal", "output.txt"));
 
-        FlowDescription desc = new DualIdentityFlow<Line1, Line1>(in1, in2, out1, out2);
+        FlowDescription desc = new DualIdentityFlow<>(in1, in2, out1, out2);
         JobflowInfo info = compile(flow, desc);
         assertThat(info, is(nullValue()));
     }

@@ -97,11 +97,8 @@ public final class ConfigurationDetecter {
     private static void write(File conf, File path) throws IOException {
         assert conf != null;
         assert path != null;
-        OutputStream output = new FileOutputStream(path);
-        try {
+        try (OutputStream output = new FileOutputStream(path)) {
             output.write(conf.getAbsolutePath().getBytes(ENCODING));
-        } finally {
-            output.close();
         }
     }
 
@@ -117,9 +114,8 @@ public final class ConfigurationDetecter {
             throw new IllegalArgumentException("path must not be null"); //$NON-NLS-1$
         }
         String result;
-        InputStream input = new FileInputStream(path);
-        try {
-            OutputBuffer ob = new OutputBuffer();
+        try (InputStream input = new FileInputStream(path);
+                OutputBuffer ob = new OutputBuffer();) {
             byte[] buf = new byte[256];
             while (true) {
                 int read = input.read(buf);
@@ -129,9 +125,6 @@ public final class ConfigurationDetecter {
                 ob.write(buf, 0, read);
             }
             result = new String(ob.getData(), 0, ob.getLength(), ENCODING).trim();
-            ob.close();
-        } finally {
-            input.close();
         }
         File file = new File(result);
         return file;

@@ -197,7 +197,7 @@ public class TestResultInspector {
             throw new IllegalArgumentException("verifier must not be null"); //$NON-NLS-1$
         }
         DataModelDefinition<? extends T> definition = findDefinition(modelClass);
-        return new ModelVerifierDriver<T>(verifier, definition);
+        return new ModelVerifierDriver<>(verifier, definition);
     }
 
     /**
@@ -252,12 +252,9 @@ public class TestResultInspector {
         assert definition != null;
         assert description != null;
         assert engine != null;
-        List<Difference> results = new ArrayList<Difference>();
-        DataModelSource target = targets.createSource(definition, description, context);
-        try {
+        List<Difference> results = new ArrayList<>();
+        try (DataModelSource target = targets.createSource(definition, description, context)) {
             results.addAll(engine.inspectInput(target));
-        } finally {
-            target.close();
         }
         results.addAll(engine.inspectRest());
         return results;

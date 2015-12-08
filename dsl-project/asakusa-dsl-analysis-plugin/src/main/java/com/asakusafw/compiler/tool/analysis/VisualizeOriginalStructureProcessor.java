@@ -87,9 +87,8 @@ public class VisualizeOriginalStructureProcessor extends AbstractWorkflowProcess
     }
 
     void process(Workflow workflow, String path, boolean merged) throws IOException {
-        OutputStream output = getEnvironment().openResource(path);
-        try {
-            Context context = new Context(output, merged);
+        try (OutputStream output = getEnvironment().openResource(path);
+                Context context = new Context(output, merged);) {
             context.put("digraph {"); //$NON-NLS-1$
             context.push();
             context.put("rankdir = LR;"); //$NON-NLS-1$
@@ -98,9 +97,6 @@ public class VisualizeOriginalStructureProcessor extends AbstractWorkflowProcess
             dump(context, batchId, workflow.getGraph());
             context.pop();
             context.put("}"); //$NON-NLS-1$
-            context.close();
-        } finally {
-            output.close();
         }
     }
 

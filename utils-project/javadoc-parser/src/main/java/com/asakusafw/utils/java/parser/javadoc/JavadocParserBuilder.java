@@ -32,8 +32,8 @@ public class JavadocParserBuilder {
      */
     public JavadocParserBuilder() {
         this.generated = false;
-        this.inlines = new ArrayList<JavadocBlockParser>();
-        this.toplevels = new ArrayList<JavadocBlockParser>();
+        this.inlines = new ArrayList<>();
+        this.toplevels = new ArrayList<>();
     }
 
     /**

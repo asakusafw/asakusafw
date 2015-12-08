@@ -77,17 +77,13 @@ public final class DirectOutputReducer extends ReducerWithRuntimeResource<
         String resourcePath = variables.parse(group.getResourcePath());
 
         Counter counter = new Counter();
-        ModelOutput output = datasource.openOutput(outputContext, definition, basePath, resourcePath, counter);
-
         long records = 0;
-        try {
+        try (ModelOutput output = datasource.openOutput(outputContext, definition, basePath, resourcePath, counter)) {
             for (Union union : values) {
                 Object object = union.getObject();
                 output.write(object);
                 records++;
             }
-        } finally {
-            output.close();
         }
         recordCounter.increment(records);
         context.getCounter(COUNTER_GROUP, id + ".files").increment(1); //$NON-NLS-1$

@@ -99,11 +99,8 @@ public class FlowCompiler {
      */
     public void buildSources(File output) throws IOException {
         Precondition.checkMustNotBeNull(output, "output"); //$NON-NLS-1$
-        OutputStream stream = open(output);
-        try {
+        try (OutputStream stream = open(output)) {
             buildSources(stream);
-        } finally {
-            stream.close();
         }
     }
 
@@ -115,11 +112,8 @@ public class FlowCompiler {
      */
     public void collectSources(File output) throws IOException {
         Precondition.checkMustNotBeNull(output, "output"); //$NON-NLS-1$
-        OutputStream stream = open(output);
-        try {
+        try (OutputStream stream = open(output)) {
             collectSources(stream);
-        } finally {
-            stream.close();
         }
     }
 
@@ -211,11 +205,8 @@ public class FlowCompiler {
                 new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())); //$NON-NLS-1$
         properties.put(RuntimeContext.KEY_RUNTIME_VERSION, RuntimeContext.getRuntimeVersion());
 
-        OutputStream output = environment.openResource(null, RuntimeContext.PATH_APPLICATION_INFO);
-        try {
+        try (OutputStream output = environment.openResource(null, RuntimeContext.PATH_APPLICATION_INFO)) {
             properties.store(output, "Created by Asakusa DSL compiler"); //$NON-NLS-1$
-        } finally {
-            output.close();
         }
     }
 

@@ -48,6 +48,7 @@ import com.asakusafw.windgate.core.resource.ResourceProvider;
 import com.asakusafw.windgate.core.session.SessionMirror;
 import com.asakusafw.windgate.core.session.SessionProfile;
 import com.asakusafw.windgate.core.session.SessionProvider;
+import com.asakusafw.windgate.core.util.SafeCloser;
 
 /**
  * Executes WindGate.
@@ -142,7 +143,7 @@ public class GateTask implements Closeable {
     private List<ResourceProvider> loadResourceProviders(
             List<ResourceProfile> resources) throws IOException {
         assert resources != null;
-        List<ResourceProvider> results = new ArrayList<ResourceProvider>();
+        List<ResourceProvider> results = new ArrayList<>();
         for (ResourceProfile resourceProfile : resources) {
             LOG.debug("Loading resource provider \"{}\": {}",
                     resourceProfile.getName(),
@@ -156,7 +157,7 @@ public class GateTask implements Closeable {
     private Map<String, ProcessProvider> loadProcessProviders(
             List<ProcessProfile> processes) throws IOException {
         assert processes != null;
-        Map<String, ProcessProvider> results = new TreeMap<String, ProcessProvider>();
+        Map<String, ProcessProvider> results = new TreeMap<>();
         for (ProcessProfile processProfile : processes) {
             LOG.debug("Loading process provider \"{}\": {}",
                     processProfile.getName(),
@@ -179,13 +180,21 @@ public class GateTask implements Closeable {
                 profile.getName(),
                 script.getName());
         long start = System.currentTimeMillis();
+        WGLOG.info("I00001",
+                sessionId,
+                profile.getName(),
+                script.getName());
         try {
-            WGLOG.info("I00001",
-                    sessionId,
-                    profile.getName(),
-                    script.getName());
-            SessionMirror session = attachSession(createSession);
-            try {
+            try (SafeCloser<SessionMirror> session = new SafeCloser<SessionMirror>() {
+                @Override
+                protected void handle(IOException exception) throws IOException {
+                    WGLOG.warn(exception, "W00001",
+                            sessionId,
+                            profile.getName(),
+                            script.getName());
+                }
+            }) {
+                session.set(attachSession(createSession));
                 WGLOG.info("I00002",
                         sessionId,
                         profile.getName(),
@@ -218,16 +227,7 @@ public class GateTask implements Closeable {
                             sessionId,
                             profile.getName(),
                             script.getName());
-                    session.complete();
-                }
-            } finally {
-                try {
-                    session.close();
-                } catch (IOException e) {
-                    WGLOG.warn(e, "W00001",
-                            sessionId,
-                            profile.getName(),
-                            script.getName());
+                    session.get().complete();
                 }
             }
             WGLOG.info("I00008",
@@ -265,7 +265,7 @@ public class GateTask implements Closeable {
     }
 
     private List<ResourceMirror> createResources() throws IOException {
-        List<ResourceMirror> results = new ArrayList<ResourceMirror>();
+        List<ResourceMirror> results = new ArrayList<>();
         for (ResourceProvider provider : resourceProviders) {
             LOG.debug("Creating resource: {}",
                     provider.getClass().getName());
@@ -300,7 +300,7 @@ public class GateTask implements Closeable {
                 }
             }
         }
-        LinkedList<Future<?>> futures = new LinkedList<Future<?>>();
+        LinkedList<Future<?>> futures = new LinkedList<>();
         for (final ResourceMirror resource : resources) {
             if (resource.isTransactional() == false) {
                 Future<?> future = executor.submit(new Callable<Void>() {
@@ -340,7 +340,7 @@ public class GateTask implements Closeable {
 
     private void prepareResources(List<ResourceMirror> resources) throws IOException {
         assert resources != null;
-        LinkedList<Future<?>> futures = new LinkedList<Future<?>>();
+        LinkedList<Future<?>> futures = new LinkedList<>();
         for (final ResourceMirror resource : resources) {
             Future<?> future = executor.submit(new Callable<Void>() {
                 @Override
@@ -376,7 +376,7 @@ public class GateTask implements Closeable {
     private void runGateProcesses(List<ResourceMirror> resources) throws IOException {
         assert resources != null;
         final DriverRepository drivers = new DriverRepository(resources);
-        LinkedList<Future<?>> futures = new LinkedList<Future<?>>();
+        LinkedList<Future<?>> futures = new LinkedList<>();
         for (final ProcessScript<?> process : script.getProcesses()) {
             final ProcessProvider processProvider = processProviders.get(process.getProcessType());
             assert processProvider != null;
@@ -420,7 +420,7 @@ public class GateTask implements Closeable {
 
     private void fireSessionCompleted(List<ResourceMirror> resources) throws IOException {
         assert resources != null;
-        LinkedList<Future<?>> futures = new LinkedList<Future<?>>();
+        LinkedList<Future<?>> futures = new LinkedList<>();
         for (final ResourceMirror resource : resources) {
             if (resource.isTransactional() == false) {
                 Future<?> future = executor.submit(new Callable<Void>() {

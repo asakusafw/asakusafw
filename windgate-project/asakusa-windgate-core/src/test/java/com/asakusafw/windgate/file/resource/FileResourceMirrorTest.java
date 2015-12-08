@@ -53,11 +53,8 @@ public class FileResourceMirrorTest {
      */
     @Test
     public void getName() throws Exception {
-        FileResourceMirror resource = new FileResourceMirror("testing");
-        try {
+        try (FileResourceMirror resource = new FileResourceMirror("testing")) {
             assertThat(resource.getName(), is("testing"));
-        } finally {
-            resource.close();
         }
     }
 
@@ -69,13 +66,10 @@ public class FileResourceMirrorTest {
     public void prepare() throws Exception {
         File source = folder.newFile("source");
         File drain = folder.newFile("drain");
-        FileResourceMirror resource = new FileResourceMirror("testing");
-        try {
+        try (FileResourceMirror resource = new FileResourceMirror("testing")) {
             ProcessScript<String> script = script(source, drain);
             // may do nothing
             resource.prepare(gate(script));
-        } finally {
-            resource.close();
         }
     }
 
@@ -88,23 +82,17 @@ public class FileResourceMirrorTest {
         File source = folder.newFile("source");
         File drain = folder.newFile("drain");
         put(source, "Hello", "World!");
-        FileResourceMirror resource = new FileResourceMirror("testing");
-        try {
+        try (FileResourceMirror resource = new FileResourceMirror("testing")) {
             ProcessScript<String> script = script(source, drain);
             resource.prepare(gate(script));
-            SourceDriver<String> driver = resource.createSource(script);
-            try {
+            try (SourceDriver<String> driver = resource.createSource(script)) {
                 driver.prepare();
                 assertThat(driver.next(), is(true));
                 assertThat(driver.get(), is("Hello"));
                 assertThat(driver.next(), is(true));
                 assertThat(driver.get(), is("World!"));
                 assertThat(driver.next(), is(false));
-            } finally {
-                driver.close();
             }
-        } finally {
-            resource.close();
         }
     }
 
@@ -116,34 +104,25 @@ public class FileResourceMirrorTest {
     public void createDrain() throws Exception {
         File source = folder.newFile("source");
         File drain = folder.newFile("drain");
-        FileResourceMirror resource = new FileResourceMirror("testing");
-        try {
+        try (FileResourceMirror resource = new FileResourceMirror("testing")) {
             ProcessScript<String> script = script(source, drain);
             ProcessScript<String> opposite = script(drain, source);
             resource.prepare(gate(script, opposite));
 
-            DrainDriver<String> driver = resource.createDrain(script);
-            try {
+            try (DrainDriver<String> driver = resource.createDrain(script)) {
                 driver.prepare();
                 driver.put("Hello");
                 driver.put("World!");
-            } finally {
-                driver.close();
             }
 
-            SourceDriver<String> verifier = resource.createSource(opposite);
-            try {
+            try (SourceDriver<String> verifier = resource.createSource(opposite)) {
                 verifier.prepare();
                 assertThat(verifier.next(), is(true));
                 assertThat(verifier.get(), is("Hello"));
                 assertThat(verifier.next(), is(true));
                 assertThat(verifier.get(), is("World!"));
                 assertThat(verifier.next(), is(false));
-            } finally {
-                verifier.close();
             }
-        } finally {
-            resource.close();
         }
     }
 
@@ -152,7 +131,7 @@ public class FileResourceMirrorTest {
     }
 
     private ProcessScript<String> script(File source, File drain) {
-        return new ProcessScript<String>(
+        return new ProcessScript<>(
                 "example",
                 "plain",
                 String.class,
@@ -161,15 +140,11 @@ public class FileResourceMirrorTest {
     }
 
     private void put(File file, String...values) throws IOException {
-        FileOutputStream out = new FileOutputStream(file);
-        try {
-            ObjectOutputStream output = new ObjectOutputStream(out);
+        try (FileOutputStream out = new FileOutputStream(file);
+                ObjectOutputStream output = new ObjectOutputStream(out)) {
             for (String string : values) {
                 output.writeObject(string);
             }
-            output.close();
-        } finally {
-            out.close();
         }
     }
 }

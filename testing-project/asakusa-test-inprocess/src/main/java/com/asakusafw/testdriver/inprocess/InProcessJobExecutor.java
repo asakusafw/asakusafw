@@ -129,7 +129,7 @@ synchronized(s) {
         if (requiresValidateExecutionEnvironment() == false) {
             return;
         }
-        List<TestExecutionPlan.Task> tasks = new ArrayList<TestExecutionPlan.Task>();
+        List<TestExecutionPlan.Task> tasks = new ArrayList<>();
         tasks.addAll(plan.getInitializers());
         tasks.addAll(plan.getImporters());
         tasks.addAll(plan.getJobs());
@@ -168,7 +168,7 @@ synchronized(s) {
         LOG.info(MessageFormat.format(
                 Messages.getString("InProcessJobExecutor.infoStartHadoop"), //$NON-NLS-1$
                 job.getClassName()));
-        List<String> arguments = new ArrayList<String>();
+        List<String> arguments = new ArrayList<>();
         arguments.add(job.getClassName());
         arguments.addAll(computeHadoopJobArguments(job));
         ClassLoader original = Thread.currentThread().getContextClassLoader();
@@ -202,7 +202,7 @@ synchronized(s) {
 
     private List<String> computeHadoopJobArguments(Job job) throws IOException {
         assert job != null;
-        List<String> arguments = new ArrayList<String>();
+        List<String> arguments = new ArrayList<>();
         computeHadoopLibjars(arguments);
         computeAsakusaResources(arguments);
         return arguments;
@@ -264,7 +264,7 @@ synchronized(s) {
 
     private synchronized CommandEmulator findCommandEmulator(TestExecutionPlan.Command command) {
         if (commandEmulators == null) {
-            this.commandEmulators = new ArrayList<CommandEmulator>();
+            this.commandEmulators = new ArrayList<>();
             for (CommandEmulator executor : ServiceLoader.load(CommandEmulator.class, context.getClassLoader())) {
                 this.commandEmulators.add(executor);
             }
@@ -283,7 +283,7 @@ synchronized(s) {
      */
     public static final class Settings {
 
-        private final Map<String, String> properties = new HashMap<String, String>();
+        private final Map<String, String> properties = new HashMap<>();
 
         /**
          * Returns the view of additional Hadoop properties.
