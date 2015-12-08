@@ -57,7 +57,7 @@ public class JschProcessExecutorTest {
     @Before
     public void setUp() throws Exception {
         File home = new File(System.getProperty("user.home"));
-        privateKey = new File(home, ".ssh/id_dsa").getCanonicalFile();
+        privateKey = new File(home, ".ssh/id_localhost").getCanonicalFile();
         if (privateKey.isFile() == false) {
             System.err.printf("Test is skipped because %s is not found%n", privateKey);
             Assume.assumeTrue(false);
@@ -88,6 +88,7 @@ public class JschProcessExecutorTest {
         assertThat(extracted.getPort(), is(nullValue()));
         assertThat(extracted.getPrivateKey(), is(privateKey.getAbsolutePath()));
         assertThat(extracted.getPassPhrase(), is(nullValue()));
+        assertThat(extracted.getTemporaryBlobPrefix(), is(JschProcessExecutor.DEFAULT_TEMPORARY_BLOB_PREFIX));
     }
 
     /**
@@ -111,6 +112,7 @@ public class JschProcessExecutorTest {
         assertThat(extracted.getPort(), is(10022));
         assertThat(extracted.getPrivateKey(), is(privateKey.getAbsolutePath()));
         assertThat(extracted.getPassPhrase(), is(nullValue()));
+        assertThat(extracted.getTemporaryBlobPrefix(), is(JschProcessExecutor.DEFAULT_TEMPORARY_BLOB_PREFIX));
     }
 
     /**
@@ -134,6 +136,31 @@ public class JschProcessExecutorTest {
         assertThat(extracted.getPort(), is(nullValue()));
         assertThat(extracted.getPrivateKey(), is(privateKey.getAbsolutePath()));
         assertThat(extracted.getPassPhrase(), is("Hello, world!"));
+        assertThat(extracted.getTemporaryBlobPrefix(), is(JschProcessExecutor.DEFAULT_TEMPORARY_BLOB_PREFIX));
+    }
+
+    /**
+     * extracts configuration w/ blob location.
+     * @throws Exception if failed
+     */
+    @Test
+    public void extract_with_blob() throws Exception {
+        Map<String, String> config = new HashMap<>();
+        config.put(JschProcessExecutor.KEY_USER, "tester");
+        config.put(JschProcessExecutor.KEY_HOST, "example.com");
+        config.put(JschProcessExecutor.KEY_PRIVATE_KEY, privateKey.getAbsolutePath());
+        config.put(JschProcessExecutor.KEY_TEMPORARY_BLOB_PREFIX, "C:\\Temp\\BLOBS\\");
+
+        Map<String, String> variables = new HashMap<>();
+        VariableResolver resolver = new VariableResolver(variables);
+
+        JschProcessExecutor extracted = JschProcessExecutor.extract("testing", config, resolver);
+        assertThat(extracted.getUser(), is("tester"));
+        assertThat(extracted.getHost(), is("example.com"));
+        assertThat(extracted.getPort(), is(nullValue()));
+        assertThat(extracted.getPrivateKey(), is(privateKey.getAbsolutePath()));
+        assertThat(extracted.getPassPhrase(), is(nullValue()));
+        assertThat(extracted.getTemporaryBlobPrefix(), is("C:\\Temp\\BLOBS\\"));
     }
 
     /**

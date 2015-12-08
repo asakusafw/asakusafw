@@ -25,6 +25,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.yaess.core.Blob;
 import com.asakusafw.yaess.core.CommandScript;
 import com.asakusafw.yaess.core.CommandScriptHandler;
 import com.asakusafw.yaess.core.ExecutionContext;
@@ -155,7 +156,7 @@ public abstract class ProcessCommandScriptHandler extends ExecutionScriptHandler
         assert script != null;
 
         Map<String, String> env = buildEnvironmentVariables(context, script);
-        LOG.debug("Env: {}", env);
+        LOG.debug("env: {}", env);
 
         List<String> original = script.getCommandLineTokens();
         List<String> command;
@@ -172,11 +173,14 @@ public abstract class ProcessCommandScriptHandler extends ExecutionScriptHandler
                     currentProfile.getPrefix(),
                     original), e);
         }
-        LOG.debug("Command: {}", command);
+        LOG.debug("command: {}", command);
+
+        Map<String, Blob> extensions = BlobUtil.getExtensions(context, script);
+        LOG.debug("extensions: {}", extensions);
 
         monitor.checkCancelled();
         ProcessExecutor executor = getCommandExecutor();
-        int exit = executor.execute(context, command, env, monitor.getOutput());
+        int exit = executor.execute(context, command, env, extensions, monitor.getOutput());
         if (exit == 0) {
             return;
         }
@@ -201,10 +205,17 @@ public abstract class ProcessCommandScriptHandler extends ExecutionScriptHandler
         assert command != null;
         assert command.isEmpty() == false;
 
-        LOG.debug("Command: {}", command);
+        Map<String, String> env = getEnvironmentVariables(context, script);
+        LOG.debug("env: {}", env);
+
+        LOG.debug("command: {}", command);
+
+        Map<String, Blob> extensions = BlobUtil.getExtensions(context, script);
+        LOG.debug("extensions: {}", extensions);
+
         monitor.checkCancelled();
         ProcessExecutor executor = getCommandExecutor();
-        int exit = executor.execute(context, command, getEnvironmentVariables(context, script), monitor.getOutput());
+        int exit = executor.execute(context, command, env, extensions, monitor.getOutput());
         if (exit == 0) {
             return;
         }

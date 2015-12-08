@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
@@ -39,10 +40,12 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.yaess.core.Blob;
 import com.asakusafw.yaess.core.ExecutionContext;
 import com.asakusafw.yaess.core.VariableResolver;
 import com.asakusafw.yaess.core.util.PropertiesUtil;
 import com.asakusafw.yaess.core.util.StreamRedirectTask;
+import com.asakusafw.yaess.core.util.TemporaryFiles;
 
 /**
  * Utilities for Processes.
@@ -66,6 +69,8 @@ final class ProcessUtil {
      * The (sub) key prefix of cleanup command line tokens.
      */
     public static final String PREFIX_CLEANUP = "cleanup.";
+
+    private static final String BLOB_FILE_PREFIX = "yaess-blob-";
 
     private static final Pattern ARGUMENT = Pattern.compile("@\\[(0|[1-9][0-9]{0,3})\\]");
 
@@ -146,10 +151,7 @@ final class ProcessUtil {
      * @return the built command line tokens
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public static List<String> buildCommand(
-            List<String> head,
-            List<String> original,
-            List<String> tail) {
+    public static List<String> buildCommand(List<String> head, List<String> original, List<String> tail) {
         if (head == null) {
             throw new IllegalArgumentException("head must not be null"); //$NON-NLS-1$
         }
@@ -194,9 +196,8 @@ final class ProcessUtil {
     }
 
     /**
-     * Returns an implementation of {@link ProcessExecutor} which redirects into
-     * {@link #execute(ExecutionContext, List, Map, OutputStream)}.
-     * @return {@link ProcessExecutor} which redirects into {@link #execute(ExecutionContext, List, Map, OutputStream)}
+     * Returns an implementation of {@link ProcessExecutor} runs in the local computer.
+     * @return {@link ProcessExecutor} which runs in the local computer
      */
     public static ProcessExecutor getProcessExecutor() {
         return new ProcessExecutor() {
@@ -205,41 +206,67 @@ final class ProcessUtil {
                     ExecutionContext context,
                     List<String> commandLineTokens,
                     Map<String, String> environmentVariables) throws InterruptedException, IOException {
-                return execute(context, commandLineTokens, environmentVariables, System.out);
+                return execute(context,
+                        commandLineTokens, environmentVariables,
+                        Collections.<String, Blob>emptyMap(), System.out);
             }
             @Override
             public int execute(
                     ExecutionContext context,
-                    List<String> command,
-                    Map<String, String> env,
+                    List<String> commandLineTokens,
+                    Map<String, String> environmentVariables,
                     OutputStream output) throws InterruptedException, IOException {
-                return ProcessUtil.execute(context, command, env, output);
+                return execute(context,
+                        commandLineTokens, environmentVariables,
+                        Collections.<String, Blob>emptyMap(), output);
+            }
+            @Override
+            public int execute(
+                    ExecutionContext context,
+                    List<String> commandLineTokens,
+                    Map<String, String> environmentVariables,
+                    Map<String, Blob> extensions,
+                    OutputStream output) throws InterruptedException, IOException {
+                return ProcessUtil.execute(
+                        context,
+                        commandLineTokens, environmentVariables,
+                        extensions, output);
             }
         };
     }
 
-    /**
-     * Executes a command.
-     * @param context current context
-     * @param command target command
-     * @param env environment variables
-     * @param output current information output
-     * @return exit code
-     * @throws InterruptedException if interrupted while waiting process exit
-     * @throws IOException if failed to execute the command
-     * @throws IllegalArgumentException if some parameters were {@code null}
-     */
-    public static int execute(
+    static int execute(
+            ExecutionContext context,
+            List<String> command,
+            Map<String, String> env,
+            Map<String, Blob> extensions,
+            OutputStream output) throws InterruptedException, IOException {
+        List<String> newCommand = new ArrayList<>();
+        newCommand.addAll(command);
+        try (TemporaryFiles temporaries = new TemporaryFiles()) {
+            for (Map.Entry<String, Blob> entry : extensions.entrySet()) {
+                String token = resolve(entry.getKey(), entry.getValue(), temporaries);
+                newCommand.add(token);
+            }
+            return execute(context, newCommand, env, output);
+        }
+    }
+
+    private static String resolve(String extension, Blob blob, TemporaryFiles temporaries) throws IOException {
+        if (blob instanceof FileBlob) {
+            return ((FileBlob) blob).getFile().getAbsolutePath();
+        }
+        String suffix = BlobUtil.getSuffix(extension, blob);
+        try (InputStream in = blob.open()) {
+            return temporaries.create(BLOB_FILE_PREFIX, suffix, in).getAbsolutePath();
+        }
+    }
+
+    private static int execute(
             ExecutionContext context,
             List<String> command,
             Map<String, String> env,
             OutputStream output) throws InterruptedException, IOException {
-        if (command == null) {
-            throw new IllegalArgumentException("command must not be null"); //$NON-NLS-1$
-        }
-        if (env == null) {
-            throw new IllegalArgumentException("env must not be null"); //$NON-NLS-1$
-        }
         ProcessBuilder builder = new ProcessBuilder(command);
         builder.redirectErrorStream(true);
         builder.environment().putAll(env);

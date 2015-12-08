@@ -23,7 +23,8 @@ Usage:
     yaess-batch.sh batch-id \\
         [-A <key>=<value> [-A <key>=<value>  [...]]] \\
         [-D <key>=<value> [-D <key>=<value>  [...]]] \\
-        [-V <key>=<value> [-V <key>=<value>  [...]]]
+        [-V <key>=<value> [-V <key>=<value>  [...]]] \\
+        [-E <key>=<file> [-E <key>=<file>  [...]]]
 
 Parameters:
     batch-id
@@ -34,6 +35,8 @@ Parameters:
         definition for this execution
     -V <key>=<value>
         custom variables (inherits current environment variables)
+    -E <key>=<file>
+        extension files
 
 Definitions:
     -D profile=<custom-profile-name>
