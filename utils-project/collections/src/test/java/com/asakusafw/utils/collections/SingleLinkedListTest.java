@@ -342,39 +342,27 @@ public class SingleLinkedListTest {
     public void serialize() throws Exception {
         {
             SingleLinkedList<String> list = new SingleLinkedList<>();
-
-            byte[] bytes;
-            try (ByteArrayOutputStream out = new ByteArrayOutputStream();
-                    ObjectOutputStream oo = new ObjectOutputStream(out)) {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            try (ObjectOutputStream oo = new ObjectOutputStream(out)) {
                 oo.writeObject(list);
-                oo.flush();
-                bytes = out.toByteArray();
             }
             SingleLinkedList<?> serialized;
-            try (ByteArrayInputStream in = new ByteArrayInputStream(bytes);
-                    ObjectInputStream oi = new ObjectInputStream(in)) {
+            try (ObjectInputStream oi = new ObjectInputStream(new ByteArrayInputStream(out.toByteArray()))) {
                 serialized = (SingleLinkedList<?>) oi.readObject();
             }
-
             assertThat(serialized.size(), is(0));
         }
         {
             List<String> from = Arrays.asList("a", "b", "c");
             SingleLinkedList<String> list = new SingleLinkedList<>(from);
-
-            byte[] bytes;
-            try (ByteArrayOutputStream out = new ByteArrayOutputStream();
-                    ObjectOutputStream oo = new ObjectOutputStream(out)) {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            try (ObjectOutputStream oo = new ObjectOutputStream(out)) {
                 oo.writeObject(list);
-                oo.flush();
-                bytes = out.toByteArray();
             }
             SingleLinkedList<?> serialized;
-            try (ByteArrayInputStream in = new ByteArrayInputStream(bytes);
-                    ObjectInputStream oi = new ObjectInputStream(in)) {
+            try (ObjectInputStream oi = new ObjectInputStream(new ByteArrayInputStream(out.toByteArray()))) {
                 serialized = (SingleLinkedList<?>) oi.readObject();
             }
-
             assertThat(serialized.size(), is(3));
             assertThat(serialized.get(0), is((Object) "a"));
             assertThat(serialized.get(1), is((Object) "b"));

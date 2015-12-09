@@ -119,17 +119,16 @@ public class PluginClassLoader extends URLClassLoader {
                         Messages.getString("PluginClassLoader.errorFailedToLoadClassBytes"), //$NON-NLS-1$
                         aClass.getName()));
             }
-            try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
-                byte[] buf = new byte[256];
-                while (true) {
-                    int read = input.read(buf);
-                    if (read < 0) {
-                        break;
-                    }
-                    output.write(buf, 0, read);
+            ByteArrayOutputStream output = new ByteArrayOutputStream();
+            byte[] buf = new byte[256];
+            while (true) {
+                int read = input.read(buf);
+                if (read < 0) {
+                    break;
                 }
-                results = output.toByteArray();
+                output.write(buf, 0, read);
             }
+            results = output.toByteArray();
         }
         synchronized (CACHE_CLASS_BYTES) {
             CACHE_CLASS_BYTES.put(aClass, results);

@@ -21,12 +21,9 @@ import java.io.IOException;
 /**
  * An abstract superclass of session mirror.
 <pre><code>
-SessionMirror session = ...;
-try {
+try (SessionMirror session = ...) {
     // do something
     session.complete(); // or session.abort();
-} finally {
-    session.close();
 }
 </code></pre>
  * @since 0.2.2

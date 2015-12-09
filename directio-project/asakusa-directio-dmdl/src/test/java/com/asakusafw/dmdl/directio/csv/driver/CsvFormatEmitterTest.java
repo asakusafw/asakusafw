@@ -594,7 +594,8 @@ public class CsvFormatEmitterTest extends GeneratorTesterRoot {
     }
 
     private byte[] dump(InputStream input) throws IOException {
-        try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
+        try {
+            ByteArrayOutputStream output = new ByteArrayOutputStream();
             byte[] buf = new byte[1024];
             while (true) {
                 int read = input.read(buf);
@@ -603,7 +604,6 @@ public class CsvFormatEmitterTest extends GeneratorTesterRoot {
                 }
                 output.write(buf, 0, read);
             }
-            output.close();
             return output.toByteArray();
         } finally {
             input.close();
