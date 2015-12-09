@@ -23,6 +23,7 @@ import java.io.OutputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
@@ -42,6 +43,7 @@ import org.slf4j.LoggerFactory;
 
 import com.asakusafw.yaess.core.Blob;
 import com.asakusafw.yaess.core.ExecutionContext;
+import com.asakusafw.yaess.core.ExecutionScriptHandler;
 import com.asakusafw.yaess.core.VariableResolver;
 import com.asakusafw.yaess.core.util.PropertiesUtil;
 import com.asakusafw.yaess.core.util.StreamRedirectTask;
@@ -241,14 +243,15 @@ final class ProcessUtil {
             Map<String, String> env,
             Map<String, Blob> extensions,
             OutputStream output) throws InterruptedException, IOException {
-        List<String> newCommand = new ArrayList<>();
-        newCommand.addAll(command);
+        Map<String, String> newEnv = new LinkedHashMap<>();
+        newEnv.putAll(env);
         try (TemporaryFiles temporaries = new TemporaryFiles()) {
             for (Map.Entry<String, Blob> entry : extensions.entrySet()) {
+                String name = entry.getKey();
                 String token = resolve(entry.getKey(), entry.getValue(), temporaries);
-                newCommand.add(token);
+                newEnv.put(ExecutionScriptHandler.ENV_EXTENSION_PREFIX + name, token);
             }
-            return execute(context, newCommand, env, output);
+            return execute(context, command, newEnv, output);
         }
     }
 
