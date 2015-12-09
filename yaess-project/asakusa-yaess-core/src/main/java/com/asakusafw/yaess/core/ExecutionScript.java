@@ -78,6 +78,12 @@ public interface ExecutionScript {
      */
     Map<String, String> getEnvironmentVariables();
 
+    /**
+     * Returns the supported extension names.
+     * @return the supported extension names
+     * @since 0.8.0
+     */
+    Set<String> getSupportedExtensions();
 
     /**
      * Returns whether this script is resolved.

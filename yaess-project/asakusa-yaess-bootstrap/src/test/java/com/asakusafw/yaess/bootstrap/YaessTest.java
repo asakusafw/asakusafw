@@ -41,6 +41,7 @@ import org.junit.rules.TemporaryFolder;
 import com.asakusafw.yaess.bootstrap.ExecutionTracker.Record;
 import com.asakusafw.yaess.bootstrap.Yaess.Configuration;
 import com.asakusafw.yaess.bootstrap.Yaess.Mode;
+import com.asakusafw.yaess.core.Blob;
 import com.asakusafw.yaess.core.CoreProfile;
 import com.asakusafw.yaess.core.ExecutionLock;
 import com.asakusafw.yaess.core.ExecutionPhase;
@@ -238,6 +239,41 @@ public class YaessTest {
 
         CoreProfile core = conf.profile.getCore().newInstance();
         assertThat(core.getVersion(), is("CUSTOM"));
+    }
+
+    /**
+     * parse configuration w/ extensions.
+     * @throws Exception if failed
+     */
+    @Test
+    public void config_extension() throws Exception {
+        ProfileBuilder builder = new ProfileBuilder(folder.getRoot());
+        File profile = builder.getProfile();
+        File script = builder.getScript();
+        File extA = folder.newFile("extA.txt");
+        File extB = folder.newFile("extB.bin");
+        File extC = folder.newFile("extC");
+
+        List<String> arguments = new ArrayList<>();
+        Collections.addAll(arguments, "-profile", profile.getAbsolutePath());
+        Collections.addAll(arguments, "-script", script.getAbsolutePath());
+        Collections.addAll(arguments, "-batch", "tbatch");
+        Collections.addAll(arguments, "-E", "A=" + extA.getPath());
+        Collections.addAll(arguments, "-E", "B=" + extB.getPath());
+        Collections.addAll(arguments, "-E", "C=" + extC.getPath());
+
+        Configuration conf = Yaess.parseConfiguration(arguments.toArray(new String[arguments.size()]));
+        assertThat(conf.mode, is(Mode.BATCH));
+        assertThat(conf.batchId, is("tbatch"));
+        assertThat(conf.flowId, is(nullValue()));
+        assertThat(conf.executionId, is(nullValue()));
+        assertThat(conf.phase, is(nullValue()));
+        assertThat(conf.arguments.keySet(), hasSize(0));
+        assertThat(conf.extensions.keySet(), containsInAnyOrder("A", "B", "C"));
+
+        assertThat(conf.extensions.get("A").getFileExtension(), is("txt"));
+        assertThat(conf.extensions.get("B").getFileExtension(), is("bin"));
+        assertThat(conf.extensions.get("C").getFileExtension(), is(Blob.DEFAULT_FILE_EXTENSION));
     }
 
     /**

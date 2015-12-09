@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Contextual information of jobflow executions.
  * @since 0.2.3
- * @version 0.4.0
+ * @version 0.8.0
  */
 public class ExecutionContext {
 
@@ -45,6 +45,8 @@ public class ExecutionContext {
 
     private final Map<String, String> environmentVariables;
 
+    private final Map<String, Blob> extensions;
+
     /**
      * Creates a new instance.
      * @param batchId current batch ID
@@ -60,7 +62,8 @@ public class ExecutionContext {
             String executionId,
             ExecutionPhase phase,
             Map<String, String> arguments) {
-        this(batchId, flowId, executionId, phase, arguments, Collections.<String, String>emptyMap());
+        this(batchId, flowId, executionId, phase,
+                arguments, Collections.<String, String>emptyMap());
     }
 
     /**
@@ -81,6 +84,30 @@ public class ExecutionContext {
             ExecutionPhase phase,
             Map<String, String> arguments,
             Map<String, String> environmentVariables) {
+        this(batchId, flowId, executionId, phase,
+                arguments, environmentVariables, Collections.<String, Blob>emptyMap());
+    }
+
+    /**
+     * Creates a new instance.
+     * @param batchId current batch ID
+     * @param flowId current flow ID
+     * @param executionId current execution ID
+     * @param phase current execution phase
+     * @param arguments current argument pairs
+     * @param environmentVariables environment variables to be inherited
+     * @param extensions extension BLOB map
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.8.0
+     */
+    public ExecutionContext(
+            String batchId,
+            String flowId,
+            String executionId,
+            ExecutionPhase phase,
+            Map<String, String> arguments,
+            Map<String, String> environmentVariables,
+            Map<String, ? extends Blob> extensions) {
         if (batchId == null) {
             throw new IllegalArgumentException("batchId must not be null"); //$NON-NLS-1$
         }
@@ -96,12 +123,19 @@ public class ExecutionContext {
         if (arguments == null) {
             throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
         }
+        if (environmentVariables == null) {
+            throw new IllegalArgumentException("environmentVariables must not be null"); //$NON-NLS-1$
+        }
+        if (extensions == null) {
+            throw new IllegalArgumentException("extensions must not be null"); //$NON-NLS-1$
+        }
         this.batchId = batchId;
         this.flowId = flowId;
         this.executionId = executionId;
         this.phase = phase;
         this.arguments = Collections.unmodifiableMap(new HashMap<>(arguments));
         this.environmentVariables = Collections.unmodifiableMap(new HashMap<>(environmentVariables));
+        this.extensions = Collections.unmodifiableMap(new HashMap<>(extensions));
     }
 
     /**
@@ -153,7 +187,16 @@ public class ExecutionContext {
     }
 
     /**
-     * Returns currnt argument pairs as string format.
+     * Returns the extension BLOBs.
+     * @return the extensions
+     * @since 0.8.0
+     */
+    public Map<String, Blob> getExtensions() {
+        return extensions;
+    }
+
+    /**
+     * Returns current argument pairs as string format.
      * @return string format of the execution arguments
      */
     public String getArgumentsAsString() {
@@ -179,12 +222,13 @@ public class ExecutionContext {
     @Override
     public String toString() {
         return MessageFormat.format(
-                "Context'{'batchId={0}, flowId={1}, executionId={2}, phase={3}, arguments={4}, env={5}'}'",
+                "Context'{'batchId={0}, flowId={1}, executionId={2}, phase={3}, args={4}, ext={5}, env={6}'}'",
                 batchId,
                 flowId,
                 executionId,
                 phase,
                 arguments,
+                extensions,
                 environmentVariables);
     }
 }

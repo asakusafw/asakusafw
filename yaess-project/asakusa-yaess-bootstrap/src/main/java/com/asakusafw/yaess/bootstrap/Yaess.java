@@ -35,6 +35,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.yaess.basic.ExitCodeException;
+import com.asakusafw.yaess.basic.FileBlob;
+import com.asakusafw.yaess.core.Blob;
 import com.asakusafw.yaess.core.ExecutionPhase;
 import com.asakusafw.yaess.core.ProfileContext;
 import com.asakusafw.yaess.core.VariableResolver;
@@ -45,7 +47,7 @@ import com.asakusafw.yaess.core.task.ExecutionTask;
 /**
  * A YAESS program main entry point.
  * @since 0.2.3
- * @version 0.7.4
+ * @version 0.8.0
  */
 public final class Yaess {
 
@@ -65,6 +67,7 @@ public final class Yaess {
     static final Option OPT_ARGUMENT;
     static final Option OPT_DEFINITION;
     static final Option OPT_ENVIRONMENT_VARIABLE;
+    static final Option OPT_EXTENSION;
 
     private static final Options OPTIONS;
     static {
@@ -96,23 +99,29 @@ public final class Yaess {
         OPT_PLUGIN.setArgName("plugin-1.jar" + File.pathSeparatorChar + "plugin-2.jar");
         OPT_PLUGIN.setRequired(false);
 
-        OPT_ARGUMENT = new Option("A", true, "batch argument");
+        OPT_ARGUMENT = new Option("A", "argument", true, "batch argument");
         OPT_ARGUMENT.setArgs(2);
         OPT_ARGUMENT.setValueSeparator('=');
         OPT_ARGUMENT.setArgName("name=value");
         OPT_ARGUMENT.setRequired(false);
 
-        OPT_DEFINITION = new Option("D", true, "definitions");
+        OPT_DEFINITION = new Option("D", "define", true, "definitions");
         OPT_DEFINITION.setArgs(2);
         OPT_DEFINITION.setValueSeparator('=');
         OPT_DEFINITION.setArgName("name=value");
         OPT_DEFINITION.setRequired(false);
 
-        OPT_ENVIRONMENT_VARIABLE = new Option("V", true, "extra environment variable");
+        OPT_ENVIRONMENT_VARIABLE = new Option("V", "variable", true, "extra environment variable");
         OPT_ENVIRONMENT_VARIABLE.setArgs(2);
         OPT_ENVIRONMENT_VARIABLE.setValueSeparator('=');
         OPT_ENVIRONMENT_VARIABLE.setArgName("name=value");
         OPT_ENVIRONMENT_VARIABLE.setRequired(false);
+
+        OPT_EXTENSION = new Option("E", "extension", true, "YAESS extension");
+        OPT_EXTENSION.setArgs(2);
+        OPT_EXTENSION.setValueSeparator('=');
+        OPT_EXTENSION.setArgName("name=/path/to/file");
+        OPT_EXTENSION.setRequired(false);
 
         OPTIONS = new Options();
         OPTIONS.addOption(OPT_PROFILE);
@@ -125,6 +134,7 @@ public final class Yaess {
         OPTIONS.addOption(OPT_ARGUMENT);
         OPTIONS.addOption(OPT_DEFINITION);
         OPTIONS.addOption(OPT_ENVIRONMENT_VARIABLE);
+        OPTIONS.addOption(OPT_EXTENSION);
     }
 
     private Yaess() {
@@ -168,7 +178,8 @@ public final class Yaess {
         }
         ExecutionTask task;
         try {
-            task = ExecutionTask.load(conf.profile, conf.script, conf.arguments, conf.definitions);
+            task = ExecutionTask.load(conf.profile, conf.script,
+                    conf.arguments, conf.definitions, conf.extensions);
         } catch (Exception e) {
             YSLOG.error(e, "E00002", conf);
             return 1;
@@ -225,6 +236,8 @@ public final class Yaess {
         LOG.debug("Environment variables: {}", variables);
         Properties definitions = cmd.getOptionProperties(OPT_DEFINITION.getOpt());
         LOG.debug("YAESS feature definitions: {}", definitions);
+        Properties extensions = cmd.getOptionProperties(OPT_EXTENSION.getOpt());
+        LOG.debug("YAESS extensions: {}", extensions);
 
         LOG.debug("Loading plugins: {}", plugins);
         List<File> pluginFiles = CommandLineUtil.parseFileList(plugins);
@@ -276,6 +289,7 @@ public final class Yaess {
 
         result.arguments = toMap(arguments);
         result.definitions = toMap(definitions);
+        result.extensions = buildExtensions(toMap(extensions));
 
         LOG.debug("Analyzed YAESS bootstrap arguments");
         return result;
@@ -337,6 +351,19 @@ public final class Yaess {
         }
     }
 
+    static Map<String, Blob> buildExtensions(Map<String, String> extensions) {
+        if (extensions == null) {
+            throw new IllegalArgumentException("properties must not be null"); //$NON-NLS-1$
+        }
+        Map<String, Blob> results = new HashMap<>();
+        for (Map.Entry<String, String> entry : extensions.entrySet()) {
+            String name = entry.getKey();
+            File path = new File(entry.getValue());
+            results.put(name, new FileBlob(path));
+        }
+        return results;
+    }
+
     static final class Configuration {
         Mode mode;
         ProfileContext context;
@@ -348,6 +375,7 @@ public final class Yaess {
         ExecutionPhase phase;
         Map<String, String> arguments;
         Map<String, String> definitions;
+        Map<String, Blob> extensions;
         @Override
         public String toString() {
             StringBuilder builder = new StringBuilder();

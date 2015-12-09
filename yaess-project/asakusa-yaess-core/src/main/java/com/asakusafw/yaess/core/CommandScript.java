@@ -18,8 +18,10 @@ package com.asakusafw.yaess.core;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,6 +33,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A script that describes process command using operating system shell.
  * @since 0.2.3
+ * @version 0.8.0
  */
 public class CommandScript implements ExecutionScript {
 
@@ -53,6 +56,8 @@ public class CommandScript implements ExecutionScript {
 
     private final Map<String, String> environmentVariables;
 
+    private final Set<String> supportedExtensions;
+
     private final boolean resolved;
 
     /**
@@ -70,13 +75,38 @@ public class CommandScript implements ExecutionScript {
      * @see #resolve(ExecutionContext, ExecutionScriptHandler)
      */
     public CommandScript(
-            String id,
-            Set<String> blockerIds,
-            String profileName,
-            String moduleName,
+            String id, Set<String> blockerIds,
+            String profileName, String moduleName,
             List<String> command,
             Map<String, String> environmentVariables) {
-        this(id, blockerIds, profileName, moduleName, command, environmentVariables, false);
+        this(id, blockerIds, profileName, moduleName,
+                command, environmentVariables,
+                Collections.<String>emptySet(), false);
+    }
+
+    /**
+     * Creates a new instance.
+     * Note that this creates an <em>UNRESOLVED</em> instance.
+     * To create a resolved instance, please use {@link #resolve(ExecutionContext, ExecutionScriptHandler)}.
+     * @param id the script ID
+     * @param blockerIds other script IDs blocking this script execution
+     * @param profileName the profile name to execute this command, empty string means use default profile
+     * @param moduleName module name of target command
+     * @param command sequence of command tokens
+     * @param environmentVariables the extra environment variables
+     * @param supportedExtensions the supported extension names
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @see #DEFAULT_PROFILE_NAME
+     * @see #resolve(ExecutionContext, ExecutionScriptHandler)
+     * @since 0.8.0
+     */
+    public CommandScript(
+            String id, Set<String> blockerIds,
+            String profileName, String moduleName,
+            List<String> command, Map<String, String> environmentVariables,
+            Collection<String> supportedExtensions) {
+        this(id, blockerIds, profileName, moduleName, command,
+                environmentVariables, supportedExtensions, false);
     }
 
     private CommandScript(
@@ -86,6 +116,7 @@ public class CommandScript implements ExecutionScript {
             String moduleName,
             List<String> command,
             Map<String, String> environmentVariables,
+            Collection<String> supportedExtensions,
             boolean resolved) {
         if (id == null) {
             throw new IllegalArgumentException("id must not be null"); //$NON-NLS-1$
@@ -108,11 +139,15 @@ public class CommandScript implements ExecutionScript {
         if (environmentVariables == null) {
             throw new IllegalArgumentException("environmentVariables must not be null"); //$NON-NLS-1$
         }
+        if (supportedExtensions == null) {
+            throw new IllegalArgumentException("supportedExtensions must not be null"); //$NON-NLS-1$
+        }
         this.id = id;
         this.blockerIds = Collections.unmodifiableSet(new TreeSet<>(blockerIds));
         this.profileName = profileName;
         this.command = Collections.unmodifiableList(new ArrayList<>(command));
         this.moduleName = moduleName;
+        this.supportedExtensions = Collections.unmodifiableSet(new LinkedHashSet<>(supportedExtensions));
         this.environmentVariables = Collections.unmodifiableMap(new LinkedHashMap<>(environmentVariables));
         this.resolved = resolved;
     }
@@ -164,6 +199,11 @@ public class CommandScript implements ExecutionScript {
     }
 
     @Override
+    public Set<String> getSupportedExtensions() {
+        return supportedExtensions;
+    }
+
+    @Override
     public boolean isResolved() {
         return resolved;
     }
@@ -203,6 +243,7 @@ public class CommandScript implements ExecutionScript {
                 getModuleName(),
                 resolvedCommands,
                 resolvedEnvironments,
+                supportedExtensions,
                 true);
     }
 
@@ -228,6 +269,7 @@ public class CommandScript implements ExecutionScript {
         result = prime * result + moduleName.hashCode();
         result = prime * result + command.hashCode();
         result = prime * result + environmentVariables.hashCode();
+        result = prime * result + supportedExtensions.hashCode();
         return result;
     }
 
@@ -259,6 +301,9 @@ public class CommandScript implements ExecutionScript {
             return false;
         }
         if (!environmentVariables.equals(other.environmentVariables)) {
+            return false;
+        }
+        if (!supportedExtensions.equals(other.supportedExtensions)) {
             return false;
         }
         return true;

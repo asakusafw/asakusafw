@@ -40,6 +40,7 @@ import com.asakusafw.yaess.core.YaessLogger;
 /**
  * Utilities for command line interfaces.
  * @since 0.2.3
+ * @version 0.8.0
  */
 public final class CommandLineUtil {
 

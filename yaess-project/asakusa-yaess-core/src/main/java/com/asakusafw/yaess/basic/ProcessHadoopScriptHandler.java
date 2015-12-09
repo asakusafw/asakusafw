@@ -27,6 +27,7 @@ import java.util.TreeMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.yaess.core.Blob;
 import com.asakusafw.yaess.core.ExecutionContext;
 import com.asakusafw.yaess.core.ExecutionMonitor;
 import com.asakusafw.yaess.core.ExecutionScript;
@@ -249,7 +250,7 @@ public abstract class ProcessHadoopScriptHandler extends ExecutionScriptHandlerB
         assert script != null;
 
         Map<String, String> env = buildEnvironmentVariables(context, script);
-        LOG.debug("Env: {}", env);
+        LOG.debug("env: {}", env);
 
         List<String> original = buildExecutionCommand(context, script);
         List<String> command;
@@ -267,11 +268,14 @@ public abstract class ProcessHadoopScriptHandler extends ExecutionScriptHandlerB
                     currentProfile.getPrefix(),
                     original), e);
         }
-        LOG.debug("Command: {}", command);
+        LOG.debug("command: {}", command);
+
+        Map<String, Blob> extensions = BlobUtil.getExtensions(context, script);
+        LOG.debug("extensions: {}", extensions);
 
         monitor.checkCancelled();
         ProcessExecutor executor = getCommandExecutor();
-        int exit = executor.execute(context, command, env, monitor.getOutput());
+        int exit = executor.execute(context, command, env, extensions, monitor.getOutput());
         if (exit == 0) {
             return;
         }

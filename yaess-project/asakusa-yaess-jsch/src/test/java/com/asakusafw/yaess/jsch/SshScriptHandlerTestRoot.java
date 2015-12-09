@@ -73,7 +73,7 @@ public class SshScriptHandlerTestRoot {
     @Before
     public void setUp() throws Exception {
         File home = new File(System.getProperty("user.home"));
-        privateKey = new File(home, ".ssh/id_dsa").getCanonicalFile();
+        privateKey = new File(home, ".ssh/id_localhost").getCanonicalFile();
         if (privateKey.isFile() == false) {
             System.err.printf("Test is skipped because %s is not found%n", privateKey);
             Assume.assumeTrue(false);

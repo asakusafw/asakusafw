@@ -18,9 +18,12 @@ package com.asakusafw.yaess.basic;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,11 +40,14 @@ import com.asakusafw.yaess.core.ExecutionMonitor;
 import com.asakusafw.yaess.core.ExecutionPhase;
 import com.asakusafw.yaess.core.ProfileContext;
 import com.asakusafw.yaess.core.ServiceProfile;
+import com.asakusafw.yaess.core.util.TemporaryFiles;
 
 /**
  * Test for {@link BasicCommandScriptHandler}.
  */
 public class BasicCommandScriptHandlerTest extends BasicScriptHandlerTestRoot {
+
+    private static final Charset ENCODING = Charset.forName("UTF-8");
 
     /**
      * Simple testing.
@@ -269,6 +275,64 @@ public class BasicCommandScriptHandlerTest extends BasicScriptHandlerTestRoot {
         ExecutionContext context = new ExecutionContext(
                 "tbatch", "tflow", "texec", ExecutionPhase.MAIN, map());
         handler.execute(ExecutionMonitor.NULL, context, script);
+    }
+
+    /**
+     * test for extensions.
+     * @throws Exception if failed
+     */
+    @Test
+    public void extension() throws Exception {
+        File shell = putScript("blob.sh", "bin/script.sh");
+
+        CommandScript script = new CommandScript(
+                "testing", set(), "profile", "module",
+                Arrays.asList(shell.getAbsolutePath(), "Hello, world!"), map(),
+                Arrays.asList("testing"));
+
+        CommandScriptHandler handler = handler();
+
+        try (TemporaryFiles temporaries = new TemporaryFiles()) {
+            File file = temporaries.create(
+                    "testing", ".txt",
+                    new ByteArrayInputStream("BLOB-TEST".getBytes(ENCODING)));
+            ExecutionContext context = new ExecutionContext(
+                    "b", "f", "e", ExecutionPhase.MAIN,
+                    map(), map(),
+                    Collections.singletonMap("testing", new FileBlob(file)));
+            execute(context, script, handler);
+        }
+        List<String> results = getOutput(shell);
+        assertThat(results, is(Arrays.asList("Hello, world!", "BLOB-TEST")));
+    }
+
+    /**
+     * test for extensions.
+     * @throws Exception if failed
+     */
+    @Test
+    public void extension_mismatch() throws Exception {
+        File shell = putScript("arguments.sh", "bin/script.sh");
+
+        CommandScript script = new CommandScript(
+                "testing", set(), "profile", "module",
+                Arrays.asList(shell.getAbsolutePath(), "Hello, world!"), map(),
+                Arrays.asList("testing"));
+
+        CommandScriptHandler handler = handler();
+
+        try (TemporaryFiles temporaries = new TemporaryFiles()) {
+            File file = temporaries.create(
+                    "testing", ".txt",
+                    new ByteArrayInputStream("BLOB-TEST".getBytes(ENCODING)));
+            ExecutionContext context = new ExecutionContext(
+                    "b", "f", "e", ExecutionPhase.MAIN,
+                    map(), map(),
+                    Collections.singletonMap("OTHER", new FileBlob(file)));
+            execute(context, script, handler);
+        }
+        List<String> results = getOutput(shell);
+        assertThat(results, is(Arrays.asList("Hello, world!")));
     }
 
     private CommandScriptHandler handler(String... keyValuePairs) {

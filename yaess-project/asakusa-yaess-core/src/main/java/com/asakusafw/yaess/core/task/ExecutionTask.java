@@ -48,6 +48,7 @@ import com.asakusafw.runtime.core.context.RuntimeContext;
 import com.asakusafw.runtime.core.context.RuntimeContext.ExecutionMode;
 import com.asakusafw.yaess.basic.ExitCodeException;
 import com.asakusafw.yaess.core.BatchScript;
+import com.asakusafw.yaess.core.Blob;
 import com.asakusafw.yaess.core.CommandScript;
 import com.asakusafw.yaess.core.CommandScriptHandler;
 import com.asakusafw.yaess.core.ExecutionContext;
@@ -71,7 +72,7 @@ import com.asakusafw.yaess.core.YaessProfile;
 /**
  * Task to execute target batch, flow, or phase.
  * @since 0.2.3
- * @version 0.4.0
+ * @version 0.8.0
  */
 public class ExecutionTask {
 
@@ -101,7 +102,9 @@ public class ExecutionTask {
 
     private final Map<String, String> batchArguments;
 
-    private final Map<String, String> subprocessEnvironmentVaritables = new ConcurrentHashMap<>();
+    private final Map<String, String> environmentVaritables = new ConcurrentHashMap<>();
+
+    private final Map<String, Blob> extensions;
 
     private final Set<String> skipFlows = Collections.synchronizedSet(new HashSet<String>());
 
@@ -118,16 +121,18 @@ public class ExecutionTask {
      * @param commandHandlers command script handlers and its profile names
      * @param script target script
      * @param batchArguments current batch arguments
+     * @param extensions extension BLOBs
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public ExecutionTask(
+    ExecutionTask(
             ExecutionMonitorProvider monitors,
             ExecutionLockProvider locks,
             JobScheduler scheduler,
             HadoopScriptHandler hadoopHandler,
             Map<String, CommandScriptHandler> commandHandlers,
             BatchScript script,
-            Map<String, String> batchArguments) {
+            Map<String, String> batchArguments,
+            Map<String, Blob> extensions) {
         if (monitors == null) {
             throw new IllegalArgumentException("monitors must not be null"); //$NON-NLS-1$
         }
@@ -149,6 +154,9 @@ public class ExecutionTask {
         if (batchArguments == null) {
             throw new IllegalArgumentException("batchArguments must not be null"); //$NON-NLS-1$
         }
+        if (extensions == null) {
+            throw new IllegalArgumentException("extensions must not be null"); //$NON-NLS-1$
+        }
         this.monitors = monitors;
         this.locks = locks;
         this.scheduler = scheduler;
@@ -156,6 +164,7 @@ public class ExecutionTask {
         this.commandHandlers = Collections.unmodifiableMap(new HashMap<>(commandHandlers));
         this.script = script;
         this.batchArguments = Collections.unmodifiableMap(new LinkedHashMap<>(batchArguments));
+        this.extensions = Collections.unmodifiableMap(new LinkedHashMap<>(extensions));
         this.runtimeContext = RuntimeContext.get();
     }
 
@@ -181,7 +190,7 @@ public class ExecutionTask {
      * @param profile target profile
      * @param script target script
      * @param batchArguments current batch arguments
-     * @param yaessArguments current controll arguments
+     * @param yaessArguments current control arguments
      * @return the created task
      * @throws InterruptedException if interrupted while configuring services
      * @throws IOException if failed to configure services
@@ -193,6 +202,28 @@ public class ExecutionTask {
             Properties script,
             Map<String, String> batchArguments,
             Map<String, String> yaessArguments) throws InterruptedException, IOException {
+        return load(profile, script, batchArguments, yaessArguments, Collections.<String, Blob>emptyMap());
+    }
+
+    /**
+     * Loads profile and create a new {@link ExecutionTask}.
+     * @param profile target profile
+     * @param script target script
+     * @param batchArguments current batch arguments
+     * @param yaessArguments current control arguments
+     * @param extensions extension BLOBs
+     * @return the created task
+     * @throws InterruptedException if interrupted while configuring services
+     * @throws IOException if failed to configure services
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.8.0
+     */
+    public static ExecutionTask load(
+            YaessProfile profile,
+            Properties script,
+            Map<String, String> batchArguments,
+            Map<String, String> yaessArguments,
+            Map<String, Blob> extensions) throws InterruptedException, IOException {
         if (profile == null) {
             throw new IllegalArgumentException("profile must not be null"); //$NON-NLS-1$
         }
@@ -204,6 +235,9 @@ public class ExecutionTask {
         }
         if (yaessArguments == null) {
             throw new IllegalArgumentException("yaessArguments must not be null"); //$NON-NLS-1$
+        }
+        if (extensions == null) {
+            throw new IllegalArgumentException("extensions must not be null"); //$NON-NLS-1$
         }
         LOG.debug("Loading execution monitor feature");
         ExecutionMonitorProvider monitors = profile.getMonitors().newInstance();
@@ -234,7 +268,8 @@ public class ExecutionTask {
                 hadoopHandler,
                 commandHandlers,
                 batch,
-                batchArguments);
+                batchArguments,
+                extensions);
 
         LOG.debug("Applying definitions");
         Map<String, String> copyDefinitions = new TreeMap<>(yaessArguments);
@@ -377,7 +412,7 @@ public class ExecutionTask {
      * @since 0.4.0
      */
     Map<String, String> getEnv() {
-        return this.subprocessEnvironmentVaritables;
+        return this.environmentVaritables;
     }
 
     /**
@@ -524,9 +559,14 @@ public class ExecutionTask {
         if (phase == null) {
             throw new IllegalArgumentException("phase must not be null"); //$NON-NLS-1$
         }
-        ExecutionContext context = new ExecutionContext(
-                batchId, flowId, executionId, phase, batchArguments, subprocessEnvironmentVaritables);
+        ExecutionContext context = newContext(batchId, flowId, executionId, phase);
         executePhase(context);
+    }
+
+    private ExecutionContext newContext(String batchId, String flowId, String executionId, ExecutionPhase phase) {
+        return new ExecutionContext(
+                batchId, flowId, executionId, phase,
+                batchArguments, environmentVaritables, extensions);
     }
 
     /**
@@ -616,8 +656,7 @@ public class ExecutionTask {
             FlowScript flow,
             String executionId,
             ExecutionPhase phase) throws InterruptedException, IOException {
-        ExecutionContext context = new ExecutionContext(
-                batchId, flow.getId(), executionId, phase, batchArguments, subprocessEnvironmentVaritables);
+        ExecutionContext context = newContext(batchId, flow.getId(), executionId, phase);
         Set<ExecutionScript> scripts = flow.getScripts().get(phase);
         assert scripts != null;
         executePhase(context, scripts);

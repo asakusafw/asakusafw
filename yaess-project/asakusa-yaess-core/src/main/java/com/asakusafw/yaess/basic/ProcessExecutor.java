@@ -20,12 +20,13 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 
+import com.asakusafw.yaess.core.Blob;
 import com.asakusafw.yaess.core.ExecutionContext;
 
 /**
  * Executes programs.
  * @since 0.2.3
- * @version 0.2.6
+ * @version 0.8.0
  */
 public interface ProcessExecutor {
 
@@ -38,7 +39,7 @@ public interface ProcessExecutor {
      * @throws InterruptedException if interrupted while waiting process exit
      * @throws IOException if failed to execute the command
      * @throws IllegalArgumentException if some parameters were {@code null}
-     * @deprecated Use {@link #execute(ExecutionContext, List, Map, OutputStream)} inste
+     * @deprecated Use {@link #execute(ExecutionContext, List, Map, Map, OutputStream)} instead
      */
     @Deprecated
     int execute(
@@ -62,5 +63,25 @@ public interface ProcessExecutor {
             ExecutionContext context,
             List<String> commandLineTokens,
             Map<String, String> environmentVariables,
+            OutputStream output) throws InterruptedException, IOException;
+
+    /**
+     * Executes a process.
+     * @param context current execution context
+     * @param commandLineTokens target command
+     * @param environmentVariables environment variables
+     * @param extensions the extension BLOBs
+     * @param output information output
+     * @return exit code
+     * @throws InterruptedException if interrupted while waiting process exit
+     * @throws IOException if failed to execute the command
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.8.0
+     */
+    int execute(
+            ExecutionContext context,
+            List<String> commandLineTokens,
+            Map<String, String> environmentVariables,
+            Map<String, Blob> extensions,
             OutputStream output) throws InterruptedException, IOException;
 }

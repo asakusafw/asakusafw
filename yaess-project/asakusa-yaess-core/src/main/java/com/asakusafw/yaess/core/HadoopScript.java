@@ -17,8 +17,10 @@ package com.asakusafw.yaess.core;
 
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -29,6 +31,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A script that describes process execution using Hadoop.
  * @since 0.2.3
+ * @version 0.8.0
  */
 public class HadoopScript implements ExecutionScript {
 
@@ -44,6 +47,8 @@ public class HadoopScript implements ExecutionScript {
 
     private final Map<String, String> environmentVariables;
 
+    private final Set<String> supportedExtensions;
+
     private final boolean resolved;
 
     /**
@@ -58,20 +63,40 @@ public class HadoopScript implements ExecutionScript {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public HadoopScript(
-            String id,
-            Set<String> blockerIds,
+            String id, Set<String> blockerIds,
             String className,
             Map<String, String> hadoopProperties,
             Map<String, String> environmentVariables) {
-        this(id, blockerIds, className, hadoopProperties, environmentVariables, false);
+        this(id, blockerIds,
+                className, hadoopProperties, environmentVariables,
+                Collections.<String>emptySet(),
+                false);
+    }
+
+    /**
+     * Creates a new instance.
+     * Note that this creates an <em>UNRESOLVED</em> instance.
+     * To create a resolved instance, please use {@link #resolve(ExecutionContext, ExecutionScriptHandler)}.
+     * @param id the script ID
+     * @param blockerIds other script IDs blocking this script execution
+     * @param className fully qualified execution target class name
+     * @param hadoopProperties the extra Hadoop properties
+     * @param environmentVariables the extra environment variables
+     * @param supportedExtensions the supported extension names
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.8.0
+     */
+    public HadoopScript(
+            String id, Set<String> blockerIds,
+            String className, Map<String, String> hadoopProperties, Map<String, String> environmentVariables,
+            Collection<String> supportedExtensions) {
+        this(id, blockerIds, className, hadoopProperties, environmentVariables, supportedExtensions, false);
     }
 
     private HadoopScript(
-            String id,
-            Set<String> blockerIds,
-            String className,
-            Map<String, String> hadoopProperties,
-            Map<String, String> environmentVariables,
+            String id, Set<String> blockerIds,
+            String className, Map<String, String> hadoopProperties, Map<String, String> environmentVariables,
+            Collection<String> supportedExtensions,
             boolean resolved) {
         if (id == null) {
             throw new IllegalArgumentException("id must not be null"); //$NON-NLS-1$
@@ -88,11 +113,15 @@ public class HadoopScript implements ExecutionScript {
         if (environmentVariables == null) {
             throw new IllegalArgumentException("environmentVariables must not be null"); //$NON-NLS-1$
         }
+        if (supportedExtensions == null) {
+            throw new IllegalArgumentException("supportedExtensions must not be null"); //$NON-NLS-1$
+        }
         this.id = id;
         this.blockerIds = Collections.unmodifiableSet(new TreeSet<>(blockerIds));
         this.className = className;
         this.hadoopProperties = Collections.unmodifiableMap(new LinkedHashMap<>(hadoopProperties));
         this.environmentVariables = Collections.unmodifiableMap(new LinkedHashMap<>(environmentVariables));
+        this.supportedExtensions = Collections.unmodifiableSet(new LinkedHashSet<>(supportedExtensions));
         this.resolved = resolved;
     }
 
@@ -133,6 +162,11 @@ public class HadoopScript implements ExecutionScript {
     }
 
     @Override
+    public Set<String> getSupportedExtensions() {
+        return supportedExtensions;
+    }
+
+    @Override
     public boolean isResolved() {
         return resolved;
     }
@@ -166,11 +200,11 @@ public class HadoopScript implements ExecutionScript {
         LOG.debug("Resolved environment variables: {}", resolvedEnvironments);
 
         return new HadoopScript(
-                getId(),
-                getBlockerIds(),
+                getId(), getBlockerIds(),
                 className,
                 resolvedProperties,
                 resolvedEnvironments,
+                supportedExtensions,
                 true);
     }
 
@@ -194,6 +228,7 @@ public class HadoopScript implements ExecutionScript {
         result = prime * result + className.hashCode();
         result = prime * result + hadoopProperties.hashCode();
         result = prime * result + environmentVariables.hashCode();
+        result = prime * result + supportedExtensions.hashCode();
         return result;
     }
 
@@ -222,6 +257,9 @@ public class HadoopScript implements ExecutionScript {
             return false;
         }
         if (!environmentVariables.equals(other.environmentVariables)) {
+            return false;
+        }
+        if (!supportedExtensions.equals(other.supportedExtensions)) {
             return false;
         }
         return true;

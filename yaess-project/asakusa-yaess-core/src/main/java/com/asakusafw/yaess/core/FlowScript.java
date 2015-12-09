@@ -39,6 +39,7 @@ import com.asakusafw.yaess.core.util.PropertiesUtil;
 /**
  * A script describes each jobflow structure.
  * @since 0.2.3
+ * @version 0.8.0
  */
 public final class FlowScript {
 
@@ -78,6 +79,12 @@ public final class FlowScript {
      * A configuration key name of {@link CommandScript#getModuleName() module name}.
      */
     public static final String KEY_MODULE = "module";
+
+    /**
+     * A configuration key name of {@link ExecutionScript#getSupportedExtensions() supported extensions}.
+     * @since 0.8.0
+     */
+    public static final String KEY_SUPPORTED_EXTENSIONS = "extensions";
 
     /**
      * The configuration key prefix of {@link ExecutionScript#getEnvironmentVariables() environment variables}.
@@ -330,6 +337,9 @@ public final class FlowScript {
         String blockersString = extract(contents, prefix, KEY_BLOCKERS);
         Set<String> blockers = parseTokens(blockersString);
         Map<String, String> environmentVariables = PropertiesUtil.createPrefixMap(contents, KEY_ENV_PREFIX);
+        String extensionsString = contents.get(KEY_SUPPORTED_EXTENSIONS);
+        Set<String> extensions = extensionsString == null ? Collections.<String>emptySet()
+                : parseTokens(extensionsString);
         ExecutionScript script;
         if (kind == ExecutionScript.Kind.COMMAND) {
             String profileName = extract(contents, prefix, KEY_PROFILE);
@@ -342,16 +352,17 @@ public final class FlowScript {
             }
             List<String> command = new ArrayList<>(commandMap.values());
             script = new CommandScript(
-                    scriptId,
-                    blockers,
-                    profileName,
-                    moduleName,
-                    command,
-                    environmentVariables);
+                    scriptId, blockers,
+                    profileName, moduleName,
+                    command, environmentVariables,
+                    extensions);
         } else if (kind == ExecutionScript.Kind.HADOOP) {
             String className = extract(contents, prefix, KEY_CLASS_NAME);
             Map<String, String> properties = PropertiesUtil.createPrefixMap(contents, KEY_PROP_PREFIX);
-            script = new HadoopScript(scriptId, blockers, className, properties, environmentVariables);
+            script = new HadoopScript(
+                    scriptId, blockers,
+                    className, properties, environmentVariables,
+                    extensions);
         } else {
             throw new IllegalArgumentException(MessageFormat.format(
                     "Unsupported kind in \"{0}\": {1}",
@@ -437,6 +448,7 @@ public final class FlowScript {
                 properties.setProperty(scriptPrefix + KEY_ID, script.getId());
                 properties.setProperty(scriptPrefix + KEY_KIND, script.getKind().getSymbol());
                 properties.setProperty(scriptPrefix + KEY_BLOCKERS, join(script.getBlockerIds()));
+                properties.setProperty(scriptPrefix + KEY_SUPPORTED_EXTENSIONS, join(script.getSupportedExtensions()));
                 String envPrefix = scriptPrefix + KEY_ENV_PREFIX;
                 for (Map.Entry<String, String> entry : script.getEnvironmentVariables().entrySet()) {
                     properties.setProperty(envPrefix + entry.getKey(), entry.getValue());
