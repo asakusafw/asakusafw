@@ -27,7 +27,7 @@ import java.util.Map;
  * implement {@link HadoopScriptHandler} or {@link CommandScriptHandler} instead.
  * @param <T> the type of script
  * @since 0.2.3
- * @version 0.2.6
+ * @version 0.8.0
  */
 public interface ExecutionScriptHandler<T extends ExecutionScript> extends Service {
 
@@ -55,6 +55,12 @@ public interface ExecutionScriptHandler<T extends ExecutionScript> extends Servi
      * The default value of {@link #getResourceId(ExecutionContext, ExecutionScript) resource ID}.
      */
     String DEFAULT_RESOURCE_ID = "default";
+
+    /**
+     * The prefix of environment variable names for each extension {@link Blob}s.
+     * @since 0.8.0
+     */
+    String ENV_EXTENSION_PREFIX = "ASAKUSA_EXTENSION_";
 
     /**
      * Returns the ID of this handler.

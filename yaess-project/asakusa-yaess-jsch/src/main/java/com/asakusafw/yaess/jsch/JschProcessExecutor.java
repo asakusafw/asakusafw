@@ -21,8 +21,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -36,6 +36,7 @@ import com.asakusafw.yaess.basic.BlobUtil;
 import com.asakusafw.yaess.basic.ProcessExecutor;
 import com.asakusafw.yaess.core.Blob;
 import com.asakusafw.yaess.core.ExecutionContext;
+import com.asakusafw.yaess.core.ExecutionScriptHandler;
 import com.asakusafw.yaess.core.VariableResolver;
 import com.asakusafw.yaess.core.YaessLogger;
 import com.jcraft.jsch.ChannelExec;
@@ -376,8 +377,8 @@ public class JschProcessExecutor implements ProcessExecutor {
             long sessionEnd = System.currentTimeMillis();
             YSLOG.info("I00002", user, host, port, privateKey, sessionEnd - sessionStart);
             try {
-                List<String> resolvedCommand = resolveBlobs(session, commandLineTokens, extensions, output);
-                return execute0(session, resolvedCommand, environmentVariables, output);
+                Map<String, String> newEnv = resolveBlobs(session, environmentVariables, extensions, output);
+                return execute0(session, commandLineTokens, newEnv, output);
             } finally {
                 session.disconnect();
             }
@@ -387,23 +388,24 @@ public class JschProcessExecutor implements ProcessExecutor {
         }
     }
 
-    private List<String> resolveBlobs(
+    private Map<String, String> resolveBlobs(
             Session session,
-            List<String> commandLineTokens,
+            Map<String, String> environmentVariables,
             Map<String, Blob> extensions,
             OutputStream output) throws IOException, JSchException {
         if (extensions.isEmpty()) {
-            return commandLineTokens;
+            return environmentVariables;
         }
-        List<String> results = new ArrayList<>();
-        results.addAll(commandLineTokens);
+        Map<String, String> results = new LinkedHashMap<>();
+        results.putAll(environmentVariables);
         int index = 0;
         for (Map.Entry<String, Blob> entry : extensions.entrySet()) {
+            String name = entry.getKey();
             Blob blob = entry.getValue();
-            String suffix = BlobUtil.getSuffix(entry.getKey(), blob);
+            String suffix = BlobUtil.getSuffix(name, blob);
             String path = String.format("%s%s%s", temporaryBlobPrefix, UUID.randomUUID(), suffix); //$NON-NLS-1$
             send(session, blob, path, index++, output);
-            results.add(path);
+            results.put(ExecutionScriptHandler.ENV_EXTENSION_PREFIX + name, path);
         }
         return results;
     }

@@ -15,23 +15,19 @@
 # limitations under the License.
 #
 
-if [ $# -ne 2 ]
-then
-    echo "invalid arguments"
-    exit 1
-fi
-
 _OUTPUT="$0.out"
-_MAIN="$1"
-_BLOB="$2"
+touch "$_OUTPUT"
 
-echo "$_MAIN" >> "$_OUTPUT"
+for line in "$@"
+do
+    echo "$line" >> "$_OUTPUT"
+done
 
-if [ -e "$_BLOB" ]
+if [ -e "$ASAKUSA_EXTENSION_testing" ]
 then
-    cat "$_BLOB" >> "$_OUTPUT"
-else
-    echo "MISSING FILE: $_BLOB" >> "$_OUTPUT"
+    cat "$ASAKUSA_EXTENSION_testing" >> "$_OUTPUT"
 fi
+
+cat "$_OUTPUT"
 
 exit 0

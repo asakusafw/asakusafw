@@ -15,7 +15,6 @@
 # limitations under the License.
 #
 
-
 _OUTPUT="$0.out"
 touch "$_OUTPUT"
 
@@ -25,3 +24,5 @@ do
 done
 
 cat "$_OUTPUT"
+
+exit 0
