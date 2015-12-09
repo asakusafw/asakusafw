@@ -136,15 +136,16 @@ public class StreamSupportEmitterTest extends GeneratorTesterRoot {
     }
 
     private byte[] write(DataModelStreamSupport<Object> support, ModelWrapper... models) {
-        try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        try {
             DataModelWriter<Object> writer = support.createWriter("example", output);
             for (ModelWrapper model : models) {
                 writer.write(model.unwrap());
             }
             writer.flush();
-            return output.toByteArray();
         } catch (IOException e) {
             throw new AssertionError();
         }
+        return output.toByteArray();
     }
 }

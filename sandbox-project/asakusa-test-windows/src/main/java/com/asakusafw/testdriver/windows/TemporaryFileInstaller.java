@@ -79,22 +79,15 @@ public final class TemporaryFileInstaller {
                     Messages.getString("TemporaryFileInstaller.errorFailedToCreateFile"), //$NON-NLS-1$
                     target));
         }
-        RandomAccessFile file = new RandomAccessFile(target, "rw"); //$NON-NLS-1$
-        try {
-            FileLock lock = file.getChannel().lock(0, 0, false);
-            try {
-                if (reuse && isReusable(target, file)) {
-                    LOG.debug("we reuse a temporary file: {}", target); //$NON-NLS-1$
-                    return false;
-                }
-                LOG.debug("creating a temporary file: {}", target); //$NON-NLS-1$
-                doInstall(target, file);
-                return true;
-            } finally {
-                lock.release();
+        try (RandomAccessFile file = new RandomAccessFile(target, "rw"); //$NON-NLS-1$
+                FileLock lock = file.getChannel().lock(0, 0, false)) {
+            if (reuse && isReusable(target, file)) {
+                LOG.debug("we reuse a temporary file: {}", target); //$NON-NLS-1$
+                return false;
             }
-        } finally {
-            file.close();
+            LOG.debug("creating a temporary file: {}", target); //$NON-NLS-1$
+            doInstall(target, file);
+            return true;
         }
     }
 

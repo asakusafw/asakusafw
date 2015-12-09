@@ -150,7 +150,7 @@ public class CsvSupportEmitterTest extends GeneratorTesterRoot {
     public void header() throws Exception {
         ModelLoader loaded = generateJava("field_name");
         DataModelStreamSupport<Object> support = unsafe(loaded.newObject("csv", "ModelCsvSupport"));
-        
+
         ModelWrapper model = loaded.newModel("Model");
         model.set("value", new Text("Hello, world!"));
         byte[] data = write(support, model);
@@ -369,15 +369,16 @@ public class CsvSupportEmitterTest extends GeneratorTesterRoot {
     }
 
     private byte[] write(DataModelStreamSupport<Object> support, ModelWrapper... models) {
-        try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        try {
             DataModelWriter<Object> writer = support.createWriter("testing", output);
             for (ModelWrapper model : models) {
                 writer.write(model.unwrap());
             }
             writer.flush();
-            return output.toByteArray();
         } catch (IOException e) {
             throw new AssertionError();
         }
+        return output.toByteArray();
     }
 }

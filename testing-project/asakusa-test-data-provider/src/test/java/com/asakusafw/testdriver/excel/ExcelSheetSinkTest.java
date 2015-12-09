@@ -329,13 +329,10 @@ public class ExcelSheetSinkTest {
         } catch (URISyntaxException e) {
             throw new AssertionError(e);
         }
-        InputStream in = resource.openStream();
-        try {
+        try (InputStream in = resource.openStream()) {
             Workbook book = Util.openWorkbookFor(resource.getFile(), in);
             Sheet sheet = book.getSheetAt(0);
             return new ExcelSheetDataModelSource(SIMPLE, uri, sheet);
-        } finally {
-            in.close();
         }
     }
 }

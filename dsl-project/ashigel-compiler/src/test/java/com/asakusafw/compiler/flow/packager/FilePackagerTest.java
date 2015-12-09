@@ -208,12 +208,9 @@ public class FilePackagerTest extends JobflowCompilerTestRoot {
 
     private void build(Set<String> entries, FilePackager packager)
             throws IOException {
-        byte[] bytes;
-        try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
-            packager.build(output);
-            bytes = output.toByteArray();
-        }
-        ByteArrayInputStream input = new ByteArrayInputStream(bytes);
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        packager.build(output);
+        ByteArrayInputStream input = new ByteArrayInputStream(output.toByteArray());
         try (JarInputStream jar = new JarInputStream(input)) {
             while (true) {
                 JarEntry entry = jar.getNextJarEntry();
