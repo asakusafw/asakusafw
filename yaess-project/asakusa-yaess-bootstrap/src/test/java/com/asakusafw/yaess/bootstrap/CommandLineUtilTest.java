@@ -32,6 +32,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import com.asakusafw.yaess.basic.BasicExtension;
+import com.asakusafw.yaess.core.Extension;
+
 /**
  * Test for {@link CommandLineUtil}.
  */
@@ -144,5 +147,51 @@ public class CommandLineUtilTest {
             p.store(out, "testing");
         }
         return file;
+    }
+
+    /**
+     * load extensions.
+     * @throws Exception if failed
+     */
+    @Test
+    public void loadExtensions() throws Exception {
+        File f = folder.newFile().getCanonicalFile();
+        List<Extension> extensions = CommandLineUtil.loadExtensions(getClass().getClassLoader(), Arrays.asList(
+                new ExtendedArgument(TestingExtensionHandler.TAG, f.getAbsolutePath())));
+        try {
+            assertThat(extensions, hasSize(1));
+
+            Extension e0 = extensions.get(0);
+            assertThat(e0.getName(), is(TestingExtensionHandler.TAG));
+            assertThat(((BasicExtension) e0).getData().getFile().getCanonicalFile(), is(f));
+        } finally {
+            closeAll(extensions);
+        }
+    }
+
+    /**
+     * load extensions w/ erroneous handler.
+     * @throws Exception if failed
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void loadExtensions_erroneous() throws Exception {
+        CommandLineUtil.loadExtensions(getClass().getClassLoader(), Arrays.asList(
+                new ExtendedArgument(ErroneousExtensionHandler.TAG, "?")));
+    }
+
+    /**
+     * load extensions w/ unknown tag.
+     * @throws Exception if failed
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void loadExtensions_unknown() throws Exception {
+        CommandLineUtil.loadExtensions(getClass().getClassLoader(), Arrays.asList(
+                new ExtendedArgument("UNKNOWN", "?")));
+    }
+
+    private void closeAll(List<Extension> extensions) throws IOException {
+        for (Extension ext : extensions) {
+            ext.close();
+        }
     }
 }
