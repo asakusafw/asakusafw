@@ -17,14 +17,14 @@
         <directory>src/main/resources</directory>
         <filtering>true</filtering>
         <includes>
-          <include>**/*.properties</include>
+          <include>**/information.properties</include>
         </includes>
       </resource>
       <resource>
         <directory>src/main/resources</directory>
         <filtering>false</filtering>
         <excludes>
-          <exclude>**/*.properties</exclude>
+          <exclude>**/information.properties</exclude>
         </excludes>
       </resource>
     </resources>
@@ -162,6 +162,11 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>asakusa-runtime-inprocess</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>asakusa-runtime-workaround</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

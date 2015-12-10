@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xerial.snappy.Snappy;
 
+import com.asakusafw.runtime.workaround.snappyjava.MacSnappyJavaWorkaround;
 import com.asakusafw.testdriver.core.TestingEnvironmentConfigurator;
 
 /**
@@ -46,6 +47,7 @@ public class SnappyConfigurator extends TestingEnvironmentConfigurator {
             return;
         }
         // Preloads native snappy library.
+        MacSnappyJavaWorkaround.install();
         Snappy.getNativeLibraryVersion();
     }
 

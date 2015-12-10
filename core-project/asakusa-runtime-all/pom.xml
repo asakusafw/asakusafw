@@ -52,6 +52,11 @@
       <artifactId>asakusa-runtime-inprocess</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>asakusa-runtime-workaround</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
 
 </project>

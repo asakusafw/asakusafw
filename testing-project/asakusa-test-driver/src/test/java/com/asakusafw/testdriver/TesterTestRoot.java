@@ -22,6 +22,7 @@ import org.junit.Rule;
 import com.asakusafw.runtime.configuration.FrameworkDeployer;
 import com.asakusafw.runtime.mapreduce.simple.SimpleJobRunner;
 import com.asakusafw.runtime.stage.inprocess.InProcessStageConfigurator;
+import com.asakusafw.runtime.workaround.RuntimeWorkaround;
 import com.asakusafw.utils.io.Sources;
 
 /**
@@ -33,6 +34,7 @@ public abstract class TesterTestRoot {
         InProcessStageConfigurator.class,
         SimpleJobRunner.class,
         Sources.class,
+        RuntimeWorkaround.class,
     };
 
     /**
