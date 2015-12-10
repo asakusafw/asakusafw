@@ -19,6 +19,7 @@
 package com.asakusafw.testdriver.excel.legacy;
 
 import java.text.MessageFormat;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -66,18 +67,19 @@ public enum ColumnMatchingCondition {
         return japaneseName;
     }
 
-    private static Map<String, ColumnMatchingCondition> japaneseNameMap
-        = new HashMap<>();
+    private static final Map<String, ColumnMatchingCondition> JAPANESE_NAME_MAP;
     static {
+        Map<String, ColumnMatchingCondition> map = new HashMap<>();
         for (ColumnMatchingCondition conditon : ColumnMatchingCondition.values()) {
             String key = conditon.getJapaneseName();
-            if (japaneseNameMap.containsKey(key)) {
+            if (map.containsKey(key)) {
                 throw new RuntimeException(MessageFormat.format(
                         "duplicate Japanese name: {0}", //$NON-NLS-1$
                         key));
             }
-            japaneseNameMap.put(key, conditon);
+            map.put(key, conditon);
         }
+        JAPANESE_NAME_MAP = Collections.unmodifiableMap(map);
     }
 
     /**
@@ -86,7 +88,7 @@ public enum ColumnMatchingCondition {
      * @return the related item, or {@code null} if there is no such the item
      */
     public static ColumnMatchingCondition getConditonByJapanseName(String key) {
-        return japaneseNameMap.get(key);
+        return JAPANESE_NAME_MAP.get(key);
     }
 
     /**
