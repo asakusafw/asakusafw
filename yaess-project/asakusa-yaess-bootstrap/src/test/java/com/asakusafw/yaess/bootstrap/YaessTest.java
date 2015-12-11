@@ -38,10 +38,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import com.asakusafw.yaess.basic.FileBlob;
 import com.asakusafw.yaess.bootstrap.ExecutionTracker.Record;
 import com.asakusafw.yaess.bootstrap.Yaess.Configuration;
 import com.asakusafw.yaess.bootstrap.Yaess.Mode;
-import com.asakusafw.yaess.core.Blob;
 import com.asakusafw.yaess.core.CoreProfile;
 import com.asakusafw.yaess.core.ExecutionLock;
 import com.asakusafw.yaess.core.ExecutionPhase;
@@ -79,7 +79,7 @@ public class YaessTest {
         assertThat(conf.flowId, is(nullValue()));
         assertThat(conf.executionId, is(nullValue()));
         assertThat(conf.phase, is(nullValue()));
-        assertThat(conf.arguments.size(), is(0));
+        assertThat(conf.arguments.keySet(), hasSize(0));
     }
 
     /**
@@ -105,7 +105,7 @@ public class YaessTest {
         assertThat(conf.flowId, is("tflow"));
         assertThat(conf.executionId, is("texec"));
         assertThat(conf.phase, is(nullValue()));
-        assertThat(conf.arguments.size(), is(0));
+        assertThat(conf.arguments.keySet(), hasSize(0));
     }
 
     /**
@@ -132,7 +132,7 @@ public class YaessTest {
         assertThat(conf.flowId, is("tflow"));
         assertThat(conf.executionId, is("texec"));
         assertThat(conf.phase, is(ExecutionPhase.MAIN));
-        assertThat(conf.arguments.size(), is(0));
+        assertThat(conf.arguments.keySet(), hasSize(0));
     }
 
     /**
@@ -159,10 +159,10 @@ public class YaessTest {
         assertThat(conf.flowId, is(nullValue()));
         assertThat(conf.executionId, is(nullValue()));
         assertThat(conf.phase, is(nullValue()));
-        assertThat(conf.arguments.size(), is(3));
-        assertThat(conf.arguments.get("a"), is("b"));
-        assertThat(conf.arguments.get("c"), is("d"));
-        assertThat(conf.arguments.get("e"), is("f"));
+        assertThat(conf.arguments.keySet(), hasSize(3));
+        assertThat(conf.arguments, hasEntry("a", "b"));
+        assertThat(conf.arguments, hasEntry("c", "d"));
+        assertThat(conf.arguments, hasEntry("e", "f"));
     }
 
     /**
@@ -247,20 +247,17 @@ public class YaessTest {
      */
     @Test
     public void config_extension() throws Exception {
+        File ext = folder.newFile().getCanonicalFile();
+
         ProfileBuilder builder = new ProfileBuilder(folder.getRoot());
         File profile = builder.getProfile();
         File script = builder.getScript();
-        File extA = folder.newFile("extA.txt");
-        File extB = folder.newFile("extB.bin");
-        File extC = folder.newFile("extC");
 
         List<String> arguments = new ArrayList<>();
         Collections.addAll(arguments, "-profile", profile.getAbsolutePath());
         Collections.addAll(arguments, "-script", script.getAbsolutePath());
         Collections.addAll(arguments, "-batch", "tbatch");
-        Collections.addAll(arguments, "-E", "A=" + extA.getPath());
-        Collections.addAll(arguments, "-E", "B=" + extB.getPath());
-        Collections.addAll(arguments, "-E", "C=" + extC.getPath());
+        Collections.addAll(arguments, "-X-testing", ext.getPath());
 
         Configuration conf = Yaess.parseConfiguration(arguments.toArray(new String[arguments.size()]));
         assertThat(conf.mode, is(Mode.BATCH));
@@ -269,11 +266,8 @@ public class YaessTest {
         assertThat(conf.executionId, is(nullValue()));
         assertThat(conf.phase, is(nullValue()));
         assertThat(conf.arguments.keySet(), hasSize(0));
-        assertThat(conf.extensions.keySet(), containsInAnyOrder("A", "B", "C"));
-
-        assertThat(conf.extensions.get("A").getFileExtension(), is("txt"));
-        assertThat(conf.extensions.get("B").getFileExtension(), is("bin"));
-        assertThat(conf.extensions.get("C").getFileExtension(), is(Blob.DEFAULT_FILE_EXTENSION));
+        assertThat(conf.extensions, hasSize(1));
+        assertThat(((FileBlob) conf.extensions.get(0).getData()).getFile().getCanonicalFile(), is(ext));
     }
 
     /**
@@ -373,6 +367,27 @@ public class YaessTest {
     }
 
     /**
+     * parse configuration w/ unknown extensions.
+     * @throws Exception if failed
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void config_unknown_extension() throws Exception {
+        File ext = folder.newFile().getCanonicalFile();
+
+        ProfileBuilder builder = new ProfileBuilder(folder.getRoot());
+        File profile = builder.getProfile();
+        File script = builder.getScript();
+
+        List<String> arguments = new ArrayList<>();
+        Collections.addAll(arguments, "-profile", profile.getAbsolutePath());
+        Collections.addAll(arguments, "-script", script.getAbsolutePath());
+        Collections.addAll(arguments, "-batch", "tbatch");
+        Collections.addAll(arguments, "-X-UNKNOWN", ext.getPath());
+
+        Yaess.parseConfiguration(arguments.toArray(new String[arguments.size()]));
+    }
+
+    /**
      * Executes batch.
      * @throws Exception if failed
      */
@@ -401,7 +416,7 @@ public class YaessTest {
         execs.add(flow(records, "left").get(0).context.getExecutionId());
         execs.add(flow(records, "right").get(0).context.getExecutionId());
         execs.add(flow(records, "last").get(0).context.getExecutionId());
-        assertThat(execs.size(), is(4));
+        assertThat(execs, hasSize(4));
     }
 
     /**
@@ -425,10 +440,10 @@ public class YaessTest {
         assertThat(exit, is(0));
 
         List<Record> records = SerialExecutionTracker.get(builder.trackingId);
-        assertThat(flow(records, "testing").size(), is(0));
-        assertThat(flow(records, "left").size(), is(0));
+        assertThat(flow(records, "testing"), hasSize(0));
+        assertThat(flow(records, "left"), hasSize(0));
         assertThat(flow(records, "right").size(), is(greaterThan(0)));
-        assertThat(flow(records, "last").size(), is(0));
+        assertThat(flow(records, "last"), hasSize(0));
 
         List<Record> flow = flow(records, "right");
         assertThat(flow.get(0).context.getExecutionId(), is("texec"));
@@ -459,10 +474,10 @@ public class YaessTest {
         assertThat(exit, is(0));
 
         List<Record> records = SerialExecutionTracker.get(builder.trackingId);
-        assertThat(flow(records, "testing").size(), is(0));
-        assertThat(flow(records, "left").size(), is(0));
+        assertThat(flow(records, "testing"), hasSize(0));
+        assertThat(flow(records, "left"), hasSize(0));
         assertThat(flow(records, "right").size(), is(greaterThan(0)));
-        assertThat(flow(records, "last").size(), is(0));
+        assertThat(flow(records, "last"), hasSize(0));
 
         List<Record> flow = flow(records, "right");
         assertThat(flow.get(0).context.getExecutionId(), is("texec"));
@@ -492,9 +507,9 @@ public class YaessTest {
 
         List<Record> records = SerialExecutionTracker.get(builder.trackingId);
         assertThat(flow(records, "testing").size(), is(greaterThan(0)));
-        assertThat(flow(records, "left").size(), is(0));
-        assertThat(flow(records, "right").size(), is(0));
-        assertThat(flow(records, "last").size(), is(0));
+        assertThat(flow(records, "left"), hasSize(0));
+        assertThat(flow(records, "right"), hasSize(0));
+        assertThat(flow(records, "last"), hasSize(0));
 
         assertThat(flow(records, "testing"), is(phase(records, "testing", ExecutionPhase.MAIN)));
     }

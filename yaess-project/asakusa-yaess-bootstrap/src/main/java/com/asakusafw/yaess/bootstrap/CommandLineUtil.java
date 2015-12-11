@@ -29,12 +29,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.ServiceLoader;
 import java.util.TreeMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
+import com.asakusafw.yaess.core.Extension;
+import com.asakusafw.yaess.core.ExtensionHandler;
 import com.asakusafw.yaess.core.YaessLogger;
 
 /**
@@ -163,6 +166,52 @@ public final class CommandLineUtil {
             }
         });
         return serviceLoader;
+    }
+
+    /**
+     * Loads extensions from extended arguments.
+     * @param classLoader the extension class loader
+     * @param arguments the target arguments
+     * @return the loaded extensions
+     * @throws IllegalArgumentException if extensions are something wrong
+     */
+    public static List<Extension> loadExtensions(ClassLoader classLoader, List<ExtendedArgument> arguments) {
+        List<Extension> results = new ArrayList<>();
+        ServiceLoader<ExtensionHandler> services = ServiceLoader.load(ExtensionHandler.class, classLoader);
+        for (ExtendedArgument argument : arguments) {
+            String name = argument.getName();
+            String value = argument.getValue();
+            boolean consumed = false;
+            for (ExtensionHandler handler : services) {
+                try {
+                    Extension extension = handler.handle(name, value);
+                    if (extension != null) {
+                        results.add(extension);
+                        consumed = true;
+                        break;
+                    }
+                } catch (IOException e) {
+                    YSLOG.error(e, "E99001", name, value);
+                    for (Extension ext : results) {
+                        try {
+                            ext.close();
+                        } catch (IOException inner) {
+                            e.addSuppressed(inner);
+                        }
+                    }
+                    throw new IllegalArgumentException(MessageFormat.format(
+                            "invalid extended argument \"{0}\"",
+                            argument), e);
+                }
+            }
+            if (consumed == false) {
+                YSLOG.error("E99001", name, value);
+                throw new IllegalArgumentException(MessageFormat.format(
+                        "there is no available extension handler \"{0}\"",
+                        argument));
+            }
+        }
+        return results;
     }
 
     private CommandLineUtil() {
