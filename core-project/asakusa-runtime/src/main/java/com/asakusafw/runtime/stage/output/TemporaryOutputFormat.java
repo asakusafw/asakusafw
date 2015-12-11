@@ -44,11 +44,17 @@ import com.asakusafw.runtime.stage.temporary.TemporaryStorage;
  * A temporary output format.
  * @param <T> target type
  * @since 0.2.5
- * @version 0.7.0
+ * @version 0.8.0
  */
 public final class TemporaryOutputFormat<T> extends OutputFormat<NullWritable, T> {
 
     static final Log LOG = LogFactory.getLog(TemporaryOutputFormat.class);
+
+    /**
+     * The Hadoop property key of output name prefix.
+     * @since 0.8.0
+     */
+    public static final String KEY_FILE_NAME = "com.asakusafw.temporary.output.name"; //$NON-NLS-1$
 
     /**
      * The default output name prefix.
@@ -84,7 +90,8 @@ public final class TemporaryOutputFormat<T> extends OutputFormat<NullWritable, T
             TaskAttemptContext context) throws IOException, InterruptedException {
         @SuppressWarnings("unchecked")
         Class<T> valueClass = (Class<T>) context.getOutputValueClass();
-        return createRecordWriter(context, DEFAULT_FILE_NAME, valueClass);
+        String name = context.getConfiguration().get(KEY_FILE_NAME, DEFAULT_FILE_NAME);
+        return createRecordWriter(context, name, valueClass);
     }
 
     /**
