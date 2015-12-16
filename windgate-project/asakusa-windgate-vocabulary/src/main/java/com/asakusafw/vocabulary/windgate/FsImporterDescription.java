@@ -17,7 +17,9 @@ package com.asakusafw.vocabulary.windgate;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
+import com.asakusafw.runtime.util.VariableTable;
 import com.asakusafw.windgate.core.DriverScript;
 import com.asakusafw.windgate.core.vocabulary.DataModelStreamSupport;
 import com.asakusafw.windgate.core.vocabulary.FileProcess;
@@ -61,6 +63,8 @@ public abstract class FsImporterDescription extends WindGateImporterDescription 
         Map<String, String> configuration = new HashMap<>();
         configuration.put(FileProcess.FILE.key(), path);
         configuration.put(StreamProcess.STREAM_SUPPORT.key(), supportClass.getName());
-        return new DriverScript(Constants.LOCAL_FILE_RESOURCE_NAME, configuration);
+
+        Set<String> parameters = VariableTable.collectVariableNames(path);
+        return new DriverScript(Constants.LOCAL_FILE_RESOURCE_NAME, configuration, parameters);
     }
 }

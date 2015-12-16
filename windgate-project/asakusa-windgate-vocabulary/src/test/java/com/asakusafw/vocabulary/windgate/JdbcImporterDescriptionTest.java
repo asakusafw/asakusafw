@@ -30,7 +30,6 @@ import com.asakusafw.windgate.core.vocabulary.JdbcProcess;
 
 /**
  * Test for {@link JdbcImporterDescription}.
- * @since 0.2.2
  */
 public class JdbcImporterDescriptionTest {
 
@@ -48,6 +47,7 @@ public class JdbcImporterDescriptionTest {
         assertThat(conf.get(JdbcProcess.COLUMNS.key()), equalToIgnoringWhiteSpace("VALUE"));
         assertThat(conf.get(JdbcProcess.JDBC_SUPPORT.key()), is(StringSupport.class.getName()));
         assertThat(conf.get(JdbcProcess.CONDITION.key()), is(nullValue()));
+        assertThat(script.getParameterNames(), hasSize(0));
     }
 
     /**
@@ -55,8 +55,7 @@ public class JdbcImporterDescriptionTest {
      */
     @Test
     public void multiple_columns() {
-        Mock mock = new Mock(String.class, "testing", StringSupport.class, "TESTING", null,
-                "A", "B", "C");
+        Mock mock = new Mock(String.class, "testing", StringSupport.class, "TESTING", null, "A", "B", "C");
         DriverScript script = mock.getDriverScript();
         assertThat(script.getResourceName(), is(Constants.JDBC_RESOURCE_NAME));
         Map<String, String> conf = script.getConfiguration();
@@ -65,6 +64,7 @@ public class JdbcImporterDescriptionTest {
         assertThat(conf.get(JdbcProcess.COLUMNS.key()), equalToIgnoringWhiteSpace("A, B, C"));
         assertThat(conf.get(JdbcProcess.JDBC_SUPPORT.key()), is(StringSupport.class.getName()));
         assertThat(conf.get(JdbcProcess.CONDITION.key()), is(nullValue()));
+        assertThat(script.getParameterNames(), hasSize(0));
     }
 
     /**
@@ -81,6 +81,24 @@ public class JdbcImporterDescriptionTest {
         assertThat(conf.get(JdbcProcess.COLUMNS.key()), equalToIgnoringWhiteSpace("VALUE"));
         assertThat(conf.get(JdbcProcess.JDBC_SUPPORT.key()), is(StringSupport.class.getName()));
         assertThat(conf.get(JdbcProcess.CONDITION.key()), equalToIgnoringWhiteSpace("VALUE > 0"));
+        assertThat(script.getParameterNames(), hasSize(0));
+    }
+
+    /**
+     * w/ parameters.
+     */
+    @Test
+    public void parameters() {
+        Mock mock = new Mock(String.class, "testing", StringSupport.class, "TESTING", "VALUE > ${var}", "VALUE");
+        DriverScript script = mock.getDriverScript();
+        assertThat(script.getResourceName(), is(Constants.JDBC_RESOURCE_NAME));
+        Map<String, String> conf = script.getConfiguration();
+        assertThat(conf.size(), is(4));
+        assertThat(conf.get(JdbcProcess.TABLE.key()), is("TESTING"));
+        assertThat(conf.get(JdbcProcess.COLUMNS.key()), equalToIgnoringWhiteSpace("VALUE"));
+        assertThat(conf.get(JdbcProcess.JDBC_SUPPORT.key()), is(StringSupport.class.getName()));
+        assertThat(conf.get(JdbcProcess.CONDITION.key()), equalToIgnoringWhiteSpace("VALUE > ${var}"));
+        assertThat(script.getParameterNames(), containsInAnyOrder("var"));
     }
 
     /**

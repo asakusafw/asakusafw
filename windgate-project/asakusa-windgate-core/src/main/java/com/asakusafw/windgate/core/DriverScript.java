@@ -17,11 +17,14 @@ package com.asakusafw.windgate.core;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 /**
- * A script describes drivers' behaviour.
+ * A script describes drivers' behavior.
  * @since 0.2.2
+ * @version 0.8.0
  */
 public class DriverScript {
 
@@ -39,6 +42,8 @@ public class DriverScript {
 
     private final Map<String, String> configuration;
 
+    private final Set<String> parameterNames;
+
     /**
      * Creates a new instance.
      * @param resource the name of target resource
@@ -46,14 +51,30 @@ public class DriverScript {
      * @throws IllegalArgumentException if any parameter is {@code null}
      */
     public DriverScript(String resource, Map<String, String> configuration) {
+        this(resource, configuration, Collections.<String>emptySet());
+    }
+
+    /**
+     * Creates a new instance.
+     * @param resource the name of target resource
+     * @param configuration configurations for this driver
+     * @param parameterNames required parameter names
+     * @throws IllegalArgumentException if any parameter is {@code null}
+     * @since 0.8.0
+     */
+    public DriverScript(String resource, Map<String, String> configuration, Set<String> parameterNames) {
         if (resource == null) {
             throw new IllegalArgumentException("resource must not be null"); //$NON-NLS-1$
         }
         if (configuration == null) {
             throw new IllegalArgumentException("configuration must not be null"); //$NON-NLS-1$
         }
+        if (parameterNames == null) {
+            throw new IllegalArgumentException("parameterNames must not be null"); //$NON-NLS-1$
+        }
         this.resourceName = resource;
         this.configuration = Collections.unmodifiableMap(new TreeMap<>(configuration));
+        this.parameterNames = Collections.unmodifiableSet(new TreeSet<>(parameterNames));
     }
 
     /**
@@ -71,6 +92,15 @@ public class DriverScript {
      */
     public Map<String, String> getConfiguration() {
         return configuration;
+    }
+
+    /**
+     * Returns the required parameter names.
+     * @return the required parameter names
+     * @since 0.8.0
+     */
+    public Set<String> getParameterNames() {
+        return parameterNames;
     }
 
     /**

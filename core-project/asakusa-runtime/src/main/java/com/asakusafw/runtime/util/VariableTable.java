@@ -16,8 +16,11 @@
 package com.asakusafw.runtime.util;
 
 import java.text.MessageFormat;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -28,6 +31,8 @@ import java.util.regex.Pattern;
  * This can parse a string that contain variable in form of <code>${variable-name}</code>, and substitute them with
  * defined variables by using {@link #defineVariable(String, String)}, etc.
  * </p>
+ * @since 0.1.0
+ * @version 0.8.0
  */
 public class VariableTable {
 
@@ -276,6 +281,26 @@ Character:
         }
         buf.append(string.substring(start));
         return buf.toString();
+    }
+
+    /**
+     * Collects variable names in the target string.
+     * @param string the target string (nullable)
+     * @return the found variable names
+     * @since 0.8.0
+     */
+    public static Set<String> collectVariableNames(String string) {
+        if (string == null) {
+            return Collections.emptySet();
+        }
+        Set<String> results = new HashSet<>();
+        Matcher matcher = VARIABLE.matcher(string);
+        int start = 0;
+        while (matcher.find(start)) {
+            results.add(matcher.group(1));
+            start = matcher.end();
+        }
+        return results;
     }
 
     @Override

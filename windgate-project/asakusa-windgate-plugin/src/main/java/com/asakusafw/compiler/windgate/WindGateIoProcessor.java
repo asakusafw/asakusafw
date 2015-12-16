@@ -305,13 +305,14 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
         assert input != null;
         WindGateImporterDescription desc = extract(input.getDescription());
         String location = getInputLocation(input.getDescription()).toPath('/');
+        DriverScript source = desc.getDriverScript();
         DriverScript drain = new DriverScript(
                 Constants.HADOOP_FILE_RESOURCE_NAME,
                 Collections.singletonMap(FileProcess.FILE.key(), location));
         return createProcessScript(
                 input.getDescription().getName(),
                 desc.getModelType(),
-                desc.getDriverScript(),
+                source,
                 drain);
     }
 
@@ -322,11 +323,12 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
         DriverScript source = new DriverScript(
                 Constants.HADOOP_FILE_RESOURCE_NAME,
                 Collections.singletonMap(FileProcess.FILE.key(), location));
+        DriverScript drain = desc.getDriverScript();
         return createProcessScript(
                 output.getDescription().getName(),
                 desc.getModelType(),
                 source,
-                desc.getDriverScript());
+                drain);
     }
 
     private <T> ProcessScript<T> createProcessScript(
