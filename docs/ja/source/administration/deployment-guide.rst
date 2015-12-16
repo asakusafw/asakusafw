@@ -312,7 +312,7 @@ Direct I/O Hiveを `MapR`_ 環境で利用する場合、Direct I/O HiveはMapR�
 また、それぞれのプロファイルに共通の設定ファイルを管理するディレクトリ( :file:`src/dist/common` )からも設定ファイルを配置しています。
 このとき、 ``replace`` 句を指定することで設定ファイルの内容を置換して、環境ごとに固有のパラメータを設定しています。
 
-例えば、 :file:`src/dist/common` 配下に :file:`asakusa-resources-xml` を以下のような内容で配置します。
+例えば、 :file:`src/dist/common` 配下に :file:`asakusa-resources.xml` を以下のような内容で配置します。
 
 **asakusa-resources.xml**
 
