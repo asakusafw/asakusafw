@@ -19,11 +19,14 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +36,7 @@ import com.asakusafw.windgate.core.util.PropertiesUtil;
 /**
  * A gate script.
  * @since 0.2.2
+ * @version 0.8.0
  */
 public class GateScript {
 
@@ -41,6 +45,10 @@ public class GateScript {
     static final Logger LOG = LoggerFactory.getLogger(GateScript.class);
 
     static final char QUALIFIER = '.';
+
+    static final String KEY_PARAMETER_NAMES = "parameterNames"; //$NON-NLS-1$
+
+    private static final String DELIM_PARAMETER_NAME = "$"; //$NON-NLS-1$
 
     private final String name;
 
@@ -194,15 +202,26 @@ public class GateScript {
         String resourceName = consume(conf, name, kind.prefix);
         Map<String, String> driverConf = new HashMap<>();
         String prefix = kind.prefix + QUALIFIER;
+        String parameterNameList = conf.remove(prefix + KEY_PARAMETER_NAMES);
         for (Iterator<Map.Entry<String, String>> iter = conf.entrySet().iterator(); iter.hasNext();) {
             Map.Entry<String, String> entry = iter.next();
             String key = entry.getKey();
             if (key.startsWith(prefix)) {
-                driverConf.put(key.substring(prefix.length()), entry.getValue());
+                String subKey = key.substring(prefix.length());
+                driverConf.put(subKey, entry.getValue());
                 iter.remove();
             }
         }
-        return new DriverScript(resourceName, driverConf);
+        Set<String> parameterNames;
+        if (parameterNameList == null) {
+            parameterNames = Collections.emptySet();
+        } else {
+            parameterNames = new HashSet<>();
+            for (String s : parameterNameList.split(Pattern.quote(DELIM_PARAMETER_NAME))) {
+                parameterNames.add(s);
+            }
+        }
+        return new DriverScript(resourceName, driverConf, parameterNames);
     }
 
     private static <T> ProcessScript<T> createProcess(
@@ -264,6 +283,16 @@ public class GateScript {
         String prefix = process.getName() + QUALIFIER + kind.prefix + QUALIFIER;
         for (Map.Entry<String, String> entry : driver.getConfiguration().entrySet()) {
             properties.put(prefix + entry.getKey(), entry.getValue());
+        }
+        if (driver.getParameterNames().isEmpty() == false) {
+            StringBuilder buf = new StringBuilder();
+            for (String s : driver.getParameterNames()) {
+                buf.append(s);
+                buf.append(DELIM_PARAMETER_NAME);
+            }
+            assert buf.length() >= 1;
+            buf.deleteCharAt(buf.length() - 1);
+            properties.put(prefix + KEY_PARAMETER_NAMES, buf.toString());
         }
     }
 }

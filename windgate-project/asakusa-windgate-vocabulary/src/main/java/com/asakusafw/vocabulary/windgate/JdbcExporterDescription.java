@@ -19,7 +19,9 @@ import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import com.asakusafw.runtime.util.VariableTable;
 import com.asakusafw.windgate.core.DriverScript;
 import com.asakusafw.windgate.core.vocabulary.DataModelJdbcSupport;
 import com.asakusafw.windgate.core.vocabulary.JdbcProcess;
@@ -94,6 +96,7 @@ public abstract class JdbcExporterDescription extends WindGateExporterDescriptio
             configuration.put(JdbcProcess.CUSTOM_TRUNCATE.key(), customTruncate);
         }
 
-        return new DriverScript(Constants.JDBC_RESOURCE_NAME, configuration);
+        Set<String> parameters = VariableTable.collectVariableNames(customTruncate);
+        return new DriverScript(Constants.JDBC_RESOURCE_NAME, configuration, parameters);
     }
 }

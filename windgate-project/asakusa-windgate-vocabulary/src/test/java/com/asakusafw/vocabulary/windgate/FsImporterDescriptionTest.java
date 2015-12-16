@@ -38,8 +38,22 @@ public class FsImporterDescriptionTest {
         Mock desc = new Mock("example", StringSupport.class);
         DriverScript script = desc.getDriverScript();
         assertThat(script.getResourceName(), is(Constants.LOCAL_FILE_RESOURCE_NAME));
-        assertThat(script.getConfiguration().get(FileProcess.FILE.key()), is("example"));
-        assertThat(script.getConfiguration().get(StreamProcess.STREAM_SUPPORT.key()), is(StringSupport.class.getName()));
+        assertThat(script.getConfiguration(), hasEntry(FileProcess.FILE.key(), "example"));
+        assertThat(script.getConfiguration(), hasEntry(StreamProcess.STREAM_SUPPORT.key(), StringSupport.class.getName()));
+        assertThat(script.getParameterNames(), hasSize(0));
+    }
+
+    /**
+     * w/ variables.
+     */
+    @Test
+    public void parameters() {
+        Mock desc = new Mock("testing/${var}", StringSupport.class);
+        DriverScript script = desc.getDriverScript();
+        assertThat(script.getResourceName(), is(Constants.LOCAL_FILE_RESOURCE_NAME));
+        assertThat(script.getConfiguration(), hasEntry(FileProcess.FILE.key(), "testing/${var}"));
+        assertThat(script.getConfiguration(), hasEntry(StreamProcess.STREAM_SUPPORT.key(), StringSupport.class.getName()));
+        assertThat(script.getParameterNames(), containsInAnyOrder("var"));
     }
 
     /**

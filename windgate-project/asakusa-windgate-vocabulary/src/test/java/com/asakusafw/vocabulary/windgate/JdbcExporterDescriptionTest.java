@@ -48,6 +48,7 @@ public class JdbcExporterDescriptionTest {
         assertThat(conf.get(JdbcProcess.JDBC_SUPPORT.key()), is(StringSupport.class.getName()));
         assertThat(conf.get(JdbcProcess.CUSTOM_TRUNCATE.key()), is(nullValue()));
         assertThat(conf.get(JdbcProcess.OPERATION.key()), is(not(nullValue())));
+        assertThat(script.getParameterNames(), hasSize(0));
     }
 
     /**
@@ -66,6 +67,7 @@ public class JdbcExporterDescriptionTest {
         assertThat(conf.get(JdbcProcess.JDBC_SUPPORT.key()), is(StringSupport.class.getName()));
         assertThat(conf.get(JdbcProcess.CUSTOM_TRUNCATE.key()), is(nullValue()));
         assertThat(conf.get(JdbcProcess.OPERATION.key()), is(not(nullValue())));
+        assertThat(script.getParameterNames(), hasSize(0));
     }
 
     /**
@@ -84,6 +86,26 @@ public class JdbcExporterDescriptionTest {
         assertThat(conf.get(JdbcProcess.JDBC_SUPPORT.key()), is(StringSupport.class.getName()));
         assertThat(conf.get(JdbcProcess.CUSTOM_TRUNCATE.key()), is("CUSTOM"));
         assertThat(conf.get(JdbcProcess.OPERATION.key()), is(not(nullValue())));
+        assertThat(script.getParameterNames(), hasSize(0));
+    }
+
+    /**
+     * w/ parameters.
+     */
+    @Test
+    public void parameters() {
+        Mock mock = new Mock(String.class, "testing", StringSupport.class, "TESTING", "VALUE")
+            .withCustomTruncate("CUSTOM WITH ${var}");
+        DriverScript script = mock.getDriverScript();
+        assertThat(script.getResourceName(), is(Constants.JDBC_RESOURCE_NAME));
+        Map<String, String> conf = script.getConfiguration();
+        assertThat(conf.size(), is(5));
+        assertThat(conf.get(JdbcProcess.TABLE.key()), is("TESTING"));
+        assertThat(conf.get(JdbcProcess.COLUMNS.key()), equalToIgnoringWhiteSpace("VALUE"));
+        assertThat(conf.get(JdbcProcess.JDBC_SUPPORT.key()), is(StringSupport.class.getName()));
+        assertThat(conf.get(JdbcProcess.CUSTOM_TRUNCATE.key()), is("CUSTOM WITH ${var}"));
+        assertThat(conf.get(JdbcProcess.OPERATION.key()), is(not(nullValue())));
+        assertThat(script.getParameterNames(), containsInAnyOrder("var"));
     }
 
     /**

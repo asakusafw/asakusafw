@@ -48,9 +48,11 @@ public class GateScriptTest {
         assertThat(test.getProcessType(), is("plain"));
         assertThat(test.getDataClass(), is((Object) String.class));
         assertThat(test.getSourceScript().getResourceName(), is("ts"));
-        assertThat(test.getSourceScript().getConfiguration().size(), is(0));
+        assertThat(test.getSourceScript().getConfiguration().keySet(), hasSize(0));
+        assertThat(test.getSourceScript().getParameterNames(), hasSize(0));
         assertThat(test.getDrainScript().getResourceName(), is("td"));
-        assertThat(test.getDrainScript().getConfiguration().size(), is(0));
+        assertThat(test.getDrainScript().getConfiguration().keySet(), hasSize(0));
+        assertThat(test.getDrainScript().getParameterNames(), hasSize(0));
     }
 
     /**
@@ -79,7 +81,7 @@ public class GateScriptTest {
         assertThat(test.getSourceScript().getConfiguration().get("aaa"), is("bbb"));
         assertThat(test.getSourceScript().getConfiguration().get("bbb"), is("ccc"));
         assertThat(test.getDrainScript().getResourceName(), is("td"));
-        assertThat(test.getDrainScript().getConfiguration().size(), is(0));
+        assertThat(test.getDrainScript().getConfiguration().keySet(), hasSize(0));
     }
 
     /**
@@ -104,7 +106,7 @@ public class GateScriptTest {
         assertThat(test.getProcessType(), is("plain"));
         assertThat(test.getDataClass(), is((Object) String.class));
         assertThat(test.getSourceScript().getResourceName(), is("ts"));
-        assertThat(test.getSourceScript().getConfiguration().size(), is(0));
+        assertThat(test.getSourceScript().getConfiguration().keySet(), hasSize(0));
         assertThat(test.getDrainScript().getResourceName(), is("td"));
         assertThat(test.getDrainScript().getConfiguration().size(), is(2));
         assertThat(test.getDrainScript().getConfiguration().get("aaa"), is("bbb"));
@@ -140,27 +142,55 @@ public class GateScriptTest {
         assertThat(test1.getProcessType(), is("plain1"));
         assertThat(test1.getDataClass(), is((Object) String.class));
         assertThat(test1.getSourceScript().getResourceName(), is("ts1"));
-        assertThat(test1.getSourceScript().getConfiguration().size(), is(0));
+        assertThat(test1.getSourceScript().getConfiguration().keySet(), hasSize(0));
         assertThat(test1.getDrainScript().getResourceName(), is("td1"));
-        assertThat(test1.getDrainScript().getConfiguration().size(), is(0));
+        assertThat(test1.getDrainScript().getConfiguration().keySet(), hasSize(0));
 
         ProcessScript<?> test2 = find(script, "test2");
         assertThat(test2.getName(), is("test2"));
         assertThat(test2.getProcessType(), is("plain2"));
         assertThat(test2.getDataClass(), is((Object) Integer.class));
         assertThat(test2.getSourceScript().getResourceName(), is("ts2"));
-        assertThat(test2.getSourceScript().getConfiguration().size(), is(0));
+        assertThat(test2.getSourceScript().getConfiguration().keySet(), hasSize(0));
         assertThat(test2.getDrainScript().getResourceName(), is("td2"));
-        assertThat(test2.getDrainScript().getConfiguration().size(), is(0));
+        assertThat(test2.getDrainScript().getConfiguration().keySet(), hasSize(0));
 
         ProcessScript<?> test3 = find(script, "test3");
         assertThat(test3.getName(), is("test3"));
         assertThat(test3.getProcessType(), is("plain3"));
         assertThat(test3.getDataClass(), is((Object) Long.class));
         assertThat(test3.getSourceScript().getResourceName(), is("ts3"));
-        assertThat(test3.getSourceScript().getConfiguration().size(), is(0));
+        assertThat(test3.getSourceScript().getConfiguration().keySet(), hasSize(0));
         assertThat(test3.getDrainScript().getResourceName(), is("td3"));
-        assertThat(test3.getDrainScript().getConfiguration().size(), is(0));
+        assertThat(test3.getDrainScript().getConfiguration().keySet(), hasSize(0));
+    }
+
+    /**
+     * Loads driver scripts w/ parameter names.
+     */
+    @Test
+    public void loadFrom_parameterNames() {
+        Properties p = new Properties();
+        p.setProperty(k("test", KEY_DATA_CLASS), String.class.getName());
+        p.setProperty(k("test", KEY_PROCESS_TYPE), "plain");
+        p.setProperty(k("test", PREFIX_SOURCE), "ts");
+        p.setProperty(k("test", PREFIX_DRAIN), "td");
+        p.setProperty(k("test", PREFIX_SOURCE, GateScript.KEY_PARAMETER_NAMES), "a$b$c");
+        p.setProperty(k("test", PREFIX_DRAIN, GateScript.KEY_PARAMETER_NAMES), "d$e$f");
+
+        GateScript script = GateScript.loadFrom("testing", p, getClass().getClassLoader());
+        assertThat(script.getProcesses().size(), is(1));
+
+        ProcessScript<?> test = find(script, "test");
+        assertThat(test.getName(), is("test"));
+        assertThat(test.getProcessType(), is("plain"));
+        assertThat(test.getDataClass(), is((Object) String.class));
+        assertThat(test.getSourceScript().getResourceName(), is("ts"));
+        assertThat(test.getSourceScript().getConfiguration().keySet(), hasSize(0));
+        assertThat(test.getSourceScript().getParameterNames(), containsInAnyOrder("a", "b", "c"));
+        assertThat(test.getDrainScript().getResourceName(), is("td"));
+        assertThat(test.getDrainScript().getConfiguration().keySet(), hasSize(0));
+        assertThat(test.getDrainScript().getParameterNames(), containsInAnyOrder("d", "e", "f"));
     }
 
     /**
@@ -298,6 +328,27 @@ public class GateScriptTest {
         p.setProperty(k("test3", KEY_PROCESS_TYPE), "plain3");
         p.setProperty(k("test3", PREFIX_SOURCE), "ts3");
         p.setProperty(k("test3", PREFIX_DRAIN), "td3");
+
+        GateScript script = GateScript.loadFrom("testing", p, getClass().getClassLoader());
+        Properties target = new Properties();
+        script.storeTo(target);
+        assertThat(target, is(p));
+    }
+
+    /**
+     * stores driver scripts w/ parameter names.
+     */
+    @Test
+    public void storeTo_parameterNames() {
+        Properties p = new Properties();
+        p.setProperty(k("test", KEY_DATA_CLASS), String.class.getName());
+        p.setProperty(k("test", KEY_PROCESS_TYPE), "plain");
+        p.setProperty(k("test", PREFIX_SOURCE), "ts");
+        p.setProperty(k("test", PREFIX_SOURCE, "aaa"), "bbb");
+        p.setProperty(k("test", PREFIX_SOURCE, GateScript.KEY_PARAMETER_NAMES), "a$b$c");
+        p.setProperty(k("test", PREFIX_DRAIN), "td");
+        p.setProperty(k("test", PREFIX_DRAIN, "bbb"), "ccc");
+        p.setProperty(k("test", PREFIX_DRAIN, GateScript.KEY_PARAMETER_NAMES), "d$e$f");
 
         GateScript script = GateScript.loadFrom("testing", p, getClass().getClassLoader());
         Properties target = new Properties();
