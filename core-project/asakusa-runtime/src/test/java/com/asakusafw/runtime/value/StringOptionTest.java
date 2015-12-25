@@ -104,6 +104,33 @@ public class StringOptionTest extends ValueOptionTestRoot {
     }
 
     /**
+     * test for reset.
+     */
+    @Test
+    public void reset() {
+        StringOption option = new StringOption();
+        assertThat(option.isNull(), is(true));
+
+        option.reset();
+        assertThat(option, is(new StringOption("")));
+
+        option.modify("NotEmpty");
+        option.reset();
+        assertThat(option, is(new StringOption("")));
+    }
+
+    /**
+     * test for modify w/ byte arrays.
+     */
+    @Test
+    public void modify_bytes() {
+        StringOption option = new StringOption();
+        byte[] bytes = "hello".getBytes(StringOptionUtil.ENCODING);
+        option.modify(bytes, 0, bytes.length);
+        assertThat(option, is(new StringOption("hello")));
+    }
+
+    /**
      * test for copyFrom.
      */
     @Test
