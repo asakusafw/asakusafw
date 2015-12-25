@@ -40,10 +40,12 @@ class Something {
     }
 }
 </code></pre>
+ * @since 0.1.0
+ * @version 0.8.0
  */
 public final class StringOption extends ValueOption<StringOption> {
 
-    private static final ThreadLocal<Text> BUFFER_POOL = new ThreadLocal<Text>() {
+    static final ThreadLocal<Text> BUFFER_POOL = new ThreadLocal<Text>() {
         @Override
         protected Text initialValue() {
             return new Text();
@@ -125,8 +127,8 @@ public final class StringOption extends ValueOption<StringOption> {
      * This method makes the object non-null, an empty string even if the object just represents {@code null}.
      */
     public void reset() {
-        nullValue = false;
         entity.clear();
+        nullValue = false;
     }
 
     /**
@@ -160,6 +162,22 @@ public final class StringOption extends ValueOption<StringOption> {
             this.nullValue = false;
             entity.set(newText);
         }
+        return this;
+    }
+
+    /**
+     * Sets the UTF-8 encode text contents.
+     * @param utf8 the UTF-8 encode byte array
+     * @param offset the offset in the byte array
+     * @param length the content length in bytes
+     * @return this
+     * @deprecated Application developer should not use this method directly
+     * @since 0.8.0
+     */
+    @Deprecated
+    public StringOption modify(byte[] utf8, int offset, int length) {
+        entity.set(utf8, offset, length);
+        this.nullValue = false;
         return this;
     }
 
