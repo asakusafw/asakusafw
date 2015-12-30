@@ -24,7 +24,6 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.hadoop.filecache.DistributedCache;
 import org.apache.hadoop.mapreduce.JobContext;
 
 /**
@@ -202,10 +201,9 @@ public final class CoreCompatibility {
             static {
                 FrameworkVersion detected = UNKNOWN;
 
-                // Detect MRConfig
-                if (DistributedCache.class.isAnnotationPresent(Deprecated.class)) {
+                if (isHadoopV2()) {
                     detected = HADOOP_V2;
-                } else if (JobContext.class.isInterface()) {
+                } else if (isHadoopV2MR1()) {
                     detected = HADOOP_V2_MR1;
                 } else {
                     detected = HADOOP_V1;
@@ -216,6 +214,23 @@ public final class CoreCompatibility {
                             detected));
                 }
                 VERSION = detected;
+            }
+
+            private static boolean isHadoopV2() {
+                // v1 - DistributedCache exists in hadoop-core
+                // v2 - DistributedCache exists in hadoop-mapreduce-client-core, and it is deprecated
+                try {
+                    ClassLoader cl = CoreCompatibility.class.getClassLoader();
+                    Class<?> c = cl.loadClass("org.apache.hadoop.filecache.DistributedCache"); // //$NON-NLS-1$
+                    return c.isAnnotationPresent(Deprecated.class);
+                } catch (ClassNotFoundException e) {
+                    return true;
+                }
+            }
+
+            private static boolean isHadoopV2MR1() {
+                // JobContext is interface in v2 even if the current environment is MRv1
+                return JobContext.class.isInterface();
             }
         }
     }
