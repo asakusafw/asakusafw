@@ -91,4 +91,37 @@ public class LookUpKeyTest {
         assertThat(k1.equals(k2), is(true));
         assertThat(k1.hashCode(), is(k2.hashCode()));
     }
+
+    /**
+     * test for views.
+     * @throws Exception if failed
+     */
+    @Test
+    public void view() throws Exception {
+        LookUpKey k1 = new LookUpKey();
+        LookUpKey k2 = new LookUpKey();
+        LookUpKey k3 = new LookUpKey();
+
+        k1.add(new IntOption(100));
+        k2.add(new IntOption(200));
+        k3.add(new IntOption(100));
+
+        assertThat(k1.getDirectView(), is(k1.getDirectView()));
+        assertThat(k1.getDirectView(), is(k1.getFrozenView()));
+        assertThat(k1.getFrozenView(), is(k1.getDirectView()));
+        assertThat(k1.getFrozenView(), is(k1.getFrozenView()));
+
+        assertThat(k1.getDirectView(), not(is(k2.getDirectView())));
+        assertThat(k1.getDirectView(), not(is(k2.getFrozenView())));
+        assertThat(k1.getFrozenView(), not(is(k2.getDirectView())));
+        assertThat(k1.getFrozenView(), not(is(k2.getFrozenView())));
+
+        assertThat(k1.getDirectView(), is(k3.getDirectView()));
+        assertThat(k1.getDirectView(), is(k3.getFrozenView()));
+        assertThat(k1.getFrozenView(), is(k3.getDirectView()));
+        assertThat(k1.getFrozenView(), is(k3.getFrozenView()));
+
+        assertThat(k1.getDirectView().hashCode(), is(k3.getFrozenView().hashCode()));
+        assertThat(k1.getFrozenView().hashCode(), is(k3.getDirectView().hashCode()));
+    }
 }

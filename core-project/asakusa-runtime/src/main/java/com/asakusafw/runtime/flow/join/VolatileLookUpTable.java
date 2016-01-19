@@ -28,17 +28,9 @@ import java.util.Map;
  */
 public class VolatileLookUpTable<T> implements LookUpTable<T> {
 
-    private final Map<LookUpKey, List<T>> entity;
+    private final Map<LookUpKey.View, List<T>> entity;
 
-    /**
-     * Creates a new instance.
-     * @param entity the table entries
-     * @throws IllegalArgumentException if the parameter is {@code null}
-     */
-    public VolatileLookUpTable(Map<LookUpKey, List<T>> entity) {
-        if (entity == null) {
-            throw new IllegalArgumentException("entity must not be null"); //$NON-NLS-1$
-        }
+    VolatileLookUpTable(Map<LookUpKey.View, List<T>> entity) {
         this.entity = entity;
     }
 
@@ -47,7 +39,7 @@ public class VolatileLookUpTable<T> implements LookUpTable<T> {
         if (key == null) {
             throw new IllegalArgumentException("key must not be null"); //$NON-NLS-1$
         }
-        List<T> list = entity.get(key);
+        List<T> list = entity.get(key.getDirectView());
         if (list == null) {
             return Collections.emptyList();
         }
@@ -60,17 +52,17 @@ public class VolatileLookUpTable<T> implements LookUpTable<T> {
      */
     public static class Builder<T> implements LookUpTable.Builder<T> {
 
-        private final Map<LookUpKey, List<T>> entity = new HashMap<>();
+        private final Map<LookUpKey.View, List<T>> entity = new HashMap<>();
 
         @Override
         public void add(LookUpKey key, T value) throws IOException {
             if (key == null) {
                 throw new IllegalArgumentException("key must not be null"); //$NON-NLS-1$
             }
-            List<T> list = entity.get(key);
+            List<T> list = entity.get(key.getDirectView());
             if (list == null) {
                 list = new ArrayList<>();
-                entity.put(key.copy(), list);
+                entity.put(key.getFrozenView(), list);
             }
             list.add(value);
         }
