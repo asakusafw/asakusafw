@@ -44,6 +44,11 @@
       <Bug pattern="URF_UNREAD_FIELD"/>
     </Or>
   </Match>
+  <Match class="com.asakusafw.runtime.flow.join.LookUpKey">
+    <Or>
+      <Bug pattern="EQ_CHECK_FOR_OPERAND_NOT_COMPATIBLE_WITH_THIS"/>
+    </Or>
+  </Match>
   <Match class="com.asakusafw.runtime.io.util.BufferedFileInput">
     <Or>
       <Bug pattern="EI_EXPOSE_REP2"/>
