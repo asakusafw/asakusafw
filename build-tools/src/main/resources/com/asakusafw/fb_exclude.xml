@@ -44,7 +44,7 @@
       <Bug pattern="URF_UNREAD_FIELD"/>
     </Or>
   </Match>
-  <Match class="com.asakusafw.runtime.flow.join.LookUpKey\$.*View">
+  <Match classregex="com.asakusafw.runtime.flow.join.LookUpKey\$.*View">
     <Or>
       <Bug pattern="EQ_CHECK_FOR_OPERAND_NOT_COMPATIBLE_WITH_THIS"/>
     </Or>
