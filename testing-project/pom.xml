@@ -20,6 +20,7 @@
     <module>asakusa-test-trace-plugin</module>
     <module>asakusa-test-inprocess</module>
     <module>asakusa-test-inprocess-ext</module>
+    <module>asakusa-test-windows</module>
   </modules>
 
 </project>

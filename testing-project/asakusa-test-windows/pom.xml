@@ -4,8 +4,8 @@
   <name>Extended Test Driver Helpers for Windows</name>
   <artifactId>asakusa-test-windows</artifactId>
   <parent>
-    <artifactId>asakusa-sandbox-project</artifactId>
-    <groupId>com.asakusafw.sandbox</groupId>
+    <artifactId>asakusa-testing-project</artifactId>
+    <groupId>com.asakusafw</groupId>
     <version>0.8.0-SNAPSHOT</version>
   </parent>
 
