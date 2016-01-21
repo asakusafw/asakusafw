@@ -1,5 +1,0 @@
-simple = {
-    value1 : INT;
-    value2 : INT;
-    value3 : INT;
-};
