@@ -17,7 +17,6 @@ package com.asakusafw.directio.hive.parquet.mock;
 
 import com.asakusafw.runtime.value.DateOption;
 import com.asakusafw.runtime.value.DateTimeOption;
-import com.asakusafw.runtime.value.DecimalOption;
 
 /**
  * Mock data type with timestamp supports.

@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 package com.asakusafw.compiler.flow.testing.operator;
+import javax.annotation.Generated;
+
 import com.asakusafw.compiler.flow.testing.model.Ex1;
 import com.asakusafw.compiler.flow.testing.model.ExSummarized;
-import javax.annotation.Generated;
 /**
  * An operator implementation class for{@link ExOperator}.
  */

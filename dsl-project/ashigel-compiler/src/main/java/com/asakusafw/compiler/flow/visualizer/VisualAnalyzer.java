@@ -15,6 +15,7 @@
  */
 package com.asakusafw.compiler.flow.visualizer;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -41,7 +42,7 @@ public final class VisualAnalyzer {
 
     static final Logger LOG = LoggerFactory.getLogger(VisualAnalyzer.class);
 
-    private final Set<FlowElement> sawElements = Sets.create();
+    private final Set<FlowElement> sawElements = new HashSet<>();
 
     private VisualAnalyzer() {
         return;
@@ -57,7 +58,7 @@ public final class VisualAnalyzer {
         Precondition.checkMustNotBeNull(graph, "graph"); //$NON-NLS-1$
         LOG.debug("analyzing flow graph for visualizing: {}", graph); //$NON-NLS-1$
         VisualAnalyzer analyzer = new VisualAnalyzer();
-        Set<VisualNode> nodes = Sets.create();
+        Set<VisualNode> nodes = new HashSet<>();
         for (FlowElement element : FlowGraphUtil.collectElements(graph)) {
             VisualNode node = analyzer.convertElement(element);
             if (node != null) {
@@ -77,7 +78,7 @@ public final class VisualAnalyzer {
         Precondition.checkMustNotBeNull(graph, "graph"); //$NON-NLS-1$
         LOG.debug("analyzing stage graph for visualizing: {}", graph); //$NON-NLS-1$
         VisualAnalyzer analyzer = new VisualAnalyzer();
-        Set<VisualNode> nodes = Sets.create();
+        Set<VisualNode> nodes = new HashSet<>();
         nodes.add(analyzer.convertBlock("(source)", graph.getInput())); //$NON-NLS-1$
         for (StageBlock stage : graph.getStages()) {
             nodes.add(analyzer.convertStage(stage));
@@ -96,7 +97,7 @@ public final class VisualAnalyzer {
         Precondition.checkMustNotBeNull(stage, "stage"); //$NON-NLS-1$
         LOG.debug("analyzing stage block for visualizing: {}", stage); //$NON-NLS-1$
         VisualAnalyzer analyzer = new VisualAnalyzer();
-        Set<VisualNode> nodes = Sets.create();
+        Set<VisualNode> nodes = new HashSet<>();
         for (FlowBlock head : stage.getMapBlocks()) {
             for (FlowBlock.Input input : head.getBlockInputs()) {
                 for (FlowBlock.Connection conn : input.getConnections()) {
@@ -135,14 +136,14 @@ public final class VisualAnalyzer {
         Precondition.checkMustNotBeNull(block, "block"); //$NON-NLS-1$
         LOG.debug("analyzing flow block for visualizing: {}", block); //$NON-NLS-1$
         VisualAnalyzer analyzer = new VisualAnalyzer();
-        Set<VisualNode> nodes = Sets.create();
+        Set<VisualNode> nodes = new HashSet<>();
         nodes.add(analyzer.convertBlock("block", block)); //$NON-NLS-1$
         return new VisualGraph(null, nodes);
     }
 
     private VisualGraph convertStage(StageBlock stage) {
         assert stage != null;
-        Set<VisualBlock> nodes = Sets.create();
+        Set<VisualBlock> nodes = new HashSet<>();
         for (FlowBlock block : stage.getMapBlocks()) {
             // "cluster"'s bug of dot
             nodes.add(convertBlock(null, block));
@@ -157,7 +158,7 @@ public final class VisualAnalyzer {
 
     private VisualBlock convertBlock(String label, FlowBlock block) {
         assert block != null;
-        Set<VisualNode> nodes = Sets.create();
+        Set<VisualNode> nodes = new HashSet<>();
         for (FlowElement element : block.getElements()) {
             VisualNode node = convertElement(element);
             if (node != null) {
@@ -180,7 +181,7 @@ public final class VisualAnalyzer {
         sawElements.add(element);
         if (element.getDescription().getKind() == FlowElementKind.FLOW_COMPONENT) {
             FlowPartDescription desc = (FlowPartDescription) element.getDescription();
-            Set<VisualNode> nodes = Sets.create();
+            Set<VisualNode> nodes = new HashSet<>();
             for (FlowElement inner : FlowGraphUtil.collectElements(desc.getFlowGraph())) {
                 VisualNode node = convertElement(inner);
                 if (node != null) {

@@ -21,7 +21,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -46,8 +48,6 @@ import com.asakusafw.compiler.repository.SpiDataClassRepository;
 import com.asakusafw.compiler.repository.SpiExternalIoDescriptionProcessorRepository;
 import com.asakusafw.compiler.repository.SpiFlowElementProcessorRepository;
 import com.asakusafw.compiler.repository.SpiFlowGraphRewriterRepository;
-import com.asakusafw.utils.collections.Lists;
-import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.utils.graph.Graph;
 import com.asakusafw.utils.graph.Graphs;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
@@ -141,7 +141,7 @@ public final class DirectFlowCompiler {
         Precondition.checkMustNotBeNull(jobflow, "jobflow"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(sourceBundle, "sourceBundle"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(packageFile, "packageFile"); //$NON-NLS-1$
-        List<StageInfo> stages = Lists.create();
+        List<StageInfo> stages = new ArrayList<>();
         for (CompiledStage compiled : jobflow.getCompiled().getPrologueStages()) {
             stages.add(toInfo(compiled));
         }
@@ -172,11 +172,11 @@ public final class DirectFlowCompiler {
             List<File> extraResources) throws IOException {
         assert classLoader != null;
         assert extraResources != null;
-        List<File> targets = Lists.create();
+        List<File> targets = new ArrayList<>();
         targets.addAll(collectLibraryPathsFromMarker(classLoader));
         targets.addAll(extraResources);
-        List<ResourceRepository> results = Lists.create();
-        Set<File> saw = Sets.create();
+        List<ResourceRepository> results = new ArrayList<>();
+        Set<File> saw = new HashSet<>();
         for (File file : targets) {
             LOG.debug("Preparing fragment resource: {}", file); //$NON-NLS-1$
             File canonical = file.getAbsoluteFile().getCanonicalFile();
@@ -256,7 +256,7 @@ public final class DirectFlowCompiler {
         assert classLoader != null;
         String path = Packager.FRAGMENT_MARKER_PATH.toPath('/');
         Enumeration<URL> resources = classLoader.getResources(path);
-        List<File> results = Lists.create();
+        List<File> results = new ArrayList<>();
         while (resources.hasMoreElements()) {
             URL url = resources.nextElement();
             LOG.debug("Fragment marker found: {}", url); //$NON-NLS-1$

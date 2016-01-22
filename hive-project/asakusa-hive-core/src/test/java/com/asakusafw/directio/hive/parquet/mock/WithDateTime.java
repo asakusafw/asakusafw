@@ -17,7 +17,6 @@ package com.asakusafw.directio.hive.parquet.mock;
 
 import com.asakusafw.runtime.value.DateTime;
 import com.asakusafw.runtime.value.DateTimeOption;
-import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.runtime.value.StringOption;
 
 /**

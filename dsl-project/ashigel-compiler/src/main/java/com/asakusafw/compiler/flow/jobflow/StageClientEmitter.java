@@ -45,7 +45,6 @@ import com.asakusafw.runtime.stage.StageInput;
 import com.asakusafw.runtime.stage.StageOutput;
 import com.asakusafw.runtime.stage.StageResource;
 import com.asakusafw.runtime.trace.TraceLocation;
-import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Comment;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
 import com.asakusafw.utils.java.model.syntax.Expression;
@@ -147,7 +146,7 @@ public class StageClientEmitter {
         private TypeDeclaration createType() {
             SimpleName name = factory.newSimpleName(Naming.getClientClass());
             importer.resolvePackageMember(name);
-            List<TypeBodyDeclaration> members = Lists.create();
+            List<TypeBodyDeclaration> members = new ArrayList<>();
             members.addAll(createIdMethods());
             members.add(createStageOutputPath());
             members.add(createStageInputsMethod());
@@ -179,7 +178,7 @@ public class StageClientEmitter {
         }
 
         private List<MethodDeclaration> createIdMethods() {
-            List<MethodDeclaration> results = Lists.create();
+            List<MethodDeclaration> results = new ArrayList<>();
             results.add(createValueMethod(
                     BaseStageClient.METHOD_BATCH_ID,
                     t(String.class),
@@ -209,7 +208,7 @@ public class StageClientEmitter {
             SimpleName list = factory.newSimpleName("results"); //$NON-NLS-1$
             SimpleName attributes = factory.newSimpleName("attributes"); //$NON-NLS-1$
 
-            List<Statement> statements = Lists.create();
+            List<Statement> statements = new ArrayList<>();
             statements.add(new TypeBuilder(factory, t(ArrayList.class, t(StageInput.class)))
                 .newObject()
                 .toLocalVariableDeclaration(t(List.class, t(StageInput.class)), list));
@@ -263,7 +262,7 @@ public class StageClientEmitter {
 
         private MethodDeclaration createStageOutputsMethod() {
             SimpleName list = factory.newSimpleName("results"); //$NON-NLS-1$
-            List<Statement> statements = Lists.create();
+            List<Statement> statements = new ArrayList<>();
             statements.add(new TypeBuilder(factory, t(ArrayList.class, t(StageOutput.class)))
                 .newObject()
                 .toLocalVariableDeclaration(t(List.class, t(StageOutput.class)), list));
@@ -299,7 +298,7 @@ public class StageClientEmitter {
 
         private TypeBodyDeclaration createStageResourcesMethod() {
             SimpleName list = factory.newSimpleName("results"); //$NON-NLS-1$
-            List<Statement> statements = Lists.create();
+            List<Statement> statements = new ArrayList<>();
             statements.add(new TypeBuilder(factory, t(ArrayList.class, t(StageResource.class)))
                 .newObject()
                 .toLocalVariableDeclaration(t(List.class, t(StageResource.class)), list));
@@ -330,7 +329,7 @@ public class StageClientEmitter {
 
         private List<MethodDeclaration> createShuffleMethods() {
             Reduce reduce = stage.getReduceOrNull();
-            List<MethodDeclaration> results = Lists.create();
+            List<MethodDeclaration> results = new ArrayList<>();
             results.add(createClassLiteralMethod(
                     AbstractStageClient.METHOD_SHUFFLE_KEY_CLASS,
                     importer.toType(reduce.getKeyTypeName())));

@@ -16,6 +16,7 @@
 package com.asakusafw.dmdl.directio.line.driver;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import com.asakusafw.dmdl.model.AstNode;
 import com.asakusafw.dmdl.semantics.Trait;
@@ -26,7 +27,7 @@ import com.asakusafw.dmdl.semantics.Trait;
  */
 public class LineFormatTrait implements Trait<LineFormatTrait> {
 
-    static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8"); //$NON-NLS-1$
+    static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
 
     private final AstNode originalAst;
 

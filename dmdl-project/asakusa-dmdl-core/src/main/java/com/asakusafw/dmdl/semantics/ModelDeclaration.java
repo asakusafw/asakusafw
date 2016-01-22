@@ -16,6 +16,8 @@
 package com.asakusafw.dmdl.semantics;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +27,6 @@ import com.asakusafw.dmdl.model.AstModelDefinition;
 import com.asakusafw.dmdl.model.AstNode;
 import com.asakusafw.dmdl.model.AstSimpleName;
 import com.asakusafw.utils.collections.Lists;
-import com.asakusafw.utils.collections.Maps;
 
 /**
  * Declaration of data models.
@@ -75,8 +76,8 @@ public class ModelDeclaration implements Declaration {
         this.name = name;
         this.description = description;
         this.attributes = Lists.freeze(attributes);
-        this.declaredProperties = Lists.create();
-        this.traits = Maps.create();
+        this.declaredProperties = new ArrayList<>();
+        this.traits = new HashMap<>();
     }
 
     /**

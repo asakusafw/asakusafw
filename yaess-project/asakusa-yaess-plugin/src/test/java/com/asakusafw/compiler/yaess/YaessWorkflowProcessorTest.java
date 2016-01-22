@@ -23,6 +23,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -41,7 +42,6 @@ import com.asakusafw.compiler.testing.DirectBatchCompiler;
 import com.asakusafw.compiler.yaess.testing.batch.ComplexBatch;
 import com.asakusafw.compiler.yaess.testing.batch.DiamondBatch;
 import com.asakusafw.compiler.yaess.testing.batch.SimpleBatch;
-import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.vocabulary.batch.BatchDescription;
 import com.asakusafw.yaess.core.BatchScript;
 import com.asakusafw.yaess.core.CommandScript;
@@ -101,7 +101,7 @@ public class YaessWorkflowProcessorTest {
         assertThat(last.getBlockerIds(), is(set()));
         Map<ExecutionPhase, Set<ExecutionScript>> lastScripts = last.getScripts();
         assertThat(lastScripts.get(ExecutionPhase.MAIN).size(), is(3));
-        Set<String> blockers = Sets.create();
+        Set<String> blockers = new HashSet<>();
         for (ExecutionScript ex : lastScripts.get(ExecutionPhase.MAIN)) {
             blockers.addAll(ex.getBlockerIds());
         }

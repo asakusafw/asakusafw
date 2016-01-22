@@ -16,6 +16,7 @@
 package com.asakusafw.compiler.flow.stage;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -35,7 +36,6 @@ import com.asakusafw.compiler.flow.FlowElementProcessor;
 import com.asakusafw.compiler.flow.plan.FlowBlock;
 import com.asakusafw.runtime.flow.MapperWithRuntimeResource;
 import com.asakusafw.runtime.trace.TraceLocation;
-import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Comment;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
 import com.asakusafw.utils.java.model.syntax.Expression;
@@ -176,7 +176,7 @@ public class MapperEmitter {
             SimpleName name = factory.newSimpleName(
                     Naming.getMapClass(unit.getSerialNumber()));
             importer.resolvePackageMember(name);
-            List<TypeBodyDeclaration> members = Lists.create();
+            List<TypeBodyDeclaration> members = new ArrayList<>();
             members.add(createCache());
             members.addAll(fragments.createFields());
             members.add(createSetup());
@@ -264,7 +264,7 @@ public class MapperEmitter {
         }
 
         private MethodDeclaration createRun() {
-            List<Statement> loop = Lists.create();
+            List<Statement> loop = new ArrayList<>();
 
             for (FlowBlock.Input input : unit.getInputs()) {
                 Expression expr = fragments.getLine(input.getElementPort());
@@ -276,7 +276,7 @@ public class MapperEmitter {
                     .toStatement());
             }
 
-            List<Statement> statements = Lists.create();
+            List<Statement> statements = new ArrayList<>();
             statements.add(new ExpressionBuilder(factory, factory.newThis())
                 .method("setup", context) //$NON-NLS-1$
                 .toStatement());

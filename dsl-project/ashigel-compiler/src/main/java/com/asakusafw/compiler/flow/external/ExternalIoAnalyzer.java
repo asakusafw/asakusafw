@@ -15,6 +15,8 @@
  */
 package com.asakusafw.compiler.flow.external;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -27,8 +29,6 @@ import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.flow.ExternalIoDescriptionProcessor;
 import com.asakusafw.compiler.flow.ExternalIoDescriptionProcessor.Repository;
 import com.asakusafw.compiler.flow.FlowCompilingEnvironment;
-import com.asakusafw.utils.collections.Lists;
-import com.asakusafw.utils.collections.Maps;
 import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.utils.collections.Tuple2;
 import com.asakusafw.utils.collections.Tuples;
@@ -66,8 +66,8 @@ public class ExternalIoAnalyzer {
     public boolean validate(FlowGraph graph) {
         Precondition.checkMustNotBeNull(graph, "graph"); //$NON-NLS-1$
         LOG.debug("validating external I/O: {}", graph.getDescription().getName()); //$NON-NLS-1$
-        List<Tuple2<InputDescription, ExternalIoDescriptionProcessor>> inputs = Lists.create();
-        List<Tuple2<OutputDescription, ExternalIoDescriptionProcessor>> outputs = Lists.create();
+        List<Tuple2<InputDescription, ExternalIoDescriptionProcessor>> inputs = new ArrayList<>();
+        List<Tuple2<OutputDescription, ExternalIoDescriptionProcessor>> outputs = new ArrayList<>();
 
         if (collect(graph, inputs, outputs) == false) {
             return false;
@@ -89,7 +89,7 @@ public class ExternalIoAnalyzer {
             ExternalIoDescriptionProcessor proc) {
         assert inputs != null;
         assert proc != null;
-        List<T> results = Lists.create();
+        List<T> results = new ArrayList<>();
         for (Tuple2<T, ExternalIoDescriptionProcessor> tuple : inputs) {
             if (tuple.second.equals(proc)) {
                 results.add(tuple.first);
@@ -103,7 +103,7 @@ public class ExternalIoAnalyzer {
             List<Tuple2<OutputDescription, ExternalIoDescriptionProcessor>> outputs) {
         assert inputs != null;
         assert outputs != null;
-        Map<Class<?>, ExternalIoDescriptionProcessor> actives = Maps.create();
+        Map<Class<?>, ExternalIoDescriptionProcessor> actives = new HashMap<>();
 
         // collect
         for (Tuple2<InputDescription, ExternalIoDescriptionProcessor> tuple : inputs) {

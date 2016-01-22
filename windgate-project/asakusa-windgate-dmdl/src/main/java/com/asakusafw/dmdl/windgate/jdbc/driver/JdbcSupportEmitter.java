@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -46,8 +47,6 @@ import com.asakusafw.dmdl.windgate.util.JdbcProcessDescriptionGenerator;
 import com.asakusafw.runtime.value.Date;
 import com.asakusafw.runtime.value.DateTime;
 import com.asakusafw.runtime.value.DateUtil;
-import com.asakusafw.utils.collections.Lists;
-import com.asakusafw.utils.collections.Maps;
 import com.asakusafw.utils.java.model.syntax.ClassDeclaration;
 import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.ExpressionStatement;
@@ -227,7 +226,7 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
 
     private void checkColumnConflict(ModelDeclaration model) throws IOException {
         assert model != null;
-        Map<String, PropertyDeclaration> saw = Maps.create();
+        Map<String, PropertyDeclaration> saw = new HashMap<>();
         for (PropertyDeclaration prop : model.getDeclaredProperties()) {
             JdbcColumnTrait trait = prop.getTrait(JdbcColumnTrait.class);
             if (trait == null) {
@@ -306,7 +305,7 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
         }
 
         private List<TypeBodyDeclaration> createMembers() {
-            List<TypeBodyDeclaration> results = Lists.create();
+            List<TypeBodyDeclaration> results = new ArrayList<>();
             results.addAll(createMetaData());
             results.add(createGetSupportedType());
             results.add(createIsSupported());
@@ -319,7 +318,7 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
         }
 
         private List<TypeBodyDeclaration> createMetaData() {
-            List<TypeBodyDeclaration> results = Lists.create();
+            List<TypeBodyDeclaration> results = new ArrayList<>();
             results.add(f.newFieldDeclaration(
                     null,
                     new AttributeBuilder(f)
@@ -333,7 +332,7 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
                             context.resolve(Integer.class)),
                     f.newSimpleName(NAME_PROPERTY_POSITIONS),
                     null));
-            List<Statement> statements = Lists.create();
+            List<Statement> statements = new ArrayList<>();
             SimpleName map = f.newSimpleName("map"); //$NON-NLS-1$
             statements.add(new TypeBuilder(f, context.resolve(TreeMap.class))
                 .parameterize(context.resolve(String.class), context.resolve(Integer.class))
@@ -388,7 +387,7 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
 
         private MethodDeclaration createIsSupported() {
             SimpleName columnNames = f.newSimpleName("columnNames"); //$NON-NLS-1$
-            List<Statement> statements = Lists.create();
+            List<Statement> statements = new ArrayList<>();
             statements.add(createNullCheck(columnNames));
             statements.add(f.newIfStatement(
                     new ExpressionBuilder(f, columnNames)
@@ -429,7 +428,7 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
         private MethodDeclaration createCreateResultSetSupport() {
             SimpleName resultSet = f.newSimpleName("resultSet"); //$NON-NLS-1$
             SimpleName columnNames = f.newSimpleName("columnNames"); //$NON-NLS-1$
-            List<Statement> statements = Lists.create();
+            List<Statement> statements = new ArrayList<>();
             statements.add(createNullCheck(resultSet));
             statements.add(createNullCheck(columnNames));
             SimpleName vector = f.newSimpleName("vector"); //$NON-NLS-1$
@@ -465,7 +464,7 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
         private MethodDeclaration createCreatePreparedStatementSupport() {
             SimpleName preparedStatement = f.newSimpleName("statement"); //$NON-NLS-1$
             SimpleName columnNames = f.newSimpleName("columnNames"); //$NON-NLS-1$
-            List<Statement> statements = Lists.create();
+            List<Statement> statements = new ArrayList<>();
             statements.add(createNullCheck(preparedStatement));
             statements.add(createNullCheck(columnNames));
             SimpleName vector = f.newSimpleName("vector"); //$NON-NLS-1$
@@ -514,7 +513,7 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
         private MethodDeclaration createCreatePropertyVector() {
             SimpleName columnNames = f.newSimpleName("columnNames"); //$NON-NLS-1$
             SimpleName vector = f.newSimpleName("vector"); //$NON-NLS-1$
-            List<Statement> statements = Lists.create();
+            List<Statement> statements = new ArrayList<>();
 
             statements.add(new TypeBuilder(f, context.resolve(int[].class))
                 .newArray(new ExpressionBuilder(f, f.newSimpleName(NAME_PROPERTY_POSITIONS))
@@ -588,7 +587,7 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
         private ClassDeclaration createResultSetSupportClass() {
             SimpleName resultSet = f.newSimpleName("resultSet"); //$NON-NLS-1$
             SimpleName properties = f.newSimpleName("properties"); //$NON-NLS-1$
-            List<TypeBodyDeclaration> members = Lists.create();
+            List<TypeBodyDeclaration> members = new ArrayList<>();
             members.add(createPrivateField(ResultSet.class, resultSet, false));
             members.add(createPrivateField(int[].class, properties, false));
             Set<BasicTypeKind> kinds = collectTypeKinds();
@@ -614,7 +613,7 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
                     Arrays.asList(mapField(resultSet), mapField(properties))));
 
             SimpleName object = f.newSimpleName("object"); //$NON-NLS-1$
-            List<Statement> statements = Lists.create();
+            List<Statement> statements = new ArrayList<>();
             statements.add(f.newIfStatement(
                     new ExpressionBuilder(f, resultSet)
                         .method("next") //$NON-NLS-1$
@@ -686,7 +685,7 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
         private ClassDeclaration createPreparedStatementSupportClass() {
             SimpleName preparedStatement = f.newSimpleName("statement"); //$NON-NLS-1$
             SimpleName properties = f.newSimpleName("properties"); //$NON-NLS-1$
-            List<TypeBodyDeclaration> members = Lists.create();
+            List<TypeBodyDeclaration> members = new ArrayList<>();
             members.add(createPrivateField(PreparedStatement.class, preparedStatement, false));
             members.add(createPrivateField(int[].class, properties, false));
             Set<BasicTypeKind> kinds = collectTypeKinds();
@@ -731,7 +730,7 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
                     Arrays.asList(mapField(preparedStatement), mapField(properties))));
 
             SimpleName object = f.newSimpleName("object"); //$NON-NLS-1$
-            List<Statement> statements = Lists.create();
+            List<Statement> statements = new ArrayList<>();
             List<PropertyDeclaration> declared = getProperties();
             for (int i = 0, n = declared.size(); i < n; i++) {
                 statements.add(createPreparedStatementSupportStatement(
@@ -774,7 +773,7 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
                 Expression resultSet,
                 Expression position,
                 PropertyDeclaration property) {
-            List<Statement> statements = Lists.create();
+            List<Statement> statements = new ArrayList<>();
             SimpleName value = f.newSimpleName("value"); //$NON-NLS-1$
             SimpleName calendar = f.newSimpleName(NAME_CALENDAR);
             SimpleName text = f.newSimpleName(NAME_TEXT);
@@ -955,7 +954,7 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
             assert statement != null;
             assert position != null;
             assert property != null;
-            List<Statement> statements = Lists.create();
+            List<Statement> statements = new ArrayList<>();
             SimpleName date = f.newSimpleName(NAME_DATE);
             SimpleName calendar = f.newSimpleName(NAME_CALENDAR);
             SimpleName datetime = f.newSimpleName(NAME_DATETIME);
@@ -1151,7 +1150,7 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
         }
 
         private List<PropertyDeclaration> getProperties() {
-            List<PropertyDeclaration> results = Lists.create();
+            List<PropertyDeclaration> results = new ArrayList<>();
             for (PropertyDeclaration property : model.getDeclaredProperties()) {
                 if (property.getTrait(JdbcColumnTrait.class) != null) {
                     results.add(property);

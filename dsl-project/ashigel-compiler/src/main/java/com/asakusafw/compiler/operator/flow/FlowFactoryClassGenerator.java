@@ -15,6 +15,7 @@
  */
 package com.asakusafw.compiler.operator.flow;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -26,7 +27,6 @@ import com.asakusafw.compiler.common.NameGenerator;
 import com.asakusafw.compiler.operator.OperatorCompilingEnvironment;
 import com.asakusafw.compiler.operator.OperatorPortDeclaration;
 import com.asakusafw.compiler.operator.util.GeneratorUtil;
-import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.jsr269.bridge.Jsr269;
 import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.FieldDeclaration;
@@ -129,7 +129,7 @@ public class FlowFactoryClassGenerator {
     }
 
     private List<TypeBodyDeclaration> createMembers() {
-        List<TypeBodyDeclaration> results = Lists.create();
+        List<TypeBodyDeclaration> results = new ArrayList<>();
 
         TypeDeclaration objectClass = createObjectClass();
         results.add(objectClass);
@@ -176,7 +176,7 @@ public class FlowFactoryClassGenerator {
     private List<TypeBodyDeclaration> createObjectMembers(NamedType objectType) {
         assert objectType != null;
         NameGenerator names = new NameGenerator(factory);
-        List<TypeBodyDeclaration> results = Lists.create();
+        List<TypeBodyDeclaration> results = new ArrayList<>();
         results.add(createResolverField());
         for (OperatorPortDeclaration var : flowClass.getOutputPorts()) {
             results.add(createObjectOutputField(var, names));
@@ -300,7 +300,7 @@ public class FlowFactoryClassGenerator {
     }
 
     private List<FormalParameterDeclaration> createParametersForConstructor(NameGenerator names) {
-        List<FormalParameterDeclaration> parameters = Lists.create();
+        List<FormalParameterDeclaration> parameters = new ArrayList<>();
         for (OperatorPortDeclaration var : flowClass.getInputPorts()) {
             SimpleName name = factory.newSimpleName(names.reserve(var.getName()));
             parameters.add(factory.newFormalParameterDeclaration(
@@ -320,7 +320,7 @@ public class FlowFactoryClassGenerator {
             List<FormalParameterDeclaration> parameters,
             NameGenerator names) {
         assert parameters != null;
-        List<Statement> statements = Lists.create();
+        List<Statement> statements = new ArrayList<>();
         SimpleName builderName = names.create("builder"); //$NON-NLS-1$
         statements.add(new TypeBuilder(factory, util.t(FlowPartDescription.Builder.class))
             .newObject(factory.newClassLiteral(util.t(flowClass.getElement())))
@@ -415,9 +415,9 @@ public class FlowFactoryClassGenerator {
         assert objectType != null;
         JavadocBuilder javadoc = new JavadocBuilder(factory);
         javadoc.inline(flowClass.getDocumentation());
-        List<FormalParameterDeclaration> parameters = Lists.create();
-        List<Expression> arguments = Lists.create();
-        List<Expression> inputMetaData = Lists.create();
+        List<FormalParameterDeclaration> parameters = new ArrayList<>();
+        List<Expression> arguments = new ArrayList<>();
+        List<Expression> inputMetaData = new ArrayList<>();
         for (OperatorPortDeclaration var : flowClass.getInputPorts()) {
             SimpleName name = factory.newSimpleName(var.getName());
             javadoc.param(name).inline(var.getDocumentation());
@@ -425,11 +425,11 @@ public class FlowFactoryClassGenerator {
             inputMetaData.add(util.toMetaData(var, arguments.size()));
             arguments.add(name);
         }
-        List<Expression> outputMetaData = Lists.create();
+        List<Expression> outputMetaData = new ArrayList<>();
         for (OperatorPortDeclaration var : flowClass.getOutputPorts()) {
             outputMetaData.add(util.toMetaData(var, -1));
         }
-        List<Expression> parameterMetaData = Lists.create();
+        List<Expression> parameterMetaData = new ArrayList<>();
         for (OperatorPortDeclaration var : flowClass.getParameters()) {
             SimpleName name = factory.newSimpleName(var.getName());
             javadoc.param(name).inline(var.getDocumentation());

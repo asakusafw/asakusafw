@@ -17,11 +17,11 @@ package com.asakusafw.directio.hive.parquet;
 
 import java.util.List;
 
-import parquet.io.api.Converter;
-import parquet.io.api.GroupConverter;
-
 import com.asakusafw.directio.hive.serde.PropertyDescriptor;
 import com.asakusafw.runtime.value.ValueOption;
+
+import parquet.io.api.Converter;
+import parquet.io.api.GroupConverter;
 
 /**
  * An implementation of parquet file data converter for Asakusa data models.

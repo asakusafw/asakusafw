@@ -20,9 +20,6 @@ import java.util.Map;
 
 import org.apache.hadoop.hive.serde2.typeinfo.TypeInfo;
 
-import parquet.column.ParquetProperties;
-import parquet.hadoop.metadata.CompressionCodecName;
-
 import com.asakusafw.directio.hive.parquet.ParquetValueDriver;
 import com.asakusafw.directio.hive.parquet.ParquetValueDrivers;
 import com.asakusafw.directio.hive.serde.DataModelMapping.ExceptionHandlingStrategy;
@@ -43,6 +40,9 @@ import com.asakusafw.dmdl.semantics.PropertyDeclaration;
 import com.asakusafw.dmdl.spi.ModelAttributeDriver;
 import com.asakusafw.dmdl.util.AttributeUtil;
 import com.asakusafw.utils.java.model.syntax.Name;
+
+import parquet.column.ParquetProperties;
+import parquet.hadoop.metadata.CompressionCodecName;
 
 /**
  * Processes <code>&#64;directio.hive.parquet</code> attributes.

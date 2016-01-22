@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 package com.asakusafw.compiler.flow.processor.operator;
+import javax.annotation.Generated;
+
 import com.asakusafw.compiler.flow.testing.model.Ex1;
 import com.asakusafw.vocabulary.flow.Operator;
 import com.asakusafw.vocabulary.flow.Source;
@@ -24,7 +26,6 @@ import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 import com.asakusafw.vocabulary.operator.Logging;
 import com.asakusafw.vocabulary.operator.OperatorFactory;
 import com.asakusafw.vocabulary.operator.OperatorInfo;
-import javax.annotation.Generated;
 /**
  * An operator factory class about <code>LoggingFlow</code>.
  * @see LoggingFlow

@@ -27,9 +27,6 @@ import org.junit.Test;
 
 import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.flow.testing.model.Ex1;
-import com.asakusafw.compiler.testing.JobflowInfo;
-import com.asakusafw.compiler.testing.TemporaryIoProcessor;
-import com.asakusafw.compiler.testing.TemporaryOutputDescription;
 import com.asakusafw.compiler.testing.flow.IndependentOutExporterDesc;
 import com.asakusafw.compiler.testing.flow.IndependentOutputJob;
 import com.asakusafw.compiler.testing.flow.InvalidFileNameOutputJob;

@@ -18,6 +18,8 @@ package com.asakusafw.testdriver;
 import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -43,7 +45,6 @@ import com.asakusafw.testdriver.core.Difference;
 import com.asakusafw.testdriver.core.TestModerator;
 import com.asakusafw.testdriver.core.VerifyContext;
 import com.asakusafw.testdriver.hadoop.ConfigurationFactory;
-import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.collections.Maps;
 import com.asakusafw.vocabulary.external.ExporterDescription;
 import com.asakusafw.vocabulary.external.ImporterDescription;
@@ -311,7 +312,7 @@ public class JobflowExecutor {
 
     private Map<String, String> createHadoopProperties(CommandContext commands) {
         assert commands != null;
-        Map<String, String> dPropMap = Maps.create();
+        Map<String, String> dPropMap = new HashMap<>();
         dPropMap.put(StageConstants.PROP_USER, context.getOsUser());
         dPropMap.put(StageConstants.PROP_EXECUTION_ID, commands.getExecutionId());
         dPropMap.put(StageConstants.PROP_ASAKUSA_BATCH_ARGS, commands.getVariableList());
@@ -330,15 +331,15 @@ public class JobflowExecutor {
         assert info != null;
         assert commands != null;
         assert properties != null;
-        List<Job> jobs = Lists.create();
+        List<Job> jobs = new ArrayList<>();
         for (StageInfo stage : info.getStages()) {
             jobs.add(new Job(stage.getClassName(), properties));
         }
 
-        List<Command> initializers = Lists.create();
-        List<Command> importers = Lists.create();
-        List<Command> exporters = Lists.create();
-        List<Command> finalizers = Lists.create();
+        List<Command> initializers = new ArrayList<>();
+        List<Command> importers = new ArrayList<>();
+        List<Command> exporters = new ArrayList<>();
+        List<Command> finalizers = new ArrayList<>();
 
         for (ExternalIoCommandProvider provider : info.getCommandProviders()) {
             initializers.addAll(convert(provider.getInitializeCommand(commands)));
@@ -358,7 +359,7 @@ public class JobflowExecutor {
     }
 
     private List<TestExecutionPlan.Command> convert(List<ExternalIoCommandProvider.Command> commands) {
-        List<TestExecutionPlan.Command> results = Lists.create();
+        List<TestExecutionPlan.Command> results = new ArrayList<>();
         for (ExternalIoCommandProvider.Command cmd : commands) {
             results.add(new TestExecutionPlan.Command(
                     cmd.getCommandTokens(),

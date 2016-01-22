@@ -16,11 +16,12 @@
 package com.asakusafw.compiler.flow.plan;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import com.asakusafw.compiler.common.Precondition;
-import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.vocabulary.flow.graph.FlowElement;
 import com.asakusafw.vocabulary.flow.graph.FlowElementInput;
@@ -123,7 +124,7 @@ public class FlowPath {
     }
 
     private List<PortConnection> createBlockInputs(boolean includeStartings) {
-        List<PortConnection> results = Lists.create();
+        List<PortConnection> results = new ArrayList<>();
         if (includeStartings) {
             for (FlowElement element : startings) {
                 for (FlowElementInput input : element.getInputPorts()) {
@@ -146,7 +147,7 @@ public class FlowPath {
     }
 
     private List<PortConnection> createBlockOutputs(boolean includeArrivals) {
-        List<PortConnection> results = Lists.create();
+        List<PortConnection> results = new ArrayList<>();
         if (includeArrivals) {
             for (FlowElement element : arrivals) {
                 for (FlowElementOutput output : element.getOutputPorts()) {
@@ -170,7 +171,7 @@ public class FlowPath {
 
     private Set<FlowElement> createBlockElements(boolean includeStartings,
             boolean includeArrivals) {
-        Set<FlowElement> elements = Sets.create();
+        Set<FlowElement> elements = new HashSet<>();
         elements.addAll(passings);
         if (includeStartings) {
             elements.addAll(startings);

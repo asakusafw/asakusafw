@@ -16,6 +16,7 @@
 package com.asakusafw.compiler.flow.mapreduce.parallel;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -33,7 +34,6 @@ import com.asakusafw.compiler.flow.FlowCompilingEnvironment;
 import com.asakusafw.compiler.flow.stage.CompiledType;
 import com.asakusafw.runtime.stage.collector.SlotSorter;
 import com.asakusafw.runtime.trace.TraceLocation;
-import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Comment;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
 import com.asakusafw.utils.java.model.syntax.Expression;
@@ -150,7 +150,7 @@ final class ParallelSortReducerEmitter {
 
         private MethodDeclaration createSlotNames() {
             SimpleName resultName = factory.newSimpleName("results"); //$NON-NLS-1$
-            List<Statement> statements = Lists.create();
+            List<Statement> statements = new ArrayList<>();
             statements.add(new TypeBuilder(factory, importer.toType(String.class))
                 .array(1)
                 .newArray(getSlotCount())
@@ -185,7 +185,7 @@ final class ParallelSortReducerEmitter {
 
         private MethodDeclaration createSlotObjects() {
             SimpleName resultName = factory.newSimpleName("results"); //$NON-NLS-1$
-            List<Statement> statements = Lists.create();
+            List<Statement> statements = new ArrayList<>();
             statements.add(new TypeBuilder(factory, importer.toType(Writable.class))
                 .array(1)
                 .newArray(getSlotCount())

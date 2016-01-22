@@ -23,8 +23,12 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -37,9 +41,6 @@ import org.slf4j.LoggerFactory;
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.flow.plan.FlowBlock;
 import com.asakusafw.compiler.flow.visualizer.VisualNode.Kind;
-import com.asakusafw.utils.collections.Lists;
-import com.asakusafw.utils.collections.Maps;
-import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.utils.java.internal.model.util.LiteralAnalyzer;
 import com.asakusafw.utils.java.model.util.NoThrow;
 import com.asakusafw.vocabulary.flow.graph.FlowElement;
@@ -58,7 +59,7 @@ import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
  */
 public final class VisualGraphEmitter {
 
-    static final Charset ENCODING = Charset.forName("UTF-8"); //$NON-NLS-1$
+    static final Charset ENCODING = StandardCharsets.UTF_8;
 
     static final Logger LOG = LoggerFactory.getLogger(VisualGraphEmitter.class);
 
@@ -124,7 +125,7 @@ public final class VisualGraphEmitter {
 
     private static void dumpLabels(EmitContext context, List<Relation> relations) {
         assert relations != null;
-        Set<UUID> saw = Sets.create();
+        Set<UUID> saw = new HashSet<>();
         for (Relation relation : relations) {
             if (saw.contains(relation.source.getResolved().getId()) == false) {
                 dumpLabel(context, relation.source.getResolved());
@@ -178,11 +179,11 @@ public final class VisualGraphEmitter {
 
         private final boolean partial;
 
-        private final Set<Relation> saw = Sets.create();
+        private final Set<Relation> saw = new HashSet<>();
 
-        final List<Relation> relations = Lists.create();
+        final List<Relation> relations = new ArrayList<>();
 
-        final Map<FlowElement, VisualNode> resolveMap = Maps.create();
+        final Map<FlowElement, VisualNode> resolveMap = new HashMap<>();
 
         RelationCollector(boolean partial) {
             this.partial = partial;

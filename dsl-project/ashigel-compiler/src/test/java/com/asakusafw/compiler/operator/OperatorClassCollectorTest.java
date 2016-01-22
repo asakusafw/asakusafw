@@ -18,13 +18,13 @@ package com.asakusafw.compiler.operator;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
 
 import com.asakusafw.compiler.operator.processor.UpdateOperatorProcessor;
-import com.asakusafw.utils.collections.Lists;
 
 /**
  * Test for {@link OperatorClassCollector}.
@@ -220,7 +220,7 @@ public class OperatorClassCollectorTest extends OperatorCompilerTestRoot {
         List<OperatorProcessor> processors;
 
         Collector(OperatorProcessor...processors) {
-            this.processors = Lists.create();
+            this.processors = new ArrayList<>();
             Collections.addAll(this.processors, processors);
         }
 

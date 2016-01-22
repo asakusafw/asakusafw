@@ -163,15 +163,7 @@ public class DateTime implements Comparable<DateTime> {
 
     @Override
     public int compareTo(DateTime o) {
-        long a = elapsedSeconds;
-        long b = o.elapsedSeconds;
-        if (a == b) {
-            return 0;
-        }
-        if (a < b) {
-            return -1;
-        }
-        return +1;
+        return Long.compare(elapsedSeconds, o.elapsedSeconds);
     }
 
     @Override

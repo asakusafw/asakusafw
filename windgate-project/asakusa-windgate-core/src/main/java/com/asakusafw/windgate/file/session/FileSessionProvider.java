@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileLock;
 import java.nio.channels.OverlappingFileLockException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,11 +52,11 @@ public class FileSessionProvider extends SessionProvider {
 
     private static final byte[] VALID = String.format(
             "%-10s%n", //$NON-NLS-1$
-            VALID_STRING).getBytes(Charset.forName("ASCII"));
+            VALID_STRING).getBytes(StandardCharsets.US_ASCII);
 
     private static final byte[] DISPOSED = String.format(
             "%-10s%n", //$NON-NLS-1$
-            DISPOSED_STRING).getBytes(Charset.forName("ASCII"));
+            DISPOSED_STRING).getBytes(StandardCharsets.US_ASCII);
 
     /**
      * Profile key name of session storage directory.

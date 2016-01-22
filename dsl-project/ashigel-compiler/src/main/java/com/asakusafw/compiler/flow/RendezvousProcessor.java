@@ -16,6 +16,7 @@
 package com.asakusafw.compiler.flow;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,8 +24,6 @@ import com.asakusafw.compiler.common.NameGenerator;
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.runtime.core.Result;
 import com.asakusafw.runtime.flow.Rendezvous;
-import com.asakusafw.utils.collections.Lists;
-import com.asakusafw.utils.collections.Maps;
 import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.Statement;
 import com.asakusafw.utils.java.model.util.ImportBuilder;
@@ -123,9 +122,9 @@ public abstract class RendezvousProcessor extends AbstractFlowElementProcessor {
             Precondition.checkMustNotBeNull(outputs, "outputs"); //$NON-NLS-1$
             this.inputs = inputs;
             this.outputs = outputs;
-            this.beginStatements = Lists.create();
-            this.processStatements = Maps.create();
-            this.endStatements = Lists.create();
+            this.beginStatements = new ArrayList<>();
+            this.processStatements = new HashMap<>();
+            this.endStatements = new ArrayList<>();
             for (FlowElementPortDescription input : inputs.keySet()) {
                 processStatements.put(input, new ArrayList<Statement>());
             }

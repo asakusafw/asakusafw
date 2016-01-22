@@ -16,6 +16,7 @@
 package com.asakusafw.compiler.operator.flow;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.lang.model.element.Element;
@@ -36,7 +37,6 @@ import com.asakusafw.compiler.operator.OperatorCompilerException;
 import com.asakusafw.compiler.operator.OperatorCompilingEnvironment;
 import com.asakusafw.compiler.operator.OperatorPortDeclaration;
 import com.asakusafw.compiler.operator.PortTypeDescription;
-import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.DocElement;
 import com.asakusafw.vocabulary.flow.FlowDescription;
 
@@ -59,7 +59,7 @@ public class FlowPartClassCollector {
     public FlowPartClassCollector(OperatorCompilingEnvironment environment) {
         Precondition.checkMustNotBeNull(environment, "environment"); //$NON-NLS-1$
         this.environment = environment;
-        this.collected = Lists.create();
+        this.collected = new ArrayList<>();
         this.sawError = false;
     }
 
@@ -101,9 +101,9 @@ public class FlowPartClassCollector {
         assert ctor != null;
         ExecutableAnalyzer analyzer = new ExecutableAnalyzer(environment, ctor);
         List<? extends DocElement> documentation = analyzer.getDocument(aClass);
-        List<OperatorPortDeclaration> inputPorts = Lists.create();
-        List<OperatorPortDeclaration> outputPorts = Lists.create();
-        List<OperatorPortDeclaration> parameters = Lists.create();
+        List<OperatorPortDeclaration> inputPorts = new ArrayList<>();
+        List<OperatorPortDeclaration> outputPorts = new ArrayList<>();
+        List<OperatorPortDeclaration> parameters = new ArrayList<>();
         for (int i = 0, n = analyzer.countParameters(); i < n; i++) {
             OperatorPortDeclaration port = analyzePort(analyzer, i);
             if (port == null) {
@@ -157,7 +157,7 @@ public class FlowPartClassCollector {
         assert inputPorts != null;
         assert outputPorts != null;
         assert parameters != null;
-        List<OperatorPortDeclaration> inferred = Lists.create();
+        List<OperatorPortDeclaration> inferred = new ArrayList<>();
         for (OperatorPortDeclaration output : outputPorts) {
             if (output.getType().getRepresentation().getKind() != TypeKind.TYPEVAR) {
                 inferred.add(new OperatorPortDeclaration(
@@ -273,7 +273,7 @@ public class FlowPartClassCollector {
 
     private ExecutableElement findConstructor(TypeElement type) {
         assert type != null;
-        List<ExecutableElement> elements = Lists.create();
+        List<ExecutableElement> elements = new ArrayList<>();
         for (Element element : type.getEnclosedElements()) {
             if (element.getKind() == ElementKind.CONSTRUCTOR
                     && element.getModifiers().contains(Modifier.PUBLIC)) {

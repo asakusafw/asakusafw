@@ -98,14 +98,7 @@ public final class DirectIoTransactionEditor extends Configured {
         Collections.sort(list, new Comparator<FileStatus>() {
             @Override
             public int compare(FileStatus o1, FileStatus o2) {
-                long t1 = o1.getModificationTime();
-                long t2 = o2.getModificationTime();
-                if (t1 < t2) {
-                    return -1;
-                } else if (t1 > t2) {
-                    return +1;
-                }
-                return 0;
+                return Long.compare(o1.getModificationTime(), o2.getModificationTime());
             }
         });
         LOG.info(MessageFormat.format(

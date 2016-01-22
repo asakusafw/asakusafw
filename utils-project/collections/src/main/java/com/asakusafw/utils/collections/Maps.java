@@ -15,6 +15,7 @@
  */
 package com.asakusafw.utils.collections;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -120,7 +121,7 @@ public final class Maps {
         }
         List<V> list = map.get(key);
         if (list == null) {
-            list = Lists.create();
+            list = new ArrayList<>();
             map.put(key, list);
         }
         list.add(value);
@@ -146,7 +147,7 @@ public final class Maps {
             K key = entry.getKey();
             List<V> list = map.get(key);
             if (list == null) {
-                list = Lists.create();
+                list = new ArrayList<>();
                 map.put(key, list);
             }
             list.add(entry.getValue());
@@ -172,7 +173,7 @@ public final class Maps {
         }
         List<V> list = map.get(key);
         if (list == null) {
-            list = Lists.create();
+            list = new ArrayList<>();
             map.put(key, list);
         }
         list.addAll(values);
@@ -200,7 +201,7 @@ public final class Maps {
             K key = entry.getKey();
             List<V> list = map.get(key);
             if (list == null) {
-                list = Lists.create();
+                list = new ArrayList<>();
                 map.put(key, list);
             }
             list.addAll(entry.getValue());
@@ -248,7 +249,7 @@ public final class Maps {
             K key = entry.getKey();
             Set<V> set = map.get(key);
             if (set == null) {
-                set = Sets.create();
+                set = new HashSet<>();
                 map.put(key, set);
             }
             set.add(entry.getValue());
@@ -274,7 +275,7 @@ public final class Maps {
         }
         Set<V> set = map.get(key);
         if (set == null) {
-            set = Sets.create();
+            set = new HashSet<>();
             map.put(key, set);
         }
         set.addAll(values);
@@ -302,7 +303,7 @@ public final class Maps {
             K key = entry.getKey();
             Set<V> set = map.get(key);
             if (set == null) {
-                set = Sets.create();
+                set = new HashSet<>();
                 map.put(key, set);
             }
             set.addAll(entry.getValue());

@@ -16,6 +16,7 @@
 package com.asakusafw.compiler.tool.batchspec;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Constants for this package.
@@ -25,7 +26,7 @@ final class Constants {
 
     public static final String PATH = "etc/batch-spec.json"; //$NON-NLS-1$
 
-    public static final Charset ENCODING = Charset.forName("UTF-8"); //$NON-NLS-1$
+    public static final Charset ENCODING = StandardCharsets.UTF_8;
 
     private Constants() {
         return;

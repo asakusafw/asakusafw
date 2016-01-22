@@ -19,9 +19,6 @@ import java.text.MessageFormat;
 
 import org.apache.hadoop.io.Text;
 
-import parquet.io.api.Binary;
-import parquet.io.api.RecordConsumer;
-
 import com.asakusafw.directio.hive.util.TemporalUtil;
 import com.asakusafw.runtime.value.BooleanOption;
 import com.asakusafw.runtime.value.ByteOption;
@@ -33,6 +30,9 @@ import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.runtime.value.LongOption;
 import com.asakusafw.runtime.value.ShortOption;
 import com.asakusafw.runtime.value.StringOption;
+
+import parquet.io.api.Binary;
+import parquet.io.api.RecordConsumer;
 
 /**
  * Provides {@link ValueWriter}s.

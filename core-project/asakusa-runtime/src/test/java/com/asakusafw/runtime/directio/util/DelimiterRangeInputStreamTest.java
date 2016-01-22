@@ -22,7 +22,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Random;
 
@@ -150,7 +150,7 @@ public class DelimiterRangeInputStreamTest {
      */
     @Test
     public void readByte_random() throws Exception {
-        byte[] bytes = "ABC|D|EF".getBytes(Charset.forName("ASCII"));
+        byte[] bytes = "ABC|D|EF".getBytes(StandardCharsets.US_ASCII);
         InputBuffer buffer = new InputBuffer();
         buffer.reset(bytes, bytes.length);
         Random random = new Random(12345);
@@ -288,7 +288,7 @@ public class DelimiterRangeInputStreamTest {
      */
     @Test
     public void readArray_random() throws Exception {
-        byte[] bytes = "ABC|D|EF".getBytes(Charset.forName("ASCII"));
+        byte[] bytes = "ABC|D|EF".getBytes(StandardCharsets.US_ASCII);
         InputBuffer buffer = new InputBuffer();
         buffer.reset(bytes, bytes.length);
         Random random = new Random(12345);
@@ -311,7 +311,7 @@ public class DelimiterRangeInputStreamTest {
     }
 
     private InputStream bytes(String content) {
-        return new ByteArrayInputStream(content.getBytes(Charset.forName("ASCII")));
+        return new ByteArrayInputStream(content.getBytes(StandardCharsets.US_ASCII));
     }
 
     private String readBytes(InputStream in) throws IOException {
@@ -323,7 +323,7 @@ public class DelimiterRangeInputStreamTest {
             }
             output.write(c);
         }
-        return new String(output.toByteArray(), Charset.forName("ASCII"));
+        return new String(output.toByteArray(), StandardCharsets.US_ASCII);
     }
 
     private String readBytes(InputStream in, int size) throws IOException {
@@ -336,7 +336,7 @@ public class DelimiterRangeInputStreamTest {
             }
             output.write(buf, 0, read);
         }
-        return new String(output.toByteArray(), Charset.forName("ASCII"));
+        return new String(output.toByteArray(), StandardCharsets.US_ASCII);
     }
 
     private void copy(InputBuffer source, StringBuilder sink, int start, int end) throws IOException {

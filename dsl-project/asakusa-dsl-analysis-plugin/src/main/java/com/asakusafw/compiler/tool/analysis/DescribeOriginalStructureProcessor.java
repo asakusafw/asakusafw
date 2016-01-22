@@ -21,7 +21,9 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -36,7 +38,6 @@ import com.asakusafw.compiler.flow.jobflow.JobflowModel;
 import com.asakusafw.compiler.flow.jobflow.JobflowModel.Export;
 import com.asakusafw.compiler.flow.jobflow.JobflowModel.Import;
 import com.asakusafw.compiler.flow.plan.FlowGraphUtil;
-import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.graph.Graph;
 import com.asakusafw.utils.graph.Graphs;
 import com.asakusafw.vocabulary.batch.JobFlowWorkDescription;
@@ -54,7 +55,7 @@ public class DescribeOriginalStructureProcessor extends AbstractWorkflowProcesso
 
     static final Logger LOG = LoggerFactory.getLogger(DescribeOriginalStructureProcessor.class);
 
-    static final Charset ENCODING = Charset.forName("UTF-8"); //$NON-NLS-1$
+    static final Charset ENCODING = StandardCharsets.UTF_8;
 
     /**
      * Output path.
@@ -63,7 +64,7 @@ public class DescribeOriginalStructureProcessor extends AbstractWorkflowProcesso
 
     @Override
     public Collection<Class<? extends WorkDescriptionProcessor<?>>> getDescriptionProcessors() {
-        List<Class<? extends WorkDescriptionProcessor<?>>> results = Lists.create();
+        List<Class<? extends WorkDescriptionProcessor<?>>> results = new ArrayList<>();
         results.add(JobFlowWorkDescriptionProcessor.class);
         return results;
     }

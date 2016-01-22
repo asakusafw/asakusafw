@@ -140,21 +140,11 @@ public class SummarizeYaessLogSink implements Sink<YaessLogRecord> {
         Collections.sort(results, new Comparator<Summary>() {
             @Override
             public int compare(Summary o1, Summary o2) {
-                long t1 = normalize(o1.minTime);
-                long t2 = normalize(o2.minTime);
-                if (t1 < t2) {
-                    return -1;
-                } else if (t1 > t2) {
-                    return +1;
+                int diffTime = Long.compare(normalize(o1.minTime), normalize(o2.minTime));
+                if (diffTime != 0) {
+                    return diffTime;
                 }
-                long e1 = normalize(o1.getElapsed());
-                long e2 = normalize(o2.getElapsed());
-                if (e1 > e2) {
-                    return -1;
-                } else if (e1 < e2) {
-                    return +1;
-                }
-                return 0;
+                return Long.compare(normalize(o1.getElapsed()), normalize(o2.getElapsed()));
             }
             private long normalize(long value) {
                 return value < 0L ? Long.MAX_VALUE : value;

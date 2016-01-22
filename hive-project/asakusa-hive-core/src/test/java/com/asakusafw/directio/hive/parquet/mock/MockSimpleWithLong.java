@@ -15,7 +15,6 @@
  */
 package com.asakusafw.directio.hive.parquet.mock;
 
-import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.runtime.value.LongOption;
 import com.asakusafw.runtime.value.StringOption;
 

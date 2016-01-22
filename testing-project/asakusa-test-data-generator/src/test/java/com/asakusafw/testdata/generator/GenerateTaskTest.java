@@ -20,7 +20,7 @@ import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.net.URL;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -61,7 +61,7 @@ public class GenerateTaskTest {
             assertThat(s, r, not(nullValue()));
             resources.add(r);
         }
-        return new DmdlSourceResource(resources, Charset.forName("UTF-8"));
+        return new DmdlSourceResource(resources, StandardCharsets.UTF_8);
     }
 
     static class Mock implements TemplateGenerator {

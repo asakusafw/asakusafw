@@ -25,9 +25,11 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -54,8 +56,6 @@ import com.asakusafw.compiler.flow.FlowCompilerOptions.GenericOptionValue;
 import com.asakusafw.compiler.flow.FlowCompilingEnvironment;
 import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.flow.Packager;
-import com.asakusafw.utils.collections.Lists;
-import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
 import com.asakusafw.utils.java.model.syntax.Name;
 import com.asakusafw.utils.java.model.util.Filer;
@@ -69,7 +69,7 @@ public class FilePackager extends FlowCompilingEnvironment.Initialized implement
 
     static final Logger LOG = LoggerFactory.getLogger(FilePackager.class);
 
-    private static final Charset CHARSET = Charset.forName("UTF-8"); //$NON-NLS-1$
+    private static final Charset CHARSET = StandardCharsets.UTF_8;
 
     /**
      * The option name of whether or not packaging is enabled.
@@ -153,7 +153,7 @@ public class FilePackager extends FlowCompilingEnvironment.Initialized implement
         compile();
         try (JarOutputStream jar = new JarOutputStream(buffering(output))) {
             LOG.debug("creating a package of compilation results"); //$NON-NLS-1$
-            List<ResourceRepository> repos = Lists.create();
+            List<ResourceRepository> repos = new ArrayList<>();
             if (classDirectory.exists()) {
                 repos.add(new FileRepository(classDirectory));
             }
@@ -192,7 +192,7 @@ public class FilePackager extends FlowCompilingEnvironment.Initialized implement
             Iterable<? extends ResourceRepository> fragments) throws IOException {
         assert jar != null;
         assert fragments != null;
-        Set<Location> saw = Sets.create();
+        Set<Location> saw = new HashSet<>();
         for (ResourceRepository repo : main) {
             drainRepo(repo, jar, saw, true);
         }
@@ -290,7 +290,7 @@ public class FilePackager extends FlowCompilingEnvironment.Initialized implement
                 diagnostics,
                 Locale.getDefault(),
                 CHARSET)) {
-            List<String> arguments = Lists.create();
+            List<String> arguments = new ArrayList<>();
             String javaVersion = getJavaVersion();
             Collections.addAll(arguments, "-source", javaVersion); //$NON-NLS-1$
             Collections.addAll(arguments, "-target", javaVersion); //$NON-NLS-1$

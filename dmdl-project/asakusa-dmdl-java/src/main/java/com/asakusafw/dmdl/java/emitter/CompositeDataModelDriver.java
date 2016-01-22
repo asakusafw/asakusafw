@@ -16,6 +16,7 @@
 package com.asakusafw.dmdl.java.emitter;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -56,7 +57,7 @@ public class CompositeDataModelDriver extends JavaDataModelDriver {
 
     private List<JavaDataModelDriver> loadSpi(ClassLoader serviceClassLoader) {
         assert serviceClassLoader != null;
-        List<JavaDataModelDriver> results = Lists.create();
+        List<JavaDataModelDriver> results = new ArrayList<>();
         ServiceLoader<JavaDataModelDriver> loader =
             ServiceLoader.load(JavaDataModelDriver.class, serviceClassLoader);
         for (JavaDataModelDriver driver : loader) {
@@ -106,7 +107,7 @@ public class CompositeDataModelDriver extends JavaDataModelDriver {
 
     @Override
     public List<Type> getInterfaces(EmitContext context, ModelDeclaration model) throws IOException {
-        List<Type> results = Lists.create();
+        List<Type> results = new ArrayList<>();
         for (JavaDataModelDriver driver : drivers) {
             results.addAll(driver.getInterfaces(context, model));
         }
@@ -115,7 +116,7 @@ public class CompositeDataModelDriver extends JavaDataModelDriver {
 
     @Override
     public List<FieldDeclaration> getFields(EmitContext context, ModelDeclaration model) throws IOException {
-        List<FieldDeclaration> results = Lists.create();
+        List<FieldDeclaration> results = new ArrayList<>();
         for (JavaDataModelDriver driver : drivers) {
             results.addAll(driver.getFields(context, model));
         }
@@ -124,7 +125,7 @@ public class CompositeDataModelDriver extends JavaDataModelDriver {
 
     @Override
     public List<MethodDeclaration> getMethods(EmitContext context, ModelDeclaration model) throws IOException {
-        List<MethodDeclaration> results = Lists.create();
+        List<MethodDeclaration> results = new ArrayList<>();
         for (JavaDataModelDriver driver : drivers) {
             results.addAll(driver.getMethods(context, model));
         }
@@ -133,7 +134,7 @@ public class CompositeDataModelDriver extends JavaDataModelDriver {
 
     @Override
     public List<Annotation> getTypeAnnotations(EmitContext context, ModelDeclaration model) throws IOException {
-        List<Annotation> results = Lists.create();
+        List<Annotation> results = new ArrayList<>();
         for (JavaDataModelDriver driver : drivers) {
             results.addAll(driver.getTypeAnnotations(context, model));
         }
@@ -142,7 +143,7 @@ public class CompositeDataModelDriver extends JavaDataModelDriver {
 
     @Override
     public List<Annotation> getMemberAnnotations(EmitContext context, PropertyDeclaration property) throws IOException {
-        List<Annotation> results = Lists.create();
+        List<Annotation> results = new ArrayList<>();
         for (JavaDataModelDriver driver : drivers) {
             results.addAll(driver.getMemberAnnotations(context, property));
         }

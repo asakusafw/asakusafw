@@ -15,6 +15,7 @@
  */
 package com.asakusafw.compiler.operator;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -25,7 +26,6 @@ import javax.lang.model.type.TypeMirror;
 
 import com.asakusafw.compiler.common.NameGenerator;
 import com.asakusafw.compiler.common.Precondition;
-import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.jsr269.bridge.Jsr269;
 import com.asakusafw.utils.java.model.syntax.Attribute;
 import com.asakusafw.utils.java.model.syntax.Expression;
@@ -75,8 +75,8 @@ public class ImplementationBuilder {
         this.importer = context.importer;
         this.names = context.names;
         this.converter = new Jsr269(factory);
-        this.statements = Lists.create();
-        this.fields = Lists.create();
+        this.statements = new ArrayList<>();
+        this.fields = new ArrayList<>();
     }
 
     /**
@@ -166,7 +166,7 @@ public class ImplementationBuilder {
      * @return the member declaration of operator implementations
      */
     public List<TypeBodyDeclaration> toImplementation() {
-        List<TypeBodyDeclaration> results = Lists.create();
+        List<TypeBodyDeclaration> results = new ArrayList<>();
         results.addAll(fields);
         results.add(toMethodDeclaration());
         return results;
@@ -190,7 +190,7 @@ public class ImplementationBuilder {
 
     private List<FormalParameterDeclaration> toParameters() {
         List<? extends VariableElement> parameters = element.getParameters();
-        List<FormalParameterDeclaration> results = Lists.create();
+        List<FormalParameterDeclaration> results = new ArrayList<>();
         for (int i = 0, n = parameters.size(); i < n; i++) {
             VariableElement var = parameters.get(i);
             results.add(factory.newFormalParameterDeclaration(
@@ -208,10 +208,10 @@ public class ImplementationBuilder {
         if (typeParameters.isEmpty()) {
             return Collections.emptyList();
         }
-        List<TypeParameterDeclaration> results = Lists.create();
+        List<TypeParameterDeclaration> results = new ArrayList<>();
         for (TypeParameterElement typeParameter : typeParameters) {
             SimpleName name = factory.newSimpleName(typeParameter.getSimpleName().toString());
-            List<Type> typeBounds = Lists.create();
+            List<Type> typeBounds = new ArrayList<>();
             for (TypeMirror typeBound : typeParameter.getBounds()) {
                 typeBounds.add(importer.resolve(converter.convert(typeBound)));
             }

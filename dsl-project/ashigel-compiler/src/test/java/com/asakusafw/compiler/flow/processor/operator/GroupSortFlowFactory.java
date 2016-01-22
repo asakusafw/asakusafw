@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 package com.asakusafw.compiler.flow.processor.operator;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.annotation.Generated;
+
 import com.asakusafw.compiler.flow.testing.model.Ex1;
 import com.asakusafw.runtime.core.Result;
 import com.asakusafw.vocabulary.flow.Operator;
@@ -28,9 +33,6 @@ import com.asakusafw.vocabulary.operator.CoGroup;
 import com.asakusafw.vocabulary.operator.KeyInfo;
 import com.asakusafw.vocabulary.operator.OperatorFactory;
 import com.asakusafw.vocabulary.operator.OperatorInfo;
-import java.util.Arrays;
-import java.util.List;
-import javax.annotation.Generated;
 /**
  * An operator factory class about <code>GroupSortFlow</code>.
  * @see GroupSortFlow

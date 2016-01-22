@@ -25,6 +25,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CoderResult;
 import java.nio.charset.CodingErrorAction;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 
 import org.apache.hadoop.io.Text;
@@ -49,7 +50,7 @@ import com.asakusafw.runtime.value.ValueOption;
  */
 public class TsvEmitter implements RecordEmitter {
 
-    private static final Charset TEXT_ENCODE = Charset.forName("UTF-8"); //$NON-NLS-1$
+    private static final Charset TEXT_ENCODE = StandardCharsets.UTF_8;
 
     private static final int BUFFER_SIZE = 2048;
 

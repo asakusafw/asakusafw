@@ -21,6 +21,7 @@ import java.io.RandomAccessFile;
 import java.nio.channels.FileLock;
 import java.nio.channels.OverlappingFileLockException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 
 import org.apache.commons.logging.Log;
@@ -35,7 +36,7 @@ public class LocalFileLockProvider<T> implements LockProvider<T> {
 
     static final Log LOG = LogFactory.getLog(LocalFileLockProvider.class);
 
-    private static final Charset ENCODING = Charset.forName("UTF-8"); //$NON-NLS-1$
+    private static final Charset ENCODING = StandardCharsets.UTF_8;
 
     private final File baseDirectory;
 

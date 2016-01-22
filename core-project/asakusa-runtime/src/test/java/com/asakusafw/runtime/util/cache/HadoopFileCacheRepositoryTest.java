@@ -38,8 +38,6 @@ import org.apache.hadoop.fs.Path;
 import org.junit.Assume;
 import org.junit.Test;
 
-import com.asakusafw.runtime.util.cache.HadoopFileCacheRepository;
-import com.asakusafw.runtime.util.cache.FileCacheRepository;
 import com.asakusafw.runtime.util.hadoop.ConfigurationProvider;
 import com.asakusafw.runtime.util.lock.ConstantRetryStrategy;
 import com.asakusafw.runtime.util.lock.LocalFileLockProvider;

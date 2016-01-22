@@ -39,8 +39,8 @@ import com.asakusafw.compiler.util.tester.CompilerTester.TestInput;
 import com.asakusafw.compiler.util.tester.CompilerTester.TestOutput;
 import com.asakusafw.trace.io.TraceSettingSerializer;
 import com.asakusafw.trace.model.TraceSetting;
-import com.asakusafw.trace.model.Tracepoint;
 import com.asakusafw.trace.model.TraceSetting.Mode;
+import com.asakusafw.trace.model.Tracepoint;
 import com.asakusafw.trace.model.Tracepoint.PortKind;
 
 /**

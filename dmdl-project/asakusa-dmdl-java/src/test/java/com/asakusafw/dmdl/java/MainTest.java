@@ -21,6 +21,7 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -35,7 +36,6 @@ import org.junit.rules.TemporaryFolder;
 
 import com.asakusafw.dmdl.source.DmdlSourceRepository;
 import com.asakusafw.dmdl.source.DmdlSourceRepository.Cursor;
-import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.util.Emitter;
 
 /**
@@ -58,7 +58,7 @@ public class MainTest {
         File output = folder.newFolder("output");
         File source = folder.newFile("example.dmdl");
 
-        List<String> arguments = Lists.create();
+        List<String> arguments = new ArrayList<>();
 
         Collections.addAll(arguments, "-output", output.getPath());
         Collections.addAll(arguments, "-source", source.getPath());
@@ -81,7 +81,7 @@ public class MainTest {
         new File(source, "a.dmdl").createNewFile();
         new File(source, "b.dmdl").createNewFile();
 
-        List<String> arguments = Lists.create();
+        List<String> arguments = new ArrayList<>();
 
         Collections.addAll(arguments, "-output", output.getPath());
         Collections.addAll(arguments, "-source", source.getPath());
@@ -103,7 +103,7 @@ public class MainTest {
         new File(source1, "b.dmdl").createNewFile();
         File source2 = folder.newFile("file.dmdl");
 
-        List<String> arguments = Lists.create();
+        List<String> arguments = new ArrayList<>();
 
         Collections.addAll(arguments, "-output", output.getPath());
         Collections.addAll(arguments, "-source",

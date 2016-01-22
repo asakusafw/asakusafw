@@ -15,6 +15,8 @@
  */
 package com.asakusafw.compiler.flow.join.processor;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -25,8 +27,6 @@ import com.asakusafw.compiler.flow.LineEndProcessor;
 import com.asakusafw.compiler.flow.join.JoinResourceDescription;
 import com.asakusafw.compiler.flow.join.operator.SideDataJoin;
 import com.asakusafw.runtime.util.TypeUtil;
-import com.asakusafw.utils.collections.Lists;
-import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
 import com.asakusafw.utils.java.model.syntax.Statement;
@@ -53,10 +53,10 @@ public class SideDataJoinFlowProcessor extends LineEndProcessor {
 
         DataObjectMirror resultCache = context.createModelCache(joinedPort.getDataType());
         DataClass outputType = getEnvironment().getDataClasses().load(joinedPort.getDataType());
-        List<Statement> process = Lists.create();
+        List<Statement> process = new ArrayList<>();
         process.add(resultCache.createReset());
         Joined annotation = TypeUtil.erase(joinedPort.getDataType()).getAnnotation(Joined.class);
-        Set<String> saw = Sets.create();
+        Set<String> saw = new HashSet<>();
         for (Joined.Term term : annotation.terms()) {
             DataClass inputType = getEnvironment().getDataClasses().load(term.source());
             Expression input;

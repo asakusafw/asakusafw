@@ -19,6 +19,7 @@ import java.lang.reflect.Method;
 import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,7 +30,6 @@ import com.asakusafw.compiler.flow.FlowCompilingEnvironment;
 import com.asakusafw.compiler.repository.ValueOptionProperty;
 import com.asakusafw.runtime.model.DataModel;
 import com.asakusafw.runtime.value.ValueOption;
-import com.asakusafw.utils.collections.Maps;
 import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
 import com.asakusafw.utils.java.model.syntax.Statement;
@@ -67,7 +67,7 @@ public class DataModelClass implements DataClass {
             Class<?> aClass) {
         assert environment != null;
         assert aClass != null;
-        Map<String, Property> results = Maps.create();
+        Map<String, Property> results = new HashMap<>();
         for (Method method : aClass.getMethods()) {
             String propertyName = toPropertyName(method);
             Class<?> propertyType = method.getReturnType();

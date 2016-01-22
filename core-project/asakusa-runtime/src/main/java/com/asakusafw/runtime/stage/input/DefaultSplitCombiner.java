@@ -737,15 +737,7 @@ public class DefaultSplitCombiner extends SplitCombiner {
         }
         @Override
         public int compareTo(LocationAndTime o) {
-            double a = time;
-            double b = o.time;
-            if (a < b) {
-                return +1;
-            } else if (a > b) {
-                return -1;
-            } else {
-                return 0;
-            }
+            return Double.compare(time, o.time);
         }
         @Override
         public int hashCode() {
@@ -870,15 +862,7 @@ public class DefaultSplitCombiner extends SplitCombiner {
             ;
             @Override
             public int compare(Gene o1, Gene o2) {
-                double a = o1.score;
-                double b = o2.score;
-                if (a < b) {
-                    return -1;
-                } else if (a > b) {
-                    return +1;
-                } else {
-                    return 0;
-                }
+                return Double.compare(o1.score, o2.score);
             }
         }
     }

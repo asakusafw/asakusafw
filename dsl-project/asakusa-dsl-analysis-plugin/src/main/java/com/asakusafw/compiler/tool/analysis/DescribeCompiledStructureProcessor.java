@@ -21,7 +21,9 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -45,7 +47,6 @@ import com.asakusafw.compiler.flow.stage.StageModel.Factor;
 import com.asakusafw.compiler.flow.stage.StageModel.Fragment;
 import com.asakusafw.compiler.flow.stage.StageModel.MapUnit;
 import com.asakusafw.compiler.flow.stage.StageModel.ReduceUnit;
-import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.graph.Graph;
 import com.asakusafw.utils.graph.Graphs;
 import com.asakusafw.utils.java.model.syntax.Name;
@@ -64,7 +65,7 @@ public class DescribeCompiledStructureProcessor extends AbstractWorkflowProcesso
 
     static final Logger LOG = LoggerFactory.getLogger(DescribeCompiledStructureProcessor.class);
 
-    static final Charset ENCODING = Charset.forName("UTF-8"); //$NON-NLS-1$
+    static final Charset ENCODING = StandardCharsets.UTF_8;
 
     /**
      * Output path.
@@ -73,7 +74,7 @@ public class DescribeCompiledStructureProcessor extends AbstractWorkflowProcesso
 
     @Override
     public Collection<Class<? extends WorkDescriptionProcessor<?>>> getDescriptionProcessors() {
-        List<Class<? extends WorkDescriptionProcessor<?>>> results = Lists.create();
+        List<Class<? extends WorkDescriptionProcessor<?>>> results = new ArrayList<>();
         results.add(JobFlowWorkDescriptionProcessor.class);
         return results;
     }
@@ -190,7 +191,7 @@ public class DescribeCompiledStructureProcessor extends AbstractWorkflowProcesso
     }
 
     private List<Stage> sort(Set<Stage> stages) {
-        List<Stage> results = Lists.create();
+        List<Stage> results = new ArrayList<>();
         Collections.sort(results, new Comparator<Stage>() {
             @Override
             public int compare(Stage o1, Stage o2) {

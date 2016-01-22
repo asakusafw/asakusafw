@@ -15,6 +15,9 @@
  */
 package com.asakusafw.dmdl.analyzer.driver;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -29,9 +32,6 @@ import com.asakusafw.dmdl.semantics.Type;
 import com.asakusafw.dmdl.semantics.trait.ProjectionsTrait;
 import com.asakusafw.dmdl.spi.ModelAttributeDriver;
 import com.asakusafw.dmdl.util.AttributeUtil;
-import com.asakusafw.utils.collections.Lists;
-import com.asakusafw.utils.collections.Maps;
-import com.asakusafw.utils.collections.Sets;
 
 /**
  * Processes <code>&#64;auto_projection</code> annotations.
@@ -66,7 +66,7 @@ public class AutoProjectionDriver extends ModelAttributeDriver {
         if (projections == null) {
             projections = new ProjectionsTrait(declaration.getOriginalAst().expression, autoProjectios);
         } else {
-            List<ModelSymbol> composite = Lists.create();
+            List<ModelSymbol> composite = new ArrayList<>();
             composite.addAll(projections.getProjections());
             composite.addAll(autoProjectios);
             projections = new ProjectionsTrait(declaration.getOriginalAst().expression, composite);
@@ -77,12 +77,12 @@ public class AutoProjectionDriver extends ModelAttributeDriver {
     private List<ModelSymbol> collectProjections(DmdlSemantics environment, ModelDeclaration model) {
         assert environment != null;
         assert model != null;
-        Map<String, Type> properties = Maps.create();
+        Map<String, Type> properties = new HashMap<>();
         for (PropertyDeclaration property : model.getDeclaredProperties()) {
             properties.put(property.getName().identifier, property.getType());
         }
 
-        Set<String> saw = Sets.create();
+        Set<String> saw = new HashSet<>();
         saw.add(model.getName().identifier);
         ProjectionsTrait projections = model.getTrait(ProjectionsTrait.class);
         if (projections != null) {
@@ -91,7 +91,7 @@ public class AutoProjectionDriver extends ModelAttributeDriver {
             }
         }
 
-        List<ModelSymbol> autoProjectios = Lists.create();
+        List<ModelSymbol> autoProjectios = new ArrayList<>();
         for (ModelDeclaration other : environment.getDeclaredModels()) {
             // projection must be a projective model
             if (other.getOriginalAst().kind != ModelDefinitionKind.PROJECTIVE) {

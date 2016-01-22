@@ -18,6 +18,7 @@ package com.asakusafw.compiler.operator.flow;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -39,7 +40,6 @@ import com.asakusafw.compiler.operator.OperatorCompiler;
 import com.asakusafw.compiler.operator.OperatorCompilerException;
 import com.asakusafw.compiler.operator.OperatorCompilerOptions;
 import com.asakusafw.compiler.operator.OperatorCompilingEnvironment;
-import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.utils.java.model.util.Models;
 import com.asakusafw.vocabulary.flow.FlowPart;
 
@@ -74,7 +74,7 @@ public class FlowOperatorCompiler implements Processor {
 
     @Override
     public Set<String> getSupportedAnnotationTypes() {
-        Set<String> results = Sets.create();
+        Set<String> results = new HashSet<>();
         results.add(FlowPart.class.getName());
         return results;
     }

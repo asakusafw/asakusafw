@@ -16,6 +16,7 @@
 package com.asakusafw.runtime.io.csv;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.List;
@@ -34,7 +35,7 @@ public class CsvConfiguration {
      * The default charset encoding.
      * @see #getCharset()
      */
-    public static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8"); //$NON-NLS-1$
+    public static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
 
     /**
      * The default header cells (empty list).

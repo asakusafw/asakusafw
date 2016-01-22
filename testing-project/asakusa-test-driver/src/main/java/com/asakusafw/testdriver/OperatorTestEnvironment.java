@@ -17,6 +17,7 @@ package com.asakusafw.testdriver;
 
 import java.net.URL;
 import java.text.MessageFormat;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.hadoop.conf.Configuration;
@@ -35,7 +36,6 @@ import com.asakusafw.testdriver.core.TestDataToolProvider;
 import com.asakusafw.testdriver.core.TestToolRepository;
 import com.asakusafw.testdriver.core.TestingEnvironmentConfigurator;
 import com.asakusafw.testdriver.hadoop.ConfigurationFactory;
-import com.asakusafw.utils.collections.Maps;
 
 /**
  * An <em>Operator DSL</em> test helper which enables framework APIs.
@@ -119,8 +119,8 @@ public class OperatorTestEnvironment extends DriverElementBase implements TestRu
         }
         this.configurationPath = configurationPath;
         this.explicitConfigurationPath = explicit;
-        this.extraConfigurations = Maps.create();
-        this.batchArguments = Maps.create();
+        this.extraConfigurations = new HashMap<>();
+        this.batchArguments = new HashMap<>();
         this.dirty = false;
     }
 

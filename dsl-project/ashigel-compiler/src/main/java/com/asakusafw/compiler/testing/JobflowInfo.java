@@ -16,6 +16,7 @@
 package com.asakusafw.compiler.testing;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,7 +25,6 @@ import com.asakusafw.compiler.flow.ExternalIoCommandProvider;
 import com.asakusafw.compiler.flow.jobflow.JobflowModel;
 import com.asakusafw.compiler.flow.jobflow.JobflowModel.Export;
 import com.asakusafw.compiler.flow.jobflow.JobflowModel.Import;
-import com.asakusafw.utils.collections.Maps;
 import com.asakusafw.vocabulary.external.ExporterDescription;
 import com.asakusafw.vocabulary.external.ImporterDescription;
 
@@ -87,7 +87,7 @@ public class JobflowInfo {
      * @return pairs of input ID and its {@link ImporterDescription}
      */
     public Map<String, ImporterDescription> getImporterMap() {
-        Map<String, ImporterDescription> results = Maps.create();
+        Map<String, ImporterDescription> results = new HashMap<>();
         for (Import importer : jobflow.getImports()) {
             results.put(importer.getId(), importer.getDescription().getImporterDescription());
         }
@@ -117,7 +117,7 @@ public class JobflowInfo {
      * @return pairs of output ID and its {@link ExporterDescription}
      */
     public Map<String, ExporterDescription> getExporterMap() {
-        Map<String, ExporterDescription> results = Maps.create();
+        Map<String, ExporterDescription> results = new HashMap<>();
         for (Export exporter : jobflow.getExports()) {
             results.put(exporter.getId(), exporter.getDescription().getExporterDescription());
         }

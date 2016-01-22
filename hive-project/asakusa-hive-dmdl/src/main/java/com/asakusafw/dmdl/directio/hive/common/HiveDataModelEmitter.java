@@ -41,7 +41,6 @@ import com.asakusafw.dmdl.semantics.ModelDeclaration;
 import com.asakusafw.dmdl.semantics.PropertyDeclaration;
 import com.asakusafw.dmdl.semantics.type.BasicType;
 import com.asakusafw.runtime.value.ValueOption;
-import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Annotation;
 import com.asakusafw.utils.java.model.syntax.ClassBody;
 import com.asakusafw.utils.java.model.syntax.ClassDeclaration;
@@ -264,7 +263,7 @@ public class HiveDataModelEmitter extends JavaDataModelDriver {
         }
 
         private List<TypeBodyDeclaration> createMembers() {
-            List<TypeBodyDeclaration> results = Lists.create();
+            List<TypeBodyDeclaration> results = new ArrayList<>();
             results.add(createSingletonField());
             results.add(createStaticInitializer());
             results.add(createConstructor());
@@ -286,7 +285,7 @@ public class HiveDataModelEmitter extends JavaDataModelDriver {
         }
 
         private InitializerDeclaration createStaticInitializer() {
-            List<Statement> statements = Lists.create();
+            List<Statement> statements = new ArrayList<>();
             SimpleName builder = f.newSimpleName("builder"); //$NON-NLS-1$
             statements.add(new TypeBuilder(f, context.resolve(DataModelDescriptorBuilder.class))
                     .newObject(f.newClassLiteral(context.resolve(model.getSymbol())))

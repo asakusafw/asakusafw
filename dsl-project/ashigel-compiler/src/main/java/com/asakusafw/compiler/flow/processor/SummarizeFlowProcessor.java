@@ -17,7 +17,9 @@ package com.asakusafw.compiler.flow.processor;
 
 import java.lang.reflect.Type;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,8 +31,6 @@ import com.asakusafw.compiler.flow.LinePartProcessor;
 import com.asakusafw.compiler.flow.RendezvousProcessor;
 import com.asakusafw.compiler.flow.ShuffleDescription;
 import com.asakusafw.runtime.util.TypeUtil;
-import com.asakusafw.utils.collections.Lists;
-import com.asakusafw.utils.collections.Maps;
 import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
 import com.asakusafw.utils.java.model.syntax.Statement;
@@ -75,13 +75,13 @@ public class SummarizeFlowProcessor extends RendezvousProcessor {
                     output));
         }
 
-        Map<String, String> mapping = Maps.create();
+        Map<String, String> mapping = new HashMap<>();
         for (Summarized.Folding folding : summarized.term().foldings()) {
             if (folding.aggregator() == Aggregator.ANY) {
                 mapping.put(folding.source(), folding.destination());
             }
         }
-        List<String> remapped = Lists.create();
+        List<String> remapped = new ArrayList<>();
         for (String original : input.getShuffleKey().getGroupProperties()) {
             String target = mapping.get(original);
             if (target == null) {
@@ -110,7 +110,7 @@ public class SummarizeFlowProcessor extends RendezvousProcessor {
 
         DataObjectMirror cache = context.createModelCache(output.getDataType());
 
-        List<Statement> combine = Lists.create();
+        List<Statement> combine = new ArrayList<>();
         DataClass outputType = getEnvironment().getDataClasses().load(output.getDataType());
         Summarized summarized = TypeUtil.erase(output.getDataType()).getAnnotation(Summarized.class);
         for (Summarized.Folding folding : summarized.term().foldings()) {

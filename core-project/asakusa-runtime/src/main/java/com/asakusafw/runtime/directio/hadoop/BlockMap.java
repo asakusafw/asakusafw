@@ -110,11 +110,11 @@ public final class BlockMap {
         Arrays.sort(blocks, new Comparator<BlockInfo>() {
             @Override
             public int compare(BlockInfo o1, BlockInfo o2) {
-                int startDiff = compareLong(o1.start, o2.start);
+                int startDiff = Long.compare(o1.start, o2.start);
                 if (startDiff != 0) {
                     return startDiff;
                 }
-                return -compareLong(o1.hosts.length, o2.hosts.length);
+                return Integer.compare(o2.hosts.length, o1.hosts.length);
             }
         });
         long lastOffset = 0;
@@ -234,18 +234,9 @@ public final class BlockMap {
         Collections.sort(entries, new Comparator<Map.Entry<String, Long>>() {
             @Override
             public int compare(Map.Entry<String, Long> o1, Map.Entry<String, Long> o2) {
-                return -compareLong(o1.getValue(), o2.getValue());
+                return Long.compare(o2.getValue(), o1.getValue());
             }
         });
         return entries;
-    }
-
-    static int compareLong(long offset1, long offset2) {
-        if (offset1 < offset2) {
-            return -1;
-        } else if (offset1 > offset2) {
-            return +1;
-        }
-        return 0;
     }
 }

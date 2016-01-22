@@ -21,6 +21,9 @@ import java.math.RoundingMode;
 import java.text.MessageFormat;
 import java.util.Arrays;
 
+import com.asakusafw.runtime.value.DecimalOption;
+import com.asakusafw.runtime.value.ValueOption;
+
 import parquet.column.Dictionary;
 import parquet.io.api.Binary;
 import parquet.io.api.RecordConsumer;
@@ -30,9 +33,6 @@ import parquet.schema.PrimitiveType.PrimitiveTypeName;
 import parquet.schema.Type;
 import parquet.schema.Types;
 import parquet.schema.Types.PrimitiveBuilder;
-
-import com.asakusafw.runtime.value.DecimalOption;
-import com.asakusafw.runtime.value.ValueOption;
 
 /**
  * {@link ParquetValueDriver} for decimals.

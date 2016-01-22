@@ -21,6 +21,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -47,7 +48,6 @@ import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.runtime.io.TsvEmitter;
 import com.asakusafw.runtime.io.TsvParser;
 import com.asakusafw.runtime.value.StringOption;
-import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.ClassDeclaration;
 import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.ExpressionStatement;
@@ -224,7 +224,7 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
         }
 
         private List<TypeBodyDeclaration> createMembers() {
-            List<TypeBodyDeclaration> results = Lists.create();
+            List<TypeBodyDeclaration> results = new ArrayList<>();
             results.add(createGetSupportedType());
             results.add(createGetPreferredFragmentSize());
             results.add(createGetMinimumFragmentSize());
@@ -304,7 +304,7 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
             SimpleName stream = f.newSimpleName("stream"); //$NON-NLS-1$
             SimpleName offset = f.newSimpleName("offset"); //$NON-NLS-1$
             SimpleName fragmentSize = f.newSimpleName("fragmentSize"); //$NON-NLS-1$
-            List<Statement> statements = Lists.create();
+            List<Statement> statements = new ArrayList<>();
             statements.add(createNullCheck(dataType));
             statements.add(createNullCheck(path));
             statements.add(createNullCheck(stream));
@@ -359,7 +359,7 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
                         .toExpression())
                 .toLocalVariableDeclaration(context.resolve(TsvParser.class), parser));
 
-            List<Expression> arguments = Lists.create();
+            List<Expression> arguments = new ArrayList<>();
             arguments.add(parser);
             if (hasFileName()) {
                 arguments.add(new TypeBuilder(f, context.resolve(StringOption.class))
@@ -402,7 +402,7 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
             SimpleName dataType = f.newSimpleName("dataType"); //$NON-NLS-1$
             SimpleName path = f.newSimpleName("path"); //$NON-NLS-1$
             SimpleName stream = f.newSimpleName("stream"); //$NON-NLS-1$
-            List<Statement> statements = Lists.create();
+            List<Statement> statements = new ArrayList<>();
             statements.add(createNullCheck(path));
             statements.add(createNullCheck(stream));
 
@@ -453,7 +453,7 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
         private MethodDeclaration createAddHeader() {
             SimpleName emitter = f.newSimpleName("emitter"); //$NON-NLS-1$
             SimpleName buf = f.newSimpleName("buf"); //$NON-NLS-1$
-            List<Statement> statements = Lists.create();
+            List<Statement> statements = new ArrayList<>();
             statements.add(new TypeBuilder(f, context.resolve(StringOption.class))
                     .newObject()
                     .toLocalVariableDeclaration(context.resolve(StringOption.class), buf));
@@ -494,7 +494,7 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
 
         private MethodDeclaration createSkipHeader() {
             SimpleName input = f.newSimpleName("stream"); //$NON-NLS-1$
-            List<Statement> body = Lists.create();
+            List<Statement> body = new ArrayList<>();
 
             SimpleName c = f.newSimpleName("c"); //$NON-NLS-1$
             body.add(new ExpressionBuilder(f, input)
@@ -580,9 +580,9 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
             SimpleName parser = f.newSimpleName("parser"); //$NON-NLS-1$
             SimpleName path = f.newSimpleName("path"); //$NON-NLS-1$
 
-            List<TypeBodyDeclaration> members = Lists.create();
-            List<ExpressionStatement> constructorStatements = Lists.create();
-            List<FormalParameterDeclaration> constructorParameters = Lists.create();
+            List<TypeBodyDeclaration> members = new ArrayList<>();
+            List<ExpressionStatement> constructorStatements = new ArrayList<>();
+            List<FormalParameterDeclaration> constructorParameters = new ArrayList<>();
             members.add(createPrivateField(TsvParser.class, parser));
             constructorParameters.add(f.newFormalParameterDeclaration(context.resolve(TsvParser.class), parser));
             constructorStatements.add(mapField(parser));
@@ -599,7 +599,7 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
                     constructorStatements));
 
             SimpleName object = f.newSimpleName("object"); //$NON-NLS-1$
-            List<Statement> statements = Lists.create();
+            List<Statement> statements = new ArrayList<>();
             statements.add(f.newIfStatement(
                     new ExpressionBuilder(f, parser)
                         .method("next") //$NON-NLS-1$
@@ -677,7 +677,7 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
 
         private ClassDeclaration createWriterClass() {
             SimpleName emitter = f.newSimpleName("emitter"); //$NON-NLS-1$
-            List<TypeBodyDeclaration> members = Lists.create();
+            List<TypeBodyDeclaration> members = new ArrayList<>();
             members.add(createPrivateField(TsvEmitter.class, emitter));
             members.add(f.newConstructorDeclaration(
                     null,
@@ -687,7 +687,7 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
                     Arrays.asList(mapField(emitter))));
 
             SimpleName object = f.newSimpleName("object"); //$NON-NLS-1$
-            List<Statement> statements = Lists.create();
+            List<Statement> statements = new ArrayList<>();
             for (PropertyDeclaration property : model.getDeclaredProperties()) {
                 if (isValueField(property)) {
                     statements.add(new ExpressionBuilder(f, emitter)

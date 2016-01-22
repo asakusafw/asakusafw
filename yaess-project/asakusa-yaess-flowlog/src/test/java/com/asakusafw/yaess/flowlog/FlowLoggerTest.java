@@ -21,7 +21,7 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Scanner;
@@ -236,7 +236,7 @@ public class FlowLoggerTest {
     private FlowLoggerProfile profile(boolean reportJob, boolean deleteOnSetup, boolean deleteOnCleanup) {
         return new FlowLoggerProfile(
                 folder.getRoot(),
-                Charset.forName("UTF-8"),
+                StandardCharsets.UTF_8,
                 new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"),
                 0.10,
                 reportJob,

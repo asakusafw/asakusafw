@@ -15,13 +15,13 @@
  */
 package com.asakusafw.compiler.flow.join.processor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.asakusafw.compiler.common.TargetOperator;
 import com.asakusafw.compiler.flow.LineEndProcessor;
 import com.asakusafw.compiler.flow.join.JoinResourceDescription;
 import com.asakusafw.compiler.flow.join.operator.SideDataJoinUpdate;
-import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
 import com.asakusafw.utils.java.model.syntax.Statement;
@@ -52,7 +52,7 @@ public class SideDataJoinUpdateFlowProcessor extends LineEndProcessor {
         ResultMirror missed = context.getOutput(missedPort);
 
         Expression impl = context.createImplementation();
-        List<Expression> arguments = Lists.create();
+        List<Expression> arguments = new ArrayList<>();
         arguments.add(helper.getGetRawMasterExpression());
         arguments.add(context.getInput());
         for (OperatorDescription.Parameter param : desc.getParameters()) {

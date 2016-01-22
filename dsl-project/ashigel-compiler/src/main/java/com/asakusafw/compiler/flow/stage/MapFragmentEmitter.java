@@ -16,6 +16,7 @@
 package com.asakusafw.compiler.flow.stage;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -39,7 +40,6 @@ import com.asakusafw.compiler.flow.stage.StageModel.Factor;
 import com.asakusafw.compiler.flow.stage.StageModel.Fragment;
 import com.asakusafw.runtime.core.Result;
 import com.asakusafw.runtime.trace.TraceLocation;
-import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Comment;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
 import com.asakusafw.utils.java.model.syntax.ConstructorDeclaration;
@@ -131,7 +131,7 @@ public class MapFragmentEmitter {
 
         private final FragmentConnection connection;
 
-        private final List<FieldDeclaration> extraFields = Lists.create();
+        private final List<FieldDeclaration> extraFields = new ArrayList<>();
 
         Engine(
                 FlowCompilingEnvironment environment,
@@ -166,7 +166,7 @@ public class MapFragmentEmitter {
             SimpleName name = factory.newSimpleName(
                     Naming.getMapFragmentClass(fragment.getSerialNumber()));
             importer.resolvePackageMember(name);
-            List<TypeBodyDeclaration> members = Lists.create();
+            List<TypeBodyDeclaration> members = new ArrayList<>();
             members.addAll(connection.createFields());
             ConstructorDeclaration ctor = connection.createConstructor(name);
             MethodDeclaration method = createBody();
@@ -224,7 +224,7 @@ public class MapFragmentEmitter {
 
         private List<Statement> createStatements(SimpleName argument) {
             assert argument != null;
-            List<Statement> results = Lists.create();
+            List<Statement> results = new ArrayList<>();
             boolean end = false;
             Expression input = argument;
             Iterator<Factor> factors = fragment.getFactors().iterator();

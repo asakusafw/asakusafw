@@ -15,8 +15,11 @@
  */
 package com.asakusafw.compiler.flow.stage;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,9 +43,7 @@ import com.asakusafw.compiler.flow.stage.StageModel.ReduceUnit;
 import com.asakusafw.compiler.flow.stage.StageModel.ResourceFragment;
 import com.asakusafw.compiler.flow.stage.StageModel.Sink;
 import com.asakusafw.compiler.flow.stage.StageModel.Unit;
-import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.collections.Maps;
-import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.utils.graph.Graph;
 import com.asakusafw.utils.graph.Graphs;
 import com.asakusafw.vocabulary.flow.graph.FlowElement;
@@ -101,18 +102,18 @@ public class StageAnalyzer {
         LOG.debug("start analyzing stage: {}", block); //$NON-NLS-1$
 
         Context context = new Context(environment);
-        List<MapUnit> mapUnits = Lists.create();
+        List<MapUnit> mapUnits = new ArrayList<>();
         for (FlowBlock flowBlock : block.getMapBlocks()) {
             mapUnits.addAll(collectMapUnits(context, flowBlock));
         }
         mapUnits = composeMapUnits(mapUnits);
 
-        List<ReduceUnit> reduceUnits = Lists.create();
+        List<ReduceUnit> reduceUnits = new ArrayList<>();
         for (FlowBlock flowBlock : block.getReduceBlocks()) {
             reduceUnits.addAll(collectReduceUnits(context, flowBlock));
         }
 
-        List<Sink> outputs = Lists.create();
+        List<Sink> outputs = new ArrayList<>();
         if (block.hasReduceBlocks()) {
             outputs.addAll(collectOutputs(context, reduceUnits, block.getReduceBlocks()));
         } else {
@@ -143,9 +144,9 @@ public class StageAnalyzer {
 
     private List<MapUnit> composeMapUnits(List<MapUnit> mapUnits) {
         assert mapUnits != null;
-        Map<Set<FlowBlock.Output>, List<MapUnit>> sameInputs = Maps.create();
+        Map<Set<FlowBlock.Output>, List<MapUnit>> sameInputs = new HashMap<>();
         for (MapUnit unit : mapUnits) {
-            Set<FlowBlock.Output> sources = Sets.create();
+            Set<FlowBlock.Output> sources = new HashSet<>();
             for (FlowBlock.Input input : unit.getInputs()) {
                 for (FlowBlock.Connection conn : input.getConnections()) {
                     sources.add(conn.getUpstream());
@@ -153,7 +154,7 @@ public class StageAnalyzer {
             }
             Maps.addToList(sameInputs, sources, unit);
         }
-        List<MapUnit> results = Lists.create();
+        List<MapUnit> results = new ArrayList<>();
         for (Map.Entry<Set<FlowBlock.Output>, List<MapUnit>> entry : sameInputs.entrySet()) {
             Set<FlowBlock.Output> sources = entry.getKey();
             List<MapUnit> group = entry.getValue();
@@ -169,9 +170,9 @@ public class StageAnalyzer {
         if (group.size() == 1) {
             return group.get(0);
         }
-        Set<FlowBlock.Input> sawInputs = Sets.create();
-        List<FlowBlock.Input> inputs = Lists.create();
-        List<Fragment> fragments = Lists.create();
+        Set<FlowBlock.Input> sawInputs = new HashSet<>();
+        List<FlowBlock.Input> inputs = new ArrayList<>();
+        List<Fragment> fragments = new ArrayList<>();
 
         for (MapUnit unit : group) {
             fragments.addAll(unit.getFragments());
@@ -216,7 +217,7 @@ public class StageAnalyzer {
             Graph<Fragment> subgraph = createSubgraph(head, fgraph);
             streams.put(blockInput, subgraph);
         }
-        List<MapUnit> results = Lists.create();
+        List<MapUnit> results = new ArrayList<>();
         for (Map.Entry<FlowBlock.Input, Graph<Fragment>> entry : streams.entrySet()) {
             FlowBlock.Input input = entry.getKey();
             Graph<Fragment> subgraph = entry.getValue();
@@ -245,14 +246,14 @@ public class StageAnalyzer {
             Maps.addToList(inputGroups, element, blockInput);
         }
 
-        Map<FlowElement, Graph<Fragment>> streams = Maps.create();
+        Map<FlowElement, Graph<Fragment>> streams = new HashMap<>();
 
         for (FlowElement element : inputGroups.keySet()) {
             Fragment head = fragments.get(element);
             Graph<Fragment> subgraph = createSubgraph(head, fgraph);
             streams.put(element, subgraph);
         }
-        List<ReduceUnit> results = Lists.create();
+        List<ReduceUnit> results = new ArrayList<>();
         for (Map.Entry<FlowElement, Graph<Fragment>> entry : streams.entrySet()) {
             FlowElement element = entry.getKey();
             Graph<Fragment> subgraph = entry.getValue();
@@ -274,13 +275,13 @@ public class StageAnalyzer {
         assert context != null;
         assert units != null;
         assert blocks != null;
-        Set<FlowElementOutput> candidates = Sets.create();
+        Set<FlowElementOutput> candidates = new HashSet<>();
         for (FlowBlock block : blocks) {
             for (FlowBlock.Output blockOutput : block.getBlockOutputs()) {
                 candidates.add(blockOutput.getElementPort());
             }
         }
-        Set<FlowElementOutput> outputs = Sets.create();
+        Set<FlowElementOutput> outputs = new HashSet<>();
         for (Unit<?> unit : units) {
             for (Fragment fragment : unit.getFragments()) {
                 for (FlowElementOutput output : fragment.getOutputPorts()) {
@@ -291,7 +292,7 @@ public class StageAnalyzer {
             }
         }
 
-        Map<Set<FlowBlock.Input>, Set<FlowBlock.Output>> opposites = Maps.create();
+        Map<Set<FlowBlock.Input>, Set<FlowBlock.Output>> opposites = new HashMap<>();
         for (FlowBlock block : blocks) {
             for (FlowBlock.Output blockOutput : block.getBlockOutputs()) {
                 // ignores disconnected outputs
@@ -299,7 +300,7 @@ public class StageAnalyzer {
                     continue;
                 }
                 // grouping outputs by having the same downstream
-                Set<FlowBlock.Input> downstream = Sets.create();
+                Set<FlowBlock.Input> downstream = new HashSet<>();
                 for (FlowBlock.Connection connection : blockOutput.getConnections()) {
                     downstream.add(connection.getDownstream());
                 }
@@ -307,7 +308,7 @@ public class StageAnalyzer {
             }
         }
 
-        List<Sink> results = Lists.create();
+        List<Sink> results = new ArrayList<>();
         for (Set<FlowBlock.Output> group : opposites.values()) {
             String name = context.names.create("result").getToken(); //$NON-NLS-1$
             results.add(new Sink(group, context.names.create(name).getToken()));
@@ -361,7 +362,7 @@ public class StageAnalyzer {
             Set<FlowElement> startElements) {
         assert context != null;
         assert startElements != null;
-        Map<FlowElement, Fragment> results = Maps.create();
+        Map<FlowElement, Fragment> results = new HashMap<>();
         for (FlowElement element : startElements) {
             Fragment fragment = getFragment(context, element, startElements);
             assert results.containsKey(element) == false;
@@ -378,8 +379,8 @@ public class StageAnalyzer {
         assert element != null;
         assert startElements != null;
         FlowElement current = element;
-        List<Factor> factors = Lists.create();
-        List<ResourceFragment> resources = Lists.create();
+        List<Factor> factors = new ArrayList<>();
+        List<ResourceFragment> resources = new ArrayList<>();
         while (true) {
             Factor factor = getFactor(current);
             if (factor == null) {
@@ -406,12 +407,12 @@ public class StageAnalyzer {
     private Set<FlowElement> collectFragmentStartElements(FlowBlock block) {
         assert block != null;
 
-        Set<FlowElement> outputs = Sets.create();
+        Set<FlowElement> outputs = new HashSet<>();
         for (FlowBlock.Output blockOutput : block.getBlockOutputs()) {
             outputs.add(blockOutput.getElementPort().getOwner());
         }
 
-        Set<FlowElement> results = Sets.create();
+        Set<FlowElement> results = new HashSet<>();
         for (FlowBlock.Input blockInput : block.getBlockInputs()) {
             results.add(blockInput.getElementPort().getOwner());
         }
@@ -476,7 +477,7 @@ public class StageAnalyzer {
         if (resources.isEmpty()) {
             return Collections.emptyList();
         }
-        List<ResourceFragment> results = Lists.create();
+        List<ResourceFragment> results = new ArrayList<>();
         for (FlowResourceDescription description : resources) {
             results.add(new ResourceFragment(description));
         }

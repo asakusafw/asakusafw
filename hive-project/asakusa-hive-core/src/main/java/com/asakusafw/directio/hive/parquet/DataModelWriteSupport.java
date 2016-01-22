@@ -23,15 +23,15 @@ import java.util.Map;
 
 import org.apache.hadoop.conf.Configuration;
 
-import parquet.hadoop.api.WriteSupport;
-import parquet.io.api.RecordConsumer;
-import parquet.schema.MessageType;
-import parquet.schema.Type;
-
 import com.asakusafw.directio.hive.serde.DataModelDescriptor;
 import com.asakusafw.directio.hive.serde.PropertyDescriptor;
 import com.asakusafw.directio.hive.serde.PropertyExtractor;
 import com.asakusafw.runtime.value.ValueOption;
+
+import parquet.hadoop.api.WriteSupport;
+import parquet.io.api.RecordConsumer;
+import parquet.schema.MessageType;
+import parquet.schema.Type;
 
 /**
  * Consumes a data model into {@link RecordConsumer}.

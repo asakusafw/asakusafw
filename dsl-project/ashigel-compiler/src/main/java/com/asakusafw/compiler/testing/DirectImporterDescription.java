@@ -16,6 +16,7 @@
 package com.asakusafw.compiler.testing;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 import com.asakusafw.compiler.common.Precondition;
@@ -61,7 +62,7 @@ public class DirectImporterDescription extends TemporaryInputDescription {
         Precondition.checkMustNotBeNull(path, "path"); //$NON-NLS-1$
         Precondition.checkMustNotBeNull(pathRest, "pathRest"); //$NON-NLS-1$
         this.modelType = modelType;
-        Set<String> pathSet = Sets.create();
+        Set<String> pathSet = new HashSet<>();
         pathSet.add(path);
         Collections.addAll(pathSet, pathRest);
         this.paths = Collections.unmodifiableSet(pathSet);

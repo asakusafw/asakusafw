@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 package com.asakusafw.compiler.flow.processor.operator;
+import javax.annotation.Generated;
+
 import com.asakusafw.compiler.flow.testing.model.Ex1;
 import com.asakusafw.compiler.flow.testing.model.Ex2;
-import javax.annotation.Generated;
 /**
  * An operator implementation class for{@link MasterCheckFlow}.
  */

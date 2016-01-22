@@ -47,7 +47,6 @@ import com.asakusafw.runtime.stage.launcher.ApplicationLauncher;
 import com.asakusafw.runtime.stage.optimizer.LibraryCopySuppressionConfigurator;
 import com.asakusafw.runtime.stage.temporary.TemporaryStorage;
 import com.asakusafw.runtime.util.hadoop.ConfigurationProvider;
-import com.asakusafw.utils.collections.Lists;
 
 /**
  * A driver for control Hadoop jobs for testing.
@@ -196,7 +195,7 @@ public final class HadoopDriver implements Closeable {
         }
         copyFromHadoop(location, temp);
 
-        List<ModelInput<T>> sources = Lists.create();
+        List<ModelInput<T>> sources = new ArrayList<>();
         if (location.isPrefix()) {
             for (File file : temp.listFiles()) {
                 if (isCopyTarget(file)) {
@@ -318,7 +317,7 @@ public final class HadoopDriver implements Closeable {
             File conf,
             Map<String, String> properties) throws IOException {
         logger.info("FORK EXEC: {} with {}", className, libjars);
-        List<String> arguments = Lists.create();
+        List<String> arguments = new ArrayList<>();
         arguments.add("jar");
         arguments.add(runtimeLib.getAbsolutePath());
         arguments.add(ApplicationLauncher.class.getName());
@@ -481,7 +480,7 @@ public final class HadoopDriver implements Closeable {
                     "hadoop",
                     Arrays.toString(arguments)));
         }
-        List<String> commands = Lists.create();
+        List<String> commands = new ArrayList<>();
         commands.add(hadoop);
         Collections.addAll(commands, arguments);
 

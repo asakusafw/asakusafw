@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -40,7 +42,6 @@ import com.asakusafw.compiler.flow.join.operator.SideDataBranch;
 import com.asakusafw.compiler.flow.join.operator.SideDataCheck;
 import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.collections.Maps;
-import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.utils.graph.Graph;
 import com.asakusafw.utils.graph.Graphs;
 import com.asakusafw.vocabulary.flow.graph.Connectivity;
@@ -90,7 +91,7 @@ public class StagePlanner {
 
     private final FlowCompilerOptions options;
 
-    private final List<StagePlanner.Diagnostic> diagnostics = Lists.create();
+    private final List<StagePlanner.Diagnostic> diagnostics = new ArrayList<>();
 
     private int blockSequence = 1;
 
@@ -234,7 +235,7 @@ public class StagePlanner {
     private void sortStageBlocks(List<StageBlock> stageBlocks) {
         assert stageBlocks != null;
         LOG.debug("sorting stages in stage graph"); //$NON-NLS-1$
-        Map<FlowBlock, StageBlock> membership = Maps.create();
+        Map<FlowBlock, StageBlock> membership = new HashMap<>();
         for (StageBlock stage : stageBlocks) {
             for (FlowBlock flow : stage.getMapBlocks()) {
                 membership.put(flow, stage);
@@ -288,7 +289,7 @@ public class StagePlanner {
         assert blocks != null;
         LOG.debug("building stage blocks: {}", blocks); //$NON-NLS-1$
 
-        List<StageBlock> results = Lists.create();
+        List<StageBlock> results = new ArrayList<>();
         List<FlowBlockGroup> flowBlockGroups = collectFlowBlockGroups(blocks);
         compressFlowBlockGroups(flowBlockGroups);
         for (FlowBlockGroup group : flowBlockGroups) {
@@ -322,9 +323,9 @@ public class StagePlanner {
         LOG.debug("Compressing flow blocks"); //$NON-NLS-1$
 
         // merge blocks
-        List<FlowBlock> blocks = Lists.create();
-        Map<FlowBlock.Input, Set<FlowBlock.Input>> inputMapping = Maps.create();
-        Map<FlowBlock.Output, Set<FlowBlock.Output>> outputMapping = Maps.create();
+        List<FlowBlock> blocks = new ArrayList<>();
+        Map<FlowBlock.Input, Set<FlowBlock.Input>> inputMapping = new HashMap<>();
+        Map<FlowBlock.Output, Set<FlowBlock.Output>> outputMapping = new HashMap<>();
         for (FlowBlockGroup group : flowBlockGroups) {
             if (group.reducer) {
                 Set<FlowBlock> predecessors = getPredecessors(group.members);
@@ -411,7 +412,7 @@ public class StagePlanner {
         computeCriticalPaths(groups);
 
         // merges blocks
-        List<FlowBlockGroup> results = Lists.create();
+        List<FlowBlockGroup> results = new ArrayList<>();
         while (groups.isEmpty() == false) {
             FlowBlockGroup first = groups.removeFirst();
             Iterator<FlowBlockGroup> rest = groups.iterator();
@@ -429,7 +430,7 @@ public class StagePlanner {
 
     private void computeCriticalPaths(List<FlowBlockGroup> groups) {
         assert groups != null;
-        Map<FlowBlock, FlowBlockGroup> mapping = Maps.create();
+        Map<FlowBlock, FlowBlockGroup> mapping = new HashMap<>();
         LinkedList<FlowBlockGroup> work = new LinkedList<>();
         for (FlowBlockGroup group : groups) {
             work.add(group);
@@ -454,7 +455,7 @@ public class StagePlanner {
 
     private Set<FlowBlock> getPredecessors(Set<FlowBlock> blocks) {
         assert blocks != null;
-        Set<FlowBlock> results = Sets.create();
+        Set<FlowBlock> results = new HashSet<>();
         for (FlowBlock block : blocks) {
             for (FlowBlock.Input port : block.getBlockInputs()) {
                 for (FlowBlock.Connection conn : port.getConnections()) {
@@ -473,8 +474,8 @@ public class StagePlanner {
      */
     private FlowBlock buildInputBlock(FlowGraph graph) {
         assert graph != null;
-        List<FlowElementOutput> outputs = Lists.create();
-        Set<FlowElement> elements = Sets.create();
+        List<FlowElementOutput> outputs = new ArrayList<>();
+        Set<FlowElement> elements = new HashSet<>();
         for (FlowIn<?> node : graph.getFlowInputs()) {
             outputs.add(node.toOutputPort());
             elements.add(node.getFlowElement());
@@ -494,8 +495,8 @@ public class StagePlanner {
      */
     private FlowBlock buildOutputBlock(FlowGraph graph) {
         assert graph != null;
-        List<FlowElementInput> inputs = Lists.create();
-        Set<FlowElement> elements = Sets.create();
+        List<FlowElementInput> inputs = new ArrayList<>();
+        Set<FlowElement> elements = new HashSet<>();
         for (FlowOut<?> node : graph.getFlowOutputs()) {
             inputs.add(node.toInputPort());
             elements.add(node.getFlowElement());
@@ -518,16 +519,16 @@ public class StagePlanner {
         LOG.debug("computing flow blocks: {}", graph); //$NON-NLS-1$
 
         // shuffle bound -> next stage bounds
-        Collection<FlowPath> shuffleSuccessors = Sets.create();
+        Collection<FlowPath> shuffleSuccessors = new HashSet<>();
 
         // shuffle bound <- previous stage bounds
-        Collection<FlowPath> shufflePredecessors = Sets.create();
+        Collection<FlowPath> shufflePredecessors = new HashSet<>();
 
         // stage bound -> any next (shuffle/stage) bounds
-        Map<FlowElement, FlowPath> stageSuccessors = Maps.create();
+        Map<FlowElement, FlowPath> stageSuccessors = new HashMap<>();
 
         // stage bound <- any previous (shuffle/stage) bounds
-        Map<FlowElement, FlowPath> stagePredecessors = Maps.create();
+        Map<FlowElement, FlowPath> stagePredecessors = new HashMap<>();
 
         for (FlowElement boundary : FlowGraphUtil.collectBoundaries(graph)) {
             boolean shuffle = FlowGraphUtil.isShuffleBoundary(boundary);
@@ -548,7 +549,7 @@ public class StagePlanner {
             }
         }
 
-        List<FlowBlock> results = Lists.create();
+        List<FlowBlock> results = new ArrayList<>();
 
         results.addAll(collectShuffleToStage(graph, shuffleSuccessors));
         results.addAll(collectStageToShuffle(graph, shufflePredecessors, stageSuccessors));
@@ -566,10 +567,10 @@ public class StagePlanner {
         LOG.debug("computing map blocks (w/o succeeding reducers): {}", graph); //$NON-NLS-1$
 
         // creates map blocks from (stage -> stage) path per their input
-        List<FlowBlock> results = Lists.create();
+        List<FlowBlock> results = new ArrayList<>();
         Collection<FlowPath> ss = stageSuccessors.values();
         for (FlowPath stageForward : ss) {
-            List<FlowPath> stageBackwards = Lists.create();
+            List<FlowPath> stageBackwards = new ArrayList<>();
             for (FlowElement arrival : stageForward.getArrivals()) {
                 if (FlowGraphUtil.isShuffleBoundary(arrival) == false) {
                     FlowPath stageBackward = stagePredecessors.get(arrival);
@@ -605,7 +606,7 @@ public class StagePlanner {
         LOG.debug("computing map blocks (w/ succeeding reducers): {}", graph); //$NON-NLS-1$
 
         // creates map blocks from (stage -> shuffle) path per their input
-        List<FlowBlock> results = Lists.create();
+        List<FlowBlock> results = new ArrayList<>();
         for (FlowPath shuffleBackward : shufflePredecessors) {
             Set<FlowElement> arrivals = shuffleBackward.getArrivals();
             for (FlowElement stageStart : arrivals) {
@@ -634,7 +635,7 @@ public class StagePlanner {
         LOG.debug("computing reduce blocks (w/ succeeding reducers): {}", graph); //$NON-NLS-1$
 
         // creates map blocks from [shuffle -> stage) path
-        List<FlowBlock> results = Lists.create();
+        List<FlowBlock> results = new ArrayList<>();
         for (FlowPath path : shuffleSuccessors) {
             FlowBlock block = path.createBlock(
                     graph,
@@ -659,12 +660,12 @@ public class StagePlanner {
         assert computationBlocks != null;
         LOG.debug("connecting flow blocks"); //$NON-NLS-1$
 
-        List<FlowBlock> blocks = Lists.create();
+        List<FlowBlock> blocks = new ArrayList<>();
         blocks.add(inputBlock);
         blocks.add(outputBlock);
         blocks.addAll(computationBlocks);
 
-        Map<PortConnection, Set<FlowBlock.Input>> mapping = Maps.create();
+        Map<PortConnection, Set<FlowBlock.Input>> mapping = new HashMap<>();
         for (FlowBlock block : blocks) {
             for (FlowBlock.Input input : block.getBlockInputs()) {
                 for (PortConnection conn : input.getOriginalConnections()) {
@@ -1025,7 +1026,7 @@ public class StagePlanner {
         Set<Set<FlowElement>> circuits = Graphs.findCircuit(elements);
         for (Set<FlowElement> cyclic : circuits) {
             List<FlowElement> context = Lists.from(cyclic);
-            List<String> names = Lists.create();
+            List<String> names = new ArrayList<>();
             for (FlowElement elem : context) {
                 names.add(elem.getDescription().getName());
             }
@@ -1127,7 +1128,7 @@ public class StagePlanner {
         FlowBlockGroup(FlowBlock flowBlock) {
             assert flowBlock != null;
             this.founder = flowBlock;
-            this.members = Sets.create();
+            this.members = new HashSet<>();
             this.members.add(flowBlock);
             this.reducer = flowBlock.isReduceBlock();
             this.groupSource = collectStageSource(flowBlock);
@@ -1137,7 +1138,7 @@ public class StagePlanner {
         private Set<FlowBlock.Output> collectStageSource(FlowBlock flowBlock) {
             assert flowBlock != null;
             if (flowBlock.isReduceBlock()) {
-                Set<FlowBlock.Output> results = Sets.create();
+                Set<FlowBlock.Output> results = new HashSet<>();
                 for (FlowBlock predecessor : getPredeceaseBlocks(flowBlock)) {
                     assert predecessor.isReduceBlock() == false;
                     results.addAll(collectBlockSource(predecessor));
@@ -1150,7 +1151,7 @@ public class StagePlanner {
 
         private Set<FlowBlock> getPredeceaseBlocks(FlowBlock flowBlock) {
             assert flowBlock != null;
-            Set<FlowBlock> results = Sets.create();
+            Set<FlowBlock> results = new HashSet<>();
             for (FlowBlock.Input input : flowBlock.getBlockInputs()) {
                 for (FlowBlock.Connection conn : input.getConnections()) {
                     FlowBlock pred = conn.getUpstream().getOwner();
@@ -1162,7 +1163,7 @@ public class StagePlanner {
 
         private Set<FlowBlock.Output> collectBlockSource(FlowBlock flowBlock) {
             assert flowBlock != null;
-            Set<FlowBlock.Output> results = Sets.create();
+            Set<FlowBlock.Output> results = new HashSet<>();
             for (FlowBlock.Input input : flowBlock.getBlockInputs()) {
                 for (FlowBlock.Connection conn : input.getConnections()) {
                     results.add(conn.getUpstream());
@@ -1173,7 +1174,7 @@ public class StagePlanner {
 
         private Set<FlowBlock> collectPredeceaseBlocks(FlowBlock flowBlock) {
             assert flowBlock != null;
-            Set<FlowBlock> results = Sets.create();
+            Set<FlowBlock> results = new HashSet<>();
             LinkedList<FlowBlock> work = new LinkedList<>();
             work.addLast(flowBlock);
             while (work.isEmpty() == false) {

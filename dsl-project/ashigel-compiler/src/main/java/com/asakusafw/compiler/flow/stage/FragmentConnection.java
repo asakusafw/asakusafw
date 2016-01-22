@@ -15,6 +15,8 @@
  */
 package com.asakusafw.compiler.flow.stage;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,8 +26,6 @@ import com.asakusafw.compiler.flow.FlowCompilingEnvironment;
 import com.asakusafw.compiler.flow.stage.StageModel.Fragment;
 import com.asakusafw.compiler.flow.stage.StageModel.ResourceFragment;
 import com.asakusafw.runtime.core.Result;
-import com.asakusafw.utils.collections.Lists;
-import com.asakusafw.utils.collections.Maps;
 import com.asakusafw.utils.java.model.syntax.ConstructorDeclaration;
 import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.FieldDeclaration;
@@ -47,9 +47,9 @@ import com.asakusafw.vocabulary.flow.graph.FlowResourceDescription;
  */
 public class FragmentConnection {
 
-    private final Map<FlowResourceDescription, SimpleName> resources = Maps.create();
+    private final Map<FlowResourceDescription, SimpleName> resources = new HashMap<>();
 
-    private final Map<FlowElementOutput, SimpleName> successors = Maps.create();
+    private final Map<FlowElementOutput, SimpleName> successors = new HashMap<>();
 
     private final ModelFactory factory;
 
@@ -93,7 +93,7 @@ public class FragmentConnection {
      * @return the field declarations
      */
     public List<FieldDeclaration> createFields() {
-        List<FieldDeclaration> results = Lists.create();
+        List<FieldDeclaration> results = new ArrayList<>();
         for (ResourceFragment resource : fragment.getResources()) {
             results.add(createResourceField(resource));
         }
@@ -113,8 +113,8 @@ public class FragmentConnection {
         Precondition.checkMustNotBeNull(className, "className"); //$NON-NLS-1$
         JavadocBuilder javadoc = new JavadocBuilder(factory)
             .text("Creates a new instance."); //$NON-NLS-1$
-        List<FormalParameterDeclaration> parameters = Lists.create();
-        List<Statement> statements = Lists.create();
+        List<FormalParameterDeclaration> parameters = new ArrayList<>();
+        List<Statement> statements = new ArrayList<>();
         for (ResourceFragment resource : fragment.getResources()) {
             SimpleName param = getResource(resource.getDescription());
             javadoc.param(param)
@@ -196,7 +196,7 @@ public class FragmentConnection {
      * @return a mapping of external resource description to its expression
      */
     public Map<FlowResourceDescription, Expression> getResources() {
-        Map<FlowResourceDescription, Expression> results = Maps.create();
+        Map<FlowResourceDescription, Expression> results = new HashMap<>();
         for (ResourceFragment key : fragment.getResources()) {
             SimpleName name = resources.get(key.getDescription());
             assert name != null;
@@ -214,7 +214,7 @@ public class FragmentConnection {
      * @return a mapping of output port to its expression
      */
     public Map<FlowElementPortDescription, Expression> getOutputs() {
-        Map<FlowElementPortDescription, Expression> results = Maps.create();
+        Map<FlowElementPortDescription, Expression> results = new HashMap<>();
         for (FlowElementOutput key : fragment.getOutputPorts()) {
             SimpleName name = successors.get(key);
             assert name != null;

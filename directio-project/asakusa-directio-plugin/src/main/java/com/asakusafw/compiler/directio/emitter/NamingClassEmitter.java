@@ -16,6 +16,7 @@
 package com.asakusafw.compiler.directio.emitter;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -34,7 +35,6 @@ import com.asakusafw.runtime.stage.directio.StringTemplate;
 import com.asakusafw.runtime.stage.directio.StringTemplate.Format;
 import com.asakusafw.runtime.stage.directio.StringTemplate.FormatSpec;
 import com.asakusafw.runtime.value.IntOption;
-import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Comment;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
 import com.asakusafw.utils.java.model.syntax.ConstructorDeclaration;
@@ -193,7 +193,7 @@ public class NamingClassEmitter {
         private TypeDeclaration createType() {
             SimpleName name = getClassName();
             importer.resolvePackageMember(name);
-            List<TypeBodyDeclaration> members = Lists.create();
+            List<TypeBodyDeclaration> members = new ArrayList<>();
             if (requireRandomNumber()) {
                 members.add(createRandomHolder());
                 members.add(createRandomizer());
@@ -255,7 +255,7 @@ public class NamingClassEmitter {
         }
 
         private ConstructorDeclaration createConstructor() {
-            List<Expression> arguments = Lists.create();
+            List<Expression> arguments = new ArrayList<>();
             for (CompiledResourcePattern naming : namingInfo) {
                 arguments.add(new TypeBuilder(factory, t(FormatSpec.class))
                     .newObject(
@@ -267,7 +267,7 @@ public class NamingClassEmitter {
                                 : Models.toLiteral(factory, naming.getArgument()))
                     .toExpression());
             }
-            List<Statement> statements = Lists.create();
+            List<Statement> statements = new ArrayList<>();
             statements.add(factory.newSuperConstructorInvocation(arguments));
             return factory.newConstructorDeclaration(
                     new JavadocBuilder(factory)
@@ -284,7 +284,7 @@ public class NamingClassEmitter {
         private MethodDeclaration createSetMethod() {
             SimpleName raw = factory.newSimpleName("rawObject"); //$NON-NLS-1$
             SimpleName object = factory.newSimpleName("object"); //$NON-NLS-1$
-            List<Statement> statements = Lists.create();
+            List<Statement> statements = new ArrayList<>();
             statements.add(new ExpressionBuilder(factory, raw)
                 .castTo(t(dataType.getType()))
                 .toLocalVariableDeclaration(t(dataType.getType()), object));

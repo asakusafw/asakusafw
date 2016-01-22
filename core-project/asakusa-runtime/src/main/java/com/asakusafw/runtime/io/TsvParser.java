@@ -27,6 +27,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.CoderResult;
 import java.nio.charset.CodingErrorAction;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -61,7 +62,7 @@ public final class TsvParser implements RecordParser {
 
     private static final int SPECIAL_FLOAT_NEGATIVE_INF = 2;
 
-    private static final Charset TEXT_ENCODE = Charset.forName("UTF-8"); //$NON-NLS-1$
+    private static final Charset TEXT_ENCODE = StandardCharsets.UTF_8;
 
     private static final int INITIAL_BUFFER_SIZE = 2048;
 

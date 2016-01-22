@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -49,7 +50,6 @@ import com.asakusafw.runtime.io.line.LineConfiguration;
 import com.asakusafw.runtime.io.line.LineInput;
 import com.asakusafw.runtime.io.line.LineOutput;
 import com.asakusafw.runtime.value.StringOption;
-import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.ClassDeclaration;
 import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.ExpressionStatement;
@@ -257,7 +257,7 @@ public class LineFormatEmitter extends JavaDataModelDriver {
         }
 
         private List<TypeBodyDeclaration> createMembers() {
-            List<TypeBodyDeclaration> results = Lists.create();
+            List<TypeBodyDeclaration> results = new ArrayList<>();
             results.add(createGetConfiguration());
             results.add(createGetSupportedType());
             results.add(createGetPreferredFragmentSize());
@@ -372,7 +372,7 @@ public class LineFormatEmitter extends JavaDataModelDriver {
             SimpleName stream = f.newSimpleName("stream"); //$NON-NLS-1$
             SimpleName offset = f.newSimpleName("offset"); //$NON-NLS-1$
             SimpleName fragmentSize = f.newSimpleName("fragmentSize"); //$NON-NLS-1$
-            List<Statement> statements = Lists.create();
+            List<Statement> statements = new ArrayList<>();
             statements.add(createNullCheck(dataType));
             statements.add(createNullCheck(path));
             statements.add(createNullCheck(stream));
@@ -455,7 +455,7 @@ public class LineFormatEmitter extends JavaDataModelDriver {
             SimpleName dataType = f.newSimpleName("dataType"); //$NON-NLS-1$
             SimpleName path = f.newSimpleName("path"); //$NON-NLS-1$
             SimpleName stream = f.newSimpleName("stream"); //$NON-NLS-1$
-            List<Statement> statements = Lists.create();
+            List<Statement> statements = new ArrayList<>();
             statements.add(createNullCheck(path));
             statements.add(createNullCheck(stream));
 
@@ -551,9 +551,9 @@ public class LineFormatEmitter extends JavaDataModelDriver {
 
         private ClassDeclaration createReaderClass() {
             SimpleName parser = f.newSimpleName("parser"); //$NON-NLS-1$
-            List<TypeBodyDeclaration> members = Lists.create();
-            List<ExpressionStatement> constructorStatements = Lists.create();
-            List<FormalParameterDeclaration> constructorParameters = Lists.create();
+            List<TypeBodyDeclaration> members = new ArrayList<>();
+            List<ExpressionStatement> constructorStatements = new ArrayList<>();
+            List<FormalParameterDeclaration> constructorParameters = new ArrayList<>();
             members.add(createPrivateField(LineInput.class, parser));
             constructorParameters.add(f.newFormalParameterDeclaration(context.resolve(LineInput.class), parser));
             constructorStatements.add(mapField(parser));
@@ -576,7 +576,7 @@ public class LineFormatEmitter extends JavaDataModelDriver {
                     constructorStatements));
 
             SimpleName object = f.newSimpleName("object"); //$NON-NLS-1$
-            List<Statement> statements = Lists.create();
+            List<Statement> statements = new ArrayList<>();
             PropertyDeclaration body = findProperty(model, LineFieldTrait.Kind.BODY);
             statements.add(f.newIfStatement(
                     new ExpressionBuilder(f, parser)
@@ -669,7 +669,7 @@ public class LineFormatEmitter extends JavaDataModelDriver {
 
         private ClassDeclaration createWriterClass() {
             SimpleName emitter = f.newSimpleName("emitter"); //$NON-NLS-1$
-            List<TypeBodyDeclaration> members = Lists.create();
+            List<TypeBodyDeclaration> members = new ArrayList<>();
             members.add(createPrivateField(LineOutput.class, emitter));
             members.add(f.newConstructorDeclaration(
                     null,

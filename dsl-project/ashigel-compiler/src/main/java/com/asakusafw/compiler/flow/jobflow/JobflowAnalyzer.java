@@ -15,9 +15,12 @@
  */
 package com.asakusafw.compiler.flow.jobflow;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -44,8 +47,6 @@ import com.asakusafw.compiler.flow.stage.CompiledReduce;
 import com.asakusafw.compiler.flow.stage.CompiledShuffle;
 import com.asakusafw.compiler.flow.stage.StageModel;
 import com.asakusafw.utils.collections.Lists;
-import com.asakusafw.utils.collections.Maps;
-import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.vocabulary.flow.graph.FlowElement;
 import com.asakusafw.vocabulary.flow.graph.FlowElementDescription;
 import com.asakusafw.vocabulary.flow.graph.FlowElementKind;
@@ -129,8 +130,8 @@ public class JobflowAnalyzer {
         assert stageModels != null;
         LOG.debug("analyzing jobflow inputs: {}", graph.getInput()); //$NON-NLS-1$
 
-        Set<InputDescription> saw = Sets.create();
-        List<Import> results = Lists.create();
+        Set<InputDescription> saw = new HashSet<>();
+        List<Import> results = new ArrayList<>();
         for (FlowBlock.Output source : graph.getInput().getBlockOutputs()) {
             FlowElement element = source.getElementPort().getOwner();
             FlowElementDescription desc = element.getDescription();
@@ -149,7 +150,7 @@ public class JobflowAnalyzer {
             LOG.debug("found jobflow input: {}", input); //$NON-NLS-1$
             results.add(input);
         }
-        Set<InputDescription> sideData = Sets.create();
+        Set<InputDescription> sideData = new HashSet<>();
         for (StageModel stage : stageModels) {
             sideData.addAll(stage.getSideDataInputs());
         }
@@ -172,7 +173,7 @@ public class JobflowAnalyzer {
         assert stageModels != null;
         LOG.debug("analyzing jobflow outputs: {}", graph.getOutput()); //$NON-NLS-1$
 
-        List<Export> results = Lists.create();
+        List<Export> results = new ArrayList<>();
         for (FlowBlock.Input target : graph.getOutput().getBlockInputs()) {
             FlowElement element = target.getElementPort().getOwner();
             FlowElementDescription desc = element.getDescription();
@@ -198,7 +199,7 @@ public class JobflowAnalyzer {
 
     private List<Stage> analyzeStages(Collection<StageModel> stageModels) {
         assert stageModels != null;
-        List<Stage> results = Lists.create();
+        List<Stage> results = new ArrayList<>();
         for (StageModel model : sort(stageModels)) {
             results.add(analyzeStage(model));
         }
@@ -245,7 +246,7 @@ public class JobflowAnalyzer {
     private List<Delivery> analyzeDeliveries(StageModel model) {
         assert model != null;
         Location base = environment.getStageLocation(model.getStageBlock().getStageNumber());
-        List<Delivery> deliveries = Lists.create();
+        List<Delivery> deliveries = new ArrayList<>();
         for (StageModel.Sink sink : model.getStageResults()) {
             Location location = base.append(sink.getName()).asPrefix();
             deliveries.add(new Delivery(sink.getOutputs(), Collections.singleton(location)));
@@ -254,7 +255,7 @@ public class JobflowAnalyzer {
     }
 
     private List<Process> analyzeProcesses(StageModel model) {
-        List<Process> processes = Lists.create();
+        List<Process> processes = new ArrayList<>();
         for (StageModel.MapUnit unit : model.getMapUnits()) {
             processes.add(new Process(
                     unit.getInputs(),
@@ -265,7 +266,7 @@ public class JobflowAnalyzer {
 
     private Set<SideData> analyzeSideData(StageModel model) {
         assert model != null;
-        Set<SideData> results = Sets.create();
+        Set<SideData> results = new HashSet<>();
         for (InputDescription input : model.getSideDataInputs()) {
             ExternalIoDescriptionProcessor proc = environment.getExternals().findProcessor(input);
             if (proc == null) {
@@ -283,15 +284,7 @@ public class JobflowAnalyzer {
         Collections.sort(models, new Comparator<StageModel>() {
             @Override
             public int compare(StageModel o1, StageModel o2) {
-                int s1 = o1.getStageBlock().getStageNumber();
-                int s2 = o2.getStageBlock().getStageNumber();
-                if (s1 == s2) {
-                    return 0;
-                }
-                if (s1 < s2) {
-                    return -1;
-                }
-                return +1;
+                return Integer.compare(o1.getStageBlock().getStageNumber(), o2.getStageBlock().getStageNumber());
             }
         });
         return models;
@@ -315,7 +308,7 @@ public class JobflowAnalyzer {
     private void resolveTarget(Target target, Map<FlowBlock.Output, Source> sources) {
         assert target != null;
         assert sources != null;
-        Set<Source> opposites = Sets.create();
+        Set<Source> opposites = new HashSet<>();
         for (FlowBlock.Input input : target.getInputs()) {
             for (FlowBlock.Connection conn : input.getConnections()) {
                 FlowBlock.Output upstream = conn.getUpstream();
@@ -332,7 +325,7 @@ public class JobflowAnalyzer {
             List<Stage> stages) {
         assert imports != null;
         assert stages != null;
-        Map<FlowBlock.Output, Source> sources = Maps.create();
+        Map<FlowBlock.Output, Source> sources = new HashMap<>();
         for (Source source : imports) {
             for (FlowBlock.Output output : source.getOutputs()) {
                 sources.put(output, source);

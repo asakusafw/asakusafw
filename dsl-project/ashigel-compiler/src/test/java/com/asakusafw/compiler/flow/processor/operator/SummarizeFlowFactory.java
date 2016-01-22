@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 package com.asakusafw.compiler.flow.processor.operator;
+import java.util.Arrays;
+
+import javax.annotation.Generated;
+
 import com.asakusafw.compiler.flow.testing.model.Ex1;
 import com.asakusafw.compiler.flow.testing.model.ExSummarized;
 import com.asakusafw.compiler.flow.testing.model.ExSummarized2;
@@ -29,8 +33,6 @@ import com.asakusafw.vocabulary.operator.KeyInfo;
 import com.asakusafw.vocabulary.operator.OperatorFactory;
 import com.asakusafw.vocabulary.operator.OperatorInfo;
 import com.asakusafw.vocabulary.operator.Summarize;
-import java.util.Arrays;
-import javax.annotation.Generated;
 /**
  * An operator factory class about <code>SummarizeFlow</code>.
  * @see SummarizeFlow

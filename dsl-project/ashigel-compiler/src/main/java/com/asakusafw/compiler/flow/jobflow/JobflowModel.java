@@ -18,6 +18,8 @@ package com.asakusafw.compiler.flow.jobflow;
 import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -34,7 +36,6 @@ import com.asakusafw.compiler.flow.plan.StageGraph;
 import com.asakusafw.compiler.flow.stage.StageModel;
 import com.asakusafw.runtime.stage.input.TemporaryInputFormat;
 import com.asakusafw.runtime.stage.output.TemporaryOutputFormat;
-import com.asakusafw.utils.collections.Maps;
 import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.utils.graph.Graph;
 import com.asakusafw.utils.graph.Graphs;
@@ -142,7 +143,7 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
      * @return the dependency graph
      */
     public Graph<Stage> getDependencyGraph() {
-        Map<Delivery, Stage> deliveries = Maps.create();
+        Map<Delivery, Stage> deliveries = new HashMap<>();
         for (Stage stage : stages) {
             for (Delivery delivery : stage.getDeliveries()) {
                 deliveries.put(delivery, stage);
@@ -456,7 +457,7 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
          * @see #resolveSources(Collection)
          */
         public Set<Location> getResolvedLocations() {
-            Set<Location> results = Sets.create();
+            Set<Location> results = new HashSet<>();
             for (Source source : getResolvedSources()) {
                 results.addAll(source.getInputInfo().getLocations());
             }

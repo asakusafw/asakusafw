@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -47,7 +48,6 @@ import com.asakusafw.runtime.directio.BinaryStreamFormat;
 import com.asakusafw.runtime.directio.DataFormat;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
-import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.vocabulary.directio.DirectFileInputDescription;
 import com.asakusafw.vocabulary.directio.DirectFileOutputDescription;
 import com.asakusafw.vocabulary.external.ImporterDescription.DataSize;
@@ -696,7 +696,7 @@ public class DirectFileIoProcessorTest {
         private final String basePath;
         private final String resourcePattern;
         private final String[] order;
-        private final List<String> deletes = Lists.create();
+        private final List<String> deletes = new ArrayList<>();
 
         Output(
                 Class<?> modelType,

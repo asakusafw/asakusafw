@@ -61,7 +61,7 @@ public class VolatileLookUpTable<T> implements LookUpTable<T> {
             }
             List<T> list = entity.get(key.getDirectView());
             if (list == null) {
-                list = new ArrayList<>();
+                list = new ArrayList<>(1);
                 entity.put(key.getFrozenView(), list);
             }
             list.add(value);

@@ -26,6 +26,12 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 
+import com.asakusafw.directio.hive.serde.DataModelDescriptor;
+import com.asakusafw.directio.hive.serde.DataModelDriver;
+import com.asakusafw.directio.hive.serde.DataModelMapping;
+import com.asakusafw.runtime.directio.Counter;
+import com.asakusafw.runtime.io.ModelInput;
+
 import parquet.column.page.PageReadStore;
 import parquet.hadoop.ParquetFileReader;
 import parquet.hadoop.metadata.BlockMetaData;
@@ -34,12 +40,6 @@ import parquet.hadoop.metadata.ParquetMetadata;
 import parquet.io.ColumnIOFactory;
 import parquet.io.MessageColumnIO;
 import parquet.io.RecordReader;
-
-import com.asakusafw.directio.hive.serde.DataModelDescriptor;
-import com.asakusafw.directio.hive.serde.DataModelDriver;
-import com.asakusafw.directio.hive.serde.DataModelMapping;
-import com.asakusafw.runtime.directio.Counter;
-import com.asakusafw.runtime.io.ModelInput;
 
 /**
  * An implementation of {@link ModelInput} for reading Parquet files.

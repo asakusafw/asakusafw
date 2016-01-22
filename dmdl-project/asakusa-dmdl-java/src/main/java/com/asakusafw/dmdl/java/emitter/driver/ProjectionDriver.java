@@ -15,6 +15,7 @@
  */
 package com.asakusafw.dmdl.java.emitter.driver;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -23,7 +24,6 @@ import com.asakusafw.dmdl.java.spi.JavaDataModelDriver;
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
 import com.asakusafw.dmdl.semantics.ModelSymbol;
 import com.asakusafw.dmdl.semantics.trait.ProjectionsTrait;
-import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Type;
 
 /**
@@ -37,7 +37,7 @@ public class ProjectionDriver extends JavaDataModelDriver {
         if (trait == null) {
             return Collections.emptyList();
         }
-        List<Type> results = Lists.create();
+        List<Type> results = new ArrayList<>();
         for (ModelSymbol projection : trait.getProjections()) {
             results.add(context.resolve(projection));
         }

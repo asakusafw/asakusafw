@@ -15,6 +15,7 @@
  */
 package com.asakusafw.compiler.repository;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -29,7 +30,6 @@ import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.operator.DataModelMirror;
 import com.asakusafw.compiler.operator.DataModelMirrorRepository;
 import com.asakusafw.compiler.operator.OperatorCompilingEnvironment;
-import com.asakusafw.utils.collections.Lists;
 
 /**
  * Aggregates repositories of {@link DataModelMirror} using Service Provider Interface.
@@ -68,7 +68,7 @@ public class SpiDataModelMirrorRepository implements DataModelMirrorRepository {
         ServiceLoader<DataModelMirrorRepository> services = ServiceLoader.load(
                 DataModelMirrorRepository.class,
                 serviceLoader);
-        List<DataModelMirrorRepository> results = Lists.create();
+        List<DataModelMirrorRepository> results = new ArrayList<>();
         for (DataModelMirrorRepository repo : services) {
             results.add(repo);
         }

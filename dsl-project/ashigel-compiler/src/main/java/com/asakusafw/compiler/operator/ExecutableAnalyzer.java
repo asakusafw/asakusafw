@@ -16,8 +16,10 @@
 package com.asakusafw.compiler.operator;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -40,8 +42,6 @@ import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.operator.DataModelMirror.Kind;
 import com.asakusafw.compiler.operator.DataModelMirror.PropertyMirror;
 import com.asakusafw.runtime.core.Result;
-import com.asakusafw.utils.collections.Lists;
-import com.asakusafw.utils.collections.Maps;
 import com.asakusafw.utils.java.model.syntax.DocBlock;
 import com.asakusafw.utils.java.model.syntax.DocElement;
 import com.asakusafw.utils.java.model.syntax.Javadoc;
@@ -474,7 +474,7 @@ public class ExecutableAnalyzer {
         if (order == null) {
             order = Collections.emptyList();
         }
-        List<ShuffleKey.Order> formedOrder = Lists.create();
+        List<ShuffleKey.Order> formedOrder = new ArrayList<>();
         for (String orderString : order) {
             ShuffleKey.Order o = ShuffleKey.Order.parse(orderString);
             if (o == null) {
@@ -518,7 +518,7 @@ public class ExecutableAnalyzer {
             return null;
         }
         List<?> list = (List<?>) object;
-        List<String> results = Lists.create();
+        List<String> results = new ArrayList<>();
         for (Object element : list) {
             Object elementValue = ((AnnotationValue) element).getValue();
             if ((elementValue instanceof String) == false) {
@@ -595,7 +595,7 @@ public class ExecutableAnalyzer {
     static Map<String, AnnotationValue> getValues(
             AnnotationMirror annotation) {
         assert annotation != null;
-        Map<String, AnnotationValue> results = Maps.create();
+        Map<String, AnnotationValue> results = new HashMap<>();
         for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry
                 : annotation.getElementValues().entrySet()) {
             ExecutableElement key = entry.getKey();
@@ -627,7 +627,7 @@ public class ExecutableAnalyzer {
         }
 
         private List<PropertyMirror> resolveProperties() {
-            List<PropertyMirror> results = Lists.create();
+            List<PropertyMirror> results = new ArrayList<>();
             for (String name : key.getGroupProperties()) {
                 results.add(model.findProperty(name));
             }
@@ -730,7 +730,7 @@ public class ExecutableAnalyzer {
                 throw new IllegalStateException();
             }
             TypeElement decl = (TypeElement) element;
-            List<VariableElement> results = Lists.create();
+            List<VariableElement> results = new ArrayList<>();
             for (Element member : decl.getEnclosedElements()) {
                 if (isEnumConstant(member)) {
                     results.add((VariableElement) member);

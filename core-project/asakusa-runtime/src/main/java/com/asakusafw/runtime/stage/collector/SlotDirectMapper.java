@@ -18,6 +18,7 @@ package com.asakusafw.runtime.stage.collector;
 import java.io.IOException;
 
 import org.apache.hadoop.io.Writable;
+
 import com.asakusafw.runtime.core.Result;
 import com.asakusafw.runtime.flow.MapperWithRuntimeResource;
 import com.asakusafw.runtime.stage.output.StageOutputDriver;

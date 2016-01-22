@@ -31,10 +31,10 @@ import com.asakusafw.windgate.core.resource.ResourceProfile;
 import com.asakusafw.windgate.core.resource.ResourceProvider;
 import com.asakusafw.windgate.core.session.SessionException;
 import com.asakusafw.windgate.core.session.SessionException.Reason;
-import com.asakusafw.windgate.core.util.SafeCloser;
 import com.asakusafw.windgate.core.session.SessionMirror;
 import com.asakusafw.windgate.core.session.SessionProfile;
 import com.asakusafw.windgate.core.session.SessionProvider;
+import com.asakusafw.windgate.core.util.SafeCloser;
 
 /**
  * Aborts a session or sessions.

@@ -15,6 +15,7 @@
  */
 package com.asakusafw.compiler.operator.processor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.asakusafw.compiler.common.Precondition;
@@ -23,7 +24,6 @@ import com.asakusafw.compiler.operator.AbstractOperatorProcessor;
 import com.asakusafw.compiler.operator.ExecutableAnalyzer;
 import com.asakusafw.compiler.operator.OperatorMethodDescriptor;
 import com.asakusafw.compiler.operator.OperatorMethodDescriptor.Builder;
-import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.DocElement;
 import com.asakusafw.vocabulary.flow.graph.Connectivity;
 import com.asakusafw.vocabulary.flow.graph.ObservationCount;
@@ -66,7 +66,7 @@ public class LoggingOperatorProcessor extends AbstractOperatorProcessor {
             return null;
         }
 
-        List<DocElement> elements = Lists.create();
+        List<DocElement> elements = new ArrayList<>();
         elements.addAll(a.getExecutableDocument());
         elements.add(context.environment.getFactory().newDocText(
                 Messages.getString("LoggingOperatorProcessor.javadocOptionalBody"))); //$NON-NLS-1$

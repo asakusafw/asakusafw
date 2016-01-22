@@ -29,13 +29,12 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
-
-import com.asakusafw.utils.collections.Lists;
 
 /**
  * Keep a connection of H2 'in memory' Database.
@@ -163,7 +162,7 @@ public class H2Resource extends TestWatcher {
             ResultSet rs = s.executeQuery(sql);
             ResultSetMetaData meta = rs.getMetaData();
             int size = meta.getColumnCount();
-            List<List<Object>> results = Lists.create();
+            List<List<Object>> results = new ArrayList<>();
             while (rs.next()) {
                 Object[] columns = new Object[size];
                 for (int i = 0; i < size; i++) {

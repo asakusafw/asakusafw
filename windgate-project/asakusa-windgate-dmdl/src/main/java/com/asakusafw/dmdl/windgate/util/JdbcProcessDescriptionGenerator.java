@@ -16,12 +16,12 @@
 package com.asakusafw.dmdl.windgate.util;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import com.asakusafw.dmdl.java.emitter.EmitContext;
-import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Attribute;
 import com.asakusafw.utils.java.model.syntax.ClassDeclaration;
 import com.asakusafw.utils.java.model.syntax.Expression;
@@ -124,7 +124,7 @@ public final class JdbcProcessDescriptionGenerator {
     }
 
     private List<TypeBodyDeclaration> createMembers() {
-        List<TypeBodyDeclaration> results = Lists.create();
+        List<TypeBodyDeclaration> results = new ArrayList<>();
         results.add(createGetModelType());
         if (description.getProfileName() != null) {
             results.add(createGetProfileName());
@@ -186,7 +186,7 @@ public final class JdbcProcessDescriptionGenerator {
     }
 
     private MethodDeclaration createGetColumnNames() {
-        List<Expression> arguments = Lists.create();
+        List<Expression> arguments = new ArrayList<>();
         for (String name : description.getColumnNames()) {
             arguments.add(Models.toLiteral(f, name));
         }

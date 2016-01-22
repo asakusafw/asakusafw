@@ -17,6 +17,7 @@ package com.asakusafw.runtime.io.line;
 
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.runtime.value.StringOption;
@@ -27,7 +28,7 @@ import com.asakusafw.runtime.value.StringOption;
  */
 public abstract class LineOutput implements ModelOutput<StringOption> {
 
-    static final Charset INTERNAL_CHARSET = Charset.forName("UTF-8"); //$NON-NLS-1$
+    static final Charset INTERNAL_CHARSET = StandardCharsets.UTF_8;
 
     static final char LINE_BREAK = '\n';
 

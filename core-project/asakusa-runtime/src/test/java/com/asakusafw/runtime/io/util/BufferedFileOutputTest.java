@@ -19,7 +19,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 import java.io.RandomAccessFile;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import org.junit.Test;
 
@@ -263,7 +263,7 @@ public class BufferedFileOutputTest extends BufferedFileTestRoot {
         buf.flush();
 
         file.seek(0);
-        byte[] expect = "Hello, world!".getBytes(Charset.forName("ascii"));
+        byte[] expect = "Hello, world!".getBytes(StandardCharsets.US_ASCII);
         byte[] b = new byte[expect.length];
         file.readFully(b);
         assertThat(b, is(expect));

@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.Arrays;
 
@@ -38,7 +39,7 @@ public final class ConfigurationDetecter {
 
     static final String MARKER_FILE_NAME = "core-site.xml"; //$NON-NLS-1$
 
-    private static final Charset ENCODING = Charset.forName("UTF-8"); //$NON-NLS-1$
+    private static final Charset ENCODING = StandardCharsets.UTF_8;
 
     private ConfigurationDetecter() {
         return;

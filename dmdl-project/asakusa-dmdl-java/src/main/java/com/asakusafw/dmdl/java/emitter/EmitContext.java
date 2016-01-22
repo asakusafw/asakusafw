@@ -20,6 +20,7 @@ import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.text.MessageFormat;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.hadoop.io.Text;
@@ -51,7 +52,6 @@ import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.runtime.value.LongOption;
 import com.asakusafw.runtime.value.ShortOption;
 import com.asakusafw.runtime.value.StringOption;
-import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.utils.java.model.syntax.Comment;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
 import com.asakusafw.utils.java.model.syntax.Expression;
@@ -129,7 +129,7 @@ public final class EmitContext {
 
     private Set<String> collectFieldNames(ModelDeclaration model) {
         assert model != null;
-        Set<String> results = Sets.create();
+        Set<String> results = new HashSet<>();
         for (PropertyDeclaration property : model.getDeclaredProperties()) {
             results.add(getFieldName(property).getToken());
         }

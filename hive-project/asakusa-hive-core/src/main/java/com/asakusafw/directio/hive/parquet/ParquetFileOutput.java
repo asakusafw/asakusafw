@@ -26,15 +26,15 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 
+import com.asakusafw.directio.hive.serde.DataModelDescriptor;
+import com.asakusafw.runtime.directio.Counter;
+import com.asakusafw.runtime.io.ModelOutput;
+
 import parquet.column.ParquetProperties;
 import parquet.column.ParquetProperties.WriterVersion;
 import parquet.hadoop.ParquetWriter;
 import parquet.hadoop.api.WriteSupport;
 import parquet.hadoop.metadata.CompressionCodecName;
-
-import com.asakusafw.directio.hive.serde.DataModelDescriptor;
-import com.asakusafw.runtime.directio.Counter;
-import com.asakusafw.runtime.io.ModelOutput;
 
 /**
  * An implementation of {@link ModelOutput} for writing Parquet files.

@@ -17,8 +17,10 @@ package com.asakusafw.compiler.directio;
 
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -36,8 +38,8 @@ import com.asakusafw.compiler.directio.emitter.Slot;
 import com.asakusafw.compiler.directio.emitter.StageEmitter;
 import com.asakusafw.compiler.flow.DataClass;
 import com.asakusafw.compiler.flow.ExternalIoDescriptionProcessor;
-import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.flow.FlowCompilerOptions.GenericOptionValue;
+import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.flow.jobflow.CompiledStage;
 import com.asakusafw.compiler.flow.jobflow.ExternalIoStage;
 import com.asakusafw.compiler.flow.mapreduce.copy.CopierClientEmitter;
@@ -49,8 +51,6 @@ import com.asakusafw.runtime.directio.FilePattern.PatternElementKind;
 import com.asakusafw.runtime.stage.input.BridgeInputFormat;
 import com.asakusafw.runtime.stage.input.TemporaryInputFormat;
 import com.asakusafw.runtime.stage.output.TemporaryOutputFormat;
-import com.asakusafw.utils.collections.Lists;
-import com.asakusafw.utils.collections.Maps;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
 import com.asakusafw.utils.java.model.syntax.Name;
 import com.asakusafw.utils.java.model.util.Models;
@@ -387,7 +387,7 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
     }
 
     private Map<String, String> getAttributes(DirectFileInputDescription desc) {
-        Map<String, String> attributes = Maps.create();
+        Map<String, String> attributes = new HashMap<>();
         attributes.put(DirectDataSourceConstants.KEY_DATA_CLASS, desc.getModelType().getName());
         attributes.put(DirectDataSourceConstants.KEY_FORMAT_CLASS, desc.getFormat().getName());
         attributes.put(DirectDataSourceConstants.KEY_BASE_PATH, desc.getBasePath());
@@ -434,7 +434,7 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
     @Override
     public List<ExternalIoStage> emitPrologue(IoContext context) throws IOException {
         IoContextBuilder builder = new IoContextBuilder();
-        List<CopyDescription> targets = Lists.create();
+        List<CopyDescription> targets = new ArrayList<>();
         for (Input input : context.getInputs()) {
             InputDescription description = input.getDescription();
             DirectFileInputDescription desc = extract(description);
@@ -464,7 +464,7 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
         ModelFactory f = getEnvironment().getModelFactory();
         NamingClassEmitter namingEmitter = new NamingClassEmitter(getEnvironment(), MODULE_NAME);
         OrderingClassEmitter orderingEmitter = new OrderingClassEmitter(getEnvironment(), MODULE_NAME);
-        List<Slot> slots = Lists.create();
+        List<Slot> slots = new ArrayList<>();
         for (Output output : context.getOutputs()) {
             DirectFileOutputDescription desc = extract(output.getDescription());
             DataClass dataType = getEnvironment().getDataClasses().load(desc.getModelType());

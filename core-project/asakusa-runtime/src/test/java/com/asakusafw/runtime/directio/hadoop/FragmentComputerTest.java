@@ -272,15 +272,7 @@ public class FragmentComputerTest {
             Collections.sort(results, new Comparator<DirectInputFragment>() {
                 @Override
                 public int compare(DirectInputFragment o1, DirectInputFragment o2) {
-                    long i1 = o1.getOffset();
-                    long i2 = o2.getOffset();
-                    if (i1 < i2) {
-                        return -1;
-                    }
-                    if (i1 > i2) {
-                        return +1;
-                    }
-                    return 0;
+                    return Long.compare(o1.getOffset(), o2.getOffset());
                 }
             });
             long expectedOffset = 0;

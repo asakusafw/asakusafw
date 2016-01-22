@@ -19,6 +19,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -102,7 +103,7 @@ public final class HadoopDataSourceUtil {
     /**
      * Charset for commit mark file comments.
      */
-    public static final Charset COMMENT_CHARSET = Charset.forName("UTF-8"); //$NON-NLS-1$
+    public static final Charset COMMENT_CHARSET = StandardCharsets.UTF_8;
 
     /**
      * Loads a profile list from the configuration.

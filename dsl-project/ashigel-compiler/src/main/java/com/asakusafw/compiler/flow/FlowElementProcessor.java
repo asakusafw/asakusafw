@@ -16,6 +16,7 @@
 package com.asakusafw.compiler.flow;
 
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -27,7 +28,6 @@ import com.asakusafw.runtime.core.Result;
 import com.asakusafw.runtime.flow.ArrayListBuffer;
 import com.asakusafw.runtime.flow.FileMapListBuffer;
 import com.asakusafw.runtime.flow.ListBuffer;
-import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.FieldDeclaration;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
@@ -144,7 +144,7 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
             this.names = names;
             this.description = desc;
             this.resources = resources;
-            this.generatedFields = Lists.create();
+            this.generatedFields = new ArrayList<>();
         }
 
         /**

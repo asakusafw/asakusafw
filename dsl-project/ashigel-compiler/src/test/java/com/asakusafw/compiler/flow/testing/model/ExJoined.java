@@ -14,6 +14,12 @@
  * limitations under the License.
  */
 package com.asakusafw.compiler.flow.testing.model;
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+
+import org.apache.hadoop.io.Writable;
+
 import com.asakusafw.runtime.model.DataModel;
 import com.asakusafw.runtime.model.DataModelKind;
 import com.asakusafw.runtime.model.PropertyOrder;
@@ -21,10 +27,6 @@ import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.runtime.value.LongOption;
 import com.asakusafw.vocabulary.model.Joined;
 import com.asakusafw.vocabulary.model.Key;
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
-import org.apache.hadoop.io.Writable;
 /**
  * A data model class that represents ex_joined.
  */

@@ -18,6 +18,7 @@ package com.asakusafw.runtime.value;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.hadoop.io.InputBuffer;
 import org.apache.hadoop.io.Text;
@@ -31,7 +32,7 @@ public final class StringOptionUtil {
     /**
      * The internal text encoding.
      */
-    public static final Charset ENCODING = Charset.forName("UTF-8"); //$NON-NLS-1$
+    public static final Charset ENCODING = StandardCharsets.UTF_8;
 
     private StringOptionUtil() {
         return;

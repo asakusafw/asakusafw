@@ -16,7 +16,6 @@
 package com.asakusafw.directio.hive.serde.mock;
 
 import com.asakusafw.runtime.value.IntOption;
-import com.asakusafw.runtime.value.LongOption;
 import com.asakusafw.runtime.value.StringOption;
 
 /**

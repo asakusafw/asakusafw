@@ -18,9 +18,9 @@ package com.asakusafw.yaess.core.task;
 import java.io.IOException;
 
 import com.asakusafw.yaess.core.ExecutionLock;
+import com.asakusafw.yaess.core.ExecutionLock.Scope;
 import com.asakusafw.yaess.core.ExecutionLockProvider;
 import com.asakusafw.yaess.core.ServiceProfile;
-import com.asakusafw.yaess.core.ExecutionLock.Scope;
 
 /**
  * Invalid {@link ExecutionLockProvider}.

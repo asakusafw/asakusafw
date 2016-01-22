@@ -23,7 +23,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -71,7 +71,7 @@ public class ExcelTesterRoot {
         URL resource = getClass().getResource(dmdl);
         assertThat(dmdl, resource, not(nullValue()));
 
-        DmdlSourceResource repo = new DmdlSourceResource(Arrays.asList(resource), Charset.forName("UTF-8"));
+        DmdlSourceResource repo = new DmdlSourceResource(Arrays.asList(resource), StandardCharsets.UTF_8);
         ClassLoader loader = ExcelTesterRoot.class.getClassLoader();
         AnalyzeTask task = new AnalyzeTask(testName.getMethodName(), loader);
         try {

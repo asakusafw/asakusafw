@@ -24,8 +24,6 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.asakusafw.utils.io.csv.CsvReader;
-
 /**
  * Test for {@link CsvReader}.
  */

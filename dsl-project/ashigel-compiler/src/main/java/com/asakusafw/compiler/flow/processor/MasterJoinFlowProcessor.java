@@ -15,6 +15,8 @@
  */
 package com.asakusafw.compiler.flow.processor;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -23,8 +25,6 @@ import com.asakusafw.compiler.flow.DataClass;
 import com.asakusafw.compiler.flow.DataClass.Property;
 import com.asakusafw.compiler.flow.RendezvousProcessor;
 import com.asakusafw.runtime.util.TypeUtil;
-import com.asakusafw.utils.collections.Lists;
-import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
 import com.asakusafw.utils.java.model.syntax.Statement;
@@ -50,11 +50,11 @@ public class MasterJoinFlowProcessor extends RendezvousProcessor {
 
         DataObjectMirror resultCache = context.createModelCache(joinedPort.getDataType());
         DataClass outputType = getEnvironment().getDataClasses().load(joinedPort.getDataType());
-        List<Statement> process = Lists.create();
+        List<Statement> process = new ArrayList<>();
         process.add(resultCache.createReset());
 
         Joined annotation = TypeUtil.erase(joinedPort.getDataType()).getAnnotation(Joined.class);
-        Set<String> saw = Sets.create();
+        Set<String> saw = new HashSet<>();
         for (Joined.Term term : annotation.terms()) {
             DataClass inputType = getEnvironment().getDataClasses().load(term.source());
             Expression input;
