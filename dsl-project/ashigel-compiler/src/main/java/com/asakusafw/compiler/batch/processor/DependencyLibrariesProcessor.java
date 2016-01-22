@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -31,7 +32,6 @@ import org.slf4j.LoggerFactory;
 import com.asakusafw.compiler.batch.AbstractWorkflowProcessor;
 import com.asakusafw.compiler.batch.WorkDescriptionProcessor;
 import com.asakusafw.compiler.batch.Workflow;
-import com.asakusafw.utils.collections.Lists;
 
 /**
  * Copies dependency libraries into the final artifact.
@@ -53,7 +53,7 @@ public class DependencyLibrariesProcessor extends AbstractWorkflowProcessor {
 
     @Override
     public Collection<Class<? extends WorkDescriptionProcessor<?>>> getDescriptionProcessors() {
-        List<Class<? extends WorkDescriptionProcessor<?>>> results = Lists.create();
+        List<Class<? extends WorkDescriptionProcessor<?>>> results = new ArrayList<>();
         results.add(JobFlowWorkDescriptionProcessor.class);
         return results;
     }

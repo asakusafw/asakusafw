@@ -15,6 +15,8 @@
  */
 package com.asakusafw.compiler.operator.model;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -34,8 +36,6 @@ import javax.lang.model.util.Types;
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.operator.DataModelMirror;
 import com.asakusafw.compiler.operator.OperatorCompilingEnvironment;
-import com.asakusafw.utils.collections.Lists;
-import com.asakusafw.utils.collections.Sets;
 
 /**
  * Default implementation of a partial {@link DataModelMirror}.
@@ -136,8 +136,8 @@ final class PartialDataModelMirror implements DataModelMirror {
     private List<TypeElement> collectUpperBounds() {
         LinkedList<TypeMirror> works = new LinkedList<>();
         works.add(type);
-        Set<TypeMirror> saw = Sets.create();
-        List<TypeElement> types = Lists.create();
+        Set<TypeMirror> saw = new HashSet<>();
+        List<TypeElement> types = new ArrayList<>();
         int countDown = 100; // avoid infinite loop
         while (works.isEmpty() == false && --countDown >= 0) {
             TypeMirror target = works.removeFirst();

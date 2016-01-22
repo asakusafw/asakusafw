@@ -16,8 +16,10 @@
 package com.asakusafw.dmdl.semantics;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,17 +29,15 @@ import com.asakusafw.dmdl.model.AstAttribute;
 import com.asakusafw.dmdl.model.AstDescription;
 import com.asakusafw.dmdl.model.AstModelDefinition;
 import com.asakusafw.dmdl.model.AstSimpleName;
-import com.asakusafw.utils.collections.Lists;
-import com.asakusafw.utils.collections.Maps;
 
 /**
  * The world of DMDL semantics.
  */
 public class DmdlSemantics {
 
-    private final Map<String, ModelDeclaration> declaredModels = Maps.create();
+    private final Map<String, ModelDeclaration> declaredModels = new HashMap<>();
 
-    private final List<Diagnostic> diagnostics = Lists.create();
+    private final List<Diagnostic> diagnostics = new ArrayList<>();
 
     private boolean sawError = false;
 

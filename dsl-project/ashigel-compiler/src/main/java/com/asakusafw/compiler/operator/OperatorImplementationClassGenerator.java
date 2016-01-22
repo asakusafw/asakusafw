@@ -15,6 +15,7 @@
  */
 package com.asakusafw.compiler.operator;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -22,7 +23,6 @@ import javax.annotation.Generated;
 import javax.lang.model.type.TypeMirror;
 
 import com.asakusafw.compiler.common.NameGenerator;
-import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Attribute;
 import com.asakusafw.utils.java.model.syntax.ConstructorDeclaration;
 import com.asakusafw.utils.java.model.syntax.FormalParameterDeclaration;
@@ -89,7 +89,7 @@ public class OperatorImplementationClassGenerator extends OperatorClassGenerator
     @Override
     protected List<TypeBodyDeclaration> createMembers() {
         NameGenerator names = new NameGenerator(factory);
-        List<TypeBodyDeclaration> results = Lists.create();
+        List<TypeBodyDeclaration> results = new ArrayList<>();
         results.add(createConstructor());
         for (OperatorMethod method : operatorClass.getMethods()) {
             OperatorProcessor.Context context = new OperatorProcessor.Context(

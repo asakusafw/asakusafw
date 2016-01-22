@@ -16,6 +16,7 @@
 package com.asakusafw.dmdl.java.emitter.driver;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -24,7 +25,6 @@ import com.asakusafw.dmdl.java.spi.JavaDataModelDriver;
 import com.asakusafw.dmdl.model.ModelDefinitionKind;
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
 import com.asakusafw.dmdl.semantics.PropertyDeclaration;
-import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.FormalParameterDeclaration;
 import com.asakusafw.utils.java.model.syntax.InfixOperator;
 import com.asakusafw.utils.java.model.syntax.MethodDeclaration;
@@ -47,7 +47,7 @@ public class ObjectDriver extends JavaDataModelDriver {
         if (model.getOriginalAst().kind == ModelDefinitionKind.PROJECTIVE) {
             return Collections.emptyList();
         }
-        List<MethodDeclaration> results = Lists.create();
+        List<MethodDeclaration> results = new ArrayList<>();
         results.add(createToString(context, model));
         results.add(createHashCode(context, model));
         results.add(createEquals(context, model));
@@ -58,7 +58,7 @@ public class ObjectDriver extends JavaDataModelDriver {
         assert context != null;
         assert model != null;
         ModelFactory f = context.getModelFactory();
-        List<Statement> statements = Lists.create();
+        List<Statement> statements = new ArrayList<>();
         SimpleName buffer = context.createVariableName("result"); //$NON-NLS-1$
         statements.add(new TypeBuilder(f, context.resolve(StringBuilder.class))
             .newObject()
@@ -103,7 +103,7 @@ public class ObjectDriver extends JavaDataModelDriver {
         assert context != null;
         assert model != null;
         ModelFactory f = context.getModelFactory();
-        List<Statement> statements = Lists.create();
+        List<Statement> statements = new ArrayList<>();
         SimpleName prime = context.createVariableName("prime"); //$NON-NLS-1$
         SimpleName result = context.createVariableName("result"); //$NON-NLS-1$
         statements.add(new ExpressionBuilder(f, Models.toLiteral(f, 31))
@@ -139,7 +139,7 @@ public class ObjectDriver extends JavaDataModelDriver {
         assert context != null;
         assert model != null;
         ModelFactory f = context.getModelFactory();
-        List<Statement> statements = Lists.create();
+        List<Statement> statements = new ArrayList<>();
         SimpleName obj = context.createVariableName("obj"); //$NON-NLS-1$
         statements.add(f.newIfStatement(
                 new ExpressionBuilder(f, f.newThis())

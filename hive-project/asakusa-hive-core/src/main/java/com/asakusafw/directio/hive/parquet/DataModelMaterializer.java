@@ -27,6 +27,11 @@ import java.util.TreeMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.asakusafw.directio.hive.serde.DataModelDescriptor;
+import com.asakusafw.directio.hive.serde.DataModelMapping;
+import com.asakusafw.directio.hive.serde.DataModelMapping.ExceptionHandlingStrategy;
+import com.asakusafw.directio.hive.serde.PropertyDescriptor;
+
 import parquet.column.ColumnDescriptor;
 import parquet.io.api.GroupConverter;
 import parquet.io.api.RecordMaterializer;
@@ -35,11 +40,6 @@ import parquet.schema.OriginalType;
 import parquet.schema.PrimitiveType;
 import parquet.schema.Type;
 import parquet.schema.Type.Repetition;
-
-import com.asakusafw.directio.hive.serde.DataModelDescriptor;
-import com.asakusafw.directio.hive.serde.DataModelMapping;
-import com.asakusafw.directio.hive.serde.DataModelMapping.ExceptionHandlingStrategy;
-import com.asakusafw.directio.hive.serde.PropertyDescriptor;
 
 /**
  * An implementation of parquet record materializer for Asakusa data models.

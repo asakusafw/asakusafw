@@ -16,6 +16,7 @@
 package com.asakusafw.compiler.directio.emitter;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -29,7 +30,6 @@ import com.asakusafw.compiler.flow.DataClass;
 import com.asakusafw.compiler.flow.FlowCompilingEnvironment;
 import com.asakusafw.runtime.io.util.InvertOrder;
 import com.asakusafw.runtime.stage.directio.DirectOutputOrder;
-import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Comment;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
 import com.asakusafw.utils.java.model.syntax.ConstructorDeclaration;
@@ -179,7 +179,7 @@ public class OrderingClassEmitter {
         private TypeDeclaration createType() {
             SimpleName name = getClassName();
             importer.resolvePackageMember(name);
-            List<TypeBodyDeclaration> members = Lists.create();
+            List<TypeBodyDeclaration> members = new ArrayList<>();
             members.addAll(createFields());
             members.add(createConstructor());
             members.add(createSetMethod());
@@ -197,7 +197,7 @@ public class OrderingClassEmitter {
         }
 
         private List<FieldDeclaration> createFields() {
-            List<FieldDeclaration> results = Lists.create();
+            List<FieldDeclaration> results = new ArrayList<>();
             for (CompiledOrder order : orderingInfo) {
                 results.add(factory.newFieldDeclaration(
                         null,
@@ -213,7 +213,7 @@ public class OrderingClassEmitter {
         }
 
         private ConstructorDeclaration createConstructor() {
-            List<Expression> arguments = Lists.create();
+            List<Expression> arguments = new ArrayList<>();
             for (CompiledOrder order : orderingInfo) {
                 Expression arg = order.getTarget().createNewInstance(t(order.getTarget().getType()));
                 if (order.isAscend() == false) {
@@ -223,7 +223,7 @@ public class OrderingClassEmitter {
                 }
                 arguments.add(arg);
             }
-            List<Statement> statements = Lists.create();
+            List<Statement> statements = new ArrayList<>();
             statements.add(factory.newSuperConstructorInvocation(arguments));
             int position = 0;
             for (CompiledOrder order : orderingInfo) {
@@ -261,7 +261,7 @@ public class OrderingClassEmitter {
         private MethodDeclaration createSetMethod() {
             SimpleName raw = getArgumentName("rawObject"); //$NON-NLS-1$
             SimpleName object = getArgumentName("object"); //$NON-NLS-1$
-            List<Statement> statements = Lists.create();
+            List<Statement> statements = new ArrayList<>();
             statements.add(new ExpressionBuilder(factory, raw)
                 .castTo(t(dataType.getType()))
                 .toLocalVariableDeclaration(t(dataType.getType()), object));

@@ -22,6 +22,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.lang.reflect.Modifier;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -40,7 +41,7 @@ import com.asakusafw.directio.hive.tools.cli.ClassCollector.Selector;
  */
 public class GenerateCreateTableTask {
 
-    static final Charset ENCODING = Charset.forName("UTF-8"); //$NON-NLS-1$
+    static final Charset ENCODING = StandardCharsets.UTF_8;
 
     static final Logger LOG = LoggerFactory.getLogger(GenerateCreateTableTask.class);
 

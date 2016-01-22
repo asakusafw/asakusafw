@@ -25,6 +25,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -54,7 +55,7 @@ public class HtmlDifferenceSink implements DifferenceSink {
 
     private static final String CSS_FILE_NAME = "difference.css"; //$NON-NLS-1$
 
-    static final Charset CHARSET = Charset.forName("UTF-8"); //$NON-NLS-1$
+    static final Charset CHARSET = StandardCharsets.UTF_8;
 
     static final List<String> CSS;
 

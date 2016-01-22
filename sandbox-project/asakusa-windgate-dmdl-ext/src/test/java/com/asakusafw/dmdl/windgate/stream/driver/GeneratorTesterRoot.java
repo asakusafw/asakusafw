@@ -24,7 +24,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -116,7 +116,7 @@ public class GeneratorTesterRoot {
         try {
             List<VolatileJavaFile> files = emit(new DmdlSourceDirectory(
                     folder.getRoot(),
-                    Charset.forName("UTF-8"),
+                    StandardCharsets.UTF_8,
                     Pattern.compile(".*\\.dmdl"),
                     Pattern.compile("\\..*")));
             ClassLoader loaded = compile(files);
@@ -207,7 +207,7 @@ public class GeneratorTesterRoot {
     private DmdlSourceRepository collectInput(String name) {
         URL url = getClass().getResource(name + ".txt");
         assertThat(name, url, not(nullValue()));
-        return new DmdlSourceResource(Collections.singletonList(url), Charset.forName("UTF-8"));
+        return new DmdlSourceResource(Collections.singletonList(url), StandardCharsets.UTF_8);
     }
 
 

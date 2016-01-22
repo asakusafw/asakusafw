@@ -16,12 +16,12 @@
 package com.asakusafw.compiler.flow.processor;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.asakusafw.compiler.common.EnumUtil;
 import com.asakusafw.compiler.common.TargetOperator;
 import com.asakusafw.compiler.flow.LineEndProcessor;
-import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.collections.Tuple2;
 import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
@@ -51,7 +51,7 @@ public class BranchFlowProcessor extends LineEndProcessor {
         assert method != null : desc.getDeclaration();
         Class<?> enumType = method.getReturnType();
 
-        List<Expression> arguments = Lists.create();
+        List<Expression> arguments = new ArrayList<>();
         arguments.add(input);
         for (OperatorDescription.Parameter param : desc.getParameters()) {
             arguments.add(Models.toLiteral(f, param.getValue()));
@@ -64,7 +64,7 @@ public class BranchFlowProcessor extends LineEndProcessor {
         List<Tuple2<Enum<?>, FlowElementPortDescription>> constants =
             EnumUtil.extractConstants(enumType, desc.getOutputPorts());
 
-        List<Statement> cases = Lists.create();
+        List<Statement> cases = new ArrayList<>();
         for (Tuple2<Enum<?>, FlowElementPortDescription> tuple : constants) {
             Enum<?> constant = tuple.first;
             FlowElementPortDescription port = tuple.second;

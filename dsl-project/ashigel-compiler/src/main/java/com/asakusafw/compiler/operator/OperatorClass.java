@@ -15,6 +15,7 @@
  */
 package com.asakusafw.compiler.operator;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.lang.model.element.AnnotationMirror;
@@ -22,7 +23,6 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 
 import com.asakusafw.compiler.common.Precondition;
-import com.asakusafw.utils.collections.Lists;
 
 /**
  * Structural information of operator classes.
@@ -43,7 +43,7 @@ public class OperatorClass {
     public OperatorClass(TypeElement type) {
         Precondition.checkMustNotBeNull(type, "type"); //$NON-NLS-1$
         this.element = type;
-        this.methods = Lists.create();
+        this.methods = new ArrayList<>();
     }
 
     /**

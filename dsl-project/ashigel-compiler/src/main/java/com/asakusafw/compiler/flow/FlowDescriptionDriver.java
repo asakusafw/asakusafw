@@ -16,6 +16,7 @@
 package com.asakusafw.compiler.flow;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +40,7 @@ import com.asakusafw.vocabulary.flow.graph.OutputDescription;
  */
 public class FlowDescriptionDriver {
 
-    private final List<Object> ports = Lists.create();
+    private final List<Object> ports = new ArrayList<>();
 
     private final Map<String, FlowIn<?>> inputs = new LinkedHashMap<>();
 

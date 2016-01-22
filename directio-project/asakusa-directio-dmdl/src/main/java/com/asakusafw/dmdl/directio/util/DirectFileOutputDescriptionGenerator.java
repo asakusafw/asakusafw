@@ -16,12 +16,12 @@
 package com.asakusafw.dmdl.directio.util;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import com.asakusafw.dmdl.java.emitter.EmitContext;
-import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Attribute;
 import com.asakusafw.utils.java.model.syntax.ClassDeclaration;
 import com.asakusafw.utils.java.model.syntax.Expression;
@@ -98,7 +98,7 @@ public final class DirectFileOutputDescriptionGenerator {
     }
 
     private List<TypeBodyDeclaration> createMembers() {
-        List<TypeBodyDeclaration> results = Lists.create();
+        List<TypeBodyDeclaration> results = new ArrayList<>();
         results.add(createGetModelTypeMethod(description.getModelClassName()));
         if (description.getBasePath() != null) {
             results.add(createGetBasePathMethod(description.getBasePath()));
@@ -157,7 +157,7 @@ public final class DirectFileOutputDescriptionGenerator {
     }
 
     private MethodDeclaration createGetListOfStringMethod(String name, List<String> values) {
-        List<Expression> arguments = Lists.create();
+        List<Expression> arguments = new ArrayList<>();
         for (String element : values) {
             arguments.add(Models.toLiteral(f, element));
         }
@@ -195,9 +195,9 @@ public final class DirectFileOutputDescriptionGenerator {
 
         private String resourcePattern;
 
-        private final List<String> order = Lists.create();
+        private final List<String> order = new ArrayList<>();
 
-        private final List<String> deletePatterns = Lists.create();
+        private final List<String> deletePatterns = new ArrayList<>();
 
         private Name formatClassName;
 

@@ -24,6 +24,7 @@ import java.nio.charset.Charset;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -36,7 +37,6 @@ import com.asakusafw.dmdl.source.CompositeSourceRepository;
 import com.asakusafw.dmdl.source.DmdlSourceDirectory;
 import com.asakusafw.dmdl.source.DmdlSourceFile;
 import com.asakusafw.dmdl.source.DmdlSourceRepository;
-import com.asakusafw.utils.collections.Lists;
 
 /**
  * Utilities for command line interfaces.
@@ -89,7 +89,7 @@ public final class CommandLineUtils {
         if (fileListOrNull == null || fileListOrNull.isEmpty()) {
             return Collections.emptyList();
         }
-        List<File> results = Lists.create();
+        List<File> results = new ArrayList<>();
         int start = 0;
         while (true) {
             int index = fileListOrNull.indexOf(File.pathSeparatorChar, start);
@@ -119,7 +119,7 @@ public final class CommandLineUtils {
         if (cs == null) {
             throw new IllegalArgumentException("cs must not be null"); //$NON-NLS-1$
         }
-        List<DmdlSourceRepository> repositories = Lists.create();
+        List<DmdlSourceRepository> repositories = new ArrayList<>();
         for (File file : files) {
             if (file.isFile()) {
                 repositories.add(new DmdlSourceFile(Collections.singletonList(file), cs));
@@ -151,7 +151,7 @@ public final class CommandLineUtils {
         if (files == null) {
             throw new IllegalArgumentException("files must not be null"); //$NON-NLS-1$
         }
-        final List<URL> pluginLocations = Lists.create();
+        final List<URL> pluginLocations = new ArrayList<>();
         for (File file : files) {
             try {
                 if (file.exists() == false) {

@@ -18,11 +18,11 @@ package com.asakusafw.compiler.directio;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import com.asakusafw.compiler.flow.DataClass;
-import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.Statement;
 
@@ -41,7 +41,7 @@ public class MockDataClass implements DataClass {
      */
     public MockDataClass(Class<?> entity) {
         this.entity = entity;
-        this.properties = Lists.create();
+        this.properties = new ArrayList<>();
         for (Field field : entity.getDeclaredFields()) {
             int modifiers = field.getModifiers();
             if (Modifier.isStatic(modifiers) == false && field.isSynthetic() == false) {

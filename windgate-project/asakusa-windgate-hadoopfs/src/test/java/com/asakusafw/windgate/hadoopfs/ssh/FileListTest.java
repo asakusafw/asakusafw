@@ -25,7 +25,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.hadoop.fs.Path;
 import org.junit.Rule;
@@ -108,7 +108,7 @@ public class FileListTest {
     public void unexpected_header() throws Exception {
         File file = folder.newFile("testing.filelist");
         try (FileOutputStream output = new FileOutputStream(file);) {
-            output.write("Hello, world!@A_INVALID_HEADER@".getBytes(Charset.forName("UTF-8")));
+            output.write("Hello, world!@A_INVALID_HEADER@".getBytes(StandardCharsets.UTF_8));
             try (FileList.Writer writer = FileList.createWriter(output)) {
                 write(writer, "example.txt", "Hello, world!");
             }

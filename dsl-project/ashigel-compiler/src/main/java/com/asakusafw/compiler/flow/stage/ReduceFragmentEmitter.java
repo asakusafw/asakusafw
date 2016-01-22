@@ -16,8 +16,10 @@
 package com.asakusafw.compiler.flow.stage;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,8 +41,6 @@ import com.asakusafw.compiler.flow.stage.StageModel.Fragment;
 import com.asakusafw.runtime.flow.Rendezvous;
 import com.asakusafw.runtime.flow.SegmentedWritable;
 import com.asakusafw.runtime.trace.TraceLocation;
-import com.asakusafw.utils.collections.Lists;
-import com.asakusafw.utils.collections.Maps;
 import com.asakusafw.utils.java.model.syntax.Comment;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
 import com.asakusafw.utils.java.model.syntax.ConstructorDeclaration;
@@ -146,7 +146,7 @@ public class ReduceFragmentEmitter {
 
         private final NameGenerator names;
 
-        private final List<FieldDeclaration> extraFields = Lists.create();
+        private final List<FieldDeclaration> extraFields = new ArrayList<>();
 
         private final Type valueType;
 
@@ -190,10 +190,10 @@ public class ReduceFragmentEmitter {
             SimpleName name = factory.newSimpleName(
                     Naming.getReduceFragmentClass(fragment.getSerialNumber()));
             importer.resolvePackageMember(name);
-            List<TypeBodyDeclaration> members = Lists.create();
+            List<TypeBodyDeclaration> members = new ArrayList<>();
             members.addAll(connection.createFields());
             ConstructorDeclaration ctor = connection.createConstructor(name);
-            List<MethodDeclaration> methods = Lists.create();
+            List<MethodDeclaration> methods = new ArrayList<>();
             SimpleName value = names.create("value"); //$NON-NLS-1$
             methods.add(createProcess(value));
             methods.addAll(emit(value));
@@ -246,7 +246,7 @@ public class ReduceFragmentEmitter {
 
         private MethodDeclaration createProcess(SimpleName value) {
             assert value != null;
-            List<Statement> cases = Lists.create();
+            List<Statement> cases = new ArrayList<>();
             for (FlowElementInput input : fragment.getInputPorts()) {
                 Segment segment = shuffle.findSegment(input);
                 cases.add(factory.newSwitchCaseLabel(
@@ -264,7 +264,7 @@ public class ReduceFragmentEmitter {
                 .newObject(value)
                 .toThrowStatement());
 
-            List<Statement> statements = Lists.create();
+            List<Statement> statements = new ArrayList<>();
             statements.add(factory.newSwitchStatement(
                     new ExpressionBuilder(factory, value)
                         .method(SegmentedWritable.ID_GETTER)
@@ -322,7 +322,7 @@ public class ReduceFragmentEmitter {
                 throw new IllegalArgumentException(desc.toString());
             }
             OperatorDescription description = (OperatorDescription) desc;
-            Map<FlowElementPortDescription, Expression> inputs = Maps.create();
+            Map<FlowElementPortDescription, Expression> inputs = new HashMap<>();
             for (FlowElementInput port : factor.getElement().getInputPorts()) {
                 inputs.put(port.getDescription(), argument);
             }
@@ -343,7 +343,7 @@ public class ReduceFragmentEmitter {
             assert context != null;
             assert argument != null;
             extraFields.addAll(context.getGeneratedFields());
-            List<MethodDeclaration> results = Lists.create();
+            List<MethodDeclaration> results = new ArrayList<>();
             results.add(createBegin(context.getBeginStatements()));
             results.add(createEnd(context.getEndStatements()));
             for (FlowElementInput input : fragment.getInputPorts()) {

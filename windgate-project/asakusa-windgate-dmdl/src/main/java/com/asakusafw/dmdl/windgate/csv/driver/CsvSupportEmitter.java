@@ -41,7 +41,6 @@ import com.asakusafw.runtime.io.csv.CsvConfiguration;
 import com.asakusafw.runtime.io.csv.CsvEmitter;
 import com.asakusafw.runtime.io.csv.CsvParser;
 import com.asakusafw.runtime.value.StringOption;
-import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.ClassDeclaration;
 import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.ExpressionStatement;
@@ -223,7 +222,7 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
         }
 
         private List<TypeBodyDeclaration> createMembers() {
-            List<TypeBodyDeclaration> results = Lists.create();
+            List<TypeBodyDeclaration> results = new ArrayList<>();
             results.add(createGetConfiguration());
             results.add(createGetSupportedType());
             results.add(createCreateReader());
@@ -234,8 +233,8 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
         }
 
         private MethodDeclaration createGetConfiguration() {
-            List<Statement> statements = Lists.create();
-            List<Expression> arguments = Lists.create();
+            List<Statement> statements = new ArrayList<>();
+            List<Expression> arguments = new ArrayList<>();
             arguments.add(new TypeBuilder(f, context.resolve(Charset.class))
                 .method("forName", Models.toLiteral(f, conf.getCharsetName())) //$NON-NLS-1$
                 .toExpression());
@@ -315,7 +314,7 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
         private MethodDeclaration createCreateReader() {
             SimpleName path = f.newSimpleName("path"); //$NON-NLS-1$
             SimpleName stream = f.newSimpleName("stream"); //$NON-NLS-1$
-            List<Statement> statements = Lists.create();
+            List<Statement> statements = new ArrayList<>();
             statements.add(createNullCheck(path));
             statements.add(createNullCheck(stream));
 
@@ -352,7 +351,7 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
         private MethodDeclaration createCreateWriter() {
             SimpleName path = f.newSimpleName("path"); //$NON-NLS-1$
             SimpleName stream = f.newSimpleName("stream"); //$NON-NLS-1$
-            List<Statement> statements = Lists.create();
+            List<Statement> statements = new ArrayList<>();
             statements.add(createNullCheck(path));
             statements.add(createNullCheck(stream));
 
@@ -402,9 +401,9 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
 
         private ClassDeclaration createReaderClass() {
             SimpleName parser = f.newSimpleName("parser"); //$NON-NLS-1$
-            List<TypeBodyDeclaration> members = Lists.create();
+            List<TypeBodyDeclaration> members = new ArrayList<>();
             members.add(createPrivateField(CsvParser.class, parser));
-            List<ExpressionStatement> constructorStatements = Lists.create();
+            List<ExpressionStatement> constructorStatements = new ArrayList<>();
             constructorStatements.add(mapField(parser));
             if (hasFileName()) {
                 members.add(createPrivateField(StringOption.class, f.newSimpleName(FIELD_PATH_NAME)));
@@ -425,7 +424,7 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
                     constructorStatements));
 
             SimpleName object = f.newSimpleName("object"); //$NON-NLS-1$
-            List<Statement> statements = Lists.create();
+            List<Statement> statements = new ArrayList<>();
             statements.add(f.newIfStatement(
                     new ExpressionBuilder(f, parser)
                         .method("next") //$NON-NLS-1$
@@ -502,7 +501,7 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
 
         private ClassDeclaration createWriterClass() {
             SimpleName emitter = f.newSimpleName("emitter"); //$NON-NLS-1$
-            List<TypeBodyDeclaration> members = Lists.create();
+            List<TypeBodyDeclaration> members = new ArrayList<>();
             members.add(createPrivateField(CsvEmitter.class, emitter));
             members.add(f.newConstructorDeclaration(
                     null,
@@ -512,7 +511,7 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
                     Arrays.asList(mapField(emitter))));
 
             SimpleName object = f.newSimpleName("object"); //$NON-NLS-1$
-            List<Statement> statements = Lists.create();
+            List<Statement> statements = new ArrayList<>();
             for (PropertyDeclaration property : model.getDeclaredProperties()) {
                 if (isValueField(property)) {
                     statements.add(new ExpressionBuilder(f, emitter)

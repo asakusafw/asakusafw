@@ -16,6 +16,8 @@
 package com.asakusafw.compiler.flow.plan;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +28,6 @@ import org.slf4j.LoggerFactory;
 
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.utils.collections.Lists;
-import com.asakusafw.utils.collections.Maps;
 import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.vocabulary.flow.graph.FlowElement;
 import com.asakusafw.vocabulary.flow.graph.FlowElementOutput;
@@ -154,7 +155,7 @@ public class StageBlock {
     private boolean bypass(FlowBlock block) {
         assert block != null;
         // create mapping: FlowElementOutput -> FlowBlockOutput
-        Map<FlowElementOutput, FlowBlock.Output> outputs = Maps.create();
+        Map<FlowElementOutput, FlowBlock.Output> outputs = new HashMap<>();
         for (FlowBlock.Output blockOutput : block.getBlockOutputs()) {
             outputs.put(blockOutput.getElementPort(), blockOutput);
         }
@@ -182,13 +183,13 @@ public class StageBlock {
     private void bypass(FlowBlock.Input input, FlowBlock.Output output) {
         assert input != null;
         assert output != null;
-        List<FlowBlock.Output> upstreams = Lists.create();
+        List<FlowBlock.Output> upstreams = new ArrayList<>();
         List<FlowBlock.Connection> inConns = Lists.from(input.getConnections());
         for (FlowBlock.Connection conn : inConns) {
             upstreams.add(conn.getUpstream());
             conn.disconnect();
         }
-        List<FlowBlock.Input> downstreams = Lists.create();
+        List<FlowBlock.Input> downstreams = new ArrayList<>();
         List<FlowBlock.Connection> outConns = Lists.from(output.getConnections());
         for (FlowBlock.Connection conn : outConns) {
             downstreams.add(conn.getDownstream());

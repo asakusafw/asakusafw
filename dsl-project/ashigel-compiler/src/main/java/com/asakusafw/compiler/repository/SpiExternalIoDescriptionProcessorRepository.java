@@ -15,6 +15,8 @@
  */
 package com.asakusafw.compiler.repository;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
@@ -25,8 +27,6 @@ import org.slf4j.LoggerFactory;
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.flow.ExternalIoDescriptionProcessor;
 import com.asakusafw.compiler.flow.FlowCompilingEnvironment;
-import com.asakusafw.utils.collections.Lists;
-import com.asakusafw.utils.collections.Maps;
 import com.asakusafw.vocabulary.external.ExporterDescription;
 import com.asakusafw.vocabulary.external.ImporterDescription;
 import com.asakusafw.vocabulary.flow.graph.InputDescription;
@@ -48,8 +48,8 @@ public class SpiExternalIoDescriptionProcessorRepository
     @Override
     protected void doInitialize() {
         LOG.debug("loading external I/O plug-ins"); //$NON-NLS-1$
-        this.processors = Lists.create();
-        this.map = Maps.create();
+        this.processors = new ArrayList<>();
+        this.map = new HashMap<>();
         ServiceLoader<ExternalIoDescriptionProcessor> services = ServiceLoader.load(
                 ExternalIoDescriptionProcessor.class,
                 getEnvironment().getServiceClassLoader());

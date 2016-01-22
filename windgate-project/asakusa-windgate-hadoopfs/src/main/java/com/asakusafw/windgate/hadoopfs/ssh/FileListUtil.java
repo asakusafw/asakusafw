@@ -19,7 +19,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 
 /**
@@ -28,7 +28,7 @@ import java.text.MessageFormat;
  */
 public final class FileListUtil {
 
-    private static final byte[] PREAMBLE = "@ASKS_FL:".getBytes(Charset.forName("UTF-8"));
+    private static final byte[] PREAMBLE = "@ASKS_FL:".getBytes(StandardCharsets.UTF_8);
 
     private FileListUtil() {
         return;

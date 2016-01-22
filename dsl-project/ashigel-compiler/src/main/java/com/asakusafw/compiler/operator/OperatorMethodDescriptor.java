@@ -16,6 +16,7 @@
 package com.asakusafw.compiler.operator;
 
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -185,11 +186,11 @@ public class OperatorMethodDescriptor {
             this.context = context;
             this.annotationType = annotationType;
             this.name = context.element.getSimpleName().toString();
-            this.operatorDescription = Lists.create();
-            this.inputPorts = Lists.create();
-            this.outputPorts = Lists.create();
-            this.parameters = Lists.create();
-            this.attributes = Lists.create();
+            this.operatorDescription = new ArrayList<>();
+            this.inputPorts = new ArrayList<>();
+            this.outputPorts = new ArrayList<>();
+            this.parameters = new ArrayList<>();
+            this.attributes = new ArrayList<>();
         }
 
         /**
@@ -383,7 +384,7 @@ public class OperatorMethodDescriptor {
             ModelFactory f = context.environment.getFactory();
             ImportBuilder ib = context.importer;
             Jsr269 conv = new Jsr269(f);
-            List<Expression> parameterTypeLiterals = Lists.create();
+            List<Expression> parameterTypeLiterals = new ArrayList<>();
             for (VariableElement parameter : helperMethod.getParameters()) {
                 TypeMirror type = context.environment.getErasure(parameter.asType());
                 parameterTypeLiterals.add(new TypeBuilder(f, ib.resolve(conv.convert(type)))

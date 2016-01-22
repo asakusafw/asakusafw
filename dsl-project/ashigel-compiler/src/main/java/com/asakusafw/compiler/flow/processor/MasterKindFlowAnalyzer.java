@@ -15,13 +15,13 @@
  */
 package com.asakusafw.compiler.flow.processor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.flow.FlowElementProcessor.DataObjectMirror;
 import com.asakusafw.compiler.flow.FlowElementProcessor.ListBufferMirror;
 import com.asakusafw.compiler.flow.RendezvousProcessor;
-import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.InfixOperator;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
@@ -136,7 +136,7 @@ public class MasterKindFlowAnalyzer {
         context.addProcess(master, list.createAdvance(proc));
         context.addEnd(list.createEnd());
 
-        List<Expression> arguments = Lists.create();
+        List<Expression> arguments = new ArrayList<>();
         arguments.add(list.get());
         arguments.add(context.getProcessInput(tx));
         for (OperatorDescription.Parameter param : desc.getParameters()) {

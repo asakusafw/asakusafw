@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -33,7 +34,6 @@ import org.slf4j.LoggerFactory;
 
 import com.asakusafw.compiler.common.Naming;
 import com.asakusafw.testdriver.hadoop.ConfigurationFactory;
-import com.asakusafw.utils.collections.Lists;
 
 /**
  * A default implementation of {@link JobExecutor}.
@@ -144,7 +144,7 @@ public class DefaultJobExecutor extends JobExecutor {
             Map<String, String> environmentVariables) throws IOException {
         assert job != null;
         assert environmentVariables != null;
-        List<String> commandLine = Lists.create();
+        List<String> commandLine = new ArrayList<>();
         commandLine.add(new File(context.getFrameworkHomePath(), SUBMIT_JOB_SCRIPT).getAbsolutePath());
         commandLine.add(findPackage());
         commandLine.add(job.getClassName());
@@ -236,7 +236,7 @@ public class DefaultJobExecutor extends JobExecutor {
 
         private final BufferedReader reader;
 
-        private final List<String> list = Lists.create();
+        private final List<String> list = new ArrayList<>();
 
         public InputStreamThread(InputStream is) {
             reader = new BufferedReader(new InputStreamReader(is, Charset.defaultCharset()));

@@ -128,15 +128,7 @@ public class Date implements Comparable<Date> {
 
     @Override
     public int compareTo(Date o) {
-        int a = elapsedDays;
-        int b = o.elapsedDays;
-        if (a == b) {
-            return 0;
-        }
-        if (a < b) {
-            return -1;
-        }
-        return +1;
+        return Integer.compare(elapsedDays, o.elapsedDays);
     }
 
     @Override

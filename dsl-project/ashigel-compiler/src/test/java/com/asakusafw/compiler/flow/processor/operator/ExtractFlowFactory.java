@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 package com.asakusafw.compiler.flow.processor.operator;
+import javax.annotation.Generated;
+
 import com.asakusafw.compiler.flow.testing.model.Ex1;
 import com.asakusafw.compiler.flow.testing.model.Ex2;
 import com.asakusafw.runtime.core.Result;
@@ -25,7 +27,6 @@ import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 import com.asakusafw.vocabulary.operator.Extract;
 import com.asakusafw.vocabulary.operator.OperatorFactory;
 import com.asakusafw.vocabulary.operator.OperatorInfo;
-import javax.annotation.Generated;
 /**
  * An operator factory class about <code>ExtractFlow</code>.
  * @see ExtractFlow

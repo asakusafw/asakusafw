@@ -16,6 +16,7 @@
 package com.asakusafw.testdriver.temporary;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -30,7 +31,6 @@ import com.asakusafw.runtime.stage.temporary.TemporaryStorage;
 import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.DataModelReflection;
 import com.asakusafw.testdriver.core.DataModelSource;
-import com.asakusafw.utils.collections.Lists;
 
 /**
  * {@link DataModelSource} using {@link TemporaryInputFormat}.
@@ -78,7 +78,7 @@ public class TemporaryDataModelSource implements DataModelSource {
         Path path = new Path(pathExpression);
         this.fs = path.getFileSystem(conf);
         FileStatus[] list = fs.globStatus(path);
-        List<Path> paths = Lists.create();
+        List<Path> paths = new ArrayList<>();
         for (int i = 0; i < list.length; i++) {
             paths.add(list[i].getPath());
         }

@@ -16,7 +16,9 @@
 package com.asakusafw.compiler.flow.stage;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -30,7 +32,6 @@ import com.asakusafw.compiler.flow.plan.StageBlock;
 import com.asakusafw.runtime.core.Result;
 import com.asakusafw.runtime.flow.Rendezvous;
 import com.asakusafw.utils.collections.Lists;
-import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.vocabulary.flow.graph.FlowElement;
 import com.asakusafw.vocabulary.flow.graph.FlowElementInput;
 import com.asakusafw.vocabulary.flow.graph.FlowElementOutput;
@@ -123,8 +124,8 @@ public class StageModel {
      * @return input description of the external resources
      */
     public Set<InputDescription> getSideDataInputs() {
-        Set<ResourceFragment> resources = Sets.create();
-        List<Unit<?>> units = Lists.create();
+        Set<ResourceFragment> resources = new HashSet<>();
+        List<Unit<?>> units = new ArrayList<>();
         units.addAll(getMapUnits());
         units.addAll(getReduceUnits());
         for (Unit<?> unit : units) {
@@ -132,7 +133,7 @@ public class StageModel {
                 resources.addAll(fragment.getResources());
             }
         }
-        Set<InputDescription> results = Sets.create();
+        Set<InputDescription> results = new HashSet<>();
         for (ResourceFragment resource : resources) {
             results.addAll(resource.getDescription().getSideDataInputs());
         }

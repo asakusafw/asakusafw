@@ -16,6 +16,7 @@
 package com.asakusafw.compiler.flow.jobflow;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -30,7 +31,6 @@ import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.runtime.stage.AbstractCleanupStageClient;
 import com.asakusafw.runtime.stage.BaseStageClient;
 import com.asakusafw.runtime.stage.StageConstants;
-import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Comment;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
 import com.asakusafw.utils.java.model.syntax.Expression;
@@ -123,7 +123,7 @@ public class CleanupStageClientEmitter {
 
         private TypeDeclaration createType() {
             importer.resolvePackageMember(fqn.getSimpleName());
-            List<TypeBodyDeclaration> members = Lists.create();
+            List<TypeBodyDeclaration> members = new ArrayList<>();
             members.addAll(createIdMethods());
             members.add(createStageOutputPath());
             return factory.newClassDeclaration(
@@ -140,7 +140,7 @@ public class CleanupStageClientEmitter {
         }
 
         private List<MethodDeclaration> createIdMethods() {
-            List<MethodDeclaration> results = Lists.create();
+            List<MethodDeclaration> results = new ArrayList<>();
             results.add(createValueMethod(
                     BaseStageClient.METHOD_BATCH_ID,
                     t(String.class),

@@ -19,8 +19,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Method;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -44,7 +45,6 @@ import com.asakusafw.dmdl.source.DmdlSourceRepository;
 import com.asakusafw.dmdl.util.AnalyzeTask;
 import com.asakusafw.runtime.model.DataModel;
 import com.asakusafw.runtime.value.ValueOption;
-import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.jsr199.testing.VolatileCompiler;
 import com.asakusafw.utils.java.jsr199.testing.VolatileJavaFile;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
@@ -69,7 +69,7 @@ public class GeneratorTesterRoot {
     /**
      * {@link JavaDataModelDriver}s.
      */
-    protected final List<JavaDataModelDriver> emitDrivers = Lists.create();
+    protected final List<JavaDataModelDriver> emitDrivers = new ArrayList<>();
 
     /**
      * Cleans up the test.
@@ -104,7 +104,7 @@ public class GeneratorTesterRoot {
         try {
             return analyze(new DmdlSourceFile(
                     Arrays.asList(emitDmdl(lines)),
-                    Charset.forName("UTF-8")));
+                    StandardCharsets.UTF_8));
         } catch (Exception e) {
             throw new AssertionError(e);
         }
@@ -119,7 +119,7 @@ public class GeneratorTesterRoot {
         try {
             List<VolatileJavaFile> sources = emit(new DmdlSourceFile(
                     Arrays.asList(emitDmdl(lines)),
-                    Charset.forName("UTF-8")));
+                    StandardCharsets.UTF_8));
             ClassLoader loaded = compile(sources);
             return new ModelLoader(loaded);
         } catch (Exception e) {
@@ -135,7 +135,7 @@ public class GeneratorTesterRoot {
         try {
             emit(new DmdlSourceFile(
                     Arrays.asList(emitDmdl(lines)),
-                    Charset.forName("UTF-8")));
+                    StandardCharsets.UTF_8));
             throw new AssertionError("semantic error should be raised");
         } catch (IOException e) {
             // ok.

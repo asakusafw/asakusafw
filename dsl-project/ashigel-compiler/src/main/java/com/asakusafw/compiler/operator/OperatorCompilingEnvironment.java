@@ -16,6 +16,7 @@
 package com.asakusafw.compiler.operator;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.annotation.processing.Filer;
@@ -30,7 +31,6 @@ import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
 import com.asakusafw.compiler.common.Precondition;
-import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.utils.java.jsr269.bridge.Jsr269;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
@@ -56,7 +56,7 @@ public class OperatorCompilingEnvironment {
 
     private final boolean forceGenerate;
 
-    private final Set<String> generatedResourceKeys = Sets.create();
+    private final Set<String> generatedResourceKeys = new HashSet<>();
 
     /**
      * Creates a new instance.

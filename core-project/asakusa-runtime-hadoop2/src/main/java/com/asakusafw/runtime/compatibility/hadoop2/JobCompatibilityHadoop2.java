@@ -55,9 +55,9 @@ import org.apache.hadoop.mapreduce.task.TaskAttemptContextImpl;
 import org.apache.hadoop.mapreduce.task.TaskInputOutputContextImpl;
 import org.apache.hadoop.util.Progressable;
 
+import com.asakusafw.runtime.compatibility.hadoop.CoreCompatibility.FrameworkVersion;
 import com.asakusafw.runtime.compatibility.hadoop.JobCompatibilityHadoop;
 import com.asakusafw.runtime.compatibility.hadoop.KeyValueConsumer;
-import com.asakusafw.runtime.compatibility.hadoop.CoreCompatibility.FrameworkVersion;
 
 /**
  * Compatibility for job APIs (Hadoop {@code 2.x}).

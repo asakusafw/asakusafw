@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -55,7 +56,7 @@ public class JschProcessExecutor implements ProcessExecutor {
 
     static final Logger LOG = LoggerFactory.getLogger(JschProcessExecutor.class);
 
-    static final Charset ENCODING = Charset.forName("UTF-8"); //$NON-NLS-1$
+    static final Charset ENCODING = StandardCharsets.UTF_8;
 
     private static final String PREFIX = "ssh.";
 

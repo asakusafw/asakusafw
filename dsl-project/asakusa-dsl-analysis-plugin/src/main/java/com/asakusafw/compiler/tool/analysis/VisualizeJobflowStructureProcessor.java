@@ -18,7 +18,9 @@ package com.asakusafw.compiler.tool.analysis;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -35,7 +37,6 @@ import com.asakusafw.compiler.flow.plan.StageGraph;
 import com.asakusafw.compiler.flow.visualizer.VisualAnalyzer;
 import com.asakusafw.compiler.flow.visualizer.VisualGraph;
 import com.asakusafw.compiler.flow.visualizer.VisualGraphEmitter;
-import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.vocabulary.batch.JobFlowWorkDescription;
 import com.asakusafw.vocabulary.batch.WorkDescription;
 import com.asakusafw.vocabulary.flow.graph.FlowGraph;
@@ -48,7 +49,7 @@ public class VisualizeJobflowStructureProcessor extends AbstractWorkflowProcesso
 
     static final Logger LOG = LoggerFactory.getLogger(VisualizeJobflowStructureProcessor.class);
 
-    static final Charset ENCODING = Charset.forName("UTF-8"); //$NON-NLS-1$
+    static final Charset ENCODING = StandardCharsets.UTF_8;
 
     private static final String PATH_FLOW_GRAPH = Constants.PATH_JOBFLOW + "{0}/flowgraph.dot"; //$NON-NLS-1$
 
@@ -58,7 +59,7 @@ public class VisualizeJobflowStructureProcessor extends AbstractWorkflowProcesso
 
     @Override
     public Collection<Class<? extends WorkDescriptionProcessor<?>>> getDescriptionProcessors() {
-        List<Class<? extends WorkDescriptionProcessor<?>>> results = Lists.create();
+        List<Class<? extends WorkDescriptionProcessor<?>>> results = new ArrayList<>();
         results.add(JobFlowWorkDescriptionProcessor.class);
         return results;
     }

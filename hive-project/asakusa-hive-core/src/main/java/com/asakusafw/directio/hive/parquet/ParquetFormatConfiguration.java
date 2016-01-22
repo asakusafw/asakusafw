@@ -15,11 +15,11 @@
  */
 package com.asakusafw.directio.hive.parquet;
 
-import parquet.column.ParquetProperties.WriterVersion;
-import parquet.hadoop.metadata.CompressionCodecName;
-
 import com.asakusafw.directio.hive.serde.DataModelMapping.ExceptionHandlingStrategy;
 import com.asakusafw.directio.hive.serde.DataModelMapping.FieldMappingStrategy;
+
+import parquet.column.ParquetProperties.WriterVersion;
+import parquet.hadoop.metadata.CompressionCodecName;
 
 /**
  * Represents the parquet file format configurations.

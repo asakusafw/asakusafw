@@ -17,6 +17,9 @@ package com.asakusafw.compiler.operator;
 
 import java.lang.annotation.Annotation;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -34,9 +37,7 @@ import javax.lang.model.util.ElementFilter;
 import javax.tools.Diagnostic;
 
 import com.asakusafw.compiler.common.Precondition;
-import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.collections.Maps;
-import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.vocabulary.operator.OperatorHelper;
 
 /**
@@ -65,7 +66,7 @@ public class OperatorClassCollector {
         Precondition.checkMustNotBeNull(round, "round"); //$NON-NLS-1$
         this.environment = environment;
         this.round = round;
-        this.targetMethods = Lists.create();
+        this.targetMethods = new ArrayList<>();
     }
 
     /**
@@ -162,12 +163,12 @@ public class OperatorClassCollector {
             throw new OperatorCompilerException(null,
                     Messages.getString("OperatorClassCollector.errorFailedToAnalyzeMethod")); //$NON-NLS-1$
         }
-        Map<TypeElement, List<TargetMethod>> mapping = Maps.create();
+        Map<TypeElement, List<TargetMethod>> mapping = new HashMap<>();
         for (TargetMethod target : targetMethods) {
             Maps.addToList(mapping, target.type, target);
         }
 
-        List<OperatorClass> results = Lists.create();
+        List<OperatorClass> results = new ArrayList<>();
         for (Map.Entry<TypeElement, List<TargetMethod>> entry : mapping.entrySet()) {
             OperatorClass klass = toOperatorClass(entry.getKey(), entry.getValue());
             results.add(klass);
@@ -239,7 +240,7 @@ public class OperatorClassCollector {
     }
 
     private void validateMemberNames(TypeElement type) {
-        Map<String, Element> saw = Maps.create();
+        Map<String, Element> saw = new HashMap<>();
         for (Element member : type.getEnclosedElements()) {
             ElementKind kind = member.getKind();
             if (kind != ElementKind.METHOD
@@ -264,10 +265,10 @@ public class OperatorClassCollector {
         assert type != null;
         assert targets != null;
 
-        Set<ExecutableElement> methods = Sets.create();
+        Set<ExecutableElement> methods = new HashSet<>();
         methods.addAll(ElementFilter.methodsIn(type.getEnclosedElements()));
 
-        Set<ExecutableElement> saw = Sets.create();
+        Set<ExecutableElement> saw = new HashSet<>();
         for (TargetMethod target : targets) {
             ExecutableElement method = target.method;
             if (saw.contains(method)) {

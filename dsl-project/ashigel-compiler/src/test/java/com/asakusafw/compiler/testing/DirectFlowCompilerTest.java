@@ -42,9 +42,9 @@ import com.asakusafw.compiler.testing.flow.DuplicateFragments;
 import com.asakusafw.compiler.testing.flow.StraightFragments;
 import com.asakusafw.compiler.testing.flow.StraightRendezvousFragments;
 import com.asakusafw.compiler.util.tester.CompilerTester;
-import com.asakusafw.compiler.util.tester.HadoopDriver;
 import com.asakusafw.compiler.util.tester.CompilerTester.TestInput;
 import com.asakusafw.compiler.util.tester.CompilerTester.TestOutput;
+import com.asakusafw.compiler.util.tester.HadoopDriver;
 import com.asakusafw.runtime.value.ValueOption;
 
 /**

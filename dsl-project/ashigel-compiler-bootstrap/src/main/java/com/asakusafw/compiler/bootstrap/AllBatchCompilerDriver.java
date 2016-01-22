@@ -20,7 +20,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -39,8 +41,6 @@ import com.asakusafw.compiler.batch.ResourceRepository.Cursor;
 import com.asakusafw.compiler.common.FileRepository;
 import com.asakusafw.compiler.common.ZipRepository;
 import com.asakusafw.compiler.flow.Location;
-import com.asakusafw.utils.collections.Lists;
-import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.vocabulary.batch.Batch;
 import com.asakusafw.vocabulary.batch.BatchDescription;
 
@@ -161,7 +161,7 @@ public final class AllBatchCompilerDriver {
         List<File> linkingResources = extractEmbedResources(link);
         List<URL> pluginLocations = extractPluginPath(plugin);
         Pattern includePattern = extractIncludePattern(include);
-        Set<String> errorBatches = Sets.create();
+        Set<String> errorBatches = new HashSet<>();
         boolean succeeded = true;
         try {
             ResourceRepository scanner = getScanner(new File(scanPath));
@@ -210,7 +210,7 @@ public final class AllBatchCompilerDriver {
         if (path == null) {
             return Collections.emptyList();
         }
-        List<File> results = Lists.create();
+        List<File> results = new ArrayList<>();
         for (String s : path.split(File.pathSeparator)) {
             results.add(new File(s));
         }
@@ -221,7 +221,7 @@ public final class AllBatchCompilerDriver {
         if (path == null) {
             return Collections.emptyList();
         }
-        List<URL> results = Lists.create();
+        List<URL> results = new ArrayList<>();
         for (String s : path.split(File.pathSeparator)) {
             if (s.trim().isEmpty()) {
                 continue;

@@ -16,7 +16,9 @@
 package com.asakusafw.dmdl.java.emitter.driver;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,8 +32,6 @@ import com.asakusafw.dmdl.semantics.PropertySymbol;
 import com.asakusafw.dmdl.semantics.trait.MappingFactor;
 import com.asakusafw.dmdl.semantics.trait.ReduceTerm;
 import com.asakusafw.dmdl.semantics.trait.SummarizeTrait;
-import com.asakusafw.utils.collections.Lists;
-import com.asakusafw.utils.collections.Maps;
 import com.asakusafw.utils.java.model.syntax.Annotation;
 import com.asakusafw.utils.java.model.syntax.ArrayInitializer;
 import com.asakusafw.utils.java.model.syntax.ClassLiteral;
@@ -62,7 +62,7 @@ public class SummarizeDriver extends JavaDataModelDriver {
         }
 
         ModelFactory f = context.getModelFactory();
-        List<Annotation> eTerms = Lists.create();
+        List<Annotation> eTerms = new ArrayList<>();
         for (ReduceTerm<?> term : trait.getTerms()) {
             ClassLiteral source = f.newClassLiteral(context.resolve(term.getSource()));
             ArrayInitializer mappings = toMappings(context, term.getMappings());
@@ -84,7 +84,7 @@ public class SummarizeDriver extends JavaDataModelDriver {
         assert context != null;
         assert foldings != null;
         ModelFactory f = context.getModelFactory();
-        List<Annotation> eachFolding = Lists.create();
+        List<Annotation> eachFolding = new ArrayList<>();
         for (MappingFactor factor : foldings) {
             Expression aggregator = new TypeBuilder(f, context.resolve(Summarized.Aggregator.class))
                 .field(convert(factor.getKind()).name())
@@ -123,8 +123,8 @@ public class SummarizeDriver extends JavaDataModelDriver {
         assert context != null;
         assert term != null;
         ModelFactory f = context.getModelFactory();
-        List<Literal> properties = Lists.create();
-        Map<String, PropertySymbol> reverseMapping = Maps.create();
+        List<Literal> properties = new ArrayList<>();
+        Map<String, PropertySymbol> reverseMapping = new HashMap<>();
         for (MappingFactor mapping : term.getMappings()) {
             reverseMapping.put(mapping.getTarget().getName().identifier, mapping.getSource());
         }

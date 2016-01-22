@@ -16,6 +16,7 @@
 package com.asakusafw.compiler.flow.mapreduce.parallel;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -35,7 +36,6 @@ import com.asakusafw.runtime.stage.collector.SlotDirectMapper;
 import com.asakusafw.runtime.stage.collector.SlotDistributor;
 import com.asakusafw.runtime.stage.collector.SortableSlot;
 import com.asakusafw.runtime.trace.TraceLocation;
-import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Comment;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
 import com.asakusafw.utils.java.model.syntax.Expression;
@@ -167,7 +167,7 @@ final class ParallelSortMapperEmitter {
         }
 
         private MethodDeclaration createOutputName() {
-            List<Statement> statements = Lists.create();
+            List<Statement> statements = new ArrayList<>();
             statements.add(new ExpressionBuilder(factory, Models.toLiteral(factory, slot.getSource().getOutputName()))
                 .toReturnStatement());
             return factory.newMethodDeclaration(
@@ -239,7 +239,7 @@ final class ParallelSortMapperEmitter {
         private MethodDeclaration createSlotSpec() {
             SimpleName valueName = factory.newSimpleName("value"); //$NON-NLS-1$
             SimpleName slotName = factory.newSimpleName("slot"); //$NON-NLS-1$
-            List<Statement> statements = Lists.create();
+            List<Statement> statements = new ArrayList<>();
             statements.add(new ExpressionBuilder(factory, slotName)
                 .method(SortableSlot.NAME_BEGIN, Models.toLiteral(factory, slot.getSlotNumber()))
                 .toStatement());

@@ -25,6 +25,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hamcrest.BaseMatcher;
@@ -69,7 +70,7 @@ public abstract class DmdlTesterRoot {
     /**
      * {@link AttributeDriver}s.
      */
-    protected final List<AttributeDriver> attributeDrivers = Lists.create();
+    protected final List<AttributeDriver> attributeDrivers = new ArrayList<>();
 
     /**
      * Returns a type matcher.

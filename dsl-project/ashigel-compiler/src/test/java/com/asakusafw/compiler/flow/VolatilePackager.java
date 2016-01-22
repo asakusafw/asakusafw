@@ -22,7 +22,9 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -44,7 +46,6 @@ import org.slf4j.LoggerFactory;
 
 import com.asakusafw.compiler.batch.batch.MockEmitter;
 import com.asakusafw.compiler.flow.packager.FilePackager;
-import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.jsr199.testing.VolatileClassFile;
 import com.asakusafw.utils.java.jsr199.testing.VolatileClassOutputManager;
 import com.asakusafw.utils.java.jsr199.testing.VolatileJavaFile;
@@ -61,7 +62,7 @@ public class VolatilePackager
 
     static final Logger LOG = LoggerFactory.getLogger(VolatilePackager.class);
 
-    private static final Charset CHARSET = Charset.forName("UTF-8");
+    private static final Charset CHARSET = StandardCharsets.UTF_8;
 
     private final MockEmitter emitter;
 
@@ -154,7 +155,7 @@ public class VolatilePackager
                         diagnostics,
                         Locale.getDefault(),
                         CHARSET))) {
-            List<String> arguments = Lists.create();
+            List<String> arguments = new ArrayList<>();
             Collections.addAll(arguments, "-source", FilePackager.DEFAULT_JAVA_VERSION);
             Collections.addAll(arguments, "-target", FilePackager.DEFAULT_JAVA_VERSION);
             Collections.addAll(arguments, "-encoding", CHARSET.name());

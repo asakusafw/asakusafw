@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -50,7 +51,7 @@ public final class FileList {
 
     static final String LAST_ENTRY_NAME = ".__LAST_ENTRY__"; //$NON-NLS-1$
 
-    static final Charset PATH_ENCODING = Charset.forName("UTF-8"); //$NON-NLS-1$
+    static final Charset PATH_ENCODING = StandardCharsets.UTF_8;
 
     /**
      * Creates a simple {@link FileStatus}.

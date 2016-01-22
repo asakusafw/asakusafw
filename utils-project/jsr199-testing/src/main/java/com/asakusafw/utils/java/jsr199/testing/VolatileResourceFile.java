@@ -27,6 +27,7 @@ import java.io.Writer;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import javax.tools.FileObject;
 
@@ -40,7 +41,7 @@ public class VolatileResourceFile implements FileObject {
      */
     public static final String URI_SCHEME = VolatileResourceFile.class.getName();
 
-    private static final Charset CHARSET = Charset.forName("UTF-8"); //$NON-NLS-1$
+    private static final Charset CHARSET = StandardCharsets.UTF_8;
 
     private final URI uri;
 

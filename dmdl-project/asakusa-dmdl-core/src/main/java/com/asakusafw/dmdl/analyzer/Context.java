@@ -15,6 +15,8 @@
  */
 package com.asakusafw.dmdl.analyzer;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,7 +30,6 @@ import com.asakusafw.dmdl.semantics.DmdlSemantics;
 import com.asakusafw.dmdl.semantics.Type;
 import com.asakusafw.dmdl.spi.AttributeDriver;
 import com.asakusafw.dmdl.spi.TypeDriver;
-import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.collections.Maps;
 
 /**
@@ -112,7 +113,7 @@ public class Context {
 
     private List<TypeDriver> buildTypeDrivers(Iterable<? extends TypeDriver> drivers) {
         assert drivers != null;
-        List<TypeDriver> results = Lists.create();
+        List<TypeDriver> results = new ArrayList<>();
         for (TypeDriver driver : drivers) {
             LOG.debug("Activating type driver: {}", driver.getClass().getName()); //$NON-NLS-1$
             results.add(driver);
@@ -122,14 +123,14 @@ public class Context {
 
     private Map<String, AttributeDriver> buildAttributeDriverMap(Iterable<? extends AttributeDriver> flatDrivers) {
         assert flatDrivers != null;
-        Map<String, List<AttributeDriver>> group = Maps.create();
+        Map<String, List<AttributeDriver>> group = new HashMap<>();
         for (AttributeDriver driver : flatDrivers) {
             LOG.debug("Activating attribute driver: {}", driver.getClass().getName()); //$NON-NLS-1$
             String target = driver.getTargetName();
             Maps.addToList(group, target, driver);
         }
 
-        Map<String, AttributeDriver> results = Maps.create();
+        Map<String, AttributeDriver> results = new HashMap<>();
         for (Map.Entry<String, List<AttributeDriver>> entry : group.entrySet()) {
             String target = entry.getKey();
             LOG.debug("Enabling attribute: {}", target); //$NON-NLS-1$

@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -180,7 +181,7 @@ public class RunTask {
         TestDriverContext context = configuration.context;
         VariableTable resolver = new VariableTable(RedefineStrategy.ERROR);
         resolver.defineVariables(context.getBatchArgs());
-        Map<String, String> dPropMap = Maps.create();
+        Map<String, String> dPropMap = new HashMap<>();
         dPropMap.put(StageConstants.PROP_USER, context.getOsUser());
         dPropMap.put(StageConstants.PROP_EXECUTION_ID, context.getExecutionId());
         dPropMap.put(StageConstants.PROP_ASAKUSA_BATCH_ARGS, resolver.toSerialString());

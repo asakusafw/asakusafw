@@ -20,6 +20,9 @@ import java.util.Arrays;
 import org.apache.hadoop.hive.common.type.HiveBaseChar;
 import org.apache.hadoop.io.Text;
 
+import com.asakusafw.runtime.value.StringOption;
+import com.asakusafw.runtime.value.ValueOption;
+
 import parquet.column.Dictionary;
 import parquet.io.api.Binary;
 import parquet.io.api.RecordConsumer;
@@ -27,9 +30,6 @@ import parquet.schema.OriginalType;
 import parquet.schema.PrimitiveType.PrimitiveTypeName;
 import parquet.schema.Type;
 import parquet.schema.Types;
-
-import com.asakusafw.runtime.value.StringOption;
-import com.asakusafw.runtime.value.ValueOption;
 
 /**
  * {@link ParquetValueDriver} for character strings with its length limit.

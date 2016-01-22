@@ -16,12 +16,10 @@
 package com.asakusafw.dmdl.directio.hive.parquet;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import parquet.column.ParquetProperties.WriterVersion;
-import parquet.hadoop.metadata.CompressionCodecName;
 
 import com.asakusafw.directio.hive.parquet.AbstractParquetFileFormat;
 import com.asakusafw.directio.hive.parquet.ParquetFormatConfiguration;
@@ -35,7 +33,6 @@ import com.asakusafw.dmdl.java.emitter.EmitContext;
 import com.asakusafw.dmdl.java.spi.JavaDataModelDriver;
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
 import com.asakusafw.runtime.directio.DataFormat;
-import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.ClassDeclaration;
 import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.FormalParameterDeclaration;
@@ -53,6 +50,9 @@ import com.asakusafw.utils.java.model.util.ExpressionBuilder;
 import com.asakusafw.utils.java.model.util.JavadocBuilder;
 import com.asakusafw.utils.java.model.util.Models;
 import com.asakusafw.utils.java.model.util.TypeBuilder;
+
+import parquet.column.ParquetProperties.WriterVersion;
+import parquet.hadoop.metadata.CompressionCodecName;
 
 /**
  * Emits a {@link DataFormat} class for parquet files.
@@ -177,7 +177,7 @@ public class ParquetFileEmitter extends JavaDataModelDriver {
         }
 
         private List<TypeBodyDeclaration> createMembers() {
-            List<TypeBodyDeclaration> results = Lists.create();
+            List<TypeBodyDeclaration> results = new ArrayList<>();
             results.add(createGetTableNameMethod());
             results.add(createGetDataModelDescriptorMethod());
             results.add(createGetFormatConfigurationMethod());
@@ -202,7 +202,7 @@ public class ParquetFileEmitter extends JavaDataModelDriver {
 
         private MethodDeclaration createGetFormatConfigurationMethod() {
             SimpleName result = f.newSimpleName("result"); //$NON-NLS-1$
-            List<Statement> statements = Lists.create();
+            List<Statement> statements = new ArrayList<>();
             statements.add(new TypeBuilder(f, context.resolve(ParquetFormatConfiguration.class))
                     .newObject()
                     .toLocalVariableDeclaration(context.resolve(ParquetFormatConfiguration.class), result));

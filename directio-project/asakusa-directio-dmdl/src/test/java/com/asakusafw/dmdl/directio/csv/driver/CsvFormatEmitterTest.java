@@ -24,7 +24,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -50,14 +52,13 @@ import com.asakusafw.runtime.value.DateTime;
 import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.runtime.value.LongOption;
 import com.asakusafw.runtime.value.StringOption;
-import com.asakusafw.utils.collections.Lists;
 
 /**
  * Test for {@link CsvFormatEmitter}.
  */
 public class CsvFormatEmitterTest extends GeneratorTesterRoot {
 
-    private static final Charset DEFAULT_ENCODING = Charset.forName("UTF-8");
+    private static final Charset DEFAULT_ENCODING = StandardCharsets.UTF_8;
 
     /**
      * Initializes the test.
@@ -424,7 +425,7 @@ public class CsvFormatEmitterTest extends GeneratorTesterRoot {
 
         BinaryStreamFormat<Object> unsafe = unsafe(support);
 
-        List<Object> expected = Lists.create();
+        List<Object> expected = new ArrayList<>();
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         try (ModelOutput<Object> writer = unsafe.createOutput(model.unwrap().getClass(), "hello", output)) {
             for (int line = 0; line < 100; line++) {
@@ -439,7 +440,7 @@ public class CsvFormatEmitterTest extends GeneratorTesterRoot {
         byte[] bytes = output.toByteArray();
 
         for (int attempt = 0; attempt < 100; attempt++) {
-            List<Object> actual = Lists.create();
+            List<Object> actual = new ArrayList<>();
             int[] fragment = new int[random.nextInt(100) + 2];
             fragment[0] = output.size();
             for (int i = 1; i < fragment.length; i++) {
@@ -552,7 +553,7 @@ public class CsvFormatEmitterTest extends GeneratorTesterRoot {
                 CsvConfiguration.DEFAULT_FALSE_FORMAT,
                 CsvConfiguration.DEFAULT_DATE_FORMAT,
                 CsvConfiguration.DEFAULT_DATE_TIME_FORMAT);
-        List<String[]> results = Lists.create();
+        List<String[]> results = new ArrayList<>();
         ByteArrayInputStream input = new ByteArrayInputStream(string.getBytes(conf.getCharset()));
         try (CsvParser parser = new CsvParser(input, string, conf)) {
             StringOption buffer = new StringOption();
@@ -612,7 +613,7 @@ public class CsvFormatEmitterTest extends GeneratorTesterRoot {
 
     private List<String> scan(byte[] bytes) {
         try (Scanner scanner = new Scanner(new ByteArrayInputStream(bytes), DEFAULT_ENCODING.name())) {
-            List<String> results = Lists.create();
+            List<String> results = new ArrayList<>();
             while (scanner.hasNextLine()) {
                 results.add(scanner.nextLine());
             }

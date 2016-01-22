@@ -23,6 +23,7 @@ import java.io.Reader;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 
 import org.slf4j.Logger;
@@ -44,7 +45,7 @@ public class JsonSourceProvider implements DataModelSourceProvider {
 
     private static final String EXTENSION = ".json"; //$NON-NLS-1$
 
-    private static final Charset ENCONDING = Charset.forName("UTF-8"); //$NON-NLS-1$
+    private static final Charset ENCONDING = StandardCharsets.UTF_8;
 
     @Override
     public <T> DataModelSource open(

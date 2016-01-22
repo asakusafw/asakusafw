@@ -20,15 +20,15 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import parquet.column.ParquetProperties.WriterVersion;
-import parquet.hadoop.metadata.CompressionCodecName;
-
 import com.asakusafw.directio.hive.parquet.AbstractParquetFileFormat;
 import com.asakusafw.directio.hive.parquet.ParquetFormatConfiguration;
 import com.asakusafw.directio.hive.serde.DataModelMapping.ExceptionHandlingStrategy;
 import com.asakusafw.directio.hive.serde.DataModelMapping.FieldMappingStrategy;
 import com.asakusafw.dmdl.directio.hive.common.GeneratorTesterRoot;
 import com.asakusafw.dmdl.directio.hive.common.HiveDataModelEmitter;
+
+import parquet.column.ParquetProperties.WriterVersion;
+import parquet.hadoop.metadata.CompressionCodecName;
 
 /**
  * Test for {@link ParquetFileEmitter}.

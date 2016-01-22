@@ -15,13 +15,14 @@
  */
 package com.asakusafw.compiler.common;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import com.asakusafw.utils.collections.Lists;
-import com.asakusafw.utils.collections.Sets;
 
 /**
  * Naming rules for Java source files.
@@ -31,7 +32,7 @@ public class JavaName {
     private static final Set<String> RESERVED;
     static {
         // see http://java.sun.com/docs/books/jls/third_edition/html/lexical.html#3.9
-        Set<String> set = Sets.create();
+        Set<String> set = new HashSet<>();
         set.add("abstract"); //$NON-NLS-1$
         set.add("continue"); //$NON-NLS-1$
         set.add("for"); //$NON-NLS-1$
@@ -93,7 +94,7 @@ public class JavaName {
         if (words == null) {
             throw new NullPointerException("words"); //$NON-NLS-1$
         }
-        this.words = Lists.create();
+        this.words = new ArrayList<>();
         for (String word : words) {
             this.words.add(normalize(word));
         }
@@ -111,7 +112,7 @@ public class JavaName {
             String[] segments = nameString.split(EMPTY_NAME);
             return new JavaName(normalize(Arrays.asList(segments)));
         } else {
-            List<String> segments = Lists.create();
+            List<String> segments = new ArrayList<>();
             int start = 0;
             for (int i = 1, n = nameString.length(); i < n; i++) {
                 if (Character.isUpperCase(nameString.charAt(i))) {
@@ -245,7 +246,7 @@ public class JavaName {
     }
 
     private static List<String> normalize(List<String> segments) {
-        List<String> results = Lists.create();
+        List<String> results = new ArrayList<>();
         for (String segment : segments) {
             if (segment.isEmpty() == false) {
                 results.add(segment);

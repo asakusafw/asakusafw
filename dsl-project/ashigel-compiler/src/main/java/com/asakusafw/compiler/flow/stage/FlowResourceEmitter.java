@@ -17,6 +17,7 @@ package com.asakusafw.compiler.flow.stage;
 
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -29,7 +30,6 @@ import com.asakusafw.compiler.flow.FlowCompilingEnvironment;
 import com.asakusafw.compiler.flow.FlowGraphRewriter;
 import com.asakusafw.compiler.flow.FlowGraphRewriter.RewriteException;
 import com.asakusafw.runtime.flow.FlowResource;
-import com.asakusafw.utils.collections.Maps;
 import com.asakusafw.utils.java.model.syntax.Name;
 import com.asakusafw.vocabulary.flow.graph.FlowResourceDescription;
 
@@ -64,7 +64,7 @@ public class FlowResourceEmitter {
      */
     public Map<FlowResourceDescription, CompiledType> emit(Set<FlowResourceDescription> resources) throws IOException {
         Precondition.checkMustNotBeNull(resources, "resources"); //$NON-NLS-1$
-        Map<FlowResourceDescription, CompiledType> results = Maps.create();
+        Map<FlowResourceDescription, CompiledType> results = new HashMap<>();
         for (FlowResourceDescription resource : resources) {
             Name compiled = compile(resource);
             if (compiled != null) {

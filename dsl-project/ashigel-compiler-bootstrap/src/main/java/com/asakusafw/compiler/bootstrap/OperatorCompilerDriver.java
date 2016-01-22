@@ -20,6 +20,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -150,7 +151,7 @@ public final class OperatorCompilerDriver {
         assert sourcePath != null;
         assert outputPath != null;
         assert encoding != null;
-        List<String> results = Lists.create();
+        List<String> results = new ArrayList<>();
         Collections.addAll(results, "-proc:only"); //$NON-NLS-1$
         Collections.addAll(results, "-source", FilePackager.DEFAULT_JAVA_VERSION); //$NON-NLS-1$
         Collections.addAll(results, "-target", FilePackager.DEFAULT_JAVA_VERSION); //$NON-NLS-1$
@@ -235,7 +236,7 @@ public final class OperatorCompilerDriver {
         String encoding = cmd.getOptionValue(OPT_ENCODING.getOpt(), "UTF-8"); //$NON-NLS-1$
         String[] classes = cmd.getOptionValues(OPT_CLASSES.getOpt());
 
-        List<Class<?>> operatorClasses = Lists.create();
+        List<Class<?>> operatorClasses = new ArrayList<>();
         for (String className : classes) {
             Class<?> oc = Class.forName(className);
             operatorClasses.add(oc);

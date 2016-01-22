@@ -15,11 +15,11 @@
  */
 package com.asakusafw.compiler.flow.processor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.asakusafw.compiler.common.TargetOperator;
 import com.asakusafw.compiler.flow.LineEndProcessor;
-import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
 import com.asakusafw.utils.java.model.util.ExpressionBuilder;
@@ -41,7 +41,7 @@ public class ExtractFlowProcessor extends LineEndProcessor {
         Expression impl = context.createImplementation();
         OperatorDescription desc = context.getOperatorDescription();
 
-        List<Expression> arguments = Lists.create();
+        List<Expression> arguments = new ArrayList<>();
         arguments.add(input);
         for (FlowElementPortDescription output : desc.getOutputPorts()) {
             arguments.add(context.getOutput(output).get());

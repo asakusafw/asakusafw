@@ -30,7 +30,6 @@ import com.asakusafw.compiler.flow.DataClassRepository;
 import com.asakusafw.compiler.flow.FlowCompilingEnvironment;
 import com.asakusafw.runtime.model.DataModel;
 import com.asakusafw.runtime.model.DataModelKind;
-import com.asakusafw.utils.collections.Maps;
 
 /**
  * An implementation of {@link DataClassRepository} for basic data model classes.
@@ -69,7 +68,7 @@ public class DataModelClassRepository
         }
         DataModelClass created = DataModelClass.create(getEnvironment(), aClass);
         if (cacheMap == null) {
-            cacheMap = Maps.create();
+            cacheMap = new HashMap<>();
             cache = new SoftReference<>(cacheMap);
         }
         cacheMap.put(type, created);

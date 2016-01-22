@@ -24,6 +24,7 @@ import java.lang.reflect.Type;
 import java.net.Socket;
 import java.net.URI;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -76,7 +77,7 @@ public class HttpJobClient implements JobClient {
 
     static final Logger LOG = LoggerFactory.getLogger(HttpJobClient.class);
 
-    private static final Charset ENCODING = Charset.forName("UTF-8");
+    private static final Charset ENCODING = StandardCharsets.UTF_8;
 
     static final ContentType CONTENT_TYPE = ContentType.create("text/json", ENCODING);
 

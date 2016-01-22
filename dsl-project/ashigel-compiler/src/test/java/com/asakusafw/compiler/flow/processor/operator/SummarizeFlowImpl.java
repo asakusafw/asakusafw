@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 package com.asakusafw.compiler.flow.processor.operator;
+import javax.annotation.Generated;
+
 import com.asakusafw.compiler.flow.testing.model.Ex1;
 import com.asakusafw.compiler.flow.testing.model.ExSummarized;
 import com.asakusafw.compiler.flow.testing.model.ExSummarized2;
 import com.asakusafw.compiler.flow.testing.model.KeyConflict;
-import javax.annotation.Generated;
 /**
  * An operator implementation class for{@link SummarizeFlow}.
  */

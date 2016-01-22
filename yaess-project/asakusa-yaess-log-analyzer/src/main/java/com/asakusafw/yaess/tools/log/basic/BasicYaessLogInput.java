@@ -25,8 +25,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.asakusafw.utils.io.Source;
-import com.asakusafw.yaess.tools.log.YaessLogRecord;
 import com.asakusafw.yaess.tools.log.YaessLogInput;
+import com.asakusafw.yaess.tools.log.YaessLogRecord;
 import com.asakusafw.yaess.tools.log.util.LineSource;
 
 /**

@@ -45,8 +45,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import parquet.column.ParquetProperties.WriterVersion;
-
 import com.asakusafw.directio.hive.parquet.mock.MockSimpleWithLong;
 import com.asakusafw.directio.hive.parquet.mock.WithDate;
 import com.asakusafw.directio.hive.parquet.mock.WithDateTime;
@@ -78,6 +76,8 @@ import com.asakusafw.runtime.value.DecimalOption;
 import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.runtime.value.LongOption;
 import com.asakusafw.runtime.value.StringOption;
+
+import parquet.column.ParquetProperties.WriterVersion;
 
 /**
  * Test for {@link ParquetFileFormat}.

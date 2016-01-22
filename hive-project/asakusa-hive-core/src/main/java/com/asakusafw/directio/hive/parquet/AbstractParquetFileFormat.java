@@ -28,13 +28,6 @@ import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
-import parquet.column.ParquetProperties.WriterVersion;
-import parquet.hadoop.Footer;
-import parquet.hadoop.ParquetFileReader;
-import parquet.hadoop.metadata.BlockMetaData;
-import parquet.hadoop.metadata.ColumnChunkMetaData;
-import parquet.hadoop.metadata.CompressionCodecName;
-
 import com.asakusafw.directio.hive.common.HiveFieldInfo;
 import com.asakusafw.directio.hive.common.HiveTableInfo;
 import com.asakusafw.directio.hive.common.RowFormatInfo;
@@ -47,6 +40,13 @@ import com.asakusafw.runtime.directio.hadoop.HadoopFileFormat;
 import com.asakusafw.runtime.directio.hadoop.StripedDataFormat;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
+
+import parquet.column.ParquetProperties.WriterVersion;
+import parquet.hadoop.Footer;
+import parquet.hadoop.ParquetFileReader;
+import parquet.hadoop.metadata.BlockMetaData;
+import parquet.hadoop.metadata.ColumnChunkMetaData;
+import parquet.hadoop.metadata.CompressionCodecName;
 
 /**
  * An abstract implementation of {@link HadoopFileFormat} for Parquet.

@@ -21,6 +21,7 @@ import static org.junit.Assert.*;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -29,8 +30,27 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.dmdl.DmdlTesterRoot;
-import com.asakusafw.dmdl.model.*;
-import com.asakusafw.utils.collections.Lists;
+import com.asakusafw.dmdl.model.AstAttribute;
+import com.asakusafw.dmdl.model.AstAttributeElement;
+import com.asakusafw.dmdl.model.AstAttributeValue;
+import com.asakusafw.dmdl.model.AstAttributeValueArray;
+import com.asakusafw.dmdl.model.AstBasicType;
+import com.asakusafw.dmdl.model.AstExpression;
+import com.asakusafw.dmdl.model.AstJoin;
+import com.asakusafw.dmdl.model.AstLiteral;
+import com.asakusafw.dmdl.model.AstModelDefinition;
+import com.asakusafw.dmdl.model.AstModelReference;
+import com.asakusafw.dmdl.model.AstPropertyDefinition;
+import com.asakusafw.dmdl.model.AstQualifiedName;
+import com.asakusafw.dmdl.model.AstRecord;
+import com.asakusafw.dmdl.model.AstRecordDefinition;
+import com.asakusafw.dmdl.model.AstScript;
+import com.asakusafw.dmdl.model.AstSummarize;
+import com.asakusafw.dmdl.model.AstTerm;
+import com.asakusafw.dmdl.model.AstType;
+import com.asakusafw.dmdl.model.AstUnionExpression;
+import com.asakusafw.dmdl.model.BasicTypeKind;
+import com.asakusafw.dmdl.model.LiteralKind;
 
 /**
  * Test for {@link DmdlParser}.
@@ -563,7 +583,7 @@ public class DmdlParserTest extends DmdlTesterRoot {
 
     @SuppressWarnings("unchecked")
     private <T extends AstTerm<T>> List<T> extract(AstExpression<T> expression) {
-        List<T> results = Lists.create();
+        List<T> results = new ArrayList<>();
         LinkedList<AstExpression<T>> work = new LinkedList<>();
         work.add(expression);
         int count = 0;

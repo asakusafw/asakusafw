@@ -25,6 +25,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
@@ -41,7 +42,6 @@ import org.slf4j.LoggerFactory;
 import com.asakusafw.compiler.batch.ResourceRepository;
 import com.asakusafw.compiler.flow.JobflowCompilerTestRoot;
 import com.asakusafw.compiler.flow.Packager;
-import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.utils.java.model.syntax.Comment;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
 import com.asakusafw.utils.java.model.syntax.ImportDeclaration;
@@ -71,7 +71,7 @@ public class FilePackagerTest extends JobflowCompilerTestRoot {
      */
     @Test
     public void build_java() throws Exception {
-        Set<String> entries = Sets.create();
+        Set<String> entries = new HashSet<>();
 
         FilePackager packager = new FilePackager(
                 folder.newFolder(),
@@ -89,7 +89,7 @@ public class FilePackagerTest extends JobflowCompilerTestRoot {
      */
     @Test
     public void build_resource() throws Exception {
-        Set<String> entries = Sets.create();
+        Set<String> entries = new HashSet<>();
 
         FilePackager packager = new FilePackager(
                 folder.newFolder(),
@@ -107,7 +107,7 @@ public class FilePackagerTest extends JobflowCompilerTestRoot {
      */
     @Test
     public void build_mixed() throws Exception {
-        Set<String> entries = Sets.create();
+        Set<String> entries = new HashSet<>();
 
         FilePackager packager = new FilePackager(
                 folder.newFolder(),
@@ -131,7 +131,7 @@ public class FilePackagerTest extends JobflowCompilerTestRoot {
      */
     @Test
     public void build_error() throws Exception {
-        Set<String> entries = Sets.create();
+        Set<String> entries = new HashSet<>();
 
         FilePackager packager = new FilePackager(
                 folder.newFolder(),
@@ -154,7 +154,7 @@ public class FilePackagerTest extends JobflowCompilerTestRoot {
     @Test
     public void skip_packaging() throws Exception {
         environment.getOptions().putExtraAttribute(FilePackager.KEY_OPTION_PACKAGING, "false");
-        Set<String> entries = Sets.create();
+        Set<String> entries = new HashSet<>();
 
         FilePackager packager = new FilePackager(
                 folder.newFolder(),
@@ -176,7 +176,7 @@ public class FilePackagerTest extends JobflowCompilerTestRoot {
     public void build_java_jdk7() throws Exception {
         Assume.assumeThat(SourceVersion.latest(), is(greaterThan(SourceVersion.RELEASE_6)));
         environment.getOptions().putExtraAttribute(FilePackager.KEY_JAVA_VERSION, "1.7");
-        Set<String> entries = Sets.create();
+        Set<String> entries = new HashSet<>();
         FilePackager packager = new FilePackager(
                 folder.newFolder(),
                 Arrays.<ResourceRepository>asList());

@@ -15,8 +15,8 @@
  */
 package com.asakusafw.runtime.mapreduce.simple;
 
-import static org.junit.Assert.*;
 import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -48,7 +48,6 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import com.asakusafw.runtime.compatibility.JobCompatibility;
-import com.asakusafw.runtime.mapreduce.simple.SimpleJobRunner;
 
 /**
  * Test for {@link SimpleJobRunner}.

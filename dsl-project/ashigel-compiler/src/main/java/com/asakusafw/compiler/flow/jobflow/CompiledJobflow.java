@@ -15,6 +15,7 @@
  */
 package com.asakusafw.compiler.flow.jobflow;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -122,7 +123,7 @@ public class CompiledJobflow {
     }
 
     private List<ExternalIoStage> blessIoContext(String moduleName, List<CompiledStage> stages, IoContext context) {
-        List<ExternalIoStage> results = Lists.create();
+        List<ExternalIoStage> results = new ArrayList<>();
         for (CompiledStage stage : stages) {
             results.add(new ExternalIoStage(moduleName, stage, context));
         }
@@ -130,7 +131,7 @@ public class CompiledJobflow {
     }
 
     private List<CompiledStage> unblessIoContext(List<ExternalIoStage> stages) {
-        List<CompiledStage> results = Lists.create();
+        List<CompiledStage> results = new ArrayList<>();
         for (ExternalIoStage stage : stages) {
             results.add(stage.getCompiledStage());
         }

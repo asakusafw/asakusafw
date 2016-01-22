@@ -26,7 +26,9 @@ import java.io.Reader;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -41,7 +43,6 @@ import org.junit.After;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.utils.graph.Graph;
 import com.asakusafw.utils.graph.Graphs;
@@ -69,7 +70,7 @@ public class OperatorCompilerTestRoot {
 
     private final VolatileCompiler compiler = new VolatileCompiler();
 
-    private final List<JavaFileObject> sources = Lists.create();
+    private final List<JavaFileObject> sources = new ArrayList<>();
 
     /**
      * Disposes the internal compiler.
@@ -197,7 +198,7 @@ public class OperatorCompilerTestRoot {
      * @return the graph
      */
     protected Graph<String> toGraph(FlowElement... startingElements) {
-        Set<String> saw = Sets.create();
+        Set<String> saw = new HashSet<>();
         LinkedList<FlowElement> work = new LinkedList<>();
         for (FlowElement elem : startingElements) {
             work.add(elem);

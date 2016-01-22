@@ -18,7 +18,9 @@ package com.asakusafw.compiler.flow.join;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -39,8 +41,6 @@ import com.asakusafw.compiler.flow.join.operator.SideDataJoin;
 import com.asakusafw.compiler.flow.join.operator.SideDataJoinUpdate;
 import com.asakusafw.compiler.flow.plan.FlowGraphUtil;
 import com.asakusafw.runtime.stage.input.TemporaryInputFormat;
-import com.asakusafw.utils.collections.Lists;
-import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.utils.java.model.syntax.Name;
 import com.asakusafw.vocabulary.external.ImporterDescription;
 import com.asakusafw.vocabulary.flow.graph.FlowBoundary;
@@ -150,7 +150,7 @@ public class JoinRewriter extends FlowCompilingEnvironment.Initialized implement
         for (FlowElementOutput output : input.getFlowElement().getOutputPorts()) {
             successors.addAll(output.getOpposites());
         }
-        Set<FlowElement> saw = Sets.create();
+        Set<FlowElement> saw = new HashSet<>();
         boolean modified = false;
         while (successors.isEmpty() == false) {
             FlowElementInput next = successors.removeFirst();
@@ -299,7 +299,7 @@ public class JoinRewriter extends FlowCompilingEnvironment.Initialized implement
         DataClass dataClass = toDataClass(input);
         ShuffleKey key = input.getDescription().getShuffleKey();
         assert key != null;
-        List<Property> results = Lists.create();
+        List<Property> results = new ArrayList<>();
         for (String name : key.getGroupProperties()) {
             Property property = dataClass.findProperty(name);
             if (property == null) {

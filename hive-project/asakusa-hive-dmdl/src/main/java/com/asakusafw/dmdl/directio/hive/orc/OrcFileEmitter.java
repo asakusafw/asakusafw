@@ -16,6 +16,7 @@
 package com.asakusafw.dmdl.directio.hive.orc;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -35,7 +36,6 @@ import com.asakusafw.dmdl.java.emitter.EmitContext;
 import com.asakusafw.dmdl.java.spi.JavaDataModelDriver;
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
 import com.asakusafw.runtime.directio.DataFormat;
-import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.ClassDeclaration;
 import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.FormalParameterDeclaration;
@@ -176,7 +176,7 @@ public class OrcFileEmitter extends JavaDataModelDriver {
         }
 
         private List<TypeBodyDeclaration> createMembers() {
-            List<TypeBodyDeclaration> results = Lists.create();
+            List<TypeBodyDeclaration> results = new ArrayList<>();
             results.add(createGetTableNameMethod());
             results.add(createGetDataModelDescriptorMethod());
             results.add(createGetFormatConfigurationMethod());
@@ -201,7 +201,7 @@ public class OrcFileEmitter extends JavaDataModelDriver {
 
         private MethodDeclaration createGetFormatConfigurationMethod() {
             SimpleName result = f.newSimpleName("result"); //$NON-NLS-1$
-            List<Statement> statements = Lists.create();
+            List<Statement> statements = new ArrayList<>();
             statements.add(new TypeBuilder(f, context.resolve(OrcFormatConfiguration.class))
                     .newObject()
                     .toLocalVariableDeclaration(context.resolve(OrcFormatConfiguration.class), result));

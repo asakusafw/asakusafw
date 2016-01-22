@@ -28,9 +28,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import com.asakusafw.runtime.util.lock.LocalFileLockObject;
-import com.asakusafw.runtime.util.lock.LocalFileLockProvider;
-
 /**
  * Test for {@link LocalFileLockProvider}.
  */

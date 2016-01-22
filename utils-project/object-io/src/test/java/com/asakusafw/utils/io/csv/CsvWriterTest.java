@@ -20,8 +20,6 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import com.asakusafw.utils.io.csv.CsvWriter;
-
 /**
  * Test for {@link CsvWriter}.
  */

@@ -60,13 +60,7 @@ abstract class ValueOptionTestRoot {
     }
 
     private int sign(int value) {
-        if (value == 0) {
-            return 0;
-        }
-        if (value < 0) {
-            return -1;
-        }
-        return +1;
+        return Integer.signum(value);
     }
 
     /**

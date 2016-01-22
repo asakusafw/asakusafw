@@ -373,12 +373,7 @@ public class DirectDataSourceRepository {
                     return cmp;
                 }
             }
-            if (a.size() > b.size()) {
-                return +1;
-            } else if (a.size() < b.size()) {
-                return -1;
-            }
-            return 0;
+            return Integer.compare(a.size(), b.size());
         }
     }
 }

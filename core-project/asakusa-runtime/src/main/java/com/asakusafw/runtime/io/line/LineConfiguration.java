@@ -17,6 +17,7 @@ package com.asakusafw.runtime.io.line;
 
 import java.nio.charset.Charset;
 import java.nio.charset.CodingErrorAction;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Line based text configurations.
@@ -28,7 +29,7 @@ public class LineConfiguration {
      * The default charset.
      * @see #getCharset()
      */
-    public static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8"); //$NON-NLS-1$
+    public static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
 
     /**
      * The default buffer size hint in bytes.

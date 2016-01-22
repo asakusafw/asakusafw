@@ -26,6 +26,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -75,7 +76,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
 
     static final Log LOG = LogFactory.getLog(BridgeOutputFormat.class);
 
-    private static final Charset ASCII = Charset.forName("ASCII"); //$NON-NLS-1$
+    private static final Charset ASCII = StandardCharsets.US_ASCII;
 
     private static final long SERIAL_VERSION = 1;
 

@@ -17,6 +17,7 @@ package com.asakusafw.windgate.hadoopfs.ssh;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 /**
@@ -30,7 +31,7 @@ public class FileInfo {
         (byte) 0x1e,
     };
 
-    static final Charset PATH_ENCODING = Charset.forName("UTF-8"); //$NON-NLS-1$
+    static final Charset PATH_ENCODING = StandardCharsets.UTF_8;
 
     private final String uri;
 

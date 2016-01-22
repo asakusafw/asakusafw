@@ -147,13 +147,7 @@ public final class ShortOption extends ValueOption<ShortOption> {
             }
             return nullValue ? -1 : +1;
         }
-        if (value == other.value) {
-            return 0;
-        }
-        if (value < other.value) {
-            return -1;
-        }
-        return +1;
+        return Short.compare(value, other.value);
     }
 
     @Override

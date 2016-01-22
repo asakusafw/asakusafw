@@ -20,7 +20,9 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -34,8 +36,6 @@ import com.asakusafw.compiler.batch.WorkDescriptionProcessor;
 import com.asakusafw.compiler.batch.Workflow;
 import com.asakusafw.compiler.batch.processor.JobFlowWorkDescriptionProcessor;
 import com.asakusafw.compiler.tool.batchspec.BatchSpec.Parameter;
-import com.asakusafw.utils.collections.Lists;
-import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.vocabulary.batch.Batch;
 import com.asakusafw.vocabulary.batch.BatchDescription;
 import com.google.gson.Gson;
@@ -51,7 +51,7 @@ public class BatchSpecProcessor extends AbstractWorkflowProcessor {
 
     @Override
     public Collection<Class<? extends WorkDescriptionProcessor<?>>> getDescriptionProcessors() {
-        List<Class<? extends WorkDescriptionProcessor<?>>> results = Lists.create();
+        List<Class<? extends WorkDescriptionProcessor<?>>> results = new ArrayList<>();
         results.add(JobFlowWorkDescriptionProcessor.class);
         return results;
     }
@@ -99,8 +99,8 @@ public class BatchSpecProcessor extends AbstractWorkflowProcessor {
     private List<Parameter> toParameters(
             Class<? extends BatchDescription> description,
             com.asakusafw.vocabulary.batch.Batch.Parameter[] parameters) {
-        Set<String> keys = Sets.create();
-        List<Parameter> results = Lists.create();
+        Set<String> keys = new HashSet<>();
+        List<Parameter> results = new ArrayList<>();
         for (com.asakusafw.vocabulary.batch.Batch.Parameter parameter : parameters) {
             String key = parameter.key();
             if (keys.contains(key)) {

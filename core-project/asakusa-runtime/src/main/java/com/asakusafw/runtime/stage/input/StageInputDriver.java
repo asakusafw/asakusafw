@@ -23,6 +23,7 @@ import java.io.DataOutput;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -57,7 +58,7 @@ public final class StageInputDriver {
 
     static final Log LOG = LogFactory.getLog(StageInputDriver.class);
 
-    private static final Charset ASCII = Charset.forName("ASCII"); //$NON-NLS-1$
+    private static final Charset ASCII = StandardCharsets.US_ASCII;
 
     private static final long SERIAL_VERSION = 1;
 

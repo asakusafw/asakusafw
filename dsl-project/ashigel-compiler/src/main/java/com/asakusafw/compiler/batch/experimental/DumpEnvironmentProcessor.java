@@ -21,7 +21,9 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +37,6 @@ import com.asakusafw.compiler.batch.AbstractWorkflowProcessor;
 import com.asakusafw.compiler.batch.WorkDescriptionProcessor;
 import com.asakusafw.compiler.batch.Workflow;
 import com.asakusafw.compiler.batch.processor.JobFlowWorkDescriptionProcessor;
-import com.asakusafw.utils.collections.Lists;
 
 /**
  * Dumps environment variables: {@code ASAKUSA_*} and system properties: {@code com.asakusafw.*}.
@@ -44,7 +45,7 @@ public class DumpEnvironmentProcessor extends AbstractWorkflowProcessor {
 
     static final Logger LOG = LoggerFactory.getLogger(DumpEnvironmentProcessor.class);
 
-    static final Charset ENCODING = Charset.forName("UTF-8"); //$NON-NLS-1$
+    static final Charset ENCODING = StandardCharsets.UTF_8;
 
     /**
      * The output path.
@@ -63,7 +64,7 @@ public class DumpEnvironmentProcessor extends AbstractWorkflowProcessor {
 
     @Override
     public Collection<Class<? extends WorkDescriptionProcessor<?>>> getDescriptionProcessors() {
-        List<Class<? extends WorkDescriptionProcessor<?>>> results = Lists.create();
+        List<Class<? extends WorkDescriptionProcessor<?>>> results = new ArrayList<>();
         results.add(JobFlowWorkDescriptionProcessor.class);
         return results;
     }

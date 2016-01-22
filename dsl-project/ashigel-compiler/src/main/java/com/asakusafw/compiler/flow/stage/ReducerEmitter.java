@@ -16,6 +16,7 @@
 package com.asakusafw.compiler.flow.stage;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -34,7 +35,6 @@ import com.asakusafw.runtime.flow.Rendezvous;
 import com.asakusafw.runtime.flow.SegmentedReducer;
 import com.asakusafw.runtime.flow.SegmentedWritable;
 import com.asakusafw.runtime.trace.TraceLocation;
-import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Comment;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
 import com.asakusafw.utils.java.model.syntax.Expression;
@@ -154,7 +154,7 @@ public class ReducerEmitter {
         private TypeDeclaration createType() {
             SimpleName name = factory.newSimpleName(Naming.getReduceClass());
             importer.resolvePackageMember(name);
-            List<TypeBodyDeclaration> members = Lists.create();
+            List<TypeBodyDeclaration> members = new ArrayList<>();
             members.addAll(fragments.createFields());
             members.add(createSetup());
             members.add(createCleanup());
@@ -227,7 +227,7 @@ public class ReducerEmitter {
         }
 
         private MethodDeclaration createGetRendezvous() {
-            List<Statement> cases = Lists.create();
+            List<Statement> cases = new ArrayList<>();
             for (List<ShuffleModel.Segment> group : ShuffleEmiterUtil.groupByElement(shuffle)) {
                 for (ShuffleModel.Segment segment : group) {
                     cases.add(factory.newSwitchCaseLabel(v(segment.getPortId())));
@@ -242,7 +242,7 @@ public class ReducerEmitter {
                 .toThrowStatement());
 
             SimpleName argument = names.create("nextKey"); //$NON-NLS-1$
-            List<Statement> statements = Lists.create();
+            List<Statement> statements = new ArrayList<>();
             statements.add(factory.newSwitchStatement(
                     new ExpressionBuilder(factory, argument)
                         .method(SegmentedWritable.ID_GETTER)

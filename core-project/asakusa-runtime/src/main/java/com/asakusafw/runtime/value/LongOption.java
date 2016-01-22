@@ -176,13 +176,7 @@ public final class LongOption extends ValueOption<LongOption> {
             }
             return nullValue ? -1 : +1;
         }
-        if (value == other.value) {
-            return 0;
-        }
-        if (value < other.value) {
-            return -1;
-        }
-        return +1;
+        return Long.compare(value, other.value);
     }
 
     @Override

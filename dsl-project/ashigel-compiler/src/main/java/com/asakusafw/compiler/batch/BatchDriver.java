@@ -18,13 +18,13 @@ package com.asakusafw.compiler.batch;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.compiler.common.Precondition;
-import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.vocabulary.batch.Batch;
 import com.asakusafw.vocabulary.batch.BatchDescription;
 
@@ -44,7 +44,7 @@ public final class BatchDriver {
     private BatchDriver(Class<? extends BatchDescription> description) {
         Precondition.checkMustNotBeNull(description, "description"); //$NON-NLS-1$
         this.description = description;
-        this.diagnostics = Lists.create();
+        this.diagnostics = new ArrayList<>();
     }
 
     /**

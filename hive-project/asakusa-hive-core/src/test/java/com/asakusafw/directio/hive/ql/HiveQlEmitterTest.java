@@ -26,8 +26,6 @@ import org.junit.Test;
 import com.asakusafw.directio.hive.common.DelimitedRowFormatInfo;
 import com.asakusafw.directio.hive.common.SimpleFieldInfo;
 import com.asakusafw.directio.hive.common.SimpleTableInfo;
-import com.asakusafw.directio.hive.ql.HiveCreateTable;
-import com.asakusafw.directio.hive.ql.HiveQlEmitter;
 
 /**
  * Test for {@link HiveQlEmitter}.

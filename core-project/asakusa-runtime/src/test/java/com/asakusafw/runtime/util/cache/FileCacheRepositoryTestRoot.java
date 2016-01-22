@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -34,7 +35,7 @@ import org.junit.rules.TemporaryFolder;
  */
 public abstract class FileCacheRepositoryTestRoot {
 
-    private static final Charset ENCODING = Charset.forName("UTF-8");
+    private static final Charset ENCODING = StandardCharsets.UTF_8;
 
     /**
      * Temporary folder.

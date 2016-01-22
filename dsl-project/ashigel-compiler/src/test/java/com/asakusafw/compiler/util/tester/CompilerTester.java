@@ -62,7 +62,6 @@ import com.asakusafw.runtime.stage.StageConstants;
 import com.asakusafw.runtime.util.VariableTable;
 import com.asakusafw.runtime.util.VariableTable.RedefineStrategy;
 import com.asakusafw.runtime.util.hadoop.ConfigurationProvider;
-import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.vocabulary.batch.BatchDescription;
 import com.asakusafw.vocabulary.external.ExporterDescription;
 import com.asakusafw.vocabulary.external.ImporterDescription;
@@ -464,7 +463,7 @@ public class CompilerTester implements TestRule {
     }
 
     private List<File> buildClassPath(Class<?>... libraryClasses) {
-        List<File> classPath = Lists.create();
+        List<File> classPath = new ArrayList<>();
         classPath.add(findClassPathFromClass(testClass));
         for (Class<?> libraryClass : libraryClasses) {
             classPath.add(findClassPathFromClass(libraryClass));
@@ -684,7 +683,7 @@ public class CompilerTester implements TestRule {
             Class<T> type,
             Location location) throws IOException {
         try (ModelInput<T> input = hadoopDriver.openInput(type, location)) {
-            List<T> results = Lists.create();
+            List<T> results = new ArrayList<>();
             while (true) {
                 T target = type.newInstance();
                 if (input.readTo(target) == false) {
@@ -819,7 +818,7 @@ public class CompilerTester implements TestRule {
          */
         public List<T> toList() throws IOException {
             try (ModelInput<T> input = hadoopDriver.openInput(type, pathPrefix)) {
-                List<T> results = Lists.create();
+                List<T> results = new ArrayList<>();
                 while (true) {
                     T target = type.newInstance();
                     if (input.readTo(target) == false) {

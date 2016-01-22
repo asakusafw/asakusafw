@@ -25,6 +25,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -37,7 +38,6 @@ import com.asakusafw.dmdl.java.GeneratorTesterRoot;
 import com.asakusafw.dmdl.java.spi.JavaDataModelDriver;
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
 import com.asakusafw.dmdl.semantics.PropertyDeclaration;
-import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.utils.java.model.syntax.Annotation;
 import com.asakusafw.utils.java.model.syntax.MethodDeclaration;
 import com.asakusafw.utils.java.model.syntax.Type;
@@ -127,10 +127,10 @@ public class CompositeDataModelDriverTest extends GeneratorTesterRoot {
 
     static class TrackingDriver extends JavaDataModelDriver {
 
-        final Set<String> interfaces = Sets.create();
-        final Set<String> methods = Sets.create();
-        final Set<String> typeAnnotations = Sets.create();
-        final Set<String> propertyAnnotations = Sets.create();
+        final Set<String> interfaces = new HashSet<>();
+        final Set<String> methods = new HashSet<>();
+        final Set<String> typeAnnotations = new HashSet<>();
+        final Set<String> propertyAnnotations = new HashSet<>();
 
         @Override
         public List<Type> getInterfaces(EmitContext context, ModelDeclaration model) {

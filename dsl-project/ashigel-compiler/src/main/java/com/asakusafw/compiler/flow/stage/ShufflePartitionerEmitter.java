@@ -16,6 +16,7 @@
 package com.asakusafw.compiler.flow.stage;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -31,7 +32,6 @@ import com.asakusafw.compiler.flow.stage.ShuffleModel.Arrangement;
 import com.asakusafw.compiler.flow.stage.ShuffleModel.Segment;
 import com.asakusafw.compiler.flow.stage.ShuffleModel.Term;
 import com.asakusafw.runtime.flow.SegmentedWritable;
-import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Comment;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
 import com.asakusafw.utils.java.model.syntax.Expression;
@@ -145,7 +145,7 @@ public class ShufflePartitionerEmitter {
         private TypeDeclaration createType() {
             SimpleName name = factory.newSimpleName(Naming.getShufflePartitionerClass());
             importer.resolvePackageMember(name);
-            List<TypeBodyDeclaration> members = Lists.create();
+            List<TypeBodyDeclaration> members = new ArrayList<>();
             members.add(createPartition());
             members.add(createHashCode());
             members.add(ShuffleEmiterUtil.createPortToElement(factory, model));
@@ -170,7 +170,7 @@ public class ShufflePartitionerEmitter {
             SimpleName value = factory.newSimpleName("value"); //$NON-NLS-1$
             SimpleName partitions = factory.newSimpleName("numPartitions"); //$NON-NLS-1$
 
-            List<Statement> statements = Lists.create();
+            List<Statement> statements = new ArrayList<>();
             statements.add(new ExpressionBuilder(factory, factory.newThis())
                 .method(HASH_CODE_METHOD_NAME, key)
                 .apply(InfixOperator.AND, new TypeBuilder(factory, t(Integer.class))
@@ -197,7 +197,7 @@ public class ShufflePartitionerEmitter {
 
         private MethodDeclaration createHashCode() {
             SimpleName key = factory.newSimpleName("key"); //$NON-NLS-1$
-            List<Statement> statements = Lists.create();
+            List<Statement> statements = new ArrayList<>();
             SimpleName portId = factory.newSimpleName("portId"); //$NON-NLS-1$
             SimpleName result = factory.newSimpleName("result"); //$NON-NLS-1$
 
@@ -208,7 +208,7 @@ public class ShufflePartitionerEmitter {
                 .method(ShuffleEmiterUtil.PORT_TO_ELEMENT, portId)
                 .toLocalVariableDeclaration(t(int.class), result));
 
-            List<Statement> cases = Lists.create();
+            List<Statement> cases = new ArrayList<>();
             for (Segment segment : model.getSegments()) {
                 cases.add(factory.newSwitchCaseLabel(v(segment.getPortId())));
                 for (Term term : segment.getTerms()) {

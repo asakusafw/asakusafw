@@ -19,7 +19,10 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.annotation.Annotation;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -41,8 +44,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.compiler.common.Precondition;
-import com.asakusafw.utils.collections.Lists;
-import com.asakusafw.utils.collections.Maps;
 import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.utils.java.model.util.Models;
 
@@ -100,7 +101,7 @@ public class OperatorCompiler implements Processor {
 
     private Set<OperatorProcessor> loadSubProcessors(OperatorCompilingEnvironment env) {
         assert env != null;
-        Map<Class<?>, OperatorProcessor> results = Maps.create();
+        Map<Class<?>, OperatorProcessor> results = new HashMap<>();
         for (OperatorProcessor proc : findOperatorProcessors(env)) {
             proc.initialize(env);
             Class<? extends Annotation> target = proc.getTargetAnnotationType();
@@ -132,7 +133,7 @@ public class OperatorCompiler implements Processor {
      * @throws IllegalArgumentException if the parameter is {@code null}
      */
     protected Iterable<OperatorProcessor> findOperatorProcessors(OperatorCompilingEnvironment env) {
-        List<OperatorProcessor> results = Lists.create();
+        List<OperatorProcessor> results = new ArrayList<>();
         Iterator<OperatorProcessor> iter = ServiceLoader
             .load(OperatorProcessor.class, env.getServiceClassLoader())
             .iterator();
@@ -167,7 +168,7 @@ public class OperatorCompiler implements Processor {
 
     @Override
     public Set<String> getSupportedAnnotationTypes() {
-        Set<String> results = Sets.create();
+        Set<String> results = new HashSet<>();
         for (OperatorProcessor proc : subProcessors) {
             Class<? extends Annotation> type = proc.getTargetAnnotationType();
             results.add(type.getName());

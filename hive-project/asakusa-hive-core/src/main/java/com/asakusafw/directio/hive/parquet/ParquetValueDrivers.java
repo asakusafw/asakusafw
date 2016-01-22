@@ -27,14 +27,6 @@ import org.apache.hadoop.hive.serde2.typeinfo.PrimitiveTypeInfo;
 import org.apache.hadoop.hive.serde2.typeinfo.TypeInfo;
 import org.apache.hadoop.hive.serde2.typeinfo.TypeInfoFactory;
 
-import parquet.column.Dictionary;
-import parquet.io.api.Binary;
-import parquet.schema.OriginalType;
-import parquet.schema.PrimitiveType;
-import parquet.schema.PrimitiveType.PrimitiveTypeName;
-import parquet.schema.Type;
-import parquet.schema.Type.Repetition;
-
 import com.asakusafw.directio.hive.util.TemporalUtil;
 import com.asakusafw.runtime.value.BooleanOption;
 import com.asakusafw.runtime.value.ByteOption;
@@ -47,6 +39,14 @@ import com.asakusafw.runtime.value.LongOption;
 import com.asakusafw.runtime.value.ShortOption;
 import com.asakusafw.runtime.value.StringOption;
 import com.asakusafw.runtime.value.ValueOption;
+
+import parquet.column.Dictionary;
+import parquet.io.api.Binary;
+import parquet.schema.OriginalType;
+import parquet.schema.PrimitiveType;
+import parquet.schema.PrimitiveType.PrimitiveTypeName;
+import parquet.schema.Type;
+import parquet.schema.Type.Repetition;
 
 /**
  * Provides {@link ParquetValueDriver}.

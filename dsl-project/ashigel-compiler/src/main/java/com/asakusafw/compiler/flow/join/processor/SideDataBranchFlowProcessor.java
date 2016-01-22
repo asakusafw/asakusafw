@@ -16,6 +16,7 @@
 package com.asakusafw.compiler.flow.join.processor;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.asakusafw.compiler.common.EnumUtil;
@@ -23,7 +24,6 @@ import com.asakusafw.compiler.common.TargetOperator;
 import com.asakusafw.compiler.flow.LineEndProcessor;
 import com.asakusafw.compiler.flow.join.JoinResourceDescription;
 import com.asakusafw.compiler.flow.join.operator.SideDataBranch;
-import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.collections.Tuple2;
 import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
@@ -50,7 +50,7 @@ public class SideDataBranchFlowProcessor extends LineEndProcessor {
                 (JoinResourceDescription) resource);
 
         OperatorDescription desc = context.getOperatorDescription();
-        List<Expression> arguments = Lists.create();
+        List<Expression> arguments = new ArrayList<>();
         arguments.add(helper.getGetCheckedMasterExpression());
         arguments.add(context.getInput());
         for (OperatorDescription.Parameter param : desc.getParameters()) {
@@ -70,7 +70,7 @@ public class SideDataBranchFlowProcessor extends LineEndProcessor {
                     .method(desc.getDeclaration().getName(), arguments)
                     .toExpression());
 
-        List<Statement> cases = Lists.create();
+        List<Statement> cases = new ArrayList<>();
         for (Tuple2<Enum<?>, FlowElementPortDescription> tuple : constants) {
             Enum<?> constant = tuple.first;
             FlowElementPortDescription port = tuple.second;

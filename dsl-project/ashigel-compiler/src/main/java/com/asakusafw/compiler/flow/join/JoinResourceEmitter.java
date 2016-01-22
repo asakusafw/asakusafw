@@ -16,6 +16,7 @@
 package com.asakusafw.compiler.flow.join;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -29,7 +30,6 @@ import com.asakusafw.compiler.flow.DataClass.Property;
 import com.asakusafw.compiler.flow.FlowCompilingEnvironment;
 import com.asakusafw.runtime.flow.join.JoinResource;
 import com.asakusafw.runtime.flow.join.LookUpKey;
-import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.ClassDeclaration;
 import com.asakusafw.utils.java.model.syntax.Comment;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
@@ -141,7 +141,7 @@ public final class JoinResourceEmitter {
     }
 
     private List<TypeBodyDeclaration> createMembers() {
-        List<TypeBodyDeclaration> results = Lists.create();
+        List<TypeBodyDeclaration> results = new ArrayList<>();
         results.add(createGetCacheName());
         results.add(createCreateValueObject());
         results.add(createBuildLeftKey());
@@ -202,7 +202,7 @@ public final class JoinResourceEmitter {
         assert joinKeys != null;
         SimpleName value = factory.newSimpleName("value"); //$NON-NLS-1$
         SimpleName key = factory.newSimpleName("key"); //$NON-NLS-1$
-        List<Statement> statements = Lists.create();
+        List<Statement> statements = new ArrayList<>();
         for (Property join : joinKeys) {
             statements.add(new ExpressionBuilder(factory, key)
                 .method("add", join.createGetter(value)) //$NON-NLS-1$

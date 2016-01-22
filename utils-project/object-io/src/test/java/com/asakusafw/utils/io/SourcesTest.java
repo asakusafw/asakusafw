@@ -223,12 +223,7 @@ public class SourcesTest {
 
         @Override
         public int compareTo(IntBuf o) {
-            if (value < o.value) {
-                return -1;
-            } else if (value > o.value) {
-                return +1;
-            }
-            return 0;
+            return Integer.compare(value, o.value);
         }
 
         @Override

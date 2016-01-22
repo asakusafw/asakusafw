@@ -17,9 +17,9 @@ package com.asakusafw.dmdl.windgate.common.driver;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 
-import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.jsr199.testing.VolatileJavaFile;
 import com.asakusafw.utils.java.model.syntax.PackageDeclaration;
 import com.asakusafw.utils.java.model.util.Emitter;
@@ -29,7 +29,7 @@ import com.asakusafw.utils.java.model.util.Emitter;
  */
 public class VolatileEmitter extends Emitter {
 
-    private final List<VolatileJavaFile> emitted = Lists.create();
+    private final List<VolatileJavaFile> emitted = new ArrayList<>();
 
     @Override
     public PrintWriter openFor(

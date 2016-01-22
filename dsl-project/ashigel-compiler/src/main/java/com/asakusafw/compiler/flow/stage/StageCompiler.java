@@ -17,6 +17,8 @@ package com.asakusafw.compiler.flow.stage;
 
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -32,8 +34,6 @@ import com.asakusafw.compiler.flow.plan.StageGraph;
 import com.asakusafw.compiler.flow.stage.StageModel.Fragment;
 import com.asakusafw.compiler.flow.stage.StageModel.ResourceFragment;
 import com.asakusafw.compiler.flow.stage.StageModel.Unit;
-import com.asakusafw.utils.collections.Lists;
-import com.asakusafw.utils.collections.Sets;
 import com.asakusafw.utils.java.model.syntax.Name;
 import com.asakusafw.vocabulary.flow.graph.FlowElement;
 import com.asakusafw.vocabulary.flow.graph.FlowResourceDescription;
@@ -108,7 +108,7 @@ public class StageCompiler {
                 graph.getInput().getSource().getDescription().getName());
 
         Map<FlowResourceDescription, CompiledType> resourceMap = compileResources(graph);
-        List<StageModel> results = Lists.create();
+        List<StageModel> results = new ArrayList<>();
         for (StageBlock block : graph.getStages()) {
             StageModel model = compileStage(block, resourceMap);
             results.add(model);
@@ -238,9 +238,9 @@ public class StageCompiler {
 
     private Set<FlowResourceDescription> collectResources(StageGraph graph) {
         assert graph != null;
-        Set<FlowResourceDescription> resources = Sets.create();
+        Set<FlowResourceDescription> resources = new HashSet<>();
         for (StageBlock stage : graph.getStages()) {
-            List<FlowBlock> blocks = Lists.create();
+            List<FlowBlock> blocks = new ArrayList<>();
             blocks.addAll(stage.getMapBlocks());
             blocks.addAll(stage.getReduceBlocks());
             for (FlowBlock block : blocks) {
@@ -259,8 +259,8 @@ public class StageCompiler {
             Map<FlowResourceDescription, CompiledType> resourceMap) {
         assert model != null;
         assert resourceMap != null;
-        List<ResourceFragment> resources = Lists.create();
-        List<Unit<?>> units = Lists.create();
+        List<ResourceFragment> resources = new ArrayList<>();
+        List<Unit<?>> units = new ArrayList<>();
         units.addAll(model.getMapUnits());
         units.addAll(model.getReduceUnits());
         for (Unit<?> unit : units) {
@@ -268,7 +268,7 @@ public class StageCompiler {
                 resources.addAll(fragment.getResources());
             }
         }
-        Set<FlowResourceDescription> saw = Sets.create();
+        Set<FlowResourceDescription> saw = new HashSet<>();
         for (ResourceFragment fragment : resources) {
             if (fragment.isCompiled()) {
                 continue;

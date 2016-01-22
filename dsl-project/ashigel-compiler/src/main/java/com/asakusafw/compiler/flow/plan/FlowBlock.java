@@ -19,6 +19,8 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -76,8 +78,8 @@ public class FlowBlock {
             List<FlowElementInput> inputs,
             List<FlowElementOutput> outputs,
             Set<FlowElement> elements) {
-        List<PortConnection> toInput = Lists.create();
-        List<PortConnection> fromOutput = Lists.create();
+        List<PortConnection> toInput = new ArrayList<>();
+        List<PortConnection> fromOutput = new ArrayList<>();
         for (FlowElementInput in : inputs) {
             toInput.addAll(in.getConnected());
         }
@@ -170,9 +172,9 @@ public class FlowBlock {
         Precondition.checkMustNotBeNull(source, "source"); //$NON-NLS-1$
         this.serialNumber = serialNumber;
         this.source = source;
-        this.blockInputs = Lists.create();
-        this.blockOutputs = Lists.create();
-        this.elements = Sets.create();
+        this.blockInputs = new ArrayList<>();
+        this.blockOutputs = new ArrayList<>();
+        this.elements = new HashSet<>();
         this.detached = false;
     }
 
@@ -194,7 +196,7 @@ public class FlowBlock {
             FlowElementInput port = input.getDownstream();
             Maps.addToSet(map, port, input);
         }
-        List<FlowBlock.Input> results = Lists.create();
+        List<FlowBlock.Input> results = new ArrayList<>();
         for (Map.Entry<FlowElementInput, Set<PortConnection>> entry : map.entrySet()) {
             results.add(new FlowBlock.Input(entry.getKey(), entry.getValue()));
         }
@@ -208,7 +210,7 @@ public class FlowBlock {
             FlowElementOutput port = output.getUpstream();
             Maps.addToSet(map, port, output);
         }
-        List<FlowBlock.Output> results = Lists.create();
+        List<FlowBlock.Output> results = new ArrayList<>();
         for (Map.Entry<FlowElementOutput, Set<PortConnection>> entry : map.entrySet()) {
             results.add(new FlowBlock.Output(entry.getKey(), entry.getValue()));
         }
@@ -346,9 +348,9 @@ public class FlowBlock {
             return;
         }
         LOG.debug("detaching from {}: {}", getSource(), this); //$NON-NLS-1$
-        Map<FlowElement, FlowElement> elementMapping = Maps.create();
-        Map<FlowElementInput, FlowElementInput> inputMapping = Maps.create();
-        Map<FlowElementOutput, FlowElementOutput> outputMapping = Maps.create();
+        Map<FlowElement, FlowElement> elementMapping = new HashMap<>();
+        Map<FlowElementInput, FlowElementInput> inputMapping = new HashMap<>();
+        Map<FlowElementOutput, FlowElementOutput> outputMapping = new HashMap<>();
         FlowGraphUtil.deepCopy(elements, elementMapping, inputMapping, outputMapping);
         this.elements = Sets.from(elementMapping.values());
         reconnectBlockInOut(inputMapping, outputMapping);
@@ -380,9 +382,9 @@ public class FlowBlock {
         if (detached == false) {
             throw new IllegalStateException();
         }
-        Map<FlowElement, FlowElement> elementMapping = Maps.create();
-        Map<FlowElementInput, FlowElementInput> inputMapping = Maps.create();
-        Map<FlowElementOutput, FlowElementOutput> outputMapping = Maps.create();
+        Map<FlowElement, FlowElement> elementMapping = new HashMap<>();
+        Map<FlowElementInput, FlowElementInput> inputMapping = new HashMap<>();
+        Map<FlowElementOutput, FlowElementOutput> outputMapping = new HashMap<>();
         FlowGraphUtil.deepCopy(elements, elementMapping, inputMapping, outputMapping);
         unifyElements(elementMapping, inputMapping, outputMapping);
         unifyInputs(elementMapping, inputMapping, outputMapping);
@@ -399,10 +401,10 @@ public class FlowBlock {
 
         LOG.debug("Unifying elements: {}", this); //$NON-NLS-1$
 
-        Map<Object, FlowElement> unifier = Maps.create();
-        Map<FlowElement, FlowElement> unifiedElements = Maps.create();
-        Map<FlowElementInput, FlowElementInput> unifiedInputs = Maps.create();
-        Map<FlowElementOutput, FlowElementOutput> unifiedOutputs = Maps.create();
+        Map<Object, FlowElement> unifier = new HashMap<>();
+        Map<FlowElement, FlowElement> unifiedElements = new HashMap<>();
+        Map<FlowElementInput, FlowElementInput> unifiedInputs = new HashMap<>();
+        Map<FlowElementOutput, FlowElementOutput> unifiedOutputs = new HashMap<>();
 
         // find originals
         for (Map.Entry<FlowElement, FlowElement> entry : elementMapping.entrySet()) {
@@ -501,7 +503,7 @@ public class FlowBlock {
         assert elementMapping != null;
         assert inputMapping != null;
         assert outputMapping != null;
-        Map<FlowElementInput, FlowBlock.Input> map = Maps.create();
+        Map<FlowElementInput, FlowBlock.Input> map = new HashMap<>();
         for (Iterator<FlowBlock.Input> iter = blockInputs.iterator(); iter.hasNext();) {
             FlowBlock.Input blockPort = iter.next();
             FlowElementInput elementPort = inputMapping.get(blockPort.getElementPort());
@@ -529,7 +531,7 @@ public class FlowBlock {
         assert elementMapping != null;
         assert outputMapping != null;
         assert inputMapping != null;
-        Map<FlowElementOutput, FlowBlock.Output> map = Maps.create();
+        Map<FlowElementOutput, FlowBlock.Output> map = new HashMap<>();
         for (Iterator<FlowBlock.Output> iter = blockOutputs.iterator(); iter.hasNext();) {
             FlowBlock.Output blockPort = iter.next();
             FlowElementOutput elementPort = outputMapping.get(blockPort.getElementPort());
@@ -584,7 +586,7 @@ public class FlowBlock {
         boolean changed = false;
         LOG.debug("Merging same block edges: {}", this); //$NON-NLS-1$
 
-        Map<FlowElementInput, FlowBlock.Input> inputMapping = Maps.create();
+        Map<FlowElementInput, FlowBlock.Input> inputMapping = new HashMap<>();
         for (FlowBlock.Input port : blockInputs) {
             FlowBlock.Input prime = inputMapping.get(port.getElementPort());
             if (prime != null) {
@@ -599,7 +601,7 @@ public class FlowBlock {
             }
         }
 
-        Map<FlowElementOutput, FlowBlock.Output> outputMapping = Maps.create();
+        Map<FlowElementOutput, FlowBlock.Output> outputMapping = new HashMap<>();
         for (FlowBlock.Output port : blockOutputs) {
             FlowBlock.Output prime = outputMapping.get(port.getElementPort());
             if (prime != null) {
@@ -650,7 +652,7 @@ public class FlowBlock {
         LOG.debug("Searching for unnecessary operators: {}", this); //$NON-NLS-1$
 
         Set<FlowElement> blockEdge = collectBlockEdges();
-        Set<FlowElement> removed = Sets.create();
+        Set<FlowElement> removed = new HashSet<>();
         LinkedList<FlowElement> work = new LinkedList<>();
         work.addAll(elements);
 
@@ -690,8 +692,8 @@ public class FlowBlock {
         boolean changed = false;
         LOG.debug("Searching for unnecessary block edges: {}", this); //$NON-NLS-1$
 
-        Set<FlowElement> inputElements = Sets.create();
-        Set<FlowElement> outputElements = Sets.create();
+        Set<FlowElement> inputElements = new HashSet<>();
+        Set<FlowElement> outputElements = new HashSet<>();
         for (FlowBlock.Output output : blockOutputs) {
             outputElements.add(output.getElementPort().getOwner());
         }
@@ -733,7 +735,7 @@ public class FlowBlock {
     private boolean mergeIdentity() {
         boolean changed = false;
         boolean foundTarget = false;
-        Map<FlowBlock.Input, List<FlowBlock.Output>> targets =  Maps.create();
+        Map<FlowBlock.Input, List<FlowBlock.Output>> targets =  new HashMap<>();
         for (FlowBlock.Output output : blockOutputs) {
             FlowElement element = output.getElementPort().getOwner();
             if (element.getDescription().getKind() != FlowElementKind.PSEUD) {
@@ -755,7 +757,7 @@ public class FlowBlock {
         if (foundTarget == false) {
             return changed;
         }
-        Map<FlowElementInput, FlowBlock.Input> inputs = Maps.create();
+        Map<FlowElementInput, FlowBlock.Input> inputs = new HashMap<>();
         for (FlowBlock.Input input : blockInputs) {
             FlowElementInput elementInput = input.getElementPort();
             assert inputs.containsKey(elementInput) == false;
@@ -830,7 +832,7 @@ public class FlowBlock {
     }
 
     private Set<FlowElement> collectBlockEdges() {
-        Set<FlowElement> blockEdge = Sets.create();
+        Set<FlowElement> blockEdge = new HashSet<>();
         for (FlowBlock.Input input : getBlockInputs()) {
             blockEdge.add(input.getElementPort().getOwner());
         }
@@ -869,7 +871,7 @@ public class FlowBlock {
         public Input(FlowElementInput input, Set<PortConnection> originalConnections) {
             Precondition.checkMustNotBeNull(input, "input"); //$NON-NLS-1$
             this.input = input;
-            this.connections = Lists.create();
+            this.connections = new ArrayList<>();
             this.originalConnections = originalConnections;
         }
 
@@ -951,7 +953,7 @@ public class FlowBlock {
         public Output(FlowElementOutput output, Set<PortConnection> originalConnections) {
             Precondition.checkMustNotBeNull(output, "output"); //$NON-NLS-1$
             this.output = output;
-            this.connections = Lists.create();
+            this.connections = new ArrayList<>();
             this.originalConnections = originalConnections;
         }
 

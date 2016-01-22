@@ -26,6 +26,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -47,7 +48,6 @@ import com.asakusafw.compiler.directio.testing.model.Line2;
 import com.asakusafw.compiler.util.tester.CompilerTester;
 import com.asakusafw.runtime.directio.DataFilter;
 import com.asakusafw.runtime.directio.DataFormat;
-import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.vocabulary.directio.DirectFileInputDescription;
 import com.asakusafw.vocabulary.directio.DirectFileOutputDescription;
 import com.asakusafw.vocabulary.external.ImporterDescription.DataSize;
@@ -182,7 +182,7 @@ public class DirectFileIoProcessorRunTest {
      */
     @Test
     public void random() throws Exception {
-        List<String> lines = Lists.create();
+        List<String> lines = new ArrayList<>();
         for (int i = 0; i < 1000; i++) {
             lines.add(String.format("%03d", i));
         }
@@ -202,7 +202,7 @@ public class DirectFileIoProcessorRunTest {
         assertThat(o3.size(), is(greaterThan(0)));
         assertThat(o4.size(), is(greaterThan(0)));
 
-        List<String> results = Lists.create();
+        List<String> results = new ArrayList<>();
         results.addAll(o1);
         results.addAll(o2);
         results.addAll(o3);
@@ -599,7 +599,7 @@ public class DirectFileIoProcessorRunTest {
         if (list == null) {
             return Collections.emptyList();
         }
-        List<Path> results = Lists.create();
+        List<Path> results = new ArrayList<>();
         for (FileStatus file : list) {
             results.add(file.getPath());
         }
@@ -608,7 +608,7 @@ public class DirectFileIoProcessorRunTest {
 
     private List<String> get(String target) throws IOException {
         FileSystem fs = FileSystem.get(tester.configuration());
-        List<String> results = Lists.create();
+        List<String> results = new ArrayList<>();
         for (Path path : find(target)) {
             try (InputStream input = fs.open(path); Scanner s = new Scanner(new InputStreamReader(input, "UTF-8"))) {
                 while (s.hasNextLine()) {
@@ -753,7 +753,7 @@ public class DirectFileIoProcessorRunTest {
         private final String basePath;
         private final String resourcePattern;
         private final String[] order;
-        private final List<String> deletes = Lists.create();
+        private final List<String> deletes = new ArrayList<>();
 
         Output(
                 Class<?> modelType,

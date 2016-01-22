@@ -135,13 +135,7 @@ public final class ByteOption extends ValueOption<ByteOption> {
             }
             return nullValue ? -1 : +1;
         }
-        if (value == other.value) {
-            return 0;
-        }
-        if (value < other.value) {
-            return -1;
-        }
-        return +1;
+        return Byte.compare(value, other.value);
     }
 
     /**

@@ -15,13 +15,13 @@
  */
 package com.asakusafw.compiler.flow.mapreduce.parallel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.flow.DataClass;
 import com.asakusafw.compiler.flow.DataClass.Property;
 import com.asakusafw.compiler.flow.FlowCompilingEnvironment;
-import com.asakusafw.utils.collections.Lists;
 
 /**
  * Resolved {@link Slot} objects into {@link ResolvedSlot}.
@@ -48,7 +48,7 @@ public class SlotResolver {
      */
     public List<ResolvedSlot> resolve(List<Slot> slots) {
         Precondition.checkMustNotBeNull(slots, "slots"); //$NON-NLS-1$
-        List<ResolvedSlot> results = Lists.create();
+        List<ResolvedSlot> results = new ArrayList<>();
         int number = 0;
         for (Slot slot : slots) {
             ResolvedSlot compiled = compile(slot, number++);
@@ -60,7 +60,7 @@ public class SlotResolver {
     private ResolvedSlot compile(Slot slot, int number) {
         assert slot != null;
         DataClass valueClass = environment.getDataClasses().load(slot.getType());
-        List<Property> sortProperties = Lists.create();
+        List<Property> sortProperties = new ArrayList<>();
         if (valueClass == null) {
             valueClass = new DataClass.Unresolved(environment.getModelFactory(), slot.getType());
             environment.error(Messages.getString("SlotResolver.errorMissingDataClass"), slot.getType()); //$NON-NLS-1$

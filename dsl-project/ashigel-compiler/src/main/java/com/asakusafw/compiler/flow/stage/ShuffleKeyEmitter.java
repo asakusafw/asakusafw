@@ -18,6 +18,7 @@ package com.asakusafw.compiler.flow.stage;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -33,7 +34,6 @@ import com.asakusafw.compiler.flow.stage.ShuffleModel.Arrangement;
 import com.asakusafw.compiler.flow.stage.ShuffleModel.Segment;
 import com.asakusafw.compiler.flow.stage.ShuffleModel.Term;
 import com.asakusafw.runtime.flow.SegmentedWritable;
-import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.model.syntax.Comment;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
 import com.asakusafw.utils.java.model.syntax.Expression;
@@ -130,7 +130,7 @@ public class ShuffleKeyEmitter {
         private TypeDeclaration createType() {
             SimpleName name = factory.newSimpleName(Naming.getShuffleKeyClass());
             importer.resolvePackageMember(name);
-            List<TypeBodyDeclaration> members = Lists.create();
+            List<TypeBodyDeclaration> members = new ArrayList<>();
             members.addAll(createSegmentDistinction());
             members.addAll(createProperties());
             members.addAll(createConverters());
@@ -151,7 +151,7 @@ public class ShuffleKeyEmitter {
         }
 
         private List<TypeBodyDeclaration> createSegmentDistinction() {
-            List<TypeBodyDeclaration> results = Lists.create();
+            List<TypeBodyDeclaration> results = new ArrayList<>();
             results.add(createSegmentIdField());
             results.add(createSegmentIdGetter());
             return results;
@@ -187,7 +187,7 @@ public class ShuffleKeyEmitter {
         }
 
         private List<FieldDeclaration> createProperties() {
-            List<FieldDeclaration> results = Lists.create();
+            List<FieldDeclaration> results = new ArrayList<>();
             for (List<Segment> segments : ShuffleEmiterUtil.groupByElement(model)) {
                 Segment first = segments.get(0);
                 for (Term term : first.getTerms()) {
@@ -229,7 +229,7 @@ public class ShuffleKeyEmitter {
         }
 
         private List<MethodDeclaration> createConverters() {
-            List<MethodDeclaration> results = Lists.create();
+            List<MethodDeclaration> results = new ArrayList<>();
             for (Segment segment : model.getSegments()) {
                 results.add(createConverter(segment));
             }
@@ -241,7 +241,7 @@ public class ShuffleKeyEmitter {
             String methodName = Naming.getShuffleKeySetter(segment.getPortId());
             SimpleName argument = factory.newSimpleName("source"); //$NON-NLS-1$
 
-            List<Statement> statements = Lists.create();
+            List<Statement> statements = new ArrayList<>();
             statements.add(new ExpressionBuilder(factory, factory.newThis())
                 .field(PORT_ID_FIELD_NAME)
                 .assignFrom(v(segment.getPortId()))
@@ -276,7 +276,7 @@ public class ShuffleKeyEmitter {
 
         private MethodDeclaration createCopier() {
             SimpleName argument = factory.newSimpleName("original"); //$NON-NLS-1$
-            List<Statement> cases = Lists.create();
+            List<Statement> cases = new ArrayList<>();
             for (List<Segment> segments : ShuffleEmiterUtil.groupByElement(model)) {
                 for (Segment segment : segments) {
                     cases.add(factory.newSwitchCaseLabel(v(segment.getPortId())));
@@ -309,7 +309,7 @@ public class ShuffleKeyEmitter {
                 .toThrowStatement());
 
             SimpleName typeName = factory.newSimpleName(Naming.getShuffleKeyClass());
-            List<Statement> statements = Lists.create();
+            List<Statement> statements = new ArrayList<>();
             statements.add(new ExpressionBuilder(factory, factory.newThis())
                 .field(factory.newSimpleName(PORT_ID_FIELD_NAME))
                 .assignFrom(new ExpressionBuilder(factory, argument)
@@ -359,7 +359,7 @@ public class ShuffleKeyEmitter {
                 .field(PORT_ID_FIELD_NAME)
                 .toExpression();
 
-            List<Statement> cases = Lists.create();
+            List<Statement> cases = new ArrayList<>();
             for (Segment segment : model.getSegments()) {
                 cases.add(factory.newSwitchCaseLabel(v(segment.getPortId())));
                 cases.add(new ExpressionBuilder(factory, out)
@@ -380,7 +380,7 @@ public class ShuffleKeyEmitter {
                 .newObject(segmentId)
                 .toThrowStatement());
 
-            List<Statement> statements = Lists.create();
+            List<Statement> statements = new ArrayList<>();
             statements.add(factory.newSwitchStatement(segmentId, cases));
 
             return factory.newMethodDeclaration(
@@ -407,14 +407,14 @@ public class ShuffleKeyEmitter {
                 .field(PORT_ID_FIELD_NAME)
                 .toExpression();
 
-            List<Statement> statements = Lists.create();
+            List<Statement> statements = new ArrayList<>();
             statements.add(new ExpressionBuilder(factory, segmentId)
                 .assignFrom(new ExpressionBuilder(factory, in)
                     .method("readInt") //$NON-NLS-1$
                     .toExpression())
                 .toStatement());
 
-            List<Statement> cases = Lists.create();
+            List<Statement> cases = new ArrayList<>();
             for (Segment segment : model.getSegments()) {
                 cases.add(factory.newSwitchCaseLabel(v(segment.getPortId())));
                 for (Term term : segment.getTerms()) {

@@ -24,8 +24,9 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -51,7 +52,6 @@ import com.asakusafw.dmdl.source.DmdlSourceRepository;
 import com.asakusafw.dmdl.source.DmdlSourceResource;
 import com.asakusafw.runtime.model.DataModel;
 import com.asakusafw.runtime.value.ValueOption;
-import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.jsr199.testing.VolatileCompiler;
 import com.asakusafw.utils.java.jsr199.testing.VolatileJavaFile;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
@@ -76,7 +76,7 @@ public class GeneratorTesterRoot {
     /**
      * {@link JavaDataModelDriver}s.
      */
-    protected final List<JavaDataModelDriver> emitDrivers = Lists.create();
+    protected final List<JavaDataModelDriver> emitDrivers = new ArrayList<>();
 
     /**
      * Cleans up the test.
@@ -116,7 +116,7 @@ public class GeneratorTesterRoot {
         try {
             List<VolatileJavaFile> files = emit(new DmdlSourceDirectory(
                     folder.getRoot(),
-                    Charset.forName("UTF-8"),
+                    StandardCharsets.UTF_8,
                     Pattern.compile(".*\\.dmdl"),
                     Pattern.compile("\\..*")));
             ClassLoader loaded = compile(files);
@@ -207,7 +207,7 @@ public class GeneratorTesterRoot {
     private DmdlSourceRepository collectInput(String name) {
         URL url = getClass().getResource(name + ".txt");
         assertThat(name, url, not(nullValue()));
-        return new DmdlSourceResource(Collections.singletonList(url), Charset.forName("UTF-8"));
+        return new DmdlSourceResource(Collections.singletonList(url), StandardCharsets.UTF_8);
     }
 
 

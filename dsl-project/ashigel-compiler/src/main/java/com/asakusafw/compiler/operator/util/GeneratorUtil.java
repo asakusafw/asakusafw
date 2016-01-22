@@ -31,7 +31,6 @@ import javax.lang.model.type.TypeVariable;
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.compiler.operator.OperatorCompilingEnvironment;
 import com.asakusafw.compiler.operator.OperatorPortDeclaration;
-import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.java.jsr269.bridge.Jsr269;
 import com.asakusafw.utils.java.model.syntax.AnnotationElement;
 import com.asakusafw.utils.java.model.syntax.Expression;
@@ -247,10 +246,10 @@ public class GeneratorUtil {
     private List<TypeParameterDeclaration> toTypeParameters(
             List<? extends TypeParameterElement> typeParameters) {
         assert typeParameters != null;
-        List<TypeParameterDeclaration> results = Lists.create();
+        List<TypeParameterDeclaration> results = new ArrayList<>();
         for (TypeParameterElement typeParameter : typeParameters) {
             SimpleName name = factory.newSimpleName(typeParameter.getSimpleName().toString());
-            List<Type> typeBounds = Lists.create();
+            List<Type> typeBounds = new ArrayList<>();
             for (TypeMirror typeBound : typeParameter.getBounds()) {
                 typeBounds.add(t(typeBound));
             }
@@ -282,7 +281,7 @@ public class GeneratorUtil {
     }
 
     private List<Type> toTypeVariables(List<? extends TypeParameterElement> typeParameters) {
-        List<Type> results = Lists.create();
+        List<Type> results = new ArrayList<>();
         for (TypeParameterElement typeParameter : typeParameters) {
             SimpleName name = factory.newSimpleName(typeParameter.getSimpleName().toString());
             results.add(factory.newNamedType(name));
@@ -348,7 +347,7 @@ public class GeneratorUtil {
         Precondition.checkMustNotBeNull(var, "var"); //$NON-NLS-1$
         NamedType type;
         TypeMirror representation = var.getType().getRepresentation();
-        List<AnnotationElement> members = Lists.create();
+        List<AnnotationElement> members = new ArrayList<>();
         members.add(factory.newAnnotationElement(
                 factory.newSimpleName("name"), //$NON-NLS-1$
                 Models.toLiteral(factory, var.getName())));

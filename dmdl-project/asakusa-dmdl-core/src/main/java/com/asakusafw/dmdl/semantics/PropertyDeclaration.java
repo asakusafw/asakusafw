@@ -16,6 +16,7 @@
 package com.asakusafw.dmdl.semantics;
 
 import java.text.MessageFormat;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,7 +25,6 @@ import com.asakusafw.dmdl.model.AstDescription;
 import com.asakusafw.dmdl.model.AstNode;
 import com.asakusafw.dmdl.model.AstSimpleName;
 import com.asakusafw.utils.collections.Lists;
-import com.asakusafw.utils.collections.Maps;
 
 /**
  * Declaration of properties.
@@ -80,7 +80,7 @@ public class PropertyDeclaration implements Declaration {
         this.type = type;
         this.description = description;
         this.attributes = Lists.freeze(attributes);
-        this.traits = Maps.create();
+        this.traits = new HashMap<>();
     }
 
     @Override
