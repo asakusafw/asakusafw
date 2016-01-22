@@ -39,16 +39,12 @@
     <module>testing-project</module>
     <module>directio-project</module>
     <module>windgate-project</module>
-    <module>thundergate-project</module>
     <module>yaess-project</module>
     <module>hive-project</module>
     <module>iterative-project</module>
     <module>operation-project</module>
-    <module>development-project</module>
-    <module>legacy-project</module>
     <module>sandbox-project</module>
     <module>sdk-project</module>
-    <module>distribution-project</module>
   </modules>
 
   <properties>
@@ -76,7 +72,6 @@
     <hive.version>1.2.1</hive.version>
     <sdk.hive.version>1.1.1</sdk.hive.version>
     <snappy.version>1.1.1.6</snappy.version>
-    <mysql.jdbc.version>5.1.25</mysql.jdbc.version>
     <commons.cli.version>1.2</commons.cli.version>
     <commons.configuration.version>1.8</commons.configuration.version>
     <commons.io.version>2.4</commons.io.version>
@@ -667,11 +662,6 @@ encoding/<project>=UTF-8
         <groupId>org.hamcrest</groupId>
         <artifactId>hamcrest-library</artifactId>
         <version>${hamcrest.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>mysql</groupId>
-        <artifactId>mysql-connector-java</artifactId>
-        <version>${mysql.jdbc.version}</version>
       </dependency>
       <dependency>
         <groupId>commons-lang</groupId>

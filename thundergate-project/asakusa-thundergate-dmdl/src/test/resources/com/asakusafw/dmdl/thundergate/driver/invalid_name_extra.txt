@@ -1,4 +1,0 @@
-@thundergate.name(value = "OK", extra = "ERROR")
-simple = {
-    value : INT;
-};
