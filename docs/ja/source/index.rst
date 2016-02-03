@@ -32,7 +32,7 @@ Asakusa Framework入門
 * :doc:`application/index`
 * :doc:`administration/index`
 * :doc:`sandbox/index`
-* :preview:`Asakusa on Spark (Developer Preview) <asakusa-on-spark/index.html>`
+* :asakusa-on-spark:`Asakusa on Spark <index.html>`
 
 プロダクトについて
 ==================
