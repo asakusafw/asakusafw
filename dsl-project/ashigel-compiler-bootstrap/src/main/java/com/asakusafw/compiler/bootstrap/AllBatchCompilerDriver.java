@@ -25,7 +25,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
@@ -61,6 +60,7 @@ public final class AllBatchCompilerDriver {
     private static final Option OPT_SKIPERROR;
     private static final Option OPT_SCANPATH;
     private static final Option OPT_INCLUDE;
+    private static final Option OPT_EXCLUDE;
 
     private static final Options OPTIONS;
     static {
@@ -107,6 +107,11 @@ public final class AllBatchCompilerDriver {
         OPT_INCLUDE.setArgName("class-pattern1[,class-pattern2[,..]]"); //$NON-NLS-1$
         OPT_INCLUDE.setRequired(false);
 
+        OPT_EXCLUDE = new Option("exclude", true, //$NON-NLS-1$
+                Messages.getString("AllBatchCompilerDriver.optExclude")); //$NON-NLS-1$
+        OPT_EXCLUDE.setArgName("class-pattern1[,class-pattern2[,..]]"); //$NON-NLS-1$
+        OPT_EXCLUDE.setRequired(false);
+
         OPTIONS = new Options();
         OPTIONS.addOption(OPT_OUTPUT);
         OPTIONS.addOption(OPT_PACKAGE);
@@ -117,6 +122,7 @@ public final class AllBatchCompilerDriver {
         OPTIONS.addOption(OPT_SKIPERROR);
         OPTIONS.addOption(OPT_SCANPATH);
         OPTIONS.addOption(OPT_INCLUDE);
+        OPTIONS.addOption(OPT_EXCLUDE);
     }
 
     /**
@@ -154,13 +160,15 @@ public final class AllBatchCompilerDriver {
         String plugin = cmd.getOptionValue(OPT_PLUGIN.getOpt());
         boolean skipError = cmd.hasOption(OPT_SKIPERROR.getOpt());
         String include = cmd.getOptionValue(OPT_INCLUDE.getOpt());
+        String exclude = cmd.getOptionValue(OPT_EXCLUDE.getOpt());
 
         File outputDirectory = new File(output);
         Location hadoopWorkLocation = Location.fromPath(hadoopWork, '/');
         File compilerWorkDirectory = new File(compilerWork);
         List<File> linkingResources = extractEmbedResources(link);
         List<URL> pluginLocations = extractPluginPath(plugin);
-        Pattern includePattern = extractIncludePattern(include);
+        ClassNamePattern includePattern = ClassNamePattern.parse(include, true);
+        ClassNamePattern excludePattern = ClassNamePattern.parse(exclude, false);
         Set<String> errorBatches = new HashSet<>();
         boolean succeeded = true;
         try {
@@ -168,7 +176,8 @@ public final class AllBatchCompilerDriver {
             try (Cursor cursor = scanner.createCursor()) {
                 while (cursor.next()) {
                     Location location = cursor.getLocation();
-                    Class<? extends BatchDescription> batchDescription = getBatchDescription(location, includePattern);
+                    Class<? extends BatchDescription> batchDescription =
+                            getBatchDescription(location, includePattern, excludePattern);
                     if (batchDescription == null) {
                         continue;
                     }
@@ -243,31 +252,12 @@ public final class AllBatchCompilerDriver {
         return results;
     }
 
-    private static Pattern extractIncludePattern(String pattern) {
-        if (pattern == null) {
-            return null;
-        }
-        StringBuilder buf = new StringBuilder();
-        int start = 0;
-        while (true) {
-            int next = pattern.indexOf('*', start);
-            if (next < 0) {
-                break;
-            }
-            if (start < next) {
-                buf.append(Pattern.quote(pattern.substring(start, next)));
-            }
-            buf.append(".*"); //$NON-NLS-1$
-            start = next + 1;
-        }
-        if (start < pattern.length()) {
-            buf.append(Pattern.quote(pattern.substring(start)));
-        }
-        return Pattern.compile(buf.toString());
-    }
-
-    private static Class<? extends BatchDescription> getBatchDescription(Location location, Pattern include) {
+    private static Class<? extends BatchDescription> getBatchDescription(
+            Location location,
+            ClassNamePattern include, ClassNamePattern exclude) {
         assert location != null;
+        assert include != null;
+        assert exclude != null;
         if (isValidClassFileName(location) == false) {
             LOG.debug("invalid batch class name: {}", location); //$NON-NLS-1$
             return null;
@@ -278,7 +268,7 @@ public final class AllBatchCompilerDriver {
             LOG.debug("not a batch class: {}", className); //$NON-NLS-1$
             return null;
         }
-        if (include != null && include.matcher(className).matches() == false) {
+        if (include.accepts(className) == false || exclude.accepts(className)) {
             LOG.info(MessageFormat.format(
                     Messages.getString("AllBatchCompilerDriver.infoSkipBatchClass"), //$NON-NLS-1$
                     className));
