@@ -88,7 +88,6 @@
     <gson.version>2.5</gson.version>
     <jackson.version>2.6.4</jackson.version>
     <httpclient.version>4.2.5</httpclient.version>
-    <commons.httpclient.version>3.0.1</commons.httpclient.version>
     <commons.codec.version>1.10</commons.codec.version>
 
     <!-- build timestamp -->
@@ -691,11 +690,6 @@ encoding/<project>=UTF-8
         <groupId>com.jcraft</groupId>
         <artifactId>jsch</artifactId>
         <version>${jsch.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>commons-httpclient</groupId>
-        <artifactId>commons-httpclient</artifactId>
-        <version>${commons.httpclient.version}</version>
       </dependency>
       <dependency>
         <groupId>commons-codec</groupId>
