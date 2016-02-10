@@ -9,7 +9,7 @@ Asakusa consists of the following components: (1) Asakusa DSL compiler, (2) a da
 
 ## How to build
 
-mvn install -DskipTests
+`mvn install -DskipTests`
 
 ## How to run tests
 * Install [Hadoop](http://hadoop.apache.org/) with local-mode settings
