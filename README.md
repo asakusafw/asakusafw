@@ -9,25 +9,15 @@ Asakusa consists of the following components: (1) Asakusa DSL compiler, (2) a da
 
 ## How to build
 
-### Build for Hadoop 1.x
-
-```sh
-mvn install [-Phadoop1] [-Dhadoop1.version=1.x.y] -DskipTests
-```
-
-### Build for Hadoop 2.x
-
-```sh
-mvn install -Phadoop2 [-Dhadoop2.version=2.x.y] -DskipTests
-```
+mvn install -DskipTests
 
 ## How to run tests
 * Install [Hadoop](http://hadoop.apache.org/) with local-mode settings
 * Set `hadoop` command into your PATH variable, or set it to `$HADOOP_CMD`
-* And then run `mvn test [-Phadoop(1|2)] [-Dhadoop.builtin]`
+* And then run `mvn test`
 
 ## How to import projects into Eclipse
-* Run `mvn install eclipse:eclipse [-Phadoop(1|2)] -DskipTests`
+* Run `mvn install eclipse:eclipse -DskipTests`
 * And then import projects from Eclipse
 
 If you run tests in Eclipse, please activate `Preferences > Java > Debug > 'Only include exported classpath entries when launching'`.
