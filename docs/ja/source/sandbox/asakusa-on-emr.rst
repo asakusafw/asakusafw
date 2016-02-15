@@ -125,7 +125,7 @@ EMR向けの構成を持つデプロイメントアーカイブを作成する�
             asakusafwVersion asakusafw.asakusafwVersion
         }
         profiles.emr {
-            asakusafwVersion '0.7.6-hadoop2'
+            asakusafwVersion '0.8.0-hadoop2'
             assembly.into('.') {
                 put 'src/dist/emr'
                 replace 'asakusa-resources.xml', directioRootFsPath: 's3://[mybucket]/app-data'
@@ -188,7 +188,7 @@ S3に対するファイルアップロードはAWS CLIからも実行するこ�
 
 ..  code-block:: sh
 
-    aws s3 cp build/asakusafw-0.7.6-hadoop2-emr.tar.gz s3://[mybucket]/asakusafw/
+    aws s3 cp build/asakusafw-0.8.0-hadoop2-emr.tar.gz s3://[mybucket]/asakusafw/
 
 S3上のファイルを表示し、正しくアップロードされたことを確認します。
 
@@ -414,7 +414,7 @@ EMRクラスターに対して処理を要求するには、コンソールやCL
       * 第1引数:  ``s3://asakusafw/emr/deploy-asakusa.sh``
       * 第2引数:  `デプロイメントアーカイブをS3に配置`_ で配置したデプロイメントアーカイブのS3パス
         
-        * 例: ``s3://[mybucket]/asakusafw/asakusafw-0.7.6-hadoop2-emr.tar.gz``
+        * 例: ``s3://[mybucket]/asakusafw/asakusafw-0.8.0-hadoop2-emr.tar.gz``
     
     :guilabel:`Action on failure`
       * ``Continue`` を選択
@@ -452,7 +452,7 @@ AWS CLI を使ったデプロイ例を以下に示します。
     ActionOnFailure=CONTINUE,\
     Jar=s3://elasticmapreduce/libs/script-runner/script-runner.jar,\
     Args=s3://asakusafw/emr/deploy-asakusa.sh,\
-    s3://[mybucket]/asakusafw/asakusafw-0.7.6-hadoop2-emr.tar.gz
+    s3://[mybucket]/asakusafw/asakusafw-0.8.0-hadoop2-emr.tar.gz
 
 ステップを登録すると、以下のようにステップIDが表示されます。
 ステップIDはステップの実行結果を確認する場合などで使用します。

@@ -94,7 +94,7 @@ Asakusa Frameworkを開発環境にインストールするには、まずAsakus
 この文書では基本的なプロジェクトレイアウトのみを持つプロジェクトテンプレートにサンプルアプリケーションを同梱したサンプルアプリケーションプロジェクトを利用します。
 サンプルアプリケーションプロジェクトは以下からダウンロードします。
 
-* `asakusa-example-project-0.7.6.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-example-project-0.7.6.tar.gz>`_
+* `asakusa-example-project-0.8.0.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-example-project-0.8.0.tar.gz>`_
 
 ダウンロードが完了したら、サンプルアプリケーションプロジェクトを任意のディレクトリに配置します。
 
@@ -183,7 +183,7 @@ Asakusa Frameworkのインストール確認
 
     cat $ASAKUSA_HOME/VERSION
 
-    asakusafw.version=0.7.6
+    asakusafw.version=0.8.0
     ...
 
 
