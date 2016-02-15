@@ -1251,4 +1251,4 @@ YAESSについては :doc:`../yaess/index` を参照してください。
 ..  tip::
     コンパイルオプションは項目名を間違えた場合にエラーとなりますが、コンパイラスイッチは項目名を間違えると単に設定が無視されます。
 
-..  [#] :doc:`../application/gradle-plugin` に従ってアプリケーションプロジェクトを作成した場合は、Gradle Pluginの設定値が適用されます。詳しくは :ref:`asakusa-gradle-plugin-reference` を参照してください。
+..  [#] :doc:`../application/gradle-plugin` に従ってアプリケーションプロジェクトを作成した場合は、Gradle Pluginの設定値が適用されます。詳しくは :doc:`../application/gradle-plugin-reference` を参照してください。

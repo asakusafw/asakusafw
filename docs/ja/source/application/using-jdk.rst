@@ -11,7 +11,6 @@
 =====================
 
 Asakusa Framework バージョン |version| では主に `Oracle JDK`_ で動作検証を行なっています。
-また JDKのバージョンは主にJDK 7(JDK 1.7)で動作検証を行なっています。
 
 ..  attention::
     :jinrikisha:`Jinrikisha <index.xml>` を使って開発環境を構築する場合、試用を目的として `Open JDK`_ を使ったセットアップを行う機能を提供していますが、 `Open JDK`_ では簡単な動作検証のみを行なっているため、試用目的以外の用途でAsakusa Frameworkを使用する場合は `Oracle JDK`_ を利用してください。
@@ -22,7 +21,9 @@ Asakusa Framework バージョン |version| では主に `Oracle JDK`_ で動作
 JDKのインストール
 -----------------
 
-Oracle JDKの入手やインストール方法については、 :doc:`../introduction/start-guide` やOracleのJavaのサイトなどを参照してください。
+Oracle JDKの入手やインストール方法については、OracleのJavaのサイトなど [#]_ を参照してください。
+
+..  [#] https://docs.oracle.com/javase/jp/8/docs/technotes/guides/install/install_overview.html
 
 開発ツールが利用するJDKの設定
 =============================
@@ -30,7 +31,7 @@ Oracle JDKの入手やインストール方法については、 :doc:`../introd
 GradleやEclipseなどの開発ツールが利用するためのJDKの設定を行います。
 
 通常、これらは環境変数 ``$PATH`` や ``$JAVA_HOME`` に対して、インストールしたJDKのパスを設定します。
-具体的な設定については :doc:`../introduction/start-guide` や各ツールのドキュメントなどを参照してください。
+詳しくは各ツールのドキュメントなどを参照してください。
 
 アプリケーションプロジェクトの設定
 ==================================
@@ -40,15 +41,11 @@ Asakusa Frameworkのバージョン |version| では、アプリケーション�
 その他のバージョンを使用する場合、必要に応じてこれらの設定を変更します。
 
 ..  attention::
-    Asakusa Framework バージョン 0.7.3 からJDK 6の利用は非推奨になりました。
+    Asakusa Framework バージョン 0.8.0 からJDK 6の利用は非対応となりました。
 
 ..  attention::
     Asakusa Framework バージョン 0.7.0 からアプリケーション開発環境向けのデフォルト設定が JDK 6からJDK 7に変更になりました。
     過去バージョンからのマイグレーションに関する注意点などは、 :doc:`migration-guide` も参照してください。
-
-..  attention::
-    Asakusa Frameworkが動作検証を行なっているHadoopディストリビューションと
-    Javaバージョンの組み合わせについては、 :doc:`../product/target-platform` を参照してください。
 
 Javaバージョンに関する設定
 --------------------------
@@ -85,7 +82,6 @@ build.gradleの設定
 ..  code-block:: groovy
     
     asakusafw {
-        asakusafwVersion '0.8.0-hadoop1'
         ...
         javac {
             sourceCompatibility '1.8'

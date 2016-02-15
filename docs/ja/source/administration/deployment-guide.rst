@@ -4,61 +4,11 @@ Asakusa Framework デプロイメントガイド
 
 この文書は、運用環境(Hadoopクラスター)に対してAsakusa Frameworkの実行環境をセットアップする方法に関して説明します。
 
-はじめに
-========
-
-まず運用環境構築の前提となる事項について説明します。
-
-Hadoopバージョンについて
-------------------------
-
-`Apache Hadoop`_ のリリースは多くのバージョン体系が存在しますが、現在は以下の2つのバージョン系が主に利用されており、多くのHadoopディストリビューションはこの2つのどちらかのバージョン系がベースとなっています。
-
-Hadoop1系
-  `Apache Hadoop`_ バージョン ``1.x.x`` というバージョン名でリリース
-
-Hadoop2系
-  `Apache Hadoop`_ バージョン ``2.x.x`` というバージョン名でリリース
-
-..  _`Apache Hadoop`: http://hadoop.apache.org/
-
-..  attention::
-    利用するHadoopディストリビューションがベースとしているHadoopバージョンについては、各Hadoopディストリビューションのドキュメントなどを参照してください。
-
-Asakusa Frameworkバージョンについて
------------------------------------
-
-Hadoop1系とHadoop2系ではいくつかの非互換性を含む変更 [#]_ が含まれているため、Asakusa FrameworkではそれぞれのHadoopバージョン系向けに以下のAsakusa Frameworkバージョンをリリースしています。
-
-Hadoop1系向けAsakusa Framework
-  Asakusa Framework バージョン ``0.x.x-hadoop1`` というバージョン名でリリース
-
-Hadoop2系向けAsakusa Framework
-  Asakusa Framework バージョン ``0.x.x-hadoop2`` というバージョン名でリリース
-
-運用環境を構築する際には、利用するHadoopバージョンに応じたAsakusa Frameworkの実行モジュールを運用環境にデプロイする必要があります。
-
-..  warning::
-    Asakusa Framework バージョン ``0.7.0`` からAsakusa Frameworkのバージョン体系が変更になりました。
-    Asakusa Framework バージョン ``0.6.x`` 以前のバージョンからのマイグレーションを検討する場合、必ず :doc:`../application/migration-guide` - :ref:`versioning-sysytem-changing` の内容を確認してください。
-
-..  attention::
-    Asakusa FrameworkとHadoopで異なるHadoopバージョン系を指定した場合、バッチ実行時にバリデーションエラーとなります。
-
-..  attention::
-    `CDH`_ などのHadoop2系ディストリビューションでは ``MRv1`` と呼ばれる、YARNベースのサービスを使用せずHadoop1系と同様のサービスを利用したHadoopクラスターを構築することができますが、MRv1はHadoop2系のAPIを利用しています。
-     
-    このため、 ``MRv1`` を利用する場合は、 **Hadoop2系向けAsakusa Framework** を使用します。
-
-..  [#] `Apache Hadoop`_ のリリースにおける非互換性を含む変更については、 `Apache Hadoop Documentation`_ に含まれる Release Notes や Change Log などを参照してください。
-
-..  _`Apache Hadoop Documentation`: http://hadoop.apache.org/docs/current/
-..  _`CDH`: http://www.cloudera.com/content/cloudera/en/products-and-services/cdh.html
-
 Hadoopクラスターの構築について
-------------------------------
+==============================
 
-以降の説明では、利用可能なHadoopクラスターが準備済みであることを前提とします。
+以降の説明では、Asakusa Frameworkの実行環境となるHadoopクラスターが準備済みであることを前提とします。
+
 Hadoopクラスターの具体的な構築手順は、利用するHadoopディストリビューションのドキュメント等を参考にして下さい。
 
 Asakusa Frameworkのデプロイメント
@@ -96,44 +46,13 @@ Asakusa Frameworkではこれらの実行モジュールを生成する様々な
     
     ./gradlew assemble
 
-アプリケーションプロジェクトの標準設定でGradleの :program:`assemble` タスクを実行すると、バッチアプリケーションのビルドが行われ、ビルドが成功した場合はデプロイメントアーカイブがプロジェクトの :file:`build` ディレクトリ配下に :file:`asakusafw-${asakusafwVersion}.tar.gz` というファイル名で生成されます。
+アプリケーションプロジェクトの標準設定でGradleの :program:`assemble` タスクを実行すると、バッチアプリケーションのビルドが行われ、ビルドが成功した場合はデプロイメントアーカイブがプロジェクトの :file:`build` ディレクトリ配下に ``asakusafw-${asakusafwVersion}.tar.gz`` というファイル名で生成されます。
 
 このデプロイメントアーカイブには以下のモジュールが含まれます。
 
-* Hadoop1系向けのAsakusa Framework本体の実行ライブラリ
+* Asakusa Framework本体の実行ライブラリ
 * プロジェクトに含まれるすべてのバッチアプリケーション
 * Asakusa Frameworkの標準設定の設定ファイル
-
-Hadoop2系向けの構成
-~~~~~~~~~~~~~~~~~~~
-
-運用環境にHadoop2系がベースのHadoopディストリビューションを利用する場合は、Hadoop2系向けのAsakusa Framework本体の実行ライブラリをデプロイメントアーカイブに含むよう設定します。
-
-デプロイメントアーカイブの構成を変更するには、アプリケーションプロジェクトのビルドスクリプト :file:`build.gradle` の ``asakusafwOrganizer`` ブロックを編集します。
-
-Hadoop2系向けの構成に変更するには、 ``profile.prod`` ブロックに含まれる ``asakusafwVersion`` をHadoop2系向けのバージョンに変更します。
-
-**build.gradle**
-
-..  code-block:: groovy
-    :emphasize-lines: 3
-   
-    asakusafwOrganizer {
-        profiles.prod {
-            asakusafwVersion '0.8.0-hadoop2'
-        }
-    }
-
-
-この状態で :program:`assemble` タスクを実行すると、Hadoop2系向けのAsakusa Framework本体の実行ライブラリが含まれます。
-
-..  hint::
-    上記の構成では、開発環境のHadoopはHadoop1系を利用し、運用環境向けのHadoopはHadoop2系を利用する、という構成になります。
-     
-    Asakusa Framework バージョン |version| では、開発環境で利用するHadoopはHadoop1系を推奨しています。
-    :doc:`../introduction/start-guide` の手順やJinrikishaの標準構成ではHadoop1系を利用するため、上記例のように設定すると開発環境の構成変更が不要です。
-     
-    開発環境で利用するHadoopについて詳しくは、 :doc:`../application/using-hadoop` を参照してください。
 
 設定ファイルの同梱
 ~~~~~~~~~~~~~~~~~~
@@ -145,16 +64,18 @@ Hadoop2系向けの構成に変更するには、 ``profile.prod`` ブロック�
 **build.gradle**
 
 ..  code-block:: groovy
-    :emphasize-lines: 4-6
    
     asakusafwOrganizer {
         profiles.prod {
-            asakusafwVersion asakusafw.asakusafwVersion
             assembly.into('.') {
                 put 'src/dist/prod'
             }
         }
     }
+
+デプロイメントアーカイブの構成を変更するには、アプリケーションプロジェクトのビルドスクリプト :file:`build.gradle` の ``asakusafwOrganizer`` ブロックを編集します。
+
+また、標準のデプロイメント構成用のプロファイル [#]_  である ``profile.prod`` ブロック内の設定を編集します。
 
 ``assembly.into`` は引数に指定したパス上にファイルを含めることを意味します。
 例では引数に ``(.)`` と記述しており、これはデプロイメントアーカイブのルートディレクトリに対してファイルを含める指定となります。
@@ -173,8 +94,7 @@ Hadoop2系向けの構成に変更するには、 ``profile.prod`` ブロック�
          └── conf
              └── yaess.properties
 
-その他の例
-~~~~~~~~~~
+..  [#] プロファイルについては後述の `複数の運用環境向けのデプロイ管理`_ にて説明します。
 
 ``asakusafwOrganizer`` ブロック上では上記の他にも様々な構成に関する設定が可能です。
 いくつかの構成例を以下に紹介します。
@@ -182,7 +102,7 @@ Hadoop2系向けの構成に変更するには、 ``profile.prod`` ブロック�
 ``asakusafwOrganizer`` ブロックに関する設定やこれを提供するAsakusa Gradle Pluginの詳細な説明は、 :doc:`../application/gradle-plugin` を参照してください。
 
 拡張モジュールの同梱
-^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~
 
 Asakusa Frameworkが標準のデプロイメントアーカイブに含めていない拡張モジュールを同梱する例です。
 
@@ -196,9 +116,6 @@ Asakusa Frameworkが標準のデプロイメントアーカイブに含めてい
     asakusafwOrganizer {
         hive.enabled true
         windgate.retryableEnabled true
-        profiles.prod {
-            asakusafwVersion asakusafw.asakusafwVersion
-        }
     }
 
 この例では、設定を ( ``profiles.prod`` ブロックではなく ) ``asakusafwOrganizer`` ブロックの直下に追加しているため、この設定は開発環境用のインストール構成にも適用されます。
@@ -207,7 +124,7 @@ Asakusa Frameworkが標準のデプロイメントアーカイブに含めてい
     拡張モジュールの利用については、 :doc:`../application/gradle-plugin` を参照してください。
 
 Hiveライブラリの指定
-^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~
 
 開発環境と運用環境でDirect I/O Hive用の実行ライブラリを分ける例です。
 
@@ -216,7 +133,7 @@ Hiveライブラリの指定
 **build.gradle**
 
 ..  code-block:: groovy
-    :emphasize-lines: 6,9
+    :emphasize-lines: 6,8
      
     repositories {
         maven { url 'http://repository.mapr.com/maven/' }
@@ -225,10 +142,11 @@ Hiveライブラリの指定
     asakusafwOrganizer {
         hive.enabled true
         profiles.prod {
-            asakusafwVersion asakusafw.asakusafwVersion
             hive.libraries = ['org.apache.hive:hive-exec:0.13.0-mapr-1501-protobuf250@jar']
         }
     }
+
+..  todo:: bump up hive-exec version for MapR 5.0.0
 
 Direct I/O Hiveを `MapR`_ 環境で利用する場合、Direct I/O HiveはMapRが提供するHiveライブラリを利用する必要があるため、運用環境用のデプロイメントアーカイブにHiveライブラリを指定しています。
 
@@ -243,7 +161,7 @@ Direct I/O Hiveを `MapR`_ 環境で利用する場合、Direct I/O HiveはMapR�
 .. _deployment-extention-libraries-example:
 
 外部ライブラリの配置
-^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~
 
 外部ライブラリやAsakusa Frameworkが標準で同梱しない、特別な実行時プラグインを利用する場合、 :file:`$ASAKUSA_HOME/ext/lib` 配下にライブラリを配置すると利用可能になります [#]_ 。
 
@@ -252,7 +170,6 @@ Direct I/O Hiveを `MapR`_ 環境で利用する場合、Direct I/O HiveはMapR�
 **build.gradle**
 
 ..  code-block:: groovy
-    :emphasize-lines: 2
     
     asakusafwOrganizer {
         extension {
@@ -263,12 +180,12 @@ Direct I/O Hiveを `MapR`_ 環境で利用する場合、Direct I/O HiveはMapR�
     この機能では、指定したライブラリの推移的依存関係となるライブラリは含まれません。
 
 ..  hint::
-    リポジトリ上に存在しないライブラリを同梱したい場合には、 `設定ファイルの同梱`_ と同様の方法などで、ライブラリファイルを配置するのがよいでしょう。
+    リポジトリ上に存在しないライブラリを同梱したい場合には、 `設定ファイルの同梱`_ と同様の方法でもライブラリファイルを配置することができます。
 
 ..  [#] 実行時プラグインの配置については、 :doc:`deployment-runtime-plugins` の内容も参照してください。
 
 複数の運用環境向けのデプロイ管理
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 バッチアプリケーションを実行する運用環境が複数ある場合、環境ごとにデプロイ構成を変更したい場合があります。
 このような場合、運用環境ごとにデプロイ構成用のプロファイルを作成すると便利です。
@@ -282,7 +199,6 @@ Direct I/O Hiveを `MapR`_ 環境で利用する場合、Direct I/O HiveはMapR�
      
     asakusafwOrganizer {
         profiles.prod {
-            asakusafwVersion asakusafw.asakusafwVersion
             assembly.into('.') {
                 put 'src/dist/prod'
             }
@@ -292,7 +208,6 @@ Direct I/O Hiveを `MapR`_ 環境で利用する場合、Direct I/O HiveはMapR�
             }
         }
         profiles.stage {
-            asakusafwVersion asakusafw.asakusafwVersion
             assembly.into('.') {
                 put 'src/dist/stage'
             }
@@ -305,7 +220,7 @@ Direct I/O Hiveを `MapR`_ 環境で利用する場合、Direct I/O HiveはMapR�
 
 標準で設定されているプロファイル ``profiles.prod`` に加えて、ステージング環境用のプロファイルとして ``profiles.stage`` を追加しています。
 
-この設定でデプロイメントアーカイブの生成を行うと、 :file:`build` ディレクトリ配下に標準のデプロイメントアーカイブに加えて、 :file:`asakusafw-${asakusafwVersion}-stage.tar.gz` というファイル名で ``profiles.stage`` に対応したデプロイメントアーカイブが生成されます。
+この設定でデプロイメントアーカイブの生成を行うと、 :file:`build` ディレクトリ配下に標準のデプロイメントアーカイブに加えて、 ``asakusafw-${asakusafwVersion}-stage.tar.gz`` というファイル名で ``profiles.stage`` に対応したデプロイメントアーカイブが生成されます。
 
 この例では、それぞれのプロファイル用に作成した設定ファイル用のディレクトリ( :file:`src/dist/prod`, :file:`src/dist/stage` )から設定ファイルを配置しています。
 
@@ -351,17 +266,19 @@ Direct I/O Hiveを `MapR`_ 環境で利用する場合、Direct I/O HiveはMapR�
 
 Hadoopクライアントマシン上でAsakusa Frameworkを配置しバッチアプリケーションの実行操作を行うOSユーザに対して、以下の環境変数を設定します。
 
-* ``ASAKUSA_HOME``: Asakusa Frameworkのインストールパス
 * ``JAVA_HOME``: YAESSが使用するJavaのインストールパス
-* ``HADOOP_CMD``: YAESSが使用するHadoopコマンドのパス
+* ``HADOOP_CMD``: YAESSが使用する :program:`hadoop` コマンドのパス
+* ``SPARK_CMD``: YAESSが使用する :program:`spark-submit` コマンドのパス ( :asakusa-on-spark:`Asakusa on Spark <index.html>` を利用する場合 )
+* ``ASAKUSA_HOME``: Asakusa Frameworkのインストールパス
 
 :file:`~/.profile` をエディタで開き、最下行に以下の定義を追加します。
 
 ..  code-block:: sh
     
     export JAVA_HOME=/usr/lib/jvm/java-7-oracle
-    export ASAKUSA_HOME=$HOME/asakusa
     export HADOOP_CMD=/usr/lib/hadoop/bin/hadoop
+    export SPARK_CMD=/opt/spark/bin/spark-submit
+    export ASAKUSA_HOME=$HOME/asakusa
 
 :file:`~/.profile` を保存した後、設定した環境変数をターミナル上のシェルに反映させるため、以下のコマンドを実行します。
 
@@ -376,7 +293,7 @@ Hadoopクライアントマシン上でAsakusa Frameworkを配置しバッチア
 デプロイメントアーカイブの展開
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Hadoopクライアントマシンにデプロイメントアーカイブファイル :file:`asakusafw-${asakusafwVersion}.tar.gz` を配置し、 ``$ASAKUSA_HOME`` 配下にデプロイメントアーカイブを展開します。
+Hadoopクライアントマシンにデプロイメントアーカイブファイル ``asakusafw-${asakusafwVersion}.tar.gz`` を配置し、 ``$ASAKUSA_HOME`` 配下にデプロイメントアーカイブを展開します。
 展開後、 ``$ASAKUSA_HOME`` 配下の :file:`*.sh` に実行権限を追加します。
 
 ..  code-block:: sh
@@ -425,9 +342,15 @@ Hadoopクライアントマシンにデプロイメントアーカイブファ�
 
     $ASAKUSA_HOME/yaess/bin/yaess-batch.sh example.summarizeSales -A date=2011-04-01
 
-バッチの実行が成功すると、コマンドの標準出力の最終行に ``Finished: SUCCESS`` と出力されます。
+:asakusa-on-spark:`Asakusa on Spark <index.html>` を利用したバッチアプリケーションの場合、バッチIDのプレフィックスに ``spark.`` を付与して実行します。
 
 ..  code-block:: sh
+
+    $ASAKUSA_HOME/yaess/bin/yaess-batch.sh spark.example.summarizeSales -A date=2011-04-01
+
+バッチの実行が成功すると、コマンドの標準出力の最終行に ``Finished: SUCCESS`` と出力されます。
+
+..  code-block:: none
 
     2013/04/22 13:50:35 INFO  [YS-CORE-I01999] Finishing batch "example.summarizeSales": batchId=example.summarizeSales, elapsed=12,712ms
     2013/04/22 13:50:35 INFO  [YS-BOOTSTRAP-I00999] Exiting YAESS: code=0, elapsed=12,798ms
@@ -446,7 +369,7 @@ YAESSでは実際のアプリケーションの実行は行わず、環境構成
 
 ..  code-block:: sh
 
-    .../yaess-batch.sh example.summarizeSales -A date=2011-04-01 -D dryRun
+    $ASAKUSA_HOME/yaess/bin/yaess-batch.sh example.summarizeSales -A date=2011-04-01 -D dryRun
 
 バッチアプリケーションの実行結果の確認
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -481,6 +404,13 @@ Hadoopパラメータの設定
 
 * :doc:`configure-hadoop-parameters`
 
+Asakusa on Sparkの最適化設定
+----------------------------
+
+以下のドキュメントでは、Asakusa on Sparkを使ったSparkアプリケーションの実行に関してAkakusa Framework特有のチューニングパラメータなどを説明しています。
+
+* :asakusa-on-spark:`Asakusa on Sparkの最適化設定 <optimization.html>`
+
 各コンポーネントの設定
 ----------------------
 
@@ -488,6 +418,5 @@ Asakusa Frameworkの各コンポーネントの設定に関しては、各コン
 
 * :doc:`../directio/user-guide`
 * :doc:`../windgate/user-guide`
-* :doc:`../thundergate/user-guide`
 * :doc:`../yaess/user-guide`
 

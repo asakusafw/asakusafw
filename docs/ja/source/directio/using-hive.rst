@@ -41,13 +41,10 @@ GradleプロジェクトでHive 連携モジュールを使用する場合は :f
 以下、 ``build.gradle`` の設定例です。
 
 ..  code-block:: groovy
-    :emphasize-lines: 2,10
+    :emphasize-lines: 2,7
 
     asakusafwOrganizer {
         hive.enabled true
-        profiles.prod {
-            asakusafwVersion asakusafw.asakusafwVersion
-        }
     }
     
     dependencies {

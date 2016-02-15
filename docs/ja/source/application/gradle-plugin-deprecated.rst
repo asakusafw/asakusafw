@@ -250,7 +250,7 @@ Framework Organizer Plugin は、以下のタスクを定義します。
     ``build.gradle`` 内の ``asakusafwOrganizer`` ブロックで
     デプロイメント構成を定義する方法を推奨するよう変更しています。
     
-    詳しくは、 :doc:`../administration/deployment-guide` や :ref:`asakusa-gradle-plugin-reference` を参照してください。
+    詳しくは、 :doc:`../administration/deployment-guide` や :doc:`gradle-plugin-reference` を参照してください。
 
 ..  warning::
     バージョン 0.7.0 以降では、以下のタスクは削除されました。
@@ -263,7 +263,7 @@ Framework Organizer Plugin は、以下のタスクを定義します。
     複数のデプロイメントアーカイブ構成を管理する機能として、
     バージョン 0.7.0 以降ではプロファイル定義による構成機能を提供しています。
     
-    詳しくは、 :doc:`../administration/deployment-guide` や :ref:`asakusa-gradle-plugin-reference` を参照してください。
+    詳しくは、 :doc:`../administration/deployment-guide` や :doc:`gradle-plugin-reference` を参照してください。
 
 ..  attention::
     以下では非推奨となったタスク、及び削除されたタスクをあげています。
