@@ -1,6 +1,4 @@
-group   'com.example'
-version '1.0.0'
-description 'Example application'
+group 'com.example'
 
 buildscript {
     repositories {
@@ -17,28 +15,9 @@ apply plugin: 'asakusafw-mapreduce'
 apply plugin: 'asakusafw-spark'
 apply plugin: 'eclipse'
 
-asakusafw {
-    basePackage 'foo.bar'
-    spark {
-        compilerProperties += ['spark.input.direct':'false']
-    }
-}
-
-asakusafwOrganizer {
-    mapreduce.enabled false
-    windgate.retryableEnabled true
-    profiles.prod {
-        assembly.into('.') {
-            put 'src/dist/prod'
-        }
-    }
-}
-
 dependencies {
     compile group: 'com.asakusafw.sdk', name: 'asakusa-sdk-core', version: asakusafw.asakusafwVersion
     compile group: 'com.asakusafw.sdk', name: 'asakusa-sdk-directio', version: asakusafw.asakusafwVersion
     compile group: 'com.asakusafw.sdk', name: 'asakusa-sdk-windgate', version: asakusafw.asakusafwVersion
     testRuntime group: 'com.asakusafw.sdk', name: 'asakusa-sdk-test-emulation', version: asakusafw.asakusafwVersion
-    
-    compile group: 'com.asakusafw.sandbox', name: 'asakusa-directio-dmdl-ext', version: asakusafw.asakusafwVersion
 }

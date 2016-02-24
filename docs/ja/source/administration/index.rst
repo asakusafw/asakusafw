@@ -13,6 +13,10 @@ Asakusa FrameworkとバッチアプリケーションをHadoopクラスタなど
 * :doc:`configure-task-optimization`
 * :doc:`configure-library-cache`
 * :doc:`deployment-runtime-plugins`
+
+マイグレーション
+================
+
 * :doc:`migration-guide`
 
 運用ツールの利用
@@ -32,7 +36,6 @@ Asakusa Frameworkが提供する運用ツールに関するドキュメントで
 
 Asakusa Framework バージョン |version| において、以下のドキュメントで説明する機能は非推奨となっています。
 
-* :doc:`framework-organizer`
 * :doc:`deployment-cleaner`
 
 ..  attention::
@@ -53,6 +56,5 @@ Asakusa Framework バージョン |version| において、以下のドキュメ
     migration-guide
     utility-tool-user-guide
     generate-deployment-archive-from-source
-    framework-organizer
     deployment-cleaner
 

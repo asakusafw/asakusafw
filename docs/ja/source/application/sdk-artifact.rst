@@ -50,9 +50,11 @@ Asakusa Frameworkが提供するSDKアーティファクトは以下のものが
 SDKアーティファクトの利用方法
 =============================
 
-:doc:`gradle-plugin` などの手順で構築したGradleプロジェクトでSDKアーティファクトを使用する場合は :file:`build.gradleの` ``dependencies`` ブロック内に ``compile`` 依存関係(コンフィグレーション)に対して依存定義を追加します。
+:doc:`gradle-plugin` などの手順で構築したGradleプロジェクトでSDKアーティファクトを使用する場合は、ビルドスクリプトの ``dependencies`` ブロック内にSDKアーティファクトの定義を追加します。
 
-例えば、Direct I/O と WindGate を使ったアプリケーション開発プロジェクト向けに依存関係を設定する場合は、以下のようになります。
+以下、SDKアーティファクトを利用したビルドスクリプトの設定例です。
+
+**build.gradle**
 
 ..  code-block:: groovy
 
@@ -60,4 +62,4 @@ SDKアーティファクトの利用方法
         compile group: 'com.asakusafw.sdk', name: 'asakusa-sdk-core', version: asakusafw.asakusafwVersion
         compile group: 'com.asakusafw.sdk', name: 'asakusa-sdk-directio', version: asakusafw.asakusafwVersion
         compile group: 'com.asakusafw.sdk', name: 'asakusa-sdk-windgate', version: asakusafw.asakusafwVersion
-
+        testRuntime group: 'com.asakusafw.sdk', name: 'asakusa-sdk-test-emulation', version: asakusafw.asakusafwVersion

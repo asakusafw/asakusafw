@@ -51,21 +51,18 @@
       - 説明
     * - ``com.asakusafw.sdk``
       - ``asakusa-sdk-test-emulation``
-      - テストドライバ実行をエミュレーションモードに変更
+      - テストドライバ実行にエミュレーションモードを使用する
 
 ..  attention::
     Asakusa Framework バージョン ``0.7.3`` から、エミュレーションに関するモジュール定義は上記のSDKアーティファクトに統一されました。
+    バージョン ``0.7.2`` 以前で説明していた設定方法は一部環境で動作しないため、上記のSDKアーティファクトに変更してください。
     
-    バージョン ``0.7.2`` 以前で公開されていた以下のモジュール定義も当面は使用できますが、将来のバージョンでは使用できなくなる可能性があるため、上記のSDKアーティファクトに変更することを推奨します。
-     
-    * ``com.asakusafw:asakusa-test-inprocess``
-    * ``com.asakusafw:asakusa-test-inprocess-ext``
-    * ``com.asakusafw:asakusa-windgate-test-inprocess``
-
 エミュレーションモードの有効化
 ------------------------------
 
-アプリケーションプロジェクトでエミュレーションモードを使用する場合は :file:`build.gradle` の ``dependencies`` ブロック内に ``com.asakusafw.sdk:asakusa-sdk-test-emulation`` を利用する依存定義を追加します。
+アプリケーションプロジェクトでエミュレーションモードを使用する場合はビルドスクリプトの ``dependencies`` ブロック内に `エミュレーションモードで利用するモジュール`_ を利用する依存定義を追加します。
+
+**build.gradle**
 
 ..  code-block:: groovy
 
@@ -74,7 +71,7 @@
         testRuntime group: 'com.asakusafw.sdk', name: 'asakusa-sdk-test-emulation', version: asakusafw.asakusafwVersion
 
 ..  tip::
-    エミュレーションモードを有効する別の方法として、 :jinrikisha:`Shafu<shafu.html>` の機能を使ってEclipse上で設定する方法があります。
+    エミュレーションモードを有効する別の方法として、ビルドスクリプトにはモジュール設定を記述せず、 :jinrikisha:`Shafu<shafu.html>` の機能を使ってEclipse上で設定する方法があります。
     この方法で設定を行うと、Eclipse上でのみエミュレーションモードが有効になります。
     詳しくは :jinrikisha:`Shafu<shafu.html>` の「設定」の説明を参照してください。
 

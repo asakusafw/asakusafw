@@ -2,7 +2,7 @@
 Amazon EMR上でAsakusa Frameworkを利用する
 =========================================
 
-* 対象バージョン: Asakusa Framework ``0.7.0`` 以降
+* 対象バージョン: Asakusa Framework ``0.8.0`` 以降
 
 この文書は、 `Amazon Web Services`_ (AWS) が提供するクラウド環境上のHadoopサービス `Amazon Elastic MapReduce`_ (Amazon EMR) 上でAsakusa Frameworkを利用する方法について説明します。
 
@@ -118,14 +118,10 @@ EMR向けの構成を持つデプロイメントアーカイブを作成する�
 **build.gradle**
 
 ..  code-block:: groovy
-    :emphasize-lines: 9
+    :emphasize-lines: 5
     
     asakusafwOrganizer {
-        profiles.prod {
-            asakusafwVersion asakusafw.asakusafwVersion
-        }
         profiles.emr {
-            asakusafwVersion '0.8.0-hadoop2'
             assembly.into('.') {
                 put 'src/dist/emr'
                 replace 'asakusa-resources.xml', directioRootFsPath: 's3://[mybucket]/app-data'
@@ -137,10 +133,6 @@ EMR向けの構成を持つデプロイメントアーカイブを作成する�
     上記例を参考に設定ファイルを作成する際は、必ず ``directioRootFsPath`` の値を実際に使用するS3バケットのパスに置き換えてください。
    
 ここでは標準の設定に対して、EMR向けのプロファイルとして ``profiles.emr`` ブロックを追加しています。
-
-``emr`` プロファイルの ``asakusafwVersion`` にはHadoop2系向けのAsakusa Frameworkを指定しています。
-本書ではHadoop2系のEMRクラスターを使用します。
-詳細は後述の `EMRクラスターの起動`_ を参照してください。
 
 ``assembly.into('.')`` 配下は先述の `Direct I/Oの設定`_ で説明した設定ファイルを ``put`` によってデプロイメント構成に加えています。
 このとき、 ``asakusa-resources`` 内で定義したDirect I/O のファイルシステムパスの値 ``directioRootFsPath`` を指定したS3バケット上のパスに置換するための設定を定義しています。
@@ -188,7 +180,7 @@ S3に対するファイルアップロードはAWS CLIからも実行するこ�
 
 ..  code-block:: sh
 
-    aws s3 cp build/asakusafw-0.8.0-hadoop2-emr.tar.gz s3://[mybucket]/asakusafw/
+    aws s3 cp build/asakusafw-0.8.0-emr.tar.gz s3://[mybucket]/asakusafw/
 
 S3上のファイルを表示し、正しくアップロードされたことを確認します。
 
@@ -246,7 +238,7 @@ EMRクラスターの起動はAWS CLIから実行することができます。
 ..  code-block:: sh
 
     aws emr create-cluster \
-     --ami-version 3.2.0 \
+     --ami-version 4.3.0 \
      --instance-groups \
      InstanceGroupType=MASTER,InstanceCount=1,InstanceType=c3.xlarge \
      InstanceGroupType=CORE,InstanceCount=1,InstanceType=c3.xlarge \
@@ -277,14 +269,7 @@ EMRクラスターの起動パラメータ（オプション）の概要を説�
 
 :guilabel:`AMI version` ``(--ami-version)``
   EMRクラスターのマシンイメージ(AMI)のバージョンです。
-  AMIのバージョンによって使用されるHadoopバージョンや設定が異なります。
   指定可能なAMIバージョンについては `AMI Versions Supported in Amazon EMR`_ ( `EMR Developer Guide`_ ) などを参照してください。
-
-..  attention::
-    AMIバージョンの ``3.0.0`` 以降はEMRクラスターに使用されるHadoopのバージョンはHadoop2系が利用されます。
-    そのため、AMIバージョンの ``3.0.0`` 以降を利用する場合はHadoop2系向けのAsakusa Frameworkバージョンを使用する必要があります。
-    
-    詳しくは先述の `デプロイメント構成の設定`_ を参照してください。
 
 :guilabel:`Network`
   VPCの使用有無を指定します。
@@ -414,7 +399,7 @@ EMRクラスターに対して処理を要求するには、コンソールやCL
       * 第1引数:  ``s3://asakusafw/emr/deploy-asakusa.sh``
       * 第2引数:  `デプロイメントアーカイブをS3に配置`_ で配置したデプロイメントアーカイブのS3パス
         
-        * 例: ``s3://[mybucket]/asakusafw/asakusafw-0.8.0-hadoop2-emr.tar.gz``
+        * 例: ``s3://[mybucket]/asakusafw/asakusafw-0.8.0-emr.tar.gz``
     
     :guilabel:`Action on failure`
       * ``Continue`` を選択
@@ -452,7 +437,7 @@ AWS CLI を使ったデプロイ例を以下に示します。
     ActionOnFailure=CONTINUE,\
     Jar=s3://elasticmapreduce/libs/script-runner/script-runner.jar,\
     Args=s3://asakusafw/emr/deploy-asakusa.sh,\
-    s3://[mybucket]/asakusafw/asakusafw-0.8.0-hadoop2-emr.tar.gz
+    s3://[mybucket]/asakusafw/asakusafw-0.8.0-emr.tar.gz
 
 ステップを登録すると、以下のようにステップIDが表示されます。
 ステップIDはステップの実行結果を確認する場合などで使用します。

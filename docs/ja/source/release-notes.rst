@@ -2,471 +2,62 @@
 リリースノート
 ==============
 
-Release 0.7.6
+Release 0.8.0
 =============
 
-Dec 02, 2015
-
-`Asakusa Framework 0.7.6 documentation`_
-
-..  _`Asakusa Framework 0.7.6 documentation`: http://docs.asakusafw.com/0.7.6/release/ja/html/index.html
-
-このバージョンはAsakusa DSLコンパイラの以下の問題に対応したメンテナンスリリースです。
-
-* MasterJoin系演算子のマスタ側入力に、 ``DataSize.TINY`` を含む2つ以上の入力を指定した場合に正しく動作しない問題を修正
-
-その他、軽微なバグフィックスやドキュメント修正を含みます。
-
-Release 0.7.5
-=============
-
-Nov 19, 2015
-
-`Asakusa Framework 0.7.5 documentation`_
-
-..  _`Asakusa Framework 0.7.5 documentation`: http://docs.asakusafw.com/0.7.5/release/ja/html/index.html
+XXX XX, 2016
 
 新機能と主な変更点
 ------------------
 
-Direct I/O line - 特定フォーマットに依存しないテキストファイルの入出力
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Direct I/Oで任意のテキストファイルを行ごとに読み書きするための機能 :doc:`Direct I/O line <../sandbox/directio-line>` を追加しました。
-
-Direct I/O lineはファイル内の行文字列とデータモデル内の1つの文字列型プロパティをマッピングする機能のみを提供します。
-行文字列の解析、生成などの処理はバッチアプリケーションの演算子として記述します。
-
-Direct I/O lineは、以下のような用途に利用することを想定しています。
-
-* Direct I/Oが対応していないファイルフォーマットの入出力
-
-  * 例えば `JSON <http://json.org>`_ や `LTSV <http://ltsv.org>`_ といったフォーマットを扱う場合に、行文字列をパースする処理と組み合わせて利用します。
-* 入力ファイルの整形や形式変換、バリデーションチェックなどの事前処理
-
-  * 例えばCSVファイルの一部にDirect I/Oでは直接扱えないような形式が含まれる場合に、事前に形式の変換を行うといった用途で利用します。
-
-Direct I/O lineの詳細は、以下のドキュメントを参照してください。
-
-* :doc:`sandbox/directio-line`
-
-GradleのDSLコンパイル時に対象のバッチアプリケーションを指定
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Gradleから :program:`compileBatchapp` タスクを指定してバッチアプリケーションのDSLコンパイルを実行する際に、 ``compileBatchapp --update <バッチクラス名>`` と指定することで、指定したバッチクラス名のみをバッチコンパイルすることができるようになりました。
-
-詳細は、以下のドキュメントを参照してください。
-
-* :doc:`application/gradle-plugin` - :ref:`gradle-plugin-dslcompile-filter`
-
-開発環境向けの英語メッセージリソースの追加とAPIリファレンスの英語化
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Asakusa DSLコンパイラのメッセージなど、従来日本語メッセージのみ提供していた機能に対して英語メッセージリソースを追加しました。
-
-また、多くのAPIリファレンスの記述を日本語から英語に変更しました。
-
-将来のバージョンで、全てのAPIリファレンスの記述を英語に統一する予定です。
-また、日本語によるAPIの説明は本ドキュメントに記述するよう統一する予定です。
-
-サポートプラットフォームの更新
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-アプリケーション開発開発の動作検証プラットフォームにJava8(JDK 8)を追加しました。
-
-また、アプリケーションプロジェクトで使用するGradleの標準バージョンを2.8にアップデートしました。
-
-その他、いくつかの動作検証プラットフォームを更新しています。
-詳しくは、 以下のドキュメントを参照してください。
-
-* :doc:`product/target-platform`
-
-その他の変更点
-~~~~~~~~~~~~~~
-
-その他、細かな機能改善およびバグフィックスが含まれます。
-すべての変更点は :doc:`changelogs` を参照してください。
-
 互換性に関して
 --------------
 
-将来のバージョンにおいて、以下のプロダクトバージョンを対応プラットフォームから除外することを計画しています。
+変更点
+~~~~~~
 
-* Hadoop: Hadoop1系 (Hadoop2系にのみ対応)
-* Gradle: Gradleのバージョン1.12以前 (Gradle 2.X以降にのみ対応)
-* Java: JDK6 （JDK7以降にのみ対応)
-
-..  seealso::
-    Hadoopバージョンについての詳細は :doc:`administration/deployment-guide` を参照してください
-
-Release 0.7.4
-=============
-
-Aug 11, 2015
-
-`Asakusa Framework 0.7.4 documentation`_
-
-..  _`Asakusa Framework 0.7.4 documentation`: http://docs.asakusafw.com/0.7.4/release/ja/html/index.html
-
-新機能と主な変更点
-------------------
-
-YAESSコマンドオプションの追加
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-YAESSのバッチ実行用コマンドに以下のオプションを設定できるようになりました。
-
-* 任意のプロファイルセット(構成ファイル)を指定 ( ``-D profile=<プロファイル名>`` )
-* 実行時の環境変数を指定 ( ``-V key=value`` )
-
-YAESSコマンドオプションの詳細は、以下のドキュメントを参照してください。
-
-* :doc:`yaess/user-guide`
-
-ParquetのDATE型に対応
-~~~~~~~~~~~~~~~~~~~~~
-
-Direct I/O HiveでParquetを利用する場合にHiveの ``DATE`` 型を利用できるようになりました。
-
-なお、ParquetのDATE型をHiveから利用する場合、Hiveのバージョン 1.2 以上を利用する必要があります。
-
-詳細は、以下のドキュメントを参照してください。
-
-* :doc:`directio/using-hive`
-
-サポートプラットフォームの更新
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-いくつかのプラットフォームの対応バージョンを更新しています。
-
-* MapR 5.0.0
-* Hortonworks Data Platform 2.3
-* Apache Hive 1.2.1
-
-また、いくつかのHadoopディストリビューションでJDK8上での動作検証を行いました。
-
-なお、アプリケーションの開発環境でのJDK8の利用については、現時点では基本的な動作のみ検証しています。
-
-詳しくは、 :doc:`product/target-platform` を参照してください。
-
-その他の変更点
-~~~~~~~~~~~~~~
-
-* Asakusa Gradle PluginがGradle 2.4以降で正常に動作しない問題を修正しました。
-* WindGate-SSHを異なるHadoopバージョン間の環境で利用した場合の動作を改善しました。
-* Windows上でHadoop2系を使ったエミュレーションモードが動作しない問題を修正しました。
-
-その他、細かな機能改善およびバグフィックスが含まれます。
-すべての変更点は :doc:`changelogs` を参照してください。
-
-互換性に関して
---------------
-
-将来のバージョンにおいて、以下のプロダクトバージョンを対応プラットフォームから除外することを計画しています。
-
-* Hadoop: Hadoop1系 (Hadoop2系にのみ対応)
-* Gradle: Gradleのバージョン1.12以前 (Gradle 2.X以降にのみ対応)
-* Java: JDK6 （JDK7以降にのみ対応)
-
-..  seealso::
-    Hadoopバージョンについての詳細は :doc:`administration/deployment-guide` を参照してください
-
-Release 0.7.3
-=============
-
-Apr 22, 2015
-
-`Asakusa Framework 0.7.3 documentation`_
-
-..  _`Asakusa Framework 0.7.3 documentation`: http://docs.asakusafw.com/0.7.3/release/ja/html/index.html
-
-新機能と主な変更点
-------------------
-
-Direct I/O 入力フィルター
-~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Direct I/O を利用してファイルからデータを読み出す際に、ファイル単位やレコード単位で読み出すデータを制限する機能を追加。
-
-入力フィルターを使うことで、従来のDirect I/Oの機能では記述しきれないような複雑な絞り込みを行えるようになります。
-バッチの実行パラメータと組み合わせることで、処理対象のデータを動的に制限することも可能です。
-また、フィルターによるデータの絞り込みをDSLコンパイラの最適化設定と組み合わせることで、アプリケーションの高速化が望めます。
-
-Direct I/O 入力フィルターが提供する機能には以下のようなものがあります。
-
-パスフィルターメソッド
-  入力の候補となるファイルパスに対して、個別に処理を行うかを決定するフィルタールールを記述します。
-
-データフィルターメソッド
-  入力の候補となるデータモデルの内容に基づいて、個別に処理を行うかを決定するフィルタールールを記述します。
-
-Direct I/O 入力フィルターについての詳細は、以下のドキュメントを参照してください。
-
-* :doc:`directio/user-guide` - :ref:`directio-input-filter`
-
-スモールジョブ実行エンジンの正式対応
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Asakusa Framework バージョン 0.7.1 ( `Release 0.7.1`_ ) で試験的機能として追加されたスモールジョブ実行エンジンに正式に対応しました。
-
-正式対応に伴い、 :doc:`testing/emulation-mode` で利用するための設定方法が変更になっています。
-従来の設定で利用している環境も当面は引き続き利用可能ですが、できるだけ新しい設定方法を利用するようにしてください。
-
-サポートプラットフォームの更新
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-いくつかのプラットフォームの対応バージョンを更新しています。
-
-* Apache Hadoop 2.6.0
-* Apache Hive 1.1.0
-* MapR 4.1.0
-
-詳しくは、 :doc:`product/target-platform` を参照してください。
-
-その他の変更点
-~~~~~~~~~~~~~~
-
-* WindGate/JDBCでTRUNCATE時のクエリーをジョブフロー単位で指定可能になりました。
-* Direct I/O及びWindGateでCSVファイルの入力時にヘッダーの検証をスキップするオプションを追加しました。
-* テストドライバを利用したインテグレーションテスト用のAPIを追加しました。
-* 多相データフロー向けのコア演算子用APIを拡張しました。
-* ドキュメントの構成を改善しました。
-
-その他、細かな機能改善およびバグフィックスが含まれます。
-すべての変更点は :doc:`changelogs` を参照してください。
-
-互換性に関して
---------------
-
-Java SE Development Kit (JDK)
-  本バージョンからJDK6の利用は非推奨となりました。
-  開発環境、運用環境共にJDK7を利用してください。
-
-  Asakusa Frameworkが動作検証を行なっているJavaのバージョンについては、 :doc:`product/target-platform` を参照してください。
-  また、開発環境で利用するJavaについての詳細は、 :doc:`application/using-jdk` を参照してください。
-
-  なお、将来のバージョンではJDK6の利用は非対応とすることを計画しています。
-  
-過去バージョンからのマイグレーション情報については、以下のドキュメントを参照してください。
-
-* :doc:`application/migration-guide`
-* :doc:`administration/migration-guide`
-
-Release 0.7.2
-=============
-
-Jan 05, 2015
-
-`Asakusa Framework 0.7.2 documentation`_
-
-..  _`Asakusa Framework 0.7.2 documentation`: http://docs.asakusafw.com/0.7.2/release/ja/html/index.html
-
-新機能と主な変更点
-------------------
-
-Windows上でのアプリケーション開発に対応
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-アプリケーション開発環境の対応プラットフォームとしてWindowsを追加しました。
-
-:doc:`introduction/start-guide-windows` ではWindows上にアプリケーション開発環境を構築し、サンプルアプリケーションを例に開発環境を利用する方法を紹介しています。
-
-Windowsでは運用機能に制限がありますが、アプリケーションの開発、テスト、ビルド機能のほぼすべてを利用することができます。
-
-Hive 0.14に対応
-~~~~~~~~~~~~~~~
-
-:doc:`Direct I/O Hive <directio/using-hive>` がHive 0.14.0に対応しました。
-
-Direct I/O Hiveが出力するParquetフォーマットで ``TIMESTAMP`` や ``DECIMAL`` 型などHive 0.14で新たに対応したデータタイプを利用することができるようになりました。
-
-その他の変更点
-~~~~~~~~~~~~~~
-
-その他、細かな機能改善およびバグフィックスが含まれます。
-すべての変更点は :doc:`changelogs` を参照してください。
-
-互換性に関して
---------------
-
-本リリースでは過去バージョンとの互換性に関する特別な情報はありません。
-
-過去バージョンからのマイグレーション情報については、以下のドキュメントを参照してください。
-
-* :doc:`application/migration-guide`
-* :doc:`administration/migration-guide`
-
-Release 0.7.1
-=============
-
-Nov 20, 2014
-
-`Asakusa Framework 0.7.1 documentation`_
-
-..  _`Asakusa Framework 0.7.1 documentation`: http://docs.asakusafw.com/0.7.1/release/ja/html/index.html
-
-新機能と主な変更点
-------------------
-
-小さなデータの処理性能を改善 (Experimental)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-10MB程度の非常に小さなデータを処理するステージについて、実行性能を向上させる「スモールジョブ実行エンジン」を追加しました。
-
-バッチアプリケーション内に小さなデータを処理するステージが多数含まれる場合、この機能を有効にすると性能が改善する場合があります。
-
-また、常に小さなデータを利用する開発環境上のテスト実行では、この機能と :doc:`エミュレーションモード <testing/emulation-mode>` を組み合わせて利用することで、テストの実行時間を大幅に短縮できます。
-
-運用環境で本機能を有効にするには、以下を参照してください。
-
-* :doc:`administration/configure-task-optimization`
-
-開発環境で本機能を有効にするには、以下を参照してください。
-
-* :doc:`testing/emulation-mode`
-
-サポートプラットフォームを追加
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-対応プラットフォームにHortonworks Data Platform 2.1を追加しました。
-
-その他、いくつかのプラットフォームの対応バージョンを更新しています。
-
-詳しくは、 :doc:`product/target-platform` を参照してください。
-
-その他の変更点
-~~~~~~~~~~~~~~
-
-その他、細かな機能改善およびバグフィックスが含まれます。
-すべての変更点は :doc:`changelogs` を参照してください。
-
-互換性に関して
---------------
-
-本リリースでは過去バージョンとの互換性に関する特別な情報はありません。
-
-過去バージョンからのマイグレーション情報については、以下のドキュメントを参照してください。
-
-* :doc:`application/migration-guide`
-* :doc:`administration/migration-guide`
-
-Release 0.7.0
-=============
-
-Sep 25, 2014
-
-`Asakusa Framework 0.7.0 documentation`_
-
-..  _`Asakusa Framework 0.7.0 documentation`: http://docs.asakusafw.com/0.7.0/release/ja/html/index.html
-
-新機能と主な変更点
-------------------
-
-Direct I/O Hive
-~~~~~~~~~~~~~~~
-
-`Apache Hive <https://hive.apache.org/>`_ で利用されるいくつかのファイルフォーマットをDirect I/Oで直接取り扱えるようになりました。
-これにより、Apache Hiveのテーブルデータをアプリケーションから直接作成できるようになります。
-
-本フィーチャーには主に以下の改善が含まれています。
-
-Parquet / ORCFile フォーマット
-  さまざまなクエリーエンジンがサポートしている、ParquetとORCFileフォーマットをDirect I/Oから読み書きできるようになりました。
-DMDL上での各種フォーマットのサポート
-  DMDLから各種Hive対応フォーマット向けのDataFormatクラスを自動生成できるようになりました。
-
-  また、上記の方法で作成したデータモデルから、Hive Metastore向けにDDLスクリプトを自動生成できるようになりました。
-
-Direct I/O Hiveについて詳しくは、以下のドキュメントを参照してください。
-
-* :doc:`directio/using-hive`
-
-Hadoop2系に正式対応
-~~~~~~~~~~~~~~~~~~~
-
-従来のHadoop1系に加え、以前のバージョンから試験的機能として対応していたHadoop2系に本バージョンから正式に対応しました。
-これにより、最新のHadoopディストリビューション上でAsakusa Frameworkのアプリケーションを安全に実行できます。
-
-なお、正式にサポートするHadoopのバージョンラインが複数になったことにより、Asakusa Frameworkのバージョン体系もそれに合わせて変化しています。詳しくは以下のドキュメントを参照してください。
-
-* :doc:`application/migration-guide` - :ref:`versioning-sysytem-changing`
-
-本バージョンより、Gradleを利用したビルドシステムにおいて、開発環境や様々な運用環境で異なるHadoopのバージョンラインを使い分けられるようになりました。
-利用方法については以下のドキュメントを参照してください。
-
-* :doc:`application/gradle-plugin` - :ref:`gradle-plugin-oraganizer-profile`
-* :doc:`administration/deployment-guide`
-
-テストドライバの改善
-~~~~~~~~~~~~~~~~~~~~
-
-テストドライバに以下の改善が加えられています。
-
-Excelの数式をサポート
-  Excelによるテストデータ定義において、セルに数式を指定できるようになりました。これにより、より柔軟な方法でテストデータの定義を行えるようになります。
-いくつかの比較形式を追加
-  Excelによるテストデータ定義において、誤差を許す比較や、大小比較をサポートしました。
-
-  本機能を利用する場合、新しいバージョンのテストデータテンプレートが必要になります。Excelのテストデータテンプレートを再生成してください。
-テストデータの事前検証
-  テストデータやテスト条件に形式的な問題がある場合、Asakusa DSLのコンパイルやHadoop上での実行に先立ってエラーが報告されるようになりました。
-
-Excelによるテストデータ定義に関して詳しくは、以下のドキュメントを参照してください。
-
-* :doc:`testing/using-excel`
-
-実行時パフォーマンスの改善
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-以下の機能により、全体的なパフォーマンス改善が加えられています。
-
-ライブラリファイルのキャッシュ
-  フレームワークやアプリケーションのライブラリファイル群をHadoop上にキャッシュして再利用できるようになりました。
-ステージ間の新しい中間データ形式
-  中間データに独自の形式を利用するようになりました。また、中間データの入出力をマルチコアプロセッサー向けに改善しました。
-Mapタスクのスケジューリングを改善
-  Mapタスクの結合を行う遺伝的アルゴリズムを見直し、よりデータローカリティを重視するようになりました。
-
-これらの機能に関する設定など詳しくは、以下のドキュメントを参照してください。
-
-* :doc:`administration/configure-library-cache`
-* :doc:`administration/configure-task-optimization`
-
-----
-
-| その他、 :doc:`product/target-platform` のアップデートや細かな機能改善およびバグフィックスが含まれます。
-| すべての変更点は :doc:`changelogs` を参照してください。
-
-互換性に関して
---------------
-
-本リリースには、過去のリリースに対していくつかの潜在的な非互換性が存在します。
-
-Java SE Development Kit (JDK)
-  アプリケーションプロジェクトの標準設定で利用するJavaのバージョンをJDK 6からJDK 7に変更しました。
-
-  Java 7に対応していないHadoopディストリビューション上でアプリケーションを実行する場合、手動でJDK 6に戻す必要があります。
-Gradle
-  Gradle 2.1に対応しました。
-
-  以前のAsakusa FrameworkはGradle 2.0以降に対応していません。プロジェクトのAsakusa Frameworkのバージョンをダウングレードする場合に注意が必要です。
-Maven
-  本バージョンより非推奨となりました。当面は引き続き利用可能ですが、できるだけGradleを利用するようにしてください。
-
-  マイグレーション手順については :doc:`application/gradle-plugin` - :ref:`migrate-from-maven-to-gradle` を参照してください。
-Framework Organizer Plugin (Gradle)
-  新機能の追加に伴い、いくつかのタスクが非推奨/利用不可能になりました。
-
-  詳しくは、 :doc:`application/gradle-plugin-deprecated` を参照してください。
-
-過去バージョンからのマイグレーション情報については、以下のドキュメントを参照してください。
-
-* :doc:`application/migration-guide`
-* :doc:`administration/migration-guide`
+本リリースでは、対応プラットフォームに関する重要な変更と非互換性があります。
 
 ..  warning::
-    バージョン 0.7.0 は以前のバージョンからいくつかの重要な変更が行われました。
-    過去のバージョンからのマイグレーションを検討する際には必ず :doc:`application/migration-guide` の内容を確認してください。
+    バージョン 0.8.0 は以前のバージョンからいくつかの重要な変更が行われました。
+    過去のバージョンからのマイグレーションを検討する際には必ず以下の内容を確認してください。
+    
+Java (JDK)
+  Java6、およびJDK 6は非対応になりました。
+  
+  Java6、およびJDK 6を利用している場合、Java 7(JDK 7)、またはJava 8 (JDK 8)に移行する必要があります。
+  
+Hadoop
+  Hadoop1系は非対応となりました。
+
+  開発環境にHadoop1系をインストールしている場合、Hadoop2系をインストールしてAsakusa FrameworkからはHadoop2系を利用するよう設定してください。
+  
+  運用環境でHadoop1系を利用している場合、Hadoop2系に移行する必要があります。
+
+Gradle
+  Gradleのバージョン1系は非対応になりました。
+  
+  また、Asakusa Gradle Pluginにいくつか仕様変更が行われ、一部のタスクの動作やビルドスクリプトの設定方法が変更されています。
+  
+Maven
+  Mavenの利用は非対応になりました。
+  
+  Mavenを利用しているアプリケーションプロジェクトは、Gradleを利用するよう移行する必要があります。
+
+Asakusa Framework
+  Hadoop1系が非対応となったことにより、Asakusa Framwork バージョン 0.7.0 から導入された「Hadoopバージョン」が廃止になりました。
+  
+  Asakusa Framework 0.7系では、Asakusa Framworkのバージョンは ``<version>-hadoop1``, ``<version>-hadoop2`` のように、利用するHadoopのバージョンを持つバージョン体系を導入していました。
+  
+  本リリース以降は、Asakusa Frameworkのバージョンは単一のバージョン体系 ( 例えば本リリースのバージョンは ``0.8.0`` ) を使用します。
+
+変更内容の詳細やマイグレーション手順については、以下のドキュメント説明しています。
+
+* :doc:`application/migration-guide`
+* :doc:`administration/migration-guide`
+
+..  attention::
+    過去のバージョンからのマイグレーション作業を行う場合、必ず :doc:`application/migration-guide` と :doc:`administration/migration-guide` を確認してください。
 
 リンク
 ======
