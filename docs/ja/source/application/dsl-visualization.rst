@@ -4,6 +4,9 @@ Asakusa DSLの可視化
 
 この文書では、Asakusa DSLの分析を行うにあたって、Asakusa Frameworkが提供するDSLの可視化の仕組みについて解説します。
 
+..  attention::
+    Asakusa Framework バージョン |version| では、本書で説明する機能はMapReduce DSLコンパイラで使用可能です。Spark DSLコンパイラには含まれていません。
+
 Asakusa DSLの分析用ファイル
 ===========================
 

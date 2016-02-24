@@ -378,8 +378,12 @@ DSLコンパイラプロパティ
 ..  attention::
     バージョン 0.8.0 より、 ``compiler`` ブロックの指定は非推奨となりました。
     MapReduceコンパイラに対する設定は、後述の MapReduceプロパティ を使用してください。
+
+..  attention::
+    バージョン 0.8.0 時点では、 ``compiler`` ブロックではMapReduce DSLコンパイラに対する設定がおこなわれます。
     
 DSLコンパイラ関する規約プロパティは、 ``asakusafw`` ブロック内の参照名 ``compiler`` でアクセスできます [#]_ 。
+
 この規約オブジェクトは以下のプロパティを持ちます。
 
 ..  list-table:: Batch Application Plugin - DSLコンパイラプロパティ ( ``compiler`` ブロック )
@@ -413,7 +417,7 @@ DSLコンパイラ関する規約プロパティは、 ``asakusafw`` ブロッ�
 
 ..  [#] これらのプロパティは規約オブジェクト :gradledoc:`com.asakusafw.gradle.plugins.AsakusafwPluginConvention.CompilerConfiguration` が提供します。
 ..  [#] `Javaコンパイラプロパティ`_ の ``targetCompatibility`` の値が設定されます。
-..  [#] DSLコンパイラオプションについては、 :doc:`../dsl/user-guide` - :ref:`batch-compile-options` を参照してください。
+..  [#] DSLコンパイラオプションについては、 :doc:`../dsl/mapreduce-compiler` - :ref:`mapreduce-compile-options` を参照してください。
 
 MapReduceプロパティ
 ~~~~~~~~~~~~~~~~~~~
@@ -456,7 +460,7 @@ MapReduce DSLコンパイラ関する規約プロパティは、 ``asakusafw`` �
 
 ..  [#] これらのプロパティは規約オブジェクト :gradledoc:`com.asakusafw.gradle.plugins.AsakusafwCompilerExtension` が提供します。
 ..  [#] ``include``, ``exclude`` プロパティの利用方法については、 :doc:`gradle-plugin` - :ref:`gradle-plugin-dslcompile-filter` を参照してください。
-..  [#] MapReduce DSLコンパイラのコンパイルオプションについては、 :doc:`../dsl/user-guide` - :ref:`batch-compile-options` を参照してください。
+..  [#] DSLコンパイラオプションについては、 :doc:`../dsl/mapreduce-compiler` - :ref:`mapreduce-compile-options` を参照してください。
 
 Sparkプロパティ
 ~~~~~~~~~~~~~~~
