@@ -2369,7 +2369,7 @@ NULL値に対する集約関数の動作
     初期値は ``PARTIAL`` になっています。
 
 ..  [#] :javadoc:`com.asakusafw.vocabulary.flow.processor.PartialAggregation`
-..  [#] コンパイラオプションの設定については :doc:`user-guide` - :ref:`batch-compile-options` を参照してください
+..  [#] コンパイラオプションの設定については :doc:`mapreduce-compiler` - :ref:`mapreduce-compile-options` や :asakusa-on-spark:`Asakusa DSL Compiler for Spark リファレンス - コンパイラプロパティ <reference.html#asakusa-dsl-compiler-for-spark>` を参照してください
 
 .. _fold-operator:
 
@@ -2774,7 +2774,7 @@ Flow DSLで定義したフロー部品を演算子として利用します。
       -
 
 ..  hint::
-    現在の実装では、チェックポイント演算子の前後でMapReduceジョブが区切られます。
+    MapReduceコンパイラの現在の実装では、チェックポイント演算子の前後でMapReduceジョブが区切られます。
     MapReduceジョブの終わりでは、分散ファイルシステム上にジョブの結果が一時的に出力されます。
     そのため、チェックポイント以降にノードに不具合が発生した場合にも、チェックポイント以前の情報は多くの場合復旧可能です。
 
