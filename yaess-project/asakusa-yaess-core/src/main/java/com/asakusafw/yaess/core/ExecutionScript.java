@@ -111,7 +111,7 @@ public interface ExecutionScript {
      * Type of each {@link ExecutionScript}.
      * @since 0.2.3
      */
-    public enum Kind {
+    public enum Kind implements Symbolic {
 
         /**
          * Generic command script.
@@ -129,6 +129,7 @@ public interface ExecutionScript {
          * This symbol is used in {@link ExecutionScript}s.
          * @return the symbol of this phase
          */
+        @Override
         public String getSymbol() {
             return name().toLowerCase();
         }

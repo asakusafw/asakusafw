@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -170,7 +171,9 @@ public class YaessWorkflowProcessor extends AbstractWorkflowProcessor {
         scripts.put(ExecutionPhase.EPILOGUE, processEpilogues(model, context));
         scripts.put(ExecutionPhase.EXPORT, processExporters(model, context));
         scripts.put(ExecutionPhase.FINALIZE, processFinalizers(model, context));
-        return new FlowScript(model.getFlowId(), toUnitNames(blockers), scripts);
+        return new FlowScript(
+                model.getFlowId(), toUnitNames(blockers),
+                scripts, EnumSet.allOf(ExecutionScript.Kind.class));
     }
 
     private List<ExecutionScript> processInitializers(JobflowModel model, CommandContext context) {

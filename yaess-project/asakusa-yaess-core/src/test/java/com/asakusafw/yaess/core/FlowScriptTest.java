@@ -19,6 +19,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -50,7 +51,8 @@ public class FlowScriptTest {
     public void simple() throws Exception {
         Map<ExecutionPhase, List<? extends ExecutionScript>> exec = new HashMap<>();
         exec.put(ExecutionPhase.MAIN, Arrays.asList(hadoop(1)));
-        FlowScript script = new FlowScript("testing", set("b1", "b2"), exec);
+        Set<ExecutionScript.Kind> kinds = EnumSet.allOf(ExecutionScript.Kind.class);
+        FlowScript script = new FlowScript("testing", set("b1", "b2"), exec, kinds);
 
         assertThat(script.getId(), is("testing"));
         assertThat(script.getBlockerIds(), is(set("b1", "b2")));
@@ -68,10 +70,11 @@ public class FlowScriptTest {
         exec.put(ExecutionPhase.IMPORT, Arrays.asList(command(0)));
         exec.put(ExecutionPhase.MAIN, Arrays.asList(hadoop(1), command(2, 1)));
         exec.put(ExecutionPhase.EXPORT, Arrays.asList(command(100)));
-        FlowScript script = new FlowScript("testing", set("b1", "b2"), exec);
+        Set<ExecutionScript.Kind> kinds = EnumSet.allOf(ExecutionScript.Kind.class);
+        FlowScript script = new FlowScript("testing", set("b1", "b2"), exec, kinds);
 
         exec.put(ExecutionPhase.INITIALIZE, Arrays.asList(command(100)));
-        FlowScript dummy = new FlowScript("dummy", set(), exec);
+        FlowScript dummy = new FlowScript("dummy", set(), exec, kinds);
 
 
         Properties p = new Properties();
@@ -80,6 +83,27 @@ public class FlowScriptTest {
 
         FlowScript loaded = FlowScript.load(p, "testing");
         assertThat(loaded, is(script));
+    }
+
+    /**
+     * Loads flow.
+     * @throws Exception if failed
+     */
+    @Test
+    public void loadFlow_enables() throws Exception {
+        Map<ExecutionPhase, List<? extends ExecutionScript>> exec = new HashMap<>();
+        exec.put(ExecutionPhase.IMPORT, Arrays.asList(command(0)));
+        exec.put(ExecutionPhase.MAIN, Arrays.asList(command(1, 2)));
+        exec.put(ExecutionPhase.EXPORT, Arrays.asList(command(100)));
+        Set<ExecutionScript.Kind> kinds = EnumSet.of(ExecutionScript.Kind.COMMAND);
+        FlowScript script = new FlowScript("testing", set(), exec, kinds);
+
+        Properties p = new Properties();
+        script.storeTo(p);
+
+        FlowScript loaded = FlowScript.load(p, "testing");
+        assertThat(loaded, is(script));
+        assertThat(loaded.getEnabledScriptKinds(), is(kinds));
     }
 
     /**
@@ -102,11 +126,11 @@ public class FlowScriptTest {
         exec.put(ExecutionPhase.IMPORT, Arrays.asList(command(0)));
         exec.put(ExecutionPhase.MAIN, Arrays.asList(hadoop(1), command(2, 1)));
         exec.put(ExecutionPhase.EXPORT, Arrays.asList(command(100)));
-        FlowScript script = new FlowScript("testing", set("b1", "b2"), exec);
+        Set<ExecutionScript.Kind> kinds = EnumSet.allOf(ExecutionScript.Kind.class);
+        FlowScript script = new FlowScript("testing", set("b1", "b2"), exec, kinds);
 
         exec.put(ExecutionPhase.INITIALIZE, Arrays.asList(command(100)));
-        FlowScript dummy = new FlowScript("dummy", set(), exec);
-
+        FlowScript dummy = new FlowScript("dummy", set(), exec, kinds);
 
         Properties p = new Properties();
         script.storeTo(p);
@@ -125,10 +149,11 @@ public class FlowScriptTest {
     @Test
     public void loadPhase_empty() throws Exception {
         Map<ExecutionPhase, List<? extends ExecutionScript>> exec = new HashMap<>();
-        FlowScript script = new FlowScript("testing", set("b1", "b2"), exec);
+        Set<ExecutionScript.Kind> kinds = EnumSet.allOf(ExecutionScript.Kind.class);
+        FlowScript script = new FlowScript("testing", set("b1", "b2"), exec, kinds);
 
         exec.put(ExecutionPhase.INITIALIZE, Arrays.asList(command(100)));
-        FlowScript dummy = new FlowScript("dummy", set(), exec);
+        FlowScript dummy = new FlowScript("dummy", set(), exec, kinds);
 
         Properties p = new Properties();
         script.storeTo(p);
