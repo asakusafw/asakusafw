@@ -111,7 +111,6 @@ Asakusa Frameworkが標準のデプロイメントアーカイブに含めてい
 **build.gradle**
 
 ..  code-block:: groovy
-    :emphasize-lines: 2-3
    
     asakusafwOrganizer {
         hive.enabled true
@@ -133,7 +132,6 @@ Hiveライブラリの指定
 **build.gradle**
 
 ..  code-block:: groovy
-    :emphasize-lines: 6,8
      
     repositories {
         maven { url 'http://repository.mapr.com/maven/' }
@@ -195,7 +193,7 @@ Direct I/O Hiveを `MapR`_ 環境で利用する場合、Direct I/O HiveはMapR�
 **build.gradle**
 
 ..  code-block:: groovy
-    :emphasize-lines: 2,12
+    :emphasize-lines: 2,11
      
     asakusafwOrganizer {
         profiles.prod {
@@ -232,8 +230,7 @@ Direct I/O Hiveを `MapR`_ 環境で利用する場合、Direct I/O HiveはMapR�
 **asakusa-resources.xml**
 
 ..  code-block:: xml
-    :emphasize-lines: 7
-         
+
     <?xml version="1.0" encoding="UTF-8"?>
     <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
     <configuration>
