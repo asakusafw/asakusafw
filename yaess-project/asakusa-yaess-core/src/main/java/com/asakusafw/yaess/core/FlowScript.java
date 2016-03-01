@@ -138,7 +138,7 @@ public final class FlowScript {
             String id,
             Set<String> blockerIds,
             Map<ExecutionPhase, ? extends Collection<? extends ExecutionScript>> scripts) {
-        this(id, blockerIds, scripts, Collections.<ExecutionScript.Kind>emptySet());
+        this(id, blockerIds, scripts, EnumSet.allOf(ExecutionScript.Kind.class));
     }
 
     /**
@@ -186,7 +186,7 @@ public final class FlowScript {
                 for (ExecutionScript script : set) {
                     if (enables.contains(script.getKind()) == false) {
                         throw new IllegalArgumentException(MessageFormat.format(
-                                "script kind \"{3}\" is not supported in this flow: {0}",
+                                "script kind \"{1}\" is not supported in this flow: {0}",
                                 id,
                                 script.getKind().getSymbol()));
                     }
