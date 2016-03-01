@@ -75,7 +75,7 @@ public abstract class ExecutionLock implements Closeable {
      * Represents lock scope.
      * @since 0.2.3
      */
-    public enum Scope {
+    public enum Scope implements Symbolic {
 
         /**
          * World scope.
@@ -114,6 +114,7 @@ public abstract class ExecutionLock implements Closeable {
          * Returns the symbol of this scope.
          * @return the symbol of this scope
          */
+        @Override
         public String getSymbol() {
             return name().toLowerCase();
         }

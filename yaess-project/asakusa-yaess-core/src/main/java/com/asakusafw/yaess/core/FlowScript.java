@@ -21,11 +21,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
@@ -87,6 +89,12 @@ public final class FlowScript {
     public static final String KEY_SUPPORTED_EXTENSIONS = "extensions";
 
     /**
+     * A configuration key name of enabled {@link ExecutionScript#getKind() script kinds}.
+     * @since 0.8.0
+     */
+    public static final String KEY_ENABLED_SCRIPT_KINDS = "enables";
+
+    /**
      * The configuration key prefix of {@link ExecutionScript#getEnvironmentVariables() environment variables}.
      */
     public static final String KEY_ENV_PREFIX = "env.";
@@ -115,17 +123,38 @@ public final class FlowScript {
 
     private final Map<ExecutionPhase, Set<ExecutionScript>> scripts;
 
+    private final Set<ExecutionScript.Kind> enables;
+
     /**
      * Creates a new instance.
      * @param id the flow ID
      * @param blockerIds the predecessors' flow ID
      * @param scripts the execution scripts for each {@link ExecutionPhase}
      * @throws IllegalArgumentException if some parameters were {@code null}
+     * @deprecated Use {@link #FlowScript(String, Set, Map, Set)} instead
      */
+    @Deprecated
     public FlowScript(
             String id,
             Set<String> blockerIds,
             Map<ExecutionPhase, ? extends Collection<? extends ExecutionScript>> scripts) {
+        this(id, blockerIds, scripts, EnumSet.allOf(ExecutionScript.Kind.class));
+    }
+
+    /**
+     * Creates a new instance.
+     * @param id the flow ID
+     * @param blockerIds the predecessors' flow ID
+     * @param scripts the execution scripts for each {@link ExecutionPhase}
+     * @param enables the enabled script kinds
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.8.0
+     */
+    public FlowScript(
+            String id,
+            Set<String> blockerIds,
+            Map<ExecutionPhase, ? extends Collection<? extends ExecutionScript>> scripts,
+            Set<ExecutionScript.Kind> enables) {
         if (id == null) {
             throw new IllegalArgumentException("id must not be null"); //$NON-NLS-1$
         }
@@ -138,9 +167,11 @@ public final class FlowScript {
         if (scripts == null) {
             throw new IllegalArgumentException("scripts must not be null"); //$NON-NLS-1$
         }
+        if (enables == null) {
+            throw new IllegalArgumentException("enables must not be null"); //$NON-NLS-1$
+        }
         this.id = id;
         this.blockerIds = Collections.unmodifiableSet(new LinkedHashSet<>(blockerIds));
-
         EnumMap<ExecutionPhase, Set<ExecutionScript>> map = new EnumMap<>(ExecutionPhase.class);
         for (ExecutionPhase phase : ExecutionPhase.values()) {
             if (scripts.containsKey(phase)) {
@@ -152,12 +183,21 @@ public final class FlowScript {
                             id,
                             phase));
                 }
+                for (ExecutionScript script : set) {
+                    if (enables.contains(script.getKind()) == false) {
+                        throw new IllegalArgumentException(MessageFormat.format(
+                                "script kind \"{1}\" is not supported in this flow: {0}",
+                                id,
+                                script.getKind().getSymbol()));
+                    }
+                }
                 map.put(phase, Collections.unmodifiableSet(set));
             } else {
                 map.put(phase, Collections.<ExecutionScript>emptySet());
             }
         }
         this.scripts = Collections.unmodifiableMap(map);
+        this.enables = Collections.unmodifiableSet(new LinkedHashSet<>(enables));
     }
 
     /**
@@ -174,6 +214,15 @@ public final class FlowScript {
      */
     public Set<String> getBlockerIds() {
         return blockerIds;
+    }
+
+    /**
+     * Returns the enabled script kinds in this flow execution.
+     * @return the enabled script kinds
+     * @since 0.8.0
+     */
+    public Set<ExecutionScript.Kind> getEnabledScriptKinds() {
+        return enables;
     }
 
     /**
@@ -223,11 +272,44 @@ public final class FlowScript {
         LOG.debug("Loading execution scripts: {}*", prefix);
 
         NavigableMap<String, String> flowMap = PropertiesUtil.createPrefixMap(properties, prefix);
-        String blockersString = extract(flowMap, prefix, KEY_BLOCKERS);
+        Set<String> blockerIds = consumeBlockerIds(flowMap, flowId);
+        Set<ExecutionScript.Kind> enables = consumeEnables(flowMap, flowId);
+        Map<ExecutionPhase, List<ExecutionScript>> scripts = consumeScripts(flowMap, flowId);
+        FlowScript script = new FlowScript(flowId, blockerIds, scripts, enables);
+        LOG.trace("Loaded {}*: {}", prefix, script);
+        return script;
+    }
+
+    private static Set<String> consumeBlockerIds(NavigableMap<String, String> flowMap, String flowId) {
+        String blockersString = extract(flowMap, getPrefix(flowId), KEY_BLOCKERS);
         Set<String> blockerIds = parseTokens(blockersString);
-        EnumMap<ExecutionPhase, List<ExecutionScript>> scripts = new EnumMap<>(ExecutionPhase.class);
+        return blockerIds;
+    }
+
+    private static Set<ExecutionScript.Kind> consumeEnables(NavigableMap<String, String> flowMap, String flowId) {
+        String string = flowMap.remove(KEY_ENABLED_SCRIPT_KINDS);
+        if (string == null) {
+            return EnumSet.allOf(ExecutionScript.Kind.class);
+        }
+        Set<ExecutionScript.Kind> results = EnumSet.noneOf(ExecutionScript.Kind.class);
+        for (String symbol : parseTokens(string)) {
+            ExecutionScript.Kind kind = ExecutionScript.Kind.findFromSymbol(symbol);
+            if (kind == null) {
+                throw new IllegalArgumentException(MessageFormat.format(
+                        "unknown script kind in \"{0}\": {1}",
+                        flowId,
+                        symbol));
+            }
+            results.add(kind);
+        }
+        return results;
+    }
+
+    private static EnumMap<ExecutionPhase, List<ExecutionScript>> consumeScripts(
+            NavigableMap<String, String> flowMap, String flowId) {
+        EnumMap<ExecutionPhase, List<ExecutionScript>> results = new EnumMap<>(ExecutionPhase.class);
         for (ExecutionPhase phase : ExecutionPhase.values()) {
-            scripts.put(phase, Collections.<ExecutionScript>emptyList());
+            results.put(phase, Collections.<ExecutionScript>emptyList());
         }
         int count = 0;
         Map<String, NavigableMap<String, String>> phaseMap = partitioning(flowMap);
@@ -242,13 +324,11 @@ public final class FlowScript {
                         phaseSymbol));
             }
             List<ExecutionScript> scriptsInPhase = loadScripts(flowId, phase, phaseContents);
-            scripts.put(phase, scriptsInPhase);
+            results.put(phase, scriptsInPhase);
             count += scriptsInPhase.size();
         }
-        FlowScript script = new FlowScript(flowId, blockerIds, scripts);
-        LOG.debug("Loaded {} execution scripts: {}*", count, prefix);
-        LOG.trace("Loaded {}*: {}", prefix, script);
-        return script;
+        LOG.debug("Loaded {} execution scripts: {}*", count, getPrefix(flowId));
+        return results;
     }
 
     /**
@@ -440,7 +520,9 @@ public final class FlowScript {
         if (properties == null) {
             throw new IllegalArgumentException("properties must not be null"); //$NON-NLS-1$
         }
-        properties.setProperty(getPrefix(getId()) + KEY_BLOCKERS, join(getBlockerIds()));
+        String flowPrefix = getPrefix(getId());
+        properties.setProperty(flowPrefix + KEY_BLOCKERS, join(getBlockerIds()));
+        properties.setProperty(flowPrefix + KEY_ENABLED_SCRIPT_KINDS, join(toSymbols(getEnabledScriptKinds())));
         for (Map.Entry<ExecutionPhase, Set<ExecutionScript>> phase : getScripts().entrySet()) {
             int index = 0;
             for (ExecutionScript script : phase.getValue()) {
@@ -482,6 +564,14 @@ public final class FlowScript {
         }
     }
 
+    private static Set<String> toSymbols(Collection<? extends Symbolic> elements) {
+        Set<String> results = new LinkedHashSet<>();
+        for (Symbolic element : elements) {
+            results.add(element.getSymbol());
+        }
+        return results;
+    }
+
     private static Set<String> parseTokens(String tokens) {
         assert tokens != null;
         String trimmed = tokens.trim();
@@ -518,9 +608,10 @@ public final class FlowScript {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((blockerIds == null) ? 0 : blockerIds.hashCode());
-        result = prime * result + ((scripts == null) ? 0 : scripts.hashCode());
+        result = prime * result + Objects.hashCode(id.hashCode());
+        result = prime * result + Objects.hashCode(blockerIds.hashCode());
+        result = prime * result + Objects.hashCode(enables.hashCode());
+        result = prime * result + Objects.hashCode(scripts.hashCode());
         return result;
     }
 
@@ -536,25 +627,16 @@ public final class FlowScript {
             return false;
         }
         FlowScript other = (FlowScript) obj;
-        if (id == null) {
-            if (other.id != null) {
-                return false;
-            }
-        } else if (!id.equals(other.id)) {
+        if (!Objects.equals(id, other.id)) {
             return false;
         }
-        if (blockerIds == null) {
-            if (other.blockerIds != null) {
-                return false;
-            }
-        } else if (!blockerIds.equals(other.blockerIds)) {
+        if (!Objects.equals(blockerIds, other.blockerIds)) {
             return false;
         }
-        if (scripts == null) {
-            if (other.scripts != null) {
-                return false;
-            }
-        } else if (!scripts.equals(other.scripts)) {
+        if (!Objects.equals(enables, other.enables)) {
+            return false;
+        }
+        if (!Objects.equals(scripts, other.scripts)) {
             return false;
         }
         return true;

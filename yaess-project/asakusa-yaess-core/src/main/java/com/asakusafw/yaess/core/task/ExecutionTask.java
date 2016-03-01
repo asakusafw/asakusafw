@@ -592,7 +592,7 @@ public class ExecutionTask {
         Set<ExecutionScript> executions = flow.getScripts().get(context.getPhase());
         try (ExecutionLock lock = acquireExecutionLock(context.getBatchId())) {
             lock.beginFlow(context.getFlowId(), context.getExecutionId());
-            executePhase(context, executions);
+            executePhase(context, executions, flow.getEnabledScriptKinds());
             lock.endFlow(context.getFlowId(), context.getExecutionId());
         }
     }
@@ -659,12 +659,13 @@ public class ExecutionTask {
         ExecutionContext context = newContext(batchId, flow.getId(), executionId, phase);
         Set<ExecutionScript> scripts = flow.getScripts().get(phase);
         assert scripts != null;
-        executePhase(context, scripts);
+        executePhase(context, scripts, flow.getEnabledScriptKinds());
     }
 
     private void executePhase(
             ExecutionContext context,
-            Set<ExecutionScript> executions) throws InterruptedException, IOException {
+            Set<ExecutionScript> executions,
+            Set<ExecutionScript.Kind> enables) throws InterruptedException, IOException {
         assert context != null;
         assert executions != null;
         YSLOG.info("I03000",
@@ -680,19 +681,19 @@ public class ExecutionTask {
             ErrorHandler handler;
             switch (context.getPhase()) {
             case SETUP:
-                jobs = buildSetupJobs(context);
+                jobs = buildSetupJobs(context, enables);
                 handler = JobScheduler.STRICT;
                 break;
             case CLEANUP:
-                jobs = buildCleanupJobs(context);
+                jobs = buildCleanupJobs(context, enables);
                 handler = JobScheduler.BEST_EFFORT;
                 break;
             case FINALIZE:
-                jobs = buildExecutionJobs(context, executions);
+                jobs = buildExecutionJobs(context, executions, enables);
                 handler = JobScheduler.BEST_EFFORT;
                 break;
             default:
-                jobs = buildExecutionJobs(context, executions);
+                jobs = buildExecutionJobs(context, executions, enables);
                 handler = JobScheduler.STRICT;
                 break;
             }
@@ -721,33 +722,49 @@ public class ExecutionTask {
         }
     }
 
-    private List<SetupJob> buildSetupJobs(ExecutionContext context) {
+    private List<SetupJob> buildSetupJobs(ExecutionContext context, Set<ExecutionScript.Kind> enables) {
         assert context != null;
         List<SetupJob> results = new ArrayList<>();
-        results.add(new SetupJob(hadoopHandler));
-        for (CommandScriptHandler commandHandler : commandHandlers.values()) {
-            results.add(new SetupJob(commandHandler));
+        if (enables.contains(ExecutionScript.Kind.HADOOP)) {
+            results.add(new SetupJob(hadoopHandler));
+        }
+        if (enables.contains(ExecutionScript.Kind.COMMAND)) {
+            for (CommandScriptHandler commandHandler : commandHandlers.values()) {
+                results.add(new SetupJob(commandHandler));
+            }
         }
         return results;
     }
 
-    private List<CleanupJob> buildCleanupJobs(ExecutionContext context) {
+    private List<CleanupJob> buildCleanupJobs(ExecutionContext context, Set<ExecutionScript.Kind> enables) {
         assert context != null;
         List<CleanupJob> results = new ArrayList<>();
-        results.add(new CleanupJob(hadoopHandler));
-        for (CommandScriptHandler commandHandler : commandHandlers.values()) {
-            results.add(new CleanupJob(commandHandler));
+        if (enables.contains(ExecutionScript.Kind.HADOOP)) {
+            results.add(new CleanupJob(hadoopHandler));
+        }
+        if (enables.contains(ExecutionScript.Kind.COMMAND)) {
+            for (CommandScriptHandler commandHandler : commandHandlers.values()) {
+                results.add(new CleanupJob(commandHandler));
+            }
         }
         return results;
     }
 
     private List<ScriptJob<?>> buildExecutionJobs(
             ExecutionContext context,
-            Set<ExecutionScript> executions) throws IOException, InterruptedException {
+            Set<ExecutionScript> executions,
+            Set<ExecutionScript.Kind> enables) throws IOException, InterruptedException {
         assert context != null;
         assert executions != null;
         List<ScriptJob<?>> results = new ArrayList<>();
         for (ExecutionScript execution : executions) {
+            if (enables.contains(execution.getKind()) == false) {
+                throw new IllegalStateException(MessageFormat.format(
+                        "job kind {2} is not enabled in this flow (batch={0}, flow={1})",
+                        context.getBatchId(),
+                        context.getFlowId(),
+                        execution.getKind()));
+            }
             switch (execution.getKind()) {
             case COMMAND: {
                 CommandScript exec = (CommandScript) execution;

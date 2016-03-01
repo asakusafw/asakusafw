@@ -23,7 +23,7 @@ import java.util.Map;
  * Phases each execution replies on.
  * @since 0.2.3
  */
-public enum ExecutionPhase {
+public enum ExecutionPhase implements Symbolic {
 
     /**
      * Setup working space.
@@ -76,6 +76,7 @@ public enum ExecutionPhase {
      * This symbol is used in {@link ExecutionScript}s.
      * @return the symbol of this phase
      */
+    @Override
     public String getSymbol() {
         return name().toLowerCase();
     }
