@@ -23,6 +23,15 @@ public class PureByteArrayComparator implements ByteArrayComparator {
 
     @Override
     public boolean equals(byte[] b1, int s1, int l1, byte[] b2, int s2, int l2) {
+        return equalsBytes(b1, s1, l1, b2, s2, l2);
+    }
+
+    @Override
+    public int compare(byte[] b1, int s1, int l1, byte[] b2, int s2, int l2) {
+        return compareBytes(b1, s1, l1, b2, s2, l2);
+    }
+
+    static boolean equalsBytes(byte[] b1, int s1, int l1, byte[] b2, int s2, int l2) {
         if (l1 != l2) {
             return false;
         }
@@ -34,8 +43,7 @@ public class PureByteArrayComparator implements ByteArrayComparator {
         return true;
     }
 
-    @Override
-    public int compare(byte[] b1, int s1, int l1, byte[] b2, int s2, int l2) {
+    static int compareBytes(byte[] b1, int s1, int l1, byte[] b2, int s2, int l2) {
         for (int i = 0, n = Math.min(l1, l2); i < n; i++) {
             int cmp = Integer.compare(b1[s1 + i] & 0xff, b2[s2 + i] & 0xff);
             if (cmp != 0) {

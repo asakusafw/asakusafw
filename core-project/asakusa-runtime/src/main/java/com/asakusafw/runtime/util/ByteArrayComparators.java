@@ -31,7 +31,7 @@ public final class ByteArrayComparators {
 
     static final Log LOG = LogFactory.getLog(ByteArrayComparators.class);
 
-    private static final ByteArrayComparator DEFAULT = new PureByteArrayComparator();
+    private static final ByteArrayComparator DEFAULT = new BasicByteArrayComparator();
 
     private static final String KEY_COMPARATOR = ByteArrayComparator.class.getName();
 
