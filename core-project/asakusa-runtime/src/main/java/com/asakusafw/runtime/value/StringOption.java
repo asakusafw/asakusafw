@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.text.MessageFormat;
 
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.io.WritableComparator;
 import org.apache.hadoop.io.WritableUtils;
 
 import com.asakusafw.runtime.io.util.WritableRawComparable;
@@ -219,10 +218,12 @@ public final class StringOption extends ValueOption<StringOption> {
         if (nullValue != other.nullValue) {
             return false;
         }
-        if (nullValue == false && entity.equals(other.entity) == false) {
-            return false;
+        if (nullValue) {
+            return other.nullValue;
         }
-        return true;
+        Text a = entity;
+        Text b = other.entity;
+        return equalsTexts(a, b);
     }
 
     /**
@@ -254,7 +255,7 @@ public final class StringOption extends ValueOption<StringOption> {
         if (other == null) {
             return false;
         }
-        return entity.equals(other);
+        return equalsTexts(entity, other);
     }
 
     @Override
@@ -266,7 +267,7 @@ public final class StringOption extends ValueOption<StringOption> {
             }
             return nullValue ? -1 : +1;
         }
-        return entity.compareTo(other.entity);
+        return compareTexts(entity, other.entity);
     }
 
     @Override
@@ -375,8 +376,20 @@ public final class StringOption extends ValueOption<StringOption> {
         int n2 = WritableUtils.decodeVIntSize(b2[s2 + 1]);
         int len1 = (int) ByteArrayUtil.readVLong(b1, s1 + 1);
         int len2 = (int) ByteArrayUtil.readVLong(b2, s2 + 1);
-        return WritableComparator.compareBytes(
+        return ByteArrayUtil.compare(
                 b1, s1 + 1 + n1, len1,
                 b2, s2 + 1 + n2, len2);
+    }
+
+    private static boolean equalsTexts(Text a, Text b) {
+        return ByteArrayUtil.equals(
+                a.getBytes(), 0, a.getLength(),
+                b.getBytes(), 0, b.getLength());
+    }
+
+    private static int compareTexts(Text a, Text b) {
+        return ByteArrayUtil.compare(
+                a.getBytes(), 0, a.getLength(),
+                b.getBytes(), 0, b.getLength());
     }
 }
