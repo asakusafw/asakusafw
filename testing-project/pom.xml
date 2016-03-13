@@ -16,6 +16,8 @@
     <module>asakusa-test-data-provider</module>
     <module>asakusa-test-driver</module>
     <module>asakusa-test-moderator</module>
+    <module>asakusa-test-compiler</module>
+    <module>asakusa-test-mapreduce</module>
     <module>asakusa-test-trace-model</module>
     <module>asakusa-test-trace-plugin</module>
     <module>asakusa-test-inprocess</module>

@@ -32,14 +32,23 @@ import org.slf4j.LoggerFactory;
 import com.asakusafw.compiler.batch.AbstractWorkflowProcessor;
 import com.asakusafw.compiler.batch.WorkDescriptionProcessor;
 import com.asakusafw.compiler.batch.Workflow;
+import com.asakusafw.compiler.flow.FlowCompilerOptions;
+import com.asakusafw.compiler.flow.FlowCompilerOptions.GenericOptionValue;
 
 /**
  * Copies dependency libraries into the final artifact.
  * @since 0.5.1
+ * @version 0.8.0
  */
 public class DependencyLibrariesProcessor extends AbstractWorkflowProcessor {
 
     static final Logger LOG = LoggerFactory.getLogger(DependencyLibrariesProcessor.class);
+
+    /**
+     * The compiler option whether this feature is enabled or not.
+     * @since 0.8.0
+     */
+    public static final String KEY_ENABLE = DependencyLibrariesProcessor.class.getName() + ".enabled"; //$NON-NLS-1$
 
     /**
      * The library directory path in the target project.
@@ -60,6 +69,10 @@ public class DependencyLibrariesProcessor extends AbstractWorkflowProcessor {
 
     @Override
     public void process(Workflow workflow) throws IOException {
+        if (isEnabled() == false) {
+            LOG.debug("Attaching dependency libraries is not enabled"); //$NON-NLS-1$
+            return;
+        }
         File libraryDirectory = getLibraryDirectory();
         LOG.debug("Inspecting library directory: {}", libraryDirectory); //$NON-NLS-1$
 
@@ -96,6 +109,12 @@ public class DependencyLibrariesProcessor extends AbstractWorkflowProcessor {
             }
         }
         LOG.debug("Finished copying library files: {}", libraryDirectory); //$NON-NLS-1$
+    }
+
+    private boolean isEnabled() {
+        FlowCompilerOptions options = getEnvironment().getConfiguration().getFlowCompilerOptions();
+        GenericOptionValue value = options.getGenericExtraAttribute(KEY_ENABLE, GenericOptionValue.AUTO);
+        return value != GenericOptionValue.DISABLED;
     }
 
     private File getLibraryDirectory() {

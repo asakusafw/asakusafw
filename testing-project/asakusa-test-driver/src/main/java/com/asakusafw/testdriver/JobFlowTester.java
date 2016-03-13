@@ -15,25 +15,21 @@
  */
 package com.asakusafw.testdriver;
 
-import static org.junit.Assert.*;
-
-import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.asakusafw.compiler.flow.JobFlowClass;
-import com.asakusafw.compiler.flow.JobFlowDriver;
-import com.asakusafw.compiler.flow.Location;
-import com.asakusafw.compiler.testing.DirectFlowCompiler;
-import com.asakusafw.compiler.testing.JobflowInfo;
+import com.asakusafw.testdriver.compiler.ArtifactMirror;
+import com.asakusafw.testdriver.compiler.BatchMirror;
+import com.asakusafw.testdriver.compiler.CompilerConfiguration;
+import com.asakusafw.testdriver.compiler.CompilerSession;
+import com.asakusafw.testdriver.compiler.CompilerToolkit;
+import com.asakusafw.testdriver.compiler.JobflowMirror;
 import com.asakusafw.testdriver.core.DataModelSourceFactory;
 import com.asakusafw.testdriver.core.TestModerator;
 import com.asakusafw.testdriver.core.VerifierFactory;
@@ -42,16 +38,17 @@ import com.asakusafw.vocabulary.external.ImporterDescription;
 import com.asakusafw.vocabulary.flow.Export;
 import com.asakusafw.vocabulary.flow.FlowDescription;
 import com.asakusafw.vocabulary.flow.Import;
-import com.asakusafw.vocabulary.flow.graph.FlowGraph;
 
 /**
  * A tester for {@code JobFlow jobflow} classes.
  * @since 0.2.0
- * @version 0.5.2
+ * @version 0.8.0
  */
 public class JobFlowTester extends TesterBase {
 
     static final Logger LOG = LoggerFactory.getLogger(JobFlowTester.class);
+
+    private final CompilerToolkit toolkit;
 
     /**
      * The flow inputs.
@@ -69,6 +66,7 @@ public class JobFlowTester extends TesterBase {
      */
     public JobFlowTester(Class<?> callerClass) {
         super(callerClass);
+        this.toolkit = Util.getToolkit(callerClass);
     }
 
     /**
@@ -115,7 +113,7 @@ public class JobFlowTester extends TesterBase {
         }
     }
 
-    private void runTestInternal(Class<? extends FlowDescription> jobFlowDescriptionClass) throws IOException {
+    private void runTestInternal(Class<? extends FlowDescription> jobflowClass) throws IOException {
         LOG.info(MessageFormat.format(
                 Messages.getString("JobFlowTester.infoStart"), //$NON-NLS-1$
                 driverContext.getCallerClass().getName()));
@@ -127,66 +125,45 @@ public class JobFlowTester extends TesterBase {
             validateTestCondition();
         }
 
-        LOG.info(MessageFormat.format(
-                Messages.getString("JobFlowTester.infoCompileDsl"), //$NON-NLS-1$
-                jobFlowDescriptionClass.getName()));
-        JobFlowDriver jobFlowDriver = JobFlowDriver.analyze(jobFlowDescriptionClass);
-        assertFalse(jobFlowDriver.getDiagnostics().toString(), jobFlowDriver.hasError());
+        CompilerConfiguration configuration = Util.getConfiguration(toolkit, driverContext);
+        try (CompilerSession compiler = toolkit.newSession(configuration)) {
+            ArtifactMirror artifact = compiler.compileJobflow(jobflowClass);
+            Util.deploy(driverContext, artifact);
 
-        driverContext.validateCompileEnvironment();
+            BatchMirror batch = artifact.getBatch();
+            JobflowMirror jobflow = Util.getJobflow(batch);
 
-        JobFlowClass jobFlowClass = jobFlowDriver.getJobFlowClass();
-        File compileWorkDir = driverContext.getCompilerWorkingDirectory();
-        if (compileWorkDir.exists()) {
-            FileUtils.forceDelete(compileWorkDir);
+            driverContext.validateExecutionEnvironment();
+
+            JobflowExecutor executor = new JobflowExecutor(driverContext);
+            Util.prepare(driverContext, batch, jobflow);
+
+            LOG.info(MessageFormat.format(
+                    Messages.getString("JobFlowTester.infoInitializeEnvironment"), //$NON-NLS-1$
+                    driverContext.getCallerClass().getName()));
+            executor.cleanWorkingDirectory();
+            executor.cleanInputOutput(jobflow);
+            executor.cleanExtraResources(getExternalResources());
+
+            LOG.info(MessageFormat.format(
+                    Messages.getString("JobFlowTester.infoPrepareData"), //$NON-NLS-1$
+                    driverContext.getCallerClass().getName()));
+            executor.prepareExternalResources(getExternalResources());
+            executor.prepareInput(jobflow, inputs);
+            executor.prepareOutput(jobflow, outputs);
+
+            LOG.info(MessageFormat.format(
+                    Messages.getString("JobFlowTester.infoExecute"), //$NON-NLS-1$
+                    jobflowClass.getName()));
+            VerifyContext verifyContext = new VerifyContext(driverContext);
+            executor.runJobflow(jobflow);
+            verifyContext.testFinished();
+
+            LOG.info(MessageFormat.format(
+                    Messages.getString("JobFlowTester.infoVerifyResult"), //$NON-NLS-1$
+                    driverContext.getCallerClass().getName()));
+            executor.verify(jobflow, verifyContext, outputs);
         }
-
-        FlowGraph flowGraph = jobFlowClass.getGraph();
-        String batchId = "testing"; //$NON-NLS-1$
-        String flowId = jobFlowClass.getConfig().name();
-        JobflowInfo jobflowInfo = DirectFlowCompiler.compile(
-                flowGraph,
-                batchId,
-                flowId,
-                "test.jobflow", //$NON-NLS-1$
-                Location.fromPath(driverContext.getClusterWorkDir(), '/'),
-                compileWorkDir,
-                Arrays.asList(new File[] {
-                        DirectFlowCompiler.toLibraryPath(jobFlowDescriptionClass)
-                }),
-                jobFlowDescriptionClass.getClassLoader(),
-                driverContext.getOptions());
-
-        driverContext.validateExecutionEnvironment();
-
-        JobflowExecutor executor = new JobflowExecutor(driverContext);
-        driverContext.prepareCurrentJobflow(jobflowInfo);
-
-        LOG.info(MessageFormat.format(
-                Messages.getString("JobFlowTester.infoInitializeEnvironment"), //$NON-NLS-1$
-                driverContext.getCallerClass().getName()));
-        executor.cleanWorkingDirectory();
-        executor.cleanInputOutput(jobflowInfo);
-        executor.cleanExtraResources(getExternalResources());
-
-        LOG.info(MessageFormat.format(
-                Messages.getString("JobFlowTester.infoPrepareData"), //$NON-NLS-1$
-                driverContext.getCallerClass().getName()));
-        executor.prepareExternalResources(getExternalResources());
-        executor.prepareInput(jobflowInfo, inputs);
-        executor.prepareOutput(jobflowInfo, outputs);
-
-        LOG.info(MessageFormat.format(
-                Messages.getString("JobFlowTester.infoExecute"), //$NON-NLS-1$
-                jobFlowDescriptionClass.getName()));
-        VerifyContext verifyContext = new VerifyContext(driverContext);
-        executor.runJobflow(jobflowInfo);
-        verifyContext.testFinished();
-
-        LOG.info(MessageFormat.format(
-                Messages.getString("JobFlowTester.infoVerifyResult"), //$NON-NLS-1$
-                driverContext.getCallerClass().getName()));
-        executor.verify(jobflowInfo, verifyContext, outputs);
     }
 
     private void validateTestCondition() throws IOException {

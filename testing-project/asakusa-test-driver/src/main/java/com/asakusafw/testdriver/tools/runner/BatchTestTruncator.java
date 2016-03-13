@@ -15,10 +15,11 @@
  */
 package com.asakusafw.testdriver.tools.runner;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -34,8 +35,6 @@ import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.asakusafw.compiler.batch.BatchDriver;
-import com.asakusafw.compiler.flow.JobFlowDriver;
 import com.asakusafw.testdriver.TestDriverContext;
 import com.asakusafw.vocabulary.batch.BatchDescription;
 import com.asakusafw.vocabulary.batch.JobFlowWorkDescription;
@@ -43,10 +42,9 @@ import com.asakusafw.vocabulary.batch.Work;
 import com.asakusafw.vocabulary.batch.WorkDescription;
 import com.asakusafw.vocabulary.external.ExporterDescription;
 import com.asakusafw.vocabulary.external.ImporterDescription;
+import com.asakusafw.vocabulary.flow.Export;
 import com.asakusafw.vocabulary.flow.FlowDescription;
-import com.asakusafw.vocabulary.flow.graph.FlowGraph;
-import com.asakusafw.vocabulary.flow.graph.FlowIn;
-import com.asakusafw.vocabulary.flow.graph.FlowOut;
+import com.asakusafw.vocabulary.flow.Import;
 
 /**
  * Truncates batch execution inputs/outputs.
@@ -192,47 +190,42 @@ public class BatchTestTruncator extends BatchTestTool {
 
     private static void resolveBatch(Conf conf, Class<? extends BatchDescription> aClass) {
         LOG.debug("analyzing batch: {}", aClass.getName()); //$NON-NLS-1$
-        BatchDriver driver = BatchDriver.analyze(aClass);
-        if (driver.hasError()) {
-            for (String message : driver.getDiagnostics()) {
-                LOG.error(message);
+        List<Class<? extends FlowDescription>> flows = new ArrayList<>();
+        try {
+            BatchDescription batch = aClass.newInstance();
+            batch.start();
+            for (Work work : batch.getWorks()) {
+                WorkDescription desc = work.getDescription();
+                if (desc instanceof JobFlowWorkDescription) {
+                    Class<? extends FlowDescription> flow = ((JobFlowWorkDescription) desc).getFlowClass();
+                    flows.add(flow);
+                }
             }
+        } catch (ReflectiveOperationException e) {
             throw new IllegalArgumentException(MessageFormat.format(
                     Messages.getString("BatchTestTruncator.errorInvalidBatchClass"), //$NON-NLS-1$
                     aClass.getName()));
         }
-        Collection<Work> works = driver.getBatchClass().getDescription().getWorks();
-        for (Work work : works) {
-            WorkDescription desc = work.getDescription();
-            if (desc instanceof JobFlowWorkDescription) {
-                Class<? extends FlowDescription> flow = ((JobFlowWorkDescription) desc).getFlowClass();
-                resolveFlow(conf, flow);
-            }
+        for (Class<? extends FlowDescription> flow : flows) {
+            resolveFlow(conf, flow);
         }
     }
 
     private static void resolveFlow(Conf conf, Class<? extends FlowDescription> aClass) {
         LOG.debug("analyzing jobflow: {}", aClass.getName()); //$NON-NLS-1$
-        JobFlowDriver driver = JobFlowDriver.analyze(aClass);
-        if (driver.hasError()) {
-            for (String message : driver.getDiagnostics()) {
-                LOG.error(message);
-            }
+        Constructor<?>[] ctors = aClass.getConstructors();
+        if (FlowDescription.isJobFlow(aClass) == false || ctors.length != 1) {
             throw new IllegalArgumentException(MessageFormat.format(
                     Messages.getString("BatchTestTruncator.errorInvalidJobflowClass"), //$NON-NLS-1$
                     aClass.getName()));
         }
-        FlowGraph graph = driver.getJobFlowClass().getGraph();
-        for (FlowIn<?> port : graph.getFlowInputs()) {
-            ImporterDescription desc = port.getDescription().getImporterDescription();
-            if (desc != null) {
-                conf.importers.add(desc);
-            }
-        }
-        for (FlowOut<?> port : graph.getFlowOutputs()) {
-            ExporterDescription desc = port.getDescription().getExporterDescription();
-            if (desc != null) {
-                conf.exporters.add(desc);
+        for (Annotation[] as : ctors[0].getParameterAnnotations()) {
+            for (Annotation a : as) {
+                if (a.annotationType() == Import.class) {
+                    resolveImporter(conf, ((Import) a).description());
+                } else if (a.annotationType() == Export.class) {
+                    resolveExporter(conf, ((Export) a).description());
+                }
             }
         }
     }

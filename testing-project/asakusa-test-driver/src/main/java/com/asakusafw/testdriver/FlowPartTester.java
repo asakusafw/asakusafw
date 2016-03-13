@@ -15,21 +15,22 @@
  */
 package com.asakusafw.testdriver;
 
-import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.asakusafw.compiler.flow.FlowDescriptionDriver;
-import com.asakusafw.compiler.testing.DirectFlowCompiler;
-import com.asakusafw.compiler.testing.JobflowInfo;
+import com.asakusafw.testdriver.compiler.ArtifactMirror;
+import com.asakusafw.testdriver.compiler.BatchMirror;
+import com.asakusafw.testdriver.compiler.CompilerConfiguration;
+import com.asakusafw.testdriver.compiler.CompilerSession;
+import com.asakusafw.testdriver.compiler.CompilerToolkit;
+import com.asakusafw.testdriver.compiler.FlowPortMap;
+import com.asakusafw.testdriver.compiler.JobflowMirror;
 import com.asakusafw.testdriver.core.DataModelSourceFactory;
 import com.asakusafw.testdriver.core.TestModerator;
 import com.asakusafw.testdriver.core.VerifierFactory;
@@ -38,21 +39,23 @@ import com.asakusafw.vocabulary.external.ImporterDescription;
 import com.asakusafw.vocabulary.flow.FlowDescription;
 import com.asakusafw.vocabulary.flow.In;
 import com.asakusafw.vocabulary.flow.Out;
-import com.asakusafw.vocabulary.flow.graph.FlowGraph;
 
 /**
  * A tester for {@code FlowPart flow-part} classes.
  * @since 0.2.0
- * @version 0.5.2
+ * @version 0.8.0
  */
 public class FlowPartTester extends TesterBase {
 
     static final Logger LOG = LoggerFactory.getLogger(FlowPartTester.class);
 
-    private final List<FlowPartDriverInput<?>> inputs = new LinkedList<>();
-    private final List<FlowPartDriverOutput<?>> outputs = new LinkedList<>();
+    private final CompilerToolkit toolkit;
 
-    private final FlowDescriptionDriver descDriver = new FlowDescriptionDriver();
+    private final FlowPortMap portMap;
+
+    private final List<FlowPartDriverInput<?>> inputs = new LinkedList<>();
+
+    private final List<FlowPartDriverOutput<?>> outputs = new LinkedList<>();
 
     /**
      * Creates a new instance.
@@ -60,6 +63,8 @@ public class FlowPartTester extends TesterBase {
      */
     public FlowPartTester(Class<?> callerClass) {
         super(callerClass);
+        this.toolkit = Util.getToolkit(callerClass);
+        this.portMap = toolkit.newFlowPortMap();
     }
 
     /**
@@ -72,7 +77,8 @@ public class FlowPartTester extends TesterBase {
      * @return object for configuring the target input
      */
     public <T> FlowPartDriverInput<T> input(String name, Class<T> modelType) {
-        FlowPartDriverInput<T> input = new FlowPartDriverInput<>(driverContext, descDriver, name, modelType);
+        In<T> vocabulary = portMap.addInput(name, modelType);
+        FlowPartDriverInput<T> input = new FlowPartDriverInput<>(driverContext, name, modelType, vocabulary);
         inputs.add(input);
         return input;
     }
@@ -87,7 +93,8 @@ public class FlowPartTester extends TesterBase {
      * @return object for configuring the target output
      */
     public <T> FlowPartDriverOutput<T> output(String name, Class<T> modelType) {
-        FlowPartDriverOutput<T> output = new FlowPartDriverOutput<>(driverContext, descDriver, name, modelType);
+        Out<T> vocabulary = portMap.addOutput(name, modelType);
+        FlowPartDriverOutput<T> output = new FlowPartDriverOutput<>(driverContext, name, modelType, vocabulary);
         outputs.add(output);
         return output;
     }
@@ -125,60 +132,46 @@ public class FlowPartTester extends TesterBase {
         LOG.info(MessageFormat.format(
                 Messages.getString("FlowPartTester.infoCompileDsl"), //$NON-NLS-1$
                 flowDescription.getClass().getName()));
-        FlowGraph flowGraph = descDriver.createFlowGraph(flowDescription);
 
-        driverContext.validateCompileEnvironment();
+        CompilerConfiguration configuration = Util.getConfiguration(toolkit, driverContext);
+        try (CompilerSession compiler = toolkit.newSession(configuration)) {
+            ArtifactMirror artifact = compiler.compileFlow(flowDescription, portMap);
+            Util.deploy(driverContext, artifact);
 
-        File compileWorkDir = driverContext.getCompilerWorkingDirectory();
-        if (compileWorkDir.exists()) {
-            FileUtils.forceDelete(compileWorkDir);
+            BatchMirror batch = artifact.getBatch();
+            JobflowMirror jobflow = Util.getJobflow(batch);
+
+            driverContext.validateExecutionEnvironment();
+
+            JobflowExecutor executor = new JobflowExecutor(driverContext);
+            Util.prepare(driverContext, batch, jobflow);
+
+            LOG.info(MessageFormat.format(
+                    Messages.getString("FlowPartTester.infoInitializeEnvironment"), //$NON-NLS-1$
+                    driverContext.getCallerClass().getName()));
+            executor.cleanWorkingDirectory();
+            executor.cleanInputOutput(jobflow);
+            executor.cleanExtraResources(getExternalResources());
+
+            LOG.info(MessageFormat.format(
+                    Messages.getString("FlowPartTester.infoPrepareData"), //$NON-NLS-1$
+                    driverContext.getCallerClass().getName()));
+            executor.prepareExternalResources(getExternalResources());
+            executor.prepareInput(jobflow, inputs);
+            executor.prepareOutput(jobflow, outputs);
+
+            LOG.info(MessageFormat.format(
+                    Messages.getString("FlowPartTester.infoExecute"), //$NON-NLS-1$
+                    flowDescription.getClass().getName()));
+            VerifyContext verifyContext = new VerifyContext(driverContext);
+            executor.runJobflow(jobflow);
+            verifyContext.testFinished();
+
+            LOG.info(MessageFormat.format(
+                    Messages.getString("FlowPartTester.infoVerifyResult"), //$NON-NLS-1$
+                    driverContext.getCallerClass().getName()));
+            executor.verify(jobflow, verifyContext, outputs);
         }
-
-        String batchId = "testing"; //$NON-NLS-1$
-        String flowId = "flowpart"; //$NON-NLS-1$
-        JobflowInfo jobflowInfo = DirectFlowCompiler.compile(
-                flowGraph,
-                batchId,
-                flowId,
-                "test.flowpart", //$NON-NLS-1$
-                FlowPartDriverUtils.createWorkingLocation(driverContext),
-                compileWorkDir,
-                Arrays.asList(new File[] {
-                        DirectFlowCompiler.toLibraryPath(flowDescription.getClass())
-                }),
-                flowDescription.getClass().getClassLoader(),
-                driverContext.getOptions());
-
-        driverContext.validateExecutionEnvironment();
-
-        JobflowExecutor executor = new JobflowExecutor(driverContext);
-        driverContext.prepareCurrentJobflow(jobflowInfo);
-
-        LOG.info(MessageFormat.format(
-                Messages.getString("FlowPartTester.infoInitializeEnvironment"), //$NON-NLS-1$
-                driverContext.getCallerClass().getName()));
-        executor.cleanWorkingDirectory();
-        executor.cleanInputOutput(jobflowInfo);
-        executor.cleanExtraResources(getExternalResources());
-
-        LOG.info(MessageFormat.format(
-                Messages.getString("FlowPartTester.infoPrepareData"), //$NON-NLS-1$
-                driverContext.getCallerClass().getName()));
-        executor.prepareExternalResources(getExternalResources());
-        executor.prepareInput(jobflowInfo, inputs);
-        executor.prepareOutput(jobflowInfo, outputs);
-
-        LOG.info(MessageFormat.format(
-                Messages.getString("FlowPartTester.infoExecute"), //$NON-NLS-1$
-                flowDescription.getClass().getName()));
-        VerifyContext verifyContext = new VerifyContext(driverContext);
-        executor.runJobflow(jobflowInfo);
-        verifyContext.testFinished();
-
-        LOG.info(MessageFormat.format(
-                Messages.getString("FlowPartTester.infoVerifyResult"), //$NON-NLS-1$
-                driverContext.getCallerClass().getName()));
-        executor.verify(jobflowInfo, verifyContext, outputs);
     }
 
     private void validateTestCondition() throws IOException {
