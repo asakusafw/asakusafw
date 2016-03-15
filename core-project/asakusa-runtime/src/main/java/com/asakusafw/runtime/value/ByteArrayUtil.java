@@ -19,7 +19,24 @@ import java.io.IOException;
 
 import org.apache.hadoop.io.WritableComparator;
 
+import com.asakusafw.runtime.util.ByteArrayComparator;
+import com.asakusafw.runtime.util.ByteArrayComparators;
+
 final class ByteArrayUtil {
+
+    private static final ByteArrayComparator COMPARATOR = ByteArrayComparators.getInstance();
+
+    static boolean equals(
+            byte[] b1, int s1, int l1,
+            byte[] b2, int s2, int l2) {
+        return COMPARATOR.equals(b1, s1, l1, b2, s2, l2);
+    }
+
+    static int compare(
+            byte[] b1, int s1, int l1,
+            byte[] b2, int s2, int l2) {
+        return COMPARATOR.compare(b1, s1, l1, b2, s2, l2);
+    }
 
     static int compare(int a, int b) {
         return Integer.compare(a, b);

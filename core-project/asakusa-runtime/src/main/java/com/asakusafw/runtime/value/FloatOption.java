@@ -20,8 +20,6 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.text.MessageFormat;
 
-import org.apache.hadoop.io.WritableComparator;
-
 import com.asakusafw.runtime.io.util.WritableRawComparable;
 
 /**
@@ -274,7 +272,7 @@ public final class FloatOption extends ValueOption<FloatOption> {
             byte[] b2, int s2, int l2) {
         int len1 = getBytesLength(b1, s1, l1);
         int len2 = getBytesLength(b2, s2, l2);
-        return WritableComparator.compareBytes(b1, s1, len1, b2, s2, len2);
+        return ByteArrayUtil.compare(b1, s1, len1, b2, s2, len2);
     }
 
     private static int encode(float decoded) {
