@@ -17,7 +17,6 @@ Asakusa Framework入門
 
 * :doc:`introduction/overview`
 * :doc:`introduction/start-guide`
-* :doc:`introduction/start-guide-windows`
 * :doc:`introduction/next-step`
 
 ドキュメント

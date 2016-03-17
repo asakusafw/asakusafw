@@ -11,6 +11,5 @@ Asakusa Framework全体の外観については :doc:`overview` を、Asakusa Fr
 
     overview
     start-guide
-    start-guide-windows
     next-step
 

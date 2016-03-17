@@ -2,331 +2,343 @@
 Asakusa Framework スタートガイド
 ================================
 
-この文書では、Asakusa Frameworkをはじめて利用するユーザ向けに、Linux OS上にAsakusa Frameworkの開発環境を作成し、その環境でサンプルアプリケーションを動かすまでの手順を説明します。
-
-..  seealso::
-    Windows環境を利用する場合は、 :doc:`start-guide-windows` の手順に従って開発環境を構築するか、仮想マシンなどを利用してLinux環境を用意してください。
-
-..  seealso::
-    この文書では開発環境の構築に必要となる各種ソフトウェアのバージョンは明記していません。Asakusa Frameworkが動作検証を行っている各種ソフトウェアのバージョンについては、 :doc:`../product/target-platform` を確認してください。
-
-..  seealso::
-    開発環境の構築については、ここで説明するセットアップ手順を実施するほか、Asakusa Frmameworkの開発環境を手軽に構築するインストーラパッケージである Jinrikisha を利用する方法もあります。
-   
-    * :jinrikisha:`Jinrikisha (人力車) - Asakusa Framework Starter Package - <index.html>`
+この文書では、Asakusa Frameworkをはじめて利用するユーザ向けに、Asakusa Frameworkを使ったバッチアプリケーションの開発、実行方法を簡単に説明します。
 
 .. _startguide-development-environment:
 
-開発環境の構築
+開発環境の準備
 ==============
 
-Linux OS上にAsakusa Frameworkの開発環境を作成します。
+前提環境
+--------
 
-Java(JDK)のインストール
------------------------
+Asakusa Frameworkを開発環境で利用するためには、開発環境に以下がセットアップされている必要があります。
 
-Hadoop、及びAsakusa Frameworkの実行に使用するJavaをインストールします。
+..  list-table::
+    :widths: 3 3 4
+    :header-rows: 1
 
-ブラウザを開き、Javaのダウンロードサイト (http://www.oracle.com/technetwork/java/javase/downloads/index.html) から、JDK 7のインストールアーカイブ :file:`jdk-7u{XX}-linux-{YY}.tar.gz` ( ``XX`` はUpdate番号、 ``YY`` はプラットフォーム固有の名前 ) をダウンロードします。
+    * - ソフトウェア
+      - バージョン
+      - 備考
+    * - JDK
+      - JDK 7 または JDK 8
+      - JREは利用不可
+    * - Eclipse
+      - 4.4.2 以上を推奨
+      - Shafuを利用する場合に使用
 
 ..  attention::
-    利用するプラットフォーム(32/64bit版)に応じたインストールアーカイブをダウンロードしてください。
-
-この文書では、ブラウザ標準のダウンロードディレクトリ :file:`~/Downloads` にダウンロードしたものとして説明を進めます。
-ダウンロードが完了したら、以下の例を参考にしてJDKをインストールします。
-
-..  code-block:: sh
-
-    cd ~/Downloads
-    tar xf jdk-7u*-linux-*.tar.gz
-    sudo chown -R root:root jdk1.7.0_*/
-    sudo mkdir /usr/lib/jvm
-    sudo mv jdk1.7.0_*/ /usr/lib/jvm
-    sudo ln -s /usr/lib/jvm/jdk1.7.0_* /usr/lib/jvm/java-7-oracle
-
-Hadoopのインストール
---------------------
-
-`Apache Hadoop`_ をインストールします。
-
-Apache Hadoopのインストール方法はOS毎に提供されているインストールパッケージを使う方法や、tarballを展開する方法などがありますが、ここではtarballを展開する方法でインストールします。
-
-Apache Hadoopのダウンロードサイト (http://www.apache.org/dyn/closer.cgi/hadoop/common/) から Hadoop本体のコンポーネントのtarball :file:`hadoop-1.2.{X}.tar.gz` ( ``X`` はバージョン番号 )  をダウンロードします。
-
-ダウンロードが完了したら、以下の例を参考にしてApache Hadoopをインストールします。
-
-..  code-block:: sh
-
-    cd ~/Downloads
-    tar xf hadoop-*.tar.gz
-    sudo chown -R root:root hadoop-*/
-    sudo mv hadoop-*/ /usr/lib
-    sudo ln -s /usr/lib/hadoop-* /usr/lib/hadoop
-
-..  _`Apache Hadoop`: http://hadoop.apache.org/
+    Asakusa Frameworkのバッチアプリケーションのコンパイルやテストの実行にはJDKが必要です。
+    JREのみがインストールされている環境では利用できません。
 
 環境変数の設定
 --------------
 
-Asakusa Frameworkの利用に必要となる環境変数を設定します。
+Asakusa Frameworkを開発環境で利用するには、以下の環境変数が必要です。
 
-:file:`~/.profile` をエディタで開き、最下行に以下の定義を追加します。
+..  list-table::
+    :widths: 3 7
+    :header-rows: 1
 
-..  code-block:: sh
+    * - 変数名
+      - 説明
+    * - ``ASAKUSA_HOME``
+      - Asakusa Frameworkのインストールディレクトリ
 
-    export JAVA_HOME=/usr/lib/jvm/java-7-oracle
-    export ASAKUSA_HOME=$HOME/asakusa
-    export PATH=$JAVA_HOME/bin:$PATH:/usr/lib/hadoop/bin
+Asakusa Frameworkの開発支援ツール
+---------------------------------
 
-:file:`~/.profile` を保存した後、設定した環境変数をターミナル上のシェルに反映させるため、以下のコマンドを実行します。
+Asakusa Frameworkを使ったバッチアプリケーションの開発は、基本的にJavaを利用したアプリケーションの開発になりますが、いくつかの点でAsakusa Framework固有の環境設定やビルドに関する知識が必要になります。
 
-..  code-block:: sh
+そのため、Asakusa Frameworkではアプリケーションの開発をサポートするいくつかのツールを提供しています。
 
-    . ~/.profile
+Shafu
+~~~~~
 
-開発用Asakusa Frameworkのインストール
--------------------------------------
+Shafu (車夫) は、 Asakusa Framework のバッチアプリケーション開発をサポートするEclipseプラグインです。
 
-Asakusa Frameworkをインストールします。
+* :jinrikisha:`Shafu - Asakusa Gradle Plug-in Helper for Eclipse - <shafu.html>`
 
-Asakusa Frameworkを開発環境にインストールするには、まずAsakusa Frameworkアプリケーション用プロジェクトテンプレートをダウンロードし、これに含まれるビルドツール `Gradle`_ のAsakusa Frameworkインストール用タスクを実行します。
+Asakusa Frameworkではアプリケーションのビルドに `Gradle <http://www.gradle.org/>`_ というビルドシステムを利用しますが、
+Shafuを使うことで、Gradleに関する詳細な知識がなくてもAsakusa Frameworkの基本的な開発作業が行えるようになります。
+また、コマンドライン上でのGradleの操作が不要となり、Eclipse上でアプリケーション開発に必要なほとんどの作業を行うことができるようになります。
 
-この文書では基本的なプロジェクトレイアウトのみを持つプロジェクトテンプレートにサンプルアプリケーションを同梱したサンプルアプリケーションプロジェクトを利用します。
-サンプルアプリケーションプロジェクトは以下からダウンロードします。
+なお、このスタートガイドではコマンドライン上でGradleを利用する手順と、Shafuを利用する手順の両方を記載します。
 
-* `asakusa-example-project-0.8.0.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-example-project-0.8.0.tar.gz>`_
+Jinrikisha
+~~~~~~~~~~
 
-ダウンロードが完了したら、サンプルアプリケーションプロジェクトを任意のディレクトリに配置します。
+Jinrikisha (人力車) は、 Asakusa Framework の開発環境を手軽に構築するためのインストーラパッケージです。
 
-ここでは :file:`$HOME/workspace` 配下に配置するため、まずこのディレクトリを作成します。
+* :jinrikisha:`Jinrikisha - Asakusa Framework Starter Package - <index.html>`
 
-..  code-block:: sh
-    
-    mkdir ~/workspace
+Jinrikishaは新規のLinux環境上にAsakusa Framework専用の開発環境を簡単にセットアップすることを主な目的としています。
+JDKやEclipseといった基本的なツールのセットアップに加えて、ローカル環境でHadoopやSparkを利用したバッチアプリケーションを実行できるようにするための設定も行うため、
+Hadoopクラスターなどの運用環境にデプロイする前にバッチアプリケーションの疎通確認や検証を行うといった用途に適しています。
 
-:file:`$HOME/workspace` 配下に :file:`example-app` というディレクトリ名でサンプルアプリケーションを配置します。
+このスタートガイドではJinrikishaの利用は前提ではありませんが、開発したアプリケーションをローカルで実行したい場合はJinrikishaを使って環境をセットアップすると便利です。
 
-..  code-block:: sh
-    
-    cd ~/Downloads
-    tar xf asakusa-example-project-*.tar.gz
-    mv asakusa-example-project ~/workspace/example-app
+Shafuのセットアップ
+===================
 
-配下したサンプルアプリケーションプロジェクト上で、以下の例を参考にしてAsakusa FrameworkをインストールするGradleタスクを実行します。
-インストールが成功すると、 ``$ASAKUSA_HOME`` 配下に Asakusa Frameworkがインストールされます。
+Shafuを利用する場合、以下の手順例を参考にしてEclipse上にインストールしてください。
 
-..  code-block:: sh
-     
-    cd ~/workspace/example-app
-    ./gradlew installAsakusafw
+..  seealso::
+    Shafuについては、 :jinrikisha:`Shafuのドキュメント <shafu.html>` も参考にしてください。
 
-インストールに成功した場合、画面に以下のように ``BUILD SUCCESSFUL`` と表示されます。
+Shafuのインストール
+-------------------
 
-..  code-block:: sh
+ShafuはEclipseプラグインとして公開されており、一般的なEclipseプラグインと同様にインストールを行います。
 
-    ...
-    Asakusa Framework has been installed on ASAKUSA_HOME: /home/asakusa/asakusa
+以下、Eclipse上でのインストール手順例です。
 
-    BUILD SUCCESSFUL
+#. Eclipseのメニューバーから :menuselection:`Help --> Install New Software...` を選択します。
+#. :guilabel:`Install` ダイアログで :guilabel:`Work with:` の項目右の :guilabel:`Add` ボタンを押下します。
+#. :guilabel:`Add Repository` ダイアログに以下の値を入力します。
 
-    Total time: XX.XXX secs
+   * :guilabel:`Name:` 任意の名前(例: ``Jinrikisha`` )
+   * :guilabel:`Location:` ``http://www.asakusafw.com/eclipse/jinrikisha/updates/``
+#. :guilabel:`Install` ダイアログに表示された :guilabel:`Jinrikisha (人力車)` カテゴリを展開して :guilabel:`Asakusa Gradle プラグインサポート` を選択し、 :guilabel:`Next >` ボタンを押下します。
+#. 以降、画面の指示に従いインストールを進めます。Eclipseの再起動を促されたら :guilabel:`Yes` を選択します。
+#. Eclipseの再起動が完了したら :guilabel:`Java` パースペクティブを選択し、 メニューバーから :menuselection:`Window --> Perspective --> Reset Perspective..` を選択して :guilabel:`Java` パースペクティブを初期化します。
 
 ..  attention::
-    以降の手順についても、Gradleのコマンド実行後に処理が成功したかを確認するには ``BUILD SUCCESSFUL`` が表示されていることを確認してください。
+    Shafuのインストール後にJavaパースペクティブの初期化を行わないと、Shafuのメニューが表示されないことがあります。
 
-..  _`Gradle`: http://gradle.org
+EclipseのJDK登録
+----------------
 
-インストールソフトウェアの動作確認
+Eclipse経由で実行するJavaにJREが設定されている場合、これをJDKに変更します。
+
+#. Eclipseの設定画面から :menuselection:`Java --> Installed JREs` を選択します。
+#. :guilabel:`Installed JREs` ダイアログにJDK以外のJava定義が表示されている場合 (例えば ``jre8`` のような項目が表示されている場合)、これら項目を削除します。 削除する項目を選択して、 :guilabel:`Remove` ボタンを押下します。
+#. JDKを追加します。 :guilabel:`Installed JREs` ダイアログで :guilabel:`Add` ボタンを押下します。
+#. :guilabel:`JRE Type` ダイアログで :guilabel:`Standard VM` を選択し、 :guilabel:`Next >` ボタンを押下します。
+#. :guilabel:`JRE Definition` ダイアログで :guilabel:`JRE home:` の項目右の :guilabel:`Directory...` ボタンを押下し、JDKのフォルダを指定します。
+#. :guilabel:`JRE Definition` ダイアログの各項目にインストールしたJDKの情報が設定されたことを確認して :guilabel:`Finish` ボタンを押下します。
+#. :guilabel:`Installed JREs` ダイアログに追加したJDKの項目が表示されるので、その項目の :guilabel:`Name` 欄に表示されているチェックボックスを :guilabel:`ON` にします。JDKの項目が ``jdk1.8.0_XX (default)`` のような表示になれば設定完了です。
+
+..  attention::
+    Asakusa Frameworkのバッチアプリケーションのコンパイルやテストの実行にはJDKを使用する必要があります。
+    JREを使用することはできないため、必ず上記の設定を確認してください。
+
+環境変数の確認
+--------------
+
+Eclipse上で環境変数 ``ASAKUSA_HOME`` が有効になっていることを確認します。
+
+#. Eclipseの設定画面から :menuselection:`Jinrikisha (人力車) --> Asakusa Framework` を選択します。
+#. :guilabel:`フレームワークのインストール先 (ASAKUSA_HOME)` に環境変数 ``ASAKUSA_HOME`` で設定したフォルダが表示されていることを確認します。
+
+正しく表示されていない場合、環境の設定を確認してください。
+
+アプリケーション開発の準備
+==========================
+
+アプリケーションプロジェクトの作成
 ----------------------------------
 
-これまでの手順でインストールしたソフトウェアの動作確認を行います。
+バッチアプリケーションの開発をはじめるには、まずAsakusa Frameworkアプリケーション開発用のプロジェクトを作成します。
 
-以下の例を参考にして、ターミナルからコマンドを実行し、例の通りの出力が行われることを確認してください。
-コマンドが見つからないと表示された場合には、それぞれのインストール手順や `環境変数の設定`_ を見直してください。
+アプリケーションプロジェクトを作成するには、オンライン上に公開されているAsakusa Frameworkのプロジェクトテンプレートを利用すると便利です。
+このプロジェクトテンプレートにはプロジェクトで利用するビルドツール(Gradle)の設定や実行環境、および開発環境で利用する設定ファイルなどが含まれます。
 
-Javaの動作確認
-~~~~~~~~~~~~~~
+コマンドライン上から作成する場合、以下のURLに公開されているプロジェクトテンプレートのアーカイブを展開します。
+
+* `asakusa-project-template-0.8.0.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-project-template-0.8.0.tar.gz>`_
 
 ..  code-block:: sh
 
-    java -version
+    cd <work-dir>
+    curl -OL http://www.asakusafw.com/download/gradle-plugin/asakusa-project-template-0.8.0.tar.gz
+    tar xf asakusa-project-template-0.8.0.tar.gz
+    mv asakusa-project-template my-batchapp
+    cd my-batchapp
 
-    java version "1.7.0_45"
+Shafuを導入した開発環境では、オンライン上に公開されているAsakusa Frameworkのプロジェクトテンプレートカタログを利用して、テンプレートプロジェクトをベースに新規プロジェクトを作成することができます。
+
+#. Javaパースペクティブ上のメニューバーから :menuselection:`File --> New --> Gradleプロジェクトをテンプレートから生成` を選択します。
+#. :guilabel:`新規プロジェクト情報` ダイアログで、プロジェクト名などを入力します。
+#. :guilabel:`テンプレートからプロジェクトを作成` ダイアログで :guilabel:`URLを指定してプロジェクトテンプレートをダウンロードする` が選択状態になっていることを確認して、画面右の :guilabel:`選択` ボタンを押下します。
+#. :guilabel:`プロジェクトテンプレート` ダイアログにオンラインに公開されている、利用可能なプロジェクトテンプレートの一覧が表示されます。ここでは :guilabel:`Asakusa Project Template - 0.8.0` を選択します。
+#. :guilabel:`Finish` ボタンを押すと選択したプロジェクトテンプレートを読み込み、Eclipseプロジェクトとして新規プロジェクトが作成されます。
+
+Asakusa Frameworkのインストール
+-------------------------------
+
+次に、開発環境用のAsakusa Frameworkをインストールします。これはアプリケーションのテスト時などに利用します。
+
+コマンドライン上から作成する場合、Gradleの :program:`installAsakusafw` タスクを実行します。
+プロジェクト上でタスクを実行するには、以下のように :program:`gradlew` コマンドにタスク名を指定して実行します。
+
+..  code-block:: sh
+
+    ./gradlew installAsakusafw
+
+Shafuを導入した開発環境では、EclipseのメニューからAsakusa Frameworkのインストールを実行します。
+
+#. Javaパースペクティブ上のプロジェクトを選択してコンテキストメニュー(右クリックなどで表示されるメニュー)を表示します。
+#. コンテキストメニューから :menuselection:`Jinrikisha (人力車) --> Asakusa開発環境の構成 --> Asakusa Frameworkのインストール` を選択します。
+
+インストールが成功した場合、コンソールに以下のように表示され、環境変数 ``ASAKUSA_HOME`` で指定したフォルダ配下にAsakusa Frameworkがインストールされます。
+    
+..  code-block:: none
+
     ...
+    :installAsakusafw
+    Asakusa Framework is successfully installed: /home/asakusa/asakusa
+    
+    BUILD SUCCESSFUL
+    
+    Total time: 4.352 secs
 
-Java SDKの動作確認
-~~~~~~~~~~~~~~~~~~
+Next Step
+---------
 
-..  code-block:: sh
+ここまでの手順で、Asakusa Framework上でバッチアプリケーションの開発を行う準備が整いました。
 
-    javac -version
+次のステップとして、 :doc:`next-step` では実際にアプリケーションの開発を行うための、Asakusa Frameworkを使ったアプリケーション開発の流れを紹介しています。
 
-    javac 1.7.0_45
-
-Hadoopの動作確認
-~~~~~~~~~~~~~~~~
-
-..  code-block:: sh
-
-    hadoop version
-
-    Hadoop 1.2.1
-    ...
-
-..  attention::
-    Hadoopのみバージョンを確認するためのコマンドが ``hadoop version`` となっていて、 ``version`` の前にハイフンが不要です。
-
-Asakusa Frameworkのインストール確認
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-..  code-block:: sh
-
-    cat $ASAKUSA_HOME/VERSION
-
-    asakusafw.version=0.8.0
-    ...
-
-
-Eclipseの環境構築
------------------
-
-Asakusa Frameworkのアプリケーション実装・テストに使用する統合開発環境(IDE)として、Eclipseの環境を構築します。
-
-..  hint::
-    Asakusa Frameworkを使う上でEclipseの使用は必須ではありませんが、Asakusa FrameworkではEclipse上での開発をサポートするいくつかの機能を提供しています。
-    ここではサンプルアプリケーションのソースを確認するなどの用途を想定して、Eclipseの環境構築手順を説明します。
-
-Eclipseのインストール
-~~~~~~~~~~~~~~~~~~~~~
-
-Eclipseのダウンロードサイト (http://www.eclipse.org/downloads/) から Eclipse IDE for Java Developers - Linux 32 Bit :file:`eclipse-java-{XX}-linux-gtk.tar.gz` ( ``XX`` はバージョンを表すコード名 )  をダウンロードします。
-
-ダウンロードが完了したら、以下の例を参考にしてEclipseをインストールします。
-
-..  code-block:: sh
-
-    cd ~/Downloads
-    tar xf eclipse-java-*-linux-gtk.tar.gz
-    mv eclipse ~/eclipse
-
-Eclipseを起動するには、:program:`$HOME/eclipse/eclipse` を実行します。以下はターミナルから起動する例です。
-
-..  code-block:: sh
-
-    $HOME/eclipse/eclipse &
-
-..  attention::
-    デスクトップ上のファイラーなどからEclipseを起動する場合は、デスクトップ環境に対して :file:`~/.profile` で定義した環境変数が反映されている必要がるため、Eclipseを起動する前に一度デスクトップ環境からログアウトし、再ログインする必要があります。
-
-Eclipse起動時にワークスペースを指定するダイアログが表示されるので、デフォルトの :file:`$HOME/workspace` をそのまま指定します。
-
-Eclipseへアプリケーションプロジェクトをインポート
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-アプリケーションプロジェクトをEclipseへインポートして、Eclipse上でアプリケーションの開発を行えるようにします。
-
-インポートするプロジェクトのディレクトリに移動し、Gradleの以下のコマンドを実行してEclipse用の定義ファイルを作成します。
-
-..  code-block:: sh
-
-    cd ~/workspace/example-app
-    ./gradlew eclipse
-
-これでEclipseからプロジェクトをインポート出来る状態になりました。
-Eclipseのメニューから :menuselection:`File --> Import --> General --> Existing Projects into Workspace` を選択し、プロジェクトディレクトリを指定してEclipseにインポートします。
+また、このスタートガイドの以降の説明では、公開されているサンプルアプリケーションを使ってバッチアプリケーションを実行する手順を紹介しています。
 
 .. _startguide-running-example:
 
 サンプルアプリケーションの実行
 ==============================
 
-開発環境上で Asakusa Framework のサンプルアプリケーションを実行してみます。
+ここでは、Asakusa Frameworkのサンプルアプリケーションを使って、実行環境上でバッチアプリケーションを実行する手順を簡単に説明します。
 
 サンプルアプリケーションの概要
 ------------------------------
 
-サンプルアプリケーションプロジェクトには、サンプルアプリケーション「カテゴリー別売上金額集計バッチ」のソースファイルが含まれています。
+Asakusa Frameworkの `サンプルプログラム集 (GitHub)`_ ではいくつかのサンプルアプリケーションが公開されています。
+その中から、ここでは ``examle-directio-csv`` ディレクトリ配下に含まれるサンプルアプリケーション「カテゴリー別売上金額集計バッチ」を使います。
 
 カテゴリー別売上金額集計バッチは、売上トランザクションデータと、商品マスタ、店舗マスタを入力として、エラーチェックを行った後、売上データを商品マスタのカテゴリ毎に集計するアプリケーションです。
 
 バッチアプリケーションの入力データ取得と出力データ生成には、Asakusa Frameworkの「Direct I/O」と呼ばれるコンポーネントを利用しています。
 Direct I/Oを利用して、Hadoopファイルシステム上のCSVファイルに対して入出力を行います。
 
-サンプルアプリケーションのビルド
---------------------------------
+..  _`サンプルプログラム集 (GitHub)`: http://github.com/asakusafw/asakusafw-examples
 
-アプリケーションのソースファイルをAsakusa Framework上で実行可能な形式にビルドします。
+サンプルアプリケーションプロジェクトの作成
+------------------------------------------
 
-アプリケーションのビルドを実行するには、Gradleの :program:`build` タスクを実行します（初回の実行時のみ、Gradleがリモートからライブラリをダウンロードするため、実行に時間がかかります）。
+`サンプルプログラム集 (GitHub)`_ に公開されているプロジェクトを開発環境に取り込みます。
+
+コマンドライン上でプロジェクトを作成する場合、GitHub上に公開されているサンプルアプリケーションのアーカイブを展開します。
 
 ..  code-block:: sh
 
-    cd ~/workspace/example-app
-    ./gradlew build
+    cd <work-dir>
+    curl -OL https://github.com/asakusafw/asakusafw-examples/archive/0.8.0.tar.gz
+    tar xf 0.8.0.tar.gz
+    cd asakusafw-examples-0.8.0/example-directio-csv
 
-このコマンドの実行によって、アプリケーションのプロジェクトに対して以下の処理が実行されます。
+Shafuを導入した開発環境では、オンライン上に公開されているAsakusa Frameworkのプロジェクトテンプレートカタログを利用して、サンプルアプリケーションのプロジェクトをEclipse上に取り込みます。
 
-1. データモデル定義DSL(DMDL)から、データモデルクラスを生成
-2. Asakusa DSLとデータモデル定義DSLから、HadoopやSparkなどの各処理系で実行可能なプログラム群を生成
-3. 実行可能なプログラム群に対するテストを実行
-4. アプリケーションを実行環境に配置するためのデプロイメントアーカイブファイルを生成
+#. Javaパースペクティブ上のメニューバーから :menuselection:`File --> New --> Gradleプロジェクトをテンプレートから生成` を選択します。
+#. :guilabel:`新規プロジェクト情報` ダイアログで、プロジェクト名などを入力します。
+#. :guilabel:`テンプレートからプロジェクトを作成` ダイアログで :guilabel:`URLを指定してプロジェクトテンプレートをダウンロードする` が選択状態になっていることを確認して、画面右の :guilabel:`選択` ボタンを押下します。
+#. :guilabel:`プロジェクトテンプレート` ダイアログにオンラインに公開されている、利用可能なプロジェクトテンプレートの一覧が表示されます。ここでは :guilabel:`Asakusa Example Projects - 0.8.0` を選択します。
+#. :guilabel:`Finish` ボタンを押すと選択したプロジェクトテンプレートを読み込み、Eclipseプロジェクトとして新規プロジェクトが作成されます。
+#. :guilabel:`テンプレートからプロジェクトを作成` ダイアログで ``example-directio-csv`` を選択して :guilabel:`OK` ボタンを押下します。
 
-ビルドが成功すると、プロジェクトの :file:`build` ディレクトリ配下にいくつかのファイルが作成されますが、この中の :file:`example-app-batchapps.jar` というファイルがサンプルアプリケーションが含まれるデプロイメントアーカイブファイルです。
+サンプルアプリケーションのビルド
+--------------------------------
 
-..  attention::
-    このアーカイブファイルの名前は、プロジェクトディレクトリ名やビルドスクリプト上に設定したバージョンなどから決定されます。
-    本ドキュメントの例以外のプロジェクト名やバージョンを指定した場合は、それに合わせて読み替えてください。
-    
+Asakusa Frameworkの開発環境で作成したバッチアプリケーションを運用環境（Hadoopクラスターなど）で実行するには、コンパイル済みのバッチアプリケーションとAsakusa Framework本体の実行モジュールをあわせて運用環境にデプロイします。
+そのためにまず、開発環境上でデプロイに必要なモジュールを全て含めた「デプロイメントアーカイブ」と呼ばれるパッケージファイルを生成します。
+
+コマンドライン上でデプロイメントアーカイブを生成するには、Gradleの :program:`assemble` タスクを実行します。
+
+..  code-block:: sh
+
+    ./gradlew assemble
+
+Shafuを導入した開発環境では、コンテキストメニューから :menuselection:`Jinrikisha (人力車) --> Asakusaデプロイメントアーカイブを生成` を選択します。
+
+このコマンドの実行によって、アプリケーションプロジェクトに対して以下の処理が実行されます。
+
+* データモデル定義DSL(DMDL)から、データモデルクラスを生成
+* Asakusa DSLとデータモデル定義DSLから、HadoopやSparkなどの各処理系で実行可能なプログラム群を生成
+* アプリケーションを実行環境に配置するためのデプロイメントアーカイブファイルを生成
+
+デプロイメントアーカイブファイルはプロジェクトの :file:`build` ディレクトリ配下に ``asakusafw-0.8.0.tar.gz`` というファイル名で生成されます。
+
 .. _introduction-start-guide-deploy-app:
 
 サンプルアプリケーションのデプロイ
 ----------------------------------
 
-サンプルアプリケーションを実行するために、先ほどビルドしたサンプルアプリケーションを実行環境にデプロイします。
+`サンプルアプリケーションのビルド`_ で作成したデプロイメントアーカイブファイルを運用環境にデプロイします。
 
-実行環境は、通常はHadoopクラスターが構築されている運用環境となりますが、ここでは開発環境（ローカル）上のHadoopとAsakusa Framework上でサンプルアプリケーションを実行するため、ローカルに対するデプロイを行います。
+通常、デプロイ対象となるノードはHadoopクライアントモジュールがインストールされているHadoopクラスターのノードを選択します。
 
-アプリケーションのデプロイは、Asakusa Frameworkがインストールされているマシン上の :file:`$ASAKUSA_HOME/batchapps` ディレクトリに アプリケーションが含まれるjarファイルの中身を展開して配置します。
-以下はアプリケーションプロジェクトで生成したアーカイブファイルをローカルのAsakusa Frameworkにデプロイする例です。
+以降の手順を行う前に、デプロイメントアーカイブファイル ``asakusafw-0.8.0.tar.gz`` をデプロイ対象となるノードに転送しておいてください。
+
+環境変数の設定
+~~~~~~~~~~~~~~
+
+運用環境上でAsakusa Frameworkを配置しバッチアプリケーションを実行するためのOSユーザに対して、以下の環境変数を設定します。
+
+* ``JAVA_HOME``: Javaのインストールパス
+* ``HADOOP_CMD``: :program:`hadoop` コマンドのパス
+* ``SPARK_CMD``: :program:`spark-submit` コマンドのパス ( :asakusa-on-spark:`Asakusa on Spark <index.html>` を利用する場合 )
+* ``ASAKUSA_HOME``: Asakusa Frameworkのインストールパス
+
+以下は環境変数の設定例です。
+
+..  code-block:: sh
+    
+    export JAVA_HOME=/usr/lib/jvm/java-8-oracle
+    export HADOOP_CMD=/usr/lib/hadoop/bin/hadoop
+    export SPARK_CMD=/opt/spark/bin/spark-submit
+    export ASAKUSA_HOME=$HOME/asakusa
+
+デプロイメントアーカイブの展開
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`サンプルアプリケーションのビルド`_ で作成したデプロイメントアーカイブファイル ``asakusafw-0.8.0.tar.gz`` を配置し、 ``$ASAKUSA_HOME`` 配下にデプロイメントアーカイブを展開します。
+展開後、 ``$ASAKUSA_HOME`` 配下の :file:`*.sh` に実行権限を追加します。
 
 ..  code-block:: sh
 
-    cd ~/workspace/example-app
-    cp build/*batchapps*.jar $ASAKUSA_HOME/batchapps
-    cd $ASAKUSA_HOME/batchapps
-    jar xf *batchapps*.jar
+    mkdir -p "$ASAKUSA_HOME"
+    cd "$ASAKUSA_HOME"
+    tar -xzf /path/to/asakusafw-0.8.0.tar.gz
+    find "$ASAKUSA_HOME" -name "*.sh" | xargs chmod u+x
 
+..  hint::
+    試用や疏通確認などの場合は、Hadoopクラスターの代わりにJinrikishaなどを使って構築した開発環境（ローカル）を利用することもできます。
+    詳しくは :jinrikisha:`Jinrikishaのドキュメント <index.html>` を参照してください。
 
 サンプルデータの配置
 --------------------
-サンプルアプリケーションプロジェクトには、プロジェクトディレクトリ配下の :file:`src/test/example-dataset` ディレクトリ以下にテスト用の入力データが用意されています。
+
+サンプルアプリケーションの構成では、 :file:`$ASAKUSA_HOME/example-dataset` ディレクトリ以下にテスト用の入力データが用意されています。
 これらのファイルをHadoopファイルシステム上のDirect I/Oの入出力ディレクトリ(デフォルトの設定では :file:`target/testing/directio` 配下) にコピーします。
 
 ..  warning::
-    Direct I/Oの入出力ディレクトリはテスト実行時に削除されます。
-    特にスタンドアロンモードのHadoopを利用時にデフォルトの設定のような相対パスを指定した場合、 ホームディレクトリを起点としたパスと解釈されるため注意が必要です。
-    
-    例えばホームディレクトリが :file:`/home/asakusa` であった場合でデフォルト設定の相対パスを利用する場合、 テスト実行の都度 :file:`/home/asakusa/target/testing/directio` ディレクトリ以下が削除されることになります。
-    このパスに重要なデータがないことを実行前に確認してください。
+    Direct I/Oの出力ディレクトリはバッチアプリケーション実行時に初期化されます。
+    既存のディレクトリを利用する場合、このパスに重要なデータがないことを実行前に確認してください。
 
-以下はサンプルデータの配置の実行例です。
+以下は、サンプルデータをHadoopファイルシステムに配置する手順の例です。
 
 ..  code-block:: sh
 
-    # スタンドアロンモードに対応するため、ホームディレクトリに移動しておく
-    cd ~
-    # ファイルシステムパス上のデータをクリアしておく
-    hadoop fs -rmr target/testing/directio
-    # サンプルデータを配置する
-    hadoop fs -put ~/workspace/example-app/src/test/example-dataset/master target/testing/directio/master
-    hadoop fs -put ~/workspace/example-app/src/test/example-dataset/sales target/testing/directio/sales
+    hadoop fs -mkdir -p target/testing/directio
+    hadoop fs -put $ASAKUSA_HOME/example-dataset/master target/testing/directio/master
+    hadoop fs -put $ASAKUSA_HOME/example-dataset/sales target/testing/directio/sales
     
 .. _introduction-start-guide-run-app:
 
 サンプルアプリケーションの実行
 ------------------------------
 
-ローカルにデプロイしたサンプルアプリケーションを実行します。
+サンプルアプリケーションを実行します。
 
 Asakusa Frameworkでは、バッチアプリケーションを実行するためのコマンドプログラムとして「YAESS」というツールが提供されています。
 バッチアプリケーションを実行するには、:program:`$ASAKUSA_HOME/yaess/bin/yaess-batch.sh` に実行するバッチのバッチIDとバッチ引数を指定します。
@@ -334,19 +346,27 @@ Asakusa Frameworkでは、バッチアプリケーションを実行するため
 サンプルアプリケーション「カテゴリー別売上金額集計バッチ」は「 ``example.summarizeSales`` 」というバッチIDを持っています。
 また、このバッチは引数に処理対象の売上日時( ``date`` )を指定し、この値に基づいて処理対象CSVファイルを特定します。
 
-バッチIDとバッチ引数を指定して、以下のようにバッチアプリケーションを実行します。
+サンプルアプリケーションの標準の構成では、バッチアプリケーションはHadoop(MapReduce)を利用する構成と、Spark を利用する構成の2つの構成が配置されています。
+
+MapReduceを利用するバッチアプリケーションは、そのままバッチIDとバッチ引数を指定して、以下のようにバッチアプリケーションを実行します。
 
 ..  code-block:: sh
 
     $ASAKUSA_HOME/yaess/bin/yaess-batch.sh example.summarizeSales -A date=2011-04-01
 
-バッチの実行が成功すると、コマンドの標準出力の最終行に ``Finished: SUCCESS`` と出力されます。
+Sparkを利用するバッチアプリケーションは、Spark向けのバッチアプリケーションはバッチIDの接頭辞に spark. を付与して実行します。
 
 ..  code-block:: sh
 
+    $ASAKUSA_HOME/yaess/bin/yaess-batch.sh spark.example.summarizeSales -A date=2011-04-01
+
+バッチの実行が成功すると、コマンドの標準出力の最終行に ``Finished: SUCCESS`` と出力されます。
+
+..  code-block:: none
+
     ...
-    2013/04/22 13:50:35 INFO  [YS-CORE-I01999] Finishing batch "example.summarizeSales": batchId=example.summarizeSales, elapsed=12,712ms
-    2013/04/22 13:50:35 INFO  [YS-BOOTSTRAP-I00999] Exiting YAESS: code=0, elapsed=12,798ms
+    2016/03/17 03:56:24 INFO  [YS-CORE-I01999] Finishing batch "spark.example.summarizeSales": batchId=spark.example.summarizeSales, elapsed=51,738ms
+    2016/03/17 03:56:24 INFO  [YS-BOOTSTRAP-I00999] Exiting YAESS: code=0, elapsed=51,790ms
     Finished: SUCCESS
 
 サンプルアプリケーション実行結果の確認
@@ -355,7 +375,7 @@ Asakusa Frameworkでは、バッチアプリケーションを実行するため
 Asakusa FrameworkはDirect I/Oの入出力ディレクトリやファイルの一覧をリストアップするコマンド :program:`$ASAKUSA_HOME/directio/bin/list-file.sh` を提供しています。
 このコマンドを利用して、サンプルアプリケーションの出力結果を確認します。
 
-ここでは、Direct I/Oの入出力ディレクトリにサンプルアプリケーションが出力データを配置したパス :file:`result` 以下のすべてのファイルを、サブディレクトリ含めてリストするようコマンドを実行してみます。
+ここでは、サンプルアプリケーションの出力結果ディレクトリ :file:`result` 以下のすべてのファイルを、サブディレクトリ含めてリストするようコマンドを実行してみます。
 
 ..  code-block:: sh
 
@@ -367,37 +387,42 @@ Asakusa FrameworkはDirect I/Oの入出力ディレクトリやファイルの�
 ..  code-block:: sh
 
     Starting List Direct I/O Files:
-     Hadoop Command: /usr/lib/hadoop/bin/hadoop
-              Class: com.asakusafw.directio.tools.DirectIoList
-          Libraries: /home/asakusa/asakusa/directio/lib/asakusa-directio-tools-X.X.X.jar,...
-          Arguments: result **/*
-    file:/home/asakusa/target/testing/directio/result/category
-    file:/home/asakusa/target/testing/directio/result/error
-    file:/home/asakusa/target/testing/directio/result/error/20110401.csv
-    file:/home/asakusa/target/testing/directio/result/category/result.csv
+    ...
+    hdfs://<host:port>/user/asakusa/target/testing/directio/result/category
+    hdfs://<host:port>/user/asakusa/target/testing/directio/result/error
+    hdfs://<host:port>/user/asakusa/target/testing/directio/result/category/result.csv
+    hdfs://<host:port>/user/asakusa/target/testing/directio/result/error/2011-04-01.csv
 .. ***
 
 出力ファイルの一覧に対して、 :program:`hadoop fs -text` コマンドを利用してファイル内容を確認します。
-以下は :file:`result` 配下に生成された売上データの集計ファイル :file:`category/result.csv` を表示する例です。
+
+以下は 売上データの集計ファイル :file:`category/result.csv` を表示する例です。
 
 ..  code-block:: sh
 
-    hadoop fs -text file:/home/asakusa/target/testing/directio/result/category/result.csv
+    hadoop fs -text hdfs://<host:port>/user/asakusa/target/testing/directio/result/category/result.csv
 
 指定したファイルの内容が表示されます。
 売上データが商品マスタのカテゴリコード単位で集計され、売上合計の降順で整列されたCSVが出力されています。
 
-..  code-block:: sh
+..  code-block:: none
 
     カテゴリコード,販売数量,売上合計
     1600,28,5400
     1300,12,1596
     1401,15,1470
 
-Next Step:アプリケーションの開発を行う
-======================================
+また、このバッチでは処理の中で不正なレコードをチェックして、該当したエラーレコードをまとめてファイル :file:`error/2011-04-01.csv` に出力します。
 
-これまでの手順で、Asakusa Framework上でバッチアプリケーションの開発を行う準備が整いました。
+..  code-block:: sh
 
-次に、アプリケーションの開発を行うために、Asakusa Frameworkを使ったアプリケーション開発の流れを見てみましょう。 >> :doc:`next-step`
+    hadoop fs -text hdfs://<host:port>/user/asakusa/target/testing/directio/result/error/2011-04-01.csv
 
+エラーチェックに該当したレコードの一覧は以下のように出力されます。
+
+..  code-block:: none
+
+    ファイル名,日時,店舗コード,商品コード,メッセージ
+    hdfs://<host:port>/user/asakusa/target/testing/directio/sales/2011-04-01.csv,2011-04-01 19:00:00,9999,4922010001000,店舗不明
+    hdfs://<host:port>/user/asakusa/target/testing/directio/sales/2011-04-01.csv,2011-04-01 10:00:00,0001,9999999999999,商品不明
+    hdfs://<host:port>/user/asakusa/target/testing/directio/sales/2011-04-01.csv,1990-01-01 10:40:00,0001,4922010001000,商品不明

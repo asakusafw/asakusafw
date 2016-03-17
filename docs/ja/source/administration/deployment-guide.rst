@@ -272,7 +272,7 @@ Hadoopクライアントマシン上でAsakusa Frameworkを配置しバッチア
 
 ..  code-block:: sh
     
-    export JAVA_HOME=/usr/lib/jvm/java-7-oracle
+    export JAVA_HOME=/usr/lib/jvm/java-8-oracle
     export HADOOP_CMD=/usr/lib/hadoop/bin/hadoop
     export SPARK_CMD=/opt/spark/bin/spark-submit
     export ASAKUSA_HOME=$HOME/asakusa

@@ -69,24 +69,13 @@ Asakusa Gradle Pluginを使った標準的なアプリケーション開発環�
 プロジェクトテンプレートのダウンロード
 --------------------------------------
 
-..  todo:: プロジェクトテンプレートの構成とダウンロードURLの変更
-
 プロジェクトテンプレートは、以下リンクからダウンロードします。
-
-基本的なプロジェクトレイアウトのみを持つプロジェクトテンプレートのほか、これにサンプルアプリケーションのソースコード一式を加えたサンプルアプリケーションプロジェクトを公開しています。
-
-Asakusa Gradle Plugin 用プロジェクトテンプレート
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 * `asakusa-project-template-0.8.0.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-project-template-0.8.0.tar.gz>`_
 
-Asakusa Gradle Plugin 用サンプルアプリケーションプロジェクト
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+また、Asakusa Frameworkの `サンプルプログラム集 (GitHub)`_ では、サンプルアプリケーションのソースコード一式を含むサンプルアプリケーションプロジェクトを公開しています。
 
-* `asakusa-example-project-0.8.0.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-example-project-0.8.0.tar.gz>`_
-
-..  seealso::
-    サンプルアプリケーションの内容や利用方法については、 :doc:`../introduction/start-guide` - :ref:`startguide-running-example`  を参照してください。
+..  _`サンプルプログラム集 (GitHub)`: http://github.com/asakusafw/asakusafw-examples
 
 プロジェクトの配置
 ------------------
@@ -100,8 +89,9 @@ Asakusa Gradle Plugin 用サンプルアプリケーションプロジェクト
 ..  code-block:: sh
 
     cd ~/Downloads
-    tar xf asakusa-example-project-*.tar.gz
-    mv asakusa-example-project ~/workspace/example-app
+    curl -OL https://github.com/asakusafw/asakusafw-examples/archive/0.8.0.tar.gz
+    tar xf 0.8.0.tar.gz
+    mv asakusafw-examples-0.8.0/example-directio-csv ~/workspace/example-app
 
 プロジェクトレイアウト
 ----------------------
