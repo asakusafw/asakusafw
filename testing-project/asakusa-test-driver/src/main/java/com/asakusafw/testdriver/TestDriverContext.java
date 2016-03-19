@@ -23,9 +23,11 @@ import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.ListResourceBundle;
 import java.util.Map;
 import java.util.MissingResourceException;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -36,12 +38,10 @@ import javax.tools.ToolProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.asakusafw.compiler.batch.processor.DependencyLibrariesProcessor;
-import com.asakusafw.compiler.flow.ExternalIoCommandProvider.CommandContext;
-import com.asakusafw.compiler.flow.FlowCompilerOptions;
-import com.asakusafw.compiler.flow.FlowCompilerOptions.GenericOptionValue;
-import com.asakusafw.compiler.testing.JobflowInfo;
 import com.asakusafw.runtime.stage.StageConstants;
+import com.asakusafw.testdriver.compiler.CompilerConfiguration.DebugLevel;
+import com.asakusafw.testdriver.compiler.CompilerConfiguration.OptimizeLevel;
+import com.asakusafw.testdriver.compiler.CompilerConstants;
 import com.asakusafw.testdriver.core.TestContext;
 import com.asakusafw.testdriver.core.TestToolRepository;
 import com.asakusafw.testdriver.core.TestingEnvironmentConfigurator;
@@ -50,7 +50,7 @@ import com.asakusafw.utils.collections.Maps;
 /**
  * Represents contextual information for test drivers.
  * @since 0.2.0
- * @version 0.6.1
+ * @version 0.8.0
  */
 public class TestDriverContext implements TestContext {
 
@@ -75,9 +75,11 @@ public class TestDriverContext implements TestContext {
 
     /**
      * The system property key of runtime working directory.
-     * This working directory must be a relative path from the default working directory.
+     * This working directory should be a relative path from the default working directory.
+     * @deprecated Use {@link CompilerConstants#KEY_RUNTIME_WORKING_DIRECTORY} instead
      */
-    public static final String KEY_RUNTIME_WORKING_DIRECTORY = "asakusa.testdriver.hadoopwork.dir"; //$NON-NLS-1$
+    @Deprecated
+    public static final String KEY_RUNTIME_WORKING_DIRECTORY = CompilerConstants.KEY_RUNTIME_WORKING_DIRECTORY;
 
     /**
      * The system property key of compiler working directory.
@@ -126,7 +128,12 @@ public class TestDriverContext implements TestContext {
      * The path to the external dependency libraries folder (relative from working directory).
      * @since 0.5.1
      */
-    public static final String EXTERNAL_LIBRARIES_PATH = DependencyLibrariesProcessor.LIBRARY_DIRECTORY_PATH;
+    public static final String EXTERNAL_LIBRARIES_PATH = "src/main/libs"; //$NON-NLS-1$
+
+    /**
+     * The output directory path in the final artifact.
+     */
+    private static final String OUTPUT_DIRECTORY_PATH = "usr/lib"; //$NON-NLS-1$
 
     /**
      * The path to the framework version file (relative from the framework home path).
@@ -147,8 +154,6 @@ public class TestDriverContext implements TestContext {
      */
     public static final String KEY_JOB_EXECUTOR_FACTORY = "asakusa.testdriver.exec.factory"; //$NON-NLS-1$
 
-    private static final String HADOOPWORK_DIR_DEFAULT = "target/testdriver/hadoopwork"; //$NON-NLS-1$
-
     static {
         TestingEnvironmentConfigurator.initialize();
     }
@@ -165,7 +170,11 @@ public class TestDriverContext implements TestContext {
 
     private final Map<String, String> environmentVariables;
 
-    private final FlowCompilerOptions options;
+    private final Map<String, String> compilerOptions;
+
+    private volatile OptimizeLevel compilerOptimizeLevel = OptimizeLevel.NORMAL;
+
+    private volatile DebugLevel compilerDebugLevel = DebugLevel.DISABLED;
 
     private final Set<TestExecutionPhase> skipPhases;
 
@@ -203,35 +212,17 @@ public class TestDriverContext implements TestContext {
         this.extraConfigurations = new TreeMap<>();
         this.batchArgs = new TreeMap<>();
         this.environmentVariables = new HashMap<>(System.getenv());
-        this.options = new FlowCompilerOptions();
-        configureOptions();
+        this.compilerOptions = new LinkedHashMap<>();
         this.skipPhases = EnumSet.noneOf(TestExecutionPhase.class);
-    }
-
-    private void configureOptions() {
-        // disables Direct I/O input filters
-        if (checkClass("com.asakusafw.compiler.directio.DirectFileIoProcessor")) { //$NON-NLS-1$
-            LOG.debug("diasbles Direct I/O input filters"); //$NON-NLS-1$
-            this.options.putExtraAttribute(
-                    "directio.input.filter.enabled", //$NON-NLS-1$
-                    GenericOptionValue.DISABLED.getSymbol());
-        }
-    }
-
-    private boolean checkClass(String name) {
-        try {
-            Class.forName(name);
-            return true;
-        } catch (ClassNotFoundException e) {
-            return false;
-        }
     }
 
     /**
      * Validates current compiler environment.
      * @throws AssertionError if current test environment is invalid
      * @since 0.5.1
+     * @deprecated legacy API
      */
+    @Deprecated
     public void validateCompileEnvironment() {
         if (ToolProvider.getSystemJavaCompiler() == null) {
             // validates runtime environment first
@@ -434,20 +425,8 @@ public class TestDriverContext implements TestContext {
         }
         File apps = getBatchApplicationsInstallationPath();
         File batch = new File(apps, batchId);
-        File lib = new File(batch, DependencyLibrariesProcessor.OUTPUT_DIRECTORY_PATH);
+        File lib = new File(batch, OUTPUT_DIRECTORY_PATH);
         return lib;
-    }
-
-    /**
-     * Returns the command context for this attempt.
-     * @return the command context
-     */
-    public CommandContext getCommandContext() {
-        CommandContext context = new CommandContext(
-                getFrameworkHomePath().getAbsolutePath() + "/", //$NON-NLS-1$
-                getExecutionId(),
-                getBatchArgs());
-        return context;
     }
 
     /**
@@ -518,14 +497,12 @@ public class TestDriverContext implements TestContext {
      * Returns the path to the runtime working directory.
      * This working directory is relative path from cluster's default working directory.
      * Clients can configure this property using system property {@value #KEY_RUNTIME_WORKING_DIRECTORY}.
-     * @return the compiler working directory
+     * @return the runtime working directory
+     * @deprecated Use {@link CompilerConstants#getRuntimeWorkingDirectory()} instead
      */
+    @Deprecated
     public String getClusterWorkDir() {
-        String dir = System.getProperty(KEY_RUNTIME_WORKING_DIRECTORY);
-        if (dir == null) {
-            return HADOOPWORK_DIR_DEFAULT;
-        }
-        return dir;
+        return CompilerConstants.getRuntimeWorkingDirectory();
     }
 
     /**
@@ -570,43 +547,15 @@ public class TestDriverContext implements TestContext {
     }
 
     /**
-     * Changes current Jobflow.
-     * @param info target jobflow
-     * @throws IllegalArgumentException if some parameters were {@code null}
-     * @since 0.2.2
-     */
-    public void prepareCurrentJobflow(JobflowInfo info) {
-        if (info == null) {
-            throw new IllegalArgumentException("info must not be null"); //$NON-NLS-1$
-        }
-        this.currentBatchId = info.getJobflow().getBatchId();
-        this.currentFlowId = info.getJobflow().getFlowId();
-        this.currentExecutionId = MessageFormat.format(
-                "{0}-{1}-{2}", //$NON-NLS-1$
-                getCallerClass().getSimpleName(),
-                currentBatchId,
-                currentFlowId);
-    }
-
-    /**
      * Returns the current execution ID.
      * @return current execution ID
-     * @see #prepareCurrentJobflow(JobflowInfo)
+     * @see #setCurrentExecutionId(String)
      */
     public String getExecutionId() {
         if (currentExecutionId == null) {
             throw new IllegalStateException("prepareCurrentJobflow was not invoked"); //$NON-NLS-1$
         }
         return currentExecutionId;
-    }
-
-    /**
-     * Change current {@link #getExecutionId() execution ID} into a unique string.
-     * @deprecated Please invoke {@link #prepareCurrentJobflow(JobflowInfo)}
-     */
-    @Deprecated
-    public void changeExecutionId() {
-        // do nothing
     }
 
     /**
@@ -657,11 +606,48 @@ public class TestDriverContext implements TestContext {
     }
 
     /**
-     * Returns the compiler options.
-     * @return the compiler options
+     * Sets the compiler optimization level.
+     * @param newValue the compiler optimization level
      */
-    public FlowCompilerOptions getOptions() {
-        return options;
+    public void setCompilerOptimizeLevel(OptimizeLevel newValue) {
+        Objects.requireNonNull(newValue);
+        this.compilerOptimizeLevel = newValue;
+    }
+
+    /**
+     * Sets the compiler debug level.
+     * @param newValue the compiler debug level
+     */
+    public void setCompilerDebugLevel(DebugLevel newValue) {
+        Objects.requireNonNull(newValue);
+        this.compilerDebugLevel = newValue;
+    }
+
+    /**
+     * Returns the compiler optimization level.
+     * @return the compiler optimization level
+     * @since 0.8.0
+     */
+    public OptimizeLevel getCompilerOptimizeLevel() {
+        return compilerOptimizeLevel;
+    }
+
+    /**
+     * Returns the compiler debug level.
+     * @return the compiler debug level
+     * @since 0.8.0
+     */
+    public DebugLevel getCompilerDebugLevel() {
+        return compilerDebugLevel;
+    }
+
+    /**
+     * Returns the compiler specific options.
+     * @return the compiler specific options
+     * @since 0.8.0
+     */
+    public Map<String, String> getCompilerOptions() {
+        return compilerOptions;
     }
 
     @Override

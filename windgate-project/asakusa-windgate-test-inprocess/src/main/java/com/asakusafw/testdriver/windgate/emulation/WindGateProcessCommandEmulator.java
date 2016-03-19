@@ -19,12 +19,14 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.net.URI;
 import java.text.MessageFormat;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.runtime.stage.StageConstants;
 import com.asakusafw.testdriver.TestDriverContext;
 import com.asakusafw.testdriver.TestExecutionPlan;
 import com.asakusafw.testdriver.hadoop.ConfigurationFactory;
@@ -33,6 +35,7 @@ import com.asakusafw.windgate.bootstrap.ExecutionKind;
 import com.asakusafw.windgate.core.GateProfile;
 import com.asakusafw.windgate.core.GateScript;
 import com.asakusafw.windgate.core.GateTask;
+import com.asakusafw.windgate.core.ParameterList;
 
 /**
  * Emulates {@code windgate/bin/process.sh} command.
@@ -93,14 +96,21 @@ public class WindGateProcessCommandEmulator extends AbstractWindGateCommandEmula
         GateScript script = loadScript(context, classLoader, cmd.get(ARG_SCRIPT));
         String sessionId = context.getExecutionId();
         ExecutionKind mode = ExecutionKind.parse(cmd.get(ARG_SESSION_KIND));
-        String arguments = cmd.get(ARG_ARGUMENTS);
+
+        LinkedHashMap<String, String> arguments = new LinkedHashMap<>();
+        arguments.putAll(CommandLineUtil.parseArguments(cmd.get(ARG_ARGUMENTS)).getPairs());
+        arguments.put(StageConstants.VAR_USER, context.getOsUser());
+        arguments.put(StageConstants.VAR_BATCH_ID, context.getCurrentBatchId());
+        arguments.put(StageConstants.VAR_FLOW_ID, context.getCurrentFlowId());
+        arguments.put(StageConstants.VAR_EXECUTION_ID, context.getCurrentExecutionId());
+
         GateTask task = new GateTask(
                 profile,
                 script,
                 sessionId,
                 mode.createsSession,
                 mode.completesSession,
-                CommandLineUtil.parseArguments(arguments));
+                new ParameterList(arguments));
         return task;
     }
 

@@ -15,25 +15,20 @@
  */
 package com.asakusafw.testdriver;
 
-import static org.junit.Assert.*;
-
-import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.asakusafw.compiler.batch.BatchDriver;
-import com.asakusafw.compiler.flow.Location;
-import com.asakusafw.compiler.testing.BatchInfo;
-import com.asakusafw.compiler.testing.DirectBatchCompiler;
-import com.asakusafw.compiler.testing.DirectFlowCompiler;
-import com.asakusafw.compiler.testing.JobflowInfo;
+import com.asakusafw.testdriver.compiler.ArtifactMirror;
+import com.asakusafw.testdriver.compiler.BatchMirror;
+import com.asakusafw.testdriver.compiler.CompilerConfiguration;
+import com.asakusafw.testdriver.compiler.CompilerSession;
+import com.asakusafw.testdriver.compiler.CompilerToolkit;
+import com.asakusafw.testdriver.compiler.JobflowMirror;
 import com.asakusafw.testdriver.core.DataModelSourceFactory;
 import com.asakusafw.testdriver.core.TestModerator;
 import com.asakusafw.testdriver.core.VerifierFactory;
@@ -44,13 +39,15 @@ import com.asakusafw.vocabulary.external.ImporterDescription;
 /**
  * A tester for {@code Batch batch} classes.
  * @since 0.2.0
- * @version 0.5.2
+ * @version 0.8.0
  */
 public class BatchTester extends TesterBase {
 
     static final Logger LOG = LoggerFactory.getLogger(BatchTester.class);
 
-    private final Map<String, JobFlowTester> jobFlowMap = new LinkedHashMap<>();
+    private final CompilerToolkit toolkit;
+
+    private final Map<String, JobFlowTester> jobflowMap = new LinkedHashMap<>();
 
     /**
      * Creates a new instance.
@@ -58,6 +55,7 @@ public class BatchTester extends TesterBase {
      */
     public BatchTester(Class<?> callerClass) {
         super(callerClass);
+        this.toolkit = Util.getToolkit(callerClass);
     }
 
     /**
@@ -66,10 +64,10 @@ public class BatchTester extends TesterBase {
      * @return the corresponding jobflow tester
      */
     public JobFlowTester jobflow(String flowId) {
-        JobFlowTester driver = jobFlowMap.get(flowId);
+        JobFlowTester driver = jobflowMap.get(flowId);
         if (driver == null) {
             driver = new JobFlowTester(driverContext.getCallerClass());
-            jobFlowMap.put(flowId, driver);
+            jobflowMap.put(flowId, driver);
         }
         return driver;
     }
@@ -92,7 +90,7 @@ public class BatchTester extends TesterBase {
         }
     }
 
-    private void runTestInternal(Class<? extends BatchDescription> batchDescriptionClass) throws IOException {
+    private void runTestInternal(Class<? extends BatchDescription> batchClass) throws IOException {
         LOG.info(MessageFormat.format(
                 Messages.getString("BatchTester.infoStart"), //$NON-NLS-1$
                 driverContext.getCallerClass().getName()));
@@ -106,82 +104,66 @@ public class BatchTester extends TesterBase {
 
         LOG.info(MessageFormat.format(
                 Messages.getString("BatchTester.infoCompile"), //$NON-NLS-1$
-                batchDescriptionClass.getName()));
+                batchClass.getName()));
 
-        BatchDriver batchDriver = BatchDriver.analyze(batchDescriptionClass);
-        assertFalse(batchDriver.getDiagnostics().toString(), batchDriver.hasError());
+        CompilerConfiguration configuration = Util.getConfiguration(toolkit, driverContext);
+        try (CompilerSession compiler = toolkit.newSession(configuration)) {
+            ArtifactMirror artifact = compiler.compileBatch(batchClass);
+            Util.deploy(driverContext, artifact);
 
-        driverContext.validateCompileEnvironment();
+            BatchMirror batch = artifact.getBatch();
 
-        File compileWorkDir = driverContext.getCompilerWorkingDirectory();
-        if (compileWorkDir.exists()) {
-            FileUtils.forceDelete(compileWorkDir);
-        }
-
-        File compilerOutputDir = new File(compileWorkDir, "output"); //$NON-NLS-1$
-        File compilerLocalWorkingDir = new File(compileWorkDir, "build"); //$NON-NLS-1$
-
-        BatchInfo batchInfo = DirectBatchCompiler.compile(
-                batchDescriptionClass,
-                "test.batch", //$NON-NLS-1$
-                Location.fromPath(driverContext.getClusterWorkDir(), '/'),
-                compilerOutputDir,
-                compilerLocalWorkingDir,
-                Arrays.asList(new File[] {
-                        DirectFlowCompiler.toLibraryPath(batchDescriptionClass)
-                }),
-                batchDescriptionClass.getClassLoader(),
-                driverContext.getOptions());
-
-        for (String flowId : jobFlowMap.keySet()) {
-            if (batchInfo.findJobflow(flowId) == null) {
-                throw new IllegalStateException(MessageFormat.format(
-                        Messages.getString("BatchTester.errorMissingJobflow"), //$NON-NLS-1$
-                        driverContext.getCallerClass().getName(),
-                        flowId));
+            for (String flowId : jobflowMap.keySet()) {
+                if (batch.findElement(flowId) == null) {
+                    throw new IllegalStateException(MessageFormat.format(
+                            Messages.getString("BatchTester.errorMissingJobflow"), //$NON-NLS-1$
+                            driverContext.getCallerClass().getName(),
+                            flowId));
+                }
             }
-        }
 
-        driverContext.validateExecutionEnvironment();
+            driverContext.validateExecutionEnvironment();
 
-        LOG.info(MessageFormat.format(
-                Messages.getString("BatchTester.infoInitializeEnvironment"), //$NON-NLS-1$
-                driverContext.getCallerClass().getName()));
-        JobflowExecutor executor = new JobflowExecutor(driverContext);
-        executor.cleanWorkingDirectory();
-        for (JobflowInfo jobflowInfo : batchInfo.getJobflows()) {
-            driverContext.prepareCurrentJobflow(jobflowInfo);
-            executor.cleanInputOutput(jobflowInfo);
-        }
-        executor.cleanExtraResources(getExternalResources());
+            LOG.info(MessageFormat.format(
+                    Messages.getString("BatchTester.infoInitializeEnvironment"), //$NON-NLS-1$
+                    driverContext.getCallerClass().getName()));
+            JobflowExecutor executor = new JobflowExecutor(driverContext);
+            executor.cleanWorkingDirectory();
 
-        if (getExternalResources().isEmpty() == false) {
-            LOG.debug("initializing external resources: {}", //$NON-NLS-1$
-                    batchDescriptionClass.getName());
-            executor.prepareExternalResources(getExternalResources());
-        }
+            for (JobflowMirror jobflow : batch.getElements()) {
+                Util.prepare(driverContext, batch, jobflow);
+                executor.cleanInputOutput(jobflow);
+            }
+            executor.cleanExtraResources(getExternalResources());
 
-        for (JobflowInfo jobflowInfo : batchInfo.getJobflows()) {
-            driverContext.prepareCurrentJobflow(jobflowInfo);
-            String flowId = jobflowInfo.getJobflow().getFlowId();
-            JobFlowTester tester = jobFlowMap.get(flowId);
-            if (tester != null) {
-                LOG.debug("initializing jobflow input/output: {}#{}", //$NON-NLS-1$
-                        batchDescriptionClass.getName(), flowId);
-                executor.prepareInput(jobflowInfo, tester.inputs);
-                executor.prepareOutput(jobflowInfo, tester.outputs);
+            if (getExternalResources().isEmpty() == false) {
+                LOG.debug("initializing external resources: {}", //$NON-NLS-1$
+                        batchClass.getName());
+                executor.prepareExternalResources(getExternalResources());
+            }
 
-                LOG.info(MessageFormat.format(
-                        Messages.getString("BatchTester.infoExecute"), //$NON-NLS-1$
-                        batchDescriptionClass.getName(), flowId));
-                VerifyContext verifyContext = new VerifyContext(driverContext);
-                executor.runJobflow(jobflowInfo);
-                verifyContext.testFinished();
+            for (JobflowMirror jobflow : Util.sort(batch.getElements())) {
+                Util.prepare(driverContext, batch, jobflow);
+                String flowId = jobflow.getFlowId();
+                JobFlowTester tester = jobflowMap.get(flowId);
+                if (tester != null) {
+                    LOG.debug("initializing jobflow input/output: {}#{}", //$NON-NLS-1$
+                            batchClass.getName(), flowId);
+                    executor.prepareInput(jobflow, tester.inputs);
+                    executor.prepareOutput(jobflow, tester.outputs);
 
-                LOG.info(MessageFormat.format(
-                        Messages.getString("BatchTester.infoVerifyResult"), //$NON-NLS-1$
-                        batchDescriptionClass.getName(), flowId));
-                executor.verify(jobflowInfo, verifyContext, tester.outputs);
+                    LOG.info(MessageFormat.format(
+                            Messages.getString("BatchTester.infoExecute"), //$NON-NLS-1$
+                            batchClass.getName(), flowId));
+                    VerifyContext verifyContext = new VerifyContext(driverContext);
+                    executor.runJobflow(jobflow);
+                    verifyContext.testFinished();
+
+                    LOG.info(MessageFormat.format(
+                            Messages.getString("BatchTester.infoVerifyResult"), //$NON-NLS-1$
+                            batchClass.getName(), flowId));
+                    executor.verify(jobflow, verifyContext, tester.outputs);
+                }
             }
         }
     }
@@ -195,7 +177,7 @@ public class BatchTester extends TesterBase {
             DataModelSourceFactory source = entry.getValue();
             moderator.validate(entry.getKey().getModelType(), label, source);
         }
-        for (Map.Entry<String, JobFlowTester> entry : jobFlowMap.entrySet()) {
+        for (Map.Entry<String, JobFlowTester> entry : jobflowMap.entrySet()) {
             validateTestCondition(entry.getValue(), entry.getKey());
         }
     }

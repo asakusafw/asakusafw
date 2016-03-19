@@ -15,8 +15,6 @@
  */
 package com.asakusafw.testdriver;
 
-import com.asakusafw.compiler.flow.FlowDescriptionDriver;
-import com.asakusafw.compiler.testing.DirectExporterDescription;
 import com.asakusafw.vocabulary.flow.Out;
 import com.asakusafw.vocabulary.flow.Source;
 import com.asakusafw.vocabulary.flow.graph.FlowElementInput;
@@ -24,32 +22,23 @@ import com.asakusafw.vocabulary.flow.graph.FlowElementInput;
 /**
  * A flow output driver for testing flow-parts.
  * @since 0.2.0
- * @version 0.6.0
+ * @version 0.8.0
  * @param <T> the data model type
  */
 public class FlowPartDriverOutput<T> extends FlowDriverOutput<T, FlowPartDriverOutput<T>> implements Out<T> {
-
-    private final DirectExporterDescription exporterDescription;
 
     private final Out<T> out;
 
     /**
      * Creates a new instance.
      * @param driverContext the current test driver context
-     * @param descDriver the flow description driver
      * @param name the flow output name
      * @param modelType the data model class
+     * @param vocabulary the original vocabulary
      */
-    public FlowPartDriverOutput(TestDriverContext driverContext, FlowDescriptionDriver descDriver, String name,
-            Class<T> modelType) {
+    public FlowPartDriverOutput(TestDriverContext driverContext, String name, Class<T> modelType, Out<T> vocabulary) {
         super(driverContext.getCallerClass(), driverContext.getRepository(), name, modelType);
-        String exportPath = FlowPartDriverUtils.createOutputLocation(driverContext, name).toPath('/');
-        this.exporterDescription = new DirectExporterDescription(modelType, exportPath);
-        this.out = descDriver.createOut(name, exporterDescription);
-    }
-
-    DirectExporterDescription getExporterDescription() {
-        return exporterDescription;
+        this.out = vocabulary;
     }
 
     @Override

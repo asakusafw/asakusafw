@@ -22,10 +22,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
-import com.asakusafw.compiler.flow.FlowCompilerOptions;
 import com.asakusafw.compiler.trace.TracepointWeaveRewriter;
 import com.asakusafw.runtime.core.Report;
+import com.asakusafw.testdriver.compiler.CompilerConfiguration.DebugLevel;
+import com.asakusafw.testdriver.compiler.CompilerConfiguration.OptimizeLevel;
 import com.asakusafw.testdriver.core.TestDataToolProvider;
 import com.asakusafw.testdriver.core.TestingEnvironmentConfigurator;
 import com.asakusafw.trace.io.TraceSettingSerializer;
@@ -121,25 +123,12 @@ public abstract class TestDriverBase extends DriverElementBase {
      * @param level the compiler optimization level
      */
     public void setOptimize(int level) {
-        FlowCompilerOptions options = driverContext.getOptions();
         if (level <= 0) {
-            options.setCompressConcurrentStage(false);
-            options.setCompressFlowPart(false);
-            options.setHashJoinForSmall(false);
-            options.setHashJoinForTiny(false);
-            options.setEnableCombiner(false);
+            driverContext.setCompilerOptimizeLevel(OptimizeLevel.DISABLED);
         } else if (level == 1) {
-            options.setCompressConcurrentStage(FlowCompilerOptions.Item.compressConcurrentStage.defaultValue);
-            options.setCompressFlowPart(FlowCompilerOptions.Item.compressFlowPart.defaultValue);
-            options.setHashJoinForSmall(FlowCompilerOptions.Item.hashJoinForSmall.defaultValue);
-            options.setHashJoinForTiny(FlowCompilerOptions.Item.hashJoinForTiny.defaultValue);
-            options.setEnableCombiner(FlowCompilerOptions.Item.enableCombiner.defaultValue);
+            driverContext.setCompilerOptimizeLevel(OptimizeLevel.NORMAL);
         } else {
-            options.setCompressConcurrentStage(true);
-            options.setCompressFlowPart(true);
-            options.setHashJoinForSmall(true);
-            options.setHashJoinForTiny(true);
-            options.setEnableCombiner(true);
+            driverContext.setCompilerOptimizeLevel(OptimizeLevel.AGGRESSIVE);
         }
     }
 
@@ -148,24 +137,26 @@ public abstract class TestDriverBase extends DriverElementBase {
      * @param enable {@code true} to keep debugging information, otherwise {@code false}
      */
     public void setDebug(boolean enable) {
-        driverContext.getOptions().setEnableDebugLogging(enable);
+        if (enable) {
+            driverContext.setCompilerDebugLevel(DebugLevel.NORMAL);
+        } else {
+            driverContext.setCompilerDebugLevel(DebugLevel.DISABLED);
+        }
     }
 
     /**
-     * Sets an extra compiler option ({@code X<name>=<value>}).
-     * The compiler name MUST NOT start with {@code "X"}.
+     * Sets an extra compiler option.
      * @param name the option name
      * @param value the option value
      * @since 0.7.3
      */
     public void setExtraCompilerOption(String name, String value) {
-        if (name.startsWith(FlowCompilerOptions.PREFIX_EXTRA_OPTION)) {
-            throw new IllegalArgumentException(MessageFormat.format(
-                    Messages.getString("TestDriverBase.errorInvalidPrefix"), //$NON-NLS-1$
-                    FlowCompilerOptions.PREFIX_EXTRA_OPTION,
-                    name));
+        Objects.requireNonNull(name);
+        if (value == null) {
+            driverContext.getCompilerOptions().remove(name);
+        } else {
+            driverContext.getCompilerOptions().put(name, value);
         }
-        driverContext.getOptions().putExtraAttribute(name, value);
     }
 
     /**
@@ -359,9 +350,11 @@ public abstract class TestDriverBase extends DriverElementBase {
 
     private void appendTrace(TraceSetting setting) {
         assert setting != null;
-        String optionValue = driverContext.getOptions().getExtraAttribute(TracepointWeaveRewriter.KEY_COMPILER_OPTION);
+        // FIXME
+        Map<String, String> options = driverContext.getCompilerOptions();
+        String optionValue = options.get(TracepointWeaveRewriter.KEY_COMPILER_OPTION);
         optionValue = appendTraceSetting(optionValue, setting);
-        driverContext.getOptions().putExtraAttribute(TracepointWeaveRewriter.KEY_COMPILER_OPTION, optionValue);
+        options.put(TracepointWeaveRewriter.KEY_COMPILER_OPTION, optionValue);
     }
 
     private String appendTraceSetting(String option, TraceSetting setting) {

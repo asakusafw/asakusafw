@@ -19,8 +19,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import com.asakusafw.compiler.common.Naming;
 import com.asakusafw.testdriver.TestDriverContext;
+import com.asakusafw.testdriver.compiler.CompilerConstants;
 
 /**
  * Utilities for emulated executions.
@@ -59,7 +59,7 @@ public final class EmulatorUtils {
      */
     public static File getJobflowLibraryPath(TestDriverContext context) {
         File packagePath = context.getJobflowPackageLocation(context.getCurrentBatchId());
-        File packageFile = new File(packagePath, Naming.getJobflowClassPackageName(context.getCurrentFlowId()));
+        File packageFile = new File(packagePath, CompilerConstants.getJobflowLibraryName(context.getCurrentFlowId()));
         return packageFile;
     }
 }

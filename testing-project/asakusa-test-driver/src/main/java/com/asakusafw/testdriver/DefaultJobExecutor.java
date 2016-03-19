@@ -32,7 +32,7 @@ import org.junit.Assume;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.asakusafw.compiler.common.Naming;
+import com.asakusafw.testdriver.compiler.CompilerConstants;
 import com.asakusafw.testdriver.hadoop.ConfigurationFactory;
 
 /**
@@ -165,7 +165,7 @@ public class DefaultJobExecutor extends JobExecutor {
 
     private String findPackage() throws IOException {
         File packagePath = context.getJobflowPackageLocation(context.getCurrentBatchId());
-        File packageFile = new File(packagePath, Naming.getJobflowClassPackageName(context.getCurrentFlowId()));
+        File packageFile = new File(packagePath, CompilerConstants.getJobflowLibraryName(context.getCurrentFlowId()));
         if (packageFile.isFile()) {
             return packageFile.getAbsolutePath();
         }
