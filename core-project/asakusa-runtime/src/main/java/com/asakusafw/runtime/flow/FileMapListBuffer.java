@@ -290,14 +290,11 @@ public class FileMapListBuffer<E extends Writable>
                 assert fileInput == null;
                 assert fileOutput == null;
                 mapFilePath = File.createTempFile(PAGE_STORE_PREFIX, PAGE_STORE_SUFFIX);
-                LOG.info(MessageFormat.format(
-                        "Initializing a backing store for FileMapListBuffer: {0}",
-                        mapFilePath));
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(MessageFormat.format(
                             "Preparing map file: path={0}, example={1}", //$NON-NLS-1$
                             mapFilePath,
-                            objects[0]));
+                            objects.length > 0 ? objects[0] : "N/A")); //$NON-NLS-1$
                 }
                 mapFile = new RandomAccessFile(mapFilePath, "rw"); //$NON-NLS-1$
                 fileInput = new BufferedFileInput(mapFile, inputBuffer);

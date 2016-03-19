@@ -80,9 +80,11 @@ class HeartbeatKeeper implements Closeable {
         }
         synchronized (daemon) {
             if (daemon.getState() == State.NEW) {
-                LOG.info(MessageFormat.format(
-                        "Starting Heartbeat Keeper: {0})",
-                        daemon.getName()));
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(MessageFormat.format(
+                            "Starting Heartbeat Keeper: {0})",
+                            daemon.getName()));
+                }
                 daemon.start();
             }
         }
