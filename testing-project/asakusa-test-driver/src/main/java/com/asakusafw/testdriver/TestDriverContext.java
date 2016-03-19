@@ -75,15 +75,15 @@ public class TestDriverContext implements TestContext {
 
     /**
      * The system property key of runtime working directory.
-     * This working directory must be a relative path from the default working directory.
+     * This working directory should be a relative path from the default working directory.
+     * @deprecated Use {@link CompilerConstants#KEY_RUNTIME_WORKING_DIRECTORY} instead
      */
     @Deprecated
-    public static final String KEY_RUNTIME_WORKING_DIRECTORY = "asakusa.testdriver.hadoopwork.dir"; //$NON-NLS-1$
+    public static final String KEY_RUNTIME_WORKING_DIRECTORY = CompilerConstants.KEY_RUNTIME_WORKING_DIRECTORY;
 
     /**
      * The system property key of compiler working directory.
      */
-    @Deprecated
     public static final String KEY_COMPILER_WORKING_DIRECTORY = "asakusa.testdriver.compilerwork.dir"; //$NON-NLS-1$
 
     /**
@@ -128,7 +128,12 @@ public class TestDriverContext implements TestContext {
      * The path to the external dependency libraries folder (relative from working directory).
      * @since 0.5.1
      */
-    public static final String EXTERNAL_LIBRARIES_PATH = CompilerConstants.LIBRARY_DIRECTORY_PATH;
+    public static final String EXTERNAL_LIBRARIES_PATH = "src/main/libs"; //$NON-NLS-1$
+
+    /**
+     * The output directory path in the final artifact.
+     */
+    private static final String OUTPUT_DIRECTORY_PATH = "usr/lib"; //$NON-NLS-1$
 
     /**
      * The path to the framework version file (relative from the framework home path).
@@ -420,7 +425,7 @@ public class TestDriverContext implements TestContext {
         }
         File apps = getBatchApplicationsInstallationPath();
         File batch = new File(apps, batchId);
-        File lib = new File(batch, CompilerConstants.OUTPUT_DIRECTORY_PATH);
+        File lib = new File(batch, OUTPUT_DIRECTORY_PATH);
         return lib;
     }
 

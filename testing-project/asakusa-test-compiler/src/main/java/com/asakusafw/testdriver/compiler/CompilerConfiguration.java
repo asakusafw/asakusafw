@@ -70,7 +70,7 @@ public interface CompilerConfiguration {
     <T> T getExtension(Class<T> type);
 
     /**
-     * Sets the base class loader
+     * Sets the base class loader.
      * @param newValue the class loader
      * @return this
      */

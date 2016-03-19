@@ -29,39 +29,23 @@ public final class CompilerConstants {
      */
     public static final String KEY_RUNTIME_WORKING_DIRECTORY = "asakusa.testdriver.hadoopwork.dir"; //$NON-NLS-1$
 
-    /**
-     * The system property key of compiler working directory.
-     */
-    public static final String KEY_COMPILER_WORKING_DIRECTORY = "asakusa.testdriver.compilerwork.dir"; //$NON-NLS-1$
-
-    private static final String HADOOPWORK_DIR_DEFAULT = "target/testdriver/hadoopwork"; //$NON-NLS-1$
-
-    /**
-     * The library directory path in the target project.
-     */
-    public static final String LIBRARY_DIRECTORY_PATH = "src/main/libs"; //$NON-NLS-1$
-
-    /**
-     * The output directory path in the final artifact.
-     */
-    public static final String OUTPUT_DIRECTORY_PATH = "usr/lib"; //$NON-NLS-1$
+    private static final String DEFAULT_RUNTIME_WORKING_DIRECTORY = "target/testdriver/hadoopwork"; //$NON-NLS-1$
 
     /**
      * Returns the path to the runtime working directory.
-     * This working directory is relative path from cluster's default working directory.
      * Clients can configure this property using system property {@value #KEY_RUNTIME_WORKING_DIRECTORY}.
      * @return the runtime working directory
      */
     public static String getRuntimeWorkingDirectory() {
         String dir = System.getProperty(KEY_RUNTIME_WORKING_DIRECTORY);
         if (dir == null) {
-            return HADOOPWORK_DIR_DEFAULT;
+            return DEFAULT_RUNTIME_WORKING_DIRECTORY;
         }
         return dir;
     }
 
     /**
-     * Returns the path of the jobflow library path (from the batch directory)
+     * Returns the path of the jobflow library path (from the batch directory).
      * @param batchDirectory the batch directory
      * @param flowId the target flow ID
      * @return the jobflow library path
