@@ -147,14 +147,16 @@ Eclipse上で環境変数 ``ASAKUSA_HOME`` が有効になっていることを�
 
 コマンドライン上から作成する場合、以下のURLに公開されているプロジェクトテンプレートのアーカイブを展開します。
 
-* `asakusa-project-template-0.8.0.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-project-template-0.8.0.tar.gz>`_
+* `asakusa-mapreduce-template-0.8.0.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-mapreduce-template-0.8.0.tar.gz>`_
+
+Asakusa on Sparkを利用する場合のプロジェクトテンプレートは、 :asakusa-on-spark:`Asakusa on Spark ユーザガイド <user-guide.html>` に記載のリンクからダウンロードします。
 
 ..  code-block:: sh
 
     cd <work-dir>
-    curl -OL http://www.asakusafw.com/download/gradle-plugin/asakusa-project-template-0.8.0.tar.gz
-    tar xf asakusa-project-template-0.8.0.tar.gz
-    mv asakusa-project-template my-batchapp
+    curl -OL http://www.asakusafw.com/download/gradle-plugin/asakusa-mapreduce-template-0.8.0.tar.gz
+    tar xf asakusa-mapreduce-template-0.8.0.tar.gz
+    mv asakusa-mapreduce-template my-batchapp
     cd my-batchapp
 
 Shafuを導入した開発環境では、オンライン上に公開されているAsakusa Frameworkのプロジェクトテンプレートカタログを利用して、テンプレートプロジェクトをベースに新規プロジェクトを作成することができます。
@@ -162,8 +164,13 @@ Shafuを導入した開発環境では、オンライン上に公開されてい
 #. Javaパースペクティブ上のメニューバーから :menuselection:`File --> New --> Gradleプロジェクトをテンプレートから生成` を選択します。
 #. :guilabel:`新規プロジェクト情報` ダイアログで、プロジェクト名などを入力します。
 #. :guilabel:`テンプレートからプロジェクトを作成` ダイアログで :guilabel:`URLを指定してプロジェクトテンプレートをダウンロードする` が選択状態になっていることを確認して、画面右の :guilabel:`選択` ボタンを押下します。
-#. :guilabel:`プロジェクトテンプレート` ダイアログにオンラインに公開されている、利用可能なプロジェクトテンプレートの一覧が表示されます。ここでは :guilabel:`Asakusa Project Template - 0.8.0` を選択します。
+#. :guilabel:`プロジェクトテンプレート` ダイアログにオンラインに公開されている、利用可能なプロジェクトテンプレートの一覧が表示されます。
+
+   *  MapReduce向けのテンプレートを利用する場合は、 :guilabel:`Asakusa Project Template <MapReduce> - 0.8.0` を選択します。
+   *  Spark向けのテンプレートを利用する場合は、 :guilabel:`Asakusa Project Template <Spark> - <version>` を選択します [#]_ 。
 #. :guilabel:`Finish` ボタンを押すと選択したプロジェクトテンプレートを読み込み、Eclipseプロジェクトとして新規プロジェクトが作成されます。
+
+..  [#] Asakusa on Sparkで利用可能なバージョンは、 :asakusa-on-spark:`Asakusa on Spark <index.html>` のドキュメントを確認してください。
 
 Asakusa Frameworkのインストール
 -------------------------------

@@ -69,9 +69,11 @@ Asakusa Gradle Pluginを使った標準的なアプリケーション開発環�
 プロジェクトテンプレートのダウンロード
 --------------------------------------
 
-プロジェクトテンプレートは、以下リンクからダウンロードします。
+基本的な構成のみを持つプロジェクトテンプレートは、以下リンクからダウンロードします。
 
-* `asakusa-project-template-0.8.0.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-project-template-0.8.0.tar.gz>`_
+* `asakusa-mapreduce-template-0.8.0.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-mapreduce-template-0.8.0.tar.gz>`_
+
+Asakusa on Sparkを利用する場合のプロジェクトテンプレートは、 :asakusa-on-spark:`Asakusa on Spark ユーザガイド <user-guide.html>` に記載のリンクからダウンロードします。
 
 また、Asakusa Frameworkの `サンプルプログラム集 (GitHub)`_ では、サンプルアプリケーションのソースコード一式を含むサンプルアプリケーションプロジェクトを公開しています。
 
@@ -80,10 +82,13 @@ Asakusa Gradle Pluginを使った標準的なアプリケーション開発環�
 プロジェクトの配置
 ------------------
 
-ダウンロードしたアーカイブファイルを展開すると、プロジェクトテンプレート名をディレクトリ名に持つプロジェクトファイル一式が作成されます。
-このディレクトリ名は開発するアプリケーションを示す名前に変更して作業用ディレクトリに配置してください。
+ダウンロードしたプロジェクトテンプレートのアーカイブを展開すると、プロジェクトテンプレート名をディレクトリ名に持つプロジェクトファイル一式が作成されます。
+このディレクトリを開発するアプリケーションを示すプロジェクト名に変更して、作業用ディレクトリに配置してください。
+サンプルアプリケーションを利用する場合も同様です。
 
-以降本書では、ビルドの流れを解説するためにサンプルアプリケーションプロジェクトを使って説明します。
+以降本書では、ビルドの流れを解説するために `サンプルプログラム集 (GitHub)`_ に公開されているサンプルアプリケーションプロジェクトを使って説明します。
+サンプルアプリケーションは、Asakusa on Sparkのプロジェクトテンプレートを利用しています。
+
 ここでは、ダウンロードしたサンプルアプリケーションプロジェクトを ``example-app`` というプロジェクト名で :file:`$HOME/workspace` に配置したものとします。
 
 ..  code-block:: sh
@@ -91,7 +96,7 @@ Asakusa Gradle Pluginを使った標準的なアプリケーション開発環�
     cd ~/Downloads
     curl -OL https://github.com/asakusafw/asakusafw-examples/archive/0.8.0.tar.gz
     tar xf 0.8.0.tar.gz
-    mv asakusafw-examples-0.8.0/example-directio-csv ~/workspace/example-app
+    cp -a asakusafw-examples-0.8.0/example-directio-csv ~/workspace/example-app
 
 プロジェクトレイアウト
 ----------------------
@@ -147,9 +152,8 @@ Gradleラッパーに関するディレクトリ及びファイルは、Gradle�
 ..  literalinclude:: gradle-attachment/template-build.gradle
     :language: groovy
 
-プロジェクトテンプレートに含まれるビルドスクリプトには、Asakusa Frameworkの基本的な機能に加えて、以下の機能を利用するための設定が定義されています。
+プロジェクトテンプレートに含まれるビルドスクリプトには、以下の機能を利用するための設定があらかじめ定義されています。
 
-* :asakusa-on-spark:`Asakusa on Spark <index.html>`
 * :doc:`Direct I/O <../directio/index>`
 * :doc:`WindGate <../windgate/index>`
 * :doc:`エミュレーションモードによるテスト実行 <../testing/emulation-mode>`
@@ -328,7 +332,7 @@ Asakusa DSLの記述や配置方法については :doc:`../dsl/index` を参照
     ./gradlew compileBatchapp
     
 このタスクは、ビルドスクリプトに適用されているプラグイン構成に従って、利用するAsakusa DSLコンパイラを実行します。
-プロジェクトテンプレートに含まれるビルドスクリプトの構成ではMapReduceとSpark向けのプラグインが設定されているため、
+例えばAsakusa on Sparkのプロジェクトテンプレートに含まれるビルドスクリプトの構成ではMapReduceとSpark向けのプラグインが設定されているため、
 この2つの環境向けのDSLコンパイラが実行されます。
 
 その他、バッチアプリケーションのコンパイルでは以下のタスクが利用できます。

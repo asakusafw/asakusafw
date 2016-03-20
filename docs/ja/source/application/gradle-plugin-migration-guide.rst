@@ -171,8 +171,8 @@ Asakusa Gradle Pluginのプロジェクトテンプレートに含まれるフ�
 ..  code-block:: sh
 
     cd ~/Downloads
-    tar xf asakusa-project-template-*.tar.gz
-    cd asakusa-project-template
+    tar xf asakusa-*-template-*.tar.gz
+    cd asakusa-*-template
     cp -a build.gradle gradlew gradlew.bat .buildtools ~/workspace/migrate-app
 
 プロジェクト初期設定ファイルの適用
