@@ -300,6 +300,10 @@
             <forkMode>once</forkMode>
             <systemProperties>
               <property>
+                <name>java.awt.headless</name>
+                <value>true</value>
+              </property>
+              <property>
                 <name>net.sourceforge.cobertura.datafile</name>
                 <value>${basedir}/target/cobertura/cobertura.ser</value>
               </property>
