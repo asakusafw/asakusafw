@@ -186,11 +186,6 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>asakusa-test-mapreduce</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
       <artifactId>asakusa-test-trace-plugin</artifactId>
       <version>${project.version}</version>
     </dependency>
