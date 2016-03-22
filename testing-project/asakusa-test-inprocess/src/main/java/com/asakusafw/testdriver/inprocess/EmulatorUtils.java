@@ -18,6 +18,8 @@ package com.asakusafw.testdriver.inprocess;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.regex.Pattern;
 
 import com.asakusafw.testdriver.TestDriverContext;
 import com.asakusafw.testdriver.compiler.CompilerConstants;
@@ -25,6 +27,7 @@ import com.asakusafw.testdriver.compiler.CompilerConstants;
 /**
  * Utilities for emulated executions.
  * @since 0.6.0
+ * @version 0.8.0
  */
 public final class EmulatorUtils {
 
@@ -61,5 +64,36 @@ public final class EmulatorUtils {
         File packagePath = context.getJobflowPackageLocation(context.getCurrentBatchId());
         File packageFile = new File(packagePath, CompilerConstants.getJobflowLibraryName(context.getCurrentFlowId()));
         return packageFile;
+    }
+
+    /**
+     * Returns whether the target command path has the specified suffix.
+     * @param command the target command
+     * @param suffix the suffix
+     * @return {@code true} if the command path has the specified suffix, otherwise {@code false}
+     * @since 0.8.0
+     */
+    public static boolean hasCommandSuffix(String command, String suffix) {
+        List<String> commandList = toPathSegments(command);
+        List<String> suffixList = toPathSegments(suffix);
+        int commandSize = commandList.size();
+        int suffixSize = suffixList.size();
+        if (commandSize < suffixSize) {
+            return false;
+        }
+        List<String> commandRegion = commandList.subList(commandSize - suffixSize, commandSize);
+        return commandRegion.equals(suffixList);
+    }
+
+    private static List<String> toPathSegments(String path) {
+        File f = new File(path);
+        List<String> results = new ArrayList<>();
+        for (String s : f.getPath().split(Pattern.quote(File.separator))) {
+            if (s.isEmpty()) {
+                continue;
+            }
+            results.add(s);
+        }
+        return results;
     }
 }

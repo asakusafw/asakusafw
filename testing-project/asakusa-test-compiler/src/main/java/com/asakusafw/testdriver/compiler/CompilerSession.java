@@ -21,7 +21,7 @@ import java.io.IOException;
 import com.asakusafw.vocabulary.flow.FlowDescription;
 
 /**
- * An abstract super interface of Asakusa DSL compiler API for testing.
+ * An abstract super interface of Asakusa DSL TestKit Compiler.
  * @since 0.8.0
  */
 public interface CompilerSession extends Closeable {

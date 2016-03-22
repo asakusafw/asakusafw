@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import com.asakusafw.testdriver.TestDriverContext;
 import com.asakusafw.testdriver.TestExecutionPlan;
 import com.asakusafw.testdriver.hadoop.ConfigurationFactory;
+import com.asakusafw.testdriver.inprocess.EmulatorUtils;
 import com.asakusafw.windgate.core.AbortTask;
 import com.asakusafw.windgate.core.GateProfile;
 
@@ -35,7 +36,7 @@ public class WindGateFinalizeCommandEmulator extends AbstractWindGateCommandEmul
 
     static final Logger LOG = LoggerFactory.getLogger(WindGateFinalizeCommandEmulator.class);
 
-    private static final String PATH_COMMAND = PATH_WINDGATE + "/bin/finalize.sh"; //$NON-NLS-1$
+    private static final String COMMAND_SUFFIX = PATH_WINDGATE + "/bin/finalize.sh"; //$NON-NLS-1$
 
     @Override
     public String getName() {
@@ -54,7 +55,7 @@ public class WindGateFinalizeCommandEmulator extends AbstractWindGateCommandEmul
         if (cmd.size() < 1) {
             return false;
         }
-        if (cmd.get(0).endsWith('/' + PATH_COMMAND) == false) {
+        if (EmulatorUtils.hasCommandSuffix(cmd.get(0), COMMAND_SUFFIX) == false) {
             return false;
         }
         return true;

@@ -18,7 +18,7 @@ package com.asakusafw.testdriver.compiler;
 import java.io.File;
 
 /**
- * Constants for Asakusa compiler API for testing.
+ * Constants for Asakusa DSL TestKit Compiler.
  * @since 0.8.0
  */
 public final class CompilerConstants {

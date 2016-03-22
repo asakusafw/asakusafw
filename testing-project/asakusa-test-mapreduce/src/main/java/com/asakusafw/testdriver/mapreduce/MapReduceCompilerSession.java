@@ -23,8 +23,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.io.FileUtils;
-
 import com.asakusafw.compiler.batch.BatchDriver;
 import com.asakusafw.compiler.batch.Workflow;
 import com.asakusafw.compiler.flow.ExternalIoCommandProvider;
@@ -49,6 +47,7 @@ import com.asakusafw.testdriver.compiler.basic.BasicCommandTaskMirror;
 import com.asakusafw.testdriver.compiler.basic.BasicHadoopTaskMirror;
 import com.asakusafw.testdriver.compiler.basic.BasicJobflowMirror;
 import com.asakusafw.testdriver.compiler.basic.BasicPortMirror;
+import com.asakusafw.testdriver.compiler.util.DeploymentUtil;
 import com.asakusafw.utils.graph.Graph;
 import com.asakusafw.vocabulary.batch.BatchDescription;
 import com.asakusafw.vocabulary.flow.FlowDescription;
@@ -258,6 +257,7 @@ class MapReduceCompilerSession implements CompilerSession {
     }
 
     private void deploy(JobflowInfo info, File outputDirectory) throws IOException {
+        assert info.getPackageFile().isFile();
         File dest = CompilerConstants.getJobflowLibraryPath(outputDirectory, info.getJobflow().getFlowId());
         File parent = dest.getParentFile();
         if (parent.mkdirs() == false && parent.isDirectory() == false) {
@@ -265,7 +265,7 @@ class MapReduceCompilerSession implements CompilerSession {
                     "failed to create file: {0}",
                     dest));
         }
-        FileUtils.moveFile(info.getPackageFile(), dest);
+        DeploymentUtil.deploy(info.getPackageFile(), dest);
     }
 
     @Override
