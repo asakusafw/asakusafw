@@ -83,6 +83,18 @@ Gradle上でのテストドライバ実行
 ..  tip::
     エミュレーションモードを有効にして Gradle上でテストを実行すると、Gradleが提供する `JaCoCo Plugin <http://www.gradle.org/docs/current/userguide/jacoco_plugin.html>`_ などのソースコードカバレッジ取得機能との連携が可能になります。
 
+..  attention::
+    Asakusa Framework バージョン |version| において、Windows上でエミュレーションモードを有効してテストドライバを実行した際に以下のようなエラーログが出力されることがありますが、動作上は問題ありません。
+
+    ..  code-block:: none
+
+        INFO  インプロセステスト実行用の機能をテストドライバーにインストールしています
+        INFO  インプロセステスト実行用の最適化設定をテストドライバーにインストールしています
+        ERROR Failed to locate the winutils binary in the hadoop binary path
+        java.io.IOException: Could not locate executable null\bin\winutils.exe in the Hadoop binaries.
+            at org.apache.hadoop.util.Shell.getQualifiedBinPath(Shell.java:356) [hadoop-common-2.7.2.jar:na]
+            ...
+
 Eclipse上でのテストドライバ実行
 -------------------------------
 
