@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.ServiceLoader;
 
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +33,8 @@ import com.asakusafw.testdriver.compiler.CompilerConfiguration;
 import com.asakusafw.testdriver.compiler.CompilerToolkit;
 import com.asakusafw.testdriver.compiler.GraphElement;
 import com.asakusafw.testdriver.compiler.JobflowMirror;
+import com.asakusafw.testdriver.compiler.util.DeploymentUtil;
+import com.asakusafw.testdriver.compiler.util.DeploymentUtil.DeployOption;
 import com.asakusafw.utils.graph.Graph;
 import com.asakusafw.utils.graph.Graphs;
 
@@ -112,15 +113,12 @@ final class Util {
                     Messages.getString("JobflowExecutor.warnFailedToCreateDirectory"), //$NON-NLS-1$
                     target.getAbsolutePath()));
         }
-        if (target.exists()) {
-            FileUtils.deleteDirectory(target);
-        }
-        FileUtils.moveDirectory(artifact.getContents(), target);
+        DeploymentUtil.deploy(artifact.getContents(), target, DeployOption.DELETE_SOURCE);
 
         File dependenciesDest = context.getLibrariesPackageLocation(artifact.getBatch().getBatchId());
         if (dependenciesDest.exists()) {
             LOG.debug("Cleaning up dependency libraries: {}", dependenciesDest); //$NON-NLS-1$
-            FileUtils.deleteDirectory(dependenciesDest);
+            DeploymentUtil.delete(dependenciesDest);
         }
         File dependencies = context.getLibrariesPath();
         if (dependencies.exists()) {
@@ -135,7 +133,7 @@ final class Util {
                     continue;
                 }
                 LOG.debug("Copying a library: {} -> {}", file, dependenciesDest); //$NON-NLS-1$
-                FileUtils.copyFileToDirectory(file, dependenciesDest);
+                DeploymentUtil.deployToDirectory(file, dependenciesDest);
             }
         }
     }

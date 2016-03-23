@@ -18,12 +18,11 @@ package com.asakusafw.testdriver.mapreduce;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.commons.io.FileUtils;
-
 import com.asakusafw.testdriver.compiler.CompilerConfiguration;
 import com.asakusafw.testdriver.compiler.CompilerSession;
 import com.asakusafw.testdriver.compiler.CompilerToolkit;
 import com.asakusafw.testdriver.compiler.FlowPortMap;
+import com.asakusafw.testdriver.compiler.util.DeploymentUtil;
 
 /**
  * An implementation of {@link CompilerToolkit} for the MapReduce compiler.
@@ -64,7 +63,7 @@ public class MapReduceCompilerToolkit implements CompilerToolkit {
             throw new IllegalStateException();
         }
         if (workingDirectory.exists()) {
-            FileUtils.forceDelete(workingDirectory);
+            DeploymentUtil.delete(workingDirectory);
         }
     }
 }

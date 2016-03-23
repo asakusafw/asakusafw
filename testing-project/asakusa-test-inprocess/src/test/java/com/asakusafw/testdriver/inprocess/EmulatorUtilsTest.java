@@ -26,6 +26,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.SystemUtils;
+import org.junit.Assume;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -100,6 +102,61 @@ public class EmulatorUtilsTest {
 
         Set<String> paths = normalize(EmulatorUtils.getBatchLibraryPaths(context));
         assertThat(paths, is(normalize(files)));
+    }
+
+    /**
+     * check command suffix.
+     */
+    @Test
+    public void hasCommandSuffix() {
+        assertThat(EmulatorUtils.hasCommandSuffix(
+                "path/to/command",
+                "path/to/command"),
+                is(true));
+        assertThat(EmulatorUtils.hasCommandSuffix(
+                "command",
+                "path/to/command"),
+                is(false));
+        assertThat(EmulatorUtils.hasCommandSuffix(
+                "path/to/other",
+                "path/to/command"),
+                is(false));
+        assertThat(EmulatorUtils.hasCommandSuffix(
+                "/absolute/unix/path/to/command",
+                "path/to/command"),
+                is(true));
+        assertThat(EmulatorUtils.hasCommandSuffix(
+                "/absolute/unix/path/to/other",
+                "path/to/command"),
+                is(false));
+    }
+
+    /**
+     * check command suffix (for windows).
+     */
+    @Test
+    public void hasCommandSuffix_windows() {
+        Assume.assumeTrue(SystemUtils.IS_OS_WINDOWS);
+        assertThat(EmulatorUtils.hasCommandSuffix(
+                "path\\to\\command",
+                "path/to/command"),
+                is(true));
+        assertThat(EmulatorUtils.hasCommandSuffix(
+                "command",
+                "path/to/command"),
+                is(false));
+        assertThat(EmulatorUtils.hasCommandSuffix(
+                "path\\to\\other",
+                "path/to/command"),
+                is(false));
+        assertThat(EmulatorUtils.hasCommandSuffix(
+                "C:\\absolute\\windows\\path\\to\\command",
+                "path/to/command"),
+                is(true));
+        assertThat(EmulatorUtils.hasCommandSuffix(
+                "C:\\absolute\\windows\\path\\to\\other",
+                "path/to/command"),
+                is(false));
     }
 
     private Set<String> normalize(Iterable<File> paths) throws IOException {

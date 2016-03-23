@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * Basic implementations of Asakusa DSL TestKit Compiler.
+ * Utilities for Asakusa DSL TestKit Compiler.
  */
-package com.asakusafw.testdriver.compiler.basic;
+package com.asakusafw.testdriver.compiler.util;

@@ -18,7 +18,7 @@ package com.asakusafw.testdriver.compiler;
 import java.io.IOException;
 
 /**
- * Provides {@link CompilerSession}.
+ * Entry API for Asakusa DSL TestKit Compiler.
  * @since 0.8.0
  */
 public interface CompilerToolkit {

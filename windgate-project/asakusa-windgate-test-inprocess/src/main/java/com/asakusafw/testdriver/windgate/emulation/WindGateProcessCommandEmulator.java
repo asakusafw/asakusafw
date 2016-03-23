@@ -30,6 +30,7 @@ import com.asakusafw.runtime.stage.StageConstants;
 import com.asakusafw.testdriver.TestDriverContext;
 import com.asakusafw.testdriver.TestExecutionPlan;
 import com.asakusafw.testdriver.hadoop.ConfigurationFactory;
+import com.asakusafw.testdriver.inprocess.EmulatorUtils;
 import com.asakusafw.windgate.bootstrap.CommandLineUtil;
 import com.asakusafw.windgate.bootstrap.ExecutionKind;
 import com.asakusafw.windgate.core.GateProfile;
@@ -45,7 +46,7 @@ public class WindGateProcessCommandEmulator extends AbstractWindGateCommandEmula
 
     static final Logger LOG = LoggerFactory.getLogger(WindGateProcessCommandEmulator.class);
 
-    private static final String PATH_COMMAND = PATH_WINDGATE + "/bin/process.sh"; //$NON-NLS-1$
+    private static final String COMMAND_SUFFIX = PATH_WINDGATE + "/bin/process.sh"; //$NON-NLS-1$
 
     private static final int ARG_SESSION_KIND = 2;
 
@@ -70,7 +71,7 @@ public class WindGateProcessCommandEmulator extends AbstractWindGateCommandEmula
         if (cmd.size() < 7) {
             return false;
         }
-        if (cmd.get(0).endsWith('/' + PATH_COMMAND) == false) {
+        if (EmulatorUtils.hasCommandSuffix(cmd.get(0), COMMAND_SUFFIX) == false) {
             return false;
         }
         return true;
