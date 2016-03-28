@@ -33,10 +33,8 @@ extensions = ['sphinx.ext.pngmath', 'sphinx.ext.todo', 'sphinx.ext.extlinks', 'a
 todo_include_todos = True
 
 extlinks = {
-    'issue': ('https://github.com/asakusafw/asakusafw/issues/%s', '#'),
-    'issue-sdk': ('https://github.com/asakusafw/asakusafw-sdk/issues/%s', 'SDK-#'),
-    'pr': ('https://github.com/asakusafw/asakusafw/pull/%s', '#'),
-    'pr-sdk': ('https://github.com/asakusafw/asakusafw-sdk/pull/%s', 'SDK-#'),
+    'milestone-asakusafw': ("https://github.com/asakusafw/asakusafw/issues?&q=milestone:%s", 'asakusafw milestone:'),
+    'milestone-asakusafw-sdk': ("https://github.com/asakusafw/asakusafw-sdk/issues?&q=milestone:%s", 'asakusafw-sdk milestone:'),
     'jinrikisha': ('http://docs.asakusafw.com/jinrikisha/ja/html/%s', None),
     'asakusa-on-spark': ('http://docs.asakusafw.com/asakusa-on-spark/latest/release/ja/html/%s', None),
     'apiref': ('http://docs.asakusafw.com/0.8.0/release/api/%s', None),
