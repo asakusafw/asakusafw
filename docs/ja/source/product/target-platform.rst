@@ -15,22 +15,22 @@ Asakusa Framework は、以下のHadoopディストリビューションと組�
       - Version
       - OS
       - JDK
+    * - Hortonworks Data Platform
+      - 2.4.0
+      - CentOS 7 (7.1)
+      - JDK 8 (1.8.0_60)
     * - MapR
       - 5.0.0 (MRv2) [#]_
       - Red Hat Enterprise Linux 7.1
       - JDK 8 (1.8.0_51)
-    * - Hortonworks Data Platform
-      - 2.3.2
-      - CentOS 7 (7.1)
-      - JDK 8 (1.8.0_40)
     * - CDH
       - 5.2.0 (MRv2) [#]_
       - CentOS 6 (6.2)
       - JDK 7 (1.7.0_45)
     * - Amazon EMR
-      - Hadoop 2.6.0
-      - AMI 4.1.0
-      - JDK 7 (1.7.0_85)
+      - 4.4.0
+      - Amazon Linux 2015.09
+      - JDK 8 (1.8.0_71)
 
 ..  [#] MapReduce Version 1 (MRv1) では動作検証を行なっていません。
 ..  [#] MapReduce Version 1 (MRv1) では動作検証を行なっていません。
@@ -49,31 +49,31 @@ Asakusa Frameworkを利用したバッチアプリケーションの開発環境
       - Version
     * - OS
       - Ubuntu Desktop
-      - 12.04 / 14.04
-    * - OS
-      - MacOSX [#]_
-      - 10.9 / 10.11
+      - 14.04 / 15.10
     * - OS
       - Windows [#]_
       - 7(SP1) / 10
+    * - OS
+      - MacOSX [#]_
+      - 10.11
     * - Java
       - JDK [#]_ [#]_
-      - 1.7.0_76 / 1.8.0.66
+      - 1.7.0_79 / 1.8.0_77
     * - ビルドツール
       - Gradle [#]_
-      - 2.11
+      - 2.12
     * - IDE
       - Eclipse IDE for Java Developers
-      - 4.4.2 / 4.5.1
+      - 4.4.2 / 4.5.2
     * - IDE
       - IntelliJ IDEA Community Edition [#]_
-      - 14.0.3
+      - 2016.1
     * - Hadoop
       - Apache Hadoop [#]_
       - 2.7.2
 
-..  [#] MacOSX上では基本的な動作のみ検証しています。
 ..  [#] Windows上ではテストドライバを利用したテストは :doc:`エミュレーションモード <../testing/emulation-mode>` のみ使用できます。Windowsの利用については、 :doc:`../introduction/start-guide-windows` を参照してください。
+..  [#] MacOSX上では基本的な動作のみ検証しています。
 ..  [#] JREでは一部の機能が動作しません。必ずJDKを使用してください。
 ..  [#] 開発環境に対するJavaのセットアップについては、 :doc:`../application/using-jdk` を参照してください。
 ..  [#] Gradleの利用については、 :doc:`../application/gradle-plugin` を参照してください。
@@ -114,10 +114,10 @@ WindGate
       - Link
     * - Apache Hadoop
       - http://hadoop.apache.org/
-    * - MapR
-      - http://www.mapr.com/
     * - Hortonworks Data Platform
       - http://hortonworks.com/hdp/
+    * - MapR
+      - http://www.mapr.com/
     * - Cloudera CDH
       - http://www.cloudera.com/content/cloudera/en/products-and-services/cdh.html
     * - Amazon EMR
@@ -126,15 +126,17 @@ WindGate
       - http://www.centos.org/
     * - Ubuntu
       - http://www.ubuntu.com/
-    * - MacOSX
-      - http://www.apple.com/osx/
     * - Windows
       - http://windows.microsoft.com/
+    * - MacOSX
+      - http://www.apple.com/osx/
     * - JDK (Java SE)
       - http://www.oracle.com/technetwork/java/javase/index.html
     * - Gradle
       - http://www.gradle.org/
     * - Eclipse
       - http://www.eclipse.org/
+    * - IntelliJ IDEA
+      - https://www.jetbrains.com/idea/
     * - PostgreSQL
       - http://www.postgresql.org/
