@@ -8,7 +8,7 @@
   <fileSets>
     <fileSet>
       <directory>src/main/dist</directory>
-      <outputDirectory>/</outputDirectory>
+      <outputDirectory>.</outputDirectory>
       <fileMode>0644</fileMode>
       <directoryMode>0755</directoryMode>
       <lineEnding>unix</lineEnding>
