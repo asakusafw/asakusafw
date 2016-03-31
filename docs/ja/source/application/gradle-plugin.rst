@@ -128,7 +128,7 @@ Asakusa on Sparkを利用する場合のプロジェクトテンプレートは�
     * - :file:`gradlew.bat`
       - Gradleラッパーコマンド (Windows)
     * - :file:`.buildtools`
-      - Gradleラッパーライブラリ (Gradle Version: 2.11)
+      - Gradleラッパーライブラリ (Gradle Version: 2.12)
 
 アプリケーション開発者は :file:`src` ディレクトリ配下を編集することでアプリケーションを開発します。
 :file:`build` ディレクトリは :file:`src` ディレクトリ配下のファイルをビルドすることで生成される成果物が配置されます。
