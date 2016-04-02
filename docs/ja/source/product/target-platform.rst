@@ -31,6 +31,10 @@ Asakusa Framework は、以下のHadoopディストリビューションと組�
       - 4.4.0
       - Amazon Linux 2015.09
       - JDK 8 (1.8.0_71)
+    * - Microsoft Azure HDInsight
+      - 3.4
+      - Ubuntu 14.04.4
+      - JDK 7 (1.7.0_95)
 
 ..  [#] MapReduce Version 1 (MRv1) では動作検証を行なっていません。
 ..  [#] MapReduce Version 1 (MRv1) では動作検証を行なっていません。
@@ -122,6 +126,8 @@ WindGate
       - http://www.cloudera.com/content/cloudera/en/products-and-services/cdh.html
     * - Amazon EMR
       - http://aws.amazon.com/elasticmapreduce/
+    * - Microsoft Azure HDInsight
+      - https://azure.microsoft.com/services/hdinsight/
     * - CentOS
       - http://www.centos.org/
     * - Ubuntu
