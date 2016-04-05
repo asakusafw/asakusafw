@@ -37,7 +37,7 @@ extlinks = {
     'milestone-asakusafw-sdk': ("https://github.com/asakusafw/asakusafw-sdk/issues?&q=milestone:%s", 'asakusafw-sdk milestone:'),
     'jinrikisha': ('http://docs.asakusafw.com/jinrikisha/ja/html/%s', None),
     'asakusa-on-spark': ('http://docs.asakusafw.com/asakusa-on-spark/latest/release/ja/html/%s', None),
-    'asakusa-on-m3': ('http://docs.asakusafw.com/asakusa-on-m3/latest/release/ja/html/%s', None),
+    'asakusa-on-m3bp': ('http://docs.asakusafw.com/asakusa-on-m3bp/latest/release/ja/html/%s', None),
     'apiref': ('http://docs.asakusafw.com/0.8.0/release/api/%s', None),
     'epub': ('http://docs.asakusafw.com/0.8.0/release/ja/epub/%s', None)
 }
@@ -46,8 +46,9 @@ javadoclinks = {
     'gradledoc': ('http://docs.asakusafw.com/0.8.0/release/gradle-plugins/%s.html', "")
 }
 
-# The max depth of sidebar toctree.
-rst_prolog = """
+rst_prolog = u"""
+..  |ASAKUSA_ON_M3BP| replace:: Asakusa on M\ :sup:`3`\ BP
+
 :tocdepth: 3
 """
 
