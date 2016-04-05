@@ -17,7 +17,7 @@ Gradleラッパーのアップデートに関する変更
 :program:`asakusaUpgrade` タスクは、Asakusa Gradle Pluginの該当バージョンで推奨されるGradleラッパーのバージョンをアプリケーションプロジェクトに導入します。
 
 ..  code-block:: sh
-    
+
     ./gradlew asakusaUpgrade
 
 また、この変更に伴いビルドスクリプトの ``wrapper`` タスクに関する定義は不要となりました。
@@ -41,14 +41,14 @@ Gradleラッパーのアップデートに関する変更
 過去のバージョンでは、 ビルドスクリプトでAsakusa Gradle Pluginを適用する方法は、以下のように記述していました。
 
 ..  code-block:: groovy
-    
+
     apply plugin: 'asakusafw'
     apply plugin: 'asakusafw-organizer'
 
 0.8系以降では、以下のように記述します。
 
 ..  code-block:: groovy
-    
+
     apply plugin: 'asakusafw-sdk'
     apply plugin: 'asakusafw-organizer'
     apply plugin: 'asakusafw-mapreduce'
@@ -90,7 +90,7 @@ Asakusa Frameworkバージョンの指定
 また、 Asakusa on Spark Gradle Pluginを利用する場合も同様に、このプラグインの該当バージョンが規定するAsakusa Frameworkバージョンを導入します。
 
 ..  attention::
-    通常、Asakusa Gradle Pluginはプラグインのバージョンと同一のAsakusa Frameworkバージョンを適用しますが、ホットフィックスリリースが行なわた場合などにより異なるバージョンを適用する可能性があります。
+    通常、Asakusa Gradle Pluginはプラグインのバージョンと同一のAsakusa Frameworkバージョンを適用しますが、ホットフィックスリリースが行われた場合などにより異なるバージョンを適用する可能性があります。
     アプリケーションプロジェクトで利用される各コンポーネントのバージョンを確認する方法は、後述の `Asakusa Frameworkバージョンの確認`_ を参照してください。
 
 なお、検証されていない組み合わせの各Gradle PluginとAsakusa Frameworkバージョンを利用することは非推奨です。
@@ -105,7 +105,7 @@ Asakusa Frameworkバージョンの指定
         asakusafwVersion '0.7.6-hadoop1'
     ...
     }
-    
+
     asakusafwOrganizer {
         profiles.prod {
             asakusafwVersion asakusafw.asakusafwVersion
@@ -131,7 +131,7 @@ Hadoopライブラリの指定
 **build.gradle** (以下の定義は不要)
 
 ..  code-block:: groovy
-    
+
     dependencies {
         ...
         provided (group: 'org.apache.hadoop', name: 'hadoop-client', version: '1.2.1') {
@@ -139,7 +139,7 @@ Hadoopライブラリの指定
             exclude module: 'mockito-all'
             exclude module: 'slf4j-log4j12'
         }
-    
+
 ..  [#] SDKアーティファクトについて詳しくは、 :doc:`sdk-artifact` を参照してください。
 
 バッチアプリケーションのコンパイルに関する変更
@@ -156,19 +156,19 @@ Hadoopライブラリの指定
 
 :program:`compileBatchapp` タスク
   ビルドスクリプトのプラグイン設定に従って利用可能なDSLコンパイラを全て実行します。
-  
+
   例えば、ビルドスクリプトにMapReduce向けのプラグイン ``asakusafw-mapreduce`` と Spark向けのプラグイン ``asakusafw-spark`` が適用されている場合、
   :program:`compileBatchapp` タスクを実行すると MapReduce向けのコンパイルとSpark向けのコンパイルをそれぞれ実行します。
-  
+
   ..  attention::
       0.8系から導入されたビルドスクリプトに対するプラグインの適用方法については先述の `プラグインの適用方法の変更`_ を参照してください。
-  
+
 :program:`mapreduceCompileBatchapps` タスク
   MapReduceコンパイラによるバッチアプリケーションのコンパイルを実行します。
-  
+
   このタスクはビルドスクリプトにプラグイン ``asakusafw-mapreduce`` を適用することで利用可能になります。
   このプラグインを適用した状態で :program:`compileBatchapp` タスクを実行すると、 :program:`mapreduceCompileBatchapps` タスクが実行されます。
-  
+
   このタスクはバージョン0.8.0で新規で追加されました。
 
 :program:`sparkeCompileBatchapps` タスク
@@ -181,7 +181,7 @@ Hadoopライブラリの指定
   処理の過程で :program:`compileBatchapp` タスクを実行するため、 :program:`compileBatchapp` タスクの動作変更の影響を受けることに注意してください。
 
   なお、バージョン 0.8.0から追加になった機能として、デプロイメント構成ごとに各DSLコンパイラの生成物を含めるかどうかの設定が可能になりました。
-  
+
   詳しくは、 :doc:`gradle-plugin` - :ref:`gradle-plugin-dslcompile-disable` を参照してください。
 
 バッチアプリケーションのフィルタリングに関する変更
@@ -221,7 +221,7 @@ Asakusa Frameworkバージョンの確認
 :program:`asakusaVersion` タスクはビルドスクリプトの設定を解析し、以下のようにプロジェクトで利用するコンポーネントのバージョンが表示します。
 
 ..  code-block:: none
-    
+
     :asakusaVersions
     Asakusa Gradle Plug-ins: 0.8.0
     Asakusa on Spark: 0.3.0
