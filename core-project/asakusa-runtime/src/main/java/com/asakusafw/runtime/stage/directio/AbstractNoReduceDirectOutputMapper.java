@@ -40,17 +40,17 @@ import com.asakusafw.runtime.util.VariableTable;
  * Mapper which directly creates file for direct output.
  * @param <T> target data type
  * @since 0.4.0
- * @version 0.7.0
+ * @version 0.8.1
  */
 public abstract class AbstractNoReduceDirectOutputMapper<T> extends MapperWithRuntimeResource<
         Object, T,
         Object, Object> {
 
-    private static final String COUNTER_GROUP = "com.asakusafw.directio.output.Statistics"; //$NON-NLS-1$
-
     private final Log log;
 
     private final Class<? extends T> dataType;
+
+    private final String outputId;
 
     private final String rawBasePath;
 
@@ -71,6 +71,25 @@ public abstract class AbstractNoReduceDirectOutputMapper<T> extends MapperWithRu
             String rawBasePath,
             String rawResourcePath,
             Class<? extends DataFormat<? super T>> dataFormatClass) {
+        this(dataType, null, rawBasePath, rawResourcePath, dataFormatClass);
+    }
+
+    /**
+     * Creates a new instance.
+     * @param dataType target data type
+     * @param outputId the output ID (nullable)
+     * @param rawBasePath target base path
+     * @param rawResourcePath target resource path
+     * @param dataFormatClass output data format
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.8.1
+     */
+    public AbstractNoReduceDirectOutputMapper(
+            Class<? extends T> dataType,
+            String outputId,
+            String rawBasePath,
+            String rawResourcePath,
+            Class<? extends DataFormat<? super T>> dataFormatClass) {
         if (dataType == null) {
             throw new IllegalArgumentException("dataType must not be null"); //$NON-NLS-1$
         }
@@ -85,6 +104,7 @@ public abstract class AbstractNoReduceDirectOutputMapper<T> extends MapperWithRu
         }
         this.log = LogFactory.getLog(getClass());
         this.dataType = dataType;
+        this.outputId = outputId;
         this.rawBasePath = rawBasePath;
         this.rawResourcePath = rawResourcePath;
         this.dataFormatClass = dataFormatClass;
@@ -112,8 +132,8 @@ public abstract class AbstractNoReduceDirectOutputMapper<T> extends MapperWithRu
             variables.defineVariables(arguments);
 
             String path = variables.parse(rawBasePath, false);
-            String id = repository.getRelatedId(path);
-            OutputAttemptContext outputContext = HadoopDataSourceUtil.createContext(context, id);
+            String sourceId = repository.getRelatedId(path);
+            OutputAttemptContext outputContext = HadoopDataSourceUtil.createContext(context, sourceId);
             DataFormat<? super T> format = ReflectionUtils.newInstance(dataFormatClass, context.getConfiguration());
             DirectDataSource datasource = repository.getRelatedDataSource(path);
             String basePath = repository.getComponentPath(path);
@@ -126,7 +146,7 @@ public abstract class AbstractNoReduceDirectOutputMapper<T> extends MapperWithRu
             if (log.isDebugEnabled()) {
                 log.debug(MessageFormat.format(
                         "Open mapper output (id={0}, basePath={1}, resourcePath={2})", //$NON-NLS-1$
-                        id,
+                        sourceId,
                         basePath,
                         resourcePath));
             }
@@ -152,9 +172,7 @@ public abstract class AbstractNoReduceDirectOutputMapper<T> extends MapperWithRu
             }
             org.apache.hadoop.mapreduce.Counter recordCounter = JobCompatibility.getTaskOutputRecordCounter(context);
             recordCounter.increment(records);
-            context.getCounter(COUNTER_GROUP, id + ".files").increment(1); //$NON-NLS-1$
-            context.getCounter(COUNTER_GROUP, id + ".records").increment(records); //$NON-NLS-1$
-            context.getCounter(COUNTER_GROUP, id + ".size").increment(outputContext.getCounter().get()); //$NON-NLS-1$
+            Constants.putCounts(context, sourceId, outputId, 1, records, outputContext.getCounter().get());
         }
     }
 }

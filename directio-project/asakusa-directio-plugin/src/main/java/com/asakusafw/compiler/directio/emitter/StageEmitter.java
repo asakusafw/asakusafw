@@ -275,6 +275,7 @@ public class StageEmitter {
         importer.resolvePackageMember(className);
         List<Expression> arguments = new ArrayList<>();
         arguments.add(f.newClassLiteral(importer.toType(slot.valueType)));
+        arguments.add(Models.toLiteral(f, slot.name));
         arguments.add(Models.toLiteral(f, slot.basePath));
         arguments.add(Models.toLiteral(f, slot.resourcePath));
         arguments.add(f.newClassLiteral(importer.toType(slot.formatClass)));
@@ -304,6 +305,7 @@ public class StageEmitter {
             if (requiresReducer(slot)) {
                 List<Expression> arguments = new ArrayList<>();
                 arguments.add(f.newClassLiteral(importer.toType(slot.valueType)));
+                arguments.add(Models.toLiteral(f, slot.name));
                 arguments.add(Models.toLiteral(f, slot.basePath));
                 arguments.add(f.newClassLiteral(importer.toType(slot.formatClass)));
                 arguments.add(f.newClassLiteral(importer.toType(slot.namingClass)));
