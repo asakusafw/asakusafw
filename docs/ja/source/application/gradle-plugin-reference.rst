@@ -281,7 +281,7 @@ Batch Application Pluginの規約プロパティはビルドスクリプトか�
 
 Asakusa Gradle Pluginを利用する場合、このプラグインの該当バージョンが規定するAsakusa Frameworkバージョンを導入します。
 
-通常、Asakusa Gradle Pluginはプラグインのバージョンと同一のAsakusa Frameworkバージョンを適用しますが、ホットフィックスリリースが行なわた場合などにより異なるバージョンを適用する可能性があります。
+通常、Asakusa Gradle Pluginはプラグインのバージョンと同一のAsakusa Frameworkバージョンを適用しますが、ホットフィックスリリースが行われた場合などにより異なるバージョンを適用する可能性があります。
 
 アプリケーションプロジェクトで利用される各コンポーネントのバージョンを確認するには、 Asakusa Gradle Plugin が提供する ``asakusaVersion`` タスクを使用します。
 
@@ -381,7 +381,7 @@ DSLコンパイラプロパティ
 
 ..  attention::
     バージョン 0.8.0 時点では、 ``compiler`` ブロックではMapReduce DSLコンパイラに対する設定がおこなわれます。
-    
+
 DSLコンパイラ関する規約プロパティは、 ``asakusafw`` ブロック内の参照名 ``compiler`` でアクセスできます [#]_ 。
 
 この規約オブジェクトは以下のプロパティを持ちます。
@@ -537,7 +537,7 @@ IntelliJ IDEAプロジェクト用の定義ファイルを作成するには、:
 ..  tip::
     IntelliJ IDEAからプロジェクトをインポートするには、Welcome Screen(プロジェクトを開いていない時に表示されるダイアログ)から :guilabel:`Import` を選択するか、メニューから :menuselection:`File --> Import Project...` を選択し、プロジェクトディレクトリを選択します。
     インポートウィザードが開始されるので、以下の例を参考にしてプロジェクトのインポートを行います。
-    
+
     * インポートウィザードの最初の画面では、:guilabel:`Import project from external model` を選択し、 :guilabel:`Gradle` を選択して :guilabel:`Next` を押下します。
     * インポートウィザードの次の画面の :guilabel:`Project format:` は :guilabel:`ipr (file based)` を選択してください。
       デフォルトの :guilabel:`.idea (directory based)` ではGradleの :program:`idea` タスクが生成した設定ファイルが使用されません。
@@ -840,7 +840,7 @@ Asakusa Frameworkの拡張構成に関する規約プロパティは、 ``asakus
 **build.gradle**
 
 ..  code-block:: groovy
-   
+
     asakusafwOrganizer {
         profiles.prod {
             assembly.into('.') {
