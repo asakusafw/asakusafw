@@ -400,7 +400,7 @@ public final class VisualGraphEmitter {
 
         private VisualNode resolved;
 
-        public Port(FlowElement element, String name) {
+        Port(FlowElement element, String name) {
             assert element != null;
             assert name != null;
             this.element = element;
@@ -569,7 +569,7 @@ public final class VisualGraphEmitter {
 
         private int indent = 0;
 
-        public EmitContext(OutputStream output) {
+        EmitContext(OutputStream output) {
             assert output != null;
             writer = new PrintWriter(new OutputStreamWriter(output, ENCODING));
         }

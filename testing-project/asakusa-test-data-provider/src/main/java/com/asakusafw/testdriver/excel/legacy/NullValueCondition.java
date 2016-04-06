@@ -52,7 +52,7 @@ public enum NullValueCondition {
 
     private String japaneseName;
 
-    private NullValueCondition(String japaneseName) {
+    NullValueCondition(String japaneseName) {
         this.japaneseName = japaneseName;
     }
 

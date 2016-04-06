@@ -504,7 +504,7 @@ public class FilePattern implements ResourcePattern {
 
         private final String symbol;
 
-        private PatternElementKind(String symbol) {
+        PatternElementKind(String symbol) {
             this.symbol = symbol;
         }
 

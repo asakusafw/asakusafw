@@ -238,7 +238,7 @@ public class DefaultJobExecutor extends JobExecutor {
 
         private final List<String> list = new ArrayList<>();
 
-        public InputStreamThread(InputStream is) {
+        InputStreamThread(InputStream is) {
             reader = new BufferedReader(new InputStreamReader(is, Charset.defaultCharset()));
             setDaemon(true);
         }

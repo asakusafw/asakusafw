@@ -63,7 +63,7 @@ class TemporaryFileOutputHelper implements Closeable {
 
     private int positionInBlock;
 
-    public TemporaryFileOutputHelper(OutputStream output, String dataTypeName) {
+    TemporaryFileOutputHelper(OutputStream output, String dataTypeName) {
         this.output = output;
         this.dataTypeName = dataTypeName;
     }
@@ -143,7 +143,7 @@ class TemporaryFileOutputHelper implements Closeable {
 
         final int positionInBlock;
 
-        public Result(DataBuffer buffer, int positionInBlock) {
+        Result(DataBuffer buffer, int positionInBlock) {
             this.buffer = buffer;
             this.positionInBlock = positionInBlock;
         }
@@ -161,7 +161,7 @@ class TemporaryFileOutputHelper implements Closeable {
 
         private int positionInBlock;
 
-        public Task(OutputStream output, DataBuffer buffer, String dataTypeName, int positionInBlock) {
+        Task(OutputStream output, DataBuffer buffer, String dataTypeName, int positionInBlock) {
             this.output = output;
             this.buffer = buffer;
             this.dataTypeName = dataTypeName;

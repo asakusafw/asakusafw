@@ -376,7 +376,7 @@ public class HttpJobClient implements JobClient {
 
     private static final class JobStatusKindAdapter implements JsonDeserializer<JobStatus.Kind> {
 
-        public JobStatusKindAdapter() {
+        JobStatusKindAdapter() {
             return;
         }
 
@@ -402,7 +402,7 @@ public class HttpJobClient implements JobClient {
 
     private static final class ExecutionPhaseAdapter implements JsonSerializer<ExecutionPhase> {
 
-        public ExecutionPhaseAdapter() {
+        ExecutionPhaseAdapter() {
             return;
         }
 

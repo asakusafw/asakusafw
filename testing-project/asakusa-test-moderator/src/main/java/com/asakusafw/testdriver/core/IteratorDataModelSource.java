@@ -80,7 +80,7 @@ public class IteratorDataModelSource implements DataModelSource {
          * @param iterator a data model iterator
          * @throws IllegalArgumentException if some parameters were {@code null}
          */
-        public IteratorDriver(DataModelDefinition<? super E> definition, Iterator<? extends E> iterator) {
+        IteratorDriver(DataModelDefinition<? super E> definition, Iterator<? extends E> iterator) {
             if (definition == null) {
                 throw new IllegalArgumentException("definition must not be null"); //$NON-NLS-1$
             }

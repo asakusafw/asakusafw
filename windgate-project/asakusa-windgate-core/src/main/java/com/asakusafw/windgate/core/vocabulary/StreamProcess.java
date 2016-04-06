@@ -34,7 +34,7 @@ public enum StreamProcess implements ConfigurationItem {
 
     private final String description;
 
-    private StreamProcess(String key, String description) {
+    StreamProcess(String key, String description) {
         assert key != null;
         assert description != null;
         this.key = key;

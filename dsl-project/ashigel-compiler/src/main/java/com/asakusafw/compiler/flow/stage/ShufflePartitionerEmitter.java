@@ -113,7 +113,7 @@ public class ShufflePartitionerEmitter {
 
         private final Type valueType;
 
-        public Engine(
+        Engine(
                 FlowCompilingEnvironment environment,
                 ShuffleModel model,
                 Name keyTypeName,

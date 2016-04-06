@@ -275,7 +275,7 @@ public class HiveFieldTrait extends BaseTrait<HiveFieldTrait> {
 
         private final Set<BasicTypeKind> supportedKinds;
 
-        private TypeKind(Callable<Set<BasicTypeKind>> lazy) {
+        TypeKind(Callable<Set<BasicTypeKind>> lazy) {
             try {
                 this.supportedKinds = Collections.unmodifiableSet(lazy.call());
             } catch (Exception e) {
@@ -283,7 +283,7 @@ public class HiveFieldTrait extends BaseTrait<HiveFieldTrait> {
             }
         }
 
-        private TypeKind(BasicTypeKind... kinds) {
+        TypeKind(BasicTypeKind... kinds) {
             EnumSet<BasicTypeKind> set = EnumSet.noneOf(BasicTypeKind.class);
             Collections.addAll(set, kinds);
             this.supportedKinds = Collections.unmodifiableSet(set);

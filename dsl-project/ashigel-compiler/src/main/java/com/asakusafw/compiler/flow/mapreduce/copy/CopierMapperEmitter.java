@@ -67,7 +67,7 @@ final class CopierMapperEmitter {
      * @param environment current environment
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public CopierMapperEmitter(FlowCompilingEnvironment environment) {
+    CopierMapperEmitter(FlowCompilingEnvironment environment) {
         Precondition.checkMustNotBeNull(environment, "environment"); //$NON-NLS-1$
         this.environment = environment;
     }

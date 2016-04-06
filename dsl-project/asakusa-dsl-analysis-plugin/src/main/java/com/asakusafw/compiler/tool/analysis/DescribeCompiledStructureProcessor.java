@@ -262,7 +262,7 @@ public class DescribeCompiledStructureProcessor extends AbstractWorkflowProcesso
 
         private int indent = 0;
 
-        public Context(OutputStream output) {
+        Context(OutputStream output) {
             assert output != null;
             writer = new PrintWriter(new OutputStreamWriter(output, ENCODING));
         }

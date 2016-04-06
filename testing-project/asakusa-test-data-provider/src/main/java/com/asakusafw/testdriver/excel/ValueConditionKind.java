@@ -74,7 +74,7 @@ public enum ValueConditionKind {
 
     private final String text;
 
-    private ValueConditionKind(String symbol, String title, String expectedType) {
+    ValueConditionKind(String symbol, String title, String expectedType) {
         assert symbol != null;
         assert title != null;
         assert expectedType != null;

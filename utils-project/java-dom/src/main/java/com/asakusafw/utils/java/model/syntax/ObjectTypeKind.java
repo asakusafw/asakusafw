@@ -43,7 +43,7 @@ public enum ObjectTypeKind implements DeclarationKind {
 
     private final boolean classLike;
 
-    private ObjectTypeKind(boolean classLike) {
+    ObjectTypeKind(boolean classLike) {
         this.classLike = classLike;
     }
 

@@ -42,7 +42,7 @@ public interface ImporterDescription {
     /**
      * Represents a kind of estimated input data size.
      */
-    public enum DataSize {
+    enum DataSize {
 
         /**
          * Unknown or not estimated.

@@ -69,7 +69,7 @@ class FileExecutionLock extends ExecutionLock {
      * @throws IOException if failed to create instance
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public FileExecutionLock(Scope lockScope, String batchId, File directory) throws IOException {
+    FileExecutionLock(Scope lockScope, String batchId, File directory) throws IOException {
         if (lockScope == null) {
             throw new IllegalArgumentException("lockScope must not be null"); //$NON-NLS-1$
         }

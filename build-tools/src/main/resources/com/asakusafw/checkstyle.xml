@@ -10,8 +10,10 @@
     <module name="FileContentsHolder"/>
     <module name="JavadocMethod">
       <property name="scope" value="protected"/>
+      <property name="validateThrows" value="true"/>
       <property name="allowUndeclaredRTE" value="true"/>
       <property name="suppressLoadErrors" value="true"/>
+      <property name="tokens" value="METHOD_DEF,CTOR_DEF"/>
     </module>
     <module name="JavadocType">
       <property name="scope" value="protected"/>
@@ -123,6 +125,7 @@
       <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit"/>
     </module>
   </module>
+  <module name="JavadocPackage"/>
   <module name="NewlineAtEndOfFile">
     <property name="severity" value="ignore"/>
     <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit"/>

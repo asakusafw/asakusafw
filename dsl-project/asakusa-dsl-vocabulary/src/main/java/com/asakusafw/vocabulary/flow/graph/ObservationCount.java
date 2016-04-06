@@ -91,7 +91,7 @@ public enum ObservationCount implements FlowElementAttribute {
      */
     public final boolean atLeastOnce;
 
-    private ObservationCount(boolean atMostOnce, boolean atLeastOnce) {
+    ObservationCount(boolean atMostOnce, boolean atLeastOnce) {
         this.atMostOnce = atMostOnce;
         this.atLeastOnce = atLeastOnce;
     }

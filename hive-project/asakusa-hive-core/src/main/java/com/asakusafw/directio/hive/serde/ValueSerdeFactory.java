@@ -169,7 +169,7 @@ public enum ValueSerdeFactory implements ValueSerde {
 
     private final PrimitiveObjectInspector objectInspector;
 
-    private ValueSerdeFactory(
+    ValueSerdeFactory(
             Class<? extends ValueOption<?>> valueOptionClass,
             PrimitiveObjectInspector objectInspector) {
         this.valueOptionClass = valueOptionClass;

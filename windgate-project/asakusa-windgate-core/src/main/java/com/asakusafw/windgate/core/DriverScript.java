@@ -135,7 +135,7 @@ public class DriverScript {
          */
         public final String prefix;
 
-        private Kind(String prefix) {
+        Kind(String prefix) {
             assert prefix != null;
             this.prefix = prefix;
         }

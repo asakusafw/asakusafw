@@ -153,7 +153,7 @@ public class ShuffleFragmentEmitter {
 
     private static class MapOutputEngine extends Engine {
 
-        public MapOutputEngine(
+        MapOutputEngine(
                 FlowCompilingEnvironment environment,
                 StageBlock stageBlock,
                 Segment segment,
@@ -191,7 +191,7 @@ public class ShuffleFragmentEmitter {
 
     private static class CombineOutputEngine extends Engine {
 
-        public CombineOutputEngine(
+        CombineOutputEngine(
                 FlowCompilingEnvironment environment,
                 StageBlock stageBlock,
                 Segment segment,

@@ -64,7 +64,7 @@ class DirectOutputGroup implements WritableRawComparable {
      * @param nameGenerator name generator
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public DirectOutputGroup(String path, Class<?> dataType, DataFormat<?> format, StringTemplate nameGenerator) {
+    DirectOutputGroup(String path, Class<?> dataType, DataFormat<?> format, StringTemplate nameGenerator) {
         if (path == null) {
             throw new IllegalArgumentException("path must not be null"); //$NON-NLS-1$
         }

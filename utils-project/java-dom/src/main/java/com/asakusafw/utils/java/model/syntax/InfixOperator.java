@@ -200,7 +200,7 @@ public enum InfixOperator {
      * @param permitted set of the permitted contexts
      * @param category the operator category
      */
-    private InfixOperator(String symbol, EnumSet<Context> permitted, Category category) {
+    InfixOperator(String symbol, EnumSet<Context> permitted, Category category) {
         assert symbol != null;
         assert permitted != null;
         assert category != null;
@@ -266,7 +266,7 @@ public enum InfixOperator {
     /**
      * Represents a kind of permissive context.
      */
-    public static enum Context {
+    enum Context {
 
         /**
          * The operator can be used as infix operator.
@@ -283,7 +283,7 @@ public enum InfixOperator {
     /**
      * Represents an operator kind.
      */
-    public static enum Category {
+    enum Category {
 
         /**
          * multiplicative operators ({@literal 15.17}).

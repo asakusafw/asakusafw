@@ -29,7 +29,7 @@ class MapReduceFlowPortMap implements FlowPortMap {
 
     private final FlowDescriptionDriver driver = new FlowDescriptionDriver();
 
-    public MapReduceFlowPortMap() {
+    MapReduceFlowPortMap() {
         return;
     }
 

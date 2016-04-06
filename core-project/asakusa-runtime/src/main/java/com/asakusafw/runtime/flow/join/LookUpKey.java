@@ -153,7 +153,7 @@ public class LookUpKey {
 
         final DataBuffer entity;
 
-        public DirectView(DataBuffer entity) {
+        DirectView(DataBuffer entity) {
             this.entity = entity;
         }
 
@@ -190,7 +190,7 @@ public class LookUpKey {
 
         final byte[] entity;
 
-        public FrozenView(DataBuffer entity) {
+        FrozenView(DataBuffer entity) {
             this.entity = Arrays.copyOfRange(entity.getData(), entity.getReadPosition(), entity.getReadLimit());
         }
 

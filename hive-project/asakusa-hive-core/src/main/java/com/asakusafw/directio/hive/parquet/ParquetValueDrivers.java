@@ -199,14 +199,14 @@ public enum ParquetValueDrivers implements ParquetValueDriver {
 
     final PrimitiveTypeName typeName;
 
-    private ParquetValueDrivers(
+    ParquetValueDrivers(
             Class<? extends ValueOption<?>>
             valueOptionClass, TypeInfo typeInfo,
             PrimitiveTypeName typeName) {
         this(true, valueOptionClass, typeInfo, typeName);
     }
 
-    private ParquetValueDrivers(
+    ParquetValueDrivers(
             boolean standard,
             Class<? extends ValueOption<?>>
             valueOptionClass, TypeInfo typeInfo,
@@ -330,7 +330,7 @@ public enum ParquetValueDrivers implements ParquetValueDriver {
 
         private BooleanOption target;
 
-        public BooleanOptionConverter() {
+        BooleanOptionConverter() {
             return;
         }
 
@@ -350,7 +350,7 @@ public enum ParquetValueDrivers implements ParquetValueDriver {
 
         private ByteOption target;
 
-        public ByteOptionConverter() {
+        ByteOptionConverter() {
             return;
         }
 
@@ -370,7 +370,7 @@ public enum ParquetValueDrivers implements ParquetValueDriver {
 
         private ShortOption target;
 
-        public ShortOptionConverter() {
+        ShortOptionConverter() {
             return;
         }
 
@@ -390,7 +390,7 @@ public enum ParquetValueDrivers implements ParquetValueDriver {
 
         private IntOption target;
 
-        public IntOptionConverter() {
+        IntOptionConverter() {
             return;
         }
 
@@ -410,7 +410,7 @@ public enum ParquetValueDrivers implements ParquetValueDriver {
 
         private LongOption target;
 
-        public LongOptionConverter() {
+        LongOptionConverter() {
             return;
         }
 
@@ -430,7 +430,7 @@ public enum ParquetValueDrivers implements ParquetValueDriver {
 
         private FloatOption target;
 
-        public FloatOptionConverter() {
+        FloatOptionConverter() {
             return;
         }
 
@@ -450,7 +450,7 @@ public enum ParquetValueDrivers implements ParquetValueDriver {
 
         private DoubleOption target;
 
-        public DoubleOptionConverter() {
+        DoubleOptionConverter() {
             return;
         }
 
@@ -472,7 +472,7 @@ public enum ParquetValueDrivers implements ParquetValueDriver {
 
         private Binary[] dict;
 
-        public StringOptionConverter() {
+        StringOptionConverter() {
             return;
         }
 
@@ -521,7 +521,7 @@ public enum ParquetValueDrivers implements ParquetValueDriver {
 
         private DateOption target;
 
-        public DateOptionConverter() {
+        DateOptionConverter() {
             return;
         }
 

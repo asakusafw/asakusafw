@@ -47,7 +47,7 @@ class FileSourceDriver<T> implements SourceDriver<T> {
      * @param file the target file
      * @throws IllegalArgumentException if any parameter is {@code null}
      */
-    public FileSourceDriver(Class<T> type, File file) {
+    FileSourceDriver(Class<T> type, File file) {
         if (type == null) {
             throw new IllegalArgumentException("type must not be null"); //$NON-NLS-1$
         }

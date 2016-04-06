@@ -121,7 +121,9 @@ public class ParquetFileOutput<T> implements ModelOutput<T> {
         }
     }
 
+    // CHECKSTYLE:OFF RedundantModifierCheck
     private static enum ParquetVersion {
+    // CHECKSTYLE:ON RedundantModifierCheck
 
         // Note: put newer version on top
 
@@ -214,7 +216,7 @@ public class ParquetFileOutput<T> implements ModelOutput<T> {
 
         private transient volatile Constructor<?> constructor;
 
-        private ParquetVersion(int parameterCount) {
+        ParquetVersion(int parameterCount) {
             this.parameterCount = parameterCount;
         }
 

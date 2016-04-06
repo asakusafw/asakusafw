@@ -332,7 +332,7 @@ public class Clean extends Configured implements Tool {
 
         final List<Path> paths;
 
-        public Opts(boolean recursive, double keepDays, boolean dryRun, List<Path> paths) {
+        Opts(boolean recursive, double keepDays, boolean dryRun, List<Path> paths) {
             this.recursive = recursive;
             this.keepDays = keepDays;
             this.dryRun = dryRun;
@@ -362,7 +362,7 @@ public class Clean extends Configured implements Tool {
             FILE_STATUS_IS_SYMLINK = m;
         }
 
-        public Context(boolean recursive, long keepPeriod, boolean dryRun) {
+        Context(boolean recursive, long keepPeriod, boolean dryRun) {
             this.recursive = recursive;
             this.keepPeriod = keepPeriod;
             this.dryRun = dryRun;

@@ -53,7 +53,7 @@ public enum TimestampValueSerdeFactory implements ValueSerde {
 
     private final Class<? extends ValueOption<?>> valueOptionClass;
 
-    private TimestampValueSerdeFactory(Class<? extends ValueOption<?>> valueOptionClass) {
+    TimestampValueSerdeFactory(Class<? extends ValueOption<?>> valueOptionClass) {
         this.valueOptionClass = valueOptionClass;
     }
 
@@ -176,7 +176,7 @@ public enum TimestampValueSerdeFactory implements ValueSerde {
 
     static class TimestampDateOptionDriver extends AbstractTimestampDriver {
 
-        public TimestampDateOptionDriver(TimestampObjectInspector inspector) {
+        TimestampDateOptionDriver(TimestampObjectInspector inspector) {
             super(inspector);
         }
 

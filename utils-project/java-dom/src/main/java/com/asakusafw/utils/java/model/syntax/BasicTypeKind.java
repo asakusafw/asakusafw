@@ -80,7 +80,7 @@ public enum BasicTypeKind {
      * @param descriptor the type descriptor
      * @param klass the related Java reflection type
      */
-    private BasicTypeKind(char descriptor, Class<?> klass) {
+    BasicTypeKind(char descriptor, Class<?> klass) {
         assert klass != null;
         assert klass.isPrimitive();
         this.descriptor = descriptor;

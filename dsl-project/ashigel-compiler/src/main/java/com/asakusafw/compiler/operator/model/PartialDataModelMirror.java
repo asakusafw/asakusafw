@@ -55,7 +55,7 @@ final class PartialDataModelMirror implements DataModelMirror {
      * @param type the target data model type
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public PartialDataModelMirror(OperatorCompilingEnvironment environment, TypeVariable type) {
+    PartialDataModelMirror(OperatorCompilingEnvironment environment, TypeVariable type) {
         if (environment == null) {
             throw new IllegalArgumentException("environment must not be null"); //$NON-NLS-1$
         }

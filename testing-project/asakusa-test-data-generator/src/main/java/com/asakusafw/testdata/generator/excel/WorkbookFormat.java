@@ -113,7 +113,7 @@ public enum WorkbookFormat {
 
     private final List<SheetFormat> sheets;
 
-    private WorkbookFormat(String namePattern, SpreadsheetVersion version, SheetFormat... sheets) {
+    WorkbookFormat(String namePattern, SpreadsheetVersion version, SheetFormat... sheets) {
         assert namePattern != null;
         assert version != null;
         assert sheets != null;

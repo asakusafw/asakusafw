@@ -202,7 +202,7 @@ public final class HiveQlEmitter {
          * Creates a new instance.
          * @param writer the target writer
          */
-        public Context(Appendable writer) {
+        Context(Appendable writer) {
             this.writer = writer;
         }
 

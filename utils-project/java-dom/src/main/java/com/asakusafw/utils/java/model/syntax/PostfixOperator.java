@@ -42,7 +42,7 @@ public enum PostfixOperator {
      * Creates a new instance.
      * @param symbol the operator symbol
      */
-    private PostfixOperator(String symbol) {
+    PostfixOperator(String symbol) {
         assert symbol != null;
         this.symbol = symbol;
     }

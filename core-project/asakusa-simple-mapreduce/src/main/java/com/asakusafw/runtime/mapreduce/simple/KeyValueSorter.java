@@ -350,7 +350,7 @@ public class KeyValueSorter<K, V> implements Closeable {
 
         private final RawComparator<?> comparator;
 
-        public KeyValuePageBuffer(
+        KeyValuePageBuffer(
                 int initialBufferSize, int bufferLimit,
                 SerializationFactory serialization,
                 Class<K> keyClass, Class<V> valueClass, RawComparator<?> comparator) {
@@ -439,7 +439,7 @@ public class KeyValueSorter<K, V> implements Closeable {
 
         private int pageCount = 0;
 
-        public BlockBuffer(int initialBufferSize, int bufferLimit) {
+        BlockBuffer(int initialBufferSize, int bufferLimit) {
             this.buffer = new DataBuffer(initialBufferSize, BUFFER_EXPANSION_FACTOR);
             this.bufferLimit = bufferLimit;
         }
@@ -533,7 +533,7 @@ public class KeyValueSorter<K, V> implements Closeable {
 
         private long totalSize;
 
-        public BlockStore(File temporaryDirectory, boolean compress) {
+        BlockStore(File temporaryDirectory, boolean compress) {
             this.temporaryDirectory = temporaryDirectory;
             this.compress = compress;
         }
@@ -650,7 +650,7 @@ public class KeyValueSorter<K, V> implements Closeable {
 
         private final KeyValueSlice slice;
 
-        public StreamSource(DataInputStream input) {
+        StreamSource(DataInputStream input) {
             this.input = input;
             this.slice = new KeyValueSlice();
         }
@@ -701,7 +701,7 @@ public class KeyValueSorter<K, V> implements Closeable {
 
         private final KeyValueSlice slice;
 
-        public PageBufferSource(KeyValuePageBuffer<?, ?> buffer) {
+        PageBufferSource(KeyValuePageBuffer<?, ?> buffer) {
             this.ranges = buffer.sort();
             this.size = buffer.getCount();
             this.slice = new KeyValueSlice();
@@ -744,7 +744,7 @@ public class KeyValueSorter<K, V> implements Closeable {
 
         private final KeyValueSlice slice;
 
-        public PartialPageSource(byte[] bytes, int offset, int limit) {
+        PartialPageSource(byte[] bytes, int offset, int limit) {
             this.bytes = bytes;
             this.offset = offset;
             this.limit = limit;
@@ -813,7 +813,7 @@ public class KeyValueSorter<K, V> implements Closeable {
 
         private final RawComparator<?> comparator;
 
-        public InPageBufferComparator(byte[] bytes, RawComparator<?> comparator) {
+        InPageBufferComparator(byte[] bytes, RawComparator<?> comparator) {
             this.bytes = bytes;
             this.comparator = comparator;
         }
@@ -830,7 +830,7 @@ public class KeyValueSorter<K, V> implements Closeable {
 
         private final RawComparator<?> comparator;
 
-        public KeyValueSliceComparator(RawComparator<?> comparator) {
+        KeyValueSliceComparator(RawComparator<?> comparator) {
             this.comparator = comparator;
         }
 

@@ -399,7 +399,7 @@ public final class DecimalOption extends ValueOption<DecimalOption> {
 
         byte[] unsigned = EMPTY;
 
-        public DecimalBuffer() {
+        DecimalBuffer() {
             return;
         }
 

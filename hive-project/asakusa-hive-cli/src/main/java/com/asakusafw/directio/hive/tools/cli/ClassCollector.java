@@ -161,7 +161,7 @@ public class ClassCollector {
 
         final File file;
 
-        public Entry(List<String> segments, File file) {
+        Entry(List<String> segments, File file) {
             super();
             this.segments = segments;
             this.file = file;

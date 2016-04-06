@@ -245,7 +245,7 @@ public final class TemporaryInputFormat<T> extends InputFormat<NullWritable, T> 
 
         private T value;
 
-        public Reader() {
+        Reader() {
             return;
         }
 

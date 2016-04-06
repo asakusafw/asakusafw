@@ -38,7 +38,7 @@ public @interface Summarized {
      * Source term.
      */
     @Target({ })
-    public @interface Term {
+    @interface Term {
 
         /**
          * The class of source model.
@@ -63,7 +63,7 @@ public @interface Summarized {
      * Property folding.
      */
     @Target({ })
-    public @interface Folding {
+    @interface Folding {
 
         /**
          * The aggregator how aggregate source properties into the destination property.
@@ -84,7 +84,7 @@ public @interface Summarized {
     /**
      * Aggregator functions.
      */
-    public enum Aggregator {
+    enum Aggregator {
 
         /**
          * Any of element in bag.

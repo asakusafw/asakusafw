@@ -402,7 +402,7 @@ public final class WindGateTestHelper {
 
         final File directory;
 
-        public Holder(TestContext referent, PluginClassLoader loader, File directory) {
+        Holder(TestContext referent, PluginClassLoader loader, File directory) {
             super(referent, QUEUE);
             this.loader = loader;
             this.directory = directory;

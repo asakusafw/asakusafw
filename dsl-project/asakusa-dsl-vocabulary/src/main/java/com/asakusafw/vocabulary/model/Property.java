@@ -60,7 +60,7 @@ public @interface Property {
     /**
      * The source property information.
      */
-    public @interface Source {
+    @interface Source {
 
         /**
          * The class that declares the target property.
@@ -76,7 +76,7 @@ public @interface Property {
     /**
      * Represents aggregate functions.
      */
-    public enum Aggregator {
+    enum Aggregator {
 
         /**
          * Do not aggregate.

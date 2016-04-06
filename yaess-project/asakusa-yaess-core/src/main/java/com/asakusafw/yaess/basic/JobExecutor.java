@@ -55,7 +55,7 @@ public interface JobExecutor {
      * @since 0.2.3
      * @version 0.2.6
      */
-    public final class Executing extends FutureTask<Void> {
+    final class Executing extends FutureTask<Void> {
 
         static final Logger LOG = LoggerFactory.getLogger(JobExecutor.class);
 

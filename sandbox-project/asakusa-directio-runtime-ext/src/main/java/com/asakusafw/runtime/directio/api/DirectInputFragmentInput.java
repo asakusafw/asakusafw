@@ -37,7 +37,7 @@ class DirectInputFragmentInput<T> implements ModelInput<T> {
 
     private ModelInput<T> current;
 
-    public DirectInputFragmentInput(
+    DirectInputFragmentInput(
             DirectDataSource dataSource,
             DataDefinition<T> definition,
             Iterator<DirectInputFragment> fragments,

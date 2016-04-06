@@ -142,11 +142,11 @@ public final class CoreCompatibility {
 
         final Pattern pattern;
 
-        private FrameworkVersion(String label) {
+        FrameworkVersion(String label) {
             this(label, null);
         }
 
-        private FrameworkVersion(String label, String pattern) {
+        FrameworkVersion(String label, String pattern) {
             this.label = label;
             this.pattern = pattern == null ? null : Pattern.compile(pattern);
         }

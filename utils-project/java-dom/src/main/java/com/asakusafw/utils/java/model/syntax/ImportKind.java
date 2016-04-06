@@ -70,7 +70,7 @@ public enum ImportKind {
 
     private Range range;
 
-    private ImportKind(Target target, Range range) {
+    ImportKind(Target target, Range range) {
         assert target != null;
         assert range != null;
         this.target = target;

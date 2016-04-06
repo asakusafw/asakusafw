@@ -71,7 +71,7 @@ public enum TimestampValueDrivers implements ParquetValueDriver {
 
     final Class<? extends ValueOption<?>> valueOptionClass;
 
-    private TimestampValueDrivers(Class<? extends ValueOption<?>> valueOptionClass) {
+    TimestampValueDrivers(Class<? extends ValueOption<?>> valueOptionClass) {
         this.valueOptionClass = valueOptionClass;
     }
 

@@ -254,7 +254,7 @@ public final class JobCompatibilityHadoop1 extends JobCompatibilityHadoop {
 
         private final KeyValueConsumer<? super KEYOUT, ? super VALUEOUT> consumer;
 
-        public MockTaskInputOutputContext(
+        MockTaskInputOutputContext(
                 Configuration conf, TaskAttemptID taskId,
                 KeyValueConsumer<? super KEYOUT, ? super VALUEOUT> consumer) {
             super(conf, taskId, null, null, new MockStatusReporter());

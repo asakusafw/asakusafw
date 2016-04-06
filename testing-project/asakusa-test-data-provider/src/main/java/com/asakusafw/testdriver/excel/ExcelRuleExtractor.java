@@ -106,7 +106,7 @@ public interface ExcelRuleExtractor {
      * Invalid format of excel condition sheet.
      * @since 0.2.0
      */
-    public class FormatException extends Exception {
+    class FormatException extends Exception {
 
         private static final long serialVersionUID = -1107137393611473010L;
 

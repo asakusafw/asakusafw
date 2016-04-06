@@ -96,7 +96,7 @@ public interface DataModelDefinition<T> {
      * @param <T> type of data model
      * @since 0.2.0
      */
-    public class Builder<T> {
+    class Builder<T> {
 
         /**
          * The current definition object.

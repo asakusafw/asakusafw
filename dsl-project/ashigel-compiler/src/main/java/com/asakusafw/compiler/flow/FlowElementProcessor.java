@@ -75,7 +75,7 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
      * @since 0.1.0
      * @version 0.5.1
      */
-    public abstract static class AbstractProcessorContext implements FlowElementAttributeProvider {
+    abstract class AbstractProcessorContext implements FlowElementAttributeProvider {
 
         /**
          * The current environment.
@@ -394,7 +394,7 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
     /**
      * A mirror of data model objects.
      */
-    public static class DataObjectMirror {
+    class DataObjectMirror {
 
         private final Expression object;
 
@@ -446,7 +446,7 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
     /**
      * A mirror of a {@link Result} object.
      */
-    public static class ResultMirror {
+    class ResultMirror {
 
         private final ModelFactory factory;
 
@@ -490,7 +490,7 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
     /**
      * A mirror of {@link ListBuffer}.
      */
-    public static class ListBufferMirror {
+    class ListBufferMirror {
 
         private static final String BEGIN = "begin"; //$NON-NLS-1$
 

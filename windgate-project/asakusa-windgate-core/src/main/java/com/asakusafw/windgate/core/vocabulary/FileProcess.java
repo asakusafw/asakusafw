@@ -35,7 +35,7 @@ public enum FileProcess implements ConfigurationItem {
 
     private final String description;
 
-    private FileProcess(String key, String description) {
+    FileProcess(String key, String description) {
         assert key != null;
         assert description != null;
         this.key = key;

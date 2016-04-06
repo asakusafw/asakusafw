@@ -75,7 +75,7 @@ class JobflowExecutor {
      * @param context submission context
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public JobflowExecutor(TestDriverContext context) {
+    JobflowExecutor(TestDriverContext context) {
         if (context == null) {
             throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
         }

@@ -47,7 +47,7 @@ final class ConcreteDataModelMirror implements DataModelMirror {
      * @param type the target data model type
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public ConcreteDataModelMirror(OperatorCompilingEnvironment environment, DeclaredType type) {
+    ConcreteDataModelMirror(OperatorCompilingEnvironment environment, DeclaredType type) {
         if (environment == null) {
             throw new IllegalArgumentException("environment must not be null"); //$NON-NLS-1$
         }

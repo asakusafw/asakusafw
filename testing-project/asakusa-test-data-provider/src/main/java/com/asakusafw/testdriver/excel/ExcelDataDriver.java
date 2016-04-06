@@ -47,7 +47,7 @@ class ExcelDataDriver {
      * @param id source ID (nullable)
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public ExcelDataDriver(DataModelDefinition<?> definition, URI id) {
+    ExcelDataDriver(DataModelDefinition<?> definition, URI id) {
         if (definition == null) {
             throw new IllegalArgumentException("definition must not be null"); //$NON-NLS-1$
         }

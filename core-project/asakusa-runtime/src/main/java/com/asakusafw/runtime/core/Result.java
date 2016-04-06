@@ -34,7 +34,7 @@ public interface Result<T> {
     /**
      * An {@link OutputException} is thrown when a {@link Result} was failed to output data model objects.
      */
-    public static class OutputException extends RuntimeException {
+    class OutputException extends RuntimeException {
 
         private static final long serialVersionUID = 1L;
 

@@ -59,7 +59,7 @@ class MapReduceCompilerSession implements CompilerSession {
 
     private final MapReduceCompilerConfiguration configuration;
 
-    public MapReduceCompilerSession(MapReduceCompilerConfiguration configuration) {
+    MapReduceCompilerSession(MapReduceCompilerConfiguration configuration) {
         this.configuration = configuration;
     }
 

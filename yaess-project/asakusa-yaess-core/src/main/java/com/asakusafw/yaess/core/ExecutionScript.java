@@ -111,7 +111,7 @@ public interface ExecutionScript {
      * Type of each {@link ExecutionScript}.
      * @since 0.2.3
      */
-    public enum Kind implements Symbolic {
+    enum Kind implements Symbolic {
 
         /**
          * Generic command script.
@@ -168,7 +168,7 @@ public interface ExecutionScript {
      * Resolves placeholders in script.
      * @since 0.2.3
      */
-    public class PlaceholderResolver {
+    class PlaceholderResolver {
 
         static final Logger LOG = LoggerFactory.getLogger(ExecutionScript.class);
 

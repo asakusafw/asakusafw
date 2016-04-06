@@ -156,7 +156,7 @@ public enum ModifierKind {
     private final Set<DeclarationKind> declarable;
     private final Set<DeclarationKind> grantable;
 
-    private ModifierKind(Set<DeclarationKind> declarable, Set<DeclarationKind> grant) {
+    ModifierKind(Set<DeclarationKind> declarable, Set<DeclarationKind> grant) {
         assert declarable != null;
         assert grant != null;
         this.declarable = Collections.unmodifiableSet(declarable);

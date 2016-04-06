@@ -40,7 +40,7 @@ class FileDrainDriver<T> implements DrainDriver<T> {
      * @param file the target file
      * @throws IllegalArgumentException if any parameter is {@code null}
      */
-    public FileDrainDriver(Class<T> type, File file) {
+    FileDrainDriver(Class<T> type, File file) {
         if (type == null) {
             throw new IllegalArgumentException("type must not be null"); //$NON-NLS-1$
         }

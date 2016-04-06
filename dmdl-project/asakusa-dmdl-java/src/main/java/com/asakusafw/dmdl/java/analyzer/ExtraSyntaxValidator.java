@@ -44,7 +44,7 @@ class ExtraSyntaxValidator extends AbstractVisitor<AstModelDefinition<?>, Void> 
      * Creates a new instance.
      * @param root the root semantics
      */
-    public ExtraSyntaxValidator(DmdlSemantics root) {
+    ExtraSyntaxValidator(DmdlSemantics root) {
         this.root = root;
     }
 

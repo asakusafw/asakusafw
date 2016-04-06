@@ -88,7 +88,7 @@ public enum StringValueDrivers implements ParquetValueDriver {
 
     final Class<? extends ValueOption<?>> valueOptionClass;
 
-    private StringValueDrivers(Class<? extends ValueOption<?>> valueOptionClass) {
+    StringValueDrivers(Class<? extends ValueOption<?>> valueOptionClass) {
         this.valueOptionClass = valueOptionClass;
     }
 

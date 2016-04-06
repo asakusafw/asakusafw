@@ -44,7 +44,7 @@ public enum LiteralKind {
 
     private String description;
 
-    private LiteralKind(String description) {
+    LiteralKind(String description) {
         this.description = description;
     }
 

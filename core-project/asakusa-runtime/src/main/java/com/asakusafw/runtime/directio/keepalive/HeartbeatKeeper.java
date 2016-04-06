@@ -49,7 +49,7 @@ class HeartbeatKeeper implements Closeable {
      * @param interval heartbeat interval (ms)
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public HeartbeatKeeper(final long interval) {
+    HeartbeatKeeper(final long interval) {
         this.interval = interval;
         this.daemon = new Thread(new Runnable() {
             @Override
