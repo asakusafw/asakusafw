@@ -1,19 +1,19 @@
-==================================
-Asakusa Gradle Plugin ユーザガイド
-==================================
+===================================
+Asakusa Gradle Pluginユーザーガイド
+===================================
 
-この文書では、GradleにAsakusa Framework を使ったアプリケーションの開発やデプロイを行うための機能を追加する Asakusa Gradle Plugin について説明します。
+この文書では、\ `Gradle <http://www.gradle.org/>`_\ にAsakusa Framework を使ったアプリケーションの開発やデプロイを行うための機能を追加するAsakusa Gradle Pluginについて説明します。
 
 概要
 ====
 
-Asakusa Gradle Plugin は、Asakusa Framework用の `Gradle <http://www.gradle.org/>`_ 拡張プラグインです。
+Asakusa Gradle Pluginは、Asakusa Framework用のGradle拡張プラグイン群です。
 このプラグインを利用することで、Gradleを利用してAsakusa Framework を使ったアプリケーションの開発やデプロイを行うことができます。
 
 利用環境
 --------
 
-Asakusa Gradle Plugin を利用するにはJava(JDK)がインストールされている必要があります。
+Asakusa Gradle Pluginを利用するにはJava(JDK)がインストールされている必要があります。
 これらの導入方法については、 :doc:`../introduction/start-guide` - :ref:`startguide-development-environment` などを参考にしてください。
 
 なお、Gradleのインストールについては、本書では `Gradleラッパー <http://www.gradle.org/docs/current/userguide/gradle_wrapper.html>`_ と呼ばれるGradleを利用するためのコマンドを使う方法を推奨しています。
@@ -73,7 +73,7 @@ Asakusa Gradle Pluginを使った標準的なアプリケーション開発環�
 
 * `asakusa-mapreduce-template-0.8.0.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-mapreduce-template-0.8.0.tar.gz>`_
 
-Asakusa on Sparkを利用する場合のプロジェクトテンプレートは、 :asakusa-on-spark:`Asakusa on Spark ユーザガイド <user-guide.html>` に記載のリンクからダウンロードします。
+Asakusa on Sparkを利用する場合のプロジェクトテンプレートは、 :asakusa-on-spark:`Asakusa on Spark ユーザーガイド <user-guide.html>` に記載のリンクからダウンロードします。
 
 また、Asakusa Frameworkの `サンプルプログラム集 (GitHub)`_ では、サンプルアプリケーションのソースコード一式を含むサンプルアプリケーションプロジェクトを公開しています。
 
@@ -184,7 +184,7 @@ Gradleラッパーに関するディレクトリ及びファイルは、Gradle�
 
 ..  [#] このディレクトリ内に直接配置したライブラリファイル(:file:`.jar`)のみ、バッチアプリケーション内で利用可能です。
         サブディレクトリに配置したライブラリファイルは無視されます。
-        詳しくは、後述の  `ユーザ演算子で使用するライブラリの追加`_  を参照してください。
+        詳しくは、後述の  `ユーザー演算子で使用するライブラリの追加`_  を参照してください。
 
 ..  list-table:: プロジェクトレイアウト - :file:`src/test`
     :widths: 5 5
@@ -290,7 +290,7 @@ Asakusa Frameworkを開発環境にインストールするには、インスト
 このタスクは ``ASAKUSA_HOME`` のパス上に開発環境用の構成を持つAsakusa Frameworkをインストールします。
 
 ..  attention::
-    開発環境では、Asakusa DSLを使ってアプリケーションを記述するだけであればAsakusa Frameworkのインストールは不要ですが、テストドライバを使ってFlow DSL、Batch DSLのテストを行う場合や、YAESSを使ってローカル環境でバッチアプリケーションを実行する場合など、Hadoopを実際に動作させる機能については、Asakusa Frameworkをインストールする必要があります。
+    開発環境では、Asakusa DSLを使ってアプリケーションを記述するだけであればAsakusa Frameworkのインストールは不要ですが、テストドライバーを使ってFlow DSL、Batch DSLのテストを行う場合や、YAESSを使ってローカル環境でバッチアプリケーションを実行する場合など、Hadoopを実際に動作させる機能については、Asakusa Frameworkをインストールする必要があります。
 
 データモデルクラスの生成
 ------------------------
@@ -352,7 +352,7 @@ Asakusa DSLの記述や配置方法については :doc:`../dsl/index` を参照
 デプロイメントアーカイブの構成
 ------------------------------
 
-Asakusa Frameworkのバッチアプリケーションをアプリケーション運用環境（Hadoopクラスタなど）で実行するには、DSLコンパイルによって作成したバッチアプリケーションとAsakusa Framework本体の実行モジュールをあわせて運用環境にデプロイします。
+Asakusa Frameworkのバッチアプリケーションをアプリケーション運用環境（Hadoopクラスターなど）で実行するには、DSLコンパイルによって作成したバッチアプリケーションとAsakusa Framework本体の実行モジュールをあわせて運用環境にデプロイします。
 
 Asakusa Gradle Pluginでは運用環境にデプロイする必要がある実行モジュールを全て含めた「デプロイメントアーカイブ」と呼ばれるパッケージファイルを生成することができます。
 
@@ -387,9 +387,9 @@ Asakusa DSLのテストを実行するには、 :program:`check` タスクを実
 
 テストの実行結果は :file:`build/reports/tests` 配下にHTML形式のテストレポートが生成されます。
 また、 :file:`build/test-results` にはXML形式のテスト結果ファイルが生成されます。
-このXMLファイルはCIサーバなどのツールと連携して使用することができます。
+このXMLファイルはCIサーバーなどのツールと連携して使用することができます。
 
-テストドライバの :doc:`../testing/using-excel` を使用したテストを記述する場合、 :program:`generateTestbook` タスクを実行することでテストデータ定義シート（テストデータテンプレート）を生成することができます。
+テストドライバーの :doc:`../testing/using-excel` を使用したテストを記述する場合、 :program:`generateTestbook` タスクを実行することでテストデータ定義シート（テストデータテンプレート）を生成することができます。
 
 ..  code-block:: sh
 
@@ -402,7 +402,7 @@ Asakusa DSLのテストを実行するには、 :program:`check` タスクを実
 
 :program:`build` タスクはプロジェクトのフルビルドを実行します。
 実際には上記 :program:`assemble` と :program:`check` タスクを実行します。
-CIサーバなどでリリースビルドを行うような場合に、このタスクを利用するとよいでしょう。
+CIサーバーなどでリリースビルドを行うような場合に、このタスクを利用するとよいでしょう。
 
 ..  code-block:: sh
 
@@ -536,10 +536,10 @@ Asakusa Frameworkではアプリケーションプロジェクトで使用する
 
 .. _dependency-library-gradle-plugin:
 
-ユーザ演算子で使用するライブラリの追加
---------------------------------------
+ユーザー演算子で使用するライブラリの追加
+----------------------------------------
 
-バッチアプリケーションのユーザ演算子から任意のJavaライブラリを利用する場合は、以下に示すいずれかの方法でアプリケーション用依存ライブラリを追加します。
+バッチアプリケーションのユーザー演算子から任意のJavaライブラリを利用する場合は、以下に示すいずれかの方法でアプリケーション用依存ライブラリを追加します。
 
 プロジェクトの依存ライブラリディレクトリへjarファイルを配置
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -629,7 +629,7 @@ Asakusa Gradle Pluginでは、特定の環境向けに個別にデプロイメ�
 
 ..  [#] これらの機能は :gradledoc:`com.asakusafw.gradle.plugins.AsakusafwOrganizerProfile` が提供します。
 ..  [#] ``dev`` プロファイルは主に :program:`installAsakusafw` タスクで開発環境にデプロイする構成として使用します。
-        ``dev`` プロファイルはテストドライバ用の構成が有効になるなど、開発環境向けの既定値が設定されています。
+        ``dev`` プロファイルはテストドライバー用の構成が有効になるなど、開発環境向けの既定値が設定されています。
 ..  [#] 標準の設定では、プロファイル ``prod`` のデプロイメントアーカイブは ``asakusafw-${asakusafwVersion}.tar.gz`` というファイル名(プロファイル名が接尾辞につかない)で生成されます。
         上記の ``stage`` プロファイルの例のように、プロパティ ``archiveName`` を設定することで任意のファイル名を指定することもできます。
 
@@ -759,7 +759,7 @@ Asakusa Gradle Pluginでは、特定の環境向けに個別にデプロイメ�
 ..  attention::
     Asakusa Frameworkのバージョン |version| では、 ``TestTookTask`` は試験的機能として提供しています。
 
-``TestToolTask`` [#]_ を使うことで、テストドライバやバッチテストランナーが持つ機能を組み合わせてGradleのタスクとして実行することができます。
+``TestToolTask`` [#]_ を使うことで、テストドライバーやバッチテストランナーが持つ機能を組み合わせてGradleのタスクとして実行することができます。
 
 ..  seealso::
     テストツールタスクの利用例は :doc:`../testing/user-guide` - :ref:`testing-userguide-testtool-task` を参照してください。

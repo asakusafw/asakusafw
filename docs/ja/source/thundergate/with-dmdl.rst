@@ -208,9 +208,9 @@ Asakusa Frameworkの ``asakusa-thundergate-dmdl-*.jar`` の
 
 .. code-block:: none
 
-    jdbc.driver = <JDBCドライバのクラス名>
+    jdbc.driver = <JDBCドライバーのクラス名>
     jdbc.url = <接続先のJDBC URL>
-    jdbc.user = <接続ユーザ名>
+    jdbc.user = <接続ユーザー名>
     jdbc.password = <接続パスワード>
     database.name = <接続先データベース名>
 

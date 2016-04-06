@@ -2,7 +2,7 @@
 Asakusa Framework スタートガイド
 ================================
 
-この文書では、Asakusa Frameworkをはじめて利用するユーザ向けに、Asakusa Frameworkを使ったバッチアプリケーションの開発、実行方法を簡単に説明します。
+この文書では、Asakusa Frameworkをはじめて利用するユーザー向けに、Asakusa Frameworkを使ったバッチアプリケーションの開発、実行方法を簡単に説明します。
 
 .. _startguide-development-environment:
 
@@ -149,7 +149,7 @@ Eclipse上で環境変数 ``ASAKUSA_HOME`` が有効になっていることを�
 
 * `asakusa-mapreduce-template-0.8.0.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-mapreduce-template-0.8.0.tar.gz>`_
 
-Asakusa on Sparkを利用する場合のプロジェクトテンプレートは、 :asakusa-on-spark:`Asakusa on Spark ユーザガイド <user-guide.html>` に記載のリンクからダウンロードします。
+Asakusa on Sparkを利用する場合のプロジェクトテンプレートは、 :asakusa-on-spark:`Asakusa on Spark ユーザーガイド <user-guide.html>` に記載のリンクからダウンロードします。
 
 ..  code-block:: sh
 
@@ -289,7 +289,7 @@ Shafuを導入した開発環境では、コンテキストメニューから :m
 環境変数の設定
 ~~~~~~~~~~~~~~
 
-運用環境上でAsakusa Frameworkを配置しバッチアプリケーションを実行するためのOSユーザに対して、以下の環境変数を設定します。
+運用環境上でAsakusa Frameworkを配置しバッチアプリケーションを実行するためのOSユーザーに対して、以下の環境変数を設定します。
 
 * ``JAVA_HOME``: Javaのインストールパス
 * ``HADOOP_CMD``: :program:`hadoop` コマンドのパス

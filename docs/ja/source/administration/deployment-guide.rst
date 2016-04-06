@@ -261,7 +261,7 @@ Direct I/O Hiveを `MapR`_ 環境で利用する場合、Direct I/O HiveはMapR�
 環境変数の設定
 ~~~~~~~~~~~~~~
 
-Hadoopクライアントマシン上でAsakusa Frameworkを配置しバッチアプリケーションの実行操作を行うOSユーザに対して、以下の環境変数を設定します。
+Hadoopクライアントマシン上でAsakusa Frameworkを配置しバッチアプリケーションの実行操作を行うOSユーザーに対して、以下の環境変数を設定します。
 
 * ``JAVA_HOME``: YAESSが使用するJavaのインストールパス
 * ``HADOOP_CMD``: YAESSが使用する :program:`hadoop` コマンドのパス
@@ -411,7 +411,7 @@ Asakusa on Sparkの最適化設定
 各コンポーネントの設定
 ----------------------
 
-Asakusa Frameworkの各コンポーネントの設定に関しては、各コンポーネントのユーザガイドなどを参照してください。
+Asakusa Frameworkの各コンポーネントの設定に関しては、各コンポーネントのユーザーガイドなどを参照してください。
 
 * :doc:`../directio/user-guide`
 * :doc:`../windgate/user-guide`

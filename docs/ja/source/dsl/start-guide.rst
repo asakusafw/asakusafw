@@ -697,7 +697,7 @@ WindGateはCSVのほか、さまざまな形式のファイルやデータベー
 * 売上明細データ ( `SalesDetailFromCsv` )
 
 まず、店舗情報のマスタデータである :file:`<ベースディレクトリ>/master/store_info.csv` にあるCSVファイルを読み出す例 ( `StoreInfoFromCsv` ) を以下に示します。
-この ``<ベースディレクトリ>`` の部分はWindGateの設定で、既定では :file:`/tmp/windgate-<ログインユーザ名>` を利用します。
+この ``<ベースディレクトリ>`` の部分はWindGateの設定で、既定では :file:`/tmp/windgate-<ログインユーザー名>` を利用します。
 
 ..  code-block:: java
 
@@ -935,7 +935,7 @@ WindGateはCSVのほか、さまざまな形式のファイルやデータベー
 ジョブフローのテスト
 --------------------
 
-ジョブフローのテストは、Asakusa Frameworkが提供するテストドライバを利用して行います。
+ジョブフローのテストは、Asakusa Frameworkが提供するテストドライバーを利用して行います。
 
 詳しくは、 :doc:`../testing/start-guide` を参照して下さい。
 

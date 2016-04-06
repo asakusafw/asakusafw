@@ -76,7 +76,7 @@ Asakusa Frameworkを利用したバッチアプリケーションの開発環境
       - Apache Hadoop [#]_
       - 2.7.2
 
-..  [#] Windows上ではテストドライバを利用したテストは :doc:`エミュレーションモード <../testing/emulation-mode>` のみ使用できます。Windowsの利用については、 :doc:`../introduction/start-guide-windows` を参照してください。
+..  [#] Windows上ではテストドライバーを利用したテストは :doc:`エミュレーションモード <../testing/emulation-mode>` のみ使用できます。Windowsの利用については、 :doc:`../introduction/start-guide-windows` を参照してください。
 ..  [#] MacOSX上では基本的な動作のみ検証しています。
 ..  [#] JREでは一部の機能が動作しません。必ずJDKを使用してください。
 ..  [#] 開発環境に対するJavaのセットアップについては、 :doc:`../application/using-jdk` を参照してください。

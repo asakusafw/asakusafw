@@ -82,11 +82,11 @@ Experimental shell script は 簡易的にアプリケーションをテスト�
 
 運用ツール
 ----------
-Asakusa Cleaner はローカルファイル、及びHadoopクラスタ上の分散ファイルシステム(HDFS等)上のファイルをクリーニングするためのコマンドツールです。
+Asakusa Cleaner はローカルファイル、及びHadoopクラスター上の分散ファイルシステム(HDFS等)上のファイルをクリーニングするためのコマンドツールです。
 
 Asakusa Cleaner はファイルパスの解決方法に問題があるため、Hadoopファイルシステムを扱うために追加のライブラリが必要になるHadoopディストリビューション [#]_ に対応できていないなどの問題があります。
 
-バージョン0.4.0から :doc:`../administration/utility-tool-user-guide` で説明されている ``hadoop-fs-clean.sh`` が提供されました。このコマンドはローカルにインストールされているHadoopクラスタの設定を参照し、その設定に基づいてHadoopファイルシステムに対するファイルをクリーニングする機能を提供しています。バージョン0.4以降は ``hadoop-fs-clean.sh`` を利用することを強く推奨します。
+バージョン0.4.0から :doc:`../administration/utility-tool-user-guide` で説明されている ``hadoop-fs-clean.sh`` が提供されました。このコマンドはローカルにインストールされているHadoopクラスターの設定を参照し、その設定に基づいてHadoopファイルシステムに対するファイルをクリーニングする機能を提供しています。バージョン0.4以降は ``hadoop-fs-clean.sh`` を利用することを強く推奨します。
 
 ..  [#] バージョン |version| 時点では、MapRで提供されるMapRFS上で正常に動作しないことが確認されています。
 

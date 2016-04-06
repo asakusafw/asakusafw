@@ -4,8 +4,8 @@ YAESS JobQueue
 
 この文書では、シンプルなHadoopジョブの実行を制御するJobQueue(JobQueueサーバーおよび、それをYAESSと連携して利用するJobQueueクライアントプラグイン ``asakusa-yaess-jobqueue`` )の利用方法について解説します。
 
-:doc:`YAESS <index>` がリモートマシン上に配置したJobQueueサーバを経由してバッチを実行することで、YAESS本体の設定とは独立してリモートマシンのリソースを簡易的に制御することが可能です。
-また、JobQueueサーバとJobQueueクライアントプラグインはHTTP経由で非同期的に通信し、ジョブの状況を監視するため、Hadoopのジョブ実行が長時間に渡る場合や、通信路が不安定な場合などに、組み込みで提供されているSSH経由での通信よりも安定した動作が見込めます。
+:doc:`YAESS <index>` がリモートマシン上に配置したJobQueueサーバーを経由してバッチを実行することで、YAESS本体の設定とは独立してリモートマシンのリソースを簡易的に制御することが可能です。
+また、JobQueueサーバーとJobQueueクライアントプラグインはHTTP経由で非同期的に通信し、ジョブの状況を監視するため、Hadoopのジョブ実行が長時間に渡る場合や、通信路が不安定な場合などに、組み込みで提供されているSSH経由での通信よりも安定した動作が見込めます。
 
 JobQueueの概要
 ==============
@@ -92,10 +92,10 @@ JobQueueをデプロイするにあたって、まずはAsakusa Frameworkの全�
 これについて、詳しくは :doc:`../administration/deployment-architecture` を参考にしてください。
 このドキュメントの「モジュール」の説明に対応づけると、JobQueueのコンポーネントは以下のモジュールに含まれることになります。
 
-* JobQueueサーバ: Hadoopクライアントモジュール
+* JobQueueサーバー: Hadoopクライアントモジュール
 * JobQueueクライアントプラグイン: バッチ起動モジュール
 
-以降では運用環境に対して、JobQueueサーバとJobQueueクライアントプラグインを導入し利用する方法について説明します。
+以降では運用環境に対して、JobQueueサーバーとJobQueueクライアントプラグインを導入し利用する方法について説明します。
 
 JobQueueサーバーの利用方法
 ==========================
@@ -144,9 +144,9 @@ JobQueueサーバーの動作に必要な設定を行います。
     * - ``hadoop.log.dir``
       - Hadoopジョブ実行時のログ出力先。
         
-        ここで指定したログディレクトリ配下にJobQueueサーバがJobQueueクライアントプラグインからジョブ実行リクエストを受け付ける単位で生成される JRID(Job Request ID)の値でディレクトリが作成され、そのディレクトリ配下に ``stdout`` と ``stderr`` というファイル名で、Hadoopジョブが出力した標準出力、標準エラー出力の内容が出力されます。
+        ここで指定したログディレクトリ配下にJobQueueサーバーがJobQueueクライアントプラグインからジョブ実行リクエストを受け付ける単位で生成される JRID(Job Request ID)の値でディレクトリが作成され、そのディレクトリ配下に ``stdout`` と ``stderr`` というファイル名で、Hadoopジョブが出力した標準出力、標準エラー出力の内容が出力されます。
 
-        JRIDはJobQueueクライアントプラグインやJobQueueサーバが出力するログに出力されます。
+        JRIDはJobQueueクライアントプラグインやJobQueueサーバーが出力するログに出力されます。
         問題分析の際にはこれらのログからエラートなったジョブのログを特定することができます。
         
         このディレクトリ配下のディレクトリ/ファイルは自動的には削除されないため、必要に応じてクリーニングを行なってください。
@@ -252,7 +252,7 @@ JobQueueサーバーはログ出力にLogback [#]_ を利用しています。
     
     </configuration>
 
-JobQueueサーバが設定ファイルを使用するには、上記の ``CATALINA_OPTS`` 環境変数に以下のように設定を追加します。
+JobQueueサーバーが設定ファイルを使用するには、上記の ``CATALINA_OPTS`` 環境変数に以下のように設定を追加します。
 
 ..  code-block:: sh
 
@@ -266,7 +266,7 @@ Tomcatの起動
 ドキュメントに従ってTomcatを起動してください。
 
 ..  attention::
-    Tomcatは各デプロイメントガイドで説明したAsakusa Framework管理用のOSユーザ( *ASAKUSA_USER* )から実行するように設定してください。
+    Tomcatは各デプロイメントガイドで説明したAsakusa Framework管理用のOSユーザー( *ASAKUSA_USER* )から実行するように設定してください。
 
 動作確認
 --------
@@ -328,7 +328,7 @@ YAESS導入時には ``hadoop`` には標準的なハンドラクラスが設定
 認証を行わない場合、これらの認証情報は省略可能です。
 
 ``hadoop.timeout`` と ``hadoop.pollingInterval`` はいずれも省略可能です。
-それぞれJobQueueサーバに対する通信のタイムアウトと問い合わせ間隔を指定します。
+それぞれJobQueueサーバーに対する通信のタイムアウトと問い合わせ間隔を指定します。
 省略した場合、タイムアウトは ``10000`` 、問い合わせ間隔は ``1000`` をそれぞれ既定値として利用します。
 
 上記のうち、先頭の ``hadoop`` を除くすべての項目には ``${変数名}`` という形式で、YAESSを起動した環境の環境変数を含められます。
@@ -368,11 +368,11 @@ YAESS導入時には ``hadoop`` には標準的なハンドラクラスが設定
 設定例
 ------
 
-ジョブ実行クラスタの振り分けと組み合わせて利用する例
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ジョブ実行クラスターの振り分けと組み合わせて利用する例
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 以下は :doc:`multi-dispatch` とJobQueueを組み合わせて利用する設定例(構成ファイルの一部)です。
 ローカル環境上の設定に対するサブハンドラには ``default`` を、JobQueueを経由するサブハンドラには ``jobqueue`` という名前をそれぞれ指定しています。
-Jobqueueサーバは2台の冗長構成をもち、それぞれBASIC認証を使用します。
+Jobqueueサーバーは2台の冗長構成をもち、それぞれBASIC認証を使用します。
 
 ..  code-block:: properties
 
@@ -392,7 +392,7 @@ Jobqueueサーバは2台の冗長構成をもち、それぞれBASIC認証を使
     hadoop.jobqueue.timeout = 30000
     hadoop.jobqueue.pollingInterval = 500
     
-    #JobQueueサーバは2台の冗長構成
+    #JobQueueサーバーは2台の冗長構成
     hadoop.jobqueue.1.url = http://jobqueue-server1:8080/jobqueue
     hadoop.jobqueue.1.user = asakusa1
     hadoop.jobqueue.1.password = asakusa1
