@@ -54,14 +54,14 @@ Asakusa Framework入門
 * `ソースリポジトリ (GitHub)`_
 * `サンプルプログラム集 (GitHub)`_
 * `課題管理 (GitHub)`_
-* `ビルドサーバ(Jenkins)`_
+* `ビルドサーバー(Jenkins)`_
 * :apiref:`APIリファレンス <index.html>`
 * :epub:`ePub版のダウンロード <AsakusaFramework.epub>`
 
 ..  _`ソースリポジトリ (GitHub)`: http://github.com/asakusafw/asakusafw
 ..  _`サンプルプログラム集 (GitHub)`: http://github.com/asakusafw/asakusafw-examples
 ..  _`課題管理 (GitHub)`: https://github.com/asakusafw/asakusafw/issues
-..  _`ビルドサーバ(Jenkins)`: http://ci.asakusafw.com
+..  _`ビルドサーバー(Jenkins)`: http://ci.asakusafw.com
 
 ..  toctree::
     :hidden:

@@ -80,7 +80,7 @@
       - 各種DSLおよびコンパイラ
     * - :file:`testing/`
       - TestDriver
-      - テストドライバ
+      - テストドライバー
     * - :file:`directio/`
       - Direct I/O
       - Direct I/O

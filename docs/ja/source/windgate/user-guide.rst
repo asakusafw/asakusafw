@@ -7,13 +7,13 @@ WindGateユーザーガイド
 WindGateプロファイル
 ====================
 
-WindGateは「Hadoopクラスタとデータベース」または「Hadoopクラスタとローカルファイルシステム」などの二点間で様々なデータをやり取りするツールです。
+WindGateは「Hadoopクラスターとデータベース」または「Hadoopクラスターとローカルファイルシステム」などの二点間で様々なデータをやり取りするツールです。
 主に、Asakusa Frameworkでバッチアプリケーションを作成する際に、データフローの入力データや出力データを取り扱うために利用します。
 
-WindGateでは、「Hadoopクラスタ」や「データベース」、「ローカルファイルシステム」などのそれぞれを「リソース」という考え方で同じように取り扱います。
+WindGateでは、「Hadoopクラスター」や「データベース」、「ローカルファイルシステム」などのそれぞれを「リソース」という考え方で同じように取り扱います。
 WindGateの「プロファイル」にそれぞれのリソースとアクセス方法を記述することで、リソース間で自由にデータをやり取りできるようにします。
 
-また、このプロファイルはWindGateに複数登録することもでき、複数のデータベースやローカルファイルシステム上のパス、またはアクセスするHadoopクラスタへの通信方法など、複数の組み合わせを個別に管理できます。
+また、このプロファイルはWindGateに複数登録することもでき、複数のデータベースやローカルファイルシステム上のパス、またはアクセスするHadoopクラスターへの通信方法など、複数の組み合わせを個別に管理できます。
 
 WindGateのプロファイルは、 :file:`$ASAKUSA_HOME/windgate/profile/<プロファイル名>.properties` (以降、構成ファイル)内に記述します。
 ``<プロファイル名>`` の部分には、特定のプロファイルごとに名前を付けてその名前を指定します。
@@ -33,7 +33,7 @@ WindGateのプロファイルは、 :file:`$ASAKUSA_HOME/windgate/profile/<プ�
     * - ``process.basic``
       - `プロセスの設定`_
     * - ``resource.hadoop``
-      - `Hadoopクラスタの設定`_
+      - `Hadoopクラスターの設定`_
     * - ``resource.local``
       - `ローカルファイルシステムの設定`_
     * - ``resource.jdbc``
@@ -188,12 +188,12 @@ WindGateは二つのリソースの間でデータを転送するツールです
 なお、このプロセスを利用するには、プラグインライブラリに ``asakusa-windgate-retryable`` の追加が必要です。
 詳しくは `プラグインライブラリの管理`_ を参照してください。
 
-Hadoopクラスタの設定
---------------------
+Hadoopクラスターの設定
+----------------------
 
-Asakusa Frameworkで作成したバッチからWindGateを利用する場合、リソースの片方にはHadoopクラスタを利用します。
+Asakusa Frameworkで作成したバッチからWindGateを利用する場合、リソースの片方にはHadoopクラスターを利用します。
 
-Hadoopクラスタとの通信方法は、構成ファイル内の ``resource.hadoop`` セクション内に記述します。
+Hadoopクラスターとの通信方法は、構成ファイル内の ``resource.hadoop`` セクション内に記述します。
 
 同一環境上のHadoopを利用する
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -230,7 +230,7 @@ URI形式で、 ``hdfs://<host>:8080/user/asakusa`` 等のHadoopファイルシ�
 Hadoopを利用する際の環境変数
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Hadoopクラスタと通信するリソースを利用するには、WindGateの起動時にHadoopの設定がすべて利用可能である必要があります。
+Hadoopクラスターと通信するリソースを利用するには、WindGateの起動時にHadoopの設定がすべて利用可能である必要があります。
 WindGate起動時のHadoopの設定と、バッチで利用するHadoopの設定が異なる場合、正しく動作しない可能性があります。
 
 環境変数の設定方法は `WindGateの環境変数設定`_ を参照してください。
@@ -288,7 +288,7 @@ WindGateからSSHを経由してHadoopにアクセスする際に、Hadoopブリ
 このツールは通常 :file:`$ASAKUSA_HOME/windgate-ssh` というディレクトリにインストールされていて、リモートコンピューターのAsakusa Frameworkにも同様のディレクトリが必要です。
 また、プロファイルの ``resource.hadoop.env.ASAKUSA_HOME`` には、リモートコンピューターのAsakusa Frameworkのインストール先をフルパスで指定してください。
 
-このツールの内部では、以下の順序で :program:`hadoop` コマンドを検索し、そのコマンドでHadoopクラスタの操作を行います。
+このツールの内部では、以下の順序で :program:`hadoop` コマンドを検索し、そのコマンドでHadoopクラスターの操作を行います。
 
 * 環境変数 ``HADOOP_CMD`` が設定されている場合、 ``$HADOOP_CMD`` を :program:`hadoop` コマンドとみなして利用します。
 * 環境変数 ``HADOOP_HOME`` が設定されている場合、 :program:`$HADOOP_HOME/bin/hadoop` コマンドを利用します。
@@ -340,7 +340,7 @@ WindGateのリソースとして、WindGateを起動したコンピュータの�
 
 ..  warning::
     開発環境では、ベースパスに壊れてもよいディレクトリを指定してください。
-    ここで指定したパスはテスト実行時などにテストドライバが削除したり変更したりします。
+    ここで指定したパスはテスト実行時などにテストドライバーが削除したり変更したりします。
 
 ..  [#] WindGateを起動したコンピュータから、OSのファイルシステムを利用するというだけですので、ネットワークファイルシステム等でもファイルシステム上にマウントしてあれば利用可能です。
     なお、「ローカル」と書いているのは、Hadoopのファイルシステムと区別するためです。
@@ -350,7 +350,7 @@ WindGateのリソースとして、WindGateを起動したコンピュータの�
 
 WindGateのリソースとして、JDBCをサポートするデータベースを指定できます。
 
-現在の構成では、WindGateから直接JDBCドライバを利用して対象のデータベースにアクセスします。
+現在の構成では、WindGateから直接JDBCドライバーを利用して対象のデータベースにアクセスします。
 また、データの取得にはテーブルを ``SELECT`` 文で取得し、データの書き戻しにはテーブルを ``TRUNCATE`` した後にバッチモードで ``INSERT`` 文を発行します。
 
 ..  warning::
@@ -373,11 +373,11 @@ WindGateのリソースとして、JDBCをサポートするデータベース�
     * - ``resource.jdbc``
       - ``com.asakusafw.windgate.jdbc.JdbcResourceProvider``
     * - ``resource.jdbc.driver``
-      - JDBCドライバのクラス名
+      - JDBCドライバーのクラス名
     * - ``resource.jdbc.url``
       - 接続先データベースのJDBC URL
     * - ``resource.jdbc.user``
-      - データベースのユーザ名
+      - データベースのユーザー名
     * - ``resource.jdbc.password``
       - データベースのパスワード
     * - ``resource.jdbc.batchGetUnit``
@@ -395,7 +395,7 @@ WindGateのリソースとして、JDBCをサポートするデータベース�
 
 上記の設定のうち、先頭の ``resource.jdbc`` を除くすべての項目の値の中に ``${環境変数名}`` という形式で環境変数を含められます。
 
-なお、このリソースを利用するには、プラグインライブラリに ``asakusa-windgate-jdbc`` とJDBCドライバライブラリの追加が必要です。
+なお、このリソースを利用するには、プラグインライブラリに ``asakusa-windgate-jdbc`` とJDBCドライバーライブラリの追加が必要です。
 詳しくは `プラグインライブラリの管理`_ を参照してください。
 
 ..  [#] この値は ``Statement.setFetchSize()`` に設定します。
@@ -502,7 +502,7 @@ Logback以外のログの仕組みを利用する場合、 :file:`$ASAKUSA_HOME/
 WindGateの様々な機能は、プラグイン機構を利用して実現しています。
 それぞれのプラグイン、およびプラグインが利用する依存ライブラリは、 :file:`$ASAKUSA_HOME/windgate/plugin` ディレクトリ直下に配置してください。
 
-たとえば、WindGateはHadoopクラスタにアクセスする際にもプラグインが必要です。
+たとえば、WindGateはHadoopクラスターにアクセスする際にもプラグインが必要です。
 標準的なものはWindGate導入時に自動的にプラグインが追加されますが、その他のプラグインは拡張モジュールとして提供されるため、必要に応じて拡張モジュールを導入してください。
 
 ..  seealso::
@@ -549,7 +549,7 @@ Asakusa FrameworkのバッチアプリケーションからWindGateを利用し�
     * - ``asakusa-windgate-plugin``
       - DSLコンパイラプラグイン
     * - ``asakusa-windgate-test-moderator``
-      - テストドライバプラグイン
+      - テストドライバープラグイン
     * - ``asakusa-windgate-dmdl``
       - DMDLコンパイラプラグイン
 
@@ -846,7 +846,7 @@ Asakusa FrameworkのバッチアプリケーションからWindGateを利用し�
     * - ``asakusa-windgate-plugin``
       - DSLコンパイラプラグイン
     * - ``asakusa-windgate-test-moderator``
-      - テストドライバプラグイン
+      - テストドライバープラグイン
     * - ``asakusa-windgate-dmdl``
       - DMDLコンパイラプラグイン
 
@@ -1093,7 +1093,7 @@ WindGateを利用したジョブフローやバッチのテストは、Asakusa F
 通常のテストについては :doc:`../testing/index` を参照してください。
 
 ..  attention::
-    テストドライバは、テストのたびにWindGateのプラグイン用のClassLoaderを作成し、プラグインライブラリをクラスパスに通します。
+    テストドライバーは、テストのたびにWindGateのプラグイン用のClassLoaderを作成し、プラグインライブラリをクラスパスに通します。
 
     クラスロードに関する問題が発生した場合には、テストを実行する際のクラスパスにそれらのライブラリを含めてください。
 

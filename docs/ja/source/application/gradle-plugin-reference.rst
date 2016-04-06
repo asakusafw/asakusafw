@@ -38,7 +38,7 @@ Asakusa Gradle PluginはAsakusa FrameworkのMavenリポジトリに以下のMave
         }
     }
 
-Asakusa on Sparkを利用する場合の設定例については、Asakusa on Sparkのドキュメント :asakusa-on-spark:`Asakusa on Spark ユーザガイド - Asakusa on Spark Gradle Plugin <user-guide.html#asakusa-on-spark-gradle-plugin>` を参照してください。
+Asakusa on Sparkを利用する場合の設定例については、Asakusa on Sparkのドキュメント :asakusa-on-spark:`Asakusa on Spark ユーザーガイド - Asakusa on Spark Gradle Plugin <user-guide.html#asakusa-on-spark-gradle-plugin>` を参照してください。
 
 Asakusa Gradle Plugin 一覧
 ==========================
@@ -112,7 +112,7 @@ Batch Application Plugin はAsakusa Framework の バッチアプリケーショ
 * DMDLスクリプトからデータモデルクラスを生成するタスクの提供
 * Gradle標準のJavaコンパイルタスクに対して、Operator DSLコンパイラによる演算子実装クラス、演算子ファクトリクラスの生成を行うための設定を追加
 * Asakusa DSLとして記述したJavaソースファイル一式に対して、Batch DSLコンパイラによるバッチアプリケーション実行モジュールの生成を行うタスクの提供
-* テストドライバを利用したテストケースを作成するためのテストデータ定義シートのテンプレートファイルを生成するタスクの提供
+* テストドライバーを利用したテストケースを作成するためのテストデータ定義シートのテンプレートファイルを生成するタスクの提供
 * Gradle標準のEclipseのタスクに対して、Asakusa Framework用の設定を追加
 
 ..  note::
@@ -714,8 +714,8 @@ Direct I/O Hiveの構成に関する規約プロパティは、 ``asakusafwOrgan
 
 ..  [#] これらのプロパティは規約オブジェクト :gradledoc:`com.asakusafw.gradle.plugins.AsakusafwOrganizerPluginConvention.HiveConfiguration` が提供します。
 
-テストドライバプロパティ
-~~~~~~~~~~~~~~~~~~~~~~~~
+テストドライバープロパティ
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 テストモジュール用の構成に関する規約プロパティは、 ``asakusafwOrganizer`` ブロック内の参照名 ``testing`` でアクセスできます [#]_ 。
 この規約オブジェクトは以下のプロパティを持ちます。
