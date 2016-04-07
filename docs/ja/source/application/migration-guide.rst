@@ -58,12 +58,6 @@ Hadoop1系は非対応となりました。
 
 * :doc:`using-hadoop`
 
-また、Jinrikishaを使って構築した開発環境の移行については、以下のドキュメントを参照してください。
-
-* :jinrikisha:`Jinrikishaのドキュメント <index.html>`
-
-..  todo:: Jinrikishaのマイグレーションに関するドキュメントのリンク
-
 Gradle
 ~~~~~~
 

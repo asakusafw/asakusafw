@@ -144,8 +144,6 @@ Hiveライブラリの指定
         }
     }
 
-..  todo:: bump up hive-exec version for MapR 5.0.0
-
 Direct I/O Hiveを `MapR`_ 環境で利用する場合、Direct I/O HiveはMapRが提供するHiveライブラリを利用する必要があるため、運用環境用のデプロイメントアーカイブにHiveライブラリを指定しています。
 
 ..  hint::

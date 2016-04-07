@@ -94,12 +94,12 @@ Gradleラッパーのアップデート
 ..  code-block:: sh
 
     ./gradlew help
-    
+
 ..  code-block:: none
 
     :help
 
-    Welcome to Gradle 2.11.
+    Welcome to Gradle 2.12.
     ...
 
 ..  attention::
