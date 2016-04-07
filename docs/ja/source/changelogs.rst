@@ -10,6 +10,17 @@ Release 0.8.0
 * [ :milestone-asakusafw:`0.8.0` ]
 * [ :milestone-asakusafw-sdk:`0.8.0` ]
 
+..  list-table:: Bundled Components
+    :widths: 8 2
+    :header-rows: 1
+
+    * - Component
+      - Version
+    * - Asakusa Framework Core
+      - 0.8.0
+    * - Asakusa on MapReduce
+      - 0.8.0
+
 Release 0.7.6
 =============
 
