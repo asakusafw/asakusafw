@@ -48,6 +48,7 @@ javadoclinks = {
 
 rst_prolog = u"""
 ..  |ASAKUSA_ON_M3BP| replace:: Asakusa on M\ :sup:`3`\ BP
+..  |M3BP_ENGINE| replace:: M\ :sup:`3` for Batch Processing
 
 :tocdepth: 3
 """

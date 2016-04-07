@@ -12,7 +12,7 @@ Release 0.8.0
 
 Asakusa Frameworkは優れた開発生産性、高いパフォーマンスを発揮するバッチアプリケーションの開発、実行基盤として様々な改善を続けています。
 
-今回のリリースでは、 新しい実行基盤である Asakusa on M\ :sup:`3` の新規公開、昨年からDeveloper Previewとして公開していた Asakusa on Spark の正式公開など重要なアップデートが多数含まれています。
+今回のリリースでは、 新しい実行基盤である |ASAKUSA_ON_M3BP| の新規公開、昨年からDeveloper Previewとして公開していた Asakusa on Spark の正式公開など重要なアップデートが多数含まれています。
 
 また今回のリリースでは、より優れたプラットフォームへの対応を積極的に行うために、いくつかの古いプラットフォームの対応を削除しています。
 
@@ -22,11 +22,11 @@ Asakusa Frameworkは優れた開発生産性、高いパフォーマンスを発
 |ASAKUSA_ON_M3BP|
 ~~~~~~~~~~~~~~~~~
 
-|ASAKUSA_ON_M3BP| は、Asakusa DSLを始めとするAsakusa Frameworkの開発基盤を利用して作成したバッチアプリケーションに対して、M\ :sup:`3` for Batch Processing (M\ :sup:`3` for BP) をその実行基盤として利用するための機能セットを提供します [#]_ 。
+|ASAKUSA_ON_M3BP| は、Asakusa DSLを始めとするAsakusa Frameworkの開発基盤を利用して作成したバッチアプリケーションに対して、 |M3BP_ENGINE| をその実行基盤として利用するための機能セットを提供します [#]_ 。
 
-M\ :sup:`3` for BPはDAG (Directed Acyclic Graph; 有向非循環グラフ) の形で表現されたタスクをマルチコア環境で効率よく処理するためのフレームワークで、以下のような特徴があります。
+|M3BP_ENGINE| はDAG (Directed Acyclic Graph; 有向非循環グラフ) の形で表現されたタスクをマルチコア環境で効率よく処理するためのフレームワークで、以下のような特徴があります。
 
-* 単一のコンピューター上で動作
+* 単一ノード上のマルチコア/マルチプロセッサ用に最適化
 * 細粒度で動的なタスクスケジューリング
 * ほぼすべてオンメモリで処理
 
@@ -34,11 +34,11 @@ M\ :sup:`3` for BPはDAG (Directed Acyclic Graph; 有向非循環グラフ) の�
 
 Asakusa Frameworkの適用領域においても、中間結果が全てメモリ上に収まる規模のバッチにおいてはAsakusa on Sparkよりも高速で、かつ高いコストパフォーマンスになることを確認しています。
 
+.. [#] https://github.com/fixstars/m3bp
+
 |ASAKUSA_ON_M3BP| の詳細は、以下のドキュメントを参照してください。
 
 * :asakusa-on-m3bp:`Asakusa on M3BP <index.html>`
-
-.. [#] https://github.com/fixstars/m3bp
 
 Asakusa on Spark
 ~~~~~~~~~~~~~~~~
