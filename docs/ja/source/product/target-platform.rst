@@ -28,7 +28,7 @@ Asakusa Framework は、以下のHadoopディストリビューションと組�
       - CentOS 6 (6.2)
       - JDK 7 (1.7.0_45)
     * - Amazon EMR
-      - 4.4.0
+      - 4.5.0
       - Amazon Linux 2015.09
       - JDK 8 (1.8.0_71)
     * - Microsoft Azure HDInsight
