@@ -212,7 +212,7 @@ Direct I/O Hiveを利用したバッチアプリケーションを実行しま�
 
 ..  code-block:: sh
 
-    hadoop fs -rmr target/testing/directio/tables
+    hadoop fs -rm -r target/testing/directio/tables
     hadoop fs -put /tmp/example-dataset/tables target/testing/directio/tables
 
     $ASAKUSA_HOME/yaess/bin/yaess-batch.sh example.summarizeSales
