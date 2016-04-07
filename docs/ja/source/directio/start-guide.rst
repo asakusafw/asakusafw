@@ -173,7 +173,7 @@ Direct I/Oの機構を利用するには、入出力の仲介を行う「デー�
     # スタンドアロンモードに対応するため、ホームディレクトリに移動しておく
     cd ~
     # ファイルシステムパス上のデータをクリアしておく
-    hadoop fs -rmr target/testing/directio
+    hadoop fs -rm -r target/testing/directio/*
     # サンプルデータを配置する
     hadoop fs -put <サンプルアプリケーションプロジェクトのパス>/src/test/example-dataset/master target/testing/directio/master
     hadoop fs -put <サンプルアプリケーションプロジェクトのパス>/src/test/example-dataset/sales target/testing/directio/sales
@@ -186,7 +186,8 @@ Direct I/Oの機構を利用するには、入出力の仲介を行う「デー�
 
 アプリケーション実行の手順は :doc:`../introduction/start-guide` と同様です。
 
-ここではコマンド例のみを示します。詳しくは同文書の :ref:`introduction-start-guide-deploy-app` と :ref:`introduction-start-guide-run-app` を参考にしてください。
+ここではローカルでアプリケーションを実行するためのコマンド例のみを示します。
+詳しくは :doc:`../introduction/start-guide` の :ref:`introduction-start-guide-deploy-app` や :ref:`introduction-start-guide-run-app` を参考にしてください。
 
 ..  code-block:: sh
 
@@ -216,14 +217,11 @@ Direct I/Oでは論理パスに配置したデータソース内のファイル�
 ..  code-block:: sh
      
     Starting List Direct I/O Files:
-     Hadoop Command: /usr/lib/hadoop/bin/hadoop
-              Class: com.asakusafw.directio.tools.DirectIoList
-          Libraries: /home/asakusa/asakusa/directio/lib/asakusa-directio-tools-0.5.0.jar,...
-          Arguments: result **/*
+    ...
     file:/home/asakusa/target/testing/directio/result/category
     file:/home/asakusa/target/testing/directio/result/error
-    file:/home/asakusa/target/testing/directio/result/error/20110401.csv
     file:/home/asakusa/target/testing/directio/result/category/result.csv
+    file:/home/asakusa/target/testing/directio/result/error/2011-04-01.csv
 
 デフォルト設定の場合、論理パス ``result`` に対応するデータソースはルートパス ``/`` に対応するデータソース ``root`` が使用されます。
 また、データソース ``root`` に対応するファイルシステムパスは相対パス :file:`target/testing/directio` が使用されます。
@@ -303,7 +301,7 @@ Asakusa DSLの記述
 Direct I/Oを利用する場合でも、Asakusa DSLの基本的な記述方法は同様です。
 Direct I/O特有の部分は、以下に示す `ファイルシステム上のCSVファイルを入力に利用する`_ と `ファイルシステム上にCSVファイルを出力する`_ 部分のみです。
 
-それ以外の部分については、 :doc:`../dsl/start-guide` を参照してください。 
+それ以外の部分については、 :doc:`../dsl/start-guide` を参照してください。
 
 ファイルシステム上のCSVファイルを入力に利用する
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
