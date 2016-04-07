@@ -3,10 +3,6 @@ Asakusa is a Hadoop-based Enterprise Batch Processing Framework, to improve the 
 
 Asakusa consists of the following components: (1) Asakusa DSL compiler, (2) a data model generator for Hadoop data format, and (3) integrated test suites tools. Asakusa DSL compiler compiles the DSLs (multi-layered DSLs, business workflow DSL, logic flow DSL, and data operator DSL) into MapReduce programs. The data model generator takes a simple DSL script (data model definition language: DMDL) or RDBMS schema as an input, and generates the Hadoop I/O classes and the corresponding test templates. For the ease of the development, the test suite tools integrate the Asakusa DSL compiler and data model generator.
 
-## Resources
-* [Asakusa Framework Documentation (ja)](http://docs.asakusafw.com/latest/release/ja/html/index.html)
-* [Asakusa Framework Community Site (ja)](http://asakusafw.com)
-
 ## How to build
 
 `mvn install -DskipTests`
@@ -22,10 +18,22 @@ Asakusa consists of the following components: (1) Asakusa DSL compiler, (2) a da
 
 If you run tests in Eclipse, please activate `Preferences > Java > Debug > 'Only include exported classpath entries when launching'`.
 
-## Sub projects
-* [Asakusa SDK](https://github.com/asakusafw/asakusafw-sdk)
-* [Asakusa Framework Language Project](https://github.com/asakusafw/asakusafw-compiler)
+## Sub Projects
+* [Asakusa Framework SDK](https://github.com/asakusafw/asakusafw-sdk)
+* [Asakusa Framework Language Toolset](https://github.com/asakusafw/asakusafw-compiler)
+* [Asakusa Framework DAG Toolset](https://github.com/asakusafw/asakusafw-dag)
 * [Asakusa on Spark](https://github.com/asakusafw/asakusafw-spark)
+* [Asakusa on M<sup>3</sup>BP](https://github.com/asakusafw/asakusafw-m3bp)
+
+## Related Projects
+* [Asakusa Framework Examples](https://github.com/asakusafw/asakusafw-examples)
+* [Asakusa Framework Legacy Modules](https://github.com/asakusafw/asakusafw-legacy)
+* [Jinrikisha](https://github.com/asakusafw/asakusafw-starter)
+* [Shafu](https://github.com/asakusafw/asakusafw-shafu)
+
+## Resources
+* [Asakusa Framework Documentation (ja)](http://docs.asakusafw.com/)
+* [Asakusa Framework Community Site (ja)](http://asakusafw.com)
 
 ## License
 * [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0)
