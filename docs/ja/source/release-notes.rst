@@ -22,7 +22,7 @@ Asakusa Frameworkは優れた開発生産性、高いパフォーマンスを発
 |ASAKUSA_ON_M3BP|
 ~~~~~~~~~~~~~~~~~
 
-|ASAKUSA_ON_M3BP| は、Asakusa DSLを始めとするAsakusa Frameworkの開発基盤を利用して作成したバッチアプリケーションに対して、 |M3BP_ENGINE| をその実行基盤として利用するための機能セットを提供します [#]_ 。
+|ASAKUSA_ON_M3BP| は、Asakusa DSLを始めとするAsakusa Frameworkの開発基盤を利用して作成したバッチアプリケーションに対して、 |M3BP_ENGINE| (https://github.com/fixstars/m3bp) を実行基盤として利用するための機能セットを提供します。
 
 |M3BP_ENGINE| はDAG (Directed Acyclic Graph; 有向非循環グラフ) の形で表現されたタスクをマルチコア環境で効率よく処理するためのフレームワークで、以下のような特徴があります。
 
@@ -30,11 +30,7 @@ Asakusa Frameworkは優れた開発生産性、高いパフォーマンスを発
 * 細粒度で動的なタスクスケジューリング
 * ほぼすべてオンメモリで処理
 
-上記のような特徴のため、Hadoop MapReduceやSparkに比べて、小〜中規模データサイズのバッチ処理に非常に適しています。
-
-Asakusa Frameworkの適用領域においても、中間結果が全てメモリ上に収まる規模のバッチにおいてはAsakusa on Sparkよりも高速で、かつ高いコストパフォーマンスになることを確認しています。
-
-.. [#] https://github.com/fixstars/m3bp
+上記のような特徴のため、 小規模〜中規模のデータを扱うバッチに対して、|ASAKUSA_ON_M3BP| によって単一ノード上で高速に処理できるようになりました。
 
 |ASAKUSA_ON_M3BP| の詳細は、以下のドキュメントを参照してください。
 
@@ -45,9 +41,9 @@ Asakusa on Spark
 
 2015年からDeveloper Previewとして公開していた Asakusa on Spark を正式機能として公開しました。
 
-Asakusa on Sparkは、Asakusa DSLを始めとするAsakusa Frameworkの開発基盤を利用して作成したバッチアプリケーションに対して、Apache Sparkをその実行基盤として利用するための機能セットを提供します。
+Asakusa on Sparkは、Asakusa DSLを始めとするAsakusa Frameworkの開発基盤を利用して作成したバッチアプリケーションに対して、Apache Spark (http://spark.apache.org) を実行基盤として利用するための機能セットを提供します。
 
-複雑なデータフローを扱う場合、大容量データを扱う場合などの多くのケースにおいて、Asakusa on Sparkの上で実行するバッチアプリケーションは優れたパフォーマンスを発揮します。
+特に中規模〜大規模のデータを扱うバッチに対して、Asakusa on Sparkは優れたパフォーマンスを発揮します。
 
 Asakusa on Spark の詳細は、以下のドキュメントを参照してください。
 
