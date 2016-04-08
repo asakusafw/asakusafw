@@ -87,7 +87,7 @@ public class ConstantRetryStrategy implements RetryStrategy {
 
         private int attemptNumber = 1;
 
-        public Retry(String taskName, int maxAttemptNumber, long minInterval, long maxInterval) {
+        Retry(String taskName, int maxAttemptNumber, long minInterval, long maxInterval) {
             this.taskName = taskName;
             this.maxAttemptNumber = maxAttemptNumber;
             this.minInterval = minInterval;

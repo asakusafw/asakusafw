@@ -57,7 +57,7 @@ public enum ExecutionKind {
      */
     public final boolean completesSession;
 
-    private ExecutionKind(String symbol, boolean createsSession, boolean completesSession) {
+    ExecutionKind(String symbol, boolean createsSession, boolean completesSession) {
         assert symbol != null;
         this.symbol = symbol;
         this.createsSession = createsSession;

@@ -179,7 +179,7 @@ public class GenerateCreateTableTask {
 
         private final Configuration configuration;
 
-        public Ql(HiveTableInfo table, Configuration configuration) {
+        Ql(HiveTableInfo table, Configuration configuration) {
             this.table = table;
             this.configuration = configuration;
         }

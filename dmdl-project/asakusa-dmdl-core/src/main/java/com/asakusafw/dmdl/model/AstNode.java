@@ -241,7 +241,7 @@ public interface AstNode {
      * @param <C> type of visitor context
      * @param <R> type of visitor result
      */
-    public abstract class AbstractVisitor<C, R> implements Visitor<C, R> {
+    abstract class AbstractVisitor<C, R> implements Visitor<C, R> {
 
         @Override
         public R visitAttribute(C context, AstAttribute node) {

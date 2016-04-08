@@ -132,7 +132,7 @@ public interface CompilerConfiguration {
      * Represents an optimization level.
      * @since 0.8.0
      */
-    public enum OptimizeLevel {
+    enum OptimizeLevel {
 
         /**
          * Disables optimization.
@@ -154,7 +154,7 @@ public interface CompilerConfiguration {
      * Represents a debug level.
      * @since 0.8.0
      */
-    public enum DebugLevel {
+    enum DebugLevel {
 
         /**
          * No debugging information.

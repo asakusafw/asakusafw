@@ -52,7 +52,7 @@ public @interface KeyInfo {
     @Target({ })
     @Retention(RetentionPolicy.RUNTIME)
     @Documented
-    public @interface Group {
+    @interface Group {
 
         /**
          * The grouping expression.
@@ -67,7 +67,7 @@ public @interface KeyInfo {
     @Target({ })
     @Retention(RetentionPolicy.RUNTIME)
     @Documented
-    public @interface Order {
+    @interface Order {
 
         /**
          * The ordering direction.
@@ -84,7 +84,7 @@ public @interface KeyInfo {
      * Ordering direction.
      * @since 0.5.0
      */
-    public enum Direction {
+    enum Direction {
 
         /**
          * Ascendant.

@@ -30,7 +30,7 @@ public interface RowFormatInfo {
     /**
      * Represents a row format kind.
      */
-    public enum Kind {
+    enum Kind {
 
         /**
          * The delimited rows.

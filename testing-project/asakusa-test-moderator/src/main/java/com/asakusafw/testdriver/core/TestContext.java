@@ -47,7 +47,7 @@ public interface TestContext {
      * Empty {@link TestContext}.
      * @since 0.2.2
      */
-    public static class Empty implements TestContext {
+    class Empty implements TestContext {
 
         @Override
         public Map<String, String> getArguments() {

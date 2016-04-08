@@ -217,7 +217,7 @@ public final class Sources {
         private boolean firstTime = true;
 
         @SuppressWarnings("unchecked")
-        public HeapSource(
+        HeapSource(
                 List<? extends Source<? extends T>> sortedSources,
                 Comparator<? super T> comparator) {
             assert sortedSources.isEmpty() == false;
@@ -331,7 +331,7 @@ public final class Sources {
 
         T value;
 
-        public HeapElement(Source<? extends T> source) {
+        HeapElement(Source<? extends T> source) {
             this.source = source;
         }
 

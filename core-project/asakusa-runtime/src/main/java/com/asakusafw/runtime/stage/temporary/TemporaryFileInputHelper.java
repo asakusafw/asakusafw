@@ -149,7 +149,7 @@ final class TemporaryFileInputHelper implements Closeable {
 
         final boolean sawEof;
 
-        public Result(
+        Result(
                 DataBuffer buffer,
                 int positionInBlock, int currentBlock,
                 int blockRest, String dataTypeName,

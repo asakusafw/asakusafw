@@ -79,7 +79,7 @@ public enum JdbcProcess implements ConfigurationItem {
 
     private final String description;
 
-    private JdbcProcess(String key, String description) {
+    JdbcProcess(String key, String description) {
         assert key != null;
         assert description != null;
         this.key = key;

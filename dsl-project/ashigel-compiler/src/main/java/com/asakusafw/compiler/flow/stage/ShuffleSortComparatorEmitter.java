@@ -111,7 +111,7 @@ public class ShuffleSortComparatorEmitter {
 
         private final Type keyType;
 
-        public Engine(
+        Engine(
                 FlowCompilingEnvironment environment,
                 ShuffleModel model,
                 Name keyTypeName) {

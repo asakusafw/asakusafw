@@ -47,7 +47,7 @@ class WorkbookInfo {
      * @param workbook target workbook
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public WorkbookInfo(Workbook workbook) {
+    WorkbookInfo(Workbook workbook) {
         if (workbook == null) {
             throw new IllegalArgumentException("workbook must not be null"); //$NON-NLS-1$
         }

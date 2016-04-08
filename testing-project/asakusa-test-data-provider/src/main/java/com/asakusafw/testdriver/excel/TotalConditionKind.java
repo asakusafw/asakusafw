@@ -71,7 +71,7 @@ public enum TotalConditionKind {
 
     private final String text;
 
-    private TotalConditionKind(String symbol, String title, DataModelCondition... conditions) {
+    TotalConditionKind(String symbol, String title, DataModelCondition... conditions) {
         assert symbol != null;
         assert title != null;
         assert conditions != null;

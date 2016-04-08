@@ -1289,7 +1289,7 @@ public enum PropertyKind {
 
     private String name;
 
-    private PropertyKind(Class<? extends Model> ownerType, String name) {
+    PropertyKind(Class<? extends Model> ownerType, String name) {
         assert ownerType != null;
         assert name != null;
         this.ownerType = ownerType;

@@ -111,7 +111,7 @@ public class SessionException extends IOException {
 
         private final String description;
 
-        private Reason(String description) {
+        Reason(String description) {
             assert description != null;
             this.description = description;
         }

@@ -76,7 +76,7 @@ public enum CompareOperator {
 
     private final String symbol;
 
-    private CompareOperator(String symbol) {
+    CompareOperator(String symbol) {
         this.symbol = symbol;
     }
 

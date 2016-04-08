@@ -124,7 +124,7 @@ abstract class DateFormatter {
 
         private final char separator;
 
-        public Standard(char separator) {
+        Standard(char separator) {
             this.separator = separator;
             this.next = new Default(new SimpleDateFormat(getPattern()));
         }

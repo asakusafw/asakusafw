@@ -68,7 +68,7 @@ class JschConnection implements SshConnection {
      * @throws IOException if failed to create a new connection
      * @throws IllegalArgumentException if any parameter is {@code null}
      */
-    public JschConnection(SshProfile profile, List<String> commandLineTokens) throws IOException {
+    JschConnection(SshProfile profile, List<String> commandLineTokens) throws IOException {
         if (profile == null) {
             throw new IllegalArgumentException("profile must not be null"); //$NON-NLS-1$
         }

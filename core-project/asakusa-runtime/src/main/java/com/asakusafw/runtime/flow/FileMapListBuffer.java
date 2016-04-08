@@ -212,7 +212,7 @@ public class FileMapListBuffer<E extends Writable>
 
         private long[] pageIndex;
 
-        public BackingStore(int bufferSize) {
+        BackingStore(int bufferSize) {
             cursor = NOT_SAVED;
             pageIndex = new long[INITIAL_INDEX_SIZE];
             Arrays.fill(pageIndex, NOT_SAVED);

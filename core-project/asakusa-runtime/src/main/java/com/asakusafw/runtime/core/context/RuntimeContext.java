@@ -497,7 +497,7 @@ public final class RuntimeContext {
 
         private final String symbol;
 
-        private ExecutionMode(String symbol) {
+        ExecutionMode(String symbol) {
             assert symbol != null;
             this.symbol = symbol;
         }

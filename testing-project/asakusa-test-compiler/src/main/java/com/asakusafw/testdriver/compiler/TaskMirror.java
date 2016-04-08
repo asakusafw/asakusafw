@@ -30,7 +30,7 @@ public interface TaskMirror extends GraphElement<TaskMirror> {
     /**
      * Represents a task phase.
      */
-    public enum Phase {
+    enum Phase {
 
         /**
          * Initialization.

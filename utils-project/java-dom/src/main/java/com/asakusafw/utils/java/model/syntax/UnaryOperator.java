@@ -65,7 +65,7 @@ public enum UnaryOperator {
      * @param symbol the operator symbol
      * @param category the operator category
      */
-    private UnaryOperator(String symbol, Category category) {
+    UnaryOperator(String symbol, Category category) {
         assert symbol != null;
         assert category != null;
         this.symbol = symbol;

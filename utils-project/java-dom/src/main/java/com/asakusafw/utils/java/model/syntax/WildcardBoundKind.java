@@ -42,7 +42,7 @@ public enum WildcardBoundKind {
      * Creates a new instance.
      * @param representation the keyword
      */
-    private WildcardBoundKind(String representation) {
+    WildcardBoundKind(String representation) {
         assert representation != null;
         this.representation = representation;
     }

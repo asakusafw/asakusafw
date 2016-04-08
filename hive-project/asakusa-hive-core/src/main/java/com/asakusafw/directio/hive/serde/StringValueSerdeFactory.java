@@ -83,7 +83,7 @@ public enum StringValueSerdeFactory implements ValueSerde {
 
     private final Class<? extends ValueOption<?>> valueOptionClass;
 
-    private StringValueSerdeFactory(Class<? extends ValueOption<?>> valueOptionClass) {
+    StringValueSerdeFactory(Class<? extends ValueOption<?>> valueOptionClass) {
         this.valueOptionClass = valueOptionClass;
     }
 
@@ -202,7 +202,7 @@ public enum StringValueSerdeFactory implements ValueSerde {
 
     static class StringDecimalOptionDriver extends AbstractStringDriver {
 
-        public StringDecimalOptionDriver(StringObjectInspector inspector) {
+        StringDecimalOptionDriver(StringObjectInspector inspector) {
             super(inspector);
         }
 
@@ -234,7 +234,7 @@ public enum StringValueSerdeFactory implements ValueSerde {
 
     static class StringDateOptionDriver extends AbstractStringDriver {
 
-        public StringDateOptionDriver(StringObjectInspector inspector) {
+        StringDateOptionDriver(StringObjectInspector inspector) {
             super(inspector);
         }
 
@@ -266,7 +266,7 @@ public enum StringValueSerdeFactory implements ValueSerde {
 
     static class StringDateTimeOptionDriver extends AbstractStringDriver {
 
-        public StringDateTimeOptionDriver(StringObjectInspector inspector) {
+        StringDateTimeOptionDriver(StringObjectInspector inspector) {
             super(inspector);
         }
 

@@ -89,6 +89,7 @@
     <jackson.version>2.6.4</jackson.version>
     <httpclient.version>4.2.5</httpclient.version>
     <commons.codec.version>1.10</commons.codec.version>
+    <checkstyle.version>6.17</checkstyle.version>
 
     <!-- build timestamp -->
     <timestamp>${maven.build.timestamp}</timestamp>
@@ -464,6 +465,11 @@ encoding/<project>=UTF-8
           <version>2.12.1</version>
           <dependencies>
             <dependency>
+              <groupId>com.puppycrawl.tools</groupId>
+              <artifactId>checkstyle</artifactId>
+              <version>${checkstyle.version}</version>
+            </dependency>
+            <dependency>
               <groupId>com.asakusafw</groupId>
               <artifactId>build-tools</artifactId>
               <version>${project.version}</version>
@@ -522,7 +528,6 @@ encoding/<project>=UTF-8
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>2.12.1</version>
         <configuration>
           <configLocation>com/asakusafw/checkstyle.xml</configLocation>
         </configuration>

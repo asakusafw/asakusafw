@@ -175,7 +175,7 @@ public class HashGraph<V> implements Graph<V> {
 
         final Set<V> to;
 
-        public HashVertex(V node) {
+        HashVertex(V node) {
             this.from = node;
             this.to = new HashSet<>();
         }
@@ -234,7 +234,7 @@ public class HashGraph<V> implements Graph<V> {
 
         private final Iterator<? extends V> iterator;
 
-        public IteratorWrapper(Iterator<? extends V> iterator) {
+        IteratorWrapper(Iterator<? extends V> iterator) {
             assert iterator != null;
             this.iterator = iterator;
         }

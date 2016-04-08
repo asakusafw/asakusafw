@@ -103,7 +103,7 @@ public enum PropertyType {
     ;
     private final Class<?> representation;
 
-    private PropertyType(Class<?> representation) {
+    PropertyType(Class<?> representation) {
         assert representation != null;
         this.representation = representation;
     }

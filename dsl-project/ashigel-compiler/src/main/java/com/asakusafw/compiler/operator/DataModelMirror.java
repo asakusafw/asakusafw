@@ -80,7 +80,7 @@ public interface DataModelMirror {
      * Kinds of data models.
      * @since 0.2.0
      */
-    public enum Kind {
+    enum Kind {
 
         /**
          * A concrete data model.
@@ -97,7 +97,7 @@ public interface DataModelMirror {
      * Property in data models.
      * @since 0.2.0
      */
-    public interface PropertyMirror {
+    interface PropertyMirror {
 
         /**
          * Returns the name of this property.

@@ -363,7 +363,7 @@ public class StageResourceDriver implements Closeable {
      * Represents the access mode for {@link StageResourceDriver}.
      * @since 0.7.1
      */
-    public static enum AccessMode {
+    public enum AccessMode {
 
         /**
          * Accesses to resources via distributed cache.

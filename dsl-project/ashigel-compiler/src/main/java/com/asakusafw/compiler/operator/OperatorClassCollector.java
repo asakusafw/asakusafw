@@ -324,7 +324,7 @@ public class OperatorClassCollector {
 
         final OperatorProcessor processor;
 
-        public TargetMethod(
+        TargetMethod(
                 AnnotationMirror annotation,
                 ExecutableElement method,
                 OperatorProcessor processor) {

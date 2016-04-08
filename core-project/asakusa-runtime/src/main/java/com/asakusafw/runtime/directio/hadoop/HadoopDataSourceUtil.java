@@ -967,7 +967,7 @@ public final class HadoopDataSourceUtil {
 
         private final DirectDataSourceProfile profile;
 
-        public HadoopDataSourceProvider(Configuration configuration, DirectDataSourceProfile profile) {
+        HadoopDataSourceProvider(Configuration configuration, DirectDataSourceProfile profile) {
             assert configuration != null;
             assert profile != null;
             this.configuration = configuration;

@@ -333,7 +333,7 @@ public final class JobCompatibilityHadoop2 extends JobCompatibilityHadoop {
 
         private final KeyValueConsumer<? super KEYOUT, ? super VALUEOUT> consumer;
 
-        public MockTaskInputOutputContext(
+        MockTaskInputOutputContext(
                 Configuration conf, TaskAttemptID taskId,
                 KeyValueConsumer<? super KEYOUT, ? super VALUEOUT> consumer) {
             super(conf, taskId, null, null, new MockStatusReporter());

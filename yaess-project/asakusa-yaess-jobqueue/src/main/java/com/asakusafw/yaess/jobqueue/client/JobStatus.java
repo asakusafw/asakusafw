@@ -152,7 +152,7 @@ public class JobStatus {
 
         private final String symbol;
 
-        private Kind(String symbol) {
+        Kind(String symbol) {
             assert symbol != null;
             this.symbol = symbol;
         }

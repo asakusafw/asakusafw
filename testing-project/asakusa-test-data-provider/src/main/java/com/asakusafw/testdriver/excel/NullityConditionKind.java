@@ -53,7 +53,7 @@ public enum NullityConditionKind {
 
     private final String text;
 
-    private NullityConditionKind(String symbol, String title) {
+    NullityConditionKind(String symbol, String title) {
         assert symbol != null;
         assert title != null;
         this.symbol = symbol;

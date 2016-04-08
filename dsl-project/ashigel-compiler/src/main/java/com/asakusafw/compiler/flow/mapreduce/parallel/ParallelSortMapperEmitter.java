@@ -72,7 +72,7 @@ final class ParallelSortMapperEmitter {
      * @param environment the current environment
      * @throws IllegalArgumentException if the parameter is {@code null}
      */
-    public ParallelSortMapperEmitter(FlowCompilingEnvironment environment) {
+    ParallelSortMapperEmitter(FlowCompilingEnvironment environment) {
         Precondition.checkMustNotBeNull(environment, "environment"); //$NON-NLS-1$
         this.environment = environment;
     }

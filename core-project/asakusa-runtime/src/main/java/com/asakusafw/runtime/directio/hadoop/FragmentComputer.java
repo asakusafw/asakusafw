@@ -45,7 +45,7 @@ class FragmentComputer {
      * Creates a new instance.
      * @since 0.7.0
      */
-    public FragmentComputer() {
+    FragmentComputer() {
         this(-1L, -1L, false, false);
     }
 
@@ -56,7 +56,7 @@ class FragmentComputer {
      * @param combineBlocks whether combines blocks
      * @param splitBlocks {@code true} to split fragments
      */
-    public FragmentComputer(long minSize, long prefSize, boolean combineBlocks, boolean splitBlocks) {
+    FragmentComputer(long minSize, long prefSize, boolean combineBlocks, boolean splitBlocks) {
         this.minSize = Math.min(minSize, MAX_MIN_SIZE);
         this.prefSize = Math.max(minSize, prefSize);
         this.combineBlocks = combineBlocks;

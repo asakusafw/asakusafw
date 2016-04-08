@@ -48,7 +48,7 @@ final class DirectIoOperatorTester extends DirectIoTester {
 
         private final OperatorTestEnvironment environment;
 
-        public Resource(OperatorTestEnvironment environment, DirectFileInputDescription description) {
+        Resource(OperatorTestEnvironment environment, DirectFileInputDescription description) {
             super(environment, description);
             this.environment = environment;
         }

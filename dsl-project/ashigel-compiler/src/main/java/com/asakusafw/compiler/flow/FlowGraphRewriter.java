@@ -62,7 +62,7 @@ public interface FlowGraphRewriter extends FlowCompilingEnvironment.Initializabl
      * Represents a rewrite phase.
      * @since 0.5.1
      */
-    public enum Phase {
+    enum Phase {
 
         /**
          * Rewrite flow-graph for debugging.

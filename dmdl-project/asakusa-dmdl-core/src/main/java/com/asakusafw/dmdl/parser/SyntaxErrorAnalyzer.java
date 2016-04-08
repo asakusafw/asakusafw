@@ -63,7 +63,7 @@ class SyntaxErrorAnalyzer {
 
     private final Region region;
 
-    public SyntaxErrorAnalyzer(JjDmdlParser parser, ParseException exception) {
+    SyntaxErrorAnalyzer(JjDmdlParser parser, ParseException exception) {
         this.parser = parser;
         this.exception = exception;
         this.region = computeRegion();

@@ -83,7 +83,7 @@ class ExcelSheetRuleExtensionRepository implements ExcelSheetRuleExtension {
      * @param extensions the extensions
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public ExcelSheetRuleExtensionRepository(List<? extends ExcelSheetRuleExtension> extensions) {
+    ExcelSheetRuleExtensionRepository(List<? extends ExcelSheetRuleExtension> extensions) {
         if (extensions == null) {
             throw new IllegalArgumentException("extensions must not be null"); //$NON-NLS-1$
         }

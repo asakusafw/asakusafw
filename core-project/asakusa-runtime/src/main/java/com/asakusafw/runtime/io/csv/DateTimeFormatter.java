@@ -130,7 +130,7 @@ abstract class DateTimeFormatter {
 
         private final char timeSegmentSeparator;
 
-        public Standard(char dateSegmentSeparator, char dateTimeSeparator, char timeSegmentSeparator) {
+        Standard(char dateSegmentSeparator, char dateTimeSeparator, char timeSegmentSeparator) {
             this.dateSegmentSeparator = dateSegmentSeparator;
             this.dateTimeSeparator = dateTimeSeparator;
             this.timeSegmentSeparator = timeSegmentSeparator;

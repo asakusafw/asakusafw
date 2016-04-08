@@ -106,7 +106,7 @@ public class ShuffleKeyEmitter {
 
         private final ImportBuilder importer;
 
-        public Engine(FlowCompilingEnvironment environment, ShuffleModel model) {
+        Engine(FlowCompilingEnvironment environment, ShuffleModel model) {
             assert environment != null;
             assert model != null;
             this.model = model;

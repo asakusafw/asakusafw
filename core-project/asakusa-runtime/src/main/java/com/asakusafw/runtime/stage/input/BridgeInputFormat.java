@@ -613,7 +613,7 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
 
         private boolean closed = false;
 
-        public BridgeRecordReader(
+        BridgeRecordReader(
                 ModelInput<T> input,
                 T buffer,
                 Counter sizeCounter,

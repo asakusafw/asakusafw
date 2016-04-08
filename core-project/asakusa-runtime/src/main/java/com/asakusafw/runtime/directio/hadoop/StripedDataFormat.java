@@ -46,7 +46,7 @@ public interface StripedDataFormat<T> extends DataFormat<T> {
      * An input context for computing {@link DirectInputFragment}s.
      * @since 0.7.0
      */
-    public static class InputContext {
+    class InputContext {
 
         private final Class<?> dataType;
 

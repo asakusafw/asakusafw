@@ -81,7 +81,7 @@ public enum RuleSheetFormat {
 
     private final int columnIndex;
 
-    private RuleSheetFormat(String title, int rowIndex, int columnIndex) {
+    RuleSheetFormat(String title, int rowIndex, int columnIndex) {
         assert title != null;
         this.title = title;
         this.rowIndex = rowIndex;

@@ -55,7 +55,7 @@ public enum ColumnMatchingCondition {
 
     private String japaneseName;
 
-    private ColumnMatchingCondition(String japaneseName) {
+    ColumnMatchingCondition(String japaneseName) {
         this.japaneseName = japaneseName;
     }
 

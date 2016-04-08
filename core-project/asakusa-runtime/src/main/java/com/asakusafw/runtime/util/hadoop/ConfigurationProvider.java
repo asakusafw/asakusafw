@@ -538,7 +538,7 @@ public class ConfigurationProvider {
 
         final String configPath;
 
-        public ClassLoaderHolder(ClassLoader referent, String configPath) {
+        ClassLoaderHolder(ClassLoader referent, String configPath) {
             super(referent);
             this.configPath = configPath;
         }

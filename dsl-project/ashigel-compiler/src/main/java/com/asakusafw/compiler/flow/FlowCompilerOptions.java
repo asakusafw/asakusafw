@@ -146,7 +146,7 @@ EscapedString:
          */
         public final boolean defaultValue;
 
-        private Item(boolean defaultValue) {
+        Item(boolean defaultValue) {
             this.defaultValue = defaultValue;
         }
 
@@ -190,7 +190,7 @@ EscapedString:
 
         private final Set<String> symbols;
 
-        private GenericOptionValue(String symbols) {
+        GenericOptionValue(String symbols) {
             assert symbols != null;
             String first = null;
             this.symbols = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
