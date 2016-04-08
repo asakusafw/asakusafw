@@ -49,7 +49,7 @@ Asakusa on Spark の詳細は、以下のドキュメントを参照してくだ
 
 * :asakusa-on-spark:`Asakusa on Spark <index.html>`
 
-Asakusa on Spark Iterative Extentions
+Asakusa on Spark Iterative Extensions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Asakusa on Spark の拡張機能「Iterative Extensions」を試験的機能として公開しました。
