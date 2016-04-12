@@ -26,10 +26,13 @@ import com.asakusafw.runtime.io.util.WritableRawComparableUnion;
 /**
  * A spec for each direct output stage.
  * @since 0.2.5
+ * @version 0.8.1
  */
 public class DirectOutputSpec {
 
     private final Class<? extends Writable> valueType;
+
+    private final String outputId;
 
     private final String path;
 
@@ -54,6 +57,27 @@ public class DirectOutputSpec {
             Class<? extends DataFormat<?>> formatClass,
             Class<? extends StringTemplate> namingClass,
             Class<? extends DirectOutputOrder> orderClass) {
+        this(valueType, null, path, formatClass, namingClass, orderClass);
+    }
+
+    /**
+     * Creates a new instance.
+     * @param valueType  data type
+     * @param outputId the output ID (nullable)
+     * @param path the path
+     * @param formatClass format class
+     * @param namingClass naming class
+     * @param orderClass ordering class
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.8.1
+     */
+    public DirectOutputSpec(
+            Class<? extends Writable> valueType,
+            String outputId,
+            String path,
+            Class<? extends DataFormat<?>> formatClass,
+            Class<? extends StringTemplate> namingClass,
+            Class<? extends DirectOutputOrder> orderClass) {
         if (valueType == null) {
             throw new IllegalArgumentException("valueType must not be null"); //$NON-NLS-1$
         }
@@ -70,6 +94,7 @@ public class DirectOutputSpec {
             throw new IllegalArgumentException("orderClass must not be null"); //$NON-NLS-1$
         }
         this.valueType = valueType;
+        this.outputId = outputId;
         this.path = path;
         this.formatClass = formatClass;
         this.namingClass = namingClass;
@@ -127,7 +152,7 @@ public class DirectOutputSpec {
     private DirectOutputGroup createGroup() {
         DataFormat<?> format = ReflectionUtils.newInstance(formatClass, null);
         StringTemplate nameGenerator = ReflectionUtils.newInstance(namingClass, null);
-        return new DirectOutputGroup(path, valueType, format, nameGenerator);
+        return new DirectOutputGroup(valueType, outputId, path, format, nameGenerator);
     }
 
     private DirectOutputOrder createOrder() {
@@ -138,8 +163,9 @@ public class DirectOutputSpec {
     @Override
     public String toString() {
         return MessageFormat.format(
-                "DirectOutputSpec(valueType={0}, path={1}, format={2}, naming={3}, order={4})", //$NON-NLS-1$
+                "DirectOutputSpec(valueType={0}, id={1}, path={2}, format={3}, naming={4}, order={5})", //$NON-NLS-1$
                 valueType.getName(),
+                outputId,
                 path,
                 formatClass.getName(),
                 namingClass.getName(),

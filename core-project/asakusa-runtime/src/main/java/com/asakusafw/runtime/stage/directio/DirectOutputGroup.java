@@ -27,6 +27,7 @@ import com.asakusafw.runtime.io.util.WritableRawComparable;
 /**
  * Group object in shuffle key in direct output stages.
  * @since 0.2.5
+ * @version 0.8.1
  */
 class DirectOutputGroup implements WritableRawComparable {
 
@@ -35,6 +36,8 @@ class DirectOutputGroup implements WritableRawComparable {
      * @since 0.4.0
      */
     public static final DirectOutputGroup EMPTY = new DirectOutputGroup();
+
+    private final String outputId;
 
     private final String path;
 
@@ -45,6 +48,7 @@ class DirectOutputGroup implements WritableRawComparable {
     private final StringTemplate nameGenerator;
 
     private DirectOutputGroup() {
+        this.outputId = null;
         this.path = ""; //$NON-NLS-1$
         this.dataType = NullWritableRawComparable.class;
         this.format = new DataFormat<NullWritableRawComparable>() {
@@ -58,13 +62,17 @@ class DirectOutputGroup implements WritableRawComparable {
 
     /**
      * Creates a new instance.
+     * @param outputId the output ID (nullable)
      * @param path the path
      * @param dataType the data type
      * @param format format object
      * @param nameGenerator name generator
      * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.8.1
      */
-    DirectOutputGroup(String path, Class<?> dataType, DataFormat<?> format, StringTemplate nameGenerator) {
+    DirectOutputGroup(
+            Class<?> dataType, String outputId, String path,
+            DataFormat<?> format, StringTemplate nameGenerator) {
         if (path == null) {
             throw new IllegalArgumentException("path must not be null"); //$NON-NLS-1$
         }
@@ -77,6 +85,7 @@ class DirectOutputGroup implements WritableRawComparable {
         if (nameGenerator == null) {
             throw new IllegalArgumentException("nameGenerator must not be null"); //$NON-NLS-1$
         }
+        this.outputId = outputId;
         this.path = path;
         this.dataType = dataType;
         this.format = format;
@@ -85,6 +94,10 @@ class DirectOutputGroup implements WritableRawComparable {
 
     public void set(Object value) {
         nameGenerator.set(value);
+    }
+
+    public String getOutputId() {
+        return outputId;
     }
 
     public String getPath() {
