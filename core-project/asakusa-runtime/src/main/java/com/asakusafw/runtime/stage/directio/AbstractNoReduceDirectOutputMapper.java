@@ -24,6 +24,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.util.ReflectionUtils;
 
 import com.asakusafw.runtime.compatibility.JobCompatibility;
+import com.asakusafw.runtime.directio.Counter;
 import com.asakusafw.runtime.directio.DataDefinition;
 import com.asakusafw.runtime.directio.DataFormat;
 import com.asakusafw.runtime.directio.DirectDataSource;
@@ -151,13 +152,14 @@ public abstract class AbstractNoReduceDirectOutputMapper<T> extends MapperWithRu
                         resourcePath));
             }
 
+            Counter counter = new Counter();
             int records = 0;
             try (ModelOutput<? super T> output = datasource.openOutput(
                     outputContext,
                     definition,
                     basePath,
                     resourcePath,
-                    outputContext.getCounter())) {
+                    counter)) {
                 do {
                     output.write(context.getCurrentValue());
                     records++;
@@ -172,7 +174,7 @@ public abstract class AbstractNoReduceDirectOutputMapper<T> extends MapperWithRu
             }
             org.apache.hadoop.mapreduce.Counter recordCounter = JobCompatibility.getTaskOutputRecordCounter(context);
             recordCounter.increment(records);
-            Constants.putCounts(context, sourceId, outputId, 1, records, outputContext.getCounter().get());
+            Constants.putCounts(context, sourceId, outputId, 1, records, counter.get());
         }
     }
 }
