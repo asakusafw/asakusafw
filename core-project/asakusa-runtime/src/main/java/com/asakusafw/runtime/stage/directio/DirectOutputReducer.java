@@ -85,7 +85,7 @@ public final class DirectOutputReducer extends ReducerWithRuntimeResource<
             }
         }
         recordCounter.increment(records);
-        Constants.putCounts(context, sourceId, portId, 1, records, outputContext.getCounter().get());
+        Constants.putCounts(context, sourceId, portId, 1, records, counter.get());
     }
 
     private <T> T configure(Context context, T object) {
