@@ -19,13 +19,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.compiler.common.JavaName;
-import com.asakusafw.runtime.trace.TraceDriver;
+import com.asakusafw.runtime.trace.DefaultTraceOperator;
 import com.asakusafw.trace.model.TraceSetting;
 import com.asakusafw.trace.model.TraceSetting.Mode;
 import com.asakusafw.trace.model.Tracepoint;
@@ -66,8 +65,6 @@ public class TracepointWeaver {
     private final Map<String, Map<Tracepoint, TraceSetting>> tracepointsByOperatorClass;
 
     private final Map<Tracepoint, TraceSetting> rest;
-
-    private final AtomicInteger counter = new AtomicInteger();
 
     /**
      * Creates a new instance.
@@ -181,10 +178,12 @@ public class TracepointWeaver {
         assert upstreams != null;
         assert downstreams != null;
         OperatorDescription.Builder builder = new OperatorDescription.Builder(Trace.class);
-        builder.declare(TraceDriver.class, TraceDriver.class, "trace"); //$NON-NLS-1$
+        builder.declare(DefaultTraceOperator.class, DefaultTraceOperator.class, "trace"); //$NON-NLS-1$
+        builder.declareParameter(Object.class);
+        builder.declareParameter(String.class);
         builder.addInput(INPUT_PORT_NAME, port.getDescription().getDataType());
         builder.addOutput(OUTPUT_PORT_NAME, port.getDescription().getDataType());
-        builder.addAttribute(new TraceSettingAttribute(setting, counter.incrementAndGet()));
+        builder.addParameter("header", String.class, setting.getTracepoint().toString());
         builder.addAttribute(Connectivity.OPTIONAL);
         if (setting.getMode() == Mode.STRICT) {
             builder.addAttribute(ObservationCount.EXACTLY_ONCE);

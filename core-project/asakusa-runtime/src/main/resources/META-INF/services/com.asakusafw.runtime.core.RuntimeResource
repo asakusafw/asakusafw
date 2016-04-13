@@ -1,3 +1,2 @@
 com.asakusafw.runtime.core.BatchContext$Initializer
 com.asakusafw.runtime.core.Report$Initializer
-com.asakusafw.runtime.trace.TraceDriverLifecycleManager

@@ -599,17 +599,6 @@ Javaオブジェクトによるテストデータ定義
         ...
     }
 
-フロー部品の入力に対してトレースの設定を行う場合、引数を2つだけとる ``addInputTrace`` メソッドを利用して演算子の名前を省略できます。
-
-..  code-block:: java
-
-    @Test
-    public void testExample() {
-        JobFlowTester tester = new JobFlowTester(getClass());
-        tester.addInputTrace(YourFlowpart.class, "inputName");
-        ...
-    }
-
 ..  [#] 演算子ファクトリクラスに含まれる演算子ファクトリメソッドの引数名が入力ポート名に該当します。
         詳しくは :doc:`../dsl/user-guide` - :ref:`dsl-userguide-operator-factory` を参照してください。
 
@@ -628,52 +617,23 @@ Javaオブジェクトによるテストデータ定義
         ...
     }
 
-入力と同様に、フロー部品の出力に対してトレースの設定を行う場合、引数を2つだけとる ``addOutputTrace`` メソッドを利用して演算子の名前を省略できます。
-
-..  code-block:: java
-
-    @Test
-    public void testExample() {
-        JobFlowTester tester = new JobFlowTester(getClass());
-        tester.addOutputTrace(YourFlowpart.class, "outputName");
-        ...
-    }
-
-..  hint::
-    フロー部品から作成されるフロー演算子について、3つの引数を取るメソッド ``addInputTrace`` や ``addOutputTrace`` を利用する場合、演算子の名前には ``"create"`` という名前を指定してください。
-
-..  [#] 演算子ファクトリクラスに含まれる演算子オブジェクトクラスのメソッド名が出力ポート名に該当します。
+..  [#] 演算子ファクトリクラスに含まれる演算子オブジェクトクラスのフィールド名が出力ポート名に該当します。
         詳しくは :doc:`../dsl/user-guide` - :ref:`dsl-userguide-operator-factory` を参照してください。
 
 トレース情報の出力
 ~~~~~~~~~~~~~~~~~~
 
-上記の設定を行った状態でテストを実行すると、指定した演算子の入力や出力が行われるたびに ``[TRACE-xxxx]`` ( ``xxxx`` は識別番号) を含むメッセージを :ref:`dsl-report-api` 経由で出力します。
+上記の設定を行った状態でテストを実行すると、指定した演算子の入力や出力が行われるたびに、文字列 ``TRACE-`` を含むメッセージを :ref:`dsl-report-api` 経由で出力します [#]_ 。
 ここには、トレースを設定した対象の情報や、実際に入出力が行われたデータの内容が含まれています。
 
-以下はHadoopのログに出力するレポートAPIを利用し、トレースの設定を行ってテストを実行した際の、コンソールログの一部を抜粋し、表示用に加工したものです。
-コンソールに ``[TRACE-0001]`` という文字列を含む行がいくつか含まれています。
-
-..  code-block:: sh
-
-    stage.AbstractStageClient: Job Submitted: id=job_local_0001, name=bid.byCategory.stage0001
-    mapred.JobClient: Running job: job_local_0001
-    mapred.Task:  Using ResourceCalculatorPlugin : org.apache.hadoop.util.LinuxResourceCalculatorPlugin@1c5ddc9
-    trace.TraceDriverLifecycleManager: The configuration key "com.asakusafw.runtime.trace.TraceReportActionFactory" is not set, we use "com.asakusafw.runtime.trace.TraceReportActionFactory"
-    report.CommonsLoggingReport: [TRACE-0001] 1@..CategorySummaryOperator#.checkStore.INPUT.sales:..SalesDetail: {class=sales_detail, salesDateTime=2011-01-01 00:00:00, storeCode=..}
-    report.CommonsLoggingReport: [TRACE-0001] 1@..CategorySummaryOperator#.checkStore.INPUT.sales:..SalesDetail: {class=sales_detail, salesDateTime=2011-01-15 00:00:00, storeCode=..}
-    report.CommonsLoggingReport: [TRACE-0001] 1@..CategorySummaryOperator#.checkStore.INPUT.sales:..SalesDetail: {class=sales_detail, salesDateTime=2011-01-31 23:59:59, storeCode=..}
-    report.CommonsLoggingReport: [TRACE-0001] 1@..CategorySummaryOperator#.checkStore.INPUT.sales:..SalesDetail: {class=sales_detail, salesDateTime=2011-02-01 00:00:00, storeCode=..}
-    report.CommonsLoggingReport: [TRACE-0001] 1@..CategorySummaryOperator#.checkStore.INPUT.sales:..SalesDetail: {class=sales_detail, salesDateTime=2012-01-01 00:00:00, storeCode=..}
-    mapred.Task: Task:attempt_local_0001_m_000000_0 is done. And is in the process of commiting
-    mapred.LocalJobRunner:
-    mapred.Task: Task attempt_local_0001_m_000000_0 is allowed to commit now
-
 ..  attention::
-    上記のトレースの出力形式は、将来変更される可能性があります。
+    トレースの出力方式は将来変更される可能性があります。
 
 ..  attention::
     トレース機能を有効にすると、テストの実行に非常に時間がかかるようになる場合があります。
+
+..  [#] このとき、 ``Report.info()`` を利用してメッセージを出力しています。
+        メッセージが正しく表示されない場合には、Report APIの設定を確認してください。
 
 テストドライバーの各実行ステップをスキップする
 ----------------------------------------------
