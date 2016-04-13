@@ -22,7 +22,6 @@ import java.io.File;
 
 import org.junit.Test;
 
-import com.asakusafw.testdriver.testing.flowpart.SimpleFlowPart;
 import com.asakusafw.testdriver.testing.jobflow.SimpleJobflow;
 import com.asakusafw.testdriver.testing.model.Simple;
 import com.asakusafw.testdriver.testing.operator.SimpleOperator;
@@ -53,7 +52,7 @@ public class JobFlowTesterTest extends TesterTestRoot {
         tester.setFrameworkHomePath(framework.getHome());
         tester.input("simple", Simple.class).prepare("data/simple-in.json");
         tester.output("simple", Simple.class).verify("data/simple-out.json", new IdentityVerifier());
-        tester.addInputTrace(SimpleFlowPart.class, "in");
+        tester.addInputTrace(SimpleOperator.class, "setValue", "model");
         tester.runTest(SimpleJobflow.class);
     }
 
@@ -66,7 +65,7 @@ public class JobFlowTesterTest extends TesterTestRoot {
         tester.setFrameworkHomePath(framework.getHome());
         tester.input("simple", Simple.class).prepare("data/simple-in.json");
         tester.output("simple", Simple.class).verify("data/simple-out.json", new IdentityVerifier());
-        tester.addOutputTrace(SimpleFlowPart.class, "out");
+        tester.addOutputTrace(SimpleOperator.class, "setValue", "out");
         tester.runTest(SimpleJobflow.class);
     }
 
@@ -79,8 +78,8 @@ public class JobFlowTesterTest extends TesterTestRoot {
         tester.setFrameworkHomePath(framework.getHome());
         tester.input("simple", Simple.class).prepare("data/simple-in.json");
         tester.output("simple", Simple.class).verify("data/simple-out.json", new IdentityVerifier());
-        tester.addInputTrace(SimpleFlowPart.class, "in");
-        tester.addOutputTrace(SimpleFlowPart.class, "out");
+        tester.addInputTrace(SimpleOperator.class, "setValue", "model");
+        tester.addOutputTrace(SimpleOperator.class, "setValue", "out");
         tester.runTest(SimpleJobflow.class);
     }
 
