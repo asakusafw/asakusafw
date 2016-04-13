@@ -15,10 +15,16 @@
  */
 package com.asakusafw.testdriver.mapreduce;
 
+import java.util.List;
+
 import com.asakusafw.compiler.batch.processor.DependencyLibrariesProcessor;
 import com.asakusafw.compiler.flow.FlowCompilerOptions;
 import com.asakusafw.compiler.flow.FlowCompilerOptions.GenericOptionValue;
+import com.asakusafw.compiler.trace.TracepointWeaveRewriter;
 import com.asakusafw.testdriver.compiler.basic.BasicCompilerConfiguration;
+import com.asakusafw.trace.io.TraceSettingSerializer;
+import com.asakusafw.trace.model.TraceSetting;
+import com.asakusafw.trace.model.TraceSettingList;
 
 class MapReduceCompilerConfiguration extends BasicCompilerConfiguration {
 
@@ -48,6 +54,21 @@ class MapReduceCompilerConfiguration extends BasicCompilerConfiguration {
     }
 
     public FlowCompilerOptions getFlowCompilerOptions() {
-        return MapReduceCompierUtil.toFlowCompilerOptions(getOptimizeLevel(), getDebugLevel(), getOptions());
+        FlowCompilerOptions results =
+                MapReduceCompierUtil.toFlowCompilerOptions(getOptimizeLevel(), getDebugLevel(), getOptions());
+        TraceSettingList trace = getExtension(TraceSettingList.class);
+        if (trace != null) {
+            install(results, trace);
+        }
+        return results;
+    }
+
+    private void install(FlowCompilerOptions options, TraceSettingList trace) {
+        List<TraceSetting> elements = trace.getElements();
+        if (elements.isEmpty()) {
+            return;
+        }
+        String conf = TraceSettingSerializer.serialize(elements);
+        options.putExtraAttribute(TracepointWeaveRewriter.KEY_COMPILER_OPTION, conf);
     }
 }

@@ -50,7 +50,7 @@ import com.asakusafw.utils.collections.Maps;
 /**
  * Represents contextual information for test drivers.
  * @since 0.2.0
- * @version 0.8.0
+ * @version 0.8.1
  */
 public class TestDriverContext implements TestContext {
 
@@ -172,6 +172,8 @@ public class TestDriverContext implements TestContext {
 
     private final Map<String, String> compilerOptions;
 
+    private final Map<Class<?>, Object> extensionMap;
+
     private volatile OptimizeLevel compilerOptimizeLevel = OptimizeLevel.NORMAL;
 
     private volatile DebugLevel compilerDebugLevel = DebugLevel.DISABLED;
@@ -213,6 +215,7 @@ public class TestDriverContext implements TestContext {
         this.batchArgs = new TreeMap<>();
         this.environmentVariables = new HashMap<>(System.getenv());
         this.compilerOptions = new LinkedHashMap<>();
+        this.extensionMap = new LinkedHashMap<>();
         this.skipPhases = EnumSet.noneOf(TestExecutionPhase.class);
     }
 
@@ -648,6 +651,42 @@ public class TestDriverContext implements TestContext {
      */
     public Map<String, String> getCompilerOptions() {
         return compilerOptions;
+    }
+
+    /**
+     * Returns the extension object.
+     * @param <T> the extension type
+     * @param type the extension type
+     * @return the related extension, or {@code null} if it is not registered
+     * @since 0.8.1
+     */
+    public <T> T getExtension(Class<T> type) {
+        return type.cast(extensionMap.get(type));
+    }
+
+    /**
+     * Returns the registered extension types.
+     * @return the extension types
+     * @since 0.8.1
+     * @see #getExtension(Class)
+     */
+    public Set<Class<?>> getExtensionTypes() {
+        return Collections.unmodifiableSet(extensionMap.keySet());
+    }
+
+    /**
+     * Puts the extension object.
+     * @param <T> the extension type
+     * @param type the extension type
+     * @param object the extension object, or {@code null} to remove the target extension
+     * @since 0.8.1
+     */
+    public <T> void putExtension(Class<T> type, T object) {
+        if (object == null) {
+            extensionMap.remove(type);
+        } else {
+            extensionMap.put(type, object);
+        }
     }
 
     @Override

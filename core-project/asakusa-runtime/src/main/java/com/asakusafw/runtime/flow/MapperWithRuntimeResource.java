@@ -58,6 +58,7 @@ public abstract class MapperWithRuntimeResource<KEYIN, VALUEIN, KEYOUT, VALUEOUT
         } catch (Throwable t) {
             oombuf = null;
             try {
+                // FIXME change to logger
                 TraceDriver.error(t);
             } catch (Throwable e) {
                 // ignored errors during error tracking

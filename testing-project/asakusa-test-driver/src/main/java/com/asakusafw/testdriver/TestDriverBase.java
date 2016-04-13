@@ -18,21 +18,19 @@ package com.asakusafw.testdriver;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import com.asakusafw.compiler.trace.TracepointWeaveRewriter;
 import com.asakusafw.runtime.core.Report;
 import com.asakusafw.testdriver.compiler.CompilerConfiguration.DebugLevel;
 import com.asakusafw.testdriver.compiler.CompilerConfiguration.OptimizeLevel;
 import com.asakusafw.testdriver.core.TestDataToolProvider;
 import com.asakusafw.testdriver.core.TestingEnvironmentConfigurator;
-import com.asakusafw.trace.io.TraceSettingSerializer;
 import com.asakusafw.trace.model.TraceSetting;
 import com.asakusafw.trace.model.TraceSetting.Mode;
+import com.asakusafw.trace.model.TraceSettingList;
 import com.asakusafw.trace.model.Tracepoint;
 import com.asakusafw.trace.model.Tracepoint.PortKind;
 import com.asakusafw.vocabulary.flow.FlowDescription;
@@ -301,8 +299,11 @@ public abstract class TestDriverBase extends DriverElementBase {
      * @param flowpartClass target flow-part class
      * @param portName target operator input port name
      * @throws IllegalArgumentException if some parameters were {@code null}
+     * @deprecated some platform does not support tracing flow-part I/O;
+     *      please use {@link #addInputTrace(Class, String, String)} instead
      * @since 0.5.1
      */
+    @Deprecated
     public void addInputTrace(Class<? extends FlowDescription> flowpartClass, String portName) {
         if (flowpartClass == null) {
             throw new IllegalArgumentException("operatorClass must not be null"); //$NON-NLS-1$
@@ -318,21 +319,16 @@ public abstract class TestDriverBase extends DriverElementBase {
         appendTrace(setting);
     }
 
-    private void checkFlowpart(Class<? extends FlowDescription> flowpartClass) {
-        if (flowpartClass.isAnnotationPresent(FlowPart.class) == false) {
-            throw new IllegalArgumentException(MessageFormat.format(
-                    Messages.getString("TestDriverBase.errorInvalidFlowpartClass"), //$NON-NLS-1$
-                    flowpartClass.getName()));
-        }
-    }
-
     /**
      * Adds a new trace-point to the target operator output.
      * @param flowpartClass target flow-part class
      * @param portName target operator input port name
      * @throws IllegalArgumentException if some parameters were {@code null}
+     * @deprecated some platform does not support tracing flow-part I/O;
+     *      please use {@link #addOutputTrace(Class, String, String)} instead
      * @since 0.5.1
      */
+    @Deprecated
     public void addOutputTrace(Class<? extends FlowDescription> flowpartClass, String portName) {
         if (flowpartClass == null) {
             throw new IllegalArgumentException("operatorClass must not be null"); //$NON-NLS-1$
@@ -348,23 +344,23 @@ public abstract class TestDriverBase extends DriverElementBase {
         appendTrace(setting);
     }
 
-    private void appendTrace(TraceSetting setting) {
-        assert setting != null;
-        // FIXME
-        Map<String, String> options = driverContext.getCompilerOptions();
-        String optionValue = options.get(TracepointWeaveRewriter.KEY_COMPILER_OPTION);
-        optionValue = appendTraceSetting(optionValue, setting);
-        options.put(TracepointWeaveRewriter.KEY_COMPILER_OPTION, optionValue);
+    private void checkFlowpart(Class<? extends FlowDescription> flowpartClass) {
+        if (flowpartClass.isAnnotationPresent(FlowPart.class) == false) {
+            throw new IllegalArgumentException(MessageFormat.format(
+                    Messages.getString("TestDriverBase.errorInvalidFlowpartClass"), //$NON-NLS-1$
+                    flowpartClass.getName()));
+        }
     }
 
-    private String appendTraceSetting(String option, TraceSetting setting) {
-        List<TraceSetting> settings = new ArrayList<>();
-        if (option != null) {
-            Collection<? extends TraceSetting> loaded = TraceSettingSerializer.deserialize(option);
-            settings.addAll(loaded);
+    private void appendTrace(TraceSetting setting) {
+        assert setting != null;
+        List<TraceSetting> elements = new ArrayList<>();
+        TraceSettingList list = driverContext.getExtension(TraceSettingList.class);
+        if (list != null) {
+            elements.addAll(list.getElements());
         }
-        settings.add(setting);
-        return TraceSettingSerializer.serialize(settings);
+        elements.add(setting);
+        driverContext.putExtension(TraceSettingList.class, new TraceSettingList(elements));
     }
 
     static TraceSetting createTraceSetting(

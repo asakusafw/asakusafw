@@ -77,15 +77,22 @@ final class Util {
         return result;
     }
 
-    public static CompilerConfiguration getConfiguration(
-            CompilerToolkit toolkit, TestDriverContext context) {
+    public static CompilerConfiguration getConfiguration(CompilerToolkit toolkit, TestDriverContext context) {
         CompilerConfiguration configuration = toolkit.newConfiguration();
         configuration.withClassLoader(context.getClassLoader());
         configuration.withWorkingDirectory(context.getCompilerWorkingDirectory());
         configuration.withOptimizeLevel(context.getCompilerOptimizeLevel());
         configuration.withDebugLevel(context.getCompilerDebugLevel());
         configuration.withOptions(context.getCompilerOptions());
+        for (Class<?> type : context.getExtensionTypes()) {
+            putExtension(context, configuration, type);
+        }
         return configuration;
+    }
+
+    private static <T> void putExtension(TestDriverContext context, CompilerConfiguration conf, Class<T> type) {
+        T extension = context.getExtension(type);
+        conf.withExtension(type, extension);
     }
 
     public static JobflowMirror getJobflow(BatchMirror batch) {
