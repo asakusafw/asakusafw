@@ -39,6 +39,7 @@ Asakusa Framework入門
 
 * :doc:`release-notes`
 * :doc:`changelogs`
+* :doc:`contribution`
 * :doc:`product/target-platform`
 * :doc:`product/road-map`
 * :doc:`product/license`
@@ -47,6 +48,7 @@ Asakusa Framework入門
 ==============
 
 * :jinrikisha:`Jinrikisha (人力車) - Asakusa Framework Starter Package - <index.html>`
+
 
 リソース
 ========
@@ -60,7 +62,7 @@ Asakusa Framework入門
 
 ..  _`ソースリポジトリ (GitHub)`: http://github.com/asakusafw/asakusafw
 ..  _`サンプルプログラム集 (GitHub)`: http://github.com/asakusafw/asakusafw-examples
-..  _`課題管理 (GitHub)`: https://github.com/asakusafw/asakusafw/issues
+..  _`課題管理 (GitHub)`: https://github.com/asakusafw/asakusafw-issues/issues
 ..  _`ビルドサーバー(Jenkins)`: http://ci.asakusafw.com
 
 ..  toctree::
