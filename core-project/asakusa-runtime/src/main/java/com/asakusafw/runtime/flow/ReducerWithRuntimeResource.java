@@ -16,11 +16,13 @@
 package com.asakusafw.runtime.flow;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.mapreduce.Reducer;
 
 import com.asakusafw.runtime.core.RuntimeResource;
-import com.asakusafw.runtime.trace.TraceDriver;
 
 /**
  * An abstract super class of a reducer with {@link RuntimeResource}s.
@@ -32,6 +34,8 @@ import com.asakusafw.runtime.trace.TraceDriver;
  */
 public abstract class ReducerWithRuntimeResource<KEYIN, VALUEIN, KEYOUT, VALUEOUT>
         extends Reducer<KEYIN, VALUEIN, KEYOUT, VALUEOUT> {
+
+    private static final Log LOG = LogFactory.getLog(ReducerWithRuntimeResource.class);
 
     @SuppressWarnings("unused")
     private byte[] oombuf = new byte[4096];
@@ -57,12 +61,9 @@ public abstract class ReducerWithRuntimeResource<KEYIN, VALUEIN, KEYOUT, VALUEOU
             runInternal(context);
         } catch (Throwable t) {
             oombuf = null;
-            try {
-                TraceDriver.error(t);
-            } catch (Throwable e) {
-                // ignored errors during error tracking
-                e.printStackTrace();
-            }
+            LOG.error(MessageFormat.format(
+                    "error occurred while executing reducer: {0}",
+                    getClass().getName()), t);
             if (t instanceof Error) {
                 throw (Error) t;
             } else if (t instanceof RuntimeException) {

@@ -57,8 +57,6 @@ public @interface TraceLocation {
 
     /**
      * The stage unit ID.
-     * If the target unit is a mapper, this must be {@code "m" + unitId}.
-     * If the target unit is a reducer, this must be {@code "r"}.
      */
     String stageUnitId() default UNKNOWN;
 
