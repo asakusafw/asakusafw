@@ -9,6 +9,7 @@
     release-notes
     previous-release-notes
     changelogs
+    contribution
     introduction/index
     dmdl/index
     dsl/index
