@@ -705,7 +705,7 @@ Asakusa Gradle Pluginでは、特定の環境向けに個別にデプロイメ�
 コマンドラインの指定によるフィルタリングは、ビルドスクリプトの設定に対してコマンドライン上でバッチコンパイルの対象をフィルタリングします。
 
 コマンドラインの指定によるフィルタリングは、:program:`gradlew` コマンドを実行する際に各DSLコンパイラの実行用タスクの後に ``--update <バッチクラス名>`` と指定します。
-例えば、MapReduceコンパイラに対してフィルタリングを指定するには、 ``mapreduceCompileBatchapp --update <バッチクラス名>`` と指定します。
+例えば、MapReduceコンパイラに対してフィルタリングを指定するには、 ``mapreduceCompileBatchapps --update <バッチクラス名>`` と指定します。
 
 バッチクラス名の文字列には ``*`` をワイルドカードとして使用することもできます。
 
@@ -713,12 +713,12 @@ Asakusa Gradle Pluginでは、特定の環境向けに個別にデプロイメ�
 
 ..  code-block:: sh
 
-    ./gradlew mapreduceCompileBatchapp --update com.example.target.batch.* assemble
+    ./gradlew mapreduceCompileBatchapps --update com.example.target.batch.* assemble
 
 ..  attention::
     Asakusa Frameworkのバージョン ``0.7.6`` 以前では :program:`compileBatchapp` タスクに対して ``--update`` オプションを指定していましたが、
     バージョン ``0.8.0`` 以降は :program:`compileBatchapp` タスクに ``--update`` オプションを指定することはできなくなりました。
-    代わりに、各DSLコンパイラの実行用タスク ( :program:`mapreduceCompileBatchapp` タスクや :program:`sparkCompileBatchapp` タスク ) に ``--update`` オプションを指定します。
+    代わりに、各DSLコンパイラの実行用タスク ( :program:`mapreduceCompileBatchapps` タスクや :program:`sparkCompileBatchapps` タスク ) に ``--update`` オプションを指定します。
 
 バッチテストランナーの実行
 --------------------------
