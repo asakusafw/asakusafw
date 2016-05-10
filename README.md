@@ -28,15 +28,15 @@ All these features have been well designed and developed with the expertise from
 
 ## How to build
 
-`mvn install -DskipTests`
+`./mvnw install -DskipTests`
 
 ## How to run tests
 * Install [Hadoop](http://hadoop.apache.org/) with local-mode settings
 * Set `hadoop` command into your PATH variable, or set it to `$HADOOP_CMD`
-* And then run `mvn test`
+* And then run `./mvnw test`
 
 ## How to import projects into Eclipse
-* Run `mvn install eclipse:eclipse -DskipTests`
+* Run `./mvnw install eclipse:eclipse -DskipTests`
 * And then import projects from Eclipse
 
 If you run tests in Eclipse, please activate `Preferences > Java > Debug > 'Only include exported classpath entries when launching'`.
