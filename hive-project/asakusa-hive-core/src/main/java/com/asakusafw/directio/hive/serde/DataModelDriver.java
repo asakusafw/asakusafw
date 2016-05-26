@@ -92,7 +92,7 @@ public class DataModelDriver {
                             mapping.source.getFieldName(),
                             mapping.source.getFieldObjectInspector().getTypeName(),
                             mapping.target.getFieldName(),
-                            mapping.target.getFieldTypeInfo()));
+                            mapping.target.getTypeInfo()));
                 }
             }
         }

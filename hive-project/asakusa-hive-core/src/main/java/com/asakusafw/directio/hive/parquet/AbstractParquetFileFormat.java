@@ -28,11 +28,12 @@ import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
-import com.asakusafw.directio.hive.common.HiveFieldInfo;
-import com.asakusafw.directio.hive.common.HiveTableInfo;
-import com.asakusafw.directio.hive.common.RowFormatInfo;
+import com.asakusafw.directio.hive.info.BuiltinStorageFormatInfo;
+import com.asakusafw.directio.hive.info.StorageFormatInfo;
+import com.asakusafw.directio.hive.info.TableInfo;
 import com.asakusafw.directio.hive.serde.DataModelDescriptor;
 import com.asakusafw.directio.hive.serde.DataModelMapping;
+import com.asakusafw.directio.hive.serde.PropertyDescriptor;
 import com.asakusafw.runtime.directio.Counter;
 import com.asakusafw.runtime.directio.DirectInputFragment;
 import com.asakusafw.runtime.directio.hadoop.BlockMap;
@@ -54,7 +55,7 @@ import parquet.hadoop.metadata.CompressionCodecName;
  * @since 0.7.0
  */
 public abstract class AbstractParquetFileFormat<T> extends HadoopFileFormat<T>
-        implements StripedDataFormat<T>, HiveTableInfo {
+        implements StripedDataFormat<T>, TableInfo.Provider {
 
     static final Log LOG = LogFactory.getLog(AbstractParquetFileFormat.class);
 
@@ -70,36 +71,22 @@ public abstract class AbstractParquetFileFormat<T> extends HadoopFileFormat<T>
      */
     public abstract DataModelDescriptor getDataModelDescriptor();
 
-    @Override
-    public Class<?> getDataModelClass() {
-        return getDataModelDescriptor().getDataModelClass();
-    }
+    /**
+     * Returns the table name.
+     * @return the table name
+     */
+    public abstract String getTableName();
 
     @Override
-    public String getTableComment() {
-        return getDataModelDescriptor().getDataModelComment();
-    }
-
-    @Override
-    public List<? extends HiveFieldInfo> getFields() {
-        return getDataModelDescriptor().getPropertyDescriptors();
-    }
-
-    @Override
-    public RowFormatInfo getRowFormat() {
-        return null;
-    }
-
-    @Override
-    public String getFormatName() {
-        return "PARQUET"; //$NON-NLS-1$
-    }
-
-    @Override
-    public Map<String, String> getTableProperties() {
-        Map<String, String> results = new HashMap<>();
-        // no special items
-        return results;
+    public TableInfo getSchema() {
+        DataModelDescriptor desc = getDataModelDescriptor();
+        TableInfo.Builder builder = new TableInfo.Builder(getTableName());
+        for (PropertyDescriptor property : desc.getPropertyDescriptors()) {
+            builder.withColumn(property.getSchema());
+        }
+        builder.withComment(desc.getDataModelComment());
+        builder.withStorageFormat(BuiltinStorageFormatInfo.of(StorageFormatInfo.FormatKind.PARQUET));
+        return builder.build();
     }
 
     @SuppressWarnings("unchecked")

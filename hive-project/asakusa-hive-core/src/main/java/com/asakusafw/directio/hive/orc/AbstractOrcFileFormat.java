@@ -35,12 +35,13 @@ import org.apache.hadoop.hive.ql.io.orc.OrcFile.WriterOptions;
 import org.apache.hadoop.hive.ql.io.orc.Reader;
 import org.apache.hadoop.hive.ql.io.orc.StripeInformation;
 
-import com.asakusafw.directio.hive.common.HiveFieldInfo;
-import com.asakusafw.directio.hive.common.HiveTableInfo;
-import com.asakusafw.directio.hive.common.RowFormatInfo;
+import com.asakusafw.directio.hive.info.BuiltinStorageFormatInfo;
+import com.asakusafw.directio.hive.info.StorageFormatInfo;
+import com.asakusafw.directio.hive.info.TableInfo;
 import com.asakusafw.directio.hive.serde.DataModelDescriptor;
 import com.asakusafw.directio.hive.serde.DataModelInspector;
 import com.asakusafw.directio.hive.serde.DataModelMapping;
+import com.asakusafw.directio.hive.serde.PropertyDescriptor;
 import com.asakusafw.runtime.directio.Counter;
 import com.asakusafw.runtime.directio.DirectInputFragment;
 import com.asakusafw.runtime.directio.hadoop.BlockMap;
@@ -55,7 +56,7 @@ import com.asakusafw.runtime.io.ModelOutput;
  * @since 0.7.0
  */
 public abstract class AbstractOrcFileFormat<T> extends HadoopFileFormat<T>
-        implements StripedDataFormat<T>, HiveTableInfo {
+        implements StripedDataFormat<T>, TableInfo.Provider {
 
     static final Log LOG = LogFactory.getLog(AbstractOrcFileFormat.class);
 
@@ -71,38 +72,28 @@ public abstract class AbstractOrcFileFormat<T> extends HadoopFileFormat<T>
      */
     public abstract DataModelDescriptor getDataModelDescriptor();
 
-    @Override
-    public Class<?> getDataModelClass() {
-        return getDataModelDescriptor().getDataModelClass();
-    }
+    /**
+     * Returns the table name.
+     * @return the table name
+     */
+    public abstract String getTableName();
 
     @Override
-    public String getTableComment() {
-        return getDataModelDescriptor().getDataModelComment();
-    }
-
-    @Override
-    public List<? extends HiveFieldInfo> getFields() {
-        return getDataModelDescriptor().getPropertyDescriptors();
-    }
-
-    @Override
-    public RowFormatInfo getRowFormat() {
-        return null;
-    }
-
-    @Override
-    public String getFormatName() {
-        return "ORC"; //$NON-NLS-1$
-    }
-
-    @Override
-    public Map<String, String> getTableProperties() {
+    public TableInfo getSchema() {
+        DataModelDescriptor desc = getDataModelDescriptor();
+        TableInfo.Builder builder = new TableInfo.Builder(getTableName());
+        for (PropertyDescriptor property : desc.getPropertyDescriptors()) {
+            builder.withColumn(property.getSchema());
+        }
+        builder.withComment(desc.getDataModelComment());
+        builder.withStorageFormat(BuiltinStorageFormatInfo.of(StorageFormatInfo.FormatKind.ORC));
         OrcFormatConfiguration conf = getFormatConfiguration();
-        Map<String, String> results = new HashMap<>();
-        putTableProperty(results, OrcTableProperties.COMPRESSION, conf.getCompressionKind());
-        putTableProperty(results, OrcTableProperties.STRIPE_SIZE, conf.getStripeSize());
-        return results;
+        Map<String, String> properties = new HashMap<>();
+        putTableProperty(properties, OrcTableProperties.COMPRESSION, conf.getCompressionKind());
+        putTableProperty(properties, OrcTableProperties.STRIPE_SIZE, conf.getStripeSize());
+        builder.withProperties(properties);
+
+        return builder.build();
     }
 
     private void putTableProperty(Map<String, String> results, OrcTableProperties property, Object value) {

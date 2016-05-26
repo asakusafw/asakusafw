@@ -22,11 +22,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.asakusafw.directio.hive.common.HiveTableInfo;
+import com.asakusafw.directio.hive.info.TableInfo;
 
 /**
  * Hive table annotation.
  * @since 0.7.0
+ * @version 0.8.1
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
@@ -35,7 +36,7 @@ import com.asakusafw.directio.hive.common.HiveTableInfo;
 public @interface HiveTable {
 
     /**
-     * The table information classes.
+     * The table schema providers.
      */
-    Class<? extends HiveTableInfo>[] value();
+    Class<? extends TableInfo.Provider>[] value();
 }

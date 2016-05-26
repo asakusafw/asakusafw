@@ -27,15 +27,14 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.cli.ParseException;
-import org.apache.hadoop.hive.serde2.typeinfo.TypeInfoFactory;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.junit.Assume;
 import org.junit.Test;
 
-import com.asakusafw.directio.hive.common.SimpleFieldInfo;
-import com.asakusafw.directio.hive.common.SimpleTableInfo;
+import com.asakusafw.directio.hive.info.FieldType.TypeName;
+import com.asakusafw.directio.hive.info.TableInfo;
 import com.asakusafw.directio.hive.tools.cli.GenerateCreateTableTask.Configuration;
 
 /**
@@ -50,8 +49,9 @@ public class GenerateCreateTableTest extends GenerateCeateTableTestRoot {
     @Test
     public void exec_simple() throws Exception {
         File output = new File(folder.getRoot(), "output.txt");
-        Info1.delegate = new SimpleTableInfo("testing")
-            .withField(new SimpleFieldInfo("testing", TypeInfoFactory.intTypeInfo));
+        Info1.schema = new TableInfo.Builder("testing")
+            .withColumn("testing", TypeName.INT)
+            .build();
         int status = GenerateCreateTable.execute(new String[] {
                 "--classpath", source(),
                 "--output", output.getPath(),
@@ -105,8 +105,9 @@ public class GenerateCreateTableTest extends GenerateCeateTableTestRoot {
                 "--database", "testdb",
                 "--pluginpath", plugin.getPath(),
         });
-        String location = conf.locationProvider.toString(new SimpleTableInfo("testing")
-                .withField(new SimpleFieldInfo("p", TypeInfoFactory.intTypeInfo)));
+        String location = conf.locationProvider.toString(new TableInfo.Builder("testing")
+                .withColumn("p", TypeName.INT)
+                .build());
         assertThat(location, is("/home/dwh/testing"));
         assertThat(conf.databaseName, is("testdb"));
         assertThat(conf.classLoader, canLoad(plugin));

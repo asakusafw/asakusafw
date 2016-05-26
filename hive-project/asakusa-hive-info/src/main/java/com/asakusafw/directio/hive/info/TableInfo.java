@@ -187,6 +187,19 @@ public class TableInfo {
     }
 
     /**
+     * Provides {@link TableInfo}.
+     * @since 0.8.1
+     */
+    public interface Provider {
+
+        /**
+         * Returns the {@link TableInfo} of this object.
+         * @return the table schema
+         */
+        TableInfo getSchema();
+    }
+
+    /**
      * A builder for {@link TableInfo}.
      * @since 0.8.1
      */

@@ -26,7 +26,7 @@ import org.junit.Test;
 
 import com.asakusafw.directio.hive.annotation.HiveField;
 import com.asakusafw.directio.hive.annotation.HiveTable;
-import com.asakusafw.directio.hive.common.HiveTableInfo;
+import com.asakusafw.directio.hive.info.TableInfo;
 import com.asakusafw.directio.hive.serde.DataModelDescriptor;
 import com.asakusafw.directio.hive.serde.PropertyDescriptor;
 import com.asakusafw.dmdl.directio.hive.orc.OrcFileEmitter;
@@ -63,10 +63,10 @@ public class HiveDataModelEmitterTest extends GeneratorTesterRoot {
 
         HiveTable table = descriptor.getDataModelClass().getAnnotation(HiveTable.class);
         assertThat(table, is(notNullValue()));
-        Class<? extends HiveTableInfo>[] infos = table.value();
+        Class<? extends TableInfo.Provider>[] infos = table.value();
         assertThat(infos, arrayWithSize(1));
-        HiveTableInfo info = infos[0].newInstance();
-        assertThat(info.getTableName(), is("model"));
+        TableInfo.Provider info = infos[0].newInstance();
+        assertThat(info.getSchema().getName(), is("model"));
 
         Method simple = descriptor.getDataModelClass().getMethod("getSimpleOption");
         HiveField field = simple.getAnnotation(HiveField.class);

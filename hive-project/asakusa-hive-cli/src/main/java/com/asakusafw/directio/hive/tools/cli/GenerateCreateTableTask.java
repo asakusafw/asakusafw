@@ -30,9 +30,9 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.asakusafw.directio.hive.common.HiveTableInfo;
-import com.asakusafw.directio.hive.ql.HiveCreateTable;
-import com.asakusafw.directio.hive.ql.HiveQlEmitter;
+import com.asakusafw.directio.hive.info.TableInfo;
+import com.asakusafw.directio.hive.syntax.HiveCreateTable;
+import com.asakusafw.directio.hive.syntax.HiveQlEmitter;
 import com.asakusafw.directio.hive.tools.cli.ClassCollector.Selector;
 
 /**
@@ -63,14 +63,14 @@ public class GenerateCreateTableTask {
         int count = 0;
         try (Writer writer = open(configuration)) {
             for (Class<?> aClass : collector.getClasses()) {
-                HiveTableInfo table = newTableInfo(aClass);
-                if (table == null) {
+                TableInfo schema = getSchema(aClass);
+                if (schema == null) {
                     continue;
                 }
                 LOG.info(MessageFormat.format(
                         Messages.getString("GenerateCreateTableTask.infoStartGenerateDdl"), //$NON-NLS-1$
-                        table.getTableName()));
-                HiveQlEmitter.emit(new Ql(table, configuration), writer);
+                        schema.getName()));
+                HiveQlEmitter.emit(new Ql(schema, configuration), writer);
                 writer.write(STATEMENT_SEPARATOR);
                 count++;
             }
@@ -97,19 +97,13 @@ public class GenerateCreateTableTask {
         ClassCollector collector = new ClassCollector(configuration.classLoader, new Selector() {
             @Override
             public boolean accept(Class<?> aClass) {
-                if (HiveTableInfo.class.isAssignableFrom(aClass) == false) {
-                    return false;
-                }
-                if (Modifier.isAbstract(aClass.getModifiers())) {
+                TableInfo info = getSchema(aClass);
+                if (info == null) {
                     return false;
                 }
                 if (pattern != null) {
-                    HiveTableInfo info = newTableInfo(aClass);
-                    if (info == null) {
-                        return false;
-                    }
-                    if (pattern.matcher(info.getTableName()).matches() == false) {
-                        LOG.debug("Filtered table: {}", info.getTableName()); //$NON-NLS-1$
+                    if (pattern.matcher(info.getName()).matches() == false) {
+                        LOG.debug("filtered table: {}", info.getName()); //$NON-NLS-1$
                         return false;
                     }
                 }
@@ -119,9 +113,15 @@ public class GenerateCreateTableTask {
         return collector;
     }
 
-    static HiveTableInfo newTableInfo(Class<?> aClass) {
+    static TableInfo getSchema(Class<?> aClass) {
+        if (TableInfo.Provider.class.isAssignableFrom(aClass) == false
+                || Modifier.isInterface(aClass.getModifiers())
+                || Modifier.isAbstract(aClass.getModifiers())) {
+            return null;
+        }
         try {
-            return aClass.asSubclass(HiveTableInfo.class).newInstance();
+            TableInfo.Provider provider = aClass.asSubclass(TableInfo.Provider.class).newInstance();
+            return provider.getSchema();
         } catch (Exception e) {
             LOG.warn(MessageFormat.format(
                     Messages.getString("GenerateCreateTableTask.warnFailedToInstantiate"), //$NON-NLS-1$
@@ -175,17 +175,17 @@ public class GenerateCreateTableTask {
 
     private static final class Ql implements HiveCreateTable {
 
-        private final HiveTableInfo table;
+        private final TableInfo table;
 
         private final Configuration configuration;
 
-        Ql(HiveTableInfo table, Configuration configuration) {
+        Ql(TableInfo table, Configuration configuration) {
             this.table = table;
             this.configuration = configuration;
         }
 
         @Override
-        public HiveTableInfo getTableInfo() {
+        public TableInfo getTableInfo() {
             return table;
         }
 

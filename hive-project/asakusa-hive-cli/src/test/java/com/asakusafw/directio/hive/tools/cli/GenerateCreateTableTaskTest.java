@@ -24,16 +24,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.apache.hadoop.hive.serde2.typeinfo.TypeInfoFactory;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.junit.Assume;
 import org.junit.Test;
 
-import com.asakusafw.directio.hive.common.HiveTableInfo;
-import com.asakusafw.directio.hive.common.SimpleFieldInfo;
-import com.asakusafw.directio.hive.common.SimpleTableInfo;
+import com.asakusafw.directio.hive.info.FieldType.TypeName;
+import com.asakusafw.directio.hive.info.TableInfo;
 import com.asakusafw.directio.hive.tools.cli.GenerateCreateTableTask.Configuration;
 
 /**
@@ -55,8 +53,9 @@ public class GenerateCreateTableTaskTest extends GenerateCeateTableTestRoot {
                 null,
                 new File(folder.getRoot(), "output.txt"));
 
-        Info1.delegate = new SimpleTableInfo("testing")
-            .withField(new SimpleFieldInfo("simple", TypeInfoFactory.intTypeInfo));
+        Info1.schema = new TableInfo.Builder("testing")
+            .withColumn("simple", TypeName.INT)
+            .build();
         List<String> stmts = run(conf);
         assertThat(stmts, hasSize(1));
         verify(stmts.get(0));
@@ -76,10 +75,12 @@ public class GenerateCreateTableTaskTest extends GenerateCeateTableTestRoot {
                 null,
                 new File(folder.getRoot(), "output.txt"));
 
-        Info1.delegate = new SimpleTableInfo("t1")
-            .withField(new SimpleFieldInfo("simple", TypeInfoFactory.intTypeInfo));
-        Info2.delegate = new SimpleTableInfo("t2")
-            .withField(new SimpleFieldInfo("simple", TypeInfoFactory.intTypeInfo));
+        Info1.schema = new TableInfo.Builder("t1")
+            .withColumn("simple", TypeName.INT)
+            .build();
+        Info2.schema = new TableInfo.Builder("t2")
+            .withColumn("simple", TypeName.INT)
+            .build();
         List<String> stmts = run(conf);
         assertThat(stmts, hasSize(greaterThanOrEqualTo(2)));
     }
@@ -96,15 +97,16 @@ public class GenerateCreateTableTaskTest extends GenerateCeateTableTestRoot {
                 Pattern.compile("testing"),
                 new Stringnizer() {
                     @Override
-                    public String toString(HiveTableInfo table) {
+                    public String toString(TableInfo table) {
                         return "here";
                     }
                 },
                 null,
                 new File(folder.getRoot(), "output.txt"));
 
-        Info1.delegate = new SimpleTableInfo("testing")
-            .withField(new SimpleFieldInfo("simple", TypeInfoFactory.intTypeInfo));
+        Info1.schema = new TableInfo.Builder("testing")
+            .withColumn("simple", TypeName.INT)
+            .build();
         List<String> stmts = run(conf);
         assertThat(stmts, hasSize(1));
         verify(stmts.get(0));
@@ -125,8 +127,9 @@ public class GenerateCreateTableTaskTest extends GenerateCeateTableTestRoot {
                 "testdb",
                 new File(folder.getRoot(), "output.txt"));
 
-        Info1.delegate = new SimpleTableInfo("testing")
-            .withField(new SimpleFieldInfo("simple", TypeInfoFactory.intTypeInfo));
+        Info1.schema = new TableInfo.Builder("testing")
+            .withColumn("simple", TypeName.INT)
+            .build();
         List<String> stmts = run(conf);
         assertThat(stmts, hasSize(1));
         verify(stmts.get(0));

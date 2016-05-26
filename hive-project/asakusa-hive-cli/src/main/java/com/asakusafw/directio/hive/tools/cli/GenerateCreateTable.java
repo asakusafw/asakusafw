@@ -41,7 +41,7 @@ import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.asakusafw.directio.hive.common.HiveTableInfo;
+import com.asakusafw.directio.hive.info.TableInfo;
 
 /**
  * Program entry for generate Hive QL {@code CREATE TABLE} statements.
@@ -178,8 +178,8 @@ public final class GenerateCreateTable {
             final String prefix = location.endsWith("/") ? location : location + '/'; //$NON-NLS-1$
             locationProvider = new Stringnizer() {
                 @Override
-                public String toString(HiveTableInfo table) {
-                    return prefix + table.getTableName();
+                public String toString(TableInfo table) {
+                    return prefix + table.getName();
                 }
             };
         }

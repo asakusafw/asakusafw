@@ -21,7 +21,8 @@ import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspector;
 import org.apache.hadoop.hive.serde2.objectinspector.StructField;
 import org.apache.hadoop.hive.serde2.typeinfo.TypeInfo;
 
-import com.asakusafw.directio.hive.common.HiveFieldInfo;
+import com.asakusafw.directio.hive.info.ColumnInfo;
+import com.asakusafw.directio.hive.util.SchemaUtil;
 import com.asakusafw.runtime.value.ValueOption;
 
 /**
@@ -29,7 +30,7 @@ import com.asakusafw.runtime.value.ValueOption;
  * @since 0.7.0
  * @version 0.7.2
  */
-public abstract class PropertyDescriptor implements StructField, HiveFieldInfo, ValueSerde, PropertyExtractor {
+public abstract class PropertyDescriptor implements StructField, ValueSerde, PropertyExtractor {
 
     static final int INVALID_FIELD_ID = -1;
 
@@ -96,11 +97,6 @@ public abstract class PropertyDescriptor implements StructField, HiveFieldInfo, 
     }
 
     @Override
-    public TypeInfo getFieldTypeInfo() {
-        return getTypeInfo();
-    }
-
-    @Override
     public String getFieldComment() {
         return comment;
     }
@@ -117,6 +113,15 @@ public abstract class PropertyDescriptor implements StructField, HiveFieldInfo, 
      */
     void setFieldId(int id) {
         this.fieldId = id;
+    }
+
+    /**
+     * Returns the {@link ColumnInfo} of this property.
+     * @return the {@link ColumnInfo}
+     * @since 0.8.1
+     */
+    public ColumnInfo getSchema() {
+        return new ColumnInfo(getFieldName(), SchemaUtil.toPortable(getTypeInfo()), getFieldComment());
     }
 
     @Override
