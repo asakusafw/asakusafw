@@ -13,30 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.directio.hive.info;
+package com.asakusafw.compiler.directio.hive.testing;
 
-import org.junit.Test;
+import com.asakusafw.vocabulary.batch.Batch;
+import com.asakusafw.vocabulary.batch.BatchDescription;
 
-import com.asakusafw.directio.hive.info.FieldType.TypeName;
+@Batch(name = "other")
+@SuppressWarnings("javadoc")
+public class OtherBatch extends BatchDescription {
 
-/**
- * Test for {@link InputInfo}.
- */
-public class InputInfoTest {
-
-    /**
-     * simple case.
-     */
-    @Test
-    public void simple() {
-        check(new InputInfo(
-                new LocationInfo("base-path", "resource-pattern"),
-                new TableInfo.Builder("TESTING")
-                    .withColumn("COL", TypeName.INT)
-                    .build()));
-    }
-
-    private void check(InputInfo info) {
-        Util.check(InputInfo.class, info);
+    @Override
+    protected void describe() {
+        run(OtherJob.class).soon();
     }
 }

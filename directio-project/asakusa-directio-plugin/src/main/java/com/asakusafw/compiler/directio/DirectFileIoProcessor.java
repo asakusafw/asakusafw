@@ -479,10 +479,10 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
                 Slot slot = new Slot(
                         outputName,
                         output.getSources(),
-                        Models.toName(f, desc.getModelType().getName()),
+                        Models.toName(f, desc.getModelType().getName().replace('$', '.')),
                         desc.getBasePath(),
                         desc.getResourcePattern(),
-                        Models.toName(f, desc.getFormat().getName()),
+                        Models.toName(f, desc.getFormat().getName().replace('$', '.')),
                         null,
                         null,
                         desc.getDeletePatterns());
@@ -495,10 +495,10 @@ public class DirectFileIoProcessor extends ExternalIoDescriptionProcessor {
                 Slot slot = new Slot(
                         outputName,
                         output.getSources(),
-                        Models.toName(f, desc.getModelType().getName()),
+                        Models.toName(f, desc.getModelType().getName().replace('$', '.')),
                         desc.getBasePath(),
                         desc.getResourcePattern(),
-                        Models.toName(f, desc.getFormat().getName()),
+                        Models.toName(f, desc.getFormat().getName().replace('$', '.')),
                         naming,
                         ordering,
                         desc.getDeletePatterns());

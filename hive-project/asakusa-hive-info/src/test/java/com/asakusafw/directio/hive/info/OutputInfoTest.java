@@ -15,8 +15,6 @@
  */
 package com.asakusafw.directio.hive.info;
 
-import java.util.Arrays;
-
 import org.junit.Test;
 
 import com.asakusafw.directio.hive.info.FieldType.TypeName;
@@ -33,12 +31,9 @@ public class OutputInfoTest {
     public void simple() {
         check(new OutputInfo(
                 new LocationInfo("base-path", "resource-pattern"),
-                new TableInfo(
-                        "TESTING",
-                        Arrays.asList(new ColumnInfo[] {
-                                new ColumnInfo("TESTING", PlainType.of(TypeName.INT), null)
-                        }),
-                        null, null, null, null)));
+                new TableInfo.Builder("TESTING")
+                    .withColumn("COL", TypeName.INT)
+                    .build()));
     }
 
     private void check(OutputInfo info) {

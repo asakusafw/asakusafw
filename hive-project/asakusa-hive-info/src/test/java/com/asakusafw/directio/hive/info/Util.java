@@ -18,11 +18,16 @@ package com.asakusafw.directio.hive.info;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 final class Util {
+
+    static final Logger LOG = LoggerFactory.getLogger(Util.class);
 
     private Util() {
         return;
@@ -37,7 +42,7 @@ final class Util {
                     new JavaType[] { mapper.constructType(valueType) });
             String json = mapper.writerFor(type)
                     .writeValueAsString(new Container<>(value));
-            System.out.println(json);
+            LOG.debug("json: {}", json);
             Container<?> restore = mapper.readValue(json, type);
             assertThat(value.toString(), restore.value, is((Object) value));
             assertThat(value.toString(), restore.value.hashCode(), is(value.hashCode()));
