@@ -15,10 +15,10 @@
  */
 package com.asakusafw.directio.hive.tools.cli;
 
-import com.asakusafw.directio.hive.common.HiveTableInfo;
+import com.asakusafw.directio.hive.info.TableInfo;
 
 /**
- * Provides string from {@link HiveTableInfo}.
+ * Provides string from {@link TableInfo}.
  * @since 0.7.0
  */
 public interface Stringnizer {
@@ -28,7 +28,7 @@ public interface Stringnizer {
      */
     Stringnizer NULL = new Stringnizer() {
         @Override
-        public String toString(HiveTableInfo table) {
+        public String toString(TableInfo table) {
             return null;
         }
     };
@@ -38,5 +38,5 @@ public interface Stringnizer {
      * @param table the target table
      * @return the related text, or {@code null} to 'nothing'
      */
-    String toString(HiveTableInfo table);
+    String toString(TableInfo table);
 }

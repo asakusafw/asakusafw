@@ -15,14 +15,10 @@
  */
 package com.asakusafw.directio.hive.tools.cli;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 
 import org.apache.hadoop.hive.ql.parse.ASTNode;
@@ -32,9 +28,7 @@ import org.junit.Rule;
 import org.junit.rules.ExternalResource;
 import org.junit.rules.TemporaryFolder;
 
-import com.asakusafw.directio.hive.common.HiveFieldInfo;
-import com.asakusafw.directio.hive.common.HiveTableInfo;
-import com.asakusafw.directio.hive.common.RowFormatInfo;
+import com.asakusafw.directio.hive.info.TableInfo;
 
 /**
  * Base class for {@link GenerateCreateTableTask} related classes.
@@ -61,52 +55,10 @@ public class GenerateCeateTableTestRoot {
                 clear();
             }
             private void clear() {
-                Info1.delegate = null;
-                Info2.delegate = null;
+                Info1.schema = null;
+                Info2.schema = null;
             }
         };
-
-    /**
-     * Mock {@link HiveTableInfo} for testing.
-     */
-    public abstract static class MockInfo implements HiveTableInfo {
-
-        /**
-         * Returns the delegated table.
-         * @return the delegated table
-         */
-        protected abstract HiveTableInfo delegate();
-
-        @Override
-        public Class<?> getDataModelClass() {
-            return delegate().getDataModelClass();
-        }
-
-        @Override
-        public List<? extends HiveFieldInfo> getFields() {
-            return delegate().getFields();
-        }
-
-        @Override
-        public String getTableComment() {
-            return delegate().getTableComment();
-        }
-
-        @Override
-        public RowFormatInfo getRowFormat() {
-            return delegate().getRowFormat();
-        }
-
-        @Override
-        public String getFormatName() {
-            return delegate().getFormatName();
-        }
-
-        @Override
-        public Map<String, String> getTableProperties() {
-            return delegate().getTableProperties();
-        }
-    }
 
     /**
      * Collect output statements.
@@ -145,80 +97,45 @@ public class GenerateCeateTableTestRoot {
     }
 
     /**
-     * Mock {@link HiveTableInfo} for testing.
+     * Mock {@link TableInfo} provider for testing.
      */
-    public static class Info1 extends MockInfo {
+    public static class Info1 implements TableInfo.Provider {
 
         /**
-         * Delegate target.
+         * Table schema.
          */
-        protected static HiveTableInfo delegate;
+        protected static TableInfo schema;
 
         @Override
-        protected HiveTableInfo delegate() {
-            assertThat(delegate, is(notNullValue()));
-            return delegate;
-        }
-
-        @Override
-        public String getTableName() {
-            if (delegate != null) {
-                return delegate.getTableName();
-            }
-            return getClass().getSimpleName();
+        public TableInfo getSchema() {
+            return schema;
         }
     }
 
     /**
-     * Mock {@link HiveTableInfo} for testing.
+     * Mock {@link TableInfo} provider for testing.
      */
-    public static class Info2 extends MockInfo {
+    public static class Info2 implements TableInfo.Provider {
 
         /**
-         * Delegate target.
+         * Table schema.
          */
-        protected static HiveTableInfo delegate;
+        protected static TableInfo schema;
 
         @Override
-        protected HiveTableInfo delegate() {
-            assertThat(delegate, is(notNullValue()));
-            return delegate;
-        }
-
-        @Override
-        public String getTableName() {
-            if (delegate != null) {
-                return delegate.getTableName();
-            }
-            return getClass().getSimpleName();
+        public TableInfo getSchema() {
+            return schema;
         }
     }
 
     /**
-     * Invalid {@link HiveTableInfo} for testing.
+     * Invalid {@link TableInfo} provider for testing.
      */
-    public static class InfoInvalid extends MockInfo {
-
-        private InfoInvalid() {
-            return;
-        }
+    public static class InfoInvalid implements TableInfo.Provider {
 
         @Override
-        protected HiveTableInfo delegate() {
-            throw new AssertionError();
-        }
-
-        @Override
-        public String getTableName() {
-            throw new AssertionError();
+        public TableInfo getSchema() {
+            return null;
         }
     }
-
-    /**
-     *
-     */
-    public GenerateCeateTableTestRoot() {
-        super();
-    }
-
 }

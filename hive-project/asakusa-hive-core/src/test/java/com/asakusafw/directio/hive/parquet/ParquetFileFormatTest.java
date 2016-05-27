@@ -45,6 +45,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import com.asakusafw.directio.hive.info.BuiltinStorageFormatInfo;
+import com.asakusafw.directio.hive.info.StorageFormatInfo;
 import com.asakusafw.directio.hive.parquet.mock.MockSimpleWithLong;
 import com.asakusafw.directio.hive.parquet.mock.WithDate;
 import com.asakusafw.directio.hive.parquet.mock.WithDateTime;
@@ -118,11 +120,13 @@ public class ParquetFileFormatTest {
     }
 
     /**
-     * Test method for {@link AbstractParquetFileFormat#getFormatName()}.
+     * Test method for {@link AbstractParquetFileFormat#getSchema()}.
      */
     @Test
     public void format_name() {
-        assertThat(format(MockSimple.class).getFormatName(), equalTo("PARQUET"));
+        assertThat(
+                format(MockSimple.class).getSchema().getStorageFormat(),
+                equalTo((Object) BuiltinStorageFormatInfo.of(StorageFormatInfo.FormatKind.PARQUET)));
     }
 
     /**
@@ -138,7 +142,7 @@ public class ParquetFileFormatTest {
      */
     @Test
     public void table_properties_default() {
-        Map<String, String> props = format(MockSimple.class).getTableProperties();
+        Map<String, String> props = format(MockSimple.class).getSchema().getProperties();
         assertThat(props.size(), is(0));
     }
 

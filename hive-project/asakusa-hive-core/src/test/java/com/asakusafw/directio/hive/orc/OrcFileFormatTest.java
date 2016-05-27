@@ -37,6 +37,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import com.asakusafw.directio.hive.info.BuiltinStorageFormatInfo;
+import com.asakusafw.directio.hive.info.StorageFormatInfo;
 import com.asakusafw.directio.hive.serde.DataModelDescriptorEditor;
 import com.asakusafw.directio.hive.serde.DataModelMapping.ExceptionHandlingStrategy;
 import com.asakusafw.directio.hive.serde.DataModelMapping.FieldMappingStrategy;
@@ -82,11 +84,13 @@ public class OrcFileFormatTest {
     }
 
     /**
-     * Test method for {@link AbstractOrcFileFormat#getFormatName()}.
+     * Test method for {@link AbstractOrcFileFormat#getSchema()}.
      */
     @Test
     public void format_name() {
-        assertThat(format(MockSimple.class).getFormatName(), equalTo("ORC"));
+        assertThat(
+                format(MockSimple.class).getSchema().getStorageFormat(),
+                equalTo((Object) BuiltinStorageFormatInfo.of(StorageFormatInfo.FormatKind.ORC)));
     }
 
     /**
@@ -102,7 +106,7 @@ public class OrcFileFormatTest {
      */
     @Test
     public void table_properties_default() {
-        Map<String, String> props = format(MockSimple.class).getTableProperties();
+        Map<String, String> props = format(MockSimple.class).getSchema().getProperties();
         assertThat(props.size(), is(2));
         assertThat(props, hasEntry("orc.compress", "SNAPPY"));
         assertThat(props, hasEntry("orc.stripe.size", String.valueOf(64L * 1024 * 1024)));
@@ -119,7 +123,7 @@ public class OrcFileFormatTest {
             .withFormatVersion(OrcFile.Version.V_0_11)
             .withCompressionKind(CompressionKind.ZLIB)
             .withStripeSize(stripeSize);
-        Map<String, String> props = format.getTableProperties();
+        Map<String, String> props = format.getSchema().getProperties();
         assertThat(props.size(), is(2));
         assertThat(props, hasEntry("orc.compress", "ZLIB"));
         assertThat(props, hasEntry("orc.stripe.size", String.valueOf(stripeSize)));

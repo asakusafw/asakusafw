@@ -131,7 +131,7 @@ public class DataModelMaterializer extends RecordMaterializer<Object> {
                             mapping.source.getPath()[0],
                             mapping.source.getType(),
                             mapping.target.getFieldName(),
-                            mapping.target.getFieldTypeInfo()));
+                            mapping.target.getTypeInfo()));
                 }
                 int index = schema.getFieldIndex(mapping.source.getPath()[0]);
                 propertyMap.put(index, mapping);
@@ -212,7 +212,7 @@ public class DataModelMaterializer extends RecordMaterializer<Object> {
                     Messages.getString("DataModelMaterializer.errorMissingSource"), //$NON-NLS-1$
                     descriptor.getDataModelClass().getName(),
                     mapping.target.getFieldName(),
-                    mapping.target.getFieldTypeInfo()));
+                    mapping.target.getTypeInfo()));
             return false;
         } else if (mapping.target == null) {
             handleException(configuration.getOnMissingTarget(), MessageFormat.format(
@@ -228,7 +228,7 @@ public class DataModelMaterializer extends RecordMaterializer<Object> {
                     mapping.source.getPath()[0],
                     getSourceTypeDescription(mapping),
                     mapping.target.getFieldName(),
-                    mapping.target.getFieldTypeInfo()));
+                    mapping.target.getTypeInfo()));
             return false;
         } else {
             return true;
