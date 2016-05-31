@@ -15,10 +15,6 @@
  */
 package com.asakusafw.directio.hive.info;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.junit.Test;
 
 import com.asakusafw.directio.hive.info.FieldType.TypeName;
@@ -33,15 +29,9 @@ public class TableInfoTest {
      */
     @Test
     public void simple() {
-        check(new TableInfo(
-                "TESTING",
-                Arrays.asList(new ColumnInfo[] {
-                        new ColumnInfo("TESTING", PlainType.of(TypeName.INT), null)
-                }),
-                null,
-                null,
-                null,
-                null));
+        check(new TableInfo.Builder("TESTING")
+                .withColumn("TESTING", TypeName.INT)
+                .build());
     }
 
     /**
@@ -49,17 +39,11 @@ public class TableInfoTest {
      */
     @Test
     public void multiple_columns() {
-        check(new TableInfo(
-                "TESTING",
-                Arrays.asList(new ColumnInfo[] {
-                        new ColumnInfo("A", PlainType.of(TypeName.INT), "key"),
-                        new ColumnInfo("B", PlainType.of(TypeName.STRING), "string value"),
-                        new ColumnInfo("C", PlainType.of(TypeName.TIMESTAMP), "timestamp"),
-                }),
-                null,
-                null,
-                null,
-                null));
+        check(new TableInfo.Builder("TESTING")
+                .withColumn(new ColumnInfo("A", PlainType.of(TypeName.INT), "key"))
+                .withColumn(new ColumnInfo("B", PlainType.of(TypeName.STRING), "string value"))
+                .withColumn(new ColumnInfo("C", PlainType.of(TypeName.TIMESTAMP), "timestamp"))
+                .build());
     }
 
     /**
@@ -67,15 +51,10 @@ public class TableInfoTest {
      */
     @Test
     public void comments() {
-        check(new TableInfo(
-                "TESTING",
-                Arrays.asList(new ColumnInfo[] {
-                        new ColumnInfo("TESTING", PlainType.of(TypeName.INT), null)
-                }),
-                "Hello, world!",
-                null,
-                null,
-                null));
+        check(new TableInfo.Builder("TESTING")
+                .withColumn("TESTING", TypeName.INT)
+                .withComment("Hello, world!")
+                .build());
     }
 
     /**
@@ -83,15 +62,10 @@ public class TableInfoTest {
      */
     @Test
     public void storage() {
-        check(new TableInfo(
-                "TESTING",
-                Arrays.asList(new ColumnInfo[] {
-                        new ColumnInfo("TESTING", PlainType.of(TypeName.INT), null)
-                }),
-                null,
-                null,
-                BuiltinStorageFormatInfo.of(StorageFormatInfo.FormatKind.PARQUET),
-                null));
+        check(new TableInfo.Builder("TESTING")
+                .withColumn("TESTING", TypeName.INT)
+                .withStorageFormat(StorageFormatInfo.FormatKind.PARQUET)
+                .build());
     }
 
     /**
@@ -99,19 +73,12 @@ public class TableInfoTest {
      */
     @Test
     public void properties() {
-        Map<String, String> properties = new HashMap<>();
-        properties.put("a", "A");
-        properties.put("b", "B");
-        properties.put("c", "C");
-        check(new TableInfo(
-                "TESTING",
-                Arrays.asList(new ColumnInfo[] {
-                        new ColumnInfo("TESTING", PlainType.of(TypeName.INT), null)
-                }),
-                null,
-                null,
-                null,
-                properties));
+        check(new TableInfo.Builder("TESTING")
+                .withColumn("TESTING", TypeName.INT)
+                .withProperty("a", "A")
+                .withProperty("b", "B")
+                .withProperty("c", "C")
+                .build());
     }
 
     private void check(TableInfo info) {

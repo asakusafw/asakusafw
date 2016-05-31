@@ -15,6 +15,7 @@
     <module>asakusa-hive-info</module>
     <module>asakusa-hive-core</module>
     <module>asakusa-hive-dmdl</module>
+    <module>asakusa-hive-plugin</module>
     <module>asakusa-hive-cli</module>
   </modules>
 

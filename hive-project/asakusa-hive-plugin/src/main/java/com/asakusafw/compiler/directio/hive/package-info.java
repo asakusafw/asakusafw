@@ -13,30 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.directio.hive.info;
-
-import org.junit.Test;
-
-import com.asakusafw.directio.hive.info.FieldType.TypeName;
-
 /**
- * Test for {@link InputInfo}.
+ * Asakusa DSL compiler extensions for Direct I/O Hive vocabularies.
  */
-public class InputInfoTest {
-
-    /**
-     * simple case.
-     */
-    @Test
-    public void simple() {
-        check(new InputInfo(
-                new LocationInfo("base-path", "resource-pattern"),
-                new TableInfo.Builder("TESTING")
-                    .withColumn("COL", TypeName.INT)
-                    .build()));
-    }
-
-    private void check(InputInfo info) {
-        Util.check(InputInfo.class, info);
-    }
-}
+package com.asakusafw.compiler.directio.hive;

@@ -23,26 +23,26 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Represents a Direct I/O Hive output.
  * @since 0.8.1
  */
-public class OutputInfo {
+public class OutputInfo implements TableInfo.Provider {
 
     private static final String K_LOCATION = "location";
 
-    private static final String K_TABLE = "table";
+    private static final String K_SCHEMA = "schema";
 
     private final LocationInfo location;
 
-    private final TableInfo table;
+    private final TableInfo schema;
 
     /**
      * Creates a new instance.
      * @param location the output location
-     * @param table the table structure
+     * @param schema the table structure
      */
     public OutputInfo(
             @JsonProperty(value = K_LOCATION, required = true) LocationInfo location,
-            @JsonProperty(value = K_TABLE, required = true) TableInfo table) {
+            @JsonProperty(value = K_SCHEMA, required = true) TableInfo schema) {
         this.location = location;
-        this.table = table;
+        this.schema = schema;
     }
 
     /**
@@ -54,13 +54,10 @@ public class OutputInfo {
         return location;
     }
 
-    /**
-     * Returns the table.
-     * @return the table
-     */
-    @JsonProperty(K_TABLE)
-    public TableInfo getTable() {
-        return table;
+    @Override
+    @JsonProperty(K_SCHEMA)
+    public TableInfo getSchema() {
+        return schema;
     }
 
     @Override
@@ -68,7 +65,7 @@ public class OutputInfo {
         final int prime = 31;
         int result = 1;
         result = prime * result + Objects.hashCode(location);
-        result = prime * result + Objects.hashCode(table);
+        result = prime * result + Objects.hashCode(schema);
         return result;
     }
 
@@ -87,7 +84,7 @@ public class OutputInfo {
         if (!Objects.equals(location, other.location)) {
             return false;
         }
-        if (!Objects.equals(table, other.table)) {
+        if (!Objects.equals(schema, other.schema)) {
             return false;
         }
         return true;
@@ -97,7 +94,7 @@ public class OutputInfo {
     public String toString() {
         return String.format(
                 "Outut(%s@%s)",
-                getTable(),
+                getSchema(),
                 getLocation());
     }
 }
