@@ -22,6 +22,7 @@
     <module>asakusa-sdk-app-windgate</module>
     <module>asakusa-sdk-test-windgate</module>
     <module>asakusa-sdk-dmdl-windgate</module>
+    <module>asakusa-sdk-app-hive</module>
     <module>asakusa-sdk-dmdl-hive</module>
     <module>asakusa-sdk-core</module>
     <module>asakusa-sdk-directio</module>
