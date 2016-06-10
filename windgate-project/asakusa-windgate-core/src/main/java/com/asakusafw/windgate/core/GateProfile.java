@@ -28,6 +28,7 @@ import com.asakusafw.windgate.core.process.ProcessProfile;
 import com.asakusafw.windgate.core.process.ProcessProvider;
 import com.asakusafw.windgate.core.resource.ResourceProfile;
 import com.asakusafw.windgate.core.session.SessionProfile;
+import com.asakusafw.windgate.core.util.VoidResourceProvider;
 
 /**
  * A total profile for WindGate execution.
@@ -179,6 +180,24 @@ public class GateProfile {
             WGLOG.warn("W02001",
                     copy.keySet());
         }
+        resources = addVoidResource(resources, context);
         return new GateProfile(name, core, session, processes, resources);
+    }
+
+    private static Collection<? extends ResourceProfile> addVoidResource(
+            Collection<? extends ResourceProfile> resources, ProfileContext context) {
+        for (ResourceProfile profile : resources) {
+            if (profile.getName().equals(VoidResourceProvider.NAME)) {
+                return resources;
+            }
+        }
+        List<ResourceProfile> results = new ArrayList<>(resources.size() + 1);
+        results.addAll(resources);
+        results.add(new ResourceProfile(
+                VoidResourceProvider.NAME,
+                VoidResourceProvider.class,
+                context,
+                Collections.<String, String>emptyMap()));
+        return results;
     }
 }
