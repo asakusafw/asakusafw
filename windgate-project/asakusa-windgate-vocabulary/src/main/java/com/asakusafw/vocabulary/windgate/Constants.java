@@ -18,6 +18,7 @@ package com.asakusafw.vocabulary.windgate;
 /**
  * The common constants of WindGate vocabularies.
  * @since 0.2.2
+ * @version 0.8.1
  */
 public final class Constants {
 
@@ -35,6 +36,12 @@ public final class Constants {
      * The abstract resource name of local file systems.
      */
     public static final String LOCAL_FILE_RESOURCE_NAME = "local"; //$NON-NLS-1$
+
+    /**
+     * The abstract resource name of void inputs/outputs.
+     * @since 0.8.1
+     */
+    public static final String VOID_RESOURCE_NAME = "void"; //$NON-NLS-1$
 
     /**
      * The default process provider name.
