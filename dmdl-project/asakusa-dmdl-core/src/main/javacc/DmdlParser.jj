@@ -1044,7 +1044,7 @@ private List<AstAttributeElement> AttributeElementList() :
 */
 private AstAttributeElement AttributeElement() :
 {
-    begin("attribute-element-list");
+    begin("attribute-element");
     AstSimpleName name;
     AstAttributeValue value;
 }
@@ -1053,7 +1053,7 @@ private AstAttributeElement AttributeElement() :
     "="
     value = AttributeValue()
     {
-        Region region = end("attribute-element-list");
+        Region region = end("attribute-element");
         return new AstAttributeElement(region, name, value);
     }
 }
