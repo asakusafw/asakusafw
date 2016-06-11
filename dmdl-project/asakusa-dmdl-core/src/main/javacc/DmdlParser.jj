@@ -265,6 +265,7 @@ TOKEN :
 
 /* Keywords
 <keyword>:
+     'projective'
      'joined'
      'summarized'
      'any'
