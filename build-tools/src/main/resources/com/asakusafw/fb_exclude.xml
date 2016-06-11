@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <FindBugsFilter>
   <Match classregex=".*\.EscapeDecoder"/>
   <Match classregex=".*\.LiteralParser"/>
@@ -13,26 +14,6 @@
   </Match>
   <Match>
     <Bug pattern="SE_BAD_FIELD"/>
-  </Match>
-  <Match class="com.asakusafw.testtools.TestDataHolder">
-    <Or>
-      <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING"/>
-    </Or>
-  </Match>
-  <Match class="com.asakusafw.testtools.db.DbUtils">
-    <Or>
-      <Bug pattern="SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE"/>
-    </Or>
-  </Match>
-  <Match class="com.asakusafw.testtools.templategen.ExcelBookBuilder">
-    <Or>
-      <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING"/>
-    </Or>
-  </Match>
-  <Match class="com.asakusafw.bulkloader.exporter.ExportFileLoad">
-    <Or>
-      <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING"/>
-    </Or>
   </Match>
   <Match class="com.asakusafw.runtime.flow.MapperWithRuntimeResource">
     <Or>
