@@ -466,7 +466,7 @@ WindGateをAsakusa Frameworkのバッチから利用する場合、以下の環�
 ..  hint::
     :program:`hadoop` コマンドが見つからない場合、WindGateは代わりに :program:`java` コマンドを利用してアプリケーションを起動します。
     前者はHadoopに関する設定やクラスライブラリなどが有効になりますが、後者は :file:`$ASAKUSA_HOME/windgate/lib` 以下のライブラリのみをクラスパスに通し、Hadoopに関する設定を行いません。
-    
+
     特別な理由がない限り、 :file:`$ASAKUSA_HOME/windgate/conf/env.sh` 内で ``HADOOP_CMD`` や ``HADOOP_HOME`` を設定しておくのがよいでしょう。
     または、 :doc:`YAESS <../yaess/index>` を利用して外部から環境変数を設定することも可能です。
 
@@ -514,7 +514,7 @@ WindGateの様々な機能は、プラグイン機構を利用して実現して
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 Asakusa Frameworkのデプロイメントアーカイブには、デフォルトのWindGate用プラグインライブラリとして、あらかじめ以下のプラグインライブラリと、プラグインライブラリが使用する依存ライブラリが同梱されています。
-   
+
 ..  list-table:: WindGate標準プラグインライブラリ
     :widths: 4 6
     :header-rows: 1
@@ -555,7 +555,7 @@ Asakusa FrameworkのバッチアプリケーションからWindGateを利用し�
 
 ..  hint::
     :doc:`../application/gradle-plugin` の手順に従ってプロジェクトテンプレートから作成したプロジェクトは、これらのライブラリやプラグインがSDKアーティファクトという依存性定義によってデフォルトで利用可能になっています。詳しくは :doc:`../application/sdk-artifact` を参照してください。
-    
+
 ..  [#] :javadoc:`com.asakusafw.runtime.directio.DataFormat`
 ..  [#] :javadoc:`com.asakusafw.windgate.core.vocabulary.DataModelStreamSupport`
 
@@ -564,7 +564,7 @@ CSV形式のDataModelStreamSupportの作成
 
 CSV形式 [#]_ に対応した ``DataModelStreamSupport`` の実装クラスを自動的に生成するには、対象のデータモデルに ``@windgate.csv`` を指定します。
 
-..  code-block:: none
+..  code-block:: dmdl
 
     @windgate.csv
     document = {
@@ -631,7 +631,7 @@ CSV形式の設定
 
 以下は記述例です。
 
-..  code-block:: none
+..  code-block:: dmdl
 
     @windgate.csv(
         charset = "ISO-2022-JP",
@@ -656,7 +656,7 @@ CSV形式の設定
 
 以下は利用例です。
 
-..  code-block:: none
+..  code-block:: dmdl
 
     @windgate.csv
     document = {
@@ -861,7 +861,7 @@ DataModelJdbcSupportの自動生成
 データモデルから ``DataModelJdbcSupport`` の実装クラスを自動的に生成するには、それぞれのプロパティに ``@windgate.jdbc.column`` を指定してさらに ``name`` 要素で対応するカラム名を記述します。
 また、テーブル名を指定するにはデータモデルに ``@windgate.jdbc.table`` を指定して ``name`` 要素内に記述します [#]_ 。
 
-..  code-block:: none
+..  code-block:: dmdl
 
     @windgate.jdbc.table(name = "DOCUMENT")
     document = {

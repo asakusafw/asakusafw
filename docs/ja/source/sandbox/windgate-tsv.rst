@@ -10,7 +10,7 @@ Mavenアーティファクト
 WindGateのTSVファイル連携モジュールはAsakusa FrameworkのMavenリポジトリにグループID ``com.asakusafw.sandbox`` を持つMavenアーティファクトとして登録されています。
 
 ..  list-table:: WindGateのTSVファイル連携で使用するMavenアーティファクト
-    :widths: 5 5 
+    :widths: 5 5
     :header-rows: 1
 
     * - グループID
@@ -41,7 +41,7 @@ TSVファイル連携を行うために、DMDLに対してTSVファイルを扱�
 
 以下にTSVファイルを扱う場合のDMDLスクリプトの例を示します。
 
-..  code-block:: sh
+..  code-block:: dmdl
 
     "テーブルEX1"
     ...
@@ -111,19 +111,19 @@ DMDLスクリプトに対応するTSVファイルの例を以下に示します�
 サンプル:DMDLスクリプト
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-..  code-block:: java
+..  code-block:: dmdl
 
     "テーブルEX1"
-    ... 
+    ...
     @windgate.stream_format(type="tsv")
-    ex1 = { 
+    ex1 = {
         "SID"
         sid : LONG;
         "VALUE"
         value : INT;
         "STRING"
         string : TEXT;
-    };  
+    };
 
 サンプル:TSVファイル
 ~~~~~~~~~~~~~~~~~~~~
@@ -131,7 +131,7 @@ DMDLスクリプトに対応するTSVファイルの例を以下に示します�
 ..  attention::
     以下サンプルのドキュメント上の区切り文字はスペースになっていますが、実際のファイルはタブ文字を使用してください。
 
-..  code-block:: java
+..  code-block:: none
 
     1	111	hoge1
     2	222	fuga2

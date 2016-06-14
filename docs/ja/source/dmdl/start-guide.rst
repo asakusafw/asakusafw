@@ -24,7 +24,7 @@ DMDLスクリプトを作成する
 
 データモデルを新たに定義するには、作成したDMDLスクリプト内に ``<データモデル名> = <プロパティ定義>;`` のように記述します。
 
-..  code-block:: none
+..  code-block:: dmdl
 
     model_name = {
         property_name : INT;
@@ -38,7 +38,7 @@ DMDLスクリプトを作成する
 
 データモデル内に複数のプロパティを定義するには、 ``{`` と ``}`` の間にプロパティを続けて指定します。
 
-..  code-block:: none
+..  code-block:: dmdl
 
     model_name = {
         property_name : INT;
@@ -48,7 +48,7 @@ DMDLスクリプトを作成する
 
 複数のデータモデルを定義するには、DMDLスクリプト内にデータモデルを続けて記述します。
 
-..  code-block:: none
+..  code-block:: dmdl
 
     model_name = {
         property_name : INT;
@@ -102,7 +102,7 @@ DMDLスクリプトを作成する
 
 DMDLでは、定義した複数のデータモデルを組み合わせて新しいデータモデルを定義できます。
 
-..  code-block:: none
+..  code-block:: dmdl
 
     both = left + right;
     left = {
@@ -115,7 +115,7 @@ DMDLでは、定義した複数のデータモデルを組み合わせて新し�
 上記のようにデータモデル定義の右辺で「モデル名 + モデル名」と記述した場合、それぞれのデータモデルで定義したプロパティをすべて持つような新しいデータモデルを定義します。
 この例では、以下のようなデータモデルを定義したことになります。
 
-..  code-block:: none
+..  code-block:: dmdl
 
     both = {
         left_value : INT;
@@ -129,7 +129,7 @@ DMDLでは、定義した複数のデータモデルを組み合わせて新し�
 
 以下のように他のデータモデルと新しいプロパティを合成して、新しいデータモデルを定義できます。
 
-..  code-block:: none
+..  code-block:: dmdl
 
     origin = {
         value : INT;
@@ -141,7 +141,7 @@ DMDLでは、定義した複数のデータモデルを組み合わせて新し�
 上記の ``extended`` では、 ``origin`` で定義したプロパティ ``value`` に加えて、新たに ``extra`` というプロパティを定義しています。
 この ``extended`` は以下のような構造になります。
 
-..  code-block:: none
+..  code-block:: dmdl
 
     extended = {
         value : INT;

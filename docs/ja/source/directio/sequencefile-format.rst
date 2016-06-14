@@ -127,7 +127,7 @@ Hadoopのシーケンスファイル [#]_ を直接読み書きするには、 `
 
 シーケンスファイル対し、Asakusa Frameworkで利用するデータモデル形式を直接保存したり復元したりするような ``DataFormat`` の実装クラスを自動的に生成するには、対象のデータモデルに ``@directio.sequence_file`` を指定します。
 
-..  code-block:: none
+..  code-block:: dmdl
 
     @directio.sequence_file
     document = {
@@ -163,6 +163,6 @@ DMDLコンパイラについては :doc:`../dmdl/user-guide` を参照してく�
     シーケンスファイルの中身をテキスト形式で確認する場合、以下のコマンドを利用すると便利です。
 
     ..  code-block:: sh
-    
+
         hadoop fs -libjars "$ASAKUSA_HOME/core/lib/asakusa-runtime-all.jar,$ASAKUSA_HOME/batchapps/<バッチID>/lib/jobflow-<フローID>.jar" -text "<path/to/sequence-file>"
 
