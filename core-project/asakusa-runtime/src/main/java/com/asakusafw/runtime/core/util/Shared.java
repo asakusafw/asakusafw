@@ -16,6 +16,7 @@
 package com.asakusafw.runtime.core.util;
 
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * An abstract super class of shared object holder for operator classes.
@@ -49,7 +50,7 @@ public abstract class SomeOperator {
  */
 public abstract class Shared<T> {
 
-    private T shared;
+    private final AtomicReference<T> shared = new AtomicReference<>();
 
     private boolean initialized;
 
@@ -60,17 +61,20 @@ public abstract class Shared<T> {
      * @return the shared value
      * @throws Shared.InitializationException if failed to initialize the shared value
      */
-    public final synchronized T get() {
+    public final T get() {
+        T cached = shared.get();
+        if (cached != null) {
+            return cached;
+        }
         synchronized (this) {
             if (initialized == false) {
                 try {
-                    this.shared = initialValue();
-                    this.initialized = true;
+                    set(initialValue());
                 } catch (IOException e) {
                     throw new InitializationException("failed to initialize shared value", e);
                 }
             }
-            return shared;
+            return shared.get();
         }
     }
 
@@ -82,7 +86,7 @@ public abstract class Shared<T> {
      */
     public final void remove() {
         synchronized (this) {
-            this.shared = null;
+            this.shared.set(null);
             this.initialized = false;
         }
     }
@@ -96,7 +100,7 @@ public abstract class Shared<T> {
      */
     public final void set(T value) {
         synchronized (this) {
-            this.shared = value;
+            this.shared.set(value);
             this.initialized = true;
         }
     }
