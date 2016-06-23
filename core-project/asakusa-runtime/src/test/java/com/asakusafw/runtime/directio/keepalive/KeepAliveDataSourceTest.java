@@ -198,6 +198,11 @@ public class KeepAliveDataSourceTest {
         }
 
         @Override
+        public String path(String basePath, ResourcePattern resourcePattern) {
+            return String.format("%s/%s", basePath, resourcePattern);
+        }
+
+        @Override
         public <T> List<DirectInputFragment> findInputFragments(
                 DataDefinition<T> definition,
                 String basePath,

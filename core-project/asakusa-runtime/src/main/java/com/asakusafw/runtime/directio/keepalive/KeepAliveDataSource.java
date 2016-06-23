@@ -55,6 +55,11 @@ public class KeepAliveDataSource implements DirectDataSource {
     }
 
     @Override
+    public String path(String basePath, ResourcePattern resourcePattern) {
+        return entity.path(basePath, resourcePattern);
+    }
+
+    @Override
     public <T> List<DirectInputFragment> findInputFragments(
             DataDefinition<T> definition,
             String basePath,

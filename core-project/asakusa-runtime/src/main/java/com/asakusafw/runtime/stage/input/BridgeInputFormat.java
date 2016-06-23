@@ -158,34 +158,22 @@ public final class BridgeInputFormat extends InputFormat<NullWritable, Object> {
             dataSource.findInputFragments(definition, path.componentPath, path.pattern);
         if (fragments.isEmpty()) {
             String id = repo.getRelatedId(group.containerPath);
-            String containerPath = repo.getContainerPath(group.containerPath);
+            String pathString = dataSource.path(path.componentPath, path.pattern);
             if (path.optional) {
                 LOG.info(MessageFormat.format(
-                        "Skipped optional input (datasource={0}, basePath=\"{1}\", resourcePattern=\"{2}\", type={3})",
+                        "Skipped optional input (datasource={0}, path=\"{1}\", type={2})",
                         id,
-                        getBasePath(containerPath, path),
-                        path.pattern,
+                        pathString,
                         definition.getDataFormat().getSupportedType().getName()));
             } else {
                 throw new IOException(MessageFormat.format(
-                        "Input not found (datasource={0}, basePath=\"{1}\", resourcePattern=\"{2}\", type={3})",
+                        "Input not found (datasource={0}, path=\"{1}\", type={2})",
                         id,
-                        getBasePath(containerPath, path),
-                        path.pattern,
+                        pathString,
                         definition.getDataFormat().getSupportedType().getName()));
             }
         }
         return fragments;
-    }
-
-    private String getBasePath(String containerPath, InputPath input) {
-        if (containerPath.isEmpty()) {
-            return input.componentPath;
-        }
-        if (input.componentPath.isEmpty()) {
-            return containerPath;
-        }
-        return String.format("%s/%s", containerPath, input.componentPath); //$NON-NLS-1$
     }
 
     private Map<DirectInputGroup, List<InputPath>> extractInputList(

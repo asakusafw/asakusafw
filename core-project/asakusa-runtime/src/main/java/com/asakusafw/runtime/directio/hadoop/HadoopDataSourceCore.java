@@ -73,6 +73,14 @@ public class HadoopDataSourceCore implements DirectDataSource {
     }
 
     @Override
+    public String path(String basePath, ResourcePattern resourcePattern) {
+        HadoopDataSourceProfile p = profile;
+        Path root = p.getFileSystemPath();
+        Path base = append(root, basePath);
+        return String.format("%s/%s", base, resourcePattern); //$NON-NLS-1$
+    }
+
+    @Override
     public <T> List<DirectInputFragment> findInputFragments(
             DataDefinition<T> definition,
             String basePath,

@@ -58,10 +58,20 @@ import com.asakusafw.runtime.io.ModelOutput;
  * </li>
  * </ol>
  * @since 0.2.5
- * @version 0.7.0
+ * @version 0.8.1
  * @see AbstractDirectDataSource
  */
 public interface DirectDataSource {
+
+    /**
+     * Returns a textually representation of the target path pattern.
+     * @param basePath base path of target resources
+     * @param resourcePattern search pattern of target resources from {@code basePath}
+     * @return the found resources, or an empty list if there are no resources
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.8.1
+     */
+    String path(String basePath, ResourcePattern resourcePattern);
 
     /**
      * Collects input fragments about target resources.
