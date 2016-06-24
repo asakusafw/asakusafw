@@ -44,6 +44,7 @@ public class SharedTest {
         assertThat(shared.get(), is(0));
         assertThat(shared.isInitialzed(), is(true));
         assertThat(shared.get(), is(0));
+        assertThat(shared.get(), is(0));
 
         shared.remove();
         assertThat(shared.isInitialzed(), is(false));

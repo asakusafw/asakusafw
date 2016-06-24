@@ -49,7 +49,7 @@ public abstract class SomeOperator {
  */
 public abstract class Shared<T> {
 
-    private T shared;
+    private volatile T shared;
 
     private boolean initialized;
 
@@ -60,12 +60,15 @@ public abstract class Shared<T> {
      * @return the shared value
      * @throws Shared.InitializationException if failed to initialize the shared value
      */
-    public final synchronized T get() {
+    public final T get() {
+        T cached = shared;
+        if (cached != null) {
+            return cached;
+        }
         synchronized (this) {
             if (initialized == false) {
                 try {
-                    this.shared = initialValue();
-                    this.initialized = true;
+                    set(initialValue());
                 } catch (IOException e) {
                     throw new InitializationException("failed to initialize shared value", e);
                 }
