@@ -86,6 +86,11 @@ public class HadoopDataSource extends AbstractDirectDataSource implements Config
     }
 
     @Override
+    public String path(String basePath, ResourcePattern resourcePattern) {
+        return core.path(basePath, resourcePattern);
+    }
+
+    @Override
     public <T> List<DirectInputFragment> findInputFragments(
             DataDefinition<T> definition,
             String basePath,
