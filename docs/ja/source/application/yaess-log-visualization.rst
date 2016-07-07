@@ -2,6 +2,9 @@
 YAESSログの可視化
 =================
 
+..  attention::
+    バージョン 0.8.1 より、 YAESSログの可視化の利用は非推奨となりました。
+
 この文書では、 :doc:`YAESS <../yaess/index>` を実行した際のログを分析する際に有用な、YAESS Log Analyzerツールの使い方について解説します。
 
 ..  attention::
