@@ -26,7 +26,7 @@ sys.path.append(os.path.abspath('_exts'))
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ['sphinx.ext.pngmath', 'sphinx.ext.todo', 'sphinx.ext.extlinks', 'asakusafw.javadoclinks']
+extensions = ['sphinx.ext.imgmath', 'sphinx.ext.todo', 'sphinx.ext.extlinks', 'asakusafw.javadoclinks']
 
 # -- EXTENSIONS ----------------------------------------------------------------
 [extensions]
