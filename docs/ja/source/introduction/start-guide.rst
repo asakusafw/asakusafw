@@ -242,7 +242,7 @@ Direct I/Oを利用して、Hadoopファイルシステム上のCSVファイル�
     cd <work-dir>
     curl -OL https://github.com/asakusafw/asakusafw-examples/archive/0.8.0.tar.gz
     tar xf 0.8.0.tar.gz
-    cd asakusafw-examples-0.8.0/example-directio-csv
+    cd asakusafw-examples-0.8.0/example-basic-spark
 
 Shafuを導入した開発環境では、オンライン上に公開されているAsakusa Frameworkのプロジェクトテンプレートカタログを利用して、サンプルアプリケーションのプロジェクトをEclipse上に取り込みます。
 
@@ -251,7 +251,7 @@ Shafuを導入した開発環境では、オンライン上に公開されてい
 #. :guilabel:`テンプレートからプロジェクトを作成` ダイアログで :guilabel:`URLを指定してプロジェクトテンプレートをダウンロードする` が選択状態になっていることを確認して、画面右の :guilabel:`選択` ボタンを押下します。
 #. :guilabel:`プロジェクトテンプレート` ダイアログにオンラインに公開されている、利用可能なプロジェクトテンプレートの一覧が表示されます。ここでは :guilabel:`Asakusa Example Projects - 0.8.0` を選択します。
 #. :guilabel:`Finish` ボタンを押すと選択したプロジェクトテンプレートを読み込み、Eclipseプロジェクトとして新規プロジェクトが作成されます。
-#. :guilabel:`テンプレートからプロジェクトを作成` ダイアログで ``example-directio-csv`` を選択して :guilabel:`OK` ボタンを押下します。
+#. :guilabel:`テンプレートからプロジェクトを作成` ダイアログで ``example-basic-spark`` を選択して :guilabel:`OK` ボタンを押下します。
 
 サンプルアプリケーションのビルド
 --------------------------------

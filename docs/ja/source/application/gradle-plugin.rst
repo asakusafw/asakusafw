@@ -96,7 +96,7 @@ Asakusa on Sparkを利用する場合のプロジェクトテンプレートは�
     cd ~/Downloads
     curl -OL https://github.com/asakusafw/asakusafw-examples/archive/0.8.0.tar.gz
     tar xf 0.8.0.tar.gz
-    cp -a asakusafw-examples-0.8.0/example-directio-csv ~/workspace/example-app
+    cp -a asakusafw-examples-0.8.0/example-basic-spark ~/workspace/example-app
 
 プロジェクトレイアウト
 ----------------------
@@ -267,7 +267,7 @@ Gradleラッパーに関するディレクトリ及びファイルは、Gradle�
 :program:`asakusaVersion` タスクが正しく実行されると、以下のようにプロジェクトで利用するコンポーネントのバージョンが表示されます。
 
 ..  code-block:: none
-    
+
     :asakusaVersions
     Asakusa Gradle Plug-ins: 0.8.0
     Asakusa on Spark: 0.3.0
@@ -330,7 +330,7 @@ Asakusa DSLの記述や配置方法については :doc:`../dsl/index` を参照
 ..  code-block:: sh
 
     ./gradlew compileBatchapp
-    
+
 このタスクは、ビルドスクリプトに適用されているプラグイン構成に従って、利用するAsakusa DSLコンパイラを実行します。
 例えばAsakusa on Sparkのプロジェクトテンプレートに含まれるビルドスクリプトの構成ではMapReduceとSpark向けのプラグインが設定されているため、
 この2つの環境向けのDSLコンパイラが実行されます。
@@ -545,7 +545,7 @@ Asakusa Frameworkではアプリケーションプロジェクトで使用する
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 プロジェクトディレクトリの「依存ライブラリディレクトリ」( :file:`src/main/libs` ) 配下にjarファイルを配置すると、Javaソースファイルのコンパイル時にこのライブラリが依存関係に追加され、さらにDSLコンパイルの結果バッチアプリケーションの実行ファイルに自動的に含まれるようになります。
- 
+
 通常はこの方法でライブラリを追加することを推奨します。
 
 ..  attention::
@@ -601,7 +601,7 @@ Asakusa Gradle Pluginでは、特定の環境向けに個別にデプロイメ�
 **build.gradle**
 
 ..  code-block:: groovy
-     
+
     asakusafwOrganizer {
         hive.enabled true
         windgate.retryableEnabled true
@@ -659,7 +659,7 @@ Asakusa Gradle Pluginでは、特定の環境向けに個別にデプロイメ�
 この設定により、 :program:`assemble` タスクの実行時にMapReduceコンパイラのコンパイル処理がスキップされます。
 
 ..  code-block:: groovy
-    
+
     asakusafwOrganizer {
         spark.enabled true
         mapreduce.enabled false
@@ -685,7 +685,7 @@ Asakusa Gradle Pluginでは、特定の環境向けに個別にデプロイメ�
 以下、ビルドスクリプトの設定例です。
 
 ..  code-block:: groovy
-    
+
     asakusafw {
         mapreduce {
             include 'com.example.batch.Hoge'
@@ -735,11 +735,11 @@ Asakusa Gradle Pluginでは、特定の環境向けに個別にデプロイメ�
 ..  option:: --id batch-id
 
     実行するバッチアプリケーションのバッチID
-  
+
 ..  option:: --arguments key1=value1 [,key2=value2]
 
     バッチ引数を ``key=value`` 形式で指定
-    
+
     複数のバッチ引数がある場合はカンマ区切りで指定 ( ``key1=value1,key2=value2`` )
 
 :program:`testRunBatchapp` タスクの実行例は以下の通りです。
@@ -770,7 +770,7 @@ Hive用DDLファイルの生成
 -----------------------
 
 :program:`generateHiveDDL` は Hive連携用の拡張属性を持つDMDLスクリプトからをHive用のDDLファイルを生成します。
- 
+
 :program:`generateHiveDDL` タスクを実行すると、プロジェクトの :file:`build/hive-ddl` ディレクトリ配下にHiveのテーブル作成用の ``CREATE TABLE`` 文を含むSQLファイルが生成されます。
 
 :program:`generateHiveDDL` タスクは :program:`gradlew` コマンド実行時に以下のコマンドラインオプションを指定することができます。
@@ -784,7 +784,7 @@ Hive用DDLファイルの生成
     (``LOCATION`` の値に ``'<指定したパス>/<table-name>'`` を追加)
 
     指定がない場合は ``LOCATION`` 句は未指定
-  
+
 ..  option:: --database-name database-name
 
     生成する ``CRATE TABLE`` 文のテーブル名の前にデータベース名を付与する
