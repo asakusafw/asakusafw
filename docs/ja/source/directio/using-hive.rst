@@ -46,7 +46,7 @@ GradleプロジェクトでHive 連携モジュールを使用する場合は :f
         ...
         hive.enabled true
     }
-    
+
     dependencies {
         ...
         compile group: 'com.asakusafw.sdk', name: 'asakusa-sdk-hive', version: asakusafw.asakusafwVersion
@@ -88,7 +88,7 @@ ORC File形式に対応した ``DataFormat`` の実装クラスを自動的に�
     document = {
         "the name of this document"
         name : TEXT;
-    
+
         "the content of this document"
         content : TEXT;
     };
@@ -187,7 +187,7 @@ Parquet形式に対応した ``DataFormat`` の実装クラスを自動的に生
     document = {
         "the name of this document"
         name : TEXT;
-    
+
         "the content of this document"
         content : TEXT;
     };
@@ -328,12 +328,12 @@ Parquet形式の設定
         "the name of this document"
         @directio.hive.field(name = "doc_name")
         name : TEXT;
-    
+
         "the content of this document"
         @directio.hive.field(name = "doc_content")
         content : TEXT;
     };
-    
+
 
 マッピング失敗時の動作
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -356,7 +356,7 @@ Parquet形式の設定
 ..  hint::
     ORC Fileにカラム情報が出力されているかどうかを確認する方法として、ORC File Dump Utility を利用することができます。
     このツールはHive CLIが利用できる環境で以下のコマンドを実行します。
-    
+
     :program:`hive --orcfiledump <hdfs-location-of-orc-file>`
 
 データ型のマッピング
@@ -467,7 +467,7 @@ Asakusa Framework バージョン |version| では、Direct I/O の Hive連携�
 属性によっては、さらにその属性が持つ各要素でデータ型の詳細情報を指定します。
 
 マッピング型変換で利用可能な属性は以下の通りです。
-    
+
 ..  list-table:: マッピング型変換
     :widths: 90 120 70 163
     :header-rows: 1
@@ -509,20 +509,20 @@ Asakusa Framework バージョン |version| では、Direct I/O の Hive連携�
     item = {
         @directio.hive.char(length = 2)
         item_no : TEXT;
-    
+
         @directio.hive.decimal(precision = 20, scale = 4)
         unit_selling_price : DECIMAL;
-    
+
         @directio.hive.string
         extended_price : DECIMAL;
-    
+
         @directio.hive.timestamp
         order_date : DATE;
-    
+
         @directio.hive.varchar(length = 1024)
         memo : TEXT;
     };
-    
+
 
 Hiveデータ型とカラムナフォーマットのデータ型とのマッピング
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -535,9 +535,6 @@ Hiveデータ型とカラムナフォーマットのデータ型とのマッピ�
 ..  attention::
     Asakusa Framework バージョン |version| では、Direct I/OはHiveのバージョン ``1.1.1`` のライブラリを使用しています。
     そのため、Parquetに関しては上記のHiveのドキュメントに記載がある通り、DATEデータ型がサポートされていないことに注意してください。
-
-..  attention::
-    本ドキュメントの作成時点で、Amazon EMRの最新AMIバージョン ``3.3.1`` では、Hive ``0.13.1`` に対して ``0.14.0`` で導入されたParquetの ``TIMESTAMP`` 型対応のパッチをバックポートした構成になっていますが、 Hive ``0.14.0`` が生成するParquetの ``TIMESTAMP`` 型とは互換性がないようです。
 
 カラムナフォーマットファイルから除外するプロパティ
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -555,7 +552,7 @@ Hive DDLの生成
 ..  code-block:: sh
 
     ./gradlew generateHiveDDL
-    
+
 :program:`generateHiveDDL` タスクを実行すると、プロジェクトの :file:`build/hive-ddl` ディレクトリ配下にHiveのDDL文を含むSQLファイルが生成されます。
 
 詳しくは、 :doc:`../application/gradle-plugin` - :ref:`gradle-plugin-task-hiveddl` を参照してください。
