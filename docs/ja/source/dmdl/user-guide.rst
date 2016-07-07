@@ -91,7 +91,7 @@ DMDLでは4種類のデータモデルを記述できます。
     :header-rows: 1
 
     * - 型の名前
-      - 対応するJavaの型
+      - 説明
     * - ``INT``
       - 32bit符号付き整数
     * - ``LONG``
@@ -644,7 +644,7 @@ DMDLコンパイラが生成するJavaのクラスやインターフェースに
     * - ``SHORT``
       - ``short (ShortOption)``
 
-..  [#] ``org.hadoop.io.Text`` , ``...AsString`` は ``java.lang.String``
+..  [#] ``org.apache.hadoop.io.Text`` , ``...AsString`` は ``java.lang.String``
 ..  [#] :javadoc:`com.asakusafw.runtime.value.Date`
 ..  [#] :javadoc:`com.asakusafw.runtime.value.DateTime`
 

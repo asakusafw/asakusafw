@@ -5,7 +5,7 @@
 DMDLの特徴
 ==========
 
-Data Model Definition Languare (DMDL)は、Asakusa Frameworkで利用するJavaのデータモデルクラスを定義するための言語です。
+Data Model Definition Language (DMDL)は、Asakusa Frameworkで利用するJavaのデータモデルクラスを定義するための言語です。
 DMDLではそれぞれのデータモデルが持つプロパティなどを定義でき、DMDLで定義されたデータモデルをDMDLコンパイラに渡すと、対応したJavaのデータモデルクラスを自動的に作成します。
 
 Asakusa Framewokを利用する場合、DMDLを利用してデータモデルを作成することが推奨されます。これは、次のような理由があります。

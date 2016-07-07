@@ -177,7 +177,7 @@ Asakusa Frameworkのインストール
 
 次に、開発環境用のAsakusa Frameworkをインストールします。これはアプリケーションのテスト時などに利用します。
 
-コマンドライン上から作成する場合、Gradleの :program:`installAsakusafw` タスクを実行します。
+コマンドライン上からインストールする場合、Gradleの :program:`installAsakusafw` タスクを実行します。
 プロジェクト上でタスクを実行するには、以下のように :program:`gradlew` コマンドにタスク名を指定して実行します。
 
 ..  code-block:: sh
@@ -190,15 +190,15 @@ Shafuを導入した開発環境では、EclipseのメニューからAsakusa Fra
 #. コンテキストメニューから :menuselection:`Jinrikisha (人力車) --> Asakusa開発環境の構成 --> Asakusa Frameworkのインストール` を選択します。
 
 インストールが成功した場合、コンソールに以下のように表示され、環境変数 ``ASAKUSA_HOME`` で指定したフォルダ配下にAsakusa Frameworkがインストールされます。
-    
+
 ..  code-block:: none
 
     ...
     :installAsakusafw
     Asakusa Framework is successfully installed: /home/asakusa/asakusa
-    
+
     BUILD SUCCESSFUL
-    
+
     Total time: 4.352 secs
 
 Next Step
@@ -299,7 +299,7 @@ Shafuを導入した開発環境では、コンテキストメニューから :m
 以下は環境変数の設定例です。
 
 ..  code-block:: sh
-    
+
     export JAVA_HOME=/usr/lib/jvm/java-8-oracle
     export HADOOP_CMD=/usr/lib/hadoop/bin/hadoop
     export SPARK_CMD=/opt/spark/bin/spark-submit
@@ -339,7 +339,7 @@ Shafuを導入した開発環境では、コンテキストメニューから :m
     hadoop fs -mkdir -p target/testing/directio
     hadoop fs -put $ASAKUSA_HOME/example-dataset/master target/testing/directio/master
     hadoop fs -put $ASAKUSA_HOME/example-dataset/sales target/testing/directio/sales
-    
+
 .. _introduction-start-guide-run-app:
 
 サンプルアプリケーションの実行
