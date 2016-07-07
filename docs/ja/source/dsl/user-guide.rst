@@ -48,7 +48,7 @@ Asakusa DSLで記述したプログラムは、Asakusa Frameworkに付属のAsak
 `Batch DSLコンパイラ`_
     `Batch DSL`_ をコンパイルして、実行プラットフォーム向けのプログラムを生成するコンパイラ。
     コマンドラインインターフェースを提供している。
-    
+
     Batch DSLコンパイラは実行プラットフォームごとに対応するコンパイラを提供します。
 
 なお、DSLが3層であるのに対し、コンパイラは2層のみに対応しています。
@@ -406,7 +406,7 @@ Operator DSLコンパイラは作成した `演算子クラス`_ をコンパイ
     上記の演算子オブジェクトを生成するファクトリメソッドです。
     このメソッドは、演算子への入力を表す「ポート」を引数にとります。
 
-演算子実装クラスは、もとの演算子クラスの末尾に ``Factory`` をつけた名前で生成されます。
+演算子ファクトリクラスは、もとの演算子クラスの末尾に ``Factory`` をつけた名前で生成されます。
 また、演算子ファクトリメソッドはもとの演算子メソッドと同じ名前で、演算子オブジェクトクラスはもとの演算子メソッドをJavaのクラス名の規約に変換した名前 [#]_ がつけられます。
 
 `演算子の多相化`_ を行っている場合、対応する演算子オブジェクトクラスとファクトリメソッドにはそれぞれもとの演算子メソッドで宣言した型引数が自動的に宣言されます。
@@ -624,15 +624,15 @@ Asakusa Frameworkは標準でDirect I/OやWindGateというデータソースを
     protected void describe() {
         CoreOperatorFactory core = new CoreOperatorFactory();
         StockOpFactory op = new StockOpFactory();
-       
+
         // 処理できない注文をあらかじめフィルタリング
         CheckShipment check = op.checkShipment(shipmentIn);
         core.stop(check.notShipmentped);
         core.stop(check.completed);
-       
+
         // 在庫引当を行う
         Cutoff cutoff = op.cutoff(stockIn, check.costUnknown);
-       
+
         // 結果を書き出す
         shipmentOut.add(cutoff.newShipments);
         stockOut.add(cutoff.newStocks);
@@ -678,7 +678,7 @@ Asakusa Frameworkは標準でDirect I/OやWindGateというデータソースを
 フロー部品クラス
 ~~~~~~~~~~~~~~~~
 
-それぞれのジョブフローは、 `ジョブフロー`_ と同様に ``FlowDescription`` [#]_ を継承したJavaのクラスとして宣言します。
+それぞれのフロー部品は、 `ジョブフロー`_ と同様に ``FlowDescription`` [#]_ を継承したJavaのクラスとして宣言します。
 このクラスには以下のような制約があります。
 
 * ``public`` として宣言されている
@@ -989,7 +989,7 @@ Batch DSLコンパイラが生成するバッチアプリケーションには�
   これはワークフローエンジンごとに生成される記述で、対応するコンパイラプラグインをコンパイル時に指定します。
 
   標準では、Batch DSLコンパイラはYAESSというジョブ実行ツールのためのワークフロー記述である「YAESSスクリプト」を生成します。
-  
+
   YAESSについては :doc:`../yaess/index` を参照してください。
 
 モジュールの取り込み
