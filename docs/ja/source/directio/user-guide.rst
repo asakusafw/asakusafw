@@ -99,7 +99,7 @@ Direct I/Oのトランザクション処理は主に以下の流れで行いま�
 5. コミットマークファイルが存在する場合、それぞれのステージング領域の内容を最終的な出力先に移動し、コミットマークファイルを削除する
 
    * コミットマークファイルが存在しない場合は、ステージング領域の内容をクリアする
-    
+
 6. トランザクション情報ファイルを削除する
 
 ..  attention::
@@ -229,18 +229,18 @@ Direct I/Oの設定ファイルには、対象のデータソースに対して�
 
 ``相対パス``
   Hadoopのデフォルトファイルシステム [#]_ のワーキングディレクトリ [#]_ からの相対パスを利用します。
-  
+
   なお、デフォルトファイルシステムにローカルファイルシステムを指定している場合、
   ワーキングディレクトリは必ずユーザーのホームディレクトリになります。
 
 ``絶対パス``
   Hadoopのデフォルトファイルシステム上の絶対パスを利用します。
-  
+
   たとえば :file:`/var/log` や :file:`/tmp/directio` などです。
 
 ``完全URI``
   URIに対応するファイルシステム、ホスト、パスを利用します。
-  
+
   たとえば ``file:///home/asakusa`` や ``hdfs://localhost:8020/user/asakusa`` などです。
 
 
@@ -256,9 +256,9 @@ Direct I/Oの設定ファイルには、対象のデータソースに対して�
 
     例えば開発環境ではOSやHadoopの設定に依存しない相対パスの設定が便利でしょう。
     運用環境ではワーキングディレクトリに依存しない絶対パスの設定が安定するかもしれません。
-    
+
     また、複数種類のデータソースを使用し、Hadoopのデフォルトファイルシステム以外のファイルシステムを利用する場合は完全URIを使用する必要がありますが、この場合すべてのファイルシステムパスを完全URIで記述したほうが可読性が向上するかもしれません。
-    
+
     絶対パスや完全URIはHadoop側の設定を変更した場合に、その設定に追従する必要があるかもしれないので注意が必要です。
 
 論理パスとファイルシステムパスの対応付け
@@ -282,7 +282,7 @@ Hadoopのファイルシステムを利用したデータソースでは、指�
 ..  list-table:: ファイルの分割読み出しに関する設定
     :widths: 30 5 20
     :header-rows: 1
-    
+
     * - 名前
       - 形式
       - 値
@@ -324,7 +324,7 @@ Hadoopのファイルシステムを利用したデータソースでは、指�
 ..  list-table:: トランザクションに関する設定
     :widths: 25 5 30
     :header-rows: 1
-    
+
     * - 名前
       - 形式
       - 値
@@ -365,7 +365,7 @@ Hadoopの一部のファイルシステムでは、データを大きなブロ�
 ..  list-table:: Keep Aliveの設定
     :widths: 30 5 20
     :header-rows: 1
-    
+
     * - 名前
       - 形式
       - 値
@@ -452,38 +452,6 @@ Amazon Simple Storage Service ( `Amazon S3`_ )の入出力を行う場合の設�
 ..  attention::
     上記の例はステージ領域をスキップするよう設定していますが、この設定によりトランザクション処理が行えなくなる点に注意してください。
 
-..  attention::
-    HadoopやAmazon EMRの古いバージョンなどの一部の実装では、Hadoopのファイルシステムを経由してS3を利用する場合に入力データの分割にコストがかかる（巨大な入力データを途中から読み出す際にウェイトが発生する）ようです。
-    
-    このような環境では、入力データの分割を行わない ( ``...fragment.min = -1`` ) ように設定することを推奨します。以下設定例です。
-
-    ..  code-block:: xml
-    
-        <property>
-            <name>com.asakusafw.directio.s3.fragment.min</name>
-            <value>-1</value>
-        </property>
-
-..  attention::
-    HadoopやAmazon EMRの古いバージョンなどの一部の実装では、S3上でのファイル名変更が正常に動作しないことがあります。
-    もしこのような場合、以下の設定を試してみてください。
-     
-    * 試行領域をローカルファイルシステム上に作成する ( ``...output.streaming = false`` )
-   
-      * この設定では出力を直接データソースに出力せず、ローカルテンポラリ領域に出力するよう設定しています ( ``com.asakusafw.output.local.tempdir`` ) 。
-
-    ..  code-block:: xml
-
-         <property>
-             <name>com.asakusafw.directio.s3.output.streaming</name>
-             <value>false</value>
-         </property>
-         <property>
-             <name>com.asakusafw.output.local.tempdir</name>
-             <value>/mnt/asakusa-directio</value>
-         </property>
-    
-
 複数のデータソースを利用する設定例
 ----------------------------------
 
@@ -561,7 +529,7 @@ DSLで論理パスより長いパスを指定した場合、論理パスにマ�
 ..  list-table:: システムディレクトリの設定
     :widths: 20 5 30
     :header-rows: 1
-    
+
     * - 名前
       - 形式
       - 値
@@ -591,7 +559,7 @@ DSLで論理パスより長いパスを指定した場合、論理パスにマ�
 ..  list-table:: ローカルテンポラリ領域の設定
     :widths: 20 10 30
     :header-rows: 1
-    
+
     * - 名前
       - 形式
       - 値
@@ -640,7 +608,7 @@ Direct I/Oを利用してファイルを入出力するには、 `Hadoopのフ�
 ..  hint::
     :doc:`../application/gradle-plugin` の手順に従ってプロジェクトテンプレートから作成したプロジェクトは、これらのライブラリやプラグインがSDKアーティファクトという依存性定義によってデフォルトで利用可能になっています。
     詳しくは :doc:`../application/sdk-artifact` を参照してください。
-    
+
 ..  [#] :javadoc:`com.asakusafw.runtime.directio.DataFormat`
 ..  [#] :javadoc:`com.asakusafw.runtime.directio.BinaryStreamFormat`
 ..  [#] :javadoc:`com.asakusafw.runtime.directio.hadoop.HadoopFileFormat`
@@ -902,7 +870,7 @@ Direct I/Oを利用してデータをファイルに書き出す場合、 ``Dire
 
 ``List<String> getOrder()``
   それぞれの出力ファイルの内容をソートするプロパティを指定します。
-  
+
   それぞれのプロパティは ``+property_name`` で昇順、 ``-property_name`` で降順を表します。
   プロパティ名はDMDLのプロパティ名と同様、すべて小文字で単語をアンダースコア ( ``_`` ) で区切ってください。
 

@@ -25,7 +25,7 @@ Asakusa Frameworkを利用してアプリケーションを実行する場合、
 **asakusa-resources.xml**
 
 ..  code-block:: xml
-    
+
     <property>
         <name>com.asakusafw.launcher.cache.path</name>
         <value>target/libcache</value>
@@ -34,7 +34,7 @@ Asakusa Frameworkを利用してアプリケーションを実行する場合、
 ライブラリキャッシュの設定を追加した状態でYAESSからアプリケーションを実行した後にキャッシュパスの内容を参照すると、アプリケーション実行時のライブラリファイルがキャッシュされていることが確認できます。
 
 ..  code-block:: sh
-    
+
     $ hadoop fs -ls target/libcache/*
     -rw-------   3 asakusa asakusa     507053 2014-06-23 13:11 /user/asakusa/target/libcache/1b1eded1/asakusa-runtime-all.jar
     -rw-------   3 asakusa asakusa          8 2014-06-23 13:11 /user/asakusa/target/libcache/1b1eded1/asakusa-runtime-all.jar.acrc
@@ -85,9 +85,6 @@ Asakusa Frameworkを利用してアプリケーションを実行する場合、
 ..  [#] Hadoopディストリビューションによっては、この設定項目が ``true`` の状態ではアプリケーションが実行できません。
         ライブラリキャッシュの設定後アプリケーション実行がエラー終了する場合は、この設定項目を変更してみてください。
 
-..  attention::
-    Asakusa Framework バージョン |version| では、Amazon EMRのHadoop1系（AMIバージョン ``2.4.x`` ）において ``com.asakusafw.launcher.cache.jobjar`` を ``false`` にする必要があることを確認しています。
-        
 キャッシュされたライブラリのクリーンアップ
 ==========================================
 
