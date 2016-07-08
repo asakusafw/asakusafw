@@ -39,7 +39,8 @@ extlinks = {
     'asakusa-on-spark': ('http://docs.asakusafw.com/asakusa-on-spark/latest/release/ja/html/%s', None),
     'asakusa-on-m3bp': ('http://docs.asakusafw.com/asakusa-on-m3bp/latest/release/ja/html/%s', None),
     'apiref': ('http://docs.asakusafw.com/0.8.1/release/api/%s', None),
-    'epub': ('http://docs.asakusafw.com/0.8.1/release/ja/epub/%s', None)
+    'epub': ('http://docs.asakusafw.com/0.8.1/release/ja/epub/%s', None),
+    'basic-tutorial': ('http://docs.asakusafw.com/basic-tutorial/0.8/release/ja/html/%s', None),
 }
 javadoclinks = {
     'javadoc': ('http://docs.asakusafw.com/0.8.1/release/api/%s.html', ""),

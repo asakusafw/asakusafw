@@ -4,6 +4,9 @@ Asakusa Framework スタートガイド
 
 この文書では、Asakusa Frameworkをはじめて利用するユーザー向けに、Asakusa Frameworkを使ったバッチアプリケーションの開発、実行方法を簡単に説明します。
 
+..  seealso::
+    本書より詳しい入門向けドキュメントとして、 :basic-tutorial:`Asakusa Framework チュートリアル <index.html>` ではサンプルアプリケーションを作成しながらフレームワークの基本的な使い方や開発の流れを説明しています。
+
 .. _startguide-development-environment:
 
 開発環境の準備
@@ -202,13 +205,15 @@ Shafuを導入した開発環境では、EclipseのメニューからAsakusa Fra
     Total time: 4.352 secs
 
 Next Step
----------
+=========
 
 ここまでの手順で、Asakusa Framework上でバッチアプリケーションの開発を行う準備が整いました。
 
 次のステップとして、 :doc:`next-step` では実際にアプリケーションの開発を行うための、Asakusa Frameworkを使ったアプリケーション開発の流れを紹介しています。
 
-また、このスタートガイドの以降の説明では、公開されているサンプルアプリケーションを使ってバッチアプリケーションを実行する手順を紹介しています。
+また :basic-tutorial:`Asakusa Framework チュートリアル <index.html>` では、サンプルアプリケーションを作成しながらフレームワークの基本的な使い方や開発の流れを説明しています。
+
+このスタートガイドの以降の説明では、公開されているサンプルアプリケーションを使ってバッチアプリケーションを実行する手順を紹介しています。
 
 .. _startguide-running-example:
 
