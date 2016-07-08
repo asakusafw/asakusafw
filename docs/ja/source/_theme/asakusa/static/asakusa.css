@@ -44,3 +44,6 @@
   margin-bottom: 0.3em;
 }
 
+div.attention p.admonition-title {
+  background-color: #EE9816;
+}
