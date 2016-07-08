@@ -17,7 +17,7 @@ Direct I/OのTSVファイル連携モジュールはAsakusa FrameworkのMavenリ
       - アーティファクトID
     * - ``com.asakusafw.sandbox``
       - ``asakusa-directio-dmdl-ext``
-      
+
 ..  note::
     Sandoxモジュールとして提供するDirect I/Oの各フォーマット拡張機能は同一のMavenアーティファクトで提供しています。
 
@@ -44,7 +44,7 @@ TSVファイル連携を行うために、DMDLに対してTSVファイルを扱�
 
 以下にTSVファイルを扱う場合のDMDLスクリプトの例を示します。
 
-..  code-block:: sh
+..  code-block:: dmdl
 
     "テーブルEX1"
     ...
@@ -97,7 +97,7 @@ TSV形式の設定
 
 以下はDMDLスクリプトの記述例です。
 
-..  code-block:: none
+..  code-block:: dmdl
 
     @directio.tsv(
         charset = "ISO-2022-jp",
@@ -118,7 +118,7 @@ TSV形式の設定
 
 以下はヘッダの内容の付加したDMDLスクリプトの記述例です。
 
-..  code-block:: none
+..  code-block:: dmdl
 
     @directio.tsv
     document = {
@@ -241,7 +241,7 @@ DMDLスクリプトに対応するTSVファイルの例を以下に示します�
 サンプル:DMDLスクリプト
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-..  code-block:: java
+..  code-block:: dmdl
 
     "テーブルEX1"
     ...
@@ -261,7 +261,7 @@ DMDLスクリプトに対応するTSVファイルの例を以下に示します�
 ..  attention::
     以下サンプルのドキュメント上の区切り文字はスペースになっていますが、実際のファイルはタブ文字を使用してください。
 
-..  code-block:: java
+..  code-block:: none
 
     1	111	hoge1
     2	222	fuga2

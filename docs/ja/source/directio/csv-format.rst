@@ -9,7 +9,7 @@ CSV形式のDataFormatの作成
 
 CSV形式 [#]_ に対応した ``DataFormat`` の実装クラスを自動的に生成するには、対象のデータモデルに対応するDMDLスクリプトに ``@directio.csv`` を指定します。
 
-..  code-block:: none
+..  code-block:: dmdl
 
     @directio.csv
     document = {
@@ -31,7 +31,7 @@ DMDLコンパイラについては :doc:`../dmdl/user-guide` を参照してく�
 
 ..  hint::
     :doc:`../application/gradle-plugin` の手順に従ってプロジェクトテンプレートから作成したプロジェクトは、これらのライブラリやプラグインがSDKアーティファクトという依存性定義によってデフォルトで利用可能になっています。詳しくは :doc:`../application/sdk-artifact` を参照してください。
-    
+
 ..  note::
     この機構は :doc:`WindGate <../windgate/user-guide>` のものと将来統合されるかもしれません。
 
@@ -107,7 +107,7 @@ CSV形式の設定
 
 以下はDMDLスクリプトの記述例です。
 
-..  code-block:: none
+..  code-block:: dmdl
 
     @directio.csv(
         charset = "ISO-2022-JP",
@@ -135,7 +135,7 @@ CSV形式の設定
 
 以下はヘッダの内容の付加したDMDLスクリプトの記述例です。
 
-..  code-block:: none
+..  code-block:: dmdl
 
     @directio.csv
     document = {

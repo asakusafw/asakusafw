@@ -69,7 +69,7 @@ CSV入出力への対応
 この属性は、データモデルの宣言の直前に指定します。
 以下は記述例です。
 
-..  code-block:: none
+..  code-block:: dmdl
 
     @windgate.csv
     example_model = {
@@ -90,7 +90,7 @@ Asakusa DSLの記述
 WindGateを利用する場合でも、Asakusa DSLの基本的な記述方法は同様です。
 WindGate特有の部分は、以降で説明する `CSVファイルをインポートする`_ と `CSVファイルをエクスポートする`_ 部分のみです。
 
-それ以外の部分については、 :doc:`../dsl/start-guide` を参照してください。 
+それ以外の部分については、 :doc:`../dsl/start-guide` を参照してください。
 
 CSVファイルをインポートする
 ---------------------------

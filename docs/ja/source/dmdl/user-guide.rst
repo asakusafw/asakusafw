@@ -41,7 +41,7 @@ DMDLでは4種類のデータモデルを記述できます。
 
 以下はモデル名が `example_model` 、プロパティがそれぞれ整数型の `number` , 文字列型の `item_code` , 日時型の `last_updated` である場合の記述です。
 
-..  code-block:: none
+..  code-block:: dmdl
 
     example_model = {
         number : INT;
@@ -126,7 +126,7 @@ DMDLでは4種類のデータモデルを記述できます。
 
 合成されたデータモデルは、対象のデータモデルが定義する全てのプロパティを持つことになります。
 
-..  code-block:: none
+..  code-block:: dmdl
 
     both = left + right;
     left = {
@@ -138,7 +138,7 @@ DMDLでは4種類のデータモデルを記述できます。
 
 上記の例では、以下のようなデータモデルを定義したことになります。
 
-..  code-block:: none
+..  code-block:: dmdl
 
     both = {
         left_value : INT;
@@ -161,7 +161,7 @@ DMDLでは4種類のデータモデルを記述できます。
 
 拡張されたデータモデルは、対象のデータモデルが定義するすべてのプロパティに加え、新たに定義したプロパティを持つことになります。
 
-..  code-block:: none
+..  code-block:: dmdl
 
     origin = {
         value : INT;
@@ -172,7 +172,7 @@ DMDLでは4種類のデータモデルを記述できます。
 
 上記の例では、以下のようなデータモデルを定義したことになります。
 
-..  code-block:: none
+..  code-block:: dmdl
 
     extended = {
         value : INT;
@@ -196,7 +196,7 @@ DMDLでは4種類のデータモデルを記述できます。
 
 プロパティマッピングを行わない場合、次のような方法で結合モデルを定義します。
 
-..  code-block:: none
+..  code-block:: dmdl
 
     joined <結合モデル名> = <対象モデル1> % <結合キー1> + <対象モデル2> % <結合キー2>;
 
@@ -207,7 +207,7 @@ DMDLでは4種類のデータモデルを記述できます。
 
 たとえば、次のような結合モデル `item_order` を定義できます。
 
-..  code-block:: none
+..  code-block:: dmdl
 
     item = {
         code : LONG;
@@ -249,7 +249,7 @@ DMDLでは4種類のデータモデルを記述できます。
 
 以下はプロパティのマッピングを行いながら結合モデルを定義する例です。
 
-..  code-block:: none
+..  code-block:: dmdl
 
     item = {
         code : LONG;
@@ -322,7 +322,7 @@ DMDLでは4種類のデータモデルを記述できます。
 
 たとえば、次のような集計モデル `item_order` を定義できます。
 
-..  code-block:: none
+..  code-block:: dmdl
 
     order = {
         item_code : LONG;
@@ -478,7 +478,7 @@ DMDLでは4種類のデータモデルを記述できます。
 
 射影モデルを合成してレコードモデルを定義した場合、通常のデータモデルを合成した際と同様に、全てのプロパティが定義するレコードモデルに取り込まれます。
 
-..  code-block:: none
+..  code-block:: dmdl
 
     projective proj_model = {
         value : INT;
@@ -487,7 +487,7 @@ DMDLでは4種類のデータモデルを記述できます。
 上記のように記述した場合、 `proj_model` に対応するJavaのデータモデルクラスは生成されず、代わりに同様のプロパティを持つインターフェースが生成されます。
 このインターフェースを実装( ``implements`` )するデータモデルクラスを生成するには、次のようにデータモデル定義の右辺にこの射影モデルを利用します。
 
-..  code-block:: none
+..  code-block:: dmdl
 
     conc_model = proj_model + {
         other : INT;
@@ -501,7 +501,7 @@ DMDLでは4種類のデータモデルを記述できます。
 
 たとえば、以下の例で `record` は、 `sub_proj` , `super_proj` がどちらも射影として登録されます。
 
-..  code-block:: none
+..  code-block:: dmdl
 
     projective super_proj = { a : INT; };
     projective sub_proj = super_proj + { b : INT; };
@@ -517,7 +517,7 @@ DMDLスクリプトにコメントを挿入するには、以下のように記�
 
 以下コメントの使用例です。
 
-..  code-block:: none
+..  code-block:: dmdl
 
     item = {
         code : LONG; -- XYZコード体系で表現される商品コード
@@ -658,7 +658,7 @@ DMDLコンパイラが生成するJavaのクラスやインターフェースに
 
 データモデルのドキュメンテーションを変更するには、データモデルの定義の直前に ``"<データモデルの説明>"`` を付与します。
 
-..  code-block:: none
+..  code-block:: dmdl
 
     "サンプルのデータモデル"
     example = { ... };
@@ -672,7 +672,7 @@ DMDLコンパイラが生成するJavaのクラスやインターフェースに
 
 プロパティのドキュメンテーションを変更するには、プロパティ定義やマッピングの直前に ``"<プロパティの説明>"`` を付与します。
 
-..  code-block:: none
+..  code-block:: dmdl
 
     order = {
         "商品コード"
@@ -697,7 +697,7 @@ DMDLコンパイラが生成するJavaのクラスやインターフェースに
 このパッケージ名は、データモデルの名前と同様に ``snake_case`` の形式で記述します ( `名前の形式`_ を参照 )。
 また、 ``.`` で区切って深い階層の名前も指定できます。
 
-..  code-block:: none
+..  code-block:: dmdl
 
     "名前空間付きのモデル"
     @namespace(value = your.namespace)
@@ -718,7 +718,7 @@ DMDLコンパイラが生成するJavaのクラスやインターフェースに
 
 射影モデルが持つプロパティをすべて持つモデルに ``@auto_projection`` 属性を指定した場合、そのデータモデルには対象の射影が自動的に登録されます。
 
-..  code-block:: none
+..  code-block:: dmdl
 
     projective foo = {
         value1 : INT;

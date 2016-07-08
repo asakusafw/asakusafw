@@ -82,7 +82,7 @@ ORC File形式のDataFormatの作成
 
 ORC File形式に対応した ``DataFormat`` の実装クラスを自動的に生成するには、対象のデータモデルに対応するDMDLスクリプトに ``@directio.hive.orc`` を指定します。
 
-..  code-block:: none
+..  code-block:: dmdl
 
     @directio.hive.orc
     document = {
@@ -160,7 +160,7 @@ Hiveのバージョンについては 後述の `Hiveのバージョンに関し
 
 以下はDMDLスクリプトの記述例です。
 
-..  code-block:: none
+..  code-block:: dmdl
 
     @directio.hive.orc(
         table_name = "tb_lineitem",
@@ -181,7 +181,7 @@ Parquet形式のDataFormatの作成
 
 Parquet形式に対応した ``DataFormat`` の実装クラスを自動的に生成するには、対象のデータモデルに対応するDMDLスクリプトに ``@directio.hive.parquet`` を指定します。
 
-..  code-block:: none
+..  code-block:: dmdl
 
     @directio.hive.parquet
     document = {
@@ -272,7 +272,7 @@ Parquet形式の設定
 
 以下はDMDLスクリプトの記述例です。
 
-..  code-block:: none
+..  code-block:: dmdl
 
     @directio.hive.parquet(
         table_name = "tb_lineitem",
@@ -321,7 +321,7 @@ Parquet形式の設定
 
 以下は名前マッピングの定義を付加したDMDLスクリプトの記述例です。
 
-..  code-block:: none
+..  code-block:: dmdl
 
     @directio.hive.orc
     document = {
@@ -504,7 +504,7 @@ Asakusa Framework バージョン |version| では、Direct I/O の Hive連携�
 
 以下はマッピング変換機能の定義を付加したDMDLスクリプトの記述例です。
 
-..  code-block:: none
+..  code-block:: dmdl
 
     item = {
         @directio.hive.char(length = 2)

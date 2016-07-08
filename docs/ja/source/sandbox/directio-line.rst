@@ -29,7 +29,7 @@ Direct I/O lineはAsakusa FrameworkのMavenリポジトリにグループID ``co
       - アーティファクトID
     * - ``com.asakusafw.sandbox``
       - ``asakusa-directio-dmdl-ext``
-      
+
 ..  note::
     Sandoxモジュールとして提供するDirect I/Oの各フォーマット拡張機能は同一のMavenアーティファクトで提供しています。
 
@@ -54,7 +54,7 @@ Direct I/O lineを利用するには、DMDLに対してDirect I/O lineを利用�
 
 以下はDirect I/O lineと連携するデータモデル定義の最もシンプルな例です。
 
-..  code-block:: none
+..  code-block:: dmdl
 
     @directio.line
     model = {
@@ -91,7 +91,7 @@ Direct I/O lineを利用するには、DMDLに対してDirect I/O lineを利用�
 
 以下はDMDLスクリプトの記述例です。
 
-..  code-block:: none
+..  code-block:: dmdl
 
     @directio.line(
         charset="ISO-2022-jp",
@@ -118,7 +118,7 @@ Direct I/O lineで利用できるモデルプロパティの設定について�
 
 以下は、モデルプロパティの設定を指定したDMDLスクリプトの記述例です。
 
-..  code-block:: none
+..  code-block:: dmdl
 
     @directio.line
     model = {
@@ -185,7 +185,7 @@ Direct I/O lineで利用できるモデルプロパティの設定について�
 
 ..  attention::
     ``@directio.line.line_number`` が指定された場合、 :ref:`directio-input-split` が行われなくなります。
-    
+
 ..  attention::
     これらの属性はファイルを読み込みの解析時のみ有効です。
     ファイルを書き出す際には無視されます。
