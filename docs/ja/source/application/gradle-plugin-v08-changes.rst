@@ -83,7 +83,7 @@ Asakusa Frameworkバージョンの指定
 
 0.8系以降ではHadoop1系が非対応となったことにより、Asakusa Framwork バージョン 0.7.0 から導入された「Hadoopバージョン」（``<version>-hadoop1``, ``<version>-hadoop2`` のように、利用するHadoopのバージョンを持つバージョン体系）が廃止になりました。
 
-0.8系以降は、Asakusa Frameworkのバージョンは単一のバージョン体系 ( 例えば本リリースのバージョンは ``0.8.0`` ) を使用します。
+0.8系以降は、Asakusa Frameworkのバージョンは単一のバージョン体系 ( 例えば ``0.8.0`` ) を使用します。
 
 また、0.8系ではビルドスクリプト上の ``asakusafwVersion`` の指定はオプションになりました。
 ``asakusafwVersion`` を指定しない場合、 Asakusa Gradle Pluginの該当バージョンが規定するAsakusa Frameworkバージョンを導入します。

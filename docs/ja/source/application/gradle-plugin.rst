@@ -80,11 +80,11 @@ Asakusa Gradle Pluginを使った標準的なアプリケーション開発環�
 
     * - プロジェクトテンプレート
       - 説明
-    * - `asakusa-mapreduce-template-0.8.0.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-mapreduce-template-0.8.0.tar.gz>`_
+    * - `asakusa-mapreduce-template-0.8.1.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-mapreduce-template-0.8.1.tar.gz>`_
       - Asakusa on MapReduceを利用するプロジェクトテンプレート
-    * - `asakusa-spark-template-0.3.0.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-spark-template-0.3.0.tar.gz>`_
+    * - `asakusa-spark-template-0.3.1.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-spark-template-0.3.1.tar.gz>`_
       - :asakusa-on-spark:`Asakusa on Spark <index.html>` を利用するプロジェクトテンプレート
-    * - `asakusa-m3bp-template-0.1.1.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-m3bp-template-0.1.1.tar.gz>`_
+    * - `asakusa-m3bp-template-0.1.2.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-m3bp-template-0.1.2.tar.gz>`_
       - :asakusa-on-m3bp:`Asakusa on M3BP <index.html>` を利用するプロジェクトテンプレート
 
 ..  seealso::
@@ -115,9 +115,9 @@ Asakusa Gradle Pluginを使った標準的なアプリケーション開発環�
 ..  code-block:: sh
 
     cd ~/Downloads
-    curl -OL https://github.com/asakusafw/asakusafw-examples/archive/0.8.0.tar.gz
-    tar xf 0.8.0.tar.gz
-    cp -a asakusafw-examples-0.8.0/example-basic-spark ~/workspace
+    curl -OL https://github.com/asakusafw/asakusafw-examples/archive/0.8.1.tar.gz
+    tar xf 0.8.1.tar.gz
+    cp -a asakusafw-examples-0.8.1/example-basic-spark ~/workspace
 
 プロジェクトレイアウト
 ----------------------
@@ -290,11 +290,11 @@ Gradleラッパーに関するディレクトリ及びファイルは、Gradle�
 ..  code-block:: none
 
     :asakusaVersions
-    Asakusa Gradle Plug-ins: 0.8.0
-    Asakusa on Spark: 0.3.0
-    Asakusa SDK: 0.8.0
+    Asakusa Gradle Plug-ins: 0.8.1
+    Asakusa on Spark: 0.3.1
+    Asakusa SDK: 0.8.1
     JVM: 1.7
-    Spark: 1.6.0
+    Spark: 1.6.2
     Hadoop: 2.7.2
 
 開発用のAsakusa Frameworkインストール

@@ -35,7 +35,7 @@ Asakusa Gradle PluginはAsakusa FrameworkのMavenリポジトリに以下のMave
             maven { url 'http://asakusafw.s3.amazonaws.com/maven/releases' }
         }
         dependencies {
-            classpath group: 'com.asakusafw', name: 'asakusa-gradle-plugins', version: '0.8.0'
+            classpath group: 'com.asakusafw', name: 'asakusa-gradle-plugins', version: '0.8.1'
         }
     }
 
@@ -391,7 +391,7 @@ DSLコンパイラプロパティ
     MapReduceコンパイラに対する設定は、後述の MapReduceプロパティ を使用してください。
 
 ..  attention::
-    バージョン 0.8.0 時点では、 ``compiler`` ブロックではMapReduce DSLコンパイラに対する設定がおこなわれます。
+    バージョン |version| 時点では、 ``compiler`` ブロックではMapReduce DSLコンパイラに対する設定がおこなわれます。
 
 DSLコンパイラ関する規約プロパティは、 ``asakusafw`` ブロック内の参照名 ``compiler`` でアクセスできます [#]_ 。
 
