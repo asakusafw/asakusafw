@@ -19,6 +19,5 @@
 
     windgate-tsv
     directio-tsv
-    directio-line
     asakusa-on-emr
     asakusa-with-hive

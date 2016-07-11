@@ -36,7 +36,7 @@ Nov 19, 2015
 Direct I/O line - 特定フォーマットに依存しないテキストファイルの入出力
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Direct I/Oで任意のテキストファイルを行ごとに読み書きするための機能 :doc:`Direct I/O line <../sandbox/directio-line>` を追加しました。
+Direct I/Oで任意のテキストファイルを行ごとに読み書きするための機能 :doc:`Direct I/O line <../directio/directio-line>` を追加しました。
 
 Direct I/O lineはファイル内の行文字列とデータモデル内の1つの文字列型プロパティをマッピングする機能のみを提供します。
 行文字列の解析、生成などの処理はバッチアプリケーションの演算子として記述します。
@@ -52,7 +52,7 @@ Direct I/O lineは、以下のような用途に利用することを想定し�
 
 Direct I/O lineの詳細は、以下のドキュメントを参照してください。
 
-* :doc:`sandbox/directio-line`
+* :doc:`directio/directio-line`
 
 GradleのDSLコンパイル時に対象のバッチアプリケーションを指定
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -250,7 +250,7 @@ Java SE Development Kit (JDK)
   また、開発環境で利用するJavaについての詳細は、 :doc:`application/using-jdk` を参照してください。
 
   なお、将来のバージョンではJDK6の利用は非対応とすることを計画しています。
-  
+
 過去バージョンからのマイグレーション情報については、以下のドキュメントを参照してください。
 
 * :doc:`application/migration-guide`
