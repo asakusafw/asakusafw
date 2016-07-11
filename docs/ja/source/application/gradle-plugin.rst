@@ -525,8 +525,7 @@ Asakusa Frameworkではアプリケーションプロジェクトで使用する
 
 これらの機能を追加するには、各ライブラリの利用方法にしたがってビルドスクリプトの ``dependencies`` ブロックに指定します。
 
-以下の例では、プロジェクトテンプレートに含まれるビルドスクリプトに対して、
-:doc:`../sandbox/directio-line` , :doc:`../sandbox/directio-tsv` を利用するための拡張ライブラリ ``com.asakusafw.sandbox:asakusa-directio-dmdl-ext`` を追加しています。
+以下の例では、プロジェクトテンプレートに含まれるビルドスクリプトに対して :doc:`../sandbox/directio-tsv` を利用するための拡張ライブラリ ``com.asakusafw.sandbox:asakusa-directio-dmdl-ext`` を追加しています。
 
 **build.gradle**
 
