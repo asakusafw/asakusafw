@@ -9,8 +9,6 @@ Asakusa Gradle Plugin リファレンス
 
 Asakusa Gradle PluginはAsakusa FrameworkのMavenリポジトリに以下のMavenアーティファクトとして登録されています。
 
-また、Asakusa on Sparkを利用する場合は、Asakusa on Spark用のMavenアーティファクトを使用します。
-
 ..  list-table:: Asakusa Gradle PluginのMavenアーティファクト
     :widths: 2 2 6
     :header-rows: 1
@@ -23,7 +21,10 @@ Asakusa Gradle PluginはAsakusa FrameworkのMavenリポジトリに以下のMave
       - Asakusa Gradle Pluginの標準機能を提供する
     * - ``com.asakusafw.spark``
       - ``asakusa-spark-gradle``
-      - Asakusa Gradle Pluginの標準機能に加えて、Asakusa on Spark向けの機能を提供する。
+      - Asakusa Gradle Pluginの標準機能に加えて、 :asakusa-on-spark:`Asakusa on Spark <index.html>` 向けの機能を提供する。
+    * - ``com.asakusafw.m3bp``
+      - ``asakusa-m3bp-gradle``
+      - Asakusa Gradle Pluginの標準機能に加えて、 :asakusa-on-m3bp:`Asakusa on M3BP <index.html>` 向けの機能を提供する。
 
 アプリケーションプロジェクトからAsakusa Gradle Pluginを利用する場合、ビルドスクリプトに下記を含めます。
 
@@ -38,7 +39,11 @@ Asakusa Gradle PluginはAsakusa FrameworkのMavenリポジトリに以下のMave
         }
     }
 
-Asakusa on Sparkを利用する場合の設定例については、Asakusa on Sparkのドキュメント :asakusa-on-spark:`Asakusa on Spark ユーザーガイド - Asakusa on Spark Gradle Plugin <user-guide.html#asakusa-on-spark-gradle-plugin>` を参照してください。
+..  seealso::
+    Asakusa on Spark , |ASAKUSA_ON_M3BP| を利用する場合の設定例については、それぞれ以下のドキュメントを確認してください。
+
+    * :asakusa-on-spark:`Asakusa on Spark ユーザガイド <user-guide.html>`
+    * :asakusa-on-m3bp:`Asakusa on M3BP ユーザガイド <user-guide.html>`
 
 Asakusa Gradle Plugin 一覧
 ==========================
@@ -76,16 +81,18 @@ Asakusa Gradle Pluginはいくつかのプラグインから構成されてい�
       - Asakusa on MapReduce Plugin
       - ``-``
       - MapReduce向けのバッチアプリケーションを生成、実行するための機能を導入する。
-    * - ``asakusafw-spark`` [#]_
+    * - ``asakusafw-spark``
       - Asakusa on Spark Plugin
       - ``-``
       - Spark向けのバッチアプリケーションを生成、実行するための機能を導入する。
+    * - ``asakusafw-m3bp``
+      - |ASAKUSA_ON_M3BP| Plugin
+      - ``-``
+      - |M3BP_ENGINE| 向けのバッチアプリケーションを生成、実行するための機能を導入する。
     * - ``asakusafw-legacy``
       - Legacy Modules Plugin
       - ``-``
       - ThunderGateなどのレガシーモジュールを利用するための機能を導入する
-
-..  [#] ``asakusafw-spark`` を利用するには Asakusa on Spark Gradle Pluginを利用するための設定が必要です。詳しくは :asakusa-on-spark:`Asakusa on Spark <index.html>` のドキュメントを参照してください。
 
 使用方法
 --------
@@ -146,7 +153,7 @@ Batch Application Plugin は、以下のタスクをプロジェクトに追加�
     * - :program:`compileBatchapp`
       - ``asakusafw-sdk``
       - ``CompileBatchappTask`` [#]_
-      - DSLコンパイラを使ってバッチアプリケーションを生成する
+      - プロジェクトのビルド構成に基づくBatch DSLコンパイラを使ってバッチアプリケーションを生成する
     * - :program:`mapreduceCompileBatchapps`
       - ``asakusafw-mapreduce``
       - ``-``
@@ -155,6 +162,10 @@ Batch Application Plugin は、以下のタスクをプロジェクトに追加�
       - ``asakusafw-spark``
       - ``-``
       - Spark DSLコンパイラを使ってバッチアプリケーションを生成する
+    * - :program:`m3bpCompileBatchapps`
+      - ``asakusafw-m3bp``
+      - ``-``
+      - M\ :sup:`3`\ BP DSLコンパイラを使ってバッチアプリケーションを生成する
     * - :program:`jarBatchapp`
       - ``asakusafw-sdk``
       - ``Jar``
@@ -195,7 +206,7 @@ Batch Application Plugin は、以下のタスクをプロジェクトに追加�
     * - :program:`compileJava`
       - :program:`compileDMDL`
     * - :program:`compileBatchapp`
-      - :program:`classes`, :program:`mapreduceCompileBatchapps`, :program:`sparkCompileBatchapps`
+      - :program:`classes`, :program:`mapreduceCompileBatchapps`, :program:`sparkCompileBatchapps`, :program:`m3bpCompileBatchapps`
     * - :program:`jarBatchapp`
       - :program:`compileBatchapp`
     * - :program:`assemble`
@@ -435,7 +446,7 @@ MapReduce DSLコンパイラ関する規約プロパティは、 ``asakusafw`` �
       - 説明
     * - ``outputDirectory``
       - String
-      - ``$buildDir/spark-batchapps``
+      - ``$buildDir/batchc``
       - コンパイラの出力先を指定する。文字列や java.io.File などで指定し、相対パスが指定された場合にはプロジェクトからの相対パスとして取り扱う。
     * - ``include``
       - String, List<String>
@@ -465,11 +476,20 @@ MapReduce DSLコンパイラ関する規約プロパティは、 ``asakusafw`` �
 Sparkプロパティ
 ~~~~~~~~~~~~~~~
 
-Spark DSLコンパイラ関する規約プロパティは、 ``asakusafw`` ブロック内の参照名 ``spark`` でアクセスできます。
+Spark DSLコンパイラに関する規約プロパティは、 ``asakusafw`` ブロック内の参照名 ``spark`` でアクセスできます。
 
 この規約オブジェクトについては、Asakusa on Sparkの以下のドキュメントを参照してください。
 
 * :asakusa-on-spark:`Asakusa on Spark リファレンス - Batch Application Plguin (asakusafw) への拡張 <reference.html#batch-application-plugin-asakusafw>`
+
+M3BPプロパティ
+~~~~~~~~~~~~~~
+
+M\ :sup:`3`\ BP DSLコンパイラに関する規約プロパティは、 ``asakusafw`` ブロック内の参照名 ``m3bp`` でアクセスできます。
+
+この規約オブジェクトについては、 |ASAKUSA_ON_M3BP| の以下のドキュメントを参照してください。
+
+* :asakusa-on-m3bp:`Asakusa on M3BP リファレンス - Batch Application Plguin (asakusafw) への拡張 <reference.html#batch-application-plugin-asakusafw>`
 
 テストツールプロパティ
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -665,6 +685,15 @@ Spark DSLコンパイラが生成するバッチアプリケーションの構�
 この規約オブジェクトについては、Asakusa on Sparkの以下のドキュメントを参照してください。
 
 * :asakusa-on-spark:`Asakusa on Spark リファレンス - Framework Organizer Plugin ( asakusafwOrganizer ) への拡張 <reference.html#framework-organizer-plugin-asakusafworganizer>`
+
+M3BPプロパティ
+~~~~~~~~~~~~~~
+
+M\ :sup:`3`\ BP DSLコンパイラが生成するバッチアプリケーションの構成に関する規約プロパティは、 ``asakusafwOrganizer`` ブロック内の参照名 ``m3bp`` でアクセスできます。
+
+この規約オブジェクトについては、 |ASAKUSA_ON_M3BP| の以下のドキュメントを参照してください。
+
+* :asakusa-on-m3bp:`Asakusa on M3BP リファレンス - Framework Organizer Plugin ( asakusafwOrganizer ) への拡張 <reference.html#framework-organizer-plugin-asakusafworganizer>`
 
 Direct I/Oプロパティ
 ~~~~~~~~~~~~~~~~~~~~
