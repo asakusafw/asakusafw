@@ -60,6 +60,8 @@ Asakusa Gradle Pluginを使った標準的なアプリケーション開発環�
 このプロジェクトテンプレートには  `Gradleラッパー <http://www.gradle.org/docs/current/userguide/gradle_wrapper.html>`_  と呼ばれるGradleを利用するコマンドが含まれます。
 このコマンドを利用することで、Gradle自体の導入設定は不要となり、すぐにこのプロジェクト上で開発を始めることができます。
 
+現在のところ、プロジェクトテンプレートは利用するプラットフォームに応じた初期設定が導入された複数種類のテンプレートを公開しています。
+
 2)は、テンプレートを使用せずフルスクラッチでビルドスクリプトの定義やプロジェクトレイアウトを作成する方法です。
 この方法はGradleやAsakusa Gradle Pluginの利用に精通している必要がありますが、既存プロジェクトのマイグレーションなどで個別に設定を行う必要がある場合などでは、こちらの方法を検討してください。
 
@@ -69,11 +71,30 @@ Asakusa Gradle Pluginを使った標準的なアプリケーション開発環�
 プロジェクトテンプレートのダウンロード
 --------------------------------------
 
-基本的な構成のみを持つプロジェクトテンプレートは、以下リンクからダウンロードします。
+プロジェクトテンプレートは、以下リンクからダウンロードします。
 
-* `asakusa-mapreduce-template-0.8.0.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-mapreduce-template-0.8.0.tar.gz>`_
 
-Asakusa on Sparkを利用する場合のプロジェクトテンプレートは、 :asakusa-on-spark:`Asakusa on Spark ユーザーガイド <user-guide.html>` に記載のリンクからダウンロードします。
+..  list-table:: プロジェクトテンプレートのダウンロード
+    :widths: 3 4
+    :header-rows: 1
+
+    * - プロジェクトテンプレート
+      - 説明
+    * - `asakusa-mapreduce-template-0.8.0.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-mapreduce-template-0.8.0.tar.gz>`_
+      - Asakusa on MapReduceを利用するプロジェクトテンプレート
+    * - `asakusa-spark-template-0.3.0.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-spark-template-0.3.0.tar.gz>`_
+      - :asakusa-on-spark:`Asakusa on Spark <index.html>` を利用するプロジェクトテンプレート
+    * - `asakusa-m3bp-template-0.1.1.tar.gz <http://www.asakusafw.com/download/gradle-plugin/asakusa-m3bp-template-0.1.1.tar.gz>`_
+      - :asakusa-on-m3bp:`Asakusa on M3BP <index.html>` を利用するプロジェクトテンプレート
+
+..  seealso::
+    Asakusa on Spark , |ASAKUSA_ON_M3BP| についてはこのドキュメントの更新とは独立してリリースが実施される可能性があり、
+    プロジェクトテンプレートも上記よりも新しいバージョンがリリースされている可能性があります。
+
+    それぞれの最新バージョンのプロジェクトテンプレートについては、以下のドキュメントを確認してください。
+
+    * :asakusa-on-spark:`Asakusa on Spark ユーザガイド <user-guide.html>`
+    * :asakusa-on-m3bp:`Asakusa on M3BP ユーザガイド <user-guide.html>`
 
 また、Asakusa Frameworkの `サンプルプログラム集 (GitHub)`_ では、サンプルアプリケーションのソースコード一式を含むサンプルアプリケーションプロジェクトを公開しています。
 
@@ -86,17 +107,17 @@ Asakusa on Sparkを利用する場合のプロジェクトテンプレートは�
 このディレクトリを開発するアプリケーションを示すプロジェクト名に変更して、作業用ディレクトリに配置してください。
 サンプルアプリケーションを利用する場合も同様です。
 
-以降本書では、ビルドの流れを解説するために `サンプルプログラム集 (GitHub)`_ に公開されているサンプルアプリケーションプロジェクトを使って説明します。
-サンプルアプリケーションは、Asakusa on Sparkのプロジェクトテンプレートを利用しています。
+以降本書では、ビルドの流れを解説するために `サンプルプログラム集 (GitHub)`_ に公開されているサンプルアプリケーションプロジェクト ``example-basic-spark`` を使って説明します。
+このサンプルアプリケーションは、Asakusa on Sparkのプロジェクトテンプレートをベースにして作成されています。
 
-ここでは、ダウンロードしたサンプルアプリケーションプロジェクトを ``example-app`` というプロジェクト名で :file:`$HOME/workspace` に配置したものとします。
+ここでは、ダウンロードしたサンプルアプリケーションプロジェクト ``example-basic-spark`` を :file:`$HOME/workspace` に配置したものとします。
 
 ..  code-block:: sh
 
     cd ~/Downloads
     curl -OL https://github.com/asakusafw/asakusafw-examples/archive/0.8.0.tar.gz
     tar xf 0.8.0.tar.gz
-    cp -a asakusafw-examples-0.8.0/example-basic-spark ~/workspace/example-app
+    cp -a asakusafw-examples-0.8.0/example-basic-spark ~/workspace
 
 プロジェクトレイアウト
 ----------------------
@@ -251,7 +272,7 @@ Gradleラッパーに関するディレクトリ及びファイルは、Gradle�
 
 ..  code-block:: sh
 
-    cd ~/workspace/example-app
+    cd ~/workspace/example-basic-spark
 
 バージョンの確認
 ----------------
@@ -322,7 +343,7 @@ DMDLスクリプトの記述や配置方法については :doc:`../dmdl/index` 
 バッチアプリケーションのコンパイル
 ----------------------------------
 
-Asakusa DSLコンパイラを使ってバッチアプリケーションのコンパイルを行い、実行可能モジュールを生成します。
+Batch DSLコンパイラを使ってバッチアプリケーションのコンパイルを行い、実行可能モジュールを生成します。
 Asakusa DSLの記述や配置方法については :doc:`../dsl/index` を参照してください。
 
 バッチアプリケーションのコンパイルを行うには、 :program:`compileBatchapp` タスクを実行します。
@@ -331,23 +352,30 @@ Asakusa DSLの記述や配置方法については :doc:`../dsl/index` を参照
 
     ./gradlew compileBatchapp
 
-このタスクは、ビルドスクリプトに適用されているプラグイン構成に従って、利用するAsakusa DSLコンパイラを実行します。
+このタスクは、ビルドスクリプトに適用されているプラグイン構成に従って、利用するBatch DSLコンパイラを実行します。
 例えばAsakusa on Sparkのプロジェクトテンプレートに含まれるビルドスクリプトの構成ではMapReduceとSpark向けのプラグインが設定されているため、
-この2つの環境向けのDSLコンパイラが実行されます。
+この2つの環境向けのBatch DSLコンパイラが実行されます。
 
-その他、バッチアプリケーションのコンパイルでは以下のタスクが利用できます。
+その他、バッチアプリケーションのコンパイルでは以下のようなタスクが利用できます。
 
-:program:`mapreduceCompileBatchapps`
-  MapReduce向けのDSLコンパイラを実行し、 :file:`build/batchc` 配下にコンパイル済みのバッチアプリケーションを配置します。
+..  list-table:: バッチアプリケーションのコンパイルに関連するタスク
+    :widths: 2 5
+    :header-rows: 1
 
-:program:`sparkCompileBatchapps`
-  Spark向けのDSLコンパイラを実行し、 :file:`build/spark-batchapps` 配下にコンパイル済みのバッチアプリケーションを配置します。
+    * - タスク
+      - 説明
+    * - :program:`compileBatchapp`
+      - プロジェクトのプラグイン構成に従って、それぞれのBatch DSLコンパイラを実行する [#]_ 。
+    * - :program:`mapreduceCompileBatchapps`
+      - MapReduce向けのDSLコンパイラを実行し、 :file:`build/batchc` 配下にコンパイル済みのバッチアプリケーションを配置する。
+    * - :program:`sparkCompileBatchapps`
+      - Spark向けのDSLコンパイラを実行し、 :file:`build/spark-batchapps` 配下にコンパイル済みのバッチアプリケーションを配置する。
+    * - :program:`m3bpCompileBatchapps`
+      - |M3BP_ENGINE| 向けのDSLコンパイラを実行し、 :file:`build/m3bp-batchapps` 配下にコンパイル済みのバッチアプリケーションを配置する。
+    * - :program:`jarBatchapp`
+      - :program:`compileBatchapp` タスクで生成したバッチアプリケーションを含むjarファイルを生成し ``build/${project}-batchapps.jar`` に配置します。
 
-:program:`jarBatchapp`
-    :program:`compileBatchapp` タスクで生成したバッチアプリケーションを含むjarファイルを生成し ``build/${project}-batchapps.jar`` に配置します。
-
-..  note::
-    プロジェクトテンプレートの初期構成では :program:`compileBatchapp` は :program:`mapreduceCompileBatchapps` と :program:`sparkCompileBatchapps` を実行します。
+..  [#] 例えばAsakusa on Sparkのプロジェクトテンプレートの初期構成では :program:`compileBatchapp` は :program:`mapreduceCompileBatchapps` と :program:`sparkCompileBatchapps` を実行します。
 
 デプロイメントアーカイブの構成
 ------------------------------
