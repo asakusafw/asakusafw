@@ -1,2 +1,1 @@
-com.asakusafw.dmdl.directio.line.driver.LineFormatEmitter
 com.asakusafw.dmdl.directio.tsv.driver.TsvFormatEmitter

@@ -5,3 +5,7 @@ com.asakusafw.dmdl.directio.csv.driver.CsvLineNumberDriver
 com.asakusafw.dmdl.directio.csv.driver.CsvRecordNumberDriver
 com.asakusafw.dmdl.directio.csv.driver.CsvIgnoreDriver
 com.asakusafw.dmdl.directio.sequencefile.driver.SequenceFileFormatDriver
+com.asakusafw.dmdl.directio.line.driver.LineFormatDriver
+com.asakusafw.dmdl.directio.line.driver.LineBodyDriver
+com.asakusafw.dmdl.directio.line.driver.LineFileNameDriver
+com.asakusafw.dmdl.directio.line.driver.LineLineNumberDriver
