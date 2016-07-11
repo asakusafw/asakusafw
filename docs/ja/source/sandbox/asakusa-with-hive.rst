@@ -96,9 +96,9 @@ Hiveとの連携に利用するカラムナフォーマットファイルは、�
 
 Asakusa Frameworkの `サンプルプログラム集 (GitHub)`_ にDirect I/O Hiveを利用したサンプルアプリケーションを公開しています。
 
-以下はAsakusa Framework バージョン ``0.8.0`` を使用したDirect I/O Hiveのサンプルアプリケーションです。
+以下はAsakusa Framework バージョン ``0.8.1`` を使用したDirect I/O Hiveのサンプルアプリケーションです。
 
-* https://github.com/asakusafw/asakusafw-examples/tree/0.8.0/example-directio-hive
+* https://github.com/asakusafw/asakusafw-examples/tree/0.8.1/example-directio-hive
 
 ..  _`サンプルプログラム集 (GitHub)`: http://github.com/asakusafw/asakusafw-examples
 
@@ -128,12 +128,12 @@ Hiveはここで指定したパスにディレクトリを作成し、配下に�
 ..  code-block:: java
 
     public class CategorySummaryToOrc extends AbstractCategorySummaryOrcFileOutputDescription {
-    
+
         @Override
         public String getBasePath() {
             return "tables/category_summary";
         }
-    
+
         @Override
         public String getResourcePattern() {
             return "*";
@@ -176,13 +176,13 @@ Hiveが導入されてる環境上にDDLファイルを配置し、コマンド�
 ..  code-block:: sh
 
     hive
-    
+
 ``show tables`` クエリーを実行してメタストアに登録したテーブル一覧を表示します。
 
 ..  code-block:: sh
 
     hive> show tables;
-    
+
     OK
     category_summary
     error_record
@@ -231,7 +231,7 @@ Direct I/O Hiveを利用したバッチアプリケーションを実行しま�
     1300    12  1596
     1401    15  1470
     1600    28  5400
-    
+
     hive> select * from error_record;
     OK
     1990-01-01 10:40:00 0001    9999999999999   商品不明

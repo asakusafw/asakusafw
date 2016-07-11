@@ -40,13 +40,13 @@ Asakusa Gradle Pluginのバージョン変更
 
 ..  code-block:: groovy
     :emphasize-lines: 6
-    
+
     buildscript {
         repositories {
             maven { url 'http://asakusafw.s3.amazonaws.com/maven/releases' }
         }
         dependencies {
-            classpath group: 'com.asakusafw', name: 'asakusa-gradle-plugins', version: '0.8.0'
+            classpath group: 'com.asakusafw', name: 'asakusa-gradle-plugins', version: '0.8.1'
         }
     }
 
@@ -75,7 +75,7 @@ Asakusa Frameworkの各バージョンでビルドスクリプトに関すバー
 
 ..  warning::
     バージョン 0.6系, 0.7系のGradleプロジェクトのマイグレーション時には、必ず以下のドキュメントを参照してください。
-    
+
     * :doc:`gradle-plugin-v08-changes`
 
 Gradleラッパーのアップデート
@@ -90,7 +90,7 @@ Gradleラッパーのアップデート
     ./gradlew asakusaUpgrade
 
 :program:`asakusaUpgrade` タスクを実行後、 :program:`help` タスクを実行するとGradleラッパーのバージョンを確認できます。
-    
+
 ..  code-block:: sh
 
     ./gradlew help
@@ -105,7 +105,7 @@ Gradleラッパーのアップデート
 ..  attention::
     Shafuを利用している場合、ShafuはプロジェクトのGradleラッパーを使用せず、Shafu側で設定されているGradleを使用します。
     Shafuが利用するGradleのバージョンをアップデートするにはShafu側の設定を変更する必要があります。
-    
+
     Shafuの設定については :jinrikisha:`Shafuのドキュメント <shafu.html>` を参照してください。
 
 Asakusa Frameworkの再インストール
@@ -209,7 +209,7 @@ Gradle、およびAsakusa Gradle Pluginでは従来のMavenベースの依存関
 以下、この箇所に該当する :file:`pom.xml` の設定例です。
 
 ..  code-block:: xml
-         
+
         <name>Example Application</name>
         <groupId>com.example</groupId>
         <artifactId>migrate-app</artifactId>
