@@ -47,10 +47,12 @@ javadoclinks = {
 }
 
 rst_prolog = u"""
+:tocdepth: 3
+
 ..  |ASAKUSA_ON_M3BP| replace:: Asakusa on M\ :sup:`3`\ BP
 ..  |M3BP_ENGINE| replace:: M\ :sup:`3` for Batch Processing
+..  |VERSION_UP| unicode:: U+2191
 
-:tocdepth: 3
 """
 
 # ------------------------------------------------------------------------------
