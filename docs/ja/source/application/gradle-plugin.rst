@@ -168,10 +168,10 @@ Gradleラッパーに関するディレクトリ及びファイルは、Gradle�
 
 ビルドスクリプト( ``build.gradle`` )はプロジェクトのビルド設定を記述したGradle用のビルドスクリプトで、プロジェクトテンプレートに含まれるビルドスクリプトにはAsakusa Gradle Pluginを利用するための設定が記述されています。
 
-**build.gradle**
-
 ..  literalinclude:: gradle-attachment/template-build.gradle
     :language: groovy
+    :caption: build.gradle
+    :name: build.gradle-gradle-plugin-1
 
 プロジェクトテンプレートに含まれるビルドスクリプトには、以下の機能を利用するための設定があらかじめ定義されています。
 
@@ -468,20 +468,20 @@ Eclipseプロジェクト用の定義ファイルを作成するには、 :progr
 
 以下は、いくつかの基本的なカスタマイズをおこなったビルドスクリプトの例です。
 
-**build.gradle**
-
 ..  literalinclude:: gradle-attachment/custom-build.gradle
     :language: groovy
+    :caption: build.gradle
+    :name: build.gradle-gradle-plugin-2
 
 標準プロジェクトプロパティ
 --------------------------
 
 標準的なプロジェクト情報は、以下のようにビルドスクリプトのトップレベルの階層に定義します。
 
-**build.gradle**
-
 ..  literalinclude:: gradle-attachment/custom-build.gradle
     :language: groovy
+    :caption: build.gradle
+    :name: build.gradle-gradle-plugin-3
     :lines: 1-4
 
 ``group`` プロパティはプラグインの各タスクでJavaソースコードの生成時に指定する基底Javaパッケージとして使用されます。
@@ -507,10 +507,10 @@ Asakusa Gradle Pluginのプラグイン規約プロパティは、以下に説�
 以下の例では、プロジェクトで使用するコード自動生成用の規定パッケージ名 を ``basePackage`` で指定し、続いてSpark向けのDSLコンパイルの設定に関する ``spark`` ブロックが指定されています。
 ブロック内には複数のプロパティを指定することができます。
 
-**build.gradle**
-
 ..  literalinclude:: gradle-attachment/custom-build.gradle
     :language: groovy
+    :caption: build.gradle
+    :name: build.gradle-gradle-plugin-4
     :lines: 20-25
 
 ..  seealso::
@@ -530,10 +530,10 @@ Asakusa Gradle Pluginのプラグイン規約プロパティは、以下に説�
 ``profiles`` から始まるブロックは、デプロイメントアーカイブの構成情報を管理するプロファイルに関する設定です。
 プロファイルについては後述の `プロファイルの管理`_ で詳しく説明します。
 
-**build.gradle**
-
 ..  literalinclude:: gradle-attachment/custom-build.gradle
     :language: groovy
+    :caption: build.gradle
+    :name: build.gradle-gradle-plugin-5
     :lines: 27-36
 
 ..  seealso::
@@ -555,11 +555,11 @@ Asakusa Frameworkではアプリケーションプロジェクトで使用する
 
 以下の例では、プロジェクトテンプレートに含まれるビルドスクリプトに対して :doc:`../sandbox/directio-tsv` を利用するための拡張ライブラリ ``com.asakusafw.sandbox:asakusa-directio-dmdl-ext`` を追加しています。
 
-**build.gradle**
-
 ..  literalinclude:: gradle-attachment/custom-build.gradle
     :language: groovy
-    :lines: 38-45
+    :caption: build.gradle
+    :name: build.gradle-gradle-plugin-6
+    :lines: 37-45
 
 .. _dependency-library-gradle-plugin:
 
@@ -625,9 +625,9 @@ Asakusa Gradle Pluginでは、特定の環境向けに個別にデプロイメ�
 
 以下は、ステージング環境用のデプロイ構成を持つプロファイル ``stage`` を定義する例です。
 
-**build.gradle**
-
 ..  code-block:: groovy
+    :caption: build.gradle
+    :name: build.gradle-gradle-plugin-7
 
     asakusafwOrganizer {
         hive.enabled true
@@ -686,6 +686,8 @@ Asakusa Gradle Pluginでは、特定の環境向けに個別にデプロイメ�
 この設定により、 :program:`assemble` タスクの実行時にMapReduceコンパイラのコンパイル処理がスキップされます。
 
 ..  code-block:: groovy
+    :caption: build.gradle
+    :name: build.gradle-gradle-plugin-8
 
     asakusafwOrganizer {
         spark.enabled true
@@ -712,6 +714,8 @@ Asakusa Gradle Pluginでは、特定の環境向けに個別にデプロイメ�
 以下、ビルドスクリプトの設定例です。
 
 ..  code-block:: groovy
+    :caption: build.gradle
+    :name: build.gradle-gradle-plugin-9
 
     asakusafw {
         mapreduce {

@@ -22,9 +22,9 @@ Asakusa Frameworkを利用してアプリケーションを実行する場合、
 
 以下はライブラリキャッシュの設定例です。
 
-**asakusa-resources.xml**
-
 ..  code-block:: xml
+    :caption: asakusa-resources.xml
+    :name: asakusa-resources.xml-configure-library-cache-1
 
     <property>
         <name>com.asakusafw.launcher.cache.path</name>

@@ -135,9 +135,9 @@ YAESSでは、それぞれの環境に対するジョブ起動方法の設定や
 
 プロパティファイルのそれぞれのセクションには、該当するセクション名から始まるキーと、それに対応する値が記述されています。
 
-**yaess.properties**
-
 ..  code-block:: properties
+    :caption: yaess.properties
+    :name: yaess.properties-yaess-user-guide-1
 
     core = com.asakusafw.yaess.basic.BasicCoreProfile
     core.version = 0.1
@@ -146,7 +146,7 @@ YAESSでは、それぞれの環境に対するジョブ起動方法の設定や
     lock = com.asakusafw.yaess.basic.BasicLockProvider
     lock.scope = world
     lock.directory = ${ASAKUSA_HOME}/yaess/var/lock
-    
+
     ## ...
 
 環境変数の利用
@@ -159,9 +159,9 @@ YAESSを起動した環境の環境変数が存在しない場合に、ここで
 
 以下は、デフォルト値を持つ環境変数の利用例です。
 
-**yaess.properties**
-
 ..  code-block:: properties
+    :caption: yaess.properties
+    :name: yaess.properties-yaess-user-guide-2
 
     scheduler.parallel.hadoop-master = ${YAESS_PARALLEL_HADOOP-3}
 
@@ -892,7 +892,7 @@ YAESSのいくつかの機能を利用するには、追加のプラグインラ
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 Asakusa Frameworkのデプロイメントアーカイブには、デフォルトのYAESS用プラグインライブラリとして、あらかじめ以下のプラグインライブラリと、プラグインライブラリが使用する依存ライブラリが同梱されています。
-    
+
 ..  list-table:: YAESS標準プラグインライブラリ
     :widths: 4 6
     :header-rows: 1
@@ -940,7 +940,9 @@ YAESSスクリプトの内容を確認するには、コマンドラインから
 
 以下はコマンドの出力結果の例です。
 
-..  code-block:: javascript
+..  code-block:: json
+    :caption: yaess-script.properties
+    :name: yaess-script.properties-yaess-user-guide-1
 
     {
       "id": "example.summarizeSales",

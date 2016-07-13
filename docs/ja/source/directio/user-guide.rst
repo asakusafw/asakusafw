@@ -138,6 +138,8 @@ Direct I/Oの機構を利用するには、入出力の仲介を行う「デー�
 これらの設定は、 ``$ASAKUSA_HOME`` で指定したディレクトリ以下の :file:`core/conf/asakusa-resources.xml` (以下「設定ファイル」)内に、以下の形式でそれぞれ記述していきます。
 
 ..  code-block:: xml
+    :caption: asakusa-resources.xml
+    :name: asakusa-resources.xml-directio-user-guide-1
 
     <property>
         <name>プロパティ名</name>
@@ -397,6 +399,8 @@ HDFSでの設定例
 以下はHDFSの入出力を行う場合の設定例です。
 
 ..  code-block:: xml
+    :caption: asakusa-resources.xml
+    :name: asakusa-resources.xml-directio-user-guide-2
 
     <property>
         <name>com.asakusafw.directio.hdfs</name>
@@ -420,6 +424,8 @@ Amazon S3での設定例
 Amazon Simple Storage Service ( `Amazon S3`_ )の入出力を行う場合の設定例です。
 
 ..  code-block:: xml
+    :caption: asakusa-resources.xml
+    :name: asakusa-resources.xml-directio-user-guide-3
 
     <property>
         <name>com.asakusafw.directio.s3</name>
@@ -458,6 +464,8 @@ Amazon Simple Storage Service ( `Amazon S3`_ )の入出力を行う場合の設�
 複数のデータソースを組み合わせて利用する場合、設定ファイルのデータソース( ``com.asakusafw.directio.<DSID>`` ) のうち、 ``<DSID>`` の部分を別々のものに設定します。
 
 ..  code-block:: xml
+    :caption: asakusa-resources.xml
+    :name: asakusa-resources.xml-directio-user-guide-4
 
     <property>
         <name>com.asakusafw.directio.data</name>

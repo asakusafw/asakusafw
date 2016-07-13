@@ -55,7 +55,7 @@ EMRやS3など、AWSが提供する各サービスに対する操作には以下
 * `AWSコマンドラインインターフェイス`_ (以下「CLI」)を使用する方法
 * AWSが提供するSDKを利用する方法
 * 各サービスが提供するWeb Service APIを利用する方法
-   
+
 それぞれのツールで実現可能な操作が多少異なりますが、本書の範囲内ではコンソールやCLIですべての操作が可能です。
 本書では操作手順の説明においてコンソールとCLIの操作を簡単に紹介します。
 
@@ -82,14 +82,14 @@ Direct I/Oを使ってS3に対してデータの読み書きを行うように�
 
 以下は、 :file:`asakusa-resources.xml` の設定例です。
 
-* :download:`asakusa-resources.xml <attachment/asakusa-resources.xml>`
-
 ..  literalinclude:: attachment/asakusa-resources.xml
     :language: xml
+    :caption: asakusa-resources.xml
+    :name: asakusa-resources.xml-sandbox-asakusa-on-emr-1
 
 ..  seealso::
     :file:`asakusa-resources.xml` で記述するDirect I/Oの設定について詳しくは、 :doc:`../directio/user-guide` を参照してください。
-  
+
     また、上記の設定ファイルの例ではDirect I/O以外にいくつかの実行時設定を行なっています。詳しくは、 :doc:`../administration/configure-hadoop-parameters` を参照してください。
 
 ここでは上記の :file:`asakusa-resources.xml` をダウンロードして、アプリケーションプロジェクト配下のディレクトリ :file:`src/dist/emr/core/conf` に配置してください。
@@ -102,7 +102,7 @@ Direct I/Oを使ってS3に対してデータの読み書きを行うように�
 ..  hint::
     上記設定に含まれる ``@...@`` の文字列は、 :doc:`Framework Organizer Plugin <../application/gradle-plugin>` の機能を利用して
     デプロイメントアーカイブ作成時に環境に合わせた値に置換します。
-    
+
     上記の設定ファイルの例では、プロパティ ``com.asakusafw.directio.root.fs.path`` の値 ``@directioRootFsPath@`` はデータ入出力に利用する、S3上のパスに置換します。詳しくは次項を参照してください。
 
 デプロイメント構成の設定
@@ -115,11 +115,11 @@ EMR向けの構成を持つデプロイメントアーカイブを作成する�
 
 ここでは、サンプルアプリケーションのプロジェクトにEMR向けのデプロイメント構成用のプロファイル ``emr`` を作成するためビルドスクリプト :file:`build.gradle` を編集します。
 
-**build.gradle**
-
 ..  code-block:: groovy
+    :caption: build.gradle
+    :name: build.gradle-sandbox-asakusa-on-emr_-1
     :emphasize-lines: 5
-    
+
     asakusafwOrganizer {
         profiles.emr {
             assembly.into('.') {
@@ -128,10 +128,10 @@ EMR向けの構成を持つデプロイメントアーカイブを作成する�
             }
         }
     }
-   
+
 ..  attention::
     上記例を参考に設定ファイルを作成する際は、必ず ``directioRootFsPath`` の値を実際に使用するS3バケットのパスに置き換えてください。
-   
+
 ここでは標準の設定に対して、EMR向けのプロファイルとして ``profiles.emr`` ブロックを追加しています。
 
 ``assembly.into('.')`` 配下は先述の `Direct I/Oの設定`_ で説明した設定ファイルを ``put`` によってデプロイメント構成に加えています。
@@ -185,9 +185,9 @@ S3に対するファイルアップロードはAWS CLIからも実行するこ�
 S3上のファイルを表示し、正しくアップロードされたことを確認します。
 
 ..  code-block:: sh
-    
+
     aws s3 ls s3://[mybucket]/asakusafw/
-    
+
 ..  attention::
     上記例を参考にコマンドを入力する際は、必ずアップロード先のS3バケットのパスを実際に使用するパスに置き換えてください。
 
@@ -279,7 +279,7 @@ EMRクラスターの起動パラメータ（オプション）の概要を説�
 :guilabel:`Master/Core/Task` ``(--instance-groups InstanceGroupType=MASTER, ...)``
   EMRクラスターのインスタンス構成を指定します。
   起動するインスタンスグループ(Master/Core/Task)ごとのインスタンス数やインスタンスタイプなどを指定します。
-  
+
 ..  hint::
     デプロイメント構成の確認やアプリケーションとの疎通確認など、試験的に実行する段階ではEC2インスタンスタイプは低コストで利用できるインスタンスタイプを使用し、ノード数も少なめで確認するのがよいでしょう。
 
@@ -299,7 +299,7 @@ CLI
 ~~~
 
 ..  code-block:: json
-     
+
     {
         "ClusterId": "j-XXXXXXXXXXXXX"
     }
@@ -338,7 +338,7 @@ CLI
 
 ..  hint::
     上記例の ``--query`` オプションによって全体の出力から結果ステータスの項目を抽出しています。
-    
+
     :program:`aws` コマンドには他にも様々なオプションが利用できます。
     詳しくは AWS CLI Reference の `Command Reference <http://docs.aws.amazon.com/cli/latest/index.html>`_ などを参照してください。
 
@@ -384,26 +384,26 @@ EMRクラスターに対して処理を要求するには、コンソールやCL
 
     :guilabel:`Step type`
       ``Custom JAR`` を選択
-    
+
     :guilabel:`Name`
       任意のステップ名を入力 (この名前はステップ一覧に表示されます)
-    
+
     :guilabel:`JAR locations`
       以下のS3パスを入力 [#]_
-    
+
       * ``s3://elasticmapreduce/libs/script-runner/script-runner.jar``
-    
+
     :guilabel:`Arguments`
       以下2つの引数を半角スペース区切りで指定 [#]_
-    
+
       * 第1引数:  ``s3://asakusafw/emr/deploy-asakusa.sh``
       * 第2引数:  `デプロイメントアーカイブをS3に配置`_ で配置したデプロイメントアーカイブのS3パス
-        
+
         * 例: ``s3://[mybucket]/asakusafw/asakusafw-0.8.0-emr.tar.gz``
-    
+
     :guilabel:`Action on failure`
       * ``Continue`` を選択
-    
+
 以上の手順でマスターノード上にAsakusa Frameworkのデプロイ処理が実行されます。
 
 正常にデプロイが完了したことを確認するには、クラスター詳細画面の :guilabel:`Steps` セクションを展開して、ステップ一覧に表示されるデプロイ用のステップを確認します。
@@ -451,7 +451,7 @@ AWS CLI を使ったデプロイ例を以下に示します。
     }
 
 デプロイの結果を確認します。
- 
+
 ..  code-block:: sh
 
     aws emr describe-step --cluster-id j-XXXXXXXXXXXXX --step-id s-XXXXXXXXXXXXX \
@@ -533,26 +533,26 @@ CLI
 
     ..  figure:: attachment/emr-console-addstep-runbatch.png
         :width: 100%
-    
+
     :guilabel:`Step type`
       ``Custom JAR`` を選択
-    
+
     :guilabel:`Name`
       任意のステップ名を入力 (この名前はステップ一覧に表示されます)
-    
+
     :guilabel:`JAR locations`
       以下のS3パスを入力 [#]_
-    
+
       * ``s3://asakusafw/emr/asakusa-script-runner.jar``
-    
+
     :guilabel:`Arguments`
       以下2つの引数を半角スペース区切りで指定 [#]_
-    
+
       * 第1引数:  ``$ASAKUSA_HOME/yaess/bin/yaess-batch.sh``
       * 第2引数以降:  ``yaess-batch.sh`` の引数
-        
+
         * 例: ``example.summarizeSales -A date=2011-04-01``
-    
+
     :guilabel:`Action on failure`
       * ``Continue`` を選択
 
@@ -579,9 +579,9 @@ AWS CLI を使ったバッチアプリケーション実行例を以下に示し
 ..  attention::
     ``Args`` の値全体は上の例のように ``'[`` ``]'`` で囲むことを推奨します。
     こうすることで、 ``Args`` の値に ``key=value`` 形式や ``${...}`` といった形式が含まれていてもそのまま記述できます。
-    
+
     また、 ``Args`` の値に複数の引数を指定する場合は、半角スペースではなくカンマ区切りになることに注意してください。
-    
+
 アプリケーションの実行結果を確認
 --------------------------------
 
@@ -658,7 +658,7 @@ AWS CLI を使ったファイルダウンロードの例を以下に示します
 ..  code-block:: sh
 
     aws s3 cp --recursive s3://[mybucket]/app-data/result /tmp/result
-    
+
 ..  attention::
     上記例を参考にコマンドを入力する際は、必ずダウンロード元のS3バケットのパスを実際に使用するパスに置き換えてください。
 
@@ -704,8 +704,8 @@ AWS CLI を使ったEMRクラスター停止の例を以下に示します。
 
     aws emr describe-cluster --cluster-id j-XXXXXXXXXXXXX \
      --query 'Cluster.Status.State'
-    
+
 ..  code-block:: json
 
     "TERMINATED"
-    
+

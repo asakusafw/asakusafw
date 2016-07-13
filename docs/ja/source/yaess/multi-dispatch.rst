@@ -79,12 +79,14 @@ YAESS導入時には ``hadoop`` には標準的なハンドラクラスが設定
 例えば、サブハンドラ名に `remote` を指定し、このハンドラに対して :ref:`yaess-profile-hadoop-section-ssh` 設定を適用する場合、以下例のようになります [#]_ 。
 
 ..  code-block:: properties
+    :caption: yaess.properties
+    :name: yaess.properties-yaess-multi-dispatch-1
 
     hadoop.remote = com.asakusafw.yaess.jsch.SshHadoopScriptHandler
     hadoop.remote.ssh.user=asakusa
     hadoop.remote.ssh.host=example.com
     hadoop.remote.ssh.port=22
-    
+
 サブハンドラは複数定義することが出来ますが、必ず ``default`` という名前のサブハンドラの設定を含めてください。
 これは、振り分け設定ファイルで振り分け先のサブハンドラが明示的に指定されなかった場合に利用されるサブハンドラとなります。
 
@@ -137,6 +139,8 @@ YAESS導入時には ``command.<プロファイル名>`` には標準的なハ�
 例えば、サブハンドラ名に `remote` を指定し、このハンドラに対してコマンドラインジョブのプロファイル `asakusa` に対して :ref:`yaess-profile-command-section-ssh` 設定を適用する場合、以下のようになります [#]_ 。
 
 ..  code-block:: properties
+    :caption: yaess.properties
+    :name: yaess.properties-yaess-multi-dispatch-2
 
     command.asakusa.remote = com.asakusafw.yaess.jsch.SshCommandScriptHandler
     command.asakusa.remote.ssh.user=asakusa
@@ -145,7 +149,7 @@ YAESS導入時には ``command.<プロファイル名>`` には標準的なハ�
 
 ..  attention::
     コマンドラインジョブの振り分け機能を使うと、 :ref:`yaess-profile-command-section` で説明するプロファイル単位で実行方法を切り替える機能の代替として、単一のプロファイル( ``command.*`` )のみを指定し、ジョブフロー単位でコマンドラインジョブを振り分けることで同様の振る舞いを実現可能な場合がありますが、この方法は推奨できません。
-     
+
     プロファイル単位で実行方法を分ける必要がある場合は、できるだけプロファイル名を分けて個別の ``command.<プロファイル名>`` セクションを用意して設定を切り替えるべきです。
 
 サブハンドラは複数定義することが出来ますが、必ず ``default`` という名前のサブハンドラの設定を含めてください。
@@ -217,24 +221,26 @@ YAESS導入時には ``command.<プロファイル名>`` には標準的なハ�
 ローカル環境上の設定に対するサブハンドラには ``default`` を、リモート環境の設定に対するサブハンドラには ``remote`` という名前をそれぞれ指定しています。
 
 ..  code-block:: properties
+    :caption: yaess.properties
+    :name: yaess.properties-yaess-multi-dispatch-3
 
     # 振り分けハンドラ本体
     hadoop = com.asakusafw.yaess.multidispatch.HadoopScriptHandlerDispatcher
     hadoop.conf.directory = ${ASAKUSA_HOME}/yaess/conf/multidispatch/
-    
+
     command.* = com.asakusafw.yaess.multidispatch.CommandScriptHandlerDispatcher
     command.*.conf.directory = ${ASAKUSA_HOME}/yaess/conf/multidispatch/
-    
+
     # ローカル環境向けサブハンドラ (default)
     hadoop.default = com.asakusafw.yaess.basic.BasicHadoopScriptHandler
     hadoop.default.resource = hadoop-local
     hadoop.default.env.HADOOP_CMD = /usr/bin/hadoop
     hadoop.default.env.ASAKUSA_HOME = ${ASAKUSA_HOME}
-    
+
     command.*.default = com.asakusafw.yaess.basic.BasicCommandScriptHandler
     command.*.default.resource = asakusa-local
     command.*.default.env.ASAKUSA_HOME = ${ASAKUSA_HOME}
-    
+
     # リモート環境向けサブハンドラ (remote)
     hadoop.remote = com.asakusafw.yaess.jsch.SshHadoopScriptHandler
     hadoop.remote.ssh.user=asakusa
@@ -244,7 +250,7 @@ YAESS導入時には ``command.<プロファイル名>`` には標準的なハ�
     hadoop.remote.resource = hadoop-remote
     hadoop.remote.env.HADOOP_CMD = /usr/bin/hadoop
     hadoop.remote.env.ASAKUSA_HOME = /home/asakusa/asakusafw
-    
+
     command.*.remote = com.asakusafw.yaess.jsch.SshCommandScriptHandler
     command.*.remote.ssh.user=asakusa
     command.*.remote.ssh.host=example.com
@@ -252,7 +258,7 @@ YAESS導入時には ``command.<プロファイル名>`` には標準的なハ�
     command.*.remote.ssh.privateKey=${HOME}/.ssh/id_dsa
     command.*.remote.resource = asakusa-remote
     command.*.remote.env.ASAKUSA_HOME = /home/asakusa/asakusafw
-    
+
 
 そして、 ``md.batch`` というバッチに含まれる ``farexec`` というジョブフローのみをリモート環境で実行し、それ以外のすべての処理をローカル環境で動作させる場合を考えます。
 
@@ -261,17 +267,19 @@ YAESS導入時には ``command.<プロファイル名>`` には標準的なハ�
 このファイルを以下のように定義します。
 
 ..  code-block:: properties
+    :caption: md.batch.properties
+    :name: md.batch.properties-yaess-multi-dispatch-1
 
     # farexec だけ remote で実行
     farexec.* = remote
-    
+
     # それ以外は default で実行
     * = default
 
 ..  note::
     上記のように完全に異なる2つ以上の環境を併用する場合、ジョブフローまたはバッチの単位で振り分けを行うとよいでしょう。
     フェーズやジョブなどジョブフローより細かい単位で振り分けを行った場合、ジョブフロー実行中の中間結果がジョブ間で共有されないため、通常は正しく動作しません。
-    
+
     なお、複数のクラスターでデフォルトのファイルシステムを共有している場合、上記は問題になりません。
 
 単一の実行環境を異なる設定で利用する例
@@ -283,24 +291,26 @@ YAESS導入時には ``command.<プロファイル名>`` には標準的なハ�
 デフォルトの設定を利用するサブハンドラには ``default`` を、Reduceタスク数を4に設定したサブハンドラには ``reduce4`` を、Reduceタスク数を8に設定したサブハンドラには ``reduce8`` という名前をそれぞれ指定しています。
 
 ..  code-block:: properties
+    :caption: yaess.properties
+    :name: yaess.properties-yaess-multi-dispatch-5
 
     # 振り分けハンドラ本体
     hadoop = com.asakusafw.yaess.multidispatch.HadoopScriptHandlerDispatcher
     hadoop.conf.directory = ${HOME}/.asakusa/multidispatch
-    
+
     # デフォルト設定を利用するサブハンドラ (default)
     hadoop.default = com.asakusafw.yaess.basic.BasicHadoopScriptHandler
     hadoop.default.resource = hadoop
     hadoop.default.env.HADOOP_CMD = /usr/bin/hadoop
     hadoop.default.env.ASAKUSA_HOME = ${ASAKUSA_HOME}
-    
+
     # 別の設定を利用するサブハンドラ (reduce4)
     hadoop.reduce4 = com.asakusafw.yaess.basic.BasicHadoopScriptHandler
     hadoop.reduce4.resource = hadoop
     hadoop.reduce4.prop.mapred.reduce.tasks = 4
     hadoop.reduce4.env.HADOOP_CMD = /usr/bin/hadoop
     hadoop.reduce4.env.ASAKUSA_HOME = ${ASAKUSA_HOME}
-    
+
     # 別の設定を利用するサブハンドラ (reduce8)
     hadoop.reduce8 = com.asakusafw.yaess.basic.BasicHadoopScriptHandler
     hadoop.reduce8.resource = hadoop
@@ -313,6 +323,8 @@ YAESS導入時には ``command.<プロファイル名>`` には標準的なハ�
 上記の例では、 :file:`${HOME}/.asakusa/multidispatch/md.batch.properties` というファイルを以下のように定義します。
 
 ..  code-block:: properties
+    :caption: md.batch.properties
+    :name: md.batch.properties-yaess-multi-dispatch-2
 
     medium.epilogue.* = reduce4
     medium.* = reduce8

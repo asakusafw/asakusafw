@@ -56,7 +56,9 @@ YAESSスクリプトの内容を確認するには、コマンドラインから
 
 この結果、以下のようなJSON形式のバッチの構造が表示されます。
 
-..  code-block:: javascript
+..  code-block:: json
+    :caption: yaess-script.properties
+    :name: yaess-script.properties-yaess-start-guide-1
 
     {
       "id": "example.summarizeSales",
@@ -103,6 +105,8 @@ YAESSを利用すると、SSHを経由してリモートコンピューターに
 既定の構成は以下のようになっており、これはYAESSはローカルのコンピューターにインストールされたHadoopを利用して、Hadoopのジョブを実行するよう設定されています。
 
 ..  code-block:: properties
+    :caption: yaess.properties
+    :name: yaess.properties-yaess-start-guide-1
 
     hadoop = com.asakusafw.yaess.basic.BasicHadoopScriptHandler
     hadoop.resource = hadoop-master
@@ -137,6 +141,8 @@ YAESSを利用すると、SSHを経由してリモートコンピューターに
 以下は設定例です。
 
 ..  code-block:: properties
+    :caption: yaess.properties
+    :name: yaess.properties-yaess-start-guide-2
 
     hadoop = com.asakusafw.yaess.jsch.SshHadoopScriptHandler
     hadoop.ssh.user = hadoop
@@ -162,6 +168,8 @@ Hadoopと同様に、WindGateなどの外部連携コマンドもSSHを経由し
 既定の構成は以下のようになっており、これはローカルのコンピューターにインストールされたコマンドを実行するよう設定されています。
 
 ..  code-block:: properties
+    :caption: yaess.properties
+    :name: yaess.properties-yaess-start-guide-3
 
     command.* = com.asakusafw.yaess.basic.BasicCommandScriptHandler
     command.*.resource = asakusa
@@ -196,6 +204,8 @@ Hadoopと同様に、WindGateなどの外部連携コマンドもSSHを経由し
 以下は設定例です。
 
 ..  code-block:: properties
+    :caption: yaess.properties
+    :name: yaess.properties-yaess-start-guide-4
 
     command.* = com.asakusafw.yaess.jsch.SshCommandScriptHandler
     command.*.ssh.user = windgate
@@ -217,6 +227,8 @@ WindGateには「プロファイル名」という実行構成の名前がそれ
 以下は ``asakusa`` という名前のプロファイルに対するコマンド実行方法の記述です。
 
 ..  code-block:: properties
+    :caption: yaess.properties
+    :name: yaess.properties-yaess-start-guide-5
 
     command.asakusa = com.asakusafw.yaess.jsch.SshCommandScriptHandler
     command.asakusa.ssh.user = asakusa

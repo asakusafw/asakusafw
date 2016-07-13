@@ -13,10 +13,10 @@ Asakusa Frameworkに関するHadoopのパラメータは、 :file:`$ASAKUSA_HOME
 設定ファイルはHadoopの各設定ファイルのフォーマットと同様です。
 以下のように、１つの設定項目に対して ``<property>`` 要素を作成し、設定名を ``<name>`` 要素に、設定値を ``<value>`` 要素にそれぞれ設定します。
 
-**asakusa-resources.xml**
-
 ..  code-block:: xml
-    
+    :caption: asakusa-resources.xml
+    :name: asakusa-resources.xml-configure-hadoop-parameters-1
+
     <configuration>
         <property>
             <name>(設定名1)</name>

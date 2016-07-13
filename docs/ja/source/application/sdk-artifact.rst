@@ -24,7 +24,7 @@ Asakusa Frameworkが提供するSDKアーティファクトは以下のものが
 ..  list-table:: Asakusa Framework SDKアーティファクト一覧
     :widths: 30 20 50
     :header-rows: 1
-    
+
     * - アーティファクトID
       - 導入バージョン
       - 説明
@@ -54,12 +54,13 @@ SDKアーティファクトの利用方法
 
 以下、SDKアーティファクトを利用したビルドスクリプトの設定例です。
 
-**build.gradle**
-
 ..  code-block:: groovy
+    :caption: build.gradle
+    :name: build.gradle-sdk-artifact-1
 
     dependencies {
         compile group: 'com.asakusafw.sdk', name: 'asakusa-sdk-core', version: asakusafw.asakusafwVersion
         compile group: 'com.asakusafw.sdk', name: 'asakusa-sdk-directio', version: asakusafw.asakusafwVersion
         compile group: 'com.asakusafw.sdk', name: 'asakusa-sdk-windgate', version: asakusafw.asakusafwVersion
         testRuntime group: 'com.asakusafw.sdk', name: 'asakusa-sdk-test-emulation', version: asakusafw.asakusafwVersion
+    }

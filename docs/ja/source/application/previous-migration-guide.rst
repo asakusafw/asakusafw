@@ -50,17 +50,17 @@ Hadoop2系向けAsakusa Framework
 
 例として、利用するAsakusa Framework を ``0.6.2`` から ``0.7.0`` に変更する場合の :file:`build.gradle` のバージョン指定を示します。
 
-**build.gradle** : Asakusa Framework ``0.6.2`` を利用するプロジェクトのバージョン指定
-
 ..  code-block:: groovy
-    
+    :caption: build.gradle : Asakusa Framework ``0.6.2`` を利用するプロジェクトのバージョン指定
+    :name: build.gradle-previous-migration-guide-1
+
     asakusafw {
         asakusafwVersion '0.6.2'
 
-**build.gradle** : Asakusa Framework ``0.7.0`` を利用するプロジェクトのバージョン指定
-
 ..  code-block:: groovy
-    
+    :caption: build.gradle : Asakusa Framework ``0.7.0`` を利用するプロジェクトのバージョン指定
+    :name: build.gradle-previous-migration-guide-2
+
     asakusafw {
         asakusafwVersion '0.7.0-hadoop1'
 
@@ -68,7 +68,9 @@ Hadoop2系向けAsakusa Framework
     ``build.gradle`` には先頭に ``buildscript`` ブロックでAsakusa Gradle Plugin のバージョンを指定しますが、このバージョンはAsakusa Frameworkのバージョン指定とは異なり、以下のようにバージョン番号に ``-hadoop1`` や ``-hadoop2`` といった接尾辞は付かないことに注意してください。
 
 ..  code-block:: groovy
-    
+    :caption: build.gradle
+    :name: build.gradle-previous-migration-guide-3
+
     buildscript {
         repositories {
             maven { url 'http://asakusafw.s3.amazonaws.com/maven/releases' }

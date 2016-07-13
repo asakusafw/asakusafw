@@ -23,9 +23,9 @@ Gradleラッパーのアップデートに関する変更
 また、この変更に伴いビルドスクリプトの ``wrapper`` タスクに関する定義は不要となりました。
 特別な理由がない限り、以下の例に示す ``wrapper`` タスクの定義はビルドスクリプトから削除することを推奨します。
 
-**build.gradle** (以下の定義は不要)
-
 ..  code-block:: groovy
+    :caption: build.gradle (以下の定義は不要)
+    :name: build.gradle-gradle-plugin-v08-changes-1
 
     task wrapper(type: Wrapper) {
         distributionUrl 'http://services.gradle.org/distributions/gradle-2.8-bin.zip'
@@ -41,6 +41,8 @@ Gradleラッパーのアップデートに関する変更
 過去のバージョンでは、 ビルドスクリプトでAsakusa Gradle Pluginを適用する方法は、以下のように記述していました。
 
 ..  code-block:: groovy
+    :caption: build.gradle
+    :name: build.gradle-gradle-plugin-v08-changes-2
 
     apply plugin: 'asakusafw'
     apply plugin: 'asakusafw-organizer'
@@ -48,6 +50,8 @@ Gradleラッパーのアップデートに関する変更
 0.8系以降では、以下のように記述します。
 
 ..  code-block:: groovy
+    :caption: build.gradle
+    :name: build.gradle-gradle-plugin-v08-changes-3
 
     apply plugin: 'asakusafw-sdk'
     apply plugin: 'asakusafw-organizer'
@@ -97,9 +101,9 @@ Asakusa Frameworkバージョンの指定
 
 これらの理由により、特別な理由がない限り以下の例に示す ``asakusafwVersion`` の定義はビルドスクリプトから削除することを推奨します。
 
-**build.gradle** (以下の定義は不要)
-
 ..  code-block:: groovy
+    :caption: build.gradle (以下の定義は不要)
+    :name: build.gradle-gradle-plugin-v08-changes-4
 
     asakusafw {
         asakusafwVersion '0.7.6-hadoop1'
@@ -128,9 +132,9 @@ Hadoopライブラリの指定
 
 このため、特別な理由がない限り以下の例に示す ``dependencies`` ブロックのHadoopライブラリに関する定義はビルドスクリプトから削除することを推奨します。
 
-**build.gradle** (以下の定義は不要)
-
 ..  code-block:: groovy
+    :caption: build.gradle (以下の定義は不要)
+    :name: build.gradle-gradle-plugin-v08-changes-5
 
     dependencies {
         ...

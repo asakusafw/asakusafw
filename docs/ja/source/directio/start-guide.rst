@@ -31,6 +31,8 @@ Direct I/Oの機構を利用するには、入出力の仲介を行う「デー�
 ``$ASAKUSA_HOME/core/conf/asakusa-resources.xml`` にはデフォルトの設定ファイルが作成されています。これは以下のような内容になっています。
 
 ..  code-block:: xml
+    :caption: asakusa-resources.xml
+    :name: asakusa-resources.xml-directio-start-guide-1
 
     <?xml version="1.0" encoding="UTF-8"?>
     <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
@@ -42,7 +44,7 @@ Direct I/Oの機構を利用するには、入出力の仲介を行う「デー�
             <name>com.asakusafw.runtime.core.Report.Delegate</name>
             <value>com.asakusafw.runtime.core.Report$Default</value>
         </property>
-    
+
         <property>
             <name>com.asakusafw.directio.root</name>
             <value>com.asakusafw.runtime.directio.hadoop.HadoopDataSource</value>
@@ -64,7 +66,7 @@ Direct I/Oの機構を利用するには、入出力の仲介を行う「デー�
 
   Direct I/Oでは、それぞれのデータソースを識別するための識別子を ``com.asakusafw.directio.<DSID>`` の形式で指定します。
   デフォルトの設定では ``root`` というIDのデータソースが設定されていることになります。
-  
+
   Hadoopのファイルシステムを利用するには ``com.asakusafw.runtime.directio.hadoop.HadoopDataSource`` と指定します。
 
 ``com.asakusafw.directio.root.path``
@@ -72,9 +74,9 @@ Direct I/Oの機構を利用するには、入出力の仲介を行う「デー�
 
   論理パスは、 ``com.asakusafw.directio.<DSID>.path`` の形式で指定します。
   DSLからはこの論理パスでデータソースを指定します。
-  
+
   論理パスはUnixのディレクトリのような構造を取り、 ``alpha/beta/gamma`` のように名前をスラッシュ ( ``/`` ) で区切って指定します。
-  
+
   特別な論理パスとして、ルートパスは ``/`` 一文字で指定します。
 
   ..  tip::
@@ -169,7 +171,7 @@ Direct I/Oの機構を利用するには、入出力の仲介を行う「デー�
 以下はデフォルト設定を利用した場合のコマンド例です。
 
 ..  code-block:: sh
-    
+
     # スタンドアロンモードに対応するため、ホームディレクトリに移動しておく
     cd ~
     # ファイルシステムパス上のデータをクリアしておく
@@ -215,7 +217,7 @@ Direct I/Oでは論理パスに配置したデータソース内のファイル�
 上記のコマンドを実行した場合、サンプルデータでは以下のような結果が表示されます。
 
 ..  code-block:: sh
-     
+
     Starting List Direct I/O Files:
     ...
     file:/home/asakusa/target/testing/directio/result/category
@@ -231,13 +233,15 @@ Direct I/Oでは論理パスに配置したデータソース内のファイル�
 :program:`hadoop fs -text` コマンドを利用して :program:`list-file.sh` が出力したファイルシステムパスのファイル内容を確認します。
 
 ..  code-block:: sh
-    
+
     hadoop fs -text file:/home/asakusa/target/testing/directio/result/category/result.csv
 
 上記のコマンドを実行した場合、サンプルデータでは以下のような結果が表示されます。
 
-..  code-block:: sh
-    
+..  code-block:: none
+    :caption: category/result.csv
+    :name: category/result.csv-directio-start-guide-1
+
     カテゴリコード,販売数量,売上合計
     1600,28,5400
     1300,12,1596
@@ -248,11 +252,11 @@ Direct I/Oでは論理パスに配置したデータソース内のファイル�
 ..  attention::
     Direct I/Oの出力は論理パス ``result`` 上に行われます。
     つまり、出力データの実体は 論理パス ``result`` に配置したデータソースが実際に利用するファイルシステム上に出力されます。
-    
+
     Direct I/Oのデフォルト設定では、データソースが実際に利用するファイルシステムはHadoopファイルシステムです。
     Hadoopでは設定により、Hadoopファイルシステムの実体が変わることに注意してください。
     例えば、Hadoopがスタンドアロンモードの場合は、Hadoopファイルシステムはローカルファイルを使用し、Hadoopが分散モードの場合はHDFSを使用するといったケースが多いでしょう。
-    
+
     つまり開発環境でHadoopをスタンドアロンモードで使用する場合は通常Direct I/Oの出力はローカルファイルシステム上に出力されますが、WindGate/CSVと異なり設定次第ではローカルファイルシステム以外にも出力されることがあることに注意してください。
 
 アプリケーションの開発
@@ -366,7 +370,7 @@ Direct I/O特有の部分は、以下に示す `ファイルシステム上のCS
 
 ``List<String> getOrder()``
   それぞれの出力ファイルの内容をソートするプロパティを指定します。
-    
+
   それぞれのプロパティは ``+property_name`` で昇順、 ``-property_name`` で降順を表します。
   プロパティ名はDMDLのプロパティ名と同様、すべて小文字で単語をアンダースコア ( ``_`` ) で区切ってください。
 

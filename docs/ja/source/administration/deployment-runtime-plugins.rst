@@ -27,7 +27,9 @@
 実行時プラグインの設定は、 :file:`$ASAKUSA_HOME/core/conf/asakusa-resources.xml` を編集します。
 以下のように、それぞれの設定項目に対して ``<property>`` 要素を作成し、設定名を ``<name>`` 要素に、設定値を ``<value>`` 要素にそれぞれ設定します。
 
-..  code-block:: sh
+..  code-block:: xml
+    :caption: asakusa-resources.xml
+    :name: asakusa-resources.xml-deployment-runtime-plugins-1
 
     <configuration>
         <property>
@@ -61,7 +63,7 @@ Asakusa Frameworkは以下の実装クラスを組み込みで提供していま
       - 概要
     * - ``com.asakusafw.runtime.core.Report$Default`` [#]_
       - 標準出力にレポートを出力する実装。
-    * - ``com.asakusafw.runtime.report.CommonsLoggingReport`` [#]_ 
+    * - ``com.asakusafw.runtime.report.CommonsLoggingReport`` [#]_
       - Commons Loggingを経由してレポートを出力する実装。
         Hadoop上で実行する場合、Hadoopのログの設定を変更することで出力先等を設定可能。
 
