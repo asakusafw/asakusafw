@@ -70,11 +70,20 @@ Asakusa Frameworkを通じてHadoopを実行する場合、実行する :program
 
 :program:`hadoop` コマンドを利用するAsakusa Frameworkの各コンポーネントは、次の手順で :program:`hadoop` コマンドを検索します。
 
-* 環境変数 ``HADOOP_CMD`` が設定されている場合、 ``$HADOOP_CMD`` を :program:`hadoop` コマンドとみなして利用します。
-* :program:`hadoop` コマンドのパス ( 環境変数 ``PATH`` ) が通っている場合、それを利用します。
+#. 環境変数 ``HADOOP_CMD`` が設定されている場合、 ``$HADOOP_CMD`` を :program:`hadoop` コマンドとみなして利用する
+#. (非推奨) 環境変数 ``HADOOP_HOME`` にHadoopのインストール先が指定されている場合、 :program:`$HADOOP_HOME/bin/hadoop` を利用する
+#. :program:`hadoop` コマンドのパス ( 環境変数 ``PATH`` ) が通っている場合、それを利用する
 
 以下は、環境変数 ``HADOOP_CMD`` の設定例です。
 
 ..  code-block:: sh
-    
+
     export HADOOP_CMD=/usr/lib/hadoop/bin/hadoop
+
+また、テスト実行の際には上記で検出したHadoopの設定とは異なる設定でテストを実行することも可能です。
+テストドライバーが利用するHadoopの設定は次の順番で検出しています。
+
+#. 環境変数 ``HADOOP_CONF`` が指定されている場合、その内容を設定ディレクトリへのパスとして利用する
+#. ``hadoop`` コマンドを実行し、そこで利用されている設定ディレクトリを利用する
+
+上記のうち、環境変数 ``HADOOP_CONF`` を指定する際には :file:`core-site.xml` などのHadoopの設定情報が格納されたディレクトリへのパスを指定してください。
