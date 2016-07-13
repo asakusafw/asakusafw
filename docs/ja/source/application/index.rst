@@ -32,7 +32,6 @@ Asakusa Frameworkの開発環境(OSやAsakusa Frameworkが利用するソフト�
 Asakusa Frameworkが提供する開発ツールに関するドキュメントです。
 
 * :doc:`dsl-visualization`
-* :doc:`yaess-log-visualization`
 
 プラットフォーム関連
 ====================
@@ -49,6 +48,7 @@ Asakusa Framework バージョン |version| において、以下のドキュメ
 
 * :doc:`gradle-plugin-deprecated`
 * :doc:`legacy-module-guide`
+* :doc:`yaess-log-visualization`
 
 ..  attention::
     非推奨となった機能のうち、その多くは、現在のバージョンで代替となる推奨機能が提供されています。

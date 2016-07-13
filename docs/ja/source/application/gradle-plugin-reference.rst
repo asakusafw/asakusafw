@@ -29,6 +29,8 @@ Asakusa Gradle PluginはAsakusa FrameworkのMavenリポジトリに以下のMave
 アプリケーションプロジェクトからAsakusa Gradle Pluginを利用する場合、ビルドスクリプトに下記を含めます。
 
 ..  code-block:: groovy
+    :caption: build.gradle
+    :name: build.gradle-gradle-plugin-reference-1
 
     buildscript {
         repositories {
@@ -101,6 +103,8 @@ Asakusa Gradle Pluginの各プラグインを使うためには、ビルドス�
 以下、設定例です。
 
 ..  code-block:: groovy
+    :caption: build.gradle
+    :name: build.gradle-gradle-plugin-reference-2
 
     apply plugin: 'asakusafw-sdk'
     apply plugin: 'asakusafw-organizer'
@@ -866,9 +870,9 @@ Asakusa Frameworkの拡張構成に関する規約プロパティは、 ``asakus
 
 以下は、 ``assembly`` の利用例です [#]_ 。
 
-**build.gradle**
-
 ..  code-block:: groovy
+    :caption: build.gradle
+    :name: build.gradle-gradle-plugin-reference-3
 
     asakusafwOrganizer {
         profiles.prod {

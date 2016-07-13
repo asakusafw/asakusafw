@@ -43,7 +43,7 @@ Asakusa Frameworkではこれらの実行モジュールを生成する様々な
 デプロイメントアーカイブの作成には、Gradleの :program:`assemble` タスクを実行します。
 
 ..  code-block:: sh
-    
+
     ./gradlew assemble
 
 アプリケーションプロジェクトの標準設定でGradleの :program:`assemble` タスクを実行すると、バッチアプリケーションのビルドが行われ、ビルドが成功した場合はデプロイメントアーカイブがプロジェクトの :file:`build` ディレクトリ配下に ``asakusafw-${asakusafwVersion}.tar.gz`` というファイル名で生成されます。
@@ -61,10 +61,10 @@ Asakusa Frameworkではこれらの実行モジュールを生成する様々な
 
 以下は、 プロジェクトディレクトリの :file:`src/dist/prod` 配下に配置した設定ファイルをデプロイメントアーカイブに含める例です。
 
-**build.gradle**
-
 ..  code-block:: groovy
-   
+    :caption: build.gradle
+    :name: build.gradle-deployment-guide-1
+
     asakusafwOrganizer {
         profiles.prod {
             assembly.into('.') {
@@ -85,7 +85,7 @@ Asakusa Frameworkではこれらの実行モジュールを生成する様々な
 この例では、 :file:`src/dist/prod` 配下には ``$ASAKUSA_HOME`` のディレクトリ構造と同じ形式で追加したい設定ファイルを以下のように配置しています。
 
 ..  code-block:: sh
-    
+
     src/dist/prod
      ├── core
      │   └── conf
@@ -108,10 +108,10 @@ Asakusa Frameworkが標準のデプロイメントアーカイブに含めてい
 
 以下は、Direct I/O Hive用の実行ライブラリとWindGateのリトライ実行用の拡張プラグイン ``asakusa-windgate-retryable`` をデプロイメントアーカイブに含める例です。
 
-**build.gradle**
-
 ..  code-block:: groovy
-   
+    :caption: build.gradle
+    :name: build.gradle-deployment-guide-2
+
     asakusafwOrganizer {
         hive.enabled true
         windgate.retryableEnabled true
@@ -129,14 +129,14 @@ Hiveライブラリの指定
 
 以下は、運用環境のHadoopディストリビューションに `MapR`_ を利用する環境でDirect I/O Hiveを利用するための設定例です。
 
-**build.gradle**
-
 ..  code-block:: groovy
-     
+    :caption: build.gradle
+    :name: build.gradle-deployment-guide-3
+
     repositories {
         maven { url 'http://repository.mapr.com/maven/' }
     }
-     
+
     asakusafwOrganizer {
         hive.enabled true
         profiles.prod {
@@ -163,10 +163,10 @@ Direct I/O Hiveを `MapR`_ 環境で利用する場合、Direct I/O HiveはMapR�
 
 これらのライブラリをデプロイメントアーカイブに同梱するには、以下のように書けます。
 
-**build.gradle**
-
 ..  code-block:: groovy
-    
+    :caption: build.gradle
+    :name: build.gradle-deployment-guide-4
+
     asakusafwOrganizer {
         extension {
             libraries += ['joda-time:joda-time:2.5']
@@ -188,11 +188,11 @@ Direct I/O Hiveを `MapR`_ 環境で利用する場合、Direct I/O HiveはMapR�
 
 以下は、ステージング環境用のデプロイ構成を持つデプロイメントアーカイブを作成する例です。
 
-**build.gradle**
-
 ..  code-block:: groovy
+    :caption: build.gradle
+    :name: build.gradle-deployment-guide-5
     :emphasize-lines: 2,11
-     
+
     asakusafwOrganizer {
         profiles.prod {
             assembly.into('.') {
@@ -225,9 +225,9 @@ Direct I/O Hiveを `MapR`_ 環境で利用する場合、Direct I/O HiveはMapR�
 
 例えば、 :file:`src/dist/common` 配下に :file:`asakusa-resources.xml` を以下のような内容で配置します。
 
-**asakusa-resources.xml**
-
 ..  code-block:: xml
+    :caption: asakusa-resources.xml
+    :name: asakusa-resources.xml-deployment-guide-1
 
     <?xml version="1.0" encoding="UTF-8"?>
     <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
@@ -248,7 +248,7 @@ Direct I/O Hiveを `MapR`_ 環境で利用する場合、Direct I/O HiveはMapR�
 
 ..  seealso::
     :doc:`../sandbox/asakusa-on-emr` でも運用環境向けのデプロイ機能の利用例を紹介しています。デプロイ構成を柔軟に設定できるこれらの機能は、クラウド環境上で様々な運用環境を構築する場合などでも効果的でしょう。
-    
+
 デプロイメントアーカイブの配置
 ------------------------------
 
@@ -269,7 +269,9 @@ Hadoopクライアントマシン上でAsakusa Frameworkを配置しバッチア
 :file:`~/.profile` をエディタで開き、最下行に以下の定義を追加します。
 
 ..  code-block:: sh
-    
+    :caption: .profile
+    :name: .profile-deployment-guide-1
+
     export JAVA_HOME=/usr/lib/jvm/java-8-oracle
     export HADOOP_CMD=/usr/lib/hadoop/bin/hadoop
     export SPARK_CMD=/opt/spark/bin/spark-submit

@@ -36,9 +36,9 @@ Asakusa Gradle Pluginのバージョン変更
 
 ビルドスクリプト内の ``buildscript`` ブロック内に定義しているAsakusa Gradle Pluginのバージョンの値を、アップデートするAsakusa Gradle Pluginのバージョンに変更します。
 
-**build.gradle**
-
 ..  code-block:: groovy
+    :caption: build.gradle
+    :name: build.gradle-gradle-plugin-migration-guide-1
     :emphasize-lines: 6
 
     buildscript {
@@ -52,10 +52,10 @@ Asakusa Gradle Pluginのバージョン変更
 
 :asakusa-on-spark:`Asakusa on Spark <index.html>` を利用している場合は、Asakusa on Spark Gradle Pluginのバージョンを指定します。
 
-**build.gradle**
-
 ..  literalinclude:: gradle-attachment/template-build.gradle
     :language: groovy
+    :caption: build.gradle
+    :name: build.gradle-gradle-plugin-migration-guide-2
     :lines: 3-10
     :emphasize-lines: 6
 
@@ -209,6 +209,8 @@ Gradle、およびAsakusa Gradle Pluginでは従来のMavenベースの依存関
 以下、この箇所に該当する :file:`pom.xml` の設定例です。
 
 ..  code-block:: xml
+    :caption: pom.xml
+    :name: pom.xml-gradle-plugin-migration-guide-1
 
         <name>Example Application</name>
         <groupId>com.example</groupId>

@@ -80,9 +80,10 @@ build.gradleの設定
 以下は、Javaバージョンに ``1.8`` (JDK 8)を利用するための設定例です。
 
 ..  code-block:: groovy
-    
+    :caption: build.gradle
+    :name: build.gradle-using-jdk-1
+
     asakusafw {
-        ...
         javac {
             sourceCompatibility '1.8'
             targetCompatibility '1.8'
