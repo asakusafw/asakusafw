@@ -17,19 +17,19 @@ Asakusa Framework は、以下のHadoopディストリビューションと組�
       - JDK
     * - Hortonworks Data Platform
       - 2.4.0
-      - CentOS 7 (7.1)
+      - CentOS 7 (7.2)
       - JDK 8 (1.8.0_60)
     * - MapR
-      - 5.0.0 (MRv2) [#]_
-      - Red Hat Enterprise Linux 7.1
+      - 5.1.0 (MRv2) [#]_
+      - Red Hat Enterprise Linux 7.2
       - JDK 8 (1.8.0_51)
     * - CDH
-      - 5.2.0 (MRv2) [#]_
-      - CentOS 6 (6.2)
-      - JDK 7 (1.7.0_45)
+      - 5.7.0 (MRv2) [#]_
+      - CentOS 6 (6.7)
+      - JDK 7 (1.7.0_67)
     * - Amazon EMR
-      - 4.5.0
-      - Amazon Linux 2015.09
+      - 4.7.1
+      - Amazon Linux 2016.03 based
       - JDK 8 (1.8.0_71)
     * - Microsoft Azure HDInsight
       - 3.4
@@ -53,7 +53,7 @@ Asakusa Frameworkを利用したバッチアプリケーションの開発環境
       - Version
     * - OS
       - Ubuntu Desktop
-      - 14.04 / 15.10
+      - 16.04
     * - OS
       - Windows [#]_
       - 7(SP1) / 10
@@ -62,13 +62,13 @@ Asakusa Frameworkを利用したバッチアプリケーションの開発環境
       - 10.11
     * - Java
       - JDK [#]_ [#]_
-      - 1.7.0_79 / 1.8.0_77
+      - 1.7.0_79 / 1.8.0_91
     * - ビルドツール
       - Gradle [#]_
-      - 2.12
+      - 2.14
     * - IDE
       - Eclipse IDE for Java Developers
-      - 4.4.2 / 4.5.2
+      - 4.5.2 / 4.6.0
     * - IDE
       - IntelliJ IDEA Community Edition [#]_
       - 2016.1
