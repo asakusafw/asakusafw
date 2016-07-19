@@ -82,8 +82,14 @@ Gradleラッパーのアップデートに関する変更
 
 ..  [#] 現時点では過去バージョンとの互換性のために必要なプラグイン機能を適用しています。なお、今後のバージョンで導入される機能が変更される可能性があります。
 
+.. _gradle-plugin-v08-specify-asakusafw-version:
+
 Asakusa Frameworkバージョンの指定
 ---------------------------------
+
+..  attention::
+    バージョン 0.8.1 より、 Asakusa Frameworkバージョンの指定 は非推奨機能に変更されました。
+    本項の説明の通り、``asakusafwVersion`` の定義をビルドスクリプトから削除することを強く推奨します。
 
 0.8系以降ではHadoop1系が非対応となったことにより、Asakusa Framwork バージョン 0.7.0 から導入された「Hadoopバージョン」（``<version>-hadoop1``, ``<version>-hadoop2`` のように、利用するHadoopのバージョンを持つバージョン体系）が廃止になりました。
 
