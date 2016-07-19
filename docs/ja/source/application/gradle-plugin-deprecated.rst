@@ -23,7 +23,7 @@ Asakusa Frameworkのデプロイメントアーカイブ生成
     :doc:`gradle-plugin` では ``assembleAsakusafw`` の代わりに ``assemble`` タスクの利用を紹介しています。
     バージョン |version| では 標準設定の状態で ``assemble`` タスクを実行すると、
     デプロイメントアーカイブが生成され、バッチアプリケーションが同梱されるようになっています。
-    
+
     ``assembleAsakusafw`` タスクは
     バージョン |version| でも以前のバージョンと同様に使用することができます。
 
@@ -34,7 +34,7 @@ Asakusa Frameworkを運用環境にデプロイするためのデプロイメン
 ..  code-block:: sh
 
     ./gradlew assembleAsakusafw
-    
+
 ``assembleAsakusafw`` タスクを実行すると、 ``build`` 配下に  ``asakusafw-${asakusafwVersion}.tar.gz`` という名前でデプロイメントアーカイブが作成されます。このアーカイブには Direct I/O , WindGateを含むAsakusa Framework実行環境一式が含まれます。
 
 このデプロイメントアーカイブは運用環境上の$ASAKUSA_HOME配下に展開してデプロイします。より詳しくは、 :doc:`../administration/index` のデプロイメントガイドなどを参照してください。
@@ -44,7 +44,7 @@ Asakusa Frameworkを運用環境にデプロイするためのデプロイメン
     バージョン 0.7.0 以降では、 ``attach`` から始まる各タスクを組み合わせる方式から
     ``build.gradle`` 内の ``asakusafwOrganizer`` ブロックで
     デプロイメント構成を定義する方法を推奨するよう変更しています。
-    
+
     詳しくは、 :doc:`../administration/deployment-guide` を参照してください。
 
 バッチアプリケーションの同梱
@@ -89,7 +89,7 @@ Asakusa Frameworkを運用環境にデプロイするためのデプロイメン
 ..  code-block:: sh
 
     ./gradlew attachConfMyEnv assembleAsakusafw
-    
+
 
 このようにタスクを実行すると、バッチコンパイルを実行後に ``build`` 配下に   ``asakusafw-${asakusafwVersion}.tar.gz`` が生成され、このアーカイブには  ``src/dist/myenv`` 以下のディレクトリ構造を含むファイル一式が含まれます。
 
@@ -124,7 +124,7 @@ Asakusa Frameworkでは、標準のデプロイメントアーカイブに含ま
 ..  code-block:: sh
 
     ./gradlew clean build attachBatchapps attachConfMyEnv attachExtensionWindGateRetryable assembleAsakusafw
-    
+
 このようにタスクを実行すると、テスト済のバッチアプリケーションと設定ファイル、追加ライブラリ、拡張モジュールを含むデプロイメントアーカイブを生成します。
 
 Asakusa Gradle Plugin リファレンス
@@ -162,6 +162,44 @@ Batch Application Plugin は、以下のタスクをプロジェクトに追加�
 
 ..  attention::
     以下では非推奨となった規約プロパティをあげています。
+
+Batch Application Pluginの規約プロパティはビルドスクリプトから 参照名 ``asakusafw`` でアクセスできます [#]_ 。
+この規約オブジェクトは以下のプロパティを持ちます。
+
+..  list-table:: Batch Application Plugin - 規約プロパティ ( ``asakusafw`` ブロック )
+    :widths: 2 1 2 5
+    :header-rows: 1
+
+    * - プロパティ名
+      - 型
+      - デフォルト値
+      - 説明
+    * - ``asakusafwVersion``
+      - String
+      - プラグイン規定のバージョン [#]_
+      - プロジェクトが使用するAsakusa Frameworkのバージョン
+
+..  [#] これらのプロパティは規約オブジェクト :gradledoc:`com.asakusafw.gradle.plugins.AsakusafwPluginConvention` が提供します。
+..  [#] Asakusa Gradle Pluginの該当バージョンが規定するAsakusa Frameworkバージョンを導入します。詳しくは後述の `asakusafwVersion`_ を参照してください。
+
+``asakusafwVersion``
+~~~~~~~~~~~~~~~~~~~~
+
+..  attention::
+    バージョン 0.8.1 より、 Asakusa Frameworkバージョンの指定 は非推奨機能に変更されました。
+    :doc:`gradle-plugin-v08-changes` - :ref:`gradle-plugin-v08-specify-asakusafw-version` の説明を確認の上、
+    `asakusafwVersion`` の定義をビルドスクリプトから削除することを強く推奨します。
+
+``asakusafwVersion`` はアプリケーションプロジェクトで使用するAsakusa Frameworkのバージョンを表します。
+
+Asakusa Gradle Pluginを利用する場合、このプラグインの該当バージョンが規定するAsakusa Frameworkバージョンを導入します。
+
+通常、Asakusa Gradle Pluginはプラグインのバージョンと同一のAsakusa Frameworkバージョンを適用しますが、ホットフィックスリリースが行われた場合などにより異なるバージョンを適用する可能性があります。
+
+アプリケーションプロジェクトで利用される各コンポーネントのバージョンを確認するには、 Asakusa Gradle Plugin が提供する ``asakusaVersion`` タスクを使用します。
+
+なお、検証されていない組み合わせの各Gradle PluginとAsakusa Frameworkバージョンを利用することは非推奨です。
+特別な理由がない限り、 ``asakusafwVersion`` の定義はビルドスクリプトでは指定しない（標準の構成を使用する）ことを推奨します。
 
 ThunderGateプロパティ
 ^^^^^^^^^^^^^^^^^^^^^
@@ -244,25 +282,25 @@ Framework Organizer Plugin は、以下のタスクを定義します。
 ..  attention::
     バージョン 0.7.0 以降では、 ``attach`` から始まる各タスクの使用は非推奨となりました。
     ``attach`` から始まるタスクはFramework Organizer Pluginが内部で生成し利用します。
-    
+
     デプロイメントアーカイブ構築のカスタマイズ方法について、
     バージョン 0.7.0 以降では、 ``attach`` から始まる各タスクを組み合わせる方式から
     ``build.gradle`` 内の ``asakusafwOrganizer`` ブロックで
     デプロイメント構成を定義する方法を推奨するよう変更しています。
-    
+
     詳しくは、 :doc:`../administration/deployment-guide` や :doc:`gradle-plugin-reference` を参照してください。
 
 ..  warning::
     バージョン 0.7.0 以降では、以下のタスクは削除されました。
-     
+
     * ``attachAssemble``
     * ``attachAssembleDev``
     * ``assembleCustomAsakusafw``
     * ``assembleDevAsakusafw``
-    
+
     複数のデプロイメントアーカイブ構成を管理する機能として、
     バージョン 0.7.0 以降ではプロファイル定義による構成機能を提供しています。
-    
+
     詳しくは、 :doc:`../administration/deployment-guide` や :doc:`gradle-plugin-reference` を参照してください。
 
 ..  attention::
@@ -355,6 +393,25 @@ Framework Organizer Plugin は、以下のタスクを定義します。
 
 ..  attention::
     以下では非推奨となった規約プロパティをあげています。
+
+Framework Organizer Plugin の規約プロパティはビルドスクリプトから 参照名  ``asakusafwOrganizer`` でアクセスできます [#]_ 。
+この規約オブジェクトは以下のプロパティを持ちます。
+
+..  list-table:: Framework Organizer Plugin - 規約プロパティ
+    :widths: 135 102 101 113
+    :header-rows: 1
+
+    * - プロパティ名
+      - 型
+      - デフォルト値
+      - 説明
+    * - ``asakusafwVersion``
+      - String
+      - プラグイン規定のバージョン [#]_
+      - プロジェクトが使用するAsakusa Frameworkのバージョン
+
+..  [#] これらのプロパティは規約オブジェクト :gradledoc:`com.asakusafw.gradle.plugins.AsakusafwOrganizerPluginConvention` が提供します。
+..  [#] Asakusa Gradle Pluginの該当バージョンが規定するAsakusa Frameworkバージョンを導入します。詳しくは先述の `asakusafwVersion`_ を参照してください。
 
 ThunderGateプロパティ
 ^^^^^^^^^^^^^^^^^^^^^

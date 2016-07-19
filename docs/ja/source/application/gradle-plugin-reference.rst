@@ -268,10 +268,6 @@ Batch Application Pluginの規約プロパティはビルドスクリプトか�
       - 型
       - デフォルト値
       - 説明
-    * - ``asakusafwVersion``
-      - String
-      - プラグイン規定のバージョン [#]_
-      - プロジェクトが使用するAsakusa Frameworkのバージョン
     * - ``maxHeapSize``
       - String
       - ``1024m``
@@ -285,23 +281,8 @@ Batch Application Pluginの規約プロパティはビルドスクリプトか�
       - ``${project.group}``
       - プラグインの各タスクでJavaソースコードの生成時に指定する基底Javaパッケージ
 
-..  [#] Asakusa Gradle Pluginの該当バージョンが規定するAsakusa Frameworkバージョンを導入します。詳しくは後述の `asakusafwVersion`_ を参照してください。
 ..  [#] これらのプロパティは規約オブジェクト :gradledoc:`com.asakusafw.gradle.plugins.AsakusafwPluginConvention` が提供します。
 ..  [#] Logback設定ファイルの詳細は次のドキュメントを参照してください: http://logback.qos.ch/manual/configuration.html
-
-``asakusafwVersion``
-~~~~~~~~~~~~~~~~~~~~
-
-``asakusafwVersion`` はアプリケーションプロジェクトで使用するAsakusa Frameworkのバージョンを表します。
-
-Asakusa Gradle Pluginを利用する場合、このプラグインの該当バージョンが規定するAsakusa Frameworkバージョンを導入します。
-
-通常、Asakusa Gradle Pluginはプラグインのバージョンと同一のAsakusa Frameworkバージョンを適用しますが、ホットフィックスリリースが行われた場合などにより異なるバージョンを適用する可能性があります。
-
-アプリケーションプロジェクトで利用される各コンポーネントのバージョンを確認するには、 Asakusa Gradle Plugin が提供する ``asakusaVersion`` タスクを使用します。
-
-なお、検証されていない組み合わせの各Gradle PluginとAsakusa Frameworkバージョンを利用することは非推奨です。
-特別な理由がない限り、 ``asakusafwVersion`` の定義はビルドスクリプトでは指定しない（標準の構成を使用する）ことを推奨します。
 
 DMDLプロパティ
 ~~~~~~~~~~~~~~
@@ -626,18 +607,12 @@ Framework Organizer Plugin の規約プロパティはビルドスクリプト�
       - 型
       - デフォルト値
       - 説明
-    * - ``asakusafwVersion``
-      - String
-      - プラグイン規定のバージョン [#]_
-      - プロジェクトが使用するAsakusa Frameworkのバージョン
     * - ``assembleDir``
       - String
       - ``${project.buildDir}/asakusafw-assembly``
       - デプロイメント構成の構築時に利用するワーキングディレクトリのプレフィックス
 
 ..  [#] これらのプロパティは規約オブジェクト :gradledoc:`com.asakusafw.gradle.plugins.AsakusafwOrganizerPluginConvention` が提供します。
-
-..  [#] Asakusa Gradle Pluginの該当バージョンが規定するAsakusa Frameworkバージョンを導入します。詳しくは先述の `asakusafwVersion`_ を参照してください。
 
 バッチアプリケーションプロパティ
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
