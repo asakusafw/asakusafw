@@ -149,7 +149,7 @@ Asakusa Gradle Pluginを使った標準的なアプリケーション開発環�
     * - :file:`gradlew.bat`
       - Gradleラッパーコマンド (Windows)
     * - :file:`.buildtools`
-      - Gradleラッパーライブラリ (Gradle Version: 2.14)
+      - Gradleラッパーライブラリ (Gradle Version: 2.14.1)
 
 アプリケーション開発者は :file:`src` ディレクトリ配下を編集することでアプリケーションを開発します。
 :file:`build` ディレクトリは :file:`src` ディレクトリ配下のファイルをビルドすることで生成される成果物が配置されます。
