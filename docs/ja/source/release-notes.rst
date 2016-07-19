@@ -2,10 +2,90 @@
 リリースノート
 ==============
 
+Release 0.8.1
+=============
+
+(開発中)
+
+`Asakusa Framework 0.8.1 documentation`_
+
+..  _`Asakusa Framework 0.8.1 documentation`: http://docs.asakusafw.com/0.8.1/release/ja/html/index.html
+
+新機能と主な変更点
+------------------
+
+Direct I/O 出力カウンターの改善
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Direct I/O の出力時に表示されるカウンターに、出力ポートごとの情報が表示されるようになりました。
+
+..  code-block:: none
+
+    com.asakusafw.directio.output.port.Statistics
+      categorySummary.bytes=91
+      categorySummary.files=1
+      categorySummary.records=3
+      errorRecord.bytes=432
+      errorRecord.files=1
+      errorRecord.records=3
+
+Direct I/O line を正式機能としてリリース
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+バージョン 0.7.5 から試験的機能として公開していた :doc:`Direct I/O line <directio/directio-line>` を正式機能として公開しました。
+
+Direct I/O line は任意のテキストファイルを行ごとに読み書きするための機能です。
+Direct I/Oが対応していないファイルフォーマットの入出力や、入力ファイルの整形や形式変換、バリデーションチェックなどの事前処理などに利用することができます。
+
+Direct I/O lineの詳細は、以下のドキュメントを参照してください。
+
+* :doc:`directio/directio-line`
+
+また、過去バージョンのDirect I/O lineを利用しているプロジェクトについては、以下のマイグレーション情報を確認してください。
+
+* :doc:`application/migration-guide`
+
+Asakusa Framework チュートリアル
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Asakusa Frameworkのサンプルアプリケーションを作成しながら、フレームワークの基本的な使い方や開発の流れを紹介するチュートリアルを公開しました。
+
+..  todo:: url
+
+その他の変更点
+~~~~~~~~~~~~~~
+
+その他、細かな機能改善およびバグフィックスが含まれます。
+すべての変更点は :doc:`changelogs` を参照してください。
+
+互換性に関して
+--------------
+
+非推奨機能
+~~~~~~~~~~
+
+試験的機能として提供していた以下の機能の利用が非推奨になりました。
+
+* :ref:`gradle-plugin-v08-specify-asakusafw-version` ( ビルドスクリプトの設定 )
+
+  * この変更に伴うプロジェクトのマイグレーションについては :doc:`application/migration-guide` を確認してください。
+* :doc:`application/yaess-log-visualization`
+
+将来のバージョンにおける非互換性を含む変更
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+将来のバージョンにおいて、以下のプロダクトバージョンを対応プラットフォームから除外することを計画しています。
+
+* Java: JDK7（JDK8にのみ対応）
+
 Release 0.8.0
 =============
 
 Apr 08, 2016
+
+`Asakusa Framework 0.8.0 documentation`_
+
+..  _`Asakusa Framework 0.8.0 documentation`: http://docs.asakusafw.com/0.8.0/release/ja/html/index.html
 
 はじめに
 --------
@@ -89,8 +169,6 @@ Asakusa on Spark Iterative Extensions の詳細は、以下のドキュメント
 
 詳しくは後述の互換性に関する説明を参照してください。
 
-*  `互換性に関して`_
-
 Asakusa Gradle Pluginの改善
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -118,34 +196,34 @@ Asakusa Gradle Pluginの変更点については、以下のドキュメント�
 ..  warning::
     バージョン 0.8.0 は以前のバージョンからいくつかの重要な変更が行われました。
     過去のバージョンからのマイグレーションを検討する際には必ず以下の内容を確認してください。
-    
+
 Java (JDK)
   Java6、およびJDK 6は非対応になりました。
-  
+
   Java6、およびJDK 6を利用している場合、Java 7(JDK 7)、またはJava 8 (JDK 8)に移行する必要があります。
-  
+
 Hadoop
   Hadoop1系は非対応となりました。
 
   開発環境にHadoop1系をインストールしている場合、Hadoop2系をインストールしてAsakusa FrameworkからはHadoop2系を利用するよう設定してください。
-  
+
   運用環境でHadoop1系を利用している場合、Hadoop2系に移行する必要があります。
 
 Gradle
   Gradleのバージョン1系は非対応になりました。
-  
+
   また、Asakusa Gradle Pluginにいくつか仕様変更が行われ、一部のタスクの動作やビルドスクリプトの設定方法が変更されています。
-  
+
 Maven
   Mavenの利用は非対応になりました。
-  
+
   Mavenを利用しているアプリケーションプロジェクトは、Gradleを利用するよう移行する必要があります。
 
 Asakusa Framework
   Hadoop1系が非対応となったことにより、Asakusa Framwork バージョン 0.7.0 から導入された「Hadoopバージョン」が廃止になりました。
-  
+
   Asakusa Framework 0.7系では、Asakusa Framworkのバージョンは ``<version>-hadoop1``, ``<version>-hadoop2`` のように、利用するHadoopのバージョンを持つバージョン体系を導入していました。
-  
+
   本リリース以降は、Asakusa Frameworkのバージョンは単一のバージョン体系 ( 例えば本リリースのバージョンは ``0.8.0`` ) を使用します。
 
 変更内容の詳細やマイグレーション手順については、以下のドキュメント説明しています。
