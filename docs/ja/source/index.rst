@@ -18,6 +18,7 @@ Asakusa Framework入門
 * :doc:`introduction/overview`
 * :doc:`introduction/start-guide`
 * :doc:`introduction/next-step`
+* :basic-tutorial:`Asakusa Framework チュートリアル <index.html>`
 
 ドキュメント
 ============
@@ -67,6 +68,6 @@ Asakusa Framework入門
 
 ..  toctree::
     :hidden:
-   
+
     contents
 

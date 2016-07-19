@@ -50,7 +50,7 @@ Asakusa Framework チュートリアル
 
 Asakusa Frameworkのサンプルアプリケーションを作成しながら、フレームワークの基本的な使い方や開発の流れを紹介するチュートリアルを公開しました。
 
-..  todo:: url
+* :basic-tutorial:`Asakusa Framework チュートリアル <index.html>`
 
 その他の変更点
 ~~~~~~~~~~~~~~
