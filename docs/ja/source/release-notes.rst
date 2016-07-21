@@ -17,7 +17,7 @@ Release 0.8.1
 Direct I/O 出力カウンターの改善
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Direct I/O の出力時に表示されるカウンターに、出力ポートごとの情報が表示されるようになりました。
+Direct I/O の出力時に表示されるカウンターに、出力ポートごとの統計情報が表示されるようになりました。
 
 ..  code-block:: none
 
@@ -41,10 +41,6 @@ Direct I/O lineの詳細は、以下のドキュメントを参照してくだ�
 
 * :doc:`directio/directio-line`
 
-また、過去バージョンのDirect I/O lineを利用しているプロジェクトについては、以下のマイグレーション情報を確認してください。
-
-* :doc:`application/migration-guide`
-
 Asakusa Framework チュートリアル
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -64,12 +60,21 @@ Asakusa Frameworkのサンプルアプリケーションを作成しながら、
 非推奨機能
 ~~~~~~~~~~
 
-試験的機能として提供していた以下の機能の利用が非推奨になりました。
+以下の機能の利用が非推奨になりました。
 
 * :ref:`gradle-plugin-v08-specify-asakusafw-version` ( ビルドスクリプトの設定 )
 
-  * この変更に伴うプロジェクトのマイグレーションについては :doc:`application/migration-guide` を確認してください。
+  * バージョン 0.8.0 より、Asakusa FrameworkバージョンはAsakusa Gradle Pluginのバージョンから自動的に設定される値を利用することを推奨しています。
+  * 特にバージョン 0.7.6 以前に作成したプロジェクトから移行する場合は :doc:`application/migration-guide` を確認して、必要に応じてビルドスクリプトを修正してください。
 * :doc:`application/yaess-log-visualization`
+
+  * この機能はバージョン 0.6.2 から試験的機能として提供していましたが、MapReduce以外の実行プラットフォームでは適切な分析が行えないなどの問題があるため、本バージョンより非推奨となりました。
+
+ライブラリの構成変更
+~~~~~~~~~~~~~~~~~~~~
+
+Direct I/O lineが含まれるSDKアーティファクトが変更になりました。
+過去バージョンのDirect I/O lineを利用しているプロジェクトについては、:doc:`application/migration-guide` を確認してください。
 
 将来のバージョンにおける非互換性を含む変更
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
