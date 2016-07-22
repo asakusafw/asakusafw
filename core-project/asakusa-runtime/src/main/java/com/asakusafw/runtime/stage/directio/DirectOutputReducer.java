@@ -31,6 +31,7 @@ import com.asakusafw.runtime.flow.ReducerWithRuntimeResource;
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.runtime.io.util.Union;
 import com.asakusafw.runtime.stage.StageConstants;
+import com.asakusafw.runtime.stage.output.BridgeOutputFormat;
 import com.asakusafw.runtime.util.VariableTable;
 
 /**
@@ -67,7 +68,7 @@ public final class DirectOutputReducer extends ReducerWithRuntimeResource<
         String portId = group.getOutputId();
         String path = variables.parse(group.getPath(), false);
         String sourceId = repository.getRelatedId(path);
-        OutputAttemptContext outputContext = HadoopDataSourceUtil.createContext(context, sourceId);
+        OutputAttemptContext outputContext = BridgeOutputFormat.createContext(context, sourceId);
         DataDefinition definition = SimpleDataDefinition.newInstance(
                 group.getDataType(),
                 configure(context, group.getFormat()));

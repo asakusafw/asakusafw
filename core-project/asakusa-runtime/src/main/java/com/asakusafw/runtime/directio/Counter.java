@@ -15,7 +15,7 @@
  */
 package com.asakusafw.runtime.directio;
 
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.LongAdder;
 
 import com.asakusafw.runtime.directio.util.CountInputStream;
 import com.asakusafw.runtime.directio.util.CountOutputStream;
@@ -28,14 +28,14 @@ import com.asakusafw.runtime.directio.util.CountOutputStream;
  */
 public class Counter {
 
-    private final AtomicLong entity = new AtomicLong();
+    private final LongAdder entity = new LongAdder();
 
     /**
      * Adds count.
      * @param delta count delta
      */
     public void add(long delta) {
-        entity.addAndGet(delta);
+        entity.add(delta);
         onChanged();
     }
 
@@ -51,6 +51,6 @@ public class Counter {
      * @return count
      */
     public long get() {
-        return entity.get();
+        return entity.longValue();
     }
 }

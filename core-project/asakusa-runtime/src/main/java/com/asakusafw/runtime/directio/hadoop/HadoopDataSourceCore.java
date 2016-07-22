@@ -577,7 +577,7 @@ public class HadoopDataSourceCore implements DirectDataSource {
                         profile.getId(),
                         staging));
             }
-            HadoopDataSourceUtil.move(context.getCounter(), fs, staging, target);
+            HadoopDataSourceUtil.move(context.getCounter(), fs, staging, target, profile.getRollforwardThreads());
         }
     }
 

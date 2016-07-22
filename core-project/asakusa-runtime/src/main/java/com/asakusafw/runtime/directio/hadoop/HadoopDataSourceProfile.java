@@ -34,7 +34,7 @@ import com.asakusafw.runtime.directio.FragmentableDataFormat;
 /**
  * A structured profile for {@link HadoopDataSource}.
  * @since 0.2.5
- * @version 0.2.6
+ * @version 0.9.0
  */
 public class HadoopDataSourceProfile {
 
@@ -91,6 +91,12 @@ public class HadoopDataSourceProfile {
      */
     public static final String KEY_KEEPALIVE_INTERVAL = "keepalive.interval"; //$NON-NLS-1$
 
+    /**
+     * The property key name of number of threads for moving files in roll-forward operation.
+     * @since 0.9.0
+     */
+    public static final String KEY_ROLLFORWARD_THREADS = "threads.commit"; //$NON-NLS-1$
+
     private static final String DEFAULT_TEMP_SUFFIX = "_directio_temp"; //$NON-NLS-1$
 
     private static final boolean DEFAULT_OUTPUT_STAGING = true;
@@ -106,6 +112,8 @@ public class HadoopDataSourceProfile {
     private static final boolean DEFAULT_COMBINE_BLOCKS = true;
 
     private static final long DEFAULT_KEEPALIVE_INTERVAL = 0;
+
+    private static final int DEFAULT_ROLLFORWARD_THREADS = 1;
 
     private final String id;
 
@@ -128,6 +136,8 @@ public class HadoopDataSourceProfile {
     private boolean combineBlocks = DEFAULT_COMBINE_BLOCKS;
 
     private long keepAliveInterval = DEFAULT_KEEPALIVE_INTERVAL;
+
+    private int rollforwardThreads = DEFAULT_ROLLFORWARD_THREADS;
 
     private final FileSystem fileSystem;
 
@@ -369,6 +379,24 @@ public class HadoopDataSourceProfile {
         this.keepAliveInterval = interval;
     }
 
+    /**
+     * Returns the number of threads to move staged files to committed area.
+     * @return the number of threads
+     * @since 0.9.0
+     */
+    public int getRollforwardThreads() {
+        return rollforwardThreads;
+    }
+
+    /**
+     * Sets the number of threads to move staged files to committed area.
+     * @param threads the number of threads
+     * @since 0.9.0
+     */
+    public void setRollforwardThreads(int threads) {
+        this.rollforwardThreads = threads;
+    }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
@@ -394,6 +422,8 @@ public class HadoopDataSourceProfile {
         builder.append(combineBlocks);
         builder.append(", keepAliveInterval="); //$NON-NLS-1$
         builder.append(keepAliveInterval);
+        builder.append(", rollforwardThreads="); //$NON-NLS-1$
+        builder.append(rollforwardThreads);
         builder.append(", fileSystem="); //$NON-NLS-1$
         builder.append(fileSystem);
         builder.append(", localFileSystem="); //$NON-NLS-1$
@@ -453,7 +483,9 @@ public class HadoopDataSourceProfile {
         result.setOutputStreaming(takeBoolean(profile, attributes, KEY_OUTPUT_STREAMING, DEFAULT_OUTPUT_STREAMING));
         result.setSplitBlocks(takeBoolean(profile, attributes, KEY_SPLIT_BLOCKS, DEFAULT_SPLIT_BLOCKS));
         result.setCombineBlocks(takeBoolean(profile, attributes, KEY_COMBINE_BLOCKS, DEFAULT_COMBINE_BLOCKS));
-        result.setKeepAliveInterval(takeKeepAliveInterval(profile, attributes, conf));
+        result.setKeepAliveInterval(
+                takePositive(profile, attributes, KEY_KEEPALIVE_INTERVAL, DEFAULT_KEEPALIVE_INTERVAL));
+        result.setRollforwardThreads(takePositive(profile, attributes, KEY_ROLLFORWARD_THREADS, DEFAULT_ROLLFORWARD_THREADS));
 
         if (attributes.isEmpty() == false) {
             throw new IOException(MessageFormat.format(
@@ -583,30 +615,61 @@ public class HadoopDataSourceProfile {
         }
     }
 
-    private static long takeKeepAliveInterval(
+    private static int takePositive(
             DirectDataSourceProfile profile,
             Map<String, String> attributes,
-            Configuration conf) throws IOException {
+            String key,
+            int defaultValue) throws IOException {
         assert profile != null;
         assert attributes != null;
-        assert conf != null;
-        String string = attributes.remove(KEY_KEEPALIVE_INTERVAL);
+        assert key != null;
+        String string = attributes.remove(key);
         if (string == null) {
-            return DEFAULT_KEEPALIVE_INTERVAL;
+            return defaultValue;
         }
         try {
-            long value = Long.parseLong(string);
-            if (value < 0) {
+            int result = Integer.parseInt(string.trim());
+            if (result < 0) {
                 throw new IOException(MessageFormat.format(
-                        "Keep-alive interval must not be negative: {0}",
-                        fqn(profile, KEY_KEEPALIVE_INTERVAL)));
+                        "\"{0}\" must be positive integer: {1}",
+                        fqn(profile, key),
+                        string));
             }
-            return value;
+            return result;
         } catch (NumberFormatException e) {
             throw new IOException(MessageFormat.format(
-                    "Keep-alive interval must be integer: {0}={1}",
-                    fqn(profile, KEY_KEEPALIVE_INTERVAL),
-                    string));
+                    "\"{0}\" must be positive integer: {1}",
+                    fqn(profile, key),
+                    string), e);
+        }
+    }
+
+    private static long takePositive(
+            DirectDataSourceProfile profile,
+            Map<String, String> attributes,
+            String key,
+            long defaultValue) throws IOException {
+        assert profile != null;
+        assert attributes != null;
+        assert key != null;
+        String string = attributes.remove(key);
+        if (string == null) {
+            return defaultValue;
+        }
+        try {
+            long result = Integer.parseInt(string.trim());
+            if (result < 0) {
+                throw new IOException(MessageFormat.format(
+                        "\"{0}\" must be positive integer: {1}",
+                        fqn(profile, key),
+                        string));
+            }
+            return result;
+        } catch (NumberFormatException e) {
+            throw new IOException(MessageFormat.format(
+                    "\"{0}\" must be positive integer: {1}",
+                    fqn(profile, key),
+                    string), e);
         }
     }
 }
