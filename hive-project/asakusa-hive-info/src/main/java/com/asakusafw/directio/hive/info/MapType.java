@@ -24,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * Represents a Hive map type.
  * Each type category must be {@link com.asakusafw.directio.hive.info.FieldType.Category#MAP}.
- * @since WIP
+ * @since 0.8.1
  */
 public class MapType implements FieldType {
 
