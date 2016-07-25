@@ -174,8 +174,8 @@ public class FilePackagerTest extends JobflowCompilerTestRoot {
      */
     @Test
     public void build_java_jdk7() throws Exception {
-        Assume.assumeThat(SourceVersion.latest(), is(greaterThan(SourceVersion.RELEASE_6)));
-        environment.getOptions().putExtraAttribute(FilePackager.KEY_JAVA_VERSION, "1.7");
+        Assume.assumeThat(SourceVersion.latest(), is(greaterThan(SourceVersion.RELEASE_8)));
+        environment.getOptions().putExtraAttribute(FilePackager.KEY_JAVA_VERSION, FilePackager.DEFAULT_JAVA_VERSION);
         Set<String> entries = new HashSet<>();
         FilePackager packager = new FilePackager(
                 folder.newFolder(),

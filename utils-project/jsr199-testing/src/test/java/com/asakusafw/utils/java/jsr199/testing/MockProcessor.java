@@ -41,7 +41,7 @@ import javax.tools.StandardLocation;
 @SupportedAnnotationTypes({
     "java.lang.SuppressWarnings"
 })
-@SupportedSourceVersion(SourceVersion.RELEASE_7)
+@SupportedSourceVersion(SourceVersion.RELEASE_8)
 public class MockProcessor extends AbstractProcessor {
 
     @Override

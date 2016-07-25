@@ -87,7 +87,7 @@ public class FilePackager extends FlowCompilingEnvironment.Initialized implement
      * The default value of {@link #KEY_JAVA_VERSION}.
      * @since 0.7.3
      */
-    public static final String DEFAULT_JAVA_VERSION = "1.7"; //$NON-NLS-1$
+    public static final String DEFAULT_JAVA_VERSION = "1.8"; //$NON-NLS-1$
 
     private static final String SOURCE_DIRECTORY = "src"; //$NON-NLS-1$
 

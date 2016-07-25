@@ -46,6 +46,10 @@ import javax.tools.ToolProvider;
  */
 public class VolatileCompiler implements Closeable {
 
+    private static final String JAVA_VERSION = "1.8"; //$NON-NLS-1$
+
+    private static final String ENCODING = StandardCharsets.UTF_8.name();
+
     private final JavaCompiler compiler;
 
     private final VolatileClassOutputManager files;
@@ -74,9 +78,9 @@ public class VolatileCompiler implements Closeable {
         this.targets = new ArrayList<>();
         this.processors = new ArrayList<>();
 
-        Collections.addAll(arguments, "-source", "1.7"); //$NON-NLS-1$ //$NON-NLS-2$
-        Collections.addAll(arguments, "-target", "1.7"); //$NON-NLS-1$ //$NON-NLS-2$
-        Collections.addAll(arguments, "-encoding", "UTF-8"); //$NON-NLS-1$ //$NON-NLS-2$
+        Collections.addAll(arguments, "-source", JAVA_VERSION); //$NON-NLS-1$
+        Collections.addAll(arguments, "-target", JAVA_VERSION); //$NON-NLS-1$
+        Collections.addAll(arguments, "-encoding", ENCODING); //$NON-NLS-1$ 
     }
 
     /**
@@ -126,8 +130,8 @@ public class VolatileCompiler implements Closeable {
      * Adds compiler arguments.
      * Initially the compiler has the following arguments:
      * <ul>
-     * <li> {@code -source 1.7} </li>
-     * <li> {@code -target 1.7} </li>
+     * <li> {@code -source 1.8} </li>
+     * <li> {@code -target 1.8} </li>
      * <li> {@code -encoding UTF-8} </li>
      * </ul>
      * @param compilerArguments the compiler arguments to add

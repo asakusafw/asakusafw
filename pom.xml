@@ -97,6 +97,7 @@
 
     <!-- build configuration -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <java.version>1.8</java.version>
     <artifact.name>${project.artifactId}</artifact.name>
     <artifact.version>${project.version}</artifact.version>
     <artifact.id>${artifact.name}-${artifact.version}</artifact.id>
@@ -287,8 +288,8 @@
           <configuration>
             <fork>true</fork>
             <encoding>UTF-8</encoding>
-            <source>1.7</source>
-            <target>1.7</target>
+            <source>${java.version}</source>
+            <target>${java.version}</target>
             <proc>none</proc>
           </configuration>
         </plugin>
@@ -350,7 +351,7 @@
             <downloadSources>true</downloadSources>
             <downloadJavadocs>false</downloadJavadocs>
             <classpathContainers>
-              <classpathContainer>org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7</classpathContainer>
+              <classpathContainer>org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-${java.version}</classpathContainer>
             </classpathContainers>
             <additionalConfig>
               <file>
