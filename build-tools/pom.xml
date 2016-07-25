@@ -4,7 +4,7 @@
   <name>Asakusa Framework Build Tools</name>
   <groupId>com.asakusafw</groupId>
   <artifactId>build-tools</artifactId>
-  <version>0.8.1-SNAPSHOT</version>
+  <version>0.8.1</version>
 
   <description>Asakusa Framework Build Tools</description>
   <url>http://asakusafw.com</url>
