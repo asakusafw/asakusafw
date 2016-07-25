@@ -5,7 +5,7 @@ Changelogs
 Release 0.8.1
 =============
 
-(in development)
+Jul 25, 2016
 
 * [ :milestone-asakusafw:`0.8.1` ]
 * [ :milestone-asakusafw-sdk:`0.8.1` ]
