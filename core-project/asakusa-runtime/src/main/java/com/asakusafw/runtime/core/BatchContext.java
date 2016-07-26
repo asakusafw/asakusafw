@@ -29,12 +29,9 @@ import com.asakusafw.runtime.util.VariableTable;
  */
 public class BatchContext {
 
-    static final ThreadLocal<BatchContext> CONTEXTS = new ThreadLocal<BatchContext>() {
-        @Override
-        protected BatchContext initialValue() {
-            throw new IllegalStateException("BatchContext is not yet initialized (internal error)");
-        }
-    };
+    static final ThreadLocal<BatchContext> CONTEXTS = ThreadLocal.withInitial(() -> {
+        throw new IllegalStateException("BatchContext is not yet initialized (internal error)");
+    });
 
     private Map<String, String> variables = new HashMap<>();
 

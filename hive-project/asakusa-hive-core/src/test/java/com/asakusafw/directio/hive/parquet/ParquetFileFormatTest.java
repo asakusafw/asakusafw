@@ -101,7 +101,7 @@ public class ParquetFileFormatTest {
     public final TemporaryFolder folder = new TemporaryFolder();
 
     private <T> ParquetFileFormat<T> format(Class<T> type, String... removes) {
-        return format(type, Collections.<String, ValueSerde>emptyMap(), removes);
+        return format(type, Collections.emptyMap(), removes);
     }
 
     private <T> ParquetFileFormat<T> format(

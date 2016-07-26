@@ -193,7 +193,7 @@ public final class FlowScript {
                 }
                 map.put(phase, Collections.unmodifiableSet(set));
             } else {
-                map.put(phase, Collections.<ExecutionScript>emptySet());
+                map.put(phase, Collections.emptySet());
             }
         }
         this.scripts = Collections.unmodifiableMap(map);
@@ -309,7 +309,7 @@ public final class FlowScript {
             NavigableMap<String, String> flowMap, String flowId) {
         EnumMap<ExecutionPhase, List<ExecutionScript>> results = new EnumMap<>(ExecutionPhase.class);
         for (ExecutionPhase phase : ExecutionPhase.values()) {
-            results.put(phase, Collections.<ExecutionScript>emptyList());
+            results.put(phase, Collections.emptyList());
         }
         int count = 0;
         Map<String, NavigableMap<String, String>> phaseMap = partitioning(flowMap);
@@ -418,7 +418,7 @@ public final class FlowScript {
         Set<String> blockers = parseTokens(blockersString);
         Map<String, String> environmentVariables = PropertiesUtil.createPrefixMap(contents, KEY_ENV_PREFIX);
         String extensionsString = contents.get(KEY_SUPPORTED_EXTENSIONS);
-        Set<String> extensions = extensionsString == null ? Collections.<String>emptySet()
+        Set<String> extensions = extensionsString == null ? Collections.emptySet()
                 : parseTokens(extensionsString);
         ExecutionScript script;
         if (kind == ExecutionScript.Kind.COMMAND) {

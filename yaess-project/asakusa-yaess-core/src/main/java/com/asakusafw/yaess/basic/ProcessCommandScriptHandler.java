@@ -161,7 +161,7 @@ public abstract class ProcessCommandScriptHandler extends ExecutionScriptHandler
         List<String> original = script.getCommandLineTokens();
         List<String> command;
         try {
-            command = ProcessUtil.buildCommand(commandPrefix, original, Collections.<String>emptyList());
+            command = ProcessUtil.buildCommand(commandPrefix, original, Collections.emptyList());
         } catch (IllegalArgumentException e) {
             throw new IOException(MessageFormat.format(
                     "Failed to build command: {6} (batch={0}, flow={1}, phase={3}, stage={4}, execution={2})",

@@ -101,7 +101,7 @@ public class HadoopScriptTest {
 
     private HadoopScriptHandler handler(String... keyValuePairs) {
         Map<String, String> conf = map(keyValuePairs);
-        ServiceProfile<HadoopScriptHandler> profile = new ServiceProfile<HadoopScriptHandler>(
+        ServiceProfile<HadoopScriptHandler> profile = new ServiceProfile<>(
                 "hadoop", MockHadoopScriptHandler.class, conf, ProfileContext.system(getClass().getClassLoader()));
         try {
             return profile.newInstance();

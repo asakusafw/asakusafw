@@ -47,7 +47,7 @@ public final class FlowElement implements FlowElementAttributeProvider {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public FlowElement(FlowElementDescription description) {
-        this(new Object(), description, Collections.<FlowElementAttribute>emptyList());
+        this(new Object(), description, Collections.emptyList());
     }
 
     /**

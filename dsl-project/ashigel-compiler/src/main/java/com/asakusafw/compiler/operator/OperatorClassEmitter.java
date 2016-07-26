@@ -30,7 +30,6 @@ import org.slf4j.LoggerFactory;
 
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.utils.java.jsr269.bridge.Jsr269;
-import com.asakusafw.utils.java.model.syntax.Comment;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
 import com.asakusafw.utils.java.model.syntax.ImportDeclaration;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
@@ -169,7 +168,7 @@ public class OperatorClassEmitter {
                 packageDecl,
                 importDecls,
                 Collections.singletonList(typeDecl),
-                Collections.<Comment>emptyList());
+                Collections.emptyList());
         try {
             environment.emit(unit, originating);
             if (key != null) {

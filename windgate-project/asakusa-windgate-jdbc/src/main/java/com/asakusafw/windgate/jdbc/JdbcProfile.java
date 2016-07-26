@@ -171,7 +171,7 @@ public class JdbcProfile {
             String user,
             String password,
             long batchPutUnit) {
-        this(resourceName, classLoader, driver, url, user, password, Collections.<String, String>emptyMap());
+        this(resourceName, classLoader, driver, url, user, password, Collections.emptyMap());
         setBatchPutUnit0(batchPutUnit);
     }
 

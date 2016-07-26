@@ -46,7 +46,7 @@ import com.asakusafw.yaess.core.ServiceProfile;
 public class BasicJobSchedulerTest {
 
     private static final ExecutionContext CONTEXT = new ExecutionContext(
-            "b", "f", "e", ExecutionPhase.MAIN, Collections.<String, String>emptyMap());
+            "b", "f", "e", ExecutionPhase.MAIN, Collections.emptyMap());
 
     /**
      * Simple testing.
@@ -55,7 +55,7 @@ public class BasicJobSchedulerTest {
     @Test
     public void simple() throws Exception {
         Map<String, String> conf = new HashMap<>();
-        ServiceProfile<JobScheduler> profile = new ServiceProfile<JobScheduler>(
+        ServiceProfile<JobScheduler> profile = new ServiceProfile<>(
                 "testing", BasicJobScheduler.class, conf, ProfileContext.system(getClass().getClassLoader()));
 
         JobScheduler instance = profile.newInstance();
@@ -74,7 +74,7 @@ public class BasicJobSchedulerTest {
     @Test
     public void multiple() throws Exception {
         Map<String, String> conf = new HashMap<>();
-        ServiceProfile<JobScheduler> profile = new ServiceProfile<JobScheduler>(
+        ServiceProfile<JobScheduler> profile = new ServiceProfile<>(
                 "testing", BasicJobScheduler.class, conf, ProfileContext.system(getClass().getClassLoader()));
 
         JobScheduler instance = profile.newInstance();
@@ -95,7 +95,7 @@ public class BasicJobSchedulerTest {
     @Test
     public void dependencies() throws Exception {
         Map<String, String> conf = new HashMap<>();
-        ServiceProfile<JobScheduler> profile = new ServiceProfile<JobScheduler>(
+        ServiceProfile<JobScheduler> profile = new ServiceProfile<>(
                 "testing", BasicJobScheduler.class, conf, ProfileContext.system(getClass().getClassLoader()));
 
         JobScheduler instance = profile.newInstance();
@@ -123,7 +123,7 @@ public class BasicJobSchedulerTest {
     @Test
     public void cyclic() throws Exception {
         Map<String, String> conf = new HashMap<>();
-        ServiceProfile<JobScheduler> profile = new ServiceProfile<JobScheduler>(
+        ServiceProfile<JobScheduler> profile = new ServiceProfile<>(
                 "testing", BasicJobScheduler.class, conf, ProfileContext.system(getClass().getClassLoader()));
 
         JobScheduler instance = profile.newInstance();
@@ -156,7 +156,7 @@ public class BasicJobSchedulerTest {
     @Test
     public void fail_job() throws Exception {
         Map<String, String> conf = new HashMap<>();
-        ServiceProfile<JobScheduler> profile = new ServiceProfile<JobScheduler>(
+        ServiceProfile<JobScheduler> profile = new ServiceProfile<>(
                 "testing", BasicJobScheduler.class, conf, ProfileContext.system(getClass().getClassLoader()));
 
         JobScheduler instance = profile.newInstance();
@@ -185,7 +185,7 @@ public class BasicJobSchedulerTest {
     @Test
     public void fail_besteffort() throws Exception {
         Map<String, String> conf = new HashMap<>();
-        ServiceProfile<JobScheduler> profile = new ServiceProfile<JobScheduler>(
+        ServiceProfile<JobScheduler> profile = new ServiceProfile<>(
                 "testing", BasicJobScheduler.class, conf, ProfileContext.system(getClass().getClassLoader()));
 
         JobScheduler instance = profile.newInstance();
@@ -216,7 +216,7 @@ public class BasicJobSchedulerTest {
     @Test
     public void fail_stuck() throws Exception {
         Map<String, String> conf = new HashMap<>();
-        ServiceProfile<JobScheduler> profile = new ServiceProfile<JobScheduler>(
+        ServiceProfile<JobScheduler> profile = new ServiceProfile<>(
                 "testing", BasicJobScheduler.class, conf, ProfileContext.system(getClass().getClassLoader()));
 
         JobScheduler instance = profile.newInstance();

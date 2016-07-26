@@ -109,7 +109,7 @@ public class DirectDataSourceRepositoryTest {
                     id,
                     MockDirectDataSource.class,
                     path,
-                    Collections.<String, String>emptyMap()));
+                    Collections.emptyMap()));
             return ds;
         }
     }

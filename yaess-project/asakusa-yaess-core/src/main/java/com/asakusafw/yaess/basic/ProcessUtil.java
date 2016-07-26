@@ -210,7 +210,7 @@ final class ProcessUtil {
                     Map<String, String> environmentVariables) throws InterruptedException, IOException {
                 return execute(context,
                         commandLineTokens, environmentVariables,
-                        Collections.<String, Blob>emptyMap(), System.out);
+                        Collections.emptyMap(), System.out);
             }
             @Override
             public int execute(
@@ -220,7 +220,7 @@ final class ProcessUtil {
                     OutputStream output) throws InterruptedException, IOException {
                 return execute(context,
                         commandLineTokens, environmentVariables,
-                        Collections.<String, Blob>emptyMap(), output);
+                        Collections.emptyMap(), output);
             }
             @Override
             public int execute(

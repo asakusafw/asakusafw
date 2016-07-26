@@ -18,7 +18,6 @@ package com.asakusafw.compiler.windgate;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -355,7 +354,7 @@ public class WindGateIoProcessorTest {
                     "com.example",
                     Location.fromPath("target/testing", '/'),
                     folder.newFolder("build"),
-                    Collections.<File>emptyList(),
+                    Collections.emptyList(),
                     getClass().getClassLoader(),
                     FlowCompilerOptions.load(System.getProperties()));
         } catch (IOException e) {
@@ -383,7 +382,7 @@ public class WindGateIoProcessorTest {
     }
 
     private DriverScript dummy() {
-        return new DriverScript("example", Collections.<String, String>emptyMap());
+        return new DriverScript("example", Collections.emptyMap());
     }
 
     static final class Import extends WindGateImporterDescription {

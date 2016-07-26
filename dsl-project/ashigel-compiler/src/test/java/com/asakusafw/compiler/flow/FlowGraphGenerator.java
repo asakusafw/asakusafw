@@ -39,7 +39,6 @@ import com.asakusafw.vocabulary.flow.graph.FlowGraph;
 import com.asakusafw.vocabulary.flow.graph.FlowIn;
 import com.asakusafw.vocabulary.flow.graph.FlowOut;
 import com.asakusafw.vocabulary.flow.graph.FlowPartDescription;
-import com.asakusafw.vocabulary.flow.graph.FlowResourceDescription;
 import com.asakusafw.vocabulary.flow.graph.InputDescription;
 import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 import com.asakusafw.vocabulary.flow.graph.OutputDescription;
@@ -123,11 +122,11 @@ public class FlowGraphGenerator {
                         type,
                         type,
                         name,
-                        Collections.<Class<?>>emptyList()),
+                        Collections.emptyList()),
                 inputs,
                 outputs,
-                Collections.<FlowResourceDescription>emptyList(),
-                Collections.<OperatorDescription.Parameter>emptyList(),
+                Collections.emptyList(),
+                Collections.emptyList(),
                 Arrays.asList(attributes));
         return register(name, desc);
     }

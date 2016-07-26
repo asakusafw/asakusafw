@@ -260,7 +260,7 @@ public class ExecutionTaskTest {
         task.executePhase("batch", "testing", "f-setup", ExecutionPhase.SETUP);
 
         List<Record> results = SerialExecutionTracker.get(prf.trackingId);
-        assertThat(results, is(Collections.<Record>emptyList()));
+        assertThat(results, is(Collections.emptyList()));
     }
 
     /**
@@ -312,7 +312,7 @@ public class ExecutionTaskTest {
         task.executeFlow("batch", "testing", "flow");
 
         List<Record> results = SerialExecutionTracker.get(prf.trackingId);
-        assertThat(results, is(Collections.<Record>emptyList()));
+        assertThat(results, is(Collections.emptyList()));
     }
 
     /**

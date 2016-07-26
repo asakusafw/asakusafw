@@ -162,7 +162,7 @@ public class SequenceFileFormatEmitter extends JavaDataModelDriver {
                             context.resolve(NullWritable.class),
                             context.resolve(model.getSymbol()),
                             context.resolve(model.getSymbol())),
-                    Collections.<com.asakusafw.utils.java.model.syntax.Type>emptyList(),
+                    Collections.emptyList(),
                     createMembers());
             context.emit(decl);
         }
@@ -188,7 +188,7 @@ public class SequenceFileFormatEmitter extends JavaDataModelDriver {
                             context.resolve(Class.class),
                             context.resolve(model.getSymbol())),
                     f.newSimpleName("getSupportedType"), //$NON-NLS-1$
-                    Collections.<FormalParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     Arrays.asList(new Statement[] {
                             new TypeBuilder(f, context.resolve(model.getSymbol()))
                                 .dotClass()
@@ -206,7 +206,7 @@ public class SequenceFileFormatEmitter extends JavaDataModelDriver {
                         .toAttributes(),
                     context.resolve(NullWritable.class),
                     f.newSimpleName("createKeyObject"), //$NON-NLS-1$
-                    Collections.<FormalParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     Arrays.asList(new TypeBuilder(f, context.resolve(NullWritable.class))
                         .method("get") //$NON-NLS-1$
                         .toReturnStatement()));
@@ -221,7 +221,7 @@ public class SequenceFileFormatEmitter extends JavaDataModelDriver {
                         .toAttributes(),
                     context.resolve(model.getSymbol()),
                     f.newSimpleName("createValueObject"), //$NON-NLS-1$
-                    Collections.<FormalParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     Arrays.asList(new TypeBuilder(f, context.resolve(model.getSymbol()))
                         .newObject()
                         .toReturnStatement()));

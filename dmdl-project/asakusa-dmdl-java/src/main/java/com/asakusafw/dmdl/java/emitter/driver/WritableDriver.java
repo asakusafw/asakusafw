@@ -35,7 +35,6 @@ import com.asakusafw.utils.java.model.syntax.ModelFactory;
 import com.asakusafw.utils.java.model.syntax.SimpleName;
 import com.asakusafw.utils.java.model.syntax.Statement;
 import com.asakusafw.utils.java.model.syntax.Type;
-import com.asakusafw.utils.java.model.syntax.TypeParameterDeclaration;
 import com.asakusafw.utils.java.model.util.AttributeBuilder;
 import com.asakusafw.utils.java.model.util.ExpressionBuilder;
 import com.asakusafw.utils.java.model.util.Models;
@@ -79,7 +78,7 @@ public class WritableDriver extends JavaDataModelDriver {
                     .annotation(context.resolve(Override.class))
                     .Public()
                     .toAttributes(),
-                Collections.<TypeParameterDeclaration>emptyList(),
+                Collections.emptyList(),
                 Models.toType(f, void.class),
                 f.newSimpleName("write"), //$NON-NLS-1$
                 Collections.singletonList(f.newFormalParameterDeclaration(
@@ -108,7 +107,7 @@ public class WritableDriver extends JavaDataModelDriver {
                     .annotation(context.resolve(Override.class))
                     .Public()
                     .toAttributes(),
-                Collections.<TypeParameterDeclaration>emptyList(),
+                Collections.emptyList(),
                 Models.toType(f, void.class),
                 f.newSimpleName("readFields"), //$NON-NLS-1$
                 Arrays.asList(f.newFormalParameterDeclaration(

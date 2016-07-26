@@ -197,7 +197,7 @@ public class GateProfile {
                 VoidResourceProvider.NAME,
                 VoidResourceProvider.class,
                 context,
-                Collections.<String, String>emptyMap()));
+                Collections.emptyMap()));
         return results;
     }
 }

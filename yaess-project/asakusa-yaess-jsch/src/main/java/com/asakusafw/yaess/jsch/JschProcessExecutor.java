@@ -320,7 +320,7 @@ public class JschProcessExecutor implements ProcessExecutor {
         return execute(
                 context,
                 commandLineTokens, environmentVariables,
-                Collections.<String, Blob>emptyMap(), System.out);
+                Collections.emptyMap(), System.out);
     }
 
     @Override
@@ -332,7 +332,7 @@ public class JschProcessExecutor implements ProcessExecutor {
         return execute(
                 context,
                 commandLineTokens, environmentVariables,
-                Collections.<String, Blob>emptyMap(), output);
+                Collections.emptyMap(), output);
     }
 
     @Override

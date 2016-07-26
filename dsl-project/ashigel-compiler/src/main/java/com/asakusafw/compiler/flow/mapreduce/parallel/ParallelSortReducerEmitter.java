@@ -34,18 +34,14 @@ import com.asakusafw.compiler.flow.FlowCompilingEnvironment;
 import com.asakusafw.compiler.flow.stage.CompiledType;
 import com.asakusafw.runtime.stage.collector.SlotSorter;
 import com.asakusafw.runtime.trace.TraceLocation;
-import com.asakusafw.utils.java.model.syntax.Comment;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
 import com.asakusafw.utils.java.model.syntax.Expression;
-import com.asakusafw.utils.java.model.syntax.FormalParameterDeclaration;
 import com.asakusafw.utils.java.model.syntax.MethodDeclaration;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
 import com.asakusafw.utils.java.model.syntax.Name;
 import com.asakusafw.utils.java.model.syntax.SimpleName;
 import com.asakusafw.utils.java.model.syntax.Statement;
-import com.asakusafw.utils.java.model.syntax.Type;
 import com.asakusafw.utils.java.model.syntax.TypeDeclaration;
-import com.asakusafw.utils.java.model.syntax.TypeParameterDeclaration;
 import com.asakusafw.utils.java.model.util.AttributeBuilder;
 import com.asakusafw.utils.java.model.util.ExpressionBuilder;
 import com.asakusafw.utils.java.model.util.ImportBuilder;
@@ -119,7 +115,7 @@ final class ParallelSortReducerEmitter {
                     importer.getPackageDeclaration(),
                     importer.toImportDeclarations(),
                     Collections.singletonList(type),
-                    Collections.<Comment>emptyList());
+                    Collections.emptyList());
         }
 
         private TypeDeclaration createType() {
@@ -134,9 +130,9 @@ final class ParallelSortReducerEmitter {
                         .Public()
                         .toAttributes(),
                     name,
-                    Collections.<TypeParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     importer.toType(SlotSorter.class),
-                    Collections.<Type>emptyList(),
+                    Collections.emptyList(),
                     Arrays.asList(createSlotNames(), createSlotObjects()));
         }
 
@@ -179,7 +175,7 @@ final class ParallelSortReducerEmitter {
                         .toAttributes(),
                     importer.toType(String[].class),
                     factory.newSimpleName(SlotSorter.NAME_GET_OUTPUT_NAMES),
-                    Collections.<FormalParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     statements);
         }
 
@@ -215,7 +211,7 @@ final class ParallelSortReducerEmitter {
                         .toAttributes(),
                     importer.toType(Writable[].class),
                     factory.newSimpleName(SlotSorter.NAME_CREATE_SLOT_OBJECTS),
-                    Collections.<FormalParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     statements);
         }
 

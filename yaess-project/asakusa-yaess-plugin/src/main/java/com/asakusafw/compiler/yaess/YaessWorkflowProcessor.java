@@ -229,7 +229,7 @@ public class YaessWorkflowProcessor extends AbstractWorkflowProcessor {
             String profile = command.getProfileName();
             scripts.add(new CommandScript(
                     command.getId(),
-                    Collections.<String>emptySet(),
+                    Collections.emptySet(),
                     profile == null ? CommandScript.DEFAULT_PROFILE_NAME : profile,
                     command.getModuleName(),
                     command.getCommandTokens(),
@@ -264,7 +264,7 @@ public class YaessWorkflowProcessor extends AbstractWorkflowProcessor {
         assert stages != null;
         List<ExecutionScript> results = new ArrayList<>();
         for (CompiledStage stage : stages) {
-            results.add(processStage(stage, Collections.<JobflowModel.Stage>emptySet()));
+            results.add(processStage(stage, Collections.emptySet()));
         }
         return results;
     }

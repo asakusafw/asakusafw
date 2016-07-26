@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Matcher;
@@ -81,8 +82,8 @@ public class DirectFileOutputDescriptionGeneratorTest extends GeneratorTesterRoo
         assertThat(object.getModelType(), is((Object) MockData.class));
         assertThat(object.getBasePath(), is("base-path"));
         assertThat(object.getResourcePattern(), is("*"));
-        assertThat(object.getOrder(), is(Arrays.<String>asList()));
-        assertThat(object.getDeletePatterns(), is(Arrays.<String>asList()));
+        assertThat(object.getOrder(), is(Collections.emptyList()));
+        assertThat(object.getDeletePatterns(), is(Collections.emptyList()));
         assertThat(object.getFormat(), is((Object) MockDataFormat.class));
     }
 

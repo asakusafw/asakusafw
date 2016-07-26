@@ -44,12 +44,7 @@ class Something {
  */
 public final class StringOption extends ValueOption<StringOption> {
 
-    static final ThreadLocal<Text> BUFFER_POOL = new ThreadLocal<Text>() {
-        @Override
-        protected Text initialValue() {
-            return new Text();
-        }
-    };
+    static final ThreadLocal<Text> BUFFER_POOL = ThreadLocal.withInitial(Text::new);
 
     private final Text entity = new Text();
 

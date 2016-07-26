@@ -568,11 +568,11 @@ public class FragmentFlow {
 
         return factory.newClassInstanceCreationExpression(
                 null,
-                Collections.<Type>emptyList(),
+                Collections.emptyList(),
                 importer.resolve(factory.newParameterizedType(
                         Models.toType(factory, Result.class),
                         dataType)),
-                Collections.<Expression>emptyList(),
+                Collections.emptyList(),
                 factory.newClassBody(Arrays.asList(cache, result)));
     }
 

@@ -40,10 +40,8 @@ import com.asakusafw.runtime.stage.BaseStageClient;
 import com.asakusafw.runtime.stage.StageInput;
 import com.asakusafw.runtime.stage.StageOutput;
 import com.asakusafw.runtime.trace.TraceLocation;
-import com.asakusafw.utils.java.model.syntax.Comment;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
 import com.asakusafw.utils.java.model.syntax.Expression;
-import com.asakusafw.utils.java.model.syntax.FormalParameterDeclaration;
 import com.asakusafw.utils.java.model.syntax.Javadoc;
 import com.asakusafw.utils.java.model.syntax.MethodDeclaration;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
@@ -54,7 +52,6 @@ import com.asakusafw.utils.java.model.syntax.Statement;
 import com.asakusafw.utils.java.model.syntax.Type;
 import com.asakusafw.utils.java.model.syntax.TypeBodyDeclaration;
 import com.asakusafw.utils.java.model.syntax.TypeDeclaration;
-import com.asakusafw.utils.java.model.syntax.TypeParameterDeclaration;
 import com.asakusafw.utils.java.model.util.AttributeBuilder;
 import com.asakusafw.utils.java.model.util.ExpressionBuilder;
 import com.asakusafw.utils.java.model.util.ImportBuilder;
@@ -186,7 +183,7 @@ public class CopierClientEmitter {
                     importer.getPackageDeclaration(),
                     importer.toImportDeclarations(),
                     Collections.singletonList(type),
-                    Collections.<Comment>emptyList());
+                    Collections.emptyList());
         }
 
         private TypeDeclaration createType() throws IOException {
@@ -205,9 +202,9 @@ public class CopierClientEmitter {
                         .Final()
                         .toAttributes(),
                     name,
-                    Collections.<TypeParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     t(AbstractStageClient.class),
-                    Collections.<Type>emptyList(),
+                    Collections.emptyList(),
                     members);
         }
 
@@ -299,7 +296,7 @@ public class CopierClientEmitter {
                         .toAttributes(),
                     t(List.class, t(StageInput.class)),
                     factory.newSimpleName(AbstractStageClient.METHOD_STAGE_INPUTS),
-                    Collections.<FormalParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     statements);
         }
 
@@ -333,7 +330,7 @@ public class CopierClientEmitter {
                         .toAttributes(),
                     t(List.class, t(StageOutput.class)),
                     factory.newSimpleName(AbstractStageClient.METHOD_STAGE_OUTPUTS),
-                    Collections.<FormalParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     statements);
         }
 
@@ -362,7 +359,7 @@ public class CopierClientEmitter {
                         .toAttributes(),
                     returnType,
                     factory.newSimpleName(methodName),
-                    Collections.<FormalParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     Collections.singletonList(factory.newReturnStatement(expression)));
         }
 

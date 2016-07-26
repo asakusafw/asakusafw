@@ -211,8 +211,8 @@ public class RetryableProcessProviderTest {
                 "dummy",
                 "testing",
                 String.class,
-                new DriverScript("dummy", Collections.<String, String>emptyMap()),
-                new DriverScript("dummy", Collections.<String, String>emptyMap()));
+                new DriverScript("dummy", Collections.emptyMap()),
+                new DriverScript("dummy", Collections.emptyMap()));
     }
 
     /**

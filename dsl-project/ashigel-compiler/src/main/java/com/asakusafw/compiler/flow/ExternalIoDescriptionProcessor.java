@@ -137,8 +137,7 @@ public abstract class ExternalIoDescriptionProcessor extends FlowCompilingEnviro
          * An empty instance.
          * @since 0.5.1
          */
-        public static final IoContext EMPTY =
-                new IoContext(Collections.<Input>emptyList(), Collections.<Output>emptyList());
+        public static final IoContext EMPTY = new IoContext(Collections.emptyList(), Collections.emptyList());
 
         private final List<Input> inputs;
 
@@ -175,7 +174,7 @@ public abstract class ExternalIoDescriptionProcessor extends FlowCompilingEnviro
          * @return the created instance
          */
         public IoContext getInputContext() {
-            return new IoContext(inputs, Collections.<Output>emptyList());
+            return new IoContext(inputs, Collections.emptyList());
         }
 
         /**
@@ -183,7 +182,7 @@ public abstract class ExternalIoDescriptionProcessor extends FlowCompilingEnviro
          * @return the created instance
          */
         public IoContext getOutputContext() {
-            return new IoContext(Collections.<Input>emptyList(), outputs);
+            return new IoContext(Collections.emptyList(), outputs);
         }
     }
 
@@ -326,7 +325,7 @@ public abstract class ExternalIoDescriptionProcessor extends FlowCompilingEnviro
         public SourceInfo(
                 Set<Location> locations,
                 Class<? extends InputFormat> format) {
-            this(locations, format, Collections.<String, String>emptyMap());
+            this(locations, format, Collections.emptyMap());
         }
 
         /**

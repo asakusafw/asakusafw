@@ -47,7 +47,7 @@ public class BatchSpec {
      * @param id the target batch ID
      */
     public BatchSpec(String id) {
-        this(id, null, false, Collections.<Parameter>emptyList());
+        this(id, null, false, Collections.emptyList());
     }
 
     /**

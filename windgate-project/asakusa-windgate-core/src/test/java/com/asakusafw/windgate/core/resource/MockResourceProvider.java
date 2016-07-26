@@ -54,7 +54,7 @@ public class MockResourceProvider extends ResourceProvider {
                 name,
                 MockResourceProvider.class,
                 ProfileContext.system(MockResourceProvider.class.getClassLoader()),
-                Collections.<String, String>emptyMap());
+                Collections.emptyMap());
     }
 
     @Override

@@ -260,7 +260,7 @@ public class TypeBuilder {
         if (initializer == null) {
             throw new IllegalArgumentException("initializer must not be null"); //$NON-NLS-1$
         }
-        return expr(f.newArrayCreationExpression(toArrayType(), Collections.<Expression> emptyList(), initializer));
+        return expr(f.newArrayCreationExpression(toArrayType(), Collections.emptyList(), initializer));
     }
 
     /**
@@ -299,7 +299,7 @@ public class TypeBuilder {
         }
         return expr(f.newClassInstanceCreationExpression(
                 null,
-                Collections.<Type>emptyList(),
+                Collections.emptyList(),
                 context,
                 arguments,
                 anonymousClassBlock));
@@ -346,7 +346,7 @@ public class TypeBuilder {
         if (arguments == null) {
             throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
         }
-        return method(Collections.<Type> emptyList(), name, Arrays.asList(arguments));
+        return method(Collections.emptyList(), name, Arrays.asList(arguments));
     }
 
     /**
@@ -386,7 +386,7 @@ public class TypeBuilder {
         if (arguments == null) {
             throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
         }
-        return method(Collections.<Type> emptyList(), name, arguments);
+        return method(Collections.emptyList(), name, arguments);
     }
 
     /**
@@ -429,7 +429,7 @@ public class TypeBuilder {
         if (arguments == null) {
             throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
         }
-        return method(Collections.<Type> emptyList(), name, Arrays.asList(arguments));
+        return method(Collections.emptyList(), name, Arrays.asList(arguments));
     }
 
     /**
@@ -469,7 +469,7 @@ public class TypeBuilder {
         if (arguments == null) {
             throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
         }
-        return method(Collections.<Type> emptyList(), name, arguments);
+        return method(Collections.emptyList(), name, arguments);
     }
 
     /**

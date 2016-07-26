@@ -63,7 +63,7 @@ public class ExecutionContext {
             ExecutionPhase phase,
             Map<String, String> arguments) {
         this(batchId, flowId, executionId, phase,
-                arguments, Collections.<String, String>emptyMap());
+                arguments, Collections.emptyMap());
     }
 
     /**
@@ -85,7 +85,7 @@ public class ExecutionContext {
             Map<String, String> arguments,
             Map<String, String> environmentVariables) {
         this(batchId, flowId, executionId, phase,
-                arguments, environmentVariables, Collections.<String, Blob>emptyMap());
+                arguments, environmentVariables, Collections.emptyMap());
     }
 
     /**

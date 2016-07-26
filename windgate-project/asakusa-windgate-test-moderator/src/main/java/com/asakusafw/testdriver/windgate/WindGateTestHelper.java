@@ -153,7 +153,7 @@ public final class WindGateTestHelper {
     private static DriverScript createDummyDriverScript() {
         return new DriverScript(
                 DUMMY_RESOURCE_NAME,
-                Collections.<String, String>emptyMap());
+                Collections.emptyMap());
     }
 
     /**

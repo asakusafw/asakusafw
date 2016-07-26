@@ -33,12 +33,9 @@ import com.asakusafw.runtime.io.ModelInput;
  */
 public final class DirectIo {
 
-    static final ThreadLocal<DirectIoDelegate> DELEGATE = new ThreadLocal<DirectIoDelegate>() {
-        @Override
-        protected DirectIoDelegate initialValue() {
-            throw new IllegalStateException("Direct I/O API is not yet initialized");
-        }
-    };
+    static final ThreadLocal<DirectIoDelegate> DELEGATE = ThreadLocal.withInitial(() -> {
+        throw new IllegalStateException("Direct I/O API is not yet initialized");
+    });
 
     private DirectIo() {
         return;

@@ -76,7 +76,7 @@ public class JdbcSupportEmitterTest extends GeneratorTesterRoot {
 
         assertThat(support.isSupported(list("VALUE")), is(true));
         assertThat(support.isSupported(list("VALUE", "VALUE")), is(false));
-        assertThat(support.isSupported(JdbcSupportEmitterTest.<String>list()), is(false));
+        assertThat(support.isSupported(JdbcSupportEmitterTest.list()), is(false));
         assertThat(support.isSupported(list("INVALID")), is(false));
         assertThat(support.isSupported(list("VALUE", "INVALID")), is(false));
 

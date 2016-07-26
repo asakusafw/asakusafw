@@ -180,7 +180,7 @@ public class ConcreteModelEmitter {
                     .toAttributes(),
                 context.resolve(void.class),
                 f.newSimpleName("reset"), //$NON-NLS-1$
-                Collections.<FormalParameterDeclaration>emptyList(),
+                Collections.emptyList(),
                 statements);
     }
 
@@ -244,7 +244,7 @@ public class ConcreteModelEmitter {
                 attributes,
                 context.getValueType(property),
                 context.getValueGetterName(property),
-                Collections.<FormalParameterDeclaration>emptyList(),
+                Collections.emptyList(),
                 Collections.singletonList(new ExpressionBuilder(f, f.newThis())
                     .field(context.getFieldName(property))
                     .method("get") //$NON-NLS-1$
@@ -299,7 +299,7 @@ public class ConcreteModelEmitter {
                 attributes,
                 context.getFieldType(property),
                 context.getOptionGetterName(property),
-                Collections.<FormalParameterDeclaration>emptyList(),
+                Collections.emptyList(),
                 Collections.singletonList(new ExpressionBuilder(f, f.newThis())
                     .field(context.getFieldName(property))
                     .toReturnStatement()));

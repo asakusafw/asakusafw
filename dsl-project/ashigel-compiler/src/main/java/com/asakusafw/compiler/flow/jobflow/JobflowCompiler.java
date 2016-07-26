@@ -254,7 +254,7 @@ public class JobflowCompiler {
         assert samples != null;
         for (K sample : samples) {
             if (map.containsKey(sample) == false) {
-                map.put(sample, Collections.<V>emptyList());
+                map.put(sample, Collections.emptyList());
             }
         }
     }

@@ -79,7 +79,7 @@ public class TableInfo {
         this.rowFormat = rowFormat;
         this.storageFormat = storageFormat;
         this.properties = properties == null || properties.isEmpty()
-                ? Collections.<String, String>emptyMap()
+                ? Collections.emptyMap()
                 : Collections.unmodifiableMap(new LinkedHashMap<>(properties));
     }
 

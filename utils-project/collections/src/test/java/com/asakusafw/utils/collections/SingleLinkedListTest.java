@@ -24,6 +24,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -285,14 +286,14 @@ public class SingleLinkedListTest {
     @Test
     public void equals() {
         {
-            SingleLinkedList<?> a = new SingleLinkedList<>(Arrays.<String>asList());
-            SingleLinkedList<?> b = new SingleLinkedList<>(Arrays.<String>asList());
+            SingleLinkedList<?> a = new SingleLinkedList<>(Collections.emptyList());
+            SingleLinkedList<?> b = new SingleLinkedList<>(Collections.emptyList());
             assertTrue(a.equals(b));
             assertTrue(b.equals(a));
         }
         {
             SingleLinkedList<?> a = new SingleLinkedList<>(Arrays.asList("a"));
-            SingleLinkedList<?> b = new SingleLinkedList<>(Arrays.<String>asList());
+            SingleLinkedList<?> b = new SingleLinkedList<>(Collections.emptyList());
             assertFalse(a.equals(b));
             assertFalse(b.equals(a));
         }

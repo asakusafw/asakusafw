@@ -24,12 +24,7 @@ import java.util.Calendar;
  */
 public final class DateUtil {
 
-    private static final ThreadLocal<Calendar> CALENDAR_CACHE = new ThreadLocal<Calendar>() {
-        @Override
-        protected Calendar initialValue() {
-            return Calendar.getInstance();
-        }
-    };
+    private static final ThreadLocal<Calendar> CALENDAR_CACHE = ThreadLocal.withInitial(Calendar::getInstance);
 
     private static final int DAYS_YEAR = 365;
 

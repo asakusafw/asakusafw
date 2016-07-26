@@ -51,7 +51,7 @@ public class StageOutput {
             Class<?> keyClass,
             Class<?> valueClass,
             Class<? extends OutputFormat> formatClass) {
-        this(name, keyClass, valueClass, formatClass, Collections.<String, String>emptyMap());
+        this(name, keyClass, valueClass, formatClass, Collections.emptyMap());
     }
 
     /**

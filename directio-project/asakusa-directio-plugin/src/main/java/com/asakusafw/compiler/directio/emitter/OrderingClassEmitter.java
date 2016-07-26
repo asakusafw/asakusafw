@@ -30,12 +30,10 @@ import com.asakusafw.compiler.flow.DataClass;
 import com.asakusafw.compiler.flow.FlowCompilingEnvironment;
 import com.asakusafw.runtime.io.util.InvertOrder;
 import com.asakusafw.runtime.stage.directio.DirectOutputOrder;
-import com.asakusafw.utils.java.model.syntax.Comment;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
 import com.asakusafw.utils.java.model.syntax.ConstructorDeclaration;
 import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.FieldDeclaration;
-import com.asakusafw.utils.java.model.syntax.FormalParameterDeclaration;
 import com.asakusafw.utils.java.model.syntax.Javadoc;
 import com.asakusafw.utils.java.model.syntax.MethodDeclaration;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
@@ -46,7 +44,6 @@ import com.asakusafw.utils.java.model.syntax.Statement;
 import com.asakusafw.utils.java.model.syntax.Type;
 import com.asakusafw.utils.java.model.syntax.TypeBodyDeclaration;
 import com.asakusafw.utils.java.model.syntax.TypeDeclaration;
-import com.asakusafw.utils.java.model.syntax.TypeParameterDeclaration;
 import com.asakusafw.utils.java.model.util.AttributeBuilder;
 import com.asakusafw.utils.java.model.util.ExpressionBuilder;
 import com.asakusafw.utils.java.model.util.ImportBuilder;
@@ -173,7 +170,7 @@ public class OrderingClassEmitter {
                     importer.getPackageDeclaration(),
                     importer.toImportDeclarations(),
                     Collections.singletonList(type),
-                    Collections.<Comment>emptyList());
+                    Collections.emptyList());
         }
 
         private TypeDeclaration createType() {
@@ -190,9 +187,9 @@ public class OrderingClassEmitter {
                         .Final()
                         .toAttributes(),
                     name,
-                    Collections.<TypeParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     t(DirectOutputOrder.class),
-                    Collections.<Type>emptyList(),
+                    Collections.emptyList(),
                     members);
         }
 
@@ -254,7 +251,7 @@ public class OrderingClassEmitter {
                         .Public()
                         .toAttributes(),
                     getClassName(),
-                    Collections.<FormalParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     statements);
         }
 

@@ -130,7 +130,7 @@ public class CoreOperatorFactoryTest {
     }
 
     private Matcher<? super Set<String>> connected(String... names) {
-        return Matchers.<Set<String>>is(new HashSet<>(Arrays.asList(names)));
+        return Matchers.is(new HashSet<>(Arrays.asList(names)));
     }
 
     private Graph<String> toGraph() {

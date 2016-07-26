@@ -27,7 +27,6 @@ import javax.lang.model.type.TypeMirror;
 import com.asakusafw.compiler.common.NameGenerator;
 import com.asakusafw.compiler.common.Precondition;
 import com.asakusafw.utils.java.jsr269.bridge.Jsr269;
-import com.asakusafw.utils.java.model.syntax.Attribute;
 import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.FieldAccessExpression;
 import com.asakusafw.utils.java.model.syntax.FieldDeclaration;
@@ -184,7 +183,7 @@ public class ImplementationBuilder {
                 factory.newSimpleName(element.getSimpleName().toString()),
                 toParameters(),
                 0,
-                Collections.<Type>emptyList(),
+                Collections.emptyList(),
                 factory.newBlock(statements));
     }
 
@@ -194,7 +193,7 @@ public class ImplementationBuilder {
         for (int i = 0, n = parameters.size(); i < n; i++) {
             VariableElement var = parameters.get(i);
             results.add(factory.newFormalParameterDeclaration(
-                    Collections.<Attribute>emptyList(),
+                    Collections.emptyList(),
                     importer.resolve(converter.convert(var.asType())),
                     (i == n - 1) && element.isVarArgs(),
                     factory.newSimpleName(var.getSimpleName().toString()),

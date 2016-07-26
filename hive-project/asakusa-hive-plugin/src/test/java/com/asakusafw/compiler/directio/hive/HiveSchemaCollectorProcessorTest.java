@@ -108,7 +108,7 @@ public class HiveSchemaCollectorProcessorTest {
                 Location.fromPath("target/testing", '/'),
                 output,
                 working,
-                Collections.<File>emptyList(),
+                Collections.emptyList(),
                 HiveSchemaCollectorProcessorTest.class.getClassLoader(),
                 new FlowCompilerOptions());
         return info.getOutputDirectory();

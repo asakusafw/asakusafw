@@ -40,7 +40,7 @@ public class SourcesTest {
      */
     @Test
     public void empty() throws Exception {
-        List<String> objects = dump(Sources.<String>empty());
+        List<String> objects = dump(Sources.empty());
         assertThat(objects, hasSize(0));
     }
 
@@ -60,7 +60,7 @@ public class SourcesTest {
      */
     @Test
     public void wrap_empty() throws Exception {
-        List<String> objects = dump(Sources.wrap(SourcesTest.<String>iter()));
+        List<String> objects = dump(Sources.wrap(SourcesTest.iter()));
         assertThat(objects, hasSize(0));
     }
 

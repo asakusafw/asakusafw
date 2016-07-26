@@ -112,8 +112,7 @@ public class OperatorCompilerTest extends OperatorCompilerTestRoot {
         assertThat(decl.getDeclaring().getName(), is("com.example.Simple"));
         assertThat(decl.getImplementing().getName(), is("com.example.SimpleImpl"));
         assertThat(decl.getName(), is("example"));
-        assertThat(decl.getParameterTypes(), is((Object) Arrays.<Object>asList(
-                String.class, int.class)));
+        assertThat(decl.getParameterTypes(), is((Object) Arrays.asList(String.class, int.class)));
 
         Graph<String> graph = toGraph(in);
         assertThat(graph.getConnected("in"), isJust(desc.getName()));

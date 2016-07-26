@@ -31,7 +31,6 @@ import com.asakusafw.compiler.flow.FlowCompilingEnvironment;
 import com.asakusafw.runtime.flow.join.JoinResource;
 import com.asakusafw.runtime.flow.join.LookUpKey;
 import com.asakusafw.utils.java.model.syntax.ClassDeclaration;
-import com.asakusafw.utils.java.model.syntax.Comment;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
 import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.FormalParameterDeclaration;
@@ -40,9 +39,7 @@ import com.asakusafw.utils.java.model.syntax.ModelFactory;
 import com.asakusafw.utils.java.model.syntax.Name;
 import com.asakusafw.utils.java.model.syntax.SimpleName;
 import com.asakusafw.utils.java.model.syntax.Statement;
-import com.asakusafw.utils.java.model.syntax.Type;
 import com.asakusafw.utils.java.model.syntax.TypeBodyDeclaration;
-import com.asakusafw.utils.java.model.syntax.TypeParameterDeclaration;
 import com.asakusafw.utils.java.model.util.AttributeBuilder;
 import com.asakusafw.utils.java.model.util.ExpressionBuilder;
 import com.asakusafw.utils.java.model.util.ImportBuilder;
@@ -112,7 +109,7 @@ public final class JoinResourceEmitter {
                 importer.getPackageDeclaration(),
                 importer.toImportDeclarations(),
                 Collections.singletonList(type),
-                Collections.<Comment>emptyList());
+                Collections.emptyList());
     }
 
     private ClassDeclaration createType() {
@@ -136,7 +133,7 @@ public final class JoinResourceEmitter {
                             resource.getMasterDataClass().getType(),
                             resource.getTransactionDataClass().getType())
                     .toType()),
-                Collections.<Type>emptyList(),
+                Collections.emptyList(),
                 members);
     }
 
@@ -158,7 +155,7 @@ public final class JoinResourceEmitter {
                     .toAttributes(),
                 importer.toType(String.class),
                 factory.newSimpleName("getCacheName"), //$NON-NLS-1$
-                Collections.<FormalParameterDeclaration>emptyList(),
+                Collections.emptyList(),
                 Collections.singletonList(new ExpressionBuilder(factory, result)
                     .toReturnStatement()));
     }
@@ -174,7 +171,7 @@ public final class JoinResourceEmitter {
                     .toAttributes(),
                 importer.toType(resource.getMasterDataClass().getType()),
                 factory.newSimpleName("createValueObject"), //$NON-NLS-1$
-                Collections.<FormalParameterDeclaration>emptyList(),
+                Collections.emptyList(),
                 Collections.singletonList(new ExpressionBuilder(factory, result)
                     .toReturnStatement()));
     }
@@ -215,7 +212,7 @@ public final class JoinResourceEmitter {
                 new AttributeBuilder(factory)
                     .Protected()
                     .toAttributes(),
-                Collections.<TypeParameterDeclaration>emptyList(),
+                Collections.emptyList(),
                 importer.toType(LookUpKey.class),
                 factory.newSimpleName(methodName),
                 Arrays.asList(new FormalParameterDeclaration[] {

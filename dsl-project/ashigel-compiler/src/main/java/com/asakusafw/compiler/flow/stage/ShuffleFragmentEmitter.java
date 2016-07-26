@@ -35,7 +35,6 @@ import com.asakusafw.compiler.flow.plan.StageBlock;
 import com.asakusafw.compiler.flow.stage.ShuffleModel.Segment;
 import com.asakusafw.runtime.core.Result;
 import com.asakusafw.runtime.flow.ResultOutput;
-import com.asakusafw.utils.java.model.syntax.Comment;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
 import com.asakusafw.utils.java.model.syntax.ConstructorDeclaration;
 import com.asakusafw.utils.java.model.syntax.Expression;
@@ -49,7 +48,6 @@ import com.asakusafw.utils.java.model.syntax.Statement;
 import com.asakusafw.utils.java.model.syntax.Type;
 import com.asakusafw.utils.java.model.syntax.TypeBodyDeclaration;
 import com.asakusafw.utils.java.model.syntax.TypeDeclaration;
-import com.asakusafw.utils.java.model.syntax.TypeParameterDeclaration;
 import com.asakusafw.utils.java.model.syntax.WildcardBoundKind;
 import com.asakusafw.utils.java.model.util.AttributeBuilder;
 import com.asakusafw.utils.java.model.util.ExpressionBuilder;
@@ -57,7 +55,6 @@ import com.asakusafw.utils.java.model.util.ImportBuilder;
 import com.asakusafw.utils.java.model.util.JavadocBuilder;
 import com.asakusafw.utils.java.model.util.Models;
 import com.asakusafw.utils.java.model.util.TypeBuilder;
-import com.asakusafw.vocabulary.flow.graph.FlowResourceDescription;
 import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 import com.asakusafw.vocabulary.operator.Identity;
 
@@ -270,7 +267,7 @@ public class ShuffleFragmentEmitter {
                     importer.getPackageDeclaration(),
                     importer.toImportDeclarations(),
                     Collections.singletonList(type),
-                    Collections.<Comment>emptyList());
+                    Collections.emptyList());
         }
 
         private TypeDeclaration createType() {
@@ -292,7 +289,7 @@ public class ShuffleFragmentEmitter {
                         .Final()
                         .toAttributes(),
                     name,
-                    Collections.<TypeParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     null,
                     Collections.singletonList(importer.resolve(
                             factory.newParameterizedType(
@@ -451,7 +448,7 @@ public class ShuffleFragmentEmitter {
                     names,
                     description,
                     input,
-                    Collections.<FlowResourceDescription, Expression>emptyMap());
+                    Collections.emptyMap());
         }
 
         private Javadoc createJavadoc() {

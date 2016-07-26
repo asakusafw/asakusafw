@@ -552,7 +552,7 @@ public class FlowDriverOutputTest {
         private final List<? extends TestRule> extras;
 
         MockVerifyRuleFactory(List<? extends TestRule> extraRules, String... fail) {
-            this.extras = extraRules == null ? Collections.<TestRule>emptyList() : extraRules;
+            this.extras = extraRules == null ? Collections.emptyList() : extraRules;
             this.fail = new HashSet<>(Arrays.asList(fail));
         }
 

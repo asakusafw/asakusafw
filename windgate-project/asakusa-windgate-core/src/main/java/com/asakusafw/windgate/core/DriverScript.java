@@ -51,7 +51,7 @@ public class DriverScript {
      * @throws IllegalArgumentException if any parameter is {@code null}
      */
     public DriverScript(String resource, Map<String, String> configuration) {
-        this(resource, configuration, Collections.<String>emptySet());
+        this(resource, configuration, Collections.emptySet());
     }
 
     /**

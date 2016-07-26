@@ -224,7 +224,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         process(elem.getModifiers(), context);
         process(elem.getType(), context);
         process(elem.getName(), context);
-        processParameters(Collections.<Model> emptyList(), context);
+        processParameters(Collections.emptyList(), context);
         if (appears(elem.getDefaultExpression())) {
             context.keyword("default"); //$NON-NLS-1$
             process(elem.getDefaultExpression(), context);

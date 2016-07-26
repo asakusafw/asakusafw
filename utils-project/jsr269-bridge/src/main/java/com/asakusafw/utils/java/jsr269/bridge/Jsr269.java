@@ -36,7 +36,6 @@ import javax.lang.model.type.TypeVariable;
 import javax.lang.model.type.WildcardType;
 import javax.tools.JavaFileObject;
 
-import com.asakusafw.utils.java.model.syntax.Annotation;
 import com.asakusafw.utils.java.model.syntax.ArrayType;
 import com.asakusafw.utils.java.model.syntax.BasicType;
 import com.asakusafw.utils.java.model.syntax.BasicTypeKind;
@@ -111,7 +110,7 @@ public class Jsr269 {
         }
         return factory.newPackageDeclaration(
                 null,
-                Collections.<Annotation>emptyList(),
+                Collections.emptyList(),
                 convert(packageElement.getQualifiedName()));
     }
 

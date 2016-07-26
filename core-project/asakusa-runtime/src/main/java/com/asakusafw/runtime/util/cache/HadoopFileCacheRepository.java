@@ -56,12 +56,7 @@ public class HadoopFileCacheRepository implements FileCacheRepository {
 
     private final boolean checkBeforeDelete;
 
-    private final ThreadLocal<byte[]> byteBuffers = new ThreadLocal<byte[]>() {
-        @Override
-        protected byte[] initialValue() {
-            return new byte[1024];
-        }
-    };
+    private final ThreadLocal<byte[]> byteBuffers = ThreadLocal.withInitial(() -> new byte[1024]);
 
     /**
      * Creates a new instance.

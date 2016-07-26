@@ -19,6 +19,7 @@ package com.asakusafw.runtime.util;
  * An abstract super interface for comparing byte arrays.
  * @since 0.8.0
  */
+@FunctionalInterface
 public interface ByteArrayComparator {
 
     /**
@@ -31,9 +32,11 @@ public interface ByteArrayComparator {
      * @param l2 the length in the second byte array (in bytes)
      * @return {@code true} if the each byte array range is equivalent, otherwise {@code false}
      */
-    boolean equals(
+    default boolean equals(
             byte[] b1, int s1, int l1,
-            byte[] b2, int s2, int l2);
+            byte[] b2, int s2, int l2) {
+        return compare(b1, s1, l1, b2, s2, l2) == 0;
+    }
 
     /**
      * Compares the two byte array regions (as unsigned bytes), and returns their sign value.

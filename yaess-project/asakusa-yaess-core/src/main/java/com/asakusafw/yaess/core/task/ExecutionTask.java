@@ -182,7 +182,7 @@ public class ExecutionTask {
             YaessProfile profile,
             Properties script,
             Map<String, String> batchArguments) throws InterruptedException, IOException {
-        return load(profile, script, batchArguments, Collections.<String, String>emptyMap());
+        return load(profile, script, batchArguments, Collections.emptyMap());
     }
 
     /**
@@ -202,7 +202,7 @@ public class ExecutionTask {
             Properties script,
             Map<String, String> batchArguments,
             Map<String, String> yaessArguments) throws InterruptedException, IOException {
-        return load(profile, script, batchArguments, yaessArguments, Collections.<String, Blob>emptyMap());
+        return load(profile, script, batchArguments, yaessArguments, Collections.emptyMap());
     }
 
     /**

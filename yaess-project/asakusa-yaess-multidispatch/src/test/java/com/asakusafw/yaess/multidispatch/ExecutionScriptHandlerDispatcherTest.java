@@ -519,7 +519,7 @@ public class ExecutionScriptHandlerDispatcherTest {
                 conf,
                 new ProfileContext(
                         getClass().getClassLoader(),
-                        new VariableResolver(Collections.<String, String>emptyMap())));
+                        new VariableResolver(Collections.emptyMap())));
         return profile.newInstance();
     }
 
@@ -557,17 +557,17 @@ public class ExecutionScriptHandlerDispatcherTest {
     }
 
     private ExecutionContext context(String flowId, ExecutionPhase phase) {
-        return new ExecutionContext(BATCH_ID, flowId, "exec", phase, Collections.<String, String>emptyMap());
+        return new ExecutionContext(BATCH_ID, flowId, "exec", phase, Collections.emptyMap());
     }
 
     CommandScript script(String scriptId) {
         CommandScript script = new CommandScript(
                 scriptId,
-                Collections.<String>emptySet(),
+                Collections.emptySet(),
                 "profile",
                 "module",
                 Collections.singletonList("hello"),
-                Collections.<String, String>emptyMap());
+                Collections.emptyMap());
         return script;
     }
 }

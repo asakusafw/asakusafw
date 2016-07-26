@@ -65,6 +65,6 @@ public final class TraceSettingSerializer {
         if (serializedSettings == null) {
             throw new IllegalArgumentException("serializedSettings must not be null"); //$NON-NLS-1$
         }
-        return GSON.<Collection<TraceSetting>>fromJson(serializedSettings, TYPE);
+        return GSON.fromJson(serializedSettings, TYPE);
     }
 }

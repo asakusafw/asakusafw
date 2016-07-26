@@ -204,7 +204,7 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
         return new Slot(
                 name,
                 output.getDescription().getDataType(),
-                Collections.<String>emptyList(),
+                Collections.emptyList(),
                 output.getSources(),
                 TemporaryOutputFormat.class);
     }

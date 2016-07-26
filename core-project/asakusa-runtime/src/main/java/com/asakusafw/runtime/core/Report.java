@@ -48,13 +48,9 @@ public final class Report {
      */
     public static final String K_DELEGATE_CLASS = "com.asakusafw.runtime.core.Report.Delegate"; //$NON-NLS-1$
 
-    private static final ThreadLocal<Delegate> DELEGATE = new ThreadLocal<Delegate>() {
-        @Override
-        protected Delegate initialValue() {
-            throw new FailedException(
-                    "Report is not initialized (report plugin may be not registered)");
-        }
-    };
+    private static final ThreadLocal<Delegate> DELEGATE = ThreadLocal.withInitial(() -> {
+        throw new FailedException("Report is not initialized (report plugin may be not registered)");
+    });
 
     /**
      * Sets a custom implementation for the current thread.

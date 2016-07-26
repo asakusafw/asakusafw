@@ -25,12 +25,7 @@ import java.io.UTFDataFormatException;
  */
 final class DataIoUtils {
 
-    private static final ThreadLocal<StringBuffer> STRING_BUFFER_POOL = new ThreadLocal<StringBuffer>() {
-        @Override
-        protected StringBuffer initialValue() {
-            return new StringBuffer();
-        }
-    };
+    private static final ThreadLocal<StringBuilder> STRING_BUFFER_POOL = ThreadLocal.withInitial(StringBuilder::new);
 
     private static final int MASK_BYTE = ~(-1 << Byte.SIZE); // 1111_1111
 
@@ -69,7 +64,7 @@ final class DataIoUtils {
         if (size == 0) {
             return ""; //$NON-NLS-1$
         }
-        StringBuffer buf = STRING_BUFFER_POOL.get();
+        StringBuilder buf = STRING_BUFFER_POOL.get();
         buf.setLength(0);
         while (size > 0) {
             int b0 = read(input);

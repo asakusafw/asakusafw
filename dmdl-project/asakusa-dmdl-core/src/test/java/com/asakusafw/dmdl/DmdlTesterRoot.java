@@ -27,6 +27,8 @@ import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
@@ -49,7 +51,6 @@ import com.asakusafw.dmdl.semantics.Type;
 import com.asakusafw.dmdl.semantics.type.BasicType;
 import com.asakusafw.dmdl.spi.AttributeDriver;
 import com.asakusafw.dmdl.spi.TypeDriver;
-import com.asakusafw.utils.collections.Lists;
 
 /**
  * Testing utilities for this project.
@@ -65,7 +66,7 @@ public abstract class DmdlTesterRoot {
     /**
      * {@link TypeDriver}s.
      */
-    protected final List<TypeDriver> typeDrivers = Lists.<TypeDriver>of(new BasicTypeDriver());
+    protected final List<TypeDriver> typeDrivers = Stream.of(new BasicTypeDriver()).collect(Collectors.toList());
 
     /**
      * {@link AttributeDriver}s.

@@ -75,7 +75,7 @@ final class FlowDriverPortTestHelper {
 
     static <T> void verify(DataModelSourceFactory target, DataModelDefinition<T> def, Collection<T> expected) {
         try (DataModelSource source = target.createSource(def, CONTEXT)) {
-            Set<Object> set = new HashSet<Object>(expected);
+            Set<Object> set = new HashSet<>(expected);
             while (true) {
                 DataModelReflection next = source.next();
                 if (next == null) {

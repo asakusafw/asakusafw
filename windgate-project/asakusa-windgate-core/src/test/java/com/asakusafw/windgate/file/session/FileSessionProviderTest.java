@@ -272,7 +272,7 @@ public class FileSessionProviderTest {
         provider.configure(new SessionProfile(
                 FileSessionProvider.class,
                 ProfileContext.system(FileSessionProvider.class.getClassLoader()),
-                Collections.<String, String>emptyMap()));
+                Collections.emptyMap()));
     }
 
     /**

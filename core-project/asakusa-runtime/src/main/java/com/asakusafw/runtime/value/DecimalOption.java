@@ -40,19 +40,9 @@ public final class DecimalOption extends ValueOption<DecimalOption> {
 
     private static final int MASK_PLUS = 0x40;
 
-    private static final ThreadLocal<DecimalBuffer> BUFFER_MAIN = new ThreadLocal<DecimalBuffer>() {
-        @Override
-        protected DecimalBuffer initialValue() {
-            return new DecimalBuffer();
-        }
-    };
+    private static final ThreadLocal<DecimalBuffer> BUFFER_MAIN = ThreadLocal.withInitial(DecimalBuffer::new);
 
-    private static final ThreadLocal<DecimalBuffer> BUFFER_SUB = new ThreadLocal<DecimalBuffer>() {
-        @Override
-        protected DecimalBuffer initialValue() {
-            return new DecimalBuffer();
-        }
-    };
+    private static final ThreadLocal<DecimalBuffer> BUFFER_SUB = ThreadLocal.withInitial(DecimalBuffer::new);
 
     private BigDecimal entity = BigDecimal.ZERO;
 

@@ -49,7 +49,7 @@ import com.asakusafw.yaess.core.ServiceProfile;
 public class ParallelJobSchedulerTest {
 
     private static final ExecutionContext CONTEXT = new ExecutionContext(
-            "b", "f", "e", ExecutionPhase.MAIN, Collections.<String, String>emptyMap());
+            "b", "f", "e", ExecutionPhase.MAIN, Collections.emptyMap());
 
     /**
      * Simple testing.
@@ -293,7 +293,7 @@ public class ParallelJobSchedulerTest {
     private JobScheduler create(String... keyValuePairs) throws InterruptedException, IOException {
         assert keyValuePairs != null;
         Map<String, String> conf = map(keyValuePairs);
-        ServiceProfile<JobScheduler> profile = new ServiceProfile<JobScheduler>(
+        ServiceProfile<JobScheduler> profile = new ServiceProfile<>(
                 "testing", ParallelJobScheduler.class, conf, ProfileContext.system(getClass().getClassLoader()));
         JobScheduler instance = profile.newInstance();
         return instance;

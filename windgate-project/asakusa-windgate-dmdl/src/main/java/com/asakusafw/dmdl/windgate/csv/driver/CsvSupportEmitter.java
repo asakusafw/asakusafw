@@ -45,7 +45,6 @@ import com.asakusafw.utils.java.model.syntax.ClassDeclaration;
 import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.ExpressionStatement;
 import com.asakusafw.utils.java.model.syntax.FieldDeclaration;
-import com.asakusafw.utils.java.model.syntax.FormalParameterDeclaration;
 import com.asakusafw.utils.java.model.syntax.InfixOperator;
 import com.asakusafw.utils.java.model.syntax.MethodDeclaration;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
@@ -53,7 +52,6 @@ import com.asakusafw.utils.java.model.syntax.Name;
 import com.asakusafw.utils.java.model.syntax.SimpleName;
 import com.asakusafw.utils.java.model.syntax.Statement;
 import com.asakusafw.utils.java.model.syntax.TypeBodyDeclaration;
-import com.asakusafw.utils.java.model.syntax.TypeParameterDeclaration;
 import com.asakusafw.utils.java.model.util.AttributeBuilder;
 import com.asakusafw.utils.java.model.util.ExpressionBuilder;
 import com.asakusafw.utils.java.model.util.JavadocBuilder;
@@ -212,7 +210,7 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
                         .Public()
                         .toAttributes(),
                     context.getTypeName(),
-                    Collections.<TypeParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     null,
                     Collections.singletonList(f.newParameterizedType(
                             context.resolve(DataModelStreamSupport.class),
@@ -287,7 +285,7 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
                         .toAttributes(),
                     context.resolve(CsvConfiguration.class),
                     f.newSimpleName(METHOD_CONFIG),
-                    Collections.<FormalParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     statements);
         }
 
@@ -302,7 +300,7 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
                             context.resolve(Class.class),
                             context.resolve(model.getSymbol())),
                     f.newSimpleName("getSupportedType"), //$NON-NLS-1$
-                    Collections.<FormalParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     Arrays.asList(new Statement[] {
                             new TypeBuilder(f, context.resolve(model.getSymbol()))
                                 .dotClass()
@@ -334,7 +332,7 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
                         .annotation(context.resolve(Override.class))
                         .Public()
                         .toAttributes(),
-                    Collections.<TypeParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     context.resolve(f.newParameterizedType(
                             context.resolve(DataModelReader.class),
                             context.resolve(model.getSymbol()))),
@@ -372,7 +370,7 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
                         .annotation(context.resolve(Override.class))
                         .Public()
                         .toAttributes(),
-                    Collections.<TypeParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     context.resolve(f.newParameterizedType(
                             context.resolve(DataModelWriter.class),
                             context.resolve(model.getSymbol()))),
@@ -476,7 +474,7 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
                         .annotation(context.resolve(Override.class))
                         .Public()
                         .toAttributes(),
-                    Collections.<TypeParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     context.resolve(boolean.class),
                     f.newSimpleName("readTo"), //$NON-NLS-1$
                     Arrays.asList(f.newFormalParameterDeclaration(context.resolve(model.getSymbol()), object)),
@@ -531,7 +529,7 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
                         .annotation(context.resolve(Override.class))
                         .Public()
                         .toAttributes(),
-                    Collections.<TypeParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     context.resolve(void.class),
                     f.newSimpleName("write"), //$NON-NLS-1$
                     Arrays.asList(f.newFormalParameterDeclaration(context.resolve(model.getSymbol()), object)),
@@ -545,10 +543,10 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
                         .annotation(context.resolve(Override.class))
                         .Public()
                         .toAttributes(),
-                    Collections.<TypeParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     context.resolve(void.class),
                     f.newSimpleName("flush"), //$NON-NLS-1$
-                    Collections.<FormalParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     0,
                     Arrays.asList(context.resolve(IOException.class)),
                     f.newBlock(new ExpressionBuilder(f, emitter)

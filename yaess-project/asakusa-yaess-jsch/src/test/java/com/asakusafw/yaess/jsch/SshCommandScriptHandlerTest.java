@@ -204,7 +204,7 @@ public class SshCommandScriptHandlerTest extends SshScriptHandlerTestRoot {
 
         Map<String, String> conf = map();
         conf.put("command.0", target);
-        ServiceProfile<CommandScriptHandler> profile = new ServiceProfile<CommandScriptHandler>(
+        ServiceProfile<CommandScriptHandler> profile = new ServiceProfile<>(
                 "command.default", SshCommandScriptHandler.class, conf, ProfileContext.system(getClass().getClassLoader()));
         profile.newInstance();
     }
@@ -222,7 +222,7 @@ public class SshCommandScriptHandlerTest extends SshScriptHandlerTestRoot {
         conf.put(JschProcessExecutor.KEY_USER, System.getProperty("user.name"));
         conf.put(JschProcessExecutor.KEY_HOST, "localhost");
         conf.put(JschProcessExecutor.KEY_PRIVATE_KEY, privateKey.getAbsolutePath() + "__INVALID__");
-        ServiceProfile<CommandScriptHandler> profile = new ServiceProfile<CommandScriptHandler>(
+        ServiceProfile<CommandScriptHandler> profile = new ServiceProfile<>(
                 "command.default", SshCommandScriptHandler.class, conf, ProfileContext.system(getClass().getClassLoader()));
         profile.newInstance();
     }
@@ -353,7 +353,7 @@ public class SshCommandScriptHandlerTest extends SshScriptHandlerTestRoot {
         conf.put(JschProcessExecutor.KEY_USER, System.getProperty("user.name"));
         conf.put(JschProcessExecutor.KEY_HOST, "localhost");
         conf.put(JschProcessExecutor.KEY_PRIVATE_KEY, privateKey.getAbsolutePath());
-        ServiceProfile<CommandScriptHandler> profile = new ServiceProfile<CommandScriptHandler>(
+        ServiceProfile<CommandScriptHandler> profile = new ServiceProfile<>(
                 "command.default", SshCommandScriptHandler.class, conf, ProfileContext.system(getClass().getClassLoader()));
         try {
             return profile.newInstance();

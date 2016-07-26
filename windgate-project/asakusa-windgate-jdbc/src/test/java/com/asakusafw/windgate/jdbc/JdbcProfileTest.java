@@ -231,7 +231,7 @@ public class JdbcProfileTest {
     }
 
     private ResourceProfile toProfile(Map<String, String> map) {
-        return toProfile(map, Collections.<String, String>emptyMap());
+        return toProfile(map, Collections.emptyMap());
     }
 
     private ResourceProfile toProfile(Map<String, String> map, Map<String, String> params) {

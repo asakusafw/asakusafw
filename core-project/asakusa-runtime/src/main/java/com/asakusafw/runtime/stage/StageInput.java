@@ -49,7 +49,7 @@ public class StageInput {
             String pathString,
             Class<? extends InputFormat> formatClass,
             Class<? extends Mapper> mapperClass) {
-        this(pathString, formatClass, mapperClass, Collections.<String, String>emptyMap());
+        this(pathString, formatClass, mapperClass, Collections.emptyMap());
     }
 
     /**

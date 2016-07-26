@@ -645,7 +645,7 @@ public class JdbcResourceMirrorTest {
     }
 
     private GateScript script(ProcessScript<?>... processes) {
-        return new GateScript("testing", Arrays.<ProcessScript<?>>asList(processes));
+        return new GateScript("testing", Arrays.asList(processes));
     }
 
     private ProcessScript<Pair> process(DriverScript source, DriverScript drain) {
@@ -659,7 +659,7 @@ public class JdbcResourceMirrorTest {
     }
 
     private DriverScript dummy() {
-        return new DriverScript("dummy", Collections.<String, String>emptyMap());
+        return new DriverScript("dummy", Collections.emptyMap());
     }
 
     private JdbcProfile profile() {

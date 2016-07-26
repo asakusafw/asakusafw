@@ -34,26 +34,14 @@ import com.asakusafw.runtime.value.DateUtil;
  */
 public final class TemporalUtil {
 
-    private static final ThreadLocal<DateFormat> DATE_FORMAT_CACHE = new ThreadLocal<DateFormat>() {
-        @Override
-        protected DateFormat initialValue() {
-            return new SimpleDateFormat("yyyy-MM-dd"); //$NON-NLS-1$
-        }
-    };
+    private static final ThreadLocal<DateFormat> DATE_FORMAT_CACHE = ThreadLocal
+            .withInitial(() -> new SimpleDateFormat("yyyy-MM-dd")); //$NON-NLS-1$;
 
-    private static final ThreadLocal<DateFormat> TIMESTAMP_FORMAT_CACHE = new ThreadLocal<DateFormat>() {
-        @Override
-        protected DateFormat initialValue() {
-            return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //$NON-NLS-1$
-        }
-    };
+    private static final ThreadLocal<DateFormat> TIMESTAMP_FORMAT_CACHE = ThreadLocal
+            .withInitial(() -> new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")); //$NON-NLS-1$;
 
-    private static final ThreadLocal<StringBuilder> STRING_BUILDER_CACHE = new ThreadLocal<StringBuilder>() {
-        @Override
-        protected StringBuilder initialValue() {
-            return new StringBuilder(32);
-        }
-    };
+    private static final ThreadLocal<StringBuilder> STRING_BUILDER_CACHE = ThreadLocal
+            .withInitial(() -> new StringBuilder(32));
 
     private static final char DATE_SEGMENT_SEPARATOR = '-';
 

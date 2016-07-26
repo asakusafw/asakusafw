@@ -600,7 +600,7 @@ public class JobflowModel extends Compilable.Trait<CompiledJobflow> {
          * @throws IllegalArgumentException if the parameters are {@code null}
          */
         public Import(InputDescription description, ExternalIoDescriptionProcessor processor) {
-            super(Collections.<FlowBlock.Output>emptySet());
+            super(Collections.emptySet());
             Precondition.checkMustNotBeNull(description, "description"); //$NON-NLS-1$
             Precondition.checkMustNotBeNull(processor, "processor"); //$NON-NLS-1$
             this.description = description;

@@ -37,7 +37,7 @@ public class ExecutionScriptHandlerBaseTest {
     @Test
     public void simple() throws Exception {
         Map<String, String> conf = new HashMap<>();
-        ServiceProfile<CommandScriptHandler> profile = new ServiceProfile<CommandScriptHandler>(
+        ServiceProfile<CommandScriptHandler> profile = new ServiceProfile<>(
                 "command.*",
                 MockCommandScriptHandler.class,
                 conf,
@@ -58,7 +58,7 @@ public class ExecutionScriptHandlerBaseTest {
         Map<String, String> conf = new HashMap<>();
         conf.put(ExecutionScriptHandler.KEY_ENV_PREFIX + "a", "A");
         conf.put(ExecutionScriptHandler.KEY_ENV_PREFIX + "b", "B");
-        ServiceProfile<CommandScriptHandler> profile = new ServiceProfile<CommandScriptHandler>(
+        ServiceProfile<CommandScriptHandler> profile = new ServiceProfile<>(
                 "command.*",
                 MockCommandScriptHandler.class,
                 conf,
@@ -79,7 +79,7 @@ public class ExecutionScriptHandlerBaseTest {
     public void resource() throws Exception {
         Map<String, String> conf = new HashMap<>();
         conf.put(ExecutionScriptHandler.KEY_RESOURCE, "testing");
-        ServiceProfile<CommandScriptHandler> profile = new ServiceProfile<CommandScriptHandler>(
+        ServiceProfile<CommandScriptHandler> profile = new ServiceProfile<>(
                 "command.*",
                 MockCommandScriptHandler.class,
                 conf,
@@ -102,7 +102,7 @@ public class ExecutionScriptHandlerBaseTest {
 
         Map<String, String> entries = new HashMap<>();
         entries.put("VAR", "foo");
-        ServiceProfile<CommandScriptHandler> profile = new ServiceProfile<CommandScriptHandler>(
+        ServiceProfile<CommandScriptHandler> profile = new ServiceProfile<>(
                 "command.*",
                 MockCommandScriptHandler.class,
                 conf,
@@ -126,7 +126,7 @@ public class ExecutionScriptHandlerBaseTest {
         conf.put(ExecutionScriptHandler.KEY_ENV_PREFIX + "hoge", "${__INVALID__}");
         conf.put(ExecutionScriptHandler.KEY_RESOURCE, "alt");
         Map<String, String> entries = new HashMap<>();
-        ServiceProfile<CommandScriptHandler> profile = new ServiceProfile<CommandScriptHandler>(
+        ServiceProfile<CommandScriptHandler> profile = new ServiceProfile<>(
                 "command.*",
                 MockCommandScriptHandler.class,
                 conf,
@@ -136,6 +136,6 @@ public class ExecutionScriptHandlerBaseTest {
     }
 
     private ExecutionContext context() {
-        return new ExecutionContext("b", "f", "e", ExecutionPhase.MAIN, Collections.<String, String>emptyMap());
+        return new ExecutionContext("b", "f", "e", ExecutionPhase.MAIN, Collections.emptyMap());
     }
 }

@@ -52,11 +52,9 @@ import com.asakusafw.runtime.stage.output.BridgeOutputFormat;
 import com.asakusafw.runtime.trace.TraceLocation;
 import com.asakusafw.utils.java.model.syntax.ArrayType;
 import com.asakusafw.utils.java.model.syntax.ClassDeclaration;
-import com.asakusafw.utils.java.model.syntax.Comment;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
 import com.asakusafw.utils.java.model.syntax.ConstructorDeclaration;
 import com.asakusafw.utils.java.model.syntax.Expression;
-import com.asakusafw.utils.java.model.syntax.FormalParameterDeclaration;
 import com.asakusafw.utils.java.model.syntax.Javadoc;
 import com.asakusafw.utils.java.model.syntax.MethodDeclaration;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
@@ -67,7 +65,6 @@ import com.asakusafw.utils.java.model.syntax.Statement;
 import com.asakusafw.utils.java.model.syntax.Type;
 import com.asakusafw.utils.java.model.syntax.TypeBodyDeclaration;
 import com.asakusafw.utils.java.model.syntax.TypeDeclaration;
-import com.asakusafw.utils.java.model.syntax.TypeParameterDeclaration;
 import com.asakusafw.utils.java.model.util.AttributeBuilder;
 import com.asakusafw.utils.java.model.util.ExpressionBuilder;
 import com.asakusafw.utils.java.model.util.ImportBuilder;
@@ -373,7 +370,7 @@ public class StageEmitter {
                     .Public()
                     .toAttributes(),
                 className,
-                Collections.<FormalParameterDeclaration>emptyList(),
+                Collections.emptyList(),
                 Collections.singletonList(ctorChain));
         ClassDeclaration typeDecl = f.newClassDeclaration(
                 new JavadocBuilder(f)
@@ -385,13 +382,13 @@ public class StageEmitter {
                     .toAttributes(),
                 className,
                 importer.resolve(baseClass),
-                Collections.<Type>emptyList(),
+                Collections.emptyList(),
                 Collections.singletonList(ctorDecl));
         CompilationUnit source = f.newCompilationUnit(
                 importer.getPackageDeclaration(),
                 importer.toImportDeclarations(),
                 Collections.singletonList(typeDecl),
-                Collections.<Comment>emptyList());
+                Collections.emptyList());
         environment.emit(source);
         Name packageName = source.getPackageDeclaration().getName();
         SimpleName simpleName = source.getTypeDeclarations().get(0).getName();
@@ -521,7 +518,7 @@ public class StageEmitter {
                     importer.getPackageDeclaration(),
                     importer.toImportDeclarations(),
                     Collections.singletonList(type),
-                    Collections.<Comment>emptyList());
+                    Collections.emptyList());
         }
 
         private TypeDeclaration createType() {
@@ -543,9 +540,9 @@ public class StageEmitter {
                         .Final()
                         .toAttributes(),
                     name,
-                    Collections.<TypeParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     t(AbstractStageClient.class),
-                    Collections.<Type>emptyList(),
+                    Collections.emptyList(),
                     members);
         }
 
@@ -631,7 +628,7 @@ public class StageEmitter {
                         .toAttributes(),
                     t(List.class, t(StageInput.class)),
                     factory.newSimpleName(AbstractStageClient.METHOD_STAGE_INPUTS),
-                    Collections.<FormalParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     statements);
         }
 
@@ -705,7 +702,7 @@ public class StageEmitter {
                         .toAttributes(),
                     t(List.class, t(StageOutput.class)),
                     factory.newSimpleName(AbstractStageClient.METHOD_STAGE_OUTPUTS),
-                    Collections.<FormalParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     statements);
         }
 
@@ -727,7 +724,7 @@ public class StageEmitter {
                         .toAttributes(),
                     returnType,
                     factory.newSimpleName(methodName),
-                    Collections.<FormalParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     Collections.singletonList(factory.newReturnStatement(expression)));
         }
 

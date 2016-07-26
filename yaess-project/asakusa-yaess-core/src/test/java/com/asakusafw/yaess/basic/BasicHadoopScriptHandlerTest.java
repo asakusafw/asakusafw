@@ -407,7 +407,7 @@ public class BasicHadoopScriptHandlerTest extends BasicScriptHandlerTestRoot {
 
     private HadoopScriptHandler handler(String... keyValuePairs) {
         Map<String, String> conf = map(keyValuePairs);
-        ServiceProfile<HadoopScriptHandler> profile = new ServiceProfile<HadoopScriptHandler>(
+        ServiceProfile<HadoopScriptHandler> profile = new ServiceProfile<>(
                 "hadoop", BasicHadoopScriptHandler.class, conf, ProfileContext.system(getClass().getClassLoader()));
         try {
             return profile.newInstance();

@@ -37,7 +37,6 @@ import com.asakusafw.runtime.flow.Rendezvous;
 import com.asakusafw.runtime.flow.SegmentedCombiner;
 import com.asakusafw.runtime.flow.SegmentedReducer;
 import com.asakusafw.runtime.flow.SegmentedWritable;
-import com.asakusafw.utils.java.model.syntax.Comment;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
 import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.FieldDeclaration;
@@ -50,7 +49,6 @@ import com.asakusafw.utils.java.model.syntax.Statement;
 import com.asakusafw.utils.java.model.syntax.Type;
 import com.asakusafw.utils.java.model.syntax.TypeBodyDeclaration;
 import com.asakusafw.utils.java.model.syntax.TypeDeclaration;
-import com.asakusafw.utils.java.model.syntax.TypeParameterDeclaration;
 import com.asakusafw.utils.java.model.util.AttributeBuilder;
 import com.asakusafw.utils.java.model.util.ExpressionBuilder;
 import com.asakusafw.utils.java.model.util.ImportBuilder;
@@ -159,7 +157,7 @@ public class CombinerEmitter {
                     importer.getPackageDeclaration(),
                     importer.toImportDeclarations(),
                     Collections.singletonList(type),
-                    Collections.<Comment>emptyList());
+                    Collections.emptyList());
         }
 
         private TypeDeclaration createType() {
@@ -181,13 +179,13 @@ public class CombinerEmitter {
                         .Final()
                         .toAttributes(),
                     name,
-                    Collections.<TypeParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     importer.resolve(factory.newParameterizedType(
                             Models.toType(factory, SegmentedCombiner.class),
                             Arrays.asList(
                                     importer.toType(shuffle.getCompiled().getKeyTypeName()),
                                     importer.toType(shuffle.getCompiled().getValueTypeName())))),
-                    Collections.<Type>emptyList(),
+                    Collections.emptyList(),
                     members);
         }
 
@@ -276,7 +274,7 @@ public class CombinerEmitter {
                         .annotation(t(Override.class))
                         .Public()
                         .toAttributes(),
-                    Collections.<TypeParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     t(void.class),
                     factory.newSimpleName("setup"), //$NON-NLS-1$
                     Collections.singletonList(factory.newFormalParameterDeclaration(
@@ -307,7 +305,7 @@ public class CombinerEmitter {
                         .annotation(t(Override.class))
                         .Public()
                         .toAttributes(),
-                    Collections.<TypeParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     t(void.class),
                     factory.newSimpleName("cleanup"), //$NON-NLS-1$
                     Collections.singletonList(factory.newFormalParameterDeclaration(

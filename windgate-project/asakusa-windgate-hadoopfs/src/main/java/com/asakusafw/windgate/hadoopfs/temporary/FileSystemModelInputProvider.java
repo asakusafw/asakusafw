@@ -135,7 +135,7 @@ public class FileSystemModelInputProvider<T> implements ModelInputProvider<T> {
                         }
                     }
                 }
-                queue.put(Entry.<T>eof());
+                queue.put(Entry.eof());
                 return null;
             }
         });

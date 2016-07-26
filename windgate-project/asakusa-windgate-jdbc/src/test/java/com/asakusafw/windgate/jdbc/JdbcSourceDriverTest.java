@@ -83,7 +83,7 @@ public class JdbcSourceDriverTest {
             try (JdbcSourceDriver<Pair> driver = new JdbcSourceDriver<>(profile(), script, conn, new Pair())) {
                 driver.prepare();
                 List<String> values = values(driver);
-                assertThat(values, is(Arrays.<String>asList()));
+                assertThat(values, is(Collections.emptyList()));
             }
         }
     }

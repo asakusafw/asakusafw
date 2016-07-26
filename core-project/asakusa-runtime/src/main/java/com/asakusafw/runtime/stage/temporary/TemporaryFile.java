@@ -67,12 +67,7 @@ public final class TemporaryFile {
 
     private static final int MAJOR_VERSION = 1;
 
-    private static final ThreadLocal<byte[]> HEADER_BUFFER = new ThreadLocal<byte[]>() {
-        @Override
-        protected byte[] initialValue() {
-            return new byte[PAGE_HEADER_SIZE];
-        }
-    };
+    private static final ThreadLocal<byte[]> HEADER_BUFFER = ThreadLocal.withInitial(() -> new byte[PAGE_HEADER_SIZE]);
 
     private static final ThreadLocal<byte[]> INSTANT_BUFFER = new ThreadLocal<>();
 
