@@ -30,7 +30,7 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>asakusa-runtime-hadoop2</artifactId>
+      <artifactId>asakusa-runtime-hadoop</artifactId>
       <version>${project.version}</version>
       <exclusions>
         <exclusion>
