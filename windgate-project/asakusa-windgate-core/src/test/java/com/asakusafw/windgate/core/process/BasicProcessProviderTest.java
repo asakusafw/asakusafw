@@ -52,7 +52,7 @@ public class BasicProcessProviderTest {
                 "plain",
                 BasicProcessProvider.class,
                 ProfileContext.system(BasicProcessProvider.class.getClassLoader()),
-                Collections.<String, String>emptyMap()));
+                Collections.emptyMap()));
     }
 
     /**
@@ -173,6 +173,6 @@ public class BasicProcessProviderTest {
     }
 
     private DriverScript driver(String name) {
-        return new DriverScript(name, Collections.<String, String>emptyMap());
+        return new DriverScript(name, Collections.emptyMap());
     }
 }

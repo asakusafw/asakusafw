@@ -35,7 +35,6 @@ import com.asakusafw.dmdl.semantics.ModelDeclaration;
 import com.asakusafw.runtime.directio.DataFormat;
 import com.asakusafw.utils.java.model.syntax.ClassDeclaration;
 import com.asakusafw.utils.java.model.syntax.Expression;
-import com.asakusafw.utils.java.model.syntax.FormalParameterDeclaration;
 import com.asakusafw.utils.java.model.syntax.MethodDeclaration;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
 import com.asakusafw.utils.java.model.syntax.Name;
@@ -44,7 +43,6 @@ import com.asakusafw.utils.java.model.syntax.SimpleName;
 import com.asakusafw.utils.java.model.syntax.Statement;
 import com.asakusafw.utils.java.model.syntax.Type;
 import com.asakusafw.utils.java.model.syntax.TypeBodyDeclaration;
-import com.asakusafw.utils.java.model.syntax.TypeParameterDeclaration;
 import com.asakusafw.utils.java.model.util.AttributeBuilder;
 import com.asakusafw.utils.java.model.util.ExpressionBuilder;
 import com.asakusafw.utils.java.model.util.JavadocBuilder;
@@ -167,11 +165,11 @@ public class ParquetFileEmitter extends JavaDataModelDriver {
                         .Public()
                         .toAttributes(),
                     context.getTypeName(),
-                    Collections.<TypeParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     new TypeBuilder(f, context.resolve(AbstractParquetFileFormat.class))
                         .parameterize(context.resolve(model.getSymbol()))
                         .toType(),
-                    Collections.<Type>emptyList(),
+                    Collections.emptyList(),
                     createMembers());
             context.emit(decl);
         }
@@ -290,7 +288,7 @@ public class ParquetFileEmitter extends JavaDataModelDriver {
                         .toAttributes(),
                     context.resolve(ParquetFormatConfiguration.class),
                     f.newSimpleName("getFormatConfiguration"), //$NON-NLS-1$
-                    Collections.<FormalParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     statements);
         }
 
@@ -303,7 +301,7 @@ public class ParquetFileEmitter extends JavaDataModelDriver {
                         .toAttributes(),
                     returnType,
                     f.newSimpleName(methodName),
-                    Collections.<FormalParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     Arrays.asList(new ExpressionBuilder(f, value).toReturnStatement()));
         }
     }

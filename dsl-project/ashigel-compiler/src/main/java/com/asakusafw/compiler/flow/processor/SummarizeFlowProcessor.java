@@ -93,7 +93,7 @@ public class SummarizeFlowProcessor extends RendezvousProcessor {
             }
             remapped.add(target);
         }
-        return new ShuffleKey(remapped, Collections.<ShuffleKey.Order>emptyList());
+        return new ShuffleKey(remapped, Collections.emptyList());
     }
 
     @Override

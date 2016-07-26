@@ -65,7 +65,7 @@ public class OrcFileFormatTest {
     public final TemporaryFolder folder = new TemporaryFolder();
 
     private <T> OrcFileFormat<T> format(Class<T> type, String... removes) {
-        return format(type, Collections.<String, ValueSerde>emptyMap(), removes);
+        return format(type, Collections.emptyMap(), removes);
     }
 
     private <T> OrcFileFormat<T> format(

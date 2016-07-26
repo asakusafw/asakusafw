@@ -178,7 +178,7 @@ public class FilePackager extends FlowCompilingEnvironment.Initialized implement
             boolean exists = drain(
                     jar,
                     Collections.singletonList(new FileRepository(sourceDirectory)),
-                    Collections.<ResourceRepository>emptyList());
+                    Collections.emptyList());
             if (exists == false) {
                 LOG.warn(Messages.getString("FilePackager.warnEmptySource")); //$NON-NLS-1$
                 addDummyEntry(jar);
@@ -314,7 +314,7 @@ public class FilePackager extends FlowCompilingEnvironment.Initialized implement
                         fileManager,
                         diagnostics,
                         arguments,
-                        Collections.<String>emptyList(),
+                        Collections.emptyList(),
                         fileManager.getJavaFileObjectsFromFiles(sources));
                 succeeded = task.call();
             }

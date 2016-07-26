@@ -103,7 +103,7 @@ public class MockIoDescriptionProcessor extends ExternalIoDescriptionProcessor {
             return Arrays.asList(new Command[] {
                     new Command("initialize", Arrays.asList(new String[] {
                             "initialize",
-                    }), "mock", null, Collections.<String, String>emptyMap(), IoContext.EMPTY)
+                    }), "mock", null, Collections.emptyMap(), IoContext.EMPTY)
             });
         }
 
@@ -112,7 +112,7 @@ public class MockIoDescriptionProcessor extends ExternalIoDescriptionProcessor {
             return Arrays.asList(new Command[] {
                     new Command("import", Arrays.asList(new String[] {
                             "import",
-                    }), "mock", "mock", Collections.<String, String>emptyMap(), IoContext.EMPTY)
+                    }), "mock", "mock", Collections.emptyMap(), IoContext.EMPTY)
             });
         }
 
@@ -121,7 +121,7 @@ public class MockIoDescriptionProcessor extends ExternalIoDescriptionProcessor {
             return Arrays.asList(new Command[] {
                     new Command("export", Arrays.asList(new String[] {
                             "export",
-                    }), "mock", "mock", Collections.<String, String>emptyMap(), IoContext.EMPTY)
+                    }), "mock", "mock", Collections.emptyMap(), IoContext.EMPTY)
             });
         }
 
@@ -130,7 +130,7 @@ public class MockIoDescriptionProcessor extends ExternalIoDescriptionProcessor {
             return Arrays.asList(new Command[] {
                     new Command("finalize", Arrays.asList(new String[] {
                             "finalize",
-                    }), "mock", null, Collections.<String, String>emptyMap(), IoContext.EMPTY)
+                    }), "mock", null, Collections.emptyMap(), IoContext.EMPTY)
             });
         }
     }

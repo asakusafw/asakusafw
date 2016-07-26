@@ -51,12 +51,11 @@ public class SpiExporterRetriever implements ExporterRetriever<ExporterDescripti
      * @param elements the elements to be composed
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    @SuppressWarnings("rawtypes")
     public SpiExporterRetriever(List<? extends ExporterRetriever<?>> elements) {
         if (elements == null) {
             throw new IllegalArgumentException("elements must not be null"); //$NON-NLS-1$
         }
-        this.elements = new ArrayList<ExporterRetriever>(elements);
+        this.elements = new ArrayList<>(elements);
     }
 
     @Override

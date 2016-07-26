@@ -67,7 +67,7 @@ public final class EnumUtil {
                         constant.name(),
                         portNames));
             }
-            results.add(Tuples.<Enum<?>, FlowElementPortDescription>of(constant, port));
+            results.add(Tuples.of(constant, port));
         }
         if (ports.size() > results.size()) {
             throw new IllegalArgumentException(MessageFormat.format(

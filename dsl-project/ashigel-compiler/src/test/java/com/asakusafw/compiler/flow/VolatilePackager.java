@@ -168,7 +168,7 @@ public class VolatilePackager
                         fileManager,
                         diagnostics,
                         arguments,
-                        Collections.<String>emptyList(),
+                        Collections.emptyList(),
                         emitter.getEmitted());
                 successed = task.call();
             }

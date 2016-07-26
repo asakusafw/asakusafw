@@ -672,7 +672,7 @@ public class AbstractSshHadoopFsMirrorTest {
         return new DriverScript(
                 name,
                 file == null ?
-                        Collections.<String, String>emptyMap() :
+                        Collections.emptyMap() :
                             Collections.singletonMap(FileProcess.FILE.key(), file));
     }
 

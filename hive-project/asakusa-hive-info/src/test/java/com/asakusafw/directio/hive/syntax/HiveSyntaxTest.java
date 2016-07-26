@@ -20,8 +20,6 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import com.asakusafw.directio.hive.syntax.HiveSyntax;
-
 /**
  * Test for {@link HiveSyntax}.
  */

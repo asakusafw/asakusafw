@@ -58,7 +58,7 @@ public class BasicLockProviderTest {
         Map<String, String> conf = new HashMap<>();
         conf.put(BasicLockProvider.KEY_DIRECTORY, lockDir.getAbsolutePath());
 
-        ServiceProfile<ExecutionLockProvider> profile = new ServiceProfile<ExecutionLockProvider>(
+        ServiceProfile<ExecutionLockProvider> profile = new ServiceProfile<>(
                 "testing", BasicLockProvider.class, conf, ProfileContext.system(getClass().getClassLoader()));
         ExecutionLockProvider instance = profile.newInstance();
         try (ExecutionLock lock = instance.newInstance("batch")) {
@@ -81,7 +81,7 @@ public class BasicLockProviderTest {
         Map<String, String> conf = new HashMap<>();
         conf.put(BasicLockProvider.KEY_DIRECTORY, "${LOCATION}");
 
-        ServiceProfile<ExecutionLockProvider> profile = new ServiceProfile<ExecutionLockProvider>(
+        ServiceProfile<ExecutionLockProvider> profile = new ServiceProfile<>(
                 "testing", BasicLockProvider.class, conf, new ProfileContext(getClass().getClassLoader(), var));
         ExecutionLockProvider instance = profile.newInstance();
         try (ExecutionLock lock = instance.newInstance("batch")) {
@@ -103,7 +103,7 @@ public class BasicLockProviderTest {
         Map<String, String> conf = new HashMap<>();
         conf.put(BasicLockProvider.KEY_DIRECTORY, "${__INVALID__}");
 
-        ServiceProfile<ExecutionLockProvider> profile = new ServiceProfile<ExecutionLockProvider>(
+        ServiceProfile<ExecutionLockProvider> profile = new ServiceProfile<>(
                 "testing", BasicLockProvider.class, conf, new ProfileContext(getClass().getClassLoader(), var));
         profile.newInstance();
     }
@@ -118,7 +118,7 @@ public class BasicLockProviderTest {
         conf.put(BasicLockProvider.KEY_DIRECTORY, folder.getRoot().getAbsolutePath());
         conf.put(ExecutionLockProvider.KEY_SCOPE, ExecutionLock.Scope.WORLD.getSymbol());
 
-        ServiceProfile<ExecutionLockProvider> profile = new ServiceProfile<ExecutionLockProvider>(
+        ServiceProfile<ExecutionLockProvider> profile = new ServiceProfile<>(
                 "testing", BasicLockProvider.class, conf, ProfileContext.system(getClass().getClassLoader()));
         ExecutionLockProvider instance1 = profile.newInstance();
         ExecutionLockProvider instance2 = profile.newInstance();
@@ -158,7 +158,7 @@ public class BasicLockProviderTest {
         conf.put(BasicLockProvider.KEY_DIRECTORY, folder.getRoot().getAbsolutePath());
         conf.put(ExecutionLockProvider.KEY_SCOPE, ExecutionLock.Scope.BATCH.getSymbol());
 
-        ServiceProfile<ExecutionLockProvider> profile = new ServiceProfile<ExecutionLockProvider>(
+        ServiceProfile<ExecutionLockProvider> profile = new ServiceProfile<>(
                 "testing", BasicLockProvider.class, conf, ProfileContext.system(getClass().getClassLoader()));
         ExecutionLockProvider instance1 = profile.newInstance();
         ExecutionLockProvider instance2 = profile.newInstance();
@@ -193,7 +193,7 @@ public class BasicLockProviderTest {
         conf.put(BasicLockProvider.KEY_DIRECTORY, folder.getRoot().getAbsolutePath());
         conf.put(ExecutionLockProvider.KEY_SCOPE, ExecutionLock.Scope.FLOW.getSymbol());
 
-        ServiceProfile<ExecutionLockProvider> profile = new ServiceProfile<ExecutionLockProvider>(
+        ServiceProfile<ExecutionLockProvider> profile = new ServiceProfile<>(
                 "testing", BasicLockProvider.class, conf, ProfileContext.system(getClass().getClassLoader()));
         ExecutionLockProvider instance1 = profile.newInstance();
         ExecutionLockProvider instance2 = profile.newInstance();
@@ -230,7 +230,7 @@ public class BasicLockProviderTest {
         conf.put(BasicLockProvider.KEY_DIRECTORY, folder.getRoot().getAbsolutePath());
         conf.put(ExecutionLockProvider.KEY_SCOPE, ExecutionLock.Scope.EXECUTION.getSymbol());
 
-        ServiceProfile<ExecutionLockProvider> profile = new ServiceProfile<ExecutionLockProvider>(
+        ServiceProfile<ExecutionLockProvider> profile = new ServiceProfile<>(
                 "testing", BasicLockProvider.class, conf, ProfileContext.system(getClass().getClassLoader()));
         ExecutionLockProvider instance1 = profile.newInstance();
         ExecutionLockProvider instance2 = profile.newInstance();
@@ -274,7 +274,7 @@ public class BasicLockProviderTest {
         Map<String, String> conf = new HashMap<>();
         conf.put(BasicLockProvider.KEY_DIRECTORY, lockDir.getAbsolutePath());
 
-        ServiceProfile<ExecutionLockProvider> profile = new ServiceProfile<ExecutionLockProvider>(
+        ServiceProfile<ExecutionLockProvider> profile = new ServiceProfile<>(
                 "testing", BasicLockProvider.class, conf, ProfileContext.system(getClass().getClassLoader()));
         ExecutionLockProvider instance = profile.newInstance();
         try (ExecutionLock lock = instance.newInstance("batch")) {
@@ -290,7 +290,7 @@ public class BasicLockProviderTest {
     @Test(expected = IOException.class)
     public void missing_directory_config() throws Exception {
         Map<String, String> conf = new HashMap<>();
-        ServiceProfile<ExecutionLockProvider> profile = new ServiceProfile<ExecutionLockProvider>(
+        ServiceProfile<ExecutionLockProvider> profile = new ServiceProfile<>(
                 "testing", BasicLockProvider.class, conf, ProfileContext.system(getClass().getClassLoader()));
         ExecutionLockProvider instance = profile.newInstance();
         instance.newInstance("batch");
@@ -307,7 +307,7 @@ public class BasicLockProviderTest {
         Map<String, String> conf = new HashMap<>();
         conf.put(BasicLockProvider.KEY_DIRECTORY, lockDir.getAbsolutePath());
 
-        ServiceProfile<ExecutionLockProvider> profile = new ServiceProfile<ExecutionLockProvider>(
+        ServiceProfile<ExecutionLockProvider> profile = new ServiceProfile<>(
                 "testing", BasicLockProvider.class, conf, ProfileContext.system(getClass().getClassLoader()));
         ExecutionLockProvider instance = profile.newInstance();
         instance.newInstance("batch");

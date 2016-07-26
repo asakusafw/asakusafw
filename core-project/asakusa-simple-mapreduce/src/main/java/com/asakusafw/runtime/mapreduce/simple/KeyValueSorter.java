@@ -424,7 +424,7 @@ public class KeyValueSorter<K, V> implements Closeable {
             if (getCount() == 0) {
                 return Collections.emptyList();
             } else {
-                return Collections.<Source<KeyValueSlice>>singletonList(new PageBufferSource(this));
+                return Collections.singletonList(new PageBufferSource(this));
             }
         }
     }

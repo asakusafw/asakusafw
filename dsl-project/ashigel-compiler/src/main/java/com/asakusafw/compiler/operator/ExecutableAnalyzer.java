@@ -224,7 +224,7 @@ public class ExecutableAnalyzer {
         ModelFactory f = environment.getFactory();
         String comment = environment.getElementUtils().getDocComment(element);
         if (comment == null) {
-            return f.newJavadoc(Collections.<DocBlock>emptyList());
+            return f.newJavadoc(Collections.emptyList());
         }
         if (comment.startsWith("/**") == false) { //$NON-NLS-1$
             comment = "/**" + comment; //$NON-NLS-1$
@@ -239,7 +239,7 @@ public class ExecutableAnalyzer {
             environment.getMessager().printMessage(Diagnostic.Kind.ERROR,
                     e.getMessage(),
                     element);
-            return f.newJavadoc(Collections.<DocBlock>emptyList());
+            return f.newJavadoc(Collections.emptyList());
         }
     }
 

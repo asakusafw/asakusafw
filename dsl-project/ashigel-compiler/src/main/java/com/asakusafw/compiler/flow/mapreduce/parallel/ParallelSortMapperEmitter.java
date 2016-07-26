@@ -36,7 +36,6 @@ import com.asakusafw.runtime.stage.collector.SlotDirectMapper;
 import com.asakusafw.runtime.stage.collector.SlotDistributor;
 import com.asakusafw.runtime.stage.collector.SortableSlot;
 import com.asakusafw.runtime.trace.TraceLocation;
-import com.asakusafw.utils.java.model.syntax.Comment;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
 import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.FormalParameterDeclaration;
@@ -45,9 +44,7 @@ import com.asakusafw.utils.java.model.syntax.ModelFactory;
 import com.asakusafw.utils.java.model.syntax.Name;
 import com.asakusafw.utils.java.model.syntax.SimpleName;
 import com.asakusafw.utils.java.model.syntax.Statement;
-import com.asakusafw.utils.java.model.syntax.Type;
 import com.asakusafw.utils.java.model.syntax.TypeDeclaration;
-import com.asakusafw.utils.java.model.syntax.TypeParameterDeclaration;
 import com.asakusafw.utils.java.model.util.AttributeBuilder;
 import com.asakusafw.utils.java.model.util.ExpressionBuilder;
 import com.asakusafw.utils.java.model.util.ImportBuilder;
@@ -136,7 +133,7 @@ final class ParallelSortMapperEmitter {
                     importer.getPackageDeclaration(),
                     importer.toImportDeclarations(),
                     Collections.singletonList(type),
-                    Collections.<Comment>emptyList());
+                    Collections.emptyList());
         }
 
         private TypeDeclaration createType() {
@@ -152,9 +149,9 @@ final class ParallelSortMapperEmitter {
                         .Public()
                         .toAttributes(),
                     name,
-                    Collections.<TypeParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     importer.toType(SlotDirectMapper.class),
-                    Collections.<Type>emptyList(),
+                    Collections.emptyList(),
                     Collections.singletonList(createOutputName()));
         }
 
@@ -178,7 +175,7 @@ final class ParallelSortMapperEmitter {
                         .toAttributes(),
                     importer.toType(String.class),
                     factory.newSimpleName(SlotDirectMapper.NAME_GET_OUTPUT_NAME),
-                    Collections.<FormalParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     statements);
         }
     }
@@ -213,7 +210,7 @@ final class ParallelSortMapperEmitter {
                     importer.getPackageDeclaration(),
                     importer.toImportDeclarations(),
                     Collections.singletonList(type),
-                    Collections.<Comment>emptyList());
+                    Collections.emptyList());
         }
 
         private TypeDeclaration createType() {
@@ -228,11 +225,11 @@ final class ParallelSortMapperEmitter {
                         .Public()
                         .toAttributes(),
                     name,
-                    Collections.<TypeParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     new TypeBuilder(factory, importer.toType(SlotDistributor.class))
                         .parameterize(importer.toType(slot.getValueClass().getType()))
                         .toType(),
-                    Collections.<Type>emptyList(),
+                    Collections.emptyList(),
                     Collections.singletonList(createSlotSpec()));
         }
 
@@ -280,7 +277,7 @@ final class ParallelSortMapperEmitter {
                         .annotation(importer.toType(Override.class))
                         .Protected()
                         .toAttributes(),
-                    Collections.<TypeParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     importer.toType(void.class),
                     factory.newSimpleName(SlotDistributor.NAME_SET_SLOT_SPEC),
                     Arrays.asList(new FormalParameterDeclaration[] {

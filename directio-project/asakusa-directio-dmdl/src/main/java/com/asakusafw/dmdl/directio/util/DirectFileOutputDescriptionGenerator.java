@@ -25,13 +25,11 @@ import com.asakusafw.dmdl.java.emitter.EmitContext;
 import com.asakusafw.utils.java.model.syntax.Attribute;
 import com.asakusafw.utils.java.model.syntax.ClassDeclaration;
 import com.asakusafw.utils.java.model.syntax.Expression;
-import com.asakusafw.utils.java.model.syntax.FormalParameterDeclaration;
 import com.asakusafw.utils.java.model.syntax.MethodDeclaration;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
 import com.asakusafw.utils.java.model.syntax.Name;
 import com.asakusafw.utils.java.model.syntax.Type;
 import com.asakusafw.utils.java.model.syntax.TypeBodyDeclaration;
-import com.asakusafw.utils.java.model.syntax.TypeParameterDeclaration;
 import com.asakusafw.utils.java.model.syntax.WildcardBoundKind;
 import com.asakusafw.utils.java.model.util.AttributeBuilder;
 import com.asakusafw.utils.java.model.util.JavadocBuilder;
@@ -79,9 +77,9 @@ public final class DirectFileOutputDescriptionGenerator {
                     .toJavadoc(),
                 getClassAttributes(),
                 context.getTypeName(),
-                Collections.<TypeParameterDeclaration>emptyList(),
+                Collections.emptyList(),
                 context.resolve(base),
-                Collections.<Type>emptyList(),
+                Collections.emptyList(),
                 createMembers());
         context.emit(decl);
     }
@@ -177,7 +175,7 @@ public final class DirectFileOutputDescriptionGenerator {
                     .toAttributes(),
                 type,
                 f.newSimpleName(name),
-                Collections.<FormalParameterDeclaration>emptyList(),
+                Collections.emptyList(),
                 Arrays.asList(f.newReturnStatement(value)));
     }
 

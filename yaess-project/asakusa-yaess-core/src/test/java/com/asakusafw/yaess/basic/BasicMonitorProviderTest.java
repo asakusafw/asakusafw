@@ -34,7 +34,7 @@ import com.asakusafw.yaess.core.ServiceProfile;
  */
 public class BasicMonitorProviderTest {
 
-    private static final Map<String, String> EMPTY = Collections.<String, String>emptyMap();
+    private static final Map<String, String> EMPTY = Collections.emptyMap();
 
     private static final ExecutionContext CONTEXT = new ExecutionContext("b", "f", "e", ExecutionPhase.MAIN, EMPTY);
 
@@ -45,7 +45,7 @@ public class BasicMonitorProviderTest {
     @Test
     public void simple() throws Exception {
         Map<String, String> conf = new HashMap<>();
-        ServiceProfile<ExecutionMonitorProvider> profile = new ServiceProfile<ExecutionMonitorProvider>(
+        ServiceProfile<ExecutionMonitorProvider> profile = new ServiceProfile<>(
                 "testing", BasicMonitorProvider.class, conf, ProfileContext.system(getClass().getClassLoader()));
 
         ExecutionMonitorProvider instance = profile.newInstance();
@@ -66,7 +66,7 @@ public class BasicMonitorProviderTest {
     public void with_stepUnit() throws Exception {
         Map<String, String> conf = new HashMap<>();
         conf.put(BasicMonitorProvider.KEY_STEP_UNIT, "0.1");
-        ServiceProfile<ExecutionMonitorProvider> profile = new ServiceProfile<ExecutionMonitorProvider>(
+        ServiceProfile<ExecutionMonitorProvider> profile = new ServiceProfile<>(
                 "testing", BasicMonitorProvider.class, conf, ProfileContext.system(getClass().getClassLoader()));
 
         ExecutionMonitorProvider instance = profile.newInstance();
@@ -86,7 +86,7 @@ public class BasicMonitorProviderTest {
     public void large_stepUnit() throws Exception {
         Map<String, String> conf = new HashMap<>();
         conf.put(BasicMonitorProvider.KEY_STEP_UNIT, "0.5");
-        ServiceProfile<ExecutionMonitorProvider> profile = new ServiceProfile<ExecutionMonitorProvider>(
+        ServiceProfile<ExecutionMonitorProvider> profile = new ServiceProfile<>(
                 "testing", BasicMonitorProvider.class, conf, ProfileContext.system(getClass().getClassLoader()));
 
         ExecutionMonitorProvider instance = profile.newInstance();
@@ -106,7 +106,7 @@ public class BasicMonitorProviderTest {
     public void invalid_stepUnit() throws Exception {
         Map<String, String> conf = new HashMap<>();
         conf.put(BasicMonitorProvider.KEY_STEP_UNIT, "INVALID");
-        ServiceProfile<ExecutionMonitorProvider> profile = new ServiceProfile<ExecutionMonitorProvider>(
+        ServiceProfile<ExecutionMonitorProvider> profile = new ServiceProfile<>(
                 "testing", BasicMonitorProvider.class, conf, ProfileContext.system(getClass().getClassLoader()));
 
         profile.newInstance();

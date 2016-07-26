@@ -95,7 +95,7 @@ public class StringPropertyDriver extends JavaDataModelDriver {
                     .toAttributes(),
                 context.resolve(String.class),
                 f.newSimpleName(name.toMemberName()),
-                Collections.<FormalParameterDeclaration>emptyList(),
+                Collections.emptyList(),
                 Collections.singletonList(new ExpressionBuilder(f, f.newThis())
                     .field(context.getFieldName(property))
                     .method("getAsString") //$NON-NLS-1$

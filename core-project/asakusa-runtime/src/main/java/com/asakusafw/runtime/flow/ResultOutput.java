@@ -57,7 +57,7 @@ public class ResultOutput<T> implements Result<T> {
      */
     @SuppressWarnings({ "rawtypes" })
     public ResultOutput(TaskAttemptContext context, RecordWriter writer) throws IOException, InterruptedException {
-        this(context, writer, Collections.<Counter>emptyList());
+        this(context, writer, Collections.emptyList());
     }
 
     /**

@@ -40,7 +40,6 @@ import com.asakusafw.utils.java.model.syntax.Statement;
 import com.asakusafw.utils.java.model.syntax.Type;
 import com.asakusafw.utils.java.model.syntax.TypeBodyDeclaration;
 import com.asakusafw.utils.java.model.syntax.TypeDeclaration;
-import com.asakusafw.utils.java.model.syntax.TypeParameterDeclaration;
 import com.asakusafw.utils.java.model.util.AttributeBuilder;
 import com.asakusafw.utils.java.model.util.ExpressionBuilder;
 import com.asakusafw.utils.java.model.util.ImportBuilder;
@@ -122,9 +121,9 @@ public class FlowFactoryClassGenerator {
                     .Public()
                     .toAttributes(),
                 name,
-                Collections.<TypeParameterDeclaration>emptyList(),
+                Collections.emptyList(),
                 null,
-                Collections.<Type>emptyList(),
+                Collections.emptyList(),
                 createMembers());
     }
 
@@ -457,7 +456,7 @@ public class FlowFactoryClassGenerator {
                 factory.newSimpleName("create"), //$NON-NLS-1$
                 parameters,
                 0,
-                Collections.<Type>emptyList(),
+                Collections.emptyList(),
                 factory.newBlock(
                         new TypeBuilder(factory, type)
                             .newObject(arguments)

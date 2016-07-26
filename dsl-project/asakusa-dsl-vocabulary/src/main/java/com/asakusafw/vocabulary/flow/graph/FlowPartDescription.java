@@ -56,7 +56,7 @@ public class FlowPartDescription implements FlowElementDescription {
      * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public FlowPartDescription(FlowGraph flowGraph) {
-        this(flowGraph, Collections.<Parameter>emptyList());
+        this(flowGraph, Collections.emptyList());
     }
 
     /**

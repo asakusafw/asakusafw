@@ -135,7 +135,7 @@ public final class OperatorCompilerDriver {
                     files,
                     null,
                     arguments,
-                    Collections.<String>emptyList(),
+                    Collections.emptyList(),
                     files.getJavaFileObjectsFromFiles(sourceFiles));
             if (task.call() == false) {
                 LOG.error(Messages.getString("OperatorCompilerDriver.errorFailedToCompile")); //$NON-NLS-1$

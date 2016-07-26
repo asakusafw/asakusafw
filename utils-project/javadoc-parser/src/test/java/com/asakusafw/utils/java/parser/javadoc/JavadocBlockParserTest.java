@@ -43,7 +43,7 @@ public class JavadocBlockParserTest extends JavadocTestRoot {
     public void testNewBlock() {
         MockJavadocBlockParser parser = new MockJavadocBlockParser();
         {
-            IrDocBlock block = parser.newBlock(null, Collections.<IrDocFragment>emptyList());
+            IrDocBlock block = parser.newBlock(null, Collections.emptyList());
             assertNull(block.getTag());
             assertEquals(0, block.getFragments().size());
         }
@@ -58,7 +58,7 @@ public class JavadocBlockParserTest extends JavadocTestRoot {
             IrDocSimpleName f0 = new IrDocSimpleName("arg0");
             IrDocText f1 = new IrDocText("Hello!");
             IrDocText f2 = new IrDocText("This is text");
-            IrDocBlock block = parser.newBlock("param", Arrays.<IrDocFragment>asList(f0, f1, f2));
+            IrDocBlock block = parser.newBlock("param", Arrays.asList(f0, f1, f2));
             assertEquals("@param", block.getTag());
             assertEquals(3, block.getFragments().size());
             assertEquals(f0, block.getFragments().get(0));

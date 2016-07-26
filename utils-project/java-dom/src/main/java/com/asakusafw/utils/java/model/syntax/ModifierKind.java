@@ -45,7 +45,7 @@ public enum ModifierKind {
      */
     PROTECTED(
         of(CLASS, INTERFACE, ENUM, ANNOTATION, FIELD, CONSTRUCTOR, METHOD),
-        Collections.<DeclarationKind>emptySet()
+        Collections.emptySet()
     ),
 
     /**
@@ -53,7 +53,7 @@ public enum ModifierKind {
      */
     PRIVATE(
         of(CLASS, INTERFACE, ENUM, ANNOTATION, FIELD, CONSTRUCTOR, METHOD),
-        Collections.<DeclarationKind>emptySet()
+        Collections.emptySet()
     ),
 
     /**
@@ -77,7 +77,7 @@ public enum ModifierKind {
      */
     NATIVE(
         of(METHOD),
-        Collections.<DeclarationKind>emptySet()
+        Collections.emptySet()
     ),
 
     /**
@@ -93,7 +93,7 @@ public enum ModifierKind {
      */
     SYNCHRONIZED(
         of(METHOD),
-        Collections.<DeclarationKind>emptySet()
+        Collections.emptySet()
     ),
 
     /**
@@ -101,7 +101,7 @@ public enum ModifierKind {
      */
     TRANSIENT(
         of(FIELD),
-        Collections.<DeclarationKind>emptySet()
+        Collections.emptySet()
     ),
 
     /**
@@ -109,7 +109,7 @@ public enum ModifierKind {
      */
     VOLATILE(
         of(FIELD),
-        Collections.<DeclarationKind>emptySet()
+        Collections.emptySet()
     ),
 
     /**
@@ -117,14 +117,14 @@ public enum ModifierKind {
      */
     STRICTFP(
         of(CLASS, INTERFACE, ENUM, ANNOTATION, METHOD),
-        Collections.<DeclarationKind>emptySet()
+        Collections.emptySet()
     ),
 
     /**
      * {@code ACC_SUPER}.
      */
     SUPER(
-        Collections.<DeclarationKind>emptySet(),
+        Collections.emptySet(),
         of(CLASS, INTERFACE, ENUM, ANNOTATION)
     ),
 
@@ -132,7 +132,7 @@ public enum ModifierKind {
      * {@code ACC_BRIDGE}.
      */
     BRIDGE(
-        Collections.<DeclarationKind>emptySet(),
+        Collections.emptySet(),
         of(METHOD)
     ),
 
@@ -140,7 +140,7 @@ public enum ModifierKind {
      * {@code ACC_VARARGS}.
      */
     VARARGS(
-        Collections.<DeclarationKind>emptySet(),
+        Collections.emptySet(),
         of(METHOD, CONSTRUCTOR)
     ),
 
@@ -148,7 +148,7 @@ public enum ModifierKind {
      * {@code ACC_SYNTHETIC}.
      */
     SYNTHETIC(
-        Collections.<DeclarationKind>emptySet(),
+        Collections.emptySet(),
         of(CLASS, INTERFACE, ENUM, ANNOTATION, FIELD, CONSTRUCTOR, METHOD, ANNOTATION_ELEMENT, ENUM_CONSTANT)
     ),
     ;

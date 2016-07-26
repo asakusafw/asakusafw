@@ -19,6 +19,7 @@ package com.asakusafw.runtime.core;
  * Represents a result sink of operators.
  * @param <T> the data type
  */
+@FunctionalInterface
 public interface Result<T> {
 
     /**

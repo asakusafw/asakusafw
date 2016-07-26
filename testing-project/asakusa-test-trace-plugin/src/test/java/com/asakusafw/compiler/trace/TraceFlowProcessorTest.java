@@ -201,7 +201,7 @@ public class TraceFlowProcessorTest {
     }
 
     private Map<String, String> attr() {
-        return Collections.<String, String>emptyMap();
+        return Collections.emptyMap();
     }
 
     private void prepare(TestInput<Model> in) throws IOException {

@@ -52,7 +52,6 @@ import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.runtime.value.LongOption;
 import com.asakusafw.runtime.value.ShortOption;
 import com.asakusafw.runtime.value.StringOption;
-import com.asakusafw.utils.java.model.syntax.Comment;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
 import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
@@ -250,7 +249,7 @@ public final class EmitContext {
                 imports.getPackageDeclaration(),
                 imports.toImportDeclarations(),
                 Collections.singletonList(type),
-                Collections.<Comment>emptyList());
+                Collections.emptyList());
         try (PrintWriter writer = config.getOutput().openFor(compilationUnit)) {
             Models.emit(compilationUnit, writer);
         }

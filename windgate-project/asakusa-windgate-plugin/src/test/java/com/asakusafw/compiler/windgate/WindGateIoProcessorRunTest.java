@@ -138,7 +138,7 @@ public class WindGateIoProcessorRunTest {
     }
 
     private DriverScript dummy(String resourceName) {
-        return new DriverScript(resourceName, Collections.<String, String>emptyMap());
+        return new DriverScript(resourceName, Collections.emptyMap());
     }
 
     static final class Import extends WindGateImporterDescription {

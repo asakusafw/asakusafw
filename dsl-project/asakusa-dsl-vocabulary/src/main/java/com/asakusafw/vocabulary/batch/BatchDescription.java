@@ -173,7 +173,7 @@ public abstract class BatchDescription {
          * @return the registered job
          */
         public Work soon() {
-            return register(new Work(BatchDescription.this, description, Collections.<Work> emptyList()));
+            return register(new Work(BatchDescription.this, description, Collections.emptyList()));
         }
 
         /**

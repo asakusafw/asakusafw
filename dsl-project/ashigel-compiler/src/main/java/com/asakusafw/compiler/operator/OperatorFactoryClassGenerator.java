@@ -437,7 +437,7 @@ public class OperatorFactoryClassGenerator extends OperatorClassGenerator {
         return new TypeBuilder(factory, util.t(Arrays.class))
             .method("asList", factory.newArrayCreationExpression(//$NON-NLS-1$
                     factory.newArrayType(type),
-                    Collections.<Expression>emptyList(),
+                    Collections.emptyList(),
                     factory.newArrayInitializer(expressions)))
             .toExpression();
     }
@@ -522,7 +522,7 @@ public class OperatorFactoryClassGenerator extends OperatorClassGenerator {
                 factory.newSimpleName(JavaName.of(descriptor.getName()).toMemberName()),
                 parameters,
                 0,
-                Collections.<Type>emptyList(),
+                Collections.emptyList(),
                 factory.newBlock(new TypeBuilder(factory, objectType)
                     .newObject(arguments)
                     .toReturnStatement()));

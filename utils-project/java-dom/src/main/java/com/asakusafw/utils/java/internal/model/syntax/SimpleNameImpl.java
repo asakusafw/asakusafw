@@ -136,7 +136,7 @@ public final class SimpleNameImpl extends ModelRoot implements SimpleName {
 
     @Override
     public List<SimpleName> toNameList() {
-        return Collections.<SimpleName>singletonList(this);
+        return Collections.singletonList(this);
     }
 
     @Override

@@ -69,7 +69,7 @@ public class HadoopScript implements ExecutionScript {
             Map<String, String> environmentVariables) {
         this(id, blockerIds,
                 className, hadoopProperties, environmentVariables,
-                Collections.<String>emptySet(),
+                Collections.emptySet(),
                 false);
     }
 

@@ -77,7 +77,7 @@ public class ClassCollector {
      */
     public void inspect(File classPath) {
         LinkedList<Entry> work = new LinkedList<>();
-        work.add(new Entry(Collections.<String>emptyList(), classPath));
+        work.add(new Entry(Collections.emptyList(), classPath));
         while (work.isEmpty() == false) {
             Entry next = work.removeFirst();
             if (isHidden(next.file)) {

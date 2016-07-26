@@ -224,10 +224,10 @@ public abstract class ProcessHadoopScriptHandler extends ExecutionScriptHandlerB
                         getHandlerId());
                 HadoopScript script = new HadoopScript(
                         context.getPhase().getSymbol(),
-                        Collections.<String>emptySet(),
+                        Collections.emptySet(),
                         CLEANUP_STAGE_CLASS,
-                        Collections.<String, String>emptyMap(),
-                        Collections.<String, String>emptyMap());
+                        Collections.emptyMap(),
+                        Collections.emptyMap());
                 execute0(monitor, context, script);
             } else {
                 YSLOG.info("I51002",
@@ -255,7 +255,7 @@ public abstract class ProcessHadoopScriptHandler extends ExecutionScriptHandlerB
         List<String> original = buildExecutionCommand(context, script);
         List<String> command;
         try {
-            command = ProcessUtil.buildCommand(commandPrefix, original, Collections.<String>emptyList());
+            command = ProcessUtil.buildCommand(commandPrefix, original, Collections.emptyList());
         } catch (IllegalArgumentException e) {
             throw new IOException(MessageFormat.format(
                     "Failed to build command: "

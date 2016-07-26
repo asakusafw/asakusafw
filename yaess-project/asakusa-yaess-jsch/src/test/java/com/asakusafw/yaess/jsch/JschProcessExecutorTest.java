@@ -305,9 +305,9 @@ public class JschProcessExecutorTest {
         JschProcessExecutor extracted = JschProcessExecutor.extract("testing", config, resolver);
         try {
             int exit = extracted.execute(
-                    new ExecutionContext("b", "f", "e", ExecutionPhase.MAIN, Collections.<String, String>emptyMap()),
+                    new ExecutionContext("b", "f", "e", ExecutionPhase.MAIN, Collections.emptyMap()),
                     Arrays.asList("touch", file.getAbsolutePath()),
-                    Collections.<String, String>emptyMap());
+                    Collections.emptyMap());
             assertThat(exit, is(0));
         } catch (IOException e) {
             System.err.printf("Test is skipped because SSH session was not available%n");
@@ -347,7 +347,7 @@ public class JschProcessExecutorTest {
             env.put("file1", file1.getAbsolutePath());
             env.put("file2", file2.getAbsolutePath());
             int exit = extracted.execute(
-                    new ExecutionContext("b", "f", "e", ExecutionPhase.MAIN, Collections.<String, String>emptyMap()),
+                    new ExecutionContext("b", "f", "e", ExecutionPhase.MAIN, Collections.emptyMap()),
                     Arrays.asList(script.getAbsolutePath()),
                     env);
             assertThat(exit, is(0));
@@ -376,9 +376,9 @@ public class JschProcessExecutorTest {
         JschProcessExecutor extracted = JschProcessExecutor.extract("testing", config, resolver);
         try {
             int exit = extracted.execute(
-                    new ExecutionContext("b", "f", "e", ExecutionPhase.MAIN, Collections.<String, String>emptyMap()),
+                    new ExecutionContext("b", "f", "e", ExecutionPhase.MAIN, Collections.emptyMap()),
                     Arrays.asList(".__INVALID__"),
-                    Collections.<String, String>emptyMap());
+                    Collections.emptyMap());
             assertThat(exit, is(not(0)));
         } catch (IOException e) {
             System.err.printf("Test is skipped because SSH session was not available%n");
@@ -405,9 +405,9 @@ public class JschProcessExecutorTest {
         JschProcessExecutor extracted = JschProcessExecutor.extract("testing", config, resolver);
         try {
             int exit = extracted.execute(
-                    new ExecutionContext("b", "f", "e", ExecutionPhase.MAIN, Collections.<String, String>emptyMap()),
+                    new ExecutionContext("b", "f", "e", ExecutionPhase.MAIN, Collections.emptyMap()),
                     Arrays.asList("touch", file.getAbsolutePath()),
-                    Collections.<String, String>emptyMap());
+                    Collections.emptyMap());
             assertThat(exit, is(0));
         } catch (IOException e) {
             System.err.printf("Test is skipped because SSH session was not available%n");
@@ -443,7 +443,7 @@ public class JschProcessExecutorTest {
             Map<String, String> env = new HashMap<>();
             env.put("file", file.getAbsolutePath());
             int exit = extracted.execute(
-                    new ExecutionContext("b", "f", "e", ExecutionPhase.MAIN, Collections.<String, String>emptyMap()),
+                    new ExecutionContext("b", "f", "e", ExecutionPhase.MAIN, Collections.emptyMap()),
                     Arrays.asList(script.getAbsolutePath()),
                     env);
             assertThat(exit, is(0));

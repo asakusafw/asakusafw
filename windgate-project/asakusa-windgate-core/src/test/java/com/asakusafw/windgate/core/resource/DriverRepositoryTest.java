@@ -94,6 +94,6 @@ public class DriverRepositoryTest {
 
     private DriverScript driver(String name) {
         assert name != null;
-        return new DriverScript(name, Collections.<String, String>emptyMap());
+        return new DriverScript(name, Collections.emptyMap());
     }
 }

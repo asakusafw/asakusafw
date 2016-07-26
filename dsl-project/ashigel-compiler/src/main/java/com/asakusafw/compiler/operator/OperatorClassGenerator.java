@@ -27,7 +27,6 @@ import com.asakusafw.utils.java.model.syntax.SimpleName;
 import com.asakusafw.utils.java.model.syntax.Type;
 import com.asakusafw.utils.java.model.syntax.TypeBodyDeclaration;
 import com.asakusafw.utils.java.model.syntax.TypeDeclaration;
-import com.asakusafw.utils.java.model.syntax.TypeParameterDeclaration;
 import com.asakusafw.utils.java.model.util.ImportBuilder;
 
 /**
@@ -97,9 +96,9 @@ public abstract class OperatorClassGenerator {
                 createJavadoc(),
                 getAttributes(),
                 name,
-                Collections.<TypeParameterDeclaration>emptyList(),
+                Collections.emptyList(),
                 getSuperClass(),
-                Collections.<Type>emptyList(),
+                Collections.emptyList(),
                 createMembers());
     }
 

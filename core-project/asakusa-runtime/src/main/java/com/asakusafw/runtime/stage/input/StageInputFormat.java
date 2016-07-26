@@ -91,7 +91,7 @@ public class StageInputFormat extends InputFormat {
                     splits.size(),
                     combined.size()));
         }
-        return new ArrayList<InputSplit>(combined);
+        return new ArrayList<>(combined);
     }
 
     static List<StageInputSplit> computeSplits(JobContext context) throws IOException, InterruptedException {

@@ -118,7 +118,7 @@ public class FlowBlock {
         if (reduces != 0 && reduces != blocks.size()) {
             throw new IllegalArgumentException("Cannot merge map blocks and reduce blocks"); //$NON-NLS-1$
         }
-        final Set<PortConnection> empty = Collections.<PortConnection>emptySet();
+        final Set<PortConnection> empty = Collections.emptySet();
         FlowBlock result = new FlowBlock(minSerialNumber, graph);
         for (FlowBlock block : blocks) {
             result.elements.addAll(block.elements);

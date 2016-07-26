@@ -44,7 +44,7 @@ public class ParameterList {
      * @throws IllegalArgumentException if any parameter is {@code null}
      */
     public ParameterList() {
-        this(Collections.<String, String>emptyMap());
+        this(Collections.emptyMap());
     }
 
     /**

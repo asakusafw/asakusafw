@@ -233,13 +233,13 @@ public class GateTaskTest {
                         "default",
                         BasicProcessProvider.class,
                         ProfileContext.system(BasicProcessProvider.class.getClassLoader()),
-                        Collections.<String, String>emptyMap()
+                        Collections.emptyMap()
                 ),
                 new ProcessProfile(
                         "void",
                         VoidProcessProvider.class,
                         ProfileContext.system(BasicProcessProvider.class.getClassLoader()),
-                        Collections.<String, String>emptyMap()
+                        Collections.emptyMap()
                 ),
         });
         List<ResourceProfile> resources = Arrays.asList(new ResourceProfile[] {
@@ -247,12 +247,12 @@ public class GateTaskTest {
                         "fs1",
                         FileResourceProvider.class,
                         ProfileContext.system(FileResourceProvider.class.getClassLoader()),
-                        Collections.<String, String>emptyMap()),
+                        Collections.emptyMap()),
                 new ResourceProfile(
                         "fs2",
                         FileResourceProvider.class,
                         ProfileContext.system(FileResourceProvider.class.getClassLoader()),
-                        Collections.<String, String>emptyMap()),
+                        Collections.emptyMap()),
         });
         return new GateProfile("default", core, session, processes, resources);
     }

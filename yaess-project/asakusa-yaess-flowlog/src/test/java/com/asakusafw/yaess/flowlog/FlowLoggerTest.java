@@ -230,7 +230,7 @@ public class FlowLoggerTest {
     }
 
     private ExecutionContext context(ExecutionPhase phase) {
-        return new ExecutionContext("batch", "flow", "exec", phase, Collections.<String, String>emptyMap());
+        return new ExecutionContext("batch", "flow", "exec", phase, Collections.emptyMap());
     }
 
     private FlowLoggerProfile profile(boolean reportJob, boolean deleteOnSetup, boolean deleteOnCleanup) {

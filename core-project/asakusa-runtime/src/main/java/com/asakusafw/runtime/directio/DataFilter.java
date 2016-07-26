@@ -65,7 +65,7 @@ public abstract class DataFilter<T> {
          * Creates a new instance without batch arguments.
          */
         public Context() {
-            this(Collections.<String, String>emptyMap());
+            this(Collections.emptyMap());
         }
 
         /**

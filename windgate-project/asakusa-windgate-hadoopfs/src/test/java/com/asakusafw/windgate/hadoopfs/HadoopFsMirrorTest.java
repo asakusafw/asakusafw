@@ -407,7 +407,7 @@ public class HadoopFsMirrorTest {
         return new ProcessScript<>(
                 "testing", "default", Text.class,
                 d(resource, buf.toString().trim()),
-                new DriverScript("DUMMY", Collections.<String, String>emptyMap()));
+                new DriverScript("DUMMY", Collections.emptyMap()));
     }
 
     private ProcessScript<Text> drain(String resource, String... files) {
@@ -418,7 +418,7 @@ public class HadoopFsMirrorTest {
         }
         return new ProcessScript<>(
                 "testing", "default", Text.class,
-                new DriverScript("DUMMY", Collections.<String, String>emptyMap()),
+                new DriverScript("DUMMY", Collections.emptyMap()),
                 d(resource, buf.toString().trim()));
     }
 
@@ -426,7 +426,7 @@ public class HadoopFsMirrorTest {
         return new DriverScript(
                 name,
                 file == null ?
-                        Collections.<String, String>emptyMap() :
+                        Collections.emptyMap() :
                             Collections.singletonMap(FileProcess.FILE.key(), file));
     }
 

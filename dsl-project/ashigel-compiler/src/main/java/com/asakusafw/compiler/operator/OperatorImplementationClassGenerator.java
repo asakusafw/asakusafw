@@ -25,7 +25,6 @@ import javax.lang.model.type.TypeMirror;
 import com.asakusafw.compiler.common.NameGenerator;
 import com.asakusafw.utils.java.model.syntax.Attribute;
 import com.asakusafw.utils.java.model.syntax.ConstructorDeclaration;
-import com.asakusafw.utils.java.model.syntax.FormalParameterDeclaration;
 import com.asakusafw.utils.java.model.syntax.Javadoc;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
 import com.asakusafw.utils.java.model.syntax.SimpleName;
@@ -116,7 +115,7 @@ public class OperatorImplementationClassGenerator extends OperatorClassGenerator
                     .Public()
                     .toAttributes(),
                 getClassName(),
-                Collections.<FormalParameterDeclaration>emptyList(),
+                Collections.emptyList(),
                 Collections.singletonList(factory.newReturnStatement()));
     }
 }

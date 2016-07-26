@@ -36,7 +36,7 @@ public class ModelFactoryImpl implements ModelFactory {
             Expression...arguments) {
         Util.notNull(arguments, "arguments"); //$NON-NLS-1$
         return this.newAlternateConstructorInvocation0(
-            Collections.<Type>emptyList(),
+            Collections.emptyList(),
             Arrays.asList(arguments)
         );
     }
@@ -45,7 +45,7 @@ public class ModelFactoryImpl implements ModelFactory {
     public AlternateConstructorInvocation newAlternateConstructorInvocation(
             List<? extends Expression> arguments) {
         return this.newAlternateConstructorInvocation0(
-            Collections.<Type>emptyList(),
+            Collections.emptyList(),
             arguments
         );
     }
@@ -188,7 +188,7 @@ public class ModelFactoryImpl implements ModelFactory {
             ArrayInitializer arrayInitializer) {
         return this.newArrayCreationExpression0(
             type,
-            Collections.<Expression>emptyList(),
+            Collections.emptyList(),
             arrayInitializer
         );
     }
@@ -477,7 +477,7 @@ public class ModelFactoryImpl implements ModelFactory {
             javadoc,
             modifiers,
             name,
-            Collections.<TypeParameterDeclaration>emptyList(),
+            Collections.emptyList(),
             superClass,
             superInterfaceTypes,
             bodyDeclarations
@@ -539,7 +539,7 @@ public class ModelFactoryImpl implements ModelFactory {
         Util.notNull(arguments, "arguments"); //$NON-NLS-1$
         return this.newClassInstanceCreationExpression0(
             null,
-            Collections.<Type>emptyList(),
+            Collections.emptyList(),
             type,
             Arrays.asList(arguments),
             null
@@ -552,7 +552,7 @@ public class ModelFactoryImpl implements ModelFactory {
             List<? extends Expression> arguments) {
         return this.newClassInstanceCreationExpression0(
             null,
-            Collections.<Type>emptyList(),
+            Collections.emptyList(),
             type,
             arguments,
             null
@@ -681,10 +681,10 @@ public class ModelFactoryImpl implements ModelFactory {
         return this.newConstructorDeclaration0(
             javadoc,
             modifiers,
-            Collections.<TypeParameterDeclaration>emptyList(),
+            Collections.emptyList(),
             name,
             formalParameters,
-            Collections.<Type>emptyList(),
+            Collections.emptyList(),
             newBlock(statements)
         );
     }
@@ -937,7 +937,7 @@ public class ModelFactoryImpl implements ModelFactory {
         Util.notNull(arguments, "arguments"); //$NON-NLS-1$
         return this.newEnumConstantDeclaration0(
             javadoc,
-            Collections.<Attribute>emptyList(),
+            Collections.emptyList(),
             name,
             Arrays.asList(arguments),
             null
@@ -992,7 +992,7 @@ public class ModelFactoryImpl implements ModelFactory {
             javadoc,
             modifiers,
             name,
-            Collections.<Type>emptyList(),
+            Collections.emptyList(),
             constantDeclarations,
             Arrays.asList(bodyDeclarations)
         );
@@ -1163,7 +1163,7 @@ public class ModelFactoryImpl implements ModelFactory {
             Type type,
             SimpleName name) {
         return this.newFormalParameterDeclaration0(
-            Collections.<Attribute>emptyList(),
+            Collections.emptyList(),
             type,
             false,
             name,
@@ -1295,7 +1295,7 @@ public class ModelFactoryImpl implements ModelFactory {
         Util.notNull(statements, "statements"); //$NON-NLS-1$
         return this.newInitializerDeclaration0(
             null,
-            Collections.<Attribute>emptyList(),
+            Collections.emptyList(),
             newBlock(statements)
         );
     }
@@ -1358,7 +1358,7 @@ public class ModelFactoryImpl implements ModelFactory {
             javadoc,
             modifiers,
             name,
-            Collections.<TypeParameterDeclaration>emptyList(),
+            Collections.emptyList(),
             superInterfaceTypes,
             bodyDeclarations
         );
@@ -1500,7 +1500,7 @@ public class ModelFactoryImpl implements ModelFactory {
             SimpleName name,
             Expression initializer) {
         return this.newLocalVariableDeclaration0(
-            Collections.<Attribute>emptyList(),
+            Collections.emptyList(),
             type,
             Collections.singletonList(newVariableDeclarator(
                 name,
@@ -1566,12 +1566,12 @@ public class ModelFactoryImpl implements ModelFactory {
         return this.newMethodDeclaration0(
             javadoc,
             modifiers,
-            Collections.<TypeParameterDeclaration>emptyList(),
+            Collections.emptyList(),
             returnType,
             name,
             formalParameters,
             0,
-            Collections.<Type>emptyList(),
+            Collections.emptyList(),
             newBlock(statements)
         );
     }
@@ -1641,7 +1641,7 @@ public class ModelFactoryImpl implements ModelFactory {
         Util.notNull(arguments, "arguments"); //$NON-NLS-1$
         return this.newMethodInvocationExpression0(
             qualifier,
-            Collections.<Type>emptyList(),
+            Collections.emptyList(),
             name,
             Arrays.asList(arguments)
         );
@@ -1654,7 +1654,7 @@ public class ModelFactoryImpl implements ModelFactory {
             List<? extends Expression> arguments) {
         return this.newMethodInvocationExpression0(
             qualifier,
-            Collections.<Type>emptyList(),
+            Collections.emptyList(),
             name,
             arguments
         );
@@ -1750,7 +1750,7 @@ public class ModelFactoryImpl implements ModelFactory {
     public PackageDeclaration newPackageDeclaration(Name name) {
         return this.newPackageDeclaration0(
             null,
-            Collections.<Annotation>emptyList(),
+            Collections.emptyList(),
             name
         );
     }
@@ -2008,7 +2008,7 @@ public class ModelFactoryImpl implements ModelFactory {
         Util.notNull(arguments, "arguments"); //$NON-NLS-1$
         return this.newSuperConstructorInvocation0(
             null,
-            Collections.<Type>emptyList(),
+            Collections.emptyList(),
             Arrays.asList(arguments)
         );
     }
@@ -2018,7 +2018,7 @@ public class ModelFactoryImpl implements ModelFactory {
             List<? extends Expression> arguments) {
         return this.newSuperConstructorInvocation0(
             null,
-            Collections.<Type>emptyList(),
+            Collections.emptyList(),
             arguments
         );
     }

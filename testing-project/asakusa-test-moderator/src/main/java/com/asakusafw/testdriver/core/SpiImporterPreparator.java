@@ -51,12 +51,11 @@ public class SpiImporterPreparator implements ImporterPreparator<ImporterDescrip
      * @param elements the elements to be composited
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    @SuppressWarnings("rawtypes")
     public SpiImporterPreparator(List<? extends ImporterPreparator<?>> elements) {
         if (elements == null) {
             throw new IllegalArgumentException("elements must not be null"); //$NON-NLS-1$
         }
-        this.elements = new ArrayList<ImporterPreparator>(elements);
+        this.elements = new ArrayList<>(elements);
     }
 
     @Override

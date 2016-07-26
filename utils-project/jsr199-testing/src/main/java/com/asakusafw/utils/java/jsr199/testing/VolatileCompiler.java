@@ -24,7 +24,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -158,7 +157,7 @@ public class VolatileCompiler implements Closeable {
             files,
             collector,
             arguments,
-            Arrays.<String>asList(),
+            Collections.emptyList(),
             targets);
         task.setProcessors(processors);
         task.call();

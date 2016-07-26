@@ -67,7 +67,7 @@ public class RuntimeResourceManagerTest {
         RuntimeResourceManager manager = new RuntimeResourceManager(conf) {
             @Override
             protected List<RuntimeResource> load() throws IOException {
-                return Arrays.<RuntimeResource>asList(new Adapter() {
+                return Arrays.asList(new Adapter() {
                     @Override
                     public void setup(ResourceConfiguration configuration) {
                         passed.incrementAndGet();
@@ -90,7 +90,7 @@ public class RuntimeResourceManagerTest {
         RuntimeResourceManager manager = new RuntimeResourceManager(conf) {
             @Override
             protected List<RuntimeResource> load() throws IOException {
-                return Arrays.<RuntimeResource>asList(new Adapter() {
+                return Arrays.asList(new Adapter() {
                     @Override
                     public void setup(ResourceConfiguration configuration) throws IOException {
                         throw new IOException();
@@ -139,7 +139,7 @@ public class RuntimeResourceManagerTest {
         RuntimeResourceManager manager = new RuntimeResourceManager(conf) {
             @Override
             protected List<RuntimeResource> load() throws IOException {
-                return Arrays.<RuntimeResource>asList(new Adapter() {
+                return Arrays.asList(new Adapter() {
                     @Override
                     public void cleanup(ResourceConfiguration configuration) {
                         passed.incrementAndGet();
@@ -164,7 +164,7 @@ public class RuntimeResourceManagerTest {
         RuntimeResourceManager manager = new RuntimeResourceManager(conf) {
             @Override
             protected List<RuntimeResource> load() throws IOException {
-                return Arrays.<RuntimeResource>asList(new Adapter() {
+                return Arrays.asList(new Adapter() {
                     @Override
                     public void cleanup(ResourceConfiguration configuration) throws IOException {
                         throw new IOException();

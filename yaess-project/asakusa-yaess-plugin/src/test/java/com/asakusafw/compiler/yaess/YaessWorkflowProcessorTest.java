@@ -176,7 +176,7 @@ public class YaessWorkflowProcessorTest {
                 Location.fromPath("testing", '/'),
                 output,
                 folder.newFolder("working"),
-                Collections.<File>emptyList(),
+                Collections.emptyList(),
                 getClass().getClassLoader(),
                 new FlowCompilerOptions());
         File script = YaessWorkflowProcessor.getScriptOutput(output);

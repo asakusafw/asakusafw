@@ -121,7 +121,7 @@ public class HashGraph<V> implements Graph<V> {
 
     @Override
     public Iterator<Graph.Vertex<V>> iterator() {
-        return new IteratorWrapper<Vertex<V>>(entity.values().iterator());
+        return new IteratorWrapper<>(entity.values().iterator());
     }
 
     @Override

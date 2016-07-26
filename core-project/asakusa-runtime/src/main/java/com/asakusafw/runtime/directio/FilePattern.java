@@ -443,7 +443,7 @@ public class FilePattern implements ResourcePattern {
 
         private final List<PatternElement> elements;
 
-        static final Segment TRAVERSE = new Segment(Collections.<PatternElement>emptyList());
+        static final Segment TRAVERSE = new Segment(Collections.emptyList());
 
         Segment(List<PatternElement> elements) {
             assert elements != null;

@@ -18,7 +18,6 @@ package com.asakusafw.compiler.directio;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -622,7 +621,7 @@ public class DirectFileIoProcessorTest {
                     "com.example",
                     Location.fromPath("target/testing", '/'),
                     folder.newFolder("build"),
-                    Collections.<File>emptyList(),
+                    Collections.emptyList(),
                     getClass().getClassLoader(),
                     FlowCompilerOptions.load(System.getProperties()));
         } catch (IOException e) {

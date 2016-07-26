@@ -375,7 +375,7 @@ public class FileResourceMirrorTest {
     }
 
     private GateScript script(ProcessScript<?>... processes) {
-        return new GateScript("testing", Arrays.<ProcessScript<?>>asList(processes));
+        return new GateScript("testing", Arrays.asList(processes));
     }
 
     private ProcessScript<StringBuilder> process(String name, DriverScript source, DriverScript drain) {
@@ -396,7 +396,7 @@ public class FileResourceMirrorTest {
     }
 
     private DriverScript dummy() {
-        return new DriverScript("dummy", Collections.<String, String>emptyMap());
+        return new DriverScript("dummy", Collections.emptyMap());
     }
 
     private FileProfile profile() {

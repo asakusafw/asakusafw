@@ -120,14 +120,12 @@ public class BasicYaessLogSource implements Source<YaessLogRecord> {
     }
 
     static final String TIME_PATTERN = "yyyy/MM/dd HH:mm:ss";
-    private static final ThreadLocal<DateFormat> TIME_FORMAT = new ThreadLocal<DateFormat>() {
-        @Override
-        protected DateFormat initialValue() {
-            SimpleDateFormat format = new SimpleDateFormat(TIME_PATTERN);
-            format.setLenient(true);
-            return format;
-        }
-    };
+    private static final ThreadLocal<DateFormat> TIME_FORMAT = ThreadLocal.withInitial(() -> {
+        SimpleDateFormat format = new SimpleDateFormat(TIME_PATTERN);
+        format.setLenient(true);
+        return format;
+    });
+
     private long extractTime(String line) {
         if (line.length() <= TIME_PATTERN.length()) {
             return -1L;

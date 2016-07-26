@@ -44,7 +44,7 @@ public class SerdeRowFormatInfo implements RowFormatInfo {
             @JsonProperty(value = "properties", required = false) Map<String, String> properties) {
         this.name = name;
         this.properties = properties == null || properties.isEmpty()
-                ? Collections.<String, String>emptyMap()
+                ? Collections.emptyMap()
                 : Collections.unmodifiableMap(new LinkedHashMap<>(properties));
     }
 

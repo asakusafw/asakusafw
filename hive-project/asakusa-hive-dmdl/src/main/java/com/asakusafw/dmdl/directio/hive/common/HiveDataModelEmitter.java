@@ -47,7 +47,6 @@ import com.asakusafw.utils.java.model.syntax.ClassDeclaration;
 import com.asakusafw.utils.java.model.syntax.ConstructorDeclaration;
 import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.FieldDeclaration;
-import com.asakusafw.utils.java.model.syntax.FormalParameterDeclaration;
 import com.asakusafw.utils.java.model.syntax.InitializerDeclaration;
 import com.asakusafw.utils.java.model.syntax.MethodDeclaration;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
@@ -55,9 +54,7 @@ import com.asakusafw.utils.java.model.syntax.Name;
 import com.asakusafw.utils.java.model.syntax.QualifiedName;
 import com.asakusafw.utils.java.model.syntax.SimpleName;
 import com.asakusafw.utils.java.model.syntax.Statement;
-import com.asakusafw.utils.java.model.syntax.Type;
 import com.asakusafw.utils.java.model.syntax.TypeBodyDeclaration;
-import com.asakusafw.utils.java.model.syntax.TypeParameterDeclaration;
 import com.asakusafw.utils.java.model.util.AttributeBuilder;
 import com.asakusafw.utils.java.model.util.ExpressionBuilder;
 import com.asakusafw.utils.java.model.util.JavadocBuilder;
@@ -255,9 +252,9 @@ public class HiveDataModelEmitter extends JavaDataModelDriver {
                         .Final()
                         .toAttributes(),
                     context.getTypeName(),
-                    Collections.<TypeParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     null,
-                    Collections.<Type>emptyList(),
+                    Collections.emptyList(),
                     createMembers());
             context.emit(decl);
         }
@@ -357,7 +354,7 @@ public class HiveDataModelEmitter extends JavaDataModelDriver {
                     null,
                     new AttributeBuilder(f).Private().toAttributes(),
                     context.getTypeName(),
-                    Collections.<FormalParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     Arrays.asList(f.newReturnStatement()));
         }
 
@@ -376,7 +373,7 @@ public class HiveDataModelEmitter extends JavaDataModelDriver {
                         .toAttributes(),
                     context.resolve(DataModelDescriptor.class),
                     f.newSimpleName(NAME_GETTER_METHOD),
-                    Collections.<FormalParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     Arrays.asList(new ExpressionBuilder(f, f.newSimpleName(NAME_SINGLETON_FIELD))
                             .toReturnStatement()));
         }

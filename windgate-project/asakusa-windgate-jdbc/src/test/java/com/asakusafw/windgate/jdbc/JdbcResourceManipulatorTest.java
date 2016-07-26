@@ -410,7 +410,7 @@ public class JdbcResourceManipulatorTest {
     }
 
     private DriverScript dummy() {
-        return new DriverScript("dummy", Collections.<String, String>emptyMap());
+        return new DriverScript("dummy", Collections.emptyMap());
     }
 
     private JdbcProfile profile() {

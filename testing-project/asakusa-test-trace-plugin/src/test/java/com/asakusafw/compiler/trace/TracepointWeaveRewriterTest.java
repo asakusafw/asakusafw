@@ -104,7 +104,7 @@ public class TracepointWeaveRewriterTest {
     }
 
     private Map<String, String> attr() {
-        return Collections.<String, String>emptyMap();
+        return Collections.emptyMap();
     }
 
     private FlowGraph rewrite(TraceSetting... settings) {

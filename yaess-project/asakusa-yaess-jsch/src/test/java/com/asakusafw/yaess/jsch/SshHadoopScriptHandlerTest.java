@@ -236,7 +236,7 @@ public class SshHadoopScriptHandlerTest extends SshScriptHandlerTestRoot {
 
         Map<String, String> conf = map();
         conf.put("env.ASAKUSA_HOME", getAsakusaHome().getAbsolutePath());
-        ServiceProfile<HadoopScriptHandler> profile = new ServiceProfile<HadoopScriptHandler>(
+        ServiceProfile<HadoopScriptHandler> profile = new ServiceProfile<>(
                 "hadoop", SshHadoopScriptHandler.class, conf, ProfileContext.system(getClass().getClassLoader()));
         profile.newInstance();
     }
@@ -255,7 +255,7 @@ public class SshHadoopScriptHandlerTest extends SshScriptHandlerTestRoot {
         conf.put(JschProcessExecutor.KEY_USER, System.getProperty("user.name"));
         conf.put(JschProcessExecutor.KEY_HOST, "localhost");
         conf.put(JschProcessExecutor.KEY_PRIVATE_KEY, privateKey.getAbsolutePath() + "__INVALID__");
-        ServiceProfile<HadoopScriptHandler> profile = new ServiceProfile<HadoopScriptHandler>(
+        ServiceProfile<HadoopScriptHandler> profile = new ServiceProfile<>(
                 "hadoop", SshHadoopScriptHandler.class, conf, ProfileContext.system(getClass().getClassLoader()));
         profile.newInstance();
     }
@@ -355,7 +355,7 @@ public class SshHadoopScriptHandlerTest extends SshScriptHandlerTestRoot {
         conf.put(JschProcessExecutor.KEY_USER, System.getProperty("user.name"));
         conf.put(JschProcessExecutor.KEY_HOST, "localhost");
         conf.put(JschProcessExecutor.KEY_PRIVATE_KEY, privateKey.getAbsolutePath());
-        ServiceProfile<HadoopScriptHandler> profile = new ServiceProfile<HadoopScriptHandler>(
+        ServiceProfile<HadoopScriptHandler> profile = new ServiceProfile<>(
                 "hadoop", SshHadoopScriptHandler.class, conf, ProfileContext.system(getClass().getClassLoader()));
         try {
             return profile.newInstance();

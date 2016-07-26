@@ -25,7 +25,6 @@ import com.asakusafw.dmdl.java.emitter.EmitContext;
 import com.asakusafw.utils.java.model.syntax.Attribute;
 import com.asakusafw.utils.java.model.syntax.ClassDeclaration;
 import com.asakusafw.utils.java.model.syntax.Expression;
-import com.asakusafw.utils.java.model.syntax.FormalParameterDeclaration;
 import com.asakusafw.utils.java.model.syntax.MethodDeclaration;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
 import com.asakusafw.utils.java.model.syntax.Name;
@@ -106,7 +105,7 @@ public final class FsProcessDescriptionGenerator {
                 getClassAttributes(),
                 context.getTypeName(),
                 context.resolve(Models.toName(f, importer ? IMPORTER_TYPE_NAME : EXPORTER_TYPE_NAME)),
-                Collections.<com.asakusafw.utils.java.model.syntax.Type>emptyList(),
+                Collections.emptyList(),
                 createMembers());
         context.emit(decl);
     }
@@ -203,7 +202,7 @@ public final class FsProcessDescriptionGenerator {
                     .toAttributes(),
                 type,
                 f.newSimpleName(name),
-                Collections.<FormalParameterDeclaration>emptyList(),
+                Collections.emptyList(),
                 Arrays.asList(new ExpressionBuilder(f, value).toReturnStatement()));
     }
 

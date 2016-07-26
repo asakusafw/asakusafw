@@ -335,7 +335,7 @@ public class ExpressionBuilder {
         if (arguments == null) {
             throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
         }
-        return method(Collections.<Type> emptyList(), name, Arrays.asList(arguments));
+        return method(Collections.emptyList(), name, Arrays.asList(arguments));
     }
 
     /**
@@ -378,7 +378,7 @@ public class ExpressionBuilder {
         if (arguments == null) {
             throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
         }
-        return method(Collections.<Type> emptyList(), name, arguments);
+        return method(Collections.emptyList(), name, arguments);
     }
 
     /**
@@ -421,7 +421,7 @@ public class ExpressionBuilder {
         if (arguments == null) {
             throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
         }
-        return method(Collections.<Type> emptyList(), name, Arrays.asList(arguments));
+        return method(Collections.emptyList(), name, Arrays.asList(arguments));
     }
 
     /**
@@ -464,7 +464,7 @@ public class ExpressionBuilder {
         if (arguments == null) {
             throw new IllegalArgumentException("arguments must not be null"); //$NON-NLS-1$
         }
-        return method(Collections.<Type> emptyList(), name, arguments);
+        return method(Collections.emptyList(), name, arguments);
     }
 
     /**

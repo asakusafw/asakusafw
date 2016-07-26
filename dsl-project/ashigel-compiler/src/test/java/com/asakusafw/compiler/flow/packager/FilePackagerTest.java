@@ -23,7 +23,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -39,16 +38,10 @@ import org.junit.rules.TemporaryFolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.asakusafw.compiler.batch.ResourceRepository;
 import com.asakusafw.compiler.flow.JobflowCompilerTestRoot;
 import com.asakusafw.compiler.flow.Packager;
-import com.asakusafw.utils.java.model.syntax.Comment;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
-import com.asakusafw.utils.java.model.syntax.ImportDeclaration;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
-import com.asakusafw.utils.java.model.syntax.Type;
-import com.asakusafw.utils.java.model.syntax.TypeBodyDeclaration;
-import com.asakusafw.utils.java.model.syntax.TypeParameterDeclaration;
 import com.asakusafw.utils.java.model.util.AttributeBuilder;
 import com.asakusafw.utils.java.model.util.Models;
 
@@ -75,7 +68,7 @@ public class FilePackagerTest extends JobflowCompilerTestRoot {
 
         FilePackager packager = new FilePackager(
                 folder.newFolder(),
-                Arrays.<ResourceRepository>asList());
+                Collections.emptyList());
         packager.initialize(environment);
 
         emit(packager, java("Hello"));
@@ -93,7 +86,7 @@ public class FilePackagerTest extends JobflowCompilerTestRoot {
 
         FilePackager packager = new FilePackager(
                 folder.newFolder(),
-                Arrays.<ResourceRepository>asList());
+                Collections.emptyList());
         packager.initialize(environment);
 
         write(packager, "com.example", "messages.properties", "key=value");
@@ -111,7 +104,7 @@ public class FilePackagerTest extends JobflowCompilerTestRoot {
 
         FilePackager packager = new FilePackager(
                 folder.newFolder(),
-                Arrays.<ResourceRepository>asList());
+                Collections.emptyList());
         packager.initialize(environment);
 
         emit(packager, java("Hello"));
@@ -135,7 +128,7 @@ public class FilePackagerTest extends JobflowCompilerTestRoot {
 
         FilePackager packager = new FilePackager(
                 folder.newFolder(),
-                Arrays.<ResourceRepository>asList());
+                Collections.emptyList());
         packager.initialize(environment);
         CompilationUnit cu = getErroneousSource();
         emit(packager, cu);
@@ -158,7 +151,7 @@ public class FilePackagerTest extends JobflowCompilerTestRoot {
 
         FilePackager packager = new FilePackager(
                 folder.newFolder(),
-                Arrays.<ResourceRepository>asList());
+                Collections.emptyList());
         packager.initialize(environment);
 
         CompilationUnit cu = getErroneousSource();
@@ -179,7 +172,7 @@ public class FilePackagerTest extends JobflowCompilerTestRoot {
         Set<String> entries = new HashSet<>();
         FilePackager packager = new FilePackager(
                 folder.newFolder(),
-                Arrays.<ResourceRepository>asList());
+                Collections.emptyList());
         packager.initialize(environment);
         emit(packager, java("Hello"));
         build(entries, packager);
@@ -190,7 +183,7 @@ public class FilePackagerTest extends JobflowCompilerTestRoot {
         ModelFactory f = Models.getModelFactory();
         CompilationUnit cu = f.newCompilationUnit(
                 f.newPackageDeclaration(Models.toName(f, "com.example")),
-                Collections.<ImportDeclaration>emptyList(),
+                Collections.emptyList(),
                 Collections.singletonList(f.newClassDeclaration(
                         null,
                         new AttributeBuilder(f)
@@ -198,11 +191,11 @@ public class FilePackagerTest extends JobflowCompilerTestRoot {
                             .Private()
                             .toAttributes(),
                         f.newSimpleName("Hello"),
-                        Collections.<TypeParameterDeclaration>emptyList(),
+                        Collections.emptyList(),
                         null,
-                        Collections.<Type>emptyList(),
-                        Collections.<TypeBodyDeclaration>emptyList())),
-                Collections.<Comment>emptyList());
+                        Collections.emptyList(),
+                        Collections.emptyList())),
+                Collections.emptyList());
         return cu;
     }
 
@@ -241,17 +234,17 @@ public class FilePackagerTest extends JobflowCompilerTestRoot {
         ModelFactory f = Models.getModelFactory();
         return f.newCompilationUnit(
                 f.newPackageDeclaration(Models.toName(f, "com.example")),
-                Collections.<ImportDeclaration>emptyList(),
+                Collections.emptyList(),
                 Collections.singletonList(f.newClassDeclaration(
                         null,
                         new AttributeBuilder(f)
                             .Public()
                             .toAttributes(),
                         f.newSimpleName(name),
-                        Collections.<TypeParameterDeclaration>emptyList(),
+                        Collections.emptyList(),
                         null,
-                        Collections.<Type>emptyList(),
-                        Collections.<TypeBodyDeclaration>emptyList())),
-                Collections.<Comment>emptyList());
+                        Collections.emptyList(),
+                        Collections.emptyList())),
+                Collections.emptyList());
     }
 }

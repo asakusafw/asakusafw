@@ -205,7 +205,7 @@ public class InProcessJobExecutorTest {
 
         JobExecutor executor = new InProcessJobExecutor(context);
         try {
-            executor.execute(job(MockHadoopJob.class.getName()), Collections.<String, String>emptyMap());
+            executor.execute(job(MockHadoopJob.class.getName()), Collections.emptyMap());
         } catch (IOException e) {
             throw new AssertionError(e);
         }
@@ -232,7 +232,7 @@ public class InProcessJobExecutorTest {
 
         JobExecutor executor = new InProcessJobExecutor(context);
         try {
-            executor.execute(job, Collections.<String, String>emptyMap());
+            executor.execute(job, Collections.emptyMap());
         } catch (IOException e) {
             throw new AssertionError(e);
         }
@@ -258,7 +258,7 @@ public class InProcessJobExecutorTest {
         JobExecutor executor = new InProcessJobExecutor(context);
         deploy("dummy.xml", new File(framework.getHome(), InProcessJobExecutor.PATH_ASAKUSA_RESOURCES));
         try {
-            executor.execute(job(MockHadoopJob.class.getName()), Collections.<String, String>emptyMap());
+            executor.execute(job(MockHadoopJob.class.getName()), Collections.emptyMap());
         } catch (IOException e) {
             throw new AssertionError(e);
         }
@@ -280,7 +280,7 @@ public class InProcessJobExecutorTest {
 
         JobExecutor executor = new InProcessJobExecutor(context);
         try {
-            executor.execute(job(MockHadoopJob.class.getName()), Collections.<String, String>emptyMap());
+            executor.execute(job(MockHadoopJob.class.getName()), Collections.emptyMap());
             throw new IOException();
         } catch (IOException e) {
             throw new AssertionError(e);
@@ -304,7 +304,7 @@ public class InProcessJobExecutorTest {
 
         JobExecutor executor = new InProcessJobExecutor(context);
         try {
-            executor.execute(job(MockHadoopJob.class.getName()), Collections.<String, String>emptyMap());
+            executor.execute(job(MockHadoopJob.class.getName()), Collections.emptyMap());
             throw new IOException();
         } catch (IOException e) {
             throw new AssertionError(e);
@@ -328,7 +328,7 @@ public class InProcessJobExecutorTest {
         });
         JobExecutor executor = new InProcessJobExecutor(context);
         try {
-            executor.execute(command("mock", "hello", "world"), Collections.<String, String>emptyMap());
+            executor.execute(command("mock", "hello", "world"), Collections.emptyMap());
         } catch (IOException e) {
             throw new AssertionError(e);
         }
@@ -348,7 +348,7 @@ public class InProcessJobExecutorTest {
         });
         JobExecutor executor = new InProcessJobExecutor(context);
         try {
-            executor.execute(command("mock"), Collections.<String, String>emptyMap());
+            executor.execute(command("mock"), Collections.emptyMap());
             throw new IllegalStateException();
         } catch (IOException e) {
             // ok.
@@ -370,7 +370,7 @@ public class InProcessJobExecutorTest {
         });
         JobExecutor executor = new InProcessJobExecutor(context);
         try {
-            executor.execute(command("mock"), Collections.<String, String>emptyMap());
+            executor.execute(command("mock"), Collections.emptyMap());
             throw new IllegalStateException();
         } catch (IOException e) {
             // ok.
@@ -403,7 +403,7 @@ public class InProcessJobExecutorTest {
         TestExecutionPlan.Command command = command("generic", touch.getPath(), target.getAbsolutePath());
         JobExecutor executor = new InProcessJobExecutor(context);
         try {
-            executor.execute(command, Collections.<String, String>emptyMap());
+            executor.execute(command, Collections.emptyMap());
         } catch (IOException e) {
             throw new AssertionError(e);
         }
@@ -431,7 +431,7 @@ public class InProcessJobExecutorTest {
 
     private TestExecutionPlan.Command command(String moduleName, String... commandLine) {
         return new TestExecutionPlan.Command(
-                Arrays.asList(commandLine), moduleName, null, Collections.<String, String>emptyMap());
+                Arrays.asList(commandLine), moduleName, null, Collections.emptyMap());
     }
 
     private void putPropertiesFile(Properties props, File file) {

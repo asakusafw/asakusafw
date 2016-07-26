@@ -30,6 +30,7 @@ import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.RandomAccess;
@@ -524,7 +525,7 @@ public class ModelEmitterTest {
                     Arrays.asList(
                         f.newArrayCreationExpression(
                             f.newArrayType(f.newBasicType(BasicTypeKind.INT)),
-                            Arrays.<Expression>asList(),
+                            Collections.emptyList(),
                             f.newArrayInitializer(Arrays.asList(
                                 Models.toLiteral(f, 0),
                                 Models.toLiteral(f, 1),
@@ -544,7 +545,7 @@ public class ModelEmitterTest {
                     f.newParenthesizedExpression(
                         f.newArrayCreationExpression(
                             f.newArrayType(f.newBasicType(BasicTypeKind.INT)),
-                            Arrays.<Expression>asList(),
+                            Collections.emptyList(),
                             f.newArrayInitializer(Arrays.asList(
                                 Models.toLiteral(f, 100),
                                 Models.toLiteral(f, 200),
@@ -2025,7 +2026,6 @@ public class ModelEmitterTest {
                         })))
                 })));
 
-        @SuppressWarnings("unchecked")
         Enum<?> constant = Enum.valueOf(klass.asSubclass(Enum.class), "A");
         Field field = klass.getDeclaredField("arguments");
         assertThat(field.get(constant), is((Object) new Object[] { 1, "a" }));
@@ -2058,7 +2058,6 @@ public class ModelEmitterTest {
                 Arrays.asList(new TypeBodyDeclaration[] {})
             ));
 
-        @SuppressWarnings("unchecked")
         Enum<?> constant = Enum.valueOf(klass.asSubclass(Enum.class), "A");
         assertThat(constant.toString(), is("hello"));
     }
@@ -2094,7 +2093,6 @@ public class ModelEmitterTest {
                 Arrays.asList(new TypeBodyDeclaration[] {})
             ));
 
-        @SuppressWarnings("unchecked")
         Enum<?> constant = Enum.valueOf(klass.asSubclass(Enum.class), "A");
         assertThat(constant.toString(), is("A"));
     }

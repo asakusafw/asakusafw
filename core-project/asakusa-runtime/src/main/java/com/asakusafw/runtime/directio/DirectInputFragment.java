@@ -45,7 +45,7 @@ public final class DirectInputFragment {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public DirectInputFragment(String path, long offset, long length, List<String> ownerNodeNames) {
-        this(path, offset, length, ownerNodeNames, Collections.<String, String>emptyMap());
+        this(path, offset, length, ownerNodeNames, Collections.emptyMap());
     }
 
     /**

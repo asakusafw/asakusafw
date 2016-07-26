@@ -135,7 +135,7 @@ public class BasicParameterTable implements ParameterTable {
                 current = null;
                 return false;
             }
-            previous = current != null ? current : Collections.<String, String>emptyMap();
+            previous = current != null ? current : Collections.emptyMap();
             current = entity.next();
             return true;
         }

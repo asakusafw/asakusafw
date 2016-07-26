@@ -24,6 +24,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
@@ -85,7 +86,7 @@ public class CommandLineUtilTest {
     @Test
     public void parseFileList_null() {
         List<File> result = canonicalize(CommandLineUtil.parseFileList(null));
-        assertThat(result, is(Arrays.<File>asList()));
+        assertThat(result, is(Collections.emptyList()));
     }
 
     /**
@@ -94,7 +95,7 @@ public class CommandLineUtilTest {
     @Test
     public void parseFileList_empty() {
         List<File> result = canonicalize(CommandLineUtil.parseFileList(""));
-        assertThat(result, is(Arrays.<File>asList()));
+        assertThat(result, is(Collections.emptyList()));
     }
 
     private List<File> canonicalize(List<File> list) {

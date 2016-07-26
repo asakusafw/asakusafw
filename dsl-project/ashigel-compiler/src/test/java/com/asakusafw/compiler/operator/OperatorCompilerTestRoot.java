@@ -163,7 +163,7 @@ public class OperatorCompilerTestRoot {
      * @return the matcher
      */
     protected Matcher<? super Set<String>> isJust(String... names) {
-        return Matchers.<Set<String>>is(Sets.from(names));
+        return Matchers.is(Sets.from(names));
     }
 
     /**

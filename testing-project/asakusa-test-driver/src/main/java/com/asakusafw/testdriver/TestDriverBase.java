@@ -265,7 +265,7 @@ public abstract class TestDriverBase extends DriverElementBase {
         TraceSetting setting = createTraceSetting(
                 operatorClass, methodName,
                 PortKind.INPUT, portName,
-                Collections.<String, String>emptyMap());
+                Collections.emptyMap());
         appendTrace(setting);
     }
 
@@ -290,7 +290,7 @@ public abstract class TestDriverBase extends DriverElementBase {
         TraceSetting setting = createTraceSetting(
                 operatorClass, methodName,
                 PortKind.OUTPUT, portName,
-                Collections.<String, String>emptyMap());
+                Collections.emptyMap());
         appendTrace(setting);
     }
 
@@ -315,7 +315,7 @@ public abstract class TestDriverBase extends DriverElementBase {
         TraceSetting setting = createTraceSetting(
                 flowpartClass, FLOW_OPERATOR_FACTORY_METHOD_NAME,
                 PortKind.INPUT, portName,
-                Collections.<String, String>emptyMap());
+                Collections.emptyMap());
         appendTrace(setting);
     }
 
@@ -340,7 +340,7 @@ public abstract class TestDriverBase extends DriverElementBase {
         TraceSetting setting = createTraceSetting(
                 flowpartClass, FLOW_OPERATOR_FACTORY_METHOD_NAME,
                 PortKind.OUTPUT, portName,
-                Collections.<String, String>emptyMap());
+                Collections.emptyMap());
         appendTrace(setting);
     }
 

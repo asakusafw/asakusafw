@@ -237,7 +237,7 @@ public class QueueHadoopScriptHandlerTest {
             .buildId("OK");
         ExecutionContext context = new ExecutionContext(
                 "b", "f", "e", ExecutionPhase.MAIN,
-                Collections.<String, String>emptyMap(),
+                Collections.emptyMap(),
                 rc.unapply());
 
         HadoopScript script = script();
@@ -292,7 +292,7 @@ public class QueueHadoopScriptHandlerTest {
         Map<String, String> env = new HashMap<>();
         env.put("e", "env");
 
-        return new HadoopScript("s", Collections.<String>emptySet(), "Cls", prop, env);
+        return new HadoopScript("s", Collections.emptySet(), "Cls", prop, env);
     }
 
     private ExecutionContext context() {

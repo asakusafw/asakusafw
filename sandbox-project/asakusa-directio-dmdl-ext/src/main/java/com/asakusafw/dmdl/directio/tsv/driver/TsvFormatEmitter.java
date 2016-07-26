@@ -60,7 +60,6 @@ import com.asakusafw.utils.java.model.syntax.Name;
 import com.asakusafw.utils.java.model.syntax.SimpleName;
 import com.asakusafw.utils.java.model.syntax.Statement;
 import com.asakusafw.utils.java.model.syntax.TypeBodyDeclaration;
-import com.asakusafw.utils.java.model.syntax.TypeParameterDeclaration;
 import com.asakusafw.utils.java.model.syntax.WildcardBoundKind;
 import com.asakusafw.utils.java.model.util.AttributeBuilder;
 import com.asakusafw.utils.java.model.util.ExpressionBuilder;
@@ -218,7 +217,7 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
                     f.newParameterizedType(
                             context.resolve(superClass),
                             context.resolve(model.getSymbol())),
-                    Collections.<com.asakusafw.utils.java.model.syntax.Type>emptyList(),
+                    Collections.emptyList(),
                     createMembers());
             context.emit(decl);
         }
@@ -250,7 +249,7 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
                             context.resolve(Class.class),
                             context.resolve(model.getSymbol())),
                     f.newSimpleName("getSupportedType"), //$NON-NLS-1$
-                    Collections.<FormalParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     Arrays.asList(new Statement[] {
                             new TypeBuilder(f, context.resolve(model.getSymbol()))
                                 .dotClass()
@@ -269,7 +268,7 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
                         .toAttributes(),
                     context.resolve(long.class),
                     f.newSimpleName("getPreferredFragmentSize"), //$NON-NLS-1$
-                    Collections.<FormalParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     Collections.singletonList(new ExpressionBuilder(f, value).toReturnStatement()));
         }
 
@@ -286,7 +285,7 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
                         .toAttributes(),
                     context.resolve(long.class),
                     f.newSimpleName("getMinimumFragmentSize"), //$NON-NLS-1$
-                    Collections.<FormalParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     Collections.singletonList(new ExpressionBuilder(f, value).toReturnStatement()));
         }
 
@@ -375,7 +374,7 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
                         .annotation(context.resolve(Override.class))
                         .Public()
                         .toAttributes(),
-                    Collections.<TypeParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     f.newParameterizedType(
                             context.resolve(ModelInput.class),
                             context.resolve(model.getSymbol())),
@@ -429,7 +428,7 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
                         .annotation(context.resolve(Override.class))
                         .Public()
                         .toAttributes(),
-                    Collections.<TypeParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     context.resolve(f.newParameterizedType(
                             context.resolve(ModelOutput.class),
                             context.resolve(model.getSymbol()))),
@@ -482,7 +481,7 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
                         .annotation(context.resolve(Deprecated.class))
                         .Private()
                         .toAttributes(),
-                    Collections.<TypeParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     context.resolve(void.class),
                     f.newSimpleName(NAME_ADD_HEADER),
                     Arrays.asList(f.newFormalParameterDeclaration(context.resolve(TsvEmitter.class), emitter)),
@@ -515,7 +514,7 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
                     new AttributeBuilder(f)
                         .Private()
                         .toAttributes(),
-                    Collections.<TypeParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     context.resolve(void.class),
                     f.newSimpleName(NAME_SKIP_HEADER),
                     Arrays.asList(f.newFormalParameterDeclaration(context.resolve(InputStream.class), input)),
@@ -637,7 +636,7 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
                         .annotation(context.resolve(Override.class))
                         .Public()
                         .toAttributes(),
-                    Collections.<TypeParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     context.resolve(boolean.class),
                     f.newSimpleName("readTo"), //$NON-NLS-1$
                     Arrays.asList(f.newFormalParameterDeclaration(context.resolve(model.getSymbol()), object)),
@@ -650,10 +649,10 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
                         .annotation(context.resolve(Override.class))
                         .Public()
                         .toAttributes(),
-                    Collections.<TypeParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     context.resolve(void.class),
                     f.newSimpleName("close"), //$NON-NLS-1$
-                    Collections.<FormalParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     0,
                     Arrays.asList(context.resolve(IOException.class)),
                     f.newBlock(new ExpressionBuilder(f, parser)
@@ -707,7 +706,7 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
                         .annotation(context.resolve(Override.class))
                         .Public()
                         .toAttributes(),
-                    Collections.<TypeParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     context.resolve(void.class),
                     f.newSimpleName("write"), //$NON-NLS-1$
                     Arrays.asList(f.newFormalParameterDeclaration(context.resolve(model.getSymbol()), object)),
@@ -720,10 +719,10 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
                         .annotation(context.resolve(Override.class))
                         .Public()
                         .toAttributes(),
-                    Collections.<TypeParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     context.resolve(void.class),
                     f.newSimpleName("close"), //$NON-NLS-1$
-                    Collections.<FormalParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     0,
                     Arrays.asList(context.resolve(IOException.class)),
                     f.newBlock(new ExpressionBuilder(f, emitter)

@@ -127,10 +127,10 @@ public class QueueHadoopScriptHandler extends ExecutionScriptHandlerBase impleme
             ExecutionContext context) throws InterruptedException, IOException {
         HadoopScript script = new HadoopScript(
                 context.getPhase().getSymbol(),
-                Collections.<String>emptySet(),
+                Collections.emptySet(),
                 CLEANUP_STAGE_CLASS,
-                Collections.<String, String>emptyMap(),
-                Collections.<String, String>emptyMap());
+                Collections.emptyMap(),
+                Collections.emptyMap());
         run(monitor, context, script);
     }
 

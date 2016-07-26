@@ -58,7 +58,7 @@ public class CompositeDataModelDriverTest extends GeneratorTesterRoot {
      */
     @Test
     public void empty() {
-        emitDrivers.add(new CompositeDataModelDriver(Collections.<JavaDataModelDriver>emptyList()));
+        emitDrivers.add(new CompositeDataModelDriver(Collections.emptyList()));
         generate("simple");
     }
 

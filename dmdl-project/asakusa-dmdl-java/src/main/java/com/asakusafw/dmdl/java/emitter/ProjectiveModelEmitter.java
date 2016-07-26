@@ -33,7 +33,6 @@ import com.asakusafw.utils.java.model.syntax.ModelFactory;
 import com.asakusafw.utils.java.model.syntax.SimpleName;
 import com.asakusafw.utils.java.model.syntax.Type;
 import com.asakusafw.utils.java.model.syntax.TypeBodyDeclaration;
-import com.asakusafw.utils.java.model.syntax.TypeParameterDeclaration;
 import com.asakusafw.utils.java.model.util.AttributeBuilder;
 import com.asakusafw.utils.java.model.util.JavadocBuilder;
 
@@ -147,12 +146,12 @@ public class ProjectiveModelEmitter {
                                 context.getDescription(property))
                     .toJavadoc(),
                 new AttributeBuilder(f).toAttributes(),
-                Collections.<TypeParameterDeclaration>emptyList(),
+                Collections.emptyList(),
                 context.getValueType(property),
                 context.getValueGetterName(property),
-                Collections.<FormalParameterDeclaration>emptyList(),
+                Collections.emptyList(),
                 0,
-                Collections.<Type>emptyList(),
+                Collections.emptyList(),
                 null);
     }
 
@@ -170,14 +169,14 @@ public class ProjectiveModelEmitter {
                     .toJavadoc(),
                 new AttributeBuilder(f)
                     .toAttributes(),
-                Collections.<TypeParameterDeclaration>emptyList(),
+                Collections.emptyList(),
                 context.resolve(void.class),
                 context.getValueSetterName(property),
                 Arrays.asList(new FormalParameterDeclaration[] {
                         f.newFormalParameterDeclaration(valueType, paramName)
                 }),
                 0,
-                Collections.<Type>emptyList(),
+                Collections.emptyList(),
                 null);
     }
 
@@ -192,12 +191,12 @@ public class ProjectiveModelEmitter {
                                 context.getDescription(property))
                     .toJavadoc(),
                 driver.getMemberAnnotations(context, property),
-                Collections.<TypeParameterDeclaration>emptyList(),
+                Collections.emptyList(),
                 context.getFieldType(property),
                 context.getOptionGetterName(property),
-                Collections.<FormalParameterDeclaration>emptyList(),
+                Collections.emptyList(),
                 0,
-                Collections.<Type>emptyList(),
+                Collections.emptyList(),
                 null);
     }
 
@@ -216,14 +215,14 @@ public class ProjectiveModelEmitter {
                     .toJavadoc(),
                 new AttributeBuilder(f)
                     .toAttributes(),
-                Collections.<TypeParameterDeclaration>emptyList(),
+                Collections.emptyList(),
                 context.resolve(void.class),
                 context.getOptionSetterName(property),
                 Arrays.asList(new FormalParameterDeclaration[] {
                         f.newFormalParameterDeclaration(optionType, paramName)
                 }),
                 0,
-                Collections.<Type>emptyList(),
+                Collections.emptyList(),
                 null);
     }
 }

@@ -25,7 +25,6 @@ import com.asakusafw.dmdl.java.spi.JavaDataModelDriver;
 import com.asakusafw.dmdl.model.ModelDefinitionKind;
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
 import com.asakusafw.dmdl.semantics.PropertyDeclaration;
-import com.asakusafw.utils.java.model.syntax.FormalParameterDeclaration;
 import com.asakusafw.utils.java.model.syntax.InfixOperator;
 import com.asakusafw.utils.java.model.syntax.MethodDeclaration;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
@@ -95,7 +94,7 @@ public class ObjectDriver extends JavaDataModelDriver {
                     .toAttributes(),
                 context.resolve(String.class),
                 f.newSimpleName("toString"), //$NON-NLS-1$
-                Collections.<FormalParameterDeclaration>emptyList(),
+                Collections.emptyList(),
                 statements);
     }
 
@@ -131,7 +130,7 @@ public class ObjectDriver extends JavaDataModelDriver {
                     .toAttributes(),
                 Models.toType(f, int.class),
                 f.newSimpleName("hashCode"), //$NON-NLS-1$
-                Collections.<FormalParameterDeclaration>emptyList(),
+                Collections.emptyList(),
                 statements);
     }
 

@@ -32,11 +32,9 @@ import com.asakusafw.compiler.flow.DataClass;
 import com.asakusafw.compiler.flow.FlowCompilingEnvironment;
 import com.asakusafw.compiler.flow.stage.ShuffleModel.Segment;
 import com.asakusafw.runtime.flow.SegmentedWritable;
-import com.asakusafw.utils.java.model.syntax.Comment;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
 import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.FieldDeclaration;
-import com.asakusafw.utils.java.model.syntax.FormalParameterDeclaration;
 import com.asakusafw.utils.java.model.syntax.InfixOperator;
 import com.asakusafw.utils.java.model.syntax.Javadoc;
 import com.asakusafw.utils.java.model.syntax.MethodDeclaration;
@@ -47,7 +45,6 @@ import com.asakusafw.utils.java.model.syntax.Statement;
 import com.asakusafw.utils.java.model.syntax.Type;
 import com.asakusafw.utils.java.model.syntax.TypeBodyDeclaration;
 import com.asakusafw.utils.java.model.syntax.TypeDeclaration;
-import com.asakusafw.utils.java.model.syntax.TypeParameterDeclaration;
 import com.asakusafw.utils.java.model.util.AttributeBuilder;
 import com.asakusafw.utils.java.model.util.ExpressionBuilder;
 import com.asakusafw.utils.java.model.util.ImportBuilder;
@@ -122,7 +119,7 @@ public class ShuffleValueEmitter {
                     importer.getPackageDeclaration(),
                     importer.toImportDeclarations(),
                     Collections.singletonList(type),
-                    Collections.<Comment>emptyList());
+                    Collections.emptyList());
         }
 
         private TypeDeclaration createType() {
@@ -141,7 +138,7 @@ public class ShuffleValueEmitter {
                         .Final()
                         .toAttributes(),
                     name,
-                    Collections.<TypeParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     null,
                     Collections.singletonList(t(SegmentedWritable.class)),
                     members);
@@ -179,7 +176,7 @@ public class ShuffleValueEmitter {
                         .toAttributes(),
                     t(int.class),
                     factory.newSimpleName(SegmentedWritable.ID_GETTER),
-                    Collections.<FormalParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     Collections.singletonList(body));
         }
 
@@ -253,7 +250,7 @@ public class ShuffleValueEmitter {
                         .toAttributes(),
                     t(segment.getTarget().getType()),
                     factory.newSimpleName(methodName),
-                    Collections.<FormalParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     statements);
         }
 
@@ -336,7 +333,7 @@ public class ShuffleValueEmitter {
                         .annotation(t(Override.class))
                         .Public()
                         .toAttributes(),
-                    Collections.<TypeParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     t(void.class),
                     factory.newSimpleName("write"), //$NON-NLS-1$
                     Collections.singletonList(factory.newFormalParameterDeclaration(
@@ -385,7 +382,7 @@ public class ShuffleValueEmitter {
                         .annotation(t(Override.class))
                         .Public()
                         .toAttributes(),
-                    Collections.<TypeParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     t(void.class),
                     factory.newSimpleName("readFields"), //$NON-NLS-1$
                     Collections.singletonList(factory.newFormalParameterDeclaration(

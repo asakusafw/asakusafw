@@ -81,7 +81,7 @@ public class CommandScript implements ExecutionScript {
             Map<String, String> environmentVariables) {
         this(id, blockerIds, profileName, moduleName,
                 command, environmentVariables,
-                Collections.<String>emptySet(), false);
+                Collections.emptySet(), false);
     }
 
     /**

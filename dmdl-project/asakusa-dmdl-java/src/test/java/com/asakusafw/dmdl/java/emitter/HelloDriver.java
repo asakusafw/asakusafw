@@ -20,7 +20,6 @@ import java.util.List;
 
 import com.asakusafw.dmdl.java.spi.JavaDataModelDriver;
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
-import com.asakusafw.utils.java.model.syntax.FormalParameterDeclaration;
 import com.asakusafw.utils.java.model.syntax.MethodDeclaration;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
 import com.asakusafw.utils.java.model.util.AttributeBuilder;
@@ -42,7 +41,7 @@ public class HelloDriver extends JavaDataModelDriver {
                     .toAttributes(),
                 context.resolve(String.class),
                 f.newSimpleName("hello"),
-                Collections.<FormalParameterDeclaration>emptyList(),
+                Collections.emptyList(),
                 Collections.singletonList(new ExpressionBuilder(f, Models.toLiteral(f, "hello"))
                     .toReturnStatement())));
     }

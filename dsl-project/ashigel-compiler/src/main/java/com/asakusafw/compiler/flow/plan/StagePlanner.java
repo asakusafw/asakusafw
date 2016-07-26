@@ -158,7 +158,7 @@ public class StagePlanner {
                         e.getMessage()), e);
                 error(
                         graph,
-                        Collections.<FlowElement>emptyList(),
+                        Collections.emptyList(),
                         Messages.getString("StagePlanner.errorFailedToRewrite"), //$NON-NLS-1$
                         e.getMessage());
                 return false;
@@ -304,7 +304,7 @@ public class StagePlanner {
                         group.members,
                 });
             } else {
-                StageBlock stage = new StageBlock(group.members, Collections.<FlowBlock>emptySet());
+                StageBlock stage = new StageBlock(group.members, Collections.emptySet());
                 results.add(stage);
                 LOG.debug("stage {}: map={}, reduce=N/A", stage, group.members); //$NON-NLS-1$
             }
@@ -483,7 +483,7 @@ public class StagePlanner {
         return FlowBlock.fromPorts(
                 nextBlockSequenceNumber(),
                 graph,
-                Collections.<FlowElementInput>emptyList(),
+                Collections.emptyList(),
                 outputs,
                 elements);
     }
@@ -505,7 +505,7 @@ public class StagePlanner {
                 nextBlockSequenceNumber(),
                 graph,
                 inputs,
-                Collections.<FlowElementOutput>emptyList(),
+                Collections.emptyList(),
                 elements);
     }
 

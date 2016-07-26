@@ -51,7 +51,7 @@ public abstract class JavadocBlockParser extends JavadocBaseParser {
      * Creates a new instance without any inline block parsers.
      */
     protected JavadocBlockParser() {
-        this(Collections.<JavadocBlockParser>emptyList());
+        this(Collections.emptyList());
     }
 
     /**

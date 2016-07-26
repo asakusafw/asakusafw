@@ -56,7 +56,7 @@ public class DataModelWriteSupport extends WriteSupport<Object> {
      * @param descriptor the target data model descriptor
      */
     public DataModelWriteSupport(DataModelDescriptor descriptor) {
-        this(descriptor, Collections.<String, String>emptyMap());
+        this(descriptor, Collections.emptyMap());
     }
 
     /**
@@ -71,7 +71,7 @@ public class DataModelWriteSupport extends WriteSupport<Object> {
                     descriptor.getDataModelClass().getName()));
         }
         this.schema = computeSchema(descriptor);
-        this.metadata = metadata == null ? Collections.<String, String>emptyMap() : metadata;
+        this.metadata = metadata == null ? Collections.emptyMap() : metadata;
         List<? extends PropertyDescriptor> props = descriptor.getPropertyDescriptors();
         this.properties = props.toArray(new PropertyDescriptor[props.size()]);
         this.names = new String[props.size()];

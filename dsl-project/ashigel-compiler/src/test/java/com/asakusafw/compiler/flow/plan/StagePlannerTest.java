@@ -32,7 +32,6 @@ import org.junit.runners.Parameterized.Parameters;
 import com.asakusafw.compiler.flow.FlowCompilerOptions;
 import com.asakusafw.compiler.flow.FlowCompilerOptions.GenericOptionValue;
 import com.asakusafw.compiler.flow.FlowGraphGenerator;
-import com.asakusafw.compiler.flow.FlowGraphRewriter;
 import com.asakusafw.vocabulary.flow.graph.Connectivity;
 import com.asakusafw.vocabulary.flow.graph.FlowBoundary;
 import com.asakusafw.vocabulary.flow.graph.FlowElement;
@@ -79,7 +78,7 @@ public class StagePlannerTest {
         options.setHashJoinForTiny(false);
         options.putExtraAttribute(StagePlanner.KEY_COMPRESS_FLOW_BLOCK_GROUP, opt.getSymbol());
         return new StagePlanner(
-                Collections.<FlowGraphRewriter>emptyList(),
+                Collections.emptyList(),
                 options);
         }
 
@@ -883,7 +882,7 @@ public class StagePlannerTest {
         FlowCompilerOptions options = new FlowCompilerOptions();
         options.setCompressFlowPart(true);
         StagePlanner planner = new StagePlanner(
-                Collections.<FlowGraphRewriter>emptyList(),
+                Collections.emptyList(),
                 options);
         StageGraph stages = planner.plan(gen.toGraph());
 

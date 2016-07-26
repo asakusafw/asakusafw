@@ -31,10 +31,8 @@ import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.runtime.stage.AbstractCleanupStageClient;
 import com.asakusafw.runtime.stage.BaseStageClient;
 import com.asakusafw.runtime.stage.StageConstants;
-import com.asakusafw.utils.java.model.syntax.Comment;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
 import com.asakusafw.utils.java.model.syntax.Expression;
-import com.asakusafw.utils.java.model.syntax.FormalParameterDeclaration;
 import com.asakusafw.utils.java.model.syntax.Javadoc;
 import com.asakusafw.utils.java.model.syntax.MethodDeclaration;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
@@ -44,7 +42,6 @@ import com.asakusafw.utils.java.model.syntax.SimpleName;
 import com.asakusafw.utils.java.model.syntax.Type;
 import com.asakusafw.utils.java.model.syntax.TypeBodyDeclaration;
 import com.asakusafw.utils.java.model.syntax.TypeDeclaration;
-import com.asakusafw.utils.java.model.syntax.TypeParameterDeclaration;
 import com.asakusafw.utils.java.model.util.AttributeBuilder;
 import com.asakusafw.utils.java.model.util.ImportBuilder;
 import com.asakusafw.utils.java.model.util.JavadocBuilder;
@@ -118,7 +115,7 @@ public class CleanupStageClientEmitter {
                     importer.getPackageDeclaration(),
                     importer.toImportDeclarations(),
                     Collections.singletonList(type),
-                    Collections.<Comment>emptyList());
+                    Collections.emptyList());
         }
 
         private TypeDeclaration createType() {
@@ -133,9 +130,9 @@ public class CleanupStageClientEmitter {
                         .Final()
                         .toAttributes(),
                     fqn.getSimpleName(),
-                    Collections.<TypeParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     t(AbstractCleanupStageClient.class),
-                    Collections.<Type>emptyList(),
+                    Collections.emptyList(),
                     members);
         }
 
@@ -197,7 +194,7 @@ public class CleanupStageClientEmitter {
                         .toAttributes(),
                     returnType,
                     factory.newSimpleName(methodName),
-                    Collections.<FormalParameterDeclaration>emptyList(),
+                    Collections.emptyList(),
                     Collections.singletonList(factory.newReturnStatement(expression)));
         }
 
