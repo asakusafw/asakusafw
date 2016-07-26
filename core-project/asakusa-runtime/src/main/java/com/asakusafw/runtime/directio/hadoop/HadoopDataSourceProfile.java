@@ -439,8 +439,8 @@ public class HadoopDataSourceProfile {
                     fqn(profile, KEY_TEMP),
                     tempPath));
         }
-        fsPath = fsPath.makeQualified(fileSystem);
-        tempPath = tempPath.makeQualified(fileSystem);
+        fsPath = fileSystem.makeQualified(fsPath);
+        tempPath = fileSystem.makeQualified(tempPath);
         HadoopDataSourceProfile result = new HadoopDataSourceProfile(
                 conf,
                 profile.getId(), profile.getPath(),

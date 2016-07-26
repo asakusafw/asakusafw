@@ -41,7 +41,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 
-import com.asakusafw.runtime.compatibility.hadoop.CoreCompatibility;
+import com.asakusafw.runtime.compatibility.CoreCompatibility;
 
 /**
  * Creates {@link Configuration}s with system defaults.

@@ -17,11 +17,16 @@ package com.asakusafw.compiler.flow.mock;
 
 import static com.asakusafw.runtime.compatibility.JobCompatibility.*;
 
+import java.io.IOException;
+
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.mapreduce.Counter;
+import org.apache.hadoop.mapreduce.StatusReporter;
 import org.apache.hadoop.mapreduce.TaskAttemptID;
 import org.apache.hadoop.mapreduce.TaskInputOutputContext;
+import org.apache.hadoop.mapreduce.counters.GenericCounter;
+import org.apache.hadoop.mapreduce.task.TaskInputOutputContextImpl;
 
-import com.asakusafw.runtime.compatibility.hadoop.KeyValueConsumer;
 import com.asakusafw.runtime.core.Result;
 
 /**
@@ -44,25 +49,79 @@ public class MockOutput {
     public static <K, V> TaskInputOutputContext<?, ?, K, V> create(
             Result<K> keyOut,
             Result<V> valueOut) {
+        Configuration conf = new Configuration(false);
         TaskAttemptID id = newTaskAttemptId(newTaskId(newJobId()));
-        return newTaskOutputContext(new Configuration(false), id, new ResultBridge<>(keyOut, valueOut));
+        return new MockTaskInputOutputContext<>(conf, id, keyOut, valueOut);
     }
 
-    private static class ResultBridge<K, V> implements KeyValueConsumer<K, V> {
+    private static class MockTaskInputOutputContext<KEYIN, VALUEIN, KEYOUT, VALUEOUT>
+            extends TaskInputOutputContextImpl<KEYIN, VALUEIN, KEYOUT, VALUEOUT> {
 
-        private final Result<K> keyOut;
+        private final Result<? super KEYOUT> keyOut;
 
-        private final Result<V> valueOut;
+        private final Result<? super VALUEOUT> valueOut;
 
-        public ResultBridge(Result<K> keyOut, Result<V> valueOut) {
+        MockTaskInputOutputContext(
+                Configuration conf, TaskAttemptID taskId,
+                Result<? super KEYOUT> keyOut, Result<? super VALUEOUT> valueOut) {
+            super(conf, taskId, null, null, new MockStatusReporter());
             this.keyOut = keyOut;
             this.valueOut = valueOut;
         }
 
         @Override
-        public void consume(K key, V value) {
+        public boolean nextKeyValue() throws IOException, InterruptedException {
+            return false;
+        }
+
+        @Override
+        public KEYIN getCurrentKey() throws IOException, InterruptedException {
+            return null;
+        }
+
+        @Override
+        public VALUEIN getCurrentValue() throws IOException, InterruptedException {
+            return null;
+        }
+
+        @Override
+        public void write(KEYOUT key, VALUEOUT value) {
             keyOut.add(key);
             valueOut.add(value);
+        }
+    }
+
+    private static final class MockStatusReporter extends StatusReporter {
+
+        MockStatusReporter() {
+            return;
+        }
+
+        @Override
+        public Counter getCounter(Enum<?> name) {
+            return getCounter(name.getDeclaringClass().getName(), name.name());
+        }
+
+        @Override
+        public Counter getCounter(String group, String name) {
+            return new GenericCounter() {
+                // empty
+            };
+        }
+
+        @Override
+        public void progress() {
+            return;
+        }
+
+        @Override
+        public void setStatus(String status) {
+            return;
+        }
+
+        @Override
+        public float getProgress() {
+            return 0;
         }
     }
 }

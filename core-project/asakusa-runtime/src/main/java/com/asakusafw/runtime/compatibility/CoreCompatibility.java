@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.runtime.compatibility.hadoop;
+package com.asakusafw.runtime.compatibility;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -28,8 +28,7 @@ import org.apache.hadoop.mapreduce.JobContext;
 
 /**
  * Compatibility for core framework layer.
- * @since 0.7.0
- * @version 0.7.4
+ * @since 0.9.0
  */
 public final class CoreCompatibility {
 

@@ -17,17 +17,12 @@ package com.asakusafw.runtime.compatibility;
 
 import org.apache.hadoop.fs.FileStatus;
 
-import com.asakusafw.runtime.compatibility.hadoop.FileSystemCompatibilityHadoop;
-
 /**
  * Compatibility for file system APIs.
  * @since 0.5.0
- * @version 0.7.4
+ * @version 0.9.0
  */
 public final class FileSystemCompatibility {
-
-    private static final FileSystemCompatibilityHadoop DELEGATE =
-            CompatibilitySelector.getImplementation(FileSystemCompatibilityHadoop.class);
 
     private FileSystemCompatibility() {
         return;
@@ -40,6 +35,9 @@ public final class FileSystemCompatibility {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public static boolean isDirectory(FileStatus status) {
-        return DELEGATE.isDirectory(status);
+        if (status == null) {
+            throw new IllegalArgumentException("status must not be null"); //$NON-NLS-1$
+        }
+        return status.isDirectory();
     }
 }

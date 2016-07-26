@@ -17,7 +17,7 @@ package com.asakusafw.runtime.flow;
 
 import java.io.IOException;
 
-import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.mapreduce.JobContext;
 
 /**
  * Represents a resource used in runtime, and it has resource lifecycle.
@@ -26,21 +26,21 @@ public interface FlowResource {
 
     /**
      * Initializes this resource.
-     * @param configuration the current configuration
+     * @param context the current job context
      * @throws IOException if failed to initialize this resource
      * @throws InterruptedException if interrupted while initializing this resource
      * @throws IllegalArgumentException if configuration is not valid
      * @throws IllegalStateException if resource lifecycle has something wrong
      */
-    void setup(Configuration configuration) throws IOException, InterruptedException;
+    void setup(JobContext context) throws IOException, InterruptedException;
 
     /**
      * Finalizes this resource.
-     * @param configuration the current configuration
+     * @param context the current job context
      * @throws IOException if failed to finalizing this resource
      * @throws InterruptedException if interrupted while finalizing this resource
      * @throws IllegalArgumentException if configuration is not valid
      * @throws IllegalStateException if resource lifecycle has something wrong
      */
-    void cleanup(Configuration configuration) throws IOException, InterruptedException;
+    void cleanup(JobContext context) throws IOException, InterruptedException;
 }

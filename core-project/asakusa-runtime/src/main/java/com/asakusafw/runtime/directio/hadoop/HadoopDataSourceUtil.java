@@ -50,7 +50,6 @@ import org.apache.hadoop.mapreduce.JobContext;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
 import org.apache.hadoop.util.Progressable;
 
-import com.asakusafw.runtime.compatibility.FileSystemCompatibility;
 import com.asakusafw.runtime.directio.AbstractDirectDataSource;
 import com.asakusafw.runtime.directio.Counter;
 import com.asakusafw.runtime.directio.DirectDataSource;
@@ -651,7 +650,7 @@ public final class HadoopDataSourceUtil {
             if (paths.contains(path) == false) {
                 paths.add(path);
                 results.add(next);
-                if (FileSystemCompatibility.isDirectory(next)) {
+                if (next.isDirectory()) {
                     FileStatus[] children;
                     try {
                         children = fs.listStatus(path);
@@ -680,7 +679,7 @@ public final class HadoopDataSourceUtil {
         Set<Path> paths = new HashSet<>();
         List<FileStatus> results = new ArrayList<>();
         for (FileStatus status : current) {
-            if (FileSystemCompatibility.isDirectory(status) == false) {
+            if (status.isDirectory() == false) {
                 continue;
             }
             for (Path expression : expressions) {
@@ -710,7 +709,7 @@ public final class HadoopDataSourceUtil {
         assert statList != null;
         FileStatus[] stats = statList.toArray(new FileStatus[statList.size()]);
         for (int i = 0; i < stats.length; i++) {
-            if (stats[i] == null || FileSystemCompatibility.isDirectory(stats[i]) == false) {
+            if (stats[i] == null || stats[i].isDirectory() == false) {
                 continue;
             }
             for (int j = 0; j < stats.length; j++) {
@@ -735,7 +734,7 @@ public final class HadoopDataSourceUtil {
     private static boolean contains(FileStatus dir, FileStatus target) {
         assert dir != null;
         assert target != null;
-        assert FileSystemCompatibility.isDirectory(dir);
+        assert dir.isDirectory();
         Path parent = dir.getPath();
         Path child = target.getPath();
         return contains(parent, child);
@@ -865,7 +864,7 @@ public final class HadoopDataSourceUtil {
                             "Deleting file: {0}", //$NON-NLS-1$
                             targetFile));
                 }
-                if (FileSystemCompatibility.isDirectory(stat)) {
+                if (stat.isDirectory()) {
                     toFs.delete(targetFile, true);
                 } else {
                     toFs.delete(targetFile, false);
@@ -937,7 +936,7 @@ public final class HadoopDataSourceUtil {
         }
         List<Path> results = new ArrayList<>();
         for (FileStatus stat : all) {
-            if (FileSystemCompatibility.isDirectory(stat)) {
+            if (stat.isDirectory()) {
                 continue;
             }
             Path path = stat.getPath();

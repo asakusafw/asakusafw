@@ -89,7 +89,10 @@ public class SequenceFileUtilTest {
 
         Text key = new Text();
         Text value = new Text();
-        try (SequenceFile.Writer writer = SequenceFile.createWriter(fs, conf, path, key.getClass(), value.getClass())) {
+        try (SequenceFile.Writer writer = SequenceFile.createWriter(conf,
+                SequenceFile.Writer.file(fs.makeQualified(path)),
+                SequenceFile.Writer.keyClass(key.getClass()),
+                SequenceFile.Writer.valueClass(value.getClass()))) {
             key.set("Hello");
             value.set("World");
             writer.append(key, value);
@@ -117,7 +120,10 @@ public class SequenceFileUtilTest {
 
         Text key = new Text();
         Text value = new Text();
-        try (SequenceFile.Writer writer = SequenceFile.createWriter(fs, conf, path, key.getClass(), value.getClass())) {
+        try (SequenceFile.Writer writer = SequenceFile.createWriter(conf,
+                SequenceFile.Writer.file(fs.makeQualified(path)),
+                SequenceFile.Writer.keyClass(key.getClass()),
+                SequenceFile.Writer.valueClass(value.getClass()))) {
             key.set("Hello");
             value.set("World");
             writer.append(key, value);
@@ -146,7 +152,10 @@ public class SequenceFileUtilTest {
         LongWritable key = new LongWritable();
         LongWritable value = new LongWritable();
 
-        try (SequenceFile.Writer writer = SequenceFile.createWriter(fs, conf, path, key.getClass(), value.getClass())) {
+        try (SequenceFile.Writer writer = SequenceFile.createWriter(conf,
+                SequenceFile.Writer.file(fs.makeQualified(path)),
+                SequenceFile.Writer.keyClass(key.getClass()),
+                SequenceFile.Writer.valueClass(value.getClass()))) {
             for (long i = 0; i < 300000; i++) {
                 key.set(i);
                 value.set(i + 1);
@@ -154,7 +163,8 @@ public class SequenceFileUtilTest {
             }
         }
 
-        try (SequenceFile.Reader reader = new SequenceFile.Reader(fs, path, conf)) {
+        try (SequenceFile.Reader reader = new SequenceFile.Reader(conf,
+                SequenceFile.Reader.file(fs.makeQualified(path)))) {
             for (long i = 0; i < 300000; i++) {
                 assertThat(reader.next(key, value), is(true));
                 assertThat(key.get(), is(i));
@@ -175,7 +185,10 @@ public class SequenceFileUtilTest {
         LongWritable key = new LongWritable();
         LongWritable value = new LongWritable();
 
-        try (SequenceFile.Writer writer = SequenceFile.createWriter(fs, conf, path, key.getClass(), value.getClass())) {
+        try (SequenceFile.Writer writer = SequenceFile.createWriter(conf,
+                SequenceFile.Writer.file(fs.makeQualified(path)),
+                SequenceFile.Writer.keyClass(key.getClass()),
+                SequenceFile.Writer.valueClass(value.getClass()))) {
             for (long i = 0; i < 300000; i++) {
                 key.set(i);
                 value.set(i + 1);
@@ -215,7 +228,8 @@ public class SequenceFileUtilTest {
         key.clear();
         value.clear();
 
-        try (SequenceFile.Reader reader = new SequenceFile.Reader(fs, path, conf)) {
+        try (SequenceFile.Reader reader = new SequenceFile.Reader(conf,
+                SequenceFile.Reader.file(fs.makeQualified(path)))) {
             assertThat(reader.next(key, value), is(true));
             assertThat(key.toString(), is("Hello"));
             assertThat(value.toString(), is("World"));
@@ -243,7 +257,8 @@ public class SequenceFileUtilTest {
             }
         }
 
-        try (SequenceFile.Reader reader = new SequenceFile.Reader(fs, path, conf)) {
+        try (SequenceFile.Reader reader = new SequenceFile.Reader(conf,
+                SequenceFile.Reader.file(fs.makeQualified(path)))) {
             for (long i = 0; i < 300000; i++) {
                 assertThat(reader.next(key, value), is(true));
                 assertThat(key.get(), is(i));
@@ -276,7 +291,8 @@ public class SequenceFileUtilTest {
             }
         }
 
-        try (SequenceFile.Reader reader = new SequenceFile.Reader(fs, path, conf)) {
+        try (SequenceFile.Reader reader = new SequenceFile.Reader(conf,
+                SequenceFile.Reader.file(fs.makeQualified(path)))) {
             for (long i = 0; i < 300000; i++) {
                 assertThat(reader.next(key, value), is(true));
                 assertThat(key.get(), is(i));

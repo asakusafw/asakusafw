@@ -21,14 +21,14 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.filecache.DistributedCache;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -57,7 +57,7 @@ public class StageResourceDriver implements Closeable {
 
     private static final String KEY_ACCESS_MODE = KEY_PREFIX + "mode"; //$NON-NLS-1$
 
-    private final Configuration configuration;
+    private final JobContext context;
 
     private final FileSystem localFileSystem;
 
@@ -65,17 +65,18 @@ public class StageResourceDriver implements Closeable {
 
     /**
      * Creates a new instance.
-     * @param configuration the current configuration
+     * @param context the current job context
      * @throws IOException if failed to initialize this driver
      * @throws IllegalArgumentException if the parameter is {@code null}
      */
-    public StageResourceDriver(Configuration configuration) throws IOException {
-        if (configuration == null) {
-            throw new IllegalArgumentException("configuration must not be null"); //$NON-NLS-1$
+    public StageResourceDriver(JobContext context) throws IOException {
+        if (context == null) {
+            throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
         }
-        this.configuration = configuration;
-        this.localFileSystem = FileSystem.getLocal(configuration);
-        this.accessMode = AccessMode.decode(configuration.get(KEY_ACCESS_MODE));
+        this.context = context;
+        Configuration conf = context.getConfiguration();
+        this.localFileSystem = FileSystem.getLocal(conf);
+        this.accessMode = AccessMode.decode(conf.get(KEY_ACCESS_MODE));
     }
 
     /**
@@ -83,7 +84,7 @@ public class StageResourceDriver implements Closeable {
      * @return the current configuration
      */
     public Configuration getConfiguration() {
-        return configuration;
+        return context.getConfiguration();
     }
 
     /**
@@ -162,7 +163,7 @@ public class StageResourceDriver implements Closeable {
         assert localName != null;
         Path remotePath = null;
         String remoteName = null;
-        for (URI uri : DistributedCache.getCacheFiles(configuration)) {
+        for (URI uri : context.getCacheFiles()) {
             if (localName.equals(uri.getFragment())) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("fragment matched: " + uri); //$NON-NLS-1$
@@ -193,7 +194,7 @@ public class StageResourceDriver implements Closeable {
             }
             return localFileSystem.makeQualified(path);
         }
-        FileSystem remoteFileSystem = remotePath.getFileSystem(configuration);
+        FileSystem remoteFileSystem = remotePath.getFileSystem(context.getConfiguration());
         remotePath = remoteFileSystem.makeQualified(remotePath);
         if (LOG.isDebugEnabled()) {
             LOG.debug("distributed cache is not localized explicitly: " + remotePath); //$NON-NLS-1$
@@ -208,11 +209,11 @@ public class StageResourceDriver implements Closeable {
     }
 
     private List<Path> getLocalCacheFiles() throws IOException {
-        Path[] results = DistributedCache.getLocalCacheFiles(configuration);
+        URI[] results = context.getCacheFiles();
         if (results == null) {
             return Collections.emptyList();
         } else {
-            return Arrays.asList(results);
+            return Stream.of(results).map(Path::new).collect(Collectors.toList());
         }
     }
 
@@ -239,6 +240,7 @@ public class StageResourceDriver implements Closeable {
      * @throws IOException if failed to detect resources on the path
      * @throws IllegalArgumentException if some parameters are {@code null}
      */
+    @SuppressWarnings("deprecation")
     public static void add(Job job, String resourcePath, String resourceName) throws IOException {
         if (job == null) {
             throw new IllegalArgumentException("job must not be null"); //$NON-NLS-1$
@@ -272,7 +274,7 @@ public class StageResourceDriver implements Closeable {
             localNames.add(name);
             try {
                 URI uri = new URI(cachePath);
-                DistributedCache.addCacheFile(uri, conf);
+                job.addCacheFile(uri);
             } catch (URISyntaxException e) {
                 throw new IllegalStateException(e);
             }
@@ -290,7 +292,8 @@ public class StageResourceDriver implements Closeable {
                 LOG.debug("symlinks for distributed cache will not be created in standalone mode"); //$NON-NLS-1$
             }
         } else {
-            DistributedCache.createSymlink(conf);
+            // FIXME is needed?
+            job.createSymlink();
         }
     }
 

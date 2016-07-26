@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 
 import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.testing.MultipleModelInput;
-import com.asakusafw.runtime.compatibility.hadoop.CoreCompatibility;
+import com.asakusafw.runtime.compatibility.CoreCompatibility;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.runtime.mapreduce.simple.SimpleJobRunner;

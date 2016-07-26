@@ -22,9 +22,9 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Writable;
+import org.apache.hadoop.mapreduce.JobContext;
 
 import com.asakusafw.runtime.flow.FlowResource;
 import com.asakusafw.runtime.io.ModelInput;
@@ -45,13 +45,13 @@ public abstract class JoinResource<L extends Writable, R> implements FlowResourc
     private LookUpTable<L> table;
 
     @Override
-    public void setup(Configuration configuration) throws IOException, InterruptedException {
+    public void setup(JobContext context) throws IOException, InterruptedException {
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
                     "Building join-table from \"{0}\" on distributed cache", //$NON-NLS-1$
                     getCacheName()));
         }
-        try (StageResourceDriver driver = new StageResourceDriver(configuration)) {
+        try (StageResourceDriver driver = new StageResourceDriver(context)) {
             List<Path> paths = driver.findCache(getCacheName());
             if (paths.isEmpty()) {
                 throw new FileNotFoundException(MessageFormat.format(
@@ -109,7 +109,7 @@ public abstract class JoinResource<L extends Writable, R> implements FlowResourc
     }
 
     @Override
-    public void cleanup(Configuration configuration) throws IOException, InterruptedException {
+    public void cleanup(JobContext context) throws IOException, InterruptedException {
         return;
     }
 

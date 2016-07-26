@@ -145,7 +145,7 @@ public final class TemporaryStorage {
         if (Writable.class.isAssignableFrom(dataType)) {
             return (ModelInput<V>) new TemporaryFileInput<>(fs.open(path), 0);
         }
-        SequenceFile.Reader reader = new SequenceFile.Reader(fs, path, conf);
+        SequenceFile.Reader reader = new SequenceFile.Reader(conf, SequenceFile.Reader.file(fs.makeQualified(path)));
         return (ModelInput<V>) new SequenceFileModelInput<>(reader);
     }
 
@@ -223,11 +223,10 @@ public final class TemporaryStorage {
                     OUTPUT_INIT_BUFFER_SIZE, OUTPUT_PAGE_SIZE);
         }
         SequenceFile.Writer out = SequenceFile.createWriter(
-                fs,
                 conf,
-                path,
-                NullWritable.class,
-                dataType);
+                SequenceFile.Writer.file(fs.makeQualified(path)),
+                SequenceFile.Writer.keyClass(NullWritable.class),
+                SequenceFile.Writer.valueClass(dataType));
         return new SequenceFileModelOutput<>(out);
     }
 
@@ -278,24 +277,14 @@ public final class TemporaryStorage {
             Configuration conf, FileSystem fs,
             Class<V> dataType, Path path,
             CompressionCodec compressionCodec) throws IOException {
-        if (compressionCodec == null) {
-            return SequenceFile.createWriter(
-                    fs,
-                    conf,
-                    path,
-                    NullWritable.class,
-                    dataType,
-                    CompressionType.NONE);
-        } else {
-            return SequenceFile.createWriter(
-                    fs,
-                    conf,
-                    path,
-                    NullWritable.class,
-                    dataType,
-                    CompressionType.BLOCK,
-                    compressionCodec);
-        }
+        return SequenceFile.createWriter(
+                conf,
+                SequenceFile.Writer.file(fs.makeQualified(path)),
+                SequenceFile.Writer.keyClass(NullWritable.class),
+                SequenceFile.Writer.valueClass(dataType),
+                SequenceFile.Writer.compression(
+                        compressionCodec == null ? CompressionType.BLOCK : CompressionType.NONE,
+                        compressionCodec));
     }
 
     /**

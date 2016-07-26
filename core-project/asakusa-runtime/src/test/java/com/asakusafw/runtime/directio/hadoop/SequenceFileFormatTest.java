@@ -76,7 +76,10 @@ public class SequenceFileFormatTest {
         final int count = 10000;
         LocalFileSystem fs = FileSystem.getLocal(conf);
         Path path = new Path(folder.newFile("testing").toURI());
-        try (SequenceFile.Writer writer = SequenceFile.createWriter(fs, conf, path, LongWritable.class, Text.class)) {
+        try (SequenceFile.Writer writer = SequenceFile.createWriter(conf,
+                SequenceFile.Writer.file(fs.makeQualified(path)),
+                SequenceFile.Writer.keyClass(LongWritable.class),
+                SequenceFile.Writer.valueClass(Text.class))) {
             LongWritable k = new LongWritable();
             Text v = new Text();
             for (int i = 0; i < count; i++) {
@@ -113,7 +116,10 @@ public class SequenceFileFormatTest {
         Random rand = new Random();
         LocalFileSystem fs = FileSystem.getLocal(conf);
         Path path = new Path(folder.newFile("testing").toURI());
-        try (SequenceFile.Writer writer = SequenceFile.createWriter(fs, conf, path, LongWritable.class, Text.class)) {
+        try (SequenceFile.Writer writer = SequenceFile.createWriter(conf,
+                SequenceFile.Writer.file(fs.makeQualified(path)),
+                SequenceFile.Writer.keyClass(LongWritable.class),
+                SequenceFile.Writer.valueClass(Text.class))) {
             LongWritable k = new LongWritable();
             Text v = new Text();
             for (int i = 0; i < count; i++) {
@@ -166,7 +172,10 @@ public class SequenceFileFormatTest {
         final int count = 5;
         LocalFileSystem fs = FileSystem.getLocal(conf);
         Path path = new Path(folder.newFile("testing").toURI());
-        try (SequenceFile.Writer writer = SequenceFile.createWriter(fs, conf, path, LongWritable.class, Text.class)) {
+        try (SequenceFile.Writer writer = SequenceFile.createWriter(conf,
+                SequenceFile.Writer.file(fs.makeQualified(path)),
+                SequenceFile.Writer.keyClass(LongWritable.class),
+                SequenceFile.Writer.valueClass(Text.class))) {
             LongWritable k = new LongWritable();
             Text v = new Text();
             for (int i = 0; i < count; i++) {
@@ -286,7 +295,8 @@ public class SequenceFileFormatTest {
             out.write(new StringOption("Hello, world!"));
         }
 
-        try (SequenceFile.Reader reader = new SequenceFile.Reader(fs, path, conf)) {
+        try (SequenceFile.Reader reader = new SequenceFile.Reader(conf,
+                SequenceFile.Reader.file(fs.makeQualified(path)))) {
             assertThat(reader.getCompressionCodec(), instanceOf(DefaultCodec.class));
         }
     }
@@ -303,7 +313,8 @@ public class SequenceFileFormatTest {
                 .createOutput(StringOption.class, fs, path, new Counter())) {
             out.write(new StringOption("Hello, world!"));
         }
-        try (SequenceFile.Reader reader = new SequenceFile.Reader(fs, path, conf)) {
+        try (SequenceFile.Reader reader = new SequenceFile.Reader(conf,
+                SequenceFile.Reader.file(fs.makeQualified(path)))) {
             assertThat(reader.getCompressionCodec(), is(nullValue()));
         }
     }
@@ -320,7 +331,8 @@ public class SequenceFileFormatTest {
         try (ModelOutput<StringOption> out = format.createOutput(StringOption.class, fs, path, new Counter())) {
             out.write(new StringOption("Hello, world!"));
         }
-        try (SequenceFile.Reader reader = new SequenceFile.Reader(fs, path, conf)) {
+        try (SequenceFile.Reader reader = new SequenceFile.Reader(conf,
+                SequenceFile.Reader.file(fs.makeQualified(path)))) {
             assertThat(reader.getCompressionCodec(), instanceOf(DefaultCodec.class));
         }
     }
@@ -337,7 +349,8 @@ public class SequenceFileFormatTest {
         try (ModelOutput<StringOption> out = format.createOutput(StringOption.class, fs, path, new Counter())) {
             out.write(new StringOption("Hello, world!"));
         }
-        try (SequenceFile.Reader reader = new SequenceFile.Reader(fs, path, conf)) {
+        try (SequenceFile.Reader reader = new SequenceFile.Reader(conf,
+                SequenceFile.Reader.file(fs.makeQualified(path)))) {
             assertThat(reader.getCompressionCodec(), is(nullValue()));
         }
     }

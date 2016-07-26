@@ -16,6 +16,7 @@
 package com.asakusafw.runtime.compatibility;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -27,19 +28,28 @@ import org.apache.hadoop.mapreduce.InputSplit;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.JobContext;
 import org.apache.hadoop.mapreduce.JobID;
+import org.apache.hadoop.mapreduce.MRConfig;
+import org.apache.hadoop.mapreduce.MapContext;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.OutputCommitter;
 import org.apache.hadoop.mapreduce.RecordReader;
 import org.apache.hadoop.mapreduce.RecordWriter;
+import org.apache.hadoop.mapreduce.ReduceContext;
 import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.hadoop.mapreduce.StatusReporter;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
 import org.apache.hadoop.mapreduce.TaskAttemptID;
+import org.apache.hadoop.mapreduce.TaskCounter;
 import org.apache.hadoop.mapreduce.TaskID;
 import org.apache.hadoop.mapreduce.TaskInputOutputContext;
+import org.apache.hadoop.mapreduce.TaskType;
+import org.apache.hadoop.mapreduce.counters.GenericCounter;
+import org.apache.hadoop.mapreduce.lib.map.WrappedMapper;
+import org.apache.hadoop.mapreduce.lib.reduce.WrappedReducer;
+import org.apache.hadoop.mapreduce.task.MapContextImpl;
+import org.apache.hadoop.mapreduce.task.ReduceContextImpl;
+import org.apache.hadoop.mapreduce.task.TaskAttemptContextImpl;
 import org.apache.hadoop.util.Progressable;
-
-import com.asakusafw.runtime.compatibility.hadoop.JobCompatibilityHadoop;
-import com.asakusafw.runtime.compatibility.hadoop.KeyValueConsumer;
 
 /**
  * Compatibility for job APIs.
@@ -50,8 +60,7 @@ public final class JobCompatibility {
 
     static final Log LOG = LogFactory.getLog(JobCompatibility.class);
 
-    private static final JobCompatibilityHadoop DELEGATE =
-            CompatibilitySelector.getImplementation(JobCompatibilityHadoop.class);
+    private static final String NAME_DUMMY_JOB = "asakusafw"; //$NON-NLS-1$
 
     private JobCompatibility() {
         return;
@@ -65,7 +74,10 @@ public final class JobCompatibility {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public static Job newJob(Configuration conf) throws IOException {
-        return DELEGATE.newJob(conf);
+        if (conf == null) {
+            throw new IllegalArgumentException("conf must not be null"); //$NON-NLS-1$
+        }
+        return Job.getInstance(conf);
     }
 
     /**
@@ -76,7 +88,7 @@ public final class JobCompatibility {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public static TaskAttemptContext newTaskAttemptContext(Configuration conf, TaskAttemptID id) {
-        return DELEGATE.newTaskAttemptContext(conf, id);
+        return new TaskAttemptContextImpl(conf, id);
     }
 
     /**
@@ -91,7 +103,22 @@ public final class JobCompatibility {
             Configuration conf,
             TaskAttemptID id,
             Progressable progressable) {
-        return DELEGATE.newTaskAttemptContext(conf, id, progressable);
+        if (conf == null) {
+            throw new IllegalArgumentException("conf must not be null"); //$NON-NLS-1$
+        }
+        if (id == null) {
+            throw new IllegalArgumentException("id must not be null"); //$NON-NLS-1$
+        }
+        if (progressable == null) {
+            return new TaskAttemptContextImpl(conf, id);
+        }
+        return new TaskAttemptContextImpl(conf, id) {
+            @Override
+            public void progress() {
+                progressable.progress();
+                super.progress();
+            }
+        };
     }
 
     /**
@@ -99,7 +126,7 @@ public final class JobCompatibility {
      * @return the created ID
      */
     public static JobID newJobId() {
-        return DELEGATE.newJobId();
+        return newJobId(0);
     }
 
     /**
@@ -109,7 +136,7 @@ public final class JobCompatibility {
      * @since 0.7.1
      */
     public static JobID newJobId(int id) {
-        return DELEGATE.newJobId(id);
+        return new JobID(NAME_DUMMY_JOB, id);
     }
 
     /**
@@ -131,7 +158,10 @@ public final class JobCompatibility {
      * @since 0.7.1
      */
     public static TaskID newMapTaskId(JobID jobId, int id) {
-        return DELEGATE.newMapTaskId(jobId, id);
+        if (jobId == null) {
+            throw new IllegalArgumentException("jobId must not be null"); //$NON-NLS-1$
+        }
+        return new TaskID(jobId, TaskType.MAP, id);
     }
 
     /**
@@ -143,7 +173,10 @@ public final class JobCompatibility {
      * @since 0.7.1
      */
     public static TaskID newReduceTaskId(JobID jobId, int id) {
-        return DELEGATE.newReduceTaskId(jobId, id);
+        if (jobId == null) {
+            throw new IllegalArgumentException("jobId must not be null"); //$NON-NLS-1$
+        }
+        return new TaskID(jobId, TaskType.REDUCE, id);
     }
 
     /**
@@ -153,7 +186,7 @@ public final class JobCompatibility {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public static TaskAttemptID newTaskAttemptId(TaskID taskId) {
-        return DELEGATE.newTaskAttemptId(taskId);
+        return newTaskAttemptId(taskId, 0);
     }
 
     /**
@@ -165,7 +198,10 @@ public final class JobCompatibility {
      * @since 0.7.1
      */
     public static TaskAttemptID newTaskAttemptId(TaskID taskId, int id) {
-        return DELEGATE.newTaskAttemptId(taskId, id);
+        if (taskId == null) {
+            throw new IllegalArgumentException("taskId must not be null"); //$NON-NLS-1$
+        }
+        return new TaskAttemptID(taskId, id);
     }
 
     /**
@@ -176,7 +212,13 @@ public final class JobCompatibility {
      * @since 0.7.1
      */
     public static void setJobId(Job job, JobID id) {
-        DELEGATE.setJobId(job, id);
+        if (job == null) {
+            throw new IllegalArgumentException("job must not be null"); //$NON-NLS-1$
+        }
+        if (id == null) {
+            throw new IllegalArgumentException("id must not be null"); //$NON-NLS-1$
+        }
+        job.setJobID(id);
     }
 
     /**
@@ -186,7 +228,14 @@ public final class JobCompatibility {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public static Counter getTaskOutputRecordCounter(TaskInputOutputContext<?, ?, ?, ?> context) {
-        return DELEGATE.getTaskOutputRecordCounter(context);
+        if (context == null) {
+            throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
+        }
+        if (context.getTaskAttemptID().getTaskType() == TaskType.MAP) {
+            return context.getCounter(TaskCounter.MAP_OUTPUT_RECORDS);
+        } else {
+            return context.getCounter(TaskCounter.REDUCE_OUTPUT_RECORDS);
+        }
     }
 
     /**
@@ -197,7 +246,17 @@ public final class JobCompatibility {
      * @since 0.6.2
      */
     public static boolean isLocalMode(JobContext context) {
-        return DELEGATE.isLocalMode(context);
+        if (context == null) {
+            throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
+        }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "{0}={1}", //$NON-NLS-1$
+                    MRConfig.FRAMEWORK_NAME,
+                    context.getConfiguration().get(MRConfig.FRAMEWORK_NAME)));
+        }
+        String name = context.getConfiguration().get(MRConfig.FRAMEWORK_NAME, MRConfig.LOCAL_FRAMEWORK_NAME);
+        return name.equals(MRConfig.LOCAL_FRAMEWORK_NAME);
     }
 
     /**
@@ -225,7 +284,9 @@ public final class JobCompatibility {
             RecordWriter<KEYOUT, VALUEOUT> writer,
             OutputCommitter committer,
             InputSplit split) throws IOException, InterruptedException {
-        return DELEGATE.newMapperContext(configuration, id, reader, writer, committer, split);
+        MapContext<KEYIN, VALUEIN, KEYOUT, VALUEOUT> context = new MapContextImpl<>(
+                configuration, id, reader, writer, committer, new MockStatusReporter(), split);
+        return new WrappedMapper<KEYIN, VALUEIN, KEYOUT, VALUEOUT>().getMapContext(context);
     }
 
     /**
@@ -256,25 +317,46 @@ public final class JobCompatibility {
             RecordWriter<KEYOUT, VALUEOUT> writer,
             OutputCommitter committer,
             RawComparator<KEYIN> comparator) throws IOException, InterruptedException {
-        return DELEGATE.newReducerContext(
-                configuration, id, reader, inputKeyClass, inputValueClass, writer, committer, comparator);
+        StatusReporter reporter = new MockStatusReporter();
+        ReduceContext<KEYIN, VALUEIN, KEYOUT, VALUEOUT> context = new ReduceContextImpl<>(
+                configuration, id, reader,
+                reporter.getCounter("asakusafw", "inputKey"), //$NON-NLS-1$ //$NON-NLS-2$
+                reporter.getCounter("asakusafw", "inputValue"), //$NON-NLS-1$ //$NON-NLS-2$
+                writer, committer, reporter, comparator, inputKeyClass, inputValueClass);
+        return new WrappedReducer<KEYIN, VALUEIN, KEYOUT, VALUEOUT>().getReducerContext(context);
     }
 
-    /**
-     * Creates a new {@link TaskInputOutputContext} (for testing only).
-     * @param <KEYIN> the input key type
-     * @param <VALUEIN> the input value type
-     * @param <KEYOUT> the output key type
-     * @param <VALUEOUT> the output value type
-     * @param configuration the current configuration
-     * @param id the task attempt ID
-     * @param consumer the output consumer
-     * @return the created object
-     */
-    public static <KEYIN, VALUEIN, KEYOUT, VALUEOUT> TaskInputOutputContext<KEYIN, VALUEIN, KEYOUT, VALUEOUT>
-    newTaskOutputContext(
-            Configuration configuration, TaskAttemptID id,
-            KeyValueConsumer<? super KEYOUT, ? super VALUEOUT> consumer) {
-        return DELEGATE.newTaskOutputContext(configuration, id, consumer);
+    private static final class MockStatusReporter extends StatusReporter {
+
+        MockStatusReporter() {
+            return;
+        }
+
+        @Override
+        public Counter getCounter(Enum<?> name) {
+            return getCounter(name.getDeclaringClass().getName(), name.name());
+        }
+
+        @Override
+        public Counter getCounter(String group, String name) {
+            return new GenericCounter() {
+                // empty
+            };
+        }
+
+        @Override
+        public void progress() {
+            return;
+        }
+
+        @Override
+        public void setStatus(String status) {
+            return;
+        }
+
+        @Override
+        public float getProgress() {
+            return 0;
+        }
     }
 }
