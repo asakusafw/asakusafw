@@ -46,7 +46,7 @@ public class DataModelClassRepository
 
     @Override
     protected void doInitialize() {
-        cache = new SoftReference<Map<Type, DataClass>>(new HashMap<Type, DataClass>());
+        cache = new SoftReference<>(new HashMap<>());
     }
 
     @Override

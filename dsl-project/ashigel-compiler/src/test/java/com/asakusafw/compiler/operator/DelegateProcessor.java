@@ -30,7 +30,7 @@ import javax.lang.model.element.TypeElement;
 @SupportedAnnotationTypes({
     "*"
 })
-@SupportedSourceVersion(SourceVersion.RELEASE_7)
+@SupportedSourceVersion(SourceVersion.RELEASE_8)
 public class DelegateProcessor extends AbstractProcessor {
 
     private final Callback callback;
