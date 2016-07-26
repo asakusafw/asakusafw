@@ -51,7 +51,6 @@ import org.slf4j.LoggerFactory;
 import org.xerial.snappy.Snappy;
 
 import com.asakusafw.runtime.compatibility.hadoop.JobCompatibilityHadoop;
-import com.asakusafw.runtime.compatibility.hadoop1.JobCompatibilityHadoop1;
 import com.asakusafw.runtime.compatibility.hadoop2.JobCompatibilityHadoop2;
 import com.asakusafw.runtime.stage.launcher.ApplicationLauncher;
 
@@ -158,7 +157,6 @@ public class FrameworkDeployer implements TestRule {
             bootstrapJar = deployFatLibrary("core/lib/asakusa-runtime-all.jar",
                     ApplicationLauncher.class,
                     JobCompatibilityHadoop.class,
-                    JobCompatibilityHadoop1.class,
                     JobCompatibilityHadoop2.class,
                     Snappy.class);
             int length = (int) bootstrapJar.length();

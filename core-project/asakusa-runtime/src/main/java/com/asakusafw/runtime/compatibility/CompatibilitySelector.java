@@ -25,9 +25,6 @@ import com.asakusafw.runtime.compatibility.hadoop.CoreCompatibility.FrameworkVer
 import com.asakusafw.runtime.compatibility.hadoop.FileSystemCompatibilityHadoop;
 import com.asakusafw.runtime.compatibility.hadoop.JobCompatibilityHadoop;
 import com.asakusafw.runtime.compatibility.hadoop.SequenceFileCompatibilityHadoop;
-import com.asakusafw.runtime.compatibility.hadoop1.FileSystemCompatibilityHadoop1;
-import com.asakusafw.runtime.compatibility.hadoop1.JobCompatibilityHadoop1;
-import com.asakusafw.runtime.compatibility.hadoop1.SequenceFileCompatibilityHadoop1;
 import com.asakusafw.runtime.compatibility.hadoop2.FileSystemCompatibilityHadoop2;
 import com.asakusafw.runtime.compatibility.hadoop2.JobCompatibilityHadoop2;
 import com.asakusafw.runtime.compatibility.hadoop2.SequenceFileCompatibilityHadoop2;
@@ -41,11 +38,7 @@ final class CompatibilitySelector {
     static {
         FrameworkVersion version = FrameworkVersion.get();
         Map<Class<?>, Class<?>> map = new HashMap<>();
-        if (version.isCompatibleTo(FrameworkVersion.HADOOP_V1)) {
-            map.put(FileSystemCompatibilityHadoop.class, FileSystemCompatibilityHadoop1.class);
-            map.put(JobCompatibilityHadoop.class, JobCompatibilityHadoop1.class);
-            map.put(SequenceFileCompatibilityHadoop.class, SequenceFileCompatibilityHadoop1.class);
-        } else if (version.isCompatibleTo(FrameworkVersion.HADOOP_V2)) {
+        if (version.isCompatibleTo(FrameworkVersion.HADOOP_V2)) {
             map.put(FileSystemCompatibilityHadoop.class, FileSystemCompatibilityHadoop2.class);
             map.put(JobCompatibilityHadoop.class, JobCompatibilityHadoop2.class);
             map.put(SequenceFileCompatibilityHadoop.class, SequenceFileCompatibilityHadoop2.class);
