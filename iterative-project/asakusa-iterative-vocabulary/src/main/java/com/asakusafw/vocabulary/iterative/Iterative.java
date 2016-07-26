@@ -35,7 +35,7 @@ import com.asakusafw.vocabulary.flow.Import;
 public class Something extends FlowDescription {
     ...
     public Something(
-            &#64;Iterative(...) &#64;Import(...) In<...> input,
+            &#64;Iterative(...) &#64;Import(...) In&lt;...&gt; input,
             ...) {
         ...
     }
