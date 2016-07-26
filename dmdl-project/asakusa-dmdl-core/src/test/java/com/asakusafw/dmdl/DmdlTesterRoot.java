@@ -26,8 +26,9 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
@@ -65,7 +66,7 @@ public abstract class DmdlTesterRoot {
     /**
      * {@link TypeDriver}s.
      */
-    protected final List<TypeDriver> typeDrivers = Arrays.asList(new BasicTypeDriver());
+    protected final List<TypeDriver> typeDrivers = Stream.of(new BasicTypeDriver()).collect(Collectors.toList());
 
     /**
      * {@link AttributeDriver}s.
