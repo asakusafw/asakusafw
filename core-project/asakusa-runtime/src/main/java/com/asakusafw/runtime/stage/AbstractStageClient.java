@@ -40,7 +40,6 @@ import org.apache.hadoop.mapreduce.Partitioner;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.util.ReflectionUtils;
 
-import com.asakusafw.runtime.compatibility.JobCompatibility;
 import com.asakusafw.runtime.core.context.RuntimeContext;
 import com.asakusafw.runtime.stage.input.StageInputDriver;
 import com.asakusafw.runtime.stage.input.StageInputFormat;
@@ -249,7 +248,7 @@ public abstract class AbstractStageClient extends BaseStageClient {
         if (conf == null) {
             throw new IllegalArgumentException("conf must not be null"); //$NON-NLS-1$
         }
-        Job job = JobCompatibility.newJob(conf);
+        Job job = Job.getInstance(conf);
         VariableTable variables = getPathParser(job.getConfiguration());
         configureJobInfo(job, variables);
         configureStageInput(job, variables);

@@ -22,8 +22,8 @@ import java.text.MessageFormat;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.util.Tool;
 
-import com.asakusafw.runtime.compatibility.CoreCompatibility;
 import com.asakusafw.runtime.core.context.RuntimeContext;
+import com.asakusafw.runtime.util.hadoop.InstallationUtil;
 
 /**
  * A skeletal implementation of stage clients.
@@ -32,7 +32,7 @@ import com.asakusafw.runtime.core.context.RuntimeContext;
 public abstract class BaseStageClient extends Configured implements Tool {
 
     static {
-        CoreCompatibility.verifyFrameworkVersion();
+        InstallationUtil.verifyFrameworkVersion();
     }
 
     /**

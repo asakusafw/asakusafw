@@ -15,8 +15,6 @@
  */
 package com.asakusafw.compiler.flow.mock;
 
-import static com.asakusafw.runtime.compatibility.JobCompatibility.*;
-
 import java.io.IOException;
 
 import org.apache.hadoop.conf.Configuration;
@@ -50,7 +48,7 @@ public class MockOutput {
             Result<K> keyOut,
             Result<V> valueOut) {
         Configuration conf = new Configuration(false);
-        TaskAttemptID id = newTaskAttemptId(newTaskId(newJobId()));
+        TaskAttemptID id = new TaskAttemptID();
         return new MockTaskInputOutputContext<>(conf, id, keyOut, valueOut);
     }
 

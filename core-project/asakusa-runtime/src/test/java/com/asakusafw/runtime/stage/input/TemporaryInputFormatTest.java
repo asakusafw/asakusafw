@@ -30,11 +30,11 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.RecordReader;
 import org.apache.hadoop.mapreduce.TaskAttemptID;
 import org.apache.hadoop.mapreduce.lib.input.FileSplit;
+import org.apache.hadoop.mapreduce.task.TaskAttemptContextImpl;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import com.asakusafw.runtime.compatibility.JobCompatibility;
 import com.asakusafw.runtime.directio.hadoop.BlockInfo;
 import com.asakusafw.runtime.directio.hadoop.BlockMap;
 import com.asakusafw.runtime.io.ModelOutput;
@@ -164,7 +164,7 @@ public class TemporaryInputFormatTest {
         try (RecordReader<NullWritable, Text> reader = TemporaryInputFormat.createRecordReader()) {
             reader.initialize(
                     new FileSplit(stat.getPath(), 0, stat.getLen(), null),
-                    JobCompatibility.newTaskAttemptContext(conf, id()));
+                    new TaskAttemptContextImpl(conf, new TaskAttemptID()));
 
             assertThat(reader.nextKeyValue(), is(true));
             assertThat(reader.getCurrentValue(), is(new Text("Hello, world!")));
@@ -172,10 +172,6 @@ public class TemporaryInputFormatTest {
             assertThat(reader.nextKeyValue(), is(false));
             assertThat((double) reader.getProgress(), closeTo(1.0, 0.01));
         }
-    }
-
-    private TaskAttemptID id() {
-        return JobCompatibility.newTaskAttemptId(JobCompatibility.newTaskId(JobCompatibility.newJobId()));
     }
 
     private FileStatus write(Configuration conf, int count) throws IOException {

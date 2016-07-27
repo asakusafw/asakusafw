@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.runtime.compatibility;
+package com.asakusafw.runtime.util.hadoop;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -27,12 +27,12 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.mapreduce.JobContext;
 
 /**
- * Compatibility for core framework layer.
+ * Utilities for Hadoop installations.
  * @since 0.9.0
  */
-public final class CoreCompatibility {
+public final class InstallationUtil {
 
-    static final Log LOG = LogFactory.getLog(CoreCompatibility.class);
+    static final Log LOG = LogFactory.getLog(InstallationUtil.class);
 
     private static final String PATH_HADOOP_INFO = "META-INF/asakusa-runtime/hadoop.properties"; //$NON-NLS-1$
 
@@ -44,7 +44,7 @@ public final class CoreCompatibility {
     static final FrameworkVersion TARGET;
     static {
         FrameworkVersion detected = FrameworkVersion.DONT_CARE;
-        try (InputStream input = CoreCompatibility.class.getClassLoader().getResourceAsStream(PATH_HADOOP_INFO)) {
+        try (InputStream input = InstallationUtil.class.getClassLoader().getResourceAsStream(PATH_HADOOP_INFO)) {
             if (input == null) {
                 throw new FileNotFoundException(PATH_HADOOP_INFO);
             }
@@ -76,7 +76,7 @@ public final class CoreCompatibility {
         TARGET = detected;
     }
 
-    private CoreCompatibility() {
+    private InstallationUtil() {
         return;
     }
 
@@ -95,8 +95,7 @@ public final class CoreCompatibility {
 
     /**
      * Represents the core framework version.
-     * @since 0.7.0
-     * @version 0.7.4
+     * @since 0.9.0
      */
     public enum FrameworkVersion {
 
@@ -163,7 +162,6 @@ public final class CoreCompatibility {
          * Returns a version constant from its name.
          * @param name the version name
          * @return the related version, or {@code null} if there is no such a version
-         * @since 0.7.4
          */
         public static FrameworkVersion find(String name) {
             for (FrameworkVersion version : values()) {
@@ -219,7 +217,7 @@ public final class CoreCompatibility {
                 // v1 - DistributedCache exists in hadoop-core
                 // v2 - DistributedCache exists in hadoop-mapreduce-client-core, and it is deprecated
                 try {
-                    ClassLoader cl = CoreCompatibility.class.getClassLoader();
+                    ClassLoader cl = InstallationUtil.class.getClassLoader();
                     Class<?> c = cl.loadClass("org.apache.hadoop.filecache.DistributedCache"); // //$NON-NLS-1$
                     return c.isAnnotationPresent(Deprecated.class);
                 } catch (ClassNotFoundException e) {

@@ -26,7 +26,7 @@ import java.util.ServiceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.asakusafw.runtime.compatibility.CoreCompatibility;
+import com.asakusafw.runtime.util.hadoop.InstallationUtil;
 
 /**
  * Configures the current testing environment.
@@ -40,7 +40,7 @@ import com.asakusafw.runtime.compatibility.CoreCompatibility;
 public abstract class TestingEnvironmentConfigurator {
 
     static {
-        CoreCompatibility.verifyFrameworkVersion();
+        InstallationUtil.verifyFrameworkVersion();
     }
 
     static final Logger LOG = LoggerFactory.getLogger(TestingEnvironmentConfigurator.class);

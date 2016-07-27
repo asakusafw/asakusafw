@@ -38,7 +38,6 @@ import org.slf4j.LoggerFactory;
 
 import com.asakusafw.compiler.flow.Location;
 import com.asakusafw.compiler.testing.MultipleModelInput;
-import com.asakusafw.runtime.compatibility.CoreCompatibility;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.runtime.mapreduce.simple.SimpleJobRunner;
@@ -47,6 +46,7 @@ import com.asakusafw.runtime.stage.launcher.ApplicationLauncher;
 import com.asakusafw.runtime.stage.optimizer.LibraryCopySuppressionConfigurator;
 import com.asakusafw.runtime.stage.temporary.TemporaryStorage;
 import com.asakusafw.runtime.util.hadoop.ConfigurationProvider;
+import com.asakusafw.runtime.util.hadoop.InstallationUtil;
 
 /**
  * A driver for control Hadoop jobs for testing.
@@ -56,7 +56,7 @@ import com.asakusafw.runtime.util.hadoop.ConfigurationProvider;
 public final class HadoopDriver implements Closeable {
 
     static {
-        CoreCompatibility.verifyFrameworkVersion();
+        InstallationUtil.verifyFrameworkVersion();
     }
 
     static final Logger LOG = LoggerFactory.getLogger(HadoopDriver.class);

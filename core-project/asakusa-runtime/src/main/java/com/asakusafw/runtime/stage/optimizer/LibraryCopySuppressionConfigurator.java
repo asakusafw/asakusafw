@@ -31,8 +31,8 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapreduce.Job;
 
-import com.asakusafw.runtime.compatibility.JobCompatibility;
 import com.asakusafw.runtime.stage.StageConfigurator;
+import com.asakusafw.runtime.stage.StageUtil;
 import com.asakusafw.runtime.stage.launcher.ApplicationLauncher;
 
 /**
@@ -78,7 +78,7 @@ public class LibraryCopySuppressionConfigurator extends StageConfigurator {
         if (conf.getBoolean(ApplicationLauncher.KEY_LAUNCHER_USED, false) == false) {
             return;
         }
-        if (JobCompatibility.isLocalMode(job) == false) {
+        if (StageUtil.isLocalMode(job) == false) {
             return;
         }
         String libraries = conf.get(KEY_CONF_LIBRARIES);
