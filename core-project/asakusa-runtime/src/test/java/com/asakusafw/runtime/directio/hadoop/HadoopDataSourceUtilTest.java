@@ -37,6 +37,7 @@ import org.apache.hadoop.fs.Path;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -46,11 +47,18 @@ import com.asakusafw.runtime.directio.DirectDataSource;
 import com.asakusafw.runtime.directio.DirectDataSourceProfile;
 import com.asakusafw.runtime.directio.DirectDataSourceRepository;
 import com.asakusafw.runtime.directio.FilePattern;
+import com.asakusafw.runtime.windows.WindowsSupport;
 
 /**
  * Test for {@link HadoopDataSourceUtil}.
  */
 public class HadoopDataSourceUtilTest {
+
+    /**
+     * Windows platform support.
+     */
+    @ClassRule
+    public static final WindowsSupport WINDOWS_SUPPORT = new WindowsSupport();
 
     /**
      * Temporary folder for testing.

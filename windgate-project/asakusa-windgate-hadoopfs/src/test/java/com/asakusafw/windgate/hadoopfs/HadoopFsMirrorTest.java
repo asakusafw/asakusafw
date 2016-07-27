@@ -31,6 +31,7 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
 import org.junit.Assume;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -42,6 +43,7 @@ import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.runtime.stage.temporary.TemporaryStorage;
 import com.asakusafw.runtime.util.hadoop.ConfigurationProvider;
+import com.asakusafw.runtime.windows.WindowsSupport;
 import com.asakusafw.windgate.core.DriverScript;
 import com.asakusafw.windgate.core.GateScript;
 import com.asakusafw.windgate.core.ParameterList;
@@ -54,6 +56,12 @@ import com.asakusafw.windgate.core.vocabulary.FileProcess;
  * Test for {@link HadoopFsMirror}.
  */
 public class HadoopFsMirrorTest {
+
+    /**
+     * Windows platform support.
+     */
+    @ClassRule
+    public static final WindowsSupport WINDOWS_SUPPORT = new WindowsSupport();
 
     /**
      * Keeps runtime context.

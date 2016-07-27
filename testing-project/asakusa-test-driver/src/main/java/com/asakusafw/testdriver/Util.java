@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.ServiceLoader;
 
 import org.slf4j.Logger;
@@ -41,14 +42,22 @@ import com.asakusafw.utils.graph.Graphs;
 /**
  * Utilities for testers.
  * @since 0.8.0
+ * @version 0.9.0
  */
 final class Util {
 
     static final Logger LOG = LoggerFactory.getLogger(Util.class);
 
+    private static volatile CompilerToolkit force;
+
+    public static void setToolkit(CompilerToolkit toolkit) {
+        force = toolkit;
+    }
+
     public static CompilerToolkit getToolkit(Class<?> contextClass) {
         Objects.requireNonNull(contextClass);
-        return getToolkit(contextClass.getClassLoader());
+        return Optional.ofNullable(force)
+                .orElseGet(() -> getToolkit(contextClass.getClassLoader()));
     }
 
     public static CompilerToolkit getToolkit(ClassLoader classLoader) {

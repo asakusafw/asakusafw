@@ -13,9 +13,9 @@
 
   <dependencies>
     <dependency>
-      <groupId>com.asakusafw</groupId>
-      <artifactId>asakusa-hive-plugin</artifactId>
-      <version>${project.version}</version>
+      <groupId>com.asakusafw.mapreduce.compiler</groupId>
+      <artifactId>asakusa-mapreduce-compiler-extension-hive</artifactId>
+      <version>${asakusafw-mapreduce.version}</version>
     </dependency>
   </dependencies>
 </project>

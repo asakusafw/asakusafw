@@ -18,9 +18,15 @@ package com.asakusafw.vocabulary.windgate;
 /**
  * The common constants of WindGate vocabularies.
  * @since 0.2.2
- * @version 0.8.1
+ * @version 0.9.0
  */
 public final class Constants {
+
+    /**
+     * The module name.
+     * @since 0.9.0
+     */
+    public static final String MODULE_NAME = "windgate";
 
     /**
      * The abstract resource name of JDBC.

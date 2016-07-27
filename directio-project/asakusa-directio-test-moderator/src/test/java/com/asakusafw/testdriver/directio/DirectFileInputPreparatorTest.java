@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import org.apache.hadoop.io.Text;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -41,6 +42,7 @@ import com.asakusafw.runtime.directio.DataFormat;
 import com.asakusafw.runtime.directio.hadoop.HadoopDataSource;
 import com.asakusafw.runtime.directio.hadoop.HadoopDataSourceProfile;
 import com.asakusafw.runtime.io.ModelOutput;
+import com.asakusafw.runtime.windows.WindowsSupport;
 import com.asakusafw.testdriver.core.SpiImporterPreparator;
 
 /**
@@ -48,6 +50,12 @@ import com.asakusafw.testdriver.core.SpiImporterPreparator;
  */
 @RunWith(Parameterized.class)
 public class DirectFileInputPreparatorTest {
+
+    /**
+     * Windows platform support.
+     */
+    @ClassRule
+    public static final WindowsSupport WINDOWS_SUPPORT = new WindowsSupport();
 
     /**
      * Profile context.

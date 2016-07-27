@@ -79,6 +79,7 @@ public final class StreamResourceUtil {
                     "Invalid process configuration: key={3}, value={4} (resource={0}, process={1}, direction={2})",
                     resourceName,
                     script.getName(),
+                    direction,
                     StreamProcess.STREAM_SUPPORT.key(),
                     null));
         }

@@ -34,17 +34,25 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
 import com.asakusafw.runtime.core.context.RuntimeContext;
 import com.asakusafw.runtime.core.context.RuntimeContext.ExecutionMode;
+import com.asakusafw.runtime.windows.WindowsSupport;
 import com.asakusafw.runtime.core.context.RuntimeContextKeeper;
 
 /**
  * Test for {@link WindGateHadoopPut}.
  */
 public class WindGateHadoopPutTest {
+
+    /**
+     * Windows platform support.
+     */
+    @ClassRule
+    public static final WindowsSupport WINDOWS_SUPPORT = new WindowsSupport();
 
     /**
      * Keeps runtime context.

@@ -52,12 +52,6 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>asakusa-windgate-plugin</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
       <artifactId>asakusa-windgate-stream</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
@@ -65,18 +59,6 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>asakusa-windgate-hadoopfs</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>asakusa-test-inprocess-ext</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>asakusa-test-mapreduce</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>

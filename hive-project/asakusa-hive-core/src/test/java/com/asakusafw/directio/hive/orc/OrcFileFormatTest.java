@@ -33,6 +33,7 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hive.ql.io.orc.CompressionKind;
 import org.apache.hadoop.hive.ql.io.orc.OrcFile;
 import org.junit.Assume;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -52,11 +53,18 @@ import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.runtime.value.StringOption;
+import com.asakusafw.runtime.windows.WindowsSupport;
 
 /**
  * Test for {@link OrcFileFormat}.
  */
 public class OrcFileFormatTest {
+
+    /**
+     * Windows platform support.
+     */
+    @ClassRule
+    public static final WindowsSupport WINDOWS_SUPPORT = new WindowsSupport();
 
     /**
      * A temporary folder for testing.

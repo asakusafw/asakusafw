@@ -18,9 +18,9 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.asakusafw</groupId>
-      <artifactId>asakusa-directio-plugin</artifactId>
-      <version>${project.version}</version>
+      <groupId>com.asakusafw.mapreduce.compiler</groupId>
+      <artifactId>asakusa-mapreduce-compiler-extension-directio</artifactId>
+      <version>${asakusafw-mapreduce.version}</version>
     </dependency>
   </dependencies>
 </project>

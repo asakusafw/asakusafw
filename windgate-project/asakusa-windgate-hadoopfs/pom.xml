@@ -36,12 +36,12 @@
 
   <dependencies>
     <dependency>
-      <groupId>com.asakusafw</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>asakusa-windgate-core</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.asakusafw</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>asakusa-runtime</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -69,11 +69,10 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>com.asakusafw</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>asakusa-runtime</artifactId>
       <version>${project.version}</version>
       <classifier>tests</classifier>
-      <optional>true</optional>
       <scope>test</scope>
     </dependency>
     <dependency>

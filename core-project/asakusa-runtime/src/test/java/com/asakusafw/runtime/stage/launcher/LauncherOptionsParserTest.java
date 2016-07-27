@@ -28,14 +28,22 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.util.GenericOptionsParser;
 import org.junit.After;
+import org.junit.ClassRule;
 import org.junit.Test;
 
 import com.asakusafw.runtime.util.hadoop.ConfigurationProvider;
+import com.asakusafw.runtime.windows.WindowsSupport;
 
 /**
  * Test for {@link LauncherOptionsParser}.
  */
 public class LauncherOptionsParserTest extends LauncherTestRoot {
+
+    /**
+     * Windows platform support.
+     */
+    @ClassRule
+    public static final WindowsSupport WINDOWS_SUPPORT = new WindowsSupport();
 
     private final Configuration conf = new ConfigurationProvider().newInstance();
 

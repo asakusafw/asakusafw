@@ -15,15 +15,27 @@
  */
 package com.asakusafw.testdriver;
 
+import org.junit.ClassRule;
 import org.junit.Test;
 
-import com.asakusafw.testdriver.testing.batch.SimpleBatch;
+import com.asakusafw.runtime.windows.WindowsSupport;
+import com.asakusafw.testdriver.testing.dsl.SimpleBatch;
 import com.asakusafw.testdriver.testing.model.Simple;
 
 /**
  * Test for {@link BatchTester}.
  */
 public class BatchTesterTest extends TesterTestRoot {
+
+    /**
+     * Windows platform support.
+     */
+    @ClassRule
+    public static final WindowsSupport WINDOWS_SUPPORT = new WindowsSupport(true);
+
+    {
+        compiler.withBatch((conf, aClass) -> getSimpleArtifact());
+    }
 
     /**
      * simple testing.

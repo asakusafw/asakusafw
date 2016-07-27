@@ -30,6 +30,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -37,11 +38,18 @@ import org.xerial.snappy.Snappy;
 
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
+import com.asakusafw.runtime.windows.WindowsSupport;
 
 /**
  * Test for {@link TemporaryFile}.
  */
 public class TemporaryFileTest {
+
+    /**
+     * Windows platform support.
+     */
+    @ClassRule
+    public static final WindowsSupport WINDOWS_SUPPORT = new WindowsSupport();
 
     /**
      * A temporary folder for testing.

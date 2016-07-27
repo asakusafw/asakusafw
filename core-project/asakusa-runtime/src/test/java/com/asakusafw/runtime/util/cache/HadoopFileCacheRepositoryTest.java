@@ -36,6 +36,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.junit.Assume;
+import org.junit.ClassRule;
 import org.junit.Test;
 
 import com.asakusafw.runtime.util.hadoop.ConfigurationProvider;
@@ -43,11 +44,18 @@ import com.asakusafw.runtime.util.lock.ConstantRetryStrategy;
 import com.asakusafw.runtime.util.lock.LocalFileLockProvider;
 import com.asakusafw.runtime.util.lock.LockProvider;
 import com.asakusafw.runtime.util.lock.RetryStrategy;
+import com.asakusafw.runtime.windows.WindowsSupport;
 
 /**
  * Test for {@link FileCacheRepository}.
  */
 public class HadoopFileCacheRepositoryTest extends FileCacheRepositoryTestRoot {
+
+    /**
+     * Windows platform support.
+     */
+    @ClassRule
+    public static final WindowsSupport WINDOWS_SUPPORT = new WindowsSupport();
 
     static final Log LOG = LogFactory.getLog(HadoopFileCacheRepositoryTest.class);
 

@@ -64,18 +64,6 @@
               </sources>
             </configuration>
           </execution>
-          <execution>
-            <id>add-test-processed-test-sources</id>
-            <phase>process-test-sources</phase>
-            <goals>
-              <goal>add-test-source</goal>
-            </goals>
-            <configuration>
-              <sources>
-                <source>target/generated-test-sources/test-annotations</source>
-              </sources>
-            </configuration>
-          </execution>
         </executions>
       </plugin>
       <plugin>
@@ -110,47 +98,6 @@
                   <arg value="${project.build.sourceEncoding}" />
                 </java>
               </target>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <fork>true</fork>
-          <encoding>UTF-8</encoding>
-          <proc>none</proc>
-        </configuration>
-        <executions>
-          <execution>
-            <id>compile</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>compile</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>test-compile</id>
-            <phase>test-compile</phase>
-            <goals>
-              <goal>testCompile</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>test-process</id>
-            <phase>process-test-sources</phase>
-            <goals>
-              <goal>testCompile</goal>
-            </goals>
-            <configuration>
-              <fork>true</fork>
-              <encoding>UTF-8</encoding>
-              <proc>only</proc>
-              <failOnError>false</failOnError>
-              <compilerArgs>
-                <arg>-J-Duser.language=en</arg>
-              </compilerArgs>
             </configuration>
           </execution>
         </executions>
@@ -232,14 +179,9 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>asakusa-test-mapreduce</artifactId>
+      <artifactId>asakusa-runtime</artifactId>
       <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>asakusa-yaess-plugin</artifactId>
-      <version>${project.version}</version>
+      <classifier>tests</classifier>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -247,21 +189,6 @@
       <artifactId>asakusa-runtime-configuration</artifactId>
       <version>${project.version}</version>
       <classifier>tests</classifier>
-      <optional>true</optional>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>ashigel-compiler</artifactId>
-      <version>${project.version}</version>
-      <classifier>tests</classifier>
-      <optional>true</optional>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>asakusa-simple-mapreduce</artifactId>
-      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

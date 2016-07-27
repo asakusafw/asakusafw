@@ -34,6 +34,7 @@ import org.apache.hadoop.fs.Path;
 import org.junit.After;
 import org.junit.Assume;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -49,11 +50,18 @@ import com.asakusafw.runtime.directio.SimpleDataDefinition;
 import com.asakusafw.runtime.directio.hadoop.DirectIoTransactionEditor.TransactionInfo;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
+import com.asakusafw.runtime.windows.WindowsSupport;
 
 /**
  * Test for {@link DirectIoTransactionEditor}.
  */
 public class DirectIoTransactionEditorTest {
+
+    /**
+     * Windows platform support.
+     */
+    @ClassRule
+    public static final WindowsSupport WINDOWS_SUPPORT = new WindowsSupport();
 
     /**
      * A temporary folder.

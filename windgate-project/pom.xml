@@ -17,7 +17,6 @@
     <module>asakusa-windgate-dmdl</module>
     <module>asakusa-windgate-hadoopfs</module>
     <module>asakusa-windgate-jdbc</module>
-    <module>asakusa-windgate-plugin</module>
     <module>asakusa-windgate-retryable</module>
     <module>asakusa-windgate-stream</module>
     <module>asakusa-windgate-test-moderator</module>

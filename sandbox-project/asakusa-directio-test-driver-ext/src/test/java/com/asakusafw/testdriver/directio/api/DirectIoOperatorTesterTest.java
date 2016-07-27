@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
 
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -42,6 +43,7 @@ import com.asakusafw.runtime.directio.hadoop.HadoopDataSourceProfile;
 import com.asakusafw.runtime.directio.hadoop.HadoopDataSourceUtil;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
+import com.asakusafw.runtime.windows.WindowsSupport;
 import com.asakusafw.testdriver.OperatorTestEnvironment;
 import com.asakusafw.utils.io.Provider;
 import com.asakusafw.utils.io.Source;
@@ -51,6 +53,12 @@ import com.asakusafw.utils.io.Sources;
  * Test for {@link DirectIoOperatorTester}.
  */
 public class DirectIoOperatorTesterTest {
+
+    /**
+     * Windows platform support.
+     */
+    @ClassRule
+    public static final WindowsSupport WINDOWS_SUPPORT = new WindowsSupport();
 
     /**
      * temporary folder.

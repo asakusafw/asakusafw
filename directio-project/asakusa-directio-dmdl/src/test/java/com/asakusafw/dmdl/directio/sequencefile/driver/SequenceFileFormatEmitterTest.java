@@ -27,6 +27,7 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 
 import com.asakusafw.dmdl.directio.common.driver.GeneratorTesterRoot;
@@ -37,11 +38,18 @@ import com.asakusafw.runtime.directio.DataFormat;
 import com.asakusafw.runtime.directio.hadoop.HadoopFileFormat;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
+import com.asakusafw.runtime.windows.WindowsSupport;
 
 /**
  * Test for {@link SequenceFileFormatEmitter}.
  */
 public class SequenceFileFormatEmitterTest extends GeneratorTesterRoot {
+
+    /**
+     * Windows platform support.
+     */
+    @ClassRule
+    public static final WindowsSupport WINDOWS_SUPPORT = new WindowsSupport();
 
     private ClassLoader classLoader;
 
