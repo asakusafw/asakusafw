@@ -27,9 +27,10 @@ import org.apache.hadoop.mapreduce.JobStatus;
 import org.apache.hadoop.mapreduce.JobStatus.State;
 import org.apache.hadoop.mapreduce.OutputCommitter;
 import org.apache.hadoop.mapreduce.TaskAttemptID;
+import org.apache.hadoop.mapreduce.TaskID;
+import org.apache.hadoop.mapreduce.TaskType;
+import org.apache.hadoop.mapreduce.task.TaskAttemptContextImpl;
 import org.apache.hadoop.util.Progressable;
-
-import com.asakusafw.runtime.compatibility.JobCompatibility;
 
 /**
  * Bridge implementation between
@@ -116,7 +117,7 @@ public class LegacyBridgeOutputCommitter extends org.apache.hadoop.mapred.Output
 
     private org.apache.hadoop.mapreduce.TaskAttemptContext toTaskAttemptContext(JobContext jobContext) {
         assert jobContext != null;
-        // NOTE: Only in Hadoop 2.x, JobContext can be instance of TaskAttemptContext.
+        // NOTE: JobContext can be instance of TaskAttemptContext.
         if (TaskAttemptContext.class.isInstance(jobContext)) {
             return TaskAttemptContext.class.cast(jobContext);
         }
@@ -132,8 +133,14 @@ public class LegacyBridgeOutputCommitter extends org.apache.hadoop.mapred.Output
                     jobContext.getJobID(),
                     progressable));
         }
-        TaskAttemptID id = JobCompatibility.newTaskAttemptId(JobCompatibility.newTaskId(jobContext.getJobID()));
-        return JobCompatibility.newTaskAttemptContext(jobContext.getConfiguration(), id, progressable);
+        TaskAttemptID id = new TaskAttemptID(new TaskID(jobContext.getJobID(), TaskType.MAP, 0), 0);
+        return new TaskAttemptContextImpl(jobContext.getConfiguration(), id) {
+            @Override
+            public void progress() {
+                progressable.progress();
+                super.progress();
+            }
+        };
     }
 
     private void logJob(JobContext jobContext) {

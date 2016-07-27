@@ -38,11 +38,13 @@ import org.apache.hadoop.mapreduce.JobContext;
 import org.apache.hadoop.mapreduce.OutputFormat;
 import org.apache.hadoop.mapreduce.RecordWriter;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
+import org.apache.hadoop.mapreduce.TaskCounter;
 import org.apache.hadoop.mapreduce.TaskInputOutputContext;
+import org.apache.hadoop.mapreduce.TaskType;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.mapreduce.task.TaskAttemptContextImpl;
 import org.apache.hadoop.util.ReflectionUtils;
 
-import com.asakusafw.runtime.compatibility.JobCompatibility;
 import com.asakusafw.runtime.core.Result;
 import com.asakusafw.runtime.flow.ResultOutput;
 import com.asakusafw.runtime.stage.StageOutput;
@@ -179,7 +181,11 @@ public class StageOutputDriver {
         assert name != null;
         try {
             List<Counter> results = new ArrayList<>();
-            results.add(JobCompatibility.getTaskOutputRecordCounter(context));
+            if (context.getTaskAttemptID().getTaskType() == TaskType.MAP) {
+                results.add(context.getCounter(TaskCounter.MAP_OUTPUT_RECORDS));
+            } else {
+                results.add(context.getCounter(TaskCounter.REDUCE_OUTPUT_RECORDS));
+            }
             results.add(context.getCounter(COUNTER_GROUP, name));
             return results;
         } catch (RuntimeException e) {
@@ -213,11 +219,11 @@ public class StageOutputDriver {
         assert keyClass != null;
         assert valueClass != null;
         assert counters != null;
-        Job job = JobCompatibility.newJob(context.getConfiguration());
+        Job job = Job.getInstance(context.getConfiguration());
         job.setOutputFormatClass(formatClass);
         job.setOutputKeyClass(keyClass);
         job.setOutputValueClass(valueClass);
-        TaskAttemptContext localContext = JobCompatibility.newTaskAttemptContext(
+        TaskAttemptContext localContext = new TaskAttemptContextImpl(
                 job.getConfiguration(),
                 context.getTaskAttemptID());
         if (FileOutputFormat.class.isAssignableFrom(formatClass)) {

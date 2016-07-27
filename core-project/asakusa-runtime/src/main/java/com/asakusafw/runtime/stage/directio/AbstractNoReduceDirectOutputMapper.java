@@ -21,9 +21,9 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.mapreduce.TaskCounter;
 import org.apache.hadoop.util.ReflectionUtils;
 
-import com.asakusafw.runtime.compatibility.JobCompatibility;
 import com.asakusafw.runtime.directio.Counter;
 import com.asakusafw.runtime.directio.DataDefinition;
 import com.asakusafw.runtime.directio.DataFormat;
@@ -172,7 +172,7 @@ public abstract class AbstractNoReduceDirectOutputMapper<T> extends MapperWithRu
                             context.getTaskAttemptID()));
                 }
             }
-            org.apache.hadoop.mapreduce.Counter recordCounter = JobCompatibility.getTaskOutputRecordCounter(context);
+            org.apache.hadoop.mapreduce.Counter recordCounter = context.getCounter(TaskCounter.MAP_OUTPUT_RECORDS);
             recordCounter.increment(records);
             Constants.putCounts(context, sourceId, outputId, 1, records, counter.get());
         }

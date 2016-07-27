@@ -394,9 +394,7 @@ public class FragmentFlow {
                 .toStatement());
             results.add(new ExpressionBuilder(factory, factory.newThis())
                 .field(field)
-                .method("setup", new ExpressionBuilder(factory, context) //$NON-NLS-1$
-                    .method("getConfiguration") //$NON-NLS-1$
-                    .toExpression())
+                .method("setup", context) //$NON-NLS-1$
                 .toStatement());
         }
         return results;
@@ -635,9 +633,7 @@ public class FragmentFlow {
                     factory.newBlock(new Statement[] {
                             new ExpressionBuilder(factory, factory.newThis())
                                 .field(entry.getValue())
-                                .method("cleanup", new ExpressionBuilder(factory, context) //$NON-NLS-1$
-                                    .method("getConfiguration") //$NON-NLS-1$
-                                    .toExpression())
+                                .method("cleanup", context) //$NON-NLS-1$
                                 .toStatement(),
                             new ExpressionBuilder(factory, factory.newThis())
                                 .field(entry.getValue())

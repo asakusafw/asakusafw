@@ -249,7 +249,7 @@ public class Clean extends Configured implements Tool {
             context.setError();
             return false;
         }
-        if (file.isDir()) {
+        if (file.isDirectory()) {
             if (context.isRecursive()) {
                 List<FileStatus> children;
                 try {

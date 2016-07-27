@@ -47,8 +47,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import com.asakusafw.runtime.compatibility.JobCompatibility;
-
 /**
  * Test for {@link SimpleJobRunner}.
  */
@@ -199,7 +197,7 @@ public class SimpleJobRunnerTest {
     }
 
     private Job newJob() throws IOException {
-        Job job = JobCompatibility.newJob(new Configuration());
+        Job job = Job.getInstance(new Configuration());
         job.getConfiguration().setInt(SimpleJobRunner.KEY_BUFFER_SIZE, 16 * 1024 * 1024);
         job.getConfiguration().set(
                 SimpleJobRunner.KEY_TEMPORARY_LOCATION,

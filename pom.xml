@@ -66,8 +66,6 @@
 
     <!-- artifact id/versions -->
     <hadoop.version>2.7.2</hadoop.version>
-    <hadoop1.version>1.2.1</hadoop1.version>
-    <hadoop2.version>2.7.2</hadoop2.version>
     <hadoop.artifact.id>hadoop-client</hadoop.artifact.id>
     <hive.version>1.2.1</hive.version>
     <sdk.hive.version>1.1.1</sdk.hive.version>
@@ -104,18 +102,6 @@
   </properties>
 
   <profiles>
-    <profile>
-      <id>hadoop1</id>
-      <properties>
-        <hadoop.version>${hadoop1.version}</hadoop.version>
-      </properties>
-    </profile>
-    <profile>
-      <id>hadoop2</id>
-      <properties>
-        <hadoop.version>${hadoop2.version}</hadoop.version>
-      </properties>
-    </profile>
     <profile>
       <id>compiler.bootclasspath</id>
       <activation>

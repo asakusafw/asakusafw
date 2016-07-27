@@ -41,8 +41,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 
-import com.asakusafw.runtime.compatibility.hadoop.CoreCompatibility;
-
 /**
  * Creates {@link Configuration}s with system defaults.
  * @since 0.4.0
@@ -51,7 +49,7 @@ import com.asakusafw.runtime.compatibility.hadoop.CoreCompatibility;
 public class ConfigurationProvider {
 
     static {
-        CoreCompatibility.verifyFrameworkVersion();
+        InstallationUtil.verifyFrameworkVersion();
     }
 
     private static final String ENV_PATH = "PATH"; //$NON-NLS-1$

@@ -41,7 +41,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import com.asakusafw.runtime.compatibility.FileSystemCompatibility;
 import com.asakusafw.runtime.directio.Counter;
 import com.asakusafw.runtime.directio.DirectDataSource;
 import com.asakusafw.runtime.directio.DirectDataSourceProfile;
@@ -489,7 +488,7 @@ public class HadoopDataSourceUtilTest {
         List<FileStatus> all = HadoopDataSourceUtil.search(getTempFileSystem(), getBase(), FilePattern.compile("**"));
         List<FileStatus> files = new ArrayList<>();
         for (FileStatus stat : all) {
-            if (FileSystemCompatibility.isDirectory(stat) == false) {
+            if (stat.isDirectory() == false) {
                 files.add(stat);
             }
         }

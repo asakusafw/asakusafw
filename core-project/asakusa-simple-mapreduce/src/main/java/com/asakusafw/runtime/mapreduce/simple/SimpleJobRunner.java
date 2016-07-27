@@ -15,8 +15,6 @@
  */
 package com.asakusafw.runtime.mapreduce.simple;
 
-import static com.asakusafw.runtime.compatibility.JobCompatibility.*;
-
 import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -28,6 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.RawComparator;
 import org.apache.hadoop.io.serializer.SerializationFactory;
+import org.apache.hadoop.mapreduce.Counter;
 import org.apache.hadoop.mapreduce.InputFormat;
 import org.apache.hadoop.mapreduce.InputSplit;
 import org.apache.hadoop.mapreduce.Job;
@@ -39,9 +38,17 @@ import org.apache.hadoop.mapreduce.OutputFormat;
 import org.apache.hadoop.mapreduce.RecordReader;
 import org.apache.hadoop.mapreduce.RecordWriter;
 import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.hadoop.mapreduce.StatusReporter;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
 import org.apache.hadoop.mapreduce.TaskAttemptID;
 import org.apache.hadoop.mapreduce.TaskID;
+import org.apache.hadoop.mapreduce.TaskType;
+import org.apache.hadoop.mapreduce.counters.GenericCounter;
+import org.apache.hadoop.mapreduce.lib.map.WrappedMapper;
+import org.apache.hadoop.mapreduce.lib.reduce.WrappedReducer;
+import org.apache.hadoop.mapreduce.task.MapContextImpl;
+import org.apache.hadoop.mapreduce.task.ReduceContextImpl;
+import org.apache.hadoop.mapreduce.task.TaskAttemptContextImpl;
 import org.apache.hadoop.util.Progress;
 import org.apache.hadoop.util.ReflectionUtils;
 
@@ -80,10 +87,11 @@ public class SimpleJobRunner implements JobRunner {
 
     private static final boolean DEFAULT_COMPRESS_BLOCK = false;
 
+    private static final String DUMMY_JOBTRACKER_ID = "asakusafw";
+
     @Override
     public boolean run(Job job) throws InterruptedException {
-        JobID jobId = newJobId(new Random().nextInt(Integer.MAX_VALUE));
-        setJobId(job, jobId);
+        job.setJobID(new JobID(DUMMY_JOBTRACKER_ID, new Random().nextInt(Integer.MAX_VALUE)));
         LOG.info(MessageFormat.format(
                 "starting job using {0}: {1} ({2})",
                 this,
@@ -105,11 +113,11 @@ public class SimpleJobRunner implements JobRunner {
 
     private void runJob(Job job) throws ClassNotFoundException, IOException, InterruptedException {
         assert job.getJobID() != null;
-        TaskID taskId = newMapTaskId(job.getJobID(), 0);
+        TaskID taskId = new TaskID(job.getJobID(), TaskType.MAP, 0);
         Configuration conf = job.getConfiguration();
         OutputFormat<?, ?> output = ReflectionUtils.newInstance(job.getOutputFormatClass(), conf);
         OutputCommitter committer = output.getOutputCommitter(
-                newTaskAttemptContext(conf, newTaskAttemptId(taskId, 0)));
+                new TaskAttemptContextImpl(conf, new TaskAttemptID(taskId, 0)));
         boolean succeed = false;
         committer.setupJob(job);
         try {
@@ -147,7 +155,7 @@ public class SimpleJobRunner implements JobRunner {
         List<InputSplit> splits = input.getSplits(job);
         int serial = 1;
         for (InputSplit split : splits) {
-            TaskAttemptID id = newTaskAttemptId(newMapTaskId(job.getJobID(), serial++), 0);
+            TaskAttemptID id = new TaskAttemptID(new TaskID(job.getJobID(), TaskType.MAP, serial++), 0);
             Mapper<?, ?, ?, ?> mapper = ReflectionUtils.newInstance(job.getMapperClass(), conf);
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MessageFormat.format(
@@ -156,28 +164,29 @@ public class SimpleJobRunner implements JobRunner {
                         id,
                         split.getLength()));
             }
-            TaskAttemptContext context = newTaskAttemptContext(conf, id);
+            TaskAttemptContext context = new TaskAttemptContextImpl(conf, id);
             // we always obtain a new OutputFormat object / OutputFormat.getOutputCommiter() may be cached
             OutputFormat<?, ?> output = ReflectionUtils.newInstance(job.getOutputFormatClass(), conf);
             OutputCommitter committer = output.getOutputCommitter(context);
             committer.setupTask(context);
             boolean succeed = false;
-            try (RecordReader<?, ?> reader = input.createRecordReader(split, newTaskAttemptContext(conf, id))) {
+            try (RecordReader<?, ?> reader = input.createRecordReader(split, new TaskAttemptContextImpl(conf, id))) {
                 RecordWriter<?, ?> writer;
                 if (sorter != null) {
                     writer = new ShuffleWriter(sorter);
                 } else {
-                    writer = output.getRecordWriter(newTaskAttemptContext(conf, id));
+                    writer = output.getRecordWriter(new TaskAttemptContextImpl(conf, id));
                 }
                 try {
-                    Mapper.Context c = newMapperContext(
+                    Mapper.Context c = new WrappedMapper().getMapContext(new MapContextImpl<>(
                             conf, id,
                             reader, writer,
-                            committer, split);
+                            committer, new MockStatusReporter(),
+                            split));
                     reader.initialize(split, c);
                     mapper.run(c);
                 } finally {
-                    writer.close(newTaskAttemptContext(conf, id));
+                    writer.close(new TaskAttemptContextImpl(conf, id));
                 }
                 doCommitTask(context, committer);
                 succeed = true;
@@ -195,7 +204,7 @@ public class SimpleJobRunner implements JobRunner {
             KeyValueSorter<?, ?> sorter) throws ClassNotFoundException, IOException, InterruptedException {
         Configuration conf = job.getConfiguration();
         OutputFormat<?, ?> output = ReflectionUtils.newInstance(job.getOutputFormatClass(), conf);
-        TaskAttemptID id = newTaskAttemptId(newReduceTaskId(job.getJobID(), 1), 0);
+        TaskAttemptID id = new TaskAttemptID(new TaskID(job.getJobID(), TaskType.REDUCE, 0), 0);
         Reducer<?, ?, ?, ?> reducer = ReflectionUtils.newInstance(job.getReducerClass(), conf);
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
@@ -205,23 +214,25 @@ public class SimpleJobRunner implements JobRunner {
                     sorter.getRecordCount(),
                     sorter.getSizeInBytes()));
         }
-        TaskAttemptContext context = newTaskAttemptContext(conf, id);
+        TaskAttemptContext context = new TaskAttemptContextImpl(conf, id);
         OutputCommitter committer = output.getOutputCommitter(context);
         committer.setupTask(context);
         boolean succeed = false;
         try {
             ShuffleReader reader = new ShuffleReader(sorter, new Progress());
             try {
-                RecordWriter<?, ?> writer = output.getRecordWriter(newTaskAttemptContext(conf, id));
+                RecordWriter<?, ?> writer = output.getRecordWriter(new TaskAttemptContextImpl(conf, id));
                 try {
-                    Reducer.Context c = newReducerContext(
-                            conf, id,
-                            reader, sorter.getKeyClass(), sorter.getValueClass(),
-                            writer, committer,
-                            (RawComparator) job.getGroupingComparator());
+                    Reducer.Context c = new WrappedReducer().getReducerContext(new ReduceContextImpl<>(
+                            conf, id, reader,
+                            new GenericCounter(),
+                            new GenericCounter(),
+                            writer, committer, new MockStatusReporter(),
+                            (RawComparator) job.getGroupingComparator(),
+                            sorter.getKeyClass(), sorter.getValueClass()));
                     reducer.run(c);
                 } finally {
-                    writer.close(newTaskAttemptContext(conf, id));
+                    writer.close(new TaskAttemptContextImpl(conf, id));
                 }
             } finally {
                 try {
@@ -304,5 +315,37 @@ public class SimpleJobRunner implements JobRunner {
     @Override
     public String toString() {
         return "Asakusa built-in job runner";
+    }
+
+    private static final class MockStatusReporter extends StatusReporter {
+
+        MockStatusReporter() {
+            return;
+        }
+
+        @Override
+        public Counter getCounter(Enum<?> name) {
+            return new GenericCounter();
+        }
+
+        @Override
+        public Counter getCounter(String group, String name) {
+            return new GenericCounter();
+        }
+
+        @Override
+        public void progress() {
+            return;
+        }
+
+        @Override
+        public void setStatus(String status) {
+            return;
+        }
+
+        @Override
+        public float getProgress() {
+            return 0;
+        }
     }
 }

@@ -27,7 +27,6 @@ import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
-import com.asakusafw.runtime.compatibility.FileSystemCompatibility;
 import com.asakusafw.runtime.directio.BinaryStreamFormat;
 import com.asakusafw.runtime.directio.Counter;
 import com.asakusafw.runtime.directio.DataDefinition;
@@ -185,7 +184,7 @@ public class HadoopDataSourceCore implements DirectDataSource {
     private List<FileStatus> filesOnly(List<FileStatus> stats, Path temporary) {
         List<FileStatus> results = new ArrayList<>();
         for (FileStatus stat : stats) {
-            if (FileSystemCompatibility.isDirectory(stat) == false && isIn(stat, temporary) == false) {
+            if (stat.isDirectory() == false && isIn(stat, temporary) == false) {
                 results.add(stat);
             }
         }
@@ -364,7 +363,7 @@ public class HadoopDataSourceCore implements DirectDataSource {
             ResourceInfo resource = new ResourceInfo(
                     profile.getId(),
                     stat.getPath().toString(),
-                    FileSystemCompatibility.isDirectory(stat));
+                    stat.isDirectory());
             results.add(resource);
         }
         if (LOG.isDebugEnabled()) {
@@ -422,7 +421,7 @@ public class HadoopDataSourceCore implements DirectDataSource {
                         stat.getPath(),
                         recursive));
             }
-            if (recursive == false && FileSystemCompatibility.isDirectory(stat)) {
+            if (recursive == false && stat.isDirectory()) {
                 LOG.info(MessageFormat.format(
                         "Skip deleting directory (id={0}, path={1})",
                         profile.getId(),

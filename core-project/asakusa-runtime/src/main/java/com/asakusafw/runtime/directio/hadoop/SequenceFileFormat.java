@@ -106,7 +106,7 @@ public abstract class SequenceFileFormat<K, V, T> extends HadoopFileFormat<T> {
         final V valueBuffer = createValueObject();
         final SequenceFile.Reader reader;
         try {
-            reader = new SequenceFile.Reader(fileSystem, path, getConf());
+            reader = new SequenceFile.Reader(getConf(), SequenceFile.Reader.file(fileSystem.makeQualified(path)));
         } catch (EOFException e) {
             FileStatus status = fileSystem.getFileStatus(path);
             if (status.getLen() == 0L) {
@@ -189,14 +189,11 @@ public abstract class SequenceFileFormat<K, V, T> extends HadoopFileFormat<T> {
                     codec));
         }
         configure(codec);
-        final SequenceFile.Writer writer = SequenceFile.createWriter(
-                fileSystem,
-                getConf(),
-                path,
-                keyBuffer.getClass(),
-                valueBuffer.getClass(),
-                codec == null ? CompressionType.NONE : CompressionType.BLOCK,
-                codec);
+        SequenceFile.Writer writer = SequenceFile.createWriter(getConf(),
+                SequenceFile.Writer.file(fileSystem.makeQualified(path)),
+                SequenceFile.Writer.keyClass(keyBuffer.getClass()),
+                SequenceFile.Writer.valueClass(valueBuffer.getClass()),
+                SequenceFile.Writer.compression(codec == null ? CompressionType.NONE : CompressionType.BLOCK, codec));
         boolean succeed = false;
         try {
             ModelOutput<T> output = new ModelOutput<T>() {

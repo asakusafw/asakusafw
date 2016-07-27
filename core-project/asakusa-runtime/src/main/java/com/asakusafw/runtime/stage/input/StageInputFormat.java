@@ -44,9 +44,9 @@ import org.apache.hadoop.mapreduce.TaskAttemptContext;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.util.ReflectionUtils;
 
-import com.asakusafw.runtime.compatibility.JobCompatibility;
 import com.asakusafw.runtime.io.util.DataBuffer;
 import com.asakusafw.runtime.stage.StageInput;
+import com.asakusafw.runtime.stage.StageUtil;
 import com.asakusafw.runtime.stage.input.StageInputSplit.Source;
 
 /**
@@ -104,7 +104,7 @@ public class StageInputFormat extends InputFormat {
         Map<FormatAndMapper, List<StageInput>> paths = groupByFormatAndMapper(inputs);
         Map<Class<? extends InputFormat<?, ?>>, InputFormat<?, ?>> formats =
             instantiateFormats(context, paths.keySet());
-        Job temporaryJob = JobCompatibility.newJob(context.getConfiguration());
+        Job temporaryJob = Job.getInstance(context.getConfiguration());
         List<StageInputSplit> results = new ArrayList<>();
         for (Map.Entry<FormatAndMapper, List<StageInput>> entry : paths.entrySet()) {
             FormatAndMapper formatAndMapper = entry.getKey();
@@ -152,7 +152,7 @@ public class StageInputFormat extends InputFormat {
         }
         Configuration conf = context.getConfiguration();
         String combinerType = conf.get(KEY_SPLIT_COMBINER, DEFAULT_SPLIT_COMBINER);
-        if (JobCompatibility.isLocalMode(context) && combinerType.equals(DEFAULT_SPLIT_COMBINER)) {
+        if (StageUtil.isLocalMode(context) && combinerType.equals(DEFAULT_SPLIT_COMBINER)) {
             return ExtremeSplitCombiner.class;
         }
         Class<? extends SplitCombiner> defined = SPLIT_COMBINERS.get(combinerType);

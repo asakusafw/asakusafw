@@ -27,7 +27,6 @@ import org.apache.hadoop.mapreduce.Job;
 import org.junit.Assume;
 import org.junit.Test;
 
-import com.asakusafw.runtime.compatibility.JobCompatibility;
 import com.asakusafw.runtime.stage.StageConfigurator;
 import com.asakusafw.runtime.stage.StageConstants;
 import com.asakusafw.runtime.stage.input.ExtremeSplitCombiner;
@@ -138,7 +137,7 @@ public class InProcessStageConfiguratorTest {
 
     private Job newJob() {
         try {
-            Job job = JobCompatibility.newJob(new ConfigurationProvider().newInstance());
+            Job job = Job.getInstance(new ConfigurationProvider().newInstance());
             Assume.assumeThat(job.getConfiguration().get(StageConstants.PROP_JOB_RUNNER), is(nullValue()));
             job.setJobName("testing");
             return job;

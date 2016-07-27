@@ -41,7 +41,6 @@ import org.apache.hadoop.fs.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.asakusafw.runtime.compatibility.FileSystemCompatibility;
 import com.asakusafw.runtime.core.context.RuntimeContext;
 import com.asakusafw.runtime.io.util.VoidInputStream;
 import com.asakusafw.windgate.core.WindGateLogger;
@@ -208,7 +207,7 @@ public class WindGateHadoopGet extends WindGateHadoopBase {
             FileStatus[] results = fs.globStatus(path);
             if (results != null) {
                 for (FileStatus status : results) {
-                    if (FileSystemCompatibility.isDirectory(status)) {
+                    if (status.isDirectory()) {
                         continue;
                     }
                     found = true;
