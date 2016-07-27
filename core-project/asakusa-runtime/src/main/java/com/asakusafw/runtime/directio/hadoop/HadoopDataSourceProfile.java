@@ -466,7 +466,6 @@ public class HadoopDataSourceProfile {
 
     static String getFsIdentity(FileSystem fileSystem) {
         assert fileSystem != null;
-        // TODO user getCanonicalUri() on 1.0.0
         return fileSystem.getUri().toString();
     }
 

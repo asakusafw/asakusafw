@@ -222,7 +222,6 @@ public class StageResourceDriver implements Closeable {
         if (fs == localFileSystem) {
             return true;
         }
-        // TODO user getCanonicalUri() on 1.0.0
         return fs.getUri().equals(localFileSystem.getUri());
     }
 
