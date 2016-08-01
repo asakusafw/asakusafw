@@ -171,6 +171,12 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>asakusa-mapreduce-compiler-operator</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>com.asakusafw</groupId>
       <artifactId>asakusa-simple-mapreduce</artifactId>
       <version>${asakusafw.version}</version>
