@@ -1,0 +1,18 @@
+package com.example.ctor;
+
+import com.example.*;
+import com.example.external.*;
+import com.asakusafw.vocabulary.flow.*;
+
+@FlowPart
+public class WithExternOut extends FlowDescription {
+
+    public WithExternOut(
+            In<String> in,
+            Out<String> out,
+            @Export(name = "out", description = StringExporter.class) Out<String> exporter) {
+    }
+
+    @Override
+    protected void describe() {}
+}

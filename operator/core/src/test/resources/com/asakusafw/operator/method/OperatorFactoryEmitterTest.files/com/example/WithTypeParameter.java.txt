@@ -1,0 +1,16 @@
+package com.example;
+
+public abstract class WithTypeParameter {
+
+    /**
+     * A method.
+     * @param <A> type parameter
+     * @param p the parameter
+     * @param a the argument
+     * @return the result
+     */
+    @Mock
+    public <A> A method(A p, String a) {
+        return p;
+    }
+}

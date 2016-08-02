@@ -1,0 +1,14 @@
+package com.example.ctor;
+
+import com.example.*;
+import com.asakusafw.vocabulary.flow.*;
+
+@FlowPart
+public class WithProjective<T extends CharSequence> extends FlowDescription {
+
+    public WithProjective(In<T> in, Out<T> out) {
+    }
+
+    @Override
+    protected void describe() {}
+}

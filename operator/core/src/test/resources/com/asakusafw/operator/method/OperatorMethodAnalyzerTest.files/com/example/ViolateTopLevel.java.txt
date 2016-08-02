@@ -1,0 +1,10 @@
+package com.example;
+
+public abstract class ViolateTopLevel {
+    
+    public static abstract class Nested {
+        @Mock
+        public void method() {
+        }
+    }
+}

@@ -1,0 +1,14 @@
+package com.example;
+
+import com.asakusafw.vocabulary.model.Key;
+
+public abstract class WithKey {
+
+    /**
+     * A method.
+     * @param p the parameter
+     */
+    @Mock
+    public void method(@Key(group = "value", order = "+value") String p) {
+    }
+}

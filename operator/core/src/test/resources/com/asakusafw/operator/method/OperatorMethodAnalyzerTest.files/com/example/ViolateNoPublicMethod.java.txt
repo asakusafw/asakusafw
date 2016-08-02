@@ -1,0 +1,10 @@
+package com.example;
+
+public abstract class ViolateNoPublicMethod {
+    
+    @Mock
+    public void method() {
+    }
+    
+    public void invalid() {}
+}

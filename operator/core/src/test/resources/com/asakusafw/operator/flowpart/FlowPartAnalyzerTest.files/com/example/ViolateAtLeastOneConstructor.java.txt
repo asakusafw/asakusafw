@@ -1,0 +1,12 @@
+package com.example;
+
+import com.asakusafw.vocabulary.flow.*;
+
+@FlowPart
+public class ViolateAtLeastOneConstructor extends FlowDescription {
+
+    private ViolateAtLeastOneConstructor() {}
+
+    @Override
+    protected void describe() {}
+}

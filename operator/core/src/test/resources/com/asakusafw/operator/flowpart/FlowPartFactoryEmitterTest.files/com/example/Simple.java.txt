@@ -1,0 +1,13 @@
+package com.example;
+
+import com.asakusafw.vocabulary.flow.*;
+
+@FlowPart
+public class Simple extends FlowDescription {
+    
+    public Simple() {
+    }
+
+    @Override
+    protected void describe() {}
+}

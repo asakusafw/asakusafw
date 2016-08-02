@@ -1,0 +1,14 @@
+package com.example.ctor;
+
+import com.example.*;
+import com.asakusafw.vocabulary.flow.*;
+
+@FlowPart
+public class ViolateOutputInferable<S extends CharSequence, T extends CharSequence> extends FlowDescription {
+
+    public ViolateOutputInferable(In<S> in, Out<T> out) {
+    }
+
+    @Override
+    protected void describe() {}
+}

@@ -29,12 +29,12 @@
     </dependency>
     <dependency>
       <groupId>com.asakusafw.mapreduce.compiler</groupId>
-      <artifactId>asakusa-mapreduce-compiler-core</artifactId>
+      <artifactId>asakusa-mapreduce-compiler-cli</artifactId>
       <version>${asakusafw-mapreduce.version}</version>
     </dependency>
     <dependency>
       <groupId>com.asakusafw.mapreduce.compiler</groupId>
-      <artifactId>asakusa-mapreduce-compiler-cli</artifactId>
+      <artifactId>asakusa-mapreduce-compiler-operator</artifactId>
       <version>${asakusafw-mapreduce.version}</version>
     </dependency>
 

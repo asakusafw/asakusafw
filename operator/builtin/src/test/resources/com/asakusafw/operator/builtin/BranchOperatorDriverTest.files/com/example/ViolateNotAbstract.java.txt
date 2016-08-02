@@ -1,0 +1,13 @@
+package com.example;
+
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class ViolateNotAbstract {
+
+    @Branch
+    public abstract Select method(Model model);
+
+    public enum Select {
+        LEFT, RIGHT,
+    }
+}

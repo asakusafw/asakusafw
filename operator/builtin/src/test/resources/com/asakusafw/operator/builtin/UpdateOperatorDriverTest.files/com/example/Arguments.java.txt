@@ -1,0 +1,10 @@
+package com.example;
+
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class Arguments {
+
+    @Update
+    public void method(Model model, int arg0, String arg1) {
+    }
+}

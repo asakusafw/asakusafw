@@ -1,0 +1,15 @@
+package com.example;
+
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class WithArgument {
+
+    @Branch
+    public Select method(Model model, String stringArg, int intArg) {
+        return Select.values()[0];
+    }
+
+    public enum Select {
+        LEFT, RIGHT,
+    }
+}

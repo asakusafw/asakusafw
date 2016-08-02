@@ -1,0 +1,17 @@
+package com.example;
+
+import java.util.List;
+import com.asakusafw.runtime.core.Result;
+import com.asakusafw.vocabulary.model.Key;
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class WithSelection {
+
+    @MasterSelection
+    public LModel selector(List<LModel> left, RModel right) {
+        return null;
+    }
+
+    @MasterJoin(selection = "selector")
+    public abstract JModel method(LModel left, RModel right);
+}

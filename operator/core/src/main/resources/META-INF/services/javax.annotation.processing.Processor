@@ -1,0 +1,2 @@
+com.asakusafw.operator.method.OperatorAnnotationProcessor
+com.asakusafw.operator.flowpart.FlowPartAnnotationProcessor

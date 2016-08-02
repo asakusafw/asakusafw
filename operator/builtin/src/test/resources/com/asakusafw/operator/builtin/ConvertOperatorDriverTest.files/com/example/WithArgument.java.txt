@@ -1,0 +1,11 @@
+package com.example;
+
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class WithArgument {
+
+    @Convert
+    public Proceeded method(Model model, String stringArg, int intArg) {
+        return null;
+    }
+}

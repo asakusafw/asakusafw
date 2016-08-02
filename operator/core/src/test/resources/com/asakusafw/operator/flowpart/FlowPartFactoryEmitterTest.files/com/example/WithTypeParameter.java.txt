@@ -1,0 +1,23 @@
+package com.example;
+
+import com.asakusafw.vocabulary.flow.*;
+
+/**
+ * A class.
+ * @param <A> type parameter
+ */
+@FlowPart
+public class WithTypeParameter<A> extends FlowDescription {
+    
+    /**
+     * Ctor.
+     * @param in input
+     * @param out output
+     * @param arg argument
+     */
+    public WithTypeParameter(A in, A out, String arg) {
+    }
+    
+    @Override
+    protected void describe() {}
+}

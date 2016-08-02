@@ -1,0 +1,31 @@
+package com.example;
+
+import java.util.List;
+import com.asakusafw.runtime.core.Result;
+import com.asakusafw.vocabulary.model.*;
+import com.asakusafw.vocabulary.model.Joined.*;
+import com.asakusafw.vocabulary.operator.*;
+
+@Joined(terms = {
+    @Term(
+        source = LModel.class,
+        mappings = {
+            @Mapping(source = "left", destination = "key"),
+            @Mapping(source = "value", destination = "leftValue")
+        },
+        shuffle = @Key(group = "left")
+    ),
+    @Term(
+        source = RModel.class,
+        mappings = {
+            @Mapping(source = "right", destination = "key"),
+            @Mapping(source = "value", destination = "rightValue")
+        },
+        shuffle = @Key(group = "right")
+    )
+})
+public class JModel {
+    public int key;
+    public int leftValue;
+    public int rightValue;
+}

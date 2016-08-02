@@ -1,0 +1,14 @@
+package com.example.ctor;
+
+import com.example.*;
+import com.asakusafw.vocabulary.flow.*;
+
+@FlowPart
+public class ViolateOutputType extends FlowDescription {
+
+    public ViolateOutputType(In<String> in, Out<Number> out) {
+    }
+
+    @Override
+    protected void describe() {}
+}

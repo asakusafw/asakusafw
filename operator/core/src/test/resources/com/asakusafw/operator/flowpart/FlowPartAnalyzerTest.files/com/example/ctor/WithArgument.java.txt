@@ -1,0 +1,14 @@
+package com.example.ctor;
+
+import com.example.*;
+import com.asakusafw.vocabulary.flow.*;
+
+@FlowPart
+public class WithArgument extends FlowDescription {
+
+    public WithArgument(In<String> in, Out<String> out, String stringArg, int intArg) {
+    }
+
+    @Override
+    protected void describe() {}
+}

@@ -1,0 +1,14 @@
+com.asakusafw.operator.builtin.BranchOperatorDriver
+com.asakusafw.operator.builtin.CoGroupOperatorDriver
+com.asakusafw.operator.builtin.ConvertOperatorDriver
+com.asakusafw.operator.builtin.ExtractOperatorDriver
+com.asakusafw.operator.builtin.FoldOperatorDriver
+com.asakusafw.operator.builtin.GroupSortOperatorDriver
+com.asakusafw.operator.builtin.LoggingOperatorDriver
+com.asakusafw.operator.builtin.MasterBranchOperatorDriver
+com.asakusafw.operator.builtin.MasterCheckOperatorDriver
+com.asakusafw.operator.builtin.MasterJoinOperatorDriver
+com.asakusafw.operator.builtin.MasterJoinUpdateOperatorDriver
+com.asakusafw.operator.builtin.SplitOperatorDriver
+com.asakusafw.operator.builtin.SummarizeOperatorDriver
+com.asakusafw.operator.builtin.UpdateOperatorDriver

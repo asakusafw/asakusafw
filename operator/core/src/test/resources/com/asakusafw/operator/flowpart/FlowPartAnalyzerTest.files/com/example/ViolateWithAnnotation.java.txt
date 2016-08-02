@@ -1,0 +1,12 @@
+package com.example;
+
+import com.asakusafw.vocabulary.flow.*;
+
+public class ViolateWithAnnotation extends FlowDescription {
+
+    public ViolateWithAnnotation(In<String> in, Out<String> out) {
+    }
+
+    @Override
+    protected void describe() {}
+}

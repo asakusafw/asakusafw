@@ -1,0 +1,10 @@
+package com.example;
+
+public abstract class ViolateEmptyConstructor {
+
+    public ViolateEmptyConstructor(int a) {}
+    
+    @Mock
+    public void method() {
+    }
+}

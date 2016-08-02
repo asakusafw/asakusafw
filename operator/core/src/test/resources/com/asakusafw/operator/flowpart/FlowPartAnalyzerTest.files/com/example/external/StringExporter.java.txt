@@ -1,0 +1,10 @@
+package com.example.external;
+
+import com.asakusafw.vocabulary.external.*;
+
+public class StringExporter implements ExporterDescription {
+    
+    @Override public Class<?> getModelType() {
+        return String.class;
+    }
+}

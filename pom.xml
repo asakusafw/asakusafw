@@ -44,6 +44,7 @@
     <module>iterative-project</module>
     <module>operation-project</module>
     <module>sandbox-project</module>
+    <module>operator</module>
     <module>mapreduce</module>
     <module>sdk-project</module>
   </modules>

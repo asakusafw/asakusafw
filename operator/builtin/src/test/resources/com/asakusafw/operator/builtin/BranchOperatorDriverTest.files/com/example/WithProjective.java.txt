@@ -1,0 +1,15 @@
+package com.example;
+
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class WithProjective {
+
+    @Branch
+    public <T extends Projective> Select method(T model) {
+        return Select.values()[0];
+    }
+
+    public enum Select {
+        LEFT, RIGHT,
+    }
+}

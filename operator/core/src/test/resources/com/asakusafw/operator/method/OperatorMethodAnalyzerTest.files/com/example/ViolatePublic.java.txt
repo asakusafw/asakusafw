@@ -1,0 +1,8 @@
+package com.example;
+
+abstract class ViolatePublic {
+    
+    @Mock
+    public void method() {
+    }
+}

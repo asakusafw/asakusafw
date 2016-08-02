@@ -1,0 +1,15 @@
+package com.example.ctor;
+
+import com.example.*;
+import com.asakusafw.vocabulary.flow.*;
+
+@FlowPart
+public class ViolateInputArgument extends FlowDescription {
+
+    @SuppressWarnings("all")
+    public ViolateInputArgument(In in, Out<String> out) {
+    }
+
+    @Override
+    protected void describe() {}
+}

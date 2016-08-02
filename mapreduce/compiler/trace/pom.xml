@@ -115,8 +115,16 @@
               <proc>only</proc>
               <failOnError>false</failOnError>
               <compilerArgs>
+                <arg>-J-Dorg.slf4j.simpleLogger.defaultLogLevel=debug</arg>
                 <arg>-J-Duser.language=en</arg>
               </compilerArgs>
+              <annotationProcessorPaths>
+                <path>
+                  <groupId>com.asakusafw.operator</groupId>
+                  <artifactId>asakusa-operator-all</artifactId>
+                  <version>${project.version}</version>
+                </path>
+              </annotationProcessorPaths>
             </configuration>
           </execution>
         </executions>
@@ -168,12 +176,6 @@
       <artifactId>asakusa-mapreduce-compiler-core</artifactId>
       <version>${project.version}</version>
       <classifier>tests</classifier>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>asakusa-mapreduce-compiler-operator</artifactId>
-      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

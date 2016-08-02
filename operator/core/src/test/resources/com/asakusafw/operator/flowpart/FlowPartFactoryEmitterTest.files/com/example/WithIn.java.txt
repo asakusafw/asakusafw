@@ -1,0 +1,20 @@
+package com.example;
+
+import com.asakusafw.vocabulary.flow.*;
+
+/**
+ * A class.
+ */
+@FlowPart
+public class WithIn extends FlowDescription {
+    
+    /**
+     * Ctor.
+     * @param p the parameter
+     */
+    public WithIn(In<String> p) {
+    }
+
+    @Override
+    protected void describe() {}
+}

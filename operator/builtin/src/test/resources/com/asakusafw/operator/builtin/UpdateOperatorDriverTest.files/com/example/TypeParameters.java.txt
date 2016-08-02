@@ -1,0 +1,10 @@
+package com.example;
+
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class TypeParameters {
+
+    @Update
+    public <T extends Projective> void method(T model) {
+    }
+}
