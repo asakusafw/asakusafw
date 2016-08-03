@@ -356,8 +356,8 @@ public class ShuffleGroupingComparatorEmitter {
 
         private Javadoc createJavadoc() {
             return new JavadocBuilder(factory)
-                .text("A grouping comparator using shuffle phase in stage <code>{0}</code>.", //$NON-NLS-1$
-                    model.getStageBlock().getStageNumber())
+                .inline("A grouping comparator using shuffle phase in stage {0}.", //$NON-NLS-1$
+                    d -> d.code(model.getStageBlock().getStageNumber()))
                 .toJavadoc();
         }
 

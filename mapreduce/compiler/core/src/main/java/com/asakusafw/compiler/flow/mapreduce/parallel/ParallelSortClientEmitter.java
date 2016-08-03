@@ -356,7 +356,8 @@ public class ParallelSortClientEmitter {
 
         private Javadoc createJavadoc() {
             return new JavadocBuilder(factory)
-                .text("Hadoop client class for processing epilogue stage <code>{0}</code>.", moduleId) //$NON-NLS-1$
+                .inline("Hadoop client class for processing epilogue stage {0}.",
+                        d -> d.code("\"{0}\"", moduleId)) //$NON-NLS-1$
                 .toJavadoc();
         }
 

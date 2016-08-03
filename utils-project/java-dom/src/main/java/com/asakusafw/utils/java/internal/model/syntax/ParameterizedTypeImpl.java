@@ -60,7 +60,6 @@ public final class ParameterizedTypeImpl extends ModelRoot implements Parameteri
     public void setTypeArguments(List<? extends Type> typeArguments) {
         Util.notNull(typeArguments, "typeArguments"); //$NON-NLS-1$
         Util.notContainNull(typeArguments, "typeArguments"); //$NON-NLS-1$
-        Util.notEmpty(typeArguments, "typeArguments"); //$NON-NLS-1$
         this.typeArguments = Util.freeze(typeArguments);
     }
 

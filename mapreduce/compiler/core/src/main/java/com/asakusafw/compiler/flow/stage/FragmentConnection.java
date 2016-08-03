@@ -131,11 +131,10 @@ public class FragmentConnection {
             SimpleName chain = successors.get(output);
             assert chain != null;
             javadoc.param(chain)
-                .text("output for ") //$NON-NLS-1$
-                .code("{0}#{1}", //$NON-NLS-1$
-                        output.getOwner().getDescription().getName(),
-                        output.getDescription().getName())
-                .text("."); //$NON-NLS-1$
+                .inline("output for {0}.",
+                        d -> d.code("{0}#{1}", //$NON-NLS-1$
+                                output.getOwner().getDescription().getName(),
+                                output.getDescription().getName()));
             parameters.add(factory.newFormalParameterDeclaration(
                     importer.resolve(factory.newParameterizedType(
                             Models.toType(factory, Result.class),

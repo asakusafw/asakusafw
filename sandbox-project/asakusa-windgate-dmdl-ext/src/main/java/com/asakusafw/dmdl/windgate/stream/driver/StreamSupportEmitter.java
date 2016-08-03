@@ -197,10 +197,8 @@ public class StreamSupportEmitter extends JavaDataModelDriver {
         private void emit() throws IOException {
             ClassDeclaration decl = f.newClassDeclaration(
                     new JavadocBuilder(f)
-                        .text("Supports binary stream for ", //$NON-NLS-1$
-                                model.getName())
-                        .linkType(context.resolve(model.getSymbol()))
-                        .text(".") //$NON-NLS-1$
+                        .inline("Supports binary stream for {0}.", //$NON-NLS-1$
+                                d -> d.linkType(context.resolve(model.getSymbol())))
                         .toJavadoc(),
                     new AttributeBuilder(f)
                         .Public()

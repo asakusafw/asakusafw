@@ -265,8 +265,8 @@ public class ReducerEmitter {
 
         private Javadoc createJavadoc() {
             return new JavadocBuilder(factory)
-                .text("A reducer class for processing stage <code>{0}</code>.", //$NON-NLS-1$
-                        shuffle.getStageBlock().getStageNumber())
+                .inline("A reducer class for processing stage {0}.", //$NON-NLS-1$
+                        d -> d.code(shuffle.getStageBlock().getStageNumber()))
                 .toJavadoc();
         }
 

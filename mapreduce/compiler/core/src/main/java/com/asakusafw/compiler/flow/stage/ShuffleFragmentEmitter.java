@@ -453,9 +453,8 @@ public class ShuffleFragmentEmitter {
 
         private Javadoc createJavadoc() {
             return new JavadocBuilder(factory)
-                .text("A shuffle fragment for processing") //$NON-NLS-1$
-                .code("{0}", segment.getPort()) //$NON-NLS-1$
-                .text(".") //$NON-NLS-1$
+                .inline("A shuffle fragment for processing {0}.",
+                        d -> d.code(segment.getPort()))
                 .toJavadoc();
         }
 

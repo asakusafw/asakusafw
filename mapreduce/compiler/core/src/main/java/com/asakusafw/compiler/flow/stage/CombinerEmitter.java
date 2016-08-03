@@ -170,8 +170,8 @@ public class CombinerEmitter {
             members.add(createGetRendezvous());
             return factory.newClassDeclaration(
                     new JavadocBuilder(factory)
-                        .text("Combiner class for stage <code>{0}</code>.", //$NON-NLS-1$
-                                shuffle.getStageBlock().getStageNumber())
+                        .inline("Combiner class for stage {0}.", //$NON-NLS-1$
+                                d -> d.code(shuffle.getStageBlock().getStageNumber()))
                         .toJavadoc(),
                     new AttributeBuilder(factory)
                         .annotation(t(SuppressWarnings.class), v("deprecation")) //$NON-NLS-1$

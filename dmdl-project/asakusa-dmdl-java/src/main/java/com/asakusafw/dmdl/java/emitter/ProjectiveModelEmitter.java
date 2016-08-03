@@ -138,11 +138,9 @@ public class ProjectiveModelEmitter {
                     .text(Messages.getString("ProjectiveModelEmitter.javadocGetter"), //$NON-NLS-1$
                             context.getDescription(property))
                     .returns()
-                        .text("{0}", //$NON-NLS-1$
-                                context.getDescription(property))
+                        .text(context.getDescription(property))
                     .exception(context.resolve(NullPointerException.class))
-                        .text(Messages.getString(
-                                "ProjectiveModelEmitter.javadocGetterNullPointerException"), //$NON-NLS-1$
+                        .text(Messages.getString("ProjectiveModelEmitter.javadocGetterNullPointerException"), //$NON-NLS-1$
                                 context.getDescription(property))
                     .toJavadoc(),
                 new AttributeBuilder(f).toAttributes(),
@@ -187,8 +185,7 @@ public class ProjectiveModelEmitter {
                     .text(Messages.getString("ProjectiveModelEmitter.javadocOptionGetter"), //$NON-NLS-1$
                             context.getDescription(property))
                     .returns()
-                        .text("{0}", //$NON-NLS-1$
-                                context.getDescription(property))
+                        .text(context.getDescription(property))
                     .toJavadoc(),
                 driver.getMemberAnnotations(context, property),
                 Collections.emptyList(),

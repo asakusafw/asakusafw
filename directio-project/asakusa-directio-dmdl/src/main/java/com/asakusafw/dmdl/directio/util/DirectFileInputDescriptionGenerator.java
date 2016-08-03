@@ -74,9 +74,9 @@ public final class DirectFileInputDescriptionGenerator {
         Name base = Models.toName(f, DESCRIPTION_CLASS);
         ClassDeclaration decl = f.newClassDeclaration(
                 new JavadocBuilder(f)
-                    .text("{0} for ", description.getDescription()) //$NON-NLS-1$
-                    .linkType(context.resolve(description.getModelClassName()))
-                    .text(".") //$NON-NLS-1$
+                    .inline("{0} for {1}.",
+                            d -> d.text(description.getDescription()),
+                            d -> d.linkType(context.resolve(description.getModelClassName())))
                     .toJavadoc(),
                 getClassAttributes(),
                 context.getTypeName(),

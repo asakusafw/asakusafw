@@ -212,10 +212,11 @@ public class ShuffleKeyEmitter {
             String name = ShuffleEmiterUtil.getPropertyName(segment, term);
             return factory.newFieldDeclaration(
                     new JavadocBuilder(factory)
-                        .text("shuffle key value for {0}#{1} ({2}).", //$NON-NLS-1$
-                                segment.getPort().getOwner().getDescription().getName(),
-                                segment.getPort().getDescription().getName(),
-                                source.getName())
+                        .inline("shuffle key value for {0} ({1}).", //$NON-NLS-1$
+                                d -> d.code("{0}#{1}",
+                                        segment.getPort().getOwner().getDescription().getName(),
+                                        segment.getPort().getDescription().getName()),
+                                d -> d.code(source.getName()))
                         .toJavadoc(),
                     new AttributeBuilder(factory)
                         .Public()
@@ -253,10 +254,10 @@ public class ShuffleKeyEmitter {
             }
             return factory.newMethodDeclaration(
                     new JavadocBuilder(factory)
-                        .text("Sets a data model object for " //$NON-NLS-1$
-                                + "the successing operator input <code>{0}#{1}</code>.", //$NON-NLS-1$
-                                segment.getPort().getOwner().getDescription().getName(),
-                                segment.getPort().getDescription().getName())
+                        .inline("Sets a data model object for the successing operator input {0}.", //$NON-NLS-1$
+                                d -> d.code("{0}#{1}", //$NON-NLS-1$
+                                        segment.getPort().getOwner().getDescription().getName(),
+                                        segment.getPort().getDescription().getName()))
                         .param(argument)
                             .text("the target data model object") //$NON-NLS-1$
                         .toJavadoc(),
@@ -450,8 +451,8 @@ public class ShuffleKeyEmitter {
 
         private Javadoc createJavadoc() {
             return new JavadocBuilder(factory)
-                .text("The shuffle key class for stage <code>{0}</code>.", //$NON-NLS-1$
-                    model.getStageBlock().getStageNumber())
+                .inline("The shuffle key class for stage {0}.", //$NON-NLS-1$
+                        d -> d.code(model.getStageBlock().getStageNumber()))
                 .toJavadoc();
         }
 

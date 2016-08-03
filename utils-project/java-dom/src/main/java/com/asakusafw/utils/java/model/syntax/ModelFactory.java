@@ -1226,7 +1226,6 @@ public interface ModelFactory {
      * @return the created object
      * @throws IllegalArgumentException if {@code type} was {@code null}
      * @throws IllegalArgumentException if {@code typeArguments} was {@code null}
-     * @throws IllegalArgumentException if {@code typeArguments} was empty
      */
     ParameterizedType newParameterizedType(
             Type type,
@@ -1240,7 +1239,6 @@ public interface ModelFactory {
      * @return the created object
      * @throws IllegalArgumentException if {@code type} was {@code null}
      * @throws IllegalArgumentException if {@code typeArguments} was {@code null}
-     * @throws IllegalArgumentException if {@code typeArguments} was empty
      */
     ParameterizedType newParameterizedType(
             Type type,

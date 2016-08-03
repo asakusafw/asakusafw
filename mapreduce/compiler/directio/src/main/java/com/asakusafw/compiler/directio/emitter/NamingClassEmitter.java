@@ -342,7 +342,9 @@ public class NamingClassEmitter {
 
         private Javadoc createJavadoc() {
             return new JavadocBuilder(factory)
-                .text("A naming output \"{1}\" class for \"{0}\".", moduleId, outputName) //$NON-NLS-1$
+                .inline("A naming output {1} class for {0}.",
+                        d -> d.code("\"{0}\"", moduleId), //$NON-NLS-1$
+                        d -> d.code("\"{0}\"", outputName)) //$NON-NLS-1$
                 .toJavadoc();
         }
 

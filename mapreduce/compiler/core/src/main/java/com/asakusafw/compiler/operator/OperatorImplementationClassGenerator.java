@@ -79,9 +79,8 @@ public class OperatorImplementationClassGenerator extends OperatorClassGenerator
     @Override
     protected Javadoc createJavadoc() {
         return new JavadocBuilder(factory)
-            .text("An operator implementation class for") //$NON-NLS-1$
-            .linkType(util.t(operatorClass.getElement()))
-            .text(".") //$NON-NLS-1$
+            .inline("An operator implementation class for {0}.",
+                    d -> d.linkType(util.t(operatorClass.getElement())))
             .toJavadoc();
     }
 

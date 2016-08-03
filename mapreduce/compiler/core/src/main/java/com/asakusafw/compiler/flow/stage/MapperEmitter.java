@@ -316,9 +316,8 @@ public class MapperEmitter {
 
         private Javadoc createJavadoc() {
             return new JavadocBuilder(factory)
-                .text("A mapper class for processing") //$NON-NLS-1$
-                .code("{0}", unit.getInputs()) //$NON-NLS-1$
-                .text(".") //$NON-NLS-1$
+                .inline("A mapper class for processing {0}.",
+                        d -> d.code(unit.getInputs()))
                 .toJavadoc();
         }
 

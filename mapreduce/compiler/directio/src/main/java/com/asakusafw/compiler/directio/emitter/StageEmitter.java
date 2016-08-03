@@ -708,7 +708,8 @@ public class StageEmitter {
 
         private Javadoc createJavadoc() {
             return new JavadocBuilder(factory)
-                .text("A client class for \"{0}\".", moduleId) //$NON-NLS-1$
+                .inline("A client class for {0}.",
+                        d -> d.code("\"{0}\"", moduleId)) //$NON-NLS-1$
                 .toJavadoc();
         }
 

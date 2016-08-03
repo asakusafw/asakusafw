@@ -380,9 +380,8 @@ public class ReduceFragmentEmitter {
 
         private Javadoc createJavadoc() {
             return new JavadocBuilder(factory)
-                .text("A reducer fragment for processing") //$NON-NLS-1$
-                .code("{0}", fragment.getInputPorts()) //$NON-NLS-1$
-                .text(".") //$NON-NLS-1$
+                .inline("A reducer fragment for processing {0}.",
+                        d -> d.code(fragment.getInputPorts()))
                 .toJavadoc();
         }
 

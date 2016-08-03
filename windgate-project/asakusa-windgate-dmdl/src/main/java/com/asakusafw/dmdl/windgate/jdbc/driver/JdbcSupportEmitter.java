@@ -333,7 +333,7 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
             List<Statement> statements = new ArrayList<>();
             SimpleName map = f.newSimpleName("map"); //$NON-NLS-1$
             statements.add(new TypeBuilder(f, context.resolve(TreeMap.class))
-                .parameterize(context.resolve(String.class), context.resolve(Integer.class))
+                .parameterize()
                 .newObject()
                 .toLocalVariableDeclaration(
                         f.newParameterizedType(

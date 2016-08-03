@@ -157,9 +157,8 @@ public class ParquetFileEmitter extends JavaDataModelDriver {
         private void emit() throws IOException {
             ClassDeclaration decl = f.newClassDeclaration(
                     new JavadocBuilder(f)
-                        .text("Hive Parquet data format for ") //$NON-NLS-1$
-                        .linkType(context.resolve(model.getSymbol()))
-                        .text(".") //$NON-NLS-1$
+                        .inline("Hive Parquet data format for {0}.",
+                                d -> d.linkType(context.resolve(model.getSymbol())))
                         .toJavadoc(),
                     new AttributeBuilder(f)
                         .Public()

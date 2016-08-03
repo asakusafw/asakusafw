@@ -366,9 +366,8 @@ public class MapFragmentEmitter {
 
         private Javadoc createJavadoc() {
             return new JavadocBuilder(factory)
-                .text("A mapper fragment for processing") //$NON-NLS-1$
-                .code("{0}", fragment.getInputPorts()) //$NON-NLS-1$
-                .text(".") //$NON-NLS-1$
+                .inline("A mapper fragment for processing {0}.",
+                        d -> d.code(fragment.getInputPorts()))
                 .toJavadoc();
         }
 

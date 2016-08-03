@@ -123,7 +123,8 @@ final class ParallelSortReducerEmitter {
             importer.resolvePackageMember(name);
             return factory.newClassDeclaration(
                     new JavadocBuilder(factory)
-                        .text("Reducer class for epilogue <code>{0}</code>.", moduleId) //$NON-NLS-1$
+                        .inline("Reducer class for epilogue {0}.",
+                                d -> d.code("\"{0}\"", moduleId)) //$NON-NLS-1$
                         .toJavadoc(),
                     new AttributeBuilder(factory)
                         .annotation(importer.toType(TraceLocation.class), createTraceLocationElements())

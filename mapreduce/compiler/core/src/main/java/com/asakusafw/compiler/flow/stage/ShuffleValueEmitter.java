@@ -198,10 +198,11 @@ public class ShuffleValueEmitter {
             DataClass target = segment.getTarget();
             return factory.newFieldDeclaration(
                     new JavadocBuilder(factory)
-                        .text("data model for {0}#{1} ({2}).", //$NON-NLS-1$
-                                segment.getPort().getOwner().getDescription().getName(),
-                                segment.getPort().getDescription().getName(),
-                                segment.getPortId())
+                        .inline("data model for {0} ({1}).", //$NON-NLS-1$
+                                d -> d.code("{0}#{1}", //$NON-NLS-1$
+                                        segment.getPort().getOwner().getDescription().getName(),
+                                        segment.getPort().getDescription().getName()),
+                                d -> d.code(segment.getPortId()))
                         .toJavadoc(),
                     new AttributeBuilder(factory)
                         .Public()
@@ -241,9 +242,10 @@ public class ShuffleValueEmitter {
 
             return factory.newMethodDeclaration(
                     new JavadocBuilder(factory)
-                        .text("Return a data model object for {0}#{1}.", //$NON-NLS-1$
-                                segment.getPort().getOwner().getDescription().getName(),
-                                segment.getPort().getDescription().getName())
+                        .inline("Return a data model object for {0}.", //$NON-NLS-1$
+                                d -> d.code("{0}#{1}", //$NON-NLS-1$
+                                        segment.getPort().getOwner().getDescription().getName(),
+                                        segment.getPort().getDescription().getName()))
                         .toJavadoc(),
                     new AttributeBuilder(factory)
                         .Public()
@@ -274,10 +276,10 @@ public class ShuffleValueEmitter {
 
             return factory.newMethodDeclaration(
                     new JavadocBuilder(factory)
-                        .text("Sets a data model object for " //$NON-NLS-1$
-                                + "the successing operator input <code>{0}#{1}</code>.", //$NON-NLS-1$
-                                segment.getPort().getOwner().getDescription().getName(),
-                                segment.getPort().getDescription().getName())
+                        .inline("Sets a data model object for the successing operator input {0}.", //$NON-NLS-1$
+                                d -> d.code("{0}#{1}", //$NON-NLS-1$
+                                        segment.getPort().getOwner().getDescription().getName(),
+                                        segment.getPort().getDescription().getName()))
                         .param(argument)
                             .text("the target data model object") //$NON-NLS-1$
                         .toJavadoc(),
@@ -395,8 +397,8 @@ public class ShuffleValueEmitter {
 
         private Javadoc createJavadoc() {
             return new JavadocBuilder(factory)
-                .text("The shuffle value class for stage <code>{0}</code>.", //$NON-NLS-1$
-                    model.getStageBlock().getStageNumber())
+                .inline("The shuffle value class for stage {0}.", //$NON-NLS-1$
+                    d -> d.code(model.getStageBlock().getStageNumber()))
                 .toJavadoc();
         }
 

@@ -118,11 +118,9 @@ public final class JoinResourceEmitter {
         List<TypeBodyDeclaration> members = createMembers();
         return factory.newClassDeclaration(
                 new JavadocBuilder(factory)
-                    .text("Represents side-data join action between ") //$NON-NLS-1$
-                    .linkType(importer.toType(resource.getMasterDataClass().getType()))
-                    .text("and") //$NON-NLS-1$
-                    .linkType(importer.toType(resource.getTransactionDataClass().getType()))
-                    .text(".") //$NON-NLS-1$
+                    .inline("Represents side-data join action between {0} and {1}.", //$NON-NLS-1$
+                            d -> d.linkType(importer.toType(resource.getMasterDataClass().getType())),
+                            d -> d.linkType(importer.toType(resource.getTransactionDataClass().getType())))
                     .toJavadoc(),
                 new AttributeBuilder(factory)
                     .Public()

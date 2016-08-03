@@ -30,7 +30,6 @@ import com.asakusafw.testdriver.rule.DataModelCondition;
 
 /**
  * Test for {@link DefaultExcelRuleExtractor}.
- * @since 0.2.0
  */
 public class DefaultExcelRuleExtractorTest {
 

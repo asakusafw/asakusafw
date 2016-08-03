@@ -250,8 +250,8 @@ public class ShufflePartitionerEmitter {
 
         private Javadoc createJavadoc() {
             return new JavadocBuilder(factory)
-                .text("The shuffle partitioner class for stage <code>{0}</code>.", //$NON-NLS-1$
-                    model.getStageBlock().getStageNumber())
+                .inline("The shuffle partitioner class for stage {0}.", //$NON-NLS-1$
+                    d -> d.code(model.getStageBlock().getStageNumber()))
                 .toJavadoc();
         }
 

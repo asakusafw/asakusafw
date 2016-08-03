@@ -25,18 +25,25 @@ import java.util.EnumSet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.junit.Rule;
 import org.junit.Test;
 
 import com.asakusafw.testdriver.excel.ExcelRuleExtractor;
 import com.asakusafw.testdriver.excel.NullityConditionKind;
+import com.asakusafw.testdriver.excel.TemporaryResource;
 import com.asakusafw.testdriver.excel.ValueConditionKind;
 import com.asakusafw.testdriver.rule.DataModelCondition;
 
 /**
  * Test for {@link LegacyExcelRuleExtractor}.
- * @since 0.2.0
  */
 public class LegacyExcelRuleExtractorTest {
+
+    /**
+     * temporary resource manager.
+     */
+    @Rule
+    public final TemporaryResource resources = new TemporaryResource();
 
     /**
      * supported.
@@ -287,7 +294,7 @@ public class LegacyExcelRuleExtractorTest {
     private Sheet sheet(String name) {
         try (InputStream in = getClass().getResourceAsStream(name)) {
             assertThat(name, in, not(nullValue()));
-            Workbook book = new HSSFWorkbook(in);
+            Workbook book = resources.bless(new HSSFWorkbook(in));
             return book.getSheetAt(0);
         } catch (IOException e) {
             throw new AssertionError(e);

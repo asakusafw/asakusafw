@@ -141,8 +141,8 @@ final class ParallelSortMapperEmitter {
             importer.resolvePackageMember(name);
             return factory.newClassDeclaration(
                     new JavadocBuilder(factory)
-                        .text("Mapper for output \"{0}\" in epilogue phase.", //$NON-NLS-1$
-                                slot.getSource().getOutputName())
+                        .inline("Mapper for output {0} in epilogue phase.", //$NON-NLS-1$
+                                d -> d.code("\"{0}\"", slot.getSource().getOutputName())) //$NON-NLS-1$
                         .toJavadoc(),
                     new AttributeBuilder(factory)
                         .annotation(importer.toType(TraceLocation.class), createTraceLocationElements())
@@ -218,8 +218,8 @@ final class ParallelSortMapperEmitter {
             importer.resolvePackageMember(name);
             return factory.newClassDeclaration(
                     new JavadocBuilder(factory)
-                        .text("Mapper for output \"{0}\" in epilogue phase.", //$NON-NLS-1$
-                                slot.getSource().getOutputName())
+                        .inline("Mapper for output {0} in epilogue phase.", //$NON-NLS-1$
+                                d -> d.code("\"{0}\"", slot.getSource().getOutputName())) //$NON-NLS-1$
                         .toJavadoc(),
                     new AttributeBuilder(factory)
                         .Public()

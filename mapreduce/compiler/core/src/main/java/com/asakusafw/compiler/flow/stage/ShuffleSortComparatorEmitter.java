@@ -443,8 +443,8 @@ public class ShuffleSortComparatorEmitter {
 
         private Javadoc createJavadoc() {
             return new JavadocBuilder(factory)
-                .text("The shuffle sort comparator class for stage <code>{0}</code>.", //$NON-NLS-1$
-                    model.getStageBlock().getStageNumber())
+                .inline("The shuffle sort comparator class for stage {0}.", //$NON-NLS-1$
+                    d -> d.code(model.getStageBlock().getStageNumber()))
                 .toJavadoc();
         }
 

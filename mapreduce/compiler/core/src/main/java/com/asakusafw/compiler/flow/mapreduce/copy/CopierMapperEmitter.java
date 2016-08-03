@@ -144,7 +144,8 @@ final class CopierMapperEmitter {
             importer.resolvePackageMember(name);
             return factory.newClassDeclaration(
                     new JavadocBuilder(factory)
-                        .text("Mapper for input \"{0}\" in prologue phase.", slot.getName()) //$NON-NLS-1$
+                        .inline("Mapper for input {0} in prologue phase.",
+                                d -> d.code("\"{0}\"", slot.getName())) //$NON-NLS-1$
                         .toJavadoc(),
                     new AttributeBuilder(factory)
                         .annotation(importer.toType(TraceLocation.class), createTraceLocationElements())

@@ -33,6 +33,7 @@ import com.asakusafw.utils.java.model.syntax.ArrayInitializer;
 import com.asakusafw.utils.java.model.syntax.ArrayType;
 import com.asakusafw.utils.java.model.syntax.AssertStatement;
 import com.asakusafw.utils.java.model.syntax.AssignmentExpression;
+import com.asakusafw.utils.java.model.syntax.Attribute;
 import com.asakusafw.utils.java.model.syntax.BasicType;
 import com.asakusafw.utils.java.model.syntax.Block;
 import com.asakusafw.utils.java.model.syntax.BlockComment;
@@ -194,7 +195,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         context.declaration(EmitDirection.BEGIN);
         process(elem.getJavadoc(), context);
         processBlockComment(elem, context);
-        process(elem.getModifiers(), context);
+        processAttributes(elem.getModifiers(), context);
         context.symbol("@"); //$NON-NLS-1$
         context.keyword("interface"); //$NON-NLS-1$
         process(elem.getName(), context);
@@ -221,7 +222,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         context.declaration(EmitDirection.END);
         process(elem.getJavadoc(), context);
         processBlockComment(elem, context);
-        process(elem.getModifiers(), context);
+        processAttributes(elem.getModifiers(), context);
         process(elem.getType(), context);
         process(elem.getName(), context);
         processParameters(Collections.emptyList(), context);
@@ -418,7 +419,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         context.declaration(EmitDirection.BEGIN);
         process(elem.getJavadoc(), context);
         processBlockComment(elem, context);
-        process(elem.getModifiers(), context);
+        processAttributes(elem.getModifiers(), context);
         context.keyword("class"); //$NON-NLS-1$
         process(elem.getName(), context);
         processTypeParameters(elem.getTypeParameters(), context);
@@ -490,7 +491,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         context.declaration(EmitDirection.BEGIN);
         process(elem.getJavadoc(), context);
         processBlockComment(elem, context);
-        process(elem.getModifiers(), context);
+        processAttributes(elem.getModifiers(), context);
         processTypeParameters(elem.getTypeParameters(), context);
         process(elem.getName(), context);
         processParameters(elem.getFormalParameters(), context);
@@ -563,7 +564,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         context.declaration(EmitDirection.BEGIN);
         process(elem.getJavadoc(), context);
         processBlockComment(elem, context);
-        process(elem.getModifiers(), context);
+        processAttributes(elem.getModifiers(), context);
         process(elem.getName(), context);
         if (appears(elem.getArguments())) {
             processParameters(elem.getArguments(), context);
@@ -580,7 +581,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         context.declaration(EmitDirection.BEGIN);
         process(elem.getJavadoc(), context);
         processBlockComment(elem, context);
-        process(elem.getModifiers(), context);
+        processAttributes(elem.getModifiers(), context);
         context.keyword("enum"); //$NON-NLS-1$
         process(elem.getName(), context);
         if (appears(elem.getSuperInterfaceTypes())) {
@@ -627,7 +628,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         context.declaration(EmitDirection.BEGIN);
         process(elem.getJavadoc(), context);
         processBlockComment(elem, context);
-        process(elem.getModifiers(), context);
+        processAttributes(elem.getModifiers(), context);
         process(elem.getType(), context);
         processJoinWithComma(elem.getVariableDeclarators(), context);
         context.separator(";"); //$NON-NLS-1$
@@ -639,7 +640,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     public Void visitFormalParameterDeclaration(FormalParameterDeclaration elem, EmitContext context) {
         begin(elem, context);
         processInlineComment(elem, context);
-        process(elem.getModifiers(), context);
+        processAttributes(elem.getModifiers(), context);
         process(elem.getType(), context);
         if (elem.isVariableArity()) {
             context.separator("..."); //$NON-NLS-1$
@@ -727,7 +728,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         begin(elem, context);
         context.declaration(EmitDirection.BEGIN);
         processBlockComment(elem, context);
-        process(elem.getModifiers(), context);
+        processAttributes(elem.getModifiers(), context);
         process(elem.getBody(), context);
         context.declaration(EmitDirection.END);
         return null;
@@ -749,7 +750,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         context.declaration(EmitDirection.BEGIN);
         process(elem.getJavadoc(), context);
         processBlockComment(elem, context);
-        process(elem.getModifiers(), context);
+        processAttributes(elem.getModifiers(), context);
         context.keyword("interface"); //$NON-NLS-1$
         process(elem.getName(), context);
         processTypeParameters(elem.getTypeParameters(), context);
@@ -820,7 +821,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
 
     private void processLocalVaribale(LocalVariableDeclaration elem, EmitContext context) {
         begin(elem, context);
-        process(elem.getModifiers(), context);
+        processAttributes(elem.getModifiers(), context);
         process(elem.getType(), context);
         processJoinWithComma(elem.getVariableDeclarators(), context);
     }
@@ -840,7 +841,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         context.declaration(EmitDirection.BEGIN);
         process(elem.getJavadoc(), context);
         processBlockComment(elem, context);
-        process(elem.getModifiers(), context);
+        processAttributes(elem.getModifiers(), context);
         processTypeParameters(elem.getTypeParameters(), context);
         process(elem.getReturnType(), context);
         process(elem.getName(), context);
@@ -919,7 +920,10 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         begin(elem, context);
         processInlineComment(elem, context);
         process(elem.getType(), context);
-        processTypeParameters(elem.getTypeArguments(), context);
+        // may be diamond operator
+        context.symbol("<"); //$NON-NLS-1$
+        processJoinWithComma(elem.getTypeArguments(), context);
+        context.separator(">"); //$NON-NLS-1$
         return null;
     }
 
@@ -1368,6 +1372,21 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
             while (iter.hasNext()) {
                 context.separator(","); //$NON-NLS-1$
                 process(iter.next(), context);
+            }
+        }
+    }
+
+    private void processAttributes(List<? extends Attribute> elements, EmitContext context) {
+        for (Attribute element : elements) {
+            element.accept(this, context);
+            switch (element.getModelKind()) {
+            case MARKER_ANNOTATION:
+            case SINGLE_ELEMENT_ANNOTATION:
+            case NORMAL_ANNOTATION:
+                context.blockPadding();
+                break;
+            default:
+                break;
             }
         }
     }

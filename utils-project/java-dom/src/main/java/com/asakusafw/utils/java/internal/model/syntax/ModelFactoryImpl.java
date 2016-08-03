@@ -1808,7 +1808,6 @@ public class ModelFactoryImpl implements ModelFactory {
         Util.notNull(type, "type"); //$NON-NLS-1$
         Util.notNull(typeArguments, "typeArguments"); //$NON-NLS-1$
         Util.notContainNull(typeArguments, "typeArguments"); //$NON-NLS-1$
-        Util.notEmpty(typeArguments, "typeArguments"); //$NON-NLS-1$
         ParameterizedTypeImpl result = new ParameterizedTypeImpl();
         result.setType(type);
         result.setTypeArguments(typeArguments);

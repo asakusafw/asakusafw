@@ -21,6 +21,8 @@ import com.asakusafw.utils.java.model.syntax.Model;
 
 /**
  * An interface of emitting {@link Model} objects.
+ * @since 0.1.0
+ * @version 0.9.0
  */
 public interface EmitContext {
 
@@ -76,6 +78,12 @@ public interface EmitContext {
      * Emits a padding.
      */
     void padding();
+
+    /**
+     * Emits a block padding.
+     * @since 0.9.0
+     */
+    void blockPadding();
 
     /**
      * Registers a comment.
