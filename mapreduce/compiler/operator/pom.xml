@@ -25,6 +25,7 @@
             <configuration>
               <artifactSet>
                 <includes>
+                  <include>com.asakusafw</include>
                   <include>${project.groupId}</include>
                   <include>org.slf4j</include>
                 </includes>
@@ -33,7 +34,6 @@
                 <filter>
                   <artifact>${project.groupId}:asakusa-mapreduce-compiler-core</artifact>
                   <includes>
-                    <include>META-INF/services/javax.annotation.processing.Processor</include>
                     <include>META-INF/services/com.asakusafw.compiler.operator.*</include>
                     <include>com/asakusafw/compiler/common/**</include>
                     <include>com/asakusafw/compiler/operator/**</include>

@@ -34,7 +34,7 @@
     </dependency>
     <dependency>
       <groupId>com.asakusafw.mapreduce.compiler</groupId>
-      <artifactId>asakusa-mapreduce-compiler-operator</artifactId>
+      <artifactId>asakusa-mapreduce-compiler-core</artifactId>
       <version>${asakusafw-mapreduce.version}</version>
     </dependency>
 
