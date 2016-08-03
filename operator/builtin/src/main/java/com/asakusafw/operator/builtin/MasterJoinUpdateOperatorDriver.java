@@ -45,10 +45,10 @@ public class MasterJoinUpdateOperatorDriver extends AbstractOperatorDriver {
     public OperatorDescription analyze(Context context) {
         DslBuilder dsl = new DslBuilder(context);
         if (dsl.method().modifiers().contains(Modifier.ABSTRACT)) {
-            dsl.method().error("This operator method must not be \"abstract\"");
+            dsl.method().error(Messages.getString("MasterJoinUpdateOperatorDriver.errorAbstract")); //$NON-NLS-1$
         }
         if (dsl.result().type().isVoid() == false) {
-            dsl.method().error("This operator method must return \"void\"");
+            dsl.method().error(Messages.getString("MasterJoinUpdateOperatorDriver.errorReturnNotVoid")); //$NON-NLS-1$
         }
         MasterKindOperatorHelper.consumeMaster(dsl);
         MasterKindOperatorHelper.consumeTx(dsl);
@@ -58,12 +58,12 @@ public class MasterJoinUpdateOperatorDriver extends AbstractOperatorDriver {
         if (dsl.getInputs().isEmpty() == false) {
             Node txInput = dsl.getInputs().get(dsl.getInputs().size() - 1);
             dsl.addOutput(
-                    Document.text("updated dataset"),
+                    Document.text(Messages.getString("MasterJoinUpdateOperatorDriver.javadocJoinOutput")), //$NON-NLS-1$
                     dsl.annotation().string(JOINED_PORT),
                     txInput.getType(),
                     txInput.getReference());
             dsl.addOutput(
-                    Document.text("dataset for missed master data"),
+                    Document.text(Messages.getString("MasterJoinUpdateOperatorDriver.javadocMissOutput")), //$NON-NLS-1$
                     dsl.annotation().string(MISSED_PORT),
                     txInput.getType(),
                     Reference.special(String.valueOf(false)));

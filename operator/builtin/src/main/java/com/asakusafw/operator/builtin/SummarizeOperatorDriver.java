@@ -45,17 +45,18 @@ public class SummarizeOperatorDriver extends AbstractOperatorDriver {
     public OperatorDescription analyze(Context context) {
         DslBuilder dsl = new DslBuilder(context);
         if (dsl.method().modifiers().contains(Modifier.ABSTRACT) == false) {
-            dsl.method().error("This operator method must be \"abstract\"");
+            dsl.method().error(Messages.getString("SummarizeOperatorDriver.errorNotAbstract")); //$NON-NLS-1$
         }
         if (dsl.result().type().isDataModel() == false) {
-            dsl.method().error("This operator method must return a data model type");
+            dsl.method().error(Messages.getString("SummarizeOperatorDriver.errorReturnNotDataModelType")); //$NON-NLS-1$
         }
+        // TODO: allow generic
         if (dsl.isGeneric()) {
-            dsl.method().error("This operator must not have any type parameters");
+            dsl.method().error(Messages.getString("SummarizeOperatorDriver.errorGeneric")); //$NON-NLS-1$
         }
         ElementRef p0 = dsl.parameter(0);
         if (p0.type().isDataModel() == false) {
-            p0.error("The first parameter must be a data model type");
+            p0.error(Messages.getString("SummarizeOperatorDriver.errorInputNotDataModelType")); //$NON-NLS-1$
         }
         if (dsl.sawError()) {
             return null;
@@ -63,12 +64,12 @@ public class SummarizeOperatorDriver extends AbstractOperatorDriver {
 
         AnnotationRef summarized = dsl.result().type().annotation(Constants.TYPE_SUMMARIZED);
         if (summarized == null) {
-            dsl.result().error("The return type must be a \"Summarized data model\"");
+            dsl.result().error(Messages.getString("SummarizeOperatorDriver.errorInputNotSummarizedModelType")); //$NON-NLS-1$
             return null;
         }
         AnnotationRef term = summarized.annotation("term"); //$NON-NLS-1$
         if (term == null) {
-            dsl.result().error("The return type is invalid summarized data model (\"term\" is not declared?)");
+            dsl.result().error(Messages.getString("SummarizeOperatorDriver.errorSummarizedModelMissingTerms")); //$NON-NLS-1$
             return null;
         }
 
@@ -77,7 +78,7 @@ public class SummarizeOperatorDriver extends AbstractOperatorDriver {
             AnnotationRef shuffle = term.annotation("shuffle"); //$NON-NLS-1$
             if (shuffle == null) {
                 dsl.result().error(
-                        "The return type is invalid summarized data model (\"term.shuffle\" is not declared?)");
+                        Messages.getString("SummarizeOperatorDriver.errorSummarizzedModelMissingTermsShuffle")); //$NON-NLS-1$
                 return null;
             }
             KeyRef key = p0.resolveKey(p0.type(), shuffle.get());
@@ -92,11 +93,11 @@ public class SummarizeOperatorDriver extends AbstractOperatorDriver {
         for (ElementRef p : dsl.parameters(1)) {
             TypeRef type = p.type();
             if (type.isDataModel()) {
-                p.error("This operator must not have multiple data model type parameters");
+                p.error(Messages.getString("SummarizeOperatorDriver.errorInputTooMany")); //$NON-NLS-1$
             } else if (type.isBasic()) {
-                p.error("This operator must not have any basic type parameters");
+                p.error(Messages.getString("SummarizeOperatorDriver.errorParameterBasicType")); //$NON-NLS-1$
             } else {
-                p.error("This operator's parameters must be data model type");
+                p.error(Messages.getString("SummarizeOperatorDriver.errorParameterUnsupportedType")); //$NON-NLS-1$
             }
         }
         dsl.requireShuffle();

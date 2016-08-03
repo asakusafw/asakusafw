@@ -42,10 +42,10 @@ public class GroupSortOperatorDriver extends AbstractOperatorDriver {
     public OperatorDescription analyze(Context context) {
         DslBuilder dsl = new DslBuilder(context);
         if (dsl.method().modifiers().contains(Modifier.ABSTRACT)) {
-            dsl.method().error("This operator method must not be \"abstract\"");
+            dsl.method().error(Messages.getString("GroupSortOperatorDriver.errorAbstract")); //$NON-NLS-1$
         }
         if (dsl.result().type().isVoid() == false) {
-            dsl.method().error("This operator method must return \"void\"");
+            dsl.method().error(Messages.getString("GroupSortOperatorDriver.errorReturnNotVoid")); //$NON-NLS-1$
         }
         for (ElementRef p : dsl.parameters()) {
             TypeRef type = p.type();
@@ -56,22 +56,22 @@ public class GroupSortOperatorDriver extends AbstractOperatorDriver {
                         KeyRef key = p.resolveKey(arg);
                         dsl.addInput(p.document(), p.name(), arg.mirror(), key, p.reference());
                     } else {
-                        p.error("Input List element must be a data model type");
+                        p.error(Messages.getString("GroupSortOperatorDriver.errorInputNotDataModelListType")); //$NON-NLS-1$
                     }
                 } else {
-                    p.error("This operator must not have multiple data model type parameters");
+                    p.error(Messages.getString("GroupSortOperatorDriver.errorInputTooMany")); //$NON-NLS-1$
                 }
             } else if (type.isResult()) {
                 TypeRef arg = type.arg(0);
                 if (arg.isDataModel()) {
                     dsl.addOutput(p.document(), p.name(), arg.mirror(), p.reference());
                 } else {
-                    p.error("Output Result element must be a data model type");
+                    p.error(Messages.getString("GroupSortOperatorDriver.errorOutputNotDataModelResultType")); //$NON-NLS-1$
                 }
             } else if (type.isBasic()) {
                 dsl.consumeGenericParameter(p);
             } else {
-                p.error("This operator's parameter must be one of List, Result, or basic type");
+                p.error(Messages.getString("GroupSortOperatorDriver.errorParameterUnsupportedType")); //$NON-NLS-1$
             }
         }
         dsl.addAttribute(dsl.annotation().constant(INPUT_BUFFER));

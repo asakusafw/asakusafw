@@ -45,30 +45,30 @@ public class SplitOperatorDriver extends AbstractOperatorDriver {
     public OperatorDescription analyze(Context context) {
         DslBuilder dsl = new DslBuilder(context);
         if (dsl.method().modifiers().contains(Modifier.ABSTRACT) == false) {
-            dsl.method().error("This operator method must be \"abstract\"");
+            dsl.method().error(Messages.getString("SplitOperatorDriver.errorNotAbstract")); //$NON-NLS-1$
         }
         if (dsl.result().type().isVoid() == false) {
-            dsl.method().error("This operator method must return \"void\"");
+            dsl.method().error(Messages.getString("SplitOperatorDriver.errorReturnNotVoid")); //$NON-NLS-1$
         }
 
         ElementRef p0 = dsl.parameter(0);
         if (p0.type().isDataModel() == false) {
-            p0.error("The first parameter must be a data model type");
+            p0.error(Messages.getString("SplitOperatorDriver.errorFirstParameterNotDataModelType")); //$NON-NLS-1$
         }
         if (dsl.isGeneric()) {
-            dsl.method().error("This operator must not have any type parameters");
+            dsl.method().error(Messages.getString("SplitOperatorDriver.errorGeneric")); //$NON-NLS-1$
         }
         if (dsl.sawError()) {
             return null;
         }
         AnnotationRef joined = p0.type().annotation(Constants.TYPE_JOINED);
         if (joined == null) {
-            p0.error("The first parameter type must be a \"Joined data model\"");
+            p0.error(Messages.getString("SplitOperatorDriver.errorFirstParameterNotJoinedModelType")); //$NON-NLS-1$
             return null;
         }
         List<AnnotationRef> terms = joined.annotations("terms"); //$NON-NLS-1$
         if (terms == null || terms.isEmpty()) {
-            p0.error("The first parameter type is invalid joind data model (\"terms\" is not declared?)");
+            p0.error(Messages.getString("SplitOperatorDriver.errorJoinedModelMissingTerms")); //$NON-NLS-1$
             return null;
         }
         LinkedList<TypeRef> sourceTypes = new LinkedList<>();
@@ -83,7 +83,7 @@ public class SplitOperatorDriver extends AbstractOperatorDriver {
             if (type.isResult()) {
                 TypeRef arg = type.arg(0);
                 if (arg.isDataModel() == false) {
-                    p.error("Output Result parameter must have a data model type in its type argument");
+                    p.error(Messages.getString("SplitOperatorDriver.errorOutputNotDataModelResultType")); //$NON-NLS-1$
                 } else {
                     boolean saw = false;
                     for (Iterator<TypeRef> iter = sourceTypes.iterator(); iter.hasNext();) {
@@ -97,20 +97,20 @@ public class SplitOperatorDriver extends AbstractOperatorDriver {
                     if (saw) {
                         dsl.addOutput(p.document(), p.name(), arg.mirror(), p.reference());
                     } else {
-                        p.error("This output type is not a valid join source");
+                        p.error(Messages.getString("SplitOperatorDriver.errorOutputNotJoinSourceType")); //$NON-NLS-1$
                     }
                 }
             } else if (type.isDataModel()) {
-                p.error("Output parameter must have Result type");
+                p.error(Messages.getString("SplitOperatorDriver.errorOutputDataModelType")); //$NON-NLS-1$
             } else if (type.isBasic()) {
-                p.error("This operator cannot have any basic arguments");
+                p.error(Messages.getString("SplitOperatorDriver.errorOutputBasicType")); //$NON-NLS-1$
             } else {
-                p.error("Rest of parameters must be Result type");
+                p.error(Messages.getString("SplitOperatorDriver.errorParameterUnsupportedType")); //$NON-NLS-1$
             }
         }
         if (dsl.sawError() == false && sourceTypes.isEmpty() == false) {
             p0.error(MessageFormat.format(
-                    "Some join source types do not appeared in parameter: {0}",
+                    Messages.getString("SplitOperatorDriver.errorOutputIncomplete"), //$NON-NLS-1$
                     sourceTypes));
         }
         return dsl.toDescription();

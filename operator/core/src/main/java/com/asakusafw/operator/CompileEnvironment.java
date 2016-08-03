@@ -108,7 +108,7 @@ public class CompileEnvironment {
         try {
             Class.forName(CompileEnvironment.class.getName(), false, classLoader);
         } catch (ClassNotFoundException e) {
-            LOG.debug("Thread context class loader is invalid", e);
+            LOG.debug("Thread context class loader is invalid", e); //$NON-NLS-1$
             classLoader = CompileEnvironment.class.getClassLoader();
         }
         return classLoader;
@@ -155,7 +155,7 @@ public class CompileEnvironment {
             return results;
         } catch (ServiceConfigurationError e) {
             throw new IllegalStateException(MessageFormat.format(
-                    "Failed to load services via SPI: {0}",
+                    Messages.getString("CompileEnvironment.errorFailLoadService"), //$NON-NLS-1$
                     spi.getName()), e);
         }
     }

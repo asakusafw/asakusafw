@@ -39,10 +39,10 @@ public class ExtractOperatorDriver extends AbstractOperatorDriver {
     public OperatorDescription analyze(Context context) {
         DslBuilder dsl = new DslBuilder(context);
         if (dsl.method().modifiers().contains(Modifier.ABSTRACT)) {
-            dsl.method().error("This operator method must not be \"abstract\"");
+            dsl.method().error(Messages.getString("ExtractOperatorDriver.errorAbstract")); //$NON-NLS-1$
         }
         if (dsl.result().type().isVoid() == false) {
-            dsl.method().error("This operator method must return \"void\"");
+            dsl.method().error(Messages.getString("ExtractOperatorDriver.errorReturnNotVoid")); //$NON-NLS-1$
         }
         for (ElementRef p : dsl.parameters()) {
             TypeRef type = p.type();
@@ -50,19 +50,19 @@ public class ExtractOperatorDriver extends AbstractOperatorDriver {
                 if (dsl.getInputs().isEmpty()) {
                     dsl.addInput(p.document(), p.name(), p.type().mirror(), p.reference());
                 } else {
-                    p.error("This operator must not have multiple data model type parameters");
+                    p.error(Messages.getString("ExtractOperatorDriver.errorInputTooMany")); //$NON-NLS-1$
                 }
             } else if (type.isResult()) {
                 TypeRef arg = type.arg(0);
                 if (arg.isDataModel()) {
                     dsl.addOutput(p.document(), p.name(), arg.mirror(), p.reference());
                 } else {
-                    p.error("Output Result element must be a data model type");
+                    p.error(Messages.getString("ExtractOperatorDriver.errorOutputNotDataModelResultType")); //$NON-NLS-1$
                 }
             } else if (type.isBasic()) {
                 dsl.consumeGenericParameter(p);
             } else {
-                p.error("This operator's parameters must be one of List, Result, or basic type");
+                p.error(Messages.getString("ExtractOperatorDriver.errorParameterUnsupportedType")); //$NON-NLS-1$
             }
         }
         return dsl.toDescription();

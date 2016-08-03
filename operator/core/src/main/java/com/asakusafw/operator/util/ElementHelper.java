@@ -143,7 +143,7 @@ public final class ElementHelper {
                 Node other = names.get(node.getName());
                 environment.getProcessingEnvironment().getMessager().printMessage(Diagnostic.Kind.ERROR,
                         MessageFormat.format(
-                                "Input name \"{0}\" is conflict to {1}",
+                                Messages.getString("ElementHelper.errorInputNameConflict"), //$NON-NLS-1$
                                 node.getName(),
                                 target(element, other.getReference())),
                         target(element, node.getReference()));
@@ -169,7 +169,7 @@ public final class ElementHelper {
                 Node other = names.get(node.getName());
                 environment.getProcessingEnvironment().getMessager().printMessage(Diagnostic.Kind.ERROR,
                         MessageFormat.format(
-                                "Output name \"{0}\" is conflict to {1}",
+                                Messages.getString("ElementHelper.errorOutputNameConflict"), //$NON-NLS-1$
                                 target(element, other.getReference())),
                         target(element, node.getReference()));
                 valid = false;
@@ -207,7 +207,7 @@ public final class ElementHelper {
                 if (found == false) {
                     environment.getProcessingEnvironment().getMessager().printMessage(Diagnostic.Kind.ERROR,
                             MessageFormat.format(
-                                    "Failed to infer output type \"{0}\"",
+                                    Messages.getString("ElementHelper.errorOutputTypeNotInferable"), //$NON-NLS-1$
                                     ((TypeVariable) output.getType()).asElement().getSimpleName()),
                             target(element, output.getReference()));
                     valid = false;
@@ -341,7 +341,7 @@ public final class ElementHelper {
             String name = group.getProperty().getName();
             groups.add(new AnnotationDescription(
                     TYPE_KEY_GROUP,
-                    Collections.singletonMap("expression", Descriptions.valueOf(name))));
+                    Collections.singletonMap("expression", Descriptions.valueOf(name)))); //$NON-NLS-1$
         }
         List<AnnotationDescription> orders = new ArrayList<>();
         for (KeyMirror.Order order : key.getOrder()) {
@@ -461,9 +461,9 @@ public final class ElementHelper {
                 .method("defineAttribute", expression) //$NON-NLS-1$
                 .toStatement());
         }
-        SimpleName editorVar = f.newSimpleName("$editor$");
+        SimpleName editorVar = f.newSimpleName("$editor$"); //$NON-NLS-1$
         statements.add(new ExpressionBuilder(f, builderExpression)
-            .method("resolve")
+            .method("resolve") //$NON-NLS-1$
             .toLocalVariableDeclaration(
                     DescriptionHelper.resolve(imports, TYPE_EDITOR),
                     editorVar));
@@ -472,7 +472,7 @@ public final class ElementHelper {
             statements.add(new ExpressionBuilder(f, f.newThis())
                 .field(f.newSimpleName(node.getName()))
                 .assignFrom(new ExpressionBuilder(f, editorVar)
-                    .method("createSource", Models.toLiteral(f, node.getName()), type)
+                    .method("createSource", Models.toLiteral(f, node.getName()), type) //$NON-NLS-1$
                     .toExpression())
                 .toStatement());
         }
@@ -509,7 +509,7 @@ public final class ElementHelper {
                 new TypeBuilder(factory, DescriptionHelper.resolve(imports, TYPE_ATTRIBUTES))
                     .method("key"); //$NON-NLS-1$
         for (KeyMirror.Group group : element.getGroup()) {
-            builder = builder.method("group", Models.toLiteral(factory, group.getProperty().getName()));
+            builder = builder.method("group", Models.toLiteral(factory, group.getProperty().getName())); //$NON-NLS-1$
         }
         for (KeyMirror.Order order : element.getOrder()) {
             String direction = order.getDirection().name().toLowerCase(Locale.ENGLISH);

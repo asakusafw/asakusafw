@@ -48,6 +48,7 @@
     <module name="LineLength">
       <property name="max" value="120"/>
       <property name="tabWidth" value="4"/>
+      <property name="ignorePattern" value="//\$NON-NLS-\d+\$$"/>
     </module>
     <module name="MethodLength">
       <property name="severity" value="error"/>

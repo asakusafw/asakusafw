@@ -54,7 +54,7 @@ final class MasterKindOperatorHelper {
             KeyRef key = p.resolveKey(type);
             dsl.addInput(p.document(), p.name(), p.type().mirror(), key, p.reference());
         } else {
-            p.error("The first parameter of this operator must have data model type");
+            p.error(Messages.getString("MasterKindOperatorHelper.errorMasterInputNotDataModelType")); //$NON-NLS-1$
         }
     }
 
@@ -65,7 +65,7 @@ final class MasterKindOperatorHelper {
             KeyRef key = p.resolveKey(type);
             dsl.addInput(p.document(), p.name(), p.type().mirror(), key, p.reference());
         } else {
-            p.error("The second parameter of this operator must have data model type");
+            p.error(Messages.getString("MasterKindOperatorHelper.errorTransactionInputNotDataModelType")); //$NON-NLS-1$
         }
     }
 
@@ -95,7 +95,8 @@ final class MasterKindOperatorHelper {
         ClassDescription className = Constants.getBuiltinOperatorClass("MasterSelection"); //$NON-NLS-1$
         TypeElement annotationDecl = dsl.getEnvironment().findTypeElement(className);
         if (annotationDecl == null) {
-            dsl.annotation().error(NAME_SELECTION, "Failed to resolve selector annotation type");
+            dsl.annotation().error(NAME_SELECTION,
+                    Messages.getString("MasterKindOperatorHelper.errorFailedToResolveMasterSelectionType")); //$NON-NLS-1$
             return null;
         }
 
@@ -113,14 +114,16 @@ final class MasterKindOperatorHelper {
                 if (result == null) {
                     result = element;
                 } else {
-                    dsl.annotation().error(NAME_SELECTION, "Selector method is ambiguous");
+                    dsl.annotation().error(NAME_SELECTION,
+                            Messages.getString("MasterKindOperatorHelper.errorAmbiguousSelectorMethod")); //$NON-NLS-1$
                     return null;
                 }
             }
         }
 
         if (result == null) {
-            dsl.annotation().error(NAME_SELECTION, "Selector method is not found");
+            dsl.annotation().error(NAME_SELECTION,
+                    Messages.getString("MasterKindOperatorHelper.errorMissingSelectorMethod")); //$NON-NLS-1$
             return null;
         }
         return result;
@@ -129,13 +132,16 @@ final class MasterKindOperatorHelper {
     private static void validateSelectorDeclaration(DslBuilder dsl, ExecutableElement selector) {
         assert selector != null;
         if (selector.getModifiers().contains(Modifier.PUBLIC) == false) {
-            dsl.annotation().error(NAME_SELECTION, "Selector method must be \"public\"");
+            dsl.annotation().error(NAME_SELECTION,
+                    Messages.getString("MasterKindOperatorHelper.errorSelectorMethodNotPublic")); //$NON-NLS-1$
         }
         if (selector.getModifiers().contains(Modifier.ABSTRACT)) {
-            dsl.annotation().error(NAME_SELECTION, "Selector method must not be \"abstract\"");
+            dsl.annotation().error(NAME_SELECTION,
+                    Messages.getString("MasterKindOperatorHelper.errorSelectorMethodAbstract")); //$NON-NLS-1$
         }
         if (selector.getModifiers().contains(Modifier.STATIC)) {
-            dsl.annotation().error(NAME_SELECTION, "Selector method must not be \"static\"");
+            dsl.annotation().error(NAME_SELECTION,
+                    Messages.getString("MasterKindOperatorHelper.errorSelectorMethodStatic")); //$NON-NLS-1$
         }
     }
 
@@ -155,7 +161,7 @@ final class MasterKindOperatorHelper {
                 environment, selectorMethod, selectorParams.get(0).asType());
         if (isValidMaster(operatorMaster, selectorMaster) == false) {
             throw new ResolveException(MessageFormat.format(
-                    "The first parameter in selector method \"{0}\" must be in form of List<{1}>",
+                    Messages.getString("MasterKindOperatorHelper.errorSelectorMethodMasterInputInconsistentType"), //$NON-NLS-1$
                     selectorMethod.getSimpleName(),
                     operatorMaster));
         }
@@ -166,14 +172,14 @@ final class MasterKindOperatorHelper {
         DataModelMirror selectorTx = environment.findDataModel(selectorParams.get(1).asType());
         if (isValidTx(operatorTx, selectorTx) == false) {
             throw new ResolveException(MessageFormat.format(
-                    "The first parameter in selector method \"{0}\" must have super-type of {1}",
+                    Messages.getString("MasterKindOperatorHelper.errorSelectorMethodTransactionInputInconsistentType"), //$NON-NLS-1$
                     selectorMethod.getSimpleName(),
                     operatorTx));
         }
         DataModelMirror selectorResult = environment.findDataModel(selectorMethod.getReturnType());
         if (isValidResult(operatorMaster, selectorMaster, selectorResult) == false) {
             throw new ResolveException(MessageFormat.format(
-                    "The return type of selector method \"{0}\" must be sub-type of {1}",
+                    Messages.getString("MasterKindOperatorHelper.errorSelectorMethodReturnInconsistentType"), //$NON-NLS-1$
                     selectorMethod.getSimpleName(),
                     operatorMaster));
         }
@@ -182,7 +188,7 @@ final class MasterKindOperatorHelper {
             TypeMirror actual = selectorParams.get(i).asType();
             if (environment.getProcessingEnvironment().getTypeUtils().isSubtype(expected, actual) == false) {
                 throw new ResolveException(MessageFormat.format(
-                        "The parameter \"{2}\" in selector method \"{0}\" must have super-type of {1}",
+                        Messages.getString("MasterKindOperatorHelper.errorSelectorMethodParameterInconsistentType"), //$NON-NLS-1$
                         selectorMethod.getSimpleName(),
                         expected,
                         selectorParams.get(i)));
@@ -230,12 +236,12 @@ final class MasterKindOperatorHelper {
         List<? extends VariableElement> selectorParams = selectorMethod.getParameters();
         if (operatorParams.size() < selectorParams.size()) {
             throw new ResolveException(MessageFormat.format(
-                    "The selector method \"{0}\" can only have parameters less than this operator's",
+                    Messages.getString("MasterKindOperatorHelper.errorSelectorMethodParameterTooMany"), //$NON-NLS-1$
                     selectorMethod.getSimpleName()));
         }
         if (selectorParams.size() == 0) {
             throw new ResolveException(MessageFormat.format(
-                    "The first parameter in the selector method \"{0}\" must have a list of {1}",
+                    Messages.getString("MasterKindOperatorHelper.errorSelectorMethodParameterMissing"), //$NON-NLS-1$
                     selectorMethod.getSimpleName(),
                     operatorParams.get(0).asType()));
         }
@@ -252,13 +258,13 @@ final class MasterKindOperatorHelper {
         Types types = environment.getProcessingEnvironment().getTypeUtils();
         if (types.isSameType(erasedSelector, environment.findDeclaredType(TYPE_LIST)) == false) {
             throw new ResolveException(MessageFormat.format(
-                    "The first parameter in the selector method \"{0}\" must be in form of List<...>",
+                    Messages.getString("MasterKindOperatorHelper.errorSelectorMethodMasterInputNotList"), //$NON-NLS-1$
                     selectorMethod.getSimpleName()));
         }
         DeclaredType list = (DeclaredType) firstParameter;
         if (list.getTypeArguments().size() != 1) {
             throw new ResolveException(MessageFormat.format(
-                    "The first parameter in the selector method \"{0}\" must be in form of List<...>",
+                    Messages.getString("MasterKindOperatorHelper.errorSelectorMethodMasterInputRawList"), //$NON-NLS-1$
                     selectorMethod.getSimpleName()));
         }
         TypeMirror selectorElement = list.getTypeArguments().get(0);

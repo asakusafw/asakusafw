@@ -94,7 +94,7 @@ public class FlowPartAnalyzer {
         if (annotation == null) {
             environment.getProcessingEnvironment().getMessager().printMessage(Diagnostic.Kind.ERROR,
                     MessageFormat.format(
-                            "Failed to extract annotation \"{1}\" from \"{0}\"",
+                            Messages.getString("FlowPartAnalyzer.errorFailExtractAnnotation"), //$NON-NLS-1$
                             typeDecl.getSimpleName(),
                             annotationDecl.getSimpleName()),
                             typeDecl);
@@ -143,23 +143,23 @@ public class FlowPartAnalyzer {
         boolean valid = true;
         DeclaredType superType = environment.findDeclaredType(Constants.TYPE_FLOW_DESCRIPTION);
         if (environment.getProcessingEnvironment().getTypeUtils().isSubtype(type.asType(), superType) == false) {
-            error(type, "flow part class {0} must be a subtype of {1}",
+            error(type, Messages.getString("FlowPartAnalyzer.errorClassNotSubtype"), //$NON-NLS-1$
                     type.getSimpleName(),
                     Constants.TYPE_FLOW_DESCRIPTION);
             valid = false;
         }
         if (type.getEnclosingElement().getKind() != ElementKind.PACKAGE) {
-            error(type, "flow part class {0} must be a top-level class (must be declared on packages directly)",
+            error(type, Messages.getString("FlowPartAnalyzer.errorClassNotTopLevel"), //$NON-NLS-1$
                     type.getSimpleName());
             valid = false;
         }
         if (type.getModifiers().contains(Modifier.PUBLIC) == false) {
-            error(type, "flow part class {0} must be declared as \"public\"",
+            error(type, Messages.getString("FlowPartAnalyzer.errorClassNotPublic"), //$NON-NLS-1$
                     type.getSimpleName());
             valid = false;
         }
         if (type.getModifiers().contains(Modifier.ABSTRACT)) {
-            error(type, "flow part class {0} must not be declared as \"abstract\"",
+            error(type, Messages.getString("FlowPartAnalyzer.errorClassAbstract"), //$NON-NLS-1$
                     type.getSimpleName());
             valid = false;
         }
@@ -175,11 +175,11 @@ public class FlowPartAnalyzer {
             }
         }
         if (results.isEmpty()) {
-            error(type, "flow part class {0} must have a public constructor", type.getSimpleName());
+            error(type, Messages.getString("FlowPartAnalyzer.errorConstructorMissing"), type.getSimpleName()); //$NON-NLS-1$
         }
         if (results.size() >= 2) {
             for (ExecutableElement element : results) {
-                error(element, "flow part class {0} must have only one public constructor", type.getSimpleName());
+                error(element, Messages.getString("FlowPartAnalyzer.errorConstructorAmbiguous"), type.getSimpleName()); //$NON-NLS-1$
             }
         }
         for (Iterator<ExecutableElement> iter = results.iterator(); iter.hasNext();) {
@@ -194,11 +194,11 @@ public class FlowPartAnalyzer {
     private boolean validateConstructor(ExecutableElement ctor) {
         boolean valid = true;
         if (ctor.getThrownTypes().isEmpty() == false) {
-            error(ctor, "flow part class constructor must not have any exception types");
+            error(ctor, Messages.getString("FlowPartAnalyzer.errorConstructorException")); //$NON-NLS-1$
             valid = false;
         }
         if (ctor.getTypeParameters().isEmpty() == false) {
-            error(ctor, "flow part class constructor must not have any type parameters");
+            error(ctor, Messages.getString("FlowPartAnalyzer.errorConstructorGeneric")); //$NON-NLS-1$
             valid = false;
         }
         boolean sawIn = false;
@@ -213,12 +213,12 @@ public class FlowPartAnalyzer {
             AnnotationMirror exporter = AnnotationHelper.findAnnotation(environment, exportType, param);
             if (environment.isFlowpartExternalIo() == false) {
                 if (importer != null) {
-                    error(param, "@Import(...) is not available for flow-part");
+                    error(param, Messages.getString("FlowPartAnalyzer.errorConstructorImportAnnoattion")); //$NON-NLS-1$
                     valid = false;
                     continue;
                 }
                 if (exporter != null) {
-                    error(param, "@Export(...) is not available for flow-part");
+                    error(param, Messages.getString("FlowPartAnalyzer.errorConstructorExportAnnotation")); //$NON-NLS-1$
                     valid = false;
                     continue;
                 }
@@ -229,13 +229,13 @@ public class FlowPartAnalyzer {
                 sawIn = true;
                 TypeMirror component = TypeHelper.getInType(environment, type);
                 if (component == null) {
-                    error(param, "flow-part input must be type of In<...>");
+                    error(param, Messages.getString("FlowPartAnalyzer.errorInputRawInType")); //$NON-NLS-1$
                     valid = false;
                     continue;
                 }
                 DataModelMirror model = environment.findDataModel(component);
                 if (model == null) {
-                    error(param, "In<...> must be a data model type ({0})", component);
+                    error(param, Messages.getString("FlowPartAnalyzer.errorInputNotDataModelType"), component); //$NON-NLS-1$
                     valid = false;
                     continue;
                 }
@@ -243,7 +243,7 @@ public class FlowPartAnalyzer {
                 valid &= validateImport(param, component, importer);
             } else {
                 if (importer != null) {
-                    error(param, "@Import(...) is only for In<...> parameters ({0})", type);
+                    error(param, Messages.getString("FlowPartAnalyzer.errorImportNotIn"), type); //$NON-NLS-1$
                     valid = false;
                     continue;
                 }
@@ -252,13 +252,13 @@ public class FlowPartAnalyzer {
                 sawOut = true;
                 TypeMirror component = TypeHelper.getOutType(environment, type);
                 if (component == null) {
-                    error(param, "flow-part input must be type of Out<...>");
+                    error(param, Messages.getString("FlowPartAnalyzer.errorOutputRawOutType")); //$NON-NLS-1$
                     valid = false;
                     continue;
                 }
                 DataModelMirror model = environment.findDataModel(component);
                 if (model == null) {
-                    error(param, "Out<...> must be a data model type ({0})", component);
+                    error(param, Messages.getString("FlowPartAnalyzer.errorOutputNotDataModelType"), component); //$NON-NLS-1$
                     valid = false;
                     continue;
                 }
@@ -266,24 +266,24 @@ public class FlowPartAnalyzer {
                 valid &= validateExport(param, component, exporter);
             } else {
                 if (exporter != null) {
-                    error(param, "@Export(...) is only for Out<...> parameters ({0})", type);
+                    error(param, Messages.getString("FlowPartAnalyzer.errorExportNotOut"), type); //$NON-NLS-1$
                     valid = false;
                     continue;
                 }
             }
         }
         if (sawIn == false) {
-            error(ctor, "flow part class constructor must have one or more In<..> parameters");
+            error(ctor, Messages.getString("FlowPartAnalyzer.errorInMissing")); //$NON-NLS-1$
             valid = false;
         } else if (sawFlowIn == false) {
-            error(ctor, "flow part class constructor must have one or more In<...> parameters without @Import");
+            error(ctor, Messages.getString("FlowPartAnalyzer.errorInWithoutExternMissing")); //$NON-NLS-1$
             valid = false;
         }
         if (sawOut == false) {
-            error(ctor, "flow part class constructor must have one or more Out<..> parameters");
+            error(ctor, Messages.getString("FlowPartAnalyzer.errorOutMissing")); //$NON-NLS-1$
             valid = false;
         } else if (sawFlowOut == false) {
-            error(ctor, "flow part class constructor must have one or more Out<...> parameters without @Export");
+            error(ctor, Messages.getString("FlowPartAnalyzer.errorOutWithoutExternMissing")); //$NON-NLS-1$
             valid = false;
         }
         return valid;
@@ -295,15 +295,15 @@ public class FlowPartAnalyzer {
         boolean valid = true;
         if (extern != null) {
             if (component.getKind() == TypeKind.TYPEVAR) {
-                error(param, "@Import(...) In<{0}> must not use a type variable", component);
+                error(param, Messages.getString("FlowPartAnalyzer.errorImportTypeVariable"), component); //$NON-NLS-1$
                 valid = false;
             }
-            AnnotationValue value = AnnotationHelper.getValue(environment, extern, "description");
+            AnnotationValue value = AnnotationHelper.getValue(environment, extern, "description"); //$NON-NLS-1$
             if (value.getValue() instanceof TypeMirror) {
                 TypeMirror desc = (TypeMirror) value.getValue();
                 Types types = environment.getProcessingEnvironment().getTypeUtils();
                 if (types.isSubtype(desc, environment.findDeclaredType(Constants.TYPE_IMPORTER_DESC)) == false) {
-                    error(param, "@Import(...) must specify a subtype of ImporterDescription ({0})", desc);
+                    error(param, Messages.getString("FlowPartAnalyzer.errorImportInvalidDescriptionType"), desc); //$NON-NLS-1$
                     valid = false;
                 }
             }
@@ -317,15 +317,15 @@ public class FlowPartAnalyzer {
         boolean valid = true;
         if (extern != null) {
             if (component.getKind() == TypeKind.TYPEVAR) {
-                error(param, "@Export(...) Out<{0}> must not use a type variable", component);
+                error(param, Messages.getString("FlowPartAnalyzer.errorExportTypeVariable"), component); //$NON-NLS-1$
                 valid = false;
             }
-            AnnotationValue value = AnnotationHelper.getValue(environment, extern, "description");
+            AnnotationValue value = AnnotationHelper.getValue(environment, extern, "description"); //$NON-NLS-1$
             if (value.getValue() instanceof TypeMirror) {
                 TypeMirror desc = (TypeMirror) value.getValue();
                 Types types = environment.getProcessingEnvironment().getTypeUtils();
                 if (types.isSubtype(desc, environment.findDeclaredType(Constants.TYPE_EXPORTER_DESC)) == false) {
-                    error(param, "@Export(...) must specify a subtype of ExporterDescription ({0})", desc);
+                    error(param, Messages.getString("FlowPartAnalyzer.errorExportInvalidDescriptionType"), desc); //$NON-NLS-1$
                     valid = false;
                 }
             }

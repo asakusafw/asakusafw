@@ -45,25 +45,25 @@ public class MasterCheckOperatorDriver extends AbstractOperatorDriver {
     public OperatorDescription analyze(Context context) {
         DslBuilder dsl = new DslBuilder(context);
         if (dsl.method().modifiers().contains(Modifier.ABSTRACT) == false) {
-            dsl.method().error("This operator method must be \"abstract\"");
+            dsl.method().error(Messages.getString("MasterCheckOperatorDriver.errorNotAbstract")); //$NON-NLS-1$
         }
         if (dsl.result().type().isBoolean() == false) {
-            dsl.method().error("This operator method must return boolean type");
+            dsl.method().error(Messages.getString("MasterCheckOperatorDriver.errorReturnNotBooleanType")); //$NON-NLS-1$
         }
         MasterKindOperatorHelper.consumeMaster(dsl);
         MasterKindOperatorHelper.consumeTx(dsl);
         for (ElementRef p : dsl.parameters(2)) {
-            p.error("This operator cannot have any basic parameters");
+            p.error(Messages.getString("MasterCheckOperatorDriver.errorParameterBasicType")); //$NON-NLS-1$
         }
         if (dsl.getInputs().isEmpty() == false) {
             Node txInput = dsl.getInputs().get(dsl.getInputs().size() - 1);
             dsl.addOutput(
-                    Document.text("dataset for found master data"),
+                    Document.text(Messages.getString("MasterCheckOperatorDriver.javadocJoinOutput")), //$NON-NLS-1$
                     dsl.annotation().string(JOINED_PORT),
                     txInput.getType(),
                     txInput.getReference());
             dsl.addOutput(
-                    Document.text("dataset for missed master data"),
+                    Document.text(Messages.getString("MasterCheckOperatorDriver.javadocMissOutput")), //$NON-NLS-1$
                     dsl.annotation().string(MISSED_PORT),
                     txInput.getType(),
                     Reference.special(String.valueOf(false)));

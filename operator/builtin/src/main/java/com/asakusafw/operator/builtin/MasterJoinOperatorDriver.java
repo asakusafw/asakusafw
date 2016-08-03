@@ -52,13 +52,13 @@ public class MasterJoinOperatorDriver extends AbstractOperatorDriver {
     public OperatorDescription analyze(Context context) {
         DslBuilder dsl = new DslBuilder(context);
         if (dsl.method().modifiers().contains(Modifier.ABSTRACT) == false) {
-            dsl.method().error("this operator method must be \"abstract\"");
+            dsl.method().error(Messages.getString("MasterJoinOperatorDriver.errorNotAbstract")); //$NON-NLS-1$
         }
         if (dsl.result().type().isDataModel() == false) {
-            dsl.method().error("this operator method must return a data model type");
+            dsl.method().error(Messages.getString("MasterJoinOperatorDriver.errorReturnNotDataModelType")); //$NON-NLS-1$
         }
         if (dsl.isGeneric()) {
-            dsl.method().error("this operator must not have any type parameters");
+            dsl.method().error(Messages.getString("MasterJoinOperatorDriver.errorGeneric")); //$NON-NLS-1$
         }
         if (dsl.sawError()) {
             return null;
@@ -66,12 +66,12 @@ public class MasterJoinOperatorDriver extends AbstractOperatorDriver {
 
         AnnotationRef joined = dsl.result().type().annotation(Constants.TYPE_JOINED);
         if (joined == null) {
-            dsl.result().error("the return type must be a \"Joined data model\"");
+            dsl.result().error(Messages.getString("MasterJoinOperatorDriver.errorReturnJoinedModelType")); //$NON-NLS-1$
             return null;
         }
         List<AnnotationRef> terms = joined.annotations("terms"); //$NON-NLS-1$
         if (terms == null || terms.isEmpty()) {
-            dsl.result().error("the return type is invalid joind data model (\"terms\" is not declared?)");
+            dsl.result().error(Messages.getString("MasterJoinOperatorDriver.errorJoinedModelMissingTerms")); //$NON-NLS-1$
             return null;
         }
 
@@ -85,7 +85,7 @@ public class MasterJoinOperatorDriver extends AbstractOperatorDriver {
                     TypeRef termType = term.type("source"); //$NON-NLS-1$
                     if (type.isEqualTo(termType)) {
                         iter.remove();
-                        AnnotationRef shuffle = term.annotation("shuffle");
+                        AnnotationRef shuffle = term.annotation("shuffle"); //$NON-NLS-1$
                         if (shuffle != null) {
                             key = p.resolveKey(type, shuffle.get());
                         }
@@ -96,16 +96,16 @@ public class MasterJoinOperatorDriver extends AbstractOperatorDriver {
                 if (saw) {
                     dsl.addInput(p.document(), p.name(), type.mirror(), key, p.reference());
                 } else {
-                    p.error("this output type is not a valid join source");
+                    p.error(Messages.getString("MasterJoinOperatorDriver.errorInputNotJoinSourceType")); //$NON-NLS-1$
                 }
             } else if (type.isBasic()) {
-                p.error("this operator cannot have any basic arguments");
+                p.error(Messages.getString("MasterJoinOperatorDriver.errorParameterBasic")); //$NON-NLS-1$
             } else {
-                p.error("rest of parameters must be Result type");
+                p.error(Messages.getString("MasterJoinOperatorDriver.errorParameterUnsupportedType")); //$NON-NLS-1$
             }
         }
         if (dsl.getInputs().size() != 2) {
-            dsl.method().error("this operator must have just 2 input data model parameters");
+            dsl.method().error(Messages.getString("MasterJoinOperatorDriver.errorInputInvalidCount")); //$NON-NLS-1$
         }
         if (terms.isEmpty()) {
             List<Node> inputs = dsl.getInputs();
@@ -117,7 +117,7 @@ public class MasterJoinOperatorDriver extends AbstractOperatorDriver {
                     dsl.result().type().mirror(),
                     dsl.result().reference());
             dsl.addOutput(
-                    Document.text("missed dataset"),
+                    Document.text(Messages.getString("MasterJoinOperatorDriver.javadocMissOutput")), //$NON-NLS-1$
                     dsl.annotation().string(MISSED_PORT),
                     txInput.getType(),
                     txInput.getReference());
@@ -129,7 +129,7 @@ public class MasterJoinOperatorDriver extends AbstractOperatorDriver {
                     types.add(type);
                 }
                 dsl.result().error(MessageFormat.format(
-                        "some join source types do not appeared in parameter: {0}",
+                        Messages.getString("MasterJoinOperatorDriver.errorInputIncomplete"), //$NON-NLS-1$
                         types));
             }
         }

@@ -84,11 +84,11 @@ public final class ExternMirror {
         Objects.requireNonNull(source, "source must not be null"); //$NON-NLS-1$
         Objects.requireNonNull(annotationOwner, "annotationOwner must not be null"); //$NON-NLS-1$
         Map<String, AnnotationValue> pairs = AnnotationHelper.getValues(environment, source);
-        AnnotationValue nameValue = pairs.get("name");
+        AnnotationValue nameValue = pairs.get("name"); //$NON-NLS-1$
         if (nameValue == null || (nameValue.getValue() instanceof String) == false) {
             return null;
         }
-        AnnotationValue descriptionValue = pairs.get("description");
+        AnnotationValue descriptionValue = pairs.get("description"); //$NON-NLS-1$
         if (descriptionValue == null || (descriptionValue.getValue() instanceof TypeMirror) == false) {
             return null;
         }

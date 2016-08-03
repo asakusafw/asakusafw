@@ -105,11 +105,11 @@ public class FlowPartFactoryEmitter {
         } catch (IOException e) {
             environment.getProcessingEnvironment().getMessager().printMessage(Diagnostic.Kind.ERROR,
                     MessageFormat.format(
-                            "Failed to generate factory class by I/O exception: {0}",
+                            Messages.getString("FlowPartFactoryEmitter.errorFailEmit"), //$NON-NLS-1$
                             e.toString()),
                     operatorClass.getDeclaration());
             LOG.error(MessageFormat.format(
-                    "Failed to generate implementation class for {0}",
+                    Messages.getString("FlowPartFactoryEmitter.logFailEmit"), //$NON-NLS-1$
                     operatorClass.getDeclaration().getQualifiedName()), e);
         }
     }
@@ -166,9 +166,8 @@ public class FlowPartFactoryEmitter {
             members.addAll(generateMembers());
             return f.newClassDeclaration(
                     new JavadocBuilder(f)
-                        .text("An operator factory class about ")
-                        .linkType(imports.resolve(converter.convert(originalClass)))
-                        .text(".")
+                        .inline(Messages.getString("FlowPartFactoryEmitter.javadocClassSynopsis"), //$NON-NLS-1$
+                                d -> d.linkType(imports.resolve(converter.convert(originalClass))))
                         .toJavadoc(),
                     new AttributeBuilder(f)
                         .annotation(DescriptionHelper.resolveAnnotation(imports, Constants.getGenetedAnnotation()))
@@ -250,9 +249,9 @@ public class FlowPartFactoryEmitter {
         private ConstructorDeclaration generateNodeConstructor(OperatorElement element) {
             Type builderType = DescriptionHelper.resolve(imports, Constants.TYPE_ELEMENT_BUILDER);
             List<Statement> statements = new ArrayList<>();
-            SimpleName builderVar = f.newSimpleName("$builder$");
+            SimpleName builderVar = f.newSimpleName("$builder$"); //$NON-NLS-1$
             statements.add(new TypeBuilder(f, builderType)
-                .method("createFlow", toOperatorDeclaration(element))
+                .method("createFlow", toOperatorDeclaration(element)) //$NON-NLS-1$
                 .toLocalVariableDeclaration(builderType, builderVar));
             statements.addAll(ElementHelper.toNodeConstructorStatements(environment, element, builderVar, imports));
             return f.newConstructorDeclaration(
@@ -308,7 +307,7 @@ public class FlowPartFactoryEmitter {
         private TypeBodyDeclaration generateConstructor() {
             return f.newConstructorDeclaration(
                     new JavadocBuilder(f)
-                        .text("Creates a new instance.")
+                        .text(Messages.getString("FlowPartFactoryEmitter.javadocConstructorSynopsis")) //$NON-NLS-1$
                         .toJavadoc(),
                     new AttributeBuilder(f)
                         .Public()
@@ -335,7 +334,7 @@ public class FlowPartFactoryEmitter {
                 javadoc.param(node.getName());
                 javadoc.inline(source.get(node.getDocument()));
             }
-            javadoc.returns().text("operator node");
+            javadoc.returns().text(Messages.getString("FlowPartFactoryEmitter.javadocFactoryMethodReturn")); //$NON-NLS-1$
             return javadoc.toJavadoc();
         }
 
@@ -366,7 +365,7 @@ public class FlowPartFactoryEmitter {
             assert javadoc != null;
             assert source != null;
             for (TypeParameterElement param : element.getDeclaration().getTypeParameters()) {
-                javadoc.param("<" + param.getSimpleName() + ">");
+                javadoc.typeParam(param.getSimpleName().toString());
                 javadoc.inline(source.getTypeParameter(param.getSimpleName().toString()));
             }
         }

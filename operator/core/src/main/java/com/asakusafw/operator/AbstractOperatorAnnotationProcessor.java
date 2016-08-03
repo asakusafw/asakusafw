@@ -61,16 +61,16 @@ public abstract class AbstractOperatorAnnotationProcessor implements Processor {
             processingEnv.getMessager().printMessage(
                     Diagnostic.Kind.ERROR,
                     MessageFormat.format(
-                            "failed to initialize Asakusa Operator Compiler ({0})",
+                            Messages.getString("AbstractOperatorAnnotationProcessor.errorFailInitialize"), //$NON-NLS-1$
                             e.toString()));
-            LOG.error("failed to initialize Asakusa Operator Compiler", e);
+            LOG.error(Messages.getString("AbstractOperatorAnnotationProcessor.logFailInitialize"), e); //$NON-NLS-1$
         } catch (LinkageError e) {
             processingEnv.getMessager().printMessage(
                     Diagnostic.Kind.ERROR,
                     MessageFormat.format(
-                            "failed to initialize Asakusa Operator Compiler by linkage error ({0})",
+                            Messages.getString("AbstractOperatorAnnotationProcessor.errorFailLinkage"), //$NON-NLS-1$
                             e.toString()));
-            LOG.error("failed to initialize Asakusa Operator Compiler by linkage error", e);
+            LOG.error(Messages.getString("AbstractOperatorAnnotationProcessor.logFailLinkage"), e); //$NON-NLS-1$
             throw e;
         }
     }
@@ -115,9 +115,9 @@ public abstract class AbstractOperatorAnnotationProcessor implements Processor {
             environment.getProcessingEnvironment().getMessager().printMessage(
                     Diagnostic.Kind.ERROR,
                     MessageFormat.format(
-                            "failed to compile Asakusa operators ({0})",
+                            Messages.getString("AbstractOperatorAnnotationProcessor.errorFailCompile"), //$NON-NLS-1$
                             e.toString()));
-            LOG.error("failed to compile Asakusa operators by unknown exception", e);
+            LOG.error(Messages.getString("AbstractOperatorAnnotationProcessor.logFailCompile"), e); //$NON-NLS-1$
         }
         return false;
     }

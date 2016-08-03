@@ -117,12 +117,12 @@ public final class KeyMirror {
         Objects.requireNonNull(annotationOwner, "annotationOwner must not be null"); //$NON-NLS-1$
         Objects.requireNonNull(contextType, "contextType must not be null"); //$NON-NLS-1$
         Map<String, AnnotationValue> pairs = AnnotationHelper.getValues(environment, source);
-        if (pairs.containsKey("group") == false || pairs.containsKey("order") == false) {
+        if (pairs.containsKey("group") == false || pairs.containsKey("order") == false) { //$NON-NLS-1$ //$NON-NLS-2$
             // May compilation failed
             return null;
         }
         boolean valid = true;
-        List<AnnotationValue> groupValues = AnnotationHelper.toValueList(environment, pairs.get("group"));
+        List<AnnotationValue> groupValues = AnnotationHelper.toValueList(environment, pairs.get("group")); //$NON-NLS-1$
         List<Group> groupList = new ArrayList<>();
         for (AnnotationValue groupValue : groupValues) {
             Group group = parseGroup(environment, source, groupValue, annotationOwner, contextType);
@@ -132,7 +132,7 @@ public final class KeyMirror {
                 groupList.add(group);
             }
         }
-        List<AnnotationValue> orderValues = AnnotationHelper.toValueList(environment, pairs.get("order"));
+        List<AnnotationValue> orderValues = AnnotationHelper.toValueList(environment, pairs.get("order")); //$NON-NLS-1$
         List<Order> orderList = new ArrayList<>();
         for (AnnotationValue orderValue : orderValues) {
             Order order = parseOrder(environment, source, orderValue, annotationOwner, contextType);
@@ -163,7 +163,7 @@ public final class KeyMirror {
         if ((value instanceof String) == false) {
             Messager messager = environment.getProcessingEnvironment().getMessager();
             messager.printMessage(Diagnostic.Kind.ERROR,
-                    "Invalid group format",
+                    Messages.getString("KeyMirror.errorGroupMalformed"), //$NON-NLS-1$
                     contextElement,
                     annotation,
                     annotationValue);
@@ -176,7 +176,7 @@ public final class KeyMirror {
             Messager messager = environment.getProcessingEnvironment().getMessager();
             messager.printMessage(Diagnostic.Kind.ERROR,
                     MessageFormat.format(
-                            "Unknown property \"{0}\"",
+                            Messages.getString("KeyMirror.errorGroupUnknownProperty"), //$NON-NLS-1$
                             name),
                     contextElement,
                     annotation,
@@ -201,7 +201,7 @@ public final class KeyMirror {
         if ((value instanceof String) == false) {
             Messager messager = environment.getProcessingEnvironment().getMessager();
             messager.printMessage(Diagnostic.Kind.ERROR,
-                    "Invalid order format",
+                    Messages.getString("KeyMirror.errorOrderMalformed"), //$NON-NLS-1$
                     contextElement,
                     annotation,
                     annotationValue);
@@ -212,7 +212,7 @@ public final class KeyMirror {
         if (matcher.matches() == false) {
             Messager messager = environment.getProcessingEnvironment().getMessager();
             messager.printMessage(Diagnostic.Kind.ERROR,
-                    "Invalid order format",
+                    Messages.getString("KeyMirror.errorOrderMalformed"), //$NON-NLS-1$
                     contextElement,
                     annotation,
                     annotationValue);
@@ -236,7 +236,7 @@ public final class KeyMirror {
             Messager messager = environment.getProcessingEnvironment().getMessager();
             messager.printMessage(Diagnostic.Kind.ERROR,
                     MessageFormat.format(
-                            "Unknown property \"{0}\"",
+                            Messages.getString("KeyMirror.errorOrderUnknownProperty"), //$NON-NLS-1$
                             name),
                     contextElement,
                     annotation,

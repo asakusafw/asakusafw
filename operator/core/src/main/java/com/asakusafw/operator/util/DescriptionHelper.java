@@ -91,7 +91,7 @@ public final class DescriptionHelper {
             return new BasicTypeDescription(BasicTypeDescription.BasicTypeKind.VOID);
         default:
             throw new AssertionError(MessageFormat.format(
-                    "unsupported type: {0}",
+                    "unsupported type: {0}", //$NON-NLS-1$
                     type));
         }
     }
@@ -210,7 +210,7 @@ public final class DescriptionHelper {
             return resolveConstant(importer, (ArrayDescription) constant);
         default:
             throw new IllegalArgumentException(MessageFormat.format(
-                    "not a constant value: {0}",
+                    "not a constant value: {0}", //$NON-NLS-1$
                     constant));
         }
     }
@@ -264,7 +264,7 @@ public final class DescriptionHelper {
         if (elements.isEmpty()) {
             return factory.newMarkerAnnotation(type);
         } else if (elements.size() == 1 && elements.containsKey("value")) { //$NON-NLS-1$
-            return factory.newSingleElementAnnotation(type, elements.get("value"));
+            return factory.newSingleElementAnnotation(type, elements.get("value")); //$NON-NLS-1$
         } else {
             List<AnnotationElement> elementList = new ArrayList<>();
             for (Map.Entry<String, Expression> entry : elements.entrySet()) {
@@ -297,7 +297,7 @@ public final class DescriptionHelper {
             return resolveAnnotation(importer, (AnnotationDescription) value);
         default:
             throw new IllegalArgumentException(MessageFormat.format(
-                    "not an annotation value: {0}",
+                    "not an annotation value: {0}", //$NON-NLS-1$
                     value));
         }
     }

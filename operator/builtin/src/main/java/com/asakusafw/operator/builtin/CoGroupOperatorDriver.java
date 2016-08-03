@@ -42,10 +42,10 @@ public class CoGroupOperatorDriver extends AbstractOperatorDriver {
     public OperatorDescription analyze(Context context) {
         DslBuilder dsl = new DslBuilder(context);
         if (dsl.method().modifiers().contains(Modifier.ABSTRACT)) {
-            dsl.method().error("This operator method must not be \"abstract\"");
+            dsl.method().error(Messages.getString("CoGroupOperatorDriver.errorAbstract")); //$NON-NLS-1$
         }
         if (dsl.result().type().isVoid() == false) {
-            dsl.method().error("This operator method must return \"void\"");
+            dsl.method().error(Messages.getString("CoGroupOperatorDriver.errorReturnNotVoid")); //$NON-NLS-1$
         }
         for (ElementRef p : dsl.parameters()) {
             TypeRef type = p.type();
@@ -55,19 +55,19 @@ public class CoGroupOperatorDriver extends AbstractOperatorDriver {
                     KeyRef key = p.resolveKey(arg);
                     dsl.addInput(p.document(), p.name(), arg.mirror(), key, p.reference());
                 } else {
-                    p.error("Input List element must be a data model type");
+                    p.error(Messages.getString("CoGroupOperatorDriver.errorInputNotDataModelListType")); //$NON-NLS-1$
                 }
             } else if (type.isResult()) {
                 TypeRef arg = type.arg(0);
                 if (arg.isDataModel()) {
                     dsl.addOutput(p.document(), p.name(), arg.mirror(), p.reference());
                 } else {
-                    p.error("Output Result element must be a data model type");
+                    p.error(Messages.getString("CoGroupOperatorDriver.errorOutputNotDataModelListType")); //$NON-NLS-1$
                 }
             } else if (type.isBasic()) {
                 dsl.consumeGenericParameter(p);
             } else {
-                p.error("This operator's parameters must be one of List, Result, or basic type");
+                p.error(Messages.getString("CoGroupOperatorDriver.errorParameterUnsupportedType")); //$NON-NLS-1$
             }
         }
         dsl.addAttribute(dsl.annotation().constant(INPUT_BUFFER));

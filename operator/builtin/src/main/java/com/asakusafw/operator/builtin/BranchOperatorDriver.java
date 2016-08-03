@@ -44,11 +44,11 @@ public class BranchOperatorDriver extends AbstractOperatorDriver {
     public OperatorDescription analyze(Context context) {
         DslBuilder dsl = new DslBuilder(context);
         if (dsl.method().modifiers().contains(Modifier.ABSTRACT)) {
-            dsl.method().error("This operator method must not be \"abstract\"");
+            dsl.method().error(Messages.getString("BranchOperatorDriver.errorAbstract")); //$NON-NLS-1$
         }
         boolean enumResult = dsl.result().type().isEnum();
         if (enumResult == false) {
-            dsl.method().error("This operator method must return enum type");
+            dsl.method().error(Messages.getString("BranchOperatorDriver.errorReturnNotEnumType")); //$NON-NLS-1$
         }
         for (ElementRef p : dsl.parameters()) {
             TypeRef type = p.type();
@@ -56,18 +56,18 @@ public class BranchOperatorDriver extends AbstractOperatorDriver {
                 if (dsl.getInputs().isEmpty()) {
                     dsl.addInput(p.document(), p.name(), p.type().mirror(), p.reference());
                 } else {
-                    p.error("This operator must not have multiple data model type parameters");
+                    p.error(Messages.getString("BranchOperatorDriver.errorInputTooMany")); //$NON-NLS-1$
                 }
             } else if (type.isBasic()) {
                 dsl.consumeGenericParameter(p);
             } else {
-                p.error("This operator's parameters must be either data model type or basic type");
+                p.error(Messages.getString("BranchOperatorDriver.errorParameterUnsupportedType")); //$NON-NLS-1$
             }
         }
         if (dsl.getInputs().isEmpty() == false && enumResult) {
             List<ElementRef> constants = dsl.result().type().enumConstants();
             if (constants.isEmpty()) {
-                dsl.result().error("This operator method must return enum with one or more constants");
+                dsl.result().error(Messages.getString("BranchOperatorDriver.errorReturnEmptyEnumType")); //$NON-NLS-1$
             } else {
                 Node input = dsl.getInputs().get(0);
                 for (ElementRef constant : constants) {

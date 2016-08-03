@@ -60,7 +60,7 @@ public class OperatorAnnotationProcessor extends AbstractOperatorAnnotationProce
     @Override
     public Set<String> getSupportedAnnotationTypes() {
         if (environment == null) {
-            return Collections.singleton("*");
+            return Collections.singleton("*"); //$NON-NLS-1$
         }
         Set<String> results = new HashSet<>();
         for (OperatorDriver driver : environment.getOperatorDrivers()) {

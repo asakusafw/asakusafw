@@ -45,24 +45,24 @@ public class FoldOperatorDriver extends AbstractOperatorDriver {
     public OperatorDescription analyze(Context context) {
         DslBuilder dsl = new DslBuilder(context);
         if (dsl.method().modifiers().contains(Modifier.ABSTRACT)) {
-            dsl.method().error("This operator method must not be \"abstract\"");
+            dsl.method().error(Messages.getString("FoldOperatorDriver.errorAbstract")); //$NON-NLS-1$
         }
         if (dsl.result().type().isVoid() == false) {
-            dsl.method().error("This operator method must return \"void\"");
+            dsl.method().error(Messages.getString("FoldOperatorDriver.errorReturnNotVoid")); //$NON-NLS-1$
         }
         ElementRef p0 = dsl.parameter(0);
         ElementRef p1 = dsl.parameter(1);
         if (p0.type().isDataModel() == false) {
-            p0.error("The first parameter of this operator must be a data model type");
+            p0.error(Messages.getString("FoldOperatorDriver.errorLeftInputNotDataModelType")); //$NON-NLS-1$
         } else if (p1.type().isDataModel() == false) {
-            p1.error("The second parameter of this operator must be a data model type");
+            p1.error(Messages.getString("FoldOperatorDriver.errorRightInputNotDataModelType")); //$NON-NLS-1$
         } else if (p0.type().isEqualTo(p1.type()) == false) {
-            p1.error("The second parameter type must be same to the first parameter type");
+            p1.error(Messages.getString("FoldOperatorDriver.errorInputInconsistentType")); //$NON-NLS-1$
         } else {
             KeyRef key = p0.resolveKey(p0.type());
             dsl.addInput(p1.document(), p1.name(), p1.type().mirror(), key, p0.reference());
             dsl.addOutput(
-                    Document.text("folding result"),
+                    Document.text(Messages.getString("FoldOperatorDriver.javadocOutput")), //$NON-NLS-1$
                     dsl.annotation().string(OUTPUT_PORT),
                     p0.type().mirror(),
                     p0.reference());
@@ -72,7 +72,7 @@ public class FoldOperatorDriver extends AbstractOperatorDriver {
             if (type.isBasic()) {
                 dsl.consumeGenericParameter(p);
             } else {
-                p.error("Rest of this operator's parameters must be basic type");
+                p.error(Messages.getString("FoldOperatorDriver.errorParameterUnsupportedType")); //$NON-NLS-1$
             }
         }
         dsl.requireShuffle();

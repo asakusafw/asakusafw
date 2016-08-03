@@ -83,7 +83,7 @@ public class OperatorMethodAnalyzer {
         Objects.requireNonNull(annotationDecl, "annotationDecl must not be null"); //$NON-NLS-1$
         Objects.requireNonNull(methodDecl, "methodDecl must not be null"); //$NON-NLS-1$
         if (methodDecl.getKind() != ElementKind.METHOD) {
-            error(methodDecl, "\"{0}\" is not a valid operator declaration (is invalid method?)",
+            error(methodDecl, Messages.getString("OperatorMethodAnalyzer.errorMethodInvalid"), //$NON-NLS-1$
                     methodDecl.getSimpleName());
             return;
         }
@@ -106,7 +106,7 @@ public class OperatorMethodAnalyzer {
         AnnotationMirror annotation = AnnotationHelper.findAnnotation(environment, annotationDecl, methodDecl);
         if (annotation == null) {
             // may not come here
-            error(methodDecl, "Failed to extract annotation \"{1}\" from \"{0}\"",
+            error(methodDecl, Messages.getString("OperatorMethodAnalyzer.errorMethodInvalidAnnotation"), //$NON-NLS-1$
                     methodDecl.getSimpleName(),
                     annotationDecl.getSimpleName());
             return null;
@@ -116,7 +116,7 @@ public class OperatorMethodAnalyzer {
             // may not come here
             environment.getProcessingEnvironment().getMessager().printMessage(Diagnostic.Kind.ERROR,
                     MessageFormat.format(
-                            "Failed to load operator annotation driver \"{0}\"",
+                            Messages.getString("OperatorMethodAnalyzer.errorFailLoadOperatorDriver"), //$NON-NLS-1$
                             annotationDecl.getSimpleName()),
                     methodDecl,
                     annotation);
@@ -163,43 +163,43 @@ public class OperatorMethodAnalyzer {
         assert type != null;
         boolean valid = true;
         if (type.getKind() != ElementKind.CLASS) {
-            error(type, "operator class {0} must be just a class");
+            error(type, Messages.getString("OperatorMethodAnalyzer.errorClassNotNotmalClass")); //$NON-NLS-1$
             valid = false;
         }
         if (type.getEnclosingElement().getKind() != ElementKind.PACKAGE) {
-            error(type, "operator class {0} must be a top-level class (must be declared on packages directly)",
+            error(type, Messages.getString("OperatorMethodAnalyzer.errorClassNotTopLevel"), //$NON-NLS-1$
                     type.getSimpleName());
             valid = false;
         }
         if (type.getTypeParameters().isEmpty() == false) {
-            error(type, "operator class {0} must not have any type parameters",
+            error(type, Messages.getString("OperatorMethodAnalyzer.errorClassGeneric"), //$NON-NLS-1$
                     type.getSimpleName());
             valid = false;
         }
         if (type.getModifiers().contains(Modifier.PUBLIC) == false) {
-            error(type, "operator class {0} must be declared as \"public\"",
+            error(type, Messages.getString("OperatorMethodAnalyzer.errorClassNotPublic"), //$NON-NLS-1$
                     type.getSimpleName());
             valid = false;
         }
         if (type.getModifiers().contains(Modifier.FINAL)) {
-            error(type, "operator class {0} must not be declared as \"final\"",
+            error(type, Messages.getString("OperatorMethodAnalyzer.errorClassFinal"), //$NON-NLS-1$
                     type.getSimpleName());
             valid = false;
         }
         if (type.getModifiers().contains(Modifier.ABSTRACT) == false) { // optional requirement
-            warn(type, "operator class {0} should be declared as \"abstract\"",
+            warn(type, Messages.getString("OperatorMethodAnalyzer.warnClassNotAbstract"), //$NON-NLS-1$
                     type.getSimpleName());
         }
         if (type.getSuperclass().getKind() != TypeKind.NONE) { // optional requirement
             Types types = environment.getProcessingEnvironment().getTypeUtils();
             DeclaredType object = environment.findDeclaredType(TYPE_OBJECT);
             if (types.isSameType(type.getSuperclass(), object) == false) {
-                warn(type, "operator class {0} should not be specify super class (extends ...)",
+                warn(type, Messages.getString("OperatorMethodAnalyzer.warnClassExtendNotObjectClass"), //$NON-NLS-1$
                         type.getSimpleName());
             }
         }
         if (type.getInterfaces().isEmpty() == false) { // optional requirement
-            warn(type, "operator class {0} should not be specify interfaces (implements ...)",
+            warn(type, Messages.getString("OperatorMethodAnalyzer.warnClassImplementInterface"), //$NON-NLS-1$
                     type.getSimpleName());
         }
         List<ExecutableElement> ctors = ElementFilter.constructorsIn(type.getEnclosedElements());
@@ -208,15 +208,15 @@ public class OperatorMethodAnalyzer {
             for (ExecutableElement ctor : ctors) {
                 if (ctor.getParameters().isEmpty()) {
                     if (ctor.getModifiers().contains(Modifier.PUBLIC) == false) {
-                        error(type, "operator class {0} constructor must be declared as \"public\"",
+                        error(type, Messages.getString("OperatorMethodAnalyzer.errorConstructorNotPublic"), //$NON-NLS-1$
                                 type.getSimpleName());
                     }
                     if (ctor.getTypeParameters().isEmpty() == false) {
-                        error(type, "operator class {0} constructor must not have any type parameters",
+                        error(type, Messages.getString("OperatorMethodAnalyzer.errorConstructorGeneric"), //$NON-NLS-1$
                                 type.getSimpleName());
                     }
                     if (ctor.getThrownTypes().isEmpty() == false) {
-                        error(type, "operator class {0} constructor must not have any exception types",
+                        error(type, Messages.getString("OperatorMethodAnalyzer.errorConstructorException"), //$NON-NLS-1$
                                 type.getSimpleName());
                     }
                     sawTrivial = true;
@@ -224,7 +224,7 @@ public class OperatorMethodAnalyzer {
                 }
             }
             if (sawTrivial == false) {
-                error(type, "operator class {0} must have a constructor without any parameters",
+                error(type, Messages.getString("OperatorMethodAnalyzer.errorConstructorMissing"), //$NON-NLS-1$
                         type.getSimpleName());
                 valid = false;
             }
@@ -242,12 +242,12 @@ public class OperatorMethodAnalyzer {
             ExecutableElement method = target.decl;
             boolean valid = true;
             if (method.getModifiers().contains(Modifier.PUBLIC) == false) {
-                error(method, "operator method {0}.{1} must be declared as \"public\"",
+                error(method, Messages.getString("OperatorMethodAnalyzer.errorMethodNotPublic"), //$NON-NLS-1$
                         type.getSimpleName(), method.getSimpleName());
                 valid = false;
             }
             if (method.getModifiers().contains(Modifier.STATIC)) {
-                error(method, "operator method {0}.{1} must not be declared as \"static\"",
+                error(method, Messages.getString("OperatorMethodAnalyzer.errorMethodStatic"), //$NON-NLS-1$
                         type.getSimpleName(), method.getSimpleName());
                 valid = false;
             }
@@ -255,7 +255,7 @@ public class OperatorMethodAnalyzer {
                 AnnotatedMethod conflict = sawMethods.get(method);
                 environment.getProcessingEnvironment().getMessager().printMessage(Diagnostic.Kind.ERROR,
                         MessageFormat.format(
-                                "operator method {0}.{1} must not have multiple operator annotations ({2}, {3})",
+                                Messages.getString("OperatorMethodAnalyzer.errorMethodAmbiguousOperatorAnnotation"), //$NON-NLS-1$
                                 type.getSimpleName(), method.getSimpleName(),
                                 conflict.annotation.getAnnotationType().asElement().getSimpleName(),
                                 target.annotation.getAnnotationType().asElement().getSimpleName()),
@@ -267,7 +267,7 @@ public class OperatorMethodAnalyzer {
                 String nameId = toNameId(method.getSimpleName());
                 if (sawNameIds.containsKey(nameId)) {
                     AnnotatedMethod conflict = sawNameIds.get(nameId);
-                    error(method, "operator method {0}.{1} name is conflict with other method name \"{2}\"",
+                    error(method, Messages.getString("OperatorMethodAnalyzer.errorMethodNameConflict"), //$NON-NLS-1$
                             type.getSimpleName(), method.getSimpleName(),
                             conflict.decl.getSimpleName());
                     valid = false;
@@ -290,7 +290,7 @@ public class OperatorMethodAnalyzer {
             if (hasOperatorHelper(method)) {
                 continue;
             }
-            warn(method, "operator class {0} should not declare public methods except operators: {1}",
+            warn(method, Messages.getString("OperatorMethodAnalyzer.warnMethodPublicOtherThanOperator"), //$NON-NLS-1$
                     type.getSimpleName(),
                     method.getSimpleName());
         }

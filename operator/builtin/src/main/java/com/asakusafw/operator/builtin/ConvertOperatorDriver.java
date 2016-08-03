@@ -44,7 +44,7 @@ public class ConvertOperatorDriver extends AbstractOperatorDriver {
     public OperatorDescription analyze(Context context) {
         DslBuilder dsl = new DslBuilder(context);
         if (dsl.method().modifiers().contains(Modifier.ABSTRACT)) {
-            dsl.method().error("This operator method must not be \"abstract\"");
+            dsl.method().error(Messages.getString("ConvertOperatorDriver.errorAbstract")); //$NON-NLS-1$
         }
         if (dsl.result().type().isDataModel()) {
             ElementRef result = dsl.result();
@@ -54,7 +54,7 @@ public class ConvertOperatorDriver extends AbstractOperatorDriver {
                     result.type().mirror(),
                     result.reference());
         } else {
-            dsl.method().error("This operator method must not return a data model type");
+            dsl.method().error(Messages.getString("ConvertOperatorDriver.errorReturnNotDataModelType")); //$NON-NLS-1$
         }
         for (ElementRef p : dsl.parameters()) {
             TypeRef type = p.type();
@@ -62,17 +62,17 @@ public class ConvertOperatorDriver extends AbstractOperatorDriver {
                 if (dsl.getInputs().isEmpty()) {
                     dsl.addInput(p.document(), p.name(), p.type().mirror(), p.reference());
                     dsl.addOutput(
-                            Document.text("original dataset"),
+                            Document.text(Messages.getString("ConvertOperatorDriver.javadocOriginalOutput")), //$NON-NLS-1$
                             dsl.annotation().string(ORIGINAL_PORT),
                             p.type().mirror(),
                             p.reference());
                 } else {
-                    p.error("This operator must not have multiple data model type parameters");
+                    p.error(Messages.getString("ConvertOperatorDriver.errorInputTooMany")); //$NON-NLS-1$
                 }
             } else if (type.isBasic()) {
                 dsl.consumeGenericParameter(p);
             } else {
-                p.error("This operator's parameters must be either data model type or basic type");
+                p.error(Messages.getString("ConvertOperatorDriver.errorParameterUnsupportedType")); //$NON-NLS-1$
             }
         }
         return dsl.toDescription();

@@ -44,10 +44,10 @@ public class LoggingOperatorDriver extends AbstractOperatorDriver {
     public OperatorDescription analyze(Context context) {
         DslBuilder dsl = new DslBuilder(context);
         if (dsl.method().modifiers().contains(Modifier.ABSTRACT)) {
-            dsl.method().error("This operator method must not be \"abstract\"");
+            dsl.method().error(Messages.getString("LoggingOperatorDriver.errorAbstract")); //$NON-NLS-1$
         }
         if (dsl.result().type().isString() == false) {
-            dsl.method().error("This operator method must return \"String\"");
+            dsl.method().error(Messages.getString("LoggingOperatorDriver.errorReturnNotStringType")); //$NON-NLS-1$
         }
         for (ElementRef p : dsl.parameters()) {
             TypeRef type = p.type();
@@ -55,17 +55,17 @@ public class LoggingOperatorDriver extends AbstractOperatorDriver {
                 if (dsl.getInputs().isEmpty()) {
                     dsl.addInput(p.document(), p.name(), p.type().mirror(), p.reference());
                     dsl.addOutput(
-                            Document.text("logged dataset (ignorable)"),
+                            Document.text(Messages.getString("LoggingOperatorDriver.javadocOutput")), //$NON-NLS-1$
                             dsl.annotation().string(OUTPUT_PORT),
                             p.type().mirror(),
                             p.reference());
                 } else {
-                    p.error("This operator must not have multiple data model type parameters");
+                    p.error(Messages.getString("LoggingOperatorDriver.errorInputTooMany")); //$NON-NLS-1$
                 }
             } else if (type.isBasic()) {
                 dsl.consumeGenericParameter(p);
             } else {
-                p.error("This operator's parameters must be either data model type or basic type");
+                p.error(Messages.getString("LoggingOperatorDriver.errorParameterUnsupportedType")); //$NON-NLS-1$
             }
         }
         dsl.addAttribute(dsl.annotation().constant(LOG_LEVEL));

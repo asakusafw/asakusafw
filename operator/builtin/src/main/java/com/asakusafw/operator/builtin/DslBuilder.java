@@ -193,10 +193,10 @@ final class DslBuilder {
             return null;
         }
         if (inputs.isEmpty()) {
-            methodRef.error("Operator method must have at least one input parameter");
+            methodRef.error(Messages.getString("DslBuilder.errorInputMissing")); //$NON-NLS-1$
         }
         if (outputs.isEmpty()) {
-            methodRef.error("Operator method must have at least one output parameter");
+            methodRef.error(Messages.getString("DslBuilder.errorOutputMissing")); //$NON-NLS-1$
         }
         validateMainKeys();
 
@@ -230,7 +230,7 @@ final class DslBuilder {
             KeyMirror.Group b = bs.get(i);
             if (types.isSameType(a.getProperty().getType(), b.getProperty().getType()) == false) {
                 target.error(b.getSource(), MessageFormat.format(
-                        "inconsistent group property type: \"{0}.{1}\" <> \"{2}.{3}\"",
+                        Messages.getString("DslBuilder.errorKeyAnnotationInconsistentGroupPropertyType"), //$NON-NLS-1$
                         first.getOwner().getSimpleName(),
                         a.getProperty().getName(),
                         target.getOwner().getSimpleName(),
@@ -241,7 +241,7 @@ final class DslBuilder {
             for (int i = as.size(), n = bs.size(); i < n; i++) {
                 KeyMirror.Group b = bs.get(i);
                 first.error(MessageFormat.format(
-                        "missing group property for \"{0}.{1}\" at \"{2}\"",
+                        Messages.getString("DslBuilder.errorKeyAnnotationInconsistentGroupProperty"), //$NON-NLS-1$
                         target.getOwner().getSimpleName(),
                         b.getProperty().getName(),
                         first.getOwner().getSimpleName()));
@@ -250,7 +250,7 @@ final class DslBuilder {
             for (int i = bs.size(), n = as.size(); i < n; i++) {
                 KeyMirror.Group a = as.get(i);
                 target.error(MessageFormat.format(
-                        "missing group property for \"{0}.{1}\" at \"{2}\"",
+                        Messages.getString("DslBuilder.errorKeyAnnotationInconsistentGroupProperty"), //$NON-NLS-1$
                         first.getOwner().getSimpleName(),
                         a.getProperty().getName(),
                         target.getOwner().getSimpleName()));
@@ -328,7 +328,7 @@ final class DslBuilder {
         if (parameter.type().isBasic()) {
             addArgument(parameter.document(), parameter.name(), parameter.type().mirror(), parameter.reference());
         } else {
-            parameter.error("value parameter must be primitive type or java.lang.String type");
+            parameter.error(Messages.getString("DslBuilder.errorParameterNotBasicType")); //$NON-NLS-1$
         }
     }
 
@@ -385,17 +385,17 @@ final class DslBuilder {
 
         @Override
         public Document document() {
-            return Document.text("MISSING");
+            return Document.text("MISSING"); //$NON-NLS-1$
         }
 
         @Override
         public Reference reference() {
-            return Reference.special("UNKWON");
+            return Reference.special("UNKWON"); //$NON-NLS-1$
         }
 
         @Override
         public String name() {
-            return "MISSING";
+            return "MISSING"; //$NON-NLS-1$
         }
 
         @Override
@@ -478,7 +478,7 @@ final class DslBuilder {
             }
             AnnotationMirror annotation = AnnotationHelper.findAnnotation(environment, annotationType, element);
             if (annotation == null) {
-                error("Failed to extract @Key annotation");
+                error(Messages.getString("DslBuilder.errorElementMissingKeyAnnotation")); //$NON-NLS-1$
                 return null;
             }
             return resolveKey(dataModelType, annotation);

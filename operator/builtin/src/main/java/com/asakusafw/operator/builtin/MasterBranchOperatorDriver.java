@@ -43,11 +43,11 @@ public class MasterBranchOperatorDriver extends AbstractOperatorDriver {
     public OperatorDescription analyze(Context context) {
         DslBuilder dsl = new DslBuilder(context);
         if (dsl.method().modifiers().contains(Modifier.ABSTRACT)) {
-            dsl.method().error("This operator method must not be \"abstract\"");
+            dsl.method().error(Messages.getString("MasterBranchOperatorDriver.errorAbstract")); //$NON-NLS-1$
         }
         boolean enumResult = dsl.result().type().isEnum();
         if (enumResult == false) {
-            dsl.method().error("This operator method must return enum type");
+            dsl.method().error(Messages.getString("MasterBranchOperatorDriver.errorReturnNotEnumType")); //$NON-NLS-1$
         }
         MasterKindOperatorHelper.consumeMaster(dsl);
         MasterKindOperatorHelper.consumeTx(dsl);
@@ -57,7 +57,7 @@ public class MasterBranchOperatorDriver extends AbstractOperatorDriver {
         if (dsl.getInputs().isEmpty() == false && enumResult) {
             List<ElementRef> constants = dsl.result().type().enumConstants();
             if (constants.isEmpty()) {
-                dsl.result().error("This operator method must return enum with one or more constants");
+                dsl.result().error(Messages.getString("MasterBranchOperatorDriver.errorReturnEmptyEnumType")); //$NON-NLS-1$
             } else {
                 Node txInput = dsl.getInputs().get(dsl.getInputs().size() - 1);
                 for (ElementRef constant : constants) {

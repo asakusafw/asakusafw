@@ -98,11 +98,11 @@ public class OperatorImplementationEmitter {
         } catch (IOException e) {
             environment.getProcessingEnvironment().getMessager().printMessage(Diagnostic.Kind.ERROR,
                     MessageFormat.format(
-                            "Failed to generate implementation class by I/O exception: {0}",
+                            Messages.getString("OperatorImplementationEmitter.errorFailEmit"), //$NON-NLS-1$
                             e.toString()),
                     operatorClass.getDeclaration());
             LOG.error(MessageFormat.format(
-                    "Failed to generate implementation class for {0}",
+                    Messages.getString("OperatorImplementationEmitter.logFailEmit"), //$NON-NLS-1$
                     operatorClass.getDeclaration().getQualifiedName()), e);
         }
     }
@@ -156,9 +156,8 @@ public class OperatorImplementationEmitter {
             members.addAll(generateMembers());
             return f.newClassDeclaration(
                     new JavadocBuilder(f)
-                        .text("An operator implementation class about ")
-                        .linkType(imports.resolve(converter.convert(superClass)))
-                        .text(".")
+                        .inline(Messages.getString("OperatorImplementationEmitter.javadocClassSynopsis"), //$NON-NLS-1$
+                                d -> d.linkType(imports.resolve(converter.convert(superClass))))
                         .toJavadoc(),
                     new AttributeBuilder(f)
                         .annotation(DescriptionHelper.resolveAnnotation(imports, Constants.getGenetedAnnotation()))
@@ -174,7 +173,7 @@ public class OperatorImplementationEmitter {
         private TypeBodyDeclaration generateConstructor() {
             return f.newConstructorDeclaration(
                     new JavadocBuilder(f)
-                        .text("Creates a new instance.")
+                        .text(Messages.getString("OperatorImplementationEmitter.javadocConstructorSynopsis")) //$NON-NLS-1$
                         .toJavadoc(),
                     new AttributeBuilder(f)
                         .Public()

@@ -42,10 +42,10 @@ public class UpdateOperatorDriver extends AbstractOperatorDriver {
     public OperatorDescription analyze(Context context) {
         DslBuilder dsl = new DslBuilder(context);
         if (dsl.method().modifiers().contains(Modifier.ABSTRACT)) {
-            dsl.method().error("Update operator method must not be \"abstract\"");
+            dsl.method().error(Messages.getString("UpdateOperatorDriver.errorAbstract")); //$NON-NLS-1$
         }
         if (dsl.result().type().isVoid() == false) {
-            dsl.method().error("Update operator method must return \"void\"");
+            dsl.method().error(Messages.getString("UpdateOperatorDriver.errorReturnNotVoidType")); //$NON-NLS-1$
         }
         for (ElementRef p : dsl.parameters()) {
             TypeRef type = p.type();
@@ -53,17 +53,17 @@ public class UpdateOperatorDriver extends AbstractOperatorDriver {
                 if (dsl.getInputs().isEmpty()) {
                     dsl.addInput(p.document(), p.name(), p.type().mirror(), p.reference());
                     dsl.addOutput(
-                            Document.text("updated dataset"),
+                            Document.text(Messages.getString("UpdateOperatorDriver.javadocOutput")), //$NON-NLS-1$
                             dsl.annotation().string(OUTPUT_PORT),
                             p.type().mirror(),
                             p.reference());
                 } else {
-                    p.error("This operator must not have multiple data model type parameters");
+                    p.error(Messages.getString("UpdateOperatorDriver.errorInputTooMany")); //$NON-NLS-1$
                 }
             } else if (type.isBasic()) {
                 dsl.consumeGenericParameter(p);
             } else {
-                p.error("This operator's parameters must be either data model type or basic type");
+                p.error(Messages.getString("UpdateOperatorDriver.errorParameterUnsupportedType")); //$NON-NLS-1$
             }
         }
         return dsl.toDescription();
