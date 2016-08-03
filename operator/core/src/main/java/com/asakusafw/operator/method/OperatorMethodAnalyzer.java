@@ -319,7 +319,7 @@ public class OperatorMethodAnalyzer {
     }
 
     private void warn(Element element, String pattern, Object... arguments) {
-        if (environment.isStrict()) {
+        if (environment.isFailOnWarn()) {
             message(Diagnostic.Kind.WARNING, element, pattern, arguments);
         }
     }

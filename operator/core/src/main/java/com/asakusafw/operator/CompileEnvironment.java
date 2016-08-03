@@ -59,13 +59,15 @@ public class CompileEnvironment {
 
     private final Set<String> generatedResourceKeys = new HashSet<>();
 
-    private volatile boolean strict = true;
+    private volatile boolean failOnWarn = true;
 
     private volatile boolean forceRegenerateResources = false;
 
     private volatile boolean flowpartExternalIo = false;
 
     private volatile boolean forceGenerateImplementation = false;
+
+    private volatile boolean strictOperatorParameterOrder = false;
 
     /**
      * Creates a new instance.
@@ -140,10 +142,11 @@ public class CompileEnvironment {
             dataModelMirrors.addAll(load(DataModelMirrorRepository.class, serviceLoader));
         }
         return new CompileEnvironment(processingEnvironment, operatorDrivers, dataModelMirrors)
-            .withStrict(set.contains(Support.STRICT_CHECKING))
+            .withFailOnWarn(set.contains(Support.FAIL_ON_WARN))
             .withFlowpartExternalIo(set.contains(Support.FLOWPART_EXTERNAL_IO))
             .withForceRegenerateResources(set.contains(Support.FORCE_REGENERATE_RESOURCES))
-            .withForceGenerateImplementation(set.contains(Support.FORCE_GENERATE_IMPLEMENTATION));
+            .withForceGenerateImplementation(set.contains(Support.FORCE_GENERATE_IMPLEMENTATION))
+            .withStrictOperatorParameterOrder(set.contains(Support.STRICT_PARAMETER_ORDER));
     }
 
     private static <T> List<T> load(Class<T> spi, ClassLoader serviceLoader) {
@@ -306,8 +309,8 @@ public class CompileEnvironment {
      * Returns whether strict checking is available.
      * @return {@code true} if it is available, otherwise {@code false}
      */
-    public boolean isStrict() {
-        return strict;
+    public boolean isFailOnWarn() {
+        return failOnWarn;
     }
 
     /**
@@ -315,8 +318,8 @@ public class CompileEnvironment {
      * @param newValue {@code true} iff check semantics strictly
      * @return this
      */
-    public CompileEnvironment withStrict(boolean newValue) {
-        this.strict = newValue;
+    public CompileEnvironment withFailOnWarn(boolean newValue) {
+        this.failOnWarn = newValue;
         return this;
     }
 
@@ -375,6 +378,24 @@ public class CompileEnvironment {
     }
 
     /**
+     * Returns whether the operator method parameter must be strict ordered or not.
+     * @return {@code true} if it is strict, otherwise {@code false}
+     */
+    public boolean isStrictOperatorParameterOrder() {
+        return strictOperatorParameterOrder;
+    }
+
+    /**
+     * Sets whether the operator method parameter must be strict ordered or not.
+     * @param newValue {@code true} if it must be strict, otherwise {@code false}
+     * @return this
+     */
+    public CompileEnvironment withStrictOperatorParameterOrder(boolean newValue) {
+        this.strictOperatorParameterOrder = newValue;
+        return this;
+    }
+
+    /**
      * Represents kind of supported features in {@link CompileEnvironment}.
      */
     public enum Support {
@@ -390,9 +411,14 @@ public class CompileEnvironment {
         DATA_MODEL_REPOSITORY,
 
         /**
-         * Supports strict checking.
+         * Fail if warning level diagnostics are raised.
          */
-        STRICT_CHECKING,
+        FAIL_ON_WARN,
+
+        /**
+         * Operator method parameters must be strict ordered.
+         */
+        STRICT_PARAMETER_ORDER,
 
         /**
          * Forcibly regenerates resources.

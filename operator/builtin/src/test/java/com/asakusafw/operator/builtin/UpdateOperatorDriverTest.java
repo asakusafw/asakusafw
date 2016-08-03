@@ -23,11 +23,10 @@ import javax.lang.model.type.TypeVariable;
 
 import org.junit.Test;
 
-import com.asakusafw.operator.builtin.UpdateOperatorDriver;
 import com.asakusafw.operator.description.Descriptions;
 import com.asakusafw.operator.model.OperatorDescription;
-import com.asakusafw.operator.model.OperatorElement;
 import com.asakusafw.operator.model.OperatorDescription.Node;
+import com.asakusafw.operator.model.OperatorElement;
 import com.asakusafw.vocabulary.operator.Update;
 
 /**

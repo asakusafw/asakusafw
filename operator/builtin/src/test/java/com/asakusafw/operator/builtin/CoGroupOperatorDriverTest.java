@@ -227,4 +227,28 @@ public class CoGroupOperatorDriverTest extends OperatorDriverTestRoot {
     public void violate_key_group_not_smaller() {
         violate("com.example.ViolateKeyGroupNotSmaller");
     }
+
+    /**
+     * Violates each group has same number of properties.
+     */
+    @Test
+    public void violate_input_before_output() {
+        violate("com.example.ViolateInputBeforeOutput");
+    }
+
+    /**
+     * Violates each group has same number of properties.
+     */
+    @Test
+    public void violate_input_before_argument() {
+        violate("com.example.ViolateInputBeforeArgument");
+    }
+
+    /**
+     * Violates each group has same number of properties.
+     */
+    @Test
+    public void violate_output_before_argument() {
+        violate("com.example.ViolateOutputBeforeArgument");
+    }
 }

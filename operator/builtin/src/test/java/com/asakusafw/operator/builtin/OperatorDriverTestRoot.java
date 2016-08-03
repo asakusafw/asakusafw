@@ -35,15 +35,15 @@ import javax.lang.model.util.ElementFilter;
 
 import com.asakusafw.operator.Callback;
 import com.asakusafw.operator.CompileEnvironment;
+import com.asakusafw.operator.CompileEnvironment.Support;
 import com.asakusafw.operator.MockDataModelMirrorRepository;
 import com.asakusafw.operator.OperatorCompilerTestRoot;
 import com.asakusafw.operator.OperatorDriver;
-import com.asakusafw.operator.CompileEnvironment.Support;
 import com.asakusafw.operator.description.ClassDescription;
 import com.asakusafw.operator.method.OperatorMethodAnalyzer;
 import com.asakusafw.operator.model.OperatorClass;
-import com.asakusafw.operator.model.OperatorElement;
 import com.asakusafw.operator.model.OperatorDescription.Node;
+import com.asakusafw.operator.model.OperatorElement;
 
 /**
  * Test helper for {@link OperatorDriver}s.
@@ -104,6 +104,12 @@ public class OperatorDriverTestRoot extends OperatorCompilerTestRoot {
             @Override
             protected void perform(OperatorElement target) {
                 return;
+            }
+            @Override
+            protected CompileEnvironment createCompileEnvironment(ProcessingEnvironment processingEnv) {
+                return super.createCompileEnvironment(processingEnv)
+                        .withFailOnWarn(true)
+                        .withStrictOperatorParameterOrder(true);
             }
         };
         action.expectError = true;

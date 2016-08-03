@@ -1,0 +1,13 @@
+package com.example;
+
+import java.util.List;
+import com.asakusafw.runtime.core.Result;
+import com.asakusafw.vocabulary.model.Key;
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class ViolateInputBeforeOutput {
+
+    @CoGroup
+    public void method(Result<Proceeded> out, @Key(group = "content") List<Model> in) {
+    }
+}

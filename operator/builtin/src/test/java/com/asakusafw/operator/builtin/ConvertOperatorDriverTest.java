@@ -154,4 +154,12 @@ public class ConvertOperatorDriverTest extends OperatorDriverTestRoot {
     public void violate_valid_parameter() {
         violate("com.example.ViolateValidParameter");
     }
+
+    /**
+     * Violates input must appear before parameters.
+     */
+    @Test
+    public void violate_argument_order() {
+        violate("com.example.ViolateArgumentOrder");
+    }
 }

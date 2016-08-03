@@ -17,12 +17,14 @@ package com.asakusafw.operator.builtin;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.IntConsumer;
 
 import javax.annotation.processing.Messager;
 import javax.lang.model.element.AnnotationMirror;
@@ -51,7 +53,9 @@ import com.asakusafw.operator.model.KeyMirror;
 import com.asakusafw.operator.model.OperatorDescription;
 import com.asakusafw.operator.model.OperatorDescription.Document;
 import com.asakusafw.operator.model.OperatorDescription.Node;
+import com.asakusafw.operator.model.OperatorDescription.ParameterReference;
 import com.asakusafw.operator.model.OperatorDescription.Reference;
+import com.asakusafw.operator.model.OperatorDescription.Reference.Kind;
 import com.asakusafw.operator.model.OperatorDescription.SpecialReference;
 import com.asakusafw.operator.util.AnnotationHelper;
 
@@ -199,7 +203,9 @@ final class DslBuilder {
             methodRef.error(Messages.getString("DslBuilder.errorOutputMissing")); //$NON-NLS-1$
         }
         validateMainKeys();
-
+        if (environment.isStrictOperatorParameterOrder()) {
+            validateParameterOrder();
+        }
         if (sawError()) {
             return null;
         }
@@ -255,6 +261,44 @@ final class DslBuilder {
                         a.getProperty().getName(),
                         target.getOwner().getSimpleName()));
             }
+        }
+    }
+
+    private void validateParameterOrder() {
+        BitSet inMask = toMask(inputs);
+        BitSet outMask = toMask(outputs);
+        BitSet argMask = toMask(arguments);
+
+        // don't consider input&output parameters
+        outMask.andNot(inMask);
+        if (outMask.isEmpty() == false) {
+            forEach(inMask, outMask.nextSetBit(0), i -> {
+                parameterRefs.get(i).error(Messages.getString("DslBuilder.errorInputAfterOutput")); //$NON-NLS-1$
+            });
+        }
+        if (argMask.isEmpty() == false) {
+            forEach(inMask, argMask.nextSetBit(0), i -> {
+                parameterRefs.get(i).error(Messages.getString("DslBuilder.errorInputAfterArgument")); //$NON-NLS-1$
+            });
+            forEach(outMask, argMask.nextSetBit(0), i -> {
+                parameterRefs.get(i).error(Messages.getString("DslBuilder.errorOutputAfterArgument")); //$NON-NLS-1$
+            });
+        }
+    }
+
+    private BitSet toMask(List<Node> nodes) {
+        BitSet results = new BitSet();
+        nodes.stream()
+            .map(n -> n.getReference())
+            .filter(r -> r.getKind() == Kind.PARAMETER)
+            .map(ParameterReference.class::cast)
+            .forEach(r -> results.set(r.getLocation()));
+        return results;
+    }
+
+    private void forEach(BitSet bits, int start, IntConsumer body) {
+        for (int i = bits.nextSetBit(start); i >= 0; i = bits.nextSetBit(i + 1)) {
+            body.accept(i);
         }
     }
 

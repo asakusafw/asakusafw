@@ -44,7 +44,7 @@ public class FlowPartAnnotationProcessor extends AbstractOperatorAnnotationProce
         return CompileEnvironment.newInstance(
                 processingEnv,
                 CompileEnvironment.Support.DATA_MODEL_REPOSITORY,
-                CompileEnvironment.Support.STRICT_CHECKING);
+                CompileEnvironment.Support.FAIL_ON_WARN);
     }
 
     @Override
