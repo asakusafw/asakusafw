@@ -1,0 +1,16 @@
+package com.example;
+
+import com.asakusafw.vocabulary.flow.*;
+
+@FlowPart
+public class ViolateUpToOneConstructor extends FlowDescription {
+
+    public ViolateUpToOneConstructor(In<String> in, Out<String> out) {
+    }
+
+    public ViolateUpToOneConstructor(In<String> in, Out<String> out, String argument) {
+    }
+
+    @Override
+    protected void describe() {}
+}

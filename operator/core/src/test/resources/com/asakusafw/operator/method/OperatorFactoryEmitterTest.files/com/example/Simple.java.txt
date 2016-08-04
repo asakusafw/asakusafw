@@ -1,0 +1,8 @@
+package com.example;
+
+public abstract class Simple {
+    
+    @Mock
+    public void method() {
+    }
+}

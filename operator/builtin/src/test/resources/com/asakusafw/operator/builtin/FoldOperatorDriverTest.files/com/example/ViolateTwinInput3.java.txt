@@ -1,0 +1,13 @@
+package com.example;
+
+import java.util.List;
+import com.asakusafw.runtime.core.Result;
+import com.asakusafw.vocabulary.model.Key;
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class ViolateTwinInput3 {
+
+    @Fold
+    public void method(@Key(group = "content") Model aggregate, Model in, Model invalid) {
+    }
+}

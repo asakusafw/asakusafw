@@ -1,0 +1,13 @@
+package com.example;
+
+import com.asakusafw.vocabulary.flow.*;
+
+@FlowPart
+public class ViolateExtendsFlowDescription {
+
+    public ViolateExtendsFlowDescription(In<String> in, Out<String> out) {
+    }
+
+    @Override
+    protected void describe() {}
+}

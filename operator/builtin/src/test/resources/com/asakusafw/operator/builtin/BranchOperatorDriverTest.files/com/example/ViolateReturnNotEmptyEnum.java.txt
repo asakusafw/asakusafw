@@ -1,0 +1,14 @@
+package com.example;
+
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class ViolateReturnNotEmptyEnum {
+
+    @Branch
+    public Select method(Model model) {
+        return null;
+    }
+
+    public enum Select {
+    }
+}

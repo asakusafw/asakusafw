@@ -1,0 +1,14 @@
+package com.example.method;
+
+import com.example.*;
+
+public abstract class ViolateUniqueId {
+    
+    @Mock
+    public void method() {
+    }
+    
+    @Mock
+    public void method_() {
+    }
+}

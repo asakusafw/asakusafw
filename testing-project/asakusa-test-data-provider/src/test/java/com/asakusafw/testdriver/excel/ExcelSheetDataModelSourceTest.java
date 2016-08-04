@@ -28,6 +28,7 @@ import java.util.Calendar;
 
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.junit.Rule;
 import org.junit.Test;
 
 import com.asakusafw.testdriver.core.DataModelDefinition;
@@ -38,6 +39,12 @@ import com.asakusafw.testdriver.model.SimpleDataModelDefinition;
  * Test for {@link ExcelSheetDataModelSource}.
  */
 public class ExcelSheetDataModelSourceTest {
+
+    /**
+     * temporary resource manager.
+     */
+    @Rule
+    public final TemporaryResource resources = new TemporaryResource();
 
     static final DataModelDefinition<Simple> SIMPLE = new SimpleDataModelDefinition<>(Simple.class);
 
@@ -618,7 +625,7 @@ public class ExcelSheetDataModelSourceTest {
             throw new AssertionError(e);
         }
         try (InputStream in = resource.openStream()) {
-            Workbook book = Util.openWorkbookFor(file, in);
+            Workbook book = resources.bless(Util.openWorkbookFor(file, in));
             Sheet sheet = book.getSheetAt(0);
             return new ExcelSheetDataModelSource(SIMPLE, uri, sheet);
         }

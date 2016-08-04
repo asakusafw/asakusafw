@@ -1,0 +1,20 @@
+package com.example;
+
+import java.util.List;
+import com.asakusafw.runtime.core.Result;
+import com.asakusafw.vocabulary.model.*;
+import com.asakusafw.vocabulary.model.Summarized.*;
+import com.asakusafw.vocabulary.operator.*;
+
+@Summarized(term = @Term(
+    source = Model.class,
+    foldings = {
+        @Folding(aggregator = Aggregator.ANY, source = "key", destination = "key"),
+        @Folding(aggregator = Aggregator.SUM, source = "content", destination = "sum")
+    },
+    shuffle = @Key(group = "key")
+))
+public class SModel {
+    public int key;
+    public int sum;
+}

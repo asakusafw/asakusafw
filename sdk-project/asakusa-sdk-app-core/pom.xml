@@ -28,26 +28,26 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.asakusafw</groupId>
-      <artifactId>ashigel-compiler</artifactId>
-      <version>${project.version}</version>
+      <groupId>com.asakusafw.mapreduce.compiler</groupId>
+      <artifactId>asakusa-mapreduce-compiler-cli</artifactId>
+      <version>${asakusafw-mapreduce.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.asakusafw</groupId>
-      <artifactId>ashigel-compiler-bootstrap</artifactId>
-      <version>${project.version}</version>
+      <groupId>com.asakusafw.mapreduce.compiler</groupId>
+      <artifactId>asakusa-mapreduce-compiler-core</artifactId>
+      <version>${asakusafw-mapreduce.version}</version>
     </dependency>
 
     <!-- Default Compiler Plug-ins -->
     <dependency>
-      <groupId>com.asakusafw</groupId>
-      <artifactId>asakusa-dsl-analysis-plugin</artifactId>
-      <version>${project.version}</version>
+      <groupId>com.asakusafw.mapreduce.compiler</groupId>
+      <artifactId>asakusa-mapreduce-compiler-extension-inspection</artifactId>
+      <version>${asakusafw-mapreduce.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.asakusafw</groupId>
-      <artifactId>asakusa-yaess-plugin</artifactId>
-      <version>${project.version}</version>
+      <groupId>com.asakusafw.mapreduce.compiler</groupId>
+      <artifactId>asakusa-mapreduce-compiler-extension-yaess</artifactId>
+      <version>${asakusafw-mapreduce.version}</version>
     </dependency>
   </dependencies>
 </project>

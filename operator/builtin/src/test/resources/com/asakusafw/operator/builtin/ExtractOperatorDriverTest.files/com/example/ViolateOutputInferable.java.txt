@@ -1,0 +1,12 @@
+package com.example;
+
+import java.util.List;
+import com.asakusafw.runtime.core.Result;
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class ViolateOutputInferable {
+
+    @Extract
+    public <T extends Projective> void method(Model in, Result<T> out) {
+    }
+}

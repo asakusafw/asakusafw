@@ -15,12 +15,12 @@
  */
 package com.asakusafw.testdriver.windgate.emulation;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.net.URI;
 import java.text.MessageFormat;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -31,6 +31,7 @@ import com.asakusafw.testdriver.TestDriverContext;
 import com.asakusafw.testdriver.TestExecutionPlan;
 import com.asakusafw.testdriver.hadoop.ConfigurationFactory;
 import com.asakusafw.testdriver.inprocess.EmulatorUtils;
+import com.asakusafw.vocabulary.windgate.Constants;
 import com.asakusafw.windgate.bootstrap.CommandLineUtil;
 import com.asakusafw.windgate.bootstrap.ExecutionKind;
 import com.asakusafw.windgate.core.GateProfile;
@@ -46,13 +47,22 @@ public class WindGateProcessCommandEmulator extends AbstractWindGateCommandEmula
 
     static final Logger LOG = LoggerFactory.getLogger(WindGateProcessCommandEmulator.class);
 
-    private static final String COMMAND_SUFFIX = PATH_WINDGATE + "/bin/process.sh"; //$NON-NLS-1$
+    // FIXME - move to windgate-assembly
+    static final String COMMAND_SUFFIX = PATH_WINDGATE + "/bin/process.sh"; //$NON-NLS-1$
 
-    private static final int ARG_SESSION_KIND = 2;
+    static final int ARG_SESSION_KIND = ARG_PROFILE + 1;
 
-    private static final int ARG_SCRIPT = 3;
+    static final int ARG_SCRIPT = ARG_SESSION_KIND + 1;
 
-    private static final int ARG_ARGUMENTS = 7;
+    static final int ARG_BATCH_ID = ARG_SCRIPT + 1;
+
+    static final int ARG_FLOW_ID = ARG_BATCH_ID + 1;
+
+    static final int ARG_EXECUTION_ID = ARG_FLOW_ID + 1;
+
+    static final int ARG_ARGUMENTS = ARG_EXECUTION_ID + 1;
+
+    static final int MINIMUM_TOKENS = ARG_EXECUTION_ID + 1;
 
     @Override
     public String getName() {
@@ -64,11 +74,12 @@ public class WindGateProcessCommandEmulator extends AbstractWindGateCommandEmula
             TestDriverContext context,
             ConfigurationFactory configurations,
             TestExecutionPlan.Command command) {
-        if (command.getModuleName().startsWith(MODULE_NAME_PREFIX) == false) {
+        if (command.getModuleName().equals(Constants.MODULE_NAME) == false
+                && command.getModuleName().startsWith(MODULE_NAME_PREFIX) == false) {
             return false;
         }
         List<String> cmd = command.getCommandTokens();
-        if (cmd.size() < 7) {
+        if (cmd.size() < MINIMUM_TOKENS) {
             return false;
         }
         if (EmulatorUtils.hasCommandSuffix(cmd.get(0), COMMAND_SUFFIX) == false) {
@@ -98,12 +109,12 @@ public class WindGateProcessCommandEmulator extends AbstractWindGateCommandEmula
         String sessionId = context.getExecutionId();
         ExecutionKind mode = ExecutionKind.parse(cmd.get(ARG_SESSION_KIND));
 
-        LinkedHashMap<String, String> arguments = new LinkedHashMap<>();
+        Map<String, String> arguments = new LinkedHashMap<>();
         arguments.putAll(CommandLineUtil.parseArguments(cmd.get(ARG_ARGUMENTS)).getPairs());
         arguments.put(StageConstants.VAR_USER, context.getOsUser());
-        arguments.put(StageConstants.VAR_BATCH_ID, context.getCurrentBatchId());
-        arguments.put(StageConstants.VAR_FLOW_ID, context.getCurrentFlowId());
-        arguments.put(StageConstants.VAR_EXECUTION_ID, context.getCurrentExecutionId());
+        arguments.put(StageConstants.VAR_BATCH_ID, cmd.get(ARG_BATCH_ID));
+        arguments.put(StageConstants.VAR_FLOW_ID, cmd.get(ARG_FLOW_ID));
+        arguments.put(StageConstants.VAR_EXECUTION_ID, cmd.get(ARG_EXECUTION_ID));
 
         GateTask task = new GateTask(
                 profile,
@@ -128,16 +139,6 @@ public class WindGateProcessCommandEmulator extends AbstractWindGateCommandEmula
             throw new IllegalArgumentException(MessageFormat.format(
                     Messages.getString("WindGateProcessCommandEmulator.errorInvalidScript"), //$NON-NLS-1$
                     script), e);
-        }
-    }
-
-    static void closeQuietly(ClassLoader object) {
-        if (object instanceof Closeable) {
-            try {
-                ((Closeable) object).close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
     }
 }

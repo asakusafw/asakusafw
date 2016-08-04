@@ -25,6 +25,7 @@ import com.asakusafw.testdriver.TestDriverContext;
 import com.asakusafw.testdriver.TestExecutionPlan;
 import com.asakusafw.testdriver.hadoop.ConfigurationFactory;
 import com.asakusafw.testdriver.inprocess.EmulatorUtils;
+import com.asakusafw.vocabulary.windgate.Constants;
 import com.asakusafw.windgate.core.AbortTask;
 import com.asakusafw.windgate.core.GateProfile;
 
@@ -36,7 +37,15 @@ public class WindGateFinalizeCommandEmulator extends AbstractWindGateCommandEmul
 
     static final Logger LOG = LoggerFactory.getLogger(WindGateFinalizeCommandEmulator.class);
 
-    private static final String COMMAND_SUFFIX = PATH_WINDGATE + "/bin/finalize.sh"; //$NON-NLS-1$
+    static final String COMMAND_SUFFIX = PATH_WINDGATE + "/bin/finalize.sh"; //$NON-NLS-1$
+
+    static final int ARG_BATCH_ID = ARG_PROFILE + 1;
+
+    static final int ARG_FLOW_ID = ARG_BATCH_ID + 1;
+
+    static final int ARG_EXECUTION_ID = ARG_FLOW_ID + 1;
+
+    static final int MINIMUM_TOKENS = ARG_PROFILE + 1;
 
     @Override
     public String getName() {
@@ -48,11 +57,12 @@ public class WindGateFinalizeCommandEmulator extends AbstractWindGateCommandEmul
             TestDriverContext context,
             ConfigurationFactory configurations,
             TestExecutionPlan.Command command) {
-        if (command.getModuleName().startsWith(MODULE_NAME_PREFIX) == false) {
+        if (command.getModuleName().equals(Constants.MODULE_NAME) == false
+                && command.getModuleName().startsWith(MODULE_NAME_PREFIX) == false) {
             return false;
         }
         List<String> cmd = command.getCommandTokens();
-        if (cmd.size() < 1) {
+        if (cmd.size() < MINIMUM_TOKENS) {
             return false;
         }
         if (EmulatorUtils.hasCommandSuffix(cmd.get(0), COMMAND_SUFFIX) == false) {

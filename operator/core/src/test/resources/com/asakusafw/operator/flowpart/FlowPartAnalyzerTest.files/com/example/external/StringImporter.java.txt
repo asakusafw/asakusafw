@@ -1,0 +1,14 @@
+package com.example.external;
+
+import com.asakusafw.vocabulary.external.*;
+
+public class StringImporter implements ImporterDescription {
+    
+    @Override public Class<?> getModelType() {
+        return String.class;
+    }
+    
+    @Override public DataSize getDataSize() {
+        return DataSize.UNKNOWN;
+    }
+}

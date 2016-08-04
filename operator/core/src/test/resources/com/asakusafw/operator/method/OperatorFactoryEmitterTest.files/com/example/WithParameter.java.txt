@@ -1,0 +1,12 @@
+package com.example;
+
+public abstract class WithParameter {
+
+    /**
+     * A method.
+     * @param p the parameter
+     */
+    @Mock
+    public void method(String p) {
+    }
+}

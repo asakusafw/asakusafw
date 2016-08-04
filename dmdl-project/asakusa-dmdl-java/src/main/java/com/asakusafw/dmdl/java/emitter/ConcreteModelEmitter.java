@@ -234,8 +234,7 @@ public class ConcreteModelEmitter {
                     .text(Messages.getString("ConcreteModelEmitter.javadocGetter"), //$NON-NLS-1$
                             context.getDescription(property))
                     .returns()
-                        .text("{0}", //$NON-NLS-1$
-                                context.getDescription(property))
+                        .text(context.getDescription(property))
                     .exception(context.resolve(NullPointerException.class))
                         .text(Messages.getString(
                                 "ConcreteModelEmitter.javadocGetterNullPointerException"), //$NON-NLS-1$
@@ -293,8 +292,7 @@ public class ConcreteModelEmitter {
                     .text(Messages.getString("ConcreteModelEmitter.javadocOptionGetter"), //$NON-NLS-1$
                             context.getDescription(property))
                     .returns()
-                        .text("{0}", //$NON-NLS-1$
-                                context.getDescription(property))
+                        .text(context.getDescription(property))
                     .toJavadoc(),
                 attributes,
                 context.getFieldType(property),

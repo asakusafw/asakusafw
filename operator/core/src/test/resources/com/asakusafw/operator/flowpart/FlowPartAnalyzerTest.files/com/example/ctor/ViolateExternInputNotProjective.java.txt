@@ -1,0 +1,18 @@
+package com.example.ctor;
+
+import com.example.*;
+import com.example.external.*;
+import com.asakusafw.vocabulary.flow.*;
+
+@FlowPart
+public class ViolateExternInputNotProjective<T extends CharSequence> extends FlowDescription {
+
+    public ViolateExternInputNotProjective(
+            In<String> in,
+            @Import(name = "in", description = StringImporter.class) In<T> importer,
+            Out<String> out) {
+    }
+
+    @Override
+    protected void describe() {}
+}

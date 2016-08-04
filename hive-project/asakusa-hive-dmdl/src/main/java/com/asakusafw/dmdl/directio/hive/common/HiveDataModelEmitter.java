@@ -243,9 +243,8 @@ public class HiveDataModelEmitter extends JavaDataModelDriver {
         private void emit() throws IOException {
             ClassDeclaration decl = f.newClassDeclaration(
                     new JavadocBuilder(f)
-                        .text("Hive table information for ") //$NON-NLS-1$
-                        .linkType(context.resolve(model.getSymbol()))
-                        .text(".") //$NON-NLS-1$
+                        .inline("Hive table information for {0}.",
+                                d -> d.linkType(context.resolve(model.getSymbol())))
                         .toJavadoc(),
                     new AttributeBuilder(f)
                         .Public()
@@ -361,11 +360,10 @@ public class HiveDataModelEmitter extends JavaDataModelDriver {
         private MethodDeclaration createGetterMethod() {
             return f.newMethodDeclaration(
                     new JavadocBuilder(f)
-                        .text("Returns a data model descriptor for ") //$NON-NLS-1$
-                        .linkType(context.resolve(model.getSymbol()))
-                        .text(".") //$NON-NLS-1$
+                        .inline("Returns a data model descriptor for {0}.",
+                                d -> d.linkType(context.resolve(model.getSymbol())))
                         .returns()
-                            .text("the descriptor object") //$NON-NLS-1$
+                            .text("the descriptor object")
                         .toJavadoc(),
                     new AttributeBuilder(f)
                         .Public()

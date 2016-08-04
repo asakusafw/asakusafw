@@ -1,0 +1,10 @@
+package com.example;
+
+import com.asakusafw.vocabulary.model.Key;
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class Simple {
+
+    @MasterCheck
+    public abstract boolean method(@Key(group = "id") Side side, @Key(group = "key") Model model);
+}

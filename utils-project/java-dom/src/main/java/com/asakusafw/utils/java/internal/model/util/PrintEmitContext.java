@@ -141,6 +141,11 @@ public class PrintEmitContext implements EmitContext {
     }
 
     @Override
+    public void blockPadding() {
+        before(State.LINE_END);
+    }
+
+    @Override
     public void comment(int location, String content) {
         if (content == null) {
             throw new IllegalArgumentException("content must not be null"); //$NON-NLS-1$

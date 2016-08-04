@@ -20,7 +20,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import com.asakusafw.utils.java.model.syntax.DocBlock;
 import com.asakusafw.utils.java.model.syntax.DocElement;
@@ -35,12 +38,14 @@ import com.asakusafw.utils.java.model.syntax.Type;
 
 /**
  * A builder for building Javadoc.
+ * @since 0.1.0
+ * @version 0.9.0
  */
 public class JavadocBuilder {
 
-    private static final Pattern ESCAPE = Pattern.compile("@"); //$NON-NLS-1$
-
     private final ModelFactory f;
+
+    private final DocElementFactory inlines;
 
     private List<DocBlock> blocks;
 
@@ -58,6 +63,7 @@ public class JavadocBuilder {
             throw new IllegalArgumentException("factory must not be null"); //$NON-NLS-1$
         }
         this.f = factory;
+        this.inlines = new DocElementFactory(factory);
         this.blocks = new ArrayList<>();
         this.currentTag = ""; // overview //$NON-NLS-1$
         this.elements = new ArrayList<>();
@@ -128,6 +134,52 @@ public class JavadocBuilder {
             throw new IllegalArgumentException("elems must not be null"); //$NON-NLS-1$
         }
         elements.addAll(elems);
+        return this;
+    }
+
+    private static final Pattern PATTERN_INLINE = Pattern.compile("\\{(.*?)\\}"); //$NON-NLS-1$
+
+    /**
+     * Appends inline elements into this builder.
+     * @param pattern the pattern string that can include <code>{n}</code>
+     * @param placeholders the placeholders
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
+     */
+    public JavadocBuilder inline(String pattern, Placeholder... placeholders) {
+        DocElementFactory factory = new DocElementFactory(f);
+        DocElement[] args = Stream.of(placeholders)
+                .map(p -> p.apply(factory))
+                .toArray(DocElement[]::new);
+        Matcher matcher = PATTERN_INLINE.matcher(pattern);
+        int start = 0;
+        while (matcher.find()) {
+            if (start < matcher.start()) {
+                text(pattern.substring(start, matcher.start()));
+            }
+            int index;
+            try {
+                index = Integer.parseInt(matcher.group(1));
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException(MessageFormat.format(
+                        "invalid placeholder \"{2}\": \"{0}\" at {1}", //$NON-NLS-1$
+                        pattern,
+                        matcher.start(),
+                        matcher.group()));
+            }
+            if (index < 0 || index >= args.length) {
+                throw new IllegalArgumentException(MessageFormat.format(
+                        "invalid placeholder \"{2}\": \"{0}\" at {1}", //$NON-NLS-1$
+                        pattern,
+                        matcher.start(),
+                        matcher.group()));
+            }
+            inline(args[index]);
+            start = matcher.end();
+        }
+        if (start < pattern.length()) {
+            text(pattern.substring(start));
+        }
         return this;
     }
 
@@ -485,8 +537,7 @@ public class JavadocBuilder {
      * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocBuilder text(String pattern, Object... arguments) {
-        elements.add(escape(pattern, arguments));
-        return this;
+        return inline(inlines.text(pattern, arguments));
     }
 
     /**
@@ -497,10 +548,7 @@ public class JavadocBuilder {
      * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocBuilder code(String pattern, Object... arguments) {
-        elements.add(f.newDocBlock(
-                "@code", //$NON-NLS-1$
-                Collections.singletonList(escape(pattern, arguments))));
-        return this;
+        return inline(inlines.code(pattern, arguments));
     }
 
     /**
@@ -509,13 +557,7 @@ public class JavadocBuilder {
      * @return this
      */
     public JavadocBuilder linkType(Type type) {
-        if (type == null) {
-            throw new IllegalArgumentException("type must not be null"); //$NON-NLS-1$
-        }
-        if (type.getModelKind() != ModelKind.NAMED_TYPE) {
-            throw new IllegalArgumentException("type must be a simple name-type");
-        }
-        return link(((NamedType) type).getName());
+        return inline(inlines.linkType(type));
     }
 
     /**
@@ -525,10 +567,7 @@ public class JavadocBuilder {
      * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocBuilder linkField(String name) {
-        if (name == null) {
-            throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
-        }
-        return linkField(null, f.newSimpleName(name));
+        return inline(inlines.linkField(name));
     }
 
     /**
@@ -539,10 +578,7 @@ public class JavadocBuilder {
      * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocBuilder linkField(Type type, String name) {
-        if (name == null) {
-            throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
-        }
-        return linkField(type, f.newSimpleName(name));
+        return inline(inlines.linkField(name));
     }
 
     /**
@@ -552,7 +588,7 @@ public class JavadocBuilder {
      * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocBuilder linkField(SimpleName name) {
-        return linkField(null, name);
+        return inline(inlines.linkField(name));
     }
 
     /**
@@ -563,10 +599,7 @@ public class JavadocBuilder {
      * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocBuilder linkField(Type type, SimpleName name) {
-        if (name == null) {
-            throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
-        }
-        return link(f.newDocField(type, name));
+        return inline(inlines.linkField(type, name));
     }
 
     /**
@@ -577,16 +610,7 @@ public class JavadocBuilder {
      * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocBuilder linkMethod(String name, Type... parameterTypes) {
-        if (name == null) {
-            throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
-        }
-        if (parameterTypes == null) {
-            throw new IllegalArgumentException("parameterTypes must not be null"); //$NON-NLS-1$
-        }
-        return linkMethod(
-                null,
-                f.newSimpleName(name),
-                Arrays.asList(parameterTypes));
+        return inline(inlines.linkMethod(name, parameterTypes));
     }
 
     /**
@@ -597,13 +621,7 @@ public class JavadocBuilder {
      * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocBuilder linkMethod(String name, List<? extends Type> parameterTypes) {
-        if (name == null) {
-            throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
-        }
-        if (parameterTypes == null) {
-            throw new IllegalArgumentException("parameterTypes must not be null"); //$NON-NLS-1$
-        }
-        return linkMethod(null, f.newSimpleName(name), parameterTypes);
+        return inline(inlines.linkMethod(name, parameterTypes));
     }
 
     /**
@@ -614,13 +632,7 @@ public class JavadocBuilder {
      * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocBuilder linkMethod(SimpleName name, Type... parameterTypes) {
-        if (name == null) {
-            throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
-        }
-        if (parameterTypes == null) {
-            throw new IllegalArgumentException("parameterTypes must not be null"); //$NON-NLS-1$
-        }
-        return linkMethod(null, name, Arrays.asList(parameterTypes));
+        return inline(inlines.linkMethod(name, parameterTypes));
     }
 
     /**
@@ -631,13 +643,7 @@ public class JavadocBuilder {
      * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocBuilder linkMethod(SimpleName name, List<? extends Type> parameterTypes) {
-        if (name == null) {
-            throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
-        }
-        if (parameterTypes == null) {
-            throw new IllegalArgumentException("parameterTypes must not be null"); //$NON-NLS-1$
-        }
-        return linkMethod(null, name, parameterTypes);
+        return inline(inlines.linkMethod(name, parameterTypes));
     }
 
     /**
@@ -649,16 +655,7 @@ public class JavadocBuilder {
      * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocBuilder linkMethod(Type type, String name, Type... parameterTypes) {
-        if (name == null) {
-            throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
-        }
-        if (parameterTypes == null) {
-            throw new IllegalArgumentException("parameterTypes must not be null"); //$NON-NLS-1$
-        }
-        return linkMethod(
-                type,
-                f.newSimpleName(name),
-                Arrays.asList(parameterTypes));
+        return inline(inlines.linkMethod(type, name, parameterTypes));
     }
 
     /**
@@ -670,13 +667,7 @@ public class JavadocBuilder {
      * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocBuilder linkMethod(Type type, String name, List<? extends Type> parameterTypes) {
-        if (name == null) {
-            throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
-        }
-        if (parameterTypes == null) {
-            throw new IllegalArgumentException("parameterTypes must not be null"); //$NON-NLS-1$
-        }
-        return linkMethod(type, f.newSimpleName(name), parameterTypes);
+        return inline(inlines.linkMethod(type, name, parameterTypes));
     }
 
     /**
@@ -688,13 +679,7 @@ public class JavadocBuilder {
      * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocBuilder linkMethod(Type type, SimpleName name, Type... parameterTypes) {
-        if (name == null) {
-            throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
-        }
-        if (parameterTypes == null) {
-            throw new IllegalArgumentException("parameterTypes must not be null"); //$NON-NLS-1$
-        }
-        return linkMethod(type, name, Arrays.asList(parameterTypes));
+        return inline(inlines.linkMethod(type, name, parameterTypes));
     }
 
     /**
@@ -706,17 +691,7 @@ public class JavadocBuilder {
      * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocBuilder linkMethod(Type type, SimpleName name, List<? extends Type> parameterTypes) {
-        if (name == null) {
-            throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
-        }
-        if (parameterTypes == null) {
-            throw new IllegalArgumentException("parameterTypes must not be null"); //$NON-NLS-1$
-        }
-        List<DocMethodParameter> parameters = new ArrayList<>();
-        for (Type parameterType : parameterTypes) {
-            parameters.add(f.newDocMethodParameter(parameterType, null, false));
-        }
-        return link(f.newDocMethod(type, name, parameters));
+        return inline(inlines.linkMethod(type, name, parameterTypes));
     }
 
     /**
@@ -726,19 +701,7 @@ public class JavadocBuilder {
      * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public JavadocBuilder link(DocElement element) {
-        if (element == null) {
-            throw new IllegalArgumentException("element must not be null"); //$NON-NLS-1$
-        }
-        elements.add(f.newDocBlock(
-            "@link", //$NON-NLS-1$
-            Collections.singletonList(element)));
-        return this;
-    }
-
-    private DocText escape(String pattern, Object... arguments) {
-        String text = MessageFormat.format(pattern, arguments);
-        String escaped = ESCAPE.matcher(text).replaceAll("&#64;"); //$NON-NLS-1$
-        return f.newDocText(escaped);
+        return inline(inlines.link(element));
     }
 
     private void flushBlock(String nextTag) {
@@ -747,5 +710,316 @@ public class JavadocBuilder {
             elements.clear();
         }
         this.currentTag = nextTag;
+    }
+
+    /**
+     * A document placeholder.
+     * @since 0.9.0
+     * @see JavadocBuilder#inline(String, Placeholder...)
+     */
+    @FunctionalInterface
+    public interface Placeholder extends Function<DocElementFactory, DocElement> {
+        // no special members
+    }
+
+    /**
+     * Creates {@link DocElement}.
+     * @since 0.9.0
+     */
+    public static class DocElementFactory {
+
+        private static final Pattern ESCAPE = Pattern.compile("@"); //$NON-NLS-1$
+
+        private final ModelFactory f;
+
+        DocElementFactory(ModelFactory f) {
+            this.f = f;
+        }
+
+        /**
+         * Appends a plain text into this builder.
+         * @param text the text
+         * @return this
+         * @throws IllegalArgumentException if the parameter is {@code null}
+         */
+        public DocElement text(Object text) {
+            return escape(String.valueOf(text));
+        }
+
+        /**
+         * Appends a plain text into this builder.
+         * @param pattern the text pattern in form of {@link MessageFormat#format(String, Object...)}
+         * @param arguments the arguments for the pattern
+         * @return this
+         * @throws IllegalArgumentException if the parameter is {@code null}
+         */
+        public DocElement text(String pattern, Object... arguments) {
+            return escape(pattern, arguments);
+        }
+
+        /**
+         * Appends a <code>&#64;code</code> inline block into this builder.
+         * @param text the text
+         * @return this
+         * @throws IllegalArgumentException if the parameter is {@code null}
+         */
+        public DocElement code(Object text) {
+            return f.newDocBlock(
+                    "@code", //$NON-NLS-1$
+                    Collections.singletonList(escape(String.valueOf(text))));
+        }
+
+        /**
+         * Appends a <code>&#64;code</code> inline block into this builder.
+         * @param pattern the text pattern in form of {@link MessageFormat#format(String, Object...)}
+         * @param arguments the arguments for the pattern
+         * @return this
+         * @throws IllegalArgumentException if the parameter is {@code null}
+         */
+        public DocElement code(String pattern, Object... arguments) {
+            return f.newDocBlock(
+                    "@code", //$NON-NLS-1$
+                    Collections.singletonList(escape(pattern, arguments)));
+        }
+
+        /**
+         * Appends a <code>&#64;link</code> inline block for the target type into this builder.
+         * @param type the target type
+         * @return this
+         */
+        public DocElement linkType(Type type) {
+            if (type == null) {
+                throw new IllegalArgumentException("type must not be null"); //$NON-NLS-1$
+            }
+            if (type.getModelKind() != ModelKind.NAMED_TYPE) {
+                throw new IllegalArgumentException("type must be a simple name-type");
+            }
+            return link(((NamedType) type).getName());
+        }
+
+        /**
+         * Appends a <code>&#64;link</code> inline block for the target field into this builder.
+         * @param name the target field name
+         * @return this
+         * @throws IllegalArgumentException if the parameter is {@code null}
+         */
+        public DocElement linkField(String name) {
+            if (name == null) {
+                throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
+            }
+            return linkField(null, f.newSimpleName(name));
+        }
+
+        /**
+         * Appends a <code>&#64;link</code> inline block for the target field into this builder.
+         * @param type the target field type
+         * @param name the target field name
+         * @return this
+         * @throws IllegalArgumentException if the parameter is {@code null}
+         */
+        public DocElement linkField(Type type, String name) {
+            if (name == null) {
+                throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
+            }
+            return linkField(type, f.newSimpleName(name));
+        }
+
+        /**
+         * Appends a <code>&#64;link</code> inline block for the target field into this builder.
+         * @param name the target field name
+         * @return this
+         * @throws IllegalArgumentException if the parameter is {@code null}
+         */
+        public DocElement linkField(SimpleName name) {
+            return linkField(null, name);
+        }
+
+        /**
+         * Appends a <code>&#64;link</code> inline block for the target field into this builder.
+         * @param type the target field type
+         * @param name the target field name
+         * @return this
+         * @throws IllegalArgumentException if the parameter is {@code null}
+         */
+        public DocElement linkField(Type type, SimpleName name) {
+            if (name == null) {
+                throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
+            }
+            return link(f.newDocField(type, name));
+        }
+
+        /**
+         * Appends a <code>&#64;link</code> inline block for the target method into this builder.
+         * @param name the target method name
+         * @param parameterTypes the target method parameter types
+         * @return this
+         * @throws IllegalArgumentException if the parameter is {@code null}
+         */
+        public DocElement linkMethod(String name, Type... parameterTypes) {
+            if (name == null) {
+                throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
+            }
+            if (parameterTypes == null) {
+                throw new IllegalArgumentException("parameterTypes must not be null"); //$NON-NLS-1$
+            }
+            return linkMethod(
+                    null,
+                    f.newSimpleName(name),
+                    Arrays.asList(parameterTypes));
+        }
+
+        /**
+         * Appends a <code>&#64;link</code> inline block for the target method into this builder.
+         * @param name the target method name
+         * @param parameterTypes the target method parameter types
+         * @return this
+         * @throws IllegalArgumentException if the parameter is {@code null}
+         */
+        public DocElement linkMethod(String name, List<? extends Type> parameterTypes) {
+            if (name == null) {
+                throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
+            }
+            if (parameterTypes == null) {
+                throw new IllegalArgumentException("parameterTypes must not be null"); //$NON-NLS-1$
+            }
+            return linkMethod(null, f.newSimpleName(name), parameterTypes);
+        }
+
+        /**
+         * Appends a <code>&#64;link</code> inline block for the target method into this builder.
+         * @param name the target method name
+         * @param parameterTypes the target method parameter types
+         * @return this
+         * @throws IllegalArgumentException if the parameter is {@code null}
+         */
+        public DocElement linkMethod(SimpleName name, Type... parameterTypes) {
+            if (name == null) {
+                throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
+            }
+            if (parameterTypes == null) {
+                throw new IllegalArgumentException("parameterTypes must not be null"); //$NON-NLS-1$
+            }
+            return linkMethod(null, name, Arrays.asList(parameterTypes));
+        }
+
+        /**
+         * Appends a <code>&#64;link</code> inline block for the target method into this builder.
+         * @param name the target method name
+         * @param parameterTypes the target method parameter types
+         * @return this
+         * @throws IllegalArgumentException if the parameter is {@code null}
+         */
+        public DocElement linkMethod(SimpleName name, List<? extends Type> parameterTypes) {
+            if (name == null) {
+                throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
+            }
+            if (parameterTypes == null) {
+                throw new IllegalArgumentException("parameterTypes must not be null"); //$NON-NLS-1$
+            }
+            return linkMethod(null, name, parameterTypes);
+        }
+
+        /**
+         * Appends a <code>&#64;link</code> inline block for the target method into this builder.
+         * @param type the target method type
+         * @param name the target method name
+         * @param parameterTypes the target method parameter types
+         * @return this
+         * @throws IllegalArgumentException if the parameter is {@code null}
+         */
+        public DocElement linkMethod(Type type, String name, Type... parameterTypes) {
+            if (name == null) {
+                throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
+            }
+            if (parameterTypes == null) {
+                throw new IllegalArgumentException("parameterTypes must not be null"); //$NON-NLS-1$
+            }
+            return linkMethod(
+                    type,
+                    f.newSimpleName(name),
+                    Arrays.asList(parameterTypes));
+        }
+
+        /**
+         * Appends a <code>&#64;link</code> inline block for the target method into this builder.
+         * @param type the target method type
+         * @param name the target method name
+         * @param parameterTypes the target method parameter types
+         * @return this
+         * @throws IllegalArgumentException if the parameter is {@code null}
+         */
+        public DocElement linkMethod(Type type, String name, List<? extends Type> parameterTypes) {
+            if (name == null) {
+                throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
+            }
+            if (parameterTypes == null) {
+                throw new IllegalArgumentException("parameterTypes must not be null"); //$NON-NLS-1$
+            }
+            return linkMethod(type, f.newSimpleName(name), parameterTypes);
+        }
+
+        /**
+         * Appends a <code>&#64;link</code> inline block for the target method into this builder.
+         * @param type the target method type
+         * @param name the target method name
+         * @param parameterTypes the target method parameter types
+         * @return this
+         * @throws IllegalArgumentException if the parameter is {@code null}
+         */
+        public DocElement linkMethod(Type type, SimpleName name, Type... parameterTypes) {
+            if (name == null) {
+                throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
+            }
+            if (parameterTypes == null) {
+                throw new IllegalArgumentException("parameterTypes must not be null"); //$NON-NLS-1$
+            }
+            return linkMethod(type, name, Arrays.asList(parameterTypes));
+        }
+
+        /**
+         * Appends a <code>&#64;link</code> inline block for the target method into this builder.
+         * @param type the target method type
+         * @param name the target method name
+         * @param parameterTypes the target method parameter types
+         * @return this
+         * @throws IllegalArgumentException if the parameter is {@code null}
+         */
+        public DocElement linkMethod(Type type, SimpleName name, List<? extends Type> parameterTypes) {
+            if (name == null) {
+                throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
+            }
+            if (parameterTypes == null) {
+                throw new IllegalArgumentException("parameterTypes must not be null"); //$NON-NLS-1$
+            }
+            List<DocMethodParameter> parameters = new ArrayList<>();
+            for (Type parameterType : parameterTypes) {
+                parameters.add(f.newDocMethodParameter(parameterType, null, false));
+            }
+            return link(f.newDocMethod(type, name, parameters));
+        }
+
+        /**
+         * Appends a <code>&#64;link</code> inline block for the target element into this builder.
+         * @param element the target element
+         * @return this
+         * @throws IllegalArgumentException if the parameter is {@code null}
+         */
+        public DocElement link(DocElement element) {
+            if (element == null) {
+                throw new IllegalArgumentException("element must not be null"); //$NON-NLS-1$
+            }
+            return f.newDocBlock(
+                    "@link", //$NON-NLS-1$
+                    Collections.singletonList(element));
+        }
+
+        private DocText escape(String text) {
+            String escaped = ESCAPE.matcher(text).replaceAll("&#64;"); //$NON-NLS-1$
+            return f.newDocText(escaped);
+        }
+
+        private DocText escape(String pattern, Object... arguments) {
+            return escape(MessageFormat.format(pattern, arguments));
+        }
     }
 }

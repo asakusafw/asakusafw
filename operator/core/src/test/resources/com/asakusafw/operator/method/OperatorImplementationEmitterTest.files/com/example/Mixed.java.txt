@@ -1,0 +1,9 @@
+package com.example;
+
+public abstract class Mixed {
+    public int field = 0;
+    public void method(int value) {
+        field = value;
+    }
+    public abstract void method();
+}

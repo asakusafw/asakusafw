@@ -38,6 +38,7 @@ import com.asakusafw.testdriver.inprocess.CommandEmulator;
 import com.asakusafw.testdriver.inprocess.EmulatorUtils;
 import com.asakusafw.testdriver.windgate.PluginClassLoader;
 import com.asakusafw.testdriver.windgate.WindGateTestHelper;
+import com.asakusafw.vocabulary.windgate.Constants;
 import com.asakusafw.windgate.bootstrap.CommandLineUtil;
 import com.asakusafw.windgate.core.GateProfile;
 import com.asakusafw.windgate.core.ParameterList;
@@ -51,7 +52,7 @@ public abstract class AbstractWindGateCommandEmulator extends CommandEmulator {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractWindGateCommandEmulator.class);
 
-    static final String MODULE_NAME_PREFIX = "windgate."; //$NON-NLS-1$
+    static final String MODULE_NAME_PREFIX = Constants.MODULE_NAME + '.';
 
     static final String PATH_WINDGATE = "windgate"; //$NON-NLS-1$
 
@@ -61,7 +62,7 @@ public abstract class AbstractWindGateCommandEmulator extends CommandEmulator {
 
     private static final String PATTERN_PROFILE = WindGateTestHelper.PRODUCTION_PROFILE_PATH;
 
-    private static final int ARG_PROFILE = 1;
+    static final int ARG_PROFILE = 1;
 
     @Override
     public final void execute(
@@ -69,14 +70,15 @@ public abstract class AbstractWindGateCommandEmulator extends CommandEmulator {
             ConfigurationFactory configurations,
             TestExecutionPlan.Command command) throws IOException, InterruptedException {
         configureLogs(context);
-        PluginClassLoader classLoader = createClassLoader(context, configurations);
-        ClassLoader contextClassLoader = ApplicationLauncher.switchContextClassLoader(classLoader);
-        try {
-            GateProfile profile = loadProfile(context, classLoader, command.getCommandTokens().get(ARG_PROFILE));
-            execute0(context, classLoader, profile, command);
-        } finally {
-            ApplicationLauncher.switchContextClassLoader(contextClassLoader);
-            WindGateTestHelper.disposePluginClassLoader(classLoader);
+        try (PluginClassLoader classLoader = createClassLoader(context, configurations)) {
+            ClassLoader contextClassLoader = ApplicationLauncher.switchContextClassLoader(classLoader);
+            try {
+                GateProfile profile = loadProfile(context, classLoader, command.getCommandTokens().get(ARG_PROFILE));
+                execute0(context, classLoader, profile, command);
+            } finally {
+                ApplicationLauncher.switchContextClassLoader(contextClassLoader);
+                WindGateTestHelper.disposePluginClassLoader(classLoader);
+            }
         }
     }
 

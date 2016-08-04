@@ -1,0 +1,11 @@
+package com.example;
+
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class ViolateArgumentOrder {
+
+    @Convert
+    public Proceeded method(String stringArg, Model model, int intArg) {
+        return null;
+    }
+}

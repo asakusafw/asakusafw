@@ -1,0 +1,5 @@
+package com.example;
+
+public abstract class Complex {
+    public abstract <S, T extends CharSequence> T method(S s, T t, String... args);
+}

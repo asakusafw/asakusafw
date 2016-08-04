@@ -1,0 +1,11 @@
+package com.example;
+
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class ViolateSingleInput {
+
+    @Convert
+    public Proceeded method(Model model, Model invalid) {
+        return null;
+    }
+}

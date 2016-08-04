@@ -1,0 +1,12 @@
+package com.example.ctor;
+
+import com.example.*;
+
+public abstract class ViolateNoExceptions {
+
+    public ViolateNoExceptions() throws java.io.IOException {}
+    
+    @Mock
+    public void method() {
+    }
+}

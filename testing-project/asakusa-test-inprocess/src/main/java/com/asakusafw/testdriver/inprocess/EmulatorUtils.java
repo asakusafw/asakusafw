@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.asakusafw.testdriver.TestDriverContext;
 import com.asakusafw.testdriver.compiler.CompilerConstants;
@@ -86,14 +88,8 @@ public final class EmulatorUtils {
     }
 
     private static List<String> toPathSegments(String path) {
-        File f = new File(path);
-        List<String> results = new ArrayList<>();
-        for (String s : f.getPath().split(Pattern.quote(File.separator))) {
-            if (s.isEmpty()) {
-                continue;
-            }
-            results.add(s);
-        }
-        return results;
+        return Stream.of(new File(path).getPath().split(Pattern.quote(File.separator)))
+                .filter(s -> s.isEmpty() == false)
+                .collect(Collectors.toList());
     }
 }

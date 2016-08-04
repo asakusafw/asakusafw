@@ -25,12 +25,12 @@ import java.net.URL;
 import java.net.URLClassLoader;
 
 import org.junit.Assume;
+import org.junit.ClassRule;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.asakusafw.testdriver.testing.flowpart.DependencyFlowPart;
-import com.asakusafw.testdriver.testing.flowpart.InvalidFlowPart;
-import com.asakusafw.testdriver.testing.flowpart.SimpleFlowPart;
+import com.asakusafw.runtime.windows.WindowsSupport;
+import com.asakusafw.testdriver.testing.dsl.SimpleFlowPart;
 import com.asakusafw.testdriver.testing.model.Simple;
 import com.asakusafw.vocabulary.flow.In;
 import com.asakusafw.vocabulary.flow.Out;
@@ -39,6 +39,16 @@ import com.asakusafw.vocabulary.flow.Out;
  * Test for {@link FlowPartTester}.
  */
 public class FlowPartTesterTest extends TesterTestRoot {
+
+    /**
+     * Windows platform support.
+     */
+    @ClassRule
+    public static final WindowsSupport WINDOWS_SUPPORT = new WindowsSupport(true);
+
+    {
+        compiler.withFlow((conf, flow, ports) -> getSimpleArtifact("testing", "in", "out"));
+    }
 
     /**
      * simple testing.
@@ -312,7 +322,8 @@ public class FlowPartTesterTest extends TesterTestRoot {
         tester.skipVerify(true);
         In<Simple> in = tester.input("in", Simple.class).prepare("data/invalid-in.json");
         Out<Simple> out = tester.output("out", Simple.class).verify("data/invalid-out.json", new IdentityVerifier());
-        tester.runTest(new InvalidFlowPart(in, out));
+        tester.setBatchArg("action", "invalid");
+        tester.runTest(new SimpleFlowPart(in, out));
     }
 
     /**
@@ -326,7 +337,8 @@ public class FlowPartTesterTest extends TesterTestRoot {
         tester.setFrameworkHomePath(framework.getHome());
         In<Simple> in = tester.input("in", Simple.class).prepare("data/simple-in.json");
         Out<Simple> out = tester.output("out", Simple.class).verify("data/simple-out.json", new IdentityVerifier());
-        tester.runTest(new DependencyFlowPart(in, out));
+        tester.setBatchArg("action", "dependency");
+        tester.runTest(new SimpleFlowPart(in, out));
     }
 
     /**

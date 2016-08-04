@@ -1,0 +1,16 @@
+package com.example;
+
+import com.asakusafw.vocabulary.flow.*;
+
+public class ViolateTopLevel {
+
+    @FlowPart
+    public static class Nested extends FlowDescription {
+    
+        public Nested(In<String> in, Out<String> out) {
+        }
+
+        @Override
+        protected void describe() {}
+    }
+}

@@ -20,16 +20,29 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 
+import org.junit.ClassRule;
+import org.junit.Ignore;
 import org.junit.Test;
 
-import com.asakusafw.testdriver.testing.jobflow.SimpleJobflow;
+import com.asakusafw.runtime.windows.WindowsSupport;
+import com.asakusafw.testdriver.testing.dsl.SimpleJobflow;
+import com.asakusafw.testdriver.testing.dsl.SimpleOperator;
 import com.asakusafw.testdriver.testing.model.Simple;
-import com.asakusafw.testdriver.testing.operator.SimpleOperator;
 
 /**
  * Test for {@link JobFlowTester}.
  */
 public class JobFlowTesterTest extends TesterTestRoot {
+
+    /**
+     * Windows platform support.
+     */
+    @ClassRule
+    public static final WindowsSupport WINDOWS_SUPPORT = new WindowsSupport(true);
+
+    {
+        compiler.withJobflow((conf, aClass) -> getSimpleArtifact());
+    }
 
     /**
      * simple testing.
@@ -46,7 +59,7 @@ public class JobFlowTesterTest extends TesterTestRoot {
     /**
      * input tracing.
      */
-    @Test
+    @Ignore("mock compiler toolkit does not support tracing facilities")
     public void trace_in() {
         JobFlowTester tester = new JobFlowTester(getClass());
         tester.setFrameworkHomePath(framework.getHome());
@@ -59,7 +72,7 @@ public class JobFlowTesterTest extends TesterTestRoot {
     /**
      * output tracing.
      */
-    @Test
+    @Ignore("mock compiler toolkit does not support tracing facilities")
     public void trace_out() {
         JobFlowTester tester = new JobFlowTester(getClass());
         tester.setFrameworkHomePath(framework.getHome());
@@ -72,7 +85,7 @@ public class JobFlowTesterTest extends TesterTestRoot {
     /**
      * input/output tracing.
      */
-    @Test
+    @Ignore("mock compiler toolkit does not support tracing facilities")
     public void trace_both() {
         JobFlowTester tester = new JobFlowTester(getClass());
         tester.setFrameworkHomePath(framework.getHome());
@@ -315,6 +328,7 @@ public class JobFlowTesterTest extends TesterTestRoot {
     /**
      * Attempts to trace invalid operator class.
      */
+    @Ignore("mock compiler toolkit does not support tracing facilities")
     @Test(expected = IllegalStateException.class)
     public void invalid_trace_operator_class() {
         JobFlowTester tester = new JobFlowTester(getClass());
@@ -326,6 +340,7 @@ public class JobFlowTesterTest extends TesterTestRoot {
     /**
      * Attempts to trace invalid operator method.
      */
+    @Ignore("mock compiler toolkit does not support tracing facilities")
     @Test(expected = IllegalStateException.class)
     public void invalid_trace_operator_method() {
         JobFlowTester tester = new JobFlowTester(getClass());
@@ -337,6 +352,7 @@ public class JobFlowTesterTest extends TesterTestRoot {
     /**
      * Attempts to trace invalid input.
      */
+    @Ignore("mock compiler toolkit does not support tracing facilities")
     @Test(expected = IllegalStateException.class)
     public void invalid_trace_input() {
         JobFlowTester tester = new JobFlowTester(getClass());
@@ -348,6 +364,7 @@ public class JobFlowTesterTest extends TesterTestRoot {
     /**
      * Attempts to trace invalid output.
      */
+    @Ignore("mock compiler toolkit does not support tracing facilities")
     @Test(expected = IllegalStateException.class)
     public void invalid_trace_output() {
         JobFlowTester tester = new JobFlowTester(getClass());

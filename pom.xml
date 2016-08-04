@@ -44,6 +44,8 @@
     <module>iterative-project</module>
     <module>operation-project</module>
     <module>sandbox-project</module>
+    <module>operator</module>
+    <module>mapreduce</module>
     <module>sdk-project</module>
   </modules>
 
@@ -65,6 +67,7 @@
     <plugin.jflex.version>1.4.3</plugin.jflex.version>
 
     <!-- artifact id/versions -->
+    <asakusafw-mapreduce.version>${project.version}</asakusafw-mapreduce.version>
     <hadoop.version>2.7.2</hadoop.version>
     <hadoop.artifact.id>hadoop-client</hadoop.artifact.id>
     <hive.version>1.2.1</hive.version>

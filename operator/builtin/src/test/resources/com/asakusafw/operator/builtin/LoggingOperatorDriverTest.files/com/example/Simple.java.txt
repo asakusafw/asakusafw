@@ -1,0 +1,11 @@
+package com.example;
+
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class Simple {
+
+    @Logging
+    public String method(Model model) {
+        return null;
+    }
+}

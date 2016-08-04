@@ -1,0 +1,17 @@
+package com.example.ctor;
+
+import com.example.*;
+import com.example.external.*;
+import com.asakusafw.vocabulary.flow.*;
+
+@FlowPart
+public class ViolateWithNotOnlyExtern extends FlowDescription {
+
+    public ViolateWithNotOnlyExtern(
+            @Import(name = "in", description = StringImporter.class) In<String> in,
+            @Export(name = "out", description = StringExporter.class) Out<String> out) {
+    }
+
+    @Override
+    protected void describe() {}
+}

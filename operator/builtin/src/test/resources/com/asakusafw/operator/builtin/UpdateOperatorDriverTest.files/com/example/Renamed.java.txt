@@ -1,0 +1,10 @@
+package com.example;
+
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class Renamed {
+
+    @Update(outputPort = "renamed")
+    public void method(Model model) {
+    }
+}

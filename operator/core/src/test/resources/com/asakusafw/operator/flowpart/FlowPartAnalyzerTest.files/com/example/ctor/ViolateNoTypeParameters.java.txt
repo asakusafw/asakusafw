@@ -1,0 +1,14 @@
+package com.example.ctor;
+
+import com.example.*;
+import com.asakusafw.vocabulary.flow.*;
+
+@FlowPart
+public class ViolateNoTypeParameters extends FlowDescription {
+
+    public <T> ViolateNoTypeParameters(In<String> in, Out<String> out) {
+    }
+
+    @Override
+    protected void describe() {}
+}

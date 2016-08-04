@@ -1,0 +1,11 @@
+package com.example;
+
+import java.util.List;
+import com.asakusafw.runtime.core.Result;
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class ViolateNotAbstract {
+
+    @Extract
+    public abstract void method(Model in, Result<Proceeded> out);
+}

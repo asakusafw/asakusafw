@@ -1,0 +1,8 @@
+package com.example;
+
+public abstract class ViolateNoExtends extends java.util.ArrayList<String> {
+    
+    @Mock
+    public void method() {
+    }
+}

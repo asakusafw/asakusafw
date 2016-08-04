@@ -23,6 +23,7 @@ import java.text.MessageFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.runtime.windows.WinUtilsInstaller;
 import com.asakusafw.testdriver.core.TestingEnvironmentConfigurator;
 
 /**

@@ -35,14 +35,23 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.compress.DefaultCodec;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+
+import com.asakusafw.runtime.windows.WindowsSupport;
 
 /**
  * Test for {@link SequenceFileUtil}.
  */
 public class SequenceFileUtilTest {
+
+    /**
+     * Windows platform support.
+     */
+    @ClassRule
+    public static final WindowsSupport WINDOWS_SUPPORT = new WindowsSupport();
 
     /**
      * A temporary folder.

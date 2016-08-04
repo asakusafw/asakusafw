@@ -18,11 +18,24 @@ package com.asakusafw.testdriver;
 import java.io.IOException;
 
 import org.junit.Rule;
+import org.xerial.snappy.Snappy;
 
 import com.asakusafw.runtime.configuration.FrameworkDeployer;
 import com.asakusafw.runtime.mapreduce.simple.SimpleJobRunner;
 import com.asakusafw.runtime.stage.inprocess.InProcessStageConfigurator;
+import com.asakusafw.runtime.stage.launcher.ApplicationLauncher;
 import com.asakusafw.runtime.workaround.RuntimeWorkaround;
+import com.asakusafw.runtime.workaround.snappyjava.MacSnappyJavaWorkaround;
+import com.asakusafw.testdriver.compiler.ArtifactMirror;
+import com.asakusafw.testdriver.compiler.TaskMirror;
+import com.asakusafw.testdriver.compiler.basic.BasicHadoopTaskMirror;
+import com.asakusafw.testdriver.compiler.basic.BasicPortMirror;
+import com.asakusafw.testdriver.testing.compiler.MockCompilerToolkit;
+import com.asakusafw.testdriver.testing.dsl.SimpleBatch;
+import com.asakusafw.testdriver.testing.dsl.SimpleBatchAction;
+import com.asakusafw.testdriver.testing.dsl.SimpleExporter;
+import com.asakusafw.testdriver.testing.dsl.SimpleImporter;
+import com.asakusafw.testdriver.testing.model.Simple;
 import com.asakusafw.utils.io.Sources;
 
 /**
@@ -38,6 +51,11 @@ public abstract class TesterTestRoot {
     };
 
     /**
+     * The compiler toolkit for this test.
+     */
+    protected final MockCompilerToolkit compiler = new MockCompilerToolkit();
+
+    /**
      * Temporary framework installation target.
      */
     @Rule
@@ -47,6 +65,45 @@ public abstract class TesterTestRoot {
             installTo(this);
         }
     };
+
+    /**
+     * Temporary compiler.
+     */
+    @Rule
+    public final TempopraryCompiler tempopraryCompiler = new TempopraryCompiler(compiler);
+
+    /**
+     * Returns an artifact of {@link SimpleBatch}.
+     * @return the created artifact
+     * @throws IOException if failed
+     */
+    public final ArtifactMirror getSimpleArtifact() throws IOException {
+        return getSimpleArtifact("simple", "simple", "simple");
+    }
+
+    /**
+     * Returns an artifact of {@link SimpleBatch}.
+     * @param flowId the flow ID
+     * @param input the input name
+     * @param output the output name
+     * @return the created artifact
+     * @throws IOException if failed
+     */
+    public final ArtifactMirror getSimpleArtifact(String flowId, String input, String output) throws IOException {
+        return tempopraryCompiler.artifact(
+                flowId,
+                jobflow -> {
+                    jobflow.addTask(
+                            TaskMirror.Phase.MAIN,
+                            new BasicHadoopTaskMirror(SimpleBatchAction.class.getName()));
+                    jobflow.addInput(new BasicPortMirror<>(input, Simple.class, new SimpleImporter()));
+                    jobflow.addOutput(new BasicPortMirror<>(output, Simple.class, new SimpleExporter()));
+                },
+                SimpleBatchAction.class,
+                ApplicationLauncher.class,
+                Snappy.class,
+                MacSnappyJavaWorkaround.class);
+    }
 
     /**
      * Installs helper libraries via the framework deployer.

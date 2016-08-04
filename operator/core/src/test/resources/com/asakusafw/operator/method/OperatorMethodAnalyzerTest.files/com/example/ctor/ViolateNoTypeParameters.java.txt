@@ -1,0 +1,12 @@
+package com.example.ctor;
+
+import com.example.*;
+
+public abstract class ViolateNoTypeParameters {
+
+    public <T> ViolateNoTypeParameters() {}
+    
+    @Mock
+    public void method() {
+    }
+}

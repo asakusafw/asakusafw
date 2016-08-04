@@ -12,11 +12,7 @@
   <packaging>pom</packaging>
 
   <modules>
-    <module>asakusa-dsl-analysis-plugin</module>
-    <module>asakusa-dsl-batch-spec-plugin</module>
     <module>asakusa-dsl-vocabulary</module>
-    <module>ashigel-compiler</module>
-    <module>ashigel-compiler-bootstrap</module>
   </modules>
 
 </project>

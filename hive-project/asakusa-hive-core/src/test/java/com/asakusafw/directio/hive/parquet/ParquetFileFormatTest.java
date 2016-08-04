@@ -41,6 +41,7 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hive.common.type.HiveDecimal;
 import org.apache.hadoop.io.IOUtils;
 import org.junit.Assume;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -78,6 +79,7 @@ import com.asakusafw.runtime.value.DecimalOption;
 import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.runtime.value.LongOption;
 import com.asakusafw.runtime.value.StringOption;
+import com.asakusafw.runtime.windows.WindowsSupport;
 
 import parquet.column.ParquetProperties.WriterVersion;
 
@@ -85,6 +87,12 @@ import parquet.column.ParquetProperties.WriterVersion;
  * Test for {@link ParquetFileFormat}.
  */
 public class ParquetFileFormatTest {
+
+    /**
+     * Windows platform support.
+     */
+    @ClassRule
+    public static final WindowsSupport WINDOWS_SUPPORT = new WindowsSupport();
 
     private static final long LOCAL_TIMEZONE_OFFSET =
             TimeUnit.MILLISECONDS.toSeconds(TimeZone.getDefault().getRawOffset());

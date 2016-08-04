@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <name>Asakusa DSL Compiler for MapReduce</name>
+  <artifactId>project</artifactId>
+  <groupId>com.asakusafw.mapreduce.compiler</groupId>
+  <parent>
+    <artifactId>project</artifactId>
+    <groupId>com.asakusafw.mapreduce</groupId>
+    <version>0.9.0-SNAPSHOT</version>
+  </parent>
+
+  <packaging>pom</packaging>
+
+  <modules>
+    <module>core</module>
+    <module>cli</module>
+
+    <module>directio</module>
+    <module>hive</module>
+    <module>windgate</module>
+    <module>yaess</module>
+
+    <module>batchspec</module>
+    <module>inspection</module>
+
+    <module>trace</module>
+    <module>test-adapter</module>
+
+    <module>operator</module>
+  </modules>
+</project>

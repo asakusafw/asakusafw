@@ -31,6 +31,7 @@ import org.apache.hadoop.mapreduce.RecordReader;
 import org.apache.hadoop.mapreduce.TaskAttemptID;
 import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 import org.apache.hadoop.mapreduce.task.TaskAttemptContextImpl;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -41,11 +42,18 @@ import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.runtime.stage.temporary.TemporaryFile;
 import com.asakusafw.runtime.stage.temporary.TemporaryStorage;
 import com.asakusafw.runtime.util.hadoop.ConfigurationProvider;
+import com.asakusafw.runtime.windows.WindowsSupport;
 
 /**
  * Test for {@link TemporaryInputFormat}.
  */
 public class TemporaryInputFormatTest {
+
+    /**
+     * Windows platform support.
+     */
+    @ClassRule
+    public static final WindowsSupport WINDOWS_SUPPORT = new WindowsSupport();
 
     /**
      * Temporary folder for testing.

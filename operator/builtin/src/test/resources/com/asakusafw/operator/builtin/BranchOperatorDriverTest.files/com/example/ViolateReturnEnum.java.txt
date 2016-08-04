@@ -1,0 +1,10 @@
+package com.example;
+
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class ViolateReturnEnum {
+
+    @Branch
+    public void method(Model model) {
+    }
+}

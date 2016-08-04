@@ -1,0 +1,11 @@
+package com.example;
+
+import java.util.List;
+import com.asakusafw.runtime.core.Result;
+import com.asakusafw.vocabulary.model.*;
+import com.asakusafw.vocabulary.operator.*;
+
+public class LModel {
+    public int left;
+    public int value;
+}

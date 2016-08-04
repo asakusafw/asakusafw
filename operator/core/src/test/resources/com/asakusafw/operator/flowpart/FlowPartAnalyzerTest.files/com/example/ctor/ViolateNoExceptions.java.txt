@@ -1,0 +1,14 @@
+package com.example.ctor;
+
+import com.example.*;
+import com.asakusafw.vocabulary.flow.*;
+
+@FlowPart
+public class ViolateNoExceptions extends FlowDescription {
+
+    public ViolateNoExceptions(In<String> in, Out<String> out) throws Exception {
+    }
+
+    @Override
+    protected void describe() {}
+}

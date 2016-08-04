@@ -32,6 +32,7 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.compress.CompressionCodec;
 import org.apache.hadoop.io.compress.DefaultCodec;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -40,11 +41,18 @@ import com.asakusafw.runtime.directio.Counter;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.runtime.value.StringOption;
+import com.asakusafw.runtime.windows.WindowsSupport;
 
 /**
  * Test for {@link SequenceFileFormat}.
  */
 public class SequenceFileFormatTest {
+
+    /**
+     * Windows platform support.
+     */
+    @ClassRule
+    public static final WindowsSupport WINDOWS_SUPPORT = new WindowsSupport();
 
     /**
      * Creates a new instance.

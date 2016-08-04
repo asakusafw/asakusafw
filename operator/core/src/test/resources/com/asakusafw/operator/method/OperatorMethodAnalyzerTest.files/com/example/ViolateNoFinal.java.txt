@@ -1,0 +1,8 @@
+package com.example;
+
+public final class ViolateNoFinal {
+    
+    @Mock
+    public void method() {
+    }
+}

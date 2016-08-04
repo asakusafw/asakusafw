@@ -98,6 +98,15 @@ public class TypeBuilder {
     }
 
     /**
+     * Returns the parameterized type (as diamond operator).
+     * @return this
+     * @throws IllegalArgumentException if the parameter is {@code null}
+     */
+    public TypeBuilder parameterize() {
+        return parameterize(Collections.emptyList());
+    }
+
+    /**
      * Returns the parameterized type.
      * @param typeArguments the type arguments
      * @return this
@@ -119,9 +128,6 @@ public class TypeBuilder {
     public TypeBuilder parameterize(List<? extends Type> typeArguments) {
         if (typeArguments == null) {
             throw new IllegalArgumentException("typeArguments must not be null"); //$NON-NLS-1$
-        }
-        if (typeArguments.isEmpty()) {
-            throw new IllegalArgumentException("typeArguments must have one or more elements"); //$NON-NLS-1$
         }
         return chain(f.newParameterizedType(context, typeArguments));
     }

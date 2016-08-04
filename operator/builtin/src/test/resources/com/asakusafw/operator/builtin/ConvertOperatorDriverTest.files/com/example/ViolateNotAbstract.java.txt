@@ -1,0 +1,9 @@
+package com.example;
+
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class ViolateNotAbstract {
+
+    @Convert
+    public abstract Proceeded method(Model model);
+}

@@ -1,0 +1,18 @@
+package com.example;
+
+public abstract class WithSupport {
+
+    /**
+     * A method.
+     * @param p the parameter
+     */
+    @Mock
+    public void method(String p) {
+    }
+
+    /**
+     * support method.
+     * @param p the parameter
+     */
+    public void support(int p) {}
+}

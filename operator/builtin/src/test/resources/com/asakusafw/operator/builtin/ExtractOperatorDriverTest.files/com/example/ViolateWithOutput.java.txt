@@ -1,0 +1,12 @@
+package com.example;
+
+import java.util.List;
+import com.asakusafw.runtime.core.Result;
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class ViolateWithOutput {
+
+    @Extract
+    public void method(Model in) {
+    }
+}

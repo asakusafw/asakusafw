@@ -239,7 +239,7 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
             if (conf.isEnableHeader() || conf.isForceHeader()) {
                 SimpleName headers = f.newSimpleName("headers"); //$NON-NLS-1$
                 statements.add(new TypeBuilder(f, context.resolve(ArrayList.class))
-                    .parameterize(context.resolve(String.class))
+                    .parameterize()
                     .newObject()
                     .toLocalVariableDeclaration(
                             new TypeBuilder(f, context.resolve(List.class))

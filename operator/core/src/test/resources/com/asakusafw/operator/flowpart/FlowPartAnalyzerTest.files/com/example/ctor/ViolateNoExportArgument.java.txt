@@ -1,0 +1,16 @@
+package com.example.ctor;
+
+import com.example.*;
+import com.asakusafw.vocabulary.flow.*;
+
+@FlowPart
+public class ViolateNoExportArgument extends FlowDescription {
+
+    public ViolateNoExportArgument(
+        In<String> in, Out<String> out,
+        @Export(name = "arg", description = StringExporter.class) int arg) {
+    }
+
+    @Override
+    protected void describe() {}
+}
