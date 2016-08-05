@@ -485,7 +485,8 @@ public class HadoopDataSourceProfile {
         result.setCombineBlocks(takeBoolean(profile, attributes, KEY_COMBINE_BLOCKS, DEFAULT_COMBINE_BLOCKS));
         result.setKeepAliveInterval(
                 takePositive(profile, attributes, KEY_KEEPALIVE_INTERVAL, DEFAULT_KEEPALIVE_INTERVAL));
-        result.setRollforwardThreads(takePositive(profile, attributes, KEY_ROLLFORWARD_THREADS, DEFAULT_ROLLFORWARD_THREADS));
+        result.setRollforwardThreads(
+                takePositive(profile, attributes, KEY_ROLLFORWARD_THREADS, DEFAULT_ROLLFORWARD_THREADS));
 
         if (attributes.isEmpty() == false) {
             throw new IOException(MessageFormat.format(
