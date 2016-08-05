@@ -55,7 +55,9 @@ import org.apache.hadoop.mapreduce.OutputFormat;
 import org.apache.hadoop.mapreduce.RecordWriter;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
 import org.apache.hadoop.mapreduce.TaskAttemptID;
+import org.apache.hadoop.util.Progressable;
 
+import com.asakusafw.runtime.directio.Counter;
 import com.asakusafw.runtime.directio.DirectDataSource;
 import com.asakusafw.runtime.directio.DirectDataSourceConstants;
 import com.asakusafw.runtime.directio.DirectDataSourceRepository;
@@ -63,6 +65,7 @@ import com.asakusafw.runtime.directio.FilePattern;
 import com.asakusafw.runtime.directio.OutputAttemptContext;
 import com.asakusafw.runtime.directio.OutputTransactionContext;
 import com.asakusafw.runtime.directio.hadoop.HadoopDataSourceUtil;
+import com.asakusafw.runtime.directio.hadoop.ProgressableCounter;
 import com.asakusafw.runtime.stage.StageConstants;
 import com.asakusafw.runtime.stage.StageOutput;
 import com.asakusafw.runtime.util.VariableTable;
@@ -70,7 +73,7 @@ import com.asakusafw.runtime.util.VariableTable;
 /**
  * A bridge implementation for Hadoop {@link OutputFormat}.
  * @since 0.2.5
- * @version 0.6.1
+ * @version 0.9.0
  */
 public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
 
@@ -208,6 +211,74 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
     private static DirectDataSourceRepository getDataSourceRepository(JobContext context) {
         assert context != null;
         return HadoopDataSourceUtil.loadRepository(context.getConfiguration());
+    }
+
+    /**
+     * Creates output context from Hadoop context.
+     * @param context current context in Hadoop
+     * @param datasourceId datasource ID
+     * @return the created context
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public static OutputTransactionContext createContext(JobContext context, String datasourceId) {
+        if (context == null) {
+            throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
+        }
+        if (datasourceId == null) {
+            throw new IllegalArgumentException("datasourceId must not be null"); //$NON-NLS-1$
+        }
+        String transactionId = getTransactionId(context, datasourceId);
+        return new OutputTransactionContext(transactionId, datasourceId, createCounter(context));
+    }
+
+    /**
+     * Creates output context from Hadoop context.
+     * @param context current context in Hadoop
+     * @param datasourceId datasource ID
+     * @return the created context
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public static OutputAttemptContext createContext(TaskAttemptContext context, String datasourceId) {
+        if (context == null) {
+            throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
+        }
+        if (datasourceId == null) {
+            throw new IllegalArgumentException("datasourceId must not be null"); //$NON-NLS-1$
+        }
+        String transactionId = getTransactionId(context, datasourceId);
+        String attemptId = getAttemptId(context, datasourceId);
+        return new OutputAttemptContext(transactionId, attemptId, datasourceId, createCounter(context));
+    }
+
+    private static String getTransactionId(JobContext jobContext, String datasourceId) {
+        assert jobContext != null;
+        assert datasourceId != null;
+        String executionId = jobContext.getConfiguration().get(StageConstants.PROP_EXECUTION_ID);
+        if (executionId == null) {
+            executionId = jobContext.getJobID().toString();
+        }
+        return getTransactionId(executionId);
+    }
+
+    private static String getTransactionId(String executionId) {
+        return executionId;
+    }
+
+    private static String getAttemptId(TaskAttemptContext taskContext, String datasourceId) {
+        assert taskContext != null;
+        assert datasourceId != null;
+        return taskContext.getTaskAttemptID().toString();
+    }
+
+    private static Counter createCounter(JobContext context) {
+        assert context != null;
+        if (context instanceof Progressable) {
+            return new ProgressableCounter((Progressable) context);
+        } else if (context instanceof org.apache.hadoop.mapred.JobContext) {
+            return new ProgressableCounter(((org.apache.hadoop.mapred.JobContext) context).getProgressible());
+        } else {
+            return new Counter();
+        }
     }
 
     @Override
@@ -361,7 +432,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
                             taskContext.getJobName(),
                             taskContext.getTaskAttemptID()));
                 }
-                OutputAttemptContext context = HadoopDataSourceUtil.createContext(taskContext, id);
+                OutputAttemptContext context = createContext(taskContext, id);
                 try {
                     DirectDataSource repo = repository.getRelatedDataSource(containerPath);
                     repo.setupAttemptOutput(context);
@@ -414,7 +485,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
                             taskContext.getJobName(),
                             taskContext.getTaskAttemptID()));
                 }
-                OutputAttemptContext context = HadoopDataSourceUtil.createContext(taskContext, id);
+                OutputAttemptContext context = createContext(taskContext, id);
                 try {
                     DirectDataSource repo = repository.getRelatedDataSource(containerPath);
                     repo.commitAttemptOutput(context);
@@ -483,7 +554,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
                             taskContext.getJobName(),
                             taskContext.getTaskAttemptID()));
                 }
-                OutputAttemptContext context = HadoopDataSourceUtil.createContext(taskContext, id);
+                OutputAttemptContext context = createContext(taskContext, id);
                 try {
                     DirectDataSource repo = repository.getRelatedDataSource(containerPath);
                     repo.cleanupAttemptOutput(context);
@@ -529,7 +600,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
                             jobContext.getJobID(),
                             jobContext.getJobName()));
                 }
-                OutputTransactionContext context = HadoopDataSourceUtil.createContext(jobContext, id);
+                OutputTransactionContext context = createContext(jobContext, id);
                 try {
                     DirectDataSource repo = repository.getRelatedDataSource(containerPath);
                     repo.setupTransactionOutput(context);
@@ -565,7 +636,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
                     continue;
                 }
                 String id = repository.getRelatedId(spec.basePath);
-                OutputTransactionContext context = HadoopDataSourceUtil.createContext(jobContext, id);
+                OutputTransactionContext context = createContext(jobContext, id);
                 try {
                     DirectDataSource repo = repository.getRelatedDataSource(spec.basePath);
                     String basePath = repository.getComponentPath(spec.basePath);
@@ -789,7 +860,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
                             jobContext.getJobID(),
                             jobContext.getJobName()));
                 }
-                OutputTransactionContext context = HadoopDataSourceUtil.createContext(jobContext, id);
+                OutputTransactionContext context = createContext(jobContext, id);
                 try {
                     DirectDataSource repo = repository.getRelatedDataSource(containerPath);
                     repo.commitTransactionOutput(context);
@@ -821,7 +892,7 @@ public final class BridgeOutputFormat extends OutputFormat<Object, Object> {
                             jobContext.getJobID(),
                             jobContext.getJobName()));
                 }
-                OutputTransactionContext context = HadoopDataSourceUtil.createContext(jobContext, id);
+                OutputTransactionContext context = createContext(jobContext, id);
                 try {
                     DirectDataSource repo = repository.getRelatedDataSource(containerPath);
                     repo.cleanupTransactionOutput(context);

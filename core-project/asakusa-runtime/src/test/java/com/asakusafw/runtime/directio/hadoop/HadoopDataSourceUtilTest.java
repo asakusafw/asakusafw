@@ -465,6 +465,26 @@ public class HadoopDataSourceUtilTest {
     }
 
     /**
+     * move multiple files.
+     * @throws Exception if failed
+     */
+    @Test
+    public void move_threads() throws Exception {
+        List<String> paths = new ArrayList<>();
+        List<String> expects = new ArrayList<>();
+        for (int i = 0; i < 1000; i++) {
+            paths.add(String.format("src/%04d.csv", i));
+            expects.add(String.format("dst/%04d.csv", i));
+        }
+        for (String s : paths) {
+            touch(s);
+        }
+        FileSystem fs = getTempFileSystem();
+        HadoopDataSourceUtil.move(new Counter(), fs, getPath("src"), getPath("dst"), 4);
+        assertThat(collect(), is(path(expects.toArray(new String[expects.size()]))));
+    }
+
+    /**
      * move deep files.
      * @throws Exception if failed
      */

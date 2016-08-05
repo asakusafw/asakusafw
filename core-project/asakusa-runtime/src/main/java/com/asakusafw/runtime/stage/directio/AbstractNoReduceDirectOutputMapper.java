@@ -35,6 +35,7 @@ import com.asakusafw.runtime.directio.hadoop.HadoopDataSourceUtil;
 import com.asakusafw.runtime.flow.MapperWithRuntimeResource;
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.runtime.stage.StageConstants;
+import com.asakusafw.runtime.stage.output.BridgeOutputFormat;
 import com.asakusafw.runtime.util.VariableTable;
 
 /**
@@ -134,7 +135,7 @@ public abstract class AbstractNoReduceDirectOutputMapper<T> extends MapperWithRu
 
             String path = variables.parse(rawBasePath, false);
             String sourceId = repository.getRelatedId(path);
-            OutputAttemptContext outputContext = HadoopDataSourceUtil.createContext(context, sourceId);
+            OutputAttemptContext outputContext = BridgeOutputFormat.createContext(context, sourceId);
             DataFormat<? super T> format = ReflectionUtils.newInstance(dataFormatClass, context.getConfiguration());
             DirectDataSource datasource = repository.getRelatedDataSource(path);
             String basePath = repository.getComponentPath(path);

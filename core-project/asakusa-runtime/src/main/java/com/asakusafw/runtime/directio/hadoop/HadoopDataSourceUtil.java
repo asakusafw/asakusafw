@@ -35,8 +35,18 @@ import java.util.NavigableMap;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -48,7 +58,7 @@ import org.apache.hadoop.fs.LocalFileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapreduce.JobContext;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
-import org.apache.hadoop.util.Progressable;
+import org.jboss.netty.util.internal.ConcurrentHashMap;
 
 import com.asakusafw.runtime.directio.AbstractDirectDataSource;
 import com.asakusafw.runtime.directio.Counter;
@@ -63,15 +73,28 @@ import com.asakusafw.runtime.directio.FilePattern.Segment;
 import com.asakusafw.runtime.directio.FilePattern.Selection;
 import com.asakusafw.runtime.directio.OutputAttemptContext;
 import com.asakusafw.runtime.directio.OutputTransactionContext;
-import com.asakusafw.runtime.stage.StageConstants;
+import com.asakusafw.runtime.stage.output.BridgeOutputFormat;
 
 /**
  * Utilities for Direct data access facilities on Hadoop.
  * @since 0.2.5
+ * @version 0.9.0
  */
 public final class HadoopDataSourceUtil {
 
     static final Log LOG = LogFactory.getLog(HadoopDataSourceUtil.class);
+
+    static final AtomicInteger THREAD_COUNTER = new AtomicInteger();
+
+    private static final ThreadFactory DAEMON_THREAD_FACTORY = new ThreadFactory() {
+        @Override
+        public Thread newThread(Runnable r) {
+            Thread t = new Thread(r);
+            t.setDaemon(true);
+            t.setName(String.format("DirectIO-MOVE-%d", THREAD_COUNTER.incrementAndGet())); //$NON-NLS-1$
+            return t;
+        }
+    };
 
     /**
      * The key prefix of data sources.
@@ -94,6 +117,8 @@ public final class HadoopDataSourceUtil {
      * The attribute key name of local tempdir.
      */
     public static final String KEY_LOCAL_TEMPDIR = "com.asakusafw.output.local.tempdir"; //$NON-NLS-1$
+
+    private static final int PARALLEL_MOVE_MIN = 3;
 
     static final String DEFAULT_SYSTEM_DIR = "_directio"; //$NON-NLS-1$
 
@@ -286,24 +311,6 @@ public final class HadoopDataSourceUtil {
     }
 
     /**
-     * Creates output context from Hadoop context.
-     * @param context current context in Hadoop
-     * @param datasourceId datasource ID
-     * @return the created context
-     * @throws IllegalArgumentException if some parameters were {@code null}
-     */
-    public static OutputTransactionContext createContext(JobContext context, String datasourceId) {
-        if (context == null) {
-            throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
-        }
-        if (datasourceId == null) {
-            throw new IllegalArgumentException("datasourceId must not be null"); //$NON-NLS-1$
-        }
-        String transactionId = getTransactionId(context, datasourceId);
-        return new OutputTransactionContext(transactionId, datasourceId, createCounter(context));
-    }
-
-    /**
      * Creates output context from execution ID and datasource ID.
      * @param executionId current execution ID
      * @param datasourceId target datasource ID
@@ -317,8 +324,7 @@ public final class HadoopDataSourceUtil {
         if (datasourceId == null) {
             throw new IllegalArgumentException("datasourceId must not be null"); //$NON-NLS-1$
         }
-        String transactionId = getTransactionId(executionId);
-        return new OutputTransactionContext(transactionId, datasourceId, new Counter());
+        return new OutputTransactionContext(executionId, datasourceId, new Counter());
     }
 
     /**
@@ -327,48 +333,24 @@ public final class HadoopDataSourceUtil {
      * @param datasourceId datasource ID
      * @return the created context
      * @throws IllegalArgumentException if some parameters were {@code null}
+     * @deprecated Use {@link BridgeOutputFormat#createContext(JobContext, String)} instead
      */
+    @Deprecated
+    public static OutputTransactionContext createContext(JobContext context, String datasourceId) {
+        return BridgeOutputFormat.createContext(context, datasourceId);
+    }
+
+    /**
+     * Creates output context from Hadoop context.
+     * @param context current context in Hadoop
+     * @param datasourceId datasource ID
+     * @return the created context
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @deprecated Use {@link BridgeOutputFormat#createContext(TaskAttemptContext, String)} instead
+     */
+    @Deprecated
     public static OutputAttemptContext createContext(TaskAttemptContext context, String datasourceId) {
-        if (context == null) {
-            throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
-        }
-        if (datasourceId == null) {
-            throw new IllegalArgumentException("datasourceId must not be null"); //$NON-NLS-1$
-        }
-        String transactionId = getTransactionId(context, datasourceId);
-        String attemptId = getAttemptId(context, datasourceId);
-        return new OutputAttemptContext(transactionId, attemptId, datasourceId, createCounter(context));
-    }
-
-    private static String getTransactionId(JobContext jobContext, String datasourceId) {
-        assert jobContext != null;
-        assert datasourceId != null;
-        String executionId = jobContext.getConfiguration().get(StageConstants.PROP_EXECUTION_ID);
-        if (executionId == null) {
-            executionId = jobContext.getJobID().toString();
-        }
-        return getTransactionId(executionId);
-    }
-
-    private static String getTransactionId(String executionId) {
-        return executionId;
-    }
-
-    private static String getAttemptId(TaskAttemptContext taskContext, String datasourceId) {
-        assert taskContext != null;
-        assert datasourceId != null;
-        return taskContext.getTaskAttemptID().toString();
-    }
-
-    private static Counter createCounter(JobContext context) {
-        assert context != null;
-        if (context instanceof Progressable) {
-            return new ProgressableCounter((Progressable) context);
-        } else if (context instanceof org.apache.hadoop.mapred.JobContext) {
-            return new ProgressableCounter(((org.apache.hadoop.mapred.JobContext) context).getProgressible());
-        } else {
-            return new Counter();
-        }
+        return BridgeOutputFormat.createContext(context, datasourceId);
     }
 
     /**
@@ -777,11 +759,13 @@ public final class HadoopDataSourceUtil {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public static void move(
-            Counter counter,
-            FileSystem fs,
-            Path from,
-            Path to) throws IOException {
-        move(counter, fs, from, fs, to, false);
+            Counter counter, FileSystem fs,
+            Path from, Path to) throws IOException {
+        try {
+            move(counter, fs, from, fs, to, false, 0);
+        } catch (InterruptedException e) {
+            throw new IOException(e);
+        }
     }
 
     /**
@@ -796,18 +780,38 @@ public final class HadoopDataSourceUtil {
      */
     public static void moveFromLocal(
             Counter counter,
-            LocalFileSystem localFs,
-            FileSystem fs,
-            Path from,
-            Path to) throws IOException {
-        move(counter, localFs, from, fs, to, true);
+            LocalFileSystem localFs, FileSystem fs,
+            Path from, Path to) throws IOException {
+        try {
+            move(counter, localFs, from, fs, to, true, 0);
+        } catch (InterruptedException e) {
+            throw new IOException(e);
+        }
+    }
+
+    /**
+     * Moves all files in source directory into target directory.
+     * @param counter counter which accepts operations count
+     * @param fs file system
+     * @param from path to source directory
+     * @param to path to target directory
+     * @param threads the number of threads for moving each file
+     * @throws IOException if failed to move files
+     * @throws InterruptedException if interrupted while moving files
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.9.0
+     */
+    public static void move(
+            Counter counter, FileSystem fs,
+            Path from, Path to, int threads) throws IOException, InterruptedException {
+        move(counter, fs, from, fs, to, false, threads);
     }
 
     private static void move(
             Counter counter,
             FileSystem fromFs, Path from,
             FileSystem toFs, Path to,
-            boolean fromLocal) throws IOException {
+            boolean fromLocal, int threads) throws IOException, InterruptedException {
         if (counter == null) {
             throw new IllegalArgumentException("counter must not be null"); //$NON-NLS-1$
         }
@@ -838,13 +842,41 @@ public final class HadoopDataSourceUtil {
         if (list.isEmpty()) {
             return;
         }
+        boolean parallel = threads > 1 && list.size() >= PARALLEL_MOVE_MIN;
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Process moving files (from={0}, to={1}, count={2})", //$NON-NLS-1$
+                    "Process moving files (from={0}, to={1}, count={2}, parallel={3})", //$NON-NLS-1$
+                    from,
+                    to,
+                    list.size(),
+                    parallel ? threads : "N/A")); //$NON-NLS-1$
+        }
+        if (parallel) {
+            ExecutorService executor = Executors.newFixedThreadPool(
+                    Math.min(threads, list.size()),
+                    DAEMON_THREAD_FACTORY);
+            try {
+                moveParallel(counter, fromFs, toFs, source, target, list, fromLocal, executor);
+            } finally {
+                executor.shutdownNow();
+            }
+        } else {
+            moveSerial(counter, fromFs, toFs, source, target, list, fromLocal);
+        }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format(
+                    "Finish moving files (from={0}, to={1}, count={2})", //$NON-NLS-1$
                     from,
                     to,
                     list.size()));
         }
+    }
+
+    private static void moveSerial(
+            Counter counter,
+            FileSystem fromFs, FileSystem toFs,
+            Path source, Path target,
+            List<Path> list, boolean fromLocal) throws IOException {
         Set<Path> directoryCreated = new HashSet<>();
         for (Path path : list) {
             Path sourceFile = new Path(source, path);
@@ -857,51 +889,160 @@ public final class HadoopDataSourceUtil {
                         targetFile,
                         stat.getLen()));
             }
-            try {
-                FileStatus stat = toFs.getFileStatus(targetFile);
+            prepareTarget(toFs, targetFile, directoryCreated);
+            counter.add(1);
+            moveFile(toFs, sourceFile, targetFile, fromLocal);
+            counter.add(1);
+        }
+    }
+
+    private static void prepareTarget(FileSystem fs, Path file, Set<Path> directoryCreated) throws IOException {
+        try {
+            FileStatus stat = fs.getFileStatus(file);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(MessageFormat.format(
+                        "deleting file: {0}", //$NON-NLS-1$
+                        file));
+            }
+            if (stat.isDirectory()) {
+                fs.delete(file, true);
+            } else {
+                fs.delete(file, false);
+            }
+        } catch (FileNotFoundException e) {
+            Path parent = file.getParent();
+            if (directoryCreated.contains(parent) == false) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(MessageFormat.format(
-                            "Deleting file: {0}", //$NON-NLS-1$
-                            targetFile));
+                            "creating directory: {0}", //$NON-NLS-1$
+                            parent));
                 }
-                if (stat.isDirectory()) {
-                    toFs.delete(targetFile, true);
-                } else {
-                    toFs.delete(targetFile, false);
-                }
-            } catch (FileNotFoundException e) {
-                Path targetParent = targetFile.getParent();
-                if (directoryCreated.contains(targetParent) == false) {
+                fs.mkdirs(parent);
+                directoryCreated.add(parent);
+            }
+        }
+    }
+
+    static void moveFile(FileSystem toFs, Path sourceFile, Path targetFile, boolean fromLocal) throws IOException {
+        if (fromLocal) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(MessageFormat.format(
+                        "moving file from local: {0} -> {1}", //$NON-NLS-1$
+                        sourceFile, targetFile));
+            }
+            toFs.moveFromLocalFile(sourceFile, targetFile);
+        } else {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(MessageFormat.format(
+                        "moving file: {0} -> {1}", //$NON-NLS-1$
+                        sourceFile, targetFile));
+            }
+            boolean succeed = toFs.rename(sourceFile, targetFile);
+            if (succeed == false) {
+                throw new IOException(MessageFormat.format(
+                        "failed to move file (from={0}, to={1})",
+                        sourceFile,
+                        targetFile));
+            }
+        }
+    }
+
+    private static void moveParallel(
+            Counter counter,
+            FileSystem fromFs, FileSystem toFs,
+            Path source, Path target,
+            List<Path> list, boolean fromLocal,
+            ExecutorService executor) throws IOException, InterruptedException {
+        prepareParallel(counter, toFs, target, list, executor);
+        parallel(executor, list.stream()
+                .map(path -> (Callable<?>) () -> {
+                    Path sourceFile = new Path(source, path);
+                    Path targetFile = new Path(target, path);
+                    if (LOG.isTraceEnabled()) {
+                        FileStatus stat = fromFs.getFileStatus(sourceFile);
+                        LOG.trace(MessageFormat.format(
+                                "moving file (from={0}, to={1}, size={2})", //$NON-NLS-1$
+                                sourceFile,
+                                targetFile,
+                                stat.getLen()));
+                    }
+                    moveFile(toFs, sourceFile, targetFile, fromLocal);
+                    counter.add(1);
+                    return null;
+                })
+                .collect(Collectors.toList()));
+    }
+
+    private static void prepareParallel(
+            Counter counter, FileSystem fs, Path base, List<Path> list,
+            ExecutorService executor) throws IOException, InterruptedException {
+        ConcurrentMap<Path, Boolean> requiredDirs = new ConcurrentHashMap<>();
+        parallel(executor, list.stream()
+                .map(p -> new Path(base, p))
+                .map(file -> (Callable<?>) () -> {
+                    try {
+                        FileStatus stat = fs.getFileStatus(file);
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug(MessageFormat.format(
+                                    "deleting file: {0}", //$NON-NLS-1$
+                                    file));
+                        }
+                        if (stat.isDirectory()) {
+                            fs.delete(file, true);
+                        } else {
+                            fs.delete(file, false);
+                        }
+                        counter.add(1);
+                    } catch (FileNotFoundException e) {
+                        Path parent = file.getParent();
+                        if (fs.exists(parent) == false) {
+                            requiredDirs.put(parent, Boolean.TRUE);
+                        }
+                    }
+                    return null;
+                })
+                .collect(Collectors.toList()));
+        parallel(executor, requiredDirs.keySet().stream()
+                .map(parent -> (Callable<?>) () -> {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug(MessageFormat.format(
-                                "Creating directory: {0}", //$NON-NLS-1$
-                                targetParent));
+                                "creating directory: {0}", //$NON-NLS-1$
+                                parent));
                     }
-                    toFs.mkdirs(targetParent);
-                    directoryCreated.add(targetParent);
+                    fs.mkdirs(parent);
+                    counter.add(1);
+                    return null;
+                })
+                .collect(Collectors.toList()));
+    }
+
+    private static void parallel(
+            ExecutorService executor,
+            Collection<? extends Callable<?>> tasks) throws IOException, InterruptedException {
+        List<Future<?>> futures = tasks.stream()
+                .map(task -> executor.submit(task))
+                .collect(Collectors.toList());
+        for (Future<?> future : futures) {
+            try {
+                future.get();
+            } catch (CancellationException | InterruptedException e) {
+                cancel(futures);
+                throw e;
+            } catch (ExecutionException e) {
+                cancel(futures);
+                try {
+                    throw e.getCause();
+                } catch (Error | RuntimeException | IOException | InterruptedException cause) {
+                    throw cause;
+                } catch (Throwable cause) {
+                    throw new IOException(cause);
                 }
             }
-            counter.add(1);
-            if (fromLocal) {
-                toFs.moveFromLocalFile(sourceFile, targetFile);
-            } else {
-                boolean succeed = toFs.rename(sourceFile, targetFile);
-                if (succeed == false) {
-                    throw new IOException(MessageFormat.format(
-                            "Failed to move file (from={0}, to={1})",
-                            sourceFile,
-                            targetFile));
-                }
-            }
-            counter.add(1);
         }
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(MessageFormat.format(
-                    "Finish moving files (from={0}, to={1}, count={2})", //$NON-NLS-1$
-                    from,
-                    to,
-                    list.size()));
-        }
+    }
+
+    private static void cancel(List<? extends Future<?>> futures) {
+        futures.forEach(f -> f.cancel(true));
     }
 
     private static boolean isLocalPath(Path path) {
