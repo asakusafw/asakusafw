@@ -86,11 +86,14 @@ public final class HadoopDataSourceUtil {
 
     static final AtomicInteger THREAD_COUNTER = new AtomicInteger();
 
-    private static final ThreadFactory DAEMON_THREAD_FACTORY = r -> {
-        Thread t = new Thread(r);
-        t.setDaemon(true);
-        t.setName(String.format("DirectIO-MOVE-%d", THREAD_COUNTER.incrementAndGet())); //$NON-NLS-1$
-        return t;
+    private static final ThreadFactory DAEMON_THREAD_FACTORY = new ThreadFactory() {
+        @Override
+        public Thread newThread(Runnable r) {
+            Thread t = new Thread(r);
+            t.setDaemon(true);
+            t.setName(String.format("DirectIO-MOVE-%d", THREAD_COUNTER.incrementAndGet())); //$NON-NLS-1$
+            return t;
+        }
     };
 
     /**
