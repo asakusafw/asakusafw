@@ -1543,6 +1543,32 @@ public class ModelEmitterTest {
     }
 
     /**
+     * interface declaration w/ default method.
+     * @throws Exception if failed
+     */
+    @Test
+    public void InterfaceDeclaration_default() throws Exception {
+        Class<?> klass = getTypeDeclaration(
+                f.newInterfaceDeclaration(
+                        null,
+                        Arrays.asList(f.newModifier(ModifierKind.PUBLIC)),
+                        f.newSimpleName("Testing"),
+                        Collections.emptyList(),
+                        Arrays.asList(f.newMethodDeclaration(
+                                null,
+                                Arrays.asList(f.newModifier(ModifierKind.DEFAULT)),
+                                Models.toType(f, String.class),
+                                f.newSimpleName("f"),
+                                Collections.emptyList(),
+                                Arrays.asList(f.newReturnStatement(Models.toLiteral(f, "OK")))))));
+
+        assertThat(klass.isInterface(), is(true));
+        assertThat(klass.getName(), equalTo("Testing"));
+
+        assertThat(klass.getMethod("f").isDefault(), is(true));
+    }
+
+    /**
      * enum declaration.
      * @throws Exception if error occurred
      */
