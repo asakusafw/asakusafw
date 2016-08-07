@@ -636,6 +636,19 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
+     * Processes {@link LambdaExpression} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
+     */
+    public R visitLambdaExpression(
+            LambdaExpression elem,
+            C context) throws E {
+        return null;
+    }
+
+    /**
      * Processes {@link LineComment} using this visitor.
      * @param elem the target element
      * @param context the current context (nullable)

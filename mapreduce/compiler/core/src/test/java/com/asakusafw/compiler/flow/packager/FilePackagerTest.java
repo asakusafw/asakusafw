@@ -191,11 +191,9 @@ public class FilePackagerTest extends JobflowCompilerTestRoot {
                             .Private()
                             .toAttributes(),
                         f.newSimpleName("Hello"),
-                        Collections.emptyList(),
                         null,
                         Collections.emptyList(),
-                        Collections.emptyList())),
-                Collections.emptyList());
+                        Collections.emptyList())));
         return cu;
     }
 
@@ -241,10 +239,8 @@ public class FilePackagerTest extends JobflowCompilerTestRoot {
                             .Public()
                             .toAttributes(),
                         f.newSimpleName(name),
-                        Collections.emptyList(),
                         null,
                         Collections.emptyList(),
-                        Collections.emptyList())),
-                Collections.emptyList());
+                        Collections.emptyList())));
     }
 }

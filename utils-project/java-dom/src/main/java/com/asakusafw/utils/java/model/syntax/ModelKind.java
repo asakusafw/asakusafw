@@ -21,6 +21,8 @@ import java.util.List;
 
 /**
  * Represents a kind of {@link Model}.
+ * @since 0.1.0
+ * @version 0.9.0
  */
 public enum ModelKind {
 
@@ -431,6 +433,15 @@ public enum ModelKind {
     LABELED_STATEMENT(LabeledStatement.class, new PropertyKind[] {
         PropertyKind.LABELED_STATEMENT_LABEL,
         PropertyKind.LABELED_STATEMENT_BODY,
+    }),
+
+    /**
+     * Represents {@link LambdaExpression}.
+     * @since 0.9.0
+     */
+    LAMBDA_EXPRESSION(LabeledStatement.class, new PropertyKind[] {
+        PropertyKind.LAMBDA_EXPRESSION_PARAMETERS,
+        PropertyKind.LAMBDA_EXPRESSION_BODY,
     }),
 
     /**

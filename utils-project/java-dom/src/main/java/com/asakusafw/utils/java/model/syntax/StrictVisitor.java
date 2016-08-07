@@ -354,6 +354,13 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     }
 
     @Override
+    public R visitLambdaExpression(
+            LambdaExpression elem,
+            C context) throws E {
+        throw new UnsupportedOperationException("LambdaExpression"); //$NON-NLS-1$
+    }
+
+    @Override
     public R visitLineComment(
             LineComment elem,
             C context) throws E {

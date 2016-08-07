@@ -75,6 +75,8 @@ import com.asakusafw.utils.java.model.syntax.InstanceofExpression;
 import com.asakusafw.utils.java.model.syntax.InterfaceDeclaration;
 import com.asakusafw.utils.java.model.syntax.Javadoc;
 import com.asakusafw.utils.java.model.syntax.LabeledStatement;
+import com.asakusafw.utils.java.model.syntax.LambdaExpression;
+import com.asakusafw.utils.java.model.syntax.LambdaParameter;
 import com.asakusafw.utils.java.model.syntax.LineComment;
 import com.asakusafw.utils.java.model.syntax.Literal;
 import com.asakusafw.utils.java.model.syntax.LocalClassDeclaration;
@@ -774,6 +776,21 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         context.separator(":"); //$NON-NLS-1$
         process(elem.getBody(), context);
         context.statement(EmitDirection.END);
+        return null;
+    }
+
+    @Override
+    public Void visitLambdaExpression(LambdaExpression elem, EmitContext context) {
+        List<? extends LambdaParameter> parameters = elem.getParameters();
+        if (parameters.size() == 1 && parameters.get(0).getModelKind() == ModelKind.SIMPLE_NAME) {
+            process(parameters.get(0), context);
+        } else {
+            context.symbol("("); //$NON-NLS-1$
+            processJoinWithComma(parameters, context);
+            context.separator(")"); //$NON-NLS-1$
+        }
+        context.separator("->"); //$NON-NLS-1$
+        process(elem.getBody(), context);
         return null;
     }
 

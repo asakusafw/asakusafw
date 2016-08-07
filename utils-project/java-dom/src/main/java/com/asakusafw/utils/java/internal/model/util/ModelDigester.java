@@ -64,6 +64,7 @@ import com.asakusafw.utils.java.model.syntax.InstanceofExpression;
 import com.asakusafw.utils.java.model.syntax.InterfaceDeclaration;
 import com.asakusafw.utils.java.model.syntax.Javadoc;
 import com.asakusafw.utils.java.model.syntax.LabeledStatement;
+import com.asakusafw.utils.java.model.syntax.LambdaExpression;
 import com.asakusafw.utils.java.model.syntax.LineComment;
 import com.asakusafw.utils.java.model.syntax.Literal;
 import com.asakusafw.utils.java.model.syntax.LocalClassDeclaration;
@@ -630,6 +631,15 @@ public final class ModelDigester extends StrictVisitor<Void, DigestContext, NoTh
             DigestContext context) {
         digest(elem.getModelKind(), context);
         digest(elem.getLabel(), context);
+        digest(elem.getBody(), context);
+        return null;
+    }
+
+    @Override
+    public Void visitLambdaExpression(
+            LambdaExpression elem,
+            DigestContext context) {
+        digest(elem.getParameters(), context);
         digest(elem.getBody(), context);
         return null;
     }

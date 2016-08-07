@@ -153,8 +153,7 @@ public class FlowPartFactoryEmitter {
             return f.newCompilationUnit(
                     imports.getPackageDeclaration(),
                     imports.toImportDeclarations(),
-                    Collections.singletonList(typeDecl),
-                    Collections.emptyList());
+                    Collections.singletonList(typeDecl));
         }
 
         private ClassDeclaration generateClass() {

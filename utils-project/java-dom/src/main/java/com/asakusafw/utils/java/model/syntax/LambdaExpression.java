@@ -15,26 +15,28 @@
  */
 package com.asakusafw.utils.java.model.syntax;
 
+import java.util.List;
 
 /**
- * An interface which represents simple names.
+ * An abstract super interface of lambda expressions.
  * <ul>
  *   <li> Specified In: <ul>
- *     <li> {@code [JLS3:6.2] Names and Identifiers} </li>
+ *     <li> {@code [JLS8:15.27] Lambda Expressions} </li>
  *   </ul> </li>
  * </ul>
+ * @since 0.9.0
  */
-public interface SimpleName
-        extends Name, LambdaParameter {
+public interface LambdaExpression extends Expression {
 
     /**
-     * Returns the identifier.
-     * @return the identifier
+     * Returns the lambda parameters.
+     * @return the lambda parameters
      */
-    String getToken();
+    List<? extends LambdaParameter> getParameters();
 
-    @Override
-    default SimpleName getName() {
-        return this;
-    }
+    /**
+     * Returns the lambda body.
+     * @return the lambda body
+     */
+    LambdaBody getBody();
 }

@@ -162,8 +162,7 @@ public class ParallelSortClientEmitter {
             return factory.newCompilationUnit(
                     importer.getPackageDeclaration(),
                     importer.toImportDeclarations(),
-                    Collections.singletonList(type),
-                    Collections.emptyList());
+                    Collections.singletonList(type));
         }
 
         private TypeDeclaration createType() throws IOException {

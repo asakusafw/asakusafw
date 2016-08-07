@@ -15,14 +15,16 @@
  */
 package com.asakusafw.utils.java.model.syntax;
 
+import java.util.Collections;
 import java.util.List;
-
-import javax.annotation.Generated;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * A factory for providing {@link Model} objects.
+ * @since 0.1.0
+ * @version 0.9.0
  */
-@Generated("com.asakusafw.utils.java.model.syntax.ModelFactory")
 public interface ModelFactory {
 
     /**
@@ -31,9 +33,7 @@ public interface ModelFactory {
      * @return the created object
      * @throws IllegalArgumentException if {@code arguments} was {@code null}
      */
-    AlternateConstructorInvocation newAlternateConstructorInvocation(
-            Expression... arguments
-    );
+    AlternateConstructorInvocation newAlternateConstructorInvocation(Expression... arguments);
 
     /**
      * Returns a new {@link AlternateConstructorInvocation} object.
@@ -41,9 +41,7 @@ public interface ModelFactory {
      * @return the created object
      * @throws IllegalArgumentException if {@code arguments} was {@code null}
      */
-    AlternateConstructorInvocation newAlternateConstructorInvocation(
-            List<? extends Expression> arguments
-    );
+    AlternateConstructorInvocation newAlternateConstructorInvocation(List<? extends Expression> arguments);
 
     /**
      * Returns a new {@link AlternateConstructorInvocation} object.
@@ -84,10 +82,7 @@ public interface ModelFactory {
      * @throws IllegalArgumentException if {@code name} was {@code null}
      * @throws IllegalArgumentException if {@code expression} was {@code null}
      */
-    AnnotationElement newAnnotationElement(
-            SimpleName name,
-            Expression expression
-    );
+    AnnotationElement newAnnotationElement(SimpleName name, Expression expression);
 
     /**
      * Returns a new {@link AnnotationElementDeclaration} object.
@@ -117,10 +112,7 @@ public interface ModelFactory {
      * @throws IllegalArgumentException if {@code array} was {@code null}
      * @throws IllegalArgumentException if {@code index} was {@code null}
      */
-    ArrayAccessExpression newArrayAccessExpression(
-            Expression array,
-            Expression index
-    );
+    ArrayAccessExpression newArrayAccessExpression(Expression array, Expression index);
 
     /**
      * Returns a new {@link ArrayCreationExpression} object.
@@ -129,10 +121,7 @@ public interface ModelFactory {
      * @return the created object
      * @throws IllegalArgumentException if {@code type} was {@code null}
      */
-    ArrayCreationExpression newArrayCreationExpression(
-            ArrayType type,
-            ArrayInitializer arrayInitializer
-    );
+    ArrayCreationExpression newArrayCreationExpression(ArrayType type, ArrayInitializer arrayInitializer);
 
     /**
      * Returns a new {@link ArrayCreationExpression} object.
@@ -155,9 +144,7 @@ public interface ModelFactory {
      * @return the created object
      * @throws IllegalArgumentException if {@code elements} was {@code null}
      */
-    ArrayInitializer newArrayInitializer(
-            Expression... elements
-    );
+    ArrayInitializer newArrayInitializer(Expression... elements);
 
     /**
      * Returns a new {@link ArrayInitializer} object.
@@ -165,9 +152,7 @@ public interface ModelFactory {
      * @return the created object
      * @throws IllegalArgumentException if {@code elements} was {@code null}
      */
-    ArrayInitializer newArrayInitializer(
-            List<? extends Expression> elements
-    );
+    ArrayInitializer newArrayInitializer(List<? extends Expression> elements);
 
     /**
      * Returns a new {@link ArrayType} object.
@@ -175,9 +160,7 @@ public interface ModelFactory {
      * @return the created object
      * @throws IllegalArgumentException if {@code componentType} was {@code null}
      */
-    ArrayType newArrayType(
-            Type componentType
-    );
+    ArrayType newArrayType(Type componentType);
 
     /**
      * Returns a new {@link AssertStatement} object.
@@ -185,9 +168,9 @@ public interface ModelFactory {
      * @return the created object
      * @throws IllegalArgumentException if {@code expression} was {@code null}
      */
-    AssertStatement newAssertStatement(
-            Expression expression
-    );
+    default AssertStatement newAssertStatement(Expression expression) {
+        return newAssertStatement(expression, null);
+    }
 
     /**
      * Returns a new {@link AssertStatement} object.
@@ -196,10 +179,7 @@ public interface ModelFactory {
      * @return the created object
      * @throws IllegalArgumentException if {@code expression} was {@code null}
      */
-    AssertStatement newAssertStatement(
-            Expression expression,
-            Expression message
-    );
+    AssertStatement newAssertStatement(Expression expression, Expression message);
 
     /**
      * Returns a new {@link AssignmentExpression} object.
@@ -209,10 +189,9 @@ public interface ModelFactory {
      * @throws IllegalArgumentException if {@code leftHandSide} was {@code null}
      * @throws IllegalArgumentException if {@code rightHandSide} was {@code null}
      */
-    AssignmentExpression newAssignmentExpression(
-            Expression leftHandSide,
-            Expression rightHandSide
-    );
+    default AssignmentExpression newAssignmentExpression(Expression leftHandSide, Expression rightHandSide) {
+        return newAssignmentExpression(leftHandSide, InfixOperator.ASSIGN, rightHandSide);
+    }
 
     /**
      * Returns a new {@link AssignmentExpression} object.
@@ -236,9 +215,7 @@ public interface ModelFactory {
      * @return the created object
      * @throws IllegalArgumentException if {@code typeKind} was {@code null}
      */
-    BasicType newBasicType(
-            BasicTypeKind typeKind
-    );
+    BasicType newBasicType(BasicTypeKind typeKind);
 
     /**
      * Returns a new {@link Block} object.
@@ -246,9 +223,7 @@ public interface ModelFactory {
      * @return the created object
      * @throws IllegalArgumentException if {@code statements} was {@code null}
      */
-    Block newBlock(
-            Statement... statements
-    );
+    Block newBlock(Statement... statements);
 
     /**
      * Returns a new {@link Block} object.
@@ -256,9 +231,7 @@ public interface ModelFactory {
      * @return the created object
      * @throws IllegalArgumentException if {@code statements} was {@code null}
      */
-    Block newBlock(
-            List<? extends Statement> statements
-    );
+    Block newBlock(List<? extends Statement> statements);
 
     /**
      * Returns a new {@link BlockComment} object.
@@ -267,24 +240,22 @@ public interface ModelFactory {
      * @throws IllegalArgumentException if {@code string} was {@code null}
      * @throws IllegalArgumentException if {@code string} was empty
      */
-    BlockComment newBlockComment(
-            String string
-    );
+    BlockComment newBlockComment(String string);
 
     /**
      * Returns a new {@link BreakStatement} object.
      * @return the created object
      */
-    BreakStatement newBreakStatement();
+    default BreakStatement newBreakStatement() {
+        return newBreakStatement(null);
+    }
 
     /**
      * Returns a new {@link BreakStatement} object.
      * @param target the target label, or {@code null} if there is no target labels
      * @return the created object
      */
-    BreakStatement newBreakStatement(
-            SimpleName target
-    );
+    BreakStatement newBreakStatement(SimpleName target);
 
     /**
      * Returns a new {@link CastExpression} object.
@@ -294,10 +265,7 @@ public interface ModelFactory {
      * @throws IllegalArgumentException if {@code type} was {@code null}
      * @throws IllegalArgumentException if {@code expression} was {@code null}
      */
-    CastExpression newCastExpression(
-            Type type,
-            Expression expression
-    );
+    CastExpression newCastExpression(Type type, Expression expression);
 
     /**
      * Returns a new {@link CatchClause} object.
@@ -307,10 +275,7 @@ public interface ModelFactory {
      * @throws IllegalArgumentException if {@code parameter} was {@code null}
      * @throws IllegalArgumentException if {@code body} was {@code null}
      */
-    CatchClause newCatchClause(
-            FormalParameterDeclaration parameter,
-            Block body
-    );
+    CatchClause newCatchClause(FormalParameterDeclaration parameter, Block body);
 
     /**
      * Returns a new {@link ClassBody} object.
@@ -318,9 +283,7 @@ public interface ModelFactory {
      * @return the created object
      * @throws IllegalArgumentException if {@code bodyDeclarations} was {@code null}
      */
-    ClassBody newClassBody(
-            List<? extends TypeBodyDeclaration> bodyDeclarations
-    );
+    ClassBody newClassBody(List<? extends TypeBodyDeclaration> bodyDeclarations);
 
     /**
      * Returns a new {@link ClassDeclaration} object.
@@ -379,10 +342,7 @@ public interface ModelFactory {
      * @throws IllegalArgumentException if {@code type} was {@code null}
      * @throws IllegalArgumentException if {@code arguments} was {@code null}
      */
-    ClassInstanceCreationExpression newClassInstanceCreationExpression(
-            Type type,
-            Expression... arguments
-    );
+    ClassInstanceCreationExpression newClassInstanceCreationExpression(Type type, Expression... arguments);
 
     /**
      * Returns a new {@link ClassInstanceCreationExpression} object.
@@ -423,9 +383,26 @@ public interface ModelFactory {
      * @return the created object
      * @throws IllegalArgumentException if {@code type} was {@code null}
      */
-    ClassLiteral newClassLiteral(
-            Type type
-    );
+    ClassLiteral newClassLiteral(Type type);
+
+    /**
+     * Returns a new {@link CompilationUnit} object.
+     * @param packageDeclaration the package declaration,
+     *     or {@code null} if this compilation unit is on the default (unnamed) package
+     * @param importDeclarations the import declarations
+     * @param typeDeclarations the type declarations
+     * @return the created object
+     * @throws IllegalArgumentException if {@code importDeclarations} was {@code null}
+     * @throws IllegalArgumentException if {@code typeDeclarations} was {@code null}
+     * @throws IllegalArgumentException if {@code comments} was {@code null}
+     * @since 0.9.0
+     */
+    default CompilationUnit newCompilationUnit(
+            PackageDeclaration packageDeclaration,
+            List<? extends ImportDeclaration> importDeclarations,
+            List<? extends TypeDeclaration> typeDeclarations) {
+        return newCompilationUnit(packageDeclaration, importDeclarations, typeDeclarations, Collections.emptyList());
+    }
 
     /**
      * Returns a new {@link CompilationUnit} object.
@@ -514,16 +491,16 @@ public interface ModelFactory {
      * Returns a new {@link ContinueStatement} object.
      * @return the created object
      */
-    ContinueStatement newContinueStatement();
+    default ContinueStatement newContinueStatement() {
+        return newContinueStatement(null);
+    }
 
     /**
      * Returns a new {@link ContinueStatement} object.
      * @param target the target label, or {@code null} if there is no target labels
      * @return the created object
      */
-    ContinueStatement newContinueStatement(
-            SimpleName target
-    );
+    ContinueStatement newContinueStatement(SimpleName target);
 
     /**
      * Returns a new {@link DoStatement} object.
@@ -533,10 +510,7 @@ public interface ModelFactory {
      * @throws IllegalArgumentException if {@code body} was {@code null}
      * @throws IllegalArgumentException if {@code condition} was {@code null}
      */
-    DoStatement newDoStatement(
-            Statement body,
-            Expression condition
-    );
+    DoStatement newDoStatement(Statement body, Expression condition);
 
     /**
      * Returns a new {@link DocBlock} object.
@@ -546,10 +520,7 @@ public interface ModelFactory {
      * @throws IllegalArgumentException if {@code tag} was {@code null}
      * @throws IllegalArgumentException if {@code elements} was {@code null}
      */
-    DocBlock newDocBlock(
-            String tag,
-            List<? extends DocElement> elements
-    );
+    DocBlock newDocBlock(String tag, List<? extends DocElement> elements);
 
     /**
      * Returns a new {@link DocField} object.
@@ -558,10 +529,7 @@ public interface ModelFactory {
      * @return the created object
      * @throws IllegalArgumentException if {@code name} was {@code null}
      */
-    DocField newDocField(
-            Type type,
-            SimpleName name
-    );
+    DocField newDocField(Type type, SimpleName name);
 
     /**
      * Returns a new {@link DocMethod} object.
@@ -572,11 +540,7 @@ public interface ModelFactory {
      * @throws IllegalArgumentException if {@code name} was {@code null}
      * @throws IllegalArgumentException if {@code formalParameters} was {@code null}
      */
-    DocMethod newDocMethod(
-            Type type,
-            SimpleName name,
-            List<? extends DocMethodParameter> formalParameters
-    );
+    DocMethod newDocMethod(Type type, SimpleName name, List<? extends DocMethodParameter> formalParameters);
 
     /**
      * Returns a new {@link DocMethodParameter} object.
@@ -586,11 +550,7 @@ public interface ModelFactory {
      * @return the created object
      * @throws IllegalArgumentException if {@code type} was {@code null}
      */
-    DocMethodParameter newDocMethodParameter(
-            Type type,
-            SimpleName name,
-            boolean variableArity
-    );
+    DocMethodParameter newDocMethodParameter(Type type, SimpleName name, boolean variableArity);
 
     /**
      * Returns a new {@link DocText} object.
@@ -598,17 +558,13 @@ public interface ModelFactory {
      * @return the created object
      * @throws IllegalArgumentException if {@code string} was {@code null}
      */
-    DocText newDocText(
-            String string
-    );
+    DocText newDocText(String string);
 
     /**
      * Returns a new {@link EmptyStatement} object.
      * @return the created object
      */
-    EmptyStatement newEmptyStatement(
-
-    );
+    EmptyStatement newEmptyStatement();
 
     /**
      * Returns a new {@link EnhancedForStatement} object.
@@ -712,9 +668,7 @@ public interface ModelFactory {
      * @return the created object
      * @throws IllegalArgumentException if {@code expression} was {@code null}
      */
-    ExpressionStatement newExpressionStatement(
-            Expression expression
-    );
+    ExpressionStatement newExpressionStatement(Expression expression);
 
     /**
      * Returns a new {@link FieldAccessExpression} object.
@@ -724,10 +678,7 @@ public interface ModelFactory {
      * @throws IllegalArgumentException if {@code qualifier} was {@code null}
      * @throws IllegalArgumentException if {@code name} was {@code null}
      */
-    FieldAccessExpression newFieldAccessExpression(
-            Expression qualifier,
-            SimpleName name
-    );
+    FieldAccessExpression newFieldAccessExpression(Expression qualifier, SimpleName name);
 
     /**
      * Returns a new {@link FieldDeclaration} object.
@@ -792,10 +743,7 @@ public interface ModelFactory {
      * @throws IllegalArgumentException if {@code type} was {@code null}
      * @throws IllegalArgumentException if {@code name} was {@code null}
      */
-    FormalParameterDeclaration newFormalParameterDeclaration(
-            Type type,
-            SimpleName name
-    );
+    FormalParameterDeclaration newFormalParameterDeclaration(Type type, SimpleName name);
 
     /**
      * Returns a new {@link FormalParameterDeclaration} object.
@@ -826,10 +774,9 @@ public interface ModelFactory {
      * @throws IllegalArgumentException if {@code condition} was {@code null}
      * @throws IllegalArgumentException if {@code thenStatement} was {@code null}
      */
-    IfStatement newIfStatement(
-            Expression condition,
-            Statement thenStatement
-    );
+    default IfStatement newIfStatement(Expression condition, Statement thenStatement) {
+        return newIfStatement(condition, thenStatement, null);
+    }
 
     /**
      * Returns a new {@link IfStatement} object.
@@ -840,11 +787,18 @@ public interface ModelFactory {
      * @throws IllegalArgumentException if {@code condition} was {@code null}
      * @throws IllegalArgumentException if {@code thenStatement} was {@code null}
      */
-    IfStatement newIfStatement(
-            Expression condition,
-            Statement thenStatement,
-            Statement elseStatement
-    );
+    IfStatement newIfStatement(Expression condition, Statement thenStatement, Statement elseStatement);
+
+    /**
+     * Returns a new {@link ImportDeclaration} object.
+     * @param name the import target name
+     * @return the created object
+     * @throws IllegalArgumentException if {@code importKind} was {@code null}
+     * @throws IllegalArgumentException if {@code name} was {@code null}
+     */
+    default ImportDeclaration newImportDeclaration(Name name) {
+        return newImportDeclaration(ImportKind.SINGLE_TYPE, name);
+    }
 
     /**
      * Returns a new {@link ImportDeclaration} object.
@@ -854,10 +808,7 @@ public interface ModelFactory {
      * @throws IllegalArgumentException if {@code importKind} was {@code null}
      * @throws IllegalArgumentException if {@code name} was {@code null}
      */
-    ImportDeclaration newImportDeclaration(
-            ImportKind importKind,
-            Name name
-    );
+    ImportDeclaration newImportDeclaration(ImportKind importKind, Name name);
 
     /**
      * Returns a new {@link InfixExpression} object.
@@ -869,11 +820,7 @@ public interface ModelFactory {
      * @throws IllegalArgumentException if {@code operator} was {@code null}
      * @throws IllegalArgumentException if {@code rightOperand} was {@code null}
      */
-    InfixExpression newInfixExpression(
-            Expression leftOperand,
-            InfixOperator operator,
-            Expression rightOperand
-    );
+    InfixExpression newInfixExpression(Expression leftOperand, InfixOperator operator, Expression rightOperand);
 
     /**
      * Returns a new {@link InitializerDeclaration} object.
@@ -881,9 +828,7 @@ public interface ModelFactory {
      * @return the created object
      * @throws IllegalArgumentException if {@code body} was {@code null}
      */
-    InitializerDeclaration newInitializerDeclaration(
-            List<? extends Statement> body
-    );
+    InitializerDeclaration newInitializerDeclaration(List<? extends Statement> body);
 
     /**
      * Returns a new {@link InitializerDeclaration} object.
@@ -908,10 +853,7 @@ public interface ModelFactory {
      * @throws IllegalArgumentException if {@code expression} was {@code null}
      * @throws IllegalArgumentException if {@code type} was {@code null}
      */
-    InstanceofExpression newInstanceofExpression(
-            Expression expression,
-            Type type
-    );
+    InstanceofExpression newInstanceofExpression(Expression expression, Type type);
 
     /**
      * Returns a new {@link InterfaceDeclaration} object.
@@ -964,9 +906,7 @@ public interface ModelFactory {
      * @return the created object
      * @throws IllegalArgumentException if {@code blocks} was {@code null}
      */
-    Javadoc newJavadoc(
-            List<? extends DocBlock> blocks
-    );
+    Javadoc newJavadoc(List<? extends DocBlock> blocks);
 
     /**
      * Returns a new {@link LabeledStatement} object.
@@ -976,10 +916,73 @@ public interface ModelFactory {
      * @throws IllegalArgumentException if {@code label} was {@code null}
      * @throws IllegalArgumentException if {@code body} was {@code null}
      */
-    LabeledStatement newLabeledStatement(
-            SimpleName label,
-            Statement body
-    );
+    LabeledStatement newLabeledStatement(SimpleName label, Statement body);
+
+    /**
+     * Returns a new {@link LambdaExpression} object.
+     * @param parameters the lambda parameters
+     * @param body the lambda body
+     * @return the created object
+     * @throws IllegalArgumentException if {@code parameters} was {@code null}
+     * @throws IllegalArgumentException if {@code body} was {@code null}
+     * @since 0.9.0
+     */
+    LambdaExpression newLambdaExpression(List<? extends LambdaParameter> parameters, LambdaBody body);
+
+    /**
+     * Returns a new {@link LambdaExpression} object.
+     * @param parameter the lambda parameter name
+     * @param body the lambda body
+     * @return the created object
+     * @throws IllegalArgumentException if {@code parameters} was {@code null}
+     * @throws IllegalArgumentException if {@code body} was {@code null}
+     * @since 0.9.0
+     */
+    LambdaExpression newLambdaExpression(LambdaParameter parameter, LambdaBody body);
+
+    /**
+     * Returns a new {@link LambdaExpression} object.
+     * @param body the lambda body
+     * @return the created object
+     * @throws IllegalArgumentException if {@code parameters} was {@code null}
+     * @throws IllegalArgumentException if {@code body} was {@code null}
+     * @since 0.9.0
+     */
+    default LambdaExpression newLambdaExpression(LambdaBody body) {
+        return newLambdaExpression(Collections.emptyList(), body);
+    }
+
+    /**
+     * Returns a new {@link LambdaExpression} object.
+     * @param parameters the lambda parameters
+     * @param lambda the lambda function body
+     * @return the created object
+     * @throws IllegalArgumentException if {@code parameters} was {@code null}
+     * @throws IllegalArgumentException if {@code body} was {@code null}
+     * @since 0.9.0
+     */
+    default LambdaExpression newLambdaExpression(
+            List<? extends LambdaParameter> parameters,
+            Function<? super List<? extends SimpleName>, ? extends LambdaBody> lambda) {
+        return newLambdaExpression(
+                parameters,
+                lambda.apply(parameters.stream().map(LambdaParameter::getName).collect(Collectors.toList())));
+    }
+
+    /**
+     * Returns a new {@link LambdaExpression} object.
+     * @param parameter the lambda parameter name
+     * @param lambda the lambda function body
+     * @return the created object
+     * @throws IllegalArgumentException if {@code parameters} was {@code null}
+     * @throws IllegalArgumentException if {@code body} was {@code null}
+     * @since 0.9.0
+     */
+    default LambdaExpression newLambdaExpression(
+            LambdaParameter parameter,
+            Function<? super SimpleName, ? extends LambdaBody> lambda) {
+        return newLambdaExpression(parameter, lambda.apply(parameter.getName()));
+    }
 
     /**
      * Returns a new {@link LineComment} object.
@@ -988,9 +991,7 @@ public interface ModelFactory {
      * @throws IllegalArgumentException if {@code string} was {@code null}
      * @throws IllegalArgumentException if {@code string} was empty
      */
-    LineComment newLineComment(
-            String string
-    );
+    LineComment newLineComment(String string);
 
     /**
      * Returns a new {@link Literal} object.
@@ -999,9 +1000,7 @@ public interface ModelFactory {
      * @throws IllegalArgumentException if {@code token} was {@code null}
      * @throws IllegalArgumentException if {@code token} was empty
      */
-    Literal newLiteral(
-            String token
-    );
+    Literal newLiteral(String token);
 
     /**
      * Returns a new {@link LocalClassDeclaration} object.
@@ -1009,9 +1008,7 @@ public interface ModelFactory {
      * @return the created object
      * @throws IllegalArgumentException if {@code declaration} was {@code null}
      */
-    LocalClassDeclaration newLocalClassDeclaration(
-            ClassDeclaration declaration
-    );
+    LocalClassDeclaration newLocalClassDeclaration(ClassDeclaration declaration);
 
     /**
      * Returns a new {@link LocalVariableDeclaration} object.
@@ -1022,11 +1019,7 @@ public interface ModelFactory {
      * @throws IllegalArgumentException if {@code type} was {@code null}
      * @throws IllegalArgumentException if {@code name} was {@code null}
      */
-    LocalVariableDeclaration newLocalVariableDeclaration(
-            Type type,
-            SimpleName name,
-            Expression initializer
-    );
+    LocalVariableDeclaration newLocalVariableDeclaration(Type type, SimpleName name, Expression initializer);
 
     /**
      * Returns a new {@link LocalVariableDeclaration} object.
@@ -1051,9 +1044,7 @@ public interface ModelFactory {
      * @return the created object
      * @throws IllegalArgumentException if {@code type} was {@code null}
      */
-    MarkerAnnotation newMarkerAnnotation(
-            NamedType type
-    );
+    MarkerAnnotation newMarkerAnnotation(NamedType type);
 
     /**
      * Returns a new {@link MethodDeclaration} object.
@@ -1167,9 +1158,7 @@ public interface ModelFactory {
      * @return the created object
      * @throws IllegalArgumentException if {@code modifierKind} was {@code null}
      */
-    Modifier newModifier(
-            ModifierKind modifierKind
-    );
+    Modifier newModifier(ModifierKind modifierKind);
 
     /**
      * Returns a new {@link NamedType} object.
@@ -1177,9 +1166,7 @@ public interface ModelFactory {
      * @return the created object
      * @throws IllegalArgumentException if {@code name} was {@code null}
      */
-    NamedType newNamedType(
-            Name name
-    );
+    NamedType newNamedType(Name name);
 
     /**
      * Returns a new {@link NormalAnnotation} object.
@@ -1189,10 +1176,7 @@ public interface ModelFactory {
      * @throws IllegalArgumentException if {@code type} was {@code null}
      * @throws IllegalArgumentException if {@code elements} was {@code null}
      */
-    NormalAnnotation newNormalAnnotation(
-            NamedType type,
-            List<? extends AnnotationElement> elements
-    );
+    NormalAnnotation newNormalAnnotation(NamedType type, List<? extends AnnotationElement> elements);
 
     /**
      * Returns a new {@link PackageDeclaration} object.
@@ -1200,9 +1184,9 @@ public interface ModelFactory {
      * @return the created object
      * @throws IllegalArgumentException if {@code name} was {@code null}
      */
-    PackageDeclaration newPackageDeclaration(
-            Name name
-    );
+    default PackageDeclaration newPackageDeclaration(Name name) {
+        return newPackageDeclaration(null, Collections.emptyList(), name);
+    }
 
     /**
      * Returns a new {@link PackageDeclaration} object.
@@ -1213,11 +1197,7 @@ public interface ModelFactory {
      * @throws IllegalArgumentException if {@code annotations} was {@code null}
      * @throws IllegalArgumentException if {@code name} was {@code null}
      */
-    PackageDeclaration newPackageDeclaration(
-            Javadoc javadoc,
-            List<? extends Annotation> annotations,
-            Name name
-    );
+    PackageDeclaration newPackageDeclaration(Javadoc javadoc, List<? extends Annotation> annotations, Name name);
 
     /**
      * Returns a new {@link ParameterizedType} object.
@@ -1227,10 +1207,7 @@ public interface ModelFactory {
      * @throws IllegalArgumentException if {@code type} was {@code null}
      * @throws IllegalArgumentException if {@code typeArguments} was {@code null}
      */
-    ParameterizedType newParameterizedType(
-            Type type,
-            Type... typeArguments
-    );
+    ParameterizedType newParameterizedType(Type type, Type... typeArguments);
 
     /**
      * Returns a new {@link ParameterizedType} object.
@@ -1240,10 +1217,7 @@ public interface ModelFactory {
      * @throws IllegalArgumentException if {@code type} was {@code null}
      * @throws IllegalArgumentException if {@code typeArguments} was {@code null}
      */
-    ParameterizedType newParameterizedType(
-            Type type,
-            List<? extends Type> typeArguments
-    );
+    ParameterizedType newParameterizedType(Type type, List<? extends Type> typeArguments);
 
     /**
      * Returns a new {@link ParenthesizedExpression} object.
@@ -1251,9 +1225,7 @@ public interface ModelFactory {
      * @return the created object
      * @throws IllegalArgumentException if {@code expression} was {@code null}
      */
-    ParenthesizedExpression newParenthesizedExpression(
-            Expression expression
-    );
+    ParenthesizedExpression newParenthesizedExpression(Expression expression);
 
     /**
      * Returns a new {@link PostfixExpression} object.
@@ -1263,10 +1235,7 @@ public interface ModelFactory {
      * @throws IllegalArgumentException if {@code operand} was {@code null}
      * @throws IllegalArgumentException if {@code operator} was {@code null}
      */
-    PostfixExpression newPostfixExpression(
-            Expression operand,
-            PostfixOperator operator
-    );
+    PostfixExpression newPostfixExpression(Expression operand, PostfixOperator operator);
 
     /**
      * Returns a new {@link QualifiedName} object.
@@ -1276,10 +1245,7 @@ public interface ModelFactory {
      * @throws IllegalArgumentException if {@code qualifier} was {@code null}
      * @throws IllegalArgumentException if {@code simpleName} was {@code null}
      */
-    QualifiedName newQualifiedName(
-            Name qualifier,
-            SimpleName simpleName
-    );
+    QualifiedName newQualifiedName(Name qualifier, SimpleName simpleName);
 
     /**
      * Returns a new {@link QualifiedType} object.
@@ -1289,25 +1255,22 @@ public interface ModelFactory {
      * @throws IllegalArgumentException if {@code qualifier} was {@code null}
      * @throws IllegalArgumentException if {@code simpleName} was {@code null}
      */
-    QualifiedType newQualifiedType(
-            Type qualifier,
-            SimpleName simpleName
-    );
+    QualifiedType newQualifiedType(Type qualifier, SimpleName simpleName);
 
     /**
      * Returns a new {@link ReturnStatement} object.
      * @return the created object
      */
-    ReturnStatement newReturnStatement();
+    default ReturnStatement newReturnStatement() {
+        return newReturnStatement(null);
+    }
 
     /**
      * Returns a new {@link ReturnStatement} object.
      * @param expression the expression, or {@code null} if this does not return anything
      * @return the created object
      */
-    ReturnStatement newReturnStatement(
-            Expression expression
-    );
+    ReturnStatement newReturnStatement(Expression expression);
 
     /**
      * Returns a new {@link SimpleName} object.
@@ -1316,9 +1279,7 @@ public interface ModelFactory {
      * @throws IllegalArgumentException if {@code string} was {@code null}
      * @throws IllegalArgumentException if {@code string} was empty
      */
-    SimpleName newSimpleName(
-            String string
-    );
+    SimpleName newSimpleName(String string);
 
     /**
      * Returns a new {@link SingleElementAnnotation} object.
@@ -1328,10 +1289,7 @@ public interface ModelFactory {
      * @throws IllegalArgumentException if {@code type} was {@code null}
      * @throws IllegalArgumentException if {@code expression} was {@code null}
      */
-    SingleElementAnnotation newSingleElementAnnotation(
-            NamedType type,
-            Expression expression
-    );
+    SingleElementAnnotation newSingleElementAnnotation(NamedType type, Expression expression);
 
     /**
      * Returns a new {@link StatementExpressionList} object.
@@ -1340,9 +1298,7 @@ public interface ModelFactory {
      * @throws IllegalArgumentException if {@code expressions} was {@code null}
      * @throws IllegalArgumentException if {@code expressions} was empty
      */
-    StatementExpressionList newStatementExpressionList(
-            Expression... expressions
-    );
+    StatementExpressionList newStatementExpressionList(Expression... expressions);
 
     /**
      * Returns a new {@link StatementExpressionList} object.
@@ -1351,24 +1307,22 @@ public interface ModelFactory {
      * @throws IllegalArgumentException if {@code expressions} was {@code null}
      * @throws IllegalArgumentException if {@code expressions} was empty
      */
-    StatementExpressionList newStatementExpressionList(
-            List<? extends Expression> expressions
-    );
+    StatementExpressionList newStatementExpressionList(List<? extends Expression> expressions);
 
     /**
      * Returns a new {@link Super} object.
      * @return the created object
      */
-    Super newSuper();
+    default Super newSuper() {
+        return newSuper(null);
+    }
 
     /**
      * Returns a new {@link Super} object.
      * @param qualifier the type qualifier, or {@code null} if there is no type qualifier
      * @return the created object
      */
-    Super newSuper(
-            NamedType qualifier
-    );
+    Super newSuper(NamedType qualifier);
 
     /**
      * Returns a new {@link SuperConstructorInvocation} object.
@@ -1376,9 +1330,7 @@ public interface ModelFactory {
      * @return the created object
      * @throws IllegalArgumentException if {@code arguments} was {@code null}
      */
-    SuperConstructorInvocation newSuperConstructorInvocation(
-            Expression... arguments
-    );
+    SuperConstructorInvocation newSuperConstructorInvocation(Expression... arguments);
 
     /**
      * Returns a new {@link SuperConstructorInvocation} object.
@@ -1386,9 +1338,7 @@ public interface ModelFactory {
      * @return the created object
      * @throws IllegalArgumentException if {@code arguments} was {@code null}
      */
-    SuperConstructorInvocation newSuperConstructorInvocation(
-            List<? extends Expression> arguments
-    );
+    SuperConstructorInvocation newSuperConstructorInvocation(List<? extends Expression> arguments);
 
     /**
      * Returns a new {@link SuperConstructorInvocation} object.
@@ -1411,17 +1361,13 @@ public interface ModelFactory {
      * @return the created object
      * @throws IllegalArgumentException if {@code expression} was {@code null}
      */
-    SwitchCaseLabel newSwitchCaseLabel(
-            Expression expression
-    );
+    SwitchCaseLabel newSwitchCaseLabel(Expression expression);
 
     /**
      * Returns a new {@link SwitchDefaultLabel} object.
      * @return the created object
      */
-    SwitchDefaultLabel newSwitchDefaultLabel(
-
-    );
+    SwitchDefaultLabel newSwitchDefaultLabel();
 
     /**
      * Returns a new {@link SwitchStatement} object.
@@ -1431,10 +1377,7 @@ public interface ModelFactory {
      * @throws IllegalArgumentException if {@code expression} was {@code null}
      * @throws IllegalArgumentException if {@code statements} was {@code null}
      */
-    SwitchStatement newSwitchStatement(
-            Expression expression,
-            List<? extends Statement> statements
-    );
+    SwitchStatement newSwitchStatement(Expression expression, List<? extends Statement> statements);
 
     /**
      * Returns a new {@link SynchronizedStatement} object.
@@ -1444,25 +1387,22 @@ public interface ModelFactory {
      * @throws IllegalArgumentException if {@code expression} was {@code null}
      * @throws IllegalArgumentException if {@code body} was {@code null}
      */
-    SynchronizedStatement newSynchronizedStatement(
-            Expression expression,
-            Block body
-    );
+    SynchronizedStatement newSynchronizedStatement(Expression expression, Block body);
 
     /**
      * Returns a new {@link This} object.
      * @return the created object
      */
-    This newThis();
+    default This newThis() {
+        return newThis(null);
+    }
 
     /**
      * Returns a new {@link This} object.
      * @param qualifier the type qualifier, or {@code null} if there is no type qualifier
      * @return the created object
      */
-    This newThis(
-            NamedType qualifier
-    );
+    This newThis(NamedType qualifier);
 
     /**
      * Returns a new {@link ThrowStatement} object.
@@ -1470,9 +1410,7 @@ public interface ModelFactory {
      * @return the created object
      * @throws IllegalArgumentException if {@code expression} was {@code null}
      */
-    ThrowStatement newThrowStatement(
-            Expression expression
-    );
+    ThrowStatement newThrowStatement(Expression expression);
 
     /**
      * Returns a new {@link TryStatement} object.
@@ -1497,10 +1435,7 @@ public interface ModelFactory {
      * @throws IllegalArgumentException if {@code name} was {@code null}
      * @throws IllegalArgumentException if {@code typeBounds} was {@code null}
      */
-    TypeParameterDeclaration newTypeParameterDeclaration(
-            SimpleName name,
-            Type... typeBounds
-    );
+    TypeParameterDeclaration newTypeParameterDeclaration(SimpleName name, Type... typeBounds);
 
     /**
      * Returns a new {@link TypeParameterDeclaration} object.
@@ -1510,10 +1445,7 @@ public interface ModelFactory {
      * @throws IllegalArgumentException if {@code name} was {@code null}
      * @throws IllegalArgumentException if {@code typeBounds} was {@code null}
      */
-    TypeParameterDeclaration newTypeParameterDeclaration(
-            SimpleName name,
-            List<? extends Type> typeBounds
-    );
+    TypeParameterDeclaration newTypeParameterDeclaration(SimpleName name, List<? extends Type> typeBounds);
 
     /**
      * Returns a new {@link UnaryExpression} object.
@@ -1523,10 +1455,7 @@ public interface ModelFactory {
      * @throws IllegalArgumentException if {@code operator} was {@code null}
      * @throws IllegalArgumentException if {@code operand} was {@code null}
      */
-    UnaryExpression newUnaryExpression(
-            UnaryOperator operator,
-            Expression operand
-    );
+    UnaryExpression newUnaryExpression(UnaryOperator operator, Expression operand);
 
     /**
      * Returns a new {@link VariableDeclarator} object.
@@ -1535,10 +1464,9 @@ public interface ModelFactory {
      * @return the created object
      * @throws IllegalArgumentException if {@code name} was {@code null}
      */
-    VariableDeclarator newVariableDeclarator(
-            SimpleName name,
-            Expression initializer
-    );
+    default VariableDeclarator newVariableDeclarator(SimpleName name, Expression initializer) {
+        return newVariableDeclarator(name, 0, initializer);
+    }
 
     /**
      * Returns a new {@link VariableDeclarator} object.
@@ -1549,11 +1477,7 @@ public interface ModelFactory {
      * @throws IllegalArgumentException if {@code name} was {@code null}
      * @throws IllegalArgumentException if {@code extraDimensions} was negative
      */
-    VariableDeclarator newVariableDeclarator(
-            SimpleName name,
-            int extraDimensions,
-            Expression initializer
-    );
+    VariableDeclarator newVariableDeclarator(SimpleName name, int extraDimensions, Expression initializer);
 
     /**
      * Returns a new {@link WhileStatement} object.
@@ -1563,16 +1487,15 @@ public interface ModelFactory {
      * @throws IllegalArgumentException if {@code condition} was {@code null}
      * @throws IllegalArgumentException if {@code body} was {@code null}
      */
-    WhileStatement newWhileStatement(
-            Expression condition,
-            Statement body
-    );
+    WhileStatement newWhileStatement(Expression condition, Statement body);
 
     /**
      * Returns a new {@link Wildcard} object.
      * @return the created object
      */
-    Wildcard newWildcard();
+    default Wildcard newWildcard() {
+        return newWildcard(WildcardBoundKind.UNBOUNDED, null);
+    }
 
     /**
      * Returns a new {@link Wildcard} object.
@@ -1581,8 +1504,5 @@ public interface ModelFactory {
      * @return the created object
      * @throws IllegalArgumentException if {@code boundKind} was {@code null}
      */
-    Wildcard newWildcard(
-            WildcardBoundKind boundKind,
-            Type typeBound
-    );
+    Wildcard newWildcard(WildcardBoundKind boundKind, Type typeBound);
 }

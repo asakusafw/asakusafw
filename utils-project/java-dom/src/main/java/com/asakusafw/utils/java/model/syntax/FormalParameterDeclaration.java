@@ -26,7 +26,7 @@ import java.util.List;
  * </ul>
  */
 public interface FormalParameterDeclaration
-        extends TypedElement {
+        extends TypedElement, LambdaParameter {
 
     /**
      * Returns the modifiers and annotations.
@@ -50,6 +50,7 @@ public interface FormalParameterDeclaration
      * Returns the parameter name.
      * @return the parameter name
      */
+    @Override
     SimpleName getName();
 
     /**

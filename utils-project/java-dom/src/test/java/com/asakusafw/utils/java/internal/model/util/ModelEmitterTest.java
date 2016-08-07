@@ -34,6 +34,9 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.RandomAccess;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
@@ -49,7 +52,6 @@ import com.asakusafw.utils.java.model.syntax.Attribute;
 import com.asakusafw.utils.java.model.syntax.BasicTypeKind;
 import com.asakusafw.utils.java.model.syntax.CatchClause;
 import com.asakusafw.utils.java.model.syntax.ClassDeclaration;
-import com.asakusafw.utils.java.model.syntax.Comment;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
 import com.asakusafw.utils.java.model.syntax.EnumConstantDeclaration;
 import com.asakusafw.utils.java.model.syntax.Expression;
@@ -438,7 +440,7 @@ public class ModelEmitterTest {
                 f.newFieldAccessExpression(
                     f.newClassInstanceCreationExpression(
                         null,
-                        Arrays.asList(new Type[] {}),
+                        Collections.emptyList(),
                         f.newNamedType(Models.toName(f, "java.awt.Point")),
                         Arrays.asList(
                             Models.toLiteral(f, 100),
@@ -458,7 +460,7 @@ public class ModelEmitterTest {
             fromExpr("Hello",
                 f.newMethodInvocationExpression(
                     Models.toName(f, "java.util.Arrays"),
-                    Arrays.asList(new Type[] {}),
+                    Collections.emptyList(),
                     f.newSimpleName("toString"),
                     Arrays.asList(
                         f.newArrayCreationExpression(
@@ -478,7 +480,7 @@ public class ModelEmitterTest {
             fromExpr("Hello",
                 f.newMethodInvocationExpression(
                     Models.toName(f, "java.util.Arrays"),
-                    Arrays.asList(new Type[] {}),
+                    Collections.emptyList(),
                     f.newSimpleName("deepToString"),
                     Arrays.asList(
                         f.newArrayCreationExpression(
@@ -499,7 +501,7 @@ public class ModelEmitterTest {
             fromExpr("Hello",
                 f.newMethodInvocationExpression(
                     Models.toName(f, "java.util.Arrays"),
-                    Arrays.asList(new Type[] {}),
+                    Collections.emptyList(),
                     f.newSimpleName("deepToString"),
                     Arrays.asList(
                         f.newArrayCreationExpression(
@@ -520,7 +522,7 @@ public class ModelEmitterTest {
             fromExpr("Hello",
                 f.newMethodInvocationExpression(
                     Models.toName(f, "java.util.Arrays"),
-                    Arrays.asList(new Type[] {}),
+                    Collections.emptyList(),
                     f.newSimpleName("toString"),
                     Arrays.asList(
                         f.newArrayCreationExpression(
@@ -564,9 +566,9 @@ public class ModelEmitterTest {
             fromExpr("Hello",
                 f.newMethodInvocationExpression(
                     f.newClassLiteral(f.newNamedType(f.newSimpleName("Object"))),
-                    Arrays.asList(new Type[] {}),
+                    Collections.emptyList(),
                     f.newSimpleName("getName"),
-                    Arrays.asList(new Expression[] {}))),
+                    Collections.emptyList())),
             "Hello",
             "java.lang.Object");
     }
@@ -580,9 +582,9 @@ public class ModelEmitterTest {
             fromExpr("Hello",
                 f.newMethodInvocationExpression(
                         f.newLiteral("\"Hello, world!\""),
-                        Arrays.asList(new Type[] {}),
+                        Collections.emptyList(),
                         f.newSimpleName("toString"),
-                        Arrays.asList(new Expression[] {}))),
+                        Collections.emptyList())),
             "Hello",
             "Hello, world!");
     }
@@ -598,9 +600,9 @@ public class ModelEmitterTest {
                         f.newCastExpression(
                                 f.newNamedType(f.newSimpleName("Integer")),
                                 f.newLiteral("1")),
-                        Arrays.asList(new Type[] {}),
+                        Collections.emptyList(),
                         f.newSimpleName("toString"),
-                        Arrays.asList(new Expression[] {}))),
+                        Collections.emptyList())),
             "Hello",
             "1");
     }
@@ -614,7 +616,7 @@ public class ModelEmitterTest {
             fromExpr("Hello",
                 f.newClassInstanceCreationExpression(
                     null,
-                    Arrays.asList(new Type[] {}),
+                    Collections.emptyList(),
                     f.newNamedType(f.newSimpleName("String")),
                     Arrays.asList(Models.toLiteral(f, "Hello, world!")),
                     null)),
@@ -628,17 +630,104 @@ public class ModelEmitterTest {
     @Test
     public void ClassInstanceCreation_Anonymous() {
         assertToString(
-            fromExpr("Hello",
-                f.newClassInstanceCreationExpression(
-                    null,
-                    Arrays.asList(new Type[] {}),
-                    f.newNamedType(f.newSimpleName("Object")),
-                    Arrays.asList(new Expression[] {}),
-                    f.newClassBody(Arrays.asList(new TypeBodyDeclaration[] {
-                        toString(f.newReturnStatement(Models.toLiteral(f, "Anon")))
-                    })))),
-            "Hello",
-            "Anon");
+                fromExpr("Hello",
+                    f.newClassInstanceCreationExpression(
+                        null,
+                        Collections.emptyList(),
+                        f.newNamedType(f.newSimpleName("Object")),
+                        Collections.emptyList(),
+                        f.newClassBody(Arrays.asList(new TypeBodyDeclaration[] {
+                            toString(f.newReturnStatement(Models.toLiteral(f, "Anon")))
+                        })))),
+                "Hello",
+                "Anon");
+    }
+
+    /**
+     * lambda expression w/ empty parameters.
+     */
+    @Test
+    public void LambdaExpression() {
+        assertToString(
+                fromExpr("Hello",
+                    f.newMethodInvocationExpression(
+                            f.newCastExpression(
+                                    f.newParameterizedType(
+                                            Models.toType(f, Supplier.class),
+                                            Models.toType(f, String.class)),
+                                    f.newLambdaExpression(Models.toLiteral(f, "LAMBDA"))),
+                            f.newSimpleName("get"),
+                            Arrays.asList())),
+                "Hello",
+                "LAMBDA");
+    }
+
+    /**
+     * lambda expression w/ block body.
+     */
+    @Test
+    public void LambdaExpression_block() {
+        assertToString(
+                fromExpr("Hello",
+                    f.newMethodInvocationExpression(
+                            f.newCastExpression(
+                                    f.newParameterizedType(
+                                            Models.toType(f, Supplier.class),
+                                            Models.toType(f, String.class)),
+                                    f.newLambdaExpression(f.newBlock(f.newReturnStatement(
+                                            Models.toLiteral(f, "LAMBDA"))))),
+                            f.newSimpleName("get"),
+                            Arrays.asList())),
+                "Hello",
+                "LAMBDA");
+    }
+
+    /**
+     * lambda expression w/ single simple parameter.
+     */
+    @Test
+    public void LambdaExpression_single() {
+        assertToString(
+                fromExpr("Hello",
+                    f.newMethodInvocationExpression(
+                            f.newCastExpression(
+                                    f.newParameterizedType(
+                                            Models.toType(f, Function.class),
+                                            Models.toType(f, String.class),
+                                            Models.toType(f, String.class)),
+                                    f.newLambdaExpression(f.newSimpleName("e"), e -> e)),
+                            f.newSimpleName("apply"),
+                            Arrays.asList(Models.toLiteral(f, "LAMBDA")))),
+                "Hello",
+                "LAMBDA");
+    }
+
+    /**
+     * lambda expression w/ formal parameters.
+     */
+    @Test
+    public void LambdaExpression_formal() {
+        assertToString(
+                fromExpr("Hello",
+                    f.newMethodInvocationExpression(
+                            f.newCastExpression(
+                                    f.newParameterizedType(
+                                            Models.toType(f, BiFunction.class),
+                                            Models.toType(f, String.class),
+                                            Models.toType(f, Integer.class),
+                                            Models.toType(f, String.class)),
+                                    f.newLambdaExpression(
+                                            Arrays.asList(new FormalParameterDeclaration[] {
+                                                    f.newFormalParameterDeclaration(
+                                                            Models.toType(f, String.class), f.newSimpleName("a")),
+                                                    f.newFormalParameterDeclaration(
+                                                            Models.toType(f, Integer.class), f.newSimpleName("b")),
+                                            }),
+                                            ps -> f.newInfixExpression(ps.get(0), InfixOperator.PLUS, ps.get(1)))),
+                            f.newSimpleName("apply"),
+                            Arrays.asList(Models.toLiteral(f, "LAMBDA"), Models.toLiteral(f, 100)))),
+                "Hello",
+                "LAMBDA100");
     }
 
     /**
@@ -677,7 +766,7 @@ public class ModelEmitterTest {
         assertToString(
             fromStmt("Hello",
                 f.newLocalVariableDeclaration(
-                    Arrays.asList(new Attribute[] {}),
+                    Collections.emptyList(),
                     f.newBasicType(BasicTypeKind.INT),
                     Arrays.asList(new VariableDeclarator[] {
                         f.newVariableDeclarator(
@@ -698,7 +787,7 @@ public class ModelEmitterTest {
         assertToString(
             fromStmt("Hello",
                 f.newLocalVariableDeclaration(
-                    Arrays.asList(new Attribute[] {}),
+                    Collections.emptyList(),
                     f.newBasicType(BasicTypeKind.INT),
                     Arrays.asList(new VariableDeclarator[] {
                         f.newVariableDeclarator(
@@ -734,7 +823,7 @@ public class ModelEmitterTest {
         assertToString(
             fromStmt("Hello",
                 f.newLocalVariableDeclaration(
-                    Arrays.asList(new Attribute[] {}),
+                    Collections.emptyList(),
                     f.newBasicType(BasicTypeKind.INT),
                     Arrays.asList(new VariableDeclarator[] {
                         f.newVariableDeclarator(
@@ -918,14 +1007,14 @@ public class ModelEmitterTest {
                 newStringBuilder("buf"),
                 f.newEnhancedForStatement(
                     f.newFormalParameterDeclaration(
-                        Arrays.asList(new Attribute[] {}),
+                        Collections.emptyList(),
                         f.newBasicType(BasicTypeKind.INT),
                         false,
                         f.newSimpleName("elem"),
                         0),
                     f.newArrayCreationExpression(
                         f.newArrayType(f.newBasicType(BasicTypeKind.INT)),
-                        Arrays.asList(new Expression[] {}),
+                        Collections.emptyList(),
                         f.newArrayInitializer(Arrays.asList(new Expression[] {
                             Models.toLiteral(f, 10),
                             Models.toLiteral(f, 20),
@@ -1144,9 +1233,9 @@ public class ModelEmitterTest {
                 f.newThrowStatement(
                     f.newClassInstanceCreationExpression(
                         null,
-                        Arrays.asList(new Type[] {}),
+                        Collections.emptyList(),
                         f.newNamedType(Models.toName(f, "UnsupportedOperationException")),
-                        Arrays.asList(new Expression[] {}),
+                        Collections.emptyList(),
                         null))),
             "Hello",
             UnsupportedOperationException.class);
@@ -1165,7 +1254,7 @@ public class ModelEmitterTest {
                         f.newThrowStatement(
                             f.newClassInstanceCreationExpression(
                                 null,
-                                Arrays.asList(new Type[] {}),
+                                Collections.emptyList(),
                                 f.newNamedType(Models.toName(f, "UnsupportedOperationException")),
                                 Arrays.asList(new Expression[] {
                                     Models.toLiteral(f, "OK")
@@ -1175,7 +1264,7 @@ public class ModelEmitterTest {
                     Arrays.asList(new CatchClause[] {
                         f.newCatchClause(
                             f.newFormalParameterDeclaration(
-                                Arrays.asList(new Attribute[] {}),
+                                Collections.emptyList(),
                                 f.newNamedType(f.newSimpleName("Error")),
                                 false,
                                 f.newSimpleName("e"),
@@ -1184,7 +1273,7 @@ public class ModelEmitterTest {
                             }))),
                         f.newCatchClause(
                             f.newFormalParameterDeclaration(
-                                Arrays.asList(new Attribute[] {}),
+                                Collections.emptyList(),
                                 f.newNamedType(f.newSimpleName("UnsupportedOperationException")),
                                 false,
                                 f.newSimpleName("e"),
@@ -1194,9 +1283,9 @@ public class ModelEmitterTest {
                                 "buf",
                                 f.newMethodInvocationExpression(
                                     f.newSimpleName("e"),
-                                    Arrays.asList(new Type[] {}),
+                                    Collections.emptyList(),
                                     f.newSimpleName("getMessage"),
-                                    Arrays.asList(new Expression[] {})))
+                                    Collections.emptyList()))
                             })))
                     }),
                     null),
@@ -1218,7 +1307,7 @@ public class ModelEmitterTest {
                         f.newThrowStatement(
                             f.newClassInstanceCreationExpression(
                                 null,
-                                Arrays.asList(new Type[] {}),
+                                Collections.emptyList(),
                                 f.newNamedType(Models.toName(f, "UnsupportedOperationException")),
                                 Arrays.asList(new Expression[] {
                                     Models.toLiteral(f, "OK")
@@ -1228,7 +1317,7 @@ public class ModelEmitterTest {
                     Arrays.asList(new CatchClause[] {
                         f.newCatchClause(
                             f.newFormalParameterDeclaration(
-                                Arrays.asList(new Attribute[] {}),
+                                Collections.emptyList(),
                                 f.newNamedType(f.newSimpleName("UnsupportedOperationException")),
                                 false,
                                 f.newSimpleName("e"),
@@ -1238,9 +1327,9 @@ public class ModelEmitterTest {
                                 "buf",
                                 f.newMethodInvocationExpression(
                                     f.newSimpleName("e"),
-                                    Arrays.asList(new Type[] {}),
+                                    Collections.emptyList(),
                                     f.newSimpleName("getMessage"),
-                                    Arrays.asList(new Expression[] {})))
+                                    Collections.emptyList()))
                             })))
                     }),
                     f.newBlock(Arrays.asList(new Statement[] {
@@ -1264,9 +1353,9 @@ public class ModelEmitterTest {
                     f.newBlock(Arrays.asList(new Statement[] {
                         f.newExpressionStatement(f.newMethodInvocationExpression(
                             f.newThis(),
-                            Arrays.asList(new Type[] {}),
+                            Collections.emptyList(),
                             f.newSimpleName("notify"),
-                            Arrays.asList(new Expression[] {}))),
+                            Collections.emptyList())),
                     }))),
                 append("buf", Models.toLiteral(f, "OK")),
                 returnAsString(f.newSimpleName("buf"))),
@@ -1282,12 +1371,12 @@ public class ModelEmitterTest {
         Class<?> klass = getTypeDeclaration(
             f.newClassDeclaration(
                 null,
-                Arrays.asList(new Attribute[] {}),
+                Collections.emptyList(),
                 f.newSimpleName("Testing"),
-                Arrays.asList(new TypeParameterDeclaration[] {}),
+                Collections.emptyList(),
                 null,
-                Arrays.asList(new Type[] {}),
-                Arrays.asList(new TypeBodyDeclaration[] {})));
+                Collections.emptyList(),
+                Collections.emptyList()));
         assertThat(klass.getAnnotations().length, is(0));
         assertThat(klass.getName(), equalTo("Testing"));
         assertThat(klass.getTypeParameters().length, is(0));
@@ -1308,10 +1397,10 @@ public class ModelEmitterTest {
                     f.newModifier(ModifierKind.ABSTRACT),
                 }),
                 f.newSimpleName("Testing"),
-                Arrays.asList(new TypeParameterDeclaration[] {}),
+                Collections.emptyList(),
                 null,
-                Arrays.asList(new Type[] {}),
-                Arrays.asList(new TypeBodyDeclaration[] {})));
+                Collections.emptyList(),
+                Collections.emptyList()));
 
         assertThat(java.lang.reflect.Modifier.isPublic(klass.getModifiers()),
                 is(true));
@@ -1332,10 +1421,10 @@ public class ModelEmitterTest {
                         (NamedType) Models.toType(f, Deprecated.class))
                 }),
                 f.newSimpleName("Testing"),
-                Arrays.asList(new TypeParameterDeclaration[] {}),
+                Collections.emptyList(),
                 null,
-                Arrays.asList(new Type[] {}),
-                Arrays.asList(new TypeBodyDeclaration[] {})));
+                Collections.emptyList(),
+                Collections.emptyList()));
 
         assertThat(klass.getAnnotation(Deprecated.class),
                 not(nullValue()));
@@ -1358,10 +1447,10 @@ public class ModelEmitterTest {
                         })))
                 }),
                 f.newSimpleName("Testing"),
-                Arrays.asList(new TypeParameterDeclaration[] {}),
+                Collections.emptyList(),
                 null,
-                Arrays.asList(new Type[] {}),
-                Arrays.asList(new TypeBodyDeclaration[] {})),
+                Collections.emptyList(),
+                Collections.emptyList()),
             createAnnotation("An"));
 
         String[] value = (String[]) getAnnotationValue(klass, "An", "value");
@@ -1394,10 +1483,10 @@ public class ModelEmitterTest {
                         }))
                 }),
                 f.newSimpleName("Testing"),
-                Arrays.asList(new TypeParameterDeclaration[] {}),
+                Collections.emptyList(),
                 null,
-                Arrays.asList(new Type[] {}),
-                Arrays.asList(new TypeBodyDeclaration[] {})),
+                Collections.emptyList(),
+                Collections.emptyList()),
             createAnnotation("An"));
 
         String[] value = (String[]) getAnnotationValue(klass, "An", "value");
@@ -1416,16 +1505,16 @@ public class ModelEmitterTest {
         Class<?> klass = getTypeDeclaration(
             f.newClassDeclaration(
                 null,
-                Arrays.asList(new Attribute[] {}),
+                Collections.emptyList(),
                 f.newSimpleName("Testing"),
                 Arrays.asList(new TypeParameterDeclaration[] {
                     f.newTypeParameterDeclaration(
                         f.newSimpleName("T"),
-                        Arrays.asList(new Type[] {}))
+                        Collections.emptyList())
                 }),
                 null,
-                Arrays.asList(new Type[] {}),
-                Arrays.asList(new TypeBodyDeclaration[] {})));
+                Collections.emptyList(),
+                Collections.emptyList()));
         TypeVariable<?>[] tps = klass.getTypeParameters();
         assertThat(tps.length, is(1));
         assertThat(tps[0].getName(), is("T"));
@@ -1443,7 +1532,7 @@ public class ModelEmitterTest {
         Class<?> klass = getTypeDeclaration(
             f.newClassDeclaration(
                 null,
-                Arrays.asList(new Attribute[] {}),
+                Collections.emptyList(),
                 f.newSimpleName("Testing"),
                 Arrays.asList(new TypeParameterDeclaration[] {
                     f.newTypeParameterDeclaration(
@@ -1453,8 +1542,8 @@ public class ModelEmitterTest {
                         }))
                 }),
                 null,
-                Arrays.asList(new Type[] {}),
-                Arrays.asList(new TypeBodyDeclaration[] {})));
+                Collections.emptyList(),
+                Collections.emptyList()));
         TypeVariable<?>[] tps = klass.getTypeParameters();
         assertThat(tps.length, is(1));
         assertThat(tps[0].getName(), is("T"));
@@ -1471,12 +1560,12 @@ public class ModelEmitterTest {
         Class<?> klass = getTypeDeclaration(
             f.newClassDeclaration(
                 null,
-                Arrays.asList(new Attribute[] {}),
+                Collections.emptyList(),
                 f.newSimpleName("Testing"),
-                Arrays.asList(new TypeParameterDeclaration[] {}),
+                Collections.emptyList(),
                 Models.toType(f, Date.class),
-                Arrays.asList(new Type[] {}),
-                Arrays.asList(new TypeBodyDeclaration[] {})));
+                Collections.emptyList(),
+                Collections.emptyList()));
         assertThat(klass.getSuperclass(), is((Object) Date.class));
     }
 
@@ -1492,13 +1581,13 @@ public class ModelEmitterTest {
                     f.newModifier(ModifierKind.ABSTRACT)
                 }),
                 f.newSimpleName("Testing"),
-                Arrays.asList(new TypeParameterDeclaration[] {}),
+                Collections.emptyList(),
                 null,
                 Arrays.asList(new Type[] {
                     Models.toType(f, Serializable.class),
                     Models.toType(f, RandomAccess.class),
                 }),
-                Arrays.asList(new TypeBodyDeclaration[] {})));
+                Collections.emptyList()));
 
         Class<?>[] interfaces = klass.getInterfaces();
         assertThat(interfaces.length, is(2));
@@ -1521,13 +1610,13 @@ public class ModelEmitterTest {
                 Arrays.asList(new TypeParameterDeclaration[] {
                     f.newTypeParameterDeclaration(
                         f.newSimpleName("A"),
-                        Arrays.asList(new Type[] {}))
+                        Collections.emptyList())
                 }),
                 Arrays.asList(new Type[] {
                     Models.toType(f, Serializable.class),
                     Models.toType(f, RandomAccess.class),
                 }),
-                Arrays.asList(new TypeBodyDeclaration[] {})));
+                Collections.emptyList()));
 
         assertThat(klass.isInterface(), is(true));
         assertThat(klass.getName(), equalTo("Testing"));
@@ -1587,15 +1676,15 @@ public class ModelEmitterTest {
                 Arrays.asList(new EnumConstantDeclaration[] {
                     f.newEnumConstantDeclaration(
                         null,
-                        Arrays.asList(new Attribute[] {}),
+                        Collections.emptyList(),
                         f.newSimpleName("A"),
-                        Arrays.asList(new Expression[] {}),
+                        Collections.emptyList(),
                         null),
                     f.newEnumConstantDeclaration(
                         null,
-                        Arrays.asList(new Attribute[] {}),
+                        Collections.emptyList(),
                         f.newSimpleName("B"),
-                        Arrays.asList(new Expression[] {}),
+                        Collections.emptyList(),
                         null),
                 }),
                 Arrays.asList(new TypeBodyDeclaration[] {
@@ -1604,13 +1693,13 @@ public class ModelEmitterTest {
                         Arrays.asList(new Attribute[] {
                             f.newModifier(ModifierKind.PUBLIC)
                         }),
-                        Arrays.asList(new TypeParameterDeclaration[] {}),
+                        Collections.emptyList(),
                         Models.toType(f, void.class),
                         f.newSimpleName("example"),
-                        Arrays.asList(new FormalParameterDeclaration[] {}),
+                        Collections.emptyList(),
                         0,
-                        Arrays.asList(new Type[] {}),
-                        f.newBlock(Arrays.asList(new Statement[] {})))
+                        Collections.emptyList(),
+                        f.newBlock(Collections.emptyList()))
                 })));
 
         assertThat(klass.isEnum(), is(true));
@@ -1724,10 +1813,10 @@ public class ModelEmitterTest {
                 Arrays.asList(new Attribute[] {
                     f.newModifier(ModifierKind.PUBLIC)
                 }),
-                Arrays.asList(new TypeParameterDeclaration[] {}),
+                Collections.emptyList(),
                 f.newSimpleName("Testing"),
-                Arrays.asList(new FormalParameterDeclaration[] {}),
-                Arrays.asList(new Type[] {}),
+                Collections.emptyList(),
+                Collections.emptyList(),
                 f.newBlock(Arrays.asList(new Statement[] {
                     f.newExpressionStatement(
                         f.newAssignmentExpression(
@@ -1765,13 +1854,13 @@ public class ModelEmitterTest {
                 Arrays.asList(new Attribute[] {
                     f.newModifier(ModifierKind.PUBLIC)
                 }),
-                Arrays.asList(new TypeParameterDeclaration[] {}),
+                Collections.emptyList(),
                 f.newSimpleName("Testing"),
-                Arrays.asList(new FormalParameterDeclaration[] {}),
-                Arrays.asList(new Type[] {}),
+                Collections.emptyList(),
+                Collections.emptyList(),
                 f.newBlock(Arrays.asList(new Statement[] {
                     f.newAlternateConstructorInvocation(
-                        Arrays.asList(new Type[] {}),
+                        Collections.emptyList(),
                         Arrays.asList(new Expression[] {
                             Models.toLiteral(f, 100),
                         })),
@@ -1786,22 +1875,22 @@ public class ModelEmitterTest {
                 Arrays.asList(new Attribute[] {
                     f.newModifier(ModifierKind.PRIVATE)
                 }),
-                Arrays.asList(new TypeParameterDeclaration[] {}),
+                Collections.emptyList(),
                 f.newSimpleName("Testing"),
                 Arrays.asList(new FormalParameterDeclaration[] {
                     f.newFormalParameterDeclaration(
-                        Arrays.asList(new Attribute[] {}),
+                        Collections.emptyList(),
                         Models.toType(f, int.class),
                         false,
                         f.newSimpleName("p"),
                         0)
                 }),
-                Arrays.asList(new Type[] {}),
+                Collections.emptyList(),
                 f.newBlock(Arrays.asList(new Statement[] {
                     f.newSuperConstructorInvocation(
                         null,
-                        Arrays.asList(new Type[] {}),
-                        Arrays.asList(new Expression[] {})),
+                        Collections.emptyList(),
+                        Collections.emptyList()),
                     f.newExpressionStatement(
                         f.newAssignmentExpression(
                             f.newSimpleName("a"),
@@ -1826,9 +1915,9 @@ public class ModelEmitterTest {
                 Arrays.asList(new Attribute[] {
                     f.newModifier(ModifierKind.PUBLIC)
                 }),
-                Arrays.asList(new TypeParameterDeclaration[] {}),
+                Collections.emptyList(),
                 f.newSimpleName("Testing"),
-                Arrays.asList(new FormalParameterDeclaration[] {}),
+                Collections.emptyList(),
                 Arrays.asList(new Type[] {
                     Models.toType(f, Exception.class)
                 }),
@@ -1836,9 +1925,9 @@ public class ModelEmitterTest {
                     f.newThrowStatement(
                         f.newClassInstanceCreationExpression(
                             null,
-                            Arrays.asList(new Type[] {}),
+                            Collections.emptyList(),
                             Models.toType(f, IOException.class),
-                            Arrays.asList(new Expression[] {}),
+                            Collections.emptyList(),
                             null))
                 })))));
 
@@ -1865,10 +1954,10 @@ public class ModelEmitterTest {
                 Arrays.asList(new Attribute[] {
                     f.newModifier(ModifierKind.PUBLIC)
                 }),
-                Arrays.asList(new TypeParameterDeclaration[] {}),
+                Collections.emptyList(),
                 Models.toType(f, String.class),
                 f.newSimpleName("method"),
-                Arrays.asList(new FormalParameterDeclaration[] {}),
+                Collections.emptyList(),
                 0,
                 Arrays.asList(new Type[] {
                     Models.toType(f, Exception.class)
@@ -1894,19 +1983,19 @@ public class ModelEmitterTest {
                 Arrays.asList(new Attribute[] {
                     f.newModifier(ModifierKind.PUBLIC)
                 }),
-                Arrays.asList(new TypeParameterDeclaration[] {}),
+                Collections.emptyList(),
                 Models.toType(f, String.class),
                 f.newSimpleName("method"),
                 Arrays.asList(new FormalParameterDeclaration[] {
                     f.newFormalParameterDeclaration(
-                        Arrays.asList(new Attribute[] {}),
+                        Collections.emptyList(),
                         Models.toType(f, String.class),
                         false,
                         f.newSimpleName("a"),
                         0)
                 }),
                 0,
-                Arrays.asList(new Type[] {}),
+                Collections.emptyList(),
                 f.newBlock(Arrays.asList(new Statement[] {
                     f.newReturnStatement(f.newSimpleName("a"))
                 })))));
@@ -1928,19 +2017,19 @@ public class ModelEmitterTest {
                 Arrays.asList(new Attribute[] {
                     f.newModifier(ModifierKind.PUBLIC)
                 }),
-                Arrays.asList(new TypeParameterDeclaration[] {}),
+                Collections.emptyList(),
                 Models.toType(f, String[].class),
                 f.newSimpleName("method"),
                 Arrays.asList(new FormalParameterDeclaration[] {
                     f.newFormalParameterDeclaration(
-                        Arrays.asList(new Attribute[] {}),
+                        Collections.emptyList(),
                         Models.toType(f, String.class),
                         true,
                         f.newSimpleName("a"),
                         0)
                 }),
                 0,
-                Arrays.asList(new Type[] {}),
+                Collections.emptyList(),
                 f.newBlock(Arrays.asList(new Statement[] {
                     f.newReturnStatement(f.newSimpleName("a"))
                 })))));
@@ -1965,19 +2054,19 @@ public class ModelEmitterTest {
                 Arrays.asList(new Attribute[] {
                     f.newModifier(ModifierKind.PUBLIC)
                 }),
-                Arrays.asList(new TypeParameterDeclaration[] {}),
+                Collections.emptyList(),
                 Models.toType(f, String.class),
                 f.newSimpleName("method"),
                 Arrays.asList(new FormalParameterDeclaration[] {
                     f.newFormalParameterDeclaration(
-                        Arrays.asList(new Attribute[] {}),
+                        Collections.emptyList(),
                         Models.toType(f, String.class),
                         false,
                         f.newSimpleName("a"),
                         1)
                 }),
                 1,
-                Arrays.asList(new Type[] {}),
+                Collections.emptyList(),
                 f.newBlock(Arrays.asList(new Statement[] {
                     f.newReturnStatement(f.newSimpleName("a"))
                 })))));
@@ -2002,11 +2091,11 @@ public class ModelEmitterTest {
                     f.newModifier(ModifierKind.PUBLIC)
                 }),
                 f.newSimpleName("Testing"),
-                Arrays.asList(new Type[] {}),
+                Collections.emptyList(),
                 Arrays.asList(new EnumConstantDeclaration[] {
                     f.newEnumConstantDeclaration(
                         null,
-                        Arrays.asList(new Attribute[] {}),
+                        Collections.emptyList(),
                         f.newSimpleName("A"),
                         Arrays.asList(new Expression[] {
                             Models.toLiteral(f, 1),
@@ -2032,17 +2121,17 @@ public class ModelEmitterTest {
                         Arrays.asList(new Attribute[] {
                             f.newModifier(ModifierKind.PRIVATE)
                         }),
-                        Arrays.asList(new TypeParameterDeclaration[] {}),
+                        Collections.emptyList(),
                         f.newSimpleName("Testing"),
                         Arrays.asList(new FormalParameterDeclaration[] {
                             f.newFormalParameterDeclaration(
-                                Arrays.asList(new Attribute[] {}),
+                                Collections.emptyList(),
                                 Models.toType(f, Object.class),
                                 true,
                                 f.newSimpleName("args"),
                                 0)
                         }),
-                        Arrays.asList(new Type[] {}),
+                        Collections.emptyList(),
                         f.newBlock(Arrays.asList(new Statement[] {
                             f.newExpressionStatement(
                                 f.newAssignmentExpression(
@@ -2070,18 +2159,18 @@ public class ModelEmitterTest {
                     f.newModifier(ModifierKind.PUBLIC)
                 }),
                 f.newSimpleName("Testing"),
-                Arrays.asList(new Type[] {}),
+                Collections.emptyList(),
                 Arrays.asList(new EnumConstantDeclaration[] {
                     f.newEnumConstantDeclaration(
                         null,
-                        Arrays.asList(new Attribute[] {}),
+                        Collections.emptyList(),
                         f.newSimpleName("A"),
-                        Arrays.asList(new Expression[] {}),
+                        Collections.emptyList(),
                         f.newClassBody(Arrays.asList(new TypeBodyDeclaration[] {
                             toString(returnAsString(Models.toLiteral(f, "hello")))
                         }))),
                 }),
-                Arrays.asList(new TypeBodyDeclaration[] {})
+                Collections.emptyList()
             ));
 
         Enum<?> constant = Enum.valueOf(klass.asSubclass(Enum.class), "A");
@@ -2101,22 +2190,22 @@ public class ModelEmitterTest {
                     f.newModifier(ModifierKind.PUBLIC)
                 }),
                 f.newSimpleName("Testing"),
-                Arrays.asList(new Type[] {}),
+                Collections.emptyList(),
                 Arrays.asList(new EnumConstantDeclaration[] {
                     f.newEnumConstantDeclaration(
                         null,
-                        Arrays.asList(new Attribute[] {}),
+                        Collections.emptyList(),
                         f.newSimpleName("A"),
-                        Arrays.asList(new Expression[] {}),
+                        Collections.emptyList(),
                         f.newClassBody(Arrays.asList(new TypeBodyDeclaration[] {
                             toString(returnAsString(f.newMethodInvocationExpression(
                                 f.newSuper(null),
-                                Arrays.asList(new Type[] {}),
+                                Collections.emptyList(),
                                 f.newSimpleName("name"),
-                                Arrays.asList(new Expression[] {}))))
+                                Collections.emptyList())))
                         }))),
                 }),
-                Arrays.asList(new TypeBodyDeclaration[] {})
+                Collections.emptyList()
             ));
 
         Enum<?> constant = Enum.valueOf(klass.asSubclass(Enum.class), "A");
@@ -2130,7 +2219,7 @@ public class ModelEmitterTest {
     public void PackageDeclaration() {
         packageDecl = f.newPackageDeclaration(
             null,
-            Arrays.asList(new Annotation[] {}),
+            Collections.emptyList(),
             Models.toName(f, "com.example"));
         assertToString(
             fromExpr("Hello", Models.toLiteral(f, "Hello, world!")),
@@ -2149,7 +2238,7 @@ public class ModelEmitterTest {
             fromExpr("Hello",
                 f.newMethodInvocationExpression(
                     Models.toName(f, "Arrays"),
-                    Arrays.asList(new Type[] {}),
+                    Collections.emptyList(),
                     f.newSimpleName("asList"),
                     Arrays.asList(Models.toLiteral(f, "Hello, world!")))),
             "Hello",
@@ -2167,7 +2256,7 @@ public class ModelEmitterTest {
             fromExpr("Hello",
                 f.newMethodInvocationExpression(
                     Models.toName(f, "Arrays"),
-                    Arrays.asList(new Type[] {}),
+                    Collections.emptyList(),
                     f.newSimpleName("asList"),
                     Arrays.asList(Models.toLiteral(f, "Hello, world!")))),
             "Hello",
@@ -2185,7 +2274,7 @@ public class ModelEmitterTest {
             fromExpr("Hello",
                 f.newMethodInvocationExpression(
                     null,
-                    Arrays.asList(new Type[] {}),
+                    Collections.emptyList(),
                     f.newSimpleName("asList"),
                     Arrays.asList(Models.toLiteral(f, "Hello, world!")))),
             "Hello",
@@ -2203,7 +2292,7 @@ public class ModelEmitterTest {
             fromExpr("Hello",
                 f.newMethodInvocationExpression(
                     null,
-                    Arrays.asList(new Type[] {}),
+                    Collections.emptyList(),
                     f.newSimpleName("asList"),
                     Arrays.asList(Models.toLiteral(f, "Hello, world!")))),
             "Hello",
@@ -2246,7 +2335,7 @@ public class ModelEmitterTest {
 
     private LocalVariableDeclaration var(Type type, String name, Expression init) {
         return f.newLocalVariableDeclaration(
-            Arrays.asList(new Attribute[] {}),
+            Collections.emptyList(),
             type,
             Arrays.asList(new VariableDeclarator[] {
                 f.newVariableDeclarator(f.newSimpleName(name), 0, init)
@@ -2259,9 +2348,9 @@ public class ModelEmitterTest {
             name,
             f.newClassInstanceCreationExpression(
                 null,
-                Arrays.asList(new Type[] {}),
+                Collections.emptyList(),
                 f.newNamedType(f.newSimpleName("StringBuilder")),
-                Arrays.asList(new Expression[] {}),
+                Collections.emptyList(),
                 null));
     }
 
@@ -2269,17 +2358,13 @@ public class ModelEmitterTest {
         return f.newExpressionStatement(
             f.newMethodInvocationExpression(
                 f.newSimpleName(name),
-                Arrays.asList(new Type[] {}),
+                Collections.emptyList(),
                 f.newSimpleName("append"),
                 Arrays.asList(value)));
     }
 
     private CompilationUnit unit(TypeDeclaration...types) {
-        return f.newCompilationUnit(
-            packageDecl,
-            importDecls,
-            Arrays.asList(types),
-            Arrays.asList(new Comment[] {}));
+        return f.newCompilationUnit(packageDecl, importDecls, Arrays.asList(types));
     }
 
     private ClassDeclaration klass(String name, TypeBodyDeclaration...elems) {
@@ -2289,9 +2374,9 @@ public class ModelEmitterTest {
                 f.newModifier(ModifierKind.PUBLIC)
             }),
             f.newSimpleName(name),
-            Arrays.asList(new TypeParameterDeclaration[] {}),
+            Collections.emptyList(),
             null,
-            Arrays.asList(new Type[] {}),
+            Arrays.asList(),
             Arrays.asList(elems));
     }
 
@@ -2301,12 +2386,12 @@ public class ModelEmitterTest {
             Arrays.asList(new Attribute[] {
                 f.newModifier(ModifierKind.PUBLIC)
             }),
-            Arrays.asList(new TypeParameterDeclaration[] {}),
+            Collections.emptyList(),
             f.newNamedType(Models.toName(f, "String")),
             f.newSimpleName("toString"),
-            Arrays.asList(new FormalParameterDeclaration[] {}),
+            Collections.emptyList(),
             0,
-            Arrays.asList(new Type[] {}),
+            Collections.emptyList(),
             f.newBlock(Arrays.asList(statements)));
     }
 
@@ -2320,7 +2405,7 @@ public class ModelEmitterTest {
         return f.newReturnStatement(
             f.newMethodInvocationExpression(
                 Models.toName(f, "String"),
-                Arrays.asList(new Type[] {}),
+                Collections.emptyList(),
                 f.newSimpleName("valueOf"),
                 Arrays.asList(expr))
         );
@@ -2358,13 +2443,13 @@ public class ModelEmitterTest {
                 Arrays.asList(new TypeBodyDeclaration[] {
                     f.newAnnotationElementDeclaration(
                         null,
-                        Arrays.asList(new Attribute[] {}),
+                        Collections.emptyList(),
                         Models.toType(f, String[].class),
                         f.newSimpleName("value"),
                         null),
                     f.newAnnotationElementDeclaration(
                             null,
-                            Arrays.asList(new Attribute[] {}),
+                            Collections.emptyList(),
                             Models.toType(f, int.class),
                             f.newSimpleName("option"),
                             Models.toLiteral(f, 100)),
@@ -2413,13 +2498,13 @@ public class ModelEmitterTest {
                     Arrays.asList(new TypeParameterDeclaration[] {
                         f.newTypeParameterDeclaration(
                             f.newSimpleName("T"),
-                            Arrays.asList(new Type[] {}))
+                            Collections.emptyList())
                     }),
                     type,
                     f.newSimpleName("testing"),
-                    Arrays.asList(new FormalParameterDeclaration[] {}),
+                    Collections.emptyList(),
                     0,
-                    Arrays.asList(new Type[] {}),
+                    Collections.emptyList(),
                     null)));
         Class<?> klass = compile(unit, "Testing");
         try {

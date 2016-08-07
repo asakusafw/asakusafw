@@ -64,6 +64,7 @@ import com.asakusafw.utils.java.model.syntax.InstanceofExpression;
 import com.asakusafw.utils.java.model.syntax.InterfaceDeclaration;
 import com.asakusafw.utils.java.model.syntax.Javadoc;
 import com.asakusafw.utils.java.model.syntax.LabeledStatement;
+import com.asakusafw.utils.java.model.syntax.LambdaExpression;
 import com.asakusafw.utils.java.model.syntax.LineComment;
 import com.asakusafw.utils.java.model.syntax.Literal;
 import com.asakusafw.utils.java.model.syntax.LocalClassDeclaration;
@@ -1005,6 +1006,23 @@ public final class ModelMatcher extends StrictVisitor<Boolean, Model, NoThrow> {
         }
         LabeledStatement that = (LabeledStatement) context;
         if (Boolean.FALSE.equals(match(elem.getLabel(), that.getLabel()))) {
+            return Boolean.FALSE;
+        }
+        if (Boolean.FALSE.equals(match(elem.getBody(), that.getBody()))) {
+            return Boolean.FALSE;
+        }
+        return Boolean.TRUE;
+    }
+
+    @Override
+    public Boolean visitLambdaExpression(
+            LambdaExpression elem,
+            Model context) {
+        if (elem.getModelKind() != context.getModelKind()) {
+            return Boolean.FALSE;
+        }
+        LambdaExpression that = (LambdaExpression) context;
+        if (Boolean.FALSE.equals(match(elem.getParameters(), elem.getParameters()))) {
             return Boolean.FALSE;
         }
         if (Boolean.FALSE.equals(match(elem.getBody(), that.getBody()))) {
