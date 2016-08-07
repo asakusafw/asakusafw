@@ -640,7 +640,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     public Void visitFormalParameterDeclaration(FormalParameterDeclaration elem, EmitContext context) {
         begin(elem, context);
         processInlineComment(elem, context);
-        processAttributes(elem.getModifiers(), context);
+        process(elem.getModifiers(), context); // one liner instead of processAttributes(...)
         process(elem.getType(), context);
         if (elem.isVariableArity()) {
             context.separator("..."); //$NON-NLS-1$
