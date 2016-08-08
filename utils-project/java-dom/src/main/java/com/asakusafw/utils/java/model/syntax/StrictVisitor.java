@@ -557,6 +557,13 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     }
 
     @Override
+    public R visitTryResource(
+            TryResource elem,
+            C context) throws E {
+        throw new UnsupportedOperationException("TryResource"); //$NON-NLS-1$
+    }
+
+    @Override
     public R visitTryStatement(
             TryStatement elem,
             C context) throws E {

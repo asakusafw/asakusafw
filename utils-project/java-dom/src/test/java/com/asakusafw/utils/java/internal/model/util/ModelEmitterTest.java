@@ -18,6 +18,7 @@ package com.asakusafw.utils.java.internal.model.util;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.annotation.Retention;
@@ -69,6 +70,7 @@ import com.asakusafw.utils.java.model.syntax.PackageDeclaration;
 import com.asakusafw.utils.java.model.syntax.PostfixOperator;
 import com.asakusafw.utils.java.model.syntax.ReturnStatement;
 import com.asakusafw.utils.java.model.syntax.Statement;
+import com.asakusafw.utils.java.model.syntax.TryResource;
 import com.asakusafw.utils.java.model.syntax.Type;
 import com.asakusafw.utils.java.model.syntax.TypeBodyDeclaration;
 import com.asakusafw.utils.java.model.syntax.TypeDeclaration;
@@ -1287,8 +1289,7 @@ public class ModelEmitterTest {
                                     f.newSimpleName("getMessage"),
                                     Collections.emptyList()))
                             })))
-                    }),
-                    null),
+                    })),
                 returnAsString(f.newSimpleName("buf"))),
             "Hello",
             "OK");
@@ -1334,8 +1335,7 @@ public class ModelEmitterTest {
                                     f.newSimpleName("getMessage"),
                                     Collections.emptyList()))
                             })))
-                    }),
-                    null),
+                    })),
                 returnAsString(f.newSimpleName("buf"))),
             "Hello",
             "OK");
@@ -1385,6 +1385,58 @@ public class ModelEmitterTest {
                 returnAsString(f.newSimpleName("buf"))),
             "Hello",
             "OKfin");
+    }
+
+    /**
+     * try with resources.
+     */
+    @Test
+    public void Try_with_resources() {
+        assertToString(
+            fromStmt("Hello",
+                f.newTryStatement(
+                    Arrays.asList(f.newTryResource(
+                        Models.toType(f, ByteArrayOutputStream.class),
+                        f.newSimpleName("out"),
+                        f.newClassInstanceCreationExpression(Models.toType(f, ByteArrayOutputStream.class)))),
+                    f.newBlock(f.newReturnStatement(Models.toLiteral(f, "OK"))),
+                    Arrays.asList(f.newCatchClause(
+                            Models.toType(f, IOException.class),
+                            f.newSimpleName("e"),
+                            e -> f.newBlock(f.newReturnStatement(Models.toLiteral(f, "NG"))))))),
+            "Hello",
+            "OK");
+    }
+
+    /**
+     * try with resources.
+     */
+    @Test
+    public void Try_with_resources_multiple() {
+        assertToString(
+                fromStmt("Hello",
+                    f.newTryStatement(
+                        Arrays.asList(new TryResource[] {
+                            f.newTryResource(
+                                Models.toType(f, ByteArrayOutputStream.class),
+                                f.newSimpleName("a"),
+                                f.newClassInstanceCreationExpression(Models.toType(f, ByteArrayOutputStream.class))),
+                            f.newTryResource(
+                                Models.toType(f, ByteArrayOutputStream.class),
+                                f.newSimpleName("b"),
+                                f.newClassInstanceCreationExpression(Models.toType(f, ByteArrayOutputStream.class))),
+                            f.newTryResource(
+                                Models.toType(f, ByteArrayOutputStream.class),
+                                f.newSimpleName("c"),
+                                f.newClassInstanceCreationExpression(Models.toType(f, ByteArrayOutputStream.class))),
+                        }),
+                        f.newBlock(f.newReturnStatement(Models.toLiteral(f, "OK"))),
+                        Arrays.asList(f.newCatchClause(
+                            Models.toType(f, IOException.class),
+                            f.newSimpleName("e"),
+                            e -> f.newBlock(f.newReturnStatement(Models.toLiteral(f, "NG"))))))),
+                "Hello",
+                "OK");
     }
 
     /**

@@ -1161,6 +1161,30 @@ public enum PropertyKind {
     ),
 
     /**
+     * Represents {@link TryResource#getParameter()}.
+     */
+    TRY_RESOURCE_PARAMETER(
+        TryResource.class,
+        "parameter" //$NON-NLS-1$
+    ),
+
+    /**
+     * Represents {@link TryResource#getInitializer()}.
+     */
+    TRY_RESOURCE_INITIALIZER(
+        TryResource.class,
+        "initializer" //$NON-NLS-1$
+    ),
+
+    /**
+     * Represents {@link TryStatement#getResources()}.
+     */
+    TRY_STATEMENT_RESOURCES(
+        TryStatement.class,
+        "resources" //$NON-NLS-1$
+    ),
+
+    /**
      * Represents {@link TryStatement#getTryBlock()}.
      */
     TRY_STATEMENT_TRY_BLOCK(

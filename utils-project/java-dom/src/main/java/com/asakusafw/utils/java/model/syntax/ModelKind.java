@@ -665,9 +665,18 @@ public enum ModelKind {
     }),
 
     /**
+     * Represents {@link TryResource}.
+     */
+    TRY_RESOURCE(TryResource.class, new PropertyKind[] {
+        PropertyKind.TRY_RESOURCE_PARAMETER,
+        PropertyKind.TRY_RESOURCE_INITIALIZER,
+    }),
+
+    /**
      * Represents {@link TryStatement}.
      */
     TRY_STATEMENT(TryStatement.class, new PropertyKind[] {
+        PropertyKind.TRY_STATEMENT_RESOURCES,
         PropertyKind.TRY_STATEMENT_TRY_BLOCK,
         PropertyKind.TRY_STATEMENT_CATCH_CLAUSES,
         PropertyKind.TRY_STATEMENT_FINALLY_BLOCK,
@@ -691,6 +700,7 @@ public enum ModelKind {
 
     /**
      * Represents {@link UnionType}.
+     * @since 0.9.0
      */
     UNION_TYPE(UnaryExpression.class, new PropertyKind[] {
             PropertyKind.UNION_TYPE_ALTERNATIVE_TYPES,

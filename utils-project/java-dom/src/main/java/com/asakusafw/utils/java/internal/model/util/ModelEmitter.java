@@ -110,6 +110,7 @@ import com.asakusafw.utils.java.model.syntax.SwitchStatement;
 import com.asakusafw.utils.java.model.syntax.SynchronizedStatement;
 import com.asakusafw.utils.java.model.syntax.This;
 import com.asakusafw.utils.java.model.syntax.ThrowStatement;
+import com.asakusafw.utils.java.model.syntax.TryResource;
 import com.asakusafw.utils.java.model.syntax.TryStatement;
 import com.asakusafw.utils.java.model.syntax.Type;
 import com.asakusafw.utils.java.model.syntax.TypeParameterDeclaration;
@@ -1150,11 +1151,35 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
+    public Void visitTryResource(TryResource elem, EmitContext context) {
+        begin(elem, context);
+        processInlineComment(elem, context);
+        process(elem.getParameter(), context);
+        context.operator("="); //$NON-NLS-1$
+        process(elem.getInitializer(), context);
+        return null;
+    }
+
+    @Override
     public Void visitTryStatement(TryStatement elem, EmitContext context) {
         begin(elem, context);
         processBlockComment(elem, context);
         context.statement(EmitDirection.BEGIN);
         context.keyword("try"); //$NON-NLS-1$
+        if (appears(elem.getResources())) {
+            context.symbol("("); //$NON-NLS-1$
+            boolean first = true;
+            for (TryResource resource : elem.getResources()) {
+                if (first) {
+                    first = false;
+                } else {
+                    context.separator(";"); //$NON-NLS-1$
+                    context.blockPadding();
+                }
+                process(resource, context);
+            }
+            context.separator(")");
+        }
         process(elem.getTryBlock(), context);
         process(elem.getCatchClauses(), context);
         if (appears(elem.getFinallyBlock())) {

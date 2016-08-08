@@ -95,6 +95,7 @@ import com.asakusafw.utils.java.model.syntax.SwitchStatement;
 import com.asakusafw.utils.java.model.syntax.SynchronizedStatement;
 import com.asakusafw.utils.java.model.syntax.This;
 import com.asakusafw.utils.java.model.syntax.ThrowStatement;
+import com.asakusafw.utils.java.model.syntax.TryResource;
 import com.asakusafw.utils.java.model.syntax.TryStatement;
 import com.asakusafw.utils.java.model.syntax.TypeParameterDeclaration;
 import com.asakusafw.utils.java.model.syntax.UnaryExpression;
@@ -922,10 +923,21 @@ public final class ModelDigester extends StrictVisitor<Void, DigestContext, NoTh
     }
 
     @Override
+    public Void visitTryResource(
+            TryResource elem,
+            DigestContext context) {
+        digest(elem.getModelKind(), context);
+        digest(elem.getParameter(), context);
+        digest(elem.getInitializer(), context);
+        return null;
+    }
+
+    @Override
     public Void visitTryStatement(
             TryStatement elem,
             DigestContext context) {
         digest(elem.getModelKind(), context);
+        digest(elem.getResources(), context);
         digest(elem.getTryBlock(), context);
         digest(elem.getCatchClauses(), context);
         digest(elem.getFinallyBlock(), context);

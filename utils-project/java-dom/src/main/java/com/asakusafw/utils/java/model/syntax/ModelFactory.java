@@ -269,6 +269,24 @@ public interface ModelFactory {
 
     /**
      * Returns a new {@link CatchClause} object.
+     * @param type the exception type
+     * @param name the exception parameter name
+     * @param body the {@code catch} block with exception parameter name
+     * @return the created object
+     * @throws IllegalArgumentException if {@code parameter} was {@code null}
+     * @throws IllegalArgumentException if {@code body} was {@code null}
+     * @since 0.9.0
+     */
+    default CatchClause newCatchClause(
+            Type type, SimpleName name,
+            Function<? super SimpleName, ? extends Block> body) {
+        return newCatchClause(
+                newFormalParameterDeclaration(type, name),
+                body.apply(name));
+    }
+
+    /**
+     * Returns a new {@link CatchClause} object.
      * @param parameter the expression parameter
      * @param body the {@code catch} block
      * @return the created object
@@ -568,6 +586,26 @@ public interface ModelFactory {
 
     /**
      * Returns a new {@link EnhancedForStatement} object.
+     * @param type the loop variable type
+     * @param name the loop variable name
+     * @param expression the loop target
+     * @param body the loop body
+     * @return the created object
+     * @throws IllegalArgumentException if {@code parameter} was {@code null}
+     * @throws IllegalArgumentException if {@code expression} was {@code null}
+     * @throws IllegalArgumentException if {@code body} was {@code null}
+     * @since 0.9.0
+     */
+    default EnhancedForStatement newEnhancedForStatement(
+            Type type,
+            SimpleName name,
+            Expression expression,
+            Statement body) {
+        return newEnhancedForStatement(newFormalParameterDeclaration(type, name), expression, body);
+    }
+
+    /**
+     * Returns a new {@link EnhancedForStatement} object.
      * @param parameter the loop parameter
      * @param expression the loop target
      * @param body the loop body
@@ -743,7 +781,9 @@ public interface ModelFactory {
      * @throws IllegalArgumentException if {@code type} was {@code null}
      * @throws IllegalArgumentException if {@code name} was {@code null}
      */
-    FormalParameterDeclaration newFormalParameterDeclaration(Type type, SimpleName name);
+    default FormalParameterDeclaration newFormalParameterDeclaration(Type type, SimpleName name) {
+        return newFormalParameterDeclaration(Collections.emptyList(), type, false, name, 0);
+    }
 
     /**
      * Returns a new {@link FormalParameterDeclaration} object.
@@ -1413,6 +1453,55 @@ public interface ModelFactory {
     ThrowStatement newThrowStatement(Expression expression);
 
     /**
+     * Returns a new {@link TryResource} object.
+     * @param type the resource type
+     * @param name the resource name
+     * @param expression the resource expression
+     * @return the created object
+     * @throws IllegalArgumentException if parameters are {@code null}
+     * @since 0.9.0
+     */
+    default TryResource newTryResource(Type type, SimpleName name, Expression expression) {
+        return newTryResource(newFormalParameterDeclaration(type, name), expression);
+    }
+
+    /**
+     * Returns a new {@link TryResource} object.
+     * @param parameter the resource variable declaration
+     * @param expression the resource expression
+     * @return the created object
+     * @throws IllegalArgumentException if parameters are {@code null}
+     * @since 0.9.0
+     */
+    TryResource newTryResource(FormalParameterDeclaration parameter, Expression expression);
+
+    /**
+     * Returns a new {@link TryStatement} object.
+     * @param tryBlock the {@code try} clause
+     * @param catchClauses the {@code catch} clauses
+     * @return the created object
+     * @throws IllegalArgumentException if {@code tryBlock} was {@code null}
+     * @throws IllegalArgumentException if {@code catchClauses} was {@code null}
+     * @since 0.9.0
+     */
+    default TryStatement newTryStatement(Block tryBlock, List<? extends CatchClause> catchClauses) {
+        return newTryStatement(Collections.emptyList(), tryBlock, catchClauses, null);
+    }
+
+    /**
+     * Returns a new {@link TryStatement} object.
+     * @param tryBlock the {@code try} clause
+     * @param finallyBlock the {@code finally} clause, or {@code null} if it is not specified
+     * @return the created object
+     * @throws IllegalArgumentException if {@code tryBlock} was {@code null}
+     * @throws IllegalArgumentException if {@code catchClauses} was {@code null}
+     * @since 0.9.0
+     */
+    default TryStatement newTryStatement(Block tryBlock, Block finallyBlock) {
+        return newTryStatement(Collections.emptyList(), tryBlock, Collections.emptyList(), finallyBlock);
+    }
+
+    /**
      * Returns a new {@link TryStatement} object.
      * @param tryBlock the {@code try} clause
      * @param catchClauses the {@code catch} clauses
@@ -1421,11 +1510,86 @@ public interface ModelFactory {
      * @throws IllegalArgumentException if {@code tryBlock} was {@code null}
      * @throws IllegalArgumentException if {@code catchClauses} was {@code null}
      */
-    TryStatement newTryStatement(
+    default TryStatement newTryStatement(
             Block tryBlock,
             List<? extends CatchClause> catchClauses,
-            Block finallyBlock
-    );
+            Block finallyBlock) {
+        return newTryStatement(Collections.emptyList(), tryBlock, catchClauses, finallyBlock);
+    }
+
+    /**
+     * Returns a new {@link TryStatement} object.
+     * @param resource the resource statement
+     * @param tryBlock the {@code try} clause
+     * @return the created object
+     * @throws IllegalArgumentException if {@code tryBlock} was {@code null}
+     * @throws IllegalArgumentException if {@code catchClauses} was {@code null}
+     * @since 0.9.0
+     */
+    default TryStatement newTryStatement(TryResource resource, Block tryBlock) {
+        return newTryStatement(Collections.singletonList(resource), tryBlock, Collections.emptyList(), null);
+    }
+
+    /**
+     * Returns a new {@link TryStatement} object.
+     * @param resources the resource statements
+     * @param tryBlock the {@code try} clause
+     * @return the created object
+     * @throws IllegalArgumentException if {@code tryBlock} was {@code null}
+     * @throws IllegalArgumentException if {@code catchClauses} was {@code null}
+     * @since 0.9.0
+     */
+    default TryStatement newTryStatement(List<? extends TryResource> resources, Block tryBlock) {
+        return newTryStatement(resources, tryBlock, Collections.emptyList(), null);
+    }
+
+    /**
+     * Returns a new {@link TryStatement} object.
+     * @param resources the resource statements
+     * @param tryBlock the {@code try} clause
+     * @param catchClauses the {@code catch} clauses
+     * @return the created object
+     * @throws IllegalArgumentException if {@code tryBlock} was {@code null}
+     * @throws IllegalArgumentException if {@code catchClauses} was {@code null}
+     * @since 0.9.0
+     */
+    default TryStatement newTryStatement(
+            List<? extends TryResource> resources,
+            Block tryBlock,
+            List<? extends CatchClause> catchClauses) {
+        return newTryStatement(resources, tryBlock, catchClauses, null);
+    }
+
+    /**
+     * Returns a new {@link TryStatement} object.
+     * @param resources the resource statements
+     * @param tryBlock the {@code try} clause
+     * @param finallyBlock the {@code finally} clause, or {@code null} if it is not specified
+     * @return the created object
+     * @throws IllegalArgumentException if {@code tryBlock} was {@code null}
+     * @throws IllegalArgumentException if {@code catchClauses} was {@code null}
+     * @since 0.9.0
+     */
+    default TryStatement newTryStatement(List<? extends TryResource> resources, Block tryBlock, Block finallyBlock) {
+        return newTryStatement(resources, tryBlock, Collections.emptyList(), finallyBlock);
+    }
+
+    /**
+     * Returns a new {@link TryStatement} object.
+     * @param resources the resource statements
+     * @param tryBlock the {@code try} clause
+     * @param catchClauses the {@code catch} clauses
+     * @param finallyBlock the {@code finally} clause, or {@code null} if it is not specified
+     * @return the created object
+     * @throws IllegalArgumentException if {@code tryBlock} was {@code null}
+     * @throws IllegalArgumentException if {@code catchClauses} was {@code null}
+     * @since 0.9.0
+     */
+    TryStatement newTryStatement(
+            List<? extends TryResource> resources,
+            Block tryBlock,
+            List<? extends CatchClause> catchClauses,
+            Block finallyBlock);
 
     /**
      * Returns a new {@link TypeParameterDeclaration} object.

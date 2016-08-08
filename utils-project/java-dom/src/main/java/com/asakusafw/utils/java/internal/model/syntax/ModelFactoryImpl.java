@@ -769,21 +769,7 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public FormalParameterDeclaration newFormalParameterDeclaration(Type type, SimpleName name) {
-        return this.newFormalParameterDeclaration0(Collections.emptyList(), type, false, name, 0);
-    }
-
-    @Override
     public FormalParameterDeclaration newFormalParameterDeclaration(
-            List<? extends Attribute> modifiers,
-            Type type,
-            boolean variableArity,
-            SimpleName name,
-            int extraDimensions) {
-        return this.newFormalParameterDeclaration0(modifiers, type, variableArity, name, extraDimensions);
-    }
-
-    private FormalParameterDeclarationImpl newFormalParameterDeclaration0(
             List<? extends Attribute> modifiers,
             Type type,
             boolean variableArity,
@@ -1407,11 +1393,28 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public TryStatement newTryStatement(Block tryBlock, List<? extends CatchClause> catchClauses, Block finallyBlock) {
+    public TryResource newTryResource(FormalParameterDeclaration parameter, Expression expression) {
+        Util.notNull(parameter, "parameter"); //$NON-NLS-1$
+        Util.notNull(expression, "expression"); //$NON-NLS-1$
+        TryResourceImpl result = new TryResourceImpl();
+        result.setParameter(parameter);
+        result.setInitializer(expression);
+        return result;
+    }
+
+    @Override
+    public TryStatement newTryStatement(
+            List<? extends TryResource> resources,
+            Block tryBlock,
+            List<? extends CatchClause> catchClauses,
+            Block finallyBlock) {
+        Util.notNull(resources, "resources"); //$NON-NLS-1$
+        Util.notContainNull(resources, "resources"); //$NON-NLS-1$
         Util.notNull(tryBlock, "tryBlock"); //$NON-NLS-1$
         Util.notNull(catchClauses, "catchClauses"); //$NON-NLS-1$
         Util.notContainNull(catchClauses, "catchClauses"); //$NON-NLS-1$
         TryStatementImpl result = new TryStatementImpl();
+        result.setResources(resources);
         result.setTryBlock(tryBlock);
         result.setCatchClauses(catchClauses);
         result.setFinallyBlock(finallyBlock);

@@ -1016,6 +1016,19 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
+     * Processes {@link TryResource} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
+     */
+    public R visitTryResource(
+            TryResource elem,
+            C context) throws E {
+        return null;
+    }
+
+    /**
      * Processes {@link TryStatement} using this visitor.
      * @param elem the target element
      * @param context the current context (nullable)

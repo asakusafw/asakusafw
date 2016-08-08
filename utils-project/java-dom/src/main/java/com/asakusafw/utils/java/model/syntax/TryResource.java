@@ -15,44 +15,27 @@
  */
 package com.asakusafw.utils.java.model.syntax;
 
-import java.util.List;
-
 /**
- * An interface which represents try statement.
+ * An interface which represents try resources.
  * <ul>
  *   <li> Specified In: <ul>
- *     <li> {@code [JLS3:14.20] The try statement} </li>
  *     <li> {@code [JLS8:14.20.3] try-with-resources} </li>
  *   </ul> </li>
  * </ul>
  * @since 0.1.0
  * @version 0.9.0
  */
-public interface TryStatement
-        extends Statement {
+public interface TryResource extends TypedElement {
 
     /**
-     * Returns the resource statements.
-     * @return the resource statements
-     * @since 0.9.0
+     * Returns the resource variable declaration.
+     * @return the resource variable declaration
      */
-    List<? extends TryResource> getResources();
+    FormalParameterDeclaration getParameter();
 
     /**
-     * Returns the body block of {@code try} clause.
-     * @return the body block of {@code try} clause
+     * Returns the resource expression.
+     * @return the resource expression
      */
-    Block getTryBlock();
-
-    /**
-     * Returns the {@code catch} clauses.
-     * @return the {@code catch} clauses, or an empty list if there is no cache clauses
-     */
-    List<? extends CatchClause> getCatchClauses();
-
-    /**
-     * Returns the body block of {@code finally} clause.
-     * @return the body block of {@code finally} clause, or {@code null} if it is not specified
-     */
-    Block getFinallyBlock();
+    Expression getInitializer();
 }

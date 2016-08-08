@@ -95,6 +95,7 @@ import com.asakusafw.utils.java.model.syntax.SwitchStatement;
 import com.asakusafw.utils.java.model.syntax.SynchronizedStatement;
 import com.asakusafw.utils.java.model.syntax.This;
 import com.asakusafw.utils.java.model.syntax.ThrowStatement;
+import com.asakusafw.utils.java.model.syntax.TryResource;
 import com.asakusafw.utils.java.model.syntax.TryStatement;
 import com.asakusafw.utils.java.model.syntax.TypeParameterDeclaration;
 import com.asakusafw.utils.java.model.syntax.UnaryExpression;
@@ -1496,6 +1497,23 @@ public final class ModelMatcher extends StrictVisitor<Boolean, Model, NoThrow> {
     }
 
     @Override
+    public Boolean visitTryResource(
+            TryResource elem,
+            Model context) {
+        if (elem.getModelKind() != context.getModelKind()) {
+            return Boolean.FALSE;
+        }
+        TryResource that = (TryResource) context;
+        if (Boolean.FALSE.equals(match(elem.getParameter(), that.getParameter()))) {
+            return Boolean.FALSE;
+        }
+        if (Boolean.FALSE.equals(match(elem.getInitializer(), that.getInitializer()))) {
+            return Boolean.FALSE;
+        }
+        return Boolean.TRUE;
+    }
+
+    @Override
     public Boolean visitTryStatement(
             TryStatement elem,
             Model context) {
@@ -1503,6 +1521,9 @@ public final class ModelMatcher extends StrictVisitor<Boolean, Model, NoThrow> {
             return Boolean.FALSE;
         }
         TryStatement that = (TryStatement) context;
+        if (Boolean.FALSE.equals(match(elem.getResources(), that.getResources()))) {
+            return Boolean.FALSE;
+        }
         if (Boolean.FALSE.equals(match(elem.getTryBlock(), that.getTryBlock()))) {
             return Boolean.FALSE;
         }

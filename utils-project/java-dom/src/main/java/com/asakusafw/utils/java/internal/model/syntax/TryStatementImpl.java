@@ -20,19 +20,40 @@ import java.util.List;
 import com.asakusafw.utils.java.model.syntax.Block;
 import com.asakusafw.utils.java.model.syntax.CatchClause;
 import com.asakusafw.utils.java.model.syntax.ModelKind;
+import com.asakusafw.utils.java.model.syntax.TryResource;
 import com.asakusafw.utils.java.model.syntax.TryStatement;
 import com.asakusafw.utils.java.model.syntax.Visitor;
 
 /**
  * An implementation of {@link TryStatement}.
+ * @since 0.1.0
+ * @version 0.9.0
  */
 public final class TryStatementImpl extends ModelRoot implements TryStatement {
+
+    private List<? extends TryResource> resources;
 
     private Block tryBlock;
 
     private List<? extends CatchClause> catchClauses;
 
     private Block finallyBlock;
+
+    @Override
+    public List<? extends TryResource> getResources() {
+        return resources;
+    }
+
+    /**
+     * Sets the resources.
+     * @param resources the resources
+     * @since 0.9.0
+     */
+    public void setResources(List<? extends TryResource> resources) {
+        Util.notNull(resources, "resources"); //$NON-NLS-1$
+        Util.notContainNull(resources, "resources"); //$NON-NLS-1$
+        this.resources = Util.freeze(resources);
+    }
 
     @Override
     public Block getTryBlock() {
