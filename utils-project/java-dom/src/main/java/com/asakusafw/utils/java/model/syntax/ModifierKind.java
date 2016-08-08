@@ -22,152 +22,103 @@ import static com.asakusafw.utils.java.model.syntax.ObjectTypeKind.*;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
  * Represents a kind of declaration modifiers.
+ * @since 0.1.0
+ * @version 0.2.0
  */
 public enum ModifierKind {
 
     /**
      * {@code public}.
      */
-    PUBLIC(
-        of(CLASS, INTERFACE, ENUM, ANNOTATION, FIELD, CONSTRUCTOR, METHOD),
-        of(ANNOTATION_ELEMENT, ENUM_CONSTANT)
-    ),
+    PUBLIC(CLASS, INTERFACE, ENUM, ANNOTATION, FIELD, CONSTRUCTOR, METHOD),
 
     /**
      * {@code protected}.
      */
-    PROTECTED(
-        of(CLASS, INTERFACE, ENUM, ANNOTATION, FIELD, CONSTRUCTOR, METHOD),
-        Collections.emptySet()
-    ),
+    PROTECTED(CLASS, INTERFACE, ENUM, ANNOTATION, FIELD, CONSTRUCTOR, METHOD),
 
     /**
      * {@code private}.
      */
-    PRIVATE(
-        of(CLASS, INTERFACE, ENUM, ANNOTATION, FIELD, CONSTRUCTOR, METHOD),
-        Collections.emptySet()
-    ),
+    PRIVATE(CLASS, INTERFACE, ENUM, ANNOTATION, FIELD, CONSTRUCTOR, METHOD),
 
     /**
      * {@code static}.
      */
-    STATIC(
-        of(CLASS, INTERFACE, ENUM, ANNOTATION, FIELD, METHOD),
-        of(ENUM_CONSTANT)
-    ),
+    STATIC(CLASS, INTERFACE, ENUM, ANNOTATION, FIELD, METHOD),
 
     /**
      * {@code abstract}.
      */
-    ABSTRACT(
-        of(CLASS, INTERFACE, ENUM, ANNOTATION, FIELD, METHOD),
-        of(ANNOTATION_ELEMENT)
-    ),
+    ABSTRACT(CLASS, INTERFACE, ENUM, ANNOTATION, FIELD, METHOD),
+
+    /**
+     * {@code default}.
+     * @since 0.9.0
+     */
+    DEFAULT(METHOD),
 
     /**
      * {@code native}.
      */
-    NATIVE(
-        of(METHOD),
-        Collections.emptySet()
-    ),
+    NATIVE(METHOD),
 
     /**
      * {@code final}.
      */
-    FINAL(
-        of(CLASS, FIELD, METHOD),
-        of(ENUM, ENUM_CONSTANT)
-    ),
+    FINAL(CLASS, FIELD, METHOD),
 
     /**
      * {@code synchronized}.
      */
-    SYNCHRONIZED(
-        of(METHOD),
-        Collections.emptySet()
-    ),
+    SYNCHRONIZED(METHOD),
 
     /**
      * {@code transient}.
      */
-    TRANSIENT(
-        of(FIELD),
-        Collections.emptySet()
-    ),
+    TRANSIENT(FIELD),
 
     /**
      * {@code volatile}.
      */
-    VOLATILE(
-        of(FIELD),
-        Collections.emptySet()
-    ),
+    VOLATILE(FIELD),
 
     /**
      * {@code strictfp}.
      */
-    STRICTFP(
-        of(CLASS, INTERFACE, ENUM, ANNOTATION, METHOD),
-        Collections.emptySet()
-    ),
+    STRICTFP(CLASS, INTERFACE, ENUM, ANNOTATION, METHOD),
 
     /**
      * {@code ACC_SUPER}.
      */
-    SUPER(
-        Collections.emptySet(),
-        of(CLASS, INTERFACE, ENUM, ANNOTATION)
-    ),
+    SUPER(),
 
     /**
      * {@code ACC_BRIDGE}.
      */
-    BRIDGE(
-        Collections.emptySet(),
-        of(METHOD)
-    ),
+    BRIDGE(),
 
     /**
      * {@code ACC_VARARGS}.
      */
-    VARARGS(
-        Collections.emptySet(),
-        of(METHOD, CONSTRUCTOR)
-    ),
+    VARARGS(),
 
     /**
      * {@code ACC_SYNTHETIC}.
      */
-    SYNTHETIC(
-        Collections.emptySet(),
-        of(CLASS, INTERFACE, ENUM, ANNOTATION, FIELD, CONSTRUCTOR, METHOD, ANNOTATION_ELEMENT, ENUM_CONSTANT)
-    ),
+    SYNTHETIC(),
     ;
 
     private final Set<DeclarationKind> declarable;
-    private final Set<DeclarationKind> grantable;
 
-    ModifierKind(Set<DeclarationKind> declarable, Set<DeclarationKind> grant) {
+    ModifierKind(DeclarationKind... declarable) {
         assert declarable != null;
-        assert grant != null;
-        this.declarable = Collections.unmodifiableSet(declarable);
-        Set<DeclarationKind> allGrants;
-        if (grant.isEmpty()) {
-            allGrants = declarable;
-        } else {
-            allGrants = new HashSet<>(grant);
-            allGrants.addAll(declarable);
-        }
-        this.grantable = Collections.unmodifiableSet(allGrants);
+        this.declarable = Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList(declarable)));
     }
 
     /**
@@ -189,69 +140,6 @@ public enum ModifierKind {
     }
 
     /**
-     * Returns whether this modifier can be implicitly declared on the target declaration or not.
-     * For example, the {@code public} modifier cannot be explicitly declared on enum constants,
-     * but it modifier is implicitly declared on their enum constants in class files.
-     * @param kind the target declaration kind
-     * @return {@code true} if this modifier can be declared on the target declaration, otherwise {@code false}
-     */
-    public boolean canBeGrantedIn(DeclarationKind kind) {
-        return grantable.contains(kind);
-    }
-
-    /**
-     * Returns a string representation of the set of modifier kinds.
-     * @param modifiers the target modifier kinds
-     * @return the string representation
-     * @throws IllegalArgumentException if the parameter is {@code null}
-     */
-    public static String toStringAll(Set<ModifierKind> modifiers) {
-        if (modifiers == null) {
-            throw new IllegalArgumentException("modifiers must not be null"); //$NON-NLS-1$
-        }
-        StringBuilder buf = new StringBuilder();
-        Iterator<ModifierKind> iter = modifiers.iterator();
-        if (iter.hasNext()) {
-            buf.append(iter.next().name());
-            while (iter.hasNext()) {
-                buf.append(',');
-                buf.append(iter.next().name());
-            }
-        }
-        return buf.toString();
-    }
-
-    /**
-     * Restores modifier kinds from its string representation.
-     * @param values the string representation of modifier kinds (in form of {@link #toStringAll(Set)})
-     * @return a set of the restored modifier kinds
-     * @throws IllegalArgumentException if the string representation is malformed
-     * @throws IllegalArgumentException if the parameter is {@code null}
-     * @see #toStringAll(Set)
-     */
-    public static Set<ModifierKind> allValueOf(String values) {
-        if (values == null) {
-            throw new IllegalArgumentException("values must not be null"); //$NON-NLS-1$
-        }
-        if (values.length() == 0) {
-            return Collections.emptySet();
-        }
-        EnumSet<ModifierKind> results = EnumSet.noneOf(ModifierKind.class);
-        int start = 0;
-        while (true) {
-            int index = values.indexOf(',', start);
-            if (index < 0) {
-                break;
-            }
-            String token = values.substring(start, index);
-            results.add(ModifierKind.valueOf(token));
-            start = index + 1;
-        }
-        results.add(ModifierKind.valueOf(values.substring(start)));
-        return results;
-    }
-
-    /**
      * Returns the keyword of this modifier.
      * @return the modifier keyword, or a special keyword if this modifier kind {@link #isImplicit() is implicit}
      */
@@ -266,9 +154,5 @@ public enum ModifierKind {
     @Override
     public String toString() {
         return getKeyword();
-    }
-
-    private static Set<DeclarationKind> of(DeclarationKind...kinds) {
-        return new HashSet<>(Arrays.asList(kinds));
     }
 }

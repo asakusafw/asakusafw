@@ -354,6 +354,13 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     }
 
     @Override
+    public R visitLambdaExpression(
+            LambdaExpression elem,
+            C context) throws E {
+        throw new UnsupportedOperationException("LambdaExpression"); //$NON-NLS-1$
+    }
+
+    @Override
     public R visitLineComment(
             LineComment elem,
             C context) throws E {
@@ -550,6 +557,13 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     }
 
     @Override
+    public R visitTryResource(
+            TryResource elem,
+            C context) throws E {
+        throw new UnsupportedOperationException("TryResource"); //$NON-NLS-1$
+    }
+
+    @Override
     public R visitTryStatement(
             TryStatement elem,
             C context) throws E {
@@ -568,6 +582,13 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
             UnaryExpression elem,
             C context) throws E {
         throw new UnsupportedOperationException("UnaryExpression"); //$NON-NLS-1$
+    }
+
+    @Override
+    public R visitUnionType(
+            UnionType elem,
+            C context) throws E {
+        throw new UnsupportedOperationException("UnionType"); //$NON-NLS-1$
     }
 
     @Override

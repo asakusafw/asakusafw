@@ -15,26 +15,24 @@
  */
 package com.asakusafw.utils.java.model.syntax;
 
+import java.util.List;
 
 /**
- * An interface which represents simple names.
+ * An interface which represents union types.
+ * In JLS8, this is only for cache clauses.
  * <ul>
  *   <li> Specified In: <ul>
- *     <li> {@code [JLS3:6.2] Names and Identifiers} </li>
+ *     <li> {@code [JLS8:14.20] The try statement} </li>
  *   </ul> </li>
  * </ul>
+ * @since 0.9.0
  */
-public interface SimpleName
-        extends Name, LambdaParameter {
+public interface UnionType
+        extends Type {
 
     /**
-     * Returns the identifier.
-     * @return the identifier
+     * Returns the alternative types.
+     * @return the alternative types
      */
-    String getToken();
-
-    @Override
-    default SimpleName getName() {
-        return this;
-    }
+    List<? extends Type> getAlternativeTypes();
 }

@@ -75,6 +75,8 @@ import com.asakusafw.utils.java.model.syntax.InstanceofExpression;
 import com.asakusafw.utils.java.model.syntax.InterfaceDeclaration;
 import com.asakusafw.utils.java.model.syntax.Javadoc;
 import com.asakusafw.utils.java.model.syntax.LabeledStatement;
+import com.asakusafw.utils.java.model.syntax.LambdaExpression;
+import com.asakusafw.utils.java.model.syntax.LambdaParameter;
 import com.asakusafw.utils.java.model.syntax.LineComment;
 import com.asakusafw.utils.java.model.syntax.Literal;
 import com.asakusafw.utils.java.model.syntax.LocalClassDeclaration;
@@ -108,10 +110,12 @@ import com.asakusafw.utils.java.model.syntax.SwitchStatement;
 import com.asakusafw.utils.java.model.syntax.SynchronizedStatement;
 import com.asakusafw.utils.java.model.syntax.This;
 import com.asakusafw.utils.java.model.syntax.ThrowStatement;
+import com.asakusafw.utils.java.model.syntax.TryResource;
 import com.asakusafw.utils.java.model.syntax.TryStatement;
 import com.asakusafw.utils.java.model.syntax.Type;
 import com.asakusafw.utils.java.model.syntax.TypeParameterDeclaration;
 import com.asakusafw.utils.java.model.syntax.UnaryExpression;
+import com.asakusafw.utils.java.model.syntax.UnionType;
 import com.asakusafw.utils.java.model.syntax.VariableDeclarator;
 import com.asakusafw.utils.java.model.syntax.WhileStatement;
 import com.asakusafw.utils.java.model.syntax.Wildcard;
@@ -640,7 +644,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     public Void visitFormalParameterDeclaration(FormalParameterDeclaration elem, EmitContext context) {
         begin(elem, context);
         processInlineComment(elem, context);
-        processAttributes(elem.getModifiers(), context);
+        process(elem.getModifiers(), context); // one liner instead of processAttributes(...)
         process(elem.getType(), context);
         if (elem.isVariableArity()) {
             context.separator("..."); //$NON-NLS-1$
@@ -774,6 +778,21 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         context.separator(":"); //$NON-NLS-1$
         process(elem.getBody(), context);
         context.statement(EmitDirection.END);
+        return null;
+    }
+
+    @Override
+    public Void visitLambdaExpression(LambdaExpression elem, EmitContext context) {
+        List<? extends LambdaParameter> parameters = elem.getParameters();
+        if (parameters.size() == 1 && parameters.get(0).getModelKind() == ModelKind.SIMPLE_NAME) {
+            process(parameters.get(0), context);
+        } else {
+            context.symbol("("); //$NON-NLS-1$
+            processJoinWithComma(parameters, context);
+            context.separator(")"); //$NON-NLS-1$
+        }
+        context.operator("->"); //$NON-NLS-1$
+        process(elem.getBody(), context);
         return null;
     }
 
@@ -1132,11 +1151,35 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
+    public Void visitTryResource(TryResource elem, EmitContext context) {
+        begin(elem, context);
+        processInlineComment(elem, context);
+        process(elem.getParameter(), context);
+        context.operator("="); //$NON-NLS-1$
+        process(elem.getInitializer(), context);
+        return null;
+    }
+
+    @Override
     public Void visitTryStatement(TryStatement elem, EmitContext context) {
         begin(elem, context);
         processBlockComment(elem, context);
         context.statement(EmitDirection.BEGIN);
         context.keyword("try"); //$NON-NLS-1$
+        if (appears(elem.getResources())) {
+            context.symbol("("); //$NON-NLS-1$
+            boolean first = true;
+            for (TryResource resource : elem.getResources()) {
+                if (first) {
+                    first = false;
+                } else {
+                    context.separator(";"); //$NON-NLS-1$
+                    context.blockPadding();
+                }
+                process(resource, context);
+            }
+            context.separator(")");
+        }
         process(elem.getTryBlock(), context);
         process(elem.getCatchClauses(), context);
         if (appears(elem.getFinallyBlock())) {
@@ -1170,6 +1213,13 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         processInlineComment(elem, context);
         context.operator(elem.getOperator().getSymbol());
         process(elem.getOperand(), context);
+        return null;
+    }
+
+    @Override
+    public Void visitUnionType(UnionType elem, EmitContext context) {
+        begin(elem, context);
+        processJoin("|", elem.getAlternativeTypes(), context); //$NON-NLS-1$
         return null;
     }
 
@@ -1366,11 +1416,15 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     private void processJoinWithComma(List<? extends Model> elements, EmitContext context) {
+        processJoin(",", elements, context); //$NON-NLS-1$
+    }
+
+    private void processJoin(String separator, List<? extends Model> elements, EmitContext context) {
         Iterator<? extends Model> iter = elements.iterator();
         if (iter.hasNext()) {
             process(iter.next(), context);
             while (iter.hasNext()) {
-                context.separator(","); //$NON-NLS-1$
+                context.separator(separator);
                 process(iter.next(), context);
             }
         }

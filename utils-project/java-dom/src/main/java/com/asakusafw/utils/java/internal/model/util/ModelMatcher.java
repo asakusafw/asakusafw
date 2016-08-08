@@ -64,6 +64,7 @@ import com.asakusafw.utils.java.model.syntax.InstanceofExpression;
 import com.asakusafw.utils.java.model.syntax.InterfaceDeclaration;
 import com.asakusafw.utils.java.model.syntax.Javadoc;
 import com.asakusafw.utils.java.model.syntax.LabeledStatement;
+import com.asakusafw.utils.java.model.syntax.LambdaExpression;
 import com.asakusafw.utils.java.model.syntax.LineComment;
 import com.asakusafw.utils.java.model.syntax.Literal;
 import com.asakusafw.utils.java.model.syntax.LocalClassDeclaration;
@@ -94,9 +95,11 @@ import com.asakusafw.utils.java.model.syntax.SwitchStatement;
 import com.asakusafw.utils.java.model.syntax.SynchronizedStatement;
 import com.asakusafw.utils.java.model.syntax.This;
 import com.asakusafw.utils.java.model.syntax.ThrowStatement;
+import com.asakusafw.utils.java.model.syntax.TryResource;
 import com.asakusafw.utils.java.model.syntax.TryStatement;
 import com.asakusafw.utils.java.model.syntax.TypeParameterDeclaration;
 import com.asakusafw.utils.java.model.syntax.UnaryExpression;
+import com.asakusafw.utils.java.model.syntax.UnionType;
 import com.asakusafw.utils.java.model.syntax.VariableDeclarator;
 import com.asakusafw.utils.java.model.syntax.WhileStatement;
 import com.asakusafw.utils.java.model.syntax.Wildcard;
@@ -1014,6 +1017,23 @@ public final class ModelMatcher extends StrictVisitor<Boolean, Model, NoThrow> {
     }
 
     @Override
+    public Boolean visitLambdaExpression(
+            LambdaExpression elem,
+            Model context) {
+        if (elem.getModelKind() != context.getModelKind()) {
+            return Boolean.FALSE;
+        }
+        LambdaExpression that = (LambdaExpression) context;
+        if (Boolean.FALSE.equals(match(elem.getParameters(), elem.getParameters()))) {
+            return Boolean.FALSE;
+        }
+        if (Boolean.FALSE.equals(match(elem.getBody(), that.getBody()))) {
+            return Boolean.FALSE;
+        }
+        return Boolean.TRUE;
+    }
+
+    @Override
     public Boolean visitLineComment(
             LineComment elem,
             Model context) {
@@ -1477,6 +1497,23 @@ public final class ModelMatcher extends StrictVisitor<Boolean, Model, NoThrow> {
     }
 
     @Override
+    public Boolean visitTryResource(
+            TryResource elem,
+            Model context) {
+        if (elem.getModelKind() != context.getModelKind()) {
+            return Boolean.FALSE;
+        }
+        TryResource that = (TryResource) context;
+        if (Boolean.FALSE.equals(match(elem.getParameter(), that.getParameter()))) {
+            return Boolean.FALSE;
+        }
+        if (Boolean.FALSE.equals(match(elem.getInitializer(), that.getInitializer()))) {
+            return Boolean.FALSE;
+        }
+        return Boolean.TRUE;
+    }
+
+    @Override
     public Boolean visitTryStatement(
             TryStatement elem,
             Model context) {
@@ -1484,6 +1521,9 @@ public final class ModelMatcher extends StrictVisitor<Boolean, Model, NoThrow> {
             return Boolean.FALSE;
         }
         TryStatement that = (TryStatement) context;
+        if (Boolean.FALSE.equals(match(elem.getResources(), that.getResources()))) {
+            return Boolean.FALSE;
+        }
         if (Boolean.FALSE.equals(match(elem.getTryBlock(), that.getTryBlock()))) {
             return Boolean.FALSE;
         }
@@ -1525,6 +1565,20 @@ public final class ModelMatcher extends StrictVisitor<Boolean, Model, NoThrow> {
             return Boolean.FALSE;
         }
         if (Boolean.FALSE.equals(match(elem.getOperand(), that.getOperand()))) {
+            return Boolean.FALSE;
+        }
+        return Boolean.TRUE;
+    }
+
+    @Override
+    public Boolean visitUnionType(
+            UnionType elem,
+            Model context) {
+        if (elem.getModelKind() != context.getModelKind()) {
+            return Boolean.FALSE;
+        }
+        UnionType that = (UnionType) context;
+        if (Boolean.FALSE.equals(match(elem.getAlternativeTypes(), that.getAlternativeTypes()))) {
             return Boolean.FALSE;
         }
         return Boolean.TRUE;

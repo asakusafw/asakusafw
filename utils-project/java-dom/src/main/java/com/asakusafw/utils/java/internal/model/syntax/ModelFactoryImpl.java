@@ -32,32 +32,21 @@ import com.asakusafw.utils.java.model.syntax.*;
 public class ModelFactoryImpl implements ModelFactory {
 
     @Override
-    public AlternateConstructorInvocation newAlternateConstructorInvocation(
-            Expression...arguments) {
+    public AlternateConstructorInvocation newAlternateConstructorInvocation(Expression... arguments) {
         Util.notNull(arguments, "arguments"); //$NON-NLS-1$
-        return this.newAlternateConstructorInvocation0(
-            Collections.emptyList(),
-            Arrays.asList(arguments)
-        );
+        return this.newAlternateConstructorInvocation0(Collections.emptyList(), Arrays.asList(arguments));
     }
 
     @Override
-    public AlternateConstructorInvocation newAlternateConstructorInvocation(
-            List<? extends Expression> arguments) {
-        return this.newAlternateConstructorInvocation0(
-            Collections.emptyList(),
-            arguments
-        );
+    public AlternateConstructorInvocation newAlternateConstructorInvocation(List<? extends Expression> arguments) {
+        return this.newAlternateConstructorInvocation0(Collections.emptyList(), arguments);
     }
 
     @Override
     public AlternateConstructorInvocation newAlternateConstructorInvocation(
             List<? extends Type> typeArguments,
             List<? extends Expression> arguments) {
-        return this.newAlternateConstructorInvocation0(
-            typeArguments,
-            arguments
-        );
+        return this.newAlternateConstructorInvocation0(typeArguments, arguments);
     }
 
     private AlternateConstructorInvocationImpl newAlternateConstructorInvocation0(
@@ -79,19 +68,6 @@ public class ModelFactoryImpl implements ModelFactory {
             List<? extends Attribute> modifiers,
             SimpleName name,
             List<? extends TypeBodyDeclaration> bodyDeclarations) {
-        return this.newAnnotationDeclaration0(
-            javadoc,
-            modifiers,
-            name,
-            bodyDeclarations
-        );
-    }
-
-    private AnnotationDeclarationImpl newAnnotationDeclaration0(
-            Javadoc javadoc,
-            List<? extends Attribute> modifiers,
-            SimpleName name,
-            List<? extends TypeBodyDeclaration> bodyDeclarations) {
         Util.notNull(modifiers, "modifiers"); //$NON-NLS-1$
         Util.notContainNull(modifiers, "modifiers"); //$NON-NLS-1$
         Util.notNull(name, "name"); //$NON-NLS-1$
@@ -106,18 +82,7 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public AnnotationElement newAnnotationElement(
-            SimpleName name,
-            Expression expression) {
-        return this.newAnnotationElement0(
-            name,
-            expression
-        );
-    }
-
-    private AnnotationElementImpl newAnnotationElement0(
-            SimpleName name,
-            Expression expression) {
+    public AnnotationElement newAnnotationElement(SimpleName name, Expression expression) {
         Util.notNull(name, "name"); //$NON-NLS-1$
         Util.notNull(expression, "expression"); //$NON-NLS-1$
         AnnotationElementImpl result = new AnnotationElementImpl();
@@ -128,21 +93,6 @@ public class ModelFactoryImpl implements ModelFactory {
 
     @Override
     public AnnotationElementDeclaration newAnnotationElementDeclaration(
-            Javadoc javadoc,
-            List<? extends Attribute> modifiers,
-            Type type,
-            SimpleName name,
-            Expression defaultExpression) {
-        return this.newAnnotationElementDeclaration0(
-            javadoc,
-            modifiers,
-            type,
-            name,
-            defaultExpression
-        );
-    }
-
-    private AnnotationElementDeclarationImpl newAnnotationElementDeclaration0(
             Javadoc javadoc,
             List<? extends Attribute> modifiers,
             Type type,
@@ -162,18 +112,7 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public ArrayAccessExpression newArrayAccessExpression(
-            Expression array,
-            Expression index) {
-        return this.newArrayAccessExpression0(
-            array,
-            index
-        );
-    }
-
-    private ArrayAccessExpressionImpl newArrayAccessExpression0(
-            Expression array,
-            Expression index) {
+    public ArrayAccessExpression newArrayAccessExpression(Expression array, Expression index) {
         Util.notNull(array, "array"); //$NON-NLS-1$
         Util.notNull(index, "index"); //$NON-NLS-1$
         ArrayAccessExpressionImpl result = new ArrayAccessExpressionImpl();
@@ -183,14 +122,8 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public ArrayCreationExpression newArrayCreationExpression(
-            ArrayType type,
-            ArrayInitializer arrayInitializer) {
-        return this.newArrayCreationExpression0(
-            type,
-            Collections.emptyList(),
-            arrayInitializer
-        );
+    public ArrayCreationExpression newArrayCreationExpression(ArrayType type, ArrayInitializer arrayInitializer) {
+        return this.newArrayCreationExpression0(type, Collections.emptyList(), arrayInitializer);
     }
 
     @Override
@@ -198,11 +131,7 @@ public class ModelFactoryImpl implements ModelFactory {
             ArrayType type,
             List<? extends Expression> dimensionExpressions,
             ArrayInitializer arrayInitializer) {
-        return this.newArrayCreationExpression0(
-            type,
-            dimensionExpressions,
-            arrayInitializer
-        );
+        return this.newArrayCreationExpression0(type, dimensionExpressions, arrayInitializer);
     }
 
     private ArrayCreationExpressionImpl newArrayCreationExpression0(
@@ -220,23 +149,17 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public ArrayInitializer newArrayInitializer(Expression...elements) {
+    public ArrayInitializer newArrayInitializer(Expression... elements) {
         Util.notNull(elements, "elements"); //$NON-NLS-1$
-        return this.newArrayInitializer0(
-            Arrays.asList(elements)
-        );
+        return this.newArrayInitializer0(Arrays.asList(elements));
     }
 
     @Override
-    public ArrayInitializer newArrayInitializer(
-            List<? extends Expression> elements) {
-        return this.newArrayInitializer0(
-            elements
-        );
+    public ArrayInitializer newArrayInitializer(List<? extends Expression> elements) {
+        return this.newArrayInitializer0(elements);
     }
 
-    private ArrayInitializerImpl newArrayInitializer0(
-            List<? extends Expression> elements) {
+    private ArrayInitializerImpl newArrayInitializer0(List<? extends Expression> elements) {
         Util.notNull(elements, "elements"); //$NON-NLS-1$
         Util.notContainNull(elements, "elements"); //$NON-NLS-1$
         ArrayInitializerImpl result = new ArrayInitializerImpl();
@@ -245,15 +168,7 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public ArrayType newArrayType(
-            Type componentType) {
-        return this.newArrayType0(
-            componentType
-        );
-    }
-
-    private ArrayTypeImpl newArrayType0(
-            Type componentType) {
+    public ArrayType newArrayType(Type componentType) {
         Util.notNull(componentType, "componentType"); //$NON-NLS-1$
         ArrayTypeImpl result = new ArrayTypeImpl();
         result.setComponentType(componentType);
@@ -261,27 +176,7 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public AssertStatement newAssertStatement(
-            Expression expression) {
-        return this.newAssertStatement0(
-            expression,
-            null
-        );
-    }
-
-    @Override
-    public AssertStatement newAssertStatement(
-            Expression expression,
-            Expression message) {
-        return this.newAssertStatement0(
-            expression,
-            message
-        );
-    }
-
-    private AssertStatementImpl newAssertStatement0(
-            Expression expression,
-            Expression message) {
+    public AssertStatement newAssertStatement(Expression expression, Expression message) {
         Util.notNull(expression, "expression"); //$NON-NLS-1$
         AssertStatementImpl result = new AssertStatementImpl();
         result.setExpression(expression);
@@ -291,28 +186,6 @@ public class ModelFactoryImpl implements ModelFactory {
 
     @Override
     public AssignmentExpression newAssignmentExpression(
-            Expression leftHandSide,
-            Expression rightHandSide) {
-        return this.newAssignmentExpression0(
-            leftHandSide,
-            InfixOperator.ASSIGN,
-            rightHandSide
-        );
-    }
-
-    @Override
-    public AssignmentExpression newAssignmentExpression(
-            Expression leftHandSide,
-            InfixOperator operator,
-            Expression rightHandSide) {
-        return this.newAssignmentExpression0(
-            leftHandSide,
-            operator,
-            rightHandSide
-        );
-    }
-
-    private AssignmentExpressionImpl newAssignmentExpression0(
             Expression leftHandSide,
             InfixOperator operator,
             Expression rightHandSide) {
@@ -327,15 +200,7 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public BasicType newBasicType(
-            BasicTypeKind typeKind) {
-        return this.newBasicType0(
-            typeKind
-        );
-    }
-
-    private BasicTypeImpl newBasicType0(
-            BasicTypeKind typeKind) {
+    public BasicType newBasicType(BasicTypeKind typeKind) {
         Util.notNull(typeKind, "typeKind"); //$NON-NLS-1$
         BasicTypeImpl result = new BasicTypeImpl();
         result.setTypeKind(typeKind);
@@ -343,24 +208,17 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public Block newBlock(
-            Statement... statements) {
+    public Block newBlock(Statement... statements) {
         Util.notNull(statements, "statements"); //$NON-NLS-1$
-        return this.newBlock0(
-            Arrays.asList(statements)
-        );
+        return this.newBlock0(Arrays.asList(statements));
     }
 
     @Override
-    public Block newBlock(
-            List<? extends Statement> statements) {
-        return this.newBlock0(
-            statements
-        );
+    public Block newBlock(List<? extends Statement> statements) {
+        return this.newBlock0(statements);
     }
 
-    private BlockImpl newBlock0(
-            List<? extends Statement> statements) {
+    private BlockImpl newBlock0(List<? extends Statement> statements) {
         Util.notNull(statements, "statements"); //$NON-NLS-1$
         Util.notContainNull(statements, "statements"); //$NON-NLS-1$
         BlockImpl result = new BlockImpl();
@@ -369,15 +227,7 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public BlockComment newBlockComment(
-            String string) {
-        return this.newBlockComment0(
-            string
-        );
-    }
-
-    private BlockCommentImpl newBlockComment0(
-            String string) {
+    public BlockComment newBlockComment(String string) {
         Util.notNull(string, "string"); //$NON-NLS-1$
         BlockCommentImpl result = new BlockCommentImpl();
         result.setString(string);
@@ -385,40 +235,14 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public BreakStatement newBreakStatement() {
-        return this.newBreakStatement0(
-            null
-        );
-    }
-
-    @Override
-    public BreakStatement newBreakStatement(
-            SimpleName target) {
-        return this.newBreakStatement0(
-            target
-        );
-    }
-
-    private BreakStatementImpl newBreakStatement0(
-            SimpleName target) {
+    public BreakStatement newBreakStatement(SimpleName target) {
         BreakStatementImpl result = new BreakStatementImpl();
         result.setTarget(target);
         return result;
     }
 
     @Override
-    public CastExpression newCastExpression(
-            Type type,
-            Expression expression) {
-        return this.newCastExpression0(
-            type,
-            expression
-        );
-    }
-
-    private CastExpressionImpl newCastExpression0(
-            Type type,
-            Expression expression) {
+    public CastExpression newCastExpression(Type type, Expression expression) {
         Util.notNull(type, "type"); //$NON-NLS-1$
         Util.notNull(expression, "expression"); //$NON-NLS-1$
         CastExpressionImpl result = new CastExpressionImpl();
@@ -428,18 +252,7 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public CatchClause newCatchClause(
-            FormalParameterDeclaration parameter,
-            Block body) {
-        return this.newCatchClause0(
-            parameter,
-            body
-        );
-    }
-
-    private CatchClauseImpl newCatchClause0(
-            FormalParameterDeclaration parameter,
-            Block body) {
+    public CatchClause newCatchClause(FormalParameterDeclaration parameter, Block body) {
         Util.notNull(parameter, "parameter"); //$NON-NLS-1$
         Util.notNull(body, "body"); //$NON-NLS-1$
         CatchClauseImpl result = new CatchClauseImpl();
@@ -449,15 +262,7 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public ClassBody newClassBody(
-            List<? extends TypeBodyDeclaration> bodyDeclarations) {
-        return this.newClassBody0(
-            bodyDeclarations
-        );
-    }
-
-    private ClassBodyImpl newClassBody0(
-            List<? extends TypeBodyDeclaration> bodyDeclarations) {
+    public ClassBody newClassBody(List<? extends TypeBodyDeclaration> bodyDeclarations) {
         Util.notNull(bodyDeclarations, "bodyDeclarations"); //$NON-NLS-1$
         Util.notContainNull(bodyDeclarations, "bodyDeclarations"); //$NON-NLS-1$
         ClassBodyImpl result = new ClassBodyImpl();
@@ -533,9 +338,7 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public ClassInstanceCreationExpression newClassInstanceCreationExpression(
-            Type type,
-            Expression...arguments) {
+    public ClassInstanceCreationExpression newClassInstanceCreationExpression(Type type, Expression... arguments) {
         Util.notNull(arguments, "arguments"); //$NON-NLS-1$
         return this.newClassInstanceCreationExpression0(
             null,
@@ -550,13 +353,7 @@ public class ModelFactoryImpl implements ModelFactory {
     public ClassInstanceCreationExpression newClassInstanceCreationExpression(
             Type type,
             List<? extends Expression> arguments) {
-        return this.newClassInstanceCreationExpression0(
-            null,
-            Collections.emptyList(),
-            type,
-            arguments,
-            null
-        );
+        return this.newClassInstanceCreationExpression0(null, Collections.emptyList(), type, arguments, null);
     }
 
     @Override
@@ -566,13 +363,7 @@ public class ModelFactoryImpl implements ModelFactory {
             Type type,
             List<? extends Expression> arguments,
             ClassBody body) {
-        return this.newClassInstanceCreationExpression0(
-            qualifier,
-            typeArguments,
-            type,
-            arguments,
-            body
-        );
+        return this.newClassInstanceCreationExpression0(qualifier, typeArguments, type, arguments, body);
     }
 
     private ClassInstanceCreationExpressionImpl newClassInstanceCreationExpression0(
@@ -596,15 +387,7 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public ClassLiteral newClassLiteral(
-            Type type) {
-        return this.newClassLiteral0(
-            type
-        );
-    }
-
-    private ClassLiteralImpl newClassLiteral0(
-            Type type) {
+    public ClassLiteral newClassLiteral(Type type) {
         Util.notNull(type, "type"); //$NON-NLS-1$
         ClassLiteralImpl result = new ClassLiteralImpl();
         result.setType(type);
@@ -613,19 +396,6 @@ public class ModelFactoryImpl implements ModelFactory {
 
     @Override
     public CompilationUnit newCompilationUnit(
-            PackageDeclaration packageDeclaration,
-            List<? extends ImportDeclaration> importDeclarations,
-            List<? extends TypeDeclaration> typeDeclarations,
-            List<? extends Comment> comments) {
-        return this.newCompilationUnit0(
-            packageDeclaration,
-            importDeclarations,
-            typeDeclarations,
-            comments
-        );
-    }
-
-    private CompilationUnitImpl newCompilationUnit0(
             PackageDeclaration packageDeclaration,
             List<? extends ImportDeclaration> importDeclarations,
             List<? extends TypeDeclaration> typeDeclarations,
@@ -646,17 +416,6 @@ public class ModelFactoryImpl implements ModelFactory {
 
     @Override
     public ConditionalExpression newConditionalExpression(
-            Expression condition,
-            Expression thenExpression,
-            Expression elseExpression) {
-        return this.newConditionalExpression0(
-            condition,
-            thenExpression,
-            elseExpression
-        );
-    }
-
-    private ConditionalExpressionImpl newConditionalExpression0(
             Expression condition,
             Expression thenExpression,
             Expression elseExpression) {
@@ -739,40 +498,14 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public ContinueStatement newContinueStatement() {
-        return this.newContinueStatement0(
-            null
-        );
-    }
-
-    @Override
-    public ContinueStatement newContinueStatement(
-            SimpleName target) {
-        return this.newContinueStatement0(
-            target
-        );
-    }
-
-    private ContinueStatementImpl newContinueStatement0(
-            SimpleName target) {
+    public ContinueStatement newContinueStatement(SimpleName target) {
         ContinueStatementImpl result = new ContinueStatementImpl();
         result.setTarget(target);
         return result;
     }
 
     @Override
-    public DoStatement newDoStatement(
-            Statement body,
-            Expression condition) {
-        return this.newDoStatement0(
-            body,
-            condition
-        );
-    }
-
-    private DoStatementImpl newDoStatement0(
-            Statement body,
-            Expression condition) {
+    public DoStatement newDoStatement(Statement body, Expression condition) {
         Util.notNull(body, "body"); //$NON-NLS-1$
         Util.notNull(condition, "condition"); //$NON-NLS-1$
         DoStatementImpl result = new DoStatementImpl();
@@ -782,18 +515,7 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public DocBlock newDocBlock(
-            String tag,
-            List<? extends DocElement> elements) {
-        return this.newDocBlock0(
-            tag,
-            elements
-        );
-    }
-
-    private DocBlockImpl newDocBlock0(
-            String tag,
-            List<? extends DocElement> elements) {
+    public DocBlock newDocBlock(String tag, List<? extends DocElement> elements) {
         Util.notNull(tag, "tag"); //$NON-NLS-1$
         Util.notNull(elements, "elements"); //$NON-NLS-1$
         Util.notContainNull(elements, "elements"); //$NON-NLS-1$
@@ -804,18 +526,7 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public DocField newDocField(
-            Type type,
-            SimpleName name) {
-        return this.newDocField0(
-            type,
-            name
-        );
-    }
-
-    private DocFieldImpl newDocField0(
-            Type type,
-            SimpleName name) {
+    public DocField newDocField(Type type, SimpleName name) {
         Util.notNull(name, "name"); //$NON-NLS-1$
         DocFieldImpl result = new DocFieldImpl();
         result.setType(type);
@@ -824,21 +535,7 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public DocMethod newDocMethod(
-            Type type,
-            SimpleName name,
-            List<? extends DocMethodParameter> formalParameters) {
-        return this.newDocMethod0(
-            type,
-            name,
-            formalParameters
-        );
-    }
-
-    private DocMethodImpl newDocMethod0(
-            Type type,
-            SimpleName name,
-            List<? extends DocMethodParameter> formalParameters) {
+    public DocMethod newDocMethod(Type type, SimpleName name, List<? extends DocMethodParameter> formalParameters) {
         Util.notNull(name, "name"); //$NON-NLS-1$
         Util.notNull(formalParameters, "formalParameters"); //$NON-NLS-1$
         Util.notContainNull(formalParameters, "formalParameters"); //$NON-NLS-1$
@@ -850,21 +547,7 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public DocMethodParameter newDocMethodParameter(
-            Type type,
-            SimpleName name,
-            boolean variableArity) {
-        return this.newDocMethodParameter0(
-            type,
-            name,
-            variableArity
-        );
-    }
-
-    private DocMethodParameterImpl newDocMethodParameter0(
-            Type type,
-            SimpleName name,
-            boolean variableArity) {
+    public DocMethodParameter newDocMethodParameter(Type type, SimpleName name, boolean variableArity) {
         Util.notNull(type, "type"); //$NON-NLS-1$
         DocMethodParameterImpl result = new DocMethodParameterImpl();
         result.setType(type);
@@ -874,15 +557,7 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public DocText newDocText(
-            String string) {
-        return this.newDocText0(
-            string
-        );
-    }
-
-    private DocTextImpl newDocText0(
-            String string) {
+    public DocText newDocText(String string) {
         Util.notNull(string, "string"); //$NON-NLS-1$
         DocTextImpl result = new DocTextImpl();
         result.setString(string);
@@ -890,32 +565,13 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public EmptyStatement newEmptyStatement(
-            ) {
-        return this.newEmptyStatement0(
-
-        );
-    }
-
-    private EmptyStatementImpl newEmptyStatement0(
-            ) {
+    public EmptyStatement newEmptyStatement() {
         EmptyStatementImpl result = new EmptyStatementImpl();
         return result;
     }
 
     @Override
     public EnhancedForStatement newEnhancedForStatement(
-            FormalParameterDeclaration parameter,
-            Expression expression,
-            Statement body) {
-        return this.newEnhancedForStatement0(
-            parameter,
-            expression,
-            body
-        );
-    }
-
-    private EnhancedForStatementImpl newEnhancedForStatement0(
             FormalParameterDeclaration parameter,
             Expression expression,
             Statement body) {
@@ -951,13 +607,7 @@ public class ModelFactoryImpl implements ModelFactory {
             SimpleName name,
             List<? extends Expression> arguments,
             ClassBody body) {
-        return this.newEnumConstantDeclaration0(
-            javadoc,
-            modifiers,
-            name,
-            arguments,
-            body
-        );
+        return this.newEnumConstantDeclaration0(javadoc, modifiers, name, arguments, body);
     }
 
     private EnumConstantDeclarationImpl newEnumConstantDeclaration0(
@@ -1043,15 +693,7 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public ExpressionStatement newExpressionStatement(
-            Expression expression) {
-        return this.newExpressionStatement0(
-            expression
-        );
-    }
-
-    private ExpressionStatementImpl newExpressionStatement0(
-            Expression expression) {
+    public ExpressionStatement newExpressionStatement(Expression expression) {
         Util.notNull(expression, "expression"); //$NON-NLS-1$
         ExpressionStatementImpl result = new ExpressionStatementImpl();
         result.setExpression(expression);
@@ -1059,18 +701,7 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public FieldAccessExpression newFieldAccessExpression(
-            Expression qualifier,
-            SimpleName name) {
-        return this.newFieldAccessExpression0(
-            qualifier,
-            name
-        );
-    }
-
-    private FieldAccessExpressionImpl newFieldAccessExpression0(
-            Expression qualifier,
-            SimpleName name) {
+    public FieldAccessExpression newFieldAccessExpression(Expression qualifier, SimpleName name) {
         Util.notNull(qualifier, "qualifier"); //$NON-NLS-1$
         Util.notNull(name, "name"); //$NON-NLS-1$
         FieldAccessExpressionImpl result = new FieldAccessExpressionImpl();
@@ -1090,10 +721,7 @@ public class ModelFactoryImpl implements ModelFactory {
             javadoc,
             modifiers,
             type,
-            Collections.singletonList(newVariableDeclarator(
-                name,
-                0,
-                initializer))
+            Collections.singletonList(newVariableDeclarator(name, initializer))
         );
     }
 
@@ -1103,12 +731,7 @@ public class ModelFactoryImpl implements ModelFactory {
             List<? extends Attribute> modifiers,
             Type type,
             List<? extends VariableDeclarator> variableDeclarators) {
-        return this.newFieldDeclaration0(
-            javadoc,
-            modifiers,
-            type,
-            variableDeclarators
-        );
+        return this.newFieldDeclaration0(javadoc, modifiers, type, variableDeclarators);
     }
 
     private FieldDeclarationImpl newFieldDeclaration0(
@@ -1136,19 +759,6 @@ public class ModelFactoryImpl implements ModelFactory {
             Expression condition,
             StatementExpressionList update,
             Statement body) {
-        return this.newForStatement0(
-            initialization,
-            condition,
-            update,
-            body
-        );
-    }
-
-    private ForStatementImpl newForStatement0(
-            ForInitializer initialization,
-            Expression condition,
-            StatementExpressionList update,
-            Statement body) {
         Util.notNull(body, "body"); //$NON-NLS-1$
         ForStatementImpl result = new ForStatementImpl();
         result.setInitialization(initialization);
@@ -1160,34 +770,6 @@ public class ModelFactoryImpl implements ModelFactory {
 
     @Override
     public FormalParameterDeclaration newFormalParameterDeclaration(
-            Type type,
-            SimpleName name) {
-        return this.newFormalParameterDeclaration0(
-            Collections.emptyList(),
-            type,
-            false,
-            name,
-            0
-        );
-    }
-
-    @Override
-    public FormalParameterDeclaration newFormalParameterDeclaration(
-            List<? extends Attribute> modifiers,
-            Type type,
-            boolean variableArity,
-            SimpleName name,
-            int extraDimensions) {
-        return this.newFormalParameterDeclaration0(
-            modifiers,
-            type,
-            variableArity,
-            name,
-            extraDimensions
-        );
-    }
-
-    private FormalParameterDeclarationImpl newFormalParameterDeclaration0(
             List<? extends Attribute> modifiers,
             Type type,
             boolean variableArity,
@@ -1207,32 +789,7 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public IfStatement newIfStatement(
-            Expression condition,
-            Statement thenStatement) {
-        return this.newIfStatement0(
-            condition,
-            thenStatement,
-            null
-        );
-    }
-
-    @Override
-    public IfStatement newIfStatement(
-            Expression condition,
-            Statement thenStatement,
-            Statement elseStatement) {
-        return this.newIfStatement0(
-            condition,
-            thenStatement,
-            elseStatement
-        );
-    }
-
-    private IfStatementImpl newIfStatement0(
-            Expression condition,
-            Statement thenStatement,
-            Statement elseStatement) {
+    public IfStatement newIfStatement(Expression condition, Statement thenStatement, Statement elseStatement) {
         Util.notNull(condition, "condition"); //$NON-NLS-1$
         Util.notNull(thenStatement, "thenStatement"); //$NON-NLS-1$
         IfStatementImpl result = new IfStatementImpl();
@@ -1243,18 +800,7 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public ImportDeclaration newImportDeclaration(
-            ImportKind importKind,
-            Name name) {
-        return this.newImportDeclaration0(
-            importKind,
-            name
-        );
-    }
-
-    private ImportDeclarationImpl newImportDeclaration0(
-            ImportKind importKind,
-            Name name) {
+    public ImportDeclaration newImportDeclaration(ImportKind importKind, Name name) {
         Util.notNull(importKind, "importKind"); //$NON-NLS-1$
         Util.notNull(name, "name"); //$NON-NLS-1$
         ImportDeclarationImpl result = new ImportDeclarationImpl();
@@ -1265,17 +811,6 @@ public class ModelFactoryImpl implements ModelFactory {
 
     @Override
     public InfixExpression newInfixExpression(
-            Expression leftOperand,
-            InfixOperator operator,
-            Expression rightOperand) {
-        return this.newInfixExpression0(
-            leftOperand,
-            operator,
-            rightOperand
-        );
-    }
-
-    private InfixExpressionImpl newInfixExpression0(
             Expression leftOperand,
             InfixOperator operator,
             Expression rightOperand) {
@@ -1290,14 +825,9 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public InitializerDeclaration newInitializerDeclaration(
-            List<? extends Statement> statements) {
+    public InitializerDeclaration newInitializerDeclaration(List<? extends Statement> statements) {
         Util.notNull(statements, "statements"); //$NON-NLS-1$
-        return this.newInitializerDeclaration0(
-            null,
-            Collections.emptyList(),
-            newBlock(statements)
-        );
+        return this.newInitializerDeclaration0(null, Collections.emptyList(), newBlock(statements));
     }
 
     @Override
@@ -1305,11 +835,7 @@ public class ModelFactoryImpl implements ModelFactory {
             Javadoc javadoc,
             List<? extends Attribute> modifiers,
             Block body) {
-        return this.newInitializerDeclaration0(
-            javadoc,
-            modifiers,
-            body
-        );
+        return this.newInitializerDeclaration0(javadoc, modifiers, body);
     }
 
     private InitializerDeclarationImpl newInitializerDeclaration0(
@@ -1327,18 +853,7 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public InstanceofExpression newInstanceofExpression(
-            Expression expression,
-            Type type) {
-        return this.newInstanceofExpression0(
-            expression,
-            type
-        );
-    }
-
-    private InstanceofExpressionImpl newInstanceofExpression0(
-            Expression expression,
-            Type type) {
+    public InstanceofExpression newInstanceofExpression(Expression expression, Type type) {
         Util.notNull(expression, "expression"); //$NON-NLS-1$
         Util.notNull(type, "type"); //$NON-NLS-1$
         InstanceofExpressionImpl result = new InstanceofExpressionImpl();
@@ -1409,15 +924,7 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public Javadoc newJavadoc(
-            List<? extends DocBlock> blocks) {
-        return this.newJavadoc0(
-            blocks
-        );
-    }
-
-    private JavadocImpl newJavadoc0(
-            List<? extends DocBlock> blocks) {
+    public Javadoc newJavadoc(List<? extends DocBlock> blocks) {
         Util.notNull(blocks, "blocks"); //$NON-NLS-1$
         Util.notContainNull(blocks, "blocks"); //$NON-NLS-1$
         JavadocImpl result = new JavadocImpl();
@@ -1426,18 +933,7 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public LabeledStatement newLabeledStatement(
-            SimpleName label,
-            Statement body) {
-        return this.newLabeledStatement0(
-            label,
-            body
-        );
-    }
-
-    private LabeledStatementImpl newLabeledStatement0(
-            SimpleName label,
-            Statement body) {
+    public LabeledStatement newLabeledStatement(SimpleName label, Statement body) {
         Util.notNull(label, "label"); //$NON-NLS-1$
         Util.notNull(body, "body"); //$NON-NLS-1$
         LabeledStatementImpl result = new LabeledStatementImpl();
@@ -1447,15 +943,32 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public LineComment newLineComment(
-            String string) {
-        return this.newLineComment0(
-            string
-        );
+    public LambdaExpression newLambdaExpression(List<? extends LambdaParameter> parameters, LambdaBody body) {
+        Util.notNull(parameters, "parameters");
+        Util.notNull(body, "body");
+        return newLambdaExpression0(parameters, body);
     }
 
-    private LineCommentImpl newLineComment0(
-            String string) {
+    @Override
+    public LambdaExpression newLambdaExpression(LambdaParameter parameter, LambdaBody body) {
+        Util.notNull(parameter, "parameter");
+        Util.notNull(body, "body");
+        return newLambdaExpression0(Arrays.asList(parameter), body);
+    }
+
+    private LambdaExpressionImpl newLambdaExpression0(List<? extends LambdaParameter> parameters, LambdaBody body) {
+        LambdaExpressionImpl result = new LambdaExpressionImpl();
+        result.setParameters(parameters);
+        result.setBody(body);
+        return result;
+    }
+
+    @Override
+    public LineComment newLineComment(String string) {
+        return this.newLineComment0(string);
+    }
+
+    private LineCommentImpl newLineComment0(String string) {
         Util.notNull(string, "string"); //$NON-NLS-1$
         LineCommentImpl result = new LineCommentImpl();
         result.setString(string);
@@ -1463,15 +976,7 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public Literal newLiteral(
-            String token) {
-        return this.newLiteral0(
-            token
-        );
-    }
-
-    private LiteralImpl newLiteral0(
-            String token) {
+    public Literal newLiteral(String token) {
         Util.notNull(token, "token"); //$NON-NLS-1$
         LiteralImpl result = new LiteralImpl();
         result.setToken(token);
@@ -1479,15 +984,7 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public LocalClassDeclaration newLocalClassDeclaration(
-            ClassDeclaration declaration) {
-        return this.newLocalClassDeclaration0(
-            declaration
-        );
-    }
-
-    private LocalClassDeclarationImpl newLocalClassDeclaration0(
-            ClassDeclaration declaration) {
+    public LocalClassDeclaration newLocalClassDeclaration(ClassDeclaration declaration) {
         Util.notNull(declaration, "declaration"); //$NON-NLS-1$
         LocalClassDeclarationImpl result = new LocalClassDeclarationImpl();
         result.setDeclaration(declaration);
@@ -1495,18 +992,11 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public LocalVariableDeclaration newLocalVariableDeclaration(
-            Type type,
-            SimpleName name,
-            Expression initializer) {
+    public LocalVariableDeclaration newLocalVariableDeclaration(Type type, SimpleName name, Expression initializer) {
         return this.newLocalVariableDeclaration0(
-            Collections.emptyList(),
-            type,
-            Collections.singletonList(newVariableDeclarator(
-                name,
-                0,
-                initializer))
-        );
+                Collections.emptyList(),
+                type,
+                Collections.singletonList(newVariableDeclarator(name, 0, initializer)));
     }
 
     @Override
@@ -1514,11 +1004,7 @@ public class ModelFactoryImpl implements ModelFactory {
             List<? extends Attribute> modifiers,
             Type type,
             List<? extends VariableDeclarator> variableDeclarators) {
-        return this.newLocalVariableDeclaration0(
-            modifiers,
-            type,
-            variableDeclarators
-        );
+        return this.newLocalVariableDeclaration0(modifiers, type, variableDeclarators);
     }
 
     private LocalVariableDeclarationImpl newLocalVariableDeclaration0(
@@ -1539,15 +1025,7 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public MarkerAnnotation newMarkerAnnotation(
-            NamedType type) {
-        return this.newMarkerAnnotation0(
-            type
-        );
-    }
-
-    private MarkerAnnotationImpl newMarkerAnnotation0(
-            NamedType type) {
+    public MarkerAnnotation newMarkerAnnotation(NamedType type) {
         Util.notNull(type, "type"); //$NON-NLS-1$
         MarkerAnnotationImpl result = new MarkerAnnotationImpl();
         result.setType(type);
@@ -1639,12 +1117,7 @@ public class ModelFactoryImpl implements ModelFactory {
             SimpleName name,
             Expression...arguments) {
         Util.notNull(arguments, "arguments"); //$NON-NLS-1$
-        return this.newMethodInvocationExpression0(
-            qualifier,
-            Collections.emptyList(),
-            name,
-            Arrays.asList(arguments)
-        );
+        return this.newMethodInvocationExpression0(qualifier, Collections.emptyList(), name, Arrays.asList(arguments));
     }
 
     @Override
@@ -1652,12 +1125,7 @@ public class ModelFactoryImpl implements ModelFactory {
             Expression qualifier,
             SimpleName name,
             List<? extends Expression> arguments) {
-        return this.newMethodInvocationExpression0(
-            qualifier,
-            Collections.emptyList(),
-            name,
-            arguments
-        );
+        return this.newMethodInvocationExpression0(qualifier, Collections.emptyList(), name, arguments);
     }
 
     @Override
@@ -1666,12 +1134,7 @@ public class ModelFactoryImpl implements ModelFactory {
             List<? extends Type> typeArguments,
             SimpleName name,
             List<? extends Expression> arguments) {
-        return this.newMethodInvocationExpression0(
-            qualifier,
-            typeArguments,
-            name,
-            arguments
-        );
+        return this.newMethodInvocationExpression0(qualifier, typeArguments, name, arguments);
     }
 
     private MethodInvocationExpressionImpl newMethodInvocationExpression0(
@@ -1693,15 +1156,7 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public Modifier newModifier(
-            ModifierKind modifierKind) {
-        return this.newModifier0(
-            modifierKind
-        );
-    }
-
-    private ModifierImpl newModifier0(
-            ModifierKind modifierKind) {
+    public Modifier newModifier(ModifierKind modifierKind) {
         Util.notNull(modifierKind, "modifierKind"); //$NON-NLS-1$
         ModifierImpl result = new ModifierImpl();
         result.setModifierKind(modifierKind);
@@ -1709,15 +1164,7 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public NamedType newNamedType(
-            Name name) {
-        return this.newNamedType0(
-            name
-        );
-    }
-
-    private NamedTypeImpl newNamedType0(
-            Name name) {
+    public NamedType newNamedType(Name name) {
         Util.notNull(name, "name"); //$NON-NLS-1$
         NamedTypeImpl result = new NamedTypeImpl();
         result.setName(name);
@@ -1725,18 +1172,7 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public NormalAnnotation newNormalAnnotation(
-            NamedType type,
-            List<? extends AnnotationElement> elements) {
-        return this.newNormalAnnotation0(
-            type,
-            elements
-        );
-    }
-
-    private NormalAnnotationImpl newNormalAnnotation0(
-            NamedType type,
-            List<? extends AnnotationElement> elements) {
+    public NormalAnnotation newNormalAnnotation(NamedType type, List<? extends AnnotationElement> elements) {
         Util.notNull(type, "type"); //$NON-NLS-1$
         Util.notNull(elements, "elements"); //$NON-NLS-1$
         Util.notContainNull(elements, "elements"); //$NON-NLS-1$
@@ -1747,27 +1183,7 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public PackageDeclaration newPackageDeclaration(Name name) {
-        return this.newPackageDeclaration0(
-            null,
-            Collections.emptyList(),
-            name
-        );
-    }
-
-    @Override
     public PackageDeclaration newPackageDeclaration(
-            Javadoc javadoc,
-            List<? extends Annotation> annotations,
-            Name name) {
-        return this.newPackageDeclaration0(
-            javadoc,
-            annotations,
-            name
-        );
-    }
-
-    private PackageDeclarationImpl newPackageDeclaration0(
             Javadoc javadoc,
             List<? extends Annotation> annotations,
             Name name) {
@@ -1782,29 +1198,17 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public ParameterizedType newParameterizedType(
-            Type type,
-            Type...typeArguments) {
+    public ParameterizedType newParameterizedType(Type type, Type... typeArguments) {
         Util.notNull(typeArguments, "typeArguments"); //$NON-NLS-1$
-        return this.newParameterizedType0(
-            type,
-            Arrays.asList(typeArguments)
-        );
+        return this.newParameterizedType0(type, Arrays.asList(typeArguments));
     }
 
     @Override
-    public ParameterizedType newParameterizedType(
-            Type type,
-            List<? extends Type> typeArguments) {
-        return this.newParameterizedType0(
-            type,
-            typeArguments
-        );
+    public ParameterizedType newParameterizedType(Type type, List<? extends Type> typeArguments) {
+        return this.newParameterizedType0(type, typeArguments);
     }
 
-    private ParameterizedTypeImpl newParameterizedType0(
-            Type type,
-            List<? extends Type> typeArguments) {
+    private ParameterizedTypeImpl newParameterizedType0(Type type, List<? extends Type> typeArguments) {
         Util.notNull(type, "type"); //$NON-NLS-1$
         Util.notNull(typeArguments, "typeArguments"); //$NON-NLS-1$
         Util.notContainNull(typeArguments, "typeArguments"); //$NON-NLS-1$
@@ -1815,15 +1219,7 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public ParenthesizedExpression newParenthesizedExpression(
-            Expression expression) {
-        return this.newParenthesizedExpression0(
-            expression
-        );
-    }
-
-    private ParenthesizedExpressionImpl newParenthesizedExpression0(
-            Expression expression) {
+    public ParenthesizedExpression newParenthesizedExpression(Expression expression) {
         Util.notNull(expression, "expression"); //$NON-NLS-1$
         ParenthesizedExpressionImpl result = new ParenthesizedExpressionImpl();
         result.setExpression(expression);
@@ -1831,18 +1227,7 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public PostfixExpression newPostfixExpression(
-            Expression operand,
-            PostfixOperator operator) {
-        return this.newPostfixExpression0(
-            operand,
-            operator
-        );
-    }
-
-    private PostfixExpressionImpl newPostfixExpression0(
-            Expression operand,
-            PostfixOperator operator) {
+    public PostfixExpression newPostfixExpression(Expression operand, PostfixOperator operator) {
         Util.notNull(operand, "operand"); //$NON-NLS-1$
         Util.notNull(operator, "operator"); //$NON-NLS-1$
         PostfixExpressionImpl result = new PostfixExpressionImpl();
@@ -1852,18 +1237,7 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public QualifiedName newQualifiedName(
-            Name qualifier,
-            SimpleName simpleName) {
-        return this.newQualifiedName0(
-            qualifier,
-            simpleName
-        );
-    }
-
-    private QualifiedNameImpl newQualifiedName0(
-            Name qualifier,
-            SimpleName simpleName) {
+    public QualifiedName newQualifiedName(Name qualifier, SimpleName simpleName) {
         Util.notNull(qualifier, "qualifier"); //$NON-NLS-1$
         Util.notNull(simpleName, "simpleName"); //$NON-NLS-1$
         QualifiedNameImpl result = new QualifiedNameImpl();
@@ -1873,18 +1247,7 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public QualifiedType newQualifiedType(
-            Type qualifier,
-            SimpleName simpleName) {
-        return this.newQualifiedType0(
-            qualifier,
-            simpleName
-        );
-    }
-
-    private QualifiedTypeImpl newQualifiedType0(
-            Type qualifier,
-            SimpleName simpleName) {
+    public QualifiedType newQualifiedType(Type qualifier, SimpleName simpleName) {
         Util.notNull(qualifier, "qualifier"); //$NON-NLS-1$
         Util.notNull(simpleName, "simpleName"); //$NON-NLS-1$
         QualifiedTypeImpl result = new QualifiedTypeImpl();
@@ -1894,37 +1257,14 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public ReturnStatement newReturnStatement() {
-        return this.newReturnStatement0(
-            null
-        );
-    }
-
-    @Override
-    public ReturnStatement newReturnStatement(
-            Expression expression) {
-        return this.newReturnStatement0(
-            expression
-        );
-    }
-
-    private ReturnStatementImpl newReturnStatement0(
-            Expression expression) {
+    public ReturnStatement newReturnStatement(Expression expression) {
         ReturnStatementImpl result = new ReturnStatementImpl();
         result.setExpression(expression);
         return result;
     }
 
     @Override
-    public SimpleName newSimpleName(
-            String string) {
-        return this.newSimpleName0(
-            string
-        );
-    }
-
-    private SimpleNameImpl newSimpleName0(
-            String string) {
+    public SimpleName newSimpleName(String string) {
         Util.notNull(string, "string"); //$NON-NLS-1$
         SimpleNameImpl result = new SimpleNameImpl();
         result.setToken(string);
@@ -1932,18 +1272,7 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public SingleElementAnnotation newSingleElementAnnotation(
-            NamedType type,
-            Expression expression) {
-        return this.newSingleElementAnnotation0(
-            type,
-            expression
-        );
-    }
-
-    private SingleElementAnnotationImpl newSingleElementAnnotation0(
-            NamedType type,
-            Expression expression) {
+    public SingleElementAnnotation newSingleElementAnnotation(NamedType type, Expression expression) {
         Util.notNull(type, "type"); //$NON-NLS-1$
         Util.notNull(expression, "expression"); //$NON-NLS-1$
         SingleElementAnnotationImpl result = new SingleElementAnnotationImpl();
@@ -1953,24 +1282,17 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public StatementExpressionList newStatementExpressionList(
-            Expression...expressions) {
+    public StatementExpressionList newStatementExpressionList(Expression... expressions) {
         Util.notNull(expressions, "expressions"); //$NON-NLS-1$
-        return this.newStatementExpressionList0(
-            Arrays.asList(expressions)
-        );
+        return this.newStatementExpressionList0(Arrays.asList(expressions));
     }
 
     @Override
-    public StatementExpressionList newStatementExpressionList(
-            List<? extends Expression> expressions) {
-        return this.newStatementExpressionList0(
-            expressions
-        );
+    public StatementExpressionList newStatementExpressionList(List<? extends Expression> expressions) {
+        return this.newStatementExpressionList0(expressions);
     }
 
-    private StatementExpressionListImpl newStatementExpressionList0(
-            List<? extends Expression> expressions) {
+    private StatementExpressionListImpl newStatementExpressionList0(List<? extends Expression> expressions) {
         Util.notNull(expressions, "expressions"); //$NON-NLS-1$
         Util.notContainNull(expressions, "expressions"); //$NON-NLS-1$
         Util.notEmpty(expressions, "expressions"); //$NON-NLS-1$
@@ -1980,46 +1302,21 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public Super newSuper() {
-        return this.newSuper0(
-            null
-        );
-    }
-
-    @Override
-    public Super newSuper(
-            NamedType qualifier) {
-        return this.newSuper0(
-            qualifier
-        );
-    }
-
-    private SuperImpl newSuper0(
-            NamedType qualifier) {
+    public Super newSuper(NamedType qualifier) {
         SuperImpl result = new SuperImpl();
         result.setQualifier(qualifier);
         return result;
     }
 
     @Override
-    public SuperConstructorInvocation newSuperConstructorInvocation(
-            Expression...arguments) {
+    public SuperConstructorInvocation newSuperConstructorInvocation(Expression... arguments) {
         Util.notNull(arguments, "arguments"); //$NON-NLS-1$
-        return this.newSuperConstructorInvocation0(
-            null,
-            Collections.emptyList(),
-            Arrays.asList(arguments)
-        );
+        return this.newSuperConstructorInvocation0(null, Collections.emptyList(), Arrays.asList(arguments));
     }
 
     @Override
-    public SuperConstructorInvocation newSuperConstructorInvocation(
-            List<? extends Expression> arguments) {
-        return this.newSuperConstructorInvocation0(
-            null,
-            Collections.emptyList(),
-            arguments
-        );
+    public SuperConstructorInvocation newSuperConstructorInvocation(List<? extends Expression> arguments) {
+        return this.newSuperConstructorInvocation0(null, Collections.emptyList(), arguments);
     }
 
     @Override
@@ -2027,11 +1324,7 @@ public class ModelFactoryImpl implements ModelFactory {
             Expression qualifier,
             List<? extends Type> typeArguments,
             List<? extends Expression> arguments) {
-        return this.newSuperConstructorInvocation0(
-            qualifier,
-            typeArguments,
-            arguments
-        );
+        return this.newSuperConstructorInvocation0(qualifier, typeArguments, arguments);
     }
 
     private SuperConstructorInvocationImpl newSuperConstructorInvocation0(
@@ -2050,15 +1343,7 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public SwitchCaseLabel newSwitchCaseLabel(
-            Expression expression) {
-        return this.newSwitchCaseLabel0(
-            expression
-        );
-    }
-
-    private SwitchCaseLabelImpl newSwitchCaseLabel0(
-            Expression expression) {
+    public SwitchCaseLabel newSwitchCaseLabel(Expression expression) {
         Util.notNull(expression, "expression"); //$NON-NLS-1$
         SwitchCaseLabelImpl result = new SwitchCaseLabelImpl();
         result.setExpression(expression);
@@ -2066,32 +1351,13 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public SwitchDefaultLabel newSwitchDefaultLabel(
-            ) {
-        return this.newSwitchDefaultLabel0(
-
-        );
-    }
-
-    private SwitchDefaultLabelImpl newSwitchDefaultLabel0(
-            ) {
+    public SwitchDefaultLabel newSwitchDefaultLabel() {
         SwitchDefaultLabelImpl result = new SwitchDefaultLabelImpl();
         return result;
     }
 
     @Override
-    public SwitchStatement newSwitchStatement(
-            Expression expression,
-            List<? extends Statement> statements) {
-        return this.newSwitchStatement0(
-            expression,
-            statements
-        );
-    }
-
-    private SwitchStatementImpl newSwitchStatement0(
-            Expression expression,
-            List<? extends Statement> statements) {
+    public SwitchStatement newSwitchStatement(Expression expression, List<? extends Statement> statements) {
         Util.notNull(expression, "expression"); //$NON-NLS-1$
         Util.notNull(statements, "statements"); //$NON-NLS-1$
         Util.notContainNull(statements, "statements"); //$NON-NLS-1$
@@ -2102,18 +1368,7 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public SynchronizedStatement newSynchronizedStatement(
-            Expression expression,
-            Block body) {
-        return this.newSynchronizedStatement0(
-            expression,
-            body
-        );
-    }
-
-    private SynchronizedStatementImpl newSynchronizedStatement0(
-            Expression expression,
-            Block body) {
+    public SynchronizedStatement newSynchronizedStatement(Expression expression, Block body) {
         Util.notNull(expression, "expression"); //$NON-NLS-1$
         Util.notNull(body, "body"); //$NON-NLS-1$
         SynchronizedStatementImpl result = new SynchronizedStatementImpl();
@@ -2123,37 +1378,14 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public This newThis() {
-        return this.newThis0(
-            null
-        );
-    }
-
-    @Override
-    public This newThis(
-            NamedType qualifier) {
-        return this.newThis0(
-            qualifier
-        );
-    }
-
-    private ThisImpl newThis0(
-            NamedType qualifier) {
+    public This newThis(NamedType qualifier) {
         ThisImpl result = new ThisImpl();
         result.setQualifier(qualifier);
         return result;
     }
 
     @Override
-    public ThrowStatement newThrowStatement(
-            Expression expression) {
-        return this.newThrowStatement0(
-            expression
-        );
-    }
-
-    private ThrowStatementImpl newThrowStatement0(
-            Expression expression) {
+    public ThrowStatement newThrowStatement(Expression expression) {
         Util.notNull(expression, "expression"); //$NON-NLS-1$
         ThrowStatementImpl result = new ThrowStatementImpl();
         result.setExpression(expression);
@@ -2161,25 +1393,28 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public TryStatement newTryStatement(
-            Block tryBlock,
-            List<? extends CatchClause> catchClauses,
-            Block finallyBlock) {
-        return this.newTryStatement0(
-            tryBlock,
-            catchClauses,
-            finallyBlock
-        );
+    public TryResource newTryResource(FormalParameterDeclaration parameter, Expression expression) {
+        Util.notNull(parameter, "parameter"); //$NON-NLS-1$
+        Util.notNull(expression, "expression"); //$NON-NLS-1$
+        TryResourceImpl result = new TryResourceImpl();
+        result.setParameter(parameter);
+        result.setInitializer(expression);
+        return result;
     }
 
-    private TryStatementImpl newTryStatement0(
+    @Override
+    public TryStatement newTryStatement(
+            List<? extends TryResource> resources,
             Block tryBlock,
             List<? extends CatchClause> catchClauses,
             Block finallyBlock) {
+        Util.notNull(resources, "resources"); //$NON-NLS-1$
+        Util.notContainNull(resources, "resources"); //$NON-NLS-1$
         Util.notNull(tryBlock, "tryBlock"); //$NON-NLS-1$
         Util.notNull(catchClauses, "catchClauses"); //$NON-NLS-1$
         Util.notContainNull(catchClauses, "catchClauses"); //$NON-NLS-1$
         TryStatementImpl result = new TryStatementImpl();
+        result.setResources(resources);
         result.setTryBlock(tryBlock);
         result.setCatchClauses(catchClauses);
         result.setFinallyBlock(finallyBlock);
@@ -2187,28 +1422,17 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public TypeParameterDeclaration newTypeParameterDeclaration(
-            SimpleName name,
-            Type...typeBounds) {
+    public TypeParameterDeclaration newTypeParameterDeclaration(SimpleName name, Type... typeBounds) {
         Util.notNull(typeBounds, "typeBounds"); //$NON-NLS-1$
-        return this.newTypeParameterDeclaration0(
-            name,
-            Arrays.asList(typeBounds)
-        );
+        return this.newTypeParameterDeclaration0(name, Arrays.asList(typeBounds));
     }
 
     @Override
-    public TypeParameterDeclaration newTypeParameterDeclaration(
-            SimpleName name,
-            List<? extends Type> typeBounds) {
-        return this.newTypeParameterDeclaration0(
-            name,
-            typeBounds
-        );
+    public TypeParameterDeclaration newTypeParameterDeclaration(SimpleName name, List<? extends Type> typeBounds) {
+        return this.newTypeParameterDeclaration0(name, typeBounds);
     }
 
-    private TypeParameterDeclarationImpl newTypeParameterDeclaration0(
-            SimpleName name,
+    private TypeParameterDeclarationImpl newTypeParameterDeclaration0(SimpleName name,
             List<? extends Type> typeBounds) {
         Util.notNull(name, "name"); //$NON-NLS-1$
         Util.notNull(typeBounds, "typeBounds"); //$NON-NLS-1$
@@ -2220,18 +1444,7 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public UnaryExpression newUnaryExpression(
-            UnaryOperator operator,
-            Expression operand) {
-        return this.newUnaryExpression0(
-            operator,
-            operand
-        );
-    }
-
-    private UnaryExpressionImpl newUnaryExpression0(
-            UnaryOperator operator,
-            Expression operand) {
+    public UnaryExpression newUnaryExpression(UnaryOperator operator, Expression operand) {
         Util.notNull(operator, "operator"); //$NON-NLS-1$
         Util.notNull(operand, "operand"); //$NON-NLS-1$
         UnaryExpressionImpl result = new UnaryExpressionImpl();
@@ -2241,32 +1454,23 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public VariableDeclarator newVariableDeclarator(
-            SimpleName name,
-            Expression initializer) {
-        return this.newVariableDeclarator0(
-            name,
-            0,
-            initializer
-        );
+    public UnionType newUnionType(Type... alternativeTypes) {
+        Util.notNull(alternativeTypes, "alternativeTypes"); //$NON-NLS-1$
+        return newUnionType(Arrays.asList(alternativeTypes));
     }
 
     @Override
-    public VariableDeclarator newVariableDeclarator(
-            SimpleName name,
-            int extraDimensions,
-            Expression initializer) {
-        return this.newVariableDeclarator0(
-            name,
-            extraDimensions,
-            initializer
-        );
+    public UnionType newUnionType(List<? extends Type> alternativeTypes) {
+        Util.notNull(alternativeTypes, "alternativeTypes"); //$NON-NLS-1$
+        Util.notContainNull(alternativeTypes, "alternativeTypes"); //$NON-NLS-1$
+        Util.notEmpty(alternativeTypes, "alternativeTypes"); //$NON-NLS-1$
+        UnionTypeImpl result = new UnionTypeImpl();
+        result.setAlternativeTypes(alternativeTypes);
+        return result;
     }
 
-    private VariableDeclaratorImpl newVariableDeclarator0(
-            SimpleName name,
-            int extraDimensions,
-            Expression initializer) {
+    @Override
+    public VariableDeclarator newVariableDeclarator(SimpleName name, int extraDimensions, Expression initializer) {
         Util.notNull(name, "name"); //$NON-NLS-1$
         VariableDeclaratorImpl result = new VariableDeclaratorImpl();
         result.setName(name);
@@ -2276,18 +1480,7 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public WhileStatement newWhileStatement(
-            Expression condition,
-            Statement body) {
-        return this.newWhileStatement0(
-            condition,
-            body
-        );
-    }
-
-    private WhileStatementImpl newWhileStatement0(
-            Expression condition,
-            Statement body) {
+    public WhileStatement newWhileStatement(Expression condition, Statement body) {
         Util.notNull(condition, "condition"); //$NON-NLS-1$
         Util.notNull(body, "body"); //$NON-NLS-1$
         WhileStatementImpl result = new WhileStatementImpl();
@@ -2297,26 +1490,7 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
-    public Wildcard newWildcard() {
-        return this.newWildcard0(
-            WildcardBoundKind.UNBOUNDED,
-            null
-        );
-    }
-
-    @Override
-    public Wildcard newWildcard(
-            WildcardBoundKind boundKind,
-            Type typeBound) {
-        return this.newWildcard0(
-            boundKind,
-            typeBound
-        );
-    }
-
-    private WildcardImpl newWildcard0(
-            WildcardBoundKind boundKind,
-            Type typeBound) {
+    public Wildcard newWildcard(WildcardBoundKind boundKind, Type typeBound) {
         Util.notNull(boundKind, "boundKind"); //$NON-NLS-1$
         WildcardImpl result = new WildcardImpl();
         result.setBoundKind(boundKind);
@@ -2330,7 +1504,7 @@ public class ModelFactoryImpl implements ModelFactory {
         }
         ExpressionPriority priority = ExpressionPriority.valueOf(expression);
         if (ExpressionPriority.isParenthesesRequired(context, false, priority)) {
-            return newParenthesizedExpression0(expression);
+            return newParenthesizedExpression(expression);
         } else {
             return expression;
         }
@@ -2342,7 +1516,7 @@ public class ModelFactoryImpl implements ModelFactory {
         }
         ExpressionPriority priority = ExpressionPriority.valueOf(expression);
         if (ExpressionPriority.isParenthesesRequired(context, true, priority)) {
-            return newParenthesizedExpression0(expression);
+            return newParenthesizedExpression(expression);
         } else {
             return expression;
         }

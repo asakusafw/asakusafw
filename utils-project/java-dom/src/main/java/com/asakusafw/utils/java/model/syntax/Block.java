@@ -26,7 +26,7 @@ import java.util.List;
  * </ul>
  */
 public interface Block
-        extends Statement {
+        extends Statement, LambdaBody {
 
     /**
      * Returns the element statements.

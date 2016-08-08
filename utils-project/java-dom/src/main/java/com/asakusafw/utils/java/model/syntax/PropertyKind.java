@@ -17,6 +17,8 @@ package com.asakusafw.utils.java.model.syntax;
 
 /**
  * Represents a kind of properties in {@link Model}.
+ * @since 0.1.0
+ * @version 0.9.0
  */
 public enum PropertyKind {
 
@@ -25,7 +27,7 @@ public enum PropertyKind {
      */
     ANNOTATION_TYPE(
         Annotation.class,
-        "type" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "type" //$NON-NLS-1$
     ),
 
     /**
@@ -33,7 +35,7 @@ public enum PropertyKind {
      */
     ANNOTATION_ELEMENT_NAME(
         AnnotationElement.class,
-        "name" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "name" //$NON-NLS-1$
     ),
 
     /**
@@ -41,7 +43,7 @@ public enum PropertyKind {
      */
     ANNOTATION_ELEMENT_EXPRESSION(
         AnnotationElement.class,
-        "expression" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "expression" //$NON-NLS-1$
     ),
 
     /**
@@ -49,7 +51,7 @@ public enum PropertyKind {
      */
     ANNOTATION_ELEMENT_DECLARATION_TYPE(
         AnnotationElementDeclaration.class,
-        "type" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "type" //$NON-NLS-1$
     ),
 
     /**
@@ -57,7 +59,7 @@ public enum PropertyKind {
      */
     ANNOTATION_ELEMENT_DECLARATION_NAME(
         AnnotationElementDeclaration.class,
-        "name" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "name" //$NON-NLS-1$
     ),
 
     /**
@@ -65,7 +67,7 @@ public enum PropertyKind {
      */
     ANNOTATION_ELEMENT_DECLARATION_DEFAULT_EXPRESSION(
         AnnotationElementDeclaration.class,
-        "defaultExpression" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "defaultExpression" //$NON-NLS-1$
     ),
 
     /**
@@ -73,7 +75,7 @@ public enum PropertyKind {
      */
     ARRAY_ACCESS_EXPRESSION_ARRAY(
         ArrayAccessExpression.class,
-        "array" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "array" //$NON-NLS-1$
     ),
 
     /**
@@ -81,7 +83,7 @@ public enum PropertyKind {
      */
     ARRAY_ACCESS_EXPRESSION_INDEX(
         ArrayAccessExpression.class,
-        "index" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "index" //$NON-NLS-1$
     ),
 
     /**
@@ -89,7 +91,7 @@ public enum PropertyKind {
      */
     ARRAY_CREATION_EXPRESSION_TYPE(
         ArrayCreationExpression.class,
-        "type" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "type" //$NON-NLS-1$
     ),
 
     /**
@@ -97,7 +99,7 @@ public enum PropertyKind {
      */
     ARRAY_CREATION_EXPRESSION_DIMENSION_EXPRESSIONS(
         ArrayCreationExpression.class,
-        "dimensionExpressions" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "dimensionExpressions" //$NON-NLS-1$
     ),
 
     /**
@@ -105,7 +107,7 @@ public enum PropertyKind {
      */
     ARRAY_CREATION_EXPRESSION_ARRAY_INITIALIZER(
         ArrayCreationExpression.class,
-        "arrayInitializer" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "arrayInitializer" //$NON-NLS-1$
     ),
 
     /**
@@ -113,7 +115,7 @@ public enum PropertyKind {
      */
     ARRAY_INITIALIZER_ELEMENTS(
         ArrayInitializer.class,
-        "elements" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "elements" //$NON-NLS-1$
     ),
 
     /**
@@ -121,7 +123,7 @@ public enum PropertyKind {
      */
     ARRAY_TYPE_COMPONENT_TYPE(
         ArrayType.class,
-        "componentType" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "componentType" //$NON-NLS-1$
     ),
 
     /**
@@ -129,7 +131,7 @@ public enum PropertyKind {
      */
     ASSERT_STATEMENT_EXPRESSION(
         AssertStatement.class,
-        "expression" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "expression" //$NON-NLS-1$
     ),
 
     /**
@@ -137,7 +139,7 @@ public enum PropertyKind {
      */
     ASSERT_STATEMENT_MESSAGE(
         AssertStatement.class,
-        "message" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "message" //$NON-NLS-1$
     ),
 
     /**
@@ -145,7 +147,7 @@ public enum PropertyKind {
      */
     ASSIGNMENT_EXPRESSION_LEFT_HAND_SIDE(
         AssignmentExpression.class,
-        "leftHandSide" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "leftHandSide" //$NON-NLS-1$
     ),
 
     /**
@@ -153,7 +155,7 @@ public enum PropertyKind {
      */
     ASSIGNMENT_EXPRESSION_OPERATOR(
         AssignmentExpression.class,
-        "operator" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "operator" //$NON-NLS-1$
     ),
 
     /**
@@ -161,7 +163,7 @@ public enum PropertyKind {
      */
     ASSIGNMENT_EXPRESSION_RIGHT_HAND_SIDE(
         AssignmentExpression.class,
-        "rightHandSide" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "rightHandSide" //$NON-NLS-1$
     ),
 
     /**
@@ -169,7 +171,7 @@ public enum PropertyKind {
      */
     BASIC_TYPE_TYPE_KIND(
         BasicType.class,
-        "typeKind" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "typeKind" //$NON-NLS-1$
     ),
 
     /**
@@ -177,7 +179,7 @@ public enum PropertyKind {
      */
     BLOCK_STATEMENTS(
         Block.class,
-        "statements" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "statements" //$NON-NLS-1$
     ),
 
     /**
@@ -185,7 +187,7 @@ public enum PropertyKind {
      */
     BLOCK_COMMENT_STRING(
         BlockComment.class,
-        "string" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "string" //$NON-NLS-1$
     ),
 
     /**
@@ -193,7 +195,7 @@ public enum PropertyKind {
      */
     BRANCH_STATEMENT_TARGET(
         BranchStatement.class,
-        "target" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "target" //$NON-NLS-1$
     ),
 
     /**
@@ -201,7 +203,7 @@ public enum PropertyKind {
      */
     CAST_EXPRESSION_TYPE(
         CastExpression.class,
-        "type" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "type" //$NON-NLS-1$
     ),
 
     /**
@@ -209,7 +211,7 @@ public enum PropertyKind {
      */
     CAST_EXPRESSION_EXPRESSION(
         CastExpression.class,
-        "expression" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "expression" //$NON-NLS-1$
     ),
 
     /**
@@ -217,7 +219,7 @@ public enum PropertyKind {
      */
     CATCH_CLAUSE_PARAMETER(
         CatchClause.class,
-        "parameter" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "parameter" //$NON-NLS-1$
     ),
 
     /**
@@ -225,7 +227,7 @@ public enum PropertyKind {
      */
     CATCH_CLAUSE_BODY(
         CatchClause.class,
-        "body" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "body" //$NON-NLS-1$
     ),
 
     /**
@@ -233,7 +235,7 @@ public enum PropertyKind {
      */
     CLASS_BODY_BODY_DECLARATIONS(
         ClassBody.class,
-        "bodyDeclarations" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "bodyDeclarations" //$NON-NLS-1$
     ),
 
     /**
@@ -241,7 +243,7 @@ public enum PropertyKind {
      */
     CLASS_DECLARATION_TYPE_PARAMETERS(
         ClassDeclaration.class,
-        "typeParameters" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "typeParameters" //$NON-NLS-1$
     ),
 
     /**
@@ -249,7 +251,7 @@ public enum PropertyKind {
      */
     CLASS_DECLARATION_SUPER_CLASS(
         ClassDeclaration.class,
-        "superClass" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "superClass" //$NON-NLS-1$
     ),
 
     /**
@@ -257,7 +259,7 @@ public enum PropertyKind {
      */
     CLASS_DECLARATION_SUPER_INTERFACE_TYPES(
         ClassDeclaration.class,
-        "superInterfaceTypes" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "superInterfaceTypes" //$NON-NLS-1$
     ),
 
     /**
@@ -265,7 +267,7 @@ public enum PropertyKind {
      */
     CLASS_INSTANCE_CREATION_EXPRESSION_QUALIFIER(
         ClassInstanceCreationExpression.class,
-        "qualifier" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "qualifier" //$NON-NLS-1$
     ),
 
     /**
@@ -273,7 +275,7 @@ public enum PropertyKind {
      */
     CLASS_INSTANCE_CREATION_EXPRESSION_TYPE_ARGUMENTS(
         ClassInstanceCreationExpression.class,
-        "typeArguments" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "typeArguments" //$NON-NLS-1$
     ),
 
     /**
@@ -281,7 +283,7 @@ public enum PropertyKind {
      */
     CLASS_INSTANCE_CREATION_EXPRESSION_TYPE(
         ClassInstanceCreationExpression.class,
-        "type" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "type" //$NON-NLS-1$
     ),
 
     /**
@@ -289,7 +291,7 @@ public enum PropertyKind {
      */
     CLASS_INSTANCE_CREATION_EXPRESSION_ARGUMENTS(
         ClassInstanceCreationExpression.class,
-        "arguments" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "arguments" //$NON-NLS-1$
     ),
 
     /**
@@ -297,7 +299,7 @@ public enum PropertyKind {
      */
     CLASS_INSTANCE_CREATION_EXPRESSION_BODY(
         ClassInstanceCreationExpression.class,
-        "body" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "body" //$NON-NLS-1$
     ),
 
     /**
@@ -305,7 +307,7 @@ public enum PropertyKind {
      */
     CLASS_LITERAL_TYPE(
         ClassLiteral.class,
-        "type" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "type" //$NON-NLS-1$
     ),
 
     /**
@@ -313,7 +315,7 @@ public enum PropertyKind {
      */
     COMPILATION_UNIT_PACKAGE_DECLARATION(
         CompilationUnit.class,
-        "packageDeclaration" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "packageDeclaration" //$NON-NLS-1$
     ),
 
     /**
@@ -321,7 +323,7 @@ public enum PropertyKind {
      */
     COMPILATION_UNIT_IMPORT_DECLARATIONS(
         CompilationUnit.class,
-        "importDeclarations" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "importDeclarations" //$NON-NLS-1$
     ),
 
     /**
@@ -329,7 +331,7 @@ public enum PropertyKind {
      */
     COMPILATION_UNIT_TYPE_DECLARATIONS(
         CompilationUnit.class,
-        "typeDeclarations" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "typeDeclarations" //$NON-NLS-1$
     ),
 
     /**
@@ -337,7 +339,7 @@ public enum PropertyKind {
      */
     COMPILATION_UNIT_COMMENTS(
         CompilationUnit.class,
-        "comments" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "comments" //$NON-NLS-1$
     ),
 
     /**
@@ -345,7 +347,7 @@ public enum PropertyKind {
      */
     CONDITIONAL_EXPRESSION_CONDITION(
         ConditionalExpression.class,
-        "condition" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "condition" //$NON-NLS-1$
     ),
 
     /**
@@ -353,7 +355,7 @@ public enum PropertyKind {
      */
     CONDITIONAL_EXPRESSION_THEN_EXPRESSION(
         ConditionalExpression.class,
-        "thenExpression" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "thenExpression" //$NON-NLS-1$
     ),
 
     /**
@@ -361,7 +363,7 @@ public enum PropertyKind {
      */
     CONDITIONAL_EXPRESSION_ELSE_EXPRESSION(
         ConditionalExpression.class,
-        "elseExpression" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "elseExpression" //$NON-NLS-1$
     ),
 
     /**
@@ -369,7 +371,7 @@ public enum PropertyKind {
      */
     CONSTRUCTOR_INVOCATION_TYPE_ARGUMENTS(
         ConstructorInvocation.class,
-        "typeArguments" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "typeArguments" //$NON-NLS-1$
     ),
 
     /**
@@ -377,7 +379,7 @@ public enum PropertyKind {
      */
     CONSTRUCTOR_INVOCATION_ARGUMENTS(
         ConstructorInvocation.class,
-        "arguments" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "arguments" //$NON-NLS-1$
     ),
 
     /**
@@ -385,7 +387,7 @@ public enum PropertyKind {
      */
     DO_STATEMENT_BODY(
         DoStatement.class,
-        "body" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "body" //$NON-NLS-1$
     ),
 
     /**
@@ -393,7 +395,7 @@ public enum PropertyKind {
      */
     DO_STATEMENT_CONDITION(
         DoStatement.class,
-        "condition" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "condition" //$NON-NLS-1$
     ),
 
     /**
@@ -401,7 +403,7 @@ public enum PropertyKind {
      */
     DOC_BLOCK_TAG(
         DocBlock.class,
-        "tag" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "tag" //$NON-NLS-1$
     ),
 
     /**
@@ -409,7 +411,7 @@ public enum PropertyKind {
      */
     DOC_BLOCK_ELEMENTS(
         DocBlock.class,
-        "elements" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "elements" //$NON-NLS-1$
     ),
 
     /**
@@ -417,7 +419,7 @@ public enum PropertyKind {
      */
     DOC_FIELD_TYPE(
         DocField.class,
-        "type" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "type" //$NON-NLS-1$
     ),
 
     /**
@@ -425,7 +427,7 @@ public enum PropertyKind {
      */
     DOC_FIELD_NAME(
         DocField.class,
-        "name" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "name" //$NON-NLS-1$
     ),
 
     /**
@@ -433,7 +435,7 @@ public enum PropertyKind {
      */
     DOC_METHOD_TYPE(
         DocMethod.class,
-        "type" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "type" //$NON-NLS-1$
     ),
 
     /**
@@ -441,7 +443,7 @@ public enum PropertyKind {
      */
     DOC_METHOD_NAME(
         DocMethod.class,
-        "name" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "name" //$NON-NLS-1$
     ),
 
     /**
@@ -449,7 +451,7 @@ public enum PropertyKind {
      */
     DOC_METHOD_FORMAL_PARAMETERS(
         DocMethod.class,
-        "formalParameters" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "formalParameters" //$NON-NLS-1$
     ),
 
     /**
@@ -457,7 +459,7 @@ public enum PropertyKind {
      */
     DOC_METHOD_PARAMETER_TYPE(
         DocMethodParameter.class,
-        "type" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "type" //$NON-NLS-1$
     ),
 
     /**
@@ -465,7 +467,7 @@ public enum PropertyKind {
      */
     DOC_METHOD_PARAMETER_NAME(
         DocMethodParameter.class,
-        "name" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "name" //$NON-NLS-1$
     ),
 
     /**
@@ -473,7 +475,7 @@ public enum PropertyKind {
      */
     DOC_METHOD_PARAMETER_VARIABLE_ARITY(
         DocMethodParameter.class,
-        "variableArity" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "variableArity" //$NON-NLS-1$
     ),
 
     /**
@@ -481,7 +483,7 @@ public enum PropertyKind {
      */
     DOC_TEXT_STRING(
         DocText.class,
-        "string" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "string" //$NON-NLS-1$
     ),
 
     /**
@@ -489,7 +491,7 @@ public enum PropertyKind {
      */
     ENHANCED_FOR_STATEMENT_PARAMETER(
         EnhancedForStatement.class,
-        "parameter" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "parameter" //$NON-NLS-1$
     ),
 
     /**
@@ -497,7 +499,7 @@ public enum PropertyKind {
      */
     ENHANCED_FOR_STATEMENT_EXPRESSION(
         EnhancedForStatement.class,
-        "expression" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "expression" //$NON-NLS-1$
     ),
 
     /**
@@ -505,7 +507,7 @@ public enum PropertyKind {
      */
     ENHANCED_FOR_STATEMENT_BODY(
         EnhancedForStatement.class,
-        "body" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "body" //$NON-NLS-1$
     ),
 
     /**
@@ -513,7 +515,7 @@ public enum PropertyKind {
      */
     ENUM_CONSTANT_DECLARATION_NAME(
         EnumConstantDeclaration.class,
-        "name" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "name" //$NON-NLS-1$
     ),
 
     /**
@@ -521,7 +523,7 @@ public enum PropertyKind {
      */
     ENUM_CONSTANT_DECLARATION_ARGUMENTS(
         EnumConstantDeclaration.class,
-        "arguments" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "arguments" //$NON-NLS-1$
     ),
 
     /**
@@ -529,7 +531,7 @@ public enum PropertyKind {
      */
     ENUM_CONSTANT_DECLARATION_BODY(
         EnumConstantDeclaration.class,
-        "body" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "body" //$NON-NLS-1$
     ),
 
     /**
@@ -537,7 +539,7 @@ public enum PropertyKind {
      */
     ENUM_DECLARATION_SUPER_INTERFACE_TYPES(
         EnumDeclaration.class,
-        "superInterfaceTypes" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "superInterfaceTypes" //$NON-NLS-1$
     ),
 
     /**
@@ -545,7 +547,7 @@ public enum PropertyKind {
      */
     ENUM_DECLARATION_CONSTANT_DECLARATIONS(
         EnumDeclaration.class,
-        "constantDeclarations" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "constantDeclarations" //$NON-NLS-1$
     ),
 
     /**
@@ -553,7 +555,7 @@ public enum PropertyKind {
      */
     EXPRESSION_STATEMENT_EXPRESSION(
         ExpressionStatement.class,
-        "expression" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "expression" //$NON-NLS-1$
     ),
 
     /**
@@ -561,7 +563,7 @@ public enum PropertyKind {
      */
     FIELD_ACCESS_EXPRESSION_QUALIFIER(
         FieldAccessExpression.class,
-        "qualifier" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "qualifier" //$NON-NLS-1$
     ),
 
     /**
@@ -569,7 +571,7 @@ public enum PropertyKind {
      */
     FIELD_ACCESS_EXPRESSION_NAME(
         FieldAccessExpression.class,
-        "name" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "name" //$NON-NLS-1$
     ),
 
     /**
@@ -577,7 +579,7 @@ public enum PropertyKind {
      */
     FIELD_DECLARATION_TYPE(
         FieldDeclaration.class,
-        "type" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "type" //$NON-NLS-1$
     ),
 
     /**
@@ -585,7 +587,7 @@ public enum PropertyKind {
      */
     FIELD_DECLARATION_VARIABLE_DECLARATORS(
         FieldDeclaration.class,
-        "variableDeclarators" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "variableDeclarators" //$NON-NLS-1$
     ),
 
     /**
@@ -593,7 +595,7 @@ public enum PropertyKind {
      */
     FOR_STATEMENT_INITIALIZATION(
         ForStatement.class,
-        "initialization" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "initialization" //$NON-NLS-1$
     ),
 
     /**
@@ -601,7 +603,7 @@ public enum PropertyKind {
      */
     FOR_STATEMENT_CONDITION(
         ForStatement.class,
-        "condition" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "condition" //$NON-NLS-1$
     ),
 
     /**
@@ -609,7 +611,7 @@ public enum PropertyKind {
      */
     FOR_STATEMENT_UPDATE(
         ForStatement.class,
-        "update" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "update" //$NON-NLS-1$
     ),
 
     /**
@@ -617,7 +619,7 @@ public enum PropertyKind {
      */
     FOR_STATEMENT_BODY(
         ForStatement.class,
-        "body" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "body" //$NON-NLS-1$
     ),
 
     /**
@@ -625,7 +627,7 @@ public enum PropertyKind {
      */
     FORMAL_PARAMETER_DECLARATION_MODIFIERS(
         FormalParameterDeclaration.class,
-        "modifiers" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "modifiers" //$NON-NLS-1$
     ),
 
     /**
@@ -633,7 +635,7 @@ public enum PropertyKind {
      */
     FORMAL_PARAMETER_DECLARATION_TYPE(
         FormalParameterDeclaration.class,
-        "type" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "type" //$NON-NLS-1$
     ),
 
     /**
@@ -641,7 +643,7 @@ public enum PropertyKind {
      */
     FORMAL_PARAMETER_DECLARATION_VARIABLE_ARITY(
         FormalParameterDeclaration.class,
-        "variableArity" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "variableArity" //$NON-NLS-1$
     ),
 
     /**
@@ -649,7 +651,7 @@ public enum PropertyKind {
      */
     FORMAL_PARAMETER_DECLARATION_NAME(
         FormalParameterDeclaration.class,
-        "name" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "name" //$NON-NLS-1$
     ),
 
     /**
@@ -657,7 +659,7 @@ public enum PropertyKind {
      */
     FORMAL_PARAMETER_DECLARATION_EXTRA_DIMENSIONS(
         FormalParameterDeclaration.class,
-        "extraDimensions" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "extraDimensions" //$NON-NLS-1$
     ),
 
     /**
@@ -665,7 +667,7 @@ public enum PropertyKind {
      */
     IF_STATEMENT_CONDITION(
         IfStatement.class,
-        "condition" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "condition" //$NON-NLS-1$
     ),
 
     /**
@@ -673,7 +675,7 @@ public enum PropertyKind {
      */
     IF_STATEMENT_THEN_STATEMENT(
         IfStatement.class,
-        "thenStatement" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "thenStatement" //$NON-NLS-1$
     ),
 
     /**
@@ -681,7 +683,7 @@ public enum PropertyKind {
      */
     IF_STATEMENT_ELSE_STATEMENT(
         IfStatement.class,
-        "elseStatement" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "elseStatement" //$NON-NLS-1$
     ),
 
     /**
@@ -689,7 +691,7 @@ public enum PropertyKind {
      */
     IMPORT_DECLARATION_IMPORT_KIND(
         ImportDeclaration.class,
-        "importKind" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "importKind" //$NON-NLS-1$
     ),
 
     /**
@@ -697,7 +699,7 @@ public enum PropertyKind {
      */
     IMPORT_DECLARATION_NAME(
         ImportDeclaration.class,
-        "name" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "name" //$NON-NLS-1$
     ),
 
     /**
@@ -705,7 +707,7 @@ public enum PropertyKind {
      */
     INFIX_EXPRESSION_LEFT_OPERAND(
         InfixExpression.class,
-        "leftOperand" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "leftOperand" //$NON-NLS-1$
     ),
 
     /**
@@ -713,7 +715,7 @@ public enum PropertyKind {
      */
     INFIX_EXPRESSION_OPERATOR(
         InfixExpression.class,
-        "operator" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "operator" //$NON-NLS-1$
     ),
 
     /**
@@ -721,7 +723,7 @@ public enum PropertyKind {
      */
     INFIX_EXPRESSION_RIGHT_OPERAND(
         InfixExpression.class,
-        "rightOperand" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "rightOperand" //$NON-NLS-1$
     ),
 
     /**
@@ -729,7 +731,7 @@ public enum PropertyKind {
      */
     INITIALIZER_DECLARATION_BODY(
         InitializerDeclaration.class,
-        "body" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "body" //$NON-NLS-1$
     ),
 
     /**
@@ -737,7 +739,7 @@ public enum PropertyKind {
      */
     INSTANCEOF_EXPRESSION_EXPRESSION(
         InstanceofExpression.class,
-        "expression" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "expression" //$NON-NLS-1$
     ),
 
     /**
@@ -745,7 +747,7 @@ public enum PropertyKind {
      */
     INSTANCEOF_EXPRESSION_TYPE(
         InstanceofExpression.class,
-        "type" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "type" //$NON-NLS-1$
     ),
 
     /**
@@ -753,7 +755,7 @@ public enum PropertyKind {
      */
     INTERFACE_DECLARATION_TYPE_PARAMETERS(
         InterfaceDeclaration.class,
-        "typeParameters" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "typeParameters" //$NON-NLS-1$
     ),
 
     /**
@@ -761,7 +763,7 @@ public enum PropertyKind {
      */
     INTERFACE_DECLARATION_SUPER_INTERFACE_TYPES(
         InterfaceDeclaration.class,
-        "superInterfaceTypes" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "superInterfaceTypes" //$NON-NLS-1$
     ),
 
     /**
@@ -769,7 +771,7 @@ public enum PropertyKind {
      */
     JAVADOC_BLOCKS(
         Javadoc.class,
-        "blocks" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "blocks" //$NON-NLS-1$
     ),
 
     /**
@@ -777,7 +779,7 @@ public enum PropertyKind {
      */
     KEYWORD_QUALIFIER(
         Keyword.class,
-        "qualifier" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "qualifier" //$NON-NLS-1$
     ),
 
     /**
@@ -785,7 +787,7 @@ public enum PropertyKind {
      */
     LABELED_STATEMENT_LABEL(
         LabeledStatement.class,
-        "label" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "label" //$NON-NLS-1$
     ),
 
     /**
@@ -793,7 +795,25 @@ public enum PropertyKind {
      */
     LABELED_STATEMENT_BODY(
         LabeledStatement.class,
-        "body" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "body" //$NON-NLS-1$
+    ),
+
+    /**
+     * Represents {@link LambdaExpression#getParameters()}.
+     * @since 0.9.0
+     */
+    LAMBDA_EXPRESSION_PARAMETERS(
+        LambdaParameter.class,
+        "parameters" //$NON-NLS-1$
+    ),
+
+    /**
+     * Represents {@link LambdaExpression#getBody()}.
+     * @since 0.9.0
+     */
+    LAMBDA_EXPRESSION_BODY(
+        LambdaBody.class,
+        "body" //$NON-NLS-1$
     ),
 
     /**
@@ -801,7 +821,7 @@ public enum PropertyKind {
      */
     LINE_COMMENT_STRING(
         LineComment.class,
-        "string" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "string" //$NON-NLS-1$
     ),
 
     /**
@@ -809,7 +829,7 @@ public enum PropertyKind {
      */
     LITERAL_TOKEN(
         Literal.class,
-        "token" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "token" //$NON-NLS-1$
     ),
 
     /**
@@ -817,7 +837,7 @@ public enum PropertyKind {
      */
     LOCAL_CLASS_DECLARATION_DECLARATION(
         LocalClassDeclaration.class,
-        "declaration" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "declaration" //$NON-NLS-1$
     ),
 
     /**
@@ -825,7 +845,7 @@ public enum PropertyKind {
      */
     LOCAL_VARIABLE_DECLARATION_MODIFIERS(
         LocalVariableDeclaration.class,
-        "modifiers" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "modifiers" //$NON-NLS-1$
     ),
 
     /**
@@ -833,7 +853,7 @@ public enum PropertyKind {
      */
     LOCAL_VARIABLE_DECLARATION_TYPE(
         LocalVariableDeclaration.class,
-        "type" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "type" //$NON-NLS-1$
     ),
 
     /**
@@ -841,7 +861,7 @@ public enum PropertyKind {
      */
     LOCAL_VARIABLE_DECLARATION_VARIABLE_DECLARATORS(
         LocalVariableDeclaration.class,
-        "variableDeclarators" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "variableDeclarators" //$NON-NLS-1$
     ),
 
     /**
@@ -849,7 +869,7 @@ public enum PropertyKind {
      */
     METHOD_DECLARATION_RETURN_TYPE(
         MethodDeclaration.class,
-        "returnType" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "returnType" //$NON-NLS-1$
     ),
 
     /**
@@ -857,7 +877,7 @@ public enum PropertyKind {
      */
     METHOD_DECLARATION_EXTRA_DIMENSIONS(
         MethodDeclaration.class,
-        "extraDimensions" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "extraDimensions" //$NON-NLS-1$
     ),
 
     /**
@@ -865,7 +885,7 @@ public enum PropertyKind {
      */
     METHOD_INVOCATION_EXPRESSION_QUALIFIER(
         MethodInvocationExpression.class,
-        "qualifier" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "qualifier" //$NON-NLS-1$
     ),
 
     /**
@@ -873,7 +893,7 @@ public enum PropertyKind {
      */
     METHOD_INVOCATION_EXPRESSION_TYPE_ARGUMENTS(
         MethodInvocationExpression.class,
-        "typeArguments" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "typeArguments" //$NON-NLS-1$
     ),
 
     /**
@@ -881,7 +901,7 @@ public enum PropertyKind {
      */
     METHOD_INVOCATION_EXPRESSION_NAME(
         MethodInvocationExpression.class,
-        "name" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "name" //$NON-NLS-1$
     ),
 
     /**
@@ -889,7 +909,7 @@ public enum PropertyKind {
      */
     METHOD_INVOCATION_EXPRESSION_ARGUMENTS(
         MethodInvocationExpression.class,
-        "arguments" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "arguments" //$NON-NLS-1$
     ),
 
     /**
@@ -897,7 +917,7 @@ public enum PropertyKind {
      */
     METHOD_OR_CONSTRUCTOR_DECLARATION_TYPE_PARAMETERS(
         MethodOrConstructorDeclaration.class,
-        "typeParameters" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "typeParameters" //$NON-NLS-1$
     ),
 
     /**
@@ -905,7 +925,7 @@ public enum PropertyKind {
      */
     METHOD_OR_CONSTRUCTOR_DECLARATION_NAME(
         MethodOrConstructorDeclaration.class,
-        "name" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "name" //$NON-NLS-1$
     ),
 
     /**
@@ -913,7 +933,7 @@ public enum PropertyKind {
      */
     METHOD_OR_CONSTRUCTOR_DECLARATION_FORMAL_PARAMETERS(
         MethodOrConstructorDeclaration.class,
-        "formalParameters" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "formalParameters" //$NON-NLS-1$
     ),
 
     /**
@@ -921,7 +941,7 @@ public enum PropertyKind {
      */
     METHOD_OR_CONSTRUCTOR_DECLARATION_EXCEPTION_TYPES(
         MethodOrConstructorDeclaration.class,
-        "exceptionTypes" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "exceptionTypes" //$NON-NLS-1$
     ),
 
     /**
@@ -929,7 +949,7 @@ public enum PropertyKind {
      */
     METHOD_OR_CONSTRUCTOR_DECLARATION_BODY(
         MethodOrConstructorDeclaration.class,
-        "body" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "body" //$NON-NLS-1$
     ),
 
     /**
@@ -937,7 +957,7 @@ public enum PropertyKind {
      */
     MODIFIER_MODIFIER_KIND(
         Modifier.class,
-        "modifierKind" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "modifierKind" //$NON-NLS-1$
     ),
 
     /**
@@ -945,7 +965,7 @@ public enum PropertyKind {
      */
     NAMED_TYPE_NAME(
         NamedType.class,
-        "name" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "name" //$NON-NLS-1$
     ),
 
     /**
@@ -953,7 +973,7 @@ public enum PropertyKind {
      */
     NORMAL_ANNOTATION_ELEMENTS(
         NormalAnnotation.class,
-        "elements" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "elements" //$NON-NLS-1$
     ),
 
     /**
@@ -961,7 +981,7 @@ public enum PropertyKind {
      */
     PACKAGE_DECLARATION_JAVADOC(
         PackageDeclaration.class,
-        "javadoc" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "javadoc" //$NON-NLS-1$
     ),
 
     /**
@@ -969,7 +989,7 @@ public enum PropertyKind {
      */
     PACKAGE_DECLARATION_ANNOTATIONS(
         PackageDeclaration.class,
-        "annotations" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "annotations" //$NON-NLS-1$
     ),
 
     /**
@@ -977,7 +997,7 @@ public enum PropertyKind {
      */
     PACKAGE_DECLARATION_NAME(
         PackageDeclaration.class,
-        "name" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "name" //$NON-NLS-1$
     ),
 
     /**
@@ -985,7 +1005,7 @@ public enum PropertyKind {
      */
     PARAMETERIZED_TYPE_TYPE(
         ParameterizedType.class,
-        "type" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "type" //$NON-NLS-1$
     ),
 
     /**
@@ -993,7 +1013,7 @@ public enum PropertyKind {
      */
     PARAMETERIZED_TYPE_TYPE_ARGUMENTS(
         ParameterizedType.class,
-        "typeArguments" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "typeArguments" //$NON-NLS-1$
     ),
 
     /**
@@ -1001,7 +1021,7 @@ public enum PropertyKind {
      */
     PARENTHESIZED_EXPRESSION_EXPRESSION(
         ParenthesizedExpression.class,
-        "expression" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "expression" //$NON-NLS-1$
     ),
 
     /**
@@ -1009,7 +1029,7 @@ public enum PropertyKind {
      */
     POSTFIX_EXPRESSION_OPERAND(
         PostfixExpression.class,
-        "operand" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "operand" //$NON-NLS-1$
     ),
 
     /**
@@ -1017,7 +1037,7 @@ public enum PropertyKind {
      */
     POSTFIX_EXPRESSION_OPERATOR(
         PostfixExpression.class,
-        "operator" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "operator" //$NON-NLS-1$
     ),
 
     /**
@@ -1025,7 +1045,7 @@ public enum PropertyKind {
      */
     QUALIFIED_NAME_QUALIFIER(
         QualifiedName.class,
-        "qualifier" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "qualifier" //$NON-NLS-1$
     ),
 
     /**
@@ -1033,7 +1053,7 @@ public enum PropertyKind {
      */
     QUALIFIED_NAME_SIMPLE_NAME(
         QualifiedName.class,
-        "simpleName" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "simpleName" //$NON-NLS-1$
     ),
 
     /**
@@ -1041,7 +1061,7 @@ public enum PropertyKind {
      */
     QUALIFIED_TYPE_QUALIFIER(
         QualifiedType.class,
-        "qualifier" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "qualifier" //$NON-NLS-1$
     ),
 
     /**
@@ -1049,7 +1069,7 @@ public enum PropertyKind {
      */
     QUALIFIED_TYPE_SIMPLE_NAME(
         QualifiedType.class,
-        "simpleName" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "simpleName" //$NON-NLS-1$
     ),
 
     /**
@@ -1057,7 +1077,7 @@ public enum PropertyKind {
      */
     RETURN_STATEMENT_EXPRESSION(
         ReturnStatement.class,
-        "expression" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "expression" //$NON-NLS-1$
     ),
 
     /**
@@ -1065,7 +1085,7 @@ public enum PropertyKind {
      */
     SIMPLE_NAME_STRING(
         SimpleName.class,
-        "token" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "token" //$NON-NLS-1$
     ),
 
     /**
@@ -1073,7 +1093,7 @@ public enum PropertyKind {
      */
     SINGLE_ELEMENT_ANNOTATION_EXPRESSION(
         SingleElementAnnotation.class,
-        "expression" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "expression" //$NON-NLS-1$
     ),
 
     /**
@@ -1081,7 +1101,7 @@ public enum PropertyKind {
      */
     STATEMENT_EXPRESSION_LIST_EXPRESSIONS(
         StatementExpressionList.class,
-        "expressions" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "expressions" //$NON-NLS-1$
     ),
 
     /**
@@ -1089,7 +1109,7 @@ public enum PropertyKind {
      */
     SUPER_CONSTRUCTOR_INVOCATION_QUALIFIER(
         SuperConstructorInvocation.class,
-        "qualifier" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "qualifier" //$NON-NLS-1$
     ),
 
     /**
@@ -1097,7 +1117,7 @@ public enum PropertyKind {
      */
     SWITCH_CASE_LABEL_EXPRESSION(
         SwitchCaseLabel.class,
-        "expression" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "expression" //$NON-NLS-1$
     ),
 
     /**
@@ -1105,7 +1125,7 @@ public enum PropertyKind {
      */
     SWITCH_STATEMENT_EXPRESSION(
         SwitchStatement.class,
-        "expression" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "expression" //$NON-NLS-1$
     ),
 
     /**
@@ -1113,7 +1133,7 @@ public enum PropertyKind {
      */
     SWITCH_STATEMENT_STATEMENTS(
         SwitchStatement.class,
-        "statements" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "statements" //$NON-NLS-1$
     ),
 
     /**
@@ -1121,7 +1141,7 @@ public enum PropertyKind {
      */
     SYNCHRONIZED_STATEMENT_EXPRESSION(
         SynchronizedStatement.class,
-        "expression" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "expression" //$NON-NLS-1$
     ),
 
     /**
@@ -1129,7 +1149,7 @@ public enum PropertyKind {
      */
     SYNCHRONIZED_STATEMENT_BODY(
         SynchronizedStatement.class,
-        "body" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "body" //$NON-NLS-1$
     ),
 
     /**
@@ -1137,7 +1157,31 @@ public enum PropertyKind {
      */
     THROW_STATEMENT_EXPRESSION(
         ThrowStatement.class,
-        "expression" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "expression" //$NON-NLS-1$
+    ),
+
+    /**
+     * Represents {@link TryResource#getParameter()}.
+     */
+    TRY_RESOURCE_PARAMETER(
+        TryResource.class,
+        "parameter" //$NON-NLS-1$
+    ),
+
+    /**
+     * Represents {@link TryResource#getInitializer()}.
+     */
+    TRY_RESOURCE_INITIALIZER(
+        TryResource.class,
+        "initializer" //$NON-NLS-1$
+    ),
+
+    /**
+     * Represents {@link TryStatement#getResources()}.
+     */
+    TRY_STATEMENT_RESOURCES(
+        TryStatement.class,
+        "resources" //$NON-NLS-1$
     ),
 
     /**
@@ -1145,7 +1189,7 @@ public enum PropertyKind {
      */
     TRY_STATEMENT_TRY_BLOCK(
         TryStatement.class,
-        "tryBlock" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "tryBlock" //$NON-NLS-1$
     ),
 
     /**
@@ -1153,7 +1197,7 @@ public enum PropertyKind {
      */
     TRY_STATEMENT_CATCH_CLAUSES(
         TryStatement.class,
-        "catchClauses" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "catchClauses" //$NON-NLS-1$
     ),
 
     /**
@@ -1161,7 +1205,7 @@ public enum PropertyKind {
      */
     TRY_STATEMENT_FINALLY_BLOCK(
         TryStatement.class,
-        "finallyBlock" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "finallyBlock" //$NON-NLS-1$
     ),
 
     /**
@@ -1169,7 +1213,7 @@ public enum PropertyKind {
      */
     TYPE_BODY_DECLARATION_JAVADOC(
         TypeBodyDeclaration.class,
-        "javadoc" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "javadoc" //$NON-NLS-1$
     ),
 
     /**
@@ -1177,7 +1221,7 @@ public enum PropertyKind {
      */
     TYPE_BODY_DECLARATION_MODIFIERS(
         TypeBodyDeclaration.class,
-        "modifiers" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "modifiers" //$NON-NLS-1$
     ),
 
     /**
@@ -1185,7 +1229,7 @@ public enum PropertyKind {
      */
     TYPE_DECLARATION_NAME(
         TypeDeclaration.class,
-        "name" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "name" //$NON-NLS-1$
     ),
 
     /**
@@ -1193,7 +1237,7 @@ public enum PropertyKind {
      */
     TYPE_DECLARATION_BODY_DECLARATIONS(
         TypeDeclaration.class,
-        "bodyDeclarations" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "bodyDeclarations" //$NON-NLS-1$
     ),
 
     /**
@@ -1201,7 +1245,7 @@ public enum PropertyKind {
      */
     TYPE_PARAMETER_DECLARATION_NAME(
         TypeParameterDeclaration.class,
-        "name" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "name" //$NON-NLS-1$
     ),
 
     /**
@@ -1209,7 +1253,7 @@ public enum PropertyKind {
      */
     TYPE_PARAMETER_DECLARATION_TYPE_BOUNDS(
         TypeParameterDeclaration.class,
-        "typeBounds" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "typeBounds" //$NON-NLS-1$
     ),
 
     /**
@@ -1217,7 +1261,7 @@ public enum PropertyKind {
      */
     UNARY_EXPRESSION_OPERATOR(
         UnaryExpression.class,
-        "operator" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "operator" //$NON-NLS-1$
     ),
 
     /**
@@ -1225,7 +1269,15 @@ public enum PropertyKind {
      */
     UNARY_EXPRESSION_OPERAND(
         UnaryExpression.class,
-        "operand" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "operand" //$NON-NLS-1$
+    ),
+
+    /**
+     * Represents {@link UnionType#getAlternativeTypes()}.
+     */
+    UNION_TYPE_ALTERNATIVE_TYPES(
+        UnionType.class,
+        "alternativeTypes" //$NON-NLS-1$
     ),
 
     /**
@@ -1233,7 +1285,7 @@ public enum PropertyKind {
      */
     VARIABLE_DECLARATOR_NAME(
         VariableDeclarator.class,
-        "name" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "name" //$NON-NLS-1$
     ),
 
     /**
@@ -1241,7 +1293,7 @@ public enum PropertyKind {
      */
     VARIABLE_DECLARATOR_EXTRA_DIMENSIONS(
         VariableDeclarator.class,
-        "extraDimensions" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "extraDimensions" //$NON-NLS-1$
     ),
 
     /**
@@ -1249,7 +1301,7 @@ public enum PropertyKind {
      */
     VARIABLE_DECLARATOR_INITIALIZER(
         VariableDeclarator.class,
-        "initializer" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "initializer" //$NON-NLS-1$
     ),
 
     /**
@@ -1257,7 +1309,7 @@ public enum PropertyKind {
      */
     WHILE_STATEMENT_CONDITION(
         WhileStatement.class,
-        "condition" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "condition" //$NON-NLS-1$
     ),
 
     /**
@@ -1265,7 +1317,7 @@ public enum PropertyKind {
      */
     WHILE_STATEMENT_BODY(
         WhileStatement.class,
-        "body" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "body" //$NON-NLS-1$
     ),
 
     /**
@@ -1273,7 +1325,7 @@ public enum PropertyKind {
      */
     WILDCARD_BOUND_KIND(
         Wildcard.class,
-        "boundKind" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "boundKind" //$NON-NLS-1$
     ),
 
     /**
@@ -1281,7 +1333,7 @@ public enum PropertyKind {
      */
     WILDCARD_TYPE_BOUND(
         Wildcard.class,
-        "typeBound" //$$NON-NLS-1$$ //$NON-NLS-1$
+        "typeBound" //$NON-NLS-1$
     ),
     ;
 

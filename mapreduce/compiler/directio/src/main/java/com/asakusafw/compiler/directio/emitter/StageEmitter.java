@@ -387,8 +387,7 @@ public class StageEmitter {
         CompilationUnit source = f.newCompilationUnit(
                 importer.getPackageDeclaration(),
                 importer.toImportDeclarations(),
-                Collections.singletonList(typeDecl),
-                Collections.emptyList());
+                Collections.singletonList(typeDecl));
         environment.emit(source);
         Name packageName = source.getPackageDeclaration().getName();
         SimpleName simpleName = source.getTypeDeclarations().get(0).getName();
@@ -517,8 +516,7 @@ public class StageEmitter {
             return factory.newCompilationUnit(
                     importer.getPackageDeclaration(),
                     importer.toImportDeclarations(),
-                    Collections.singletonList(type),
-                    Collections.emptyList());
+                    Collections.singletonList(type));
         }
 
         private TypeDeclaration createType() {

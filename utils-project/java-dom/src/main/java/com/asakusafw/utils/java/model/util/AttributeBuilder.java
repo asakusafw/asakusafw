@@ -34,7 +34,7 @@ import com.asakusafw.utils.java.model.syntax.Type;
 /**
  * A builder for building attributes of declarations.
  * @since 0.1.0
- * @version 0.5.1
+ * @version 0.9.0
  */
 public class AttributeBuilder {
 
@@ -143,6 +143,15 @@ public class AttributeBuilder {
      */
     public AttributeBuilder Abstract() {
         return modifier(ModifierKind.ABSTRACT);
+    }
+
+    /**
+     * Appends {@code default} modifier to this builder.
+     * @return this
+     * @since 0.9.0
+     */
+    public AttributeBuilder Default() {
+        return modifier(ModifierKind.DEFAULT);
     }
 
     /**

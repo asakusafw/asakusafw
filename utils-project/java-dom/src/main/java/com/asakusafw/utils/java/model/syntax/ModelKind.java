@@ -21,6 +21,8 @@ import java.util.List;
 
 /**
  * Represents a kind of {@link Model}.
+ * @since 0.1.0
+ * @version 0.9.0
  */
 public enum ModelKind {
 
@@ -434,6 +436,15 @@ public enum ModelKind {
     }),
 
     /**
+     * Represents {@link LambdaExpression}.
+     * @since 0.9.0
+     */
+    LAMBDA_EXPRESSION(LabeledStatement.class, new PropertyKind[] {
+        PropertyKind.LAMBDA_EXPRESSION_PARAMETERS,
+        PropertyKind.LAMBDA_EXPRESSION_BODY,
+    }),
+
+    /**
      * Represents {@link LineComment}.
      */
     LINE_COMMENT(LineComment.class, new PropertyKind[] {
@@ -654,9 +665,18 @@ public enum ModelKind {
     }),
 
     /**
+     * Represents {@link TryResource}.
+     */
+    TRY_RESOURCE(TryResource.class, new PropertyKind[] {
+        PropertyKind.TRY_RESOURCE_PARAMETER,
+        PropertyKind.TRY_RESOURCE_INITIALIZER,
+    }),
+
+    /**
      * Represents {@link TryStatement}.
      */
     TRY_STATEMENT(TryStatement.class, new PropertyKind[] {
+        PropertyKind.TRY_STATEMENT_RESOURCES,
         PropertyKind.TRY_STATEMENT_TRY_BLOCK,
         PropertyKind.TRY_STATEMENT_CATCH_CLAUSES,
         PropertyKind.TRY_STATEMENT_FINALLY_BLOCK,
@@ -676,6 +696,14 @@ public enum ModelKind {
     UNARY_EXPRESSION(UnaryExpression.class, new PropertyKind[] {
         PropertyKind.UNARY_EXPRESSION_OPERATOR,
         PropertyKind.UNARY_EXPRESSION_OPERAND,
+    }),
+
+    /**
+     * Represents {@link UnionType}.
+     * @since 0.9.0
+     */
+    UNION_TYPE(UnaryExpression.class, new PropertyKind[] {
+            PropertyKind.UNION_TYPE_ALTERNATIVE_TYPES,
     }),
 
     /**

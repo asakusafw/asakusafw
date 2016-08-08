@@ -237,8 +237,7 @@ public class DescriptionHelperTest extends OperatorCompilerTestRoot {
                 env.emit(f.newCompilationUnit(
                         imports.getPackageDeclaration(),
                         imports.toImportDeclarations(),
-                        Collections.singletonList(type),
-                        Collections.emptyList()));
+                        Collections.singletonList(type)));
             }
         });
         try {
@@ -280,8 +279,7 @@ public class DescriptionHelperTest extends OperatorCompilerTestRoot {
                 env.emit(f.newCompilationUnit(
                         imports.getPackageDeclaration(),
                         imports.toImportDeclarations(),
-                        Collections.singletonList(type),
-                        Collections.emptyList()));
+                        Collections.singletonList(type)));
             }
         });
         try {
@@ -322,8 +320,7 @@ public class DescriptionHelperTest extends OperatorCompilerTestRoot {
                 env.emit(f.newCompilationUnit(
                         imports.getPackageDeclaration(),
                         imports.toImportDeclarations(),
-                        Collections.singletonList(type),
-                        Collections.emptyList()));
+                        Collections.singletonList(type)));
             }
         });
         try {

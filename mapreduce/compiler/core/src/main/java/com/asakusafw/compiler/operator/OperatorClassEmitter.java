@@ -163,12 +163,10 @@ public class OperatorClassEmitter {
             List<ImportDeclaration> importDecls,
             TypeDeclaration typeDecl,
             TypeElement originating) throws IOException {
-
         CompilationUnit unit = factory.newCompilationUnit(
                 packageDecl,
                 importDecls,
-                Collections.singletonList(typeDecl),
-                Collections.emptyList());
+                Collections.singletonList(typeDecl));
         try {
             environment.emit(unit, originating);
             if (key != null) {

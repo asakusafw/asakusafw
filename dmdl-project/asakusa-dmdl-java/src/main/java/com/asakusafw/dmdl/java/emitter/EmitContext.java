@@ -248,8 +248,7 @@ public final class EmitContext {
         CompilationUnit compilationUnit = factory.newCompilationUnit(
                 imports.getPackageDeclaration(),
                 imports.toImportDeclarations(),
-                Collections.singletonList(type),
-                Collections.emptyList());
+                Collections.singletonList(type));
         try (PrintWriter writer = config.getOutput().openFor(compilationUnit)) {
             Models.emit(compilationUnit, writer);
         }
