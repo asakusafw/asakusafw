@@ -1458,6 +1458,26 @@ public interface ModelFactory {
     UnaryExpression newUnaryExpression(UnaryOperator operator, Expression operand);
 
     /**
+     * Returns a new {@link UnionType} object.
+     * @param alternativeTypes the alternatives
+     * @return the created object
+     * @throws IllegalArgumentException if {@code alternativeTypes} was {@code null}
+     * @throws IllegalArgumentException if {@code alternativeTypes} was empty
+     * @since 0.9.0
+     */
+    UnionType newUnionType(List<? extends Type> alternativeTypes);
+
+    /**
+     * Returns a new {@link UnionType} object.
+     * @param alternativeTypes the alternatives
+     * @return the created object
+     * @throws IllegalArgumentException if {@code alternativeTypes} was {@code null}
+     * @throws IllegalArgumentException if {@code alternativeTypes} was empty
+     * @since 0.9.0
+     */
+    UnionType newUnionType(Type... alternativeTypes);
+
+    /**
      * Returns a new {@link VariableDeclarator} object.
      * @param name the variable name
      * @param initializer the initializer expression, or {@code null} if it is not specified

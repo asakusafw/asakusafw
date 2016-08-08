@@ -1451,6 +1451,22 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
+    public UnionType newUnionType(Type... alternativeTypes) {
+        Util.notNull(alternativeTypes, "alternativeTypes"); //$NON-NLS-1$
+        return newUnionType(Arrays.asList(alternativeTypes));
+    }
+
+    @Override
+    public UnionType newUnionType(List<? extends Type> alternativeTypes) {
+        Util.notNull(alternativeTypes, "alternativeTypes"); //$NON-NLS-1$
+        Util.notContainNull(alternativeTypes, "alternativeTypes"); //$NON-NLS-1$
+        Util.notEmpty(alternativeTypes, "alternativeTypes"); //$NON-NLS-1$
+        UnionTypeImpl result = new UnionTypeImpl();
+        result.setAlternativeTypes(alternativeTypes);
+        return result;
+    }
+
+    @Override
     public VariableDeclarator newVariableDeclarator(SimpleName name, int extraDimensions, Expression initializer) {
         Util.notNull(name, "name"); //$NON-NLS-1$
         VariableDeclaratorImpl result = new VariableDeclaratorImpl();

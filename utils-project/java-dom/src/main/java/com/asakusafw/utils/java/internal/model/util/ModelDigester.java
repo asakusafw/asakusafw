@@ -98,6 +98,7 @@ import com.asakusafw.utils.java.model.syntax.ThrowStatement;
 import com.asakusafw.utils.java.model.syntax.TryStatement;
 import com.asakusafw.utils.java.model.syntax.TypeParameterDeclaration;
 import com.asakusafw.utils.java.model.syntax.UnaryExpression;
+import com.asakusafw.utils.java.model.syntax.UnionType;
 import com.asakusafw.utils.java.model.syntax.VariableDeclarator;
 import com.asakusafw.utils.java.model.syntax.WhileStatement;
 import com.asakusafw.utils.java.model.syntax.Wildcard;
@@ -948,6 +949,15 @@ public final class ModelDigester extends StrictVisitor<Void, DigestContext, NoTh
         digest(elem.getModelKind(), context);
         digest(elem.getOperator(), context);
         digest(elem.getOperand(), context);
+        return null;
+    }
+
+    @Override
+    public Void visitUnionType(
+            UnionType elem,
+            DigestContext context) {
+        digest(elem.getModelKind(), context);
+        digest(elem.getAlternativeTypes(), context);
         return null;
     }
 

@@ -21,6 +21,8 @@ package com.asakusafw.utils.java.model.syntax;
  * @param <C> type of visitor context
  * @param <R> type of visitor result
  * @param <E> type of visitor exception
+ * @since 0.1.0
+ * @version 0.9.0
  */
 public abstract class Visitor<R, C, E extends Throwable> {
 
@@ -641,6 +643,7 @@ public abstract class Visitor<R, C, E extends Throwable> {
      * @param context the current context (nullable)
      * @return the processing result
      * @throws E if error was occurred while processing the target element
+     * @since 0.9.0
      */
     public R visitLambdaExpression(
             LambdaExpression elem,
@@ -1047,6 +1050,20 @@ public abstract class Visitor<R, C, E extends Throwable> {
      */
     public R visitUnaryExpression(
             UnaryExpression elem,
+            C context) throws E {
+        return null;
+    }
+
+    /**
+     * Processes {@link UnionType} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
+     * @since 0.9.0
+     */
+    public R visitUnionType(
+            UnionType elem,
             C context) throws E {
         return null;
     }

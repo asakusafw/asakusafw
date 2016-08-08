@@ -98,6 +98,7 @@ import com.asakusafw.utils.java.model.syntax.ThrowStatement;
 import com.asakusafw.utils.java.model.syntax.TryStatement;
 import com.asakusafw.utils.java.model.syntax.TypeParameterDeclaration;
 import com.asakusafw.utils.java.model.syntax.UnaryExpression;
+import com.asakusafw.utils.java.model.syntax.UnionType;
 import com.asakusafw.utils.java.model.syntax.VariableDeclarator;
 import com.asakusafw.utils.java.model.syntax.WhileStatement;
 import com.asakusafw.utils.java.model.syntax.Wildcard;
@@ -1543,6 +1544,20 @@ public final class ModelMatcher extends StrictVisitor<Boolean, Model, NoThrow> {
             return Boolean.FALSE;
         }
         if (Boolean.FALSE.equals(match(elem.getOperand(), that.getOperand()))) {
+            return Boolean.FALSE;
+        }
+        return Boolean.TRUE;
+    }
+
+    @Override
+    public Boolean visitUnionType(
+            UnionType elem,
+            Model context) {
+        if (elem.getModelKind() != context.getModelKind()) {
+            return Boolean.FALSE;
+        }
+        UnionType that = (UnionType) context;
+        if (Boolean.FALSE.equals(match(elem.getAlternativeTypes(), that.getAlternativeTypes()))) {
             return Boolean.FALSE;
         }
         return Boolean.TRUE;

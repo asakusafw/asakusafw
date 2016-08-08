@@ -690,6 +690,13 @@ public enum ModelKind {
     }),
 
     /**
+     * Represents {@link UnionType}.
+     */
+    UNION_TYPE(UnaryExpression.class, new PropertyKind[] {
+            PropertyKind.UNION_TYPE_ALTERNATIVE_TYPES,
+    }),
+
+    /**
      * Represents {@link VariableDeclarator}.
      */
     VARIABLE_DECLARATOR(VariableDeclarator.class, new PropertyKind[] {

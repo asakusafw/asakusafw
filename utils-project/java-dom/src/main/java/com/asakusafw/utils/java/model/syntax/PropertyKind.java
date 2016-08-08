@@ -1249,6 +1249,14 @@ public enum PropertyKind {
     ),
 
     /**
+     * Represents {@link UnionType#getAlternativeTypes()}.
+     */
+    UNION_TYPE_ALTERNATIVE_TYPES(
+        UnionType.class,
+        "alternativeTypes" //$NON-NLS-1$
+    ),
+
+    /**
      * Represents {@link VariableDeclarator#getName()}.
      */
     VARIABLE_DECLARATOR_NAME(

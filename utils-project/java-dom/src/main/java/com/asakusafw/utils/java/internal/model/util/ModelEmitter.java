@@ -114,6 +114,7 @@ import com.asakusafw.utils.java.model.syntax.TryStatement;
 import com.asakusafw.utils.java.model.syntax.Type;
 import com.asakusafw.utils.java.model.syntax.TypeParameterDeclaration;
 import com.asakusafw.utils.java.model.syntax.UnaryExpression;
+import com.asakusafw.utils.java.model.syntax.UnionType;
 import com.asakusafw.utils.java.model.syntax.VariableDeclarator;
 import com.asakusafw.utils.java.model.syntax.WhileStatement;
 import com.asakusafw.utils.java.model.syntax.Wildcard;
@@ -789,7 +790,7 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
             processJoinWithComma(parameters, context);
             context.separator(")"); //$NON-NLS-1$
         }
-        context.separator("->"); //$NON-NLS-1$
+        context.operator("->"); //$NON-NLS-1$
         process(elem.getBody(), context);
         return null;
     }
@@ -1191,6 +1192,13 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     @Override
+    public Void visitUnionType(UnionType elem, EmitContext context) {
+        begin(elem, context);
+        processJoin("|", elem.getAlternativeTypes(), context); //$NON-NLS-1$
+        return null;
+    }
+
+    @Override
     public Void visitVariableDeclarator(VariableDeclarator elem, EmitContext context) {
         begin(elem, context);
         processInlineComment(elem, context);
@@ -1383,11 +1391,15 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
     }
 
     private void processJoinWithComma(List<? extends Model> elements, EmitContext context) {
+        processJoin(",", elements, context); //$NON-NLS-1$
+    }
+
+    private void processJoin(String separator, List<? extends Model> elements, EmitContext context) {
         Iterator<? extends Model> iter = elements.iterator();
         if (iter.hasNext()) {
             process(iter.next(), context);
             while (iter.hasNext()) {
-                context.separator(","); //$NON-NLS-1$
+                context.separator(separator);
                 process(iter.next(), context);
             }
         }

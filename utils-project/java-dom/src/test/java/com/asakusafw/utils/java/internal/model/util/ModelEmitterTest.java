@@ -1242,7 +1242,7 @@ public class ModelEmitterTest {
     }
 
     /**
-     * switch-case statement.
+     * try-catch statement.
      */
     @Test
     public void Try_Catch() {
@@ -1295,7 +1295,54 @@ public class ModelEmitterTest {
     }
 
     /**
-     * switch-case statement.
+     * try with multi-catch.
+     */
+    @Test
+    public void Try_Catch_multi() {
+        assertToString(
+            fromStmt("Hello",
+                newStringBuilder("buf"),
+                f.newTryStatement(
+                    f.newBlock(Arrays.asList(new Statement[] {
+                        f.newThrowStatement(
+                            f.newClassInstanceCreationExpression(
+                                null,
+                                Collections.emptyList(),
+                                f.newNamedType(Models.toName(f, "UnsupportedOperationException")),
+                                Arrays.asList(new Expression[] {
+                                    Models.toLiteral(f, "OK")
+                                }),
+                                null))
+                    })),
+                    Arrays.asList(new CatchClause[] {
+                        f.newCatchClause(
+                            f.newFormalParameterDeclaration(
+                                Collections.emptyList(),
+                                f.newUnionType(new Type[] {
+                                        f.newNamedType(f.newSimpleName("IllegalArgumentException")),
+                                        f.newNamedType(f.newSimpleName("UnsupportedOperationException")),
+                                }),
+                                false,
+                                f.newSimpleName("e"),
+                                0),
+                            f.newBlock(Arrays.asList(new Statement[] {
+                                append(
+                                "buf",
+                                f.newMethodInvocationExpression(
+                                    f.newSimpleName("e"),
+                                    Collections.emptyList(),
+                                    f.newSimpleName("getMessage"),
+                                    Collections.emptyList()))
+                            })))
+                    }),
+                    null),
+                returnAsString(f.newSimpleName("buf"))),
+            "Hello",
+            "OK");
+    }
+
+    /**
+     * try-finally statement.
      */
     @Test
     public void Try_Finally() {

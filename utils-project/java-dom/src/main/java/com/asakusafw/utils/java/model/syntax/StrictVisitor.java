@@ -578,6 +578,13 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     }
 
     @Override
+    public R visitUnionType(
+            UnionType elem,
+            C context) throws E {
+        throw new UnsupportedOperationException("UnionType"); //$NON-NLS-1$
+    }
+
+    @Override
     public R visitVariableDeclarator(
             VariableDeclarator elem,
             C context) throws E {
