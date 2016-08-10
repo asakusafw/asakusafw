@@ -15,6 +15,8 @@
  */
 package com.asakusafw.vocabulary.windgate;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +37,7 @@ import com.asakusafw.windgate.core.vocabulary.JdbcProcess;
  * <li> not declared any explicit constructors </li>
  * </ul>
  * @since 0.2.2
+ * @version 0.9.0
  */
 public abstract class JdbcImporterDescription extends WindGateImporterDescription {
 
@@ -67,6 +70,15 @@ public abstract class JdbcImporterDescription extends WindGateImporterDescriptio
         return null;
     }
 
+    /**
+     * Returns WindGate JDBC import options.
+     * @return options
+     * @since 0.9.0
+     */
+    public Collection<String> getOptions() {
+        return Collections.emptySet();
+    }
+
     @Override
     public final DriverScript getDriverScript() {
         String descriptionClass = getClass().getName();
@@ -75,8 +87,9 @@ public abstract class JdbcImporterDescription extends WindGateImporterDescriptio
         String table = getTableName();
         List<String> columns = getColumnNames();
         String condition = getCondition();
+        Collection<String> options = getOptions();
 
-        JdbcDescriptionUtil.checkCommonConfig(descriptionClass, modelType, supportClass, table, columns);
+        JdbcDescriptionUtil.checkCommonConfig(descriptionClass, modelType, supportClass, table, columns, options);
 
         Map<String, String> configuration = new HashMap<>();
         configuration.put(JdbcProcess.TABLE.key(), table);
@@ -84,6 +97,9 @@ public abstract class JdbcImporterDescription extends WindGateImporterDescriptio
         configuration.put(JdbcProcess.JDBC_SUPPORT.key(), supportClass.getName());
         if (JdbcDescriptionUtil.isEmpty(condition) == false) {
             configuration.put(JdbcProcess.CONDITION.key(), condition);
+        }
+        if (options != null && options.isEmpty() == false) {
+            configuration.put(JdbcProcess.OPTIONS.key(), JdbcDescriptionUtil.join(options));
         }
 
         Set<String> parameters = VariableTable.collectVariableNames(condition);

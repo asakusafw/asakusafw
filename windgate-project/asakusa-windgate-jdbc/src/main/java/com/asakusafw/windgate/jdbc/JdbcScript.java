@@ -16,8 +16,11 @@
 package com.asakusafw.windgate.jdbc;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.asakusafw.windgate.core.vocabulary.DataModelJdbcSupport;
 
@@ -25,7 +28,7 @@ import com.asakusafw.windgate.core.vocabulary.DataModelJdbcSupport;
  * A structured gate script fragment for JDBC.
  * @param <T> the type of target data model
  * @since 0.2.2
- * @version 0.7.3
+ * @version 0.9.0
  */
 public class JdbcScript<T> {
 
@@ -37,9 +40,48 @@ public class JdbcScript<T> {
 
     private final List<String> columnNames;
 
-    private final String condition;
+    private volatile String condition;
 
-    private final String customTruncate;
+    private volatile String customTruncate;
+
+    private volatile Set<String> options = Collections.emptySet();
+
+    /**
+     * Creates a new instance.
+     * @param name the name of original process
+     * @param support the support object for the script
+     * @param tableName the target table name
+     * @param columnNames the target column names
+     * @throws IllegalArgumentException if any parameter is {@code null}
+     * @since 0.9.0
+     */
+    public JdbcScript(
+            String name,
+            DataModelJdbcSupport<? super T> support,
+            String tableName,
+            List<String> columnNames) {
+        if (name == null) {
+            throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
+        }
+        if (support == null) {
+            throw new IllegalArgumentException("support must not be null"); //$NON-NLS-1$
+        }
+        if (tableName == null) {
+            throw new IllegalArgumentException("tableName must not be null"); //$NON-NLS-1$
+        }
+        if (columnNames == null) {
+            throw new IllegalArgumentException("columnNames must not be null"); //$NON-NLS-1$
+        }
+        this.name = name;
+        this.support = support;
+        this.tableName = tableName;
+        for (String columnName : columnNames) {
+            if (isEmpty(columnName)) {
+                throw new IllegalArgumentException("columnNames must not contain empty"); //$NON-NLS-1$
+            }
+        }
+        this.columnNames = Collections.unmodifiableList(new ArrayList<>(columnNames));
+    }
 
     /**
      * Creates a new instance.
@@ -77,35 +119,16 @@ public class JdbcScript<T> {
             List<String> columnNames,
             String condition,
             String customTruncate) {
-        if (name == null) {
-            throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
-        }
-        if (support == null) {
-            throw new IllegalArgumentException("support must not be null"); //$NON-NLS-1$
-        }
-        if (tableName == null) {
-            throw new IllegalArgumentException("tableName must not be null"); //$NON-NLS-1$
-        }
-        if (columnNames == null) {
-            throw new IllegalArgumentException("columnNames must not be null"); //$NON-NLS-1$
-        }
+        this(name, support, tableName, columnNames);
         if (condition != null && isEmpty(condition)) {
             throw new IllegalArgumentException("condition must not be empty"); //$NON-NLS-1$
         }
         if (customTruncate != null && isEmpty(customTruncate)) {
             throw new IllegalArgumentException("customTruncate must not be empty"); //$NON-NLS-1$
         }
-        this.name = name;
-        this.support = support;
-        this.tableName = tableName;
-        for (String columnName : columnNames) {
-            if (isEmpty(columnName)) {
-                throw new IllegalArgumentException("columnNames must not contain empty"); //$NON-NLS-1$
-            }
-        }
-        this.columnNames = Collections.unmodifiableList(new ArrayList<>(columnNames));
         this.condition = condition;
         this.customTruncate = customTruncate;
+        this.options = Collections.emptySet();
     }
 
     private boolean isEmpty(String string) {
@@ -153,11 +176,59 @@ public class JdbcScript<T> {
     }
 
     /**
+     * Sets the SQL condition expression.
+     * @param expression the expression
+     * @return this
+     * @since 0.9.0
+     */
+    public JdbcScript<T> withCondition(String expression) {
+        if (expression != null && isEmpty(expression)) {
+            throw new IllegalArgumentException("condition expression must not be empty"); //$NON-NLS-1$
+        }
+        this.condition = expression;
+        return this;
+    }
+
+    /**
      * Returns the custom truncate SQL statement.
      * @return the custom truncate statement, or {@code null} if not used
      * @since 0.7.3
      */
     public String getCustomTruncate() {
         return customTruncate;
+    }
+
+    /**
+     * Sets the custom truncate SQL statement.
+     * @param statement the statement
+     * @return this
+     * @since 0.9.0
+     */
+    public JdbcScript<T> withCustomTruncate(String statement) {
+        if (statement != null && isEmpty(statement)) {
+            throw new IllegalArgumentException("custom truncate statement must not be empty"); //$NON-NLS-1$
+        }
+        this.customTruncate = statement;
+        return this;
+    }
+
+    /**
+     * Returns the WindGate JDBC options.
+     * @return the WindGate JDBC options
+     * @since 0.9.0
+     */
+    public Set<String> getOptions() {
+        return options;
+    }
+
+    /**
+     * Sets the WindGate JDBC options.
+     * @param values the options
+     * @return this
+     * @since 0.9.0
+     */
+    public JdbcScript<T> withOptions(Collection<String> values) {
+        this.options = Collections.unmodifiableSet(new LinkedHashSet<>(values));
+        return this;
     }
 }

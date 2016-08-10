@@ -19,6 +19,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -46,7 +47,6 @@ public class JdbcExporterDescriptionTest {
         assertThat(conf.get(JdbcProcess.TABLE.key()), is("TESTING"));
         assertThat(conf.get(JdbcProcess.COLUMNS.key()), equalToIgnoringWhiteSpace("VALUE"));
         assertThat(conf.get(JdbcProcess.JDBC_SUPPORT.key()), is(StringSupport.class.getName()));
-        assertThat(conf.get(JdbcProcess.CUSTOM_TRUNCATE.key()), is(nullValue()));
         assertThat(conf.get(JdbcProcess.OPERATION.key()), is(not(nullValue())));
         assertThat(script.getParameterNames(), hasSize(0));
     }
@@ -65,7 +65,6 @@ public class JdbcExporterDescriptionTest {
         assertThat(conf.get(JdbcProcess.TABLE.key()), is("TESTING"));
         assertThat(conf.get(JdbcProcess.COLUMNS.key()), equalToIgnoringWhiteSpace("A, B, C"));
         assertThat(conf.get(JdbcProcess.JDBC_SUPPORT.key()), is(StringSupport.class.getName()));
-        assertThat(conf.get(JdbcProcess.CUSTOM_TRUNCATE.key()), is(nullValue()));
         assertThat(conf.get(JdbcProcess.OPERATION.key()), is(not(nullValue())));
         assertThat(script.getParameterNames(), hasSize(0));
     }
@@ -85,6 +84,25 @@ public class JdbcExporterDescriptionTest {
         assertThat(conf.get(JdbcProcess.COLUMNS.key()), equalToIgnoringWhiteSpace("VALUE"));
         assertThat(conf.get(JdbcProcess.JDBC_SUPPORT.key()), is(StringSupport.class.getName()));
         assertThat(conf.get(JdbcProcess.CUSTOM_TRUNCATE.key()), is("CUSTOM"));
+        assertThat(conf.get(JdbcProcess.OPERATION.key()), is(not(nullValue())));
+        assertThat(script.getParameterNames(), hasSize(0));
+    }
+
+    /**
+     * w/ options.
+     */
+    @Test
+    public void options() {
+        Mock mock = new Mock(String.class, "testing", StringSupport.class, "TESTING", "VALUE")
+                .withOptions("a", "b", "c");
+        DriverScript script = mock.getDriverScript();
+        assertThat(script.getResourceName(), is(Constants.JDBC_RESOURCE_NAME));
+        Map<String, String> conf = script.getConfiguration();
+        assertThat(conf.size(), is(5));
+        assertThat(conf.get(JdbcProcess.TABLE.key()), is("TESTING"));
+        assertThat(conf.get(JdbcProcess.COLUMNS.key()), equalToIgnoringWhiteSpace("VALUE"));
+        assertThat(conf.get(JdbcProcess.JDBC_SUPPORT.key()), is(StringSupport.class.getName()));
+        assertThat(conf.get(JdbcProcess.OPTIONS.key()), equalToIgnoringWhiteSpace("a, b, c"));
         assertThat(conf.get(JdbcProcess.OPERATION.key()), is(not(nullValue())));
         assertThat(script.getParameterNames(), hasSize(0));
     }
@@ -285,6 +303,7 @@ public class JdbcExporterDescriptionTest {
         private final String tableName;
         private final List<String> columnNames;
         private String customTruncate;
+        private List<String> options;
 
         Mock(
                 Class<?> modelType,
@@ -338,6 +357,16 @@ public class JdbcExporterDescriptionTest {
 
         public Mock withCustomTruncate(String value) {
             this.customTruncate = value;
+            return this;
+        }
+
+        @Override
+        public Collection<String> getOptions() {
+            return options;
+        }
+
+        public Mock withOptions(String... elements) {
+            this.options = Arrays.asList(elements);
             return this;
         }
     }

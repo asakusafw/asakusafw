@@ -17,10 +17,14 @@ package com.asakusafw.windgate.jdbc;
 
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,7 +79,11 @@ final class JdbcResourceUtil {
 
         String tableName = extract(profile, process, kind, JdbcProcess.TABLE, true);
         String columnNameList = extract(profile, process, kind, JdbcProcess.COLUMNS, true);
-        List<String> columnNames = Arrays.asList(columnNameList.split("\\s*,\\s*")); //$NON-NLS-1$
+        List<String> columnNames = Stream.of(columnNameList.split(",")) //$NON-NLS-1$
+                .sequential()
+                .map(String::trim)
+                .filter(s -> s.isEmpty() == false)
+                .collect(Collectors.toList());
         if (support.isSupported(columnNames) == false) {
             WGLOG.error("E01002",
                     profile.getResourceName(),
@@ -162,7 +170,17 @@ final class JdbcResourceUtil {
                         operationString));
             }
         }
-        return new JdbcScript<>(process.getName(), support, tableName, columnNames, condition, customTruncate);
+        String optionsString = extract(profile, process, kind, JdbcProcess.OPTIONS, false);
+        Set<String> options = optionsString == null ? Collections.emptySet() : Stream.of(optionsString.split(","))
+                .sequential()
+                .map(String::trim)
+                .filter(s -> s.isEmpty() == false)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+        JdbcScript<T> script = new JdbcScript<T>(process.getName(), support, tableName, columnNames)
+                .withCondition(condition)
+                .withCustomTruncate(customTruncate)
+                .withOptions(options);
+        return script;
     }
 
     private static String extract(
