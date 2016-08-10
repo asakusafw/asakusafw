@@ -18,6 +18,7 @@ package com.asakusafw.windgate.jdbc;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.List;
+import java.util.Map;
 
 import com.asakusafw.windgate.core.vocabulary.DataModelJdbcSupport;
 
@@ -37,6 +38,11 @@ public class SupportWithPrivateConstructor implements DataModelJdbcSupport<Objec
 
     @Override
     public boolean isSupported(List<String> columnNames) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Map<String, String> getColumnMap() {
         throw new UnsupportedOperationException();
     }
 

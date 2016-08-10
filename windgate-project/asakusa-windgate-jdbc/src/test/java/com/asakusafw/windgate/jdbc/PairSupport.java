@@ -19,7 +19,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import com.asakusafw.windgate.core.vocabulary.DataModelJdbcSupport;
 
@@ -28,6 +32,8 @@ import com.asakusafw.windgate.core.vocabulary.DataModelJdbcSupport;
  */
 public class PairSupport implements DataModelJdbcSupport<Pair> {
 
+    private static final List<String> COLUMNS = Collections.unmodifiableList(Arrays.asList("KEY", "VALUE"));
+
     @Override
     public Class<Pair> getSupportedType() {
         return Pair.class;
@@ -35,7 +41,12 @@ public class PairSupport implements DataModelJdbcSupport<Pair> {
 
     @Override
     public boolean isSupported(List<String> columnNames) {
-        return columnNames.equals(Arrays.asList("KEY", "VALUE"));
+        return columnNames.equals(COLUMNS);
+    }
+
+    @Override
+    public Map<String, String> getColumnMap() {
+        return COLUMNS.stream().collect(Collectors.toMap(Function.identity(), String::toLowerCase));
     }
 
     @Override

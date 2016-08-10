@@ -19,12 +19,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Supports JDBC interfaces for data models.
  * This implementation class must have public constructor without any parameters.
  * @param <T> the type of target data model
  * @since 0.2.2
+ * @version 0.9.0
  */
 public interface DataModelJdbcSupport<T> {
 
@@ -33,6 +35,13 @@ public interface DataModelJdbcSupport<T> {
      * @return the supported type
      */
     Class<T> getSupportedType();
+
+    /**
+     * Returns the column names into property names mapping.
+     * @return the column names mappings
+     * @since 0.9.0
+     */
+    Map<String, String> getColumnMap();
 
     /**
      * Checks whether this object supports the target column names.
