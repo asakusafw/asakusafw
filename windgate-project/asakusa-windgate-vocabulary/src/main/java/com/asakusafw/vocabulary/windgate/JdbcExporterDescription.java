@@ -16,6 +16,8 @@
 package com.asakusafw.vocabulary.windgate;
 
 import java.text.MessageFormat;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +38,7 @@ import com.asakusafw.windgate.core.vocabulary.JdbcProcess;
  * <li> not declared any explicit constructors </li>
  * </ul>
  * @since 0.2.2
- * @version 0.7.3
+ * @version 0.9.0
  */
 public abstract class JdbcExporterDescription extends WindGateExporterDescription {
 
@@ -70,6 +72,15 @@ public abstract class JdbcExporterDescription extends WindGateExporterDescriptio
         return null;
     }
 
+    /**
+     * Returns WindGate JDBC export options.
+     * @return options
+     * @since 0.9.0
+     */
+    public Collection<String> getOptions() {
+        return Collections.emptySet();
+    }
+
     @Override
     public final DriverScript getDriverScript() {
         String descriptionClass = getClass().getName();
@@ -78,8 +89,9 @@ public abstract class JdbcExporterDescription extends WindGateExporterDescriptio
         String table = getTableName();
         List<String> columns = getColumnNames();
         String customTruncate = getCustomTruncate();
+        Collection<String> options = getOptions();
 
-        JdbcDescriptionUtil.checkCommonConfig(descriptionClass, modelType, supportClass, table, columns);
+        JdbcDescriptionUtil.checkCommonConfig(descriptionClass, modelType, supportClass, table, columns, options);
         if (customTruncate != null && customTruncate.trim().isEmpty()) {
             throw new IllegalStateException(MessageFormat.format(
                     Messages.getString("JdbcExporterDescription.errorEmptyStringProperty"), //$NON-NLS-1$
@@ -94,6 +106,9 @@ public abstract class JdbcExporterDescription extends WindGateExporterDescriptio
         configuration.put(JdbcProcess.OPERATION.key(), JdbcProcess.OperationKind.INSERT_AFTER_TRUNCATE.value());
         if (customTruncate != null) {
             configuration.put(JdbcProcess.CUSTOM_TRUNCATE.key(), customTruncate);
+        }
+        if (options != null && options.isEmpty() == false) {
+            configuration.put(JdbcProcess.OPTIONS.key(), JdbcDescriptionUtil.join(options));
         }
 
         Set<String> parameters = VariableTable.collectVariableNames(customTruncate);

@@ -27,10 +27,10 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
 import org.apache.hadoop.io.Text;
 import org.slf4j.Logger;
@@ -260,6 +260,8 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
 
         private static final String NAME_PROPERTY_POSITIONS = "PROPERTY_POSITIONS"; //$NON-NLS-1$
 
+        private static final String NAME_COLUMN_MAP = "COLUMN_MAP"; //$NON-NLS-1$
+
         private static final String NAME_CREATE_VECTOR = "createPropertyVector"; //$NON-NLS-1$
 
         private final EmitContext context;
@@ -286,8 +288,8 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
         private void emit() throws IOException {
             ClassDeclaration decl = f.newClassDeclaration(
                     new JavadocBuilder(f)
-                        .text(Messages.getString("JdbcSupportEmitter.javadocClass"), //$NON-NLS-1$
-                                context.getTypeName(model.getSymbol()))
+                        .inline(Messages.getString("JdbcSupportEmitter.javadocClass"), //$NON-NLS-1$
+                                d -> d.linkType(context.resolve(model.getSymbol())))
                         .toJavadoc(),
                     new AttributeBuilder(f)
                         .Public()
@@ -304,9 +306,11 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
 
         private List<TypeBodyDeclaration> createMembers() {
             List<TypeBodyDeclaration> results = new ArrayList<>();
-            results.addAll(createMetaData());
+            results.addAll(createPropertyPositions());
+            results.addAll(createColumnMap());
             results.add(createGetSupportedType());
             results.add(createIsSupported());
+            results.add(createGetColumnMap());
             results.add(createCreateResultSetSupport());
             results.add(createCreatePreparedStatementSupport());
             results.add(createCreatePropertyVector());
@@ -315,7 +319,7 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
             return results;
         }
 
-        private List<TypeBodyDeclaration> createMetaData() {
+        private List<TypeBodyDeclaration> createPropertyPositions() {
             List<TypeBodyDeclaration> results = new ArrayList<>();
             results.add(f.newFieldDeclaration(
                     null,
@@ -332,7 +336,7 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
                     null));
             List<Statement> statements = new ArrayList<>();
             SimpleName map = f.newSimpleName("map"); //$NON-NLS-1$
-            statements.add(new TypeBuilder(f, context.resolve(TreeMap.class))
+            statements.add(new TypeBuilder(f, context.resolve(LinkedHashMap.class))
                 .parameterize()
                 .newObject()
                 .toLocalVariableDeclaration(
@@ -353,6 +357,56 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
             }
             statements.add(new ExpressionBuilder(f, f.newSimpleName(NAME_PROPERTY_POSITIONS))
                 .assignFrom(map)
+                .toStatement());
+            results.add(f.newInitializerDeclaration(
+                    null,
+                    new AttributeBuilder(f)
+                        .Static()
+                        .toAttributes(),
+                    f.newBlock(statements)));
+            return results;
+        }
+
+        private List<TypeBodyDeclaration> createColumnMap() {
+            List<TypeBodyDeclaration> results = new ArrayList<>();
+            results.add(f.newFieldDeclaration(
+                    null,
+                    new AttributeBuilder(f)
+                        .Private()
+                        .Static()
+                        .Final()
+                        .toAttributes(),
+                    f.newParameterizedType(
+                            context.resolve(Map.class),
+                            context.resolve(String.class),
+                            context.resolve(String.class)),
+                    f.newSimpleName(NAME_COLUMN_MAP),
+                    null));
+            List<Statement> statements = new ArrayList<>();
+            SimpleName map = f.newSimpleName("map"); //$NON-NLS-1$
+            statements.add(new TypeBuilder(f, context.resolve(LinkedHashMap.class))
+                .parameterize()
+                .newObject()
+                .toLocalVariableDeclaration(
+                        f.newParameterizedType(
+                                context.resolve(Map.class),
+                                context.resolve(String.class),
+                                context.resolve(String.class)),
+                        map));
+
+            for (PropertyDeclaration property : getProperties()) {
+                JdbcColumnTrait trait = property.getTrait(JdbcColumnTrait.class);
+                assert trait != null;
+                statements.add(new ExpressionBuilder(f, map)
+                    .method("put",
+                            Models.toLiteral(f, trait.getName()),
+                            Models.toLiteral(f, property.getName().identifier))
+                    .toStatement());
+            }
+            statements.add(new ExpressionBuilder(f, f.newSimpleName(NAME_COLUMN_MAP))
+                .assignFrom(new TypeBuilder(f, context.resolve(Collections.class))
+                        .method("unmodifiableMap", map) //$NON-NLS-1$
+                        .toExpression())
                 .toStatement());
             results.add(f.newInitializerDeclaration(
                     null,
@@ -420,6 +474,24 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
                                     context.resolve(String.class)),
                             columnNames)),
                     statements);
+            return decl;
+        }
+
+        private MethodDeclaration createGetColumnMap() {
+            MethodDeclaration decl = f.newMethodDeclaration(
+                    null,
+                    new AttributeBuilder(f)
+                        .annotation(context.resolve(Override.class))
+                        .Public()
+                        .toAttributes(),
+                    f.newParameterizedType(
+                            context.resolve(Map.class),
+                            context.resolve(String.class),
+                            context.resolve(String.class)),
+                    f.newSimpleName("getColumnMap"), //$NON-NLS-1$
+                    Collections.emptyList(),
+                    Arrays.asList(new ExpressionBuilder(f, f.newSimpleName(NAME_COLUMN_MAP))
+                            .toReturnStatement()));
             return decl;
         }
 

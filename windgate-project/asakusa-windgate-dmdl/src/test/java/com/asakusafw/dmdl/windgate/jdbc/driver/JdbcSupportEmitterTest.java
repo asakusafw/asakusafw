@@ -27,6 +27,8 @@ import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.apache.hadoop.io.Text;
 import org.junit.Before;
@@ -80,6 +82,9 @@ public class JdbcSupportEmitterTest extends GeneratorTesterRoot {
         assertThat(support.isSupported(list("INVALID")), is(false));
         assertThat(support.isSupported(list("VALUE", "INVALID")), is(false));
 
+        assertThat(support.getColumnMap().keySet(), hasSize(1));
+        assertThat(support.getColumnMap(), hasEntry("VALUE", "value"));
+
         DataModelJdbcSupport<Object> unsafe = unsafe(support);
         h2.executeFile("simple.sql");
         try (Connection conn = h2.open();
@@ -124,6 +129,10 @@ public class JdbcSupportEmitterTest extends GeneratorTesterRoot {
                 "C_DATETIME",
         });
         assertThat(support.isSupported(list), is(true));
+
+        assertThat(support.getColumnMap(), is(list.stream().collect(Collectors.toMap(
+                Function.identity(),
+                String::toLowerCase))));
 
         DataModelJdbcSupport<Object> unsafe = unsafe(support);
         h2.executeFile("types.sql");

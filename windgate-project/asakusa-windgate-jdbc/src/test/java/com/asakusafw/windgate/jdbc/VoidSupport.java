@@ -19,6 +19,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import com.asakusafw.windgate.core.vocabulary.DataModelJdbcSupport;
 
@@ -35,6 +36,11 @@ public class VoidSupport implements DataModelJdbcSupport<Void> {
     @Override
     public boolean isSupported(List<String> columnNames) {
         return columnNames.equals(Arrays.asList("KEY", "VALUE"));
+    }
+
+    @Override
+    public Map<String, String> getColumnMap() {
+        throw new UnsupportedOperationException();
     }
 
     @Override

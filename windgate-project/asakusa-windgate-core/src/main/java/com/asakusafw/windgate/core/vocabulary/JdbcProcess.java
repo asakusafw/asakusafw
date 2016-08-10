@@ -18,7 +18,7 @@ package com.asakusafw.windgate.core.vocabulary;
 /**
  * WindGate database resource configuration.
  * @since 0.2.2
- * @version 0.7.3
+ * @version 0.9.0
  */
 public enum JdbcProcess implements ConfigurationItem {
 
@@ -63,6 +63,15 @@ public enum JdbcProcess implements ConfigurationItem {
     CUSTOM_TRUNCATE(
             "customTruncate", //$NON-NLS-1$
             "custom truncate statement"
+    ),
+
+    /**
+     * The script key of the operation options.
+     * @since 0.9.0
+     */
+    OPTIONS(
+            "options", //$NON-NLS-1$
+            "WindGate JDBC options"
     ),
 
     /**

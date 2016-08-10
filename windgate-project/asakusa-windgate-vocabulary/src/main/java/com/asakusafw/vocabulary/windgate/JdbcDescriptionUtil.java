@@ -16,14 +16,11 @@
 package com.asakusafw.vocabulary.windgate;
 
 import java.text.MessageFormat;
+import java.util.Collection;
 import java.util.List;
 
 import com.asakusafw.windgate.core.vocabulary.DataModelJdbcSupport;
 
-/**
- * Common utilities for JDBC.
- * @since 0.2.2
- */
 final class JdbcDescriptionUtil {
 
     static void checkCommonConfig(
@@ -31,14 +28,24 @@ final class JdbcDescriptionUtil {
             Class<?> modelType,
             Class<? extends DataModelJdbcSupport<?>> supportClass,
             String table,
-            List<String> columns) {
+            List<String> columns,
+            Collection<String> options) {
+        checkTable(descriptionClass, table);
+        checkColumns(descriptionClass, columns);
+        checkSupportClass(descriptionClass, supportClass, modelType, columns);
+        checkOptions(descriptionClass, options);
+    }
+
+    private static void checkTable(String descriptionClass, String table) {
         if (isEmpty(table)) {
             throw new IllegalStateException(MessageFormat.format(
                     Messages.getString("JdbcDescriptionUtil.errorEmptyProperty"), //$NON-NLS-1$
                     descriptionClass,
                     "getTableName()")); //$NON-NLS-1$
         }
+    }
 
+    private static void checkColumns(String descriptionClass, List<String> columns) {
         if (columns == null) {
             throw new IllegalStateException(MessageFormat.format(
                     Messages.getString("JdbcDescriptionUtil.errorNullProperty"), //$NON-NLS-1$
@@ -57,16 +64,26 @@ final class JdbcDescriptionUtil {
                         Messages.getString("JdbcDescriptionUtil.errorContainEmptyStringProperty"), //$NON-NLS-1$
                         descriptionClass,
                         "getColumnNames()")); //$NON-NLS-1$
+            } else if (column.indexOf(',') >= 0) {
+                throw new IllegalStateException(MessageFormat.format(
+                        Messages.getString("JdbcDescriptionUtil.errorContainSeparatorProperty"), //$NON-NLS-1$
+                        descriptionClass,
+                        "getColumnNames()")); //$NON-NLS-1$
             }
         }
+    }
 
+    private static void checkSupportClass(
+            String descriptionClass,
+            Class<? extends DataModelJdbcSupport<?>> supportClass,
+            Class<?> modelType,
+            List<String> columns) {
         if (supportClass == null) {
             throw new IllegalStateException(MessageFormat.format(
                     Messages.getString("JdbcDescriptionUtil.errorNullProperty"), //$NON-NLS-1$
                     descriptionClass,
                     "getJdbcSupport()")); //$NON-NLS-1$
         }
-
         DataModelJdbcSupport<?> support;
         try {
             support = supportClass.newInstance();
@@ -92,20 +109,32 @@ final class JdbcDescriptionUtil {
         }
     }
 
+    private static void checkOptions(String descriptionClass, Collection<String> options) {
+        if (options != null) {
+            for (String option : options) {
+                if (isEmpty(option)) {
+                    throw new IllegalStateException(MessageFormat.format(
+                            Messages.getString("JdbcDescriptionUtil.errorContainEmptyStringProperty"), //$NON-NLS-1$
+                            descriptionClass,
+                            "getOptions()")); //$NON-NLS-1$
+                } else if (option.indexOf(',') >= 0) {
+                    throw new IllegalStateException(MessageFormat.format(
+                            Messages.getString("JdbcDescriptionUtil.errorContainSeparatorProperty"), //$NON-NLS-1$
+                            descriptionClass,
+                            "getOptions()")); //$NON-NLS-1$
+                }
+            }
+        }
+    }
+
     static boolean isEmpty(String string) {
         return string == null || string.isEmpty();
     }
 
-    static String join(List<String> columns) {
-        assert columns != null;
-        assert columns.isEmpty() == false;
-        StringBuilder buf = new StringBuilder();
-        buf.append(columns.get(0));
-        for (int i = 1, n = columns.size(); i < n; i++) {
-            buf.append(", "); //$NON-NLS-1$
-            buf.append(columns.get(i));
-        }
-        return buf.toString();
+    static String join(Collection<String> elements) {
+        assert elements != null;
+        assert elements.isEmpty() == false;
+        return String.join(", ", elements); //$NON-NLS-1$
     }
 
     private JdbcDescriptionUtil() {

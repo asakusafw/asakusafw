@@ -19,6 +19,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -46,7 +47,6 @@ public class JdbcImporterDescriptionTest {
         assertThat(conf.get(JdbcProcess.TABLE.key()), is("TESTING"));
         assertThat(conf.get(JdbcProcess.COLUMNS.key()), equalToIgnoringWhiteSpace("VALUE"));
         assertThat(conf.get(JdbcProcess.JDBC_SUPPORT.key()), is(StringSupport.class.getName()));
-        assertThat(conf.get(JdbcProcess.CONDITION.key()), is(nullValue()));
         assertThat(script.getParameterNames(), hasSize(0));
     }
 
@@ -63,7 +63,6 @@ public class JdbcImporterDescriptionTest {
         assertThat(conf.get(JdbcProcess.TABLE.key()), is("TESTING"));
         assertThat(conf.get(JdbcProcess.COLUMNS.key()), equalToIgnoringWhiteSpace("A, B, C"));
         assertThat(conf.get(JdbcProcess.JDBC_SUPPORT.key()), is(StringSupport.class.getName()));
-        assertThat(conf.get(JdbcProcess.CONDITION.key()), is(nullValue()));
         assertThat(script.getParameterNames(), hasSize(0));
     }
 
@@ -81,6 +80,24 @@ public class JdbcImporterDescriptionTest {
         assertThat(conf.get(JdbcProcess.COLUMNS.key()), equalToIgnoringWhiteSpace("VALUE"));
         assertThat(conf.get(JdbcProcess.JDBC_SUPPORT.key()), is(StringSupport.class.getName()));
         assertThat(conf.get(JdbcProcess.CONDITION.key()), equalToIgnoringWhiteSpace("VALUE > 0"));
+        assertThat(script.getParameterNames(), hasSize(0));
+    }
+
+    /**
+     * w/ options.
+     */
+    @Test
+    public void options() {
+        Mock mock = new Mock(String.class, "testing", StringSupport.class, "TESTING", null, "VALUE")
+                .withOptions("a", "b", "c");
+        DriverScript script = mock.getDriverScript();
+        assertThat(script.getResourceName(), is(Constants.JDBC_RESOURCE_NAME));
+        Map<String, String> conf = script.getConfiguration();
+        assertThat(conf.keySet(), hasSize(4));
+        assertThat(conf, hasEntry(JdbcProcess.TABLE.key(), "TESTING"));
+        assertThat(conf, hasEntry(is(JdbcProcess.COLUMNS.key()), equalToIgnoringWhiteSpace("VALUE")));
+        assertThat(conf, hasEntry(JdbcProcess.JDBC_SUPPORT.key(), StringSupport.class.getName()));
+        assertThat(conf, hasEntry(is(JdbcProcess.OPTIONS.key()), equalToIgnoringWhiteSpace("a, b, c")));
         assertThat(script.getParameterNames(), hasSize(0));
     }
 
@@ -266,6 +283,7 @@ public class JdbcImporterDescriptionTest {
         private final String tableName;
         private final String condition;
         private final List<String> columnNames;
+        private List<String> options;
 
         Mock(
                 Class<?> modelType,
@@ -317,6 +335,16 @@ public class JdbcImporterDescriptionTest {
                 return super.getCondition();
             }
             return condition;
+        }
+
+        @Override
+        public Collection<String> getOptions() {
+            return options;
+        }
+
+        public Mock withOptions(String... elements) {
+            this.options = Arrays.asList(elements);
+            return this;
         }
     }
 }

@@ -17,7 +17,9 @@ package com.asakusafw.vocabulary.windgate;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import com.asakusafw.windgate.core.vocabulary.DataModelJdbcSupport;
 
@@ -30,6 +32,11 @@ public abstract class MockJdbcSupport<T> implements DataModelJdbcSupport<T> {
     @Override
     public boolean isSupported(List<String> columnNames) {
         return true;
+    }
+
+    @Override
+    public Map<String, String> getColumnMap() {
+        return Collections.emptyMap();
     }
 
     @Override
