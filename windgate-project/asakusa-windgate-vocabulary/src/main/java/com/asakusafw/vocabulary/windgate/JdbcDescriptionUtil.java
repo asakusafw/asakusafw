@@ -117,7 +117,7 @@ final class JdbcDescriptionUtil {
                             Messages.getString("JdbcDescriptionUtil.errorContainEmptyStringProperty"), //$NON-NLS-1$
                             descriptionClass,
                             "getOptions()")); //$NON-NLS-1$
-                }else if (option.indexOf(',') >= 0) {
+                } else if (option.indexOf(',') >= 0) {
                     throw new IllegalStateException(MessageFormat.format(
                             Messages.getString("JdbcDescriptionUtil.errorContainSeparatorProperty"), //$NON-NLS-1$
                             descriptionClass,
