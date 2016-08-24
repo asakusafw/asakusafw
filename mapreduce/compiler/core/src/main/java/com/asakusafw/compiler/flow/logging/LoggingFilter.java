@@ -58,10 +58,11 @@ public class LoggingFilter extends FlowCompilingEnvironment.Initialized implemen
         for (FlowElement element : FlowGraphUtil.collectElements(graph)) {
             if (element.getDescription().getKind() == FlowElementKind.FLOW_COMPONENT) {
                 FlowPartDescription desc = (FlowPartDescription) element.getDescription();
-                rewriteGraph(desc.getFlowGraph());
+                modified |= rewriteGraph(desc.getFlowGraph());
             } else if (isDebugLogging(element)) {
                 LOG.debug("removing debug logging operator: {}", element); //$NON-NLS-1$
                 FlowGraphUtil.skip(element);
+                modified = true;
             }
         }
         return modified;
