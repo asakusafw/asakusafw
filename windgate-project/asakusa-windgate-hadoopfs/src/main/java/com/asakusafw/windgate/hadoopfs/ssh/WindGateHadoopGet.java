@@ -25,13 +25,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.hadoop.conf.Configuration;
@@ -124,27 +122,21 @@ public class WindGateHadoopGet extends WindGateHadoopBase {
         }
     }
 
-    void doGet(final List<Path> paths, FileList.Writer drain) throws IOException, InterruptedException {
+    void doGet(List<Path> paths, FileList.Writer drain) throws IOException, InterruptedException {
         assert paths != null;
         assert drain != null;
-        final BlockingQueue<Pair> queue = new SynchronousQueue<>();
-        final FileSystem fs = FileSystem.get(conf);
-        ExecutorService executor = Executors.newFixedThreadPool(1, new ThreadFactory() {
-            @Override
-            public Thread newThread(Runnable r) {
-                Thread t = new Thread(r, "HadoopFileCollector");
-                t.setDaemon(true);
-                return t;
-            }
+        BlockingQueue<Pair> queue = new SynchronousQueue<>();
+        FileSystem fs = FileSystem.get(conf);
+        ExecutorService executor = Executors.newFixedThreadPool(1, r -> {
+            Thread t = new Thread(r, "HadoopFileCollector");
+            t.setDaemon(true);
+            return t;
         });
         try {
-            Future<Void> fetcher = executor.submit(new Callable<Void>() {
-                @Override
-                public Void call() throws Exception {
-                    fetch(fs, paths, queue);
-                    queue.put(Pair.eof());
-                    return null;
-                }
+            Future<Void> fetcher = executor.submit(() -> {
+                fetch(fs, paths, queue);
+                queue.put(Pair.eof());
+                return null;
             });
             while (true) {
                 Pair next = queue.poll(1, TimeUnit.SECONDS);

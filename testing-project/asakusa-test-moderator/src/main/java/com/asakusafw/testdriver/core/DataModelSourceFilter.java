@@ -15,16 +15,20 @@
  */
 package com.asakusafw.testdriver.core;
 
+import java.util.function.UnaryOperator;
+
 /**
  * Filters {@link DataModelSource}s.
  * @since 0.7.0
  */
-public interface DataModelSourceFilter {
+@FunctionalInterface
+public interface DataModelSourceFilter extends UnaryOperator<DataModelSource> {
 
     /**
      * Applies this filter.
      * @param source the original source
      * @return the filtered source
      */
+    @Override
     DataModelSource apply(DataModelSource source);
 }

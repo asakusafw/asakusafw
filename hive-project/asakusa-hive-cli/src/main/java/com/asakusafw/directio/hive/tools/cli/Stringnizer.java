@@ -15,23 +15,21 @@
  */
 package com.asakusafw.directio.hive.tools.cli;
 
+import java.util.function.Function;
+
 import com.asakusafw.directio.hive.info.TableInfo;
 
 /**
  * Provides string from {@link TableInfo}.
  * @since 0.7.0
  */
-public interface Stringnizer {
+@FunctionalInterface
+public interface Stringnizer extends Function<TableInfo, String> {
 
     /**
      * Always returns {@code null}.
      */
-    Stringnizer NULL = new Stringnizer() {
-        @Override
-        public String toString(TableInfo table) {
-            return null;
-        }
-    };
+    Stringnizer NULL = table -> null;
 
     /**
      * Returns text for the table.
@@ -39,4 +37,9 @@ public interface Stringnizer {
      * @return the related text, or {@code null} to 'nothing'
      */
     String toString(TableInfo table);
+
+    @Override
+    default String apply(TableInfo t) {
+        return toString(t);
+    }
 }

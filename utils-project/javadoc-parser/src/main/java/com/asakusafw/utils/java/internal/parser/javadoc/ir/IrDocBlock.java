@@ -108,7 +108,7 @@ public class IrDocBlock extends AbstractIrDocElement implements IrDocFragment {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final IrDocBlock other = (IrDocBlock) obj;
+        IrDocBlock other = (IrDocBlock) obj;
         if (!fragments.equals(other.fragments)) {
             return false;
         }

@@ -124,7 +124,7 @@ public class JsonObjectDriverTest {
         assertThat(object.datetimeValue, is(calendar("yyyy-MM-dd HH:mm:ss", "2011-12-31 10:20:30")));
     }
 
-    private Matcher<Calendar> calendar(final String format, final String value) {
+    private Matcher<Calendar> calendar(String format, String value) {
         return new BaseMatcher<Calendar>() {
             @Override
             public boolean matches(Object object) {

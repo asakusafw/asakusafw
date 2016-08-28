@@ -21,7 +21,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -174,12 +173,7 @@ public class HiveSchemaCollectorProcessor extends AbstractWorkflowProcessor {
             saw.add(element);
             normalized.add(element);
         }
-        Collections.sort(normalized, new Comparator<T>() {
-            @Override
-            public int compare(T o1, T o2) {
-                return o1.getSchema().getName().compareTo(o2.getSchema().getName());
-            }
-        });
+        Collections.sort(normalized, (o1, o2) -> o1.getSchema().getName().compareTo(o2.getSchema().getName()));
         return normalized;
     }
 

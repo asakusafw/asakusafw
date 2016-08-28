@@ -61,6 +61,7 @@ public interface DataModelStreamSupport<T> {
      * @since 0.2.2
      * @param <T> the type of target data model
      */
+    @FunctionalInterface
     public interface DataModelReader<T> {
 
         /**

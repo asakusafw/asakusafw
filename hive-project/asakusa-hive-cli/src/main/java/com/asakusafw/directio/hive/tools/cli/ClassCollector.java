@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,44 +32,37 @@ import org.slf4j.LoggerFactory;
 /**
  * Collects classes in class-path.
  * @since 0.7.0
+ * @version 0.9.0
  */
 public class ClassCollector {
 
     static final Logger LOG = LoggerFactory.getLogger(ClassCollector.class);
 
-    private static final Selector THROUGH_SELECTOR = new Selector() {
-
-        @Override
-        public boolean accept(Class<?> aClass) {
-            return true;
-        }
-    };
-
     private static final String CLASS_EXTENSION = ".class"; //$NON-NLS-1$
 
     private final ClassLoader classLoader;
 
-    private final Selector selector;
+    private final Predicate<? super Class<?>> selector;
 
-    private final Map<String, Class<?>> classes;
+    private final Map<String, Class<?>> classes = new HashMap<>();
 
     /**
      * Creates a new instance with a filter which accepts any classes.
      * @param classLoader the project class loader
      */
     public ClassCollector(ClassLoader classLoader) {
-        this(classLoader, THROUGH_SELECTOR);
+        this(classLoader, c -> true);
     }
 
     /**
      * Creates a new instance.
      * @param classLoader the project class loader
      * @param selector the class selector
+     * @since 0.9.0
      */
-    public ClassCollector(ClassLoader classLoader, Selector selector) {
+    public ClassCollector(ClassLoader classLoader, Predicate<? super Class<?>> selector) {
         this.classLoader = classLoader;
         this.selector = selector;
-        this.classes = new HashMap<>();
     }
 
     /**
@@ -118,7 +112,7 @@ public class ClassCollector {
         LOG.debug("Registering: {}", className); //$NON-NLS-1$
         try {
             Class<?> aClass = classLoader.loadClass(className);
-            if (selector.accept(aClass)) {
+            if (selector.test(aClass)) {
                 classes.put(className, aClass);
                 LOG.debug("Registered: {}", className); //$NON-NLS-1$
             } else {
@@ -170,8 +164,11 @@ public class ClassCollector {
 
     /**
      * Filters classes to collect.
+     * @deprecated Use {@link Predicate} instead
      */
-    public interface Selector {
+    @Deprecated
+    @FunctionalInterface
+    public interface Selector extends Predicate<Class<?>> {
 
         /**
          * Returns whether or not accepts target class.
@@ -179,5 +176,10 @@ public class ClassCollector {
          * @return {@code true} if this accepts the target class, otherwise {@code false}
          */
         boolean accept(Class<?> aClass);
+
+        @Override
+        default boolean test(Class<?> t) {
+            return accept(t);
+        }
     }
 }

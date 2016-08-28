@@ -113,7 +113,7 @@ public final class IrDocSimpleName extends IrDocName {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final IrDocSimpleName other = (IrDocSimpleName) obj;
+        IrDocSimpleName other = (IrDocSimpleName) obj;
         if (!identifier.equals(other.identifier)) {
             return false;
         }

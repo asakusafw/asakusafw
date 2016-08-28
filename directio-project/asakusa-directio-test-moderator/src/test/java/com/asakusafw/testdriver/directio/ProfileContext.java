@@ -59,9 +59,9 @@ public class ProfileContext extends ExternalResource {
      */
     public TestContext getTextContext(String... kvs) {
         assert kvs.length % 2 == 0;
-        final Map<String, String> env = new HashMap<>(System.getenv());
+        Map<String, String> env = new HashMap<>(System.getenv());
         env.put("ASAKUSA_HOME", folder.getRoot().getAbsolutePath());
-        final Map<String, String> args = new HashMap<>();
+        Map<String, String> args = new HashMap<>();
         for (int i = 0; i < kvs.length; i += 2) {
             args.put(kvs[i], kvs[i + 1]);
         }

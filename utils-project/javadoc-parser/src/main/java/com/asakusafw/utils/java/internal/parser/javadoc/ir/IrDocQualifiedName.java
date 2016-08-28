@@ -159,7 +159,7 @@ public class IrDocQualifiedName extends IrDocName {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final IrDocQualifiedName other = (IrDocQualifiedName) obj;
+        IrDocQualifiedName other = (IrDocQualifiedName) obj;
         if (!name.equals(other.name)) {
             return false;
         }

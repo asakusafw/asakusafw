@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -179,17 +178,14 @@ public class TemporaryIoProcessor extends ExternalIoDescriptionProcessor {
 
     private Map<Location, List<Slot>> groupByOutputLocation(IoContext context) {
         assert context != null;
-        Map<Location, List<Slot>> results = new TreeMap<>(new Comparator<Location>() {
-            @Override
-            public int compare(Location o1, Location o2) {
-                String parentPath1 = (o1.getParent() == null) ? "" : o1.getParent().toPath('/'); //$NON-NLS-1$
-                String parentPath2 = (o2.getParent() == null) ? "" : o2.getParent().toPath('/'); //$NON-NLS-1$
-                int parentDiff = parentPath1.compareTo(parentPath2);
-                if (parentDiff != 0) {
-                    return (parentDiff > 0) ? +1 : -1;
-                }
-                return o1.getName().compareTo(o2.getName());
+        Map<Location, List<Slot>> results = new TreeMap<>((o1, o2) -> {
+            String parentPath1 = (o1.getParent() == null) ? "" : o1.getParent().toPath('/'); //$NON-NLS-1$
+            String parentPath2 = (o2.getParent() == null) ? "" : o2.getParent().toPath('/'); //$NON-NLS-1$
+            int parentDiff = parentPath1.compareTo(parentPath2);
+            if (parentDiff != 0) {
+                return (parentDiff > 0) ? +1 : -1;
             }
+            return o1.getName().compareTo(o2.getName());
         });
         for (Output output : context.getOutputs()) {
             TemporaryOutputDescription desc = extract(output.getDescription());

@@ -19,6 +19,7 @@ package com.asakusafw.testdriver.core;
  * Converts data model objects into unified {@link DataModelReflection}s.
  * @since 0.2.0
  */
+@FunctionalInterface
 public interface DataModelAdapter {
 
     /**

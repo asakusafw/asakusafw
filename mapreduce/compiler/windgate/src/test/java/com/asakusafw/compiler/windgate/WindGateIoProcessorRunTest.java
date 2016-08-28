@@ -22,7 +22,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
@@ -111,12 +110,7 @@ public class WindGateIoProcessorRunTest {
 
         List<Simple> results = tester.getList(Simple.class, exporterLocation);
         assertThat(results.size(), is(3));
-        Collections.sort(results, new Comparator<Simple>() {
-            @Override
-            public int compare(Simple o1, Simple o2) {
-                return o1.getValueOption().compareTo(o2.getValueOption());
-            }
-        });
+        Collections.sort(results, (o1, o2) -> o1.getValueOption().compareTo(o2.getValueOption()));
         assertThat(results.get(0).getValueAsString(), is("Hello1, world!"));
         assertThat(results.get(1).getValueAsString(), is("Hello2, world!"));
         assertThat(results.get(2).getValueAsString(), is("Hello3, world!"));

@@ -30,8 +30,6 @@ import java.util.concurrent.Executors;
 import org.apache.hadoop.fs.Path;
 import org.junit.Test;
 
-import com.asakusafw.runtime.util.cache.ConcurrentBatchFileCacheRepository.ExceptionHandler;
-
 /**
  * Test for {@link ConcurrentBatchFileCacheRepository}.
  */
@@ -99,22 +97,14 @@ public class ConcurrentBatchFileCacheRepositoryTest extends FileCacheRepositoryT
     @Test
     public void exception_suppress() throws Exception {
         File source = put(newFile(), "Hello, world!");
-        final File alter = newFile();
+        File alter = newFile();
         Map<File, File> results;
         ExecutorService executor = Executors.newFixedThreadPool(1);
         try {
             BatchFileCacheRepository batch = new ConcurrentBatchFileCacheRepository(
-                    new FileCacheRepository() {
-                        @Override
-                        public Path resolve(Path file) throws IOException, InterruptedException {
-                            throw new IOException();
-                        }
-                    }, executor, new ExceptionHandler() {
-                        @Override
-                        public Path handle(Path path, IOException exception) throws IOException {
-                            return path(alter);
-                        }
-                    });
+                    file -> {
+                        throw new IOException();
+                    }, executor, (path, exception) -> path(alter));
             results = files(batch.resolve(Arrays.asList(path(source))));
         } finally {
             executor.shutdown();
@@ -133,16 +123,10 @@ public class ConcurrentBatchFileCacheRepositoryTest extends FileCacheRepositoryT
         ExecutorService executor = Executors.newFixedThreadPool(1);
         try {
             BatchFileCacheRepository batch = new ConcurrentBatchFileCacheRepository(
-                    new FileCacheRepository() {
-                        @Override
-                        public Path resolve(Path file) throws IOException, InterruptedException {
-                            throw new IOException();
-                        }
-                    }, executor, new ExceptionHandler() {
-                        @Override
-                        public Path handle(Path path, IOException exception) throws IOException {
-                            throw exception;
-                        }
+                    file -> {
+                        throw new IOException();
+                    }, executor, (path, exception) -> {
+                        throw exception;
                     });
             batch.resolve(Arrays.asList(path(source)));
             fail();
@@ -164,11 +148,8 @@ public class ConcurrentBatchFileCacheRepositoryTest extends FileCacheRepositoryT
         ExecutorService executor = Executors.newFixedThreadPool(1);
         try {
             BatchFileCacheRepository batch = new ConcurrentBatchFileCacheRepository(
-                    new FileCacheRepository() {
-                        @Override
-                        public Path resolve(Path file) throws IOException, InterruptedException {
-                            throw new InterruptedException();
-                        }
+                    file -> {
+                        throw new InterruptedException();
                     }, executor);
             results = files(batch.resolve(Arrays.asList(path(source))));
         } finally {

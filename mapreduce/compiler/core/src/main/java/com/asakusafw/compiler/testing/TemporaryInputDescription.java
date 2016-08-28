@@ -26,11 +26,6 @@ import com.asakusafw.vocabulary.external.ImporterDescription;
  */
 public abstract class TemporaryInputDescription implements ImporterDescription {
 
-    @Override
-    public DataSize getDataSize() {
-        return DataSize.UNKNOWN;
-    }
-
     /**
      * Returns the import target path prefix.
      * <p>

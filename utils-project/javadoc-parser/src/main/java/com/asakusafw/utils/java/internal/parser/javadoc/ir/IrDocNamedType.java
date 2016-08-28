@@ -80,7 +80,7 @@ public class IrDocNamedType extends AbstractIrDocElement implements IrDocType {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final IrDocNamedType other = (IrDocNamedType) obj;
+        IrDocNamedType other = (IrDocNamedType) obj;
         if (name == null) {
             if (other.name != null) {
                 return false;

@@ -23,13 +23,13 @@ import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 import com.asakusafw.utils.io.Sink;
 import com.asakusafw.utils.io.csv.CsvWriter;
 import com.asakusafw.yaess.tools.log.YaessLogOutput;
 import com.asakusafw.yaess.tools.log.YaessLogRecord;
-import com.asakusafw.yaess.tools.log.util.Filter;
 import com.asakusafw.yaess.tools.log.util.LogCodeRegexFilter;
 
 /**
@@ -83,7 +83,7 @@ public class SummarizeYaessLogOutput implements YaessLogOutput {
                     "Invalid output encoding \"{1}\" ({0})",
                     KEY_ENCODING, encodingString), e);
         }
-        Filter<YaessLogRecord> filter;
+        Predicate<YaessLogRecord> filter;
         try {
             filter = new LogCodeRegexFilter(Pattern.compile(codeString));
         } catch (IllegalArgumentException e) {

@@ -77,7 +77,7 @@ public class SummarizeDriverTest extends GeneratorTesterRoot {
         assertThat(annotation, nullValue());
     }
 
-    private Matcher<Key> grouping(final String... properties) {
+    private Matcher<Key> grouping(String... properties) {
         return new BaseMatcher<Key>() {
             @Override
             public boolean matches(Object object) {
@@ -96,8 +96,7 @@ public class SummarizeDriverTest extends GeneratorTesterRoot {
         };
     }
 
-    private Matcher<Summarized.Folding> mapping(
-            final Aggregator aggregator, final String src, final String dst) {
+    private Matcher<Summarized.Folding> mapping(Aggregator aggregator, String src, String dst) {
         return new BaseMatcher<Summarized.Folding>() {
             @Override
             public boolean matches(Object object) {

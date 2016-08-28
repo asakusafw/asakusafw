@@ -138,9 +138,4 @@ public abstract class DirectFileInputDescription implements ImporterDescription 
     public boolean isOptional() {
         return false;
     }
-
-    @Override
-    public DataSize getDataSize() {
-        return DataSize.UNKNOWN;
-    }
 }

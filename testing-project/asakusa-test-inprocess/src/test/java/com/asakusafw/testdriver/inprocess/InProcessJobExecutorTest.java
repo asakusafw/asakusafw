@@ -26,13 +26,11 @@ import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.lang.SystemUtils;
-import org.apache.hadoop.conf.Configuration;
 import org.junit.Assume;
 import org.junit.Rule;
 import org.junit.Test;
@@ -43,7 +41,6 @@ import com.asakusafw.testdriver.JobExecutor;
 import com.asakusafw.testdriver.TestDriverContext;
 import com.asakusafw.testdriver.TestExecutionPlan;
 import com.asakusafw.testdriver.hadoop.ConfigurationFactory;
-import com.asakusafw.testdriver.inprocess.MockHadoopJob.Callback;
 
 /**
  * Test for {@link InProcessJobExecutor}.
@@ -194,13 +191,10 @@ public class InProcessJobExecutorTest {
     @Test
     public void executeJob_simple() {
         prepareJobflow();
-        final AtomicBoolean call = new AtomicBoolean();
-        MockHadoopJob.callback(new MockHadoopJob.Callback() {
-            @Override
-            public int run(String[] args, Configuration conf) {
-                call.set(true);
-                return 0;
-            }
+        AtomicBoolean call = new AtomicBoolean();
+        MockHadoopJob.callback((args, conf) -> {
+            call.set(true);
+            return 0;
         });
 
         JobExecutor executor = new InProcessJobExecutor(context);
@@ -218,14 +212,11 @@ public class InProcessJobExecutorTest {
     @Test
     public void executeJob_w_properties() {
         prepareJobflow();
-        final AtomicBoolean call = new AtomicBoolean();
-        MockHadoopJob.callback(new MockHadoopJob.Callback() {
-            @Override
-            public int run(String[] args, Configuration conf) {
-                call.set(true);
-                assertThat(conf.get("com.example.testing"), is("true"));
-                return 0;
-            }
+        AtomicBoolean call = new AtomicBoolean();
+        MockHadoopJob.callback((args, conf) -> {
+            call.set(true);
+            assertThat(conf.get("com.example.testing"), is("true"));
+            return 0;
         });
 
         TestExecutionPlan.Job job = job(MockHadoopJob.class.getName(), "com.example.testing", "true");
@@ -245,14 +236,11 @@ public class InProcessJobExecutorTest {
     @Test
     public void executeJob_w_resources() {
         prepareJobflow();
-        final AtomicBoolean call = new AtomicBoolean();
-        MockHadoopJob.callback(new MockHadoopJob.Callback() {
-            @Override
-            public int run(String[] args, Configuration conf) {
-                call.set(true);
-                assertThat(conf.get("com.example.testing"), is("true"));
-                return 0;
-            }
+        AtomicBoolean call = new AtomicBoolean();
+        MockHadoopJob.callback((args, conf) -> {
+            call.set(true);
+            assertThat(conf.get("com.example.testing"), is("true"));
+            return 0;
         });
 
         JobExecutor executor = new InProcessJobExecutor(context);
@@ -271,12 +259,7 @@ public class InProcessJobExecutorTest {
     @Test
     public void executeJob_nonzero() {
         prepareJobflow();
-        MockHadoopJob.callback(new MockHadoopJob.Callback() {
-            @Override
-            public int run(String[] args, Configuration conf) {
-                return 1;
-            }
-        });
+        MockHadoopJob.callback((args, conf) -> 1);
 
         JobExecutor executor = new InProcessJobExecutor(context);
         try {
@@ -295,11 +278,8 @@ public class InProcessJobExecutorTest {
     @Test
     public void executeJob_error() {
         prepareJobflow();
-        MockHadoopJob.callback(new Callback() {
-            @Override
-            public int run(String[] args, Configuration conf) throws Exception {
-                throw new InterruptedException();
-            }
+        MockHadoopJob.callback((args, conf) -> {
+            throw new InterruptedException();
         });
 
         JobExecutor executor = new InProcessJobExecutor(context);
@@ -318,13 +298,10 @@ public class InProcessJobExecutorTest {
      */
     @Test
     public void executeCommand_simple() {
-        final AtomicBoolean call = new AtomicBoolean();
-        MockCommandEmulator.callback(new MockCommandEmulator.Callback() {
-            @Override
-            public void run(List<String> args) throws IOException, InterruptedException {
-                call.set(true);
-                assertThat(args, contains("hello", "world"));
-            }
+        AtomicBoolean call = new AtomicBoolean();
+        MockCommandEmulator.callback(args -> {
+            call.set(true);
+            assertThat(args, contains("hello", "world"));
         });
         JobExecutor executor = new InProcessJobExecutor(context);
         try {
@@ -340,11 +317,8 @@ public class InProcessJobExecutorTest {
      */
     @Test
     public void executeCommand_error() {
-        MockCommandEmulator.callback(new MockCommandEmulator.Callback() {
-            @Override
-            public void run(List<String> args) throws IOException, InterruptedException {
-                throw new IOException();
-            }
+        MockCommandEmulator.callback(args -> {
+            throw new IOException();
         });
         JobExecutor executor = new InProcessJobExecutor(context);
         try {
@@ -362,11 +336,8 @@ public class InProcessJobExecutorTest {
      */
     @Test
     public void executeCommand_interrupt() {
-        MockCommandEmulator.callback(new MockCommandEmulator.Callback() {
-            @Override
-            public void run(List<String> args) throws IOException, InterruptedException {
-                throw new InterruptedException();
-            }
+        MockCommandEmulator.callback(args -> {
+            throw new InterruptedException();
         });
         JobExecutor executor = new InProcessJobExecutor(context);
         try {
@@ -389,13 +360,8 @@ public class InProcessJobExecutorTest {
         File touch = new File("/usr/bin/touch");
         Assume.assumeTrue("no 'touch' command", touch.isFile() && touch.canExecute());
 
-        final AtomicBoolean call = new AtomicBoolean();
-        MockCommandEmulator.callback(new MockCommandEmulator.Callback() {
-            @Override
-            public void run(List<String> args) throws IOException, InterruptedException {
-                call.set(true);
-            }
-        });
+        AtomicBoolean call = new AtomicBoolean();
+        MockCommandEmulator.callback(args -> call.set(true));
         File target = new File(framework.getWork("working"), "target");
         Assume.assumeFalse(target.exists());
 

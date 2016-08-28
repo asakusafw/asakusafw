@@ -32,7 +32,9 @@ public interface FlowResource {
      * @throws IllegalArgumentException if configuration is not valid
      * @throws IllegalStateException if resource lifecycle has something wrong
      */
-    void setup(JobContext context) throws IOException, InterruptedException;
+    default void setup(JobContext context) throws IOException, InterruptedException {
+        return;
+    }
 
     /**
      * Finalizes this resource.
@@ -42,5 +44,7 @@ public interface FlowResource {
      * @throws IllegalArgumentException if configuration is not valid
      * @throws IllegalStateException if resource lifecycle has something wrong
      */
-    void cleanup(JobContext context) throws IOException, InterruptedException;
+    default void cleanup(JobContext context) throws IOException, InterruptedException {
+        return;
+    }
 }

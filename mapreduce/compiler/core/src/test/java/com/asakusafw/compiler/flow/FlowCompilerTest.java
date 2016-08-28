@@ -18,7 +18,6 @@ package com.asakusafw.compiler.flow;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
-import java.util.Comparator;
 import java.util.List;
 
 import org.junit.ClassRule;
@@ -107,12 +106,7 @@ public class FlowCompilerTest {
         FlowDescription flow = new SimpleShuffleStage(in.flow(), out.flow());
         assertThat(tester.runFlow(flow), is(true));
 
-        List<ExSummarized> list = out.toList(new Comparator<ExSummarized>() {
-            @Override
-            public int compare(ExSummarized o1, ExSummarized o2) {
-                return o1.getCountOption().compareTo(o2.getCountOption());
-            }
-        });
+        List<ExSummarized> list = out.toList((o1, o2) -> o1.getCountOption().compareTo(o2.getCountOption()));
         assertThat(list.size(), is(2));
         assertThat(list.get(0).getValue(), is(90L));
         assertThat(list.get(0).getCount(), is(2L));

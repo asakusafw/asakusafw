@@ -62,7 +62,7 @@ public class MockExporterRetriever extends AbstractExporterRetriever<MockExporte
     public <V> ModelOutput<V> createOutput(
             DataModelDefinition<V> definition,
             Desc description) throws IOException {
-        final List<String> lines = description.lines;
+        List<String> lines = description.lines;
         return new ModelOutput<V>() {
             @Override
             public void write(V model) throws IOException {

@@ -626,7 +626,7 @@ public class HadoopDataSourceCoreTest {
         public ModelInput<StringBuilder> createInput(Class<? extends StringBuilder> dataType, String path,
                 InputStream stream, long offset, long fragmentSize) throws IOException,
                 InterruptedException {
-            final Scanner s = new Scanner(stream, "UTF-8");
+            Scanner s = new Scanner(stream, "UTF-8");
             return new ModelInput<StringBuilder>() {
                 @Override
                 public boolean readTo(StringBuilder model) throws IOException {
@@ -647,7 +647,7 @@ public class HadoopDataSourceCoreTest {
         @Override
         public ModelOutput<StringBuilder> createOutput(Class<? extends StringBuilder> dataType, String path,
                 OutputStream stream) throws IOException, InterruptedException {
-            final PrintWriter w = new PrintWriter(new OutputStreamWriter(stream));
+            PrintWriter w = new PrintWriter(new OutputStreamWriter(stream));
             return new ModelOutput<StringBuilder>() {
                 @Override
                 public void write(StringBuilder model) throws IOException {

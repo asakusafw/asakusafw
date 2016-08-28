@@ -91,7 +91,7 @@ public class IrDocArrayType extends AbstractIrDocElement implements IrDocType {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final IrDocArrayType other = (IrDocArrayType) obj;
+        IrDocArrayType other = (IrDocArrayType) obj;
         if (componentType == null) {
             if (other.componentType != null) {
                 return false;

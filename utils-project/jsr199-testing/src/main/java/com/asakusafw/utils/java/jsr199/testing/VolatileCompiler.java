@@ -79,7 +79,7 @@ public class VolatileCompiler implements Closeable {
 
         Collections.addAll(arguments, "-source", JAVA_VERSION); //$NON-NLS-1$
         Collections.addAll(arguments, "-target", JAVA_VERSION); //$NON-NLS-1$
-        Collections.addAll(arguments, "-encoding", ENCODING); //$NON-NLS-1$ 
+        Collections.addAll(arguments, "-encoding", ENCODING); //$NON-NLS-1$
     }
 
     /**
@@ -169,12 +169,8 @@ public class VolatileCompiler implements Closeable {
      * @return the class loader for loading the compilation results
      */
     public ClassLoader getClassLoader() {
-        DirectClassLoader loader = AccessController.doPrivileged(new PrivilegedAction<DirectClassLoader>() {
-            @Override
-            public DirectClassLoader run() {
-                return new DirectClassLoader(VolatileCompiler.this.getClass().getClassLoader());
-            }
-        });
+        DirectClassLoader loader = AccessController.doPrivileged((PrivilegedAction<DirectClassLoader>) () ->
+                new DirectClassLoader(VolatileCompiler.this.getClass().getClassLoader()));
         loader.setDefaultAssertionStatus(true);
         for (VolatileClassFile klass : files.getCompiled()) {
             loader.add(klass.getBinaryName(), klass.getBinaryContent());

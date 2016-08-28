@@ -106,7 +106,7 @@ public class IrDocMethodParameter extends AbstractIrDocElement {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final IrDocMethodParameter other = (IrDocMethodParameter) obj;
+        IrDocMethodParameter other = (IrDocMethodParameter) obj;
         if (name == null) {
             if (other.name != null) {
                 return false;

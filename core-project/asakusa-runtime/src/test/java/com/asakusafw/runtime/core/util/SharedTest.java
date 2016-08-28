@@ -33,7 +33,7 @@ public class SharedTest {
      */
     @Test
     public void simple() {
-        final AtomicInteger counter = new AtomicInteger(0);
+        AtomicInteger counter = new AtomicInteger(0);
         Shared<Integer> shared = new Shared<Integer>() {
             @Override
             protected Integer initialValue() throws IOException {

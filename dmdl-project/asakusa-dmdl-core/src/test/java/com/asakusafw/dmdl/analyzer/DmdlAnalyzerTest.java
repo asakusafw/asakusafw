@@ -353,10 +353,7 @@ public class DmdlAnalyzerTest extends DmdlTesterRoot {
         shouldSemanticError();
     }
 
-    private Matcher<MappingFactor> mapping(
-            final PropertyMappingKind kind,
-            final String source,
-            final String target) {
+    private Matcher<MappingFactor> mapping(PropertyMappingKind kind, String source, String target) {
         return new BaseMatcher<MappingFactor>() {
             @Override
             public boolean matches(Object object) {

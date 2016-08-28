@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +34,6 @@ import com.asakusafw.utils.io.RecordWriter;
 import com.asakusafw.utils.io.Sink;
 import com.asakusafw.yaess.tools.log.YaessJobId;
 import com.asakusafw.yaess.tools.log.YaessLogRecord;
-import com.asakusafw.yaess.tools.log.util.Filter;
 
 /**
  * Summarizes {@link YaessLogRecord}s.
@@ -49,14 +49,14 @@ public class SummarizeYaessLogSink implements Sink<YaessLogRecord> {
 
     private boolean closed = false;
 
-    private final Filter<? super YaessLogRecord> filter;
+    private final Predicate<? super YaessLogRecord> filter;
 
     /**
      * Creates a new instance.
      * @param writer the target writer
      * @param filter the summarize target filter
      */
-    public SummarizeYaessLogSink(RecordWriter writer, Filter<? super YaessLogRecord> filter) {
+    public SummarizeYaessLogSink(RecordWriter writer, Predicate<? super YaessLogRecord> filter) {
         this.writer = writer;
         this.filter = filter;
     }
@@ -67,7 +67,7 @@ public class SummarizeYaessLogSink implements Sink<YaessLogRecord> {
         if (id == null) {
             return;
         }
-        if (filter.accepts(object) == false) {
+        if (filter.test(object) == false) {
             LOG.debug("Record \"{}\" is filtered", object.getCode());
             return;
         }

@@ -19,13 +19,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.hadoop.conf.Configuration;
@@ -75,10 +73,10 @@ public class FileSystemModelInputProvider<T> implements ModelInputProvider<T> {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public FileSystemModelInputProvider(
-            final Configuration configuration,
-            final FileSystem fileSystem,
-            final Iterable<Path> paths,
-            final Class<T> dataModelClass) throws IOException {
+            Configuration configuration,
+            FileSystem fileSystem,
+            Iterable<Path> paths,
+            Class<T> dataModelClass) throws IOException {
         if (configuration == null) {
             throw new IllegalArgumentException("configuration must not be null"); //$NON-NLS-1$
         }
@@ -93,51 +91,45 @@ public class FileSystemModelInputProvider<T> implements ModelInputProvider<T> {
         }
         this.fileSystem = fileSystem;
         this.queue = new SynchronousQueue<>();
-        this.executor = Executors.newFixedThreadPool(1, new ThreadFactory() {
-            @Override
-            public Thread newThread(Runnable r) {
-                Thread t = new Thread(r, "HadoopFileCollector");
-                t.setDaemon(true);
-                return t;
-            }
+        this.executor = Executors.newFixedThreadPool(1, r -> {
+            Thread t = new Thread(r, "HadoopFileCollector");
+            t.setDaemon(true);
+            return t;
         });
-        this.fetcher = this.executor.submit(new Callable<Void>() {
-            @Override
-            public Void call() throws Exception {
-                for (Path path : paths) {
-                    WGLOG.info("I09001",
+        this.fetcher = this.executor.submit(() -> {
+            for (Path path : paths) {
+                WGLOG.info("I09001",
+                        fileSystem.getUri(),
+                        paths);
+                FileStatus[] statusList = fileSystem.globStatus(path);
+                if (statusList == null || statusList.length == 0) {
+                    throw new FileNotFoundException(MessageFormat.format(
+                            "File is not found in {1} (fs={0})",
                             fileSystem.getUri(),
-                            paths);
-                    FileStatus[] statusList = fileSystem.globStatus(path);
-                    if (statusList == null || statusList.length == 0) {
-                        throw new FileNotFoundException(MessageFormat.format(
-                                "File is not found in {1} (fs={0})",
-                                fileSystem.getUri(),
-                                paths));
-                    }
-                    for (FileStatus status : statusList) {
-                        WGLOG.info("I09002",
-                                fileSystem.getUri(),
-                                status.getPath(),
-                                status.getLen());
-                        ModelInput<T> input = TemporaryStorage.openInput(
-                                configuration,
-                                dataModelClass,
-                                status.getPath());
-                        boolean succeed = false;
-                        try {
-                            queue.put(new Entry<>(status, input));
-                            succeed = true;
-                        } finally {
-                            if (succeed == false) {
-                                input.close();
-                            }
+                            paths));
+                }
+                for (FileStatus status : statusList) {
+                    WGLOG.info("I09002",
+                            fileSystem.getUri(),
+                            status.getPath(),
+                            status.getLen());
+                    ModelInput<T> input = TemporaryStorage.openInput(
+                            configuration,
+                            dataModelClass,
+                            status.getPath());
+                    boolean succeed = false;
+                    try {
+                        queue.put(new Entry<>(status, input));
+                        succeed = true;
+                    } finally {
+                        if (succeed == false) {
+                            input.close();
                         }
                     }
                 }
-                queue.put(Entry.eof());
-                return null;
             }
+            queue.put(Entry.eof());
+            return null;
         });
     }
 

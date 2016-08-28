@@ -22,7 +22,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -46,7 +45,6 @@ import com.asakusafw.compiler.flow.ExternalIoCommandProvider.CommandContext;
 import com.asakusafw.compiler.flow.jobflow.CompiledStage;
 import com.asakusafw.compiler.flow.jobflow.JobflowModel;
 import com.asakusafw.utils.graph.Graph;
-import com.asakusafw.utils.graph.Graph.Vertex;
 import com.asakusafw.vocabulary.batch.JobFlowWorkDescription;
 import com.asakusafw.yaess.core.BatchScript;
 import com.asakusafw.yaess.core.CommandScript;
@@ -131,12 +129,7 @@ public class YaessWorkflowProcessor extends AbstractWorkflowProcessor {
         for (Graph.Vertex<JobflowModel.Stage> vertex : vertices) {
             results.add(vertex);
         }
-        Collections.sort(results, new Comparator<Graph.Vertex<JobflowModel.Stage>>() {
-            @Override
-            public int compare(Vertex<JobflowModel.Stage> o1, Vertex<JobflowModel.Stage> o2) {
-                return Integer.compare(o1.getNode().getNumber(), o2.getNode().getNumber());
-            }
-        });
+        Collections.sort(results, (o1, o2) -> Integer.compare(o1.getNode().getNumber(), o2.getNode().getNumber()));
         return results;
     }
 
@@ -146,12 +139,8 @@ public class YaessWorkflowProcessor extends AbstractWorkflowProcessor {
         for (Graph.Vertex<Workflow.Unit> vertex : vertices) {
             results.add(vertex);
         }
-        Collections.sort(results, new Comparator<Graph.Vertex<Workflow.Unit>>() {
-            @Override
-            public int compare(Vertex<Workflow.Unit> o1, Vertex<Workflow.Unit> o2) {
-                return o1.getNode().getDescription().getName().compareTo(o2.getNode().getDescription().getName());
-            }
-        });
+        Collections.sort(results, (o1, o2) ->
+                o1.getNode().getDescription().getName().compareTo(o2.getNode().getDescription().getName()));
         return results;
     }
 

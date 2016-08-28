@@ -26,7 +26,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -192,12 +191,7 @@ public class DescribeCompiledStructureProcessor extends AbstractWorkflowProcesso
 
     private List<Stage> sort(Set<Stage> stages) {
         List<Stage> results = new ArrayList<>();
-        Collections.sort(results, new Comparator<Stage>() {
-            @Override
-            public int compare(Stage o1, Stage o2) {
-                return o1.getCompiled().getStageId().compareTo(o2.getCompiled().getStageId());
-            }
-        });
+        Collections.sort(results, (o1, o2) -> o1.getCompiled().getStageId().compareTo(o2.getCompiled().getStageId()));
         return results;
     }
 

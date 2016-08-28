@@ -89,7 +89,7 @@ public class ParallelJobExecutor implements JobExecutor {
         });
         HashMap<String, ExecutorService> map = new HashMap<>();
         for (Map.Entry<String, Integer> entry : threadConfig.entrySet()) {
-            final String name = entry.getKey();
+            String name = entry.getKey();
             Integer value = entry.getValue();
             if (value == null || value < 0) {
                 throw new IllegalArgumentException(MessageFormat.format(

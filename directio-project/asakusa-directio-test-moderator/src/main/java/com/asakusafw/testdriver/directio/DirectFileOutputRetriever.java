@@ -62,7 +62,7 @@ public class DirectFileOutputRetriever extends BaseExporterRetriever<DirectFileO
 
     @Override
     public <V> DataModelSource createSource(
-            final DataModelDefinition<V> definition,
+            DataModelDefinition<V> definition,
             DirectFileOutputDescription description,
             TestContext context) throws IOException {
         DirectIoTestHelper helper = new DirectIoTestHelper(context, description.getBasePath());
@@ -71,8 +71,8 @@ public class DirectFileOutputRetriever extends BaseExporterRetriever<DirectFileO
                     "Retrieving Direct I/O output: {0}", //$NON-NLS-1$
                     description.getClass().getName()));
         }
-        final V object = definition.toObject(definition.newReflection().build());
-        final ModelInput<? super V> input = helper.openInput(definition.getModelClass(), description);
+        V object = definition.toObject(definition.newReflection().build());
+        ModelInput<? super V> input = helper.openInput(definition.getModelClass(), description);
         return new DataModelSource() {
             @Override
             public DataModelReflection next() throws IOException {

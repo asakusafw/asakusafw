@@ -22,7 +22,6 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -310,29 +309,6 @@ public class JschProcessExecutor implements ProcessExecutor {
                     prefix + '.' + key,
                     value));
         }
-    }
-
-    @Override
-    public int execute(
-            ExecutionContext context,
-            List<String> commandLineTokens,
-            Map<String, String> environmentVariables) throws InterruptedException, IOException {
-        return execute(
-                context,
-                commandLineTokens, environmentVariables,
-                Collections.emptyMap(), System.out);
-    }
-
-    @Override
-    public int execute(
-            ExecutionContext context,
-            List<String> commandLineTokens,
-            Map<String, String> environmentVariables,
-            OutputStream output) throws InterruptedException, IOException {
-        return execute(
-                context,
-                commandLineTokens, environmentVariables,
-                Collections.emptyMap(), output);
     }
 
     @Override

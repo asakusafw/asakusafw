@@ -23,6 +23,7 @@ import org.apache.hadoop.mapreduce.Job;
  * Executes jobs.
  * @since 0.7.1
  */
+@FunctionalInterface
 public interface JobRunner {
 
     /**

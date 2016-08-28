@@ -15,12 +15,17 @@
  */
 package com.asakusafw.yaess.tools.log.util;
 
+import java.util.function.Predicate;
+
 /**
  * Filters objects.
  * @param <T> the target object type
  * @since 0.6.2
+ * @deprecated Use {@link Predicate} instead
  */
-public interface Filter<T> {
+@Deprecated
+@FunctionalInterface
+public interface Filter<T> extends Predicate<T> {
 
     /**
      * Accepts any objects.
@@ -38,4 +43,9 @@ public interface Filter<T> {
      * @return {@code true} if this accepts the object, otherwise {@code false}
      */
     boolean accepts(T value);
+
+    @Override
+    default boolean test(T t) {
+        return accepts(t);
+    }
 }

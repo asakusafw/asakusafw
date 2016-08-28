@@ -248,14 +248,10 @@ public final class LauncherOptionsParser {
     private URLClassLoader buildApplicationClassLoader(
             List<Path> libraryPaths,
             String applicationClassName) throws IOException, InterruptedException {
-        final List<URL> libraries = processLibraries(libraryPaths, applicationClassName);
-        final ClassLoader parent = configuration.getClassLoader();
-        URLClassLoader application = AccessController.doPrivileged(new PrivilegedAction<URLClassLoader>() {
-            @Override
-            public URLClassLoader run() {
-                return new URLClassLoader(libraries.toArray(new URL[libraries.size()]), parent);
-            }
-        });
+        List<URL> libraries = processLibraries(libraryPaths, applicationClassName);
+        ClassLoader parent = configuration.getClassLoader();
+        URLClassLoader application = AccessController.doPrivileged((PrivilegedAction<URLClassLoader>) () ->
+                new URLClassLoader(libraries.toArray(new URL[libraries.size()]), parent));
         this.applicationResources.add(application);
         configuration.setClassLoader(application);
         return application;

@@ -21,6 +21,7 @@ import java.io.IOException;
  * Handles argument pair and creates its {@link Extension}.
  * @since 0.8.0
  */
+@FunctionalInterface
 public interface ExtensionHandler {
 
     /**

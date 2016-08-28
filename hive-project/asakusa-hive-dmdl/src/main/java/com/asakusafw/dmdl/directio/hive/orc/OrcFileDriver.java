@@ -29,8 +29,6 @@ import com.asakusafw.dmdl.Diagnostic;
 import com.asakusafw.dmdl.Diagnostic.Level;
 import com.asakusafw.dmdl.directio.hive.common.HiveDataModelTrait;
 import com.asakusafw.dmdl.directio.hive.common.HiveFieldTrait;
-import com.asakusafw.dmdl.directio.hive.common.Namer;
-import com.asakusafw.dmdl.java.emitter.EmitContext;
 import com.asakusafw.dmdl.model.AstAttribute;
 import com.asakusafw.dmdl.model.AstAttributeElement;
 import com.asakusafw.dmdl.model.AstLiteral;
@@ -40,7 +38,6 @@ import com.asakusafw.dmdl.semantics.ModelDeclaration;
 import com.asakusafw.dmdl.semantics.PropertyDeclaration;
 import com.asakusafw.dmdl.spi.ModelAttributeDriver;
 import com.asakusafw.dmdl.util.AttributeUtil;
-import com.asakusafw.utils.java.model.syntax.Name;
 
 /**
  * Processes <code>&#64;directio.hive.orc</code> attributes.
@@ -119,12 +116,7 @@ public class OrcFileDriver extends ModelAttributeDriver {
         declaration.putTrait(OrcFileTrait.class, trait);
 
         HiveDataModelTrait baseTrait = HiveDataModelTrait.get(declaration);
-        baseTrait.addDataFormatNamer(new Namer() {
-            @Override
-            public Name computeName(EmitContext context, ModelDeclaration model) {
-                return OrcFileEmitter.getClassName(context, model);
-            }
-        });
+        baseTrait.addDataFormatNamer((context, model) -> OrcFileEmitter.getClassName(context, model));
         baseTrait.setOriginalAst(attribute, false);
     }
 

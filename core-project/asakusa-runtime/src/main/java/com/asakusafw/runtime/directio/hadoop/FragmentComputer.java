@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import com.asakusafw.runtime.directio.DirectInputFragment;
@@ -137,12 +136,7 @@ class FragmentComputer {
     private boolean validFragments(BlockMap map, List<DirectInputFragment> results) {
         assert map != null;
         assert results != null;
-        Collections.sort(results, new Comparator<DirectInputFragment>() {
-            @Override
-            public int compare(DirectInputFragment o1, DirectInputFragment o2) {
-                return Long.compare(o1.getOffset(), o2.getOffset());
-            }
-        });
+        Collections.sort(results, (o1, o2) -> Long.compare(o1.getOffset(), o2.getOffset()));
         long expectedOffset = 0;
         for (DirectInputFragment fragment : results) {
             long offset = fragment.getOffset();

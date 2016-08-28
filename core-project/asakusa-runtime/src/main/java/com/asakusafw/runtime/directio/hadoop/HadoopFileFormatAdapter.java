@@ -90,9 +90,9 @@ public class HadoopFileFormatAdapter<T> extends HadoopFileFormat<T> {
     public ModelInput<T> createInput(
             Class<? extends T> dataType,
             FileSystem fileSystem,
-            final Path path,
-            final long offset,
-            final long fragmentSize,
+            Path path,
+            long offset,
+            long fragmentSize,
             Counter counter) throws IOException, InterruptedException {
         FSDataInputStream stream = fileSystem.open(path);
         boolean succeed = false;
@@ -157,7 +157,7 @@ public class HadoopFileFormatAdapter<T> extends HadoopFileFormat<T> {
     public ModelOutput<T> createOutput(
             Class<? extends T> dataType,
             FileSystem fileSystem,
-            final Path path,
+            Path path,
             Counter counter) throws IOException, InterruptedException {
         FSDataOutputStream stream = fileSystem.create(path);
         boolean succeed = false;

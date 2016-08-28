@@ -156,16 +156,6 @@ public abstract class AbstractOrcFileFormat<T> extends HadoopFileFormat<T>
     }
 
     @Override
-    public long getPreferredFragmentSize() throws IOException, InterruptedException {
-        return -1L;
-    }
-
-    @Override
-    public long getMinimumFragmentSize() throws IOException, InterruptedException {
-        return -1L;
-    }
-
-    @Override
     public ModelInput<T> createInput(
             Class<? extends T> dataType,
             FileSystem fileSystem, Path path,

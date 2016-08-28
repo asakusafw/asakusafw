@@ -22,13 +22,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 import org.junit.Test;
 
 import com.asakusafw.yaess.tools.log.YaessJobId;
 import com.asakusafw.yaess.tools.log.YaessLogRecord;
-import com.asakusafw.yaess.tools.log.util.Filter;
 import com.asakusafw.yaess.tools.log.util.LogCodeRegexFilter;
 
 /**
@@ -62,7 +62,7 @@ public class SummarizeYaessLogSinkTest {
         append(0, "YS-CORE-I00000", id1);
         append(100, "YS-CORE-I00999", id1);
 
-        Map<YaessJobId, List<String>> results = summarize(Filter.THROUGH);
+        Map<YaessJobId, List<String>> results = summarize(anything -> true);
         assertThat(results.size(), is(1));
 
         List<String> r1 = results.get(id1);
@@ -95,7 +95,7 @@ public class SummarizeYaessLogSinkTest {
         append(12001, "YS-CORE-E00001", id3);
         append(12300, "YS-CORE-I00999", id3);
 
-        Map<YaessJobId, List<String>> results = summarize(Filter.THROUGH);
+        Map<YaessJobId, List<String>> results = summarize(anything -> true);
         assertThat(results.size(), is(3));
 
         List<String> r1 = results.get(id1);
@@ -145,7 +145,7 @@ public class SummarizeYaessLogSinkTest {
         records.add(record);
     }
 
-    private Map<YaessJobId, List<String>> summarize(Filter<? super YaessLogRecord> filter) {
+    private Map<YaessJobId, List<String>> summarize(Predicate<? super YaessLogRecord> filter) {
         List<List<String>> lines;
         try (ListWriter writer = new ListWriter();
                 SummarizeYaessLogSink sink = new SummarizeYaessLogSink(writer, filter)) {

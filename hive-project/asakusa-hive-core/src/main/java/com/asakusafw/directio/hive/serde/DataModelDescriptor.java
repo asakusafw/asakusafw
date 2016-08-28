@@ -60,7 +60,7 @@ public class DataModelDescriptor {
         this.comment = comment;
         this.propertyDescriptors = properties;
         this.names = new HashMap<>();
-        for (final PropertyDescriptor property : properties) {
+        for (PropertyDescriptor property : properties) {
             PropertyDescriptor p = property;
             if (p.getFieldID() == PropertyDescriptor.INVALID_FIELD_ID) {
                 p.setFieldId(names.size());

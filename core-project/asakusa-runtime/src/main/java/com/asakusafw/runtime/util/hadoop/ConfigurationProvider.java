@@ -483,9 +483,7 @@ public class ConfigurationProvider {
         return current;
     }
 
-    private ClassLoader createLoader(
-            final ClassLoader current,
-            final URL defaultConfigPath) {
+    private ClassLoader createLoader(ClassLoader current, URL defaultConfigPath) {
         assert current != null;
         if (defaultConfigPath == null) {
             return current;
@@ -501,12 +499,8 @@ public class ConfigurationProvider {
                 }
             }
         }
-        ClassLoader ehnahced = AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
-            @Override
-            public ClassLoader run() {
-                return new URLClassLoader(new URL[] { defaultConfigPath }, current);
-            }
-        });
+        ClassLoader ehnahced = AccessController.doPrivileged((PrivilegedAction<ClassLoader>) () ->
+                new URLClassLoader(new URL[] { defaultConfigPath }, current));
         synchronized (CACHE_CLASS_LOADER) {
             CACHE_CLASS_LOADER.put(current, new ClassLoaderHolder(ehnahced, configPath));
         }

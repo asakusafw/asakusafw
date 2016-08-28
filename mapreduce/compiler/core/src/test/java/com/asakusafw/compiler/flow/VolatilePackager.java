@@ -104,7 +104,7 @@ public class VolatilePackager
             buf.append('/');
         }
         buf.append(relativePath.replace('\\', '/'));
-        final String name = buf.toString();
+        String name = buf.toString();
         return new ByteArrayOutputStream() {
             @Override
             public void close() throws IOException {

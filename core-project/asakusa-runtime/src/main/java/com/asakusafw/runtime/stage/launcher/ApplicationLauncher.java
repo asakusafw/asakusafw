@@ -175,14 +175,11 @@ public final class ApplicationLauncher {
      * @return the current context class loader
      * @since 0.7.1
      */
-    public static ClassLoader switchContextClassLoader(final ClassLoader classLoader) {
-        return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
-            @Override
-            public ClassLoader run() {
-                ClassLoader old = Thread.currentThread().getContextClassLoader();
-                Thread.currentThread().setContextClassLoader(classLoader);
-                return old;
-            }
+    public static ClassLoader switchContextClassLoader(ClassLoader classLoader) {
+        return AccessController.doPrivileged((PrivilegedAction<ClassLoader>) () -> {
+            ClassLoader old = Thread.currentThread().getContextClassLoader();
+            Thread.currentThread().setContextClassLoader(classLoader);
+            return old;
         });
     }
 

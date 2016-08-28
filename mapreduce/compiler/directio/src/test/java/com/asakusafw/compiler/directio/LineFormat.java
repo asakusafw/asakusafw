@@ -39,21 +39,11 @@ public class LineFormat extends BinaryStreamFormat<Line> {
     }
 
     @Override
-    public long getPreferredFragmentSize() throws IOException, InterruptedException {
-        return -1;
-    }
-
-    @Override
-    public long getMinimumFragmentSize() throws IOException, InterruptedException {
-        return -1;
-    }
-
-    @Override
     public ModelInput<Line> createInput(Class<? extends Line> dataType, String path,
             InputStream stream, long offset, long fragmentSize) throws IOException,
             InterruptedException {
         assert offset == 0;
-        final Scanner scanner = new Scanner(new InputStreamReader(stream, "UTF-8"));
+        Scanner scanner = new Scanner(new InputStreamReader(stream, "UTF-8"));
         return new ModelInput<Line>() {
             int position = 0;
             @Override
@@ -79,7 +69,7 @@ public class LineFormat extends BinaryStreamFormat<Line> {
     @Override
     public ModelOutput<Line> createOutput(Class<? extends Line> dataType, String path,
             OutputStream stream) throws IOException, InterruptedException {
-        final PrintWriter writer = new PrintWriter(new OutputStreamWriter(stream, "UTF-8"));
+        PrintWriter writer = new PrintWriter(new OutputStreamWriter(stream, "UTF-8"));
         return new ModelOutput<Line>() {
 
             @Override

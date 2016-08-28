@@ -19,7 +19,6 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 
 import org.junit.ClassRule;
@@ -283,18 +282,8 @@ public class StagePlannerRunTest {
         boolean result = tester.runFlow(new CombineStage(in.flow(), out1.flow(), out2.flow()));
         assertThat(result, is(true));
 
-        List<Ex1> list1 = out1.toList(new Comparator<Ex1>() {
-            @Override
-            public int compare(Ex1 o1, Ex1 o2) {
-                return o1.getStringOption().compareTo(o2.getStringOption());
-            }
-        });
-        List<Ex1> list2 = out2.toList(new Comparator<Ex1>() {
-            @Override
-            public int compare(Ex1 o1, Ex1 o2) {
-                return o1.getStringOption().compareTo(o2.getStringOption());
-            }
-        });
+        List<Ex1> list1 = out1.toList((o1, o2) -> o1.getStringOption().compareTo(o2.getStringOption()));
+        List<Ex1> list2 = out2.toList((o1, o2) -> o1.getStringOption().compareTo(o2.getStringOption()));
 
         assertThat(list1.size(), is(3));
         assertThat(list1.get(0).getStringAsString(), is("a"));

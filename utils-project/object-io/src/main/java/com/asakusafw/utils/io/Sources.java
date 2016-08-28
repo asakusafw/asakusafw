@@ -65,7 +65,7 @@ public final class Sources {
      * @return the wrapped source
      */
     @SafeVarargs
-    public static <T> Source<T> wrap(final T... values) {
+    public static <T> Source<T> wrap(T... values) {
         return new Source<T>() {
 
             private int position = -1;
@@ -101,7 +101,7 @@ public final class Sources {
      * @param <T> the element type
      * @return the {@link Source} which provides elements in the iterator
      */
-    public static <T> Source<T> wrap(final Iterator<? extends T> iterator) {
+    public static <T> Source<T> wrap(Iterator<? extends T> iterator) {
         return new Source<T>() {
             private T next;
             @Override
@@ -135,7 +135,7 @@ public final class Sources {
      * @return the concatenated source
      */
     public static <T> Source<T> concat(List<? extends Source<? extends T>> sources) {
-        final Iterator<? extends Source<? extends T>> iter = sources.iterator();
+        Iterator<? extends Source<? extends T>> iter = sources.iterator();
         return new Source<T>() {
 
             Source<? extends T> current;

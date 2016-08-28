@@ -52,7 +52,7 @@ public class ApplicationLauncherTest extends LauncherTestRoot {
      */
     @Test
     public void simple() {
-        final AtomicBoolean ok = new AtomicBoolean(false);
+        AtomicBoolean ok = new AtomicBoolean(false);
         Bootstrap.register(new Callback() {
             @Override
             public int run(String[] args) throws Exception {
@@ -94,7 +94,7 @@ public class ApplicationLauncherTest extends LauncherTestRoot {
      */
     @Test
     public void w_libjars() throws Exception {
-        final File lib = putFile("dummy.jar");
+        File lib = putFile("dummy.jar");
         Bootstrap.register(new Callback() {
             @Override
             public int run(String[] args) throws Exception {

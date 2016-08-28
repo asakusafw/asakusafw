@@ -35,7 +35,7 @@ public class SharedObjectCleanerTest {
      */
     @Test
     public void objects() {
-        final AtomicInteger counter = new AtomicInteger();
+        AtomicInteger counter = new AtomicInteger();
         Shared<Integer> shared = new Shared<Integer>() {
             @Override
             protected Integer initialValue() throws IOException {

@@ -83,6 +83,7 @@ public interface DataModelJdbcSupport<T> {
      * @since 0.2.2
      * @param <T> the type of target data model
      */
+    @FunctionalInterface
     public interface DataModelResultSet<T> {
 
         /*
@@ -105,6 +106,7 @@ public interface DataModelJdbcSupport<T> {
      * @since 0.2.2
      * @param <T> the type of target data model
      */
+    @FunctionalInterface
     public interface DataModelPreparedStatement<T> {
 
         /**

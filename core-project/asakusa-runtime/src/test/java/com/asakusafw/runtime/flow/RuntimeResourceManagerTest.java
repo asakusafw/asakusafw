@@ -61,13 +61,13 @@ public class RuntimeResourceManagerTest {
      */
     @Test
     public void setup() throws Exception {
-        final AtomicInteger passed = new AtomicInteger();
+        AtomicInteger passed = new AtomicInteger();
         Configuration conf = new Configuration();
         conf.set("test", "OK");
         RuntimeResourceManager manager = new RuntimeResourceManager(conf) {
             @Override
             protected List<RuntimeResource> load() throws IOException {
-                return Arrays.asList(new Adapter() {
+                return Arrays.asList(new RuntimeResource() {
                     @Override
                     public void setup(ResourceConfiguration configuration) {
                         passed.incrementAndGet();
@@ -90,7 +90,7 @@ public class RuntimeResourceManagerTest {
         RuntimeResourceManager manager = new RuntimeResourceManager(conf) {
             @Override
             protected List<RuntimeResource> load() throws IOException {
-                return Arrays.asList(new Adapter() {
+                return Arrays.asList(new RuntimeResource() {
                     @Override
                     public void setup(ResourceConfiguration configuration) throws IOException {
                         throw new IOException();
@@ -107,13 +107,13 @@ public class RuntimeResourceManagerTest {
      */
     @Test
     public void setup_multi() throws Exception {
-        final AtomicInteger passed = new AtomicInteger();
+        AtomicInteger passed = new AtomicInteger();
         Configuration conf = new Configuration();
         conf.set("test", "OK");
         RuntimeResourceManager manager = new RuntimeResourceManager(conf) {
             @Override
             protected List<RuntimeResource> load() throws IOException {
-                RuntimeResource adapter = new Adapter() {
+                RuntimeResource adapter = new RuntimeResource() {
                     @Override
                     public void setup(ResourceConfiguration configuration) {
                         passed.addAndGet(1);
@@ -133,13 +133,13 @@ public class RuntimeResourceManagerTest {
      */
     @Test
     public void cleanup() throws Exception {
-        final AtomicInteger passed = new AtomicInteger();
+        AtomicInteger passed = new AtomicInteger();
         Configuration conf = new Configuration();
         conf.set("test", "OK");
         RuntimeResourceManager manager = new RuntimeResourceManager(conf) {
             @Override
             protected List<RuntimeResource> load() throws IOException {
-                return Arrays.asList(new Adapter() {
+                return Arrays.asList(new RuntimeResource() {
                     @Override
                     public void cleanup(ResourceConfiguration configuration) {
                         passed.incrementAndGet();
@@ -164,7 +164,7 @@ public class RuntimeResourceManagerTest {
         RuntimeResourceManager manager = new RuntimeResourceManager(conf) {
             @Override
             protected List<RuntimeResource> load() throws IOException {
-                return Arrays.asList(new Adapter() {
+                return Arrays.asList(new RuntimeResource() {
                     @Override
                     public void cleanup(ResourceConfiguration configuration) throws IOException {
                         throw new IOException();
@@ -182,13 +182,13 @@ public class RuntimeResourceManagerTest {
      */
     @Test
     public void cleanup_multi() throws Exception {
-        final AtomicInteger passed = new AtomicInteger();
+        AtomicInteger passed = new AtomicInteger();
         Configuration conf = new Configuration();
         conf.set("test", "OK");
         RuntimeResourceManager manager = new RuntimeResourceManager(conf) {
             @Override
             protected List<RuntimeResource> load() throws IOException {
-                RuntimeResource adapter = new Adapter() {
+                RuntimeResource adapter = new RuntimeResource() {
                     @Override
                     public void cleanup(ResourceConfiguration configuration) {
                         passed.addAndGet(1);
@@ -209,12 +209,12 @@ public class RuntimeResourceManagerTest {
      */
     @Test
     public void partial_setup_cleanup() throws Exception {
-        final AtomicInteger passed = new AtomicInteger();
+        AtomicInteger passed = new AtomicInteger();
         Configuration conf = new Configuration();
         RuntimeResourceManager manager = new RuntimeResourceManager(conf) {
             @Override
             protected List<RuntimeResource> load() throws IOException {
-                RuntimeResource adapter = new Adapter() {
+                RuntimeResource adapter = new RuntimeResource() {
                     @Override
                     public void setup(ResourceConfiguration configuration) throws IOException {
                         if (passed.get() >= 3) {
@@ -239,18 +239,5 @@ public class RuntimeResourceManagerTest {
         assertThat("partially set-up", passed.get(), is(3));
         manager.cleanup();
         assertThat(passed.get(), is(0));
-    }
-
-    static class Adapter implements RuntimeResource {
-
-        @Override
-        public void setup(ResourceConfiguration configuration) throws IOException, InterruptedException {
-            return;
-        }
-
-        @Override
-        public void cleanup(ResourceConfiguration configuration) throws IOException, InterruptedException {
-            return;
-        }
     }
 }

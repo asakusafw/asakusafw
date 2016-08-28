@@ -24,6 +24,7 @@ import java.util.NoSuchElementException;
 /**
  * DMDL source file repository.
  */
+@FunctionalInterface
 public interface DmdlSourceRepository {
 
     /**

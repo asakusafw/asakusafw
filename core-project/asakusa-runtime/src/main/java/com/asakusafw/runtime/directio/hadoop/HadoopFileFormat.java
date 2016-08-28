@@ -53,24 +53,6 @@ public abstract class HadoopFileFormat<T> extends Configured implements Fragment
     }
 
     /**
-     * Returns the preffered fragment size (in bytes).
-     * @return the preffered fragment size, or {@code -1} as infinite
-     * @throws IOException if failed to compute bytes count
-     * @throws InterruptedException if interrupted
-     */
-    @Override
-    public abstract long getPreferredFragmentSize() throws IOException, InterruptedException;
-
-    /**
-     * Returns the minimum fragment size (in bytes).
-     * @return the minimum fragment size, or {@code -1} as infinite
-     * @throws IOException if failed to compute bytes count
-     * @throws InterruptedException if interrupted
-     */
-    @Override
-    public abstract long getMinimumFragmentSize() throws IOException, InterruptedException;
-
-    /**
      * Creates a new {@link ModelInput} for the specified properties.
      * @param dataType the target data type
      * @param fileSystem the file system to open the target path

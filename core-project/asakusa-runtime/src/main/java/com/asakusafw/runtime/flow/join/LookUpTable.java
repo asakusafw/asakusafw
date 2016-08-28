@@ -22,6 +22,7 @@ import java.util.List;
  * An abstract super interface of looking up a list of objects.
  * @param <T> the element type
  */
+@FunctionalInterface
 public interface LookUpTable<T> {
 
     /**

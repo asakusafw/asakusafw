@@ -19,6 +19,7 @@ package com.asakusafw.vocabulary.flow.graph;
  * Provides {@link FlowElementAttribute}s.
  * @since 0.4.0
  */
+@FunctionalInterface
 public interface FlowElementAttributeProvider {
 
     /**

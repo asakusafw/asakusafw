@@ -269,18 +269,15 @@ public class StagePlanner {
             stageNumber++;
         }
 
-        Collections.sort(stageBlocks, new Comparator<StageBlock>() {
-            @Override
-            public int compare(StageBlock o1, StageBlock o2) {
-                int n1 = o1.getStageNumber();
-                int n2 = o2.getStageNumber();
-                if (n1 == n2) {
-                    return 0;
-                } else if (n1 < n2) {
-                    return -1;
-                } else {
-                    return +1;
-                }
+        Collections.sort(stageBlocks, (o1, o2) -> {
+            int n1 = o1.getStageNumber();
+            int n2 = o2.getStageNumber();
+            if (n1 == n2) {
+                return 0;
+            } else if (n1 < n2) {
+                return -1;
+            } else {
+                return +1;
             }
         });
     }

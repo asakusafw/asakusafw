@@ -27,6 +27,7 @@ import java.net.URI;
  * </p>
  * @since 0.2.0
  */
+@FunctionalInterface
 public interface VerifyRuleProvider {
 
     /**

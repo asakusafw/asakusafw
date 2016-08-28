@@ -81,10 +81,10 @@ public class OperatorAnnotationProcessorTest extends OperatorCompilerTestRoot {
         assertThat(field(node.getClass(), "out"), is(notNullValue()));
     }
 
-    private Compiled compile(final String name) {
+    private Compiled compile(String name) {
         add(name);
         add("com.example.Mock");
-        final ClassLoader classLoader = start(operatorProcessor());
+        ClassLoader classLoader = start(operatorProcessor());
         Class<?> origin = load(classLoader, name);
         Object factory = create(classLoader, Constants.getFactoryClass(name));
         Object impl = create(classLoader, Constants.getImplementationClass(name));

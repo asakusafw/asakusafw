@@ -117,7 +117,7 @@ public class ParallelJobSchedulerTest {
                 "parallel.default", "1",
                 "parallel.para", "2");
 
-        final CyclicBarrier barrier = new CyclicBarrier(3);
+        CyclicBarrier barrier = new CyclicBarrier(3);
         List<Mock> jobs = new ArrayList<>();
         jobs.add(new Mock("a0") {
             @Override

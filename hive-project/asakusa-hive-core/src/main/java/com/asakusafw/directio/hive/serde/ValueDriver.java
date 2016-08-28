@@ -21,6 +21,7 @@ import com.asakusafw.runtime.value.ValueOption;
  * Drives a value into {@link ValueOption}.
  * @since 0.7.0
  */
+@FunctionalInterface
 public interface ValueDriver {
 
     /**

@@ -24,6 +24,7 @@ import java.util.Map;
  * @since 0.8.0
  */
 public interface CompilerConfiguration {
+
     /**
      * Returns the class loader.
      * @return the class loader

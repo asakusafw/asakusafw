@@ -90,7 +90,7 @@ public class ExcelSheetSinkFactory extends DataModelSinkFactory {
                     Messages.getString("ExcelSheetSinkFactory.errorFailedToCreateOutputDirectory"), //$NON-NLS-1$
                     output));
         }
-        final Workbook workbook = Util.createEmptyWorkbookFor(output.getPath());
+        Workbook workbook = Util.createEmptyWorkbookFor(output.getPath());
         Sheet sheet = workbook.createSheet("results"); //$NON-NLS-1$
         return new ExcelSheetSink(definition, sheet, version.getMaxColumns()) {
             private boolean closed = false;

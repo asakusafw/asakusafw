@@ -472,18 +472,15 @@ public class ExecutionTask {
         }
     }
 
-    private ExecutorService createJobflowExecutor(final String batchId) {
+    private ExecutorService createJobflowExecutor(String batchId) {
         assert batchId != null;
-        ThreadFactory threadFactory = new ThreadFactory() {
-            @Override
-            public Thread newThread(Runnable r) {
-                Thread thread = new Thread(r);
-                thread.setName(MessageFormat.format(
-                        "JobflowExecutor-{0}",
-                        batchId));
-                thread.setDaemon(true);
-                return thread;
-            }
+        ThreadFactory threadFactory = r -> {
+            Thread thread = new Thread(r);
+            thread.setName(MessageFormat.format(
+                    "JobflowExecutor-{0}",
+                    batchId));
+            thread.setDaemon(true);
+            return thread;
         };
         if (serializeFlows) {
             return Executors.newFixedThreadPool(1, threadFactory);
@@ -889,7 +886,7 @@ public class ExecutionTask {
             return submitted;
         }
 
-        private void submit(final FlowScript flow) {
+        private void submit(FlowScript flow) {
             LOG.debug("Submitting jobflow \"{}\": {}", flow.getId(), batchId);
             FlowScriptTask task = new FlowScriptTask(flow, doneQueue, new Callable<Void>() {
                 @Override

@@ -18,7 +18,6 @@ package com.asakusafw.compiler.flow.jobflow;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -281,12 +280,9 @@ public class JobflowAnalyzer {
 
     private List<StageModel> sort(Collection<StageModel> stageModels) {
         List<StageModel> models = Lists.from(stageModels);
-        Collections.sort(models, new Comparator<StageModel>() {
-            @Override
-            public int compare(StageModel o1, StageModel o2) {
-                return Integer.compare(o1.getStageBlock().getStageNumber(), o2.getStageBlock().getStageNumber());
-            }
-        });
+        Collections.sort(models, (o1, o2) -> Integer.compare(
+                o1.getStageBlock().getStageNumber(),
+                o2.getStageBlock().getStageNumber()));
         return models;
     }
 

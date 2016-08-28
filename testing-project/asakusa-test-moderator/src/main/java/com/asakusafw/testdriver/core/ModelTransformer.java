@@ -20,6 +20,7 @@ package com.asakusafw.testdriver.core;
  * @param <T> the data model type
  * @since 0.7.0
  */
+@FunctionalInterface
 public interface ModelTransformer<T> {
 
     /**

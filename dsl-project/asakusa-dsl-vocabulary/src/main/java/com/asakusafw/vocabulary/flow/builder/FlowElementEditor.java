@@ -115,7 +115,7 @@ public class FlowElementEditor {
         return toSource(port, type);
     }
 
-    private <T> Source<T> toSource(final FlowElementOutput port, java.lang.reflect.Type type) {
+    private <T> Source<T> toSource(FlowElementOutput port, java.lang.reflect.Type type) {
         assert port != null;
         assert type != null;
         FlowElementPortDescription description = port.getDescription();

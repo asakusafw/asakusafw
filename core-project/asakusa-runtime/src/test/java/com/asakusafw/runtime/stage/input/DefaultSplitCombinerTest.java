@@ -304,7 +304,7 @@ public class DefaultSplitCombinerTest {
     }
 
     private Matcher<String[]> locations(String... locations) {
-        final Set<String> set = new TreeSet<>();
+        Set<String> set = new TreeSet<>();
         Collections.addAll(set, locations);
         return new BaseMatcher<String[]>() {
             @Override

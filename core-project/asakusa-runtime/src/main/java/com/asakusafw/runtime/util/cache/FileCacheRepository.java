@@ -23,6 +23,7 @@ import org.apache.hadoop.fs.Path;
  * An abstract super interface of remote cache.
  * @since 0.7.0
  */
+@FunctionalInterface
 public interface FileCacheRepository {
 
     /**

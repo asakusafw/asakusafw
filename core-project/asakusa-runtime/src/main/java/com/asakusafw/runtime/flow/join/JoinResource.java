@@ -108,11 +108,6 @@ public abstract class JoinResource<L extends Writable, R> implements FlowResourc
         return builder.build();
     }
 
-    @Override
-    public void cleanup(JobContext context) throws IOException, InterruptedException {
-        return;
-    }
-
     /**
      * Returns a builder for building a new lookup table.
      * @return the created builder

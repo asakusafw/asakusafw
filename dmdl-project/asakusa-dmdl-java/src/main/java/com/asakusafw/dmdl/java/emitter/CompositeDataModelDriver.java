@@ -18,7 +18,6 @@ package com.asakusafw.dmdl.java.emitter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.ServiceLoader;
 
@@ -64,16 +63,13 @@ public class CompositeDataModelDriver extends JavaDataModelDriver {
             LOG.debug("Activating Java data model driver: {}", driver.getClass().getName()); //$NON-NLS-1$
             results.add(driver);
         }
-        Collections.sort(results, new Comparator<Object>() {
-            @Override
-            public int compare(Object o1, Object o2) {
-                assert o2 != null;
-                int diff = o1.getClass().getSimpleName().compareTo(o2.getClass().getSimpleName());
-                if (diff != 0) {
-                    return diff;
-                }
-                return o1.getClass().getName().compareTo(o2.getClass().getName());
+        Collections.sort(results, (o1, o2) -> {
+            assert o2 != null;
+            int diff = o1.getClass().getSimpleName().compareTo(o2.getClass().getSimpleName());
+            if (diff != 0) {
+                return diff;
             }
+            return o1.getClass().getName().compareTo(o2.getClass().getName());
         });
         return results;
     }

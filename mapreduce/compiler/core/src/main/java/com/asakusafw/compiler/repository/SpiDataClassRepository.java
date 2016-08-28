@@ -18,7 +18,6 @@ package com.asakusafw.compiler.repository;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.ServiceLoader;
 
@@ -54,13 +53,10 @@ public class SpiDataClassRepository extends FlowCompilingEnvironment.Initialized
             LOG.debug("found data model class plug-in: {}", repo.getClass().getName()); //$NON-NLS-1$
             results.add(repo);
         }
-        Collections.sort(results, new Comparator<DataClassRepository>() {
-            @Override
-            public int compare(DataClassRepository o1, DataClassRepository o2) {
-                String name1 = o1.getClass().getName();
-                String name2 = o2.getClass().getName();
-                return name1.compareTo(name2);
-            }
+        Collections.sort(results, (o1, o2) -> {
+            String name1 = o1.getClass().getName();
+            String name2 = o2.getClass().getName();
+            return name1.compareTo(name2);
         });
         this.repositories = results;
     }

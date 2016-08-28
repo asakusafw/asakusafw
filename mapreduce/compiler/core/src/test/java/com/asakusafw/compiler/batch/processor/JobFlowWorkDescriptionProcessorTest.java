@@ -19,7 +19,6 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 import java.io.File;
-import java.util.Comparator;
 import java.util.List;
 
 import org.junit.ClassRule;
@@ -99,12 +98,7 @@ public class JobFlowWorkDescriptionProcessorTest {
         List<Ex1> input = tester.getList(
                 Ex1.class,
                 Location.fromPath("target/testing/SimpleJobFlow/exporter/out-*", '/'),
-                new Comparator<Ex1>() {
-                    @Override
-                    public int compare(Ex1 o1, Ex1 o2) {
-                        return o1.getSidOption().compareTo(o2.getSidOption());
-                    }
-                });
+                (o1, o2) -> o1.getSidOption().compareTo(o2.getSidOption()));
         assertThat(input.size(), is(3));
         assertThat(input.get(0).getValue(), is(200));
         assertThat(input.get(1).getValue(), is(300));

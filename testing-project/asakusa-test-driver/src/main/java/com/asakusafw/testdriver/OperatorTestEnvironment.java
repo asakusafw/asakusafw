@@ -125,7 +125,7 @@ public class OperatorTestEnvironment extends DriverElementBase implements TestRu
     }
 
     @Override
-    public Statement apply(final Statement base, Description description) {
+    public Statement apply(Statement base, Description description) {
         this.testClass = description.getTestClass();
         return new Statement() {
             @Override

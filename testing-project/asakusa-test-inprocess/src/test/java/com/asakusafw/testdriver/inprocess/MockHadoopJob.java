@@ -45,6 +45,7 @@ public class MockHadoopJob extends Configured implements Tool {
         callback = tool;
     }
 
+    @FunctionalInterface
     interface Callback {
         int run(String[] args, Configuration conf) throws Exception;
     }

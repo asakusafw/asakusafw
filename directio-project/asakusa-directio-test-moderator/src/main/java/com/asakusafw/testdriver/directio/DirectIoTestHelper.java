@@ -256,7 +256,7 @@ public final class DirectIoTestHelper {
         if (description == null) {
             throw new IllegalArgumentException("description must not be null"); //$NON-NLS-1$
         }
-        final OutputAttemptContext outputContext = createOutputContext();
+        OutputAttemptContext outputContext = createOutputContext();
         DataFormat<T> format = createFormat(dataType, description.getFormat());
         String outputPath = toOutputName(description.getResourcePattern());
         if (LOG.isDebugEnabled()) {
@@ -272,8 +272,7 @@ public final class DirectIoTestHelper {
             dataSource.setupTransactionOutput(outputContext.getTransactionContext());
             dataSource.setupAttemptOutput(outputContext);
             Counter counter = new Counter();
-            final ModelOutput<T> output = dataSource.openOutput(
-                    outputContext, definition, basePath, outputPath, counter);
+            ModelOutput<T> output = dataSource.openOutput(outputContext, definition, basePath, outputPath, counter);
             return new ModelOutput<T>() {
                 @Override
                 public void write(T model) throws IOException {
@@ -316,8 +315,8 @@ public final class DirectIoTestHelper {
             throw new IllegalArgumentException("description must not be null"); //$NON-NLS-1$
         }
         DataFormat<T> format = createFormat(dataType, description.getFormat());
-        final DataDefinition<T> definition = SimpleDataDefinition.newInstance(dataType, format);
-        final Counter counter = new Counter();
+        DataDefinition<T> definition = SimpleDataDefinition.newInstance(dataType, format);
+        Counter counter = new Counter();
         try {
             FilePattern pattern = toInputPattern(description.getResourcePattern());
             if (LOG.isDebugEnabled()) {
@@ -328,7 +327,7 @@ public final class DirectIoTestHelper {
                         id,
                         description.getClass().getName()));
             }
-            final List<DirectInputFragment> fragments = dataSource.findInputFragments(definition, basePath, pattern);
+            List<DirectInputFragment> fragments = dataSource.findInputFragments(definition, basePath, pattern);
             return new ModelInput<T>() {
 
                 private final Iterator<DirectInputFragment> iterator = fragments.iterator();

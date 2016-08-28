@@ -41,7 +41,7 @@ public class FlowPartAnnotationProcessorTest extends OperatorCompilerTestRoot {
         assertThat(field(node.getClass(), "out"), is(notNullValue()));
     }
 
-    private Object compile(final String name) {
+    private Object compile(String name) {
         add(new StringDataModelMirrorRepository());
         add(name);
         ClassLoader classLoader = start(flowPartProcessor());

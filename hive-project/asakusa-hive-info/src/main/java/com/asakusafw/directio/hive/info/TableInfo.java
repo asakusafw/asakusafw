@@ -190,6 +190,7 @@ public class TableInfo {
      * Provides {@link TableInfo}.
      * @since 0.8.1
      */
+    @FunctionalInterface
     public interface Provider {
 
         /**

@@ -141,7 +141,7 @@ public class AbortTask {
         }
     }
 
-    private boolean doAbortSingle(final String targetSessionId) throws IOException {
+    private boolean doAbortSingle(String targetSessionId) throws IOException {
         assert targetSessionId != null;
         try (SafeCloser<SessionMirror> session = new SafeCloser<SessionMirror>() {
             @Override

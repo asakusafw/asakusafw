@@ -118,17 +118,16 @@ public class FlowBlock {
         if (reduces != 0 && reduces != blocks.size()) {
             throw new IllegalArgumentException("Cannot merge map blocks and reduce blocks"); //$NON-NLS-1$
         }
-        final Set<PortConnection> empty = Collections.emptySet();
         FlowBlock result = new FlowBlock(minSerialNumber, graph);
         for (FlowBlock block : blocks) {
             result.elements.addAll(block.elements);
             for (FlowBlock.Input origin : block.getBlockInputs()) {
-                FlowBlock.Input mapped = result.new Input(origin.getElementPort(), empty);
+                FlowBlock.Input mapped = result.new Input(origin.getElementPort(), Collections.emptySet());
                 result.blockInputs.add(mapped);
                 Maps.addToSet(inputMapping, origin, mapped);
             }
             for (FlowBlock.Output origin : block.getBlockOutputs()) {
-                FlowBlock.Output mapped = result.new Output(origin.getElementPort(), empty);
+                FlowBlock.Output mapped = result.new Output(origin.getElementPort(), Collections.emptySet());
                 result.blockOutputs.add(mapped);
                 Maps.addToSet(outputMapping, origin, mapped);
             }

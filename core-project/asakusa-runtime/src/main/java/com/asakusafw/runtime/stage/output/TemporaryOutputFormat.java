@@ -125,10 +125,10 @@ public final class TemporaryOutputFormat<T> extends OutputFormat<NullWritable, T
             codec = (CompressionCodec) ReflectionUtils.newInstance(codecClass, conf);
         }
         FileOutputCommitter committer = getOutputCommitter(context);
-        final Path file = new Path(
+        Path file = new Path(
                 committer.getWorkPath(),
                 FileOutputFormat.getUniqueFile(context, name, "")); //$NON-NLS-1$
-        final ModelOutput<V> out = TemporaryStorage.openOutput(conf, dataType, file, codec);
+        ModelOutput<V> out = TemporaryStorage.openOutput(conf, dataType, file, codec);
         return new RecordWriter<NullWritable, V>() {
 
             @Override

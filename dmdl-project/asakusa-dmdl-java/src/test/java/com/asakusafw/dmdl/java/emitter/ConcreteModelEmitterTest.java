@@ -123,7 +123,7 @@ public class ConcreteModelEmitterTest extends GeneratorTesterRoot {
         assertThat(object.get("value"), eq(100));
     }
 
-    private Matcher<Object> eq(final Object value) {
+    private Matcher<Object> eq(Object value) {
         return is(value);
     }
 }

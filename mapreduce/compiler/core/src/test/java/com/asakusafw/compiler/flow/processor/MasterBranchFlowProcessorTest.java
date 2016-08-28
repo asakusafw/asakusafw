@@ -19,7 +19,6 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
-import java.util.Comparator;
 import java.util.List;
 
 import org.junit.ClassRule;
@@ -122,12 +121,7 @@ public class MasterBranchFlowProcessorTest {
 
         List<Ex1> highList = high.toList();
         List<Ex1> lowList = low.toList();
-        List<Ex1> stopList = stop.toList(new Comparator<Ex1>() {
-            @Override
-            public int compare(Ex1 o1, Ex1 o2) {
-                return o1.getStringOption().compareTo(o2.getStringOption());
-            }
-        });
+        List<Ex1> stopList = stop.toList((o1, o2) -> o1.getStringOption().compareTo(o2.getStringOption()));
         assertThat(highList.size(), is(1));
         assertThat(lowList.size(), is(1));
         assertThat(stopList.size(), is(2));
@@ -188,12 +182,7 @@ public class MasterBranchFlowProcessorTest {
 
         List<Ex1> highList = high.toList();
         List<Ex1> lowList = low.toList();
-        List<Ex1> stopList = stop.toList(new Comparator<Ex1>() {
-            @Override
-            public int compare(Ex1 o1, Ex1 o2) {
-                return o1.getStringOption().compareTo(o2.getStringOption());
-            }
-        });
+        List<Ex1> stopList = stop.toList((o1, o2) -> o1.getStringOption().compareTo(o2.getStringOption()));
         assertThat(highList.size(), is(1));
         assertThat(lowList.size(), is(1));
         assertThat(stopList.size(), is(2));
@@ -288,12 +277,7 @@ public class MasterBranchFlowProcessorTest {
 
         List<Ex1> highList = high.toList();
         List<Ex1> lowList = low.toList();
-        List<Ex1> stopList = stop.toList(new Comparator<Ex1>() {
-            @Override
-            public int compare(Ex1 o1, Ex1 o2) {
-                return o1.getStringOption().compareTo(o2.getStringOption());
-            }
-        });
+        List<Ex1> stopList = stop.toList((o1, o2) -> o1.getStringOption().compareTo(o2.getStringOption()));
         assertThat(highList.size(), is(1));
         assertThat(lowList.size(), is(1));
         assertThat(stopList.size(), is(2));
@@ -388,12 +372,7 @@ public class MasterBranchFlowProcessorTest {
 
         List<Ex1> highList = high.toList();
         List<Ex1> lowList = low.toList();
-        List<Ex1> stopList = stop.toList(new Comparator<Ex1>() {
-            @Override
-            public int compare(Ex1 o1, Ex1 o2) {
-                return o1.getStringOption().compareTo(o2.getStringOption());
-            }
-        });
+        List<Ex1> stopList = stop.toList((o1, o2) -> o1.getStringOption().compareTo(o2.getStringOption()));
         assertThat(highList.size(), is(1));
         assertThat(lowList.size(), is(1));
         assertThat(stopList.size(), is(2));
@@ -488,12 +467,7 @@ public class MasterBranchFlowProcessorTest {
 
         List<Ex1> highList = high.toList();
         List<Ex1> lowList = low.toList();
-        List<Ex1> stopList = stop.toList(new Comparator<Ex1>() {
-            @Override
-            public int compare(Ex1 o1, Ex1 o2) {
-                return o1.getStringOption().compareTo(o2.getStringOption());
-            }
-        });
+        List<Ex1> stopList = stop.toList((o1, o2) -> o1.getStringOption().compareTo(o2.getStringOption()));
         assertThat(highList.size(), is(1));
         assertThat(lowList.size(), is(1));
         assertThat(stopList.size(), is(2));

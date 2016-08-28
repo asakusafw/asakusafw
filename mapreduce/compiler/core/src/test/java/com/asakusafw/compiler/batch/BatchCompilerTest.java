@@ -18,7 +18,6 @@ package com.asakusafw.compiler.batch;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
-import java.util.Comparator;
 import java.util.List;
 
 import org.junit.ClassRule;
@@ -77,12 +76,7 @@ public class BatchCompilerTest {
         List<Ex1> input = tester.getList(
                 Ex1.class,
                 seqfile(tester.getExporter(info, "x")).asPrefix(),
-                new Comparator<Ex1>() {
-                    @Override
-                    public int compare(Ex1 o1, Ex1 o2) {
-                        return o1.getSidOption().compareTo(o2.getSidOption());
-                    }
-                });
+                (o1, o2) -> o1.getSidOption().compareTo(o2.getSidOption()));
         assertThat(input.size(), is(3));
         assertThat(input.get(0).getValue(), is(200));
         assertThat(input.get(1).getValue(), is(300));
@@ -127,12 +121,7 @@ public class BatchCompilerTest {
         List<Ex1> input = tester.getList(
                 Ex1.class,
                 seqfile(tester.getExporter(info, "join")).asPrefix(),
-                new Comparator<Ex1>() {
-                    @Override
-                    public int compare(Ex1 o1, Ex1 o2) {
-                        return o1.getValueOption().compareTo(o2.getValueOption());
-                    }
-                });
+                (o1, o2) -> o1.getValueOption().compareTo(o2.getValueOption()));
         assertThat(input.size(), is(2));
         assertThat(input.get(0).getValue(), is(113)); // from second
         assertThat(input.get(1).getValue(), is(114)); // from side

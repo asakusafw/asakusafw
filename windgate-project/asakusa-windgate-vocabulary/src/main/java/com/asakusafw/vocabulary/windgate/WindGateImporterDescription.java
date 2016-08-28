@@ -29,9 +29,5 @@ import com.asakusafw.vocabulary.external.ImporterDescription;
  * @since 0.2.2
  */
 public abstract class WindGateImporterDescription implements ImporterDescription, WindGateProcessDescription {
-
-    @Override
-    public DataSize getDataSize() {
-        return DataSize.UNKNOWN;
-    }
+    // no special members
 }

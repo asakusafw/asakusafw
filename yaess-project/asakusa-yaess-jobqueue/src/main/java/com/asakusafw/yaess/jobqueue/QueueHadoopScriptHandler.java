@@ -20,7 +20,6 @@ import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -252,35 +251,30 @@ public class QueueHadoopScriptHandler extends ExecutionScriptHandlerBase impleme
                 job.getStageId()));
     }
 
-    private JobId registerWithTimeout(
-            final JobScript job,
-            final JobClient client) throws IOException, InterruptedException {
+    private JobId registerWithTimeout(JobScript job, JobClient client) throws IOException, InterruptedException {
         assert job != null;
         assert client != null;
-        Future<JobId> future = TIMEOUT_THREAD.submit(new Callable<JobId>() {
-            @Override
-            public JobId call() throws Exception {
-                YSLOG.info("I01001",
-                        job.getBatchId(),
-                        job.getFlowId(),
-                        job.getPhase(),
-                        job.getExecutionId(),
-                        job.getStageId(),
-                        client);
-                long start = System.currentTimeMillis();
-                JobId id = client.register(job);
-                long end = System.currentTimeMillis();
-                YSLOG.info("I01002",
-                        job.getBatchId(),
-                        job.getFlowId(),
-                        job.getPhase(),
-                        job.getExecutionId(),
-                        job.getStageId(),
-                        client,
-                        id,
-                        end - start);
-                return id;
-            }
+        Future<JobId> future = TIMEOUT_THREAD.submit(() -> {
+            YSLOG.info("I01001",
+                    job.getBatchId(),
+                    job.getFlowId(),
+                    job.getPhase(),
+                    job.getExecutionId(),
+                    job.getStageId(),
+                    client);
+            long start = System.currentTimeMillis();
+            JobId id = client.register(job);
+            long end = System.currentTimeMillis();
+            YSLOG.info("I01002",
+                    job.getBatchId(),
+                    job.getFlowId(),
+                    job.getPhase(),
+                    job.getExecutionId(),
+                    job.getStageId(),
+                    client,
+                    id,
+                    end - start);
+            return id;
         });
         try {
             return future.get(timeout, TimeUnit.MILLISECONDS);

@@ -115,7 +115,7 @@ public class DirectFileOutputDescriptionGeneratorTest extends GeneratorTesterRoo
         assertThat(object.getFormat(), is((Object) MockDataFormat.class));
     }
 
-    private Matcher<Class<?>> hasGetter(final String name) {
+    private Matcher<Class<?>> hasGetter(String name) {
         return new BaseMatcher<Class<?>>() {
             @Override
             public boolean matches(Object item) {
@@ -144,7 +144,7 @@ public class DirectFileOutputDescriptionGeneratorTest extends GeneratorTesterRoo
     }
 
     @SuppressWarnings("unchecked")
-    private Class<? extends DirectFileOutputDescription> generate(final Description description) {
+    private Class<? extends DirectFileOutputDescription> generate(Description description) {
         emitDrivers.add(new JavaDataModelDriver() {
             @Override
             public void generateResources(EmitContext context, ModelDeclaration model) throws IOException {

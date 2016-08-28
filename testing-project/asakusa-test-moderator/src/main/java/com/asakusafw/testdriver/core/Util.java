@@ -17,7 +17,6 @@ package com.asakusafw.testdriver.core;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.ServiceLoader;
 
@@ -42,12 +41,7 @@ final class Util {
             LOG.debug("activating {}", service.getClass().getName()); //$NON-NLS-1$
             results.add(service);
         }
-        Collections.sort(results, new Comparator<Object>() {
-            @Override
-            public int compare(Object o1, Object o2) {
-                return o1.getClass().getName().compareTo(o2.getClass().getName());
-            }
-        });
+        Collections.sort(results, (o1, o2) -> o1.getClass().getName().compareTo(o2.getClass().getName()));
         return results;
     }
 

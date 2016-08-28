@@ -19,7 +19,6 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
-import java.util.Comparator;
 import java.util.List;
 
 import org.junit.ClassRule;
@@ -111,18 +110,8 @@ public class MasterCheckFlowProcessorTest {
                 in1.flow(), in2.flow(),
                 found.flow(), missing.flow())), is(true));
 
-        List<Ex1> foundList = found.toList(new Comparator<Ex1>() {
-            @Override
-            public int compare(Ex1 o1, Ex1 o2) {
-                return o1.getSidOption().compareTo(o2.getSidOption());
-            }
-        });
-        List<Ex1> missingList = missing.toList(new Comparator<Ex1>() {
-            @Override
-            public int compare(Ex1 o1, Ex1 o2) {
-                return o1.getSidOption().compareTo(o2.getSidOption());
-            }
-        });
+        List<Ex1> foundList = found.toList((o1, o2) -> o1.getSidOption().compareTo(o2.getSidOption()));
+        List<Ex1> missingList = missing.toList((o1, o2) -> o1.getSidOption().compareTo(o2.getSidOption()));
         assertThat(foundList.size(), is(4));
         assertThat(missingList.size(), is(2));
 
@@ -204,18 +193,8 @@ public class MasterCheckFlowProcessorTest {
                 in1.flow(), in2.flow(),
                 found.flow(), missing.flow())), is(true));
 
-        List<Ex1> foundList = found.toList(new Comparator<Ex1>() {
-            @Override
-            public int compare(Ex1 o1, Ex1 o2) {
-                return o1.getSidOption().compareTo(o2.getSidOption());
-            }
-        });
-        List<Ex1> missingList = missing.toList(new Comparator<Ex1>() {
-            @Override
-            public int compare(Ex1 o1, Ex1 o2) {
-                return o1.getSidOption().compareTo(o2.getSidOption());
-            }
-        });
+        List<Ex1> foundList = found.toList((o1, o2) -> o1.getSidOption().compareTo(o2.getSidOption()));
+        List<Ex1> missingList = missing.toList((o1, o2) -> o1.getSidOption().compareTo(o2.getSidOption()));
         assertThat(foundList.size(), is(3));
         assertThat(missingList.size(), is(3));
 

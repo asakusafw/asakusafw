@@ -49,14 +49,8 @@ public class ConfigurationDetecterTest {
      */
     @Before
     public void setUp() throws Exception {
-        this.testLoader = AccessController.doPrivileged(new PrivilegedExceptionAction<ClassLoader>() {
-            @Override
-            public ClassLoader run() throws Exception {
-                return new URLClassLoader(new URL[] {
-                        folder.getRoot().toURI().toURL()
-                });
-            }
-        });
+        this.testLoader = AccessController.doPrivileged((PrivilegedExceptionAction<ClassLoader>) () ->
+                new URLClassLoader(new URL[] { folder.getRoot().toURI().toURL() }));
     }
 
     /**

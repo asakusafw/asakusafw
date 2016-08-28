@@ -18,7 +18,6 @@ package com.asakusafw.compiler.flow.processor;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
-import java.util.Comparator;
 import java.util.List;
 
 import org.apache.hadoop.io.Writable;
@@ -196,12 +195,7 @@ public class SummarizeFlowProcessorTest extends JobflowCompilerTestRoot {
         assertThat(tester.runFlow(new SummarizeFlowRenameKey(
                 in.flow(), summarized.flow())), is(true));
 
-        List<ExSummarized2> results = summarized.toList(new Comparator<ExSummarized2>() {
-            @Override
-            public int compare(ExSummarized2 o1, ExSummarized2 o2) {
-                return o1.getKeyOption().compareTo(o2.getKeyOption());
-            }
-        });
+        List<ExSummarized2> results = summarized.toList((o1, o2) -> o1.getKeyOption().compareTo(o2.getKeyOption()));
 
         assertThat(results.size(), is(2));
         assertThat(results.get(0).getKeyAsString(), is("a"));
@@ -241,12 +235,7 @@ public class SummarizeFlowProcessorTest extends JobflowCompilerTestRoot {
         assertThat(tester.runFlow(new SummarizeFlowKeyConflict(
                 in.flow(), summarized.flow())), is(true));
 
-        List<KeyConflict> results = summarized.toList(new Comparator<KeyConflict>() {
-            @Override
-            public int compare(KeyConflict o1, KeyConflict o2) {
-                return o1.getKeyOption().compareTo(o2.getKeyOption());
-            }
-        });
+        List<KeyConflict> results = summarized.toList((o1, o2) -> o1.getKeyOption().compareTo(o2.getKeyOption()));
 
         assertThat(results.size(), is(2));
         assertThat(results.get(0).getKeyAsString(), is("a"));

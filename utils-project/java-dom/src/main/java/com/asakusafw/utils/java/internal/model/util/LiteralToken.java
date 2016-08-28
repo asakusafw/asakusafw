@@ -111,7 +111,7 @@ public class LiteralToken implements Serializable {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final LiteralToken other = (LiteralToken) obj;
+        LiteralToken other = (LiteralToken) obj;
         if (text.equals(other.text) == false) {
             return false;
         }

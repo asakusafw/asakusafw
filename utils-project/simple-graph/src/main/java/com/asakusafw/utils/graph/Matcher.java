@@ -15,11 +15,18 @@
  */
 package com.asakusafw.utils.graph;
 
+import java.util.function.Predicate;
+
 /**
  * An interface for evaluating whether the value satisfies some conditions.
  * @param <T> the value type
+ * @since 0.1.0
+ * @version 0.9.0
+ * @deprecated Use {@link Predicate} instead
  */
-public interface Matcher<T> {
+@Deprecated
+@FunctionalInterface
+public interface Matcher<T> extends Predicate<T> {
 
     /**
      * Returns whether the target value satisfies this matcher's condition.
@@ -27,4 +34,9 @@ public interface Matcher<T> {
      * @return {@code true} if the target value satisfies this matcher's condition, otherwise {@code false}
      */
     boolean matches(T object);
+
+    @Override
+    default boolean test(T t) {
+        return matches(t);
+    }
 }

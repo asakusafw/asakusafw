@@ -20,7 +20,6 @@ import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import org.junit.Test;
@@ -269,12 +268,7 @@ public class FragmentComputerTest {
 
         private List<DirectInputFragment> validate(List<DirectInputFragment> fragments) {
             List<DirectInputFragment> results = new ArrayList<>(fragments);
-            Collections.sort(results, new Comparator<DirectInputFragment>() {
-                @Override
-                public int compare(DirectInputFragment o1, DirectInputFragment o2) {
-                    return Long.compare(o1.getOffset(), o2.getOffset());
-                }
-            });
+            Collections.sort(results, (o1, o2) -> Long.compare(o1.getOffset(), o2.getOffset()));
             long expectedOffset = 0;
             for (DirectInputFragment fragment : results) {
                 assertThat(fragment.getOffset(), is(expectedOffset));
