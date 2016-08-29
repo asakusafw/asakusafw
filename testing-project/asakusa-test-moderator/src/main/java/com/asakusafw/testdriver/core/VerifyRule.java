@@ -18,8 +18,24 @@ package com.asakusafw.testdriver.core;
 /**
  * Strategy of test result verification.
  * @since 0.2.0
+ * @version 0.9.0
  */
 public interface VerifyRule extends TestRule {
+
+    /**
+     * A verify rule that accepts any data.
+     * @since 0.9.0
+     */
+    VerifyRule NULL = new VerifyRule() {
+        @Override
+        public Object getKey(DataModelReflection target) {
+            return new Object();
+        }
+        @Override
+        public Object verify(DataModelReflection expected, DataModelReflection actual) {
+            return null;
+        }
+    };
 
     /**
      * Returns the key of the target data model.
@@ -32,7 +48,4 @@ public interface VerifyRule extends TestRule {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     Object getKey(DataModelReflection target);
-
-    @Override
-    Object verify(DataModelReflection expected, DataModelReflection actual);
 }

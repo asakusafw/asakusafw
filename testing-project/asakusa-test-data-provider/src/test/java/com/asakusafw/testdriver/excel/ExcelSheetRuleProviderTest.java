@@ -147,7 +147,7 @@ public class ExcelSheetRuleProviderTest {
     }
 
     /**
-     * {@link DataModelCondition} - ignore unexpected.
+     * {@link DataModelCondition} - ignore all.
      * @throws Exception if occur
      */
     @Test
@@ -157,6 +157,21 @@ public class ExcelSheetRuleProviderTest {
         assertThat(rule.verify(obj(1, "a"), obj(1, "b")), is(nullValue()));
         assertThat(rule.verify(null, obj(1, "a")), is(nullValue()));
         assertThat(rule.verify(obj(1, "a"), null), is(nullValue()));
+    }
+
+    /**
+     * {@link DataModelCondition} - ignore all.
+     * @throws Exception if occur
+     */
+    @Test
+    public void skip_key() throws Exception {
+        VerifyRule rule = rule("verify/skip.xls");
+        Object k0 = rule.getKey(obj(1, "a"));
+        Object k1 = rule.getKey(obj(1, "a"));
+        Object k2 = rule.getKey(obj(1, "a"));
+        assertThat(k0, not(equalTo(k1)));
+        assertThat(k0, not(equalTo(k2)));
+        assertThat(k1, not(equalTo(k2)));
     }
 
     /**

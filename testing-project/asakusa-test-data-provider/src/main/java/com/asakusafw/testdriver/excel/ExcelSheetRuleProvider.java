@@ -57,6 +57,7 @@ import com.asakusafw.testdriver.rule.VerifyRuleBuilder.Property;
  * </li>
  * </ul>
  * @since 0.2.0
+ * @version 0.9.0
  */
 public class ExcelSheetRuleProvider implements VerifyRuleProvider {
 
@@ -115,8 +116,15 @@ public class ExcelSheetRuleProvider implements VerifyRuleProvider {
         assert sheet != null;
         assert extractor != null;
 
-        VerifyRuleBuilder builder = new VerifyRuleBuilder(definition);
         Set<DataModelCondition> modelPredicates = extractor.extractDataModelCondition(sheet);
+        // if ignores anything, this returns special rule that accepts anything
+        if (modelPredicates.contains(DataModelCondition.IGNORE_MATCHED)
+                && modelPredicates.contains(DataModelCondition.IGNORE_ABSENT)
+                && modelPredicates.contains(DataModelCondition.IGNORE_UNEXPECTED)) {
+            return VerifyRule.NULL;
+        }
+
+        VerifyRuleBuilder builder = new VerifyRuleBuilder(definition);
         if (modelPredicates.contains(DataModelCondition.IGNORE_ABSENT)) {
             builder.acceptIfAbsent();
         }
