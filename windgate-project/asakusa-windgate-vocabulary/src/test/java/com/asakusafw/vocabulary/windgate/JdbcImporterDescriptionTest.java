@@ -25,6 +25,7 @@ import java.util.Map;
 
 import org.junit.Test;
 
+import com.asakusafw.vocabulary.windgate.JdbcImporterDescription.Option;
 import com.asakusafw.windgate.core.DriverScript;
 import com.asakusafw.windgate.core.vocabulary.DataModelJdbcSupport;
 import com.asakusafw.windgate.core.vocabulary.JdbcProcess;
@@ -89,7 +90,7 @@ public class JdbcImporterDescriptionTest {
     @Test
     public void options() {
         Mock mock = new Mock(String.class, "testing", StringSupport.class, "TESTING", null, "VALUE")
-                .withOptions("a", "b", "c");
+                .withOptions(Option.POSTGRES_COPY);
         DriverScript script = mock.getDriverScript();
         assertThat(script.getResourceName(), is(Constants.JDBC_RESOURCE_NAME));
         Map<String, String> conf = script.getConfiguration();
@@ -97,7 +98,7 @@ public class JdbcImporterDescriptionTest {
         assertThat(conf, hasEntry(JdbcProcess.TABLE.key(), "TESTING"));
         assertThat(conf, hasEntry(is(JdbcProcess.COLUMNS.key()), equalToIgnoringWhiteSpace("VALUE")));
         assertThat(conf, hasEntry(JdbcProcess.JDBC_SUPPORT.key(), StringSupport.class.getName()));
-        assertThat(conf, hasEntry(is(JdbcProcess.OPTIONS.key()), equalToIgnoringWhiteSpace("a, b, c")));
+        assertThat(conf, hasEntry(is(JdbcProcess.OPTIONS.key()), equalTo(JdbcProcess.OptionSymbols.POSTGRES_COPY)));
         assertThat(script.getParameterNames(), hasSize(0));
     }
 
@@ -283,7 +284,7 @@ public class JdbcImporterDescriptionTest {
         private final String tableName;
         private final String condition;
         private final List<String> columnNames;
-        private List<String> options;
+        private List<Option> options;
 
         Mock(
                 Class<?> modelType,
@@ -338,11 +339,11 @@ public class JdbcImporterDescriptionTest {
         }
 
         @Override
-        public Collection<String> getOptions() {
+        public Collection<Option> getOptions() {
             return options;
         }
 
-        public Mock withOptions(String... elements) {
+        public Mock withOptions(Option... elements) {
             this.options = Arrays.asList(elements);
             return this;
         }

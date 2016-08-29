@@ -25,6 +25,7 @@ import java.util.Map;
 
 import org.junit.Test;
 
+import com.asakusafw.vocabulary.windgate.JdbcExporterDescription.Option;
 import com.asakusafw.windgate.core.DriverScript;
 import com.asakusafw.windgate.core.vocabulary.DataModelJdbcSupport;
 import com.asakusafw.windgate.core.vocabulary.JdbcProcess;
@@ -94,7 +95,7 @@ public class JdbcExporterDescriptionTest {
     @Test
     public void options() {
         Mock mock = new Mock(String.class, "testing", StringSupport.class, "TESTING", "VALUE")
-                .withOptions("a", "b", "c");
+                .withOptions(Option.POSTGRES_COPY, Option.ORACLE_DIRPATH);
         DriverScript script = mock.getDriverScript();
         assertThat(script.getResourceName(), is(Constants.JDBC_RESOURCE_NAME));
         Map<String, String> conf = script.getConfiguration();
@@ -102,7 +103,8 @@ public class JdbcExporterDescriptionTest {
         assertThat(conf.get(JdbcProcess.TABLE.key()), is("TESTING"));
         assertThat(conf.get(JdbcProcess.COLUMNS.key()), equalToIgnoringWhiteSpace("VALUE"));
         assertThat(conf.get(JdbcProcess.JDBC_SUPPORT.key()), is(StringSupport.class.getName()));
-        assertThat(conf.get(JdbcProcess.OPTIONS.key()), equalToIgnoringWhiteSpace("a, b, c"));
+        assertThat(conf.get(JdbcProcess.OPTIONS.key()), equalToIgnoringWhiteSpace(String.format("%s, %s",
+                JdbcProcess.OptionSymbols.POSTGRES_COPY, JdbcProcess.OptionSymbols.ORACLE_DIRPATH)));
         assertThat(conf.get(JdbcProcess.OPERATION.key()), is(not(nullValue())));
         assertThat(script.getParameterNames(), hasSize(0));
     }
@@ -303,7 +305,7 @@ public class JdbcExporterDescriptionTest {
         private final String tableName;
         private final List<String> columnNames;
         private String customTruncate;
-        private List<String> options;
+        private List<Option> options;
 
         Mock(
                 Class<?> modelType,
@@ -361,11 +363,11 @@ public class JdbcExporterDescriptionTest {
         }
 
         @Override
-        public Collection<String> getOptions() {
+        public Collection<Option> getOptions() {
             return options;
         }
 
-        public Mock withOptions(String... elements) {
+        public Mock withOptions(Option... elements) {
             this.options = Arrays.asList(elements);
             return this;
         }
