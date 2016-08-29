@@ -20,6 +20,7 @@ package com.asakusafw.testdriver.core;
  * @param <T> type of model
  * @since 0.2.3
  */
+@FunctionalInterface
 public interface ModelTester<T> {
 
     /**

@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.UnaryOperator;
 
 import org.apache.hadoop.io.Text;
 import org.junit.Rule;
@@ -39,7 +40,6 @@ import com.asakusafw.testdriver.core.DataModelSink;
 import com.asakusafw.testdriver.core.DataModelSinkFactory;
 import com.asakusafw.testdriver.core.DataModelSource;
 import com.asakusafw.testdriver.core.DataModelSourceFactory;
-import com.asakusafw.testdriver.core.DataModelSourceFilter;
 import com.asakusafw.testdriver.core.Difference;
 import com.asakusafw.testdriver.core.DifferenceSink;
 import com.asakusafw.testdriver.core.DifferenceSinkFactory;
@@ -136,7 +136,7 @@ public class FlowDriverOutputTest {
      */
     @Test
     public void dumpActual_factory() {
-        final MockDataModelSink sink = new MockDataModelSink();
+        MockDataModelSink sink = new MockDataModelSink();
         MockFlowDriverOutput mock = new MockFlowDriverOutput(getClass(), new MockTestDataToolProvider());
         mock.dumpActual(new DataModelSinkFactory() {
             @Override
@@ -153,7 +153,7 @@ public class FlowDriverOutputTest {
      */
     @Test
     public void dumpDifference_factory() {
-        final MockDiffSink sink = new MockDiffSink();
+        MockDiffSink sink = new MockDiffSink();
         MockFlowDriverOutput mock = new MockFlowDriverOutput(getClass(), new MockTestDataToolProvider());
         mock.dumpDifference(new DifferenceSinkFactory() {
             @Override
@@ -313,28 +313,23 @@ public class FlowDriverOutputTest {
     }
 
     /**
-     * Test method for {@link FlowDriverOutput#filter(DataModelSourceFilter)}.
+     * Test method for {@link FlowDriverOutput#filter(UnaryOperator)}.
      */
     @Test
     public void filter() {
         MockFlowDriverOutput mock = new MockFlowDriverOutput(getClass(), tool_rule("Hello3"));
-        DataModelSourceFilter filter = new DataModelSourceFilter() {
+        UnaryOperator<DataModelSource> filter = source -> new DataModelSource() {
             @Override
-            public DataModelSource apply(final DataModelSource source) {
-                return new DataModelSource() {
-                    @Override
-                    public DataModelReflection next() throws IOException {
-                        DataModelReflection next = source.next();
-                        if (next == null || DEFINITION.toObject(next).toString().equals("Hello2")) {
-                            return next;
-                        }
-                        return next;
-                    }
-                    @Override
-                    public void close() throws IOException {
-                        source.close();
-                    }
-                };
+            public DataModelReflection next() throws IOException {
+                DataModelReflection next = source.next();
+                if (next == null || DEFINITION.toObject(next).toString().equals("Hello2")) {
+                    return next;
+                }
+                return next;
+            }
+            @Override
+            public void close() throws IOException {
+                source.close();
             }
         };
         mock.filter(filter);
@@ -364,7 +359,7 @@ public class FlowDriverOutputTest {
      */
     @Test
     public void dumpActual_uri() {
-        final MockDataModelSink sink = new MockDataModelSink();
+        MockDataModelSink sink = new MockDataModelSink();
         MockFlowDriverOutput mock = new MockFlowDriverOutput(getClass(), new MockTestDataToolProvider() {
             @Override
             public DataModelSinkFactory getDataModelSinkFactory(URI uri) {
@@ -386,8 +381,8 @@ public class FlowDriverOutputTest {
      */
     @Test
     public void dumpActual_file() {
-        final File file = new File(folder.getRoot(), "testing");
-        final MockDataModelSink sink = new MockDataModelSink();
+        File file = new File(folder.getRoot(), "testing");
+        MockDataModelSink sink = new MockDataModelSink();
         MockFlowDriverOutput mock = new MockFlowDriverOutput(getClass(), new MockTestDataToolProvider() {
             @Override
             public DataModelSinkFactory getDataModelSinkFactory(URI uri) {
@@ -409,7 +404,7 @@ public class FlowDriverOutputTest {
      */
     @Test
     public void dumpDifference_uri() {
-        final MockDiffSink sink = new MockDiffSink();
+        MockDiffSink sink = new MockDiffSink();
         MockFlowDriverOutput mock = new MockFlowDriverOutput(getClass(), new MockTestDataToolProvider() {
             @Override
             public DifferenceSinkFactory getDifferenceSinkFactory(URI uri) {
@@ -431,8 +426,8 @@ public class FlowDriverOutputTest {
      */
     @Test
     public void dumpDifference_file() {
-        final File file = new File(folder.getRoot(), "testing");
-        final MockDiffSink sink = new MockDiffSink();
+        File file = new File(folder.getRoot(), "testing");
+        MockDiffSink sink = new MockDiffSink();
         MockFlowDriverOutput mock = new MockFlowDriverOutput(getClass(), new MockTestDataToolProvider() {
             @Override
             public DifferenceSinkFactory getDifferenceSinkFactory(URI uri) {
@@ -449,7 +444,7 @@ public class FlowDriverOutputTest {
         checkInstance(mock.getDifferenceSink(), sink);
     }
 
-    private final MockTestDataToolProvider tool_data_rule(final String... key) {
+    private final MockTestDataToolProvider tool_data_rule(String... key) {
         return new MockTestDataToolProvider() {
             @Override
             public DataModelSourceFactory getDataModelSourceFactory(URI uri) {
@@ -472,7 +467,7 @@ public class FlowDriverOutputTest {
         }
     };
 
-    private MockTestDataToolProvider tool_rule(final String... key) {
+    private MockTestDataToolProvider tool_rule(String... key) {
         return new MockTestDataToolProvider() {
             @Override
             public VerifyRuleFactory getVerifyRuleFactory(URI ruleUri, List<? extends TestRule> extraRules) {
@@ -482,19 +477,16 @@ public class FlowDriverOutputTest {
         };
     }
 
-    private final ModelTester<Text> modelTester(final String key) {
-        return new ModelTester<Text>() {
-            @Override
-            public Object verify(Text expected, Text actual) {
-                if (actual.toString().equals(key)) {
-                    return key;
-                }
-                return null;
+    private final ModelTester<Text> modelTester(String key) {
+        return (expected, actual) -> {
+            if (actual.toString().equals(key)) {
+                return key;
             }
+            return null;
         };
     }
 
-    private final ModelVerifier<Text> modelVerifier(final String key) {
+    private final ModelVerifier<Text> modelVerifier(String key) {
         return new ModelVerifier<Text>() {
             @Override
             public Object getKey(Text target) {

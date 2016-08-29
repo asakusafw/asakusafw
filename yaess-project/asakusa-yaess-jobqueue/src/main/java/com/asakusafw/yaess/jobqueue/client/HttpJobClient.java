@@ -19,7 +19,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.net.Socket;
 import java.net.URI;
@@ -31,6 +30,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
+import java.util.Optional;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -56,7 +56,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.yaess.core.ExecutionPhase;
-import com.google.gson.FieldNamingStrategy;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -86,16 +85,9 @@ public class HttpJobClient implements JobClient {
         GSON_BUILDER = new GsonBuilder();
         GSON_BUILDER.registerTypeAdapter(JobStatus.Kind.class, new JobStatusKindAdapter());
         GSON_BUILDER.registerTypeAdapter(ExecutionPhase.class, new ExecutionPhaseAdapter());
-        GSON_BUILDER.setFieldNamingStrategy(new FieldNamingStrategy() {
-            @Override
-            public String translateName(Field f) {
-                SerializedName name = f.getAnnotation(SerializedName.class);
-                if (name != null) {
-                    return name.value();
-                }
-                return f.getName();
-            }
-        });
+        GSON_BUILDER.setFieldNamingStrategy(f -> Optional.ofNullable(f.getAnnotation(SerializedName.class))
+                .map(SerializedName::value)
+                .orElse(f.getName()));
     }
 
     private final String baseUri;

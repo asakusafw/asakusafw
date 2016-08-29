@@ -39,7 +39,6 @@ public final class CursorUtil {
      */
     public static <T> Iterator<T> toIterator(BaseCursor<T> cursor) {
         Objects.requireNonNull(cursor);
-        final BaseCursor<T> c = cursor;
         return new Iterator<T>() {
             private boolean prepared = false;
             @Override
@@ -50,13 +49,13 @@ public final class CursorUtil {
             public T next() {
                 if (prepare()) {
                     prepared = false;
-                    return c.get();
+                    return cursor.get();
                 }
                 throw new NoSuchElementException();
             }
             private boolean prepare() {
                 if (prepared == false) {
-                    prepared = c.next();
+                    prepared = cursor.next();
                 }
                 return prepared;
             }

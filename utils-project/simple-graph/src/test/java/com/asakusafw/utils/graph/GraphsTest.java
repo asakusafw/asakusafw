@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import org.junit.Test;
 
@@ -65,12 +66,7 @@ public class GraphsTest {
         Graph<Integer> graph = Graphs.newInstance();
         addPath(graph, 1, 2, 3, 4, 5, 1);
         addPath(graph, 1, 3, 5, 2, 4, 1);
-        Graph<Integer> sub = Graphs.subgraph(graph, new Matcher<Integer>() {
-            @Override
-            public boolean matches(Integer object) {
-                return object != 5;
-            }
-        });
+        Graph<Integer> sub = Graphs.subgraph(graph, object -> object != 5);
 
         Graph<Integer> expect = Graphs.newInstance();
         addPath(expect, 1, 2, 3, 4, 1);
@@ -88,12 +84,7 @@ public class GraphsTest {
         Graph<Integer> graph = Graphs.newInstance();
         addPath(graph, 1, 2, 3, 4, 5, 1);
         addPath(graph, 1, 3, 5, 2, 4, 1);
-        Graph<Integer> sub = Graphs.subgraph(graph, new Matcher<Integer>() {
-            @Override
-            public boolean matches(Integer object) {
-                return false;
-            }
-        });
+        Graph<Integer> sub = Graphs.subgraph(graph, object -> false);
 
         assertThat(sub.isEmpty(), is(true));
     }
@@ -106,12 +97,7 @@ public class GraphsTest {
         Graph<Integer> graph = Graphs.newInstance();
         addPath(graph, 1, 2, 3, 4, 5, 1);
         addPath(graph, 1, 3, 5, 2, 4, 1);
-        Graph<Integer> sub = Graphs.subgraph(graph, new Matcher<Integer>() {
-            @Override
-            public boolean matches(Integer object) {
-                return true;
-            }
-        });
+        Graph<Integer> sub = Graphs.subgraph(graph, object -> true);
 
         assertThat(sub, is(graph));
     }
@@ -162,72 +148,52 @@ public class GraphsTest {
     }
 
     /**
-     * Test method for {@link Graphs#findNearest(Graph, java.util.Collection, Matcher)}.
+     * Test method for {@link Graphs#findNearest(Graph, java.util.Collection, Predicate)}.
      */
     @Test
     public void findNearest_simple() {
         Graph<Integer> graph = Graphs.newInstance();
         addPath(graph, 1, -2, -3);
-        Set<Integer> results = Graphs.findNearest(graph, set(1), new Matcher<Integer>() {
-            @Override
-            public boolean matches(Integer object) {
-                return object < 0;
-            }
-        });
+        Set<Integer> results = Graphs.findNearest(graph, set(1), object -> object < 0);
         assertThat(results, is(set(-2)));
     }
 
     /**
-     * Test method for {@link Graphs#findNearest(Graph, java.util.Collection, Matcher)}.
+     * Test method for {@link Graphs#findNearest(Graph, java.util.Collection, Predicate)}.
      */
     @Test
     public void findNearest_hop() {
         Graph<Integer> graph = Graphs.newInstance();
         addPath(graph, 1, 2, -3);
-        Set<Integer> results = Graphs.findNearest(graph, set(1), new Matcher<Integer>() {
-            @Override
-            public boolean matches(Integer object) {
-                return object < 0;
-            }
-        });
+        Set<Integer> results = Graphs.findNearest(graph, set(1), object -> object < 0);
         assertThat(results, is(set(-3)));
     }
 
     /**
-     * Test method for {@link Graphs#findNearest(Graph, java.util.Collection, Matcher)}.
+     * Test method for {@link Graphs#findNearest(Graph, java.util.Collection, Predicate)}.
      */
     @Test
     public void findNearest_ignoreItself() {
         Graph<Integer> graph = Graphs.newInstance();
         addPath(graph, -1, 2, -3);
-        Set<Integer> results = Graphs.findNearest(graph, set(-1), new Matcher<Integer>() {
-            @Override
-            public boolean matches(Integer object) {
-                return object < 0;
-            }
-        });
+        Set<Integer> results = Graphs.findNearest(graph, set(-1), object -> object < 0);
         assertThat(results, is(set(-3)));
     }
 
     /**
-     * Test method for {@link Graphs#findNearest(Graph, java.util.Collection, Matcher)}.
+     * Test method for {@link Graphs#findNearest(Graph, java.util.Collection, Predicate)}.
      */
     @Test
     public void findNearest_dominants() {
         Graph<Integer> graph = Graphs.newInstance();
         addPath(graph, 1, -2, 3, -4, -6);
         addPath(graph, 1, 5, 3);
-        Set<Integer> results = Graphs.findNearest(graph, set(1), new Matcher<Integer>() {
-            @Override
-            public boolean matches(Integer object) {
-                return object < 0;
-            }
-        });
+        Set<Integer> results = Graphs.findNearest(graph, set(1), object -> object < 0);
         assertThat(results, is(set(-2, -4)));
     }
 
     /**
-     * Test method for {@link Graphs#findNearest(Graph, java.util.Collection, Matcher)}.
+     * Test method for {@link Graphs#findNearest(Graph, java.util.Collection, Predicate)}.
      */
     @Test
     public void findNearest_multipath() {
@@ -236,98 +202,68 @@ public class GraphsTest {
         addPath(graph, 1, -2, -4);
         addPath(graph, 5, 6, -4);
         addPath(graph, 5, -7, -8);
-        Set<Integer> results = Graphs.findNearest(graph, set(1, 5), new Matcher<Integer>() {
-            @Override
-            public boolean matches(Integer object) {
-                return object < 0;
-            }
-        });
+        Set<Integer> results = Graphs.findNearest(graph, set(1, 5), object -> object < 0);
         assertThat(results, is(set(-2, -4, -7)));
     }
 
     /**
-     * Test method for {@link Graphs#findNearest(Graph, java.util.Collection, Matcher)}.
+     * Test method for {@link Graphs#findNearest(Graph, java.util.Collection, Predicate)}.
      */
     @Test
     public void findNearest_overlap() {
         Graph<Integer> graph = Graphs.newInstance();
         addPath(graph, 1, -2, 3, -4, 1);
-        Set<Integer> results = Graphs.findNearest(graph, set(1, -2), new Matcher<Integer>() {
-            @Override
-            public boolean matches(Integer object) {
-                return object < 0;
-            }
-        });
+        Set<Integer> results = Graphs.findNearest(graph, set(1, -2), object -> object < 0);
         assertThat(results, is(set(-2, -4)));
     }
 
     /**
-     * Test method for {@link Graphs#collectNearest(Graph, java.util.Collection, Matcher)}.
+     * Test method for {@link Graphs#collectNearest(Graph, java.util.Collection, Predicate)}.
      */
     @Test
     public void collectNearest_simple() {
         Graph<Integer> graph = Graphs.newInstance();
         addPath(graph, 1, -2, -3);
-        Set<Integer> results = Graphs.collectNearest(graph, set(1), new Matcher<Integer>() {
-            @Override
-            public boolean matches(Integer object) {
-                return object < 0;
-            }
-        });
+        Set<Integer> results = Graphs.collectNearest(graph, set(1), object -> object < 0);
         assertThat(results, is(set(-2)));
     }
 
     /**
-     * Test method for {@link Graphs#collectNearest(Graph, java.util.Collection, Matcher)}.
+     * Test method for {@link Graphs#collectNearest(Graph, java.util.Collection, Predicate)}.
      */
     @Test
     public void collectNearest_hop() {
         Graph<Integer> graph = Graphs.newInstance();
         addPath(graph, 1, 2, -3);
-        Set<Integer> results = Graphs.collectNearest(graph, set(1), new Matcher<Integer>() {
-            @Override
-            public boolean matches(Integer object) {
-                return object < 0;
-            }
-        });
+        Set<Integer> results = Graphs.collectNearest(graph, set(1), object -> object < 0);
         assertThat(results, is(set(2, -3)));
     }
 
     /**
-     * Test method for {@link Graphs#collectNearest(Graph, java.util.Collection, Matcher)}.
+     * Test method for {@link Graphs#collectNearest(Graph, java.util.Collection, Predicate)}.
      */
     @Test
     public void collectNearest_ignoreItself() {
         Graph<Integer> graph = Graphs.newInstance();
         addPath(graph, -1, 2, -3);
-        Set<Integer> results = Graphs.collectNearest(graph, set(-1), new Matcher<Integer>() {
-            @Override
-            public boolean matches(Integer object) {
-                return object < 0;
-            }
-        });
+        Set<Integer> results = Graphs.collectNearest(graph, set(-1), object -> object < 0);
         assertThat(results, is(set(2, -3)));
     }
 
     /**
-     * Test method for {@link Graphs#collectNearest(Graph, java.util.Collection, Matcher)}.
+     * Test method for {@link Graphs#collectNearest(Graph, java.util.Collection, Predicate)}.
      */
     @Test
     public void collectNearest_dominants() {
         Graph<Integer> graph = Graphs.newInstance();
         addPath(graph, 1, -2, 3, -4, -6);
         addPath(graph, 1, 5, 3);
-        Set<Integer> results = Graphs.collectNearest(graph, set(1), new Matcher<Integer>() {
-            @Override
-            public boolean matches(Integer object) {
-                return object < 0;
-            }
-        });
+        Set<Integer> results = Graphs.collectNearest(graph, set(1), object -> object < 0);
         assertThat(results, is(set(-2, 3, 5, -4)));
     }
 
     /**
-     * Test method for {@link Graphs#collectNearest(Graph, java.util.Collection, Matcher)}.
+     * Test method for {@link Graphs#collectNearest(Graph, java.util.Collection, Predicate)}.
      */
     @Test
     public void collectNearest_multipath() {
@@ -336,28 +272,18 @@ public class GraphsTest {
         addPath(graph, 1, -2, -4);
         addPath(graph, 5, 6, -4);
         addPath(graph, 5, -7, -8);
-        Set<Integer> results = Graphs.collectNearest(graph, set(1, 5), new Matcher<Integer>() {
-            @Override
-            public boolean matches(Integer object) {
-                return object < 0;
-            }
-        });
+        Set<Integer> results = Graphs.collectNearest(graph, set(1, 5), object -> object < 0);
         assertThat(results, is(set(-2, -4, 6, -7)));
     }
 
     /**
-     * Test method for {@link Graphs#collectNearest(Graph, java.util.Collection, Matcher)}.
+     * Test method for {@link Graphs#collectNearest(Graph, java.util.Collection, Predicate)}.
      */
     @Test
     public void collectNearest_overlap() {
         Graph<Integer> graph = Graphs.newInstance();
         addPath(graph, 1, -2, 3, -4, 1);
-        Set<Integer> results = Graphs.collectNearest(graph, set(1, -2), new Matcher<Integer>() {
-            @Override
-            public boolean matches(Integer object) {
-                return object < 0;
-            }
-        });
+        Set<Integer> results = Graphs.collectNearest(graph, set(1, -2), object -> object < 0);
         assertThat(results, is(set(-2, 3, -4)));
     }
 

@@ -112,7 +112,7 @@ public class DirectFileInputDescriptionGeneratorTest extends GeneratorTesterRoot
         assertThat(object.getDataSize(), is(DataSize.TINY));
     }
 
-    private Matcher<Class<?>> hasGetter(final String name) {
+    private Matcher<Class<?>> hasGetter(String name) {
         return new BaseMatcher<Class<?>>() {
             @Override
             public boolean matches(Object item) {
@@ -141,7 +141,7 @@ public class DirectFileInputDescriptionGeneratorTest extends GeneratorTesterRoot
     }
 
     @SuppressWarnings("unchecked")
-    private Class<? extends DirectFileInputDescription> generate(final Description description) {
+    private Class<? extends DirectFileInputDescription> generate(Description description) {
         emitDrivers.add(new JavaDataModelDriver() {
             @Override
             public void generateResources(EmitContext context, ModelDeclaration model) throws IOException {

@@ -23,7 +23,6 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -145,34 +144,31 @@ public class HadoopFileCacheRepositoryTest extends FileCacheRepositoryTestRoot {
             }
         }
 
-        final Path path = path(source);
+        Path path = path(source);
         File cacheRepo = folder.newFolder();
         Configuration configuration = new ConfigurationProvider().newInstance();
         LockProvider<Path> locks = new LocalFileLockProvider<>(folder.newFolder());
         RetryStrategy retrier = new ConstantRetryStrategy(30, 100, 200);
-        final FileCacheRepository cache = new HadoopFileCacheRepository(configuration, path(cacheRepo), locks, retrier);
+        FileCacheRepository cache = new HadoopFileCacheRepository(configuration, path(cacheRepo), locks, retrier);
 
         List<Future<Path>> futures = new ArrayList<>();
         int count = 10;
-        final CountDownLatch latch = new CountDownLatch(count);
+        CountDownLatch latch = new CountDownLatch(count);
         ExecutorService executor = Executors.newFixedThreadPool(count);
         try {
             for (int i = 0; i < count; i++) {
-                final String label = String.format("thread-%d", i);
-                futures.add(executor.submit(new Callable<Path>() {
-                    @Override
-                    public Path call() throws Exception {
-                        LOG.info("Wait: resolve @" + label);
-                        latch.countDown();
-                        if (latch.await(5, TimeUnit.SECONDS) == false) {
-                            throw new TimeoutException();
-                        }
-                        LOG.info("Start: resolve @" + label);
-                        Path result = cache.resolve(path);
-
-                        LOG.info("Finish: resolve @" + label);
-                        return result;
+                String label = String.format("thread-%d", i);
+                futures.add(executor.submit(() -> {
+                    LOG.info("Wait: resolve @" + label);
+                    latch.countDown();
+                    if (latch.await(5, TimeUnit.SECONDS) == false) {
+                        throw new TimeoutException();
                     }
+                    LOG.info("Start: resolve @" + label);
+                    Path result = cache.resolve(path);
+
+                    LOG.info("Finish: resolve @" + label);
+                    return result;
                 }));
             }
             executor.shutdown();

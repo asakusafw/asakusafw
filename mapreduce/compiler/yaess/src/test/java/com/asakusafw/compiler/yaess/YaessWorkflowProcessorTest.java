@@ -136,7 +136,7 @@ public class YaessWorkflowProcessorTest {
     }
 
     private Matcher<Set<ExecutionScript>> hasCommands(String... executables) {
-        final Set<String> expected = new TreeSet<>();
+        Set<String> expected = new TreeSet<>();
         Collections.addAll(expected, executables);
         return new BaseMatcher<Set<ExecutionScript>>() {
             @Override

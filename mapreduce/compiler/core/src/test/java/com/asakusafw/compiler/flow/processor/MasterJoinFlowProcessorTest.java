@@ -19,7 +19,6 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
-import java.util.Comparator;
 import java.util.List;
 
 import org.junit.ClassRule;
@@ -114,18 +113,8 @@ public class MasterJoinFlowProcessorTest {
                 in1.flow(), in2.flow(),
                 joined.flow(), missing.flow())), is(true));
 
-        List<ExJoined> joinedList = joined.toList(new Comparator<ExJoined>() {
-            @Override
-            public int compare(ExJoined o1, ExJoined o2) {
-                return o1.getSid2Option().compareTo(o2.getSid2Option());
-            }
-        });
-        List<Ex2> missingList = missing.toList(new Comparator<Ex2>() {
-            @Override
-            public int compare(Ex2 o1, Ex2 o2) {
-                return o1.getSidOption().compareTo(o2.getSidOption());
-            }
-        });
+        List<ExJoined> joinedList = joined.toList((o1, o2) -> o1.getSid2Option().compareTo(o2.getSid2Option()));
+        List<Ex2> missingList = missing.toList((o1, o2) -> o1.getSidOption().compareTo(o2.getSidOption()));
         assertThat(joinedList.size(), is(4));
         assertThat(missingList.size(), is(2));
 
@@ -195,18 +184,8 @@ public class MasterJoinFlowProcessorTest {
                 in1.flow(), in2.flow(),
                 joined.flow(), missing.flow())), is(true));
 
-        List<ExJoined2> joinedList = joined.toList(new Comparator<ExJoined2>() {
-            @Override
-            public int compare(ExJoined2 o1, ExJoined2 o2) {
-                return o1.getSid2Option().compareTo(o2.getSid2Option());
-            }
-        });
-        List<Ex2> missingList = missing.toList(new Comparator<Ex2>() {
-            @Override
-            public int compare(Ex2 o1, Ex2 o2) {
-                return o1.getSidOption().compareTo(o2.getSidOption());
-            }
-        });
+        List<ExJoined2> joinedList = joined.toList((o1, o2) -> o1.getSid2Option().compareTo(o2.getSid2Option()));
+        List<Ex2> missingList = missing.toList((o1, o2) -> o1.getSidOption().compareTo(o2.getSidOption()));
         assertThat(joinedList.size(), is(4));
         assertThat(missingList.size(), is(2));
 
@@ -304,18 +283,8 @@ public class MasterJoinFlowProcessorTest {
                 in1.flow(), in2.flow(),
                 joined.flow(), missing.flow())), is(true));
 
-        List<ExJoined> joinedList = joined.toList(new Comparator<ExJoined>() {
-            @Override
-            public int compare(ExJoined o1, ExJoined o2) {
-                return o1.getSid2Option().compareTo(o2.getSid2Option());
-            }
-        });
-        List<Ex2> missingList = missing.toList(new Comparator<Ex2>() {
-            @Override
-            public int compare(Ex2 o1, Ex2 o2) {
-                return o1.getSidOption().compareTo(o2.getSidOption());
-            }
-        });
+        List<ExJoined> joinedList = joined.toList((o1, o2) -> o1.getSid2Option().compareTo(o2.getSid2Option()));
+        List<Ex2> missingList = missing.toList((o1, o2) -> o1.getSidOption().compareTo(o2.getSidOption()));
         assertThat(joinedList.size(), is(3));
         assertThat(missingList.size(), is(3));
 

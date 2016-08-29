@@ -153,8 +153,8 @@ public class BasicYaessLogSourceTest {
         assertThat(r0.getJobId().getTrackingId(), is("t"));
     }
 
-    static Matcher<Long> at(final String dateString) {
-        final SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+    static Matcher<Long> at(String dateString) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         return new BaseMatcher<Long>() {
             @Override
             public boolean matches(Object item) {

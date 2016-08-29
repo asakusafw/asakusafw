@@ -78,7 +78,7 @@ public abstract class DmdlTesterRoot {
      * @param kind type kind
      * @return the matcher
      */
-    protected Matcher<Type> type(final BasicTypeKind kind) {
+    protected Matcher<Type> type(BasicTypeKind kind) {
         return new BaseMatcher<Type>() {
             @Override
             public boolean matches(Object object) {
@@ -99,7 +99,7 @@ public abstract class DmdlTesterRoot {
      * @param name the model name
      * @return the matcher
      */
-    protected Matcher<ModelSymbol> model(final String name) {
+    protected Matcher<ModelSymbol> model(String name) {
         return new BaseMatcher<ModelSymbol>() {
             @Override
             public boolean matches(Object object) {
@@ -120,7 +120,7 @@ public abstract class DmdlTesterRoot {
      * @param name the property name
      * @return the matcher
      */
-    protected Matcher<PropertySymbol> property(final String name) {
+    protected Matcher<PropertySymbol> property(String name) {
         return new BaseMatcher<PropertySymbol>() {
             @Override
             public boolean matches(Object object) {
@@ -142,7 +142,7 @@ public abstract class DmdlTesterRoot {
      * @param name the property name
      * @return the matcher
      */
-    protected Matcher<PropertySymbol> property(final String modelName, final String name) {
+    protected Matcher<PropertySymbol> property(String modelName, String name) {
         return new BaseMatcher<PropertySymbol>() {
             @Override
             public boolean matches(Object object) {
@@ -169,7 +169,7 @@ public abstract class DmdlTesterRoot {
      * @param matcher RHS
      * @return the matcher
      */
-    protected static <T> Matcher<Iterable<T>> has(final Matcher<T> matcher) {
+    protected static <T> Matcher<Iterable<T>> has(Matcher<T> matcher) {
         return new BaseMatcher<Iterable<T>>() {
             @Override
             public boolean matches(Object item) {

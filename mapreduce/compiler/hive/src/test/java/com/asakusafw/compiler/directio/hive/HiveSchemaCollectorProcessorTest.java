@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import org.junit.Rule;
@@ -127,12 +126,7 @@ public class HiveSchemaCollectorProcessorTest {
         try (InputStream input = new FileInputStream(file)) {
             results = Persistent.read(type, input);
         }
-        Collections.sort(results, new Comparator<T>() {
-            @Override
-            public int compare(T o1, T o2) {
-                return o1.getSchema().getName().compareTo(o2.getSchema().getName());
-            }
-        });
+        Collections.sort(results, (o1, o2) -> o1.getSchema().getName().compareTo(o2.getSchema().getName()));
         assertThat(results, equalTo(elements));
     }
 }

@@ -32,27 +32,14 @@ import com.asakusafw.runtime.value.DateUtil;
 abstract class DateFormatter {
 
     private static final Factory[] BUILTIN = new Factory[] {
-        new Factory() {
-            @Override
-            public DateFormatter of(String pattern) {
-                if (pattern.equals(Direct.PATTERN)) {
-                    return new Direct();
-                }
-                return null;
+        pattern -> {
+            if (pattern.equals(Direct.PATTERN)) {
+                return new Direct();
             }
+            return null;
         },
-        new Factory() {
-            @Override
-            public DateFormatter of(String pattern) {
-                return Standard.of(pattern);
-            }
-        },
-        new Factory() {
-            @Override
-            public DateFormatter of(String pattern) {
-                return new Default(new SimpleDateFormat(pattern));
-            }
-        },
+        pattern -> Standard.of(pattern),
+        pattern -> new Default(new SimpleDateFormat(pattern)),
     };
 
     abstract String getPattern();
@@ -71,6 +58,7 @@ abstract class DateFormatter {
         throw new AssertionError(pattern);
     }
 
+    @FunctionalInterface
     private interface Factory {
 
         DateFormatter of(String pattern);

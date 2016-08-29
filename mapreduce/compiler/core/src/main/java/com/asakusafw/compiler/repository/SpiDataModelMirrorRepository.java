@@ -17,7 +17,6 @@ package com.asakusafw.compiler.repository;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.ServiceLoader;
 
@@ -72,12 +71,7 @@ public class SpiDataModelMirrorRepository implements DataModelMirrorRepository {
         for (DataModelMirrorRepository repo : services) {
             results.add(repo);
         }
-        Collections.sort(results, new Comparator<DataModelMirrorRepository>() {
-            @Override
-            public int compare(DataModelMirrorRepository o1, DataModelMirrorRepository o2) {
-                return o1.getClass().getName().compareTo(o2.getClass().getName());
-            }
-        });
+        Collections.sort(results, (o1, o2) -> o1.getClass().getName().compareTo(o2.getClass().getName()));
         return results;
     }
 }

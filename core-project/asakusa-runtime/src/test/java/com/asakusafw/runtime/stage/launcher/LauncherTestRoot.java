@@ -54,24 +54,21 @@ public abstract class LauncherTestRoot {
      * @param urls jar file URLs
      * @param resourceName the target resource name
      */
-    public void assertClasspath(final URL[] urls, final String resourceName) {
-        AccessController.doPrivileged(new PrivilegedAction<Void>() {
-            @Override
-            public Void run() {
-                ClassLoader loader = new URLClassLoader(urls);
-                try {
-                    assertThat(loader.getResource(resourceName), is(notNullValue()));
-                } finally {
-                    if (loader instanceof Closeable) {
-                        try {
-                            ((Closeable) loader).close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+    public void assertClasspath(final URL[] urls, String resourceName) {
+        AccessController.doPrivileged((PrivilegedAction<Void>) () -> {
+            ClassLoader loader = new URLClassLoader(urls);
+            try {
+                assertThat(loader.getResource(resourceName), is(notNullValue()));
+            } finally {
+                if (loader instanceof Closeable) {
+                    try {
+                        ((Closeable) loader).close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
                 }
-                return null;
             }
+            return null;
         });
     }
 
@@ -94,7 +91,7 @@ public abstract class LauncherTestRoot {
      * @param urls URLs
      * @return the matcher
      */
-    public Matcher<File> inClasspath(final URL[] urls) {
+    public Matcher<File> inClasspath(URL[] urls) {
         return new BaseMatcher<File>() {
             @Override
             public boolean matches(Object item) {

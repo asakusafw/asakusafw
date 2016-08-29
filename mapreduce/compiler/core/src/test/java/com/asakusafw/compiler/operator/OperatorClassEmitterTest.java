@@ -111,7 +111,7 @@ public class OperatorClassEmitterTest extends OperatorCompilerTestRoot {
         assertThat(result, is((Object) "hello100!"));
     }
 
-    private ClassLoader compile(final OperatorProcessor... procs) {
+    private ClassLoader compile(OperatorProcessor... procs) {
         return start(new Callback() {
             @Override
             protected void test() {

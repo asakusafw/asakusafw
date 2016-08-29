@@ -19,6 +19,9 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.hadoop.hive.serde2.typeinfo.TypeInfo;
 import org.apache.hadoop.hive.serde2.typeinfo.TypeInfoFactory;
@@ -230,32 +233,17 @@ public class HiveFieldTrait extends BaseTrait<HiveFieldTrait> {
         /**
          * Use property natural type.
          */
-        NATURAL(new Acceptor() {
-            @Override
-            protected boolean accepts(Class<?> valueClass) {
-                return ValueSerdeFactory.fromClass(valueClass) != null;
-            }
-        }),
+        NATURAL(c -> ValueSerdeFactory.fromClass(c) != null),
 
         /**
          * timestamp type.
          */
-        TIMESTAMP(new Acceptor() {
-            @Override
-            protected boolean accepts(Class<?> valueClass) {
-                return TimestampValueSerdeFactory.fromClass(valueClass) != null;
-            }
-        }),
+        TIMESTAMP(c -> TimestampValueSerdeFactory.fromClass(c) != null),
 
         /**
          * string type.
          */
-        STRING(new Acceptor() {
-            @Override
-            protected boolean accepts(Class<?> valueClass) {
-                return StringValueSerdeFactory.fromClass(valueClass) != null;
-            }
-        }),
+        STRING(c -> StringValueSerdeFactory.fromClass(c) != null),
 
         /**
          * decimal type.
@@ -283,10 +271,19 @@ public class HiveFieldTrait extends BaseTrait<HiveFieldTrait> {
             }
         }
 
+        TypeKind(Predicate<? super Class<?>> filter) {
+            this.supportedKinds = Stream.of(BasicTypeKind.values())
+                .filter(k -> filter.test(EmitContext.getFieldTypeAsClass(k)))
+                .collect(Collectors.collectingAndThen(
+                        Collectors.toCollection(() -> EnumSet.noneOf(BasicTypeKind.class)),
+                        Collections::unmodifiableSet));
+        }
+
         TypeKind(BasicTypeKind... kinds) {
-            EnumSet<BasicTypeKind> set = EnumSet.noneOf(BasicTypeKind.class);
-            Collections.addAll(set, kinds);
-            this.supportedKinds = Collections.unmodifiableSet(set);
+            this.supportedKinds = Stream.of(kinds)
+                    .collect(Collectors.collectingAndThen(
+                            Collectors.toCollection(() -> EnumSet.noneOf(BasicTypeKind.class)),
+                            Collections::unmodifiableSet));
         }
 
         /**
@@ -295,27 +292,6 @@ public class HiveFieldTrait extends BaseTrait<HiveFieldTrait> {
          */
         public Set<BasicTypeKind> getSupportedKinds() {
             return supportedKinds;
-        }
-
-        private abstract static class Acceptor implements Callable<Set<BasicTypeKind>> {
-
-            Acceptor() {
-                return;
-            }
-
-            @Override
-            public Set<BasicTypeKind> call() {
-                EnumSet<BasicTypeKind> results = EnumSet.noneOf(BasicTypeKind.class);
-                for (BasicTypeKind kind : BasicTypeKind.values()) {
-                    Class<?> valueClass = EmitContext.getFieldTypeAsClass(kind);
-                    if (accepts(valueClass)) {
-                        results.add(kind);
-                    }
-                }
-                return results;
-            }
-
-            protected abstract boolean accepts(Class<?> valueClass);
         }
     }
 }

@@ -320,7 +320,7 @@ public final class WindGateTestHelper {
                     return holder.loader;
                 }
             }
-            final List<URL> pluginLibraries = new ArrayList<>();
+            List<URL> pluginLibraries = new ArrayList<>();
             for (File file : pluginDirectory.listFiles()) {
                 if (file.isFile() && file.getName().endsWith(PLUGIN_EXTENSION)) {
                     try {

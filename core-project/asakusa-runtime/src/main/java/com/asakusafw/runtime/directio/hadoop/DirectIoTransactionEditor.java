@@ -21,7 +21,6 @@ import java.io.InputStreamReader;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 
@@ -95,12 +94,7 @@ public final class DirectIoTransactionEditor extends Configured {
             LOG.info("There are no Direct I/O transactions");
             return Collections.emptyList();
         }
-        Collections.sort(list, new Comparator<FileStatus>() {
-            @Override
-            public int compare(FileStatus o1, FileStatus o2) {
-                return Long.compare(o1.getModificationTime(), o2.getModificationTime());
-            }
-        });
+        Collections.sort(list, (o1, o2) -> Long.compare(o1.getModificationTime(), o2.getModificationTime()));
         LOG.info(MessageFormat.format(
                 "Start extracting {0} Direct I/O commit information",
                 list.size()));

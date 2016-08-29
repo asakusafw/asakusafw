@@ -105,7 +105,7 @@ public class GenerateCreateTableTest extends GenerateCeateTableTestRoot {
                 "--database", "testdb",
                 "--pluginpath", plugin.getPath(),
         });
-        String location = conf.locationProvider.toString(new TableInfo.Builder("testing")
+        String location = conf.locationProvider.apply(new TableInfo.Builder("testing")
                 .withColumn("p", TypeName.INT)
                 .build());
         assertThat(location, is("/home/dwh/testing"));
@@ -113,7 +113,7 @@ public class GenerateCreateTableTest extends GenerateCeateTableTestRoot {
         assertThat(conf.classLoader, canLoad(plugin));
     }
 
-    private Matcher<ClassLoader> canLoad(final File path) {
+    private Matcher<ClassLoader> canLoad(File path) {
         return new BaseMatcher<ClassLoader>() {
             @Override
             public boolean matches(Object item) {

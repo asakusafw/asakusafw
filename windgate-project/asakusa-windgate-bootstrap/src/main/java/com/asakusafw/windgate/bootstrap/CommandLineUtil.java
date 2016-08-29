@@ -241,11 +241,11 @@ public final class CommandLineUtil {
      * @return the created class loader
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public static ClassLoader buildPluginLoader(final ClassLoader parent, List<File> files) {
+    public static ClassLoader buildPluginLoader(ClassLoader parent, List<File> files) {
         if (files == null) {
             throw new IllegalArgumentException("files must not be null"); //$NON-NLS-1$
         }
-        final List<URL> pluginLocations = new ArrayList<>();
+        List<URL> pluginLocations = new ArrayList<>();
         for (File file : files) {
             try {
                 if (file.exists() == false) {
@@ -260,14 +260,11 @@ public final class CommandLineUtil {
                         file.getAbsolutePath());
             }
         }
-        ClassLoader serviceLoader = AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
-            @Override
-            public ClassLoader run() {
-                URLClassLoader loader = new URLClassLoader(
-                        pluginLocations.toArray(new URL[pluginLocations.size()]),
-                        parent);
-                return loader;
-            }
+        ClassLoader serviceLoader = AccessController.doPrivileged((PrivilegedAction<ClassLoader>) () -> {
+            URLClassLoader loader = new URLClassLoader(
+                    pluginLocations.toArray(new URL[pluginLocations.size()]),
+                    parent);
+            return loader;
         });
         return serviceLoader;
     }

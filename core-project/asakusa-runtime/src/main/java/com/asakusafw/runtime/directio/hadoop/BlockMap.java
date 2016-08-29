@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -107,15 +106,12 @@ public final class BlockMap {
         assert path != null;
         assert blockList != null;
         BlockInfo[] blocks = blockList.toArray(new BlockInfo[blockList.size()]);
-        Arrays.sort(blocks, new Comparator<BlockInfo>() {
-            @Override
-            public int compare(BlockInfo o1, BlockInfo o2) {
-                int startDiff = Long.compare(o1.start, o2.start);
-                if (startDiff != 0) {
-                    return startDiff;
-                }
-                return Integer.compare(o2.hosts.length, o1.hosts.length);
+        Arrays.sort(blocks, (o1, o2) -> {
+            int startDiff = Long.compare(o1.start, o2.start);
+            if (startDiff != 0) {
+                return startDiff;
             }
+            return Integer.compare(o2.hosts.length, o1.hosts.length);
         });
         long lastOffset = 0;
         List<BlockInfo> results = new ArrayList<>();
@@ -231,12 +227,7 @@ public final class BlockMap {
             return Collections.emptyList();
         }
         List<Map.Entry<String, Long>> entries = new ArrayList<>(ownBytes.entrySet());
-        Collections.sort(entries, new Comparator<Map.Entry<String, Long>>() {
-            @Override
-            public int compare(Map.Entry<String, Long> o1, Map.Entry<String, Long> o2) {
-                return Long.compare(o2.getValue(), o1.getValue());
-            }
-        });
+        Collections.sort(entries, (o1, o2) -> Long.compare(o2.getValue(), o1.getValue()));
         return entries;
     }
 }

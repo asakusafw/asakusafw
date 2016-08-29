@@ -51,7 +51,7 @@ public class IrDocField extends IrDocMember {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final IrDocField other = (IrDocField) obj;
+        IrDocField other = (IrDocField) obj;
         IrDocNamedType type = getDeclaringType();
         IrDocNamedType oType = other.getDeclaringType();
         if (type == null) {

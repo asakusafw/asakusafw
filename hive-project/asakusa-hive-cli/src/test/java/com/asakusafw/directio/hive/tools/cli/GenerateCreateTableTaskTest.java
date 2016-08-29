@@ -95,12 +95,7 @@ public class GenerateCreateTableTaskTest extends GenerateCeateTableTestRoot {
                 getClass().getClassLoader(),
                 source(),
                 Pattern.compile("testing"),
-                new Stringnizer() {
-                    @Override
-                    public String toString(TableInfo table) {
-                        return "here";
-                    }
-                },
+                table -> "here",
                 null,
                 new File(folder.getRoot(), "output.txt"));
 
@@ -136,7 +131,7 @@ public class GenerateCreateTableTaskTest extends GenerateCeateTableTestRoot {
         assertThat(stmts.get(0), is(regex("testdb\\s*\\.\\s*testing")));
     }
 
-    private Matcher<String> regex(final String pattern) {
+    private Matcher<String> regex(String pattern) {
         return new BaseMatcher<String>() {
             @Override
             public boolean matches(Object item) {

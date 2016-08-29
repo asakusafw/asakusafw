@@ -54,7 +54,7 @@ public class MockImporterPreparator extends AbstractImporterPreparator<MockImpor
     public <V> ModelOutput<V> createOutput(
             DataModelDefinition<V> definition,
             Desc description) throws IOException {
-        final List<String> lines = description.lines;
+        List<String> lines = description.lines;
         return new ModelOutput<V>() {
             @Override
             public void write(V model) throws IOException {
@@ -81,11 +81,6 @@ public class MockImporterPreparator extends AbstractImporterPreparator<MockImpor
         @Override
         public Class<?> getModelType() {
             return String.class;
-        }
-
-        @Override
-        public DataSize getDataSize() {
-            return DataSize.UNKNOWN;
         }
     }
 }

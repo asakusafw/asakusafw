@@ -292,7 +292,7 @@ public class OperatorCompilerTestRoot {
      * @param procs the operator processors
      * @return the class loader
      */
-    protected ClassLoader start(final OperatorProcessor... procs) {
+    protected ClassLoader start(OperatorProcessor... procs) {
         return start(new OperatorCompiler() {
             @Override
             protected Iterable<OperatorProcessor> findOperatorProcessors(OperatorCompilingEnvironment env) {
@@ -305,7 +305,7 @@ public class OperatorCompilerTestRoot {
      * Compiles and check if compilation errors are occurred.
      * @param procs the operator processors
      */
-    protected void error(final OperatorProcessor... procs) {
+    protected void error(OperatorProcessor... procs) {
         SafeProcessor proc = new SafeProcessor(new OperatorCompiler() {
             @Override
             protected Iterable<OperatorProcessor> findOperatorProcessors(OperatorCompilingEnvironment env) {

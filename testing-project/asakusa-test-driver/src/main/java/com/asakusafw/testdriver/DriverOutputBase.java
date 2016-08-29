@@ -20,12 +20,14 @@ import java.net.URISyntaxException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.UnaryOperator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.DataModelSinkFactory;
+import com.asakusafw.testdriver.core.DataModelSource;
 import com.asakusafw.testdriver.core.DataModelSourceFactory;
 import com.asakusafw.testdriver.core.DataModelSourceFilter;
 import com.asakusafw.testdriver.core.DifferenceSinkFactory;
@@ -53,7 +55,7 @@ public class DriverOutputBase<T> extends DriverInputBase<T> {
 
     private DifferenceSinkFactory differenceSink;
 
-    private DataModelSourceFilter resultFilter;
+    private UnaryOperator<DataModelSource> resultFilter;
 
     /**
      * Creates a new instance.
@@ -155,7 +157,7 @@ public class DriverOutputBase<T> extends DriverInputBase<T> {
      * @param filter the source filter
      * @since 0.7.0
      */
-    protected final void setResultFilter(DataModelSourceFilter filter) {
+    protected final void setResultFilter(UnaryOperator<DataModelSource> filter) {
         this.resultFilter = filter;
     }
 
@@ -205,8 +207,8 @@ public class DriverOutputBase<T> extends DriverInputBase<T> {
      * @return the filter which transforms each data model objects using the transformer
      * @since 0.7.0
      */
-    protected final DataModelSourceFilter toDataModelSourceFilter(final ModelTransformer<? super T> transformer) {
-        final DataModelDefinition<T> definition = getDataModelDefinition();
+    protected final DataModelSourceFilter toDataModelSourceFilter(ModelTransformer<? super T> transformer) {
+        DataModelDefinition<T> definition = getDataModelDefinition();
         return toDataModelSourceFilter(definition, transformer);
     }
 

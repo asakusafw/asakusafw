@@ -81,7 +81,7 @@ public class IrDocComment extends AbstractIrDocElement {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final IrDocComment other = (IrDocComment) obj;
+        IrDocComment other = (IrDocComment) obj;
         if (blocks == null) {
             if (other.blocks != null) {
                 return false;

@@ -71,14 +71,11 @@ public class ConcurrentBatchFileCacheRepository implements BatchFileCacheReposit
             ExceptionHandler exceptionHandler) {
         this.repository = repository;
         this.executor = executor;
-        this.exceptionHandler = exceptionHandler != null ? exceptionHandler : new ExceptionHandler() {
-            @Override
-            public Path handle(Path path, IOException exception) throws IOException {
-                LOG.warn(MessageFormat.format(
-                        "Processing cache is failed: {0}",
-                        path), exception);
-                return null;
-            }
+        this.exceptionHandler = exceptionHandler != null ? exceptionHandler : (path, exception) -> {
+            LOG.warn(MessageFormat.format(
+                    "Processing cache is failed: {0}",
+                    path), exception);
+            return null;
         };
     }
 
@@ -186,6 +183,7 @@ public class ConcurrentBatchFileCacheRepository implements BatchFileCacheReposit
     /**
      * Exception handler.
      */
+    @FunctionalInterface
     public interface ExceptionHandler {
 
         /**

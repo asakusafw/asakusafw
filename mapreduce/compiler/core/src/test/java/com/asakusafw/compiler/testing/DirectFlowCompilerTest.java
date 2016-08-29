@@ -25,7 +25,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 import java.util.jar.JarFile;
 import java.util.zip.ZipInputStream;
@@ -212,12 +211,7 @@ public class DirectFlowCompilerTest {
                 FlowCompilerOptions.load(System.getProperties()));
         assertThat(tester.run(info), is(true));
 
-        List<Ex1> results = out.toList(new Comparator<Ex1>() {
-            @Override
-            public int compare(Ex1 o1, Ex1 o2) {
-                return o1.getSidOption().compareTo(o2.getSidOption());
-            }
-        });
+        List<Ex1> results = out.toList((o1, o2) -> o1.getSidOption().compareTo(o2.getSidOption()));
         assertThat(results.size(), is(2));
         assertThat(results.get(0).getValue(), is(1));
         assertThat(results.get(1).getValue(), is(100));

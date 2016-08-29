@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -173,15 +174,10 @@ public final class GenerateCreateTable {
             }
         }
 
-        Stringnizer locationProvider = null;
+        Function<TableInfo, String> locationProvider = null;
         if (location != null) {
-            final String prefix = location.endsWith("/") ? location : location + '/'; //$NON-NLS-1$
-            locationProvider = new Stringnizer() {
-                @Override
-                public String toString(TableInfo table) {
-                    return prefix + table.getName();
-                }
-            };
+            String prefix = location.endsWith("/") ? location : location + '/'; //$NON-NLS-1$
+            locationProvider = table -> prefix + table.getName();
         }
 
         if (database != null) {
@@ -241,11 +237,11 @@ public final class GenerateCreateTable {
      * @return the created class loader
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    private static URLClassLoader buildPluginLoader(final ClassLoader parent, List<File> files) {
+    private static URLClassLoader buildPluginLoader(ClassLoader parent, List<File> files) {
         if (files == null) {
             throw new IllegalArgumentException("files must not be null"); //$NON-NLS-1$
         }
-        final List<URL> locations = new ArrayList<>();
+        List<URL> locations = new ArrayList<>();
         for (File file : files) {
             try {
                 if (file.exists() == false) {
@@ -261,14 +257,9 @@ public final class GenerateCreateTable {
                         file.getAbsolutePath()), e);
             }
         }
-        return AccessController.doPrivileged(new PrivilegedAction<URLClassLoader>() {
-            @Override
-            public URLClassLoader run() {
-                return new URLClassLoader(
-                        locations.toArray(new URL[locations.size()]),
-                        parent);
-            }
-        });
+        return AccessController.doPrivileged((PrivilegedAction<URLClassLoader>) () -> new URLClassLoader(
+                locations.toArray(new URL[locations.size()]),
+                parent));
     }
 
     private static void closeQuiet(Object object) {

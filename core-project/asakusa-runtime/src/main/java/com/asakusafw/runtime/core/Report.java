@@ -219,16 +219,6 @@ public final class Report {
      */
     public abstract static class Delegate implements RuntimeResource {
 
-        @Override
-        public void setup(ResourceConfiguration configuration) throws IOException, InterruptedException {
-            return;
-        }
-
-        @Override
-        public void cleanup(ResourceConfiguration configuration) throws IOException, InterruptedException {
-            return;
-        }
-
         /**
          * Notifies a report.
          * @param level report level

@@ -31,6 +31,7 @@ import com.asakusafw.yaess.core.Job;
  * An abstract super interface of {@link Job} executor.
  * @since 0.2.3
  */
+@FunctionalInterface
 public interface JobExecutor {
 
     /**
@@ -81,10 +82,7 @@ public interface JobExecutor {
             this.doneQueue = doneQueue;
         }
 
-        private static Callable<Void> build(
-                final ExecutionMonitor monitor,
-                final ExecutionContext context,
-                final Job job) {
+        private static Callable<Void> build(ExecutionMonitor monitor, ExecutionContext context, Job job) {
             if (monitor == null) {
                 throw new IllegalArgumentException("monitor must not be null"); //$NON-NLS-1$
             }
@@ -94,14 +92,11 @@ public interface JobExecutor {
             if (job == null) {
                 throw new IllegalArgumentException("job must not be null"); //$NON-NLS-1$
             }
-            return new Callable<Void>() {
-                @Override
-                public Void call() throws Exception {
-                    LOG.debug("Starting job: {} in {}", job.getId(), Thread.currentThread().getName());
-                    job.launch(monitor, context);
-                    LOG.debug("Completing job: {} in {}", job.getId(), Thread.currentThread().getName());
-                    return null;
-                }
+            return () -> {
+                LOG.debug("Starting job: {} in {}", job.getId(), Thread.currentThread().getName());
+                job.launch(monitor, context);
+                LOG.debug("Completing job: {} in {}", job.getId(), Thread.currentThread().getName());
+                return null;
             };
         }
 

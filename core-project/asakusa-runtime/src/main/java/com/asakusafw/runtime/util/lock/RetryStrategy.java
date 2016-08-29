@@ -19,6 +19,7 @@ package com.asakusafw.runtime.util.lock;
  * Represents a retry strategy.
  * @since 0.7.0
  */
+@FunctionalInterface
 public interface RetryStrategy {
 
     /**

@@ -22,6 +22,7 @@ import java.io.IOException;
  * @param <T> the target type
  * @since 0.7.0
  */
+@FunctionalInterface
 public interface LockProvider<T> {
 
     /**

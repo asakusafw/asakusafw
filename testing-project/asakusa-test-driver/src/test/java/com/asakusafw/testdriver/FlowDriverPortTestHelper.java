@@ -56,7 +56,7 @@ final class FlowDriverPortTestHelper {
         return new SourceDataModelSource<>(DEFINITION, Sources.wrap(list(texts).iterator()));
     }
 
-    static Provider<Source<Text>> provider(final String... texts) {
+    static Provider<Source<Text>> provider(String... texts) {
         return new Provider<Source<Text>>() {
             @Override
             public Source<Text> open() throws IOException, InterruptedException {

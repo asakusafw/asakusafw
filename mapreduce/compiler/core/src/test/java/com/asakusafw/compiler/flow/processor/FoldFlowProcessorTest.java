@@ -18,7 +18,6 @@ package com.asakusafw.compiler.flow.processor;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
-import java.util.Comparator;
 import java.util.List;
 
 import org.junit.ClassRule;
@@ -85,12 +84,7 @@ public class FoldFlowProcessorTest extends JobflowCompilerTestRoot {
         in.add(ex1);
 
         assertThat(tester.runFlow(new FoldFlowSimple(in.flow(), out.flow())), is(true));
-        List<Ex1> results = out.toList(new Comparator<Ex1>() {
-            @Override
-            public int compare(Ex1 o1, Ex1 o2) {
-                return o1.getStringOption().compareTo(o2.getStringOption());
-            }
-        });
+        List<Ex1> results = out.toList((o1, o2) -> o1.getStringOption().compareTo(o2.getStringOption()));
         assertThat(results.size(), is(3));
         assertThat(results.get(0).getStringOption().has("a"), is(true));
         assertThat(results.get(1).getStringOption().has("b"), is(true));
@@ -133,12 +127,7 @@ public class FoldFlowProcessorTest extends JobflowCompilerTestRoot {
         in.add(ex1);
 
         assertThat(tester.runFlow(new FoldFlowWithParameter(in.flow(), out.flow())), is(true));
-        List<Ex1> results = out.toList(new Comparator<Ex1>() {
-            @Override
-            public int compare(Ex1 o1, Ex1 o2) {
-                return o1.getStringOption().compareTo(o2.getStringOption());
-            }
-        });
+        List<Ex1> results = out.toList((o1, o2) -> o1.getStringOption().compareTo(o2.getStringOption()));
         assertThat(results.size(), is(3));
         assertThat(results.get(0).getStringOption().has("a"), is(true));
         assertThat(results.get(1).getStringOption().has("b"), is(true));
@@ -183,12 +172,7 @@ public class FoldFlowProcessorTest extends JobflowCompilerTestRoot {
         in.add(ex1);
 
         assertThat(tester.runFlow(new FoldFlowSimple(in.flow(), out.flow())), is(true));
-        List<Ex1> results = out.toList(new Comparator<Ex1>() {
-            @Override
-            public int compare(Ex1 o1, Ex1 o2) {
-                return o1.getStringOption().compareTo(o2.getStringOption());
-            }
-        });
+        List<Ex1> results = out.toList((o1, o2) -> o1.getStringOption().compareTo(o2.getStringOption()));
         assertThat(results.size(), is(3));
         assertThat(results.get(0).getStringOption().has("a"), is(true));
         assertThat(results.get(1).getStringOption().has("b"), is(true));

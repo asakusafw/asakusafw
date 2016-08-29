@@ -24,6 +24,7 @@ import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.UnaryOperator;
 
 import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.DataModelReflection;
@@ -92,12 +93,12 @@ public abstract class DriverElementBase {
      * @return the {@link DataModelSourceFactory}
      */
     protected final <T> DataModelSourceFactory toDataModelSourceFactory(
-            final DataModelDefinition<T> definition,
+            DataModelDefinition<T> definition,
             Iterable<? extends T> sourceObjects) {
         if (sourceObjects == null) {
             throw new IllegalArgumentException("sourceObjects must not be null"); //$NON-NLS-1$
         }
-        final ArrayList<DataModelReflection> results = new ArrayList<>();
+        ArrayList<DataModelReflection> results = new ArrayList<>();
         for (T dataModel : sourceObjects) {
             results.add(definition.toReflection(dataModel));
         }
@@ -126,7 +127,7 @@ public abstract class DriverElementBase {
      * @return the {@link DataModelSourceFactory}
      */
     protected final <T> DataModelSourceFactory toDataModelSourceFactory(
-            final Provider<? extends Source<? extends T>> sourceProvider) {
+            Provider<? extends Source<? extends T>> sourceProvider) {
         return new DataModelSourceFactory() {
             @SuppressWarnings({ "rawtypes", "unchecked" })
             @Override
@@ -155,11 +156,11 @@ public abstract class DriverElementBase {
      * @since 0.7.3
      */
     protected final <T> DataModelSourceFilter toDataModelSourceFilter(
-            final DataModelDefinition<T> definition,
-            final ModelTransformer<? super T> transformer) {
+            DataModelDefinition<T> definition,
+            ModelTransformer<? super T> transformer) {
         return new DataModelSourceFilter() {
             @Override
-            public DataModelSource apply(final DataModelSource source) {
+            public DataModelSource apply(DataModelSource source) {
                 return new DataModelSource() {
                     @Override
                     public DataModelReflection next() throws IOException {
@@ -194,8 +195,8 @@ public abstract class DriverElementBase {
      * @since 0.7.0
      */
     protected final VerifierFactory toVerifierFactory(
-            final VerifierFactory verifierFactory,
-            final DataModelSourceFilter sourceFilter) {
+            VerifierFactory verifierFactory,
+            UnaryOperator<DataModelSource> sourceFilter) {
         return new VerifierFactory() {
             @Override
             public <M> Verifier createVerifier(

@@ -107,7 +107,7 @@ public class DataModelDescriptorEditor {
      */
     public DataModelDescriptor build() {
         List<PropertyDescriptor> properties = new ArrayList<>();
-        for (final PropertyDescriptor property : origin.getPropertyDescriptors()) {
+        for (PropertyDescriptor property : origin.getPropertyDescriptors()) {
             if (removes.contains(property)) {
                 continue;
             }

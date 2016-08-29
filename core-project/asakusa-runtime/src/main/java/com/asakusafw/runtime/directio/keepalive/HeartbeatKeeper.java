@@ -51,12 +51,7 @@ class HeartbeatKeeper implements Closeable {
      */
     HeartbeatKeeper(final long interval) {
         this.interval = interval;
-        this.daemon = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                keepAlive();
-            }
-        });
+        this.daemon = new Thread(() -> keepAlive());
         daemon.setName(String.format("directio-keepalive-%02d", THREAD_SERIAL.incrementAndGet())); //$NON-NLS-1$
         daemon.setDaemon(true);
     }

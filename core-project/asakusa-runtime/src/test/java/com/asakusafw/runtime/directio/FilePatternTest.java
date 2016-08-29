@@ -279,7 +279,7 @@ public class FilePatternTest {
         FilePattern.compile("\\data.csv");
     }
 
-    private Matcher<List<PatternElement>> kind(final PatternElementKind... kinds) {
+    private Matcher<List<PatternElement>> kind(PatternElementKind... kinds) {
         return new BaseMatcher<List<PatternElement>>() {
 
             @Override
@@ -304,7 +304,7 @@ public class FilePatternTest {
         };
     }
 
-    private Matcher<List<PatternElement>> token(final String... tokens) {
+    private Matcher<List<PatternElement>> token(String... tokens) {
         return new BaseMatcher<List<PatternElement>>() {
 
             @Override

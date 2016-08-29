@@ -23,6 +23,7 @@ import com.asakusafw.utils.java.model.syntax.Name;
  * {@link Name} computer.
  * @since 0.7.0
  */
+@FunctionalInterface
 public interface Namer {
 
     /**

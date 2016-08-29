@@ -94,7 +94,7 @@ public class IrLocation implements Serializable {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final IrLocation other = (IrLocation) obj;
+        IrLocation other = (IrLocation) obj;
         if (length != other.length) {
             return false;
         }

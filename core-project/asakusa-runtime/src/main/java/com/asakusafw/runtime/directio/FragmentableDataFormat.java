@@ -22,6 +22,7 @@ import java.io.IOException;
  * Client should not implement this interface directly.
  * @param <T> the type of target data model
  * @since 0.2.6
+ * @version 0.9.0
  */
 public interface FragmentableDataFormat<T> extends DataFormat<T> {
 
@@ -31,7 +32,9 @@ public interface FragmentableDataFormat<T> extends DataFormat<T> {
      * @throws IOException if failed to compute bytes count
      * @throws InterruptedException if interrupted
      */
-    long getPreferredFragmentSize() throws IOException, InterruptedException;
+    default long getPreferredFragmentSize() throws IOException, InterruptedException {
+        return -1L;
+    }
 
     /**
      * Returns the minimum fragment size (in bytes).
@@ -39,5 +42,7 @@ public interface FragmentableDataFormat<T> extends DataFormat<T> {
      * @throws IOException if failed to compute bytes count
      * @throws InterruptedException if interrupted
      */
-    long getMinimumFragmentSize() throws IOException, InterruptedException;
+    default long getMinimumFragmentSize() throws IOException, InterruptedException {
+        return -1L;
+    }
 }

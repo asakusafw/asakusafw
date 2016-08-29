@@ -18,7 +18,6 @@ package com.asakusafw.yaess.basic;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.asakusafw.yaess.core.JobScheduler;
@@ -36,15 +35,12 @@ public class BasicJobScheduler extends AbstractJobScheduler {
 
     @Override
     protected void doConfigure(ServiceProfile<?> profile) throws InterruptedException, IOException {
-        this.executor = new ThreadedJobExecutor(Executors.newFixedThreadPool(1, new ThreadFactory() {
-            @Override
-            public Thread newThread(Runnable r) {
-                Thread thread = new Thread(r);
-                thread.setName(MessageFormat.format(
-                        "BasicJobScheduler-{0}",
-                        COUNTER.incrementAndGet()));
-                return thread;
-            }
+        this.executor = new ThreadedJobExecutor(Executors.newFixedThreadPool(1, r -> {
+            Thread thread = new Thread(r);
+            thread.setName(MessageFormat.format(
+                    "BasicJobScheduler-{0}",
+                    COUNTER.incrementAndGet()));
+            return thread;
         }));
     }
 

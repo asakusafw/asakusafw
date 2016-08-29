@@ -24,6 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import com.asakusafw.utils.graph.Graph.Vertex;
 
@@ -130,7 +131,7 @@ public final class Graphs {
      *   ({@link #collectAllConnected(Graph, Collection) collectAllConnected(graph, startNodes).contains(nearest)})
      * </li>
      * <li>
-     *   Satisfies the {@code matcher} rule ({@link Matcher#matches(Object) matcher.matches(nearest)})
+     *   Satisfies the {@code matcher} rule ({@link Predicate#test(Object) matcher.test(nearest)})
      * </li>
      * <li>
      *   Reachable from any starting vertices, NOT via other <em>nearest</em>
@@ -149,7 +150,7 @@ public final class Graphs {
     public static <V> Set<V> findNearest(
             Graph<? extends V> graph,
             Collection<? extends V> startNodes,
-            Matcher<? super V> matcher) {
+            Predicate<? super V> matcher) {
         if (graph == null) {
             throw new IllegalArgumentException("graph must not be null"); //$NON-NLS-1$
         }
@@ -172,7 +173,7 @@ public final class Graphs {
                 continue;
             }
             saw.add(first);
-            boolean matched = matcher.matches(first);
+            boolean matched = matcher.test(first);
             if (matched) {
                 results.add(first);
             } else {
@@ -185,7 +186,7 @@ public final class Graphs {
     /**
      * Returns the succeeding nearest vertices which match the condition, from the starting vertices,
      * and vertices on their routes. In other words, this method returns all vertices on the searching route on
-     * {@link #findNearest(Graph, Collection, Matcher)}. The resulting set may not contain the starting vertices,
+     * {@link #findNearest(Graph, Collection, Predicate)}. The resulting set may not contain the starting vertices,
      * excepts the starting vertices also on their searching route.
      * @param <V> the vertex value type
      * @param graph the target graph
@@ -197,7 +198,7 @@ public final class Graphs {
     public static <V> Set<V> collectNearest(
             Graph<? extends V> graph,
             Collection<? extends V> startNodes,
-            Matcher<? super V> matcher) {
+            Predicate<? super V> matcher) {
         if (graph == null) {
             throw new IllegalArgumentException("graph must not be null"); //$NON-NLS-1$
         }
@@ -220,7 +221,7 @@ public final class Graphs {
                 continue;
             }
             saw.add(first);
-            boolean matched = matcher.matches(first);
+            boolean matched = matcher.test(first);
             if (matched) {
                 results.add(first);
             } else {
@@ -354,11 +355,11 @@ graph.isConnected(a, b) <=> reverse.isConnected(b, a).
      * Creates a new subgraph from the target graph.
      * @param <V> the vertex value type
      * @param graph the target graph
-     * @param matcher only matches to the subgraph members
+     * @param matcher only test to the subgraph members
      * @return the created subgraph
      * @throws IllegalArgumentException if the parameters are {@code null}
      */
-    public static <V> Graph<V> subgraph(Graph<? extends V> graph, Matcher<? super V> matcher) {
+    public static <V> Graph<V> subgraph(Graph<? extends V> graph, Predicate<? super V> matcher) {
         if (graph == null) {
             throw new IllegalArgumentException("graph must not be null"); //$NON-NLS-1$
         }
@@ -368,7 +369,7 @@ graph.isConnected(a, b) <=> reverse.isConnected(b, a).
         Graph<V> subgraph = newInstance();
         Map<V, Boolean> matchedSet = new HashMap<>();
         for (V vertex : graph.getNodeSet()) {
-            boolean matched = matcher.matches(vertex);
+            boolean matched = matcher.test(vertex);
             if (matched) {
                 subgraph.addNode(vertex);
             }

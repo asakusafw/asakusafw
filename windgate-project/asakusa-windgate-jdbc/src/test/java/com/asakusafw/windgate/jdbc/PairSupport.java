@@ -17,7 +17,6 @@ package com.asakusafw.windgate.jdbc;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -51,29 +50,23 @@ public class PairSupport implements DataModelJdbcSupport<Pair> {
 
     @Override
     public DataModelResultSet<Pair> createResultSetSupport(
-            final ResultSet resultSet, List<String> columnNames) {
-        return new DataModelResultSet<Pair>() {
-            @Override
-            public boolean next(Pair object) throws SQLException {
-                if (resultSet.next()) {
-                    object.key = resultSet.getInt(1);
-                    object.value = resultSet.getString(2);
-                    return true;
-                }
-                return false;
+            ResultSet resultSet, List<String> columnNames) {
+        return object -> {
+            if (resultSet.next()) {
+                object.key = resultSet.getInt(1);
+                object.value = resultSet.getString(2);
+                return true;
             }
+            return false;
         };
     }
 
     @Override
     public DataModelPreparedStatement<Pair> createPreparedStatementSupport(
-            final PreparedStatement statement, List<String> columnNames) {
-        return new DataModelPreparedStatement<Pair>() {
-            @Override
-            public void setParameters(Pair object) throws SQLException {
-                statement.setInt(1, object.key);
-                statement.setString(2, object.value);
-            }
+            PreparedStatement statement, List<String> columnNames) {
+        return object -> {
+            statement.setInt(1, object.key);
+            statement.setString(2, object.value);
         };
     }
 }

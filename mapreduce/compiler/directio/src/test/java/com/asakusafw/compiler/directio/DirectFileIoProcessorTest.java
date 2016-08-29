@@ -780,16 +780,6 @@ public class DirectFileIoProcessorTest {
         }
 
         @Override
-        public long getPreferredFragmentSize() throws IOException, InterruptedException {
-            return -1;
-        }
-
-        @Override
-        public long getMinimumFragmentSize() throws IOException, InterruptedException {
-            return -1;
-        }
-
-        @Override
         public ModelInput<T> createInput(Class<? extends T> dataType, String path,
                 InputStream stream, long offset, long fragmentSize) throws IOException,
                 InterruptedException {

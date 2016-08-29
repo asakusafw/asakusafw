@@ -15,6 +15,7 @@
  */
 package com.asakusafw.yaess.tools.log.util;
 
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 import com.asakusafw.yaess.tools.log.YaessLogRecord;
@@ -23,7 +24,7 @@ import com.asakusafw.yaess.tools.log.YaessLogRecord;
  * Filters {@link YaessLogRecord} by its log code using regular expressions.
  * @since 0.6.2
  */
-public class LogCodeRegexFilter implements Filter<YaessLogRecord> {
+public class LogCodeRegexFilter implements Predicate<YaessLogRecord> {
 
     private final Pattern pattern;
 
@@ -36,7 +37,7 @@ public class LogCodeRegexFilter implements Filter<YaessLogRecord> {
     }
 
     @Override
-    public boolean accepts(YaessLogRecord value) {
+    public boolean test(YaessLogRecord value) {
         String code = value.getCode();
         if (code == null) {
             return false;

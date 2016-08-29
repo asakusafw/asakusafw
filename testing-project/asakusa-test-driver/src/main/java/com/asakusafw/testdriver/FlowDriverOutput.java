@@ -18,10 +18,11 @@ package com.asakusafw.testdriver;
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.UnaryOperator;
 
 import com.asakusafw.testdriver.core.DataModelSinkFactory;
+import com.asakusafw.testdriver.core.DataModelSource;
 import com.asakusafw.testdriver.core.DataModelSourceFactory;
-import com.asakusafw.testdriver.core.DataModelSourceFilter;
 import com.asakusafw.testdriver.core.DifferenceSinkFactory;
 import com.asakusafw.testdriver.core.ModelTester;
 import com.asakusafw.testdriver.core.ModelTransformer;
@@ -95,7 +96,7 @@ public abstract class FlowDriverOutput<T, S extends FlowDriverOutput<T, S>> exte
      * @return this
      * @since 0.7.0
      */
-    public S filter(DataModelSourceFilter filter) {
+    public S filter(UnaryOperator<DataModelSource> filter) {
         if (filter == null) {
             throw new IllegalArgumentException("filter must not be null"); //$NON-NLS-1$
         }

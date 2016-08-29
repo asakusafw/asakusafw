@@ -19,7 +19,6 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
-import java.util.Comparator;
 import java.util.List;
 
 import org.junit.ClassRule;
@@ -248,12 +247,7 @@ public class TemporaryIoProcessorTest {
             return tester.getList(
                     Ex1.class,
                     Location.fromPath(instance.getPathPrefix(), '/'),
-                    new Comparator<Ex1>() {
-                        @Override
-                        public int compare(Ex1 o1, Ex1 o2) {
-                            return o1.getSidOption().compareTo(o2.getSidOption());
-                        }
-                    });
+                    (o1, o2) -> o1.getSidOption().compareTo(o2.getSidOption()));
         } catch (Exception e) {
             throw new AssertionError(e);
         }

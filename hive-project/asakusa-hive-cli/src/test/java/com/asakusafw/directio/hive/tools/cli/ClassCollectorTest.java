@@ -44,12 +44,7 @@ public class ClassCollectorTest {
      */
     @Test
     public void find() {
-        ClassCollector collector = new ClassCollector(getClass().getClassLoader(), new ClassCollector.Selector() {
-            @Override
-            public boolean accept(Class<?> aClass) {
-                return true;
-            }
-        });
+        ClassCollector collector = new ClassCollector(getClass().getClassLoader(), aClass -> true);
         collector.inspect(ENTRY);
         assertThat(collector.getClasses().contains(getClass()), is(true));
         assertThat(collector.getClasses().contains(Dummy.class), is(true));
@@ -60,12 +55,7 @@ public class ClassCollectorTest {
      */
     @Test
     public void selector() {
-        ClassCollector collector = new ClassCollector(getClass().getClassLoader(), new ClassCollector.Selector() {
-            @Override
-            public boolean accept(Class<?> aClass) {
-                return aClass == Dummy.class;
-            }
-        });
+        ClassCollector collector = new ClassCollector(getClass().getClassLoader(), aClass -> aClass == Dummy.class);
         collector.inspect(ENTRY);
         assertThat(collector.getClasses().contains(getClass()), is(false));
         assertThat(collector.getClasses().contains(Dummy.class), is(true));
@@ -76,12 +66,7 @@ public class ClassCollectorTest {
      */
     @Test
     public void nothing() {
-        ClassCollector collector = new ClassCollector(getClass().getClassLoader(), new ClassCollector.Selector() {
-            @Override
-            public boolean accept(Class<?> aClass) {
-                return false;
-            }
-        });
+        ClassCollector collector = new ClassCollector(getClass().getClassLoader(), aClass -> false);
         collector.inspect(ENTRY);
         assertThat(collector.getClasses().contains(getClass()), is(false));
         assertThat(collector.getClasses().contains(Dummy.class), is(false));

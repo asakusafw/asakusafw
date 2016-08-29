@@ -27,6 +27,7 @@ import java.net.URI;
  * </p>
  * @since 0.2.3
  */
+@FunctionalInterface
 public interface DataModelSourceProvider {
 
     /**

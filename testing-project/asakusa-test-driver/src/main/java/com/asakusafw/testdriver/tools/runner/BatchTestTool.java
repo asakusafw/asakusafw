@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.UnaryOperator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,8 +30,8 @@ import org.slf4j.LoggerFactory;
 import com.asakusafw.testdriver.DriverElementBase;
 import com.asakusafw.testdriver.TestDriverContext;
 import com.asakusafw.testdriver.core.DataModelDefinition;
+import com.asakusafw.testdriver.core.DataModelSource;
 import com.asakusafw.testdriver.core.DataModelSourceFactory;
-import com.asakusafw.testdriver.core.DataModelSourceFilter;
 import com.asakusafw.testdriver.core.Difference;
 import com.asakusafw.testdriver.core.ModelTester;
 import com.asakusafw.testdriver.core.ModelTransformer;
@@ -252,7 +253,7 @@ public class BatchTestTool extends DriverElementBase implements TestContext {
         VerifyRuleFactory rules = getTestTools().getVerifyRuleFactory(toUri(verifyRulePath), fragments);
         VerifierFactory result = getTestTools().toVerifierFactory(source, rules);
         if (transformer != null) {
-            DataModelSourceFilter filter =
+            UnaryOperator<DataModelSource> filter =
                     toDataModelSourceFilter(definition, (ModelTransformer<? super T>) transformer);
             result = toVerifierFactory(result, filter);
         }

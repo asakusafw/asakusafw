@@ -146,7 +146,7 @@ public class CompilerTester implements TestRule {
     }
 
     @Override
-    public Statement apply(final Statement base, final Description description) {
+    public Statement apply(Statement base, Description description) {
         Statement stmt = new Statement() {
             @Override
             public void evaluate() throws Throwable {

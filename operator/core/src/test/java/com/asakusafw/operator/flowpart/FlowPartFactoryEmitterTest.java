@@ -177,7 +177,7 @@ public class FlowPartFactoryEmitterTest extends OperatorCompilerTestRoot {
 
     private Object compile(Action action) {
         add(action.className);
-        final ClassLoader classLoader = start(action);
+        ClassLoader classLoader = start(action);
         assertThat(action.performed, is(true));
         ClassDescription implClass = Constants.getFactoryClass(action.className);
         return create(classLoader, implClass);

@@ -51,14 +51,14 @@ public class BasicProcessProvider extends ProcessProvider {
     }
 
     @Override
-    public <T> void execute(DriverFactory drivers, final ProcessScript<T> script) throws IOException {
+    public <T> void execute(DriverFactory drivers, ProcessScript<T> script) throws IOException {
         WGLOG.info("I05000",
                 script.getName(),
                 script.getSourceScript().getResourceName(),
                 script.getDrainScript().getResourceName());
         long start = System.currentTimeMillis();
         long count = 0;
-        final ExceptionHolder<IOException> exceptions = new ExceptionHolder<>();
+        ExceptionHolder<IOException> exceptions = new ExceptionHolder<>();
         try (SafeCloser<SourceDriver<T>> source = new SafeCloser<SourceDriver<T>>() {
             @Override
             protected void handle(IOException exception) throws IOException {

@@ -21,6 +21,7 @@ import parquet.io.api.RecordConsumer;
  * Write values into {@link RecordConsumer}.
  * @since 0.7.0
  */
+@FunctionalInterface
 public interface ValueWriter {
 
     /**

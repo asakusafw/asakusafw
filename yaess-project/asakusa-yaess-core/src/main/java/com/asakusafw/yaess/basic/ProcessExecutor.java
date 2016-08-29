@@ -17,6 +17,7 @@ package com.asakusafw.yaess.basic;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -28,6 +29,7 @@ import com.asakusafw.yaess.core.ExecutionContext;
  * @since 0.2.3
  * @version 0.8.0
  */
+@FunctionalInterface
 public interface ProcessExecutor {
 
     /**
@@ -39,13 +41,13 @@ public interface ProcessExecutor {
      * @throws InterruptedException if interrupted while waiting process exit
      * @throws IOException if failed to execute the command
      * @throws IllegalArgumentException if some parameters were {@code null}
-     * @deprecated Use {@link #execute(ExecutionContext, List, Map, Map, OutputStream)} instead
      */
-    @Deprecated
-    int execute(
+    default int execute(
             ExecutionContext context,
             List<String> commandLineTokens,
-            Map<String, String> environmentVariables) throws InterruptedException, IOException;
+            Map<String, String> environmentVariables) throws InterruptedException, IOException {
+        return execute(context, commandLineTokens, environmentVariables, System.out);
+    }
 
     /**
      * Executes a process.
@@ -59,11 +61,13 @@ public interface ProcessExecutor {
      * @throws IllegalArgumentException if some parameters were {@code null}
      * @since 0.2.6
      */
-    int execute(
+    default int execute(
             ExecutionContext context,
             List<String> commandLineTokens,
             Map<String, String> environmentVariables,
-            OutputStream output) throws InterruptedException, IOException;
+            OutputStream output) throws InterruptedException, IOException {
+        return execute(context, commandLineTokens, environmentVariables, Collections.emptyMap(), output);
+    }
 
     /**
      * Executes a process.

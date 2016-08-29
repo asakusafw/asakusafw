@@ -38,22 +38,19 @@ public class LineStreamSupport implements DataModelStreamSupport<Line> {
 
     @Override
     public DataModelReader<Line> createReader(String path, InputStream stream) throws IOException {
-        final Scanner scanner = new Scanner(stream, "UTF-8");
-        return new DataModelReader<Line>() {
-            @Override
-            public boolean readTo(Line object) throws IOException {
-                if (scanner.hasNextLine()) {
-                    object.getValueOption().modify(scanner.nextLine());
-                    return true;
-                }
-                return false;
+        Scanner scanner = new Scanner(stream, "UTF-8");
+        return object -> {
+            if (scanner.hasNextLine()) {
+                object.getValueOption().modify(scanner.nextLine());
+                return true;
             }
+            return false;
         };
     }
 
     @Override
     public DataModelWriter<Line> createWriter(String path, OutputStream stream) throws IOException {
-        final PrintWriter writer = new PrintWriter(new OutputStreamWriter(stream, "UTF-8"));
+        PrintWriter writer = new PrintWriter(new OutputStreamWriter(stream, "UTF-8"));
         return new DataModelWriter<Line>() {
             @Override
             public void write(Line object) throws IOException {

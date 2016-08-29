@@ -64,13 +64,9 @@ public class PluginClassLoader extends URLClassLoader {
      * @param urls the plug-in URLs
      * @return the created instance
      */
-    public static PluginClassLoader newInstance(final ClassLoader parent, final List<URL> urls) {
-        return AccessController.doPrivileged(new PrivilegedAction<PluginClassLoader>() {
-            @Override
-            public PluginClassLoader run() {
-                return new PluginClassLoader(parent, urls);
-            }
-        });
+    public static PluginClassLoader newInstance(ClassLoader parent, List<URL> urls) {
+        return AccessController.doPrivileged((PrivilegedAction<PluginClassLoader>) () ->
+                new PluginClassLoader(parent, urls));
     }
 
     private static URL[] toArray(List<URL> urls) {

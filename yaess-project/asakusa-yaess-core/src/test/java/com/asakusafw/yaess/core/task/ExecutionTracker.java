@@ -28,6 +28,7 @@ import com.asakusafw.yaess.core.ExecutionScriptHandler;
  * Tracking execution in testing.
  * @since 0.2.3
  */
+@FunctionalInterface
 public interface ExecutionTracker {
 
     /**

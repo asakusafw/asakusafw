@@ -86,7 +86,7 @@ public class IrDocText extends AbstractIrDocElement implements IrDocFragment {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final IrDocText other = (IrDocText) obj;
+        IrDocText other = (IrDocText) obj;
         if (content == null) {
             if (other.content != null) {
                 return false;

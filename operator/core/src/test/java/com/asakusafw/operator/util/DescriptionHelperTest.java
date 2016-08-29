@@ -208,8 +208,8 @@ public class DescriptionHelperTest extends OperatorCompilerTestRoot {
                         new AnnotationDescription(single, Descriptions.valueOf("C")))));
     }
 
-    private Class<?> resolve(final TypeDescription description) {
-        final ModelFactory f = Models.getModelFactory();
+    private Class<?> resolve(TypeDescription description) {
+        ModelFactory f = Models.getModelFactory();
         ClassLoader loader = start(new Callback(true) {
             @Override
             protected void test() throws IOException {
@@ -250,8 +250,8 @@ public class DescriptionHelperTest extends OperatorCompilerTestRoot {
         }
     }
 
-    private Object constant(final ValueDescription description) {
-        final ModelFactory f = Models.getModelFactory();
+    private Object constant(ValueDescription description) {
+        ModelFactory f = Models.getModelFactory();
         ClassLoader loader = start(new Callback(true) {
             @Override
             protected void test() throws IOException {
@@ -298,8 +298,8 @@ public class DescriptionHelperTest extends OperatorCompilerTestRoot {
         assertThat(restored, is(description));
     }
 
-    private Annotation annotation(final AnnotationDescription description) {
-        final ModelFactory f = Models.getModelFactory();
+    private Annotation annotation(AnnotationDescription description) {
+        ModelFactory f = Models.getModelFactory();
         ClassLoader loader = start(new Callback(true) {
             @Override
             protected void test() throws IOException {

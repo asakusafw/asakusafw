@@ -21,6 +21,7 @@ import com.asakusafw.runtime.value.ValueOption;
  * Extracts a property in data models.
  * @since 0.7.0
  */
+@FunctionalInterface
 public interface PropertyExtractor {
 
     /**

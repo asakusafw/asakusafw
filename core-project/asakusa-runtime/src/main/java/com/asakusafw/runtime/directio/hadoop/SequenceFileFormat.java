@@ -54,11 +54,6 @@ public abstract class SequenceFileFormat<K, V, T> extends HadoopFileFormat<T> {
     static final String VALUE_COMPRESSION_AUTO = "auto"; //$NON-NLS-1$
 
     @Override
-    public long getPreferredFragmentSize() throws IOException, InterruptedException {
-        return -1L;
-    }
-
-    @Override
     public long getMinimumFragmentSize() throws IOException, InterruptedException {
         return SequenceFile.SYNC_INTERVAL;
     }
@@ -100,11 +95,11 @@ public abstract class SequenceFileFormat<K, V, T> extends HadoopFileFormat<T> {
             Path path,
             long offset,
             long fragmentSize,
-            final Counter counter) throws IOException, InterruptedException {
-        final long end = offset + fragmentSize;
-        final K keyBuffer = createKeyObject();
-        final V valueBuffer = createValueObject();
-        final SequenceFile.Reader reader;
+            Counter counter) throws IOException, InterruptedException {
+        long end = offset + fragmentSize;
+        K keyBuffer = createKeyObject();
+        V valueBuffer = createValueObject();
+        SequenceFile.Reader reader;
         try {
             reader = new SequenceFile.Reader(getConf(), SequenceFile.Reader.file(fileSystem.makeQualified(path)));
         } catch (EOFException e) {
@@ -177,9 +172,9 @@ public abstract class SequenceFileFormat<K, V, T> extends HadoopFileFormat<T> {
             Class<? extends T> dataType,
             FileSystem fileSystem,
             Path path,
-            final Counter counter) throws IOException, InterruptedException {
-        final K keyBuffer = createKeyObject();
-        final V valueBuffer = createValueObject();
+            Counter counter) throws IOException, InterruptedException {
+        K keyBuffer = createKeyObject();
+        V valueBuffer = createValueObject();
         CompressionCodec codec = getCompressionCodec(path);
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(

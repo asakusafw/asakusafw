@@ -105,7 +105,7 @@ public class TestToolRepository extends AbstractTestDataToolProvider {
     }
 
     @Override
-    public DataModelSourceFactory getDataModelSourceFactory(final URI uri) {
+    public DataModelSourceFactory getDataModelSourceFactory(URI uri) {
         if (uri == null) {
             throw new IllegalArgumentException("uri must not be null"); //$NON-NLS-1$
         }
@@ -132,7 +132,7 @@ public class TestToolRepository extends AbstractTestDataToolProvider {
     }
 
     @Override
-    public DataModelSinkFactory getDataModelSinkFactory(final URI uri) {
+    public DataModelSinkFactory getDataModelSinkFactory(URI uri) {
         if (uri == null) {
             throw new IllegalArgumentException("uri must not be null"); //$NON-NLS-1$
         }
@@ -159,7 +159,7 @@ public class TestToolRepository extends AbstractTestDataToolProvider {
     }
 
     @Override
-    public DifferenceSinkFactory getDifferenceSinkFactory(final URI uri) {
+    public DifferenceSinkFactory getDifferenceSinkFactory(URI uri) {
         if (uri == null) {
             throw new IllegalArgumentException("uri must not be null"); //$NON-NLS-1$
         }
@@ -186,7 +186,7 @@ public class TestToolRepository extends AbstractTestDataToolProvider {
     }
 
     @Override
-    public VerifyRuleFactory getVerifyRuleFactory(final URI ruleUri, final List<? extends TestRule> extraRules) {
+    public VerifyRuleFactory getVerifyRuleFactory(URI ruleUri, List<? extends TestRule> extraRules) {
         assert ruleUri != null;
         assert extraRules != null;
         return new VerifyRuleFactory() {

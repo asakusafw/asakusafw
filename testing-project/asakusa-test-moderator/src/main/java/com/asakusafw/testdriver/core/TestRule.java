@@ -19,6 +19,7 @@ package com.asakusafw.testdriver.core;
  * Strategy of test result verification.
  * @since 0.2.3
  */
+@FunctionalInterface
 public interface TestRule {
 
     /**

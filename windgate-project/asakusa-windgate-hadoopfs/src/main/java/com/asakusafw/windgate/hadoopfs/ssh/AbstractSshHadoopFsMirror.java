@@ -112,16 +112,16 @@ public abstract class AbstractSshHadoopFsMirror extends ResourceMirror {
     }
 
     @Override
-    public <T> SourceDriver<T> createSource(final ProcessScript<T> script) throws IOException {
+    public <T> SourceDriver<T> createSource(ProcessScript<T> script) throws IOException {
         if (script == null) {
             throw new IllegalArgumentException("script must not be null"); //$NON-NLS-1$
         }
         LOG.debug("Creating source driver for resource \"{}\" in process \"{}\"",
                 getName(),
                 script.getName());
-        final List<String> path = getPath(script, DriverScript.Kind.SOURCE);
+        List<String> path = getPath(script, DriverScript.Kind.SOURCE);
         T value = newDataModel(script);
-        final SshConnection connection = openGet(path);
+        SshConnection connection = openGet(path);
         boolean succeeded = false;
         try {
             InputStream output = connection.openStandardOutput();
@@ -147,20 +147,20 @@ public abstract class AbstractSshHadoopFsMirror extends ResourceMirror {
     }
 
     @Override
-    public <T> DrainDriver<T> createDrain(final ProcessScript<T> script) throws IOException {
+    public <T> DrainDriver<T> createDrain(ProcessScript<T> script) throws IOException {
         if (script == null) {
             throw new IllegalArgumentException("script must not be null"); //$NON-NLS-1$
         }
         LOG.debug("Creating drain driver for resource \"{}\" in process \"{}\"",
                 getName(),
                 script.getName());
-        final List<String> path = getPath(script, DriverScript.Kind.DRAIN);
-        final SshConnection connection = openPut();
+        List<String> path = getPath(script, DriverScript.Kind.DRAIN);
+        SshConnection connection = openPut();
         boolean succeeded = false;
         try {
             OutputStream input = connection.openStandardInput();
             connection.connect();
-            final FileList.Writer fileList = FileList.createWriter(input);
+            FileList.Writer fileList = FileList.createWriter(input);
             ModelOutput<T> output = TemporaryStorage.openOutput(
                     configuration,
                     script.getDataClass(),

@@ -190,22 +190,12 @@ public class DirectIoOperatorTesterTest {
         }
 
         @Override
-        public long getPreferredFragmentSize() {
-            return -1;
-        }
-
-        @Override
-        public long getMinimumFragmentSize() {
-            return -1;
-        }
-
-        @Override
         public ModelInput<StringBuilder> createInput(
                 Class<? extends StringBuilder> dataType, String path,
                 InputStream stream, long offset, long fragmentSize)
                 throws IOException, InterruptedException {
             assertThat(offset, is(0L));
-            final Scanner scanner = new Scanner(stream, "UTF-8");
+            Scanner scanner = new Scanner(stream, "UTF-8");
             return new ModelInput<StringBuilder>() {
                 @Override
                 public boolean readTo(StringBuilder model) throws IOException {
@@ -228,7 +218,7 @@ public class DirectIoOperatorTesterTest {
         public ModelOutput<StringBuilder> createOutput(
                 Class<? extends StringBuilder> dataType, String path,
                 OutputStream stream) throws IOException, InterruptedException {
-            final PrintWriter writer = new PrintWriter(new OutputStreamWriter(stream, "UTF-8"));
+            PrintWriter writer = new PrintWriter(new OutputStreamWriter(stream, "UTF-8"));
             return new ModelOutput<StringBuilder>() {
                 @Override
                 public void write(StringBuilder model) throws IOException {

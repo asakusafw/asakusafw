@@ -115,7 +115,7 @@ public class MainTest {
     }
 
     private Matcher<DmdlSourceRepository> source(String... fileNames) {
-        final Set<String> files = new TreeSet<>();
+        Set<String> files = new TreeSet<>();
         Collections.addAll(files, fileNames);
         return new BaseMatcher<DmdlSourceRepository>() {
             @Override
@@ -148,7 +148,7 @@ public class MainTest {
         };
     }
 
-    private Matcher<Emitter> target(final File output) {
+    private Matcher<Emitter> target(File output) {
         return new BaseMatcher<Emitter>() {
             @Override
             public boolean matches(Object target) {

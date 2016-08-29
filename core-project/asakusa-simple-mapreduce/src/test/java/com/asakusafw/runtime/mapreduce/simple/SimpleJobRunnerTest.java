@@ -261,15 +261,12 @@ public class SimpleJobRunnerTest {
     }
 
     private Set<String> read(File file) throws IOException {
-        return read(file, new FileFilter() {
-            @Override
-            public boolean accept(File pathname) {
-                String name = pathname.getName();
-                if (name.startsWith(".") || name.equals(FileOutputCommitter.SUCCEEDED_FILE_NAME)) {
-                    return false;
-                }
-                return true;
+        return read(file, pathname -> {
+            String name = pathname.getName();
+            if (name.startsWith(".") || name.equals(FileOutputCommitter.SUCCEEDED_FILE_NAME)) {
+                return false;
             }
+            return true;
         });
     }
 
@@ -309,8 +306,8 @@ public class SimpleJobRunnerTest {
      * tokenize.
      */
     public static final class WordCountMapper extends Mapper<LongWritable, Text, Text, LongWritable> {
-        final LongWritable one = new LongWritable(1);
-        final Text out = new Text();
+        LongWritable one = new LongWritable(1);
+        Text out = new Text();
         @Override
         protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
             for (String token : value.toString().split("\\s+")) {
@@ -327,7 +324,7 @@ public class SimpleJobRunnerTest {
      * aggregate.
      */
     public static final class WordCountReducer extends Reducer<Text, LongWritable, Text, LongWritable> {
-        final LongWritable count = new LongWritable(1);
+        LongWritable count = new LongWritable(1);
         @Override
         protected void reduce(Text key, Iterable<LongWritable> values, Context context) throws IOException, InterruptedException {
             long total = 0;

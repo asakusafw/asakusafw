@@ -177,16 +177,14 @@ public final class HadoopDriver implements Closeable {
      * @return the created input
      * @throws IOException if failed to create the input
      */
-    public <T extends Writable> ModelInput<T> openInput(
-            Class<T> modelType,
-            final Location location) throws IOException {
+    public <T extends Writable> ModelInput<T> openInput(Class<T> modelType, Location location) throws IOException {
         if (modelType == null) {
             throw new IllegalArgumentException("modelType must not be null"); //$NON-NLS-1$
         }
         if (location == null) {
             throw new IllegalArgumentException("location must not be null"); //$NON-NLS-1$
         }
-        final File temp = createTempFile(modelType);
+        File temp = createTempFile(modelType);
         if (temp.delete() == false) {
             logger.debug("failed to delete a placeholder file: {}", temp); //$NON-NLS-1$
         }
@@ -238,9 +236,7 @@ public final class HadoopDriver implements Closeable {
      * @return the created output
      * @throws IOException if failed to initialize the output
      */
-    public <T extends Writable> ModelOutput<T> openOutput(
-            Class<T> modelType,
-            final Location path) throws IOException {
+    public <T extends Writable> ModelOutput<T> openOutput(Class<T> modelType, Location path) throws IOException {
         return TemporaryStorage.openOutput(
                 configuration,
                 modelType,

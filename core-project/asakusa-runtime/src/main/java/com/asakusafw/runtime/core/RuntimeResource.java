@@ -34,8 +34,9 @@ public interface RuntimeResource {
      * @throws IllegalArgumentException if configuration is not valid
      * @throws IllegalStateException if resource lifecycle has something wrong
      */
-    void setup(ResourceConfiguration configuration)
-        throws IOException, InterruptedException;
+    default void setup(ResourceConfiguration configuration) throws IOException, InterruptedException {
+        return;
+    }
 
     /**
      * Finalizes this resource.
@@ -45,8 +46,9 @@ public interface RuntimeResource {
      * @throws IllegalArgumentException if configuration is not valid
      * @throws IllegalStateException if resource lifecycle has something wrong
      */
-    void cleanup(ResourceConfiguration configuration)
-        throws IOException, InterruptedException;
+    default void cleanup(ResourceConfiguration configuration) throws IOException, InterruptedException {
+        return;
+    }
 
     /**
      * A skeletal implementation of registering/unregistering resource delegation objects.

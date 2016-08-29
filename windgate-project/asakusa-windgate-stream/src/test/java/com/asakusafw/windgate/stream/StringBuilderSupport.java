@@ -37,23 +37,20 @@ public class StringBuilderSupport implements DataModelStreamSupport<StringBuilde
 
     @Override
     public DataModelReader<StringBuilder> createReader(String path, InputStream stream) throws IOException {
-        final Scanner scanner = new Scanner(stream, "UTF-8");
-        return new DataModelReader<StringBuilder>() {
-            @Override
-            public boolean readTo(StringBuilder object) throws IOException {
-                if (scanner.hasNextLine()) {
-                    object.setLength(0);
-                    object.append(scanner.nextLine());
-                    return true;
-                }
-                return false;
+        Scanner scanner = new Scanner(stream, "UTF-8");
+        return object -> {
+            if (scanner.hasNextLine()) {
+                object.setLength(0);
+                object.append(scanner.nextLine());
+                return true;
             }
+            return false;
         };
     }
 
     @Override
     public DataModelWriter<StringBuilder> createWriter(String path, OutputStream stream) throws IOException {
-        final BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(stream, "UTF-8"));
+        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(stream, "UTF-8"));
         return new DataModelWriter<StringBuilder>() {
             @Override
             public void flush() throws IOException {

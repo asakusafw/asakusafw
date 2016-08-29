@@ -25,6 +25,7 @@ import org.apache.hadoop.fs.Path;
  * Batch processing for {@link FileCacheRepository}.
  * @since 0.7.0
  */
+@FunctionalInterface
 public interface BatchFileCacheRepository {
 
     /**

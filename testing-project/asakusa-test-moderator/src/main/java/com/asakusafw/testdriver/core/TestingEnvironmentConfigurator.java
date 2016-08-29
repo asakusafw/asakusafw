@@ -19,7 +19,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.ServiceLoader;
 
@@ -95,13 +94,10 @@ public abstract class TestingEnvironmentConfigurator {
             results.add(service);
         }
         // sort by its class name
-        Collections.sort(results, new Comparator<TestingEnvironmentConfigurator>() {
-            @Override
-            public int compare(TestingEnvironmentConfigurator o1, TestingEnvironmentConfigurator o2) {
-                String c1 = o1.getClass().getName();
-                String c2 = o2.getClass().getName();
-                return c1.compareTo(c2);
-            }
+        Collections.sort(results, (o1, o2) -> {
+            String c1 = o1.getClass().getName();
+            String c2 = o2.getClass().getName();
+            return c1.compareTo(c2);
         });
         return results;
     }

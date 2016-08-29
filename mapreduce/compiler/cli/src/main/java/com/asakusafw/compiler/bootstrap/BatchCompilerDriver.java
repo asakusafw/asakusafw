@@ -195,7 +195,7 @@ public final class BatchCompilerDriver {
             Location hadoopWorkLocation,
             File compilerWorkDirectory,
             List<File> linkingResources,
-            final List<URL> pluginLibraries) {
+            List<URL> pluginLibraries) {
         assert outputDirectory != null;
         assert batchDescription != null;
         assert packageName != null;
@@ -212,14 +212,11 @@ public final class BatchCompilerDriver {
             }
 
             String batchId = analyzed.getBatchClass().getConfig().name();
-            ClassLoader serviceLoader = AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
-                @Override
-                public ClassLoader run() {
-                    URLClassLoader loader = new URLClassLoader(
-                            pluginLibraries.toArray(new URL[pluginLibraries.size()]),
-                            BatchCompilerDriver.class.getClassLoader());
-                    return loader;
-                }
+            ClassLoader serviceLoader = AccessController.doPrivileged((PrivilegedAction<ClassLoader>) () -> {
+                URLClassLoader loader = new URLClassLoader(
+                        pluginLibraries.toArray(new URL[pluginLibraries.size()]),
+                        BatchCompilerDriver.class.getClassLoader());
+                return loader;
             });
             DirectBatchCompiler.compile(
                     analyzed.getDescription(),

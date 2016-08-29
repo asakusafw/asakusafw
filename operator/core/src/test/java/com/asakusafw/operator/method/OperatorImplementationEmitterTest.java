@@ -81,7 +81,7 @@ public class OperatorImplementationEmitterTest extends OperatorCompilerTestRoot 
         assertThat(access(object, "field"), is((Object) 100));
     }
 
-    private Object compile(final String name) {
+    private Object compile(String name) {
         add(name);
         ClassLoader classLoader = start(new Callback() {
             @Override

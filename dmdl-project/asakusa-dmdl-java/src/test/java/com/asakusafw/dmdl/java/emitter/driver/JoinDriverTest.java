@@ -106,7 +106,7 @@ public class JoinDriverTest extends GeneratorTesterRoot {
         assertThat(annotation, nullValue());
     }
 
-    private Matcher<Key> grouping(final String... properties) {
+    private Matcher<Key> grouping(String... properties) {
         return new BaseMatcher<Key>() {
             @Override
             public boolean matches(Object object) {
@@ -125,7 +125,7 @@ public class JoinDriverTest extends GeneratorTesterRoot {
         };
     }
 
-    private Matcher<Joined.Mapping> mapping(final String src, final String dst) {
+    private Matcher<Joined.Mapping> mapping(String src, String dst) {
         return new BaseMatcher<Joined.Mapping>() {
             @Override
             public boolean matches(Object object) {

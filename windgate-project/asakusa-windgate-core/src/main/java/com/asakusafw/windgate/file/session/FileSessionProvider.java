@@ -122,17 +122,14 @@ public class FileSessionProvider extends SessionProvider {
     @Override
     public List<String> getCreatedIds() throws IOException {
         LOG.debug("Collecting sessions: {}", directory);
-        File[] files = directory.listFiles(new FileFilter() {
-            @Override
-            public boolean accept(File pathname) {
-                if (pathname.isFile() == false) {
-                    return false;
-                }
-                if (pathname.getName().startsWith(".")) {
-                    return false;
-                }
-                return true;
+        File[] files = directory.listFiles((FileFilter) pathname -> {
+            if (pathname.isFile() == false) {
+                return false;
             }
+            if (pathname.getName().startsWith(".")) {
+                return false;
+            }
+            return true;
         });
         List<String> results = new ArrayList<>();
         for (File file : files) {

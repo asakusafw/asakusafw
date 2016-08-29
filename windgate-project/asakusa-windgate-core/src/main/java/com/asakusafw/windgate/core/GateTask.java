@@ -23,7 +23,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -278,7 +277,7 @@ public class GateTask implements Closeable {
 
     private void fireSessionCreated(List<ResourceMirror> resources) throws IOException {
         assert resources != null;
-        for (final ResourceMirror resource : resources) {
+        for (ResourceMirror resource : resources) {
             if (resource.isTransactional()) {
                 try {
                     LOG.debug("Initializing transactional resource \"{}\" for session \"{}\"",
@@ -301,31 +300,28 @@ public class GateTask implements Closeable {
             }
         }
         LinkedList<Future<?>> futures = new LinkedList<>();
-        for (final ResourceMirror resource : resources) {
+        for (ResourceMirror resource : resources) {
             if (resource.isTransactional() == false) {
-                Future<?> future = executor.submit(new Callable<Void>() {
-                    @Override
-                    public Void call() throws IOException {
-                        LOG.debug("Initializing resource \"{}\" for session \"{}\"",
-                                resource.getName(),
-                                sessionId);
-                        try {
-                            if (RuntimeContext.get().canExecute(resource)) {
-                                resource.onSessionCreated();
-                            }
-                        } catch (IOException e) {
-                            WGLOG.error(e, "E00001",
-                                    sessionId,
-                                    profile.getName(),
-                                    script.getName(),
-                                    resource.getName());
-                            throw new IOException(MessageFormat.format(
-                                    "Failed to initializing resource \"{0}\" (session={1})",
-                                    resource.getName(),
-                                    sessionId), e);
+                Future<?> future = executor.submit(() -> {
+                    LOG.debug("Initializing resource \"{}\" for session \"{}\"",
+                            resource.getName(),
+                            sessionId);
+                    try {
+                        if (RuntimeContext.get().canExecute(resource)) {
+                            resource.onSessionCreated();
                         }
-                        return null;
+                    } catch (IOException e) {
+                        WGLOG.error(e, "E00001",
+                                sessionId,
+                                profile.getName(),
+                                script.getName(),
+                                resource.getName());
+                        throw new IOException(MessageFormat.format(
+                                "Failed to initializing resource \"{0}\" (session={1})",
+                                resource.getName(),
+                                sessionId), e);
                     }
+                    return null;
                 });
                 futures.add(future);
             }
@@ -341,29 +337,26 @@ public class GateTask implements Closeable {
     private void prepareResources(List<ResourceMirror> resources) throws IOException {
         assert resources != null;
         LinkedList<Future<?>> futures = new LinkedList<>();
-        for (final ResourceMirror resource : resources) {
-            Future<?> future = executor.submit(new Callable<Void>() {
-                @Override
-                public Void call() throws IOException {
-                    LOG.debug("Preparing resource \"{}\"",
-                            resource.getName());
-                    try {
-                        if (RuntimeContext.get().canExecute(resource)) {
-                            resource.prepare(script);
-                        }
-                    } catch (IOException e) {
-                        WGLOG.error(e, "E00002",
-                                sessionId,
-                                profile.getName(),
-                                script.getName(),
-                                resource.getName());
-                        throw new IOException(MessageFormat.format(
-                                "Preparing {0} failed (session={1})",
-                                resource.getName(),
-                                sessionId), e);
+        for (ResourceMirror resource : resources) {
+            Future<?> future = executor.submit(() -> {
+                LOG.debug("Preparing resource \"{}\"",
+                        resource.getName());
+                try {
+                    if (RuntimeContext.get().canExecute(resource)) {
+                        resource.prepare(script);
                     }
-                    return null;
+                } catch (IOException e) {
+                    WGLOG.error(e, "E00002",
+                            sessionId,
+                            profile.getName(),
+                            script.getName(),
+                            resource.getName());
+                    throw new IOException(MessageFormat.format(
+                            "Preparing {0} failed (session={1})",
+                            resource.getName(),
+                            sessionId), e);
                 }
+                return null;
             });
             futures.add(future);
         }
@@ -375,38 +368,35 @@ public class GateTask implements Closeable {
 
     private void runGateProcesses(List<ResourceMirror> resources) throws IOException {
         assert resources != null;
-        final DriverRepository drivers = new DriverRepository(resources);
+        DriverRepository drivers = new DriverRepository(resources);
         LinkedList<Future<?>> futures = new LinkedList<>();
-        for (final ProcessScript<?> process : script.getProcesses()) {
-            final ProcessProvider processProvider = processProviders.get(process.getProcessType());
+        for (ProcessScript<?> process : script.getProcesses()) {
+            ProcessProvider processProvider = processProviders.get(process.getProcessType());
             assert processProvider != null;
-            Future<?> future = executor.submit(new Callable<Void>() {
-                @Override
-                public Void call() throws IOException {
-                    LOG.debug("Starting gate process: {}",
-                            process.getName(),
-                            sessionId);
-                    try {
-                        if (RuntimeContext.get().canExecute(processProvider)) {
-                            processProvider.execute(drivers, process);
-                        } else {
-                            LOG.info("Skipped process execution (simulated)");
-                        }
-                    } catch (IOException e) {
-                        WGLOG.error(e, "E00003",
-                                sessionId,
-                                profile.getName(),
-                                script.getName(),
-                                process.getName());
-                        throw new IOException(MessageFormat.format(
-                                "Process {0} failed: source={1} -> drain={2} (session={3})",
-                                process.getName(),
-                                process.getSourceScript().getResourceName(),
-                                process.getDrainScript().getResourceName(),
-                                sessionId), e);
+            Future<?> future = executor.submit(() -> {
+                LOG.debug("Starting gate process: {}",
+                        process.getName(),
+                        sessionId);
+                try {
+                    if (RuntimeContext.get().canExecute(processProvider)) {
+                        processProvider.execute(drivers, process);
+                    } else {
+                        LOG.info("Skipped process execution (simulated)");
                     }
-                    return null;
+                } catch (IOException e) {
+                    WGLOG.error(e, "E00003",
+                            sessionId,
+                            profile.getName(),
+                            script.getName(),
+                            process.getName());
+                    throw new IOException(MessageFormat.format(
+                            "Process {0} failed: source={1} -> drain={2} (session={3})",
+                            process.getName(),
+                            process.getSourceScript().getResourceName(),
+                            process.getDrainScript().getResourceName(),
+                            sessionId), e);
                 }
+                return null;
             });
             futures.add(future);
         }
@@ -421,31 +411,28 @@ public class GateTask implements Closeable {
     private void fireSessionCompleted(List<ResourceMirror> resources) throws IOException {
         assert resources != null;
         LinkedList<Future<?>> futures = new LinkedList<>();
-        for (final ResourceMirror resource : resources) {
+        for (ResourceMirror resource : resources) {
             if (resource.isTransactional() == false) {
-                Future<?> future = executor.submit(new Callable<Void>() {
-                    @Override
-                    public Void call() throws IOException {
-                        LOG.debug("Finalizing resource \"{}\" for session \"{}\"",
-                                resource.getName(),
-                                sessionId);
-                        try {
-                            if (RuntimeContext.get().canExecute(resource)) {
-                                resource.onSessionCompleting();
-                            }
-                        } catch (IOException e) {
-                            WGLOG.error(e, "E00004",
-                                    sessionId,
-                                    profile.getName(),
-                                    script.getName(),
-                                    resource.getName());
-                            throw new IOException(MessageFormat.format(
-                                    "Failed to finalizing resource \"{0}\" (session={1})",
-                                    resource.getName(),
-                                    sessionId), e);
+                Future<?> future = executor.submit(() -> {
+                    LOG.debug("Finalizing resource \"{}\" for session \"{}\"",
+                            resource.getName(),
+                            sessionId);
+                    try {
+                        if (RuntimeContext.get().canExecute(resource)) {
+                            resource.onSessionCompleting();
                         }
-                        return null;
+                    } catch (IOException e) {
+                        WGLOG.error(e, "E00004",
+                                sessionId,
+                                profile.getName(),
+                                script.getName(),
+                                resource.getName());
+                        throw new IOException(MessageFormat.format(
+                                "Failed to finalizing resource \"{0}\" (session={1})",
+                                resource.getName(),
+                                sessionId), e);
                     }
+                    return null;
                 });
                 futures.add(future);
             }
@@ -456,7 +443,7 @@ public class GateTask implements Closeable {
                     "Failed to complete session: {0}",
                     sessionId));
         }
-        for (final ResourceMirror resource : resources) {
+        for (ResourceMirror resource : resources) {
             if (resource.isTransactional()) {
                 LOG.debug("Finalizing transactional resource \"{}\" for session \"{}\"",
                         resource.getName(),

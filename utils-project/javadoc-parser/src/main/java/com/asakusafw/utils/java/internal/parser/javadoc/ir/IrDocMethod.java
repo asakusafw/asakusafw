@@ -84,7 +84,7 @@ public class IrDocMethod extends IrDocMember {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final IrDocMethod other = (IrDocMethod) obj;
+        IrDocMethod other = (IrDocMethod) obj;
         IrDocNamedType type = getDeclaringType();
         IrDocNamedType oType = other.getDeclaringType();
         if (type == null) {

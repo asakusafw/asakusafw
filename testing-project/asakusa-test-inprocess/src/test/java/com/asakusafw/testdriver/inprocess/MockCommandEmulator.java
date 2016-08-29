@@ -63,6 +63,7 @@ public class MockCommandEmulator extends CommandEmulator {
         callback = tool;
     }
 
+    @FunctionalInterface
     interface Callback {
         void run(List<String> args) throws IOException, InterruptedException;
     }

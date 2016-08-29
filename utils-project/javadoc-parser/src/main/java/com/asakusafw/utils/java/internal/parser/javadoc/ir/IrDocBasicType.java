@@ -80,7 +80,7 @@ public class IrDocBasicType extends AbstractIrDocElement implements IrDocType {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final IrDocBasicType other = (IrDocBasicType) obj;
+        IrDocBasicType other = (IrDocBasicType) obj;
         if (!typeKind.equals(other.typeKind)) {
             return false;
         }

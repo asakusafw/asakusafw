@@ -39,20 +39,10 @@ public class MockStreamFormat extends BinaryStreamFormat<Text> {
     }
 
     @Override
-    public long getPreferredFragmentSize() throws IOException, InterruptedException {
-        return -1;
-    }
-
-    @Override
-    public long getMinimumFragmentSize() throws IOException, InterruptedException {
-        return -1;
-    }
-
-    @Override
     public ModelInput<Text> createInput(Class<? extends Text> dataType, String path,
             InputStream stream, long offset, long fragmentSize) throws IOException,
             InterruptedException {
-        final Scanner s = new Scanner(stream, "UTF-8");
+        Scanner s = new Scanner(stream, "UTF-8");
         return new ModelInput<Text>() {
             @Override
             public boolean readTo(Text model) throws IOException {
@@ -72,7 +62,7 @@ public class MockStreamFormat extends BinaryStreamFormat<Text> {
     @Override
     public ModelOutput<Text> createOutput(Class<? extends Text> dataType, String path,
             OutputStream stream) throws IOException, InterruptedException {
-        final PrintWriter w = new PrintWriter(new OutputStreamWriter(stream));
+        PrintWriter w = new PrintWriter(new OutputStreamWriter(stream));
         return new ModelOutput<Text>() {
             @Override
             public void write(Text model) throws IOException {

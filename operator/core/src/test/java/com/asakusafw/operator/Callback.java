@@ -239,7 +239,7 @@ public abstract class Callback {
      * @param type target type
      * @return the matcher
      */
-    public Matcher<TypeMirror> sameType(final TypeMirror type) {
+    public Matcher<TypeMirror> sameType(TypeMirror type) {
         return new BaseMatcher<TypeMirror>() {
             @Override
             public boolean matches(Object arg) {
@@ -257,7 +257,7 @@ public abstract class Callback {
      * @param kind target type kind
      * @return the matcher
      */
-    public Matcher<TypeMirror> kindOf(final TypeKind kind) {
+    public Matcher<TypeMirror> kindOf(TypeKind kind) {
         return new BaseMatcher<TypeMirror>() {
             @Override
             public boolean matches(Object arg) {

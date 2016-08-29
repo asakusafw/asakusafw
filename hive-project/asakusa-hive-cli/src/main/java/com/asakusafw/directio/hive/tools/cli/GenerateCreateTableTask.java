@@ -25,6 +25,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
@@ -33,7 +34,6 @@ import org.slf4j.LoggerFactory;
 import com.asakusafw.directio.hive.info.TableInfo;
 import com.asakusafw.directio.hive.syntax.HiveCreateTable;
 import com.asakusafw.directio.hive.syntax.HiveQlEmitter;
-import com.asakusafw.directio.hive.tools.cli.ClassCollector.Selector;
 
 /**
  * Generate HiveQL for {@link HiveCreateTable}.
@@ -93,22 +93,18 @@ public class GenerateCreateTableTask {
     }
 
     private ClassCollector collect(Configuration configuration) {
-        final Pattern pattern = configuration.acceptTableNames;
-        ClassCollector collector = new ClassCollector(configuration.classLoader, new Selector() {
-            @Override
-            public boolean accept(Class<?> aClass) {
-                TableInfo info = getSchema(aClass);
-                if (info == null) {
+        ClassCollector collector = new ClassCollector(configuration.classLoader, aClass -> {
+            TableInfo info = getSchema(aClass);
+            if (info == null) {
+                return false;
+            }
+            if (configuration.acceptTableNames != null) {
+                if (configuration.acceptTableNames.matcher(info.getName()).matches() == false) {
+                    LOG.debug("filtered table: {}", info.getName()); //$NON-NLS-1$
                     return false;
                 }
-                if (pattern != null) {
-                    if (pattern.matcher(info.getName()).matches() == false) {
-                        LOG.debug("filtered table: {}", info.getName()); //$NON-NLS-1$
-                        return false;
-                    }
-                }
-                return true;
             }
+            return true;
         });
         return collector;
     }
@@ -142,7 +138,7 @@ public class GenerateCreateTableTask {
 
         final Pattern acceptTableNames;
 
-        final Stringnizer locationProvider;
+        final Function<? super TableInfo, ? extends String> locationProvider;
 
         final String databaseName;
 
@@ -161,7 +157,7 @@ public class GenerateCreateTableTask {
                 ClassLoader classLoader,
                 List<File> sources,
                 Pattern acceptTableNames,
-                Stringnizer locationProvider,
+                Function<? super TableInfo, ? extends String> locationProvider,
                 String databaseName,
                 File output) {
             this.classLoader = classLoader;
@@ -209,7 +205,7 @@ public class GenerateCreateTableTask {
             if (configuration.locationProvider == null) {
                 return null;
             }
-            return configuration.locationProvider.toString(table);
+            return configuration.locationProvider.apply(table);
         }
     }
 }

@@ -194,7 +194,7 @@ public class BasicScriptHandlerTestRoot {
      * @param <T> the test target data type
      * @return the matcher
      */
-    protected static <T> Matcher<Iterable<T>> has(final Matcher<T> matcher) {
+    protected static <T> Matcher<Iterable<T>> has(Matcher<T> matcher) {
         return new BaseMatcher<Iterable<T>>() {
             @Override
             public boolean matches(Object item) {

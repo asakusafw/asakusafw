@@ -37,7 +37,9 @@ public interface ImporterDescription {
      * Returns the estimated data size.
      * @return the estimated data size
      */
-    DataSize getDataSize();
+    default DataSize getDataSize() {
+        return DataSize.UNKNOWN;
+    }
 
     /**
      * Represents a kind of estimated input data size.

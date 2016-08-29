@@ -549,7 +549,7 @@ public class HadoopDataSourceUtilTest {
         return normalized;
     }
 
-    private Matcher<List<String>> path(final String... paths) {
+    private Matcher<List<String>> path(String... paths) {
         return new BaseMatcher<List<String>>() {
             @Override
             public boolean matches(Object obj) {
