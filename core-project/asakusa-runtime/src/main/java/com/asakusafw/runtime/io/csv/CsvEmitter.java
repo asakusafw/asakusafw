@@ -19,9 +19,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.BitSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.IntStream;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -61,6 +63,10 @@ public class CsvEmitter implements RecordEmitter {
 
     private final String falseFormat;
 
+    private final boolean escapeTrue;
+
+    private final boolean escapeFalse;
+
     private final DateFormatter dateFormat;
 
     private final boolean escapeDate;
@@ -81,6 +87,10 @@ public class CsvEmitter implements RecordEmitter {
 
     private final Pattern escapePattern;
 
+    private final BitSet forceEscapeMask;
+
+    private int columnIndex;
+
     /**
      * Creates a new instance.
      * @param stream the target stream
@@ -100,12 +110,25 @@ public class CsvEmitter implements RecordEmitter {
         this.escapePattern = Pattern.compile(
                 "[" + ESCAPE + separator + LINE_DELIMITER + "]"); //$NON-NLS-1$ //$NON-NLS-2$
         this.trueFormat = escape(config.getTrueFormat());
+        this.escapeTrue = hasEscapeTarget(config.getTrueFormat());
         this.falseFormat = escape(config.getFalseFormat());
+        this.escapeFalse = hasEscapeTarget(config.getFalseFormat());
         this.dateFormat = DateFormatter.newInstance(config.getDateFormat());
         this.escapeDate = hasMetaCharacter(dateFormat.getPattern());
         this.dateTimeFormat = DateTimeFormatter.newInstance(config.getDateTimeFormat());
         this.escapeDateTime = hasMetaCharacter(dateTimeFormat.getPattern());
         this.headerCellsFormat = config.getHeaderCells();
+        this.forceEscapeMask = buildQuoteMask(config.getForceQuoteColumns());
+        this.columnIndex = 0;
+    }
+
+    private BitSet buildQuoteMask(int[] indices) {
+        if (indices.length == 0) {
+            return null;
+        }
+        BitSet results = new BitSet();
+        IntStream.of(indices).forEach(results::set);
+        return results;
     }
 
     private String escape(String string) {
@@ -127,19 +150,26 @@ public class CsvEmitter implements RecordEmitter {
     public void emit(BooleanOption option) throws IOException {
         addCellDelimiter();
         if (option.isNull() == false) {
-            lineBuffer.append(toString(option.get()));
+            boolean value = option.get();
+            String str = value ? trueFormat : falseFormat;
+            boolean raw = value ? escapeTrue == false : escapeFalse == false;
+            if (raw && isEscapeTarget()) {
+                lineBuffer.append(ESCAPE).append(str).append(ESCAPE);
+            } else {
+                lineBuffer.append(str);
+            }
         }
-    }
-
-    private String toString(boolean value) {
-        return value ? trueFormat : falseFormat;
     }
 
     @Override
     public void emit(ByteOption option) throws IOException {
         addCellDelimiter();
         if (option.isNull() == false) {
-            lineBuffer.append(option.get());
+            if (isEscapeTarget()) {
+                lineBuffer.append(ESCAPE).append(option.get()).append(ESCAPE);
+            } else {
+                lineBuffer.append(option.get());
+            }
         }
     }
 
@@ -147,7 +177,11 @@ public class CsvEmitter implements RecordEmitter {
     public void emit(ShortOption option) throws IOException {
         addCellDelimiter();
         if (option.isNull() == false) {
-            lineBuffer.append(option.get());
+            if (isEscapeTarget()) {
+                lineBuffer.append(ESCAPE).append(option.get()).append(ESCAPE);
+            } else {
+                lineBuffer.append(option.get());
+            }
         }
     }
 
@@ -155,7 +189,11 @@ public class CsvEmitter implements RecordEmitter {
     public void emit(IntOption option) throws IOException {
         addCellDelimiter();
         if (option.isNull() == false) {
-            lineBuffer.append(option.get());
+            if (isEscapeTarget()) {
+                lineBuffer.append(ESCAPE).append(option.get()).append(ESCAPE);
+            } else {
+                lineBuffer.append(option.get());
+            }
         }
     }
 
@@ -163,7 +201,11 @@ public class CsvEmitter implements RecordEmitter {
     public void emit(LongOption option) throws IOException {
         addCellDelimiter();
         if (option.isNull() == false) {
-            lineBuffer.append(option.get());
+            if (isEscapeTarget()) {
+                lineBuffer.append(ESCAPE).append(option.get()).append(ESCAPE);
+            } else {
+                lineBuffer.append(option.get());
+            }
         }
     }
 
@@ -171,7 +213,11 @@ public class CsvEmitter implements RecordEmitter {
     public void emit(FloatOption option) throws IOException {
         addCellDelimiter();
         if (option.isNull() == false) {
-            lineBuffer.append(option.get());
+            if (isEscapeTarget()) {
+                lineBuffer.append(ESCAPE).append(option.get()).append(ESCAPE);
+            } else {
+                lineBuffer.append(option.get());
+            }
         }
     }
 
@@ -179,7 +225,11 @@ public class CsvEmitter implements RecordEmitter {
     public void emit(DoubleOption option) throws IOException {
         addCellDelimiter();
         if (option.isNull() == false) {
-            lineBuffer.append(option.get());
+            if (isEscapeTarget()) {
+                lineBuffer.append(ESCAPE).append(option.get()).append(ESCAPE);
+            } else {
+                lineBuffer.append(option.get());
+            }
         }
     }
 
@@ -187,7 +237,11 @@ public class CsvEmitter implements RecordEmitter {
     public void emit(DecimalOption option) throws IOException {
         addCellDelimiter();
         if (option.isNull() == false) {
-            lineBuffer.append(option.get());
+            if (isEscapeTarget()) {
+                lineBuffer.append(ESCAPE).append(option.get()).append(ESCAPE);
+            } else {
+                lineBuffer.append(option.get());
+            }
         }
     }
 
@@ -196,7 +250,7 @@ public class CsvEmitter implements RecordEmitter {
         addCellDelimiter();
         if (option.isNull() == false) {
             String str = option.getAsString();
-            if (hasEscapeTarget(str)) {
+            if (isEscapeTarget() || hasEscapeTarget(str)) {
                 appendEscaped(lineBuffer, str);
             } else {
                 lineBuffer.append(str);
@@ -219,7 +273,7 @@ public class CsvEmitter implements RecordEmitter {
         addCellDelimiter();
         if (option.isNull() == false) {
             CharSequence string = dateFormat.format(option.get().getElapsedDays());
-            if (escapeDate) {
+            if (escapeDate || isEscapeTarget()) {
                 appendEscaped(lineBuffer, string);
             } else {
                 lineBuffer.append(string);
@@ -232,12 +286,17 @@ public class CsvEmitter implements RecordEmitter {
         addCellDelimiter();
         if (option.isNull() == false) {
             CharSequence string = dateTimeFormat.format(option.get().getElapsedSeconds());
-            if (escapeDateTime) {
+            if (escapeDateTime || isEscapeTarget()) {
                 appendEscaped(lineBuffer, string);
             } else {
                 lineBuffer.append(string);
             }
         }
+    }
+
+    private boolean isEscapeTarget() {
+        BitSet mask = forceEscapeMask;
+        return mask != null && mask.get(columnIndex);
     }
 
     private void appendEscaped(StringBuilder buffer, CharSequence string) {
@@ -269,6 +328,7 @@ public class CsvEmitter implements RecordEmitter {
             firstCell = false;
         } else {
             lineBuffer.append(separator);
+            columnIndex++;
         }
     }
 
@@ -278,6 +338,7 @@ public class CsvEmitter implements RecordEmitter {
         flushBuffer();
         firstLine = false;
         firstCell = true;
+        columnIndex = 0;
     }
 
     @Override

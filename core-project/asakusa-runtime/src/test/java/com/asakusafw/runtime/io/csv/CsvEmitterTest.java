@@ -21,6 +21,7 @@ import static org.junit.Assert.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -67,6 +68,8 @@ public class CsvEmitterTest {
 
     private String dateTimeFormat = CsvConfiguration.DEFAULT_DATE_TIME_FORMAT;
 
+    private final List<Integer> quote = new ArrayList<>();
+
     private CsvEmitter createEmitter() {
         CsvConfiguration conf = createConfiguration();
         return new CsvEmitter(output, testName.getMethodName(), conf);
@@ -85,6 +88,7 @@ public class CsvEmitterTest {
                 falseFormat,
                 dateFormat,
                 dateTimeFormat);
+        conf.setForceQuoteColumns(quote.stream().mapToInt(i -> i).toArray());
         return conf;
     }
 
@@ -143,6 +147,28 @@ public class CsvEmitterTest {
         falseFormat = "true";
         assertRestorable(new BooleanOption(true));
         assertRestorable(new BooleanOption(false));
+
+        trueFormat = "\"T\"";
+        falseFormat = "\"F\"";
+        assertRestorable(new BooleanOption(true));
+        assertRestorable(new BooleanOption(false));
+    }
+
+    /**
+     * test for boolean values.
+     * @throws Exception if failed
+     */
+    @Test
+    public void boolean_values_quote() throws Exception {
+        quote.add(0);
+        assertRestorable(new BooleanOption(true));
+        assertRestorable(new BooleanOption(false));
+        assertRestorable(new BooleanOption());
+
+        trueFormat = "\"T\"";
+        falseFormat = "\"F\"";
+        assertRestorable(new BooleanOption(true));
+        assertRestorable(new BooleanOption(false));
     }
 
     /**
@@ -158,6 +184,19 @@ public class CsvEmitterTest {
         assertRestorable(new ByteOption((byte) -50));
         assertRestorable(new ByteOption(Byte.MAX_VALUE));
         assertRestorable(new ByteOption(Byte.MIN_VALUE));
+        assertRestorable(new ByteOption());
+    }
+
+    /**
+     * test for byte values.
+     * @throws Exception if failed
+     */
+    @Test
+    public void byte_values_quote() throws Exception {
+        quote.add(0);
+        assertRestorable(new ByteOption((byte) 0));
+        assertRestorable(new ByteOption((byte) 1));
+        assertRestorable(new ByteOption((byte) -1));
         assertRestorable(new ByteOption());
     }
 
@@ -178,6 +217,18 @@ public class CsvEmitterTest {
     }
 
     /**
+     * test for short values.
+     * @throws Exception if failed
+     */
+    @Test
+    public void short_values_quote() throws Exception {
+        quote.add(0);
+        assertRestorable(new ShortOption((short) 0));
+        assertRestorable(new ShortOption((short) 1));
+        assertRestorable(new ShortOption((short) -1));
+    }
+
+    /**
      * test for int values.
      * @throws Exception if failed
      */
@@ -191,6 +242,18 @@ public class CsvEmitterTest {
         assertRestorable(new IntOption(Integer.MAX_VALUE));
         assertRestorable(new IntOption(Integer.MIN_VALUE));
         assertRestorable(new IntOption());
+    }
+
+    /**
+     * test for int values.
+     * @throws Exception if failed
+     */
+    @Test
+    public void int_values_quote() throws Exception {
+        quote.add(0);
+        assertRestorable(new IntOption(0));
+        assertRestorable(new IntOption(1));
+        assertRestorable(new IntOption(-1));
     }
 
     /**
@@ -210,6 +273,18 @@ public class CsvEmitterTest {
     }
 
     /**
+     * test for long values.
+     * @throws Exception if failed
+     */
+    @Test
+    public void long_vaules_quote() throws Exception {
+        quote.add(0);
+        assertRestorable(new LongOption(0));
+        assertRestorable(new LongOption(1));
+        assertRestorable(new LongOption(-1));
+    }
+
+    /**
      * test for float values.
      * @throws Exception if failed
      */
@@ -223,6 +298,18 @@ public class CsvEmitterTest {
         assertRestorable(new FloatOption(Float.MAX_VALUE));
         assertRestorable(new FloatOption(Float.MIN_VALUE));
         assertRestorable(new FloatOption());
+    }
+
+    /**
+     * test for float values.
+     * @throws Exception if failed
+     */
+    @Test
+    public void float_values_quote() throws Exception {
+        quote.add(0);
+        assertRestorable(new FloatOption(0));
+        assertRestorable(new FloatOption(1));
+        assertRestorable(new FloatOption(-1));
     }
 
     /**
@@ -242,6 +329,18 @@ public class CsvEmitterTest {
     }
 
     /**
+     * test for double values.
+     * @throws Exception if failed
+     */
+    @Test
+    public void double_values_quote() throws Exception {
+        quote.add(0);
+        assertRestorable(new DoubleOption(0));
+        assertRestorable(new DoubleOption(1));
+        assertRestorable(new DoubleOption(-1));
+    }
+
+    /**
      * test for decimal values.
      * @throws Exception if failed
      */
@@ -256,6 +355,19 @@ public class CsvEmitterTest {
         assertRestorable(new DecimalOption(decimal("3.1415")));
         assertRestorable(new DecimalOption(decimal("-3.1415")));
         assertRestorable(new DecimalOption());
+    }
+
+    /**
+     * test for decimal values.
+     * @throws Exception if failed
+     */
+    @Test
+    public void decimal_values_quote() throws Exception {
+        quote.add(0);
+        assertRestorable(new DecimalOption(decimal("0")));
+        assertRestorable(new DecimalOption(decimal("-100")));
+        assertRestorable(new DecimalOption(decimal("1")));
+        assertRestorable(new DecimalOption(decimal("-1")));
     }
 
     private BigDecimal decimal(String string) {
@@ -275,11 +387,51 @@ public class CsvEmitterTest {
     }
 
     /**
+     * test for text values.
+     * @throws Exception if failed
+     */
+    @Test
+    public void text_values_quote() throws Exception {
+        quote.add(0);
+        assertRestorable(new StringOption("Hello"));
+        assertRestorable(new StringOption("\u3042\u3044\u3046\u3048\u304a"));
+        assertRestorable(new StringOption("\",\r\n\t "));
+    }
+
+    /**
      * test for date values.
      * @throws Exception if failed
      */
     @Test
     public void date_values() throws Exception {
+        assertRestorable(new DateOption(new Date(2011, 3, 31)));
+        assertRestorable(new DateOption(new Date(1971, 4, 1)));
+        assertRestorable(new DateOption());
+
+        dateFormat = "yyyy-MM\"dd";
+        assertRestorable(new DateOption(new Date(2011, 3, 31)));
+        assertRestorable(new DateOption(new Date(1971, 4, 1)));
+
+        dateFormat = "yyyy-MM,dd";
+        assertRestorable(new DateOption(new Date(2011, 3, 31)));
+        assertRestorable(new DateOption(new Date(1971, 4, 1)));
+
+        dateFormat = "yyyy-MM\ndd";
+        assertRestorable(new DateOption(new Date(2011, 3, 31)));
+        assertRestorable(new DateOption(new Date(1971, 4, 1)));
+
+        dateFormat = "yyyy-MM\rdd";
+        assertRestorable(new DateOption(new Date(2011, 3, 31)));
+        assertRestorable(new DateOption(new Date(1971, 4, 1)));
+    }
+
+    /**
+     * test for date values.
+     * @throws Exception if failed
+     */
+    @Test
+    public void date_values_quote() throws Exception {
+        quote.add(0);
         assertRestorable(new DateOption(new Date(2011, 3, 31)));
         assertRestorable(new DateOption(new Date(1971, 4, 1)));
         assertRestorable(new DateOption());
@@ -319,6 +471,34 @@ public class CsvEmitterTest {
      */
     @Test
     public void datetime_values() throws Exception {
+        assertRestorable(new DateTimeOption(new DateTime(2011, 3, 31, 23, 59, 59)));
+        assertRestorable(new DateTimeOption(new DateTime(1971, 4, 1, 2 ,3, 4)));
+        assertRestorable(new DateTimeOption());
+
+        dateTimeFormat = "yyyy-MM\"dd HH:mm:ss";
+        assertRestorable(new DateTimeOption(new DateTime(2011, 3, 31, 23, 59, 59)));
+        assertRestorable(new DateTimeOption(new DateTime(1971, 4, 1, 2 ,3, 4)));
+
+        dateTimeFormat = "yyyy-MM,dd HH:mm:ss";
+        assertRestorable(new DateTimeOption(new DateTime(2011, 3, 31, 23, 59, 59)));
+        assertRestorable(new DateTimeOption(new DateTime(1971, 4, 1, 2 ,3, 4)));
+
+        dateTimeFormat = "yyyy-MM\ndd HH:mm:ss";
+        assertRestorable(new DateTimeOption(new DateTime(2011, 3, 31, 23, 59, 59)));
+        assertRestorable(new DateTimeOption(new DateTime(1971, 4, 1, 2 ,3, 4)));
+
+        dateTimeFormat = "yyyy-MM\rdd HH:mm:ss";
+        assertRestorable(new DateTimeOption(new DateTime(2011, 3, 31, 23, 59, 59)));
+        assertRestorable(new DateTimeOption(new DateTime(1971, 4, 1, 2 ,3, 4)));
+    }
+
+    /**
+     * test for date-time values.
+     * @throws Exception if failed
+     */
+    @Test
+    public void datetime_values_quote() throws Exception {
+        quote.add(0);
         assertRestorable(new DateTimeOption(new DateTime(2011, 3, 31, 23, 59, 59)));
         assertRestorable(new DateTimeOption(new DateTime(1971, 4, 1, 2 ,3, 4)));
         assertRestorable(new DateTimeOption());

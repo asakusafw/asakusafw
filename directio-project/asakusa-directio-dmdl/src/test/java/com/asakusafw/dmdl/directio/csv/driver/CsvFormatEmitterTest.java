@@ -176,6 +176,26 @@ public class CsvFormatEmitterTest extends GeneratorTesterRoot {
     }
 
     /**
+     * quoted.
+     * @throws Exception if failed
+     */
+    @Test
+    public void quote() throws Exception {
+        ModelLoader loaded = generateJava("quote");
+        ModelWrapper model = loaded.newModel("Simple");
+        BinaryStreamFormat<?> support = (BinaryStreamFormat<?>) loaded.newObject("csv", "SimpleCsvFormat");
+        BinaryStreamFormat<Object> unsafe = unsafe(support);
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        try (ModelOutput<Object> writer = unsafe.createOutput(model.unwrap().getClass(), "hello", output)) {
+            model.set("value", new Text("hello-world"));
+            writer.write(model.unwrap());
+            model.set("value", new Text("hello,world"));
+            writer.write(model.unwrap());
+        }
+        assertThat(scan(output.toByteArray()), contains("\"hello-world\"", "\"hello,world\""));
+    }
+
+    /**
      * With compression.
      * @throws Exception if failed
      */
