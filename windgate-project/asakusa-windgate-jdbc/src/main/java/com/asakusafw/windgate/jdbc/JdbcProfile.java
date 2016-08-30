@@ -20,11 +20,16 @@ import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.text.MessageFormat;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +41,7 @@ import com.asakusafw.windgate.core.util.PropertiesUtil;
 /**
  * A structured profile for {@link JdbcResourceMirror}.
  * @since 0.2.2
+ * @since 0.9.0
  */
 public class JdbcProfile {
 
@@ -99,6 +105,12 @@ public class JdbcProfile {
     public static final String KEY_PREFIX_PROPERTIES = "properties.";
 
     /**
+     * The profile key of {@link #getOptimizations()}.
+     * @since 0.9.0
+     */
+    public static final String KEY_OPTIMIZATIONS = "optimizations";
+
+    /**
      * The default value of {@link #KEY_BATCH_GET_UNIT}.
      * @since 0.2.4
      */
@@ -141,6 +153,8 @@ public class JdbcProfile {
     private final String password;
 
     private final Map<String, String> connectionProperties;
+
+    private Set<String> optimizations = Collections.emptySet();
 
     private volatile int batchGetUnit = DEFAULT_BATCH_GET_UNIT;
 
@@ -245,6 +259,7 @@ public class JdbcProfile {
         if (truncateStatement == null) {
             truncateStatement = DEFAULT_TRUNCATE_STATEMENT;
         }
+        Set<String> optimizations = extractSet(profile, KEY_OPTIMIZATIONS);
         try {
             MessageFormat.format(truncateStatement, "dummy");
         } catch (IllegalArgumentException e) {
@@ -264,6 +279,7 @@ public class JdbcProfile {
         result.setConnectRetryCount(connectRetryCount);
         result.setConnectRetryInterval(connectRetryInterval);
         result.setTruncateStatement(truncateStatement);
+        result.setOptimizations(optimizations);
         return result;
     }
 
@@ -350,6 +366,19 @@ public class JdbcProfile {
                     valueString));
         }
         return value;
+    }
+
+    private static Set<String> extractSet(ResourceProfile profile, String key) {
+        assert profile != null;
+        assert key != null;
+        String valueString = extract(profile, key, false);
+        if (valueString == null || valueString.isEmpty()) {
+            return Collections.emptySet();
+        }
+        return Stream.of(valueString.split(","))
+                .map(String::trim)
+                .filter(s -> s.isEmpty() == false)
+                .collect(Collectors.toSet());
     }
 
     private static String extract(ResourceProfile profile, String configKey, boolean mandatory) {
@@ -615,6 +644,7 @@ public class JdbcProfile {
      * Configures {@link #KEY_TRUNCATE_STATEMENT}.
      * @param pattern to set
      * @throws IllegalArgumentException if the pattern is not in form of message format
+     * @since 0.2.4
      */
     public void setTruncateStatement(String pattern) {
         if (pattern == null) {
@@ -622,5 +652,25 @@ public class JdbcProfile {
         }
         MessageFormat.format(pattern, "example");
         this.truncateStatement = pattern;
+    }
+
+    /**
+     * Returns the optimizations.
+     * @return the optimizations
+     * @see com.asakusafw.windgate.core.vocabulary.JdbcProcess.OptionSymbols
+     * @since 0.9.0
+     */
+    public Set<String> getOptimizations() {
+        return optimizations;
+    }
+
+    /**
+     * Sets the enabled optimization symbols.
+     * @param optimizations the symbols
+     * @see com.asakusafw.windgate.core.vocabulary.JdbcProcess.OptionSymbols
+     * @since 0.9.0
+     */
+    public void setOptimizations(Collection<String> optimizations) {
+        this.optimizations = Collections.unmodifiableSet(new LinkedHashSet<>(optimizations));
     }
 }

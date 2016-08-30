@@ -27,6 +27,8 @@ import java.util.List;
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.asakusafw.windgate.core.vocabulary.JdbcProcess;
+
 /**
  * Test for {@link JdbcDrainDriver}.
  */
@@ -281,6 +283,30 @@ public class JdbcDrainDriverTest {
                     // ok.
                 }
             }
+        }
+    }
+
+    /**
+     * w/ oracle dirpath.
+     * This optimization is only a hint of SQL, so that the modified SQL is still valid.
+     * @throws Exception if failed
+     */
+    @Test
+    public void optimization_oracle_dirpath() throws Exception {
+        try (Connection conn = h2.open()) {
+            JdbcScript<Pair> script = new JdbcScript<>(
+                    "testing",
+                    new PairSupport(),
+                    "PAIR",
+                    Arrays.asList("KEY", "VALUE"),
+                    null).withOptions(Arrays.asList(JdbcProcess.OptionSymbols.ORACLE_DIRPATH));
+            JdbcProfile profile = profile();
+            profile.setOptimizations(Arrays.asList(JdbcProcess.OptionSymbols.ORACLE_DIRPATH));
+            try (JdbcDrainDriver<Pair> driver = new JdbcDrainDriver<>(profile, script, conn, true)) {
+                driver.prepare();
+                driver.put(new Pair(1, "Hello, world!"));
+            }
+            test("Hello, world!");
         }
     }
 

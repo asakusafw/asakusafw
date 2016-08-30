@@ -89,10 +89,12 @@ public class JdbcProfileTest {
         map.put(JdbcProfile.KEY_PREFIX_PROPERTIES + "hello1", "world1");
         map.put(JdbcProfile.KEY_PREFIX_PROPERTIES + "hello2", "world2");
         map.put(JdbcProfile.KEY_PREFIX_PROPERTIES + "hello3", "world3");
+        map.put(JdbcProfile.KEY_OPTIMIZATIONS, " O,p, t");
 
         JdbcProfile profile = JdbcProfile.convert(toProfile(map));
         assertThat(profile.getBatchGetUnit(), is(5000));
         assertThat(profile.getBatchPutUnit(), is(10000L));
+        assertThat(profile.getOptimizations(), containsInAnyOrder("O", "p", "t"));
 
         Map<String, String> extra = new HashMap<>();
         extra.put("hello1", "world1");
