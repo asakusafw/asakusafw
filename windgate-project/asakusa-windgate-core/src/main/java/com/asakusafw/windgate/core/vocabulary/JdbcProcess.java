@@ -67,6 +67,7 @@ public enum JdbcProcess implements ConfigurationItem {
 
     /**
      * The script key of the operation options.
+     * @see OptionSymbols
      * @since 0.9.0
      */
     OPTIONS(
@@ -103,6 +104,27 @@ public enum JdbcProcess implements ConfigurationItem {
     @Override
     public String description() {
         return description;
+    }
+
+    /**
+     * The source/drain option kinds.
+     * @since 0.9.0
+     */
+    public static final class OptionSymbols {
+
+        /**
+         * The JDBC import/export option symbol of enabling postgres COPY statements.
+         */
+        public static final String POSTGRES_COPY = "POSTGRES_COPY"; //$NON-NLS-1$
+
+        /**
+         * The JDBC export option symbol of enabling Oracle direct path insert features.
+         */
+        public static final String ORACLE_DIRPATH = "ORACLE_DIRPATH"; //$NON-NLS-1$
+
+        private OptionSymbols() {
+            return;
+        }
     }
 
     /**

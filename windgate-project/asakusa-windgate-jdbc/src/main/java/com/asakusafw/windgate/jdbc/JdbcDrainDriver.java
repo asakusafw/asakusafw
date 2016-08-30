@@ -28,13 +28,14 @@ import org.slf4j.LoggerFactory;
 
 import com.asakusafw.windgate.core.WindGateLogger;
 import com.asakusafw.windgate.core.resource.DrainDriver;
+import com.asakusafw.windgate.core.vocabulary.JdbcProcess;
 import com.asakusafw.windgate.core.vocabulary.DataModelJdbcSupport.DataModelPreparedStatement;
 
 /**
  * An implementation of {@link DrainDriver} using JDBC.
  * @param <T> the type of data model object
  * @since 0.2.2
- * @version 0.7.3
+ * @version 0.9.0
  */
 public class JdbcDrainDriver<T> implements DrainDriver<T> {
 
@@ -167,11 +168,25 @@ public class JdbcDrainDriver<T> implements DrainDriver<T> {
     private String createSql() {
         assert script.getColumnNames().isEmpty() == false;
         assert script.getCondition() == null;
-        return MessageFormat.format(
-                "INSERT INTO {0} ({1}) VALUES ({2})",
-                script.getTableName(),
-                JdbcResourceUtil.join(script.getColumnNames()),
-                JdbcResourceUtil.join(Collections.nCopies(script.getColumnNames().size(), "?"))); //$NON-NLS-1$
+        StringBuilder buf = new StringBuilder();
+        buf.append("INSERT ");
+        if (isOptimizationEnabled(JdbcProcess.OptionSymbols.ORACLE_DIRPATH)) {
+            buf.append("/*+APPEND_VALUES*/ ");
+        }
+        buf.append("INTO ");
+        buf.append(script.getTableName());
+        buf.append(" (");
+        buf.append(String.join(",", script.getColumnNames())); //$NON-NLS-1$
+        buf.append(") ");
+        buf.append("VALUES ");
+        buf.append("(");
+        buf.append(String.join(",", Collections.nCopies(script.getColumnNames().size(), "?"))); //$NON-NLS-1$ //$NON-NLS-2$
+        buf.append(")");
+        return buf.toString();
+    }
+
+    private boolean isOptimizationEnabled(String symbol) {
+        return profile.getOptimizations().contains(symbol) && script.getOptions().contains(symbol);
     }
 
     @Override

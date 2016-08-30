@@ -28,12 +28,10 @@ final class JdbcDescriptionUtil {
             Class<?> modelType,
             Class<? extends DataModelJdbcSupport<?>> supportClass,
             String table,
-            List<String> columns,
-            Collection<String> options) {
+            List<String> columns) {
         checkTable(descriptionClass, table);
         checkColumns(descriptionClass, columns);
         checkSupportClass(descriptionClass, supportClass, modelType, columns);
-        checkOptions(descriptionClass, options);
     }
 
     private static void checkTable(String descriptionClass, String table) {
@@ -106,24 +104,6 @@ final class JdbcDescriptionUtil {
                     descriptionClass,
                     supportClass.getName(),
                     columns));
-        }
-    }
-
-    private static void checkOptions(String descriptionClass, Collection<String> options) {
-        if (options != null) {
-            for (String option : options) {
-                if (isEmpty(option)) {
-                    throw new IllegalStateException(MessageFormat.format(
-                            Messages.getString("JdbcDescriptionUtil.errorContainEmptyStringProperty"), //$NON-NLS-1$
-                            descriptionClass,
-                            "getOptions()")); //$NON-NLS-1$
-                } else if (option.indexOf(',') >= 0) {
-                    throw new IllegalStateException(MessageFormat.format(
-                            Messages.getString("JdbcDescriptionUtil.errorContainSeparatorProperty"), //$NON-NLS-1$
-                            descriptionClass,
-                            "getOptions()")); //$NON-NLS-1$
-                }
-            }
         }
     }
 

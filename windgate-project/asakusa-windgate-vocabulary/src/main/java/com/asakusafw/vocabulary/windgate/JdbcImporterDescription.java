@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.asakusafw.runtime.util.VariableTable;
 import com.asakusafw.windgate.core.DriverScript;
@@ -75,7 +76,7 @@ public abstract class JdbcImporterDescription extends WindGateImporterDescriptio
      * @return options
      * @since 0.9.0
      */
-    public Collection<String> getOptions() {
+    public Collection<Option> getOptions() {
         return Collections.emptySet();
     }
 
@@ -87,9 +88,9 @@ public abstract class JdbcImporterDescription extends WindGateImporterDescriptio
         String table = getTableName();
         List<String> columns = getColumnNames();
         String condition = getCondition();
-        Collection<String> options = getOptions();
+        Collection<Option> options = getOptions();
 
-        JdbcDescriptionUtil.checkCommonConfig(descriptionClass, modelType, supportClass, table, columns, options);
+        JdbcDescriptionUtil.checkCommonConfig(descriptionClass, modelType, supportClass, table, columns);
 
         Map<String, String> configuration = new HashMap<>();
         configuration.put(JdbcProcess.TABLE.key(), table);
@@ -99,10 +100,40 @@ public abstract class JdbcImporterDescription extends WindGateImporterDescriptio
             configuration.put(JdbcProcess.CONDITION.key(), condition);
         }
         if (options != null && options.isEmpty() == false) {
-            configuration.put(JdbcProcess.OPTIONS.key(), JdbcDescriptionUtil.join(options));
+            configuration.put(
+                    JdbcProcess.OPTIONS.key(),
+                    JdbcDescriptionUtil.join(options.stream().map(Option::getSymbol).collect(Collectors.toList())));
         }
 
         Set<String> parameters = VariableTable.collectVariableNames(condition);
         return new DriverScript(Constants.JDBC_RESOURCE_NAME, configuration, parameters);
+    }
+
+    /**
+     * JDBC import options.
+     * @see JdbcImporterDescription#getOptions()
+     * @since 0.9.0
+     */
+    public enum Option {
+
+        /**
+         * Use {@code COPY} statement instead of {@code SELECT} on postgresql.
+         */
+        POSTGRES_COPY(JdbcProcess.OptionSymbols.POSTGRES_COPY),
+        ;
+
+        private final String symbol;
+
+        Option(String symbol) {
+            this.symbol = symbol;
+        }
+
+        /**
+         * Returns the symbol.
+         * @return the symbol
+         */
+        String getSymbol() {
+            return symbol;
+        }
     }
 }

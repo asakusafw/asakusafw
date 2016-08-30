@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.asakusafw.runtime.util.VariableTable;
 import com.asakusafw.windgate.core.DriverScript;
@@ -77,7 +78,7 @@ public abstract class JdbcExporterDescription extends WindGateExporterDescriptio
      * @return options
      * @since 0.9.0
      */
-    public Collection<String> getOptions() {
+    public Collection<Option> getOptions() {
         return Collections.emptySet();
     }
 
@@ -89,9 +90,9 @@ public abstract class JdbcExporterDescription extends WindGateExporterDescriptio
         String table = getTableName();
         List<String> columns = getColumnNames();
         String customTruncate = getCustomTruncate();
-        Collection<String> options = getOptions();
+        Collection<Option> options = getOptions();
 
-        JdbcDescriptionUtil.checkCommonConfig(descriptionClass, modelType, supportClass, table, columns, options);
+        JdbcDescriptionUtil.checkCommonConfig(descriptionClass, modelType, supportClass, table, columns);
         if (customTruncate != null && customTruncate.trim().isEmpty()) {
             throw new IllegalStateException(MessageFormat.format(
                     Messages.getString("JdbcExporterDescription.errorEmptyStringProperty"), //$NON-NLS-1$
@@ -108,10 +109,45 @@ public abstract class JdbcExporterDescription extends WindGateExporterDescriptio
             configuration.put(JdbcProcess.CUSTOM_TRUNCATE.key(), customTruncate);
         }
         if (options != null && options.isEmpty() == false) {
-            configuration.put(JdbcProcess.OPTIONS.key(), JdbcDescriptionUtil.join(options));
+            configuration.put(
+                    JdbcProcess.OPTIONS.key(),
+                    JdbcDescriptionUtil.join(options.stream().map(Option::getSymbol).collect(Collectors.toList())));
         }
 
         Set<String> parameters = VariableTable.collectVariableNames(customTruncate);
         return new DriverScript(Constants.JDBC_RESOURCE_NAME, configuration, parameters);
+    }
+
+    /**
+     * JDBC export options.
+     * @see JdbcExporterDescription#getOptions()
+     * @since 0.9.0
+     */
+    public enum Option {
+
+        /**
+         * Use {@code COPY} statement instead of {@code INSERT} on postgresql.
+         */
+        POSTGRES_COPY(JdbcProcess.OptionSymbols.POSTGRES_COPY),
+
+        /**
+         * Use direct path insert instead of conventional insert on Oracle.
+         */
+        ORACLE_DIRPATH(JdbcProcess.OptionSymbols.ORACLE_DIRPATH),
+        ;
+
+        private final String symbol;
+
+        Option(String symbol) {
+            this.symbol = symbol;
+        }
+
+        /**
+         * Returns the symbol.
+         * @return the symbol
+         */
+        String getSymbol() {
+            return symbol;
+        }
     }
 }
