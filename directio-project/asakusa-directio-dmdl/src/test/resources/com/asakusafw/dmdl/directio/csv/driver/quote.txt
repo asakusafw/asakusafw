@@ -1,0 +1,5 @@
+@directio.csv
+simple = {
+    @directio.csv.field(quote="always")
+    value : TEXT;
+};

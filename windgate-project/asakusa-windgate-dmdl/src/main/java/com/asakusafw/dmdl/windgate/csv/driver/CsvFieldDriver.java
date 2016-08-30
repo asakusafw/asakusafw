@@ -16,7 +16,10 @@
 package com.asakusafw.dmdl.windgate.csv.driver;
 
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.asakusafw.dmdl.Diagnostic;
 import com.asakusafw.dmdl.Diagnostic.Level;
@@ -37,8 +40,10 @@ import com.asakusafw.dmdl.windgate.csv.driver.CsvFieldTrait.Kind;
 The attributed declaration must be:
 <ul>
 <li> with name=[string-literal] (optional, default: property name)</li>
+<li> with quote=["default"|"needed"|"always"] (optional, default: "default")</li>
 </ul>
  * @since 0.2.4
+ * @version 0.9.0
  */
 public class CsvFieldDriver  extends PropertyAttributeDriver {
 
@@ -52,6 +57,18 @@ public class CsvFieldDriver  extends PropertyAttributeDriver {
      */
     public static final String ELEMENT_NAME = "name"; //$NON-NLS-1$
 
+    /**
+     * The element name of quoting strategy.
+     * @since 0.9.0
+     */
+    public static final String ELEMENT_QUOTE = "quote"; //$NON-NLS-1$
+
+    /**
+     * The default value of {@link #ELEMENT_QUOTE}.
+     * @since 0.9.0
+     */
+    public static final String DEFAULT_QUOTE = "default"; //$NON-NLS-1$
+
     @Override
     public String getTargetName() {
         return TARGET_NAME;
@@ -61,13 +78,38 @@ public class CsvFieldDriver  extends PropertyAttributeDriver {
     public void process(DmdlSemantics environment, PropertyDeclaration declaration, AstAttribute attribute) {
         Map<String, AstAttributeElement> elements = AttributeUtil.getElementMap(attribute);
         String value = AttributeUtil.takeString(environment, attribute, elements, ELEMENT_NAME, false);
+        CsvFieldTrait.QuoteStrategy quote = CsvFieldDriver.takeQuote(environment, attribute, elements);
         environment.reportAll(AttributeUtil.reportInvalidElements(attribute, elements.values()));
         checkFieldType(environment, declaration, attribute, BasicTypeKind.values());
         if (CsvFieldDriver.checkConflict(environment, declaration, attribute)) {
-            declaration.putTrait(
-                    CsvFieldTrait.class,
-                    new CsvFieldTrait(attribute, Kind.VALUE, value));
+            declaration.putTrait(CsvFieldTrait.class, new CsvFieldTrait(attribute, Kind.VALUE, value, quote));
         }
+    }
+
+    private static CsvFieldTrait.QuoteStrategy takeQuote(
+            DmdlSemantics environment,
+            AstAttribute attribute,
+            Map<String, AstAttributeElement> elements) {
+        String symbol = AttributeUtil.takeString(environment, attribute, elements, ELEMENT_QUOTE, false);
+        if (symbol == null) {
+            return CsvFieldTrait.QuoteStrategy.getDefault();
+        }
+        return CsvFieldTrait.QuoteStrategy.fromSymbol(symbol)
+                .orElseGet(() -> {
+                    environment.report(new Diagnostic(
+                            Level.ERROR,
+                            attribute.name,
+                            "@{0} must be one of {2}: {1}",
+                            attribute.name.toString(),
+                            symbol,
+                            Stream.concat(
+                                    Stream.of(DEFAULT_QUOTE),
+                                    Stream.of(CsvFieldTrait.QuoteStrategy.values()).map(Enum::name))
+                                .map(s -> String.format("\"%s\"", s.toLowerCase(Locale.ENGLISH))) //$NON-NLS-1$
+                                .sequential()
+                                .collect(Collectors.toList())));
+                    return CsvFieldTrait.QuoteStrategy.getDefault();
+                });
     }
 
     static boolean checkConflict(DmdlSemantics environment, PropertyDeclaration declaration, AstAttribute attribute) {

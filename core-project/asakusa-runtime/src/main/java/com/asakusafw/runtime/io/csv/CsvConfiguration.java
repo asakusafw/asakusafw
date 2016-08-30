@@ -20,6 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import com.asakusafw.runtime.value.Date;
 import com.asakusafw.runtime.value.DateTime;
@@ -27,9 +28,11 @@ import com.asakusafw.runtime.value.DateTime;
 /**
  * CSV configurations.
  * @since 0.2.4
- * @version 0.7.3
+ * @version 0.9.0
  */
 public class CsvConfiguration {
+
+    private static final int[] EMPTY_INT_ARRAY = new int[0];
 
     /**
      * The default charset encoding.
@@ -102,6 +105,8 @@ public class CsvConfiguration {
     private volatile char separatorChar = DEFAULT_SEPARATOR_CHAR;
 
     private boolean forceConsumeHeader = DEFAULT_FORCE_CONSUME_HEADER;
+
+    private int[] forceQuoteColumns = EMPTY_INT_ARRAY;
 
     /**
      * Creates a new instance.
@@ -242,5 +247,23 @@ public class CsvConfiguration {
      */
     public void setForceConsumeHeader(boolean newValue) {
         this.forceConsumeHeader = newValue;
+    }
+
+    /**
+     * Returns column indices which quoting is always required.
+     * @return the column indices
+     * @since 0.9.0
+     */
+    public int[] getForceQuoteColumns() {
+        return forceQuoteColumns.clone();
+    }
+
+    /**
+     * Sets column indices which quoting is always required.
+     * @param indices the column indices
+     * @since 0.9.0
+     */
+    public void setForceQuoteColumns(int... indices) {
+        this.forceQuoteColumns = IntStream.of(indices).sorted().distinct().toArray();
     }
 }
