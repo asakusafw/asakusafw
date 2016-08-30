@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The parameter list.
  * @since 0.2.2
+ * @version 0.9.0
  */
 public class ParameterList {
 
@@ -36,6 +37,8 @@ public class ParameterList {
     static final Logger LOG = LoggerFactory.getLogger(ParameterList.class);
 
     private static final Pattern VARIABLE = Pattern.compile("\\$\\{(.*?)\\}");
+
+    private static final char SEPARATOR_DEFAULT_VALUE = '-';
 
     private final Map<String, String> parameters;
 
@@ -87,7 +90,7 @@ public class ParameterList {
         Matcher matcher = VARIABLE.matcher(string);
         while (matcher.find(start)) {
             String name = matcher.group(1);
-            String replacement = parameters.get(name);
+            String replacement = resolve(name);
             if (replacement == null) {
                 if (strict) {
                     WGLOG.error("E99001",
@@ -108,6 +111,24 @@ public class ParameterList {
         }
         buf.append(string.substring(start));
         return buf.toString();
+    }
+
+    private String resolve(String placeholder) {
+        String name;
+        String defaultValue;
+        int defaultAt = placeholder.indexOf(SEPARATOR_DEFAULT_VALUE);
+        if (defaultAt < 0) {
+            name = placeholder;
+            defaultValue = null;
+        } else {
+            name = placeholder.substring(0, defaultAt);
+            defaultValue = placeholder.substring(defaultAt + 1);
+        }
+        String replacement = parameters.get(name);
+        if (replacement != null) {
+            return replacement;
+        }
+        return defaultValue;
     }
 
     @Override
