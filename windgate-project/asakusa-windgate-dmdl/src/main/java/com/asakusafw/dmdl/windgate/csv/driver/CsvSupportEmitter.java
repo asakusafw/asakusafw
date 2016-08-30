@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -273,6 +275,7 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
                     .method("setForceConsumeHeader", Models.toLiteral(f, conf.isForceHeader())) //$NON-NLS-1$
                     .toStatement());
             }
+            createSetForceQuoteColumnsStatement(config).ifPresent(statements::add);
             statements.add(new ExpressionBuilder(f, config).toReturnStatement());
             return f.newMethodDeclaration(
                     new JavadocBuilder(f)
@@ -287,6 +290,35 @@ public class CsvSupportEmitter extends JavaDataModelDriver {
                     f.newSimpleName(METHOD_CONFIG),
                     Collections.emptyList(),
                     statements);
+        }
+
+        private Optional<Statement> createSetForceQuoteColumnsStatement(SimpleName config) {
+            List<Integer> force = new ArrayList<>();
+            int index = 0;
+            for (PropertyDeclaration property : model.getDeclaredProperties()) {
+                switch (CsvFieldTrait.getKind(property, Kind.VALUE)) {
+                case VALUE:
+                case FILE_NAME:
+                case LINE_NUMBER:
+                case RECORD_NUMBER:
+                    if (CsvFieldTrait.getQuoteStrategy(property) == CsvFieldTrait.QuoteStrategy.ALWAYS) {
+                        force.add(index);
+                    }
+                    index++;
+                    break;
+                default:
+                    // ignored
+                    break;
+                }
+            }
+            if (force.isEmpty()) {
+                return Optional.empty();
+            }
+            return Optional.of(new ExpressionBuilder(f, config)
+                    .method("setForceQuoteColumns", force.stream()
+                            .map(columnIndex -> Models.toLiteral(f, columnIndex))
+                            .collect(Collectors.toList()))
+                    .toStatement());
         }
 
         private MethodDeclaration createGetSupportedType() {

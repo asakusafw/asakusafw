@@ -1,0 +1,5 @@
+@windgate.csv
+model = {
+    @windgate.csv.field(quote = "always")
+    value : TEXT;
+};

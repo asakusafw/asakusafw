@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.hadoop.io.Text;
 import org.junit.Before;
@@ -200,6 +202,28 @@ public class CsvSupportEmitterTest extends GeneratorTesterRoot {
                 {"value"},
                 {"Hello, world!"},
         }));
+    }
+
+    /**
+     * quoted.
+     * @throws Exception if failed
+     */
+    @Test
+    public void quote() throws Exception {
+        ModelLoader loaded = generateJava("quote");
+        DataModelStreamSupport<Object> support = unsafe(loaded.newObject("csv", "ModelCsvSupport"));
+
+        ModelWrapper r0 = loaded.newModel("Model");
+        r0.set("value", new Text("hello-world"));
+        ModelWrapper r1 = loaded.newModel("Model");
+        r1.set("value", new Text("hello,world"));
+        byte[] data = write(support, r0, r1);
+
+        List<String> results = Stream.of(new String(data, "UTF-8").split("\\s+"))
+                .map(String::trim)
+                .filter(s -> s.isEmpty() == false)
+                .collect(Collectors.toList());
+        assertThat(results, contains("\"hello-world\"", "\"hello,world\""));
     }
 
     /**
