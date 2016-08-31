@@ -96,7 +96,9 @@ public class MasterJoinOperatorDriver extends AbstractOperatorDriver {
                 if (saw) {
                     dsl.addInput(p.document(), p.name(), type.mirror(), key, p.reference());
                 } else {
-                    p.error(Messages.getString("MasterJoinOperatorDriver.errorInputNotJoinSourceType")); //$NON-NLS-1$
+                    p.error(MessageFormat.format(
+                            Messages.getString("MasterJoinOperatorDriver.errorInputNotJoinSourceType"), //$NON-NLS-1$
+                            dsl.result().type().dataModel().getSimpleName()));
                 }
             } else if (type.isBasic()) {
                 p.error(Messages.getString("MasterJoinOperatorDriver.errorParameterBasic")); //$NON-NLS-1$

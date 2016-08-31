@@ -97,7 +97,9 @@ public class SplitOperatorDriver extends AbstractOperatorDriver {
                     if (saw) {
                         dsl.addOutput(p.document(), p.name(), arg.mirror(), p.reference());
                     } else {
-                        p.error(Messages.getString("SplitOperatorDriver.errorOutputNotJoinSourceType")); //$NON-NLS-1$
+                        p.error(MessageFormat.format(
+                                Messages.getString("SplitOperatorDriver.errorOutputNotJoinSourceType"), //$NON-NLS-1$
+                                p0.type().dataModel().getSimpleName()));
                     }
                 }
             } else if (type.isDataModel()) {

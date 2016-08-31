@@ -71,6 +71,11 @@ public final class PartialDataModelMirror implements DataModelMirror {
     }
 
     @Override
+    public String getSimpleName() {
+        return String.valueOf(type.asElement().getSimpleName());
+    }
+
+    @Override
     public Kind getKind() {
         return Kind.PARTIAL;
     }

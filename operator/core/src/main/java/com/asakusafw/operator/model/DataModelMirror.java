@@ -15,11 +15,16 @@
  */
 package com.asakusafw.operator.model;
 
-
 /**
  * Data model representation.
  */
 public interface DataModelMirror {
+
+    /**
+     * Returns the simple name of this data model.
+     * @return the simple name
+     */
+    String getSimpleName();
 
     /**
      * Returns the kind of this data model.
