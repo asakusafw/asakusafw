@@ -76,7 +76,7 @@ public abstract class JdbcImporterDescription extends WindGateImporterDescriptio
      * @return options
      * @since 0.9.0
      */
-    public Collection<Option> getOptions() {
+    public Collection<? extends JdbcAttribute> getOptions() {
         return Collections.emptySet();
     }
 
@@ -88,9 +88,9 @@ public abstract class JdbcImporterDescription extends WindGateImporterDescriptio
         String table = getTableName();
         List<String> columns = getColumnNames();
         String condition = getCondition();
-        Collection<Option> options = getOptions();
+        Collection<? extends JdbcAttribute> options = getOptions();
 
-        JdbcDescriptionUtil.checkCommonConfig(descriptionClass, modelType, supportClass, table, columns);
+        JdbcDescriptionUtil.checkCommonConfig(descriptionClass, modelType, supportClass, table, columns, options);
 
         Map<String, String> configuration = new HashMap<>();
         configuration.put(JdbcProcess.TABLE.key(), table);
@@ -100,9 +100,9 @@ public abstract class JdbcImporterDescription extends WindGateImporterDescriptio
             configuration.put(JdbcProcess.CONDITION.key(), condition);
         }
         if (options != null && options.isEmpty() == false) {
-            configuration.put(
-                    JdbcProcess.OPTIONS.key(),
-                    JdbcDescriptionUtil.join(options.stream().map(Option::getSymbol).collect(Collectors.toList())));
+            configuration.put(JdbcProcess.OPTIONS.key(), JdbcDescriptionUtil.join(options.stream()
+                    .map(JdbcAttribute::getSymbol)
+                    .collect(Collectors.toList())));
         }
 
         Set<String> parameters = VariableTable.collectVariableNames(condition);
@@ -114,7 +114,7 @@ public abstract class JdbcImporterDescription extends WindGateImporterDescriptio
      * @see JdbcImporterDescription#getOptions()
      * @since 0.9.0
      */
-    public enum Option {
+    public enum Option implements JdbcAttribute {
 
         /**
          * Use {@code COPY} statement instead of {@code SELECT} on postgresql.
@@ -128,11 +128,8 @@ public abstract class JdbcImporterDescription extends WindGateImporterDescriptio
             this.symbol = symbol;
         }
 
-        /**
-         * Returns the symbol.
-         * @return the symbol
-         */
-        String getSymbol() {
+        @Override
+        public String getSymbol() {
             return symbol;
         }
     }

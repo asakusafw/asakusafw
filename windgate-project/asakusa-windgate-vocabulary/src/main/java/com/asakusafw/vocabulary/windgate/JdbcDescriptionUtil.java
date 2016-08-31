@@ -18,6 +18,7 @@ package com.asakusafw.vocabulary.windgate;
 import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Predicate;
 
 import com.asakusafw.windgate.core.vocabulary.DataModelJdbcSupport;
 
@@ -28,10 +29,12 @@ final class JdbcDescriptionUtil {
             Class<?> modelType,
             Class<? extends DataModelJdbcSupport<?>> supportClass,
             String table,
-            List<String> columns) {
+            List<String> columns,
+            Collection<? extends JdbcAttribute> options) {
         checkTable(descriptionClass, table);
         checkColumns(descriptionClass, columns);
         checkSupportClass(descriptionClass, supportClass, modelType, columns);
+        checkOptions(descriptionClass, options);
     }
 
     private static void checkTable(String descriptionClass, String table) {
@@ -104,6 +107,15 @@ final class JdbcDescriptionUtil {
                     descriptionClass,
                     supportClass.getName(),
                     columns));
+        }
+    }
+
+    private static void checkOptions(String descriptionClass, Collection<? extends JdbcAttribute> options) {
+        if (options != null && options.stream().anyMatch(Predicate.isEqual(null))) {
+            throw new IllegalStateException(MessageFormat.format(
+                    Messages.getString("JdbcDescriptionUtil.errorNullProperty"), //$NON-NLS-1$
+                    descriptionClass,
+                    "getOptions()")); //$NON-NLS-1$
         }
     }
 
