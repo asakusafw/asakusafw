@@ -78,7 +78,7 @@ public abstract class JdbcExporterDescription extends WindGateExporterDescriptio
      * @return options
      * @since 0.9.0
      */
-    public Collection<Option> getOptions() {
+    public Collection<? extends JdbcAttribute> getOptions() {
         return Collections.emptySet();
     }
 
@@ -90,9 +90,10 @@ public abstract class JdbcExporterDescription extends WindGateExporterDescriptio
         String table = getTableName();
         List<String> columns = getColumnNames();
         String customTruncate = getCustomTruncate();
-        Collection<Option> options = getOptions();
+        Collection<? extends JdbcAttribute> options = getOptions();
 
-        JdbcDescriptionUtil.checkCommonConfig(descriptionClass, modelType, supportClass, table, columns);
+        JdbcDescriptionUtil.checkCommonConfig(descriptionClass, modelType, supportClass, table, columns, options);
+
         if (customTruncate != null && customTruncate.trim().isEmpty()) {
             throw new IllegalStateException(MessageFormat.format(
                     Messages.getString("JdbcExporterDescription.errorEmptyStringProperty"), //$NON-NLS-1$
@@ -109,9 +110,9 @@ public abstract class JdbcExporterDescription extends WindGateExporterDescriptio
             configuration.put(JdbcProcess.CUSTOM_TRUNCATE.key(), customTruncate);
         }
         if (options != null && options.isEmpty() == false) {
-            configuration.put(
-                    JdbcProcess.OPTIONS.key(),
-                    JdbcDescriptionUtil.join(options.stream().map(Option::getSymbol).collect(Collectors.toList())));
+            configuration.put(JdbcProcess.OPTIONS.key(), JdbcDescriptionUtil.join(options.stream()
+                    .map(JdbcAttribute::getSymbol)
+                    .collect(Collectors.toList())));
         }
 
         Set<String> parameters = VariableTable.collectVariableNames(customTruncate);
@@ -123,7 +124,7 @@ public abstract class JdbcExporterDescription extends WindGateExporterDescriptio
      * @see JdbcExporterDescription#getOptions()
      * @since 0.9.0
      */
-    public enum Option {
+    public enum Option implements JdbcAttribute {
 
         /**
          * Use {@code COPY} statement instead of {@code INSERT} on postgresql.
@@ -142,11 +143,8 @@ public abstract class JdbcExporterDescription extends WindGateExporterDescriptio
             this.symbol = symbol;
         }
 
-        /**
-         * Returns the symbol.
-         * @return the symbol
-         */
-        String getSymbol() {
+        @Override
+        public String getSymbol() {
             return symbol;
         }
     }

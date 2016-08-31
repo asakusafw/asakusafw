@@ -22,10 +22,15 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
 import org.junit.Test;
 
-import com.asakusafw.vocabulary.windgate.JdbcImporterDescription.Option;
 import com.asakusafw.windgate.core.DriverScript;
 import com.asakusafw.windgate.core.vocabulary.DataModelJdbcSupport;
 import com.asakusafw.windgate.core.vocabulary.JdbcProcess;
@@ -90,7 +95,7 @@ public class JdbcImporterDescriptionTest {
     @Test
     public void options() {
         Mock mock = new Mock(String.class, "testing", StringSupport.class, "TESTING", null, "VALUE")
-                .withOptions(Option.POSTGRES_COPY);
+                .withOptions(() -> "A", () -> "B", () -> "C");
         DriverScript script = mock.getDriverScript();
         assertThat(script.getResourceName(), is(Constants.JDBC_RESOURCE_NAME));
         Map<String, String> conf = script.getConfiguration();
@@ -98,7 +103,7 @@ public class JdbcImporterDescriptionTest {
         assertThat(conf, hasEntry(JdbcProcess.TABLE.key(), "TESTING"));
         assertThat(conf, hasEntry(is(JdbcProcess.COLUMNS.key()), equalToIgnoringWhiteSpace("VALUE")));
         assertThat(conf, hasEntry(JdbcProcess.JDBC_SUPPORT.key(), StringSupport.class.getName()));
-        assertThat(conf, hasEntry(is(JdbcProcess.OPTIONS.key()), equalTo(JdbcProcess.OptionSymbols.POSTGRES_COPY)));
+        assertThat(conf, hasEntry(is(JdbcProcess.OPTIONS.key()), consistsOf("A", "B", "C")));
         assertThat(script.getParameterNames(), hasSize(0));
     }
 
@@ -276,6 +281,23 @@ public class JdbcImporterDescriptionTest {
         }
     }
 
+    private static Matcher<String> consistsOf(String... elements) {
+        return new BaseMatcher<String>() {
+            @Override
+            public boolean matches(Object item) {
+                Set<String> results = Stream.of(((String) item).split(","))
+                        .map(String::trim)
+                        .filter(s -> s.isEmpty() == false)
+                        .collect(Collectors.toSet());
+                return results.equals(Stream.of(elements).collect(Collectors.toSet()));
+            }
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("consists of ").appendValue(Arrays.asList(elements));
+            }
+        };
+    }
+
     static class Mock extends JdbcImporterDescription {
 
         private final Class<?> modelType;
@@ -284,7 +306,7 @@ public class JdbcImporterDescriptionTest {
         private final String tableName;
         private final String condition;
         private final List<String> columnNames;
-        private List<Option> options;
+        private List<JdbcAttribute> options;
 
         Mock(
                 Class<?> modelType,
@@ -339,11 +361,11 @@ public class JdbcImporterDescriptionTest {
         }
 
         @Override
-        public Collection<Option> getOptions() {
+        public Collection<JdbcAttribute> getOptions() {
             return options;
         }
 
-        public Mock withOptions(Option... elements) {
+        public Mock withOptions(JdbcAttribute... elements) {
             this.options = Arrays.asList(elements);
             return this;
         }
