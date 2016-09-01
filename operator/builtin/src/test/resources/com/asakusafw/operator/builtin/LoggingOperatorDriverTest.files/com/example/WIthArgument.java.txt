@@ -1,0 +1,11 @@
+package com.example;
+
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class WithArgument {
+
+    @Logging
+    public String method(Model model, int arg) {
+        return null;
+    }
+}

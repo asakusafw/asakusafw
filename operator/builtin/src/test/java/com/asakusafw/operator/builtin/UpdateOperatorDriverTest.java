@@ -50,7 +50,7 @@ public class UpdateOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
-     * Simple testing.
+     * simple case.
      */
     @Test
     public void simple() {
@@ -74,7 +74,7 @@ public class UpdateOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
-     * With output name specified.
+     * w/ output name specified.
      */
     @Test
     public void renamed() {
@@ -89,7 +89,7 @@ public class UpdateOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
-     * With arguments.
+     * w/ arguments.
      */
     @Test
     public void arguments() {
@@ -111,7 +111,7 @@ public class UpdateOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
-     * With type parameters.
+     * w/ type parameters.
      */
     @Test
     public void type_parameters() {

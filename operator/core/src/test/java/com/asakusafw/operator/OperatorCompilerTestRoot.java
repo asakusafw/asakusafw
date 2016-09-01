@@ -18,16 +18,14 @@ package com.asakusafw.operator;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.ServiceLoader;
 
 import javax.annotation.processing.ProcessingEnvironment;
@@ -39,9 +37,6 @@ import org.junit.After;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.asakusafw.operator.CompileEnvironment;
-import com.asakusafw.operator.DataModelMirrorRepository;
-import com.asakusafw.operator.OperatorDriver;
 import com.asakusafw.operator.description.ClassDescription;
 import com.asakusafw.operator.flowpart.FlowPartAnnotationProcessor;
 import com.asakusafw.operator.method.OperatorAnnotationProcessor;
@@ -202,27 +197,27 @@ public class OperatorCompilerTestRoot {
      */
     public void add(String name) {
         Class<?> aClass = getClass();
+        ClassDescription desc = new ClassDescription(name);
         String file = MessageFormat.format(
                 "{0}.files/{1}.java.txt",
                 aClass.getSimpleName(),
-                name.replace('.', '/'));
+                desc.getInternalName());
         StringBuilder buf = new StringBuilder();
         try (InputStream in = aClass.getResourceAsStream(file)) {
             assertThat(file, in, not(nullValue()));
-            Reader reader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-            while (true) {
-                int c = reader.read();
-                if (c == -1) {
-                    break;
+            try (Scanner s = new Scanner(in, "UTF-8")) {
+                while (s.hasNextLine()) {
+                    String line = s.nextLine();
+                    buf.append(line
+                            .replaceAll("\\$s\\b", desc.getSimpleName())
+                            .replaceAll("\\$p\\b", desc.getPackageName()));
+                    buf.append("\n");
                 }
-                buf.append((char) c);
             }
         } catch (IOException e) {
             throw new AssertionError(e);
         }
-        sources.add(new VolatileJavaFile(
-                name.replace('.', '/'),
-                buf.toString()));
+        sources.add(new VolatileJavaFile(desc.getInternalName(), buf.toString()));
     }
 
     /**

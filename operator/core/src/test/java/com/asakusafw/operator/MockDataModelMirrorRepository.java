@@ -29,8 +29,6 @@ import javax.lang.model.type.TypeVariable;
 import javax.lang.model.util.ElementFilter;
 import javax.lang.model.util.Elements;
 
-import com.asakusafw.operator.CompileEnvironment;
-import com.asakusafw.operator.DataModelMirrorRepository;
 import com.asakusafw.operator.model.ConcreteDataModelMirror;
 import com.asakusafw.operator.model.DataModelMirror;
 import com.asakusafw.operator.model.PartialDataModelMirror;

@@ -24,7 +24,6 @@ import org.junit.Test;
 import com.asakusafw.operator.AnnotationProcessing;
 import com.asakusafw.operator.Constants;
 import com.asakusafw.operator.OperatorCompilerTestRoot;
-import com.asakusafw.operator.dmdl.DmdlDataModelMirrorRepository;
 import com.asakusafw.operator.model.DataModelMirror;
 import com.asakusafw.operator.model.PropertyMirror;
 import com.asakusafw.runtime.value.DecimalOption;

@@ -17,7 +17,6 @@ package com.asakusafw.operator.builtin;
 
 import javax.lang.model.element.Modifier;
 
-import com.asakusafw.operator.AbstractOperatorDriver;
 import com.asakusafw.operator.Constants;
 import com.asakusafw.operator.OperatorDriver;
 import com.asakusafw.operator.builtin.DslBuilder.ElementRef;
@@ -29,7 +28,7 @@ import com.asakusafw.operator.model.OperatorDescription;
 /**
  * {@link OperatorDriver} for {@code CoGroup} annotation.
  */
-public class CoGroupOperatorDriver extends AbstractOperatorDriver {
+public class CoGroupOperatorDriver implements OperatorDriver {
 
     private static final String INPUT_BUFFER = "inputBuffer"; //$NON-NLS-1$
 

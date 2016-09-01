@@ -24,7 +24,6 @@ import com.asakusafw.operator.Constants;
 import com.asakusafw.operator.MockSource;
 import com.asakusafw.operator.OperatorCompilerTestRoot;
 import com.asakusafw.operator.StringDataModelMirrorRepository;
-import com.asakusafw.operator.flowpart.FlowPartAnnotationProcessor;
 
 /**
  * Test for {@link FlowPartAnnotationProcessor}.
@@ -32,7 +31,7 @@ import com.asakusafw.operator.flowpart.FlowPartAnnotationProcessor;
 public class FlowPartAnnotationProcessorTest extends OperatorCompilerTestRoot {
 
     /**
-     * Simple testing.
+     * simple case.
      */
     @Test
     public void simple() {

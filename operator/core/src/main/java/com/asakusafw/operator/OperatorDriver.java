@@ -15,6 +15,7 @@
  */
 package com.asakusafw.operator;
 
+import java.util.Collections;
 import java.util.Objects;
 
 import javax.annotation.processing.Completion;
@@ -58,7 +59,9 @@ public interface OperatorDriver {
      * @throws IllegalArgumentException if some parameters were {@code null}
      * @see Completions
      */
-    Iterable<? extends Completion> getCompletions(Context context, ExecutableElement member, String userText);
+    default Iterable<? extends Completion> getCompletions(Context context, ExecutableElement member, String userText) {
+        return Collections.emptySet();
+    }
 
     /**
      * Represents processing context.

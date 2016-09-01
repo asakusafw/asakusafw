@@ -1,0 +1,11 @@
+package com.example;
+
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class ViolateReturnString {
+
+    @Logging
+    public Object method(Model model) {
+        return null;
+    }
+}

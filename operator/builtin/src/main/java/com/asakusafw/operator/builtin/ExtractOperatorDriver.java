@@ -17,7 +17,6 @@ package com.asakusafw.operator.builtin;
 
 import javax.lang.model.element.Modifier;
 
-import com.asakusafw.operator.AbstractOperatorDriver;
 import com.asakusafw.operator.Constants;
 import com.asakusafw.operator.OperatorDriver;
 import com.asakusafw.operator.builtin.DslBuilder.ElementRef;
@@ -28,7 +27,7 @@ import com.asakusafw.operator.model.OperatorDescription;
 /**
  * {@link OperatorDriver} for {@code Extract} annotation.
  */
-public class ExtractOperatorDriver extends AbstractOperatorDriver {
+public class ExtractOperatorDriver implements OperatorDriver {
 
     @Override
     public ClassDescription getAnnotationTypeName() {

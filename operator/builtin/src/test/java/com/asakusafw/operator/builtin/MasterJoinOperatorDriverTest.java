@@ -24,12 +24,11 @@ import javax.lang.model.element.ExecutableElement;
 
 import org.junit.Test;
 
-import com.asakusafw.operator.builtin.MasterJoinOperatorDriver;
 import com.asakusafw.operator.description.Descriptions;
 import com.asakusafw.operator.model.OperatorDescription;
-import com.asakusafw.operator.model.OperatorElement;
 import com.asakusafw.operator.model.OperatorDescription.Node;
 import com.asakusafw.operator.model.OperatorDescription.Reference;
+import com.asakusafw.operator.model.OperatorElement;
 import com.asakusafw.vocabulary.operator.MasterJoin;
 
 /**
@@ -53,7 +52,7 @@ public class MasterJoinOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
-     * Simple testing.
+     * simple case.
      */
     @Test
     public void simple() {

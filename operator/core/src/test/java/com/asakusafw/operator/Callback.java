@@ -22,6 +22,7 @@ import java.io.IOError;
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
@@ -39,7 +40,9 @@ import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 
-import com.asakusafw.operator.CompileEnvironment;
+import com.asakusafw.operator.description.ClassDescription;
+import com.asakusafw.operator.description.EnumConstantDescription;
+import com.asakusafw.operator.model.OperatorElement;
 
 /**
  * Callback from {@link DelegateProcessor}.
@@ -266,6 +269,46 @@ public abstract class Callback {
             @Override
             public void describeTo(Description desc) {
                 desc.appendValue(kind);
+            }
+        };
+    }
+
+    /**
+     * Returns a matcher that tests whether or not the operator has the specified attribute.
+     * @param attributeType the attribute type
+     * @return the matcher
+     */
+    public Matcher<OperatorElement> hasAttribute(Class<? extends Enum<?>> attributeType) {
+        ClassDescription type = ClassDescription.of(attributeType);
+        return new BaseMatcher<OperatorElement>() {
+            @Override
+            public boolean matches(Object item) {
+                return ((OperatorElement) item).getDescription().getAttributes().stream()
+                        .map(EnumConstantDescription::getDeclaringClass)
+                        .anyMatch(Predicate.isEqual(type));
+            }
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("has attribute ").appendValue(type.getClassName());
+            }
+        };
+    }
+
+    /**
+     * Returns a matcher that tests whether or not the operator has the specified attribute.
+     * @param attribute the attribute
+     * @return the matcher
+     */
+    public Matcher<OperatorElement> hasAttribute(Enum<?> attribute) {
+        EnumConstantDescription desc = EnumConstantDescription.of(attribute);
+        return new BaseMatcher<OperatorElement>() {
+            @Override
+            public boolean matches(Object item) {
+                return ((OperatorElement) item).getDescription().getAttributes().contains(desc);
+            }
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("has attribute ").appendValue(desc);
             }
         };
     }

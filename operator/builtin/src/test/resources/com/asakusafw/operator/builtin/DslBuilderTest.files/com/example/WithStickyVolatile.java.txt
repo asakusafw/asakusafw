@@ -1,0 +1,12 @@
+package com.example;
+
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class WithStickyVolatile {
+
+    @Sticky
+    @Volatile
+    @Update
+    public void method(Model model) {
+    }
+}

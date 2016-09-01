@@ -24,12 +24,11 @@ import javax.lang.model.type.TypeKind;
 
 import org.junit.Test;
 
-import com.asakusafw.operator.builtin.ConvertOperatorDriver;
 import com.asakusafw.operator.description.Descriptions;
 import com.asakusafw.operator.model.OperatorDescription;
-import com.asakusafw.operator.model.OperatorElement;
 import com.asakusafw.operator.model.OperatorDescription.Node;
 import com.asakusafw.operator.model.OperatorDescription.Reference;
+import com.asakusafw.operator.model.OperatorElement;
 import com.asakusafw.vocabulary.operator.Convert;
 
 /**
@@ -53,7 +52,7 @@ public class ConvertOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
-     * Simple testing.
+     * simple case.
      */
     @Test
     public void simple() {
@@ -85,7 +84,7 @@ public class ConvertOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
-     * Simple testing.
+     * w/ arguments.
      */
     @Test
     public void with_argument() {
@@ -124,7 +123,7 @@ public class ConvertOperatorDriverTest extends OperatorDriverTestRoot {
 
 
     /**
-     * Violates method is not abstract.
+     * violates method is not abstract.
      */
     @Test
     public void violate_not_abstract() {
@@ -132,7 +131,7 @@ public class ConvertOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
-     * Violates method returns model.
+     * violates method returns model.
      */
     @Test
     public void violate_return_model() {
@@ -140,7 +139,7 @@ public class ConvertOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
-     * Violates method has only single input.
+     * violates method has only single input.
      */
     @Test
     public void violate_single_input() {
@@ -148,7 +147,7 @@ public class ConvertOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
-     * Violates method has only valid parameters.
+     * violates method has only valid parameters.
      */
     @Test
     public void violate_valid_parameter() {
@@ -156,7 +155,7 @@ public class ConvertOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
-     * Violates input must appear before parameters.
+     * violates input must appear before parameters.
      */
     @Test
     public void violate_argument_order() {

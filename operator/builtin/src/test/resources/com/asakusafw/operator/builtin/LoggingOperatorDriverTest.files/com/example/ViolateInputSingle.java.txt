@@ -1,0 +1,11 @@
+package com.example;
+
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class ViolateInputSingle {
+
+    @Logging
+    public String method(Model in0, Model in1) {
+        return null;
+    }
+}

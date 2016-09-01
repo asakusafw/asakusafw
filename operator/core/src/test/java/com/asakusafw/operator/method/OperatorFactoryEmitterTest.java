@@ -42,20 +42,18 @@ import com.asakusafw.operator.StringDataModelMirrorRepository;
 import com.asakusafw.operator.description.ClassDescription;
 import com.asakusafw.operator.description.Descriptions;
 import com.asakusafw.operator.description.EnumConstantDescription;
-import com.asakusafw.operator.method.OperatorFactoryEmitter;
-import com.asakusafw.operator.method.OperatorImplementationEmitter;
 import com.asakusafw.operator.model.KeyMirror;
 import com.asakusafw.operator.model.OperatorClass;
 import com.asakusafw.operator.model.OperatorDescription;
-import com.asakusafw.operator.model.OperatorElement;
 import com.asakusafw.operator.model.OperatorDescription.Document;
 import com.asakusafw.operator.model.OperatorDescription.MethodReference;
 import com.asakusafw.operator.model.OperatorDescription.Node;
+import com.asakusafw.operator.model.OperatorDescription.Node.Kind;
 import com.asakusafw.operator.model.OperatorDescription.ParameterReference;
 import com.asakusafw.operator.model.OperatorDescription.ReferenceDocument;
 import com.asakusafw.operator.model.OperatorDescription.ReturnReference;
 import com.asakusafw.operator.model.OperatorDescription.TextDocument;
-import com.asakusafw.operator.model.OperatorDescription.Node.Kind;
+import com.asakusafw.operator.model.OperatorElement;
 import com.asakusafw.operator.util.AnnotationHelper;
 import com.asakusafw.operator.util.ElementHelper;
 import com.asakusafw.vocabulary.flow.Source;
@@ -73,7 +71,7 @@ import com.asakusafw.vocabulary.flow.graph.PortConnection;
 public class OperatorFactoryEmitterTest extends OperatorCompilerTestRoot {
 
     /**
-     * Simple testing.
+     * simple case.
      */
     @Test
     public void simple() {
@@ -91,7 +89,7 @@ public class OperatorFactoryEmitterTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * With input.
+     * w/ input.
      */
     @Test
     public void input() {
@@ -122,7 +120,7 @@ public class OperatorFactoryEmitterTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * With output.
+     * w/ output.
      */
     @Test
     public void output() {
@@ -155,7 +153,7 @@ public class OperatorFactoryEmitterTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * With argument.
+     * w/ argument.
      */
     @Test
     public void argument() {
@@ -177,7 +175,7 @@ public class OperatorFactoryEmitterTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * With type parameters.
+     * w/ type parameters.
      */
     @Test
     public void projective() {
@@ -249,7 +247,7 @@ public class OperatorFactoryEmitterTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * With key.
+     * w/ key.
      */
     @Test
     public void key() {

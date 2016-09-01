@@ -1,0 +1,17 @@
+package com.example;
+
+import java.util.List;
+import com.asakusafw.runtime.core.Result;
+import com.asakusafw.vocabulary.model.Key;
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class WithInputMany {
+
+    @CoGroup
+    public void method(
+            @Key(group = "content") List<Model> in0,
+            @Key(group = "content") List<Model> in1,
+            @Key(group = "content") List<Model> in2,
+            Result<Proceeded> out) {
+    }
+}

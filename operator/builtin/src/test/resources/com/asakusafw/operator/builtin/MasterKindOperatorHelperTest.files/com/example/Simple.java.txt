@@ -1,0 +1,11 @@
+package $p;
+
+import com.asakusafw.vocabulary.model.Key;
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class $s {
+
+    @MasterJoinUpdate
+    public void method(@Key(group = "id") Side side, @Key(group = "key") Model model) {
+    }
+}

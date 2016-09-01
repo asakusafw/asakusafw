@@ -25,11 +25,10 @@ import javax.lang.model.type.TypeVariable;
 
 import org.junit.Test;
 
-import com.asakusafw.operator.builtin.CoGroupOperatorDriver;
 import com.asakusafw.operator.description.Descriptions;
 import com.asakusafw.operator.model.OperatorDescription;
-import com.asakusafw.operator.model.OperatorElement;
 import com.asakusafw.operator.model.OperatorDescription.Node;
+import com.asakusafw.operator.model.OperatorElement;
 import com.asakusafw.vocabulary.operator.CoGroup;
 
 /**
@@ -53,7 +52,7 @@ public class CoGroupOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
-     * Simple testing.
+     * simple case.
      */
     @Test
     public void simple() {
@@ -77,7 +76,47 @@ public class CoGroupOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
-     * With arguments.
+     * w/ multiple inputs.
+     */
+    @Test
+    public void input_multiple() {
+        compile(new Action("com.example.WithInputMany") {
+            @Override
+            protected void perform(OperatorElement target) {
+                OperatorDescription description = target.getDescription();
+                assertThat(description.getInputs().size(), is(3));
+                assertThat(description.getOutputs().size(), is(1));
+                assertThat(description.getArguments().size(), is(0));
+
+                assertThat(description.getInputs().get(0).getName(), is("in0"));
+                assertThat(description.getInputs().get(1).getName(), is("in1"));
+                assertThat(description.getInputs().get(2).getName(), is("in2"));
+            }
+        });
+    }
+
+    /**
+     * w/ multiple output.
+     */
+    @Test
+    public void output_multiple() {
+        compile(new Action("com.example.WithOutputMany") {
+            @Override
+            protected void perform(OperatorElement target) {
+                OperatorDescription description = target.getDescription();
+                assertThat(description.getInputs().size(), is(1));
+                assertThat(description.getOutputs().size(), is(3));
+                assertThat(description.getArguments().size(), is(0));
+
+                assertThat(description.getOutputs().get(0).getName(), is("out0"));
+                assertThat(description.getOutputs().get(1).getName(), is("out1"));
+                assertThat(description.getOutputs().get(2).getName(), is("out2"));
+            }
+        });
+    }
+
+    /**
+     * w/ arguments.
      */
     @Test
     public void with_argument() {
@@ -107,7 +146,7 @@ public class CoGroupOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
-     * With type parameters.
+     * w/ type parameters.
      */
     @Test
     public void with_projective() {
@@ -133,7 +172,7 @@ public class CoGroupOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
-     * Violates method is not abstract.
+     * violates method is not abstract.
      */
     @Test
     public void violate_not_abstract() {
@@ -141,7 +180,7 @@ public class CoGroupOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
-     * Violates method returns void.
+     * violates method returns void.
      */
     @Test
     public void violate_return_void() {
@@ -149,7 +188,7 @@ public class CoGroupOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
-     * Violates method must be have one or more inputs.
+     * violates method must be have one or more inputs.
      */
     @Test
     public void violate_with_input() {
@@ -157,7 +196,7 @@ public class CoGroupOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
-     * Violates method must be have one or more outputs.
+     * violates method must be have one or more outputs.
      */
     @Test
     public void violate_with_output() {
@@ -165,7 +204,7 @@ public class CoGroupOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
-     * Violates method input.
+     * violates method input.
      */
     @Test
     public void violate_input_with_key() {
@@ -173,7 +212,7 @@ public class CoGroupOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
-     * Violates method input must be a model.
+     * violates method input must be a model.
      */
     @Test
     public void violate_input_with_model() {
@@ -181,7 +220,7 @@ public class CoGroupOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
-     * Violates method output must be a model.
+     * violates method output must be a model.
      */
     @Test
     public void violate_output_with_model() {
@@ -189,7 +228,7 @@ public class CoGroupOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
-     * Violates method has only valid parameters.
+     * violates method has only valid parameters.
      */
     @Test
     public void violate_valid_parameter() {
@@ -197,7 +236,7 @@ public class CoGroupOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
-     * Violates method output type is inferable.
+     * violates method output type is inferable.
      */
     @Test
     public void violate_output_inferable() {
@@ -205,7 +244,7 @@ public class CoGroupOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
-     * Violates each group has the same type.
+     * violates each group has the same type.
      */
     @Test
     public void violate_key_with_same_type() {
@@ -213,7 +252,7 @@ public class CoGroupOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
-     * Violates each group has same number of properties.
+     * violates each group has same number of properties.
      */
     @Test
     public void violate_key_group_not_larger() {
@@ -221,7 +260,7 @@ public class CoGroupOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
-     * Violates each group has same number of properties.
+     * violates each group has same number of properties.
      */
     @Test
     public void violate_key_group_not_smaller() {
@@ -229,7 +268,7 @@ public class CoGroupOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
-     * Violates each group has same number of properties.
+     * violates each group has same number of properties.
      */
     @Test
     public void violate_input_before_output() {
@@ -237,7 +276,7 @@ public class CoGroupOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
-     * Violates each group has same number of properties.
+     * violates each group has same number of properties.
      */
     @Test
     public void violate_input_before_argument() {
@@ -245,7 +284,7 @@ public class CoGroupOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
-     * Violates each group has same number of properties.
+     * violates each group has same number of properties.
      */
     @Test
     public void violate_output_before_argument() {

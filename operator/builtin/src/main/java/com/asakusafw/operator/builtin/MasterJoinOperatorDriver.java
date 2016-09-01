@@ -22,7 +22,6 @@ import java.util.List;
 
 import javax.lang.model.element.Modifier;
 
-import com.asakusafw.operator.AbstractOperatorDriver;
 import com.asakusafw.operator.Constants;
 import com.asakusafw.operator.OperatorDriver;
 import com.asakusafw.operator.builtin.DslBuilder.AnnotationRef;
@@ -37,7 +36,7 @@ import com.asakusafw.operator.model.OperatorDescription.Node;
 /**
  * {@link OperatorDriver} for {@code MasterJoin} annotation.
  */
-public class MasterJoinOperatorDriver extends AbstractOperatorDriver {
+public class MasterJoinOperatorDriver implements OperatorDriver {
 
     private static final String JOINED_PORT = "joinedPort"; //$NON-NLS-1$
 
