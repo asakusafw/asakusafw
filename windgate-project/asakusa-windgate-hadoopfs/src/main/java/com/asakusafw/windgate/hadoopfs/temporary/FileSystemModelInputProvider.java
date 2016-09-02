@@ -15,9 +15,7 @@
  */
 package com.asakusafw.windgate.hadoopfs.temporary;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.text.MessageFormat;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -103,10 +101,10 @@ public class FileSystemModelInputProvider<T> implements ModelInputProvider<T> {
                         paths);
                 FileStatus[] statusList = fileSystem.globStatus(path);
                 if (statusList == null || statusList.length == 0) {
-                    throw new FileNotFoundException(MessageFormat.format(
-                            "File is not found in {1} (fs={0})",
+                    WGLOG.warn("W09002",
                             fileSystem.getUri(),
-                            paths));
+                            paths);
+                    continue;
                 }
                 for (FileStatus status : statusList) {
                     WGLOG.info("I09002",

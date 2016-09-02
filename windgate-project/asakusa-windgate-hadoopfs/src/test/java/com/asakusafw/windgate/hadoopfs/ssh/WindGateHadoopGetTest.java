@@ -164,7 +164,7 @@ public class WindGateHadoopGetTest {
     }
 
     /**
-     * Attemts to get missing files.
+     * OK even if missing files.
      * @throws Exception if failed
      */
     @Test
@@ -173,7 +173,10 @@ public class WindGateHadoopGetTest {
 
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         int result = new WindGateHadoopGet(conf).execute(buffer, testing.toString());
-        assertThat(result, is(not(0)));
+        assertThat(result, is(0));
+
+        Map<String, String> contents = get(buffer.toByteArray());
+        assertThat(contents.keySet(), hasSize(0));
     }
 
     /**
