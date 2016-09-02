@@ -689,32 +689,6 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
             members.add(createPrivateField(PreparedStatement.class, preparedStatement, false));
             members.add(createPrivateField(int[].class, properties, false));
             Set<BasicTypeKind> kinds = collectTypeKinds();
-            if (kinds.contains(BasicTypeKind.DATE)) {
-                members.add(f.newFieldDeclaration(
-                        null,
-                        new AttributeBuilder(f)
-                            .Private()
-                            .Final()
-                            .toAttributes(),
-                        context.resolve(java.sql.Date.class),
-                        f.newSimpleName(NAME_DATE),
-                        new TypeBuilder(f, context.resolve(java.sql.Date.class))
-                            .newObject(Models.toLiteral(f, 0L))
-                            .toExpression()));
-            }
-            if (kinds.contains(BasicTypeKind.DATETIME)) {
-                members.add(f.newFieldDeclaration(
-                        null,
-                        new AttributeBuilder(f)
-                            .Private()
-                            .Final()
-                            .toAttributes(),
-                        context.resolve(java.sql.Timestamp.class),
-                        f.newSimpleName(NAME_DATETIME),
-                        new TypeBuilder(f, context.resolve(java.sql.Timestamp.class))
-                            .newObject(Models.toLiteral(f, 0L))
-                            .toExpression()));
-            }
             if (kinds.contains(BasicTypeKind.DATE) || kinds.contains(BasicTypeKind.DATETIME)) {
                 members.add(createCalendarBuffer());
             }
@@ -955,9 +929,7 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
             assert position != null;
             assert property != null;
             List<Statement> statements = new ArrayList<>();
-            SimpleName date = f.newSimpleName(NAME_DATE);
             SimpleName calendar = f.newSimpleName(NAME_CALENDAR);
-            SimpleName datetime = f.newSimpleName(NAME_DATETIME);
             BasicTypeKind kind = toBasicKind(property.getType());
             switch (kind) {
             case INT:
@@ -1009,13 +981,12 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
                                 .toExpression(),
                             calendar)
                     .toStatement());
-                statements.add(new ExpressionBuilder(f, date)
-                    .method("setTime", new ExpressionBuilder(f, calendar) //$NON-NLS-1$
-                        .method("getTimeInMillis") //$NON-NLS-1$
-                        .toExpression())
-                    .toStatement());
                 statements.add(new ExpressionBuilder(f, statement)
-                    .method("setDate", position, date) //$NON-NLS-1$
+                    .method("setDate", position, new TypeBuilder(f, context.resolve(java.sql.Date.class)) //$NON-NLS-1$
+                            .newObject(new ExpressionBuilder(f, calendar)
+                                    .method("getTimeInMillis") //$NON-NLS-1$
+                                    .toExpression())
+                            .toExpression())
                     .toStatement());
                 break;
             case DATETIME:
@@ -1027,13 +998,12 @@ public class JdbcSupportEmitter extends JavaDataModelDriver {
                                 .toExpression(),
                             calendar)
                     .toStatement());
-                statements.add(new ExpressionBuilder(f, datetime)
-                    .method("setTime", new ExpressionBuilder(f, calendar) //$NON-NLS-1$
-                        .method("getTimeInMillis") //$NON-NLS-1$
-                        .toExpression())
-                    .toStatement());
                 statements.add(new ExpressionBuilder(f, statement)
-                    .method("setTimestamp", position, datetime) //$NON-NLS-1$
+                    .method("setTimestamp", position, new TypeBuilder(f, context.resolve(java.sql.Timestamp.class)) //$NON-NLS-1$
+                            .newObject(new ExpressionBuilder(f, calendar)
+                                    .method("getTimeInMillis") //$NON-NLS-1$
+                                    .toExpression())
+                            .toExpression())
                     .toStatement());
                 break;
             default:
