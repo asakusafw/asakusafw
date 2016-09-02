@@ -16,7 +16,6 @@
 package com.asakusafw.windgate.hadoopfs.ssh;
 
 import java.io.BufferedOutputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -215,8 +214,10 @@ public class WindGateHadoopGet extends WindGateHadoopBase {
                     }
                 }
             }
+
             if (found == false && RuntimeContext.get().isSimulation() == false) {
-                throw new FileNotFoundException(paths.toString());
+                WGLOG.info("W20001",
+                        fs.getUri(), path);
             }
         }
     }
