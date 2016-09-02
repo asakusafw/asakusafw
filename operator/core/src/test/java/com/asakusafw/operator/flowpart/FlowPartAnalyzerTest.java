@@ -18,12 +18,14 @@ package com.asakusafw.operator.flowpart;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.ElementKind;
@@ -38,11 +40,10 @@ import com.asakusafw.operator.CompileEnvironment;
 import com.asakusafw.operator.OperatorCompilerTestRoot;
 import com.asakusafw.operator.StringDataModelMirrorRepository;
 import com.asakusafw.operator.description.ClassDescription;
-import com.asakusafw.operator.flowpart.FlowPartAnalyzer;
 import com.asakusafw.operator.model.OperatorClass;
 import com.asakusafw.operator.model.OperatorDescription;
-import com.asakusafw.operator.model.OperatorElement;
 import com.asakusafw.operator.model.OperatorDescription.Node;
+import com.asakusafw.operator.model.OperatorElement;
 import com.asakusafw.vocabulary.flow.FlowDescription;
 
 /**
@@ -79,7 +80,7 @@ public class FlowPartAnalyzerTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * With projective model.
+     * w/ projective model.
      */
     @Test
     public void with_projective() {
@@ -109,7 +110,7 @@ public class FlowPartAnalyzerTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * With arguments.
+     * w/ arguments.
      */
     @Test
     public void with_ctor_argument() {
@@ -143,7 +144,7 @@ public class FlowPartAnalyzerTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * With extern in.
+     * w/ extern in.
      */
     @Test
     public void with_ctor_extern_in() {
@@ -172,7 +173,7 @@ public class FlowPartAnalyzerTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * With extern out.
+     * w/ extern out.
      */
     @Test
     public void with_ctor_extern_out() {
@@ -367,10 +368,30 @@ public class FlowPartAnalyzerTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * constructor parameter must not have import annotation.
+     * constructor parameter must not have import annotations in strict mode.
      */
     @Test
     public void violate_ctor_with_not_only_extern() {
+        add("com/example/external/StringImporter");
+        add("com/example/external/StringExporter");
+        error("com.example.ctor.WithExternIn", env -> env.withFlowpartExternalIo(false));
+    }
+
+    /**
+     * constructor parameter must not have export annotations in strict mode.
+     */
+    @Test
+    public void violate_ctor_import_strict() {
+        add("com/example/external/StringImporter");
+        add("com/example/external/StringExporter");
+        error("com.example.ctor.WithExternOut", env -> env.withFlowpartExternalIo(false));
+    }
+
+    /**
+     * constructor parameter must not have import annotation.
+     */
+    @Test
+    public void violate_ctor_export_strict() {
         add("com/example/external/StringImporter");
         add("com/example/external/StringExporter");
         error("com.example.ctor.ViolateWithNotOnlyExtern");
@@ -400,6 +421,16 @@ public class FlowPartAnalyzerTest extends OperatorCompilerTestRoot {
         error(action);
     }
 
+    private void error(String className, Consumer<CompileEnvironment> editor) {
+        Action action = new Action(className) {
+            @Override
+            protected void perform(OperatorClass target) {
+                return;
+            }
+        }.with(editor);
+        error(action);
+    }
+
     private void error(Action action) {
         int index = action.className.indexOf('$');
         String file;
@@ -419,16 +450,25 @@ public class FlowPartAnalyzerTest extends OperatorCompilerTestRoot {
 
         boolean performed;
 
+        private final List<Consumer<CompileEnvironment>> environmentEditors = new ArrayList<>();
+
         Action(String className) {
             this.className = className;
         }
 
         @Override
         protected CompileEnvironment createCompileEnvironment(ProcessingEnvironment processingEnv) {
-            return new CompileEnvironment(
+            CompileEnvironment result = new CompileEnvironment(
                     processingEnv,
                     Collections.emptyList(),
                     Arrays.asList(new StringDataModelMirrorRepository())).withFlowpartExternalIo(true);
+            environmentEditors.forEach(it -> it.accept(result));
+            return result;
+        }
+
+        protected Action with(Consumer<CompileEnvironment> editor) {
+            environmentEditors.add(editor);
+            return this;
         }
 
         @Override

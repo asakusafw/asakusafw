@@ -22,7 +22,6 @@ import java.util.List;
 
 import javax.lang.model.element.Modifier;
 
-import com.asakusafw.operator.AbstractOperatorDriver;
 import com.asakusafw.operator.Constants;
 import com.asakusafw.operator.OperatorDriver;
 import com.asakusafw.operator.builtin.DslBuilder.AnnotationRef;
@@ -34,7 +33,7 @@ import com.asakusafw.operator.model.OperatorDescription;
 /**
  * {@link OperatorDriver} for {@code Split} annotation.
  */
-public class SplitOperatorDriver extends AbstractOperatorDriver {
+public class SplitOperatorDriver implements OperatorDriver {
 
     @Override
     public ClassDescription getAnnotationTypeName() {
@@ -97,7 +96,9 @@ public class SplitOperatorDriver extends AbstractOperatorDriver {
                     if (saw) {
                         dsl.addOutput(p.document(), p.name(), arg.mirror(), p.reference());
                     } else {
-                        p.error(Messages.getString("SplitOperatorDriver.errorOutputNotJoinSourceType")); //$NON-NLS-1$
+                        p.error(MessageFormat.format(
+                                Messages.getString("SplitOperatorDriver.errorOutputNotJoinSourceType"), //$NON-NLS-1$
+                                p0.type().dataModel().getSimpleName()));
                     }
                 }
             } else if (type.isDataModel()) {

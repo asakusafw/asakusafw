@@ -25,8 +25,6 @@ import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.type.TypeVariable;
 
-import com.asakusafw.operator.CompileEnvironment;
-import com.asakusafw.operator.DataModelMirrorRepository;
 import com.asakusafw.operator.description.ClassDescription;
 import com.asakusafw.operator.description.Descriptions;
 import com.asakusafw.operator.model.ConcreteDataModelMirror;

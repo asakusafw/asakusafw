@@ -25,12 +25,11 @@ import javax.lang.model.type.TypeVariable;
 
 import org.junit.Test;
 
-import com.asakusafw.operator.builtin.BranchOperatorDriver;
 import com.asakusafw.operator.description.Descriptions;
 import com.asakusafw.operator.model.OperatorDescription;
-import com.asakusafw.operator.model.OperatorElement;
 import com.asakusafw.operator.model.OperatorDescription.Node;
 import com.asakusafw.operator.model.OperatorDescription.Reference;
+import com.asakusafw.operator.model.OperatorElement;
 import com.asakusafw.vocabulary.operator.Branch;
 
 /**
@@ -54,7 +53,7 @@ public class BranchOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
-     * Simple testing.
+     * simple case.
      */
     @Test
     public void simple() {
@@ -146,7 +145,7 @@ public class BranchOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
-     * Violates method is not abstract.
+     * violates method is not abstract.
      */
     @Test
     public void violate_not_abstract() {
@@ -154,7 +153,7 @@ public class BranchOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
-     * Violates method returns enum.
+     * violates method returns enum.
      */
     @Test
     public void violate_return_enum() {
@@ -162,7 +161,7 @@ public class BranchOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
-     * Violates method has only single input.
+     * violates method has only single input.
      */
     @Test
     public void violate_single_input() {
@@ -170,7 +169,7 @@ public class BranchOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
-     * Violates method returns not empty enum.
+     * violates method returns not empty enum.
      */
     @Test
     public void violate_not_empty_enum() {
@@ -178,7 +177,7 @@ public class BranchOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
-     * Violates method has only valid parameters.
+     * violates method has only valid parameters.
      */
     @Test
     public void violate_valid_parameter() {

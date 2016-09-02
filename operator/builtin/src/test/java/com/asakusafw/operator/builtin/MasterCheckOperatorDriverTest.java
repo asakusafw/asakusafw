@@ -22,11 +22,10 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import com.asakusafw.operator.builtin.MasterCheckOperatorDriver;
 import com.asakusafw.operator.description.Descriptions;
 import com.asakusafw.operator.model.OperatorDescription;
-import com.asakusafw.operator.model.OperatorElement;
 import com.asakusafw.operator.model.OperatorDescription.Node;
+import com.asakusafw.operator.model.OperatorElement;
 import com.asakusafw.vocabulary.operator.MasterCheck;
 
 /**
@@ -50,7 +49,7 @@ public class MasterCheckOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
-     * Simple testing.
+     * simple case.
      */
     @Test
     public void simple() {

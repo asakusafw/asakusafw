@@ -17,7 +17,6 @@ package com.asakusafw.operator.builtin;
 
 import javax.lang.model.element.Modifier;
 
-import com.asakusafw.operator.AbstractOperatorDriver;
 import com.asakusafw.operator.Constants;
 import com.asakusafw.operator.OperatorDriver;
 import com.asakusafw.operator.builtin.DslBuilder.AnnotationRef;
@@ -30,7 +29,7 @@ import com.asakusafw.operator.model.OperatorDescription;
 /**
  * {@link OperatorDriver} for {@code Summarize} annotation.
  */
-public class SummarizeOperatorDriver extends AbstractOperatorDriver {
+public class SummarizeOperatorDriver implements OperatorDriver {
 
     private static final String OUTPUT_PORT = "summarizedPort"; //$NON-NLS-1$
 

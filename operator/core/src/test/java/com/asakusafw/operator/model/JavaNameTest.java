@@ -24,8 +24,6 @@ import java.util.List;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 
-import com.asakusafw.operator.model.JavaName;
-
 /**
  * Test for {@link JavaName}.
  */

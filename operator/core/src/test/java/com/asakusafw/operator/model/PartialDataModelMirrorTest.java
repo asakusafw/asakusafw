@@ -24,10 +24,6 @@ import org.junit.Test;
 import com.asakusafw.operator.AnnotationProcessing;
 import com.asakusafw.operator.MockPropertyMirrorCollector;
 import com.asakusafw.operator.OperatorCompilerTestRoot;
-import com.asakusafw.operator.model.ConcreteDataModelMirror;
-import com.asakusafw.operator.model.DataModelMirror;
-import com.asakusafw.operator.model.PartialDataModelMirror;
-import com.asakusafw.operator.model.PropertyMirror;
 
 /**
  * Test for {@link PartialDataModelMirror}.

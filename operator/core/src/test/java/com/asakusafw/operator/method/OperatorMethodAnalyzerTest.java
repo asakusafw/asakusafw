@@ -30,12 +30,11 @@ import javax.lang.model.util.ElementFilter;
 
 import org.junit.Test;
 
-import com.asakusafw.operator.AbstractOperatorDriver;
 import com.asakusafw.operator.Callback;
 import com.asakusafw.operator.CompileEnvironment;
 import com.asakusafw.operator.OperatorCompilerTestRoot;
+import com.asakusafw.operator.OperatorDriver;
 import com.asakusafw.operator.description.ClassDescription;
-import com.asakusafw.operator.method.OperatorMethodAnalyzer;
 import com.asakusafw.operator.model.OperatorClass;
 import com.asakusafw.operator.model.OperatorDescription;
 import com.asakusafw.operator.model.OperatorElement;
@@ -279,7 +278,7 @@ public class OperatorMethodAnalyzerTest extends OperatorCompilerTestRoot {
         protected abstract void perform(OperatorClass target);
     }
 
-    private static class MockDriver extends AbstractOperatorDriver {
+    private static class MockDriver implements OperatorDriver {
 
         private final ClassDescription typeName;
 

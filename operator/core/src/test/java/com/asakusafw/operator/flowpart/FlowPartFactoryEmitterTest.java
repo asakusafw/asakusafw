@@ -36,17 +36,16 @@ import com.asakusafw.operator.Constants;
 import com.asakusafw.operator.MockSource;
 import com.asakusafw.operator.OperatorCompilerTestRoot;
 import com.asakusafw.operator.description.ClassDescription;
-import com.asakusafw.operator.flowpart.FlowPartFactoryEmitter;
 import com.asakusafw.operator.model.OperatorClass;
 import com.asakusafw.operator.model.OperatorDescription;
-import com.asakusafw.operator.model.OperatorElement;
 import com.asakusafw.operator.model.OperatorDescription.Document;
 import com.asakusafw.operator.model.OperatorDescription.MethodReference;
 import com.asakusafw.operator.model.OperatorDescription.Node;
+import com.asakusafw.operator.model.OperatorDescription.Node.Kind;
 import com.asakusafw.operator.model.OperatorDescription.ParameterReference;
 import com.asakusafw.operator.model.OperatorDescription.ReferenceDocument;
 import com.asakusafw.operator.model.OperatorDescription.TextDocument;
-import com.asakusafw.operator.model.OperatorDescription.Node.Kind;
+import com.asakusafw.operator.model.OperatorElement;
 import com.asakusafw.operator.util.AnnotationHelper;
 
 /**
@@ -55,7 +54,7 @@ import com.asakusafw.operator.util.AnnotationHelper;
 public class FlowPartFactoryEmitterTest extends OperatorCompilerTestRoot {
 
     /**
-     * Simple testing.
+     * simple case.
      */
     @Test
     public void simple() {
@@ -73,7 +72,7 @@ public class FlowPartFactoryEmitterTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * With input.
+     * w/ input.
      */
     @Test
     public void input() {
@@ -95,7 +94,7 @@ public class FlowPartFactoryEmitterTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * With output.
+     * w/ output.
      */
     @Test
     public void output() {
@@ -118,7 +117,7 @@ public class FlowPartFactoryEmitterTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * With argument.
+     * w/ argument.
      */
     @Test
     public void argument() {
@@ -140,7 +139,7 @@ public class FlowPartFactoryEmitterTest extends OperatorCompilerTestRoot {
     }
 
     /**
-     * With type parameter.
+     * w/ type parameter.
      */
     @Test
     public void projective() {

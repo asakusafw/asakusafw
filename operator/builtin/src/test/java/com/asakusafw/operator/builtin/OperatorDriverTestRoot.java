@@ -132,7 +132,7 @@ public class OperatorDriverTestRoot extends OperatorCompilerTestRoot {
         addDataModel("Model", "package com.example; public class Model { public int key; public String content; }");
         addDataModel("Side", "package com.example; public class Side { public int id; }");
         addDataModel("Proceeded", "package com.example; public class Proceeded { public int proceeded; }");
-        addDataModel("Projective", "package com.example; public class Projective { public int content; }");
+        addDataModel("Projective", "package com.example; public class Projective { public String content; }");
     }
 
     /**

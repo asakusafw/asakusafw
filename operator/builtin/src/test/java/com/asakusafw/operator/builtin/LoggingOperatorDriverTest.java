@@ -18,13 +18,15 @@ package com.asakusafw.operator.builtin;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
+import javax.lang.model.type.TypeKind;
+import javax.lang.model.type.TypeVariable;
+
 import org.junit.Test;
 
-import com.asakusafw.operator.builtin.LoggingOperatorDriver;
 import com.asakusafw.operator.description.Descriptions;
 import com.asakusafw.operator.model.OperatorDescription;
-import com.asakusafw.operator.model.OperatorElement;
 import com.asakusafw.operator.model.OperatorDescription.Node;
+import com.asakusafw.operator.model.OperatorElement;
 import com.asakusafw.vocabulary.operator.Logging;
 
 /**
@@ -48,7 +50,7 @@ public class LoggingOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
-     * Simple testing.
+     * simple case.
      */
     @Test
     public void simple() {
@@ -69,5 +71,83 @@ public class LoggingOperatorDriverTest extends OperatorDriverTestRoot {
                 assertThat(output.getType(), is(sameType("com.example.Model")));
             }
         });
+    }
+
+    /**
+     * w/ basic parameters.
+     */
+    @Test
+    public void with_arguments() {
+        compile(new Action("com.example.WithArgument") {
+            @Override
+            protected void perform(OperatorElement target) {
+                OperatorDescription description = target.getDescription();
+                assertThat(description.getInputs().size(), is(1));
+                assertThat(description.getOutputs().size(), is(1));
+                assertThat(description.getArguments().size(), is(1));
+
+                Node node = description.getArguments().get(0);
+                assertThat(node.getName(), is("arg"));
+                assertThat(node.getType(), is(kindOf(TypeKind.INT)));
+            }
+        });
+    }
+
+    /**
+     * w/ type parameters.
+     */
+    @Test
+    public void with_projective() {
+        compile(new Action("com.example.WithProjective") {
+            @Override
+            protected void perform(OperatorElement target) {
+                OperatorDescription description = target.getDescription();
+                assertThat(description.getInputs().size(), is(1));
+                assertThat(description.getOutputs().size(), is(1));
+                assertThat(description.getArguments().size(), is(0));
+
+                TypeVariable t = getTypeVariable(target.getDeclaration(), "T");
+
+                Node input = description.getInputs().get(0);
+                assertThat(input.getName(), is("in"));
+                assertThat(input.getType(), is(sameType(t)));
+
+                Node output = description.getOutputs().get(0);
+                assertThat(output.getName(), is("out"));
+                assertThat(output.getType(), is(sameType(t)));
+            }
+        });
+    }
+
+    /**
+     * violates method is not abstract.
+     */
+    @Test
+    public void violate_not_abstract() {
+        violate("com.example.ViolateNotAbstract");
+    }
+
+    /**
+     * violates method returns string.
+     */
+    @Test
+    public void violate_return_string() {
+        violate("com.example.ViolateReturnString");
+    }
+
+    /**
+     * violates method number of input is 1.
+     */
+    @Test
+    public void violate_input_single() {
+        violate("com.example.ViolateInputSingle");
+    }
+
+    /**
+     * violates method valid parameter type.
+     */
+    @Test
+    public void violate_parameter_type() {
+        violate("com.example.ViolateParameterType");
     }
 }

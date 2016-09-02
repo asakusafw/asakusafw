@@ -1,0 +1,11 @@
+package com.example;
+
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class WithProjective {
+
+    @Logging
+    public <T extends Projective> String method(T in) {
+        return null;
+    }
+}

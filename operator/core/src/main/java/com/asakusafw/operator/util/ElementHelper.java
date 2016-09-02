@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
@@ -49,11 +50,11 @@ import com.asakusafw.operator.model.ExternMirror;
 import com.asakusafw.operator.model.KeyMirror;
 import com.asakusafw.operator.model.OperatorClass;
 import com.asakusafw.operator.model.OperatorDescription;
-import com.asakusafw.operator.model.OperatorElement;
 import com.asakusafw.operator.model.OperatorDescription.Node;
 import com.asakusafw.operator.model.OperatorDescription.ParameterReference;
 import com.asakusafw.operator.model.OperatorDescription.Reference;
 import com.asakusafw.operator.model.OperatorDescription.Reference.Kind;
+import com.asakusafw.operator.model.OperatorElement;
 import com.asakusafw.utils.java.jsr269.bridge.Jsr269;
 import com.asakusafw.utils.java.model.syntax.Annotation;
 import com.asakusafw.utils.java.model.syntax.Attribute;
@@ -188,23 +189,15 @@ public final class ElementHelper {
         assert element != null;
         assert description != null;
         boolean valid = true;
-        List<TypeVariable> vars = new ArrayList<>();
-        for (Node input : description.getInputs()) {
-            if (input.getType().getKind() == TypeKind.TYPEVAR) {
-                vars.add((TypeVariable) input.getType());
-            }
-        }
+        List<TypeVariable> vars = description.getInputs().stream()
+                .map(Node::getType)
+                .filter(type -> type.getKind() == TypeKind.TYPEVAR)
+                .map(TypeVariable.class::cast)
+                .collect(Collectors.toList());
         Types types = environment.getProcessingEnvironment().getTypeUtils();
         for (Node output : description.getOutputs()) {
             if (output.getType().getKind() == TypeKind.TYPEVAR) {
-                boolean found = false;
-                for (TypeVariable var : vars) {
-                    if (types.isSameType(var, output.getType())) {
-                        found = true;
-                        break;
-                    }
-                }
-                if (found == false) {
+                if (vars.stream().noneMatch(var -> types.isSameType(var, output.getType()))) {
                     environment.getProcessingEnvironment().getMessager().printMessage(Diagnostic.Kind.ERROR,
                             MessageFormat.format(
                                     Messages.getString("ElementHelper.errorOutputTypeNotInferable"), //$NON-NLS-1$

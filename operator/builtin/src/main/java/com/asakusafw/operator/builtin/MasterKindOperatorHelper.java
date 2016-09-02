@@ -159,6 +159,13 @@ final class MasterKindOperatorHelper {
         DataModelMirror operatorMaster = environment.findDataModel(operatorParams.get(0).asType());
         DataModelMirror selectorMaster = extractSelectorMaster(
                 environment, selectorMethod, selectorParams.get(0).asType());
+        DataModelMirror selectorResult = environment.findDataModel(selectorMethod.getReturnType());
+        if (isValidResult(operatorMaster, selectorMaster, selectorResult) == false) {
+            throw new ResolveException(MessageFormat.format(
+                    Messages.getString("MasterKindOperatorHelper.errorSelectorMethodReturnInconsistentType"), //$NON-NLS-1$
+                    selectorMethod.getSimpleName(),
+                    operatorMaster));
+        }
         if (isValidMaster(operatorMaster, selectorMaster) == false) {
             throw new ResolveException(MessageFormat.format(
                     Messages.getString("MasterKindOperatorHelper.errorSelectorMethodMasterInputInconsistentType"), //$NON-NLS-1$
@@ -175,13 +182,6 @@ final class MasterKindOperatorHelper {
                     Messages.getString("MasterKindOperatorHelper.errorSelectorMethodTransactionInputInconsistentType"), //$NON-NLS-1$
                     selectorMethod.getSimpleName(),
                     operatorTx));
-        }
-        DataModelMirror selectorResult = environment.findDataModel(selectorMethod.getReturnType());
-        if (isValidResult(operatorMaster, selectorMaster, selectorResult) == false) {
-            throw new ResolveException(MessageFormat.format(
-                    Messages.getString("MasterKindOperatorHelper.errorSelectorMethodReturnInconsistentType"), //$NON-NLS-1$
-                    selectorMethod.getSimpleName(),
-                    operatorMaster));
         }
         for (int i = 2, n = selectorParams.size(); i < n; i++) {
             TypeMirror expected = operatorParams.get(i).asType();
@@ -256,7 +256,7 @@ final class MasterKindOperatorHelper {
         assert firstParameter != null;
         TypeMirror erasedSelector = environment.getErasure(firstParameter);
         Types types = environment.getProcessingEnvironment().getTypeUtils();
-        if (types.isSameType(erasedSelector, environment.findDeclaredType(TYPE_LIST)) == false) {
+        if (types.isSubtype(environment.findDeclaredType(TYPE_LIST), erasedSelector) == false) {
             throw new ResolveException(MessageFormat.format(
                     Messages.getString("MasterKindOperatorHelper.errorSelectorMethodMasterInputNotList"), //$NON-NLS-1$
                     selectorMethod.getSimpleName()));

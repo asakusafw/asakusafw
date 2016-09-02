@@ -23,22 +23,24 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.processing.ProcessingEnvironment;
+
 import org.junit.Test;
 
-import com.asakusafw.operator.AbstractOperatorDriver;
+import com.asakusafw.operator.CompileEnvironment;
 import com.asakusafw.operator.Constants;
 import com.asakusafw.operator.MockSource;
 import com.asakusafw.operator.OperatorCompilerTestRoot;
+import com.asakusafw.operator.OperatorDriver;
 import com.asakusafw.operator.description.ClassDescription;
 import com.asakusafw.operator.description.Descriptions;
-import com.asakusafw.operator.method.OperatorAnnotationProcessor;
 import com.asakusafw.operator.model.OperatorDescription;
 import com.asakusafw.operator.model.OperatorDescription.MethodReference;
 import com.asakusafw.operator.model.OperatorDescription.Node;
+import com.asakusafw.operator.model.OperatorDescription.Node.Kind;
 import com.asakusafw.operator.model.OperatorDescription.ParameterReference;
 import com.asakusafw.operator.model.OperatorDescription.ReferenceDocument;
 import com.asakusafw.operator.model.OperatorDescription.ReturnReference;
-import com.asakusafw.operator.model.OperatorDescription.Node.Kind;
 
 /**
  * Test for {@link OperatorAnnotationProcessor}.
@@ -46,7 +48,7 @@ import com.asakusafw.operator.model.OperatorDescription.Node.Kind;
 public class OperatorAnnotationProcessorTest extends OperatorCompilerTestRoot {
 
     /**
-     * Simple testing.
+     * simple testing.
      */
     @Test
     public void simple() {
@@ -81,6 +83,37 @@ public class OperatorAnnotationProcessorTest extends OperatorCompilerTestRoot {
         assertThat(field(node.getClass(), "out"), is(notNullValue()));
     }
 
+    /**
+     * raise errors on initialize.
+     */
+    @Test
+    public void failure_init() {
+        add("com.example.Simple");
+        add("com.example.Mock");
+        error(new OperatorAnnotationProcessor() {
+            @Override
+            protected CompileEnvironment createCompileEnvironment(ProcessingEnvironment processingEnv) {
+                throw new RuntimeException();
+            }
+        });
+    }
+
+    /**
+     * raise errors on process.
+     */
+    @Test
+    public void failure_process() {
+        add(new Driver() {
+            @Override
+            public OperatorDescription analyze(Context context) {
+                throw new RuntimeException();
+            }
+        });
+        add("com.example.Simple");
+        add("com.example.Mock");
+        error(operatorProcessor());
+    }
+
     private Compiled compile(String name) {
         add(name);
         add("com.example.Mock");
@@ -91,7 +124,7 @@ public class OperatorAnnotationProcessorTest extends OperatorCompilerTestRoot {
         return new Compiled(origin, factory, impl);
     }
 
-    private abstract static class Driver extends AbstractOperatorDriver {
+    private abstract static class Driver implements OperatorDriver {
 
         public Driver() {
             return;

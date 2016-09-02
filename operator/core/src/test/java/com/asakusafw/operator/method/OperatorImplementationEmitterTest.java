@@ -28,7 +28,6 @@ import com.asakusafw.operator.Callback;
 import com.asakusafw.operator.Constants;
 import com.asakusafw.operator.OperatorCompilerTestRoot;
 import com.asakusafw.operator.description.ClassDescription;
-import com.asakusafw.operator.method.OperatorImplementationEmitter;
 import com.asakusafw.operator.model.OperatorClass;
 
 /**

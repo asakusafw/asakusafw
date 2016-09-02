@@ -169,14 +169,14 @@ public final class KeyMirror {
                     annotationValue);
             return null;
         }
-        String groupString = (String) value;
-        String name = groupString.trim();
+        String name = ((String) value).trim();
         PropertyMirror property = contextType.findProperty(name);
         if (property == null) {
             Messager messager = environment.getProcessingEnvironment().getMessager();
             messager.printMessage(Diagnostic.Kind.ERROR,
                     MessageFormat.format(
                             Messages.getString("KeyMirror.errorGroupUnknownProperty"), //$NON-NLS-1$
+                            contextType.getSimpleName(),
                             name),
                     contextElement,
                     annotation,
@@ -237,6 +237,7 @@ public final class KeyMirror {
             messager.printMessage(Diagnostic.Kind.ERROR,
                     MessageFormat.format(
                             Messages.getString("KeyMirror.errorOrderUnknownProperty"), //$NON-NLS-1$
+                            contextType.getSimpleName(),
                             name),
                     contextElement,
                     annotation,

@@ -24,11 +24,10 @@ import javax.lang.model.type.TypeKind;
 
 import org.junit.Test;
 
-import com.asakusafw.operator.builtin.FoldOperatorDriver;
 import com.asakusafw.operator.description.Descriptions;
 import com.asakusafw.operator.model.OperatorDescription;
-import com.asakusafw.operator.model.OperatorElement;
 import com.asakusafw.operator.model.OperatorDescription.Node;
+import com.asakusafw.operator.model.OperatorElement;
 import com.asakusafw.vocabulary.operator.Fold;
 
 /**
@@ -52,7 +51,7 @@ public class FoldOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
-     * Simple testing.
+     * simple case.
      */
     @Test
     public void simple() {
@@ -75,7 +74,7 @@ public class FoldOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
-     * With arguments.
+     * w/ arguments.
      */
     @Test
     public void with_argument() {
@@ -104,7 +103,7 @@ public class FoldOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
-     * Violates method is not abstract.
+     * violates method is not abstract.
      */
     @Test
     public void violate_not_abstract() {
@@ -112,7 +111,7 @@ public class FoldOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
-     * Violates method returns enum.
+     * violates method returns enum.
      */
     @Test
     public void violate_return_void() {
@@ -120,7 +119,7 @@ public class FoldOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
-     * Violates method first parameter must be a model.
+     * violates method first parameter must be a model.
      */
     @Test
     public void violate_input_with_model1() {
@@ -128,7 +127,7 @@ public class FoldOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
-     * Violates method second parameter must be a model.
+     * violates method second parameter must be a model.
      */
     @Test
     public void violate_input_with_model2() {
@@ -136,7 +135,7 @@ public class FoldOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
-     * Violates method both inputs must be same type.
+     * violates method both inputs must be same type.
      */
     @Test
     public void violate_input_same_type() {
@@ -144,7 +143,7 @@ public class FoldOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
-     * Violates method has just twin input.
+     * violates method has just twin input.
      */
     @Test
     public void violate_input_with_key() {
@@ -152,7 +151,7 @@ public class FoldOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
-     * Violates method has just twin input.
+     * violates method has just twin input.
      */
     @Test
     public void violate_twin_input1() {
@@ -160,7 +159,7 @@ public class FoldOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
-     * Violates method has just twin input.
+     * violates method has just twin input.
      */
     @Test
     public void violate_twin_input3() {
@@ -168,7 +167,7 @@ public class FoldOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
-     * Violates method has only valid parameters.
+     * violates method has only valid parameters.
      */
     @Test
     public void violate_valid_parameter() {

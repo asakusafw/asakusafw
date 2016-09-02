@@ -1,0 +1,11 @@
+package com.example;
+
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class ViolateParameterType {
+
+    @Logging
+    public String method(Model model, Object arg) {
+        return null;
+    }
+}

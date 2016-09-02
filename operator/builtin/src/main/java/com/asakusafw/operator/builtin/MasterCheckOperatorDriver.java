@@ -17,7 +17,6 @@ package com.asakusafw.operator.builtin;
 
 import javax.lang.model.element.Modifier;
 
-import com.asakusafw.operator.AbstractOperatorDriver;
 import com.asakusafw.operator.Constants;
 import com.asakusafw.operator.OperatorDriver;
 import com.asakusafw.operator.builtin.DslBuilder.ElementRef;
@@ -30,7 +29,7 @@ import com.asakusafw.operator.model.OperatorDescription.Reference;
 /**
  * {@link OperatorDriver} for {@code MasterCheck} annotation.
  */
-public class MasterCheckOperatorDriver extends AbstractOperatorDriver {
+public class MasterCheckOperatorDriver implements OperatorDriver {
 
     private static final String JOINED_PORT = "foundPort"; //$NON-NLS-1$
 
