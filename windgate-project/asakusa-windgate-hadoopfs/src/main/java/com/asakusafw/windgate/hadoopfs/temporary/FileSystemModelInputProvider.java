@@ -101,7 +101,7 @@ public class FileSystemModelInputProvider<T> implements ModelInputProvider<T> {
                         paths);
                 FileStatus[] statusList = fileSystem.globStatus(path);
                 if (statusList == null || statusList.length == 0) {
-                    WGLOG.warn("W09001",
+                    WGLOG.warn("W09002",
                             fileSystem.getUri(),
                             paths);
                     continue;
