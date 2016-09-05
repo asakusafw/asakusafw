@@ -127,11 +127,6 @@ public abstract class JdbcExporterDescription extends WindGateExporterDescriptio
     public enum Option implements JdbcAttribute {
 
         /**
-         * Use {@code COPY} statement instead of {@code INSERT} on postgresql.
-         */
-        POSTGRES_COPY(JdbcProcess.OptionSymbols.POSTGRES_COPY),
-
-        /**
          * Use direct path insert instead of conventional insert on Oracle.
          */
         ORACLE_DIRPATH(JdbcProcess.OptionSymbols.ORACLE_DIRPATH),
