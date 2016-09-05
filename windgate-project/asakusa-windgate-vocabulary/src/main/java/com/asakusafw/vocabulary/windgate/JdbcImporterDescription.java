@@ -115,11 +115,6 @@ public abstract class JdbcImporterDescription extends WindGateImporterDescriptio
      * @since 0.9.0
      */
     public enum Option implements JdbcAttribute {
-
-        /**
-         * Use {@code COPY} statement instead of {@code SELECT} on postgresql.
-         */
-        POSTGRES_COPY(JdbcProcess.OptionSymbols.POSTGRES_COPY),
         ;
 
         private final String symbol;
