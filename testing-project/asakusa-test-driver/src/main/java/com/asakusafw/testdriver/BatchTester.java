@@ -17,6 +17,7 @@ package com.asakusafw.testdriver;
 
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -142,6 +143,7 @@ public class BatchTester extends TesterBase {
                 executor.prepareExternalResources(getExternalResources());
             }
 
+            Date startDate = null;
             for (JobflowMirror jobflow : Util.sort(batch.getElements())) {
                 Util.prepare(driverContext, batch, jobflow);
                 String flowId = jobflow.getFlowId();
@@ -155,7 +157,10 @@ public class BatchTester extends TesterBase {
                     LOG.info(MessageFormat.format(
                             Messages.getString("BatchTester.infoExecute"), //$NON-NLS-1$
                             batchClass.getName(), flowId));
-                    VerifyContext verifyContext = new VerifyContext(driverContext);
+                    if (startDate == null) {
+                        startDate = new Date();
+                    }
+                    VerifyContext verifyContext = new VerifyContext(driverContext, startDate);
                     executor.runJobflow(jobflow);
                     verifyContext.testFinished();
 
