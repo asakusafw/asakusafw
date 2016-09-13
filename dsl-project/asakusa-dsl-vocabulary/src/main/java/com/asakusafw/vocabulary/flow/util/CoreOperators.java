@@ -30,7 +30,7 @@ import com.asakusafw.vocabulary.flow.util.CoreOperatorFactory.RestructureFragmen
 /**
  * Provides factory methods for core operators.
  * @since 0.2.6
- * @version 0.7.3
+ * @version 0.9.0
  */
 public final class CoreOperators {
 
@@ -132,6 +132,21 @@ public final class CoreOperators {
      * @see CoreOperatorFactory#confluent(Iterable)
      */
     public static <T> Confluent<T> confluent(Iterable<? extends Source<T>> inputs) {
+        return FACTORY.confluent(inputs);
+    }
+
+    /**
+     * Returns a new <em>confluent operator</em> instance.
+     * The resulting operator puts the data from each upstream source together and provides them as the output.
+     * @param <T> the data model type
+     * @param inputs the upstream sources
+     * @return a new instance of <em>confluent operator</em>
+     * @throws IllegalArgumentException if the parameter is {@code null}
+     * @see CoreOperatorFactory#confluent(Iterable)
+     * @since 0.9.0
+     */
+    @SafeVarargs
+    public static <T> Confluent<T> confluent(Source<T>... inputs) {
         return FACTORY.confluent(inputs);
     }
 

@@ -732,6 +732,7 @@ public class StagePlanner {
      * Normalizes the target flow graph.
      * <ul>
      * <li> flatten flow-parts </li>
+     * <li> removes pseudo-pseudo chains (e.g. nested confluent) </li>
      * <li> insert stage boundary into ({@code shuffle -> shuffle}) paths </li>
      * <li> insert identity operator into ({@code boundary -> boundary}) </li>
      * <li> split identity operators </li>
@@ -744,6 +745,7 @@ public class StagePlanner {
         assert graph != null;
         LOG.debug("normalizing operator graph: {}", graph); //$NON-NLS-1$
         inlineFlowParts(graph);
+        pushDownPseudoChain(graph);
         unifyGlobalSideEffects(graph);
         insertCheckpoints(graph);
         insertIdentities(graph);
@@ -772,6 +774,36 @@ public class StagePlanner {
             }
         }
         assert FlowGraphUtil.collectFlowParts(graph).isEmpty() : FlowGraphUtil.collectFlowParts(graph);
+    }
+
+    /**
+     * Removes PSEUD-PSEUD chains.
+     * @param graph the target flow graph (flattened)
+     */
+    void pushDownPseudoChain(FlowGraph graph) {
+        for (FlowElement element : FlowGraphUtil.collectElements(graph)) {
+            if (element.getDescription().getKind() != FlowElementKind.PSEUD || element.getOutputPorts().isEmpty()) {
+                continue;
+            }
+            assert element.getOutputPorts().size() == 1;
+            for (FlowElementOutput upstream : element.getOutputPorts()) {
+                for (PortConnection conn : new ArrayList<>(upstream.getConnected())) {
+                    FlowElement successor = conn.getDownstream().getOwner();
+                    if (successor.getDescription().getKind() == FlowElementKind.PSEUD
+                            && FlowGraphUtil.isBoundary(successor) == false) {
+                        for (FlowElementOutput sUpstream : successor.getOutputPorts()) {
+                            for (PortConnection sConn : sUpstream.getConnected()) {
+                                PortConnection.connect(upstream, sConn.getDownstream());
+                            }
+                        }
+                        conn.disconnect();
+                        if (FlowGraphUtil.hasPredecessors(successor) == false) {
+                            FlowGraphUtil.disconnect(successor);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /**
