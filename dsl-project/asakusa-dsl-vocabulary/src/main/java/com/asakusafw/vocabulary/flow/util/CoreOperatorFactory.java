@@ -20,6 +20,7 @@ import static com.asakusafw.vocabulary.flow.util.PseudElementDescription.*;
 import java.lang.reflect.Type;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.asakusafw.vocabulary.flow.Operator;
@@ -33,7 +34,7 @@ import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 /**
  * Provides factory methods for core operators.
  * @since 0.1.0
- * @version 0.7.3
+ * @version 0.9.0
  */
 public class CoreOperatorFactory {
 
@@ -248,6 +249,24 @@ public class CoreOperatorFactory {
         }
         Type type = getPortType(input.get(0));
         return new Confluent<>(type, input);
+    }
+
+    /**
+     * Returns a new <em>confluent operator</em> instance.
+     * The resulting operator puts the data from each upstream source together and provides them as the output.
+     * @param <T> the data model type
+     * @param inputs the upstream sources
+     * @return a new instance of <em>confluent operator</em>
+     * @throws IllegalArgumentException if the parameter is {@code null}
+     * @see com.asakusafw.vocabulary.operator.Confluent
+     * @since 0.9.0
+     */
+    @SafeVarargs
+    public final <T> Confluent<T> confluent(Source<T>... inputs) {
+        if (inputs == null) {
+            throw new IllegalArgumentException("inputs must not be null"); //$NON-NLS-1$
+        }
+        return confluent(Arrays.asList(inputs));
     }
 
     /**
