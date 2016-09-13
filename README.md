@@ -41,15 +41,13 @@ All these features have been well designed and developed with the expertise from
 
 If you run tests in Eclipse, please activate `Preferences > Java > Debug > 'Only include exported classpath entries when launching'`.
 
-## How to build document
-* See documantation [`README`](docs/README.md).
-
 ## Sub Projects
 * [Asakusa Framework SDK](https://github.com/asakusafw/asakusafw-sdk)
 * [Asakusa Framework Language Toolset](https://github.com/asakusafw/asakusafw-compiler)
 * [Asakusa Framework DAG Toolset](https://github.com/asakusafw/asakusafw-dag)
 * [Asakusa on Spark](https://github.com/asakusafw/asakusafw-spark)
 * [Asakusa on M<sup>3</sup>BP](https://github.com/asakusafw/asakusafw-m3bp)
+* [Asakusa Framework Documentation](https://github.com/asakusafw/asakusafw-documentation)
 
 ## Related Projects
 * [Asakusa Framework Examples](https://github.com/asakusafw/asakusafw-examples)
