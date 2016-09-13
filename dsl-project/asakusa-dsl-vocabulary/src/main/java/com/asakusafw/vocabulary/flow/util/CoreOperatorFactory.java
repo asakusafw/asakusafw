@@ -34,7 +34,7 @@ import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
 /**
  * Provides factory methods for core operators.
  * @since 0.1.0
- * @version 0.9.0
+ * @version 0.8.2
  */
 public class CoreOperatorFactory {
 
@@ -259,7 +259,7 @@ public class CoreOperatorFactory {
      * @return a new instance of <em>confluent operator</em>
      * @throws IllegalArgumentException if the parameter is {@code null}
      * @see com.asakusafw.vocabulary.operator.Confluent
-     * @since 0.9.0
+     * @since 0.8.2
      */
     @SafeVarargs
     public final <T> Confluent<T> confluent(Source<T>... inputs) {
