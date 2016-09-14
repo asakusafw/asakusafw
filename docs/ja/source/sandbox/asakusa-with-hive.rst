@@ -96,9 +96,9 @@ Hiveとの連携に利用するカラムナフォーマットファイルは、�
 
 Asakusa Frameworkの `サンプルプログラム集 (GitHub)`_ にDirect I/O Hiveを利用したサンプルアプリケーションを公開しています。
 
-以下はAsakusa Framework バージョン ``0.8.1`` を使用したDirect I/O Hiveのサンプルアプリケーションです。
+以下はAsakusa Framework バージョン ``0.8.2`` を使用したDirect I/O Hiveのサンプルアプリケーションです。
 
-* https://github.com/asakusafw/asakusafw-examples/tree/0.8.1/example-directio-hive
+* https://github.com/asakusafw/asakusafw-examples/tree/0.8.2/example-directio-hive
 
 ..  _`サンプルプログラム集 (GitHub)`: http://github.com/asakusafw/asakusafw-examples
 
