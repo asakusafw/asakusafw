@@ -27,9 +27,5 @@
       <artifactId>asakusa-sdk-dmdl-core</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.apache.hadoop</groupId>
-      <artifactId>${hadoop.artifact.id}</artifactId>
-    </dependency>
   </dependencies>
 </project>
