@@ -112,11 +112,11 @@ public class CsvParser implements RecordParser {
 
     private CharBuffer lineBuffer = CharBuffer.allocate(INPUT_BUFFER_SIZE);
 
-    private int currentRecordNumber = 0;
+    private long currentRecordNumber = 0;
 
-    private int currentPhysicalLine = 1;
+    private long currentPhysicalLine = 1;
 
-    private int currentPhysicalHeadLine = 1;
+    private long currentPhysicalHeadLine = 1;
 
     private CsvFormatException.Status exceptionStatus = null;
 
@@ -499,7 +499,7 @@ public class CsvParser implements RecordParser {
      * Lines are delimited with {@code CR}, {@code LF}, and {@code CRLF}.
      * @return the current line number
      */
-    public int getCurrentLineNumber() {
+    public long getCurrentLineNumber() {
         return currentPhysicalHeadLine;
     }
 
@@ -507,7 +507,7 @@ public class CsvParser implements RecordParser {
      * Returns the 1-origin record number.
      * @return the current record number.
      */
-    public int getCurrentRecordNumber() {
+    public long getCurrentRecordNumber() {
         return currentRecordNumber;
     }
 

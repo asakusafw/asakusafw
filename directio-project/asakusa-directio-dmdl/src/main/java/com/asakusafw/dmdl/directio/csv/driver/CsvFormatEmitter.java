@@ -37,6 +37,7 @@ import com.asakusafw.dmdl.directio.util.DirectFileInputDescriptionGenerator;
 import com.asakusafw.dmdl.directio.util.DirectFileOutputDescriptionGenerator;
 import com.asakusafw.dmdl.java.emitter.EmitContext;
 import com.asakusafw.dmdl.java.spi.JavaDataModelDriver;
+import com.asakusafw.dmdl.model.BasicTypeKind;
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
 import com.asakusafw.dmdl.semantics.PropertyDeclaration;
 import com.asakusafw.dmdl.semantics.Type;
@@ -640,16 +641,18 @@ public class CsvFormatEmitter extends JavaDataModelDriver {
                     break;
                 case LINE_NUMBER:
                     statements.add(new ExpressionBuilder(f, object)
-                        .method(context.getValueSetterName(property), new ExpressionBuilder(f, parser)
+                        .method(context.getValueSetterName(property),
+                                castIfInt(property.getType(), new ExpressionBuilder(f, parser)
                             .method("getCurrentLineNumber") //$NON-NLS-1$
-                            .toExpression())
+                            .toExpression()))
                         .toStatement());
                     break;
                 case RECORD_NUMBER:
                     statements.add(new ExpressionBuilder(f, object)
-                        .method(context.getValueSetterName(property), new ExpressionBuilder(f, parser)
+                        .method(context.getValueSetterName(property),
+                                castIfInt(property.getType(), new ExpressionBuilder(f, parser)
                             .method("getCurrentRecordNumber") //$NON-NLS-1$
-                            .toExpression())
+                            .toExpression()))
                         .toStatement());
                     break;
                 default:
@@ -704,6 +707,17 @@ public class CsvFormatEmitter extends JavaDataModelDriver {
                             context.resolve(ModelInput.class),
                             context.resolve(model.getSymbol()))),
                     members);
+        }
+
+        private Expression castIfInt(Type type, Expression expression) {
+            assert type instanceof BasicType;
+            BasicTypeKind kind = ((BasicType) type).getKind();
+            assert kind == BasicTypeKind.INT || kind == BasicTypeKind.LONG;
+            if (kind == BasicTypeKind.LONG) {
+                return expression;
+            } else {
+                return new ExpressionBuilder(f, expression).castTo(context.resolve(int.class)).toExpression();
+            }
         }
 
         private ClassDeclaration createWriterClass() {
