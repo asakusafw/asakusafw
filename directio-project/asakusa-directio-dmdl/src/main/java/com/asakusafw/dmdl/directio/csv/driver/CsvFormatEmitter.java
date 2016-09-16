@@ -643,16 +643,16 @@ public class CsvFormatEmitter extends JavaDataModelDriver {
                     statements.add(new ExpressionBuilder(f, object)
                         .method(context.getValueSetterName(property),
                                 castIfInt(property.getType(), new ExpressionBuilder(f, parser)
-                            .method("getCurrentLineNumber") //$NON-NLS-1$
-                            .toExpression()))
+                                        .method("getCurrentLineNumber") //$NON-NLS-1$
+                                        .toExpression()))
                         .toStatement());
                     break;
                 case RECORD_NUMBER:
                     statements.add(new ExpressionBuilder(f, object)
                         .method(context.getValueSetterName(property),
                                 castIfInt(property.getType(), new ExpressionBuilder(f, parser)
-                            .method("getCurrentRecordNumber") //$NON-NLS-1$
-                            .toExpression()))
+                                        .method("getCurrentRecordNumber") //$NON-NLS-1$
+                                        .toExpression()))
                         .toStatement());
                     break;
                 default:
