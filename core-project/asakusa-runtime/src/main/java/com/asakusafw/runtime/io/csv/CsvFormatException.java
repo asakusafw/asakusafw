@@ -105,9 +105,9 @@ public class CsvFormatException extends RecordFormatException {
 
         private final String path;
 
-        private final int lineNumber;
+        private final long lineNumber;
 
-        private final int recordNumber;
+        private final long recordNumber;
 
         private final int columnNumber;
 
@@ -129,8 +129,8 @@ public class CsvFormatException extends RecordFormatException {
         public Status(
                 Reason reason,
                 String path,
-                int lineNumber,
-                int recordNumber,
+                long lineNumber,
+                long recordNumber,
                 int columnNumber,
                 String expected,
                 String actual) {
@@ -163,7 +163,7 @@ public class CsvFormatException extends RecordFormatException {
          * Returns the current line number (1-origin).
          * @return the line number
          */
-        public int getLineNumber() {
+        public long getLineNumber() {
             return lineNumber;
         }
 
@@ -171,7 +171,7 @@ public class CsvFormatException extends RecordFormatException {
          * Returns the current record number (1-origin).
          * @return the record number
          */
-        public int getRecordNumber() {
+        public long getRecordNumber() {
             return recordNumber;
         }
 

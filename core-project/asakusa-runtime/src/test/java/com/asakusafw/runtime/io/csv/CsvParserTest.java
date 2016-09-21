@@ -775,8 +775,8 @@ public class CsvParserTest {
         StringOption value = new StringOption();
 
         assertThat(parser.next(), is(true));
-        assertThat(parser.getCurrentLineNumber(), is(2));
-        assertThat(parser.getCurrentRecordNumber(), is(1));
+        assertThat(parser.getCurrentLineNumber(), is(2L));
+        assertThat(parser.getCurrentRecordNumber(), is(1L));
         parser.fill(key);
         parser.fill(value);
         parser.endRecord();
@@ -801,8 +801,8 @@ public class CsvParserTest {
         StringOption value = new StringOption();
 
         assertThat(parser.next(), is(true));
-        assertThat(parser.getCurrentLineNumber(), is(1));
-        assertThat(parser.getCurrentRecordNumber(), is(1));
+        assertThat(parser.getCurrentLineNumber(), is(1L));
+        assertThat(parser.getCurrentRecordNumber(), is(1L));
         parser.fill(key);
         parser.fill(value);
         parser.endRecord();
@@ -810,8 +810,8 @@ public class CsvParserTest {
         assertThat(value.getAsString(), is("value"));
 
         assertThat(parser.next(), is(true));
-        assertThat(parser.getCurrentLineNumber(), is(2));
-        assertThat(parser.getCurrentRecordNumber(), is(2));
+        assertThat(parser.getCurrentLineNumber(), is(2L));
+        assertThat(parser.getCurrentRecordNumber(), is(2L));
         parser.fill(key);
         parser.fill(value);
         parser.endRecord();
@@ -857,33 +857,33 @@ public class CsvParserTest {
                 "x\n" +
                 "");
         assertThat(parser.next(), is(true));
-        assertThat(parser.getCurrentLineNumber(), is(1));
-        assertThat(parser.getCurrentRecordNumber(), is(1));
+        assertThat(parser.getCurrentLineNumber(), is(1L));
+        assertThat(parser.getCurrentRecordNumber(), is(1L));
         assertFill(parser, null);
         parser.endRecord();
 
         assertThat(parser.next(), is(true));
-        assertThat(parser.getCurrentLineNumber(), is(2));
-        assertThat(parser.getCurrentRecordNumber(), is(2));
+        assertThat(parser.getCurrentLineNumber(), is(2L));
+        assertThat(parser.getCurrentRecordNumber(), is(2L));
         assertFill(parser, null);
         assertFill(parser, null);
         parser.endRecord();
 
         assertThat(parser.next(), is(true));
-        assertThat(parser.getCurrentLineNumber(), is(3));
-        assertThat(parser.getCurrentRecordNumber(), is(3));
+        assertThat(parser.getCurrentLineNumber(), is(3L));
+        assertThat(parser.getCurrentRecordNumber(), is(3L));
         assertFill(parser, null);
         parser.endRecord();
 
         assertThat(parser.next(), is(true));
-        assertThat(parser.getCurrentLineNumber(), is(4));
-        assertThat(parser.getCurrentRecordNumber(), is(4));
+        assertThat(parser.getCurrentLineNumber(), is(4L));
+        assertThat(parser.getCurrentRecordNumber(), is(4L));
         assertFill(parser, null);
         parser.endRecord();
 
         assertThat(parser.next(), is(true));
-        assertThat(parser.getCurrentLineNumber(), is(5));
-        assertThat(parser.getCurrentRecordNumber(), is(5));
+        assertThat(parser.getCurrentLineNumber(), is(5L));
+        assertThat(parser.getCurrentRecordNumber(), is(5L));
         assertFill(parser, "x");
         parser.endRecord();
 
@@ -905,44 +905,44 @@ public class CsvParserTest {
                 "," +
                 "");
         assertThat(parser.next(), is(true));
-        assertThat(parser.getCurrentLineNumber(), is(1));
-        assertThat(parser.getCurrentRecordNumber(), is(1));
+        assertThat(parser.getCurrentLineNumber(), is(1L));
+        assertThat(parser.getCurrentRecordNumber(), is(1L));
         assertFill(parser, null);
         assertFill(parser, null);
         parser.endRecord();
 
         assertThat(parser.next(), is(true));
-        assertThat(parser.getCurrentLineNumber(), is(2));
-        assertThat(parser.getCurrentRecordNumber(), is(2));
+        assertThat(parser.getCurrentLineNumber(), is(2L));
+        assertThat(parser.getCurrentRecordNumber(), is(2L));
         assertFill(parser, null);
         assertFill(parser, null);
         assertFill(parser, null);
         parser.endRecord();
 
         assertThat(parser.next(), is(true));
-        assertThat(parser.getCurrentLineNumber(), is(3));
-        assertThat(parser.getCurrentRecordNumber(), is(3));
+        assertThat(parser.getCurrentLineNumber(), is(3L));
+        assertThat(parser.getCurrentRecordNumber(), is(3L));
         assertFill(parser, null);
         assertFill(parser, null);
         parser.endRecord();
 
         assertThat(parser.next(), is(true));
-        assertThat(parser.getCurrentLineNumber(), is(4));
-        assertThat(parser.getCurrentRecordNumber(), is(4));
+        assertThat(parser.getCurrentLineNumber(), is(4L));
+        assertThat(parser.getCurrentRecordNumber(), is(4L));
         assertFill(parser, null);
         assertFill(parser, null);
         parser.endRecord();
 
         assertThat(parser.next(), is(true));
-        assertThat(parser.getCurrentLineNumber(), is(5));
-        assertThat(parser.getCurrentRecordNumber(), is(5));
+        assertThat(parser.getCurrentLineNumber(), is(5L));
+        assertThat(parser.getCurrentRecordNumber(), is(5L));
         assertFill(parser, null);
         assertFill(parser, "x");
         parser.endRecord();
 
         assertThat(parser.next(), is(true));
-        assertThat(parser.getCurrentLineNumber(), is(6));
-        assertThat(parser.getCurrentRecordNumber(), is(6));
+        assertThat(parser.getCurrentLineNumber(), is(6L));
+        assertThat(parser.getCurrentRecordNumber(), is(6L));
         assertFill(parser, null);
         assertFill(parser, null);
         parser.endRecord();
@@ -965,39 +965,39 @@ public class CsvParserTest {
                 "x" +
                 "");
         assertThat(parser.next(), is(true));
-        assertThat(parser.getCurrentLineNumber(), is(1));
-        assertThat(parser.getCurrentRecordNumber(), is(1));
+        assertThat(parser.getCurrentLineNumber(), is(1L));
+        assertThat(parser.getCurrentRecordNumber(), is(1L));
         assertFill(parser, "x\"");
         parser.endRecord();
 
         assertThat(parser.next(), is(true));
-        assertThat(parser.getCurrentLineNumber(), is(2));
-        assertThat(parser.getCurrentRecordNumber(), is(2));
+        assertThat(parser.getCurrentLineNumber(), is(2L));
+        assertThat(parser.getCurrentRecordNumber(), is(2L));
         assertFill(parser, "x");
         assertFill(parser, null);
         parser.endRecord();
 
         assertThat(parser.next(), is(true));
-        assertThat(parser.getCurrentLineNumber(), is(3));
-        assertThat(parser.getCurrentRecordNumber(), is(3));
+        assertThat(parser.getCurrentLineNumber(), is(3L));
+        assertThat(parser.getCurrentRecordNumber(), is(3L));
         assertFill(parser, "x");
         parser.endRecord();
 
         assertThat(parser.next(), is(true));
-        assertThat(parser.getCurrentLineNumber(), is(4));
-        assertThat(parser.getCurrentRecordNumber(), is(4));
+        assertThat(parser.getCurrentLineNumber(), is(4L));
+        assertThat(parser.getCurrentRecordNumber(), is(4L));
         assertFill(parser, "x");
         parser.endRecord();
 
         assertThat(parser.next(), is(true));
-        assertThat(parser.getCurrentLineNumber(), is(5));
-        assertThat(parser.getCurrentRecordNumber(), is(5));
+        assertThat(parser.getCurrentLineNumber(), is(5L));
+        assertThat(parser.getCurrentRecordNumber(), is(5L));
         assertFill(parser, "xy");
         parser.endRecord();
 
         assertThat(parser.next(), is(true));
-        assertThat(parser.getCurrentLineNumber(), is(6));
-        assertThat(parser.getCurrentRecordNumber(), is(6));
+        assertThat(parser.getCurrentLineNumber(), is(6L));
+        assertThat(parser.getCurrentRecordNumber(), is(6L));
         assertFill(parser, "x");
         parser.endRecord();
 
@@ -1018,32 +1018,32 @@ public class CsvParserTest {
                 "\"x\"\n" +
                 "\"");
         assertThat(parser.next(), is(true));
-        assertThat(parser.getCurrentLineNumber(), is(1));
-        assertThat(parser.getCurrentRecordNumber(), is(1));
+        assertThat(parser.getCurrentLineNumber(), is(1L));
+        assertThat(parser.getCurrentRecordNumber(), is(1L));
         assertFill(parser, null);
         parser.endRecord();
 
         assertThat(parser.next(), is(true));
-        assertThat(parser.getCurrentLineNumber(), is(2));
-        assertThat(parser.getCurrentRecordNumber(), is(2));
+        assertThat(parser.getCurrentLineNumber(), is(2L));
+        assertThat(parser.getCurrentRecordNumber(), is(2L));
         assertFill(parser, ",");
         parser.endRecord();
 
         assertThat(parser.next(), is(true));
-        assertThat(parser.getCurrentLineNumber(), is(3));
-        assertThat(parser.getCurrentRecordNumber(), is(3));
+        assertThat(parser.getCurrentLineNumber(), is(3L));
+        assertThat(parser.getCurrentRecordNumber(), is(3L));
         assertFill(parser, "\r");
         parser.endRecord();
 
         assertThat(parser.next(), is(true));
-        assertThat(parser.getCurrentLineNumber(), is(5));
-        assertThat(parser.getCurrentRecordNumber(), is(4));
+        assertThat(parser.getCurrentLineNumber(), is(5L));
+        assertThat(parser.getCurrentRecordNumber(), is(4L));
         assertFill(parser, "\n");
         parser.endRecord();
 
         assertThat(parser.next(), is(true));
-        assertThat(parser.getCurrentLineNumber(), is(7));
-        assertThat(parser.getCurrentRecordNumber(), is(5));
+        assertThat(parser.getCurrentLineNumber(), is(7L));
+        assertThat(parser.getCurrentRecordNumber(), is(5L));
         assertFill(parser, "x");
         parser.endRecord();
 
@@ -1074,39 +1074,39 @@ public class CsvParserTest {
                 "\"a\"" +
                 "");
         assertThat(parser.next(), is(true));
-        assertThat(parser.getCurrentLineNumber(), is(1));
-        assertThat(parser.getCurrentRecordNumber(), is(1));
+        assertThat(parser.getCurrentLineNumber(), is(1L));
+        assertThat(parser.getCurrentRecordNumber(), is(1L));
         assertFill(parser, "a\"");
         parser.endRecord();
 
         assertThat(parser.next(), is(true));
-        assertThat(parser.getCurrentLineNumber(), is(2));
-        assertThat(parser.getCurrentRecordNumber(), is(2));
+        assertThat(parser.getCurrentLineNumber(), is(2L));
+        assertThat(parser.getCurrentRecordNumber(), is(2L));
         assertFill(parser, "a");
         assertFill(parser, null);
         parser.endRecord();
 
         assertThat(parser.next(), is(true));
-        assertThat(parser.getCurrentLineNumber(), is(3));
-        assertThat(parser.getCurrentRecordNumber(), is(3));
+        assertThat(parser.getCurrentLineNumber(), is(3L));
+        assertThat(parser.getCurrentRecordNumber(), is(3L));
         assertFill(parser, "a");
         parser.endRecord();
 
         assertThat(parser.next(), is(true));
-        assertThat(parser.getCurrentLineNumber(), is(4));
-        assertThat(parser.getCurrentRecordNumber(), is(4));
+        assertThat(parser.getCurrentLineNumber(), is(4L));
+        assertThat(parser.getCurrentRecordNumber(), is(4L));
         assertFill(parser, "a");
         parser.endRecord();
 
         assertThat(parser.next(), is(true));
-        assertThat(parser.getCurrentLineNumber(), is(5));
-        assertThat(parser.getCurrentRecordNumber(), is(5));
+        assertThat(parser.getCurrentLineNumber(), is(5L));
+        assertThat(parser.getCurrentRecordNumber(), is(5L));
         assertFill(parser, "ax");
         parser.endRecord();
 
         assertThat(parser.next(), is(true));
-        assertThat(parser.getCurrentLineNumber(), is(6));
-        assertThat(parser.getCurrentRecordNumber(), is(6));
+        assertThat(parser.getCurrentLineNumber(), is(6L));
+        assertThat(parser.getCurrentRecordNumber(), is(6L));
         assertFill(parser, "a");
         parser.endRecord();
 
@@ -1129,64 +1129,64 @@ public class CsvParserTest {
                 "");
 
         assertThat(parser.next(), is(true));
-        assertThat(parser.getCurrentLineNumber(), is(1));
-        assertThat(parser.getCurrentRecordNumber(), is(1));
+        assertThat(parser.getCurrentLineNumber(), is(1L));
+        assertThat(parser.getCurrentRecordNumber(), is(1L));
         assertFill(parser, null);
         parser.endRecord();
         assertThat(parser.next(), is(true));
-        assertThat(parser.getCurrentLineNumber(), is(2));
-        assertThat(parser.getCurrentRecordNumber(), is(2));
+        assertThat(parser.getCurrentLineNumber(), is(2L));
+        assertThat(parser.getCurrentRecordNumber(), is(2L));
         assertFill(parser, "x");
         parser.endRecord();
 
         assertThat(parser.next(), is(true));
-        assertThat(parser.getCurrentLineNumber(), is(3));
-        assertThat(parser.getCurrentRecordNumber(), is(3));
+        assertThat(parser.getCurrentLineNumber(), is(3L));
+        assertThat(parser.getCurrentRecordNumber(), is(3L));
         assertFill(parser, null);
         parser.endRecord();
         assertThat(parser.next(), is(true));
-        assertThat(parser.getCurrentLineNumber(), is(4));
-        assertThat(parser.getCurrentRecordNumber(), is(4));
+        assertThat(parser.getCurrentLineNumber(), is(4L));
+        assertThat(parser.getCurrentRecordNumber(), is(4L));
         assertFill(parser, null);
         assertFill(parser, "x");
         parser.endRecord();
 
         assertThat(parser.next(), is(true));
-        assertThat(parser.getCurrentLineNumber(), is(5));
-        assertThat(parser.getCurrentRecordNumber(), is(5));
+        assertThat(parser.getCurrentLineNumber(), is(5L));
+        assertThat(parser.getCurrentRecordNumber(), is(5L));
         assertFill(parser, null);
         parser.endRecord();
         assertThat(parser.next(), is(true));
-        assertThat(parser.getCurrentLineNumber(), is(6));
-        assertThat(parser.getCurrentRecordNumber(), is(6));
+        assertThat(parser.getCurrentLineNumber(), is(6L));
+        assertThat(parser.getCurrentRecordNumber(), is(6L));
         assertFill(parser, null);
         parser.endRecord();
         assertThat(parser.next(), is(true));
-        assertThat(parser.getCurrentLineNumber(), is(7));
-        assertThat(parser.getCurrentRecordNumber(), is(7));
+        assertThat(parser.getCurrentLineNumber(), is(7L));
+        assertThat(parser.getCurrentRecordNumber(), is(7L));
         assertFill(parser, "x");
         parser.endRecord();
 
         assertThat(parser.next(), is(true));
-        assertThat(parser.getCurrentLineNumber(), is(8));
-        assertThat(parser.getCurrentRecordNumber(), is(8));
+        assertThat(parser.getCurrentLineNumber(), is(8L));
+        assertThat(parser.getCurrentRecordNumber(), is(8L));
         assertFill(parser, null);
         parser.endRecord();
 
         assertThat(parser.next(), is(true));
-        assertThat(parser.getCurrentLineNumber(), is(9));
-        assertThat(parser.getCurrentRecordNumber(), is(9));
+        assertThat(parser.getCurrentLineNumber(), is(9L));
+        assertThat(parser.getCurrentRecordNumber(), is(9L));
         assertFill(parser, null);
         parser.endRecord();
         assertThat(parser.next(), is(true));
-        assertThat(parser.getCurrentLineNumber(), is(10));
-        assertThat(parser.getCurrentRecordNumber(), is(10));
+        assertThat(parser.getCurrentLineNumber(), is(10L));
+        assertThat(parser.getCurrentRecordNumber(), is(10L));
         assertFill(parser, "x");
         parser.endRecord();
 
         assertThat(parser.next(), is(true));
-        assertThat(parser.getCurrentLineNumber(), is(11));
-        assertThat(parser.getCurrentRecordNumber(), is(11));
+        assertThat(parser.getCurrentLineNumber(), is(11L));
+        assertThat(parser.getCurrentRecordNumber(), is(11L));
         assertFill(parser, null);
         parser.endRecord();
 
@@ -1208,32 +1208,32 @@ public class CsvParserTest {
                 "\"\r" +
                 "");
         assertThat(parser.next(), is(true));
-        assertThat(parser.getCurrentLineNumber(), is(1));
-        assertThat(parser.getCurrentRecordNumber(), is(1));
+        assertThat(parser.getCurrentLineNumber(), is(1L));
+        assertThat(parser.getCurrentRecordNumber(), is(1L));
         assertFill(parser, "\r");
         parser.endRecord();
 
         assertThat(parser.next(), is(true));
-        assertThat(parser.getCurrentLineNumber(), is(3));
-        assertThat(parser.getCurrentRecordNumber(), is(2));
+        assertThat(parser.getCurrentLineNumber(), is(3L));
+        assertThat(parser.getCurrentRecordNumber(), is(2L));
         assertFill(parser, "\r,");
         parser.endRecord();
 
         assertThat(parser.next(), is(true));
-        assertThat(parser.getCurrentLineNumber(), is(5));
-        assertThat(parser.getCurrentRecordNumber(), is(3));
+        assertThat(parser.getCurrentLineNumber(), is(5L));
+        assertThat(parser.getCurrentRecordNumber(), is(3L));
         assertFill(parser, "\r\r");
         parser.endRecord();
 
         assertThat(parser.next(), is(true));
-        assertThat(parser.getCurrentLineNumber(), is(8));
-        assertThat(parser.getCurrentRecordNumber(), is(4));
+        assertThat(parser.getCurrentLineNumber(), is(8L));
+        assertThat(parser.getCurrentRecordNumber(), is(4L));
         assertFill(parser, "\r\n");
         parser.endRecord();
 
         assertThat(parser.next(), is(true));
-        assertThat(parser.getCurrentLineNumber(), is(10));
-        assertThat(parser.getCurrentRecordNumber(), is(5));
+        assertThat(parser.getCurrentLineNumber(), is(10L));
+        assertThat(parser.getCurrentRecordNumber(), is(5L));
         assertFill(parser, "\rx");
         parser.endRecord();
 
