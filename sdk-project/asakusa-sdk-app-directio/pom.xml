@@ -17,10 +17,5 @@
       <artifactId>asakusa-directio-vocabulary</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <dependency>
-      <groupId>com.asakusafw.mapreduce.compiler</groupId>
-      <artifactId>asakusa-mapreduce-compiler-extension-directio</artifactId>
-      <version>${asakusafw-mapreduce.version}</version>
-    </dependency>
   </dependencies>
 </project>

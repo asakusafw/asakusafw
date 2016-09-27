@@ -22,10 +22,5 @@
       <artifactId>asakusa-test-driver</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <dependency>
-      <groupId>com.asakusafw.mapreduce.compiler</groupId>
-      <artifactId>asakusa-mapreduce-compiler-test-adapter</artifactId>
-      <version>${asakusafw-mapreduce.version}</version>
-    </dependency>
   </dependencies>
 </project>
