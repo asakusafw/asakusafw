@@ -27,6 +27,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.asakusafw.runtime.core.Report.Level;
+import com.asakusafw.runtime.core.legacy.LegacyReport;
 
 /**
  * Test for {@link Report}.
@@ -39,9 +40,13 @@ public class ReportTest {
      */
     @Before
     public void setUp() throws Exception {
-        Report.setDelegate(null);
+        delegate(null);
         Mock.levels.clear();
         Mock.messages.clear();
+    }
+
+    private static void delegate(Report.Delegate delegate) {
+        LegacyReport.setDelegate(delegate);
     }
 
     /**
@@ -57,7 +62,7 @@ public class ReportTest {
      */
     @Test
     public void info() {
-        Report.setDelegate(new Mock());
+        delegate(new Mock());
         Report.info("Hello");
         assertThat(Mock.levels, is(list(Level.INFO)));
         assertThat(Mock.messages, is(list("Hello")));
@@ -68,7 +73,7 @@ public class ReportTest {
      */
     @Test(expected = Report.FailedException.class)
     public void info_error() {
-        Report.setDelegate(new Report.Delegate() {
+        delegate(new Report.Delegate() {
             @Override
             public void report(Level level, String message) throws IOException {
                 throw new IOException();
@@ -82,7 +87,7 @@ public class ReportTest {
      */
     @Test
     public void warn() {
-        Report.setDelegate(new Mock());
+        delegate(new Mock());
         Report.warn("Hello");
         assertThat(Mock.levels, is(list(Level.WARN)));
         assertThat(Mock.messages, is(list("Hello")));
@@ -93,7 +98,7 @@ public class ReportTest {
      */
     @Test(expected = Report.FailedException.class)
     public void warn_error() {
-        Report.setDelegate(new Report.Delegate() {
+        delegate(new Report.Delegate() {
             @Override
             public void report(Level level, String message) throws IOException {
                 throw new IOException();
@@ -107,7 +112,7 @@ public class ReportTest {
      */
     @Test
     public void testError() {
-        Report.setDelegate(new Mock());
+        delegate(new Mock());
         Report.error("Hello");
         assertThat(Mock.levels, is(list(Level.ERROR)));
         assertThat(Mock.messages, is(list("Hello")));
@@ -118,7 +123,7 @@ public class ReportTest {
      */
     @Test(expected = Report.FailedException.class)
     public void error_error() {
-        Report.setDelegate(new Report.Delegate() {
+        delegate(new Report.Delegate() {
             @Override
             public void report(Level level, String message) throws IOException {
                 throw new IOException();
@@ -135,7 +140,7 @@ public class ReportTest {
     public void initialize() throws Exception {
         ResourceConfiguration conf = new HadoopConfiguration();
         conf.set(Report.K_DELEGATE_CLASS, Mock.class.getName());
-        Report.Initializer init = new Report.Initializer();
+        LegacyReport.Initializer init = new LegacyReport.Initializer();
         init.setup(conf);
         Report.info("hello");
         init.cleanup(conf);

@@ -29,7 +29,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 
 import com.asakusafw.runtime.core.HadoopConfiguration;
-import com.asakusafw.runtime.core.RuntimeResource;
+import com.asakusafw.runtime.core.legacy.RuntimeResource;
 
 /**
  * Manages lifecycle of {@link RuntimeResource} objects.

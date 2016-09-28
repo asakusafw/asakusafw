@@ -32,6 +32,7 @@ import com.asakusafw.compiler.flow.stage.StageModel.Fragment;
 import com.asakusafw.compiler.flow.testing.model.Ex1;
 import com.asakusafw.runtime.core.Report;
 import com.asakusafw.runtime.core.Result;
+import com.asakusafw.runtime.core.legacy.LegacyReport;
 import com.asakusafw.runtime.testing.MockResult;
 import com.asakusafw.utils.java.model.syntax.Name;
 
@@ -48,7 +49,7 @@ public class LoggingFlowProcessorTest extends JobflowCompilerTestRoot {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        Report.setDelegate(new Report.Default());
+        LegacyReport.setDelegate(new Report.Default());
     }
 
     /**
@@ -58,7 +59,7 @@ public class LoggingFlowProcessorTest extends JobflowCompilerTestRoot {
     @Override
     @After
     public void tearDown() throws Exception {
-        Report.setDelegate(null);
+        LegacyReport.setDelegate(null);
         super.tearDown();
     }
 
