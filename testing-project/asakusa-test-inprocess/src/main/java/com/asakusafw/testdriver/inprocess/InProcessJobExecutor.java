@@ -247,7 +247,7 @@ synchronized(s) {
         if (emulator != null) {
             LOG.info(MessageFormat.format(
                     Messages.getString("InProcessJobExecutor.infoStartCommandJob"), //$NON-NLS-1$
-                    command.getCommandLineString(),
+                    String.join(" ", command.getCommandTokens()), //$NON-NLS-1$
                     emulator.getName()));
             try {
                 emulator.execute(context, configurations, command);
@@ -255,7 +255,7 @@ synchronized(s) {
                 throw (AssertionError) new AssertionError(MessageFormat.format(
                         Messages.getString("InProcessJobExecutor.errorExecutionInterrupted"), //$NON-NLS-1$
                         context.getCurrentFlowId(),
-                        command.getCommandLineString())).initCause(e);
+                        String.join(" ", command.getCommandTokens()))).initCause(e); //$NON-NLS-1$
             }
         } else {
             delegate.execute(command, environmentVariables);
