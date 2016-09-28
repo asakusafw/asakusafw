@@ -17,7 +17,6 @@ package com.asakusafw.testdriver;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -264,29 +263,6 @@ public class TestExecutionPlan implements Serializable {
          */
         public List<String> getCommandTokens() {
             return commandLine;
-        }
-
-        /**
-         * Returns the command line string.
-         * @return the command line string
-         */
-        public String getCommandLineString() {
-            StringBuilder buf = new StringBuilder();
-            for (Map.Entry<String, String> entry : environment.entrySet()) {
-                buf.append("'" + entry.getKey() + "'"); //$NON-NLS-1$ //$NON-NLS-2$
-                buf.append("="); //$NON-NLS-1$
-                buf.append("'" + entry.getValue() + "'"); //$NON-NLS-1$ //$NON-NLS-2$
-                buf.append(" "); //$NON-NLS-1$
-            }
-            Iterator<String> iter = commandLine.iterator();
-            if (iter.hasNext()) {
-                buf.append(iter.next());
-                while (iter.hasNext()) {
-                    buf.append(" "); //$NON-NLS-1$
-                    buf.append(iter.next());
-                }
-            }
-            return buf.toString();
         }
 
         /**
