@@ -17,21 +17,21 @@ package com.asakusafw.runtime.directio.api;
 
 import java.io.IOException;
 
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.conf.Configured;
-
-import com.asakusafw.runtime.core.ResourceConfiguration;
-import com.asakusafw.runtime.core.RuntimeResource;
+import com.asakusafw.runtime.core.api.ApiStub;
 import com.asakusafw.runtime.core.util.Shared;
 import com.asakusafw.runtime.directio.DataFormat;
+import com.asakusafw.runtime.directio.api.legacy.LegacyDirectIo;
 import com.asakusafw.runtime.io.ModelInput;
 
 /**
  * A framework API for accessing Direct I/O.
  * @see Shared
  * @since 0.7.3
+ * @version 0.9.0
  */
 public final class DirectIo {
+
+    private static final ApiStub<DirectIoApi> STUB = new ApiStub<>(LegacyDirectIo.API);
 
     static final ThreadLocal<DirectIoDelegate> DELEGATE = ThreadLocal.withInitial(() -> {
         throw new IllegalStateException("Direct I/O API is not yet initialized");
@@ -80,31 +80,16 @@ try (ModelInput&lt;Hoge&gt; input = DirectIo.open(...)) {
             Class<? extends DataFormat<T>> formatClass,
             String basePath,
             String resourcePattern) throws IOException {
-        return DELEGATE.get().open(formatClass, basePath, resourcePattern);
-    }
-
-    static void set(Configuration configuration) {
-        DELEGATE.set(new DirectIoDelegate(configuration));
-    }
-
-    static void clear() {
-        DELEGATE.remove();
+        return STUB.get().open(formatClass, basePath, resourcePattern);
     }
 
     /**
-     * Initializes {@link DirectIo}.
-     * @since 0.7.3
+     * Returns the API stub.
+     * Application developer must not use this directly.
+     * @return the API stub
+     * @since 0.9.0
      */
-    public static final class Initializer extends Configured implements RuntimeResource {
-
-        @Override
-        public void setup(ResourceConfiguration configuration) {
-            DirectIo.set(getConf());
-        }
-
-        @Override
-        public void cleanup(ResourceConfiguration configuration) {
-            DirectIo.clear();
-        }
+    public static ApiStub<DirectIoApi> getStub() {
+        return STUB;
     }
 }

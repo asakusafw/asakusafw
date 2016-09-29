@@ -1,0 +1,2 @@
+com.asakusafw.runtime.core.legacy.LegacyBatchContext$Initializer
+com.asakusafw.runtime.core.legacy.LegacyReport$Initializer

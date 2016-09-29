@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.runtime.core;
+package com.asakusafw.runtime.core.legacy;
 
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -21,8 +21,11 @@ import java.text.MessageFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.asakusafw.runtime.core.ResourceConfiguration;
+
 /**
  * Runtime resource which has resource lifecycle.
+ * @since 0.9.0
  */
 public interface RuntimeResource {
 

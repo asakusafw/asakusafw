@@ -20,6 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.asakusafw.runtime.core.Report;
+import com.asakusafw.runtime.core.legacy.LegacyReport;
 
 /**
  * Test for {@link CommonsLoggingReport}.
@@ -32,7 +33,7 @@ public class CommonsLoggingReportTest {
      */
     @Before
     public void setUp() throws Exception {
-        Report.setDelegate(new CommonsLoggingReport());
+        LegacyReport.setDelegate(new CommonsLoggingReport());
     }
 
     /**
@@ -41,7 +42,7 @@ public class CommonsLoggingReportTest {
      */
     @After
     public void tearDown() throws Exception {
-        Report.setDelegate(null);
+        LegacyReport.setDelegate(null);
     }
 
     /**

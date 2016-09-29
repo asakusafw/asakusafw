@@ -26,9 +26,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.hadoop.conf.Configuration;
 import org.junit.Test;
 
-import com.asakusafw.runtime.core.Report;
 import com.asakusafw.runtime.core.ResourceConfiguration;
-import com.asakusafw.runtime.core.RuntimeResource;
+import com.asakusafw.runtime.core.legacy.LegacyReport;
+import com.asakusafw.runtime.core.legacy.RuntimeResource;
 
 /**
  * {@link RuntimeResourceManager}.
@@ -47,7 +47,7 @@ public class RuntimeResourceManagerTest {
 
         boolean found = false;
         for (RuntimeResource resource : loaded) {
-            if (resource instanceof Report.Initializer) {
+            if (resource instanceof LegacyReport.Initializer) {
                 found = true;
                 break;
             }

@@ -15,36 +15,23 @@
  */
 package com.asakusafw.runtime.core;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
-import com.asakusafw.runtime.stage.StageConstants;
-import com.asakusafw.runtime.util.VariableTable;
+import com.asakusafw.runtime.core.api.ApiStub;
+import com.asakusafw.runtime.core.api.BatchContextApi;
+import com.asakusafw.runtime.core.legacy.LegacyBatchContext;
 
 /**
  * Context API entry class.
  * The context API provides the batch arguments and others about the current batch execution.
  * Clients can use this class <em>only in operator methods</em>, not in flow, importer, nor descriptions.
+ * @since 0.1.0
+ * @version 0.9.0
  */
-public class BatchContext {
+public final class BatchContext {
 
-    static final ThreadLocal<BatchContext> CONTEXTS = ThreadLocal.withInitial(() -> {
-        throw new IllegalStateException("BatchContext is not yet initialized (internal error)");
-    });
+    private static final ApiStub<BatchContextApi> STUB = new ApiStub<>(LegacyBatchContext.API);
 
-    private Map<String, String> variables = new HashMap<>();
-
-    /**
-     * Creates a new instance.
-     * @param variables variable table
-     * @throws IllegalArgumentException if the parameter is {@code null}
-     */
-    protected BatchContext(Map<String, String> variables) {
-        if (variables == null) {
-            throw new IllegalArgumentException("variables must not be null"); //$NON-NLS-1$
-        }
-        this.variables = new HashMap<>(variables);
+    private BatchContext() {
+        return;
     }
 
     /**
@@ -54,29 +41,16 @@ public class BatchContext {
      * @throws IllegalArgumentException if the parameter is {@code null}
      */
     public static String get(String name) {
-        if (name == null) {
-            throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
-        }
-        return CONTEXTS.get().variables.get(name);
+        return STUB.get().get(name);
     }
 
     /**
-     * Initializes {@link BatchContext}.
+     * Returns the API stub.
+     * Application developer must not use this directly.
+     * @return the API stub
+     * @since 0.9.0
      */
-    public static class Initializer implements RuntimeResource {
-
-        @Override
-        public void setup(ResourceConfiguration configuration) throws IOException, InterruptedException {
-            String arguments = configuration.get(StageConstants.PROP_ASAKUSA_BATCH_ARGS, ""); //$NON-NLS-1$
-            VariableTable variables = new VariableTable(VariableTable.RedefineStrategy.IGNORE);
-            variables.defineVariables(arguments);
-            BatchContext context = new BatchContext(variables.getVariables());
-            CONTEXTS.set(context);
-        }
-
-        @Override
-        public void cleanup(ResourceConfiguration configuration) throws IOException, InterruptedException {
-            CONTEXTS.remove();
-        }
+    public static ApiStub<BatchContextApi> getStub() {
+        return STUB;
     }
 }

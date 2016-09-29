@@ -22,7 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.mapreduce.Reducer;
 
-import com.asakusafw.runtime.core.RuntimeResource;
+import com.asakusafw.runtime.core.legacy.RuntimeResource;
 
 /**
  * An abstract super class of a reducer with {@link RuntimeResource}s.

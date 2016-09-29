@@ -22,7 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.mapreduce.Mapper;
 
-import com.asakusafw.runtime.core.RuntimeResource;
+import com.asakusafw.runtime.core.legacy.RuntimeResource;
 
 /**
  * An abstract super class of a mapper with {@link RuntimeResource}s.

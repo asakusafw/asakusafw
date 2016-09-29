@@ -39,8 +39,10 @@ import com.asakusafw.runtime.io.ModelInput;
 
 /**
  * Delegating object for {@link DirectIo}.
+ * @since 0.7.3
+ * @version 0.9.0
  */
-public class DirectIoDelegate extends Configured {
+public class DirectIoDelegate extends Configured implements DirectIoApi {
 
     private final AtomicReference<DirectDataSourceRepository> repository = new AtomicReference<>();
 
@@ -52,15 +54,7 @@ public class DirectIoDelegate extends Configured {
         super(configuration);
     }
 
-    /**
-     * Returns data model objects from Direct I/O data sources.
-     * @param <T> the data model object type
-     * @param formatClass the Direct I/O data format class
-     * @param basePath the base path (must not contain variables)
-     * @param resourcePattern the resource pattern (must not contain variables)
-     * @return the data model objects
-     * @throws IOException if failed to open data model objects on the data source
-     */
+    @Override
     public <T> ModelInput<T> open(
             Class<? extends DataFormat<T>> formatClass,
             String basePath,

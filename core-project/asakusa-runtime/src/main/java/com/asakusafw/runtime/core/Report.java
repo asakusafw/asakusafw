@@ -18,6 +18,11 @@ package com.asakusafw.runtime.core;
 import java.io.IOException;
 import java.text.MessageFormat;
 
+import com.asakusafw.runtime.core.api.ApiStub;
+import com.asakusafw.runtime.core.api.ReportApi;
+import com.asakusafw.runtime.core.legacy.LegacyReport;
+import com.asakusafw.runtime.core.legacy.RuntimeResource;
+
 /**
  * Report API entry class.
  * The Report API enables to notify some messages in operator methods, to the runtime reporting system
@@ -38,7 +43,7 @@ public void updateWithReport(Hoge hoge) {
 }
 </code></pre>
  * @since 0.1.0
- * @version 0.5.1
+ * @version 0.9.0
  */
 public final class Report {
 
@@ -48,37 +53,21 @@ public final class Report {
      */
     public static final String K_DELEGATE_CLASS = "com.asakusafw.runtime.core.Report.Delegate"; //$NON-NLS-1$
 
-    private static final ThreadLocal<Delegate> DELEGATE = ThreadLocal.withInitial(() -> {
-        throw new FailedException("Report is not initialized (report plugin may be not registered)");
-    });
+    private static final ApiStub<ReportApi> STUB = new ApiStub<>(LegacyReport.API);
 
-    /**
-     * Sets a custom implementation for the current thread.
-     * After the implementation was set, each report API method will be redirected to the implementation.
-     * Application developers should not use this method directly.
-     * @param delegate the custom implementation, or {@code null} to unregister the implementation
-     */
-    public static void setDelegate(Delegate delegate) {
-        if (delegate == null) {
-            DELEGATE.remove();
-        } else {
-            DELEGATE.set(delegate);
-        }
+    private Report() {
+        return;
     }
 
     /**
      * Reports an <em>informative</em> message.
      * Clients should put <code>&#64;Sticky</code> annotation to the operator method that using this.
      * @param message the message
-     * @throws Report.FailedException if error was occurred while reporting the message
+     * @throws Report.FailedException if error was occurred while reporting tReportessage
      * @see Report
      */
     public static void info(String message) {
-        try {
-            DELEGATE.get().report(Level.INFO, message);
-        } catch (IOException e) {
-            throw new FailedException(e);
-        }
+        STUB.get().info(message);
     }
 
     /**
@@ -91,11 +80,7 @@ public final class Report {
      * @since 0.5.1
      */
     public static void info(String message, Throwable throwable) {
-        try {
-            DELEGATE.get().report(Level.INFO, message, throwable);
-        } catch (IOException e) {
-            throw new FailedException(e);
-        }
+        STUB.get().info(message, throwable);
     }
 
     /**
@@ -106,11 +91,7 @@ public final class Report {
      * @see Report
      */
     public static void warn(String message) {
-        try {
-            DELEGATE.get().report(Level.WARN, message);
-        } catch (IOException e) {
-            throw new FailedException(e);
-        }
+        STUB.get().warn(message);
     }
 
     /**
@@ -123,11 +104,7 @@ public final class Report {
      * @since 0.5.1
      */
     public static void warn(String message, Throwable throwable) {
-        try {
-            DELEGATE.get().report(Level.WARN, message, throwable);
-        } catch (IOException e) {
-            throw new FailedException(e);
-        }
+        STUB.get().warn(message, throwable);
     }
 
     /**
@@ -140,11 +117,7 @@ public final class Report {
      * @see Report
      */
     public static void error(String message) {
-        try {
-            DELEGATE.get().report(Level.ERROR, message);
-        } catch (IOException e) {
-            throw new FailedException(e);
-        }
+        STUB.get().error(message);
     }
 
     /**
@@ -159,15 +132,17 @@ public final class Report {
      * @since 0.5.1
      */
     public static void error(String message, Throwable throwable) {
-        try {
-            DELEGATE.get().report(Level.ERROR, message, throwable);
-        } catch (IOException e) {
-            throw new FailedException(e);
-        }
+        STUB.get().error(message, throwable);
     }
 
-    private Report() {
-        throw new AssertionError();
+    /**
+     * Returns the API stub.
+     * Application developer must not use this directly.
+     * @return the API stub
+     * @since 0.9.0
+     */
+    public static ApiStub<ReportApi> getStub() {
+        return STUB;
     }
 
     /**
@@ -259,36 +234,6 @@ public final class Report {
          * Erroneous level.
          */
         ERROR,
-    }
-
-    /**
-     * An initializer for {@link Delegate}.
-     */
-    public static class Initializer extends RuntimeResource.DelegateRegisterer<Delegate> {
-
-        @Override
-        protected String getClassNameKey() {
-            return K_DELEGATE_CLASS;
-        }
-
-        @Override
-        protected Class<? extends Delegate> getInterfaceType() {
-            return Delegate.class;
-        }
-
-        @Override
-        protected void register(Delegate delegate, ResourceConfiguration configuration) throws IOException,
-                InterruptedException {
-            delegate.setup(configuration);
-            setDelegate(delegate);
-        }
-
-        @Override
-        protected void unregister(Delegate delegate, ResourceConfiguration configuration) throws IOException,
-                InterruptedException {
-            setDelegate(null);
-            delegate.cleanup(configuration);
-        }
     }
 
     /**
