@@ -28,30 +28,8 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.asakusafw.mapreduce.compiler</groupId>
-      <artifactId>asakusa-mapreduce-compiler-cli</artifactId>
-      <version>${asakusafw-mapreduce.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.asakusafw.mapreduce.compiler</groupId>
-      <artifactId>asakusa-mapreduce-compiler-core</artifactId>
-      <version>${asakusafw-mapreduce.version}</version>
-    </dependency>
-    <dependency>
       <groupId>org.apache.hadoop</groupId>
       <artifactId>${hadoop.artifact.id}</artifactId>
-    </dependency>
-
-    <!-- Default Compiler Plug-ins -->
-    <dependency>
-      <groupId>com.asakusafw.mapreduce.compiler</groupId>
-      <artifactId>asakusa-mapreduce-compiler-extension-inspection</artifactId>
-      <version>${asakusafw-mapreduce.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.asakusafw.mapreduce.compiler</groupId>
-      <artifactId>asakusa-mapreduce-compiler-extension-yaess</artifactId>
-      <version>${asakusafw-mapreduce.version}</version>
     </dependency>
   </dependencies>
 </project>
