@@ -34,12 +34,10 @@ import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.asakusafw.operator.description.ClassDescription;
 import com.asakusafw.operator.model.DataModelMirror;
 import com.asakusafw.operator.util.DescriptionHelper;
+import com.asakusafw.operator.util.Logger;
 import com.asakusafw.utils.java.jsr269.bridge.Jsr269;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
 import com.asakusafw.utils.java.model.util.Models;
@@ -49,7 +47,7 @@ import com.asakusafw.utils.java.model.util.Models;
  */
 public class CompileEnvironment {
 
-    static final Logger LOG = LoggerFactory.getLogger(CompileEnvironment.class);
+    static final Logger LOG = Logger.get(CompileEnvironment.class);
 
     private final ProcessingEnvironment processingEnvironment;
 

@@ -34,12 +34,11 @@ import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 
 import org.junit.After;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.asakusafw.operator.description.ClassDescription;
 import com.asakusafw.operator.flowpart.FlowPartAnnotationProcessor;
 import com.asakusafw.operator.method.OperatorAnnotationProcessor;
+import com.asakusafw.operator.util.Logger;
 import com.asakusafw.utils.java.jsr199.testing.SafeProcessor;
 import com.asakusafw.utils.java.jsr199.testing.VolatileCompiler;
 import com.asakusafw.utils.java.jsr199.testing.VolatileJavaFile;
@@ -51,7 +50,7 @@ import com.asakusafw.utils.java.model.util.Models;
  */
 public class OperatorCompilerTestRoot {
 
-    static final Logger LOG = LoggerFactory.getLogger(OperatorCompilerTestRoot.class);
+    static final Logger LOG = Logger.get(OperatorCompilerTestRoot.class);
 
     final ModelFactory f = Models.getModelFactory();
 

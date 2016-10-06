@@ -31,9 +31,6 @@ import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.asakusafw.operator.CompileEnvironment;
 import com.asakusafw.operator.Constants;
 import com.asakusafw.operator.description.ClassDescription;
@@ -44,6 +41,7 @@ import com.asakusafw.operator.model.OperatorElement;
 import com.asakusafw.operator.util.DescriptionHelper;
 import com.asakusafw.operator.util.ElementHelper;
 import com.asakusafw.operator.util.JavadocHelper;
+import com.asakusafw.operator.util.Logger;
 import com.asakusafw.utils.java.jsr269.bridge.Jsr269;
 import com.asakusafw.utils.java.model.syntax.ClassDeclaration;
 import com.asakusafw.utils.java.model.syntax.ClassLiteral;
@@ -70,7 +68,7 @@ import com.asakusafw.utils.java.model.util.TypeBuilder;
  */
 public class FlowPartFactoryEmitter {
 
-    static final Logger LOG = LoggerFactory.getLogger(FlowPartFactoryEmitter.class);
+    static final Logger LOG = Logger.get(FlowPartFactoryEmitter.class);
 
     private final CompileEnvironment environment;
 

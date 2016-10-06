@@ -30,15 +30,14 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.tools.Diagnostic;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.asakusafw.operator.util.Logger;
 
 /**
  * Abstract implementation of Asakusa operator annotation processor.
  */
 public abstract class AbstractOperatorAnnotationProcessor implements Processor {
 
-    static final Logger LOG = LoggerFactory.getLogger(AbstractOperatorAnnotationProcessor.class);
+    static final Logger LOG = Logger.get(AbstractOperatorAnnotationProcessor.class);
 
     /**
      * The current compile environment.

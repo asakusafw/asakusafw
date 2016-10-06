@@ -51,11 +51,5 @@
       <artifactId>asakusa-operator-dmdl</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-simple</artifactId>
-      <version>${slf4j.version}</version>
-      <optional>true</optional>
-    </dependency>
   </dependencies>
 </project>

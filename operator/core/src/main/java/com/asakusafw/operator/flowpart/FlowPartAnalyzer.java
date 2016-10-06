@@ -40,9 +40,6 @@ import javax.lang.model.util.ElementFilter;
 import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.asakusafw.operator.CompileEnvironment;
 import com.asakusafw.operator.Constants;
 import com.asakusafw.operator.model.DataModelMirror;
@@ -63,8 +60,6 @@ import com.asakusafw.operator.util.TypeHelper;
  * Analyzes flow-part classes.
  */
 public class FlowPartAnalyzer {
-
-    static final Logger LOG = LoggerFactory.getLogger(FlowPartAnalyzer.class);
 
     private final CompileEnvironment environment;
 
