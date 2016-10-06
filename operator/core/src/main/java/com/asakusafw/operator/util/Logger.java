@@ -24,6 +24,15 @@ import java.util.logging.Level;
  */
 public final class Logger {
 
+    /**
+     * The parent logger name.
+     */
+    public static final String NAME_PARENT_LOGGER = "com.asakusafw.operator"; //$NON-NLS-1$
+
+    static {
+        java.util.logging.Logger.getLogger(NAME_PARENT_LOGGER);
+    }
+
     static final String PLACEHOLDER = "{}"; //$NON-NLS-1$
 
     private final java.util.logging.Logger entity;
