@@ -198,7 +198,11 @@ public final class Logger {
                 break;
             }
             buf.append(format, offset, found);
-            buf.append(arguments[phIndex++]);
+            if (phIndex < arguments.length) {
+                buf.append(arguments[phIndex++]);
+            } else {
+                buf.append(PLACEHOLDER);
+            }
             offset = found + 2;
         }
         if (offset != format.length()) {
