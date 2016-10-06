@@ -229,4 +229,5 @@ public final class Logger {
             return (Throwable) last;
         }
         return null;
-    }}
+    }
+}
