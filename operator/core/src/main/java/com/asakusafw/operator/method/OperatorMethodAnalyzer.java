@@ -36,9 +36,6 @@ import javax.lang.model.util.ElementFilter;
 import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.asakusafw.operator.CompileEnvironment;
 import com.asakusafw.operator.OperatorDriver;
 import com.asakusafw.operator.description.ClassDescription;
@@ -48,6 +45,7 @@ import com.asakusafw.operator.model.OperatorDescription;
 import com.asakusafw.operator.model.OperatorElement;
 import com.asakusafw.operator.util.AnnotationHelper;
 import com.asakusafw.operator.util.ElementHelper;
+import com.asakusafw.operator.util.Logger;
 import com.asakusafw.operator.util.TypeHelper;
 
 /**
@@ -55,7 +53,7 @@ import com.asakusafw.operator.util.TypeHelper;
  */
 public class OperatorMethodAnalyzer {
 
-    static final Logger LOG = LoggerFactory.getLogger(OperatorMethodAnalyzer.class);
+    static final Logger LOG = Logger.get(OperatorMethodAnalyzer.class);
 
     private static final ClassDescription TYPE_OBJECT = Descriptions.classOf(Object.class);
 

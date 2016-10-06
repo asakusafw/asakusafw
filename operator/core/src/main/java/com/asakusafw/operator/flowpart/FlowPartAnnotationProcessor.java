@@ -24,20 +24,18 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.ElementFilter;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.asakusafw.operator.AbstractOperatorAnnotationProcessor;
 import com.asakusafw.operator.CompileEnvironment;
 import com.asakusafw.operator.Constants;
 import com.asakusafw.operator.model.OperatorClass;
+import com.asakusafw.operator.util.Logger;
 
 /**
  * Process flow-part operators.
  */
 public class FlowPartAnnotationProcessor extends AbstractOperatorAnnotationProcessor {
 
-    static final Logger LOG = LoggerFactory.getLogger(FlowPartAnnotationProcessor.class);
+    static final Logger LOG = Logger.get(FlowPartAnnotationProcessor.class);
 
     @Override
     protected CompileEnvironment createCompileEnvironment(ProcessingEnvironment processingEnv) {

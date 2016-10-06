@@ -34,14 +34,12 @@ import javax.lang.model.util.ElementFilter;
 import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.asakusafw.operator.CompileEnvironment;
 import com.asakusafw.operator.Constants;
 import com.asakusafw.operator.description.ClassDescription;
 import com.asakusafw.operator.model.OperatorClass;
 import com.asakusafw.operator.util.DescriptionHelper;
+import com.asakusafw.operator.util.Logger;
 import com.asakusafw.utils.java.jsr269.bridge.Jsr269;
 import com.asakusafw.utils.java.model.syntax.ArrayType;
 import com.asakusafw.utils.java.model.syntax.ClassDeclaration;
@@ -66,7 +64,7 @@ import com.asakusafw.utils.java.model.util.TypeBuilder;
  */
 public class OperatorImplementationEmitter {
 
-    static final Logger LOG = LoggerFactory.getLogger(OperatorImplementationEmitter.class);
+    static final Logger LOG = Logger.get(OperatorImplementationEmitter.class);
 
     private final CompileEnvironment environment;
 
