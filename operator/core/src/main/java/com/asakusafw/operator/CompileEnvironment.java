@@ -106,14 +106,27 @@ public class CompileEnvironment {
     }
 
     private static ClassLoader findServiceClassLoader() {
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        try {
-            Class.forName(CompileEnvironment.class.getName(), false, classLoader);
-        } catch (ClassNotFoundException e) {
-            LOG.debug("Thread context class loader is invalid", e); //$NON-NLS-1$
-            classLoader = CompileEnvironment.class.getClassLoader();
+        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+        if (contextClassLoader == null) {
+            LOG.trace("thread context class laoder is not defined in operator compiler");
+            return getDefaultClassLoader();
         }
-        return classLoader;
+        try {
+            Class<?> aClass = Class.forName(CompileEnvironment.class.getName(), false, contextClassLoader);
+            if (CompileEnvironment.class != aClass) {
+                LOG.trace("thread context class laoder is not compatible in operator compiler");
+                return getDefaultClassLoader();
+            }
+        } catch (ClassNotFoundException e) {
+            LOG.trace("Thread context class loader is invalid", e); //$NON-NLS-1$
+            return getDefaultClassLoader();
+        }
+        LOG.trace("using context class loader in operator compiler: {}", contextClassLoader);
+        return contextClassLoader;
+    }
+
+    private static ClassLoader getDefaultClassLoader() {
+        return CompileEnvironment.class.getClassLoader();
     }
 
     /**
