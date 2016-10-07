@@ -53,6 +53,7 @@ public class OperatorAnnotationProcessor extends AbstractOperatorAnnotationProce
                 CompileEnvironment.Support.OPERATOR_DRIVER,
                 CompileEnvironment.Support.FAIL_ON_WARN,
                 CompileEnvironment.Support.FORCE_GENERATE_IMPLEMENTATION,
+                CompileEnvironment.Support.FORCE_NORMALIZE_MEMBER_NAME,
                 CompileEnvironment.Support.STRICT_PARAMETER_ORDER);
     }
 

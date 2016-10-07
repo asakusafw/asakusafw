@@ -1,0 +1,11 @@
+package com.example;
+
+public abstract class WithVariable {
+
+    /**OK*/
+    public static final String VAR = "OK";
+
+    @Mock
+    public void method() {
+    }
+}

@@ -26,6 +26,7 @@ import java.util.Set;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
@@ -50,8 +51,10 @@ import com.asakusafw.operator.model.OperatorDescription.MethodReference;
 import com.asakusafw.operator.model.OperatorDescription.Node;
 import com.asakusafw.operator.model.OperatorDescription.Node.Kind;
 import com.asakusafw.operator.model.OperatorDescription.ParameterReference;
+import com.asakusafw.operator.model.OperatorDescription.Reference;
 import com.asakusafw.operator.model.OperatorDescription.ReferenceDocument;
 import com.asakusafw.operator.model.OperatorDescription.ReturnReference;
+import com.asakusafw.operator.model.OperatorDescription.SpecialReference;
 import com.asakusafw.operator.model.OperatorDescription.TextDocument;
 import com.asakusafw.operator.model.OperatorElement;
 import com.asakusafw.operator.util.AnnotationHelper;
@@ -324,6 +327,75 @@ public class OperatorFactoryEmitterTest extends OperatorCompilerTestRoot {
         assertThat(support, is(notNullValue()));
         assertThat(support.getName(), is("support"));
         assertThat(support.getParameterTypes(), contains((Object) int.class));
+    }
+
+    /**
+     * w/ external reference.
+     */
+    @Test
+    public void external() {
+        Object factory = compile(new Action("com.example.WithVariable", "method") {
+            @Override
+            protected OperatorDescription analyze(ExecutableElement element) {
+                TypeElement type = (TypeElement) element.getEnclosingElement();
+                VariableElement var = type.getEnclosedElements().stream()
+                    .filter(e -> e.getKind() == ElementKind.FIELD)
+                    .map(VariableElement.class::cast)
+                    .filter(e -> e.getSimpleName().contentEquals("VAR"))
+                    .findAny()
+                    .get();
+                List<Node> parameters = new ArrayList<>();
+                parameters.add(new Node(
+                        Kind.INPUT,
+                        "in",
+                        Document.external(var),
+                        env.findDeclaredType(Descriptions.classOf(String.class)),
+                        new SpecialReference("SPECIAL")));
+                List<Node> outputs = new ArrayList<>();
+                return new OperatorDescription(new ReferenceDocument(new MethodReference()), parameters, outputs);
+            }
+        });
+        MockSource<String> source = MockSource.of(String.class);
+        invoke(factory, "method", source);
+
+        FlowElement info = getOppositeNode(source);
+        assertThat(info.getInputPorts().size(), is(1));
+        assertThat(info.getOutputPorts().size(), is(0));
+        assertThat(getParameters(info).size(), is(0));
+        FlowElementPortDescription port = info.getInputPorts().get(0).getDescription();
+        assertThat(port.getName(), is("in"));
+        assertThat(port.getDataType(), is((Object) String.class));
+    }
+
+    /**
+     * w/ special reference.
+     */
+    @Test
+    public void special() {
+        Object factory = compile(new Action("com.example.Simple", "method") {
+            @Override
+            protected OperatorDescription analyze(ExecutableElement element) {
+                List<Node> parameters = new ArrayList<>();
+                parameters.add(new Node(
+                        Kind.INPUT,
+                        "in",
+                        Document.reference(Reference.special("SPECIAL")),
+                        env.findDeclaredType(Descriptions.classOf(String.class)),
+                        new SpecialReference("SPECIAL")));
+                List<Node> outputs = new ArrayList<>();
+                return new OperatorDescription(new ReferenceDocument(new MethodReference()), parameters, outputs);
+            }
+        });
+        MockSource<String> source = MockSource.of(String.class);
+        invoke(factory, "method", source);
+
+        FlowElement info = getOppositeNode(source);
+        assertThat(info.getInputPorts().size(), is(1));
+        assertThat(info.getOutputPorts().size(), is(0));
+        assertThat(getParameters(info).size(), is(0));
+        FlowElementPortDescription port = info.getInputPorts().get(0).getDescription();
+        assertThat(port.getName(), is("in"));
+        assertThat(port.getDataType(), is((Object) String.class));
     }
 
     private FlowElement getOppositeNode(Source<?> source) {

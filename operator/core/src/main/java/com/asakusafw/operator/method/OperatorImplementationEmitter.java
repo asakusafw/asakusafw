@@ -159,7 +159,6 @@ public class OperatorImplementationEmitter {
                     new AttributeBuilder(f)
                         .annotation(DescriptionHelper.resolveAnnotation(imports, Constants.getGenetedAnnotation()))
                         .Public()
-                        .Final()
                         .toAttributes(),
                     className,
                     imports.resolve(converter.convert(superClass)),

@@ -29,9 +29,11 @@ import javax.tools.Diagnostic;
 
 import com.asakusafw.operator.CompileEnvironment;
 import com.asakusafw.operator.model.OperatorDescription.Document;
+import com.asakusafw.operator.model.OperatorDescription.ExternalDocument;
 import com.asakusafw.operator.model.OperatorDescription.ParameterReference;
 import com.asakusafw.operator.model.OperatorDescription.Reference;
 import com.asakusafw.operator.model.OperatorDescription.ReferenceDocument;
+import com.asakusafw.operator.model.OperatorDescription.SpecialReference;
 import com.asakusafw.operator.model.OperatorDescription.TextDocument;
 import com.asakusafw.utils.java.model.syntax.DocBlock;
 import com.asakusafw.utils.java.model.syntax.DocElement;
@@ -99,7 +101,7 @@ public class JavadocHelper {
         }
     }
 
-    private Javadoc parseJavadoc(String comment) throws JavadocParseException {
+    private static Javadoc parseJavadoc(String comment) throws JavadocParseException {
         if (comment == null) {
             return Models.getModelFactory().newJavadoc(Collections.emptyList());
         }
@@ -137,6 +139,8 @@ public class JavadocHelper {
             return text(((TextDocument) document).getText());
         case REFERENCE:
             return reference(((ReferenceDocument) document).getReference());
+        case EXTERNAL:
+            return external(((ExternalDocument) document).getElement());
         default:
             throw new AssertionError(document.getKind());
         }
@@ -190,7 +194,7 @@ public class JavadocHelper {
         return Collections.emptyList();
     }
 
-    private boolean hasName(DocElement element, String name) {
+    private static boolean hasName(DocElement element, String name) {
         assert element != null;
         assert name != null;
         switch (element.getModelKind()) {
@@ -227,6 +231,8 @@ public class JavadocHelper {
             return getBlock("@return"); //$NON-NLS-1$
         case PARAMETER:
             return getParameter(((ParameterReference) reference).getLocation());
+        case SPECIAL:
+            return text(((SpecialReference) reference).getInfo());
         default:
             throw new AssertionError(reference.getKind());
         }
@@ -238,6 +244,19 @@ public class JavadocHelper {
         }
         String name = executable.getParameters().get(location).getSimpleName().toString();
         return getParameter(name);
+    }
+
+    private List<? extends DocElement> external(Element element) {
+        Javadoc javadoc = parseJavadoc(element);
+        List<? extends DocBlock> elementBlocks = javadoc.getBlocks();
+        if (elementBlocks.isEmpty()) {
+            return Collections.emptyList();
+        }
+        DocBlock first = elementBlocks.get(0);
+        if (first.getTag().isEmpty()) {
+            return first.getElements();
+        }
+        return Collections.emptyList();
     }
 
     private List<? extends DocElement> getBlock(String tag) {

@@ -56,7 +56,6 @@ import com.asakusafw.operator.model.OperatorDescription.Node;
 import com.asakusafw.operator.model.OperatorDescription.ParameterReference;
 import com.asakusafw.operator.model.OperatorDescription.Reference;
 import com.asakusafw.operator.model.OperatorDescription.Reference.Kind;
-import com.asakusafw.operator.model.OperatorDescription.SpecialReference;
 import com.asakusafw.operator.util.AnnotationHelper;
 
 /**
@@ -469,12 +468,20 @@ final class DslBuilder {
 
         final Element element;
 
+        private final Document document;
+
         private final Reference reference;
 
         GeneralElementRef(Element element, Reference reference) {
+            this(element, Document.reference(reference), reference);
+        }
+
+        GeneralElementRef(Element element, Document document, Reference reference) {
             assert element != null;
+            assert document != null;
             assert reference != null;
             this.element = element;
+            this.document = document;
             this.reference = reference;
         }
 
@@ -495,7 +502,7 @@ final class DslBuilder {
 
         @Override
         public Document document() {
-            return Document.reference(reference);
+            return document;
         }
 
         @Override
@@ -705,8 +712,9 @@ final class DslBuilder {
             List<ElementRef> results = new ArrayList<>();
             for (VariableElement var : ElementFilter.fieldsIn(type.getEnclosedElements())) {
                 if (var.getKind() == ElementKind.ENUM_CONSTANT) {
-                    SpecialReference reference = Reference.special(var.getSimpleName().toString());
-                    results.add(new GeneralElementRef(var, reference));
+                    Document document = Document.external(var);
+                    Reference reference = Reference.special(var.getSimpleName().toString());
+                    results.add(new GeneralElementRef(var, document, reference));
                 }
             }
             return results;

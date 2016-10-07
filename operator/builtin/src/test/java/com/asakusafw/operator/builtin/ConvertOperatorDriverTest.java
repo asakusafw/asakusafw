@@ -68,17 +68,17 @@ public class ConvertOperatorDriverTest extends OperatorDriverTestRoot {
                 assertThat(input.getName(), is("model"));
                 assertThat(input.getType(), is(sameType("com.example.Model")));
 
-                Map<String, Node> outputs = toMap(description.getOutputs());
-
-                Node out = outputs.get(defaultName(Convert.class, "convertedPort"));
-                assertThat(out, is(notNullValue()));
-                assertThat(out.getType(), is(sameType("com.example.Proceeded")));
-                assertThat(out.getReference(), is(Reference.returns()));
-
-                Node orig = outputs.get(defaultName(Convert.class, "originalPort"));
+                Node orig = description.getOutputs().get(Convert.ID_OUTPUT_ORIGINAL);
                 assertThat(orig, is(notNullValue()));
+                assertThat(orig.getName(), is(defaultName(Convert.class, "originalPort")));
                 assertThat(orig.getType(), is(sameType("com.example.Model")));
                 assertThat(orig.getReference(), is((Reference) Reference.parameter(0)));
+
+                Node out = description.getOutputs().get(Convert.ID_OUTPUT_CONVERTED);
+                assertThat(out, is(notNullValue()));
+                assertThat(out.getName(), is(defaultName(Convert.class, "convertedPort")));
+                assertThat(out.getType(), is(sameType("com.example.Proceeded")));
+                assertThat(out.getReference(), is(Reference.returns()));
             }
         });
     }
@@ -102,15 +102,15 @@ public class ConvertOperatorDriverTest extends OperatorDriverTestRoot {
 
                 Map<String, Node> outputs = toMap(description.getOutputs());
 
-                Node out = outputs.get(defaultName(Convert.class, "convertedPort"));
-                assertThat(out, is(notNullValue()));
-                assertThat(out.getType(), is(sameType("com.example.Proceeded")));
-                assertThat(out.getReference(), is(Reference.returns()));
-
                 Node orig = outputs.get(defaultName(Convert.class, "originalPort"));
                 assertThat(orig, is(notNullValue()));
                 assertThat(orig.getType(), is(sameType("com.example.Model")));
                 assertThat(orig.getReference(), is((Reference) Reference.parameter(0)));
+
+                Node out = outputs.get(defaultName(Convert.class, "convertedPort"));
+                assertThat(out, is(notNullValue()));
+                assertThat(out.getType(), is(sameType("com.example.Proceeded")));
+                assertThat(out.getReference(), is(Reference.returns()));
 
                 Map<String, Node> arguments = toMap(description.getArguments());
                 assertThat(arguments.get("stringArg"), is(notNullValue()));
