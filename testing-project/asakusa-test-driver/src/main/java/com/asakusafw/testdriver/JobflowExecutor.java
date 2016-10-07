@@ -367,7 +367,7 @@ class JobflowExecutor {
             CommandTaskMirror t = (CommandTaskMirror) task;
             List<String> commandLine = new ArrayList<>();
             commandLine.add(new File(context.getFrameworkHomePath(), t.getCommand()).getAbsolutePath());
-            commandLine.addAll(resolveCommandTokens(t.getArguments()));
+            commandLine.addAll(resolveCommandTokens(t.getArguments(context.getExtraConfigurations())));
             return new Command(
                     commandLine,
                     t.getModuleName(),
