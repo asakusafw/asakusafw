@@ -45,14 +45,7 @@ public class ConvertOperatorDriver implements OperatorDriver {
         if (dsl.method().modifiers().contains(Modifier.ABSTRACT)) {
             dsl.method().error(Messages.getString("ConvertOperatorDriver.errorAbstract")); //$NON-NLS-1$
         }
-        if (dsl.result().type().isDataModel()) {
-            ElementRef result = dsl.result();
-            dsl.addOutput(
-                    result.document(),
-                    dsl.annotation().string(CONVERTED_PORT),
-                    result.type().mirror(),
-                    result.reference());
-        } else {
+        if (dsl.result().type().isDataModel() == false) {
             dsl.method().error(Messages.getString("ConvertOperatorDriver.errorReturnNotDataModelType")); //$NON-NLS-1$
         }
         for (ElementRef p : dsl.parameters()) {
@@ -74,6 +67,12 @@ public class ConvertOperatorDriver implements OperatorDriver {
                 p.error(Messages.getString("ConvertOperatorDriver.errorParameterUnsupportedType")); //$NON-NLS-1$
             }
         }
+        ElementRef result = dsl.result();
+        dsl.addOutput(
+                result.document(),
+                dsl.annotation().string(CONVERTED_PORT),
+                result.type().mirror(),
+                result.reference());
         return dsl.toDescription();
     }
 }

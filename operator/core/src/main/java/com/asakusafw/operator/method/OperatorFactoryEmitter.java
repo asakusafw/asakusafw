@@ -290,7 +290,7 @@ public class OperatorFactoryEmitter {
                         .toAttributes(),
                     ElementHelper.toTypeParameters(environment, element.getDeclaration().getTypeParameters(), imports),
                     nodeType,
-                    f.newSimpleName(element.getDeclaration().getSimpleName().toString()),
+                    f.newSimpleName(environment.getMemberName(element.getDeclaration().getSimpleName().toString())),
                     ElementHelper.toParameters(environment, element, imports),
                     0,
                     Collections.emptyList(),

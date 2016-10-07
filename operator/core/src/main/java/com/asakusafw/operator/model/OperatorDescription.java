@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.type.TypeMirror;
 
@@ -421,6 +422,16 @@ public class OperatorDescription {
         }
 
         /**
+         * Creates a new instance.
+         * @param element the target element
+         * @return the created instance
+         * @throws IllegalArgumentException if some parameters were {@code null}
+         */
+        public static ExternalDocument external(Element element) {
+            return new ExternalDocument(element);
+        }
+
+        /**
          * Returns the kind of this document.
          * @return the kind
          */
@@ -440,6 +451,11 @@ public class OperatorDescription {
              * Reference to other document.
              */
             REFERENCE,
+
+            /**
+             * The external element.
+             */
+            EXTERNAL,
         }
     }
 
@@ -499,6 +515,35 @@ public class OperatorDescription {
          */
         public Reference getReference() {
             return reference;
+        }
+    }
+
+    /**
+     * Represents a document provided by an external element.
+     */
+    public static class ExternalDocument extends Document {
+
+        private final Element element;
+
+        /**
+         * Creates a new instance.
+         * @param element the external element
+         */
+        public ExternalDocument(Element element) {
+            this.element = Objects.requireNonNull(element);
+        }
+
+        @Override
+        public Kind getKind() {
+            return Kind.EXTERNAL;
+        }
+
+        /**
+         * Returns the element.
+         * @return the element
+         */
+        public Element getElement() {
+            return element;
         }
     }
 

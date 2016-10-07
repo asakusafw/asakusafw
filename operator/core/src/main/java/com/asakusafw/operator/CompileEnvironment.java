@@ -36,6 +36,7 @@ import javax.lang.model.type.TypeMirror;
 
 import com.asakusafw.operator.description.ClassDescription;
 import com.asakusafw.operator.model.DataModelMirror;
+import com.asakusafw.operator.model.JavaName;
 import com.asakusafw.operator.util.DescriptionHelper;
 import com.asakusafw.operator.util.Logger;
 import com.asakusafw.utils.java.jsr269.bridge.Jsr269;
@@ -64,6 +65,8 @@ public class CompileEnvironment {
     private volatile boolean flowpartExternalIo = false;
 
     private volatile boolean forceGenerateImplementation = false;
+
+    private volatile boolean forceNormalizeMemberName = true;
 
     private volatile boolean strictOperatorParameterOrder = false;
 
@@ -157,6 +160,7 @@ public class CompileEnvironment {
             .withFlowpartExternalIo(set.contains(Support.FLOWPART_EXTERNAL_IO))
             .withForceRegenerateResources(set.contains(Support.FORCE_REGENERATE_RESOURCES))
             .withForceGenerateImplementation(set.contains(Support.FORCE_GENERATE_IMPLEMENTATION))
+            .withForceNormalizeMemberName(set.contains(Support.FORCE_NORMALIZE_MEMBER_NAME))
             .withStrictOperatorParameterOrder(set.contains(Support.STRICT_PARAMETER_ORDER));
     }
 
@@ -295,6 +299,20 @@ public class CompileEnvironment {
     }
 
     /**
+     * Returns the normalized member name.
+     * @param token the original token
+     * @return the normalized name for members
+     */
+    public String getMemberName(String token) {
+        Objects.requireNonNull(token);
+        if (forceNormalizeMemberName) {
+            return JavaName.of(token).toMemberName();
+        } else {
+            return token;
+        }
+    }
+
+    /**
      * Sets the target resources is generated.
      * @param key the target resource key
      */
@@ -407,6 +425,24 @@ public class CompileEnvironment {
     }
 
     /**
+     * Returns whether or not the member names must be normalized.
+     * @return {@code true} is normalized, otherwise {@code false}
+     */
+    public boolean isForceNormalizeMemberName() {
+        return forceNormalizeMemberName;
+    }
+
+    /**
+     * Sets whether or not the member names must be normalized.
+     * @param newValue {@code true} is normalized, otherwise {@code false}
+     * @return the new value
+     */
+    public CompileEnvironment withForceNormalizeMemberName(boolean newValue) {
+        this.forceNormalizeMemberName = newValue;
+        return this;
+    }
+
+    /**
      * Represents kind of supported features in {@link CompileEnvironment}.
      */
     public enum Support {
@@ -440,6 +476,11 @@ public class CompileEnvironment {
          * Always generate implementation classes.
          */
         FORCE_GENERATE_IMPLEMENTATION,
+
+        /**
+         * Always uses the normalized member name for operator factory methods.
+         */
+        FORCE_NORMALIZE_MEMBER_NAME,
 
         /**
          * Supports external I/O ports in flow parts.
