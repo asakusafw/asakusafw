@@ -21,7 +21,7 @@ import java.util.Map;
 /**
  * Represents a command task.
  * @since 0.8.0
- * @version 0.9.0
+ * @version 0.8.2
  */
 public interface CommandTaskMirror extends TaskMirror {
 
@@ -50,7 +50,5 @@ public interface CommandTaskMirror extends TaskMirror {
      * @param extraConfigurations the extra configurations (treated as Hadoop configurations)
      * @return the command arguments
      */
-    default List<CommandToken> getArguments(Map<String, String> extraConfigurations) {
-        return getArguments();
-    }
+    List<CommandToken> getArguments(Map<String, String> extraConfigurations);
 }

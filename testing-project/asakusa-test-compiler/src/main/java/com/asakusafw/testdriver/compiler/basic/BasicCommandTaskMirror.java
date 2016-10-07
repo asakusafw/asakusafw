@@ -20,7 +20,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Function;
 
 import com.asakusafw.testdriver.compiler.CommandTaskMirror;
 import com.asakusafw.testdriver.compiler.CommandToken;
@@ -28,7 +27,7 @@ import com.asakusafw.testdriver.compiler.CommandToken;
 /**
  * A basic implementation of {@link CommandTaskMirror}.
  * @since 0.8.0
- * @version 0.9.0
+ * @version 0.8.2
  */
 public class BasicCommandTaskMirror extends BasicTaskMirror implements CommandTaskMirror {
 
@@ -72,7 +71,7 @@ public class BasicCommandTaskMirror extends BasicTaskMirror implements CommandTa
      * @param command the command path
      * @param arguments the command arguments
      * @param configurationResolver resolves extra configurations
-     * @since 0.9.0
+     * @since 0.8.2
      */
     public BasicCommandTaskMirror(
             String moduleName, String profileName,
@@ -107,7 +106,7 @@ public class BasicCommandTaskMirror extends BasicTaskMirror implements CommandTa
 
     @Override
     public List<CommandToken> getArguments() {
-        return getArguments(Collections.emptyMap());
+        return getArguments(Collections.<String, String>emptyMap());
     }
 
     @Override
@@ -120,17 +119,16 @@ public class BasicCommandTaskMirror extends BasicTaskMirror implements CommandTa
 
     /**
      * Resolves extra configurations.
-     * @since 0.9.0
+     * @since 0.8.2
      * @see CommandTaskMirror#getArguments(Map)
      */
-    public interface ConfigurationResolver extends Function<Map<String, String>, List<CommandToken>> {
+    public interface ConfigurationResolver {
 
         /**
          * Resolves configurations into additional command arguments.
          * @param configurations the extra configurations (treated as Hadoop configurations)
          * @return the additional command arguments
          */
-        @Override
         List<CommandToken> apply(Map<String, String> configurations);
     }
 }
