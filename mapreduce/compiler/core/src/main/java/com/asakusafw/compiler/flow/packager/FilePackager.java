@@ -32,6 +32,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
@@ -39,6 +40,7 @@ import java.util.zip.ZipEntry;
 
 import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
+import javax.tools.FileObject;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaCompiler.CompilationTask;
 import javax.tools.JavaFileObject;
@@ -318,17 +320,17 @@ public class FilePackager extends FlowCompilingEnvironment.Initialized implement
                         fileManager.getJavaFileObjectsFromFiles(sources));
                 succeeded = task.call();
             }
-            for (Diagnostic<?> diagnostic : diagnostics.getDiagnostics()) {
+            for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics.getDiagnostics()) {
                 switch (diagnostic.getKind()) {
                 case ERROR:
                 case MANDATORY_WARNING:
-                    getEnvironment().error(diagnostic.getMessage(null));
+                    getEnvironment().error(toMessage(diagnostic));
                     break;
                 case WARNING:
-                    LOG.warn(diagnostic.getMessage(null));
+                    LOG.warn(toMessage(diagnostic));
                     break;
                 default:
-                    LOG.info(diagnostic.getMessage(null));
+                    LOG.info(toMessage(diagnostic));
                     break;
                 }
             }
@@ -339,6 +341,15 @@ public class FilePackager extends FlowCompilingEnvironment.Initialized implement
                         errors.toString()));
             }
         }
+    }
+
+    private static String toMessage(Diagnostic<? extends JavaFileObject> diagnostic) {
+        return String.format("%s (%s:%,d)", //$NON-NLS-1$
+                diagnostic.getMessage(null),
+                Optional.ofNullable(diagnostic.getSource())
+                    .map(FileObject::getName)
+                    .orElse("<unknown-file>"), //$NON-NLS-1$
+                diagnostic.getLineNumber());
     }
 
     private String getJavaVersion() {
