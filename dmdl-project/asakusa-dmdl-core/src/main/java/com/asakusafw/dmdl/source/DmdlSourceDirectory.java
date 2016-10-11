@@ -19,7 +19,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 /**
@@ -27,13 +30,13 @@ import java.util.regex.Pattern;
  */
 public class DmdlSourceDirectory implements DmdlSourceRepository {
 
-    private File directory;
+    private final File directory;
 
-    private Charset encoding;
+    private final Charset encoding;
 
-    private Pattern inclusionPattern;
+    private final Pattern inclusionPattern;
 
-    private Pattern exclusionPattern;
+    private final Pattern exclusionPattern;
 
     /**
      * Creates and returns a new instance.
@@ -81,11 +84,17 @@ public class DmdlSourceDirectory implements DmdlSourceRepository {
                 files.add(current);
             }
         } else {
-            for (File child : current.listFiles()) {
+            for (File child : list(current)) {
                 collect(child, files);
             }
         }
         return files;
+    }
+
+    private static List<File> list(File file) {
+        return Optional.ofNullable(file.listFiles())
+                .map(Arrays::asList)
+                .orElse(Collections.emptyList());
     }
 
     boolean accept(File file) {

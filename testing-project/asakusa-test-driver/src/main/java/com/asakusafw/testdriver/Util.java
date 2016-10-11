@@ -19,7 +19,9 @@ import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -144,7 +146,7 @@ final class Util {
                         Messages.getString("JobflowExecutor.warnFailedToCreateDirectory"), //$NON-NLS-1$
                         dependenciesDest.getAbsolutePath()));
             }
-            for (File file : dependencies.listFiles()) {
+            for (File file : list(dependencies)) {
                 if (file.isFile() == false) {
                     continue;
                 }
@@ -161,6 +163,12 @@ final class Util {
             graph.addEdges(element, element.getBlockers());
         }
         return Graphs.sortPostOrder(graph);
+    }
+
+    private static List<File> list(File file) {
+        return Optional.ofNullable(file.listFiles())
+                .map(Arrays::asList)
+                .orElse(Collections.emptyList());
     }
 
     private Util() {

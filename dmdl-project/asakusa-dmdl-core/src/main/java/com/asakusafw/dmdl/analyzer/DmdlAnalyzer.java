@@ -295,12 +295,6 @@ public class DmdlAnalyzer {
         assert term != null;
         LOG.debug("processing model mapping: {}", term.mapping); //$NON-NLS-1$
 
-        Set<String> groupingPropertyNames = new HashSet<>();
-        if (term.grouping != null) {
-            for (AstSimpleName name : term.grouping.properties) {
-                groupingPropertyNames.add(name.identifier);
-            }
-        }
         ModelDeclaration sourceDecl = sourceModel.findDeclaration();
         assert sourceDecl != null;
         Map<String, PropertyDeclaration> results = new HashMap<>();

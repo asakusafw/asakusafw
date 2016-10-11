@@ -30,9 +30,12 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.WeakHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
@@ -465,7 +468,7 @@ public class ConfigurationProvider {
         assert file != null;
         if (file.isDirectory()) {
             boolean rest = false;
-            for (File child : file.listFiles()) {
+            for (File child : list(file)) {
                 rest |= delete(child) == false;
             }
             if (rest) {
@@ -473,6 +476,12 @@ public class ConfigurationProvider {
             }
         }
         return file.delete() || file.exists() == false;
+    }
+
+    private static List<File> list(File file) {
+        return Optional.ofNullable(file.listFiles())
+                .map(Arrays::asList)
+                .orElse(Collections.emptyList());
     }
 
     private ClassLoader getBaseClassLoader() {
@@ -483,7 +492,7 @@ public class ConfigurationProvider {
         return current;
     }
 
-    private ClassLoader createLoader(ClassLoader current, URL defaultConfigPath) {
+    private static ClassLoader createLoader(ClassLoader current, URL defaultConfigPath) {
         assert current != null;
         if (defaultConfigPath == null) {
             return current;

@@ -19,6 +19,10 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -51,7 +55,7 @@ final class Util {
             return true;
         } else if (file.isDirectory()) {
             boolean deleteChildren = true;
-            for (File child : file.listFiles()) {
+            for (File child : list(file)) {
                 deleteChildren &= delete(child);
             }
             if (deleteChildren == false) {
@@ -66,5 +70,11 @@ final class Util {
                     file));
             return false;
         }
+    }
+
+    private static List<File> list(File file) {
+        return Optional.ofNullable(file.listFiles())
+                .map(Arrays::asList)
+                .orElse(Collections.emptyList());
     }
 }

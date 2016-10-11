@@ -21,6 +21,7 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 
@@ -30,9 +31,10 @@ import com.asakusafw.testdriver.excel.ValueConditionKind;
 import com.asakusafw.testdriver.rule.DataModelCondition;
 
 /**
- * Legacy fasion (0.1.x) {@link ExcelRuleExtractor}.
+ * Legacy fashioned (0.1.x) {@link ExcelRuleExtractor}.
  * @since 0.2.0
  */
+@SuppressWarnings("deprecation") // FIXME POI API is currently transitive
 public class LegacyExcelRuleExtractor implements ExcelRuleExtractor {
 
     @Override
@@ -93,7 +95,7 @@ public class LegacyExcelRuleExtractor implements ExcelRuleExtractor {
             return null;
         }
         Cell cell = row.getCell(colIndex);
-        if (cell == null || cell.getCellType() != Cell.CELL_TYPE_STRING) {
+        if (cell == null || cell.getCellTypeEnum() != CellType.STRING) {
             return null;
         }
         return cell.getStringCellValue();
@@ -106,9 +108,9 @@ public class LegacyExcelRuleExtractor implements ExcelRuleExtractor {
         }
         // strict checking for cell type
         Cell cell = row.getCell(ConditionSheetItem.COLUMN_NAME.getCol());
-        if (cell == null || cell.getCellType() == Cell.CELL_TYPE_BLANK) {
+        if (cell == null || cell.getCellTypeEnum() == CellType.BLANK) {
             return null;
-        } else if (cell.getCellType() != Cell.CELL_TYPE_STRING) {
+        } else if (cell.getCellTypeEnum() != CellType.STRING) {
             throw new FormatException(MessageFormat.format(
                     Messages.getString("LegacyExcelRuleExtractor.errorInvalidNameType"), //$NON-NLS-1$
                     ConditionSheetItem.COLUMN_NAME.getName(),
@@ -211,9 +213,9 @@ public class LegacyExcelRuleExtractor implements ExcelRuleExtractor {
         assert row != null;
         assert item != null;
         Cell cell = row.getCell(item.getCol());
-        if (cell == null || cell.getCellType() == Cell.CELL_TYPE_BLANK) {
+        if (cell == null || cell.getCellTypeEnum() == CellType.BLANK) {
             return ""; //$NON-NLS-1$
-        } else if (cell.getCellType() == Cell.CELL_TYPE_STRING) {
+        } else if (cell.getCellTypeEnum() == CellType.STRING) {
             return cell.getStringCellValue();
         }
         throw new FormatException(MessageFormat.format(

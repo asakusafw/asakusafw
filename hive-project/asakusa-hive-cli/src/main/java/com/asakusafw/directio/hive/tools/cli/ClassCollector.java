@@ -18,12 +18,14 @@ package com.asakusafw.directio.hive.tools.cli;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 import org.slf4j.Logger;
@@ -77,7 +79,7 @@ public class ClassCollector {
             if (isHidden(next.file)) {
                 continue;
             } else if (next.file.isDirectory()) {
-                for (File child : next.file.listFiles()) {
+                for (File child : list(next.file)) {
                     List<String> segments = new ArrayList<>(next.segments);
                     segments.add(child.getName());
                     Entry entry = new Entry(segments, child);
@@ -90,6 +92,13 @@ public class ClassCollector {
             }
         }
     }
+
+    private static List<File> list(File file) {
+        return Optional.ofNullable(file.listFiles())
+                .map(Arrays::asList)
+                .orElse(Collections.emptyList());
+    }
+
 
     /**
      * Returns the collected classes.

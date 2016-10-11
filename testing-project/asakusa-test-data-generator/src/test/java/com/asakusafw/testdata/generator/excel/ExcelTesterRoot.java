@@ -28,6 +28,7 @@ import java.util.Arrays;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -46,6 +47,7 @@ import com.asakusafw.testdriver.excel.RuleSheetFormat;
 /**
  * A common test root for this package.
  */
+@SuppressWarnings("deprecation") // FIXME POI API is currently transitive
 public class ExcelTesterRoot {
 
     /**
@@ -140,10 +142,10 @@ public class ExcelTesterRoot {
         Row row = sheet.getRow(rowIndex);
         assertThat(row, not(nullValue()));
         Cell cell = row.getCell(columnIndex);
-        if (cell == null || cell.getCellType() == Cell.CELL_TYPE_BLANK) {
+        if (cell == null || cell.getCellTypeEnum() == CellType.BLANK) {
             return null;
         }
-        assertThat(cell.getCellType(), is(Cell.CELL_TYPE_STRING));
+        assertThat(cell.getCellTypeEnum(), is(CellType.STRING));
         return cell.getStringCellValue();
     }
 

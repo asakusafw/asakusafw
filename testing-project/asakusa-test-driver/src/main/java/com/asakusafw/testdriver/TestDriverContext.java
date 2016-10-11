@@ -20,14 +20,17 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.ListResourceBundle;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -927,7 +930,7 @@ public class TestDriverContext implements TestContext {
         assert path != null;
         boolean deleted = true;
         if (path.isDirectory()) {
-            for (File child : path.listFiles()) {
+            for (File child : list(path)) {
                 deleted &= removeAll(child);
             }
         }
@@ -940,6 +943,12 @@ public class TestDriverContext implements TestContext {
             }
         }
         return deleted;
+    }
+
+    private static List<File> list(File file) {
+        return Optional.ofNullable(file.listFiles())
+                .map(Arrays::asList)
+                .orElse(Collections.emptyList());
     }
 
     /**

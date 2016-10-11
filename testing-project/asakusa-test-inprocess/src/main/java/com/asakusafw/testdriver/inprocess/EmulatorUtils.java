@@ -17,8 +17,11 @@ package com.asakusafw.testdriver.inprocess;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -48,13 +51,19 @@ public final class EmulatorUtils {
         Collection<File> results = new ArrayList<>();
         File librariesPath = context.getLibrariesPackageLocation(context.getCurrentBatchId());
         if (librariesPath.isDirectory()) {
-            for (File file : librariesPath.listFiles()) {
+            for (File file : list(librariesPath)) {
                 if (file.isFile() && file.getName().endsWith(".jar")) { //$NON-NLS-1$
                     results.add(file);
                 }
             }
         }
         return results;
+    }
+
+    private static List<File> list(File file) {
+        return Optional.ofNullable(file.listFiles())
+                .map(Arrays::asList)
+                .orElse(Collections.emptyList());
     }
 
     /**

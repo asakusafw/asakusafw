@@ -18,7 +18,10 @@ package com.asakusafw.compiler.testing;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -133,12 +136,18 @@ public final class DirectBatchCompiler {
         assert target != null;
         boolean success = true;
         if (target.isDirectory()) {
-            for (File child : target.listFiles()) {
+            for (File child : list(target)) {
                 success &= delete(child);
             }
         }
         success &= target.delete();
         return success;
+    }
+
+    private static List<File> list(File file) {
+        return Optional.ofNullable(file.listFiles())
+                .map(Arrays::asList)
+                .orElse(Collections.emptyList());
     }
 
     /**

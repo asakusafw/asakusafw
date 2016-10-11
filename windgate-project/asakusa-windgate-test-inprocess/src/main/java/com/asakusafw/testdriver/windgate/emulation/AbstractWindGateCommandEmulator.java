@@ -21,9 +21,12 @@ import java.net.URI;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -115,13 +118,19 @@ public abstract class AbstractWindGateCommandEmulator extends CommandEmulator {
         }
         File plugins = new File(context.getFrameworkHomePath(), PATH_PLUGIN);
         if (plugins.isDirectory()) {
-            for (File file : plugins.listFiles()) {
+            for (File file : list(plugins)) {
                 if (file.isFile()) {
                     libraries.add(file.toURI().toURL());
                 }
             }
         }
         return PluginClassLoader.newInstance(parent, libraries);
+    }
+
+    private static List<File> list(File file) {
+        return Optional.ofNullable(file.listFiles())
+                .map(Arrays::asList)
+                .orElse(Collections.emptyList());
     }
 
     private static GateProfile loadProfile(

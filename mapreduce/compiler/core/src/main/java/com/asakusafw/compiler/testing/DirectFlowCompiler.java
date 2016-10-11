@@ -22,9 +22,12 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -159,12 +162,18 @@ public final class DirectFlowCompiler {
         assert target != null;
         boolean success = true;
         if (target.isDirectory()) {
-            for (File child : target.listFiles()) {
+            for (File child : list(target)) {
                 success &= delete(child);
             }
         }
         success &= target.delete();
         return success;
+    }
+
+    private static List<File> list(File file) {
+        return Optional.ofNullable(file.listFiles())
+                .map(Arrays::asList)
+                .orElse(Collections.emptyList());
     }
 
     static List<ResourceRepository> createRepositories(

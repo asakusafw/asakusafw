@@ -15,10 +15,13 @@
  */
 package com.asakusafw.testdriver.excel;
 
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Workbook;
 
@@ -57,17 +60,17 @@ class WorkbookInfo {
 
         commonStyle = workbook.createCellStyle();
         commonStyle.setFont(font);
-        commonStyle.setBorderTop(CellStyle.BORDER_THIN);
-        commonStyle.setBorderBottom(CellStyle.BORDER_THIN);
-        commonStyle.setBorderLeft(CellStyle.BORDER_THIN);
-        commonStyle.setBorderRight(CellStyle.BORDER_THIN);
+        commonStyle.setBorderTop(BorderStyle.THIN);
+        commonStyle.setBorderBottom(BorderStyle.THIN);
+        commonStyle.setBorderLeft(BorderStyle.THIN);
+        commonStyle.setBorderRight(BorderStyle.THIN);
 
         titleStyle = workbook.createCellStyle();
         titleStyle.cloneStyleFrom(commonStyle);
         titleStyle.setLocked(true);
-        titleStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+        titleStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         titleStyle.setFillForegroundColor(IndexedColors.LIGHT_GREEN.getIndex());
-        titleStyle.setAlignment(CellStyle.ALIGN_CENTER);
+        titleStyle.setAlignment(HorizontalAlignment.CENTER);
 
         CreationHelper helper = workbook.getCreationHelper();
         DataFormat df = helper.createDataFormat();

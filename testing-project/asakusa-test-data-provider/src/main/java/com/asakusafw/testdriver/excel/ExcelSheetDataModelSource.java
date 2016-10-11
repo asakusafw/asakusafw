@@ -23,10 +23,12 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +41,7 @@ import com.asakusafw.testdriver.core.PropertyName;
  * {@link DataModelSource} from Excel Sheet.
  * @since 0.2.0
  */
+@SuppressWarnings("deprecation") // FIXME POI API is currently transitive
 public class ExcelSheetDataModelSource implements DataModelSource {
 
     static final Logger LOG = LoggerFactory.getLogger(ExcelSheetDataModelSource.class);
@@ -86,11 +89,11 @@ public class ExcelSheetDataModelSource implements DataModelSource {
         Map<PropertyName, Integer> results = new LinkedHashMap<>();
         for (Iterator<Cell> iter = row.cellIterator(); iter.hasNext();) {
             Cell cell = iter.next();
-            int type = cell.getCellType();
-            if (type == Cell.CELL_TYPE_BLANK) {
+            CellType type = cell.getCellTypeEnum();
+            if (type == CellType.BLANK) {
                 continue;
             }
-            if (type != Cell.CELL_TYPE_STRING || cell.getStringCellValue().isEmpty()) {
+            if (type != CellType.STRING || cell.getStringCellValue().isEmpty()) {
                 throw new IOException(MessageFormat.format(
                         Messages.getString("ExcelSheetDataModelSource.errorInvalidHeaderCell"), //$NON-NLS-1$
                         id,
@@ -116,7 +119,7 @@ public class ExcelSheetDataModelSource implements DataModelSource {
         return results;
     }
 
-    private PropertyName toPropertyName(Cell cell, String name) {
+    private static PropertyName toPropertyName(Cell cell, String name) {
         assert cell != null;
         assert name != null;
         String[] words = name.split("(_|-)+"); //$NON-NLS-1$
@@ -137,20 +140,20 @@ public class ExcelSheetDataModelSource implements DataModelSource {
             boolean sawFilled = false;
             ExcelDataDriver driver = new ExcelDataDriver(definition, id);
             for (Map.Entry<PropertyName, Integer> entry : names.entrySet()) {
-                Cell cell = row.getCell(entry.getValue(), Row.CREATE_NULL_AS_BLANK);
-                int type = cell.getCellType();
-                if (type == Cell.CELL_TYPE_FORMULA) {
+                Cell cell = row.getCell(entry.getValue(), MissingCellPolicy.CREATE_NULL_AS_BLANK);
+                CellType type = cell.getCellTypeEnum();
+                if (type == CellType.FORMULA) {
                     evaluateInCell(cell);
-                    type = cell.getCellType();
+                    type = cell.getCellTypeEnum();
                 }
-                if (type == Cell.CELL_TYPE_ERROR) {
+                if (type == CellType.ERROR) {
                     throw new IOException(MessageFormat.format(
                             Messages.getString("ExcelSheetDataModelSource.errorErroneousCell"), //$NON-NLS-1$
                             id,
                             row.getRowNum() + 1,
                             cell.getColumnIndex() + 1));
                 }
-                sawFilled |= (type != Cell.CELL_TYPE_BLANK);
+                sawFilled |= (type != CellType.BLANK);
                 driver.process(entry.getKey(), cell);
             }
             if (sawFilled) {
