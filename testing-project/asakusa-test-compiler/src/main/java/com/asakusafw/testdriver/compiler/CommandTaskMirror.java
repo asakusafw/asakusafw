@@ -16,10 +16,12 @@
 package com.asakusafw.testdriver.compiler;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Represents a command task.
  * @since 0.8.0
+ * @version 0.8.2
  */
 public interface CommandTaskMirror extends TaskMirror {
 
@@ -38,6 +40,15 @@ public interface CommandTaskMirror extends TaskMirror {
     /**
      * Returns the command arguments.
      * @return the command arguments
+     * @deprecated Use {@link #getArguments()} instead
      */
+    @Deprecated
     List<CommandToken> getArguments();
+
+    /**
+     * Returns the command arguments.
+     * @param extraConfigurations the extra configurations (treated as Hadoop configurations)
+     * @return the command arguments
+     */
+    List<CommandToken> getArguments(Map<String, String> extraConfigurations);
 }
