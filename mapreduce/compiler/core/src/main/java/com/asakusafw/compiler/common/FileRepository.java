@@ -21,8 +21,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,11 +74,17 @@ public class FileRepository implements ResourceRepository {
         if (file.isFile()) {
             results.add(new Resource(file, location));
         } else if (file.isDirectory()) {
-            for (File child : file.listFiles()) {
+            for (File child : list(file)) {
                 Location enter = new Location(location, child.getName());
                 collect(results, enter, child);
             }
         }
+    }
+
+    private static List<File> list(File file) {
+        return Optional.ofNullable(file.listFiles())
+                .map(Arrays::asList)
+                .orElse(Collections.emptyList());
     }
 
     private static class Resource {

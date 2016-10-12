@@ -22,6 +22,7 @@ import java.text.MessageFormat;
 import java.util.Calendar;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,6 +36,7 @@ import com.asakusafw.testdriver.core.PropertyName;
  * Extracts a model object from a row on Excel sheet.
  * @since 0.2.0
  */
+@SuppressWarnings("deprecation") // FIXME POI API is currently transitive
 class ExcelDataDriver {
 
     static final Logger LOG = LoggerFactory.getLogger(ExcelDataDriver.class);
@@ -68,7 +70,7 @@ class ExcelDataDriver {
         if (cell == null) {
             throw new IllegalArgumentException("cell must not be null"); //$NON-NLS-1$
         }
-        if (cell.getCellType() == Cell.CELL_TYPE_BLANK) {
+        if (cell.getCellTypeEnum() == CellType.BLANK) {
             return;
         }
         engine.scan(engine.definition, propertyName, cell);
@@ -99,7 +101,7 @@ class ExcelDataDriver {
 
         @Override
         public void booleanProperty(PropertyName name, Cell context) throws IOException {
-            if (context.getCellType() == Cell.CELL_TYPE_BOOLEAN) {
+            if (context.getCellTypeEnum() == CellType.BOOLEAN) {
                 builder.add(name, context.getBooleanCellValue());
             } else {
                 String string = context.getStringCellValue();
@@ -144,9 +146,9 @@ class ExcelDataDriver {
             assert name != null;
             assert cell != null;
             assert expected != null;
-            if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
+            if (cell.getCellTypeEnum() == CellType.NUMERIC) {
                 return (long) cell.getNumericCellValue();
-            } else if (cell.getCellType() == Cell.CELL_TYPE_STRING) {
+            } else if (cell.getCellTypeEnum() == CellType.STRING) {
                 String stringValue = cell.getStringCellValue();
                 try {
                     return Long.parseLong(stripNumber(stringValue));
@@ -207,9 +209,9 @@ class ExcelDataDriver {
             assert name != null;
             assert cell != null;
             assert expected != null;
-            if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
+            if (cell.getCellTypeEnum() == CellType.NUMERIC) {
                 return cell.getNumericCellValue();
-            } else if (cell.getCellType() == Cell.CELL_TYPE_STRING) {
+            } else if (cell.getCellTypeEnum() == CellType.STRING) {
                 String stringValue = cell.getStringCellValue();
                 try {
                     return Double.parseDouble(stripNumber(stringValue));
@@ -243,9 +245,9 @@ class ExcelDataDriver {
             assert name != null;
             assert cell != null;
             assert expected != null;
-            if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
+            if (cell.getCellTypeEnum() == CellType.NUMERIC) {
                 return new BigDecimal(cell.getNumericCellValue());
-            } else if (cell.getCellType() == Cell.CELL_TYPE_STRING) {
+            } else if (cell.getCellTypeEnum() == CellType.STRING) {
                 String stringValue = cell.getStringCellValue();
                 try {
                     return new BigDecimal(stripNumber(stringValue));
@@ -265,7 +267,7 @@ class ExcelDataDriver {
 
         @Override
         public void stringProperty(PropertyName name, Cell context) throws IOException {
-            if (context.getCellType() != Cell.CELL_TYPE_STRING) {
+            if (context.getCellTypeEnum() != CellType.STRING) {
                 throw new IOException(MessageFormat.format(
                         Messages.getString("ExcelDataDriver.errorNotExplicitString"), //$NON-NLS-1$
                         id,
@@ -277,7 +279,7 @@ class ExcelDataDriver {
 
         @Override
         public void dateProperty(PropertyName name, Cell context) throws IOException {
-            if (context.getCellType() != Cell.CELL_TYPE_NUMERIC) {
+            if (context.getCellTypeEnum() != CellType.NUMERIC) {
                 throw exception(name, context, "date/datetime"); //$NON-NLS-1$
             }
             Calendar calendar = Calendar.getInstance();
@@ -294,7 +296,7 @@ class ExcelDataDriver {
 
         @Override
         public void timeProperty(PropertyName name, Cell context) throws IOException {
-            if (context.getCellType() != Cell.CELL_TYPE_NUMERIC) {
+            if (context.getCellTypeEnum() != CellType.NUMERIC) {
                 throw exception(name, context, "date/datetime"); //$NON-NLS-1$
             }
             Calendar calendar = Calendar.getInstance();
@@ -310,7 +312,7 @@ class ExcelDataDriver {
 
         @Override
         public void datetimeProperty(PropertyName name, Cell context) throws IOException {
-            if (context.getCellType() != Cell.CELL_TYPE_NUMERIC) {
+            if (context.getCellTypeEnum() != CellType.NUMERIC) {
                 throw exception(name, context, "date/datetime"); //$NON-NLS-1$
             }
             Calendar calendar = Calendar.getInstance();

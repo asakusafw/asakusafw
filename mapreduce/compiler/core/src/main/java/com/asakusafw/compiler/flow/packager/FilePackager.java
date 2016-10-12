@@ -28,6 +28,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -361,11 +362,17 @@ public class FilePackager extends FlowCompilingEnvironment.Initialized implement
             LOG.trace("found compilation target: {}", file); //$NON-NLS-1$
             sourceFiles.add(file);
         } else {
-            for (File child : file.listFiles()) {
+            for (File child : list(file)) {
                 collect(child, sourceFiles);
             }
         }
         return sourceFiles;
+    }
+
+    private static List<File> list(File file) {
+        return Optional.ofNullable(file.listFiles())
+                .map(Arrays::asList)
+                .orElse(Collections.emptyList());
     }
 
     private InputStream buffering(InputStream input) {

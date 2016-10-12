@@ -24,8 +24,10 @@ import java.lang.ref.WeakReference;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.WeakHashMap;
 
@@ -321,7 +323,7 @@ public final class WindGateTestHelper {
                 }
             }
             List<URL> pluginLibraries = new ArrayList<>();
-            for (File file : pluginDirectory.listFiles()) {
+            for (File file : list(pluginDirectory)) {
                 if (file.isFile() && file.getName().endsWith(PLUGIN_EXTENSION)) {
                     try {
                         URL url = file.toURI().toURL();
@@ -340,6 +342,12 @@ public final class WindGateTestHelper {
             CACHE_TEMPORARY_LOADER.put(testContext, new Holder(testContext, pluginClassLoader, pluginDirectory));
             return pluginClassLoader;
         }
+    }
+
+    private static List<File> list(File file) {
+        return Optional.ofNullable(file.listFiles())
+                .map(Arrays::asList)
+                .orElse(Collections.emptyList());
     }
 
     /**

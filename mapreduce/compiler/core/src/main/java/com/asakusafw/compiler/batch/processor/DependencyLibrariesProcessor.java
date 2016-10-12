@@ -23,8 +23,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,7 +94,7 @@ public class DependencyLibrariesProcessor extends AbstractWorkflowProcessor {
         }
 
         LOG.debug("Copying library files: {}", libraryDirectory); //$NON-NLS-1$
-        for (File file : libraryDirectory.listFiles()) {
+        for (File file : list(libraryDirectory)) {
             if (file.isDirectory()) {
                 LOG.warn(MessageFormat.format(
                         Messages.getString("DependencyLibrariesProcessor.warnIgnoreNestedInputDirectory"), //$NON-NLS-1$
@@ -109,6 +112,12 @@ public class DependencyLibrariesProcessor extends AbstractWorkflowProcessor {
             }
         }
         LOG.debug("Finished copying library files: {}", libraryDirectory); //$NON-NLS-1$
+    }
+
+    private static List<File> list(File file) {
+        return Optional.ofNullable(file.listFiles())
+                .map(Arrays::asList)
+                .orElse(Collections.emptyList());
     }
 
     private boolean isEnabled() {

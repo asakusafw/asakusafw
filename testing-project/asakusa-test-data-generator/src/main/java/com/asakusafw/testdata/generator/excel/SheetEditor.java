@@ -22,6 +22,7 @@ import org.apache.poi.ss.usermodel.DataValidation;
 import org.apache.poi.ss.usermodel.DataValidationConstraint;
 import org.apache.poi.ss.usermodel.DataValidationHelper;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddressList;
@@ -105,7 +106,7 @@ public class SheetEditor {
         adjustDataWidth(sheet);
     }
 
-    private void adjustDataWidth(Sheet sheet) {
+    private static void adjustDataWidth(Sheet sheet) {
         assert sheet != null;
         int lastColumn = sheet.getRow(0).getLastCellNum();
         adjustColumnWidth(sheet, lastColumn);
@@ -207,7 +208,7 @@ public class SheetEditor {
                 end, RuleSheetFormat.NULLITY_CONDITION.getColumnIndex());
     }
 
-    private void adjustRuleWidth(Sheet sheet) {
+    private static void adjustRuleWidth(Sheet sheet) {
         assert sheet != null;
         int lastColumn = 0;
         for (RuleSheetFormat format : RuleSheetFormat.values()) {
@@ -216,7 +217,7 @@ public class SheetEditor {
         adjustColumnWidth(sheet, lastColumn);
     }
 
-    private void adjustColumnWidth(Sheet sheet, int lastColumn) {
+    private static void adjustColumnWidth(Sheet sheet, int lastColumn) {
         assert sheet != null;
         for (int i = 0; i <= lastColumn; i++) {
             sheet.autoSizeColumn(i);
@@ -227,19 +228,19 @@ public class SheetEditor {
         }
     }
 
-    private Cell getCell(Sheet sheet, RuleSheetFormat item, int rowOffset, int columnOffset) {
+    private static Cell getCell(Sheet sheet, RuleSheetFormat item, int rowOffset, int columnOffset) {
         assert sheet != null;
         assert item != null;
         return getCell(sheet, item.getRowIndex() + rowOffset, item.getColumnIndex() + columnOffset);
     }
 
-    private Cell getCell(Sheet sheet, int rowIndex, int columnIndex) {
+    private static Cell getCell(Sheet sheet, int rowIndex, int columnIndex) {
         assert sheet != null;
         Row row = sheet.getRow(rowIndex);
         if (row == null) {
             row = sheet.createRow(rowIndex);
         }
-        Cell cell = row.getCell(columnIndex, Row.CREATE_NULL_AS_BLANK);
+        Cell cell = row.getCell(columnIndex, MissingCellPolicy.CREATE_NULL_AS_BLANK);
         return cell;
     }
 
@@ -266,7 +267,7 @@ public class SheetEditor {
         workbook.setSheetName(newIndex, newName);
     }
 
-    private void setExplicitListConstraint(
+    private static void setExplicitListConstraint(
             Sheet sheet,
             String[] list,
             int firstRow, int firstCol,

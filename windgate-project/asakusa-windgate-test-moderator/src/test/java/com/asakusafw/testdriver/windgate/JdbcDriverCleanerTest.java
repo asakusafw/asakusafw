@@ -22,9 +22,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
 import java.util.Enumeration;
-import java.util.logging.Logger;
 
 import org.h2.Driver;
 import org.junit.Test;
@@ -117,21 +115,11 @@ public class JdbcDriverCleanerTest {
     }
 
     @SuppressWarnings("all")
-    public interface DriverExtensionJdk17 {
-        Logger getParentLogger() throws SQLFeatureNotSupportedException;
-    }
-
-    @SuppressWarnings("all")
-    public static abstract class MockDriverBase extends Driver implements DriverExtensionJdk17 {
+    public static abstract class MockDriverBase extends Driver {
 
         public abstract boolean isRegistered();
 
         public abstract void register();
-
-        @Override
-        public Logger getParentLogger() throws SQLFeatureNotSupportedException {
-            throw new SQLFeatureNotSupportedException();
-        }
     }
 
     @SuppressWarnings("all")

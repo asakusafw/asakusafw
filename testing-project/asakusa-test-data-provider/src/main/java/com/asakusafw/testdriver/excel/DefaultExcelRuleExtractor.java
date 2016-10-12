@@ -17,10 +17,12 @@ package com.asakusafw.testdriver.excel;
 
 import java.text.MessageFormat;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 
@@ -30,16 +32,17 @@ import com.asakusafw.testdriver.rule.DataModelCondition;
  * Default implementation of {@link ExcelRuleExtractor}.
  * @since 0.6.0
  */
+@SuppressWarnings("deprecation") // FIXME POI API is currently transitive
 public class DefaultExcelRuleExtractor implements ExcelRuleExtractor {
 
     /**
      * Format IDs which this extractor supports.
      * @since 0.7.0
      */
-    public static final Set<String> SUPPORTED_FORMATS = new HashSet<>(Arrays.asList(new String[] {
+    public static final Set<String> SUPPORTED_FORMATS = Arrays.stream(new String[] {
             "EVR-1.0.0", //$NON-NLS-1$
             RuleSheetFormat.FORMAT_VERSION,
-    }));
+    }).collect(Collectors.collectingAndThen(Collectors.toSet(), Collections::unmodifiableSet));
 
     @Override
     public boolean supports(Sheet sheet) {
@@ -82,14 +85,14 @@ public class DefaultExcelRuleExtractor implements ExcelRuleExtractor {
         return RuleSheetFormat.PROPERTY_NAME.getRowIndex() + 1;
     }
 
-    private String getStringCell(Sheet sheet, int rowIndex, int colIndex) {
+    private static String getStringCell(Sheet sheet, int rowIndex, int colIndex) {
         assert sheet != null;
         Row row = sheet.getRow(rowIndex);
         if (row == null) {
             return "?"; //$NON-NLS-1$
         }
         Cell cell = row.getCell(colIndex);
-        if (cell == null || cell.getCellType() != Cell.CELL_TYPE_STRING) {
+        if (cell == null || cell.getCellTypeEnum() != CellType.STRING) {
             return "?"; //$NON-NLS-1$
         }
         return cell.getStringCellValue();
@@ -102,9 +105,9 @@ public class DefaultExcelRuleExtractor implements ExcelRuleExtractor {
         }
         // strict checking for cell type
         Cell cell = row.getCell(RuleSheetFormat.PROPERTY_NAME.getColumnIndex());
-        if (cell == null || cell.getCellType() == Cell.CELL_TYPE_BLANK) {
+        if (cell == null || cell.getCellTypeEnum() == CellType.BLANK) {
             return null;
-        } else if (cell.getCellType() != Cell.CELL_TYPE_STRING) {
+        } else if (cell.getCellTypeEnum() != CellType.STRING) {
             throw new FormatException(MessageFormat.format(
                     Messages.getString("DefaultExcelRuleExtractor.errorInvalidNameType"), //$NON-NLS-1$
                     RuleSheetFormat.PROPERTY_NAME.getTitle(),
@@ -168,13 +171,13 @@ public class DefaultExcelRuleExtractor implements ExcelRuleExtractor {
         return value == null ? "" : value; //$NON-NLS-1$
     }
 
-    private String getStringCell(Row row, RuleSheetFormat item) throws FormatException {
+    private static String getStringCell(Row row, RuleSheetFormat item) throws FormatException {
         assert row != null;
         assert item != null;
         Cell cell = row.getCell(item.getColumnIndex());
-        if (cell == null || cell.getCellType() == Cell.CELL_TYPE_BLANK) {
+        if (cell == null || cell.getCellTypeEnum() == CellType.BLANK) {
             return ""; //$NON-NLS-1$
-        } else if (cell.getCellType() == Cell.CELL_TYPE_STRING) {
+        } else if (cell.getCellTypeEnum() == CellType.STRING) {
             return cell.getStringCellValue();
         }
         throw new FormatException(MessageFormat.format(

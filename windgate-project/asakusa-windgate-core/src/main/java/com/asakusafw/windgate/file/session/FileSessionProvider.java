@@ -23,9 +23,11 @@ import java.nio.channels.FileLock;
 import java.nio.channels.OverlappingFileLockException;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -122,7 +124,7 @@ public class FileSessionProvider extends SessionProvider {
     @Override
     public List<String> getCreatedIds() throws IOException {
         LOG.debug("Collecting sessions: {}", directory);
-        File[] files = directory.listFiles((FileFilter) pathname -> {
+        return list(directory, pathname -> {
             if (pathname.isFile() == false) {
                 return false;
             }
@@ -130,12 +132,13 @@ public class FileSessionProvider extends SessionProvider {
                 return false;
             }
             return true;
-        });
-        List<String> results = new ArrayList<>();
-        for (File file : files) {
-            results.add(fileToId(file));
-        }
-        return results;
+        }).stream().map(f -> fileToId(f)).collect(Collectors.toList());
+    }
+
+    private static List<File> list(File file, FileFilter filter) {
+        return Optional.ofNullable(file.listFiles(filter))
+                .map(Arrays::asList)
+                .orElse(Collections.emptyList());
     }
 
     @Override

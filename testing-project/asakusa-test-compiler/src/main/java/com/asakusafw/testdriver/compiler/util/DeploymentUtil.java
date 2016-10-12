@@ -27,11 +27,13 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -262,7 +264,7 @@ public final class DeploymentUtil {
         assert source != null;
         assert !(source.isFile() && path == null);
         if (source.isDirectory()) {
-            for (File child : source.listFiles()) {
+            for (File child : list(source)) {
                 String next = (path == null) ? child.getName() : path + '/' + child.getName();
                 putEntry(zip, child, next, saw);
             }
@@ -278,6 +280,12 @@ public final class DeploymentUtil {
             }
             zip.closeEntry();
         }
+    }
+
+    private static List<File> list(File file) {
+        return Optional.ofNullable(file.listFiles())
+                .map(Arrays::asList)
+                .orElse(Collections.emptyList());
     }
 
     private static void mergeEntries(ZipOutputStream zip, File file, Set<String> saw) throws IOException {
