@@ -304,7 +304,7 @@ public class OperatorMethodAnalyzer {
         return false;
     }
 
-    private String toNameId(Name simpleName) {
+    private static String toNameId(Name simpleName) {
         assert simpleName != null;
         StringBuilder buf = new StringBuilder();
         for (int i = 0, n = simpleName.length(); i < n; i++) {
@@ -317,8 +317,18 @@ public class OperatorMethodAnalyzer {
     }
 
     private void warn(Element element, String pattern, Object... arguments) {
-        if (environment.isFailOnWarn()) {
+        switch (environment.getWarningAction()) {
+        case IGNORE:
+            message(Diagnostic.Kind.NOTE, element, pattern, arguments);
+            break;
+        case REPORT:
             message(Diagnostic.Kind.WARNING, element, pattern, arguments);
+            break;
+        case FAIL:
+            message(Diagnostic.Kind.ERROR, element, pattern, arguments);
+            break;
+        default:
+            break;
         }
     }
 
@@ -332,7 +342,11 @@ public class OperatorMethodAnalyzer {
         assert pattern != null;
         assert arguments != null;
         String message = arguments.length == 0 ? pattern : MessageFormat.format(pattern, arguments);
-        environment.getProcessingEnvironment().getMessager().printMessage(kind, message, element);
+        if (kind == Diagnostic.Kind.NOTE) {
+            LOG.debug(message);
+        } else {
+            environment.getProcessingEnvironment().getMessager().printMessage(kind, message, element);
+        }
     }
 
     private static final class AnnotatedMethod {

@@ -17,6 +17,7 @@ package com.asakusafw.operator.method;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -45,16 +46,26 @@ public class OperatorAnnotationProcessor extends AbstractOperatorAnnotationProce
 
     static final Logger LOG = Logger.get(OperatorAnnotationProcessor.class);
 
+    static final Collection<CompileEnvironment.Support> FEATURES = Collections.unmodifiableSet(EnumSet.of(
+            CompileEnvironment.Support.STRICT_PARAMETER_ORDER,
+            CompileEnvironment.Support.FORCE_REGENERATE_RESOURCES,
+            CompileEnvironment.Support.FORCE_GENERATE_IMPLEMENTATION,
+            CompileEnvironment.Support.FORCE_NORMALIZE_MEMBER_NAME));
+
     @Override
     protected CompileEnvironment createCompileEnvironment(ProcessingEnvironment processingEnv) {
         return CompileEnvironment.newInstance(
                 processingEnv,
                 CompileEnvironment.Support.DATA_MODEL_REPOSITORY,
                 CompileEnvironment.Support.OPERATOR_DRIVER,
-                CompileEnvironment.Support.FAIL_ON_WARN,
                 CompileEnvironment.Support.FORCE_GENERATE_IMPLEMENTATION,
                 CompileEnvironment.Support.FORCE_NORMALIZE_MEMBER_NAME,
                 CompileEnvironment.Support.STRICT_PARAMETER_ORDER);
+    }
+
+    @Override
+    protected Collection<CompileEnvironment.Support> getSupportedFeatures() {
+        return FEATURES;
     }
 
     @Override

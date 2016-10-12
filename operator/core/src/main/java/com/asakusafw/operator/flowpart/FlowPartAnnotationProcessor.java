@@ -17,6 +17,7 @@ package com.asakusafw.operator.flowpart;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.Set;
 
 import javax.annotation.processing.ProcessingEnvironment;
@@ -37,12 +38,21 @@ public class FlowPartAnnotationProcessor extends AbstractOperatorAnnotationProce
 
     static final Logger LOG = Logger.get(FlowPartAnnotationProcessor.class);
 
+    static final Collection<CompileEnvironment.Support> FEATURES = Collections.unmodifiableSet(EnumSet.of(
+            CompileEnvironment.Support.STRICT_PARAMETER_ORDER,
+            CompileEnvironment.Support.FORCE_REGENERATE_RESOURCES,
+            CompileEnvironment.Support.FLOWPART_EXTERNAL_IO));
+
     @Override
     protected CompileEnvironment createCompileEnvironment(ProcessingEnvironment processingEnv) {
         return CompileEnvironment.newInstance(
                 processingEnv,
-                CompileEnvironment.Support.DATA_MODEL_REPOSITORY,
-                CompileEnvironment.Support.FAIL_ON_WARN);
+                CompileEnvironment.Support.DATA_MODEL_REPOSITORY);
+    }
+
+    @Override
+    protected Collection<CompileEnvironment.Support> getSupportedFeatures() {
+        return FEATURES;
     }
 
     @Override
