@@ -26,6 +26,7 @@ import java.util.Objects;
 import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
 import java.util.Set;
+import java.util.function.BiConsumer;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.Element;
@@ -58,7 +59,7 @@ public class CompileEnvironment {
 
     private final Set<String> generatedResourceKeys = new HashSet<>();
 
-    private volatile boolean failOnWarn = true;
+    private volatile WarningAction warningAction = WarningAction.getDefault();
 
     private volatile boolean forceRegenerateResources = false;
 
@@ -149,19 +150,16 @@ public class CompileEnvironment {
         Collections.addAll(set, features);
         List<OperatorDriver> operatorDrivers = new ArrayList<>();
         List<DataModelMirrorRepository> dataModelMirrors = new ArrayList<>();
-        if (set.contains(Support.OPERATOR_DRIVER)) {
+        if (set.remove(Support.OPERATOR_DRIVER)) {
             operatorDrivers.addAll(load(OperatorDriver.class, serviceLoader));
         }
-        if (set.contains(Support.DATA_MODEL_REPOSITORY)) {
+        if (set.remove(Support.DATA_MODEL_REPOSITORY)) {
             dataModelMirrors.addAll(load(DataModelMirrorRepository.class, serviceLoader));
         }
-        return new CompileEnvironment(processingEnvironment, operatorDrivers, dataModelMirrors)
-            .withFailOnWarn(set.contains(Support.FAIL_ON_WARN))
-            .withFlowpartExternalIo(set.contains(Support.FLOWPART_EXTERNAL_IO))
-            .withForceRegenerateResources(set.contains(Support.FORCE_REGENERATE_RESOURCES))
-            .withForceGenerateImplementation(set.contains(Support.FORCE_GENERATE_IMPLEMENTATION))
-            .withForceNormalizeMemberName(set.contains(Support.FORCE_NORMALIZE_MEMBER_NAME))
-            .withStrictOperatorParameterOrder(set.contains(Support.STRICT_PARAMETER_ORDER));
+        CompileEnvironment result = new CompileEnvironment(processingEnvironment, operatorDrivers, dataModelMirrors);
+        set.forEach(s -> s.set(result, true));
+        CompilerOption.install(result);
+        return result;
     }
 
     private static <T> List<T> load(Class<T> spi, ClassLoader serviceLoader) {
@@ -335,20 +333,20 @@ public class CompileEnvironment {
     }
 
     /**
-     * Returns whether strict checking is available.
-     * @return {@code true} if it is available, otherwise {@code false}
+     * Returns the warning action type.
+     * @return the warning action type
      */
-    public boolean isFailOnWarn() {
-        return failOnWarn;
+    public WarningAction getWarningAction() {
+        return warningAction;
     }
 
     /**
-     * Returns whether the compiler validates DSL semantics strictly or not.
-     * @param newValue {@code true} iff check semantics strictly
+     * Sets the warning action type.
+     * @param newValue the value to set
      * @return this
      */
-    public CompileEnvironment withFailOnWarn(boolean newValue) {
-        this.failOnWarn = newValue;
+    public CompileEnvironment withWarningAction(WarningAction newValue) {
+        this.warningAction = newValue;
         return this;
     }
 
@@ -450,41 +448,54 @@ public class CompileEnvironment {
         /**
          * Supports operator drivers.
          */
-        OPERATOR_DRIVER,
+        OPERATOR_DRIVER(null),
 
         /**
          * Supports data model repository.
          */
-        DATA_MODEL_REPOSITORY,
-
-        /**
-         * Fail if warning level diagnostics are raised.
-         */
-        FAIL_ON_WARN,
+        DATA_MODEL_REPOSITORY(null),
 
         /**
          * Operator method parameters must be strict ordered.
          */
-        STRICT_PARAMETER_ORDER,
+        STRICT_PARAMETER_ORDER(CompileEnvironment::withStrictOperatorParameterOrder),
 
         /**
          * Forcibly regenerates resources.
          */
-        FORCE_REGENERATE_RESOURCES,
+        FORCE_REGENERATE_RESOURCES(CompileEnvironment::withForceRegenerateResources),
 
         /**
          * Always generate implementation classes.
          */
-        FORCE_GENERATE_IMPLEMENTATION,
+        FORCE_GENERATE_IMPLEMENTATION(CompileEnvironment::withForceGenerateImplementation),
 
         /**
          * Always uses the normalized member name for operator factory methods.
          */
-        FORCE_NORMALIZE_MEMBER_NAME,
+        FORCE_NORMALIZE_MEMBER_NAME(CompileEnvironment::withForceNormalizeMemberName),
 
         /**
          * Supports external I/O ports in flow parts.
          */
-        FLOWPART_EXTERNAL_IO,
+        FLOWPART_EXTERNAL_IO(CompileEnvironment::withFlowpartExternalIo),
+        ;
+
+        private final BiConsumer<CompileEnvironment, Boolean> action;
+
+        Support(BiConsumer<CompileEnvironment, Boolean> action) {
+            this.action = action;
+        }
+
+        /**
+         * Sets this feature.
+         * @param target the target environment
+         * @param value the value
+         */
+        public void set(CompileEnvironment target, boolean value) {
+            if (action != null) {
+                action.accept(target, value);
+            }
+        }
     }
 }

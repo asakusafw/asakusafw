@@ -39,6 +39,7 @@ import com.asakusafw.operator.CompileEnvironment.Support;
 import com.asakusafw.operator.MockDataModelMirrorRepository;
 import com.asakusafw.operator.OperatorCompilerTestRoot;
 import com.asakusafw.operator.OperatorDriver;
+import com.asakusafw.operator.WarningAction;
 import com.asakusafw.operator.description.ClassDescription;
 import com.asakusafw.operator.method.OperatorMethodAnalyzer;
 import com.asakusafw.operator.model.OperatorClass;
@@ -108,7 +109,7 @@ public class OperatorDriverTestRoot extends OperatorCompilerTestRoot {
             @Override
             protected CompileEnvironment createCompileEnvironment(ProcessingEnvironment processingEnv) {
                 return super.createCompileEnvironment(processingEnv)
-                        .withFailOnWarn(true)
+                        .withWarningAction(WarningAction.REPORT)
                         .withStrictOperatorParameterOrder(true);
             }
         };

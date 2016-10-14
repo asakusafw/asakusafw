@@ -16,6 +16,7 @@
 package com.asakusafw.operator;
 
 import java.text.MessageFormat;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
@@ -83,6 +84,14 @@ public abstract class AbstractOperatorAnnotationProcessor implements Processor {
 
     @Override
     public final Set<String> getSupportedOptions() {
+        return CompilerOption.getOptionNames(getSupportedFeatures());
+    }
+
+    /**
+     * Returns the supported features.
+     * @return the supported features
+     */
+    protected Collection<? extends CompileEnvironment.Support> getSupportedFeatures() {
         return Collections.emptySet();
     }
 
