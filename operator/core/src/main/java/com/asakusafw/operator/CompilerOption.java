@@ -40,6 +40,10 @@ public final class CompilerOption {
      */
     public static final String KEY_WARNING_ACTION = KEY_PREFIX + "warning"; //$NON-NLS-1$
 
+    private CompilerOption() {
+        return;
+    }
+
     static void install(CompileEnvironment environment) {
         Map<String, String> options = new TreeMap<>(environment.getProcessingEnvironment().getOptions());
         installWarningAction(environment, options);
