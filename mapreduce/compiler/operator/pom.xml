@@ -45,6 +45,7 @@
                   <includes>
                     <include>com/asakusafw/runtime/model/**</include>
                     <include>com/asakusafw/runtime/value/**</include>
+                    <include>com/asakusafw/runtime/core/**</include>
                   </includes>
                 </filter>
               </filters>
