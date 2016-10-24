@@ -1,0 +1,16 @@
+package com.example.ctor;
+
+import com.example.*;
+import com.asakusafw.vocabulary.flow.*;
+
+@FlowPart
+public class $s<
+        A extends CharSequence,
+        B extends CharSequence> extends FlowDescription {
+
+    public $s(In<A> in, Out<B> out, Class<B> aClass) {
+    }
+
+    @Override
+    protected void describe() {}
+}

@@ -659,6 +659,11 @@ public class OperatorDescription {
             return extern;
         }
 
+        @Override
+        public String toString() {
+            return String.format("%s(%s)", getKind(), getName()); //$NON-NLS-1$
+        }
+
         /**
          * Represents parameter kind.
          */

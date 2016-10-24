@@ -19,12 +19,14 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.Optional;
+import java.util.Set;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
@@ -75,6 +77,10 @@ import com.asakusafw.utils.java.model.util.TypeBuilder;
  * Common helper methods about elements.
  */
 public final class ElementHelper {
+
+    static final ClassDescription TYPE_TYPE = ClassDescription.of(java.lang.reflect.Type.class);
+
+    static final ClassDescription TYPE_CLASS = ClassDescription.of(Class.class);
 
     static final ClassDescription TYPE_FACTORY = classOf("operator.OperatorFactory"); //$NON-NLS-1$
 
@@ -189,25 +195,44 @@ public final class ElementHelper {
         assert element != null;
         assert description != null;
         boolean valid = true;
-        List<TypeVariable> vars = description.getInputs().stream()
-                .map(Node::getType)
-                .filter(type -> type.getKind() == TypeKind.TYPEVAR)
-                .map(TypeVariable.class::cast)
-                .collect(Collectors.toList());
+        Set<TypeVariable> vars = collectInferSources(environment, description);
         Types types = environment.getProcessingEnvironment().getTypeUtils();
         for (Node output : description.getOutputs()) {
-            if (output.getType().getKind() == TypeKind.TYPEVAR) {
-                if (vars.stream().noneMatch(var -> types.isSameType(var, output.getType()))) {
-                    environment.getProcessingEnvironment().getMessager().printMessage(Diagnostic.Kind.ERROR,
-                            MessageFormat.format(
-                                    Messages.getString("ElementHelper.errorOutputTypeNotInferable"), //$NON-NLS-1$
-                                    ((TypeVariable) output.getType()).asElement().getSimpleName()),
-                            target(element, output.getReference()));
-                    valid = false;
-                }
+            if (output.getType().getKind() == TypeKind.TYPEVAR
+                    && vars.stream().noneMatch(var -> types.isSameType(var, output.getType()))) {
+                environment.getProcessingEnvironment().getMessager().printMessage(Diagnostic.Kind.ERROR,
+                        MessageFormat.format(
+                                Messages.getString("ElementHelper.errorOutputTypeNotInferable"), //$NON-NLS-1$
+                                ((TypeVariable) output.getType()).asElement().getSimpleName()),
+                        target(element, output.getReference()));
+                valid = false;
             }
         }
         return valid;
+    }
+
+    private static Set<TypeVariable> collectInferSources(
+            CompileEnvironment environment,
+            OperatorDescription description) {
+        Types types = environment.getProcessingEnvironment().getTypeUtils();
+        Set<TypeVariable> vars = new HashSet<>();
+        description.getInputs().stream()
+                .map(Node::getType)
+                .filter(type -> type.getKind() == TypeKind.TYPEVAR)
+                .map(TypeVariable.class::cast)
+                .forEach(vars::add);
+        description.getArguments().stream() // we only use Class<T> for inferring output types
+                .map(Node::getType)
+                .filter(type -> type.getKind() == TypeKind.DECLARED)
+                .map(DeclaredType.class::cast)
+                .filter(type -> types.isSameType(
+                        environment.getErasure(type),
+                        environment.findDeclaredType(TYPE_CLASS)))
+                .flatMap(type -> type.getTypeArguments().stream())
+                .filter(type -> type.getKind() == TypeKind.TYPEVAR)
+                .map(TypeVariable.class::cast)
+                .forEach(vars::add);
+        return vars;
     }
 
     private static Element target(ExecutableElement element, Reference reference) {
@@ -484,10 +509,17 @@ public final class ElementHelper {
             return toLiteral(environment, type, imports);
         } else {
             Types types = environment.getProcessingEnvironment().getTypeUtils();
-            for (Node input : element.getDescription().getInputs()) {
-                if (types.isSameType(input.getType(), type)) {
-                    return Models.getModelFactory().newSimpleName(input.getName());
-                }
+            Optional<Node> in = element.getDescription().getInputs().stream()
+                .filter(n -> types.isSameType(n.getType(), type))
+                .findFirst();
+            if (in.isPresent()) {
+                return in.map(n -> Models.getModelFactory().newSimpleName(n.getName())).get();
+            }
+            Optional<Node> arg = element.getDescription().getArguments().stream()
+                    .filter(n -> types.isSubtype(n.getType(), environment.findDeclaredType(TYPE_TYPE)))
+                    .findFirst();
+            if (arg.isPresent()) {
+                return arg.map(n -> Models.getModelFactory().newSimpleName(n.getName())).get();
             }
             throw new IllegalStateException(node.getName());
         }

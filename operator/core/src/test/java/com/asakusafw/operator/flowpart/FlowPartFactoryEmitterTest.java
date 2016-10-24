@@ -26,6 +26,7 @@ import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.TypeVariable;
 import javax.lang.model.util.ElementFilter;
 
 import org.junit.Test;
@@ -171,6 +172,44 @@ public class FlowPartFactoryEmitterTest extends OperatorCompilerTestRoot {
             }
         });
         Object node = invoke(factory, "create", MockSource.of(String.class), "Hello, world!");
+        assertThat(field(node.getClass(), "output"), is(notNullValue()));
+    }
+
+    /**
+     * w/ type parameter.
+     */
+    @Test
+    public void output_infer_by_class() {
+        Object factory = compile(new Action("com.example.WithClass") {
+            @Override
+            protected OperatorDescription analyze(ExecutableElement element) {
+                TypeElement type = (TypeElement) element.getEnclosingElement();
+                TypeVariable va = getTypeVariable(type, "A");
+                TypeVariable vb = getTypeVariable(type, "B");
+                List<Node> parameters = new ArrayList<>();
+                parameters.add(new Node(
+                        Kind.INPUT,
+                        "input",
+                        new ReferenceDocument(new ParameterReference(0)),
+                        va,
+                        new ParameterReference(0)));
+                parameters.add(new Node(
+                        Kind.DATA,
+                        "argument",
+                        new ReferenceDocument(new ParameterReference(2)),
+                        getType(Class.class, vb),
+                        new ParameterReference(2)));
+                List<Node> outputs = new ArrayList<>();
+                outputs.add(new Node(
+                        Kind.OUTPUT,
+                        "output",
+                        new ReferenceDocument(new ParameterReference(1)),
+                        vb,
+                        new ParameterReference(1)));
+                return new OperatorDescription(new ReferenceDocument(new MethodReference()), parameters, outputs);
+            }
+        });
+        Object node = invoke(factory, "create", MockSource.of(String.class), String.class);
         assertThat(field(node.getClass(), "output"), is(notNullValue()));
     }
 
