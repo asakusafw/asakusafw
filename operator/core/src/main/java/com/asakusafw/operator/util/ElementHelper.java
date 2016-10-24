@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.lang.model.element.Element;
@@ -76,6 +77,10 @@ import com.asakusafw.utils.java.model.util.TypeBuilder;
  * Common helper methods about elements.
  */
 public final class ElementHelper {
+
+    static final ClassDescription TYPE_TYPE = ClassDescription.of(java.lang.reflect.Type.class);
+
+    static final ClassDescription TYPE_CLASS = ClassDescription.of(Class.class);
 
     static final ClassDescription TYPE_FACTORY = classOf("operator.OperatorFactory"); //$NON-NLS-1$
 
@@ -190,7 +195,7 @@ public final class ElementHelper {
         assert element != null;
         assert description != null;
         boolean valid = true;
-        Set<TypeVariable> vars = collectInferSources(description);
+        Set<TypeVariable> vars = collectInferSources(environment, description);
         Types types = environment.getProcessingEnvironment().getTypeUtils();
         for (Node output : description.getOutputs()) {
             if (output.getType().getKind() == TypeKind.TYPEVAR
@@ -206,17 +211,23 @@ public final class ElementHelper {
         return valid;
     }
 
-    private static Set<TypeVariable> collectInferSources(OperatorDescription description) {
+    private static Set<TypeVariable> collectInferSources(
+            CompileEnvironment environment,
+            OperatorDescription description) {
+        Types types = environment.getProcessingEnvironment().getTypeUtils();
         Set<TypeVariable> vars = new HashSet<>();
         description.getInputs().stream()
                 .map(Node::getType)
                 .filter(type -> type.getKind() == TypeKind.TYPEVAR)
                 .map(TypeVariable.class::cast)
                 .forEach(vars::add);
-        description.getArguments().stream()
+        description.getArguments().stream() // we only use Class<T> for inferring output types
                 .map(Node::getType)
                 .filter(type -> type.getKind() == TypeKind.DECLARED)
                 .map(DeclaredType.class::cast)
+                .filter(type -> types.isSameType(
+                        environment.getErasure(type),
+                        environment.findDeclaredType(TYPE_CLASS)))
                 .flatMap(type -> type.getTypeArguments().stream())
                 .filter(type -> type.getKind() == TypeKind.TYPEVAR)
                 .map(TypeVariable.class::cast)
@@ -498,10 +509,17 @@ public final class ElementHelper {
             return toLiteral(environment, type, imports);
         } else {
             Types types = environment.getProcessingEnvironment().getTypeUtils();
-            for (Node input : element.getDescription().getInputs()) {
-                if (types.isSameType(input.getType(), type)) {
-                    return Models.getModelFactory().newSimpleName(input.getName());
-                }
+            Optional<Node> in = element.getDescription().getInputs().stream()
+                .filter(n -> types.isSameType(n.getType(), type))
+                .findFirst();
+            if (in.isPresent()) {
+                return in.map(n -> Models.getModelFactory().newSimpleName(n.getName())).get();
+            }
+            Optional<Node> arg = element.getDescription().getArguments().stream()
+                    .filter(n -> types.isSubtype(n.getType(), environment.findDeclaredType(TYPE_TYPE)))
+                    .findFirst();
+            if (arg.isPresent()) {
+                return arg.map(n -> Models.getModelFactory().newSimpleName(n.getName())).get();
             }
             throw new IllegalStateException(node.getName());
         }

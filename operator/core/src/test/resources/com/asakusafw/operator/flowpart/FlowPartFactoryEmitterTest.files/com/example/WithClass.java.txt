@@ -1,0 +1,24 @@
+package com.example;
+
+import com.asakusafw.vocabulary.flow.*;
+
+/**
+ * A class.
+ * @param <A> type parameter
+ * @param <B> type parameter
+ */
+@FlowPart
+public class $s<A, B> extends FlowDescription {
+    
+    /**
+     * Ctor.
+     * @param in input
+     * @param out output
+     * @param arg argument
+     */
+    public $s(A in, B out, Class<B> arg) {
+    }
+    
+    @Override
+    protected void describe() {}
+}
