@@ -19,12 +19,13 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
@@ -189,25 +190,38 @@ public final class ElementHelper {
         assert element != null;
         assert description != null;
         boolean valid = true;
-        List<TypeVariable> vars = description.getInputs().stream()
-                .map(Node::getType)
-                .filter(type -> type.getKind() == TypeKind.TYPEVAR)
-                .map(TypeVariable.class::cast)
-                .collect(Collectors.toList());
+        Set<TypeVariable> vars = collectInferSources(description);
         Types types = environment.getProcessingEnvironment().getTypeUtils();
         for (Node output : description.getOutputs()) {
-            if (output.getType().getKind() == TypeKind.TYPEVAR) {
-                if (vars.stream().noneMatch(var -> types.isSameType(var, output.getType()))) {
-                    environment.getProcessingEnvironment().getMessager().printMessage(Diagnostic.Kind.ERROR,
-                            MessageFormat.format(
-                                    Messages.getString("ElementHelper.errorOutputTypeNotInferable"), //$NON-NLS-1$
-                                    ((TypeVariable) output.getType()).asElement().getSimpleName()),
-                            target(element, output.getReference()));
-                    valid = false;
-                }
+            if (output.getType().getKind() == TypeKind.TYPEVAR
+                    && vars.stream().noneMatch(var -> types.isSameType(var, output.getType()))) {
+                environment.getProcessingEnvironment().getMessager().printMessage(Diagnostic.Kind.ERROR,
+                        MessageFormat.format(
+                                Messages.getString("ElementHelper.errorOutputTypeNotInferable"), //$NON-NLS-1$
+                                ((TypeVariable) output.getType()).asElement().getSimpleName()),
+                        target(element, output.getReference()));
+                valid = false;
             }
         }
         return valid;
+    }
+
+    private static Set<TypeVariable> collectInferSources(OperatorDescription description) {
+        Set<TypeVariable> vars = new HashSet<>();
+        description.getInputs().stream()
+                .map(Node::getType)
+                .filter(type -> type.getKind() == TypeKind.TYPEVAR)
+                .map(TypeVariable.class::cast)
+                .forEach(vars::add);
+        description.getArguments().stream()
+                .map(Node::getType)
+                .filter(type -> type.getKind() == TypeKind.DECLARED)
+                .map(DeclaredType.class::cast)
+                .flatMap(type -> type.getTypeArguments().stream())
+                .filter(type -> type.getKind() == TypeKind.TYPEVAR)
+                .map(TypeVariable.class::cast)
+                .forEach(vars::add);
+        return vars;
     }
 
     private static Element target(ExecutableElement element, Reference reference) {

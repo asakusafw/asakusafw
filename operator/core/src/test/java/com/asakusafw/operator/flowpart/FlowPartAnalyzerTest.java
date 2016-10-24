@@ -144,6 +144,41 @@ public class FlowPartAnalyzerTest extends OperatorCompilerTestRoot {
     }
 
     /**
+     * w/ class argument.
+     */
+    @Test
+    public void with_ctor_class() {
+        compile(new Action("com.example.ctor.WithClass") {
+            @Override
+            protected void perform(OperatorClass target) {
+                TypeVariable va = getTypeVariable(target.getDeclaration(), "A");
+                TypeVariable vb = getTypeVariable(target.getDeclaration(), "B");
+
+                assertThat(target, is(notNullValue()));
+                assertThat(target.getElements().size(), is(1));
+                OperatorElement element = target.getElements().get(0);
+                OperatorDescription description = element.getDescription();
+                assertThat(description, is(notNullValue()));
+                assertThat(description.getInputs().size(), is(1));
+                assertThat(description.getOutputs().size(), is(1));
+                assertThat(description.getArguments().size(), is(1));
+
+                Node input = description.getInputs().get(0);
+                assertThat(input.getName(), is("in"));
+                assertThat(input.getType(), is(sameType(va)));
+
+                Node output = description.getOutputs().get(0);
+                assertThat(output.getName(), is("out"));
+                assertThat(output.getType(), is(sameType(vb)));
+
+                Node argument = description.getArguments().get(0);
+                assertThat(argument.getName(), is("aClass"));
+                assertThat(argument.getType(), is(sameType(Class.class, vb)));
+            }
+        });
+    }
+
+    /**
      * w/ extern in.
      */
     @Test
