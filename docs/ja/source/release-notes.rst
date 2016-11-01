@@ -2,6 +2,19 @@
 リリースノート
 ==============
 
+Release 0.8.2
+=============
+
+(開発中)
+
+`Asakusa Framework 0.8.2 documentation`_
+
+..  _`Asakusa Framework 0.8.2 documentation`: http://docs.asakusafw.com/0.8.2/release/ja/html/index.html
+
+このバージョンはバグフィックスのみを含むメンテナンスリリースです。
+
+変更点の詳細は :doc:`changelogs` を参照してください。
+
 Release 0.8.1
 =============
 
