@@ -7,7 +7,7 @@
   <parent>
     <artifactId>asakusa-utils-project</artifactId>
     <groupId>com.asakusafw</groupId>
-    <version>0.8.2-RC1</version>
+    <version>0.8.2-SNAPSHOT</version>
   </parent>
 
   <packaging>jar</packaging>
