@@ -48,7 +48,7 @@ public class GroupSortOperatorDriver implements OperatorDriver {
         }
         for (ElementRef p : dsl.parameters()) {
             TypeRef type = p.type();
-            if (type.isList()) {
+            if (type.isList() || type.isIterable()) {
                 if (dsl.getInputs().isEmpty()) {
                     TypeRef arg = type.arg(0);
                     if (arg.isDataModel()) {

@@ -67,6 +67,8 @@ final class DslBuilder {
             new ClassDescription("com.asakusafw.vocabulary.flow.graph.FlowBoundary"), //$NON-NLS-1$
             "SHUFFLE"); //$NON-NLS-1$
 
+    static final ClassDescription TYPE_ITERABLE = Descriptions.classOf(Iterable.class);
+
     static final ClassDescription TYPE_LIST = Descriptions.classOf(List.class);
 
     static final ClassDescription TYPE_ENUM = Descriptions.classOf(Enum.class);
@@ -665,12 +667,16 @@ final class DslBuilder {
             return types().isSubtype(mirror, environment.findDeclaredType(TYPE_ENUM));
         }
 
+        public boolean isIterable() {
+            return isErasureEqualTo(environment.findDeclaredType(TYPE_ITERABLE));
+        }
+
         public boolean isList() {
-            return types().isSubtype(mirror, environment.findDeclaredType(TYPE_LIST));
+            return isErasureEqualTo(environment.findDeclaredType(TYPE_LIST));
         }
 
         public boolean isResult() {
-            return types().isSubtype(mirror, environment.findDeclaredType(Constants.TYPE_RESULT));
+            return isErasureEqualTo(environment.findDeclaredType(Constants.TYPE_RESULT));
         }
 
         public TypeRef arg(int index) {
@@ -690,6 +696,11 @@ final class DslBuilder {
 
         public boolean isEqualTo(TypeRef other) {
             return types().isSameType(mirror, other.mirror);
+        }
+
+        private boolean isErasureEqualTo(TypeMirror other) {
+            return types().isSameType(environment.getErasure(mirror), environment.getErasure(other));
+
         }
 
         public TypeMirror mirror() {

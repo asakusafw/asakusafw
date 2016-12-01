@@ -951,6 +951,15 @@ public class ExecutableAnalyzer {
         }
 
         /**
+         * Returns whether the target type is a subtype of {@link Iterable} or not.
+         * @return {@code true} if the target type is a list type, otherwise {@code false}
+         * @see #getTypeArgument()
+         */
+        public boolean isIterable() {
+            return isList() || typeDeclEqual(type, environment.getDeclaredType(Iterable.class));
+        }
+
+        /**
          * Returns whether the target type is a list type or not.
          * @return {@code true} if the target type is a list type, otherwise {@code false}
          * @see #getTypeArgument()

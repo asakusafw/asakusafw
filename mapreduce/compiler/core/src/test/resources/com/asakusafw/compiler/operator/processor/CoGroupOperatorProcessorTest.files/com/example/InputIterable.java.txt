@@ -1,0 +1,21 @@
+package com.example;
+
+import com.asakusafw.compiler.operator.*;
+import com.asakusafw.compiler.operator.model.*;
+import com.asakusafw.compiler.operator.processor.*;
+import com.asakusafw.runtime.core.*;
+import com.asakusafw.vocabulary.model.*;
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class InputIterable {
+
+    @CoGroup
+    public void example(
+            @Key(group = "value") Iterable<MockHoge> a,
+            @Key(group = "value") Iterable<MockFoo> b,
+            Result<MockHoge> r1,
+            Result<MockFoo> r2) {
+        r1.add(a.iterator().next());
+        r2.add(b.iterator().next());
+    }
+}

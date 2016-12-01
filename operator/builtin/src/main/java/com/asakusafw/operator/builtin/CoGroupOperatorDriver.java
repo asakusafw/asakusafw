@@ -48,7 +48,7 @@ public class CoGroupOperatorDriver implements OperatorDriver {
         }
         for (ElementRef p : dsl.parameters()) {
             TypeRef type = p.type();
-            if (type.isList()) {
+            if (type.isList() || type.isIterable()) {
                 TypeRef arg = type.arg(0);
                 if (arg.isDataModel()) {
                     KeyRef key = p.resolveKey(arg);

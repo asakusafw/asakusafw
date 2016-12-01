@@ -54,7 +54,7 @@ public class CoGroupOperatorProcessor extends AbstractOperatorProcessor {
             if (type.isResult()) {
                 break;
             }
-            if (type.isList() == false) {
+            if (type.isIterable() == false) {
                 a.error(i, Messages.getString("CoGroupOperatorProcessor.errorNotListInput")); //$NON-NLS-1$
             } else if (type.getTypeArgument().isModel() == false) {
                 a.error(i, Messages.getString("CoGroupOperatorProcessor.errorNotModelInput")); //$NON-NLS-1$
