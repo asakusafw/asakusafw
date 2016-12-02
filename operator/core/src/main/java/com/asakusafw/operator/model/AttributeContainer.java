@@ -13,7 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.asakusafw.operator.model;
+
+import java.util.List;
+
+import com.asakusafw.operator.description.ValueDescription;
+
 /**
- * Provides annotations for data model and operations over data models.
+ * Elements which provides attributes.
+ * @since 0.9.1
  */
-package com.asakusafw.vocabulary.model;
+public interface AttributeContainer {
+    /**
+     * Returns the attributes.
+     * @return the attributes
+     */
+    List<ValueDescription> getAttributes();
+}

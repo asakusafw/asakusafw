@@ -29,7 +29,7 @@ import com.asakusafw.operator.description.ValueDescription;
 /**
  * Represents an operator's semantics for Asakusa DSL.
  */
-public class OperatorDescription {
+public class OperatorDescription implements AttributeContainer {
 
     private final Document document;
 
@@ -141,10 +141,7 @@ public class OperatorDescription {
         return results;
     }
 
-    /**
-     * Returns the operator attributes.
-     * @return the operator attributes
-     */
+    @Override
     public List<ValueDescription> getAttributes() {
         return attributes;
     }
@@ -552,7 +549,7 @@ public class OperatorDescription {
      * @since 0.9.0
      * @version 0.9.1
      */
-    public static final class Node {
+    public static final class Node implements AttributeContainer {
 
         private final Kind kind;
 
@@ -673,11 +670,7 @@ public class OperatorDescription {
             return this;
         }
 
-        /**
-         * Returns the attributes.
-         * @return the attributes
-         * @since 0.9.1
-         */
+        @Override
         public List<ValueDescription> getAttributes() {
             return Collections.unmodifiableList(attributes);
         }

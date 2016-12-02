@@ -425,11 +425,21 @@ final class DslBuilder {
 
         String name();
 
-        Set<Modifier> modifiers();
+        default Set<Modifier> modifiers() {
+            return Collections.emptySet();
+        }
 
-        KeyRef resolveKey(TypeRef modelType);
+        default AnnotationRef annotation(ClassDescription type) {
+            return null;
+        }
 
-        KeyRef resolveKey(TypeRef modelType, AnnotationMirror annotation);
+        default KeyRef resolveKey(TypeRef modelType) {
+            throw new IllegalStateException();
+        }
+
+        default KeyRef resolveKey(TypeRef modelType, AnnotationMirror annotation) {
+            throw new IllegalStateException();
+        }
 
         void error(String string);
     }
@@ -471,21 +481,6 @@ final class DslBuilder {
         @Override
         public String name() {
             return "MISSING"; //$NON-NLS-1$
-        }
-
-        @Override
-        public Set<Modifier> modifiers() {
-            return Collections.emptySet();
-        }
-
-        @Override
-        public KeyRef resolveKey(TypeRef modelType) {
-            throw new IllegalStateException();
-        }
-
-        @Override
-        public KeyRef resolveKey(TypeRef modelType, AnnotationMirror annotation) {
-            throw new IllegalStateException();
         }
 
         @Override
@@ -550,6 +545,19 @@ final class DslBuilder {
         @Override
         public Set<Modifier> modifiers() {
             return element.getModifiers();
+        }
+
+        @Override
+        public AnnotationRef annotation(ClassDescription type) {
+            TypeElement annotationType = environment.findTypeElement(type);
+            if (annotationType == null) {
+                return null;
+            }
+            AnnotationMirror annotation = AnnotationHelper.findAnnotation(environment, annotationType, element);
+            if (annotation == null) {
+                return null;
+            }
+            return new AnnotationRef(element, annotation);
         }
 
         @Override
@@ -627,21 +635,6 @@ final class DslBuilder {
         @Override
         public String name() {
             throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Set<Modifier> modifiers() {
-            return Collections.emptySet();
-        }
-
-        @Override
-        public KeyRef resolveKey(TypeRef modelType) {
-            throw new IllegalStateException();
-        }
-
-        @Override
-        public KeyRef resolveKey(TypeRef modelType, AnnotationMirror annotation) {
-            throw new IllegalStateException();
         }
 
         @Override

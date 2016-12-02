@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * Provides annotations for data model and operations over data models.
+ * Attributes about flow elements.
  */
-package com.asakusafw.vocabulary.model;
+package com.asakusafw.vocabulary.attribute;

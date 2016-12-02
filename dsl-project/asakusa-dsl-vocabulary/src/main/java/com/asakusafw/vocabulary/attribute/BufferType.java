@@ -13,7 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.asakusafw.vocabulary.attribute;
+
 /**
- * Provides annotations for data model and operations over data models.
+ * Represents a buffer type of inputs.
+ * @since 0.9.1
  */
-package com.asakusafw.vocabulary.model;
+public enum BufferType implements Attribute {
+
+    /**
+     * Allocates a buffer onto the Java heap, and keeps all elements on it.
+     */
+    HEAP,
+
+    /**
+     * Allocates a buffer onto the Java heap and temporary files.
+     */
+    STORED,
+
+    /**
+     * Does not allocate buffer space.
+     */
+    VOLATILE,
+}

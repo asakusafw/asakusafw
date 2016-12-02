@@ -16,6 +16,8 @@
 package com.asakusafw.vocabulary.flow.processor;
 
 import com.asakusafw.vocabulary.flow.graph.FlowElementAttribute;
+import com.asakusafw.vocabulary.model.Once;
+import com.asakusafw.vocabulary.model.Spill;
 
 /**
  * Represents buffering strategies of list-style operator inputs.
@@ -73,6 +75,8 @@ public void invalid(&#64;Key(...) List&lt;Hoge&gt; list, Result&lt;Hoge&gt; resu
     }
 }
 </code></pre>
+     * @see Once
+     * @see Spill
      */
     ESCAPE,
 }
