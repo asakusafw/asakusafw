@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import com.asakusafw.vocabulary.flow.graph.FlowBoundary;
 import com.asakusafw.vocabulary.flow.graph.FlowElementAttribute;
@@ -153,6 +154,11 @@ public class PseudElementDescription implements FlowElementDescription {
     @Override
     public List<FlowResourceDescription> getResources() {
         return Collections.emptyList();
+    }
+
+    @Override
+    public Set<? extends Class<? extends FlowElementAttribute>> getAttributeTypes() {
+        return attributes.keySet();
     }
 
     @Override

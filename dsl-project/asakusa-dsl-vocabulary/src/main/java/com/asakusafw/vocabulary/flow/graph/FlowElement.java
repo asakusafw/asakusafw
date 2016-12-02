@@ -20,14 +20,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Represents a node in flow graph.
  * Application developers should not use this class directly.
  * @since 0.1.0
- * @version 0.4.0
+ * @version 0.9.1
  */
 public final class FlowElement implements FlowElementAttributeProvider {
 
@@ -154,13 +156,14 @@ public final class FlowElement implements FlowElementAttributeProvider {
         return own.equals(attribute);
     }
 
-    /**
-     * Returns the attribute of the specified kind.
-     * @param <T> the attribute kind
-     * @param attributeClass the attribute type
-     * @return the target attribute, or {@code null} if this element does not have such an attribute
-     * @throws IllegalArgumentException if the parameter is {@code null}
-     */
+    @Override
+    public Set<? extends Class<? extends FlowElementAttribute>> getAttributeTypes() {
+        Set<Class<? extends FlowElementAttribute>> results = new HashSet<>();
+        results.addAll(attributeOverride.keySet());
+        results.addAll(getDescription().getAttributeTypes());
+        return results;
+    }
+
     @Override
     public <T extends FlowElementAttribute> T getAttribute(Class<T> attributeClass) {
         if (attributeClass == null) {

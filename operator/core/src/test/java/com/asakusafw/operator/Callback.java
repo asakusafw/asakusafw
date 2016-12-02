@@ -284,6 +284,8 @@ public abstract class Callback {
             @Override
             public boolean matches(Object item) {
                 return ((OperatorElement) item).getDescription().getAttributes().stream()
+                        .filter(EnumConstantDescription.class::isInstance)
+                        .map(EnumConstantDescription.class::cast)
                         .map(EnumConstantDescription::getDeclaringClass)
                         .anyMatch(Predicate.isEqual(type));
             }

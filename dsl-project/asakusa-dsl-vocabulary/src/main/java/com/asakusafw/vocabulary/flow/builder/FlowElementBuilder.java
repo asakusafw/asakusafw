@@ -18,6 +18,7 @@ package com.asakusafw.vocabulary.flow.builder;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,7 @@ import java.util.Objects;
 import com.asakusafw.vocabulary.flow.FlowDescription;
 import com.asakusafw.vocabulary.flow.Source;
 import com.asakusafw.vocabulary.flow.graph.FlowElement;
+import com.asakusafw.vocabulary.flow.graph.FlowElementAttribute;
 import com.asakusafw.vocabulary.flow.graph.FlowElementDescription;
 import com.asakusafw.vocabulary.flow.graph.FlowElementInput;
 import com.asakusafw.vocabulary.flow.graph.FlowElementOutput;
@@ -34,8 +36,11 @@ import com.asakusafw.vocabulary.flow.graph.PortConnection;
 /**
  * Builds operator graphs.
  * @since 0.9.0
+ * @version 0.9.1
  */
 public abstract class FlowElementBuilder {
+
+    private static final FlowElementAttribute[] EMPTY_ATTRS = new FlowElementAttribute[0];
 
     private final List<PortInfo> inputs = new ArrayList<>();
 
@@ -106,8 +111,22 @@ public abstract class FlowElementBuilder {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public PortInfo defineInput(String name, Source<?> upstream) {
+        return defineInput(name, upstream, EMPTY_ATTRS);
+    }
+
+    /**
+     * Defines a new input for operator.
+     * @param name input name
+     * @param upstream upstream dataset
+     * @param attributes the port attributes
+     * @return defined port information
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.9.1
+     */
+    public PortInfo defineInput(String name, Source<?> upstream, FlowElementAttribute... attributes) {
         Objects.requireNonNull(name, "name must not be null"); //$NON-NLS-1$
         Objects.requireNonNull(upstream, "upstream must not be null"); //$NON-NLS-1$
+        Objects.requireNonNull(attributes);
         FlowElementOutput output = upstream.toOutputPort();
         PortInfo info = new PortInfo(PortInfo.Direction.INPUT, name, getType(output));
         inputs.add(info);
@@ -115,7 +134,7 @@ public abstract class FlowElementBuilder {
         return info;
     }
 
-    private Type getType(FlowElementOutput output) {
+    private static Type getType(FlowElementOutput output) {
         return output.getDescription().getDataType();
     }
 
@@ -127,9 +146,7 @@ public abstract class FlowElementBuilder {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public PortInfo defineOutput(String name, Type type) {
-        Objects.requireNonNull(name, "name must not be null"); //$NON-NLS-1$
-        Objects.requireNonNull(type, "type must not be null"); //$NON-NLS-1$
-        return defineOutput0(name, type);
+        return defineOutput(name, type, EMPTY_ATTRS);
     }
 
     /**
@@ -140,15 +157,45 @@ public abstract class FlowElementBuilder {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public PortInfo defineOutput(String name, Source<?> typeRef) {
-        Objects.requireNonNull(name, "name must not be null"); //$NON-NLS-1$
-        Objects.requireNonNull(typeRef, "typeRef must not be null"); //$NON-NLS-1$
-        return defineOutput0(name, getType(typeRef.toOutputPort()));
+        return defineOutput(name, typeRef, EMPTY_ATTRS);
     }
 
-    private PortInfo defineOutput0(String name, Type type) {
+    /**
+     * Defines a new output for operator.
+     * @param name output name
+     * @param type output type
+     * @param attributes the port attributes
+     * @return defined port information
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.9.1
+     */
+    public PortInfo defineOutput(String name, Type type, FlowElementAttribute... attributes) {
+        Objects.requireNonNull(name, "name must not be null"); //$NON-NLS-1$
+        Objects.requireNonNull(type, "type must not be null"); //$NON-NLS-1$
+        Objects.requireNonNull(attributes);
+        return defineOutput0(name, type, attributes);
+    }
+
+    /**
+     * Defines a new output for operator.
+     * @param name output name
+     * @param typeRef output type reference
+     * @param attributes the port attributes
+     * @return defined port information
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.9.1
+     */
+    public PortInfo defineOutput(String name, Source<?> typeRef, FlowElementAttribute... attributes) {
+        Objects.requireNonNull(name, "name must not be null"); //$NON-NLS-1$
+        Objects.requireNonNull(typeRef, "typeRef must not be null"); //$NON-NLS-1$
+        Objects.requireNonNull(attributes);
+        return defineOutput0(name, getType(typeRef.toOutputPort()), attributes);
+    }
+
+    private PortInfo defineOutput0(String name, Type type, FlowElementAttribute[] attributes) {
         assert name != null;
         assert type != null;
-        PortInfo info = new PortInfo(PortInfo.Direction.OUTPUT, name, type);
+        PortInfo info = new PortInfo(PortInfo.Direction.OUTPUT, name, type, Arrays.asList(attributes));
         outputs.add(info);
         return info;
     }

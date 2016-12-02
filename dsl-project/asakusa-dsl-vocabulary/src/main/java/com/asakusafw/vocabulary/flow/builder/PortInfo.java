@@ -16,10 +16,16 @@
 package com.asakusafw.vocabulary.flow.builder;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import com.asakusafw.vocabulary.flow.graph.FlowElementAttribute;
 
 /**
  * Represents operator input/output port information.
  * @since 0.9.0
+ * @since 0.9.1
  */
 public class PortInfo extends EdgeInfo<PortInfo> {
 
@@ -29,6 +35,8 @@ public class PortInfo extends EdgeInfo<PortInfo> {
 
     private final Type type;
 
+    private final List<FlowElementAttribute> attributes;
+
     /**
      * Creates a new instance.
      * @param direction the port direction
@@ -36,9 +44,24 @@ public class PortInfo extends EdgeInfo<PortInfo> {
      * @param type the data type on the port
      */
     public PortInfo(Direction direction, String name, Type type) {
+        this(direction, name, type, Collections.emptyList());
+    }
+
+    /**
+     * Creates a new instance.
+     * @param direction the port direction
+     * @param name the port name
+     * @param type the data type on the port
+     * @param attributes the port attributes
+     * @since 0.9.1
+     */
+    public PortInfo(Direction direction, String name, Type type, List<? extends FlowElementAttribute> attributes) {
         this.direction = direction;
         this.name = name;
         this.type = type;
+        this.attributes = attributes.isEmpty()
+                ? Collections.emptyList()
+                : Collections.unmodifiableList(new ArrayList<>(attributes));
     }
 
     @Override
@@ -69,6 +92,15 @@ public class PortInfo extends EdgeInfo<PortInfo> {
      */
     public Type getType() {
         return type;
+    }
+
+    /**
+     * Returns the attributes.
+     * @return the attributes
+     * @since 0.9.1
+     */
+    public List<FlowElementAttribute> getAttributes() {
+        return attributes;
     }
 
     /**

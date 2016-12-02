@@ -48,6 +48,7 @@ import com.asakusafw.operator.OperatorDriver;
 import com.asakusafw.operator.description.ClassDescription;
 import com.asakusafw.operator.description.Descriptions;
 import com.asakusafw.operator.description.EnumConstantDescription;
+import com.asakusafw.operator.description.ValueDescription;
 import com.asakusafw.operator.model.DataModelMirror;
 import com.asakusafw.operator.model.KeyMirror;
 import com.asakusafw.operator.model.OperatorDescription;
@@ -60,8 +61,12 @@ import com.asakusafw.operator.util.AnnotationHelper;
 
 /**
  * Helper for built-in operators.
+ * @since 0.9.0
+ * @version 0.9.1
  */
 final class DslBuilder {
+
+    private static final ValueDescription[] EMPTY_ATTRS = new ValueDescription[0];
 
     static final EnumConstantDescription CONSTANT_SHUFFLE = new EnumConstantDescription(
             new ClassDescription("com.asakusafw.vocabulary.flow.graph.FlowBoundary"), //$NON-NLS-1$
@@ -96,7 +101,7 @@ final class DslBuilder {
 
     private ExecutableElement support;
 
-    private final List<EnumConstantDescription> attributes = new ArrayList<>();
+    private final List<ValueDescription> attributes = new ArrayList<>();
 
     final CompileEnvironment environment;
 
@@ -130,31 +135,56 @@ final class DslBuilder {
     }
 
     public void addInput(Document document, String name, TypeMirror type, Reference reference) {
-        Node node = new Node(Node.Kind.INPUT, name, document, type, reference);
-        inputs.add(node);
-        parameters.add(node);
+        addInput(document, name, type, null, reference, EMPTY_ATTRS);
     }
 
     public void addInput(Document document, String name, TypeMirror type, KeyRef key, Reference reference) {
+        addInput(document, name, type, key, reference, EMPTY_ATTRS);
+    }
+
+    public Node addOutput(Document document, String name, TypeMirror type, Reference reference) {
+        return addOutput(document, name, type, reference, EMPTY_ATTRS);
+    }
+
+    public void addInput(
+            Document document, String name, TypeMirror type,
+            Reference reference,
+            ValueDescription... attrs) {
+        addInput(document, name, type, null, reference, attrs);
+    }
+
+    public void addInput(
+            Document document, String name, TypeMirror type,
+            KeyRef key, Reference reference,
+            ValueDescription... attrs) {
         Node node = new Node(Node.Kind.INPUT, name, document, type, reference);
         inputs.add(node);
         if (key != null) {
             node.withKey(key.getModel());
             mainKeys.add(key);
         }
+        for (ValueDescription attr : attrs) {
+            node.withAttribute(attr);
+        }
         parameters.add(node);
+    }
+
+    public Node addOutput(
+            Document document, String name, TypeMirror type,
+            Reference reference,
+            ValueDescription... attrs) {
+        Node node = new Node(Node.Kind.OUTPUT, name, document, type, reference);
+        for (ValueDescription attr : attrs) {
+            node.withAttribute(attr);
+        }
+        outputs.add(node);
+        return node;
     }
 
     public void addArgument(Document document, String name, TypeMirror type, Reference reference) {
         Node node = new Node(Node.Kind.DATA, name, document, type, reference);
         arguments.add(node);
         parameters.add(node);
-    }
-
-    public Node addOutput(Document document, String name, TypeMirror type, Reference reference) {
-        Node node = new Node(Node.Kind.OUTPUT, name, document, type, reference);
-        outputs.add(node);
-        return node;
     }
 
     public void requireShuffle() {
@@ -165,7 +195,7 @@ final class DslBuilder {
         this.support = newValue;
     }
 
-    public void addAttribute(EnumConstantDescription attribute) {
+    public void addAttribute(ValueDescription attribute) {
         attributes.add(attribute);
     }
 
@@ -210,7 +240,7 @@ final class DslBuilder {
         if (sawError()) {
             return null;
         }
-        List<EnumConstantDescription> attrs = new ArrayList<>();
+        List<ValueDescription> attrs = new ArrayList<>();
         attrs.addAll(attributes);
         attrs.add(computeObservationCount());
         return new OperatorDescription(Document.reference(Reference.method()), parameters, outputs, attrs)

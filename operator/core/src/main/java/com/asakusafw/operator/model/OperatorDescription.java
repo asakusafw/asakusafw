@@ -24,7 +24,7 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.type.TypeMirror;
 
-import com.asakusafw.operator.description.EnumConstantDescription;
+import com.asakusafw.operator.description.ValueDescription;
 
 /**
  * Represents an operator's semantics for Asakusa DSL.
@@ -37,7 +37,7 @@ public class OperatorDescription {
 
     private final List<Node> outputs;
 
-    private final List<EnumConstantDescription> attributes;
+    private final List<ValueDescription> attributes;
 
     private ExecutableElement support;
 
@@ -67,7 +67,7 @@ public class OperatorDescription {
             Document document,
             List<? extends Node> parameters,
             List<? extends Node> outputs,
-            List<? extends EnumConstantDescription> attributes) {
+            List<? extends ValueDescription> attributes) {
         Objects.requireNonNull(document, "document must not be null"); //$NON-NLS-1$
         Objects.requireNonNull(parameters, "parameters must not be null"); //$NON-NLS-1$
         Objects.requireNonNull(outputs, "outputs must not be null"); //$NON-NLS-1$
@@ -145,7 +145,7 @@ public class OperatorDescription {
      * Returns the operator attributes.
      * @return the operator attributes
      */
-    public List<EnumConstantDescription> getAttributes() {
+    public List<ValueDescription> getAttributes() {
         return attributes;
     }
 
@@ -549,6 +549,8 @@ public class OperatorDescription {
 
     /**
      * Represents input/output/argument.
+     * @since 0.9.0
+     * @version 0.9.1
      */
     public static final class Node {
 
@@ -565,6 +567,8 @@ public class OperatorDescription {
         private volatile KeyMirror key;
 
         private volatile ExternMirror extern;
+
+        private final List<ValueDescription> attributes = new ArrayList<>();
 
         /**
          * Creates a new instance.
@@ -657,6 +661,25 @@ public class OperatorDescription {
          */
         public ExternMirror getExtern() {
             return extern;
+        }
+
+        /**
+         * Adds an attribute.
+         * @param attribute the attribute
+         * @return this
+         */
+        public Node withAttribute(ValueDescription attribute) {
+            this.attributes.add(attribute);
+            return this;
+        }
+
+        /**
+         * Returns the attributes.
+         * @return the attributes
+         * @since 0.9.1
+         */
+        public List<ValueDescription> getAttributes() {
+            return Collections.unmodifiableList(attributes);
         }
 
         @Override

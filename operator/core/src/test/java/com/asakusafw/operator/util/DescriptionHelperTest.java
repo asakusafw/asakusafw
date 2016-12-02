@@ -21,8 +21,10 @@ import static org.junit.Assert.*;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.concurrent.Callable;
+import java.util.function.Function;
 
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
@@ -37,6 +39,7 @@ import com.asakusafw.operator.description.BasicTypeDescription;
 import com.asakusafw.operator.description.BasicTypeDescription.BasicTypeKind;
 import com.asakusafw.operator.description.ClassDescription;
 import com.asakusafw.operator.description.Descriptions;
+import com.asakusafw.operator.description.ObjectDescription;
 import com.asakusafw.operator.description.TypeDescription;
 import com.asakusafw.operator.description.ValueDescription;
 import com.asakusafw.operator.mock.MockMarker;
@@ -45,7 +48,6 @@ import com.asakusafw.operator.mock.MockSingleElement;
 import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.MethodDeclaration;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
-import com.asakusafw.utils.java.model.syntax.Type;
 import com.asakusafw.utils.java.model.syntax.TypeDeclaration;
 import com.asakusafw.utils.java.model.util.AttributeBuilder;
 import com.asakusafw.utils.java.model.util.ImportBuilder;
@@ -115,7 +117,7 @@ public class DescriptionHelperTest extends OperatorCompilerTestRoot {
      */
     @Test
     public void resolve_basic() {
-        assertThat(resolve(Descriptions.typeOf(int.class)), equalTo((Object) int.class));
+        assertThat(type(Descriptions.typeOf(int.class)), equalTo((Object) int.class));
     }
 
     /**
@@ -123,7 +125,7 @@ public class DescriptionHelperTest extends OperatorCompilerTestRoot {
      */
     @Test
     public void resolve_object() {
-        assertThat(resolve(Descriptions.typeOf(String.class)), equalTo((Object) String.class));
+        assertThat(type(Descriptions.typeOf(String.class)), equalTo((Object) String.class));
     }
 
     /**
@@ -131,7 +133,33 @@ public class DescriptionHelperTest extends OperatorCompilerTestRoot {
      */
     @Test
     public void resolve_array() {
-        assertThat(resolve(Descriptions.typeOf(String[][].class)), equalTo((Object) String[][].class));
+        assertThat(type(Descriptions.typeOf(String[][].class)), equalTo((Object) String[][].class));
+    }
+
+    /**
+     * resolve immediate value.
+     */
+    @Test
+    public void value_object() {
+        assertThat(value(ObjectDescription.of(Descriptions.classOf(BigDecimal.class), Descriptions.valueOf("3.14"))),
+                equalTo(new BigDecimal("3.14")));
+    }
+
+    /**
+     * resolve enum constant value.
+     */
+    @Test
+    public void value_array() {
+        assertThat(value(ArrayDescription.elementsOf(
+                Descriptions.classOf(BigDecimal.class),
+                ObjectDescription.of(Descriptions.classOf(BigDecimal.class), Descriptions.valueOf("1")),
+                ObjectDescription.of(Descriptions.classOf(BigDecimal.class), Descriptions.valueOf("2")),
+                ObjectDescription.of(Descriptions.classOf(BigDecimal.class), Descriptions.valueOf("3")))),
+                equalTo(new BigDecimal[] {
+                        new BigDecimal("1"),
+                        new BigDecimal("2"),
+                        new BigDecimal("3"),
+                }));
     }
 
     /**
@@ -207,49 +235,22 @@ public class DescriptionHelperTest extends OperatorCompilerTestRoot {
                         new AnnotationDescription(single, Descriptions.valueOf("C")))));
     }
 
-    private Class<?> resolve(TypeDescription description) {
+    private Class<?> type(TypeDescription description) {
         ModelFactory f = Models.getModelFactory();
-        ClassLoader loader = start(new Callback(true) {
-            @Override
-            protected void test() throws IOException {
-                ImportBuilder imports = new ImportBuilder(
-                        f,
-                        f.newPackageDeclaration(Models.toName(f, "com.example.testing")),
-                        ImportBuilder.Strategy.TOP_LEVEL);
-                Type target = DescriptionHelper.resolve(imports, description);
-                MethodDeclaration method = f.newMethodDeclaration(
-                        null,
-                        new AttributeBuilder(f).Public().toAttributes(),
-                        imports.toType(Object.class),
-                        f.newSimpleName("call"),
-                        Collections.emptyList(),
-                        Collections.singletonList(f.newReturnStatement(f.newClassLiteral(target))));
-                TypeDeclaration type = f.newClassDeclaration(
-                        null,
-                        new AttributeBuilder(f).Public().toAttributes(),
-                        f.newSimpleName("Work"),
-                        null,
-                        Collections.singletonList(new TypeBuilder(f, imports.toType(Callable.class))
-                                .parameterize(imports.toType(Object.class))
-                                .toType()),
-                        Collections.singletonList(method));
-                env.emit(f.newCompilationUnit(
-                        imports.getPackageDeclaration(),
-                        imports.toImportDeclarations(),
-                        Collections.singletonList(type)));
-            }
-        });
-        try {
-            return (Class<?>) loader.loadClass("com.example.testing.Work")
-                    .asSubclass(Callable.class)
-                    .newInstance()
-                    .call();
-        } catch (Exception e) {
-            throw new AssertionError(e);
-        }
+        return (Class<?>) expr(imports -> new TypeBuilder(f, DescriptionHelper.resolve(imports, description))
+                .dotClass()
+                .toExpression());
+    }
+
+    private Object value(ValueDescription description) {
+        return expr(imports -> DescriptionHelper.resolveValue(imports, description));
     }
 
     private Object constant(ValueDescription description) {
+        return expr(imports -> DescriptionHelper.resolveConstant(imports, description));
+    }
+
+    private Object expr(Function<ImportBuilder, Expression> resolver) {
         ModelFactory f = Models.getModelFactory();
         ClassLoader loader = start(new Callback(true) {
             @Override
@@ -258,7 +259,7 @@ public class DescriptionHelperTest extends OperatorCompilerTestRoot {
                         f,
                         f.newPackageDeclaration(Models.toName(f, "com.example.testing")),
                         ImportBuilder.Strategy.TOP_LEVEL);
-                Expression target = DescriptionHelper.resolveConstant(imports, description);
+                Expression target = resolver.apply(imports);
                 MethodDeclaration method = f.newMethodDeclaration(
                         null,
                         new AttributeBuilder(f).Public().toAttributes(),

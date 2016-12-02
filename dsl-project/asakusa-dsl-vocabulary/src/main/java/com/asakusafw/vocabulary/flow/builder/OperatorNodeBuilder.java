@@ -24,7 +24,9 @@ import java.util.Objects;
 
 import com.asakusafw.vocabulary.flow.graph.FlowElementAttribute;
 import com.asakusafw.vocabulary.flow.graph.FlowElementDescription;
+import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
 import com.asakusafw.vocabulary.flow.graph.OperatorDescription;
+import com.asakusafw.vocabulary.flow.graph.PortDirection;
 
 /**
  * Builds operator internally.
@@ -96,11 +98,12 @@ public class OperatorNodeBuilder extends FlowElementBuilder {
                         method.getName(),
                         info.getName()));
             }
-            if (info.getKey() != null) {
-                builder.addInput(info.getName(), info.getType(), info.getKey().toShuffleKey());
-            } else {
-                builder.addInput(info.getName(), info.getType());
-            }
+            builder.addPort(new FlowElementPortDescription(
+                    info.getName(),
+                    info.getType(),
+                    PortDirection.INPUT,
+                    info.getKey() == null ? null : info.getKey().toShuffleKey(),
+                    info.getAttributes()));
         }
         for (PortInfo info : outputPorts) {
             if (info.getKey() != null) {
@@ -117,7 +120,12 @@ public class OperatorNodeBuilder extends FlowElementBuilder {
                         method.getName(),
                         info.getName()));
             }
-            builder.addOutput(info.getName(), info.getType());
+            builder.addPort(new FlowElementPortDescription(
+                    info.getName(),
+                    info.getType(),
+                    PortDirection.OUTPUT,
+                    null,
+                    info.getAttributes()));
         }
         for (DataInfo info : arguments) {
             Data data = info.getData();
