@@ -5,7 +5,7 @@
 Release 0.8.2
 =============
 
-(開発中)
+Dec 05, 2016
 
 `Asakusa Framework 0.8.2 documentation`_
 
