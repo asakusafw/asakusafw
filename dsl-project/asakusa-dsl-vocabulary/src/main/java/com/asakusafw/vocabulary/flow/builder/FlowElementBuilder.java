@@ -128,9 +128,18 @@ public abstract class FlowElementBuilder {
         Objects.requireNonNull(upstream, "upstream must not be null"); //$NON-NLS-1$
         Objects.requireNonNull(attributes);
         FlowElementOutput output = upstream.toOutputPort();
-        PortInfo info = new PortInfo(PortInfo.Direction.INPUT, name, getType(output));
-        inputs.add(info);
+        Type type = getType(output);
+        PortInfo info = defineInput0(name, type, attributes);
         inputMapping.put(name, output);
+        return info;
+    }
+
+    private PortInfo defineInput0(String name, Type type, FlowElementAttribute... attributes) {
+        assert name != null;
+        assert type != null;
+        assert attributes != null;
+        PortInfo info = new PortInfo(PortInfo.Direction.INPUT, name, type, Arrays.asList(attributes));
+        inputs.add(info);
         return info;
     }
 
@@ -192,9 +201,10 @@ public abstract class FlowElementBuilder {
         return defineOutput0(name, getType(typeRef.toOutputPort()), attributes);
     }
 
-    private PortInfo defineOutput0(String name, Type type, FlowElementAttribute[] attributes) {
+    private PortInfo defineOutput0(String name, Type type, FlowElementAttribute... attributes) {
         assert name != null;
         assert type != null;
+        assert attributes != null;
         PortInfo info = new PortInfo(PortInfo.Direction.OUTPUT, name, type, Arrays.asList(attributes));
         outputs.add(info);
         return info;

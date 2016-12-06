@@ -60,7 +60,6 @@ import com.asakusafw.operator.model.OperatorElement;
 import com.asakusafw.operator.util.AnnotationHelper;
 import com.asakusafw.operator.util.ElementHelper;
 import com.asakusafw.vocabulary.flow.Source;
-import com.asakusafw.vocabulary.flow.graph.FlowBoundary;
 import com.asakusafw.vocabulary.flow.graph.FlowElement;
 import com.asakusafw.vocabulary.flow.graph.FlowElementOutput;
 import com.asakusafw.vocabulary.flow.graph.FlowElementPortDescription;
@@ -235,7 +234,7 @@ public class OperatorFactoryEmitterTest extends OperatorCompilerTestRoot {
                         new ParameterReference(0)));
                 List<Node> outputs = new ArrayList<>();
                 List<EnumConstantDescription> attributes = new ArrayList<>();
-                attributes.add(EnumConstantDescription.of(FlowBoundary.SHUFFLE));
+                attributes.add(EnumConstantDescription.of(MockAttribute.OK));
                 return new OperatorDescription(document, parameters, outputs, attributes);
             }
         });
@@ -246,7 +245,7 @@ public class OperatorFactoryEmitterTest extends OperatorCompilerTestRoot {
         assertThat(info.getInputPorts().size(), is(1));
         assertThat(info.getOutputPorts().size(), is(0));
         assertThat(getParameters(info).size(), is(0));
-        assertThat(info.getAttribute(FlowBoundary.class), is(FlowBoundary.SHUFFLE));
+        assertThat(info.getAttribute(MockAttribute.class), is(MockAttribute.OK));
     }
 
     /**
@@ -302,7 +301,6 @@ public class OperatorFactoryEmitterTest extends OperatorCompilerTestRoot {
                         new ParameterReference(0)));
                 List<Node> outputs = new ArrayList<>();
                 List<EnumConstantDescription> attributes = new ArrayList<>();
-                attributes.add(EnumConstantDescription.of(FlowBoundary.SHUFFLE));
                 ExecutableElement support = null;
                 for (ExecutableElement m : ElementFilter.methodsIn(element.getEnclosingElement().getEnclosedElements())) {
                     if (m.getSimpleName().contentEquals("support")) {
@@ -396,6 +394,72 @@ public class OperatorFactoryEmitterTest extends OperatorCompilerTestRoot {
         FlowElementPortDescription port = info.getInputPorts().get(0).getDescription();
         assertThat(port.getName(), is("in"));
         assertThat(port.getDataType(), is((Object) String.class));
+    }
+
+    /**
+     * input w/ attribute.
+     */
+    @Test
+    public void input_attribute() {
+        Object factory = compile(new Action("com.example.WithParameter", "method") {
+            @Override
+            protected OperatorDescription analyze(ExecutableElement element) {
+                List<Node> parameters = new ArrayList<>();
+                parameters.add(new Node(
+                        Kind.INPUT,
+                        "in",
+                        new ReferenceDocument(new ParameterReference(0)),
+                        env.findDeclaredType(Descriptions.classOf(String.class)),
+                        new ParameterReference(0)).withAttribute(EnumConstantDescription.of(MockAttribute.OK)));
+                List<Node> outputs = new ArrayList<>();
+                return new OperatorDescription(new ReferenceDocument(new MethodReference()), parameters, outputs);
+            }
+        });
+        MockSource<String> source = MockSource.of(String.class);
+        invoke(factory, "method", source);
+
+        FlowElement info = getOppositeNode(source);
+        assertThat(info.getInputPorts().size(), is(1));
+        assertThat(info.getOutputPorts().size(), is(0));
+        assertThat(getParameters(info).size(), is(0));
+        FlowElementPortDescription port = info.getInputPorts().get(0).getDescription();
+        assertThat(port.getName(), is("in"));
+        assertThat(port.getDataType(), is((Object) String.class));
+        assertThat(port.getAttribute(MockAttribute.class), is(MockAttribute.OK));
+    }
+
+    /**
+     * output w/ attribute.
+     */
+    @Test
+    public void output_attribute() {
+        Object factory = compile(new Action("com.example.WithParameter", "method") {
+            @Override
+            protected OperatorDescription analyze(ExecutableElement element) {
+                List<Node> parameters = new ArrayList<>();
+                List<Node> outputs = new ArrayList<>();
+                outputs.add(new Node(
+                        Kind.OUTPUT,
+                        "out",
+                        new ReferenceDocument(new ParameterReference(0)),
+                        env.findDeclaredType(Descriptions.classOf(String.class)),
+                        new ParameterReference(0)).withAttribute(EnumConstantDescription.of(MockAttribute.OK)));
+                return new OperatorDescription(new ReferenceDocument(new MethodReference()), parameters, outputs);
+            }
+        });
+        Object node = invoke(factory, "method");
+        assertThat(field(node.getClass(), "out"), is(notNullValue()));
+        Object accessed = access(node, "out");
+        assertThat(accessed, is(instanceOf(Source.class)));
+
+        FlowElement info = getNode((Source<?>) accessed);
+        assertThat(info.getInputPorts().size(), is(0));
+        assertThat(info.getOutputPorts().size(), is(1));
+        assertThat(getParameters(info).size(), is(0));
+        FlowElementPortDescription port = info.getOutputPorts().get(0).getDescription();
+        assertThat(port.getName(), is("out"));
+        assertThat(port.getDataType(), is((Object) String.class));
+        assertThat(port.getAttribute(MockAttribute.class), is(MockAttribute.OK));
     }
 
     private FlowElement getOppositeNode(Source<?> source) {

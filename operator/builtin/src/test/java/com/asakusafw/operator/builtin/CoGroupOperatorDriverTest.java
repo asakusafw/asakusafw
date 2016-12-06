@@ -219,7 +219,7 @@ public class CoGroupOperatorDriverTest extends OperatorDriverTestRoot {
                 Node in1 = description.getInputs().get(1);
                 assertThat(in1.getName(), is("in1"));
                 assertThat(in1.getType(), is(sameType("com.example.Model")));
-                assertThat(in1.getAttributes(), hasItem(Descriptions.valueOf(BufferType.STORED)));
+                assertThat(in1.getAttributes(), hasItem(Descriptions.valueOf(BufferType.SPILL)));
 
                 Node in2 = description.getInputs().get(2);
                 assertThat(in2.getName(), is("in2"));
@@ -246,17 +246,17 @@ public class CoGroupOperatorDriverTest extends OperatorDriverTestRoot {
                 Node in0 = description.getInputs().get(0);
                 assertThat(in0.getName(), is("in0"));
                 assertThat(in0.getType(), is(sameType("com.example.Model")));
-                assertThat(in0.getAttributes(), hasItem(Descriptions.valueOf(BufferType.STORED)));
+                assertThat(in0.getAttributes(), hasItem(Descriptions.valueOf(BufferType.SPILL)));
 
                 Node in1 = description.getInputs().get(1);
                 assertThat(in1.getName(), is("in1"));
                 assertThat(in1.getType(), is(sameType("com.example.Model")));
-                assertThat(in1.getAttributes(), hasItem(Descriptions.valueOf(BufferType.STORED)));
+                assertThat(in1.getAttributes(), hasItem(Descriptions.valueOf(BufferType.SPILL)));
 
                 Node in2 = description.getInputs().get(2);
                 assertThat(in2.getName(), is("in2"));
                 assertThat(in2.getType(), is(sameType("com.example.Model")));
-                assertThat(in2.getAttributes(), hasItem(Descriptions.valueOf(BufferType.STORED)));
+                assertThat(in2.getAttributes(), hasItem(Descriptions.valueOf(BufferType.SPILL)));
             }
         });
     }

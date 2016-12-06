@@ -13,26 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.vocabulary.attribute;
+package com.asakusafw.operator.method;
+
+import com.asakusafw.vocabulary.attribute.Attribute;
 
 /**
- * Represents a buffer type of inputs.
- * @since 0.9.1
+ * Mock {@link Attribute}.
  */
-public enum BufferType implements Attribute {
+public enum MockAttribute implements Attribute {
 
     /**
-     * Allocates a buffer onto the Java heap, and keeps all elements on it.
+     * OK.
      */
-    HEAP,
-
-    /**
-     * Allocates a buffer onto the Java heap and temporary files.
-     */
-    SPILL,
-
-    /**
-     * Does not allocate buffer space.
-     */
-    VOLATILE,
+    OK,
 }
