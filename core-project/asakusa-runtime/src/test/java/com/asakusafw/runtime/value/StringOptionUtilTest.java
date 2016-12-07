@@ -15,11 +15,15 @@
  */
 package com.asakusafw.runtime.value;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import org.junit.Test;
 
@@ -97,6 +101,104 @@ public class StringOptionUtilTest {
         StringOptionUtil.append(value, ", world!");
         StringOptionUtil.trim(value);
         assertThat(value, is(new StringOption("Hello, world!")));
+    }
+
+    /**
+     * count code points.
+     */
+    @Test
+    public void countCodePoints() {
+        Consumer<String> tester = s -> assertThat(
+                StringOptionUtil.countCodePoints(new StringOption(s)), is((int) s.codePoints().count()));
+        tester.accept("");
+        tester.accept("a");
+        tester.accept("Hello, world!");
+        tester.accept("\u00c0");
+        tester.accept(StringOptionTest.HELLO_JP);
+        tester.accept(new StringBuilder()
+                .appendCodePoint(0x1f37a)
+                .appendCodePoint(0x1f363)
+                .toString());
+    }
+
+    /**
+     * append - string builder.
+     */
+    @Test
+    public void append_string_builder() {
+        StringBuilder buf = new StringBuilder();
+        buf.append("<");
+        StringOptionUtil.append(buf, new StringOption("Hello, world!"));
+        buf.append(">");
+        assertThat(buf.toString(), is("<Hello, world!>"));
+    }
+
+    /**
+     * parse int.
+     */
+    @Test
+    public void parseInt() {
+        Function<Object, Integer> parser = s -> StringOptionUtil.parseInt(new StringOption(String.valueOf(s)));
+        assertThat(parser.apply("0"), is(0));
+        assertThat(parser.apply("1"), is(1));
+        assertThat(parser.apply("+100"), is(+100));
+        assertThat(parser.apply("-100"), is(-100));
+        assertThat(parser.apply(Integer.MAX_VALUE), is(Integer.MAX_VALUE));
+        assertThat(parser.apply(Integer.MIN_VALUE), is(Integer.MIN_VALUE));
+
+        raise(() -> parser.apply(""));
+        raise(() -> parser.apply("Hello, world!"));
+        raise(() -> parser.apply(Integer.MAX_VALUE + 1L));
+        raise(() -> parser.apply(Integer.MIN_VALUE - 1L));
+    }
+
+    /**
+     * parse long.
+     */
+    @Test
+    public void parseLong() {
+        Function<Object, Long> parser = s -> StringOptionUtil.parseLong(new StringOption(String.valueOf(s)));
+        assertThat(parser.apply("0"), is(0L));
+        assertThat(parser.apply("1"), is(1L));
+        assertThat(parser.apply("+100"), is(+100L));
+        assertThat(parser.apply("-100"), is(-100L));
+        assertThat(parser.apply(Integer.MAX_VALUE), is((long) Integer.MAX_VALUE));
+        assertThat(parser.apply(Integer.MIN_VALUE), is((long) Integer.MIN_VALUE));
+        assertThat(parser.apply(Long.MAX_VALUE), is(Long.MAX_VALUE));
+        assertThat(parser.apply(Long.MIN_VALUE), is(Long.MIN_VALUE));
+
+        raise(() -> parser.apply(""));
+        raise(() -> parser.apply("Hello, world!"));
+        raise(() -> parser.apply(BigInteger.valueOf(Long.MAX_VALUE).add(BigInteger.ONE)));
+        raise(() -> parser.apply(BigInteger.valueOf(Long.MIN_VALUE).subtract(BigInteger.ONE)));
+    }
+
+    /**
+     * parse decimal.
+     */
+    @Test
+    public void parseDecimal() {
+        Function<Object, BigDecimal> parser = s -> StringOptionUtil.parseDecimal(new StringOption(String.valueOf(s)));
+        assertThat(parser.apply("0"), is(new BigDecimal("0")));
+        assertThat(parser.apply("1"), is(new BigDecimal("1")));
+        assertThat(parser.apply("+100"), is(new BigDecimal("100")));
+        assertThat(parser.apply("-100"), is(new BigDecimal("-100")));
+        assertThat(parser.apply("+3.14"), is(new BigDecimal("3.14")));
+        assertThat(parser.apply("-3.14"), is(new BigDecimal("-3.14")));
+        assertThat(parser.apply(Long.MAX_VALUE), is(new BigDecimal(Long.MAX_VALUE)));
+        assertThat(parser.apply(Long.MIN_VALUE), is(new BigDecimal(Long.MIN_VALUE)));
+
+        raise(() -> parser.apply(""));
+        raise(() -> parser.apply("Hello, world!"));
+    }
+
+    private static void raise(Runnable r) {
+        try {
+            r.run();
+            fail();
+        } catch (RuntimeException e) {
+            // ok.
+        }
     }
 
     private static String dump(StringOption option) {

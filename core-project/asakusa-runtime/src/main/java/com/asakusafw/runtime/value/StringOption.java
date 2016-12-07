@@ -40,7 +40,7 @@ class Something {
 }
 </code></pre>
  * @since 0.1.0
- * @version 0.8.0
+ * @version 0.9.1
  */
 public final class StringOption extends ValueOption<StringOption> {
 
@@ -84,6 +84,7 @@ public final class StringOption extends ValueOption<StringOption> {
      * Returns the value which this object represents.
      * @return the value which this object represents, never {@code null}
      * @throws NullPointerException if this object represents {@code null}
+     * @see #appendTo(StringBuilder)
      */
     public String getAsString() {
         if (nullValue) {
@@ -93,10 +94,40 @@ public final class StringOption extends ValueOption<StringOption> {
     }
 
     /**
+     * Appends the text in this object into the given {@link StringBuilder}.
+     * @param buffer the destination {@link StringBuilder}
+     * @return the appended {@link StringBuilder}
+     * @throws NullPointerException if this object represents {@code null}
+     * @since 0.9.1
+     */
+    public StringBuilder appendTo(StringBuilder buffer) {
+        if (nullValue) {
+            throw new NullPointerException();
+        }
+        StringOptionUtil.append(buffer, this);
+        return buffer;
+    }
+
+    /**
+     * Returns whether or not this text is empty.
+     * @return {@code true} if this text is empty, or {@code false} if it has any characters
+     * @throws NullPointerException if this object represents {@code null}
+     * @since 0.9.1
+     */
+    public boolean isEmpty() {
+        if (nullValue) {
+            throw new NullPointerException();
+        }
+        return entity.getLength() == 0;
+    }
+
+    /**
      * Returns the value which this object represents.
      * @param alternate the alternative value for {@code null}
      * @return the value which this object represents, or the alternative one if this object represents {@code null}
+     * @deprecated Use {@link #or(String)} instead
      */
+    @Deprecated
     public Text or(Text alternate) {
         if (nullValue) {
             return alternate;
@@ -242,7 +273,9 @@ public final class StringOption extends ValueOption<StringOption> {
      * Returns whether both this object and the specified value represents an equivalent value or not.
      * @param other the target value (nullable)
      * @return {@code true} if this object has the specified value, otherwise {@code false}
+     * @deprecated Use {@link #equals(Object)} instead
      */
+    @Deprecated
     public boolean has(Text other) {
         if (isNull()) {
             return other == null;
@@ -251,6 +284,166 @@ public final class StringOption extends ValueOption<StringOption> {
             return false;
         }
         return equalsTexts(entity, other);
+    }
+
+    /**
+     * Returns whether or not this text contains the given substring.
+     * @param sub the substring
+     * @return {@code true} if this has the given substring or the substring is empty, otherwise {@code false}
+     * @throws NullPointerException if this or the substring is {@code null}
+     * @since 0.9.1
+     */
+    public boolean contains(String sub) {
+        if (isNull() || sub == null) {
+            throw new NullPointerException();
+        }
+        if (sub.isEmpty()) {
+            return true;
+        }
+        Text buffer = BUFFER_POOL.get();
+        buffer.set(sub);
+        return contains(entity, buffer);
+    }
+
+    /**
+     * Returns whether or not this text contains the given substring.
+     * @param sub the substring
+     * @return {@code true} if this has the given substring or the substring is empty, otherwise {@code false}
+     * @throws NullPointerException if this or the substring is {@code null}
+     * @since 0.9.1
+     */
+    public boolean contains(StringOption sub) {
+        if (isNull() || sub == null || sub.isNull()) {
+            throw new NullPointerException();
+        }
+        if (sub.isEmpty()) {
+            return true;
+        }
+        return contains(entity, sub.entity);
+    }
+
+    private boolean contains(Text a, Text b) {
+        int subLen = b.getLength();
+        if (subLen == 0) {
+            return true;
+        }
+        if (a.getLength() < subLen) {
+            return false;
+        }
+        byte[] aBuf = a.getBytes();
+        byte[] bBuf = b.getBytes();
+        LOOP: for (int i = 0, n = a.getLength() - subLen; i <= n; i++) {
+            if (aBuf[i] == bBuf[0]) {
+                for (int j = 1; j < subLen; j++) {
+                    if (aBuf[i + j] != bBuf[j]) {
+                        continue LOOP;
+                    }
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns whether or not this text starts with the given prefix.
+     * @param prefix the prefix
+     * @return {@code true} if this has the given prefix or the prefix is empty, otherwise {@code false}
+     * @throws NullPointerException if this or the prefix is {@code null}
+     * @since 0.9.1
+     */
+    public boolean startsWith(String prefix) {
+        if (isNull() || prefix == null) {
+            throw new NullPointerException();
+        }
+        if (prefix.isEmpty()) {
+            return true;
+        }
+        Text buffer = BUFFER_POOL.get();
+        buffer.set(prefix);
+        return startsWith(entity, buffer);
+    }
+
+    /**
+     * Returns whether or not this text starts with the given prefix.
+     * @param prefix the prefix
+     * @return {@code true} if this has the given prefix or the prefix is empty, otherwise {@code false}
+     * @throws NullPointerException if this or the prefix is {@code null}
+     * @since 0.9.1
+     */
+    public boolean startsWith(StringOption prefix) {
+        if (isNull() || prefix == null || prefix.isNull()) {
+            throw new NullPointerException();
+        }
+        if (prefix.isEmpty()) {
+            return true;
+        }
+        return startsWith(entity, prefix.entity);
+    }
+
+    private static boolean startsWith(Text a, Text b) {
+        if (a.getLength() < b.getLength()) {
+            return false;
+        }
+        byte[] aBuf = a.getBytes();
+        byte[] bBuf = b.getBytes();
+        for (int i = 0, n = b.getLength(); i < n; i++) {
+            if (aBuf[i] != bBuf[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Returns whether or not this text ends with the given suffix.
+     * @param suffix the suffix
+     * @return {@code true} if this has the given suffix or the suffix is empty, otherwise {@code false}
+     * @throws NullPointerException if this or the suffix is {@code null}
+     * @since 0.9.1
+     */
+    public boolean endsWith(String suffix) {
+        if (isNull() || suffix == null) {
+            throw new NullPointerException();
+        }
+        if (suffix.isEmpty()) {
+            return true;
+        }
+        Text buffer = BUFFER_POOL.get();
+        buffer.set(suffix);
+        return endsWith(entity, buffer);
+    }
+
+    /**
+     * Returns whether or not this text ends with the given suffix.
+     * @param suffix the suffix
+     * @return {@code true} if this has the given suffix or the suffix is empty, otherwise {@code false}
+     * @throws NullPointerException if this or the suffix is {@code null}
+     * @since 0.9.1
+     */
+    public boolean endsWith(StringOption suffix) {
+        if (isNull() || suffix == null || suffix.isNull()) {
+            throw new NullPointerException();
+        }
+        if (suffix.isEmpty()) {
+            return true;
+        }
+        return endsWith(entity, suffix.entity);
+    }
+
+    private static boolean endsWith(Text a, Text b) {
+        if (a.getLength() < b.getLength()) {
+            return false;
+        }
+        byte[] aBuf = a.getBytes();
+        byte[] bBuf = b.getBytes();
+        int base = a.getLength() - b.getLength();
+        for (int i = 0, n = b.getLength(); i < n; i++) {
+            if (aBuf[i + base] != bBuf[i]) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
