@@ -13,7 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.asakusafw.operator.method;
+
+import com.asakusafw.vocabulary.attribute.Attribute;
+
 /**
- * Provides annotations for data model and operations over data models.
+ * Mock {@link Attribute}.
  */
-package com.asakusafw.vocabulary.model;
+public enum MockAttribute implements Attribute {
+
+    /**
+     * OK.
+     */
+    OK,
+}

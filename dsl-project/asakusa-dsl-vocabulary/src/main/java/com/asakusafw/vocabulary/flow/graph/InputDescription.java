@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.asakusafw.vocabulary.external.ImporterDescription;
 
@@ -143,6 +144,11 @@ public class InputDescription implements FlowElementDescription {
     @Override
     public List<FlowResourceDescription> getResources() {
         return Collections.emptyList();
+    }
+
+    @Override
+    public Set<? extends Class<? extends FlowElementAttribute>> getAttributeTypes() {
+        return ATTRIBUTES.keySet();
     }
 
     @Override

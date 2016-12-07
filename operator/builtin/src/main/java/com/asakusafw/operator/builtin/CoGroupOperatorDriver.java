@@ -23,14 +23,13 @@ import com.asakusafw.operator.builtin.DslBuilder.ElementRef;
 import com.asakusafw.operator.builtin.DslBuilder.KeyRef;
 import com.asakusafw.operator.builtin.DslBuilder.TypeRef;
 import com.asakusafw.operator.description.ClassDescription;
+import com.asakusafw.operator.description.EnumConstantDescription;
 import com.asakusafw.operator.model.OperatorDescription;
 
 /**
  * {@link OperatorDriver} for {@code CoGroup} annotation.
  */
 public class CoGroupOperatorDriver implements OperatorDriver {
-
-    private static final String INPUT_BUFFER = "inputBuffer"; //$NON-NLS-1$
 
     @Override
     public ClassDescription getAnnotationTypeName() {
@@ -46,13 +45,15 @@ public class CoGroupOperatorDriver implements OperatorDriver {
         if (dsl.result().type().isVoid() == false) {
             dsl.method().error(Messages.getString("CoGroupOperatorDriver.errorReturnNotVoid")); //$NON-NLS-1$
         }
+        EnumConstantDescription inputBuffer = GroupKindOperatorUtil.getInputBuffer(dsl);
         for (ElementRef p : dsl.parameters()) {
             TypeRef type = p.type();
-            if (type.isList()) {
+            if (type.isList() || type.isIterable()) {
                 TypeRef arg = type.arg(0);
                 if (arg.isDataModel()) {
                     KeyRef key = p.resolveKey(arg);
-                    dsl.addInput(p.document(), p.name(), arg.mirror(), key, p.reference());
+                    dsl.addInput(p.document(), p.name(), arg.mirror(), key, p.reference(),
+                            GroupKindOperatorUtil.getBufferType(p, inputBuffer));
                 } else {
                     p.error(Messages.getString("CoGroupOperatorDriver.errorInputNotDataModelListType")); //$NON-NLS-1$
                 }
@@ -69,7 +70,7 @@ public class CoGroupOperatorDriver implements OperatorDriver {
                 p.error(Messages.getString("CoGroupOperatorDriver.errorParameterUnsupportedType")); //$NON-NLS-1$
             }
         }
-        dsl.addAttribute(dsl.annotation().constant(INPUT_BUFFER));
+        dsl.addAttribute(inputBuffer);
         dsl.requireShuffle();
         return dsl.toDescription();
     }

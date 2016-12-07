@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.asakusafw.vocabulary.flow.FlowDescription;
 import com.asakusafw.vocabulary.flow.Source;
@@ -29,7 +30,7 @@ import com.asakusafw.vocabulary.flow.Source;
 /**
  * A description of flow-part.
  * @since 0.1.0
- * @version 0.5.0
+ * @version 0.9.1
  */
 public class FlowPartDescription implements FlowElementDescription {
 
@@ -190,6 +191,11 @@ public class FlowPartDescription implements FlowElementDescription {
     @Override
     public List<FlowResourceDescription> getResources() {
         return Collections.emptyList();
+    }
+
+    @Override
+    public Set<? extends Class<? extends FlowElementAttribute>> getAttributeTypes() {
+        return ATTRIBUTES.keySet();
     }
 
     @Override

@@ -82,6 +82,31 @@ public class CoGroupOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
+     * iterable input.
+     */
+    @Test
+    public void input_iterable() {
+        add("com.example.InputIterable");
+        ClassLoader loader = start(new CoGroupOperatorProcessor());
+        Object factory = create(loader, "com.example.InputIterableFactory");
+
+        MockIn<MockHoge> a = MockIn.of(MockHoge.class, "a");
+        MockIn<MockFoo> b = MockIn.of(MockFoo.class, "b");
+
+        MockOut<MockHoge> r1 = MockOut.of(MockHoge.class, "r1");
+        MockOut<MockFoo> r2 = MockOut.of(MockFoo.class, "r2");
+
+        Object coGroup = invoke(factory, "example", a, b);
+        r1.add(output(MockHoge.class, coGroup, "r1"));
+        r2.add(output(MockFoo.class, coGroup, "r2"));
+
+        Graph<String> graph = toGraph(a, b);
+        assertThat(graph.getConnected("a"), isJust("InputIterable.example"));
+        assertThat(graph.getConnected("b"), isJust("InputIterable.example"));
+        assertThat(graph.getConnected("InputIterable.example"), isJust("r1", "r2"));
+    }
+
+    /**
      * generic method.
      */
     @Test

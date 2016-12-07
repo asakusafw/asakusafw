@@ -17,11 +17,19 @@ package com.asakusafw.vocabulary.flow.graph;
 
 import java.lang.reflect.Type;
 import java.text.MessageFormat;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * A description of I/O port of flow elements.
+ * @since 0.1.0
+ * @version 0.9.1
  */
-public class FlowElementPortDescription {
+public class FlowElementPortDescription implements FlowElementAttributeProvider {
 
     private final String name;
 
@@ -30,6 +38,8 @@ public class FlowElementPortDescription {
     private final PortDirection direction;
 
     private final ShuffleKey shuffleKey;
+
+    private final Map<Class<? extends FlowElementAttribute>, FlowElementAttribute> attributes;
 
     /**
      * Creates a new instance.
@@ -52,6 +62,7 @@ public class FlowElementPortDescription {
         this.dataType = dataType;
         this.direction = direction;
         this.shuffleKey = null;
+        this.attributes = Collections.emptyMap();
     }
 
     /**
@@ -75,6 +86,35 @@ public class FlowElementPortDescription {
         this.dataType = dataType;
         this.direction = PortDirection.INPUT;
         this.shuffleKey = shuffleKey;
+        this.attributes = Collections.emptyMap();
+    }
+
+    /**
+     * Creates a new instance.
+     * @param name the port name
+     * @param dataType the data type of the port
+     * @param direction the port direction
+     * @param shuffleKey the shuffle key (nullable)
+     * @param attributes the attributes
+     * @throws IllegalArgumentException if some parameters are {@code null}
+     * @since 0.9.1
+     */
+    public FlowElementPortDescription(
+            String name, Type dataType, PortDirection direction,
+            ShuffleKey shuffleKey, List<? extends FlowElementAttribute> attributes) {
+        Objects.requireNonNull(name);
+        Objects.requireNonNull(dataType);
+        Objects.requireNonNull(direction);
+        Objects.requireNonNull(attributes);
+        this.name = name;
+        this.dataType = dataType;
+        this.direction = direction;
+        this.shuffleKey = shuffleKey;
+        Map<Class<? extends FlowElementAttribute>, FlowElementAttribute> map = new LinkedHashMap<>();
+        for (FlowElementAttribute attr : attributes) {
+            map.put(attr.getDeclaringClass(), attr);
+        }
+        this.attributes = Collections.unmodifiableMap(map);
     }
 
     /**
@@ -107,6 +147,19 @@ public class FlowElementPortDescription {
      */
     public ShuffleKey getShuffleKey() {
         return shuffleKey;
+    }
+
+    @Override
+    public Set<? extends Class<? extends FlowElementAttribute>> getAttributeTypes() {
+        return attributes.keySet();
+    }
+
+    @Override
+    public <T extends FlowElementAttribute> T getAttribute(Class<T> attributeClass) {
+        if (attributeClass == null) {
+            throw new IllegalArgumentException("attributeClass must not be null"); //$NON-NLS-1$
+        }
+        return attributeClass.cast(attributes.get(attributeClass));
     }
 
     @Override

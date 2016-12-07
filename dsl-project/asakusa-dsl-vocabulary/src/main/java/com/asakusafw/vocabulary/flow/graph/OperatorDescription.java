@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import com.asakusafw.vocabulary.flow.Source;
@@ -32,7 +33,7 @@ import com.asakusafw.vocabulary.flow.Source;
 /**
  * A description of user/code operator.
  * @since 0.1.0
- * @version 0.5.1
+ * @version 0.9.1
  */
 public class OperatorDescription implements FlowElementDescription {
 
@@ -181,6 +182,11 @@ public class OperatorDescription implements FlowElementDescription {
      */
     public List<Parameter> getParameters() {
         return parameters;
+    }
+
+    @Override
+    public Set<? extends Class<? extends FlowElementAttribute>> getAttributeTypes() {
+        return attributes.keySet();
     }
 
     @Override
@@ -407,15 +413,15 @@ public class OperatorDescription implements FlowElementDescription {
 
         private final List<Class<?>> parameterTypes;
 
-        private final List<FlowElementPortDescription> inputPorts;
+        private final List<FlowElementPortDescription> inputPorts = new ArrayList<>();
 
-        private final List<FlowElementPortDescription> outputPorts;
+        private final List<FlowElementPortDescription> outputPorts = new ArrayList<>();
 
-        private final List<FlowResourceDescription> resources;
+        private final List<FlowResourceDescription> resources = new ArrayList<>();
 
-        private final List<Parameter> parameters;
+        private final List<Parameter> parameters = new ArrayList<>();
 
-        private final List<FlowElementAttribute> attributes;
+        private final List<FlowElementAttribute> attributes = new ArrayList<>();
 
         /**
          * Creates a new instance.
@@ -428,11 +434,6 @@ public class OperatorDescription implements FlowElementDescription {
             }
             this.annotationType = annotationType;
             this.parameterTypes = new ArrayList<>();
-            this.inputPorts = new ArrayList<>();
-            this.outputPorts = new ArrayList<>();
-            this.resources = new ArrayList<>();
-            this.parameters = new ArrayList<>();
-            this.attributes = new ArrayList<>();
         }
 
         /**
@@ -482,6 +483,27 @@ public class OperatorDescription implements FlowElementDescription {
                 throw new IllegalArgumentException("parameterType must not be null"); //$NON-NLS-1$
             }
             this.parameterTypes.add(parameterType);
+            return this;
+        }
+
+        /**
+         * Adds a new port of the target operator.
+         * @param description the port description
+         * @return this
+         * @since 0.9.1
+         */
+        public Builder addPort(FlowElementPortDescription description) {
+            Objects.requireNonNull(description);
+            switch (description.getDirection()) {
+            case INPUT:
+                inputPorts.add(description);
+                break;
+            case OUTPUT:
+                outputPorts.add(description);
+                break;
+            default:
+                throw new AssertionError(description);
+            }
             return this;
         }
 

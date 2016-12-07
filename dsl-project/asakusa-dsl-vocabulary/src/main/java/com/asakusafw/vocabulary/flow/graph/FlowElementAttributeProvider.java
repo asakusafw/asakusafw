@@ -15,12 +15,21 @@
  */
 package com.asakusafw.vocabulary.flow.graph;
 
+import java.util.Set;
+
 /**
  * Provides {@link FlowElementAttribute}s.
  * @since 0.4.0
+ * @version 0.9.1
  */
-@FunctionalInterface
 public interface FlowElementAttributeProvider {
+
+    /**
+     * Returns the all available attribute types of this.
+     * @return the available attribute types
+     * @since 0.9.1
+     */
+    Set<? extends Class<? extends FlowElementAttribute>> getAttributeTypes();
 
     /**
      * Returns the attribute of this.

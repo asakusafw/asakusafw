@@ -33,6 +33,7 @@ import com.asakusafw.operator.description.BasicTypeDescription;
 import com.asakusafw.operator.description.ClassDescription;
 import com.asakusafw.operator.description.EnumConstantDescription;
 import com.asakusafw.operator.description.ImmediateDescription;
+import com.asakusafw.operator.description.ObjectDescription;
 import com.asakusafw.operator.description.ReifiableTypeDescription;
 import com.asakusafw.operator.description.TypeDescription;
 import com.asakusafw.operator.description.ValueDescription;
@@ -41,6 +42,7 @@ import com.asakusafw.utils.java.model.syntax.AnnotationElement;
 import com.asakusafw.utils.java.model.syntax.ArrayCreationExpression;
 import com.asakusafw.utils.java.model.syntax.ArrayType;
 import com.asakusafw.utils.java.model.syntax.BasicTypeKind;
+import com.asakusafw.utils.java.model.syntax.ClassInstanceCreationExpression;
 import com.asakusafw.utils.java.model.syntax.ClassLiteral;
 import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
@@ -52,6 +54,8 @@ import com.asakusafw.utils.java.model.util.TypeBuilder;
 
 /**
  * Common helper methods about descriptions.
+ * @since 0.9.0
+ * @version 0.9.1
  */
 public final class DescriptionHelper {
 
@@ -193,6 +197,23 @@ public final class DescriptionHelper {
     }
 
     /**
+     * Returns the resolved value.
+     * @param importer the current import builder
+     * @param value the target constant value
+     * @return the resolved expression
+     */
+    public static Expression resolveValue(ImportBuilder importer, ValueDescription value) {
+        switch (value.getValueKind()) {
+        case OBJECT:
+            return resolveValue(importer, (ObjectDescription) value);
+        case ARRAY:
+            return resolveValue(importer, (ArrayDescription) value);
+        default:
+            return resolveConstant(importer, value);
+        }
+    }
+
+    /**
      * Returns the resolved constant value.
      * @param importer the current import builder
      * @param constant the target constant value
@@ -242,6 +263,26 @@ public final class DescriptionHelper {
         List<Expression> elements = new ArrayList<>();
         for (ValueDescription value : constant.getElements()) {
             elements.add(resolveConstant(importer, value));
+        }
+        return factory.newArrayCreationExpression(type, factory.newArrayInitializer(elements));
+    }
+
+    private static ClassInstanceCreationExpression resolveValue(ImportBuilder importer, ObjectDescription value) {
+        ModelFactory factory = Models.getModelFactory();
+        Type type = resolve(importer, value.getValueType());
+        List<Expression> arguments = new ArrayList<>();
+        for (ValueDescription argValue : value.getArguments()) {
+            arguments.add(resolveValue(importer, argValue));
+        }
+        return factory.newClassInstanceCreationExpression(type, arguments);
+    }
+
+    private static ArrayCreationExpression resolveValue(ImportBuilder importer, ArrayDescription value) {
+        ModelFactory factory = Models.getModelFactory();
+        ArrayType type = (ArrayType) resolve(importer, value.getValueType());
+        List<Expression> elements = new ArrayList<>();
+        for (ValueDescription elemValue : value.getElements()) {
+            elements.add(resolveValue(importer, elemValue));
         }
         return factory.newArrayCreationExpression(type, factory.newArrayInitializer(elements));
     }

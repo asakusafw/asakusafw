@@ -29,6 +29,8 @@ import com.asakusafw.operator.description.Descriptions;
 import com.asakusafw.operator.model.OperatorDescription;
 import com.asakusafw.operator.model.OperatorDescription.Node;
 import com.asakusafw.operator.model.OperatorElement;
+import com.asakusafw.vocabulary.attribute.BufferType;
+import com.asakusafw.vocabulary.flow.processor.InputBuffer;
 import com.asakusafw.vocabulary.operator.CoGroup;
 
 /**
@@ -172,6 +174,94 @@ public class CoGroupOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
+     * w/ iterable inputs.
+     */
+    @Test
+    public void with_iterable() {
+        compile(new Action("com.example.WithIterable") {
+            @Override
+            protected void perform(OperatorElement target) {
+                OperatorDescription description = target.getDescription();
+                assertThat(description.getInputs().size(), is(1));
+                assertThat(description.getOutputs().size(), is(1));
+                assertThat(description.getArguments().size(), is(0));
+
+                Node input = description.getInputs().get(0);
+                assertThat(input.getName(), is("in"));
+                assertThat(input.getType(), is(sameType("com.example.Model")));
+
+                Node output = description.getOutputs().get(0);
+                assertThat(output.getName(), is("out"));
+                assertThat(output.getType(), is(sameType("com.example.Proceeded")));
+            }
+        });
+    }
+
+    /**
+     * w/ buffer types.
+     */
+    @Test
+    public void with_buffer_type() {
+        compile(new Action("com.example.WithBufferType") {
+            @Override
+            protected void perform(OperatorElement target) {
+                OperatorDescription description = target.getDescription();
+                assertThat(description.getInputs().size(), is(3));
+                assertThat(description.getOutputs().size(), is(1));
+                assertThat(description.getArguments().size(), is(0));
+                assertThat(description.getAttributes(), hasItem(Descriptions.valueOf(InputBuffer.EXPAND)));
+
+                Node in0 = description.getInputs().get(0);
+                assertThat(in0.getName(), is("in0"));
+                assertThat(in0.getType(), is(sameType("com.example.Model")));
+                assertThat(in0.getAttributes(), hasItem(Descriptions.valueOf(BufferType.HEAP)));
+
+                Node in1 = description.getInputs().get(1);
+                assertThat(in1.getName(), is("in1"));
+                assertThat(in1.getType(), is(sameType("com.example.Model")));
+                assertThat(in1.getAttributes(), hasItem(Descriptions.valueOf(BufferType.SPILL)));
+
+                Node in2 = description.getInputs().get(2);
+                assertThat(in2.getName(), is("in2"));
+                assertThat(in2.getType(), is(sameType("com.example.Model")));
+                assertThat(in2.getAttributes(), hasItem(Descriptions.valueOf(BufferType.VOLATILE)));
+            }
+        });
+    }
+
+    /**
+     * w/ buffer types.
+     */
+    @Test
+    public void with_buffer_type_parent() {
+        compile(new Action("com.example.WithBufferTypeParent") {
+            @Override
+            protected void perform(OperatorElement target) {
+                OperatorDescription description = target.getDescription();
+                assertThat(description.getInputs().size(), is(3));
+                assertThat(description.getOutputs().size(), is(1));
+                assertThat(description.getArguments().size(), is(0));
+                assertThat(description.getAttributes(), hasItem(Descriptions.valueOf(InputBuffer.ESCAPE)));
+
+                Node in0 = description.getInputs().get(0);
+                assertThat(in0.getName(), is("in0"));
+                assertThat(in0.getType(), is(sameType("com.example.Model")));
+                assertThat(in0.getAttributes(), hasItem(Descriptions.valueOf(BufferType.SPILL)));
+
+                Node in1 = description.getInputs().get(1);
+                assertThat(in1.getName(), is("in1"));
+                assertThat(in1.getType(), is(sameType("com.example.Model")));
+                assertThat(in1.getAttributes(), hasItem(Descriptions.valueOf(BufferType.SPILL)));
+
+                Node in2 = description.getInputs().get(2);
+                assertThat(in2.getName(), is("in2"));
+                assertThat(in2.getType(), is(sameType("com.example.Model")));
+                assertThat(in2.getAttributes(), hasItem(Descriptions.valueOf(BufferType.VOLATILE)));
+            }
+        });
+    }
+
+    /**
      * violates method is not abstract.
      */
     @Test
@@ -289,5 +379,13 @@ public class CoGroupOperatorDriverTest extends OperatorDriverTestRoot {
     @Test
     public void violate_output_before_argument() {
         violate("com.example.ViolateOutputBeforeArgument");
+    }
+
+    /**
+     * violates input w/ "once" must be declared as iterable.
+     */
+    @Test
+    public void violate_input_once_iterable() {
+        violate("com.example.ViolateInputOnceIterable");
     }
 }

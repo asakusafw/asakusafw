@@ -24,9 +24,9 @@ import java.util.Set;
  * An abstract super class of I/O ports of {@link FlowElement}.
  * Application developers should not use this class directly.
  * @since 0.1.0
- * @version 0.5.1
+ * @version 0.9.1
  */
-public abstract class FlowElementPort {
+public abstract class FlowElementPort implements FlowElementAttributeProvider {
 
     private final FlowElement owner;
 
@@ -66,6 +66,16 @@ public abstract class FlowElementPort {
      */
     public FlowElementPortDescription getDescription() {
         return description;
+    }
+
+    @Override
+    public Set<? extends Class<? extends FlowElementAttribute>> getAttributeTypes() {
+        return getDescription().getAttributeTypes();
+    }
+
+    @Override
+    public <T extends FlowElementAttribute> T getAttribute(Class<T> attributeClass) {
+        return getDescription().getAttribute(attributeClass);
     }
 
     /**

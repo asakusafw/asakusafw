@@ -69,6 +69,12 @@ public interface ValueDescription extends Description {
         ARRAY,
 
         /**
+         * instantiated objects.
+         *
+         */
+        OBJECT,
+
+        /**
          * unknown values.
          * @see UnknownValueDescription
          */

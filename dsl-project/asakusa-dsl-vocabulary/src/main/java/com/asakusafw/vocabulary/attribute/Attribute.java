@@ -13,7 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.asakusafw.vocabulary.attribute;
+
+import com.asakusafw.vocabulary.flow.graph.FlowElementAttribute;
+
 /**
- * Provides annotations for data model and operations over data models.
+ * An abstract super interface of DSL element attributes.
+ * @since 0.9.0
  */
-package com.asakusafw.vocabulary.model;
+public interface Attribute extends FlowElementAttribute {
+
+    /**
+     * Returns the declaring class of this attribute.
+     * @return the declaring class of this attribute
+     */
+    @Override
+    Class<? extends Attribute> getDeclaringClass();
+}

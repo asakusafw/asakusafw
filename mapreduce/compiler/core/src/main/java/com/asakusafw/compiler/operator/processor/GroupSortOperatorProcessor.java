@@ -49,7 +49,7 @@ public class GroupSortOperatorProcessor extends AbstractOperatorProcessor {
         if (a.getReturnType().isVoid() == false) {
             a.error(Messages.getString("GroupSortOperatorProcessor.errorNotVoidResult")); //$NON-NLS-1$
         }
-        if (a.getParameterType(0).isList() == false) {
+        if (a.getParameterType(0).isIterable() == false) {
             a.error(0, Messages.getString("GroupSortOperatorProcessor.errorNotListInput")); //$NON-NLS-1$
         } else if (a.getParameterType(0).getTypeArgument().isModel() == false) {
             a.error(0, Messages.getString("GroupSortOperatorProcessor.errorNotModelInput")); //$NON-NLS-1$

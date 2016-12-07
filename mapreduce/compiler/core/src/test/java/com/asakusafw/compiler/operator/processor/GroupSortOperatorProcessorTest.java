@@ -73,6 +73,27 @@ public class GroupSortOperatorProcessorTest extends OperatorCompilerTestRoot {
     }
 
     /**
+     * w/ iterable input.
+     */
+    @Test
+    public void iterable_input() {
+        add("com.example.InputIterable");
+        ClassLoader loader = start(new GroupSortOperatorProcessor());
+        Object factory = create(loader, "com.example.InputIterableFactory");
+
+        MockIn<MockHoge> in = MockIn.of(MockHoge.class, "in");
+        MockOut<MockHoge> a = MockOut.of(MockHoge.class, "a");
+        MockOut<MockHoge> b = MockOut.of(MockHoge.class, "b");
+        Object gs = invoke(factory, "example", in);
+        a.add(output(MockHoge.class, gs, "first"));
+        b.add(output(MockHoge.class, gs, "last"));
+
+        Graph<String> graph = toGraph(in);
+        assertThat(graph.getConnected("in"), isJust("InputIterable.example"));
+        assertThat(graph.getConnected("InputIterable.example"), isJust("a", "b"));
+    }
+
+    /**
      * generic method.
      */
     @Test

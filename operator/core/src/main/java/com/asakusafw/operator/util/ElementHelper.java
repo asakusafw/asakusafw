@@ -430,11 +430,17 @@ public final class ElementHelper {
                 method = "defineInput"; //$NON-NLS-1$
                 arguments.add(Models.toLiteral(f, node.getName()));
                 arguments.add(f.newSimpleName(node.getName()));
+                for (ValueDescription attribute : node.getAttributes()) {
+                    arguments.add(DescriptionHelper.resolveValue(imports, attribute));
+                }
                 break;
             case OUTPUT:
                 method = "defineOutput"; //$NON-NLS-1$
                 arguments.add(Models.toLiteral(f, node.getName()));
                 arguments.add(resolveOutputType(environment, imports, node, element));
+                for (ValueDescription attribute : node.getAttributes()) {
+                    arguments.add(DescriptionHelper.resolveValue(imports, attribute));
+                }
                 break;
             case DATA:
                 method = "defineData"; //$NON-NLS-1$
@@ -460,9 +466,9 @@ public final class ElementHelper {
             }
             statements.add(builder.toStatement());
         }
-        for (EnumConstantDescription attribute : element.getDescription().getAttributes()) {
+        for (ValueDescription attribute : element.getDescription().getAttributes()) {
             statements.add(new ExpressionBuilder(f, builderExpression)
-                    .method("defineAttribute", DescriptionHelper.resolveConstant(imports, attribute)) //$NON-NLS-1$
+                    .method("defineAttribute", DescriptionHelper.resolveValue(imports, attribute)) //$NON-NLS-1$
                     .toStatement());
         }
         if (element.getDescription().getSupport() != null) {

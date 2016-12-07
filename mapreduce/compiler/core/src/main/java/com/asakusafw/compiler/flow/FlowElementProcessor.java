@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.asakusafw.compiler.common.NameGenerator;
 import com.asakusafw.compiler.common.Precondition;
@@ -73,7 +74,7 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
     /**
      * The abstract implementation of context objects for {@link FlowElementProcessor}.
      * @since 0.1.0
-     * @version 0.5.1
+     * @version 0.9.1
      */
     abstract class AbstractProcessorContext implements FlowElementAttributeProvider {
 
@@ -156,10 +157,12 @@ public interface FlowElementProcessor extends FlowCompilingEnvironment.Initializ
         }
 
         @Override
+        public Set<? extends Class<? extends FlowElementAttribute>> getAttributeTypes() {
+            return element.getAttributeTypes();
+        }
+
+        @Override
         public <T extends FlowElementAttribute> T getAttribute(Class<T> attributeClass) {
-            if (attributeClass == null) {
-                throw new IllegalArgumentException("attributeClass must not be null"); //$NON-NLS-1$
-            }
             return element.getAttribute(attributeClass);
         }
 
