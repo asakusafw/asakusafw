@@ -27,6 +27,7 @@ import org.apache.hadoop.io.Writable;
 import org.junit.Test;
 
 import com.asakusafw.runtime.model.DataModel;
+import com.asakusafw.runtime.value.IntOption;
 
 /**
  * Test for {@link FileMapListBuffer}.
@@ -122,6 +123,44 @@ public class FileMapListBufferTest {
         }
 
         buf.shrink();
+    }
+
+    /**
+     * w/ multiple records.
+     * @throws Exception if failed
+     */
+    @Test
+    public void huge() throws Exception {
+        long t0 = System.currentTimeMillis();
+        ListBuffer<IntOption> list = new FileMapListBuffer<>();
+        try {
+            int begin = 0;
+            int end = 100_000_000;
+            int size = range(list, begin, end);
+            assertThat(list.size(), is(size));
+            long t1 = System.currentTimeMillis();
+            for (int i = 0, n = end - begin; i < n; i++) {
+                IntOption value = list.get(i);
+                assertEquals(i + begin, value.get());
+            }
+            long t2 = System.currentTimeMillis();
+            System.out.printf("SpLB - write: %,dms, read: %,dms%n", t1 - t0, t2 - t1);
+        } finally {
+            list.shrink();
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    private static int range(ListBuffer<IntOption> buffer, int begin, int end) {
+        buffer.begin();
+        for (int i = begin; i < end; i++) {
+            if (buffer.isExpandRequired()) {
+                buffer.expand(new IntOption());
+            }
+            buffer.advance().modify(i);
+        }
+        buffer.end();
+        return end - begin;
     }
 
     /**
