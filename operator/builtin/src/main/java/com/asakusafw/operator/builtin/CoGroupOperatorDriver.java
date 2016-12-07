@@ -45,7 +45,7 @@ public class CoGroupOperatorDriver implements OperatorDriver {
         if (dsl.result().type().isVoid() == false) {
             dsl.method().error(Messages.getString("CoGroupOperatorDriver.errorReturnNotVoid")); //$NON-NLS-1$
         }
-        EnumConstantDescription inputBuffer = CoGroupKindOperatorUtil.getInputBuffer(dsl);
+        EnumConstantDescription inputBuffer = GroupKindOperatorUtil.getInputBuffer(dsl);
         for (ElementRef p : dsl.parameters()) {
             TypeRef type = p.type();
             if (type.isList() || type.isIterable()) {
@@ -53,7 +53,7 @@ public class CoGroupOperatorDriver implements OperatorDriver {
                 if (arg.isDataModel()) {
                     KeyRef key = p.resolveKey(arg);
                     dsl.addInput(p.document(), p.name(), arg.mirror(), key, p.reference(),
-                            CoGroupKindOperatorUtil.getBufferType(p, inputBuffer));
+                            GroupKindOperatorUtil.getBufferType(p, inputBuffer));
                 } else {
                     p.error(Messages.getString("CoGroupOperatorDriver.errorInputNotDataModelListType")); //$NON-NLS-1$
                 }

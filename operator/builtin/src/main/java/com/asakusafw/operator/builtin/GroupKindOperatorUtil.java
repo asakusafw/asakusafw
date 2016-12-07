@@ -21,7 +21,7 @@ import com.asakusafw.operator.builtin.DslBuilder.TypeRef;
 import com.asakusafw.operator.description.ClassDescription;
 import com.asakusafw.operator.description.EnumConstantDescription;
 
-final class CoGroupKindOperatorUtil {
+final class GroupKindOperatorUtil {
 
     private static final String INPUT_BUFFER = "inputBuffer"; //$NON-NLS-1$
 
@@ -41,13 +41,13 @@ final class CoGroupKindOperatorUtil {
     private static final EnumConstantDescription BUFFER_TYPE_HEAP =
             new EnumConstantDescription(TYPE_BUFFER_TYPE, "HEAP"); //$NON-NLS-1$
 
-    private static final EnumConstantDescription BUFFER_TYPE_STORED =
-            new EnumConstantDescription(TYPE_BUFFER_TYPE, "STORED"); //$NON-NLS-1$
+    private static final EnumConstantDescription BUFFER_TYPE_SPILL =
+            new EnumConstantDescription(TYPE_BUFFER_TYPE, "SPILL"); //$NON-NLS-1$
 
     private static final EnumConstantDescription BUFFER_TYPE_VOLATILE =
             new EnumConstantDescription(TYPE_BUFFER_TYPE, "VOLATILE"); //$NON-NLS-1$
 
-    private CoGroupKindOperatorUtil() {
+    private GroupKindOperatorUtil() {
         return;
     }
 
@@ -56,20 +56,33 @@ final class CoGroupKindOperatorUtil {
     }
 
     static EnumConstantDescription getBufferType(ElementRef parameter, EnumConstantDescription parent) {
+        /*
+         * - inputBuffer: EXPAND (default)
+         *   -            () : HEAP
+         *   -        (Once) : VOLATILE
+         *   -       (Spill) : SPILL
+         *   - (Once, Spill) : VOLATILE
+         * - inputBuffer = ESCAPE
+         *   -            () : SPILL
+         *   -        (Once) : VOLATILE
+         *   -       (Spill) : SPILL
+         *   - (Once, Spill) : VOLATILE
+         */
         TypeRef type = parameter.type();
         AnnotationRef once = parameter.annotation(TYPE_ONCE);
-        if (once != null && type.isIterable() == false) {
-            once.error("@Once must be declared with Iterable<...>");
-            return BUFFER_TYPE_HEAP;
+        if (once != null) {
+            if (type.isIterable() == false) {
+                once.error("@Once must be declared with Iterable<...>");
+                return BUFFER_TYPE_HEAP;
+            } else {
+                return BUFFER_TYPE_VOLATILE;
+            }
         }
         AnnotationRef spill = parameter.annotation(TYPE_SPILL);
         if (spill != null || parent.equals(INPUT_BUFFER_ESCAPE)) {
-            return BUFFER_TYPE_STORED;
-        } else if (once != null) {
-            return BUFFER_TYPE_VOLATILE;
-        } else {
-            // default buffer type
-            return BUFFER_TYPE_HEAP;
+            return BUFFER_TYPE_SPILL;
         }
+        // default buffer type
+        return BUFFER_TYPE_HEAP;
     }
 }

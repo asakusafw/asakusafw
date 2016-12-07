@@ -256,7 +256,7 @@ public class CoGroupOperatorDriverTest extends OperatorDriverTestRoot {
                 Node in2 = description.getInputs().get(2);
                 assertThat(in2.getName(), is("in2"));
                 assertThat(in2.getType(), is(sameType("com.example.Model")));
-                assertThat(in2.getAttributes(), hasItem(Descriptions.valueOf(BufferType.SPILL)));
+                assertThat(in2.getAttributes(), hasItem(Descriptions.valueOf(BufferType.VOLATILE)));
             }
         });
     }
