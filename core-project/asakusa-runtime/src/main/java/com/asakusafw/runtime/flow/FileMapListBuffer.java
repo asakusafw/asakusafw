@@ -23,6 +23,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.text.MessageFormat;
@@ -176,6 +177,10 @@ public class FileMapListBuffer<E extends Writable> extends AbstractList<E> imple
     }
 
     private static class Store<T extends Writable> implements Closeable {
+
+        private static final LinkOption[] LINK_OPTS = {
+                LinkOption.NOFOLLOW_LINKS,
+        };
 
         private static final int[] EMPTY_INTS = new int[0];
 
@@ -333,17 +338,15 @@ public class FileMapListBuffer<E extends Writable> extends AbstractList<E> imple
         @Override
         public void close() throws IOException {
             if (channel != null) {
-                offsets = EMPTY_LONGS;
-                fragmentEndOffsets = EMPTY_LONGS;
-                fragmentElementCounts = EMPTY_INTS;
-                buffer.contents = ResizableNioDataBuffer.EMPTY_BUFFER;
                 channel.close(); // DELETE_ON_CLOSE
-                if (Files.deleteIfExists(path) == false && Files.exists(path)) {
+                channel = null;
+                if (Files.exists(path, LINK_OPTS)
+                        && Files.deleteIfExists(path) == false
+                        && Files.exists(path, LINK_OPTS)) {
                     LOG.warn(MessageFormat.format(
                             "failed to delete a temporary file: {0}",
                             path));
                 }
-                channel = null;
                 path = null;
             }
         }
