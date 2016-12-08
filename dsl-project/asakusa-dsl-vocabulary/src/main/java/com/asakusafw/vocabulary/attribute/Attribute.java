@@ -28,5 +28,7 @@ public interface Attribute extends FlowElementAttribute {
      * @return the declaring class of this attribute
      */
     @Override
-    Class<? extends Attribute> getDeclaringClass();
+    default Class<? extends Attribute> getDeclaringClass() {
+        return getClass();
+    }
 }
