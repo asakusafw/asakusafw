@@ -23,7 +23,7 @@ import java.io.UTFDataFormatException;
 /**
  * Utilities for {@link DataInput} and {@link DataOutput}.
  */
-final class DataIoUtils {
+public final class DataIoUtils {
 
     private static final ThreadLocal<StringBuilder> STRING_BUFFER_POOL = ThreadLocal.withInitial(StringBuilder::new);
 
