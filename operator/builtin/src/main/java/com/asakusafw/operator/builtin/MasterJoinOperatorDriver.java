@@ -74,7 +74,7 @@ public class MasterJoinOperatorDriver implements OperatorDriver {
             return null;
         }
 
-        for (ElementRef p : dsl.parameters(0)) {
+        for (ElementRef p : dsl.parametersFrom(0)) {
             TypeRef type = p.type();
             KeyRef key = null;
             if (type.isDataModel()) {
@@ -99,7 +99,7 @@ public class MasterJoinOperatorDriver implements OperatorDriver {
                             Messages.getString("MasterJoinOperatorDriver.errorInputNotJoinSourceType"), //$NON-NLS-1$
                             dsl.result().type().dataModel().getSimpleName()));
                 }
-            } else if (type.isBasic()) {
+            } else if (type.isBasic()) { // unsupported
                 p.error(Messages.getString("MasterJoinOperatorDriver.errorParameterBasic")); //$NON-NLS-1$
             } else {
                 p.error(Messages.getString("MasterJoinOperatorDriver.errorParameterUnsupportedType")); //$NON-NLS-1$

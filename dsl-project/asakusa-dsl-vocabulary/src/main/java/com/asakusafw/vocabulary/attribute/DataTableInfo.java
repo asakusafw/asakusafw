@@ -43,15 +43,16 @@ public class DataTableInfo implements Attribute {
     }
 
     /**
-     * Creates a new instance.
+     * Creates a new instance from the given term list.
      * Each term must start with either {@code =} (grouping), {@code +} (ascendant order), or {@code -} (descendant
      * order), and follow its property name.
      * @param terms the property terms
+     * @return the created instance
      * @see #getTerms()
      */
-    public DataTableInfo(String... terms) {
-        List<String> gs = new ArrayList<>();
-        List<Ordering> os = new ArrayList<>();
+    public static DataTableInfo of(String... terms) {
+        List<String> grouping = new ArrayList<>();
+        List<Ordering> ordering = new ArrayList<>();
         for (String term : terms) {
             if (term.isEmpty()) {
                 throw new IllegalArgumentException(term);
@@ -60,20 +61,19 @@ public class DataTableInfo implements Attribute {
             String name = term.substring(1);
             switch (operator) {
             case '=':
-                gs.add(name);
+                grouping.add(name);
                 break;
             case '+':
-                os.add(new Ordering(name, Direction.ASCENDANT));
+                ordering.add(new Ordering(name, Direction.ASCENDANT));
                 break;
             case '-':
-                os.add(new Ordering(name, Direction.DESCENDANT));
+                ordering.add(new Ordering(name, Direction.DESCENDANT));
                 break;
             default:
                 throw new IllegalArgumentException(term);
             }
         }
-        this.grouping = Collections.unmodifiableList(gs);
-        this.ordering = Collections.unmodifiableList(os);
+        return new DataTableInfo(grouping, ordering);
     }
 
     /**
@@ -81,7 +81,7 @@ public class DataTableInfo implements Attribute {
      * Each term must start with either {@code =} (grouping), {@code +} (ascendant order), or {@code -} (descendant
      * order), and follow its property name.
      * @return the property terms
-     * @see #DataTableInfo(String...)
+     * @see #of(String...)
      */
     public List<String> getTerms() {
         List<String> results = new ArrayList<>();
@@ -148,7 +148,7 @@ public class DataTableInfo implements Attribute {
             elements.add(order.toString());
         }
         return MessageFormat.format(
-                "Group{0}", //$NON-NLS-1$
+                "DataTable{0}", //$NON-NLS-1$
                 elements);
     }
 
@@ -209,7 +209,7 @@ public class DataTableInfo implements Attribute {
                 return false;
             }
             Ordering other = (Ordering) obj;
-            if (Objects.equals(direction, other.direction)) {
+            if (!Objects.equals(direction, other.direction)) {
                 return false;
             }
             if (!Objects.equals(propertyName, other.propertyName)) {

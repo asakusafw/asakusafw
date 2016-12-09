@@ -61,8 +61,8 @@ public class LoggingOperatorDriver implements OperatorDriver {
                 } else {
                     p.error(Messages.getString("LoggingOperatorDriver.errorInputTooMany")); //$NON-NLS-1$
                 }
-            } else if (type.isBasic()) {
-                dsl.consumeGenericParameter(p);
+            } else if (type.isExtra()) {
+                dsl.consumeExtraParameter(p);
             } else {
                 p.error(Messages.getString("LoggingOperatorDriver.errorParameterUnsupportedType")); //$NON-NLS-1$
             }

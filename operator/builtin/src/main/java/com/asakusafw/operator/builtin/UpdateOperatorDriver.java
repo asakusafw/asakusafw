@@ -59,8 +59,8 @@ public class UpdateOperatorDriver implements OperatorDriver {
                 } else {
                     p.error(Messages.getString("UpdateOperatorDriver.errorInputTooMany")); //$NON-NLS-1$
                 }
-            } else if (type.isBasic()) {
-                dsl.consumeGenericParameter(p);
+            } else if (type.isExtra()) {
+                dsl.consumeExtraParameter(p);
             } else {
                 p.error(Messages.getString("UpdateOperatorDriver.errorParameterUnsupportedType")); //$NON-NLS-1$
             }

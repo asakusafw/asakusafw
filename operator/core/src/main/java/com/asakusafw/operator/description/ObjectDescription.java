@@ -30,15 +30,20 @@ public class ObjectDescription implements ValueDescription {
 
     private final ClassDescription objectType;
 
+    private final String methodName;
+
     private final List<ValueDescription> arguments;
 
     /**
      * Creates a new instance.
      * @param objectType the object type
-     * @param arguments the constructor arguments
+     * @param methodName the factory method name, or {@code null} to indicate constructor
+     * @param arguments the method or constructor arguments
      */
-    public ObjectDescription(ClassDescription objectType, List<? extends ValueDescription> arguments) {
+    public ObjectDescription(
+            ClassDescription objectType, String methodName, List<? extends ValueDescription> arguments) {
         this.objectType = objectType;
+        this.methodName = methodName;
         this.arguments = Collections.unmodifiableList(new ArrayList<>(arguments));
     }
 
@@ -49,7 +54,7 @@ public class ObjectDescription implements ValueDescription {
      * @return the created instance
      */
     public static ObjectDescription of(ClassDescription objectType, List<? extends ValueDescription> arguments) {
-        return new ObjectDescription(objectType, arguments);
+        return new ObjectDescription(objectType, null, arguments);
     }
 
     /**
@@ -59,7 +64,31 @@ public class ObjectDescription implements ValueDescription {
      * @return the created instance
      */
     public static ObjectDescription of(ClassDescription objectType, ValueDescription... arguments) {
-        return new ObjectDescription(objectType, Arrays.asList(arguments));
+        return of(objectType, Arrays.asList(arguments));
+    }
+
+    /**
+     * Creates a new instance.
+     * @param objectType the object type
+     * @param methodName the factory method name
+     * @param arguments the method arguments
+     * @return the created instance
+     */
+    public static ObjectDescription of(ClassDescription objectType, String methodName,
+            List<? extends ValueDescription> arguments) {
+        return new ObjectDescription(objectType, methodName, arguments);
+    }
+
+    /**
+     * Creates a new instance.
+     * @param objectType the object type
+     * @param methodName the factory method name
+     * @param arguments the method arguments
+     * @return the created instance
+     */
+    public static ObjectDescription of(ClassDescription objectType, String methodName,
+            ValueDescription... arguments) {
+        return of(objectType, methodName, Arrays.asList(arguments));
     }
 
     @Override
@@ -70,6 +99,14 @@ public class ObjectDescription implements ValueDescription {
     @Override
     public ClassDescription getValueType() {
         return objectType;
+    }
+
+    /**
+     * Returns the factory method name.
+     * @return the factory method name, or {@code null} if constructor is instead of class methods
+     */
+    public String getMethodName() {
+        return methodName;
     }
 
     /**
@@ -85,6 +122,7 @@ public class ObjectDescription implements ValueDescription {
         final int prime = 31;
         int result = 1;
         result = prime * result + Objects.hashCode(objectType);
+        result = prime * result + Objects.hashCode(methodName);
         result = prime * result + Objects.hashCode(arguments);
         return result;
     }
@@ -104,6 +142,9 @@ public class ObjectDescription implements ValueDescription {
         if (!Objects.equals(objectType, other.objectType)) {
             return false;
         }
+        if (!Objects.equals(methodName, other.methodName)) {
+            return false;
+        }
         if (!Objects.equals(arguments, other.arguments)) {
             return false;
         }
@@ -112,8 +153,9 @@ public class ObjectDescription implements ValueDescription {
 
     @Override
     public String toString() {
-        return MessageFormat.format("Object(type={0}, args={1})", //$NON-NLS-1$
+        return MessageFormat.format("Object(type={0}, method={1}, args={2})", //$NON-NLS-1$
                 objectType,
+                methodName == null ? "new" : methodName, //$NON-NLS-1$
                 arguments);
     }
 }

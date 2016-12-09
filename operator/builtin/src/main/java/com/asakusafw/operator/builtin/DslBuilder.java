@@ -25,6 +25,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.IntConsumer;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import javax.annotation.processing.Messager;
 import javax.lang.model.element.AnnotationMirror;
@@ -48,6 +50,7 @@ import com.asakusafw.operator.OperatorDriver;
 import com.asakusafw.operator.description.ClassDescription;
 import com.asakusafw.operator.description.Descriptions;
 import com.asakusafw.operator.description.EnumConstantDescription;
+import com.asakusafw.operator.description.ObjectDescription;
 import com.asakusafw.operator.description.ValueDescription;
 import com.asakusafw.operator.model.DataModelMirror;
 import com.asakusafw.operator.model.KeyMirror;
@@ -88,6 +91,11 @@ final class DslBuilder {
 
     static final ClassDescription TYPE_OBSERVATION_COUNT =
             new ClassDescription("com.asakusafw.vocabulary.flow.graph.ObservationCount"); //$NON-NLS-1$
+
+    static final ClassDescription TYPE_TABLE_INFO =
+            new ClassDescription("com.asakusafw.vocabulary.attribute.DataTableInfo"); //$NON-NLS-1$
+
+    static final String NAME_TABLE_INFO_FACTORY = "of"; //$NON-NLS-1$
 
     private final List<Node> parameters = new ArrayList<>();
 
@@ -296,12 +304,23 @@ final class DslBuilder {
     }
 
     private void validateParameterOrder() {
+        Predicate<Node> side = n -> n.getAttributes().stream()
+                .filter(v -> v instanceof ObjectDescription)
+                .map(v -> (ObjectDescription) v)
+                .anyMatch(o -> o.getValueType().equals(TYPE_TABLE_INFO));
         BitSet inMask = toMask(inputs);
+        BitSet sideMask = toMask(inputs, side);
         BitSet outMask = toMask(outputs);
         BitSet argMask = toMask(arguments);
 
-        // don't consider input&output parameters
-        outMask.andNot(inMask);
+        outMask.andNot(inMask); // don't consider input&output parameters
+        if (sideMask.isEmpty() == false) {
+            BitSet mainMask = (BitSet) inMask.clone();
+            mainMask.andNot(sideMask);
+            forEach(mainMask, sideMask.nextSetBit(0), i -> {
+                parameterRefs.get(i).error(Messages.getString("DslBuilder.errorInputAfterSide")); //$NON-NLS-1$
+            });
+        }
         if (outMask.isEmpty() == false) {
             forEach(inMask, outMask.nextSetBit(0), i -> {
                 parameterRefs.get(i).error(Messages.getString("DslBuilder.errorInputAfterOutput")); //$NON-NLS-1$
@@ -317,9 +336,10 @@ final class DslBuilder {
         }
     }
 
-    private BitSet toMask(List<Node> nodes) {
+    private static BitSet toMask(List<Node> nodes, Predicate<Node> predicate) {
         BitSet results = new BitSet();
         nodes.stream()
+            .filter(predicate)
             .map(n -> n.getReference())
             .filter(r -> r.getKind() == Kind.PARAMETER)
             .map(ParameterReference.class::cast)
@@ -327,7 +347,11 @@ final class DslBuilder {
         return results;
     }
 
-    private void forEach(BitSet bits, int start, IntConsumer body) {
+    private static BitSet toMask(List<Node> nodes) {
+        return toMask(nodes, n -> true);
+    }
+
+    private static void forEach(BitSet bits, int start, IntConsumer body) {
         for (int i = bits.nextSetBit(start); i >= 0; i = bits.nextSetBit(i + 1)) {
             body.accept(i);
         }
@@ -383,7 +407,7 @@ final class DslBuilder {
         return parameters(0, parameterRefs.size());
     }
 
-    public List<ElementRef> parameters(int from) {
+    public List<ElementRef> parametersFrom(int from) {
         return parameters(from, parameterRefs.size());
     }
 
@@ -399,11 +423,21 @@ final class DslBuilder {
         return annotationRef;
     }
 
-    public void consumeGenericParameter(ElementRef parameter) {
-        if (parameter.type().isBasic()) {
-            addArgument(parameter.document(), parameter.name(), parameter.type().mirror(), parameter.reference());
+    public void consumeExtraParameter(ElementRef parameter) {
+        TypeRef type = parameter.type();
+        if (type.isBasic()) {
+            addArgument(parameter.document(), parameter.name(), type.mirror(), parameter.reference());
+        } else if (type.isTable()) {
+            TypeRef arg = type.arg(0);
+            if (arg.isDataModel()) {
+                KeyRef key = parameter.resolveKey(arg);
+                ValueDescription info = key.toTableInfo();
+                addInput(parameter.document(), parameter.name(), arg.mirror(), null, parameter.reference(), info);
+            } else {
+                parameter.error("element type of input DataTable must be a data model type"); //$NON-NLS-1$
+            }
         } else {
-            parameter.error(Messages.getString("DslBuilder.errorParameterNotBasicType")); //$NON-NLS-1$
+            throw new IllegalArgumentException();
         }
     }
 
@@ -670,6 +704,14 @@ final class DslBuilder {
             return mirror.getKind() == TypeKind.VOID;
         }
 
+        public boolean isExtra() {
+            return isPrimitive() || isString() || isTable();
+        }
+
+        public boolean isTable() {
+            return isErasureEqualTo(environment.findDeclaredType(Constants.TYPE_TABLE));
+        }
+
         public boolean isBasic() {
             return isPrimitive() || isString();
         }
@@ -916,6 +958,18 @@ final class DslBuilder {
             errorSink.set(true);
             Messager messager = environment.getProcessingEnvironment().getMessager();
             messager.printMessage(Diagnostic.Kind.ERROR, message, owner, model.getSource(), value);
+        }
+
+        public ValueDescription toTableInfo() {
+            ObjectDescription info = ObjectDescription.of(TYPE_TABLE_INFO, NAME_TABLE_INFO_FACTORY, terms());
+            return info;
+        }
+
+        public List<ValueDescription> terms() {
+            return model.toTerms().stream()
+                    .sequential()
+                    .map(Descriptions::valueOf)
+                    .collect(Collectors.toList());
         }
     }
 }

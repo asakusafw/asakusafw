@@ -66,10 +66,10 @@ public class FoldOperatorDriver implements OperatorDriver {
                     p0.type().mirror(),
                     p0.reference());
         }
-        for (ElementRef p : dsl.parameters(2)) {
+        for (ElementRef p : dsl.parametersFrom(2)) {
             TypeRef type = p.type();
-            if (type.isBasic()) {
-                dsl.consumeGenericParameter(p);
+            if (type.isExtra()) {
+                dsl.consumeExtraParameter(p);
             } else {
                 p.error(Messages.getString("FoldOperatorDriver.errorParameterUnsupportedType")); //$NON-NLS-1$
             }

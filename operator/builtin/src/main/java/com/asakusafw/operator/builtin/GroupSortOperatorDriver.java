@@ -68,8 +68,8 @@ public class GroupSortOperatorDriver implements OperatorDriver {
                 } else {
                     p.error(Messages.getString("GroupSortOperatorDriver.errorOutputNotDataModelResultType")); //$NON-NLS-1$
                 }
-            } else if (type.isBasic()) {
-                dsl.consumeGenericParameter(p);
+            } else if (type.isExtra()) {
+                dsl.consumeExtraParameter(p);
             } else {
                 p.error(Messages.getString("GroupSortOperatorDriver.errorParameterUnsupportedType")); //$NON-NLS-1$
             }

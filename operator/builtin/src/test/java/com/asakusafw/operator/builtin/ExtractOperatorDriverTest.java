@@ -75,6 +75,36 @@ public class ExtractOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
+     * w/ tables.
+     */
+    @Test
+    public void with_table() {
+        compile(new Action("com.example.WithTable") {
+            @Override
+            protected void perform(OperatorElement target) {
+                OperatorDescription description = target.getDescription();
+                assertThat(description.getInputs().size(), is(2));
+                assertThat(description.getOutputs().size(), is(1));
+                assertThat(description.getArguments().size(), is(0));
+
+                Node input = description.getInputs().get(0);
+                assertThat(input.getName(), is("in"));
+                assertThat(input.getType(), is(sameType("com.example.Model")));
+                assertThat(input.getAttributes(), not(hasItem(isTable())));
+
+                Node side = description.getInputs().get(1);
+                assertThat(side.getName(), is("side"));
+                assertThat(side.getType(), is(sameType("com.example.Model")));
+                assertThat(side.getAttributes(), hasItem(table("=content")));
+
+                Node output = description.getOutputs().get(0);
+                assertThat(output.getName(), is("out"));
+                assertThat(output.getType(), is(sameType("com.example.Proceeded")));
+            }
+        });
+    }
+
+    /**
      * w/ arguments.
      */
     @Test

@@ -89,11 +89,11 @@ public class SummarizeOperatorDriver implements OperatorDriver {
                     dsl.result().reference());
         }
 
-        for (ElementRef p : dsl.parameters(1)) {
+        for (ElementRef p : dsl.parametersFrom(1)) {
             TypeRef type = p.type();
             if (type.isDataModel()) {
                 p.error(Messages.getString("SummarizeOperatorDriver.errorInputTooMany")); //$NON-NLS-1$
-            } else if (type.isBasic()) {
+            } else if (type.isBasic()) { // unsupported
                 p.error(Messages.getString("SummarizeOperatorDriver.errorParameterBasicType")); //$NON-NLS-1$
             } else {
                 p.error(Messages.getString("SummarizeOperatorDriver.errorParameterUnsupportedType")); //$NON-NLS-1$
