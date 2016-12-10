@@ -23,6 +23,7 @@ import com.asakusafw.operator.builtin.DslBuilder.ElementRef;
 import com.asakusafw.operator.builtin.DslBuilder.KeyRef;
 import com.asakusafw.operator.builtin.DslBuilder.TypeRef;
 import com.asakusafw.operator.description.ClassDescription;
+import com.asakusafw.operator.description.EnumConstantDescription;
 import com.asakusafw.operator.model.OperatorDescription;
 import com.asakusafw.operator.model.OperatorDescription.Document;
 
@@ -34,6 +35,12 @@ public class FoldOperatorDriver implements OperatorDriver {
     private static final String OUTPUT_PORT = "outputPort"; //$NON-NLS-1$
 
     private static final String PARTIAL_AGGREGATION = "partialAggregation"; //$NON-NLS-1$
+
+    private static final ClassDescription TYPE_PARTIAL_AGGREGATION =
+            new ClassDescription("com.asakusafw.vocabulary.flow.processor.PartialAggregation"); //$NON-NLS-1$
+
+    private static final EnumConstantDescription PARTIAL_AGGREGATION_PARTIAL =
+            new EnumConstantDescription(TYPE_PARTIAL_AGGREGATION, "PARTIAL"); //$NON-NLS-1$
 
     @Override
     public ClassDescription getAnnotationTypeName() {
@@ -66,16 +73,21 @@ public class FoldOperatorDriver implements OperatorDriver {
                     p0.type().mirror(),
                     p0.reference());
         }
+        EnumConstantDescription aggregation = dsl.annotation().constant(PARTIAL_AGGREGATION);
         for (ElementRef p : dsl.parametersFrom(2)) {
             TypeRef type = p.type();
             if (type.isExtra()) {
+                // FIXME temporary constraint
+                if (type.isTable() && aggregation.equals(PARTIAL_AGGREGATION_PARTIAL)) {
+                    p.error(Messages.getString("FoldOperatorDriver.errorTableWithPartialAggregation")); //$NON-NLS-1$
+                }
                 dsl.consumeExtraParameter(p);
             } else {
                 p.error(Messages.getString("FoldOperatorDriver.errorParameterUnsupportedType")); //$NON-NLS-1$
             }
         }
         dsl.requireShuffle();
-        dsl.addAttribute(dsl.annotation().constant(PARTIAL_AGGREGATION));
+        dsl.addAttribute(aggregation);
         return dsl.toDescription();
     }
 }
