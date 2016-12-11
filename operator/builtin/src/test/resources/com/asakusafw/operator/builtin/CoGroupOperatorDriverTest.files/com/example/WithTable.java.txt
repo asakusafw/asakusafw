@@ -10,7 +10,7 @@ public abstract class $s {
     @CoGroup
     public void method(
             @Key(group = "content") List<Model> in,
-            @Key(group = "content") DataTable<Model> side,
+            @Key(group = "content") TableView<Model> side,
             Result<Proceeded> out) {
     }
 }

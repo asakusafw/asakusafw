@@ -117,7 +117,7 @@ public class FoldOperatorDriverTest extends OperatorDriverTestRoot {
 
                 Node input = description.getInputs().get(0);
                 assertThat(input.getType(), is(sameType("com.example.Model")));
-                assertThat(input.getAttributes(), not(hasItem(isTable())));
+                assertThat(input.getAttributes(), not(hasItem(isView())));
 
                 Node side = description.getInputs().get(1);
                 assertThat(side.getType(), is(sameType("com.example.Model")));

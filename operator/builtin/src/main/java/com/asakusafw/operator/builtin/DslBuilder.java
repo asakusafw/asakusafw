@@ -92,10 +92,12 @@ final class DslBuilder {
     static final ClassDescription TYPE_OBSERVATION_COUNT =
             new ClassDescription("com.asakusafw.vocabulary.flow.graph.ObservationCount"); //$NON-NLS-1$
 
-    static final ClassDescription TYPE_TABLE_INFO =
-            new ClassDescription("com.asakusafw.vocabulary.attribute.DataTableInfo"); //$NON-NLS-1$
+    static final ClassDescription TYPE_VIEW_INFO =
+            new ClassDescription("com.asakusafw.vocabulary.attribute.ViewInfo"); //$NON-NLS-1$
 
-    static final String NAME_TABLE_INFO_FACTORY = "of"; //$NON-NLS-1$
+    static final String NAME_PLAIN_VIEW_INFO_FACTORY = "plain"; //$NON-NLS-1$
+
+    static final String NAME_TABLE_VIEW_INFO_FACTORY = "tableOf"; //$NON-NLS-1$
 
     private final List<Node> parameters = new ArrayList<>();
 
@@ -307,7 +309,7 @@ final class DslBuilder {
         Predicate<Node> side = n -> n.getAttributes().stream()
                 .filter(v -> v instanceof ObjectDescription)
                 .map(v -> (ObjectDescription) v)
-                .anyMatch(o -> o.getValueType().equals(TYPE_TABLE_INFO));
+                .anyMatch(o -> o.getValueType().equals(TYPE_VIEW_INFO));
         BitSet inMask = toMask(inputs);
         BitSet sideMask = toMask(inputs, side);
         BitSet outMask = toMask(outputs);
@@ -427,14 +429,23 @@ final class DslBuilder {
         TypeRef type = parameter.type();
         if (type.isBasic()) {
             addArgument(parameter.document(), parameter.name(), type.mirror(), parameter.reference());
-        } else if (type.isTable()) {
+        } else if (type.isTableView()) {
             TypeRef arg = type.arg(0);
             if (arg.isDataModel()) {
                 KeyRef key = parameter.resolveKey(arg);
                 ValueDescription info = key.toTableInfo();
                 addInput(parameter.document(), parameter.name(), arg.mirror(), null, parameter.reference(), info);
             } else {
-                parameter.error("element type of input DataTable must be a data model type"); //$NON-NLS-1$
+                parameter.error(Messages.getString("DslBuilder.errorTableViewNotDataModelType")); //$NON-NLS-1$
+            }
+        } else if (type.isPlainView()) {
+            TypeRef arg = type.arg(0);
+            if (arg.isDataModel()) {
+                // FIXME warn if @Key is declared
+                ValueDescription info = ObjectDescription.of(TYPE_VIEW_INFO, NAME_PLAIN_VIEW_INFO_FACTORY);
+                addInput(parameter.document(), parameter.name(), arg.mirror(), null, parameter.reference(), info);
+            } else {
+                parameter.error(Messages.getString("DslBuilder.errorPlainViewNotDataModelType")); //$NON-NLS-1$
             }
         } else {
             throw new IllegalArgumentException();
@@ -705,11 +716,19 @@ final class DslBuilder {
         }
 
         public boolean isExtra() {
-            return isPrimitive() || isString() || isTable();
+            return isPrimitive() || isString() || isViewLike();
         }
 
-        public boolean isTable() {
-            return isErasureEqualTo(environment.findDeclaredType(Constants.TYPE_TABLE));
+        public boolean isViewLike() {
+            return isPlainView() || isTableView();
+        }
+
+        public boolean isPlainView() {
+            return isErasureEqualTo(environment.findDeclaredType(Constants.TYPE_VIEW));
+        }
+
+        public boolean isTableView() {
+            return isErasureEqualTo(environment.findDeclaredType(Constants.TYPE_TABLE_VIEW));
         }
 
         public boolean isBasic() {
@@ -961,7 +980,7 @@ final class DslBuilder {
         }
 
         public ValueDescription toTableInfo() {
-            ObjectDescription info = ObjectDescription.of(TYPE_TABLE_INFO, NAME_TABLE_INFO_FACTORY, terms());
+            ObjectDescription info = ObjectDescription.of(TYPE_VIEW_INFO, NAME_TABLE_VIEW_INFO_FACTORY, terms());
             return info;
         }
 

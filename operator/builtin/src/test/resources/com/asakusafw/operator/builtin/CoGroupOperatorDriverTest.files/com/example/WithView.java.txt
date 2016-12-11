@@ -7,10 +7,10 @@ import com.asakusafw.vocabulary.operator.*;
 
 public abstract class $s {
 
-    @Extract
+    @CoGroup
     public void method(
-            Model in,
-            @Key(group = "content") TableView<Model> side,
+            @Key(group = "content") List<Model> in,
+            View<Model> side,
             Result<Proceeded> out) {
     }
 }

@@ -10,6 +10,6 @@ public abstract class $s {
     @Fold
     public void method(
             @Key(group = "content") Model aggregate, Model in,
-            @Key(group = "content") DataTable<Model> table) {
+            @Key(group = "content") TableView<Model> table) {
     }
 }

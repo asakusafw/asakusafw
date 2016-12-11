@@ -44,7 +44,7 @@ import com.asakusafw.utils.collections.Lists;
 import com.asakusafw.utils.collections.Maps;
 import com.asakusafw.utils.graph.Graph;
 import com.asakusafw.utils.graph.Graphs;
-import com.asakusafw.vocabulary.attribute.DataTableInfo;
+import com.asakusafw.vocabulary.attribute.ViewInfo;
 import com.asakusafw.vocabulary.flow.graph.Connectivity;
 import com.asakusafw.vocabulary.flow.graph.FlowBoundary;
 import com.asakusafw.vocabulary.flow.graph.FlowElement;
@@ -1006,11 +1006,11 @@ public class StagePlanner {
         boolean sawError = false;
         for (FlowElement element : elements.getNodeSet()) {
             for (FlowElementInput port : element.getInputPorts()) {
-                if (port.getAttribute(DataTableInfo.class) != null) {
+                if (port.getAttribute(ViewInfo.class) != null) {
                     error(
                             graph,
                             Collections.singletonList(element),
-                            "DataTable {1} (in {0}) is not supported in this platform",
+                            "View {1} (in {0}) is not supported in this platform",
                             element.getDescription(),
                             port.getDescription().getName());
                     sawError = true;

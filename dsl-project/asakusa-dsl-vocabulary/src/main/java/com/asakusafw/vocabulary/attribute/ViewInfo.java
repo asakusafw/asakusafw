@@ -23,23 +23,32 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * Represents information of data tables.
+ * Represents information of data-flow views.
  * @since 0.9.1
  */
-public class DataTableInfo implements Attribute {
+public final class ViewInfo implements Attribute {
+
+    private static final ViewInfo PLAIN_INSTANCE =
+            new ViewInfo(ViewKind.PLAIN, Collections.emptyList(), Collections.emptyList());
+
+    private final ViewKind kind;
 
     private final List<String> grouping;
 
     private final List<Ordering> ordering;
 
-    /**
-     * Creates a new instance.
-     * @param grouping the grouping properties
-     * @param ordering the ordering properties
-     */
-    public DataTableInfo(List<String> grouping, List<Ordering> ordering) {
+    private ViewInfo(ViewKind kind, List<String> grouping, List<Ordering> ordering) {
+        this.kind = kind;
         this.grouping = Collections.unmodifiableList(new ArrayList<>(grouping));
         this.ordering = Collections.unmodifiableList(new ArrayList<>(ordering));
+    }
+
+    /**
+     * Returns an instance of plain views.
+     * @return the instance
+     */
+    public static ViewInfo plain() {
+        return PLAIN_INSTANCE;
     }
 
     /**
@@ -50,7 +59,7 @@ public class DataTableInfo implements Attribute {
      * @return the created instance
      * @see #getTerms()
      */
-    public static DataTableInfo of(String... terms) {
+    public static ViewInfo tableOf(String... terms) {
         List<String> grouping = new ArrayList<>();
         List<Ordering> ordering = new ArrayList<>();
         for (String term : terms) {
@@ -73,7 +82,15 @@ public class DataTableInfo implements Attribute {
                 throw new IllegalArgumentException(term);
             }
         }
-        return new DataTableInfo(grouping, ordering);
+        return new ViewInfo(ViewKind.TABLE, grouping, ordering);
+    }
+
+    /**
+     * Returns the view kind.
+     * @return the view kind
+     */
+    public ViewKind getKind() {
+        return kind;
     }
 
     /**
@@ -81,7 +98,7 @@ public class DataTableInfo implements Attribute {
      * Each term must start with either {@code =} (grouping), {@code +} (ascendant order), or {@code -} (descendant
      * order), and follow its property name.
      * @return the property terms
-     * @see #of(String...)
+     * @see #tableOf(String...)
      */
     public List<String> getTerms() {
         List<String> results = new ArrayList<>();
@@ -112,6 +129,7 @@ public class DataTableInfo implements Attribute {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + Objects.hashCode(kind);
         result = prime * result + Objects.hashCode(grouping);
         result = prime * result + Objects.hashCode(ordering);
         return result;
@@ -128,7 +146,10 @@ public class DataTableInfo implements Attribute {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        DataTableInfo other = (DataTableInfo) obj;
+        ViewInfo other = (ViewInfo) obj;
+        if (!Objects.equals(kind, other.kind)) {
+            return false;
+        }
         if (!Objects.equals(grouping, other.grouping)) {
             return false;
         }
@@ -140,16 +161,41 @@ public class DataTableInfo implements Attribute {
 
     @Override
     public String toString() {
-        List<String> elements = new ArrayList<>();
-        for (String name : grouping) {
-            elements.add(String.format("=%s", name)); //$NON-NLS-1$
+        switch (kind) {
+        case PLAIN:
+            return "PlainView"; //$NON-NLS-1$
+        case TABLE: {
+            List<String> elements = new ArrayList<>();
+            for (String name : grouping) {
+                elements.add(String.format("=%s", name)); //$NON-NLS-1$
+            }
+            for (Ordering order : ordering) {
+                elements.add(order.toString());
+            }
+            return MessageFormat.format(
+                    "TableView{0}", //$NON-NLS-1$
+                    elements);
         }
-        for (Ordering order : ordering) {
-            elements.add(order.toString());
+        default:
+            return "UnknownView"; //$NON-NLS-1$
         }
-        return MessageFormat.format(
-                "DataTable{0}", //$NON-NLS-1$
-                elements);
+    }
+
+    /**
+     * Represents a kind of view.
+     * @since 0.9.1
+     */
+    public enum ViewKind {
+
+        /**
+         * Represents a plain {@code View}.
+         */
+        PLAIN,
+
+        /**
+         * Represents a {@code TableView}.
+         */
+        TABLE,
     }
 
     /**

@@ -53,7 +53,7 @@ import com.asakusafw.operator.method.OperatorMethodAnalyzer;
 import com.asakusafw.operator.model.OperatorClass;
 import com.asakusafw.operator.model.OperatorDescription.Node;
 import com.asakusafw.operator.model.OperatorElement;
-import com.asakusafw.vocabulary.attribute.DataTableInfo;
+import com.asakusafw.vocabulary.attribute.ViewInfo;
 
 /**
  * Test helper for {@link OperatorDriver}s.
@@ -165,30 +165,38 @@ public class OperatorDriverTestRoot extends OperatorCompilerTestRoot {
     }
 
     /**
-     * Returns a data table info.
+     * Returns a plain view info.
+     * @return the matcher
+     */
+    public ObjectDescription view() {
+        return ObjectDescription.of(ClassDescription.of(ViewInfo.class), "plain");
+    }
+
+    /**
+     * Returns a table view info.
      * @param terms the property terms
      * @return the matcher
      */
     public ObjectDescription table(String... terms) {
         return ObjectDescription.of(
-                ClassDescription.of(DataTableInfo.class), "of",
+                ClassDescription.of(ViewInfo.class), "tableOf",
                 Arrays.stream(terms).map(Descriptions::valueOf).collect(Collectors.toList()));
     }
 
     /**
-     * Returns a matcher that tests whether or not the value represents a data table info.
+     * Returns a matcher that tests whether or not the value represents a view info.
      * @return the matcher
      */
-    public Matcher<ValueDescription> isTable() {
+    public Matcher<ValueDescription> isView() {
         return new BaseMatcher<ValueDescription>() {
             @Override
             public boolean matches(Object item) {
                 ValueDescription v = (ValueDescription) item;
-                return v.getValueType().equals(ClassDescription.of(DataTableInfo.class));
+                return v.getValueType().equals(ClassDescription.of(ViewInfo.class));
             }
             @Override
             public void describeTo(Description description) {
-                description.appendText("is table");
+                description.appendText("is view");
             }
         };
     }

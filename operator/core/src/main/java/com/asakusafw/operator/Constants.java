@@ -62,11 +62,18 @@ public final class Constants {
     public static final ClassDescription TYPE_SOURCE = classOf("flow.Source"); //$NON-NLS-1$
 
     /**
-     * {@code DataTable} type name.
+     * {@code View} type name.
      * @since 0.9.1
      */
-    public static final ClassDescription TYPE_TABLE =
-            new ClassDescription("com.asakusafw.runtime.core.DataTable"); //$NON-NLS-1$
+    public static final ClassDescription TYPE_VIEW =
+            new ClassDescription("com.asakusafw.runtime.core.View"); //$NON-NLS-1$
+
+    /**
+     * {@code TableView} type name.
+     * @since 0.9.1
+     */
+    public static final ClassDescription TYPE_TABLE_VIEW =
+            new ClassDescription("com.asakusafw.runtime.core.TableView"); //$NON-NLS-1$
 
     /**
      * {@code Result} type name.

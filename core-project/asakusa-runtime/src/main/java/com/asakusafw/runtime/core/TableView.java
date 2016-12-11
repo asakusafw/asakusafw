@@ -18,11 +18,12 @@ package com.asakusafw.runtime.core;
 import java.util.List;
 
 /**
- * Represents a data table.
+ * Represents a data-flow view with tabular structure.
+ * Application developers <em>MUST NOT</em> change the returned lists and their elements.
  * @param <T> the data type
- * @since 0.9.0
+ * @since 0.9.1
  */
-public interface DataTable<T> {
+public interface TableView<T> extends View<T> {
 
     /**
      * Returns a data model list for the empty key.

@@ -11,6 +11,6 @@ public abstract class $s {
     public void method(
             @Key(group = "content") List<Model> in,
             Result<Proceeded> out,
-            @Key(group = "content") DataTable<Model> side) {
+            @Key(group = "content") TableView<Model> side) {
     }
 }
