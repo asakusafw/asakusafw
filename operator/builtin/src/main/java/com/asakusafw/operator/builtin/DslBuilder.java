@@ -433,7 +433,13 @@ final class DslBuilder {
             TypeRef arg = type.arg(0);
             if (arg.isDataModel()) {
                 KeyRef key = parameter.resolveKey(arg);
-                ValueDescription info = key.toTableInfo();
+                ValueDescription info;
+                if (key == null) {
+                    // error
+                    info = ObjectDescription.of(TYPE_VIEW_INFO, NAME_GROUP_VIEW_INFO_FACTORY);
+                } else {
+                    info = key.toTableInfo();
+                }
                 addInput(parameter.document(), parameter.name(), arg.mirror(), null, parameter.reference(), info);
             } else {
                 parameter.error(Messages.getString("DslBuilder.errorGroupViewNotDataModelType")); //$NON-NLS-1$
@@ -441,7 +447,10 @@ final class DslBuilder {
         } else if (type.isFlatView()) {
             TypeRef arg = type.arg(0);
             if (arg.isDataModel()) {
-                // FIXME warn if @Key is declared
+                AnnotationRef annotation = parameter.annotation(Constants.TYPE_KEY);
+                if (annotation != null) {
+                    annotation.warn(Messages.getString("DslBuilder.warnFlatViewWithKey")); //$NON-NLS-1$
+                }
                 ValueDescription info = ObjectDescription.of(TYPE_VIEW_INFO, NAME_FLAT_VIEW_INFO_FACTORY);
                 addInput(parameter.document(), parameter.name(), arg.mirror(), null, parameter.reference(), info);
             } else {
@@ -456,7 +465,14 @@ final class DslBuilder {
         return method.getTypeParameters().isEmpty() == false;
     }
 
-    interface ElementRef {
+    interface Ref {
+
+        void warn(String string);
+
+        void error(String string);
+    }
+
+    interface ElementRef extends Ref {
 
         boolean exists();
 
@@ -485,8 +501,6 @@ final class DslBuilder {
         default KeyRef resolveKey(TypeRef modelType, AnnotationMirror annotation) {
             throw new IllegalStateException();
         }
-
-        void error(String string);
     }
 
     private class MissingElementRef implements ElementRef {
@@ -526,6 +540,12 @@ final class DslBuilder {
         @Override
         public String name() {
             return "MISSING"; //$NON-NLS-1$
+        }
+
+        @Override
+        public void warn(String message) {
+            Messager messager = environment.getProcessingEnvironment().getMessager();
+            messager.printMessage(Diagnostic.Kind.WARNING, message, owner);
         }
 
         @Override
@@ -636,6 +656,12 @@ final class DslBuilder {
         }
 
         @Override
+        public void warn(String message) {
+            Messager messager = environment.getProcessingEnvironment().getMessager();
+            messager.printMessage(Diagnostic.Kind.WARNING, message, element);
+        }
+
+        @Override
         public void error(String message) {
             errorSink.set(true);
             Messager messager = environment.getProcessingEnvironment().getMessager();
@@ -680,6 +706,12 @@ final class DslBuilder {
         @Override
         public String name() {
             throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void warn(String message) {
+            Messager messager = environment.getProcessingEnvironment().getMessager();
+            messager.printMessage(Diagnostic.Kind.WARNING, message, element);
         }
 
         @Override
@@ -840,7 +872,7 @@ final class DslBuilder {
         }
     }
 
-    class AnnotationRef {
+    class AnnotationRef implements Ref {
 
         private final AnnotationMirror annotation;
 
@@ -930,10 +962,28 @@ final class DslBuilder {
             return values;
         }
 
+        @Override
+        public void warn(String message) {
+            Messager messager = environment.getProcessingEnvironment().getMessager();
+            messager.printMessage(Diagnostic.Kind.WARNING, message, holder, annotation);
+        }
+
+        @Override
         public void error(String message) {
             errorSink.set(true);
             Messager messager = environment.getProcessingEnvironment().getMessager();
             messager.printMessage(Diagnostic.Kind.ERROR, message, holder, annotation);
+        }
+
+        public void warn(String elementName, String message) {
+            AnnotationValue value = AnnotationHelper.getValue(environment, annotation, elementName);
+            if (value == null) {
+                warn(message);
+            } else {
+                errorSink.set(true);
+                Messager messager = environment.getProcessingEnvironment().getMessager();
+                messager.printMessage(Diagnostic.Kind.WARNING, message, holder, annotation, value);
+            }
         }
 
         public void error(String elementName, String message) {

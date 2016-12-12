@@ -504,4 +504,20 @@ public class CoGroupOperatorDriverTest extends OperatorDriverTestRoot {
     public void violate_input_once_iterable() {
         violate("com.example.ViolateInputOnceIterable");
     }
+
+    /**
+     * violates flat views SHOULD not have any key annotations (warning).
+     */
+    @Test
+    public void violate_flat_view_without_key() {
+        violate("com.example.ViolateFlatViewWithoutKey");
+    }
+
+    /**
+     * violates group views must have key annotation.
+     */
+    @Test
+    public void violate_group_view_with_key() {
+        violate("com.example.ViolateGroupViewWithKey");
+    }
 }

@@ -77,7 +77,6 @@ public class FoldOperatorDriver implements OperatorDriver {
         for (ElementRef p : dsl.parametersFrom(2)) {
             TypeRef type = p.type();
             if (type.isExtra()) {
-                // FIXME temporary constraint
                 if (type.isViewLike() && aggregation.equals(PARTIAL_AGGREGATION_PARTIAL)) {
                     p.error(Messages.getString("FoldOperatorDriver.errorTableWithPartialAggregation")); //$NON-NLS-1$
                 }
