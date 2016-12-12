@@ -95,9 +95,9 @@ final class DslBuilder {
     static final ClassDescription TYPE_VIEW_INFO =
             new ClassDescription("com.asakusafw.vocabulary.attribute.ViewInfo"); //$NON-NLS-1$
 
-    static final String NAME_PLAIN_VIEW_INFO_FACTORY = "plain"; //$NON-NLS-1$
+    static final String NAME_FLAT_VIEW_INFO_FACTORY = "flat"; //$NON-NLS-1$
 
-    static final String NAME_TABLE_VIEW_INFO_FACTORY = "tableOf"; //$NON-NLS-1$
+    static final String NAME_GROUP_VIEW_INFO_FACTORY = "groupOf"; //$NON-NLS-1$
 
     private final List<Node> parameters = new ArrayList<>();
 
@@ -429,23 +429,23 @@ final class DslBuilder {
         TypeRef type = parameter.type();
         if (type.isBasic()) {
             addArgument(parameter.document(), parameter.name(), type.mirror(), parameter.reference());
-        } else if (type.isTableView()) {
+        } else if (type.isGroupView()) {
             TypeRef arg = type.arg(0);
             if (arg.isDataModel()) {
                 KeyRef key = parameter.resolveKey(arg);
                 ValueDescription info = key.toTableInfo();
                 addInput(parameter.document(), parameter.name(), arg.mirror(), null, parameter.reference(), info);
             } else {
-                parameter.error(Messages.getString("DslBuilder.errorTableViewNotDataModelType")); //$NON-NLS-1$
+                parameter.error(Messages.getString("DslBuilder.errorGroupViewNotDataModelType")); //$NON-NLS-1$
             }
-        } else if (type.isPlainView()) {
+        } else if (type.isFlatView()) {
             TypeRef arg = type.arg(0);
             if (arg.isDataModel()) {
                 // FIXME warn if @Key is declared
-                ValueDescription info = ObjectDescription.of(TYPE_VIEW_INFO, NAME_PLAIN_VIEW_INFO_FACTORY);
+                ValueDescription info = ObjectDescription.of(TYPE_VIEW_INFO, NAME_FLAT_VIEW_INFO_FACTORY);
                 addInput(parameter.document(), parameter.name(), arg.mirror(), null, parameter.reference(), info);
             } else {
-                parameter.error(Messages.getString("DslBuilder.errorPlainViewNotDataModelType")); //$NON-NLS-1$
+                parameter.error(Messages.getString("DslBuilder.errorFlatViewNotDataModelType")); //$NON-NLS-1$
             }
         } else {
             throw new IllegalArgumentException();
@@ -720,15 +720,15 @@ final class DslBuilder {
         }
 
         public boolean isViewLike() {
-            return isPlainView() || isTableView();
+            return isFlatView() || isGroupView();
         }
 
-        public boolean isPlainView() {
+        public boolean isFlatView() {
             return isErasureEqualTo(environment.findDeclaredType(Constants.TYPE_VIEW));
         }
 
-        public boolean isTableView() {
-            return isErasureEqualTo(environment.findDeclaredType(Constants.TYPE_TABLE_VIEW));
+        public boolean isGroupView() {
+            return isErasureEqualTo(environment.findDeclaredType(Constants.TYPE_GROUP_VIEW));
         }
 
         public boolean isBasic() {
@@ -980,7 +980,7 @@ final class DslBuilder {
         }
 
         public ValueDescription toTableInfo() {
-            ObjectDescription info = ObjectDescription.of(TYPE_VIEW_INFO, NAME_TABLE_VIEW_INFO_FACTORY, terms());
+            ObjectDescription info = ObjectDescription.of(TYPE_VIEW_INFO, NAME_GROUP_VIEW_INFO_FACTORY, terms());
             return info;
         }
 

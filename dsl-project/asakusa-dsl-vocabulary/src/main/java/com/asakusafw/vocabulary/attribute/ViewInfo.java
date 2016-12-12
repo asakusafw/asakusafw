@@ -28,8 +28,8 @@ import java.util.stream.Collectors;
  */
 public final class ViewInfo implements Attribute {
 
-    private static final ViewInfo PLAIN_INSTANCE =
-            new ViewInfo(ViewKind.PLAIN, Collections.emptyList(), Collections.emptyList());
+    private static final ViewInfo FLAT_INSTANCE =
+            new ViewInfo(ViewKind.FLAT, Collections.emptyList(), Collections.emptyList());
 
     private final ViewKind kind;
 
@@ -44,22 +44,22 @@ public final class ViewInfo implements Attribute {
     }
 
     /**
-     * Returns an instance of plain views.
+     * Returns an instance of flat view information.
      * @return the instance
      */
-    public static ViewInfo plain() {
-        return PLAIN_INSTANCE;
+    public static ViewInfo flat() {
+        return FLAT_INSTANCE;
     }
 
     /**
-     * Creates a new instance from the given term list.
+     * Creates a new group view information instance from the given grouping term list.
      * Each term must start with either {@code =} (grouping), {@code +} (ascendant order), or {@code -} (descendant
      * order), and follow its property name.
      * @param terms the property terms
      * @return the created instance
      * @see #getTerms()
      */
-    public static ViewInfo tableOf(String... terms) {
+    public static ViewInfo groupOf(String... terms) {
         List<String> grouping = new ArrayList<>();
         List<Ordering> ordering = new ArrayList<>();
         for (String term : terms) {
@@ -82,7 +82,7 @@ public final class ViewInfo implements Attribute {
                 throw new IllegalArgumentException(term);
             }
         }
-        return new ViewInfo(ViewKind.TABLE, grouping, ordering);
+        return new ViewInfo(ViewKind.GROUP, grouping, ordering);
     }
 
     /**
@@ -98,7 +98,7 @@ public final class ViewInfo implements Attribute {
      * Each term must start with either {@code =} (grouping), {@code +} (ascendant order), or {@code -} (descendant
      * order), and follow its property name.
      * @return the property terms
-     * @see #tableOf(String...)
+     * @see #groupOf(String...)
      */
     public List<String> getTerms() {
         List<String> results = new ArrayList<>();
@@ -162,9 +162,9 @@ public final class ViewInfo implements Attribute {
     @Override
     public String toString() {
         switch (kind) {
-        case PLAIN:
+        case FLAT:
             return "PlainView"; //$NON-NLS-1$
-        case TABLE: {
+        case GROUP: {
             List<String> elements = new ArrayList<>();
             for (String name : grouping) {
                 elements.add(String.format("=%s", name)); //$NON-NLS-1$
@@ -173,7 +173,7 @@ public final class ViewInfo implements Attribute {
                 elements.add(order.toString());
             }
             return MessageFormat.format(
-                    "TableView{0}", //$NON-NLS-1$
+                    "GroupView{0}", //$NON-NLS-1$
                     elements);
         }
         default:
@@ -190,12 +190,12 @@ public final class ViewInfo implements Attribute {
         /**
          * Represents a plain {@code View}.
          */
-        PLAIN,
+        FLAT,
 
         /**
-         * Represents a {@code TableView}.
+         * Represents a {@code GroupView}.
          */
-        TABLE,
+        GROUP,
     }
 
     /**

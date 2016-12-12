@@ -95,7 +95,7 @@ public class ExtractOperatorDriverTest extends OperatorDriverTestRoot {
                 Node side = description.getInputs().get(1);
                 assertThat(side.getName(), is("side"));
                 assertThat(side.getType(), is(sameType("com.example.Model")));
-                assertThat(side.getAttributes(), hasItem(table("=content")));
+                assertThat(side.getAttributes(), hasItem(groupView("=content")));
 
                 Node output = description.getOutputs().get(0);
                 assertThat(output.getName(), is("out"));

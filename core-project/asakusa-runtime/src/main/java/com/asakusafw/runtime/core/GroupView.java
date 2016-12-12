@@ -18,12 +18,12 @@ package com.asakusafw.runtime.core;
 import java.util.List;
 
 /**
- * Represents a data-flow view with tabular structure.
+ * Represents a data-flow view, which partitioned by each sorted group.
  * Application developers <em>MUST NOT</em> change the returned lists and their elements.
  * @param <T> the data type
  * @since 0.9.1
  */
-public interface TableView<T> extends View<T> {
+public interface GroupView<T> extends View<T> {
 
     /**
      * Returns a data model list for the empty key.

@@ -10,7 +10,7 @@ public abstract class $s {
     @Extract
     public void method(
             Model in,
-            @Key(group = "content") TableView<Model> side,
+            @Key(group = "content") GroupView<Model> side,
             Result<Proceeded> out) {
     }
 }

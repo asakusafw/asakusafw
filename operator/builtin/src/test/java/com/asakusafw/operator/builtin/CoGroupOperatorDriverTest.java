@@ -194,7 +194,7 @@ public class CoGroupOperatorDriverTest extends OperatorDriverTestRoot {
                 Node side = description.getInputs().get(1);
                 assertThat(side.getName(), is("side"));
                 assertThat(side.getType(), is(sameType("com.example.Model")));
-                assertThat(side.getAttributes(), hasItem(view()));
+                assertThat(side.getAttributes(), hasItem(flatView()));
 
                 Node output = description.getOutputs().get(0);
                 assertThat(output.getName(), is("out"));
@@ -224,7 +224,7 @@ public class CoGroupOperatorDriverTest extends OperatorDriverTestRoot {
                 Node side = description.getInputs().get(1);
                 assertThat(side.getName(), is("side"));
                 assertThat(side.getType(), is(sameType("com.example.Model")));
-                assertThat(side.getAttributes(), hasItem(table("=content")));
+                assertThat(side.getAttributes(), hasItem(groupView("=content")));
 
                 Node output = description.getOutputs().get(0);
                 assertThat(output.getName(), is("out"));
@@ -254,17 +254,17 @@ public class CoGroupOperatorDriverTest extends OperatorDriverTestRoot {
                 Node side0 = description.getInputs().get(1);
                 assertThat(side0.getName(), is("side0"));
                 assertThat(side0.getType(), is(sameType("com.example.Model")));
-                assertThat(side0.getAttributes(), hasItem(table("=content")));
+                assertThat(side0.getAttributes(), hasItem(groupView("=content")));
 
                 Node side1 = description.getInputs().get(2);
                 assertThat(side1.getName(), is("side1"));
                 assertThat(side1.getType(), is(sameType("com.example.Model")));
-                assertThat(side1.getAttributes(), hasItem(table("=content")));
+                assertThat(side1.getAttributes(), hasItem(groupView("=content")));
 
                 Node side2 = description.getInputs().get(3);
                 assertThat(side2.getName(), is("side2"));
                 assertThat(side2.getType(), is(sameType("com.example.Model")));
-                assertThat(side2.getAttributes(), hasItem(table()));
+                assertThat(side2.getAttributes(), hasItem(groupView()));
 
                 Node output = description.getOutputs().get(0);
                 assertThat(output.getName(), is("out"));

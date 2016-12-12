@@ -69,11 +69,11 @@ public final class Constants {
             new ClassDescription("com.asakusafw.runtime.core.View"); //$NON-NLS-1$
 
     /**
-     * {@code TableView} type name.
+     * {@code GroupView} type name.
      * @since 0.9.1
      */
-    public static final ClassDescription TYPE_TABLE_VIEW =
-            new ClassDescription("com.asakusafw.runtime.core.TableView"); //$NON-NLS-1$
+    public static final ClassDescription TYPE_GROUP_VIEW =
+            new ClassDescription("com.asakusafw.runtime.core.GroupView"); //$NON-NLS-1$
 
     /**
      * {@code Result} type name.

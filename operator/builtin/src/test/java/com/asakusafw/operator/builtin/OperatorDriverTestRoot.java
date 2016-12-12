@@ -168,18 +168,19 @@ public class OperatorDriverTestRoot extends OperatorCompilerTestRoot {
      * Returns a plain view info.
      * @return the matcher
      */
-    public ObjectDescription view() {
-        return ObjectDescription.of(ClassDescription.of(ViewInfo.class), "plain");
+    public ObjectDescription flatView() {
+        return ObjectDescription.of(
+                DslBuilder.TYPE_VIEW_INFO, DslBuilder.NAME_FLAT_VIEW_INFO_FACTORY);
     }
 
     /**
-     * Returns a table view info.
+     * Returns a group view info.
      * @param terms the property terms
      * @return the matcher
      */
-    public ObjectDescription table(String... terms) {
+    public ObjectDescription groupView(String... terms) {
         return ObjectDescription.of(
-                ClassDescription.of(ViewInfo.class), "tableOf",
+                DslBuilder.TYPE_VIEW_INFO, DslBuilder.NAME_GROUP_VIEW_INFO_FACTORY,
                 Arrays.stream(terms).map(Descriptions::valueOf).collect(Collectors.toList()));
     }
 
