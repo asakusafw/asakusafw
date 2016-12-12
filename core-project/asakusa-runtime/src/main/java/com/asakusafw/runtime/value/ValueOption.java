@@ -22,7 +22,7 @@ import com.asakusafw.runtime.io.util.WritableRawComparable;
  * Note that, the sub-classes may be thread unsafe.
  * @param <V> self type
  * @since 0.1.0
- * @version 0.2.5
+ * @version 0.9.1
  */
 public abstract class ValueOption<V extends ValueOption<V>> implements WritableRawComparable, Restorable {
 
@@ -40,6 +40,15 @@ public abstract class ValueOption<V extends ValueOption<V>> implements WritableR
     }
 
     /**
+     * Returns whether this object has any value or not.
+     * @return {@code true} if this object DOES NOT represent {@code null}, otherwise {@code false}
+     * @since 0.9.1
+     */
+    public final boolean isPresent() {
+        return nullValue == false;
+    }
+
+    /**
      * Makes this value represent {@code null}.
      * @deprecated Application developer should not use this method directly
      * @return this
@@ -48,6 +57,20 @@ public abstract class ValueOption<V extends ValueOption<V>> implements WritableR
     public final ValueOption<V> setNull() {
         this.nullValue = true;
         return this;
+    }
+
+    /**
+     * Returns the given value if this represents {@code null}.
+     * @param other the target value which will be returned if this object represents {@code null}
+     * @return the given value if this represents {@code null}, otherwise this
+     * @since 0.9.1
+     */
+    @SuppressWarnings("unchecked")
+    public final V orOption(V other) {
+        if (nullValue) {
+            return other;
+        }
+        return (V) this;
     }
 
     /**

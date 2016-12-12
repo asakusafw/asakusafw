@@ -18,6 +18,9 @@ package com.asakusafw.runtime.value;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
+import java.util.function.BiPredicate;
+import java.util.function.Consumer;
+
 import org.apache.hadoop.io.Text;
 import org.junit.Test;
 
@@ -308,5 +311,123 @@ public class StringOptionTest extends ValueOptionTestRoot {
         StringOption option = new StringOption();
         StringOption restored = restore(option);
         assertThat(restored.isNull(), is(true));
+    }
+
+    /**
+     * is empty.
+     */
+    @Test
+    public void is_empty() {
+        npe(() -> new StringOption().isEmpty());
+        assertThat(new StringOption("").isEmpty(), is(true));
+        assertThat(new StringOption("Hello, world!").isEmpty(), is(false));
+        assertThat(new StringOption(" ").isEmpty(), is(false));
+    }
+
+    /**
+     * appendTo.
+     */
+    @Test
+    public void appendTo() {
+        npe(() -> new StringOption().appendTo(new StringBuilder()));
+        Consumer<String> tester = s -> {
+            String r = new StringOption(s).appendTo(new StringBuilder("<")).append(">").toString();
+            assertThat(r, is("<" + s + ">"));
+        };
+        tester.accept("");
+        tester.accept("a");
+        tester.accept("Hello, world!");
+        tester.accept(HELLO_JP);
+    }
+
+    /**
+     * contains.
+     */
+    @Test
+    public void contains() {
+        npe(() -> new StringOption().contains("a"));
+        npe(() -> new StringOption().contains(new StringOption("a")));
+        npe(() -> new StringOption("a").contains(new StringOption()));
+
+        BiPredicate<String, String> tester = (string, sub) -> {
+            StringOption opt = new StringOption(string);
+            boolean b0 = opt.contains(sub);
+            boolean b1 = opt.contains(new StringOption(sub));
+            assertThat(b0, is(b1));
+            return b0;
+        };
+        assertThat(tester.test("Hello", "Hello"), is(true));
+        assertThat(tester.test("Hello", ""), is(true));
+        assertThat(tester.test("Hello, world!", "a"), is(false));
+        assertThat(tester.test("Hello, world!", "Hello"), is(true));
+        assertThat(tester.test("Hello, world!", "world!"), is(true));
+        assertThat(tester.test("Hello, world!", "ello"), is(true));
+        assertThat(tester.test("Hello", "Hello, world!"), is(false));
+        assertThat(tester.test("Hello, world!", "Hello!"), is(false));
+        assertThat(tester.test("Hello, world!", "world?"), is(false));
+        assertThat(tester.test("Hello, world!", "Hello, world?"), is(false));
+    }
+
+    /**
+     * startsWith.
+     */
+    @Test
+    public void startsWith() {
+        npe(() -> new StringOption().startsWith("a"));
+        npe(() -> new StringOption().startsWith(new StringOption("a")));
+        npe(() -> new StringOption("a").startsWith(new StringOption()));
+
+        BiPredicate<String, String> tester = (string, prefix) -> {
+            StringOption opt = new StringOption(string);
+            boolean b0 = opt.startsWith(prefix);
+            boolean b1 = opt.startsWith(new StringOption(prefix));
+            assertThat(b0, is(b1));
+            return b0;
+        };
+        assertThat(tester.test("Hello", "Hello"), is(true));
+        assertThat(tester.test("Hello", ""), is(true));
+        assertThat(tester.test("Hello, world!", "a"), is(false));
+        assertThat(tester.test("Hello, world!", "Hello"), is(true));
+        assertThat(tester.test("Hello, world!", "world!"), is(false));
+        assertThat(tester.test("Hello", "Hello, world!"), is(false));
+        assertThat(tester.test("Hello, world!", "Hello!"), is(false));
+        assertThat(tester.test("Hello, world!", "world?"), is(false));
+        assertThat(tester.test("Hello, world!", "Hello, world?"), is(false));
+    }
+
+    /**
+     * endsWith.
+     */
+    @Test
+    public void endsWith() {
+        npe(() -> new StringOption().endsWith("a"));
+        npe(() -> new StringOption().endsWith(new StringOption("a")));
+        npe(() -> new StringOption("a").endsWith(new StringOption()));
+
+        BiPredicate<String, String> tester = (string, prefix) -> {
+            StringOption opt = new StringOption(string);
+            boolean b0 = opt.endsWith(prefix);
+            boolean b1 = opt.endsWith(new StringOption(prefix));
+            assertThat(b0, is(b1));
+            return b0;
+        };
+        assertThat(tester.test("Hello", "Hello"), is(true));
+        assertThat(tester.test("Hello", ""), is(true));
+        assertThat(tester.test("Hello, world!", "a"), is(false));
+        assertThat(tester.test("Hello, world!", "Hello"), is(false));
+        assertThat(tester.test("Hello, world!", "world!"), is(true));
+        assertThat(tester.test("Hello", "Hello, world!"), is(false));
+        assertThat(tester.test("Hello, world!", "Hello!"), is(false));
+        assertThat(tester.test("Hello, world!", "world?"), is(false));
+        assertThat(tester.test("Hello, world!", "Hello, world?"), is(false));
+    }
+
+    private static void npe(Runnable r) {
+        try {
+            r.run();
+            fail();
+        } catch (NullPointerException e) {
+            // ok.
+        }
     }
 }
