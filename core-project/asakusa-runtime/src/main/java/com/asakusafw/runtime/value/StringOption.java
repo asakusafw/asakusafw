@@ -125,9 +125,7 @@ public final class StringOption extends ValueOption<StringOption> {
      * Returns the value which this object represents.
      * @param alternate the alternative value for {@code null}
      * @return the value which this object represents, or the alternative one if this object represents {@code null}
-     * @deprecated Use {@link #or(String)} instead
      */
-    @Deprecated
     public Text or(Text alternate) {
         if (nullValue) {
             return alternate;
@@ -273,9 +271,7 @@ public final class StringOption extends ValueOption<StringOption> {
      * Returns whether both this object and the specified value represents an equivalent value or not.
      * @param other the target value (nullable)
      * @return {@code true} if this object has the specified value, otherwise {@code false}
-     * @deprecated Use {@link #equals(Object)} instead
      */
-    @Deprecated
     public boolean has(Text other) {
         if (isNull()) {
             return other == null;
