@@ -28,6 +28,7 @@ public interface GroupView<T> extends View<T> {
     /**
      * Returns a data model list for the empty key.
      * @return the data model list for the empty key, or an empty list there is no such entries for the key
+     * @throws IllegalArgumentException if the key structure is not compatible for this view (optional behavior)
      */
     default List<T> find() {
         return find(new Object[0]);
@@ -37,6 +38,7 @@ public interface GroupView<T> extends View<T> {
      * Returns a data model list for the key.
      * @param key the search key element
      * @return the data model list for the key, or an empty list there is no such entries for key
+     * @throws IllegalArgumentException if the key structure is not compatible for this view (optional behavior)
      */
     default List<T> find(Object key) {
         return find(new Object[] { key });
@@ -47,6 +49,7 @@ public interface GroupView<T> extends View<T> {
      * @param a the first key element
      * @param b the second key element
      * @return the data model list for the key, or an empty list there is no such entries for key
+     * @throws IllegalArgumentException if the key structure is not compatible for this view (optional behavior)
      */
     default List<T> find(Object a, Object b) {
         return find(new Object[] { a, b });
@@ -58,6 +61,7 @@ public interface GroupView<T> extends View<T> {
      * @param b the second key element
      * @param c the third key element
      * @return the data model list for the key, or an empty list there is no such entries for key
+     * @throws IllegalArgumentException if the key structure is not compatible for this view (optional behavior)
      */
     default List<T> find(Object a, Object b, Object c) {
         return find(new Object[] { a, b, c });
@@ -70,6 +74,7 @@ public interface GroupView<T> extends View<T> {
      * @param c the third key element
      * @param d the fourth key element
      * @return the data model list for the key, or an empty list there is no such entries for key
+     * @throws IllegalArgumentException if the key structure is not compatible for this view (optional behavior)
      */
     default List<T> find(Object a, Object b, Object c, Object d) {
         return find(new Object[] { a, b, c, d });
@@ -79,6 +84,7 @@ public interface GroupView<T> extends View<T> {
      * Returns a data model list for the key elements.
      * @param elements the key elements
      * @return the data model list for the key, or an empty list there is no such entries for key
+     * @throws IllegalArgumentException if the key structure is not compatible for this view (optional behavior)
      */
     List<T> find(Object... elements);
 }
