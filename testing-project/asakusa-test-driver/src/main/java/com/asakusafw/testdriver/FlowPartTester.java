@@ -43,7 +43,7 @@ import com.asakusafw.vocabulary.flow.Out;
 /**
  * A tester for {@code FlowPart flow-part} classes.
  * @since 0.2.0
- * @version 0.8.0
+ * @version 0.9.1
  */
 public class FlowPartTester extends TesterBase {
 
@@ -97,6 +97,18 @@ public class FlowPartTester extends TesterBase {
         FlowPartDriverOutput<T> output = new FlowPartDriverOutput<>(driverContext, name, modelType, vocabulary);
         outputs.add(output);
         return output;
+    }
+
+    /**
+     * Executes a temporary flow and then verifies the execution result.
+     * Application developers should build an Asakusa data-flow in the given {@link Runnable#run()}.
+     * @param description a temporary flow builder
+     * @throws IllegalStateException if error was occurred while building jobflow class or initializing this tester
+     * @throws AssertionError if verification was failed
+     * @since 0.9.1
+     */
+    public void runTest(Runnable description) {
+        runTest(new TemporaryFlow(description));
     }
 
     /**
@@ -202,6 +214,20 @@ public class FlowPartTester extends TesterBase {
             if (verifier != null) {
                 moderator.validate(type, label, verifier);
             }
+        }
+    }
+
+    private static final class TemporaryFlow extends FlowDescription {
+
+        private final Runnable body;
+
+        TemporaryFlow(Runnable body) {
+            this.body = body;
+        }
+
+        @Override
+        protected void describe() {
+            body.run();
         }
     }
 }

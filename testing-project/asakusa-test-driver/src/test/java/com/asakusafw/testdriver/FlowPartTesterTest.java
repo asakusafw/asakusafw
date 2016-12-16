@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.junit.Assume;
 import org.junit.ClassRule;
@@ -264,6 +265,27 @@ public class FlowPartTesterTest extends TesterTestRoot {
         In<Simple> in = tester.input("in", Simple.class).prepare(prefix + "data/simple-in.json");
         Out<Simple> out = tester.output("out", Simple.class).verify(prefix + "data/simple-out.json", new IdentityVerifier());
         tester.runTest(new SimpleFlowPart(in, out));
+    }
+
+    /**
+     * {@link FlowPartTester#runTest(Runnable)}.
+     */
+    @Test
+    public void runnable() {
+        compiler.withFlow((conf, flow, portMap) -> {
+            flow.start();
+            return getSimpleArtifact("testing", "in", "out");
+        });
+        FlowPartTester tester = new FlowPartTester(getClass());
+        tester.setFrameworkHomePath(framework.getHome());
+        In<Simple> in = tester.input("in", Simple.class).prepare("data/simple-in.json");
+        Out<Simple> out = tester.output("out", Simple.class).verify("data/simple-out.json", new IdentityVerifier());
+        AtomicBoolean resolved = new AtomicBoolean();
+        tester.runTest(() -> {
+            out.add(in);
+            resolved.set(true);
+        });
+        assertThat(resolved.get(), is(true));
     }
 
     /**
