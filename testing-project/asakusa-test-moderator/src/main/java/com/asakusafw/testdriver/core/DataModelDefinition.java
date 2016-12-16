@@ -25,6 +25,7 @@ import java.util.Map;
  * A data model definition for testing.
  * @param <T> type of data model
  * @since 0.2.0
+ * @version 0.9.1
  */
 public interface DataModelDefinition<T> {
 
@@ -90,6 +91,16 @@ public interface DataModelDefinition<T> {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     T toObject(DataModelReflection reflection);
+
+    /**
+     * Converts the given raw property value into a corresponded property value for {@link DataModelReflection}.
+     * @param value the raw property value
+     * @return the resolved value
+     * @since 0.9.1
+     */
+    default Object resolveRawValue(Object value) {
+        return value;
+    }
 
     /**
      * Builds a {@link DataModelReflection}.

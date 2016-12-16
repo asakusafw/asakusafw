@@ -140,7 +140,7 @@ public class SimpleDataModelDefinition<T> implements DataModelDefinition<T> {
      * Returns property type kind corresponded to the property name and type.
      * @param name property name
      * @param type property type
-     * @return property type kind, or {@code null} without suitable correponded kind
+     * @return property type kind, or {@code null} without suitable corresponded kind
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     public static PropertyType getType(PropertyName name, Class<?> type) {

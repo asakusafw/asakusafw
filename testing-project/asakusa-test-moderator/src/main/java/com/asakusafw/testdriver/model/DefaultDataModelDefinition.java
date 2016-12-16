@@ -58,6 +58,7 @@ import com.asakusafw.testdriver.core.PropertyType;
  * Default implementation of {@link DataModelDefinition}.
  * @param <T> type of data model class
  * @since 0.2.0
+ * @version 0.9.1
  * @see DefaultDataModelAdapter
  */
 public class DefaultDataModelDefinition<T> implements DataModelDefinition<T> {
@@ -419,6 +420,24 @@ public class DefaultDataModelDefinition<T> implements DataModelDefinition<T> {
         } catch (Exception e) {
             throw new AssertionError(e);
         }
+    }
+
+    @Override
+    public Object resolveRawValue(Object value) {
+        if (value == null) {
+            return null;
+        }
+        Class<?> type = value.getClass();
+        ValueDriver<?> driver = VALUE_DRIVERS.get(type);
+        if (driver == null) {
+            throw new IllegalArgumentException(MessageFormat.format(
+                    "unsupported property type: {0} ({1})",
+                    value, type.getSimpleName()));
+        }
+        if (((ValueOption<?>) value).isNull()) {
+            return null;
+        }
+        return driver.extractUnsafe(value);
     }
 
     abstract static class ValueDriver<T> {

@@ -21,11 +21,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 
 /**
  * The normal-form of property names.
  * @since 0.2.0
- * @version 0.7.0
+ * @version 0.9.1
  */
 public final class PropertyName implements Comparable<PropertyName>, Serializable {
 
@@ -120,6 +122,33 @@ public final class PropertyName implements Comparable<PropertyName>, Serializabl
             throw new IllegalArgumentException("words must not be null"); //$NON-NLS-1$
         }
         return newInstance(Arrays.asList(words));
+    }
+
+    /**
+     * Parses a property name term and creates a new instance.
+     * @param term the property name term
+     * @return the created instance
+     * @since 0.9.1
+     */
+    public static PropertyName parse(String term) {
+        Objects.requireNonNull(term);
+        if (term.isEmpty()) {
+            throw new IllegalArgumentException();
+        } else if (term.indexOf('_') >= 0 || term.toUpperCase(Locale.ENGLISH).equals(term)) {
+            String[] segments = term.split("_"); //$NON-NLS-1$
+            return newInstance(segments);
+        } else {
+            List<String> segments = new ArrayList<>();
+            int start = 0;
+            for (int i = 1, n = term.length(); i < n; i++) {
+                if (Character.isUpperCase(term.charAt(i))) {
+                    segments.add(term.substring(start, i));
+                    start = i;
+                }
+            }
+            segments.add(term.substring(start));
+            return newInstance(segments);
+        }
     }
 
     private static String normalize(String word) {
