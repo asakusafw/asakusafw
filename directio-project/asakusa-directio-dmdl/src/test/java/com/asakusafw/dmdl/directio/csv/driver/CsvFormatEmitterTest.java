@@ -529,6 +529,39 @@ public class CsvFormatEmitterTest extends GeneratorTesterRoot {
     }
 
     /**
+     * unlimited range.
+     * @throws Exception if failed
+     */
+    @Test
+    public void unlimited() throws Exception {
+        ModelLoader loaded = generateJava("simple");
+        ModelWrapper model = loaded.newModel("Simple");
+        BinaryStreamFormat<?> support = (BinaryStreamFormat<?>) loaded.newObject("csv", "SimpleCsvFormat");
+
+        assertThat(support.getSupportedType(), is((Object) model.unwrap().getClass()));
+
+        BinaryStreamFormat<Object> unsafe = unsafe(support);
+        assertThat(unsafe, is(not(instanceOf(Configurable.class))));
+
+        model.set("value", new Text("hello-world"));
+
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        try (ModelOutput<Object> writer = unsafe.createOutput(model.unwrap().getClass(), "hello", output)) {
+            writer.write(model.unwrap());
+        }
+
+        assertThat(scan(output.toByteArray()), is(Arrays.asList("hello-world")));
+
+        Object buffer = loaded.newModel("Simple").unwrap();
+        try (ModelInput<Object> reader = unsafe.createInput(model.unwrap().getClass(), "hello", in(output),
+                0, -1)) {
+            assertThat(reader.readTo(buffer), is(true));
+            assertThat(buffer, is(model.unwrap()));
+            assertThat(reader.readTo(buffer), is(false));
+        }
+    }
+
+    /**
      * Compile with no attributes.
      * @throws Exception if failed
      */

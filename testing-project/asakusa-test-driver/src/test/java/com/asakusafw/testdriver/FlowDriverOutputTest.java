@@ -53,6 +53,8 @@ import com.asakusafw.testdriver.core.VerifierFactory;
 import com.asakusafw.testdriver.core.VerifyContext;
 import com.asakusafw.testdriver.core.VerifyRule;
 import com.asakusafw.testdriver.core.VerifyRuleFactory;
+import com.asakusafw.testdriver.testing.dsl.SimpleStreamFormat;
+import com.asakusafw.testdriver.testing.model.Simple;
 import com.asakusafw.utils.io.Provider;
 
 /**
@@ -71,7 +73,7 @@ public class FlowDriverOutputTest {
      */
     @Test
     public void prepare_factory() {
-        MockFlowDriverOutput mock = new MockFlowDriverOutput(getClass(), new MockTestDataToolProvider());
+        MockFlowDriverOutput<Text> mock = MockFlowDriverOutput.text(getClass(), provider());
         mock.prepare(factory("Hello1", "Hello2"));
         verify(mock.getSource(), DEFINITION, list("Hello1", "Hello2"));
     }
@@ -81,7 +83,7 @@ public class FlowDriverOutputTest {
      */
     @Test
     public void verify_factory() {
-        MockFlowDriverOutput mock = new MockFlowDriverOutput(getClass(), new MockTestDataToolProvider());
+        MockFlowDriverOutput<Text> mock = MockFlowDriverOutput.text(getClass(), provider());
         VerifierFactory factory = new VerifierFactory() {
             @Override
             public <T> Verifier createVerifier(DataModelDefinition<T> definition, VerifyContext context) {
@@ -97,7 +99,7 @@ public class FlowDriverOutputTest {
      */
     @Test
     public void verify_factory_uri_tester() {
-        MockFlowDriverOutput mock = new MockFlowDriverOutput(getClass(), tool_rule("Hello3"));
+        MockFlowDriverOutput<Text> mock = MockFlowDriverOutput.text(getClass(), tool_rule("Hello3"));
         mock.verify(factory("Hello1", "Hello2", "Hello3"), "data/dummy", null);
         assertThat(test(mock.getVerifier(), "Hello1", "Hello2", "Hello3"), hasSize(1));
     }
@@ -107,7 +109,7 @@ public class FlowDriverOutputTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void verify_factory_uri_tester_missingRule() {
-        MockFlowDriverOutput mock = new MockFlowDriverOutput(getClass(), new MockTestDataToolProvider());
+        MockFlowDriverOutput<Text> mock = MockFlowDriverOutput.text(getClass(), provider());
         mock.verify(factory("Hello1", "Hello2", "Hello3"), "data/__MISSING__", null);
     }
 
@@ -116,7 +118,7 @@ public class FlowDriverOutputTest {
      */
     @Test
     public void verify_factory_uri_tester_withTester() {
-        MockFlowDriverOutput mock = new MockFlowDriverOutput(getClass(), tool_rule("Hello3"));
+        MockFlowDriverOutput<Text> mock = MockFlowDriverOutput.text(getClass(), tool_rule("Hello3"));
         mock.verify(factory("TESTER", "Hello2", "Hello3"), "data/dummy", modelTester("TESTER"));
         assertThat(test(mock.getVerifier(), "TESTER", "Hello2", "Hello3"), hasSize(2));
     }
@@ -126,7 +128,7 @@ public class FlowDriverOutputTest {
      */
     @Test
     public void verify_factory_verifier() {
-        MockFlowDriverOutput mock = new MockFlowDriverOutput(getClass(), new MockTestDataToolProvider());
+        MockFlowDriverOutput<Text> mock = MockFlowDriverOutput.text(getClass(), provider());
         mock.verify(factory("Hello1", "VERIFIER", "Hello3"), modelVerifier("VERIFIER"));
         assertThat(test(mock.getVerifier(), "Hello1", "VERIFIER", "Hello3"), hasSize(1));
     }
@@ -137,7 +139,7 @@ public class FlowDriverOutputTest {
     @Test
     public void dumpActual_factory() {
         MockDataModelSink sink = new MockDataModelSink();
-        MockFlowDriverOutput mock = new MockFlowDriverOutput(getClass(), new MockTestDataToolProvider());
+        MockFlowDriverOutput<Text> mock = MockFlowDriverOutput.text(getClass(), provider());
         mock.dumpActual(new DataModelSinkFactory() {
             @Override
             public <T> DataModelSink createSink(DataModelDefinition<T> definition, TestContext context) throws IOException {
@@ -154,7 +156,7 @@ public class FlowDriverOutputTest {
     @Test
     public void dumpDifference_factory() {
         MockDiffSink sink = new MockDiffSink();
-        MockFlowDriverOutput mock = new MockFlowDriverOutput(getClass(), new MockTestDataToolProvider());
+        MockFlowDriverOutput<Text> mock = MockFlowDriverOutput.text(getClass(), provider());
         mock.dumpDifference(new DifferenceSinkFactory() {
             @Override
             public <T> DifferenceSink createSink(DataModelDefinition<T> definition, TestContext context) throws IOException {
@@ -169,7 +171,7 @@ public class FlowDriverOutputTest {
      */
     @Test
     public void prepare_uri() {
-        MockFlowDriverOutput mock = new MockFlowDriverOutput(getClass(), tool_data);
+        MockFlowDriverOutput<Text> mock = MockFlowDriverOutput.text(getClass(), tool_data);
         mock.prepare("data/dummy");
         verify(mock.getSource(), DEFINITION, list("Hello1", "Hello2", "Hello3"));
     }
@@ -179,7 +181,7 @@ public class FlowDriverOutputTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void prepare_uri_missing() {
-        new MockFlowDriverOutput(getClass(), new MockTestDataToolProvider()).prepare("data/__MISSING__");
+        new MockFlowDriverOutput<>(getClass(), Text.class, provider()).prepare("data/__MISSING__");
     }
 
     /**
@@ -187,7 +189,7 @@ public class FlowDriverOutputTest {
      */
     @Test
     public void prepare_collection() {
-        MockFlowDriverOutput mock = new MockFlowDriverOutput(getClass(), new MockTestDataToolProvider());
+        MockFlowDriverOutput<Text> mock = MockFlowDriverOutput.text(getClass(), provider());
         mock.prepare(list("Hello1", "Hello2"));
         verify(mock.getSource(), DEFINITION, list("Hello1", "Hello2"));
     }
@@ -197,9 +199,29 @@ public class FlowDriverOutputTest {
      */
     @Test
     public void prepare_iterator() {
-        MockFlowDriverOutput mock = new MockFlowDriverOutput(getClass(), new MockTestDataToolProvider());
+        MockFlowDriverOutput<Text> mock = MockFlowDriverOutput.text(getClass(), provider());
         mock.prepare(provider("Hello1", "Hello2"));
         verify(mock.getSource(), DEFINITION, list("Hello1", "Hello2"));
+    }
+
+    /**
+     * simple test for {@link FlowDriverOutput#prepare(Class, String)}.
+     */
+    @Test
+    public void prepare_directio_path() {
+        MockFlowDriverOutput<?> mock = new MockFlowDriverOutput<>(getClass(), Simple.class, provider())
+                .prepare(SimpleStreamFormat.class, "directio/simple.txt");
+        verify(mock.getSource(), DEFINITION, list("Hello, world!"));
+    }
+
+    /**
+     * simple test for {@link FlowDriverOutput#prepare(Class, java.io.File)}.
+     */
+    @Test
+    public void prepare_directio_file() {
+        MockFlowDriverOutput<?> mock = new MockFlowDriverOutput<>(getClass(), Simple.class, provider())
+                .prepare(SimpleStreamFormat.class, asFile("directio/simple.txt"));
+        verify(mock.getSource(), DEFINITION, list("Hello, world!"));
     }
 
     /**
@@ -207,7 +229,7 @@ public class FlowDriverOutputTest {
      */
     @Test
     public void verify_uri_uri() {
-        MockFlowDriverOutput mock = new MockFlowDriverOutput(getClass(), tool_data_rule("Hello3"));
+        MockFlowDriverOutput<Text> mock = MockFlowDriverOutput.text(getClass(), tool_data_rule("Hello3"));
         mock.verify("data/dummy", "data/dummy2");
         assertThat(test(mock.getVerifier(), "Hello1", "Hello2", "Hello3"), hasSize(1));
     }
@@ -217,7 +239,7 @@ public class FlowDriverOutputTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void verify_uri_uri_missingExpect() {
-        MockFlowDriverOutput mock = new MockFlowDriverOutput(getClass(), tool_rule("Hello3"));
+        MockFlowDriverOutput<Text> mock = MockFlowDriverOutput.text(getClass(), tool_rule("Hello3"));
         mock.verify("data/__MISSING__", "data/dummy");
     }
 
@@ -226,7 +248,7 @@ public class FlowDriverOutputTest {
      */
     @Test
     public void verify_factory_uri() {
-        MockFlowDriverOutput mock = new MockFlowDriverOutput(getClass(), tool_rule("Hello3"));
+        MockFlowDriverOutput<Text> mock = MockFlowDriverOutput.text(getClass(), tool_rule("Hello3"));
         mock.verify(factory("Hello1", "Hello2", "Hello3"), "data/dummy");
         assertThat(test(mock.getVerifier(), "Hello1", "Hello2", "Hello3"), hasSize(1));
     }
@@ -236,7 +258,7 @@ public class FlowDriverOutputTest {
      */
     @Test
     public void verify_iterable_uri() {
-        MockFlowDriverOutput mock = new MockFlowDriverOutput(getClass(), tool_rule("Hello3"));
+        MockFlowDriverOutput<Text> mock = MockFlowDriverOutput.text(getClass(), tool_rule("Hello3"));
         mock.verify(list("Hello1", "Hello2", "Hello3"), "data/dummy");
         assertThat(test(mock.getVerifier(), "Hello1", "Hello2", "Hello3"), hasSize(1));
     }
@@ -246,7 +268,7 @@ public class FlowDriverOutputTest {
      */
     @Test
     public void verify_provider_uri() {
-        MockFlowDriverOutput mock = new MockFlowDriverOutput(getClass(), tool_rule("Hello3"));
+        MockFlowDriverOutput<Text> mock = MockFlowDriverOutput.text(getClass(), tool_rule("Hello3"));
         mock.verify(provider("Hello1", "Hello2", "Hello3"), "data/dummy");
         assertThat(test(mock.getVerifier(), "Hello1", "Hello2", "Hello3"), hasSize(1));
     }
@@ -256,7 +278,7 @@ public class FlowDriverOutputTest {
      */
     @Test
     public void verify_uri_uri_tester() {
-        MockFlowDriverOutput mock = new MockFlowDriverOutput(getClass(), tool_data_rule("Hello3"));
+        MockFlowDriverOutput<Text> mock = MockFlowDriverOutput.text(getClass(), tool_data_rule("Hello3"));
         mock.verify("data/dummy", "data/dummy2", modelTester("Hello1"));
         assertThat(test(mock.getVerifier(), "Hello1", "Hello2", "Hello3"), hasSize(2));
     }
@@ -266,7 +288,7 @@ public class FlowDriverOutputTest {
      */
     @Test
     public void verify_iterable_uri_tester() {
-        MockFlowDriverOutput mock = new MockFlowDriverOutput(getClass(), tool_rule("Hello3"));
+        MockFlowDriverOutput<Text> mock = MockFlowDriverOutput.text(getClass(), tool_rule("Hello3"));
         mock.verify(list("Hello1", "Hello2", "Hello3"), "data/dummy", modelTester("Hello1"));
         assertThat(test(mock.getVerifier(), "Hello1", "Hello2", "Hello3"), hasSize(2));
     }
@@ -276,7 +298,7 @@ public class FlowDriverOutputTest {
      */
     @Test
     public void verify_provider_uri_tester() {
-        MockFlowDriverOutput mock = new MockFlowDriverOutput(getClass(), tool_rule("Hello3"));
+        MockFlowDriverOutput<Text> mock = MockFlowDriverOutput.text(getClass(), tool_rule("Hello3"));
         mock.verify(provider("Hello1", "Hello2", "Hello3"), "data/dummy", modelTester("Hello1"));
         assertThat(test(mock.getVerifier(), "Hello1", "Hello2", "Hello3"), hasSize(2));
     }
@@ -286,7 +308,7 @@ public class FlowDriverOutputTest {
      */
     @Test
     public void verify_uri_verifier() {
-        MockFlowDriverOutput mock = new MockFlowDriverOutput(getClass(), tool_data);
+        MockFlowDriverOutput<Text> mock = MockFlowDriverOutput.text(getClass(), tool_data);
         mock.verify("data/dummy", modelVerifier("Hello2"));
         assertThat(test(mock.getVerifier(), "Hello1", "Hello2", "Hello3"), hasSize(1));
     }
@@ -296,7 +318,7 @@ public class FlowDriverOutputTest {
      */
     @Test
     public void verify_iterable_verifier() {
-        MockFlowDriverOutput mock = new MockFlowDriverOutput(getClass(), new MockTestDataToolProvider());
+        MockFlowDriverOutput<Text> mock = MockFlowDriverOutput.text(getClass(), provider());
 
         mock.verify(list("Hello1", "Hello2", "Hello3"), modelVerifier("Hello2"));
         assertThat(test(mock.getVerifier(), "Hello1", "Hello2", "Hello3"), hasSize(1));
@@ -307,7 +329,7 @@ public class FlowDriverOutputTest {
      */
     @Test
     public void verify_privider_verifier() {
-        MockFlowDriverOutput mock = new MockFlowDriverOutput(getClass(), new MockTestDataToolProvider());
+        MockFlowDriverOutput<Text> mock = MockFlowDriverOutput.text(getClass(), provider());
         mock.verify(provider("Hello1", "Hello2", "Hello3"), modelVerifier("Hello2"));
         assertThat(test(mock.getVerifier(), "Hello1", "Hello2", "Hello3"), hasSize(1));
     }
@@ -317,7 +339,7 @@ public class FlowDriverOutputTest {
      */
     @Test
     public void filter() {
-        MockFlowDriverOutput mock = new MockFlowDriverOutput(getClass(), tool_rule("Hello3"));
+        MockFlowDriverOutput<Text> mock = MockFlowDriverOutput.text(getClass(), tool_rule("Hello3"));
         UnaryOperator<DataModelSource> filter = source -> new DataModelSource() {
             @Override
             public DataModelReflection next() throws IOException {
@@ -342,7 +364,7 @@ public class FlowDriverOutputTest {
      */
     @Test
     public void transform() {
-        MockFlowDriverOutput mock = new MockFlowDriverOutput(getClass(), tool_rule("Hello3!"));
+        MockFlowDriverOutput<Text> mock = MockFlowDriverOutput.text(getClass(), tool_rule("Hello3!"));
         ModelTransformer<Text> transformer = new ModelTransformer<Text>() {
             @Override
             public void transform(Text model) {
@@ -360,7 +382,7 @@ public class FlowDriverOutputTest {
     @Test
     public void dumpActual_uri() {
         MockDataModelSink sink = new MockDataModelSink();
-        MockFlowDriverOutput mock = new MockFlowDriverOutput(getClass(), new MockTestDataToolProvider() {
+        MockFlowDriverOutput<Text> mock = MockFlowDriverOutput.text(getClass(), new MockTestDataToolProvider() {
             @Override
             public DataModelSinkFactory getDataModelSinkFactory(URI uri) {
                 assertThat(uri.getPath(), endsWith("testing"));
@@ -383,7 +405,7 @@ public class FlowDriverOutputTest {
     public void dumpActual_file() {
         File file = new File(folder.getRoot(), "testing");
         MockDataModelSink sink = new MockDataModelSink();
-        MockFlowDriverOutput mock = new MockFlowDriverOutput(getClass(), new MockTestDataToolProvider() {
+        MockFlowDriverOutput<Text> mock = MockFlowDriverOutput.text(getClass(), new MockTestDataToolProvider() {
             @Override
             public DataModelSinkFactory getDataModelSinkFactory(URI uri) {
                 assertThat(new File(uri).getName(), is(file.getName()));
@@ -405,7 +427,7 @@ public class FlowDriverOutputTest {
     @Test
     public void dumpDifference_uri() {
         MockDiffSink sink = new MockDiffSink();
-        MockFlowDriverOutput mock = new MockFlowDriverOutput(getClass(), new MockTestDataToolProvider() {
+        MockFlowDriverOutput<Text> mock = MockFlowDriverOutput.text(getClass(), new MockTestDataToolProvider() {
             @Override
             public DifferenceSinkFactory getDifferenceSinkFactory(URI uri) {
                 assertThat(uri.getPath(), endsWith("testing"));
@@ -428,7 +450,7 @@ public class FlowDriverOutputTest {
     public void dumpDifference_file() {
         File file = new File(folder.getRoot(), "testing");
         MockDiffSink sink = new MockDiffSink();
-        MockFlowDriverOutput mock = new MockFlowDriverOutput(getClass(), new MockTestDataToolProvider() {
+        MockFlowDriverOutput<Text> mock = MockFlowDriverOutput.text(getClass(), new MockTestDataToolProvider() {
             @Override
             public DifferenceSinkFactory getDifferenceSinkFactory(URI uri) {
                 assertThat(uri.getPath(), endsWith("testing"));

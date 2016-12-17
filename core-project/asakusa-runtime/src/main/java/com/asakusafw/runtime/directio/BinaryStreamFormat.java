@@ -27,8 +27,28 @@ import com.asakusafw.runtime.io.ModelOutput;
  * This implementation class must have a public constructor without any parameters.
  * @param <T> the type of target data model
  * @since 0.2.5
+ * @version 0.9.1
  */
 public abstract class BinaryStreamFormat<T> implements FragmentableDataFormat<T> {
+
+    /**
+     * Creates a new {@link ModelInput} for the specified properties.
+     * @param dataType the target data type
+     * @param path the path about the target stream (for label)
+     * @param stream the target stream
+     * @return the created reader
+     * @throws IOException if failed to create reader
+     * @throws InterruptedException if interrupted
+     * @throws IllegalArgumentException if this does not support target property sequence,
+     *     or any parameter is {@code null}
+     * @since 0.9.1
+     */
+    public ModelInput<T> createInput(
+            Class<? extends T> dataType,
+            String path,
+            InputStream stream) throws IOException, InterruptedException {
+        return createInput(dataType, path, stream, 0L, -1L);
+    }
 
     /**
      * Creates a new {@link ModelInput} for the specified properties.

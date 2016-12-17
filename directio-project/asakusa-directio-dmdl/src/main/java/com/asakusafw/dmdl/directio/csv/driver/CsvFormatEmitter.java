@@ -433,24 +433,26 @@ public class CsvFormatEmitter extends JavaDataModelDriver {
             }
 
             SimpleName fragmentInput = f.newSimpleName("fragmentInput"); //$NON-NLS-1$
-            statements.add(f.newLocalVariableDeclaration(
-                    context.resolve(InputStream.class),
-                    fragmentInput,
-                    null));
             if (isFastMode()) {
-                statements.add(new ExpressionBuilder(f, fragmentInput)
-                    .assignFrom(new TypeBuilder(f, context.resolve(DelimiterRangeInputStream.class))
+                statements.add(new TypeBuilder(f, context.resolve(DelimiterRangeInputStream.class))
                         .newObject(
                                 blessInputStream(stream),
                                 Models.toLiteral(f, '\n'),
-                                fragmentSize,
+                                f.newConditionalExpression(
+                                        f.newInfixExpression(
+                                                fragmentSize,
+                                                InfixOperator.GREATER_EQUALS,
+                                                Models.toLiteral(f, 0L)),
+                                        fragmentSize,
+                                        new TypeBuilder(f, context.resolve(Long.class))
+                                            .field("MAX_VALUE") //$NON-NLS-1$
+                                            .toExpression()),
                                 isNotHead)
-                        .toExpression())
-                    .toStatement());
+                        .toLocalVariableDeclaration(context.resolve(InputStream.class), fragmentInput));
             } else {
                 statements.add(new ExpressionBuilder(f, fragmentInput)
-                    .assignFrom(blessInputStream(stream))
-                    .toStatement());
+                        .assignFrom(blessInputStream(stream))
+                        .toLocalVariableDeclaration(context.resolve(InputStream.class), fragmentInput));
             }
 
             SimpleName parser = f.newSimpleName("parser"); //$NON-NLS-1$

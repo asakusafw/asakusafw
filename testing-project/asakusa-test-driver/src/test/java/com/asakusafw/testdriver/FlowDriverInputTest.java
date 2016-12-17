@@ -21,22 +21,24 @@ import static org.junit.Assert.*;
 
 import java.net.URI;
 
+import org.apache.hadoop.io.Text;
 import org.junit.Test;
 
 import com.asakusafw.testdriver.core.DataModelSourceFactory;
+import com.asakusafw.testdriver.testing.dsl.SimpleStreamFormat;
+import com.asakusafw.testdriver.testing.model.Simple;
 import com.asakusafw.utils.io.Provider;
 
 /**
  * Test for {@link FlowDriverInput}.
  */
 public class FlowDriverInputTest {
-
     /**
      * simple test for {@link FlowDriverInput#prepare(java.lang.String)}.
      */
     @Test
     public void prepare_uri() {
-        MockFlowDriverInput mock = new MockFlowDriverInput(getClass(), new MockTestDataToolProvider() {
+        MockFlowDriverInput<?> mock = MockFlowDriverInput.text(getClass(), new MockTestDataToolProvider() {
             @Override
             public DataModelSourceFactory getDataModelSourceFactory(URI uri) {
                 assertThat(uri.toString(), endsWith("data/dummy"));
@@ -51,7 +53,7 @@ public class FlowDriverInputTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void prepare_uri_missing() {
-        new MockFlowDriverInput(getClass(), new MockTestDataToolProvider()).prepare("data/__MISSING__");
+        new MockFlowDriverInput<>(getClass(), Text.class, provider()).prepare("data/__MISSING__");
     }
 
     /**
@@ -59,7 +61,7 @@ public class FlowDriverInputTest {
      */
     @Test
     public void prepare_factory() {
-        MockFlowDriverInput mock = new MockFlowDriverInput(getClass(), new MockTestDataToolProvider())
+        MockFlowDriverInput<?> mock = MockFlowDriverInput.text(getClass(), provider())
             .prepare(factory("Hello1", "Hello2"));
         verify(mock.getSource(), DEFINITION, list("Hello1", "Hello2"));
     }
@@ -69,7 +71,7 @@ public class FlowDriverInputTest {
      */
     @Test
     public void prepare_collection() {
-        MockFlowDriverInput mock = new MockFlowDriverInput(getClass(), new MockTestDataToolProvider())
+        MockFlowDriverInput<?> mock = MockFlowDriverInput.text(getClass(), provider())
             .prepare(list("Hello1", "Hello2"));
         verify(mock.getSource(), DEFINITION, list("Hello1", "Hello2"));
     }
@@ -79,8 +81,28 @@ public class FlowDriverInputTest {
      */
     @Test
     public void prepare_iterator() {
-        MockFlowDriverInput mock = new MockFlowDriverInput(getClass(), new MockTestDataToolProvider())
+        MockFlowDriverInput<?> mock = MockFlowDriverInput.text(getClass(), provider())
             .prepare(provider("Hello1", "Hello2"));
         verify(mock.getSource(), DEFINITION, list("Hello1", "Hello2"));
+    }
+
+    /**
+     * simple test for {@link FlowDriverInput#prepare(Class, String)}.
+     */
+    @Test
+    public void prepare_directio_path() {
+        MockFlowDriverInput<?> mock = new MockFlowDriverInput<>(getClass(), Simple.class, provider())
+                .prepare(SimpleStreamFormat.class, "directio/simple.txt");
+        verify(mock.getSource(), DEFINITION, list("Hello, world!"));
+    }
+
+    /**
+     * simple test for {@link FlowDriverInput#prepare(Class, java.io.File)}.
+     */
+    @Test
+    public void prepare_directio_file() {
+        MockFlowDriverInput<?> mock = new MockFlowDriverInput<>(getClass(), Simple.class, provider())
+                .prepare(SimpleStreamFormat.class, asFile("directio/simple.txt"));
+        verify(mock.getSource(), DEFINITION, list("Hello, world!"));
     }
 }

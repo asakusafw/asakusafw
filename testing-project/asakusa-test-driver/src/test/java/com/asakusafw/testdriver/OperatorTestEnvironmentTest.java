@@ -18,7 +18,9 @@ package com.asakusafw.testdriver;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,6 +33,7 @@ import com.asakusafw.runtime.core.Report;
 import com.asakusafw.runtime.core.Report.Level;
 import com.asakusafw.runtime.core.ResourceConfiguration;
 import com.asakusafw.runtime.flow.RuntimeResourceManager;
+import com.asakusafw.testdriver.testing.dsl.SimpleStreamFormat;
 import com.asakusafw.testdriver.testing.model.Simple;
 
 /**
@@ -124,6 +127,47 @@ public class OperatorTestEnvironmentTest {
             List<Simple> list = env.loader(Simple.class, "data/simple-in.json")
                     .asList();
             assertThat(list, is(simples("This is a test")));
+        } finally {
+            env.after();
+        }
+    }
+
+    /**
+     * loader w/ directio path.
+     * @throws Throwable if failed
+     */
+    @Test
+    public void loader_directio_path() throws Throwable {
+        OperatorTestEnvironment env = new OperatorTestEnvironment(getFilePath("simple.xml")).reset(getClass());
+        env.before();
+        try {
+            List<Simple> list = env.loader(Simple.class, SimpleStreamFormat.class, "directio/simple.txt")
+                    .asList();
+            assertThat(list, is(simples("Hello, world!")));
+        } finally {
+            env.after();
+        }
+    }
+
+    /**
+     * loader w/ directio file.
+     * @throws Throwable if failed
+     */
+    @Test
+    public void loader_directio_file() throws Throwable {
+        File file;
+        try {
+            file = new File(getClass().getResource("directio/simple.txt").toURI());
+        } catch (URISyntaxException e) {
+            Assume.assumeNoException(e);
+            throw new AssertionError(e);
+        }
+        OperatorTestEnvironment env = new OperatorTestEnvironment(getFilePath("simple.xml")).reset(getClass());
+        env.before();
+        try {
+            List<Simple> list = env.loader(Simple.class, SimpleStreamFormat.class, file)
+                    .asList();
+            assertThat(list, is(simples("Hello, world!")));
         } finally {
             env.after();
         }

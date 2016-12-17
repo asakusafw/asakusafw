@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.apache.hadoop.io.Text;
 
+import com.asakusafw.runtime.model.DataModel;
 import com.asakusafw.testdriver.core.AbstractTestDataToolProvider;
 import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.DataModelSinkFactory;
@@ -28,6 +29,7 @@ import com.asakusafw.testdriver.core.DataModelSourceFactory;
 import com.asakusafw.testdriver.core.DifferenceSinkFactory;
 import com.asakusafw.testdriver.core.TestRule;
 import com.asakusafw.testdriver.core.VerifyRuleFactory;
+import com.asakusafw.testdriver.model.DefaultDataModelDefinition;
 
 /**
  * Mock implementation of {@link AbstractTestDataToolProvider}.
@@ -37,6 +39,9 @@ public class MockTestDataToolProvider extends AbstractTestDataToolProvider {
     @SuppressWarnings("unchecked")
     @Override
     public <T> DataModelDefinition<T> toDataModelDefinition(Class<T> dataModelClass) throws IOException {
+        if (DataModel.class.isAssignableFrom(dataModelClass)) {
+            return new DefaultDataModelDefinition<>(dataModelClass);
+        }
         if (dataModelClass != Text.class) {
             throw new IOException();
         }

@@ -74,7 +74,7 @@ public class OrcFileInput<T> implements ModelInput<T> {
      * @param fileSystem the file system to open the target path
      * @param path the path to the target file
      * @param offset starting stream offset
-     * @param fragmentSize suggested fragment bytes count, or {@code -1} as infinite
+     * @param fragmentSize suggested fragment bytes count
      * @param counter the current counter
      */
     public OrcFileInput(
@@ -92,7 +92,7 @@ public class OrcFileInput<T> implements ModelInput<T> {
      * @param fileSystem the file system to open the target path
      * @param path the path to the target file
      * @param offset starting stream offset
-     * @param fragmentSize suggested fragment bytes count, or {@code -1} as infinite
+     * @param fragmentSize suggested fragment bytes count
      * @param counter the current counter
      */
     public OrcFileInput(

@@ -20,6 +20,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.UnaryOperator;
 
+import com.asakusafw.runtime.directio.DataFormat;
+import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.DataModelSinkFactory;
 import com.asakusafw.testdriver.core.DataModelSource;
 import com.asakusafw.testdriver.core.DataModelSourceFactory;
@@ -38,7 +40,7 @@ import com.asakusafw.utils.io.Source;
  * @param <T> the output data model type
  * @param <S> the implementation class type
  * @since 0.6.0
- * @version 0.7.0
+ * @version 0.9.1
  */
 public abstract class FlowDriverOutput<T, S extends FlowDriverOutput<T, S>> extends DriverOutputBase<T> {
 
@@ -170,6 +172,34 @@ public abstract class FlowDriverOutput<T, S extends FlowDriverOutput<T, S>> exte
             throw new IllegalArgumentException("provider must not be null"); //$NON-NLS-1$
         }
         return prepare(toDataModelSourceFactory(provider));
+    }
+
+    /**
+     * Sets the test data set for this input.
+     * Note that, the original source path may be changed if tracking source file name.
+     * To keep the source file path information, please use {@link #prepare(Class, File)} instead.
+     * @param formatClass the data format class
+     * @param sourcePath the input file path on the class path
+     * @return this
+     * @throws IllegalArgumentException if the source is not valid for the given data format
+     * @since 0.9.1
+     */
+    public S prepare(Class<? extends DataFormat<? super T>> formatClass, String sourcePath) {
+        DataModelDefinition<T> definition = getDataModelDefinition();
+        return prepare(toDataModelSourceFactory(definition, formatClass, sourcePath));
+    }
+
+    /**
+     * Sets the test data set for this input.
+     * @param formatClass the data format class
+     * @param sourceFile the input file
+     * @return this
+     * @throws IllegalArgumentException if the source is not valid for the given data format
+     * @since 0.9.1
+     */
+    public S prepare(Class<? extends DataFormat<? super T>> formatClass, File sourceFile) {
+        DataModelDefinition<T> definition = getDataModelDefinition();
+        return prepare(toDataModelSourceFactory(definition, formatClass, sourceFile));
     }
 
     /**

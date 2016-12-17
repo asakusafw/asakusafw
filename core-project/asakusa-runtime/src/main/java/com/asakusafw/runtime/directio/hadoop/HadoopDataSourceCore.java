@@ -27,7 +27,6 @@ import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
-import com.asakusafw.runtime.directio.BinaryStreamFormat;
 import com.asakusafw.runtime.directio.Counter;
 import com.asakusafw.runtime.directio.DataDefinition;
 import com.asakusafw.runtime.directio.DataFilter;
@@ -238,11 +237,10 @@ public class HadoopDataSourceCore implements DirectDataSource {
                     fragment.getOffset(),
                     fragment.getSize()));
         }
-        DataFormat<T> format = definition.getDataFormat();
         Class<? extends T> dataType = definition.getDataClass();
-        HadoopFileFormat<T> fileFormat = convertFormat(format);
+        HadoopFileFormat<T> dataFormat = convertFormat(definition.getDataFormat());
         DataFilter<? super T> filter = definition.getDataFilter();
-        ModelInput<T> input = fileFormat.createInput(
+        ModelInput<T> input = dataFormat.createInput(
                 dataType,
                 profile.getFileSystem(),
                 new Path(fragment.getPath()),
@@ -317,23 +315,7 @@ public class HadoopDataSourceCore implements DirectDataSource {
 
     private <T> HadoopFileFormat<T> convertFormat(DataFormat<T> format) throws IOException {
         assert format != null;
-        if (format instanceof HadoopFileFormat<?>) {
-            return (HadoopFileFormat<T>) format;
-        } else {
-            return new HadoopFileFormatAdapter<>(validateStream(format), profile.getFileSystem().getConf());
-        }
-    }
-
-    private <T> BinaryStreamFormat<T> validateStream(DataFormat<T> format) throws IOException {
-        assert format != null;
-        if ((format instanceof BinaryStreamFormat<?>) == false) {
-            throw new IOException(MessageFormat.format(
-                    "{2} must be a subtype of {1} (path={0})",
-                    profile.getContextPath(),
-                    BinaryStreamFormat.class.getName(),
-                    format.getClass().getName()));
-        }
-        return (BinaryStreamFormat<T>) format;
+        return HadoopDataSourceUtil.toHadoopFileFormat(profile.getFileSystem().getConf(), format);
     }
 
     @Override

@@ -15,6 +15,7 @@
  */
 package com.asakusafw.testdriver;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.text.MessageFormat;
@@ -29,6 +30,7 @@ import org.junit.runners.model.Statement;
 
 import com.asakusafw.runtime.core.BatchContext;
 import com.asakusafw.runtime.core.Report;
+import com.asakusafw.runtime.directio.DataFormat;
 import com.asakusafw.runtime.flow.RuntimeResourceManager;
 import com.asakusafw.runtime.stage.StageConstants;
 import com.asakusafw.runtime.util.VariableTable;
@@ -325,6 +327,36 @@ public class OperatorTestEnvironment extends DriverElementBase implements TestRu
     public <T> DataLoader<T> loader(Class<T> dataType, Provider<? extends Source<? extends T>> provider) {
         Objects.requireNonNull(provider);
         return loader(dataType, toDataModelSourceFactory(provider));
+    }
+
+    /**
+     * Returns a new data loader.
+     * Note that, the original source path may be changed if tracking source file name.
+     * To keep the source file path information, please use {@link #loader(Class, Class, File)} instead.
+     * @param <T> the data type
+     * @param dataType the data type
+     * @param formatClass the data format class
+     * @param sourcePath the input file path on the class path
+     * @return the created loader
+     * @since 0.9.1
+     */
+    public <T> DataLoader<T> loader(
+            Class<T> dataType, Class<? extends DataFormat<? super T>> formatClass, String sourcePath) {
+        return loader(dataType, toDataModelSourceFactory(toDataModelDefinition(dataType), formatClass, sourcePath));
+    }
+
+    /**
+     * Returns a new data loader.
+     * @param <T> the data type
+     * @param dataType the data type
+     * @param formatClass the data format class
+     * @param file the input file path on the class path
+     * @return the created loader
+     * @since 0.9.1
+     */
+    public <T> DataLoader<T> loader(
+            Class<T> dataType, Class<? extends DataFormat<? super T>> formatClass, File file) {
+        return loader(dataType, toDataModelSourceFactory(toDataModelDefinition(dataType), formatClass, file));
     }
 
     /**
