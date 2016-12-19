@@ -174,6 +174,106 @@ public class CoGroupOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
+     * w/ table inputs.
+     */
+    @Test
+    public void with_view() {
+        compile(new Action("com.example.WithView") {
+            @Override
+            protected void perform(OperatorElement target) {
+                OperatorDescription description = target.getDescription();
+                assertThat(description.getInputs().size(), is(2));
+                assertThat(description.getOutputs().size(), is(1));
+                assertThat(description.getArguments().size(), is(0));
+
+                Node input = description.getInputs().get(0);
+                assertThat(input.getName(), is("in"));
+                assertThat(input.getType(), is(sameType("com.example.Model")));
+                assertThat(input.getAttributes(), not(hasItem(isView())));
+
+                Node side = description.getInputs().get(1);
+                assertThat(side.getName(), is("side"));
+                assertThat(side.getType(), is(sameType("com.example.Model")));
+                assertThat(side.getAttributes(), hasItem(flatView()));
+
+                Node output = description.getOutputs().get(0);
+                assertThat(output.getName(), is("out"));
+                assertThat(output.getType(), is(sameType("com.example.Proceeded")));
+            }
+        });
+    }
+
+    /**
+     * w/ table inputs.
+     */
+    @Test
+    public void with_table() {
+        compile(new Action("com.example.WithTable") {
+            @Override
+            protected void perform(OperatorElement target) {
+                OperatorDescription description = target.getDescription();
+                assertThat(description.getInputs().size(), is(2));
+                assertThat(description.getOutputs().size(), is(1));
+                assertThat(description.getArguments().size(), is(0));
+
+                Node input = description.getInputs().get(0);
+                assertThat(input.getName(), is("in"));
+                assertThat(input.getType(), is(sameType("com.example.Model")));
+                assertThat(input.getAttributes(), not(hasItem(isView())));
+
+                Node side = description.getInputs().get(1);
+                assertThat(side.getName(), is("side"));
+                assertThat(side.getType(), is(sameType("com.example.Model")));
+                assertThat(side.getAttributes(), hasItem(groupView("=content")));
+
+                Node output = description.getOutputs().get(0);
+                assertThat(output.getName(), is("out"));
+                assertThat(output.getType(), is(sameType("com.example.Proceeded")));
+            }
+        });
+    }
+
+    /**
+     * w/ many table inputs.
+     */
+    @Test
+    public void with_table_many() {
+        compile(new Action("com.example.WithTableMany") {
+            @Override
+            protected void perform(OperatorElement target) {
+                OperatorDescription description = target.getDescription();
+                assertThat(description.getInputs().size(), is(4));
+                assertThat(description.getOutputs().size(), is(1));
+                assertThat(description.getArguments().size(), is(0));
+
+                Node input = description.getInputs().get(0);
+                assertThat(input.getName(), is("in"));
+                assertThat(input.getType(), is(sameType("com.example.Model")));
+                assertThat(input.getAttributes(), not(hasItem(isView())));
+
+                Node side0 = description.getInputs().get(1);
+                assertThat(side0.getName(), is("side0"));
+                assertThat(side0.getType(), is(sameType("com.example.Model")));
+                assertThat(side0.getAttributes(), hasItem(groupView("=content")));
+
+                Node side1 = description.getInputs().get(2);
+                assertThat(side1.getName(), is("side1"));
+                assertThat(side1.getType(), is(sameType("com.example.Model")));
+                assertThat(side1.getAttributes(), hasItem(groupView("=content")));
+
+                Node side2 = description.getInputs().get(3);
+                assertThat(side2.getName(), is("side2"));
+                assertThat(side2.getType(), is(sameType("com.example.Model")));
+                assertThat(side2.getAttributes(), hasItem(groupView()));
+
+                Node output = description.getOutputs().get(0);
+                assertThat(output.getName(), is("out"));
+                assertThat(output.getType(), is(sameType("com.example.Proceeded")));
+            }
+        });
+    }
+
+    /**
      * w/ iterable inputs.
      */
     @Test
@@ -358,7 +458,7 @@ public class CoGroupOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
-     * violates each group has same number of properties.
+     * violates parameter order.
      */
     @Test
     public void violate_input_before_output() {
@@ -366,7 +466,15 @@ public class CoGroupOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
-     * violates each group has same number of properties.
+     * violates parameter order.
+     */
+    @Test
+    public void violate_input_before_side() {
+        violate("com.example.ViolateInputBeforeSide");
+    }
+
+    /**
+     * violates parameter order.
      */
     @Test
     public void violate_input_before_argument() {
@@ -374,7 +482,15 @@ public class CoGroupOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
-     * violates each group has same number of properties.
+     * violates parameter order.
+     */
+    @Test
+    public void violate_side_before_output() {
+        violate("com.example.ViolateSideBeforeOutput");
+    }
+
+    /**
+     * violates parameter order.
      */
     @Test
     public void violate_output_before_argument() {
@@ -387,5 +503,21 @@ public class CoGroupOperatorDriverTest extends OperatorDriverTestRoot {
     @Test
     public void violate_input_once_iterable() {
         violate("com.example.ViolateInputOnceIterable");
+    }
+
+    /**
+     * violates flat views SHOULD not have any key annotations (warning).
+     */
+    @Test
+    public void violate_flat_view_without_key() {
+        violate("com.example.ViolateFlatViewWithoutKey");
+    }
+
+    /**
+     * violates group views must have key annotation.
+     */
+    @Test
+    public void violate_group_view_with_key() {
+        violate("com.example.ViolateGroupViewWithKey");
     }
 }

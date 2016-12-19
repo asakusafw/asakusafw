@@ -72,7 +72,7 @@ final class GroupKindOperatorUtil {
         AnnotationRef once = parameter.annotation(TYPE_ONCE);
         if (once != null) {
             if (type.isIterable() == false) {
-                once.error("@Once must be declared with Iterable<...>");
+                once.error(Messages.getString("GroupKindOperatorUtil.errorOnceNotIterable")); //$NON-NLS-1$
                 return BUFFER_TYPE_HEAP;
             } else {
                 return BUFFER_TYPE_VOLATILE;

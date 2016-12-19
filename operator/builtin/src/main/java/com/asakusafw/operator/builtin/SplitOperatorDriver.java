@@ -77,7 +77,7 @@ public class SplitOperatorDriver implements OperatorDriver {
 
         dsl.addInput(p0.document(), p0.name(), p0.type().mirror(), p0.reference());
 
-        for (ElementRef p : dsl.parameters(1)) {
+        for (ElementRef p : dsl.parametersFrom(1)) {
             TypeRef type = p.type();
             if (type.isResult()) {
                 TypeRef arg = type.arg(0);
@@ -103,7 +103,7 @@ public class SplitOperatorDriver implements OperatorDriver {
                 }
             } else if (type.isDataModel()) {
                 p.error(Messages.getString("SplitOperatorDriver.errorOutputDataModelType")); //$NON-NLS-1$
-            } else if (type.isBasic()) {
+            } else if (type.isBasic()) { // unsupported
                 p.error(Messages.getString("SplitOperatorDriver.errorOutputBasicType")); //$NON-NLS-1$
             } else {
                 p.error(Messages.getString("SplitOperatorDriver.errorParameterUnsupportedType")); //$NON-NLS-1$

@@ -57,8 +57,8 @@ public class BranchOperatorDriver implements OperatorDriver {
                 } else {
                     p.error(Messages.getString("BranchOperatorDriver.errorInputTooMany")); //$NON-NLS-1$
                 }
-            } else if (type.isBasic()) {
-                dsl.consumeGenericParameter(p);
+            } else if (type.isExtra()) {
+                dsl.consumeExtraParameter(p);
             } else {
                 p.error(Messages.getString("BranchOperatorDriver.errorParameterUnsupportedType")); //$NON-NLS-1$
             }

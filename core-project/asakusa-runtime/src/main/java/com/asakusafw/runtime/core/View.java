@@ -13,22 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.vocabulary.attribute;
-
-import com.asakusafw.vocabulary.flow.graph.FlowElementAttribute;
+package com.asakusafw.runtime.core;
 
 /**
- * An abstract super interface of DSL element attributes.
- * @since 0.9.0
+ * Represents a data-flow view.
+ * Application developers <em>MUST NOT</em> change the returned objects.
+ * @param <T> the data type
+ * @since 0.9.1
  */
-public interface Attribute extends FlowElementAttribute {
-
-    /**
-     * Returns the declaring class of this attribute.
-     * @return the declaring class of this attribute
-     */
-    @Override
-    default Class<? extends Attribute> getDeclaringClass() {
-        return getClass();
-    }
+public interface View<T> extends Iterable<T> {
+    // no special members
 }

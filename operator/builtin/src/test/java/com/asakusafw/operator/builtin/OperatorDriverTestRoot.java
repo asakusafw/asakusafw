@@ -26,12 +26,17 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.ElementFilter;
+
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
 
 import com.asakusafw.operator.Callback;
 import com.asakusafw.operator.CompileEnvironment;
@@ -41,10 +46,14 @@ import com.asakusafw.operator.OperatorCompilerTestRoot;
 import com.asakusafw.operator.OperatorDriver;
 import com.asakusafw.operator.WarningAction;
 import com.asakusafw.operator.description.ClassDescription;
+import com.asakusafw.operator.description.Descriptions;
+import com.asakusafw.operator.description.ObjectDescription;
+import com.asakusafw.operator.description.ValueDescription;
 import com.asakusafw.operator.method.OperatorMethodAnalyzer;
 import com.asakusafw.operator.model.OperatorClass;
 import com.asakusafw.operator.model.OperatorDescription.Node;
 import com.asakusafw.operator.model.OperatorElement;
+import com.asakusafw.vocabulary.attribute.ViewInfo;
 
 /**
  * Test helper for {@link OperatorDriver}s.
@@ -153,6 +162,44 @@ public class OperatorDriverTestRoot extends OperatorCompilerTestRoot {
     protected final void addDataModel(String simpleName, String content) {
         add("com/example/" + simpleName, content);
         dataModelNames.add(simpleName);
+    }
+
+    /**
+     * Returns a plain view info.
+     * @return the matcher
+     */
+    public ObjectDescription flatView() {
+        return ObjectDescription.of(
+                DslBuilder.TYPE_VIEW_INFO, DslBuilder.NAME_FLAT_VIEW_INFO_FACTORY);
+    }
+
+    /**
+     * Returns a group view info.
+     * @param terms the property terms
+     * @return the matcher
+     */
+    public ObjectDescription groupView(String... terms) {
+        return ObjectDescription.of(
+                DslBuilder.TYPE_VIEW_INFO, DslBuilder.NAME_GROUP_VIEW_INFO_FACTORY,
+                Arrays.stream(terms).map(Descriptions::valueOf).collect(Collectors.toList()));
+    }
+
+    /**
+     * Returns a matcher that tests whether or not the value represents a view info.
+     * @return the matcher
+     */
+    public Matcher<ValueDescription> isView() {
+        return new BaseMatcher<ValueDescription>() {
+            @Override
+            public boolean matches(Object item) {
+                ValueDescription v = (ValueDescription) item;
+                return v.getValueType().equals(ClassDescription.of(ViewInfo.class));
+            }
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("is view");
+            }
+        };
     }
 
     /**

@@ -1,0 +1,16 @@
+package com.example;
+
+import java.util.List;
+import com.asakusafw.runtime.core.*;
+import com.asakusafw.vocabulary.flow.processor.*;
+import com.asakusafw.vocabulary.model.*;
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class $s {
+
+    @Fold(partialAggregation=PartialAggregation.PARTIAL)
+    public void method(
+            @Key(group = "content") Model aggregate, Model in,
+            @Key(group = "content") GroupView<Model> table) {
+    }
+}

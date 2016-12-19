@@ -15,10 +15,12 @@
  */
 package com.asakusafw.testdriver;
 
+import java.io.IOException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.hadoop.conf.Configuration;
 import org.junit.rules.TestRule;
@@ -31,11 +33,17 @@ import com.asakusafw.runtime.flow.RuntimeResourceManager;
 import com.asakusafw.runtime.stage.StageConstants;
 import com.asakusafw.runtime.util.VariableTable;
 import com.asakusafw.runtime.util.VariableTable.RedefineStrategy;
+import com.asakusafw.testdriver.core.DataModelDefinition;
+import com.asakusafw.testdriver.core.DataModelSourceFactory;
 import com.asakusafw.testdriver.core.TestContext;
 import com.asakusafw.testdriver.core.TestDataToolProvider;
 import com.asakusafw.testdriver.core.TestToolRepository;
 import com.asakusafw.testdriver.core.TestingEnvironmentConfigurator;
 import com.asakusafw.testdriver.hadoop.ConfigurationFactory;
+import com.asakusafw.testdriver.loader.BasicDataLoader;
+import com.asakusafw.testdriver.loader.DataLoader;
+import com.asakusafw.utils.io.Provider;
+import com.asakusafw.utils.io.Source;
 
 /**
  * An <em>Operator DSL</em> test helper which enables framework APIs.
@@ -67,7 +75,7 @@ public void sometest() {
 }
 </code></pre>
  * @since 0.1.0
- * @version 0.7.3
+ * @version 0.9.1
  */
 public class OperatorTestEnvironment extends DriverElementBase implements TestRule {
 
@@ -126,7 +134,7 @@ public class OperatorTestEnvironment extends DriverElementBase implements TestRu
 
     @Override
     public Statement apply(Statement base, Description description) {
-        this.testClass = description.getTestClass();
+        reset(description.getTestClass());
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {
@@ -138,6 +146,11 @@ public class OperatorTestEnvironment extends DriverElementBase implements TestRu
                 }
             }
         };
+    }
+
+    OperatorTestEnvironment reset(Class<?> contextClass) {
+        this.testClass = contextClass;
+        return this;
     }
 
     @Override
@@ -273,6 +286,68 @@ public class OperatorTestEnvironment extends DriverElementBase implements TestRu
      */
     public Configuration getConfiguration() {
         return createConfig();
+    }
+
+    /**
+     * Returns a new data loader.
+     * @param <T> the data type
+     * @param dataType the data type
+     * @param sourcePath the path to test data set (relative from the current test case class)
+     * @return the created loader
+     * @since 0.9.1
+     */
+    public <T> DataLoader<T> loader(Class<T> dataType, String sourcePath) {
+        Objects.requireNonNull(sourcePath);
+        return loader(dataType, toDataModelSourceFactory(sourcePath));
+    }
+
+    /**
+     * Returns a new data loader.
+     * @param <T> the data type
+     * @param dataType the data type
+     * @param objects the test data objects
+     * @return the created loader
+     * @since 0.9.1
+     */
+    public <T> DataLoader<T> loader(Class<T> dataType, Iterable<? extends T> objects) {
+        Objects.requireNonNull(objects);
+        return loader(dataType, toDataModelSourceFactory(toDataModelDefinition(dataType), objects));
+    }
+
+    /**
+     * Returns a new data loader.
+     * @param <T> the data type
+     * @param dataType the data type
+     * @param provider the test data set provider
+     * @return the created loader
+     * @since 0.9.1
+     */
+    public <T> DataLoader<T> loader(Class<T> dataType, Provider<? extends Source<? extends T>> provider) {
+        Objects.requireNonNull(provider);
+        return loader(dataType, toDataModelSourceFactory(provider));
+    }
+
+    /**
+     * Returns a new data loader.
+     * @param <T> the data type
+     * @param dataType the data type
+     * @param factory factory which provides test data set
+     * @return the created loader
+     * @since 0.9.1
+     */
+    public <T> DataLoader<T> loader(Class<T> dataType, DataModelSourceFactory factory) {
+        Objects.requireNonNull(factory);
+        return new BasicDataLoader<>(getTestContext(), toDataModelDefinition(dataType), factory);
+    }
+
+    private <T> DataModelDefinition<T> toDataModelDefinition(Class<T> dataType) {
+        try {
+            return getTestTools().toDataModelDefinition(dataType);
+        } catch (IOException e) {
+            throw new IllegalStateException(MessageFormat.format(
+                    "failed to analyze the data model type: {0}",
+                    dataType.getName()), e);
+        }
     }
 
     /**

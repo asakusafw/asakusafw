@@ -51,8 +51,12 @@ public class MasterJoinUpdateOperatorDriver implements OperatorDriver {
         }
         MasterKindOperatorHelper.consumeMaster(dsl);
         MasterKindOperatorHelper.consumeTx(dsl);
-        for (ElementRef p : dsl.parameters(2)) {
-            dsl.consumeGenericParameter(p);
+        for (ElementRef p : dsl.parametersFrom(2)) {
+            if (p.type().isExtra()) {
+                dsl.consumeExtraParameter(p);
+            } else {
+                p.error(Messages.getString("MasterJoinUpdateOperatorDriver.errorExtraParameterInvalidType")); //$NON-NLS-1$
+            }
         }
         if (dsl.getInputs().isEmpty() == false) {
             Node txInput = dsl.getInputs().get(dsl.getInputs().size() - 1);

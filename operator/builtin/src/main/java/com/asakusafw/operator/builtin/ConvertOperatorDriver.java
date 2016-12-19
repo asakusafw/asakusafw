@@ -61,8 +61,8 @@ public class ConvertOperatorDriver implements OperatorDriver {
                 } else {
                     p.error(Messages.getString("ConvertOperatorDriver.errorInputTooMany")); //$NON-NLS-1$
                 }
-            } else if (type.isBasic()) {
-                dsl.consumeGenericParameter(p);
+            } else if (type.isExtra()) {
+                dsl.consumeExtraParameter(p);
             } else {
                 p.error(Messages.getString("ConvertOperatorDriver.errorParameterUnsupportedType")); //$NON-NLS-1$
             }

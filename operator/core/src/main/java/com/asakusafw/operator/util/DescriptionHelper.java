@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.lang.model.element.Name;
 import javax.lang.model.element.TypeElement;
@@ -42,7 +43,6 @@ import com.asakusafw.utils.java.model.syntax.AnnotationElement;
 import com.asakusafw.utils.java.model.syntax.ArrayCreationExpression;
 import com.asakusafw.utils.java.model.syntax.ArrayType;
 import com.asakusafw.utils.java.model.syntax.BasicTypeKind;
-import com.asakusafw.utils.java.model.syntax.ClassInstanceCreationExpression;
 import com.asakusafw.utils.java.model.syntax.ClassLiteral;
 import com.asakusafw.utils.java.model.syntax.Expression;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
@@ -267,14 +267,17 @@ public final class DescriptionHelper {
         return factory.newArrayCreationExpression(type, factory.newArrayInitializer(elements));
     }
 
-    private static ClassInstanceCreationExpression resolveValue(ImportBuilder importer, ObjectDescription value) {
+    private static Expression resolveValue(ImportBuilder importer, ObjectDescription value) {
         ModelFactory factory = Models.getModelFactory();
         Type type = resolve(importer, value.getValueType());
         List<Expression> arguments = new ArrayList<>();
         for (ValueDescription argValue : value.getArguments()) {
             arguments.add(resolveValue(importer, argValue));
         }
-        return factory.newClassInstanceCreationExpression(type, arguments);
+        return Optional.ofNullable(value.getMethodName())
+                .map(name -> new TypeBuilder(factory, type).method(name, arguments))
+                .orElseGet(() -> new TypeBuilder(factory, type).newObject(arguments))
+                .toExpression();
     }
 
     private static ArrayCreationExpression resolveValue(ImportBuilder importer, ArrayDescription value) {

@@ -17,6 +17,7 @@ package com.asakusafw.vocabulary.flow.graph;
 
 import java.lang.reflect.Type;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -87,6 +88,22 @@ public class FlowElementPortDescription implements FlowElementAttributeProvider 
         this.direction = PortDirection.INPUT;
         this.shuffleKey = shuffleKey;
         this.attributes = Collections.emptyMap();
+    }
+
+    /**
+     * Creates a new instance.
+     * @param name the port name
+     * @param dataType the data type of the port
+     * @param direction the port direction
+     * @param shuffleKey the shuffle key (nullable)
+     * @param attributes the attributes
+     * @throws IllegalArgumentException if some parameters are {@code null}
+     * @since 0.9.1
+     */
+    public FlowElementPortDescription(
+            String name, Type dataType, PortDirection direction,
+            ShuffleKey shuffleKey, FlowElementAttribute...attributes) {
+        this(name, dataType, direction, shuffleKey, Arrays.asList(attributes));
     }
 
     /**

@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.annotation.processing.Messager;
 import javax.lang.model.element.AnnotationMirror;
@@ -36,6 +37,8 @@ import com.asakusafw.operator.util.AnnotationHelper;
 
 /**
  * Represents a {@code Key} annotation model.
+ * @since 0.9.0
+ * @version 0.9.1
  */
 public final class KeyMirror {
 
@@ -96,6 +99,21 @@ public final class KeyMirror {
      */
     public List<Order> getOrder() {
         return order;
+    }
+
+    /**
+     * Returns the property terms.
+     * Each term must start with either {@code =} (grouping), {@code +} (ascendant order), or {@code -} (descendant
+     * order), and follow its property name.
+     * @return the property terms
+     * @since 0.9.1
+     */
+    public List<String> toTerms() {
+        List<String> results = new ArrayList<>();
+        results.addAll(getGroup().stream().map(Group::toTerm).collect(Collectors.toList()));
+        results.addAll(getOrder().stream().map(Order::toTerm).collect(Collectors.toList()));
+        return results;
+
     }
 
     /**
@@ -247,8 +265,15 @@ public final class KeyMirror {
         return new Order(annotation, annotationValue, property, direction);
     }
 
+    @Override
+    public String toString() {
+        return toTerms().toString();
+    }
+
     /**
      * Represents grouping.
+     * @since 0.9.0
+     * @version 0.9.1
      */
     public static class Group {
 
@@ -290,10 +315,30 @@ public final class KeyMirror {
         public PropertyMirror getProperty() {
             return property;
         }
+
+        /**
+         * Returns the property term representation.
+         * @return the property term, which starts with {@code =}, and follows the property name
+         * and then follows the property name
+         * @since 0.9.1
+         */
+        public String toTerm() {
+            return new StringBuilder()
+                    .append('=')
+                    .append(property.getName())
+                    .toString();
+        }
+
+        @Override
+        public String toString() {
+            return toTerm();
+        }
     }
 
     /**
      * Represents ordering.
+     * @since 0.9.0
+     * @version 0.9.1
      */
     public static class Order {
 
@@ -346,6 +391,23 @@ public final class KeyMirror {
          */
         public Direction getDirection() {
             return direction;
+        }
+
+        /**
+         * Returns the property term representation.
+         * @return the property term, which starts with either {@code +} or {@code -}, and follows the property name
+         * @since 0.9.1
+         */
+        public String toTerm() {
+            return new StringBuilder()
+                    .append(direction == Direction.ASCENDANT ? '+' : '-')
+                    .append(property.getName())
+                    .toString();
+        }
+
+        @Override
+        public String toString() {
+            return toTerm();
         }
     }
 

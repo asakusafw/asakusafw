@@ -103,6 +103,34 @@ public class FoldOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
+     * w/ table
+     */
+    @Test
+    public void with_table() {
+        compile(new Action("com.example.WithTable") {
+            @Override
+            protected void perform(OperatorElement target) {
+                OperatorDescription description = target.getDescription();
+                assertThat(description.getInputs().size(), is(2));
+                assertThat(description.getOutputs().size(), is(1));
+                assertThat(description.getArguments().size(), is(0));
+
+                Node input = description.getInputs().get(0);
+                assertThat(input.getType(), is(sameType("com.example.Model")));
+                assertThat(input.getAttributes(), not(hasItem(isView())));
+
+                Node side = description.getInputs().get(1);
+                assertThat(side.getType(), is(sameType("com.example.Model")));
+                assertThat(side.getAttributes(), hasItem(groupView("=content")));
+
+                Node output = description.getOutputs().get(0);
+                assertThat(output.getName(), is(defaultName(Fold.class, "outputPort")));
+                assertThat(output.getType(), is(sameType("com.example.Model")));
+            }
+        });
+    }
+
+    /**
      * violates method is not abstract.
      */
     @Test
@@ -172,5 +200,13 @@ public class FoldOperatorDriverTest extends OperatorDriverTestRoot {
     @Test
     public void violate_valid_parameter() {
         violate("com.example.ViolateValidParameter");
+    }
+
+    /**
+     * violates method has table without partial.
+     */
+    @Test
+    public void violate_table_without_partial() {
+        violate("com.example.ViolateTableWithoutPartial");
     }
 }

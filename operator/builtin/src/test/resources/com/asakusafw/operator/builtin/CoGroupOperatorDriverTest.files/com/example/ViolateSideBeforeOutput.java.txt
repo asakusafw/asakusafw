@@ -8,6 +8,9 @@ import com.asakusafw.vocabulary.operator.*;
 public abstract class $s {
 
     @CoGroup
-    public void method(@Key(group = "content") List<Model> in, Result<Proceeded> out) {
+    public void method(
+            @Key(group = "content") List<Model> in,
+            Result<Proceeded> out,
+            @Key(group = "content") GroupView<Model> side) {
     }
 }

@@ -51,7 +51,7 @@ public class MasterCheckOperatorDriver implements OperatorDriver {
         }
         MasterKindOperatorHelper.consumeMaster(dsl);
         MasterKindOperatorHelper.consumeTx(dsl);
-        for (ElementRef p : dsl.parameters(2)) {
+        for (ElementRef p : dsl.parametersFrom(2)) {
             p.error(Messages.getString("MasterCheckOperatorDriver.errorParameterBasicType")); //$NON-NLS-1$
         }
         if (dsl.getInputs().isEmpty() == false) {

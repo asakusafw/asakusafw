@@ -30,6 +30,8 @@ import com.asakusafw.operator.description.ValueDescription;
 
 /**
  * Available constant values in this project.
+ * @since 0.9.0
+ * @version 0.9.1
  */
 public final class Constants {
 
@@ -58,6 +60,20 @@ public final class Constants {
      * {@code Source} type name.
      */
     public static final ClassDescription TYPE_SOURCE = classOf("flow.Source"); //$NON-NLS-1$
+
+    /**
+     * {@code View} type name.
+     * @since 0.9.1
+     */
+    public static final ClassDescription TYPE_VIEW =
+            new ClassDescription("com.asakusafw.runtime.core.View"); //$NON-NLS-1$
+
+    /**
+     * {@code GroupView} type name.
+     * @since 0.9.1
+     */
+    public static final ClassDescription TYPE_GROUP_VIEW =
+            new ClassDescription("com.asakusafw.runtime.core.GroupView"); //$NON-NLS-1$
 
     /**
      * {@code Result} type name.
@@ -149,7 +165,7 @@ public final class Constants {
     /**
      * The generator version.
      */
-    public static final String GENERATOR_VERSION = "2.0.0"; //$NON-NLS-1$
+    public static final String GENERATOR_VERSION = "3.0.0"; //$NON-NLS-1$
 
     /**
      * Returns the implementation class name of target class with the specified name.

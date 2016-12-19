@@ -64,8 +64,8 @@ public class CoGroupOperatorDriver implements OperatorDriver {
                 } else {
                     p.error(Messages.getString("CoGroupOperatorDriver.errorOutputNotDataModelListType")); //$NON-NLS-1$
                 }
-            } else if (type.isBasic()) {
-                dsl.consumeGenericParameter(p);
+            } else if (type.isExtra()) {
+                dsl.consumeExtraParameter(p);
             } else {
                 p.error(Messages.getString("CoGroupOperatorDriver.errorParameterUnsupportedType")); //$NON-NLS-1$
             }

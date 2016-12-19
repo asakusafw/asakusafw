@@ -146,6 +146,18 @@ public class DescriptionHelperTest extends OperatorCompilerTestRoot {
     }
 
     /**
+     * resolve immediate value.
+     */
+    @Test
+    public void value_object_factory() {
+        assertThat(
+                value(ObjectDescription.of(
+                        Descriptions.classOf(Integer.class), "valueOf",
+                        Descriptions.valueOf("1234"))),
+                equalTo(1234));
+    }
+
+    /**
      * resolve enum constant value.
      */
     @Test

@@ -13,22 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.vocabulary.attribute;
-
-import com.asakusafw.vocabulary.flow.graph.FlowElementAttribute;
-
 /**
- * An abstract super interface of DSL element attributes.
- * @since 0.9.0
+ * Data loaders and its mock implementations.
  */
-public interface Attribute extends FlowElementAttribute {
-
-    /**
-     * Returns the declaring class of this attribute.
-     * @return the declaring class of this attribute
-     */
-    @Override
-    default Class<? extends Attribute> getDeclaringClass() {
-        return getClass();
-    }
-}
+package com.asakusafw.testdriver.loader;

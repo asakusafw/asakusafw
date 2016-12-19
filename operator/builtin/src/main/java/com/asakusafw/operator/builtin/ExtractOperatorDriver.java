@@ -58,8 +58,8 @@ public class ExtractOperatorDriver implements OperatorDriver {
                 } else {
                     p.error(Messages.getString("ExtractOperatorDriver.errorOutputNotDataModelResultType")); //$NON-NLS-1$
                 }
-            } else if (type.isBasic()) {
-                dsl.consumeGenericParameter(p);
+            } else if (type.isExtra()) {
+                dsl.consumeExtraParameter(p);
             } else {
                 p.error(Messages.getString("ExtractOperatorDriver.errorParameterUnsupportedType")); //$NON-NLS-1$
             }

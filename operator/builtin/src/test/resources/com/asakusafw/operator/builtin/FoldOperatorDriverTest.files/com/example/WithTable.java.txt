@@ -7,7 +7,9 @@ import com.asakusafw.vocabulary.operator.*;
 
 public abstract class $s {
 
-    @CoGroup
-    public void method(@Key(group = "content") List<Model> in, Result<Proceeded> out) {
+    @Fold
+    public void method(
+            @Key(group = "content") Model aggregate, Model in,
+            @Key(group = "content") GroupView<Model> table) {
     }
 }

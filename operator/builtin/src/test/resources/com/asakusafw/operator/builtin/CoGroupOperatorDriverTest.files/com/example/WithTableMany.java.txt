@@ -1,0 +1,18 @@
+package com.example;
+
+import java.util.List;
+import com.asakusafw.runtime.core.*;
+import com.asakusafw.vocabulary.model.*;
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class $s {
+
+    @CoGroup
+    public void method(
+            @Key(group = "content") List<Model> in,
+            @Key(group = "content") GroupView<Model> side0,
+            @Key(group = "content") GroupView<Model> side1,
+            @Key(group = {}) GroupView<Model> side2,
+            Result<Proceeded> out) {
+    }
+}
