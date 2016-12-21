@@ -19,10 +19,13 @@ import java.io.PrintWriter;
 import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 import com.asakusafw.dmdl.model.AstAttribute;
 import com.asakusafw.dmdl.model.AstAttributeElement;
+import com.asakusafw.dmdl.model.AstAttributeValue;
 import com.asakusafw.dmdl.model.AstAttributeValueArray;
+import com.asakusafw.dmdl.model.AstAttributeValueMap;
 import com.asakusafw.dmdl.model.AstBasicType;
 import com.asakusafw.dmdl.model.AstDescription;
 import com.asakusafw.dmdl.model.AstGrouping;
@@ -108,18 +111,48 @@ public final class DmdlEmitter {
 
         @Override
         public Void visitAttributeValueArray(Context context, AstAttributeValueArray node) {
-            context.println("'{'"); //$NON-NLS-1$
-            context.enter();
-            for (int i = 0, n = node.elements.size(); i < n; i++) {
-                node.elements.get(i).accept(context, this);
-                if (i != n - 1) {
-                    context.println(","); //$NON-NLS-1$
-                } else {
-                    context.println();
+            List<AstAttributeValue> elements = node.elements;
+            if (elements.isEmpty()) {
+                context.print("'{}'"); //$NON-NLS-1$
+            } else {
+                context.println("'{'"); //$NON-NLS-1$
+                context.enter();
+                for (int i = 0, n = elements.size(); i < n; i++) {
+                    elements.get(i).accept(context, this);
+                    if (i != n - 1) {
+                        context.println(","); //$NON-NLS-1$
+                    } else {
+                        context.println();
+                    }
                 }
+                context.exit();
+                context.print("'}'"); //$NON-NLS-1$
             }
-            context.exit();
-            context.print("'}'"); //$NON-NLS-1$
+            return null;
+        }
+
+        @Override
+        public Void visitAttributeValueMap(Context context, AstAttributeValueMap node) {
+            List<AstAttributeValueMap.Entry> entries = node.entries;
+            if (entries.isEmpty()) {
+                context.print("'{:}'"); //$NON-NLS-1$
+            } else {
+                context.println("'{'"); //$NON-NLS-1$
+                context.enter();
+                for (int i = 0, n = entries.size(); i < n; i++) {
+                    AstAttributeValueMap.Entry entry = entries.get(i);
+                    entry.key.accept(context, this);
+                    context.print(" : "); //$NON-NLS-1$
+                    entry.value.accept(context, this);
+                    if (i != n - 1) {
+                        context.println(","); //$NON-NLS-1$
+                    } else {
+                        context.println();
+                    }
+                }
+                context.exit();
+                context.print("'}'"); //$NON-NLS-1$
+            }
             return null;
         }
 

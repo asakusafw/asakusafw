@@ -24,6 +24,7 @@ import com.asakusafw.dmdl.Region;
 /**
  * Represents literals.
  * @since 0.2.0
+ * @version 0.9.1
  */
 public class AstLiteral extends AbstractAstNode implements AstAttributeValue {
 
@@ -138,6 +139,26 @@ public class AstLiteral extends AbstractAstNode implements AstAttributeValue {
     public boolean toBooleanValue() {
         checkKind(LiteralKind.BOOLEAN);
         return token.equals("TRUE"); //$NON-NLS-1$
+    }
+
+    /**
+     * Returns the value of this literal.
+     * @return the value
+     * @since 0.9.1
+     */
+    public Object toValue() {
+        switch (getKind()) {
+        case BOOLEAN:
+            return toBooleanValue();
+        case DECIMAL:
+            return toDecimalValue();
+        case INTEGER:
+            return toIntegerValue();
+        case STRING:
+            return toStringValue();
+        default:
+            throw new AssertionError(getKind());
+        }
     }
 
     private void checkKind(LiteralKind expected) {
