@@ -181,10 +181,15 @@ public abstract class AbstractOrcFileFormat<T> extends HadoopFileFormat<T>
         if (conf.getOnIncompatibleType() != null) {
             driverConf.setOnIncompatibleType(conf.getOnIncompatibleType());
         }
+        long size = fragmentSize;
+        if (size < 0L) {
+            FileStatus stat = fileSystem.getFileStatus(path);
+            size = stat.getLen();
+        }
         return new OrcFileInput<>(
                 getDataModelDescriptor(), driverConf,
                 fileSystem, path,
-                offset, fragmentSize, counter);
+                offset, size, counter);
     }
 
     @Override

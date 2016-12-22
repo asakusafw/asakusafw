@@ -85,7 +85,7 @@ public class ParquetFileInput<T> implements ModelInput<T> {
      * @param hadoopConfiguration the hadoop configuration
      * @param path the path to the target file
      * @param offset starting stream offset
-     * @param fragmentSize suggested fragment bytes count, or {@code -1} as infinite
+     * @param fragmentSize suggested fragment bytes count
      * @param counter the current counter
      */
     public ParquetFileInput(

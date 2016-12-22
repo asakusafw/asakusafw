@@ -18,7 +18,10 @@ package com.asakusafw.testdriver;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -26,6 +29,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.hadoop.io.Text;
+import org.junit.Assume;
 
 import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.DataModelReflection;
@@ -43,6 +47,10 @@ final class FlowDriverPortTestHelper {
     static final MockTextDefinition DEFINITION = new MockTextDefinition();
 
     static final TestContext.Empty CONTEXT = new TestContext.Empty();
+
+    static MockTestDataToolProvider provider() {
+        return new MockTestDataToolProvider();
+    }
 
     static List<Text> list(String... texts) {
         List<Text> results = new ArrayList<>();
@@ -71,6 +79,18 @@ final class FlowDriverPortTestHelper {
 
     static DataModelSourceFactory factory(String... texts) {
         return new SourceDataModelSourceFactory(provider(texts));
+    }
+
+
+    static File asFile(String name) {
+        URL url = FlowDriverPortTestHelper.class.getResource(name);
+        assertThat(url, is(notNullValue()));
+        try {
+            return new File(url.toURI());
+        } catch (URISyntaxException e) {
+            Assume.assumeNoException(e);
+            throw new AssertionError(e);
+        }
     }
 
     static <T> void verify(DataModelSourceFactory target, DataModelDefinition<T> def, Collection<T> expected) {

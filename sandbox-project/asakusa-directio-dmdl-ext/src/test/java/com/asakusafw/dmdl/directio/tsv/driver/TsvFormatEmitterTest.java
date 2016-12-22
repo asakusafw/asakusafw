@@ -283,6 +283,38 @@ public class TsvFormatEmitterTest extends GeneratorTesterRoot {
         }
     }
 
+    /**
+     * w/ unlimited length.
+     * @throws Exception if failed
+     */
+    @Test
+    public void unlimited() throws Exception {
+        ModelLoader loaded = generateJava("simple");
+        ModelWrapper model = loaded.newModel("Simple");
+        BinaryStreamFormat<?> support = (BinaryStreamFormat<?>) loaded.newObject("tsv", "SimpleTsvFormat");
+
+        assertThat(support.getSupportedType(), is((Object) model.unwrap().getClass()));
+
+        BinaryStreamFormat<Object> unsafe = unsafe(support);
+        assertThat(unsafe, is(not(instanceOf(Configurable.class))));
+        assertThat(unsafe.getMinimumFragmentSize(), greaterThan(0L));
+
+        model.set("value", new Text("Hello, world!"));
+
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        try (ModelOutput<Object> writer = unsafe.createOutput(model.unwrap().getClass(), "hello", output)) {
+            writer.write(model.unwrap());
+        }
+
+        Object buffer = loaded.newModel("Simple").unwrap();
+        try (ModelInput<Object> reader = unsafe.createInput(model.unwrap().getClass(), "hello", in(output),
+                0, -1L)) {
+            assertThat(reader.readTo(buffer), is(true));
+            assertThat(buffer, is(model.unwrap()));
+            assertThat(reader.readTo(buffer), is(false));
+        }
+    }
+
     @SuppressWarnings("unchecked")
     private BinaryStreamFormat<Object> unsafe(Object support) {
         return (BinaryStreamFormat<Object>) support;

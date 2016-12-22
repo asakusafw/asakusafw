@@ -34,6 +34,7 @@ import com.asakusafw.runtime.io.ModelOutput;
  * This implementation class must have a public constructor without any parameters.
  * @param <T> the type of target data model
  * @since 0.2.6
+ * @version 0.9.1
  */
 public abstract class HadoopFileFormat<T> extends Configured implements FragmentableDataFormat<T> {
 
@@ -50,6 +51,27 @@ public abstract class HadoopFileFormat<T> extends Configured implements Fragment
      */
     public HadoopFileFormat(Configuration conf) {
         super(conf);
+    }
+
+    /**
+     * Creates a new {@link ModelInput} for the specified properties.
+     * @param dataType the target data type
+     * @param fileSystem the file system to open the target path
+     * @param path the path to the target file
+     * @param counter the current counter
+     * @return the created reader
+     * @throws IOException if failed to create reader
+     * @throws InterruptedException if interrupted
+     * @throws IllegalArgumentException if this does not support target property sequence,
+     *     or any parameter is {@code null}
+     * @since 0.9.1
+     */
+    public ModelInput<T> createInput(
+            Class<? extends T> dataType,
+            FileSystem fileSystem,
+            Path path,
+            Counter counter) throws IOException, InterruptedException {
+        return createInput(dataType, fileSystem, path, 0L, -1L, counter);
     }
 
     /**

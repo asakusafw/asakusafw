@@ -61,7 +61,9 @@ import org.apache.hadoop.mapreduce.TaskAttemptContext;
 import org.jboss.netty.util.internal.ConcurrentHashMap;
 
 import com.asakusafw.runtime.directio.AbstractDirectDataSource;
+import com.asakusafw.runtime.directio.BinaryStreamFormat;
 import com.asakusafw.runtime.directio.Counter;
+import com.asakusafw.runtime.directio.DataFormat;
 import com.asakusafw.runtime.directio.DirectDataSource;
 import com.asakusafw.runtime.directio.DirectDataSourceProfile;
 import com.asakusafw.runtime.directio.DirectDataSourceProvider;
@@ -78,7 +80,7 @@ import com.asakusafw.runtime.stage.output.BridgeOutputFormat;
 /**
  * Utilities for Direct data access facilities on Hadoop.
  * @since 0.2.5
- * @version 0.9.0
+ * @version 0.9.1
  */
 public final class HadoopDataSourceUtil {
 
@@ -1095,6 +1097,36 @@ public final class HadoopDataSourceUtil {
         }
         Collections.sort(results);
         return results;
+    }
+
+    /**
+     * Converts {@link DataFormat} into an equivalent {@link HadoopFileFormat}.
+     * @param <T> the data type
+     * @param configuration the current configuration
+     * @param format the target data format
+     * @return the related format
+     * @throws IOException if the given {@link DataFormat} is not supported
+     * @since 0.9.1
+     */
+    public static <T> HadoopFileFormat<T> toHadoopFileFormat(
+            Configuration configuration, DataFormat<T> format) throws IOException {
+        assert format != null;
+        if (format instanceof HadoopFileFormat<?>) {
+            return (HadoopFileFormat<T>) format;
+        } else {
+            return new HadoopFileFormatAdapter<>(validateBinaryStreamFormat(format), configuration);
+        }
+    }
+
+    private static <T> BinaryStreamFormat<T> validateBinaryStreamFormat(DataFormat<T> format) throws IOException {
+        assert format != null;
+        if ((format instanceof BinaryStreamFormat<?>) == false) {
+            throw new IOException(MessageFormat.format(
+                    "{1} must be a subtype of {0}",
+                    BinaryStreamFormat.class.getName(),
+                    format.getClass().getName()));
+        }
+        return (BinaryStreamFormat<T>) format;
     }
 
     private HadoopDataSourceUtil() {

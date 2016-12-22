@@ -19,20 +19,32 @@ import org.apache.hadoop.io.Text;
 
 /**
  * Mock implementation of {@link FlowDriverInput}.
+ * @param <T> the data type
  */
-public class MockFlowDriverInput extends FlowDriverInput<Text, MockFlowDriverInput> {
+public class MockFlowDriverInput<T> extends FlowDriverInput<T, MockFlowDriverInput<T>> {
+
+    /**
+     * Creates a new instance.
+     * @param callerClass the current context class
+     * @param dataType the data type
+     * @param testTools the test tools
+     */
+    public MockFlowDriverInput(Class<?> callerClass, Class<T> dataType, MockTestDataToolProvider testTools) {
+        super(callerClass, testTools, "mock", dataType);
+    }
 
     /**
      * Creates a new instance.
      * @param callerClass the current context class
      * @param testTools the test tools
+     * @return the created instance
      */
-    public MockFlowDriverInput(Class<?> callerClass, MockTestDataToolProvider testTools) {
-        super(callerClass, testTools, "mock", Text.class);
+    public static MockFlowDriverInput<Text> text(Class<?> callerClass, MockTestDataToolProvider testTools) {
+        return new MockFlowDriverInput<>(callerClass, Text.class, testTools);
     }
 
     @Override
-    protected MockFlowDriverInput getThis() {
+    protected MockFlowDriverInput<T> getThis() {
         return this;
     }
 }

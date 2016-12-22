@@ -26,6 +26,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.UnaryOperator;
 
+import org.apache.hadoop.conf.Configuration;
+
+import com.asakusafw.runtime.directio.DataFormat;
 import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.DataModelReflection;
 import com.asakusafw.testdriver.core.DataModelSource;
@@ -41,12 +44,14 @@ import com.asakusafw.testdriver.core.Verifier;
 import com.asakusafw.testdriver.core.VerifierFactory;
 import com.asakusafw.testdriver.core.VerifyContext;
 import com.asakusafw.testdriver.core.VerifyRuleFactory;
+import com.asakusafw.testdriver.hadoop.ConfigurationFactory;
 import com.asakusafw.utils.io.Provider;
 import com.asakusafw.utils.io.Source;
 
 /**
  * An abstract implementation of test driver elements.
  * @since 0.7.3
+ * @version 0.9.1
  */
 public abstract class DriverElementBase {
 
@@ -145,6 +150,75 @@ public abstract class DriverElementBase {
                 return String.format("DataModelSource(%s)", sourceProvider); //$NON-NLS-1$
             }
         };
+    }
+
+    /**
+     * Loads a source file  {@link DataModelSourceFactory} which provides data models.
+     * This implementation immediately converts loaded into {@link DataModelReflection}s.
+     * @param <T> the data type
+     * @param definition the data model definition
+     * @param formatClass the data format class
+     * @param sourcePath the input file path on the class path
+     * @return the loaded {@link DataModelSourceFactory}
+     * @since 0.9.1
+     */
+    protected final <T> DataModelSourceFactory toDataModelSourceFactory(
+            DataModelDefinition<T> definition,
+            Class<? extends DataFormat<? super T>> formatClass,
+            String sourcePath) {
+        if (definition == null) {
+            throw new IllegalArgumentException("definition must not be null"); //$NON-NLS-1$
+        }
+        if (formatClass == null) {
+            throw new IllegalArgumentException("formatClass must not be null"); //$NON-NLS-1$
+        }
+        if (sourcePath == null) {
+            throw new IllegalArgumentException("sourcePath must not be null"); //$NON-NLS-1$
+        }
+        try {
+            Configuration conf = ConfigurationFactory.getDefault().newInstance();
+            URL url = toUri(sourcePath).toURL();
+            return DirectIoUtil.load(conf, definition, formatClass, url);
+        } catch (IOException | InterruptedException | URISyntaxException e) {
+            throw new IllegalArgumentException(MessageFormat.format(
+                    MessageFormat.format(
+                            "error occurred while loading Direct I/O input: {0}",
+                            sourcePath), e));
+        }
+    }
+
+    /**
+     * Loads a source file  {@link DataModelSourceFactory} which provides data models.
+     * This implementation immediately converts loaded into {@link DataModelReflection}s.
+     * @param <T> the data type
+     * @param definition the data model definition
+     * @param formatClass the data format class
+     * @param sourceFile the input file
+     * @return the loaded {@link DataModelSourceFactory}
+     * @since 0.9.1
+     */
+    protected final <T> DataModelSourceFactory toDataModelSourceFactory(
+            DataModelDefinition<T> definition,
+            Class<? extends DataFormat<? super T>> formatClass,
+            File sourceFile) {
+        if (definition == null) {
+            throw new IllegalArgumentException("definition must not be null"); //$NON-NLS-1$
+        }
+        if (formatClass == null) {
+            throw new IllegalArgumentException("formatClass must not be null"); //$NON-NLS-1$
+        }
+        if (sourceFile == null) {
+            throw new IllegalArgumentException("sourceFile must not be null"); //$NON-NLS-1$
+        }
+        try {
+            Configuration conf = ConfigurationFactory.getDefault().newInstance();
+            return DirectIoUtil.load(conf, definition, formatClass, sourceFile);
+        } catch (IOException | InterruptedException e) {
+            throw new IllegalArgumentException(MessageFormat.format(
+                    MessageFormat.format(
+                            "error occurred while loading Direct I/O input: {0}",
+                            sourceFile), e));
+        }
     }
 
     /**
