@@ -54,6 +54,7 @@ import com.asakusafw.testdriver.core.VerifyContext;
 import com.asakusafw.testdriver.core.VerifyRule;
 import com.asakusafw.testdriver.core.VerifyRuleFactory;
 import com.asakusafw.testdriver.testing.dsl.SimpleStreamFormat;
+import com.asakusafw.testdriver.testing.dsl.TextStreamFormat;
 import com.asakusafw.testdriver.testing.model.Simple;
 import com.asakusafw.utils.io.Provider;
 
@@ -274,6 +275,26 @@ public class FlowDriverOutputTest {
     }
 
     /**
+     * Test method for {@link FlowDriverOutput#verify(Class, String, String)}.
+     */
+    @Test
+    public void verify_directio_path_uri() {
+        MockFlowDriverOutput<Text> mock = MockFlowDriverOutput.text(getClass(), tool_data_rule("Hello3"));
+        mock.verify(TextStreamFormat.class, "directio/hello123.txt", "data/dummy2");
+        assertThat(test(mock.getVerifier(), "Hello1", "Hello2", "Hello3"), hasSize(1));
+    }
+
+    /**
+     * Test method for {@link FlowDriverOutput#verify(Class, File, String)}.
+     */
+    @Test
+    public void verify_directio_file_uri() {
+        MockFlowDriverOutput<Text> mock = MockFlowDriverOutput.text(getClass(), tool_data_rule("Hello3"));
+        mock.verify(TextStreamFormat.class, asFile("directio/hello123.txt"), "data/dummy2");
+        assertThat(test(mock.getVerifier(), "Hello1", "Hello2", "Hello3"), hasSize(1));
+    }
+
+    /**
      * Test method for {@link FlowDriverOutput#verify(String, String, ModelTester)}.
      */
     @Test
@@ -304,6 +325,26 @@ public class FlowDriverOutputTest {
     }
 
     /**
+     * Test method for {@link FlowDriverOutput#verify(Class, String, String, ModelTester)}.
+     */
+    @Test
+    public void verify_directio_path_uri_tester() {
+        MockFlowDriverOutput<Text> mock = MockFlowDriverOutput.text(getClass(), tool_data_rule("Hello3"));
+        mock.verify(TextStreamFormat.class, "directio/hello123.txt", "data/dummy2", modelTester("Hello1"));
+        assertThat(test(mock.getVerifier(), "Hello1", "Hello2", "Hello3"), hasSize(2));
+    }
+
+    /**
+     * Test method for {@link FlowDriverOutput#verify(Class, File, String, ModelTester)}.
+     */
+    @Test
+    public void verify_directio_file_uri_tester() {
+        MockFlowDriverOutput<Text> mock = MockFlowDriverOutput.text(getClass(), tool_data_rule("Hello3"));
+        mock.verify(TextStreamFormat.class, asFile("directio/hello123.txt"), "data/dummy2", modelTester("Hello1"));
+        assertThat(test(mock.getVerifier(), "Hello1", "Hello2", "Hello3"), hasSize(2));
+    }
+
+    /**
      * Test method for {@link FlowDriverOutput#verify(String, ModelVerifier)}.
      */
     @Test
@@ -319,7 +360,6 @@ public class FlowDriverOutputTest {
     @Test
     public void verify_iterable_verifier() {
         MockFlowDriverOutput<Text> mock = MockFlowDriverOutput.text(getClass(), provider());
-
         mock.verify(list("Hello1", "Hello2", "Hello3"), modelVerifier("Hello2"));
         assertThat(test(mock.getVerifier(), "Hello1", "Hello2", "Hello3"), hasSize(1));
     }
@@ -328,9 +368,29 @@ public class FlowDriverOutputTest {
      * Test method for {@link FlowDriverOutput#verify(com.asakusafw.utils.io.Provider, ModelVerifier)}.
      */
     @Test
-    public void verify_privider_verifier() {
+    public void verify_provider_verifier() {
         MockFlowDriverOutput<Text> mock = MockFlowDriverOutput.text(getClass(), provider());
         mock.verify(provider("Hello1", "Hello2", "Hello3"), modelVerifier("Hello2"));
+        assertThat(test(mock.getVerifier(), "Hello1", "Hello2", "Hello3"), hasSize(1));
+    }
+
+    /**
+     * Test method for {@link FlowDriverOutput#verify(Class, String, ModelVerifier)}.
+     */
+    @Test
+    public void verify_directio_path_verifier() {
+        MockFlowDriverOutput<Text> mock = MockFlowDriverOutput.text(getClass(), tool_data_rule("Hello3"));
+        mock.verify(TextStreamFormat.class, "directio/hello123.txt", modelVerifier("Hello2"));
+        assertThat(test(mock.getVerifier(), "Hello1", "Hello2", "Hello3"), hasSize(1));
+    }
+
+    /**
+     * Test method for {@link FlowDriverOutput#verify(Class, File, ModelVerifier)}.
+     */
+    @Test
+    public void verify_directio_file_verifier() {
+        MockFlowDriverOutput<Text> mock = MockFlowDriverOutput.text(getClass(), tool_data_rule("Hello3"));
+        mock.verify(TextStreamFormat.class, asFile("directio/hello123.txt"), modelVerifier("Hello2"));
         assertThat(test(mock.getVerifier(), "Hello1", "Hello2", "Hello3"), hasSize(1));
     }
 
@@ -594,6 +654,9 @@ public class FlowDriverOutputTest {
 
         @Override
         public Object verify(DataModelReflection expected, DataModelReflection actual) {
+            if (actual == null) {
+                return "extra: " + actual;
+            }
             if (fail.contains(DEFINITION.toObject(actual).toString())) {
                 return "Unexpected";
             }
