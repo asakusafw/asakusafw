@@ -276,6 +276,36 @@ public abstract class FlowDriverOutput<T, S extends FlowDriverOutput<T, S>> exte
 
     /**
      * Enables to verify the results of this output.
+     * Note that, the original source path may be changed if tracking source file name.
+     * To keep the source file path information, please use {@link #verify(Class, File, String)} instead.
+     * @param formatClass the data format class
+     * @param expectedPath the path to the expected data set file on the class path
+     * @param verifyRulePath the path to verification rule file
+     * @return this
+     * @throws IllegalArgumentException if the source is not valid for the given data format
+     * @since 0.9.1
+     */
+    public S verify(Class<? extends DataFormat<? super T>> formatClass, String expectedPath, String verifyRulePath) {
+        DataModelDefinition<T> definition = getDataModelDefinition();
+        return verify(toDataModelSourceFactory(definition, formatClass, expectedPath), verifyRulePath, null);
+    }
+
+    /**
+     * Enables to verify the results of this output.
+     * @param formatClass the data format class
+     * @param expectedFile the expected data set file
+     * @param verifyRulePath the path to verification rule file
+     * @return this
+     * @throws IllegalArgumentException if the source is not valid for the given data format
+     * @since 0.9.1
+     */
+    public S verify(Class<? extends DataFormat<? super T>> formatClass, File expectedFile, String verifyRulePath) {
+        DataModelDefinition<T> definition = getDataModelDefinition();
+        return verify(toDataModelSourceFactory(definition, formatClass, expectedFile), verifyRulePath, null);
+    }
+
+    /**
+     * Enables to verify the results of this output.
      * @param expectedFactory factory which provides the expected data set
      * @param verifyRulePath the path to verification rule file
      * @param tester the extra verification rule for each data model object (nullable)
@@ -361,6 +391,41 @@ public abstract class FlowDriverOutput<T, S extends FlowDriverOutput<T, S>> exte
 
     /**
      * Enables to verify the results of this output.
+     * Note that, the original source path may be changed if tracking source file name.
+     * To keep the source file path information, please use {@link #verify(Class, String, String, ModelTester)}
+     * instead.
+     * @param formatClass the data format class
+     * @param expectedPath the path to the expected data set file on the class path
+     * @param verifyRulePath the path to verification rule file
+     * @param tester the extra verification rule for each data model object (nullable)
+     * @return this
+     * @throws IllegalArgumentException if the source is not valid for the given data format
+     * @since 0.9.1
+     */
+    public S verify(Class<? extends DataFormat<? super T>> formatClass, String expectedPath,
+            String verifyRulePath, ModelTester<? super T> tester) {
+        DataModelDefinition<T> definition = getDataModelDefinition();
+        return verify(toDataModelSourceFactory(definition, formatClass, expectedPath), verifyRulePath, tester);
+    }
+
+    /**
+     * Enables to verify the results of this output.
+     * @param formatClass the data format class
+     * @param expectedFile the expected data set file
+     * @param verifyRulePath the path to verification rule file
+     * @param tester the extra verification rule for each data model object (nullable)
+     * @return this
+     * @throws IllegalArgumentException if the source is not valid for the given data format
+     * @since 0.9.1
+     */
+    public S verify(Class<? extends DataFormat<? super T>> formatClass, File expectedFile,
+            String verifyRulePath, ModelTester<? super T> tester) {
+        DataModelDefinition<T> definition = getDataModelDefinition();
+        return verify(toDataModelSourceFactory(definition, formatClass, expectedFile), verifyRulePath, tester);
+    }
+
+    /**
+     * Enables to verify the results of this output.
      * @param expectedFactory factory which provides the expected data set
      * @param modelVerifier the verification rule
      * @return this
@@ -427,6 +492,38 @@ public abstract class FlowDriverOutput<T, S extends FlowDriverOutput<T, S>> exte
             throw new IllegalArgumentException("modelVerifier must not be null"); //$NON-NLS-1$
         }
         return verify(toDataModelSourceFactory(expectedProvider), modelVerifier);
+    }
+
+    /**
+     * Enables to verify the results of this output.
+     * Note that, the original source path may be changed if tracking source file name.
+     * To keep the source file path information, please use {@link #verify(Class, File, ModelVerifier)} instead.
+     * @param formatClass the data format class
+     * @param expectedPath the path to the expected data set file on the class path
+     * @param modelVerifier the verification rule
+     * @return this
+     * @throws IllegalArgumentException if the source is not valid for the given data format
+     * @since 0.9.1
+     */
+    public S verify(Class<? extends DataFormat<? super T>> formatClass, String expectedPath,
+            ModelVerifier<? super T> modelVerifier) {
+        DataModelDefinition<T> definition = getDataModelDefinition();
+        return verify(toDataModelSourceFactory(definition, formatClass, expectedPath), modelVerifier);
+    }
+
+    /**
+     * Enables to verify the results of this output.
+     * @param formatClass the data format class
+     * @param expectedFile the expected data set file
+     * @param modelVerifier the verification rule
+     * @return this
+     * @throws IllegalArgumentException if the source is not valid for the given data format
+     * @since 0.9.1
+     */
+    public S verify(Class<? extends DataFormat<? super T>> formatClass, File expectedFile,
+            ModelVerifier<? super T> modelVerifier) {
+        DataModelDefinition<T> definition = getDataModelDefinition();
+        return verify(toDataModelSourceFactory(definition, formatClass, expectedFile), modelVerifier);
     }
 
     /**
