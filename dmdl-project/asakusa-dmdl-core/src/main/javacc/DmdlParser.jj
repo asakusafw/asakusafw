@@ -27,8 +27,10 @@ package com.asakusafw.dmdl.parser;
 import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +41,7 @@ import com.asakusafw.dmdl.model.*;
 /**
  * An implementation of the DMDL Script Parser.
  * @since 0.2.0
- * @version 0.5.3
+ * @version 0.9.1
  */
 class JjDmdlParser {
 
@@ -50,7 +52,7 @@ class JjDmdlParser {
     private LinkedList<ParseFrame> frameStack;
 
     /**
-     * Parse a DMDL Script and return a model object.
+     * Parses a DMDL Script and returns the corresponded model object.
      * @param source the source location
      * @return the analyzed AST
      * @throws ParseException if input text was not a valid DMDL script
@@ -66,7 +68,7 @@ class JjDmdlParser {
     }
 
     /**
-     * Parse a DMDL literal and return a model object.
+     * Parses a DMDL literal and returns the corresponded model object.
      * @param source the source location
      * @return the analyzed AST
      * @throws ParseException if input text was not a valid DMDL script
@@ -1062,6 +1064,7 @@ private AstAttributeElement AttributeElement() :
 /* Attribute Value
 <attribute-value>:
      <attribute-value-array>
+     <attribute-value-map>
      <qname>
      <literal>
 */
@@ -1072,7 +1075,10 @@ private AstAttributeValue AttributeValue() :
 }
 {
     (
+        LOOKAHEAD(3)
         value = AttributeValueArray()
+    |
+        value = AttributeValueMap()
     |
         value = QualifiedName()
     |
@@ -1119,6 +1125,53 @@ private AstAttributeValueArray AttributeValueArray() :
     {
         Region region = end("attribute-value-array");
         return new AstAttributeValueArray(region, elements);
+    }
+}
+
+/* Map of attribute values
+<attribute-value-map>:
+     '{' ':' '}'
+     '{' <attribute-pair-list> ','? '}'
+<attribute-pair-list>:
+     <attribute-pair-list> ',' <attribute-pair>
+     <attribute-pair>
+ <attribute-pair>:
+     <literal> ':' <attribute-value>
+*/
+private AstAttributeValueMap AttributeValueMap() :
+{
+    begin("attribute-value-map");
+    AstLiteral key;
+    AstAttributeValue value;
+    List<AstAttributeValueMap.Entry> entries = newList();
+}
+{
+    <OPEN_BLOCK>
+    (
+        key = Literal()
+        ":"
+        value = AttributeValue()
+        {
+            entries.add(new AstAttributeValueMap.Entry(key, value));
+        }
+        (
+            LOOKAHEAD(2)
+            ","
+            key = Literal()
+            ":"
+            value = AttributeValue()
+            {
+                entries.add(new AstAttributeValueMap.Entry(key, value));
+            }
+        )*
+        ( "," )?
+    |
+        ":"
+    )
+    <CLOSE_BLOCK>
+    {
+        Region region = end("attribute-value-map");
+        return new AstAttributeValueMap(region, entries);
     }
 }
 

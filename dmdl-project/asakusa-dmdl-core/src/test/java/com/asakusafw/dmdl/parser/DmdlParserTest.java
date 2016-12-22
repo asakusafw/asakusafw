@@ -21,6 +21,7 @@ import static org.junit.Assert.*;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -34,6 +35,7 @@ import com.asakusafw.dmdl.model.AstAttribute;
 import com.asakusafw.dmdl.model.AstAttributeElement;
 import com.asakusafw.dmdl.model.AstAttributeValue;
 import com.asakusafw.dmdl.model.AstAttributeValueArray;
+import com.asakusafw.dmdl.model.AstAttributeValueMap;
 import com.asakusafw.dmdl.model.AstBasicType;
 import com.asakusafw.dmdl.model.AstExpression;
 import com.asakusafw.dmdl.model.AstJoin;
@@ -478,6 +480,32 @@ public class DmdlParserTest extends DmdlTesterRoot {
         assertThat(array.elements.get(1), is(value("\"Hello, world!\"", LiteralKind.STRING)));
         assertThat(array.elements.get(2), is(value("3.141592", LiteralKind.DECIMAL)));
         assertThat(array.elements.get(3), is(value("TRUE", LiteralKind.BOOLEAN)));
+    }
+
+    /**
+     * Parse a map.
+     */
+    @Test
+    public void map() {
+        AstAttribute attr = loadFirstAttribute();
+        AstAttributeValue value = getValue(attr, "e_map");
+        assertThat(value, instanceOf(AstAttributeValueMap.class));
+
+        AstAttributeValueMap map = (AstAttributeValueMap) value;
+        assertThat(map.entries.size(), is(6));
+        assertThat(get(map, "a"), is(value("100", LiteralKind.INTEGER)));
+        assertThat(get(map, "b"), is(value("\"Hello, world!\"", LiteralKind.STRING)));
+        assertThat(get(map, "c"), is(value("3.141592", LiteralKind.DECIMAL)));
+        assertThat(get(map, "d"), is(value("TRUE", LiteralKind.BOOLEAN)));
+        assertThat(get(map, BigInteger.valueOf(0)), is(instanceOf(AstAttributeValueArray.class)));
+        assertThat(get(map, BigInteger.valueOf(1)), is(instanceOf(AstAttributeValueMap.class)));
+    }
+
+    private AstAttributeValue get(AstAttributeValueMap map, Object value) {
+        return map.entries.stream()
+                .filter(e -> e.key.toValue().equals(value))
+                .findAny()
+                .get().value;
     }
 
     /**

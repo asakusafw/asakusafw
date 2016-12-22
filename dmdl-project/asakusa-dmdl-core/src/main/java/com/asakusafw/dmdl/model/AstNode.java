@@ -45,6 +45,8 @@ public interface AstNode {
      * Visitor of {@link AstNode}.
      * @param <C> type of visitor context
      * @param <R> type of visitor result
+     * @since 0.2.0
+     * @version 0.9.1
      */
     public interface Visitor<C, R> {
 
@@ -71,6 +73,15 @@ public interface AstNode {
          * @return the result
          */
         R visitAttributeValueArray(C context, AstAttributeValueArray node);
+
+        /**
+         * Called back from {@link AstAttributeValueMap}.
+         * @param context the context of this visitor
+         * @param node the node invoked {@link AstNode#accept(Object, Visitor)}
+         * @return the result
+         * @since 0.9.1
+         */
+        R visitAttributeValueMap(C context, AstAttributeValueMap node);
 
         /**
          * Called back from {@link AstBasicType}.
@@ -255,6 +266,11 @@ public interface AstNode {
 
         @Override
         public R visitAttributeValueArray(C context, AstAttributeValueArray node) {
+            return null;
+        }
+
+        @Override
+        public R visitAttributeValueMap(C context, AstAttributeValueMap node) {
             return null;
         }
 
