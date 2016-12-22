@@ -238,7 +238,6 @@ public class FileMapListBuffer<E extends Writable> extends AbstractList<E> imple
                 }
                 elements[i].write(buffer);
             }
-            assert buffer.contents.hasRemaining();
             long end = putContents(offset, buffer.contents);
             offsets[index] = end;
         }
@@ -262,6 +261,7 @@ public class FileMapListBuffer<E extends Writable> extends AbstractList<E> imple
             if (LOG.isTraceEnabled()) {
                 LOG.trace(String.format("writing fragment: %s@%,d+%,d", path, begin, contents.remaining())); //$NON-NLS-1$
             }
+            assert contents.hasRemaining();
             long offset = begin;
             while (contents.hasRemaining()) {
                 offset += channel.write(contents, offset);
