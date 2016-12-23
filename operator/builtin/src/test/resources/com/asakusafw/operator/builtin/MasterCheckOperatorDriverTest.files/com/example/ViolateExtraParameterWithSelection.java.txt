@@ -6,5 +6,8 @@ import com.asakusafw.vocabulary.operator.*;
 public abstract class $s {
 
     @MasterCheck
-    public abstract boolean method(@Key(group = "id") Side side, @Key(group = "key") Model model);
+    public abstract boolean method(
+            @Key(group = "id") Side side,
+            @Key(group = "key") Model model,
+            int extra);
 }

@@ -20,6 +20,8 @@ import static org.junit.Assert.*;
 
 import java.util.Map;
 
+import javax.lang.model.element.ExecutableElement;
+
 import org.junit.Test;
 
 import com.asakusafw.operator.description.Descriptions;
@@ -78,7 +80,57 @@ public class MasterCheckOperatorDriverTest extends OperatorDriverTestRoot {
                 Node missed = outputs.get(defaultName(MasterCheck.class, "missedPort"));
                 assertThat(missed, is(notNullValue()));
                 assertThat(missed.getType(), is(sameType("com.example.Model")));
+
+                ExecutableElement selector = description.getSupport();
+                assertThat(selector, is(nullValue()));
             }
         });
+    }
+
+    /**
+     * w/ selection.
+     */
+    @Test
+    public void with_selection() {
+        compile(new Action("com.example.WithSelection") {
+            @Override
+            protected void perform(OperatorElement target) {
+                OperatorDescription description = target.getDescription();
+                assertThat(description.getInputs().size(), is(2));
+                assertThat(description.getOutputs().size(), is(2));
+                assertThat(description.getArguments().size(), is(0));
+
+                ExecutableElement selector = description.getSupport();
+                assertThat(selector, is(notNullValue()));
+                assertThat(selector.getSimpleName().toString(), is("selector"));
+            }
+        });
+    }
+
+    /**
+     * w/ extra parameters (+selection).
+     */
+    @Test
+    public void with_extra_parameter() {
+        compile(new Action("com.example.WithExtraParameter") {
+            @Override
+            protected void perform(OperatorElement target) {
+                OperatorDescription description = target.getDescription();
+                assertThat(description.getInputs().size(), is(2));
+                assertThat(description.getOutputs().size(), is(2));
+                assertThat(description.getArguments().size(), is(1));
+
+                ExecutableElement selector = description.getSupport();
+                assertThat(selector, is(notNullValue()));
+            }
+        });
+    }
+
+    /**
+     * violates extra parameters should be with selector.
+     */
+    @Test
+    public void violate_extra_parameter_with_selection() {
+        violate("com.example.ViolateExtraParameterWithSelection");
     }
 }

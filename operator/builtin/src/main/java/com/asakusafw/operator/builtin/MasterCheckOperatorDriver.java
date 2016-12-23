@@ -15,6 +15,7 @@
  */
 package com.asakusafw.operator.builtin;
 
+import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 
 import com.asakusafw.operator.Constants;
@@ -51,8 +52,16 @@ public class MasterCheckOperatorDriver implements OperatorDriver {
         }
         MasterKindOperatorHelper.consumeMaster(dsl);
         MasterKindOperatorHelper.consumeTx(dsl);
+        ExecutableElement selector = MasterKindOperatorHelper.extractMasterSelection(dsl);
         for (ElementRef p : dsl.parametersFrom(2)) {
-            p.error(Messages.getString("MasterCheckOperatorDriver.errorParameterBasicType")); //$NON-NLS-1$
+            if (p.type().isExtra()) {
+                dsl.consumeExtraParameter(p);
+                if (selector == null) {
+                    p.warn(Messages.getString("MasterCheckOperatorDriver.warnExtraParameterWithoutSelection")); //$NON-NLS-1$
+                }
+            } else {
+                p.error(Messages.getString("MasterCheckOperatorDriver.errorExtraParameterInvalidType")); //$NON-NLS-1$
+            }
         }
         if (dsl.getInputs().isEmpty() == false) {
             Node txInput = dsl.getInputs().get(dsl.getInputs().size() - 1);
@@ -67,7 +76,7 @@ public class MasterCheckOperatorDriver implements OperatorDriver {
                     txInput.getType(),
                     Reference.special(String.valueOf(false)));
         }
-        dsl.setSupport(MasterKindOperatorHelper.extractMasterSelection(dsl));
+        dsl.setSupport(selector);
         dsl.requireShuffle();
         return dsl.toDescription();
     }

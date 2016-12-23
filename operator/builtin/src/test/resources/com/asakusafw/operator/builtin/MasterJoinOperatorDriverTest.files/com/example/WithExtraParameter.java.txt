@@ -7,10 +7,10 @@ import com.asakusafw.vocabulary.operator.*;
 public abstract class $s {
 
     @MasterSelection
-    public LModel selector(List<LModel> left, RModel right) {
+    public LModel selector(List<LModel> left, RModel right, int extra) {
         return null;
     }
 
     @MasterJoin(selection = "selector")
-    public abstract JModel method(LModel left, RModel right);
+    public abstract JModel method(LModel left, RModel right, int extra);
 }
