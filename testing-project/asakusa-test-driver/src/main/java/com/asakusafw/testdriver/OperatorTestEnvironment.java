@@ -32,7 +32,9 @@ import com.asakusafw.runtime.core.BatchContext;
 import com.asakusafw.runtime.core.Report;
 import com.asakusafw.runtime.directio.DataFormat;
 import com.asakusafw.runtime.flow.RuntimeResourceManager;
+import com.asakusafw.runtime.model.DataModel;
 import com.asakusafw.runtime.stage.StageConstants;
+import com.asakusafw.runtime.testing.MockResult;
 import com.asakusafw.runtime.util.VariableTable;
 import com.asakusafw.runtime.util.VariableTable.RedefineStrategy;
 import com.asakusafw.testdriver.core.DataModelDefinition;
@@ -288,6 +290,30 @@ public class OperatorTestEnvironment extends DriverElementBase implements TestRu
      */
     public Configuration getConfiguration() {
         return createConfig();
+    }
+
+    /**
+     * Returns a new {@link MockResult}.
+     * The returned object will create copies of the incoming objects.
+     * @param <T> the data type
+     * @param dataType the data type
+     * @return the created {@link MockResult}
+     * @since 0.9.1
+     */
+    public <T extends DataModel<T>> MockResult<T> newResult(Class<T> dataType) {
+        Objects.requireNonNull(dataType);
+        return new MockResult<T>() {
+            @Override
+            protected T bless(T result) {
+                try {
+                    T copy = dataType.newInstance();
+                    copy.copyFrom(result);
+                    return copy;
+                } catch (ReflectiveOperationException e) {
+                    throw new IllegalStateException(e);
+                }
+            }
+        };
     }
 
     /**
