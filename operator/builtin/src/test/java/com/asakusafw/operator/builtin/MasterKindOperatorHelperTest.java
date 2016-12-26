@@ -18,6 +18,8 @@ package com.asakusafw.operator.builtin;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
+import javax.lang.model.element.ExecutableElement;
+
 import org.junit.Test;
 
 import com.asakusafw.operator.description.Descriptions;
@@ -73,29 +75,168 @@ public class MasterKindOperatorHelperTest extends OperatorDriverTestRoot {
                 assertThat(description.getInputs().size(), is(2));
                 assertThat(description.getOutputs().size(), is(2));
                 assertThat(description.getArguments().size(), is(0));
-                assertThat(description.getSupport().getSimpleName().toString(), is("selector"));
+
+                ExecutableElement selector = description.getSupport();
+                assertThat(selector.getSimpleName().toString(), is("selector"));
+                assertThat(selector.getParameters(), hasSize(1));
             }
         });
     }
 
     /**
-     * w/ selector method.
+     * selector method w/ transaction input.
      */
     @Test
-    public void selector_master_collection() {
-        compile(new Action("com.example.WithSelectorMasterInputCollection") {
+    public void selector_transaction() {
+        compile(new Action("com.example.SelectorWithTransaction") {
             @Override
             protected void perform(OperatorElement target) {
                 OperatorDescription description = target.getDescription();
-                assertThat(description.getSupport().getSimpleName().toString(), is("selector"));
+
+                ExecutableElement selector = description.getSupport();
+                assertThat(selector.getSimpleName().toString(), is("selector"));
+                assertThat(selector.getParameters(), hasSize(2));
             }
         });
     }
 
-    /*
-     * TODO
-     *   selector argument subtype
+    /**
+     * selector method w/ master input candidates as collection type.
      */
+    @Test
+    public void selector_master_collection() {
+        compile(new Action("com.example.SelectorWithMasterInputCollection") {
+            @Override
+            protected void perform(OperatorElement target) {
+                OperatorDescription description = target.getDescription();
+
+                ExecutableElement selector = description.getSupport();
+                assertThat(selector.getSimpleName().toString(), is("selector"));
+                assertThat(selector.getParameters(), hasSize(1));
+            }
+        });
+    }
+
+    /**
+     * selector method w/ master input candidates as iterable type.
+     */
+    @Test
+    public void selector_master_iterable() {
+        compile(new Action("com.example.SelectorWithMasterInputIterable") {
+            @Override
+            protected void perform(OperatorElement target) {
+                OperatorDescription description = target.getDescription();
+
+                ExecutableElement selector = description.getSupport();
+                assertThat(selector.getSimpleName().toString(), is("selector"));
+                assertThat(selector.getParameters(), hasSize(1));
+            }
+        });
+    }
+
+    /**
+     * selector method w/ basic parameter.
+     */
+    @Test
+    public void selector_basic() {
+        compile(new Action("com.example.SelectorWithBasic") {
+            @Override
+            protected void perform(OperatorElement target) {
+                OperatorDescription description = target.getDescription();
+                assertThat(description.getInputs().size(), is(2));
+                assertThat(description.getOutputs().size(), is(2));
+                assertThat(description.getArguments().size(), is(1));
+
+                ExecutableElement selector = description.getSupport();
+                assertThat(selector.getSimpleName().toString(), is("selector"));
+                assertThat(selector.getParameters(), hasSize(3));
+                assertThat(selector.getParameters().get(2).asType(), is(sameType(String.class)));
+            }
+        });
+    }
+
+    /**
+     * selector method w/ basic parameter but is ignored.
+     */
+    @Test
+    public void selector_basic_ignore() {
+        compile(new Action("com.example.SelectorWithBasicIgnore") {
+            @Override
+            protected void perform(OperatorElement target) {
+                OperatorDescription description = target.getDescription();
+                assertThat(description.getInputs().size(), is(2));
+                assertThat(description.getOutputs().size(), is(2));
+                assertThat(description.getArguments().size(), is(1));
+
+                ExecutableElement selector = description.getSupport();
+                assertThat(selector.getSimpleName().toString(), is("selector"));
+                assertThat(selector.getParameters(), hasSize(2));
+            }
+        });
+    }
+
+    /**
+     * selector method w/ view.
+     */
+    @Test
+    public void selector_view() {
+        compile(new Action("com.example.SelectorWithView") {
+            @Override
+            protected void perform(OperatorElement target) {
+                OperatorDescription description = target.getDescription();
+                assertThat(description.getInputs().size(), is(3));
+                assertThat(description.getOutputs().size(), is(2));
+                assertThat(description.getArguments().size(), is(0));
+
+                ExecutableElement selector = description.getSupport();
+                assertThat(selector.getSimpleName().toString(), is("selector"));
+                assertThat(selector.getParameters(), hasSize(3));
+                assertThat(description.getInputs().get(2).getAttributes(), hasItem(flatView()));
+            }
+        });
+    }
+
+    /**
+     * selector method w/ group view.
+     */
+    @Test
+    public void selector_group_view() {
+        compile(new Action("com.example.SelectorWithGroupView") {
+            @Override
+            protected void perform(OperatorElement target) {
+                OperatorDescription description = target.getDescription();
+                assertThat(description.getInputs().size(), is(3));
+                assertThat(description.getOutputs().size(), is(2));
+                assertThat(description.getArguments().size(), is(0));
+
+                ExecutableElement selector = description.getSupport();
+                assertThat(selector.getSimpleName().toString(), is("selector"));
+                assertThat(selector.getParameters(), hasSize(3));
+                assertThat(description.getInputs().get(2).getAttributes(), hasItem(groupView("=id")));
+            }
+        });
+    }
+
+    /**
+     * selector method w/ group view as supertype.
+     */
+    @Test
+    public void selector_group_view_supertype() {
+        compile(new Action("com.example.SelectorWithGroupViewSupertype") {
+            @Override
+            protected void perform(OperatorElement target) {
+                OperatorDescription description = target.getDescription();
+                assertThat(description.getInputs().size(), is(3));
+                assertThat(description.getOutputs().size(), is(2));
+                assertThat(description.getArguments().size(), is(0));
+
+                ExecutableElement selector = description.getSupport();
+                assertThat(selector.getSimpleName().toString(), is("selector"));
+                assertThat(selector.getParameters(), hasSize(3));
+                assertThat(description.getInputs().get(2).getAttributes(), hasItem(groupView("=id")));
+            }
+        });
+    }
 
     /**
      * violates master input is data model type.

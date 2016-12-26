@@ -95,7 +95,7 @@ public class MasterJoinOperatorDriverTest extends OperatorDriverTestRoot {
      * w/ selection.
      */
     @Test
-    public void selection() {
+    public void with_selection() {
         addDataModel("JModel");
         addDataModel("LModel");
         addDataModel("RModel");
@@ -108,5 +108,36 @@ public class MasterJoinOperatorDriverTest extends OperatorDriverTestRoot {
                 assertThat(support.getSimpleName().toString(), is("selector"));
             }
         });
+    }
+
+    /**
+     * w/ extra parameter.
+     */
+    @Test
+    public void with_extra_parameter() {
+        addDataModel("JModel");
+        addDataModel("LModel");
+        addDataModel("RModel");
+        compile(new Action("com.example.WithExtraParameter") {
+            @Override
+            protected void perform(OperatorElement target) {
+                OperatorDescription description = target.getDescription();
+                assertThat(description.getInputs().size(), is(2));
+                assertThat(description.getOutputs().size(), is(2));
+                assertThat(description.getArguments().size(), is(1));
+
+                ExecutableElement support = description.getSupport();
+                assertThat(support, is(notNullValue()));
+                assertThat(support.getSimpleName().toString(), is("selector"));
+            }
+        });
+    }
+
+    /**
+     * violates extra parameters should be with selector.
+     */
+    @Test
+    public void violate_extra_parameter_with_selection() {
+        violate("com.example.ViolateExtraParameterWithSelection");
     }
 }

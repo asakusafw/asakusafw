@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 
 import com.asakusafw.operator.Constants;
@@ -74,6 +75,7 @@ public class MasterJoinOperatorDriver implements OperatorDriver {
             return null;
         }
 
+        ExecutableElement selector = MasterKindOperatorHelper.extractMasterSelection(dsl);
         for (ElementRef p : dsl.parametersFrom(0)) {
             TypeRef type = p.type();
             KeyRef key = null;
@@ -99,10 +101,13 @@ public class MasterJoinOperatorDriver implements OperatorDriver {
                             Messages.getString("MasterJoinOperatorDriver.errorInputNotJoinSourceType"), //$NON-NLS-1$
                             dsl.result().type().dataModel().getSimpleName()));
                 }
-            } else if (type.isBasic()) { // unsupported
-                p.error(Messages.getString("MasterJoinOperatorDriver.errorParameterBasic")); //$NON-NLS-1$
+            } else if (p.type().isExtra()) {
+                dsl.consumeExtraParameter(p);
+                if (selector == null) {
+                    p.warn(Messages.getString("MasterJoinOperatorDriver.warnExtraParameterWithoutSelection")); //$NON-NLS-1$
+                }
             } else {
-                p.error(Messages.getString("MasterJoinOperatorDriver.errorParameterUnsupportedType")); //$NON-NLS-1$
+                p.error(Messages.getString("MasterJoinOperatorDriver.errorExtraParameterInvalidType")); //$NON-NLS-1$
             }
         }
         if (dsl.getInputs().size() != 2) {
@@ -134,7 +139,7 @@ public class MasterJoinOperatorDriver implements OperatorDriver {
                         types));
             }
         }
-        dsl.setSupport(MasterKindOperatorHelper.extractMasterSelection(dsl));
+        dsl.setSupport(selector);
         dsl.requireShuffle();
         return dsl.toDescription();
     }

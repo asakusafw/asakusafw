@@ -1,0 +1,19 @@
+package $p;
+
+import java.util.List;
+import com.asakusafw.vocabulary.model.Key;
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class $s {
+
+    @MasterCheck(selection = "selector")
+    public abstract boolean method(
+            @Key(group = "id") Side side,
+            @Key(group = "key") Model model,
+            int extra);
+
+    @MasterSelection
+    public Side selector(List<Side> side, Model model, int extra) {
+        return null;
+    }
+}

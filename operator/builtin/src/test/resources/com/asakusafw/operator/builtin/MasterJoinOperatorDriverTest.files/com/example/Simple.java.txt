@@ -1,11 +1,11 @@
-package com.example;
+package $p;
 
 import java.util.List;
 import com.asakusafw.runtime.core.Result;
 import com.asakusafw.vocabulary.model.Key;
 import com.asakusafw.vocabulary.operator.*;
 
-public abstract class Simple {
+public abstract class $s {
 
     @MasterJoin
     public abstract JModel method(LModel left, RModel right);
