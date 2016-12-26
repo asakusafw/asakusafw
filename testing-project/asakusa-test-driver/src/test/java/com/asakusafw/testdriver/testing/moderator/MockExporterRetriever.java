@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.Objects;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.slf4j.Logger;
@@ -67,7 +68,14 @@ public class MockExporterRetriever extends BaseExporterRetriever<MockExporterDes
         Configuration config = configurations.newInstance();
         FileSystem fs = FileSystem.get(config);
         Path path = new Path(description.getGlob());
-        fs.delete(path, false);
+        try {
+            FileStatus[] stats = fs.globStatus(path);
+            for (FileStatus s : stats) {
+                fs.delete(s.getPath(), false);
+            }
+        } catch (IOException e) {
+            LOG.debug("exception in truncate", e);
+        }
     }
 
     @Override
