@@ -71,7 +71,7 @@ public class BasicGroupLoader<T> implements GroupLoader<T> {
     @Override
     public GroupLoader<T> order(String... terms) {
         if (refComparator != null) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("order is already defined"); //$NON-NLS-1$
         }
         refComparator = Util.toComparator(definition, terms);
         return this;
@@ -80,7 +80,7 @@ public class BasicGroupLoader<T> implements GroupLoader<T> {
     @Override
     public GroupLoader<T> order(Comparator<? super T> comparator) {
         if (refComparator != null) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("order is already defined"); //$NON-NLS-1$
         }
         refComparator = Util.toComparator(definition, comparator);
         return this;

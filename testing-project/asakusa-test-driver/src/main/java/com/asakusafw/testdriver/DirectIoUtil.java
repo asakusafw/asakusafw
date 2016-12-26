@@ -62,9 +62,6 @@ final class DirectIoUtil {
             Class<? extends DataFormat<?>> formatClass,
             URL source) throws IOException, InterruptedException {
         DataFormat<? super T> format = newDataFormat(configuration, formatClass);
-        if (format.getSupportedType().isAssignableFrom(definition.getModelClass()) == false) {
-            throw new IllegalArgumentException();
-        }
         return load(configuration, definition, format, source);
     }
 
@@ -74,9 +71,6 @@ final class DirectIoUtil {
             Class<? extends DataFormat<?>> formatClass,
             File source) throws IOException, InterruptedException {
         DataFormat<? super T> format = newDataFormat(configuration, formatClass);
-        if (format.getSupportedType().isAssignableFrom(definition.getModelClass()) == false) {
-            throw new IllegalArgumentException();
-        }
         return load(configuration, definition, format, source);
     }
 
@@ -85,6 +79,7 @@ final class DirectIoUtil {
             DataModelDefinition<T> definition,
             DataFormat<? super T> format,
             File source) throws IOException, InterruptedException {
+        checkDataType(definition, format);
         if (format instanceof BinaryStreamFormat<?>) {
             return load0(definition, (BinaryStreamFormat<? super T>) format, source);
         }
@@ -97,6 +92,7 @@ final class DirectIoUtil {
             DataModelDefinition<T> definition,
             DataFormat<? super T> format,
             URL source) throws IOException, InterruptedException {
+        checkDataType(definition, format);
         if (source.getProtocol().equals("file")) { //$NON-NLS-1$
             File file = null;
             try {
@@ -127,6 +123,16 @@ final class DirectIoUtil {
             return format;
         } catch (ReflectiveOperationException e) {
             throw new IllegalStateException(e);
+        }
+    }
+
+    private static void checkDataType(DataModelDefinition<?> definition, DataFormat<?> format) {
+        if (format.getSupportedType().isAssignableFrom(definition.getModelClass()) == false) {
+            throw new IllegalArgumentException(MessageFormat.format(
+                    "inconsistent data format: data-type={0}, format-type={1}, supported-type={2}",
+                    definition.getModelClass().getName(),
+                    format.getClass().getName(),
+                    format.getSupportedType().getName()));
         }
     }
 

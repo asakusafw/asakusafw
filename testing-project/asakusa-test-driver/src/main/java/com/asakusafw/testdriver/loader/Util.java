@@ -55,6 +55,16 @@ final class Util {
         return;
     }
 
+    static void checkProperty(DataModelDefinition<?> definition, PropertyName name) {
+        PropertyType type = definition.getType(name);
+        if (type == null) {
+            throw new IllegalArgumentException(MessageFormat.format(
+                    "property \"{1}\" is not defined in {0}",
+                    definition.getClass().getName(),
+                    name));
+        }
+    }
+
     static <T> Comparator<DataModelReflection> toComparator(
             DataModelDefinition<T> definition,
             String... terms) {
@@ -79,13 +89,10 @@ final class Util {
     @SuppressWarnings("unchecked")
     private static <T> Comparator<DataModelReflection> toComparator(DataModelDefinition<T> definition, String term) {
         if (term.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("order term must not be empty"); //$NON-NLS-1$
         }
         Ordering order = parseOrder(term);
-        PropertyType type = definition.getType(order.propertyName);
-        if (type == null) {
-            throw new IllegalArgumentException();
-        }
+        checkProperty(definition, order.propertyName);
         Comparator<DataModelReflection> comparator = (a, b) -> {
             Comparable<Object> aValue = (Comparable<Object>) a.getValue(order.propertyName);
             Comparable<Object> bValue = (Comparable<Object>) b.getValue(order.propertyName);
@@ -110,6 +117,9 @@ final class Util {
     static <T> Comparator<DataModelReflection> toComparator(
             DataModelDefinition<T> definition,
             Comparator<? super T> objectComparator) {
+        if (objectComparator == null) {
+            return null;
+        }
         return (a, b) -> {
             T aObj = definition.toObject(a);
             T bObj = definition.toObject(b);

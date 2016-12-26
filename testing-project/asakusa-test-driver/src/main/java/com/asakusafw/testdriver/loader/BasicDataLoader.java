@@ -28,7 +28,6 @@ import com.asakusafw.testdriver.core.DataModelReflection;
 import com.asakusafw.testdriver.core.DataModelSource;
 import com.asakusafw.testdriver.core.DataModelSourceFactory;
 import com.asakusafw.testdriver.core.PropertyName;
-import com.asakusafw.testdriver.core.PropertyType;
 import com.asakusafw.testdriver.core.TestContext;
 
 /**
@@ -63,10 +62,7 @@ public class BasicDataLoader<T> implements DataLoader<T> {
         List<PropertyName> names = new ArrayList<>();
         for (String term : terms) {
             PropertyName name = PropertyName.parse(term);
-            PropertyType type = definition.getType(name);
-            if (type == null) {
-                throw new IllegalArgumentException();
-            }
+            Util.checkProperty(definition, name);
             names.add(name);
         }
         return new BasicGroupLoader<>(context, definition, factory, names, refComparator);
@@ -75,7 +71,7 @@ public class BasicDataLoader<T> implements DataLoader<T> {
     @Override
     public DataLoader<T> order(String... terms) {
         if (refComparator != null) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("order is already defined"); //$NON-NLS-1$
         }
         refComparator = Util.toComparator(definition, terms);
         return this;
@@ -84,7 +80,7 @@ public class BasicDataLoader<T> implements DataLoader<T> {
     @Override
     public DataLoader<T> order(Comparator<? super T> comparator) {
         if (refComparator != null) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("order is already defined"); //$NON-NLS-1$
         }
         refComparator = Util.toComparator(definition, comparator);
         return this;
