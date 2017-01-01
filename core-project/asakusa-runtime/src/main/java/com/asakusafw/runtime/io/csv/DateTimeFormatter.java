@@ -84,10 +84,11 @@ abstract class DateTimeFormatter {
 
         @Override
         long parse(CharSequence sequence) {
-            parsePositionBuffer.setIndex(0);
-            parsePositionBuffer.setErrorIndex(-1);
-            java.util.Date parsed = format.parse(sequence.toString(), parsePositionBuffer);
-            if (parsePositionBuffer.getIndex() == 0) {
+            ParsePosition pos = parsePositionBuffer;
+            pos.setIndex(0);
+            pos.setErrorIndex(-1);
+            java.util.Date parsed = format.parse(sequence.toString(), pos);
+            if (pos.getIndex() != sequence.length() || pos.getErrorIndex() >= 0) {
                 return -1;
             }
             calendarBuffer.setTime(parsed);
@@ -118,11 +119,13 @@ abstract class DateTimeFormatter {
 
         private final char timeSegmentSeparator;
 
-        Standard(char dateSegmentSeparator, char dateTimeSeparator, char timeSegmentSeparator) {
+        private Standard(
+                String pattern,
+                char dateSegmentSeparator, char dateTimeSeparator, char timeSegmentSeparator) {
             this.dateSegmentSeparator = dateSegmentSeparator;
             this.dateTimeSeparator = dateTimeSeparator;
             this.timeSegmentSeparator = timeSegmentSeparator;
-            this.next = new Default(new SimpleDateFormat(getPattern()));
+            this.next = new Default(new SimpleDateFormat(pattern));
         }
 
         static Standard of(String pattern) {
@@ -131,7 +134,7 @@ abstract class DateTimeFormatter {
                 char dateSegment = extract(matcher, 1);
                 char dateTime = extract(matcher, 2);
                 char timeSegment = extract(matcher, 3);
-                return new Standard(dateSegment, dateTime, timeSegment);
+                return new Standard(pattern, dateSegment, dateTime, timeSegment);
             }
             return null;
         }
@@ -152,19 +155,7 @@ abstract class DateTimeFormatter {
 
         @Override
         String getPattern() {
-            buffer.setLength(0);
-            buffer.append("yyyy"); //$NON-NLS-1$
-            buffer.append(dateSegmentSeparator);
-            buffer.append("MM"); //$NON-NLS-1$
-            buffer.append(dateSegmentSeparator);
-            buffer.append("dd"); //$NON-NLS-1$
-            buffer.append(dateTimeSeparator);
-            buffer.append("HH"); //$NON-NLS-1$
-            buffer.append(timeSegmentSeparator);
-            buffer.append("mm"); //$NON-NLS-1$
-            buffer.append(timeSegmentSeparator);
-            buffer.append("ss"); //$NON-NLS-1$
-            return buffer.toString();
+            return next.getPattern();
         }
 
         @Override
@@ -206,13 +197,16 @@ abstract class DateTimeFormatter {
 
         private final CharBuffer buffer;
 
+        private final DateTimeFormatter next;
+
         Direct() {
-            buffer = CharBuffer.allocate(LENGTH);
+            this.buffer = CharBuffer.allocate(LENGTH);
+            this.next = new Default(new SimpleDateFormat(PATTERN));
         }
 
         @Override
         String getPattern() {
-            return PATTERN;
+            return next.getPattern();
         }
 
         @Override
@@ -240,7 +234,7 @@ abstract class DateTimeFormatter {
         @Override
         long parse(CharSequence sequence) {
             if (sequence.length() != LENGTH) {
-                return -1;
+                return next.parse(sequence);
             }
             int year = getNumericValue(sequence, POS_YEAR, 4);
             int month = getNumericValue(sequence, POS_MONTH, 2);
@@ -249,7 +243,7 @@ abstract class DateTimeFormatter {
             int minute = getNumericValue(sequence, POS_MINUTE, 2);
             int second = getNumericValue(sequence, POS_SECOND, 2);
             if (year < 0 || month < 0 || day < 0 || hour < 0 || minute < 0 || second < 0) {
-                return -1;
+                return next.parse(sequence);
             }
             int date = DateUtil.getDayFromDate(year, month, day);
             int secondsInDay = DateUtil.getSecondFromTime(hour, minute, second);

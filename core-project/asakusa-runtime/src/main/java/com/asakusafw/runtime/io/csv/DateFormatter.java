@@ -84,10 +84,11 @@ abstract class DateFormatter {
 
         @Override
         int parse(CharSequence sequence) {
-            parsePositionBuffer.setIndex(0);
-            parsePositionBuffer.setErrorIndex(-1);
-            java.util.Date parsed = format.parse(sequence.toString(), parsePositionBuffer);
-            if (parsePositionBuffer.getIndex() == 0) {
+            ParsePosition pos = parsePositionBuffer;
+            pos.setIndex(0);
+            pos.setErrorIndex(-1);
+            java.util.Date parsed = format.parse(sequence.toString(), pos);
+            if (pos.getIndex() != sequence.length() || pos.getErrorIndex() >= 0) {
                 return -1;
             }
             calendarBuffer.setTime(parsed);
@@ -112,16 +113,16 @@ abstract class DateFormatter {
 
         private final char separator;
 
-        Standard(char separator) {
+        private Standard(String pattern, char separator) {
             this.separator = separator;
-            this.next = new Default(new SimpleDateFormat(getPattern()));
+            this.next = new Default(new SimpleDateFormat(pattern));
         }
 
         static Standard of(String pattern) {
             Matcher matcher = META_PATTERN.matcher(pattern);
             if (matcher.matches()) {
                 char separator = extract(matcher, 1);
-                return new Standard(separator);
+                return new Standard(pattern, separator);
             }
             return null;
         }
@@ -142,13 +143,7 @@ abstract class DateFormatter {
 
         @Override
         String getPattern() {
-            buffer.setLength(0);
-            buffer.append("yyyy"); //$NON-NLS-1$
-            buffer.append(separator);
-            buffer.append("MM"); //$NON-NLS-1$
-            buffer.append(separator);
-            buffer.append("dd"); //$NON-NLS-1$
-            return buffer.toString();
+            return next.getPattern();
         }
 
         @Override
@@ -182,13 +177,16 @@ abstract class DateFormatter {
 
         private final CharBuffer buffer;
 
+        private final DateFormatter next;
+
         Direct() {
             buffer = CharBuffer.allocate(LENGTH);
+            next = new Default(new SimpleDateFormat(PATTERN));
         }
 
         @Override
         String getPattern() {
-            return PATTERN;
+            return next.getPattern();
         }
 
         @Override
@@ -206,13 +204,13 @@ abstract class DateFormatter {
         @Override
         int parse(CharSequence sequence) {
             if (sequence.length() != LENGTH) {
-                return -1;
+                return next.parse(sequence);
             }
             int year = getNumericValue(sequence, POS_YEAR, 4);
             int month = getNumericValue(sequence, POS_MONTH, 2);
             int day = getNumericValue(sequence, POS_DAY, 2);
             if (year < 0 || month < 0 || day < 0) {
-                return -1;
+                return next.parse(sequence);
             }
             return DateUtil.getDayFromDate(year, month, day);
         }
