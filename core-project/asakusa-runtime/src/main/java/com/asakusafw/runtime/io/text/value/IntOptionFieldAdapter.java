@@ -15,8 +15,11 @@
  */
 package com.asakusafw.runtime.io.text.value;
 
+import java.util.Collection;
+
 import com.asakusafw.runtime.io.text.TextUtil;
 import com.asakusafw.runtime.io.text.driver.FieldAdapter;
+import com.asakusafw.runtime.io.text.driver.FieldOutput;
 import com.asakusafw.runtime.value.IntOption;
 
 /**
@@ -25,8 +28,8 @@ import com.asakusafw.runtime.value.IntOption;
  */
 public final class IntOptionFieldAdapter extends ValueOptionFieldAdapter<IntOption> {
 
-    IntOptionFieldAdapter(String nullFormat) {
-        super(nullFormat);
+    IntOptionFieldAdapter(String nullFormat, Collection<? extends FieldOutput.Option> outputOptions) {
+        super(nullFormat, outputOptions);
     }
 
     /**
@@ -55,7 +58,7 @@ public final class IntOptionFieldAdapter extends ValueOptionFieldAdapter<IntOpti
     public static class Builder extends BuilderBase<Builder, IntOptionFieldAdapter> {
         @Override
         public IntOptionFieldAdapter build() {
-            return new IntOptionFieldAdapter(getNullFormat());
+            return new IntOptionFieldAdapter(getNullFormat(), getOutputOptions());
         }
     }
 }

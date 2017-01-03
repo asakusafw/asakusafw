@@ -18,6 +18,8 @@ package com.asakusafw.runtime.io.text;
 import java.io.Closeable;
 import java.io.IOException;
 
+import com.asakusafw.runtime.io.text.driver.FieldOutput;
+
 /**
  * An abstract super interface which writing records and their fields.
  * @since 0.9.1
@@ -26,10 +28,10 @@ public interface FieldWriter extends Closeable {
 
     /**
      * Puts a next field into the current writing record.
-     * @param contents the field contents
+     * @param output the field contents
      * @throws IOException if I/O error was occurred while writing the next field
      */
-    void putField(CharSequence contents) throws IOException;
+    void putField(FieldOutput output) throws IOException;
 
     /**
      * Puts an end-of-record mark and starts writing the next record.

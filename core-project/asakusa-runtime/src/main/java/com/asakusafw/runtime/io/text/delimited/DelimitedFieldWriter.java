@@ -25,6 +25,7 @@ import com.asakusafw.runtime.io.text.FieldWriter;
 import com.asakusafw.runtime.io.text.LineSeparator;
 import com.asakusafw.runtime.io.text.UnmappableOutput;
 import com.asakusafw.runtime.io.text.UnmappableOutputException;
+import com.asakusafw.runtime.io.text.driver.FieldOutput;
 
 /**
  * A {@link FieldWriter} for delimited text contents.
@@ -96,7 +97,8 @@ public class DelimitedFieldWriter implements FieldWriter {
     }
 
     @Override
-    public void putField(CharSequence contents) throws IOException {
+    public void putField(FieldOutput output) throws IOException {
+        CharSequence contents = output.get();
         switch (lastState) {
         case BEFORE_RECORD:
             break;

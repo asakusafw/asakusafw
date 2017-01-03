@@ -29,6 +29,8 @@ import org.junit.Test;
 import com.asakusafw.runtime.io.text.FieldWriter;
 import com.asakusafw.runtime.io.text.LineSeparator;
 import com.asakusafw.runtime.io.text.UnmappableOutput.ErrorCode;
+import com.asakusafw.runtime.io.text.driver.BasicFieldOutput;
+import com.asakusafw.runtime.io.text.driver.FieldOutput;
 import com.asakusafw.runtime.io.text.UnmappableOutputException;
 
 /**
@@ -52,7 +54,7 @@ public class DelimitedFieldWriterTest {
     @Test
     public void simple() {
         String result = emit(null, w -> {
-            w.putField("Hello, world!");
+            w.putField(wrap("Hello, world!"));
             w.putEndOfRecord();
         });
         assertThat(result, is("Hello, world!\n"));
@@ -65,7 +67,7 @@ public class DelimitedFieldWriterTest {
     public void windows() {
         lineSeparator = LineSeparator.WINDOWS;
         String result = emit(null, w -> {
-            w.putField("Hello, world!");
+            w.putField(wrap("Hello, world!"));
             w.putEndOfRecord();
         });
         assertThat(result, is("Hello, world!\r\n"));
@@ -77,9 +79,9 @@ public class DelimitedFieldWriterTest {
     @Test
     public void multiple_columns() {
         String result = emit(null, w -> {
-            w.putField("A");
-            w.putField("B");
-            w.putField("C");
+            w.putField(wrap("A"));
+            w.putField(wrap("B"));
+            w.putField(wrap("C"));
             w.putEndOfRecord();
         });
         assertThat(result, is(lines(new String[][] {
@@ -93,11 +95,11 @@ public class DelimitedFieldWriterTest {
     @Test
     public void multiple_rows() {
         String result = emit(null, w -> {
-            w.putField("A");
+            w.putField(wrap("A"));
             w.putEndOfRecord();
-            w.putField("B");
+            w.putField(wrap("B"));
             w.putEndOfRecord();
-            w.putField("C");
+            w.putField(wrap("C"));
             w.putEndOfRecord();
         });
         assertThat(result, is(lines(new String[][] {
@@ -113,8 +115,8 @@ public class DelimitedFieldWriterTest {
     @Test
     public void empty_field() {
         String result = emit(null, w -> {
-            w.putField("");
-            w.putField("");
+            w.putField(wrap(""));
+            w.putField(wrap(""));
             w.putEndOfRecord();
         });
         assertThat(result, is(lines(new String[][] {
@@ -151,7 +153,7 @@ public class DelimitedFieldWriterTest {
     @Test
     public void escape_escape() {
         String result = emit(null, w -> {
-            w.putField("\\");
+            w.putField(wrap("\\"));
             w.putEndOfRecord();
         });
         assertThat(result, is(lines(new String[][] {
@@ -165,7 +167,7 @@ public class DelimitedFieldWriterTest {
     @Test
     public void escape_field_separator() {
         String result = emit(null, w -> {
-            w.putField("\t");
+            w.putField(wrap("\t"));
             w.putEndOfRecord();
         });
         assertThat(result, is(lines(new String[][] {
@@ -179,7 +181,7 @@ public class DelimitedFieldWriterTest {
     @Test
     public void escape_lf() {
         String result = emit(null, w -> {
-            w.putField("\n");
+            w.putField(wrap("\n"));
             w.putEndOfRecord();
         });
         assertThat(result, is(lines(new String[][] {
@@ -193,7 +195,7 @@ public class DelimitedFieldWriterTest {
     @Test
     public void escape_crlf() {
         String result = emit(null, w -> {
-            w.putField("\r\n");
+            w.putField(wrap("\r\n"));
             w.putEndOfRecord();
         });
         assertThat(result, is(lines(new String[][] {
@@ -207,7 +209,7 @@ public class DelimitedFieldWriterTest {
     @Test
     public void escape_cr() {
         String result = emit(null, w -> {
-            w.putField("\r");
+            w.putField(wrap("\r"));
             w.putEndOfRecord();
         });
         assertThat(result, is(lines(new String[][] {
@@ -222,7 +224,7 @@ public class DelimitedFieldWriterTest {
     public void escape_line_separator_lf() {
         escape = EscapeSequence.builder('\\').addLineSeparator().build();
         String result = emit(null, w -> {
-            w.putField("\n");
+            w.putField(wrap("\n"));
             w.putEndOfRecord();
         });
         assertThat(result, is(lines(new String[][] {
@@ -237,7 +239,7 @@ public class DelimitedFieldWriterTest {
     public void escape_line_separator_crlf() {
         escape = EscapeSequence.builder('\\').addLineSeparator().build();
         String result = emit(null, w -> {
-            w.putField("\r\n");
+            w.putField(wrap("\r\n"));
             w.putEndOfRecord();
         });
         assertThat(result, is(lines(new String[][] {
@@ -252,7 +254,7 @@ public class DelimitedFieldWriterTest {
     public void escape_line_separator_cr_cont() {
         escape = EscapeSequence.builder('\\').addLineSeparator().build();
         String result = emit(null, w -> {
-            w.putField("\rC");
+            w.putField(wrap("\rC"));
             w.putEndOfRecord();
         });
         assertThat(result, is(lines(new String[][] {
@@ -267,7 +269,7 @@ public class DelimitedFieldWriterTest {
     public void escape_line_separator_cr_eof() {
         escape = EscapeSequence.builder('\\').addLineSeparator().build();
         String result = emit(null, w -> {
-            w.putField("\r");
+            w.putField(wrap("\r"));
             w.putEndOfRecord();
         });
         assertThat(result, is(lines(new String[][] {
@@ -281,7 +283,7 @@ public class DelimitedFieldWriterTest {
     @Test
     public void null_sequence() {
         String result = emit(null, w -> {
-            w.putField(null);
+            w.putField(wrap(null));
             w.putEndOfRecord();
         });
         assertThat(result, is(lines(new String[][] {
@@ -298,7 +300,7 @@ public class DelimitedFieldWriterTest {
                 .addNullMapping('N')
                 .build();
         String result = emit(null, w -> {
-            w.putField("\t");
+            w.putField(wrap("\t"));
             expectUnmappable(w, ErrorCode.EXTRA_FIELD_SEPARATOR);
         });
         assertThat(result, is(lines(new String[][] {
@@ -315,7 +317,7 @@ public class DelimitedFieldWriterTest {
                 .addNullMapping('N')
                 .build();
         String result = emit(null, w -> {
-            w.putField("\n");
+            w.putField(wrap("\n"));
             expectUnmappable(w, ErrorCode.EXTRA_RECORD_SEPARATOR);
         });
         assertThat(result, is(lines(new String[][] {
@@ -332,7 +334,7 @@ public class DelimitedFieldWriterTest {
                 .addNullMapping('N')
                 .build();
         String result = emit(null, w -> {
-            w.putField("\r\n");
+            w.putField(wrap("\r\n"));
             expectUnmappable(w, ErrorCode.EXTRA_RECORD_SEPARATOR);
         });
         assertThat(result, is(lines(new String[][] {
@@ -349,7 +351,7 @@ public class DelimitedFieldWriterTest {
                 .addNullMapping('N')
                 .build();
         String result = emit(null, w -> {
-            w.putField("\r");
+            w.putField(wrap("\r"));
             expectUnmappable(w, ErrorCode.EXTRA_RECORD_SEPARATOR);
         });
         assertThat(result, is(lines(new String[][] {
@@ -366,7 +368,7 @@ public class DelimitedFieldWriterTest {
                 .addNullMapping('N')
                 .build();
         String result = emit(null, w -> {
-            w.putField("\r");
+            w.putField(wrap("\r"));
             expectUnmappable(w, ErrorCode.EXTRA_RECORD_SEPARATOR);
         });
         assertThat(result, is(lines(new String[][] {
@@ -383,7 +385,7 @@ public class DelimitedFieldWriterTest {
                 .addNullMapping('N')
                 .build();
         String result = emit(null, w -> {
-            w.putField("\\c");
+            w.putField(wrap("\\c"));
             w.putEndOfRecord();
         });
         assertThat(result, is(lines(new String[][] {
@@ -400,7 +402,7 @@ public class DelimitedFieldWriterTest {
                 .addMapping('t', '\t')
                 .build();
         String result = emit(null, w -> {
-            w.putField("\\\t");
+            w.putField(wrap("\\\t"));
             w.putEndOfRecord();
         });
         assertThat(result, is(lines(new String[][] {
@@ -417,7 +419,7 @@ public class DelimitedFieldWriterTest {
                 .addLineSeparator()
                 .build();
         String result = emit(null, w -> {
-            w.putField("\\\n");
+            w.putField(wrap("\\\n"));
             w.putEndOfRecord();
         });
         assertThat(result, is(lines(new String[][] {
@@ -434,7 +436,7 @@ public class DelimitedFieldWriterTest {
                 .addLineSeparator()
                 .build();
         String result = emit(null, w -> {
-            w.putField("\\\r\n");
+            w.putField(wrap("\\\r\n"));
             w.putEndOfRecord();
         });
         assertThat(result, is(lines(new String[][] {
@@ -451,7 +453,7 @@ public class DelimitedFieldWriterTest {
                 .addLineSeparator()
                 .build();
         String result = emit(null, w -> {
-            w.putField("\\\rc");
+            w.putField(wrap("\\\rc"));
             w.putEndOfRecord();
         });
         assertThat(result, is(lines(new String[][] {
@@ -468,7 +470,7 @@ public class DelimitedFieldWriterTest {
                 .addLineSeparator()
                 .build();
         String result = emit(null, w -> {
-            w.putField("\\\r");
+            w.putField(wrap("\\\r"));
             w.putEndOfRecord();
         });
         assertThat(result, is(lines(new String[][] {
@@ -485,7 +487,7 @@ public class DelimitedFieldWriterTest {
                 .addMapping('t', '\t')
                 .build();
         String result = emit(null, w -> {
-            w.putField("\\t");
+            w.putField(wrap("\\t"));
             expectUnmappable(w, ErrorCode.CONFLICT_ESCAPE_SEQUENCE);
         });
         assertThat(result, is(lines(new String[][] {
@@ -502,7 +504,7 @@ public class DelimitedFieldWriterTest {
                 .addNullMapping('N')
                 .build();
         String result = emit(null, w -> {
-            w.putField("\\N");
+            w.putField(wrap("\\N"));
             expectUnmappable(w, ErrorCode.CONFLICT_ESCAPE_SEQUENCE);
         });
         assertThat(result, is(lines(new String[][] {
@@ -519,7 +521,7 @@ public class DelimitedFieldWriterTest {
                 .addMapping('t', '\t')
                 .build();
         String result = emit(null, w -> {
-            w.putField("\\\\t");
+            w.putField(wrap("\\\\t"));
             expectUnmappable(w, ErrorCode.CONFLICT_ESCAPE_SEQUENCE);
         });
         assertThat(result, is(lines(new String[][] {
@@ -536,7 +538,7 @@ public class DelimitedFieldWriterTest {
                 .addNullMapping('N')
                 .build();
         String result = emit(null, w -> {
-            w.putField("\\\t");
+            w.putField(wrap("\\\t"));
             expectUnmappable(w, ErrorCode.EXTRA_FIELD_SEPARATOR);
         });
         assertThat(result, is(lines(new String[][] {
@@ -553,7 +555,7 @@ public class DelimitedFieldWriterTest {
                 .addNullMapping('N')
                 .build();
         String result = emit(null, w -> {
-            w.putField("\\\n");
+            w.putField(wrap("\\\n"));
             expectUnmappable(w, ErrorCode.EXTRA_RECORD_SEPARATOR);
         });
         assertThat(result, is(lines(new String[][] {
@@ -570,7 +572,7 @@ public class DelimitedFieldWriterTest {
                 .addNullMapping('N')
                 .build();
         String result = emit(null, w -> {
-            w.putField("\\\r\n");
+            w.putField(wrap("\\\r\n"));
             expectUnmappable(w, ErrorCode.EXTRA_RECORD_SEPARATOR);
         });
         assertThat(result, is(lines(new String[][] {
@@ -587,7 +589,7 @@ public class DelimitedFieldWriterTest {
                 .addNullMapping('N')
                 .build();
         String result = emit(null, w -> {
-            w.putField("\\\rc");
+            w.putField(wrap("\\\rc"));
             expectUnmappable(w, ErrorCode.EXTRA_RECORD_SEPARATOR);
         });
         assertThat(result, is(lines(new String[][] {
@@ -604,7 +606,7 @@ public class DelimitedFieldWriterTest {
                 .addNullMapping('N')
                 .build();
         String result = emit(null, w -> {
-            w.putField("\\\r");
+            w.putField(wrap("\\\r"));
             expectUnmappable(w, ErrorCode.EXTRA_RECORD_SEPARATOR);
         });
         assertThat(result, is(lines(new String[][] {
@@ -621,8 +623,8 @@ public class DelimitedFieldWriterTest {
                 .addNullMapping('N')
                 .build();
         String result = emit(null, w -> {
-            w.putField("\\");
-            w.putField("");
+            w.putField(wrap("\\"));
+            w.putField(wrap(""));
             w.putEndOfRecord();
         });
         assertThat(result, is(lines(new String[][] {
@@ -639,8 +641,8 @@ public class DelimitedFieldWriterTest {
                 .addMapping('\t', '\t')
                 .build();
         String result = emit(null, w -> {
-            w.putField("\\");
-            w.putField("");
+            w.putField(wrap("\\"));
+            w.putField(wrap(""));
             expectUnmappable(w, ErrorCode.LOST_FIELD_SEPARATOR);
         });
         assertThat(result, is(lines(new String[][] {
@@ -657,9 +659,9 @@ public class DelimitedFieldWriterTest {
                 .addNullMapping('N')
                 .build();
         String result = emit(null, w -> {
-            w.putField("\\");
+            w.putField(wrap("\\"));
             w.putEndOfRecord();
-            w.putField("");
+            w.putField(wrap(""));
             w.putEndOfRecord();
         });
         assertThat(result, is(lines(new String[][] {
@@ -677,9 +679,9 @@ public class DelimitedFieldWriterTest {
                 .addLineSeparator()
                 .build();
         String result = emit(null, w -> {
-            w.putField("\\");
+            w.putField(wrap("\\"));
             expectUnmappable(w, ErrorCode.LOST_RECORD_SEPARATOR);
-            w.putField("");
+            w.putField(wrap(""));
             w.putEndOfRecord();
         });
         assertThat(result, is(lines(new String[][] {
@@ -695,7 +697,7 @@ public class DelimitedFieldWriterTest {
     public void undefined_null_sequence() {
         escape = null;
         String result = emit(null, w -> {
-            w.putField(null);
+            w.putField(wrap(null));
             expectUnmappable(w, ErrorCode.UNDEFINED_NULL_SEQUENCE);
         });
         assertThat(result, is(lines(new String[][] {
@@ -712,7 +714,7 @@ public class DelimitedFieldWriterTest {
         Arrays.fill(fields, "Hello, world!");
         String result = emit(null, w -> {
             for (String field : fields) {
-                w.putField(field);
+                w.putField(wrap(field));
             }
             w.putEndOfRecord();
         });
@@ -727,9 +729,9 @@ public class DelimitedFieldWriterTest {
     @Test
     public void transform() {
         String result = emit(s -> s.toString().trim(), w -> {
-            w.putField(" A ");
-            w.putField(" B ");
-            w.putField(" C ");
+            w.putField(wrap(" A "));
+            w.putField(wrap(" B "));
+            w.putField(wrap(" C "));
             w.putEndOfRecord();
         });
         assertThat(result, is(lines(new String[][] {
@@ -743,17 +745,21 @@ public class DelimitedFieldWriterTest {
     @Test
     public void transform_filter() {
         String result = emit(s -> s.toString().equals("B") ? null : s, w -> {
-            w.putField("A");
+            w.putField(wrap("A"));
             w.putEndOfRecord();
-            w.putField("B");
+            w.putField(wrap("B"));
             w.putEndOfRecord();
-            w.putField("C");
+            w.putField(wrap("C"));
             w.putEndOfRecord();
         });
         assertThat(result, is(lines(new String[][] {
             { "A" },
             { "C" },
         })));
+    }
+
+    private FieldOutput wrap(CharSequence contents) {
+        return new BasicFieldOutput().set(contents);
     }
 
     private String emit(UnaryOperator<CharSequence> transformer, Action action) {

@@ -15,6 +15,8 @@
  */
 package com.asakusafw.runtime.io.text.mock;
 
+import java.io.IOException;
+
 import com.asakusafw.runtime.io.text.FieldReader;
 
 /**
@@ -94,7 +96,7 @@ public class MockFieldReader implements FieldReader {
     }
 
     @Override
-    public void close() {
+    public void close() throws IOException {
         return;
     }
 }

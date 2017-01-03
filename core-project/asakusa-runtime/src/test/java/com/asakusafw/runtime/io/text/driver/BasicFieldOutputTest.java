@@ -18,9 +18,13 @@ package com.asakusafw.runtime.io.text.driver;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
+import java.util.Objects;
+
 import org.hamcrest.FeatureMatcher;
 import org.hamcrest.Matcher;
 import org.junit.Test;
+
+import com.asakusafw.runtime.io.text.driver.FieldOutput.Option;
 
 /**
  * Test for {@link BasicFieldOutput}.
@@ -35,7 +39,7 @@ public class BasicFieldOutputTest {
     @Test
     public void simple() {
         output.put("Hello, world!");
-        assertThat(output.getContent(), hasContent("Hello, world!"));
+        assertThat(output.get(), hasContent("Hello, world!"));
     }
 
     /**
@@ -44,7 +48,7 @@ public class BasicFieldOutputTest {
     @Test
     public void put_range() {
         output.put("0123456789", 2, 7);
-        assertThat(output.getContent(), hasContent("23456"));
+        assertThat(output.get(), hasContent("23456"));
     }
 
     /**
@@ -53,7 +57,7 @@ public class BasicFieldOutputTest {
     @Test
     public void put_null() {
         output.putNull();
-        assertThat(output.getContent(), is(nullValue()));
+        assertThat(output.get(), is(nullValue()));
     }
 
     /**
@@ -64,7 +68,7 @@ public class BasicFieldOutputTest {
         output.put("first");
         output.reset();
         output.put("second");
-        assertThat(output.getContent(), hasContent("second"));
+        assertThat(output.get(), hasContent("second"));
     }
 
     /**
@@ -75,7 +79,7 @@ public class BasicFieldOutputTest {
         output.putNull();
         output.reset();
         output.put("non-null");
-        assertThat(output.getContent(), hasContent("non-null"));
+        assertThat(output.get(), hasContent("non-null"));
     }
 
     /**
@@ -95,6 +99,27 @@ public class BasicFieldOutputTest {
         output.put("Hello").putNull();
     }
 
+    /**
+     * w/ option.
+     */
+    @Test
+    public void option() {
+        output.addOption(new MockOption("Hello, world!"));
+        assertThat(output.getOptions(), contains(new MockOption("Hello, world!")));
+        assertThat(output.reset().getOptions(), hasSize(0));
+    }
+
+    /**
+     * w/ options.
+     */
+    @Test
+    public void options() {
+        output.addOptions(new MockOption("A"), new MockOption("B"), new MockOption("C"));
+        assertThat(output.getOptions(), containsInAnyOrder(
+                new MockOption("A"), new MockOption("B"), new MockOption("C")));
+        assertThat(output.reset().getOptions(), hasSize(0));
+    }
+
     private static Matcher<CharSequence> hasContent(String value) {
         return new FeatureMatcher<CharSequence, String>(equalTo(value), "content", "content") {
             @Override
@@ -102,5 +127,45 @@ public class BasicFieldOutputTest {
                 return actual == null ? null : actual.toString();
             }
         };
+    }
+
+    private static class MockOption implements Option {
+
+        private final String value;
+
+        MockOption(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + Objects.hashCode(value);
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            MockOption other = (MockOption) obj;
+            if (!Objects.equals(value, other.value)) {
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
     }
 }

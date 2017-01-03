@@ -15,11 +15,25 @@
  */
 package com.asakusafw.runtime.io.text.driver;
 
+import java.util.Collection;
+
 /**
  * An output target of {@link FieldAdapter}.
  * @since 0.9.1
  */
 public interface FieldOutput {
+
+    /**
+     * Returns the output contents.
+     * @return the output contents, or {@code null} if this output was {@link #putNull() set as null}
+     */
+    CharSequence get();
+
+    /**
+     * Returns the options of this output.
+     * @return the options
+     */
+    Collection<? extends Option> getOptions();
 
     /**
      * Sets this field as {@code NULL}.
@@ -48,6 +62,25 @@ public interface FieldOutput {
     }
 
     /**
+     * Adds an option of this output.
+     * @param option the options
+     * @return this
+     */
+    FieldOutput addOption(Option option);
+
+    /**
+     * Adds options of this output.
+     * @param options the options
+     * @return this
+     */
+    default FieldOutput addOptions(Option... options) {
+        for (Option option : options) {
+            addOption(option);
+        }
+        return this;
+    }
+
+    /**
      * Acquires the internal buffer.
      * @return the internal buffer, always empty
      * @throws IllegalStateException if this field already has some content (optional)
@@ -63,5 +96,20 @@ public interface FieldOutput {
      */
     default void releaseBuffer(StringBuilder acquired) {
         put(acquired);
+    }
+
+    /**
+     * Represents an option of {@link FieldOutput}.
+     * @since 0.9.1
+     */
+    interface Option {
+
+        /**
+         * Returns the option type.
+         * @return the option type
+         */
+        default Class<? extends Option> getDeclaringClass() {
+            return getClass();
+        }
     }
 }

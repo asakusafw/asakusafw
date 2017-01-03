@@ -53,6 +53,17 @@ public final class FieldDefinition<T> {
     }
 
     /**
+     * Creates a new builder.
+     * @param <T> the property type
+     * @param name the field name
+     * @param adapterSupplier the adapter supplier
+     * @return the created builder
+     */
+    public static <T> Builder<T> builder(String name, Supplier<? extends FieldAdapter<T>> adapterSupplier) {
+        return new Builder<>(name, adapterSupplier);
+    }
+
+    /**
      * Returns the field name.
      * @return the name
      */

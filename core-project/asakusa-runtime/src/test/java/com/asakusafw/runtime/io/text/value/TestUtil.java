@@ -66,7 +66,7 @@ final class TestUtil {
     static <T extends ValueOption<T>> void checkEmit(FieldAdapter<T> adapter, T value, Object expected) {
         BasicFieldOutput output = new BasicFieldOutput();
         adapter.emit(value, output);
-        String r = output.getContent() == null ? null : output.getContent().toString();
+        String r = output.get() == null ? null : output.get().toString();
         String e = expected == null ? null : String.valueOf(expected);
         assertThat(r, equalTo(e));
     }

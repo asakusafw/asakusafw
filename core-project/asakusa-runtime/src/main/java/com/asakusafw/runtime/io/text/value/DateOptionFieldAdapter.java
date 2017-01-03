@@ -17,9 +17,11 @@ package com.asakusafw.runtime.io.text.value;
 
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 
 import com.asakusafw.runtime.io.text.TextUtil;
 import com.asakusafw.runtime.io.text.driver.FieldAdapter;
+import com.asakusafw.runtime.io.text.driver.FieldOutput;
 import com.asakusafw.runtime.value.DateOption;
 
 /**
@@ -35,8 +37,10 @@ public final class DateOptionFieldAdapter extends ValueOptionFieldAdapter<DateOp
 
     private final DateFormatter formatter;
 
-    DateOptionFieldAdapter(String nullFormat, String dateFormat) {
-        super(nullFormat);
+    DateOptionFieldAdapter(
+            String nullFormat, String dateFormat,
+            Collection<? extends FieldOutput.Option> outputOptions) {
+        super(nullFormat, outputOptions);
         this.formatter = DateFormatter.newInstance(dateFormat);
     }
 
@@ -86,7 +90,7 @@ public final class DateOptionFieldAdapter extends ValueOptionFieldAdapter<DateOp
 
         @Override
         public DateOptionFieldAdapter build() {
-            return new DateOptionFieldAdapter(getNullFormat(), dateFormat);
+            return new DateOptionFieldAdapter(getNullFormat(), dateFormat, getOutputOptions());
         }
     }
 }

@@ -15,12 +15,14 @@
  */
 package com.asakusafw.runtime.io.text.mock;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.asakusafw.runtime.io.text.FieldWriter;
 import com.asakusafw.runtime.io.text.UnmappableOutput;
 import com.asakusafw.runtime.io.text.UnmappableOutputException;
+import com.asakusafw.runtime.io.text.driver.FieldOutput;
 
 /**
  * Mock {@link FieldWriter}.
@@ -34,7 +36,8 @@ public class MockFieldWriter implements FieldWriter {
     private final List<UnmappableOutput> unmappables = new ArrayList<>();
 
     @Override
-    public void putField(CharSequence contents) {
+    public void putField(FieldOutput output) throws IOException {
+        CharSequence contents = output.get();
         if (contents == null) {
             cols.add(null);
         } else {
@@ -69,7 +72,7 @@ public class MockFieldWriter implements FieldWriter {
     }
 
     @Override
-    public void close() {
+    public void close() throws IOException {
         return;
     }
 }

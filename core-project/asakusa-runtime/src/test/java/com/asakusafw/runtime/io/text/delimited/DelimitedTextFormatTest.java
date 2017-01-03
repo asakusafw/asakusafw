@@ -30,6 +30,7 @@ import java.util.function.UnaryOperator;
 import org.junit.Test;
 
 import com.asakusafw.runtime.io.text.LineSeparator;
+import com.asakusafw.runtime.io.text.driver.BasicFieldOutput;
 
 /**
  * Test for {@link DelimitedTextFormat}.
@@ -292,11 +293,12 @@ public class DelimitedTextFormatTest {
     }
 
     private String[] write(DelimitedTextFormat format, String[][] fields) {
+        BasicFieldOutput fout = new BasicFieldOutput();
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         try (DelimitedFieldWriter writer = format.open(output)) {
             for (String[] row : fields) {
                 for (String field : row) {
-                    writer.putField(field);
+                    writer.putField(fout.set(field));
                 }
                 writer.putEndOfRecord();
             }

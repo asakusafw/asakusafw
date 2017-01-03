@@ -76,7 +76,7 @@ final class OutputDriver<T> implements TextOutput<T> {
                     model));
         }
         for (FieldDriver<T, ?> field : fields) {
-            writer.putField(fill(model, field).getContent());
+            writer.putField(fill(model, field));
         }
         try {
             writer.putEndOfRecord();
@@ -86,8 +86,9 @@ final class OutputDriver<T> implements TextOutput<T> {
     }
 
     private void writeHeader() throws IOException {
+        BasicFieldOutput output = fieldOutput;
         for (FieldDriver<?, ?> field : fields) {
-            writer.putField(field.name);
+            writer.putField(output.set(field.name));
         }
         try {
             writer.putEndOfRecord();
@@ -98,9 +99,8 @@ final class OutputDriver<T> implements TextOutput<T> {
 
     private <P> BasicFieldOutput fill(T model, FieldDriver<T, P> field) {
         BasicFieldOutput output = fieldOutput;
-        output.reset();
         P property = field.extractor.apply(model);
-        field.adapter.emit(property, output);
+        field.adapter.emit(property, output.reset());
         return output;
     }
 
@@ -159,7 +159,7 @@ final class OutputDriver<T> implements TextOutput<T> {
         if (model == null) {
             return field.name;
         }
-        CharSequence content = fill(model, field).getContent();
+        CharSequence content = fill(model, field).get();
         return content == null ? "null" : TextUtil.quote(content); //$NON-NLS-1$
     }
 

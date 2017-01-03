@@ -15,6 +15,10 @@
  */
 package com.asakusafw.runtime.io.text.driver;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * A basic implementation of {@link FieldOutput}.
  * @since 0.9.1
@@ -23,23 +27,44 @@ public class BasicFieldOutput implements FieldOutput {
 
     private final StringBuilder buffer = new StringBuilder();
 
+    private final List<Option> options = new ArrayList<>();
+
     private boolean isNull;
 
     /**
      * Clears the last output.
+     * @return this
      */
-    public void reset() {
+    public BasicFieldOutput reset() {
         isNull = false;
         buffer.setLength(0);
+        options.clear();
+        return this;
     }
 
     /**
-     * Returns content of the output result.
-     * The result will be broken if this output was changed.
-     * @return the output result; it may be {@code null} if this represents {@link #putNull() null} value
+     * Clears the last output and set the contents.
+     * @param contents the contents (nullable)
+     * @return this
      */
-    public CharSequence getContent() {
+    public BasicFieldOutput set(CharSequence contents) {
+        reset();
+        if (contents == null) {
+            putNull();
+        } else {
+            put(contents);
+        }
+        return this;
+    }
+
+    @Override
+    public CharSequence get() {
         return isNull ? null : buffer;
+    }
+
+    @Override
+    public List<Option> getOptions() {
+        return options;
     }
 
     @Override
@@ -61,6 +86,18 @@ public class BasicFieldOutput implements FieldOutput {
     public FieldOutput put(CharSequence contents) {
         checkNonNull();
         buffer.append(contents);
+        return this;
+    }
+
+    @Override
+    public FieldOutput addOption(Option option) {
+        options.add(option);
+        return this;
+    }
+
+    @Override
+    public FieldOutput addOptions(Option... opts) {
+        Collections.addAll(options, opts);
         return this;
     }
 
