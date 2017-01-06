@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * Represents a kind of {@link Model}.
  * @since 0.1.0
- * @version 0.9.0
+ * @version 0.9.1
  */
 public enum ModelKind {
 
@@ -504,6 +504,25 @@ public enum ModelKind {
         PropertyKind.METHOD_INVOCATION_EXPRESSION_TYPE_ARGUMENTS,
         PropertyKind.METHOD_INVOCATION_EXPRESSION_NAME,
         PropertyKind.METHOD_INVOCATION_EXPRESSION_ARGUMENTS,
+    }),
+
+    /**
+     * Represents {@link MethodReferenceExpression}.
+     * @since 0.9.1
+     */
+    METHOD_REFERENCE_EXPRESSION(MethodReferenceExpression.class, new PropertyKind[] {
+        PropertyKind.METHOD_OR_CONSTRUCTOR_REFERENCE_EXPRESSION_QUALIFIER,
+        PropertyKind.METHOD_OR_CONSTRUCTOR_REFERENCE_EXPRESSION_TYPE_ARGUMENTS,
+        PropertyKind.METHOD_REFERENCE_EXPRESSION_NAME,
+    }),
+
+    /**
+     * Represents {@link ConstructorReferenceExpression}.
+     * @since 0.9.1
+     */
+    CONSTRUCTOR_REFERENCE_EXPRESSION(ConstructorReferenceExpression.class, new PropertyKind[] {
+        PropertyKind.METHOD_OR_CONSTRUCTOR_REFERENCE_EXPRESSION_QUALIFIER,
+        PropertyKind.METHOD_OR_CONSTRUCTOR_REFERENCE_EXPRESSION_TYPE_ARGUMENTS,
     }),
 
     /**

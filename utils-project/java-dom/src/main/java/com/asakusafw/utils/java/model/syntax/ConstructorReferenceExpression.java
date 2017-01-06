@@ -16,15 +16,21 @@
 package com.asakusafw.utils.java.model.syntax;
 
 /**
- * An abstract super interface of types.
+ * An interface which represents method reference expressions only for constructors.
  * <ul>
  *   <li> Specified In: <ul>
- *     <li> {@code [JLS3:4] Types, Values, and Variables} </li>
+ *     <li> {@code [JLS8:15.13] Method Reference Expressions} </li>
  *   </ul> </li>
  * </ul>
+ * @since 0.9.1
  */
-public interface Type
-        extends TypeOrExpression, TypedElement {
+public interface ConstructorReferenceExpression
+        extends MethodOrConstructorReferenceExpression {
 
-    // properties
+    /**
+     * Returns the owner type.
+     * @return the owner type
+     */
+    @Override
+    Type getQualifier();
 }

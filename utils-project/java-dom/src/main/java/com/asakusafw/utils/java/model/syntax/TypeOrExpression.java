@@ -16,15 +16,9 @@
 package com.asakusafw.utils.java.model.syntax;
 
 /**
- * An abstract super interface of types.
- * <ul>
- *   <li> Specified In: <ul>
- *     <li> {@code [JLS3:4] Types, Values, and Variables} </li>
- *   </ul> </li>
- * </ul>
+ * Represents either {@link Type} or {@link Expression}.
+ * @since 0.9.1
  */
-public interface Type
-        extends TypeOrExpression, TypedElement {
-
-    // properties
+public interface TypeOrExpression extends Model {
+    // no special members
 }

@@ -610,6 +610,70 @@ public class ModelEmitterTest {
     }
 
     /**
+     * constructor reference.
+     */
+    @Test
+    public void ConstructorReference_type() {
+        assertToString(
+            fromExpr("Hello",
+                // ((UnaryOperator<String>) String::new).apply("Hello, world!")
+                f.newMethodInvocationExpression(
+                        f.newCastExpression(
+                                f.newParameterizedType(
+                                        Models.toType(f, java.util.function.UnaryOperator.class),
+                                        Models.toType(f, String.class)),
+                                f.newConstructorReferenceExpression(
+                                        Models.toType(f, String.class))),
+                        f.newSimpleName("apply"),
+                        f.newLiteral("\"Hello, world!\""))),
+            "Hello",
+            "Hello, world!");
+    }
+
+    /**
+     * method reference.
+     */
+    @Test
+    public void MethodReference_type() {
+        assertToString(
+            fromExpr("Hello",
+                // ((UnaryOperator<String>) String::toString).apply("Hello, world!")
+                f.newMethodInvocationExpression(
+                        f.newCastExpression(
+                                f.newParameterizedType(
+                                        Models.toType(f, java.util.function.UnaryOperator.class),
+                                        Models.toType(f, String.class)),
+                                f.newMethodReferenceExpression(
+                                        Models.toType(f, String.class),
+                                        f.newSimpleName("toString"))),
+                        f.newSimpleName("apply"),
+                        f.newLiteral("\"Hello, world!\""))),
+            "Hello",
+            "Hello, world!");
+    }
+
+    /**
+     * method reference.
+     */
+    @Test
+    public void MethodReference_expression() {
+        assertToString(
+            fromExpr("Hello",
+                // ((Supplier<String>) "Hello, world!"::toString).get()
+                f.newMethodInvocationExpression(
+                        f.newCastExpression(
+                                f.newParameterizedType(
+                                        Models.toType(f, java.util.function.Supplier.class),
+                                        Models.toType(f, String.class)),
+                                f.newMethodReferenceExpression(
+                                        f.newLiteral("\"Hello, world!\""),
+                                        f.newSimpleName("toString"))),
+                        f.newSimpleName("get"))),
+            "Hello",
+            "Hello, world!");
+    }
+
+    /**
      * new object.
      */
     @Test

@@ -1156,6 +1156,37 @@ public class ModelFactoryImpl implements ModelFactory {
     }
 
     @Override
+    public ConstructorReferenceExpressionImpl newConstructorReferenceExpression(
+            Type qualifier,
+            List<? extends Type> typeArguments) {
+        Util.notNull(qualifier, "qualifier"); //$NON-NLS-1$
+        Util.notNull(typeArguments, "typeArguments"); //$NON-NLS-1$
+        Util.notContainNull(typeArguments, "typeArguments"); //$NON-NLS-1$
+        ConstructorReferenceExpressionImpl result = new ConstructorReferenceExpressionImpl();
+        result.setQualifier(qualifier);
+        result.setTypeArguments(typeArguments);
+        return result;
+    }
+
+    @Override
+    public MethodReferenceExpressionImpl newMethodReferenceExpression(
+            TypeOrExpression qualifier,
+            List<? extends Type> typeArguments,
+            SimpleName name) {
+        Util.notNull(qualifier, "qualifier"); //$NON-NLS-1$
+        Util.notNull(typeArguments, "typeArguments"); //$NON-NLS-1$
+        Util.notContainNull(typeArguments, "typeArguments"); //$NON-NLS-1$
+        Util.notNull(name, "name"); //$NON-NLS-1$
+        MethodReferenceExpressionImpl result = new MethodReferenceExpressionImpl();
+        result.setQualifier(qualifier instanceof Expression
+                ? parenthesize((Expression) qualifier, ExpressionPriority.PRIMARY)
+                : qualifier);
+        result.setTypeArguments(typeArguments);
+        result.setName(name);
+        return result;
+    }
+
+    @Override
     public Modifier newModifier(ModifierKind modifierKind) {
         Util.notNull(modifierKind, "modifierKind"); //$NON-NLS-1$
         ModifierImpl result = new ModifierImpl();

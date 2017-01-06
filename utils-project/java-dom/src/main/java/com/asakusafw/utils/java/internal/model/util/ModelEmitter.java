@@ -47,6 +47,7 @@ import com.asakusafw.utils.java.model.syntax.ClassLiteral;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
 import com.asakusafw.utils.java.model.syntax.ConditionalExpression;
 import com.asakusafw.utils.java.model.syntax.ConstructorDeclaration;
+import com.asakusafw.utils.java.model.syntax.ConstructorReferenceExpression;
 import com.asakusafw.utils.java.model.syntax.ContinueStatement;
 import com.asakusafw.utils.java.model.syntax.DoStatement;
 import com.asakusafw.utils.java.model.syntax.DocBlock;
@@ -84,6 +85,7 @@ import com.asakusafw.utils.java.model.syntax.LocalVariableDeclaration;
 import com.asakusafw.utils.java.model.syntax.MarkerAnnotation;
 import com.asakusafw.utils.java.model.syntax.MethodDeclaration;
 import com.asakusafw.utils.java.model.syntax.MethodInvocationExpression;
+import com.asakusafw.utils.java.model.syntax.MethodReferenceExpression;
 import com.asakusafw.utils.java.model.syntax.Model;
 import com.asakusafw.utils.java.model.syntax.ModelKind;
 import com.asakusafw.utils.java.model.syntax.Modifier;
@@ -892,6 +894,28 @@ class EmitEngine extends StrictVisitor<Void, EmitContext, NoThrow> {
         processTypeParameters(elem.getTypeArguments(), context);
         process(elem.getName(), context);
         processParameters(elem.getArguments(), context);
+        return null;
+    }
+
+    @Override
+    public Void visitConstructorReferenceExpression(ConstructorReferenceExpression elem, EmitContext context) {
+        begin(elem, context);
+        processInlineComment(elem, context);
+        process(elem.getQualifier(), context);
+        context.symbol("::"); //$NON-NLS-1$
+        processTypeParameters(elem.getTypeArguments(), context);
+        context.keyword("new"); //$NON-NLS-1$
+        return null;
+    }
+
+    @Override
+    public Void visitMethodReferenceExpression(MethodReferenceExpression elem, EmitContext context) {
+        begin(elem, context);
+        processInlineComment(elem, context);
+        process(elem.getQualifier(), context);
+        context.symbol("::"); //$NON-NLS-1$
+        processTypeParameters(elem.getTypeArguments(), context);
+        process(elem.getName(), context);
         return null;
     }
 

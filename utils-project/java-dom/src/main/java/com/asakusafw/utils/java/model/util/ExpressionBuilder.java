@@ -491,6 +491,66 @@ public class ExpressionBuilder {
         return chain(f.newMethodInvocationExpression(context, typeArguments, name, arguments));
     }
 
+    /**
+     * Returns the method reference using the building expression as its qualifier.
+     * @param name the target method name
+     * @return the chained expression builder
+     * @throws IllegalArgumentException if the parameters are {@code null}
+     */
+    public ExpressionBuilder methodReference(String name) {
+        if (name == null) {
+            throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
+        }
+        return methodReference(Collections.emptyList(), f.newSimpleName(name));
+    }
+
+    /**
+     * Returns the method reference using the building expression as its qualifier.
+     * @param name the target method name
+     * @return the chained expression builder
+     * @throws IllegalArgumentException if the parameters are {@code null}
+     */
+    public ExpressionBuilder methodReference(SimpleName name) {
+        if (name == null) {
+            throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
+        }
+        return methodReference(Collections.emptyList(), name);
+    }
+
+    /**
+     * Returns the method invocation using the building expression as its qualifier.
+     * @param typeArguments the type arguments
+     * @param name the target method name
+     * @return the chained expression builder
+     * @throws IllegalArgumentException if the parameters are {@code null}
+     */
+    public ExpressionBuilder methodReference(List<? extends Type> typeArguments, String name) {
+        if (typeArguments == null) {
+            throw new IllegalArgumentException("typeArguments must not be null"); //$NON-NLS-1$
+        }
+        if (name == null) {
+            throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
+        }
+        return methodReference(typeArguments, f.newSimpleName(name));
+    }
+
+    /**
+     * Returns the method invocation using the building expression as its qualifier.
+     * @param typeArguments the type arguments
+     * @param name the target method name
+     * @return the chained expression builder
+     * @throws IllegalArgumentException if the parameters are {@code null}
+     */
+    public ExpressionBuilder methodReference(List<? extends Type> typeArguments, SimpleName name) {
+        if (typeArguments == null) {
+            throw new IllegalArgumentException("typeArguments must not be null"); //$NON-NLS-1$
+        }
+        if (name == null) {
+            throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
+        }
+        return chain(f.newMethodReferenceExpression(context, typeArguments, name));
+    }
+
     private ExpressionBuilder chain(Expression expression) {
         assert expression != null;
         context = expression;

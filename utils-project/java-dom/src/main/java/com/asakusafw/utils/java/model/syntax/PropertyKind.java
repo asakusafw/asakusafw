@@ -18,7 +18,7 @@ package com.asakusafw.utils.java.model.syntax;
 /**
  * Represents a kind of properties in {@link Model}.
  * @since 0.1.0
- * @version 0.9.0
+ * @version 0.9.1
  */
 public enum PropertyKind {
 
@@ -910,6 +910,33 @@ public enum PropertyKind {
     METHOD_INVOCATION_EXPRESSION_ARGUMENTS(
         MethodInvocationExpression.class,
         "arguments" //$NON-NLS-1$
+    ),
+
+    /**
+     * Represents {@link MethodOrConstructorReferenceExpression#getQualifier()}.
+     * @since 0.9.1
+     */
+    METHOD_OR_CONSTRUCTOR_REFERENCE_EXPRESSION_QUALIFIER(
+        MethodReferenceExpression.class,
+        "qualifier" //$NON-NLS-1$
+    ),
+
+    /**
+     * Represents {@link MethodOrConstructorReferenceExpression#getTypeArguments()}.
+     * @since 0.9.1
+     */
+    METHOD_OR_CONSTRUCTOR_REFERENCE_EXPRESSION_TYPE_ARGUMENTS(
+        MethodOrConstructorReferenceExpression.class,
+        "typeArguments" //$NON-NLS-1$
+    ),
+
+    /**
+     * Represents {@link MethodReferenceExpression#getName()}.
+     * @since 0.9.1
+     */
+    METHOD_REFERENCE_EXPRESSION_NAME(
+        MethodReferenceExpression.class,
+        "name" //$NON-NLS-1$
     ),
 
     /**
