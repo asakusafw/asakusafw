@@ -40,6 +40,7 @@ import com.asakusafw.utils.java.model.syntax.ClassLiteral;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
 import com.asakusafw.utils.java.model.syntax.ConditionalExpression;
 import com.asakusafw.utils.java.model.syntax.ConstructorDeclaration;
+import com.asakusafw.utils.java.model.syntax.ConstructorReferenceExpression;
 import com.asakusafw.utils.java.model.syntax.ContinueStatement;
 import com.asakusafw.utils.java.model.syntax.DoStatement;
 import com.asakusafw.utils.java.model.syntax.DocBlock;
@@ -72,6 +73,7 @@ import com.asakusafw.utils.java.model.syntax.LocalVariableDeclaration;
 import com.asakusafw.utils.java.model.syntax.MarkerAnnotation;
 import com.asakusafw.utils.java.model.syntax.MethodDeclaration;
 import com.asakusafw.utils.java.model.syntax.MethodInvocationExpression;
+import com.asakusafw.utils.java.model.syntax.MethodReferenceExpression;
 import com.asakusafw.utils.java.model.syntax.Model;
 import com.asakusafw.utils.java.model.syntax.Modifier;
 import com.asakusafw.utils.java.model.syntax.NamedType;
@@ -719,6 +721,27 @@ public final class ModelDigester extends StrictVisitor<Void, DigestContext, NoTh
         digest(elem.getTypeArguments(), context);
         digest(elem.getName(), context);
         digest(elem.getArguments(), context);
+        return null;
+    }
+
+    @Override
+    public Void visitConstructorReferenceExpression(
+            ConstructorReferenceExpression elem,
+            DigestContext context) {
+        digest(elem.getModelKind(), context);
+        digest(elem.getQualifier(), context);
+        digest(elem.getTypeArguments(), context);
+        return null;
+    }
+
+    @Override
+    public Void visitMethodReferenceExpression(
+            MethodReferenceExpression elem,
+            DigestContext context) {
+        digest(elem.getModelKind(), context);
+        digest(elem.getQualifier(), context);
+        digest(elem.getTypeArguments(), context);
+        digest(elem.getName(), context);
         return null;
     }
 

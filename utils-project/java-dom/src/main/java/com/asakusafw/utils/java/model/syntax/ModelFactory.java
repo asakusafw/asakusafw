@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 /**
  * A factory for providing {@link Model} objects.
  * @since 0.1.0
- * @version 0.9.0
+ * @version 0.9.1
  */
 public interface ModelFactory {
 
@@ -1190,6 +1190,61 @@ public interface ModelFactory {
             List<? extends Type> typeArguments,
             SimpleName name,
             List<? extends Expression> arguments
+    );
+
+    /**
+     * Returns a new {@link ConstructorReferenceExpression} object.
+     * @param qualifier the type owner type
+     * @return the created object
+     * @throws IllegalArgumentException if {@code qualifier} was {@code null}
+     * @since 0.9.1
+     */
+    default ConstructorReferenceExpression newConstructorReferenceExpression(Type qualifier) {
+        return newConstructorReferenceExpression(qualifier, Collections.emptyList());
+    }
+
+    /**
+     * Returns a new {@link ConstructorReferenceExpression} object.
+     * @param qualifier the type owner type
+     * @param typeArguments the type arguments
+     * @return the created object
+     * @throws IllegalArgumentException if {@code qualifier} was {@code null}
+     * @throws IllegalArgumentException if {@code typeArguments} was {@code null}
+     * @since 0.9.1
+     */
+    ConstructorReferenceExpression newConstructorReferenceExpression(
+            Type qualifier,
+            List<? extends Type> typeArguments
+    );
+
+    /**
+     * Returns a new {@link MethodReferenceExpression} object.
+     * @param qualifier the qualifier expression or type qualifier
+     * @param name the method name
+     * @return the created object
+     * @throws IllegalArgumentException if {@code qualifier} was {@code null}
+     * @throws IllegalArgumentException if {@code name} was {@code null}
+     * @since 0.9.1
+     */
+    default MethodReferenceExpression newMethodReferenceExpression(TypeOrExpression qualifier, SimpleName name) {
+        return newMethodReferenceExpression(qualifier, Collections.emptyList(), name);
+    }
+
+    /**
+     * Returns a new {@link MethodReferenceExpression} object.
+     * @param qualifier the qualifier expression or type qualifier
+     * @param typeArguments the type arguments
+     * @param name the method name
+     * @return the created object
+     * @throws IllegalArgumentException if {@code qualifier} was {@code null}
+     * @throws IllegalArgumentException if {@code typeArguments} was {@code null}
+     * @throws IllegalArgumentException if {@code name} was {@code null}
+     * @since 0.9.1
+     */
+    MethodReferenceExpression newMethodReferenceExpression(
+            TypeOrExpression qualifier,
+            List<? extends Type> typeArguments,
+            SimpleName name
     );
 
     /**

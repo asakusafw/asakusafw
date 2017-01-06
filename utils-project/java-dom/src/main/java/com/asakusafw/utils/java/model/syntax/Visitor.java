@@ -743,6 +743,32 @@ public abstract class Visitor<R, C, E extends Throwable> {
     }
 
     /**
+     * Processes {@link ConstructorReferenceExpression} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
+     */
+    public R visitConstructorReferenceExpression(
+            ConstructorReferenceExpression elem,
+            C context) throws E {
+        return null;
+    }
+
+    /**
+     * Processes {@link MethodReferenceExpression} using this visitor.
+     * @param elem the target element
+     * @param context the current context (nullable)
+     * @return the processing result
+     * @throws E if error was occurred while processing the target element
+     */
+    public R visitMethodReferenceExpression(
+            MethodReferenceExpression elem,
+            C context) throws E {
+        return null;
+    }
+
+    /**
      * Processes {@link Modifier} using this visitor.
      * @param elem the target element
      * @param context the current context (nullable)

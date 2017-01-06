@@ -410,6 +410,20 @@ public abstract class StrictVisitor<R, C, E extends Throwable>
     }
 
     @Override
+    public R visitConstructorReferenceExpression(
+            ConstructorReferenceExpression elem,
+            C context) throws E {
+        throw new UnsupportedOperationException("ConstructorReferenceExpression"); //$NON-NLS-1$
+    }
+
+    @Override
+    public R visitMethodReferenceExpression(
+            MethodReferenceExpression elem,
+            C context) throws E {
+        throw new UnsupportedOperationException("MethodReferenceExpression"); //$NON-NLS-1$
+    }
+
+    @Override
     public R visitModifier(
             Modifier elem,
             C context) throws E {

@@ -40,6 +40,7 @@ import com.asakusafw.utils.java.model.syntax.ClassLiteral;
 import com.asakusafw.utils.java.model.syntax.CompilationUnit;
 import com.asakusafw.utils.java.model.syntax.ConditionalExpression;
 import com.asakusafw.utils.java.model.syntax.ConstructorDeclaration;
+import com.asakusafw.utils.java.model.syntax.ConstructorReferenceExpression;
 import com.asakusafw.utils.java.model.syntax.ContinueStatement;
 import com.asakusafw.utils.java.model.syntax.DoStatement;
 import com.asakusafw.utils.java.model.syntax.DocBlock;
@@ -72,6 +73,7 @@ import com.asakusafw.utils.java.model.syntax.LocalVariableDeclaration;
 import com.asakusafw.utils.java.model.syntax.MarkerAnnotation;
 import com.asakusafw.utils.java.model.syntax.MethodDeclaration;
 import com.asakusafw.utils.java.model.syntax.MethodInvocationExpression;
+import com.asakusafw.utils.java.model.syntax.MethodReferenceExpression;
 import com.asakusafw.utils.java.model.syntax.Model;
 import com.asakusafw.utils.java.model.syntax.Modifier;
 import com.asakusafw.utils.java.model.syntax.NamedType;
@@ -1165,6 +1167,43 @@ public final class ModelMatcher extends StrictVisitor<Boolean, Model, NoThrow> {
             return Boolean.FALSE;
         }
         if (Boolean.FALSE.equals(match(elem.getArguments(), that.getArguments()))) {
+            return Boolean.FALSE;
+        }
+        return Boolean.TRUE;
+    }
+
+    @Override
+    public Boolean visitConstructorReferenceExpression(
+            ConstructorReferenceExpression elem,
+            Model context) {
+        if (elem.getModelKind() != context.getModelKind()) {
+            return Boolean.FALSE;
+        }
+        ConstructorReferenceExpression that = (ConstructorReferenceExpression) context;
+        if (Boolean.FALSE.equals(match(elem.getQualifier(), that.getQualifier()))) {
+            return Boolean.FALSE;
+        }
+        if (Boolean.FALSE.equals(match(elem.getTypeArguments(), that.getTypeArguments()))) {
+            return Boolean.FALSE;
+        }
+        return Boolean.TRUE;
+    }
+
+    @Override
+    public Boolean visitMethodReferenceExpression(
+            MethodReferenceExpression elem,
+            Model context) {
+        if (elem.getModelKind() != context.getModelKind()) {
+            return Boolean.FALSE;
+        }
+        MethodReferenceExpression that = (MethodReferenceExpression) context;
+        if (Boolean.FALSE.equals(match(elem.getQualifier(), that.getQualifier()))) {
+            return Boolean.FALSE;
+        }
+        if (Boolean.FALSE.equals(match(elem.getTypeArguments(), that.getTypeArguments()))) {
+            return Boolean.FALSE;
+        }
+        if (Boolean.FALSE.equals(match(elem.getName(), that.getName()))) {
             return Boolean.FALSE;
         }
         return Boolean.TRUE;

@@ -25,7 +25,7 @@ package com.asakusafw.utils.java.model.syntax;
  * </ul>
  */
 public interface Expression
-        extends TypedElement, LambdaBody {
+        extends TypeOrExpression, TypedElement, LambdaBody {
 
     // properties
 }

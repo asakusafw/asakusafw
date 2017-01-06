@@ -15,16 +15,29 @@
  */
 package com.asakusafw.utils.java.model.syntax;
 
+import java.util.List;
+
 /**
- * An abstract super interface of types.
+ * An interface which represents method reference expressions.
  * <ul>
  *   <li> Specified In: <ul>
- *     <li> {@code [JLS3:4] Types, Values, and Variables} </li>
+ *     <li> {@code [JLS8:15.13] Method Reference Expressions} </li>
  *   </ul> </li>
  * </ul>
+ * @since 0.9.1
  */
-public interface Type
-        extends TypeOrExpression, TypedElement {
+public interface MethodOrConstructorReferenceExpression
+        extends Expression {
 
-    // properties
+    /**
+     * Returns the qualifier expression or type.
+     * @return the qualifier expression or type
+     */
+    TypeOrExpression getQualifier();
+
+    /**
+     * Returns the type arguments.
+     * @return the type arguments
+     */
+    List<? extends Type> getTypeArguments();
 }
