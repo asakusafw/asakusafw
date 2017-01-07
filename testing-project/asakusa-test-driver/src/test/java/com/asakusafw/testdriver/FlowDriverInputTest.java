@@ -22,8 +22,10 @@ import static org.junit.Assert.*;
 import java.net.URI;
 
 import org.apache.hadoop.io.Text;
+import org.junit.ClassRule;
 import org.junit.Test;
 
+import com.asakusafw.runtime.windows.WindowsSupport;
 import com.asakusafw.testdriver.core.DataModelSourceFactory;
 import com.asakusafw.testdriver.testing.dsl.SimpleStreamFormat;
 import com.asakusafw.testdriver.testing.model.Simple;
@@ -33,6 +35,13 @@ import com.asakusafw.utils.io.Provider;
  * Test for {@link FlowDriverInput}.
  */
 public class FlowDriverInputTest {
+
+    /**
+     * Windows platform support.
+     */
+    @ClassRule
+    public static final WindowsSupport WINDOWS_SUPPORT = new WindowsSupport();
+
     /**
      * simple test for {@link FlowDriverInput#prepare(java.lang.String)}.
      */

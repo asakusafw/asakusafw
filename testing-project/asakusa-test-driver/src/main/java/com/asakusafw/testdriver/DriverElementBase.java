@@ -31,6 +31,7 @@ import org.apache.hadoop.conf.Configuration;
 import com.asakusafw.runtime.directio.DataFormat;
 import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.DataModelReflection;
+import com.asakusafw.testdriver.core.DataModelSinkFactory;
 import com.asakusafw.testdriver.core.DataModelSource;
 import com.asakusafw.testdriver.core.DataModelSourceFactory;
 import com.asakusafw.testdriver.core.DataModelSourceFilter;
@@ -259,6 +260,39 @@ public abstract class DriverElementBase {
                         transformer);
             }
         };
+    }
+
+    /**
+     * Converts an output path to {@link DataModelSinkFactory} to write to the path.
+     * @param <T> the data type
+     * @param definition the data model definition
+     * @param formatClass the data format class
+     * @param destinationFile the output path
+     * @return the target sink factory
+     * @since 0.9.1
+     */
+    protected final <T> DataModelSinkFactory toDataModelSinkFactory(
+            DataModelDefinition<T> definition,
+            Class<? extends DataFormat<? super T>> formatClass,
+            File destinationFile) {
+        if (definition == null) {
+            throw new IllegalArgumentException("definition must not be null"); //$NON-NLS-1$
+        }
+        if (formatClass == null) {
+            throw new IllegalArgumentException("formatClass must not be null"); //$NON-NLS-1$
+        }
+        if (destinationFile == null) {
+            throw new IllegalArgumentException("sourceFile must not be null"); //$NON-NLS-1$
+        }
+        try {
+            Configuration conf = ConfigurationFactory.getDefault().newInstance();
+            return DirectIoUtil.dump(conf, definition, formatClass, destinationFile);
+        } catch (IOException e) {
+            throw new IllegalArgumentException(MessageFormat.format(
+                    MessageFormat.format(
+                            "error occurred while preparing Direct I/O output: {0}",
+                            destinationFile), e));
+        }
     }
 
     /**

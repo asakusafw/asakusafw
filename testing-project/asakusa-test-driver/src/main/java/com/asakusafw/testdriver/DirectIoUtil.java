@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InterruptedIOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -41,8 +42,11 @@ import com.asakusafw.runtime.directio.DataFormat;
 import com.asakusafw.runtime.directio.hadoop.HadoopDataSourceUtil;
 import com.asakusafw.runtime.directio.hadoop.HadoopFileFormat;
 import com.asakusafw.runtime.io.ModelInput;
+import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.DataModelReflection;
+import com.asakusafw.testdriver.core.DataModelSink;
+import com.asakusafw.testdriver.core.DataModelSinkFactory;
 import com.asakusafw.testdriver.core.DataModelSource;
 import com.asakusafw.testdriver.core.DataModelSourceFactory;
 import com.asakusafw.testdriver.core.IteratorDataModelSource;
@@ -217,11 +221,62 @@ final class DirectIoUtil {
         };
     }
 
+    static <T> DataModelSinkFactory dump(
+            Configuration configuration,
+            DataModelDefinition<T> definition,
+            Class<? extends DataFormat<?>> formatClass,
+            File destination) throws IOException {
+        DataFormat<? super T> format = newDataFormat(configuration, formatClass);
+        checkDataType(definition, format);
+        org.apache.hadoop.fs.Path path = new org.apache.hadoop.fs.Path(destination.toURI());
+        HadoopFileFormat<? super T> hFormat = HadoopDataSourceUtil.toHadoopFileFormat(configuration, format);
+        return new DataModelSinkFactory() {
+            @Override
+            public <S> DataModelSink createSink(DataModelDefinition<S> def, TestContext context) throws IOException {
+                try {
+                    return new DirectOutputSink<>(definition, hFormat, path);
+                } catch (InterruptedException e) {
+                    throw (IOException) new InterruptedIOException().initCause(e);
+                }
+            }
+        };
+    }
+
     private static <T> T newDataObject(DataModelDefinition<T> definition) {
         try {
             return definition.getModelClass().newInstance();
         } catch (ReflectiveOperationException e) {
             throw new IllegalStateException(e);
+        }
+    }
+
+    private static final class DirectOutputSink<T> implements DataModelSink {
+
+        private final DataModelDefinition<T> definition;
+
+        private final ModelOutput<? super T> output;
+
+        DirectOutputSink(
+                DataModelDefinition<T> definition,
+                HadoopFileFormat<? super T> format,
+                org.apache.hadoop.fs.Path destination) throws IOException, InterruptedException {
+            this.definition = definition;
+            this.output = format.createOutput(
+                    definition.getModelClass(),
+                    org.apache.hadoop.fs.FileSystem.getLocal(format.getConf()),
+                    destination,
+                    new Counter());
+        }
+
+        @Override
+        public void put(DataModelReflection model) throws IOException {
+            T object = definition.toObject(model);
+            output.write(object);
+        }
+
+        @Override
+        public void close() throws IOException {
+            output.close();
         }
     }
 }
