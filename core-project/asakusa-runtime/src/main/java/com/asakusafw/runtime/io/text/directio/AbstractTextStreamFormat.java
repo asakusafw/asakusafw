@@ -21,6 +21,8 @@ import java.io.OutputStream;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 
 import org.apache.hadoop.io.compress.CompressionCodec;
 import org.apache.hadoop.util.ReflectionUtils;
@@ -49,6 +51,22 @@ public abstract class AbstractTextStreamFormat<T> extends ConfigurableBinaryStre
     private static final Set<InputOption> INPUT_OPTS_REST = Collections.emptySet();
 
     private static final Set<OutputOption> OUTPUT_OPTS = Collections.emptySet();
+
+    private final AtomicReference<TextFormat> textFormatCache = new AtomicReference<>();
+
+    private final AtomicReference<RecordDefinition<T>> recordDefinitionCache = new AtomicReference<>();
+
+    /**
+     * Returns the {@link TextFormat}.
+     * @return the text format
+     */
+    protected abstract TextFormat createTextFormat();
+
+    /**
+     * Returns the {@link RecordDefinition}.
+     * @return the record structure definition
+     */
+    protected abstract RecordDefinition<T> createRecordDefinition();
 
     /**
      * Returns the input splitter of this format.
@@ -90,26 +108,44 @@ public abstract class AbstractTextStreamFormat<T> extends ConfigurableBinaryStre
      * Returns the {@link TextFormat}.
      * @return the text format
      */
-    public abstract TextFormat getTextFormat();
+    public final TextFormat getTextFormat() {
+        return cached(this::createTextFormat, textFormatCache);
+    }
 
     /**
      * Returns the {@link RecordDefinition}.
      * @return the record structure definition
      */
-    public abstract RecordDefinition<T> getRecordDefinition();
+    public final RecordDefinition<T> getRecordDefinition() {
+        return cached(this::createRecordDefinition, recordDefinitionCache);
+    }
 
-    @Override
-    public long getPreferredFragmentSize() {
-        return -1L;
+    private static <U> U cached(Supplier<U> factory, AtomicReference<U> cache) {
+        U cached = cache.get();
+        if (cached != null) {
+            return cached;
+        }
+        cache.compareAndSet(null, factory.get());
+        return cache.get();
     }
 
     @Override
-    public long getMinimumFragmentSize() {
+    public final long getPreferredFragmentSize() {
         InputSplitter splitter = getInputSplitter();
-        if (splitter == null) {
-            return -1L;
+        if (splitter != null) {
+            return splitter.getPreferredSize();
         } else {
-            return Long.MAX_VALUE;
+            return -1L;
+        }
+    }
+
+    @Override
+    public final long getMinimumFragmentSize() {
+        InputSplitter splitter = getInputSplitter();
+        if (splitter != null) {
+            return splitter.getLowerLimitSize();
+        } else {
+            return -1L;
         }
     }
 

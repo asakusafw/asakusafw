@@ -34,4 +34,20 @@ public interface InputSplitter {
      * @throws IOException if I/O error was occurred while trimming the input
      */
     InputStream trim(InputStream input, long offset, long splitSize) throws IOException;
+
+    /**
+     * Returns the preferred split size.
+     * @return the preferred split size in bytes
+     */
+    default long getPreferredSize() {
+        return -1L;
+    }
+
+    /**
+     * Returns the lower limit of split size.
+     * @return the lower limit of split size in bytes
+     */
+    default long getLowerLimitSize() {
+        return Long.MAX_VALUE;
+    }
 }

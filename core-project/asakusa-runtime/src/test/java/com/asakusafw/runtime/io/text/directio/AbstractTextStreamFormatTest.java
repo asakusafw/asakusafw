@@ -399,7 +399,7 @@ public class AbstractTextStreamFormatTest {
         }
 
         @Override
-        public TextFormat getTextFormat() {
+        protected TextFormat createTextFormat() {
             return new TextFormat() {
                 @Override
                 public FieldReader open(InputStream input) throws IOException {
@@ -431,7 +431,7 @@ public class AbstractTextStreamFormatTest {
         }
 
         @Override
-        public RecordDefinition<String[]> getRecordDefinition() {
+        protected RecordDefinition<String[]> createRecordDefinition() {
             return definition;
         }
 

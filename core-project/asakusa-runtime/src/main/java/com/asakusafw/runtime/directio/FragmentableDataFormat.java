@@ -27,8 +27,8 @@ import java.io.IOException;
 public interface FragmentableDataFormat<T> extends DataFormat<T> {
 
     /**
-     * Returns the preffered fragment size (in bytes).
-     * @return the preffered fragment size, or {@code -1} as infinite
+     * Returns the preferred fragment size (in bytes).
+     * @return the preferred fragment size, or {@code -1} as infinite
      * @throws IOException if failed to compute bytes count
      * @throws InterruptedException if interrupted
      */
@@ -37,8 +37,9 @@ public interface FragmentableDataFormat<T> extends DataFormat<T> {
     }
 
     /**
-     * Returns the minimum fragment size (in bytes).
-     * @return the minimum fragment size, or {@code -1} as infinite
+     * Returns the lower limit of fragment size (in bytes).
+     * Each fragment must not smaller than this size.
+     * @return the lower limit of fragment size, or {@code -1} as infinite
      * @throws IOException if failed to compute bytes count
      * @throws InterruptedException if interrupted
      */

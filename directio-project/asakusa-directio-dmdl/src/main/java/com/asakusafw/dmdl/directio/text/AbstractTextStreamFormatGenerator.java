@@ -168,12 +168,12 @@ public abstract class AbstractTextStreamFormatGenerator {
     private List<? extends TypeBodyDeclaration> createMembers() {
         List<TypeBodyDeclaration> results = new ArrayList<>();
         results.add(createGetSupportedType());
+        results.add(createCreateTextFormat());
+        results.addAll(createCreateRecordDefinition());
         createGetInputSplitter().ifPresent(results::add);
         createGetCompressionCodecClass().ifPresent(results::add);
         createAfterInput().ifPresent(results::add);
         createBeforeOutput().ifPresent(results::add);
-        results.add(createGetTextFormat());
-        results.addAll(createGetRecordDefinition());
         return results;
     }
 
@@ -194,7 +194,7 @@ public abstract class AbstractTextStreamFormatGenerator {
                     .toReturnStatement()));
     }
 
-    private MethodDeclaration createGetTextFormat() {
+    private MethodDeclaration createCreateTextFormat() {
         return f.newMethodDeclaration(
                 null,
                 new AttributeBuilder(f)
@@ -202,7 +202,7 @@ public abstract class AbstractTextStreamFormatGenerator {
                     .Public()
                     .toAttributes(),
                 context.resolve(TextFormat.class),
-                f.newSimpleName("getTextFormat"), //$NON-NLS-1$
+                f.newSimpleName("createTextFormat"), //$NON-NLS-1$
                 Collections.emptyList(),
                 createGetTextFormatInternal());
     }
@@ -213,7 +213,7 @@ public abstract class AbstractTextStreamFormatGenerator {
      */
     protected abstract List<Statement> createGetTextFormatInternal();
 
-    private List<MethodDeclaration> createGetRecordDefinition() {
+    private List<MethodDeclaration> createCreateRecordDefinition() {
         SimpleName builder = f.newSimpleName("builder"); //$NON-NLS-1$
         List<Statement> statements = new ArrayList<>();
         statements.add(new TypeBuilder(f, context.resolve(RecordDefinition.class))
@@ -232,12 +232,12 @@ public abstract class AbstractTextStreamFormatGenerator {
                 null,
                 new AttributeBuilder(f)
                     .annotation(context.resolve(Override.class))
-                    .Public()
+                    .Protected()
                     .toAttributes(),
                 f.newParameterizedType(
                         context.resolve(RecordDefinition.class),
                         context.resolve(model.getSymbol())),
-                f.newSimpleName("getRecordDefinition"), //$NON-NLS-1$
+                f.newSimpleName("createRecordDefinition"), //$NON-NLS-1$
                 Collections.emptyList(),
                 statements));
         results.addAll(fields);
