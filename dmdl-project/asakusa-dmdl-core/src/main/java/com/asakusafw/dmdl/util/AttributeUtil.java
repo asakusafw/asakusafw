@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import com.asakusafw.dmdl.Diagnostic;
 import com.asakusafw.dmdl.Diagnostic.Level;
@@ -40,7 +41,7 @@ import com.asakusafw.dmdl.semantics.type.BasicType;
 /**
  * Utility methods for {@link AstAttribute}.
  * @since 0.2.0
- * @version 0.7.0
+ * @version 0.9.1
  */
 public final class AttributeUtil {
 
@@ -188,6 +189,30 @@ public final class AttributeUtil {
     }
 
     /**
+     * Returns whether or not the given field has one of the given types.
+     * @param declaration the target property
+     * @param candidates the type candidates
+     * @return {@code true} if the property has a type, otherwise {@code false}
+     * @since 0.9.1
+     */
+    public static boolean hasFieldType(PropertyDeclaration declaration, BasicTypeKind... candidates) {
+        if (declaration == null) {
+            throw new IllegalArgumentException("declaration must not be null"); //$NON-NLS-1$
+        }
+        if (candidates == null) {
+            throw new IllegalArgumentException("candidates must not be null"); //$NON-NLS-1$
+        }
+        Type type = declaration.getType();
+        if (type instanceof BasicType) {
+            BasicTypeKind kind = ((BasicType) type).getKind();
+            if (Arrays.stream(candidates).anyMatch(Predicate.isEqual(kind))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Checks field type and report diagnostics.
      * @param environment the current environment
      * @param declaration the target declaration
@@ -213,24 +238,19 @@ public final class AttributeUtil {
         if (types == null) {
             throw new IllegalArgumentException("types must not be null"); //$NON-NLS-1$
         }
-        Type type = declaration.getType();
-        if (type instanceof BasicType) {
-            BasicTypeKind kind = ((BasicType) type).getKind();
-            for (BasicTypeKind accept : types) {
-                if (kind == accept) {
-                    return true;
-                }
-            }
+        if (hasFieldType(declaration, types)) {
+            return true;
+        } else {
+            environment.report(new Diagnostic(
+                    Level.ERROR,
+                    attribute,
+                    Messages.getString("AttributeUtil.diagnosticInvalidTypeElement"), //$NON-NLS-1$
+                    declaration.getOwner().getName().identifier,
+                    declaration.getName().identifier,
+                    attribute.name.toString(),
+                    Arrays.asList(types)));
+            return false;
         }
-        environment.report(new Diagnostic(
-                Level.ERROR,
-                attribute,
-                Messages.getString("AttributeUtil.diagnosticInvalidTypeElement"), //$NON-NLS-1$
-                declaration.getOwner().getName().identifier,
-                declaration.getName().identifier,
-                attribute.name.toString(),
-                Arrays.asList(types)));
-        return false;
     }
 
     /**

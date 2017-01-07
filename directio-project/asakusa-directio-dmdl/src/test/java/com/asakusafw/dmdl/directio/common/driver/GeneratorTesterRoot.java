@@ -32,6 +32,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 import javax.tools.Diagnostic;
@@ -205,7 +206,7 @@ public class GeneratorTesterRoot {
                     Arrays.asList(emitDmdl(lines)),
                     StandardCharsets.UTF_8));
             throw new AssertionError("semantic error should be raised");
-        } catch (Exception e) {
+        } catch (IOException e) {
             // ok.
         }
     }
@@ -319,6 +320,19 @@ public class GeneratorTesterRoot {
             catch (Exception e) {
                 throw new AssertionError(e);
             }
+        }
+
+        /**
+         * Creates a new model instance and wrap it.
+         * @param name the simple name of target class
+         * @param configurator the configurator
+         * @return the wrapped instance
+         * @see #setNamespace(String)
+         */
+        public ModelWrapper newModel(String name, Consumer<ModelWrapper> configurator) {
+            ModelWrapper result = newModel(name);
+            configurator.accept(result);
+            return result;
         }
 
         /**
@@ -437,11 +451,13 @@ public class GeneratorTesterRoot {
          * Invokes set~.
          * @param name the property name
          * @param value the value to set
+         * @return this
          */
-        public void set(String name, Object value) {
+        public ModelWrapper set(String name, Object value) {
             JavaName jn = JavaName.of(new AstSimpleName(null, name));
             jn.addFirst("set");
             invoke(jn.toMemberName(), value);
+            return this;
         }
 
         /**
@@ -460,12 +476,14 @@ public class GeneratorTesterRoot {
          * Invokes set~Option.
          * @param name the property name
          * @param option the value to set
+         * @return this
          */
-        public void setOption(String name, ValueOption<?> option) {
+        public ModelWrapper setOption(String name, ValueOption<?> option) {
             JavaName jn = JavaName.of(new AstSimpleName(null, name));
             jn.addFirst("set");
             jn.addLast("option");
             invoke(jn.toMemberName(), option);
+            return this;
         }
 
         /**
