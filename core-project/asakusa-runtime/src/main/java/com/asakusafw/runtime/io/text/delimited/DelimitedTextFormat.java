@@ -23,6 +23,7 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
+import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
 import com.asakusafw.runtime.io.text.LineSeparator;
@@ -57,21 +58,22 @@ public class DelimitedTextFormat implements TextFormat {
 
     private final EscapeSequence escapeSequence;
 
-    private final UnaryOperator<CharSequence> inputTransformer;
+    private final Supplier<? extends UnaryOperator<CharSequence>> inputTransformer;
 
-    private final UnaryOperator<CharSequence> outputTransformer;
+    private final Supplier<? extends UnaryOperator<CharSequence>> outputTransformer;
 
     DelimitedTextFormat(
             Charset charset,
             LineSeparator lineSeparator, char fieldSeparator,
             EscapeSequence escapeSequence,
-            UnaryOperator<CharSequence> inputTransformer, UnaryOperator<CharSequence> outputTransformer) {
+            Supplier<? extends UnaryOperator<CharSequence>> inputTransformer,
+            Supplier<? extends UnaryOperator<CharSequence>> outputTransformer) {
         this.charset = charset;
         this.lineSeparator = lineSeparator;
         this.fieldSeparator = fieldSeparator;
         this.escapeSequence = escapeSequence;
-        this.inputTransformer = inputTransformer;
-        this.outputTransformer = outputTransformer;
+        this.inputTransformer = inputTransformer != null ? inputTransformer : () -> null;
+        this.outputTransformer = outputTransformer != null ? outputTransformer : () -> null;
     }
 
     /**
@@ -87,7 +89,7 @@ public class DelimitedTextFormat implements TextFormat {
         return new DelimitedFieldReader(
                 new InputStreamReader(input, charset),
                 fieldSeparator, escapeSequence,
-                inputTransformer);
+                inputTransformer.get());
     }
 
     @Override
@@ -95,7 +97,7 @@ public class DelimitedTextFormat implements TextFormat {
         return new DelimitedFieldWriter(
                 new OutputStreamWriter(output, charset),
                 lineSeparator, fieldSeparator, escapeSequence,
-                outputTransformer);
+                outputTransformer.get());
     }
 
     Charset getCharset() {
@@ -120,9 +122,9 @@ public class DelimitedTextFormat implements TextFormat {
 
         private EscapeSequence escapeSequence;
 
-        private UnaryOperator<CharSequence> inputTransformer;
+        private Supplier<? extends UnaryOperator<CharSequence>> inputTransformer;
 
-        private UnaryOperator<CharSequence> outputTransformer;
+        private Supplier<? extends UnaryOperator<CharSequence>> outputTransformer;
 
         /**
          * Sets the charset name.
@@ -180,7 +182,7 @@ public class DelimitedTextFormat implements TextFormat {
          * @return this
          */
         public Builder withInputTransformer(Class<? extends UnaryOperator<CharSequence>> newValue) {
-            return withInputTransformer(newInstance(newValue));
+            return withInputTransformer(asSupplier(newValue));
         }
 
         /**
@@ -188,7 +190,7 @@ public class DelimitedTextFormat implements TextFormat {
          * @param newValue the input transformer
          * @return this
          */
-        public Builder withInputTransformer(UnaryOperator<CharSequence> newValue) {
+        public Builder withInputTransformer(Supplier<? extends UnaryOperator<CharSequence>> newValue) {
             this.inputTransformer = newValue;
             return this;
         }
@@ -199,7 +201,7 @@ public class DelimitedTextFormat implements TextFormat {
          * @return this
          */
         public Builder withOutputTransformer(Class<? extends UnaryOperator<CharSequence>> newValue) {
-            return withOutputTransformer(newInstance(newValue));
+            return withOutputTransformer(asSupplier(newValue));
         }
 
         /**
@@ -207,22 +209,25 @@ public class DelimitedTextFormat implements TextFormat {
          * @param newValue the output transformer
          * @return this
          */
-        public Builder withOutputTransformer(UnaryOperator<CharSequence> newValue) {
+        public Builder withOutputTransformer(Supplier<? extends UnaryOperator<CharSequence>> newValue) {
             this.outputTransformer = newValue;
             return this;
         }
 
-        private UnaryOperator<CharSequence> newInstance(Class<? extends UnaryOperator<CharSequence>> aClass) {
+        private Supplier<? extends UnaryOperator<CharSequence>> asSupplier(
+                Class<? extends UnaryOperator<CharSequence>> aClass) {
             if (aClass == null) {
                 return null;
             }
-            try {
-                return aClass.newInstance();
-            } catch (ReflectiveOperationException e) {
-                throw new IllegalArgumentException(MessageFormat.format(
-                        "failed to instantiate: {0}",
-                        aClass.getName()), e);
-            }
+            return () -> {
+                try {
+                    return aClass.newInstance();
+                } catch (ReflectiveOperationException e) {
+                    throw new IllegalArgumentException(MessageFormat.format(
+                            "failed to instantiate: {0}",
+                            aClass.getName()), e);
+                }
+            };
         }
 
         /**

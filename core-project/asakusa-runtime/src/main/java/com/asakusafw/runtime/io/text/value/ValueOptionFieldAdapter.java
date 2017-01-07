@@ -33,6 +33,11 @@ import com.asakusafw.runtime.value.ValueOption;
  */
 public abstract class ValueOptionFieldAdapter<T extends ValueOption<T>> implements FieldAdapter<T> {
 
+    /**
+     * The default value of {@code NULL} format.
+     */
+    public static final String DEFAULT_NULL_FORMAT = null;
+
     private String nullFormat;
 
     private FieldOutput.Option[] outputOptions;
@@ -115,7 +120,7 @@ public abstract class ValueOptionFieldAdapter<T extends ValueOption<T>> implemen
      */
     protected abstract static class BuilderBase<S extends BuilderBase<S, T>, T extends FieldAdapter<?>> {
 
-        private String nullFormat;
+        private String nullFormat = DEFAULT_NULL_FORMAT;
 
         private final List<FieldOutput.Option> outputOptions = new ArrayList<>();
 

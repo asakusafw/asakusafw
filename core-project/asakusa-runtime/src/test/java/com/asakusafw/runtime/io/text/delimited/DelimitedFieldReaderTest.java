@@ -116,6 +116,42 @@ public class DelimitedFieldReaderTest {
     }
 
     /**
+     * w/ escape LF.
+     */
+    @Test
+    public void escape_bare_lf() {
+        escape = EscapeSequence.builder('^').addLineSeparator().build();
+        String[][] result = read("Hello^\nworld!");
+        assertThat(result, is(new String[][] {
+            { "Hello\nworld!" },
+        }));
+    }
+
+    /**
+     * w/ escape CR-LF.
+     */
+    @Test
+    public void escape_bare_cr_lf() {
+        escape = EscapeSequence.builder('^').addLineSeparator().build();
+        String[][] result = read("Hello^\r\nworld!");
+        assertThat(result, is(new String[][] {
+            { "Hello\r\nworld!" },
+        }));
+    }
+
+    /**
+     * w/ escape CR-c.
+     */
+    @Test
+    public void escape_bare_cr_c() {
+        escape = EscapeSequence.builder('^').addLineSeparator().build();
+        String[][] result = read("Hello^\rworld!");
+        assertThat(result, is(new String[][] {
+            { "Hello\rworld!" },
+        }));
+    }
+
+    /**
      * w/ unknown escape character.
      */
     @Test

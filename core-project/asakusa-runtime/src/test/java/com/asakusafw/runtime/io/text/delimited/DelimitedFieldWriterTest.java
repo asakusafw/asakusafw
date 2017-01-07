@@ -292,6 +292,23 @@ public class DelimitedFieldWriterTest {
     }
 
     /**
+     * w/ null.
+     */
+    @Test
+    public void null_sequence_only() {
+        escape = EscapeSequence.builder('^')
+                .addNullMapping('N')
+                .build();
+        String result = emit(null, w -> {
+            w.putField(wrap(null));
+            w.putEndOfRecord();
+        });
+        assertThat(result, is(lines(new String[][] {
+            { "^N" },
+        })));
+    }
+
+    /**
      * undefined escape - field separator.
      */
     @Test

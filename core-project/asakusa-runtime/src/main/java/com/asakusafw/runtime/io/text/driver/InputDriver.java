@@ -96,7 +96,7 @@ final class InputDriver<T> implements TextInput<T> {
             LOG.trace(String.format(
                     "reading record: path=%s, line=%,d, fields=%s",
                     path,
-                    getLineNumber(),
+                    getLineNumberMessage(),
                     collectFields()));
             reader.rewindFields();
         }
@@ -139,9 +139,9 @@ final class InputDriver<T> implements TextInput<T> {
                         LOG.trace(String.format(
                                 "skip empty field: path=%s, line=%,d, row=%,d, column=%,d",
                                 path,
-                                getLineNumber() + 1,
-                                getRecordIndex(),
-                                reader.getFieldIndex()));
+                                getLineNumberMessage(),
+                                getRecordIndexMessage(),
+                                getFieldIndexMessage()));
                     }
                     continue;
                 }
@@ -167,13 +167,12 @@ final class InputDriver<T> implements TextInput<T> {
             return;
         }
         handle(onMoreInput, null, MessageFormat.format(
-                "record has {0} (of {1}) fields: path={2}, line={3}, row={4}, column={5}, fields={6}",
+                "record has {0} (of {1}) fields: path={2}, line={3}, row={4}, fields={5}",
                 count + fields.length,
                 fields.length,
                 path != null ? path : NOT_AVAILABLE,
-                fromTextHead ? getLineNumber() + 1 : NOT_AVAILABLE,
-                fromTextHead ? getRecordIndex() : NOT_AVAILABLE,
-                reader.getFieldIndex(),
+                getLineNumberMessage(),
+                getRecordIndexMessage(),
                 collectFields()));
     }
 
@@ -182,13 +181,12 @@ final class InputDriver<T> implements TextInput<T> {
             return;
         }
         handle(onLessInput, null, MessageFormat.format(
-                "record has {0} (of {1}) fields: path={2}, line={3}, row={4}, column={5}, fields={6}",
+                "record has {0} (of {1}) fields: path={2}, line={3}, row={4}, fields={5}",
                 fields.length - lessCount,
                 fields.length,
                 path != null ? path : NOT_AVAILABLE,
-                fromTextHead ? getLineNumber() + 1 : NOT_AVAILABLE,
-                fromTextHead ? getRecordIndex() : NOT_AVAILABLE,
-                reader.getFieldIndex(),
+                getLineNumberMessage(),
+                getRecordIndexMessage(),
                 collectFields()));
     }
 
@@ -203,9 +201,9 @@ final class InputDriver<T> implements TextInput<T> {
                 field.name,
                 dataType.getSimpleName(),
                 path != null ? path : NOT_AVAILABLE,
-                fromTextHead ? getLineNumber() + 1 : NOT_AVAILABLE,
-                fromTextHead ? getRecordIndex() : NOT_AVAILABLE,
-                reader.getFieldIndex(),
+                getLineNumberMessage(),
+                getRecordIndexMessage(),
+                getFieldIndexMessage(),
                 value == null ? "null" : TextUtil.quote(value))); //$NON-NLS-1$
     }
 
@@ -354,6 +352,22 @@ final class InputDriver<T> implements TextInput<T> {
             count++;
         }
         return count;
+    }
+
+    private Object getLineNumberMessage() {
+        return getIndexMessage(getLineNumber());
+    }
+
+    private Object getRecordIndexMessage() {
+        return getIndexMessage(getRecordIndex());
+    }
+
+    private Object getFieldIndexMessage() {
+        return getIndexMessage(reader.getFieldIndex());
+    }
+
+    private Object getIndexMessage(long index) {
+        return index < 0 ? NOT_AVAILABLE : index + 1;
     }
 
     @Override

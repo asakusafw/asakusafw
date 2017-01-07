@@ -42,6 +42,8 @@ public class DelimitedFieldReader implements FieldReader {
 
     private final CharMap escapeDecode;
 
+    private final boolean escapeRecordSeparator;
+
     private CharSequence currentLine;
 
     private final StringBuilder fieldBuffer = new StringBuilder();
@@ -70,6 +72,7 @@ public class DelimitedFieldReader implements FieldReader {
         this.fieldSeparator = fieldSeparator;
         this.escapeCharacter = escapeSequences == null ? ABSENT : escapeSequences.getEscapeCharacter();
         this.escapeDecode = escapeSequences == null ? CharMap.EMPTY : CharMap.forward(escapeSequences);
+        this.escapeRecordSeparator = escapeSequences == null ? false : escapeSequences.canEscapeLineSeparator();
         this.transformer = transformer == null ? UnaryOperator.identity() : transformer;
     }
 
@@ -165,9 +168,10 @@ public class DelimitedFieldReader implements FieldReader {
     private State doSawEscape(int c) {
         int esc = escapeCharacter;
         if (c < 0) {
-            // FIXME error?
             // ESC, $
-            emit((char) esc);
+            if (escapeRecordSeparator == false) {
+                emit((char) esc);
+            }
             return State.END_OF_RECORD;
         }
         // ESC, c
@@ -182,6 +186,11 @@ public class DelimitedFieldReader implements FieldReader {
                 // ESC, ::
                 emit(esc);
                 return State.END_OF_FIELD;
+            } else if (escapeRecordSeparator && (c == '\r' || c == '\n')) {
+                // ESC, CR
+                // ESC, LF
+                emit(c);
+                return State.INIT;
             } else {
                 // ESC, c
                 emit(esc);

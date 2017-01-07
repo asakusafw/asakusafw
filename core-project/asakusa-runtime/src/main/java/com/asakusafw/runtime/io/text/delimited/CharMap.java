@@ -20,11 +20,13 @@ import java.util.List;
 
 final class CharMap {
 
+    private static final int[] EMPTY_TABLE = new int[0];
+
     static final int ABSENT = -1;
 
     static final int NULL_CHARACTER = Character.MAX_VALUE + 1;
 
-    static final CharMap EMPTY = new CharMap(Character.MAX_VALUE + 1, new int[0], ABSENT);
+    static final CharMap EMPTY = new CharMap(Character.MAX_VALUE + 1, EMPTY_TABLE, ABSENT);
 
     private final int baseIndex;
 
@@ -65,8 +67,16 @@ final class CharMap {
 
     static CharMap backward(EscapeSequence sequence) {
         List<EscapeSequence.Entry> mappings = sequence.getEntries();
-        if (mappings.stream().noneMatch(c -> c.to != null)) {
+        if (mappings.isEmpty()) {
             return EMPTY;
+        }
+        if (mappings.stream().noneMatch(c -> c.to != null)) {
+            // only null rule
+            return new CharMap(Character.MAX_VALUE + 1, EMPTY_TABLE, mappings.stream()
+                    .filter(c -> c.to == null)
+                    .map(c -> c.from)
+                    .findFirst()
+                    .get());
         }
         int baseIndex = mappings.stream().filter(c -> c.to != null).mapToInt(c -> c.to).min().getAsInt();
         int size = mappings.stream().filter(c -> c.to != null).mapToInt(c -> c.to).max().getAsInt() - baseIndex + 1;
