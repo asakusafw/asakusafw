@@ -205,6 +205,16 @@ public final class LineFeedDelimitedInputStream extends InputStream {
         stateMachine.finish();
     }
 
+    @Override
+    public int available() throws IOException {
+        return bufferLimit - bufferPosition;
+    }
+
+    @Override
+    public void close() throws IOException {
+        source.close();
+    }
+
     private static final class StateMachine {
 
         static final byte LF = '\n';
