@@ -223,6 +223,10 @@ public final class StringOptionUtil {
             if (column < 0) {
                 throw invalidNumber(contents);
             }
+            // check overflow
+            if (negativeResult < (Integer.MIN_VALUE / 10)) {
+                throw invalidNumber(contents);
+            }
             negativeResult *= 10;
             // check overflow
             if (negativeResult < (Integer.MIN_VALUE | column)) {
@@ -268,6 +272,10 @@ public final class StringOptionUtil {
             char c = buffer.get();
             int column = Character.digit(c, 10);
             if (column < 0) {
+                throw invalidNumber(contents);
+            }
+            // check overflow
+            if (negativeResult < (Long.MIN_VALUE / 10)) {
                 throw invalidNumber(contents);
             }
             negativeResult *= 10;

@@ -1737,6 +1737,26 @@ public interface ModelFactory {
     }
 
     /**
+     * Returns a new {@link Wildcard} object with upper bound type.
+     * @param typeBound the bound type, or {@code null} if there is no bound types
+     * @return the created object
+     * @since 0.9.1
+     */
+    default Wildcard newWildcardExtends(Type typeBound) {
+        return newWildcard(WildcardBoundKind.UPPER_BOUNDED, typeBound);
+    }
+
+    /**
+     * Returns a new {@link Wildcard} object with lower bound type.
+     * @param typeBound the bound type, or {@code null} if there is no bound types
+     * @return the created object
+     * @since 0.9.1
+     */
+    default Wildcard newWildcardSuper(Type typeBound) {
+        return newWildcard(WildcardBoundKind.LOWER_BOUNDED, typeBound);
+    }
+
+    /**
      * Returns a new {@link Wildcard} object.
      * @param boundKind the bound type kind
      * @param typeBound the bound type, or {@code null} if there is no bound types

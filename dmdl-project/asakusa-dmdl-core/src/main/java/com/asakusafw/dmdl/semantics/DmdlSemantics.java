@@ -46,7 +46,7 @@ public class DmdlSemantics {
      * @param modelOriginalAst the original AST, or {@code null} if this is an ad-hoc element
      * @param modelName the name of this model
      * @param modelDescription the description of this model, or {@code null} if unknown
-     * @param modelAttributes the attribtues of this model
+     * @param modelAttributes the attributes of this model
      * @return the declared property
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
@@ -112,7 +112,7 @@ public class DmdlSemantics {
     }
 
     /**
-     * Addes diagnostics about semantics analysis.
+     * Adds diagnostics about semantics analysis.
      * @param diagnosticList diagnostics
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
@@ -126,7 +126,7 @@ public class DmdlSemantics {
     }
 
     /**
-     * Addes a diagnostic about semantics analysis.
+     * Adds a diagnostic about semantics analysis.
      * @param diagnostic the diagnostic
      * @throws IllegalArgumentException if some parameters were {@code null}
      */

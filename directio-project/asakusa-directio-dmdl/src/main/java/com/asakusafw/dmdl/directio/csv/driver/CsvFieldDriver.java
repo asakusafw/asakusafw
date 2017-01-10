@@ -45,7 +45,7 @@ The attributed declaration must be:
  * @since 0.2.5
  * @version 0.9.0
  */
-public class CsvFieldDriver  extends PropertyAttributeDriver {
+public class CsvFieldDriver extends PropertyAttributeDriver {
 
     /**
      * The attribute name.

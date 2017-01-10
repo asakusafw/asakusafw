@@ -1,10 +1,25 @@
+# CSV
 com.asakusafw.dmdl.directio.csv.driver.CsvFormatDriver
 com.asakusafw.dmdl.directio.csv.driver.CsvFieldDriver
 com.asakusafw.dmdl.directio.csv.driver.CsvFileNameDriver
 com.asakusafw.dmdl.directio.csv.driver.CsvLineNumberDriver
 com.asakusafw.dmdl.directio.csv.driver.CsvRecordNumberDriver
 com.asakusafw.dmdl.directio.csv.driver.CsvIgnoreDriver
+
+# Formatted Text
+com.asakusafw.dmdl.directio.text.TextFieldDriver
+com.asakusafw.dmdl.directio.text.TextFileNameDriver
+com.asakusafw.dmdl.directio.text.TextLineNumberDriver
+com.asakusafw.dmdl.directio.text.TextRecordNumberDriver
+com.asakusafw.dmdl.directio.text.TextIgnoreDriver
+
+# Delimited Text
+com.asakusafw.dmdl.directio.text.delimited.DelimitedTextDriver
+
+# Sequence File
 com.asakusafw.dmdl.directio.sequencefile.driver.SequenceFileFormatDriver
+
+# Line
 com.asakusafw.dmdl.directio.line.driver.LineFormatDriver
 com.asakusafw.dmdl.directio.line.driver.LineBodyDriver
 com.asakusafw.dmdl.directio.line.driver.LineFileNameDriver
