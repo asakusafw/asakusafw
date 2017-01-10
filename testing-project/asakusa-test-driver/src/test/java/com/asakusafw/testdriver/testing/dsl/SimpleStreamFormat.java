@@ -74,7 +74,7 @@ public class SimpleStreamFormat extends BinaryStreamFormat<Simple> {
         return new ModelOutput<Simple>() {
             @Override
             public void write(Simple model) throws IOException {
-                writer.print(model.getValueAsString());
+                writer.println(model.getValueAsString());
             }
             @Override
             public void close() throws IOException {

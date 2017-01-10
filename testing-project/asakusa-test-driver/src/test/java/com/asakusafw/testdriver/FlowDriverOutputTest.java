@@ -22,18 +22,22 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.function.UnaryOperator;
 
 import org.apache.hadoop.io.Text;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import com.asakusafw.runtime.windows.WindowsSupport;
 import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.DataModelReflection;
 import com.asakusafw.testdriver.core.DataModelSink;
@@ -53,6 +57,7 @@ import com.asakusafw.testdriver.core.VerifierFactory;
 import com.asakusafw.testdriver.core.VerifyContext;
 import com.asakusafw.testdriver.core.VerifyRule;
 import com.asakusafw.testdriver.core.VerifyRuleFactory;
+import com.asakusafw.testdriver.model.DefaultDataModelDefinition;
 import com.asakusafw.testdriver.testing.dsl.SimpleStreamFormat;
 import com.asakusafw.testdriver.testing.dsl.TextStreamFormat;
 import com.asakusafw.testdriver.testing.model.Simple;
@@ -62,6 +67,12 @@ import com.asakusafw.utils.io.Provider;
  * Test for {@link FlowDriverOutput}.
  */
 public class FlowDriverOutputTest {
+
+    /**
+     * Windows platform support.
+     */
+    @ClassRule
+    public static final WindowsSupport WINDOWS_SUPPORT = new WindowsSupport();
 
     /**
      * A temporary folder.
@@ -479,6 +490,28 @@ public class FlowDriverOutputTest {
         });
         mock.dumpActual(file);
         checkInstance(mock.getResultSink(), sink);
+    }
+
+    /**
+     * Test method for {@link FlowDriverOutput#dumpActual(Class, File)}.
+     * @throws Exception if failed
+     */
+    @Test
+    public void dumpActual_directio() throws Exception {
+        File file = new File(folder.getRoot(), "testing");
+        MockFlowDriverOutput<?> mock = new MockFlowDriverOutput<>(getClass(), Simple.class, provider())
+                .dumpActual(SimpleStreamFormat.class, file);
+        DefaultDataModelDefinition<Simple> def = new DefaultDataModelDefinition<>(Simple.class);
+        try (DataModelSink sink = mock.getResultSink().createSink(def, CONTEXT)) {
+            Simple buf = new Simple();
+            buf.setValueAsString("Hello, world!");
+            sink.put(def.toReflection(buf));
+        }
+        try (Scanner s = new Scanner(file, StandardCharsets.UTF_8.name())) {
+            assertThat(s.hasNextLine(), is(true));
+            assertThat(s.nextLine(), is("Hello, world!"));
+            assertThat(s.hasNextLine(), is(false));
+        }
     }
 
     /**

@@ -41,6 +41,7 @@ import org.junit.rules.TemporaryFolder;
 import com.asakusafw.runtime.windows.WindowsSupport;
 import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.DataModelReflection;
+import com.asakusafw.testdriver.core.DataModelSink;
 import com.asakusafw.testdriver.core.DataModelSource;
 import com.asakusafw.testdriver.core.DataModelSourceFactory;
 import com.asakusafw.testdriver.core.TestContext;
@@ -58,7 +59,7 @@ public class DirectIoUtilTest {
      * Windows platform support.
      */
     @ClassRule
-    public static final WindowsSupport WINDOWS_SUPPORT = new WindowsSupport(true);
+    public static final WindowsSupport WINDOWS_SUPPORT = new WindowsSupport();
 
     /**
      * temporary folder.
@@ -132,6 +133,31 @@ public class DirectIoUtilTest {
         URL f = asJarUrl("directio/simple.txt");
         List<String> results = extract(DirectIoUtil.load(new Configuration(), DEF, SimpleFileFormat.class, f));
         assertThat(results, containsInAnyOrder("Hello, world!"));
+    }
+
+    /**
+     * dump.
+     * @throws Exception if failed
+     */
+    @Test
+    public void dump() throws Exception {
+        File dest = new File(temporary.getRoot(), "output/file.txt");
+        try (DataModelSink sink = DirectIoUtil.dump(new Configuration(), DEF, SimpleStreamFormat.class, dest)
+                .createSink(DEF, new TestContext.Empty())) {
+            Simple buf = new Simple();
+
+            buf.setValueAsString("A");
+            sink.put(DEF.toReflection(buf));
+
+            buf.setValueAsString("B");
+            sink.put(DEF.toReflection(buf));
+
+            buf.setValueAsString("C");
+            sink.put(DEF.toReflection(buf));
+        }
+        assertThat(dest.isFile(), is(true));
+        List<String> results = extract(DirectIoUtil.load(new Configuration(), DEF, SimpleFileFormat.class, dest));
+        assertThat(results, containsInAnyOrder("A", "B", "C"));
     }
 
     private File asFile(String name) {

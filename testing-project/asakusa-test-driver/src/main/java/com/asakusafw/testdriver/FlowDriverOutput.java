@@ -566,6 +566,18 @@ public abstract class FlowDriverOutput<T, S extends FlowDriverOutput<T, S>> exte
     }
 
     /**
+     * Enables to store the result data set of this output.
+     * @param formatClass the data format class
+     * @param outputPath the output path
+     * @return this
+     * @since 0.9.1
+     */
+    public S dumpActual(Class<? extends DataFormat<? super T>> formatClass, File outputPath) {
+        DataModelDefinition<T> definition = getDataModelDefinition();
+        return dumpActual(toDataModelSinkFactory(definition, formatClass, outputPath));
+    }
+
+    /**
      * Enables to store the result differences of this output.
      * @param outputPath the output path
      * @return this
