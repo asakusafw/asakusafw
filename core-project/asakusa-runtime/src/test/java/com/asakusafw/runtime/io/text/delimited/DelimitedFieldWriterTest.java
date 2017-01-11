@@ -137,7 +137,7 @@ public class DelimitedFieldWriterTest {
         })));
     }
 
-    private void expectUnmappable(FieldWriter w, ErrorCode code) throws IOException {
+    private static void expectUnmappable(FieldWriter w, ErrorCode code) throws IOException {
         try {
             w.putEndOfRecord();
             fail("expected: " + code);
@@ -505,7 +505,7 @@ public class DelimitedFieldWriterTest {
                 .build();
         String result = emit(null, w -> {
             w.putField(wrap("\\t"));
-            expectUnmappable(w, ErrorCode.CONFLICT_ESCAPE_SEQUENCE);
+            expectUnmappable(w, ErrorCode.CONFLICT_SEQUENCE);
         });
         assertThat(result, is(lines(new String[][] {
             { "\\t" },
@@ -522,7 +522,7 @@ public class DelimitedFieldWriterTest {
                 .build();
         String result = emit(null, w -> {
             w.putField(wrap("\\N"));
-            expectUnmappable(w, ErrorCode.CONFLICT_ESCAPE_SEQUENCE);
+            expectUnmappable(w, ErrorCode.CONFLICT_SEQUENCE);
         });
         assertThat(result, is(lines(new String[][] {
             { "\\N" },
@@ -539,7 +539,7 @@ public class DelimitedFieldWriterTest {
                 .build();
         String result = emit(null, w -> {
             w.putField(wrap("\\\\t"));
-            expectUnmappable(w, ErrorCode.CONFLICT_ESCAPE_SEQUENCE);
+            expectUnmappable(w, ErrorCode.CONFLICT_SEQUENCE);
         });
         assertThat(result, is(lines(new String[][] {
             { "\\\\t" },
