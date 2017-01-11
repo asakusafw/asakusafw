@@ -127,7 +127,7 @@ public class UnmappableOutput implements Serializable {
         CONFLICT_SEQUENCE("{0} represents other sequence", true),
 
         /**
-         * The output sequence is restricted
+         * The output sequence is restricted.
          */
         RESTRICTED_SEQUENCE("{0} is restricted", true),
         ;
