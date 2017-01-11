@@ -88,7 +88,8 @@ final class OutputDriver<T> implements TextOutput<T> {
     private void writeHeader() throws IOException {
         BasicFieldOutput output = fieldOutput;
         for (FieldDriver<?, ?> field : fields) {
-            writer.putField(output.set(field.name));
+            writer.putField(output.set(field.name)
+                    .addOption(StandardFieldOutputOption.HEADER));
         }
         try {
             writer.putEndOfRecord();
