@@ -23,6 +23,7 @@ import java.util.function.UnaryOperator;
 
 import com.asakusafw.runtime.io.text.FieldWriter;
 import com.asakusafw.runtime.io.text.LineSeparator;
+import com.asakusafw.runtime.io.text.TextUtil;
 import com.asakusafw.runtime.io.text.UnmappableOutput;
 import com.asakusafw.runtime.io.text.UnmappableOutputException;
 import com.asakusafw.runtime.io.text.driver.FieldOutput;
@@ -258,10 +259,8 @@ public class DelimitedFieldWriter implements FieldWriter {
             return State.SAW_ESCAPE;
         } else {
             if (escapeDecode.get(c) != CharMap.ABSENT) {
-                handleUnmap(UnmappableOutput.ErrorCode.CONFLICT_ESCAPE_SEQUENCE, new StringBuilder(2)
-                        .append(escapeCharacter)
-                        .append(c)
-                        .toString());
+                handleUnmap(UnmappableOutput.ErrorCode.CONFLICT_SEQUENCE,
+                        TextUtil.quote(new StringBuilder(2).append(escapeCharacter).append(c)));
             }
             emit(c);
             return State.BODY;

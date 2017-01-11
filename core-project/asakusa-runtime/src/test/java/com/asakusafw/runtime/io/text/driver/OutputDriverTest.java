@@ -234,7 +234,7 @@ public class OutputDriverTest {
         RecordDefinition<String[]> def = RecordDefinition.builder(String[].class)
                 .withHeaderType(HeaderType.FORCE)
                 .withField(self(), field("a", 0).build())
-                .withField(self(), field(ErrorCode.CONFLICT_ESCAPE_SEQUENCE.name(), 1).build())
+                .withField(self(), field(ErrorCode.CONFLICT_SEQUENCE.name(), 1).build())
                 .build();
         emit(def, new String[][] {
             { "A", "B", },
@@ -251,13 +251,13 @@ public class OutputDriverTest {
                 .withHeaderType(HeaderType.FORCE)
                 .withOnUnmappableOutput(ErrorAction.IGNORE)
                 .withField(self(), field("a", 0).build())
-                .withField(self(), field(ErrorCode.CONFLICT_ESCAPE_SEQUENCE.name(), 1).build())
+                .withField(self(), field(ErrorCode.CONFLICT_SEQUENCE.name(), 1).build())
                 .build();
         String[][] results = emit(def, new String[][] {
             { "A", "B", },
         });
         assertThat(results, is(new String[][] {
-            { "a", ErrorCode.CONFLICT_ESCAPE_SEQUENCE.name(), },
+            { "a", ErrorCode.CONFLICT_SEQUENCE.name(), },
             { "A", "B", },
         }));
     }
@@ -272,13 +272,13 @@ public class OutputDriverTest {
                 .withHeaderType(HeaderType.FORCE)
                 .withOnUnmappableOutput(ErrorAction.REPORT)
                 .withField(self(), field("a", 0).build())
-                .withField(self(), field(ErrorCode.CONFLICT_ESCAPE_SEQUENCE.name(), 1).build())
+                .withField(self(), field(ErrorCode.CONFLICT_SEQUENCE.name(), 1).build())
                 .build();
         String[][] results = emit(def, new String[][] {
             { "A", "B", },
         });
         assertThat(results, is(new String[][] {
-            { "a", ErrorCode.CONFLICT_ESCAPE_SEQUENCE.name(), },
+            { "a", ErrorCode.CONFLICT_SEQUENCE.name(), },
             { "A", "B", },
         }));
     }
@@ -293,7 +293,7 @@ public class OutputDriverTest {
                 .withHeaderType(HeaderType.FORCE)
                 .withOnUnmappableOutput(ErrorAction.IGNORE)
                 .withField(self(), field("a", 0).build())
-                .withField(self(), field(ErrorCode.CONFLICT_ESCAPE_SEQUENCE.name(), 1)
+                .withField(self(), field(ErrorCode.CONFLICT_SEQUENCE.name(), 1)
                         .withOnUnmappableOutput(ErrorAction.ERROR) // ignored for header
                         .build())
                 .build();
@@ -301,7 +301,7 @@ public class OutputDriverTest {
             { "A", "B", },
         });
         assertThat(results, is(new String[][] {
-            { "a", ErrorCode.CONFLICT_ESCAPE_SEQUENCE.name(), },
+            { "a", ErrorCode.CONFLICT_SEQUENCE.name(), },
             { "A", "B", },
         }));
     }

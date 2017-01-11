@@ -30,6 +30,7 @@ public interface FieldReader extends Closeable {
      * This method may change the previous {@link #getContent()} result object.
      * @return {@code true} if the next record exists, otherwise {@code false}
      * @throws IOException if I/O error occurred while reading the next record
+     * @throws TextFormatException if text format is not valid
      */
     boolean nextRecord() throws IOException;
 
@@ -38,12 +39,14 @@ public interface FieldReader extends Closeable {
      * This method may change the previous {@link #getContent()} result object.
      * @return {@code true} if the next field exists, otherwise {@code false}
      * @throws IOException if I/O error occurred while reading the next field
+     * @throws TextFormatException if text format is not valid
      */
     boolean nextField() throws IOException;
 
     /**
      * Rewinds the cursor to the head of the current record.
      * @throws IOException if I/O error occurred while rewinding fields
+     * @throws TextFormatException if text format is not valid
      */
     void rewindFields() throws IOException;
 
@@ -51,6 +54,7 @@ public interface FieldReader extends Closeable {
      * Returns the content of the current field.
      * Note that the content may be <em>raw</em>, it can contain quoting or escape sequences.
      * @return the content, or {@code null} if this represents {@code NULL}
+     * @throws TextFormatException if text format is not valid
      */
     CharSequence getContent();
 

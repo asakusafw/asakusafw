@@ -117,14 +117,19 @@ public class UnmappableOutput implements Serializable {
         LOST_RECORD_SEPARATOR("value ends with escape character removed a record separator"),
 
         /**
-         * Output sequence conflicts with other escape sequence.
-         */
-        CONFLICT_ESCAPE_SEQUENCE("bare \"{0}\" represents another escape sequence", true),
-
-        /**
          * {@code NULL} format was not defined.
          */
         UNDEFINED_NULL_SEQUENCE("null sequence was not defined"),
+
+        /**
+         * Output sequence conflicts with another sequence.
+         */
+        CONFLICT_SEQUENCE("{0} represents other sequence", true),
+
+        /**
+         * The output sequence is restricted.
+         */
+        RESTRICTED_SEQUENCE("{0} is restricted", true),
         ;
 
         private final String message;

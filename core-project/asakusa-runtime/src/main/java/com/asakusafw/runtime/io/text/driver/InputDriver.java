@@ -24,6 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.asakusafw.runtime.io.text.FieldReader;
+import com.asakusafw.runtime.io.text.TextFormatException;
 import com.asakusafw.runtime.io.text.TextInput;
 import com.asakusafw.runtime.io.text.TextUtil;
 
@@ -89,25 +90,33 @@ final class InputDriver<T> implements TextInput<T> {
 
     @Override
     public boolean readTo(T model) throws IOException {
-        if (reader.nextRecord() == false) {
-            return false;
-        }
-        if (LOG.isTraceEnabled()) {
-            LOG.trace(String.format(
-                    "reading record: path=%s, line=%,d, fields=%s",
-                    path,
-                    getLineNumberMessage(),
-                    collectFields()));
-            reader.rewindFields();
-        }
-        if (requireConsumeHeader) {
-            requireConsumeHeader = false;
-            if (doHeaderCheck() == false) {
+        try {
+            if (reader.nextRecord() == false) {
                 return false;
             }
+            if (LOG.isTraceEnabled()) {
+                LOG.trace(String.format(
+                        "reading record: path=%s, line=%,d, fields=%s",
+                        path,
+                        getLineNumberMessage(),
+                        collectFields()));
+                reader.rewindFields();
+            }
+            if (requireConsumeHeader) {
+                requireConsumeHeader = false;
+                if (doHeaderCheck() == false) {
+                    return false;
+                }
+            }
+            process(model);
+            return true;
+        } catch (TextFormatException e) {
+            throw new IOException(MessageFormat.format(
+                    "text format is not valid: path={0}, line={1}, row={2}",
+                    path != null ? path : NOT_AVAILABLE,
+                    getLineNumberMessage(),
+                    getRecordIndexMessage()), e);
         }
-        process(model);
-        return true;
     }
 
     private void process(T model) throws IOException {

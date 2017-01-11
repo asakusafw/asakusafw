@@ -17,18 +17,18 @@ package com.asakusafw.dmdl.directio.text;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.hadoop.io.compress.CompressionCodec;
 
@@ -99,14 +99,11 @@ public abstract class AbstractTextStreamFormatGenerator {
         ADAPTER_TYPES = map;
     }
 
-    private static final Set<Charset> KNOWN_ASCII_NOT_COMPAT;
-    static {
-        Set<Charset> set = new HashSet<>();
-        set.add(StandardCharsets.UTF_16);
-        set.add(StandardCharsets.UTF_16BE);
-        set.add(StandardCharsets.UTF_16LE);
-        KNOWN_ASCII_NOT_COMPAT = set;
-    }
+    private static final Pattern PATTERN_ASCII_NOT_COMPAT = Pattern.compile("\\bUTF-(16|32)(BE|LE)?\\b"); //$NON-NLS-1$
+
+    private static final Set<Charset> KNOWN_ASCII_NOT_COMPAT = Charset.availableCharsets().values().stream()
+            .filter(s -> PATTERN_ASCII_NOT_COMPAT.matcher(s.name()).find())
+            .collect(Collectors.collectingAndThen(Collectors.toSet(), Collections::unmodifiableSet));
 
     /**
      * The current context.
