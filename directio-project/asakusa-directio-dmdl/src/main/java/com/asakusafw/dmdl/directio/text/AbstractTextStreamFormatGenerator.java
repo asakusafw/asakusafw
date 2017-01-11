@@ -383,6 +383,8 @@ public abstract class AbstractTextStreamFormatGenerator {
         default:
             throw new AssertionError(kind);
         }
+        settings.getQuoteStyle().ifPresent(v -> builder
+                .method("withOutputOption", resolve(v))); //$NON-NLS-1$
         return builder.method("lazy").toExpression(); //$NON-NLS-1$
     }
 

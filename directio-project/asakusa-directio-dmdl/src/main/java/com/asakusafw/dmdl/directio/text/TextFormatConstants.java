@@ -217,20 +217,47 @@ public final class TextFormatConstants {
      */
     public static final String VALUE_FALSE = "false"; //$NON-NLS-1$
 
+    // CSV
+
+    /**
+     * The element name of quote style.
+     */
+    public static final String ELEMENT_QUOTE_STYLE = "quote_style"; //$NON-NLS-1$
+
+    /**
+     * The element name of quote character.
+     */
+    public static final String ELEMENT_QUOTE_CHARACTER = "quote_character"; //$NON-NLS-1$
+
+    /**
+     * The element name of whether or not LF character can appear as field value.
+     */
+    public static final String ELEMENT_ALLOW_LINE_FEED_IN_FIELD = "allow_linefeed"; //$NON-NLS-1$
+
+    /**
+     * The element name of default quote style.
+     */
+    public static final String ELEMENT_DEFAULT_QUOTE_STYLE = ELEMENT_QUOTE_STYLE;
+
+    /**
+     * The element name of header quote style.
+     */
+    public static final String ELEMENT_HEADER_QUOTE_STYLE = "header_" + ELEMENT_QUOTE_STYLE; //$NON-NLS-1$
+
     // delimited text
 
     /**
-     * The element name of .
+     * The element name of escape character.
      */
     public static final String ELEMENT_ESCAPE_CHARACTER = "escape_character"; //$NON-NLS-1$
 
     /**
-     * The element name of .
+     * The element name of escape sequence map.
      */
     public static final String ELEMENT_ESCAPE_SEQUENCE_MAP = "escape_sequence"; //$NON-NLS-1$
 
     /**
-     * The element name of .
+     * The element name of whether or not escape line separators.
      */
     public static final String ELEMENT_ESCAPE_LINE_SEPARATOR = "escape_line_separator"; //$NON-NLS-1$
 }

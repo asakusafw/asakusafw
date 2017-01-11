@@ -1,4 +1,5 @@
 com.asakusafw.dmdl.directio.csv.driver.CsvFormatEmitter
 com.asakusafw.dmdl.directio.text.delimited.DelimitedTextEmitter
+com.asakusafw.dmdl.directio.text.csv.CsvTextEmitter
 com.asakusafw.dmdl.directio.sequencefile.driver.SequenceFileFormatEmitter
 com.asakusafw.dmdl.directio.line.driver.LineFormatEmitter
