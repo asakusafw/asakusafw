@@ -18,6 +18,8 @@ package com.asakusafw.runtime.io.text;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Reader;
+import java.io.Writer;
 
 /**
  * Provides {@link FieldReader} and {@link FieldWriter}.
@@ -40,4 +42,20 @@ public interface TextFormat {
      * @throws IOException if I/O error was occurred while initializing the writer
      */
     FieldWriter open(OutputStream output) throws IOException;
+
+    /**
+     * Opens {@link FieldReader} for the given input.
+     * @param input the source input reader
+     * @return the opened {@link FieldReader}
+     * @throws IOException if I/O error was occurred while initializing the reader
+     */
+    FieldReader open(Reader input) throws IOException;
+
+    /**
+     * Opens {@link FieldWriter} for the given output.
+     * @param output the destination output writer
+     * @return the opened {@link FieldWriter}
+     * @throws IOException if I/O error was occurred while initializing the writer
+     */
+    FieldWriter open(Writer output) throws IOException;
 }

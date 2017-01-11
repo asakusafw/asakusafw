@@ -20,6 +20,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
@@ -86,16 +88,26 @@ public class DelimitedTextFormat implements TextFormat {
 
     @Override
     public DelimitedFieldReader open(InputStream input) throws IOException {
+        return open(new InputStreamReader(input, charset));
+    }
+
+    @Override
+    public DelimitedFieldWriter open(OutputStream output) throws IOException {
+        return open(new OutputStreamWriter(output, charset));
+    }
+
+    @Override
+    public DelimitedFieldReader open(Reader input) throws IOException {
         return new DelimitedFieldReader(
-                new InputStreamReader(input, charset),
+                input,
                 fieldSeparator, escapeSequence,
                 inputTransformer.get());
     }
 
     @Override
-    public DelimitedFieldWriter open(OutputStream output) throws IOException {
+    public DelimitedFieldWriter open(Writer output) throws IOException {
         return new DelimitedFieldWriter(
-                new OutputStreamWriter(output, charset),
+                output,
                 lineSeparator, fieldSeparator, escapeSequence,
                 outputTransformer.get());
     }
@@ -214,7 +226,7 @@ public class DelimitedTextFormat implements TextFormat {
             return this;
         }
 
-        private Supplier<? extends UnaryOperator<CharSequence>> asSupplier(
+        private static Supplier<? extends UnaryOperator<CharSequence>> asSupplier(
                 Class<? extends UnaryOperator<CharSequence>> aClass) {
             if (aClass == null) {
                 return null;
