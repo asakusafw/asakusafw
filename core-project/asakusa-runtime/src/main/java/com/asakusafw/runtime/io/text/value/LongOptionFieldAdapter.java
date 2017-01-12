@@ -15,6 +15,9 @@
  */
 package com.asakusafw.runtime.io.text.value;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+
 import com.asakusafw.runtime.io.text.TextUtil;
 import com.asakusafw.runtime.io.text.driver.FieldAdapter;
 import com.asakusafw.runtime.value.LongOption;
@@ -23,10 +26,10 @@ import com.asakusafw.runtime.value.LongOption;
  * An implementation of {@link FieldAdapter} which accepts {@link LongOption}.
  * @since 0.9.1
  */
-public final class LongOptionFieldAdapter extends ValueOptionFieldAdapter<LongOption> {
+public final class LongOptionFieldAdapter extends NumericOptionFieldAdapter<LongOption> {
 
-    LongOptionFieldAdapter(String nullFormat) {
-        super(nullFormat);
+    LongOptionFieldAdapter(String nullFormat, DecimalFormat decimalFormat) {
+        super(nullFormat, decimalFormat);
     }
 
     /**
@@ -37,14 +40,25 @@ public final class LongOptionFieldAdapter extends ValueOptionFieldAdapter<LongOp
         return new Builder();
     }
 
+    @Override
+    protected Number get(LongOption property) {
+        return property.get();
+    }
+
     @SuppressWarnings("deprecation")
     @Override
-    protected void doParse(CharSequence contents, LongOption property) {
+    protected void set(BigDecimal value, LongOption property) {
+        property.modify(value.longValueExact());
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    protected void doParseDefault(CharSequence contents, LongOption property) {
         property.modify(TextUtil.parseLong(contents, 0, contents.length()));
     }
 
     @Override
-    protected void doEmit(LongOption property, StringBuilder output) {
+    protected void doEmitDefault(LongOption property, StringBuilder output) {
         output.append(property.get());
     }
 
@@ -52,10 +66,10 @@ public final class LongOptionFieldAdapter extends ValueOptionFieldAdapter<LongOp
      * A builder of {@link LongOptionFieldAdapter}.
      * @since 0.9.1
      */
-    public static class Builder extends BuilderBase<Builder, LongOptionFieldAdapter> {
+    public static class Builder extends NumericBuilderBase<Builder, LongOptionFieldAdapter> {
         @Override
         public LongOptionFieldAdapter build() {
-            return new LongOptionFieldAdapter(getNullFormat());
+            return new LongOptionFieldAdapter(getNullFormat(), getDecimalFormat());
         }
     }
 }

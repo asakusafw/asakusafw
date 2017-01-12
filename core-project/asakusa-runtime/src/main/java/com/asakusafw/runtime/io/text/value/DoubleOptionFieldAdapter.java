@@ -15,6 +15,9 @@
  */
 package com.asakusafw.runtime.io.text.value;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+
 import com.asakusafw.runtime.io.text.TextUtil;
 import com.asakusafw.runtime.io.text.driver.FieldAdapter;
 import com.asakusafw.runtime.value.DoubleOption;
@@ -23,10 +26,10 @@ import com.asakusafw.runtime.value.DoubleOption;
  * An implementation of {@link FieldAdapter} which accepts {@link DoubleOption}.
  * @since 0.9.1
  */
-public final class DoubleOptionFieldAdapter extends ValueOptionFieldAdapter<DoubleOption> {
+public final class DoubleOptionFieldAdapter extends NumericOptionFieldAdapter<DoubleOption> {
 
-    DoubleOptionFieldAdapter(String nullFormat) {
-        super(nullFormat);
+    DoubleOptionFieldAdapter(String nullFormat, DecimalFormat decimalFormat) {
+        super(nullFormat, decimalFormat);
     }
 
     /**
@@ -37,14 +40,31 @@ public final class DoubleOptionFieldAdapter extends ValueOptionFieldAdapter<Doub
         return new Builder();
     }
 
+    @Override
+    protected Number get(DoubleOption property) {
+        return property.get();
+    }
+
     @SuppressWarnings("deprecation")
     @Override
-    protected void doParse(CharSequence contents, DoubleOption property) {
+    protected void set(BigDecimal value, DoubleOption property) {
+        property.modify(value.doubleValue());
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    protected void setSpecial(CharSequence contents, Number value, DoubleOption property) {
+        property.modify(value.doubleValue());
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    protected void doParseDefault(CharSequence contents, DoubleOption property) {
         property.modify(TextUtil.parseDouble(contents, 0, contents.length()));
     }
 
     @Override
-    protected void doEmit(DoubleOption property, StringBuilder output) {
+    protected void doEmitDefault(DoubleOption property, StringBuilder output) {
         output.append(property.get());
     }
 
@@ -52,10 +72,10 @@ public final class DoubleOptionFieldAdapter extends ValueOptionFieldAdapter<Doub
      * A builder of {@link DoubleOptionFieldAdapter}.
      * @since 0.9.1
      */
-    public static class Builder extends BuilderBase<Builder, DoubleOptionFieldAdapter> {
+    public static class Builder extends NumericBuilderBase<Builder, DoubleOptionFieldAdapter> {
         @Override
         public DoubleOptionFieldAdapter build() {
-            return new DoubleOptionFieldAdapter(getNullFormat());
+            return new DoubleOptionFieldAdapter(getNullFormat(), getDecimalFormat());
         }
     }
 }

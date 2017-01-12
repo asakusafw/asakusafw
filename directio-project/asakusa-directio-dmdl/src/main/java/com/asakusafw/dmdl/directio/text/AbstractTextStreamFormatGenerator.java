@@ -371,7 +371,9 @@ public abstract class AbstractTextStreamFormatGenerator {
                     .method("withDateTimeFormat", resolve(v.toString()))); //$NON-NLS-1$
             break;
         case DECIMAL:
-            setting(settings, TextFieldSettings::getDecimalFormat).ifPresent(v -> builder
+            setting(settings, TextFieldSettings::getNumberFormat).ifPresent(v -> builder
+                    .method("withNumberFormat", resolve(v.toString()))); //$NON-NLS-1$
+            setting(settings, TextFieldSettings::getDecimalOutputStyle).ifPresent(v -> builder
                     .method("withOutputStyle", resolve(v))); //$NON-NLS-1$
             break;
         case BYTE:
@@ -380,6 +382,9 @@ public abstract class AbstractTextStreamFormatGenerator {
         case LONG:
         case FLOAT:
         case DOUBLE:
+            setting(settings, TextFieldSettings::getNumberFormat).ifPresent(v -> builder
+                    .method("withNumberFormat", resolve(v.toString()))); //$NON-NLS-1$
+            break;
         case TEXT:
             // no special members
             break;

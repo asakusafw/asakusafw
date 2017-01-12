@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 import com.asakusafw.dmdl.Diagnostic;
 import com.asakusafw.dmdl.directio.util.ClassName;
 import com.asakusafw.dmdl.directio.util.DatePattern;
+import com.asakusafw.dmdl.directio.util.DecimalPattern;
 import com.asakusafw.dmdl.directio.util.MapValue;
 import com.asakusafw.dmdl.directio.util.Value;
 import com.asakusafw.dmdl.model.AstAttribute;
@@ -72,12 +73,12 @@ public class AttributeAnalyzer {
     }
 
     /**
-     * Analyze the given element as a nullable string value.
+     * Analyze the given element as a string value.
      * @param element the target element
      * @return the analyzed value, or undefined if the element value is not valid
      */
     public Value<String> toString(AstAttributeElement element) {
-        return parseStringLiteral(element.value)
+        return parseString(element.value)
                 .map(s -> Value.of(element, s))
                 .orElseGet(() -> {
                     error(element, Messages.getString("AttributeAnalyzer.diagnosticNotString")); //$NON-NLS-1$
@@ -94,7 +95,12 @@ public class AttributeAnalyzer {
         if (isName(element.value, VALUE_NULL)) {
             return Value.of(element, null);
         }
-        return toString(element);
+        return parseStringLiteral(element.value)
+                .map(s -> Value.of(element, s))
+                .orElseGet(() -> {
+                    error(element, Messages.getString("AttributeAnalyzer.diagnosticNotString")); //$NON-NLS-1$
+                    return Value.undefined();
+                });
     }
 
     /**
@@ -153,6 +159,24 @@ public class AttributeAnalyzer {
                 .map(cs -> Value.of(element, cs))
                 .orElseGet(() -> {
                     error(element, Messages.getString("AttributeAnalyzer.diagnosticNotCharsetName")); //$NON-NLS-1$
+                    return Value.undefined();
+                });
+    }
+
+    /**
+     * Analyze the given element as a date format.
+     * @param element the target element
+     * @return the analyzed value, or undefined if the element value is not valid
+     */
+    public Value<DecimalPattern> toDecimalPatternWithNull(AstAttributeElement element) {
+        if (isName(element.value, VALUE_NULL)) {
+            return Value.of(element, null);
+        }
+        return parseStringLiteral(element.value)
+                .filter(DecimalPattern::isValid)
+                .map(s -> Value.of(element, new DecimalPattern(s)))
+                .orElseGet(() -> {
+                    error(element, Messages.getString("AttributeAnalyzer.diagnosticNotDecimalFormat")); //$NON-NLS-1$
                     return Value.undefined();
                 });
     }

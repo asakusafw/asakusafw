@@ -15,6 +15,9 @@
  */
 package com.asakusafw.runtime.io.text.value;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+
 import com.asakusafw.runtime.io.text.TextUtil;
 import com.asakusafw.runtime.io.text.driver.FieldAdapter;
 import com.asakusafw.runtime.value.IntOption;
@@ -23,10 +26,10 @@ import com.asakusafw.runtime.value.IntOption;
  * An implementation of {@link FieldAdapter} which accepts {@link IntOption}.
  * @since 0.9.1
  */
-public final class IntOptionFieldAdapter extends ValueOptionFieldAdapter<IntOption> {
+public final class IntOptionFieldAdapter extends NumericOptionFieldAdapter<IntOption> {
 
-    IntOptionFieldAdapter(String nullFormat) {
-        super(nullFormat);
+    IntOptionFieldAdapter(String nullFormat, DecimalFormat decimalFormat) {
+        super(nullFormat, decimalFormat);
     }
 
     /**
@@ -37,14 +40,25 @@ public final class IntOptionFieldAdapter extends ValueOptionFieldAdapter<IntOpti
         return new Builder();
     }
 
+    @Override
+    protected Number get(IntOption property) {
+        return property.get();
+    }
+
     @SuppressWarnings("deprecation")
     @Override
-    protected void doParse(CharSequence contents, IntOption property) {
+    protected void set(BigDecimal value, IntOption property) {
+        property.modify(value.intValueExact());
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    protected void doParseDefault(CharSequence contents, IntOption property) {
         property.modify(TextUtil.parseInt(contents, 0, contents.length()));
     }
 
     @Override
-    protected void doEmit(IntOption property, StringBuilder output) {
+    protected void doEmitDefault(IntOption property, StringBuilder output) {
         output.append(property.get());
     }
 
@@ -52,10 +66,10 @@ public final class IntOptionFieldAdapter extends ValueOptionFieldAdapter<IntOpti
      * A builder of {@link IntOptionFieldAdapter}.
      * @since 0.9.1
      */
-    public static class Builder extends BuilderBase<Builder, IntOptionFieldAdapter> {
+    public static class Builder extends NumericBuilderBase<Builder, IntOptionFieldAdapter> {
         @Override
         public IntOptionFieldAdapter build() {
-            return new IntOptionFieldAdapter(getNullFormat());
+            return new IntOptionFieldAdapter(getNullFormat(), getDecimalFormat());
         }
     }
 }

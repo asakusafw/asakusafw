@@ -16,7 +16,7 @@
 package com.asakusafw.runtime.io.text.value;
 
 import java.math.BigDecimal;
-import java.util.Objects;
+import java.text.DecimalFormat;
 
 import com.asakusafw.runtime.io.text.TextUtil;
 import com.asakusafw.runtime.io.text.driver.FieldAdapter;
@@ -26,7 +26,7 @@ import com.asakusafw.runtime.value.DecimalOption;
  * An implementation of {@link FieldAdapter} which accepts {@link DecimalOption}.
  * @since 0.9.1
  */
-public final class DecimalOptionFieldAdapter extends ValueOptionFieldAdapter<DecimalOption> {
+public final class DecimalOptionFieldAdapter extends NumericOptionFieldAdapter<DecimalOption> {
 
     /**
      * The default {@link OutputStyle}.
@@ -35,9 +35,8 @@ public final class DecimalOptionFieldAdapter extends ValueOptionFieldAdapter<Dec
 
     private final OutputStyle outputStyle;
 
-    DecimalOptionFieldAdapter(String nullFormat, OutputStyle outputStyle) {
-        super(nullFormat);
-        Objects.requireNonNull(outputStyle);
+    DecimalOptionFieldAdapter(String nullFormat, DecimalFormat decimalFormat, OutputStyle outputStyle) {
+        super(nullFormat, decimalFormat);
         this.outputStyle = outputStyle;
     }
 
@@ -49,14 +48,25 @@ public final class DecimalOptionFieldAdapter extends ValueOptionFieldAdapter<Dec
         return new Builder();
     }
 
+    @Override
+    protected Number get(DecimalOption property) {
+        return property.get();
+    }
+
     @SuppressWarnings("deprecation")
     @Override
-    protected void doParse(CharSequence contents, DecimalOption property) {
+    protected void set(BigDecimal value, DecimalOption property) {
+        property.modify(value);
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    protected void doParseDefault(CharSequence contents, DecimalOption property) {
         property.modify(TextUtil.parseDecimal(contents, 0, contents.length()));
     }
 
     @Override
-    protected void doEmit(DecimalOption property, StringBuilder output) {
+    protected void doEmitDefault(DecimalOption property, StringBuilder output) {
         switch (outputStyle) {
         case PLAIN:
             output.append(property.get().toPlainString());
@@ -76,7 +86,7 @@ public final class DecimalOptionFieldAdapter extends ValueOptionFieldAdapter<Dec
      * A builder of {@link DecimalOptionFieldAdapter}.
      * @since 0.9.1
      */
-    public static class Builder extends BuilderBase<Builder, DecimalOptionFieldAdapter> {
+    public static class Builder extends NumericBuilderBase<Builder, DecimalOptionFieldAdapter> {
 
         private OutputStyle outputStyle = DEFAULT_OUTPUT_STYLE;
 
@@ -92,7 +102,7 @@ public final class DecimalOptionFieldAdapter extends ValueOptionFieldAdapter<Dec
 
         @Override
         public DecimalOptionFieldAdapter build() {
-            return new DecimalOptionFieldAdapter(getNullFormat(), outputStyle);
+            return new DecimalOptionFieldAdapter(getNullFormat(), getDecimalFormat(), outputStyle);
         }
     }
 

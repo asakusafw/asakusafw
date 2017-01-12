@@ -21,6 +21,7 @@ import java.util.Map;
 
 import com.asakusafw.dmdl.directio.util.ClassName;
 import com.asakusafw.dmdl.directio.util.DatePattern;
+import com.asakusafw.dmdl.directio.util.DecimalPattern;
 import com.asakusafw.dmdl.directio.util.Value;
 import com.asakusafw.dmdl.model.AstAttribute;
 import com.asakusafw.dmdl.model.AstAttributeElement;
@@ -43,11 +44,13 @@ public class TextFieldSettings {
 
     private Value<String> falseFormat = Value.undefined();
 
+    private Value<DecimalPattern> numberFormat = Value.undefined();
+
     private Value<DatePattern> dateFormat = Value.undefined();
 
     private Value<DatePattern> dateTimeFormat = Value.undefined();
 
-    private Value<DecimalOptionFieldAdapter.OutputStyle> decimalFormat = Value.undefined();
+    private Value<DecimalOptionFieldAdapter.OutputStyle> decimalOutputStyle = Value.undefined();
 
     private Value<Boolean> trimInputWhitespaces = Value.undefined();
 
@@ -92,6 +95,14 @@ public class TextFieldSettings {
     }
 
     /**
+     * Returns the string representation of numbers.
+     * @return the string representation of numbers
+     */
+    public Value<DecimalPattern> getNumberFormat() {
+        return numberFormat;
+    }
+
+    /**
      * Returns the string representation of {@code DATE}.
      * @return the string representation of {@code DATE}
      */
@@ -111,8 +122,8 @@ public class TextFieldSettings {
      * Returns the decimal output style.
      * @return the decimal output style
      */
-    public Value<DecimalOptionFieldAdapter.OutputStyle> getDecimalFormat() {
-        return decimalFormat;
+    public Value<DecimalOptionFieldAdapter.OutputStyle> getDecimalOutputStyle() {
+        return decimalOutputStyle;
     }
 
     /**
@@ -171,9 +182,10 @@ public class TextFieldSettings {
         consumeNullFormat(settings, analyzer, elements.remove(ELEMENT_NULL_FORMAT));
         consumeTrueFormat(settings, analyzer, elements.remove(ELEMENT_TRUE_FORMAT));
         consumeFalseFormat(settings, analyzer, elements.remove(ELEMENT_FALSE_FORMAT));
+        consumeNumberFormat(settings, analyzer, elements.remove(ELEMENT_NUMBER_FORMAT));
         consumeDateFormat(settings, analyzer, elements.remove(ELEMENT_DATE_FORMAT));
         consumeDateTimeFormat(settings, analyzer, elements.remove(ELEMENT_DATETIME_FORMAT));
-        consumeDecimalFormat(settings, analyzer, elements.remove(ELEMENT_DECIMAL_FORMAT));
+        consumeDecimalOutputStyle(settings, analyzer, elements.remove(ELEMENT_DECIMAL_OUTPUT_STYLE));
         consumeTrimInputWhitespaces(settings, analyzer, elements.remove(ELEMENT_TRIM_INPUT_WHITESPACES));
         consumeSkipEmptyInput(settings, analyzer, elements.remove(ELEMENT_SKIP_EMPTY_INPUT));
         consumeMalformedInputAction(settings, analyzer, elements.remove(ELEMENT_MALFORMED_INPUT_ACTION));
@@ -210,6 +222,13 @@ public class TextFieldSettings {
         }
     }
 
+    private static void consumeNumberFormat(
+            TextFieldSettings settings, AttributeAnalyzer analyzer, AstAttributeElement element) {
+        if (element != null) {
+            settings.numberFormat = analyzer.toDecimalPatternWithNull(element);
+        }
+    }
+
     private static void consumeDateFormat(
             TextFieldSettings settings, AttributeAnalyzer analyzer, AstAttributeElement element) {
         if (element != null) {
@@ -224,10 +243,10 @@ public class TextFieldSettings {
         }
     }
 
-    private static void consumeDecimalFormat(
+    private static void consumeDecimalOutputStyle(
             TextFieldSettings settings, AttributeAnalyzer analyzer, AstAttributeElement element) {
         if (element != null) {
-            settings.decimalFormat = analyzer.toEnumConstant(element, DecimalOptionFieldAdapter.OutputStyle.class);
+            settings.decimalOutputStyle = analyzer.toEnumConstant(element, DecimalOptionFieldAdapter.OutputStyle.class);
         }
     }
 

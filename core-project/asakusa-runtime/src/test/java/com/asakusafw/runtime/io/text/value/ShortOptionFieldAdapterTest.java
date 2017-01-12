@@ -95,4 +95,26 @@ public class ShortOptionFieldAdapterTest {
         ShortOptionFieldAdapter adapter = ShortOptionFieldAdapter.builder().withNullFormat("").build();
         checkEmit(adapter, new ShortOption(), "");
     }
+
+    /**
+     * w/ number format.
+     */
+    @Test
+    public void number_format() {
+        ShortOptionFieldAdapter adapter = ShortOptionFieldAdapter.builder()
+                .withNumberFormat("0,000")
+                .build();
+        checkParse(adapter, 0, new ShortOption((short) 0));
+        checkParse(adapter, 1, new ShortOption((short) 1));
+        checkParse(adapter, -1, new ShortOption((short) -1));
+        checkParse(adapter, Short.MAX_VALUE, new ShortOption(Short.MAX_VALUE));
+        checkParse(adapter, Short.MIN_VALUE, new ShortOption(Short.MIN_VALUE));
+        checkMalformed(adapter, "", new ShortOption());
+        checkMalformed(adapter, "Hello, world!", new ShortOption());
+        checkMalformed(adapter, BigInteger.valueOf(Short.MAX_VALUE).add(BigInteger.ONE).toString(), new ShortOption());
+        checkEmit(adapter, new ShortOption((short) 1), "0,001");
+        checkEmit(adapter, new ShortOption((short) -1), "-0,001");
+        checkEmit(adapter, new ShortOption((short) 1000), "1,000");
+        checkEmit(adapter, new ShortOption((short) 10000), "10,000");
+    }
 }

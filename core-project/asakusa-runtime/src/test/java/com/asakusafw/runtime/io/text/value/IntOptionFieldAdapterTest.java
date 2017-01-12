@@ -95,4 +95,26 @@ public class IntOptionFieldAdapterTest {
         IntOptionFieldAdapter adapter = IntOptionFieldAdapter.builder().withNullFormat("").build();
         checkEmit(adapter, new IntOption(), "");
     }
+
+    /**
+     * w/ number format.
+     */
+    @Test
+    public void number_format() {
+        IntOptionFieldAdapter adapter = IntOptionFieldAdapter.builder()
+                .withNumberFormat("0,000")
+                .build();
+        checkParse(adapter, 0, new IntOption(0));
+        checkParse(adapter, 1, new IntOption(1));
+        checkParse(adapter, -1, new IntOption(-1));
+        checkParse(adapter, Integer.MAX_VALUE, new IntOption(Integer.MAX_VALUE));
+        checkParse(adapter, Integer.MIN_VALUE, new IntOption(Integer.MIN_VALUE));
+        checkMalformed(adapter, "", new IntOption());
+        checkMalformed(adapter, "Hello, world!", new IntOption());
+        checkMalformed(adapter, BigInteger.valueOf(Integer.MAX_VALUE).add(BigInteger.ONE).toString(), new IntOption());
+        checkEmit(adapter, new IntOption(1), "0,001");
+        checkEmit(adapter, new IntOption(-1), "-0,001");
+        checkEmit(adapter, new IntOption(1000), "1,000");
+        checkEmit(adapter, new IntOption(10000), "10,000");
+    }
 }

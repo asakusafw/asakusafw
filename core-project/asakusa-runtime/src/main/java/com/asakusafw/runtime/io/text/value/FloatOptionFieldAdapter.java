@@ -15,6 +15,9 @@
  */
 package com.asakusafw.runtime.io.text.value;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+
 import com.asakusafw.runtime.io.text.TextUtil;
 import com.asakusafw.runtime.io.text.driver.FieldAdapter;
 import com.asakusafw.runtime.value.FloatOption;
@@ -23,10 +26,10 @@ import com.asakusafw.runtime.value.FloatOption;
  * An implementation of {@link FieldAdapter} which accepts {@link FloatOption}.
  * @since 0.9.1
  */
-public final class FloatOptionFieldAdapter extends ValueOptionFieldAdapter<FloatOption> {
+public final class FloatOptionFieldAdapter extends NumericOptionFieldAdapter<FloatOption> {
 
-    FloatOptionFieldAdapter(String nullFormat) {
-        super(nullFormat);
+    FloatOptionFieldAdapter(String nullFormat, DecimalFormat decimalFormat) {
+        super(nullFormat, decimalFormat);
     }
 
     /**
@@ -37,14 +40,31 @@ public final class FloatOptionFieldAdapter extends ValueOptionFieldAdapter<Float
         return new Builder();
     }
 
+    @Override
+    protected Number get(FloatOption property) {
+        return property.get();
+    }
+
     @SuppressWarnings("deprecation")
     @Override
-    protected void doParse(CharSequence contents, FloatOption property) {
+    protected void set(BigDecimal value, FloatOption property) {
+        property.modify(value.floatValue());
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    protected void setSpecial(CharSequence contents, Number value, FloatOption property) {
+        property.modify(value.floatValue());
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    protected void doParseDefault(CharSequence contents, FloatOption property) {
         property.modify(TextUtil.parseFloat(contents, 0, contents.length()));
     }
 
     @Override
-    protected void doEmit(FloatOption property, StringBuilder output) {
+    protected void doEmitDefault(FloatOption property, StringBuilder output) {
         output.append(property.get());
     }
 
@@ -52,10 +72,10 @@ public final class FloatOptionFieldAdapter extends ValueOptionFieldAdapter<Float
      * A builder of {@link FloatOptionFieldAdapter}.
      * @since 0.9.1
      */
-    public static class Builder extends BuilderBase<Builder, FloatOptionFieldAdapter> {
+    public static class Builder extends NumericBuilderBase<Builder, FloatOptionFieldAdapter> {
         @Override
         public FloatOptionFieldAdapter build() {
-            return new FloatOptionFieldAdapter(getNullFormat());
+            return new FloatOptionFieldAdapter(getNullFormat(), getDecimalFormat());
         }
     }
 }

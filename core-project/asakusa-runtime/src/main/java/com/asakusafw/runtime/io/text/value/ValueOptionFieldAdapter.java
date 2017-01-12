@@ -17,6 +17,7 @@ package com.asakusafw.runtime.io.text.value;
 
 import java.util.function.Supplier;
 
+import com.asakusafw.runtime.io.text.TextUtil;
 import com.asakusafw.runtime.io.text.driver.FieldAdapter;
 import com.asakusafw.runtime.io.text.driver.FieldOutput;
 import com.asakusafw.runtime.io.text.driver.MalformedFieldException;
@@ -64,8 +65,8 @@ public abstract class ValueOptionFieldAdapter<T extends ValueOption<T>> implemen
         } else {
             try {
                 doParse(contents, property);
-            } catch (IllegalArgumentException e) {
-                throw new MalformedFieldException(property.toString(), e);
+            } catch (IllegalArgumentException | ArithmeticException e) {
+                throw new MalformedFieldException(TextUtil.quote(contents), e);
             }
         }
     }
