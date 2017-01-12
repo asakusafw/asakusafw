@@ -25,6 +25,7 @@ import com.asakusafw.dmdl.directio.util.Value;
 import com.asakusafw.dmdl.model.AstAttribute;
 import com.asakusafw.dmdl.model.AstAttributeElement;
 import com.asakusafw.dmdl.semantics.DmdlSemantics;
+import com.asakusafw.runtime.io.text.csv.QuoteStyle;
 import com.asakusafw.runtime.io.text.driver.ErrorAction;
 import com.asakusafw.runtime.io.text.value.DecimalOptionFieldAdapter;
 
@@ -55,6 +56,8 @@ public class TextFieldSettings {
     private Value<ErrorAction> malformedInputAction = Value.undefined();
 
     private Value<ErrorAction> unmappableOutputAction = Value.undefined();
+
+    private Value<QuoteStyle> quoteStyle = Value.undefined();
 
     /**
      * Returns the field adapter class.
@@ -145,6 +148,14 @@ public class TextFieldSettings {
     }
 
     /**
+     * Returns the quote style.
+     * @return the quote style
+     */
+    public Value<QuoteStyle> getQuoteStyle() {
+        return quoteStyle;
+    }
+
+    /**
      * Consumes attribute elements about escape settings, and returns corresponding {@link EscapeSettings}.
      * @param environment the current environment
      * @param attribute the attribute
@@ -167,6 +178,7 @@ public class TextFieldSettings {
         consumeSkipEmptyInput(settings, analyzer, elements.remove(ELEMENT_SKIP_EMPTY_INPUT));
         consumeMalformedInputAction(settings, analyzer, elements.remove(ELEMENT_MALFORMED_INPUT_ACTION));
         consumeUnmappableOutputAction(settings, analyzer, elements.remove(ELEMENT_UNMAPPABLE_OUTPUT_ACTION));
+        consumeQuoteStyle(settings, analyzer, elements.remove(ELEMENT_QUOTE_STYLE));
         return settings;
     }
 
@@ -244,6 +256,13 @@ public class TextFieldSettings {
             TextFieldSettings settings, AttributeAnalyzer analyzer, AstAttributeElement element) {
         if (element != null) {
             settings.unmappableOutputAction = analyzer.toEnumConstant(element, ErrorAction.class);
+        }
+    }
+
+    private static void consumeQuoteStyle(
+            TextFieldSettings settings, AttributeAnalyzer analyzer, AstAttributeElement element) {
+        if (element != null) {
+            settings.quoteStyle = analyzer.toEnumConstant(element, QuoteStyle.class);
         }
     }
 
