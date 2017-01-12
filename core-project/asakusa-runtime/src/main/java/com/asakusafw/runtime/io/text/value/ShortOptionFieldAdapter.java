@@ -15,11 +15,8 @@
  */
 package com.asakusafw.runtime.io.text.value;
 
-import java.util.Collection;
-
 import com.asakusafw.runtime.io.text.TextUtil;
 import com.asakusafw.runtime.io.text.driver.FieldAdapter;
-import com.asakusafw.runtime.io.text.driver.FieldOutput;
 import com.asakusafw.runtime.value.ShortOption;
 
 /**
@@ -28,8 +25,8 @@ import com.asakusafw.runtime.value.ShortOption;
  */
 public final class ShortOptionFieldAdapter extends ValueOptionFieldAdapter<ShortOption> {
 
-    ShortOptionFieldAdapter(String nullFormat, Collection<? extends FieldOutput.Option> outputOptions) {
-        super(nullFormat, outputOptions);
+    ShortOptionFieldAdapter(String nullFormat) {
+        super(nullFormat);
     }
 
     /**
@@ -58,7 +55,7 @@ public final class ShortOptionFieldAdapter extends ValueOptionFieldAdapter<Short
     public static class Builder extends BuilderBase<Builder, ShortOptionFieldAdapter> {
         @Override
         public ShortOptionFieldAdapter build() {
-            return new ShortOptionFieldAdapter(getNullFormat(), getOutputOptions());
+            return new ShortOptionFieldAdapter(getNullFormat());
         }
     }
 }

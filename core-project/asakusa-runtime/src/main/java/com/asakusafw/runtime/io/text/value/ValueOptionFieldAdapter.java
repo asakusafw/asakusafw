@@ -15,10 +15,6 @@
  */
 package com.asakusafw.runtime.io.text.value;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import java.util.function.Supplier;
 
 import com.asakusafw.runtime.io.text.driver.FieldAdapter;
@@ -40,23 +36,19 @@ public abstract class ValueOptionFieldAdapter<T extends ValueOption<T>> implemen
 
     private String nullFormat;
 
-    private FieldOutput.Option[] outputOptions;
-
     /**
      * Creates a new instance.
      */
     public ValueOptionFieldAdapter() {
-        this(null, Collections.emptySet());
+        this(DEFAULT_NULL_FORMAT);
     }
 
     /**
      * Creates a new instance.
      * @param nullFormat the {@code null} value format (nullable)
-     * @param outputOptions the output options
      */
-    public ValueOptionFieldAdapter(String nullFormat, Collection<? extends FieldOutput.Option> outputOptions) {
+    public ValueOptionFieldAdapter(String nullFormat) {
         this.nullFormat = nullFormat;
-        this.outputOptions = outputOptions.toArray(new FieldOutput.Option[outputOptions.size()]);
     }
 
     @SuppressWarnings("deprecation")
@@ -80,7 +72,6 @@ public abstract class ValueOptionFieldAdapter<T extends ValueOption<T>> implemen
 
     @Override
     public void emit(T property, FieldOutput output) {
-        output.addOptions(outputOptions);
         if (property.isNull()) {
             if (nullFormat == null) {
                 output.putNull();
@@ -122,8 +113,6 @@ public abstract class ValueOptionFieldAdapter<T extends ValueOption<T>> implemen
 
         private String nullFormat = DEFAULT_NULL_FORMAT;
 
-        private final List<FieldOutput.Option> outputOptions = new ArrayList<>();
-
         /**
          * Returns {@code this} object.
          * @return this
@@ -144,39 +133,11 @@ public abstract class ValueOptionFieldAdapter<T extends ValueOption<T>> implemen
         }
 
         /**
-         * Adds an output option.
-         * @param newValue the new value
-         * @return this
-         */
-        public S withOutputOption(FieldOutput.Option newValue) {
-            outputOptions.add(newValue);
-            return self();
-        }
-
-        /**
-         * Adds a set of output options.
-         * @param newValues the new values
-         * @return this
-         */
-        public S withOutputOptions(FieldOutput.Option... newValues) {
-            Collections.addAll(outputOptions, newValues);
-            return self();
-        }
-
-        /**
          * Returns the sequence which represents {@code NULL} field.
          * @return the null sequence, or {@code null} if it is not defined
          */
         protected String getNullFormat() {
             return nullFormat;
-        }
-
-        /**
-         * Returns the output options.
-         * @return the output options
-         */
-        protected List<FieldOutput.Option> getOutputOptions() {
-            return Collections.unmodifiableList(outputOptions);
         }
 
         /**

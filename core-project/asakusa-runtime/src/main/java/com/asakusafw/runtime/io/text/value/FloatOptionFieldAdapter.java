@@ -15,11 +15,8 @@
  */
 package com.asakusafw.runtime.io.text.value;
 
-import java.util.Collection;
-
 import com.asakusafw.runtime.io.text.TextUtil;
 import com.asakusafw.runtime.io.text.driver.FieldAdapter;
-import com.asakusafw.runtime.io.text.driver.FieldOutput;
 import com.asakusafw.runtime.value.FloatOption;
 
 /**
@@ -28,8 +25,8 @@ import com.asakusafw.runtime.value.FloatOption;
  */
 public final class FloatOptionFieldAdapter extends ValueOptionFieldAdapter<FloatOption> {
 
-    FloatOptionFieldAdapter(String nullFormat, Collection<? extends FieldOutput.Option> outputOptions) {
-        super(nullFormat, outputOptions);
+    FloatOptionFieldAdapter(String nullFormat) {
+        super(nullFormat);
     }
 
     /**
@@ -58,7 +55,7 @@ public final class FloatOptionFieldAdapter extends ValueOptionFieldAdapter<Float
     public static class Builder extends BuilderBase<Builder, FloatOptionFieldAdapter> {
         @Override
         public FloatOptionFieldAdapter build() {
-            return new FloatOptionFieldAdapter(getNullFormat(), getOutputOptions());
+            return new FloatOptionFieldAdapter(getNullFormat());
         }
     }
 }

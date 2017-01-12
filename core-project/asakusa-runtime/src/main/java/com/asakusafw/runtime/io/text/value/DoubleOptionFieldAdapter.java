@@ -15,11 +15,8 @@
  */
 package com.asakusafw.runtime.io.text.value;
 
-import java.util.Collection;
-
 import com.asakusafw.runtime.io.text.TextUtil;
 import com.asakusafw.runtime.io.text.driver.FieldAdapter;
-import com.asakusafw.runtime.io.text.driver.FieldOutput;
 import com.asakusafw.runtime.value.DoubleOption;
 
 /**
@@ -28,8 +25,8 @@ import com.asakusafw.runtime.value.DoubleOption;
  */
 public final class DoubleOptionFieldAdapter extends ValueOptionFieldAdapter<DoubleOption> {
 
-    DoubleOptionFieldAdapter(String nullFormat, Collection<? extends FieldOutput.Option> outputOptions) {
-        super(nullFormat, outputOptions);
+    DoubleOptionFieldAdapter(String nullFormat) {
+        super(nullFormat);
     }
 
     /**
@@ -58,7 +55,7 @@ public final class DoubleOptionFieldAdapter extends ValueOptionFieldAdapter<Doub
     public static class Builder extends BuilderBase<Builder, DoubleOptionFieldAdapter> {
         @Override
         public DoubleOptionFieldAdapter build() {
-            return new DoubleOptionFieldAdapter(getNullFormat(), getOutputOptions());
+            return new DoubleOptionFieldAdapter(getNullFormat());
         }
     }
 }

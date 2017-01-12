@@ -21,13 +21,11 @@ import java.nio.charset.CharsetEncoder;
 import java.nio.charset.CoderResult;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
-import java.util.Collection;
 
 import org.apache.hadoop.io.Text;
 
 import com.asakusafw.runtime.io.text.TextUtil;
 import com.asakusafw.runtime.io.text.driver.FieldAdapter;
-import com.asakusafw.runtime.io.text.driver.FieldOutput;
 import com.asakusafw.runtime.value.StringOption;
 
 /**
@@ -40,8 +38,8 @@ public final class StringOptionFieldAdapter extends ValueOptionFieldAdapter<Stri
 
     private final ByteBuffer encodeBuffer = ByteBuffer.allocate(256);
 
-    StringOptionFieldAdapter(String nullFormat, Collection<? extends FieldOutput.Option> outputOptions) {
-        super(nullFormat, outputOptions);
+    StringOptionFieldAdapter(String nullFormat) {
+        super(nullFormat);
     }
 
     /**
@@ -93,7 +91,7 @@ public final class StringOptionFieldAdapter extends ValueOptionFieldAdapter<Stri
     public static class Builder extends BuilderBase<Builder, StringOptionFieldAdapter> {
         @Override
         public StringOptionFieldAdapter build() {
-            return new StringOptionFieldAdapter(getNullFormat(), getOutputOptions());
+            return new StringOptionFieldAdapter(getNullFormat());
         }
     }
 }

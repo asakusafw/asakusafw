@@ -16,12 +16,10 @@
 package com.asakusafw.runtime.io.text.value;
 
 import java.math.BigDecimal;
-import java.util.Collection;
 import java.util.Objects;
 
 import com.asakusafw.runtime.io.text.TextUtil;
 import com.asakusafw.runtime.io.text.driver.FieldAdapter;
-import com.asakusafw.runtime.io.text.driver.FieldOutput;
 import com.asakusafw.runtime.value.DecimalOption;
 
 /**
@@ -37,10 +35,8 @@ public final class DecimalOptionFieldAdapter extends ValueOptionFieldAdapter<Dec
 
     private final OutputStyle outputStyle;
 
-    DecimalOptionFieldAdapter(
-            String nullFormat, OutputStyle outputStyle,
-            Collection<? extends FieldOutput.Option> outputOptions) {
-        super(nullFormat, outputOptions);
+    DecimalOptionFieldAdapter(String nullFormat, OutputStyle outputStyle) {
+        super(nullFormat);
         Objects.requireNonNull(outputStyle);
         this.outputStyle = outputStyle;
     }
@@ -96,7 +92,7 @@ public final class DecimalOptionFieldAdapter extends ValueOptionFieldAdapter<Dec
 
         @Override
         public DecimalOptionFieldAdapter build() {
-            return new DecimalOptionFieldAdapter(getNullFormat(), outputStyle, getOutputOptions());
+            return new DecimalOptionFieldAdapter(getNullFormat(), outputStyle);
         }
     }
 

@@ -309,6 +309,9 @@ public abstract class AbstractTextStreamFormatGenerator {
         settings.getUnmappableOutputAction().ifPresent(v -> statements.add(new ExpressionBuilder(f, builder)
                 .method("withOnUnmappableOutput", resolve(v)) //$NON-NLS-1$
                 .toStatement()));
+        settings.getQuoteStyle().ifPresent(v -> statements.add(new ExpressionBuilder(f, builder)
+                .method("withOutputOption", resolve(v)) //$NON-NLS-1$
+                .toStatement()));
         statements.add(new ExpressionBuilder(f, builder)
                 .method("build") //$NON-NLS-1$
                 .toReturnStatement());
@@ -383,8 +386,6 @@ public abstract class AbstractTextStreamFormatGenerator {
         default:
             throw new AssertionError(kind);
         }
-        settings.getQuoteStyle().ifPresent(v -> builder
-                .method("withOutputOption", resolve(v))); //$NON-NLS-1$
         return builder.method("lazy").toExpression(); //$NON-NLS-1$
     }
 

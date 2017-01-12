@@ -15,11 +15,8 @@
  */
 package com.asakusafw.runtime.io.text.value;
 
-import java.util.Collection;
-
 import com.asakusafw.runtime.io.text.TextUtil;
 import com.asakusafw.runtime.io.text.driver.FieldAdapter;
-import com.asakusafw.runtime.io.text.driver.FieldOutput;
 import com.asakusafw.runtime.value.ByteOption;
 
 /**
@@ -28,8 +25,8 @@ import com.asakusafw.runtime.value.ByteOption;
  */
 public final class ByteOptionFieldAdapter extends ValueOptionFieldAdapter<ByteOption> {
 
-    ByteOptionFieldAdapter(String nullFormat, Collection<? extends FieldOutput.Option> outputOptions) {
-        super(nullFormat, outputOptions);
+    ByteOptionFieldAdapter(String nullFormat) {
+        super(nullFormat);
     }
 
     /**
@@ -58,7 +55,7 @@ public final class ByteOptionFieldAdapter extends ValueOptionFieldAdapter<ByteOp
     public static class Builder extends BuilderBase<Builder, ByteOptionFieldAdapter> {
         @Override
         public ByteOptionFieldAdapter build() {
-            return new ByteOptionFieldAdapter(getNullFormat(), getOutputOptions());
+            return new ByteOptionFieldAdapter(getNullFormat());
         }
     }
 }
