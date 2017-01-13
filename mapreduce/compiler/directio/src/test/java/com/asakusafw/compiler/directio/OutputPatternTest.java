@@ -61,6 +61,19 @@ public class OutputPatternTest {
     }
 
     /**
+     * resource pattern with int placeholder.
+     */
+    @Test
+    public void resource_placeholder_numeric() {
+        List<CompiledResourcePattern> pattern = OutputPattern.compileResourcePattern(
+                "{intValue:#,###}", dataClass);
+        assertThat(pattern.size(), is(1));
+        assertThat(pattern.get(0).getTarget().getName(), is("intValue"));
+        assertThat(pattern.get(0).getFormat(), is(Format.INT));
+        assertThat(pattern.get(0).getArgument(), is("#,###"));
+    }
+
+    /**
      * resource pattern with date placeholder.
      */
     @Test

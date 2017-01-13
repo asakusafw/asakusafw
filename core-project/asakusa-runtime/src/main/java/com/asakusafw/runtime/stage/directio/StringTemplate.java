@@ -18,8 +18,11 @@ package com.asakusafw.runtime.stage.directio;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.MessageFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -30,11 +33,19 @@ import org.apache.hadoop.io.WritableComparator;
 import org.apache.hadoop.io.WritableUtils;
 
 import com.asakusafw.runtime.io.util.WritableRawComparable;
+import com.asakusafw.runtime.value.ByteOption;
 import com.asakusafw.runtime.value.Date;
 import com.asakusafw.runtime.value.DateOption;
 import com.asakusafw.runtime.value.DateTime;
 import com.asakusafw.runtime.value.DateTimeOption;
 import com.asakusafw.runtime.value.DateUtil;
+import com.asakusafw.runtime.value.DecimalOption;
+import com.asakusafw.runtime.value.DoubleOption;
+import com.asakusafw.runtime.value.FloatOption;
+import com.asakusafw.runtime.value.IntOption;
+import com.asakusafw.runtime.value.LongOption;
+import com.asakusafw.runtime.value.ShortOption;
+import com.asakusafw.runtime.value.ValueOption;
 
 /**
  * Generates a string for the object.
@@ -191,6 +202,7 @@ public abstract class StringTemplate implements WritableRawComparable {
     /**
      * Format of each generator element.
      * @since 0.2.5
+     * @version 0.9.1
      */
     public enum Format {
 
@@ -202,7 +214,6 @@ public abstract class StringTemplate implements WritableRawComparable {
             public PropertyFormatter newFormatter(String formatString) {
                 return new Constant(formatString);
             }
-
             @Override
             public void check(java.lang.reflect.Type valueType, String formatString) {
                 if (formatString == null) {
@@ -224,7 +235,6 @@ public abstract class StringTemplate implements WritableRawComparable {
                     }
                 };
             }
-
             @Override
             public void check(java.lang.reflect.Type valueType, String formatString) {
                 if (formatString != null) {
@@ -234,39 +244,161 @@ public abstract class StringTemplate implements WritableRawComparable {
         },
 
         /**
+         * Converts numeric value (use {@link DecimalFormat}).
+         * @since 0.9.1
+         */
+        BYTE {
+            @Override
+            public PropertyFormatter newFormatter(String formatString) {
+                return new NumericVariable<ByteOption>(new DecimalFormat(formatString)) {
+                    @Override
+                    void doUpdate(ByteOption option) {
+                        setValue(option.get());
+                    }
+                };
+            }
+            @Override
+            public void check(java.lang.reflect.Type valueType, String formatString) {
+                NumericVariable.check(ByteOption.class, valueType, formatString);
+            }
+        },
+
+        /**
+         * Converts numeric value (use {@link DecimalFormat}).
+         * @since 0.9.1
+         */
+        SHORT {
+            @Override
+            public PropertyFormatter newFormatter(String formatString) {
+                return new NumericVariable<ShortOption>(new DecimalFormat(formatString)) {
+                    @Override
+                    void doUpdate(ShortOption option) {
+                        setValue(option.get());
+                    }
+                };
+            }
+            @Override
+            public void check(java.lang.reflect.Type valueType, String formatString) {
+                NumericVariable.check(ShortOption.class, valueType, formatString);
+            }
+        },
+
+        /**
+         * Converts numeric value (use {@link DecimalFormat}).
+         * @since 0.9.1
+         */
+        INT {
+            @Override
+            public PropertyFormatter newFormatter(String formatString) {
+                return new NumericVariable<IntOption>(new DecimalFormat(formatString)) {
+                    @Override
+                    void doUpdate(IntOption option) {
+                        setValue(option.get());
+                    }
+                };
+            }
+            @Override
+            public void check(java.lang.reflect.Type valueType, String formatString) {
+                NumericVariable.check(IntOption.class, valueType, formatString);
+            }
+        },
+
+        /**
+         * Converts numeric value (use {@link DecimalFormat}).
+         * @since 0.9.1
+         */
+        LONG {
+            @Override
+            public PropertyFormatter newFormatter(String formatString) {
+                return new NumericVariable<LongOption>(new DecimalFormat(formatString)) {
+                    @Override
+                    void doUpdate(LongOption option) {
+                        setValue(option.get());
+                    }
+                };
+            }
+            @Override
+            public void check(java.lang.reflect.Type valueType, String formatString) {
+                NumericVariable.check(LongOption.class, valueType, formatString);
+            }
+        },
+
+        /**
+         * Converts numeric value (use {@link DecimalFormat}).
+         * @since 0.9.1
+         */
+        FLOAT {
+            @Override
+            public PropertyFormatter newFormatter(String formatString) {
+                return new NumericVariable<FloatOption>(new DecimalFormat(formatString)) {
+                    @Override
+                    void doUpdate(FloatOption option) {
+                        setValue(option.get());
+                    }
+                };
+            }
+            @Override
+            public void check(java.lang.reflect.Type valueType, String formatString) {
+                NumericVariable.check(FloatOption.class, valueType, formatString);
+            }
+        },
+
+        /**
+         * Converts numeric value (use {@link DecimalFormat}).
+         * @since 0.9.1
+         */
+        DOUBLE {
+            @Override
+            public PropertyFormatter newFormatter(String formatString) {
+                return new NumericVariable<DoubleOption>(new DecimalFormat(formatString)) {
+                    @Override
+                    void doUpdate(DoubleOption option) {
+                        setValue(option.get());
+                    }
+                };
+            }
+            @Override
+            public void check(java.lang.reflect.Type valueType, String formatString) {
+                NumericVariable.check(DoubleOption.class, valueType, formatString);
+            }
+        },
+
+        /**
+         * Converts numeric value (use {@link DecimalFormat}).
+         * @since 0.9.1
+         */
+        DECIMAL {
+            @Override
+            public PropertyFormatter newFormatter(String formatString) {
+                return new NumericVariable<DecimalOption>(new DecimalFormat(formatString)) {
+                    @Override
+                    void doUpdate(DecimalOption option) {
+                        setValue(option.get());
+                    }
+                };
+            }
+            @Override
+            public void check(java.lang.reflect.Type valueType, String formatString) {
+                NumericVariable.check(DecimalOption.class, valueType, formatString);
+            }
+        },
+
+        /**
          * Converts {@link Date} date (use {@link SimpleDateFormat}).
          */
         DATE {
             @Override
             public PropertyFormatter newFormatter(String formatString) {
-                final Calendar calendar = Calendar.getInstance();
-                final DateFormat dateFormat = new SimpleDateFormat(formatString);
-                return new Variable() {
-
+                return new DateVariable<DateOption>(new SimpleDateFormat(formatString)) {
                     @Override
-                    void set(Object propertyValue) {
-                        DateOption option = (DateOption) propertyValue;
-                        if (option.isNull()) {
-                            representation.set(String.valueOf(option));
-                        } else {
-                            Date date = option.get();
-                            DateUtil.setDayToCalendar(date.getElapsedDays(), calendar);
-                            representation.set(String.valueOf(dateFormat.format(calendar.getTime())));
-                        }
+                    void doUpdate(DateOption option) {
+                        setValue(option.get());
                     }
                 };
             }
-
             @Override
             public void check(java.lang.reflect.Type valueType, String formatString) {
-                if (valueType != DateOption.class) {
-                    throw new IllegalArgumentException("type must be Date");
-                }
-                if (formatString == null) {
-                    throw new IllegalArgumentException("format string must not be null");
-                }
-                SimpleDateFormat format = new SimpleDateFormat();
-                format.applyPattern(formatString);
+                DateVariable.check(DateOption.class, valueType, formatString);
             }
         },
 
@@ -276,34 +408,16 @@ public abstract class StringTemplate implements WritableRawComparable {
         DATETIME {
             @Override
             public PropertyFormatter newFormatter(String formatString) {
-                final Calendar calendar = Calendar.getInstance();
-                final DateFormat dateFormat = new SimpleDateFormat(formatString);
-                return new Variable() {
-
+                return new DateVariable<DateTimeOption>(new SimpleDateFormat(formatString)) {
                     @Override
-                    void set(Object propertyValue) {
-                        DateTimeOption option = (DateTimeOption) propertyValue;
-                        if (option.isNull()) {
-                            representation.set(String.valueOf(option));
-                        } else {
-                            DateTime date = option.get();
-                            DateUtil.setSecondToCalendar(date.getElapsedSeconds(), calendar);
-                            representation.set(String.valueOf(dateFormat.format(calendar.getTime())));
-                        }
+                    void doUpdate(DateTimeOption option) {
+                        setValue(option.get());
                     }
                 };
             }
-
             @Override
             public void check(java.lang.reflect.Type valueType, String formatString) {
-                if (valueType != DateTimeOption.class) {
-                    throw new IllegalArgumentException("type must be DateTime");
-                }
-                if (formatString == null) {
-                    throw new IllegalArgumentException("format string must not be null");
-                }
-                SimpleDateFormat format = new SimpleDateFormat();
-                format.applyPattern(formatString);
+                DateVariable.check(DateTimeOption.class, valueType, formatString);
             }
         },
         ;
@@ -476,18 +590,109 @@ public abstract class StringTemplate implements WritableRawComparable {
 
     private abstract static class Variable extends PropertyFormatter {
 
+        private static final Text NULL = new Text("null"); //$NON-NLS-1$
+
         Variable() {
             return;
         }
 
+        final void setNull() {
+            representation.set(NULL);
+        }
+
         @Override
-        public void write(DataOutput out) throws IOException {
+        public final void write(DataOutput out) throws IOException {
             representation.write(out);
         }
 
         @Override
-        public void readFields(DataInput in) throws IOException {
+        public final void readFields(DataInput in) throws IOException {
             representation.readFields(in);
+        }
+    }
+
+    private abstract static class PropertyVariable<T extends ValueOption<T>> extends Variable {
+
+        PropertyVariable() {
+            return;
+        }
+
+        @Override
+        final void set(Object propertyValue) {
+            @SuppressWarnings("unchecked")
+            T option = (T) propertyValue;
+            if (option.isNull()) {
+                setNull();
+            } else {
+                doUpdate(option);
+            }
+        }
+
+        abstract void doUpdate(T option);
+
+        static void check0(Class<?> required, java.lang.reflect.Type valueType, String formatString) {
+            if (valueType != required) {
+                throw new IllegalArgumentException(MessageFormat.format(
+                        "type must be {0}", //$NON-NLS-1$
+                        required.getSimpleName()));
+            }
+            if (formatString == null) {
+                throw new IllegalArgumentException("format string must not be null");
+            }
+        }
+    }
+
+    private abstract static class NumericVariable<T extends ValueOption<T>> extends PropertyVariable<T> {
+
+        private final NumberFormat format;
+
+        NumericVariable(NumberFormat format) {
+            this.format = format;
+        }
+
+        static void check(Class<?> required, java.lang.reflect.Type valueType, String formatString) {
+            check0(required, valueType, formatString);
+            DecimalFormat format = new DecimalFormat();
+            format.applyPattern(formatString);
+        }
+
+        final void setValue(long value) {
+            representation.set(format.format(value));
+        }
+
+        final void setValue(double value) {
+            representation.set(format.format(value));
+        }
+
+        final void setValue(BigDecimal value) {
+            representation.set(format.format(value));
+        }
+    }
+
+    private abstract static class DateVariable<T extends ValueOption<T>> extends PropertyVariable<T> {
+
+        private final DateFormat format;
+
+        private final Calendar calendarBuffer = Calendar.getInstance();
+
+        DateVariable(DateFormat format) {
+            this.format = format;
+        }
+
+        static void check(Class<?> required, java.lang.reflect.Type valueType, String formatString) {
+            check0(required, valueType, formatString);
+            SimpleDateFormat format = new SimpleDateFormat();
+            format.applyPattern(formatString);
+        }
+
+        final void setValue(Date value) {
+            DateUtil.setDayToCalendar(value.getElapsedDays(), calendarBuffer);
+            representation.set(format.format(calendarBuffer.getTime()));
+        }
+
+        final void setValue(DateTime value) {
+            DateUtil.setSecondToCalendar(value.getElapsedSeconds(), calendarBuffer);
+            representation.set(String.valueOf(format.format(calendarBuffer.getTime())));
         }
     }
 }

@@ -19,8 +19,11 @@ import java.lang.reflect.Type;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.BitSet;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -28,14 +31,21 @@ import java.util.regex.Pattern;
 import com.asakusafw.compiler.flow.DataClass;
 import com.asakusafw.compiler.flow.DataClass.Property;
 import com.asakusafw.runtime.stage.directio.StringTemplate.Format;
+import com.asakusafw.runtime.value.ByteOption;
 import com.asakusafw.runtime.value.DateOption;
 import com.asakusafw.runtime.value.DateTimeOption;
+import com.asakusafw.runtime.value.DecimalOption;
+import com.asakusafw.runtime.value.DoubleOption;
+import com.asakusafw.runtime.value.FloatOption;
+import com.asakusafw.runtime.value.IntOption;
+import com.asakusafw.runtime.value.LongOption;
+import com.asakusafw.runtime.value.ShortOption;
 import com.asakusafw.vocabulary.directio.DirectFileOutputDescription;
 
 /**
  * Processes patterns in {@link DirectFileOutputDescription}.
  * @since 0.2.5
- * @version 0.2.6
+ * @version 0.9.1
  */
 public final class OutputPattern {
 
@@ -80,6 +90,21 @@ public final class OutputPattern {
     private static final int[] ORDER_GROUP_INDEX = { 2, 4, 6, 8, 10 };
 
     private static final boolean[] ASC_MAP = { true, true, false, true, false };
+
+    private static final Map<Class<?>, Format> FORMATS;
+    static {
+        Map<Class<?>, Format> map = new HashMap<>();
+        map.put(ByteOption.class, Format.BYTE);
+        map.put(ShortOption.class, Format.SHORT);
+        map.put(IntOption.class, Format.INT);
+        map.put(LongOption.class, Format.LONG);
+        map.put(FloatOption.class, Format.FLOAT);
+        map.put(DoubleOption.class, Format.DOUBLE);
+        map.put(DecimalOption.class, Format.DECIMAL);
+        map.put(DateOption.class, Format.DATE);
+        map.put(DateTimeOption.class, Format.DATETIME);
+        FORMATS = Collections.unmodifiableMap(map);
+    }
 
     private OutputPattern() {
         return;
@@ -216,13 +241,7 @@ public final class OutputPattern {
             return Format.NATURAL;
         }
         Type type = property.getType();
-        if (type == DateOption.class) {
-            return Format.DATE;
-        }
-        if (type == DateTimeOption.class) {
-            return Format.DATETIME;
-        }
-        return null;
+        return FORMATS.get(type);
     }
 
     private static final class Cursor {
