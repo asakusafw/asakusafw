@@ -15,11 +15,9 @@
  */
 package com.asakusafw.runtime.io.text.value;
 
-import java.util.Collection;
 import java.util.function.Predicate;
 
 import com.asakusafw.runtime.io.text.driver.FieldAdapter;
-import com.asakusafw.runtime.io.text.driver.FieldOutput;
 import com.asakusafw.runtime.value.BooleanOption;
 
 /**
@@ -49,9 +47,8 @@ public final class BooleanOptionFieldAdapter extends ValueOptionFieldAdapter<Boo
     BooleanOptionFieldAdapter(
             String nullFormat,
             Predicate<? super CharSequence> trueTester, Predicate<? super CharSequence> falseTester,
-            String trueFormat, String falseFormat,
-            Collection<? extends FieldOutput.Option> outputOptions) {
-        super(nullFormat, outputOptions);
+            String trueFormat, String falseFormat) {
+        super(nullFormat);
         this.trueTester = trueTester;
         this.falseTester = falseTester;
         this.trueFormat = trueFormat;
@@ -152,8 +149,7 @@ public final class BooleanOptionFieldAdapter extends ValueOptionFieldAdapter<Boo
             return new BooleanOptionFieldAdapter(
                     getNullFormat(),
                     trueTester, falseTester,
-                    trueFormat, falseFormat,
-                    getOutputOptions());
+                    trueFormat, falseFormat);
         }
     }
 }

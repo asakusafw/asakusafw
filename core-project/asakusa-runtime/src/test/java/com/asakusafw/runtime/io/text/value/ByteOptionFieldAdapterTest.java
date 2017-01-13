@@ -95,4 +95,26 @@ public class ByteOptionFieldAdapterTest {
         ByteOptionFieldAdapter adapter = ByteOptionFieldAdapter.builder().withNullFormat("").build();
         checkEmit(adapter, new ByteOption(), "");
     }
+
+    /**
+     * w/ number format.
+     */
+    @Test
+    public void number_format() {
+        ByteOptionFieldAdapter adapter = ByteOptionFieldAdapter.builder()
+                .withNumberFormat("00")
+                .build();
+        checkParse(adapter, 0, new ByteOption((byte) 0));
+        checkParse(adapter, 1, new ByteOption((byte) 1));
+        checkParse(adapter, -1, new ByteOption((byte) -1));
+        checkParse(adapter, Byte.MAX_VALUE, new ByteOption(Byte.MAX_VALUE));
+        checkParse(adapter, Byte.MIN_VALUE, new ByteOption(Byte.MIN_VALUE));
+        checkMalformed(adapter, "", new ByteOption());
+        checkMalformed(adapter, "Hello, world!", new ByteOption());
+        checkMalformed(adapter, BigInteger.valueOf(Byte.MAX_VALUE).add(BigInteger.ONE).toString(), new ByteOption());
+        checkEmit(adapter, new ByteOption((byte) 1), "01");
+        checkEmit(adapter, new ByteOption((byte) -1), "-01");
+        checkEmit(adapter, new ByteOption((byte) 100), "100");
+        checkEmit(adapter, new ByteOption((byte) -100), "-100");
+    }
 }

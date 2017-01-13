@@ -17,7 +17,9 @@ package com.asakusafw.dmdl.directio.text;
 
 import static com.asakusafw.dmdl.directio.text.TextFormatConstants.*;
 
+import java.util.Arrays;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.asakusafw.dmdl.Diagnostic;
 import com.asakusafw.dmdl.directio.util.Value;
@@ -58,18 +60,23 @@ public class TextFieldDriver extends PropertyAttributeDriver {
         TextFieldSettings settings = TextFieldTrait.getSettings(declaration);
         requireType(environment, settings.getTrueFormat(), declaration, BasicTypeKind.BOOLEAN);
         requireType(environment, settings.getFalseFormat(), declaration, BasicTypeKind.BOOLEAN);
-        requireType(environment, settings.getDecimalFormat(), declaration, BasicTypeKind.DECIMAL);
+        requireType(environment, settings.getNumberFormat(), declaration,
+                BasicTypeKind.BYTE, BasicTypeKind.SHORT, BasicTypeKind.INT, BasicTypeKind.LONG,
+                BasicTypeKind.FLOAT, BasicTypeKind.DOUBLE,
+                BasicTypeKind.DECIMAL);
+        requireType(environment, settings.getDecimalOutputStyle(), declaration, BasicTypeKind.DECIMAL);
         requireType(environment, settings.getDateFormat(), declaration, BasicTypeKind.DATE);
         requireType(environment, settings.getDateTimeFormat(), declaration, BasicTypeKind.DATETIME);
     }
 
     private void requireType(
             DmdlSemantics environment,
-            Value<?> value, PropertyDeclaration property, BasicTypeKind kind) {
+            Value<?> value, PropertyDeclaration property, BasicTypeKind... kinds) {
         if (value.isPresent()) {
             AstAttributeElement element = value.getDeclaration();
             assert element != null;
-            if (AttributeUtil.hasFieldType(property, kind) == false) {
+            if (Arrays.stream(kinds)
+                    .anyMatch(kind -> AttributeUtil.hasFieldType(property, kind))) {
                 environment.report(new Diagnostic(
                         Diagnostic.Level.WARN, element.name,
                         Messages.getString("TextFieldDriver.diagnosticInvalidType"), //$NON-NLS-1$
@@ -77,7 +84,9 @@ public class TextFieldDriver extends PropertyAttributeDriver {
                         element.name.identifier,
                         property.getOwner().getName().identifier,
                         property.getName().identifier,
-                        kind));
+                        kinds.length == 1 ? kinds[0] : Arrays.stream(kinds)
+                                .map(Object::toString)
+                                .collect(Collectors.joining(",", "{", "}")))); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             }
         }
     }

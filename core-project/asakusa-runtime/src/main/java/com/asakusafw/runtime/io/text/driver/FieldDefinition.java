@@ -15,6 +15,10 @@
  */
 package com.asakusafw.runtime.io.text.driver;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -27,7 +31,7 @@ public final class FieldDefinition<T> {
 
     private final String name;
 
-    private final Supplier<? extends FieldAdapter<T>> adapterSupplier;
+    private final Supplier<? extends FieldAdapter<? super T>> adapterSupplier;
 
     private final Boolean trimInput;
 
@@ -37,19 +41,23 @@ public final class FieldDefinition<T> {
 
     private final ErrorAction onUnmappableOutput;
 
+    private final Collection<? extends FieldOutput.Option> outputOptions;
+
     FieldDefinition(
             String name,
-            Supplier<? extends FieldAdapter<T>> adapterSupplier,
+            Supplier<? extends FieldAdapter<? super T>> adapterSupplier,
             Boolean trimInput,
             Boolean skipEmptyInput,
             ErrorAction onMalformedInput,
-            ErrorAction onUnmappableOutput) {
+            ErrorAction onUnmappableOutput,
+            Collection<? extends FieldOutput.Option> outputOptions) {
         this.name = name;
         this.adapterSupplier = adapterSupplier;
         this.trimInput = trimInput;
         this.skipEmptyInput = skipEmptyInput;
         this.onMalformedInput = onMalformedInput;
         this.onUnmappableOutput = onUnmappableOutput;
+        this.outputOptions = Collections.unmodifiableList(new ArrayList<>(outputOptions));
     }
 
     /**
@@ -75,7 +83,7 @@ public final class FieldDefinition<T> {
      * Returns a supplier of the field adapter.
      * @return the adapter supplier
      */
-    public Supplier<? extends FieldAdapter<T>> getAdapterSupplier() {
+    public Supplier<? extends FieldAdapter<? super T>> getAdapterSupplier() {
         return adapterSupplier;
     }
 
@@ -112,6 +120,14 @@ public final class FieldDefinition<T> {
     }
 
     /**
+     * Returns the output options.
+     * @return the output options
+     */
+    public Collection<? extends FieldOutput.Option> getOutputOptions() {
+        return outputOptions;
+    }
+
+    /**
      * A builder of {@link FieldDefinition}.
      * @since 0.9.1
      * @param <T> the property type
@@ -120,7 +136,7 @@ public final class FieldDefinition<T> {
 
         private final String name;
 
-        private final Supplier<? extends FieldAdapter<T>> adapterSupplier;
+        private final Supplier<? extends FieldAdapter<? super T>> adapterSupplier;
 
         private Boolean trimInput = null;
 
@@ -130,12 +146,14 @@ public final class FieldDefinition<T> {
 
         private ErrorAction onUnmappableOutput = null;
 
+        private final List<FieldOutput.Option> outputOptions = new ArrayList<>();
+
         /**
          * Creates a new instance.
          * @param name the field name
          * @param adapterSupplier the adapter supplier
          */
-        public Builder(String name, Supplier<? extends FieldAdapter<T>> adapterSupplier) {
+        public Builder(String name, Supplier<? extends FieldAdapter<? super T>> adapterSupplier) {
             this.name = name;
             this.adapterSupplier = adapterSupplier;
         }
@@ -181,6 +199,26 @@ public final class FieldDefinition<T> {
         }
 
         /**
+         * Adds an output option.
+         * @param newValue the output option
+         * @return this
+         */
+        public Builder<T> withOutputOption(FieldOutput.Option newValue) {
+            this.outputOptions.add(newValue);
+            return this;
+        }
+
+        /**
+         * Adds output options.
+         * @param newValues the output options
+         * @return this
+         */
+        public Builder<T> withOutputOptions(FieldOutput.Option... newValues) {
+            Collections.addAll(this.outputOptions, newValues);
+            return this;
+        }
+
+        /**
          * Builds a {@link FieldDefinition}.
          * @return the built object
          */
@@ -188,7 +226,8 @@ public final class FieldDefinition<T> {
             return new FieldDefinition<>(
                     name, adapterSupplier,
                     trimInput, skipEmptyInput,
-                    onMalformedInput, onUnmappableOutput);
+                    onMalformedInput, onUnmappableOutput,
+                    outputOptions);
         }
     }
 }

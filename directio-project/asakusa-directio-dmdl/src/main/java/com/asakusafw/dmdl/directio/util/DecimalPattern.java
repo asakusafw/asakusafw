@@ -15,19 +15,19 @@
  */
 package com.asakusafw.dmdl.directio.util;
 
-import java.text.SimpleDateFormat;
+import java.text.DecimalFormat;
 import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Represents a date format.
+ * Represents a decimal format.
  * @since 0.9.1
  */
-public class DatePattern {
+public class DecimalPattern {
 
-    static final Logger LOG = LoggerFactory.getLogger(DatePattern.class);
+    static final Logger LOG = LoggerFactory.getLogger(DecimalPattern.class);
 
     private final String token;
 
@@ -35,7 +35,7 @@ public class DatePattern {
      * Creates a new instance.
      * @param token the token
      */
-    public DatePattern(String token) {
+    public DecimalPattern(String token) {
         this.token = token;
     }
 
@@ -46,11 +46,11 @@ public class DatePattern {
      */
     public static boolean isValid(String pattern) {
         try {
-            SimpleDateFormat format = new SimpleDateFormat();
+            DecimalFormat format = new DecimalFormat();
             format.applyPattern(pattern);
             return true;
         } catch (IllegalArgumentException e) {
-            LOG.trace("invalid date pattern: {}", pattern, e); //$NON-NLS-1$
+            LOG.trace("invalid decimal pattern: {}", pattern, e); //$NON-NLS-1$
             return false;
         }
     }
@@ -74,7 +74,7 @@ public class DatePattern {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        DatePattern other = (DatePattern) obj;
+        DecimalPattern other = (DecimalPattern) obj;
         if (!Objects.equals(token, other.token)) {
             return false;
         }

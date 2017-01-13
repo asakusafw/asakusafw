@@ -780,6 +780,25 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     }
 
     /**
+     * w/ {@code null_format}.
+     * @throws Exception if failed
+     */
+    @Test
+    public void null_format_field_null() throws Exception {
+        ModelLoader loaded = generateJavaFromLines(new String[] {
+                "@directio.text.delimited(",
+                "  null_format = 'OK',",
+                ")",
+                "simple = {",
+                "  @directio.text.field(null_format = null)",
+                "  a : TEXT;",
+                "};",
+        });
+        writeError(loaded, loaded.newModel("Simple")
+                .setOption("a", new StringOption()));
+    }
+
+    /**
      * w/ {@code true_format}.
      * @throws Exception if failed
      */
@@ -902,6 +921,110 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     }
 
     /**
+     * w/ {@code number_format}.
+     * @throws Exception if failed
+     */
+    @Test
+    public void number_format() throws Exception {
+        ModelLoader loaded = generateJavaFromLines(new String[] {
+                "@directio.text.delimited(",
+                "  number_format = '0.00',",
+                ")",
+                "simple = {",
+                "  a : DECIMAL;",
+                "};",
+        });
+        byte[] contents = write(loaded, loaded.newModel("Simple")
+                .setOption("a", new DecimalOption(new BigDecimal("3.1415"))));
+        read(contents, loaded, loaded.newModel("Simple")
+                .setOption("a", new DecimalOption(new BigDecimal("3.14"))));
+        assertThat(text(contents), is("3.14\n"));
+    }
+
+    /**
+     * w/ {@code number_format}.
+     * @throws Exception if failed
+     */
+    @Test
+    public void number_format_integer() throws Exception {
+        ModelLoader loaded = generateJavaFromLines(new String[] {
+                "@directio.text.delimited(",
+                "  number_format = '#,###;(#,###)',",
+                ")",
+                "simple = {",
+                "  a : INT;",
+                "  b : INT;",
+                "};",
+        });
+        byte[] contents = restore(loaded, loaded.newModel("Simple")
+                .setOption("a", new IntOption(12_345_678))
+                .setOption("b", new IntOption(-12_345)));
+        assertThat(text(contents), is("12,345,678\t(12,345)\n"));
+    }
+
+    /**
+     * w/ {@code number_format} for fields.
+     * @throws Exception if failed
+     */
+    @Test
+    public void number_format_field() throws Exception {
+        ModelLoader loaded = generateJavaFromLines(new String[] {
+                "@directio.text.delimited(",
+                "  number_format = '0',",
+                ")",
+                "simple = {",
+                "  a : INT;",
+                "  @directio.text.field(number_format = '#,###')",
+                "  b : INT;",
+                "};",
+        });
+        byte[] contents = restore(loaded, loaded.newModel("Simple")
+                .setOption("a", new IntOption(12_345_678))
+                .setOption("b", new IntOption(-12_345)));
+        assertThat(text(contents), is("12345678\t-12,345\n"));
+    }
+
+    /**
+     * w/ {@code number_format} for fields.
+     * @throws Exception if failed
+     */
+    @Test
+    public void number_format_field_null() throws Exception {
+        ModelLoader loaded = generateJavaFromLines(new String[] {
+                "@directio.text.delimited(",
+                "  number_format = '#,###',",
+                ")",
+                "simple = {",
+                "  a : INT;",
+                "  @directio.text.field(number_format = null)",
+                "  b : INT;",
+                "};",
+        });
+        byte[] contents = restore(loaded, loaded.newModel("Simple")
+                .setOption("a", new IntOption(12_345_678))
+                .setOption("b", new IntOption(-12_345)));
+        assertThat(text(contents), is("12,345,678\t-12345\n"));
+    }
+
+    /**
+     * w/ {@code false_format}.
+     * @throws Exception if failed
+     */
+    @Test
+    public void number_format_inconsistent_type() throws Exception {
+        ModelLoader loaded = generateJavaFromLines(new String[] {
+                "@directio.text.delimited",
+                "simple = {",
+                "  @directio.text.field(number_format = '#,###')",
+                "  a : TEXT;",
+                "};",
+        });
+        byte[] contents = restore(loaded, loaded.newModel("Simple")
+                .setOption("a", new StringOption("Hello, world!")));
+        assertThat(text(contents), is("Hello, world!\n"));
+    }
+
+    /**
      * w/ {@code date_format}.
      * @throws Exception if failed
      */
@@ -998,14 +1121,14 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     }
 
     /**
-     * w/ {@code decimal_format}.
+     * w/ {@code decimal_output_style}.
      * @throws Exception if failed
      */
     @Test
-    public void decimal_format() throws Exception {
+    public void decimal_output_style() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
                 "@directio.text.delimited(",
-                "  decimal_format = plain,",
+                "  decimal_output_style = plain,",
                 ")",
                 "simple = {",
                 "  a : DECIMAL;",
@@ -1018,15 +1141,15 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     }
 
     /**
-     * w/ {@code decimal_format}.
+     * w/ {@code decimal_output_style}.
      * @throws Exception if failed
      */
     @Test
-    public void decimal_format_field() throws Exception {
+    public void decimal_output_style_field() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
                 "@directio.text.delimited",
                 "simple = {",
-                "  @directio.text.field(decimal_format = plain)",
+                "  @directio.text.field(decimal_output_style = plain)",
                 "  a : DECIMAL;",
                 "  b : DECIMAL;",
                 "};",
@@ -1039,15 +1162,15 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     }
 
     /**
-     * w/ {@code decimal_format}.
+     * w/ {@code decimal_output_style}.
      * @throws Exception if failed
      */
     @Test
-    public void decimal_format_inconsistent_type() throws Exception {
+    public void decimal_output_style_inconsistent_type() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
                 "@directio.text.delimited",
                 "simple = {",
-                "  @directio.text.field(decimal_format = plain)",
+                "  @directio.text.field(decimal_output_style = plain)",
                 "  a : TEXT;",
                 "};",
         });
@@ -1840,6 +1963,22 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
                 "simple = {",
                 "  @directio.text.field(false_format = 'a')",
                 "  a : BOOLEAN;",
+                "};",
+        });
+    }
+
+    /**
+     * malformed number_format.
+     * @throws Exception if failed
+     */
+    @Test
+    public void invalid_number_format_malformed() throws Exception {
+        shouldSemanticErrorFromLines(new String[] {
+                "@directio.text.delimited(",
+                "  number_format = 'Hello, world!',",
+                ")",
+                "simple = {",
+                "  a : TEXT;",
                 "};",
         });
     }

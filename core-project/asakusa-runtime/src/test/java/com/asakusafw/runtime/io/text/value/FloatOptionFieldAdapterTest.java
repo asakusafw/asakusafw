@@ -17,6 +17,8 @@ package com.asakusafw.runtime.io.text.value;
 
 import static com.asakusafw.runtime.io.text.value.TestUtil.*;
 
+import java.text.DecimalFormatSymbols;
+
 import org.junit.Test;
 
 import com.asakusafw.runtime.value.FloatOption;
@@ -35,6 +37,9 @@ public class FloatOptionFieldAdapterTest {
         checkParse(adapter, 0.f, new FloatOption(0));
         checkParse(adapter, 1.f, new FloatOption(1));
         checkParse(adapter, -1.f, new FloatOption(-1));
+        checkParse(adapter, Float.NaN, new FloatOption(Float.NaN));
+        checkParse(adapter, Float.POSITIVE_INFINITY, new FloatOption(Float.POSITIVE_INFINITY));
+        checkParse(adapter, Float.NEGATIVE_INFINITY, new FloatOption(Float.NEGATIVE_INFINITY));
     }
 
     /**
@@ -91,5 +96,34 @@ public class FloatOptionFieldAdapterTest {
     public void emit_null_formatted() {
         FloatOptionFieldAdapter adapter = FloatOptionFieldAdapter.builder().withNullFormat("").build();
         checkEmit(adapter, new FloatOption(), "");
+    }
+
+    /**
+     * w/ number format.
+     */
+    @Test
+    public void number_format() {
+        DecimalFormatSymbols syms = DecimalFormatSymbols.getInstance();
+        FloatOptionFieldAdapter adapter = FloatOptionFieldAdapter.builder()
+                .withNumberFormat("0.00")
+                .withDecimalFormatSymbols(syms)
+                .build();
+        checkParse(adapter, 0, new FloatOption(0));
+        checkParse(adapter, 1, new FloatOption(1));
+        checkParse(adapter, -1, new FloatOption(-1));
+        checkParse(adapter, "-0", new FloatOption(0));
+        checkParse(adapter, syms.getNaN(), new FloatOption(Float.NaN));
+        checkParse(adapter, syms.getInfinity(), new FloatOption(Float.POSITIVE_INFINITY));
+        checkParse(adapter, "-" + syms.getInfinity(), new FloatOption(Float.NEGATIVE_INFINITY));
+        checkMalformed(adapter, "", new FloatOption());
+        checkMalformed(adapter, "Hello, world!", new FloatOption());
+        checkEmit(adapter, new FloatOption(1), "1.00");
+        checkEmit(adapter, new FloatOption(-1), "-1.00");
+        checkEmit(adapter, new FloatOption((float) Math.PI), "3.14");
+        checkEmit(adapter, new FloatOption(12345), "12345.00");
+        checkEmit(adapter, new FloatOption(-0), "0.00");
+        checkEmit(adapter, new FloatOption(Float.NaN), syms.getNaN());
+        checkEmit(adapter, new FloatOption(Float.POSITIVE_INFINITY), syms.getInfinity());
+        checkEmit(adapter, new FloatOption(Float.NEGATIVE_INFINITY), "-" + syms.getInfinity());
     }
 }

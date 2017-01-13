@@ -165,7 +165,8 @@ public final class RecordDefinition<T> {
         FieldDefinition<U> def = info.definition;
         return new OutputDriver.FieldDriver<>(
                 def.getName(), info.extractor, def.getAdapterSupplier().get(),
-                def.getOnUnmappableOutput().orElse(onUnmappableOutput));
+                def.getOnUnmappableOutput().orElse(onUnmappableOutput),
+                def.getOutputOptions());
     }
 
     /**

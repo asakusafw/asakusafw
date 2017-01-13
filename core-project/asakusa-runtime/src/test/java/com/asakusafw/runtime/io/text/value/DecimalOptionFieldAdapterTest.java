@@ -130,6 +130,25 @@ public class DecimalOptionFieldAdapterTest {
         checkEmit(adapter, new DecimalOption(new BigDecimal(BigInteger.valueOf(12), -10)), "120E+9");
     }
 
+    /**
+     * w/ number format.
+     */
+    @Test
+    public void number_format() {
+        DecimalOptionFieldAdapter adapter = DecimalOptionFieldAdapter.builder()
+                .withNumberFormat("0.00")
+                .build();
+        checkParse(adapter, 0, new DecimalOption(d("0")));
+        checkParse(adapter, 1, new DecimalOption(d("1")));
+        checkParse(adapter, -1, new DecimalOption(d("-1")));
+        checkMalformed(adapter, "", new DecimalOption());
+        checkMalformed(adapter, "Hello, world!", new DecimalOption());
+        checkEmit(adapter, new DecimalOption(d("1")), "1.00");
+        checkEmit(adapter, new DecimalOption(d("-1")), "-1.00");
+        checkEmit(adapter, new DecimalOption(d("3.1415")), "3.14");
+        checkEmit(adapter, new DecimalOption(d("12345")), "12345.00");
+    }
+
     private BigDecimal d(String s) {
         return new BigDecimal(s);
     }

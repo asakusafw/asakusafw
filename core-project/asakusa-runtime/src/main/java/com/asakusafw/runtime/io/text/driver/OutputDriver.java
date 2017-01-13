@@ -17,6 +17,7 @@ package com.asakusafw.runtime.io.text.driver;
 
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
@@ -101,7 +102,9 @@ final class OutputDriver<T> implements TextOutput<T> {
     private <P> BasicFieldOutput fill(T model, FieldDriver<T, P> field) {
         BasicFieldOutput output = fieldOutput;
         P property = field.extractor.apply(model);
-        field.adapter.emit(property, output.reset());
+        output.reset();
+        output.addOptions(field.options);
+        field.adapter.emit(property, output);
         return output;
     }
 
@@ -175,19 +178,23 @@ final class OutputDriver<T> implements TextOutput<T> {
 
         final Function<? super TRecord, ? extends TProperty> extractor;
 
-        final FieldAdapter<TProperty> adapter;
+        final FieldAdapter<? super TProperty> adapter;
 
         final ErrorAction onUnmappedOutput;
+
+        final FieldOutput.Option[] options;
 
         FieldDriver(
                 String name,
                 Function<? super TRecord, ? extends TProperty> extractor,
-                FieldAdapter<TProperty> adapter,
-                ErrorAction onUnmappedOutput) {
+                FieldAdapter<? super TProperty> adapter,
+                ErrorAction onUnmappedOutput,
+                Collection<? extends FieldOutput.Option> options) {
             this.name = name;
             this.extractor = extractor;
             this.adapter = adapter;
             this.onUnmappedOutput = onUnmappedOutput;
+            this.options = options.toArray(new FieldOutput.Option[options.size()]);
         }
     }
 }

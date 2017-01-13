@@ -136,7 +136,7 @@ final class InputDriver<T> implements TextInput<T> {
 
     private <P> boolean processField(T model, FieldDriver<T, P> field) throws IOException {
         P property = field.extractor.apply(model);
-        FieldAdapter<P> adapter = field.adapter;
+        FieldAdapter<? super P> adapter = field.adapter;
         while (reader.nextField()) {
             CharSequence value = reader.getContent();
             if (value != null) {
@@ -395,7 +395,7 @@ final class InputDriver<T> implements TextInput<T> {
 
         final Function<? super TRecord, ? extends TProperty> extractor;
 
-        final FieldAdapter<TProperty> adapter;
+        final FieldAdapter<? super TProperty> adapter;
 
         final boolean trimInput;
 
@@ -406,7 +406,7 @@ final class InputDriver<T> implements TextInput<T> {
         FieldDriver(
                 String name,
                 Function<? super TRecord, ? extends TProperty> extractor,
-                FieldAdapter<TProperty> adapter,
+                FieldAdapter<? super TProperty> adapter,
                 boolean trimInput, boolean skipEmptyInput,
                 ErrorAction onMalformedInput) {
             this.name = name;

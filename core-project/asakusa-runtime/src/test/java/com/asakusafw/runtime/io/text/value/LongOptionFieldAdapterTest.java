@@ -95,4 +95,26 @@ public class LongOptionFieldAdapterTest {
         LongOptionFieldAdapter adapter = LongOptionFieldAdapter.builder().withNullFormat("").build();
         checkEmit(adapter, new LongOption(), "");
     }
+
+    /**
+     * w/ number format.
+     */
+    @Test
+    public void number_format() {
+        LongOptionFieldAdapter adapter = LongOptionFieldAdapter.builder()
+                .withNumberFormat("0,000")
+                .build();
+        checkParse(adapter, 0, new LongOption(0));
+        checkParse(adapter, 1, new LongOption(1));
+        checkParse(adapter, -1, new LongOption(-1));
+        checkParse(adapter, Long.MAX_VALUE, new LongOption(Long.MAX_VALUE));
+        checkParse(adapter, Long.MIN_VALUE, new LongOption(Long.MIN_VALUE));
+        checkMalformed(adapter, "", new LongOption());
+        checkMalformed(adapter, "Hello, world!", new LongOption());
+        checkMalformed(adapter, BigInteger.valueOf(Long.MAX_VALUE).add(BigInteger.ONE).toString(), new LongOption());
+        checkEmit(adapter, new LongOption(1), "0,001");
+        checkEmit(adapter, new LongOption(-1), "-0,001");
+        checkEmit(adapter, new LongOption(1000), "1,000");
+        checkEmit(adapter, new LongOption(10000), "10,000");
+    }
 }

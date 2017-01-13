@@ -25,9 +25,13 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.asakusafw.dmdl.Diagnostic;
 import com.asakusafw.dmdl.directio.util.ClassName;
 import com.asakusafw.dmdl.directio.util.DatePattern;
+import com.asakusafw.dmdl.directio.util.DecimalPattern;
 import com.asakusafw.dmdl.directio.util.MapValue;
 import com.asakusafw.dmdl.directio.util.Value;
 import com.asakusafw.dmdl.model.AstAttribute;
@@ -46,6 +50,8 @@ import com.asakusafw.dmdl.semantics.DmdlSemantics;
  * @since 0.9.1
  */
 public class AttributeAnalyzer {
+
+    static final Logger LOG = LoggerFactory.getLogger(AttributeAnalyzer.class);
 
     private final DmdlSemantics environment;
 
@@ -72,12 +78,12 @@ public class AttributeAnalyzer {
     }
 
     /**
-     * Analyze the given element as a nullable string value.
+     * Analyze the given element as a string value.
      * @param element the target element
      * @return the analyzed value, or undefined if the element value is not valid
      */
     public Value<String> toString(AstAttributeElement element) {
-        return parseStringLiteral(element.value)
+        return parseString(element.value)
                 .map(s -> Value.of(element, s))
                 .orElseGet(() -> {
                     error(element, Messages.getString("AttributeAnalyzer.diagnosticNotString")); //$NON-NLS-1$
@@ -94,7 +100,12 @@ public class AttributeAnalyzer {
         if (isName(element.value, VALUE_NULL)) {
             return Value.of(element, null);
         }
-        return toString(element);
+        return parseStringLiteral(element.value)
+                .map(s -> Value.of(element, s))
+                .orElseGet(() -> {
+                    error(element, Messages.getString("AttributeAnalyzer.diagnosticNotString")); //$NON-NLS-1$
+                    return Value.undefined();
+                });
     }
 
     /**
@@ -147,12 +158,31 @@ public class AttributeAnalyzer {
                     try {
                         return Optional.of(Charset.forName(s));
                     } catch (IllegalArgumentException e) {
+                        LOG.trace("invalid charset: {}", s, e); //$NON-NLS-1$
                         return Optional.empty();
                     }
                 })
                 .map(cs -> Value.of(element, cs))
                 .orElseGet(() -> {
                     error(element, Messages.getString("AttributeAnalyzer.diagnosticNotCharsetName")); //$NON-NLS-1$
+                    return Value.undefined();
+                });
+    }
+
+    /**
+     * Analyze the given element as a date format.
+     * @param element the target element
+     * @return the analyzed value, or undefined if the element value is not valid
+     */
+    public Value<DecimalPattern> toDecimalPatternWithNull(AstAttributeElement element) {
+        if (isName(element.value, VALUE_NULL)) {
+            return Value.of(element, null);
+        }
+        return parseStringLiteral(element.value)
+                .filter(DecimalPattern::isValid)
+                .map(s -> Value.of(element, new DecimalPattern(s)))
+                .orElseGet(() -> {
+                    error(element, Messages.getString("AttributeAnalyzer.diagnosticNotDecimalFormat")); //$NON-NLS-1$
                     return Value.undefined();
                 });
     }
@@ -194,6 +224,7 @@ public class AttributeAnalyzer {
                     try {
                         return Optional.of(Enum.valueOf(type, s.toUpperCase(Locale.ENGLISH)));
                     } catch (IllegalArgumentException e) {
+                        LOG.trace("invalid enum constant: {}#{}", type.getSimpleName(), s, e); //$NON-NLS-1$
                         return Optional.empty();
                     }
                 })

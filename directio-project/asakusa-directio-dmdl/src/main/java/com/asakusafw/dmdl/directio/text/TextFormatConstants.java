@@ -112,9 +112,14 @@ public final class TextFormatConstants {
     public static final String ELEMENT_FALSE_FORMAT = "false_format"; //$NON-NLS-1$
 
     /**
-     * The element name of {@code DECIMAL} type value format.
+     * The element name of  output format.
      */
-    public static final String ELEMENT_DECIMAL_FORMAT = "decimal_format"; //$NON-NLS-1$
+    public static final String ELEMENT_NUMBER_FORMAT = "number_format"; //$NON-NLS-1$
+
+    /**
+     * The element name of {@code DECIMAL} type output style.
+     */
+    public static final String ELEMENT_DECIMAL_OUTPUT_STYLE = "decimal_output_style"; //$NON-NLS-1$
 
     /**
      * The element name of {@code DATE} type value format.
@@ -187,9 +192,9 @@ public final class TextFormatConstants {
     public static final String DEFAULT_FALSE_FORMAT = BooleanOptionFieldAdapter.DEFAULT_FALSE_FORMAT;
 
     /**
-     * The default value of {@link #ELEMENT_DECIMAL_FORMAT}.
+     * The default value of {@link #ELEMENT_DECIMAL_OUTPUT_STYLE}.
      */
-    public static final DecimalOptionFieldAdapter.OutputStyle DEFAULT_DECIMAL_FORMAT =
+    public static final DecimalOptionFieldAdapter.OutputStyle DEFAULT_DECIMAL_OUTPUT_STYLE =
             DecimalOptionFieldAdapter.DEFAULT_OUTPUT_STYLE;
 
     /**

@@ -80,7 +80,8 @@ public class DelimitedTextDriver extends ModelAttributeDriver {
                     TextFieldTrait.get(property).getSettings()));
     }
 
-    private void verifyModel(DmdlSemantics environment, ModelDeclaration declaration, DelimitedTextTrait trait) {
+    private static void verifyModel(
+            DmdlSemantics environment, ModelDeclaration declaration, DelimitedTextTrait trait) {
         if (declaration.getDeclaredProperties().stream()
                 .noneMatch(p -> TextFieldTrait.getKind(p) == TextFieldTrait.Kind.VALUE)) {
             environment.report(new Diagnostic(
@@ -91,7 +92,7 @@ public class DelimitedTextDriver extends ModelAttributeDriver {
         }
     }
 
-    private void verifyField(
+    private static void verifyField(
             DmdlSemantics environment, PropertyDeclaration property,
             TextFieldSettings parent, TextFieldSettings child) {
         if (AttributeUtil.hasFieldType(property, BasicTypeKind.BOOLEAN)) {
@@ -110,7 +111,7 @@ public class DelimitedTextDriver extends ModelAttributeDriver {
         }
     }
 
-    private void errorConflict(
+    private static void errorConflict(
             DmdlSemantics environment,
             PropertyDeclaration property,
             String a, String b) {
