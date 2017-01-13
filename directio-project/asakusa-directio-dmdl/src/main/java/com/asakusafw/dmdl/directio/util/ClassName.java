@@ -17,6 +17,9 @@ package com.asakusafw.dmdl.directio.util;
 
 import java.util.Objects;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.asakusafw.utils.java.model.util.Models;
 
 /**
@@ -24,6 +27,8 @@ import com.asakusafw.utils.java.model.util.Models;
  * @since 0.9.1
  */
 public class ClassName {
+
+    static final Logger LOG = LoggerFactory.getLogger(ClassName.class);
 
     private final String name;
 
@@ -48,6 +53,7 @@ public class ClassName {
             Models.toName(Models.getModelFactory(), name);
             return true;
         } catch (IllegalArgumentException e) {
+            LOG.trace("invalid class name: {}", name, e); //$NON-NLS-1$
             return false;
         }
     }

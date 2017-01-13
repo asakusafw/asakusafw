@@ -25,6 +25,9 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.asakusafw.dmdl.Diagnostic;
 import com.asakusafw.dmdl.directio.util.ClassName;
 import com.asakusafw.dmdl.directio.util.DatePattern;
@@ -47,6 +50,8 @@ import com.asakusafw.dmdl.semantics.DmdlSemantics;
  * @since 0.9.1
  */
 public class AttributeAnalyzer {
+
+    static final Logger LOG = LoggerFactory.getLogger(AttributeAnalyzer.class);
 
     private final DmdlSemantics environment;
 
@@ -153,6 +158,7 @@ public class AttributeAnalyzer {
                     try {
                         return Optional.of(Charset.forName(s));
                     } catch (IllegalArgumentException e) {
+                        LOG.trace("invalid charset: {}", s, e); //$NON-NLS-1$
                         return Optional.empty();
                     }
                 })
@@ -218,6 +224,7 @@ public class AttributeAnalyzer {
                     try {
                         return Optional.of(Enum.valueOf(type, s.toUpperCase(Locale.ENGLISH)));
                     } catch (IllegalArgumentException e) {
+                        LOG.trace("invalid enum constant: {}#{}", type.getSimpleName(), s, e); //$NON-NLS-1$
                         return Optional.empty();
                     }
                 })

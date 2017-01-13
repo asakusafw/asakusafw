@@ -60,7 +60,7 @@ public class DelimitedTextEmitter extends JavaDataModelDriver {
         generateOutputDescription(context, supportName, model);
     }
 
-    private Name generateFormat(EmitContext context, ModelDeclaration model) throws IOException {
+    private static Name generateFormat(EmitContext context, ModelDeclaration model) throws IOException {
         assert context != null;
         assert model != null;
         DelimitedTextTrait trait = DelimitedTextTrait.get(model);
@@ -79,7 +79,7 @@ public class DelimitedTextEmitter extends JavaDataModelDriver {
         return next.getQualifiedTypeName();
     }
 
-    private void generateInputDescription(
+    private static void generateInputDescription(
             EmitContext context, Name formatClassName, ModelDeclaration model) throws IOException {
         EmitContext next = new EmitContext(
                 context.getSemantics(),
@@ -93,7 +93,7 @@ public class DelimitedTextEmitter extends JavaDataModelDriver {
         DirectFileInputDescriptionGenerator.generate(next, desc);
     }
 
-    private void generateOutputDescription(
+    private static void generateOutputDescription(
             EmitContext context, Name formatClassName, ModelDeclaration model) throws IOException {
         EmitContext next = new EmitContext(
                 context.getSemantics(),

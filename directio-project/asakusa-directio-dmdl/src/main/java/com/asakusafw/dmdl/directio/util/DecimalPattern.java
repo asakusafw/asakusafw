@@ -18,11 +18,16 @@ package com.asakusafw.dmdl.directio.util;
 import java.text.DecimalFormat;
 import java.util.Objects;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Represents a decimal format.
  * @since 0.9.1
  */
 public class DecimalPattern {
+
+    static final Logger LOG = LoggerFactory.getLogger(DecimalPattern.class);
 
     private final String token;
 
@@ -39,12 +44,13 @@ public class DecimalPattern {
      * @param pattern the target string
      * @return {@code true} if it is valid, otherwise {@code false}
      */
-    @SuppressWarnings("unused")
     public static boolean isValid(String pattern) {
         try {
-            new DecimalFormat(pattern);
+            DecimalFormat format = new DecimalFormat();
+            format.applyPattern(pattern);
             return true;
         } catch (IllegalArgumentException e) {
+            LOG.trace("invalid decimal pattern: {}", pattern, e); //$NON-NLS-1$
             return false;
         }
     }

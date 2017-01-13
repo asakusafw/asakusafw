@@ -780,6 +780,25 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     }
 
     /**
+     * w/ {@code null_format}.
+     * @throws Exception if failed
+     */
+    @Test
+    public void null_format_field_null() throws Exception {
+        ModelLoader loaded = generateJavaFromLines(new String[] {
+                "@directio.text.delimited(",
+                "  null_format = 'OK',",
+                ")",
+                "simple = {",
+                "  @directio.text.field(null_format = null)",
+                "  a : TEXT;",
+                "};",
+        });
+        writeError(loaded, loaded.newModel("Simple")
+                .setOption("a", new StringOption()));
+    }
+
+    /**
      * w/ {@code true_format}.
      * @throws Exception if failed
      */

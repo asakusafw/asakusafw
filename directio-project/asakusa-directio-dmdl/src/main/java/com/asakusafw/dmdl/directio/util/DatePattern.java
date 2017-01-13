@@ -18,11 +18,16 @@ package com.asakusafw.dmdl.directio.util;
 import java.text.SimpleDateFormat;
 import java.util.Objects;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Represents a date format.
  * @since 0.9.1
  */
 public class DatePattern {
+
+    static final Logger LOG = LoggerFactory.getLogger(DatePattern.class);
 
     private final String token;
 
@@ -39,12 +44,13 @@ public class DatePattern {
      * @param pattern the target string
      * @return {@code true} if it is valid, otherwise {@code false}
      */
-    @SuppressWarnings("unused")
     public static boolean isValid(String pattern) {
         try {
-            new SimpleDateFormat(pattern);
+            SimpleDateFormat format = new SimpleDateFormat();
+            format.applyPattern(pattern);
             return true;
         } catch (IllegalArgumentException e) {
+            LOG.trace("invalid date pattern: {}", pattern, e); //$NON-NLS-1$
             return false;
         }
     }
