@@ -153,7 +153,11 @@ public class DelimitedTextEmitter extends JavaDataModelDriver {
             escapes.getCharacter().ifPresent(c -> {
                 ExpressionBuilder escapeBuilder = new TypeBuilder(f, context.resolve(EscapeSequence.class))
                         .method("builder", resolve(c)); //$NON-NLS-1$
-                escapes.getEscapeLineSeparator().ifPresent(v -> escapeBuilder.method("addLineSeparator")); //$NON-NLS-1$
+                escapes.getEscapeLineSeparator().ifPresent(v -> {
+                    if (v) {
+                        escapeBuilder.method("addLineSeparator"); //$NON-NLS-1$
+                    }
+                });
                 for (MapValue.Entry<Character, Character> entry : escapes.getSequences()) {
                     Character key = entry.getKey();
                     Character value = entry.getValue();

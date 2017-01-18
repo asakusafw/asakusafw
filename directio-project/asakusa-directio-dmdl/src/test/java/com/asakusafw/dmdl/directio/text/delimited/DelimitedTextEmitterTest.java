@@ -505,6 +505,26 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     }
 
     /**
+     * w/ {@code escape_line_separator}.
+     * @throws Exception if failed
+     */
+    @Test
+    public void escape_line_separator_false() throws Exception {
+        ModelLoader loaded = generateJavaFromLines(new String[] {
+                "@directio.text.delimited(",
+                "  escape_character = '^',",
+                "  escape_line_separator = false,",
+                ")",
+                "simple = {",
+                "  a : TEXT;",
+                "};",
+        });
+        read("a^\nb\n".getBytes(StandardCharsets.UTF_8), loaded,
+                loaded.newModel("Simple").setOption("a", new StringOption("a^")),
+                loaded.newModel("Simple").setOption("a", new StringOption("b")));
+    }
+
+    /**
      * w/ {@code input_transformer}.
      * @throws Exception if failed
      */
@@ -1743,6 +1763,22 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
         shouldSemanticErrorFromLines(new String[] {
                 "@directio.text.delimited(",
                 "  escape_character = '<>',",
+                ")",
+                "simple = {",
+                "  a : TEXT;",
+                "};",
+        });
+    }
+
+    /**
+     * w/ malformed escape_line_separator.
+     * @throws Exception if failed
+     */
+    @Test
+    public void invalid_escape_line_separator_malformed() throws Exception {
+        shouldSemanticErrorFromLines(new String[] {
+                "@directio.text.delimited(",
+                "  escape_line_separator = unknown,",
                 ")",
                 "simple = {",
                 "  a : TEXT;",
