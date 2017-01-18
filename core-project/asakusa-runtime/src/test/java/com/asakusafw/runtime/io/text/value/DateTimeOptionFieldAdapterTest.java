@@ -17,7 +17,11 @@ package com.asakusafw.runtime.io.text.value;
 
 import static com.asakusafw.runtime.io.text.value.TestUtil.*;
 
+import java.util.TimeZone;
+
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExternalResource;
 
 import com.asakusafw.runtime.value.DateTime;
 import com.asakusafw.runtime.value.DateTimeOption;
@@ -26,6 +30,25 @@ import com.asakusafw.runtime.value.DateTimeOption;
  * Test for {@link DateTimeOptionFieldAdapter}.
  */
 public class DateTimeOptionFieldAdapterTest {
+
+    /**
+     * Escapes time zone.
+     */
+    @Rule
+    public final ExternalResource escapeTimeZone = new ExternalResource() {
+        TimeZone escape;
+        @Override
+        protected void before() {
+            escape = TimeZone.getDefault();
+            TimeZone.setDefault(TimeZone.getTimeZone("PST"));
+        }
+        @Override
+        protected void after() {
+            if (escape != null) {
+                TimeZone.setDefault(escape);
+            }
+        }
+    };
 
     /**
      * parse.
@@ -135,6 +158,17 @@ public class DateTimeOptionFieldAdapterTest {
         equivalent(adapter, "2016 -- 12 -- 31 + 12 * 34 * 56", new DateTimeOption(dt(2016, 12, 31, 12, 34, 56)));
         equivalent(adapter, "2017 -- 01 -- 01 + 12 * 34 * 56", new DateTimeOption(dt(2017,  1,  1, 12, 34, 56)));
         equivalent(adapter, "2017 -- 01 -- 02 + 12 * 34 * 56", new DateTimeOption(dt(2017,  1,  2, 12, 34, 56)));
+    }
+
+    /**
+     * w/ timezone.
+     */
+    @Test
+    public void timezone() {
+        DateTimeOptionFieldAdapter adapter = DateTimeOptionFieldAdapter.builder()
+                .withTimeZone("UTC")
+                .build();
+        equivalent(adapter, "2017-01-02 12:34:56", new DateTimeOption(dt(2017, 1, 2, 12 - 8, 34, 56)));
     }
 
     private static DateTime dt(int year, int month, int day, int hour, int minute, int second) {

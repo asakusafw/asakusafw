@@ -15,8 +15,6 @@
  */
 package com.asakusafw.runtime.io.text.value;
 
-import static com.asakusafw.runtime.io.text.value.DateFormatter.*;
-
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -25,7 +23,7 @@ import java.util.regex.Pattern;
 
 import com.asakusafw.runtime.value.DateUtil;
 
-abstract class DateTimeFormatter {
+abstract class DateAdapter {
 
     private static final Factory[] BUILTIN = new Factory[] {
         pattern -> {
@@ -40,13 +38,13 @@ abstract class DateTimeFormatter {
 
     abstract String getPattern();
 
-    abstract long parse(CharSequence sequence);
+    abstract int parse(CharSequence sequence);
 
-    abstract void emit(long elapsedSeconds, StringBuilder output);
+    abstract void emit(int elapsedDate, StringBuilder output);
 
-    static DateTimeFormatter newInstance(String pattern) {
+    static DateAdapter newInstance(String pattern) {
         for (Factory f : BUILTIN) {
-            DateTimeFormatter formatter = f.of(pattern);
+            DateAdapter formatter = f.of(pattern);
             if (formatter != null) {
                 return formatter;
             }
@@ -56,10 +54,10 @@ abstract class DateTimeFormatter {
 
     @FunctionalInterface
     private interface Factory {
-        DateTimeFormatter of(String pattern);
+        DateAdapter of(String pattern);
     }
 
-    private static final class Default extends DateTimeFormatter {
+    private static final class Default extends DateAdapter {
 
         private final SimpleDateFormat format;
 
@@ -78,7 +76,7 @@ abstract class DateTimeFormatter {
         }
 
         @Override
-        long parse(CharSequence sequence) {
+        int parse(CharSequence sequence) {
             ParsePosition pos = parsePositionBuffer;
             pos.setIndex(0);
             pos.setErrorIndex(-1);
@@ -87,47 +85,35 @@ abstract class DateTimeFormatter {
                 return -1;
             }
             calendarBuffer.setTime(parsed);
-            return DateUtil.getSecondFromCalendar(calendarBuffer);
+            return DateUtil.getDayFromCalendar(calendarBuffer);
         }
 
         @Override
-        void emit(long elapsedSeconds, StringBuilder output) {
-            DateUtil.setSecondToCalendar(elapsedSeconds, calendarBuffer);
+        void emit(int elapsedDate, StringBuilder output) {
+            DateUtil.setDayToCalendar(elapsedDate, calendarBuffer);
             output.append(format.format(calendarBuffer.getTime()));
         }
     }
 
-    private static final class Standard extends DateTimeFormatter {
+    private static final class Standard extends DateAdapter {
 
         private static final Pattern META_PATTERN = Pattern.compile(
-                "yyyy([ \\-\\._/]|'[a-zA-Z \\-\\._/]')MM\\1dd" //$NON-NLS-1$
-                + "([ \\-\\._]|'[a-zA-Z \\-\\._]')" //$NON-NLS-1$
-                + "HH([ \\-\\.:_]|'[a-zA-Z \\-\\.:_]')mm\\3ss"); //$NON-NLS-1$
+                "yyyy([ \\-\\._/]|'[a-zA-Z \\-\\._/]')MM\\1dd"); //$NON-NLS-1$
 
-        private final DateTimeFormatter next;
+        private final DateAdapter next;
 
-        private final char dateSegmentSeparator;
+        private final char separator;
 
-        private final char dateTimeSeparator;
-
-        private final char timeSegmentSeparator;
-
-        private Standard(
-                String pattern,
-                char dateSegmentSeparator, char dateTimeSeparator, char timeSegmentSeparator) {
-            this.dateSegmentSeparator = dateSegmentSeparator;
-            this.dateTimeSeparator = dateTimeSeparator;
-            this.timeSegmentSeparator = timeSegmentSeparator;
+        private Standard(String pattern, char separator) {
+            this.separator = separator;
             this.next = new Default(new SimpleDateFormat(pattern));
         }
 
         static Standard of(String pattern) {
             Matcher matcher = META_PATTERN.matcher(pattern);
             if (matcher.matches()) {
-                char dateSegment = extract(matcher, 1);
-                char dateTime = extract(matcher, 2);
-                char timeSegment = extract(matcher, 3);
-                return new Standard(pattern, dateSegment, dateTime, timeSegment);
+                char separator = extract(matcher, 1);
+                return new Standard(pattern, separator);
             }
             return null;
         }
@@ -152,9 +138,8 @@ abstract class DateTimeFormatter {
         }
 
         @Override
-        long parse(CharSequence sequence) {
-            long value = DateUtil.parseDateTime(
-                    sequence, dateSegmentSeparator, dateTimeSeparator, timeSegmentSeparator);
+        int parse(CharSequence sequence) {
+            int value = DateUtil.parseDate(sequence, separator);
             if (value >= 0) {
                 return value;
             }
@@ -162,17 +147,14 @@ abstract class DateTimeFormatter {
         }
 
         @Override
-        void emit(long elapsedSeconds, StringBuilder output) {
-            DateUtil.toDateTimeString(
-                    elapsedSeconds,
-                    dateSegmentSeparator, dateTimeSeparator, timeSegmentSeparator,
-                    output);
+        void emit(int elapsedDate, StringBuilder output) {
+            DateUtil.toDateString(elapsedDate, separator, output);
         }
     }
 
-    private static final class Direct extends DateTimeFormatter {
+    private static final class Direct extends DateAdapter {
 
-        static final String PATTERN = "yyyyMMddHHmmss"; //$NON-NLS-1$
+        private static final String PATTERN = "yyyyMMdd"; //$NON-NLS-1$
 
         private static final int POS_YEAR = 0;
 
@@ -180,15 +162,9 @@ abstract class DateTimeFormatter {
 
         private static final int POS_DAY = 6;
 
-        private static final int POS_HOUR = 8;
+        private static final int LENGTH = 8;
 
-        private static final int POS_MINUTE = 10;
-
-        private static final int POS_SECOND = 12;
-
-        private static final int LENGTH = 14;
-
-        private final DateTimeFormatter next;
+        private final DateAdapter next;
 
         Direct() {
             this.next = new Default(new SimpleDateFormat(PATTERN));
@@ -200,43 +176,61 @@ abstract class DateTimeFormatter {
         }
 
         @Override
-        long parse(CharSequence sequence) {
+        int parse(CharSequence sequence) {
             if (sequence.length() != LENGTH) {
                 return next.parse(sequence);
             }
             int year = getNumericValue(sequence, POS_YEAR, 4);
             int month = getNumericValue(sequence, POS_MONTH, 2);
             int day = getNumericValue(sequence, POS_DAY, 2);
-            int hour = getNumericValue(sequence, POS_HOUR, 2);
-            int minute = getNumericValue(sequence, POS_MINUTE, 2);
-            int second = getNumericValue(sequence, POS_SECOND, 2);
-            if (year < 0 || month < 0 || day < 0 || hour < 0 || minute < 0 || second < 0) {
+            if (year < 0 || month < 0 || day < 0) {
                 return next.parse(sequence);
             }
-            int date = DateUtil.getDayFromDate(year, month, day);
-            int secondsInDay = DateUtil.getSecondFromTime(hour, minute, second);
-            return (long) date * 86400 + secondsInDay;
+            return DateUtil.getDayFromDate(year, month, day);
         }
 
         @Override
-        void emit(long elapsedSeconds, StringBuilder output) {
-            int elapsedDate = DateUtil.getDayFromSeconds(elapsedSeconds);
+        void emit(int elapsedDate, StringBuilder output) {
             int year = DateUtil.getYearFromDay(elapsedDate);
             int dayInYear = elapsedDate - DateUtil.getDayFromYear(year);
             int month = DateUtil.getMonthOfYear(dayInYear, DateUtil.isLeap(year));
             int day = DateUtil.getDayOfMonth(dayInYear, DateUtil.isLeap(year));
-
-            int secondOfDay = DateUtil.getSecondOfDay(elapsedSeconds);
-            int hour = secondOfDay / (60 * 60);
-            int minute = secondOfDay / 60 % 60;
-            int second = secondOfDay % 60;
-
             append(output, year, 4);
             append(output, month, 2);
             append(output, day, 2);
-            append(output, hour, 2);
-            append(output, minute, 2);
-            append(output, second, 2);
         }
+    }
+
+    static int getNumericValue(CharSequence sequence, int from, int length) {
+        int to = from + length;
+        int result = 0;
+        for (int i = from; i < to; i++) {
+            char c = (char) (sequence.charAt(i) - '0');
+            if (c > 9) {
+                return -1;
+            }
+            result = result * 10 + c;
+        }
+        return result;
+    }
+
+    static void append(StringBuilder buf, int value, int columns) {
+        if (value < 0) {
+            throw new IllegalArgumentException();
+        }
+        int required = countColumns(value);
+        for (int i = required; i < columns; i++) {
+            buf.append('0');
+        }
+        buf.append(value);
+    }
+
+    private static int countColumns(int value) {
+        assert value >= 0;
+        if (value == 0) {
+            return 1;
+        }
+        double log = Math.log10(value);
+        return (int) Math.floor(log) + 1;
     }
 }

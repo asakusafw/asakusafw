@@ -67,6 +67,7 @@ public class TextFieldDriver extends PropertyAttributeDriver {
         requireType(environment, settings.getDecimalOutputStyle(), declaration, BasicTypeKind.DECIMAL);
         requireType(environment, settings.getDateFormat(), declaration, BasicTypeKind.DATE);
         requireType(environment, settings.getDateTimeFormat(), declaration, BasicTypeKind.DATETIME);
+        requireType(environment, settings.getTimeZone(), declaration, BasicTypeKind.DATETIME);
     }
 
     private void requireType(

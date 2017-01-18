@@ -33,11 +33,11 @@ public final class DateOptionFieldAdapter extends ValueOptionFieldAdapter<DateOp
      */
     public static final String DEFAULT_FORMAT = "yyyy-MM-dd"; //$NON-NLS-1$
 
-    private final DateFormatter formatter;
+    private final DateAdapter formatter;
 
     DateOptionFieldAdapter(String nullFormat, String dateFormat) {
         super(nullFormat);
-        this.formatter = DateFormatter.newInstance(dateFormat);
+        this.formatter = DateAdapter.newInstance(dateFormat);
     }
 
     /**

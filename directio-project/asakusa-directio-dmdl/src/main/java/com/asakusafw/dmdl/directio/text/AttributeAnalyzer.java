@@ -18,6 +18,8 @@ package com.asakusafw.dmdl.directio.text;
 import static com.asakusafw.dmdl.directio.text.TextFormatConstants.*;
 
 import java.nio.charset.Charset;
+import java.time.DateTimeException;
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Optional;
@@ -170,7 +172,7 @@ public class AttributeAnalyzer {
     }
 
     /**
-     * Analyze the given element as a date format.
+     * Analyze the given element as a decimal format.
      * @param element the target element
      * @return the analyzed value, or undefined if the element value is not valid
      */
@@ -198,6 +200,32 @@ public class AttributeAnalyzer {
                 .map(s -> Value.of(element, new DatePattern(s)))
                 .orElseGet(() -> {
                     error(element, Messages.getString("AttributeAnalyzer.diagnosticNotDateFormat")); //$NON-NLS-1$
+                    return Value.undefined();
+                });
+    }
+
+    /**
+     * Analyze the given element as a time-zone ID.
+     * @param element the target element
+     * @return the analyzed value, or undefined if the element value is not valid
+     */
+    public Value<ZoneId> toZoneIdWithNull(AstAttributeElement element) {
+        if (isName(element.value, VALUE_NULL)) {
+            return Value.of(element, null);
+        }
+        return parseStringLiteral(element.value)
+                .filter(s -> {
+                    try {
+                        ZoneId.of(s);
+                        return true;
+                    } catch (DateTimeException e) {
+                        LOG.trace("invalid time zone: {}", s, e); //$NON-NLS-1$
+                        return false;
+                    }
+                })
+                .map(s -> Value.of(element, ZoneId.of(s)))
+                .orElseGet(() -> {
+                    error(element, Messages.getString("AttributeAnalyzer.diagnosticNotTimeZoneId")); //$NON-NLS-1$
                     return Value.undefined();
                 });
     }

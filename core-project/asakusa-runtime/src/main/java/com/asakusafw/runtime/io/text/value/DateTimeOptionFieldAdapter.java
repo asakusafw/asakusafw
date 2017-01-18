@@ -33,11 +33,11 @@ public final class DateTimeOptionFieldAdapter extends ValueOptionFieldAdapter<Da
      */
     public static final String DEFAULT_FORMAT = "yyyy-MM-dd HH:mm:ss"; //$NON-NLS-1$
 
-    private final DateTimeFormatter formatter;
+    private final DateTimeAdapter formatter;
 
-    DateTimeOptionFieldAdapter(String nullFormat, String dateTimeFormat) {
+    DateTimeOptionFieldAdapter(String nullFormat, String dateTimeFormat, String timeZone) {
         super(nullFormat);
-        this.formatter = DateTimeFormatter.newInstance(dateTimeFormat);
+        this.formatter = DateTimeAdapter.newInstance(dateTimeFormat, timeZone);
     }
 
     /**
@@ -74,6 +74,8 @@ public final class DateTimeOptionFieldAdapter extends ValueOptionFieldAdapter<Da
 
         private String dateTimeFormat = DEFAULT_FORMAT;
 
+        private String timeZone;
+
         /**
          * Sets the date-time format.
          * @param newValue the format string in {@link SimpleDateFormat}
@@ -84,9 +86,19 @@ public final class DateTimeOptionFieldAdapter extends ValueOptionFieldAdapter<Da
             return this;
         }
 
+        /**
+         * Sets the time zone.
+         * @param newValue a string representation of target time zone
+         * @return this
+         */
+        public Builder withTimeZone(String newValue) {
+            this.timeZone = newValue;
+            return this;
+        }
+
         @Override
         public DateTimeOptionFieldAdapter build() {
-            return new DateTimeOptionFieldAdapter(getNullFormat(), dateTimeFormat);
+            return new DateTimeOptionFieldAdapter(getNullFormat(), dateTimeFormat, timeZone);
         }
     }
 }
