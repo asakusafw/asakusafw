@@ -17,6 +17,7 @@ package com.asakusafw.dmdl.directio.text;
 
 import static com.asakusafw.dmdl.directio.text.TextFormatConstants.*;
 
+import java.time.ZoneId;
 import java.util.Map;
 
 import com.asakusafw.dmdl.directio.util.ClassName;
@@ -49,6 +50,8 @@ public class TextFieldSettings {
     private Value<DatePattern> dateFormat = Value.undefined();
 
     private Value<DatePattern> dateTimeFormat = Value.undefined();
+
+    private Value<ZoneId> timeZone = Value.undefined();
 
     private Value<DecimalOptionFieldAdapter.OutputStyle> decimalOutputStyle = Value.undefined();
 
@@ -119,6 +122,14 @@ public class TextFieldSettings {
     }
 
     /**
+     * Returns the time zone.
+     * @return the time zone
+     */
+    public Value<ZoneId> getTimeZone() {
+        return timeZone;
+    }
+
+    /**
      * Returns the decimal output style.
      * @return the decimal output style
      */
@@ -185,6 +196,7 @@ public class TextFieldSettings {
         consumeNumberFormat(settings, analyzer, elements.remove(ELEMENT_NUMBER_FORMAT));
         consumeDateFormat(settings, analyzer, elements.remove(ELEMENT_DATE_FORMAT));
         consumeDateTimeFormat(settings, analyzer, elements.remove(ELEMENT_DATETIME_FORMAT));
+        consumeTimeZone(settings, analyzer, elements.remove(ELEMENT_TIME_ZONE));
         consumeDecimalOutputStyle(settings, analyzer, elements.remove(ELEMENT_DECIMAL_OUTPUT_STYLE));
         consumeTrimInputWhitespaces(settings, analyzer, elements.remove(ELEMENT_TRIM_INPUT_WHITESPACES));
         consumeSkipEmptyInput(settings, analyzer, elements.remove(ELEMENT_SKIP_EMPTY_INPUT));
@@ -240,6 +252,13 @@ public class TextFieldSettings {
             TextFieldSettings settings, AttributeAnalyzer analyzer, AstAttributeElement element) {
         if (element != null) {
             settings.dateTimeFormat = analyzer.toDatePattern(element);
+        }
+    }
+
+    private static void consumeTimeZone(
+            TextFieldSettings settings, AttributeAnalyzer analyzer, AstAttributeElement element) {
+        if (element != null) {
+            settings.timeZone = analyzer.toZoneIdWithNull(element);
         }
     }
 
@@ -301,7 +320,9 @@ public class TextFieldSettings {
 
     private static void checkNotConflict(AttributeAnalyzer analyzer, Value<?> a, Value<?> b) {
         if (a.isPresent() && b.isPresent() && a.equals(b)) {
-            analyzer.error(a.getDeclaration(), Messages.getString("TextFieldSettings.diagnosticConflictFormat"), b.getDeclaration().name); //$NON-NLS-1$
+            analyzer.error(a.getDeclaration(),
+                    Messages.getString("TextFieldSettings.diagnosticConflictFormat"), //$NON-NLS-1$
+                    b.getDeclaration().name);
         }
     }
 }

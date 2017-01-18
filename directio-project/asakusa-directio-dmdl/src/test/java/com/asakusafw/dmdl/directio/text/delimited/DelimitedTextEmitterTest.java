@@ -25,11 +25,14 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
+import java.util.TimeZone;
 import java.util.function.Consumer;
 import java.util.zip.GZIPInputStream;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExternalResource;
 
 import com.asakusafw.dmdl.directio.common.driver.GeneratorTesterRoot;
 import com.asakusafw.dmdl.directio.text.mock.EmptyLineFilter;
@@ -57,6 +60,25 @@ import com.asakusafw.runtime.value.StringOption;
  * Test for {@link DelimitedTextEmitter}.
  */
 public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
+
+    /**
+     * Escapes time zone.
+     */
+    @Rule
+    public final ExternalResource escapeTimeZone = new ExternalResource() {
+        TimeZone escape;
+        @Override
+        protected void before() {
+            escape = TimeZone.getDefault();
+            TimeZone.setDefault(TimeZone.getTimeZone("PST"));
+        }
+        @Override
+        protected void after() {
+            if (escape != null) {
+                TimeZone.setDefault(escape);
+            }
+        }
+    };
 
     /**
      * Initializes the test.
@@ -1121,6 +1143,85 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     }
 
     /**
+     * w/ {@code timezone}.
+     * @throws Exception if failed
+     */
+    @Test
+    public void timezone() throws Exception {
+        ModelLoader loaded = generateJavaFromLines(new String[] {
+                "@directio.text.delimited(",
+                "  timezone = 'UTC',",
+                ")",
+                "simple = {",
+                "  a : DATETIME;",
+                "};",
+        });
+        byte[] contents = restore(loaded, loaded.newModel("Simple")
+                .setOption("a", new DateTimeOption(new DateTime(2017, 1, 2, 12, 34, 56))));
+        assertThat(text(contents), is("2017-01-02 20:34:56\n"));
+    }
+
+    /**
+     * w/ {@code timezone}.
+     * @throws Exception if failed
+     */
+    @Test
+    public void timezone_field() throws Exception {
+        ModelLoader loaded = generateJavaFromLines(new String[] {
+                "@directio.text.delimited",
+                "simple = {",
+                "  a : DATETIME;",
+                "  @directio.text.field(timezone = 'UTC')",
+                "  b : DATETIME;",
+                "};",
+        });
+        byte[] contents = restore(loaded, loaded.newModel("Simple")
+                .setOption("a", new DateTimeOption(new DateTime(2017, 1, 2, 12, 34, 56)))
+                .setOption("b", new DateTimeOption(new DateTime(2017, 1, 2, 12, 34, 56))));
+        assertThat(text(contents), is("2017-01-02 12:34:56\t2017-01-02 20:34:56\n"));
+    }
+
+    /**
+     * w/ {@code timezone}.
+     * @throws Exception if failed
+     */
+    @Test
+    public void timezone_null() throws Exception {
+        ModelLoader loaded = generateJavaFromLines(new String[] {
+                "@directio.text.delimited(",
+                "  timezone = 'UTC',",
+                ")",
+                "simple = {",
+                "  @directio.text.field(timezone = null)",
+                "  a : DATETIME;",
+                "  b : DATETIME;",
+                "};",
+        });
+        byte[] contents = restore(loaded, loaded.newModel("Simple")
+                .setOption("a", new DateTimeOption(new DateTime(2017, 1, 2, 12, 34, 56)))
+                .setOption("b", new DateTimeOption(new DateTime(2017, 1, 2, 12, 34, 56))));
+        assertThat(text(contents), is("2017-01-02 12:34:56\t2017-01-02 20:34:56\n"));
+    }
+
+    /**
+     * w/ {@code timezone} for non datetime field.
+     * @throws Exception if failed
+     */
+    @Test
+    public void timezone_inconsistent_type() throws Exception {
+        ModelLoader loaded = generateJavaFromLines(new String[] {
+                "@directio.text.delimited",
+                "simple = {",
+                "  @directio.text.field(timezone = 'UTC')",
+                "  a : TEXT;",
+                "};",
+        });
+        byte[] contents = restore(loaded, loaded.newModel("Simple")
+                .setOption("a", new StringOption("Hello, world!")));
+        assertThat(text(contents), is("Hello, world!\n"));
+    }
+
+    /**
      * w/ {@code decimal_output_style}.
      * @throws Exception if failed
      */
@@ -2008,6 +2109,22 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
         shouldSemanticErrorFromLines(new String[] {
                 "@directio.text.delimited(",
                 "  datetime_format = 'Hello, world!',",
+                ")",
+                "simple = {",
+                "  a : TEXT;",
+                "};",
+        });
+    }
+
+    /**
+     * malformed timezone.
+     * @throws Exception if failed
+     */
+    @Test
+    public void invalid_timezone_malformed() throws Exception {
+        shouldSemanticErrorFromLines(new String[] {
+                "@directio.text.delimited(",
+                "  timezone = 'Hello, world!',",
                 ")",
                 "simple = {",
                 "  a : TEXT;",

@@ -132,6 +132,11 @@ public final class TextFormatConstants {
     public static final String ELEMENT_DATETIME_FORMAT = "datetime_format"; //$NON-NLS-1$
 
     /**
+     * The element name of time-zone.
+     */
+    public static final String ELEMENT_TIME_ZONE = "timezone"; //$NON-NLS-1$
+
+    /**
      * The element name of whether or not trim leading/trailing white-space characters in inputs fields.
      */
     public static final String ELEMENT_TRIM_INPUT_WHITESPACES = "trim_input"; //$NON-NLS-1$

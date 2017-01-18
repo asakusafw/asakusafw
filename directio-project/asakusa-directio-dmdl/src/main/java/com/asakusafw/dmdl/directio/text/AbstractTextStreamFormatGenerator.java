@@ -369,6 +369,8 @@ public abstract class AbstractTextStreamFormatGenerator {
         case DATETIME:
             setting(settings, TextFieldSettings::getDateTimeFormat).ifPresent(v -> builder
                     .method("withDateTimeFormat", resolve(v.toString()))); //$NON-NLS-1$
+            setting(settings, TextFieldSettings::getTimeZone).ifPresent(v -> builder
+                    .method("withTimeZone", resolve(v.getId()))); //$NON-NLS-1$
             break;
         case DECIMAL:
             setting(settings, TextFieldSettings::getNumberFormat).ifPresent(v -> builder
