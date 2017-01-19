@@ -214,16 +214,15 @@ public class AttributeAnalyzer {
             return Value.of(element, null);
         }
         return parseStringLiteral(element.value)
-                .filter(s -> {
+                .flatMap(s -> {
                     try {
-                        ZoneId.of(s);
-                        return true;
+                        return Optional.of(ZoneId.of(s));
                     } catch (DateTimeException e) {
                         LOG.trace("invalid time zone: {}", s, e); //$NON-NLS-1$
-                        return false;
+                        return Optional.empty();
                     }
                 })
-                .map(s -> Value.of(element, ZoneId.of(s)))
+                .map(v -> Value.of(element, v))
                 .orElseGet(() -> {
                     error(element, Messages.getString("AttributeAnalyzer.diagnosticNotTimeZoneId")); //$NON-NLS-1$
                     return Value.undefined();
