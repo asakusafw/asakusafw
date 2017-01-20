@@ -20,6 +20,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Arrays;
 
 import org.apache.hadoop.io.DataInputBuffer;
@@ -30,10 +31,17 @@ import org.junit.Test;
 import com.asakusafw.runtime.io.util.WritableRawComparable;
 import com.asakusafw.runtime.stage.directio.StringTemplate.Format;
 import com.asakusafw.runtime.stage.directio.StringTemplate.FormatSpec;
+import com.asakusafw.runtime.value.ByteOption;
 import com.asakusafw.runtime.value.Date;
 import com.asakusafw.runtime.value.DateOption;
 import com.asakusafw.runtime.value.DateTime;
 import com.asakusafw.runtime.value.DateTimeOption;
+import com.asakusafw.runtime.value.DecimalOption;
+import com.asakusafw.runtime.value.DoubleOption;
+import com.asakusafw.runtime.value.FloatOption;
+import com.asakusafw.runtime.value.IntOption;
+import com.asakusafw.runtime.value.LongOption;
+import com.asakusafw.runtime.value.ShortOption;
 
 /**
  * Test for {@link StringTemplate}.
@@ -59,6 +67,83 @@ public class StringTemplateTest {
         Mock mock = new Mock(spec(NATURAL));
         mock.setMock("Hello, world!");
         assertThat(mock.apply(), is("Hello, world!"));
+    }
+
+    /**
+     * date placeholder.
+     * @throws Exception if failed
+     */
+    @Test
+    public void placeholder_byte() throws Exception {
+        Mock mock = new Mock(spec(BYTE, "0000"));
+        mock.setMock(new ByteOption((byte) 1));
+        assertThat(mock.apply(), is("0001"));
+    }
+
+    /**
+     * short placeholder.
+     * @throws Exception if failed
+     */
+    @Test
+    public void placeholder_short() throws Exception {
+        Mock mock = new Mock(spec(SHORT, "0000"));
+        mock.setMock(new ShortOption((short) 1));
+        assertThat(mock.apply(), is("0001"));
+    }
+
+    /**
+     * int placeholder.
+     * @throws Exception if failed
+     */
+    @Test
+    public void placeholder_int() throws Exception {
+        Mock mock = new Mock(spec(INT, "0000"));
+        mock.setMock(new IntOption(1));
+        assertThat(mock.apply(), is("0001"));
+    }
+
+    /**
+     * long placeholder.
+     * @throws Exception if failed
+     */
+    @Test
+    public void placeholder_long() throws Exception {
+        Mock mock = new Mock(spec(LONG, "0000"));
+        mock.setMock(new LongOption(1));
+        assertThat(mock.apply(), is("0001"));
+    }
+
+    /**
+     * float placeholder.
+     * @throws Exception if failed
+     */
+    @Test
+    public void placeholder_float() throws Exception {
+        Mock mock = new Mock(spec(FLOAT, "0000"));
+        mock.setMock(new FloatOption(1));
+        assertThat(mock.apply(), is("0001"));
+    }
+
+    /**
+     * double placeholder.
+     * @throws Exception if failed
+     */
+    @Test
+    public void placeholder_double() throws Exception {
+        Mock mock = new Mock(spec(DOUBLE, "0000"));
+        mock.setMock(new DoubleOption(1));
+        assertThat(mock.apply(), is("0001"));
+    }
+
+    /**
+     * decimal placeholder.
+     * @throws Exception if failed
+     */
+    @Test
+    public void placeholder_decimal() throws Exception {
+        Mock mock = new Mock(spec(DECIMAL, "0000"));
+        mock.setMock(new DecimalOption(BigDecimal.valueOf(1)));
+        assertThat(mock.apply(), is("0001"));
     }
 
     /**
@@ -204,8 +289,11 @@ public class StringTemplateTest {
 
     private static class Mock extends StringTemplate {
 
+        private final FormatSpec[] ss;
+
         Mock(FormatSpec... specs) {
             super(specs);
+            this.ss = specs;
         }
 
         void setMock(Object... values) {
@@ -216,7 +304,10 @@ public class StringTemplateTest {
         public void set(Object object) {
             Object[] values = (Object[]) object;
             for (int i = 0; i < values.length; i++) {
-                setProperty(i, values[i]);
+                FormatSpec spec = ss[i];
+                Object value = values[i];
+                spec.getFormat().check(value.getClass(), spec.getString());
+                setProperty(i, value);
             }
         }
     }
