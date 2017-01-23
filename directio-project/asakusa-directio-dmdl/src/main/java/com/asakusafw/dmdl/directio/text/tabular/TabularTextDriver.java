@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.dmdl.directio.text.delimited;
+package com.asakusafw.dmdl.directio.text.tabular;
 
 import static com.asakusafw.dmdl.directio.text.TextFormatConstants.*;
 
@@ -37,16 +37,16 @@ import com.asakusafw.dmdl.spi.ModelAttributeDriver;
 import com.asakusafw.dmdl.util.AttributeUtil;
 
 /**
- * Processes <code>&#64;directio.text.delimited</code> attributes.
+ * Processes <code>&#64;directio.text.tabular</code> attributes.
  * @since 0.9.1
  * @see TextFormatConstants
  */
-public class DelimitedTextDriver extends ModelAttributeDriver {
+public class TabularTextDriver extends ModelAttributeDriver {
 
     /**
      * The attribute name.
      */
-    public static final String NAME = PREFIX_NAMESPACE + "delimited"; //$NON-NLS-1$
+    public static final String NAME = PREFIX_NAMESPACE + "tabular"; //$NON-NLS-1$
 
     @Override
     public String getTargetName() {
@@ -60,15 +60,15 @@ public class DelimitedTextDriver extends ModelAttributeDriver {
         EscapeSettings escape = EscapeSettings.consume(environment, attribute, elements);
         TextFieldSettings field = TextFieldSettings.consume(environment, attribute, elements);
         environment.reportAll(AttributeUtil.reportInvalidElements(attribute, elements.values()));
-        DelimitedTextTrait trait = new DelimitedTextTrait(attribute, format, escape, field);
+        TabularTextTrait trait = new TabularTextTrait(attribute, format, escape, field);
         if (trait.verify(environment, declaration)) {
-            DelimitedTextTrait.register(environment, declaration, trait);
+            TabularTextTrait.register(environment, declaration, trait);
         }
     }
 
     @Override
     public void verify(DmdlSemantics environment, ModelDeclaration declaration, AstAttribute attribute) {
-        DelimitedTextTrait parent = DelimitedTextTrait.get(declaration);
+        TabularTextTrait parent = TabularTextTrait.get(declaration);
         verifyModel(environment, declaration, parent);
         declaration.getDeclaredProperties().stream()
             .filter(p -> TextFieldTrait.find(p).isPresent())
@@ -81,12 +81,12 @@ public class DelimitedTextDriver extends ModelAttributeDriver {
     }
 
     private static void verifyModel(
-            DmdlSemantics environment, ModelDeclaration declaration, DelimitedTextTrait trait) {
+            DmdlSemantics environment, ModelDeclaration declaration, TabularTextTrait trait) {
         if (declaration.getDeclaredProperties().stream()
                 .noneMatch(p -> TextFieldTrait.getKind(p) == TextFieldTrait.Kind.VALUE)) {
             environment.report(new Diagnostic(
                     Diagnostic.Level.ERROR, trait.getOriginalAst().name,
-                    Messages.getString("DelimitedTextDriver.diagnosticNoAvailableField"), //$NON-NLS-1$
+                    Messages.getString("TabularTextDriver.diagnosticNoAvailableField"), //$NON-NLS-1$
                     declaration.getName(),
                     trait.getOriginalAst().name));
         }
@@ -117,7 +117,7 @@ public class DelimitedTextDriver extends ModelAttributeDriver {
             String a, String b) {
         environment.report(new Diagnostic(
                 Diagnostic.Level.ERROR, property.getName(),
-                Messages.getString("DelimitedTextDriver.diagnosticConflictFormat"), //$NON-NLS-1$
+                Messages.getString("TabularTextDriver.diagnosticConflictFormat"), //$NON-NLS-1$
                 property.getOwner().getName(),
                 property.getName(),
                 a, b));

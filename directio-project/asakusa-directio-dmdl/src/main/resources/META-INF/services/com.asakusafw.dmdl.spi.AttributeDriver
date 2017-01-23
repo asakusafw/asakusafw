@@ -12,11 +12,7 @@ com.asakusafw.dmdl.directio.text.TextFileNameDriver
 com.asakusafw.dmdl.directio.text.TextLineNumberDriver
 com.asakusafw.dmdl.directio.text.TextRecordNumberDriver
 com.asakusafw.dmdl.directio.text.TextIgnoreDriver
-
-# Delimited Text
-com.asakusafw.dmdl.directio.text.delimited.DelimitedTextDriver
-
-# CSV Text
+com.asakusafw.dmdl.directio.text.tabular.TabularTextDriver
 com.asakusafw.dmdl.directio.text.csv.CsvTextDriver
 
 # Sequence File

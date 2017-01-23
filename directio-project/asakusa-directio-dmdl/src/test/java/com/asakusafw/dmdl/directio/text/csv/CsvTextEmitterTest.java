@@ -30,9 +30,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.asakusafw.dmdl.directio.common.driver.GeneratorTesterRoot;
-import com.asakusafw.dmdl.directio.text.delimited.DelimitedTextEmitterTest;
 import com.asakusafw.dmdl.directio.text.mock.EmptyLineFilter;
 import com.asakusafw.dmdl.directio.text.mock.UpperCaseTransformer;
+import com.asakusafw.dmdl.directio.text.tabular.TabularTextEmitterTest;
 import com.asakusafw.dmdl.java.emitter.driver.ObjectDriver;
 import com.asakusafw.runtime.directio.BinaryStreamFormat;
 import com.asakusafw.runtime.io.ModelInput;
@@ -43,7 +43,7 @@ import com.asakusafw.runtime.value.StringOption;
 
 /**
  * Test for {@link CsvTextEmitter}.
- * @see DelimitedTextEmitterTest
+ * @see TabularTextEmitterTest
  */
 public class CsvTextEmitterTest extends GeneratorTesterRoot {
 
@@ -363,6 +363,30 @@ public class CsvTextEmitterTest extends GeneratorTesterRoot {
                 .setOption("a", new StringOption("A"))
                 .setOption("b", new StringOption("B")));
         assertThat(text(contents), is("\"a\",\"b\"\r\n\"A\",\"B\"\r\n"));
+    }
+
+    /**
+     * w/ {@code header_quote_style}.
+     * @throws Exception if failed
+     */
+    @Test
+    public void header_quote_style_override() throws Exception {
+        ModelLoader loaded = generateJavaFromLines(new String[] {
+                "@directio.text.csv(",
+                "  header = force,",
+                "  quote_style = always,",
+                "  header_quote_style = never,",
+                ")",
+                "simple = {",
+                "  @directio.text.field(quote_style = always)",
+                "  a : TEXT;",
+                "  b : TEXT;",
+                "};",
+        });
+        byte[] contents = restore(loaded, loaded.newModel("Simple")
+                .setOption("a", new StringOption("A"))
+                .setOption("b", new StringOption("B")));
+        assertThat(text(contents), is("a,b\r\n\"A\",\"B\"\r\n"));
     }
 
     /**
@@ -722,7 +746,7 @@ public class CsvTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void invalid_field_empty() throws Exception {
         shouldSemanticErrorFromLines(new String[] {
-                "@directio.text.delimited",
+                "@directio.text.csv",
                 "simple = {",
                 "  @directio.text.ignore",
                 "  a : TEXT;",

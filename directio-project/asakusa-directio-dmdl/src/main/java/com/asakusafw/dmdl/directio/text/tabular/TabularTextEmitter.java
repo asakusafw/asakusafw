@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.dmdl.directio.text.delimited;
+package com.asakusafw.dmdl.directio.text.tabular;
 
 import static com.asakusafw.dmdl.directio.text.TextFormatConstants.*;
 
@@ -33,8 +33,8 @@ import com.asakusafw.dmdl.directio.util.MapValue;
 import com.asakusafw.dmdl.java.emitter.EmitContext;
 import com.asakusafw.dmdl.java.spi.JavaDataModelDriver;
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
-import com.asakusafw.runtime.io.text.delimited.DelimitedTextFormat;
-import com.asakusafw.runtime.io.text.delimited.EscapeSequence;
+import com.asakusafw.runtime.io.text.tabular.EscapeSequence;
+import com.asakusafw.runtime.io.text.tabular.TabularTextFormat;
 import com.asakusafw.utils.java.model.syntax.ModelFactory;
 import com.asakusafw.utils.java.model.syntax.Name;
 import com.asakusafw.utils.java.model.syntax.SimpleName;
@@ -43,16 +43,16 @@ import com.asakusafw.utils.java.model.util.ExpressionBuilder;
 import com.asakusafw.utils.java.model.util.TypeBuilder;
 
 /**
- * Emits Direct I/O data format classes about delimited text.
+ * Emits Direct I/O data format classes about tabular text.
  * @since 0.9.1
  */
-public class DelimitedTextEmitter extends JavaDataModelDriver {
+public class TabularTextEmitter extends JavaDataModelDriver {
 
-    static final Logger LOG = LoggerFactory.getLogger(DelimitedTextEmitter.class);
+    static final Logger LOG = LoggerFactory.getLogger(TabularTextEmitter.class);
 
     @Override
     public void generateResources(EmitContext context, ModelDeclaration model) throws IOException {
-        if (DelimitedTextTrait.find(model).isPresent() == false) {
+        if (TabularTextTrait.find(model).isPresent() == false) {
             return;
         }
         Name supportName = generateFormat(context, model);
@@ -63,17 +63,17 @@ public class DelimitedTextEmitter extends JavaDataModelDriver {
     private static Name generateFormat(EmitContext context, ModelDeclaration model) throws IOException {
         assert context != null;
         assert model != null;
-        DelimitedTextTrait trait = DelimitedTextTrait.get(model);
+        TabularTextTrait trait = TabularTextTrait.get(model);
         EmitContext next = new EmitContext(
                 context.getSemantics(),
                 context.getConfiguration(),
                 model,
                 PACKAGE_SEGMENT,
-                "{0}DelimitedTextFormat"); //$NON-NLS-1$
-        LOG.debug("Generating delimited text format for {}", //$NON-NLS-1$
+                "{0}TabularTextFormat"); //$NON-NLS-1$
+        LOG.debug("Generating tabular text format for {}", //$NON-NLS-1$
                 context.getQualifiedTypeName().toNameString());
         FormatGenerator.emit(next, model, trait);
-        LOG.debug("Generated delimited text format for {}: {}", //$NON-NLS-1$
+        LOG.debug("Generated tabular text format for {}: {}", //$NON-NLS-1$
                 context.getQualifiedTypeName().toNameString(),
                 next.getQualifiedTypeName().toNameString());
         return next.getQualifiedTypeName();
@@ -86,9 +86,9 @@ public class DelimitedTextEmitter extends JavaDataModelDriver {
                 context.getConfiguration(),
                 model,
                 PACKAGE_SEGMENT,
-                "Abstract{0}DelimitedTextInputDescription"); //$NON-NLS-1$
+                "Abstract{0}TabularTextInputDescription"); //$NON-NLS-1$
         DirectFileInputDescriptionGenerator.Description desc = new DirectFileInputDescriptionGenerator.Description(
-                "Delimited text file input", context.getQualifiedTypeName()); //$NON-NLS-1$
+                "Tabular text file input", context.getQualifiedTypeName()); //$NON-NLS-1$
         desc.setFormatClassName(formatClassName);
         DirectFileInputDescriptionGenerator.generate(next, desc);
     }
@@ -100,36 +100,36 @@ public class DelimitedTextEmitter extends JavaDataModelDriver {
                 context.getConfiguration(),
                 model,
                 PACKAGE_SEGMENT,
-                "Abstract{0}DelimitedTextOutputDescription"); //$NON-NLS-1$
+                "Abstract{0}TabularTextOutputDescription"); //$NON-NLS-1$
         DirectFileOutputDescriptionGenerator.Description desc = new DirectFileOutputDescriptionGenerator.Description(
-                "Delimited text file output", context.getQualifiedTypeName()); //$NON-NLS-1$
+                "Tabular text file output", context.getQualifiedTypeName()); //$NON-NLS-1$
         desc.setFormatClassName(formatClassName);
         DirectFileOutputDescriptionGenerator.generate(next, desc);
     }
 
     private static final class FormatGenerator extends AbstractTextStreamFormatGenerator {
 
-        private final DelimitedTextTrait root;
+        private final TabularTextTrait root;
 
         private final ModelFactory f;
 
-        private FormatGenerator(EmitContext context, ModelDeclaration model, DelimitedTextTrait root) {
+        private FormatGenerator(EmitContext context, ModelDeclaration model, TabularTextTrait root) {
             super(context, model, root.getFormatSettings(), root.getFieldSettings());
             this.root = root;
             this.f = context.getModelFactory();
         }
 
-        static void emit(EmitContext context, ModelDeclaration model, DelimitedTextTrait trait) throws IOException {
-            new FormatGenerator(context, model, trait).emit(Messages.getString("DelimitedTextEmitter.javadocTitle")); //$NON-NLS-1$
+        static void emit(EmitContext context, ModelDeclaration model, TabularTextTrait trait) throws IOException {
+            new FormatGenerator(context, model, trait).emit(Messages.getString("TabularTextEmitter.javadocTitle")); //$NON-NLS-1$
         }
 
         @Override
         protected List<Statement> createGetTextFormatInternal() {
             SimpleName builder = f.newSimpleName("builder"); //$NON-NLS-1$
             List<Statement> statements = new ArrayList<>();
-            statements.add(new TypeBuilder(f, context.resolve(DelimitedTextFormat.class))
+            statements.add(new TypeBuilder(f, context.resolve(TabularTextFormat.class))
                     .method("builder") //$NON-NLS-1$
-                    .toLocalVariableDeclaration(context.resolve(DelimitedTextFormat.Builder.class), builder));
+                    .toLocalVariableDeclaration(context.resolve(TabularTextFormat.Builder.class), builder));
             buildTextFormat(statements, builder);
             statements.add(new ExpressionBuilder(f, builder)
                     .method("build") //$NON-NLS-1$

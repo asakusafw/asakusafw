@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.dmdl.directio.text.delimited;
+package com.asakusafw.dmdl.directio.text.tabular;
 
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 final class Messages {
-    private static final String BUNDLE_NAME = "com.asakusafw.dmdl.directio.text.delimited.messages"; //$NON-NLS-1$
+    private static final String BUNDLE_NAME = "com.asakusafw.dmdl.directio.text.tabular.messages"; //$NON-NLS-1$
 
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 

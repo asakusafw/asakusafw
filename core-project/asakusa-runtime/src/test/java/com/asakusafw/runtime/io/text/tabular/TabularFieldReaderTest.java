@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.runtime.io.text.delimited;
+package com.asakusafw.runtime.io.text.tabular;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
@@ -27,9 +27,9 @@ import java.util.function.UnaryOperator;
 import org.junit.Test;
 
 /**
- * Test for {@link DelimitedFieldReader}.
+ * Test for {@link TabularFieldReader}.
  */
-public class DelimitedFieldReaderTest {
+public class TabularFieldReaderTest {
 
     private EscapeSequence escape = EscapeSequence.builder('\\')
             .addMapping('\\', '\\')
@@ -288,7 +288,7 @@ public class DelimitedFieldReaderTest {
      */
     @Test
     public void indices() throws Exception {
-        try (DelimitedFieldReader reader = reader(null, "A\tB\tC")) {
+        try (TabularFieldReader reader = reader(null, "A\tB\tC")) {
             assertThat(reader.nextRecord(), is(true));
 
             assertThat(reader.nextField(), is(true));
@@ -318,7 +318,7 @@ public class DelimitedFieldReaderTest {
      */
     @Test
     public void indices_multiline() throws Exception {
-        try (DelimitedFieldReader reader = reader(null, "A", "B", "C")) {
+        try (TabularFieldReader reader = reader(null, "A", "B", "C")) {
             assertThat(reader.nextRecord(), is(true));
 
             assertThat(reader.nextField(), is(true));
@@ -356,7 +356,7 @@ public class DelimitedFieldReaderTest {
      */
     @Test
     public void indices_filter() throws Exception {
-        try (DelimitedFieldReader reader = reader(s -> s.toString().equals("B") ? null : s, "A", "B", "C")) {
+        try (TabularFieldReader reader = reader(s -> s.toString().equals("B") ? null : s, "A", "B", "C")) {
             assertThat(reader.nextRecord(), is(true));
 
             assertThat(reader.nextField(), is(true));
@@ -384,7 +384,7 @@ public class DelimitedFieldReaderTest {
     }
 
     private String[][] read(UnaryOperator<CharSequence> transformer, String... lines) {
-        try (DelimitedFieldReader reader = reader(transformer, lines)) {
+        try (TabularFieldReader reader = reader(transformer, lines)) {
             List<List<String>> results = new ArrayList<>();
             while (reader.nextRecord()) {
                 List<String> row = new ArrayList<>();
@@ -402,8 +402,8 @@ public class DelimitedFieldReaderTest {
         }
     }
 
-    private DelimitedFieldReader reader(UnaryOperator<CharSequence> transformer, String... lines) {
-        return new DelimitedFieldReader(
+    private TabularFieldReader reader(UnaryOperator<CharSequence> transformer, String... lines) {
+        return new TabularFieldReader(
                 new StringReader(String.join("\n", lines)), '\t', escape, transformer);
     }
 }

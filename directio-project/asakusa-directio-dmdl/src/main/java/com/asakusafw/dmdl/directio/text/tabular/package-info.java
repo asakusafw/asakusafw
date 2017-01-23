@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * Delimited text support for Direct I/O.
+ * Tabular-style text support for Direct I/O.
  */
-package com.asakusafw.dmdl.directio.text.delimited;
+package com.asakusafw.dmdl.directio.text.tabular;

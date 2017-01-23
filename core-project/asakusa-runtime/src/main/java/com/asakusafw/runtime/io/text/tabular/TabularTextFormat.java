@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.runtime.io.text.delimited;
+package com.asakusafw.runtime.io.text.tabular;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,10 +32,10 @@ import com.asakusafw.runtime.io.text.LineSeparator;
 import com.asakusafw.runtime.io.text.TextFormat;
 
 /**
- * An implementation of {@link TextFormat} for delimited text files.
+ * An implementation of {@link TextFormat} for tabular-style text files.
  * @since 0.9.1
  */
-public class DelimitedTextFormat implements TextFormat {
+public class TabularTextFormat implements TextFormat {
 
     /**
      * The default charset.
@@ -64,7 +64,7 @@ public class DelimitedTextFormat implements TextFormat {
 
     private final Supplier<? extends UnaryOperator<CharSequence>> outputTransformer;
 
-    DelimitedTextFormat(
+    TabularTextFormat(
             Charset charset,
             LineSeparator lineSeparator, char fieldSeparator,
             EscapeSequence escapeSequence,
@@ -87,26 +87,26 @@ public class DelimitedTextFormat implements TextFormat {
     }
 
     @Override
-    public DelimitedFieldReader open(InputStream input) throws IOException {
+    public TabularFieldReader open(InputStream input) throws IOException {
         return open(new InputStreamReader(input, charset));
     }
 
     @Override
-    public DelimitedFieldWriter open(OutputStream output) throws IOException {
+    public TabularFieldWriter open(OutputStream output) throws IOException {
         return open(new OutputStreamWriter(output, charset));
     }
 
     @Override
-    public DelimitedFieldReader open(Reader input) throws IOException {
-        return new DelimitedFieldReader(
+    public TabularFieldReader open(Reader input) throws IOException {
+        return new TabularFieldReader(
                 input,
                 fieldSeparator, escapeSequence,
                 inputTransformer.get());
     }
 
     @Override
-    public DelimitedFieldWriter open(Writer output) throws IOException {
-        return new DelimitedFieldWriter(
+    public TabularFieldWriter open(Writer output) throws IOException {
+        return new TabularFieldWriter(
                 output,
                 lineSeparator, fieldSeparator, escapeSequence,
                 outputTransformer.get());
@@ -121,7 +121,7 @@ public class DelimitedTextFormat implements TextFormat {
     }
 
     /**
-     * A builder of {@link DelimitedTextFormat}.
+     * A builder of {@link TabularTextFormat}.
      * @since 0.9.1
      */
     public static class Builder {
@@ -243,11 +243,11 @@ public class DelimitedTextFormat implements TextFormat {
         }
 
         /**
-         * Builds a {@link DelimitedTextFormat}.
+         * Builds a {@link TabularTextFormat}.
          * @return the built object
          */
-        public DelimitedTextFormat build() {
-            return new DelimitedTextFormat(
+        public TabularTextFormat build() {
+            return new TabularTextFormat(
                     charset,
                     lineSeparator, fieldSeparator,
                     escapeSequence,

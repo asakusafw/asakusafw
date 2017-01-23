@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.dmdl.directio.text.delimited;
+package com.asakusafw.dmdl.directio.text.tabular;
 
 import static com.asakusafw.dmdl.directio.text.TextFormatConstants.*;
 
@@ -28,15 +28,15 @@ import com.asakusafw.dmdl.model.AstAttribute;
 import com.asakusafw.dmdl.semantics.DmdlSemantics;
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
 import com.asakusafw.dmdl.semantics.Trait;
-import com.asakusafw.runtime.io.text.delimited.DelimitedTextFormat;
+import com.asakusafw.runtime.io.text.tabular.TabularTextFormat;
 
 /**
- * Attributes of delimited text models.
+ * Attributes of tabular text models.
  * @since 0.9.1
  */
-public class DelimitedTextTrait implements Trait<DelimitedTextTrait> {
+public class TabularTextTrait implements Trait<TabularTextTrait> {
 
-    static final char DEFAULT_FIELD_SEPARATOR = DelimitedTextFormat.DEFAULT_FIELD_SEPARATOR;
+    static final char DEFAULT_FIELD_SEPARATOR = TabularTextFormat.DEFAULT_FIELD_SEPARATOR;
 
     private final AstAttribute attribute;
 
@@ -53,7 +53,7 @@ public class DelimitedTextTrait implements Trait<DelimitedTextTrait> {
      * @param escapeSettings the escape settings
      * @param fieldSettings the field settings
      */
-    public DelimitedTextTrait(
+    public TabularTextTrait(
             AstAttribute attribute,
             TextFormatSettings formatSettings,
             EscapeSettings escapeSettings,
@@ -64,24 +64,24 @@ public class DelimitedTextTrait implements Trait<DelimitedTextTrait> {
         this.fieldSettings = fieldSettings;
     }
 
-    static Optional<DelimitedTextTrait> find(ModelDeclaration declaration) {
-        return Optional.ofNullable(declaration.getTrait(DelimitedTextTrait.class));
+    static Optional<TabularTextTrait> find(ModelDeclaration declaration) {
+        return Optional.ofNullable(declaration.getTrait(TabularTextTrait.class));
     }
 
-    static DelimitedTextTrait get(ModelDeclaration declaration) {
-        return Optional.ofNullable(declaration.getTrait(DelimitedTextTrait.class))
+    static TabularTextTrait get(ModelDeclaration declaration) {
+        return Optional.ofNullable(declaration.getTrait(TabularTextTrait.class))
                 .orElseThrow(IllegalStateException::new);
     }
 
-    static void register(DmdlSemantics environment, ModelDeclaration declaration, DelimitedTextTrait trait) {
+    static void register(DmdlSemantics environment, ModelDeclaration declaration, TabularTextTrait trait) {
         if (find(declaration).isPresent()) {
             environment.report(new Diagnostic(
                     Diagnostic.Level.ERROR, trait.attribute.name,
-                    Messages.getString("DelimitedTextTrait.diagnosticDuplicateAttribute"), //$NON-NLS-1$
+                    Messages.getString("TabularTextTrait.diagnosticDuplicateAttribute"), //$NON-NLS-1$
                     trait.attribute.name,
                     declaration.getName().identifier));
         } else {
-            declaration.putTrait(DelimitedTextTrait.class, trait);
+            declaration.putTrait(TabularTextTrait.class, trait);
         }
     }
 
@@ -129,7 +129,7 @@ public class DelimitedTextTrait implements Trait<DelimitedTextTrait> {
             if (fieldSeparator == escapeCharacter) {
                 analyzer.error(
                         escapeSettings.getCharacter().getDeclaration(),
-                        Messages.getString("DelimitedTextTrait.diagnosticConflictCharacter"), //$NON-NLS-1$
+                        Messages.getString("TabularTextTrait.diagnosticConflictCharacter"), //$NON-NLS-1$
                         ELEMENT_FIELD_SEPARATOR);
             }
         }

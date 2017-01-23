@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * Extracting and generating delimited field text..
+ * Extracting and generating tabular-style text files.
  */
-package com.asakusafw.runtime.io.text.delimited;
+package com.asakusafw.runtime.io.text.tabular;
