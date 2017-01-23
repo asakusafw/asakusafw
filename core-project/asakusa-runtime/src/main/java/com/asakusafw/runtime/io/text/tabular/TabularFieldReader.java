@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.runtime.io.text.delimited;
+package com.asakusafw.runtime.io.text.tabular;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -23,10 +23,10 @@ import java.util.function.UnaryOperator;
 import com.asakusafw.runtime.io.text.FieldReader;
 
 /**
- * A {@link FieldReader} for delimited text contents.
+ * A {@link FieldReader} for tabular-style text contents.
  * @since 0.9.1
  */
-public class DelimitedFieldReader implements FieldReader {
+public class TabularFieldReader implements FieldReader {
 
     private static final int EOF = -1;
 
@@ -63,7 +63,7 @@ public class DelimitedFieldReader implements FieldReader {
      * @param escapeSequences the escape sequences definition (nullable)
      * @param transformer the line content transformer (nullable)
      */
-    public DelimitedFieldReader(
+    public TabularFieldReader(
             Reader reader,
             char fieldSeparator,
             EscapeSequence escapeSequences,

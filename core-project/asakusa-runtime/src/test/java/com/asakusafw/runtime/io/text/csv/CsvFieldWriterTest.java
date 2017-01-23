@@ -28,8 +28,8 @@ import org.junit.Test;
 
 import com.asakusafw.runtime.io.text.FieldWriter;
 import com.asakusafw.runtime.io.text.LineSeparator;
-import com.asakusafw.runtime.io.text.UnmappableOutputException;
 import com.asakusafw.runtime.io.text.UnmappableOutput.ErrorCode;
+import com.asakusafw.runtime.io.text.UnmappableOutputException;
 import com.asakusafw.runtime.io.text.driver.BasicFieldOutput;
 import com.asakusafw.runtime.io.text.driver.FieldOutput;
 import com.asakusafw.runtime.io.text.driver.StandardFieldOutputOption;

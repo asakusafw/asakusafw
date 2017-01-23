@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.runtime.io.text.delimited;
+package com.asakusafw.runtime.io.text.tabular;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -29,10 +29,10 @@ import com.asakusafw.runtime.io.text.UnmappableOutputException;
 import com.asakusafw.runtime.io.text.driver.FieldOutput;
 
 /**
- * A {@link FieldWriter} for delimited text contents.
+ * A {@link FieldWriter} for tabular style text contents.
  * @since 0.9.1
  */
-public class DelimitedFieldWriter implements FieldWriter {
+public class TabularFieldWriter implements FieldWriter {
 
     private static final int ABSENT = -2;
 
@@ -72,7 +72,7 @@ public class DelimitedFieldWriter implements FieldWriter {
      * @param escapeSequences the escape sequences definition (nullable)
      * @param transformer the output transformer (nullable)
      */
-    public DelimitedFieldWriter(
+    public TabularFieldWriter(
             Writer writer,
             LineSeparator lineSeparator,
             char fieldSeparator,

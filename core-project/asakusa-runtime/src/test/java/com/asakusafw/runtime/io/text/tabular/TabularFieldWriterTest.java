@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.runtime.io.text.delimited;
+package com.asakusafw.runtime.io.text.tabular;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
@@ -29,14 +29,14 @@ import org.junit.Test;
 import com.asakusafw.runtime.io.text.FieldWriter;
 import com.asakusafw.runtime.io.text.LineSeparator;
 import com.asakusafw.runtime.io.text.UnmappableOutput.ErrorCode;
+import com.asakusafw.runtime.io.text.UnmappableOutputException;
 import com.asakusafw.runtime.io.text.driver.BasicFieldOutput;
 import com.asakusafw.runtime.io.text.driver.FieldOutput;
-import com.asakusafw.runtime.io.text.UnmappableOutputException;
 
 /**
- * Test for {@link DelimitedFieldWriter}.
+ * Test for {@link TabularFieldWriter}.
  */
-public class DelimitedFieldWriterTest {
+public class TabularFieldWriterTest {
 
     private LineSeparator lineSeparator = LineSeparator.UNIX;
 
@@ -781,7 +781,7 @@ public class DelimitedFieldWriterTest {
 
     private String emit(UnaryOperator<CharSequence> transformer, Action action) {
         StringWriter writer = new StringWriter();
-        try (DelimitedFieldWriter w = new DelimitedFieldWriter(writer, lineSeparator, '\t', escape, transformer)) {
+        try (TabularFieldWriter w = new TabularFieldWriter(writer, lineSeparator, '\t', escape, transformer)) {
             action.perform(w);
         } catch (IOException e) {
             throw new AssertionError(e);

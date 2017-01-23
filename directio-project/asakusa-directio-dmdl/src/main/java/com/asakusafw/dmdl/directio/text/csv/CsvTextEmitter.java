@@ -68,10 +68,10 @@ public class CsvTextEmitter extends JavaDataModelDriver {
                 model,
                 PACKAGE_SEGMENT,
                 "{0}CsvTextFormat"); //$NON-NLS-1$
-        LOG.debug("Generating delimited text format for {}", //$NON-NLS-1$
+        LOG.debug("Generating CSV format for {}", //$NON-NLS-1$
                 context.getQualifiedTypeName().toNameString());
         FormatGenerator.emit(next, model, trait);
-        LOG.debug("Generated delimited text format for {}: {}", //$NON-NLS-1$
+        LOG.debug("Generated CSV format for {}: {}", //$NON-NLS-1$
                 context.getQualifiedTypeName().toNameString(),
                 next.getQualifiedTypeName().toNameString());
         return next.getQualifiedTypeName();

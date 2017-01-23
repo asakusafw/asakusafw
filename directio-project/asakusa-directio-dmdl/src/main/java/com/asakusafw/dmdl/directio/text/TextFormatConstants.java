@@ -254,7 +254,7 @@ public final class TextFormatConstants {
      */
     public static final String ELEMENT_HEADER_QUOTE_STYLE = "header_" + ELEMENT_QUOTE_STYLE; //$NON-NLS-1$
 
-    // delimited text
+    // tabular
 
     /**
      * The element name of escape character.

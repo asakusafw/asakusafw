@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.dmdl.directio.text.delimited;
+package com.asakusafw.dmdl.directio.text.tabular;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
@@ -57,9 +57,9 @@ import com.asakusafw.runtime.value.ShortOption;
 import com.asakusafw.runtime.value.StringOption;
 
 /**
- * Test for {@link DelimitedTextEmitter}.
+ * Test for {@link TabularTextEmitter}.
  */
-public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
+public class TabularTextEmitterTest extends GeneratorTesterRoot {
 
     /**
      * Escapes time zone.
@@ -86,7 +86,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
      */
     @Before
     public void setUp() throws Exception {
-        emitDrivers.add(new DelimitedTextEmitter());
+        emitDrivers.add(new TabularTextEmitter());
         emitDrivers.add(new ObjectDriver());
     }
 
@@ -97,13 +97,13 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void simple() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited",
+                "@directio.text.tabular",
                 "simple = { value : TEXT; };",
         });
         ModelWrapper model = loaded.newModel("Simple")
                 .setOption("value", new StringOption("Hello, world!"));
 
-        BinaryStreamFormat<?> support = (BinaryStreamFormat<?>) loaded.newObject("text", "SimpleDelimitedTextFormat");
+        BinaryStreamFormat<?> support = (BinaryStreamFormat<?>) loaded.newObject("text", "SimpleTabularTextFormat");
         assertThat(support.getSupportedType(), is((Object) model.unwrap().getClass()));
         assertThat(support.getMinimumFragmentSize(), is(not(-1L)));
 
@@ -131,7 +131,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void multiple() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited",
+                "@directio.text.tabular",
                 "simple = {",
                 "  a : TEXT;",
                 "  b : TEXT;",
@@ -161,7 +161,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void type_boolean() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited",
+                "@directio.text.tabular",
                 "simple = {",
                 "  a : BOOLEAN;",
                 "};",
@@ -178,7 +178,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void type_byte() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited",
+                "@directio.text.tabular",
                 "simple = {",
                 "  a : BYTE;",
                 "};",
@@ -195,7 +195,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void type_short() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited",
+                "@directio.text.tabular",
                 "simple = {",
                 "  a : SHORT;",
                 "};",
@@ -212,7 +212,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void type_int() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited",
+                "@directio.text.tabular",
                 "simple = {",
                 "  a : INT;",
                 "};",
@@ -229,7 +229,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void type_long() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited",
+                "@directio.text.tabular",
                 "simple = {",
                 "  a : LONG;",
                 "};",
@@ -246,7 +246,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void type_float() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited",
+                "@directio.text.tabular",
                 "simple = {",
                 "  a : FLOAT;",
                 "};",
@@ -263,7 +263,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void type_double() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited",
+                "@directio.text.tabular",
                 "simple = {",
                 "  a : DOUBLE;",
                 "};",
@@ -280,7 +280,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void header() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  header = force,",
                 ")",
                 "simple = {",
@@ -301,7 +301,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void header_name() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  header = force,",
                 ")",
                 "simple = {",
@@ -323,14 +323,14 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void charset() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  charset = 'UTF-16LE',",
                 ")",
                 "simple = {",
                 "  a : TEXT;",
                 "};",
         });
-        BinaryStreamFormat<?> support = (BinaryStreamFormat<?>) loaded.newObject("text", "SimpleDelimitedTextFormat");
+        BinaryStreamFormat<?> support = (BinaryStreamFormat<?>) loaded.newObject("text", "SimpleTabularTextFormat");
         assertThat(support.getMinimumFragmentSize(), is(-1L));
 
         ModelWrapper model = loaded.newModel("Simple")
@@ -346,7 +346,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void compression() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  compression = gzip,",
                 ")",
                 "simple = {",
@@ -373,7 +373,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void line_separator() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  line_separator = windows,",
                 ")",
                 "simple = {",
@@ -393,7 +393,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void field_separator() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  field_separator = ':',",
                 ")",
                 "simple = {",
@@ -417,7 +417,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void escape_sequence() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  escape_character = '^',",
                 "  escape_sequence = {",
                 "    't' : '\\t'",
@@ -442,7 +442,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void escape_sequence_empty() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  escape_character = '^',",
                 "  escape_sequence = {},",
                 ")",
@@ -465,7 +465,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void escape_sequence_null() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  escape_character = '^',",
                 "  escape_sequence = {",
                 "    'N' : null",
@@ -488,7 +488,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void escape_line_separator() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  escape_character = '^',",
                 "  escape_line_separator = true,",
                 ")",
@@ -511,7 +511,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void escape_line_separator_false() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  escape_character = '^',",
                 "  escape_line_separator = false,",
                 ")",
@@ -531,7 +531,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void input_transformer() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  input_transformer = '" + EmptyLineFilter.class.getName() + "'",
                 ")",
                 "simple = {",
@@ -550,7 +550,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void output_transformer() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  output_transformer = '" + UpperCaseTransformer.class.getName() + "'",
                 ")",
                 "simple = {",
@@ -570,7 +570,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void on_less_input() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  on_less_input = report,",
                 ")",
                 "simple = {",
@@ -591,7 +591,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void on_more_input() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  on_more_input = report,",
                 ")",
                 "simple = {",
@@ -612,7 +612,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void trim_input() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  trim_input = true,",
                 ")",
                 "simple = {",
@@ -635,7 +635,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void trim_input_field() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited",
+                "@directio.text.tabular",
                 "simple = {",
                 "  a : TEXT;",
                 "  @directio.text.field(trim_input = true)",
@@ -657,7 +657,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void skip_empty_input() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  skip_empty_input = true,",
                 ")",
                 "simple = {",
@@ -678,7 +678,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void skip_empty_input_field() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited",
+                "@directio.text.tabular",
                 "simple = {",
                 "  @directio.text.field(skip_empty_input = true)",
                 "  a : TEXT;",
@@ -700,7 +700,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void on_malformed_input() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  on_malformed_input = report,",
                 ")",
                 "simple = {",
@@ -723,7 +723,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void on_malformed_input_field() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited",
+                "@directio.text.tabular",
                 "simple = {",
                 "  @directio.text.field(on_malformed_input = report)",
                 "  a : INT;",
@@ -744,7 +744,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void on_unmappable_output() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  on_unmappable_output = report,",
                 ")",
                 "simple = {",
@@ -763,7 +763,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void on_unmappable_output_field() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited",
+                "@directio.text.tabular",
                 "simple = {",
                 "  @directio.text.field(on_unmappable_output = report)",
                 "  a : INT;",
@@ -787,7 +787,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void null_format() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  null_format = 'OK',",
                 ")",
                 "simple = {",
@@ -806,7 +806,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void null_format_field() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  null_format = 'OK',",
                 ")",
                 "simple = {",
@@ -828,7 +828,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void null_format_field_null() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  null_format = 'OK',",
                 ")",
                 "simple = {",
@@ -847,7 +847,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void true_format() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  true_format = 'A',",
                 ")",
                 "simple = {",
@@ -868,7 +868,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void true_format_field() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  true_format = 'A',",
                 ")",
                 "simple = {",
@@ -890,7 +890,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void true_format_inconsistent_type() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited",
+                "@directio.text.tabular",
                 "simple = {",
                 "  @directio.text.field(true_format = '_')",
                 "  a : TEXT;",
@@ -908,7 +908,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void false_format() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  false_format = 'B',",
                 ")",
                 "simple = {",
@@ -929,7 +929,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void false_format_field() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  false_format = 'B',",
                 ")",
                 "simple = {",
@@ -951,7 +951,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void false_format_inconsistent_type() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited",
+                "@directio.text.tabular",
                 "simple = {",
                 "  @directio.text.field(false_format = '_')",
                 "  a : TEXT;",
@@ -969,7 +969,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void number_format() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  number_format = '0.00',",
                 ")",
                 "simple = {",
@@ -990,7 +990,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void number_format_integer() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  number_format = '#,###;(#,###)',",
                 ")",
                 "simple = {",
@@ -1011,7 +1011,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void number_format_field() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  number_format = '0',",
                 ")",
                 "simple = {",
@@ -1033,7 +1033,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void number_format_field_null() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  number_format = '#,###',",
                 ")",
                 "simple = {",
@@ -1055,7 +1055,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void number_format_inconsistent_type() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited",
+                "@directio.text.tabular",
                 "simple = {",
                 "  @directio.text.field(number_format = '#,###')",
                 "  a : TEXT;",
@@ -1073,7 +1073,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void date_format() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  date_format = 'yyyy_MM_dd',",
                 ")",
                 "simple = {",
@@ -1092,7 +1092,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void date_format_field() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited",
+                "@directio.text.tabular",
                 "simple = {",
                 "  @directio.text.field(date_format = 'yyyy_MM_dd')",
                 "  a : DATE;",
@@ -1112,7 +1112,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void datetime_format() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  datetime_format = 'yyyy_MM_dd HH-mm-ss',",
                 ")",
                 "simple = {",
@@ -1131,7 +1131,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void datetime_format_field() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited",
+                "@directio.text.tabular",
                 "simple = {",
                 "  @directio.text.field(datetime_format = 'yyyy_MM_dd HH-mm-ss')",
                 "  a : DATETIME;",
@@ -1151,7 +1151,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void datetime_format_inconsistent_type() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited",
+                "@directio.text.tabular",
                 "simple = {",
                 "  @directio.text.field(datetime_format = '_')",
                 "  a : TEXT;",
@@ -1169,7 +1169,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void timezone() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  timezone = 'UTC',",
                 ")",
                 "simple = {",
@@ -1188,7 +1188,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void timezone_field() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited",
+                "@directio.text.tabular",
                 "simple = {",
                 "  a : DATETIME;",
                 "  @directio.text.field(timezone = 'UTC')",
@@ -1208,7 +1208,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void timezone_null() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  timezone = 'UTC',",
                 ")",
                 "simple = {",
@@ -1230,7 +1230,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void timezone_inconsistent_type() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited",
+                "@directio.text.tabular",
                 "simple = {",
                 "  @directio.text.field(timezone = 'UTC')",
                 "  a : TEXT;",
@@ -1248,7 +1248,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void decimal_output_style() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  decimal_output_style = plain,",
                 ")",
                 "simple = {",
@@ -1268,7 +1268,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void decimal_output_style_field() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited",
+                "@directio.text.tabular",
                 "simple = {",
                 "  @directio.text.field(decimal_output_style = plain)",
                 "  a : DECIMAL;",
@@ -1289,7 +1289,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void decimal_output_style_inconsistent_type() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited",
+                "@directio.text.tabular",
                 "simple = {",
                 "  @directio.text.field(decimal_output_style = plain)",
                 "  a : TEXT;",
@@ -1307,7 +1307,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void adapter() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  adapter = '" + MockFieldAdapter.class.getName() + "'",
                 ")",
                 "simple = {",
@@ -1327,7 +1327,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void adapter_field() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited",
+                "@directio.text.tabular",
                 "simple = {",
                 "  @directio.text.field(adapter = '" + MockFieldAdapter.class.getName() + "')",
                 "  a : TEXT;",
@@ -1348,7 +1348,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void adapter_override() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  adapter = '" + MockFieldAdapter.class.getName() + "'",
                 ")",
                 "simple = {",
@@ -1371,13 +1371,13 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void field_field() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited",
+                "@directio.text.tabular",
                 "simple = {",
                 "  @directio.text.field",
                 "  a : TEXT;",
                 "};",
         });
-        BinaryStreamFormat<?> support = (BinaryStreamFormat<?>) loaded.newObject("text", "SimpleDelimitedTextFormat");
+        BinaryStreamFormat<?> support = (BinaryStreamFormat<?>) loaded.newObject("text", "SimpleTabularTextFormat");
         assertThat(support.getMinimumFragmentSize(), is(not(-1L)));
 
         byte[] contents = write(loaded, loaded.newModel("Simple")
@@ -1394,14 +1394,14 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void field_ignore() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited",
+                "@directio.text.tabular",
                 "simple = {",
                 "  a : TEXT;",
                 "  @directio.text.ignore",
                 "  b : TEXT;",
                 "};",
         });
-        BinaryStreamFormat<?> support = (BinaryStreamFormat<?>) loaded.newObject("text", "SimpleDelimitedTextFormat");
+        BinaryStreamFormat<?> support = (BinaryStreamFormat<?>) loaded.newObject("text", "SimpleTabularTextFormat");
         assertThat(support.getMinimumFragmentSize(), is(not(-1L)));
 
         byte[] contents = write(loaded, loaded.newModel("Simple")
@@ -1420,14 +1420,14 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void field_file_name() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited",
+                "@directio.text.tabular",
                 "simple = {",
                 "  a : TEXT;",
                 "  @directio.text.file_name",
                 "  b : TEXT;",
                 "};",
         });
-        BinaryStreamFormat<?> support = (BinaryStreamFormat<?>) loaded.newObject("text", "SimpleDelimitedTextFormat");
+        BinaryStreamFormat<?> support = (BinaryStreamFormat<?>) loaded.newObject("text", "SimpleTabularTextFormat");
         assertThat(support.getMinimumFragmentSize(), is(not(-1L)));
 
         byte[] contents = write(loaded, loaded.newModel("Simple")
@@ -1446,7 +1446,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void field_line_number() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  input_transformer = '" + EmptyLineFilter.class.getName() + "'",
                 ")",
                 "simple = {",
@@ -1455,7 +1455,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
                 "  b : LONG;",
                 "};",
         });
-        BinaryStreamFormat<?> support = (BinaryStreamFormat<?>) loaded.newObject("text", "SimpleDelimitedTextFormat");
+        BinaryStreamFormat<?> support = (BinaryStreamFormat<?>) loaded.newObject("text", "SimpleTabularTextFormat");
         assertThat(support.getMinimumFragmentSize(), is(-1L));
 
         byte[] contents = write(loaded, loaded.newModel("Simple")
@@ -1476,7 +1476,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void field_line_number_int() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  input_transformer = '" + EmptyLineFilter.class.getName() + "'",
                 ")",
                 "simple = {",
@@ -1485,7 +1485,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
                 "  b : INT;",
                 "};",
         });
-        BinaryStreamFormat<?> support = (BinaryStreamFormat<?>) loaded.newObject("text", "SimpleDelimitedTextFormat");
+        BinaryStreamFormat<?> support = (BinaryStreamFormat<?>) loaded.newObject("text", "SimpleTabularTextFormat");
         assertThat(support.getMinimumFragmentSize(), is(-1L));
 
         byte[] contents = write(loaded, loaded.newModel("Simple")
@@ -1506,7 +1506,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void field_record_number() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  input_transformer = '" + EmptyLineFilter.class.getName() + "'",
                 ")",
                 "simple = {",
@@ -1515,7 +1515,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
                 "  b : LONG;",
                 "};",
         });
-        BinaryStreamFormat<?> support = (BinaryStreamFormat<?>) loaded.newObject("text", "SimpleDelimitedTextFormat");
+        BinaryStreamFormat<?> support = (BinaryStreamFormat<?>) loaded.newObject("text", "SimpleTabularTextFormat");
         assertThat(support.getMinimumFragmentSize(), is(-1L));
 
         byte[] contents = write(loaded, loaded.newModel("Simple")
@@ -1536,7 +1536,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void field_record_number_int() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  input_transformer = '" + EmptyLineFilter.class.getName() + "'",
                 ")",
                 "simple = {",
@@ -1545,7 +1545,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
                 "  b : INT;",
                 "};",
         });
-        BinaryStreamFormat<?> support = (BinaryStreamFormat<?>) loaded.newObject("text", "SimpleDelimitedTextFormat");
+        BinaryStreamFormat<?> support = (BinaryStreamFormat<?>) loaded.newObject("text", "SimpleTabularTextFormat");
         assertThat(support.getMinimumFragmentSize(), is(-1L));
 
         byte[] contents = write(loaded, loaded.newModel("Simple")
@@ -1566,7 +1566,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void escape_conflict_key() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  escape_character = '^',",
                 "  escape_sequence = {",
                 "    'a' : 'A',",
@@ -1591,7 +1591,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void escape_conflict_value() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  escape_character = '^',",
                 "  escape_sequence = {",
                 "    'a' : 'A',",
@@ -1616,7 +1616,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void escape_conflict_null() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  escape_character = '^',",
                 "  escape_sequence = {",
                 "    'a' : null,",
@@ -1641,7 +1641,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void invalid_unknown_property() throws Exception {
         shouldSemanticErrorFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  undef = true,",
                 ")",
                 "simple = {",
@@ -1657,7 +1657,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void invalid_charset_unknown() throws Exception {
         shouldSemanticErrorFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  charset = '?',",
                 ")",
                 "simple = {",
@@ -1673,7 +1673,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void invalid_header_unknown() throws Exception {
         shouldSemanticErrorFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  header = '?',",
                 ")",
                 "simple = {",
@@ -1689,7 +1689,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void invalid_compression_unknown() throws Exception {
         shouldSemanticErrorFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  compression = '?',",
                 ")",
                 "simple = {",
@@ -1705,7 +1705,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void invalid_line_separator_unknown() throws Exception {
         shouldSemanticErrorFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  line_separator = '\\n',",
                 ")",
                 "simple = {",
@@ -1721,7 +1721,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void invalid_field_separator_malformed() throws Exception {
         shouldSemanticErrorFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  field_separator = '<>',",
                 ")",
                 "simple = {",
@@ -1737,7 +1737,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void invalid_field_separator_conflict() throws Exception {
         shouldSemanticErrorFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  field_separator = '\\r',",
                 ")",
                 "simple = {",
@@ -1745,7 +1745,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
                 "};",
         });
         shouldSemanticErrorFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  field_separator = '\\n',",
                 ")",
                 "simple = {",
@@ -1761,7 +1761,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void invalid_escape_character_malformed() throws Exception {
         shouldSemanticErrorFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  escape_character = '<>',",
                 ")",
                 "simple = {",
@@ -1777,7 +1777,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void invalid_escape_line_separator_malformed() throws Exception {
         shouldSemanticErrorFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  escape_line_separator = unknown,",
                 ")",
                 "simple = {",
@@ -1793,7 +1793,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void invalid_escape_character_conflict_line_separator() throws Exception {
         shouldSemanticErrorFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  escape_character = '\\r',",
                 ")",
                 "simple = {",
@@ -1801,7 +1801,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
                 "};",
         });
         shouldSemanticErrorFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  escape_character = '\\n',",
                 ")",
                 "simple = {",
@@ -1817,7 +1817,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void invalid_escape_character_conflict_field_separator() throws Exception {
         shouldSemanticErrorFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  field_separator = ':',",
                 "  escape_character = ':',",
                 ")",
@@ -1826,7 +1826,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
                 "};",
         });
         shouldSemanticErrorFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  escape_character = '\\t',",
                 ")",
                 "simple = {",
@@ -1842,7 +1842,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void invalid_escape_sequence_malformed() throws Exception {
         shouldSemanticErrorFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  escape_character = '^',",
                 "  escape_sequence = { 'n', '\\n' },",
                 ")",
@@ -1859,7 +1859,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void invalid_escape_sequence_malformed_key() throws Exception {
         shouldSemanticErrorFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  escape_character = '^',",
                 "  escape_sequence = {",
                 "    'malformed' : '\\n'",
@@ -1878,7 +1878,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void invalid_escape_sequence_malformed_value() throws Exception {
         shouldSemanticErrorFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  escape_character = '^',",
                 "  escape_sequence = {",
                 "    'n' : '\\r\\n'",
@@ -1897,7 +1897,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void invalid_escape_sequence_conflict_line_separator() throws Exception {
         shouldSemanticErrorFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  escape_character = '^',",
                 "  escape_sequence = {",
                 "    '\\n' : '\\n'",
@@ -1908,7 +1908,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
                 "};",
         });
         shouldSemanticErrorFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  escape_character = '^',",
                 "  escape_sequence = {",
                 "    '\\r' : '\\r'",
@@ -1927,7 +1927,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void invalid_escape_sequence_without_escape_character() throws Exception {
         shouldSemanticErrorFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  escape_sequence = {",
                 "    'N' : null",
                 "  },",
@@ -1945,7 +1945,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void invalid_escape_line_separator_without_escape_character() throws Exception {
         shouldSemanticErrorFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  escape_line_separator = true,",
                 ")",
                 "simple = {",
@@ -1961,7 +1961,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void invalid_null_format_malformed() throws Exception {
         shouldSemanticErrorFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  null_format = {},",
                 ")",
                 "simple = {",
@@ -1977,7 +1977,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void invalid_true_format_malformed() throws Exception {
         shouldSemanticErrorFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  true_format = {},",
                 ")",
                 "simple = {",
@@ -1993,7 +1993,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void invalid_true_format_conflict_null_format() throws Exception {
         shouldSemanticErrorFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  null_format = 'NULL',",
                 "  true_format = 'NULL',",
                 ")",
@@ -2010,7 +2010,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void invalid_true_format_conflict_null_format_inherited() throws Exception {
         shouldSemanticErrorFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  null_format = 'a',",
                 ")",
                 "simple = {",
@@ -2027,7 +2027,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void invalid_false_format_malformed() throws Exception {
         shouldSemanticErrorFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  false_format = {},",
                 ")",
                 "simple = {",
@@ -2043,7 +2043,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void invalid_false_format_conflict_null_format() throws Exception {
         shouldSemanticErrorFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  null_format = 'NULL',",
                 "  false_format = 'NULL',",
                 ")",
@@ -2060,7 +2060,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void invalid_false_format_conflict_true_format() throws Exception {
         shouldSemanticErrorFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  true_format = '_',",
                 "  false_format = '_',",
                 ")",
@@ -2077,7 +2077,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void invalid_false_format_conflict_null_format_inherited() throws Exception {
         shouldSemanticErrorFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  null_format = 'a',",
                 ")",
                 "simple = {",
@@ -2094,7 +2094,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void invalid_false_format_conflict_true_format_inherited() throws Exception {
         shouldSemanticErrorFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  true_format = 'a',",
                 ")",
                 "simple = {",
@@ -2111,7 +2111,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void invalid_number_format_malformed() throws Exception {
         shouldSemanticErrorFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  number_format = 'Hello, world!',",
                 ")",
                 "simple = {",
@@ -2127,7 +2127,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void invalid_date_format_malformed() throws Exception {
         shouldSemanticErrorFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  date_format = 'Hello, world!',",
                 ")",
                 "simple = {",
@@ -2143,7 +2143,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void invalid_datetime_format_malformed() throws Exception {
         shouldSemanticErrorFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  datetime_format = 'Hello, world!',",
                 ")",
                 "simple = {",
@@ -2159,7 +2159,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void invalid_timezone_malformed() throws Exception {
         shouldSemanticErrorFromLines(new String[] {
-                "@directio.text.delimited(",
+                "@directio.text.tabular(",
                 "  timezone = 'Hello, world!',",
                 ")",
                 "simple = {",
@@ -2175,7 +2175,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void invalid_field_empty() throws Exception {
         shouldSemanticErrorFromLines(new String[] {
-                "@directio.text.delimited",
+                "@directio.text.tabular",
                 "simple = {",
                 "  @directio.text.ignore",
                 "  a : TEXT;",
@@ -2190,7 +2190,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void invalid_field_conflict() throws Exception {
         shouldSemanticErrorFromLines(new String[] {
-                "@directio.text.delimited",
+                "@directio.text.tabular",
                 "simple = {",
                 "  @directio.text.field",
                 "  @directio.text.ignore",
@@ -2206,7 +2206,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void invalid_field_unknown() throws Exception {
         shouldSemanticErrorFromLines(new String[] {
-                "@directio.text.delimited",
+                "@directio.text.tabular",
                 "simple = {",
                 "  @directio.text.field(undef = '?')",
                 "  a : TEXT;",
@@ -2221,7 +2221,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void invalid_field_file_name_inconsistent_type() throws Exception {
         shouldSemanticErrorFromLines(new String[] {
-                "@directio.text.delimited",
+                "@directio.text.tabular",
                 "simple = {",
                 "  @directio.text.file_name",
                 "  a : INT;",
@@ -2237,7 +2237,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void invalid_field_line_number_inconsistent_type() throws Exception {
         shouldSemanticErrorFromLines(new String[] {
-                "@directio.text.delimited",
+                "@directio.text.tabular",
                 "simple = {",
                 "  @directio.text.line_number",
                 "  a : TEXT;",
@@ -2253,7 +2253,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     @Test
     public void invalid_field_record_number_inconsistent_type() throws Exception {
         shouldSemanticErrorFromLines(new String[] {
-                "@directio.text.delimited",
+                "@directio.text.tabular",
                 "simple = {",
                 "  @directio.text.record_number",
                 "  a : TEXT;",
@@ -2264,7 +2264,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
 
     private byte[] write(ModelLoader loaded, ModelWrapper... objects) {
         String name = objects[0].getModelClass().getSimpleName();
-        BinaryStreamFormat<Object> unsafe = unsafe(loaded.newObject("text", name + "DelimitedTextFormat"));
+        BinaryStreamFormat<Object> unsafe = unsafe(loaded.newObject("text", name + "TabularTextFormat"));
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         try (ModelOutput<Object> writer = unsafe.createOutput(unsafe.getSupportedType(), "testing", output)) {
             for (ModelWrapper object : objects) {
@@ -2278,7 +2278,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
 
     private void writeError(ModelLoader loaded, ModelWrapper object) {
         String name = object.getModelClass().getSimpleName();
-        BinaryStreamFormat<Object> unsafe = unsafe(loaded.newObject("text", name + "DelimitedTextFormat"));
+        BinaryStreamFormat<Object> unsafe = unsafe(loaded.newObject("text", name + "TabularTextFormat"));
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         try (ModelOutput<Object> writer = unsafe.createOutput(unsafe.getSupportedType(), "testing", output)) {
             writer.write(object.unwrap());
@@ -2291,7 +2291,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     }
 
     private void read(ModelLoader loaded, String contents, Consumer<ModelWrapper> tester) {
-        BinaryStreamFormat<Object> unsafe = unsafe(loaded.newObject("text", "SimpleDelimitedTextFormat"));
+        BinaryStreamFormat<Object> unsafe = unsafe(loaded.newObject("text", "SimpleTabularTextFormat"));
         ModelWrapper wrapper = loaded.newModel("Simple");
         Object buffer = wrapper.unwrap();
         try (ModelInput<Object> reader = unsafe.createInput(unsafe.getSupportedType(), "testing", in(contents))) {
@@ -2307,7 +2307,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     private void read(
             byte[] contents, ModelLoader loaded, ModelWrapper... objects) throws IOException, InterruptedException {
         String name = objects[0].getModelClass().getSimpleName();
-        BinaryStreamFormat<Object> unsafe = unsafe(loaded.newObject("text", name + "DelimitedTextFormat"));
+        BinaryStreamFormat<Object> unsafe = unsafe(loaded.newObject("text", name + "TabularTextFormat"));
         Object buffer = loaded.newModel(name).unwrap();
         try (ModelInput<Object> reader = unsafe.createInput(unsafe.getSupportedType(), "testing",
                 new ByteArrayInputStream(contents))) {
@@ -2320,7 +2320,7 @@ public class DelimitedTextEmitterTest extends GeneratorTesterRoot {
     }
 
     private void readError(ModelLoader loaded, String contents) {
-        BinaryStreamFormat<Object> unsafe = unsafe(loaded.newObject("text", "SimpleDelimitedTextFormat"));
+        BinaryStreamFormat<Object> unsafe = unsafe(loaded.newObject("text", "SimpleTabularTextFormat"));
         ModelWrapper wrapper = loaded.newModel("Simple");
         Object buffer = wrapper.unwrap();
         try (ModelInput<Object> reader = unsafe.createInput(unsafe.getSupportedType(), "testing", in(contents))) {

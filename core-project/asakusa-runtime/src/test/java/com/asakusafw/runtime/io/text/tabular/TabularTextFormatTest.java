@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.runtime.io.text.delimited;
+package com.asakusafw.runtime.io.text.tabular;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
@@ -33,16 +33,16 @@ import com.asakusafw.runtime.io.text.LineSeparator;
 import com.asakusafw.runtime.io.text.driver.BasicFieldOutput;
 
 /**
- * Test for {@link DelimitedTextFormat}.
+ * Test for {@link TabularTextFormat}.
  */
-public class DelimitedTextFormatTest {
+public class TabularTextFormatTest {
 
     /**
      * input.
      */
     @Test
     public void input() {
-        DelimitedTextFormat format = DelimitedTextFormat.builder()
+        TabularTextFormat format = TabularTextFormat.builder()
                 .build();
         String[][] results = read(format, new String[] {
                 "Hello, world!",
@@ -57,7 +57,7 @@ public class DelimitedTextFormatTest {
      */
     @Test
     public void input_delimited() {
-        DelimitedTextFormat format = DelimitedTextFormat.builder()
+        TabularTextFormat format = TabularTextFormat.builder()
                 .build();
         String[][] results = read(format, new String[] {
                 "A\tB",
@@ -74,7 +74,7 @@ public class DelimitedTextFormatTest {
      */
     @Test
     public void input_charset() {
-        DelimitedTextFormat format = DelimitedTextFormat.builder()
+        TabularTextFormat format = TabularTextFormat.builder()
                 .withCharset("US-ASCII")
                 .build();
         String[][] results = read(format, new String[] {
@@ -92,7 +92,7 @@ public class DelimitedTextFormatTest {
      */
     @Test
     public void input_field_separator() {
-        DelimitedTextFormat format = DelimitedTextFormat.builder()
+        TabularTextFormat format = TabularTextFormat.builder()
                 .withFieldSeparator(',')
                 .build();
         String[][] results = read(format, new String[] {
@@ -110,7 +110,7 @@ public class DelimitedTextFormatTest {
      */
     @Test
     public void input_escape_sequence() {
-        DelimitedTextFormat format = DelimitedTextFormat.builder()
+        TabularTextFormat format = TabularTextFormat.builder()
                 .withEscapeSequence(EscapeSequence.builder('\\')
                         .addMapping('t', '\t')
                         .build())
@@ -130,7 +130,7 @@ public class DelimitedTextFormatTest {
      */
     @Test
     public void input_transformer() {
-        DelimitedTextFormat format = DelimitedTextFormat.builder()
+        TabularTextFormat format = TabularTextFormat.builder()
                 .withInputTransformer(LowerCaseTransformer.class)
                 .build();
         String[][] results = read(format, new String[] {
@@ -148,7 +148,7 @@ public class DelimitedTextFormatTest {
      */
     @Test
     public void output() {
-        DelimitedTextFormat format = DelimitedTextFormat.builder()
+        TabularTextFormat format = TabularTextFormat.builder()
                 .build();
         String[] results = write(format, new String[][] {
             { "Hello, world!", },
@@ -163,7 +163,7 @@ public class DelimitedTextFormatTest {
      */
     @Test
     public void output_delimited() {
-        DelimitedTextFormat format = DelimitedTextFormat.builder()
+        TabularTextFormat format = TabularTextFormat.builder()
                 .build();
         String[] results = write(format, new String[][] {
             { "A", "B", },
@@ -180,7 +180,7 @@ public class DelimitedTextFormatTest {
      */
     @Test
     public void output_charset() {
-        DelimitedTextFormat format = DelimitedTextFormat.builder()
+        TabularTextFormat format = TabularTextFormat.builder()
                 .withCharset("US-ASCII")
                 .build();
         String[] results = write(format, new String[][] {
@@ -198,7 +198,7 @@ public class DelimitedTextFormatTest {
      */
     @Test
     public void output_line_separator() {
-        DelimitedTextFormat format = DelimitedTextFormat.builder()
+        TabularTextFormat format = TabularTextFormat.builder()
                 .withLineSeparator(LineSeparator.WINDOWS)
                 .build();
         String[] results = write(format, new String[][] {
@@ -216,7 +216,7 @@ public class DelimitedTextFormatTest {
      */
     @Test
     public void output_field_separator() {
-        DelimitedTextFormat format = DelimitedTextFormat.builder()
+        TabularTextFormat format = TabularTextFormat.builder()
                 .withFieldSeparator(',')
                 .build();
         String[] results = write(format, new String[][] {
@@ -234,7 +234,7 @@ public class DelimitedTextFormatTest {
      */
     @Test
     public void output_escape_sequence() {
-        DelimitedTextFormat format = DelimitedTextFormat.builder()
+        TabularTextFormat format = TabularTextFormat.builder()
                 .withEscapeSequence(EscapeSequence.builder('\\')
                         .addMapping('t', '\t')
                         .build())
@@ -254,7 +254,7 @@ public class DelimitedTextFormatTest {
      */
     @Test
     public void output_transformer() {
-        DelimitedTextFormat format = DelimitedTextFormat.builder()
+        TabularTextFormat format = TabularTextFormat.builder()
                 .withOutputTransformer(LowerCaseTransformer.class)
                 .build();
         String[] results = write(format, new String[][] {
@@ -267,14 +267,14 @@ public class DelimitedTextFormatTest {
         }));
     }
 
-    private String[][] read(DelimitedTextFormat format, String... lines) {
+    private String[][] read(TabularTextFormat format, String... lines) {
         StringBuilder buffer = new StringBuilder();
         for (String line : lines) {
             buffer.append(line);
             buffer.append(format.getLineSeparator().getSequence());
         }
         byte[] bytes = buffer.toString().getBytes(format.getCharset());
-        try (DelimitedFieldReader reader = format.open(new ByteArrayInputStream(bytes))) {
+        try (TabularFieldReader reader = format.open(new ByteArrayInputStream(bytes))) {
             List<List<String>> results = new ArrayList<>();
             while (reader.nextRecord()) {
                 List<String> row = new ArrayList<>();
@@ -292,10 +292,10 @@ public class DelimitedTextFormatTest {
         }
     }
 
-    private String[] write(DelimitedTextFormat format, String[][] fields) {
+    private String[] write(TabularTextFormat format, String[][] fields) {
         BasicFieldOutput fout = new BasicFieldOutput();
         ByteArrayOutputStream output = new ByteArrayOutputStream();
-        try (DelimitedFieldWriter writer = format.open(output)) {
+        try (TabularFieldWriter writer = format.open(output)) {
             for (String[] row : fields) {
                 for (String field : row) {
                     writer.putField(fout.set(field));
