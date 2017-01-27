@@ -450,8 +450,7 @@ public class CsvFormatEmitter extends JavaDataModelDriver {
                                 isNotHead)
                         .toLocalVariableDeclaration(context.resolve(InputStream.class), fragmentInput));
             } else {
-                statements.add(new ExpressionBuilder(f, fragmentInput)
-                        .assignFrom(blessInputStream(stream))
+                statements.add(new ExpressionBuilder(f, blessInputStream(stream))
                         .toLocalVariableDeclaration(context.resolve(InputStream.class), fragmentInput));
             }
 
