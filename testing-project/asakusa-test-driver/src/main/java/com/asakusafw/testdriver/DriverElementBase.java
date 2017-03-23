@@ -182,9 +182,8 @@ public abstract class DriverElementBase {
             return DirectIoUtil.load(conf, definition, formatClass, url);
         } catch (IOException | InterruptedException | URISyntaxException e) {
             throw new IllegalArgumentException(MessageFormat.format(
-                    MessageFormat.format(
-                            "error occurred while loading Direct I/O input: {0}",
-                            sourcePath), e));
+                    "error occurred while loading Direct I/O input: {0}",
+                    sourcePath), e);
         }
     }
 
@@ -216,9 +215,8 @@ public abstract class DriverElementBase {
             return DirectIoUtil.load(conf, definition, formatClass, sourceFile);
         } catch (IOException | InterruptedException e) {
             throw new IllegalArgumentException(MessageFormat.format(
-                    MessageFormat.format(
-                            "error occurred while loading Direct I/O input: {0}",
-                            sourceFile), e));
+                    "error occurred while loading Direct I/O input: {0}",
+                    sourceFile), e);
         }
     }
 
@@ -289,9 +287,8 @@ public abstract class DriverElementBase {
             return DirectIoUtil.dump(conf, definition, formatClass, destinationFile);
         } catch (IOException e) {
             throw new IllegalArgumentException(MessageFormat.format(
-                    MessageFormat.format(
-                            "error occurred while preparing Direct I/O output: {0}",
-                            destinationFile), e));
+                    "error occurred while preparing Direct I/O output: {0}",
+                    destinationFile), e);
         }
     }
 
