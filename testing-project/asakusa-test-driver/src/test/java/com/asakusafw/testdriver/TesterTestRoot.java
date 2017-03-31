@@ -56,6 +56,12 @@ public abstract class TesterTestRoot {
     protected final MockCompilerToolkit compiler = new MockCompilerToolkit();
 
     /**
+     * Resets all Hadoop file systems.
+     */
+    @Rule
+    public final FileSystemCleaner fsCleaner = new FileSystemCleaner();
+
+    /**
      * Temporary framework installation target.
      */
     @Rule

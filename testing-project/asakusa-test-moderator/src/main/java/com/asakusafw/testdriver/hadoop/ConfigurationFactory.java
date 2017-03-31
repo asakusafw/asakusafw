@@ -121,7 +121,7 @@ public class ConfigurationFactory extends ConfigurationProvider {
     protected void configure(Configuration configuration) {
         if (preferences.getLocalFileSystemClassName() != null) {
             configuration.set("fs.file.impl", preferences.getLocalFileSystemClassName()); //$NON-NLS-1$
-            configuration.setBoolean("fs.fs.impl.disable.cache", true); //$NON-NLS-1$
+            configuration.setBoolean("fs.file.impl.disable.cache", true); //$NON-NLS-1$
         }
     }
 
