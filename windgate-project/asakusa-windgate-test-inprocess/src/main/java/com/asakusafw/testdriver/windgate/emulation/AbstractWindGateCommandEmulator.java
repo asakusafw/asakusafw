@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 
+import org.apache.hadoop.conf.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -76,7 +77,9 @@ public abstract class AbstractWindGateCommandEmulator extends CommandEmulator {
         try (PluginClassLoader classLoader = createClassLoader(context, configurations)) {
             ClassLoader contextClassLoader = ApplicationLauncher.switchContextClassLoader(classLoader);
             try {
-                GateProfile profile = loadProfile(context, classLoader, command.getCommandTokens().get(ARG_PROFILE));
+                GateProfile profile = loadProfile(
+                        context, configurations, classLoader,
+                        command.getCommandTokens().get(ARG_PROFILE));
                 execute0(context, classLoader, profile, command);
             } finally {
                 ApplicationLauncher.switchContextClassLoader(contextClassLoader);
@@ -135,6 +138,7 @@ public abstract class AbstractWindGateCommandEmulator extends CommandEmulator {
 
     private static GateProfile loadProfile(
             TestDriverContext context,
+            ConfigurationFactory configurations,
             ClassLoader classLoader,
             String profile) {
         LOG.debug("Loading profile: {}", profile); //$NON-NLS-1$
@@ -145,7 +149,8 @@ public abstract class AbstractWindGateCommandEmulator extends CommandEmulator {
             Map<String, String> variables = new HashMap<>(context.getEnvironmentVariables());
             variables.put("WINDGATE_PROFILE", profile); //$NON-NLS-1$
             ParameterList contextParameters = new ParameterList(variables);
-            ProfileContext profileContext = new ProfileContext(classLoader, contextParameters);
+            ProfileContext profileContext = new ProfileContext(classLoader, contextParameters)
+                    .withResource(Configuration.class, configurations.newInstance());
 
             URI uri = profilePath.toURI();
             Properties properties = CommandLineUtil.loadProperties(uri, classLoader);

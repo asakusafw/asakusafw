@@ -15,15 +15,23 @@
  */
 package com.asakusafw.windgate.core;
 
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Optional;
+
 /**
  * The profile context.
  * @since 0.2.4
+ * @version 0.9.1
  */
 public class ProfileContext {
 
     private final ClassLoader classLoader;
 
     private final ParameterList contextParameters;
+
+    private final Map<Class<?>, Object> resources;
 
     /**
      * Creates a new instance.
@@ -40,6 +48,13 @@ public class ProfileContext {
         }
         this.classLoader = classLoader;
         this.contextParameters = contextParameters;
+        this.resources = Collections.emptyMap();
+    }
+
+    private ProfileContext(ClassLoader classLoader, ParameterList contextParameters, Map<Class<?>, Object> resources) {
+        this.classLoader = classLoader;
+        this.contextParameters = contextParameters;
+        this.resources = resources;
     }
 
     /**
@@ -50,6 +65,20 @@ public class ProfileContext {
      */
     public static ProfileContext system(ClassLoader classLoader) {
         return new ProfileContext(classLoader, new ParameterList(System.getenv()));
+    }
+
+    /**
+     * Creates a new context with the additional resource.
+     * @param <T> the resource type
+     * @param type the resource type
+     * @param object the resource
+     * @return the created context
+     * @since 0.9.1
+     */
+    public <T> ProfileContext withResource(Class<T> type, T object) {
+        Map<Class<?>, Object> copy = new LinkedHashMap<>(resources);
+        copy.put(type, object);
+        return new ProfileContext(classLoader, contextParameters, copy);
     }
 
     /**
@@ -66,5 +95,16 @@ public class ProfileContext {
      */
     public ParameterList getContextParameters() {
         return contextParameters;
+    }
+
+    /**
+     * Returns an optional resource.
+     * @param <T> the resource type
+     * @param type the resource type
+     * @return the related resource
+     * @since 0.9.1
+     */
+    public <T> Optional<T> findResource(Class<T> type) {
+        return Optional.ofNullable(type.cast(resources.get(type)));
     }
 }

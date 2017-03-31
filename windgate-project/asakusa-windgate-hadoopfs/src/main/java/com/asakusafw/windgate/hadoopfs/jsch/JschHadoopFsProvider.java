@@ -26,6 +26,7 @@ import com.asakusafw.windgate.core.ParameterList;
 import com.asakusafw.windgate.core.resource.ResourceMirror;
 import com.asakusafw.windgate.core.resource.ResourceProfile;
 import com.asakusafw.windgate.core.resource.ResourceProvider;
+import com.asakusafw.windgate.hadoopfs.HadoopFsProvider;
 import com.asakusafw.windgate.hadoopfs.ssh.SshProfile;
 
 /**
@@ -44,7 +45,7 @@ public class JschHadoopFsProvider extends ResourceProvider {
     protected void configure(ResourceProfile profile) throws IOException {
         LOG.debug("Configuring Hadoop FS via JSch resource \"{}\"",
                 profile.getName());
-        this.configuration = new Configuration();
+        this.configuration = HadoopFsProvider.getConfiguration(profile.getContext());
         try {
             this.sshProfile = SshProfile.convert(configuration, profile);
         } catch (IllegalArgumentException e) {
