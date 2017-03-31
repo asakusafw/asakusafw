@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.windgate.core.ParameterList;
+import com.asakusafw.windgate.core.ProfileContext;
 import com.asakusafw.windgate.core.resource.ResourceMirror;
 import com.asakusafw.windgate.core.resource.ResourceProfile;
 import com.asakusafw.windgate.core.resource.ResourceProvider;
@@ -30,6 +31,7 @@ import com.asakusafw.windgate.core.resource.ResourceProvider;
 /**
  * Provides {@link HadoopFsMirror}.
  * @since 0.2.2
+ * @version 0.9.1
  */
 public class HadoopFsProvider extends ResourceProvider {
 
@@ -43,7 +45,7 @@ public class HadoopFsProvider extends ResourceProvider {
     protected void configure(ResourceProfile profile) throws IOException {
         LOG.debug("Configuring Hadoop FS resource \"{}\"",
                 profile.getName());
-        this.configuration = new Configuration();
+        this.configuration = getConfiguration(profile.getContext());
         try {
             this.hfsProfile = HadoopFsProfile.convert(configuration, profile);
         } catch (IllegalArgumentException e) {
@@ -65,5 +67,16 @@ public class HadoopFsProvider extends ResourceProvider {
                 hfsProfile.getResourceName(),
                 sessionId);
         return new HadoopFsMirror(configuration, hfsProfile, arguments);
+    }
+
+    /**
+     * Returns the Hadoop configuration for the current context.
+     * @param context the current context
+     * @return the Hadoop configuration
+     * @since 0.9.1
+     */
+    public static Configuration getConfiguration(ProfileContext context) {
+        return context.findResource(Configuration.class)
+                .orElseGet(Configuration::new);
     }
 }
