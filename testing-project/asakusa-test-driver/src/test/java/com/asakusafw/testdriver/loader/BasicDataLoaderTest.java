@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
 
+import org.junit.Rule;
 import org.junit.Test;
 
 import com.asakusafw.runtime.core.GroupView;
@@ -29,6 +30,7 @@ import com.asakusafw.runtime.core.View;
 import com.asakusafw.runtime.value.DecimalOption;
 import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.runtime.value.StringOption;
+import com.asakusafw.testdriver.FileSystemCleaner;
 import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.DataModelReflection;
 import com.asakusafw.testdriver.core.DataModelSource;
@@ -42,6 +44,12 @@ import com.asakusafw.testdriver.model.DefaultDataModelDefinition;
 public class BasicDataLoaderTest {
 
     static final DataModelDefinition<MockDataModel> DEF = new DefaultDataModelDefinition<>(MockDataModel.class);
+
+    /**
+     * Resets all Hadoop file systems.
+     */
+    @Rule
+    public final FileSystemCleaner fsCleaner = new FileSystemCleaner();
 
     /**
      * simple case.

@@ -62,6 +62,12 @@ public class DirectIoUtilTest {
     public static final WindowsSupport WINDOWS_SUPPORT = new WindowsSupport();
 
     /**
+     * Resets all Hadoop file systems.
+     */
+    @Rule
+    public final FileSystemCleaner fsCleaner = new FileSystemCleaner();
+
+    /**
      * temporary folder.
      */
     @Rule

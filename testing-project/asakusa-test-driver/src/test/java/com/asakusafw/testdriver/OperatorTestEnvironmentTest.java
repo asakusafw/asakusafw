@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.junit.Assume;
+import org.junit.Rule;
 import org.junit.Test;
 
 import com.asakusafw.runtime.core.BatchContext;
@@ -40,6 +41,12 @@ import com.asakusafw.testdriver.testing.model.Simple;
  * Test for {@link OperatorTestEnvironment}.
  */
 public class OperatorTestEnvironmentTest {
+
+    /**
+     * Resets all Hadoop file systems.
+     */
+    @Rule
+    public final FileSystemCleaner fsCleaner = new FileSystemCleaner();
 
     /**
      * test for loading configuration file.

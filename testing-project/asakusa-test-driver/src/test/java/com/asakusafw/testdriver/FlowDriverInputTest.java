@@ -23,6 +23,7 @@ import java.net.URI;
 
 import org.apache.hadoop.io.Text;
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 
 import com.asakusafw.runtime.windows.WindowsSupport;
@@ -41,6 +42,12 @@ public class FlowDriverInputTest {
      */
     @ClassRule
     public static final WindowsSupport WINDOWS_SUPPORT = new WindowsSupport();
+
+    /**
+     * Resets all Hadoop file systems.
+     */
+    @Rule
+    public final FileSystemCleaner fsCleaner = new FileSystemCleaner();
 
     /**
      * simple test for {@link FlowDriverInput#prepare(java.lang.String)}.
