@@ -4,7 +4,7 @@
   <name>Asakusa Framework</name>
   <groupId>com.asakusafw</groupId>
   <artifactId>asakusa-parent</artifactId>
-  <version>0.9.1-SNAPSHOT</version>
+  <version>0.9.1-RC1</version>
   <packaging>pom</packaging>
 
   <description>Asakusa Framework Parent POM</description>
@@ -27,7 +27,7 @@
     <connection>scm:git:git@github.com:asakusafw/asakusafw.git</connection>
     <developerConnection>scm:git:git@github.com:asakusafw/asakusafw.git</developerConnection>
     <url>https://github.com/asakusafw/asakusafw</url>
-    <tag>HEAD</tag>
+    <tag>0.9.1-RC1</tag>
   </scm>
 
   <modules>
