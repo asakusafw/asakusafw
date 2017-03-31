@@ -6,7 +6,7 @@
   <parent>
     <artifactId>project</artifactId>
     <groupId>com.asakusafw.operator</groupId>
-    <version>0.9.1-SNAPSHOT</version>
+    <version>0.9.1-RC2</version>
   </parent>
 
   <packaging>jar</packaging>
