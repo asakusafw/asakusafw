@@ -100,9 +100,8 @@ public final class TemporaryStorage {
         FileSystem fs = pathPattern.getFileSystem(conf);
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Listing temporary input: {0} (fs={1})", //$NON-NLS-1$
-                    pathPattern,
-                    fs.getUri()));
+                    "listing temporary inputs: {0}", //$NON-NLS-1$
+                    fs.makeQualified(pathPattern)));
         }
         FileStatus[] statusList = fs.globStatus(pathPattern);
         if (statusList == null || statusList.length == 0) {
@@ -138,9 +137,8 @@ public final class TemporaryStorage {
         FileSystem fs = path.getFileSystem(conf);
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Opening temporary input: {0} (fs={1})", //$NON-NLS-1$
-                    path,
-                    fs.getUri()));
+                    "opening temporary input: {0}", //$NON-NLS-1$
+                    fs.makeQualified(path)));
         }
         if (Writable.class.isAssignableFrom(dataType)) {
             return (ModelInput<V>) new TemporaryFileInput<>(fs.open(path), 0);
@@ -212,9 +210,8 @@ public final class TemporaryStorage {
         FileSystem fs = path.getFileSystem(conf);
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Opening temporary output: {0} (fs={1})", //$NON-NLS-1$
-                    path,
-                    fs.getUri()));
+                    "opening temporary output: {0}", //$NON-NLS-1$
+                    fs.makeQualified(path)));
         }
         if (Writable.class.isAssignableFrom(dataType)) {
             return (ModelOutput<V>) new TemporaryFileOutput<>(
@@ -259,9 +256,8 @@ public final class TemporaryStorage {
         FileSystem fs = path.getFileSystem(conf);
         if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format(
-                    "Opening temporary output: {0} (fs={1})", //$NON-NLS-1$
-                    path,
-                    fs.getUri()));
+                    "opening temporary output: {0}", //$NON-NLS-1$
+                    fs.makeQualified(path)));
         }
         if (Writable.class.isAssignableFrom(dataType)) {
             return (ModelOutput<V>) new TemporaryFileOutput<>(
