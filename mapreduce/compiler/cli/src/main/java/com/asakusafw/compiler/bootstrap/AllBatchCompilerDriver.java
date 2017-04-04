@@ -308,7 +308,7 @@ public final class AllBatchCompilerDriver {
 
     private static Class<? extends BatchDescription> loadIfBatchClass(String className) {
         try {
-            Class<?> aClass = Class.forName(className);
+            Class<?> aClass = Class.forName(className, false, AllBatchCompilerDriver.class.getClassLoader());
             if (BatchDescription.class.isAssignableFrom(aClass) == false) {
                 return null;
             }
