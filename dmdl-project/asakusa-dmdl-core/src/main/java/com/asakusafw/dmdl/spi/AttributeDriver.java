@@ -27,41 +27,49 @@ import com.asakusafw.dmdl.semantics.DmdlSemantics;
  * {@code META-INF/services/com.asakusafw.dmdl.spi.AttributeDriver}.
  * </p>
  * @since 0.2.0
- * @version 0.7.0
+ * @version 0.9.2
  */
-public abstract class AttributeDriver {
+public interface AttributeDriver {
 
     /**
      * Returns the qualified name of the target attribute.
      * @return the target attribute name
      */
-    public abstract String getTargetName();
+    String getTargetName();
 
     /**
      * Processes and modifies the attributed declaration.
-     * @param environment the processing environment
+     * @param context the current context
      * @param attribute the attribute with the {@link #getTargetName() target name}
      * @param declaration the declaration with the {@code attribute}
      * @see #getTargetName()
      */
-    public abstract void process(DmdlSemantics environment, Declaration declaration, AstAttribute attribute);
+    void process(Context context, Declaration declaration, AstAttribute attribute);
 
     /**
      * Verifies the attributed declaration.
      * This will be invoked after all attributes are
-     * {@link #process(DmdlSemantics, Declaration, AstAttribute) processed}.
-     * @param environment the processing environment
+     * {@link #process(Context, Declaration, AstAttribute) processed}.
+     * @param context the current context
      * @param attribute the attribute with the {@link #getTargetName() target name}
      * @param declaration the declaration with the {@code attribute}
      * @see #getTargetName()
      * @since 0.7.0
      */
-    public void verify(DmdlSemantics environment, Declaration declaration, AstAttribute attribute) {
+    default void verify(Context context, Declaration declaration, AstAttribute attribute) {
         return;
     }
 
-    @Override
-    public String toString() {
-        return getClass().getSimpleName();
+    /**
+     * A processing context for {@link AttributeDriver}.
+     * @since 0.9.2
+     */
+    interface Context {
+
+        /**
+         * Returns the current environment.
+         * @return the current environment
+         */
+        DmdlSemantics getEnvironment();
     }
 }

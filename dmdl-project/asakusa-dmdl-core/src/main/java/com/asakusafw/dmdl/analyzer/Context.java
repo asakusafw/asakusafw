@@ -23,7 +23,10 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.dmdl.Diagnostic;
+import com.asakusafw.dmdl.Diagnostic.Level;
 import com.asakusafw.dmdl.model.AstAttribute;
+import com.asakusafw.dmdl.model.AstNode;
 import com.asakusafw.dmdl.model.AstType;
 import com.asakusafw.dmdl.semantics.Declaration;
 import com.asakusafw.dmdl.semantics.DmdlSemantics;
@@ -34,6 +37,8 @@ import com.asakusafw.utils.collections.Maps;
 
 /**
  * A context of semantic analyzer.
+ * @since 0.2.0
+ * @version 0.9.2
  */
 public class Context {
 
@@ -79,6 +84,25 @@ public class Context {
     }
 
     /**
+     * Reports an error.
+     * @param node the related AST node
+     * @param format the message format
+     * @param arguments the message arguments
+     * @since 0.9.2
+     */
+    public void error(AstNode node, String format, Object... arguments) {
+        world.report(new Diagnostic(Level.ERROR, node, format, arguments));
+    }
+
+    /**
+     * Returns whether or not there are any errors in this context.
+     * @return {@code true} if there are some errors, otherwise {@code false}
+     */
+    public boolean hasError() {
+        return world.hasError();
+    }
+
+    /**
      * Returns the corresponded type of the type syntax.
      * @param type the type syntax
      * @return the corresponded type, or {@code null} if cannot resolve
@@ -88,8 +112,18 @@ public class Context {
         if (type == null) {
             throw new IllegalArgumentException("type must not be null"); //$NON-NLS-1$
         }
+        TypeDriver.Context local = new TypeDriver.Context() {
+            @Override
+            public DmdlSemantics getEnvironment() {
+                return Context.this.getWorld();
+            }
+            @Override
+            public Type resolve(AstType node) {
+                return Context.this.resolveType(node);
+            }
+        };
         for (TypeDriver driver : typeDrivers) {
-            Type resolved = driver.resolve(world, type);
+            Type resolved = driver.resolve(local, type);
             if (resolved != null) {
                 return resolved;
             }
@@ -147,7 +181,7 @@ public class Context {
         return results;
     }
 
-    private static class CompositeAttributeDriver extends AttributeDriver {
+    private static class CompositeAttributeDriver implements AttributeDriver {
 
         final List<AttributeDriver> drivers;
 
@@ -166,16 +200,16 @@ public class Context {
         }
 
         @Override
-        public void process(DmdlSemantics environment, Declaration declaration, AstAttribute attribute) {
+        public void process(Context context, Declaration declaration, AstAttribute attribute) {
             for (AttributeDriver driver : drivers) {
-                driver.process(environment, declaration, attribute);
+                driver.process(context, declaration, attribute);
             }
         }
 
         @Override
-        public void verify(DmdlSemantics environment, Declaration declaration, AstAttribute attribute) {
+        public void verify(Context context, Declaration declaration, AstAttribute attribute) {
             for (AttributeDriver driver : drivers) {
-                driver.verify(environment, declaration, attribute);
+                driver.verify(context, declaration, attribute);
             }
         }
     }

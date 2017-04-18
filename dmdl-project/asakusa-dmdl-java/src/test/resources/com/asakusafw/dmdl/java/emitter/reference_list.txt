@@ -1,0 +1,6 @@
+simple = {
+    a : INT;
+    b : INT;
+    c : INT;
+    all = {a, b, c};
+};

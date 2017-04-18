@@ -453,8 +453,6 @@ public class WindGateIoProcessor extends ExternalIoDescriptionProcessor {
      */
     public static class CommandProvider extends ExternalIoCommandProvider {
 
-        private static final long serialVersionUID = -3916072136449360144L;
-
         private final String batchId;
 
         private final String flowId;

@@ -141,6 +141,86 @@ public class AutoProjectionDriverTest extends DmdlTesterRoot {
     }
 
     /**
+     * references.
+     */
+    @Test
+    public void auto_projection_ref() {
+        DmdlSemantics world = resolve(new String[] {
+                "@auto_projection",
+                "m = {",
+                "  a : INT;",
+                "  ref = {a};",
+                "};",
+                "projective p = {",
+                "  ref : {INT};",
+                "};",
+        });
+        ModelDeclaration model = world.findModelDeclaration("m");
+        List<ModelSymbol> projections = projections(model);
+        assertThat(projections, hasSize(1));
+        assertThat(projections, contains(model("p")));
+    }
+
+    /**
+     * only projection has references.
+     */
+    @Test
+    public void auto_projection_ref_nothing() {
+        DmdlSemantics world = resolve(new String[] {
+                "@auto_projection",
+                "m = {",
+                "  a : INT;",
+                "};",
+                "projective p = {",
+                "  ref : {INT};",
+                "};",
+        });
+        ModelDeclaration model = world.findModelDeclaration("m");
+        List<ModelSymbol> projections = projections(model);
+        assertThat(projections, hasSize(0));
+    }
+
+    /**
+     * references w/ body.
+     */
+    @Test
+    public void auto_projection_ref_body() {
+        DmdlSemantics world = resolve(new String[] {
+                "@auto_projection",
+                "m = {",
+                "  a : INT;",
+                "  ref = {a};",
+                "};",
+                "projective p = {",
+                "  ref : {INT} = {};",
+                "};",
+        });
+        ModelDeclaration model = world.findModelDeclaration("m");
+        List<ModelSymbol> projections = projections(model);
+        assertThat(projections, hasSize(0));
+    }
+
+    /**
+     * references w/ inconsistent type.
+     */
+    @Test
+    public void auto_projection_ref_inconsistent_type() {
+        DmdlSemantics world = resolve(new String[] {
+                "@auto_projection",
+                "m = {",
+                "  a : INT;",
+                "  ref = {a};",
+                "};",
+                "projective p = {",
+                "  ref : {LONG};",
+                "};",
+        });
+        ModelDeclaration model = world.findModelDeclaration("m");
+        List<ModelSymbol> projections = projections(model);
+        assertThat(projections, hasSize(0));
+    }
+
+    /**
      * attribute is attached to property.
      */
     @Test

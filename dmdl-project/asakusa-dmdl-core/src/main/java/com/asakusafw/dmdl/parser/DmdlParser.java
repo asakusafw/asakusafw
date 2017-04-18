@@ -16,7 +16,6 @@
 package com.asakusafw.dmdl.parser;
 
 import java.io.Reader;
-import java.io.StringReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.MessageFormat;
@@ -49,7 +48,7 @@ public class DmdlParser {
             throw new IllegalArgumentException("source must not be null"); //$NON-NLS-1$
         }
         LOG.debug("Parsing DMDL: {}", identifier); //$NON-NLS-1$
-        JjDmdlParser parser = new JjDmdlParser(source);
+        JjDmdlParser parser = new JjDmdlParser(new StreamProvider(source));
         try {
             return parser.parse(identifier);
         } catch (ParseException e) {
@@ -79,7 +78,7 @@ public class DmdlParser {
         if (token == null) {
             throw new IllegalArgumentException("token must not be null"); //$NON-NLS-1$
         }
-        JjDmdlParser parser = new JjDmdlParser(new StringReader(token));
+        JjDmdlParser parser = new JjDmdlParser(new StringProvider(token));
         try {
             return parser.parseLiteral(new URI("token")); //$NON-NLS-1$
         } catch (ParseException e) {

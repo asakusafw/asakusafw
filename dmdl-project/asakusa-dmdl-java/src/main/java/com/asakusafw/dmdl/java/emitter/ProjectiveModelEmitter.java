@@ -26,6 +26,7 @@ import com.asakusafw.dmdl.java.spi.JavaDataModelDriver;
 import com.asakusafw.dmdl.semantics.DmdlSemantics;
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
 import com.asakusafw.dmdl.semantics.PropertyDeclaration;
+import com.asakusafw.dmdl.semantics.PropertyReferenceDeclaration;
 import com.asakusafw.utils.java.model.syntax.Attribute;
 import com.asakusafw.utils.java.model.syntax.FormalParameterDeclaration;
 import com.asakusafw.utils.java.model.syntax.MethodDeclaration;
@@ -37,8 +38,9 @@ import com.asakusafw.utils.java.model.util.AttributeBuilder;
 import com.asakusafw.utils.java.model.util.JavadocBuilder;
 
 /**
- * Abstract super class which emits a projective model
- * as a Java model class.
+ * Abstract super class which emits a projective model as a Java model class.
+ * @since 0.2.0
+ * @version 0.9.2
  */
 public class ProjectiveModelEmitter {
 
@@ -116,6 +118,7 @@ public class ProjectiveModelEmitter {
         List<TypeBodyDeclaration> results = new ArrayList<>();
         results.addAll(driver.getFields(context, model));
         results.addAll(createPropertyAccessors());
+        results.addAll(createReferenceAccessors());
         results.addAll(driver.getMethods(context, model));
         return results;
     }
@@ -127,6 +130,14 @@ public class ProjectiveModelEmitter {
             results.add(createSetter(property));
             results.add(createOptionGetter(property));
             results.add(createOptionSetter(property));
+        }
+        return results;
+    }
+
+    private List<MethodDeclaration> createReferenceAccessors() throws IOException {
+        List<MethodDeclaration> results = new ArrayList<>();
+        for (PropertyReferenceDeclaration reference : model.getDeclaredPropertyReferences()) {
+            results.add(createReferenceGetter(reference));
         }
         return results;
     }
@@ -218,6 +229,24 @@ public class ProjectiveModelEmitter {
                 Arrays.asList(new FormalParameterDeclaration[] {
                         f.newFormalParameterDeclaration(optionType, paramName)
                 }),
+                0,
+                Collections.emptyList(),
+                null);
+    }
+
+    private MethodDeclaration createReferenceGetter(PropertyReferenceDeclaration reference) throws IOException {
+        return f.newMethodDeclaration(
+                new JavadocBuilder(f)
+                    .text(Messages.getString("ProjectiveModelEmitter.javadocReferenceGetter"), //$NON-NLS-1$
+                            context.getDescription(reference))
+                    .returns()
+                        .text(context.getDescription(reference))
+                    .toJavadoc(),
+                driver.getMemberAnnotations(context, reference),
+                Collections.emptyList(),
+                context.getContainerType(reference),
+                context.getReferenceGetterName(reference),
+                Collections.emptyList(),
                 0,
                 Collections.emptyList(),
                 null);

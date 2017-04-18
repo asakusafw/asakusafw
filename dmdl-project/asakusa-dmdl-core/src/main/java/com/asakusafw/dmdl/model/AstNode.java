@@ -46,7 +46,7 @@ public interface AstNode {
      * @param <C> type of visitor context
      * @param <R> type of visitor result
      * @since 0.2.0
-     * @version 0.9.1
+     * @version 0.9.2
      */
     public interface Visitor<C, R> {
 
@@ -90,6 +90,15 @@ public interface AstNode {
          * @return the result
          */
         R visitBasicType(C context, AstBasicType node);
+
+        /**
+         * Called back from {@link AstCollectionType}.
+         * @param context the context of this visitor
+         * @param node the node invoked {@link AstNode#accept(Object, Visitor)}
+         * @return the result
+         * @since 0.9.2
+         */
+        R visitCollectionType(C context, AstCollectionType node);
 
         /**
          * Called back from {@link AstDescription}.
@@ -276,6 +285,11 @@ public interface AstNode {
 
         @Override
         public R visitBasicType(C context, AstBasicType node) {
+            return null;
+        }
+
+        @Override
+        public R visitCollectionType(C context, AstCollectionType node) {
             return null;
         }
 

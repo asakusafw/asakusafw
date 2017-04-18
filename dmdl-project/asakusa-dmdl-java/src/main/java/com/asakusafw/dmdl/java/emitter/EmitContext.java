@@ -21,6 +21,8 @@ import java.math.BigDecimal;
 import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.hadoop.io.Text;
@@ -34,9 +36,11 @@ import com.asakusafw.dmdl.model.AstSimpleName;
 import com.asakusafw.dmdl.model.BasicTypeKind;
 import com.asakusafw.dmdl.semantics.Declaration;
 import com.asakusafw.dmdl.semantics.DmdlSemantics;
+import com.asakusafw.dmdl.semantics.MemberDeclaration;
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
 import com.asakusafw.dmdl.semantics.ModelSymbol;
 import com.asakusafw.dmdl.semantics.PropertyDeclaration;
+import com.asakusafw.dmdl.semantics.PropertyReferenceDeclaration;
 import com.asakusafw.dmdl.semantics.trait.NamespaceTrait;
 import com.asakusafw.dmdl.semantics.type.BasicType;
 import com.asakusafw.runtime.value.BooleanOption;
@@ -310,7 +314,7 @@ public final class EmitContext {
      * @return the corresponded name
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public SimpleName getFieldName(PropertyDeclaration property) {
+    public SimpleName getFieldName(MemberDeclaration property) {
         if (property == null) {
             throw new IllegalArgumentException("property must not be null"); //$NON-NLS-1$
         }
@@ -381,6 +385,42 @@ public final class EmitContext {
      */
     public Type getFieldType(PropertyDeclaration property) {
         return resolve(getFieldTypeAsClass(property));
+    }
+
+    /**
+     * Returns the collection type of target reference.
+     * @param reference target reference
+     * @return the corresponded type
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.9.2
+     */
+    public Type getContainerType(PropertyReferenceDeclaration reference) {
+        if ((reference.getType() instanceof BasicType) == false) {
+            throw new IllegalArgumentException();
+        }
+        Type elementType = getElementType(reference);
+        switch (reference.getReference().getKind()) {
+        case LIST:
+            return factory.newParameterizedType(resolve(List.class), elementType);
+        case MAP:
+            return factory.newParameterizedType(resolve(Map.class), resolve(String.class), elementType);
+        default:
+            throw new AssertionError(reference.getReference().getKind());
+        }
+    }
+
+    /**
+     * Returns the element type of target reference.
+     * @param reference target reference
+     * @return the corresponded type
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.9.2
+     */
+    public Type getElementType(PropertyReferenceDeclaration reference) {
+        if ((reference.getType() instanceof BasicType) == false) {
+            throw new IllegalArgumentException();
+        }
+        return resolve(getFieldTypeAsClass(((BasicType) reference.getType()).getKind()));
     }
 
     /**
@@ -476,7 +516,7 @@ public final class EmitContext {
         return factory.newSimpleName(name.toMemberName());
     }
 
-    private boolean isBoolean(PropertyDeclaration property) {
+    private static boolean isBoolean(PropertyDeclaration property) {
         assert property != null;
         if ((property.getType() instanceof BasicType) == false) {
             return false;
@@ -529,6 +569,22 @@ public final class EmitContext {
         JavaName name = JavaName.of(property.getName());
         name.addFirst("set"); //$NON-NLS-1$
         name.addLast(NameConstants.PROPERTY_GETTER_SUFFIX);
+        return factory.newSimpleName(name.toMemberName());
+    }
+
+    /**
+     * Returns the corresponded reference getter name.
+     * @param reference target reference
+     * @return the corresponded name
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.9.2
+     */
+    public SimpleName getReferenceGetterName(PropertyReferenceDeclaration reference) {
+        if (reference == null) {
+            throw new IllegalArgumentException("property must not be null"); //$NON-NLS-1$
+        }
+        JavaName name = JavaName.of(reference.getName());
+        name.addFirst("get"); //$NON-NLS-1$
         return factory.newSimpleName(name.toMemberName());
     }
 

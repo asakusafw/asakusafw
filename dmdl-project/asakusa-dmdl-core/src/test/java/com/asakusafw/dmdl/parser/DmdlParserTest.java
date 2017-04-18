@@ -37,6 +37,8 @@ import com.asakusafw.dmdl.model.AstAttributeValue;
 import com.asakusafw.dmdl.model.AstAttributeValueArray;
 import com.asakusafw.dmdl.model.AstAttributeValueMap;
 import com.asakusafw.dmdl.model.AstBasicType;
+import com.asakusafw.dmdl.model.AstCollectionType;
+import com.asakusafw.dmdl.model.AstCollectionType.CollectionKind;
 import com.asakusafw.dmdl.model.AstExpression;
 import com.asakusafw.dmdl.model.AstJoin;
 import com.asakusafw.dmdl.model.AstLiteral;
@@ -47,6 +49,7 @@ import com.asakusafw.dmdl.model.AstQualifiedName;
 import com.asakusafw.dmdl.model.AstRecord;
 import com.asakusafw.dmdl.model.AstRecordDefinition;
 import com.asakusafw.dmdl.model.AstScript;
+import com.asakusafw.dmdl.model.AstSimpleName;
 import com.asakusafw.dmdl.model.AstSummarize;
 import com.asakusafw.dmdl.model.AstTerm;
 import com.asakusafw.dmdl.model.AstType;
@@ -501,7 +504,7 @@ public class DmdlParserTest extends DmdlTesterRoot {
         assertThat(get(map, BigInteger.valueOf(1)), is(instanceOf(AstAttributeValueMap.class)));
     }
 
-    private AstAttributeValue get(AstAttributeValueMap map, Object value) {
+    private static AstAttributeValue get(AstAttributeValueMap map, Object value) {
         return map.entries.stream()
                 .filter(e -> e.key.toValue().equals(value))
                 .findAny()
@@ -601,16 +604,137 @@ public class DmdlParserTest extends DmdlTesterRoot {
         shouldSyntaxError();
     }
 
-    private AstType astType(BasicTypeKind kind) {
+    /**
+     * reference.
+     */
+    @Test
+    public void reference_list() {
+        AstRecordDefinition record = loadFirstTermAs(AstRecordDefinition.class, new String[] {
+                "simple = {",
+                "  a : INT;",
+                "  r = {a};",
+                "};",
+        });
+        AstPropertyDefinition r = getProp(record, "r");
+        assertThat(r.description, is(nullValue()));
+        assertThat(r.attributes, hasSize(0));
+        assertThat(r.name, is(name("r")));
+        assertThat(r.type, is(nullValue()));
+
+        assertThat(r.expression, instanceOf(AstAttributeValueArray.class));
+        AstAttributeValueArray array = (AstAttributeValueArray) r.expression;
+        assertThat(array.elements.size(), is(1));
+        assertThat(array.elements.get(0), is(name("a")));
+    }
+
+    /**
+     * reference.
+     */
+    @Test
+    public void reference_map() {
+        AstRecordDefinition record = loadFirstTermAs(AstRecordDefinition.class, new String[] {
+                "simple = {",
+                "  a : INT;",
+                "  r = {`A`:a};",
+                "};",
+        });
+        AstPropertyDefinition r = getProp(record, "r");
+        assertThat(r.description, is(nullValue()));
+        assertThat(r.attributes, hasSize(0));
+        assertThat(r.name, is(name("r")));
+        assertThat(r.type, is(nullValue()));
+
+        assertThat(r.expression, instanceOf(AstAttributeValueMap.class));
+        AstAttributeValueMap map = (AstAttributeValueMap) r.expression;
+        assertThat(map.entries.get(0).key, is(value("\"A\"", LiteralKind.STRING)));
+        assertThat(map.entries.get(0).value, is(name("a")));
+    }
+
+    /**
+     * reference.
+     */
+    @Test
+    public void reference_indirect() {
+        AstRecordDefinition record = loadFirstTermAs(AstRecordDefinition.class, new String[] {
+                "simple = {",
+                "  a : INT;",
+                "  r = other.r;",
+                "};",
+        });
+        AstPropertyDefinition r = getProp(record, "r");
+        assertThat(r.description, is(nullValue()));
+        assertThat(r.attributes, hasSize(0));
+        assertThat(r.name, is(name("r")));
+        assertThat(r.type, is(nullValue()));
+        assertThat(r.expression, is(qname("other", "r")));
+    }
+
+    /**
+     * reference - stub.
+     */
+    @Test
+    public void reference_stub() {
+        AstRecordDefinition record = loadFirstTermAs(AstRecordDefinition.class, new String[] {
+                "simple = {",
+                "  a : INT;",
+                "  r_list : {INT};",
+                "  r_map : {:INT};",
+                "};",
+        });
+        AstPropertyDefinition list = getProp(record, "r_list");
+        assertThat(list.type, is(astType(CollectionKind.LIST, BasicTypeKind.INT)));
+        assertThat(list.expression, is(nullValue()));
+
+        AstPropertyDefinition map = getProp(record, "r_map");
+        assertThat(map.type, is(astType(CollectionKind.MAP, BasicTypeKind.INT)));
+        assertThat(map.expression, is(nullValue()));
+    }
+
+    /**
+     * reference.
+     */
+    @Test
+    public void reference_empty() {
+        AstRecordDefinition record = loadFirstTermAs(AstRecordDefinition.class, new String[] {
+                "simple = {",
+                "  a : INT;",
+                "  r_list : {INT} = {};",
+                "  r_map : {:INT} = {:};",
+                "};",
+        });
+        AstPropertyDefinition list = getProp(record, "r_list");
+        assertThat(list.type, is(astType(CollectionKind.LIST, BasicTypeKind.INT)));
+        assertThat(list.expression, instanceOf(AstAttributeValueArray.class));
+        assertThat(((AstAttributeValueArray) list.expression).elements, hasSize(0));
+
+        AstPropertyDefinition map = getProp(record, "r_map");
+        assertThat(map.type, is(astType(CollectionKind.MAP, BasicTypeKind.INT)));
+        assertThat(map.expression, instanceOf(AstAttributeValueMap.class));
+        assertThat(((AstAttributeValueMap) map.expression).entries, hasSize(0));
+    }
+
+    private static AstType astType(BasicTypeKind kind) {
         return new AstBasicType(null, kind);
     }
 
-    private AstAttributeValue value(String token, LiteralKind kind) {
+    private static AstType astType(CollectionKind container, BasicTypeKind element) {
+        return new AstCollectionType(null, container, astType(element));
+    }
+
+    private static AstAttributeValue value(String token, LiteralKind kind) {
         return new AstLiteral(null, token, kind);
     }
 
+    private static AstSimpleName name(String identifier) {
+        return new AstSimpleName(null, identifier);
+    }
+
+    private static AstQualifiedName qname(String qualifier, String identifier) {
+        return new AstQualifiedName(null, name(qualifier), name(identifier));
+    }
+
     @SuppressWarnings("unchecked")
-    private <T extends AstTerm<T>> List<T> extract(AstExpression<T> expression) {
+    private static <T extends AstTerm<T>> List<T> extract(AstExpression<T> expression) {
         List<T> results = new ArrayList<>();
         LinkedList<AstExpression<T>> work = new LinkedList<>();
         work.add(expression);
@@ -632,7 +756,7 @@ public class DmdlParserTest extends DmdlTesterRoot {
         return results;
     }
 
-    private AstModelDefinition<AstRecord> getRecord(AstScript script, String name) {
+    private static AstModelDefinition<AstRecord> getRecord(AstScript script, String name) {
         for (AstModelDefinition<?> def : script.models) {
             if (def.name.identifier.equals(name)) {
                 return def.asRecord();
@@ -641,7 +765,7 @@ public class DmdlParserTest extends DmdlTesterRoot {
         throw new AssertionError(name);
     }
 
-    private AstModelDefinition<AstRecord> getProjection(AstScript script, String name) {
+    private static AstModelDefinition<AstRecord> getProjection(AstScript script, String name) {
         for (AstModelDefinition<?> def : script.models) {
             if (def.name.identifier.equals(name)) {
                 return def.asProjective();
@@ -650,7 +774,7 @@ public class DmdlParserTest extends DmdlTesterRoot {
         throw new AssertionError(name);
     }
 
-    private AstModelDefinition<AstJoin> getJoined(AstScript script, String name) {
+    private static AstModelDefinition<AstJoin> getJoined(AstScript script, String name) {
         for (AstModelDefinition<?> def : script.models) {
             if (def.name.identifier.equals(name)) {
                 return def.asJoined();
@@ -659,7 +783,7 @@ public class DmdlParserTest extends DmdlTesterRoot {
         throw new AssertionError(name);
     }
 
-    private AstModelDefinition<AstSummarize> getSummarized(AstScript script, String name) {
+    private static AstModelDefinition<AstSummarize> getSummarized(AstScript script, String name) {
         for (AstModelDefinition<?> def : script.models) {
             if (def.name.identifier.equals(name)) {
                 return def.asSummarized();
@@ -668,7 +792,7 @@ public class DmdlParserTest extends DmdlTesterRoot {
         throw new AssertionError(name);
     }
 
-    private AstPropertyDefinition getProp(AstRecordDefinition record, String name) {
+    private static AstPropertyDefinition getProp(AstRecordDefinition record, String name) {
         for (AstPropertyDefinition prop : record.properties) {
             if (prop.name.identifier.equals(name)) {
                 return prop;
@@ -677,7 +801,7 @@ public class DmdlParserTest extends DmdlTesterRoot {
         throw new AssertionError(name);
     }
 
-    private AstAttributeValue getValue(AstAttribute attr, String name) {
+    private static AstAttributeValue getValue(AstAttribute attr, String name) {
         for (AstAttributeElement elem : attr.elements) {
             if (elem.name.identifier.equals(name)) {
                 return elem.value;
@@ -686,14 +810,14 @@ public class DmdlParserTest extends DmdlTesterRoot {
         throw new AssertionError(name);
     }
 
-    private AstScript load() {
-        AstScript script = parse();
+    private AstScript load(String... lines) {
+        AstScript script = parse(lines);
         AstScript restored = restore(script);
         assertThat(restored, equalTo(script));
         return script;
     }
 
-    private AstScript restore(AstScript script) {
+    private static AstScript restore(AstScript script) {
         StringWriter output = new StringWriter();
         try (PrintWriter writer = new PrintWriter(output)) {
             DmdlEmitter.emit(script, writer);
@@ -709,8 +833,8 @@ public class DmdlParserTest extends DmdlTesterRoot {
         }
     }
 
-    private <T extends AstTerm<?>> T loadFirstTermAs(Class<T> termKind) {
-        AstScript script = load();
+    private <T extends AstTerm<?>> T loadFirstTermAs(Class<T> termKind, String... lines) {
+        AstScript script = load(lines);
         assertThat(script.models.size(), greaterThanOrEqualTo(1));
         AstModelDefinition<?> firstModel = script.models.get(0);
 
@@ -721,8 +845,8 @@ public class DmdlParserTest extends DmdlTesterRoot {
         return termKind.cast(term);
     }
 
-    private AstAttribute loadFirstAttribute() {
-        AstScript script = load();
+    private AstAttribute loadFirstAttribute(String... lines) {
+        AstScript script = load(lines);
         assertThat(script.models.size(), greaterThanOrEqualTo(1));
         AstModelDefinition<?> firstModel = script.models.get(0);
 

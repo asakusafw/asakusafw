@@ -17,9 +17,12 @@ package com.asakusafw.dmdl.semantics;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.asakusafw.dmdl.model.AstAttribute;
 import com.asakusafw.dmdl.model.AstDescription;
@@ -30,6 +33,8 @@ import com.asakusafw.utils.collections.Lists;
 
 /**
  * Declaration of data models.
+ * @since 0.2.0
+ * @version 0.9.2
  */
 public class ModelDeclaration implements Declaration {
 
@@ -43,9 +48,9 @@ public class ModelDeclaration implements Declaration {
 
     private final List<AstAttribute> attributes;
 
-    private final List<PropertyDeclaration> declaredProperties;
+    private final Map<String, MemberDeclaration> members = new LinkedHashMap<>();
 
-    private final Map<Class<? extends Trait<?>>, Trait<?>> traits;
+    private final TraitContainer traits = new TraitContainer();
 
     /**
      * Creates and returns a new instance.
@@ -53,7 +58,7 @@ public class ModelDeclaration implements Declaration {
      * @param originalAst the original AST, or {@code null} if this is an ad-hoc element
      * @param name the name of this model
      * @param description the description of this model, or {@code null} if unknown
-     * @param attributes the attribtues of this model
+     * @param attributes the attributes of this model
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     protected ModelDeclaration(
@@ -76,8 +81,6 @@ public class ModelDeclaration implements Declaration {
         this.name = name;
         this.description = description;
         this.attributes = Lists.freeze(attributes);
-        this.declaredProperties = new ArrayList<>();
-        this.traits = new HashMap<>();
     }
 
     /**
@@ -114,7 +117,7 @@ public class ModelDeclaration implements Declaration {
      * @param propertyName the name of this property
      * @param propertyType the type of this property
      * @param propertyDescription the description of this property, or {@code null} if unknown
-     * @param propertyAttributes the attribtues of this property
+     * @param propertyAttributes the attributes of this property
      * @return the declared property
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
@@ -133,21 +136,95 @@ public class ModelDeclaration implements Declaration {
         if (propertyAttributes == null) {
             throw new IllegalArgumentException("propertyAttributes must not be null"); //$NON-NLS-1$
         }
-        if (findPropertyDeclaration(propertyName.identifier) != null) {
-            throw new IllegalArgumentException(MessageFormat.format(
-                    "Property \"{0}\" is already declared in the model \"{1}\"", //$NON-NLS-1$
-                    propertyName,
-                    getName()));
-        }
-        PropertyDeclaration property = new PropertyDeclaration(
+        return doDeclareMember(new PropertyDeclaration(
                 getSymbol(),
                 propertyOriginalAst,
                 propertyName,
                 propertyType,
                 propertyDescription,
-                propertyAttributes);
-        declaredProperties.add(property);
-        return property;
+                propertyAttributes));
+    }
+
+    /**
+     * Declares a new property reference into this model.
+     * @param memberOriginalAst the original AST, or {@code null} if this is an ad-hoc element
+     * @param memberName the name of this member
+     * @param referentType the referent type
+     * @param references the references
+     * @param memberDescription the description of this member, or {@code null} if unknown
+     * @param memberAttributes the attributes of this member
+     * @return the declared member
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.9.2
+     */
+    public PropertyReferenceDeclaration declarePropertyReference(
+            AstNode memberOriginalAst,
+            AstSimpleName memberName,
+            Type referentType,
+            PropertyReferenceDeclaration.ReferenceContainer<?> references,
+            AstDescription memberDescription,
+            List<? extends AstAttribute> memberAttributes) {
+        if (memberName == null) {
+            throw new IllegalArgumentException("memberName must not be null"); //$NON-NLS-1$
+        }
+        if (referentType == null) {
+            throw new IllegalArgumentException("referentType must not be null"); //$NON-NLS-1$
+        }
+        if (references == null) {
+            throw new IllegalArgumentException("referents must not be null"); //$NON-NLS-1$
+        }
+        if (memberAttributes == null) {
+            throw new IllegalArgumentException("memberAttributes must not be null"); //$NON-NLS-1$
+        }
+        for (PropertySymbol ref : references.getAllReferences()) {
+            PropertyDeclaration decl = ref.findDeclaration();
+            if (decl == null || Objects.equals(getSymbol(), ref.getOwner()) == false) {
+                throw new IllegalArgumentException(MessageFormat.format(
+                        "property \"{0}\" is not declared in the model \"{1}\"", //$NON-NLS-1$
+                        ref,
+                        getName()));
+            }
+            if (decl.getType().isSame(referentType) == false) {
+                throw new IllegalArgumentException(MessageFormat.format(
+                        "reference \"{0}.{1}\" has inconsistent type: {2}:{3}", //$NON-NLS-1$
+                        getName(),
+                        memberName,
+                        ref,
+                        decl.getType()));
+            }
+        }
+        return doDeclareMember(new PropertyReferenceDeclaration(
+                memberOriginalAst,
+                getSymbol(),
+                memberName,
+                referentType,
+                references,
+                memberDescription,
+                memberAttributes));
+    }
+
+    private <T extends MemberDeclaration> T doDeclareMember(T member) {
+        if (members.putIfAbsent(member.getName().identifier, member) != null) {
+            throw new IllegalArgumentException(MessageFormat.format(
+                    "Property \"{0}\" is already declared in the model \"{1}\"", //$NON-NLS-1$
+                    member.getName(),
+                    getName()));
+        }
+        return member;
+    }
+
+    /**
+     * Returns a declared member in this model.
+     * @param memberName the name of the member
+     * @return a declared member with the name, or {@code null} if not declared
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.9.2
+     */
+    public MemberDeclaration findMemberDeclaration(String memberName) {
+        if (memberName == null) {
+            throw new IllegalArgumentException("memberName must not be null"); //$NON-NLS-1$
+        }
+        return members.get(memberName);
     }
 
     /**
@@ -160,23 +237,61 @@ public class ModelDeclaration implements Declaration {
         if (propertyName == null) {
             throw new IllegalArgumentException("propertyName must not be null"); //$NON-NLS-1$
         }
-        for (PropertyDeclaration property : declaredProperties) {
-            if (property.getName().identifier.equals(propertyName)) {
-                return property;
-            }
+        return Optional.ofNullable(findMemberDeclaration(propertyName))
+                .filter(member -> member instanceof PropertyDeclaration)
+                .map(member -> (PropertyDeclaration) member)
+                .orElse(null);
+    }
+
+    /**
+     * Returns a declared property reference in this model.
+     * @param propertyName the name of the property reference
+     * @return a declared property with the name, or {@code null} if not declared
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.9.2
+     */
+    public PropertyReferenceDeclaration findPropertyReferenceDeclaration(String propertyName) {
+        if (propertyName == null) {
+            throw new IllegalArgumentException("propertyName must not be null"); //$NON-NLS-1$
         }
-        return null;
+        return Optional.ofNullable(findMemberDeclaration(propertyName))
+                .filter(member -> member instanceof PropertyReferenceDeclaration)
+                .map(member -> (PropertyReferenceDeclaration) member)
+                .orElse(null);
+    }
+
+    /**
+     * Returns all declared members in this model.
+     * @return all declared members, or an empty list if there are no declared members
+     * @since 0.9.2
+     */
+    public List<MemberDeclaration> getDeclaredMembers() {
+        return new ArrayList<>(members.values());
     }
 
     /**
      * Returns all declared properties in this model.
-     * <p>
-     * This returns an empty list if no properties are declared.
-     * </p>
-     * @return all declared properties
+     * @return all declared properties, or an empty list if there are no declared properties
      */
     public List<PropertyDeclaration> getDeclaredProperties() {
-        return declaredProperties;
+        return members.values().stream()
+                .sequential()
+                .filter(member -> member instanceof PropertyDeclaration)
+                .map(member -> (PropertyDeclaration) member)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Returns all declared property references in this model.
+     * @return all declared property references, or an empty list if there are no elements
+     * @since 0.9.2
+     */
+    public List<PropertyReferenceDeclaration> getDeclaredPropertyReferences() {
+        return members.values().stream()
+                .sequential()
+                .filter(member -> member instanceof PropertyReferenceDeclaration)
+                .map(member -> (PropertyReferenceDeclaration) member)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -194,22 +309,12 @@ public class ModelDeclaration implements Declaration {
 
     @Override
     public <T extends Trait<T>> T getTrait(Class<T> kind) {
-        if (kind == null) {
-            throw new IllegalArgumentException("kind must not be null"); //$NON-NLS-1$
-        }
-        return kind.cast(traits.get(kind));
+        return traits.get(kind);
     }
 
     @Override
     public <T extends Trait<T>> void putTrait(Class<T> kind, T trait) {
-        if (kind == null) {
-            throw new IllegalArgumentException("kind must not be null"); //$NON-NLS-1$
-        }
-        if (trait == null) {
-            traits.remove(kind);
-        } else {
-            traits.put(kind, trait);
-        }
+        traits.put(kind, trait);
     }
 
     @Override

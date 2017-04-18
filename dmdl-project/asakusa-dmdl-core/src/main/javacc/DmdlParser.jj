@@ -15,10 +15,11 @@
  */
 options {
     STATIC = false;
-    SUPPORT_CLASS_VISIBILITY_PUBLIC=false;
+    SUPPORT_CLASS_VISIBILITY_PUBLIC = false;
     UNICODE_INPUT = true;
     LOOKAHEAD = 1;
     GRAMMAR_ENCODING = "UTF-8";
+    JAVA_TEMPLATE_TYPE = "modern";
 }
 
 PARSER_BEGIN(JjDmdlParser)
@@ -27,10 +28,8 @@ package com.asakusafw.dmdl.parser;
 import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,8 +40,9 @@ import com.asakusafw.dmdl.model.*;
 /**
  * An implementation of the DMDL Script Parser.
  * @since 0.2.0
- * @version 0.9.1
+ * @version 0.9.2
  */
+@SuppressWarnings("unused")
 class JjDmdlParser {
 
     static final Logger LOG = LoggerFactory.getLogger(JjDmdlParser.class);
@@ -544,8 +544,8 @@ private AstBasicType BasicType() :
 /* Types
 <type>:
      <basic-type>
+     <collection-type>
      <reference-type>
-     <sequence-type>
 
 <sequence-type>:
     <type> '*'
@@ -559,18 +559,45 @@ private AstType Type() :
     (
         type = BasicType()
     |
+        type = CollectionType()
+    |
         type = ReferenceType()
     )
-    (
-        "*"
-        {
-            Region region = peek("type");
-            type = new AstSequenceType(region, type);
-        }
-    )*
     {
         end("type");
         return type;
+    }
+}
+
+/* Collection Types
+<collection-type>:
+    "{" <type> "}"
+    "{" ":" <type> "}"
+*/
+private AstCollectionType CollectionType() :
+{
+    begin("collection-type");
+    AstType elementType;
+    AstCollectionType.CollectionKind kind;
+}
+{
+    "{"
+    (
+        elementType = Type()
+        {
+            kind = AstCollectionType.CollectionKind.LIST;
+        }
+    |
+        ":"
+        elementType = Type()
+        {
+            kind = AstCollectionType.CollectionKind.MAP;
+        }
+    )
+    "}"
+    {
+        Region region = end("collection-type");
+        return new AstCollectionType(region, kind, elementType);
     }
 }
 
@@ -788,25 +815,31 @@ private AstRecord RecordTerm() :
     List<AstPropertyDefinition> properties = newList();
     AstPropertyDefinition property;
     AstModelReference reference;
+    AstRecord result;
 }
 {
-    <OPEN_BLOCK>
     (
-        property = PropertyDefinition()
+        <OPEN_BLOCK>
+        (
+            property = PropertyDefinition()
+            {
+                properties.add(property);
+            }
+        )+
+        <CLOSE_BLOCK>
         {
-            properties.add(property);
+            Region region = end("record-term");
+            result = new AstRecordDefinition(region, properties);
         }
-    )+
-    <CLOSE_BLOCK>
+    |
+        reference = ModelReference()
+        {
+            end("record-term");
+            result = reference;
+        }
+    )
     {
-        Region region = end("record-term");
-        return new AstRecordDefinition(region, properties);
-    }
-|
-    reference = ModelReference()
-    {
-        end("record-term");
-        return reference;
+        return result;
     }
 }
 
@@ -830,6 +863,8 @@ private AstModelReference ModelReference() :
 /* Property Definitions
 <property-definition>:
      <description>? <attribute>* <name> ':' <type> ';'
+     <description>? <attribute>* <name> '=' <property-value> ';'
+     <description>? <attribute>* <name> ':' <type>  '=' <property-value> ';'
 */
 private AstPropertyDefinition PropertyDefinition() :
 {
@@ -838,17 +873,64 @@ private AstPropertyDefinition PropertyDefinition() :
     List<AstAttribute> attributes;
     AstSimpleName name;
     AstType type;
+    AstAttributeValue expression;
 }
 {
     ( description = Description() )?
     attributes = AttributeList()
     name = Name()
-    ":"
-    type = Type()
+    (
+        ":"
+        type = Type()
+        (
+            "="
+            expression = PropertyExpression()
+        |
+            {
+                expression = null;
+            }
+        )
+    |
+        "="
+        expression = PropertyExpression()
+        {
+            type = null;
+        }
+    )
     <END_OF_DECLARATION>
     {
         Region region = end("property-definition");
-        return new AstPropertyDefinition(region, description, attributes, name, type);
+        return new AstPropertyDefinition(region, description, attributes, name, type, expression);
+    }
+}
+
+/* Property Expressions
+<property-expression>:
+    <property-expression-list>
+    <property-expression-map>
+    <property-expression-reference>
+*/
+private AstAttributeValue PropertyExpression() :
+{
+    begin("property-expression");
+    AstAttributeValue expression;
+}
+{
+    /*
+     * Note: We use subset of AttributeValue instead of special rule for property expressions,
+     * and then check their contents in the semantic analysis phase.
+     * This is good to avoid ugly error messages from JavaCC.
+     */
+    (   LOOKAHEAD(3)
+        expression = AttributeValueArray()
+    |
+        expression = AttributeValueMap()
+    |
+        expression = QualifiedName()
+    )
+    {
+        end("property-expression");
+        return expression;
     }
 }
 

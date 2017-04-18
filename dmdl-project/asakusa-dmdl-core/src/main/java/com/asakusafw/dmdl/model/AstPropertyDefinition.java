@@ -16,6 +16,7 @@
 package com.asakusafw.dmdl.model;
 
 import java.util.List;
+import java.util.Objects;
 
 import com.asakusafw.dmdl.Region;
 import com.asakusafw.utils.collections.Lists;
@@ -23,6 +24,7 @@ import com.asakusafw.utils.collections.Lists;
 /**
  * Represents a definition of each property.
  * @since 0.2.0
+ * @version 0.9.2
  */
 public class AstPropertyDefinition extends AbstractAstNode {
 
@@ -45,8 +47,14 @@ public class AstPropertyDefinition extends AbstractAstNode {
 
     /**
      * The type of the defining property.
+     * @since 0.9.2
      */
     public final AstType type;
+
+    /**
+     * The value of the defining property.
+     */
+    public final AstAttributeValue expression;
 
     /**
      * Creates and returns a new instance.
@@ -63,20 +71,54 @@ public class AstPropertyDefinition extends AbstractAstNode {
             List<AstAttribute> attributes,
             AstSimpleName name,
             AstType type) {
+        this(region, description, attributes, name, type, null);
+    }
+
+    /**
+     * Creates and returns a new instance.
+     * @param region the region of this node on the enclosing script, or {@code null} if unknown
+     * @param description the description of this property, or {@code null} if is omitted
+     * @param attributes the attributes of this property
+     * @param name the name
+     * @param type the type, or {@code null} if it is not defined
+     * @param expression the property expression, or {@code null} if it is not defined
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.9.2
+     */
+    public AstPropertyDefinition(
+            Region region,
+            AstDescription description,
+            List<AstAttribute> attributes,
+            AstSimpleName name,
+            AstType type,
+            AstAttributeValue expression) {
         if (attributes == null) {
             throw new IllegalArgumentException("attributes must not be null"); //$NON-NLS-1$
         }
         if (name == null) {
             throw new IllegalArgumentException("name must not be null"); //$NON-NLS-1$
         }
-        if (type == null) {
-            throw new IllegalArgumentException("type must not be null"); //$NON-NLS-1$
-        }
         this.region = region;
         this.description = description;
         this.attributes = Lists.freeze(attributes);
         this.name = name;
         this.type = type;
+        this.expression = expression;
+    }
+
+    /**
+     * Returns the inferred kind of this property definition.
+     * @return the property kind
+     * @since 0.9.2
+     */
+    public PropertyKind getPropertyKind() {
+        if (expression != null || type instanceof AstCollectionType) {
+            return PropertyKind.REFERENCE;
+        } else if (type != null) {
+            return PropertyKind.NORMAL;
+        } else {
+            return PropertyKind.INVALID;
+        }
     }
 
     @Override
@@ -97,10 +139,11 @@ public class AstPropertyDefinition extends AbstractAstNode {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + attributes.hashCode();
-        result = prime * result + ((description == null) ? 0 : description.hashCode());
-        result = prime * result + name.hashCode();
-        result = prime * result + type.hashCode();
+        result = prime * result + Objects.hashCode(attributes);
+        result = prime * result + Objects.hashCode(description);
+        result = prime * result + Objects.hashCode(name);
+        result = prime * result + Objects.hashCode(type);
+        result = prime * result + Objects.hashCode(expression);
         return result;
     }
 
@@ -116,22 +159,32 @@ public class AstPropertyDefinition extends AbstractAstNode {
             return false;
         }
         AstPropertyDefinition other = (AstPropertyDefinition) obj;
-        if (!name.equals(other.name)) {
-            return false;
-        }
-        if (!type.equals(other.type)) {
-            return false;
-        }
-        if (!attributes.equals(other.attributes)) {
-            return false;
-        }
-        if (description == null) {
-            if (other.description != null) {
-                return false;
-            }
-        } else if (!description.equals(other.description)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(name, other.name)
+                && Objects.equals(type, other.type)
+                && Objects.equals(expression, other.expression)
+                && Objects.equals(attributes, other.attributes)
+                && Objects.equals(type, other.type);
+    }
+
+    /**
+     * Represents a kind of property.
+     * @since 0.9.2
+     */
+    public enum PropertyKind {
+
+        /**
+         * A normal property definition.
+         */
+        NORMAL,
+
+        /**
+         * A property reference definition.
+         */
+        REFERENCE,
+
+        /**
+         * An invalid definition.
+         */
+        INVALID,
     }
 }

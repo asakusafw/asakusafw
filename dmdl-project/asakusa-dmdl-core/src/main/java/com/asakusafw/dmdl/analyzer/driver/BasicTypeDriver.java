@@ -17,17 +17,16 @@ package com.asakusafw.dmdl.analyzer.driver;
 
 import com.asakusafw.dmdl.model.AstBasicType;
 import com.asakusafw.dmdl.model.AstType;
-import com.asakusafw.dmdl.semantics.DmdlSemantics;
 import com.asakusafw.dmdl.semantics.type.BasicType;
 import com.asakusafw.dmdl.spi.TypeDriver;
 
 /**
  * Resolves basic type in formed of {@link AstBasicType}.
  */
-public class BasicTypeDriver extends TypeDriver {
+public class BasicTypeDriver implements TypeDriver {
 
     @Override
-    public BasicType resolve(DmdlSemantics world, AstType syntax) {
+    public BasicType resolve(Context context, AstType syntax) {
         if (syntax instanceof AstBasicType) {
             AstBasicType ast = (AstBasicType) syntax;
             return new BasicType(ast, ast.kind);

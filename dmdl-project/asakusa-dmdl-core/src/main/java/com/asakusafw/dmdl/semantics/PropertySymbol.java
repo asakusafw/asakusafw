@@ -31,7 +31,7 @@ public class PropertySymbol implements Symbol<PropertyDeclaration> {
 
     /**
      * Creates and returns a new instance.
-     * @param owner the owner of this propery
+     * @param owner the owner of this property
      * @param name the name of this property
      * @throws IllegalArgumentException if some parameters were {@code null}
      */

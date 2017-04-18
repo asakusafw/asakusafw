@@ -82,4 +82,9 @@ public class AstReferenceType extends AbstractAstNode implements AstType {
         }
         return true;
     }
+
+    @Override
+    public String toString() {
+        return name.identifier;
+    }
 }
