@@ -6,7 +6,7 @@
   <parent>
     <artifactId>asakusa-dmdl-project</artifactId>
     <groupId>com.asakusafw</groupId>
-    <version>0.9.1-SNAPSHOT</version>
+    <version>0.9.1</version>
   </parent>
 
   <packaging>jar</packaging>
