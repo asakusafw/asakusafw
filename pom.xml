@@ -153,6 +153,7 @@
               <artifactId>maven-javadoc-plugin</artifactId>
               <configuration>
                 <additionalparam>-Xdoclint:all,-Xdoclint:-missing</additionalparam>
+                <excludePackageNames>com.asakusafw.dmdl.parser</excludePackageNames>
               </configuration>
             </plugin>
           </plugins>
@@ -525,7 +526,6 @@ encoding/<project>=UTF-8
           <locale>en</locale>
           <doctitle>${project.name} API References (Version ${project.version})</doctitle>
           <windowtitle>${project.name} API References (Version ${project.version})</windowtitle>
-          <excludePackageNames>com.asakusafw.modelgen:com.asakusafw.testtools</excludePackageNames>
           <overview>build-tools/src/main/javadoc/overview-summary.html</overview>
         </configuration>
         <reportSets>
