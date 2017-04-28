@@ -496,7 +496,7 @@ final class PropertyReferenceDeclarationProcessor extends AbstractVisitor<ModelD
                 context.error(
                         reference,
                         Messages.getString("PropertyReferenceDeclarationProcessor.diagnosticUnexpectedReferenceElementType"), //$NON-NLS-1$
-                        property.name.identifier,
+                        decl.getName().identifier,
                         expectedType,
                         decl.getType());
                 return null;
