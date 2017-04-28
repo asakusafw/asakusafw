@@ -27,13 +27,32 @@ import com.asakusafw.dmdl.semantics.Type;
  * {@code META-INF/services/com.asakusafw.dmdl.spi.TypeDriver}.
  * </p>
  */
-public abstract class TypeDriver {
+public interface TypeDriver {
 
     /**
      * Processes and modifies the attributed declaration.
-     * @param environment the processing environment
+     * @param context the current context
      * @param syntax the syntactic form of the type
      * @return the corresponded semantic form, or {@code null} if can not resolve
      */
-    public abstract Type resolve(DmdlSemantics environment, AstType syntax);
+    Type resolve(Context context, AstType syntax);
+
+    /**
+     * A processing context for {@link TypeDriver}.
+     */
+    public interface Context {
+
+        /**
+         * Returns the current environment.
+         * @return the current environment
+         */
+        DmdlSemantics getEnvironment();
+
+        /**
+         * Resolves element type.
+         * @param node the target node
+         * @return the resolved type, or {@code null} if operation was failed
+         */
+        Type resolve(AstType node);
+    }
 }

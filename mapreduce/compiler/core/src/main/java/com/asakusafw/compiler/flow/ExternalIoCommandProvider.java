@@ -15,7 +15,6 @@
  */
 package com.asakusafw.compiler.flow;
 
-import java.io.Serializable;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -29,9 +28,7 @@ import com.asakusafw.runtime.util.VariableTable;
 /**
  * Provides commands for processing external I/Os.
  */
-public class ExternalIoCommandProvider implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class ExternalIoCommandProvider {
 
     /**
      * Returns the name of this command provider.

@@ -36,9 +36,7 @@ public class DmdlSemanticException extends Exception {
      * @param diagnostics the raised diagnostics
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public DmdlSemanticException(
-            String message,
-            List<Diagnostic> diagnostics) {
+    public DmdlSemanticException(String message, List<? extends Diagnostic> diagnostics) {
         super(message);
         if (diagnostics == null) {
             throw new IllegalArgumentException("diagnostics must not be null"); //$NON-NLS-1$

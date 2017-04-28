@@ -27,29 +27,29 @@ import com.asakusafw.dmdl.semantics.ModelDeclaration;
  * @since 0.2.4
  * @version 0.7.0
  */
-public abstract class ModelAttributeDriver extends AttributeDriver {
+public abstract class ModelAttributeDriver implements AttributeDriver {
 
     @Override
-    public final void process(DmdlSemantics environment, Declaration declaration, AstAttribute attribute) {
+    public final void process(Context context, Declaration declaration, AstAttribute attribute) {
         assert attribute.name.toString().equals(getTargetName());
         if ((declaration instanceof ModelDeclaration) == false) {
-            environment.report(new Diagnostic(
+            context.getEnvironment().report(new Diagnostic(
                     Level.ERROR,
                     declaration.getOriginalAst(),
                     Messages.getString("ModelAttributeDriver.diagnosticInvalidAttribute"), //$NON-NLS-1$
                     getTargetName()));
             return;
         }
-        process(environment, (ModelDeclaration) declaration, attribute);
+        process(context.getEnvironment(), (ModelDeclaration) declaration, attribute);
     }
 
     @Override
-    public final void verify(DmdlSemantics environment, Declaration declaration, AstAttribute attribute) {
+    public final void verify(Context context, Declaration declaration, AstAttribute attribute) {
         assert attribute.name.toString().equals(getTargetName());
         if ((declaration instanceof ModelDeclaration) == false) {
             return;
         }
-        verify(environment, (ModelDeclaration) declaration, attribute);
+        verify(context.getEnvironment(), (ModelDeclaration) declaration, attribute);
     }
 
     /**
@@ -64,7 +64,7 @@ public abstract class ModelAttributeDriver extends AttributeDriver {
     /**
      * Verifies the attributed declaration.
      * This will be invoked after all attributes are
-     * {@link AttributeDriver#process(DmdlSemantics, Declaration, AstAttribute) processed}.
+     * {@link AttributeDriver#process(Context, Declaration, AstAttribute) processed}.
      * @param environment the processing environment
      * @param attribute the attribute with the {@link #getTargetName() target name}
      * @param declaration the model declaration with the {@code attribute}

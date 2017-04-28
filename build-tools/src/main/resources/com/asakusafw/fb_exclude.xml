@@ -1,55 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <FindBugsFilter>
-  <Match classregex=".*\.EscapeDecoder"/>
-  <Match classregex=".*\.LiteralParser"/>
-  <Match classregex=".*\.JavadocTokenizer"/>
-  <Match classregex=".*\.ParseException"/>
-  <Match classregex=".*\.Jj.*"/>
-  <Match classregex=".*\.SimpleCharStream"/>
   <Match classregex=".*Test(Root|Utils?)?([\.\$].*)?"/>
   <Match classregex=".*TesterRoot([\.\$].*)?"/>
   <Match classregex=".*\.(Mock|Dummy|Stub).*"/>
-  <Match>
-    <Bug pattern="AM_CREATES_EMPTY_ZIP_FILE_ENTRY"/>
-  </Match>
-  <Match>
-    <Bug pattern="SE_BAD_FIELD"/>
-  </Match>
-  <Match class="com.asakusafw.runtime.flow.MapperWithRuntimeResource">
-    <Or>
-      <Bug pattern="URF_UNREAD_FIELD"/>
-    </Or>
-  </Match>
-  <Match class="com.asakusafw.runtime.flow.ReducerWithRuntimeResource">
-    <Or>
-      <Bug pattern="URF_UNREAD_FIELD"/>
-    </Or>
-  </Match>
-  <Match classregex="com.asakusafw.runtime.flow.join.LookUpKey\$.*View">
-    <Or>
-      <Bug pattern="EQ_CHECK_FOR_OPERAND_NOT_COMPATIBLE_WITH_THIS"/>
-    </Or>
-  </Match>
-  <Match class="com.asakusafw.runtime.io.util.BufferedFileInput">
-    <Or>
-      <Bug pattern="EI_EXPOSE_REP2"/>
-    </Or>
-  </Match>
-  <Match class="com.asakusafw.runtime.io.util.BufferedFileOutput">
-    <Or>
-      <Bug pattern="EI_EXPOSE_REP2"/>
-    </Or>
-  </Match>
-  <Match class="com.asakusafw.runtime.io.util.DataBuffer">
-    <Or>
-      <Bug pattern="EI_EXPOSE_REP"/>
-      <Bug pattern="EI_EXPOSE_REP2"/>
-    </Or>
-  </Match>
-  <Match class="com.asakusafw.runtime.mapreduce.simple.KeyValueSlice">
-    <Or>
-      <Bug pattern="EI_EXPOSE_REP"/>
-      <Bug pattern="EI_EXPOSE_REP2"/>
-    </Or>
-  </Match>
 </FindBugsFilter>

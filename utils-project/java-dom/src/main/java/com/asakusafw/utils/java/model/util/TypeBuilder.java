@@ -210,6 +210,14 @@ public class TypeBuilder {
     }
 
     /**
+     * Returns a qualified this.
+     * @return the chained expression builder
+     */
+    public ExpressionBuilder dotThis() {
+        return expr(f.newThis(toNamedType()));
+    }
+
+    /**
      * Returns the array instance creation expression.
      * @param dimensions the number of array elements for each dimension
      * @return the chained expression builder

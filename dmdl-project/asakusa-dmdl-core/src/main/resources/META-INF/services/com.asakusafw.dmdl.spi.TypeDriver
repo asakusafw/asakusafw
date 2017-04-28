@@ -1,1 +1,2 @@
 com.asakusafw.dmdl.analyzer.driver.BasicTypeDriver
+com.asakusafw.dmdl.analyzer.driver.CollectionTypeDriver

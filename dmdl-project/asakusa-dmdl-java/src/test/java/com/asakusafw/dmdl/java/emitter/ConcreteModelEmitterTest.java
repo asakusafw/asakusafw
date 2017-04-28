@@ -19,6 +19,8 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.hadoop.io.Text;
 import org.hamcrest.Matcher;
@@ -28,6 +30,8 @@ import com.asakusafw.dmdl.java.GeneratorTesterRoot;
 import com.asakusafw.runtime.value.Date;
 import com.asakusafw.runtime.value.DateTime;
 import com.asakusafw.runtime.value.IntOption;
+import com.asakusafw.runtime.value.ValueOptionList;
+import com.asakusafw.runtime.value.ValueOptionMap;
 
 /**
  * Test for {@link ConcreteModelEmitter}.
@@ -121,6 +125,74 @@ public class ConcreteModelEmitterTest extends GeneratorTesterRoot {
 
         object.set("value", 100);
         assertThat(object.get("value"), eq(100));
+    }
+
+    /**
+     * w/ reference list.
+     */
+    @Test
+    public void reference_list() {
+        ModelLoader loader = generate();
+        ModelWrapper object = loader.newModel("Simple");
+
+        IntOption a = (IntOption) object.getOption("a");
+        IntOption b = (IntOption) object.getOption("b");
+        IntOption c = (IntOption) object.getOption("c");
+        @SuppressWarnings("unchecked")
+        List<IntOption> all = (List<IntOption>) object.get("all");
+
+        assertThat(all, is(instanceOf(ValueOptionList.class)));
+        assertThat(all, hasSize(3));
+        assertThat(all.get(0), is(sameInstance(a)));
+        assertThat(all.get(1), is(sameInstance(b)));
+        assertThat(all.get(2), is(sameInstance(c)));
+    }
+
+    /**
+     * w/ reference list.
+     */
+    @Test
+    public void reference_list_empty() {
+        ModelLoader loader = generate();
+        ModelWrapper object = loader.newModel("Simple");
+
+        @SuppressWarnings("unchecked")
+        List<IntOption> all = (List<IntOption>) object.get("empty");
+        assertThat(all, hasSize(0));
+    }
+
+    /**
+     * w/ reference map.
+     */
+    @Test
+    public void reference_map() {
+        ModelLoader loader = generate();
+        ModelWrapper object = loader.newModel("Simple");
+
+        IntOption a = (IntOption) object.getOption("a");
+        IntOption b = (IntOption) object.getOption("b");
+        IntOption c = (IntOption) object.getOption("c");
+        @SuppressWarnings("unchecked")
+        Map<String, IntOption> all = (Map<String, IntOption>) object.get("all");
+
+        assertThat(all, is(instanceOf(ValueOptionMap.class)));
+        assertThat(all.keySet(), hasSize(3));
+        assertThat(all, hasEntry(is("A"), sameInstance(a)));
+        assertThat(all, hasEntry(is("B"), sameInstance(b)));
+        assertThat(all, hasEntry(is("C"), sameInstance(c)));
+    }
+
+    /**
+     * w/ reference map.
+     */
+    @Test
+    public void reference_map_empty() {
+        ModelLoader loader = generate();
+        ModelWrapper object = loader.newModel("Simple");
+
+        @SuppressWarnings("unchecked")
+        Map<String, IntOption> all = (Map<String, IntOption>) object.get("empty");
+        assertThat(all.keySet(), hasSize(0));
     }
 
     private Matcher<Object> eq(Object value) {

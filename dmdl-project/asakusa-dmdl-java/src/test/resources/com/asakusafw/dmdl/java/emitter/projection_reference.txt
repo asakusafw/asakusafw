@@ -1,0 +1,6 @@
+projective projection = {
+    a : INT;
+    b : LONG;
+    ref_list = { a };
+    ref_map = { "K": b };
+};

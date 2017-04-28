@@ -21,11 +21,13 @@ import static org.junit.Assert.*;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.StringReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -35,10 +37,13 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.junit.Rule;
 import org.junit.rules.TestName;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.asakusafw.dmdl.analyzer.DmdlAnalyzer;
 import com.asakusafw.dmdl.analyzer.DmdlSemanticException;
 import com.asakusafw.dmdl.analyzer.driver.BasicTypeDriver;
+import com.asakusafw.dmdl.analyzer.driver.CollectionTypeDriver;
 import com.asakusafw.dmdl.model.AstModelDefinition;
 import com.asakusafw.dmdl.model.AstScript;
 import com.asakusafw.dmdl.model.BasicTypeKind;
@@ -57,6 +62,8 @@ import com.asakusafw.dmdl.spi.TypeDriver;
  */
 public abstract class DmdlTesterRoot {
 
+    private final Logger log = LoggerFactory.getLogger(getClass());
+
     /**
      * a test name handler.
      */
@@ -66,7 +73,8 @@ public abstract class DmdlTesterRoot {
     /**
      * {@link TypeDriver}s.
      */
-    protected final List<TypeDriver> typeDrivers = Stream.of(new BasicTypeDriver()).collect(Collectors.toList());
+    protected final List<TypeDriver> typeDrivers = Stream.of(new BasicTypeDriver(), new CollectionTypeDriver())
+            .collect(Collectors.toList());
 
     /**
      * {@link AttributeDriver}s.
@@ -189,23 +197,26 @@ public abstract class DmdlTesterRoot {
 
     /**
      * Resolves context script.
+     * @param lines explicit source lines
      * @return the resolved
      */
-    protected DmdlSemantics resolve() {
+    protected DmdlSemantics resolve(String... lines) {
         try {
-            return resolve0();
+            return resolve0(lines);
         } catch (DmdlSemanticException e) {
+            e.getDiagnostics().forEach(it -> log.error("{}", it));
             throw new AssertionError(e.getDiagnostics());
         }
     }
 
     /**
      * Assert semantic error should occur.
+     * @param lines explicit source lines
      * @return error object
      */
-    protected DmdlSemanticException shouldSemanticError() {
+    protected DmdlSemanticException shouldSemanticError(String... lines) {
         try {
-            resolve0();
+            resolve0(lines);
             throw new AssertionError("error should be raised");
         } catch (DmdlSemanticException e) {
             return e;
@@ -214,11 +225,12 @@ public abstract class DmdlTesterRoot {
 
     /**
      * Resolves context script.
+     * @param lines explicit source lines
      * @return the resolved
      * @throws DmdlSemanticException if failed to resolve
      */
-    protected DmdlSemantics resolve0() throws DmdlSemanticException {
-        AstScript script = parse();
+    protected DmdlSemantics resolve0(String... lines) throws DmdlSemanticException {
+        AstScript script = parse(lines);
         DmdlAnalyzer result = new DmdlAnalyzer(typeDrivers, attributeDrivers);
         for (AstModelDefinition<?> model : script.models) {
             result.addModel(model);
@@ -229,11 +241,12 @@ public abstract class DmdlTesterRoot {
 
     /**
      * Parses context script.
+     * @param lines explicit source lines
      * @return the parsed
      */
-    protected AstScript parse() {
+    protected AstScript parse(String... lines) {
         try {
-            return parse0();
+            return parse0(lines);
         }
         catch (DmdlSyntaxException e) {
             throw new AssertionError(e);
@@ -243,10 +256,11 @@ public abstract class DmdlTesterRoot {
     /**
      * Assert syntax error should occur.
      * @return error object
+     * @param lines explicit source lines
      */
-    protected DmdlSyntaxException shouldSyntaxError() {
+    protected DmdlSyntaxException shouldSyntaxError(String... lines) {
         try {
-            parse0();
+            parse0(lines);
             throw new AssertionError("error should be raised");
         } catch (DmdlSyntaxException e) {
             return e;
@@ -255,14 +269,15 @@ public abstract class DmdlTesterRoot {
 
     /**
      * Parses context script.
+     * @param lines explicit source lines
      * @return the parsed
      * @throws DmdlSyntaxException if failed to parse
      */
-    protected AstScript parse0() throws DmdlSyntaxException {
-        return parse(currentTestName.getMethodName());
+    protected AstScript parse0(String... lines) throws DmdlSyntaxException {
+        return lines.length == 0 ? parseFile(currentTestName.getMethodName()) : parseLines(lines);
     }
 
-    private AstScript parse(String resource) throws DmdlSyntaxException {
+    private AstScript parseFile(String resource) throws DmdlSyntaxException {
         try {
             String fileName = resource + ".txt";
             URL url = getClass().getResource(fileName);
@@ -281,7 +296,22 @@ public abstract class DmdlTesterRoot {
                 return script;
             }
         } catch (IOException e) {
-            throw new AssertionError();
+            throw new AssertionError(e);
+        }
+    }
+
+    private static AstScript parseLines(String... lines) throws DmdlSyntaxException {
+        try {
+            try (Reader r = new StringReader(Arrays.stream(lines)
+                    .map(s -> s.replace('\'', '"'))
+                    .map(s -> s.replace('`', '"'))
+                    .collect(Collectors.joining(System.lineSeparator())))) {
+                DmdlParser parser = new DmdlParser();
+                AstScript script = parser.parse(r, URI.create("testing"));
+                return script;
+            }
+        } catch (IOException e) {
+            throw new AssertionError(e);
         }
     }
 }

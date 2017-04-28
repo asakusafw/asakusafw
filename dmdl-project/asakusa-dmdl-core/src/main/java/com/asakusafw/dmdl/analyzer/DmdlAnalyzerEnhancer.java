@@ -22,12 +22,12 @@ import com.asakusafw.dmdl.semantics.DmdlSemantics;
  * Enhances {@link DmdlAnalyzer}.
  * @since 0.7.1
  */
-public abstract class DmdlAnalyzerEnhancer {
+public interface DmdlAnalyzerEnhancer {
 
     /**
      * No enhancements.
      */
-    public static final DmdlAnalyzerEnhancer NULL = new DmdlAnalyzerEnhancer() {
+    DmdlAnalyzerEnhancer NULL = new DmdlAnalyzerEnhancer() {
         // no special members
     };
 
@@ -36,7 +36,7 @@ public abstract class DmdlAnalyzerEnhancer {
      * @param root the semantics root; this may have no definitions
      * @param definition the syntax model
      */
-    public void validateSyntax(DmdlSemantics root, AstModelDefinition<?> definition) {
+    default void validateSyntax(DmdlSemantics root, AstModelDefinition<?> definition) {
         return;
     }
 }

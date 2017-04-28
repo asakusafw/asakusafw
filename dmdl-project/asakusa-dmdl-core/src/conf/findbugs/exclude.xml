@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+  <Match class="com.asakusafw.dmdl.model.EscapeDecoder" />
+  <Match class="com.asakusafw.dmdl.parser.ParseException" />
+  <Match class="com.asakusafw.dmdl.parser.StreamProvider" />
+  <Match class="com.asakusafw.dmdl.parser.StringProvider" />
+  <Match classregex="com\.asakusafw\.dmdl\.parser\.Jj.*" />
+</FindBugsFilter>

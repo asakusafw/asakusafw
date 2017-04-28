@@ -27,6 +27,7 @@ import com.asakusafw.dmdl.model.AstAttributeValue;
 import com.asakusafw.dmdl.model.AstAttributeValueArray;
 import com.asakusafw.dmdl.model.AstAttributeValueMap;
 import com.asakusafw.dmdl.model.AstBasicType;
+import com.asakusafw.dmdl.model.AstCollectionType;
 import com.asakusafw.dmdl.model.AstDescription;
 import com.asakusafw.dmdl.model.AstGrouping;
 import com.asakusafw.dmdl.model.AstJoin;
@@ -163,6 +164,26 @@ public final class DmdlEmitter {
         }
 
         @Override
+        public Void visitCollectionType(Context context, AstCollectionType node) {
+            switch (node.kind) {
+            case LIST:
+                context.print("'{'"); //$NON-NLS-1$
+                node.elementType.accept(context, this);
+                context.print("'}'"); //$NON-NLS-1$
+                break;
+            case MAP:
+                context.print("'{'"); //$NON-NLS-1$
+                context.print(":"); //$NON-NLS-1$
+                node.elementType.accept(context, this);
+                context.print("'}'"); //$NON-NLS-1$
+                break;
+            default:
+                throw new AssertionError(node.kind);
+            }
+            return null;
+        }
+
+        @Override
         public Void visitDescription(Context context, AstDescription node) {
             context.print("{0}", node.token); //$NON-NLS-1$
             return null;
@@ -275,8 +296,14 @@ public final class DmdlEmitter {
                 context.println();
             }
             node.name.accept(context, this);
-            context.print(" : "); //$NON-NLS-1$
-            node.type.accept(context, this);
+            if (node.type != null) {
+                context.print(" : "); //$NON-NLS-1$
+                node.type.accept(context, this);
+            }
+            if (node.expression != null) {
+                context.print(" = "); //$NON-NLS-1$
+                node.expression.accept(context, this);
+            }
             context.print(";"); //$NON-NLS-1$
             return null;
         }

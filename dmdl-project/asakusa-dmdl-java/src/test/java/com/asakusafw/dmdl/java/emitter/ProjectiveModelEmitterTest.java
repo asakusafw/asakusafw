@@ -18,11 +18,18 @@ package com.asakusafw.dmdl.java.emitter;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.hadoop.io.Text;
 import org.junit.Test;
 
 import com.asakusafw.dmdl.java.GeneratorTesterRoot;
 import com.asakusafw.dmdl.java.emitter.driver.ProjectionDriver;
+import com.asakusafw.runtime.value.IntOption;
+import com.asakusafw.runtime.value.LongOption;
 
 /**
  * Test for {@link ProjectiveModelEmitter}.
@@ -48,5 +55,31 @@ public class ProjectiveModelEmitterTest extends GeneratorTesterRoot {
 
         object.set("foo", new Text("Hello, Projections!"));
         assertThat(object.get("foo"), is((Object) new Text("Hello, Projections!")));
+    }
+
+    /**
+     * projection test.
+     * @throws Exception if failed
+     */
+    @Test
+    public void projection_reference() throws Exception {
+        ModelLoader loader = generate();
+        Class<?> projection = loader.modelType("Projection");
+
+        Type list = projection.getMethod("getRefList").getGenericReturnType();
+        assertType(list, List.class, IntOption.class);
+
+        Type map = projection.getMethod("getRefMap").getGenericReturnType();
+        assertType(map, Map.class, String.class, LongOption.class);
+    }
+
+    private static void assertType(Type actual, Class<?> raw, Class<?>... arguments) {
+        assertThat(actual, is(instanceOf(ParameterizedType.class)));
+
+        ParameterizedType a = (ParameterizedType) actual;
+        Type actualRaw = a.getRawType();
+        Type[] actualArgs = a.getActualTypeArguments();
+        assertThat(actualRaw, equalTo(raw));
+        assertThat(actualArgs, equalTo(arguments));
     }
 }

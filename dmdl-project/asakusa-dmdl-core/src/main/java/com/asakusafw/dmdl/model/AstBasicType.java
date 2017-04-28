@@ -83,4 +83,9 @@ public class AstBasicType extends AbstractAstNode implements AstType {
         }
         return true;
     }
+
+    @Override
+    public String toString() {
+        return kind.name();
+    }
 }

@@ -16,9 +16,7 @@
 package com.asakusafw.dmdl.semantics;
 
 import java.text.MessageFormat;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.asakusafw.dmdl.model.AstAttribute;
 import com.asakusafw.dmdl.model.AstDescription;
@@ -28,8 +26,10 @@ import com.asakusafw.utils.collections.Lists;
 
 /**
  * Declaration of properties.
+ * @since 0.2.0
+ * @version 0.9.2
  */
-public class PropertyDeclaration implements Declaration {
+public class PropertyDeclaration implements MemberDeclaration {
 
     private final AstNode originalAst;
 
@@ -43,7 +43,7 @@ public class PropertyDeclaration implements Declaration {
 
     private final List<AstAttribute> attributes;
 
-    private final Map<Class<? extends Trait<?>>, Trait<?>> traits;
+    private final TraitContainer traits = new TraitContainer();
 
     /**
      * Creates and returns a new instance.
@@ -52,7 +52,7 @@ public class PropertyDeclaration implements Declaration {
      * @param name the name of this property
      * @param type the type of this property
      * @param description the description of this property, or {@code null} if unknown
-     * @param attributes the attribtues of this property
+     * @param attributes the attributes of this property
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     protected PropertyDeclaration(
@@ -80,7 +80,6 @@ public class PropertyDeclaration implements Declaration {
         this.type = type;
         this.description = description;
         this.attributes = Lists.freeze(attributes);
-        this.traits = new HashMap<>();
     }
 
     @Override
@@ -111,10 +110,7 @@ public class PropertyDeclaration implements Declaration {
         return attributes;
     }
 
-    /**
-     * Returns owner of this property.
-     * @return the owner of this property
-     */
+    @Override
     public ModelSymbol getOwner() {
         return owner;
     }
@@ -138,21 +134,11 @@ public class PropertyDeclaration implements Declaration {
 
     @Override
     public <T extends Trait<T>> T getTrait(Class<T> kind) {
-        if (kind == null) {
-            throw new IllegalArgumentException("kind must not be null"); //$NON-NLS-1$
-        }
-        return kind.cast(traits.get(kind));
+        return traits.get(kind);
     }
 
     @Override
     public <T extends Trait<T>> void putTrait(Class<T> kind, T trait) {
-        if (kind == null) {
-            throw new IllegalArgumentException("kind must not be null"); //$NON-NLS-1$
-        }
-        if (trait == null) {
-            traits.remove(kind);
-        } else {
-            traits.put(kind, trait);
-        }
+        traits.put(kind, trait);
     }
 }

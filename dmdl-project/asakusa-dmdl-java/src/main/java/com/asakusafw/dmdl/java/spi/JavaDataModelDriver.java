@@ -22,6 +22,7 @@ import java.util.List;
 import com.asakusafw.dmdl.java.emitter.EmitContext;
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
 import com.asakusafw.dmdl.semantics.PropertyDeclaration;
+import com.asakusafw.dmdl.semantics.PropertyReferenceDeclaration;
 import com.asakusafw.utils.java.model.syntax.Annotation;
 import com.asakusafw.utils.java.model.syntax.FieldDeclaration;
 import com.asakusafw.utils.java.model.syntax.MethodDeclaration;
@@ -37,6 +38,8 @@ import com.asakusafw.utils.java.model.syntax.Type;
  * <p>
  * All default implementation will do nothing.
  * </p>
+ * @since 0.2.0
+ * @version 0.9.2
  */
 public abstract class JavaDataModelDriver {
 
@@ -106,6 +109,19 @@ public abstract class JavaDataModelDriver {
      */
     public List<Annotation> getMemberAnnotations(
             EmitContext context, PropertyDeclaration property) throws IOException {
+        return Collections.emptyList();
+    }
+
+    /**
+     * Returns the type annotations to attach to the reference.
+     * @param context the attached context
+     * @param reference target reference
+     * @return the list of annotations
+     * @throws IOException if failed to create other models
+     * @since 0.9.2
+     */
+    public List<Annotation> getMemberAnnotations(
+            EmitContext context, PropertyReferenceDeclaration reference) throws IOException {
         return Collections.emptyList();
     }
 }

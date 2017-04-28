@@ -16,9 +16,11 @@
 package com.asakusafw.dmdl.analyzer;
 
 import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
-import com.asakusafw.dmdl.model.AstExpression;
 import com.asakusafw.dmdl.model.AstJoin;
+import com.asakusafw.dmdl.model.AstModelDefinition;
 import com.asakusafw.dmdl.model.AstModelReference;
 import com.asakusafw.dmdl.model.AstNode.AbstractVisitor;
 import com.asakusafw.dmdl.model.AstSimpleName;
@@ -26,15 +28,17 @@ import com.asakusafw.dmdl.model.AstSummarize;
 import com.asakusafw.dmdl.model.AstTerm;
 import com.asakusafw.dmdl.model.AstUnionExpression;
 
-/**
- * Collects appreared model symbols in {@link AstExpression}.
- */
-public class ModelSymbolCollector extends AbstractVisitor<Collection<AstSimpleName>, Void> {
+final class ModelSymbolCollector extends AbstractVisitor<Collection<AstSimpleName>, Void> {
 
-    /**
-     * The singleton instance.
-     */
-    public static final ModelSymbolCollector INSTANCE = new ModelSymbolCollector();
+    private ModelSymbolCollector() {
+        return;
+    }
+
+    static Set<AstSimpleName> collect(AstModelDefinition<?> definition) {
+        Set<AstSimpleName> results = new LinkedHashSet<>();
+        definition.expression.accept(results, new ModelSymbolCollector());
+        return results;
+    }
 
     @Override
     public Void visitModelReference(Collection<AstSimpleName> context, AstModelReference node) {

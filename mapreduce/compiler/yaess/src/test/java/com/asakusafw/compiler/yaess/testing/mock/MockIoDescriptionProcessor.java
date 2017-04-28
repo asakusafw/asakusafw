@@ -91,8 +91,6 @@ public class MockIoDescriptionProcessor extends ExternalIoDescriptionProcessor {
 
     static class CommandProvider extends ExternalIoCommandProvider {
 
-        private static final long serialVersionUID = 1L;
-
         @Override
         public String getName() {
             return "mock";
