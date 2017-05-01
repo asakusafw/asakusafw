@@ -113,8 +113,15 @@ public abstract class JdbcImporterDescription extends WindGateImporterDescriptio
      * JDBC import options.
      * @see JdbcImporterDescription#getOptions()
      * @since 0.9.0
+     * @version 0.9.2
      */
     public enum Option implements JdbcAttribute {
+
+        /**
+         * Enable partitioned tables on Oracle.
+         * @since 0.9.2
+         */
+        ORACLE_PARTITION(JdbcProcess.OptionSymbols.ORACLE_PARTITION),
         ;
 
         private final String symbol;

@@ -109,6 +109,7 @@ public enum JdbcProcess implements ConfigurationItem {
     /**
      * The source/drain option kinds.
      * @since 0.9.0
+     * @version 0.9.2
      */
     public static final class OptionSymbols {
 
@@ -121,6 +122,12 @@ public enum JdbcProcess implements ConfigurationItem {
          * The JDBC export option symbol of enabling Oracle direct path insert features.
          */
         public static final String ORACLE_DIRPATH = "ORACLE_DIRPATH"; //$NON-NLS-1$
+
+        /**
+         * The JDBC import option symbol of enabling Oracle partitions.
+         * @since 0.9.2
+         */
+        public static final String ORACLE_PARTITION = "ORACLE_PARTITION"; //$NON-NLS-1$
 
         private OptionSymbols() {
             return;
