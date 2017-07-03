@@ -1022,7 +1022,7 @@ public final class HadoopDataSourceUtil {
             ExecutorService executor,
             Collection<? extends Callable<?>> tasks) throws IOException, InterruptedException {
         List<Future<?>> futures = tasks.stream()
-                .map(task -> executor.submit(task))
+                .map((Callable<?> task) -> executor.submit(task))
                 .collect(Collectors.toList());
         for (Future<?> future : futures) {
             try {
