@@ -307,7 +307,7 @@ public class ExcelSheetSinkTest {
                 if (next == null) {
                     break;
                 }
-                assertThat(next.toString(), results.contains(source), is(false));
+                assertThat(next.toString(), results, not(contains(next)));
                 results.add(next);
             }
         } finally {
