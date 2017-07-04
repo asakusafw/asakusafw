@@ -28,6 +28,7 @@ import org.junit.runners.model.Statement
 import com.asakusafw.gradle.plugins.AsakusafwOrganizerPluginConvention.BatchappsConfiguration
 import com.asakusafw.gradle.plugins.AsakusafwOrganizerPluginConvention.DirectIoConfiguration
 import com.asakusafw.gradle.plugins.AsakusafwOrganizerPluginConvention.ExtensionConfiguration
+import com.asakusafw.gradle.plugins.AsakusafwOrganizerPluginConvention.HadoopConfiguration
 import com.asakusafw.gradle.plugins.AsakusafwOrganizerPluginConvention.HiveConfiguration
 import com.asakusafw.gradle.plugins.AsakusafwOrganizerPluginConvention.TestingConfiguration
 import com.asakusafw.gradle.plugins.AsakusafwOrganizerPluginConvention.WindGateConfiguration
@@ -68,6 +69,7 @@ class AsakusafwOrganizerPluginConventionTest {
         project.asakusafwBase.frameworkVersion = 'AFW_TEST'
         assert convention.asakusafwVersion == project.asakusafwBase.frameworkVersion
         assert convention.assembleDir == "${project.buildDir}/asakusafw-assembly"
+        assert convention.hadoop instanceof HadoopConfiguration
         assert convention.directio instanceof DirectIoConfiguration
         assert convention.windgate instanceof WindGateConfiguration
         assert convention.hive instanceof HiveConfiguration
@@ -76,6 +78,17 @@ class AsakusafwOrganizerPluginConventionTest {
         assert convention.testing instanceof TestingConfiguration
         assert convention.extension instanceof ExtensionConfiguration
         assert convention.assembly.handlers.isEmpty()
+    }
+
+    /**
+     * Test for {@code project.asakusafwOrganizer.hadoop} convention default values.
+     */
+    @Test
+    public void hadoop_defaults() {
+        project.asakusafwBase.hadoopVersion = 'TESTING'
+
+        assert convention.hadoop.embed == false
+        assert convention.hadoop.version == 'TESTING'
     }
 
     /**
@@ -153,6 +166,7 @@ class AsakusafwOrganizerPluginConventionTest {
         assert profile.asakusafwVersion == convention.asakusafwVersion
         assert profile.assembleDir == "${convention.assembleDir}-dev"
         assert profile.archiveName == "asakusafw-${project.name}-dev.tar.gz"
+        assert profile.hadoop.embed == convention.hadoop.embed
         assert profile.directio.enabled == convention.directio.enabled
         assert profile.windgate.enabled == convention.windgate.enabled
         assert profile.yaess.enabled == convention.yaess.enabled
@@ -173,6 +187,7 @@ class AsakusafwOrganizerPluginConventionTest {
         assert profile.asakusafwVersion == convention.asakusafwVersion
         assert profile.assembleDir == "${convention.assembleDir}-prod"
         assert profile.archiveName == "asakusafw-${project.name}.tar.gz"
+        assert profile.hadoop.embed == convention.hadoop.embed
         assert profile.directio.enabled == convention.directio.enabled
         assert profile.windgate.enabled == convention.windgate.enabled
         assert profile.yaess.enabled == convention.yaess.enabled
@@ -198,6 +213,10 @@ class AsakusafwOrganizerPluginConventionTest {
         convention.assembleDir = 'AFW-TEST'
         assert profile.assembleDir == "${convention.assembleDir}-testProfile"
         assert profile.archiveName == "asakusafw-${project.name}-testProfile.tar.gz"
+
+        assert profile.hadoop.embed == convention.hadoop.embed
+        convention.hadoop.embed = !convention.hadoop.embed
+        assert profile.hadoop.embed == convention.hadoop.embed
 
         assert profile.directio.enabled == convention.directio.enabled
         convention.directio.enabled = !convention.directio.enabled

@@ -58,6 +58,8 @@ class AsakusafwOrganizer extends AbstractOrganizer {
         createConfigurations('asakusafw', [
                          CoreDist : "Contents of Asakusa Framework core modules (${profile.name}).",
                           CoreLib : "Libraries of Asakusa Framework core modules (${profile.name}).",
+                       HadoopDist : "Contents of embedded Hadoop modules (${profile.name}).",
+                        HadoopLib : "Libraries of embedded Hadoop modules (${profile.name}).",
                      DirectIoDist : "Contents of Asakusa Framework Direct I/O modules (${profile.name}).",
                       DirectIoLib : "Libraries of Asakusa Framework Direct I/O modules (${profile.name}).",
                  DirectIoHiveDist : "Contents of Direct I/O Hive modules (${profile.name}).",
@@ -85,6 +87,13 @@ class AsakusafwOrganizer extends AbstractOrganizer {
                      ExtensionLib : "Asakusa Framework extension libraries (${profile.name}).",
         ])
         configuration('asakusafwExtensionLib').transitive = false
+        configuration('asakusafwHadoopLib').with { Configuration conf ->
+            conf.transitive = true
+            // use snappy-java which is provided in asakusa-runtime-all
+            conf.exclude group: 'org.xerial.snappy', module: 'snappy-java'
+            conf.exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+            conf.exclude group: 'ch.qos.logback', module: 'logback-classic'
+        }
     }
 
     private void configureDependencies() {
@@ -94,6 +103,11 @@ class AsakusafwOrganizer extends AbstractOrganizer {
                 CoreDist : "com.asakusafw:asakusa-runtime-configuration:${base.frameworkVersion}:dist@jar",
                 CoreLib : [
                     "com.asakusafw:asakusa-runtime-all:${base.frameworkVersion}:lib@jar"
+                ],
+                HadoopDist : [],
+                HadoopLib : [
+                    "org.apache.hadoop:hadoop-common:${profile.hadoop.version}",
+                    "org.apache.hadoop:hadoop-mapreduce-client-jobclient:${profile.hadoop.version}",
                 ],
                 DirectIoDist : "com.asakusafw:asakusa-directio-tools:${base.frameworkVersion}:dist@jar",
                 DirectIoLib : [
@@ -178,6 +192,12 @@ class AsakusafwOrganizer extends AbstractOrganizer {
                 ] + profile.hive.libraries,
                 ExtensionLib : profile.extension.libraries,
             ])
+            if (PluginUtils.compareGradleVersion('2.5') >= 0) {
+                configuration('asakusafwHadoopLib').resolutionStrategy.dependencySubstitution {
+                    substitute module('log4j:log4j') with module("org.slf4j:log4j-over-slf4j:${base.slf4jVersion}")
+                    substitute module('commons-logging:commons-logging') with module("org.slf4j:jcl-over-slf4j:${base.slf4jVersion}")
+                }
+            }
         }
     }
 
@@ -192,6 +212,14 @@ class AsakusafwOrganizer extends AbstractOrganizer {
                     process {
                         rename(/asakusa-runtime-all-(.*).jar/, 'asakusa-runtime-all.jar')
                     }
+                }
+            },
+            Hadoop : {
+                into('.') {
+                    extract configuration('asakusafwHadoopDist')
+                }
+                into('hadoop/lib') {
+                    put configuration('asakusafwHadoopLib')
                 }
             },
             DirectIo : {
@@ -343,6 +371,10 @@ class AsakusafwOrganizer extends AbstractOrganizer {
             task('attachAssemble').dependsOn task('attachComponentOperation')
             task('attachAssemble').dependsOn task('attachComponentExtension')
 
+            if (profile.hadoop.isEmbed()) {
+                project.logger.info "Enabling embedded Hadoop: ${profile.name}"
+                task('attachAssemble').dependsOn task('attachComponentHadoop')
+            }
             if (profile.directio.isEnabled()) {
                 project.logger.info "Enabling Direct I/O: ${profile.name}"
                 task('attachAssemble').dependsOn task('attachComponentDirectIo')
