@@ -71,11 +71,10 @@ _TL_ROOT="$(cd "$(dirname "$0")/.." ; pwd)"
 
 import "$_TL_ROOT/conf/env.sh"
 import "$_TL_ROOT/libexec/configure-hadoop-cmd.sh"
-import "$_TL_ROOT/libexec/configure-classpath.sh"
-
-_TL_CLASS="com.asakusafw.operation.tools.hadoop.fs.Clean"
 
 export HADOOP_CLASSPATH="$_TL_CLASSPATH"
-"$HADOOP_CMD" "$_TL_CLASS" "$@"
+"$HADOOP_CMD" jar "$_TL_ROOT/lib/asakusa-operation-tools.jar" \
+    "com.asakusafw.operation.tools.hadoop.fs.Clean" \
+    "$@"
 _RET=$?
 exit $_RET

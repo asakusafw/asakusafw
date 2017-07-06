@@ -33,14 +33,14 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.util.Tool;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * CLI for Hadoop FS cleaning tool.
@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
  */
 public class Clean extends Configured implements Tool {
 
-    static final Logger LOG = LoggerFactory.getLogger(Clean.class);
+    static final Log LOG = LogFactory.getLog(Clean.class);
 
     static final Option OPT_RECURSIVE;
     static final Option OPT_DRY_RUN;
@@ -85,6 +85,19 @@ public class Clean extends Configured implements Tool {
      * @throws Exception if failed to execute command
      */
     public static void main(String... args) throws Exception {
+        int exit = exec(args);
+        if (exit != 0) {
+            System.exit(exit);
+        }
+    }
+
+    /**
+     * Program entry.
+     * @param args arguments
+     * @return the exit code
+     * @throws Exception if failed to execute command
+     */
+    public static int exec(String... args) throws Exception {
         LOG.info("[OT-CLEAN-I00000] Start Hadoop FS cleaning tool");
         long start = System.currentTimeMillis();
         Tool tool = new Clean();
@@ -95,9 +108,7 @@ public class Clean extends Configured implements Tool {
                 "[OT-CLEAN-I00999] Finish Hadoop FS cleaning tool (exit-code={0}, elapsed={1}ms)",
                 exit,
                 end - start));
-        if (exit != 0) {
-            System.exit(exit);
-        }
+        return exit;
     }
 
     @Override
@@ -119,7 +130,7 @@ public class Clean extends Configured implements Tool {
         }
         long period = currentTime - (long) (opts.keepDays * TimeUnit.DAYS.toMillis(1));
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Keep switching-time: {}", new Date(period)); //$NON-NLS-1$
+            LOG.debug(MessageFormat.format("Keep switching-time: {0}", new Date(period))); //$NON-NLS-1$
         }
         Context context = new Context(opts.recursive, period, opts.dryRun);
         for (Path path : opts.paths) {
@@ -134,7 +145,7 @@ public class Clean extends Configured implements Tool {
     private Opts parseOptions(String[] args) throws ParseException {
         assert args != null;
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Parsing options: {}", Arrays.toString(args)); //$NON-NLS-1$
+            LOG.debug(MessageFormat.format("Parsing options: {0}", Arrays.toString(args))); //$NON-NLS-1$
         }
 
         CommandLineParser parser = new BasicParser();
@@ -155,7 +166,9 @@ public class Clean extends Configured implements Tool {
             rest = new String[0];
         }
 
-        LOG.debug("Option {}: {}", OPT_RECURSIVE.getLongOpt(), recursive); //$NON-NLS-1$
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format("Option {0}: {1}", OPT_RECURSIVE.getLongOpt(), recursive)); //$NON-NLS-1$
+        }
         double keepDays;
         try {
             keepDays = Double.parseDouble(keepString);
@@ -166,8 +179,10 @@ public class Clean extends Configured implements Tool {
                     keepString));
             return null;
         }
-        LOG.debug("Option {}: {}", OPT_KEEP_DAYS.getLongOpt(), keepDays); //$NON-NLS-1$
-        LOG.debug("Option {}: {}", OPT_DRY_RUN.getLongOpt(), dryRun); //$NON-NLS-1$
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format("Option {0}: {1}", OPT_KEEP_DAYS.getLongOpt(), keepDays)); //$NON-NLS-1$
+            LOG.debug(MessageFormat.format("Option {0}: {1}", OPT_DRY_RUN.getLongOpt(), dryRun)); //$NON-NLS-1$
+        }
 
         List<Path> paths = new ArrayList<>();
         for (String pathString : rest) {
@@ -177,7 +192,9 @@ public class Clean extends Configured implements Tool {
             try {
                 Path path = new Path(pathString);
                 paths.add(path);
-                LOG.debug("Option --: {}", path); //$NON-NLS-1$
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(MessageFormat.format("Option --: {0}", path)); //$NON-NLS-1$
+                }
             } catch (RuntimeException e) {
                 LOG.error(MessageFormat.format(
                         "[OT-CLEAN-E00001] Invalid target path: {0}",
@@ -240,7 +257,9 @@ public class Clean extends Configured implements Tool {
     }
 
     private boolean remove(FileSystem fs, FileStatus file, Context context) {
-        LOG.debug("Attempt to remove {}", file.getPath()); //$NON-NLS-1$
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(MessageFormat.format("Attempt to remove {0}", file.getPath())); //$NON-NLS-1$
+        }
         boolean isSymlink = context.isSymlink(fs, file);
         if (isSymlink) {
             LOG.error(MessageFormat.format(
@@ -281,7 +300,9 @@ public class Clean extends Configured implements Tool {
             }
         }
         if (context.canDelete(file)) {
-            LOG.debug("Removing {}", file.getPath()); //$NON-NLS-1$
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(MessageFormat.format("Removing {0}", file.getPath())); //$NON-NLS-1$
+            }
             if (context.isDryRun() == false) {
                 try {
                     boolean removed = fs.delete(file.getPath(), false);
