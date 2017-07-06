@@ -166,8 +166,7 @@ public class Clean extends Configured implements Tool {
             rest = new String[0];
         }
 
-        if (LOG.isDebugEnabled())
-         {
+        if (LOG.isDebugEnabled()) {
             LOG.debug(MessageFormat.format("Option {0}: {1}", OPT_RECURSIVE.getLongOpt(), recursive)); //$NON-NLS-1$
         }
         double keepDays;
