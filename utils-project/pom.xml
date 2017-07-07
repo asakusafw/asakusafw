@@ -19,6 +19,7 @@
     <module>javadoc-parser</module>
     <module>jsr199-testing</module>
     <module>jsr269-bridge</module>
+    <module>launcher</module>
   </modules>
 
 </project>
