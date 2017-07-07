@@ -18,11 +18,14 @@ package com.asakusafw.testdriver.inprocess;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.ServiceLoader;
 
 import org.apache.hadoop.conf.Configuration;
@@ -136,18 +139,23 @@ synchronized(s) {
         tasks.addAll(plan.getExporters());
         tasks.addAll(plan.getFinalizers());
 
-        for (TestExecutionPlan.Task task : tasks) {
-            if (task.getTaskKind() != TaskKind.COMMAND) {
-                continue;
-            }
-            if (findCommandEmulator((TestExecutionPlan.Command) task) == null) {
-                if (configurations.getHadoopCommand() == null) {
-                    throw new AssertionError(MessageFormat.format(
-                            Messages.getString("InProcessJobExecutor.errorMissingCommandPath"), //$NON-NLS-1$
-                            "hadoop")); //$NON-NLS-1$
-                }
+        if (tasks.stream()
+                .filter(it -> it.getTaskKind() == TaskKind.COMMAND)
+                .map(it -> (TestExecutionPlan.Command) it)
+                .anyMatch(it -> findCommandEmulator(it) == null)) {
+            if (configurations.getHadoopCommand() == null && findHadoopEmbedLibraryDir().isPresent() == false) {
+                throw new AssertionError(MessageFormat.format(
+                        Messages.getString("InProcessJobExecutor.errorMissingCommandPath"), //$NON-NLS-1$
+                        "hadoop")); //$NON-NLS-1$
             }
         }
+    }
+
+    private Optional<Path> findHadoopEmbedLibraryDir() {
+        return Optional.ofNullable(context.getFrameworkHomePathOrNull())
+                .map(File::toPath)
+                .map(it -> it.resolve("hadoop/lib"))
+                .filter(Files::isDirectory);
     }
 
     private boolean requiresValidateExecutionEnvironment() {

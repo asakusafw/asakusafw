@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Copyright 2011-2017 Asakusa Framework Team.
 #
@@ -39,53 +39,59 @@ import() {
     fi
 }
 
-if [ $# -eq 1 ]
+if [ $# -ne 1 ]
 then
-    _OPT_EXECUTION_ID="$1"
-else
     usage
     exit 1
 fi
 
-_DIO_ROOT="$(cd "$(dirname "$0")/.." ; pwd)"
+_ROOT="$(cd "$(dirname "$0")/.." ; pwd)"
 
-import "$_DIO_ROOT/conf/env.sh"
-import "$_DIO_ROOT/libexec/validate-env.sh"
+import "$_ROOT/conf/env.sh"
+import "$_ROOT/libexec/validate-env.sh"
 
 # Move to home directory
 cd
 
-_DIO_TOOL_LAUNCHER="com.asakusafw.runtime.stage.ToolLauncher"
-_DIO_PLUGIN_CONF="$ASAKUSA_HOME/core/conf/asakusa-resources.xml"
-_DIO_RUNTIME_LIB="$ASAKUSA_HOME/core/lib/asakusa-runtime-all.jar"
-_DIO_CLASS_NAME="com.asakusafw.directio.tools.DirectIoApplyTransaction"
+_CLASS_NAME="com.asakusafw.directio.tools.DirectIoApplyTransaction"
+_ASAKUSA_CONF="$ASAKUSA_HOME/core/conf/asakusa-resources.xml"
 
-import "$_DIO_ROOT/libexec/configure-libjars.sh"
-import "$_DIO_ROOT/libexec/configure-hadoop-cmd.sh"
+import "$ASAKUSA_HOME/hadoop/libexec/configure-hadoop.sh"
+import "$_ROOT/libexec/configure-classpath.sh"
 
 echo "Starting Apply Direct I/O Transaction:"
-echo " Hadoop Command: $HADOOP_CMD"
-echo "          Class: $_DIO_CLASS_NAME"
-echo "      Libraries: $_DIO_LIBJARS"
-echo "   Execution ID: $_OPT_EXECUTION_ID"
+echo " Hadoop Command: ${_HADOOP_CMD:-N/A}"
+echo "          Class: $_CLASS_NAME"
+echo "      Libraries: ${_CLASSPATH[*]}"
+echo "      Arguments: $*"
 
-"$HADOOP_CMD" jar \
-    "$_DIO_RUNTIME_LIB" \
-    "$_DIO_TOOL_LAUNCHER" \
-    "$_DIO_CLASS_NAME" \
-    -conf "$_DIO_PLUGIN_CONF" \
-    -libjars "$_DIO_LIBJARS" \
-    "$_OPT_EXECUTION_ID"
+if [ "$_HADOOP_CMD" != "" ]
+then
+    export HADOOP_CLASSPATH="$(IFS=:; echo "${_CLASSPATH[*]}"):$HADOOP_CLASSPATH"
+    "$_HADOOP_CMD" \
+        "$_CLASS_NAME" \
+        -conf "$_ASAKUSA_CONF" \
+        "$@"
+    _DIO_RET=$?
+else
+    _CLASSPATH+=("${_HADOOP_EMBED_CLASSPATH[@]}")
+    _CLASSPATH+=("${_HADOOP_EMBED_LOGGING_CLASSPATH[@]}")
+    import "$ASAKUSA_HOME/core/libexec/configure-java.sh"
+    "$_JAVA_CMD" $JAVA_OPTS \
+        -classpath "$(IFS=:; echo "${_CLASSPATH[*]}")" \
+        "$_CLASS_NAME" \
+        -conf "$_ASAKUSA_CONF" \
+        "$@"
+    
+    _DIO_RET=$?
+fi
 
-_DIO_RET=$?
 if [ $_DIO_RET -ne 0 ]
 then
     echo "Apply Direct I/O Transaction failed with exit code: $_DIO_RET" 1>&2
-    echo " Execution ID: $_OPT_EXECUTION_ID"  1>&2
-    echo "  Runtime Lib: $_DIO_RUNTIME_LIB"  1>&2
-    echo "     Launcher: $_DIO_TOOL_LAUNCHER"  1>&2
-    echo "        Class: $_DIO_CLASS_NAME" 1>&2
-    echo "Configuration: -conf $_DIO_PLUGIN_CONF"  1>&2
-    echo "    Libraries: -libjars $_DIO_LIBJARS"  1>&2
+    echo " Hadoop Command: ${_HADOOP_CMD:-N/A}" 1>&2
+    echo "          Class: $_CLASS_NAME" 1>&2
+    echo "      Libraries: ${_CLASSPATH[*]}"  1>&2
+    echo "      Arguments: $*" 1>&2
     exit $_DIO_RET
 fi

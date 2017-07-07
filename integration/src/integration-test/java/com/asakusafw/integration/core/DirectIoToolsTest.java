@@ -23,6 +23,9 @@ import java.util.Optional;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
 import com.asakusafw.integration.AsakusaConfigurator;
 import com.asakusafw.integration.AsakusaProject;
@@ -34,15 +37,39 @@ import com.asakusafw.utils.gradle.ContentsConfigurator;
  * Test for {@code $ASAKUSA_HOME/directio}.
  * Please see {@code src/integration-test/data/directio-tools/README.md} on this project.
  */
+@RunWith(Parameterized.class)
 public class DirectIoToolsTest {
+
+    /**
+     * Return the test parameters.
+     * @return the test parameters
+     */
+    @Parameters(name = "use-hadoop:{0}")
+    public static Object[][] getTestParameters() {
+        return new Object[][] {
+            { false },
+            { true },
+        };
+    }
 
     /**
      * project provider.
      */
     @Rule
     public final AsakusaProjectProvider provider = new AsakusaProjectProvider()
-            .withProject(ContentsConfigurator.copy(data("directio-tools")))
-            .withProject(AsakusaConfigurator.hadoop(AsakusaConfigurator.Action.SKIP_IF_UNDEFINED));
+            .withProject(ContentsConfigurator.copy(data("directio-tools")));
+
+    /**
+     * Creates a new instance.
+     * @param useHadoop whether or not the test uses hadoop command
+     */
+    public DirectIoToolsTest(boolean useHadoop) {
+        if (useHadoop) {
+            provider.withProject(AsakusaConfigurator.hadoop(AsakusaConfigurator.Action.SKIP_IF_UNDEFINED));
+        } else {
+            provider.withProject(AsakusaConfigurator.hadoop(AsakusaConfigurator.Action.UNSET_ALWAYS));
+        }
+    }
 
     /**
      * {@code list-file.sh}.

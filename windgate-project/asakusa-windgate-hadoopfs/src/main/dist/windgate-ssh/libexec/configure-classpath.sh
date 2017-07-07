@@ -14,45 +14,49 @@
 # limitations under the License.
 #
 
-if [ "$_WG_CLASSPATH" = "" ]
+_CLASSPATH=()
+
+_JOBFLOW_LIB="$ASAKUSA_BATCHAPPS_HOME/${_OPT_BATCH_ID:-__MISSING__}/lib/jobflow-${_OPT_FLOW_ID}.jar"
+_BATCH_USER_LIBS="$ASAKUSA_BATCHAPPS_HOME/${_OPT_BATCH_ID:-__MISSING__}/usr/lib"
+
+if [ -e "$_JOBFLOW_LIB" ]
 then
-    _WG_CLASSPATH="$_WG_ROOT/conf"
-else
-    _WG_CLASSPATH="$_WG_CLASSPATH:$_WG_ROOT/conf"
+    _CLASSPATH+=("$_JOBFLOW_LIB")
 fi
 
-if [ -d "$_WG_ROOT/lib" ]
+if [ -d "$_BATCH_USER_LIBS" ]
 then
-    for f in $(ls "$_WG_ROOT/lib/")
+    for f in $(ls "$_BATCH_USER_LIBS")
     do
-        _WG_CLASSPATH="$_WG_CLASSPATH:$_WG_ROOT/lib/$f"
+        _CLASSPATH+=("$_BATCH_USER_LIBS/$f")
     done
 fi
 
-if [ -d "$ASAKUSA_HOME/core/lib" ]
+if [ -d "$_ROOT/conf" ]
 then
-    for f in $(ls "$ASAKUSA_HOME/core/lib/")
-    do
-        _WG_CLASSPATH="${_WG_CLASSPATH}:${ASAKUSA_HOME}/core/lib/$f"
-    done
+    _CLASSPATH+=("$_ROOT/conf")
 fi
 
-if [ "$_OPT_BATCH_ID" != "" -a -d "$ASAKUSA_BATCHAPPS_HOME/$_OPT_BATCH_ID/usr/lib" ]
+if [ -d "$_ROOT/lib" ]
 then
-    _OPT_LIBRARIES_PATH="$ASAKUSA_BATCHAPPS_HOME/$_OPT_BATCH_ID/usr/lib"
-    for f in $(ls "$_OPT_LIBRARIES_PATH")
+    for f in $(ls "$_ROOT/lib")
     do
-        if [ -f "$_OPT_LIBRARIES_PATH/$f" ]
-        then
-            _WG_CLASSPATH="${_WG_CLASSPATH}:${_OPT_LIBRARIES_PATH}/$f"
-        fi
+        _CLASSPATH+=("$_ROOT/lib/$f")
     done
 fi
 
 if [ -d "$ASAKUSA_HOME/ext/lib" ]
 then
-    for f in $(ls "$ASAKUSA_HOME/ext/lib/")
+    for f in $(ls "$ASAKUSA_HOME/ext/lib")
     do
-        _WG_CLASSPATH="${_WG_CLASSPATH}:${ASAKUSA_HOME}/ext/lib/$f"
+        _CLASSPATH+=("$ASAKUSA_HOME/ext/lib/$f")
+    done
+fi
+
+if [ -d "$ASAKUSA_HOME/core/lib" ]
+then
+    for f in $(ls "$ASAKUSA_HOME/core/lib")
+    do
+        _CLASSPATH+=("$ASAKUSA_HOME/core/lib/$f")
     done
 fi

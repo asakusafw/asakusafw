@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Copyright 2011-2017 Asakusa Framework Team.
 #
@@ -70,15 +70,15 @@ _OPT_FLOW_ID="$5"
 _OPT_EXECUTION_ID="$6"
 _OPT_ARGUMENTS="$7"
 
-_WG_ROOT="$(cd "$(dirname "$0")/.." ; pwd)"
+_ROOT="$(cd "$(dirname "$0")/.." ; pwd)"
 
-import "$_WG_ROOT/conf/env.sh"
-import "$_WG_ROOT/libexec/validate-env.sh"
+import "$_ROOT/conf/env.sh"
+import "$_ROOT/libexec/validate-env.sh"
 
 # Move to home directory
 cd
 
-_WG_PROFILE="$_WG_ROOT/profile/${_OPT_PROFILE}.properties"
+_WG_PROFILE="$_ROOT/profile/${_OPT_PROFILE}.properties"
 _WG_SCRIPT="$_OPT_SCRIPT"
 
 case "$_OPT_SESSION_KIND" in
@@ -103,72 +103,77 @@ _WG_ARGUMENTS="$_WG_ARGUMENTS,user=$USER"
 _WG_ARGUMENTS="$_WG_ARGUMENTS,batch_id=$_OPT_BATCH_ID"
 _WG_ARGUMENTS="$_WG_ARGUMENTS,flow_id=$_OPT_FLOW_ID"
 _WG_ARGUMENTS="$_WG_ARGUMENTS,execution_id=$_OPT_EXECUTION_ID"
-_WG_CLASSPATH="$ASAKUSA_BATCHAPPS_HOME/$_OPT_BATCH_ID/lib/jobflow-${_OPT_FLOW_ID}.jar"
-_WG_CLASS="com.asakusafw.windgate.bootstrap.WindGate"
+_CLASS_NAME="com.asakusafw.windgate.bootstrap.WindGate"
 
-import "$_WG_ROOT/libexec/configure-classpath.sh"
-import "$_WG_ROOT/libexec/configure-plugin.sh"
-import "$_WG_ROOT/libexec/configure-hadoop-cmd.sh"
+import "$ASAKUSA_HOME/hadoop/libexec/configure-hadoop.sh"
+import "$_ROOT/libexec/configure-classpath.sh"
+import "$_ROOT/libexec/configure-plugin.sh"
 
 export WINDGATE_PROFILE="$_OPT_PROFILE"
 
-cat << __EOF__
-Starting WindGate
-  -classpath $_WG_CLASSPATH
-  -mode $_WG_MODE
-  -profile $_WG_PROFILE
-  -script $_WG_SCRIPT
-  -session $_WG_SESSION
-  -plugin $_WG_PLUGIN
-  -arguments $_WG_ARGUMENTS
-  WINDGATE_OPTS="$WINDGATE_OPTS"
-__EOF__
+echo "Starting WindGate:"
+echo " Hadoop Command: ${_HADOOP_CMD:-N/A}"
+echo "          Class: $_CLASS_NAME"
+echo "      Libraries: ${_CLASSPATH[*]}"
+echo "   Process Mode: $_WG_MODE"
+echo "        Profile: $_WG_PROFILE"
+echo "         Script: $_WG_SCRIPT"
+echo "     Session ID: $_WG_SESSION"
+echo "       Plug-ins: ${_PLUGINPATH[*]}"
+echo "      Arguments: $_WG_ARGUMENTS"
+echo "  WINDGATE_OPTS: $WINDGATE_OPTS"
 
-if [ -x "$HADOOP_CMD" ]
+
+_CLASSPATH_DELIMITER="${WG_CLASSPATH_DELIMITER-:}"
+
+if [ "$_HADOOP_CMD" != "" ]
 then
-    export HADOOP_CLASSPATH="$_WG_CLASSPATH"
+    export HADOOP_CLASSPATH="$(IFS=$_CLASSPATH_DELIMITER; echo "${_CLASSPATH[*]}")$_CLASSPATH_DELIMITER$HADOOP_CLASSPATH"
     HADOOP_OPTS="$HADOOP_OPTS $WINDGATE_OPTS"
     HADOOP_OPTS="$HADOOP_OPTS -Dcom.asakusafw.windgate.log.batchId=${_OPT_BATCH_ID:-(unknown)}"
     HADOOP_OPTS="$HADOOP_OPTS -Dcom.asakusafw.windgate.log.flowId=${_OPT_FLOW_ID:-(unknown)}"
     HADOOP_OPTS="$HADOOP_OPTS -Dcom.asakusafw.windgate.log.executionId=${_OPT_EXECUTION_ID:-(unknown)}"
     export HADOOP_OPTS
-    "$HADOOP_CMD" \
-        "$_WG_CLASS" \
+    "$_HADOOP_CMD" \
+        "$_CLASS_NAME" \
         -mode "$_WG_MODE" \
         -profile "$_WG_PROFILE" \
         -script "$_WG_SCRIPT" \
         -session "$_WG_SESSION" \
-        -plugin "$_WG_PLUGIN" \
+        -plugin "$(IFS=$_CLASSPATH_DELIMITER; echo "${_PLUGINPATH[*]}")" \
         -arguments "$_WG_ARGUMENTS"
+    _RET=$?
 else
-    java \
+    import "$ASAKUSA_HOME/core/libexec/configure-java.sh"
+    _CLASSPATH+=("${_HADOOP_EMBED_CLASSPATH[@]}")
+    "$_JAVA_CMD" \
         $WINDGATE_OPTS \
-        -classpath "$_WG_CLASSPATH" \
+        -classpath "$(IFS=$_CLASSPATH_DELIMITER; echo "${_CLASSPATH[*]}")" \
         "-Dcom.asakusafw.windgate.log.batchId=${_OPT_BATCH_ID:-(unknown)}" \
         "-Dcom.asakusafw.windgate.log.flowId=${_OPT_FLOW_ID:-(unknown)}" \
         "-Dcom.asakusafw.windgate.log.executionId=${_OPT_EXECUTION_ID:-(unknown)}" \
-        "$_WG_CLASS" \
+        "$_CLASS_NAME" \
         -mode "$_WG_MODE" \
         -profile "$_WG_PROFILE" \
         -script "$_WG_SCRIPT" \
         -session "$_WG_SESSION" \
-        -plugin "$_WG_PLUGIN" \
+        -plugin "$(IFS=$_CLASSPATH_DELIMITER; echo "${_PLUGINPATH[*]}")" \
         -arguments "$_WG_ARGUMENTS"
+    _RET=$?
 fi
 
-_WG_RET=$?
-if [ $_WG_RET -ne 0 ]
+if [ $_RET -ne 0 ]
 then
-    cat 1>&2 << __EOF__
-WindGate failed with exit code: $_WG_RET
-  -classpath $_WG_CLASSPATH
-  -mode $_WG_MODE
-  -profile $_WG_PROFILE
-  -script $_WG_SCRIPT
-  -session $_WG_SESSION
-  -plugin $_WG_PLUGIN
-  -arguments $_WG_ARGUMENTS
-  WINDGATE_OPTS="$WINDGATE_OPTS"
-__EOF__
-    exit $_WG_RET
+    echo "WindGate failed with exit code: $_RET" 1>&2
+    echo " Hadoop Command: ${_HADOOP_CMD:-N/A}" 1>&2
+    echo "          Class: $_CLASS_NAME" 1>&2
+    echo "      Libraries: ${_CLASSPATH[*]}" 1>&2
+    echo "   Process Mode: $_WG_MODE" 1>&2
+    echo "        Profile: $_WG_PROFILE" 1>&2
+    echo "         Script: $_WG_SCRIPT" 1>&2
+    echo "     Session ID: $_WG_SESSION" 1>&2
+    echo "       Plug-ins: ${_PLUGINPATH[*]}" 1>&2
+    echo "      Arguments: $_WG_ARGUMENTS" 1>&2
+    echo "  WINDGATE_OPTS: $WINDGATE_OPTS" 1>&2
+    exit $_RET
 fi

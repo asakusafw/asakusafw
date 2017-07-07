@@ -60,6 +60,7 @@ class AsakusafwOrganizer extends AbstractOrganizer {
                           CoreLib : "Libraries of Asakusa Framework core modules (${profile.name}).",
                        HadoopDist : "Contents of embedded Hadoop modules (${profile.name}).",
                         HadoopLib : "Libraries of embedded Hadoop modules (${profile.name}).",
+                 HadoopLoggingLib : "Logging Libraries of embedded Hadoop modules (${profile.name}).",
                      DirectIoDist : "Contents of Asakusa Framework Direct I/O modules (${profile.name}).",
                       DirectIoLib : "Libraries of Asakusa Framework Direct I/O modules (${profile.name}).",
                  DirectIoHiveDist : "Contents of Direct I/O Hive modules (${profile.name}).",
@@ -109,9 +110,13 @@ class AsakusafwOrganizer extends AbstractOrganizer {
                     "org.apache.hadoop:hadoop-common:${profile.hadoop.version}",
                     "org.apache.hadoop:hadoop-mapreduce-client-jobclient:${profile.hadoop.version}",
                 ],
+                HadoopLoggingLib : [
+                    "org.slf4j:slf4j-simple:${base.slf4jVersion}@jar",
+                 ],
                 DirectIoDist : "com.asakusafw:asakusa-directio-tools:${base.frameworkVersion}:dist@jar",
                 DirectIoLib : [
-                    "com.asakusafw:asakusa-directio-tools:${base.frameworkVersion}@jar"
+                    "com.asakusafw:asakusa-directio-tools:${base.frameworkVersion}:lib@jar",
+                    "org.slf4j:slf4j-simple:${base.slf4jVersion}@jar",
                 ],
                 YaessDist : "com.asakusafw:asakusa-yaess-bootstrap:${base.frameworkVersion}:dist@jar",
                 YaessLib : [
@@ -184,6 +189,7 @@ class AsakusafwOrganizer extends AbstractOrganizer {
                 OperationLib : [
                     "com.asakusafw:asakusa-operation-tools:${base.frameworkVersion}:lib@jar",
                     "com.asakusafw.info:asakusa-info-cli:${base.frameworkVersion}:exec@jar",
+                    "org.slf4j:slf4j-simple:${base.slf4jVersion}@jar",
                 ],
                 DirectIoHiveDist : [],
                 DirectIoHiveLib : [
@@ -221,6 +227,9 @@ class AsakusafwOrganizer extends AbstractOrganizer {
                 into('hadoop/lib') {
                     put configuration('asakusafwHadoopLib')
                 }
+                into('hadoop/lib/logging') {
+                    put configuration('asakusafwHadoopLoggingLib')
+                }
             },
             DirectIo : {
                 into('.') {
@@ -228,6 +237,9 @@ class AsakusafwOrganizer extends AbstractOrganizer {
                 }
                 into('directio/lib') {
                     put configuration('asakusafwDirectIoLib')
+                    process {
+                        rename(/asakusa-directio-tools-.*\.jar/, 'asakusa-directio-tools.jar')
+                    }
                 }
             },
             Yaess : {
@@ -282,6 +294,7 @@ class AsakusafwOrganizer extends AbstractOrganizer {
                     process {
                         rename(/asakusa-operation-tools-.*-lib\.jar/, 'asakusa-operation-tools.jar')
                         rename(/([0-9A-Za-z\-]+)-cli-.*-exec.jar/, '$1.jar')
+                        rename(/slf4j-simple-.*\.jar/, 'slf4j-simple.jar')
                     }
                }
             },
