@@ -23,7 +23,7 @@ import org.gradle.api.file.FileCollection
  */
 final class ToolLauncherUtils {
 
-    public static final String MAIN_CLASS = 'com.asakusafw.sdk.launcher.Launcher'
+    public static final String MAIN_CLASS = 'com.asakusafw.utils.launcher.Launcher'
 
     static File createLaunchFile(Task self, FileCollection classpath, String mainClass, List<String> arguments) {
         Properties properties = new Properties()

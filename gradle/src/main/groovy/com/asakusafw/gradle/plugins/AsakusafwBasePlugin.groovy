@@ -174,7 +174,7 @@ class AsakusafwBasePlugin implements Plugin<Project> {
             }
         }
         project.dependencies {
-            asakusaToolLauncher "com.asakusafw.sdk:asakusa-tool-launcher:${extension.pluginVersion}:exec@jar"
+            asakusaToolLauncher "com.asakusafw:tool-launcher:${extension.frameworkVersion}:exec@jar"
         }
     }
 
