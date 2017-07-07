@@ -28,21 +28,57 @@ All these features have been well designed and developed with the expertise from
 
 ## How to build
 
-`./mvnw install -DskipTests`
+### Maven artifacts
+
+```sh
+./mvnw clean install -DskipTests
+```
+
+### Gradle plug-ins
+
+```sh
+cd gradle
+./gradlew clean [build] install
+```
 
 ## How to run tests
-* Install [Hadoop](http://hadoop.apache.org/) with local-mode settings
-* Set `hadoop` command into your PATH variable, or set it to `$HADOOP_CMD`
-* And then run `./mvnw test`
+
+### Maven artifacts
+
+```sh
+export HADOOP_CMD=/path/to/bin/hadoop
+./mvnw test
+```
+
+### Gradle plug-ins
+
+```sh
+cd gradle
+./gradlew [clean] check
+```
 
 ## How to import projects into Eclipse
-* Run `./mvnw eclipse:eclipse`
-* And then import projects from Eclipse
+
+### Maven artifacts
+
+```sh
+./mvnw eclipse:eclipse
+```
+
+And then import existing projects from Eclipse.
 
 If you run tests in Eclipse, please activate `Preferences > Java > Debug > 'Only include exported classpath entries when launching'`.
 
+### Gradle plug-ins
+
+```sh
+cd gradle
+./gradlew eclipse
+```
+
+And then import existing projects from Eclipse.
+
 ## Sub Projects
-* [Asakusa Framework SDK](https://github.com/asakusafw/asakusafw-sdk)
 * [Asakusa Framework Language Toolset](https://github.com/asakusafw/asakusafw-compiler)
 * [Asakusa on Spark](https://github.com/asakusafw/asakusafw-spark)
 * [Asakusa on M<sup>3</sup>BP](https://github.com/asakusafw/asakusafw-m3bp)
