@@ -1,6 +1,0 @@
--- package com.asakusafw.testdriver
-
-@namespace(value = testing)
-simple = {
-    value : TEXT;
-};

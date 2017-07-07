@@ -45,7 +45,6 @@
     <module>operation-project</module>
     <module>sandbox-project</module>
     <module>operator</module>
-    <module>mapreduce</module>
     <module>sdk-project</module>
   </modules>
 
@@ -78,7 +77,6 @@
     <plugin.surefire-report.version>2.19.1</plugin.surefire-report.version>
 
     <!-- artifact id/versions -->
-    <asakusafw-mapreduce.version>${project.version}</asakusafw-mapreduce.version>
     <hadoop.version>2.7.3</hadoop.version>
     <hadoop.artifact.id>hadoop-client</hadoop.artifact.id>
     <hive.version>1.2.1</hive.version>

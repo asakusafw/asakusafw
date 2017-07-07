@@ -36,7 +36,7 @@ All these features have been well designed and developed with the expertise from
 * And then run `./mvnw test`
 
 ## How to import projects into Eclipse
-* Run `./mvnw install eclipse:eclipse -DskipTests`
+* Run `./mvnw eclipse:eclipse`
 * And then import projects from Eclipse
 
 If you run tests in Eclipse, please activate `Preferences > Java > Debug > 'Only include exported classpath entries when launching'`.

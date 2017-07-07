@@ -1,8 +1,0 @@
-package com.example;
-
-public enum ReservedEnum {
-
-    INT,
-
-    NEW,
-}

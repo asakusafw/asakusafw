@@ -39,7 +39,7 @@ public abstract class SimpleOperator {
         model.setValueAsString(orig + value + arg("t1") + arg("t2") + arg("t3"));
     }
 
-    private String arg(String key) {
+    private static String arg(String key) {
         String value = BatchContext.get(key);
         if (value == null) {
             return "";

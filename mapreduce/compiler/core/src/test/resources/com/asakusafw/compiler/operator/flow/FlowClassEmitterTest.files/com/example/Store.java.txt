@@ -1,6 +1,0 @@
-package com.example;
-
-public class Store {
-
-    public static Object result;
-}
