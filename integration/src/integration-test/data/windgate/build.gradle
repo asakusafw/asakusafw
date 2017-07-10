@@ -1,0 +1,47 @@
+group 'com.example'
+
+buildscript {
+    repositories {
+        if (System.getProperty("maven.local", "true") == "true") {
+            mavenLocal()
+        }
+        maven { url 'http://asakusafw.s3.amazonaws.com/maven/releases' }
+        maven { url 'http://asakusafw.s3.amazonaws.com/maven/snapshots' }
+    }
+    dependencies {
+        classpath group: 'com.asakusafw', name: 'asakusa-gradle-plugins', version: System.getProperty("asakusafw.version")
+    }
+}
+
+if (System.getProperty("maven.local", "true") == "true") {
+    repositories {
+        mavenLocal()
+    }
+}
+
+apply plugin: 'asakusafw-sdk'
+apply plugin: 'asakusafw-organizer'
+
+asakusafw {
+    modelgen {
+        modelgenSourcePackage = project.group
+    }
+}
+
+asakusafwOrganizer {
+    profiles.dev {
+        assembly.into('.') {
+            from 'src/main/conf'
+            replace([
+                'project.home' : uri(System.getenv('PROJECT_HOME')).toString(),
+            ])
+        }
+        assembly.into('batchapps/app/lib') {
+            from jar
+        }
+    }
+}
+
+jar {
+    archiveName = 'jobflow-flow.jar'
+}

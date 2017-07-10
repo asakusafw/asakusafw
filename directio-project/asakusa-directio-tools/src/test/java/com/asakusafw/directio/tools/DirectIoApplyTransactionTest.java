@@ -39,7 +39,7 @@ public class DirectIoApplyTransactionTest extends DirectIoCommandTestRoot {
         assertThat(count(production1), is(0));
         assertThat(count(production2), is(0));
 
-        assertThat(ToolRunner.run(conf, exec, new String[] {"__UNKNOWN__"}), is(0));
+        assertThat(ToolRunner.run(conf, exec, new String[] {"__UNKNOWN__"}), is(not(0)));
         assertThat(count(production1), is(0));
         assertThat(count(production2), is(0));
 
@@ -47,7 +47,7 @@ public class DirectIoApplyTransactionTest extends DirectIoCommandTestRoot {
         assertThat(count(production1), is(1));
         assertThat(count(production2), is(1));
 
-        assertThat(ToolRunner.run(conf, exec, new String[] {"ex1"}), is(0));
+        assertThat(ToolRunner.run(conf, exec, new String[] {"ex1"}), is(1));
     }
 
     /**

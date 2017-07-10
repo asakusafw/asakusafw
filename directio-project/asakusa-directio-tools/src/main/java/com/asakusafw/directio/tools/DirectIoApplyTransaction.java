@@ -60,8 +60,8 @@ public final class DirectIoApplyTransaction extends Configured implements Tool {
             DirectIoTransactionEditor editor = new DirectIoTransactionEditor(repository);
             editor.setConf(getConf());
             try {
-                editor.apply(executionId);
-                return 0;
+                boolean applied = editor.apply(executionId);
+                return applied ? 0 : 1;
             } catch (Exception e) {
                 LOG.error(MessageFormat.format(
                         "Failed to apply transaction (executionId={0})",

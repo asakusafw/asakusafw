@@ -1,0 +1,152 @@
+/*
+ * Copyright 2011-2017 Asakusa Framework Team.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+plugins {
+    id 'java'
+    id 'maven'
+    id 'idea'
+    id 'eclipse'
+}
+
+group = 'com.asakusafw.integration'
+version = { f ->
+    if (!f.exists()) {
+        return null
+    }
+    def xml = new XmlSlurper().parse(f)
+    return xml.version.text()
+}(project.file('../pom.xml'))
+
+configurations {
+    integrationTestCompile.extendsFrom testCompile
+    integrationTestRuntime.extendsFrom testRuntime
+    deployerJars
+}
+
+repositories {
+    if (project.hasProperty('mavenLocal')) {
+        logger.lifecycle 'enabling maven local repository'
+        mavenLocal()
+    }
+    mavenCentral()
+    maven { url 'https://repo.gradle.org/gradle/libs-releases' }
+}
+
+dependencies {
+    compile "com.asakusafw:gradle-launcher:${project.version}"
+    compile 'junit:junit:4.12'
+    runtime 'org.slf4j:slf4j-simple:1.7.10'
+    testCompile 'org.hamcrest:hamcrest-library:1.3'
+    deployerJars 'org.springframework.build:aws-maven:5.0.0.RELEASE'
+}
+
+project.sourceCompatibility = JavaVersion.toVersion('1.8')
+project.targetCompatibility = JavaVersion.toVersion('1.8')
+
+sourceSets {
+    integrationTest {
+        java {
+            compileClasspath += main.output + test.output
+            runtimeClasspath += main.output + test.output
+            srcDir file('src/integration-test/java')
+        }
+        resources.srcDir file('src/integration-test/resources')
+    }
+}
+
+task integrationTest(type: Test) {
+    outputs.upToDateWhen { false }
+    testClassesDirs = sourceSets.integrationTest.output.classesDirs
+    classpath = sourceSets.integrationTest.runtimeClasspath
+    systemProperty('org.slf4j.simpleLogger.logFile', 'System.out')
+    systemProperty('org.slf4j.simpleLogger.defaultLogLevel', 'DEBUG')
+    systemProperties += System.getProperties()
+}
+
+test {
+    systemProperty('org.slf4j.simpleLogger.logFile', 'System.out')
+    systemProperty('org.slf4j.simpleLogger.defaultLogLevel', 'DEBUG')
+}
+
+tasks.withType(AbstractCompile) { task ->
+    task.options.encoding = 'UTF-8'
+}
+
+processResources {
+    File propertiesFile = new File(destinationDir, 'META-INF/asakusa-integration/system.properties')
+    inputs.property 'version', project.version
+    doLast {
+        logger.info "manipulating ${propertiesFile}"
+        if (propertiesFile.exists()) {
+            Properties props = new Properties()
+            propertiesFile.withInputStream { props.load(it) }
+            props.setProperty('asakusafw.version', project.version)
+            propertiesFile.withOutputStream { props.store(it, "injected by ${project.name}") }
+        }
+    }
+}
+
+eclipse.jdt {
+    javaRuntimeName = "JavaSE-${sourceCompatibility}"
+}
+
+if (project.hasProperty('referProject')) {
+    eclipse.classpath.file.whenMerged { classpath ->
+        classpath.entries = classpath.entries.collect { entry ->
+            if (entry instanceof org.gradle.plugins.ide.eclipse.model.Library \
+                    && entry.moduleVersion \
+                    && entry.moduleVersion.group.startsWith("com.asakusafw")) {
+                new org.gradle.plugins.ide.eclipse.model.ProjectDependency("/${entry.moduleVersion.name}")
+            } else {
+                entry
+            }
+        }.unique() as List
+    }
+}
+
+javadoc {
+    title "Asakusa Framework Integration Tests ${version}"
+    options {
+        docTitle title
+        windowTitle title
+        footer "Copyright 2011-${new Date().format('yyyy')} Asakusa Framework Team."
+    }
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            configuration = project.configurations.deployerJars
+            repository id: 'com.asakusafw.releases', url: 's3://asakusafw/maven/releases'
+            snapshotRepository id: 'com.asakusafw.snapshots', url: 's3://asakusafw/maven/snapshots'
+        }
+    }
+}
+
+task sourcesJar(type: Jar) {
+    classifier 'sources'
+    from sourceSets.main.allSource
+}
+
+task integrationTestData(type: Zip) {
+    classifier 'integration-test-data'
+    from fileTree('src/integration-test/data')
+}
+
+artifacts {
+    archives tasks.sourcesJar
+    archives tasks.integrationTestData
+}
+

@@ -124,17 +124,26 @@ public final class DirectIoTransactionEditor extends Configured {
         LOG.info(MessageFormat.format(
                 "Start applying Direct I/O transaction (executionId={0})",
                 executionId));
-        boolean applied = doApply(executionId);
-        if (applied) {
+        TxStatus status = doApply(executionId);
+        switch (status) {
+        case APPLIED:
             LOG.info(MessageFormat.format(
                     "Finish applying Direct I/O transaction (executionId={0})",
                     executionId));
-        } else {
+            return true;
+        case NOT_COMMITTED:
             LOG.info(MessageFormat.format(
-                    "Direct I/O transaction is already completed (executionId={0})",
+                    "Direct I/O transaction is not committed (executionId={0})",
                     executionId));
+            return false;
+        case NOT_FOUND:
+            LOG.info(MessageFormat.format(
+                    "Direct I/O transaction is already completed or not found (executionId={0})",
+                    executionId));
+            return false;
+        default:
+            throw new AssertionError(status);
         }
-        return applied;
     }
 
     /**
@@ -186,18 +195,24 @@ public final class DirectIoTransactionEditor extends Configured {
         return new TransactionInfo(executionId, timestamp, committed, comment);
     }
 
-    private boolean doApply(String executionId) throws IOException, InterruptedException {
+    private enum TxStatus {
+        NOT_FOUND,
+        NOT_COMMITTED,
+        APPLIED,
+    }
+
+    private TxStatus doApply(String executionId) throws IOException, InterruptedException {
         assert executionId != null;
         Path transactionInfo = HadoopDataSourceUtil.getTransactionInfoPath(getConf(), executionId);
         Path commitMark = HadoopDataSourceUtil.getCommitMarkPath(getConf(), executionId);
         FileSystem fs = commitMark.getFileSystem(getConf());
         if (fs.exists(transactionInfo) == false) {
-            return false;
+            return TxStatus.NOT_FOUND;
         }
         boolean succeed = true;
         if (fs.exists(commitMark) == false) {
             // FIXME cleanup
-            return false;
+            return TxStatus.NOT_COMMITTED;
         }
         DirectDataSourceRepository repo = getRepository();
         for (String containerPath : repo.getContainerPaths()) {
@@ -212,7 +227,7 @@ public final class DirectIoTransactionEditor extends Configured {
                 LOG.error(MessageFormat.format(
                         "Failed to apply transaction (datastoreId={0}, executionId={1})",
                         datasourceId,
-                        executionId));
+                        executionId), e);
             }
         }
         if (succeed) {
@@ -238,7 +253,7 @@ public final class DirectIoTransactionEditor extends Configured {
                         executionId,
                         commitMark), e);
             }
-            return true;
+            return TxStatus.APPLIED;
         } else {
             throw new IOException(MessageFormat.format(
                     "Failed to apply this transaction (executionId={0});"

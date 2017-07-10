@@ -60,8 +60,8 @@ public final class DirectIoAbortTransaction extends Configured implements Tool {
             DirectIoTransactionEditor editor = new DirectIoTransactionEditor(repository);
             editor.setConf(getConf());
             try {
-                editor.abort(executionId);
-                return 0;
+                boolean aborted = editor.abort(executionId);
+                return aborted ? 0 : 1;
             } catch (Exception e) {
                 LOG.error(MessageFormat.format(
                         "Failed to abort transaction (executionId={0})",
