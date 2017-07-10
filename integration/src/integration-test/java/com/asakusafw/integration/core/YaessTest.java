@@ -15,6 +15,7 @@
  */
 package com.asakusafw.integration.core;
 
+import static com.asakusafw.integration.core.Util.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
@@ -40,7 +41,7 @@ public class YaessTest {
      */
     @Rule
     public final AsakusaProjectProvider provider = new AsakusaProjectProvider()
-            .withProject(ContentsConfigurator.copy("src/integration-test/data/yaess"))
+            .withProject(ContentsConfigurator.copy(data("yaess")))
             .withProject(AsakusaConfigurator.hadoop(AsakusaConfigurator.Action.UNSET_ALWAYS))
             .withProject(AsakusaConfigurator.projectHome());
 

@@ -15,6 +15,7 @@
  */
 package com.asakusafw.integration.core;
 
+import static com.asakusafw.integration.core.Util.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
@@ -38,7 +39,7 @@ public class AsakusaOrganizerTest {
      */
     @Rule
     public final AsakusaProjectProvider provider = new AsakusaProjectProvider()
-        .withProject(ContentsConfigurator.copy("src/integration-test/data/organizer-simple"));
+        .withProject(ContentsConfigurator.copy(data("organizer-simple")));
 
     /**
      * help.

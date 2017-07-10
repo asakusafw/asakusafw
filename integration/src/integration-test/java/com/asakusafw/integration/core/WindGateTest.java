@@ -15,6 +15,7 @@
  */
 package com.asakusafw.integration.core;
 
+import static com.asakusafw.integration.core.Util.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
@@ -49,7 +50,7 @@ public class WindGateTest {
      */
     @Rule
     public final AsakusaProjectProvider provider = new AsakusaProjectProvider()
-            .withProject(ContentsConfigurator.copy("src/integration-test/data/windgate"))
+            .withProject(ContentsConfigurator.copy(data("windgate")))
             .withProject(AsakusaConfigurator.projectHome())
             .withProject(AsakusaConfigurator.hadoop(AsakusaConfigurator.Action.ERROR_IF_UNDEFINED));
 

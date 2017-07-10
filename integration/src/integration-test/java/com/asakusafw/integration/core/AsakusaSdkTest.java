@@ -15,11 +15,10 @@
  */
 package com.asakusafw.integration.core;
 
+import static com.asakusafw.integration.core.Util.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Optional;
 
 import org.junit.Rule;
@@ -35,14 +34,12 @@ import com.asakusafw.utils.gradle.ContentsConfigurator;
  */
 public class AsakusaSdkTest {
 
-    static final Path BASE = Paths.get("src/integration-test/data");
-
     /**
      * project provider.
      */
     @Rule
     public final AsakusaProjectProvider provider = new AsakusaProjectProvider()
-        .withProject(ContentsConfigurator.copy(BASE.resolve("sdk-simple")));
+        .withProject(ContentsConfigurator.copy(data("sdk-simple")));
 
     /**
      * help.
@@ -80,7 +77,7 @@ public class AsakusaSdkTest {
     @Test
     public void dmdl() {
         AsakusaProject project = provider.newInstance("simple")
-                .with(ContentsConfigurator.copy(BASE.resolve("ksv/src/main/dmdl"), "src/main/dmdl"));
+                .with(ContentsConfigurator.copy(data("ksv/src/main/dmdl"), "src/main/dmdl"));
         project.gradle("compileDMDL");
         Bundle contents = project.getContents();
         assertThat(
@@ -94,7 +91,7 @@ public class AsakusaSdkTest {
     @Test
     public void testbook() {
         AsakusaProject project = provider.newInstance("simple")
-                .with(ContentsConfigurator.copy(BASE.resolve("ksv/src/main/dmdl"), "src/main/dmdl"));
+                .with(ContentsConfigurator.copy(data("ksv/src/main/dmdl"), "src/main/dmdl"));
         project.gradle("generateTestbook");
         Bundle contents = project.getContents();
         assertThat(
@@ -108,7 +105,7 @@ public class AsakusaSdkTest {
     @Test
     public void compile() {
         AsakusaProject project = provider.newInstance("simple")
-                .with(ContentsConfigurator.copy(BASE.resolve("ksv/src/main"), "src/main"));
+                .with(ContentsConfigurator.copy(data("ksv/src/main"), "src/main"));
         project.gradle("compileJava");
         Bundle contents = project.getContents();
         assertThat(
@@ -122,7 +119,7 @@ public class AsakusaSdkTest {
     @Test
     public void assemble() {
         AsakusaProject project = provider.newInstance("simple")
-                .with(ContentsConfigurator.copy(BASE.resolve("ksv/src"), "src"));
+                .with(ContentsConfigurator.copy(data("ksv/src"), "src"));
         project.gradle("assemble");
         Bundle contents = project.getContents();
         assertThat(contents.find("build/libs/simple.jar"), is(not(Optional.empty())));
@@ -134,8 +131,8 @@ public class AsakusaSdkTest {
     @Test
     public void eclipse() {
         AsakusaProject project = provider.newInstance("simple")
-                .with(ContentsConfigurator.copy(BASE.resolve("ksv/src"), "src"))
-                .with(ContentsConfigurator.copy(BASE.resolve("sdk-eclipse")));
+                .with(ContentsConfigurator.copy(data("ksv/src"), "src"))
+                .with(ContentsConfigurator.copy(data("sdk-eclipse")));
         project.gradle("eclipse");
         Bundle contents = project.getContents();
         assertThat(contents.find(".project"), is(not(Optional.empty())));
