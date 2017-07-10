@@ -1,0 +1,47 @@
+task hello {
+    doLast {
+        def value = "Hello, world!"
+        println "generating file: testing (${value})"
+        file("testing").text = value
+    }
+}
+
+task putName {
+    doLast {
+        def value = project.name
+        println "generating file: testing (${value})"
+        file("testing").text = value
+    }
+}
+
+task putVersion {
+    doLast {
+        def value = gradle.gradleVersion
+        println "generating file: testing (${value})"
+        file("testing").text = value
+    }
+}
+
+task putEnvironment {
+    doLast {
+        def value = System.getenv("TESTING") ?: "N/A"
+        println "generating file: testing (${value})"
+        file("testing").text = value
+    }
+}
+
+task putProperty {
+    doLast {
+        def value = System.getProperty("TESTING", "N/A")
+        println "generating file: testing (${value})"
+        file("testing").text = value
+    }
+}
+
+task putArgument {
+    doLast {
+        def value = project.hasProperty("TESTING") ? project.TESTING : "N/A"
+        println "generating file: testing (${value})"
+        file("testing").text = value
+    }
+}

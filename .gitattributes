@@ -1,2 +1,4 @@
-*.sh eol=lf
-
+mvnw        eol=lf
+gradlew     eol=lf
+*.sh        eol=lf
+*.bat       eol=crlf
