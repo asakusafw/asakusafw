@@ -15,6 +15,12 @@
  */
 package com.asakusafw.utils.gradle;
 
+import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CodingErrorAction;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -109,10 +115,12 @@ public class GradleAdapter {
                 .setJvmArguments(properties)
                 .withArguments(args)
                 .addProgressListener(e -> {
-                    LOG.debug("[Gradle] {}", e.getDisplayName());
+                    LOG.debug("(Gradle:event) {}", e.getDisplayName());
                 }, OperationType.TASK, OperationType.TEST)
-                .setStandardOutput(System.out)
-                .setStandardError(System.err);
+                .setStandardOutput(
+                        new OutputStreamRedirector(s -> LOG.info("(Gradle:stdout) {}", s), Charset.defaultCharset()))
+                .setStandardError(
+                        new OutputStreamRedirector(s -> LOG.info("(Gradle:stderr) {}", s), Charset.defaultCharset()));
     }
 
     private List<String> getSystemPropertyArgs() {
@@ -128,5 +136,99 @@ public class GradleAdapter {
                     .map(it -> String.format("-D%s", it)))
                 .peek(it -> LOG.debug("Gradle arg: {}", it))
                 .collect(Collectors.toList());
+    }
+
+    private static class OutputStreamRedirector extends OutputStream {
+
+        private final Consumer<CharSequence> destination;
+
+        private final CharsetDecoder decoder;
+
+        private final ByteBuffer byteBuffer = ByteBuffer.allocate(4096);
+
+        private final CharBuffer charBuffer = CharBuffer.allocate(4096);
+
+        private final StringBuilder lineBuffer = new StringBuilder();
+
+        private boolean sawCr = false;
+
+        OutputStreamRedirector(Consumer<CharSequence> destination, Charset charset) {
+            this.destination = destination;
+            this.decoder = charset.newDecoder()
+                    .onMalformedInput(CodingErrorAction.REPLACE)
+                    .onUnmappableCharacter(CodingErrorAction.REPLACE);
+        }
+
+        @Override
+        public void write(int b) {
+            assert byteBuffer.hasRemaining();
+            byteBuffer.put((byte) b);
+            written();
+        }
+
+        @Override
+        public void write(byte[] b, int off, int len) {
+            final int limit = off + len;
+            int position = off;
+            while (position < limit) {
+                assert byteBuffer.hasRemaining();
+                int count = Math.min(byteBuffer.remaining(), limit - position);
+                byteBuffer.put(b, position, count);
+                position += count;
+                written();
+            }
+        }
+
+        @Override
+        public void close() {
+            byteBuffer.flip();
+            charBuffer.clear();
+            decoder.decode(byteBuffer, charBuffer, false);
+            charBuffer.flip();
+            flushBuffer();
+            byteBuffer.clear();
+        }
+
+        private void written() {
+            byteBuffer.flip();
+            while (byteBuffer.hasRemaining()) {
+                charBuffer.clear();
+                decoder.decode(byteBuffer, charBuffer, false);
+                charBuffer.flip();
+                if (charBuffer.hasRemaining() == false) {
+                    // circuit breaker: avoid infinite loop
+                    break;
+                }
+                flushBuffer();
+            }
+            byteBuffer.clear();
+        }
+
+        private void flushBuffer() {
+            while (charBuffer.hasRemaining()) {
+                char c = charBuffer.get();
+                if (c == '\r') {
+                    if (sawCr) {
+                        dumpLine();
+                    } else {
+                        sawCr = true;
+                    }
+                } else if (c == '\n') {
+                    dumpLine();
+                    sawCr = false;
+                } else {
+                    if (sawCr) {
+                        dumpLine();
+                    }
+                    lineBuffer.append(c);
+                    sawCr = false;
+                }
+            }
+        }
+
+        private void dumpLine() {
+            destination.accept(lineBuffer);
+            lineBuffer.setLength(0);
+        }
     }
 }

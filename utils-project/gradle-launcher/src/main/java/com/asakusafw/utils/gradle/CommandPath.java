@@ -194,10 +194,10 @@ public class CommandPath {
         });
         try (ReaderRedirector stdIn = new ReaderRedirector(
                 process.getInputStream(),
-                s -> LOG.info("{}: [stdout] {}", label, s));
+                s -> LOG.info("({}:stdout) {}", label, s));
                 ReaderRedirector stdErr = new ReaderRedirector(
                         process.getErrorStream(),
-                        s -> LOG.info("{}: [stderr] {}", label, s))) {
+                        s -> LOG.info("({}:stderr) {}", label, s))) {
             Future<?> output = executor.submit(stdIn);
             Future<?> error = executor.submit(stdErr);
             output.get();
