@@ -28,6 +28,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -60,16 +61,22 @@ public class CommandPath {
 
     static final String ENV_PATH = "PATH";
 
-    static final List<String> EXECUTABLE_EXTENSIONS;
+    static final String ENV_PATHEXT = "PATHEXT";
+
+    static final List<String> WINDOWS_PATH_EXTENSIONS;
     static {
         List<String> extensions = new ArrayList<>();
-        extensions.add(""); //$NON-NLS-1$
         if (WINDOWS) {
-            extensions.add(".exe");
-            extensions.add(".bat");
-            extensions.add(".cmd");
+            Optional.ofNullable(System.getenv(ENV_PATHEXT))
+                    .map(it -> Arrays.stream(it.split(Pattern.quote(File.pathSeparator))))
+                    .orElseGet(Stream::empty)
+                    .sequential()
+                    .map(String::trim)
+                    .filter(it -> it.isEmpty() == false)
+                    .map(it -> it.toLowerCase(Locale.ENGLISH))
+                    .forEach(extensions::add);
         }
-        EXECUTABLE_EXTENSIONS = extensions;
+        WINDOWS_PATH_EXTENSIONS = extensions;
     }
 
     private final List<Path> directories;
@@ -129,11 +136,28 @@ public class CommandPath {
         return Stream.concat(
                     Stream.of(Paths.get(command)).filter(Path::isAbsolute),
                     directories.stream().map(d -> d.resolve(command)))
-                .flatMap(path -> EXECUTABLE_EXTENSIONS.stream()
-                        .map(extension -> path.resolveSibling(path.getFileName() + extension))
-                        .filter(Files::isRegularFile)
-                        .filter(Files::isExecutable))
+                .flatMap(CommandPath::expand)
+                .filter(Files::isRegularFile)
+                .filter(Files::isExecutable)
                 .findFirst();
+    }
+
+    private static Stream<Path> expand(Path path) {
+        if (WINDOWS) {
+            String name = Optional.ofNullable(path.getFileName())
+                    .map(Path::toString)
+                    .orElse(null);
+            if (name == null || name.lastIndexOf('.') >= 0) {
+                // if already has extension, we don't add any extensions.
+                return Stream.of(path);
+            }
+            // otherwise, we append each %PathExt% value.
+            return WINDOWS_PATH_EXTENSIONS.stream()
+                    .map(name::concat)
+                    .map(path::resolveSibling);
+        } else {
+            return Stream.of(path);
+        }
     }
 
     /**

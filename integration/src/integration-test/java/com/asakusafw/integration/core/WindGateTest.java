@@ -52,7 +52,7 @@ public class WindGateTest {
     public final AsakusaProjectProvider provider = new AsakusaProjectProvider()
             .withProject(ContentsConfigurator.copy(data("windgate")))
             .withProject(AsakusaConfigurator.projectHome())
-            .withProject(AsakusaConfigurator.hadoop(AsakusaConfigurator.Action.ERROR_IF_UNDEFINED));
+            .withProject(AsakusaConfigurator.hadoop(AsakusaConfigurator.Action.SKIP_IF_UNDEFINED));
 
     /**
      * {@code process.sh} - one-shot.

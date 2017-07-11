@@ -24,6 +24,7 @@ import java.util.Optional;
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.asakusafw.integration.AsakusaConfigurator;
 import com.asakusafw.integration.AsakusaProject;
 import com.asakusafw.integration.AsakusaProjectProvider;
 import com.asakusafw.utils.gradle.Bundle;
@@ -39,7 +40,8 @@ public class AsakusaProjectTest {
      */
     @Rule
     public final AsakusaProjectProvider provider = new AsakusaProjectProvider()
-            .withProject(ContentsConfigurator.copy(data("simple")));
+            .withProject(ContentsConfigurator.copy(data("simple")))
+            .withProject(AsakusaConfigurator.hadoop(AsakusaConfigurator.Action.UNSET_ALWAYS));
 
     /**
      * upgrade.

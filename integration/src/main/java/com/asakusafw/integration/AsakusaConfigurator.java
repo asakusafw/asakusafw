@@ -38,13 +38,19 @@ public final class AsakusaConfigurator {
 
     static final String PROPERTY_SPARK_COMMAND = "spark.cmd";
 
+    static final String ENVIRONMENT_PROJECT_HOME = "PROJECT_HOME";
+
     static final String ENVIRONMENT_JAVA_COMMAND = "JAVA_CMD";
 
     static final String ENVIRONMENT_HADOOP_COMMAND = "HADOOP_CMD";
 
     static final String ENVIRONMENT_SPARK_COMMAND = "SPARK_CMD";
 
-    static final String ENVIRONMENT_PROJECT_HOME = "PROJECT_HOME";
+    static final String NAME_JAVA_COMMAND = "java";
+
+    static final String NAME_HADOOP_COMMAND = "hadoop";
+
+    static final String NAME_SPARK_COMMAND = "spark-submit";
 
     private AsakusaConfigurator() {
         return;
@@ -62,16 +68,6 @@ public final class AsakusaConfigurator {
     }
 
     /**
-     * Sets {@code JAVA_CMD} from system property {@code java.cmd},
-     * or unset if the system property is not defined.
-     * @return the project configurator
-     * @see BaseProject#with(Consumer)
-     */
-    public static Consumer<BaseProject<?>> java() {
-        return java(Action.UNSET_IF_UNDEFINED);
-    }
-
-    /**
      * Sets {@code JAVA_CMD} from system property {@code java.cmd}.
      * @param action action if the system property is not defined
      * @return the project configurator
@@ -85,16 +81,6 @@ public final class AsakusaConfigurator {
     }
 
     /**
-     * Sets {@code HADOOP_CMD} from system property {@code hadoop.cmd},
-     * or unset if the system property is not defined.
-     * @return the project configurator
-     * @see BaseProject#with(Consumer)
-     */
-    public static Consumer<BaseProject<?>> hadoop() {
-        return hadoop(Action.UNSET_IF_UNDEFINED);
-    }
-
-    /**
      * Sets {@code HADOOP_CMD} from system property {@code hadoop.cmd}.
      * @param action action if the system property is not defined
      * @return the project configurator
@@ -105,16 +91,6 @@ public final class AsakusaConfigurator {
                 PROPERTY_HADOOP_COMMAND,
                 ENVIRONMENT_HADOOP_COMMAND,
                 action);
-    }
-
-    /**
-     * Sets {@code SPARK_CMD} from system property {@code spark.cmd},
-     * or unset if the system property is not defined.
-     * @return the project configurator
-     * @see BaseProject#with(Consumer)
-     */
-    public static Consumer<BaseProject<?>> spark() {
-        return spark(Action.UNSET_IF_UNDEFINED);
     }
 
     /**

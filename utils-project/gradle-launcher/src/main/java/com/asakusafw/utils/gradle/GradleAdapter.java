@@ -23,6 +23,7 @@ import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CodingErrorAction;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -110,17 +111,18 @@ public class GradleAdapter {
         List<String> args = new ArrayList<>();
         args.addAll(properties);
         args.addAll(arguments);
+        if (LOG.isDebugEnabled()) {
+            args.forEach(arg -> LOG.debug("Gradle argument: {}", arg));
+        }
         return launcher
                 .setEnvironmentVariables(context.environment())
                 .setJvmArguments(properties)
                 .withArguments(args)
-                .addProgressListener(e -> {
-                    LOG.debug("(Gradle:event) {}", e.getDisplayName());
-                }, OperationType.TASK, OperationType.TEST)
-                .setStandardOutput(
-                        new OutputStreamRedirector(s -> LOG.info("(Gradle:stdout) {}", s), Charset.defaultCharset()))
-                .setStandardError(
-                        new OutputStreamRedirector(s -> LOG.info("(Gradle:stderr) {}", s), Charset.defaultCharset()));
+                .addProgressListener(
+                        e -> LOG.debug("(Gradle:event) {}", e.getDisplayName()),
+                        EnumSet.allOf(OperationType.class))
+                .setStandardOutput(redirectOutputStream("Gradle:stdout"))
+                .setStandardError(redirectOutputStream("Gradle:stderr"));
     }
 
     private List<String> getSystemPropertyArgs() {
@@ -134,8 +136,13 @@ public class GradleAdapter {
                 System.getProperties().keySet().stream()
                     .filter(it -> props.containsKey(it) == false)
                     .map(it -> String.format("-D%s", it)))
-                .peek(it -> LOG.debug("Gradle arg: {}", it))
                 .collect(Collectors.toList());
+    }
+
+    private static OutputStream redirectOutputStream(String label) {
+        return new OutputStreamRedirector(
+                line -> LOG.info("({}) {}", label, line),
+                Charset.defaultCharset());
     }
 
     private static class OutputStreamRedirector extends OutputStream {

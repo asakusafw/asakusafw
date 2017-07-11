@@ -5,12 +5,13 @@ This module provides integration tests for this repository. It checks a combinat
 ## Running tests
 
 ```sh
-./gradlew [-PmavenLocal] integrationTest -Dhadoop.cmd=/path/to/bin/hadoop
+./gradlew integrationTest
 ```
 
 * Available options
-  * `-Dhadoop.cmd=/path/to/bin/hadoop` (required)
-    * use `hadoop` command
+  * `-Dhadoop.cmd`
+    * use the specified `hadoop` command
+    * default: N/A (**skip** `hadoop` command required tests)
   * `-PmavenLocal`
     * use artifacts of *test tools* on local repository
     * default: never use artifacts on local repository
@@ -28,7 +29,7 @@ This module provides integration tests for this repository. It checks a combinat
     * default: `debug`
   * `-Dssh.key`
     * SSH private key path for `ssh://localhost:22`
-    * default: N/A (skip SSH related tests)
+    * default: N/A (**skip** SSH related tests)
   * `-Dssh.pass`
     * pass-phrase of private key specified in `-Dssh.key`
     * default: (empty pass-phrase)

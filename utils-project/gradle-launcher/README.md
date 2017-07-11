@@ -25,6 +25,13 @@ This artifact provides an easy way of Gradle access to your program.
 ### Gradle project
 
 ```gradle
+repositories {
+    mavenCentral()
+    maven { url 'http://asakusafw.s3.amazonaws.com/maven/releases' }
+    maven { url 'http://asakusafw.s3.amazonaws.com/maven/snapshots' }
+    maven { url 'https://repo.gradle.org/gradle/libs-releases' }
+}
+
 dependencies {
     compile "com.asakusafw:gradle-launcher:x.y.z"
     runtime 'org.slf4j:slf4j-simple:x.y.z'

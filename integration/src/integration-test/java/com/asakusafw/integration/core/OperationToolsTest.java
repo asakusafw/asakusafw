@@ -41,7 +41,7 @@ public class OperationToolsTest {
     @Rule
     public final AsakusaProjectProvider provider = new AsakusaProjectProvider()
             .withProject(ContentsConfigurator.copy(data("organizer-simple")))
-            .withProject(AsakusaConfigurator.hadoop(AsakusaConfigurator.Action.ERROR_IF_UNDEFINED));
+            .withProject(AsakusaConfigurator.hadoop(AsakusaConfigurator.Action.SKIP_IF_UNDEFINED));
 
     /**
      * {@code hadoop-fs-clean.sh -help}.

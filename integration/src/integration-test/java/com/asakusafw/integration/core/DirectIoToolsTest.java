@@ -42,7 +42,7 @@ public class DirectIoToolsTest {
     @Rule
     public final AsakusaProjectProvider provider = new AsakusaProjectProvider()
             .withProject(ContentsConfigurator.copy(data("directio-tools")))
-            .withProject(AsakusaConfigurator.hadoop(AsakusaConfigurator.Action.ERROR_IF_UNDEFINED));
+            .withProject(AsakusaConfigurator.hadoop(AsakusaConfigurator.Action.SKIP_IF_UNDEFINED));
 
     /**
      * {@code list-file.sh}.

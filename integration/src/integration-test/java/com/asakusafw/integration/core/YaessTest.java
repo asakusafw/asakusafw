@@ -42,8 +42,8 @@ public class YaessTest {
     @Rule
     public final AsakusaProjectProvider provider = new AsakusaProjectProvider()
             .withProject(ContentsConfigurator.copy(data("yaess")))
-            .withProject(AsakusaConfigurator.hadoop(AsakusaConfigurator.Action.UNSET_ALWAYS))
-            .withProject(AsakusaConfigurator.projectHome());
+            .withProject(AsakusaConfigurator.projectHome())
+            .withProject(AsakusaConfigurator.hadoop(AsakusaConfigurator.Action.UNSET_ALWAYS));
 
     /**
      * {@code yaess-batch.sh}.
