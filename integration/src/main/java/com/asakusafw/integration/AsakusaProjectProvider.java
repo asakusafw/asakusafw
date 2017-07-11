@@ -67,8 +67,9 @@ public class AsakusaProjectProvider implements TestRule {
                         PropertyConfigurator.system()));
                 temporary.create();
                 try {
-                    providerConfigurators.forEach(it -> it.accept(AsakusaProjectProvider.this));
+                    // activate provider before process `withProvider()` actions
                     active.set(true);
+                    providerConfigurators.forEach(it -> it.accept(AsakusaProjectProvider.this));
                     base.evaluate();
                 } finally {
                     active.set(false);
