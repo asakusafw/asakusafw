@@ -22,6 +22,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CodingErrorAction;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
@@ -92,6 +93,9 @@ public class GradleAdapter {
      * @return this
      */
     public <T> GradleAdapter get(Class<T> modelType, Consumer<? super T> configurator) {
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Gradle model: {}", modelType.getName());
+        }
         configurator.accept(get(modelType));
         return this;
     }
@@ -102,6 +106,9 @@ public class GradleAdapter {
      * @return this
      */
     public GradleAdapter launch(String... tasks) {
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Gradle tasks: {}", Arrays.toString(tasks));
+        }
         configure(connection.newBuild().forTasks(tasks)).run();
         return this;
     }
@@ -118,9 +125,7 @@ public class GradleAdapter {
                 .setEnvironmentVariables(context.environment())
                 .setJvmArguments(properties)
                 .withArguments(args)
-                .addProgressListener(
-                        e -> LOG.debug("(Gradle:event) {}", e.getDisplayName()),
-                        EnumSet.allOf(OperationType.class))
+                .addProgressListener(e -> LOG.trace("(Gradle:event) {}", e), EnumSet.allOf(OperationType.class))
                 .setStandardOutput(redirectOutputStream("Gradle:stdout"))
                 .setStandardError(redirectOutputStream("Gradle:stderr"));
     }

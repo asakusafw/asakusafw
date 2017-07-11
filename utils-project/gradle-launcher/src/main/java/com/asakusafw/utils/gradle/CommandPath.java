@@ -188,7 +188,7 @@ public class CommandPath {
         builder.environment().clear();
         builder.environment().putAll(env);
 
-        LOG.debug("exec: {}", builder.command());
+        LOG.info("Command: {}", builder.command());
         try {
             Process process = builder.start();
             try {
@@ -216,12 +216,8 @@ public class CommandPath {
             thread.setDaemon(true);
             return thread;
         });
-        try (ReaderRedirector stdIn = new ReaderRedirector(
-                process.getInputStream(),
-                s -> LOG.info("({}:stdout) {}", label, s));
-                ReaderRedirector stdErr = new ReaderRedirector(
-                        process.getErrorStream(),
-                        s -> LOG.info("({}:stderr) {}", label, s))) {
+        try (ReaderRedirector stdIn = redirect(process.getInputStream(), String.format("%s:stdout", label));
+                ReaderRedirector stdErr = redirect(process.getErrorStream(), String.format("%s:stderr", label))) {
             Future<?> output = executor.submit(stdIn);
             Future<?> error = executor.submit(stdErr);
             output.get();
@@ -232,6 +228,10 @@ public class CommandPath {
             executor.shutdownNow();
         }
         return process.waitFor();
+    }
+
+    private static ReaderRedirector redirect(InputStream stream, String title) {
+        return new ReaderRedirector(stream, line -> LOG.info("({}) {}", title, line));
     }
 
     @Override

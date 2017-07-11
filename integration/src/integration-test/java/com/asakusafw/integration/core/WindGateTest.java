@@ -51,6 +51,7 @@ public class WindGateTest {
     @Rule
     public final AsakusaProjectProvider provider = new AsakusaProjectProvider()
             .withProject(ContentsConfigurator.copy(data("windgate")))
+            .withProject(ContentsConfigurator.copy(data("logback-test")))
             .withProject(AsakusaConfigurator.projectHome())
             .withProject(AsakusaConfigurator.hadoop(AsakusaConfigurator.Action.SKIP_IF_UNDEFINED));
 
@@ -60,7 +61,7 @@ public class WindGateTest {
     @Test
     public void oneshot() {
         AsakusaProject project = provider.newInstance("wg");
-        project.gradle(g -> g.withArguments("-i").launch("installAsakusafw"));
+        project.gradle("installAsakusafw");
 
         Bundle framework = project.getFramework();
         assertThat(
@@ -93,7 +94,7 @@ public class WindGateTest {
     @Test
     public void begin_end() {
         AsakusaProject project = provider.newInstance("wg");
-        project.gradle(g -> g.withArguments("-i").launch("installAsakusafw"));
+        project.gradle("installAsakusafw");
 
         Bundle contents = project.getContents();
         Bundle framework = project.getFramework();
@@ -141,7 +142,7 @@ public class WindGateTest {
     @Test
     public void begin_finalize_end() {
         AsakusaProject project = provider.newInstance("wg");
-        project.gradle(g -> g.withArguments("-i").launch("installAsakusafw"));
+        project.gradle("installAsakusafw");
 
         Bundle contents = project.getContents();
         Bundle framework = project.getFramework();
@@ -197,7 +198,7 @@ public class WindGateTest {
     @Test
     public void process_reentrant() {
         AsakusaProject project = provider.newInstance("wg");
-        project.gradle(g -> g.withArguments("-i").launch("installAsakusafw"));
+        project.gradle("installAsakusafw");
 
         Bundle framework = project.getFramework();
         assertThat(
@@ -240,7 +241,7 @@ public class WindGateTest {
     @Test
     public void process_parallel() {
         AsakusaProject project = provider.newInstance("wg");
-        project.gradle(g -> g.withArguments("-i").launch("installAsakusafw"));
+        project.gradle("installAsakusafw");
 
         Bundle contents = project.getContents();
         Bundle framework = project.getFramework();
@@ -291,7 +292,7 @@ public class WindGateTest {
         project.withEnvironment("SSH_KEY", System.getProperty("ssh.key"));
         project.withEnvironment("SSH_PASS", System.getProperty("ssh.pass", ""));
 
-        project.gradle(g -> g.withArguments("-i").launch("installAsakusafw"));
+        project.gradle("installAsakusafw");
 
         Bundle contents = project.getContents();
         Bundle framework = project.getFramework();

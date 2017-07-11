@@ -135,7 +135,7 @@ public class AsakusaProjectProviderTest {
         AsakusaProject project = provider.newInstance("testing")
                 .with(ContentsConfigurator.copy("src/test/data/home"));
         assertThat(project.environment("ASAKUSA_HOME"), is(notNullValue()));
-        project.gradle(g -> g.launch("putHome"));
+        project.gradle("putHome");
         project.withFramework(f -> {
             assertThat(lines(f.get("output.txt")), contains("OK"));
         });
@@ -159,7 +159,7 @@ public class AsakusaProjectProviderTest {
                 .with(ContentsConfigurator.copy("src/test/data/bundle"));
 
         Bundle bundle = project.addBundle("testing");
-        project.gradle(g -> g.launch("putBundle"));
+        project.gradle("putBundle");
         assertThat(lines(bundle.get("output.txt")), contains("OK"));
     }
 
@@ -174,7 +174,7 @@ public class AsakusaProjectProviderTest {
         Bundle bundle = project.addBundle("origin");
         project.addBundle("testing", bundle.getDirectory());
 
-        project.gradle(g -> g.launch("putBundle"));
+        project.gradle("putBundle");
         assertThat(lines(bundle.get("output.txt")), contains("OK"));
     }
 

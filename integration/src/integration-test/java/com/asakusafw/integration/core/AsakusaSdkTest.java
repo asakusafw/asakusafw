@@ -41,6 +41,7 @@ public class AsakusaSdkTest {
     @Rule
     public final AsakusaProjectProvider provider = new AsakusaProjectProvider()
         .withProject(ContentsConfigurator.copy(data("sdk-simple")))
+        .withProject(ContentsConfigurator.copy(data("logback-test")))
         .withProject(AsakusaConfigurator.hadoop(AsakusaConfigurator.Action.UNSET_ALWAYS));
 
     /**

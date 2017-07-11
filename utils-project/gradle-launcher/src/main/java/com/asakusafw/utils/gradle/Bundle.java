@@ -154,7 +154,7 @@ public class Bundle {
 
     private Bundle copy0(Path source, Path to) {
         Path from = source;
-        LOG.info("deploy: {} -> {}", from, to);
+        LOG.debug("copy: {} -> {}", from, to);
         merge(from, to);
         return this;
     }
@@ -175,8 +175,7 @@ public class Bundle {
                     source));
         }
         Path offset = archive.relativize(origin);
-        LOG.info("deploy: {} -> {}", source, to);
-        LOG.debug("extract: base={} offset={}", archive, offset);
+        LOG.debug("extract: {} -- {} -> {}", archive, offset, to);
         try (FileSystem fs = FileSystems.newFileSystem(archive, getClass().getClassLoader())) {
             boolean merged = false;
             for (Path root : fs.getRootDirectories()) {
@@ -209,7 +208,7 @@ public class Bundle {
     }
 
     private static void merge(Path from, Path to) {
-        LOG.debug("merge: {}@{} -> {}", from, from.getFileSystem(), to);
+        LOG.trace("merge: {}@{} -> {}", from, from.getFileSystem(), to);
         try {
             if (Files.isDirectory(from)) {
                 Files.createDirectories(to);

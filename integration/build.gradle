@@ -74,6 +74,9 @@ task integrationTest(type: Test) {
     classpath = sourceSets.integrationTest.runtimeClasspath
     systemProperty('org.slf4j.simpleLogger.logFile', 'System.out')
     systemProperty('org.slf4j.simpleLogger.defaultLogLevel', 'DEBUG')
+    systemProperty('org.slf4j.simpleLogger.levelInBrackets', 'true')
+    systemProperty('org.slf4j.simpleLogger.showThreadName', 'false')
+    systemProperty('org.slf4j.simpleLogger.showLogName', 'false')
     systemProperties += System.getProperties()
 }
 
