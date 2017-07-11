@@ -122,7 +122,8 @@ public class AsakusaSdkTest {
     @Test
     public void assemble() {
         AsakusaProject project = provider.newInstance("simple")
-                .with(ContentsConfigurator.copy(data("ksv/src"), "src"));
+                .with(ContentsConfigurator.copy(data("ksv/src"), "src"))
+                .with(ContentsConfigurator.copy(data("ksv-ext/src"), "src"));
         project.gradle("assemble");
         Bundle contents = project.getContents();
         assertThat(contents.find("build/libs/simple.jar"), is(not(Optional.empty())));
