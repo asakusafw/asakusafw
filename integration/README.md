@@ -2,7 +2,20 @@
 
 This module provides integration tests for this repository. It checks a combination of the runtime, compiler and Gradle plug-ins.
 
-## Running tests
+## Requirements
+
+### Platform
+
+This integration test is designed for modern Linux platform, which must have `/bin/bash`.
+
+### Envrionemnt variables
+
+* `PATH`
+  * no `hadoop` command on the path
+* `JAVA_HOME`
+  * refer to Java SDK `>= 1.8`
+
+## How to run tests
 
 ```sh
 ./gradlew integrationTest
@@ -15,7 +28,7 @@ This module provides integration tests for this repository. It checks a combinat
   * default: never use artifacts on local repository
 * `-Dmaven.local=false`
   * use artifacts of *testee* only on remote repositories
-  * default: `true` (use artifacts on local repositories)
+  * default: `true` (preferentially use artifacts on local repositories)
 * `-Dhadoop.cmd=/path/to/bin/hadoop`
   * use the specified `hadoop` command
   * default: N/A (**skip** `hadoop` command required tests)
@@ -25,7 +38,7 @@ This module provides integration tests for this repository. It checks a combinat
 * `-Dssh.pass=****`
   * pass-phrase of private key specified in `-Dssh.key`
   * default: (empty pass-phrase)
-* `-Dsdk.incubating`
+* `-Dsdk.incubating=true`
   * test with Asakusa SDK incubating features
   * default: `false` (disable incubating features, and **skip** incubating features related tests)
 * `-Dasakusafw.version=x.y.z`
@@ -50,3 +63,15 @@ This module provides integration tests for this repository. It checks a combinat
   * Add `-Dasakusafw.version=x.y.z` to `Arguments > VM arguments`
   * Add other options to `Arguments > VM arguments`
 4. Run JUnit test
+
+
+## How to build
+
+Some downstream projects (integration tests for individual platforms) may refer the artifacts of this project. To pass the artifacts via local repository, please build and install this project.
+
+```sh
+./gradlew [-PmavenLocal] [build] install
+```
+
+* `-PmavenLocal`
+  * also obtain upstream artifacts from the local Maven repository
