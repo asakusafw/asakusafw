@@ -192,13 +192,18 @@ public class GradleAdapter {
         }
 
         @Override
-        public void close() {
+        public void flush() {
             byteBuffer.flip();
             charBuffer.clear();
             decoder.decode(byteBuffer, charBuffer, false);
             charBuffer.flip();
             flushBuffer();
             byteBuffer.clear();
+        }
+
+        @Override
+        public void close() {
+            flush();
         }
 
         private void written() {

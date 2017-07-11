@@ -114,6 +114,17 @@ public abstract class BaseProject<TSelf extends BaseProject<TSelf>> implements P
     }
 
     /**
+     * Returns the project directory.
+     * @return the project directory
+     */
+    protected abstract Path getDirectory();
+
+    @Override
+    public CommandLauncher getCommandLauncher() {
+        return new BasicCommandLauncher(getDirectory(), environment());
+    }
+
+    /**
      * Configures this project.
      * @param configurator the configurator
      * @return this

@@ -22,7 +22,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Optional;
 
 import org.junit.AssumptionViolatedException;
@@ -31,7 +30,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 /**
- * Test for command path.
+ * Test for {@link CommandPath}.
  */
 public class CommandPathTest {
 
@@ -47,10 +46,8 @@ public class CommandPathTest {
     @Test
     public void linux_sh() {
         Path sh = assumeLinuxSh();
-        CommandPath.launch(
-                sh, Arrays.asList("-c", "touch result"),
-                temporary.getRoot().toPath(),
-                System.getenv());
+        int exit = launcher().launch(sh, "-c", "touch result");
+        assertThat(exit, is(0));
         assertThat(Files.exists(temporary.getRoot().toPath().resolve("result")), is(true));
     }
 
@@ -72,11 +69,8 @@ public class CommandPathTest {
         Files.setPosixFilePermissions(script, PosixFilePermissions.fromString("rwx------"));
 
         CommandPath path = new CommandPath(Arrays.asList(base));
-        CommandPath.launch(
-                path.find("script").get(), Collections.emptyList(),
-                temporary.getRoot().toPath(),
-                System.getenv());
-
+        int exit = launcher().launch(path.find("script").get());
+        assertThat(exit, is(0));
         assertThat(Files.readAllLines(base.resolve("result")), contains("Hello, world!"));
     }
 
@@ -91,11 +85,9 @@ public class CommandPathTest {
         Path base = temporary.getRoot().toPath();
         Path data = base.resolve("data");
         Files.write(data, Arrays.asList("Hello, world!"));
-        CommandPath.launch(
-                cmd, Arrays.asList("/c", "copy data result"),
-                temporary.getRoot().toPath(),
-                System.getenv());
 
+        int exit = launcher().launch(cmd, "/c", "copy data result");
+        assertThat(exit, is(0));
         assertThat(Files.exists(temporary.getRoot().toPath().resolve("result")), is(true));
     }
 
@@ -114,16 +106,17 @@ public class CommandPathTest {
         }));
 
         CommandPath path = new CommandPath(Arrays.asList(base));
-        CommandPath.launch(
-                path.find("script").get(), Collections.emptyList(),
-                temporary.getRoot().toPath(),
-                System.getenv());
-
+        int exit = launcher().launch(path.find("script").get());
+        assertThat(exit, is(0));
         assertThat(Files.exists(temporary.getRoot().toPath().resolve("result")), is(true));
     }
 
+    private CommandLauncher launcher() {
+        return new BasicCommandLauncher(temporary.getRoot().toPath(), System.getenv());
+    }
+
     private static Path assumeLinuxSh() {
-        CommandPath path = CommandPath.system(System.getenv());
+        CommandPath path = CommandPath.system();
         return path.find("sh")
                 .map(Path::toAbsolutePath)
                 .filter(it -> Optional.ofNullable(it.getFileName())
@@ -134,7 +127,7 @@ public class CommandPathTest {
     }
 
     private static Path assumeWindowsCmd() {
-        CommandPath path = CommandPath.system(System.getenv());
+        CommandPath path = CommandPath.system();
         return path.find("cmd.exe")
                 .orElseThrow(() -> new AssumptionViolatedException("should cmd.exe is available"));
     }

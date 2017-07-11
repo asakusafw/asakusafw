@@ -15,7 +15,6 @@
  */
 package com.asakusafw.utils.gradle;
 
-import java.nio.file.Path;
 import java.util.Map;
 
 /**
@@ -23,12 +22,6 @@ import java.util.Map;
  * @since 0.9.2
  */
 public interface ProjectContext {
-
-    /**
-     * Returns the project directory.
-     * @return the project directory
-     */
-    Path getDirectory();
 
     /**
      * Returns the environment variables.
@@ -59,4 +52,10 @@ public interface ProjectContext {
     default String property(String key) {
         return properties().get(key);
     }
+
+    /**
+     * Returns a command launcher of this context.
+     * @return a command launcher
+     */
+    CommandLauncher getCommandLauncher();
 }

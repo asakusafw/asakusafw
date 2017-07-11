@@ -15,18 +15,10 @@
  */
 package com.asakusafw.utils.gradle;
 
-import java.io.BufferedReader;
-import java.io.Closeable;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -34,12 +26,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -102,12 +88,11 @@ public class CommandPath {
     }
 
     /**
-     * Creates a new instance.
-     * @param env the environment variables
+     * Creates a new instance from environment variables.
      * @return the created instance
      */
-    public static CommandPath system(Map<String, String> env) {
-        return CommandPath.of(env.get(ENV_PATH));
+    public static CommandPath system() {
+        return CommandPath.of(System.getenv(ENV_PATH));
     }
 
     /**
@@ -180,111 +165,11 @@ public class CommandPath {
      * @return the exit status
      */
     public static int launch(Path command, List<String> arguments, Path workingDir, Map<String, String> env) {
-        List<String> commandLine = new ArrayList<>();
-        commandLine.add(command.toAbsolutePath().toString());
-        commandLine.addAll(arguments);
-        ProcessBuilder builder = new ProcessBuilder(commandLine);
-        builder.directory(workingDir.toFile());
-        builder.environment().clear();
-        builder.environment().putAll(env);
-
-        LOG.info("Command: {}", builder.command());
-        try {
-            Process process = builder.start();
-            try {
-                return handle(process, Optional.ofNullable(command.getFileName())
-                        .map(Path::toString)
-                        .orElse("N/A"));
-            } finally {
-                process.destroy();
-            }
-        } catch (IOException e) {
-            throw new IllegalStateException(MessageFormat.format(
-                    "error occurred while executing command: {0}",
-                    command), e);
-        } catch (InterruptedException e) {
-            throw new IllegalStateException(MessageFormat.format(
-                    "interrupted while executing command: {0}",
-                    command), e);
-        }
-    }
-
-    private static int handle(Process process, String label) throws InterruptedException {
-        AtomicInteger counter = new AtomicInteger();
-        ExecutorService executor = Executors.newFixedThreadPool(2, r -> {
-            Thread thread = new Thread(r, String.format("%s-%d", label, counter.incrementAndGet())); //$NON-NLS-1$
-            thread.setDaemon(true);
-            return thread;
-        });
-        try (ReaderRedirector stdIn = redirect(process.getInputStream(), String.format("%s:stdout", label));
-                ReaderRedirector stdErr = redirect(process.getErrorStream(), String.format("%s:stderr", label))) {
-            Future<?> output = executor.submit(stdIn);
-            Future<?> error = executor.submit(stdErr);
-            output.get();
-            error.get();
-        } catch (IOException | ExecutionException e) {
-            LOG.warn("error occurred while reading output", e);
-        } finally {
-            executor.shutdownNow();
-        }
-        return process.waitFor();
-    }
-
-    private static ReaderRedirector redirect(InputStream stream, String title) {
-        return new ReaderRedirector(stream, line -> LOG.info("({}) {}", title, line));
+        return new BasicCommandLauncher(workingDir, env).launch(command, arguments);
     }
 
     @Override
     public String toString() {
         return directories.toString();
-    }
-
-    private static final class ReaderRedirector implements Runnable, Closeable {
-
-        private BufferedReader reader;
-
-        private final Consumer<CharSequence> consumer;
-
-        ReaderRedirector(InputStream input, Consumer<CharSequence> consumer) {
-            this(new InputStreamReader(input, Charset.defaultCharset()), consumer);
-        }
-
-        ReaderRedirector(Reader reader, Consumer<CharSequence> consumer) {
-            this.reader = reader instanceof BufferedReader ? (BufferedReader) reader : new BufferedReader(reader);
-            this.consumer = consumer;
-        }
-
-        @Override
-        public void run() {
-            try {
-                while (true) {
-                    String line;
-                    synchronized (this) {
-                        if (reader == null) {
-                            return;
-                        } else {
-                            line = reader.readLine();
-                        }
-                    }
-                    if (line == null) {
-                        return;
-                    }
-                    consumer.accept(line);
-                }
-            } catch (IOException e) {
-                LOG.warn("error occurred while reading output", e);
-            }
-        }
-
-        @Override
-        public void close() throws IOException {
-            synchronized (this) {
-                if (reader != null) {
-                    Reader r = reader;
-                    reader = null;
-                    r.close();
-                }
-            }
-        }
     }
 }

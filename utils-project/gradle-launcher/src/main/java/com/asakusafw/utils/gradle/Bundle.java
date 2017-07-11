@@ -29,8 +29,6 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -341,15 +339,14 @@ public class Bundle {
      * @param command the command, relative from bundle root
      * @param arguments the command arguments
      * @return the exit status
-     * @see CommandPath#launch(Path, List, Path, Map)
+     * @see BasicCommandLauncher
      */
     public int launch(String command, String... arguments) {
-        Map<String, String> env = context.environment();
         Path cmd = commandPath.find(command)
                 .orElseThrow(() -> new IllegalStateException(MessageFormat.format(
                         "command not found: {0} ({1})",
-                        command, commandPath.asPathString() + env)));
-        return CommandPath.launch(cmd, Arrays.asList(arguments), context.getDirectory(), env);
+                        command, commandPath.asPathString())));
+        return context.getCommandLauncher().launch(cmd, Arrays.asList(arguments));
     }
 
     /**
@@ -357,7 +354,7 @@ public class Bundle {
      * @param command the command, relative from bundle root
      * @param arguments the command arguments
      * @return this
-     * @see CommandPath#launch(Path, List, Path, Map)
+     * @see BasicCommandLauncher
      */
     public Bundle withLaunch(String command, String... arguments) {
         int status = launch(command, arguments);

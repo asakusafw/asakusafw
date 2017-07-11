@@ -63,7 +63,9 @@ public final class AsakusaConfigurator {
      */
     public static Consumer<BaseProject<?>> projectHome() {
         return project -> {
-            project.with(EnvironmentConfigurator.of(ENVIRONMENT_PROJECT_HOME, project.getDirectory()));
+            project.with(EnvironmentConfigurator.of(
+                    ENVIRONMENT_PROJECT_HOME,
+                    project.getContents().getDirectory()));
         };
     }
 

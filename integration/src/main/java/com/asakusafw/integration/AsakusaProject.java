@@ -49,7 +49,7 @@ public class AsakusaProject extends BaseProject<AsakusaProject> {
     }
 
     @Override
-    public Path getDirectory() {
+    protected Path getDirectory() {
         return projectDirectory;
     }
 

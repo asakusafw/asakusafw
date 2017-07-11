@@ -51,7 +51,7 @@ public class AsakusaProjectProviderTest {
     @Test
     public void simple() {
         AsakusaProject project = provider.newInstance("testing");
-        assertThat(project.getDirectory().getFileName().toString(), is("testing"));
+        assertThat(String.valueOf(project.getContents().getDirectory().getFileName()), is("testing"));
     }
 
     /**
