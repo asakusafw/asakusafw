@@ -24,7 +24,7 @@ import java.util.function.Consumer;
 
 /**
  * Configures environment variables.
- * @since 0.10.0
+ * @since 0.9.2
  */
 public class EnvironmentConfigurator implements Consumer<BaseProject<?>> {
 

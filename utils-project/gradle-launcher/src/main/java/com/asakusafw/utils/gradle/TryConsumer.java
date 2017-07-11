@@ -19,7 +19,7 @@ import java.util.function.Consumer;
 
 /**
  * {@link Consumer} with exception.
- * @since 0.10.0
+ * @since 0.9.2
  * @param <T> the acceptable value type
  * @param <E> the exception type
  */

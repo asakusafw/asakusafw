@@ -29,7 +29,7 @@ import com.asakusafw.utils.gradle.TryConsumer;
 
 /**
  * Utilities for testing on Asakusa projects.
- * @since 0.10.0
+ * @since 0.9.2
  * @see AsakusaProjectProvider
  */
 public class AsakusaProject extends BaseProject<AsakusaProject> {

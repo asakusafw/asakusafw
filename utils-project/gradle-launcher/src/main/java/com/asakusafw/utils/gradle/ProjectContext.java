@@ -20,7 +20,7 @@ import java.util.Map;
 
 /**
  * A context of project.
- * @since 0.10.0
+ * @since 0.9.2
  */
 public interface ProjectContext {
 

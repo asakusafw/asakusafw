@@ -28,7 +28,7 @@ import com.asakusafw.utils.gradle.EnvironmentConfigurator;
 
 /**
  * Provides project configurator about Asakusa framework related features.
- * @since 0.10.0
+ * @since 0.9.2
  */
 public final class AsakusaConfigurator {
 
@@ -108,7 +108,7 @@ public final class AsakusaConfigurator {
 
     /**
      * Represents action type.
-     * @since 0.10.0
+     * @since 0.9.2
      */
     public enum Action {
 

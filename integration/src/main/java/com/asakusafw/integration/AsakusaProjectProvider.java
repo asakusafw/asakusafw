@@ -37,7 +37,7 @@ import com.asakusafw.utils.gradle.PropertyConfigurator;
 
 /**
  * A JUnit resource which provides {@link AsakusaProject}.
- * @since 0.10.0
+ * @since 0.9.2
  */
 public class AsakusaProjectProvider implements TestRule {
 

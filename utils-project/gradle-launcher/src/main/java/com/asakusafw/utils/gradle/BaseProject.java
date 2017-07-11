@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 /**
  * An abstract implementation of project structure.
  * @param <TSelf> this type
- * @since 0.10.0
+ * @since 0.9.2
  * @see BasicProject
  */
 public abstract class BaseProject<TSelf extends BaseProject<TSelf>> implements ProjectContext {

@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Represents a command path.
- * @since 0.10.0
+ * @since 0.9.2
  */
 public class CommandPath {
 

@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Configures system properties.
- * @since 0.10.0
+ * @since 0.9.2
  */
 public class PropertyConfigurator implements Consumer<BaseProject<?>> {
 

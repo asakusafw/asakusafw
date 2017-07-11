@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Utilities about Gradle project.
- * @since 0.10.0
+ * @since 0.9.2
  */
 public class GradleAdapter {
 
