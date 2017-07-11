@@ -59,7 +59,7 @@ public class AsakusaSdkTest {
     @Test
     public void version() {
         AsakusaProject project = provider.newInstance("simple");
-        project.gradle("asakusaVersion");
+        project.gradle("asakusaVersions");
     }
 
     /**
