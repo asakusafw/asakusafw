@@ -20,3 +20,7 @@ if (System.getProperty("maven.local", "true") == "true") {
 }
 
 apply plugin: 'asakusafw-sdk'
+
+asakusafw {
+    sdk.incubating = System.getProperty('sdk.incubating', 'false') != 'false'
+}

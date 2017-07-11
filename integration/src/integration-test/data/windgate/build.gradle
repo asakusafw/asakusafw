@@ -26,6 +26,7 @@ asakusafw {
     modelgen {
         modelgenSourcePackage = project.group
     }
+    sdk.incubating = System.getProperty('sdk.incubating', 'false') != 'false'
 }
 
 asakusafwOrganizer {

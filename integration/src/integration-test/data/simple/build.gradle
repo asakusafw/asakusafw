@@ -22,3 +22,7 @@ if (System.getProperty("maven.local", "true") == "true") {
 apply plugin: 'asakusafw-sdk'
 apply plugin: 'asakusafw-organizer'
 apply plugin: 'eclipse'
+
+asakusafw {
+    sdk.incubating = System.getProperty('sdk.incubating', 'false') != 'false'
+}
