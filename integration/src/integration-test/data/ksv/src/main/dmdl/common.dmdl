@@ -1,0 +1,7 @@
+@directio.csv
+@windgate.csv
+ksv = {
+    key : LONG;
+    sort : DECIMAL;
+    value : TEXT;
+};

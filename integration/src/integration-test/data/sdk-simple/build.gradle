@@ -1,0 +1,26 @@
+group 'com.example'
+
+buildscript {
+    repositories {
+        if (System.getProperty("maven.local", "true") == "true") {
+            mavenLocal()
+        }
+        maven { url 'http://asakusafw.s3.amazonaws.com/maven/releases' }
+        maven { url 'http://asakusafw.s3.amazonaws.com/maven/snapshots' }
+    }
+    dependencies {
+        classpath group: 'com.asakusafw', name: 'asakusa-gradle-plugins', version: System.getProperty("asakusafw.version")
+    }
+}
+
+if (System.getProperty("maven.local", "true") == "true") {
+    repositories {
+        mavenLocal()
+    }
+}
+
+apply plugin: 'asakusafw-sdk'
+
+asakusafw {
+    sdk.incubating = System.getProperty('sdk.incubating', 'false') != 'false'
+}

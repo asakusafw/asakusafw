@@ -1,0 +1,9 @@
+task putHome {
+    doLast {
+        println "writing ${System.getenv("ASAKUSA_HOME")} / output.txt = OK"
+        assert System.getenv("ASAKUSA_HOME")
+        File f = new File(System.getenv("ASAKUSA_HOME"))
+        mkdir(f)
+        new File(f, "output.txt").text = "OK"
+    }
+}

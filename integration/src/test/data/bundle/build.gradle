@@ -1,0 +1,11 @@
+import java.rmi.activation.ActivationSystem
+
+task putBundle {
+    doLast {
+        println "writing ${System.getProperty("testing")} / output.txt = OK"
+        assert System.getProperty("testing")
+        File f = new File(System.getProperty("testing"))
+        mkdir(f)
+        new File(f, "output.txt").text = "OK"
+    }
+}
