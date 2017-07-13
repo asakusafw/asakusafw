@@ -14,7 +14,12 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>asakusa-test-driver</artifactId>
+      <artifactId>asakusa-test-compiler</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>asakusa-runtime-inprocess</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

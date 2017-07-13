@@ -27,8 +27,6 @@ import com.asakusafw.runtime.stage.launcher.ApplicationLauncher;
 import com.asakusafw.runtime.workaround.RuntimeWorkaround;
 import com.asakusafw.runtime.workaround.snappyjava.MacSnappyJavaWorkaround;
 import com.asakusafw.testdriver.compiler.ArtifactMirror;
-import com.asakusafw.testdriver.compiler.TaskMirror;
-import com.asakusafw.testdriver.compiler.basic.BasicHadoopTaskMirror;
 import com.asakusafw.testdriver.compiler.basic.BasicPortMirror;
 import com.asakusafw.testdriver.testing.compiler.MockCompilerToolkit;
 import com.asakusafw.testdriver.testing.dsl.SimpleBatch;
@@ -37,6 +35,8 @@ import com.asakusafw.testdriver.testing.dsl.SimpleExporter;
 import com.asakusafw.testdriver.testing.dsl.SimpleImporter;
 import com.asakusafw.testdriver.testing.model.Simple;
 import com.asakusafw.utils.io.Sources;
+import com.asakusafw.workflow.model.TaskInfo;
+import com.asakusafw.workflow.model.basic.BasicHadoopTaskInfo;
 
 /**
  * Common super class of DSL element testers.
@@ -100,8 +100,8 @@ public abstract class TesterTestRoot {
                 flowId,
                 jobflow -> {
                     jobflow.addTask(
-                            TaskMirror.Phase.MAIN,
-                            new BasicHadoopTaskMirror(SimpleBatchAction.class.getName()));
+                            TaskInfo.Phase.MAIN,
+                            new BasicHadoopTaskInfo(SimpleBatchAction.class.getName()));
                     jobflow.addInput(new BasicPortMirror<>(input, Simple.class, new SimpleImporter()));
                     jobflow.addOutput(new BasicPortMirror<>(output, Simple.class, new SimpleExporter()));
                 },

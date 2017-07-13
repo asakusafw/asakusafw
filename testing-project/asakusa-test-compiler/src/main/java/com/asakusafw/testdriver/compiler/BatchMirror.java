@@ -16,29 +16,19 @@
 package com.asakusafw.testdriver.compiler;
 
 import java.util.Collection;
+import java.util.Optional;
+
+import com.asakusafw.workflow.model.BatchInfo;
 
 /**
  * Represents a batch.
  * @since 0.8.0
  */
-public interface BatchMirror {
+public interface BatchMirror extends BatchInfo, Mirror {
 
-    /**
-     * Returns the batch ID of this batch.
-     * @return the batch ID
-     */
-    String getBatchId();
-
-    /**
-     * Returns the element jobflows.
-     * @return the element jobflows
-     */
+    @Override
     Collection<? extends JobflowMirror> getElements();
 
-    /**
-     * Returns an element.
-     * @param flowId the target flow ID
-     * @return the element, or {@code null} if it is not found
-     */
-    JobflowMirror findElement(String flowId);
+    @Override
+    Optional<? extends JobflowMirror> findElement(String flowId);
 }

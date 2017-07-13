@@ -18,9 +18,13 @@ package com.asakusafw.testdriver;
 import java.io.IOException;
 import java.util.Map;
 
+import com.asakusafw.workflow.executor.TaskExecutor;
+
 /**
  * Executes a job.
+ * @deprecated replaced with {@link TaskExecutor}
  */
+@Deprecated
 public abstract class JobExecutor {
 
     /**

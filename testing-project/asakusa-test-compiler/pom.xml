@@ -33,6 +33,16 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
+      <groupId>com.asakusafw.workflow</groupId>
+      <artifactId>asakusa-workflow-model</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.asakusafw.workflow</groupId>
+      <artifactId>asakusa-workflow-executor</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
     </dependency>

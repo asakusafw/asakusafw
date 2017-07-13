@@ -24,7 +24,7 @@ import com.asakusafw.testdriver.compiler.BatchMirror;
  * A basic implementation of {@link ArtifactMirror}.
  * @since 0.8.0
  */
-public class BasicArtifactMirror implements ArtifactMirror {
+public class BasicArtifactMirror extends AbstractMirror implements ArtifactMirror {
 
     private final BatchMirror batch;
 

@@ -20,7 +20,7 @@ import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.util.Tool;
 
 /**
- * Mock implementation of a hadoop job.
+ * Mock implementation of a Hadoop job for testing.
  */
 public class MockHadoopJob extends Configured implements Tool {
 

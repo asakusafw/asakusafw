@@ -141,6 +141,7 @@ public class JobFlowTester extends TesterBase {
             LOG.info(MessageFormat.format(
                     Messages.getString("JobFlowTester.infoInitializeEnvironment"), //$NON-NLS-1$
                     driverContext.getCallerClass().getName()));
+            executor.validateJobflow(jobflow);
             executor.cleanWorkingDirectory();
             executor.cleanInputOutput(jobflow);
             executor.cleanExtraResources(getExternalResources());

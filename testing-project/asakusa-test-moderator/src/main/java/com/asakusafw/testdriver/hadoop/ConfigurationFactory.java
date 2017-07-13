@@ -49,12 +49,14 @@ public class ConfigurationFactory extends ConfigurationProvider {
      * The system property key of Hadoop configuration path.
      * @since 0.6.0
      */
+    @Deprecated
     public static final String KEY_EXPLICIT_HADOOP_CONF = "asakusa.testdriver.hadoop.conf"; //$NON-NLS-1$
 
     /**
      * The system property key of Hadoop command path.
      * @since 0.6.0
      */
+    @Deprecated
     public static final String KEY_EXPLICIT_HADOOP_COMMAND = "asakusa.testdriver.hadoop.command"; //$NON-NLS-1$
 
     /**
