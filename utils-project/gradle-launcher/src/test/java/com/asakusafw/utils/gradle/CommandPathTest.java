@@ -24,6 +24,7 @@ import java.nio.file.attribute.PosixFilePermissions;
 import java.util.Arrays;
 import java.util.Optional;
 
+import org.junit.Assume;
 import org.junit.AssumptionViolatedException;
 import org.junit.Rule;
 import org.junit.Test;
@@ -127,6 +128,7 @@ public class CommandPathTest {
     }
 
     private static Path assumeWindowsCmd() {
+        Assume.assumeTrue("assume windows", CommandPath.WINDOWS);
         CommandPath path = CommandPath.system();
         return path.find("cmd.exe")
                 .orElseThrow(() -> new AssumptionViolatedException("should cmd.exe is available"));
