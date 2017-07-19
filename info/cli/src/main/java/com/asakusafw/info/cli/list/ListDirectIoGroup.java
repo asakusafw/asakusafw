@@ -15,7 +15,7 @@
  */
 package com.asakusafw.info.cli.list;
 
-import com.asakusafw.info.cli.common.GroupUsageCommand;
+import com.asakusafw.utils.jcommander.common.GroupUsageCommand;
 import com.beust.jcommander.Parameters;
 
 /**

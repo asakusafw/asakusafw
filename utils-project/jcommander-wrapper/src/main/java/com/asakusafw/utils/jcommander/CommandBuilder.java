@@ -15,10 +15,7 @@
  */
 package com.asakusafw.utils.jcommander;
 
-import java.text.MessageFormat;
 import java.util.function.Consumer;
-
-import com.beust.jcommander.Parameters;
 
 /**
  * An abstract super interface of command builders.
@@ -33,9 +30,7 @@ public interface CommandBuilder<T> {
      * @return this
      */
     default CommandBuilder<T> addCommand(T command) {
-        return addGroup(command, group -> {
-            return;
-        });
+        return addCommand(Util.getCommandName(command), command);
     }
 
     /**
@@ -44,11 +39,7 @@ public interface CommandBuilder<T> {
      * @param command the command object
      * @return this
      */
-    default CommandBuilder<T> addCommand(String name, T command) {
-        return addGroup(name, command, group -> {
-            return;
-        });
-    }
+    CommandBuilder<T> addCommand(String name, T command);
 
     /**
      * Adds a group.
@@ -57,13 +48,7 @@ public interface CommandBuilder<T> {
      * @return this
      */
     default CommandBuilder<T> addGroup(T command, Consumer<? super CommandBuilder<T>> configurator) {
-        Parameters parameters = command.getClass().getAnnotation(Parameters.class);
-        if (parameters == null || parameters.commandNames().length != 1) {
-            throw new IllegalStateException(MessageFormat.format(
-                    "there are no valid command name information: {0}",
-                    command.getClass().getName()));
-        }
-        return addGroup(parameters.commandNames()[0], command, configurator);
+        return addGroup(Util.getCommandName(command), command, configurator);
     }
 
     /**

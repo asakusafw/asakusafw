@@ -24,15 +24,15 @@ import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.asakusafw.info.cli.common.HelpParameter;
 import com.asakusafw.info.cli.common.JobflowInfoParameter;
-import com.asakusafw.info.cli.common.OutputParameter;
-import com.asakusafw.info.cli.common.VerboseParameter;
 import com.asakusafw.info.operator.FlowOperatorSpec;
 import com.asakusafw.info.operator.OperatorGraphAttribute;
 import com.asakusafw.info.operator.UserOperatorSpec;
 import com.asakusafw.info.operator.view.OperatorGraphView;
 import com.asakusafw.info.operator.view.OperatorView;
+import com.asakusafw.utils.jcommander.common.HelpParameter;
+import com.asakusafw.utils.jcommander.common.OutputParameter;
+import com.asakusafw.utils.jcommander.common.VerboseParameter;
 import com.beust.jcommander.Parameters;
 import com.beust.jcommander.ParametersDelegate;
 
@@ -49,16 +49,16 @@ public class ListOperatorCommand implements Runnable {
     static final Logger LOG = LoggerFactory.getLogger(ListOperatorCommand.class);
 
     @ParametersDelegate
-    HelpParameter helpParameter = new HelpParameter();
+    final HelpParameter helpParameter = new HelpParameter();
 
     @ParametersDelegate
-    JobflowInfoParameter jobflowInfoParameter = new JobflowInfoParameter();
+    final JobflowInfoParameter jobflowInfoParameter = new JobflowInfoParameter();
 
     @ParametersDelegate
-    VerboseParameter verboseParameter = new VerboseParameter();
+    final VerboseParameter verboseParameter = new VerboseParameter();
 
     @ParametersDelegate
-    OutputParameter outputParameter = new OutputParameter();
+    final OutputParameter outputParameter = new OutputParameter();
 
     @Override
     public void run() {

@@ -13,31 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.info.cli.common;
-
-import com.beust.jcommander.Parameter;
-
 /**
- * Provides verbose flag.
- * @since 0.10.0
+ * CLI of Asakusa workflow.
  */
-public class VerboseParameter {
-
-    /**
-     * Whether or not the help message is required.
-     */
-    @Parameter(
-            names = { "-v", "--verbose", },
-            description = "Displays verbose information.",
-            required = false
-    )
-    public boolean required = false;
-
-    /**
-     * Returns the required.
-     * @return the required
-     */
-    public boolean isRequired() {
-        return required;
-    }
-}
+package com.asakusafw.workflow.cli;

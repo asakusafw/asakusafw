@@ -13,32 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.info.cli.common;
+package com.asakusafw.workflow.cli.common;
 
-import com.beust.jcommander.Parameter;
+import com.asakusafw.workflow.executor.ExecutionContext;
+import com.asakusafw.workflow.executor.basic.BasicExecutionContext;
 
 /**
- * Provides help flag.
+ * Handles parameters about execution context.
  * @since 0.10.0
  */
-public class HelpParameter {
+public class ExecutionContextParameter {
+
+    // NOTE: require Hadoop Configuration?
+
+    private final ExecutionContext context = new BasicExecutionContext()
+            .withEnvironmentVariables(m -> m.putAll(System.getenv()));
 
     /**
-     * Whether or not the help message is required.
+     * Returns the execution context.
+     * @return the execution context
      */
-    @Parameter(
-            names = { "-h", "--help", },
-            description = "Displays help message.",
-            help = true,
-            required = false
-    )
-    public boolean required = false;
-
-    /**
-     * Returns whether or not displaying help messages is required.
-     * @return {@code true} if help is required, otherwise {@code false}
-     */
-    public boolean isRequired() {
-        return required;
+    public ExecutionContext getExecutionContext() {
+        return context;
     }
 }

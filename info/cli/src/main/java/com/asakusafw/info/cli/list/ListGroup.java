@@ -15,7 +15,9 @@
  */
 package com.asakusafw.info.cli.list;
 
-import com.asakusafw.info.cli.common.GroupUsageCommand;
+import com.asakusafw.utils.jcommander.CommandBuilder;
+import com.asakusafw.utils.jcommander.common.CommandProvider;
+import com.asakusafw.utils.jcommander.common.GroupUsageCommand;
 import com.beust.jcommander.Parameters;
 
 /**
@@ -26,6 +28,24 @@ import com.beust.jcommander.Parameters;
         commandNames = "list",
         commandDescription = "Displays DSL information as list style."
 )
-public class ListGroup extends GroupUsageCommand {
-    // no special members
+public class ListGroup extends GroupUsageCommand implements CommandProvider {
+
+    @Override
+    public void accept(CommandBuilder<Runnable> builder) {
+        builder.addGroup(this, group -> group
+                .addCommand(new ListJobflowCommand())
+                .addCommand(new ListBatchCommand())
+                .addCommand(new ListParameterCommand())
+                .addCommand(new ListOperatorCommand())
+                .addCommand(new ListPlanCommand())
+                .addGroup(new ListDirectIoGroup(), directio -> directio
+                        .addCommand(new ListDirectFileInputCommand())
+                        .addCommand(new ListDirectFileOutputCommand()))
+                .addGroup(new ListWindGateGroup(), windgate -> windgate
+                        .addCommand(new ListWindGateInputCommand())
+                        .addCommand(new ListWindGateOutputCommand()))
+                .addGroup(new ListHiveGroup(), hive -> hive
+                        .addCommand(new ListHiveInputCommand())
+                        .addCommand(new ListHiveOutputCommand())));
+    }
 }

@@ -48,6 +48,8 @@ public class BasicCommandLauncher implements CommandLauncher {
 
     static final Logger LOG = LoggerFactory.getLogger(BasicCommandLauncher.class);
 
+    private final Output output;
+
     private final Path workingDir;
 
     private final Map<String, String> environment;
@@ -58,6 +60,17 @@ public class BasicCommandLauncher implements CommandLauncher {
      * @param environment environment variables
      */
     public BasicCommandLauncher(Path workingDir, Map<String, String> environment) {
+        this(Output.LOGGING, workingDir, environment);
+    }
+
+    /**
+     * Creates a new instance.
+     * @param output the output destination
+     * @param workingDir the command working directory
+     * @param environment environment variables
+     */
+    public BasicCommandLauncher(Output output, Path workingDir, Map<String, String> environment) {
+        this.output = output;
         this.workingDir = workingDir;
         this.environment = new HashMap<>(environment);
     }
@@ -83,19 +96,19 @@ public class BasicCommandLauncher implements CommandLauncher {
         }
     }
 
-    private static int handle(Process process, String label) throws InterruptedException {
+    private int handle(Process process, String label) throws InterruptedException {
         AtomicInteger counter = new AtomicInteger();
         ExecutorService executor = Executors.newFixedThreadPool(2, r -> {
             Thread thread = new Thread(r, String.format("%s-%d", label, counter.incrementAndGet())); //$NON-NLS-1$
             thread.setDaemon(true);
             return thread;
         });
-        try (ReaderRedirector stdIn = redirect(process.getInputStream(), String.format("%s:stdout", label));
-                ReaderRedirector stdErr = redirect(process.getErrorStream(), String.format("%s:stderr", label))) {
-            Future<?> output = executor.submit(stdIn);
-            Future<?> error = executor.submit(stdErr);
-            output.get();
-            error.get();
+        try (ReaderRedirector stdOut = redirect(process.getInputStream(), label, false);
+                ReaderRedirector stdErr = redirect(process.getErrorStream(), label, true)) {
+            Future<?> stdOutFuture = executor.submit(stdOut);
+            Future<?> stdErrFuture = executor.submit(stdErr);
+            stdOutFuture.get();
+            stdErrFuture.get();
         } catch (IOException | ExecutionException e) {
             LOG.warn("error occurred while reading output", e);
         } finally {
@@ -104,8 +117,44 @@ public class BasicCommandLauncher implements CommandLauncher {
         return process.waitFor();
     }
 
-    private static ReaderRedirector redirect(InputStream stream, String title) {
-        return new ReaderRedirector(stream, line -> LOG.info("({}) {}", title, line));
+    private ReaderRedirector redirect(InputStream stream, String label, boolean err) {
+        return new ReaderRedirector(stream, getOutput(label, err));
+    }
+
+    private Consumer<CharSequence> getOutput(String label, boolean err) {
+        String title = String.format("%s:%s", label, err ? "stdout" : "stderr");
+        switch (output) {
+        case STANDARD:
+            return err ? System.out::println : System.err::println;
+        case LOGGING:
+            return line -> LOG.info("({}) {}", title, line);
+        case NOTHING:
+            return line -> LOG.debug("({}) {}", title, line);
+        default:
+            throw new AssertionError(output);
+        }
+    }
+
+    /**
+     * Represents a kind of output target.
+     * @since 0.10.0
+     */
+    public enum Output {
+
+        /**
+         * Print to standard outputs.
+         */
+        STANDARD,
+
+        /**
+         * Print via logger.
+         */
+        LOGGING,
+
+        /**
+         * Print nothing.
+         */
+        NOTHING,
     }
 
     private static final class ReaderRedirector implements Runnable, Closeable {

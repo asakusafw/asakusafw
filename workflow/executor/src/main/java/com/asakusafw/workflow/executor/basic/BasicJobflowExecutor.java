@@ -24,6 +24,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,9 +85,12 @@ public class BasicJobflowExecutor implements JobflowExecutor {
         for (TaskInfo task : tasks) {
             TaskExecutor executor = findExecutor(context, task)
                     .orElseThrow(() -> new NoSuchElementException(MessageFormat.format(
-                            "there are no suitable executor for task: kind={0}, module={1}",
+                            "there are no suitable executor for task: kind={0}, module={1}, executors={2}",
                             task.getClass().getSimpleName(),
-                            task.getModuleName())));
+                            task.getModuleName(),
+                            taskExecutors.stream()
+                                .map(it -> it.getClass().getSimpleName())
+                                .collect(Collectors.joining(", ", "{", "}")))));
             executor.execute(context, task);
         }
     }

@@ -26,6 +26,8 @@ import com.asakusafw.workflow.model.CommandTaskInfo;
 import com.asakusafw.workflow.model.CommandToken;
 import com.asakusafw.workflow.model.TaskInfo;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -47,6 +49,7 @@ public class BasicCommandTaskInfo extends BasicTaskInfo implements CommandTaskIn
     private final List<CommandToken> arguments;
 
     @JsonProperty("resolver")
+    @JsonInclude(Include.NON_NULL)
     private final ConfigurationResolver resolver;
 
     /**

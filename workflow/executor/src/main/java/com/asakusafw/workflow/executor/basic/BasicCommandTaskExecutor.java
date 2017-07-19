@@ -24,6 +24,7 @@ import java.util.Objects;
 import java.util.function.Function;
 
 import com.asakusafw.workflow.executor.CommandLauncher;
+import com.asakusafw.workflow.executor.ExecutionContext;
 import com.asakusafw.workflow.executor.TaskExecutionContext;
 import com.asakusafw.workflow.executor.TaskExecutor;
 import com.asakusafw.workflow.executor.TaskExecutors;
@@ -85,8 +86,23 @@ public class BasicCommandTaskExecutor implements TaskExecutor {
      * @param context the current context
      * @return the command launcher
      */
-    public static CommandLauncher getCommandLauncher(TaskExecutionContext context) {
+    public static CommandLauncher getCommandLauncher(ExecutionContext context) {
         return new BasicCommandLauncher(
+                TaskExecutors.getUserHome(context),
+                context.getEnvironmentVariables());
+    }
+
+    /**
+     * Returns a {@link CommandLauncher}.
+     * @param context the current context
+     * @param output the output target
+     * @return the command launcher
+     */
+    public static CommandLauncher getCommandLauncher(
+            ExecutionContext context,
+            BasicCommandLauncher.Output output) {
+        return new BasicCommandLauncher(
+                output,
                 TaskExecutors.getUserHome(context),
                 context.getEnvironmentVariables());
     }

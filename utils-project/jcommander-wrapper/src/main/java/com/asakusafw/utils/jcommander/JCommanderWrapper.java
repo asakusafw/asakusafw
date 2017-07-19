@@ -63,6 +63,16 @@ public class JCommanderWrapper<T> implements CommandBuilder<T> {
         this.root = new Builder<>(new String[] { programName }, commander);
     }
 
+    /**
+     * Configures this object.
+     * @param configurator the configurator
+     * @return this
+     */
+    public JCommanderWrapper<T> configure(Consumer<? super CommandBuilder<T>> configurator) {
+        configurator.accept(this);
+        return this;
+    }
+
     @Override
     public JCommanderWrapper<T> addCommand(T command) {
         root.addCommand(command);
@@ -189,11 +199,20 @@ public class JCommanderWrapper<T> implements CommandBuilder<T> {
         }
 
         @Override
+        public CommandBuilder<T> addCommand(String name, T command) {
+            add(name, command);
+            return this;
+        }
+
+        @Override
         public CommandBuilder<T> addGroup(String name, T object, Consumer<? super CommandBuilder<T>> configurator) {
-            JCommander nextCommander = add(name, object);
+            JCommander next = commander.getCommands().get(name);
+            if (next == null) {
+                next = add(name, object);
+            }
             String[] nextSequence = Arrays.copyOf(nameSequence, nameSequence.length + 1);
             nextSequence[nameSequence.length] = name;
-            configurator.accept(new Builder<>(nextSequence, nextCommander));
+            configurator.accept(new Builder<>(nextSequence, next));
             return this;
         }
 

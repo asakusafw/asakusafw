@@ -15,7 +15,9 @@
  */
 package com.asakusafw.info.cli.draw;
 
-import com.asakusafw.info.cli.common.GroupUsageCommand;
+import com.asakusafw.utils.jcommander.CommandBuilder;
+import com.asakusafw.utils.jcommander.common.CommandProvider;
+import com.asakusafw.utils.jcommander.common.GroupUsageCommand;
 import com.beust.jcommander.Parameters;
 
 /**
@@ -26,6 +28,13 @@ import com.beust.jcommander.Parameters;
         commandNames = "draw",
         commandDescription = "Generates information graph as Graphviz DOT scripts."
 )
-public class DrawGroup extends GroupUsageCommand {
-    // no special members
+public class DrawGroup extends GroupUsageCommand implements CommandProvider {
+
+    @Override
+    public void accept(CommandBuilder<Runnable> builder) {
+        builder.addGroup(new DrawGroup(), group -> group
+                .addCommand(new DrawJobflowCommand())
+                .addCommand(new DrawOperatorCommand())
+                .addCommand(new DrawPlanCommand()));
+    }
 }
