@@ -143,4 +143,34 @@ public class OperationToolsTest {
 
         assertThat(contents.find("var"), is(Optional.empty()));
     }
+
+    /**
+     * {@code info.sh}.
+     */
+    @Test
+    public void info() {
+        AsakusaProject project = provider.newInstance("tls");
+        project.gradle("installAsakusafw");
+
+        Bundle contents = project.getContents();
+        contents.put("var/file.txt");
+
+        Bundle framework = project.getFramework();
+        framework.withLaunch("tools/bin/info.sh");
+    }
+
+    /**
+     * {@code info.sh list batch}.
+     */
+    @Test
+    public void info_list_batch() {
+        AsakusaProject project = provider.newInstance("tls");
+        project.gradle("installAsakusafw");
+
+        Bundle contents = project.getContents();
+        contents.put("var/file.txt");
+
+        Bundle framework = project.getFramework();
+        framework.withLaunch("tools/bin/info.sh", "list", "batch", "-v");
+    }
 }
