@@ -196,7 +196,23 @@ class AsakusaSdkPlugin implements Plugin<Project> {
             AsakusafwSdkExtension features = extension.sdk
             project.dependencies {
                 if (features.core) {
-                    compile "com.asakusafw.sdk:asakusa-sdk-app-core:${base.frameworkVersion}"
+                    compile "com.asakusafw:asakusa-dsl-vocabulary:${base.frameworkVersion}"
+                    compile "com.asakusafw:asakusa-iterative-vocabulary:${base.frameworkVersion}"
+                    compile "com.asakusafw:asakusa-runtime:${base.frameworkVersion}"
+
+                    compile("org.apache.hadoop:hadoop-common:${base.hadoopVersion}") {
+                        exclude group: 'junit', module: 'junit'
+                        exclude group: 'org.mockito', module: 'mockito-all'
+                        exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+                        exclude group: 'asm', module: 'asm'
+                    }
+                    compile("org.apache.hadoop:hadoop-mapreduce-client-jobclient:${base.hadoopVersion}") {
+                        exclude group: 'junit', module: 'junit'
+                        exclude group: 'org.mockito', module: 'mockito-all'
+                        exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+                        exclude group: 'asm', module: 'asm'
+                    }
+
                     if (features.operator) {
                         if (features.incubating) {
                             compile "com.asakusafw.operator:asakusa-operator-all:${base.frameworkVersion}"
@@ -205,40 +221,44 @@ class AsakusaSdkPlugin implements Plugin<Project> {
                         }
                     }
                     if (features.directio) {
-                        compile "com.asakusafw.sdk:asakusa-sdk-app-directio:${base.frameworkVersion}"
+                        compile "com.asakusafw:asakusa-directio-vocabulary:${base.frameworkVersion}"
                     }
                     if (features.windgate) {
-                        compile "com.asakusafw.sdk:asakusa-sdk-app-windgate:${base.frameworkVersion}"
+                        compile "com.asakusafw:asakusa-windgate-vocabulary:${base.frameworkVersion}"
                     }
                     if (features.hive) {
-                        compile "com.asakusafw.sdk:asakusa-sdk-app-hive:${base.frameworkVersion}"
+                        compile "com.asakusafw:asakusa-hive-core:${base.frameworkVersion}"
                     }
                 }
                 if (features.testing) {
                     // For eclipse classpath
                     project.configurations.compile.exclude group: 'asm', module: 'asm'
                     project.configurations.testCompile.exclude group: 'asm', module: 'asm'
-                    testCompile "com.asakusafw.sdk:asakusa-sdk-test-core:${base.frameworkVersion}"
+
+                    testCompile "com.asakusafw:asakusa-test-driver:${base.frameworkVersion}"
                     if (features.directio) {
-                        testCompile "com.asakusafw.sdk:asakusa-sdk-test-directio:${base.frameworkVersion}"
+                        testCompile "com.asakusafw:asakusa-directio-test-moderator:${base.frameworkVersion}"
                     }
                     if (features.windgate) {
-                        testCompile "com.asakusafw.sdk:asakusa-sdk-test-windgate:${base.frameworkVersion}"
+                        testCompile "com.asakusafw:asakusa-windgate-test-moderator:${base.frameworkVersion}"
                     }
                     if (features.testkit) {
                         AsakusaTestkit found = findTestkit(features.testkit, features.availableTestkits)?.apply(project)
                     }
                 }
                 if (features.dmdl) {
-                    asakusaDmdlCompiler "com.asakusafw.sdk:asakusa-sdk-dmdl-core:${base.frameworkVersion}"
+                    asakusaDmdlCompiler "com.asakusafw:asakusa-dmdl-java:${base.frameworkVersion}"
+                    asakusaDmdlCompiler "com.asakusafw:asakusa-test-data-generator:${base.frameworkVersion}"
                     if (features.directio) {
-                        asakusaDmdlCompiler "com.asakusafw.sdk:asakusa-sdk-dmdl-directio:${base.frameworkVersion}"
+                        asakusaDmdlCompiler "com.asakusafw:asakusa-directio-dmdl:${base.frameworkVersion}"
                     }
                     if (features.windgate) {
-                        asakusaDmdlCompiler "com.asakusafw.sdk:asakusa-sdk-dmdl-windgate:${base.frameworkVersion}"
+                        asakusaDmdlCompiler "com.asakusafw:asakusa-windgate-dmdl:${base.frameworkVersion}"
                     }
                     if (features.hive) {
-                        asakusaDmdlCompiler "com.asakusafw.sdk:asakusa-sdk-dmdl-hive:${base.frameworkVersion}"
+                        asakusaDmdlCompiler("com.asakusafw:asakusa-hive-dmdl:${base.frameworkVersion}") {
+                            exclude group: 'org.apache.hive', module: 'hive-exec'
+                        }
                     }
                 }
             }
