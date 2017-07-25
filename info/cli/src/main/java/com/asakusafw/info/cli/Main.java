@@ -31,6 +31,9 @@ import com.asakusafw.info.cli.list.ListDirectFileInputCommand;
 import com.asakusafw.info.cli.list.ListDirectFileOutputCommand;
 import com.asakusafw.info.cli.list.ListDirectIoGroup;
 import com.asakusafw.info.cli.list.ListGroup;
+import com.asakusafw.info.cli.list.ListHiveGroup;
+import com.asakusafw.info.cli.list.ListHiveInputCommand;
+import com.asakusafw.info.cli.list.ListHiveOutputCommand;
 import com.asakusafw.info.cli.list.ListJobflowCommand;
 import com.asakusafw.info.cli.list.ListOperatorCommand;
 import com.asakusafw.info.cli.list.ListParameterCommand;
@@ -96,7 +99,10 @@ public final class Main extends GroupUsageCommand {
                             .addCommand(new ListDirectFileOutputCommand()))
                     .addGroup(new ListWindGateGroup(), windgate -> windgate
                             .addCommand(new ListWindGateInputCommand())
-                            .addCommand(new ListWindGateOutputCommand())))
+                            .addCommand(new ListWindGateOutputCommand()))
+                    .addGroup(new ListHiveGroup(), hive -> hive
+                            .addCommand(new ListHiveInputCommand())
+                            .addCommand(new ListHiveOutputCommand())))
             .addGroup(new DrawGroup(), draw -> draw
                     .addCommand(new DrawJobflowCommand())
                     .addCommand(new DrawOperatorCommand())

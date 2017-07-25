@@ -33,9 +33,9 @@ import org.hamcrest.Matcher;
 import org.junit.Assume;
 import org.junit.Test;
 
-import com.asakusafw.directio.hive.info.FieldType.TypeName;
-import com.asakusafw.directio.hive.info.TableInfo;
 import com.asakusafw.directio.hive.tools.cli.GenerateCreateTableTask.Configuration;
+import com.asakusafw.info.hive.TableInfo;
+import com.asakusafw.info.hive.FieldType.TypeName;
 
 /**
  * Test for {@link GenerateCreateTable}.

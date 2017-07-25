@@ -35,13 +35,13 @@ import org.apache.hadoop.hive.ql.io.orc.OrcFile.WriterOptions;
 import org.apache.hadoop.hive.ql.io.orc.Reader;
 import org.apache.hadoop.hive.ql.io.orc.StripeInformation;
 
-import com.asakusafw.directio.hive.info.BuiltinStorageFormatInfo;
-import com.asakusafw.directio.hive.info.StorageFormatInfo;
-import com.asakusafw.directio.hive.info.TableInfo;
 import com.asakusafw.directio.hive.serde.DataModelDescriptor;
 import com.asakusafw.directio.hive.serde.DataModelInspector;
 import com.asakusafw.directio.hive.serde.DataModelMapping;
 import com.asakusafw.directio.hive.serde.PropertyDescriptor;
+import com.asakusafw.info.hive.BuiltinStorageFormatInfo;
+import com.asakusafw.info.hive.StorageFormatInfo;
+import com.asakusafw.info.hive.TableInfo;
 import com.asakusafw.runtime.directio.Counter;
 import com.asakusafw.runtime.directio.DirectInputFragment;
 import com.asakusafw.runtime.directio.hadoop.BlockMap;

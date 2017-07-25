@@ -28,12 +28,12 @@ import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
-import com.asakusafw.directio.hive.info.BuiltinStorageFormatInfo;
-import com.asakusafw.directio.hive.info.StorageFormatInfo;
-import com.asakusafw.directio.hive.info.TableInfo;
 import com.asakusafw.directio.hive.serde.DataModelDescriptor;
 import com.asakusafw.directio.hive.serde.DataModelMapping;
 import com.asakusafw.directio.hive.serde.PropertyDescriptor;
+import com.asakusafw.info.hive.BuiltinStorageFormatInfo;
+import com.asakusafw.info.hive.StorageFormatInfo;
+import com.asakusafw.info.hive.TableInfo;
 import com.asakusafw.runtime.directio.Counter;
 import com.asakusafw.runtime.directio.DirectInputFragment;
 import com.asakusafw.runtime.directio.hadoop.BlockMap;

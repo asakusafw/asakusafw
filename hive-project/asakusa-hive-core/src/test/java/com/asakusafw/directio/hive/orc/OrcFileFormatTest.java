@@ -38,14 +38,14 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import com.asakusafw.directio.hive.info.BuiltinStorageFormatInfo;
-import com.asakusafw.directio.hive.info.StorageFormatInfo;
 import com.asakusafw.directio.hive.serde.DataModelDescriptorEditor;
 import com.asakusafw.directio.hive.serde.DataModelMapping.ExceptionHandlingStrategy;
 import com.asakusafw.directio.hive.serde.DataModelMapping.FieldMappingStrategy;
 import com.asakusafw.directio.hive.serde.FieldPropertyDescriptor;
 import com.asakusafw.directio.hive.serde.ValueSerde;
 import com.asakusafw.directio.hive.serde.mock.MockSimple;
+import com.asakusafw.info.hive.BuiltinStorageFormatInfo;
+import com.asakusafw.info.hive.StorageFormatInfo;
 import com.asakusafw.runtime.directio.Counter;
 import com.asakusafw.runtime.directio.DirectInputFragment;
 import com.asakusafw.runtime.directio.hadoop.StripedDataFormat;

@@ -42,7 +42,7 @@ import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.asakusafw.directio.hive.info.TableInfo;
+import com.asakusafw.info.hive.TableInfo;
 
 /**
  * Program entry for generate Hive QL {@code CREATE TABLE} statements.

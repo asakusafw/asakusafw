@@ -16,6 +16,7 @@
     <module>model</module>
     <module>directio</module>
     <module>windgate</module>
+    <module>hive</module>
     <module>cli</module>
   </modules>
 </project>

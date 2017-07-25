@@ -26,8 +26,6 @@ import org.apache.hadoop.hive.serde2.typeinfo.TypeInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.asakusafw.directio.hive.annotation.HiveField;
-import com.asakusafw.directio.hive.annotation.HiveTable;
 import com.asakusafw.directio.hive.serde.DataModelDescriptor;
 import com.asakusafw.directio.hive.serde.DataModelDescriptorBuilder;
 import com.asakusafw.directio.hive.serde.PropertyDescriptor;
@@ -40,6 +38,8 @@ import com.asakusafw.dmdl.model.AstDescription;
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
 import com.asakusafw.dmdl.semantics.PropertyDeclaration;
 import com.asakusafw.dmdl.semantics.type.BasicType;
+import com.asakusafw.info.hive.annotation.HiveField;
+import com.asakusafw.info.hive.annotation.HiveTable;
 import com.asakusafw.runtime.value.ValueOption;
 import com.asakusafw.utils.java.model.syntax.Annotation;
 import com.asakusafw.utils.java.model.syntax.ClassBody;

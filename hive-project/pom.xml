@@ -12,7 +12,6 @@
   <packaging>pom</packaging>
 
   <modules>
-    <module>asakusa-hive-info</module>
     <module>asakusa-hive-core</module>
     <module>asakusa-hive-dmdl</module>
     <module>asakusa-hive-cli</module>

@@ -12,8 +12,8 @@
   <packaging>jar</packaging>
   <dependencies>
     <dependency>
-      <groupId>com.asakusafw</groupId>
-      <artifactId>asakusa-hive-info</artifactId>
+      <groupId>com.asakusafw.info</groupId>
+      <artifactId>asakusa-info-hive</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
