@@ -12,6 +12,7 @@
 
   <modules>
     <module>asakusa-operation-tools</module>
+    <module>command-portal</module>
   </modules>
 
 </project>
