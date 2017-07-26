@@ -45,7 +45,6 @@
     <module>operation-project</module>
     <module>sandbox-project</module>
     <module>operator</module>
-    <module>sdk-project</module>
   </modules>
 
   <properties>
