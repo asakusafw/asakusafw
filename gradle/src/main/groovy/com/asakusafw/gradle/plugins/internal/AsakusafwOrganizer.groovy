@@ -184,10 +184,12 @@ class AsakusafwOrganizer extends AbstractOrganizer {
                 OperationDist : [
                     "com.asakusafw:asakusa-operation-tools:${base.frameworkVersion}:dist@jar",
                     "com.asakusafw:asakusa-command-portal:${base.frameworkVersion}:dist@jar",
+                    "com.asakusafw.workflow:asakusa-workflow-hadoop:${base.frameworkVersion}:dist@jar",
                 ],
                 OperationLib : [
                     "com.asakusafw:asakusa-operation-tools:${base.frameworkVersion}:lib@jar",
                     "com.asakusafw:asakusa-command-portal:${base.frameworkVersion}:exec@jar",
+                    "com.asakusafw.workflow:asakusa-workflow-hadoop:${base.frameworkVersion}:lib@jar",
                     "org.slf4j:slf4j-simple:${base.slf4jVersion}@jar",
                 ],
                 DirectIoHiveDist : [],
@@ -292,6 +294,7 @@ class AsakusafwOrganizer extends AbstractOrganizer {
                     put configuration('asakusafwOperationLib')
                     process {
                         rename(/(asakusa-operation-tools)-.*-lib\.jar/, '$1.jar')
+                        rename(/(asakusa-workflow-hadoop)-.*-lib\.jar/, '$1.jar')
                         rename(/(asakusa-command-portal)-.*-exec\.jar/, '$1.jar')
                         rename(/([0-9A-Za-z\-]+)-cli-.*-exec.jar/, '$1.jar')
                         rename(/slf4j-simple-.*\.jar/, 'slf4j-simple.jar')

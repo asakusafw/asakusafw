@@ -18,7 +18,6 @@ package com.asakusafw.workflow.cli.hadoop;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
@@ -68,11 +67,10 @@ public class BridgeDeleteTaskExecutorTest {
     public void simple() throws Exception {
         TaskInfo task = new BasicDeleteTaskInfo(PathKind.HADOOP_FILE_SYSTEM, "testing");
         TaskExecutor executor = new BridgeDeleteTaskExecutor(ctxt -> (command, arguments) -> {
-            assertThat(
-                    command.toString(),
-                    Files.isSameFile(command, HOME_DIR.resolve(BridgeDeleteTaskExecutor.PATH_SCRIPT)),
-                    is(true));
-            assertThat(arguments, contains(HadoopDelete.class.getName(), "testing"));
+            assertThat(command.toRealPath(), is(HOME_DIR.resolve(Constants.PATH_BRIDGE_SCRIPT).toRealPath()));
+            assertThat(arguments.get(0), endsWith(Constants.PATH_BRIDGE_LIBRARY));
+            assertThat(arguments.get(1), is(BridgeDeleteTaskExecutor.DELEGATE_CLASS));
+            assertThat(arguments.get(2), is("testing"));
             return 0;
         });
         assertThat(executor.isSupported(context, task), is(true));
@@ -87,11 +85,10 @@ public class BridgeDeleteTaskExecutorTest {
     public void resolved() throws Exception {
         TaskInfo task = new BasicDeleteTaskInfo(PathKind.HADOOP_FILE_SYSTEM, "${execution_id}");
         TaskExecutor executor = new BridgeDeleteTaskExecutor(ctxt -> (command, arguments) -> {
-            assertThat(
-                    command.toString(),
-                    Files.isSameFile(command, HOME_DIR.resolve(BridgeDeleteTaskExecutor.PATH_SCRIPT)),
-                    is(true));
-            assertThat(arguments, contains(HadoopDelete.class.getName(), context.getExecutionId()));
+            assertThat(command.toRealPath(), is(HOME_DIR.resolve(Constants.PATH_BRIDGE_SCRIPT).toRealPath()));
+            assertThat(arguments.get(0), endsWith(Constants.PATH_BRIDGE_LIBRARY));
+            assertThat(arguments.get(1), is(BridgeDeleteTaskExecutor.DELEGATE_CLASS));
+            assertThat(arguments.get(2), is(context.getExecutionId()));
             return 0;
         });
         assertThat(executor.isSupported(context, task), is(true));

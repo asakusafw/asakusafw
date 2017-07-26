@@ -24,7 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.utils.jcommander.CommandBuilder;
-import com.asakusafw.utils.jcommander.CommandConfigurationException;
 import com.asakusafw.utils.jcommander.CommandExecutionException;
 import com.asakusafw.utils.jcommander.common.CommandProvider;
 import com.asakusafw.utils.jcommander.common.HelpParameter;
@@ -73,7 +72,7 @@ public class RunCommand implements Runnable, CommandProvider {
         try {
             executor.execute(context, workflow, arguments);
         } catch (NoSuchElementException e) {
-            throw new CommandConfigurationException(MessageFormat.format(
+            throw new CommandExecutionException(MessageFormat.format(
                     "cannot execute batch \"{0}\"",
                     workflow.getId()), e);
         } catch (IOException | InterruptedException e) {

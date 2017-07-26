@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <name>CLI of Asakusa Workflow Executor</name>
-  <artifactId>asakusa-workflow-cli</artifactId>
+  <name>Hadoop Support of Asakusa Workflow Executor</name>
+  <artifactId>asakusa-workflow-hadoop</artifactId>
   <parent>
     <artifactId>project</artifactId>
     <groupId>com.asakusafw.workflow</groupId>
@@ -10,7 +10,6 @@
   </parent>
 
   <packaging>jar</packaging>
-
 
   <build>
     <plugins>
@@ -41,20 +40,11 @@
               <goal>shade</goal>
             </goals>
             <configuration>
-              <relocations>
-                <relocation>
-                  <pattern>com.fasterxml.jackson</pattern>
-                  <shadedPattern>com.asakusafw.workflow.shaded.com.fasterxml.jackson</shadedPattern>
-                </relocation>
-              </relocations>
               <transformers>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
-                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                  <mainClass>com.asakusafw.workflow.cli.Workflow</mainClass>
-                </transformer>
               </transformers>
               <shadedArtifactAttached>true</shadedArtifactAttached>
-              <shadedClassifierName>exec</shadedClassifierName>
+              <shadedClassifierName>lib</shadedClassifierName>
             </configuration>
           </execution>
         </executions>
@@ -65,17 +55,19 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>asakusa-workflow-hadoop</artifactId>
+      <artifactId>asakusa-workflow-executor</artifactId>
       <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
     </dependency>
     <dependency>
       <groupId>com.asakusafw</groupId>
-      <artifactId>jcommander-wrapper</artifactId>
+      <artifactId>asakusa-runtime</artifactId>
       <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.hadoop</groupId>
+      <artifactId>${hadoop.artifact.id}</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -84,7 +76,14 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-simple</artifactId>
-      <scope>runtime</scope>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.asakusafw</groupId>
+      <artifactId>asakusa-runtime</artifactId>
+      <version>${project.version}</version>
+      <classifier>tests</classifier>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>junit</groupId>

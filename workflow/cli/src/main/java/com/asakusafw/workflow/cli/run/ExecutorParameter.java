@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.asakusafw.workflow.cli.hadoop.BridgeDeleteTaskExecutor;
+import com.asakusafw.workflow.cli.hadoop.BridgeHadoopTaskExecutor;
 import com.asakusafw.workflow.executor.BatchExecutor;
 import com.asakusafw.workflow.executor.CommandLauncher;
 import com.asakusafw.workflow.executor.ExecutionContext;
@@ -56,6 +57,7 @@ public class ExecutorParameter {
         List<TaskExecutor> results = new ArrayList<>();
         results.addAll(TaskExecutors.loadDefaults(context.getClassLoader()));
         results.add(new BasicCommandTaskExecutor(this::getCommandLauncher));
+        results.add(new BridgeHadoopTaskExecutor(this::getCommandLauncher));
         results.add(new BridgeDeleteTaskExecutor(this::getCommandLauncher));
         return results;
     }
