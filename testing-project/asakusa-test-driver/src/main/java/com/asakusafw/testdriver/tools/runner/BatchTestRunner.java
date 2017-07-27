@@ -16,8 +16,6 @@
 package com.asakusafw.testdriver.tools.runner;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Map;
@@ -38,22 +36,19 @@ import org.slf4j.LoggerFactory;
 import com.asakusafw.testdriver.TestDriverContext;
 import com.asakusafw.vocabulary.batch.Batch;
 import com.asakusafw.vocabulary.batch.BatchDescription;
-import com.asakusafw.yaess.core.BatchScript;
+import com.asakusafw.workflow.executor.TaskExecutors;
+import com.asakusafw.workflow.model.BatchInfo;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * The program entry point of Asakusa batch application runner.
  * @since 0.6.0
- * @version 0.7.1
+ * @version 0.10.0
  * @see BatchTestTool
  */
 public final class BatchTestRunner {
 
     static final Logger LOG = LoggerFactory.getLogger(BatchTestRunner.class);
-
-    /**
-     * The YAESS script path (relative from batch application directory).
-     */
-    public static final String PATH_YAESS_SCRIPT = "etc/yaess-script.properties"; //$NON-NLS-1$
 
     static final Option OPT_BATCH_ID;
     static final Option OPT_ARGUMENT;
@@ -321,23 +316,17 @@ public final class BatchTestRunner {
     }
 
     private RunTask.Configuration loadConfiguration() {
-        BatchScript script;
+        BatchInfo script;
         File scriptFile = getScriptFile(context, batchId);
-        LOG.debug("Loading script: {}", scriptFile); //$NON-NLS-1$
+        LOG.debug("loading workflow info: {}", scriptFile); //$NON-NLS-1$
         try {
-            Properties properties = loadProperties(scriptFile);
-            script = BatchScript.load(properties);
+            script = new ObjectMapper().readValue(scriptFile, BatchInfo.class);
         } catch (Exception e) {
             throw new IllegalArgumentException(MessageFormat.format(
-                    Messages.getString("BatchTestRunner.errorInvalidYaessScript"), //$NON-NLS-1$
+                    Messages.getString("BatchTestRunner.errorInvalidWorkflow"), //$NON-NLS-1$
                     scriptFile), e);
         }
-
-        LOG.debug("Analyzed YAESS bootstrap arguments"); //$NON-NLS-1$
-        return new RunTask.Configuration(
-                context,
-                script,
-                executionIdPrefix);
+        return new RunTask.Configuration(context, script, executionIdPrefix);
     }
 
     private static File getScriptFile(TestDriverContext context, String batchId) {
@@ -345,7 +334,7 @@ public final class BatchTestRunner {
         assert batchId != null;
         File batchappBase = context.getBatchApplicationsInstallationPath();
         File batchapp = new File(batchappBase, batchId);
-        File scriptFile = new File(batchapp, PATH_YAESS_SCRIPT);
+        File scriptFile = new File(batchapp, TaskExecutors.LOCATION_APPLICATION_WORKFLOW_DEFINITION);
         return scriptFile;
     }
 
@@ -356,14 +345,5 @@ public final class BatchTestRunner {
             results.put((String) entry.getKey(), (String) entry.getValue());
         }
         return results;
-    }
-
-    private static Properties loadProperties(File path) throws IOException {
-        assert path != null;
-        try (FileInputStream in = new FileInputStream(path)) {
-            Properties properties = new Properties();
-            properties.load(in);
-            return properties;
-        }
     }
 }
