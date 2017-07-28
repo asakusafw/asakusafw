@@ -20,7 +20,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.asakusafw.info.BatchInfo;
 import com.asakusafw.utils.jcommander.CommandConfigurationException;
@@ -45,7 +47,7 @@ public class BatchInfoParameter {
      */
     @Parameter(
             description = "batch-id",
-            required = true
+            required = false
     )
     public String location;
 
@@ -55,11 +57,17 @@ public class BatchInfoParameter {
      * @throws CommandConfigurationException if it is not found
      */
     public Path getPath() {
+        if (location == null) {
+            throw new CommandConfigurationException(MessageFormat.format(
+                    "target batch ID must be specified ({0})",
+                    getAvailableApplicationsMessage()));
+        }
         Path base = batchappsParameter.findPath().orElse(null);
         return findInfo(base, location)
                 .orElseThrow(() -> new CommandConfigurationException(MessageFormat.format(
-                        "batch application \"{0}\" is not found",
-                        location)));
+                        "batch application \"{0}\" is not found ({1})",
+                        location,
+                        getAvailableApplicationsMessage())));
     }
 
     /**
@@ -116,6 +124,20 @@ public class BatchInfoParameter {
             throw new CommandConfigurationException(MessageFormat.format(
                     "failed to load DSL information file: {0}",
                     path), e);
+        }
+    }
+
+    private String getAvailableApplicationsMessage() {
+        List<String> apps = batchappsParameter.getEntries().stream()
+                .map(Path::getFileName)
+                .filter(it -> it != null)
+                .map(Path::toString)
+                .sorted()
+                .collect(Collectors.toList());
+        if (apps.isEmpty()) {
+            return "there are no available applications";
+        } else {
+            return MessageFormat.format("available applications are {0}", apps);
         }
     }
 }
