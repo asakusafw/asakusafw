@@ -27,15 +27,15 @@ import org.slf4j.LoggerFactory;
 
 import com.asakusafw.info.JobflowInfo;
 import com.asakusafw.info.cli.common.FlowPartSelectorParameter;
-import com.asakusafw.info.cli.common.HelpParameter;
 import com.asakusafw.info.cli.common.JobflowInfoParameter;
-import com.asakusafw.info.cli.common.OutputParameter;
 import com.asakusafw.info.cli.draw.DrawEngine.Feature;
 import com.asakusafw.info.operator.FlowOperatorSpec;
 import com.asakusafw.info.operator.OperatorGraphAttribute;
 import com.asakusafw.info.operator.view.OperatorGraphView;
 import com.asakusafw.info.operator.view.OperatorView;
 import com.asakusafw.info.value.ClassInfo;
+import com.asakusafw.utils.jcommander.common.HelpParameter;
+import com.asakusafw.utils.jcommander.common.OutputParameter;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.beust.jcommander.ParametersDelegate;
@@ -53,22 +53,22 @@ public class DrawOperatorCommand implements Runnable {
     static final Logger LOG = LoggerFactory.getLogger(DrawOperatorCommand.class);
 
     @ParametersDelegate
-    HelpParameter helpParameter = new HelpParameter();
+    final HelpParameter helpParameter = new HelpParameter();
 
     @ParametersDelegate
-    JobflowInfoParameter jobflowInfoParameter = new JobflowInfoParameter();
+    final JobflowInfoParameter jobflowInfoParameter = new JobflowInfoParameter();
 
     @ParametersDelegate
-    ShowAllParameter verboseParameter = new ShowAllParameter();
+    final ShowAllParameter verboseParameter = new ShowAllParameter();
 
     @ParametersDelegate
-    FlowPartSelectorParameter flowPartSelectorParameter = new FlowPartSelectorParameter();
+    final FlowPartSelectorParameter flowPartSelectorParameter = new FlowPartSelectorParameter();
 
     @ParametersDelegate
-    GraphvizParameter graphvizParameter = new GraphvizParameter();
+    final GraphvizParameter graphvizParameter = new GraphvizParameter();
 
     @ParametersDelegate
-    OutputParameter outputParameter = new OutputParameter();
+    final OutputParameter outputParameter = new OutputParameter();
 
     @Parameter(
             names = { "--depth", },

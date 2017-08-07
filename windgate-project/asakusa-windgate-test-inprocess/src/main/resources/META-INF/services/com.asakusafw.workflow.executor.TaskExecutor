@@ -1,0 +1,2 @@
+com.asakusafw.testdriver.windgate.inprocess.InProcessWindGateProcessTaskExecutor
+com.asakusafw.testdriver.windgate.inprocess.InProcessWindGateFinalizeTaskExecutor

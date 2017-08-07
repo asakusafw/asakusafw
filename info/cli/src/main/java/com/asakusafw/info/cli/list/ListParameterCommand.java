@@ -26,10 +26,10 @@ import org.slf4j.LoggerFactory;
 import com.asakusafw.info.BatchInfo;
 import com.asakusafw.info.ParameterListAttribute;
 import com.asakusafw.info.cli.common.BatchInfoParameter;
-import com.asakusafw.info.cli.common.HelpParameter;
-import com.asakusafw.info.cli.common.OutputParameter;
-import com.asakusafw.info.cli.common.VerboseParameter;
 import com.asakusafw.utils.jcommander.CommandConfigurationException;
+import com.asakusafw.utils.jcommander.common.HelpParameter;
+import com.asakusafw.utils.jcommander.common.OutputParameter;
+import com.asakusafw.utils.jcommander.common.VerboseParameter;
 import com.beust.jcommander.Parameters;
 import com.beust.jcommander.ParametersDelegate;
 
@@ -46,16 +46,16 @@ public class ListParameterCommand implements Runnable {
     static final Logger LOG = LoggerFactory.getLogger(ListParameterCommand.class);
 
     @ParametersDelegate
-    HelpParameter helpParameter = new HelpParameter();
+    final HelpParameter helpParameter = new HelpParameter();
 
     @ParametersDelegate
-    BatchInfoParameter batchInfoParameter = new BatchInfoParameter();
+    final BatchInfoParameter batchInfoParameter = new BatchInfoParameter();
 
     @ParametersDelegate
-    VerboseParameter verboseParameter = new VerboseParameter();
+    final VerboseParameter verboseParameter = new VerboseParameter();
 
     @ParametersDelegate
-    OutputParameter outputParameter = new OutputParameter();
+    final OutputParameter outputParameter = new OutputParameter();
 
     @Override
     public void run() {

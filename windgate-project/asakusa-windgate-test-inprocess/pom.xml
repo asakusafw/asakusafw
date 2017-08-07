@@ -12,8 +12,8 @@
   <packaging>jar</packaging>
   <dependencies>
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>asakusa-test-inprocess</artifactId>
+      <groupId>com.asakusafw.workflow</groupId>
+      <artifactId>asakusa-workflow-executor</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

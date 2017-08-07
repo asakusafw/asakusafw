@@ -38,7 +38,7 @@ public class BatchInfoParameter {
      * The batch application base directory.
      */
     @ParametersDelegate
-    public ApplicationBaseDirectoryParameter batchappsParameter = new ApplicationBaseDirectoryParameter();
+    public final ApplicationBaseDirectoryParameter batchappsParameter = new ApplicationBaseDirectoryParameter();
 
     /**
      * The information file location - must be one of batch ID, batch directory, or information file path.

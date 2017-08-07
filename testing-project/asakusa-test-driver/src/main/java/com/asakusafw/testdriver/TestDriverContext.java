@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collections;
@@ -35,6 +36,7 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.UUID;
 
 import javax.tools.ToolProvider;
 
@@ -49,11 +51,12 @@ import com.asakusafw.testdriver.core.TestContext;
 import com.asakusafw.testdriver.core.TestToolRepository;
 import com.asakusafw.testdriver.core.TestingEnvironmentConfigurator;
 import com.asakusafw.utils.collections.Maps;
+import com.asakusafw.workflow.executor.TaskExecutors;
 
 /**
  * Represents contextual information for test drivers.
  * @since 0.2.0
- * @version 0.8.1
+ * @version 0.10.0
  */
 public class TestDriverContext implements TestContext {
 
@@ -150,16 +153,11 @@ public class TestDriverContext implements TestContext {
      */
     public static final String KEY_FRAMEWORK_VERSION = "asakusafw.version"; //$NON-NLS-1$
 
-    /**
-     * The system property key of {@link JobExecutorFactory}'s implementation class name.
-     * @see #setJobExecutorFactory(JobExecutorFactory)
-     * @since 0.6.0
-     */
-    public static final String KEY_JOB_EXECUTOR_FACTORY = "asakusa.testdriver.exec.factory"; //$NON-NLS-1$
-
     static {
         TestingEnvironmentConfigurator.initialize();
     }
+
+    private final UUID contextId = UUID.randomUUID();
 
     private volatile File frameworkHomePath;
 
@@ -201,8 +199,6 @@ public class TestDriverContext implements TestContext {
 
     private volatile File generatedBatchappsHomePath;
 
-    private volatile JobExecutorFactory jobExecutorFactory;
-
     /**
      * Creates a new instance.
      * @param contextClass context class (will use to detect test resources)
@@ -220,6 +216,14 @@ public class TestDriverContext implements TestContext {
         this.compilerOptions = new LinkedHashMap<>();
         this.extensionMap = new LinkedHashMap<>();
         this.skipPhases = EnumSet.noneOf(TestExecutionPhase.class);
+    }
+
+    /**
+     * Returns the context ID.
+     * @return the context ID
+     */
+    public UUID getContextId() {
+        return contextId;
     }
 
     /**
@@ -292,21 +296,59 @@ public class TestDriverContext implements TestContext {
     }
 
     /**
+     * Returns the development environment version.
+     * @return the development environment version
+     * @throws IllegalStateException if the version is not defined
+     * @since 0.10.0
+     */
+    public Optional<String> findRuntimeEnvironmentVersion() {
+        if (TaskExecutors.findFrameworkHome(getEnvironmentVariables())
+                .map(it -> it.resolve(FRAMEWORK_VERSION_PATH))
+                .filter(Files::isRegularFile)
+                .isPresent() == false) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(getRuntimeEnvironmentVersion());
+    }
+
+    /**
+     * Returns the development environment version.
+     * @return the development environment version
+     * @throws IllegalStateException if the version is not defined
+     * @since 0.10.0
+     */
+    public Optional<String> findDevelopmentEnvironmentVersion() {
+        try {
+            return Optional.of(INFORMATION.getString(KEY_FRAMEWORK_VERSION));
+        } catch (MissingResourceException e) {
+            LOG.debug("the framework version of this development environment is not found ({0})", e);
+            return Optional.empty();
+        }
+    }
+
+    /**
      * Validates current test execution environment.
      * @throws AssertionError if current test environment is invalid
      * @since 0.5.1
      */
     public void validateExecutionEnvironment() {
-        getJobExecutor().validateEnvironment();
-    }
-
-    /**
-     * Validates current test environment.
-     * @throws AssertionError if current test environment is invalid
-     * @since 0.5.0
-     */
-    public void validateEnvironment() {
-        validateExecutionEnvironment();
+        if (Optional.ofNullable(System.getProperty(KEY_FORCE_EXEC))
+                .map(String::trim)
+                .filter(it -> it.isEmpty() || it.equalsIgnoreCase("true"))
+                .isPresent()) {
+            return;
+        }
+        Optional<String> runtime = findRuntimeEnvironmentVersion();
+        if (runtime.isPresent()) {
+            String develop = getDevelopmentEnvironmentVersion();
+            if (develop.equals(runtime.get()) == false) {
+                throw new AssertionError(MessageFormat.format(
+                        "inconsistent the framework version between development and testing environment "
+                        + "(development env: \n {0}, testing env: {1})",
+                        develop,
+                        runtime.get()));
+            }
+        }
     }
 
     /**
@@ -888,42 +930,6 @@ public class TestDriverContext implements TestContext {
             removeAll(generatedBatchappsHomePath);
             this.generatedBatchappsHomePath = null;
         }
-    }
-
-    /**
-     * Sets the {@link JobExecutorFactory} for executing jobs in this context.
-     * @param factory the factory, or {@code null} to use a default implementation
-     * @since 0.6.0
-     * @see #getJobExecutor()
-     */
-    public void setJobExecutorFactory(JobExecutorFactory factory) {
-        if (factory == null) {
-            this.jobExecutorFactory = new DefaultJobExecutorFactory();
-        } else {
-            this.jobExecutorFactory = factory;
-        }
-    }
-
-    /**
-     * Returns the {@link JobExecutor} for executes jobs in this context.
-     * @return the {@link JobExecutor} instance
-     * @since 0.6.0
-     */
-    public JobExecutor getJobExecutor() {
-        if (jobExecutorFactory != null) {
-            return jobExecutorFactory.newInstance(this);
-        }
-        String className = System.getProperty(KEY_JOB_EXECUTOR_FACTORY, DefaultJobExecutorFactory.class.getName());
-        try {
-            Class<?> aClass = Class.forName(className, false, getClassLoader());
-            this.jobExecutorFactory = aClass.asSubclass(JobExecutorFactory.class).newInstance();
-        } catch (Exception e) {
-            throw (AssertionError) new AssertionError(MessageFormat.format(
-                    Messages.getString("TestDriverContext.errorFailedToCreateJobExecutorFactory"), //$NON-NLS-1$
-                    KEY_JOB_EXECUTOR_FACTORY,
-                    className)).initCause(e);
-        }
-        return jobExecutorFactory.newInstance(this);
     }
 
     private boolean removeAll(File path) {

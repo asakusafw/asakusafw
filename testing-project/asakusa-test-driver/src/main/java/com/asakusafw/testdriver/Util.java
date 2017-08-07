@@ -34,12 +34,14 @@ import com.asakusafw.testdriver.compiler.ArtifactMirror;
 import com.asakusafw.testdriver.compiler.BatchMirror;
 import com.asakusafw.testdriver.compiler.CompilerConfiguration;
 import com.asakusafw.testdriver.compiler.CompilerToolkit;
-import com.asakusafw.testdriver.compiler.GraphElement;
 import com.asakusafw.testdriver.compiler.JobflowMirror;
 import com.asakusafw.testdriver.compiler.util.DeploymentUtil;
 import com.asakusafw.testdriver.compiler.util.DeploymentUtil.DeployOption;
 import com.asakusafw.utils.graph.Graph;
 import com.asakusafw.utils.graph.Graphs;
+import com.asakusafw.workflow.model.BatchInfo;
+import com.asakusafw.workflow.model.GraphElement;
+import com.asakusafw.workflow.model.JobflowInfo;
 
 /**
  * Utilities for testers.
@@ -113,19 +115,18 @@ final class Util {
         return batch.getElements().iterator().next();
     }
 
-    public static void prepare(TestDriverContext context, BatchMirror batch, JobflowMirror jobflow) {
-        context.setCurrentBatchId(batch.getBatchId());
-        context.setCurrentFlowId(jobflow.getFlowId());
-        context.setCurrentExecutionId(MessageFormat.format(
-                "{0}-{1}-{2}", //$NON-NLS-1$
+    public static void prepare(TestDriverContext context, BatchInfo batch, JobflowInfo jobflow) {
+        context.setCurrentBatchId(batch.getId());
+        context.setCurrentFlowId(jobflow.getId());
+        context.setCurrentExecutionId(String.format(
+                "%s-%s", //$NON-NLS-1$
                 context.getCallerClass().getSimpleName(),
-                batch.getBatchId(),
-                jobflow.getFlowId()));
+                context.getContextId()));
     }
 
     public static void deploy(TestDriverContext context, ArtifactMirror artifact) throws IOException {
         File root = context.getBatchApplicationsInstallationPath();
-        File target = new File(root, artifact.getBatch().getBatchId());
+        File target = new File(root, artifact.getBatch().getId());
         if (root.mkdirs() == false && root.isDirectory() == false) {
             LOG.warn(MessageFormat.format(
                     Messages.getString("JobflowExecutor.warnFailedToCreateDirectory"), //$NON-NLS-1$
@@ -133,7 +134,7 @@ final class Util {
         }
         DeploymentUtil.deploy(artifact.getContents(), target, DeployOption.DELETE_SOURCE);
 
-        File dependenciesDest = context.getLibrariesPackageLocation(artifact.getBatch().getBatchId());
+        File dependenciesDest = context.getLibrariesPackageLocation(artifact.getBatch().getId());
         if (dependenciesDest.exists()) {
             LOG.debug("Cleaning up dependency libraries: {}", dependenciesDest); //$NON-NLS-1$
             DeploymentUtil.delete(dependenciesDest);

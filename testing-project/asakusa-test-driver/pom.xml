@@ -72,7 +72,7 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>asakusa-runtime-inprocess</artifactId>
+      <artifactId>asakusa-runtime</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -158,6 +158,12 @@
       <artifactId>asakusa-runtime-configuration</artifactId>
       <version>${project.version}</version>
       <classifier>tests</classifier>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>asakusa-runtime-inprocess</artifactId>
+      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

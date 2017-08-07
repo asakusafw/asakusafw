@@ -39,6 +39,7 @@
     <module>testing-project</module>
     <module>directio-project</module>
     <module>windgate-project</module>
+    <module>workflow</module>
     <module>yaess-project</module>
     <module>hive-project</module>
     <module>iterative-project</module>

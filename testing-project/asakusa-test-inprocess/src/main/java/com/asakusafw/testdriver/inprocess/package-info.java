@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * In-process job executor.
+ * In-process Hadoop task executor.
  */
 package com.asakusafw.testdriver.inprocess;

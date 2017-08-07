@@ -20,6 +20,7 @@
     <module>jsr199-testing</module>
     <module>jsr269-bridge</module>
     <module>launcher</module>
+    <module>jcommander-wrapper</module>
     <module>gradle-launcher</module>
   </modules>
 

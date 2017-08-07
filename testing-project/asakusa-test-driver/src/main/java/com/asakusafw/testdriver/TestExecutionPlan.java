@@ -15,7 +15,6 @@
  */
 package com.asakusafw.testdriver;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -27,9 +26,8 @@ import java.util.Objects;
  * @since 0.1.0
  * @version 0.7.3
  */
-public class TestExecutionPlan implements Serializable {
-
-    private static final long serialVersionUID = -8962301043507876930L;
+@Deprecated
+public class TestExecutionPlan {
 
     private final String definitionId;
 
@@ -140,7 +138,7 @@ public class TestExecutionPlan implements Serializable {
      * Represents a task in execution.
      * @since 0.7.3
      */
-    public interface Task extends Serializable {
+    public interface Task {
 
         /**
          * Returns the kind of this task.
@@ -172,8 +170,6 @@ public class TestExecutionPlan implements Serializable {
      * @version 0.7.3
      */
     public static class Job implements Task {
-
-        private static final long serialVersionUID = -1707317463227716296L;
 
         private final String className;
 
@@ -217,13 +213,13 @@ public class TestExecutionPlan implements Serializable {
     /**
      * Represents a generic command task.
      * @since 0.1.0
-     * @version 0.7.3
+     * @version 0.10.0
      */
     public static class Command implements Task {
 
-        private static final long serialVersionUID = -6594560296027009816L;
+        private final String command;
 
-        private final List<String> commandLine;
+        private final List<String> arguments;
 
         private final String moduleName;
 
@@ -233,20 +229,24 @@ public class TestExecutionPlan implements Serializable {
 
         /**
          * Creates a new instance.
-         * @param commandLine the command line tokens
+         * @param command the command location (relative from framework installation path)
+         * @param arguments the command arguments
          * @param moduleName the target module name
          * @param profileName the target profile name, or {@code null} if it is default
          * @param environment the environment variables
          * @throws IllegalArgumentException if arguments contains {@code null}
          */
         public Command(
-                List<String> commandLine,
+                String command,
+                List<String> arguments,
                 String moduleName,
                 String profileName,
                 Map<String, String> environment) {
-            Objects.requireNonNull(commandLine, "commandLine"); //$NON-NLS-1$
+            Objects.requireNonNull(command, "command"); //$NON-NLS-1$
+            Objects.requireNonNull(arguments, "arguments"); //$NON-NLS-1$
             Objects.requireNonNull(moduleName, "moduleName"); //$NON-NLS-1$
-            this.commandLine = commandLine;
+            this.command = command;
+            this.arguments = arguments;
             this.moduleName = moduleName;
             this.profileName = profileName;
             this.environment = environment;
@@ -258,11 +258,19 @@ public class TestExecutionPlan implements Serializable {
         }
 
         /**
-         * Returns the command line tokens.
-         * @return the command line tokens
+         * Returns the command.
+         * @return the command
          */
-        public List<String> getCommandTokens() {
-            return commandLine;
+        public String getCommand() {
+            return command;
+        }
+
+        /**
+         * Returns the arguments.
+         * @return the arguments
+         */
+        public List<String> getArguments() {
+            return arguments;
         }
 
         /**

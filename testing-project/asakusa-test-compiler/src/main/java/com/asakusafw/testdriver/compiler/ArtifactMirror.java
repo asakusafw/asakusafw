@@ -21,7 +21,7 @@ import java.io.File;
  * Represents a compiled artifact.
  * @since 0.8.0
  */
-public interface ArtifactMirror {
+public interface ArtifactMirror extends Mirror {
 
     /**
      * Returns the batch application mirror.

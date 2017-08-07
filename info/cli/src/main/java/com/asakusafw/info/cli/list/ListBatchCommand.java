@@ -27,9 +27,9 @@ import org.slf4j.LoggerFactory;
 
 import com.asakusafw.info.BatchInfo;
 import com.asakusafw.info.cli.common.ApplicationBaseDirectoryParameter;
-import com.asakusafw.info.cli.common.HelpParameter;
-import com.asakusafw.info.cli.common.OutputParameter;
-import com.asakusafw.info.cli.common.VerboseParameter;
+import com.asakusafw.utils.jcommander.common.HelpParameter;
+import com.asakusafw.utils.jcommander.common.OutputParameter;
+import com.asakusafw.utils.jcommander.common.VerboseParameter;
 import com.beust.jcommander.Parameters;
 import com.beust.jcommander.ParametersDelegate;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -47,16 +47,16 @@ public class ListBatchCommand implements Runnable {
     static final Logger LOG = LoggerFactory.getLogger(ListBatchCommand.class);
 
     @ParametersDelegate
-    HelpParameter helpParameter = new HelpParameter();
+    final HelpParameter helpParameter = new HelpParameter();
 
     @ParametersDelegate
-    ApplicationBaseDirectoryParameter batchappsParameter = new ApplicationBaseDirectoryParameter();
+    final ApplicationBaseDirectoryParameter batchappsParameter = new ApplicationBaseDirectoryParameter();
 
     @ParametersDelegate
-    VerboseParameter verboseParameter = new VerboseParameter();
+    final VerboseParameter verboseParameter = new VerboseParameter();
 
     @ParametersDelegate
-    OutputParameter outputParameter = new OutputParameter();
+    final OutputParameter outputParameter = new OutputParameter();
 
     @Override
     public void run() {

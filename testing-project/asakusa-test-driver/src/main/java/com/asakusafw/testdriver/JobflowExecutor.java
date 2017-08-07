@@ -15,13 +15,14 @@
  */
 package com.asakusafw.testdriver;
 
-import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
@@ -29,46 +30,45 @@ import org.apache.hadoop.fs.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.asakusafw.runtime.stage.StageConstants;
-import com.asakusafw.runtime.stage.launcher.LauncherOptionsParser;
-import com.asakusafw.runtime.stage.optimizer.LibraryCopySuppressionConfigurator;
-import com.asakusafw.runtime.util.VariableTable;
-import com.asakusafw.testdriver.TestExecutionPlan.Command;
-import com.asakusafw.testdriver.TestExecutionPlan.Job;
-import com.asakusafw.testdriver.TestExecutionPlan.Task;
-import com.asakusafw.testdriver.compiler.CommandTaskMirror;
-import com.asakusafw.testdriver.compiler.CommandToken;
 import com.asakusafw.testdriver.compiler.CompilerConstants;
-import com.asakusafw.testdriver.compiler.HadoopTaskMirror;
 import com.asakusafw.testdriver.compiler.JobflowMirror;
 import com.asakusafw.testdriver.compiler.PortMirror;
-import com.asakusafw.testdriver.compiler.TaskMirror;
 import com.asakusafw.testdriver.core.DataModelSourceFactory;
 import com.asakusafw.testdriver.core.Difference;
 import com.asakusafw.testdriver.core.TestModerator;
 import com.asakusafw.testdriver.core.VerifyContext;
+import com.asakusafw.testdriver.executor.DefaultCommandTaskExecutor;
+import com.asakusafw.testdriver.executor.DefaultDeleteTaskExecutor;
+import com.asakusafw.testdriver.executor.DefaultHadoopTaskExecutor;
+import com.asakusafw.testdriver.executor.TaskExecutorContextAdapter;
 import com.asakusafw.testdriver.hadoop.ConfigurationFactory;
-import com.asakusafw.utils.collections.Maps;
 import com.asakusafw.vocabulary.external.ExporterDescription;
 import com.asakusafw.vocabulary.external.ImporterDescription;
+import com.asakusafw.workflow.executor.TaskExecutionContext;
+import com.asakusafw.workflow.executor.TaskExecutor;
+import com.asakusafw.workflow.executor.TaskExecutors;
+import com.asakusafw.workflow.executor.basic.BasicJobflowExecutor;
+import com.asakusafw.workflow.model.CommandTaskInfo;
+import com.asakusafw.workflow.model.HadoopTaskInfo;
+import com.asakusafw.workflow.model.TaskInfo;
 
 /**
  * Prepares and executes jobflows.
  * Application developers must not use this class directly.
  * @since 0.2.0
- * @version 0.8.0
+ * @version 0.10.0
  */
 class JobflowExecutor {
 
     static final Logger LOG = LoggerFactory.getLogger(JobflowExecutor.class);
 
-    private final TestDriverContext context;
+    private final TestDriverContext driverContext;
 
     private final TestModerator moderator;
 
     private final ConfigurationFactory configurations;
 
-    private final JobExecutor jobExecutor;
+    private final List<TaskExecutor> taskExecutors;
 
     /**
      * Creates a new instance.
@@ -79,9 +79,13 @@ class JobflowExecutor {
         if (context == null) {
             throw new IllegalArgumentException("context must not be null"); //$NON-NLS-1$
         }
-        this.context = context;
+        this.driverContext = context;
         this.moderator = new TestModerator(context.getRepository(), context);
-        this.jobExecutor = context.getJobExecutor();
+        this.taskExecutors = new ArrayList<>();
+        taskExecutors.addAll(TaskExecutors.loadDefaults(context.getClassLoader()));
+        taskExecutors.add(new DefaultHadoopTaskExecutor());
+        taskExecutors.add(new DefaultCommandTaskExecutor());
+        taskExecutors.add(new DefaultDeleteTaskExecutor());
         this.configurations = ConfigurationFactory.getDefault();
     }
 
@@ -114,7 +118,7 @@ class JobflowExecutor {
         if (flow == null) {
             throw new IllegalArgumentException("info must not be null"); //$NON-NLS-1$
         }
-        if (context.isSkipCleanInput() == false) {
+        if (driverContext.isSkipCleanInput() == false) {
             for (PortMirror<? extends ImporterDescription> port : flow.getInputs()) {
                 LOG.debug("cleaning input: {}", port.getName()); //$NON-NLS-1$
                 moderator.truncate(port.getDescription());
@@ -123,7 +127,7 @@ class JobflowExecutor {
             LOG.info(Messages.getString("JobflowExecutor.infoSkipInitializeInput")); //$NON-NLS-1$
         }
 
-        if (context.isSkipCleanOutput() == false) {
+        if (driverContext.isSkipCleanOutput() == false) {
             for (PortMirror<? extends ExporterDescription> port : flow.getOutputs()) {
                 LOG.debug("cleaning output: {}", port.getName()); //$NON-NLS-1$
                 moderator.truncate(port.getDescription());
@@ -145,7 +149,7 @@ class JobflowExecutor {
         if (resources == null) {
             throw new IllegalArgumentException("resources must not be null"); //$NON-NLS-1$
         }
-        if (context.isSkipCleanInput() == false) {
+        if (driverContext.isSkipCleanInput() == false) {
             for (ImporterDescription description : resources.keySet()) {
                 LOG.debug("cleaning external resource: {}", description); //$NON-NLS-1$
                 moderator.truncate(description);
@@ -172,7 +176,7 @@ class JobflowExecutor {
         if (inputs == null) {
             throw new IllegalArgumentException("inputs must not be null"); //$NON-NLS-1$
         }
-        if (context.isSkipPrepareInput() == false) {
+        if (driverContext.isSkipPrepareInput() == false) {
             for (DriverInputBase<?> input : inputs) {
                 DataModelSourceFactory source = input.getSource();
                 if (source != null) {
@@ -183,7 +187,7 @@ class JobflowExecutor {
                         throw new IllegalStateException(MessageFormat.format(
                                 Messages.getString("JobflowExecutor.errorMissingInput"), //$NON-NLS-1$
                                 name,
-                                jobflow.getFlowId()));
+                                jobflow.getId()));
                     }
                     moderator.prepare(port.getDataType(), port.getDescription(), source);
                 }
@@ -210,7 +214,7 @@ class JobflowExecutor {
         if (outputs == null) {
             throw new IllegalArgumentException("outputs must not be null"); //$NON-NLS-1$
         }
-        if (context.isSkipPrepareOutput() == false) {
+        if (driverContext.isSkipPrepareOutput() == false) {
             for (DriverOutputBase<?> output : outputs) {
                 DataModelSourceFactory source = output.getSource();
                 if (source != null) {
@@ -221,7 +225,7 @@ class JobflowExecutor {
                         throw new IllegalStateException(MessageFormat.format(
                                 Messages.getString("JobflowExecutor.errorMissingOutput"), //$NON-NLS-1$
                                 name,
-                                jobflow.getFlowId()));
+                                jobflow.getId()));
                     }
                     moderator.prepare(port.getDataType(), port.getDescription(), source);
                 }
@@ -243,7 +247,7 @@ class JobflowExecutor {
         if (resources == null) {
             throw new IllegalArgumentException("resources must not be null"); //$NON-NLS-1$
         }
-        if (context.isSkipPrepareInput() == false) {
+        if (driverContext.isSkipPrepareInput() == false) {
             for (Map.Entry<? extends ImporterDescription, ? extends DataModelSourceFactory> entry
                     : resources.entrySet()) {
                 ImporterDescription description = entry.getKey();
@@ -257,6 +261,36 @@ class JobflowExecutor {
     }
 
     /**
+     * Checks if the given jobflow is valid.
+     * @param jobflow the target jobflow
+     */
+    public void validateJobflow(JobflowMirror jobflow) {
+        if (jobflow == null) {
+            throw new IllegalArgumentException("jobflow must not be null"); //$NON-NLS-1$
+        }
+        TaskExecutionContext context = new TaskExecutorContextAdapter(driverContext, configurations);
+        List<? extends TaskInfo> tasks = Arrays.stream(TaskInfo.Phase.values())
+            .flatMap(it -> jobflow.getTasks(it).stream())
+            .filter(task -> findExecutor(context, task).isPresent() == false)
+            .collect(Collectors.toList());
+        for (TaskInfo task : tasks) {
+            if (task instanceof CommandTaskInfo) {
+                DefaultCommandTaskExecutor.checkSupported(context, (CommandTaskInfo) task);
+            } else if (task instanceof HadoopTaskInfo) {
+                DefaultHadoopTaskExecutor.checkSupported(context, (HadoopTaskInfo) task);
+            } else {
+                throw new IllegalStateException(MessageFormat.format(
+                        "unsupported task type: {0}",
+                        task.getClass().getSimpleName()));
+            }
+        }
+    }
+
+    private Optional<TaskExecutor> findExecutor(TaskExecutionContext context, TaskInfo task) {
+        return taskExecutors.stream().filter(it -> it.isSupported(context, task)).findFirst();
+    }
+
+    /**
      * Runs the target jobflow.
      * @param jobflow target jobflow
      * @throws IOException if failed to create job processes
@@ -266,155 +300,18 @@ class JobflowExecutor {
         if (jobflow == null) {
             throw new IllegalArgumentException("jobflow must not be null"); //$NON-NLS-1$
         }
-        if (context.isSkipRunJobflow() == false) {
-            TestExecutionPlan plan = createExecutionPlan(jobflow);
-            validatePlan(plan);
-            executePlan(plan);
+        if (driverContext.isSkipRunJobflow() == false) {
+            TaskExecutionContext context = new TaskExecutorContextAdapter(driverContext, configurations);
+            try {
+                new BasicJobflowExecutor(taskExecutors).execute(context, jobflow);
+            } catch (InterruptedException e) {
+                throw new IOException("interrupted while running jobflow", e);
+            }
         } else {
             LOG.info(Messages.getString("JobflowExecutor.infoSkipExecute")); //$NON-NLS-1$
         }
     }
 
-    private void validatePlan(TestExecutionPlan plan) {
-        jobExecutor.validatePlan(plan);
-    }
-
-    private void executePlan(TestExecutionPlan plan) throws IOException {
-        assert plan != null;
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Executing plan: " //$NON-NLS-1$
-                    + "home={}, batchId={}, flowId={}, execId={}, args={}, executor={}", new Object[] { //$NON-NLS-1$
-                    context.getFrameworkHomePath(),
-                    context.getCurrentBatchId(),
-                    context.getCurrentFlowId(),
-                    context.getCurrentExecutionId(),
-                    context.getBatchArgs(),
-                    jobExecutor.getClass().getName(),
-            });
-        }
-        try {
-            runJobflowTasks(plan.getInitializers());
-            runJobflowTasks(plan.getImporters());
-            runJobflowTasks(plan.getJobs());
-            runJobflowTasks(plan.getExporters());
-        } finally {
-            runJobflowTasks(plan.getFinalizers());
-        }
-    }
-
-    private void runJobflowTasks(List<? extends Task> tasks) throws IOException {
-        for (TestExecutionPlan.Task task : tasks) {
-            switch (task.getTaskKind()) {
-            case COMMAND:
-                jobExecutor.execute((TestExecutionPlan.Command) task, getEnvironmentVariables());
-                break;
-            case HADOOP:
-                jobExecutor.execute((TestExecutionPlan.Job) task, getEnvironmentVariables());
-                break;
-            default:
-                throw new AssertionError(task);
-            }
-        }
-    }
-
-    private Map<String, String> getHadoopProperties() {
-        Map<String, String> results = new HashMap<>();
-        results.put(StageConstants.PROP_USER, context.getOsUser());
-        results.put(StageConstants.PROP_EXECUTION_ID, context.getExecutionId());
-        results.put(StageConstants.PROP_ASAKUSA_BATCH_ARGS, getBatchArgumentsToken());
-        // disables libraries cache
-        results.put(LauncherOptionsParser.KEY_CACHE_ENABLED, String.valueOf(false));
-        // suppresses library copying only if is on local mode
-        results.put(LibraryCopySuppressionConfigurator.KEY_ENABLED, String.valueOf(true));
-        results.putAll(context.getExtraConfigurations());
-        return results;
-    }
-
-    private Map<String, String> getEnvironmentVariables() {
-        Map<String, String> variables = Maps.from(context.getEnvironmentVariables());
-        return variables;
-    }
-
-    private TestExecutionPlan createExecutionPlan(JobflowMirror jobflow) {
-        List<Task> initializers = createTasks(jobflow, TaskMirror.Phase.INITIALIZE);
-        List<Task> importers = createTasks(jobflow, TaskMirror.Phase.IMPORT);
-        List<Task> jobs = new ArrayList<>();
-        jobs.addAll(createTasks(jobflow, TaskMirror.Phase.PROLOGUE));
-        jobs.addAll(createTasks(jobflow, TaskMirror.Phase.MAIN));
-        jobs.addAll(createTasks(jobflow, TaskMirror.Phase.EPILOGUE));
-        List<Task> exporters = createTasks(jobflow, TaskMirror.Phase.EXPORT);
-        List<Task> finalizers = createTasks(jobflow, TaskMirror.Phase.FINALIZE);
-        return new TestExecutionPlan(
-                jobflow.getFlowId(),
-                context.getExecutionId(),
-                initializers,
-                importers,
-                jobs,
-                exporters,
-                finalizers);
-    }
-
-    private List<Task> createTasks(JobflowMirror jobflow, TaskMirror.Phase phase) {
-        List<Task> results = new ArrayList<>();
-        for (TaskMirror task : Util.sort(jobflow.getTasks(phase))) {
-            results.add(createTask(jobflow, task));
-        }
-        return results;
-    }
-
-    private Task createTask(JobflowMirror jobflow, TaskMirror task) {
-        if (task instanceof CommandTaskMirror) {
-            CommandTaskMirror t = (CommandTaskMirror) task;
-            List<String> commandLine = new ArrayList<>();
-            commandLine.add(new File(context.getFrameworkHomePath(), t.getCommand()).getAbsolutePath());
-            commandLine.addAll(resolveCommandTokens(t.getArguments(context.getExtraConfigurations())));
-            return new Command(
-                    commandLine,
-                    t.getModuleName(),
-                    t.getProfileName(),
-                    getEnvironmentVariables());
-        } else if (task instanceof HadoopTaskMirror) {
-            HadoopTaskMirror t = (HadoopTaskMirror) task;
-            return new Job(
-                    t.getClassName(),
-                    getHadoopProperties());
-        } else {
-            throw new AssertionError(task);
-        }
-    }
-
-    private List<String> resolveCommandTokens(List<CommandToken> tokens) {
-        List<String> results = new ArrayList<>();
-        for (CommandToken token : tokens) {
-            results.add(resolveCommandToken(token));
-        }
-        return results;
-    }
-
-    private String resolveCommandToken(CommandToken token) {
-        switch (token.getTokenKind()) {
-        case TEXT:
-            return token.getImage();
-        case BATCH_ID:
-            return context.getCurrentBatchId();
-        case FLOW_ID:
-            return context.getCurrentFlowId();
-        case EXECUTION_ID:
-            return context.getExecutionId();
-        case BATCH_ARGUMENTS:
-            return getBatchArgumentsToken();
-        default:
-            throw new AssertionError(token);
-        }
-    }
-
-    private String getBatchArgumentsToken() {
-        VariableTable t = new VariableTable();
-        t.defineVariables(context.getBatchArgs());
-        return t.toSerialString();
-    }
-
-    /**
     /**
      * Verifies the jobflow's results.
      * @param jobflow target jobflow
@@ -438,7 +335,7 @@ class JobflowExecutor {
         if (outputs == null) {
             throw new IllegalArgumentException("outputs must not be null"); //$NON-NLS-1$
         }
-        if (context.isSkipVerify() == false) {
+        if (driverContext.isSkipVerify() == false) {
             StringBuilder sb = new StringBuilder();
             boolean sawError = false;
             for (DriverOutputBase<?> output : outputs) {
@@ -448,7 +345,7 @@ class JobflowExecutor {
                     throw new IllegalStateException(MessageFormat.format(
                             Messages.getString("JobflowExecutor.errorMissingOutput"), //$NON-NLS-1$
                             name,
-                            jobflow.getFlowId()));
+                            jobflow.getId()));
                 }
                 if (output.getResultSink() != null) {
                     LOG.debug("saving result output: {} ({})", output.getName(), output.getResultSink()); //$NON-NLS-1$
@@ -465,7 +362,7 @@ class JobflowExecutor {
                         sawError = true;
                         String message = MessageFormat.format(
                                 Messages.getString("JobflowExecutor.messageDifferenceSummary"), //$NON-NLS-1$
-                                jobflow.getFlowId(),
+                                jobflow.getId(),
                                 output.getName(),
                                 diffList.size());
                         sb.append(String.format("%s:%n", message)); //$NON-NLS-1$

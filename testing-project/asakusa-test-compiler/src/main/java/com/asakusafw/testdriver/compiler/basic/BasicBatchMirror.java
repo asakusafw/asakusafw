@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import com.asakusafw.testdriver.compiler.BatchMirror;
 import com.asakusafw.testdriver.compiler.JobflowMirror;
@@ -27,7 +28,7 @@ import com.asakusafw.testdriver.compiler.JobflowMirror;
  * A basic implementation of {@link BatchMirror}.
  * @since 0.8.0
  */
-public class BasicBatchMirror implements BatchMirror {
+public class BasicBatchMirror extends AbstractMirror implements BatchMirror {
 
     private final String batchId;
 
@@ -43,7 +44,7 @@ public class BasicBatchMirror implements BatchMirror {
     }
 
     @Override
-    public String getBatchId() {
+    public String getId() {
         return batchId;
     }
 
@@ -53,8 +54,8 @@ public class BasicBatchMirror implements BatchMirror {
     }
 
     @Override
-    public JobflowMirror findElement(String flowId) {
-        return elements.get(flowId);
+    public Optional<JobflowMirror> findElement(String flowId) {
+        return Optional.ofNullable(elements.get(flowId));
     }
 
     /**
@@ -62,6 +63,6 @@ public class BasicBatchMirror implements BatchMirror {
      * @param element the element
      */
     public void addElement(JobflowMirror element) {
-        this.elements.put(element.getFlowId(), element);
+        this.elements.put(element.getId(), element);
     }
 }

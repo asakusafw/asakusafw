@@ -24,7 +24,7 @@ import com.asakusafw.testdriver.compiler.PortMirror;
  * @param <T> the importer/exporter description object type
  * @since 0.8.0
  */
-public class BasicPortMirror<T> implements PortMirror<T> {
+public class BasicPortMirror<T> extends AbstractMirror implements PortMirror<T> {
 
     private final String name;
 

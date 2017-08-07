@@ -161,6 +161,7 @@ public class FlowPartTester extends TesterBase {
             LOG.info(MessageFormat.format(
                     Messages.getString("FlowPartTester.infoInitializeEnvironment"), //$NON-NLS-1$
                     driverContext.getCallerClass().getName()));
+            executor.validateJobflow(jobflow);
             executor.cleanWorkingDirectory();
             executor.cleanInputOutput(jobflow);
             executor.cleanExtraResources(getExternalResources());

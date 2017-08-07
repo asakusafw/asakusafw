@@ -27,9 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.info.JobflowInfo;
-import com.asakusafw.info.cli.common.HelpParameter;
 import com.asakusafw.info.cli.common.JobflowInfoParameter;
-import com.asakusafw.info.cli.common.OutputParameter;
 import com.asakusafw.info.cli.common.VertexSelectorParameter;
 import com.asakusafw.info.cli.draw.DrawEngine.Feature;
 import com.asakusafw.info.operator.view.OperatorGraphView;
@@ -38,6 +36,8 @@ import com.asakusafw.info.plan.PlanAttribute;
 import com.asakusafw.info.plan.PlanVertexSpec;
 import com.asakusafw.info.value.ClassInfo;
 import com.asakusafw.utils.jcommander.CommandConfigurationException;
+import com.asakusafw.utils.jcommander.common.HelpParameter;
+import com.asakusafw.utils.jcommander.common.OutputParameter;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.beust.jcommander.ParametersDelegate;
@@ -55,22 +55,22 @@ public class DrawPlanCommand implements Runnable {
     static final Logger LOG = LoggerFactory.getLogger(DrawPlanCommand.class);
 
     @ParametersDelegate
-    HelpParameter helpParameter = new HelpParameter();
+    final HelpParameter helpParameter = new HelpParameter();
 
     @ParametersDelegate
-    JobflowInfoParameter jobflowInfoParameter = new JobflowInfoParameter();
+    final JobflowInfoParameter jobflowInfoParameter = new JobflowInfoParameter();
 
     @ParametersDelegate
-    ShowAllParameter verboseParameter = new ShowAllParameter();
+    final ShowAllParameter verboseParameter = new ShowAllParameter();
 
     @ParametersDelegate
-    VertexSelectorParameter vertexSelectorParameter = new VertexSelectorParameter();
+    final VertexSelectorParameter vertexSelectorParameter = new VertexSelectorParameter();
 
     @ParametersDelegate
-    GraphvizParameter graphvizParameter = new GraphvizParameter();
+    final GraphvizParameter graphvizParameter = new GraphvizParameter();
 
     @ParametersDelegate
-    OutputParameter outputParameter = new OutputParameter();
+    final OutputParameter outputParameter = new OutputParameter();
 
     @Parameter(
             names = { "--show-operator", },

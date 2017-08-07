@@ -16,6 +16,7 @@
 package com.asakusafw.testdriver;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.text.MessageFormat;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -36,6 +37,8 @@ import com.asakusafw.testdriver.core.VerifierFactory;
 import com.asakusafw.testdriver.core.VerifyContext;
 import com.asakusafw.vocabulary.batch.BatchDescription;
 import com.asakusafw.vocabulary.external.ImporterDescription;
+import com.asakusafw.workflow.executor.TaskExecutors;
+import com.asakusafw.workflow.model.JobflowInfo;
 
 /**
  * A tester for {@code Batch batch} classes.
@@ -115,7 +118,7 @@ public class BatchTester extends TesterBase {
             BatchMirror batch = artifact.getBatch();
 
             for (String flowId : jobflowMap.keySet()) {
-                if (batch.findElement(flowId) == null) {
+                if (batch.findElement(flowId).isPresent() == false) {
                     throw new IllegalStateException(MessageFormat.format(
                             Messages.getString("BatchTester.errorMissingJobflow"), //$NON-NLS-1$
                             driverContext.getCallerClass().getName(),
@@ -123,6 +126,10 @@ public class BatchTester extends TesterBase {
                 }
             }
 
+            TaskExecutors.findFrameworkHome(driverContext.getEnvironmentVariables())
+                    .filter(Files::isDirectory)
+                    .orElseThrow(() -> new IllegalStateException(
+                            "BatchTester requires Asakusa Framework installation"));
             driverContext.validateExecutionEnvironment();
 
             LOG.info(MessageFormat.format(
@@ -133,6 +140,7 @@ public class BatchTester extends TesterBase {
 
             for (JobflowMirror jobflow : batch.getElements()) {
                 Util.prepare(driverContext, batch, jobflow);
+                executor.validateJobflow(jobflow);
                 executor.cleanInputOutput(jobflow);
             }
             executor.cleanExtraResources(getExternalResources());
@@ -144,15 +152,16 @@ public class BatchTester extends TesterBase {
             }
 
             Date startDate = null;
-            for (JobflowMirror jobflow : Util.sort(batch.getElements())) {
+            for (JobflowInfo jobflow : Util.sort(batch.getElements())) {
+                JobflowMirror mirror = (JobflowMirror) jobflow;
                 Util.prepare(driverContext, batch, jobflow);
-                String flowId = jobflow.getFlowId();
+                String flowId = jobflow.getId();
                 JobFlowTester tester = jobflowMap.get(flowId);
                 if (tester != null) {
                     LOG.debug("initializing jobflow input/output: {}#{}", //$NON-NLS-1$
                             batchClass.getName(), flowId);
-                    executor.prepareInput(jobflow, tester.inputs);
-                    executor.prepareOutput(jobflow, tester.outputs);
+                    executor.prepareInput(mirror, tester.inputs);
+                    executor.prepareOutput(mirror, tester.outputs);
 
                     LOG.info(MessageFormat.format(
                             Messages.getString("BatchTester.infoExecute"), //$NON-NLS-1$
@@ -161,13 +170,13 @@ public class BatchTester extends TesterBase {
                         startDate = new Date();
                     }
                     VerifyContext verifyContext = new VerifyContext(driverContext, startDate);
-                    executor.runJobflow(jobflow);
+                    executor.runJobflow(mirror);
                     verifyContext.testFinished();
 
                     LOG.info(MessageFormat.format(
                             Messages.getString("BatchTester.infoVerifyResult"), //$NON-NLS-1$
                             batchClass.getName(), flowId));
-                    executor.verify(jobflow, verifyContext, tester.outputs);
+                    executor.verify(mirror, verifyContext, tester.outputs);
                 }
             }
         }

@@ -15,10 +15,14 @@
  */
 package com.asakusafw.testdriver;
 
+import com.asakusafw.workflow.executor.TaskExecutor;
+
 /**
  * Provides {@link JobExecutor}.
  * @since 0.6.0
+ * @deprecated replaced with {@link TaskExecutor}
  */
+@Deprecated
 public abstract class JobExecutorFactory {
 
     /**

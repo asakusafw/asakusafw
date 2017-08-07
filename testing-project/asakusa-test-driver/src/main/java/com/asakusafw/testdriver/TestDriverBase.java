@@ -23,6 +23,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.asakusafw.runtime.core.Report;
 import com.asakusafw.testdriver.compiler.CompilerConfiguration.DebugLevel;
 import com.asakusafw.testdriver.compiler.CompilerConfiguration.OptimizeLevel;
@@ -39,9 +42,11 @@ import com.asakusafw.vocabulary.flow.FlowPart;
 /**
  * An abstract super class of test-driver classes.
  * @since 0.2.0
- * @version 0.7.0
+ * @version 0.10.0
  */
 public abstract class TestDriverBase extends DriverElementBase {
+
+    private static final Logger LOG = LoggerFactory.getLogger(TestDriverBase.class);
 
     private static final String FLOW_OPERATOR_FACTORY_METHOD_NAME = "create"; //$NON-NLS-1$
 
@@ -382,11 +387,13 @@ public abstract class TestDriverBase extends DriverElementBase {
     /**
      * Sets the {@link JobExecutorFactory} for executing jobs in this test.
      * @param factory the factory, or {@code null} to use a default implementation
-     * @see TestDriverContext#KEY_JOB_EXECUTOR_FACTORY
      * @since 0.6.0
+     * @deprecated not supported
      */
+    @Deprecated
     public void setJobExecutorFactory(JobExecutorFactory factory) {
-        driverContext.setJobExecutorFactory(factory);
+        LOG.warn("{}.setJobExecutorFactory() is not supported",
+                getClass().getSimpleName());
     }
 
     /**

@@ -20,7 +20,7 @@ package com.asakusafw.testdriver.compiler;
  * @param <T> the importer/exporter description object type
  * @since 0.8.0
  */
-public interface PortMirror<T> {
+public interface PortMirror<T> extends Mirror {
 
     /**
      * Returns the port name.

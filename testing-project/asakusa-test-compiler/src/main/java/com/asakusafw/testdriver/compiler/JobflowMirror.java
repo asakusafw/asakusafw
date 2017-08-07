@@ -16,22 +16,17 @@
 package com.asakusafw.testdriver.compiler;
 
 import java.util.Collection;
-import java.util.Set;
 
 import com.asakusafw.vocabulary.external.ExporterDescription;
 import com.asakusafw.vocabulary.external.ImporterDescription;
+import com.asakusafw.workflow.model.JobflowInfo;
 
 /**
  * Represents a jobflow.
  * @since 0.8.0
+ * @version 0.10.0
  */
-public interface JobflowMirror extends GraphElement<JobflowMirror> {
-
-    /**
-     * The flow ID of this jobflow.
-     * @return the flow ID
-     */
-    String getFlowId();
+public interface JobflowMirror extends JobflowInfo, Mirror {
 
     /**
      * Returns the input ports of the jobflow.
@@ -44,13 +39,6 @@ public interface JobflowMirror extends GraphElement<JobflowMirror> {
      * @return the output ports
      */
     Collection<? extends PortMirror<? extends ExporterDescription>> getOutputs();
-
-    /**
-     * Returns tasks of this jobflow.
-     * @param phase the target phase
-     * @return the tasks, or an empty set if it is not found
-     */
-    Set<? extends TaskMirror> getTasks(TaskMirror.Phase phase);
 
     /**
      * Returns an input of this jobflow.
