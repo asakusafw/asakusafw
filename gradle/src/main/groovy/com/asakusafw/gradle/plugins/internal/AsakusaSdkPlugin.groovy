@@ -214,11 +214,7 @@ class AsakusaSdkPlugin implements Plugin<Project> {
                     }
 
                     if (features.operator) {
-                        if (features.incubating) {
-                            compile "com.asakusafw.operator:asakusa-operator-all:${base.frameworkVersion}"
-                        } else {
-                            compile "com.asakusafw.mapreduce.compiler:asakusa-mapreduce-compiler-operator:${base.frameworkVersion}"
-                        }
+                        compile "com.asakusafw.operator:asakusa-operator-all:${base.frameworkVersion}"
                     }
                     if (features.directio) {
                         compile "com.asakusafw:asakusa-directio-vocabulary:${base.frameworkVersion}"
