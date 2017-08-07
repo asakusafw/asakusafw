@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Copyright 2011-2017 Asakusa Framework Team.
 #
@@ -60,10 +60,11 @@ import "$_YS_ROOT/conf/env.sh"
 import "$_YS_ROOT/libexec/validate-env.sh"
 import "$_YS_ROOT/libexec/configure-classpath.sh"
 import "$_YS_ROOT/libexec/configure-tools-classpath.sh"
+import "$ASAKUSA_HOME/core/libexec/configure-java.sh"
 
 _YS_CLASS="com.asakusafw.yaess.tools.GenerateExecutionId"
 
-java \
+"$_JAVA_CMD" $JAVA_OPTS \
     -classpath "$_YS_CLASSPATH" \
     "$_YS_CLASS" \
     -batch "$_OPT_BATCH_ID" \

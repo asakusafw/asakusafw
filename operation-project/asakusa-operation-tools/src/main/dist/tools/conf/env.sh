@@ -1,4 +1,3 @@
-#!/bin/sh
 #
 # Copyright 2011-2017 Asakusa Framework Team.
 #

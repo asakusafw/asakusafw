@@ -14,17 +14,27 @@
 # limitations under the License.
 #
 
-if [ "$HADOOP_CMD" = "" ]
+# Defines a variable either _JAVA_CMD.
+#
+# input variables:
+#   JAVA_CMD (optional)
+#   JAVA_HOME (optional)
+# 
+# output variables:
+#   _JAVA_CMD
+
+if [ "$JAVA_CMD" != "" -a -x "$JAVA_CMD" ]
 then
-    if [ "$HADOOP_HOME" != "" ]
-    then
-        HADOOP_CMD="$HADOOP_HOME/bin/hadoop"
-    else
-        HADOOP_CMD="$(which hadoop)"
-        _RET=$?
-        if [ $_RET -ne 0 ]
-        then
-            unset HADOOP_CMD
-        fi
-    fi
+    _JAVA_CMD="$JAVA_CMD"
+elif [ -x "$JAVA_HOME/bin/java" ]
+then
+    _JAVA_CMD="$JAVA_HOME/bin/java"
+else
+    _JAVA_CMD=$(which java)
+fi
+
+if [ ! -x "$_JAVA_CMD" ]
+then
+    echo 'valid java command is not found' 1>&2
+    exit 1
 fi

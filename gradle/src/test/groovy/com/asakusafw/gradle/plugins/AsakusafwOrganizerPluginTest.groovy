@@ -54,6 +54,7 @@ class AsakusafwOrganizerPluginTest extends OrganizerTestRoot {
     public void tasks_common() {
         assert project.tasks.cleanAssembleAsakusafw
         assert project.tasks.attachComponentCore
+        assert project.tasks.attachComponentHadoop
         assert project.tasks.attachComponentDirectIo
         assert project.tasks.attachComponentWindGate
         assert project.tasks.attachComponentWindGateSsh
@@ -77,6 +78,7 @@ class AsakusafwOrganizerPluginTest extends OrganizerTestRoot {
         AsakusafwOrganizerProfile profile = project.asakusafwOrganizer.profiles.testp
         assert ptask(profile, 'cleanAssembleAsakusafw')
         assert ptask(profile, 'attachComponentCore')
+        assert ptask(profile, 'attachComponentHadoop')
         assert ptask(profile, 'attachComponentDirectIo')
         assert ptask(profile, 'attachComponentWindGate')
         assert ptask(profile, 'attachComponentWindGateSsh')
@@ -100,6 +102,7 @@ class AsakusafwOrganizerPluginTest extends OrganizerTestRoot {
     public void tasks_dependencies() {
         checkDependencies('cleanAssembleAsakusafw')
         checkDependencies('attachComponentCore')
+        checkDependencies('attachComponentHadoop')
         checkDependencies('attachComponentDirectIo')
         checkDependencies('attachComponentWindGate')
         checkDependencies('attachComponentWindGateSsh')

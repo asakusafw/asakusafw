@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Copyright 2011-2017 Asakusa Framework Team.
 #
@@ -15,20 +15,21 @@
 # limitations under the License.
 #
 
+
 usage() {
     cat 1>&2 <<EOF
-Asakusa TestDriver Hadoop Kick-script
+Asakusa test-driver Hadoop job launcher.
 
 Usage:
-    $0 jar-file class-name batch-id [direct-arguments...]
+    $0 class-name batch-id flow-id [direct-arguments...]
 
 Parameters:
-    jar-file
-        Full path of execution library
     class-name
         Fully qualified class name of program entry
     batch-id
         batch ID of current execution
+    flow-id
+        flow ID of current execution
     direct-arguments...
         Direct arguments for Hadoop
 EOF
@@ -45,67 +46,84 @@ import() {
     fi
 }
 
-if [ $# -lt 3 ]
+if [ $# -lt 4 ]
 then
     echo "$@" 1>&2
     usage
     exit 1
 fi
 
-_OPT_APP_LIB="$1"
-shift
 _OPT_CLASS_NAME="$1"
 shift
 _OPT_BATCH_ID="$1"
 shift
+_OPT_FLOW_ID="$1"
+shift
 
-_TD_ROOT="$(cd "$(dirname "$0")/.." ; pwd)"
-
-import "$_TD_ROOT/conf/env.sh"
-import "$_TD_ROOT/libexec/validate-env.sh"
+_ROOT="$(cd "$(dirname "$0")/.." ; pwd)"
+import "$_ROOT/conf/env.sh"
+import "$_ROOT/libexec/validate-env.sh"
 
 # Move to home directory
 cd
 
-_TD_TOOL_LAUNCHER="com.asakusafw.runtime.stage.ToolLauncher"
-_TD_RUNTIME_LIB="$ASAKUSA_HOME/core/lib/asakusa-runtime-all.jar"
-_TD_PLUGIN_CONF="$ASAKUSA_HOME/core/conf/asakusa-resources.xml"
+_TOOL_LAUNCHER="com.asakusafw.runtime.stage.ToolLauncher"
+_RUNTIME_LIB="$ASAKUSA_HOME/core/lib/asakusa-runtime-all.jar"
+_PLUGIN_CONF="$ASAKUSA_HOME/core/conf/asakusa-resources.xml"
 
-_TD_LIBJARS="$_OPT_APP_LIB"
-import "$_TD_ROOT/libexec/configure-libjars.sh"
-import "$_TD_ROOT/libexec/configure-hadoop-cmd.sh"
-
-cat << __EOF__
-Starting TestDriver Hadoop Job:
- Hadoop Command: $HADOOP_CMD
-    App Library: $_OPT_APP_LIB
-          Class: $_OPT_CLASS_NAME
-  All Libraries: $_TD_LIBJARS
-  Defined Props: $TD_HADOOP_PROPERTIES
-    Extra Props: $*
-__EOF__
-
-"$HADOOP_CMD" jar \
-    "$_TD_RUNTIME_LIB" \
-    "$_TD_TOOL_LAUNCHER" \
-    "$_OPT_CLASS_NAME" \
-    -conf "$_TD_PLUGIN_CONF" \
-    -libjars "$_TD_LIBJARS" \
-    $TD_HADOOP_PROPERTIES \
-    "$@"
-
-_TD_RET=$?
-if [ $_TD_RET -ne 0 ]
+if [ -e "$ASAKUSA_HOME/hadoop/libexec/configure-hadoop.sh" ]
 then
-    cat 1>&2 << __EOF__
-TestDriver Hadoop Job failed with exit code: $_TD_RET
-   Runtime Lib: $_TD_RUNTIME_LIB
-      Launcher: $_TD_TOOL_LAUNCHER
-   Stage Class: $_OPT_CLASS_NAME
- Configuration: -conf $_TD_PLUGIN_CONF
-     Libraries: -libjars $_TD_LIBJARS
- Defined Props: $TD_HADOOP_PROPERTIES
-   Extra Props: $*
-__EOF__
-    exit $_TD_RET
+    import "$ASAKUSA_HOME/hadoop/libexec/configure-hadoop.sh"
+else
+    _HADOOP_CMD="${HADOOP_CMD:?}"
+fi
+
+import "$_ROOT/libexec/configure-classpath.sh"
+
+echo "Starting test-driver Hadoop job:"
+echo " Hadoop Command: ${_HADOOP_CMD:-N/A}"
+echo "    Application: $_OPT_CLASS_NAME"
+echo "       Batch ID: $_OPT_BATCH_ID"
+echo "        Flow ID: $_OPT_FLOW_ID"
+
+if [ "$_HADOOP_CMD" != "" ]
+then
+    "$_HADOOP_CMD" jar \
+        "$_RUNTIME_LIB" \
+        "$_TOOL_LAUNCHER" \
+        "$_OPT_CLASS_NAME" \
+        -conf "$_PLUGIN_CONF" \
+        -libjars "$(IFS=,; echo "${_CLASSPATH[*]}")" \
+        "$@"
+    _RET=$?
+else
+    _CLASSPATH_DELIMITER=":"
+    if [ -e "$ASAKUSA_HOME/core/libexec/configure-java.sh" ]
+    then
+        import "$ASAKUSA_HOME/core/libexec/configure-java.sh"
+    else
+        _JAVA_CMD=java
+    fi
+    _CLASSPATH+=("${_HADOOP_EMBED_CLASSPATH[@]}")
+    _CLASSPATH+=("${_HADOOP_EMBED_LOGGING_CLASSPATH[@]}")
+    "$_JAVA_CMD" $JAVA_OPTS \
+        -classpath "$(IFS=$_CLASSPATH_DELIMITER; echo "${_CLASSPATH[*]}")" \
+        "$_TOOL_LAUNCHER" \
+        "$_OPT_CLASS_NAME" \
+        -conf "$_PLUGIN_CONF" \
+        "$@"
+    _RET=$?
+fi
+
+if [ $_RET -ne 0 ]
+then
+    echo "Hadoop job failed with exit code: $_RET" 1>&2
+    echo " Hadoop Command: ${_HADOOP_CMD:-N/A}" 1>&2
+    echo "    Application: $_OPT_CLASS_NAME" 1>&2
+    echo "       Batch ID: $_OPT_BATCH_ID" 1>&2
+    echo "        Flow ID: $_OPT_FLOW_ID" 1>&2
+    echo "  Configuration: $_PLUGIN_CONF" 1>&2
+    echo "      Libraries: ${_CLASSPATH[*]}" 1>&2
+    echo "    Extra Props: $*" 1>&2
+    exit $_RET
 fi

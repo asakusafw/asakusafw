@@ -14,29 +14,34 @@
 # limitations under the License.
 #
 
-if [ -d "$_DIO_ROOT/lib" ]
+_CLASSPATH=()
+
+_JOBFLOW_LIB="$ASAKUSA_BATCHAPPS_HOME/${_OPT_BATCH_ID:-__MISSING__}/lib/jobflow-${_OPT_FLOW_ID}.jar"
+_BATCH_USER_LIBS="$ASAKUSA_BATCHAPPS_HOME/${_OPT_BATCH_ID:-__MISSING__}/usr/lib"
+
+if [ -e "$_JOBFLOW_LIB" ]
 then
-    for f in $(ls "$_DIO_ROOT/lib")
+    _CLASSPATH+=("$_JOBFLOW_LIB")
+fi
+
+if [ -d "$_BATCH_USER_LIBS" ]
+then
+    for f in $(ls "$_BATCH_USER_LIBS")
     do
-        if [ "$_DIO_LIBJARS" = "" ]
-        then
-            _DIO_LIBJARS="$_DIO_ROOT/lib/$f"
-        else
-            _DIO_LIBJARS="$_DIO_LIBJARS,$_DIO_ROOT/lib/$f"
-        fi
+        _CLASSPATH+=("$_BATCH_USER_LIBS/$f")
     done
 fi
 
-if [ -d "$ASAKUSA_HOME/core/lib" ]
+if [ -d "$_ROOT/conf" ]
 then
-    for f in $(ls "$ASAKUSA_HOME/core/lib")
+    _CLASSPATH+=("$_ROOT/conf")
+fi
+
+if [ -d "$_ROOT/lib" ]
+then
+    for f in $(ls "$_ROOT/lib")
     do
-        if [ "$_DIO_LIBJARS" = "" ]
-        then
-            _DIO_LIBJARS="$ASAKUSA_HOME/core/lib/$f"
-        else
-            _DIO_LIBJARS="$_DIO_LIBJARS,$ASAKUSA_HOME/core/lib/$f"
-        fi
+        _CLASSPATH+=("$_ROOT/lib/$f")
     done
 fi
 
@@ -44,11 +49,14 @@ if [ -d "$ASAKUSA_HOME/ext/lib" ]
 then
     for f in $(ls "$ASAKUSA_HOME/ext/lib")
     do
-        if [ "$_DIO_LIBJARS" = "" ]
-        then
-            _DIO_LIBJARS="$ASAKUSA_HOME/ext/lib/$f"
-        else
-            _DIO_LIBJARS="$_DIO_LIBJARS,$ASAKUSA_HOME/ext/lib/$f"
-        fi
+        _CLASSPATH+=("$ASAKUSA_HOME/ext/lib/$f")
+    done
+fi
+
+if [ -d "$ASAKUSA_HOME/core/lib" ]
+then
+    for f in $(ls "$ASAKUSA_HOME/core/lib")
+    do
+        _CLASSPATH+=("$ASAKUSA_HOME/core/lib/$f")
     done
 fi

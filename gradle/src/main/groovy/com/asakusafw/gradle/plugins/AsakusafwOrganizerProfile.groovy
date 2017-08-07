@@ -20,6 +20,7 @@ import com.asakusafw.gradle.plugins.AsakusafwOrganizerPluginConvention.Batchapps
 import com.asakusafw.gradle.plugins.AsakusafwOrganizerPluginConvention.CoreConfiguration
 import com.asakusafw.gradle.plugins.AsakusafwOrganizerPluginConvention.DirectIoConfiguration
 import com.asakusafw.gradle.plugins.AsakusafwOrganizerPluginConvention.ExtensionConfiguration
+import com.asakusafw.gradle.plugins.AsakusafwOrganizerPluginConvention.HadoopConfiguration
 import com.asakusafw.gradle.plugins.AsakusafwOrganizerPluginConvention.HiveConfiguration
 import com.asakusafw.gradle.plugins.AsakusafwOrganizerPluginConvention.TestingConfiguration
 import com.asakusafw.gradle.plugins.AsakusafwOrganizerPluginConvention.WindGateConfiguration
@@ -28,7 +29,7 @@ import com.asakusafw.gradle.plugins.AsakusafwOrganizerPluginConvention.YaessConf
 /**
  * Represents an Asakusa Framework organization profile.
  * @since 0.7.0
- * @version 0.9.0
+ * @version 0.10.0
  */
 class AsakusafwOrganizerProfile {
 
@@ -66,6 +67,12 @@ class AsakusafwOrganizerProfile {
      * </dl>
      */
     String archiveName
+
+    /**
+     * Hadoop settings.
+     * @since 0.10.0
+     */
+    HadoopConfiguration hadoop
 
     /**
      * Core settings.

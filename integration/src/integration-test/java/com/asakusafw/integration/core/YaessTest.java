@@ -88,6 +88,27 @@ public class YaessTest {
     }
 
     /**
+     * {@code yaess-flow.sh}.
+     */
+    @Test
+    public void flow_generate_id() {
+        AsakusaProject project = provider.newInstance("yss");
+        project.gradle("installAsakusafw");
+
+        Bundle framework = project.getFramework();
+        assertThat(
+                framework.launch("yaess/bin/yaess-flow.sh", "testing", "work", "<generate>"),
+                is(0));
+
+        Bundle contents = project.getContents();
+        assertThat(contents.find("prepare.txt"), is(Optional.empty()));
+        assertThat(contents.find("import.txt"), is(not(Optional.empty())));
+        assertThat(contents.find("main.txt"), is(not(Optional.empty())));
+        assertThat(contents.find("export.txt"), is(not(Optional.empty())));
+        assertThat(contents.find("finalize.txt"), is(not(Optional.empty())));
+    }
+
+    /**
      * {@code yaess-phase.sh}.
      */
     @Test
@@ -106,5 +127,34 @@ public class YaessTest {
         assertThat(contents.find("main.txt"), is(not(Optional.empty())));
         assertThat(contents.find("export.txt"), is(Optional.empty()));
         assertThat(contents.find("finalize.txt"), is(Optional.empty()));
+    }
+
+    /**
+     * script includes hadoop command, and use system hadoop.
+     */
+    @Test
+    public void hadoop_system() {
+        doHadoop(provider.newInstance("yss")
+                .with(AsakusaConfigurator.hadoop(AsakusaConfigurator.Action.SKIP_IF_UNDEFINED)));
+    }
+
+    /**
+     * script includes hadoop command, and use embedded hadoop.
+     */
+    @Test
+    public void hadoop_embed() {
+        doHadoop(provider.newInstance("yss")
+                .with(AsakusaConfigurator.hadoop(AsakusaConfigurator.Action.UNSET_ALWAYS)));
+    }
+
+    private static void doHadoop(AsakusaProject project) {
+        project.gradle("installAsakusafw");
+        Bundle framework = project.getFramework();
+        assertThat(
+                framework.launch("yaess/bin/yaess-batch.sh", "whadoop"),
+                is(0));
+        Bundle contents = project.getContents();
+        assertThat(contents.find("hadoop.txt"), is(not(Optional.empty())));
+        assertThat(contents.find("cleanup.txt"), is(not(Optional.empty())));
     }
 }

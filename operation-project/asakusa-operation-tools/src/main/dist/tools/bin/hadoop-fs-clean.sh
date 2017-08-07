@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Copyright 2011-2017 Asakusa Framework Team.
 #
@@ -67,14 +67,23 @@ then
     exit 2
 fi
 
-_TL_ROOT="$(cd "$(dirname "$0")/.." ; pwd)"
+_ROOT="$(cd "$(dirname "$0")/.." ; pwd)"
 
-import "$_TL_ROOT/conf/env.sh"
-import "$_TL_ROOT/libexec/configure-hadoop-cmd.sh"
+import "${ASAKUSA_HOME:?ASAKUSA_HOME is not defined}/hadoop/libexec/configure-hadoop.sh"
+import "$_ROOT/conf/env.sh"
 
-export HADOOP_CLASSPATH="$_TL_CLASSPATH"
-"$HADOOP_CMD" jar "$_TL_ROOT/lib/asakusa-operation-tools.jar" \
-    "com.asakusafw.operation.tools.hadoop.fs.Clean" \
-    "$@"
-_RET=$?
-exit $_RET
+if [ "$_HADOOP_CMD" != "" ]
+then
+    exec "$_HADOOP_CMD" jar "$_ROOT/lib/asakusa-operation-tools.jar" \
+        "com.asakusafw.operation.tools.hadoop.fs.Clean" \
+        "$@"
+else
+    _CLASSPATH=("$_ROOT/lib/asakusa-operation-tools.jar")
+    _CLASSPATH+=("${_HADOOP_EMBED_CLASSPATH[@]}")
+    _CLASSPATH+=("$_ROOT/lib/slf4j-simple.jar")
+    import "$ASAKUSA_HOME/core/libexec/configure-java.sh"
+    exec "$_JAVA_CMD" $JAVA_OPTS \
+        -classpath "$(IFS=:; echo "${_CLASSPATH[*]}")" \
+        "com.asakusafw.operation.tools.hadoop.fs.Clean" \
+        "$@"
+fi

@@ -14,22 +14,12 @@
 # limitations under the License.
 #
 
-if [ "$WG_CLASSPATH_DELIMITER" = "" ]
-then
-    _WG_CLASSPATH_DELIMITER=':'
-else 
-    _WG_CLASSPATH_DELIMITER=$WG_CLASSPATH_DELIMITER
-fi
+_PLUGINPATH=()
 
-if [ -e "$_WG_ROOT/plugin" ]
+if [ -d "$_ROOT/plugin" ]
 then
-    for f in $(ls "$_WG_ROOT/plugin/")
+    for f in $(ls "$_ROOT/plugin")
     do
-        if [ "$_WG_PLUGIN" = "" ]
-        then
-            _WG_PLUGIN="$_WG_ROOT/plugin/$f"
-        else
-            _WG_PLUGIN="${_WG_PLUGIN}${_WG_CLASSPATH_DELIMITER}${_WG_ROOT}/plugin/$f"
-        fi
+        _PLUGINPATH+=("$_ROOT/plugin/$f")
     done
 fi

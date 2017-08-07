@@ -17,22 +17,23 @@ package com.asakusafw.testdriver;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.commons.lang.SystemUtils;
 import org.junit.Assume;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.asakusafw.testdriver.compiler.CompilerConstants;
 import com.asakusafw.testdriver.hadoop.ConfigurationFactory;
 
 /**
@@ -97,7 +98,8 @@ public class DefaultJobExecutor extends JobExecutor {
                     Messages.getString("DefaultJobExecutor.errorUndefinedEnvironmentVariable"), //$NON-NLS-1$
                     TestDriverContext.ENV_FRAMEWORK_PATH));
         }
-        if (configurations.getHadoopCommand() == null) {
+        if (configurations.getHadoopCommand() == null
+                && findHadoopEmbedLibraryDir().isPresent() == false) {
             raiseInvalid(MessageFormat.format(
                     Messages.getString("DefaultJobExecutor.errorMissingCommand"), //$NON-NLS-1$
                     "hadoop")); //$NON-NLS-1$
@@ -114,6 +116,13 @@ public class DefaultJobExecutor extends JobExecutor {
                         runtime));
             }
         }
+    }
+
+    private Optional<Path> findHadoopEmbedLibraryDir() {
+        return Optional.ofNullable(context.getFrameworkHomePathOrNull())
+                .map(File::toPath)
+                .map(it -> it.resolve("hadoop/lib"))
+                .filter(Files::isDirectory);
     }
 
     private boolean requiresValidateExecutionEnvironment() {
@@ -146,14 +155,14 @@ public class DefaultJobExecutor extends JobExecutor {
         assert environmentVariables != null;
         List<String> commandLine = new ArrayList<>();
         commandLine.add(new File(context.getFrameworkHomePath(), SUBMIT_JOB_SCRIPT).getAbsolutePath());
-        commandLine.add(findPackage());
         commandLine.add(job.getClassName());
         commandLine.add(context.getCurrentBatchId());
+        commandLine.add(context.getCurrentFlowId());
 
-        for (Map.Entry<String, String> entry : job.getProperties().entrySet()) {
+        job.getProperties().forEach((k, v) -> {
             commandLine.add("-D"); //$NON-NLS-1$
-            commandLine.add(entry.getKey() + "=" + entry.getValue()); //$NON-NLS-1$
-        }
+            commandLine.add(k + "=" + v); //$NON-NLS-1$
+        });
         int exitValue = runCommand(commandLine, environmentVariables);
         if (exitValue != 0) {
             throw new AssertionError(MessageFormat.format(
@@ -161,15 +170,6 @@ public class DefaultJobExecutor extends JobExecutor {
                     context.getCurrentFlowId(),
                     toCommandLineString(commandLine)));
         }
-    }
-
-    private String findPackage() throws IOException {
-        File packagePath = context.getJobflowPackageLocation(context.getCurrentBatchId());
-        File packageFile = new File(packagePath, CompilerConstants.getJobflowLibraryName(context.getCurrentFlowId()));
-        if (packageFile.isFile()) {
-            return packageFile.getAbsolutePath();
-        }
-        throw new FileNotFoundException(packageFile.getAbsolutePath());
     }
 
     @Override

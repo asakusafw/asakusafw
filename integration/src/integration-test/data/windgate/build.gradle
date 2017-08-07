@@ -30,6 +30,9 @@ asakusafw {
 }
 
 asakusafwOrganizer {
+    hadoop {
+        embed !System.getenv("HADOOP_CMD")
+    }
     profiles.dev {
         assembly.into('.') {
             from 'src/main/conf'

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Copyright 2011-2017 Asakusa Framework Team.
 #
@@ -96,6 +96,7 @@ import "$_YS_ROOT/conf/env.sh"
 import "$_YS_ROOT/libexec/validate-env.sh"
 import "$_YS_ROOT/libexec/configure-classpath.sh"
 import "$_YS_ROOT/libexec/configure-plugin.sh"
+import "$ASAKUSA_HOME/core/libexec/configure-java.sh"
 
 _YS_PROFILE="$_YS_ROOT/conf/yaess.properties"
 _YS_SCRIPT="$ASAKUSA_BATCHAPPS_HOME/$_OPT_BATCH_ID/etc/yaess-script.properties"
@@ -113,7 +114,7 @@ Starting YAESS
   Properties: $YAESS_OPTS
 __EOF__
 
-java \
+"$_JAVA_CMD" $JAVA_OPTS \
     $YAESS_OPTS \
     "-Dcom.asakusafw.yaess.log.batchId=$_OPT_BATCH_ID" \
     -classpath "$_YS_CLASSPATH" \

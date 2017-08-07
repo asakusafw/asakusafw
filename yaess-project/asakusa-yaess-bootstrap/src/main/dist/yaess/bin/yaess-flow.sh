@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Copyright 2011-2017 Asakusa Framework Team.
 #
@@ -94,6 +94,7 @@ import "$_YS_ROOT/conf/env.sh"
 import "$_YS_ROOT/libexec/validate-env.sh"
 import "$_YS_ROOT/libexec/configure-classpath.sh"
 import "$_YS_ROOT/libexec/configure-plugin.sh"
+import "$ASAKUSA_HOME/core/libexec/configure-java.sh"
 
 if [ "$_OPT_EXECUTION_ID" = "$_YS_GENERATE_EXECUTION_ID" ]
 then
@@ -133,7 +134,7 @@ Execution ID: $_OPT_EXECUTION_ID
   Properties: $YAESS_OPTS
 __EOF__
 
-java \
+"$_JAVA_CMD" $JAVA_OPTS \
     $YAESS_OPTS \
     "-Dcom.asakusafw.yaess.log.batchId=$_OPT_BATCH_ID" \
     -classpath "$_YS_CLASSPATH" \

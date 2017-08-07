@@ -14,25 +14,13 @@
 # limitations under the License.
 #
 
-if [ "$HADOOP_CMD" = "" ]
+if [ "$ASAKUSA_HOME" = "" ]
 then
-    if [ "$HADOOP_HOME" != "" ]
-    then
-        HADOOP_CMD="$HADOOP_HOME/bin/hadoop"
-        unset HADOOP_HOME
-    else
-        HADOOP_CMD="$(which hadoop)"
-        _RET=$?
-        if [ $_RET -ne 0 ]
-        then
-            echo 'hadoop command is not found' 1>&2
-            exit 1
-        fi
-    fi
+    echo '$ASAKUSA_HOME'" is not defined" 1>&2
+    exit 1
 fi
 
-if [ ! -x "$HADOOP_CMD" ]
+if [ "$ASAKUSA_BATCHAPPS_HOME" = "" ]
 then
-    echo "$HADOOP_CMD is not executable" 1>&2
-    exit 1
+    export ASAKUSA_BATCHAPPS_HOME="$ASAKUSA_HOME/batchapps"
 fi

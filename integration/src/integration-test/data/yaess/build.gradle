@@ -19,9 +19,13 @@ if (System.getProperty("maven.local", "true") == "true") {
     }
 }
 
+apply plugin: 'asakusafw-sdk'
 apply plugin: 'asakusafw-organizer'
 
 asakusafwOrganizer {
+    hadoop {
+        embed !System.getenv("HADOOP_CMD")
+    }
     profiles.dev {
         assembly.into('.') {
             from 'src/main/conf'
@@ -29,5 +33,12 @@ asakusafwOrganizer {
                 filesMatching('**/*.sh') { it.setMode(0755) }
             }
         }
+        assembly.into('batchapps/whadoop/lib') {
+            from jar
+        }
     }
+}
+
+jar {
+    archiveName = 'jobflow-work.jar'
 }

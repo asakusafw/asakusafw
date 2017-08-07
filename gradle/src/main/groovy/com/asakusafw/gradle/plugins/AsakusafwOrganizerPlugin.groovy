@@ -23,6 +23,7 @@ import com.asakusafw.gradle.plugins.AsakusafwOrganizerPluginConvention.Batchapps
 import com.asakusafw.gradle.plugins.AsakusafwOrganizerPluginConvention.CoreConfiguration
 import com.asakusafw.gradle.plugins.AsakusafwOrganizerPluginConvention.DirectIoConfiguration
 import com.asakusafw.gradle.plugins.AsakusafwOrganizerPluginConvention.ExtensionConfiguration
+import com.asakusafw.gradle.plugins.AsakusafwOrganizerPluginConvention.HadoopConfiguration
 import com.asakusafw.gradle.plugins.AsakusafwOrganizerPluginConvention.HiveConfiguration
 import com.asakusafw.gradle.plugins.AsakusafwOrganizerPluginConvention.TestingConfiguration
 import com.asakusafw.gradle.plugins.AsakusafwOrganizerPluginConvention.WindGateConfiguration
@@ -37,22 +38,22 @@ import com.asakusafw.gradle.tasks.GatherAssemblyTask
  * @since 0.5.3
  * @version 0.7.1
  */
-class AsakusafwOrganizerPlugin  implements Plugin<Project> {
+class AsakusafwOrganizerPlugin implements Plugin<Project> {
 
     /**
      * The task group name.
      */
-    static final String ASAKUSAFW_ORGANIZER_GROUP = 'Asakusa Framework Organizer'
+    public static final String ASAKUSAFW_ORGANIZER_GROUP = 'Asakusa Framework Organizer'
 
     /**
      * The development profile name.
      */
-    static final String PROFILE_NAME_DEVELOPMENT = 'dev'
+    public static final String PROFILE_NAME_DEVELOPMENT = 'dev'
 
     /**
      * The production profile name.
      */
-    static final String PROFILE_NAME_PRODUCTION = 'prod'
+    public static final String PROFILE_NAME_PRODUCTION = 'prod'
 
     private Project project
 
@@ -76,6 +77,7 @@ class AsakusafwOrganizerPlugin  implements Plugin<Project> {
         AsakusafwBaseExtension base = AsakusafwBasePlugin.get(project)
         AsakusafwOrganizerPluginConvention convention = project.extensions.create('asakusafwOrganizer', AsakusafwOrganizerPluginConvention)
         convention.core = convention.extensions.create('core', CoreConfiguration)
+        convention.hadoop = convention.extensions.create('hadoop', HadoopConfiguration)
         convention.directio = convention.extensions.create('directio', DirectIoConfiguration)
         convention.windgate = convention.extensions.create('windgate', WindGateConfiguration)
         convention.hive = convention.extensions.create('hive', HiveConfiguration)
@@ -92,6 +94,10 @@ class AsakusafwOrganizerPlugin  implements Plugin<Project> {
                 return base.frameworkVersion
             }
             assembleDir = { (String) "${project.buildDir}/asakusafw-assembly" }
+        }
+        convention.hadoop.conventionMapping.with {
+            embed = { false }
+            version = { base.hadoopVersion }
         }
         convention.directio.conventionMapping.with {
             enabled = { true }
@@ -149,6 +155,7 @@ class AsakusafwOrganizerPlugin  implements Plugin<Project> {
     private void configureProfile(AsakusafwOrganizerPluginConvention convention,  AsakusafwOrganizerProfile profile) {
         AsakusafwBaseExtension base = AsakusafwBasePlugin.get(project)
         profile.core = profile.extensions.create('core', CoreConfiguration)
+        profile.hadoop = profile.extensions.create('hadoop', HadoopConfiguration)
         profile.directio = profile.extensions.create('directio', DirectIoConfiguration)
         profile.windgate = profile.extensions.create('windgate', WindGateConfiguration)
         profile.hive = profile.extensions.create('hive', HiveConfiguration)
@@ -167,6 +174,10 @@ class AsakusafwOrganizerPlugin  implements Plugin<Project> {
             filesMatching('**/*.sh') { FileCopyDetails f ->
                 f.setMode(0755)
             }
+        }
+        profile.hadoop.conventionMapping.with {
+            embed = { convention.hadoop.embed }
+            version = { convention.hadoop.version }
         }
         profile.directio.conventionMapping.with {
             enabled = { convention.directio.enabled }
@@ -218,6 +229,7 @@ class AsakusafwOrganizerPlugin  implements Plugin<Project> {
         defineFacadeTasks([
                       cleanAssembleAsakusafw : 'Deletes assembly files and directories.',
                          attachComponentCore : 'Attaches framework core components to assemblies.',
+                       attachComponentHadoop : 'Attaches embedded Hadoop components to assemblies.',
                      attachComponentDirectIo : 'Attaches Direct I/O components to assemblies.',
                         attachComponentYaess : 'Attaches YAESS components to assemblies.',
                   attachComponentYaessHadoop : 'Attaches Yaess Hadoop bridge components to assemblies.',

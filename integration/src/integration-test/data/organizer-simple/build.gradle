@@ -20,3 +20,9 @@ if (System.getProperty("maven.local", "true") == "true") {
 }
 
 apply plugin: 'asakusafw-organizer'
+
+asakusafwOrganizer {
+    hadoop {
+        embed !System.getenv("HADOOP_CMD")
+    }
+}

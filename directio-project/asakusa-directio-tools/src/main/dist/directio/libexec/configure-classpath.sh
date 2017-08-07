@@ -14,25 +14,30 @@
 # limitations under the License.
 #
 
-if [ "$HADOOP_CMD" = "" ]
+_CLASSPATH=()
+
+if [ -d "$_ROOT/conf" ]
 then
-    if [ "$HADOOP_HOME" != "" ]
-    then
-        HADOOP_CMD="$HADOOP_HOME/bin/hadoop"
-        unset HADOOP_HOME
-    else
-        HADOOP_CMD="$(which hadoop)"
-        _RET=$?
-        if [ $_RET -ne 0 ]
-        then
-            echo 'hadoop command is not found' 1>&2
-            exit 1
-        fi
-    fi
+    _CLASSPATH+=("$_ROOT/conf")
 fi
 
-if [ ! -x "$HADOOP_CMD" ]
+if [ -e "$_ROOT/lib/asakusa-directio-tools.jar" ]
 then
-    echo "$HADOOP_CMD is not executable" 1>&2
-    exit 1
+    _CLASSPATH+=("$_ROOT/lib/asakusa-directio-tools.jar")
+fi
+
+if [ -d "$ASAKUSA_HOME/core/lib" ]
+then
+    for f in $(ls "$ASAKUSA_HOME/core/lib")
+    do
+        _CLASSPATH+=("$ASAKUSA_HOME/core/lib/$f")
+    done
+fi
+
+if [ -d "$ASAKUSA_HOME/ext/lib" ]
+then
+    for f in $(ls "$ASAKUSA_HOME/ext/lib")
+    do
+        _CLASSPATH+=("$ASAKUSA_HOME/ext/lib/$f")
+    done
 fi

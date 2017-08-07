@@ -58,6 +58,9 @@ class AsakusafwOrganizer extends AbstractOrganizer {
         createConfigurations('asakusafw', [
                          CoreDist : "Contents of Asakusa Framework core modules (${profile.name}).",
                           CoreLib : "Libraries of Asakusa Framework core modules (${profile.name}).",
+                       HadoopDist : "Contents of embedded Hadoop modules (${profile.name}).",
+                        HadoopLib : "Libraries of embedded Hadoop modules (${profile.name}).",
+                 HadoopLoggingLib : "Logging Libraries of embedded Hadoop modules (${profile.name}).",
                      DirectIoDist : "Contents of Asakusa Framework Direct I/O modules (${profile.name}).",
                       DirectIoLib : "Libraries of Asakusa Framework Direct I/O modules (${profile.name}).",
                  DirectIoHiveDist : "Contents of Direct I/O Hive modules (${profile.name}).",
@@ -85,6 +88,13 @@ class AsakusafwOrganizer extends AbstractOrganizer {
                      ExtensionLib : "Asakusa Framework extension libraries (${profile.name}).",
         ])
         configuration('asakusafwExtensionLib').transitive = false
+        configuration('asakusafwHadoopLib').with { Configuration conf ->
+            conf.transitive = true
+            // use snappy-java which is provided in asakusa-runtime-all
+            conf.exclude group: 'org.xerial.snappy', module: 'snappy-java'
+            conf.exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+            conf.exclude group: 'ch.qos.logback', module: 'logback-classic'
+        }
     }
 
     private void configureDependencies() {
@@ -95,9 +105,18 @@ class AsakusafwOrganizer extends AbstractOrganizer {
                 CoreLib : [
                     "com.asakusafw:asakusa-runtime-all:${base.frameworkVersion}:lib@jar"
                 ],
+                HadoopDist : [],
+                HadoopLib : [
+                    "org.apache.hadoop:hadoop-common:${profile.hadoop.version}",
+                    "org.apache.hadoop:hadoop-mapreduce-client-jobclient:${profile.hadoop.version}",
+                ],
+                HadoopLoggingLib : [
+                    "org.slf4j:slf4j-simple:${base.slf4jVersion}@jar",
+                 ],
                 DirectIoDist : "com.asakusafw:asakusa-directio-tools:${base.frameworkVersion}:dist@jar",
                 DirectIoLib : [
-                    "com.asakusafw:asakusa-directio-tools:${base.frameworkVersion}@jar"
+                    "com.asakusafw:asakusa-directio-tools:${base.frameworkVersion}:lib@jar",
+                    "org.slf4j:slf4j-simple:${base.slf4jVersion}@jar",
                 ],
                 YaessDist : "com.asakusafw:asakusa-yaess-bootstrap:${base.frameworkVersion}:dist@jar",
                 YaessLib : [
@@ -170,6 +189,7 @@ class AsakusafwOrganizer extends AbstractOrganizer {
                 OperationLib : [
                     "com.asakusafw:asakusa-operation-tools:${base.frameworkVersion}:lib@jar",
                     "com.asakusafw.info:asakusa-info-cli:${base.frameworkVersion}:exec@jar",
+                    "org.slf4j:slf4j-simple:${base.slf4jVersion}@jar",
                 ],
                 DirectIoHiveDist : [],
                 DirectIoHiveLib : [
@@ -178,6 +198,12 @@ class AsakusafwOrganizer extends AbstractOrganizer {
                 ] + profile.hive.libraries,
                 ExtensionLib : profile.extension.libraries,
             ])
+            if (PluginUtils.compareGradleVersion('2.5') >= 0) {
+                configuration('asakusafwHadoopLib').resolutionStrategy.dependencySubstitution {
+                    substitute module('log4j:log4j') with module("org.slf4j:log4j-over-slf4j:${base.slf4jVersion}")
+                    substitute module('commons-logging:commons-logging') with module("org.slf4j:jcl-over-slf4j:${base.slf4jVersion}")
+                }
+            }
         }
     }
 
@@ -194,12 +220,26 @@ class AsakusafwOrganizer extends AbstractOrganizer {
                     }
                 }
             },
+            Hadoop : {
+                into('.') {
+                    extract configuration('asakusafwHadoopDist')
+                }
+                into('hadoop/lib') {
+                    put configuration('asakusafwHadoopLib')
+                }
+                into('hadoop/lib/logging') {
+                    put configuration('asakusafwHadoopLoggingLib')
+                }
+            },
             DirectIo : {
                 into('.') {
                     extract configuration('asakusafwDirectIoDist')
                 }
                 into('directio/lib') {
                     put configuration('asakusafwDirectIoLib')
+                    process {
+                        rename(/asakusa-directio-tools-.*\.jar/, 'asakusa-directio-tools.jar')
+                    }
                 }
             },
             Yaess : {
@@ -254,6 +294,7 @@ class AsakusafwOrganizer extends AbstractOrganizer {
                     process {
                         rename(/asakusa-operation-tools-.*-lib\.jar/, 'asakusa-operation-tools.jar')
                         rename(/([0-9A-Za-z\-]+)-cli-.*-exec.jar/, '$1.jar')
+                        rename(/slf4j-simple-.*\.jar/, 'slf4j-simple.jar')
                     }
                }
             },
@@ -343,6 +384,10 @@ class AsakusafwOrganizer extends AbstractOrganizer {
             task('attachAssemble').dependsOn task('attachComponentOperation')
             task('attachAssemble').dependsOn task('attachComponentExtension')
 
+            if (profile.hadoop.isEmbed()) {
+                project.logger.info "Enabling embedded Hadoop: ${profile.name}"
+                task('attachAssemble').dependsOn task('attachComponentHadoop')
+            }
             if (profile.directio.isEnabled()) {
                 project.logger.info "Enabling Direct I/O: ${profile.name}"
                 task('attachAssemble').dependsOn task('attachComponentDirectIo')

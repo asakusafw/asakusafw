@@ -25,6 +25,9 @@ import java.util.Optional;
 import org.junit.Assume;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
 import com.asakusafw.integration.AsakusaConfigurator;
 import com.asakusafw.integration.AsakusaProject;
@@ -43,7 +46,20 @@ import com.asakusafw.utils.gradle.ContentsConfigurator;
  * <li> {@code ssh.passphase} - the pass phrase (default: "")</li>
  * </ul>
  */
+@RunWith(Parameterized.class)
 public class WindGateTest {
+
+    /**
+     * Return the test parameters.
+     * @return the test parameters
+     */
+    @Parameters(name = "use-hadoop:{0}")
+    public static Object[][] getTestParameters() {
+        return new Object[][] {
+            { false },
+            { true },
+        };
+    }
 
     /**
      * project provider.
@@ -52,8 +68,19 @@ public class WindGateTest {
     public final AsakusaProjectProvider provider = new AsakusaProjectProvider()
             .withProject(ContentsConfigurator.copy(data("windgate")))
             .withProject(ContentsConfigurator.copy(data("logback-test")))
-            .withProject(AsakusaConfigurator.projectHome())
-            .withProject(AsakusaConfigurator.hadoop(AsakusaConfigurator.Action.SKIP_IF_UNDEFINED));
+            .withProject(AsakusaConfigurator.projectHome());
+
+    /**
+     * Creates a new instance.
+     * @param useHadoop whether or not the test uses hadoop command
+     */
+    public WindGateTest(boolean useHadoop) {
+        if (useHadoop) {
+            provider.withProject(AsakusaConfigurator.hadoop(AsakusaConfigurator.Action.SKIP_IF_UNDEFINED));
+        } else {
+            provider.withProject(AsakusaConfigurator.hadoop(AsakusaConfigurator.Action.UNSET_ALWAYS));
+        }
+    }
 
     /**
      * {@code process.sh} - one-shot.

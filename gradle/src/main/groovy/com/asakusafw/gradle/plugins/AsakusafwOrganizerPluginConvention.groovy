@@ -22,7 +22,7 @@ import com.asakusafw.gradle.assembly.AsakusafwAssembly
 /**
  * Convention class for {@link AsakusafwOrganizerPlugin}.
  * @since 0.5.2
- * @version 0.9.0
+ * @version 0.10.0
  */
 class AsakusafwOrganizerPluginConvention {
 
@@ -51,6 +51,12 @@ class AsakusafwOrganizerPluginConvention {
      * @since 0.9.0
      */
     CoreConfiguration core
+
+    /**
+     * Hadoop settings.
+     * @since 0.10.0
+     */
+    HadoopConfiguration hadoop
 
     /**
      * Direct I/O settings.
@@ -111,6 +117,31 @@ class AsakusafwOrganizerPluginConvention {
      */
     static class CoreConfiguration {
         // no special members
+    }
+
+    /**
+     * Hadoop settings for the Asakusa Framework organizer.
+     * @since 0.10.0
+     */
+    static class HadoopConfiguration {
+
+        /**
+         * Configuration whether embedded Hadoop libraries enabled or not.
+         * <dl>
+         *   <dt> Default value: </dt>
+         *     <dd> {@code false} </dd>
+         * </dl>
+         */
+        boolean embed
+
+        /**
+         * The Hadoop version.
+         * <dl>
+         *   <dt> Default value: </dt>
+         *     <dd> (Asakusa Framework default version) </dd>
+         * </dl>
+         */
+        String version
     }
 
     /**
