@@ -24,12 +24,12 @@ import org.apache.hadoop.hive.serde2.typeinfo.TypeInfo;
 import org.apache.hadoop.hive.serde2.typeinfo.TypeInfoFactory;
 import org.junit.Test;
 
-import com.asakusafw.directio.hive.annotation.HiveField;
-import com.asakusafw.directio.hive.annotation.HiveTable;
-import com.asakusafw.directio.hive.info.TableInfo;
 import com.asakusafw.directio.hive.serde.DataModelDescriptor;
 import com.asakusafw.directio.hive.serde.PropertyDescriptor;
 import com.asakusafw.dmdl.directio.hive.orc.OrcFileEmitter;
+import com.asakusafw.info.hive.TableInfo;
+import com.asakusafw.info.hive.annotation.HiveField;
+import com.asakusafw.info.hive.annotation.HiveTable;
 
 /**
  * Test for {@link HiveDataModelEmitter}.

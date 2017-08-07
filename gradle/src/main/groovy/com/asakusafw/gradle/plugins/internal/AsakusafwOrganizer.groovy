@@ -30,7 +30,7 @@ import com.asakusafw.gradle.tasks.GatherAssemblyTask
 /**
  * Processes an {@link AsakusafwOrganizerProfile}.
  * @since 0.7.0
- * @version 0.7.1
+ * @version 0.10.0
  */
 class AsakusafwOrganizer extends AbstractOrganizer {
 
@@ -163,9 +163,13 @@ class AsakusafwOrganizer extends AbstractOrganizer {
                     "com.asakusafw:asakusa-windgate-retryable:${base.frameworkVersion}@jar",
                 ],
                 TestingDist : "com.asakusafw:asakusa-test-driver:${base.frameworkVersion}:dist@jar",
-                OperationDist : "com.asakusafw:asakusa-operation-tools:${base.frameworkVersion}:dist@jar",
+                OperationDist : [
+                    "com.asakusafw:asakusa-operation-tools:${base.frameworkVersion}:dist@jar",
+                    "com.asakusafw.info:asakusa-info-cli:${base.frameworkVersion}:dist@jar",
+                ],
                 OperationLib : [
                     "com.asakusafw:asakusa-operation-tools:${base.frameworkVersion}:lib@jar",
+                    "com.asakusafw.info:asakusa-info-cli:${base.frameworkVersion}:exec@jar",
                 ],
                 DirectIoHiveDist : [],
                 DirectIoHiveLib : [
@@ -249,6 +253,7 @@ class AsakusafwOrganizer extends AbstractOrganizer {
                     put configuration('asakusafwOperationLib')
                     process {
                         rename(/asakusa-operation-tools-.*-lib\.jar/, 'asakusa-operation-tools.jar')
+                        rename(/([0-9A-Za-z\-]+)-cli-.*-exec.jar/, '$1.jar')
                     }
                }
             },

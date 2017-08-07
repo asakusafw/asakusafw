@@ -21,8 +21,8 @@ import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspector;
 import org.apache.hadoop.hive.serde2.objectinspector.StructField;
 import org.apache.hadoop.hive.serde2.typeinfo.TypeInfo;
 
-import com.asakusafw.directio.hive.info.ColumnInfo;
 import com.asakusafw.directio.hive.util.SchemaUtil;
+import com.asakusafw.info.hive.ColumnInfo;
 import com.asakusafw.runtime.value.ValueOption;
 
 /**

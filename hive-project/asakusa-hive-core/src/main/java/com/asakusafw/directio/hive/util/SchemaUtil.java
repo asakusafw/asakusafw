@@ -29,15 +29,15 @@ import org.apache.hadoop.hive.serde2.typeinfo.TypeInfo;
 import org.apache.hadoop.hive.serde2.typeinfo.UnionTypeInfo;
 import org.apache.hadoop.hive.serde2.typeinfo.VarcharTypeInfo;
 
-import com.asakusafw.directio.hive.info.ArrayType;
-import com.asakusafw.directio.hive.info.ColumnInfo;
-import com.asakusafw.directio.hive.info.DecimalType;
-import com.asakusafw.directio.hive.info.FieldType;
-import com.asakusafw.directio.hive.info.MapType;
-import com.asakusafw.directio.hive.info.PlainType;
-import com.asakusafw.directio.hive.info.SequenceType;
-import com.asakusafw.directio.hive.info.StructType;
-import com.asakusafw.directio.hive.info.UnionType;
+import com.asakusafw.info.hive.ArrayType;
+import com.asakusafw.info.hive.ColumnInfo;
+import com.asakusafw.info.hive.DecimalType;
+import com.asakusafw.info.hive.FieldType;
+import com.asakusafw.info.hive.MapType;
+import com.asakusafw.info.hive.PlainType;
+import com.asakusafw.info.hive.SequenceType;
+import com.asakusafw.info.hive.StructType;
+import com.asakusafw.info.hive.UnionType;
 
 /**
  * Utilities about Hive schema.

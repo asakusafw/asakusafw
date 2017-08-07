@@ -17,8 +17,8 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>asakusa-hive-info</artifactId>
+      <groupId>com.asakusafw.info</groupId>
+      <artifactId>asakusa-info-hive</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

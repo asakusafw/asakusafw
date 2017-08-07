@@ -17,7 +17,7 @@ package com.asakusafw.directio.hive.tools.cli;
 
 import java.util.function.Function;
 
-import com.asakusafw.directio.hive.info.TableInfo;
+import com.asakusafw.info.hive.TableInfo;
 
 /**
  * Provides string from {@link TableInfo}.

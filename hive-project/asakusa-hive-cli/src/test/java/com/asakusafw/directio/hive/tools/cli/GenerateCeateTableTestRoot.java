@@ -28,7 +28,7 @@ import org.junit.Rule;
 import org.junit.rules.ExternalResource;
 import org.junit.rules.TemporaryFolder;
 
-import com.asakusafw.directio.hive.info.TableInfo;
+import com.asakusafw.info.hive.TableInfo;
 
 /**
  * Base class for {@link GenerateCreateTableTask} related classes.

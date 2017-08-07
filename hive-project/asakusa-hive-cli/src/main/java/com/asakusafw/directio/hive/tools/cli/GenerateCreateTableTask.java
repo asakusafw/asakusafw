@@ -31,9 +31,9 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.asakusafw.directio.hive.info.TableInfo;
-import com.asakusafw.directio.hive.syntax.HiveCreateTable;
-import com.asakusafw.directio.hive.syntax.HiveQlEmitter;
+import com.asakusafw.info.hive.TableInfo;
+import com.asakusafw.info.hive.syntax.HiveCreateTable;
+import com.asakusafw.info.hive.syntax.HiveQlEmitter;
 
 /**
  * Generate HiveQL for {@link HiveCreateTable}.
