@@ -20,7 +20,6 @@
     <module>asakusa-yaess-multidispatch</module>
     <module>asakusa-yaess-paralleljob</module>
     <module>asakusa-yaess-tools</module>
-    <module>asakusa-yaess-log-analyzer</module>
   </modules>
 
 </project>

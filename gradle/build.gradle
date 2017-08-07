@@ -23,6 +23,7 @@ ext.parentPom = { f ->
     results.putAll([
         'plugin-version' : xml.version.text(),
         'framework-version' : xml.version.text(),
+        'hadoop-version' : props['hadoop.version'].text(),
         'slf4j-version' : props['slf4j.version'].text(),
         'logback-version' : props['logback.version'].text(),
         'jsch-version' : props['jsch.version'].text(),

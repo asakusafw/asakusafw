@@ -100,6 +100,7 @@ class AsakusafwBasePlugin implements Plugin<Project> {
             'commons-lang-version': 'Commons Lang',
             'commons-codec-version': 'Commons Codec',
             'commons-logging-version': 'Commons Logging',
+            'hadoop-version': 'Apache Hadoop',
             'hive-version': 'Apache Hive',
         ])
         project.logger.info "Asakusa Gradle plug-ins: ${extension.pluginVersion}"
